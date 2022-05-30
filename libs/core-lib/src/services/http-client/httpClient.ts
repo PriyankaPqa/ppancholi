@@ -6,7 +6,7 @@ import axios, {
   AxiosInstance, AxiosResponse,
 } from 'axios';
 import { camelKeys } from 'js-convert-case';
-import { IAzureSearchParams } from '../../types';
+import { IAzureSearchParams, IServerError } from '../../types';
 import { sanitize932115 } from '../utils/owasp';
 import { buildQuery } from '../odata-query';
 import applicationInsights from '../../plugins/applicationInsights/applicationInsights';
@@ -23,7 +23,7 @@ export class HttpClient implements IHttpClient {
   private options: IHttpClientOptions
 
   constructor(i18n: any, options: IHttpClientOptions = {
-    authentication: false, accessTokenKey: '', redirect403Url: '', timerBeforeRedirection: 3000,
+    authentication: false, accessTokenKey: '', redirect403Url: '', timerBeforeRedirection: 3000, useErrorHandler: false,
   }) {
     this.axios = axios.create({
       baseURL: `${process.env.VUE_APP_API_BASE_URL}/`,
@@ -90,7 +90,11 @@ export class HttpClient implements IHttpClient {
     }
 
     if (!error.response?.data) {
-      Vue.toasted.global.error(this.i18n.t('error.unexpected_error'));
+      if (this.options.useErrorHandler) {
+        Vue.prototype.$reportToasted(this.i18n.t('error.unexpected_error'), error);
+      } else {
+        Vue.toasted.global.error(this.i18n.t('error.unexpected_error'));
+      }
       return false;
     }
 
@@ -105,22 +109,28 @@ export class HttpClient implements IHttpClient {
     }
 
     const { errors } = error.response.data;
-
     this.logToAppInsights(errors, error);
 
     if (this.isGlobalHandlerEnabled(error.config)) {
-      this.errorGlobalHandler(errors);
+      this.errorGlobalHandler(error);
     } else {
-      return Promise.reject(errors || error);
+      return Promise.reject(error);
     }
     return false;
   }
 
-  private errorGlobalHandler(errors: IError[]) {
-    if (errors && Array.isArray(errors)) {
-      errors.forEach((error: IError) => {
-        Vue.toasted.global.error(this.getFormattedError(error));
+  private errorGlobalHandler(e: IServerError) {
+    const errorData = e.response.data.errors;
+    if (errorData && Array.isArray(errorData)) {
+      errorData.forEach((error: IError) => {
+        if (this.options.useErrorHandler) {
+          Vue.prototype.$reportToasted(this.getFormattedError(error), e);
+        } else {
+          Vue.toasted.global.error(this.getFormattedError(error));
+        }
       });
+    } else if (this.options.useErrorHandler) {
+      Vue.prototype.$reportToasted(this.i18n.t('error.unexpected_error'), e);
     } else {
       Vue.toasted.global.error(this.i18n.t('error.unexpected_error'));
     }

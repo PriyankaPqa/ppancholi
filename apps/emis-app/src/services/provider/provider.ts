@@ -3,6 +3,7 @@ import { HouseholdsService } from '@libs/registration-lib/services/households/en
 import { HouseholdMetadataService } from '@libs/registration-lib/services/households/metadata';
 import { httpClient } from '@/services/httpClient';
 import { MassActionService } from '@/services/mass-actions/entity';
+import { ErrorReportingService } from '../error-reporting/errorReporting';
 import { IProvider } from './provider.types';
 import { CaseFilesService } from '../case-files/entity';
 import { AppUsersService } from '../app-users';
@@ -50,4 +51,5 @@ export const provider = (): IProvider => ({
   financialAssistanceCategories: new FinancialAssistanceCategoriesService(httpClient),
   massActions: new MassActionService(httpClient),
   tenantSettings: new TenantSettingsService(httpClient),
+  errorReporting: new ErrorReportingService(httpClient),
 });

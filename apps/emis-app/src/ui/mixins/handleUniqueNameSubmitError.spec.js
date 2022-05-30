@@ -23,9 +23,9 @@ describe('handleUniqueNameSubmitError.vue', () => {
   describe('Methods', () => {
     describe('handleSubmitError', () => {
       it('opens a generic error toast if the argument is not an array', async () => {
-        jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
+        wrapper.vm.$reportToasted = jest.fn();
         await wrapper.vm.handleSubmitError('foo');
-        expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('error.unexpected_error');
+        expect(wrapper.vm.$reportToasted).toHaveBeenLastCalledWith('error.submit_error', 'foo');
       });
 
       it('sets isNameUnique to false if this is the error in its argument', async () => {
@@ -34,10 +34,11 @@ describe('handleUniqueNameSubmitError.vue', () => {
       });
 
       it(' opens an error toast in case of a different error', async () => {
-        jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
-        await wrapper.vm.handleSubmitError([{ code: 'foo' }]);
+        const error = { response: { data: { errors: [{ code: 'foo' }] } } };
+        wrapper.vm.$reportToasted = jest.fn();
+        await wrapper.vm.handleSubmitError(error);
 
-        expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('foo');
+        expect(wrapper.vm.$reportToasted).toHaveBeenLastCalledWith('foo', error);
       });
     });
 

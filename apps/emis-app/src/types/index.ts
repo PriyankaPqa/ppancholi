@@ -12,6 +12,7 @@ export type { IRestResponse } from './interfaces/IRestResponse';
 export type { IListOption } from './interfaces/IListOption';
 export type { IAddress } from './interfaces/IAddress';
 export type { IIdMultilingualName } from './interfaces/IIdMultilingualName';
+export type { IErrorReport } from './interfaces/IErrorReport';
 
 /**
  * Enums

@@ -33,6 +33,10 @@ function getAffectedTestFiles(affectedPackages) {
   let allFiles = [];
   const globPattern = '*.{test,spec}.{js,ts}';
 
+  if (affectedPackages.includes('@libs/core-lib')) {
+    allFiles = allFiles.concat(jetpack.find('libs/core-lib', { matching: globPattern }));
+  }
+
   if (affectedPackages.includes('@libs/registration-lib')) {
     allFiles = allFiles.concat(jetpack.find('libs/registration-lib', { matching: globPattern }));
   }

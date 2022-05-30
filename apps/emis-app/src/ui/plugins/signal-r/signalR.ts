@@ -46,7 +46,7 @@ export class SignalR implements ISignalR {
   }: IOptions) {
     this.service = service;
     this.storage = storage;
-    this.showConsole = showConsole;
+    this.showConsole = showConsole && false;
     this.lastSubscribedIds = [];
     this.lastSubscribedNewlyCreatedIds = [];
     this.subscriptions = {};

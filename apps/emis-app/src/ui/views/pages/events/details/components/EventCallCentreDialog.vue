@@ -250,7 +250,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
           await this.submitCallCentre();
           this.$emit('close');
         } catch (e) {
-          this.$appInsights.trackTrace('Event call centre dialog submit error', { error: e }, 'EventCallCentreDialog', 'onSubmit');
+          const errorData = e.response?.data?.errors;
+          this.$appInsights.trackTrace('Event call centre dialog submit error', { error: errorData }, 'EventCallCentreDialog', 'onSubmit');
           this.handleSubmitError(e);
         } finally {
           this.loading = false;

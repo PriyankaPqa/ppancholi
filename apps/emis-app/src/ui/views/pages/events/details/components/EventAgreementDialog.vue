@@ -280,7 +280,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
           await this.submitAgreement();
           this.$emit('close');
         } catch (e) {
-          this.$appInsights.trackTrace('Event agreement dialog submit error', { error: e }, 'EventAgreementDialog', 'onSubmit');
+          const errorData = e.response?.data?.errors;
+          this.$appInsights.trackTrace('Event agreement dialog submit error', { error: errorData }, 'EventAgreementDialog', 'onSubmit');
           this.handleSubmitError(e);
         } finally {
           this.loading = false;

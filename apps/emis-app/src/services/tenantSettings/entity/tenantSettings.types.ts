@@ -34,4 +34,5 @@ export interface ITenantSettingsServiceMock extends IDomainBaseServiceMock<ITena
   updateTenantDetails: jest.Mock<ITenantSettingsEntityData>;
   updateSupportEmails: jest.Mock<ITenantSettingsEntityData>;
   getLogoUrl: jest.Mock<string>;
+
 }

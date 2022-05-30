@@ -42,6 +42,7 @@ describe('httpClient', () => {
         accessTokenKey: 'accessTokenKey',
         redirect403Url: 'redirect403',
         timerBeforeRedirection: 1000,
+        useErrorHandler: true,
       });
     });
 
@@ -70,12 +71,14 @@ describe('httpClient', () => {
       jest.useFakeTimers();
 
       mockI18n.te.mockImplementation(() => true);
+      Vue.prototype.$reportToasted = jest.fn();
 
       mockHttpClient = new HttpClient(mockI18n, {
         authentication: true,
         accessTokenKey: 'accessTokenKey',
         redirect403Url: 'redirect403',
         timerBeforeRedirection: 10000,
+        useErrorHandler: true,
       });
 
       Vue.toasted = {
@@ -145,10 +148,15 @@ describe('httpClient', () => {
     });
 
     describe('responseErrorHandler', () => {
-      it('returns false if no response', async () => {
+      it('returns false if no error', async () => {
         const result = await mockHttpClient.responseErrorHandler();
 
         expect(result).toBeFalsy();
+      });
+
+      it('toasts unexpected error if no error response', async () => {
+        await mockHttpClient.responseErrorHandler({ response: null });
+        expect(Vue.prototype.$reportToasted).toHaveBeenCalledWith('error.unexpected_error', { response: null });
       });
 
       describe('401', () => {
@@ -203,8 +211,35 @@ describe('httpClient', () => {
           },
         });
 
-        expect(Vue.toasted.global.error).toHaveBeenCalledTimes(2);
-        expect(Vue.toasted.global.error.mock.calls).toEqual([['code 1'], ['code 2']]);
+        expect(Vue.prototype.$reportToasted).toHaveBeenCalledTimes(2);
+        expect(Vue.prototype.$reportToasted.mock.calls).toEqual([['code 1', {
+          response:
+         {
+           data: {
+             errors: [
+               {
+                 code: 'code 1',
+               },
+               {
+                 code: 'code 2',
+               },
+             ],
+           },
+         },
+        }], ['code 2', {
+          response: {
+            data: {
+              errors: [
+                {
+                  code: 'code 1',
+                },
+                {
+                  code: 'code 2',
+                },
+              ],
+            },
+          },
+        }]]);
       });
 
       it('rejects if global handler deactivated', async () => {
@@ -220,7 +255,7 @@ describe('httpClient', () => {
               },
             },
           }),
-        ).rejects.toEqual(errors);
+        ).rejects.toEqual({ response: { data: { errors: [{ code: '1' }, { code: '2' }] } } });
       });
 
       it('toasts unexpected error if error not defined', async () => {
@@ -232,7 +267,7 @@ describe('httpClient', () => {
           },
         });
 
-        expect(Vue.toasted.global.error).toHaveBeenCalledWith(mockI18n.t('error.unexpected_error'));
+        expect(Vue.prototype.$reportToasted).toHaveBeenCalledWith(mockI18n.t('error.unexpected_error'), { response: { data: { errors: {} } } });
       });
     });
 

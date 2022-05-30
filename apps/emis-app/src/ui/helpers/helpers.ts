@@ -85,6 +85,7 @@ export default {
       document.body.appendChild(el);
       el.select();
       document.execCommand('copy');
+      navigator.clipboard.writeText(value);
       document.body.removeChild(el);
     }
   },

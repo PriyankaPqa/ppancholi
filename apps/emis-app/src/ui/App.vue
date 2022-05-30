@@ -41,6 +41,12 @@
       :message="singleDialogMessage"
       :min-height="dialogMinHeight"
       :max-width="dialogMaxWidth" />
+
+    <error-report-toast
+      v-if="showReportToast"
+      :show.sync="showReportToast"
+      :message="errorToastMessage"
+      :error="toastError" />
   </v-app>
 </template>
 
@@ -54,6 +60,7 @@ import sanitizeHtml from 'sanitize-html';
 import ActivityWatcher from '@/ui/ActivityWatcher.vue';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import helpers from '@/ui/helpers/helpers';
+import ErrorReportToast from '@/ui/shared-components/ErrorReportToast.vue';
 
 export default {
   name: 'App',
@@ -63,6 +70,7 @@ export default {
     RcRouterViewTransition,
     RcConfirmationDialog,
     RcErrorDialog,
+    ErrorReportToast,
   },
 
   metaInfo() {
@@ -78,6 +86,9 @@ export default {
     return {
       showConfirm: false,
       showMessage: false,
+      showReportToast: false,
+      errorToastMessage: '',
+      toastError: null,
       dialogTitle: '',
       dialogMessages: '',
       singleDialogMessage: '',
@@ -152,6 +163,12 @@ export default {
 
         this.showMessage = true;
         return true;
+      };
+
+      Vue.prototype.$reportToasted = (message, error) => {
+        this.errorToastMessage = message;
+        this.showReportToast = true;
+        this.toastError = error;
       };
     },
 

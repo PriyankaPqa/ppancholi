@@ -43,15 +43,17 @@ describe('CreateEditProgram', () => {
 
     describe('handleSubmitError', () => {
       it('sets isNameUnique to false if this is the error in its argument', async () => {
-        await wrapper.vm.handleSubmitError([{ code: 'errors.program-with-this-name-already-exists-for-this-event' }]);
+        const error = { response: { data: { errors: [{ code: 'errors.program-with-this-name-already-exists-for-this-event' }] } } };
+        await wrapper.vm.handleSubmitError(error);
         expect(wrapper.vm.isNameUnique).toBeFalsy();
       });
 
       it('opens an error toast in case of a different error', async () => {
-        jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
-        await wrapper.vm.handleSubmitError([{ code: 'foo' }]);
+        const error = { response: { data: { errors: [{ code: 'foo' }] } } };
+        wrapper.vm.$reportToasted = jest.fn();
+        await wrapper.vm.handleSubmitError(error);
 
-        expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('foo');
+        expect(wrapper.vm.$reportToasted).toHaveBeenLastCalledWith('foo', error);
       });
     });
 

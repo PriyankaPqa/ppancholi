@@ -128,7 +128,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
           }
           this.$router.replace({ name: routes.events.summary.name, params: { id: eventId } });
         } catch (e) {
-          this.$appInsights.trackTrace('Event submit error', { error: e }, 'CreateEditEvent', 'submit');
+          const errorData = e.response?.data?.errors;
+          this.$appInsights.trackTrace('Event submit error', { error: errorData }, 'CreateEditEvent', 'submit');
           this.handleSubmitError(e);
         } finally {
           this.loading = false;

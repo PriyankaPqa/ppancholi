@@ -39,6 +39,9 @@ export const createLocalVue = () => {
   localVue.use(Vuetify);
   localVue.use(Vuex);
   Vue.use(VueI18n);
+
+  Vue.prototype.$reportToasted = jest.fn();
+
   return localVue;
 };
 

@@ -1029,6 +1029,7 @@ describe('CreateEditTeam.vue', () => {
       it('calls the method setPrimaryContact of team with currentPrimaryContact', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.submitCreateTeam = jest.fn();
+        wrapper.vm.$reportToasted = jest.fn();
         await wrapper.vm.submit();
         expect(wrapper.vm.setPrimaryContactTeam).toHaveBeenCalledTimes(1);
       });
@@ -1279,6 +1280,7 @@ describe('CreateEditTeam.vue', () => {
         jest.spyOn(wrapper.vm.$storage.team.actions, 'editTeam').mockImplementation(() => {
           throw new Error([]);
         });
+        wrapper.vm.$reportToasted = jest.fn();
         await wrapper.vm.submitEditTeam();
         expect(wrapper.vm.loadTeamFromState).toBeCalled();
       });

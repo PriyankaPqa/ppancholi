@@ -493,8 +493,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.resetFormValidation();
         this.setOriginalData();
       } catch (e) {
-        this.$appInsights.trackTrace('Team create error', { error: e });
-        this.handleSubmitError(e as IError[]);
+        const errorData = e.response?.data?.errors;
+        this.$appInsights.trackTrace('Team create error', { error: errorData });
+        this.handleSubmitError(e);
       } finally {
         this.isSubmitting = false;
       }
@@ -507,15 +508,15 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.$toasted.global.success(this.$t('teams.team_updated'));
         this.resetFormValidation();
         this.setOriginalData();
-      } catch (e:unknown) {
-        const errors = e as IError[];
-        if (errors.length > 0 && errors[0].code === 'errors.team-has-active-case-file') {
+      } catch (e) {
+        const errorData = e.response?.data?.errors;
+        if (errorData && errorData.length > 0 && errorData[0].code === 'errors.team-has-active-case-file') {
           this.showErrorDialog = true;
         } else {
-          this.$appInsights.trackTrace('Team edit error', { error: errors });
-          this.handleSubmitError(errors);
+          this.$appInsights.trackTrace('Team edit error', { error: errorData });
+          this.handleSubmitError(e);
         }
-        this.loadTeamFromState(errors);
+        this.loadTeamFromState(errorData);
       } finally {
         this.isSubmitting = false;
       }

@@ -48,6 +48,7 @@
     "common.tooltip_label": "Ouvrir l'aide",
     "common.years": "années",
     "common.yes": "Oui",
+    "error.unexpected_error": "Une erreur inattendue s'est produite lors de la connexion au serveur. Veuillez réessayer.",
     "errors.fresh-address-email-address-not-safe-to-send": "Cette adresse courriel n'est pas sûre",
     "errors.fresh-address-general-exception": "Échec de la nouvelle adresse: {Message}",
     "errors.fresh-address-validation-failed": "Cette adresse courriel semble invalide",

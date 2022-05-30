@@ -6,6 +6,7 @@ import applicationInsights from '@libs/core-lib/plugins/applicationInsights/appl
 import { IMultilingual } from '@/types';
 import { FeatureKeys } from '@/entities/tenantSettings';
 import { SignalR } from '@/ui/plugins/signal-r';
+import { IServerError } from '@libs/core-lib/types';
 
 interface IFormatCurrency {
   (value: number): string;
@@ -46,5 +47,7 @@ declare module 'vue/types/vue' {
       submitActionLabel?: TranslateResult,
       minHeight?: number | string,
       maxWidth?: number | string }) => boolean;
+
+    $reportToasted: (message : TranslateResult, error: IServerError | Error) => null;
   }
 }

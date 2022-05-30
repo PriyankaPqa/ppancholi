@@ -8,4 +8,5 @@ export const httpClient = new HttpClient(i18n, {
   accessTokenKey: localStorageKeys.accessToken.name,
   redirect403Url: routes.home.path,
   timerBeforeRedirection: 3000,
+  useErrorHandler: true,
 });

@@ -25,6 +25,7 @@ import { ICaseFileDocumentsMetadataService } from '../case-file-documents/metada
 import { IEventsMetadataService } from '../events/metadata';
 import { IFinancialAssistancePaymentsMetadataService } from '../financial-assistance-payments/metadata';
 import { ITenantSettingsService, ITenantSettingsServiceMock } from '../tenantSettings/entity';
+import { IErrorReportingService, IErrorReportingServiceMock } from '../error-reporting';
 
 export interface IProvider {
   appUsers: IAppUsersService,
@@ -51,6 +52,7 @@ export interface IProvider {
   financialAssistanceCategories: IFinancialAssistanceCategoriesService,
   massActions: IMassActionService;
   tenantSettings: ITenantSettingsService;
+  errorReporting: IErrorReportingService;
 }
 
 export interface IProviderMock {
@@ -71,4 +73,5 @@ export interface IProviderMock {
   financialAssistanceCategories: IFinancialAssistanceCategoriesServiceMock,
   massActions: IMassActionServiceMock,
   tenantSettings: ITenantSettingsServiceMock;
+  errorReporting: IErrorReportingServiceMock;
 }

@@ -25,7 +25,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcPageContent } from '@libs/component-lib/components';
-import { IError } from '@libs/core-lib/services/http-client';
+import { IServerError } from '@libs/core-lib/types';
 import { VForm } from '@/types';
 import { ProgramEntity } from '@/entities/program';
 import routes from '@/constants/routes';
@@ -107,17 +107,23 @@ export default Vue.extend({
       });
     },
 
-    handleSubmitError(errors: IError[]) {
-      errors.forEach((error) => {
-        if (error.code === 'errors.program-with-this-name-already-exists-for-this-event') {
-          this.isNameUnique = false;
-          setTimeout(() => {
-            helpers.scrollToFirstError('scrollAnchor');
-          }, 300);
-        } else {
-          this.$toasted.global.error(this.$t(error.code));
-        }
-      });
+    handleSubmitError(e: IServerError) {
+      const errorData = e.response?.data?.errors;
+
+      if (!errorData || !Array.isArray(errorData)) {
+        this.$reportToasted(this.$t('error.submit_error'), e);
+      } else {
+        errorData.forEach((error) => {
+          if (error.code === 'errors.program-with-this-name-already-exists-for-this-event') {
+            this.isNameUnique = false;
+            setTimeout(() => {
+              helpers.scrollToFirstError('scrollAnchor');
+            }, 300);
+          } else {
+            this.$reportToasted(this.$t(error.code), e);
+          }
+        });
+      }
     },
 
     async createProgram() {

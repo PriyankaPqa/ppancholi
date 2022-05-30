@@ -30,6 +30,12 @@ Vue.toasted.register('error', (message) => message, {
   },
 });
 
+Vue.toasted.register('errorReport', (message) => message, {
+  type: 'error',
+  className: 'emis-toast emis-toast-error emis-toast-error-report',
+  duration: null,
+});
+
 Vue.toasted.register('warning', (message) => message, {
   type: 'warning',
   icon: 'alert',

@@ -56,6 +56,8 @@ export const createLocalVue = () => {
   localVue.use(rolesAndPermissions);
   localVue.use(features);
 
+  Vue.prototype.$reportToasted = jest.fn();
+
   return localVue;
 };
 
@@ -82,6 +84,15 @@ const mocks = {
       error: jest.fn(),
       warning: jest.fn(),
       info: jest.fn(),
+      errorReport: jest.fn(() => ({
+        el: {
+          appendChild: jest.fn(),
+          querySelector: jest.fn(() => ({
+            appendChild: jest.fn(),
+          })),
+        },
+        goAway: jest.fn(),
+      })),
     },
     show: jest.fn(),
   },

@@ -321,7 +321,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
           await this.submitLocation();
           this.$emit('close');
         } catch (e) {
-          this.$appInsights.trackTrace('Event gen. location submit error', { error: e }, 'EventGenericLocationDialog', 'onSubmit');
+          const errorData = e.response?.data?.errors;
+          this.$appInsights.trackTrace('Event gen. location submit error', { error: errorData }, 'EventGenericLocationDialog', 'onSubmit');
           this.handleSubmitError(e);
         } finally {
           this.loading = false;

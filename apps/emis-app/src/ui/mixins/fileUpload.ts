@@ -5,6 +5,7 @@ import { VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IRestResponse } from '@libs/core-lib/services/http-client';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
+import { IServerError } from '@libs/core-lib/types';
 import { IEntity } from '@libs/core-lib/entities/base';
 
 const httpClient = axios.create({
@@ -70,10 +71,11 @@ export default Vue.extend({
           },
         });
         this.uploadSuccess = true;
-      } catch (e) {
-        if (axios.isCancel(e)) {
+      } catch (error) {
+        if (axios.isCancel(error)) {
           this.uploadSuccess = false;
         } else {
+          const e = error as IServerError;
           this.uploadSuccess = false;
           if (e?.response?.data.errors) {
             this.errors = e.response.data.errors;
@@ -82,7 +84,7 @@ export default Vue.extend({
           } else {
             applicationInsights.trackException(`File upload error ${e.response.status}`, { error: e },
               'fileUpload', 'uploadForm');
-            this.errors = [{ code: 'error.unexpected_error' }];
+            this.errors = [{ code: 'error.upload_unexpected_error' }];
           }
         }
       }

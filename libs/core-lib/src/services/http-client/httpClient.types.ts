@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from 'axios';
-import { IMultilingual } from '@/types';
+import { IMultilingual } from '@/types/interfaces/IMultilingual';
 /* eslint-disable */
 export interface IRestResponse<T> {
   headers?: any;
@@ -30,6 +30,7 @@ export interface IHttpClientOptions {
   accessTokenKey: string;
   redirect403Url: string;
   timerBeforeRedirection: number;
+  useErrorHandler: boolean;
 }
 
 export interface IHttpClient {

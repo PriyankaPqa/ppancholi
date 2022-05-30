@@ -3,7 +3,7 @@
  */
 
 import Vue from 'vue';
-import { IError } from '@libs/core-lib/services/http-client';
+import { IServerError } from '@libs/core-lib/types';
 import helpers from '../helpers/helpers';
 
 export default Vue.extend({
@@ -14,11 +14,12 @@ export default Vue.extend({
   },
 
   methods: {
-    handleSubmitError(errors: IError[]) {
-      if (!Array.isArray(errors)) {
-        this.$toasted.global.error(this.$t('error.unexpected_error'));
+    handleSubmitError(e: IServerError) {
+      const errorData = e.response?.data?.errors;
+      if (!errorData || !Array.isArray(errorData)) {
+        this.$reportToasted(this.$t('error.submit_error'), e);
       } else {
-        errors.forEach((error) => {
+        errorData.forEach((error) => {
           // Used to display a validation error inside the form when an entity name is not unique, instead of the toaster that is displayed for global errors
           // The call should not use the global error handler
           if (error.code === 'errors.an-entity-with-this-name-already-exists') {
@@ -27,7 +28,7 @@ export default Vue.extend({
               helpers.scrollToFirstError('scrollAnchor');
             }, 300);
           } else {
-            this.$toasted.global.error(this.$t(error.code));
+            this.$reportToasted(this.$t(error.code), e);
           }
         });
       }

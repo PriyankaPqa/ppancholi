@@ -48,6 +48,7 @@
     "common.tooltip_label": "Open help",
     "common.years": "years",
     "common.yes": "Yes",
+    "error.unexpected_error": "An unexpected error occurred while connecting to the server. Please try again.",
     "errors.fresh-address-email-address-not-safe-to-send": "This email address is not safe",
     "errors.fresh-address-general-exception": "Fresh address failed: {Message}",
     "errors.fresh-address-validation-failed": "This email address seems invalid",
