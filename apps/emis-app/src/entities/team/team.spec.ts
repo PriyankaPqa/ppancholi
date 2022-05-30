@@ -60,6 +60,7 @@ describe('>>> Team', () => {
           id: 'guid-member-x',
           isPrimaryContact: true,
         };
+        team.teamMembers = [...team.teamMembers, mockTeamMembersData()[1]];
         team.setPrimaryContact(member);
         expect(team.teamMembers[0].isPrimaryContact).toBeFalsy();
         expect(team.teamMembers[1].isPrimaryContact).toBeFalsy();

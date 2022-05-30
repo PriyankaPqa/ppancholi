@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { BaseEntity } from '@libs/core-lib/entities/base';
 import { ContactInformation, IContactInformation } from '../contact-information';
 import { IdentitySet, IIdentitySet } from '../identity-set';
@@ -23,12 +24,12 @@ export class Member extends BaseEntity implements IMember {
       this.identitySet = new IdentitySet(data.identitySet);
       this.currentAddress = new CurrentAddress(data.currentAddress);
       this.contactInformation = new ContactInformation(data.contactInformation);
-      this.addressHistory = data.addressHistory;
+      this.addressHistory = data.addressHistory ? [...data.addressHistory] : [];
     }
   }
 
   setCurrentAddress(currentAddress: ICurrentAddress) {
-    this.currentAddress = currentAddress;
+    this.currentAddress = _cloneDeep(currentAddress);
   }
 
   validate(skipAgeRestriction = false, skipEmailPhoneRules = false): string[] {

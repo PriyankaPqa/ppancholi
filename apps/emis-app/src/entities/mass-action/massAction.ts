@@ -21,10 +21,10 @@ export class MassActionEntity extends BaseEntity implements IMassActionEntity {
       super(data);
       this.name = data.name;
       this.description = data.description;
-      this.details = data.details;
+      this.details = data.details ? { ...data.details } : null;
       this.type = data.type;
       this.group = data.group;
-      this.runs = data.runs;
+      this.runs = data.runs ? [...data.runs] : [];
     } else {
       super();
       this.name = '';

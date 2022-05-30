@@ -218,6 +218,9 @@ describe('LeftMenu.vue', () => {
       beforeEach(() => {
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
+          store: {
+            ...mockUserStateLevel(6),
+          },
         });
       });
 

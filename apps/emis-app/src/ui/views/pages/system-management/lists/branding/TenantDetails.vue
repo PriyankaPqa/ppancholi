@@ -89,7 +89,7 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { VTextFieldWithValidation, VCheckboxWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
 import _isEqual from 'lodash/isEqual';
-import entityUtils from '@/entities/utils';
+import entityUtils from '@libs/core-lib/entities/utils';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { IEditTenantDetailsRequest, ITenantDetailsEntity } from '@/entities/tenantSettings';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';

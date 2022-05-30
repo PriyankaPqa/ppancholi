@@ -246,7 +246,7 @@ import {
 import libHelpers from '@libs/registration-lib/ui/helpers';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import helpers from '@/ui/helpers/helpers';
-import utils from '@/entities/utils';
+import utils from '@libs/core-lib/entities/utils';
 import { ECanadaProvinces, IMultilingual } from '@/types';
 import {
   EResponseLevel,

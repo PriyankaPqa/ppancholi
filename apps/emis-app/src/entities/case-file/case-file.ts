@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { BaseEntity } from '@libs/core-lib/entities/base';
 import { IListOption } from '@/types';
 import {
@@ -37,20 +38,20 @@ export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
   constructor(data?: ICaseFileEntity) {
     if (data) {
       super(data);
-      this.assignedIndividualIds = [...data.assignedIndividualIds];
-      this.assignedTeamIds = [...data.assignedTeamIds];
+      this.assignedIndividualIds = data.assignedIndividualIds ? [...data.assignedIndividualIds] : [];
+      this.assignedTeamIds = data.assignedTeamIds ? [...data.assignedTeamIds] : [];
       this.caseFileNumber = data.caseFileNumber;
       this.caseFileStatus = data.caseFileStatus;
       this.eventId = data.eventId;
       this.householdId = data.householdId;
-      this.impactStatusValidation = data.impactStatusValidation
+      this.impactStatusValidation = _cloneDeep(data.impactStatusValidation)
         || { method: ImpactValidationMethod.NotApplicable, status: ValidationOfImpactStatus.Undetermined };
       this.isDuplicate = data.isDuplicate;
-      this.tags = data.tags;
-      this.labels = data.labels;
+      this.tags = _cloneDeep(data.tags) || [];
+      this.labels = _cloneDeep(data.labels) || [];
       this.triage = data.triage;
       this.privacyDateTimeConsent = new Date(data.privacyDateTimeConsent);
-      this.identityAuthentication = data.identityAuthentication || {
+      this.identityAuthentication = _cloneDeep(data.identityAuthentication) || {
         identificationIds: [],
         method: IdentityAuthenticationMethod.NotApplicable,
         status: IdentityAuthenticationStatus.NotVerified,

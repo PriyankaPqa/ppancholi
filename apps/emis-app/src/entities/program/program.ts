@@ -1,6 +1,6 @@
 import { IMultilingual } from '@/types';
 import { BaseEntity } from '@libs/core-lib/entities/base';
-import utils from '../utils';
+import utils from '@libs/core-lib/entities/utils';
 import {
   EPaymentModalities,
   IEligibilityCriteria,
@@ -33,7 +33,7 @@ export class ProgramEntity extends BaseEntity implements IProgramEntity {
         impacted: data.eligibilityCriteria.impacted,
         completedAssessments: data.eligibilityCriteria.completedAssessments,
       };
-      this.paymentModalities = [...data.paymentModalities];
+      this.paymentModalities = data.paymentModalities ? [...data.paymentModalities] : [];
     } else {
       super();
       this.reset();

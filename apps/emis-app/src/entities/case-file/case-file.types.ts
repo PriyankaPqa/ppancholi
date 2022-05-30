@@ -140,7 +140,7 @@ export interface ICaseFileEntity extends IEntity {
   impactStatusValidation?: IImpactStatusValidation;
   isDuplicate?: boolean;
   labels?: ICaseFileLabel[];
-  tags?: IListOption[];
+   tags?: IListOption[];
   triage?: CaseFileTriage;
   privacyDateTimeConsent?: Date | string;
   identityAuthentication?: IIdentityAuthentication;

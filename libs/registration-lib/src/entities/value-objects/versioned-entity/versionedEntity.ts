@@ -1,4 +1,6 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { IEntity } from '@libs/core-lib/entities/base';
+import utils from '../../../../../core-lib/src/entities/utils';
 import { IHistoryItemTemplateData, IVersionedEntity, IVersionedEntityCombined } from './versionedEntity.types';
 import { IMultilingual } from '../../../types';
 
@@ -25,12 +27,12 @@ export class VersionedEntityCombined implements IVersionedEntityCombined {
     this.versionId = data.versionId;
     this.timestamp = data.timestamp;
     this.userName = data.userName;
-    this.roleName = data.roleName;
+    this.roleName = utils.initMultilingualAttributes(data.roleName);
     this.entityType = data.entityType;
-    this.entity = data.entity;
-    this.previousEntity = data.previousEntity;
-    this.metadata = metadata?.entity;
-    this.previousMetadata = metadata?.previousEntity;
+    this.entity = _cloneDeep(data.entity);
+    this.previousEntity = _cloneDeep(data.previousEntity);
+    this.metadata = _cloneDeep(metadata?.entity);
+    this.previousMetadata = _cloneDeep(metadata?.previousEntity);
   }
 
   getLastActionName(): string {

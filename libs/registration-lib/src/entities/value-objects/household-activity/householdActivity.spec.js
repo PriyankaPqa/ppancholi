@@ -19,29 +19,29 @@ describe('>>> Household Activity', () => {
 
     it('should instantiate user', () => {
       const historyActivity = new HouseholdActivity(activity);
-      expect(historyActivity.user).toBe(activity.user);
+      expect(historyActivity.user).toEqual(activity.user);
     });
 
     it('should instantiate role', () => {
       const historyActivity = new HouseholdActivity(activity);
-      expect(historyActivity.role).toBe(activity.role);
+      expect(historyActivity.role).toEqual(activity.role);
     });
 
     it('should instantiate activityType', () => {
       const historyActivity = new HouseholdActivity(activity);
-      expect(historyActivity.activityType).toBe(activity.activityType);
+      expect(historyActivity.activityType).toEqual(activity.activityType);
     });
     it('should instantiate newDetails', () => {
       const historyActivity = new HouseholdActivity(activity);
-      expect(historyActivity.newDetails).toBe(activity.newDetails);
+      expect(historyActivity.newDetails).toEqual(activity.newDetails);
     });
     it('should instantiate newDetails', () => {
       const historyActivity = new HouseholdActivity(activity);
-      expect(historyActivity.newDetails).toBe(activity.newDetails);
+      expect(historyActivity.newDetails).toEqual(activity.newDetails);
     });
     it('should instantiate previousDetails', () => {
       const historyActivity = new HouseholdActivity(activity);
-      expect(historyActivity.previousDetails).toBe(activity.previousDetails);
+      expect(historyActivity.previousDetails).toEqual(activity.previousDetails);
     });
   });
 

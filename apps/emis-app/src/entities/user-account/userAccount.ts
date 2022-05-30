@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { BaseEntity } from '@libs/core-lib/entities/base';
 import { IListOption } from '@/types';
@@ -19,7 +20,7 @@ export class UserAccountEntity extends BaseEntity {
       super(data);
       this.accountStatus = data.accountStatus;
       this.filters = data.filters ? this.parseFilters(data.filters) : [];
-      this.roles = data.roles;
+      this.roles = _cloneDeep(data.roles) || [];
       this.accessLevels = data.accessLevels;
     } else {
       super();

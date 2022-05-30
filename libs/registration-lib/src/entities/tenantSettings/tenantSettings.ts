@@ -1,4 +1,6 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { BaseEntity } from '@libs/core-lib/entities/base';
+import utils from '@libs/core-lib/src/entities/utils';
 import { IMultilingual } from '../../types';
 import {
   IBrandingEntity, IFeatureEntity, ITenantSettingsEntity, ITenantSettingsEntityData,
@@ -20,25 +22,15 @@ export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsE
   constructor(data?: ITenantSettingsEntityData) {
     super(data);
     this.slug = data?.slug || '';
-    this.emisDomain = data?.emisDomain || {
-      translation: {
-        en: '',
-        fr: '',
-      },
-    };
-    this.registrationDomain = data?.registrationDomain || {
-      translation: {
-        en: '',
-        fr: '',
-      },
-    };
+    this.emisDomain = utils.initMultilingualAttributes(data?.emisDomain);
+    this.registrationDomain = utils.initMultilingualAttributes(data?.registrationDomain);
 
-    this.availableLanguages = data?.availableLanguages || [];
+    this.availableLanguages = data?.availableLanguages ? [...data.availableLanguages] : [];
 
-    this.features = data?.features || [];
+    this.features = _cloneDeep(data?.features) || [];
 
     if (data?.branding) {
-      this.branding = data.branding;
+      this.branding = _cloneDeep(data.branding);
       this.branding.showName = !data.branding.hideName;
     }
   }

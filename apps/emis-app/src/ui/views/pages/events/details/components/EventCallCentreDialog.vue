@@ -116,7 +116,7 @@ import {
   IEventEntity,
 } from '@/entities/event';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import entityUtils from '@/entities/utils';
+import entityUtils from '@libs/core-lib/entities/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 

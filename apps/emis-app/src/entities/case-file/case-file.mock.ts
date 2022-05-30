@@ -43,6 +43,7 @@ export const mockCaseFileEntity = (force? : Partial<IEntity>): ICaseFileEntity =
     status: ValidationOfImpactStatus.Impacted,
     method: ImpactValidationMethod.Manual,
   },
+  tags: [],
   isDuplicate: false,
   labels: [
     {

@@ -164,7 +164,7 @@ import {
 } from '@libs/component-lib/components';
 import { IMultilingual } from '@/types';
 import routes from '@/constants/routes';
-import entityUtils from '@/entities/utils';
+import entityUtils from '@libs/core-lib/entities/utils';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import {
   IOptionItem, OptionItem, ICreateOptionItemRequest, IOptionSubItem,

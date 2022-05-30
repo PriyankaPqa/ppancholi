@@ -33,12 +33,7 @@ describe('>>> TenantSettingsEntity', () => {
 
       it('should instantiate branding', () => {
         const entity = new TenantSettingsEntity(mock);
-        expect(entity.branding).toEqual(mock.branding);
-      });
-
-      it('should instantiate branding.showName', () => {
-        const entity = new TenantSettingsEntity(mock);
-        expect(entity.branding.showName).toEqual(!mock.branding.hideName);
+        expect(entity.branding).toEqual({ ...mock.branding, showName: !mock.branding.hideName });
       });
 
       it('should instantiate supportEmails', () => {

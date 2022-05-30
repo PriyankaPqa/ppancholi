@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockBrandingEntity } from '@/entities/tenantSettings';
-import entityUtils from '@/entities/utils';
+import entityUtils from '@libs/core-lib/entities/utils';
 import { mockStorage } from '@/store/storage';
 import Component from '../TenantDetails.vue';
 

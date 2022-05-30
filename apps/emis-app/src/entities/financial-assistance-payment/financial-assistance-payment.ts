@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { BaseEntity } from '@libs/core-lib/entities/base';
 import {
   ApprovalAction,
@@ -30,7 +31,7 @@ export class FinancialAssistancePaymentEntity extends BaseEntity implements IFin
       this.description = data.description;
       this.approvalStatus = data.approvalStatus;
       this.approvalAction = data.approvalAction;
-      this.groups = data.groups;
+      this.groups = _cloneDeep(data.groups) || [];
     } else {
       super();
       this.caseFileId = null;

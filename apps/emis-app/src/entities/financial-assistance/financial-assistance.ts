@@ -1,5 +1,6 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { IMultilingual } from '@/types';
-import utils from '@/entities/utils';
+import utils from '@libs/core-lib/entities/utils';
 import { BaseEntity, Status } from '@libs/core-lib/entities/base';
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItemData } from './financial-assistance.types';
 
@@ -22,11 +23,11 @@ export class FinancialAssistanceTableEntity extends BaseEntity implements IFinan
     if (data) {
       super(data);
       this.id = data.id;
-      this.name = data.name;
+      this.name = utils.initMultilingualAttributes(data.name);
       this.eventId = data.eventId;
       this.status = data.status;
       this.programId = data.programId;
-      this.items = data.items;
+      this.items = _cloneDeep(data.items) || [];
     } else {
       super();
       this.reset();

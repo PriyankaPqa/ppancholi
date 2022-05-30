@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import entityUtils from '@/entities/utils';
+import entityUtils from '@libs/core-lib/entities/utils';
 import { mockStorage } from '@/store/storage';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 import { mockTenantSettingsEntity } from '@/entities/tenantSettings';

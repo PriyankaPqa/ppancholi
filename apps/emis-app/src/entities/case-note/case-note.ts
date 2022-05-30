@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { IMultilingual } from '@/types';
 import { BaseEntity } from '@libs/core-lib/entities/base';
 import { ICaseNoteEntity } from './case-note.types';
@@ -38,9 +39,9 @@ export class CaseNoteEntity extends BaseEntity {
       this.caseFileId = data.caseFileId;
       this.subject = data.subject;
       this.description = data.description;
-      this.category = data.category;
-      this.userCreatedBy = data.userCreatedBy;
-      this.userUpdatedBy = data.userUpdatedBy;
+      this.category = _cloneDeep(data.category);
+      this.userCreatedBy = _cloneDeep(data.userCreatedBy);
+      this.userUpdatedBy = _cloneDeep(data.userUpdatedBy);
       this.isPinned = data.isPinned;
       this.updatedDate = new Date(data.updatedDate);
     } else {

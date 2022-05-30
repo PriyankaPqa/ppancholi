@@ -1,12 +1,13 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import {
   MAX_LENGTH_LG,
   MAX_LENGTH_MD,
   MAX_LENGTH_SM,
 } from '@/constants/validations';
 import { ECanadaProvinces, IMultilingual } from '@/types';
-import utils from '@/entities/utils';
 
 import { BaseEntity } from '@libs/core-lib/entities/base';
+import utils from '@libs/core-lib/entities/utils';
 import {
   EEventStatus,
   IEventEntity,
@@ -86,8 +87,8 @@ export class EventEntity extends BaseEntity {
       this.selfRegistrationEnabled = data.selfRegistrationEnabled;
       this.eventStatus = data.eventStatus;
       this.tenantId = data.tenantId;
-      this.registrationLocations = data.registrationLocations;
-      this.shelterLocations = data.shelterLocations;
+      this.registrationLocations = _cloneDeep(data.registrationLocations) || [];
+      this.shelterLocations = _cloneDeep(data.shelterLocations) || [];
       this.callCentres = data.callCentres.map((centre) => ({
         ...centre,
         name: utils.initMultilingualAttributes(centre.name),
@@ -103,7 +104,7 @@ export class EventEntity extends BaseEntity {
         details: utils.initMultilingualAttributes(agreement.details),
         agreementType: { ...agreement.agreementType },
       }));
-      this.relatedEventIds = data.relatedEventIds;
+      this.relatedEventIds = data.relatedEventIds ? [...data.relatedEventIds] : null;
     } else {
       super();
       this.reset();

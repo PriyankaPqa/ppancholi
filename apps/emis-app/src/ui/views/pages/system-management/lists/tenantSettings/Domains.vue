@@ -131,7 +131,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 import { IMultilingual } from '@/types';
-import entityUtils from '@/entities/utils';
+import entityUtils from '@libs/core-lib/entities/utils';
 
 export default Vue.extend({
   name: 'Domains',

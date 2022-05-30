@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../../constants/validations';
 import { isValidCanadianPostalCode, maxLengthCheck, required } from '../../classValidation';
 import { Address, IAddress } from '../address';
@@ -23,8 +24,8 @@ export class CurrentAddress implements ICurrentAddress {
       this.addressType = data.addressType;
       this.placeName = data.placeName;
       this.placeNumber = data.placeNumber;
-      this.address = data.address;
-      this.shelterLocation = data.shelterLocation;
+      this.address = _cloneDeep(data.address);
+      this.shelterLocation = _cloneDeep(data.shelterLocation);
     }
   }
 

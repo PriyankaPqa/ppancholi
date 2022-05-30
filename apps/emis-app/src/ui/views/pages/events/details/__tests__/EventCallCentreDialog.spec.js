@@ -4,7 +4,7 @@ import helpers from '@/ui/helpers/helpers';
 import { mockEventEntity, EEventCallCentreStatus } from '@/entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
-import entityUtils from '@/entities/utils';
+import entityUtils from '@libs/core-lib/entities/utils';
 import { EEventSummarySections } from '@/types';
 
 import Component from '../components/EventCallCentreDialog.vue';

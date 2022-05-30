@@ -12,7 +12,7 @@ describe('>>> Financial assistance', () => {
 
     it('should instantiate name', () => {
       const financialAssistance = new FinancialAssistanceTableEntity(mockFinancialAssistanceTable);
-      expect(financialAssistance.name).toBe(mockFinancialAssistanceTable.name);
+      expect(financialAssistance.name).toEqual(mockFinancialAssistanceTable.name);
     });
 
     it('should instantiate eventId', () => {
@@ -32,7 +32,7 @@ describe('>>> Financial assistance', () => {
 
     it('should instantiate items', () => {
       const financialAssistance = new FinancialAssistanceTableEntity(mockFinancialAssistanceTable);
-      expect(financialAssistance.items).toBe(mockFinancialAssistanceTable.items);
+      expect(financialAssistance.items).toEqual(mockFinancialAssistanceTable.items);
     });
   });
 });

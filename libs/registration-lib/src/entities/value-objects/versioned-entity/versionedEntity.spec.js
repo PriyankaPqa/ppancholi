@@ -27,7 +27,7 @@ describe('>>> Versioned Entity', () => {
 
     it('should instantiate roleName', () => {
       const entity = new VersionedEntityCombined(mockEntity, mockMetadata);
-      expect(entity.roleName).toBe(mockEntity.roleName);
+      expect(entity.roleName).toEqual(mockEntity.roleName);
     });
 
     it('should instantiate entityType', () => {
@@ -37,22 +37,22 @@ describe('>>> Versioned Entity', () => {
 
     it('should instantiate entity', () => {
       const entity = new VersionedEntityCombined(mockEntity, mockMetadata);
-      expect(entity.entity).toBe(mockEntity.entity);
+      expect(entity.entity).toEqual(mockEntity.entity);
     });
 
     it('should instantiate previousEntity', () => {
       const entity = new VersionedEntityCombined(mockEntity, mockMetadata);
-      expect(entity.previousEntity).toBe(mockEntity.previousEntity);
+      expect(entity.previousEntity).toEqual(mockEntity.previousEntity);
     });
 
     it('should instantiate metadata', () => {
       const entity = new VersionedEntityCombined(mockEntity, mockMetadata);
-      expect(entity.metadata).toBe(mockMetadata.entity);
+      expect(entity.metadata).toEqual(mockMetadata.entity);
     });
 
     it('should instantiate previousMetadata', () => {
       const entity = new VersionedEntityCombined(mockEntity, mockMetadata);
-      expect(entity.previousMetadata).toBe(mockMetadata.previousEntity);
+      expect(entity.previousMetadata).toEqual(mockMetadata.previousEntity);
     });
   });
 

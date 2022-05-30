@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { MAX_LENGTH_MD } from '../../../constants/validations';
 
 import { IOptionItemData } from '../../../types';
@@ -32,13 +33,13 @@ export class ContactInformation implements IContactInformation {
 
   constructor(data?: IContactInformationData) {
     this.reset();
-    this.mobilePhoneNumber = data?.mobilePhoneNumber || this.mobilePhoneNumber;
-    this.homePhoneNumber = data?.homePhoneNumber || this.homePhoneNumber;
-    this.alternatePhoneNumber = data?.alternatePhoneNumber || this.alternatePhoneNumber;
+    this.mobilePhoneNumber = _cloneDeep(data?.mobilePhoneNumber) || this.mobilePhoneNumber;
+    this.homePhoneNumber = _cloneDeep(data?.homePhoneNumber) || this.homePhoneNumber;
+    this.alternatePhoneNumber = _cloneDeep(data?.alternatePhoneNumber) || this.alternatePhoneNumber;
     this.email = data?.email || this.email;
-    this.preferredLanguage = data?.preferredLanguage || this.preferredLanguage;
+    this.preferredLanguage = _cloneDeep(data?.preferredLanguage) || this.preferredLanguage;
     this.preferredLanguageOther = data?.preferredLanguageOther || this.preferredLanguageOther;
-    this.primarySpokenLanguage = data?.primarySpokenLanguage || this.primarySpokenLanguage;
+    this.primarySpokenLanguage = _cloneDeep(data?.primarySpokenLanguage) || this.primarySpokenLanguage;
     this.primarySpokenLanguageOther = data?.primarySpokenLanguageOther || this.primarySpokenLanguageOther;
     this.emailValidatedByBackend = data ? data.emailValidatedByBackend : this.emailValidatedByBackend;
   }

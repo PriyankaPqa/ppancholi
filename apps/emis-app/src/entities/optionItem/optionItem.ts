@@ -1,6 +1,8 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import _sortBy from 'lodash/sortBy';
 import { IMultilingual } from '@/types';
 import { BaseEntity, Status } from '@libs/core-lib/entities/base';
+import utils from '@libs/core-lib/entities/utils';
 import {
   IOptionItem, IOptionItemData, IOptionSubItem,
 } from './optionItem.types';
@@ -22,12 +24,12 @@ export class OptionItem extends BaseEntity implements IOptionItem {
 
   constructor(data: IOptionItemData) {
     super(data);
-    this.name = data.name;
-    this.description = data.description;
+    this.name = utils.initMultilingualAttributes(data.name);
+    this.description = utils.initMultilingualAttributes(data.description);
     this.orderRank = data.orderRank;
     this.status = data.status;
     this.isOther = data.isOther;
     this.isDefault = data.isDefault;
-    this.subitems = _sortBy(data.subitems, 'orderRank');
+    this.subitems = _sortBy(_cloneDeep(data.subitems) || [], 'orderRank');
   }
 }

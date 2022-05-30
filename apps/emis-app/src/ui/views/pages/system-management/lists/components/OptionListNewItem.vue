@@ -91,7 +91,7 @@ import { IMultilingual, VForm } from '@/types';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import entityUtils from '@/entities/utils';
+import entityUtils from '@libs/core-lib/entities/utils';
 import { IOptionItem } from '@/entities/optionItem';
 import { Status } from '@libs/core-lib/entities/base';
 

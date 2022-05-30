@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import {
   IIdentitySetData, IBirthDate, EIndigenousTypes, IIndigenousIdentityOption, IHoneyPotIdentitySet,
 } from './identitySet.types';
@@ -45,15 +46,15 @@ export class IdentitySet implements IHoneyPotIdentitySet {
       this.middleName = data.middleName;
       this.lastName = data.lastName;
       this.preferredName = data.preferredName;
-      this.gender = data.gender;
+      this.gender = _cloneDeep(data.gender);
       this.genderOther = data.genderOther;
-      this.birthDate = data.birthDate;
+      this.birthDate = _cloneDeep(data.birthDate);
       this.dateOfBirth = data.dateOfBirth ? new Date(data.dateOfBirth).toISOString() : null;
       this.indigenousProvince = data.indigenousProvince;
       this.indigenousType = data.indigenousType;
       this.indigenousCommunityId = data.indigenousCommunityId;
       this.indigenousCommunityOther = data.indigenousCommunityOther;
-      this.indigenousIdentity = data.indigenousIdentity;
+      this.indigenousIdentity = _cloneDeep(data.indigenousIdentity);
       // name is honey pot - it should always be null...
       this.name = (data as IHoneyPotIdentitySet).name;
     }
@@ -107,9 +108,9 @@ export class IdentitySet implements IHoneyPotIdentitySet {
     this.middleName = data.middleName;
     this.lastName = data.lastName;
     this.preferredName = data.preferredName;
-    this.gender = data.gender;
+    this.gender = _cloneDeep(data.gender);
     this.genderOther = data.genderOther;
-    this.birthDate = data.birthDate;
+    this.birthDate = _cloneDeep(data.birthDate);
     this.dateOfBirth = helpers.getBirthDateUTCString(data.birthDate);
     // name is honey pot - it should always be null...
     this.name = (data as IHoneyPotIdentitySet).name;

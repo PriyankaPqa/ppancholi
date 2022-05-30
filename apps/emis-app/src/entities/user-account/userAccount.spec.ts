@@ -23,7 +23,7 @@ describe('>>> UserAccountEntity', () => {
 
       it('should instantiate roles', () => {
         const entity = new UserAccountEntity(mock);
-        expect(entity.roles).toBe(mock.roles);
+        expect(entity.roles).toEqual(mock.roles);
       });
 
       it('should instantiate accessLevels', () => {

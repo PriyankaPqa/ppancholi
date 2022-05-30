@@ -114,7 +114,7 @@ const actions = {
   },
 
   async getCurrentRoles(this: Store<IState>, context: ActionContext<IState, IState>): Promise<string[] | null> {
-    const previousRoles = context.getters.user.roles;
+    const previousRoles = context.state.roles;
     const currentToken = await AuthenticationProvider.acquireToken('fetchUserData', true);
 
     if (currentToken) {

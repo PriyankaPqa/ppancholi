@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity, EEventLocationStatus } from '@/entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
-import entityUtils from '@/entities/utils';
+import entityUtils from '@libs/core-lib/entities/utils';
 import helpers from '@/ui/helpers/helpers';
 import { ECanadaProvinces, EEventSummarySections } from '@/types';
 

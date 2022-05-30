@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { IConsentInformation, IHouseholdCreate, IHouseholdCreateData } from './householdCreate.types';
 import { IAddress, Address } from '../value-objects/address';
 import { IMember, Member } from '../value-objects/member';
@@ -29,7 +30,7 @@ export class HouseholdCreate implements IHouseholdCreate {
       this.primaryBeneficiary = data.primaryBeneficiary ? new Member(data.primaryBeneficiary) : null;
       this.homeAddress = new Address(data.homeAddress);
       this.additionalMembers = data.additionalMembers ? data.additionalMembers.map((h) => new Member(h)) : [];
-      this.consentInformation = data.consentInformation;
+      this.consentInformation = _cloneDeep(data.consentInformation);
       this.id = data.id;
       this.registrationNumber = data.registrationNumber ? data.registrationNumber : '';
     }
@@ -37,9 +38,9 @@ export class HouseholdCreate implements IHouseholdCreate {
 
   addAdditionalMember(newPerson: IMember, sameAddress: boolean) {
     if (sameAddress) {
-      newPerson.currentAddress = this.primaryBeneficiary.currentAddress;
+      newPerson.currentAddress = _cloneDeep(this.primaryBeneficiary.currentAddress);
     }
-    this.additionalMembers = [...this.additionalMembers, newPerson];
+    this.additionalMembers = [...this.additionalMembers, _cloneDeep(newPerson)];
   }
 
   removeAdditionalMember(index: number) {
@@ -48,10 +49,10 @@ export class HouseholdCreate implements IHouseholdCreate {
 
   editAdditionalMember(newPerson: IMember, index: number, sameAddress: boolean) {
     if (sameAddress) {
-      newPerson.currentAddress = this.primaryBeneficiary.currentAddress;
+      newPerson.currentAddress = _cloneDeep(this.primaryBeneficiary.currentAddress);
     }
-    const newAdditionalMembers = [...this.additionalMembers];
-    newAdditionalMembers[index] = newPerson;
+    const newAdditionalMembers = _cloneDeep(this.additionalMembers) || [];
+    newAdditionalMembers[index] = _cloneDeep(newPerson);
     this.additionalMembers = newAdditionalMembers;
   }
 

@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { BaseEntity } from '@libs/core-lib/entities/base';
 import {
@@ -18,8 +19,8 @@ export class TeamEntity extends BaseEntity implements ITeamEntity {
       super(data);
       this.name = data.name;
       this.teamType = data.teamType;
-      this.eventIds = data.eventIds;
-      this.teamMembers = data.teamMembers;
+      this.eventIds = data.eventIds ? [...data.eventIds] : [];
+      this.teamMembers = _cloneDeep(data.teamMembers) || [];
     } else {
       super();
       this.eventIds = [];

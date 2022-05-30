@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import VueI18n from 'vue-i18n';
 import { IAddress } from '../address/address.types';
 import helpers from '../../../ui/helpers/index';
@@ -40,11 +41,11 @@ export class HouseholdActivity implements IHouseholdActivity {
   constructor(data: IHouseholdActivity) {
     this.householdId = data.householdId;
     this.timestamp = data.timestamp;
-    this.user = data.user;
-    this.role = data.role;
+    this.user = _cloneDeep(data.user);
+    this.role = _cloneDeep(data.role);
     this.activityType = data.activityType;
-    this.newDetails = data.newDetails;
-    this.previousDetails = data.previousDetails;
+    this.newDetails = _cloneDeep(data.newDetails);
+    this.previousDetails = _cloneDeep(data.previousDetails);
   }
 
   getActivityName(): string {

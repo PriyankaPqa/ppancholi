@@ -24,9 +24,9 @@ export class CaseFileReferralEntity extends BaseEntity implements ICaseFileRefer
       this.name = data.name;
       this.note = data.note;
       this.method = data.method;
-      this.type = data.type;
-      this.outcomeStatus = data.outcomeStatus;
-      this.referralConsentInformation = data.referralConsentInformation;
+      this.type = data.type ? { ...data.type } : null;
+      this.outcomeStatus = data.outcomeStatus ? { ...data.outcomeStatus } : null;
+      this.referralConsentInformation = data.referralConsentInformation ? { ...data.referralConsentInformation } : null;
       if (this.referralConsentInformation?.dateTimeConsent) {
         this.referralConsentInformation.dateTimeConsent = new Date(this.referralConsentInformation.dateTimeConsent);
       }

@@ -340,24 +340,24 @@ const mutations = (): MutationTree<IState> => ({
   },
 
   setPersonalInformation(state: IState, payload: IContactInformation & IdentitySet) {
-    state.householdCreate.primaryBeneficiary.contactInformation = new ContactInformation(_cloneDeep(payload));
-    state.householdCreate.primaryBeneficiary.identitySet = new IdentitySet(_cloneDeep(payload));
+    state.householdCreate.primaryBeneficiary.contactInformation = new ContactInformation(payload);
+    state.householdCreate.primaryBeneficiary.identitySet = new IdentitySet(payload);
   },
 
   setPrimaryBeneficiary(state: IState, payload: IMember) {
-    state.householdCreate.primaryBeneficiary = new Member(_cloneDeep(payload));
+    state.householdCreate.primaryBeneficiary = new Member(payload);
   },
 
   setIdentity(state: IState, payload: IIdentitySetData) {
-    state.householdCreate.primaryBeneficiary.identitySet.setIdentity(_cloneDeep(payload));
+    state.householdCreate.primaryBeneficiary.identitySet.setIdentity(payload);
   },
 
   setIndigenousIdentity(state: IState, payload: IIdentitySetData) {
-    state.householdCreate.primaryBeneficiary.identitySet.setIndigenousIdentity(_cloneDeep(payload));
+    state.householdCreate.primaryBeneficiary.identitySet.setIndigenousIdentity(payload);
   },
 
   setContactInformation(state: IState, payload: IContactInformation) {
-    state.householdCreate.primaryBeneficiary.contactInformation = new ContactInformation(_cloneDeep(payload));
+    state.householdCreate.primaryBeneficiary.contactInformation = new ContactInformation(payload);
   },
 
   setCurrentAddress(state: IState, payload: ICurrentAddress) {
@@ -365,7 +365,7 @@ const mutations = (): MutationTree<IState> => ({
 
     state.householdCreate.additionalMembers.forEach((m: IMember) => {
       if (_isEqual(m.currentAddress, oldAddress)) {
-        m.setCurrentAddress(_cloneDeep(payload));
+        m.setCurrentAddress(payload);
       }
     });
     state.householdCreate.primaryBeneficiary.currentAddress = _cloneDeep(payload);
@@ -388,7 +388,7 @@ const mutations = (): MutationTree<IState> => ({
   },
 
   editAdditionalMember(state: IState, { payload, index, sameAddress }: {payload: IMember; index: number; sameAddress: boolean}) {
-    state.householdCreate.editAdditionalMember(_cloneDeep(payload), index, sameAddress);
+    state.householdCreate.editAdditionalMember(payload, index, sameAddress);
   },
 
   resetHouseholdCreate(state: IState) {

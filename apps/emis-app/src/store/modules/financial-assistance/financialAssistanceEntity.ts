@@ -1,7 +1,7 @@
 import { ActionContext, ActionTree } from 'vuex';
 import { cloneDeep, orderBy } from 'lodash';
 import { IRootState } from '@/store/store.types';
-import utils from '@/entities/utils';
+import utils from '@libs/core-lib/entities/utils';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,

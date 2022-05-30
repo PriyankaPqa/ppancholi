@@ -6,7 +6,7 @@ import {
 } from '@/test/testSetup';
 
 import { mockOptionItemData, EOptionLists } from '@/entities/optionItem';
-import entityUtils from '@/entities/utils';
+import entityUtils from '@libs/core-lib/entities/utils';
 import { Status } from '@libs/core-lib/entities/base';
 import Component from '../OptionListItem.vue';
 

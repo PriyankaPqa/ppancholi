@@ -22,7 +22,7 @@ export class CaseFileDocumentEntity extends BaseEntity implements ICaseFileDocum
       this.name = data.name;
       this.originalFilename = data.originalFilename;
       this.note = data.note;
-      this.category = data.category;
+      this.category = data.category ? { ...data.category } : null;
       this.documentStatus = data.documentStatus;
     } else {
       super();
