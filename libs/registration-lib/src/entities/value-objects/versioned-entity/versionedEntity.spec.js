@@ -1,4 +1,4 @@
-import { mockBaseData } from '@libs/core-lib/src/entities/base';
+import { mockBaseData } from '../../../../../core-lib/src/entities/base';
 import { i18n } from '../../../ui/plugins/i18n';
 
 import { VersionedEntityCombined } from '.';

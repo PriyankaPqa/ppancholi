@@ -1,6 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { IEntity } from '@libs/core-lib/entities/base';
-import utils from '../../../../../core-lib/src/entities/utils';
+import utils from '@libs/core-lib/entities/utils';
 import { IHistoryItemTemplateData, IVersionedEntity, IVersionedEntityCombined } from './versionedEntity.types';
 import { IMultilingual } from '../../../types';
 

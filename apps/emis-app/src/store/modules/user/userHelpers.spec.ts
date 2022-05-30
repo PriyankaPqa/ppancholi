@@ -1,5 +1,5 @@
 import { mockAuthenticationData } from '@/auth/authentication.mock';
-import AuthenticationProvider from '@/auth/AuthenticationProvider';
+import { localStorageKeys } from '@/constants/localStorage';
 
 import userHelpers from './userHelpers';
 
@@ -25,7 +25,7 @@ describe('>>> Users Helpers', () => {
   describe('getUserData', () => {
     it('returns user data from account', () => {
       const authenticationData = mockAuthenticationData();
-      AuthenticationProvider.account = authenticationData.account;
+      global.localStorage.setItem(localStorageKeys.msalAccount.name, JSON.stringify(authenticationData.account));
       const roles = ['level1'];
 
       expect(userHelpers.getUserData(roles)).toEqual({

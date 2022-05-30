@@ -1,7 +1,7 @@
 import _cloneDeep from 'lodash/cloneDeep';
+import utils from '@libs/core-lib/entities/utils';
 import { IMultilingual } from '../../types';
 import { IShelterLocationData } from '../household-create';
-import utils from '../../../../core-lib/src/entities/utils';
 import {
   IEvent, IEventData, IEventGenericLocation, IEventSchedule, IResponseDetails,
 } from './event.types';

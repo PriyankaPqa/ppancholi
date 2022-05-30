@@ -98,7 +98,9 @@ const actions = {
 
     if (currentRoles) {
       const userData = userHelpers.getUserData(currentRoles);
-      context.commit('setUser', userData);
+      if (userData) {
+        context.commit('setUser', userData);
+      }
       return !!userData;
     }
 

@@ -1,6 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { BaseEntity } from '@libs/core-lib/entities/base';
-import utils from '@libs/core-lib/src/entities/utils';
+import utils from '@libs/core-lib/entities/utils';
 import { IMultilingual } from '../../types';
 import {
   IBrandingEntity, IFeatureEntity, ITenantSettingsEntity, ITenantSettingsEntityData,
