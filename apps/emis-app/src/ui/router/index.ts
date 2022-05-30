@@ -148,10 +148,16 @@ router.beforeEach(async (to, from, next) => {
     }
 
     loginError = !await authenticationGuard(to);
+
     if (!loginError) {
       const authorized = await authorizationGuard(to);
 
       if (authorized) {
+        // eslint-disable-next-line max-depth
+        if (hasRole('noAccess')) {
+          next();
+          return;
+        }
         const featureEnabled = await featureGuard(to);
         featureEnabled ? next() : next(from);
       } else {

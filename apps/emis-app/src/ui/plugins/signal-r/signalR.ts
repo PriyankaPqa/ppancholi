@@ -79,8 +79,9 @@ export class SignalR implements ISignalR {
     }
 
     const isSignedIn = await AuthenticationProvider.isAuthenticated();
+    const noAccess = this.storage.user.getters.user().hasRole('noAccess');
 
-    if (isSignedIn) {
+    if (isSignedIn && !noAccess) {
       try {
         const connection = new HubConnectionBuilder()
         // .configureLogging(LogLevel.Debug)
@@ -548,6 +549,9 @@ export class SignalR implements ISignalR {
    * @private
    */
   private async subscribe() {
+    if (!this.connection) {
+      return;
+    }
     let idsToSubscribe = this.getAllSubscriptionsIds();
 
     // If nothing is new compared to last subscription
@@ -677,6 +681,9 @@ export class SignalR implements ISignalR {
   }
 
   private async unsubscribe(ids: uuid[]) {
+    if (!this.connection) {
+      return;
+    }
     if (ids.length > 0) {
       this.showConsole && console.log(`You will unsubscribe from ${ids}`);
       await this.service.unsubscribe(this.connection.connectionId, ids);
@@ -685,6 +692,9 @@ export class SignalR implements ISignalR {
   }
 
   public async unsubscribeAll() {
+    if (!this.connection) {
+      return;
+    }
     await this.service.unsubscribeAll(this.connection.connectionId);
     await this.connection.stop();
   }

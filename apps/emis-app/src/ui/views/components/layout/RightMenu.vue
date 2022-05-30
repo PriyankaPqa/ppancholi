@@ -187,13 +187,16 @@ export default Vue.extend({
   },
 
   async mounted() {
+    const noAccess = this.$storage.user.getters.user().hasRole('noAccess');
     this.appVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
-    this.userAccount = await this.$storage.userAccount.actions.fetch(this.$storage.user.getters.userId(),
-      { useEntityGlobalHandler: false, useMetadataGlobalHandler: false });
-    this.currentTenantId = this.userAccount.entity?.tenantId;
-    this.tenants = await this.$storage.tenantSettings.actions.fetchUserTenants();
-    this.tenants = this.tenants.filter((t) => t.status === Status.Active);
-    (await this.$storage.tenantSettings.actions.fetchAll());
+    if (!noAccess) {
+      this.userAccount = await this.$storage.userAccount.actions.fetch(this.$storage.user.getters.userId(),
+        { useEntityGlobalHandler: false, useMetadataGlobalHandler: false });
+      this.currentTenantId = this.userAccount.entity?.tenantId;
+      this.tenants = await this.$storage.tenantSettings.actions.fetchUserTenants();
+      this.tenants = this.tenants.filter((t) => t.status === Status.Active);
+      (await this.$storage.tenantSettings.actions.fetchAll());
+    }
   },
 
   methods: {
