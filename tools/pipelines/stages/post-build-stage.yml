@@ -40,7 +40,6 @@ stages:
           - template: '../steps/cache-install-npm.yml'
             parameters:
               packageFeed: ${{ parameters.packageFeed }}
-              nodeJsVersion: ${{ parameters.nodeJsVersion }}
               disableCache: ${{ parameters.disableCache }}
 
           - script: node ./tools/scripts/merge-test-coverage.js
