@@ -22,6 +22,7 @@ import { PageTemplate } from '@/ui/views/components/layout';
 import massActions from '@/ui/views/pages/mass-actions/mixins/massActions';
 import { INavigationTabGroup } from '@/types/interfaces/ui/INavigationTab';
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default mixins(massActions).extend({
   name: 'MassActionsLayout',
@@ -45,7 +46,7 @@ export default mixins(massActions).extend({
     tabs(): Array<INavigationTabGroup> {
       return [
         {
-          name: this.$t('mass_action.card.group1'),
+          name: this.$t('mass_action.card.group', { x: 1 }),
           items: [
             {
               text: this.$t('mass_action.card.financial_assistance'),
@@ -57,7 +58,7 @@ export default mixins(massActions).extend({
           ],
         },
         {
-          name: this.$t('mass_action.card.group4'),
+          name: this.$t('mass_action.card.group', { x: 4 }),
           items: [
             {
               text: this.$t('mass_action.card.export_validation_impact'),
@@ -92,7 +93,6 @@ export default mixins(massActions).extend({
               exact: false,
               level: 'level6',
               roles: ['contributorFinance'],
-              onClick: 'importPaymentStatuses',
             },
             {
               text: this.$t('mass_action.card.import_users'),
@@ -100,7 +100,19 @@ export default mixins(massActions).extend({
               to: routes.massActions.importUsers.home.name,
               exact: false,
               level: 'level6',
-              onClick: 'importUsers',
+            },
+          ],
+        },
+        {
+          name: this.$t('mass_action.card.group', { x: 5 }),
+          items: [
+            {
+              text: this.$t('mass_action.card.data_correction'),
+              test: 'mass_action.card.data_correction',
+              to: routes.massActions.dataCorrection.home.name,
+              exact: false,
+              level: 'level6',
+              feature: FeatureKeys.MassActionCorrection,
             },
           ],
         },
@@ -113,7 +125,7 @@ export default mixins(massActions).extend({
 
     availableTabs(): Array<INavigationTabGroup> {
       return this.tabs.reduce((result, group) => {
-        const filterItems = this.filterItemsOnLevelOrRole(group.items);
+        const filterItems = this.filterItems(group.items);
         if (filterItems.length > 0) {
           result.push({
             name: group.name,

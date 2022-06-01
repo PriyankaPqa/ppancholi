@@ -25,6 +25,7 @@ import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
 import massActions, { IMassActionCards } from '@/ui/views/pages/mass-actions/mixins/massActions';
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default mixins(massActions).extend({
   name: 'MassActionsHome',
@@ -43,7 +44,7 @@ export default mixins(massActions).extend({
       return [
         {
           title: 'mass_action.card.financial_assistance',
-          description: 'mass_action.card.group1',
+          description: this.$t('mass_action.card.group', { x: 1 }),
           button: 'mass_action.card.action.view',
           route: routes.massActions.financialAssistance.home.name,
           dataTest: 'massAction_financial',
@@ -53,7 +54,7 @@ export default mixins(massActions).extend({
         },
         {
           title: 'mass_action.card.export_validation_impact',
-          description: 'mass_action.card.group4',
+          description: this.$t('mass_action.card.group', { x: 4 }),
           button: 'mass_action.card.action.export',
           route: null,
           dataTest: 'massAction_export_validation_impact',
@@ -64,18 +65,17 @@ export default mixins(massActions).extend({
         },
         {
           title: 'mass_action.card.import_validation_impact',
-          description: 'mass_action.card.group4',
+          description: this.$t('mass_action.card.group', { x: 4 }),
           button: 'mass_action.card.action.view',
           route: routes.massActions.importValidationStatus.home.name,
           dataTest: 'massAction_import_validation_impact',
           level: 'level6',
           roles: ['contributorIM'],
           group: 4,
-          onClick: 'importValidationImpact',
         },
         {
           title: 'mass_action.card.generate_funding',
-          description: 'mass_action.card.group4',
+          description: this.$t('mass_action.card.group', { x: 4 }),
           button: 'mass_action.card.action.view',
           route: routes.massActions.fundingRequest.home.name,
           dataTest: 'massAction_generate_funding',
@@ -86,7 +86,7 @@ export default mixins(massActions).extend({
         },
         {
           title: 'mass_action.card.import_payment_statuses',
-          description: 'mass_action.card.group4',
+          description: this.$t('mass_action.card.group', { x: 4 }),
           button: 'mass_action.card.action.view',
           secondaryButton: 'mass_action.card.action.download_template',
           showSecondaryButton: true,
@@ -95,12 +95,11 @@ export default mixins(massActions).extend({
           level: 'level6',
           roles: ['contributorFinance'],
           group: 4,
-          onClick: 'importPaymentStatuses',
           onSecondaryClick: 'downloadImportPaymentStatusesTemplate',
         },
         {
           title: 'mass_action.card.import_users',
-          description: 'mass_action.card.group4',
+          description: this.$t('mass_action.card.group', { x: 4 }),
           button: 'mass_action.card.action.view',
           secondaryButton: 'mass_action.card.action.download_template',
           showSecondaryButton: true,
@@ -109,14 +108,24 @@ export default mixins(massActions).extend({
           level: 'level6',
           roles: null,
           group: 4,
-          onClick: 'importUsers',
           onSecondaryClick: 'downloadImportUsersTemplate',
+        },
+        {
+          title: 'mass_action.card.data_correction',
+          description: this.$t('mass_action.card.group', { x: 5 }),
+          button: 'mass_action.card.action.view',
+          route: routes.massActions.dataCorrection.home.name,
+          dataTest: 'massAction_data_correction',
+          level: 'level6',
+          roles: null,
+          group: 5,
+          feature: FeatureKeys.MassActionCorrection,
         },
       ];
     },
 
     availableCards(): Array<IMassActionCards> {
-      return this.filterItemsOnLevelOrRole(this.cards);
+      return this.filterItems(this.cards);
     },
   },
 });

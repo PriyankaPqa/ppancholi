@@ -268,6 +268,20 @@ const routes = {
         name: 'massActions.fundingRequest.details',
       },
     },
+    dataCorrection: {
+      home: {
+        path: 'data-correction',
+        name: 'massActions.dataCorrection.home',
+      },
+      create: {
+        path: 'data-correction/create',
+        name: 'massActions.dataCorrection.create',
+      },
+      details: {
+        path: 'data-correction/details/:id',
+        name: 'massActions.dataCorrection.details',
+      },
+    },
   },
   programs: {
     home: {

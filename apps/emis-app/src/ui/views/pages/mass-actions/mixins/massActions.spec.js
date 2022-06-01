@@ -50,7 +50,7 @@ describe('massActions', () => {
       });
     });
 
-    describe('filterItemsOnLevelOrRole', () => {
+    describe('filterItems', () => {
       it('returns items for which user has the proper level', async () => {
         const items = [
           {
@@ -67,7 +67,7 @@ describe('massActions', () => {
           },
         ];
         await wrapper.setRole('level1');
-        expect(wrapper.vm.filterItemsOnLevelOrRole(items)).toMatchObject([items[0]]);
+        expect(wrapper.vm.filterItems(items)).toMatchObject([items[0]]);
       });
 
       it('returns items for which user has the proper role', async () => {
@@ -89,7 +89,45 @@ describe('massActions', () => {
           },
         ];
         await wrapper.setRole('contributorIM');
-        expect(wrapper.vm.filterItemsOnLevelOrRole(items)).toMatchObject([items[1]]);
+        expect(wrapper.vm.filterItems(items)).toMatchObject([items[1]]);
+      });
+
+      it('returns items for which user has the proper role', async () => {
+        const items = [
+          {
+            to: 'routes.home.name',
+            icon: 'mdi-home',
+            text: 'leftMenu.home_title',
+            test: 'home',
+            level: 'level1',
+          },
+          {
+            to: 'routes.caseFile.home.name',
+            icon: 'mdi-clipboard-text',
+            text: 'leftMenu.caseFiles_title',
+            test: 'caseFile',
+            level: 'level6',
+            roles: ['contributorIM'],
+          },
+        ];
+        await wrapper.setRole('contributorIM');
+        expect(wrapper.vm.filterItems(items)).toMatchObject([items[1]]);
+      });
+
+      it('returns items for which user has the feature key', async () => {
+        const items = [
+          {
+            to: 'routes.caseFile.home.name',
+            icon: 'mdi-clipboard-text',
+            text: 'leftMenu.caseFiles_title',
+            test: 'caseFile',
+            level: 'level6',
+            roles: ['contributorIM'],
+            feature: 'feature key-2',
+          },
+        ];
+        await wrapper.setRole('level6');
+        expect(wrapper.vm.filterItems(items)).toMatchObject(items);
       });
     });
 

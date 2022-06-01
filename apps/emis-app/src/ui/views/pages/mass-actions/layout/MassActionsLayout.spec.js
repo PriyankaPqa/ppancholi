@@ -4,6 +4,7 @@ import {
 } from '@/test/testSetup';
 
 import routes from '@/constants/routes';
+import { FeatureKeys } from '@/entities/tenantSettings';
 import Component from './MassActionsLayout.vue';
 
 const localVue = createLocalVue();
@@ -22,7 +23,7 @@ describe('MassActionsLayout.vue', () => {
       it('should be declared correctly', () => {
         const expected = [
           {
-            name: wrapper.vm.$t('mass_action.card.group1'),
+            name: wrapper.vm.$t('mass_action.card.group', { x: 1 }),
             items: [
               {
                 text: wrapper.vm.$t('mass_action.card.financial_assistance'),
@@ -34,7 +35,7 @@ describe('MassActionsLayout.vue', () => {
             ],
           },
           {
-            name: wrapper.vm.$t('mass_action.card.group4'),
+            name: wrapper.vm.$t('mass_action.card.group', { x: 4 }),
             items: [
               {
                 text: wrapper.vm.$t('mass_action.card.export_validation_impact'),
@@ -69,7 +70,6 @@ describe('MassActionsLayout.vue', () => {
                 exact: false,
                 level: 'level6',
                 roles: ['contributorFinance'],
-                onClick: 'importPaymentStatuses',
               },
               {
                 text: wrapper.vm.$t('mass_action.card.import_users'),
@@ -77,7 +77,19 @@ describe('MassActionsLayout.vue', () => {
                 to: routes.massActions.importUsers.home.name,
                 exact: false,
                 level: 'level6',
-                onClick: 'importUsers',
+              },
+            ],
+          },
+          {
+            name: wrapper.vm.$t('mass_action.card.group', { x: 5 }),
+            items: [
+              {
+                text: wrapper.vm.$t('mass_action.card.data_correction'),
+                test: 'mass_action.card.data_correction',
+                to: routes.massActions.dataCorrection.home.name,
+                exact: false,
+                level: 'level6',
+                feature: FeatureKeys.MassActionCorrection,
               },
             ],
           },

@@ -1,9 +1,11 @@
 import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
+import { TranslateResult } from 'vue-i18n';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export interface IMassActionCards {
   title: string;
-  description: string;
+  description: string | TranslateResult;
   button: string;
   secondaryButton?: string;
   showSecondaryButton?: boolean;
@@ -14,6 +16,7 @@ export interface IMassActionCards {
   group: number;
   onClick?: string;
   onSecondaryClick?: string;
+  feature?: FeatureKeys
 }
 
 export default Vue.extend({
@@ -25,10 +28,11 @@ export default Vue.extend({
   },
   methods: {
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    filterItemsOnLevelOrRole(items: any) {
+    filterItems(items: any) {
       return items.filter((item: any) => {
         let levelCheck = false;
         let rolesCheck = false;
+        let featureCheck = true;
 
         if (item.level) {
           levelCheck = this.$hasLevel(item.level);
@@ -37,7 +41,11 @@ export default Vue.extend({
         if (item.roles) {
           rolesCheck = item.roles.some((r: string) => this.$hasRole(r));
         }
-        return levelCheck || rolesCheck;
+
+        if (item.feature) {
+          featureCheck = this.$hasFeature(item.feature);
+        }
+        return featureCheck && (levelCheck || rolesCheck);
       });
     },
 

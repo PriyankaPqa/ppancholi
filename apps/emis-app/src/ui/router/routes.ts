@@ -80,6 +80,10 @@ const MassActionsFundingRequestHome = () => import(/* webpackChunkName: "mass-ac
 const MassActionsFundingRequestCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestCreate.vue');
 const MassActionsFundingRequestDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestDetails.vue');
 
+const MassActionsDataCorrectionHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/data-correction/DataCorrectionHome.vue');
+const MassActionsDataCorrectionCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/data-correction/DataCorrectionCreate.vue');
+const MassActionsDataCorrectionDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/data-correction/DataCorrectionDetails.vue');
+
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/views/pages/login-error/LoginError.vue');
 
@@ -601,6 +605,25 @@ export const routes: Array<RouteConfig> = [
                 name: Routes.massActions.fundingRequest.details.name,
                 component: MassActionsFundingRequestDetails,
                 meta: { level: 'level6', roles: ['contributorFinance'], feature: FeatureKeys.MassAction },
+                props: true,
+              },
+              {
+                path: Routes.massActions.dataCorrection.home.path,
+                name: Routes.massActions.dataCorrection.home.name,
+                component: MassActionsDataCorrectionHome,
+                meta: { level: 'level6', feature: FeatureKeys.MassActionCorrection },
+              },
+              {
+                path: Routes.massActions.dataCorrection.create.path,
+                name: Routes.massActions.dataCorrection.create.name,
+                component: MassActionsDataCorrectionCreate,
+                meta: { level: 'level6', feature: FeatureKeys.MassActionCorrection },
+              },
+              {
+                path: Routes.massActions.dataCorrection.details.path,
+                name: Routes.massActions.dataCorrection.details.name,
+                component: MassActionsDataCorrectionDetails,
+                meta: { level: 'level6', feature: FeatureKeys.MassActionCorrection },
                 props: true,
               },
             ],

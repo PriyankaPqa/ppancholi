@@ -5,3 +5,5 @@ test-leo-benef-app
 registration.privacy_statement.p2
 registration.privacy_statement.p1
 error.there-are-no-records-to-be-processed
+mass_action.card.group4
+mass_action.card.group1

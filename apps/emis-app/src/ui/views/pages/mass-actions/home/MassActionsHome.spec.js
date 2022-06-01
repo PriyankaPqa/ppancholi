@@ -3,6 +3,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 import routes from '@/constants/routes';
+import { FeatureKeys } from '@/entities/tenantSettings';
 import Component from './MassActionsHome.vue';
 
 const localVue = createLocalVue();
@@ -22,7 +23,7 @@ describe('MassActionsHome.vue', () => {
         const expected = [
           {
             title: 'mass_action.card.financial_assistance',
-            description: 'mass_action.card.group1',
+            description: wrapper.vm.$t('mass_action.card.group', { x: 1 }),
             button: 'mass_action.card.action.view',
             route: routes.massActions.financialAssistance.home.name,
             dataTest: 'massAction_financial',
@@ -32,7 +33,7 @@ describe('MassActionsHome.vue', () => {
           },
           {
             title: 'mass_action.card.export_validation_impact',
-            description: 'mass_action.card.group4',
+            description: wrapper.vm.$t('mass_action.card.group', { x: 4 }),
             button: 'mass_action.card.action.export',
             route: null,
             dataTest: 'massAction_export_validation_impact',
@@ -43,18 +44,17 @@ describe('MassActionsHome.vue', () => {
           },
           {
             title: 'mass_action.card.import_validation_impact',
-            description: 'mass_action.card.group4',
+            description: wrapper.vm.$t('mass_action.card.group', { x: 4 }),
             button: 'mass_action.card.action.view',
             route: routes.massActions.importValidationStatus.home.name,
             dataTest: 'massAction_import_validation_impact',
             level: 'level6',
             roles: ['contributorIM'],
             group: 4,
-            onClick: 'importValidationImpact',
           },
           {
             title: 'mass_action.card.generate_funding',
-            description: 'mass_action.card.group4',
+            description: wrapper.vm.$t('mass_action.card.group', { x: 4 }),
             button: 'mass_action.card.action.view',
             route: routes.massActions.fundingRequest.home.name,
             dataTest: 'massAction_generate_funding',
@@ -65,7 +65,7 @@ describe('MassActionsHome.vue', () => {
           },
           {
             title: 'mass_action.card.import_payment_statuses',
-            description: 'mass_action.card.group4',
+            description: wrapper.vm.$t('mass_action.card.group', { x: 4 }),
             button: 'mass_action.card.action.view',
             secondaryButton: 'mass_action.card.action.download_template',
             showSecondaryButton: true,
@@ -74,12 +74,11 @@ describe('MassActionsHome.vue', () => {
             level: 'level6',
             roles: ['contributorFinance'],
             group: 4,
-            onClick: 'importPaymentStatuses',
             onSecondaryClick: 'downloadImportPaymentStatusesTemplate',
           },
           {
             title: 'mass_action.card.import_users',
-            description: 'mass_action.card.group4',
+            description: wrapper.vm.$t('mass_action.card.group', { x: 4 }),
             button: 'mass_action.card.action.view',
             secondaryButton: 'mass_action.card.action.download_template',
             showSecondaryButton: true,
@@ -88,8 +87,18 @@ describe('MassActionsHome.vue', () => {
             level: 'level6',
             roles: null,
             group: 4,
-            onClick: 'importUsers',
             onSecondaryClick: 'downloadImportUsersTemplate',
+          },
+          {
+            title: 'mass_action.card.data_correction',
+            description: wrapper.vm.$t('mass_action.card.group', { x: 5 }),
+            button: 'mass_action.card.action.view',
+            route: routes.massActions.dataCorrection.home.name,
+            dataTest: 'massAction_data_correction',
+            level: 'level6',
+            roles: null,
+            group: 5,
+            feature: FeatureKeys.MassActionCorrection,
           },
         ];
         expect(wrapper.vm.cards).toEqual(expected);
@@ -97,8 +106,8 @@ describe('MassActionsHome.vue', () => {
     });
 
     describe('availableCards', () => {
-      it('should return result of filterItemsOnLevelOrRole ', () => {
-        wrapper.vm.filterItemsOnLevelOrRole = jest.fn(() => []);
+      it('should return result of filterItems ', () => {
+        wrapper.vm.filterItems = jest.fn(() => []);
         expect(wrapper.vm.availableCards).toEqual([]);
       });
     });
