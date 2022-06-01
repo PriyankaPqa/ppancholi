@@ -55,35 +55,40 @@
         <div :id="scrollAnchorId" :class="`content full-width pa-${contentPadding}`">
           <slot name="default" />
         </div>
-        <div v-if="showCancel || showSubmit || showApply" class="rc-dialog-actions">
-          <v-btn
-            v-if="showCancel"
-            :small="isDense"
-            data-test="dialog-cancel-action"
-            :disabled="cancelButtonDisabled || loading"
-            @click.native="$emit('cancel')">
-            {{ cancelActionLabel }}
-          </v-btn>
-          <v-btn
-            v-if="showApply"
-            :small="isDense"
-            data-test="dialog-apply-action"
-            :disabled="applyButtonDisabled || loading"
-            @click.native="$emit('apply')">
-            {{ applyActionLabel }}
-          </v-btn>
-          <v-btn
-            v-if="showSubmit"
-            class="ml-3"
-            :small="isDense"
-            color="primary"
-            data-test="dialog-submit-action"
-            :loading="loading"
-            :disabled="submitButtonDisabled"
-            @click.native="$emit('submit')">
-            {{ submitActionLabel }}
-          </v-btn>
-        </div>
+        <template v-if="initLoading">
+          <v-skeleton-loader type="actions" />
+        </template>
+        <template v-else>
+          <div v-if="showCancel || showSubmit || showApply" class="rc-dialog-actions">
+            <v-btn
+              v-if="showCancel"
+              :small="isDense"
+              data-test="dialog-cancel-action"
+              :disabled="cancelButtonDisabled || loading"
+              @click.native="$emit('cancel')">
+              {{ cancelActionLabel }}
+            </v-btn>
+            <v-btn
+              v-if="showApply"
+              :small="isDense"
+              data-test="dialog-apply-action"
+              :disabled="applyButtonDisabled || loading"
+              @click.native="$emit('apply')">
+              {{ applyActionLabel }}
+            </v-btn>
+            <v-btn
+              v-if="showSubmit"
+              class="ml-3"
+              :small="isDense"
+              color="primary"
+              data-test="dialog-submit-action"
+              :loading="loading"
+              :disabled="submitButtonDisabled"
+              @click.native="$emit('submit')">
+              {{ submitActionLabel }}
+            </v-btn>
+          </div>
+        </template>
       </div>
     </v-card>
   </v-dialog>
@@ -252,6 +257,13 @@ export default Vue.extend({
     scrollAnchorId: {
       type: String,
       default: '',
+    },
+    /**
+     * Loading state
+     */
+    initLoading: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

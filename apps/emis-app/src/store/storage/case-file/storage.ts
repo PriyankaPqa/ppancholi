@@ -3,7 +3,7 @@ import {
   IImpactStatusValidation,
   ICaseFileDetailedCount,
   ICaseFileCount,
-  ICaseFileCombined,
+  ICaseFileCombined, IAssignedTeamMembers,
 } from '@/entities/case-file/case-file.types';
 import { IStorage } from '@/store/storage/case-file/storage.types';
 import { IOptionItem } from '@/entities/optionItem';
@@ -11,6 +11,7 @@ import { IListOption } from '@/types';
 
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
 import { EEventStatus } from '@/entities/event';
+import { IEntityCombined } from '@libs/core-lib/entities/base';
 import { IStore, IState } from '../../store.types';
 import { Base } from '../base';
 
@@ -34,6 +35,15 @@ export class CaseFileStorage
 
   private getters = {
     ...this.baseGetters,
+
+    get: (id: uuid): IEntityCombined<ICaseFileEntity, ICaseFileMetadata> => {
+      const entity = this.store.getters[`${this.entityModuleName}/get`](id);
+
+      const metadata = this.metadataModuleName ? this.store.getters[`${this.metadataModuleName}/get`](id) : null;
+      // case file store has overwritten combinedCollections to add properties
+      // thus if you need more properties you can also override combinedCollections
+      return this.combinedCollections([entity], [metadata])[0] || { entity, metadata };
+    },
 
     // eslint-disable-next-line
     tagsOptions: (filterOutInactive = true, actualValue?: string[] | string): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/tagsOptions`](filterOutInactive, actualValue),
@@ -99,6 +109,9 @@ export class CaseFileStorage
 
     createCaseFile: (payload: ICreateCaseFileRequest):
       Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/createCaseFile`, payload),
+
+    assignCaseFile: (id: uuid, teamMembers: IAssignedTeamMembers[], teams: uuid[]):
+      Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/assignCaseFile`, { id, teamMembers, teams }),
   }
 
   private mutations = {

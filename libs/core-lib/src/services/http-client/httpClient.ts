@@ -99,7 +99,7 @@ export class HttpClient implements IHttpClient {
     }
 
     if (error.response.status === 401) {
-      Vue.toasted.global.error(this.i18n.t('error.log_in_again'));
+      Vue?.toasted?.global.error(this.i18n.t('error.log_in_again'));
       return false;
     }
 

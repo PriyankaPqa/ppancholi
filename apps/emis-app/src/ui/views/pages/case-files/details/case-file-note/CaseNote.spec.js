@@ -130,6 +130,12 @@ describe('CaseNote.vue', () => {
           },
         });
 
+        await wrapper.setData({
+          caseFile: {
+            ...wrapper.vm.caseFile,
+            readonly: false,
+          },
+        });
         await wrapper.setRole('level1');
         expect(wrapper.vm.showAddButton).toBe(true);
 

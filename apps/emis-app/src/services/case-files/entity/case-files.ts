@@ -2,7 +2,7 @@ import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
   ICaseFileCount,
-  ICaseFileDetailedCount,
+  ICaseFileDetailedCount, IAssignedTeamMembers,
 } from '@/entities/case-file';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
@@ -74,6 +74,7 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
     return this.http.patch(`/case-file/case-files/${id}/validation-of-impact-status`, { ...impactStatusValidation });
   }
 
+  // TODO: Remove all references to setCaseFileAssign when EMISV2-4373
   async setCaseFileAssign(id: uuid, payload: {individuals: uuid[], teams: uuid[]}): Promise<ICaseFileEntity> {
     return this.http.patch<ICaseFileEntity>(`${this.baseUrl}/${id}/assign`, payload);
   }
@@ -88,5 +89,9 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
 
   async fetchCaseFileDetailedCounts(eventId: uuid): Promise<ICaseFileDetailedCount> {
     return this.http.get(`${this.baseUrl}/detailed-assigned-counts`, { params: { eventId } });
+  }
+
+  async assignCaseFile(id: uuid, payload: {teamMembers: IAssignedTeamMembers[], teams: uuid[]}): Promise<ICaseFileEntity> {
+    return this.http.patch<ICaseFileEntity>(`${this.baseUrl}/${id}/assign-case-file-teams-and-team-members`, payload);
   }
 }

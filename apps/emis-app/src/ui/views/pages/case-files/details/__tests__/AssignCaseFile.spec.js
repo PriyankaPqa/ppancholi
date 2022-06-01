@@ -1,27 +1,27 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCaseFileEntity } from '@/entities/case-file';
+import { mockAssignedTeamMembers, mockCaseFileEntity } from '@/entities/case-file';
 import { mockCombinedUserAccount, AccountStatus } from '@/entities/user-account';
 import { mockTeamEntity, TeamType, mockTeamMembersData } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
 import helpers from '@/ui/helpers/helpers';
-
 import Component from '../case-file-activity/components/AssignCaseFile.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCaseFileEntity();
+const team = { ...mockTeamEntity(), activeMemberCount: 0 };
+
+storage.userAccount.getters.getAll = jest.fn(() => [
+  mockCombinedUserAccount({ id: 'mock-id-1', accountStatus: AccountStatus.Active }),
+  mockCombinedUserAccount({ id: 'mock-id-2', accountStatus: AccountStatus.Inactive }),
+]);
+storage.team.actions.getTeamsAssignable = jest.fn(() => [mockTeamEntity()]);
 
 describe('AssignCaseFile.vue', () => {
   let wrapper;
-  storage.userAccount.getters.getAll = jest.fn(() => [
-    mockCombinedUserAccount({ id: 'mock-id-1', accountStatus: AccountStatus.Active }),
-    mockCombinedUserAccount({ id: 'mock-id-2', accountStatus: AccountStatus.Inactive }),
-  ]);
-  storage.team.actions.getTeamsAssignable = jest.fn(() => [mockTeamEntity()]);
-  const team = { ...mockTeamEntity(), activeMemberCount: 0 };
 
   describe('Template', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       wrapper = mount(Component, {
         localVue,
         propsData: {
@@ -37,6 +37,9 @@ describe('AssignCaseFile.vue', () => {
         mocks: {
           $storage: storage,
         },
+      });
+      await wrapper.setData({
+        initLoading: false,
       });
     });
 
@@ -98,6 +101,11 @@ describe('AssignCaseFile.vue', () => {
             sortable: true,
             value: 'translatedRoleName',
           },
+          {
+            text: 'caseFile.assign.assign',
+            class: 'team_member_header',
+            value: 'assign',
+          },
         ]);
       });
     });
@@ -116,7 +124,8 @@ describe('AssignCaseFile.vue', () => {
           },
         });
       });
-      it('calls the helper filterCollectionByValue with allIndividuals and searchTerm and return the result', () => {
+
+      it('calls the helper filterCollectionByValue with currentTeamMembers and searchTerm and return the result', () => {
         const individuals = wrapper.vm.displayedIndividuals;
 
         expect(individuals).toEqual(['mock-displayed-individuals']);
@@ -126,7 +135,7 @@ describe('AssignCaseFile.vue', () => {
 
   describe('Life Cycle', () => {
     describe('created', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         storage.team.actions.searchAggregatedTeams = jest.fn(() => []);
         wrapper = shallowMount(Component, {
           localVue,
@@ -139,33 +148,29 @@ describe('AssignCaseFile.vue', () => {
           },
         });
         wrapper.vm.getTeamsData = jest.fn();
+        wrapper.vm.loadAllUsers = jest.fn();
+        wrapper.vm.setAssignedTeams = jest.fn();
+        wrapper.vm.setAssignedIndividuals = jest.fn();
       });
 
-      it('calls getTeamsData', () => {
-        jest.spyOn(wrapper.vm, 'getTeamsData').mockImplementation();
-        wrapper.vm.$options.created.forEach((hook) => {
+      it('calls getTeamsData', async () => {
+        await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.getTeamsData).toHaveBeenCalledTimes(1);
       });
 
       it('calls setAssignedTeams', async () => {
-        jest.spyOn(wrapper.vm, 'getTeamsData').mockImplementation(() => {});
-
-        jest.spyOn(wrapper.vm, 'setAssignedTeams').mockImplementation(() => {});
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-
         expect(wrapper.vm.setAssignedTeams).toHaveBeenCalledTimes(1);
       });
 
       it('calls setAssignedIndividuals', async () => {
-        jest.spyOn(wrapper.vm, 'setAssignedIndividuals').mockImplementation(() => {});
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-
         expect(wrapper.vm.setAssignedIndividuals).toHaveBeenCalledTimes(1);
       });
     });
@@ -189,6 +194,12 @@ describe('AssignCaseFile.vue', () => {
       it('emits update:show false', async () => {
         await wrapper.vm.close();
         expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
+      });
+
+      it('should call resetState', async () => {
+        wrapper.vm.resetState = jest.fn();
+        await wrapper.vm.close();
+        expect(wrapper.vm.resetState).toBeCalled();
       });
     });
 
@@ -232,11 +243,17 @@ describe('AssignCaseFile.vue', () => {
           activeMemberCount: 1,
         }]);
 
+        const teamName = mockTeamEntity().name;
+
         expect(wrapper.vm.allIndividuals).toEqual([{
           id: 'mock-id-1',
           ...mockCombinedUserAccount({ id: 'mock-id-1', accountStatus: AccountStatus.Active }),
           displayName: mockCombinedUserAccount().metadata.displayName,
           translatedRoleName: mockCombinedUserAccount().metadata.roleName.translation.en,
+          teamName,
+          teamId: mockTeamEntity().id,
+          itemKey: `mock-id-1_team_${mockTeamEntity().name}`,
+          disabled: false,
         }]);
       });
     });
@@ -252,56 +269,70 @@ describe('AssignCaseFile.vue', () => {
     });
 
     describe('setAssignedIndividuals', () => {
-      it('sets setAssignedIndividuals to individuals that have the id among assignedIndividualsIds of the case file and are active', async () => {
-        const individuals = [
-          {
-            ...mockTeamMembersData()[0],
-            id: 'guid-1',
-            entity: {
-              accountStatus: AccountStatus.Active,
-            },
+      it('should attach team information to individuals and set the variable', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            caseFile: mockCaseFile,
+            show: true,
           },
-          {
-            ...mockTeamMembersData()[0],
-            id: 'guid-2',
-            entity: {
-              accountStatus: AccountStatus.Inactive,
-            },
+          data: () => ({
+            assignedTeamMembers: mockAssignedTeamMembers(),
+            allIndividuals: [
+              { entity: { id: 'mock-assigned-individual-id-1', accountStatus: AccountStatus.Active } },
+              { entity: { id: 'mock-assigned-individual-id-2', accountStatus: AccountStatus.Active } },
+              { entity: { id: 'mock-assigned-individual-id-3', accountStatus: AccountStatus.Active } },
+            ],
+            allTeams: [
+              { id: 'mock-assigned-team-id-1', name: 'Team A' },
+              { id: 'mock-assigned-team-id-2', name: 'Team B' },
+            ],
+          }),
+          mocks: {
+            $storage: storage,
           },
-          {
-            ...mockTeamMembersData()[0],
-            id: 'guid-3',
-            entity: {
-              accountStatus: AccountStatus.Active,
-            },
-          },
-
-        ];
-
-        wrapper.vm.allIndividuals = individuals;
-        wrapper.vm.caseFile.assignedIndividualIds = ['guid-1', 'guid-2'];
+        });
 
         await wrapper.vm.setAssignedIndividuals();
 
-        expect(wrapper.vm.assignedIndividuals).toEqual([{
-          ...mockTeamMembersData()[0],
-          id: 'guid-1',
-          entity: {
-            accountStatus: AccountStatus.Active,
+        expect(wrapper.vm.assignedIndividuals).toEqual([
+          {
+            entity: {
+              accountStatus: 1,
+              id: 'mock-assigned-individual-id-1',
+            },
+            teamId: 'mock-assigned-team-id-1',
+            teamName: 'Team A',
           },
-        }]);
+          {
+            entity: {
+              accountStatus: 1,
+              id: 'mock-assigned-individual-id-2',
+            },
+            teamId: 'mock-assigned-team-id-1',
+            teamName: 'Team A',
+          },
+          {
+            entity: {
+              accountStatus: 1,
+              id: 'mock-assigned-individual-id-3',
+            },
+            teamId: 'mock-assigned-team-id-2',
+            teamName: 'Team B',
+          },
+        ]);
       });
     });
 
-    describe('isSelected', () => {
-      it('returns true if the argument is part of assignedIndividuals', () => {
+    describe('isUserSelected', () => {
+      it('returns true if the user is part of assignedIndividuals', () => {
         wrapper.vm.assignedIndividuals = mockTeamMembersData();
-        expect(wrapper.vm.isSelected(mockTeamMembersData()[0])).toBeTruthy();
+        expect(wrapper.vm.isUserSelected(mockTeamMembersData()[0])).toBeTruthy();
       });
 
-      it('returns false if the argument is not part of assignedIndividuals', () => {
+      it('returns false if the user is not part of assignedIndividuals', () => {
         wrapper.vm.assignedIndividuals = mockTeamMembersData();
-        expect(wrapper.vm.isSelected({ ...mockTeamMembersData[0], id: 'guid-3' })).toBeFalsy();
+        expect(wrapper.vm.isUserSelected({ ...mockTeamMembersData[0], id: 'guid-3' })).toBeFalsy();
       });
     });
 
@@ -331,9 +362,11 @@ describe('AssignCaseFile.vue', () => {
           { ...mockTeamEntity(), id: 'team-id-1' },
           { ...mockTeamEntity(), id: 'team-id-2' },
         ];
+
+        wrapper.vm.prepareTeamMembersPayload = jest.fn(() => mockAssignedTeamMembers());
         await wrapper.vm.submit();
-        expect(storage.caseFile.actions.setCaseFileAssign)
-          .toHaveBeenCalledWith(wrapper.vm.caseFile.id, [mockTeamMembersData()[0].id, mockTeamMembersData()[1].id], ['team-id-1', 'team-id-2']);
+        expect(storage.caseFile.actions.assignCaseFile)
+          .toHaveBeenCalledWith(wrapper.vm.caseFile.id, mockAssignedTeamMembers(), ['team-id-1', 'team-id-2']);
       });
 
       it('emits updateAssignmentsInfo with the right payload', async () => {
@@ -345,10 +378,7 @@ describe('AssignCaseFile.vue', () => {
         wrapper.vm.assignedIndividuals = mockTeamMembersData();
         wrapper.vm.assignedTeams = teams;
         await wrapper.vm.submit();
-        expect(wrapper.emitted('updateAssignmentsInfo')[0][0]).toEqual({
-          teams,
-          individuals: mockTeamMembersData(),
-        });
+        expect(wrapper.emitted('updateAssignmentsInfo')[0][0]).toEqual({ teams, individuals: mockTeamMembersData() });
       });
 
       it('emits update:show false', async () => {
@@ -359,6 +389,178 @@ describe('AssignCaseFile.vue', () => {
       it('emits updateActivities', async () => {
         await wrapper.vm.submit();
         expect(wrapper.emitted('updateActivities')).toBeTruthy();
+      });
+    });
+
+    describe('assignTeam', () => {
+      it('should assign a team', () => {
+        const team = mockTeamEntity();
+        expect(wrapper.vm.assignedTeams).toEqual([]);
+        wrapper.vm.assignTeam(team);
+        expect(wrapper.vm.assignedTeams).toEqual([team]);
+      });
+    });
+
+    describe('assignIndividual', () => {
+      const users = [
+        {
+          id: '1', displayName: 'MisterX', teamId: '1', disabled: false,
+        },
+        {
+          id: '1', displayName: 'MisterX', teamId: '2', disabled: false,
+        },
+      ];
+      beforeEach(async () => {
+        await wrapper.setData({
+          allIndividuals: users,
+          currentTeam: { id: '1' },
+        });
+      });
+
+      it('should assign an individual', () => {
+        wrapper.vm.assignIndividual(users[0]);
+        expect(wrapper.vm.assignedIndividuals).toEqual([users[0]]);
+      });
+
+      it('should disable the same individual if present in other teams', () => {
+        wrapper.vm.assignIndividual(users[0]);
+        expect(wrapper.vm.allIndividuals[1].disabled).toEqual(true);
+      });
+    });
+
+    describe('unAssignIndividual', () => {
+      const allIndividuals = [
+        {
+          id: '1', displayName: 'MisterX', teamId: '1', disabled: false,
+        },
+        {
+          id: '1', displayName: 'MisterX', teamId: '2', disabled: true,
+        },
+        {
+          id: '2', displayName: 'MissY', teamId: '1', disabled: false,
+        },
+      ];
+
+      const assignedIndividuals = [
+        {
+          id: '1', displayName: 'MisterX', teamId: '1', disabled: false,
+        },
+      ];
+      beforeEach(async () => {
+        await wrapper.setData({
+          allIndividuals,
+          assignedIndividuals,
+          currentTeam: { id: '1' },
+        });
+      });
+
+      it('should un assign an individual', () => {
+        wrapper.vm.unAssignIndividual(assignedIndividuals[0]);
+        expect(wrapper.vm.assignedIndividuals).toEqual([]);
+      });
+
+      it('should enable the same individual if present in other teams', () => {
+        wrapper.vm.unAssignIndividual(assignedIndividuals[0]);
+        expect(wrapper.vm.allIndividuals[1].disabled).toEqual(false);
+      });
+    });
+
+    describe('onSelectIndividuals', () => {
+      it('should call assignIndividual when selecting a user', () => {
+        wrapper.vm.assignIndividual = jest.fn();
+        wrapper.vm.onSelectIndividuals({ item: {}, value: true });
+        expect(wrapper.vm.assignIndividual).toBeCalled();
+      });
+
+      it('should call unAssignIndividual when unselecting a user', () => {
+        wrapper.vm.unAssignIndividual = jest.fn();
+        wrapper.vm.onSelectIndividuals({ item: {}, value: false });
+        expect(wrapper.vm.unAssignIndividual).toBeCalled();
+      });
+    });
+
+    describe('prepareTeamMembersPayload', () => {
+      it('should prepare the individuals payload to assign a case file', () => {
+        const users = [
+          {
+            id: '1',
+            teamId: '1',
+          },
+          {
+            id: '2',
+            teamId: '1',
+          },
+          {
+            id: '3',
+            teamId: '2',
+          },
+        ];
+        const res = wrapper.vm.prepareTeamMembersPayload(users);
+        expect(res).toEqual([
+          {
+            teamId: '1', teamMembersIds: ['1', '2'],
+          },
+          {
+            teamId: '2', teamMembersIds: ['3'],
+          },
+        ]);
+      });
+    });
+
+    describe('saveState', () => {
+      it('should backup assigned teams', () => {
+        wrapper.setData({
+          assignedTeams: [team],
+        });
+        expect(wrapper.vm.backupAssignedTeams).toEqual([]);
+        wrapper.vm.saveState();
+        expect(wrapper.vm.backupAssignedTeams).toEqual([team]);
+      });
+
+      it('should backup assignedIndividuals teams', () => {
+        const assignedIndividuals = [
+          {
+            entity: {
+              accountStatus: 1,
+              id: 'mock-assigned-individual-id-1',
+            },
+            teamId: 'mock-assigned-team-id-1',
+            teamName: 'Team A',
+          }];
+        wrapper.setData({
+          assignedIndividuals,
+        });
+        expect(wrapper.vm.backupAssignedIndividuals).toEqual([]);
+        wrapper.vm.saveState();
+        expect(wrapper.vm.backupAssignedIndividuals).toEqual(assignedIndividuals);
+      });
+    });
+
+    describe('resetState', () => {
+      it('should reset searchTerm', () => {
+        wrapper.setData({
+          searchTerm: 'search',
+        });
+        wrapper.vm.resetState();
+        expect(wrapper.vm.searchTerm).toEqual('');
+      });
+
+      it('should reset assignedTeams', () => {
+        wrapper.setData({
+          assignedTeams: [team],
+          backupAssignedTeams: ['backup'],
+        });
+        wrapper.vm.resetState();
+        expect(wrapper.vm.assignedTeams).toEqual(['backup']);
+      });
+
+      it('should reset assignedIndividuals', () => {
+        wrapper.setData({
+          assignedIndividuals: ['individual'],
+          backupAssignedIndividuals: ['backup'],
+        });
+        wrapper.vm.resetState();
+        expect(wrapper.vm.assignedIndividuals).toEqual(['backup']);
       });
     });
   });

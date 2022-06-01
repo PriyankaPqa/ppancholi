@@ -3,7 +3,7 @@ import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
   ICaseFileCount,
-  ICaseFileDetailedCount,
+  ICaseFileDetailedCount, IAssignedTeamMembers,
 } from '@/entities/case-file';
 import { IListOption } from '@/types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
@@ -33,6 +33,7 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation): Promise<ICaseFileEntity>;
   getCaseFileAssignedCounts(params: {eventId: uuid, teamId: uuid}): Promise<ICaseFileCount>;
   fetchCaseFileDetailedCounts(eventId: uuid): Promise<ICaseFileDetailedCount>;
+  assignCaseFile(id: uuid, payload: {teamMembers: IAssignedTeamMembers[], teams: uuid[]}): Promise<ICaseFileEntity>
 }
 
 export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileEntity>{
@@ -48,4 +49,5 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   getCaseFileAssignedCounts: jest.Mock<ICaseFileCount>;
   // todo add mock from api response here for getCaseFileAssignedCounts
   fetchCaseFileDetailedCounts: jest.Mock<ICaseFileDetailedCount>;
+  assignCaseFile: jest.Mock<ICaseFileEntity>;
 }

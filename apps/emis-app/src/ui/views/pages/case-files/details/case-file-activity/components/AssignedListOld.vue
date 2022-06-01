@@ -2,16 +2,15 @@
   <div class=" d-flex flex-column">
     <span class="rc-body16 fw-bold pb-4">{{ $t('caseFile.assign.assigned_to') }}</span>
 
-    <div class="rc-body14 pb-2">
-      {{ $t('caseFile.assign.assigned_team') }}
-    </div>
-    <v-sheet rounded outlined height="100%" class="px-4 py-1">
+    <v-sheet rounded outlined height="100%" class="px-4 py-2">
       <v-list v-if="assignedTeams.length" data-test="assigned-teams-list">
+        <span class="rc-body14 pb-4">
+          {{ $t('caseFile.assign.assigned_team') }}
+        </span>
         <v-list-item-group>
           <v-list-item
             v-for="team in assignedTeams"
             :key="team.id"
-            :disabled="isViewOnly"
             class="pl-3 assigned-list-item"
             :data-test="`assigned-teams-list-item-${team.id}`">
             <v-list-item-content class="py-1">
@@ -36,26 +35,21 @@
           </v-list-item>
         </v-list-item-group>
       </v-list>
-      <div v-else class="rc-body14 text--secondary">
-        {{ $t('caseFile.assign.no_assigned_team') }}
-      </div>
-    </v-sheet>
 
-    <div class="rc-body14 pt-4 pb-2">
-      {{ $t('caseFile.assign.assigned_individual') }}
-    </div>
-    <v-sheet rounded outlined height="100%" class="px-4 py-1">
+      <div v-if="isViewOnly && assignedTeams.length && assignedIndividuals.length" class="divider" />
+
       <v-list v-if="assignedIndividuals.length" data-test="assigned-individuals-list">
+        <span class="rc-body14 pt-6 pb-3">
+          {{ $t('caseFile.assign.assigned_individual') }}
+        </span>
         <v-list-item-group>
           <v-list-item
             v-for="individual in assignedIndividuals"
             :key="individual.entity.id"
-            :disabled="isViewOnly"
             class="pl-3 assigned-list-item"
             :data-test="`assigned-individuals-list-item-${individual.entity.id}`">
             <v-list-item-content class="py-1">
               <span class="rc-body14 fw-bold">{{ individual.metadata.displayName }}</span>
-              <span class="rc-body14">{{ individual.teamName }}</span>
             </v-list-item-content>
 
             <v-list-item-action v-if="!isViewOnly" class="my-1">
@@ -76,23 +70,13 @@
           </v-list-item>
         </v-list-item-group>
       </v-list>
-      <div v-else class="rc-body14 text--secondary">
-        {{ $t('caseFile.assign.no_assigned_individual') }}
-      </div>
     </v-sheet>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { ITeamEntity, ITeamMember } from '@/entities/team';
-import { IUserAccountCombined } from '@/entities/user-account';
-
-export interface IIndividual extends ITeamMember, IUserAccountCombined{
-  translatedRoleName?: string;
-  teamName: string;
-  teamId: string;
-}
+import { ITeamEntity, ITeamMemberAsUser } from '@/entities/team';
 
 export default Vue.extend({
   name: 'AssignedList',
@@ -103,7 +87,7 @@ export default Vue.extend({
       required: true,
     },
     assignedIndividuals: {
-      type: Array as () => IIndividual[],
+      type: Array as () => ITeamMemberAsUser[],
       required: true,
     },
     isViewOnly:

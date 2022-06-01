@@ -4,7 +4,7 @@ import { IEntity, mockBaseData } from '@libs/core-lib/entities/base';
 import {
   ICaseFileMetadata,
   CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
-  ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType, HouseholdCaseFileActivityType,
+  ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType, HouseholdCaseFileActivityType, IAssignedTeamMembers,
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
 import { EPaymentModalities } from '../program';
@@ -31,9 +31,21 @@ export const mockCaseFileDetailedCount = (): ICaseFileDetailedCount => ({
   },
 });
 
+export const mockAssignedTeamMembers = (): IAssignedTeamMembers[] => [
+  {
+    teamId: 'mock-assigned-team-id-1',
+    teamMembersIds: ['mock-assigned-individual-id-1', 'mock-assigned-individual-id-2'],
+  },
+  {
+    teamId: 'mock-assigned-team-id-2',
+    teamMembersIds: ['mock-assigned-individual-id-3'],
+  },
+];
+
 export const mockCaseFileEntity = (force? : Partial<IEntity>): ICaseFileEntity => ({
   ...mockBaseData(),
   assignedIndividualIds: ['mock-assigned-individual-id-1', 'mock-assigned-individual-id-2'],
+  assignedTeamMembers: mockAssignedTeamMembers(),
   assignedTeamIds: ['mock-assigned-team-id-1'],
   caseFileNumber: '1-000001',
   caseFileStatus: 4,

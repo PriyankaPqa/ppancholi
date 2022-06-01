@@ -21,6 +21,16 @@ import {
 import { IIdMultilingualName, IMultilingual } from '@/types';
 import { EPaymentModalities } from '@/entities/program';
 
+export interface IAssignInfo {
+  id: string;
+  name: string;
+}
+
+export interface IAssignTeamMembersActivity {
+  team: IAssignInfo,
+  teamMembers: IAssignInfo[]
+}
+
 export default Vue.extend({
   name: 'CaseFileActivityListItem',
   components: {
@@ -238,21 +248,55 @@ export default Vue.extend({
     makeContentForAssignedToCaseFile():{title: TranslateResult, body: TranslateResult} {
       let title = null;
       let body = null;
-      const individuals = (this.item.details.individuals as {name: string}[]).map((i) => i.name);
       const teams = (this.item.details.teams as {name: string}[]).map((i) => i.name);
-      if ((individuals).length + (teams).length === 1) {
-        const name = individuals[0] || teams[0];
-        title = this.$t('caseFileActivity.activityList.title.AssignedToCaseFile', { x: name });
-      } else {
-        title = this.$t('caseFileActivity.activityList.title.assigned_new_users_teams');
-        body = `${this.$t('caseFileActivity.activityList.assign.new_user')}: ${individuals.length ? individuals.join(', ') : '-'}`
-      + `\n${this.$t('caseFileActivity.activityList.assign.new_team')}: ${teams.length ? teams.join(', ') : '-'}`;
+
+      if (this.item.details.teamMembers) {
+        const usersWithTeams = [] as string[];
+        (this.item.details.teamMembers as IAssignTeamMembersActivity[]).forEach((t) => {
+          t.teamMembers.forEach((m) => {
+            usersWithTeams.push(`${m.name}, ${t.team.name}`);
+          });
+        });
+
+        if ((usersWithTeams).length + (teams).length === 1) {
+          const name = usersWithTeams[0] || teams[0];
+          title = this.$t('caseFileActivity.activityList.title.AssignedToCaseFile', { x: name });
+        } else {
+          title = this.$t('caseFileActivity.activityList.title.assigned_new_users_teams');
+          body = `${this.$t('caseFileActivity.activityList.assign.new_user')}: ${usersWithTeams.length ? usersWithTeams.join('; ') : '-'}`
+            + `\n${this.$t('caseFileActivity.activityList.assign.new_team')}: ${teams.length ? teams.join('; ') : '-'}`;
+        }
+      } else { // TODO: Remove when EMISV2-4373
+        const individuals = (this.item.details.individuals as {name: string}[]).map((i) => i.name);
+        if ((individuals).length + (teams).length === 1) {
+          const name = individuals[0] || teams[0];
+          title = this.$t('caseFileActivity.activityList.title.AssignedToCaseFile', { x: name });
+        } else {
+          title = this.$t('caseFileActivity.activityList.title.assigned_new_users_teams');
+          body = `${this.$t('caseFileActivity.activityList.assign.new_user')}: ${individuals.length ? individuals.join(', ') : '-'}`
+            + `\n${this.$t('caseFileActivity.activityList.assign.new_team')}: ${teams.length ? teams.join(', ') : '-'}`;
+        }
       }
 
       return { title, body };
     },
 
-    makeContentForUnassignedFromCaseFile():{title: TranslateResult, body: TranslateResult} {
+    makeContentForUnassignedFromCaseFile(): {title: TranslateResult, body: TranslateResult} {
+      if (this.item.details.teamMembers) {
+        const usersWithTeams = [] as string[];
+        (this.item.details.teamMembers as IAssignTeamMembersActivity[]).forEach((t) => {
+          t.teamMembers.forEach((m) => {
+            usersWithTeams.push(`${m.name}, ${t.team.name}`);
+          });
+        });
+
+        const names = [...usersWithTeams, ...(this.item.details.teams as {name: string}[]).map((i) => i.name)]
+          .join(', ');
+
+        const title = this.$t('caseFileActivity.activityList.title.UnassignedFromCaseFile', { x: names });
+        return { title, body: null };
+      }
+      // TODO: Remove when EMISV2-4373
       const names = ([...this.item.details.individuals as {name: string}[], ...this.item.details.teams as {name: string}[]])
         .map((i) => i.name)
         .join(', ');

@@ -1,12 +1,10 @@
 <template>
   <v-col cols="12" md="6" class="flex-row justify-end">
-    <div class="rc-body12 mr-4" data-test="case-file-assigned-info">
-      <div v-if="!loading" class="rc-body12 mr-4" data-test="case-file-assigned-info">
-        <span v-if="assignedIndividualsInfo" class="fw-bold">{{ assignedIndividualsInfo }}</span>
-        <span v-if="assignedTeamInfo && assignedIndividualsInfo" class="px-1">{{ $t('common.and') }}</span>
-        <span v-if="assignedTeamInfo" class="fw-bold">{{ assignedTeamInfo }}</span>
-        <span v-if="!assignedTeamInfo && !assignedIndividualsInfo ">{{ $t('caseFileDetail.notAssigned') }}</span>
-      </div>
+    <div v-if="!loading" class="rc-body12 mr-4" data-test="case-file-assigned-info">
+      <span v-if="assignedIndividualsInfo" class="fw-bold">{{ assignedIndividualsInfo }}</span>
+      <span v-if="assignedTeamInfo && assignedIndividualsInfo" class="px-1">{{ $t('common.and') }}</span>
+      <span v-if="assignedTeamInfo" class="fw-bold">{{ assignedTeamInfo }}</span>
+      <span v-if="!assignedTeamInfo && !assignedIndividualsInfo ">{{ $t('caseFileDetail.notAssigned') }}</span>
     </div>
 
     <v-btn
@@ -30,18 +28,21 @@
       {{ $t("caseFileDetail.viewAssigned") }}
     </v-btn>
 
-    <assign-case-file
+    <assign-case-file-old
       v-if="showAssignmentsDialog"
       data-test="assignments-dialog"
       :case-file="caseFile"
       :show.sync="showAssignmentsDialog"
-      @updateAssignmentsInfo="setAssignmentsInfoFromData" />
+      @updateAssignmentsInfo="setAssignmentsInfoFromData"
+      @updateActivities="$emit('updateActivities')" />
 
-    <view-assigned
+    <view-assigned-old
       v-if="showViewAssignmentsDialog"
-      :show.sync="showViewAssignmentsDialog"
       data-test="view-assignments-dialog"
-      :case-file="caseFile" />
+      :case-file-id="caseFile.id"
+      :assigned-teams="assignedTeams"
+      :assigned-individual-ids="caseFile.assignedIndividualIds"
+      :show.sync="showViewAssignmentsDialog" />
   </v-col>
 </template>
 
@@ -49,17 +50,17 @@
 import Vue from 'vue';
 import { ICaseFileEntity } from '@/entities/case-file';
 import { ITeamEntity } from '@/entities/team';
+import { IAzureTableSearchResults } from '@libs/core-lib//types';
 import { FeatureKeys } from '@/entities/tenantSettings';
-import { IAzureTableSearchResults } from '@libs/core-lib/types';
-import ViewAssigned from './ViewAssigned.vue';
-import AssignCaseFile from './AssignCaseFile.vue';
+import AssignCaseFileOld from './AssignCaseFileOld.vue';
+import ViewAssignedOld from './ViewAssignedOld.vue';
 
 export default Vue.extend({
   name: 'CaseFileAssignments',
 
   components: {
-    AssignCaseFile,
-    ViewAssigned,
+    AssignCaseFileOld,
+    ViewAssignedOld,
   },
 
   props: {

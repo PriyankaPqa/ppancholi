@@ -5,6 +5,7 @@ import { mockOptionItemData } from '@/entities/optionItem';
 import routes from '@/constants/routes';
 import { mockUserStateLevel } from '@/test/helpers';
 
+import { mockCombinedCaseFile } from '@/entities/case-file';
 import Component from './CaseFileReferralDetails.vue';
 
 const storage = mockStorage();
@@ -36,12 +37,15 @@ describe('CaseFileReferralDetails', () => {
     });
 
     describe('canEdit', () => {
-      it('returns true if user has level 1', () => {
+      it('returns true if user has level 1', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
+          },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
           },
           store: {
             ...mockUserStateLevel(1),
@@ -70,7 +74,7 @@ describe('CaseFileReferralDetails', () => {
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
-      it('returns false if user does not have level 1', () => {
+      it('returns false if user does not have level 1', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -109,6 +113,13 @@ describe('CaseFileReferralDetails', () => {
                 },
               },
             },
+          },
+        });
+
+        await wrapper.setData({
+          caseFile: {
+            ...wrapper.vm.caseFile,
+            readonly: false,
           },
         });
 

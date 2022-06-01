@@ -1,7 +1,15 @@
 import { ActionContext, ActionTree } from 'vuex';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import {
-  CaseFileStatus, CaseFileTriage, ICaseFileActivity, ICaseFileCount, ICaseFileDetailedCount, ICaseFileEntity, ICaseFileLabel, IIdentityAuthentication,
+  CaseFileStatus,
+  CaseFileTriage,
+  IAssignedTeamMembers,
+  ICaseFileActivity,
+  ICaseFileCount,
+  ICaseFileDetailedCount,
+  ICaseFileEntity,
+  ICaseFileLabel,
+  IIdentityAuthentication,
   IImpactStatusValidation,
 } from '@/entities/case-file';
 import { CaseFilesService, ICreateCaseFileRequest } from '@/services/case-files/entity';
@@ -271,6 +279,23 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
         return res;
       } catch (e) {
         applicationInsights.trackException(e, { eventId }, 'module.caseFileEntity', 'fetchCaseFileDetailedCounts');
+        return null;
+      }
+    },
+
+    assignCaseFile: async (
+      context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>,
+      payload: { id: uuid, teamMembers: IAssignedTeamMembers[]; teams: uuid[] },
+    ): Promise<IUserAccountEntity> => {
+      try {
+        const { id, ...payloadData } = payload;
+        const res = await this.service.assignCaseFile(id, payloadData);
+        if (res) {
+          context.commit('set', res);
+        }
+        return res;
+      } catch (e) {
+        applicationInsights.trackException(e, {}, 'module.caseFileEntity', 'assignCaseFile');
         return null;
       }
     },

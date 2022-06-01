@@ -12,6 +12,7 @@ parameters:
   isPullRequest: ''
   nodeJsVersion: ''
   appVersion: ''
+  disableCache: ''
 
 stages:
   # Trigger before the build
@@ -28,6 +29,7 @@ stages:
       distDir: ${{ parameters.distDir }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
       appVersion: ${{ parameters.appVersion }}
+      disableCache: ${{ parameters.disableCache }}
 
   # Trigger after the build
   - template: './stages/post-build-stage.yml'
@@ -36,6 +38,7 @@ stages:
       packageFeed: ${{ parameters.packageFeed }}
       isPullRequest: ${{ parameters.isPullRequest }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
+      disableCache: ${{ parameters.disableCache }}
 
   # Deploy to feature branch, dev, production
   - template: './stages/deploy-stage.yml'

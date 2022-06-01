@@ -1,5 +1,5 @@
 import {
-  ICaseFileLabel, mockCaseFileEntity, CaseFileTriage, CaseFileStatus,
+  ICaseFileLabel, mockCaseFileEntity, CaseFileTriage, CaseFileStatus, mockAssignedTeamMembers,
 } from '@/entities/case-file';
 import { IListOption } from '@/types';
 import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
@@ -189,6 +189,18 @@ describe('>>> Case File Service', () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
       expect(http.get).toHaveBeenCalledWith('case-file/search/case-files', { params, isOData: true });
+    });
+  });
+
+  describe('assignCaseFile', () => {
+    it('is linked to the correct URL and params', async () => {
+      const { id } = mockCaseFileEntity();
+      const teamMembers = mockAssignedTeamMembers();
+      const teams = ['mock-teams-id'];
+      const payload = { teamMembers, teams };
+
+      await service.assignCaseFile(id, payload);
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/assign-case-file-teams-and-team-members`, payload);
     });
   });
 });

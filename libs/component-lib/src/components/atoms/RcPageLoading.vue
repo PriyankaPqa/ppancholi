@@ -1,5 +1,8 @@
 <template>
   <div class="pageLoading">
+    <div v-if="text" class="mb-4">
+      {{ text }}
+    </div>
     <v-progress-circular
       data-test="progress-circular"
       :color="color"
@@ -18,6 +21,10 @@ export default Vue.extend({
       type: String,
       default: 'primary',
     },
+    text: {
+      type: String,
+      default: '',
+    },
   },
 });
 </script>
@@ -29,5 +36,6 @@ export default Vue.extend({
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 </style>

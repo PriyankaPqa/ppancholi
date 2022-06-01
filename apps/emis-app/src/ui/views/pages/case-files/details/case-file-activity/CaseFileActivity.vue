@@ -55,7 +55,14 @@
           </rc-tooltip>
         </v-col>
 
+        <case-file-assignments-old
+          v-if="!$hasFeature(FeatureKeys.TeamImprovements)"
+          :case-file="caseFile.entity"
+          :readonly="readonly"
+          data-test="case-file-assignments" />
+
         <case-file-assignments
+          v-if="$hasFeature(FeatureKeys.TeamImprovements)"
           :case-file="caseFile.entity"
           :readonly="readonly"
           data-test="case-file-assignments" />
@@ -113,12 +120,14 @@ import { RcPageContent, RcPageLoading, RcTooltip } from '@libs/component-lib/com
 import { ICaseFileActivity, CaseFileTriage } from '@/entities/case-file';
 import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
+import { FeatureKeys } from '@/entities/tenantSettings';
 import CaseFileTags from './components/CaseFileTags.vue';
 import CaseFileLabels from './components/CaseFileLabels.vue';
 import CaseFileStatus from './components/CaseFileStatus.vue';
 import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
 import CaseFileActivityListItem from './components/CaseFileActivityListItem.vue';
 import AssignCaseFile from './components/AssignCaseFile.vue';
+import CaseFileAssignmentsOld from './components/CaseFileAssignmentsOld.vue';
 import CaseFileAssignments from './components/CaseFileAssignments.vue';
 import caseFileDetail from '../caseFileDetail';
 
@@ -134,6 +143,7 @@ export default mixins(caseFileDetail).extend({
     CaseFileLabels,
     CaseFileActivityListItem,
     AssignCaseFile,
+    CaseFileAssignmentsOld,
     CaseFileAssignments,
   },
 
@@ -153,8 +163,8 @@ export default mixins(caseFileDetail).extend({
         {
           value: 'desc', text: this.$t('caseFileActivity.descending'),
         },
-      ]
-      ,
+      ],
+      FeatureKeys,
     };
   },
   computed: {

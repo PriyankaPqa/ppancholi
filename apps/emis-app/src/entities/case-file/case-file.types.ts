@@ -130,8 +130,14 @@ export interface IImpactStatusValidation {
   status: ValidationOfImpactStatus;
 }
 
+export interface IAssignedTeamMembers {
+  teamId: uuid;
+  teamMembersIds: uuid[];
+}
+
 export interface ICaseFileEntity extends IEntity {
   assignedIndividualIds?: uuid[];
+  assignedTeamMembers?: IAssignedTeamMembers[],
   assignedTeamIds?: uuid[];
   caseFileNumber?: string;
   caseFileStatus?: CaseFileStatus;

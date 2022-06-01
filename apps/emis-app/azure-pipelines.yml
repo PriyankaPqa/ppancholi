@@ -29,6 +29,8 @@ variables:
   value: $(Major).$(Minor).$(Patch)
 - name: nodeJsVersion
   value: '16.x'
+- name: disableCache
+  value: 'false' # change this value to force npm package to be installed
 
 name: EMIS App - $(Major).$(Minor).$(Patch)
 
@@ -46,3 +48,4 @@ stages:
     isPullRequest: $(isPullRequest)
     nodeJsVersion: $(nodeJsVersion)
     appVersion: $(VUE_APP_VERSION)
+    disableCache: $(disableCache)

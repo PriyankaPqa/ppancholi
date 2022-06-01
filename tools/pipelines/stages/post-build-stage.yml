@@ -3,6 +3,7 @@ parameters:
   packageFeed: ''
   isPullRequest: ''
   nodeJsVersion: ''
+  disableCache: ''
 
 stages:
   - stage: 'Post_Build_Stage'
@@ -18,6 +19,7 @@ stages:
             parameters:
               packageFeed: ${{ parameters.packageFeed }}
               nodeJsVersion:  ${{ parameters.nodeJsVersion }}
+              disableCache: ${{ parameters.disableCache }}
 
           - script: yarn test:parallel ${{parameters.isPullRequest}} ${{parameters.appName}} $(System.TotalJobsInPhase) $(System.JobPositionInPhase)
             displayName: 'Run tests'
@@ -38,6 +40,8 @@ stages:
           - template: '../steps/cache-install-npm.yml'
             parameters:
               packageFeed: ${{ parameters.packageFeed }}
+              nodeJsVersion: ${{ parameters.nodeJsVersion }}
+              disableCache: ${{ parameters.disableCache }}
 
           - script: node ./tools/scripts/merge-test-coverage.js
             displayName: 'Merge Code Coverage Reports'

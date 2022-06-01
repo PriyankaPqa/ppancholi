@@ -1,20 +1,21 @@
 <template>
   <rc-dialog
     :title="$t('caseFileDetail.viewAssigned')"
-    :submit-action-label="$t('common.buttons.back')"
+    :submit-action-label="$t('common.buttons.close')"
     data-test="view-assigned-dialog"
     :show.sync="show"
     content-padding="6"
     content-only-scrolling
     :persistent="true"
     :max-width="750"
-    :min-height="480"
+    :min-height="500"
+    :show-submit="!loading"
     :tooltip-label="$t('common.tooltip_label')"
-    :loading="loading"
     :show-cancel="false"
     @close="close"
     @submit="close">
-    <v-row>
+    <rc-page-loading v-if="loading" />
+    <v-row v-else>
       <v-col cols="12" class="px-6 py-0 my-4">
         <assigned-list
           :assigned-individuals="assignedIndividuals"
@@ -27,17 +28,17 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcDialog } from '@libs/component-lib/components';
-import { ITeamEntity, ITeamMemberAsUser } from '@/entities/team';
-import { IUserAccountCombined } from '@/entities/user-account';
-import { IAzureTableSearchResults } from '@libs/core-lib/types';
-import AssignedList from './AssignedList.vue';
+import { RcDialog, RcPageLoading } from '@libs/component-lib/components';
+import { ITeamEntity } from '@/entities/team';
+import { ICaseFileEntity } from '@/entities/case-file';
+import AssignedList, { IIndividual } from './AssignedList.vue';
 
 export default Vue.extend({
   name: 'ViewAssigned',
 
   components: {
     RcDialog,
+    RcPageLoading,
     AssignedList,
   },
 
@@ -46,31 +47,37 @@ export default Vue.extend({
       type: Boolean,
       required: true,
     },
-    caseFileId: {
-      type: String,
-      required: true,
-    },
-    assignedTeams: {
-      type: Array as ()=> ITeamEntity[],
-      required: true,
-    },
-    assignedIndividualIds: {
-      type: Array as ()=> string[],
+    caseFile: {
+      type: Object as () => ICaseFileEntity,
       required: true,
     },
   },
 
   data() {
     return {
-      assignedIndividuals: [] as ITeamMemberAsUser[],
-      searchTerm: '',
+      assignedIndividuals: [] as IIndividual[],
+      allAssignedTeams: [] as ITeamEntity[],
       loading: false,
     };
+  },
+
+  computed: {
+    teamsIdsFromIndividuals(): string[] {
+      return this.caseFile.assignedTeamMembers.map((t) => t.teamId);
+    },
+    individualsIds(): string[] {
+      return this.caseFile.assignedTeamMembers.reduce((acc, i) => i.teamMembersIds.concat(acc), []);
+    },
+    assignedTeams(): ITeamEntity[] {
+      return this.allAssignedTeams.filter((t) => this.caseFile.assignedTeamIds.includes(t.id));
+    },
   },
 
   async created() {
     try {
       this.loading = true;
+      await this.fetchUserAccounts(this.individualsIds);
+      this.allAssignedTeams = await this.$storage.team.actions.getTeamsAssigned(this.caseFile.id);
       await this.setAssignedIndividuals();
     } finally {
       this.loading = false;
@@ -82,21 +89,35 @@ export default Vue.extend({
       this.$emit('update:show', false);
     },
 
-    async setAssignedIndividuals() {
-      try {
-        this.loading = true;
-        const filter = `search.in(Entity/Id, '${this.assignedIndividualIds.join('|')}', '|')`;
-        const individualsData: IAzureTableSearchResults = await this.$storage.userAccount.actions.search({ filter });
-        const { ids } = individualsData;
-        const individuals = this.$storage.userAccount.getters.getByIds(ids);
+    async fetchUserAccounts(ids: string[]): Promise<void> {
+      const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
+      await this.$storage.userAccount.actions.search({ filter });
+    },
 
-        this.assignedIndividuals = individuals?.map((i: IUserAccountCombined) => ({
-          ...i,
-          isPrimaryContact: false,
-        })) || [];
-      } finally {
-        this.loading = false;
-      }
+    async fetchTeams(ids: string[]): Promise<void> {
+      const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
+      await this.$storage.team.actions.search({ filter });
+    },
+
+    setAssignedIndividuals() {
+      const teamsThroughIndividuals = this.$storage.team.getters.getByIds(this.teamsIdsFromIndividuals);
+      const userAccounts = this.$storage.userAccount.getters.getByIds(this.individualsIds);
+
+      this.caseFile.assignedTeamMembers.forEach((team) => {
+        const teamId = team.teamId;
+        const teamName = teamsThroughIndividuals.find((t) => t.entity.id === teamId)?.entity.name;
+
+        team.teamMembersIds.forEach((id) => {
+          const user = userAccounts.find((u) => u.entity.id === id);
+          this.assignedIndividuals.push({
+            ...user,
+            id: user?.entity?.id,
+            teamId,
+            teamName,
+            isPrimaryContact: false,
+          });
+        });
+      });
     },
   },
 });

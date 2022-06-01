@@ -7,6 +7,7 @@ import routes from '@/constants/routes';
 
 import helpers from '@/ui/helpers/helpers';
 import moment from '@/ui/plugins/moment';
+import { mockCombinedCaseFile } from '@/entities/case-file';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();
@@ -113,6 +114,9 @@ describe('CaseFileDocument.vue', () => {
           store: {
             ...mockUserStateLevel(1),
           },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
+          },
           mocks: {
             $storage: storage,
           },
@@ -148,6 +152,9 @@ describe('CaseFileDocument.vue', () => {
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
+          },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
           },
           mocks: {
             $storage: storage,
@@ -213,6 +220,9 @@ describe('CaseFileDocument.vue', () => {
           store: {
             ...mockUserStateLevel(1),
           },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
+          },
           mocks: {
             $storage: storage,
           },
@@ -230,6 +240,7 @@ describe('CaseFileDocument.vue', () => {
             readonly() {
               return true;
             },
+            caseFile: () => mockCombinedCaseFile(),
           },
           store: {
             ...mockUserStateLevel(1),
@@ -262,6 +273,9 @@ describe('CaseFileDocument.vue', () => {
               },
             },
           },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
+          },
           mocks: {
             $storage: storage,
           },
@@ -282,6 +296,9 @@ describe('CaseFileDocument.vue', () => {
           store: {
             ...mockUserStateLevel(1),
           },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
+          },
           mocks: {
             $storage: storage,
           },
@@ -297,6 +314,9 @@ describe('CaseFileDocument.vue', () => {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
           },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
+          },
           mocks: {
             $storage: storage,
             $hasLevel: () => false,
@@ -310,6 +330,9 @@ describe('CaseFileDocument.vue', () => {
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
+          },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
           },
           mocks: {
             $storage: storage,
@@ -327,6 +350,9 @@ describe('CaseFileDocument.vue', () => {
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
+          },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
           },
           store: {
             modules: {
@@ -357,6 +383,9 @@ describe('CaseFileDocument.vue', () => {
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
+          },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
           },
           store: {
             ...mockUserStateLevel(6),
@@ -396,6 +425,9 @@ describe('CaseFileDocument.vue', () => {
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
+          },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
           },
           store: {
             ...mockUserStateLevel(5),

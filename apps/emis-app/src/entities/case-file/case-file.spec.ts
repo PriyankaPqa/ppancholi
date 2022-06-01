@@ -12,6 +12,11 @@ describe('>>> Case File', () => {
         expect(caseFile.assignedIndividualIds).toEqual(mockCaseFileData.assignedIndividualIds);
       });
 
+      it('should instantiate assignedTeamMembers', () => {
+        const caseFile = new CaseFileEntity(mockCaseFileData);
+        expect(caseFile.assignedTeamMembers).toEqual(mockCaseFileData.assignedTeamMembers);
+      });
+
       it('should instantiate assignedTeamIds', () => {
         const caseFile = new CaseFileEntity(mockCaseFileData);
         expect(caseFile.assignedTeamIds).toEqual(mockCaseFileData.assignedTeamIds);
@@ -69,9 +74,14 @@ describe('>>> Case File', () => {
         expect(caseFile.assignedIndividualIds).toEqual([]);
       });
 
-      it('should instantiate assignedTeamIds', () => {
+      it('should instantiate assignedIndividualIds', () => {
         const caseFile = new CaseFileEntity();
-        expect(caseFile.assignedTeamIds).toEqual([]);
+        expect(caseFile.assignedIndividualIds).toEqual([]);
+      });
+
+      it('should instantiate assignedTeamMembers', () => {
+        const caseFile = new CaseFileEntity();
+        expect(caseFile.assignedTeamMembers).toEqual([]);
       });
 
       it('should instantiate caseFileNumber', () => {

@@ -3,8 +3,9 @@ import {
 } from '@/entities/case-file';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { BaseMock } from '../base/base.mock';
+import { IStorageMock } from './storage.types';
 
-export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEntity> {
+export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEntity> implements IStorageMock {
   constructor() {
     super(mockCombinedCaseFiles(), mockCaseFileEntity());
   }
@@ -35,6 +36,7 @@ export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEn
     createCaseFile: jest.fn(() => this.entity),
     setCaseFileIdentityAuthentication: jest.fn(() => this.entity),
     setCaseFileValidationOfImpact: jest.fn(() => this.entity),
+    assignCaseFile: jest.fn(() => this.entity),
   }
 
   protected mutations = {

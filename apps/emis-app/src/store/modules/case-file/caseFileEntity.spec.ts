@@ -7,7 +7,7 @@ import { OptionItemsService } from '@/services/optionItems';
 import {
   CaseFileStatus, CaseFileTriage, mockCaseFileActivities, mockTagsOptions, mockCaseFileEntity,
   IIdentityAuthentication, IdentityAuthenticationStatus, IdentityAuthenticationMethod, IImpactStatusValidation,
-  ImpactValidationMethod, ValidationOfImpactStatus, ICaseFileEntity,
+  ImpactValidationMethod, ValidationOfImpactStatus, ICaseFileEntity, mockAssignedTeamMembers,
 } from '@/entities/case-file';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
 import { CaseFileEntityModule } from './caseFileEntity';
@@ -259,6 +259,7 @@ describe('Case file entity module', () => {
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: tags, element: 'Tags' });
       });
     });
+
     describe('setCaseFileStatus', () => {
       it('dispatches the right action with the right payload', async () => {
         const id = 'mock-id';
@@ -401,6 +402,19 @@ describe('Case file entity module', () => {
         await module.actions.fetchCaseFileDetailedCounts(actionContext, eventId);
 
         expect(module.service.fetchCaseFileDetailedCounts).toBeCalledWith(eventId);
+      });
+    });
+
+    describe('assignCaseFile', () => {
+      it('should call assignCaseFile service with proper params', async () => {
+        const id = '1';
+        const payload = { teamMembers: mockAssignedTeamMembers(), teams: ['1'] };
+
+        module.service.assignCaseFile = jest.fn();
+
+        await module.actions.assignCaseFile(actionContext, { id, ...payload });
+
+        expect(module.service.assignCaseFile).toBeCalledWith(id, payload);
       });
     });
   });

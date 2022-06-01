@@ -2,7 +2,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { BaseEntity } from '@libs/core-lib/entities/base';
 import { IListOption } from '@/types';
 import {
-  CaseFileStatus, CaseFileTriage, ICaseFileEntity, ICaseFileLabel,
+  CaseFileStatus, CaseFileTriage, IAssignedTeamMembers, ICaseFileEntity, ICaseFileLabel,
   IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication,
   IImpactStatusValidation,
   ImpactValidationMethod, ValidationOfImpactStatus,
@@ -10,6 +10,8 @@ import {
 
 export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
   assignedIndividualIds?: uuid[];
+
+  assignedTeamMembers?: IAssignedTeamMembers[];
 
   assignedTeamIds?: uuid[];
 
@@ -38,6 +40,7 @@ export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
   constructor(data?: ICaseFileEntity) {
     if (data) {
       super(data);
+      this.assignedTeamMembers = data.assignedTeamMembers ? _cloneDeep(data.assignedTeamMembers) : [];
       this.assignedIndividualIds = data.assignedIndividualIds ? [...data.assignedIndividualIds] : [];
       this.assignedTeamIds = data.assignedTeamIds ? [...data.assignedTeamIds] : [];
       this.caseFileNumber = data.caseFileNumber;
@@ -59,6 +62,7 @@ export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
     } else {
       super();
       this.assignedIndividualIds = [];
+      this.assignedTeamMembers = [];
       this.assignedTeamIds = [];
       this.caseFileNumber = null;
       this.caseFileStatus = null;

@@ -4,7 +4,7 @@ import {
   IdentityAuthenticationStatus, IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus,
   ICaseFileCombined,
   mockCaseFileEntity,
-  mockCaseFileMetadata,
+  mockCaseFileMetadata, mockAssignedTeamMembers,
 } from '@/entities/case-file';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStore } from '@/store';
@@ -215,6 +215,14 @@ describe('>>> Case File Storage', () => {
       const payload = {} as ICreateCaseFileRequest;
       storage.actions.createCaseFile(payload);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/createCaseFile`, payload);
+    });
+
+    it('should proxy assignCaseFile', () => {
+      const id = '1';
+      const teamMembers = mockAssignedTeamMembers();
+      const teams = ['2'];
+      storage.actions.assignCaseFile(id, teamMembers, teams);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/assignCaseFile`, { id, teamMembers, teams });
     });
   });
 

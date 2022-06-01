@@ -6,7 +6,7 @@ import {
   IIdentityAuthentication,
   IImpactStatusValidation,
   ICaseFileDetailedCount,
-  ICaseFileCount,
+  ICaseFileCount, IAssignedTeamMembers,
 } from '@/entities/case-file/case-file.types';
 import { IListOption } from '@/types';
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
@@ -45,6 +45,7 @@ export interface IActions extends IBaseActions<ICaseFileEntity, ICaseFileMetadat
   setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation): Promise<ICaseFileEntity>;
   setCaseFileAssign(id: uuid, individuals: uuid[], teams: uuid[]): Promise<ICaseFileEntity>;
   createCaseFile(payload: ICreateCaseFileRequest): Promise<ICaseFileEntity>;
+  assignCaseFile(id: uuid, teamMembers: IAssignedTeamMembers[], teams: uuid[]): Promise<ICaseFileEntity>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<ICaseFileEntity, ICaseFileMetadata> {
@@ -63,7 +64,7 @@ export interface IActionsMock extends IBaseActionsMock<ICaseFileEntity, ICaseFil
   setCaseFileValidationOfImpact: jest.Mock<ICaseFileEntity>;
   setCaseFileAssign: jest.Mock<ICaseFileEntity>;
   createCaseFile: jest.Mock<ICaseFileEntity>;
-
+  assignCaseFile: jest.Mock<ICaseFileEntity>;
 }
 
 export interface IMutations extends IBaseMutations<ICaseFileEntity, ICaseFileMetadata> {
@@ -97,5 +98,5 @@ export interface IStorage {
 }
 
 export interface IStorageMock {
-  make(): IStorageMake
+  make(): IStorageMakeMock
 }
