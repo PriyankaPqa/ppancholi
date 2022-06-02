@@ -138,7 +138,6 @@ export default Vue.extend({
           exact: false,
           level: 'level6',
           roles: ['contributorIM', 'contributorFinance'],
-          feature: FeatureKeys.MassAction,
         },
         {
           to: routes.assessments.home.name,
