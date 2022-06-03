@@ -35,10 +35,20 @@ describe('handleUniqueNameSubmitError.vue', () => {
 
       it(' opens an error toast in case of a different error', async () => {
         const error = { response: { data: { errors: [{ code: 'foo' }] } } };
-        wrapper.vm.$reportToasted = jest.fn();
+        wrapper.vm.$toasted.global.error = jest.fn();
+        wrapper.vm.$te = jest.fn(() => true);
         await wrapper.vm.handleSubmitError(error);
 
-        expect(wrapper.vm.$reportToasted).toHaveBeenLastCalledWith('foo', error);
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('foo');
+      });
+
+      it(' opens an error  report toast in case of a different error and the error code has no translation', async () => {
+        const error = { response: { data: { errors: [{ code: 'foo' }] } } };
+        wrapper.vm.$reportToasted = jest.fn();
+        wrapper.vm.$te = jest.fn(() => false);
+        await wrapper.vm.handleSubmitError(error);
+
+        expect(wrapper.vm.$reportToasted).toHaveBeenLastCalledWith('error.submit_error', error);
       });
     });
 

@@ -27,8 +27,10 @@ export default Vue.extend({
             setTimeout(() => {
               helpers.scrollToFirstError('scrollAnchor');
             }, 300);
+          } else if (this.$te(error.code)) {
+            this.$toasted.global.error(this.$t(error.code));
           } else {
-            this.$reportToasted(this.$t(error.code), e);
+            this.$reportToasted(this.$t('error.submit_error'), e);
           }
         });
       }

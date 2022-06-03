@@ -30,7 +30,7 @@ export interface IHttpClientOptions {
   accessTokenKey: string;
   redirect403Url: string;
   timerBeforeRedirection: number;
-  useErrorHandler: boolean;
+  useErrorReport: boolean;
 }
 
 export interface IHttpClient {

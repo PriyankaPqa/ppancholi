@@ -23,7 +23,7 @@ export class HttpClient implements IHttpClient {
   private options: IHttpClientOptions
 
   constructor(i18n: any, options: IHttpClientOptions = {
-    authentication: false, accessTokenKey: '', redirect403Url: '', timerBeforeRedirection: 3000, useErrorHandler: false,
+    authentication: false, accessTokenKey: '', redirect403Url: '', timerBeforeRedirection: 3000, useErrorReport: false,
   }) {
     this.axios = axios.create({
       baseURL: `${process.env.VUE_APP_API_BASE_URL}/`,
@@ -90,7 +90,7 @@ export class HttpClient implements IHttpClient {
     }
 
     if (!error.response?.data) {
-      if (this.options.useErrorHandler) {
+      if (this.options.useErrorReport) {
         Vue.prototype.$reportToasted(this.i18n.t('error.unexpected_error'), error);
       } else {
         Vue.toasted.global.error(this.i18n.t('error.unexpected_error'));
@@ -123,13 +123,14 @@ export class HttpClient implements IHttpClient {
     const errorData = e.response.data.errors;
     if (errorData && Array.isArray(errorData)) {
       errorData.forEach((error: IError) => {
-        if (this.options.useErrorHandler) {
-          Vue.prototype.$reportToasted(this.getFormattedError(error), e);
+        const formattedError = this.getFormattedError(error);
+        if (this.options.useErrorReport && !formattedError) {
+          Vue.prototype.$reportToasted('error.unexpected_error', e);
         } else {
           Vue.toasted.global.error(this.getFormattedError(error));
         }
       });
-    } else if (this.options.useErrorHandler) {
+    } else if (this.options.useErrorReport) {
       Vue.prototype.$reportToasted(this.i18n.t('error.unexpected_error'), e);
     } else {
       Vue.toasted.global.error(this.i18n.t('error.unexpected_error'));

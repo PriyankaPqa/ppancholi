@@ -42,7 +42,7 @@ describe('httpClient', () => {
         accessTokenKey: 'accessTokenKey',
         redirect403Url: 'redirect403',
         timerBeforeRedirection: 1000,
-        useErrorHandler: true,
+        useErrorReport: true,
       });
     });
 
@@ -78,7 +78,7 @@ describe('httpClient', () => {
         accessTokenKey: 'accessTokenKey',
         redirect403Url: 'redirect403',
         timerBeforeRedirection: 10000,
-        useErrorHandler: true,
+        useErrorReport: true,
       });
 
       Vue.toasted = {
@@ -211,8 +211,29 @@ describe('httpClient', () => {
           },
         });
 
+        expect(Vue.toasted.global.error).toHaveBeenCalledTimes(2);
+        expect(Vue.toasted.global.error.mock.calls).toEqual([['code 1'], ['code 2']]);
+      });
+
+      it('opens the error toaster if the error code has no translation', async () => {
+        mockHttpClient.getFormattedError = jest.fn(() => '');
+        await mockHttpClient.responseErrorHandler({
+          response: {
+            data: {
+              errors: [
+                {
+                  code: 'code 1',
+                },
+                {
+                  code: 'code 2',
+                },
+              ],
+            },
+          },
+        });
+
         expect(Vue.prototype.$reportToasted).toHaveBeenCalledTimes(2);
-        expect(Vue.prototype.$reportToasted.mock.calls).toEqual([['code 1', {
+        expect(Vue.prototype.$reportToasted.mock.calls).toEqual([['error.unexpected_error', {
           response:
          {
            data: {
@@ -226,7 +247,7 @@ describe('httpClient', () => {
              ],
            },
          },
-        }], ['code 2', {
+        }], ['error.unexpected_error', {
           response: {
             data: {
               errors: [

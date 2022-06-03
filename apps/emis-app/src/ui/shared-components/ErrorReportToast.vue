@@ -7,88 +7,106 @@
         </div>
       </div>
     </div>
-    <rc-dialog
-      :show="showErrorReportDialog"
-      data-test="error-report-dialog"
-      :title="hasSupportAddress? $t('errorReport.reportProblem') : $t('errorReport.errorDialog.errorDetails')"
-      :cancel-action-label="hasSupportAddress? $t('common.cancel'): $t('common.close')"
-      :submit-action-label="$t('errorReport.errorDialog.sendReport')"
-      :show-submit="hasSupportAddress"
-      :persistent="true"
-      :max-width="900"
-      :min-height="hasSupportAddress? 480 : 300"
-      :loading="loadingSubmit"
-      @cancel="closeDialog"
-      @close="closeDialog"
-      @submit="submitReport">
-      <v-sheet rounded class="error-data mb-6">
-        <table class="rc-body14 px-4 py-1">
-          <tbody>
-            <tr>
-              <td class="error-data-cell error-data-title">
-                {{ $t('errorReport.errorDialog.errorMessage') }}
-              </td>
-              <td class="error-data-cell error-data-content d-flex flex-row justify-space-between align-start">
-                <div>
-                  {{ message }}
-                </div>
-                <div>
-                  <rc-tooltip bottom>
-                    <template #activator="{ on }">
-                      <v-btn class="copy-btn" icon bottom v-on="on" @click="copyErrorData">
-                        <v-icon size="24" color="grey darken-2">
-                          mdi-content-copy
-                        </v-icon>
-                      </v-btn>
-                    </template>
-                    <span>{{ $t('errorReport.errorDialog.copyData') }}</span>
-                  </rc-tooltip>
-                </div>
-              </td>
-            </tr>
-            <tr v-if="errorType">
-              <td class="error-data-cell error-data-title">
-                {{ $t('errorReport.errorDialog.errorType') }}
-              </td>
-              <td class="error-data-cell error-data-content">
-                {{ errorType }}
-              </td>
-            </tr>
-            <tr v-if="api">
-              <td class="error-data-cell error-data-title">
-                {{ $t('errorReport.errorDialog.api') }}
-              </td>
-              <td class="error-data-cell error-data-content">
-                {{ api }}
-              </td>
-            </tr>
-            <tr v-if="callPayload">
-              <td class="error-data-cell error-data-title">
-                {{ $t('errorReport.errorDialog.callPayload') }}
-              </td>
-              <td class="error-data-cell error-data-content">
-                <div :style="`maxHeight:${payloadMaxHeight}; overflow:hidden;`">
-                  <pre class="error-data-payload">{{ callPayload }}</pre>
-                </div>
-                <span v-if="!showFullPayload" class="pl-4">.....</span>
-                <v-btn
-                  small
-                  width="fit-content"
-                  @click="showFullPayload = !showFullPayload">
-                  {{ payloadToggleText }}
-                </v-btn>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </v-sheet>
-      <v-text-area-with-validation
-        v-if="hasSupportAddress"
-        v-model="description"
-        :data-test="`error-report-description`"
-        :label="$t('common.description')"
-        rows="8" />
-    </rc-dialog>
+    <validation-observer ref="form" v-slot="{ failed }" slim>
+      <rc-dialog
+        :show="showErrorReportDialog"
+        data-test="error-report-dialog"
+        :title="hasSupportAddress? $t('errorReport.reportProblem') : $t('errorReport.errorDialog.errorDetails')"
+        :cancel-action-label="hasSupportAddress? $t('common.cancel'): $t('common.close')"
+        :submit-action-label="$t('errorReport.errorDialog.sendReport')"
+        :show-submit="hasSupportAddress"
+        :submit-button-disabled="failed"
+        :persistent="true"
+        :max-width="900"
+        :min-height="hasSupportAddress? 480 : 300"
+        :loading="loadingSubmit"
+        @cancel="closeDialog"
+        @close="closeDialog"
+        @submit="submitReport">
+        <v-sheet rounded class="error-data mb-6">
+          <table class="rc-body14 px-4 py-1 full-width">
+            <tbody>
+              <tr>
+                <td class="error-data-cell error-data-title">
+                  {{ $t('errorReport.errorDialog.errorMessage') }}
+                </td>
+                <td class="error-data-cell error-data-content d-flex flex-row justify-space-between align-start">
+                  <div>
+                    {{ message }}
+                  </div>
+                  <div>
+                    <rc-tooltip bottom>
+                      <template #activator="{ on }">
+                        <v-btn class="copy-btn" icon bottom v-on="on" @click="copyErrorData">
+                          <v-icon size="24" color="grey darken-2">
+                            mdi-content-copy
+                          </v-icon>
+                        </v-btn>
+                      </template>
+                      <span>{{ $t('errorReport.errorDialog.copyData') }}</span>
+                    </rc-tooltip>
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="errorType">
+                <td class="error-data-cell error-data-title">
+                  {{ $t('errorReport.errorDialog.errorType') }}
+                </td>
+                <td class="error-data-cell error-data-content">
+                  {{ errorType }}
+                </td>
+              </tr>
+              <tr v-if="api">
+                <td class="error-data-cell error-data-title">
+                  {{ $t('errorReport.errorDialog.api') }}
+                </td>
+                <td class="error-data-cell error-data-content">
+                  {{ api }}
+                </td>
+              </tr>
+              <tr v-if="callPayload">
+                <td class="error-data-cell error-data-title">
+                  {{ $t('errorReport.errorDialog.callPayload') }}
+                </td>
+                <td class="error-data-cell error-data-content">
+                  <div :style="`maxHeight:${payloadMaxHeight}; overflow:hidden;`">
+                    <pre class="error-data-payload">{{ callPayload }}</pre>
+                  </div>
+                  <span v-if="!showFullPayload" class="pl-4">.....</span>
+                  <v-btn
+                    small
+                    width="fit-content"
+                    @click="showFullPayload = !showFullPayload">
+                    {{ payloadToggleText }}
+                  </v-btn>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </v-sheet>
+        <v-text-area-with-validation
+          v-if="hasSupportAddress"
+          v-model="descriptionDoing"
+          :rules="rules.description"
+          :data-test="`error-report-description`"
+          :label="`${$t('errorReport.errorDialog.description.doing')} *`"
+          rows="3" />
+        <v-text-area-with-validation
+          v-if="hasSupportAddress"
+          v-model="descriptionExpected"
+          :rules="rules.description"
+          :data-test="`error-report-description`"
+          :label="`${$t('errorReport.errorDialog.description.expected')} *`"
+          rows="3" />
+        <v-text-area-with-validation
+          v-if="hasSupportAddress"
+          v-model="descriptionHappened"
+          :rules="rules.description"
+          :data-test="`error-report-description`"
+          :label="`${$t('errorReport.errorDialog.description.happened')} *`"
+          rows="3" />
+      </rc-dialog>
+    </validation-observer>
   </div>
 </template>
 
@@ -99,7 +117,8 @@ import _isEmpty from 'lodash/isEmpty';
 import { RcDialog, VTextAreaWithValidation, RcTooltip } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import { IServerError } from '@libs/core-lib/types';
-import { IErrorReport } from '@/types';
+import { IErrorReport, VForm } from '@/types';
+import { MAX_LENGTH_LG } from '@/constants/validations';
 import helpers from '../helpers/helpers';
 
 export default Vue.extend({
@@ -134,13 +153,24 @@ export default Vue.extend({
       showErrorReportDialog: false,
       loadingSubmit: false,
       toast: null,
-      description: '',
       report: null as IErrorReport,
       showFullPayload: false,
+      descriptionDoing: '',
+      descriptionExpected: '',
+      descriptionHappened: '',
     };
   },
 
   computed: {
+    rules(): Record<string, unknown> {
+      return {
+        description: {
+          required: true,
+          max: MAX_LENGTH_LG,
+        },
+      };
+    },
+
     api(): string {
       return (this.error as IServerError)?.request?.responseURL || '';
     },
@@ -233,18 +263,21 @@ export default Vue.extend({
       this.toast.goAway(0);
       this.showErrorReportDialog = true;
 
-      this.description = this.hasSupportAddress ? this.$t('errorReport.errorDialog.description.defaultContent') as string : '';
       this.makeReportPayload();
     },
 
     async submitReport() {
       try {
-        this.loadingSubmit = true;
-        this.report.description = this.description;
-        await this.$services.errorReporting.sendErrorReport(this.report);
-        this.$toasted.global.success(this.$t('errorReport.errorDialog.reportSentSuccess'));
-        this.loadingSubmit = false;
-        this.$emit('update:show', false);
+        const isValid = await (this.$refs.form as VForm).validate();
+        if (isValid) {
+          this.loadingSubmit = true;
+          this.report.description = this.makeDescription();
+
+          await this.$services.errorReporting.sendErrorReport(this.report);
+          this.$toasted.global.success(this.$t('errorReport.errorDialog.reportSentSuccess'));
+          this.loadingSubmit = false;
+          this.$emit('update:show', false);
+        }
       } catch (e) {
         this.$emit('update:show', false);
         this.$nextTick(() => {
@@ -264,11 +297,17 @@ export default Vue.extend({
         status: (this.error as IServerError).response?.status,
         payload: this.stringifiedCallPayload,
         errorResponse: JSON.stringify((this.error as IServerError).response, null, 2),
-        description: this.description,
+        description: '',
         appUrl: this.$route.fullPath,
         tenantId: this.tenantId,
         languageCode: this.languageCode,
       };
+    },
+
+    makeDescription():string {
+      return `${this.$t('errorReport.errorDialog.description.doing')} ${this.descriptionDoing}\n`
+      + `${this.$t('errorReport.errorDialog.description.expected')} ${this.descriptionExpected}\n`
+      + `${this.$t('errorReport.errorDialog.description.happened')} ${this.descriptionHappened}`;
     },
 
     copyErrorData() {

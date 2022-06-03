@@ -202,32 +202,17 @@ describe('ErrorReportToast', () => {
         expect(wrapper.vm.toast.goAway).toBeCalledTimes(1);
         expect(wrapper.vm.makeReportPayload).toBeCalledTimes(1);
       });
-
-      it('sets the right description if  hasSupportAddress is true', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            error,
-            show: true,
-            message: 'mock-error-message',
-          },
-          computed: {
-            hasSupportAddress: () => true,
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-        await wrapper.vm.initReport();
-        expect(wrapper.vm.description).toEqual('errorReport.errorDialog.description.defaultContent');
-      });
     });
 
     describe('submitReport', () => {
-      it('updares descripsion and calls the service tenantSettings.sendErrorReport and emits update:show', async () => {
+      it('calls makeDescription and calls the service tenantSettings.sendErrorReport and emits update:show', async () => {
         wrapper.setData({ report: { id: '1234' } });
+        wrapper.vm.makeDescription = jest.fn(() => 'mock-description');
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submitReport();
-        expect(wrapper.vm.$services.errorReporting.sendErrorReport).toBeCalledWith({ id: '1234', description: wrapper.vm.description });
+
+        expect(wrapper.vm.makeDescription).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$services.errorReporting.sendErrorReport).toBeCalledWith({ id: '1234', description: 'mock-description' });
         expect(wrapper.emitted('update:show')[0][0])
           .toEqual(false);
       });
@@ -272,11 +257,20 @@ describe('ErrorReportToast', () => {
           status: wrapper.vm.error.response.status,
           payload: '{"key1": { "key2": "value" }}',
           errorResponse: 'mocks-stringified-json-value',
-          description: wrapper.vm.description,
+          description: '',
           appUrl: wrapper.vm.$route.fullPath,
           tenantId: 'mock-tenant-id',
           languageCode: 'en',
         });
+      });
+    });
+
+    describe('makeDescription', () => {
+      it('returns the right description content', async () => {
+        await wrapper.setData({ descriptionDoing: 'mock-doing', descriptionExpected: 'mock-expected', descriptionHappened: 'mock-happened' });
+        const description = wrapper.vm.makeDescription();
+        // eslint-disable-next-line max-len
+        expect(description).toEqual('errorReport.errorDialog.description.doing mock-doing\nerrorReport.errorDialog.description.expected mock-expected\nerrorReport.errorDialog.description.happened mock-happened');
       });
     });
 
