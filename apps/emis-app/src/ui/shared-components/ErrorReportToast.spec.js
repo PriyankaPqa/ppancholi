@@ -1,6 +1,5 @@
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { format } from 'date-fns';
 import { User, mockUserData } from '@/entities/user';
 import helpers from '../helpers/helpers';
 import Component from './ErrorReportToast.vue';
@@ -247,12 +246,9 @@ describe('ErrorReportToast', () => {
         });
         JSON.stringify = jest.fn(() => 'mocks-stringified-json-value');
 
-        const time = new Date();
         await wrapper.vm.makeReportPayload();
-        expect(wrapper.vm.report).toEqual({
-          id: format(time, 'yyyy-MM-dd_H:mm:ss'),
+        expect(wrapper.vm.report).toEqual(expect.objectContaining({
           user,
-          timestamp: time.toISOString(),
           api: wrapper.vm.api,
           status: wrapper.vm.error.response.status,
           payload: '{"key1": { "key2": "value" }}',
@@ -261,7 +257,16 @@ describe('ErrorReportToast', () => {
           appUrl: wrapper.vm.$route.fullPath,
           tenantId: 'mock-tenant-id',
           languageCode: 'en',
-        });
+        }));
+      });
+    });
+
+    describe('makeDescription', () => {
+      it('returns the right description content', async () => {
+        await wrapper.setData({ descriptionDoing: 'mock-doing', descriptionExpected: 'mock-expected', descriptionHappened: 'mock-happened' });
+        const description = wrapper.vm.makeDescription();
+        // eslint-disable-next-line max-len
+        expect(description).toEqual('errorReport.errorDialog.description.doing mock-doing\nerrorReport.errorDialog.description.expected mock-expected\nerrorReport.errorDialog.description.happened mock-happened');
       });
     });
 

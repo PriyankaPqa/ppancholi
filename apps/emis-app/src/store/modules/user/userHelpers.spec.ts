@@ -26,7 +26,7 @@ describe('>>> Users Helpers', () => {
   describe('getUserData', () => {
     it('returns user data from account', () => {
       const authenticationData = mockAuthenticationData();
-      global.localStorage.setItem(localStorageKeys.msalAccount.name, JSON.stringify(authenticationData.account));
+      global.localStorage.setItem(localStorageKeys.msalAccount.name, null);
       AuthenticationProvider.account = authenticationData.account;
       const roles = ['level1'];
 
