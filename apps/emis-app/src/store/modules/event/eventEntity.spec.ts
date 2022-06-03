@@ -130,15 +130,6 @@ describe('>>> Event Module', () => {
       });
     });
 
-    describe('setGetLoading', () => {
-      test('the setGetLoading mutation sets the getLoading state', () => {
-        module.mutations.setGetLoading(module.state, true);
-        expect(module.state.getLoading).toBeTruthy();
-        module.mutations.setGetLoading(module.state, false);
-        expect(module.state.getLoading).toBeFalsy();
-      });
-    });
-
     describe('setSearchLoading', () => {
       test('the setSearchLoading mutation sets the searchLoading state', () => {
         module.mutations.setSearchLoading(module.state, true);

@@ -238,7 +238,6 @@ describe('EventDetails.vue', () => {
           modules: {
             event: {
               state: {
-                getLoading: true,
               },
             },
           },
@@ -276,7 +275,6 @@ describe('EventDetails.vue', () => {
             modules: {
               event: {
                 state: {
-                  getLoading: true,
                 },
               },
             },
@@ -301,7 +299,6 @@ describe('EventDetails.vue', () => {
             modules: {
               event: {
                 state: {
-                  getLoading: true,
                 },
               },
             },
@@ -328,7 +325,6 @@ describe('EventDetails.vue', () => {
             modules: {
               event: {
                 state: {
-                  getLoading: true,
                 },
               },
             },

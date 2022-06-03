@@ -3,7 +3,6 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@/entities/case-file';
 import { mockStorage } from '@/store/storage';
 
-import moment from '@/ui/plugins/moment';
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
 const localVue = createLocalVue();
@@ -100,16 +99,6 @@ describe('CaseFileActivity.vue', () => {
       let element;
       beforeEach(() => {
         element = wrapper.findDataTest('caseFileActivity-case-file-activity-sort-select');
-      });
-      it('is renders', () => {
-        expect(element.exists()).toBeTruthy();
-      });
-    });
-
-    describe('Last action date info', () => {
-      let element;
-      beforeEach(() => {
-        element = wrapper.findDataTest('caseFileActivity-last-action-date');
       });
       it('is renders', () => {
         expect(element.exists()).toBeTruthy();
@@ -237,8 +226,6 @@ describe('CaseFileActivity.vue', () => {
         store: {
           modules: {
             caseFileEntities: {
-              triageLoading: false,
-              duplicateLoading: false,
             },
           },
         },
@@ -310,18 +297,6 @@ describe('CaseFileActivity.vue', () => {
         expect(wrapper.vm.canEdit).toBe(false);
       });
     });
-
-    describe('duplicateLoading', () => {
-      it('returns the right value', (() => {
-        expect(wrapper.vm.duplicateLoading).toEqual(wrapper.vm.$store.state.caseFileEntities.duplicateLoading);
-      }));
-    });
-
-    describe('triageLoading', () => {
-      it('returns the right value', (() => {
-        expect(wrapper.vm.triageLoading).toEqual(wrapper.vm.$store.state.caseFileEntities.triageLoading);
-      }));
-    });
   });
 
   describe('lifecycle', () => {
@@ -345,18 +320,6 @@ describe('CaseFileActivity.vue', () => {
     describe('created', () => {
       it('should call fetch', () => {
         expect(wrapper.vm.$storage.caseFile.actions.fetch).toHaveBeenCalledWith(mockCaseFile.entity.id);
-      });
-
-      it('should call setLastAction', async () => {
-        wrapper.vm.setLastAction = jest.fn();
-
-        expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(0);
-
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-
-        expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(1);
       });
 
       it('should call fetchCaseFileActivities', async () => {
@@ -479,29 +442,6 @@ describe('CaseFileActivity.vue', () => {
           mockCaseFile.entity.id,
           triage,
         );
-      });
-    });
-
-    describe('setLastAction', () => {
-      it('sets the right value into daysAgo', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: { id: mockCaseFile.entity.id },
-          mocks: {
-            $storage: storage,
-
-          },
-          computed: {
-            caseFile() {
-              const altCaseFile = { ...mockCaseFile };
-              altCaseFile.metadata.lastActionDate = moment().subtract(2, 'days');
-              return altCaseFile;
-            },
-          },
-        });
-
-        await wrapper.vm.setLastAction();
-        expect(wrapper.vm.daysAgo).toEqual('2 days ago');
       });
     });
 

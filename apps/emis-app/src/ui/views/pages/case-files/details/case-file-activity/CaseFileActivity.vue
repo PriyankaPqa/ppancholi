@@ -25,10 +25,10 @@
             :value="caseFile.entity.triage"
             class="triage-select"
             data-test="caseFileActivity-triage-select"
-            :readonly="!canEdit"
+            :readonly="!canEdit || saving"
             :menu-props="{ bottom: true, offsetY: true, contentClass: 'case-file-activity-dropdown', maxWidth: 'fit-content' }"
             :items="triageLevels"
-            :loading="triageLoading"
+            :loading="loading"
             hide-details
             @change="setCaseFileTriage($event)" />
 
@@ -42,8 +42,8 @@
                 data-test="caseFileActivity-duplicateBtn"
                 :class="{ 'no-pointer': !canEdit }"
                 icon
-                :loading="duplicateLoading"
-                :disabled="!canEdit"
+                :loading="loading"
+                :disabled="!canEdit || saving"
                 v-on="on"
                 @click="setCaseFileIsDuplicate">
                 <v-icon :color="caseFile && caseFile.entity.isDuplicate ? 'secondary' : ''">
@@ -80,11 +80,7 @@
         <v-col cols="12">
           <case-file-list-wrapper :empty="caseFileActivities.length === 0" :loading="loadingActivity" class="pa-4">
             <v-row>
-              <!-- hide lastActionDate until lee decides otherwise - too many issues in BE -->
-              <v-col class="rc-body12" data-test="caseFileActivity-last-action-date" style="visibility:hidden" cols="12" md="6">
-                {{ $t('caseFileActivity.lastAction', {x: lastActionDate }) }} <span class="fw-bold ml-1">({{ daysAgo }})</span>
-              </v-col>
-              <v-col cols="12" md="6" class="d-flex justify-end align-center rc-body14">
+              <v-col cols="12" class="d-flex justify-end align-center rc-body14">
                 <span> {{ $t('caseFileActivity.sortBy') }}: </span>
                 <v-select
                   class="case-file-activity-sort-select"
@@ -99,7 +95,7 @@
             </v-row>
 
             <component
-              :is="getComponentName(item.activityType)"
+              :is="getComponentName()"
               v-for="item in caseFileActivities"
               :key="item.id"
               :force-hide-menu="true"
@@ -153,8 +149,7 @@ export default mixins(caseFileDetail).extend({
       showLabelsDialog: false,
       loading: false,
       loadingActivity: false,
-      lastActionDate: null,
-      daysAgo: null,
+      saving: false,
       caseFileActivities: [] as ICaseFileActivity[],
       sortingListItems: [
         {
@@ -168,30 +163,13 @@ export default mixins(caseFileDetail).extend({
     };
   },
   computed: {
-    locale() {
-      return this.$i18n.locale;
-    },
-
     canEdit(): boolean {
       return this.$hasLevel('level1') && !this.readonly;
-    },
-
-    duplicateLoading(): boolean {
-      return this.$store.state.caseFileEntities.duplicateLoading;
     },
 
     triageLevels(): {value: unknown, text: string}[] {
       const levels = helpers.enumToTranslatedCollection(CaseFileTriage, 'enums.Triage');
       return _sortBy(levels, 'value');
-    },
-
-    triageLoading(): boolean {
-      return this.$store.state.caseFileEntities.triageLoading;
-    },
-  },
-  watch: {
-    locale() {
-      this.setLastAction();
     },
   },
 
@@ -201,7 +179,6 @@ export default mixins(caseFileDetail).extend({
 
       await this.$storage.caseFile.actions.fetch(this.caseFileId);
 
-      this.setLastAction();
       await this.fetchCaseFileActivities();
       this.attachToChanges(true);
     } finally {
@@ -247,21 +224,17 @@ export default mixins(caseFileDetail).extend({
       return 'CaseFileActivityListItem';
     },
 
-    setLastAction() {
-      if (this.caseFile.metadata.lastActionDate) {
-        const date = moment(this.caseFile.metadata.lastActionDate).local();
-        this.lastActionDate = date.format('ll');
-        this.daysAgo = date.locale(moment.locale()).fromNow();
-      }
-    },
-
     async setCaseFileIsDuplicate() {
       const { id, isDuplicate } = this.caseFile.entity;
+      this.saving = true;
       await this.$storage.caseFile.actions.setCaseFileIsDuplicate(id, !isDuplicate);
+      this.saving = false;
     },
 
     async setCaseFileTriage(triage: number) {
+      this.saving = true;
       await this.$storage.caseFile.actions.setCaseFileTriage(this.caseFileId, triage);
+      this.saving = false;
     },
 
     async sortCaseFileActivities(direction: 'asc' | 'desc') {

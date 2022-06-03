@@ -7,6 +7,5 @@ export interface IEventEntityState extends IState<IEventEntity> {
   agreementTypesFetched: boolean;
   eventTypes: IOptionItemData[];
   eventTypesFetched: boolean;
-  getLoading: boolean;
   searchLoading: boolean,
 }

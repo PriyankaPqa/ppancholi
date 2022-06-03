@@ -146,35 +146,11 @@ describe('Case file entity module', () => {
       });
     });
 
-    describe('setGetLoading', () => {
-      test('the setGetLoading mutation sets the getLoading state', () => {
-        expect(module.state.getLoading).toBe(false);
-        module.mutations.setGetLoading(module.state, true);
-        expect(module.state.getLoading).toBe(true);
-      });
-    });
-
     describe('setSearchLoading', () => {
       test('the setSearchLoading mutation sets the searchLoading state', () => {
         expect(module.state.searchLoading).toBe(false);
         module.mutations.setSearchLoading(module.state, true);
         expect(module.state.searchLoading).toBe(true);
-      });
-    });
-
-    describe('setTriageLoading', () => {
-      test('the setTriageLoading mutation sets the triageLoading state', () => {
-        expect(module.state.triageLoading).toBe(false);
-        module.mutations.setTriageLoading(module.state, true);
-        expect(module.state.triageLoading).toBe(true);
-      });
-    });
-
-    describe('setDuplicateLoading', () => {
-      test('the setDuplicateLoading mutation sets the duplicateLoading state', () => {
-        expect(module.state.duplicateLoading).toBe(false);
-        module.mutations.setDuplicateLoading(module.state, true);
-        expect(module.state.duplicateLoading).toBe(true);
       });
     });
   });

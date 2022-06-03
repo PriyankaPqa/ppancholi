@@ -23,11 +23,8 @@ const store = mockStore({
       state: {
         tagsOptions: mockOptionItemData(),
         searchLoading: false,
-        getLoading: false,
-        duplicateLoading: false,
         inactiveReasons: mockOptionItemData(),
         closeReasons: mockOptionItemData(),
-        triageLoading: false,
         items: [
           mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open } as any),
           mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Inactive } as any),

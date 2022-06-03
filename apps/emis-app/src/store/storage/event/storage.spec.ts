@@ -23,7 +23,6 @@ const store = mockStore({
         agreementTypesFetched: true,
         eventTypes: mockOptionItemData(),
         eventTypesFetched: true,
-        getLoading: false,
         searchLoading: false,
       },
     },

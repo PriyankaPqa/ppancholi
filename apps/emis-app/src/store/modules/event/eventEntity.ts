@@ -46,7 +46,6 @@ export class EventEntityModule extends BaseModule <IEventEntity, uuid> {
     eventTypes: [] as IOptionItemData[],
     agreementTypesFetched: false,
     eventTypesFetched: false,
-    getLoading: false,
   }
 
   public getters = {
@@ -81,10 +80,6 @@ export class EventEntityModule extends BaseModule <IEventEntity, uuid> {
 
     setEventTypesFetched(state: IEventEntityState, payload: boolean) {
       state.eventTypesFetched = payload;
-    },
-
-    setGetLoading(state: IEventEntityState, payload: boolean) {
-      state.getLoading = payload;
     },
   };
 

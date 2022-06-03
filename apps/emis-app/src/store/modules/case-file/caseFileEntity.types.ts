@@ -4,9 +4,6 @@ import { IState } from '../base/base.types';
 
 export interface ICaseFileEntityState extends IState<ICaseFileEntity> {
   searchLoading: boolean;
-  getLoading: boolean;
-  duplicateLoading: boolean;
-  triageLoading: boolean;
   tagsOptions: IOptionItem[];
   inactiveReasons: IOptionItem[];
   closeReasons: IOptionItem[];

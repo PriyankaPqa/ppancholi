@@ -39,9 +39,6 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
 
   public state: ICaseFileEntityState = {
     ...this.baseState,
-    getLoading: false,
-    duplicateLoading: false,
-    triageLoading: false,
     tagsOptions: [] as IOptionItem[],
     inactiveReasons: [] as IOptionItem[],
     closeReasons: [] as IOptionItem[],
@@ -100,18 +97,6 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
 
     setCloseReasonsFetched(state: ICaseFileEntityState, payload: boolean) {
       state.closeReasonsFetched = payload;
-    },
-
-    setGetLoading(state: ICaseFileEntityState, payload: boolean) {
-      state.getLoading = payload;
-    },
-
-    setDuplicateLoading(state: ICaseFileEntityState, payload: boolean) {
-      state.duplicateLoading = payload;
-    },
-
-    setTriageLoading(state: ICaseFileEntityState, payload: boolean) {
-      state.triageLoading = payload;
     },
   }
 
