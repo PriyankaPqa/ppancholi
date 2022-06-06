@@ -1,8 +1,9 @@
 import { mockStorage } from '@libs/registration-lib/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
+import { MassActionDataCorrectionType } from '@/entities/mass-action';
 import massActions from './massActions';
-
+/* eslint-disable max-len */
 const Component = {
   render() {},
   mixins: [massActions],
@@ -38,15 +39,23 @@ describe('massActions', () => {
       });
 
       it('should trigger proper method downloadImportPaymentStatusesTemplate', () => {
-        wrapper.vm.downloadImportPaymentStatusesTemplate = jest.fn();
+        wrapper.vm.downloadTemplate = jest.fn();
         wrapper.vm.onClick('downloadImportPaymentStatusesTemplate');
-        expect(wrapper.vm.downloadImportPaymentStatusesTemplate).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('ImportPaymentStatusesTemplate.csv', 'PaymentGroupId,Status,CancellationReason');
       });
 
       it('should trigger proper method downloadImportUsersTemplate', () => {
-        wrapper.vm.downloadImportUsersTemplate = jest.fn();
+        wrapper.vm.downloadTemplate = jest.fn();
         wrapper.vm.onClick('downloadImportUsersTemplate');
-        expect(wrapper.vm.downloadImportUsersTemplate).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('ImportUsersTemplate.csv', 'FirstName,LastName,Email,Role');
+      });
+    });
+
+    describe('onClickMenu', () => {
+      it('should trigger proper method for downloadDataCorrectionTemplate', () => {
+        wrapper.vm.downloadDataCorrectionTemplate = jest.fn();
+        wrapper.vm.onClickMenu('downloadDataCorrectionTemplate', 1);
+        expect(wrapper.vm.downloadDataCorrectionTemplate).toHaveBeenCalledWith(1);
       });
     });
 
@@ -145,25 +154,52 @@ describe('massActions', () => {
       });
     });
 
-    describe('downloadImportPaymentStatusesTemplate', () => {
-      it('should call downloadBlob with proper params', () => {
-        const fileName = 'ImportPaymentStatusesTemplate.csv';
-        const blob = new Blob(['PaymentGroupId,Status,CancellationReason'], { type: 'text/csv' });
-        helpers.downloadBlob = jest.fn();
+    describe('downloadDataCorrectionTemplate', () => {
+      it('should call downloadTemplate with proper data for ContactInformation', () => {
+        wrapper.vm.downloadTemplate = jest.fn();
+        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.ContactInformation);
+        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('ContactInformationTemplate.csv', 'PersonId,PreferredLanguageSpecifiedOther,PrimarySpokenLanguageSpecifiedOther,Email,HomePhoneNumber.Number,MobilePhoneNumber.Number,AlternatePhoneNumber.Number,ETag');
+      });
 
-        wrapper.vm.downloadImportPaymentStatusesTemplate();
+      it('should call downloadTemplate with proper data for HomeAddress', () => {
+        wrapper.vm.downloadTemplate = jest.fn();
+        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.HomeAddress);
+        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('HomeAddressTemplate.csv', 'HouseholdId,StreetAddress,UnitSuite,City,ProvinceEn,PostalCode,SpecifiedOtherProvince,Country,ETag');
+      });
 
-        expect(helpers.downloadBlob).toHaveBeenCalledWith(blob, fileName);
+      it('should call downloadTemplate with proper data for AuthenticationSpecifiedOther', () => {
+        wrapper.vm.downloadTemplate = jest.fn();
+        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.AuthenticationSpecifiedOther);
+        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('AuthenticationSpecifiedOtherTemplate.csv', 'CaseFileId,AuthenticationSpecifiedOther,ETag');
+      });
+
+      it('should call downloadTemplate with proper data for Labels', () => {
+        wrapper.vm.downloadTemplate = jest.fn();
+        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.Labels);
+        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('LabelsTemplate.csv', 'CaseFileId,LabelName1,LabelName2,LabelName3,LabelName4,ETag');
+      });
+
+      it('should call downloadTemplate with proper data for IdentitySet', () => {
+        wrapper.vm.downloadTemplate = jest.fn();
+        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.IdentitySet);
+        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('IdentitySetTemplate.csv', 'PersonId,FirstName,LastName,MiddleName,GenderSpecifiedOther,ETag');
+      });
+
+      it('should call downloadTemplate with proper data for TemporaryAddress', () => {
+        wrapper.vm.downloadTemplate = jest.fn();
+        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.TemporaryAddress);
+        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('TemporaryAddressTemplate.csv', 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,ETag');
       });
     });
 
-    describe('downloadImportUsersTemplate', () => {
+    describe('downloadTemplate', () => {
       it('should call downloadBlob with proper params', () => {
-        const fileName = 'ImportUsersTemplate.csv';
-        const blob = new Blob(['FirstName,LastName,Email,Role'], { type: 'text/csv' });
+        const fileName = 'fileName';
+        const blobParts = 'PaymentGroupId,Status,CancellationReason';
+        const blob = new Blob([blobParts], { type: 'text/csv' });
         helpers.downloadBlob = jest.fn();
 
-        wrapper.vm.downloadImportUsersTemplate();
+        wrapper.vm.downloadTemplate(fileName, [blobParts]);
 
         expect(helpers.downloadBlob).toHaveBeenCalledWith(blob, fileName);
       });

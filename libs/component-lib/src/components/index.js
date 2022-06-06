@@ -31,3 +31,4 @@ export { default as RcFilterToolbar } from './molecule/RcFilterToolbar/RcFilterT
 export { default as RcCountrySelectWithValidation } from './atoms/RcCountrySelectWithValidation.vue';
 export { default as RcNestedTable } from './organism/RcNestedTable/RcNestedTable.vue';
 export { default as RcTooltip } from './atoms/RcTooltip.vue';
+export { default as RcMenu } from './atoms/RcMenu.vue';

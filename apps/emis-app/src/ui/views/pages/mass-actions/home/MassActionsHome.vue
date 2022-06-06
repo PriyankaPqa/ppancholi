@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid class="py-4 px-6">
+  <v-container fluid>
     <v-row>
-      <v-col v-for="(card, $index) in availableCards" :key="$index" xs="12" sm="12" md="3" lg="3">
+      <v-col v-for="(card, $index) in availableCards" :key="$index" xs="12" sm="12" md="4" lg="3">
         <rc-menu-card
           class="cards"
           :title="$t(card.title)"
@@ -11,8 +11,11 @@
           :route-name="card.route"
           :secondary-button-text="$t(card.secondaryButton)"
           :show-secondary-button="card.showSecondaryButton"
+          :secondary-menu="card.secondaryButtonIsMenu"
+          :secondary-menu-items="card.secondaryMenuItems"
           @click="onClick(card.onClick)"
-          @click-secondary="onClick(card.onSecondaryClick)" />
+          @click-secondary="onClick(card.onSecondaryClick)"
+          @click-secondary-menu="onClickMenu(card.onClickMenu, $event)" />
       </v-col>
     </v-row>
     <impact-status-case-file-filtering v-if="showExportValidationImpact" :show.sync="showExportValidationImpact" />
@@ -26,6 +29,8 @@ import routes from '@/constants/routes';
 import massActions, { IMassActionCards } from '@/ui/views/pages/mass-actions/mixins/massActions';
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
 import { FeatureKeys } from '@/entities/tenantSettings';
+import helpers from '@/ui/helpers/helpers';
+import { MassActionDataCorrectionType } from '@/entities/mass-action';
 
 export default mixins(massActions).extend({
   name: 'MassActionsHome',
@@ -120,6 +125,11 @@ export default mixins(massActions).extend({
           roles: null,
           group: 5,
           feature: FeatureKeys.MassActionCorrection,
+          secondaryButton: 'mass_action.card.action.download_template',
+          showSecondaryButton: true,
+          secondaryButtonIsMenu: true,
+          secondaryMenuItems: this.massActionTypes,
+          onClickMenu: 'downloadDataCorrectionTemplate',
         },
       ];
     },
@@ -127,19 +137,14 @@ export default mixins(massActions).extend({
     availableCards(): Array<IMassActionCards> {
       return this.filterItems(this.cards);
     },
+
+    massActionTypes(): Array<Record<string, unknown>> {
+      return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false);
+    },
   },
 });
 </script>
 
 <style scoped lang="scss">
-.cards {
-  min-height: 200px;
-};
-
-@media only screen and (min-width: $breakpoint-sm-min) and (max-width: $breakpoint-lg-min) {
-  .cards {
-    min-height: 300px;
-  };
-}
 
 </style>

@@ -19,6 +19,15 @@ export enum MassActionType {
   ImportUsers = 6,
 }
 
+export enum MassActionDataCorrectionType {
+  HomeAddress = 7,
+  Labels = 8,
+  TemporaryAddress = 9,
+  AuthenticationSpecifiedOther = 10,
+  IdentitySet = 11,
+  ContactInformation = 12
+}
+
 export enum MassActionMode {
   File = 'file',
   List = 'list',

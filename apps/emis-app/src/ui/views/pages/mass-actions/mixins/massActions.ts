@@ -2,6 +2,7 @@ import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
 import { TranslateResult } from 'vue-i18n';
 import { FeatureKeys } from '@/entities/tenantSettings';
+import { MassActionDataCorrectionType } from '@/entities/mass-action';
 
 export interface IMassActionCards {
   title: string;
@@ -15,15 +16,50 @@ export interface IMassActionCards {
   roles: Array<string>;
   group: number;
   onClick?: string;
+  onClickMenu?: string;
   onSecondaryClick?: string;
   feature?: FeatureKeys
+  secondaryButtonIsMenu?: boolean;
+  secondaryMenuItems?: Array<Record<string, unknown>>
 }
-
+/* eslint-disable max-len */
 export default Vue.extend({
 
   data() {
     return {
       showExportValidationImpact: false,
+      templateData: {
+        [MassActionDataCorrectionType.ContactInformation]: {
+          fileName: 'ContactInformationTemplate.csv',
+          blobsParts: 'PersonId,PreferredLanguageSpecifiedOther,PrimarySpokenLanguageSpecifiedOther,Email,HomePhoneNumber.Number,MobilePhoneNumber.Number,AlternatePhoneNumber.Number,ETag',
+        },
+        [MassActionDataCorrectionType.HomeAddress]: {
+          fileName: 'HomeAddressTemplate.csv',
+          blobsParts: 'HouseholdId,StreetAddress,UnitSuite,City,ProvinceEn,PostalCode,SpecifiedOtherProvince,Country,ETag',
+        },
+        [MassActionDataCorrectionType.AuthenticationSpecifiedOther]: {
+          fileName: 'AuthenticationSpecifiedOtherTemplate.csv',
+          blobsParts: 'CaseFileId,AuthenticationSpecifiedOther,ETag',
+        },
+        [MassActionDataCorrectionType.Labels]: {
+          fileName: 'LabelsTemplate.csv',
+          blobsParts: 'CaseFileId,LabelName1,LabelName2,LabelName3,LabelName4,ETag',
+        },
+        [MassActionDataCorrectionType.IdentitySet]: {
+          fileName: 'IdentitySetTemplate.csv',
+          blobsParts: 'PersonId,FirstName,LastName,MiddleName,GenderSpecifiedOther,ETag',
+        },
+        [MassActionDataCorrectionType.TemporaryAddress]: {
+          fileName: 'TemporaryAddressTemplate.csv',
+          blobsParts: 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,ETag',
+        },
+        importPaymentStatuses: {
+          fileName: 'ImportPaymentStatusesTemplate.csv', blobsParts: 'PaymentGroupId,Status,CancellationReason',
+        },
+        importUsers: {
+          fileName: 'ImportUsersTemplate.csv', blobsParts: 'FirstName,LastName,Email,Role',
+        },
+      },
     };
   },
   methods: {
@@ -58,12 +94,18 @@ export default Vue.extend({
           this.generateFundingRequest();
           break;
         case 'downloadImportPaymentStatusesTemplate':
-          this.downloadImportPaymentStatusesTemplate();
+          this.downloadTemplate(this.templateData.importPaymentStatuses.fileName, this.templateData.importPaymentStatuses.blobsParts);
           break;
         case 'downloadImportUsersTemplate':
-          this.downloadImportUsersTemplate();
+          this.downloadTemplate(this.templateData.importUsers.fileName, this.templateData.importUsers.blobsParts);
           break;
         default:
+      }
+    },
+
+    onClickMenu(methodName: string, itemValue: number) {
+      if (methodName === 'downloadDataCorrectionTemplate') {
+        this.downloadDataCorrectionTemplate(itemValue);
       }
     },
 
@@ -75,16 +117,13 @@ export default Vue.extend({
       return false;
     },
 
-    downloadImportPaymentStatusesTemplate() {
-      const fileName = 'ImportPaymentStatusesTemplate.csv';
-      const blob = new Blob(['PaymentGroupId,Status,CancellationReason'], { type: 'text/csv' });
+    downloadTemplate(fileName: string, blobParts: string) {
+      const blob = new Blob([blobParts], { type: 'text/csv' });
       helpers.downloadBlob(blob, fileName);
     },
 
-    downloadImportUsersTemplate() {
-      const fileName = 'ImportUsersTemplate.csv';
-      const blob = new Blob(['FirstName,LastName,Email,Role'], { type: 'text/csv' });
-      helpers.downloadBlob(blob, fileName);
+    downloadDataCorrectionTemplate(massActionType: MassActionDataCorrectionType) {
+      this.downloadTemplate(this.templateData[massActionType].fileName, this.templateData[massActionType].blobsParts);
     },
   },
 });
