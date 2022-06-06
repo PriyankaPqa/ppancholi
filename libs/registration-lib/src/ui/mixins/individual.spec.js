@@ -123,6 +123,24 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.inlineEdit).toBe(false);
       });
     });
+
+    describe('registrationSuccess', () => {
+      it('returns true if no error', () => {
+        storage.registration.getters.registrationErrors.mockReturnValueOnce([]);
+        expect(wrapper.vm.registrationSuccess).toBe(true);
+      });
+
+      it('returns false if has error', () => {
+        storage.registration.getters.registrationErrors.mockReturnValueOnce([{ detail: 'error' }]);
+        expect(wrapper.vm.registrationSuccess).toBe(false);
+      });
+
+      it('returns false if response is undefined', () => {
+        storage.registration.getters.registrationErrors.mockReturnValueOnce([]);
+        storage.registration.getters.registrationResponse.mockReturnValueOnce(undefined);
+        expect(wrapper.vm.registrationSuccess).toBe(false);
+      });
+    });
   });
 
   describe('Methods', () => {

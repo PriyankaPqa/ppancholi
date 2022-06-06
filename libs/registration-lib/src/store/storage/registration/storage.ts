@@ -236,6 +236,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     setGendersFetched(payload: boolean) {
       store.commit('registration/setGendersFetched', payload);
     },
+
+    setRegistrationResponse(payload: unknown) {
+      store.commit('registration/setRegistrationResponse', payload);
+    },
   },
 
   actions: {

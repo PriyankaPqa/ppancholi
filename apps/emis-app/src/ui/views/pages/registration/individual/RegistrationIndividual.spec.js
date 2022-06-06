@@ -563,17 +563,5 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });
-
-    describe('registrationSuccess', () => {
-      it('returns true if no error', () => {
-        storage.registration.getters.registrationErrors.mockReturnValueOnce([]);
-        expect(wrapper.vm.registrationSuccess).toBe(true);
-      });
-
-      it('returns false if has error', () => {
-        storage.registration.getters.registrationErrors.mockReturnValueOnce([{ detail: 'error' }]);
-        expect(wrapper.vm.registrationSuccess).toBe(false);
-      });
-    });
   });
 });

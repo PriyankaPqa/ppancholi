@@ -20,6 +20,7 @@ describe('>>> Registration Storage', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
+
   describe('>> Getters', () => {
     it('should proxy isCRCRegistration', () => {
       expect(storage.getters.isCRCRegistration()).toEqual(store.getters['registration/isCRCRegistration']);
@@ -294,6 +295,11 @@ describe('>>> Registration Storage', () => {
     it('should proxy setGendersFetched', () => {
       storage.mutations.setGendersFetched(true);
       expect(store.commit).toBeCalledWith('registration/setGendersFetched', true);
+    });
+
+    it('should proxy setRegistrationResponse', () => {
+      storage.mutations.setRegistrationResponse(null);
+      expect(store.commit).toBeCalledWith('registration/setRegistrationResponse', null);
     });
   });
 

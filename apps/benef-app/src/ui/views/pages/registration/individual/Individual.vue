@@ -21,17 +21,19 @@
         <template slot="actions">
           <div class="actions">
             <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
-              <v-btn
-                v-if="currentTab.id === 'confirmation'"
-                class="printButton"
-                :aria-label="$t(currentTab.backButtonTextKey)"
-                data-test="printButton"
-                @click="print()">
-                <v-icon size="20" color="grey darken-2" class="pr-2">
-                  mdi-printer
-                </v-icon>
-                {{ $t(currentTab.backButtonTextKey) }}
-              </v-btn>
+              <template v-if="currentTab.id === 'confirmation'">
+                <v-btn
+                  v-if="registrationSuccess"
+                  class="printButton"
+                  :aria-label="$t(currentTab.backButtonTextKey)"
+                  data-test="printButton"
+                  @click="print()">
+                  <v-icon size="20" color="grey darken-2" class="pr-2">
+                    mdi-printer
+                  </v-icon>
+                  {{ $t(currentTab.backButtonTextKey) }}
+                </v-btn>
+              </template>
               <v-btn v-else :aria-label="$t(currentTab.backButtonTextKey)" data-test="backButton" :disabled="submitLoading" @click="back()">
                 {{ $t(currentTab.backButtonTextKey) }}
               </v-btn>
@@ -107,8 +109,6 @@ export default mixins(individual).extend({
     recaptchaKey: localStorage.getItem(localStorageKeys.recaptchaKey.name),
     FeatureKeys,
   }),
-
-  mixins: [individual],
 
   computed: {
     isCaptchaAllowedIpAddress(): boolean {

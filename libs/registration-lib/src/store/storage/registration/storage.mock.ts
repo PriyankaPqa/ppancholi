@@ -75,6 +75,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     setTabs: jest.fn(),
     setPrimarySpokenLanguagesFetched: jest.fn(),
     setGendersFetched: jest.fn(),
+    setRegistrationResponse: jest.fn(),
   },
 
   actions: {

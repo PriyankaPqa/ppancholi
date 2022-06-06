@@ -6,6 +6,7 @@ import Component from './ErrorReportToast.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+let onLineGetter;
 
 describe('ErrorReportToast', () => {
   let wrapper;
@@ -27,6 +28,7 @@ describe('ErrorReportToast', () => {
 
   beforeEach(() => {
     jest.spyOn(document, 'getElementsByClassName').mockImplementation(() => [({ style: { display: '' } })]);
+    onLineGetter = jest.spyOn(window.navigator, 'onLine', 'get');
 
     wrapper = shallowMount(Component, {
       localVue,
@@ -41,7 +43,12 @@ describe('ErrorReportToast', () => {
       mocks: {
         $storage: storage,
       },
+
     });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('Computed', () => {
@@ -130,14 +137,32 @@ describe('ErrorReportToast', () => {
       }));
     });
 
-    it('calls addToastCloseButton and addToastReportButton', () => {
+    it('calls addToastCloseButton', () => {
       wrapper.vm.addToastCloseButton = jest.fn();
       wrapper.vm.addToastReportButton = jest.fn();
       wrapper.vm.$options.mounted.forEach((hook) => {
         hook.call(wrapper.vm);
       });
       expect(wrapper.vm.addToastCloseButton).toBeCalledTimes(1);
-      expect(wrapper.vm.addToastReportButton).toBeCalledTimes(1);
+    });
+
+    describe('addToastReportButton', () => {
+      it('should not be called if the navigator is offline', () => {
+        onLineGetter.mockReturnValueOnce(false);
+        wrapper.vm.addToastReportButton = jest.fn();
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.addToastReportButton).toBeCalledTimes(0);
+      });
+
+      it('should be called if the navigator is online', () => {
+        wrapper.vm.addToastReportButton = jest.fn();
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.addToastReportButton).toBeCalledTimes(1);
+      });
     });
   });
 

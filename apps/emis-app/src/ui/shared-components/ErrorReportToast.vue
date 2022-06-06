@@ -225,7 +225,10 @@ export default Vue.extend({
     (document.getElementsByClassName('hide-error-toaster-html')[0] as HTMLElement).style.display = 'none';
 
     this.addToastCloseButton();
-    this.addToastReportButton();
+
+    if (window.navigator.onLine) {
+      this.addToastReportButton();
+    }
   },
 
   methods: {

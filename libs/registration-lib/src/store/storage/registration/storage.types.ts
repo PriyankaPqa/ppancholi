@@ -77,6 +77,7 @@ export interface IStorage {
     setTabs(tabs: IRegistrationMenuItem[]): void;
     setPrimarySpokenLanguagesFetched(payload: boolean): void;
     setGendersFetched(payload: boolean): void;
+    setRegistrationResponse(payload: unknown): void;
   };
 
   actions: {
@@ -158,6 +159,7 @@ export interface IStorageMock {
     setTabs: jest.Mock<void>;
     setPrimarySpokenLanguagesFetched: jest.Mock<void>;
     setGendersFetched: jest.Mock<void>;
+    setRegistrationResponse: jest.Mock<void>;
   };
 
   actions: {

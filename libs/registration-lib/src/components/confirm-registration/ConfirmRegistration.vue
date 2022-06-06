@@ -74,7 +74,7 @@ export default Vue.extend({
 
   computed: {
     success(): boolean {
-      return this.errors?.length === 0;
+      return this.errors?.length === 0 && this.response !== undefined;
     },
 
     associationMode(): boolean {

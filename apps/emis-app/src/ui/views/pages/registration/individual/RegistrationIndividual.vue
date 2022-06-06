@@ -144,8 +144,6 @@ export default mixins(individual).extend({
     ConfirmationPrint,
   },
 
-  mixins: [individual],
-
   data() {
     return {
       tabs: tabs(),
@@ -217,9 +215,6 @@ export default mixins(individual).extend({
       return this.$hasFeature(FeatureKeys.AddressAutoFill);
     },
 
-    registrationSuccess(): boolean {
-      return this.$storage.registration.getters.registrationErrors()?.length === 0;
-    },
   },
 
   methods: {
@@ -308,11 +303,14 @@ export default mixins(individual).extend({
         messages: this.messagesLeave,
       }));
       if (userChoice) {
-        await this.$storage.caseFile.actions.createCaseFile({
+        const res = await this.$storage.caseFile.actions.createCaseFile({
           householdId: household.id,
           eventId: event.id,
           consentInformation: household.consentInformation,
         });
+        if (!res) {
+          this.$storage.registration.mutations.setRegistrationResponse(res);
+        }
         this.showExitConfirmation = false;
       }
       return userChoice;

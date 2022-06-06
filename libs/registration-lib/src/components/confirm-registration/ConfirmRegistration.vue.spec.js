@@ -144,6 +144,17 @@ describe('ConfirmRegistration.vue', () => {
         });
         expect(wrapper.vm.success).toEqual(false);
       });
+
+      it('returns false if response is undefined', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            errors: () => [],
+            response: () => undefined,
+          },
+        });
+        expect(wrapper.vm.success).toEqual(false);
+      });
     });
 
     describe('response', () => {

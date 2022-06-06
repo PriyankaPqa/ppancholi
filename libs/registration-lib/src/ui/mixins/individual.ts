@@ -77,6 +77,10 @@ export default Vue.extend({
           ? this.$storage.registration.getters.registrationResponse().registrationNumber
           : '';
     },
+
+    registrationSuccess(): boolean {
+      return this.$storage.registration.getters.registrationErrors()?.length === 0 && this.$storage.registration.getters.registrationResponse() !== undefined;
+    },
   },
 
   watch: {
