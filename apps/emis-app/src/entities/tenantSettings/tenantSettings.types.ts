@@ -6,7 +6,8 @@ export enum FeatureKeys {
   AddressAutoFill = 'AddressAutoFill',
   MassActionCorrection = 'massAction.correctData',
   TeamImprovements = 'teamsImprovements',
-  HouseholdSearch = 'HouseholdSearch'
+  HouseholdSearch = 'HouseholdSearch',
+  AutoFillFAPaymentNames = 'AutoFillFAPaymentNames',
 }
 
 export enum FeatureType {

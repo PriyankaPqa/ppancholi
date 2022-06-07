@@ -1,4 +1,5 @@
 import { createLocalVue, mount } from '@/test/testSetup';
+import { format } from 'date-fns';
 import { mockStorage } from '@/store/storage';
 import
 {
@@ -660,6 +661,14 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
         expect(wrapper.vm.selectedProgram?.id).toEqual(mockCombinedPrograms()[0].entity.id);
       });
+
+      it('calls makePaymentName if feature branch is on and there was an initial program', async () => {
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.makePaymentName = jest.fn();
+        await wrapper.setData({ selectedProgram: program });
+        await wrapper.vm.updateSelectedProgram(financialAssistance);
+        expect(wrapper.vm.makePaymentName).toBeCalledTimes(1);
+      });
     });
 
     describe('updateSelectedTable', () => {
@@ -724,6 +733,14 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
         expect(wrapper.vm.savePaymentLine).toHaveBeenCalled();
       });
+
+      it('calls makePaymentName if it is on add mode and feature branch is on', async () => {
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.makePaymentName = jest.fn();
+        await wrapper.setData({ isEditMode: false, isAddMode: true });
+        await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
+        expect(wrapper.vm.makePaymentName).toBeCalledTimes(1);
+      });
     });
 
     describe('warnIfInvalid', () => {
@@ -775,6 +792,14 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(storage.financialAssistancePayment.actions.editFinancialAssistancePaymentLine).toHaveBeenCalledWith(financialAssistance.id, newGroup[0]);
         expect(wrapper.vm.financialAssistance.groups).toEqual(storage.financialAssistancePayment.actions.editFinancialAssistancePaymentLine().groups);
       });
+
+      it('calls submitPaymentNameUpdate if  feature branch is on', async () => {
+        const newGroup = mockCaseFinancialAssistancePaymentGroups();
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.submitPaymentNameUpdate = jest.fn();
+        await wrapper.vm.savePaymentLine(newGroup[0]);
+        expect(wrapper.vm.submitPaymentNameUpdate).toBeCalledTimes(1);
+      });
     });
 
     describe('deletePaymentLine', () => {
@@ -813,6 +838,14 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await wrapper.vm.deletePaymentLine({ line: newGroup[0].lines[0], group: newGroup[0] });
         expect(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine).toHaveBeenCalledWith(financialAssistance.id, newGroup[0].lines[0].id);
         expect(wrapper.vm.financialAssistance.groups).toEqual(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine().groups);
+      });
+
+      it('calls submitPaymentNameUpdate if  feature branch is on', async () => {
+        const newGroup = mockCaseFinancialAssistancePaymentGroups();
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.submitPaymentNameUpdate = jest.fn();
+        await wrapper.vm.deletePaymentLine({ line: newGroup[0].lines[0], group: newGroup[0] });
+        expect(wrapper.vm.submitPaymentNameUpdate).toBeCalledTimes(1);
       });
     });
 
@@ -881,6 +914,79 @@ describe('CreateEditFinancialAssistance.vue', () => {
         wrapper.vm.closeSubmitPaymentDialog();
 
         expect(wrapper.vm.showSubmitPaymentDialog).toBe(false);
+      });
+    });
+
+    describe('makePaymentName', () => {
+      it('sets the right name to the financial assistance in edit mode', async () => {
+        wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
+        await wrapper.setData({ selectedProgram: program, financialAssistance: { ...financialAssistance, name: 'programName - lineName - 20220530 101010' } });
+        wrapper.vm.makePaymentName();
+        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - mock-payment-line - 20220530 101010`);
+      });
+
+      it('sets the right name to the financial assistance when argument keepDate true is passed', async () => {
+        wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
+        await wrapper.setData({ isEditMode: false });
+        await wrapper.setData({ selectedProgram: program, financialAssistance: { ...financialAssistance, name: 'programName - lineName - 20220530 101010' } });
+        wrapper.vm.makePaymentName(true);
+        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - mock-payment-line - 20220530 101010`);
+      });
+
+      it('sets the right name to the financial assistance in create mode', async () => {
+        wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
+        const dateNow = format(new Date(), 'yyyyMMdd HHmmss');
+        await wrapper.setData({ isEditMode: false });
+        await wrapper.setData({ selectedProgram: program });
+        wrapper.vm.makePaymentName();
+        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - mock-payment-line - ${dateNow}`);
+      });
+    });
+
+    describe('makePaymentLineNames', () => {
+      it('returns the unique names of payment lines', async () => {
+        const items = [{ mainCategory: { id: 'id-1', name: { translation: { en: 'name-1' } } } },
+          { mainCategory: { id: 'id-2', name: { translation: { en: 'name-2' } } } },
+          { mainCategory: { id: 'id-3', name: { translation: { en: 'name-3' } } } },
+          { mainCategory: { id: 'id-4', name: { translation: { en: 'name-4' } } } }];
+
+        await mountWrapper(false, 'edit', 6, 'role', {
+          computed: {
+            items() {
+              return items;
+            },
+          },
+        });
+
+        await wrapper.setData({
+          financialAssistance: {
+            ...financialAssistance,
+            groups: [
+              { lines: [{ status: Status.Active, mainCategoryId: 'id-1' }, { status: Status.Active, mainCategoryId: 'id-2' }] },
+              { lines: [{ status: Status.Active, mainCategoryId: 'id-2' }, { status: Status.Active, mainCategoryId: 'id-3' }] },
+            ],
+          },
+        });
+
+        const result = wrapper.vm.makePaymentLineNames();
+        expect(result).toEqual('name-1 - name-2 - name-3');
+      });
+    });
+
+    describe('submitPaymentNameUpdate', () => {
+      it('calls makePaymentName', async () => {
+        wrapper.vm.makePaymentName = jest.fn();
+        await wrapper.vm.submitPaymentNameUpdate();
+        expect(wrapper.vm.makePaymentName).toHaveBeenCalledWith(true);
+      });
+
+      it('calls action editFinancialAssistancePayment if financial assistance name has changed', async () => {
+        wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
+        await wrapper.setData({ selectedProgram: program, financialAssistance: { ...financialAssistance, name: 'programName - lineName - 20220530 101010' } });
+
+        await wrapper.vm.submitPaymentNameUpdate();
+        const newFA = { ...wrapper.vm.financialAssistance, name: `${program.name.translation.en} - mock-payment-line - 20220530 101010` };
+        expect(storage.financialAssistancePayment.actions.editFinancialAssistancePayment).toHaveBeenCalledWith(newFA);
       });
     });
   });

@@ -6,11 +6,11 @@
           <h3 data-test="fa-name">
             {{ financialAssistance.name }}
           </h3>
-          <div>
-            <v-icon v-if="canViewHistory" class="mr-2" @click="showApprovalHistory = true">
+          <div class="d-flex flex-nowrap align-start">
+            <v-icon v-if="canViewHistory" class="mr-2 mt-1" @click="showApprovalHistory = true">
               mdi-history
             </v-icon>
-            <status-chip status-name="ApprovalStatus" :status="financialAssistance.approvalStatus" />
+            <status-chip class="mt-1" status-name="ApprovalStatus" :status="financialAssistance.approvalStatus" />
             <v-btn v-if="canEdit" icon :to="editRoute" data-test="edit-link">
               <v-icon>
                 mdi-pencil

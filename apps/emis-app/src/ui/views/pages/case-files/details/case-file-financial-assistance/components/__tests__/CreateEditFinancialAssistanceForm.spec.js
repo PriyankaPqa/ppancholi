@@ -35,8 +35,14 @@ describe('CreateEditFinancialAssistanceForm.vue', () => {
 
   describe('Template', () => {
     describe('name', () => {
-      it('is rendered', async () => {
-        expect(wrapper.findDataTest('financial_name').exists()).toBeTruthy();
+      it('is rendered as input field if feature branch not on', async () => {
+        wrapper.vm.$hasFeature = jest.fn(() => false);
+        expect(wrapper.findDataTest('financial_name_input_field').exists()).toBeTruthy();
+      });
+
+      it('is rendered as textif feature branch is on', async () => {
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        expect(wrapper.findDataTest('financial_name_input_field').exists()).toBeTruthy();
       });
     });
 
@@ -118,7 +124,7 @@ describe('CreateEditFinancialAssistanceForm.vue', () => {
   describe('Validation rules', () => {
     describe('name', () => {
       it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('financial_name');
+        const element = wrapper.findDataTest('financial_name_input_field');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.name);
       });
     });

@@ -160,6 +160,7 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
+import { format } from 'date-fns';
 import {
   RcPageContent, RcDialog, VCheckboxWithValidation, RcPageLoading,
 } from '@libs/component-lib/components';
@@ -189,6 +190,7 @@ import routes from '@/constants/routes';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/core-lib/entities/base/index';
+import { FeatureKeys } from '@/entities/tenantSettings';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
@@ -379,8 +381,13 @@ export default mixins(caseFileDetail).extend({
     async updateSelectedProgram(table: IFinancialAssistanceTableEntity) {
       const selectedProgramId = table?.programId;
       if (selectedProgramId && this.selectedProgram?.id !== selectedProgramId) {
+        const originalProgram = this.selectedProgram;
+
         const combinedProgram = await this.$storage.program.actions.fetch({ id: selectedProgramId, eventId: this.caseFile.entity.eventId });
         this.selectedProgram = combinedProgram.entity;
+        if (this.$hasFeature(FeatureKeys.AutoFillFAPaymentNames) && originalProgram) { // TODO: remove feature flag reference in EMISV2-4487
+          this.makePaymentName();
+        }
       }
     },
 
@@ -406,6 +413,9 @@ export default mixins(caseFileDetail).extend({
       } else {
         await new Promise((s) => setTimeout(s, 1000)); // force user to stay on the dialog, in order to avoid hitting the Create button underneath
         this.mergePaymentLine(submittedPaymentGroup);
+        if (this.$hasFeature(FeatureKeys.AutoFillFAPaymentNames)) { // TODO: remove feature flag reference in EMISV2-4487
+          this.makePaymentName();
+        }
       }
       this.submittingPaymentLine = false;
     },
@@ -496,6 +506,9 @@ export default mixins(caseFileDetail).extend({
           this.$t(!submittedPaymentGroup.lines[0].id
             ? 'financialAssistancePayment_lineAdded.success' : 'financialAssistancePayment_lineModified.success'),
         );
+        if (this.$hasFeature(FeatureKeys.AutoFillFAPaymentNames)) { // TODO: remove feature flag reference in EMISV2-4487
+          this.submitPaymentNameUpdate();
+        }
       }
     },
 
@@ -514,6 +527,9 @@ export default mixins(caseFileDetail).extend({
           this.financialAssistance.groups = this.financialAssistance.groups.filter((g) => g !== event.group);
         }
       }
+      if (this.$hasFeature(FeatureKeys.AutoFillFAPaymentNames)) { // TODO: remove feature flag reference in EMISV2-4487
+        this.submitPaymentNameUpdate();
+      }
     },
 
     async updatePaymentStatus(event : {
@@ -531,6 +547,39 @@ export default mixins(caseFileDetail).extend({
       }
     },
 
+    makePaymentName(keepDate?:boolean) {
+      const programName = this.selectedProgram?.name ? this.$m(this.selectedProgram.name) : '';
+      const paymentLineNames = this.makePaymentLineNames();
+      const creationTime = this.isEditMode || keepDate ? this.financialAssistance.name.split('-').pop().trim() : format(new Date(), 'yyyyMMdd HHmmss');
+
+      this.financialAssistance.name = `${programName} - ${paymentLineNames} - ${creationTime}`;
+    },
+
+    makePaymentLineNames(): string {
+      const paymentLineIds = [] as string[];
+      this.financialAssistance.groups.forEach((group) => group.lines.forEach((line) => {
+        if (line.status === Status.Active) {
+          paymentLineIds.push(line.mainCategoryId);
+        }
+      }));
+      const uniquePaymentLineIds = [...new Set(paymentLineIds)];
+
+      return uniquePaymentLineIds.map((id) => {
+        const paymentLineData = this.items.find((i) => i.mainCategory.id === id);
+        return paymentLineData ? this.$m(paymentLineData.mainCategory.name) : '';
+      }).join(' - ');
+    },
+
+    async submitPaymentNameUpdate() {
+      const originalName = this.financialAssistance.name;
+      this.makePaymentName(true);
+      if (originalName !== this.financialAssistance.name) {
+        const result = await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePayment(this.financialAssistance);
+        if (result) {
+          this.$toasted.global.success(this.$t('financialAssistancePayment_edit.success'));
+        }
+      }
+    },
   },
 });
 </script>
