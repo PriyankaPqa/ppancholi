@@ -44,6 +44,12 @@ describe('>>> User Storage', () => {
       storage.actions.getCurrentRoles();
       expect(store.dispatch).toBeCalledWith('user/getCurrentRoles');
     });
+
+    it('should proxy isRoleChanged', () => {
+      const currentRoles = ['level1'];
+      storage.actions.isRoleChanged(currentRoles);
+      expect(store.dispatch).toBeCalledWith('user/isRoleChanged', currentRoles);
+    });
   });
 
   describe('>> Mutations', () => {

@@ -19,5 +19,6 @@ export const mockStorageUser = () : IStorageMock => ({
     signOut: jest.fn(),
     fetchUserData: jest.fn(),
     getCurrentRoles: jest.fn(),
+    isRoleChanged: jest.fn(),
   },
 });

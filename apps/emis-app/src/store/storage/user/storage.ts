@@ -35,5 +35,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     },
 
     getCurrentRoles: (): Promise<string[]> => store.dispatch('user/getCurrentRoles'),
+
+    isRoleChanged: (currentRoles: string[]): Promise<boolean> => store.dispatch('user/isRoleChanged', currentRoles),
   },
 });

@@ -208,7 +208,9 @@ describe('>>> Users Module', () => {
         const user = mockUsersData()[0];
         const originalFunction = store.dispatch;
         jest.spyOn(store, 'dispatch')
-          .mockImplementationOnce((args) => Promise.resolve(originalFunction(args))).mockImplementationOnce(() => Promise.resolve(['level5']));
+          .mockImplementationOnce((args) => Promise.resolve(originalFunction(args)))
+          .mockImplementationOnce(() => Promise.resolve(['level5']))
+          .mockImplementationOnce(() => Promise.resolve(false));
         userHelpers.getUserData = jest.fn(() => user);
 
         await store.dispatch('user/fetchUserData');
@@ -225,14 +227,35 @@ describe('>>> Users Module', () => {
         }));
       });
 
-      it('opens an error toaster and calls sign out if there are no roles', async () => {
+      it('opens an error toaster and calls sign out if the role has changed', async () => {
         store = mockStore();
+        const originalFunction = store.dispatch;
         Vue.toasted.global.error = jest.fn();
         AuthenticationProvider.signOut = jest.fn();
+
+        jest.spyOn(store, 'dispatch')
+          .mockImplementationOnce((args) => Promise.resolve(originalFunction(args)))
+          .mockImplementationOnce(() => Promise.resolve(['level5']))
+          .mockImplementationOnce(() => Promise.resolve(true));
+
         await store.dispatch('user/fetchUserData');
 
         expect(Vue.toasted.global.error).toBeCalledWith('Your system access has been changed. You need to sign in again.');
         expect(AuthenticationProvider.signOut).toBeCalledTimes(1);
+      });
+    });
+
+    describe('isRoleChanged', () => {
+      it('returns true if the passed argument and the roles that are now in store have no element in common', async () => {
+        store.state.user.roles = ['level1'];
+        const result = await store.dispatch('user/isRoleChanged', ['level2']);
+        expect(result).toEqual(true);
+      });
+
+      it('returns false if the passed argument and the roles that are now in store have elements in common', async () => {
+        store.state.user.roles = ['level1'];
+        const result = await store.dispatch('user/isRoleChanged', ['level1']);
+        expect(result).toEqual(false);
       });
     });
 
@@ -244,12 +267,11 @@ describe('>>> Users Module', () => {
         expect(AuthenticationProvider.acquireToken).toBeCalledTimes(1);
       });
 
-      it('calls decodeJwt, isSamerole and if role did not change, returns currentRoles', async () => {
+      it('calls decodeJwt and returns currentRoles', async () => {
         AuthenticationProvider.acquireToken = jest.fn(() => Promise.resolve('mock-token'));
         const currentRoles = { roles: ['level1'] };
 
         helpers.decodeJwt = jest.fn(() => currentRoles);
-        userHelpers.isSameRole = jest.fn(() => true);
         const result = await store.dispatch('user/getCurrentRoles');
 
         expect(result).toEqual(currentRoles.roles);

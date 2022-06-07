@@ -17,6 +17,7 @@ export interface IStorage {
     signOut(): void;
     fetchUserData(): void;
     getCurrentRoles(): Promise<string[]>;
+    isRoleChanged(currentRoles: string[]): Promise<boolean>;
   }
 }
 
@@ -35,5 +36,6 @@ export interface IStorageMock {
     signOut: jest.Mock<void>
     fetchUserData: jest.Mock<void>
     getCurrentRoles: jest.Mock<void>
+    isRoleChanged: jest.Mock<void>
   }
 }

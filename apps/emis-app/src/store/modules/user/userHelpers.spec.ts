@@ -9,20 +9,6 @@ describe('>>> Users Helpers', () => {
     jest.clearAllMocks();
   });
 
-  describe('isSameRole', () => {
-    it('returns true if the 2 lists in the arguments have an element in common', () => {
-      const list1 = ['a', 'b'];
-      const list2 = ['c', 'b'];
-      expect(userHelpers.isSameRole(list1, list2)).toEqual(true);
-    });
-
-    it('returns false if the 2 lists in the arguments have no element in common', () => {
-      const list1 = ['a', 'b'];
-      const list2 = ['c', 'd'];
-      expect(userHelpers.isSameRole(list1, list2)).toEqual(false);
-    });
-  });
-
   describe('getUserData', () => {
     it('returns user data from account', () => {
       const authenticationData = mockAuthenticationData();

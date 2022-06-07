@@ -4,6 +4,8 @@ import {
 } from 'vuex';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
+import _intersection from 'lodash/intersection';
+
 import {
   IMSALUserData,
   User,
@@ -95,8 +97,10 @@ const actions = {
 
   async fetchUserData(this: Store<IState>, context: ActionContext<IState, IState>) {
     const currentRoles = await context.dispatch('getCurrentRoles');
+    const isRoleChanged = await context.dispatch('isRoleChanged', currentRoles);
 
-    if (currentRoles) {
+    // A user's role is only valid if it is the same as their previous stored roles.
+    if (currentRoles && !isRoleChanged) {
       const userData = userHelpers.getUserData(currentRoles);
       if (userData) {
         context.commit('setUser', userData);
@@ -104,30 +108,32 @@ const actions = {
       return !!userData;
     }
 
-    applicationInsights.trackTrace('User data not valid', null, 'user', 'fetchUserData');
-    // A user's role is only valid if it is the same as their previous roles. If the current roles are different from the previous roles,
-    // they are not valid, so the user needs to be logged out. An error message will be displayed to the user for 2 seconds before the automatic log out.
-    Vue.toasted.global.error(i18n.t('errors.access-change.log-out'));
-    await helpers.timeout(2000);
-    AuthenticationProvider.signOut();
-    // Add a timer to give time to the sign out page to load, otherwise our own login error page will flicker on the screen right before when this function returns null (bad UX)
-    await helpers.timeout(2000);
+    if (isRoleChanged) {
+      // If the current roles are different from the previous roles, they are not valid, so the user needs to be logged out.
+      // An error message will be displayed to the user for 2 seconds before the automatic log out.
+      Vue.toasted.global.error(i18n.t('errors.access-change.log-out'));
+      await helpers.timeout(2000);
+      AuthenticationProvider.signOut();
+      // Add a timer to give time to the sign out page to load, otherwise our own login error page will flicker on the screen right before when this function returns null (bad UX)
+      await helpers.timeout(2000);
+    } else {
+      applicationInsights.trackTrace('User data not valid', null, 'user', 'fetchUserData');
+    }
     return null;
   },
 
-  async getCurrentRoles(this: Store<IState>, context: ActionContext<IState, IState>): Promise<string[] | null> {
+  isRoleChanged(this: Store<IState>, context: ActionContext<IState, IState>, currentRoles: string[]):boolean {
     const previousRoles = context.state.roles;
+    if (!currentRoles || !currentRoles.length || !previousRoles || !previousRoles.length) {
+      return false;
+    }
+    return !(_intersection(currentRoles, previousRoles).length);
+  },
+
+  async getCurrentRoles(this: Store<IState>): Promise<string[] | null> {
     const currentToken = await AuthenticationProvider.acquireToken('fetchUserData', true);
-
     if (currentToken) {
-      const currentRoles = helpers.decodeJwt(currentToken).roles;
-      const roleDidNotChange = userHelpers.isSameRole(currentRoles, previousRoles);
-
-      // A user's roles are only valid if it hasn't changed from their previous roles.
-      if (!previousRoles.length || roleDidNotChange) {
-        return currentRoles;
-      }
-      return null;
+      return helpers.decodeJwt(currentToken).roles;
     }
     return null;
   },
