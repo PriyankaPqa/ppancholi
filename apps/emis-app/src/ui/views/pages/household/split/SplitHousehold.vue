@@ -89,6 +89,7 @@ import ReviewSplit from '@/ui/views/pages/household/split/ReviewSplit.vue';
 import { tabs } from '@/store/modules/household/tabs';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
+import { EventHub } from '@libs/core-lib/plugins/event-hub';
 
 export default mixins(individual).extend({
   name: 'SplitHousehold',
@@ -207,26 +208,37 @@ export default mixins(individual).extend({
     },
 
     async next() {
-      if (!this.splitHousehold) {
-        return;
-      }
+      switch (this.currentTab.id) {
+        case 'isRegistered':
+          this.createNewHousehold();
+          this.nextDefault();
+          return;
 
-      if (this.currentTab.id === 'confirmation') {
-        this.closeSplit();
-        return;
-      }
+        case 'personalInfo':
+          EventHub.$emit('checkEmailValidation', this.nextDefault);
+          return;
 
-      if (this.currentTabIndex === 0) {
-        this.createNewHousehold();
-      }
+        case 'reviewSplitInfo':
+          this.nextDefault(true);
+          return;
 
+        case 'confirmation':
+          this.closeSplit();
+          return;
+
+        default:
+          this.nextDefault();
+      }
+    },
+
+    async nextDefault(performSplit?: boolean) {
       const isValid = await (this.$refs.form as VForm).validate();
       if (!isValid) {
         helpers.scrollToFirstError('app');
         return;
       }
 
-      if (this.currentTab.id === 'reviewSplitInfo') {
+      if (performSplit) {
         this.awaiting = true;
         await this.$storage.registration.actions.splitHousehold();
         this.awaiting = false;

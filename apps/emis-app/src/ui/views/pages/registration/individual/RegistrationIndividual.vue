@@ -101,6 +101,7 @@ import store from '@/store/store';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { FeatureKeys } from '@/entities/tenantSettings';
+import { EventHub } from '@libs/core-lib/plugins/event-hub';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -244,35 +245,50 @@ export default mixins(individual).extend({
     },
 
     async next() {
-      if (this.currentTab.id === 'confirmation') {
-        await this.closeRegistration();
+      switch (this.currentTab.id) {
+        case 'personalInfo':
+          EventHub.$emit('checkEmailValidation', this.nextDefault);
+          return;
+
+        case 'review':
+          this.nextOnReview();
+          return;
+
+        case 'confirmation':
+          await this.closeRegistration();
+          return;
+
+        default:
+          this.nextDefault();
+      }
+    },
+
+    async nextOnReview() {
+      if (this.householdAlreadyRegistered) {
+        this.goToHouseholdProfile(this.household.id);
         return;
       }
+      if (this.associationMode) {
+        const isValid = await (this.$refs.form as VForm).validate();
 
-      if (this.currentTab.id === 'review') {
-        if (this.householdAlreadyRegistered) {
-          this.goToHouseholdProfile(this.household.id);
+        if (!isValid) {
+          helpers.scrollToFirstError('app');
           return;
         }
-        if (this.associationMode) {
-          const isValid = await (this.$refs.form as VForm).validate();
 
-          if (!isValid) {
-            helpers.scrollToFirstError('app');
-            return;
-          }
+        const associating = await this.associateHousehold(this.household, this.event);
 
-          const associating = await this.associateHousehold(this.household, this.event);
-
-          if (associating) {
-            await this.jump(this.currentTabIndex + 1);
-          }
-
-          return;
+        if (associating) {
+          await this.jump(this.currentTabIndex + 1);
         }
-        await this.$storage.registration.actions.submitRegistration();
+
+        return;
       }
+      await this.$storage.registration.actions.submitRegistration();
+      this.nextDefault();
+    },
 
+    async nextDefault() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (!isValid) {
         helpers.scrollToFirstError('app');

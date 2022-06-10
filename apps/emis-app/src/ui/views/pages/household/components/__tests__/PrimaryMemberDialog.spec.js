@@ -6,6 +6,7 @@ import helpers from '@/ui/helpers/helpers';
 
 import { mockStorage } from '@/store/storage';
 
+import { EventHub } from '@libs/core-lib/plugins/event-hub';
 import Component from '../PrimaryMemberDialog.vue';
 
 const localVue = createLocalVue();
@@ -365,6 +366,14 @@ describe('PrimaryMemberDialog', () => {
       it('emits close', async () => {
         await wrapper.vm.onCancel();
         expect(wrapper.emitted('close')).toBeTruthy();
+      });
+    });
+
+    describe('validateEmailAndSubmit', () => {
+      it('calls eventhub with the right arguments', async () => {
+        EventHub.$emit = jest.fn();
+        await wrapper.vm.validateEmailAndSubmit();
+        expect(EventHub.$emit).toHaveBeenCalledWith('checkEmailValidation', wrapper.vm.onSubmit);
       });
     });
 

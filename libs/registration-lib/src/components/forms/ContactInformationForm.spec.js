@@ -6,6 +6,7 @@ import {
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './ContactInformationForm.vue';
+import helpers from '../../ui/helpers';
 
 const localVue = createLocalVue();
 
@@ -25,6 +26,12 @@ describe('ContactInformationForm.vue', () => {
         'vue-programmatic-invisible-google-recaptcha': { template: '<div></div>' },
       },
     });
+
+    wrapper.vm.$refs = {
+      email: {
+        validate: jest.fn(),
+      },
+    };
   });
 
   afterEach(() => {
@@ -382,6 +389,32 @@ describe('ContactInformationForm.vue', () => {
       });
     });
 
+    describe('validateEmailOnBlur', () => {
+      it('calls the timeout helper', async () => {
+        helpers.timeout = jest.fn();
+        await wrapper.vm.validateEmailOnBlur('mock-email');
+        expect(helpers.timeout).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls validateEmail if submitting is false', async () => {
+        wrapper.vm.validateEmail = jest.fn();
+        await wrapper.setData({ submitting: true });
+        await wrapper.vm.validateEmailOnBlur('mock-email');
+        expect(wrapper.vm.validateEmail).toHaveBeenCalledTimes(0);
+        await wrapper.setData({ submitting: false });
+        await wrapper.vm.validateEmailOnBlur('mock-email');
+        expect(wrapper.vm.validateEmail).toHaveBeenCalledWith('mock-email');
+      });
+
+      it('should be triggered when blurring email field if for CRC (no recaptcha key)', () => {
+        wrapper.vm.validateEmailOnBlur = jest.fn();
+        const element = wrapper.findDataTest('personalInfo__email');
+        element.vm.$emit('blur', { target: { value: 'email' } });
+
+        expect(wrapper.vm.validateEmailOnBlur).toHaveBeenLastCalledWith('email');
+      });
+    });
+
     describe('validateEmail', () => {
       beforeEach(() => {
         wrapper.vm.$refs = {
@@ -394,6 +427,7 @@ describe('ContactInformationForm.vue', () => {
 
       it('should call resetEmailValidation and not execute method if no email', async () => {
         wrapper.vm.resetEmailValidation = jest.fn();
+        await wrapper.setData({ formCopy: { ...wrapper.vm.formCopy, email: '' } });
         await wrapper.vm.validateEmail('');
         expect(wrapper.vm.resetEmailValidation).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.setEmailValidator).toHaveBeenCalledTimes(0);
@@ -452,14 +486,6 @@ describe('ContactInformationForm.vue', () => {
 
         await wrapper.vm.validateEmail('test@test.ca');
         expect(wrapper.vm.setEmailValidator).toHaveBeenCalledWith(result);
-      });
-
-      it('should be triggered when blurring email field if for CRC (no recaptcha key)', () => {
-        wrapper.vm.validateEmail = jest.fn();
-        const element = wrapper.findDataTest('personalInfo__email');
-        element.vm.$emit('blur', { target: { value: 'email' } });
-
-        expect(wrapper.vm.validateEmail).toHaveBeenLastCalledWith('email');
       });
     });
 

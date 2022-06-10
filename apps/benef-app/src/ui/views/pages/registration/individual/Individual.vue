@@ -81,6 +81,7 @@ import { localStorageKeys } from '@/constants/localStorage';
 import routes from '@/constants/routes';
 import { VForm } from '@/types';
 import helpers from '@libs/registration-lib/ui/helpers';
+import { EventHub } from '@libs/core-lib/plugins/event-hub';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
@@ -129,14 +130,20 @@ export default mixins(individual).extend({
       if (this.currentTab.id === 'review' && this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
         // eslint-disable-next-line
         (this.$refs.recaptchaSubmit as any).execute();
+      } else if (this.currentTab.id === 'personalInfo') {
+        EventHub.$emit('checkEmailValidation', this.validateAndNext);
       } else {
-        const isValid = await (this.$refs.form as VForm).validate();
-        if (!isValid) {
-          helpers.scrollToFirstError('app');
-          return;
-        }
-        await this.next();
+        this.validateAndNext();
       }
+    },
+
+    async validateAndNext() {
+      const isValid = await (this.$refs.form as VForm).validate();
+      if (!isValid) {
+        helpers.scrollToFirstError('app');
+        return;
+      }
+      await this.next();
     },
 
     async recaptchaCallBack(token: string) {

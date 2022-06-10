@@ -4,6 +4,8 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';
 import { tabs } from '@/store/modules/registration/tabs';
+import { EventHub } from '@libs/core-lib/plugins/event-hub';
+import helpers from '@/ui/helpers/helpers';
 import Component from './RegistrationIndividual.vue';
 
 const localVue = createLocalVue();
@@ -191,143 +193,191 @@ describe('Individual.vue', () => {
     });
 
     describe('next', () => {
-      it('calls jump', async () => {
-        wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({ id: 'personalInfo' }));
-        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
-        wrapper.vm.jump = jest.fn();
-        wrapper.vm.goToHouseholdProfile = jest.fn();
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-
-        await wrapper.vm.next();
-
-        expect(wrapper.vm.jump)
-          .toHaveBeenCalledWith(3);
-      });
-
-      it('calls closeRegistration if it is confirmation', async () => {
+      it('calls eventhub emit if current tab is personalInfo', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            currentTab: () => ({ id: 'confirmation', titleKey: '', nextButtonTextKey: '' }),
+            currentTab: () => ({ id: 'personalInfo' }),
+          },
+        });
+
+        EventHub.$emit = jest.fn();
+
+        await wrapper.vm.next();
+        expect(EventHub.$emit).toBeCalledWith('checkEmailValidation', wrapper.vm.nextDefault);
+      });
+
+      it('calls nextOnReview if current tab is review', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'review' }),
+          },
+        });
+        wrapper.vm.nextOnReview = jest.fn();
+        await wrapper.vm.next();
+        expect(wrapper.vm.nextOnReview).toBeCalledTimes(1);
+      });
+
+      it('calls nextOnReview if current tab is review', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'review' }),
+          },
+        });
+        wrapper.vm.nextOnReview = jest.fn();
+        await wrapper.vm.next();
+        expect(wrapper.vm.nextOnReview).toBeCalledTimes(1);
+      });
+
+      it('calls closeRegistration if current tab is confirmation', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'confirmation' }),
+          },
+        });
+        wrapper.vm.closeRegistration = jest.fn();
+        await wrapper.vm.next();
+        expect(wrapper.vm.closeRegistration).toBeCalledTimes(1);
+      });
+
+      it('calls nextDefault by default', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: '' }),
           },
           mocks: {
             $storage: storage,
           },
         });
-        wrapper.vm.closeRegistration = jest.fn();
-        wrapper.vm.jump = jest.fn();
-
+        wrapper.vm.nextDefault = jest.fn();
         await wrapper.vm.next();
+        expect(wrapper.vm.nextDefault).toBeCalledTimes(1);
+      });
+    });
 
-        expect(wrapper.vm.closeRegistration).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.jump).toHaveBeenCalledTimes(0);
+    describe('nextOnReview', () => {
+      it('should call goToHouseholdProfile if household is already registered', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            householdAlreadyRegistered: () => true,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.goToHouseholdProfile = jest.fn();
+
+        await wrapper.vm.nextOnReview();
+
+        expect(wrapper.vm.goToHouseholdProfile).toHaveBeenCalledTimes(1);
       });
 
-      describe('Review', () => {
-        it('should call goToHouseholdProfile if household is already registered', async () => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            computed: {
-              householdAlreadyRegistered: () => true,
-              associationMode: () => true,
-              currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
-            },
-            mocks: {
-              $storage: storage,
-            },
-          });
-          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({ id: 'review' }));
-          wrapper.vm.goToHouseholdProfile = jest.fn();
-
-          await wrapper.vm.next();
-
-          expect(wrapper.vm.goToHouseholdProfile).toHaveBeenCalledTimes(1);
-        });
-
-        describe('Association mode', () => {
-          it('should validate the form', async () => {
-            wrapper = shallowMount(Component, {
-              localVue,
-              computed: {
-                householdAlreadyRegistered: () => false,
-                associationMode: () => true,
-                currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
-              },
-              mocks: {
-                $storage: storage,
-              },
-            });
-            wrapper.vm.$refs.form.validate = jest.fn(() => true);
-            wrapper.vm.jump = jest.fn();
-            wrapper.vm.associateHousehold = jest.fn();
-
-            await wrapper.vm.next();
-
-            expect(wrapper.vm.$refs.form.validate).toBeCalled();
-          });
-
-          it('should call associateHousehold with proper param', async () => {
-            wrapper = shallowMount(Component, {
-              localVue,
-              computed: {
-                householdAlreadyRegistered: () => false,
-                associationMode: () => true,
-                currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
-              },
-              mocks: {
-                $storage: storage,
-              },
-            });
-            wrapper.vm.$refs.form.validate = jest.fn(() => true);
-            wrapper.vm.jump = jest.fn();
-            wrapper.vm.associateHousehold = jest.fn();
-
-            await wrapper.vm.next();
-
-            expect(wrapper.vm.associateHousehold).toHaveBeenCalledWith(wrapper.vm.household, wrapper.vm.event);
-          });
-
-          it('should call jump if we associated', async () => {
-            wrapper = shallowMount(Component, {
-              localVue,
-              computed: {
-                householdAlreadyRegistered: () => false,
-                associationMode: () => true,
-                currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
-              },
-              mocks: {
-                $storage: storage,
-              },
-            });
-            wrapper.vm.$refs.form.validate = jest.fn(() => true);
-            wrapper.vm.jump = jest.fn();
-            wrapper.vm.associateHousehold = jest.fn(() => true);
-
-            await wrapper.vm.next();
-
-            expect(wrapper.vm.jump).toHaveBeenCalledWith(wrapper.vm.currentTabIndex + 1);
-          });
-        });
-
-        it('should call submit registration otherwise', async () => {
+      describe('Association mode', () => {
+        it('should validate the form', async () => {
           wrapper = shallowMount(Component, {
             localVue,
             computed: {
               householdAlreadyRegistered: () => false,
-              associationMode: () => false,
-              currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
+              associationMode: () => true,
             },
             mocks: {
               $storage: storage,
             },
           });
-          wrapper.vm.jump = jest.fn();
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
+          wrapper.vm.jump = jest.fn();
+          wrapper.vm.associateHousehold = jest.fn();
 
-          await wrapper.vm.next();
+          await wrapper.vm.nextOnReview();
 
-          expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.$refs.form.validate).toBeCalled();
         });
+
+        it('should call associateHousehold with proper param', async () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            computed: {
+              householdAlreadyRegistered: () => false,
+              associationMode: () => true,
+            },
+            mocks: {
+              $storage: storage,
+            },
+          });
+          wrapper.vm.$refs.form.validate = jest.fn(() => true);
+          wrapper.vm.jump = jest.fn();
+          wrapper.vm.associateHousehold = jest.fn();
+
+          await wrapper.vm.nextOnReview();
+
+          expect(wrapper.vm.associateHousehold).toHaveBeenCalledWith(wrapper.vm.household, wrapper.vm.event);
+        });
+
+        it('should call jump if we associated', async () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            computed: {
+              householdAlreadyRegistered: () => false,
+              associationMode: () => true,
+            },
+            mocks: {
+              $storage: storage,
+            },
+          });
+          wrapper.vm.$refs.form.validate = jest.fn(() => true);
+          wrapper.vm.jump = jest.fn();
+          wrapper.vm.associateHousehold = jest.fn(() => true);
+
+          await wrapper.vm.nextOnReview();
+
+          expect(wrapper.vm.jump).toHaveBeenCalledWith(wrapper.vm.currentTabIndex + 1);
+        });
+      });
+
+      it('should call submit registration and nextDefault otherwise', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            householdAlreadyRegistered: () => false,
+            associationMode: () => false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.jump = jest.fn();
+        wrapper.vm.nextDefault = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+
+        await wrapper.vm.nextOnReview();
+
+        expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.nextDefault).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('nextDefault', () => {
+      it('calls jump if it passes validation', async () => {
+        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
+        wrapper.vm.jump = jest.fn();
+        wrapper.vm.goToHouseholdProfile = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+
+        await wrapper.vm.nextDefault();
+
+        expect(wrapper.vm.jump).toHaveBeenCalledWith(3);
+      });
+
+      it('calls scrollToFirstError if it does not pass validation', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => false);
+        helpers.scrollToFirstError = jest.fn();
+        await wrapper.vm.nextDefault();
+        expect(helpers.scrollToFirstError).toHaveBeenCalledWith('app');
       });
     });
 

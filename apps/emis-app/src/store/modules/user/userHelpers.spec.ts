@@ -1,6 +1,6 @@
-import { mockAuthenticationData } from '@/auth/authentication.mock';
-import { localStorageKeys } from '@/constants/localStorage';
-import AuthenticationProvider from '@/auth/AuthenticationProvider';
+import { localStorageKeys } from '../../../constants/localStorage';
+import AuthenticationProvider from '../../../auth/AuthenticationProvider';
+import { mockAuthenticationData } from '../../../auth/authentication.mock';
 
 import userHelpers from './userHelpers';
 

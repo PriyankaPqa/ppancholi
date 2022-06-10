@@ -1,5 +1,5 @@
 import Vuetify from 'vuetify';
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
 import _merge from 'lodash/merge';
@@ -24,7 +24,7 @@ const vuetify = new Vuetify();
 
 describe('ReviewRegistration.vue', () => {
   let wrapper;
-  beforeEach(async () => {
+  beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
       vuetify,
@@ -44,28 +44,42 @@ describe('ReviewRegistration.vue', () => {
 
   describe('Template', () => {
     describe('Personal information', () => {
-      test('edit event calls the correct method', () => {
-        jest.spyOn(wrapper.vm, 'editPersonalInformation');
+      beforeEach(() => {
+        wrapper = mount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+            disableAutocomplete: false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+      });
+
+      test('edit event calls the correct method', async () => {
+        wrapper.vm.editPersonalInformation = jest.fn();
         const section = wrapper.findDataTest('personalInformation');
-        section.vm.$emit('edit');
+        await section.vm.$emit('edit');
         expect(wrapper.vm.editPersonalInformation).toHaveBeenCalledTimes(1);
       });
 
-      test('cancel event calls the correct method', () => {
+      test('cancel event calls the correct method', async () => {
         jest.spyOn(wrapper.vm, 'cancelPersonalInformation');
         const section = wrapper.findDataTest('personalInformation');
-        section.vm.$emit('cancel');
+        await section.vm.$emit('cancel');
         expect(wrapper.vm.cancelPersonalInformation).toHaveBeenCalledTimes(1);
       });
 
-      test('submit event calls the correct method', () => {
-        jest.spyOn(wrapper.vm, 'submitPersonalInformation');
+      test('submit event calls the correct method', async () => {
+        jest.spyOn(wrapper.vm, 'validateEmailAndSubmitPersonalInfo');
         wrapper.vm.$refs.personalInfo = {
           validate: jest.fn(),
         };
         const section = wrapper.findDataTest('personalInformation');
-        section.vm.$emit('submit');
-        expect(wrapper.vm.submitPersonalInformation).toHaveBeenCalledTimes(1);
+        await section.vm.$emit('submit');
+        expect(wrapper.vm.validateEmailAndSubmitPersonalInfo).toHaveBeenCalledTimes(1);
       });
 
       it('renders personal information template if not in inline mode', () => {
@@ -75,27 +89,41 @@ describe('ReviewRegistration.vue', () => {
     });
 
     describe('Addresses', () => {
-      test('edit event calls the correct method', () => {
-        jest.spyOn(wrapper.vm, 'editAddresses');
+      beforeEach(() => {
+        wrapper = mount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+            disableAutocomplete: false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+      });
+
+      test('edit event calls the correct method', async () => {
+        wrapper.vm.editAddresses = jest.fn();
         const section = wrapper.findDataTest('addresses');
-        section.vm.$emit('edit');
+        await section.vm.$emit('edit');
         expect(wrapper.vm.editAddresses).toHaveBeenCalledTimes(1);
       });
 
-      test('cancel event calls the correct method', () => {
+      test('cancel event calls the correct method', async () => {
         jest.spyOn(wrapper.vm, 'cancelAddresses');
         const section = wrapper.findDataTest('addresses');
-        section.vm.$emit('cancel');
+        await section.vm.$emit('cancel');
         expect(wrapper.vm.cancelAddresses).toHaveBeenCalledTimes(1);
       });
 
-      test('submit event calls the correct method', () => {
+      test('submit event calls the correct method', async () => {
         jest.spyOn(wrapper.vm, 'submitAddresses');
         wrapper.vm.$refs.addresses = {
           validate: jest.fn(),
         };
         const section = wrapper.findDataTest('addresses');
-        section.vm.$emit('submit');
+        await section.vm.$emit('submit');
         expect(wrapper.vm.submitAddresses).toHaveBeenCalledTimes(1);
       });
 
@@ -107,7 +135,7 @@ describe('ReviewRegistration.vue', () => {
 
     describe('Additional members', () => {
       test('edit event calls the correct method', () => {
-        jest.spyOn(wrapper.vm, 'editAdditionalMember');
+        wrapper.vm.editAdditionalMember = jest.fn();
         wrapper.vm.$refs.additionalMember_0 = {
           validate: jest.fn(),
         };
@@ -356,6 +384,7 @@ describe('ReviewRegistration.vue', () => {
         wrapper.vm.$refs.personalInfo = {
           validate: jest.fn(() => true),
         };
+
         wrapper.vm.updatePersonalInformation = jest.fn();
         await wrapper.vm.submitPersonalInformation();
         expect(wrapper.vm.updatePersonalInformation).toHaveBeenCalledTimes(1);

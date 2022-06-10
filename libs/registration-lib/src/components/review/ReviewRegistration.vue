@@ -17,16 +17,17 @@
         </validation-observer>
       </template>
     </template>
-    <validation-observer ref="personalInfo">
+    <validation-observer ref="personalInfo" v-slot="{failed}">
       <summary-section
         :show-edit-button="!householdAlreadyRegistered && !splitMode"
         data-test="personalInformation"
         :title="$t('registration.menu.personal_info')"
         :inline-edit="personalInformation.inlineEdit"
         :loading="personalInformation.loading"
+        :submit-disabled="failed"
         @edit="editPersonalInformation()"
         @cancel="cancelPersonalInformation()"
-        @submit="submitPersonalInformation()">
+        @submit="validateEmailAndSubmitPersonalInfo()">
         <template #inline>
           <personal-information :recaptcha-key="recaptchaKey" :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" />
         </template>
@@ -34,13 +35,14 @@
       </summary-section>
     </validation-observer>
 
-    <validation-observer ref="addresses">
+    <validation-observer ref="addresses" v-slot="{failed}">
       <summary-section
         :show-edit-button="!householdAlreadyRegistered && !splitMode"
         data-test="addresses"
         :title="$t('registration.menu.addresses')"
         :inline-edit="addresses.inlineEdit"
         :loading="addresses.loading"
+        :submit-disabled="failed"
         @edit="editAddresses()"
         @cancel="cancelAddresses()"
         @submit="submitAddresses()">
@@ -141,6 +143,7 @@ import _isEqual from 'lodash/isEqual';
 import helpers from '@libs/registration-lib/ui/helpers';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
+import { EventHub } from '@libs/core-lib/plugins/event-hub';
 import { IContactInformation } from '../../entities/value-objects/contact-information';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
@@ -283,8 +286,13 @@ export default mixins(additionalMemberForm).extend({
       }
     },
 
+    validateEmailAndSubmitPersonalInfo() {
+      EventHub.$emit('checkEmailValidation', this.submitPersonalInformation);
+    },
+
     async submitPersonalInformation() {
       const isValid = await (this.$refs.personalInfo as VForm).validate();
+
       if (isValid) {
         if (this.associationMode) {
           await this.updatePersonalInformation();

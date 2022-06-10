@@ -13,7 +13,7 @@
       scroll-anchor-id="dialogScrollAnchor"
       @close="onCancel"
       @cancel="onCancel"
-      @submit="onSubmit">
+      @submit="validateEmailAndSubmit">
       <v-row class="justify-center">
         <v-col cols="12" md="8">
           <div v-if="makePrimaryMode" class="mb-6">
@@ -72,6 +72,7 @@ import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { localStorageKeys } from '@/constants/localStorage';
 import { FeatureKeys } from '@/entities/tenantSettings';
+import { EventHub } from '@libs/core-lib/plugins/event-hub';
 
 export default Vue.extend({
   name: 'PrimaryMemberDialog',
@@ -182,6 +183,10 @@ export default Vue.extend({
     onCancel() {
       this.$storage.registration.mutations.setIsPrivacyAgreed(false);
       this.$emit('close');
+    },
+
+    validateEmailAndSubmit() {
+      EventHub.$emit('checkEmailValidation', this.onSubmit);
     },
 
     async onSubmit() {

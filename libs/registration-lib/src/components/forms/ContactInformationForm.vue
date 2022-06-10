@@ -105,7 +105,8 @@
             :data-test="`${prefixDataTest}__email`"
             :rules="rules.email"
             :label="emailLabel"
-            @blur="validateEmail($event.target.value)" />
+            @input="resetEmailValidation"
+            @blur="validateEmailOnBlur($event.target.value)" />
         </template>
       </validation-observer>
     </v-col>
@@ -117,7 +118,9 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { RcPhoneWithValidation, VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
+import helpers from '@libs/registration-lib/ui/helpers';
 import { ValidationObserver } from 'vee-validate';
+import { EventHub } from '@libs/core-lib/plugins/event-hub';
 import { IOptionItemData } from '../../types';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { IContactInformation, IPhoneNumber, IValidateEmailResponse } from '../../entities/value-objects/contact-information';
@@ -181,6 +184,7 @@ export default Vue.extend({
       previousEmail: '',
       recaptchaRequired: false,
       recaptchaResolved: false,
+      submitting: false,
     };
   },
 
@@ -281,6 +285,14 @@ export default Vue.extend({
   created() {
     this.formCopy = _cloneDeep(this.form);
     this.prePopulate();
+
+    EventHub.$on('checkEmailValidation', this.validateForm);
+  },
+
+  destroyed() {
+    if (EventHub) {
+      EventHub.$off('checkEmailValidation', this.validateForm);
+    }
   },
 
   methods: {
@@ -335,12 +347,26 @@ export default Vue.extend({
       }
     },
 
-    async validateEmail(email: string, recaptchaToken?: string) {
+    async validateEmailOnBlur(email:string) {
+      await helpers.timeout(300);
+      if (!this.submitting) {
+        this.validateEmail(email);
+      }
+    },
+
+    async validateForm(validateEntireForm: ()=> void) {
+      this.submitting = true;
+      await this.validateEmail(this.formCopy.email, '', true);
+      validateEntireForm();
+    },
+
+    async validateEmail(formEmail?: string, recaptchaToken?: string, onSubmit?: boolean) {
+      const email = formEmail || this.formCopy.email;
       if (!email) {
         this.resetEmailValidation();
       }
 
-      if (email && email !== this.previousEmail) {
+      if (email && (email !== this.previousEmail || onSubmit)) {
         this.previousEmail = email;
         this.emailChecking = true;
         let result = null;
@@ -355,6 +381,7 @@ export default Vue.extend({
           result = { emailIsValid: false, errors: e };
         } finally {
           this.emailChecking = false;
+          this.submitting = false;
         }
 
         this.formCopy.emailValidatedByBackend = result.emailIsValid;
