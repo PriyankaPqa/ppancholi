@@ -54,6 +54,7 @@ export interface IFeatureEntity extends IEntity {
   description: IMultilingual;
   key: string;
   enabled: boolean;
+  canEnable: boolean;
   type: FeatureType;
 }
 export interface ITenantSettingsEntityData extends IEntity {

@@ -41,17 +41,97 @@ describe('FeatureWrapper.vue', () => {
     });
   });
 
+  describe('>> Computed', () => {
+    describe('shouldDisable', () => {
+      it('returns true if feature is not enabled and cannot be enabled', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            feature: {
+              enabled: false,
+              canEnable: false,
+            },
+          },
+        });
+
+        expect(wrapper.vm.shouldDisable).toBe(true);
+      });
+
+      it('returns false in other case', () => {
+        expect(wrapper.vm.shouldDisable).toBe(false);
+      });
+    });
+  });
+
   describe('>> Methods', () => {
     describe('onChange', () => {
+      it('calls confirmBeforeChange if can no longer be enabled', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            feature: {
+              enabled: true,
+              canEnable: false,
+            },
+          },
+        });
+
+        wrapper.vm.confirmBeforeChange = jest.fn();
+        wrapper.vm.change = jest.fn();
+
+        await wrapper.vm.onChange(false);
+
+        expect(wrapper.vm.confirmBeforeChange).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.confirmBeforeChange).toHaveBeenCalledWith(false);
+        expect(wrapper.vm.change).toHaveBeenCalledTimes(0);
+      });
+
+      it('calls change in other case', async () => {
+        wrapper.vm.confirmBeforeChange = jest.fn();
+        wrapper.vm.change = jest.fn();
+
+        await wrapper.vm.onChange(false);
+
+        expect(wrapper.vm.confirmBeforeChange).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.change).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.change).toHaveBeenCalledWith(false);
+      });
+    });
+
+    describe('confirmBeforeChange', () => {
+      it('calls change if user confirmed', async () => {
+        wrapper.vm.$confirm = jest.fn(() => true);
+        await wrapper.setData({ enabled: false });
+        wrapper.vm.change = jest.fn();
+
+        await wrapper.vm.confirmBeforeChange(true);
+
+        expect(wrapper.vm.change).toHaveBeenCalledWith(true);
+        expect(wrapper.vm.enabled = false);
+      });
+
+      it('rolls back if user did not confirm', async () => {
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.setData({ enabled: true });
+        wrapper.vm.change = jest.fn();
+
+        await wrapper.vm.confirmBeforeChange(true);
+
+        expect(wrapper.vm.change).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.enabled = false);
+      });
+    });
+
+    describe('change', () => {
       it('calls storage to enable feature', async () => {
-        await wrapper.vm.onChange(true);
+        await wrapper.vm.change(true);
 
         expect(storage.tenantSettings.actions.enableFeature).toHaveBeenCalledTimes(1);
         expect(storage.tenantSettings.actions.enableFeature).toHaveBeenCalledWith(mockFeature.id);
       });
 
       it('calls storage to disable feature', async () => {
-        await wrapper.vm.onChange(false);
+        await wrapper.vm.change(false);
 
         expect(storage.tenantSettings.actions.disableFeature).toHaveBeenCalledTimes(1);
         expect(storage.tenantSettings.actions.disableFeature).toHaveBeenCalledWith(mockFeature.id);
@@ -60,7 +140,7 @@ describe('FeatureWrapper.vue', () => {
       it('roll back data if request failed', async () => {
         storage.tenantSettings.actions.enableFeature.mockReturnValueOnce(null);
 
-        await wrapper.vm.onChange(true);
+        await wrapper.vm.change(true);
 
         expect(wrapper.vm.enabled).toBe(false);
       });
