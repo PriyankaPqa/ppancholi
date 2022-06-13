@@ -81,6 +81,8 @@ export const mockFeatures = (): IFeatureEntity[] => [{
 
   canEnable: true,
 
+  canDisable: true,
+
   type: FeatureType.Temporary,
 }, {
   ...mockBaseData(),
@@ -106,6 +108,8 @@ export const mockFeatures = (): IFeatureEntity[] => [{
   enabled: false,
 
   canEnable: true,
+
+  canDisable: true,
 
   type: FeatureType.Permanent,
 }];

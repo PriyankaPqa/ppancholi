@@ -8,20 +8,20 @@
       </v-col>
       <v-col cols="2">
         <v-row class="flex-1 justify-end pr-2">
-          <rc-tooltip v-if="shouldDisable" bottom>
+          <rc-tooltip v-if="shouldLock" bottom>
             <template #activator="{ on }">
               <v-icon class="mr-4" v-on="on">
                 mdi-lock
               </v-icon>
             </template>
-            <span>{{ $t('system_management.features.cannotBeEnabled') }}</span>
+            <span>{{ enabled ? $t('system_management.features.cannotBeDisabled') : $t('system_management.features.cannotBeEnabled') }}</span>
           </rc-tooltip>
           <v-switch
             v-model="enabled"
             class="mt-0 pt-0"
             hide-details
             :data-test="`feature-switch-${feature.id}`"
-            :disabled="loading || shouldDisable"
+            :disabled="loading || shouldLock"
             :loading="loading"
             dense
             @change="onChange($event)" />
@@ -63,8 +63,12 @@ export default Vue.extend({
   },
 
   computed: {
-    shouldDisable(): boolean {
+    shouldLock(): boolean {
       if (!this.feature.enabled && !this.feature.canEnable) {
+        return true;
+      }
+
+      if (this.feature.enabled && !this.feature.canDisable) {
         return true;
       }
 
@@ -75,8 +79,9 @@ export default Vue.extend({
   methods: {
     async onChange(toEnable: boolean) {
       const canNoLongerBeEnabled = !toEnable && this.feature.enabled && !this.feature.canEnable;
+      const canNoLongerBeDisabled = toEnable && !this.feature.enabled && !this.feature.canDisable;
 
-      if (canNoLongerBeEnabled) {
+      if (canNoLongerBeEnabled || canNoLongerBeDisabled) {
         await this.confirmBeforeChange(toEnable);
       } else {
         await this.change(toEnable);
@@ -84,13 +89,12 @@ export default Vue.extend({
     },
 
     async confirmBeforeChange(toEnable: boolean) {
-      const title = this.$t('system_management.features.confirmDisable.title');
-      const messages = [this.$t('system_management.features.confirmDisable.message1'), this.$t('system_management.features.confirmDisable.message2')];
+      const title = toEnable ? this.$t('system_management.features.confirmEnable.title') : this.$t('system_management.features.confirmDisable.title');
+      const messages = toEnable
+        ? [this.$t('system_management.features.confirmEnable.message1'), this.$t('system_management.features.confirmEnable.message2')]
+        : [this.$t('system_management.features.confirmDisable.message1'), this.$t('system_management.features.confirmDisable.message2')];
 
-      const confirmed = await this.$confirm({
-        title,
-        messages,
-      });
+      const confirmed = await this.$confirm({ title, messages });
 
       if (confirmed) {
         await this.change(toEnable);

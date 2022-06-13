@@ -42,8 +42,8 @@ describe('FeatureWrapper.vue', () => {
   });
 
   describe('>> Computed', () => {
-    describe('shouldDisable', () => {
-      it('returns true if feature is not enabled and cannot be enabled', () => {
+    describe('shouldLock', () => {
+      it('returns true if feature is disabled and cannot be enabled', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -54,11 +54,25 @@ describe('FeatureWrapper.vue', () => {
           },
         });
 
-        expect(wrapper.vm.shouldDisable).toBe(true);
+        expect(wrapper.vm.shouldLock).toBe(true);
+      });
+
+      it('returns true if feature is enabled and cannot be disabled', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            feature: {
+              enabled: true,
+              canDisable: false,
+            },
+          },
+        });
+
+        expect(wrapper.vm.shouldLock).toBe(true);
       });
 
       it('returns false in other case', () => {
-        expect(wrapper.vm.shouldDisable).toBe(false);
+        expect(wrapper.vm.shouldLock).toBe(false);
       });
     });
   });
@@ -83,6 +97,27 @@ describe('FeatureWrapper.vue', () => {
 
         expect(wrapper.vm.confirmBeforeChange).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.confirmBeforeChange).toHaveBeenCalledWith(false);
+        expect(wrapper.vm.change).toHaveBeenCalledTimes(0);
+      });
+
+      it('calls confirmBeforeChange if can no longer be disabled', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            feature: {
+              enabled: false,
+              canDisable: false,
+            },
+          },
+        });
+
+        wrapper.vm.confirmBeforeChange = jest.fn();
+        wrapper.vm.change = jest.fn();
+
+        await wrapper.vm.onChange(true);
+
+        expect(wrapper.vm.confirmBeforeChange).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.confirmBeforeChange).toHaveBeenCalledWith(true);
         expect(wrapper.vm.change).toHaveBeenCalledTimes(0);
       });
 

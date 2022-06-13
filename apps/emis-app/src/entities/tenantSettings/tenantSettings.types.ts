@@ -55,6 +55,7 @@ export interface IFeatureEntity extends IEntity {
   key: string;
   enabled: boolean;
   canEnable: boolean;
+  canDisable: boolean;
   type: FeatureType;
 }
 export interface ITenantSettingsEntityData extends IEntity {
