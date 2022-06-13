@@ -14,23 +14,35 @@ import Component from './MassActionBaseCreate.vue';
 const localVue = createLocalVue();
 
 const storage = mockStorage();
+let wrapper;
+
+const doMount = (shallow = false, propsData) => {
+  const options = {
+    localVue,
+    propsData: {
+      title: 'title',
+      formData: new FormData(),
+      uploadUrl: 'url',
+      applyToLabel: 'applyToLabel',
+      mode: MassActionMode.File,
+      loading: false,
+      ...propsData,
+    },
+    mocks: {
+      $storage: storage,
+    },
+  };
+  if (shallow) {
+    wrapper = shallowMount(Component, options);
+  } else {
+    wrapper = mount(Component, options);
+  }
+};
 
 describe('MassActionBaseCreate.vue', () => {
-  let wrapper;
-
   describe('Template', () => {
     beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-        propsData: {
-          title: 'title',
-          formData: new FormData(),
-          uploadUrl: 'url',
-          applyToLabel: 'applyToLabel',
-          mode: MassActionMode.File,
-          loading: false,
-        },
-      });
+      doMount();
     });
     describe('RcPageContent', () => {
       it('should be rendered', () => {
@@ -75,24 +87,22 @@ describe('MassActionBaseCreate.vue', () => {
         });
       });
     });
+
+    describe('Name', () => {
+      it('should be rendered by default', () => {
+        expect(wrapper.findDataTest('name').exists()).toBe(true);
+      });
+
+      it('should not be rendered if hideName is true', () => {
+        doMount(true, { hideName: true });
+        expect(wrapper.findDataTest('name').exists()).toBe(false);
+      });
+    });
   });
 
   describe('Methods', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          title: 'title',
-          formData: new FormData(),
-          uploadUrl: 'url',
-          applyToLabel: 'applyToLabel',
-          mode: MassActionMode.File,
-          loading: false,
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
+      doMount(true);
       wrapper.vm.$refs.form.validate = jest.fn(() => true);
       wrapper.vm.uploadForm = jest.fn();
       wrapper.vm.resetFileInput = jest.fn();
@@ -195,9 +205,25 @@ describe('MassActionBaseCreate.vue', () => {
     });
 
     describe('back', () => {
-      it('should emit back', () => {
+      it('should emit back if no changed', () => {
+        wrapper.vm.$refs.form = {
+          flags: {
+            changed: false,
+          },
+        };
         wrapper.vm.back();
         expect(wrapper.emitted('back')).toBeTruthy();
+      });
+
+      it('should call confirmBeforeLeave back if changed', () => {
+        wrapper.vm.$refs.form = {
+          flags: {
+            changed: true,
+          },
+        };
+        wrapper.vm.confirmBeforeLeave = jest.fn();
+        wrapper.vm.back();
+        expect(wrapper.vm.confirmBeforeLeave).toBeCalled();
       });
     });
 
@@ -291,23 +317,25 @@ describe('MassActionBaseCreate.vue', () => {
         });
       });
     });
+
+    describe('confirmBeforeLeave', () => {
+      it('should call confirm', async () => {
+        await wrapper.vm.confirmBeforeLeave();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ title: 'massAction.cancel.title', messages: 'massAction.cancel.message' });
+      });
+
+      it('should emit back if user click yes', async () => {
+        wrapper.vm.$confirm = jest.fn(() => true);
+        await wrapper.vm.confirmBeforeLeave();
+        expect(wrapper.emitted('back')).toBeTruthy();
+      });
+    });
   });
 
   describe('Computed', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          title: 'title',
-          formData: new FormData(),
-          uploadUrl: 'url',
-          applyToLabel: 'applyToLabel',
-          mode: MassActionMode.File,
-          loading: false,
-        },
-      });
+      doMount(true);
     });
-
     describe('Rules', () => {
       it('should use requiredFile custom rule', () => {
         expect(wrapper.vm.rules.file).toEqual({

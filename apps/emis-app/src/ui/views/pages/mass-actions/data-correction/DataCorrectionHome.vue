@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>DataCorrectionHome, list will be display here</h1>
+    <h1>DataCorrectionHome, list will be displayed here</h1>
 
     <router-link
       :to="routes.massActions.dataCorrection.create.path">

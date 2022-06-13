@@ -4,7 +4,9 @@
       <v-container>
         <v-row justify="center">
           <v-col cols="12" xl="8" lg="9" md="11" sm="12">
+            <slot name="top" />
             <v-text-field-with-validation
+              v-if="!hideName"
               v-model="name"
               data-test="name"
               :label="`${$t('massActions.importValidationStatus.create.name.label')} *`"
@@ -33,7 +35,7 @@
                 :file="file"
                 :max-size="10000000"
                 :errors="errors"
-                @update:file="onUpdateFile($event)" />
+                @update:file="onUpdateFile" />
             </validation-provider>
             <div v-else-if="mode === MassActionMode.List" class="grey-container px-6 py-4">
               {{ $t('massAction.common.apply_to_x_caseFiles', {x: $route.query.total}) }}
@@ -41,14 +43,14 @@
           </v-col>
         </v-row>
       </v-container>
-      <template slot="actions">
+      <template #actions>
         <v-btn data-test="cancel" :disabled="loading" @click.stop="back()">
           {{ $t('common.buttons.cancel') }}
         </v-btn>
         <v-btn
           color="primary"
           data-test="next"
-          :disabled="failed"
+          :disabled="failed || !isFileValid"
           :loading="loading"
           @click="next()">
           {{ $t('common.buttons.next') }}
@@ -160,6 +162,11 @@ export default mixins(fileUpload).extend({
       type: Boolean,
       required: true,
     },
+
+    hideName: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -180,7 +187,7 @@ export default mixins(fileUpload).extend({
 
       const regularRules = {
         name: {
-          required: true,
+          required: !this.hideName,
           max: MAX_LENGTH_MD,
         },
         description: {
@@ -233,8 +240,23 @@ export default mixins(fileUpload).extend({
       }
     },
 
-    back() {
-      this.$emit('back');
+    async back() {
+      if ((this.$refs.form as VForm).flags.changed) {
+        await this.confirmBeforeLeave();
+      } else {
+        this.$emit('back');
+      }
+    },
+
+    async confirmBeforeLeave() {
+      const userChoice = await this.$confirm({
+        title: this.$t('massAction.cancel.title'),
+        messages: this.$t('massAction.cancel.message'),
+      });
+
+      if (userChoice) {
+        this.$emit('back');
+      }
     },
 
     async create(mode: MassActionMode) {
@@ -246,8 +268,8 @@ export default mixins(fileUpload).extend({
     },
 
     async upload() {
-      // A mass action always has a name, description and a file
-      this.formData.set('name', this.name);
+      // A mass action always has a name, description and a file. If it's hidden the name will have to be set on the parent component
+      !this.hideName && this.formData.set('name', this.name);
       this.formData.set('description', this.description);
       this.formData.set('file', this.file);
 

@@ -23,6 +23,7 @@ export default Vue.extend({
       uploadSuccess: false,
       errors: [],
       showUploadDialog: false,
+      isFileValid: true,
     };
   },
   computed: {
@@ -42,8 +43,9 @@ export default Vue.extend({
     },
   },
   methods: {
-    async onUpdateFile(file: File) {
+    async onUpdateFile(file: File, isFileValid: boolean) {
       this.file = file;
+      this.isFileValid = isFileValid;
       this.$nextTick(async () => {
         await (this.$refs.file as VForm).validate();
       });
