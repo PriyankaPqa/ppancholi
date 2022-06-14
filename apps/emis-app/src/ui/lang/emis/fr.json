@@ -884,6 +884,7 @@
     "errors.team-already-has-a-primary-contact": "L’équipe a déjà une personne-ressource.",
     "errors.team-does-not-exist": "L'équipe n'existe pas",
     "errors.team-has-active-case-file": "Impossible de rendre cette équipe inactive en raison des dossiers qui lui sont attribués.",
+    "errors.team-has-active-case-file-for-these-events": "Il existe des dossiers assignés actifs pour cet événement. Veuillez réaffecter avant de supprimer l’événement.",
     "errors.team-is-not-assigned-to-the-event": "L'équipe n'est pas affectée à l'événement",
     "errors.team-member-has-active-case-file": "Un(e) membre de l’équipe a un dossier actif.",
     "errors.team.has-activefile": "Impossible d'effectuer l'action",

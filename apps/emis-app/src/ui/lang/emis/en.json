@@ -884,6 +884,7 @@
     "errors.team-already-has-a-primary-contact": "Team already has a primary contact",
     "errors.team-does-not-exist": "Team does not exist",
     "errors.team-has-active-case-file": "Cannot make this team inactive due to assigned case files",
+    "errors.team-has-active-case-file-for-these-events": "There are active assigned case files for this event. Please re-assign before removing the event.",
     "errors.team-is-not-assigned-to-the-event": "Team is not assigned to the event",
     "errors.team-member-has-active-case-file": "Team member has active case file",
     "errors.team.has-activefile": "Cannot perform action",

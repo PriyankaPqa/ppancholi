@@ -132,7 +132,7 @@
       @cancel="showErrorDialog = false"
       @close="showErrorDialog = false">
       <div class="rc-body14">
-        {{ $t('errors.team-has-active-case-file') }}
+        {{ errorMessage }}
       </div>
     </rc-dialog>
 
@@ -245,6 +245,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         primaryContact: null as string,
       },
       showErrorDialog: false,
+      errorMessage: '' as TranslateResult,
       isSubmitting: false,
     };
   },
@@ -510,7 +511,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.setOriginalData();
       } catch (e) {
         const errorData = e.response?.data?.errors;
-        if (errorData && errorData.length > 0 && errorData[0].code === 'errors.team-has-active-case-file') {
+        if (errorData && errorData.length > 0) {
+          this.errorMessage = this.$t(errorData[0].code);
           this.showErrorDialog = true;
         } else {
           this.$appInsights.trackTrace('Team edit error', { error: errorData });

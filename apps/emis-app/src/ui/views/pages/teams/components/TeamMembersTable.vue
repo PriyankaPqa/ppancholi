@@ -330,8 +330,10 @@ export default Vue.extend({
     async removeTeamMember() {
       try {
         this.removeLoading = true;
-        await this.$storage.team.actions.removeTeamMember(this.teamId, this.removeMemberId);
-        this.$toasted.global.success(this.$t('teams.remove_team_members_success'));
+        const res = await this.$storage.team.actions.removeTeamMember(this.teamId, this.removeMemberId);
+        if (res) {
+          this.$toasted.global.success(this.$t('teams.remove_team_members_success'));
+        }
       } finally {
         this.showRemoveMemberConfirmationDialog = false;
         this.removeLoading = false;

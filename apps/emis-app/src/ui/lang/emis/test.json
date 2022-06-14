@@ -884,6 +884,7 @@
     "errors.team-already-has-a-primary-contact": "errors.team-already-has-a-primary-contact",
     "errors.team-does-not-exist": "errors.team-does-not-exist",
     "errors.team-has-active-case-file": "errors.team-has-active-case-file",
+    "errors.team-has-active-case-file-for-these-events": "",
     "errors.team-is-not-assigned-to-the-event": "errors.team-is-not-assigned-to-the-event",
     "errors.team-member-has-active-case-file": "errors.team-member-has-active-case-file",
     "errors.team.has-activefile": "errors.team.has-activefile",
