@@ -68,7 +68,7 @@ export class MSAL {
     clientId: '',
     authority: 'common',
     redirectUri: window.location.origin,
-    navigateToLoginRequestUrl: false,
+    navigateToLoginRequestUrl: true,
     postLogoutRedirectUri: window.location.origin,
   };
 
@@ -531,10 +531,6 @@ export class MSAL {
     if (response !== null) { // coming back from a successful authentication redirect
       this.showConsole && console.debug('handleResponse - Set account with using response', response)
       this.account = response.account;
-      // if we have a redirect address we go to it if it isnt the current url but it is for this site
-      if (response.state && response.state !== window.location.href && response.state.startsWith(window.location.origin)) {
-        window.location.href = response.state;
-      }
     } else { // not coming back from an auth redirect
       this.showConsole && console.debug('this.account', this.account)
       this.showConsole && console.debug('handleResponse - Will set account from method getAccount')
