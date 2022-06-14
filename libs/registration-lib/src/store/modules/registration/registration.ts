@@ -1,3 +1,4 @@
+import { IServerError } from '@libs/core-lib/types';
 /* eslint-disable max-lines-per-function */
 import {
   ActionContext, ActionTree, GetterTree, Module, MutationTree,
@@ -521,7 +522,8 @@ const actions = (mode: ERegistrationMode) => ({
         result = await this.$services.households.submitCRCRegistration(context.state.householdCreate, context.state.event.id);
       }
       context.commit('setRegistrationResponse', result);
-    } catch (e) {
+    } catch (error) {
+      const e = (error as IServerError).response.data.errors;
       applicationInsights.trackTrace(`submitRegistration error - self: ${mode === ERegistrationMode.Self}`, { error: e }, 'store.registration', 'submitRegistration');
       context.commit('setRegistrationErrors', e);
     } finally {

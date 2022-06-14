@@ -92,7 +92,6 @@ import ConfirmRegistration from '../confirmation/ConfirmRegistration.vue';
 
 export default mixins(individual).extend({
   name: 'Individual',
-
   components: {
     RcPageContent,
     LeftMenu,

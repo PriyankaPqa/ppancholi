@@ -812,12 +812,13 @@ describe('>>> Registration Module', () => {
       });
 
       it('sets registrationErrors in case of error', async () => {
+        const error = { response: { data: { errors: 'mock-errors' } } };
         await store.commit('registration/setEvent', mockEventData());
         store.$services.households.submitRegistration = jest.fn(() => {
-          throw new Error();
+          throw error;
         });
         await store.dispatch('registration/submitRegistration');
-        expect(store.getters['registration/registrationErrors']).toStrictEqual(new Error());
+        expect(store.getters['registration/registrationErrors']).toEqual('mock-errors');
       });
     });
 

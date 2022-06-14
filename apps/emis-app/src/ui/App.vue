@@ -110,6 +110,7 @@ export default {
     checkingAccount() {
       return this.$store.state.dashboard.checkingAccount;
     },
+
   },
 
   async created() {
