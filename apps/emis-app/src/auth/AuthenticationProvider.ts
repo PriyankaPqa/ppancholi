@@ -11,7 +11,8 @@ if (process.env.VUE_APP_MOCK_AUTHENTICATION === 'true') {
 } else {
   const clientId = process.env.VUE_APP_AUTH_AAD_CLIENTID;
   const authority = process.env.VUE_APP_AUTH_AAD_AUTHORITY;
-  const navigateToLoginRequestUrl = process.env.VUE_APP_AUTH_AAD_NAVIGATE_TO_LOGIN_REQUEST_URL === 'true';
+  const navigateToLoginRequestUrlString = process.env.VUE_APP_AUTH_AAD_NAVIGATE_TO_LOGIN_REQUEST_URL; // Direct comparison with process.env variables in dev/prod does not seem to work well
+  const navigateToLoginRequestUrl = navigateToLoginRequestUrlString === 'true';
   const apiPermissions = process.env.VUE_APP_AUTH_AAD_API_PERMISSIONS;
 
   const msalConfig = {
