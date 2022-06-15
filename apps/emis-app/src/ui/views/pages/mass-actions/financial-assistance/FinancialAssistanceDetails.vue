@@ -3,8 +3,7 @@
     :back-route-name="routes.massActions.financialAssistance.home.name"
     details-title="massActions.financialAssistance.status.details.title"
     processing-title="massActions.financialAssistance.status.processing.title"
-    pre-processing-title="massActions.financialAssistance.status.preprocessing.title"
-    :mass-action-type="MassActionType.FinancialAssistance">
+    pre-processing-title="massActions.financialAssistance.status.preprocessing.title">
     <template #pre-processing>
       <financial-assistance-payment-details-table :mass-action="massAction" />
     </template>
@@ -20,7 +19,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import FinancialAssistancePaymentDetailsTable from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePaymentDetailsTable.vue';
-import { MassActionType, IMassActionCombined } from '@/entities/mass-action';
+import { IMassActionCombined } from '@/entities/mass-action';
 import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
 import routes from '@/constants/routes';
 
@@ -33,7 +32,6 @@ export default Vue.extend({
 
   data() {
     return {
-      MassActionType,
       routes,
     };
   },

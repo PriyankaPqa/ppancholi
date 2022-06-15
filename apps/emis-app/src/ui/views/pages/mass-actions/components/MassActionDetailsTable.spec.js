@@ -4,7 +4,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { MassActionType, mockCombinedMassAction } from '@/entities/mass-action';
+import { MassActionDataCorrectionType, MassActionType, mockCombinedMassAction } from '@/entities/mass-action';
 import { mockCombinedUserAccount } from '@/entities/user-account';
 import Component from './MassActionDetailsTable.vue';
 
@@ -19,7 +19,6 @@ describe('MassActionDetailsTable.vue', () => {
         localVue,
         propsData: {
           massAction: mockCombinedMassAction(),
-          massActionType: MassActionType.ImportValidationOfImpactStatus,
         },
         data() {
           return {
@@ -47,8 +46,7 @@ describe('MassActionDetailsTable.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          massAction: mockCombinedMassAction(),
-          massActionType: MassActionType.ImportValidationOfImpactStatus,
+          massAction: mockCombinedMassAction({ type: MassActionType.ImportValidationOfImpactStatus }),
         },
       });
       expect(wrapper.vm.massActionTypeText).toBe('massActions.type.importValidationImpactStatus');
@@ -58,8 +56,7 @@ describe('MassActionDetailsTable.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          massAction: mockCombinedMassAction(),
-          massActionType: MassActionType.FinancialAssistance,
+          massAction: mockCombinedMassAction({ type: MassActionType.FinancialAssistance }),
         },
       });
       expect(wrapper.vm.massActionTypeText).toBe('massActions.type.financialAssistance');
@@ -69,8 +66,7 @@ describe('MassActionDetailsTable.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          massAction: mockCombinedMassAction(),
-          massActionType: MassActionType.ImportPaymentStatuses,
+          massAction: mockCombinedMassAction({ type: MassActionType.ImportPaymentStatuses }),
         },
       });
       expect(wrapper.vm.massActionTypeText).toBe('massActions.type.importPaymentStatus');
@@ -80,8 +76,7 @@ describe('MassActionDetailsTable.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          massAction: mockCombinedMassAction(),
-          massActionType: MassActionType.ImportUsers,
+          massAction: mockCombinedMassAction({ type: MassActionType.ImportUsers }),
         },
       });
       expect(wrapper.vm.massActionTypeText).toBe('massActions.type.importUsers');
@@ -91,11 +86,20 @@ describe('MassActionDetailsTable.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          massAction: mockCombinedMassAction(),
-          massActionType: MassActionType.GenerateFundingRequest,
+          massAction: mockCombinedMassAction({ type: MassActionType.GenerateFundingRequest }),
         },
       });
       expect(wrapper.vm.massActionTypeText).toBe('massActions.type.fundingRequest');
+    });
+
+    it('should return proper text for data correction mass action', () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          massAction: mockCombinedMassAction({ type: MassActionDataCorrectionType.Labels }),
+        },
+      });
+      expect(wrapper.vm.massActionTypeText).toBe(`enums.MassActionDataCorrectionType.${MassActionDataCorrectionType[MassActionDataCorrectionType.Labels]}`);
     });
   });
 });

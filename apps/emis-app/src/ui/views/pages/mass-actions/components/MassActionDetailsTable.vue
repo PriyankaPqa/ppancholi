@@ -33,7 +33,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from 'moment';
-import { IMassActionCombined, MassActionRunStatus, MassActionType } from '@/entities/mass-action';
+import {
+  IMassActionCombined, MassActionDataCorrectionType, MassActionRunStatus, MassActionType,
+} from '@/entities/mass-action';
 
 export default Vue.extend({
   name: 'MassActionDetailsTable',
@@ -41,10 +43,6 @@ export default Vue.extend({
   props: {
     massAction: {
       type: Object as () => IMassActionCombined,
-      required: true,
-    },
-    massActionType: {
-      type: Number as () => MassActionType,
       required: true,
     },
   },
@@ -55,27 +53,22 @@ export default Vue.extend({
       userAccount: null,
       MassActionRunStatus,
       loading: false,
+      labels: {
+        [MassActionType.FinancialAssistance]: 'massActions.type.financialAssistance',
+        [MassActionType.ImportValidationOfImpactStatus]: 'massActions.type.importValidationImpactStatus',
+        [MassActionType.ImportPaymentStatuses]: 'massActions.type.importPaymentStatus',
+        [MassActionType.ImportUsers]: 'massActions.type.importUsers',
+        [MassActionType.GenerateFundingRequest]: 'massActions.type.fundingRequest',
+      } as Record<MassActionType, string>,
     };
   },
 
   computed: {
     massActionTypeText(): string {
-      if (this.massActionType === MassActionType.FinancialAssistance) {
-        return 'massActions.type.financialAssistance';
+      if (Object.keys(this.labels).includes(this.massAction.entity.type.toString())) {
+        return this.labels[this.massAction.entity.type];
       }
-      if (this.massActionType === MassActionType.ImportValidationOfImpactStatus) {
-        return 'massActions.type.importValidationImpactStatus';
-      }
-      if (this.massActionType === MassActionType.ImportPaymentStatuses) {
-        return 'massActions.type.importPaymentStatus';
-      }
-      if (this.massActionType === MassActionType.ImportUsers) {
-        return 'massActions.type.importUsers';
-      }
-      if (this.massActionType === MassActionType.GenerateFundingRequest) {
-        return 'massActions.type.fundingRequest';
-      }
-      return '';
+      return `enums.MassActionDataCorrectionType.${MassActionDataCorrectionType[this.massAction.entity.type]}`;
     },
   },
 

@@ -5,7 +5,7 @@ import {
 } from '@/test/testSetup';
 
 import {
-  MassActionRunStatus, MassActionRunType, MassActionType, mockMassActionEntity, mockMassActionMetadata,
+  MassActionRunStatus, MassActionRunType, mockMassActionEntity, mockMassActionMetadata,
 } from '@/entities/mass-action';
 import { mockCombinedUserAccount } from '@/entities/user-account';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
@@ -27,7 +27,6 @@ const doMount = (mountMode = false, runStatus = MassActionRunStatus.Processed) =
         entity: mockMassActionEntity(),
         metadata: mockMassActionMetadata({}, { runStatus }),
       },
-      massActionType: MassActionType.FinancialAssistance,
       massActionStatus: MassActionRunStatus.PreProcessed,
       total: 100,
       successes: 50,

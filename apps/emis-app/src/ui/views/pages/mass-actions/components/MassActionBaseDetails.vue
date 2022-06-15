@@ -3,7 +3,6 @@
     <mass-action-pre-processing-base
       v-if="preProcessing"
       :mass-action="massAction"
-      :mass-action-type="massActionType"
       :process-title="massActionBaseDetailsLabels.preProcessingWaitTitle"
       :process-label-one="massActionBaseDetailsLabels.preProcessingWaitLabelOne"
       :process-label-two="massActionBaseDetailsLabels.preProcessingWaitLabelTwo">
@@ -22,7 +21,6 @@
 
     <mass-action-pre-processed-processed-base
       v-else-if="lastRunMetadata && preProcessed"
-      :mass-action-type="massActionType"
       :mass-action-status="MassActionRunStatus.PreProcessed"
       :mass-action="massAction"
       :total="lastRunResults.total"
@@ -45,7 +43,6 @@
 
     <mass-action-pre-processed-processed-base
       v-else-if="lastRunMetadata && processed"
-      :mass-action-type="massActionType"
       :mass-action-status="MassActionRunStatus.Processed"
       :mass-action="massAction"
       :total="lastRunResults.total"
@@ -63,7 +60,7 @@
       </template>
     </mass-action-pre-processed-processed-base>
 
-    <template slot="actions">
+    <template #actions>
       <v-btn color="primary" @click="back()">
         {{ $t('massActions.backToList.label') }}
       </v-btn>
@@ -79,7 +76,7 @@ import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/M
 import MassActionPreProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessingBase.vue';
 import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessedProcessedBase.vue';
 import massActionDetails from '@/ui/views/pages/mass-actions/mixins/massActionDetails';
-import { MassActionType, MassActionRunStatus } from '@/entities/mass-action';
+import { MassActionRunStatus } from '@/entities/mass-action';
 
 export interface IMassActionBaseDetailsLabels {
   preProcessingWaitTitle: string;
@@ -107,11 +104,6 @@ export default mixins(massActionDetails).extend({
   },
 
   props: {
-    massActionType: {
-      type: Number as () => MassActionType,
-      required: true,
-    },
-
     preProcessingTitle: {
       type: String,
       required: true,

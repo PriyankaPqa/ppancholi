@@ -115,7 +115,7 @@
         </v-row>
       </div>
 
-      <mass-action-details-table :mass-action="massAction" :mass-action-type="massActionType" class="mt-12" />
+      <mass-action-details-table :mass-action="massAction" class="mt-12" />
 
       <slot name="preprocessing" />
 
@@ -154,11 +154,6 @@ export default Vue.extend({
 
     massActionStatus: {
       type: Number,
-      required: true,
-    },
-
-    massActionType: {
-      type: Number as () => MassActionType,
       required: true,
     },
 
@@ -254,7 +249,7 @@ export default Vue.extend({
     },
 
     isFinancial(): boolean {
-      return this.massActionType === MassActionType.FinancialAssistance;
+      return this.massAction.entity.type === MassActionType.FinancialAssistance;
     },
   },
 

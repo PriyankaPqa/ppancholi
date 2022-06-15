@@ -3,7 +3,6 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { MassActionType } from '@/entities/mass-action';
 import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
 import routes from '@/constants/routes';
 import Component from './FinancialAssistanceDetails.vue';
@@ -14,15 +13,6 @@ describe('FinancialAssistanceDetails.vue', () => {
   let wrapper;
 
   describe('Template', () => {
-    it('should pass correct mass action type', () => {
-      wrapper = shallowMount(Component, { localVue });
-      const component = wrapper.findComponent(MassActionBaseDetails);
-      const props = 'massActionType';
-      const expected = MassActionType.FinancialAssistance;
-
-      expect(component.props(props)).toEqual(expected);
-    });
-
     it('should pass correct pre processing title', () => {
       wrapper = shallowMount(Component, { localVue });
       const component = wrapper.findComponent(MassActionBaseDetails);

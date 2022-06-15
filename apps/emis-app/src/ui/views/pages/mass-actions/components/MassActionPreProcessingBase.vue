@@ -7,7 +7,7 @@
       :process-label-one="processLabelOne"
       :process-label-two="processLabelTwo">
       <template #preprocessing>
-        <mass-action-details-table :mass-action="massAction" :mass-action-type="massActionType" />
+        <mass-action-details-table :mass-action="massAction" />
       </template>
     </mass-action-processing-base>
     <v-row justify="center" class="pt-12">
@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMassActionCombined, MassActionRunStatus, MassActionType } from '@/entities/mass-action';
+import { IMassActionCombined, MassActionRunStatus } from '@/entities/mass-action';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 
@@ -51,11 +51,6 @@ export default Vue.extend({
     processLabelTwo: {
       type: String,
       default: 'massActions.preProcessing.info2',
-    },
-
-    massActionType: {
-      type: Number as () => MassActionType,
-      required: true,
     },
   },
 

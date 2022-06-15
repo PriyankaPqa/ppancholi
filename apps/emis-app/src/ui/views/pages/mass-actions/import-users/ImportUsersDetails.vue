@@ -1,6 +1,5 @@
 <template>
   <mass-action-base-details
-    :mass-action-type="MassActionType.ImportUsers"
     pre-processing-title="massActions.importUsers.status.preprocessing.title"
     processing-title="massActions.importUsers.status.processing.title"
     details-title="massActions.importUsers.status.details.title"
@@ -12,7 +11,6 @@
 import Vue from 'vue';
 import routes from '@/constants/routes';
 import MassActionBaseDetails, { IMassActionBaseDetailsLabels } from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
-import { MassActionType } from '@/entities/mass-action';
 
 export default Vue.extend({
   name: 'ImportUsersDetails',
@@ -24,7 +22,6 @@ export default Vue.extend({
   data() {
     return {
       routes,
-      MassActionType,
     };
   },
 

@@ -5,7 +5,7 @@ import {
 } from '@/test/testSetup';
 
 import {
-  MassActionRunStatus, mockCombinedMassAction, MassActionType,
+  MassActionRunStatus, mockCombinedMassAction,
 } from '@/entities/mass-action';
 import { mockStorage } from '@/store/storage';
 
@@ -34,7 +34,6 @@ const doMount = (fullMount = false, {
 
     },
     propsData: {
-      massActionType: MassActionType.ImportValidationOfImpactStatus,
       preProcessingTitle: 'preProcessingTitle',
       processingTitle: 'processingTitle',
       detailsTitle: 'detailsTitle',
