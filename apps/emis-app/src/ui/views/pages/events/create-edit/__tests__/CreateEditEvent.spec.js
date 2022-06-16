@@ -8,15 +8,17 @@ import {
   mockCombinedEvents, mockEventEntity, mockRegionData, mockOtherProvinceData,
 } from '@/entities/event';
 import { mockStorage } from '@/store/storage';
+import helpers from '@/ui/helpers/helpers';
 import Component from '../CreateEditEvent.vue';
 
 const localVue = createLocalVue();
+const storage = mockStorage();
 
 describe('CreatEditEvent.vue', () => {
   let wrapper;
 
   const mockEvent = mockEventEntity();
-  const storage = mockStorage();
+
   storage.event.actions.fetchEventTypes = jest.fn(() => mockOptionItemData());
   storage.event.actions.fetchAll = jest.fn(() => mockCombinedEvents());
   storage.event.actions.fetchOtherProvinces = jest.fn(() => mockOtherProvinceData());
@@ -25,185 +27,145 @@ describe('CreatEditEvent.vue', () => {
   storage.event.actions.fetchRegions = jest.fn(() => mockRegionData());
   storage.event.getters.eventTypes = jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e)));
 
+  const doMount = (shallow = true, editMode) => {
+    const options = {
+      localVue,
+      propsData: {
+        id: '',
+      },
+      computed: {
+        isEditMode() {
+          return editMode;
+        },
+      },
+      mocks: {
+        $storage: storage,
+        $route: {
+          name: routes.events.edit.name,
+        },
+      },
+    };
+    if (shallow) {
+      wrapper = shallowMount(Component, options);
+    } else {
+      wrapper = mount(Component, options);
+    }
+  };
+
   describe('Methods', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-
-      wrapper = mount(Component, {
-        localVue: createLocalVue(),
-        mocks: {
-          $storage: storage,
-        },
-        propsData: {
-          id: '',
-        },
-        computed: {
-          isEditMode() {
-            return false;
-          },
-        },
-      });
-    });
-
     describe('back', () => {
-      it('calls the router replace method with the events home page', () => {
-        wrapper.vm.back();
-        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
-          name: routes.events.home.name,
+      describe('createMode', () => {
+        it('calls the router replace method with the events home page', () => {
+          doMount(true, false);
+          wrapper.vm.back();
+          expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
+            name: routes.events.home.name,
+          });
         });
       });
 
-      it('calls the router replace method with the events detail page if edit mode is true', () => {
-        wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
-          store: {
-            modules: {
-              event: {
-                actions: {
-                  fetchEvent: jest.fn(() => mockEvent),
-                },
-              },
+      describe('editMode', () => {
+        it('calls the router replace method with the events detail page if edit mode is true', () => {
+          doMount(true, true);
+          wrapper.vm.back();
+          expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
+            name: routes.events.summary.name,
+            params: {
+              id: '',
             },
-          },
-          propsData: {
-            id: 'TEST_ID',
-          },
-          computed: {
-            isEditMode() {
-              return true;
-            },
-          },
-        });
-
-        wrapper.vm.back();
-        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
-          name: routes.events.summary.name,
-          params: {
-            id: 'TEST_ID',
-          },
+          });
         });
       });
     });
 
     describe('submit', () => {
-      it('does not call createEvent unless form validation succeeds', async () => {
-        await wrapper.vm.submit();
-        expect(wrapper.vm.$storage.event.actions.createEvent).toHaveBeenCalledTimes(0);
+      it('should call scrollToFirstError and return if the form is not valid', async () => {
+        doMount(true, true);
+        helpers.scrollToFirstError = jest.fn();
+        wrapper.vm.submitEdit = jest.fn();
+        wrapper.vm.submitCreate = jest.fn();
 
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$refs.form.validate = jest.fn(() => false);
 
         await wrapper.vm.submit();
-        expect(wrapper.vm.$storage.event.actions.createEvent).toHaveBeenCalledTimes(1);
+
+        expect(helpers.scrollToFirstError).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.submitCreate).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.submitEdit).toHaveBeenCalledTimes(0);
       });
 
-      test('after submitting, the user is redirected to the event details page', async () => {
+      it('should call submitEdit if edit mode', async () => {
+        doMount(true, true);
+        wrapper.vm.submitEdit = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-
-        jest.spyOn(wrapper.vm.$router, 'replace').mockImplementation(() => {});
         await wrapper.vm.submit();
-
-        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith(
-          { name: routes.events.summary.name, params: { id: mockEvent.id } },
-        );
+        expect(wrapper.vm.submitEdit).toHaveBeenCalledTimes(1);
       });
 
-      test('after creating an event a toast notification is shown', async () => {
+      it('should call submitCreate if create mode', async () => {
+        doMount(true, false);
+        wrapper.vm.submitCreate = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
         await wrapper.vm.submit();
-        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event_create.success');
+        expect(wrapper.vm.submitCreate).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('submitEdit', () => {
+      it('should call updateEvent', async () => {
+        doMount(true, true);
+        await wrapper.vm.submitEdit();
+        expect(wrapper.vm.$storage.event.actions.updateEvent).toBeCalled();
+      });
+
+      it('should redirect to details page in case of success', async () => {
+        doMount(true, true);
+        await wrapper.vm.submitEdit();
+        expect(wrapper.vm.$router.replace).toBeCalledWith({ name: routes.events.summary.name, params: { id: wrapper.vm.event.id } });
+      });
+    });
+
+    describe('submitCreate', () => {
+      it('should call createEvent', async () => {
+        doMount(true, false);
+        await wrapper.vm.submitCreate();
+        expect(wrapper.vm.$storage.event.actions.createEvent).toBeCalled();
+      });
+
+      it('should redirect to details page in case of success', async () => {
+        doMount(true, false);
+        await wrapper.vm.submitCreate();
+        expect(wrapper.vm.$router.replace).toBeCalledWith({ name: routes.events.summary.name, params: { id: wrapper.vm.event.id } });
       });
     });
   });
 
   describe('Computed', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          id: '',
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
-    });
-
     describe('isEditMode', () => {
       it('returns true if the route is the edit event route', () => {
-        expect(wrapper.vm.isEditMode).toBe(false);
-
-        const wrapper2 = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-            },
-            $storage: storage,
-          },
-          propsData: {
-            id: '',
-          },
-        });
-
-        expect(wrapper2.vm.isEditMode).toBe(true);
+        doMount(true, true);
+        expect(wrapper.vm.isEditMode).toBe(true);
       });
     });
 
     describe('submitLabel', () => {
       it('returns the correct value depending on edit mode', () => {
+        doMount(true, false);
         expect(wrapper.vm.submitLabel).toBe('common.buttons.create');
 
-        const wrapper2 = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-            },
-            $storage: storage,
-          },
-        });
-
-        expect(wrapper2.vm.submitLabel).toBe('common.save');
+        doMount(true, true);
+        expect(wrapper.vm.submitLabel).toBe('common.save');
       });
     });
 
     describe('helpLink', () => {
       it('returns the correct value in create mode', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            isEditMode() {
-              return false;
-            },
-          },
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-            },
-            $storage: storage,
-          },
-        });
+        doMount(true, false);
         expect(wrapper.vm.helpLink).toBe('zendesk.help_link.createEvent');
       });
 
-      it('returns the correct value in create mode', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            isEditMode() {
-              return true;
-            },
-          },
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-            },
-            $storage: storage,
-          },
-        });
+      it('returns the correct value in edit mode', () => {
+        doMount(true, true);
         expect(wrapper.vm.helpLink).toBe('zendesk.help_link.editEvent');
       });
     });
@@ -211,15 +173,7 @@ describe('CreatEditEvent.vue', () => {
 
   describe('Template', () => {
     beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue: createLocalVue(),
-        mocks: {
-          $route: {
-            name: routes.events.edit.name,
-          },
-          $storage: storage,
-        },
-      });
+      doMount(false, false);
     });
 
     describe('Event handlers', () => {
@@ -254,64 +208,10 @@ describe('CreatEditEvent.vue', () => {
     });
   });
 
-  describe('Edit mode', () => {
-    let wrapper;
-
-    beforeEach(() => {
-      jest.clearAllMocks();
-
-      wrapper = mount(Component, {
-        localVue: createLocalVue(),
-        propsData: {
-          id: mockEvent.id,
-        },
-        stubs: {
-          EventForm: true,
-        },
-        mocks: {
-          $route: {
-            name: routes.events.edit.name,
-          },
-          $storage: storage,
-        },
-        computed: {
-          isEditMode() {
-            return true;
-          },
-        },
-      });
-    });
-
+  describe('Created', () => {
+    doMount(true, true);
     it('calls the fetch action on created', async () => {
-      expect(wrapper.vm.$storage.event.actions.fetch).toHaveBeenCalledWith(
-        mockEvent.id,
-      );
-    });
-
-    it('submit calls the updateEvent action if in edit mode', async () => {
-      wrapper.vm.$refs.form.validate = jest.fn(() => true);
-
-      await wrapper.vm.submit();
-      expect(wrapper.vm.$storage.event.actions.updateEvent).toHaveBeenCalledTimes(1);
-    });
-
-    it('shows a toast notification after saving the updated event', async () => {
-      wrapper.vm.$refs.form.validate = jest.fn(() => true);
-
-      await wrapper.vm.submit();
-      expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event_edit.success');
-    });
-
-    test('after submitting, the user is redirected to the event details page', async () => {
-      wrapper.vm.$refs.form.validate = jest.fn(() => true);
-      await wrapper.setData({ event: mockEvent });
-      jest.spyOn(wrapper.vm.$router, 'replace').mockImplementation(() => {});
-
-      await wrapper.vm.submit();
-
-      expect(wrapper.vm.$router.replace).toHaveBeenCalledWith(
-        { name: routes.events.summary.name, params: { id: mockEvent.id } },
-      );
+      expect(wrapper.vm.$storage.event.actions.fetch).toHaveBeenCalledWith('');
     });
   });
 });

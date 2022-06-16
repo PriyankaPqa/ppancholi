@@ -111,31 +111,36 @@ export default mixins(handleUniqueNameSubmitError).extend({
     async submit() {
       const isValid = await (this.$refs.form as VForm).validate();
 
-      if (isValid) {
-        try {
-          this.loading = true;
-          let eventId;
-
-          if (this.isEditMode) {
-            await this.$storage.event.actions.updateEvent(this.event);
-            eventId = this.event.id;
-            this.$toasted.global.success(this.$t('event_edit.success'));
-          } else {
-            const newEvent = await this.$storage.event.actions.createEvent(this.event);
-            eventId = newEvent.id;
-            this.event = new EventEntity(newEvent);
-            this.$toasted.global.success(this.$t('event_create.success'));
-          }
-          this.$router.replace({ name: routes.events.summary.name, params: { id: eventId } });
-        } catch (e) {
-          const errorData = e.response?.data?.errors;
-          this.$appInsights.trackTrace('Event submit error', { error: errorData }, 'CreateEditEvent', 'submit');
-          this.handleSubmitError(e);
-        } finally {
-          this.loading = false;
-        }
-      } else {
+      if (!isValid) {
         helpers.scrollToFirstError('scrollAnchor');
+        return;
+      }
+
+      try {
+        this.loading = true;
+        this.isEditMode ? await this.submitEdit() : await this.submitCreate();
+      } catch (e) {
+        this.$appInsights.trackTrace('Event submit error', { error: e.response?.data?.errors }, 'CreateEditEvent', 'submit');
+        this.handleSubmitError(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async submitEdit() {
+      const res = await this.$storage.event.actions.updateEvent(this.event);
+      if (res) {
+        this.$toasted.global.success(this.$t('event_edit.success'));
+        this.$router.replace({ name: routes.events.summary.name, params: { id: this.event.id } });
+      }
+    },
+
+    async submitCreate() {
+      const newEvent = await this.$storage.event.actions.createEvent(this.event);
+      if (newEvent) {
+        this.event = new EventEntity(newEvent);
+        this.$toasted.global.success(this.$t('event_create.success'));
+        this.$router.replace({ name: routes.events.summary.name, params: { id: newEvent.id } });
       }
     },
   },
