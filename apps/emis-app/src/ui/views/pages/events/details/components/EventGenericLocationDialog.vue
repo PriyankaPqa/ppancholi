@@ -145,6 +145,7 @@ import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@/ui/helpers/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { FeatureKeys } from '@/entities/tenantSettings';
+import { IServerError } from '@libs/core-lib/types';
 
 export default mixins(handleUniqueNameSubmitError).extend({
 
@@ -321,7 +322,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
           await this.submitLocation();
           this.$emit('close');
         } catch (e) {
-          const errorData = e.response?.data?.errors;
+          const errorData = (e as IServerError).response?.data?.errors;
           this.$appInsights.trackTrace('Event gen. location submit error', { error: errorData }, 'EventGenericLocationDialog', 'onSubmit');
           this.handleSubmitError(e);
         } finally {

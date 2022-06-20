@@ -10,6 +10,8 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 storage.registration.getters.currentTab = jest.fn(() => ({ titleKey: 'mock title', nextButtonTextKey: 'mock text' }));
 
+console.log.warn = jest.fn();
+
 const computed = {
   response: () => mockHouseholdEntity(),
   event: () => ({

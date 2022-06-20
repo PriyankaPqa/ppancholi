@@ -1,16 +1,16 @@
 import { ActionContext } from 'vuex';
 
-import { HouseholdEntityModule } from '@/store/modules/household/householdEntity';
 import { HouseholdsService } from '@/services/households/entity';
 import { IHouseholdEntity, mockHouseholdEntity } from '@/entities/household';
 import { mockAddress } from '@/entities/value-objects/address';
 import { mockHttp } from '@libs/core-lib/src/services/http-client';
 import { mockStore } from '@/store';
+import { HouseholdEntityModule } from '@/store/modules/household/householdEntity';
 import { mockVersionedEntityCombined, mockVersionedEntity } from '../../../entities/value-objects/versioned-entity/versionedEntity.mock';
 import utils from '../../../entities/value-objects/versioned-entity/versionedEntityUtils';
 import { IHouseholdEntityState } from './householdEntity.types';
 
-const module = new HouseholdEntityModule(new HouseholdsService(mockHttp()));
+const myModule = new HouseholdEntityModule(new HouseholdsService(mockHttp()));
 let store = mockStore();
 
 const actionContext = {
@@ -30,11 +30,11 @@ describe('Household entity module', () => {
       it('should call updateNoFixedHomeAddress service and set the result in the store', async () => {
         const householdId = '1';
         const observation = 'observation';
-        module.service.updateNoFixedHomeAddress = jest.fn(() => Promise.resolve(mockHouseholdEntity()));
+        myModule.service.updateNoFixedHomeAddress = jest.fn(() => Promise.resolve(mockHouseholdEntity()));
 
-        await module.actions.updateNoFixedHomeAddress(actionContext, { householdId, observation });
+        await myModule.actions.updateNoFixedHomeAddress(actionContext, { householdId, observation });
 
-        expect(module.service.updateNoFixedHomeAddress).toBeCalledWith(householdId, observation);
+        expect(myModule.service.updateNoFixedHomeAddress).toBeCalledWith(householdId, observation);
         expect(actionContext.commit).toBeCalledWith('set', mockHouseholdEntity());
       });
     });
@@ -43,11 +43,11 @@ describe('Household entity module', () => {
       it('should call updateHomeAddress service and set the result in the store', async () => {
         const householdId = '1';
         const address = mockAddress();
-        module.service.updateHomeAddress = jest.fn(() => Promise.resolve(mockHouseholdEntity()));
+        myModule.service.updateHomeAddress = jest.fn(() => Promise.resolve(mockHouseholdEntity()));
 
-        await module.actions.updateHomeAddress(actionContext, { householdId, address });
+        await myModule.actions.updateHomeAddress(actionContext, { householdId, address });
 
-        expect(module.service.updateHomeAddress).toBeCalledWith(householdId, address);
+        expect(myModule.service.updateHomeAddress).toBeCalledWith(householdId, address);
         expect(actionContext.commit).toBeCalledWith('set', mockHouseholdEntity());
       });
     });
@@ -55,26 +55,26 @@ describe('Household entity module', () => {
     describe('fetchHouseholdHistory', () => {
       it('calls the fetchHistory service for the household and the members and calls mapResponses and combineEntities with the results', async () => {
         const household = mockHouseholdEntity();
-        module.service.getHouseholdHistory = jest.fn(() => Promise.resolve([
+        myModule.service.getHouseholdHistory = jest.fn(() => Promise.resolve([
           mockVersionedEntity('household', { entity: { members: ['id-1'] } as IHouseholdEntity }),
           mockVersionedEntity('household', { entity: { members: ['id-1', 'id-2'] } as IHouseholdEntity }),
         ]));
 
-        module.service.getHouseholdMetadataHistory = jest.fn(() => Promise.resolve([mockVersionedEntity()]));
-        module.service.getMemberHistory = jest.fn(() => Promise.resolve([mockVersionedEntity()]));
-        module.service.getMemberMetadataHistory = jest.fn(() => Promise.resolve([mockVersionedEntity()]));
+        myModule.service.getHouseholdMetadataHistory = jest.fn(() => Promise.resolve([mockVersionedEntity()]));
+        myModule.service.getMemberHistory = jest.fn(() => Promise.resolve([mockVersionedEntity()]));
+        myModule.service.getMemberMetadataHistory = jest.fn(() => Promise.resolve([mockVersionedEntity()]));
         utils.mapResponses = jest.fn(() => ([mockVersionedEntity('household', { versionId: '1' })]));
         const combinedEntity = mockVersionedEntityCombined('household', { versionId: '2' });
         utils.combineEntities = jest.fn(() => ([combinedEntity]));
 
-        const expectedRes = await module.actions.fetchHouseholdHistory(actionContext, household);
+        const expectedRes = await myModule.actions.fetchHouseholdHistory(actionContext, household);
 
-        expect(module.service.getHouseholdHistory).toHaveBeenCalledWith(household.id);
-        expect(module.service.getHouseholdMetadataHistory).toHaveBeenCalledWith(household.id);
-        expect(module.service.getMemberHistory).toHaveBeenCalledWith('id-1');
-        expect(module.service.getMemberHistory).toHaveBeenCalledWith('id-2');
-        expect(module.service.getMemberMetadataHistory).toHaveBeenCalledWith('id-1');
-        expect(module.service.getMemberMetadataHistory).toHaveBeenCalledWith('id-2');
+        expect(myModule.service.getHouseholdHistory).toHaveBeenCalledWith(household.id);
+        expect(myModule.service.getHouseholdMetadataHistory).toHaveBeenCalledWith(household.id);
+        expect(myModule.service.getMemberHistory).toHaveBeenCalledWith('id-1');
+        expect(myModule.service.getMemberHistory).toHaveBeenCalledWith('id-2');
+        expect(myModule.service.getMemberMetadataHistory).toHaveBeenCalledWith('id-1');
+        expect(myModule.service.getMemberMetadataHistory).toHaveBeenCalledWith('id-2');
 
         expect(utils.mapResponses).toHaveBeenCalledTimes(2);
         expect(utils.combineEntities).toHaveBeenCalledWith([mockVersionedEntity('household', { versionId: '1' })],

@@ -20,7 +20,7 @@ import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const service = new TenantSettingsService(httpClient);
-let module: TenantSettingsEntityModule;
+let myModule: TenantSettingsEntityModule;
 
 const actionContext = {
   commit: jest.fn(),
@@ -35,15 +35,15 @@ const signalR = mockSignalR();
 
 describe('>>> TenantSettings entity module', () => {
   beforeEach(() => {
-    module = new TenantSettingsEntityModule(service, signalR);
+    myModule = new TenantSettingsEntityModule(service, signalR);
   });
 
   describe('>> Getters', () => {
     describe('currentTenantSettings', () => {
       it('returns the currentTenantSettings', () => {
-        module.state.currentTenantSettings = mockTenantSettingsEntity();
+        myModule.state.currentTenantSettings = mockTenantSettingsEntity();
 
-        const res = module.getters.currentTenantSettings(module.state);
+        const res = myModule.getters.currentTenantSettings(myModule.state);
 
         expect(res).toEqual(mockTenantSettingsEntity());
       });
@@ -51,35 +51,35 @@ describe('>>> TenantSettings entity module', () => {
 
     describe('isFeatureEnabled', () => {
       it('returns true if AddressAutoFill is enabled', () => {
-        module.state.currentTenantSettings = {
+        myModule.state.currentTenantSettings = {
           features: [{
             key: FeatureKeys.AddressAutoFill,
             enabled: true,
           } as IFeatureEntity],
         } as ITenantSettingsEntity;
 
-        const res = module.getters.isFeatureEnabled(module.state)(FeatureKeys.AddressAutoFill);
+        const res = myModule.getters.isFeatureEnabled(myModule.state)(FeatureKeys.AddressAutoFill);
 
         expect(res).toBe(true);
       });
 
       it('returns false if AddressAutoFill is disabled', () => {
-        module.state.currentTenantSettings = {
+        myModule.state.currentTenantSettings = {
           features: [{
             key: FeatureKeys.AddressAutoFill,
             enabled: false,
           } as IFeatureEntity],
         } as ITenantSettingsEntity;
 
-        const res = module.getters.isFeatureEnabled(module.state)(FeatureKeys.AddressAutoFill);
+        const res = myModule.getters.isFeatureEnabled(myModule.state)(FeatureKeys.AddressAutoFill);
 
         expect(res).toBe(false);
       });
 
       it('returns false if feature not found', () => {
-        module.state.currentTenantSettings = null as ITenantSettingsEntity;
+        myModule.state.currentTenantSettings = null as ITenantSettingsEntity;
 
-        const res = module.getters.isFeatureEnabled(module.state)(FeatureKeys.AddressAutoFill);
+        const res = myModule.getters.isFeatureEnabled(myModule.state)(FeatureKeys.AddressAutoFill);
 
         expect(res).toBe(false);
       });
@@ -87,13 +87,13 @@ describe('>>> TenantSettings entity module', () => {
 
     describe('logoUrl', () => {
       it('returns the correct url', () => {
-        module.state.logoUrl = {
+        myModule.state.logoUrl = {
           en: 'url en',
           fr: 'url fr',
         };
 
-        expect(module.getters.logoUrl(module.state)('en')).toEqual('url en');
-        expect(module.getters.logoUrl(module.state)('fr')).toEqual('url fr');
+        expect(myModule.getters.logoUrl(myModule.state)('en')).toEqual('url en');
+        expect(myModule.getters.logoUrl(myModule.state)('fr')).toEqual('url fr');
       });
     });
   });
@@ -103,19 +103,19 @@ describe('>>> TenantSettings entity module', () => {
       it('sets the current tenant settings', () => {
         const tenantSettingsData = mockTenantSettingsEntityData();
 
-        module.mutations.setCurrentTenantSettings(module.state, tenantSettingsData);
+        myModule.mutations.setCurrentTenantSettings(myModule.state, tenantSettingsData);
 
-        expect(module.state.currentTenantSettings).toEqual(new TenantSettingsEntity(tenantSettingsData));
+        expect(myModule.state.currentTenantSettings).toEqual(new TenantSettingsEntity(tenantSettingsData));
       });
 
       it('updates the theme', () => {
         const tenantSettingsData = mockTenantSettingsEntityData();
 
-        module.updateTheme = jest.fn();
+        myModule.updateTheme = jest.fn();
 
-        module.mutations.setCurrentTenantSettings(module.state, tenantSettingsData);
+        myModule.mutations.setCurrentTenantSettings(myModule.state, tenantSettingsData);
 
-        expect(module.updateTheme).toHaveBeenCalledWith(new TenantSettingsEntity(tenantSettingsData).branding);
+        expect(myModule.updateTheme).toHaveBeenCalledWith(new TenantSettingsEntity(tenantSettingsData).branding);
       });
     });
 
@@ -123,12 +123,12 @@ describe('>>> TenantSettings entity module', () => {
       it('sets the logo url', () => {
         const url = 'mock url';
 
-        module.mutations.setLogoUrl(module.state, {
+        myModule.mutations.setLogoUrl(myModule.state, {
           languageCode: 'en',
           url,
         });
 
-        expect(module.state.logoUrl.en).toEqual('mock url');
+        expect(myModule.state.logoUrl.en).toEqual('mock url');
       });
     });
   });
@@ -136,17 +136,17 @@ describe('>>> TenantSettings entity module', () => {
   describe('>> Actions', () => {
     describe('fetchCurrentTenantSettings', () => {
       it('calls the getCurrentTenantSettings service', async () => {
-        module.service.getCurrentTenantSettings = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.getCurrentTenantSettings = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
 
-        await module.actions.fetchCurrentTenantSettings(actionContext);
+        await myModule.actions.fetchCurrentTenantSettings(actionContext);
 
-        expect(module.service.getCurrentTenantSettings).toHaveBeenCalledTimes(1);
+        expect(myModule.service.getCurrentTenantSettings).toHaveBeenCalledTimes(1);
       });
 
       it('commits the tenant settings', async () => {
-        module.service.getCurrentTenantSettings = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.getCurrentTenantSettings = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
 
-        await module.actions.fetchCurrentTenantSettings(actionContext);
+        await myModule.actions.fetchCurrentTenantSettings(actionContext);
 
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
       });
@@ -154,19 +154,19 @@ describe('>>> TenantSettings entity module', () => {
 
     describe('createTenantSettings', () => {
       it('calls the createTenantSettings service', async () => {
-        module.service.createTenantSettings = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.createTenantSettings = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
         const payload = mockCreateTenantSettingsRequest();
 
-        await module.actions.createTenantSettings(actionContext, payload);
+        await myModule.actions.createTenantSettings(actionContext, payload);
 
-        expect(module.service.createTenantSettings).toHaveBeenCalledTimes(1);
+        expect(myModule.service.createTenantSettings).toHaveBeenCalledTimes(1);
       });
 
       it('commits the tenant settings', async () => {
-        module.service.createTenantSettings = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.createTenantSettings = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
         const payload = mockCreateTenantSettingsRequest();
 
-        await module.actions.createTenantSettings(actionContext, payload);
+        await myModule.actions.createTenantSettings(actionContext, payload);
 
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
       });
@@ -174,19 +174,19 @@ describe('>>> TenantSettings entity module', () => {
 
     describe('createTenantDomains', () => {
       it('calls the createTenantDomains service', async () => {
-        module.service.createTenantDomains = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.createTenantDomains = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
         const payload = mockSetDomainsRequest();
 
-        await module.actions.createTenantDomains(actionContext, payload);
+        await myModule.actions.createTenantDomains(actionContext, payload);
 
-        expect(module.service.createTenantDomains).toHaveBeenCalledTimes(1);
+        expect(myModule.service.createTenantDomains).toHaveBeenCalledTimes(1);
       });
 
       it('commits the tenant settings', async () => {
-        module.service.createTenantDomains = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.createTenantDomains = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
         const payload = mockSetDomainsRequest();
 
-        await module.actions.createTenantDomains(actionContext, payload);
+        await myModule.actions.createTenantDomains(actionContext, payload);
 
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
       });
@@ -196,19 +196,19 @@ describe('>>> TenantSettings entity module', () => {
       it('calls the service', async () => {
         const featureId = 'id';
 
-        module.service.enableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.enableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
 
-        await module.actions.enableFeature(actionContext, featureId);
+        await myModule.actions.enableFeature(actionContext, featureId);
 
-        expect(module.service.enableFeature).toHaveBeenCalledWith(featureId);
+        expect(myModule.service.enableFeature).toHaveBeenCalledWith(featureId);
       });
 
       it('updates the entity', async () => {
         const featureId = 'id';
 
-        module.service.enableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.enableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
 
-        await module.actions.enableFeature(actionContext, featureId);
+        await myModule.actions.enableFeature(actionContext, featureId);
 
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
       });
@@ -218,19 +218,19 @@ describe('>>> TenantSettings entity module', () => {
       it('calls the service', async () => {
         const featureId = 'id';
 
-        module.service.disableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.disableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
 
-        await module.actions.disableFeature(actionContext, featureId);
+        await myModule.actions.disableFeature(actionContext, featureId);
 
-        expect(module.service.disableFeature).toHaveBeenCalledWith(featureId);
+        expect(myModule.service.disableFeature).toHaveBeenCalledWith(featureId);
       });
 
       it('updates the entity', async () => {
         const featureId = 'id';
 
-        module.service.disableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.disableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
 
-        await module.actions.disableFeature(actionContext, featureId);
+        await myModule.actions.disableFeature(actionContext, featureId);
 
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
       });
@@ -238,19 +238,19 @@ describe('>>> TenantSettings entity module', () => {
 
     describe('fetchUserTenants', () => {
       it('calls the getUserTenants service', async () => {
-        module.service.getUserTenants = jest.fn();
+        myModule.service.getUserTenants = jest.fn();
 
-        await module.actions.fetchUserTenants();
+        await myModule.actions.fetchUserTenants();
 
-        expect(module.service.getUserTenants).toHaveBeenCalledTimes(1);
+        expect(myModule.service.getUserTenants).toHaveBeenCalledTimes(1);
       });
 
       it('maps the brandings', async () => {
         const mockData = [mockBrandingEntityData()];
 
-        module.service.getUserTenants = jest.fn(() => Promise.resolve(mockData));
+        myModule.service.getUserTenants = jest.fn(() => Promise.resolve(mockData));
 
-        const results = await module.actions.fetchUserTenants();
+        const results = await myModule.actions.fetchUserTenants();
 
         expect(results).toEqual(mockData.map((data: IBrandingEntityData) => ({
           ...data,
@@ -263,19 +263,19 @@ describe('>>> TenantSettings entity module', () => {
       it('calls the updateColours service', async () => {
         const payload = mockEditColoursRequest();
 
-        module.service.updateColours = jest.fn();
+        myModule.service.updateColours = jest.fn();
 
-        await module.actions.updateColours(actionContext, payload);
+        await myModule.actions.updateColours(actionContext, payload);
 
-        expect(module.service.updateColours).toHaveBeenCalledWith(payload);
+        expect(myModule.service.updateColours).toHaveBeenCalledWith(payload);
       });
 
       it('commits the tenantSettings', async () => {
         const payload = mockEditColoursRequest();
 
-        module.service.updateColours = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.updateColours = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
 
-        await module.actions.updateColours(actionContext, payload);
+        await myModule.actions.updateColours(actionContext, payload);
 
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
       });
@@ -285,19 +285,19 @@ describe('>>> TenantSettings entity module', () => {
       it('calls the updateTenantDetails service', async () => {
         const payload = mockEditTenantDetailsRequest();
 
-        module.service.updateTenantDetails = jest.fn();
+        myModule.service.updateTenantDetails = jest.fn();
 
-        await module.actions.updateTenantDetails(actionContext, payload);
+        await myModule.actions.updateTenantDetails(actionContext, payload);
 
-        expect(module.service.updateTenantDetails).toHaveBeenCalledWith(payload);
+        expect(myModule.service.updateTenantDetails).toHaveBeenCalledWith(payload);
       });
 
       it('commits the tenantSettings', async () => {
         const payload = mockEditTenantDetailsRequest();
 
-        module.service.updateTenantDetails = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.updateTenantDetails = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
 
-        await module.actions.updateTenantDetails(actionContext, payload);
+        await myModule.actions.updateTenantDetails(actionContext, payload);
 
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
       });
@@ -312,11 +312,11 @@ describe('>>> TenantSettings entity module', () => {
           },
         };
 
-        module.service.updateSupportEmails = jest.fn();
+        myModule.service.updateSupportEmails = jest.fn();
 
-        await module.actions.updateSupportEmails(actionContext, payload);
+        await myModule.actions.updateSupportEmails(actionContext, payload);
 
-        expect(module.service.updateSupportEmails).toHaveBeenCalledWith(payload);
+        expect(myModule.service.updateSupportEmails).toHaveBeenCalledWith(payload);
       });
 
       it('commits the tenantSettings', async () => {
@@ -327,9 +327,9 @@ describe('>>> TenantSettings entity module', () => {
           },
         };
 
-        module.service.updateSupportEmails = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+        myModule.service.updateSupportEmails = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
 
-        await module.actions.updateSupportEmails(actionContext, payload);
+        await myModule.actions.updateSupportEmails(actionContext, payload);
 
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
       });
@@ -337,17 +337,17 @@ describe('>>> TenantSettings entity module', () => {
 
     describe('fetchLogoUrl', () => {
       it('calls the getLogoUrl service', async () => {
-        module.service.getLogoUrl = jest.fn();
+        myModule.service.getLogoUrl = jest.fn();
 
-        await module.actions.fetchLogoUrl(actionContext, 'en');
+        await myModule.actions.fetchLogoUrl(actionContext, 'en');
 
-        expect(module.service.getLogoUrl).toHaveBeenCalledWith('en');
+        expect(myModule.service.getLogoUrl).toHaveBeenCalledWith('en');
       });
 
       it('commits the logoUrl', async () => {
-        module.service.getLogoUrl = jest.fn(() => Promise.resolve('mock url'));
+        myModule.service.getLogoUrl = jest.fn(() => Promise.resolve('mock url'));
 
-        await module.actions.fetchLogoUrl(actionContext, 'en');
+        await myModule.actions.fetchLogoUrl(actionContext, 'en');
 
         expect(actionContext.commit).toBeCalledWith('setLogoUrl', {
           languageCode: 'en',

@@ -4,6 +4,9 @@ import applicationInsights from './applicationInsights';
 
 jest.mock('@microsoft/applicationinsights-web');
 
+console.error = jest.fn();
+console.log = jest.fn();
+
 describe('ApplicationInsights', () => {
   const connectionString = 'some connection string';
   const appName = 'TestEMIS';

@@ -9,7 +9,7 @@ import { IFinancialAssistancePaymentEntityState } from './financialAssistancePay
 import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const service = new FinancialAssistancePaymentsService(httpClient);
-let module: FinancialAssistancePaymentEntityModule;
+let myModule: FinancialAssistancePaymentEntityModule;
 
 const actionContext = {
   commit: jest.fn(),
@@ -24,7 +24,7 @@ const signalR = mockSignalR();
 
 describe('Financial assistance payment entity module', () => {
   beforeEach(() => {
-    module = new FinancialAssistancePaymentEntityModule(service, signalR);
+    myModule = new FinancialAssistancePaymentEntityModule(service, signalR);
   });
 
   describe('actions', () => {
@@ -32,10 +32,10 @@ describe('Financial assistance payment entity module', () => {
       it('calls the right service and returns the result', async () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
         const entity = mockCaseFinancialAssistanceEntity();
-        module.service.addFinancialAssistancePayment = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.addFinancialAssistancePayment(actionContext, entity);
+        myModule.service.addFinancialAssistancePayment = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await myModule.actions.addFinancialAssistancePayment(actionContext, entity);
 
-        expect(module.service.addFinancialAssistancePayment).toBeCalledWith(entity);
+        expect(myModule.service.addFinancialAssistancePayment).toBeCalledWith(entity);
         expect(res).toEqual(serviceRes);
         expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', serviceRes);
         expect(actionContext.commit).toBeCalledWith('set', serviceRes);
@@ -47,10 +47,10 @@ describe('Financial assistance payment entity module', () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
         const entity = mockCaseFinancialAssistanceEntity();
 
-        module.service.editFinancialAssistancePayment = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.editFinancialAssistancePayment(actionContext, entity);
+        myModule.service.editFinancialAssistancePayment = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await myModule.actions.editFinancialAssistancePayment(actionContext, entity);
 
-        expect(module.service.editFinancialAssistancePayment).toBeCalledWith(entity);
+        expect(myModule.service.editFinancialAssistancePayment).toBeCalledWith(entity);
         expect(res).toEqual(serviceRes);
       });
     });
@@ -60,12 +60,12 @@ describe('Financial assistance payment entity module', () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
         const id = 'mock-id';
 
-        module.service.updatePaymentStatus = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.updatePaymentStatus(actionContext, {
+        myModule.service.updatePaymentStatus = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await myModule.actions.updatePaymentStatus(actionContext, {
           paymentGroupId: 'group-id', entityId: id, status: 2, cancellationReason: 5,
         });
 
-        expect(module.service.updatePaymentStatus).toBeCalledWith(id, 'group-id', 2, 5);
+        expect(myModule.service.updatePaymentStatus).toBeCalledWith(id, 'group-id', 2, 5);
         expect(res).toEqual(serviceRes);
       });
     });
@@ -75,10 +75,10 @@ describe('Financial assistance payment entity module', () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
         const entity = mockCaseFinancialAssistanceEntity();
 
-        module.service.submitFinancialAssistancePayment = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.submitFinancialAssistancePayment(actionContext, entity.id);
+        myModule.service.submitFinancialAssistancePayment = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await myModule.actions.submitFinancialAssistancePayment(actionContext, entity.id);
 
-        expect(module.service.submitFinancialAssistancePayment).toBeCalledWith(entity.id);
+        expect(myModule.service.submitFinancialAssistancePayment).toBeCalledWith(entity.id);
         expect(res).toEqual(serviceRes);
       });
     });
@@ -88,10 +88,10 @@ describe('Financial assistance payment entity module', () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
         const id = 'mock-id';
         const entity = mockCaseFinancialAssistanceEntity();
-        module.service.addFinancialAssistancePaymentLine = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.addFinancialAssistancePaymentLine(actionContext, { entity: entity.groups[0], financialAssistanceId: id });
+        myModule.service.addFinancialAssistancePaymentLine = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await myModule.actions.addFinancialAssistancePaymentLine(actionContext, { entity: entity.groups[0], financialAssistanceId: id });
 
-        expect(module.service.addFinancialAssistancePaymentLine).toBeCalledWith(id, entity.groups[0]);
+        expect(myModule.service.addFinancialAssistancePaymentLine).toBeCalledWith(id, entity.groups[0]);
         expect(res).toEqual(serviceRes);
       });
     });
@@ -101,10 +101,10 @@ describe('Financial assistance payment entity module', () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
         const id = 'mock-id';
         const entity = mockCaseFinancialAssistanceEntity();
-        module.service.editFinancialAssistancePaymentLine = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.editFinancialAssistancePaymentLine(actionContext, { entity: entity.groups[0], financialAssistanceId: id });
+        myModule.service.editFinancialAssistancePaymentLine = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await myModule.actions.editFinancialAssistancePaymentLine(actionContext, { entity: entity.groups[0], financialAssistanceId: id });
 
-        expect(module.service.editFinancialAssistancePaymentLine).toBeCalledWith(id, entity.groups[0]);
+        expect(myModule.service.editFinancialAssistancePaymentLine).toBeCalledWith(id, entity.groups[0]);
         expect(res).toEqual(serviceRes);
       });
     });
@@ -113,26 +113,26 @@ describe('Financial assistance payment entity module', () => {
       it('calls the right service and returns the result', async () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
         const id = 'mock-id';
-        module.service.deleteFinancialAssistancePaymentLine = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.deleteFinancialAssistancePaymentLine(actionContext, { paymentId: 'myId', financialAssistanceId: id });
+        myModule.service.deleteFinancialAssistancePaymentLine = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await myModule.actions.deleteFinancialAssistancePaymentLine(actionContext, { paymentId: 'myId', financialAssistanceId: id });
 
-        expect(module.service.deleteFinancialAssistancePaymentLine).toBeCalledWith(id, 'myId');
+        expect(myModule.service.deleteFinancialAssistancePaymentLine).toBeCalledWith(id, 'myId');
         expect(res).toEqual(serviceRes);
       });
     });
 
     describe('fetchHistory', () => {
       it('calls the fetchHistory service for the financial assistance and metadata if true and calls mapResponses and combineEntities with the results', async () => {
-        module.service.getHistory = jest.fn(() => Promise.resolve(mockFinancialPaymentHistory()));
-        module.service.getMetadataHistory = jest.fn(() => Promise.resolve([]));
+        myModule.service.getHistory = jest.fn(() => Promise.resolve(mockFinancialPaymentHistory()));
+        myModule.service.getMetadataHistory = jest.fn(() => Promise.resolve([]));
         utils.mapResponses = jest.fn();
         const combinedEntity = mockVersionedEntityCombined('financialAssistancePayment');
         utils.combineEntities = jest.fn(() => ([combinedEntity]));
 
-        const expectedRes = await module.actions.fetchHistory(actionContext, { financialAssistanceId: 'id', includeMetadata: true });
+        const expectedRes = await myModule.actions.fetchHistory(actionContext, { financialAssistanceId: 'id', includeMetadata: true });
 
-        expect(module.service.getHistory).toHaveBeenCalledWith('id');
-        expect(module.service.getMetadataHistory).toHaveBeenCalledWith('id');
+        expect(myModule.service.getHistory).toHaveBeenCalledWith('id');
+        expect(myModule.service.getMetadataHistory).toHaveBeenCalledWith('id');
 
         expect(utils.mapResponses).toHaveBeenCalledTimes(2);
         expect(utils.combineEntities).toHaveBeenCalled();

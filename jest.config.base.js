@@ -16,7 +16,7 @@ module.exports = {
   coverageReporters: ['cobertura'],
   transform: {
     'vee-validate/dist/rules': 'babel-jest',
-    '.*\\.(vue)$': 'vue-jest',
+    '.*\\.(vue)$': '@vue/vue2-jest',
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
   testMatch: [

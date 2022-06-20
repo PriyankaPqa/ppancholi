@@ -118,6 +118,7 @@ import entityUtils from '@libs/core-lib/entities/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import { IOptionItem } from '@/entities/optionItem';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import { IServerError } from '@libs/core-lib/types';
 
 export default mixins(handleUniqueNameSubmitError).extend({
 
@@ -280,7 +281,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
           await this.submitAgreement();
           this.$emit('close');
         } catch (e) {
-          const errorData = e.response?.data?.errors;
+          const errorData = (e as IServerError).response?.data?.errors;
           this.$appInsights.trackTrace('Event agreement dialog submit error', { error: errorData }, 'EventAgreementDialog', 'onSubmit');
           this.handleSubmitError(e);
         } finally {

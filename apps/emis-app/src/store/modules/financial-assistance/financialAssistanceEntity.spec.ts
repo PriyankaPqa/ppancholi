@@ -18,7 +18,7 @@ import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.typ
 import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const service = new FinancialAssistanceTablesService(httpClient);
-let module: FinancialAssistanceEntityModule;
+let myModule: FinancialAssistanceEntityModule;
 
 const mockProgram = mockProgramEntity();
 const mockState: IFinancialAssistanceEntityState = {
@@ -54,53 +54,53 @@ const actionContext = {
 
 describe('>>> Financial Assistance Module', () => {
   beforeEach(() => {
-    module = new FinancialAssistanceEntityModule(service, signalR);
+    myModule = new FinancialAssistanceEntityModule(service, signalR);
   });
 
   describe('>> Getters', () => {
     describe('name', () => {
       it('returns the name', () => {
-        module.mutations.setName(module.state, { name: 'new name', language: 'en' });
+        myModule.mutations.setName(myModule.state, { name: 'new name', language: 'en' });
 
-        expect(module.getters.name(module.state)('en')).toEqual('new name');
+        expect(myModule.getters.name(myModule.state)('en')).toEqual('new name');
       });
     });
 
     describe('status', () => {
       it('returns the status', () => {
-        module.mutations.setStatus(module.state, { status: Status.Active });
+        myModule.mutations.setStatus(myModule.state, { status: Status.Active });
 
-        expect(module.getters.status(module.state)).toEqual(Status.Active);
+        expect(myModule.getters.status(myModule.state)).toEqual(Status.Active);
       });
     });
 
     describe('addingItem', () => {
       it('returns the addingItem', () => {
-        module.mutations.setAddingItem(module.state, { addingItem: false });
+        myModule.mutations.setAddingItem(myModule.state, { addingItem: false });
 
-        expect(module.getters.addingItem(module.state)).toEqual(false);
+        expect(myModule.getters.addingItem(myModule.state)).toEqual(false);
       });
     });
 
     describe('program', () => {
       it('returns the program', () => {
-        module.mutations.setProgram(module.state, { program: mockProgram });
+        myModule.mutations.setProgram(myModule.state, { program: mockProgram });
 
-        expect(module.getters.program(module.state)).toEqual(mockProgram);
+        expect(myModule.getters.program(myModule.state)).toEqual(mockProgram);
       });
     });
 
     describe('items', () => {
       it('returns the items', () => {
-        module.mutations.setItems(module.state, { items: mockItems() });
+        myModule.mutations.setItems(myModule.state, { items: mockItems() });
 
-        expect(module.getters.items(module.state)).toEqual(mockItems());
+        expect(myModule.getters.items(myModule.state)).toEqual(mockItems());
       });
     });
 
     describe('newItem', () => {
       it('returns the newItem', () => {
-        expect(module.getters.newItem(module.state)).toEqual({
+        expect(myModule.getters.newItem(myModule.state)).toEqual({
           mainCategory: null,
           subItems: [],
         });
@@ -109,7 +109,7 @@ describe('>>> Financial Assistance Module', () => {
 
     describe('newSubItem', () => {
       it('returns the newSubItem', () => {
-        expect(module.getters.newSubItem(module.state)).toEqual({
+        expect(myModule.getters.newSubItem(myModule.state)).toEqual({
           subCategory: null,
           maximumAmount: 0,
           amountType: EFinancialAmountModes.Fixed,
@@ -121,59 +121,59 @@ describe('>>> Financial Assistance Module', () => {
 
     describe('editedItem', () => {
       it('returns the editedItem', () => {
-        module.mutations.setEditedItem(module.state, { editedItem: mockItems()[0] });
+        myModule.mutations.setEditedItem(myModule.state, { editedItem: mockItems()[0] });
 
-        expect(module.getters.editedItem(module.state)).toEqual(mockItems()[0]);
+        expect(myModule.getters.editedItem(myModule.state)).toEqual(mockItems()[0]);
       });
     });
 
     describe('editedItemIndex', () => {
       it('returns the editedItemIndex', () => {
-        module.mutations.setEditedItemIndex(module.state, { editedItemIndex: -1 });
+        myModule.mutations.setEditedItemIndex(myModule.state, { editedItemIndex: -1 });
 
-        expect(module.getters.editedSubItemIndex(module.state)).toEqual(-1);
+        expect(myModule.getters.editedSubItemIndex(myModule.state)).toEqual(-1);
       });
     });
 
     describe('subItems', () => {
       it('returns the subItems', () => {
-        module.mutations.setItems(module.state, { items: mockItems() });
+        myModule.mutations.setItems(myModule.state, { items: mockItems() });
 
-        expect(module.getters.subItems(module.state)(0)).toEqual(mockItems()[0].subItems);
+        expect(myModule.getters.subItems(myModule.state)(0)).toEqual(mockItems()[0].subItems);
       });
     });
 
     describe('dirty', () => {
       it('returns the dirty', () => {
-        module.mutations.setDirty(module.state, { dirty: false });
+        myModule.mutations.setDirty(myModule.state, { dirty: false });
 
-        expect(module.getters.dirty(module.state)).toEqual(false);
+        expect(myModule.getters.dirty(myModule.state)).toEqual(false);
       });
     });
 
     describe('formDirty', () => {
       it('returns the formDirty', () => {
-        module.mutations.setFormDirty(module.state, { formDirty: false });
+        myModule.mutations.setFormDirty(myModule.state, { formDirty: false });
 
-        expect(module.getters.formDirty(module.state)).toEqual(false);
+        expect(myModule.getters.formDirty(myModule.state)).toEqual(false);
       });
     });
 
     describe('loading', () => {
       it('returns the loading', () => {
-        module.mutations.setLoading(module.state, { loading: false });
+        myModule.mutations.setLoading(myModule.state, { loading: false });
 
-        expect(module.getters.loading(module.state)).toEqual(false);
+        expect(myModule.getters.loading(myModule.state)).toEqual(false);
       });
     });
 
     describe('isOperating', () => {
       it('returns the isOperating', () => {
-        expect(module.getters.isOperating(module.state)).toEqual(false);
+        expect(myModule.getters.isOperating(myModule.state)).toEqual(false);
 
-        module.state.addingItem = true;
+        myModule.state.addingItem = true;
 
-        expect(module.getters.isOperating(module.state)).toEqual(true);
+        expect(myModule.getters.isOperating(myModule.state)).toEqual(true);
       });
     });
   });
@@ -183,25 +183,25 @@ describe('>>> Financial Assistance Module', () => {
 
     describe('setName', () => {
       it('sets the name', () => {
-        module.mutations.setName(module.state, { name: 'test name', language: 'en' });
+        myModule.mutations.setName(myModule.state, { name: 'test name', language: 'en' });
 
-        expect(module.state.name.translation.en).toBe('test name');
+        expect(myModule.state.name.translation.en).toBe('test name');
       });
     });
 
     describe('setStatus', () => {
       it('sets the name', () => {
-        module.mutations.setStatus(module.state, { status: Status.Active });
+        myModule.mutations.setStatus(myModule.state, { status: Status.Active });
 
-        expect(module.state.status).toEqual(Status.Active);
+        expect(myModule.state.status).toEqual(Status.Active);
       });
     });
 
     describe('setAddingItem', () => {
       it('sets the setAddingItem', () => {
-        module.mutations.setAddingItem(module.state, { addingItem: true });
+        myModule.mutations.setAddingItem(myModule.state, { addingItem: true });
 
-        expect(module.state.addingItem).toEqual(true);
+        expect(myModule.state.addingItem).toEqual(true);
       });
     });
 
@@ -209,17 +209,17 @@ describe('>>> Financial Assistance Module', () => {
       it('sets the setProgram', () => {
         const program = mockProgram;
 
-        module.mutations.setProgram(module.state, { program });
+        myModule.mutations.setProgram(myModule.state, { program });
 
-        expect(module.state.program).toEqual(program);
+        expect(myModule.state.program).toEqual(program);
       });
     });
 
     describe('setItems', () => {
       it('sets the setItems', () => {
-        module.mutations.setItems(module.state, { items: mockItems() });
+        myModule.mutations.setItems(myModule.state, { items: mockItems() });
 
-        expect(module.state.mainItems).toEqual(mockItems());
+        expect(myModule.state.mainItems).toEqual(mockItems());
       });
     });
 
@@ -227,9 +227,9 @@ describe('>>> Financial Assistance Module', () => {
       it('sets the setNewItemItem', () => {
         const item = mockItems()[1];
 
-        module.mutations.setNewItemItem(module.state, { item: item.mainCategory });
+        myModule.mutations.setNewItemItem(myModule.state, { item: item.mainCategory });
 
-        expect(module.state.newItem.mainCategory).toEqual(item.mainCategory);
+        expect(myModule.state.newItem.mainCategory).toEqual(item.mainCategory);
       });
     });
 
@@ -237,41 +237,41 @@ describe('>>> Financial Assistance Module', () => {
       it('sets the setNewSubItemSubItem', () => {
         const subItem = mockItems()[0].mainCategory.subitems[0];
 
-        module.mutations.setNewSubItemSubItem(module.state, { subItem });
+        myModule.mutations.setNewSubItemSubItem(myModule.state, { subItem });
 
-        expect(module.state.newSubItem.subCategory).toEqual(subItem);
+        expect(myModule.state.newSubItem.subCategory).toEqual(subItem);
       });
     });
 
     describe('setNewSubItemMaximum', () => {
       it('sets the setNewSubItemMaximum', () => {
-        module.mutations.setNewSubItemMaximum(module.state, { maximum: 9 });
+        myModule.mutations.setNewSubItemMaximum(myModule.state, { maximum: 9 });
 
-        expect(module.state.newSubItem.maximumAmount).toEqual(9);
+        expect(myModule.state.newSubItem.maximumAmount).toEqual(9);
       });
     });
 
     describe('setNewSubItemAmountType', () => {
       it('sets the setNewSubItemAmountType', () => {
-        module.mutations.setNewSubItemAmountType(module.state, { amountType: EFinancialAmountModes.Fixed });
+        myModule.mutations.setNewSubItemAmountType(myModule.state, { amountType: EFinancialAmountModes.Fixed });
 
-        expect(module.state.newSubItem.amountType).toEqual(EFinancialAmountModes.Fixed);
+        expect(myModule.state.newSubItem.amountType).toEqual(EFinancialAmountModes.Fixed);
       });
     });
 
     describe('setNewSubItemDocumentationRequired', () => {
       it('sets the setNewSubItemDocumentationRequired', () => {
-        module.mutations.setNewSubItemDocumentationRequired(module.state, { documentationRequired: true });
+        myModule.mutations.setNewSubItemDocumentationRequired(myModule.state, { documentationRequired: true });
 
-        expect(module.state.newSubItem.documentationRequired).toEqual(true);
+        expect(myModule.state.newSubItem.documentationRequired).toEqual(true);
       });
     });
 
     describe('setNewSubItemFrequency', () => {
       it('sets the setNewSubItemFrequency', () => {
-        module.mutations.setNewSubItemFrequency(module.state, { frequency: EFinancialFrequency.Multiple });
+        myModule.mutations.setNewSubItemFrequency(myModule.state, { frequency: EFinancialFrequency.Multiple });
 
-        expect(module.state.newSubItem.frequency).toEqual(EFinancialFrequency.Multiple);
+        expect(myModule.state.newSubItem.frequency).toEqual(EFinancialFrequency.Multiple);
       });
     });
 
@@ -279,9 +279,9 @@ describe('>>> Financial Assistance Module', () => {
       it('sets the setItem', () => {
         const item = mockItems()[2];
 
-        module.mutations.setItem(module.state, { item, index: 1 });
+        myModule.mutations.setItem(myModule.state, { item, index: 1 });
 
-        expect(module.state.mainItems[1]).toEqual(item);
+        expect(myModule.state.mainItems[1]).toEqual(item);
       });
     });
 
@@ -289,11 +289,11 @@ describe('>>> Financial Assistance Module', () => {
       it('sets the setItemItem', () => {
         const { mainCategory } = mockItems()[1];
 
-        module.state.mainItems = mockItems();
+        myModule.state.mainItems = mockItems();
 
-        module.mutations.setItemItem(module.state, { item: mainCategory, index: 0 });
+        myModule.mutations.setItemItem(myModule.state, { item: mainCategory, index: 0 });
 
-        expect(module.state.mainItems[0].mainCategory).toEqual(mainCategory);
+        expect(myModule.state.mainItems[0].mainCategory).toEqual(mainCategory);
       });
     });
 
@@ -301,11 +301,11 @@ describe('>>> Financial Assistance Module', () => {
       it('sets the setSubItem', () => {
         const subItem = mockSubItems()[1];
 
-        module.state.mainItems = mockItems();
+        myModule.state.mainItems = mockItems();
 
-        module.mutations.setSubItem(module.state, { subItem, index: 1, parentIndex: 1 });
+        myModule.mutations.setSubItem(myModule.state, { subItem, index: 1, parentIndex: 1 });
 
-        expect(module.state.mainItems[1].subItems[1]).toEqual(subItem);
+        expect(myModule.state.mainItems[1].subItems[1]).toEqual(subItem);
       });
     });
 
@@ -313,27 +313,27 @@ describe('>>> Financial Assistance Module', () => {
       it('adds item', () => {
         const item = mockItems()[1];
 
-        module.state.mainItems = mockItems();
+        myModule.state.mainItems = mockItems();
 
-        expect(module.state.mainItems.length).toBe(2);
+        expect(myModule.state.mainItems.length).toBe(2);
 
-        module.mutations.addItem(module.state, { item });
+        myModule.mutations.addItem(myModule.state, { item });
 
-        expect(module.state.mainItems.length).toBe(3);
+        expect(myModule.state.mainItems.length).toBe(3);
       });
     });
 
     describe('addSubItem', () => {
       it('sets the addSubItem', () => {
-        module.state.mainItems = mockItems();
+        myModule.state.mainItems = mockItems();
 
-        expect(module.state.mainItems[1].subItems.length).toEqual(1);
+        expect(myModule.state.mainItems[1].subItems.length).toEqual(1);
 
         const subItem = mockSubItems()[1];
 
-        module.mutations.addSubItem(module.state, { subItem, index: 1 });
+        myModule.mutations.addSubItem(myModule.state, { subItem, index: 1 });
 
-        expect(module.state.mainItems[1].subItems.length).toEqual(2);
+        expect(myModule.state.mainItems[1].subItems.length).toEqual(2);
       });
     });
 
@@ -341,139 +341,139 @@ describe('>>> Financial Assistance Module', () => {
       it('sets the editedItem', () => {
         const editedItem = mockItems()[1];
 
-        module.mutations.setEditedItem(module.state, { editedItem });
+        myModule.mutations.setEditedItem(myModule.state, { editedItem });
 
-        expect(module.state.editedItem).toStrictEqual(editedItem);
+        expect(myModule.state.editedItem).toStrictEqual(editedItem);
       });
     });
 
     describe('setEditedItemIndex', () => {
       it('sets the editedItemIndex', () => {
-        module.mutations.setEditedItemIndex(module.state, { editedItemIndex: 1 });
+        myModule.mutations.setEditedItemIndex(myModule.state, { editedItemIndex: 1 });
 
-        expect(module.state.editedItemIndex).toStrictEqual(1);
+        expect(myModule.state.editedItemIndex).toStrictEqual(1);
       });
     });
 
     describe('setEditedSubItemIndex', () => {
       it('sets the editedSubItemIndex', () => {
-        module.mutations.setEditedSubItemIndex(module.state, { editedSubItemIndex: 2 });
+        myModule.mutations.setEditedSubItemIndex(myModule.state, { editedSubItemIndex: 2 });
 
-        expect(module.state.editedSubItemIndex).toEqual(2);
+        expect(myModule.state.editedSubItemIndex).toEqual(2);
       });
     });
 
     describe('deleteItem', () => {
       it('deletes the item', () => {
-        module.state.mainItems = mockItems();
+        myModule.state.mainItems = mockItems();
 
-        expect(module.state.mainItems.length).toEqual(2);
+        expect(myModule.state.mainItems.length).toEqual(2);
 
-        module.mutations.deleteItem(module.state, { index: 1 });
+        myModule.mutations.deleteItem(myModule.state, { index: 1 });
 
-        expect(module.state.mainItems.length).toEqual(1);
+        expect(myModule.state.mainItems.length).toEqual(1);
       });
     });
 
     describe('deleteSubItem', () => {
       it('deletes the subItem', () => {
-        module.state.mainItems = mockItems();
+        myModule.state.mainItems = mockItems();
 
-        expect(module.state.mainItems[0].subItems.length).toEqual(2);
+        expect(myModule.state.mainItems[0].subItems.length).toEqual(2);
 
-        module.mutations.deleteSubItem(module.state, { index: 0, parentIndex: 0 });
+        myModule.mutations.deleteSubItem(myModule.state, { index: 0, parentIndex: 0 });
 
-        expect(module.state.mainItems[0].subItems.length).toEqual(1);
+        expect(myModule.state.mainItems[0].subItems.length).toEqual(1);
       });
     });
 
     describe('setDirty', () => {
       it('sets the dirty', () => {
-        expect(module.state.dirty).toEqual(false);
+        expect(myModule.state.dirty).toEqual(false);
 
-        module.mutations.setDirty(module.state, { dirty: true });
+        myModule.mutations.setDirty(myModule.state, { dirty: true });
 
-        expect(module.state.dirty).toEqual(true);
+        expect(myModule.state.dirty).toEqual(true);
       });
     });
 
     describe('setFormDirty', () => {
       it('sets the formDirty', () => {
-        expect(module.state.formDirty).toEqual(false);
+        expect(myModule.state.formDirty).toEqual(false);
 
-        module.mutations.setFormDirty(module.state, { formDirty: true });
+        myModule.mutations.setFormDirty(myModule.state, { formDirty: true });
 
-        expect(module.state.formDirty).toEqual(true);
+        expect(myModule.state.formDirty).toEqual(true);
       });
     });
 
     describe('setLoading', () => {
       it('sets the loading', () => {
-        expect(module.state.loading).toEqual(false);
+        expect(myModule.state.loading).toEqual(false);
 
-        module.mutations.setLoading(module.state, { loading: true });
+        myModule.mutations.setLoading(myModule.state, { loading: true });
 
-        expect(module.state.loading).toEqual(true);
+        expect(myModule.state.loading).toEqual(true);
       });
     });
 
     describe('resetNewItem', () => {
       it('resets the newItem', () => {
-        module.mutations.resetNewItem(module.state);
+        myModule.mutations.resetNewItem(myModule.state);
 
-        expect(module.state.newItem.mainCategory).toEqual(null);
-        expect(module.state.newItem.subItems).toEqual([]);
+        expect(myModule.state.newItem.mainCategory).toEqual(null);
+        expect(myModule.state.newItem.subItems).toEqual([]);
       });
     });
 
     describe('cancelOperation', () => {
       it('resets the related fields', () => {
-        module.mutations.cancelOperation(module.state);
+        myModule.mutations.cancelOperation(myModule.state);
 
-        expect(module.state.addingItem).toEqual(false);
-        expect(module.state.editedItem).toEqual(null);
-        expect(module.state.editedItemIndex).toEqual(-1);
-        expect(module.state.editedSubItemIndex).toEqual(-1);
+        expect(myModule.state.addingItem).toEqual(false);
+        expect(myModule.state.editedItem).toEqual(null);
+        expect(myModule.state.editedItemIndex).toEqual(-1);
+        expect(myModule.state.editedSubItemIndex).toEqual(-1);
       });
     });
 
     describe('resetNewSubItem', () => {
       it('resets the newSubItem', () => {
-        module.mutations.resetNewSubItem(module.state);
+        myModule.mutations.resetNewSubItem(myModule.state);
 
-        expect(module.state.newSubItem.subCategory).toEqual(null);
-        expect(module.state.newSubItem.maximumAmount).toEqual(0);
-        expect(module.state.newSubItem.amountType).toEqual(EFinancialAmountModes.Fixed);
-        expect(module.state.newSubItem.documentationRequired).toEqual(false);
-        expect(module.state.newSubItem.frequency).toEqual(EFinancialFrequency.OneTime);
+        expect(myModule.state.newSubItem.subCategory).toEqual(null);
+        expect(myModule.state.newSubItem.maximumAmount).toEqual(0);
+        expect(myModule.state.newSubItem.amountType).toEqual(EFinancialAmountModes.Fixed);
+        expect(myModule.state.newSubItem.documentationRequired).toEqual(false);
+        expect(myModule.state.newSubItem.frequency).toEqual(EFinancialFrequency.OneTime);
       });
     });
 
     describe('resetState', () => {
       it('resets the state', () => {
-        module.mutations.resetState(module.state);
+        myModule.mutations.resetState(myModule.state);
 
-        expect(module.state.id).toEqual('');
-        expect(module.state.name).toEqual({
+        expect(myModule.state.id).toEqual('');
+        expect(myModule.state.name).toEqual({
           translation: {
             en: '',
             fr: '',
           },
         });
-        expect(module.state.program).toEqual(null);
-        expect(module.state.mainItems).toEqual([]);
-        expect(module.state.dirty).toEqual(false);
-        expect(module.state.formDirty).toEqual(false);
-        expect(module.state.loading).toEqual(false);
-        expect(module.state.addingItem).toEqual(false);
-        expect(module.state.editedItem).toEqual(null);
-        expect(module.state.editedItemIndex).toEqual(-1);
-        expect(module.state.editedSubItemIndex).toEqual(-1);
-        expect(module.state.newItem).toEqual({
+        expect(myModule.state.program).toEqual(null);
+        expect(myModule.state.mainItems).toEqual([]);
+        expect(myModule.state.dirty).toEqual(false);
+        expect(myModule.state.formDirty).toEqual(false);
+        expect(myModule.state.loading).toEqual(false);
+        expect(myModule.state.addingItem).toEqual(false);
+        expect(myModule.state.editedItem).toEqual(null);
+        expect(myModule.state.editedItemIndex).toEqual(-1);
+        expect(myModule.state.editedSubItemIndex).toEqual(-1);
+        expect(myModule.state.newItem).toEqual({
           mainCategory: null,
           subItems: [],
         });
-        expect(module.state.newSubItem).toEqual({
+        expect(myModule.state.newSubItem).toEqual({
           subCategory: null,
           maximumAmount: 0,
           amountType: EFinancialAmountModes.Fixed,
@@ -485,73 +485,73 @@ describe('>>> Financial Assistance Module', () => {
 
     describe('setFinancialAssistance', () => {
       it('should set the id', () => {
-        expect(module.state.id).toEqual('');
+        expect(myModule.state.id).toEqual('');
 
-        module.mutations.setFinancialAssistance(module.state, {
+        myModule.mutations.setFinancialAssistance(myModule.state, {
           fa: mockCombinedFinancialAssistance(),
           categories: mockOptionItems(),
           program: mockProgram,
           removeInactiveItems: true,
         });
 
-        expect(module.state.id).toEqual(mockCombinedFinancialAssistance().entity.id);
+        expect(myModule.state.id).toEqual(mockCombinedFinancialAssistance().entity.id);
       });
 
       it('should set the program', () => {
-        expect(module.state.program).toEqual(null);
+        expect(myModule.state.program).toEqual(null);
 
-        module.mutations.setFinancialAssistance(module.state, {
+        myModule.mutations.setFinancialAssistance(myModule.state, {
           fa: mockCombinedFinancialAssistance(),
           categories: mockOptionItems(),
           program: mockProgram,
           removeInactiveItems: true,
         });
 
-        expect(module.state.program).toEqual(mockProgram);
+        expect(myModule.state.program).toEqual(mockProgram);
       });
 
       it('should set the name', () => {
-        expect(module.state.name).toEqual({
+        expect(myModule.state.name).toEqual({
           translation: {
             en: '',
             fr: '',
           },
         });
 
-        module.mutations.setFinancialAssistance(module.state, {
+        myModule.mutations.setFinancialAssistance(myModule.state, {
           fa: mockCombinedFinancialAssistance(),
           categories: mockOptionItems(),
           program: mockProgram,
           removeInactiveItems: true,
         });
 
-        expect(module.state.name).toEqual(mockCombinedFinancialAssistance().entity.name);
+        expect(myModule.state.name).toEqual(mockCombinedFinancialAssistance().entity.name);
       });
 
       it('should set the status', () => {
-        expect(module.state.status).toEqual(Status.Inactive);
+        expect(myModule.state.status).toEqual(Status.Inactive);
 
-        module.mutations.setFinancialAssistance(module.state, {
+        myModule.mutations.setFinancialAssistance(myModule.state, {
           fa: mockCombinedFinancialAssistance(),
           categories: mockOptionItems(),
           program: mockProgram,
           removeInactiveItems: true,
         });
 
-        expect(module.state.status).toEqual(mockCombinedFinancialAssistance().entity.status);
+        expect(myModule.state.status).toEqual(mockCombinedFinancialAssistance().entity.status);
       });
 
       it('should set mainItems', () => {
-        expect(module.state.mainItems).toEqual([]);
+        expect(myModule.state.mainItems).toEqual([]);
 
-        module.mutations.setFinancialAssistance(module.state, {
+        myModule.mutations.setFinancialAssistance(myModule.state, {
           fa: mockCombinedFinancialAssistance(),
           categories: mockOptionItems(),
           program: mockProgram,
           removeInactiveItems: true,
         });
 
-        expect(module.state.mainItems.length).toEqual(2);
+        expect(myModule.state.mainItems.length).toEqual(2);
       });
     });
   });
@@ -560,16 +560,16 @@ describe('>>> Financial Assistance Module', () => {
     describe('createFinancialAssistance', () => {
       it('calls the service', async () => {
         const res = {} as IFinancialAssistanceTableEntity;
-        module.service.createFinancialAssistanceTable = jest.fn(() => Promise.resolve(res));
+        myModule.service.createFinancialAssistanceTable = jest.fn(() => Promise.resolve(res));
 
-        expect(module.service.createFinancialAssistanceTable).toHaveBeenCalledTimes(0);
+        expect(myModule.service.createFinancialAssistanceTable).toHaveBeenCalledTimes(0);
 
-        await module.actions.createFinancialAssistance(actionContext, { table: true });
+        await myModule.actions.createFinancialAssistance(actionContext, { table: true });
 
         expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
         expect(actionContext.commit).toBeCalledWith('set', res);
-        expect(module.service.createFinancialAssistanceTable).toHaveBeenCalledTimes(1);
-        expect(module.service.createFinancialAssistanceTable).toHaveBeenCalledWith({
+        expect(myModule.service.createFinancialAssistanceTable).toHaveBeenCalledTimes(1);
+        expect(myModule.service.createFinancialAssistanceTable).toHaveBeenCalledWith({
           status: Status.Inactive,
           eventId: mockProgram.eventId,
           programId: mockProgram.id,
@@ -599,16 +599,16 @@ describe('>>> Financial Assistance Module', () => {
 
     describe('editFinancialAssistance', () => {
       it('calls the service', async () => {
-        module.service.editFinancialAssistanceTable = jest.fn();
+        myModule.service.editFinancialAssistanceTable = jest.fn();
 
-        expect(module.service.editFinancialAssistanceTable).toHaveBeenCalledTimes(0);
+        expect(myModule.service.editFinancialAssistanceTable).toHaveBeenCalledTimes(0);
 
         actionContext.state.id = 'id';
 
-        await module.actions.editFinancialAssistance(actionContext);
+        await myModule.actions.editFinancialAssistance(actionContext);
 
-        expect(module.service.editFinancialAssistanceTable).toHaveBeenCalledTimes(1);
-        expect(module.service.editFinancialAssistanceTable).toHaveBeenCalledWith('id', {
+        expect(myModule.service.editFinancialAssistanceTable).toHaveBeenCalledTimes(1);
+        expect(myModule.service.editFinancialAssistanceTable).toHaveBeenCalledWith('id', {
           status: Status.Inactive,
           name: mockFinancialAssistanceTableEntity().name,
         });
@@ -617,9 +617,9 @@ describe('>>> Financial Assistance Module', () => {
 
     describe('createSubItem', () => {
       it('calls the service', async () => {
-        module.service.createSubItem = jest.fn();
+        myModule.service.createSubItem = jest.fn();
 
-        expect(module.service.createSubItem).toHaveBeenCalledTimes(0);
+        expect(myModule.service.createSubItem).toHaveBeenCalledTimes(0);
 
         const mainItems = mockItems();
         const faId = 'faId';
@@ -630,10 +630,10 @@ describe('>>> Financial Assistance Module', () => {
         actionContext.state.id = faId;
         actionContext.state.mainItems = mainItems;
 
-        await module.actions.createSubItem(actionContext, { itemIndex, subItem });
+        await myModule.actions.createSubItem(actionContext, { itemIndex, subItem });
 
-        expect(module.service.createSubItem).toHaveBeenCalledTimes(1);
-        expect(module.service.createSubItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id, {
+        expect(myModule.service.createSubItem).toHaveBeenCalledTimes(1);
+        expect(myModule.service.createSubItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id, {
           subCategory: {
             optionItemId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
             specifiedOther: null,
@@ -649,9 +649,9 @@ describe('>>> Financial Assistance Module', () => {
 
     describe('editSubItem', () => {
       it('calls the service', async () => {
-        module.service.editSubItem = jest.fn();
+        myModule.service.editSubItem = jest.fn();
 
-        expect(module.service.editSubItem).toHaveBeenCalledTimes(0);
+        expect(myModule.service.editSubItem).toHaveBeenCalledTimes(0);
 
         const mainItems = mockItems();
         const faId = 'faId';
@@ -663,10 +663,10 @@ describe('>>> Financial Assistance Module', () => {
         actionContext.state.id = faId;
         actionContext.state.mainItems = mainItems;
 
-        await module.actions.editSubItem(actionContext, { itemIndex, subItemIndex, subItem });
+        await myModule.actions.editSubItem(actionContext, { itemIndex, subItemIndex, subItem });
 
-        expect(module.service.editSubItem).toHaveBeenCalledTimes(1);
-        expect(module.service.editSubItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id, mainItems[itemIndex].subItems[subItemIndex].id, {
+        expect(myModule.service.editSubItem).toHaveBeenCalledTimes(1);
+        expect(myModule.service.editSubItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id, mainItems[itemIndex].subItems[subItemIndex].id, {
           subCategory: {
             optionItemId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
             specifiedOther: null,
@@ -682,9 +682,9 @@ describe('>>> Financial Assistance Module', () => {
 
     describe('deleteSubItem', () => {
       it('calls the service', async () => {
-        module.service.deleteSubItem = jest.fn();
+        myModule.service.deleteSubItem = jest.fn();
 
-        expect(module.service.deleteSubItem).toHaveBeenCalledTimes(0);
+        expect(myModule.service.deleteSubItem).toHaveBeenCalledTimes(0);
 
         const mainItems = mockItems();
         const faId = 'faId';
@@ -695,18 +695,18 @@ describe('>>> Financial Assistance Module', () => {
         actionContext.state.id = faId;
         actionContext.state.mainItems = mainItems;
 
-        await module.actions.deleteSubItem(actionContext, { itemIndex, subItemIndex });
+        await myModule.actions.deleteSubItem(actionContext, { itemIndex, subItemIndex });
 
-        expect(module.service.deleteSubItem).toHaveBeenCalledTimes(1);
-        expect(module.service.deleteSubItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id, mainItems[itemIndex].subItems[subItemIndex].id);
+        expect(myModule.service.deleteSubItem).toHaveBeenCalledTimes(1);
+        expect(myModule.service.deleteSubItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id, mainItems[itemIndex].subItems[subItemIndex].id);
       });
     });
 
     describe('deleteItem', () => {
       it('calls the service', async () => {
-        module.service.deleteItem = jest.fn();
+        myModule.service.deleteItem = jest.fn();
 
-        expect(module.service.deleteItem).toHaveBeenCalledTimes(0);
+        expect(myModule.service.deleteItem).toHaveBeenCalledTimes(0);
 
         const mainItems = mockItems();
         const faId = 'faId';
@@ -716,10 +716,10 @@ describe('>>> Financial Assistance Module', () => {
         actionContext.state.id = faId;
         actionContext.state.mainItems = mainItems;
 
-        await module.actions.deleteItem(actionContext, { itemIndex });
+        await myModule.actions.deleteItem(actionContext, { itemIndex });
 
-        expect(module.service.deleteItem).toHaveBeenCalledTimes(1);
-        expect(module.service.deleteItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id);
+        expect(myModule.service.deleteItem).toHaveBeenCalledTimes(1);
+        expect(myModule.service.deleteItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id);
       });
     });
 
@@ -731,7 +731,7 @@ describe('>>> Financial Assistance Module', () => {
           items: [mockItemData()],
         }));
 
-        await module.actions.reloadItems(actionContext, { categories: [] });
+        await myModule.actions.reloadItems(actionContext, { categories: [] });
 
         expect(actionContext.dispatch).toHaveBeenCalledWith('fetch', {
           idParams: 'faId',
@@ -741,14 +741,14 @@ describe('>>> Financial Assistance Module', () => {
 
     describe('fetchByProgramId', () => {
       it('calls the service with proper parameters', async () => {
-        module.service.fetchByProgramId = jest.fn();
+        myModule.service.fetchByProgramId = jest.fn();
 
-        expect(module.service.fetchByProgramId).toHaveBeenCalledTimes(0);
+        expect(myModule.service.fetchByProgramId).toHaveBeenCalledTimes(0);
 
-        await module.actions.fetchByProgramId(actionContext, { programId: 'programId' });
+        await myModule.actions.fetchByProgramId(actionContext, { programId: 'programId' });
 
-        expect(module.service.fetchByProgramId).toHaveBeenCalledTimes(1);
-        expect(module.service.fetchByProgramId).toHaveBeenCalledWith('programId');
+        expect(myModule.service.fetchByProgramId).toHaveBeenCalledTimes(1);
+        expect(myModule.service.fetchByProgramId).toHaveBeenCalledWith('programId');
       });
     });
   });

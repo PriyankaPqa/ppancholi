@@ -14,7 +14,7 @@ import { mockSignalR } from '../../../ui/plugins/signal-r';
 const signalR = mockSignalR();
 const service = new CaseNotesService(httpClient);
 const optionItemService = new OptionItemsService(httpClient);
-const module = new CaseNoteEntityModule(service, optionItemService, signalR);
+const myModule = new CaseNoteEntityModule(service, optionItemService, signalR);
 
 const actionContext = {
   commit: jest.fn(),
@@ -29,8 +29,8 @@ describe('Case file entity module', () => {
   describe('getters', () => {
     describe('caseNoteCategories', () => {
       test('the getter returns the sorted case note categories', () => {
-        module.mutations.setCaseNoteCategories(module.state, mockCaseNoteCategories());
-        const res = module.getters.caseNoteCategories(module.state)(true);
+        myModule.mutations.setCaseNoteCategories(myModule.state, mockCaseNoteCategories());
+        const res = myModule.getters.caseNoteCategories(myModule.state)(true);
         expect(res).toEqual(
           _sortBy(
             mockCaseNoteCategories().map((e) => new OptionItem(e)),
@@ -45,31 +45,31 @@ describe('Case file entity module', () => {
     describe('setCaseNoteCategories', () => {
       test('the setCaseNoteCategories mutation sets the caseNoteCategories state', () => {
         const categories = mockOptionItemData();
-        module.mutations.setCaseNoteCategories(module.state, categories);
-        expect(module.state.caseNoteCategories).toEqual(categories);
+        myModule.mutations.setCaseNoteCategories(myModule.state, categories);
+        expect(myModule.state.caseNoteCategories).toEqual(categories);
       });
     });
 
     describe('setCaseNoteCategoriesFetched', () => {
       test('the setCaseNoteCategoriesFetched mutation sets the caseNoteCategoriesFetched state', () => {
-        module.mutations.setCaseNoteCategoriesFetched(module.state, true);
-        expect(module.state.caseNoteCategoriesFetched).toEqual(true);
+        myModule.mutations.setCaseNoteCategoriesFetched(myModule.state, true);
+        expect(myModule.state.caseNoteCategoriesFetched).toEqual(true);
       });
     });
 
     describe('setIsSavingCaseNote', () => {
       test('the setIsSavingCaseNote mutation sets the isSavingCaseNote state', () => {
-        expect(module.state.isSavingCaseNote).toBe(false);
-        module.mutations.setIsSavingCaseNote(module.state, true);
-        expect(module.state.isSavingCaseNote).toBe(true);
+        expect(myModule.state.isSavingCaseNote).toBe(false);
+        myModule.mutations.setIsSavingCaseNote(myModule.state, true);
+        expect(myModule.state.isSavingCaseNote).toBe(true);
       });
     });
 
     describe('setIsLoadingCaseNotes', () => {
       test('the setIsLoadingCaseNotes mutation sets the isLoadingCaseNotes state', () => {
-        expect(module.state.isLoadingCaseNotes).toBe(false);
-        module.mutations.setIsLoadingCaseNotes(module.state, true);
-        expect(module.state.isLoadingCaseNotes).toBe(true);
+        expect(myModule.state.isLoadingCaseNotes).toBe(false);
+        myModule.mutations.setIsLoadingCaseNotes(myModule.state, true);
+        expect(myModule.state.isLoadingCaseNotes).toBe(true);
       });
     });
   });
@@ -78,10 +78,10 @@ describe('Case file entity module', () => {
     describe('fetchCaseNoteCategories', () => {
       it('should call optionItemService getOptionList and commit the result', async () => {
         const res = mockOptionItemData();
-        module.optionItemService.getOptionList = jest.fn(() => Promise.resolve(res));
-        await module.actions.fetchCaseNoteCategories(actionContext);
+        myModule.optionItemService.getOptionList = jest.fn(() => Promise.resolve(res));
+        await myModule.actions.fetchCaseNoteCategories(actionContext);
 
-        expect(module.optionItemService.getOptionList).toBeCalledWith(EOptionLists.CaseNoteCategories);
+        expect(myModule.optionItemService.getOptionList).toBeCalledWith(EOptionLists.CaseNoteCategories);
         expect(actionContext.commit).toBeCalledWith('setCaseNoteCategories', res);
       });
     });
@@ -91,10 +91,10 @@ describe('Case file entity module', () => {
         const serviceRes = mockCaseNoteEntity();
         const id = 'mock-id';
         const caseNote = mockCaseNoteEntity();
-        module.service.addCaseNote = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.addCaseNote(actionContext, { id, caseNote });
+        myModule.service.addCaseNote = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await myModule.actions.addCaseNote(actionContext, { id, caseNote });
 
-        expect(module.service.addCaseNote).toBeCalledWith(id, caseNote);
+        expect(myModule.service.addCaseNote).toBeCalledWith(id, caseNote);
         expect(res).toEqual(serviceRes);
         expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
         expect(actionContext.commit).toBeCalledWith('set', res);
@@ -107,10 +107,10 @@ describe('Case file entity module', () => {
         const caseFileId = 'mock-case-file-id';
         const caseNoteId = 'mock-case-note-id';
         const isPinned = true;
-        module.service.pinCaseNote = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.pinCaseNote(actionContext, { caseFileId, caseNoteId, isPinned });
+        myModule.service.pinCaseNote = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await myModule.actions.pinCaseNote(actionContext, { caseFileId, caseNoteId, isPinned });
 
-        expect(module.service.pinCaseNote).toBeCalledWith(caseFileId, caseNoteId, isPinned);
+        expect(myModule.service.pinCaseNote).toBeCalledWith(caseFileId, caseNoteId, isPinned);
         expect(res).toEqual(serviceRes);
       });
     });
@@ -122,10 +122,10 @@ describe('Case file entity module', () => {
         const caseNoteId = 'mock-case-note-id';
         const caseNote = mockCaseNoteEntity();
 
-        module.service.editCaseNote = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.editCaseNote(actionContext, { caseFileId, caseNoteId, caseNote });
+        myModule.service.editCaseNote = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await myModule.actions.editCaseNote(actionContext, { caseFileId, caseNoteId, caseNote });
 
-        expect(module.service.editCaseNote).toBeCalledWith(caseFileId, caseNoteId, caseNote);
+        expect(myModule.service.editCaseNote).toBeCalledWith(caseFileId, caseNoteId, caseNote);
         expect(res).toEqual(serviceRes);
       });
     });

@@ -30,20 +30,16 @@ export default {
 
   downloadCsv(csv: string, exportedFilename: string) {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    if (navigator.msSaveBlob) { // IE 10+
-      navigator.msSaveBlob(blob, exportedFilename);
-    } else {
-      const link = document.createElement('a');
-      if (link.download !== undefined) { // feature detection
+    const link = document.createElement('a');
+    if (link.download !== undefined) { // feature detection
       // Browsers that support HTML5 download attribute
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', exportedFilename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', exportedFilename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   },
 

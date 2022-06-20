@@ -1,7 +1,7 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import _sortBy from 'lodash/sortBy';
 import { IMultilingual } from '@/types';
-import { BaseEntity, Status } from '@libs/core-lib/entities/base';
+import { BaseEntity } from '@libs/core-lib/entities/base';
 import utils from '@libs/core-lib/entities/utils';
 import {
   IOptionItem, IOptionItemData, IOptionSubItem,
@@ -14,8 +14,6 @@ export class OptionItem extends BaseEntity implements IOptionItem {
 
   readonly orderRank: number;
 
-  readonly status: Status;
-
   readonly isOther: boolean;
 
   readonly isDefault: boolean;
@@ -27,7 +25,6 @@ export class OptionItem extends BaseEntity implements IOptionItem {
     this.name = utils.initMultilingualAttributes(data.name);
     this.description = utils.initMultilingualAttributes(data.description);
     this.orderRank = data.orderRank;
-    this.status = data.status;
     this.isOther = data.isOther;
     this.isDefault = data.isDefault;
     this.subitems = _sortBy(_cloneDeep(data.subitems) || [], 'orderRank');

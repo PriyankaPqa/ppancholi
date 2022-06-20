@@ -107,8 +107,8 @@ export default Vue.extend({
       });
     },
 
-    handleSubmitError(e: IServerError) {
-      const errorData = e.response?.data?.errors;
+    handleSubmitError(e: IServerError | unknown) {
+      const errorData = (e as IServerError).response?.data?.errors;
 
       if (!errorData || !Array.isArray(errorData)) {
         this.$reportToasted(this.$t('error.submit_error'), e);

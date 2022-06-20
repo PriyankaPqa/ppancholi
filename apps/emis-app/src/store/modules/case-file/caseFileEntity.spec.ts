@@ -17,7 +17,7 @@ import { mockSignalR } from '../../../ui/plugins/signal-r';
 const signalR = mockSignalR();
 const service = new CaseFilesService(httpClient);
 const optionItemService = new OptionItemsService(httpClient);
-const module = new CaseFileEntityModule(service, optionItemService, signalR);
+const myModule = new CaseFileEntityModule(service, optionItemService, signalR);
 
 const actionContext = {
   commit: jest.fn(),
@@ -34,8 +34,8 @@ describe('Case file entity module', () => {
   describe('getters', () => {
     describe('tagsOptions', () => {
       it('returns the sorted tagsOptions', () => {
-        module.mutations.setTagsOptions(module.state, mockTagsOptions());
-        const res = module.getters.tagsOptions(module.state)();
+        myModule.mutations.setTagsOptions(myModule.state, mockTagsOptions());
+        const res = myModule.getters.tagsOptions(myModule.state)();
         expect(res).toEqual(
           _sortBy(
             mockTagsOptions().map((e) => new OptionItem(e)),
@@ -47,8 +47,8 @@ describe('Case file entity module', () => {
 
     describe('inactiveReasons', () => {
       test('the getter returns the sorted inactive reasons', () => {
-        module.mutations.setInactiveReasons(module.state, mockOptionItemData());
-        const res = module.getters.inactiveReasons(module.state)();
+        myModule.mutations.setInactiveReasons(myModule.state, mockOptionItemData());
+        const res = myModule.getters.inactiveReasons(myModule.state)();
         expect(res).toEqual(
           _sortBy(
             [mockOptionItemData()[0], mockOptionItemData()[1]].map((e) => new OptionItem(e)),
@@ -60,8 +60,8 @@ describe('Case file entity module', () => {
 
     describe('closeReasons', () => {
       test('the getter returns the sorted inactive reasons', () => {
-        module.mutations.setCloseReasons(module.state, mockOptionItemData());
-        const res = module.getters.closeReasons(module.state)();
+        myModule.mutations.setCloseReasons(myModule.state, mockOptionItemData());
+        const res = myModule.getters.closeReasons(myModule.state)();
         expect(res).toEqual(
           _sortBy(
             [mockOptionItemData()[0], mockOptionItemData()[1]].map((e) => new OptionItem(e)),
@@ -73,8 +73,8 @@ describe('Case file entity module', () => {
 
     describe('screeningIds', () => {
       test('the getter returns the sorted screening Ids', () => {
-        module.mutations.setScreeningIds(module.state, mockOptionItemData());
-        const res = module.getters.screeningIds(module.state)();
+        myModule.mutations.setScreeningIds(myModule.state, mockOptionItemData());
+        const res = myModule.getters.screeningIds(myModule.state)();
         expect(res).toEqual(
           _sortBy(
             [mockOptionItemData()[0], mockOptionItemData()[1]].map((e) => new OptionItem(e)),
@@ -89,68 +89,68 @@ describe('Case file entity module', () => {
     describe('setTagsOptions', () => {
       test('the setTagsOptions mutation sets the tagsOptions state', () => {
         const options = mockTagsOptions();
-        module.mutations.setTagsOptions(module.state, options);
-        expect(module.state.tagsOptions).toEqual(options);
+        myModule.mutations.setTagsOptions(myModule.state, options);
+        expect(myModule.state.tagsOptions).toEqual(options);
       });
     });
 
     describe('setTagsOptionsFetched', () => {
       test('the setTagsOptionsFetched mutation sets the tagsOptionsFetched state', () => {
-        module.mutations.setTagsOptionsFetched(module.state, true);
-        expect(module.state.tagsOptionsFetched).toEqual(true);
+        myModule.mutations.setTagsOptionsFetched(myModule.state, true);
+        expect(myModule.state.tagsOptionsFetched).toEqual(true);
       });
     });
 
     describe('setInactiveReasons', () => {
       test('the setInactiveReasons mutation sets the inactiveReasons state', () => {
         const reasons = mockOptionItemData();
-        module.mutations.setInactiveReasons(module.state, reasons);
-        expect(module.state.inactiveReasons).toEqual(reasons);
+        myModule.mutations.setInactiveReasons(myModule.state, reasons);
+        expect(myModule.state.inactiveReasons).toEqual(reasons);
       });
     });
 
     describe('setInactiveReasonsFetched', () => {
       test('the setInactiveReasonsFetched mutation sets the inactiveReasonsFetched state', () => {
-        module.mutations.setInactiveReasonsFetched(module.state, true);
-        expect(module.state.inactiveReasonsFetched).toEqual(true);
+        myModule.mutations.setInactiveReasonsFetched(myModule.state, true);
+        expect(myModule.state.inactiveReasonsFetched).toEqual(true);
       });
     });
 
     describe('setCloseReasons', () => {
       test('the setCloseReasons mutation sets the closeReasons state', () => {
         const reasons = mockOptionItemData();
-        module.mutations.setCloseReasons(module.state, reasons);
-        expect(module.state.closeReasons).toEqual(reasons);
+        myModule.mutations.setCloseReasons(myModule.state, reasons);
+        expect(myModule.state.closeReasons).toEqual(reasons);
       });
     });
 
     describe('setCloseReasonsFetched', () => {
       test('the setCloseReasonsFetched mutation sets the closeReasonsFetched state', () => {
-        module.mutations.setCloseReasonsFetched(module.state, true);
-        expect(module.state.closeReasonsFetched).toEqual(true);
+        myModule.mutations.setCloseReasonsFetched(myModule.state, true);
+        expect(myModule.state.closeReasonsFetched).toEqual(true);
       });
     });
 
     describe('setScreeningIds', () => {
       test('the setScreeningIds mutation sets the screeningIds state', () => {
         const i = mockOptionItemData();
-        module.mutations.setScreeningIds(module.state, i);
-        expect(module.state.allScreeningIds).toEqual(i);
+        myModule.mutations.setScreeningIds(myModule.state, i);
+        expect(myModule.state.allScreeningIds).toEqual(i);
       });
     });
 
     describe('setScreeningIdsFetched', () => {
       test('the setScreeningIdsFetched mutation sets the screeningIdsFetched state', () => {
-        module.mutations.setScreeningIdsFetched(module.state, true);
-        expect(module.state.screeningIdsFetched).toEqual(true);
+        myModule.mutations.setScreeningIdsFetched(myModule.state, true);
+        expect(myModule.state.screeningIdsFetched).toEqual(true);
       });
     });
 
     describe('setSearchLoading', () => {
       test('the setSearchLoading mutation sets the searchLoading state', () => {
-        expect(module.state.searchLoading).toBe(false);
-        module.mutations.setSearchLoading(module.state, true);
-        expect(module.state.searchLoading).toBe(true);
+        expect(myModule.state.searchLoading).toBe(false);
+        myModule.mutations.setSearchLoading(myModule.state, true);
+        expect(myModule.state.searchLoading).toBe(true);
       });
     });
   });
@@ -159,10 +159,10 @@ describe('Case file entity module', () => {
     describe('fetchTagsOptions', () => {
       it('should call optionItemService getOptionList and commit the result', async () => {
         const res = mockOptionItemData();
-        module.optionItemService.getOptionList = jest.fn(() => Promise.resolve(res));
-        await module.actions.fetchTagsOptions(actionContext);
+        myModule.optionItemService.getOptionList = jest.fn(() => Promise.resolve(res));
+        await myModule.actions.fetchTagsOptions(actionContext);
 
-        expect(module.optionItemService.getOptionList).toBeCalledWith(EOptionLists.CaseFileTags);
+        expect(myModule.optionItemService.getOptionList).toBeCalledWith(EOptionLists.CaseFileTags);
         expect(actionContext.commit).toBeCalledWith('setTagsOptions', res);
       });
     });
@@ -170,10 +170,10 @@ describe('Case file entity module', () => {
     describe('fetchInactiveReasons', () => {
       it('should call optionItemService getOptionList and commit the result', async () => {
         const res = mockOptionItemData();
-        module.optionItemService.getOptionList = jest.fn(() => Promise.resolve(res));
-        await module.actions.fetchInactiveReasons(actionContext);
+        myModule.optionItemService.getOptionList = jest.fn(() => Promise.resolve(res));
+        await myModule.actions.fetchInactiveReasons(actionContext);
 
-        expect(module.optionItemService.getOptionList).toBeCalledWith(EOptionLists.CaseFileInactiveReasons);
+        expect(myModule.optionItemService.getOptionList).toBeCalledWith(EOptionLists.CaseFileInactiveReasons);
         expect(actionContext.commit).toBeCalledWith('setInactiveReasons', res);
       });
     });
@@ -181,10 +181,10 @@ describe('Case file entity module', () => {
     describe('fetchScreeningIds', () => {
       it('should call optionItemService getOptionList and commit the result', async () => {
         const res = mockOptionItemData();
-        module.optionItemService.getOptionList = jest.fn(() => Promise.resolve(res));
-        await module.actions.fetchScreeningIds(actionContext);
+        myModule.optionItemService.getOptionList = jest.fn(() => Promise.resolve(res));
+        await myModule.actions.fetchScreeningIds(actionContext);
 
-        expect(module.optionItemService.getOptionList).toBeCalledWith(EOptionLists.ScreeningId);
+        expect(myModule.optionItemService.getOptionList).toBeCalledWith(EOptionLists.ScreeningId);
         expect(actionContext.commit).toBeCalledWith('setScreeningIds', res);
       });
     });
@@ -192,10 +192,10 @@ describe('Case file entity module', () => {
     describe('fetchCloseReasons', () => {
       it('should call optionItemService getOptionList and commit the result', async () => {
         const res = mockOptionItemData();
-        module.optionItemService.getOptionList = jest.fn(() => Promise.resolve(res));
-        await module.actions.fetchCloseReasons(actionContext);
+        myModule.optionItemService.getOptionList = jest.fn(() => Promise.resolve(res));
+        await myModule.actions.fetchCloseReasons(actionContext);
 
-        expect(module.optionItemService.getOptionList).toBeCalledWith(EOptionLists.CaseFileCloseReasons);
+        expect(myModule.optionItemService.getOptionList).toBeCalledWith(EOptionLists.CaseFileCloseReasons);
         expect(actionContext.commit).toBeCalledWith('setCloseReasons', res);
       });
     });
@@ -204,10 +204,10 @@ describe('Case file entity module', () => {
       it('should call service fetchCaseFileActivities and commit the result', async () => {
         const serviceRes = mockCaseFileActivities();
         const id = 'mock_id';
-        module.service.fetchCaseFileActivities = jest.fn(() => Promise.resolve(serviceRes));
-        const activities = await module.actions.fetchCaseFileActivities(actionContext, id);
+        myModule.service.fetchCaseFileActivities = jest.fn(() => Promise.resolve(serviceRes));
+        const activities = await myModule.actions.fetchCaseFileActivities(actionContext, id);
 
-        expect(module.service.fetchCaseFileActivities).toBeCalledWith(id);
+        expect(myModule.service.fetchCaseFileActivities).toBeCalledWith(id);
         expect(activities).toEqual(serviceRes);
       });
     });
@@ -218,10 +218,10 @@ describe('Case file entity module', () => {
         const payload = 'mock-payload';
         const element = 'Tags';
         const serviceRes = mockCaseFileEntity();
-        module.service.setCaseFileTags = jest.fn(() => Promise.resolve(serviceRes));
-        const response = await module.actions.genericSetAction(actionContext, { id, payload, element });
+        myModule.service.setCaseFileTags = jest.fn(() => Promise.resolve(serviceRes));
+        const response = await myModule.actions.genericSetAction(actionContext, { id, payload, element });
 
-        expect(module.service.setCaseFileTags).toBeCalledWith(id, payload);
+        expect(myModule.service.setCaseFileTags).toBeCalledWith(id, payload);
         expect(response).toEqual(serviceRes);
       });
     });
@@ -230,7 +230,7 @@ describe('Case file entity module', () => {
       it('dispatches the right action with the right payload', async () => {
         const id = 'mock-id';
         const tags = [{ optionItemId: '1', specifiedOther: '' }];
-        await module.actions.setCaseFileTags(actionContext, { tags, id });
+        await myModule.actions.setCaseFileTags(actionContext, { tags, id });
 
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: tags, element: 'Tags' });
       });
@@ -242,7 +242,7 @@ describe('Case file entity module', () => {
         const status = CaseFileStatus.Inactive;
         const rationale = 'mock-rationale';
         const reason = { optionItemId: '1', specifiedOther: '' };
-        await module.actions.setCaseFileStatus(actionContext, {
+        await myModule.actions.setCaseFileStatus(actionContext, {
           id, status, rationale, reason,
         });
 
@@ -258,7 +258,7 @@ describe('Case file entity module', () => {
       it('dispatches the right action with the right payload', async () => {
         const id = 'mock-id';
         const isDuplicate = true;
-        await module.actions.setCaseFileIsDuplicate(actionContext, { isDuplicate, id });
+        await myModule.actions.setCaseFileIsDuplicate(actionContext, { isDuplicate, id });
 
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: isDuplicate, element: 'IsDuplicate' });
       });
@@ -277,7 +277,7 @@ describe('Case file entity module', () => {
             order: 2,
           },
         ];
-        await module.actions.setCaseFileLabels(actionContext, { labels, id });
+        await myModule.actions.setCaseFileLabels(actionContext, { labels, id });
 
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: labels, element: 'Labels' });
       });
@@ -291,7 +291,7 @@ describe('Case file entity module', () => {
           status: IdentityAuthenticationStatus.Failed,
           method: IdentityAuthenticationMethod.System,
         };
-        await module.actions.setCaseFileIdentityAuthentication(actionContext, { identityAuthentication, id });
+        await myModule.actions.setCaseFileIdentityAuthentication(actionContext, { identityAuthentication, id });
 
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: identityAuthentication, element: 'IdentityAuthentication' });
       });
@@ -304,7 +304,7 @@ describe('Case file entity module', () => {
           method: ImpactValidationMethod.Manual,
           status: ValidationOfImpactStatus.Impacted,
         };
-        await module.actions.setCaseFileValidationOfImpact(actionContext, { impactStatusValidation, id });
+        await myModule.actions.setCaseFileValidationOfImpact(actionContext, { impactStatusValidation, id });
 
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: impactStatusValidation, element: 'ValidationOfImpact' });
       });
@@ -314,7 +314,7 @@ describe('Case file entity module', () => {
       it('dispatches the right action with the right payload', async () => {
         const id = 'mock-id';
         const triage = CaseFileTriage.Tier1;
-        await module.actions.setCaseFileTriage(actionContext, { triage, id });
+        await myModule.actions.setCaseFileTriage(actionContext, { triage, id });
 
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: triage, element: 'Triage' });
       });
@@ -326,7 +326,7 @@ describe('Case file entity module', () => {
         const individuals = ['mock-individual-id'];
         const teams = ['mock-teams-id'];
 
-        await module.actions.setCaseFileAssign(actionContext, { individuals, teams, id });
+        await myModule.actions.setCaseFileAssign(actionContext, { individuals, teams, id });
 
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: { individuals, teams }, element: 'Assign' });
       });
@@ -345,10 +345,10 @@ describe('Case file entity module', () => {
           },
         };
         const res = {} as ICaseFileEntity;
-        module.service.createCaseFile = jest.fn(() => Promise.resolve(res));
-        await module.actions.createCaseFile(actionContext, payload);
+        myModule.service.createCaseFile = jest.fn(() => Promise.resolve(res));
+        await myModule.actions.createCaseFile(actionContext, payload);
 
-        expect(module.service.createCaseFile).toBeCalledWith(payload);
+        expect(myModule.service.createCaseFile).toBeCalledWith(payload);
         expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
         expect(actionContext.commit).toBeCalledWith('set', res);
       });
@@ -361,11 +361,11 @@ describe('Case file entity module', () => {
           teamId: '76ca164f-a181-4a0c-8cf1-5967841b3981',
         };
 
-        module.service.getCaseFileAssignedCounts = jest.fn();
+        myModule.service.getCaseFileAssignedCounts = jest.fn();
 
-        await module.actions.fetchCaseFileAssignedCounts(actionContext, params);
+        await myModule.actions.fetchCaseFileAssignedCounts(actionContext, params);
 
-        expect(module.service.getCaseFileAssignedCounts).toBeCalledWith(params);
+        expect(myModule.service.getCaseFileAssignedCounts).toBeCalledWith(params);
       });
     });
 
@@ -373,11 +373,11 @@ describe('Case file entity module', () => {
       it('should call fetchCaseFileDetailedCounts service with proper params', async () => {
         const eventId = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
 
-        module.service.fetchCaseFileDetailedCounts = jest.fn();
+        myModule.service.fetchCaseFileDetailedCounts = jest.fn();
 
-        await module.actions.fetchCaseFileDetailedCounts(actionContext, eventId);
+        await myModule.actions.fetchCaseFileDetailedCounts(actionContext, eventId);
 
-        expect(module.service.fetchCaseFileDetailedCounts).toBeCalledWith(eventId);
+        expect(myModule.service.fetchCaseFileDetailedCounts).toBeCalledWith(eventId);
       });
     });
 
@@ -386,11 +386,11 @@ describe('Case file entity module', () => {
         const id = '1';
         const payload = { teamMembers: mockAssignedTeamMembers(), teams: ['1'] };
 
-        module.service.assignCaseFile = jest.fn();
+        myModule.service.assignCaseFile = jest.fn();
 
-        await module.actions.assignCaseFile(actionContext, { id, ...payload });
+        await myModule.actions.assignCaseFile(actionContext, { id, ...payload });
 
-        expect(module.service.assignCaseFile).toBeCalledWith(id, payload);
+        expect(myModule.service.assignCaseFile).toBeCalledWith(id, payload);
       });
     });
   });

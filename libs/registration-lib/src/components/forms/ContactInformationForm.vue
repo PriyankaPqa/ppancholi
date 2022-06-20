@@ -385,7 +385,7 @@ export default Vue.extend({
         }
 
         this.formCopy.emailValidatedByBackend = result.emailIsValid;
-        this.setEmailValidator(result);
+        this.setEmailValidator(result as IValidateEmailResponse);
         (this.$refs.email as InstanceType<typeof ValidationObserver>).validate();
       }
     },

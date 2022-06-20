@@ -186,6 +186,7 @@ import { IUserAccountCombined } from '@/entities/user-account';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { IError } from '@libs/core-lib/services/http-client';
 import { Status } from '@libs/core-lib/entities/base';
+import { IServerError } from '@libs/core-lib/types';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,
@@ -494,7 +495,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.resetFormValidation();
         this.setOriginalData();
       } catch (e) {
-        const errorData = e.response?.data?.errors;
+        const errorData = (e as IServerError).response?.data?.errors;
         this.$appInsights.trackTrace('Team create error', { error: errorData });
         this.handleSubmitError(e);
       } finally {
@@ -510,7 +511,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.resetFormValidation();
         this.setOriginalData();
       } catch (e) {
-        const errorData = e.response?.data?.errors;
+        const errorData = (e as IServerError).response?.data?.errors;
         if (errorData && errorData.length > 0) {
           this.errorMessage = this.$t(errorData[0].code);
           this.showErrorDialog = true;

@@ -370,7 +370,7 @@ describe('httpClient', () => {
           },
           data: {},
         };
-        const spy = spyOn(owasp, 'sanitize932115');
+        const spy = jest.spyOn(owasp, 'sanitize932115');
         mockHttpClient.requestHandler(request);
         expect(spy).toBeCalled();
       });

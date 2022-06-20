@@ -1,4 +1,4 @@
-import { createLocalVue, mount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockAppUserData, mockRolesData } from '@/entities/app-user';
 import Component from './AddEmisUser.vue';
@@ -14,7 +14,6 @@ const mockSubRole = {
     },
   },
 };
-
 const usersTestData = () => [
   {
     entity: {
@@ -59,7 +58,6 @@ const usersTestData = () => [
     },
   },
 ];
-
 const appUsersTestData = () => [
   {
     id: '1',
@@ -89,7 +87,6 @@ const appUsersTestData = () => [
     roles: [mockSubRole],
   },
 ];
-
 const optionData = [
   {
     id: '1',
@@ -138,38 +135,44 @@ const optionData = [
   },
 ];
 
+let wrapper;
+
+const doMount = (shallow = false, { allEmisUsers, appUsers } = { allEmisUsers: [], appUsers: [] }) => {
+  const options = {
+    localVue,
+    propsData: {
+      allEmisUsers,
+      show: true,
+      allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
+      allAccessLevelRoles: [],
+    },
+    data() {
+      return {
+        error: false,
+        formReady: false,
+        searchTerm: '',
+        appUsers,
+        searchResults: [],
+        selectedUsers: [],
+        componentKey: 0,
+        loading: false,
+        isSubmitAllowed: false,
+      };
+    },
+    mocks: {
+      $storage: storage,
+    },
+  };
+  if (shallow) {
+    wrapper = shallowMount(Component, options);
+  } else {
+    wrapper = mount(Component, options);
+  }
+};
+
 describe('AddEmisUser.vue', () => {
-  let wrapper;
-
-  beforeEach(() => {
-    wrapper = mount(Component, {
-      localVue,
-      propsData: {
-        allEmisUsers: [],
-        show: true,
-        allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
-        allAccessLevelRoles: [],
-      },
-      data() {
-        return {
-          error: false,
-          formReady: false,
-          searchTerm: '',
-          appUsers: [],
-          searchResults: [],
-          selectedUsers: [],
-          componentKey: 0,
-          loading: false,
-          isSubmitAllowed: false,
-        };
-      },
-      mocks: {
-        $storage: storage,
-      },
-    });
-  });
-
   describe('Mounted', () => {
+    doMount(true);
     it('loads lookup lists', async () => {
       jest.spyOn(wrapper.vm, 'fetchAllAppUsers').mockImplementation(() => true);
 
@@ -246,34 +249,7 @@ describe('AddEmisUser.vue', () => {
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-        propsData: {
-          allEmisUsers: [],
-          show: true,
-          allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
-          allAccessLevelRoles: [],
-        },
-        data() {
-          return {
-            error: false,
-            formReady: false,
-            searchTerm: '',
-            appUsers: [],
-            searchResults: [],
-            selectedUsers: [],
-            componentKey: 0,
-            loading: false,
-            isSubmitAllowed: false,
-          };
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
-    });
-
+    beforeEach(() => doMount(true));
     describe('close', () => {
       it('emit update:show with false', () => {
         wrapper.vm.close();
@@ -312,55 +288,6 @@ describe('AddEmisUser.vue', () => {
         wrapper.vm.findUsers();
         expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledWith('t');
-      });
-    });
-
-    describe('isAlreadyInEmis', () => {
-      beforeEach(() => {
-        wrapper = mount(Component, {
-          localVue,
-          propsData: {
-            allEmisUsers: usersTestData(),
-            show: true,
-            allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
-            allAccessLevelRoles: [],
-          },
-          data() {
-            return {
-              appUsers: appUsersTestData,
-            };
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-      });
-
-      it('returns true for an active user that is in the appUsers and allEmisUsers arrays', () => {
-        const tempUser = appUsersTestData()[0];
-        tempUser.status = 1;
-        expect(wrapper.vm.isAlreadyInEmis(tempUser)).toBeTruthy();
-      });
-
-      it('returns false for a user that is not in the appUsers array', () => {
-        const testUser = {
-          entity: {
-            id: '9393-39393-39393-help',
-          },
-          metadata: {
-            id: '9393-39393-39393-help',
-            displayName: 'Some Person',
-          },
-        };
-        wrapper.vm.appUsers = usersTestData();
-        expect(wrapper.vm.isAlreadyInEmis({ id: testUser.entity.id })).toBeFalsy();
-      });
-
-      it('returns false for a user that is not in the allEmisUsers array', () => {
-        wrapper.setProps({ allEmisUsers: usersTestData() });
-        const testUser = { entity: { id: '9393-39393-39393-help' }, metadata: { displayName: 'Some Person', id: '9393-39393-39393-help' } };
-        wrapper.vm.appUsers = usersTestData();
-        expect(wrapper.vm.isAlreadyInEmis(testUser)).toBeFalsy();
       });
     });
 
@@ -647,6 +574,36 @@ describe('AddEmisUser.vue', () => {
         wrapper.vm.selectedUsers[0].roles = [{ id: '123' }];
         wrapper.vm.updateIsSubmitAllowed();
         expect(wrapper.vm.isSubmitAllowed).toBeTruthy();
+      });
+    });
+
+    describe('isAlreadyInEmis', () => {
+      beforeEach(() => doMount(true, { appUsers: appUsersTestData, allEmisUsers: usersTestData() }));
+      it('returns true for an active user that is in the appUsers and allEmisUsers arrays', () => {
+        const tempUser = appUsersTestData()[0];
+        tempUser.status = 1;
+        expect(wrapper.vm.isAlreadyInEmis(tempUser)).toBeTruthy();
+      });
+
+      it('returns false for a user that is not in the appUsers array', () => {
+        const testUser = {
+          entity: {
+            id: '9393-39393-39393-help',
+          },
+          metadata: {
+            id: '9393-39393-39393-help',
+            displayName: 'Some Person',
+          },
+        };
+        wrapper.vm.appUsers = usersTestData();
+        expect(wrapper.vm.isAlreadyInEmis({ id: testUser.entity.id })).toBeFalsy();
+      });
+
+      it('returns false for a user that is not in the allEmisUsers array', () => {
+        wrapper.setProps({ allEmisUsers: usersTestData() });
+        const testUser = { entity: { id: '9393-39393-39393-help' }, metadata: { displayName: 'Some Person', id: '9393-39393-39393-help' } };
+        wrapper.vm.appUsers = usersTestData();
+        expect(wrapper.vm.isAlreadyInEmis(testUser)).toBeFalsy();
       });
     });
   });

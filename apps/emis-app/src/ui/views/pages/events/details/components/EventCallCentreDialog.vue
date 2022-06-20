@@ -119,6 +119,7 @@ import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@libs/core-lib/entities/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import { IServerError } from '@libs/core-lib/types';
 
 export default mixins(handleUniqueNameSubmitError).extend({
   name: 'EventCallCentreDialog',
@@ -250,7 +251,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
           await this.submitCallCentre();
           this.$emit('close');
         } catch (e) {
-          const errorData = e.response?.data?.errors;
+          const errorData = (e as IServerError).response?.data?.errors;
           this.$appInsights.trackTrace('Event call centre dialog submit error', { error: errorData }, 'EventCallCentreDialog', 'onSubmit');
           this.handleSubmitError(e);
         } finally {

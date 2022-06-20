@@ -6,6 +6,8 @@ import individual from './individual';
 const localVue = createLocalVue();
 const storage = mockStorage();
 
+window.scrollTo = jest.fn();
+
 const tabs = [
   {
     id: 'privacy',

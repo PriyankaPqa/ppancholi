@@ -7,7 +7,7 @@ import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const signalR = mockSignalR();
 const service = mockMassActionService();
-const module = new MassActionEntityModule(service as never, signalR);
+const myModule = new MassActionEntityModule(service as never, signalR);
 
 const actionContext = {
   commit: jest.fn(),
@@ -25,9 +25,9 @@ describe('>>> Mass Action Entity Module', () => {
         const id = '1';
         const runType = MassActionRunType.Process;
 
-        const res = await module.actions.process(actionContext, { id, runType });
+        const res = await myModule.actions.process(actionContext, { id, runType });
 
-        expect(module.service.process).toHaveBeenCalledWith(id, runType);
+        expect(myModule.service.process).toHaveBeenCalledWith(id, runType);
 
         expect(actionContext.commit).toBeCalledWith('set', res);
       });
@@ -42,9 +42,9 @@ describe('>>> Mass Action Entity Module', () => {
           description: 'description',
         };
 
-        const res = await module.actions.update(actionContext, { id, payload });
+        const res = await myModule.actions.update(actionContext, { id, payload });
 
-        expect(module.service.update).toHaveBeenCalledWith(id, payload);
+        expect(myModule.service.update).toHaveBeenCalledWith(id, payload);
 
         expect(actionContext.commit).toBeCalledWith('set', res);
       });
@@ -57,9 +57,9 @@ describe('>>> Mass Action Entity Module', () => {
           const massActionType = MassActionType.FinancialAssistance;
           const payload = mockMassActionCreatePayload();
 
-          const res = await module.actions.create(actionContext, { massActionType, payload });
+          const res = await myModule.actions.create(actionContext, { massActionType, payload });
 
-          expect(module.service.create).toHaveBeenCalledWith(urlSuffix, payload);
+          expect(myModule.service.create).toHaveBeenCalledWith(urlSuffix, payload);
 
           expect(actionContext.commit).toBeCalledWith('set', res);
           expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
@@ -72,9 +72,9 @@ describe('>>> Mass Action Entity Module', () => {
           const massActionType = MassActionType.GenerateFundingRequest;
           const payload = { name: 'test', description: '' };
 
-          const res = await module.actions.create(actionContext, { massActionType, payload });
+          const res = await myModule.actions.create(actionContext, { massActionType, payload });
 
-          expect(module.service.create).toHaveBeenCalledWith(urlSuffix, payload);
+          expect(myModule.service.create).toHaveBeenCalledWith(urlSuffix, payload);
 
           expect(actionContext.commit).toBeCalledWith('set', res);
         });

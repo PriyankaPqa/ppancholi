@@ -10,7 +10,7 @@ import { IState } from './base.types';
 import { ISignalRMock, mockSignalR } from '../../../ui/plugins/signal-r';
 
 export class BaseModuleTest extends BaseModule<any, uuid> {
-  public service: DomainBaseService<any, uuid>
+  declare public service: DomainBaseService<any, uuid>
 
   constructor(protected pService: DomainBaseService<any, uuid>, protected signalR: ISignalRMock) {
     super(pService, signalR);

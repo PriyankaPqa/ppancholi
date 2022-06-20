@@ -8,11 +8,11 @@ export type CombinedTest = any;
 export type Entity = any;
 
 export class BaseStorageTest extends Base<CombinedTest, Entity, uuid> {
-  public readonly store: IStore<IState>;
+  declare public readonly store: IStore<IState>;
 
-  public readonly entityModuleName: string;
+  declare public readonly entityModuleName: string;
 
-  public readonly metadataModuleName: string;
+  declare public readonly metadataModuleName: string;
 
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
     super(pStore, pEntityModuleName, pMetadataModuleName);

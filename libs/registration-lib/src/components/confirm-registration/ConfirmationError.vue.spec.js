@@ -5,6 +5,8 @@ import Component from './ConfirmationError.vue';
 
 const localVue = createLocalVue();
 
+console.warn = jest.fn();
+
 describe('ConfirmRegistration.vue', () => {
   let wrapper;
 

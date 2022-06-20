@@ -1,18 +1,18 @@
 import { UIStateModule } from './uiState';
 
-let module: UIStateModule;
+let myModule: UIStateModule;
 
 describe('>>> UIState module', () => {
   beforeEach(() => {
-    module = new UIStateModule();
+    myModule = new UIStateModule();
   });
 
   describe('>> Getters', () => {
     describe('getSearchTableState', () => {
       it('returns the right table by key', () => {
-        module.state.searchStates = [{ key: 'key1', state: { name: 'state1' } }, { key: 'key2', state: { name: 'state2' } }];
+        myModule.state.searchStates = [{ key: 'key1', state: { name: 'state1' } }, { key: 'key2', state: { name: 'state2' } }];
 
-        const res = module.getters.getSearchTableState(module.state)('key2');
+        const res = myModule.getters.getSearchTableState(myModule.state)('key2');
 
         expect(res).toEqual({ name: 'state2' });
       });
@@ -20,13 +20,13 @@ describe('>>> UIState module', () => {
 
     describe('getAllSearchIds', () => {
       it('returns the flat array of all searchResultIds', () => {
-        module.state.searchStates = [
+        myModule.state.searchStates = [
           { key: 'key1', state: { searchResultIds: ['1'] } },
           { key: 'key2', state: { searchResultIds: ['2'] } },
           { key: 'key2', state: { other: ['2'] } },
         ];
 
-        const res = module.getters.getAllSearchIds(module.state);
+        const res = myModule.getters.getAllSearchIds(myModule.state);
 
         expect(res).toMatchObject(['1', '2']);
       });
@@ -36,12 +36,12 @@ describe('>>> UIState module', () => {
   describe('>> Mutations', () => {
     describe('setSearchTableState', () => {
       it('sets the state for a key', () => {
-        module.state.searchStates = [{ key: 'key1', state: { name: 'state1' } }, { key: 'key2', state: { name: 'state2' } }];
+        myModule.state.searchStates = [{ key: 'key1', state: { name: 'state1' } }, { key: 'key2', state: { name: 'state2' } }];
         const newState = { key: 'key2', state: { name: 'state2alpha' } };
 
-        module.mutations.setSearchTableState(module.state, newState);
+        myModule.mutations.setSearchTableState(myModule.state, newState);
 
-        expect(module.state.searchStates).toEqual([
+        expect(myModule.state.searchStates).toEqual([
           { key: 'key1', state: { name: 'state1' } }, { key: 'key2', state: { name: 'state2alpha' } }]);
       });
     });

@@ -22,7 +22,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcPageContent } from '@libs/component-lib/components';
 import { VForm } from '@/types';
@@ -30,9 +29,11 @@ import { CaseFileReferralEntity, ICaseFileReferralEntity } from '@/entities/case
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
+import mixins from 'vue-typed-mixins';
+import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import ReferralForm from './ReferralForm.vue';
 
-export default Vue.extend({
+export default mixins(handleUniqueNameSubmitError).extend({
   name: 'CreateEditReferral',
 
   components: {
@@ -123,7 +124,7 @@ export default Vue.extend({
           }
         } catch (e) {
           this.$appInsights.trackTrace('caseFileReferral submit error', { error: e }, 'CreateEditReferral', 'submit');
-          this.$toasted.global.error(this.$t(e.code));
+          this.handleSubmitError(e);
         } finally {
           this.loading = false;
         }

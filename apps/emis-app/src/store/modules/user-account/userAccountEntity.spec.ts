@@ -17,7 +17,7 @@ const signalR = mockSignalR();
 
 const service = new UserAccountsService(httpClient);
 const optionsService = new OptionItemsService(httpClient);
-const module = new UserAccountEntityModule(service, optionsService, signalR);
+const myModule = new UserAccountEntityModule(service, optionsService, signalR);
 
 const actionContext = {
   commit: jest.fn(),
@@ -34,9 +34,9 @@ describe('User account entity module', () => {
       it('should the proper method from the service with a filter as parameter and commit the result', async () => {
         const filter = mockUserFilters()[0];
         const res = mockUserAccountEntity();
-        module.service.addFilter = jest.fn(() => Promise.resolve(res));
-        await module.actions.genericFilterAction(actionContext, { payload: filter, methodName: 'addFilter' });
-        expect(module.service.addFilter).toBeCalledWith(filter);
+        myModule.service.addFilter = jest.fn(() => Promise.resolve(res));
+        await myModule.actions.genericFilterAction(actionContext, { payload: filter, methodName: 'addFilter' });
+        expect(myModule.service.addFilter).toBeCalledWith(filter);
         expect(actionContext.commit).toBeCalledWith('set', res);
       });
     });
@@ -44,7 +44,7 @@ describe('User account entity module', () => {
     describe('addFilter', () => {
       it('should call genericFilterAction with proper parameters', async () => {
         const filter = mockUserFilters()[0];
-        await module.actions.addFilter(actionContext, filter);
+        await myModule.actions.addFilter(actionContext, filter);
         expect(actionContext.dispatch).toBeCalledWith('genericFilterAction', { payload: filter, methodName: 'addFilter' });
       });
     });
@@ -57,7 +57,7 @@ describe('User account entity module', () => {
           oldFilter,
           newFilter,
         };
-        await module.actions.editFilter(actionContext, payload);
+        await myModule.actions.editFilter(actionContext, payload);
         expect(actionContext.dispatch).toBeCalledWith('genericFilterAction', { payload, methodName: 'editFilter' });
       });
     });
@@ -65,7 +65,7 @@ describe('User account entity module', () => {
     describe('deleteFilter', () => {
       it('should call genericFilterAction with proper parameters', async () => {
         const filter = mockUserFilters()[0];
-        await module.actions.deleteFilter(actionContext, filter);
+        await myModule.actions.deleteFilter(actionContext, filter);
         expect(actionContext.dispatch).toBeCalledWith('genericFilterAction', { payload: filter, methodName: 'deleteFilter' });
       });
     });
@@ -77,11 +77,11 @@ describe('User account entity module', () => {
           userId: '123',
         } as IAddRoleToUserRequest;
         const res = mockUserAccountEntity();
-        module.service.assignRole = jest.fn(() => Promise.resolve(res));
+        myModule.service.assignRole = jest.fn(() => Promise.resolve(res));
 
-        await module.actions.assignRole(actionContext, payload);
+        await myModule.actions.assignRole(actionContext, payload);
 
-        expect(module.service.assignRole).toBeCalledWith(payload);
+        expect(myModule.service.assignRole).toBeCalledWith(payload);
         expect(actionContext.commit).toBeCalledWith('set', res);
       });
     });
@@ -89,11 +89,11 @@ describe('User account entity module', () => {
     describe('fetchCurrentUserAccount', () => {
       it('should call service fetchCurrentUserAccount and commit the result', async () => {
         const res = mockUserAccountEntity();
-        module.service.fetchCurrentUserAccount = jest.fn(() => Promise.resolve(res));
+        myModule.service.fetchCurrentUserAccount = jest.fn(() => Promise.resolve(res));
 
-        await module.actions.fetchCurrentUserAccount(actionContext);
+        await myModule.actions.fetchCurrentUserAccount(actionContext);
 
-        expect(module.service.fetchCurrentUserAccount).toBeCalledTimes(1);
+        expect(myModule.service.fetchCurrentUserAccount).toBeCalledTimes(1);
         expect(actionContext.commit).toBeCalledWith('setCurrentUserAccount', res);
       });
     });
@@ -101,11 +101,11 @@ describe('User account entity module', () => {
     describe('fetchRoles', () => {
       it('should call option service getOptionList and commit the result', async () => {
         const res = mockOptionItems();
-        module.optionsService.getOptionList = jest.fn(() => Promise.resolve(res));
+        myModule.optionsService.getOptionList = jest.fn(() => Promise.resolve(res));
 
-        await module.actions.fetchRoles(actionContext);
+        await myModule.actions.fetchRoles(actionContext);
 
-        expect(module.optionsService.getOptionList).toBeCalledTimes(1);
+        expect(myModule.optionsService.getOptionList).toBeCalledTimes(1);
         expect(actionContext.commit).toBeCalledWith('setRoles', res);
       });
     });
@@ -114,9 +114,9 @@ describe('User account entity module', () => {
   describe('getters', () => {
     describe('currentUserFiltersByKey', () => {
       it('returns the correct parsed filters', () => {
-        module.mutations.setCurrentUserAccount(module.state, mockUserAccountEntity());
+        myModule.mutations.setCurrentUserAccount(myModule.state, mockUserAccountEntity());
         const key = FilterKey.CaseFiles;
-        const res = module.getters.currentUserFiltersByKey(module.state)(key);
+        const res = myModule.getters.currentUserFiltersByKey(myModule.state)(key);
         const userAccount = new UserAccountEntity(mockUserAccountEntity());
         expect(res).toEqual([userAccount.filters[2]]);
       });
@@ -124,8 +124,8 @@ describe('User account entity module', () => {
 
     describe('roles', () => {
       it('returns the roles list', () => {
-        module.mutations.setRoles(module.state, mockOptionItems());
-        const res = module.getters.roles(module.state);
+        myModule.mutations.setRoles(myModule.state, mockOptionItems());
+        const res = myModule.getters.roles(myModule.state);
         expect(res).toEqual(_sortBy(
           mockOptionItems().map((e) => new OptionItem(e)),
           'orderRank',
@@ -138,23 +138,23 @@ describe('User account entity module', () => {
     describe('setCurrentUserAccount', () => {
       it('should set currentUserAccount', () => {
         const entity = mockUserAccountEntity();
-        module.mutations.setCurrentUserAccount(module.state, entity);
-        expect(module.state.currentUserAccount).toEqual(entity);
+        myModule.mutations.setCurrentUserAccount(myModule.state, entity);
+        expect(myModule.state.currentUserAccount).toEqual(entity);
       });
     });
 
     describe('setRoles', () => {
       it('should set roles', () => {
         const roles = mockOptionItems();
-        module.mutations.setRoles(module.state, roles);
-        expect(module.state.roles).toEqual(roles);
+        myModule.mutations.setRoles(myModule.state, roles);
+        expect(myModule.state.roles).toEqual(roles);
       });
     });
 
     describe('setRolesFetched', () => {
       it('should set rolesFetched', () => {
-        module.mutations.setRolesFetched(module.state, true);
-        expect(module.state.rolesFetched).toEqual(true);
+        myModule.mutations.setRolesFetched(myModule.state, true);
+        expect(myModule.state.rolesFetched).toEqual(true);
       });
     });
   });

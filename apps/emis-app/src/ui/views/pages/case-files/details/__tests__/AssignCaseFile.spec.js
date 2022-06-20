@@ -57,7 +57,7 @@ describe('AssignCaseFile.vue', () => {
       it('displays the right team information', () => {
         const element = wrapper.findDataTest(`team-list-item-${mockTeamEntity().id}`);
         expect(element.text()).toContain(team.name);
-        expect(element.text()).toContain(team.activeMemberCount);
+        expect(element.text()).toContain(team.activeMemberCount.toString());
         expect(element.text()).toContain(`enums.TeamType.${TeamType[mockTeamEntity().teamType]}`);
       });
     });

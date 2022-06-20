@@ -674,20 +674,6 @@ describe('CreateEditTeam.vue', () => {
       });
     });
 
-    describe('setOriginalData', () => {
-      beforeEach(async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            teamType: 'standard',
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-      });
-    });
-
     describe('handleRemoveEvent', () => {
       it('sets the eventsIdsAfterRemoval to its argument', () => {
         wrapper.vm.handleRemoveEvent(['a', 'b']);

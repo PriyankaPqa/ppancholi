@@ -148,7 +148,7 @@ export default class MSALMock {
         username,
         localAccountId,
         name,
-        idTokenClaims: idToken,
+        idTokenClaims: idToken as any,
       };
     }
 

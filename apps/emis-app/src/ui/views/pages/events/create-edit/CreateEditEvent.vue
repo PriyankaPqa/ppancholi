@@ -32,6 +32,7 @@ import { EventEntity } from '@/entities/event';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import { IServerError } from '@libs/core-lib/types';
 import EventForm from './EventForm.vue';
 
 export default mixins(handleUniqueNameSubmitError).extend({
@@ -120,7 +121,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.loading = true;
         this.isEditMode ? await this.submitEdit() : await this.submitCreate();
       } catch (e) {
-        this.$appInsights.trackTrace('Event submit error', { error: e.response?.data?.errors }, 'CreateEditEvent', 'submit');
+        this.$appInsights.trackTrace('Event submit error', { error: (e as IServerError).response?.data?.errors }, 'CreateEditEvent', 'submit');
         this.handleSubmitError(e);
       } finally {
         this.loading = false;

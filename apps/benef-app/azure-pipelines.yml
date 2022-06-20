@@ -28,7 +28,7 @@ variables:
 - name: VUE_APP_VERSION
   value: $(Major).$(Minor).$(Patch)
 - name: nodeJsVersion
-  value: '16.x'
+  value: '16.10.0'
 - name: disableCache
   value: 'false' # change this value to force npm package to be installed
 

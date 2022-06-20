@@ -8,6 +8,8 @@ import { i18n } from '../../ui/plugins/i18n';
 const localVue = createLocalVue();
 const storage = mockStorage();
 
+console.warn = jest.fn();
+
 const mockUserL6 = () => ({
   id: '',
   email: '',

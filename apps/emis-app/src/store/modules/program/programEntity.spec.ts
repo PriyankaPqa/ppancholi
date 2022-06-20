@@ -8,7 +8,7 @@ import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const signalR = mockSignalR();
 const service = new ProgramsService(httpClient);
-let module: ProgramEntityModule;
+let myModule: ProgramEntityModule;
 
 const actionContext = {
   commit: jest.fn(),
@@ -21,7 +21,7 @@ const actionContext = {
 
 describe('>>> Program entity module', () => {
   beforeEach(() => {
-    module = new ProgramEntityModule(service, signalR);
+    myModule = new ProgramEntityModule(service, signalR);
   });
 
   describe('>> Actions', () => {
@@ -29,19 +29,19 @@ describe('>>> Program entity module', () => {
       it('calls the createProgram service', async () => {
         const program = mockProgramEntity();
 
-        module.service.createProgram = jest.fn();
+        myModule.service.createProgram = jest.fn();
 
-        await module.actions.createProgram(actionContext, program);
+        await myModule.actions.createProgram(actionContext, program);
 
-        expect(module.service.createProgram).toHaveBeenCalledWith(program);
+        expect(myModule.service.createProgram).toHaveBeenCalledWith(program);
       });
 
       it('calls sets the result', async () => {
         const program = mockProgramEntity();
 
-        module.service.createProgram = jest.fn(() => new Promise((resolve) => resolve(program)));
+        myModule.service.createProgram = jest.fn(() => new Promise((resolve) => resolve(program)));
 
-        await module.actions.createProgram(actionContext, program);
+        await myModule.actions.createProgram(actionContext, program);
 
         expect(actionContext.commit).toHaveBeenCalledWith('set', program);
         expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', program);
@@ -52,19 +52,19 @@ describe('>>> Program entity module', () => {
       it('calls the updateProgram service', async () => {
         const program = mockProgramEntity();
 
-        module.service.updateProgram = jest.fn();
+        myModule.service.updateProgram = jest.fn();
 
-        await module.actions.updateProgram(actionContext, program);
+        await myModule.actions.updateProgram(actionContext, program);
 
-        expect(module.service.updateProgram).toHaveBeenCalledWith(program);
+        expect(myModule.service.updateProgram).toHaveBeenCalledWith(program);
       });
 
       it('calls sets the result', async () => {
         const program = mockProgramEntity();
 
-        module.service.updateProgram = jest.fn(() => new Promise((resolve) => resolve(program)));
+        myModule.service.updateProgram = jest.fn(() => new Promise((resolve) => resolve(program)));
 
-        await module.actions.updateProgram(actionContext, program);
+        await myModule.actions.updateProgram(actionContext, program);
 
         expect(actionContext.commit).toHaveBeenCalledWith('set', program);
       });

@@ -807,24 +807,6 @@ describe('EventSummary.vue', () => {
     });
   });
 
-  describe('lifecycle', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-      wrapper = shallowMount(Component, {
-        localVue,
-        mocks: {
-          $route: {
-            name: routes.events.edit.name,
-            params: {
-              id: '7c076603-580a-4400-bef2-5ddececb0931',
-            },
-          },
-          $storage: storage,
-        },
-      });
-    });
-  });
-
   describe('Methods', () => {
     storage.event.actions.setEventStatus = jest.fn();
 

@@ -48,6 +48,6 @@ declare module 'vue/types/vue' {
       minHeight?: number | string,
       maxWidth?: number | string }) => boolean;
 
-    $reportToasted: (message : TranslateResult, error: IServerError | Error) => null;
+    $reportToasted: (message : TranslateResult, error: IServerError | unknown) => null;
   }
 }

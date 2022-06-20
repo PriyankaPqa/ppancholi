@@ -2,7 +2,6 @@ import { mockEvent } from '@libs/registration-lib/entities/event/event.mock';
 import _sortBy from 'lodash/sortBy';
 import {
   createLocalVue,
-  mount,
   shallowMount,
 } from '@/test/testSetup';
 
@@ -40,14 +39,6 @@ const storage = mockStorage();
 
 describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
   let wrapper;
-
-  describe('Template', () => {
-    beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-      });
-    });
-  });
 
   describe('Methods', () => {
     beforeEach(() => {
