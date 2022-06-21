@@ -22,43 +22,33 @@ stages:
               disableCache: ${{ parameters.disableCache }}
 
           - script: yarn test:parallel ${{parameters.isPullRequest}} ${{parameters.appName}} $(System.TotalJobsInPhase) $(System.JobPositionInPhase)
-            displayName: 'Run tests & Create coverage'
+            displayName: 'Run tests'
 
-          - task: PublishPipelineArtifact@1
-            condition: eq(variables['build.sourceBranch'], 'refs/heads/master') # We only publish coverage after merge, so no need to create the artifact here
-            displayName: 'Create coverage artifacts'
-            inputs:
-              path: $(Build.SourcesDirectory)/coverage/ # Create artifact with what's inside coverage folder
-
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Result'
-            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
-            inputs:
-              testRunner: VSTest
-              testResultsFiles: '**/*test*.trx'
-              failTaskOnFailedTests: false
-
-      - job: 'Publish_Test_Coverage'
+      - job: 'Publish_Test'
         dependsOn: 'Test'
-        displayName: 'Publish Coverage'
+        displayName: 'Publish Results & Coverage'
         condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
         steps:
+          - task: PublishTestResults@2
+            displayName: 'Publish Test Result'
+            condition: succeededOrFailed()
+            inputs:
+              testRunner: VSTest
+              testResultsFiles: '**/*result*.trx'
+              failTaskOnFailedTests: false
+
           - template: '../steps/cache-install-npm.yml'
             parameters:
               packageFeed: ${{ parameters.packageFeed }}
               disableCache: ${{ parameters.disableCache }}
 
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download coverage artifacts'
-            inputs:
-              downloadPath: $(Build.SourcesDirectory) # Download code coverage artifact
-              itemPattern: '**/**/cobertura-coverage.xml'
-
-          - script: node ./tools/scripts/merge-test-coverage.js $(Build.SourcesDirectory) # Look for coverage file in Build.SourcesDirectory
-            displayName: 'Merge code coverage reports'
+          - script: node ./tools/scripts/merge-test-coverage.js
+            displayName: 'Merge Code Coverage Reports'
+            condition: succeededOrFailed()
 
           - task: PublishCodeCoverageResults@1
-            displayName: 'Publish code coverage'
+            displayName: 'Publish Merged Code Coverage Report'
+            condition: succeededOrFailed()
             inputs:
               codeCoverageTool: 'Cobertura'
               summaryFileLocation: '$(Build.SourcesDirectory)/coverage/merged-cobertura-coverage.xml'

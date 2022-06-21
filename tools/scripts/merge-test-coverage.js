@@ -4,9 +4,6 @@ const fs = require('fs');
 
 const mergedDir = './coverage';
 
-const parameters = process.argv.slice(2);
-const lookInFolder = parameters[0];
-
 // Create /coverage folder if not existing
 if (!fs.existsSync(mergedDir)) {
   fs.mkdirSync(mergedDir);
@@ -14,9 +11,7 @@ if (!fs.existsSync(mergedDir)) {
 
 function mergeCodeCoverage() {
   // Find all cobertura-coverage.xml in the project
-  const filesPath = jetpack.find(`${lookInFolder}`, { matching: ['cobertura-coverage.xml', '!node_modules/**/*'] });
-
-  console.log(`Found coverage reports in ${filesPath}`);
+  const filesPath = jetpack.find('', { matching: ['cobertura-coverage.xml', '!node_modules/**/*'] });
 
   // Build string package1=path_to_xml package2=path_to_xml
   const packages = filesPath
@@ -36,7 +31,7 @@ function mergeCodeCoverage() {
 
   // Build the script command
   const script = `yarn cobertura-merge -o ${mergedDir}/merged-cobertura-coverage.xml ${packages}`;
-  console.log(`Will run: ${script}`);
+
   execSync(script);
 }
 
