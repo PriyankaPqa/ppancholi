@@ -1,12 +1,13 @@
 import { BrowserAuthOptions, BrowserSystemOptions } from '@azure/msal-browser/dist/config/Configuration';
 import { BrowserCacheLocation, CacheOptions, RedirectRequest } from '@azure/msal-browser';
+import { localStorageKeys } from '@/constants/localStorage';
 import { MSAL } from './MSAL';
 import MSALMock from '../e2e/utils/MSALMock';
 
 // eslint-disable-next-line import/no-mutable-exports
 let AuthenticationProvider = null as MSAL;
 
-if (process.env.VUE_APP_MOCK_AUTHENTICATION === 'true') {
+if (localStorage.getItem(localStorageKeys.automatedTests.name) === 'true') { // When test automation
   AuthenticationProvider = new MSALMock() as unknown as MSAL; // To resolve conflict with typing since we cannot make them fully compatible
 } else {
   const clientId = process.env.VUE_APP_AUTH_AAD_CLIENTID;

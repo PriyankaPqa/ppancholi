@@ -128,6 +128,10 @@ const TeamDetails = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pag
 
 export const routes: Array<RouteConfig> = [
   {
+    path: Routes.e2e.path,
+    name: Routes.e2e.name,
+  },
+  {
     path: '/:lang',
     name: '',
     component: {

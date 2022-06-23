@@ -142,7 +142,7 @@ router.beforeEach(async (to, from, next) => {
   let loginError = false;
 
   try {
-    if (to.name === routeConstants.loginError.name) {
+    if (to.name === routeConstants.loginError.name || to.name === routeConstants.e2e.name) {
       next();
       return;
     }

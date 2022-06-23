@@ -1,5 +1,6 @@
 <template>
   <page-template
+    data-test="event-details-page"
     :loading="loading"
     :show-right-menu="showRightMenu"
     :left-menu-title="$m(event.entity.name)"

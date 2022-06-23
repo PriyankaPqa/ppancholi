@@ -17,4 +17,7 @@ export const localStorageKeys = {
   signInAttempts: {
     name: 'sign-in-attempts',
   },
+  automatedTests: {
+    name: 'automated-tests',
+  },
 };

@@ -1,14 +1,14 @@
 <template>
   <v-row class="flex-row justify-space-between ma-0 pa-2 pt-6">
     <v-col class="d-flex ma-0 pa-1" md="12" lg="6">
-      <span class="rc-heading-5" data-test="event-summary-section-title">{{ $t(title) }}</span>
+      <span class="rc-heading-5" :data-test="`event-summary-section-title-${section}`">{{ $t(title) }}</span>
     </v-col>
     <v-col class="d-flex justify-end ma-0 pa-0" md="12" lg="6">
       <v-btn
         v-if="canAdd"
         class="pl-3 pr-4"
         color="primary"
-        data-test="add-section-button"
+        :data-test="`add-section-button-${section}`"
         @click="$emit('click-add-button', section)">
         <v-icon left size="16" color="white">
           mdi-plus

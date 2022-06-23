@@ -25,19 +25,19 @@ describe('EventSummarySectionTitle.vue', () => {
 
     describe('title', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('event-summary-section-title');
+        const element = wrapper.findDataTest(`event-summary-section-title-${EEventSummarySections.CallCentre}`);
         expect(element.exists()).toBeTruthy();
       });
 
       it('displays the right data', () => {
-        const element = wrapper.findDataTest('event-summary-section-title');
+        const element = wrapper.findDataTest(`event-summary-section-title-${EEventSummarySections.CallCentre}`);
         expect(element.text()).toEqual('eventSummary.callCentre');
       });
     });
 
     describe('add button', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('add-section-button');
+        const element = wrapper.findDataTest(`add-section-button-${EEventSummarySections.CallCentre}`);
         expect(element.exists()).toBeTruthy();
       });
 
@@ -55,12 +55,12 @@ describe('EventSummarySectionTitle.vue', () => {
           },
         });
 
-        const element = wrapper.findDataTest('add-section-button');
+        const element = wrapper.findDataTest(`add-section-button-${EEventSummarySections.CallCentre}`);
         expect(element.exists()).toBeFalsy();
       });
 
       it('emits click-add-button with the right argument', async () => {
-        const element = wrapper.findDataTest('add-section-button');
+        const element = wrapper.findDataTest(`add-section-button-${EEventSummarySections.CallCentre}`);
         await element.vm.$emit('click');
         expect(wrapper.emitted('click-add-button')[0][0]).toEqual(EEventSummarySections.CallCentre);
       });
