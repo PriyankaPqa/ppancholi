@@ -1,6 +1,6 @@
+import { IServerError } from '@libs/core-lib/types';
 import { IStore, IState } from '@libs/registration-lib/store/store.types';
 import { TranslateResult } from 'vue-i18n';
-import { IError } from '@libs/core-lib/src/services/http-client';
 import { IIdentitySet } from '../../../entities/value-objects/identity-set/identitySet.types';
 import { IHouseholdEntity } from '../../../entities/household';
 import {
@@ -75,7 +75,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.getters['registration/registrationResponse'];
     },
 
-    registrationErrors(): IError[] {
+    registrationErrors(): IServerError {
       return store.getters['registration/registrationErrors'];
     },
 
@@ -213,11 +213,11 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       store.commit('registration/setHouseholdCreate', payload);
     },
 
-    setRegistrationErrors(payload: IError[]) {
+    setRegistrationErrors(payload: IServerError) {
       store.commit('registration/setRegistrationErrors', payload);
     },
 
-    setSplitHousehold({ originHouseholdId, primaryMember, additionalMembers }: {originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }) {
+    setSplitHousehold({ originHouseholdId, primaryMember, additionalMembers }: { originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }) {
       store.commit('registration/setSplitHousehold', { originHouseholdId, primaryMember, additionalMembers });
     },
 
@@ -267,17 +267,17 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('registration/submitRegistration', recaptchaToken);
     },
 
-    updatePersonContactInformation({ member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number}): Promise<IHouseholdEntity> {
+    updatePersonContactInformation({ member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number }): Promise<IHouseholdEntity> {
       return store.dispatch('registration/updatePersonContactInformation', { member, isPrimaryMember, index });
     },
 
-    updatePersonIdentity({ member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number}): Promise<IHouseholdEntity> {
+    updatePersonIdentity({ member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number }): Promise<IHouseholdEntity> {
       return store.dispatch('registration/updatePersonIdentity', { member, isPrimaryMember, index });
     },
 
     updatePersonAddress({
       member, isPrimaryMember, index = -1, sameAddress = false,
-    }: { member: IMember; isPrimaryMember: boolean; index: number; sameAddress: boolean}): Promise<IHouseholdEntity> {
+    }: { member: IMember; isPrimaryMember: boolean; index: number; sameAddress: boolean }): Promise<IHouseholdEntity> {
       return store.dispatch('registration/updatePersonAddress', {
         member, isPrimaryMember, index, sameAddress,
       });

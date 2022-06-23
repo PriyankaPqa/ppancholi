@@ -30,7 +30,7 @@ export default Vue.extend({
       this.resetAllTabs();
       this.$storage.registration.mutations.setCurrentTabIndex(tabs().findIndex((t) => t.id === 'isRegistered'));
       this.$storage.registration.mutations.resetHouseholdCreate();
-      this.$storage.registration.mutations.setRegistrationErrors([]);
+      this.$storage.registration.mutations.setRegistrationErrors(null);
     },
 
     resetAllTabs() {

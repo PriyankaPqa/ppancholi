@@ -1,5 +1,5 @@
+import { IServerError } from '@libs/core-lib/types';
 import { TranslateResult } from 'vue-i18n';
-import { IError } from '@libs/core-lib/src/services/http-client';
 import {
   ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
 } from '../../../types';
@@ -34,7 +34,7 @@ export interface IStorage {
     indigenousTypesItems(): Record<string, TranslateResult>[];
     indigenousCommunitiesItems(indigenousType: EIndigenousTypes): Record<string, string>[];
     registrationResponse(): IHouseholdEntity;
-    registrationErrors(): IError[];
+    registrationErrors(): IServerError;
     householdCreate(): HouseholdCreate;
     personalInformation(): IContactInformation & IIdentitySet;
     isSplitMode(): boolean;
@@ -71,8 +71,8 @@ export interface IStorage {
     setHouseholdAssociationMode(payload: boolean): void;
     setHouseholdAlreadyRegistered(payload: boolean): void;
     setHouseholdCreate(payload: IHouseholdCreateData): void;
-    setRegistrationErrors(payload: IError[]): void;
-    setSplitHousehold({ originHouseholdId, primaryMember, additionalMembers }: {originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }): void;
+    setRegistrationErrors(payload: IServerError): void;
+    setSplitHousehold({ originHouseholdId, primaryMember, additionalMembers }: { originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }): void;
     resetSplitHousehold(): void;
     setTabs(tabs: IRegistrationMenuItem[]): void;
     setPrimarySpokenLanguagesFetched(payload: boolean): void;
@@ -87,13 +87,13 @@ export interface IStorage {
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
     fetchIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
     submitRegistration(recaptchaToken?: string): Promise<IHouseholdEntity>;
-    updatePersonContactInformation({ member, isPrimaryMember, index }: { member: IMember; isPrimaryMember: boolean; index?: number}): Promise<IHouseholdEntity>;
-    updatePersonIdentity({ member, isPrimaryMember, index }: { member: IMember; isPrimaryMember: boolean; index?: number}): Promise<IHouseholdEntity>;
+    updatePersonContactInformation({ member, isPrimaryMember, index }: { member: IMember; isPrimaryMember: boolean; index?: number }): Promise<IHouseholdEntity>;
+    updatePersonIdentity({ member, isPrimaryMember, index }: { member: IMember; isPrimaryMember: boolean; index?: number }): Promise<IHouseholdEntity>;
     updatePersonAddress({
       member, isPrimaryMember, index, sameAddress,
-    }: { member: IMember; isPrimaryMember: boolean; index?: number; sameAddress?: boolean}): Promise<IHouseholdEntity>;
-    addAdditionalMember({ householdId, member, sameAddress }: { householdId: string; member: IMember; sameAddress?: boolean}): Promise<IHouseholdEntity>;
-    splitHousehold (): Promise<IHouseholdEntity>;
+    }: { member: IMember; isPrimaryMember: boolean; index?: number; sameAddress?: boolean }): Promise<IHouseholdEntity>;
+    addAdditionalMember({ householdId, member, sameAddress }: { householdId: string; member: IMember; sameAddress?: boolean }): Promise<IHouseholdEntity>;
+    splitHousehold(): Promise<IHouseholdEntity>;
     deleteAdditionalMember({ householdId, memberId, index }: { householdId: string; memberId: string; index: number }): Promise<IHouseholdEntity>;
   };
 }
@@ -115,7 +115,7 @@ export interface IStorageMock {
     indigenousCommunitiesItems: jest.Mock<Record<string, string>[]>;
     findEffectiveJumpIndex: jest.Mock<number>;
     registrationResponse: jest.Mock<IHouseholdEntity>;
-    registrationErrors: jest.Mock<IError[]>;
+    registrationErrors: jest.Mock<IServerError>;
     householdCreate: jest.Mock<IHouseholdCreate>;
     personalInformation: jest.Mock<IContactInformation & IIdentitySet>;
     isSplitMode: jest.Mock<boolean>;

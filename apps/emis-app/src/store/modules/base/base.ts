@@ -77,10 +77,11 @@ export class BaseModule<T extends IEntity, IdParams> {
         return res;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
+        const error = e.response?.data?.errors;
         // normal errors already logged in service.get
         // when e is an array returned from BE (a validation error or 404)
-        if (!Array.isArray(e)) {
-          applicationInsights.trackException(e, { idParams }, 'module.base', 'fetch');
+        if (error && !Array.isArray(error)) {
+          applicationInsights.trackException(error, { idParams }, 'module.base', 'fetch');
         }
         return returnFullResponse ? e.response : null;
       }

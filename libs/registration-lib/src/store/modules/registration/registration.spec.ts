@@ -51,7 +51,7 @@ describe('>>> Registration Module', () => {
           indigenousCommunities: [],
           loadingIndigenousCommunities: false,
           registrationResponse: null,
-          registrationErrors: [],
+          registrationErrors: null,
           submitLoading: false,
           inlineEditCounter: 0,
           householdResultsShown: false,
@@ -249,7 +249,7 @@ describe('>>> Registration Module', () => {
 
     describe('registrationErrors', () => {
       it('returns registrationErrors', () => {
-        expect(store.getters['registration/registrationErrors']).toEqual([]);
+        expect(store.getters['registration/registrationErrors']).toEqual(null);
       });
     });
 
@@ -486,7 +486,7 @@ describe('>>> Registration Module', () => {
 
     describe('setRegistrationErrors', () => {
       it('sets registration error', () => {
-        expect(store.state.registration.registrationErrors).toEqual([]);
+        expect(store.state.registration.registrationErrors).toEqual(null);
 
         const errors = [mockHttpError()];
         store.commit('registration/setRegistrationErrors', errors);
@@ -674,7 +674,7 @@ describe('>>> Registration Module', () => {
         store.commit('registration/resetSplitHousehold');
         expect(store.state.registration.splitHousehold).toEqual(null);
         expect(store.state.registration.event).toEqual(null);
-        expect(store.state.registration.registrationErrors).toEqual([]);
+        expect(store.state.registration.registrationErrors).toEqual(null);
         expect(store.state.registration.registrationResponse).toEqual(null);
         expect(store.state.registration.currentTabIndex).toEqual(0);
         expect(store.state.registration.isPrivacyAgreed).toEqual(false);
@@ -818,7 +818,7 @@ describe('>>> Registration Module', () => {
           throw error;
         });
         await store.dispatch('registration/submitRegistration');
-        expect(store.getters['registration/registrationErrors']).toEqual('mock-errors');
+        expect(store.getters['registration/registrationErrors']).toEqual({ response: { data: { errors: 'mock-errors' } } });
       });
     });
 

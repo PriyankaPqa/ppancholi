@@ -30,6 +30,7 @@ const mockI18n = {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  applicationInsights.trackException = jest.fn();
 });
 
 describe('httpClient', () => {

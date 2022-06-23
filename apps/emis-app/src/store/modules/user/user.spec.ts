@@ -32,6 +32,7 @@ describe('>>> Users Module', () => {
 
   beforeEach(() => {
     store = mockStoreUserLevel(1);
+    applicationInsights.trackTrace = jest.fn();
     jest.clearAllMocks();
   });
 

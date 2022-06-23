@@ -140,7 +140,7 @@ describe('ConfirmRegistration.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            errors: () => [mockHttpError()],
+            errors: () => ({ response: { data: { errors: [mockHttpError()] } } }),
             phoneAssistance: () => 'phone',
           },
         });

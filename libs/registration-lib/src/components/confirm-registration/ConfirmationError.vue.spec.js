@@ -4,6 +4,7 @@ import { mockHttpError } from '@libs/core-lib/src/services/http-client';
 import Component from './ConfirmationError.vue';
 
 const localVue = createLocalVue();
+const errors = { response: { data: { errors: [mockHttpError()] } } };
 
 console.warn = jest.fn();
 
@@ -18,7 +19,7 @@ describe('ConfirmRegistration.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          errors: [mockHttpError()],
+          errors,
           phone: 'phone',
         },
       });
@@ -36,67 +37,93 @@ describe('ConfirmRegistration.vue', () => {
       });
 
       it('returns true if the error is a duplicate of a kind', async () => {
-        await wrapper.setProps({
-          errors: [
-            { code: 'errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate' },
-          ],
-        });
+        const errors = {
+          response: {
+            data: {
+              errors: [
+                { code: 'errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate' },
+              ],
+            },
+          },
+        };
+        await wrapper.setProps({ errors });
         expect(wrapper.vm.isDuplicateError).toEqual(true);
       });
 
       it('returns true if the error is a duplicate of a kind', async () => {
-        await wrapper.setProps({
-          errors: [
-            { code: 'errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number' },
-          ],
-        });
+        const errors = {
+          response: {
+            data: {
+              errors: [
+                { code: 'errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number' },
+              ],
+            },
+          },
+        };
+        await wrapper.setProps({ errors });
         expect(wrapper.vm.isDuplicateError).toEqual(true);
       });
 
       it('returns true if the error is a duplicate of a kind', async () => {
-        await wrapper.setProps({
-          errors: [
-            { code: 'errors.the-household-have-duplicate-first-name-last-name-birthdate' },
-          ],
-        });
+        const errors = {
+          response: {
+            data: {
+              errors: [
+                { code: 'errors.the-household-have-duplicate-first-name-last-name-birthdate' },
+              ],
+            },
+          },
+        };
+        await wrapper.setProps({ errors });
         expect(wrapper.vm.isDuplicateError).toEqual(true);
       });
 
       it('returns true if the error is a duplicate of a kind', async () => {
-        await wrapper.setProps({
-          errors: [
-            { code: 'errors.the-email-provided-already-exists-in-the-system' },
-          ],
-        });
+        const errors = {
+          response: {
+            data: {
+              errors: [
+                { code: 'errors.the-email-provided-already-exists-in-the-system' },
+              ],
+            },
+          },
+        };
+        await wrapper.setProps({ errors });
         expect(wrapper.vm.isDuplicateError).toEqual(true);
       });
 
       it('returns true if the error is a duplicate of a kind', async () => {
-        await wrapper.setProps({
-          errors: [
-            { code: 'errors.person-identified-as-duplicate' },
-          ],
-        });
+        const errors = {
+          response: {
+            data: {
+              errors: [
+                { code: 'errors.person-identified-as-duplicate' },
+              ],
+            },
+          },
+        };
+        await wrapper.setProps({ errors });
+
         expect(wrapper.vm.isDuplicateError).toEqual(true);
       });
     });
 
     describe('errorMessage', () => {
       it('should return proper message for a duplicate of a kind', async () => {
-        await wrapper.setProps({
-          errors: [
-            { code: 'errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate' },
-          ],
-        });
+        const errors = {
+          response: {
+            data: {
+              errors: [
+                { code: 'errors.person-identified-as-duplicate' },
+              ],
+            },
+          },
+        };
+        await wrapper.setProps({ errors });
         expect(wrapper.vm.errorMessage).toEqual('registration.confirmation.error.message.duplicate');
       });
 
       it('should return proper message for a duplicate of a kind', async () => {
-        await wrapper.setProps({
-          errors: [
-            mockHttpError(),
-          ],
-        });
         expect(wrapper.vm.errorMessage).toEqual('registration.confirmation.error');
       });
     });

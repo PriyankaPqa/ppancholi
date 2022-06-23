@@ -9,6 +9,7 @@ import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
 import { mockUserStateLevel } from '@/test/helpers';
 import householdHelpers from '@/ui/helpers/household';
 import routes from '@/constants/routes';
+import flushPromises from 'flush-promises';
 import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();
@@ -32,13 +33,13 @@ const events = [
 
 describe('HouseholdProfile.vue', () => {
   let wrapper;
-  storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
-  storage.household.getters.get = jest.fn(() => household);
   storage.household.actions.fetch = jest.fn(() => household);
   storage.caseFile.getters.getByIds = jest.fn(() => [caseFile]);
+  storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
 
   describe('Template', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
@@ -57,11 +58,16 @@ describe('HouseholdProfile.vue', () => {
           household() {
             return householdCreate;
           },
+          householdData() {
+            return household;
+          },
         },
         mocks: {
           $storage: storage,
         },
       });
+
+      await flushPromises();
     });
 
     describe('registration number', () => {
@@ -206,9 +212,7 @@ describe('HouseholdProfile.vue', () => {
               { id: ' loc-id-4-inactive', status: EEventLocationStatus.Inactive },
             ],
           },
-        ),
-
-        ];
+        )];
 
         wrapper = shallowMount(Component, {
           localVue,
@@ -295,6 +299,7 @@ describe('HouseholdProfile.vue', () => {
 
     describe('householdData', () => {
       it('returns the right data', () => {
+        storage.household.getters.get = jest.fn(() => household);
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -469,7 +474,10 @@ describe('HouseholdProfile.vue', () => {
             $storage: {
               registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
               caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
-              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+              household: {
+                actions: { fetch: jest.fn(() => mockCombinedHousehold()) },
+                getters: { get: jest.fn(() => household) },
+              },
             },
           },
         });
@@ -506,7 +514,10 @@ describe('HouseholdProfile.vue', () => {
             $storage: {
               registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
               caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
-              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+              household: {
+                actions: { fetch: jest.fn(() => mockCombinedHousehold()) },
+                getters: { get: jest.fn(() => household) },
+              },
             },
           },
         });
@@ -534,7 +545,10 @@ describe('HouseholdProfile.vue', () => {
             $storage: {
               registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
               caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
-              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+              household: {
+                actions: { fetch: jest.fn(() => mockCombinedHousehold()) },
+                getters: { get: jest.fn(() => household) },
+              },
             },
           },
         });
@@ -853,13 +867,14 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('moveMembers', () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          id: household.entity.id,
-        },
-      });
       it('should redirect to proper page', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          mocks: { $storage: storage },
+        });
         wrapper.vm.moveMembers();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.household.householdMembersMove.name });
       });

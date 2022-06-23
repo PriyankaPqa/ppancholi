@@ -59,12 +59,12 @@
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
 import Vue from 'vue';
-import { IError } from '@libs/core-lib/services/http-client';
 import { IRegistrationMenuItem } from '../../types';
 import { IHouseholdCreate, IHouseholdCreateData } from '../../entities/household-create';
 import { IEvent } from '../../entities/event';
 import { IHouseholdEntity } from '../../entities/household';
 import ConfirmationError from './ConfirmationError.vue';
+import { IServerError } from '../../../../core-lib/src/types';
 
 export default Vue.extend({
   name: 'ConfirmRegistration',
@@ -74,7 +74,7 @@ export default Vue.extend({
 
   computed: {
     success(): boolean {
-      return this.errors?.length === 0 && this.response !== undefined;
+      return !this.errors && this.response !== undefined;
     },
 
     associationMode(): boolean {
@@ -95,7 +95,7 @@ export default Vue.extend({
       return this.$storage.registration.getters.householdCreate();
     },
 
-    errors(): IError[] {
+    errors(): IServerError {
       return this.$storage.registration.getters.registrationErrors();
     },
 

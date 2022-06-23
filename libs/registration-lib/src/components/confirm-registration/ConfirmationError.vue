@@ -55,6 +55,8 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import { IError } from '@libs/core-lib/services/http-client';
+import { keysForDuplicateErrors } from './keysForDuplicateErrors';
+import { IServerError } from '../../../../core-lib/src/types';
 
 type TranslateResult = VueI18n.TranslateResult;
 
@@ -63,7 +65,7 @@ export default Vue.extend({
 
   props: {
     errors: {
-      type: Array as () => IError[],
+      type: Object as () => IServerError,
       required: true,
     },
     phone: {
@@ -78,24 +80,20 @@ export default Vue.extend({
 
   data() {
     return {
-      keysForDuplicateErrors: [
-        'errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate',
-        'errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number',
-        'errors.the-household-have-duplicate-first-name-last-name-birthdate',
-        'errors.the-email-provided-already-exists-in-the-system',
-        'errors.person-identified-as-duplicate',
-      ],
+      keysForDuplicateErrors,
     };
   },
 
   computed: {
     firstError(): IError {
-      return this.errors[0];
+      const errors = (this.errors as IServerError)?.response?.data?.errors;
+      return errors?.[0];
     },
 
     isDuplicateError(): boolean {
-      if (Array.isArray(this.errors)) {
-        return this.errors.some((e) => this.keysForDuplicateErrors.includes(e.code));
+      const errors = (this.errors as IServerError)?.response?.data?.errors;
+      if (errors && Array.isArray(errors)) {
+        return errors.some((e) => keysForDuplicateErrors.includes(e.code));
       }
       return false;
     },

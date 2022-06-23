@@ -62,8 +62,8 @@
                   color="primary"
                   data-test="nextButton"
                   :aria-label="getNextButtonLabel"
-                  :loading="submitLoading"
-                  :disabled="submitLoading || failed || inlineEdit"
+                  :loading="submitLoading || retrying"
+                  :disabled="submitLoading || failed || inlineEdit || retrying"
                   @click="next()">
                   {{ getNextButtonLabel }}
                 </v-btn>
@@ -74,6 +74,10 @@
       </validation-observer>
     </page-template>
     <confirmation-print ref="printConfirm" :event="event" :registration-number="registrationNumber" />
+
+    <system-error-dialog
+      v-if="showErrorDialog"
+      :show.sync="showErrorDialog" />
   </div>
 </template>
 
@@ -83,7 +87,6 @@ import mixins from 'vue-typed-mixins';
 import individual from '@libs/registration-lib/ui/mixins/individual';
 import { Route, NavigationGuardNext } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
-import { HouseholdCreate } from '@libs/registration-lib/entities/household-create';
 import { IEvent } from '@libs/registration-lib/entities/event';
 import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
 import routes from '@/constants/routes';
@@ -102,6 +105,7 @@ import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { FeatureKeys } from '@/entities/tenantSettings';
 import { EventHub } from '@libs/core-lib/plugins/event-hub';
+import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -143,12 +147,13 @@ export default mixins(individual).extend({
     ReviewRegistration,
     ConfirmRegistration,
     ConfirmationPrint,
+    SystemErrorDialog,
   },
 
   data() {
     return {
       tabs: tabs(),
-      showExitConfirmation: false,
+      showErrorDialog: false,
     };
   },
 
@@ -276,15 +281,16 @@ export default mixins(individual).extend({
           return;
         }
 
-        const associating = await this.associateHousehold(this.household, this.event);
-
-        if (associating) {
-          await this.jump(this.currentTabIndex + 1);
-        }
+        this.associateHousehold();
 
         return;
       }
       await this.$storage.registration.actions.submitRegistration();
+
+      if (this.submitErrors && !this.isDuplicateError) {
+        this.handleErrors(this.submitRegistration);
+        return;
+      }
       this.nextDefault();
     },
 
@@ -313,23 +319,35 @@ export default mixins(individual).extend({
       });
     },
 
-    async associateHousehold(household: HouseholdCreate, event: IEvent): Promise<boolean> {
+    async associateHousehold() {
       const userChoice = await (this.$confirm({
         title: this.titleLeave,
         messages: this.messagesLeave,
       }));
       if (userChoice) {
-        const res = await this.$storage.caseFile.actions.createCaseFile({
-          householdId: household.id,
-          eventId: event.id,
-          consentInformation: household.consentInformation,
-        });
-        if (!res) {
-          this.$storage.registration.mutations.setRegistrationResponse(res);
+        const success = await this.createNewCaseFile();
+        if (!success) {
+          this.handleErrors(this.createNewCaseFile);
+        } else {
+          await this.jump(this.currentTabIndex + 1);
         }
-        this.showExitConfirmation = false;
       }
-      return userChoice;
+    },
+
+    async createNewCaseFile(): Promise<boolean> {
+      const res = await this.$storage.caseFile.actions.createCaseFile({
+        householdId: this.household.id,
+        eventId: this.event.id,
+        consentInformation: this.household.consentInformation,
+      });
+      if (!res) {
+        this.$storage.registration.mutations.setRegistrationErrors({ name: 'case-file-create-error', message: 'Case file create error' });
+      } else {
+        this.$storage.registration.mutations.setRegistrationErrors(null);
+      }
+
+      this.$storage.registration.mutations.setRegistrationResponse(res);
+      return !!res;
     },
   },
 });

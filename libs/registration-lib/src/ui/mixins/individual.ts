@@ -1,3 +1,4 @@
+import { IServerError } from '@libs/core-lib/types';
 // Mixin used for Individual.vue and RegistrationIndividual.vue
 import { TranslateResult } from 'vue-i18n';
 import _pickBy from 'lodash/pickBy';
@@ -5,12 +6,18 @@ import Vue from 'vue';
 import { IRegistrationMenuItem, VForm } from '../../types';
 import { HouseholdCreate, IHouseholdCreateData } from '../../entities/household-create';
 import helpers from '../helpers/index';
+import { keysForDuplicateErrors } from '../../components/confirm-registration/keysForDuplicateErrors';
 
 export default Vue.extend({
   data() {
     return {
       isFormReady: false,
       recaptchaToken: null,
+      showErrorDialog: false,
+      retryCount: 0,
+      retryMax: 5,
+      retrying: false,
+      retryInterval: 3000,
     };
   },
 
@@ -69,6 +76,10 @@ export default Vue.extend({
       return this.$storage.registration.getters.event();
     },
 
+    submitErrors(): IServerError {
+      return this.$storage.registration.getters.registrationErrors();
+    },
+
     registrationNumber(): string {
       // eslint-disable-next-line no-nested-ternary
       return this.$store.state.registration.householdAssociationMode
@@ -79,7 +90,19 @@ export default Vue.extend({
     },
 
     registrationSuccess(): boolean {
-      return this.$storage.registration.getters.registrationErrors()?.length === 0 && this.$storage.registration.getters.registrationResponse() !== undefined;
+      return !this.submitErrors && this.$storage.registration.getters.registrationResponse() !== undefined;
+    },
+
+    phoneAssistance(): string {
+      return this.event.responseDetails?.assistanceNumber || '';
+    },
+
+    isDuplicateError(): boolean {
+      const errors = (this.submitErrors as IServerError)?.response?.data?.errors;
+      if (errors && Array.isArray(errors)) {
+        return errors.some((e) => keysForDuplicateErrors.includes(e.code));
+      }
+      return false;
     },
   },
 
@@ -132,10 +155,43 @@ export default Vue.extend({
       }
 
       if (this.currentTab.id === 'review') { // The recaptchaToken is set in Individual.vue (benef app), in the callback
-        await this.$storage.registration.actions.submitRegistration(this.recaptchaToken);
+        await this.submitRegistration();
+
+        if (this.submitErrors && !this.isDuplicateError) {
+          this.handleErrors(this.submitRegistration);
+          return;
+        }
       }
 
       await this.jump(this.currentTabIndex + 1);
+    },
+
+    async submitRegistration() {
+      await this.$storage.registration.actions.submitRegistration(this.recaptchaToken);
+    },
+
+    async handleErrors(submitFunction: ()=> void) {
+      this.retrying = true;
+      while (this.retryCount < this.retryMax && this.submitErrors && !this.isDuplicateError) {
+        // eslint-disable-next-line no-await-in-loop
+        await helpers.timeout(this.retryInterval);
+        // eslint-disable-next-line no-await-in-loop
+        await submitFunction();
+        this.retryCount += 1;
+      }
+
+      this.retryCount = 0;
+      this.retrying = false;
+
+      if (this.submitErrors && !this.isDuplicateError) {
+        this.showErrorDialog = true;
+      } else {
+        await this.jump(this.currentTabIndex + 1);
+      }
+    },
+
+    async createNewCaseFile() {
+      return false;
     },
 
     print() {

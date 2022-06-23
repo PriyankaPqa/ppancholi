@@ -34,7 +34,7 @@
                   {{ $t(currentTab.backButtonTextKey) }}
                 </v-btn>
               </template>
-              <v-btn v-else :aria-label="$t(currentTab.backButtonTextKey)" data-test="backButton" :disabled="submitLoading" @click="back()">
+              <v-btn v-else :aria-label="$t(currentTab.backButtonTextKey)" data-test="backButton" :disabled="submitLoading || retrying" @click="back()">
                 {{ $t(currentTab.backButtonTextKey) }}
               </v-btn>
 
@@ -57,7 +57,7 @@
                 color="primary"
                 data-test="nextButton"
                 :aria-label="$t(currentTab.nextButtonTextKey)"
-                :loading="submitLoading"
+                :loading="submitLoading || retrying"
                 :disabled="failed || inlineEdit"
                 @click="goNext()">
                 {{ $t(currentTab.nextButtonTextKey) }}
@@ -68,6 +68,10 @@
       </rc-page-content>
     </ValidationObserver>
     <confirmation-print ref="printConfirm" :event="event" :registration-number="registrationNumber" />
+    <system-error-dialog
+      v-if="showErrorDialog"
+      :show.sync="showErrorDialog"
+      :phone="phoneAssistance" />
   </div>
 </template>
 
@@ -76,6 +80,7 @@ import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@libs/component-lib/components';
 import individual from '@libs/registration-lib/ui/mixins/individual';
 import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
+import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
 import { FeatureKeys } from '@libs/registration-lib/entities/tenantSettings';
 import { localStorageKeys } from '@/constants/localStorage';
 import routes from '@/constants/routes';
@@ -102,12 +107,14 @@ export default mixins(individual).extend({
     ReviewRegistration,
     ConfirmRegistration,
     ConfirmationPrint,
+    SystemErrorDialog,
   },
 
   data: () => ({
     recaptchaToken: null,
     recaptchaKey: localStorage.getItem(localStorageKeys.recaptchaKey.name),
     FeatureKeys,
+    showErrorDialog: false,
   }),
 
   computed: {

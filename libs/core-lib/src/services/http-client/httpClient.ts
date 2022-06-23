@@ -95,21 +95,22 @@ export class HttpClient implements IHttpClient {
       } else {
         Vue.toasted.global.error(this.i18n.t('error.unexpected_error'));
       }
-      return false;
     }
 
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
       Vue?.toasted?.global.error(this.i18n.t('error.log_in_again'));
       return false;
     }
 
-    if (error.response.status === 403 && this.isGlobalHandlerEnabled(error.config)) {
+    if (error.response?.status === 403 && this.isGlobalHandlerEnabled(error.config)) {
       this.error403Handler();
       return false;
     }
 
-    const { errors } = error.response.data;
-    this.logToAppInsights(errors, error);
+    const errors = error.response?.data?.errors;
+    if (errors) {
+      this.logToAppInsights(errors, error);
+    }
 
     if (this.isGlobalHandlerEnabled(error.config)) {
       this.errorGlobalHandler(error);
@@ -120,7 +121,7 @@ export class HttpClient implements IHttpClient {
   }
 
   private errorGlobalHandler(e: IServerError) {
-    const errorData = e.response.data.errors;
+    const errorData = e.response?.data?.errors;
     if (errorData && Array.isArray(errorData)) {
       errorData.forEach((error: IError) => {
         const formattedError = this.getFormattedError(error);
@@ -138,14 +139,14 @@ export class HttpClient implements IHttpClient {
   }
 
   private logToAppInsights(errors: any, error: any) {
-    if (error.config?.noErrorLogging) {
+    if (!error.response || error.config?.noErrorLogging) {
       return;
     }
     // we'll consider an error with a "errors" prop as a validation error from the BE and thus only trace those
     // except 404 errors which we will consider errors
     // we remove guids from the error name so as to merge similar errors
     const regexGuid = /[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/gi;
-    const urlWithoutGuids = (error.response.config?.url || '').replace(regexGuid, 'GUID');
+    const urlWithoutGuids = (error.response?.config?.url || '').replace(regexGuid, 'GUID');
     const errorName = `${urlWithoutGuids} http error ${error.response.status}`;
     const errorDetails = { error: errors || error, failedMethod: error.response.config?.method, failedRequestUrl: error.response.config?.url };
     if (errors && Array.isArray(errors) && error.response.status !== 404) {

@@ -10,7 +10,6 @@ import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
 import { Status } from '@libs/core-lib/entities/base';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
-import { IError } from '@libs/core-lib/services/http-client';
 import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';
 import {
   isRegisteredValid,
@@ -58,7 +57,7 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   indigenousCommunities: [],
   loadingIndigenousCommunities: false,
   registrationResponse: null,
-  registrationErrors: [],
+  registrationErrors: null,
   submitLoading: false,
   inlineEditCounter: 0,
   householdResultsShown: false,
@@ -246,7 +245,7 @@ const mutations = (): MutationTree<IState> => ({
     callback(currentTab);
   },
 
-  mutateTabAtIndex(state: IState, { targetIndex, callback }: {targetIndex: number; callback: (targetTab: IRegistrationMenuItem) => void}) {
+  mutateTabAtIndex(state: IState, { targetIndex, callback }: { targetIndex: number; callback: (targetTab: IRegistrationMenuItem) => void }) {
     const targetTab = state.tabs[targetIndex];
     callback(targetTab);
   },
@@ -290,7 +289,7 @@ const mutations = (): MutationTree<IState> => ({
     state.primarySpokenLanguagesFetched = payload;
   },
 
-  setIndigenousCommunities(state: IState, { communities }: {communities: IIndigenousCommunityData[]}) {
+  setIndigenousCommunities(state: IState, { communities }: { communities: IIndigenousCommunityData[] }) {
     state.indigenousCommunities = communities;
   },
 
@@ -318,7 +317,7 @@ const mutations = (): MutationTree<IState> => ({
     state.submitLoading = payload;
   },
 
-  setRegistrationErrors(state: IState, payload: IError[]) {
+  setRegistrationErrors(state: IState, payload: IServerError) {
     state.registrationErrors = payload;
   },
 
@@ -380,7 +379,7 @@ const mutations = (): MutationTree<IState> => ({
     state.householdCreate.noFixedHome = payload;
   },
 
-  addAdditionalMember(state: IState, { payload, sameAddress }: {payload: IMember; sameAddress: boolean}) {
+  addAdditionalMember(state: IState, { payload, sameAddress }: { payload: IMember; sameAddress: boolean }) {
     state.householdCreate.addAdditionalMember(payload, sameAddress);
   },
 
@@ -388,7 +387,7 @@ const mutations = (): MutationTree<IState> => ({
     state.householdCreate.removeAdditionalMember(index);
   },
 
-  editAdditionalMember(state: IState, { payload, index, sameAddress }: {payload: IMember; index: number; sameAddress: boolean}) {
+  editAdditionalMember(state: IState, { payload, index, sameAddress }: { payload: IMember; index: number; sameAddress: boolean }) {
     state.householdCreate.editAdditionalMember(payload, index, sameAddress);
   },
 
@@ -409,14 +408,14 @@ const mutations = (): MutationTree<IState> => ({
   },
 
   setSplitHousehold(state: IState,
-    { originHouseholdId, primaryMember, additionalMembers }: {originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }) {
+    { originHouseholdId, primaryMember, additionalMembers }: { originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }) {
     state.splitHousehold = { originHouseholdId, splitMembers: { primaryMember, additionalMembers } };
   },
 
   resetSplitHousehold(state: IState) {
     state.splitHousehold = null;
     state.event = null;
-    state.registrationErrors = [];
+    state.registrationErrors = null;
     state.registrationResponse = null;
     state.currentTabIndex = 0;
     state.isPrivacyAgreed = false;
@@ -435,7 +434,7 @@ const actions = (mode: ERegistrationMode) => ({
     { lang, registrationLink }: { lang: string; registrationLink: string },
   ): Promise<IEvent> {
     const result = await this.$services.publicApi.searchEvents(lang, registrationLink);
-    const eventData = result?.value?.length > 0 ? (result.value[0] as {entity: IEvent}).entity : null;
+    const eventData = result?.value?.length > 0 ? (result.value[0] as { entity: IEvent }).entity : null;
     context.commit('setEvent', eventData);
 
     return context.getters.event;
@@ -522,10 +521,11 @@ const actions = (mode: ERegistrationMode) => ({
         result = await this.$services.households.submitCRCRegistration(context.state.householdCreate, context.state.event.id);
       }
       context.commit('setRegistrationResponse', result);
+      context.commit('setRegistrationErrors', null);
     } catch (error) {
-      const e = (error as IServerError).response.data.errors;
+      const e = (error as IServerError).response?.data?.errors || error;
       applicationInsights.trackTrace(`submitRegistration error - self: ${mode === ERegistrationMode.Self}`, { error: e }, 'store.registration', 'submitRegistration');
-      context.commit('setRegistrationErrors', e);
+      context.commit('setRegistrationErrors', error);
     } finally {
       context.commit('setSubmitLoading', false);
     }
@@ -536,7 +536,7 @@ const actions = (mode: ERegistrationMode) => ({
   async updatePersonContactInformation(
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
-    { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number},
+    { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number },
   ): Promise<IHouseholdEntity> {
     const result = await this.$services.households.updatePersonContactInformation(member.id,
       { contactInformation: member.contactInformation, identitySet: member.identitySet, isPrimaryBeneficiary: isPrimaryMember });
@@ -555,7 +555,7 @@ const actions = (mode: ERegistrationMode) => ({
   async updatePersonIdentity(
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
-    { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number},
+    { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number },
   ): Promise<IHouseholdEntity> {
     const result = await this.$services.households.updatePersonIdentity(member.id,
       { contactInformation: member.contactInformation, identitySet: member.identitySet });
@@ -576,7 +576,7 @@ const actions = (mode: ERegistrationMode) => ({
     context: ActionContext<IState, IState>,
     {
       member, isPrimaryMember, index = -1, sameAddress = false,
-    }: { member: IMember; isPrimaryMember: boolean; index: number; sameAddress: boolean},
+    }: { member: IMember; isPrimaryMember: boolean; index: number; sameAddress: boolean },
   ): Promise<IHouseholdEntity> {
     let result;
     if (isPrimaryMember) {
@@ -654,7 +654,7 @@ export const makeRegistrationModule = (
     skipAgeRestriction,
     skipEmailPhoneRules,
     mode,
-  }: {i18n: VueI18n; tabs: IRegistrationMenuItem[]; skipAgeRestriction: boolean; skipEmailPhoneRules: boolean; mode: ERegistrationMode},
+  }: { i18n: VueI18n; tabs: IRegistrationMenuItem[]; skipAgeRestriction: boolean; skipEmailPhoneRules: boolean; mode: ERegistrationMode },
 ): Module<IState, IRootState> => ({
   namespaced: true,
   state: moduleState(tabs) as IState,

@@ -298,7 +298,7 @@ describe('Individual.vue', () => {
           expect(wrapper.vm.$refs.form.validate).toBeCalled();
         });
 
-        it('should call associateHousehold with proper param', async () => {
+        it('should call associateHousehold', async () => {
           wrapper = shallowMount(Component, {
             localVue,
             computed: {
@@ -310,32 +310,11 @@ describe('Individual.vue', () => {
             },
           });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
-          wrapper.vm.jump = jest.fn();
           wrapper.vm.associateHousehold = jest.fn();
 
           await wrapper.vm.nextOnReview();
 
-          expect(wrapper.vm.associateHousehold).toHaveBeenCalledWith(wrapper.vm.household, wrapper.vm.event);
-        });
-
-        it('should call jump if we associated', async () => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            computed: {
-              householdAlreadyRegistered: () => false,
-              associationMode: () => true,
-            },
-            mocks: {
-              $storage: storage,
-            },
-          });
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
-          wrapper.vm.jump = jest.fn();
-          wrapper.vm.associateHousehold = jest.fn(() => true);
-
-          await wrapper.vm.nextOnReview();
-
-          expect(wrapper.vm.jump).toHaveBeenCalledWith(wrapper.vm.currentTabIndex + 1);
+          expect(wrapper.vm.associateHousehold).toHaveBeenCalledTimes(1);
         });
       });
 
@@ -358,6 +337,28 @@ describe('Individual.vue', () => {
 
         expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.nextDefault).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls handleErrors if there are submit errors that are not duplicate errors', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            submitErrors: () => ({ response: { data: {} } }),
+            associationMode: () => false,
+            householdAlreadyRegistered: () => false,
+            isDuplicateError: () => false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.handleErrors = jest.fn();
+
+        await wrapper.vm.nextOnReview();
+        expect(wrapper.vm.handleErrors).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.handleErrors).toHaveBeenCalledWith(wrapper.vm.submitRegistration);
       });
     });
 
@@ -396,25 +397,61 @@ describe('Individual.vue', () => {
 
     describe('associateHousehold', () => {
       it('should display confirmation dialog ', async () => {
-        const household = mockHouseholdCreateData();
-        const event = { id: '1' };
         wrapper.vm.$confirm = jest.fn(() => false);
 
-        await wrapper.vm.associateHousehold(household, event);
+        await wrapper.vm.associateHousehold();
 
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ title: wrapper.vm.titleLeave, messages: wrapper.vm.messagesLeave });
       });
-      it('should call create case file action if user confirmed', async () => {
-        const household = mockHouseholdCreateData();
-        const event = { id: '1' };
 
-        await wrapper.vm.associateHousehold(household, event);
+      it('calls createNewCaseFile if user confirms', async () => {
+        wrapper.vm.$confirm = jest.fn(() => true);
+        wrapper.vm.createNewCaseFile = jest.fn(() => mockHouseholdCreateData());
+        wrapper.vm.jump = jest.fn();
+
+        await wrapper.vm.associateHousehold();
+        expect(wrapper.vm.createNewCaseFile).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls handleErrors if createNewCaseFile does not return success', async () => {
+        wrapper.vm.$confirm = jest.fn(() => true);
+        wrapper.vm.handleErrors = jest.fn();
+        wrapper.vm.createNewCaseFile = jest.fn(() => null);
+        await wrapper.vm.associateHousehold();
+        expect(wrapper.vm.handleErrors).toHaveBeenCalledWith(wrapper.vm.createNewCaseFile);
+      });
+
+      it('calls jump if createNewCaseFile returns success', async () => {
+        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
+        wrapper.vm.$confirm = jest.fn(() => true);
+        wrapper.vm.jump = jest.fn();
+        wrapper.vm.createNewCaseFile = jest.fn(() => null);
+        await wrapper.vm.associateHousehold();
+        expect(wrapper.vm.jump).toHaveBeenCalledWith(3);
+      });
+    });
+
+    describe('createNewCaseFile', () => {
+      it('should call create case file action', async () => {
+        await wrapper.vm.createNewCaseFile();
 
         expect(wrapper.vm.$storage.caseFile.actions.createCaseFile).toHaveBeenCalledWith({
-          householdId: household.id,
-          eventId: event.id,
-          consentInformation: household.consentInformation,
+          householdId: wrapper.vm.household.id,
+          eventId: wrapper.vm.event.id,
+          consentInformation: wrapper.vm.household.consentInformation,
         });
+      });
+      it('should call setRegistrationErrors with an argument if there is no response', async () => {
+        wrapper.vm.$storage.caseFile.actions.createCaseFile = jest.fn(() => null);
+        await wrapper.vm.createNewCaseFile();
+        expect(wrapper.vm.$storage.registration.mutations.setRegistrationErrors)
+          .toHaveBeenCalledWith({ name: 'case-file-create-error', message: 'Case file create error' });
+      });
+
+      it('should call setRegistrationErrors with null if there is a response', async () => {
+        wrapper.vm.$storage.caseFile.actions.createCaseFile = jest.fn(() => 'mock-response');
+        await wrapper.vm.createNewCaseFile();
+        expect(wrapper.vm.$storage.registration.mutations.setRegistrationErrors).toHaveBeenCalledWith(null);
       });
     });
   });

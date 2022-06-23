@@ -1,10 +1,13 @@
+import { mockEvent } from '../../entities/event/event.mock';
 import { mockStorage } from '../../store/storage';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
+import helpers from '../helpers/index';
 
 import individual from './individual';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const mockEventData = mockEvent();
 
 window.scrollTo = jest.fn();
 
@@ -65,6 +68,18 @@ describe('Individual.vue', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
+
+  const doMount = ({ errorCode } = { errorCode: null }) => {
+    wrapper = shallowMount(Component, {
+      localVue,
+      mocks: {
+        $storage: storage,
+      },
+      computed: {
+        submitErrors: () => (errorCode ? { response: { data: { errors: [{ code: errorCode }] } } } : null),
+      },
+    });
+  };
 
   describe('Computed', () => {
     beforeEach(() => {
@@ -128,7 +143,7 @@ describe('Individual.vue', () => {
 
     describe('registrationSuccess', () => {
       it('returns true if no error', () => {
-        storage.registration.getters.registrationErrors.mockReturnValueOnce([]);
+        storage.registration.getters.registrationErrors.mockReturnValueOnce(null);
         expect(wrapper.vm.registrationSuccess).toBe(true);
       });
 
@@ -143,10 +158,60 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.registrationSuccess).toBe(false);
       });
     });
+
+    describe('submitErrors', () => {
+      it('returns errors from the store', async () => {
+        expect(wrapper.vm.submitErrors).toEqual(wrapper.vm.$storage.registration.getters.registrationErrors());
+      });
+    });
+
+    describe('event', () => {
+      it('return the event by id from the storage', () => {
+        expect(wrapper.vm.event).toEqual(mockEventData);
+      });
+    });
+
+    describe('phoneAssistance', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.phoneAssistance).toEqual(mockEventData.responseDetails.assistanceNumber);
+      });
+    });
+
+    describe('isDuplicateError', () => {
+      it('returns false if the error is not a duplicate of a kind', async () => {
+        expect(wrapper.vm.isDuplicateError).toEqual(false);
+      });
+
+      it('returns true if the error is a duplicate of a kind', async () => {
+        doMount({ errorCode: 'errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate' });
+        expect(wrapper.vm.isDuplicateError).toEqual(true);
+      });
+
+      it('returns true if the error is a duplicate of a kind', async () => {
+        doMount({ errorCode: 'errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number' });
+        expect(wrapper.vm.isDuplicateError).toEqual(true);
+      });
+
+      it('returns true if the error is a duplicate of a kind', async () => {
+        doMount({ errorCode: 'errors.the-household-have-duplicate-first-name-last-name-birthdate' });
+        expect(wrapper.vm.isDuplicateError).toEqual(true);
+      });
+
+      it('returns true if the error is a duplicate of a kind', async () => {
+        doMount({ errorCode: 'errors.the-email-provided-already-exists-in-the-system' });
+        expect(wrapper.vm.isDuplicateError).toEqual(true);
+      });
+
+      it('returns true if the error is a duplicate of a kind', async () => {
+        doMount({ errorCode: 'errors.person-identified-as-duplicate' });
+        expect(wrapper.vm.isDuplicateError).toEqual(true);
+      });
+    });
   });
 
   describe('Methods', () => {
     beforeEach(() => {
+      window.scrollTo = jest.fn();
       wrapper = shallowMount(Component, {
         localVue,
         mocks: {
@@ -245,10 +310,100 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledWith('recaptchaToken');
       });
+
+      it('calls handleErrors if there are submit errors that are not duplicate errors if current tab is review', async () => {
+        doMount({ errorCode: { response: { data: {} } } });
+        wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+          id: 'review',
+        }));
+
+        wrapper.vm.handleErrors = jest.fn();
+
+        await wrapper.vm.next();
+        expect(wrapper.vm.handleErrors).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.handleErrors).toHaveBeenCalledWith(wrapper.vm.submitRegistration);
+      });
+    });
+
+    describe('handleErrors', () => {
+      it('calls a timer and the passed function for the amount of times equal to retryMax if there are still submit errors', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            submitErrors: () => ({ response: { data: {} } }),
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        helpers.timeout = jest.fn();
+        wrapper.vm.submitRegistration = jest.fn();
+        await wrapper.setData({ retryMax: 5, retryCount: 0, retryInterval: 2000 });
+        await wrapper.vm.handleErrors(wrapper.vm.submitRegistration);
+
+        expect(wrapper.vm.submitRegistration).toBeCalledTimes(5);
+        expect(helpers.timeout).toBeCalledTimes(5);
+        expect(helpers.timeout).toBeCalledWith(2000);
+      });
+
+      it('opens the errorDialog if it called submit for the maximum number of times and there are still errors - not duplication errors', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            submitErrors: () => ({ response: { data: {} } }),
+            isDuplicateError: () => false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        await wrapper.setData({ retryMax: 5, retryCount: 5, showErrorDialog: false });
+        await wrapper.vm.handleErrors();
+        expect(wrapper.vm.showErrorDialog).toEqual(true);
+      });
+
+      it('calls jump if it called submit for the maximum number of times and there are no errors', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            submitErrors: () => null,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
+        wrapper.vm.jump = jest.fn();
+        await wrapper.setData({ retryMax: 5, retryCount: 5, showErrorDialog: false });
+        await wrapper.vm.handleErrors();
+        expect(wrapper.vm.jump).toHaveBeenCalledWith(3);
+      });
+
+      it('calls jump if it called submit for the maximum number of times and there are duplication errors', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            submitErrors: () => ({ response: { data: {} } }),
+            isDuplicateError: () => true,
+
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
+        wrapper.vm.jump = jest.fn();
+        await wrapper.setData({ retryMax: 5, retryCount: 5, showErrorDialog: false });
+        await wrapper.vm.handleErrors();
+        expect(wrapper.vm.jump).toHaveBeenCalledWith(3);
+      });
     });
 
     describe('closeRegistration', () => {
-      it('redirects to case file if it is CRC regitration', async () => {
+      it('redirects to case file if it is CRC registration', async () => {
         wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
         wrapper.vm.$router = {
           replace: jest.fn(),

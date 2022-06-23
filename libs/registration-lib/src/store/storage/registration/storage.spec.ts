@@ -263,7 +263,7 @@ describe('>>> Registration Storage', () => {
     });
 
     it('should proxy setRegistrationErrors', () => {
-      const errors = [mockHttpError()];
+      const errors = { response: { data: { errors: [mockHttpError()] } }, name: '', message: '' };
       storage.mutations.setRegistrationErrors(errors);
       expect(store.commit).toBeCalledWith('registration/setRegistrationErrors', errors);
     });

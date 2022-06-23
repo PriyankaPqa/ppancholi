@@ -1,3 +1,4 @@
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionContext } from 'vuex';
 import { DomainBaseService } from '@libs/core-lib/services/base';
@@ -49,6 +50,9 @@ const actionContext = {
 const id = '1';
 
 describe('Base Module', () => {
+  beforeEach(() => {
+    applicationInsights.trackException = jest.fn();
+  });
   describe('constructor', () => {
     it('should instantiate a service', () => {
       expect(baseModule.service).toEqual(service);

@@ -31,7 +31,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     indigenousCommunitiesItems: jest.fn(() => mockIndigenousCommunitiesItems()),
     findEffectiveJumpIndex: jest.fn(),
     registrationResponse: jest.fn(() => mockHouseholdEntity()),
-    registrationErrors: jest.fn(() => []),
+    registrationErrors: jest.fn(),
     householdCreate: jest.fn(() => _cloneDeep(mockHouseholdCreate())),
     personalInformation: jest.fn(() => _merge(mockContactInformation(), mockIdentitySet())),
     isSplitMode: jest.fn(() => false),

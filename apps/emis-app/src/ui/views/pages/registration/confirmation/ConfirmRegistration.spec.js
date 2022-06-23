@@ -44,7 +44,7 @@ describe('ConfirmRegistration.vue', () => {
         wrapper.vm.resetAllTabs = jest.fn();
         wrapper.vm.goToSearch();
         expect(wrapper.vm.$storage.registration.mutations.setRegistrationErrors).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.registration.mutations.setRegistrationErrors).toHaveBeenCalledWith([]);
+        expect(wrapper.vm.$storage.registration.mutations.setRegistrationErrors).toHaveBeenCalledWith(null);
       });
     });
   });

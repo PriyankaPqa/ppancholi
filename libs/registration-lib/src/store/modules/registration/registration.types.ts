@@ -1,4 +1,4 @@
-import { IError } from '@libs/core-lib/services/http-client';
+import { IServerError } from '@libs/core-lib/types';
 import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';
 import { IOptionItemData } from '../../../types';
 import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
@@ -22,7 +22,7 @@ export type IState = {
   loadingIndigenousCommunities: boolean;
   isPrivacyAgreed: boolean;
   registrationResponse: IHouseholdEntity;
-  registrationErrors: IError[];
+  registrationErrors: IServerError;
   submitLoading: boolean;
   inlineEditCounter: number;
   householdResultsShown: boolean;
