@@ -158,7 +158,7 @@ export class SignalR implements ISignalR {
         // This code only displays the notification that the role has changed in AD, the log out is done after the page navigation.
         // Therefore, it is only an additional UX improvement to keep the user aware of the change, it doesn't need to be 100% reliable
         await helpers.timeout(15000);
-        const roleChanged = (this.storage.user.actions.isRoleChanged(await this.storage.user.actions.getCurrentRoles()));
+        const roleChanged = await this.storage.user.actions.isRoleChanged(await this.storage.user.actions.getCurrentRoles());
         if (roleChanged) {
           Vue.toasted.global.error(i18n.t('errors.access-change.log-out-on-navigation'));
         }
