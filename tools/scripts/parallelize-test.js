@@ -33,6 +33,8 @@ function getAffectedTestFiles(affectedPackages) {
   let allFiles = [];
   const globPattern = '*.{test,spec}.{js,ts}';
 
+  console.log(`Affected packages: ${affectedPackages}`);
+
   if (affectedPackages.includes('@libs/core-lib')) {
     allFiles = allFiles.concat(jetpack.find('libs/core-lib', { matching: globPattern }));
   }
@@ -75,7 +77,7 @@ const affectedPackages = getAffectedPackages(isPullRequest);
 const files = getAffectedTestFiles(affectedPackages);
 const globPattern = getBlobPattern(files);
 
-const script = `jest "${globPattern}" --coverage --coverageDirectory=coverage-job-${JOB_INDEX} --runInBand --logHeapUsage`;
+const script = `jest "${globPattern}" --coverage --coverageDirectory=coverage --runInBand --logHeapUsage`;
 
 shellAsync(script)
   .then()
