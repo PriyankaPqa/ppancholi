@@ -1,6 +1,7 @@
 <template>
   <v-menu
     v-model="menuModel"
+    :data-test="`${dataTest}-menu`"
     v-bind="$attrs"
     transition="scale-transition"
     :close-on-content-click="false"
@@ -23,6 +24,7 @@
     <validation-provider v-slot="{ errors, classes }" :name="$attrs.name" :rules="rules">
       <v-date-picker
         v-model="innerValue"
+        :data-test="`${dataTest}-date-picker`"
         no-title
         :class="classes"
         :error-messages="errors"
