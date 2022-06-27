@@ -55,10 +55,11 @@
 
             <v-row>
               <v-col cols="12" class="pb-0">
-                <validation-provider v-slot="{ errors, classes }" :rules="rules.streetAddress" mode="aggressive" data-test="location-streetAddress">
+                <validation-provider v-slot="{ errors, classes }" :rules="rules.streetAddress" data-test="location-streetAddress-validator" mode="aggressive">
                   <rc-google-autocomplete
                     ref="address__street_autocomplete"
                     v-model="location.address.streetAddress"
+                    data-test="location-streetAddress"
                     :class="classes"
                     :error-messages="errors"
                     :api-key="apiKey"
@@ -102,9 +103,10 @@
               </v-col>
 
               <v-col cols="12" md="8" class="pb-0">
-                <validation-provider v-slot="{ errors, classes }" :rules="rules.country" mode="aggressive" data-test="location-country">
+                <validation-provider v-slot="{ errors, classes }" :rules="rules.country" data-test="location-country-validator" mode="aggressive">
                   <rc-country-select
                     v-model="location.address.country"
+                    data-test="location-country"
                     outlined
                     :error-messages="errors"
                     :class="classes"

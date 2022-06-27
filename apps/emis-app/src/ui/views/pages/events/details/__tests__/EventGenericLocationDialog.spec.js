@@ -417,14 +417,14 @@ describe('EventGenericLocationDialog.vue', () => {
 
     describe('country', () => {
       it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('location-country');
+        const element = wrapper.findDataTest('location-country-validator');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.country);
       });
     });
 
     describe('streetAddress', () => {
       it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('location-streetAddress');
+        const element = wrapper.findDataTest('location-streetAddress-validator');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.streetAddress);
       });
     });
