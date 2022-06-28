@@ -36,7 +36,7 @@
           <v-row v-if="!isEditMode">
             <v-col cols="12">
               <validation-provider v-slot="{ errors }" ref="file" :rules="rules.file" mode="aggressive">
-                <rc-file-upload :allowed-extensions="allowedExtensions" :file="file" :errors="errors" @update:file="onUpdateFile($event)" />
+                <rc-file-upload :allowed-extensions="allowedExtensions" :errors="errors" @update:file="onUpdateFile($event)" />
               </validation-provider>
             </v-col>
           </v-row>

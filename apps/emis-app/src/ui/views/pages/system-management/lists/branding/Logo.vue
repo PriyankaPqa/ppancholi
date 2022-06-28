@@ -49,7 +49,6 @@
 
         <rc-file-upload
           :allowed-extensions="allowedExtensions"
-          :file="file"
           :errors="errors"
           :show-size="false"
           :show-rules="false"

@@ -577,6 +577,7 @@
     "error.401.refresh": "La page sera actualisée en raison de son inactivité.",
     "error.access_denied": "Accès refusé. Vous n'êtes plus autorisé à effectuer cette action",
     "error.feature_disabled": "La fonctionnalité est désactivée",
+    "error.file.upload.fileName": "Le nom du fichier ne peut contenir que des lettres, des chiffres, des espaces et les caractères +-._",
     "error.log_in_again": "Il y a eu un problème lors de votre authentification.",
     "error.no_permission": "Vous n'avez pas la permission d'accéder à cette page",
     "error.submit_error": "Une erreur s'est produite lors de la soumission de vos données. Veuillez réessayer ou envoyer un rapport.",

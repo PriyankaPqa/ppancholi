@@ -15,7 +15,7 @@
       prepend-icon=""
       outlined
       @change="onChange($event)"
-      @focus="checkRules($event)">
+      @focus="checkRules()">
       <template #append class="pa-0">
         <v-btn color="primary" class="uploadButton" @click="openSelection()">
           {{ $t('common.button.browse') }}
@@ -110,11 +110,6 @@ export default Vue.extend({
       default: false,
     },
 
-    file: {
-      type: [File, Object],
-      required: true,
-    },
-
     errors: {
       type: Array,
       default: () => [] as Array<string>,
@@ -129,7 +124,7 @@ export default Vue.extend({
   },
   computed: {
     currentFile(): File {
-      return this.localFiles[0];
+      return Array.isArray(this.localFiles) ? this.localFiles[0] : this.localFiles;
     },
     /**
      * Filter the selection of files based on extensions
@@ -147,8 +142,17 @@ export default Vue.extend({
     },
   },
   methods: {
-    checkRules(files: File[] | File) {
-      const file = Array.isArray(files) ? files[0] : files;
+    checkRules() {
+      const file = this.currentFile;
+      this.errorMessages = [];
+
+      // File names should not have special characters, because the file name is part of the blob index tag:
+      // https://docs.microsoft.com/en-us/azure/storage/blobs/storage-manage-find-blobs?tabs=azure-portal#setting-blob-index-tags
+      const allowedFileNameRegex = /^[a-zA-Z0-9+-._\s]*$/;
+      if (file?.name && !allowedFileNameRegex.test(file.name)) {
+        this.errorMessages.push(this.$t('error.file.upload.fileName') as string);
+      }
+
       if (!file?.size) {
         this.errorMessages = [];
       } else {
@@ -184,7 +188,8 @@ export default Vue.extend({
     },
 
     onChange(files: File[]) {
-      this.checkRules(files);
+      this.localFiles = files;
+      this.checkRules();
       const file = Array.isArray(files) ? files[0] : files;
 
       const isValid = !this.errorMessages.length;

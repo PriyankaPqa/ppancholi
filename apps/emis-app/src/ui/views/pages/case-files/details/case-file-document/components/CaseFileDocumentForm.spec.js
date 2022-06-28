@@ -233,12 +233,6 @@ describe('CaseFileDocumentForm.vue', () => {
         expect(wrapper.findComponent(RcFileUpload).exists()).toBe(false);
       });
 
-      it('should be passed the file in props', async () => {
-        await (mountWrapper(false, true));
-        await wrapper.setData({ file: { name: 'myFile' } });
-        expect(wrapper.findComponent(RcFileUpload).props('file')).toEqual({ name: 'myFile' });
-      });
-
       it('should allow multiple extensions upload', async () => {
         await (mountWrapper(false, true));
         expect(wrapper.findComponent(RcFileUpload).props('allowedExtensions'))

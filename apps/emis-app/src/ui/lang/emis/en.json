@@ -577,6 +577,7 @@
     "error.401.refresh": "The page will refresh due to inactivity",
     "error.access_denied": "Access denied. You no longer have permission to perform this action",
     "error.feature_disabled": "Feature is disabled",
+    "error.file.upload.fileName": "The file name can only contain letters, numbers, spaces and the characters +-._",
     "error.log_in_again": "There was an error during your authentication.",
     "error.no_permission": "You do not have permission to access this page",
     "error.submit_error": "An error occurred while submitting your data. Please try again or send a report.",

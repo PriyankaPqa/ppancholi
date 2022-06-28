@@ -32,7 +32,6 @@
               <rc-file-upload
                 ref="fileUpload"
                 :allowed-extensions="['csv']"
-                :file="file"
                 :max-size="10000000"
                 :errors="errors"
                 @update:file="onUpdateFile" />
