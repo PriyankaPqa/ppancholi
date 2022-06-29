@@ -13,7 +13,7 @@
           </v-icon>
           <span class="fw-bold">{{ $t('eventDetail.type') }}</span>
           <div class="pl-6" data-test="event-typeName">
-            {{ eventTypeName? $m(eventTypeName):"" }}
+            {{ eventTypeName ? $m(eventTypeName) : "" }}
           </div>
         </div>
       </div>
@@ -62,14 +62,14 @@
             mdi-calendar
           </v-icon>
           <span class="fw-bold">{{ $t('eventDetail.relatedEvents') }}</span>
-          <div v-for="relatedEvent in event.metadata.relatedEventsInfos" :key="relatedEvent.id" class="pl-6" :data-test="`related-event`">
+          <div v-for="(relatedEvent, i) in event.metadata.relatedEventsInfos" :key="relatedEvent.id" class="pl-6" :data-test="`related-event-${i}`">
             {{ $m(relatedEvent.eventName) }}
           </div>
         </div>
       </div>
 
       <div class="d-flex justify-center pt-1 pb-3">
-        <v-icon size="26" class="toggle-left-menu-icon" color="gray darken-2" @click="toggleExpandLeftMenu">
+        <v-icon size="26" class="toggle-left-menu-icon" color="gray darken-2" data-test="expand-button" @click="toggleExpandLeftMenu">
           {{ `mdi-chevron-${showExpandedLeftMenu? 'up': 'down'}` }}
         </v-icon>
       </div>
@@ -188,6 +188,7 @@ export default Vue.extend({
         return null;
       }
       const eventTypes = this.$storage.event.getters.eventTypes(false);
+
       const currentType = eventTypes?.find((t) => t.id === this.event.entity.responseDetails.eventType.optionItemId);
       return currentType?.name;
     },
@@ -264,6 +265,7 @@ export default Vue.extend({
     this.loading = true;
     try {
       await this.$storage.event.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+      await this.$storage.event.actions.fetchEventTypes();
     } finally {
       this.loading = false;
     }

@@ -188,12 +188,12 @@ describe('EventDetails.vue', () => {
         });
 
         it('renders', () => {
-          const element = wrapper.findDataTest('related-event');
+          const element = wrapper.findDataTest('related-event-0');
           expect(element.exists()).toBeTruthy();
         });
         it('displays the related event name', () => {
           const relatedEvent = wrapper.vm.event.metadata.relatedEventsInfos[0];
-          const element = wrapper.findDataTest('related-event');
+          const element = wrapper.findDataTest('related-event-0');
           expect(element.text()).toEqual(relatedEvent.eventName.translation.en);
         });
       });
