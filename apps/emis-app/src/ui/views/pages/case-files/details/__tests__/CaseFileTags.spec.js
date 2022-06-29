@@ -17,24 +17,42 @@ const mockCaseFile = mockCombinedCaseFile();
 
 describe('CaseFileTags.vue', () => {
   let wrapper;
-  describe('Template', () => {
-    beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-        propsData: {
-          tags: mockCaseFile.metadata.tags,
-          caseFileId: mockCaseFile.entity.id,
-        },
-        mocks: {
-          $route: {
-            name: routes.caseFile.activity.name,
-            params: {
-              id: mockCaseFile.entity.id,
-            },
+
+  storage.caseFile.actions.fetchTagsOptions.mockReturnValueOnce(mockOptionItemData());
+  storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFileEntity());
+  storage.caseFile.getters.tagsOptions = jest.fn(() => mockOptionItemData());
+
+  const doMount = (shallow = true, otherOptions = {}) => {
+    const options = {
+      localVue,
+      propsData: {
+        tags: mockCaseFile.metadata.tags,
+        caseFileId: mockCaseFile.entity.id,
+      },
+      mocks: {
+        $route: {
+          name: routes.caseFile.activity.name,
+          params: {
+            id: mockCaseFile.entity.id,
           },
         },
-      });
-      wrapper.vm.existingTags = mockCaseFile.metadata.tags;
+        $storage: storage,
+      },
+      ...otherOptions,
+    };
+
+    if (shallow) {
+      wrapper = shallowMount(Component, options);
+    } else {
+      wrapper = mount(Component, options);
+    }
+
+    wrapper.vm.existingTags = mockCaseFile.metadata.tags;
+  };
+
+  describe('Template', () => {
+    beforeEach(() => {
+      doMount(false);
     });
 
     describe('tags chips', () => {
@@ -167,21 +185,7 @@ describe('CaseFileTags.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          tags: mockCaseFile.metadata.tags,
-          caseFileId: mockCaseFile.entity.id,
-        },
-        mocks: {
-          $route: {
-            name: routes.caseFile.activity.name,
-            params: {
-              id: mockCaseFile.entity.id,
-            },
-          },
-        },
-      });
+      doMount();
     });
 
     describe('addButtonDisabled', () => {
@@ -226,51 +230,24 @@ describe('CaseFileTags.vue', () => {
         expect(wrapper.vm.remainingTags).toEqual([]);
       });
     });
+
+    describe('allTags', () => {
+      it('returns all tags from the store', () => {
+        expect(wrapper.vm.allTags).toEqual(mockOptionItemData());
+      });
+    });
   });
 
   describe('lifecycle', () => {
     test('existing tags should be set to the value of the tag prop data', () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          tags: mockCaseFile.metadata.tags,
-          caseFileId: mockCaseFile.entity.id,
-        },
-        mocks: {
-          $route: {
-            name: routes.caseFile.activity.name,
-            params: {
-              id: mockCaseFile.entity.id,
-            },
-          },
-
-        },
-      });
+      doMount();
       expect(wrapper.vm.existingTags).toEqual(mockCaseFile.metadata.tags);
     });
   });
 
   describe('Methods', () => {
     beforeEach(() => {
-      storage.caseFile.actions.fetchTagsOptions.mockReturnValueOnce(mockOptionItemData());
-      storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFileEntity());
-
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          tags: mockCaseFile.metadata.tags,
-          caseFileId: mockCaseFile.entity.id,
-        },
-        mocks: {
-          $route: {
-            name: routes.caseFile.activity.name,
-            params: {
-              id: mockCaseFile.entity.id,
-            },
-          },
-          $storage: storage,
-        },
-      });
+      doMount();
     });
 
     describe('getActiveItemClass', () => {
@@ -298,17 +275,10 @@ describe('CaseFileTags.vue', () => {
     });
 
     describe('initAddTag', () => {
-      it('fetches the options lists from the store ', async () => {
-        expect(wrapper.vm.$storage.caseFile.actions.fetchTagsOptions).toHaveBeenCalledTimes(0);
-
-        await wrapper.vm.initAddTag();
-        expect(wrapper.vm.$storage.caseFile.actions.fetchTagsOptions).toHaveBeenCalledTimes(1);
-      });
-
-      it('calls makeInitialListTags with the options list result from the storage', async () => {
+      it('calls makeInitialListTags', async () => {
         jest.spyOn(wrapper.vm, 'makeInitialListTags').mockImplementation(() => {});
         await wrapper.vm.initAddTag();
-        expect(wrapper.vm.makeInitialListTags).toHaveBeenCalledWith(mockOptionItemData());
+        expect(wrapper.vm.makeInitialListTags).toBeCalledTimes(1);
       });
     });
 
@@ -321,10 +291,12 @@ describe('CaseFileTags.vue', () => {
             name: { translation: { en: 'mock-name-en', fr: 'mock-name-fr' } },
           };
 
+          doMount(true, { computed: { allTags: () => [optionsTag] } });
+
           wrapper.vm.existingTags = [{ id: 'mock-id' }];
           wrapper.vm.listTags = [];
 
-          await wrapper.vm.makeInitialListTags([optionsTag]);
+          await wrapper.vm.makeInitialListTags();
           expect(wrapper.vm.listTags).toEqual([{
             id: optionsTag.id,
             name: optionsTag.name,
@@ -342,10 +314,12 @@ describe('CaseFileTags.vue', () => {
             name: { translation: { en: 'mock-name-en', fr: 'mock-name-fr' } },
           };
 
+          doMount(true, { computed: { allTags: () => [optionsTag] } });
+
           wrapper.vm.existingTags = [{ id: 'mock-id-2' }];
           wrapper.vm.listTags = [];
 
-          await wrapper.vm.makeInitialListTags([optionsTag]);
+          await wrapper.vm.makeInitialListTags();
           expect(wrapper.vm.listTags).toEqual([{
             id: optionsTag.id,
             name: optionsTag.name,
@@ -363,10 +337,12 @@ describe('CaseFileTags.vue', () => {
             name: { translation: { en: 'mock-name-en', fr: 'mock-name-fr' } },
           };
 
+          doMount(true, { computed: { allTags: () => [optionsTag] } });
+
           wrapper.vm.existingTags = [{ id: 'mock-id-2' }];
           wrapper.vm.listTags = [];
 
-          await wrapper.vm.makeInitialListTags([optionsTag]);
+          await wrapper.vm.makeInitialListTags();
           expect(wrapper.vm.listTags).toEqual([{
             id: optionsTag.id,
             name: optionsTag.name,
@@ -448,23 +424,7 @@ describe('CaseFileTags.vue', () => {
       it('calls the storage action setCaseFileTags with the result from the makePayload call', async () => {
         jest.clearAllMocks();
         storage.caseFile.actions.setCaseFileTags = jest.fn(() => mockCaseFileEntity());
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            tags: mockCaseFile.metadata.tags,
-            caseFileId: mockCaseFile.entity.id,
-          },
-          mocks: {
-            $route: {
-              name: routes.caseFile.activity.name,
-              params: {
-                id: mockCaseFile.entity.id,
-              },
-            },
-            $storage: storage,
-          },
-        });
+        doMount();
 
         const mockPayload = [{ foo: 'bar' }];
         jest.spyOn(wrapper.vm, 'makePayload').mockImplementation(() => mockPayload);
@@ -489,23 +449,7 @@ describe('CaseFileTags.vue', () => {
 
       it('does not call updateExistingTagsAfterAdd if the storage action does not return a result', async () => {
         storage.caseFile.actions.setCaseFileTags = jest.fn();
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            tags: mockCaseFile.metadata.tags,
-            caseFileId: mockCaseFile.entity.id,
-          },
-          mocks: {
-            $route: {
-              name: routes.caseFile.activity.name,
-              params: {
-                id: mockCaseFile.entity.id,
-              },
-            },
-            $storage: storage,
-          },
-        });
+        doMount();
         jest.spyOn(wrapper.vm, 'updateExistingTagsAfterAdd').mockImplementation(() => {});
 
         expect(wrapper.vm.updateExistingTagsAfterAdd).toHaveBeenCalledTimes(0);
@@ -513,36 +457,18 @@ describe('CaseFileTags.vue', () => {
         await wrapper.vm.submitAddTags();
         expect(wrapper.vm.updateExistingTagsAfterAdd).toHaveBeenCalledTimes(0);
       });
-
-      it('emits updateActivities', async () => {
-        await wrapper.vm.submitAddTags();
-        expect(wrapper.emitted('updateActivities')).toBeTruthy();
-      });
     });
 
     describe('submitDeleteTag', () => {
       it('calls makePayload with the remainingTags value', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            tags: mockCaseFile.metadata.tags,
-            caseFileId: mockCaseFile.entity.id,
-          },
+        doMount(true, {
           computed: {
             remainingTag() {
               return [{ tag: 'mock-tag' }];
             },
           },
-          mocks: {
-            $route: {
-              name: routes.caseFile.activity.name,
-              params: {
-                id: mockCaseFile.entity.id,
-              },
-            },
-            $storage: storage,
-          },
         });
+
         jest.spyOn(wrapper.vm, 'makePayload').mockImplementation(() => {});
 
         await wrapper.vm.submitDeleteTag();
@@ -552,26 +478,11 @@ describe('CaseFileTags.vue', () => {
       it('calls the storage action setCaseFileTags with the result from the makePayload call', async () => {
         jest.clearAllMocks();
         storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFileEntity());
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            tags: mockCaseFile.metadata.tags,
-            caseFileId: mockCaseFile.entity.id,
-          },
+        doMount(true, {
           computed: {
             remainingTag() {
               return [{ tag: 'mock-tag' }];
             },
-          },
-          mocks: {
-            $route: {
-              name: routes.caseFile.activity.name,
-              params: {
-                id: mockCaseFile.entity.id,
-              },
-            },
-            $storage: storage,
           },
         });
 
@@ -588,30 +499,8 @@ describe('CaseFileTags.vue', () => {
 
       it('sets existing tags to remaining tags if the storage action returns a result', async () => {
         jest.clearAllMocks();
-
         storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFileEntity());
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            tags: mockCaseFile.metadata.tags,
-            caseFileId: mockCaseFile.entity.id,
-          },
-          computed: {
-            remainingTag() {
-              return [{ tag: 'mock-tag' }];
-            },
-          },
-          mocks: {
-            $route: {
-              name: routes.caseFile.activity.name,
-              params: {
-                id: mockCaseFile.entity.id,
-              },
-            },
-            $storage: storage,
-          },
-        });
+        doMount();
 
         wrapper.vm.existingTags = [];
 
@@ -621,33 +510,11 @@ describe('CaseFileTags.vue', () => {
 
       it('does not set existing tags to remaining tags if the storage action does not return a result', async () => {
         storage.caseFile.actions.setCaseFileTags = jest.fn();
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            tags: mockCaseFile.metadata.tags,
-            caseFileId: mockCaseFile.entity.id,
-          },
-          mocks: {
-            $route: {
-              name: routes.caseFile.activity.name,
-              params: {
-                id: mockCaseFile.entity.id,
-              },
-            },
-            $storage: storage,
-          },
-        });
-
+        doMount();
         wrapper.vm.existingTags = [];
 
         await wrapper.vm.submitDeleteTag();
         expect(wrapper.vm.existingTags).toEqual([]);
-      });
-
-      it('emits updateActivities', async () => {
-        await wrapper.vm.submitAddTags();
-        expect(wrapper.emitted('updateActivities')).toBeTruthy();
       });
     });
 
@@ -681,13 +548,11 @@ describe('CaseFileTags.vue', () => {
         ];
 
         wrapper.vm.listTags = listTags;
-        wrapper.vm.initialInactiveTags = { id: 'id-inactive' };
 
         wrapper.vm.updateExistingTagsAfterAdd();
         expect(wrapper.vm.existingTags).toEqual([
           { id: 'id-1' },
           { id: 'id-2' },
-          { id: 'id-inactive' },
         ]);
       });
     });

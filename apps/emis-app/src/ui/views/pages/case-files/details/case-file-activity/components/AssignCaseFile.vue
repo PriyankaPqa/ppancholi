@@ -342,7 +342,6 @@ export default Vue.extend({
         const assignedTeamMembersPayload = this.prepareTeamMembersPayload(this.assignedIndividuals);
         await this.$storage.caseFile.actions.assignCaseFile(this.caseFile.id, assignedTeamMembersPayload, assignedTeamsPayload);
         this.$emit('updateAssignmentsInfo', { teams: this.assignedTeams, individuals: this.assignedIndividuals });
-        this.$emit('updateActivities');
       } finally {
         this.loading = false;
         this.$emit('update:show', false);

@@ -11,7 +11,7 @@
         data-test="caseFileActivity-tags"
         :readonly="!canEdit"
         :case-file-id="caseFile.entity.id"
-        :tags="caseFile.metadata.tags || []" />
+        :tags="tags" />
 
       <v-row class="ma-0 pa-0">
         <v-col cols="12" md="6" class="flex-row">
@@ -117,6 +117,8 @@ import { ICaseFileActivity, CaseFileTriage } from '@/entities/case-file';
 import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 import { FeatureKeys } from '@/entities/tenantSettings';
+import { IIdMultilingualName } from '@/types';
+import entityUtils from '@libs/core-lib/entities/utils';
 import CaseFileTags from './components/CaseFileTags.vue';
 import CaseFileLabels from './components/CaseFileLabels.vue';
 import CaseFileStatus from './components/CaseFileStatus.vue';
@@ -171,15 +173,27 @@ export default mixins(caseFileDetail).extend({
       const levels = helpers.enumToTranslatedCollection(CaseFileTriage, 'enums.Triage');
       return _sortBy(levels, 'value');
     },
+
+    tags(): IIdMultilingualName[] {
+      const existingIds = this.caseFile.entity.tags.map((t) => t.optionItemId);
+      const tags = this.$storage.caseFile.getters.tagsOptions(false);
+      return existingIds.map((id) => {
+        const name = tags.find((t) => t.id === id)?.name || entityUtils.initMultilingualAttributes();
+        return { id, name };
+      });
+    },
   },
 
   async created() {
     try {
       this.loading = true;
 
-      await this.$storage.caseFile.actions.fetch(this.caseFileId);
+      await Promise.all([
+        this.$storage.caseFile.actions.fetchTagsOptions(),
+        this.$storage.caseFile.actions.fetch(this.caseFileId),
+        this.fetchCaseFileActivities(),
+      ]);
 
-      await this.fetchCaseFileActivities();
       this.attachToChanges(true);
     } finally {
       this.loading = false;

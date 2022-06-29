@@ -145,7 +145,6 @@ export default Vue.extend({
       try {
         this.loading = true;
         await this.$storage.caseFile.actions.setCaseFileStatus(this.caseFile.entity.id, this.newStatus, this.rationale, this.reason);
-        this.$emit('updateActivities');
       } finally {
         this.loading = false;
         this.showConfirmationDialog = false;

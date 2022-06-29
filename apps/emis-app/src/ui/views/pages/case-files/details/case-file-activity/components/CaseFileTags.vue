@@ -62,7 +62,7 @@
             :value="listTags.filter(t=> t.selected || t.existing)"
             multiple
             @change="onSelectTag($event)">
-            <template v-for="(tag, i) in listTags.filter(t => t.active)">
+            <template v-for="(tag, i) in listTags.filter(t => t.active || t.existing)">
               <v-list-item
                 :key="tag.id"
                 dense
@@ -150,7 +150,6 @@ export default Vue.extend({
       showDeleteTagDialog: false,
       isSubmitting: false,
       isLoadingTags: false,
-      initialInactiveTags: [] as IIdMultilingualName[],
     };
   },
 
@@ -173,6 +172,11 @@ export default Vue.extend({
       return this.existingTags;
     },
 
+    allTags(): IOptionItem[] {
+      const existingIds = this.existingTags.map((t) => t.id);
+      return this.$storage.caseFile.getters.tagsOptions(true, existingIds);
+    },
+
   },
 
   created() {
@@ -191,18 +195,16 @@ export default Vue.extend({
     async initAddTag() {
       this.isLoadingTags = true;
       try {
-        // Fetch the list of all available tags as option items (active and inactive)
-        const tagsOptions: IOptionItem[] = await this.$storage.caseFile.actions.fetchTagsOptions();
         // Build the tag list that will be used to display the tags available for selection in the add modal
-        this.makeInitialListTags(tagsOptions);
+        this.makeInitialListTags();
         this.showAddTagsDialog = true;
       } finally {
         this.isLoadingTags = false;
       }
     },
 
-    makeInitialListTags(tagsOptions: IOptionItem[]) {
-      this.listTags = tagsOptions.map((tag: IOptionItem): IListTag => ({
+    makeInitialListTags() {
+      this.listTags = this.allTags.map((tag: IOptionItem): IListTag => ({
         id: tag.id,
         name: tag.name,
         existing: !!this.existingTags.find((t) => t.id === tag.id),
@@ -252,7 +254,6 @@ export default Vue.extend({
         if (res) {
           // Update the tags displayed on the page only after the patch call was successful
           this.updateExistingTagsAfterAdd();
-          this.$emit('updateActivities');
         }
       } finally {
         this.isSubmitting = false;
@@ -269,7 +270,6 @@ export default Vue.extend({
         if (res) {
           // Update the tags displayed on the page only after the patch call was successful
           this.existingTags = this.remainingTags;
-          this.$emit('updateActivities');
         }
       } finally {
         this.isSubmitting = false;
@@ -289,7 +289,8 @@ export default Vue.extend({
     },
 
     updateExistingTagsAfterAdd() {
-      const caseFileTags = this.listTags
+      // Recreating the existing tags list instead of pushing the added tags to the existing ones allows the proper ordering of the displayed case files
+      this.existingTags = this.listTags
         .filter((t) => t.selected || t.existing)
         .map((tag: IListTag): IIdMultilingualName => {
         // Remove the fields 'selected' and 'existing' from the list tag before setting them as existing case files to be displayed
@@ -299,11 +300,7 @@ export default Vue.extend({
           } = tag;
           return caseFileTag;
         });
-
-      // Recreating the exising tags list instead of pushing the added tags to the exising ones allows the proper ordering of the displayed case files
-      this.existingTags = caseFileTags.concat(this.initialInactiveTags);
     },
-
   },
 });
 </script>

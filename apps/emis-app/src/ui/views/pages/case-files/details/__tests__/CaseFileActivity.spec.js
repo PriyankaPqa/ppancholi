@@ -2,6 +2,7 @@ import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@/entities/case-file';
 import { mockStorage } from '@/store/storage';
+import { mockOptionItemData } from '@/entities/optionItem';
 
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
@@ -29,6 +30,9 @@ describe('CaseFileActivity.vue', () => {
         caseFile() {
           return mockCaseFile;
         },
+        tags() {
+          return [{ id: '1', name: { translation: { en: 'name' } } }];
+        },
       },
       mocks: {
         $storage: storage,
@@ -54,7 +58,7 @@ describe('CaseFileActivity.vue', () => {
       });
 
       it('passes the tags as props', () => {
-        expect(element.props('tags')).toEqual(mockCaseFile.metadata.tags);
+        expect(element.props('tags')).toEqual(wrapper.vm.tags);
       });
 
       it('passes readonly as props', async () => {
@@ -216,6 +220,7 @@ describe('CaseFileActivity.vue', () => {
       storage.caseFile.getters.get = jest.fn(() => mockCaseFile);
       storage.caseFile.actions.fetch = jest.fn(() => mockCaseFile);
       storage.caseFile.actions.fetchCaseFileActivities.mockReturnValueOnce(mockActivities);
+      storage.caseFile.getters.tagsOptions = jest.fn(() => mockOptionItemData());
 
       wrapper = shallowMount(Component, {
         localVue,
@@ -297,6 +302,32 @@ describe('CaseFileActivity.vue', () => {
         expect(wrapper.vm.canEdit).toBe(false);
       });
     });
+
+    describe('tags', () => {
+      it('should call the storage getter and return the tags data in the right form', async () => {
+        storage.caseFile.getters.tagsOptions = jest.fn(() => [{ ...mockOptionItemData()[1], id: 'id-1', name: { translation: { en: 'name-en', fr: 'name-fr' } } }]);
+
+        const caseFile = { ...mockCaseFile, entity: { ...mockCaseFile.entity, tags: [{ optionItemId: 'id-1' }] } };
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: { id: mockCaseFile.entity.id },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            caseFile() {
+              return caseFile;
+            },
+          },
+        });
+
+        await flushPromises();
+
+        expect(wrapper.vm.$storage.caseFile.getters.tagsOptions).toHaveBeenCalledWith(false);
+        expect(wrapper.vm.tags).toEqual([{ id: 'id-1', name: { translation: { en: 'name-en', fr: 'name-fr' } } }]);
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -332,6 +363,10 @@ describe('CaseFileActivity.vue', () => {
         });
 
         expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call fetchTagsOptions', () => {
+        expect(wrapper.vm.$storage.caseFile.actions.fetchTagsOptions).toHaveBeenCalled();
       });
 
       it('should call attachToChanges', async () => {

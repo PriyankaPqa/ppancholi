@@ -117,13 +117,6 @@ describe('CaseFileAssignmentsOld.vue', () => {
         element.vm.$emit('updateAssignmentsInfo');
         expect(wrapper.vm.setAssignmentsInfoFromData).toHaveBeenCalledTimes(1);
       });
-
-      it('emits updateActivities when updateActivities is emitted', async () => {
-        await wrapper.setData({ showAssignmentsDialog: true });
-        const element = wrapper.findDataTest('assignments-dialog');
-        element.vm.$emit('updateActivities');
-        expect(wrapper.emitted('updateActivities')).toBeTruthy();
-      });
     });
 
     describe('view assigned button', () => {

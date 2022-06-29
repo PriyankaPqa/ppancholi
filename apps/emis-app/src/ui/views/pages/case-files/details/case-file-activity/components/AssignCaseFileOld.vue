@@ -272,7 +272,6 @@ export default Vue.extend({
           this.caseFile.id, individualsPayload, teamsPayload,
         );
         this.$emit('updateAssignmentsInfo', { teams: this.assignedTeams, individuals: this.assignedIndividuals });
-        this.$emit('updateActivities');
       } finally {
         this.loading = false;
         this.$emit('update:show', false);

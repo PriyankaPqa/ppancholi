@@ -33,8 +33,7 @@
       data-test="assignments-dialog"
       :case-file="caseFile"
       :show.sync="showAssignmentsDialog"
-      @updateAssignmentsInfo="setAssignmentsInfoFromData"
-      @updateActivities="$emit('updateActivities')" />
+      @updateAssignmentsInfo="setAssignmentsInfoFromData" />
 
     <view-assigned-old
       v-if="showViewAssignmentsDialog"
