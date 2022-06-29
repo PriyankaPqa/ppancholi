@@ -392,7 +392,6 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.vm.paymentGroup).toEqual({
           created: '',
           createdBy: '',
-          eTag: '',
           groupingInformation:
           {
             modality: null,
@@ -419,7 +418,6 @@ describe('CreateEditPaymentLineDialog.vue', () => {
               status: 1,
               created: '',
               createdBy: '',
-              eTag: '',
               lastUpdatedBy: '',
               lastAction: '',
               lastActionCorrelationId: '',
@@ -439,7 +437,6 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.vm.paymentGroup).toEqual({
           created: '',
           createdBy: '',
-          eTag: '',
           groupingInformation:
           {
             modality: 2,

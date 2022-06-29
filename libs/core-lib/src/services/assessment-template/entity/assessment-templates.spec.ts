@@ -1,0 +1,29 @@
+import { IHttpMock, mockHttp } from '../../http-client';
+import { AssessmentTemplatesService } from './assessment-templates';
+
+describe('>>> AssessmentTemplates Service', () => {
+  let http: IHttpMock;
+  let service: AssessmentTemplatesService;
+
+  beforeEach(() => {
+    process.env.VUE_APP_API_BASE_URL = 'www.test.com';
+    jest.clearAllMocks();
+    http = mockHttp();
+    service = new AssessmentTemplatesService(http as never);
+  });
+
+  describe('search', () => {
+    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      const searchEndpoint = 'mock-endpoint';
+      await service.search(params, searchEndpoint);
+      expect(http.get).toHaveBeenCalledWith(`assessment/search/${searchEndpoint}`, { params, isOData: true });
+    });
+
+    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      await service.search(params);
+      expect(http.get).toHaveBeenCalledWith('assessment/search/assessment-templates', { params, isOData: true });
+    });
+  });
+});

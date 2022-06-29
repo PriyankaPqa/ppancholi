@@ -318,7 +318,7 @@ describe('LeftMenu.vue', () => {
 
       test('Item[8]', () => {
         const item = wrapper.vm.items[8];
-        expect(item.to).toBe(routes.assessments.home.name);
+        expect(item.to).toBe(routes.assessmentTemplates.home.name);
         expect(item.icon).toBe('mdi-chart-box');
         expect(item.text).toBe('leftMenu.assessments_title');
         expect(item.test).toBe('assessments');

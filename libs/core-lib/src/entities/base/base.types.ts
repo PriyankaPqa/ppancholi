@@ -13,7 +13,6 @@ export interface IEntity {
   lastUpdatedBy: uuid;
   timestamp: Date | string;
   status: Status;
-  eTag: string;
   lastAction: string;
   lastActionCorrelationId: uuid;
 }

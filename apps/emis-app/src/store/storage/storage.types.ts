@@ -69,6 +69,11 @@ import {
   IStorageMakeMock as IUIStateMakeStorageMock,
 } from './ui-state';
 
+import {
+  IStorageMake as IAssessmentTemplateMakeStorage,
+  IStorageMakeMock as IAssessmentTemplateMakeStorageMock,
+} from './assessment-template';
+
 export interface IStorage {
   user: IUserStorage;
   caseFile: ICaseFileMakeStorage;
@@ -89,6 +94,7 @@ export interface IStorage {
   massAction: IMassActionMakeStorage;
   tenantSettings: ITenantSettingsMakeStorage;
   uiState: IUIStateMakeStorage;
+  assessmentTemplate: IAssessmentTemplateMakeStorage;
 }
 
 export interface IStorageMock {
@@ -111,4 +117,5 @@ export interface IStorageMock {
   massAction: IMassActionMakeStorageMock;
   tenantSettings: ITenantSettingsMakeStorageMock;
   uiState: IUIStateMakeStorageMock;
+  assessmentTemplate: IAssessmentTemplateMakeStorageMock;
 }

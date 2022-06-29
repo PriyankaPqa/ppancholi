@@ -21,11 +21,6 @@ describe('>>> Option Item', () => {
       expect(optionItem.timestamp).toEqual(mockBaseData().timestamp);
     });
 
-    it('should instantiate eTag', () => {
-      const optionItem = new OptionItem(mockData);
-      expect(optionItem.eTag).toBe(mockBaseData().eTag);
-    });
-
     it('should instantiate name', () => {
       const optionItem = new OptionItem(mockData);
       expect(optionItem.name).toEqual({

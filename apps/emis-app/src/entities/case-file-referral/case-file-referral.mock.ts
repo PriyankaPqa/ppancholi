@@ -63,13 +63,8 @@ export const mockSearchData = {
   '@odata.count': 3,
   value: [
     {
-      '@search.score': 1,
       Id: '1',
       TenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
-      EntityETag: '3101b7c1-0000-0a00-0000-610c32480000',
-      EntityTimestamp: 1628189256,
-      MetadataETag: '06008cb9-0000-0a00-0000-610c59db0000',
-      MetadataTimestamp: 1628199387,
       Entity: {
         CaseFileId: '1',
         Name: 'Referral2',
@@ -103,13 +98,8 @@ export const mockSearchData = {
       },
     },
     {
-      '@search.score': 1,
       Id: '2',
       TenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
-      EntityETag: '3201a830-0000-0a00-0000-610c34440000',
-      EntityTimestamp: 1628189764,
-      MetadataETag: '060095b9-0000-0a00-0000-610c59db0000',
-      MetadataTimestamp: 1628199387,
       Entity: {
         CaseFileId: '1',
         Name: 'Referral4',
@@ -143,13 +133,8 @@ export const mockSearchData = {
       },
     },
     {
-      '@search.score': 1,
       Id: '3',
       TenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
-      EntityETag: '1e01f4a2-0000-0a00-0000-610bdcc00000',
-      EntityTimestamp: 1628167360,
-      MetadataETag: '06007ab9-0000-0a00-0000-610c59db0000',
-      MetadataTimestamp: 1628199387,
       Entity: {
         CaseFileId: '1',
         Name: 'Test_1',

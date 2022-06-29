@@ -19,13 +19,8 @@ export interface IAzureSearchResult <T> {
 }
 
 export interface ICombinedIndex <TEntity, TMetadata> {
-  '@search.score': number;
   id: uuid;
   tenantId: uuid;
-  entityETag: string;
-  entityTimestamp: number;
-  metadataETag: string;
-  metadataTimestamp: number;
   entity: TEntity;
   metadata: TMetadata;
 }
@@ -33,7 +28,7 @@ export interface ICombinedIndex <TEntity, TMetadata> {
 export interface IAzureCombinedSearchResult <TEntity, TMetadata> {
   odataContext?: string;
   odataCount?: number;
-  value: Array<ICombinedIndex<TEntity, TMetadata>>;
+  value: Array<ICombinedIndex<TEntity, TMetadata> & { id: uuid, tenantId: uuid }>;
 }
 
 export interface IAzureTableSearchResults {

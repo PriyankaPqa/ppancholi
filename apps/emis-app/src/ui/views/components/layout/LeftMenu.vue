@@ -140,11 +140,12 @@ export default Vue.extend({
           roles: ['contributorIM', 'contributorFinance'],
         },
         {
-          to: routes.assessments.home.name,
+          to: routes.assessmentTemplates.home.name,
           icon: 'mdi-chart-box',
           text: 'leftMenu.assessments_title',
           test: 'assessments',
           level: 'level6',
+          feature: FeatureKeys.Assessments,
         },
         {
           to: routes.systemManagement.home.name,

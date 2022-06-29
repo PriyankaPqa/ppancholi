@@ -5,14 +5,10 @@ const routes = {
       name: 'account',
     },
   },
-  assessments: {
-    layout: {
-      path: 'assessments',
-      name: 'assessments.layout',
-    },
+  assessmentTemplates: {
     home: {
-      path: '',
-      name: 'assessments.home',
+      path: 'assessment-templates',
+      name: 'assessmenttemplates.home',
     },
   },
   approvals: {

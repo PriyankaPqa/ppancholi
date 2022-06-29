@@ -99,7 +99,6 @@ export interface IEventData {
   id: uuid;
   created: Date | string;
   timestamp: Date | string;
-  eTag: string;
   number: number;
   name: IMultilingual;
   description: IMultilingual;

@@ -12,8 +12,7 @@ import Routes from '../../constants/routes';
 import { SignalR } from '../plugins/signal-r/signalR';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
-const AssessmentsLayout = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/layout/AssessmentsLayout.vue');
-const AssessmentsHome = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/home/AssessmentsHome.vue');
+const AssessmentTemplatesHome = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/home/AssessmentTemplatesHome.vue');
 
 const ApprovalsLayout = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/layout/ApprovalsLayout.vue');
 const ApprovalsTemplates = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/templates/ApprovalsTemplates.vue');
@@ -206,19 +205,13 @@ export const routes: Array<RouteConfig> = [
             ],
           },
           {
-            path: Routes.assessments.layout.path, // assessments
-            component: AssessmentsLayout,
+            path: Routes.assessmentTemplates.home.path,
+            name: Routes.assessmentTemplates.home.name,
+            component: AssessmentTemplatesHome,
             meta: {
-              requiresAuthorization: true,
+              level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
             },
-            children: [
-              {
-                path: Routes.assessments.home.path,
-                name: Routes.assessments.home.name,
-                component: AssessmentsHome,
-                meta: { level: 'level6' },
-              },
-            ],
+            children: [],
           },
           {
             path: Routes.caseFile.layout.path, // case files

@@ -11,8 +11,6 @@ export class BaseEntity implements IEntity {
 
   status: Status;
 
-  eTag: string;
-
   createdBy: uuid;
 
   lastUpdatedBy: uuid;
@@ -27,7 +25,6 @@ export class BaseEntity implements IEntity {
     this.created = data?.created ?? '';
     this.timestamp = data?.timestamp ?? '';
     this.status = data?.status ?? Status.Inactive;
-    this.eTag = data?.eTag ?? '';
     this.createdBy = data?.createdBy ?? '';
     this.lastUpdatedBy = data?.lastUpdatedBy ?? '';
     this.lastAction = data?.lastAction ?? '';

@@ -8,6 +8,7 @@ export enum FeatureKeys {
   TeamImprovements = 'teamsImprovements',
   HouseholdSearch = 'HouseholdSearch',
   AutoFillFAPaymentNames = 'AutoFillFAPaymentNames',
+  Assessments = 'Assessments',
 }
 
 export enum FeatureType {

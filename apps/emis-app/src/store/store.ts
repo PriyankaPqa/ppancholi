@@ -70,12 +70,16 @@ import { FinancialAssistancePaymentsService } from '@/services/financial-assista
 import { FinancialAssistancePaymentsMetadataService } from '@/services/financial-assistance-payments/metadata';
 import { TenantSettingsService } from '@/services/tenantSettings/entity';
 import { SignalR } from '@/ui/plugins/signal-r';
+import { AssessmentTemplatesService } from '@libs/core-lib/services/assessment-template/entity';
+import { AssessmentTemplatesMetadataService } from '@libs/core-lib/services/assessment-template/metadata';
 import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
 import { ProgramMetadataModule } from './modules/program/programMetadata';
 import { IRootState } from './store.types';
 import { UIStateModule } from './modules/ui-state/uiState';
+import { AssessmentTemplateEntityModule } from './modules/assessment-template/assessmentTemplateEntity';
+import { AssessmentTemplateMetadataModule } from './modules/assessment-template/assessmentTemplateMetadata';
 
 Vue.use(Vuex);
 
@@ -220,6 +224,15 @@ const store: StoreOptions<IRootState> = {
     ).getModule(),
 
     [vuexModule.UI_STATE]: new UIStateModule(
+    ).getModule(),
+
+    [vuexModule.ASSESSMENT_TEMPLATE_ENTITIES]: new AssessmentTemplateEntityModule(
+      new AssessmentTemplatesService(httpClient),
+      SignalR,
+    ).getModule(),
+    [vuexModule.ASSESSMENT_TEMPLATE_METADATA]: new AssessmentTemplateMetadataModule(
+      new AssessmentTemplatesMetadataService(httpClient),
+      SignalR,
     ).getModule(),
   },
 };

@@ -29,3 +29,5 @@ export const FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES = 'financialAssistancePayment
 export const FINANCIAL_ASSISTANCE_PAYMENT_METADATA = 'financialAssistancePaymentMetadata';
 export const TENANT_SETTINGS_ENTITIES = 'tenantSettingsEntities';
 export const UI_STATE = 'uiState';
+export const ASSESSMENT_TEMPLATE_ENTITIES = 'assessmentTemplateEntities';
+export const ASSESSMENT_TEMPLATE_METADATA = 'assessmentTemplateMetadata';

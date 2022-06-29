@@ -45,8 +45,8 @@ export class CaseNoteStorage
         const data = res?.value;
         if (data) {
           const value = data.map((res: ICombinedIndex<ICaseNoteEntity, ICaseNoteMetadata>) => {
-            const entity = { ...res.entity, eTag: res.entityETag };
-            const metadata = { ...res.metadata, eTag: res.metadataETag };
+            const entity = { ...res.entity };
+            const metadata = { ...res.metadata };
 
             return { entity, metadata };
           });

@@ -120,7 +120,6 @@ export const mockCombinedOptionItems = (): IOptionItemCombined[] => [mockCombine
 
 export const mockSubItem = (): IOptionSubItem => ({
   id: 'ID',
-  eTag: '',
   tenantId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
   created: '2021-08-12T19:58:28.654Z',
   timestamp: '2021-08-12T19:58:28.654Z',
@@ -170,7 +169,6 @@ export const mockRoles = (): IOptionItem[] => [
         lastUpdatedBy: null,
         lastAction: null,
         lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-        eTag: '*',
       },
       {
         name: { translation: { en: 'Recovery Manager', fr: 'Gestionnaire, Rétablissement  ' } },
@@ -187,7 +185,6 @@ export const mockRoles = (): IOptionItem[] => [
         lastUpdatedBy: null,
         lastAction: null,
         lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-        eTag: '*',
       },
       {
         name: {
@@ -209,7 +206,6 @@ export const mockRoles = (): IOptionItem[] => [
         lastUpdatedBy: null,
         lastAction: null,
         lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-        eTag: '*',
       },
     ],
     id: '942da95a-9c84-ffe8-adf6-3dd8e7c263d1',
@@ -221,7 +217,6 @@ export const mockRoles = (): IOptionItem[] => [
     lastUpdatedBy: '113e1ddf-6709-41a1-a155-a3f12260eebc',
     lastAction: null,
     lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-    eTag: '"fa18c6cd-0000-0a00-0000-616f12240000"',
   },
   {
     name: { translation: { en: 'Level 5', fr: 'Niveau 5' } },
@@ -245,7 +240,6 @@ export const mockRoles = (): IOptionItem[] => [
         lastUpdatedBy: null,
         lastAction: null,
         lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-        eTag: '*',
       },
       {
         name: { translation: { en: 'Test edited', fr: 'Test' } },
@@ -262,7 +256,6 @@ export const mockRoles = (): IOptionItem[] => [
         lastUpdatedBy: '0d22f50a-e1ab-435d-a9f0-cfda502866f4',
         lastAction: null,
         lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-        eTag: '*',
       },
     ],
     id: '7ca4d2ee-5a14-cb58-76f3-7be0cedb73e5',
@@ -274,7 +267,6 @@ export const mockRoles = (): IOptionItem[] => [
     lastUpdatedBy: '0d22f50a-e1ab-435d-a9f0-cfda502866f4',
     lastAction: null,
     lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-    eTag: '"04007561-0000-0a00-0000-60d378c10000"',
   },
   {
     name: { translation: { en: 'Level 6', fr: 'Niveau 6' } },
@@ -298,7 +290,6 @@ export const mockRoles = (): IOptionItem[] => [
         lastUpdatedBy: null,
         lastAction: null,
         lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-        eTag: '*',
       },
       {
         name: { translation: { en: 'Add - New System Admin - edited', fr: 'Add - New System Admin - FR' } },
@@ -317,7 +308,6 @@ export const mockRoles = (): IOptionItem[] => [
         lastUpdatedBy: null,
         lastAction: null,
         lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-        eTag: '*',
       },
     ],
     id: '58ff083e-b3d2-55af-705a-5db5619806c3',
@@ -329,7 +319,6 @@ export const mockRoles = (): IOptionItem[] => [
     lastUpdatedBy: null,
     lastAction: null,
     lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-    eTag: '"d401471e-0000-0a00-0000-60ad1eea0000"',
   },
   {
     name: { translation: { en: 'Contributor 3', fr: 'Contributeur 3' } },
@@ -353,7 +342,6 @@ export const mockRoles = (): IOptionItem[] => [
         lastUpdatedBy: null,
         lastAction: null,
         lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-        eTag: '*',
       },
     ],
     id: '29c1e33c-0443-2054-6330-e4aabb912f5a',
@@ -365,6 +353,5 @@ export const mockRoles = (): IOptionItem[] => [
     lastUpdatedBy: null,
     lastAction: null,
     lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
-    eTag: '"14001914-0000-0a00-0000-60a70d140000"',
   },
 ];

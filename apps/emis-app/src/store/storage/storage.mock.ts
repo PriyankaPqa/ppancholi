@@ -18,6 +18,7 @@ import { FinancialAssistanceCategoryStorageMock } from './financial-assistance-c
 import { FinancialAssistancePaymentStorageMock } from './financial-assistance-payment';
 import { TenantSettingsStorageMock } from './tenantSettings';
 import { UIStateStorageMock } from './ui-state';
+import { AssessmentTemplateStorageMock } from './assessment-template';
 
 export const mockStorage = (): IStorageMock => ({
   caseFile: new CaseFileStorageMock().make(),
@@ -39,4 +40,5 @@ export const mockStorage = (): IStorageMock => ({
   massAction: new MassActionStorageMock().make(),
   tenantSettings: new TenantSettingsStorageMock().make(),
   uiState: new UIStateStorageMock().make(),
+  assessmentTemplate: new AssessmentTemplateStorageMock().make(),
 });

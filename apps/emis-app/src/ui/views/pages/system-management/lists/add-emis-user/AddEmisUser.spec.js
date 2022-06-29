@@ -92,7 +92,6 @@ const optionData = [
     id: '1',
     created: new Date('2021-01-14T00:00:00.000Z'),
     timestamp: new Date('2021-01-14T00:00:00.000Z'),
-    eTag: '',
     name: {
       translation: {
         en: 'Z',
@@ -114,7 +113,6 @@ const optionData = [
     id: '2',
     created: new Date('2021-01-14T00:00:00.000Z'),
     timestamp: new Date('2021-01-14T00:00:00.000Z'),
-    eTag: '',
     name: {
       translation: {
         en: 'A',

@@ -362,7 +362,6 @@ export const mockEventEntityData = (): IEventEntity[] => [
     },
     created: '2021-01-20T15:45:52.2691443Z',
     timestamp: '2021-01-20T15:45:52.2699289Z',
-    eTag: '*',
     callCentres: [
       {
         name: {
@@ -738,7 +737,6 @@ export const mockEmptyBaseData = () => ({
   created: null as string,
   timestamp: null as string,
   status: null as Status,
-  eTag: null as uuid,
   createdBy: null as string,
   lastUpdatedBy: null as string,
   lastAction: null as string,
@@ -790,7 +788,6 @@ export const mockEmptyEntity = (force?: Partial<IEventEntity>) : IEventEntity =>
     },
     created: null,
     timestamp: null,
-    eTag: null,
     callCentres: [],
     registrationLocations: [],
     selfRegistrationEnabled: false,

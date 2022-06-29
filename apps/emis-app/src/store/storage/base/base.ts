@@ -260,8 +260,8 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
 
         filteredData.forEach((res: ICombinedIndex<TEntity, TMetadata>) => {
           ids.push(res.entity.id);
-          entities.push({ ...res.entity, eTag: res.entityETag });
-          metadata.push({ ...res.metadata, eTag: res.metadataETag });
+          entities.push({ ...res.entity });
+          metadata.push({ ...res.metadata });
         });
 
         this.store.commit(`${this.entityModuleName}/setAll`, entities);

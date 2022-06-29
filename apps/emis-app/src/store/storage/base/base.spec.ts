@@ -326,8 +326,8 @@ describe('BaseStorage', () => {
 
         const params = { filter: { Foo: 'foo' } };
         await storage.actions.search(params);
-        expect(store.commit).toBeCalledWith(`${storage.entityModuleName}/setAll`, [{ ...mockEntities[0], eTag: 'mock-Entity-Etag' }]);
-        expect(store.commit).toBeCalledWith(`${storage.metadataModuleName}/setAll`, [{ ...mockMetadatum[0], eTag: 'mock-metadata-Etag' }]);
+        expect(store.commit).toBeCalledWith(`${storage.entityModuleName}/setAll`, [{ ...mockEntities[0] }]);
+        expect(store.commit).toBeCalledWith(`${storage.metadataModuleName}/setAll`, [{ ...mockMetadatum[0] }]);
       });
 
       it('should return a list of ids and the total count of items', async () => {

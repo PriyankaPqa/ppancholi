@@ -67,7 +67,6 @@ describe('AddSubItemSubItem.vue', () => {
             tenantId: '',
             created: '',
             timestamp: '',
-            eTag: '',
             createdBy: '',
             lastUpdatedBy: '',
             lastAction: '',

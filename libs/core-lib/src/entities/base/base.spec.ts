@@ -31,11 +31,6 @@ describe('>>> Base Entity', () => {
         expect(entity.status).toBe(mock.status);
       });
 
-      it('should instantiate eTag', () => {
-        const entity = new BaseEntity(mock);
-        expect(entity.eTag).toBe(mock.eTag);
-      });
-
       it('should instantiate createdBy', () => {
         const entity = new BaseEntity(mock);
         expect(entity.createdBy).toBe(mock.createdBy);
@@ -80,11 +75,6 @@ describe('>>> Base Entity', () => {
       it('should instantiate status', () => {
         const entity = new BaseEntity();
         expect(entity.status).toBe(Status.Inactive);
-      });
-
-      it('should instantiate eTag', () => {
-        const entity = new BaseEntity();
-        expect(entity.eTag).toBe('');
       });
 
       it('should instantiate createdBy', () => {

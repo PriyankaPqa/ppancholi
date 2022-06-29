@@ -80,7 +80,6 @@ export default Vue.extend({
             tenantId: '',
             created: '',
             timestamp: '',
-            eTag: '',
             createdBy: '',
             lastUpdatedBy: '',
             lastAction: '',

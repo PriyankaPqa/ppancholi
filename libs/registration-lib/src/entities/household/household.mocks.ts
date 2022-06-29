@@ -12,7 +12,6 @@ export const mockHouseholdEntity = (force?: Partial<IHouseholdEntity>): IHouseho
   created: '2021-05-26T19:52:44.379Z',
   timestamp: '2021-05-26T19:52:44.379Z',
   status: 1,
-  eTag: 'string',
   createdBy: '',
   lastUpdatedBy: '',
   lastAction: '',
