@@ -144,7 +144,7 @@ import _orderBy from 'lodash/orderBy';
 import moment from 'moment';
 import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/registration-lib/entities/household';
 import {
-  CaseFileActivityType, CaseFileStatus, ICaseFileActivity, ICaseFileCombined,
+  CaseFileActivityType, CaseFileStatus, ICaseFileActivity, ICaseFileEntity, ICaseFileMetadata,
 } from '@/entities/case-file';
 import { IIdMultilingualName } from '@/types';
 import helpers from '@/ui/helpers/helpers';
@@ -183,6 +183,8 @@ export default Vue.extend({
     return {
       hasReferrals: null as boolean,
       activities: [] as ICaseFileActivity[],
+      caseFile: null as ICaseFileEntity,
+      caseFileMetadata: null as ICaseFileMetadata,
       closeActivity: null as ICaseFileActivity,
       faSummary: null as PaymentsSummary,
       primary: null as { name: string, birthDate: string },
@@ -191,30 +193,24 @@ export default Vue.extend({
   },
 
   computed: {
-    caseFile(): ICaseFileCombined {
-      return this.$storage.caseFile.getters.get(this.caseFileId);
-    },
-
     assignedUserAccounts(): string[] {
-      return this.$storage.userAccount.getters.getByIds(this.caseFile?.entity?.assignedIndividualIds || []).map((u) => u.metadata?.displayName) || [];
+      return this.$storage.userAccount.getters.getByIds(this.caseFile?.assignedIndividualIds || []).map((u) => u.metadata?.displayName) || [];
     },
 
     assignedTeams(): string[] {
-      return this.$storage.team.getters.getByIds(this.caseFile?.entity?.assignedTeamIds || []).map((u) => u.entity?.name) || [];
+      return this.$storage.team.getters.getByIds(this.caseFile?.assignedTeamIds || []).map((u) => u.entity?.name) || [];
     },
 
     summary(): CaseFileSummary {
-      if (!this.caseFile?.entity?.id || !this.caseFile?.metadata?.id) {
+      if (!this.caseFile || !this.caseFileMetadata) {
         return null;
       }
       const s = {} as CaseFileSummary;
-      const cf = this.caseFile.entity;
-      const cfm = this.caseFile.metadata;
-      s.caseFileStatus = cf.caseFileStatus;
-      s.triage = this.$m(cfm.triageName);
-      s.caseFileNumber = cf.caseFileNumber;
-      s.validationOfImpact = this.$m(cfm.impactStatusValidationName);
-      s.tags = cfm.tags || [];
+      s.caseFileStatus = this.caseFile.caseFileStatus;
+      s.triage = this.$m(this.caseFileMetadata.triageName);
+      s.caseFileNumber = this.caseFile.caseFileNumber;
+      s.validationOfImpact = this.$m(this.caseFileMetadata.impactStatusValidationName);
+      s.tags = this.caseFileMetadata.tags || [];
       s.assignedToUsersAndTeams = [...this.assignedTeams, ...this.assignedUserAccounts].join(', ');
       s.financialTotal = this.faSummary?.grandTotalAmount;
       s.hasReferrals = this.hasReferrals;
@@ -237,10 +233,11 @@ export default Vue.extend({
 
   methods: {
     async loadData() {
-      const cf = await this.$storage.caseFile.actions.fetch(this.caseFileId);
+      this.caseFile = await this.$services.caseFiles.getSummary(this.caseFileId);
+      this.caseFileMetadata = await this.$services.caseFilesMetadata.getSummary(this.caseFileId);
       await Promise.all([
         await this.$storage.team.actions.getTeamsAssigned(this.caseFileId),
-        await this.getAssignedIndividualsInfo(cf.entity.assignedIndividualIds),
+        await this.getAssignedIndividualsInfo(this.caseFile.assignedIndividualIds),
         await this.getReferrals(),
         await this.getActivities(),
         await this.getFASummary(),
@@ -279,14 +276,14 @@ export default Vue.extend({
       });
       // if we have a date of archival/close we get the household at that date else we get the current households
       if (!this.closeActivity?.created) {
-        const household = this.$storage.household.getters.get(this.caseFile?.entity?.householdId);
+        const household = this.$storage.household.getters.get(this.caseFile?.householdId);
         this.primary = (household?.metadata?.memberMetadata || [])
           .filter((m) => m.id === household?.entity.primaryBeneficiary).map(mapToMember)[0];
         this.householdMembers = (household?.metadata?.memberMetadata || [])
           .filter((m) => m.id !== household?.entity.primaryBeneficiary).map(mapToMember);
       } else {
-        let historyE = (await this.$services.households.getHouseholdHistory(this.caseFile?.entity?.householdId) || []);
-        let historyM = (await this.$services.households.getHouseholdMetadataHistory(this.caseFile?.entity?.householdId) || []);
+        let historyE = (await this.$services.households.getHouseholdHistory(this.caseFile?.householdId) || []);
+        let historyM = (await this.$services.households.getHouseholdMetadataHistory(this.caseFile?.householdId) || []);
         historyE = _orderBy(historyE, 'timestamp', 'desc');
         historyM = _orderBy(historyM, 'timestamp', 'desc');
         // since our BE stuff happens async, some history might not be recorded at the exact same time

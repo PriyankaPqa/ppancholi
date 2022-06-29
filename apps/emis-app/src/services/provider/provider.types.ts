@@ -18,7 +18,7 @@ import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '../cas
 import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMock } from '../financial-assistance-tables/entity';
 import { IFinancialAssistanceCategoriesService, IFinancialAssistanceCategoriesServiceMock } from '../financial-assistance-categories/entity';
 import { IFinancialAssistancePaymentsService, IFinancialAssistancePaymentsServiceMock } from '../financial-assistance-payments/entity';
-import { ICaseFilesMetadataService } from '../case-files/metadata';
+import { ICaseFilesMetadataService, ICaseFilesMetadataServiceMock } from '../case-files/metadata';
 import { ICaseNotesMetadataService } from '../case-notes/metadata';
 import { ICaseFileReferralsMetadataService } from '../case-file-referrals/metadata';
 import { ICaseFileDocumentsMetadataService } from '../case-file-documents/metadata';
@@ -58,6 +58,7 @@ export interface IProvider {
 export interface IProviderMock {
   appUsers: IAppUsersServiceMock,
   caseFiles: ICaseFilesServiceMock,
+  caseFilesMetadata: ICaseFilesMetadataServiceMock,
   caseFileNotes: ICaseNotesServiceMock,
   caseFileReferrals: ICaseFileReferralsServiceMock,
   caseFileDocuments: ICaseFileDocumentsServiceMock,

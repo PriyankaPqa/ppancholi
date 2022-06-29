@@ -203,4 +203,14 @@ describe('>>> Case File Service', () => {
       expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/assign-case-file-teams-and-team-members`, payload);
     });
   });
+
+  describe('getSummary', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+
+      await service.getSummary(id);
+
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}/summary`);
+    });
+  });
 });

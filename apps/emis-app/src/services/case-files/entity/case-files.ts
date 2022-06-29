@@ -94,4 +94,8 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
   async assignCaseFile(id: uuid, payload: {teamMembers: IAssignedTeamMembers[], teams: uuid[]}): Promise<ICaseFileEntity> {
     return this.http.patch<ICaseFileEntity>(`${this.baseUrl}/${id}/assign-case-file-teams-and-team-members`, payload);
   }
+
+  async getSummary(id: uuid): Promise<ICaseFileEntity> {
+    return this.http.get<ICaseFileEntity>(`${this.baseUrl}/${id}/summary`);
+  }
 }

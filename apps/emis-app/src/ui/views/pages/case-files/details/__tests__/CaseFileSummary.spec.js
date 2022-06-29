@@ -36,9 +36,11 @@ describe('CaseFileSummary.vue', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('calls all the required fetch from storage', async () => {
+      it('calls all the required fetch from services', async () => {
         await mountWrapper();
-        expect(storage.caseFile.actions.fetch).toHaveBeenCalledWith('abcd');
+        const services = wrapper.vm.$services;
+        expect(services.caseFiles.getSummary).toHaveBeenCalledWith('abcd');
+        expect(services.caseFilesMetadata.getSummary).toHaveBeenCalledWith('abcd');
         expect(storage.team.actions.getTeamsAssigned).toHaveBeenCalledWith('abcd');
         expect(storage.userAccount.actions.search).toHaveBeenCalledWith({
           filter: "search.in(Entity/Id, 'mock-assigned-individual-id-1|mock-assigned-individual-id-2', '|')",

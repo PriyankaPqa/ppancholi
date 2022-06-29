@@ -34,6 +34,7 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   getCaseFileAssignedCounts(params: {eventId: uuid, teamId: uuid}): Promise<ICaseFileCount>;
   fetchCaseFileDetailedCounts(eventId: uuid): Promise<ICaseFileDetailedCount>;
   assignCaseFile(id: uuid, payload: {teamMembers: IAssignedTeamMembers[], teams: uuid[]}): Promise<ICaseFileEntity>
+  getSummary(id: uuid): Promise<ICaseFileEntity>;
 }
 
 export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileEntity>{
@@ -50,4 +51,5 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   // todo add mock from api response here for getCaseFileAssignedCounts
   fetchCaseFileDetailedCounts: jest.Mock<ICaseFileDetailedCount>;
   assignCaseFile: jest.Mock<ICaseFileEntity>;
+  getSummary: jest.Mock<ICaseFileEntity>;
 }

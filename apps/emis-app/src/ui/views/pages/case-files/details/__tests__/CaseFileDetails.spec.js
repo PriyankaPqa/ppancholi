@@ -688,6 +688,7 @@ describe('CaseFileDetails.vue', () => {
     it('should call fetch', () => {
       expect(wrapper.vm.$storage.caseFile.actions.fetch).toHaveBeenCalledWith(wrapper.vm.id);
     });
+
     it('should call getHouseholdInfo', async () => {
       jest.spyOn(wrapper.vm, 'getHouseholdInfo').mockImplementation(() => {});
       await wrapper.vm.$options.created.forEach((hook) => {

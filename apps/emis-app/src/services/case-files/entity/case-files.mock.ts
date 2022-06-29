@@ -18,4 +18,5 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   getCaseFileAssignedCounts: jest.fn(() => mockCaseFileCount()),
   fetchCaseFileDetailedCounts: jest.fn(() => mockCaseFileDetailedCount()),
   assignCaseFile: jest.fn(() => mockCaseFileEntity()),
+  getSummary: jest.fn(() => mockCaseFileEntity()),
 });

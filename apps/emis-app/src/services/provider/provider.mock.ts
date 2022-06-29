@@ -17,10 +17,12 @@ import { mockFinancialAssistanceCategoriesService } from '../financial-assistanc
 import { mockFinancialAssistanceService } from '../financial-assistance-payments/entity';
 import { mockTenantSettingsService } from '../tenantSettings/entity';
 import { mockErrorReportingService } from '../error-reporting';
+import { mockCaseFilesMetadataService } from '../case-files/metadata';
 
 export const mockProvider = (): IProviderMock => ({
   appUsers: mockAppUsersService(),
   caseFiles: mockCaseFilesService(),
+  caseFilesMetadata: mockCaseFilesMetadataService(),
   caseFileNotes: mockCaseNotesService(),
   caseFileReferrals: mockCaseFileReferralsService(),
   caseFileDocuments: mockCaseFileDocumentsService(),
