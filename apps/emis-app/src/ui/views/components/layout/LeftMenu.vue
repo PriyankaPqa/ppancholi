@@ -95,7 +95,6 @@ export default Vue.extend({
           exact: false,
           level: 'level1',
           roles: [],
-          feature: FeatureKeys.HouseholdSearch,
         },
         {
           to: routes.events.home.name,
