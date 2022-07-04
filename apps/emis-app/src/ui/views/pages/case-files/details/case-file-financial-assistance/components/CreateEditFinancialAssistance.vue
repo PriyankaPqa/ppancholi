@@ -310,7 +310,7 @@ export default mixins(caseFileDetail).extend({
     }
 
     await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
-    await this.searchTables();
+    this.isEditMode || this.isAddMode ? await this.searchTables() : await this.fetchTable();
     this.loading = false;
     this.warnIfInvalid();
   },
@@ -336,6 +336,16 @@ export default mixins(caseFileDetail).extend({
 
         this.financialTables = this.$storage.financialAssistance.getters.getByIds(ids).map((t : IFinancialAssistanceTableCombined) => t.entity)
           .filter((t: IFinancialAssistanceTableEntity) => t.status === Status.Active || t.id === this.financialAssistance.financialAssistanceTableId);
+
+        await this.updateSelectedData(this.financialTables
+          .find((x) => x.id === this.financialAssistance.financialAssistanceTableId));
+      }
+    },
+
+    async fetchTable() {
+      if (this.caseFile) {
+        const table = await this.$storage.financialAssistance.actions.fetch(this.financialAssistance.financialAssistanceTableId);
+        this.financialTables = [table.entity];
 
         await this.updateSelectedData(this.financialTables
           .find((x) => x.id === this.financialAssistance.financialAssistanceTableId));

@@ -232,12 +232,34 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalled();
       });
 
-      it('call searchTables', async () => {
+      it('call searchTables if it is add mode', async () => {
+        wrapper.vm.isEditMode = false;
+        wrapper.vm.isAddMode = true;
         jest.spyOn(wrapper.vm, 'searchTables').mockImplementation(() => financialAssistance);
 
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
         expect(wrapper.vm.searchTables).toHaveBeenCalledTimes(1);
+      });
+
+      it('call searchTables if it is edit mode', async () => {
+        wrapper.vm.isEditMode = true;
+        wrapper.vm.isAddMode = false;
+        jest.spyOn(wrapper.vm, 'searchTables').mockImplementation(() => financialAssistance);
+
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.searchTables).toHaveBeenCalledTimes(1);
+      });
+
+      it('call fetchTable if it is read mode', async () => {
+        wrapper.vm.isEditMode = false;
+        wrapper.vm.isAddMode = false;
+        jest.spyOn(wrapper.vm, 'fetchTable').mockImplementation(() => financialAssistance);
+
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.fetchTable).toHaveBeenCalledTimes(1);
       });
 
       it('inits financialAssistance from storage when id is passed', () => {
@@ -602,6 +624,13 @@ describe('CreateEditFinancialAssistance.vue', () => {
       it('sets financial tables', async () => {
         await wrapper.vm.searchTables();
         expect(wrapper.vm.financialTables).toEqual([financialAssistance]);
+      });
+    });
+
+    describe('fetchTable', () => {
+      it('fetches financial table by id', async () => {
+        await wrapper.vm.fetchTable();
+        expect(storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(caseFileFinancialAssistance.financialAssistanceTableId);
       });
     });
 

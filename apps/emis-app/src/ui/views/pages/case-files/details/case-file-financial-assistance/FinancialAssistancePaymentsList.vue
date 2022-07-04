@@ -346,7 +346,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   async created() {
     this.saveState = true;
     this.loadState();
-    this.initContainsActiveTables();
+    if (!this.$hasRole('readonly')) {
+      this.initContainsActiveTables();
+    }
     // we fetch all the payments for the case file because we will need to submit all at once possibly if some arent submitted
     // and since ApprovalStatus is not filterable...  we will filter on the computed - not really a problem
     const res = await this.$storage.financialAssistancePayment.actions.search({

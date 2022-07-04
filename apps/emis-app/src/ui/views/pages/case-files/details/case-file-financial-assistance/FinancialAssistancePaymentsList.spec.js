@@ -473,6 +473,30 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         );
         expect(wrapper.vm.allItemsIds).toEqual(storage.financialAssistancePayment.actions.search().ids);
       });
+
+      it('should not call the method initContainsActiveTables', async () => {
+        await mountWrapper(false, null, 'readonly');
+
+        wrapper.vm.initContainsActiveTables = jest.fn();
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.initContainsActiveTables).toHaveBeenCalledTimes(0);
+      });
+
+      it('should call the method initContainsActiveTables', async () => {
+        await mountWrapper(false, null, 'contributorFinance');
+
+        wrapper.vm.initContainsActiveTables = jest.fn();
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.initContainsActiveTables).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });
