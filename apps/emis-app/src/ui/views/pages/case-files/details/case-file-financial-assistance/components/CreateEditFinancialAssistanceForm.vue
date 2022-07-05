@@ -8,16 +8,10 @@
 
     <v-row class="mt-0">
       <v-col cols="12">
-        <div v-if="$hasFeature(FeatureKeys.AutoFillFAPaymentNames) && isEditMode" class="d-flex flex-column mt-2 mb-3">
+        <div v-if="isEditMode" class="d-flex flex-column mt-2 mb-3">
           <span class="rc-body12">{{ $t('common.name') }}</span>
           <span class="rc-heading-5" data-test="financial_name_text">{{ localFinancialAssistance.name }}</span>
         </div>
-        <v-text-field-with-validation
-          v-if="!$hasFeature(FeatureKeys.AutoFillFAPaymentNames)"
-          v-model="localFinancialAssistance.name"
-          data-test="financial_name_input_field"
-          :rules="rules.name"
-          :label="`${$t('common.name')} *`" />
       </v-col>
     </v-row>
 
@@ -54,24 +48,18 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {
-  VTextFieldWithValidation,
-  VTextAreaWithValidation,
-  VAutocompleteWithValidation,
-} from '@libs/component-lib/components';
+import { VTextAreaWithValidation, VAutocompleteWithValidation } from '@libs/component-lib/components';
 import _sortBy from 'lodash/sortBy';
 import { IProgramEntity } from '@/entities/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
+import { MAX_LENGTH_LG } from '@/constants/validations';
 import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
-import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default Vue.extend({
   name: 'CreateEditFinancialAssistanceForm',
 
   components: {
-    VTextFieldWithValidation,
     VTextAreaWithValidation,
     VAutocompleteWithValidation,
     StatusChip,
@@ -101,17 +89,11 @@ export default Vue.extend({
   },
 
   data() {
-    // TODO: remove feature flag references from template in EMISV2-4487
     return {
-      FeatureKeys,
       localFinancialAssistance: null as FinancialAssistancePaymentEntity,
       financialAssistanceTable: null as IFinancialAssistanceTableEntity,
       financialTables: [] as Array<IFinancialAssistanceTableEntity>,
       rules: {
-        name: {
-          required: true,
-          max: MAX_LENGTH_MD,
-        },
         description: {
           max: MAX_LENGTH_LG,
         },

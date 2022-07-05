@@ -190,7 +190,6 @@ import routes from '@/constants/routes';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/core-lib/entities/base/index';
-import { FeatureKeys } from '@/entities/tenantSettings';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
@@ -395,7 +394,7 @@ export default mixins(caseFileDetail).extend({
 
         const combinedProgram = await this.$storage.program.actions.fetch({ id: selectedProgramId, eventId: this.caseFile.entity.eventId });
         this.selectedProgram = combinedProgram.entity;
-        if (this.$hasFeature(FeatureKeys.AutoFillFAPaymentNames) && originalProgram) { // TODO: remove feature flag reference in EMISV2-4487
+        if (originalProgram) {
           this.makePaymentName();
         }
       }
@@ -423,9 +422,7 @@ export default mixins(caseFileDetail).extend({
       } else {
         await new Promise((s) => setTimeout(s, 1000)); // force user to stay on the dialog, in order to avoid hitting the Create button underneath
         this.mergePaymentLine(submittedPaymentGroup);
-        if (this.$hasFeature(FeatureKeys.AutoFillFAPaymentNames)) { // TODO: remove feature flag reference in EMISV2-4487
-          this.makePaymentName();
-        }
+        this.makePaymentName();
       }
       this.submittingPaymentLine = false;
     },
@@ -516,9 +513,8 @@ export default mixins(caseFileDetail).extend({
           this.$t(!submittedPaymentGroup.lines[0].id
             ? 'financialAssistancePayment_lineAdded.success' : 'financialAssistancePayment_lineModified.success'),
         );
-        if (this.$hasFeature(FeatureKeys.AutoFillFAPaymentNames)) { // TODO: remove feature flag reference in EMISV2-4487
-          this.submitPaymentNameUpdate();
-        }
+
+        this.submitPaymentNameUpdate();
       }
     },
 
@@ -537,9 +533,7 @@ export default mixins(caseFileDetail).extend({
           this.financialAssistance.groups = this.financialAssistance.groups.filter((g) => g !== event.group);
         }
       }
-      if (this.$hasFeature(FeatureKeys.AutoFillFAPaymentNames)) { // TODO: remove feature flag reference in EMISV2-4487
-        this.submitPaymentNameUpdate();
-      }
+      this.submitPaymentNameUpdate();
     },
 
     async updatePaymentStatus(event : {
