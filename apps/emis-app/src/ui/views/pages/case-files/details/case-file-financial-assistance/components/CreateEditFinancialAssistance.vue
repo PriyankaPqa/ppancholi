@@ -514,7 +514,9 @@ export default mixins(caseFileDetail).extend({
             ? 'financialAssistancePayment_lineAdded.success' : 'financialAssistancePayment_lineModified.success'),
         );
 
-        this.submitPaymentNameUpdate();
+        if (this.financialAssistance.approvalStatus === ApprovalStatus.New) {
+          this.submitPaymentNameUpdate();
+        }
       }
     },
 

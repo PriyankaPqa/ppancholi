@@ -798,8 +798,11 @@ describe('CreateEditFinancialAssistance.vue', () => {
     });
 
     describe('savePaymentLine', () => {
+      beforeEach(() => {
+        wrapper.vm.financialAssistance = caseFileFinancialAssistance;
+      });
+
       it('should call the add service when new line is received', async () => {
-        wrapper.vm.financialAssistance = financialAssistance;
         wrapper.vm.financialAssistance.groups = [];
         const newGroup = mockCaseFinancialAssistancePaymentGroups();
         // mock data already has id - here we are creating
@@ -813,7 +816,6 @@ describe('CreateEditFinancialAssistance.vue', () => {
       });
 
       it('should call the edit service when existing line is received', async () => {
-        wrapper.vm.financialAssistance = financialAssistance;
         wrapper.vm.financialAssistance.groups = [];
         const newGroup = mockCaseFinancialAssistancePaymentGroups();
 
@@ -828,6 +830,20 @@ describe('CreateEditFinancialAssistance.vue', () => {
         wrapper.vm.submitPaymentNameUpdate = jest.fn();
         await wrapper.vm.savePaymentLine(newGroup[0]);
         expect(wrapper.vm.submitPaymentNameUpdate).toBeCalledTimes(1);
+      });
+
+      test.each([
+        [ApprovalStatus.New, 1],
+        [ApprovalStatus.Pending, 0],
+        [ApprovalStatus.Approved, 0],
+        [ApprovalStatus.Declined, 0],
+      ])('if approvalStatus is %i, calls submitPaymentNameUpdate %i times)', async (approvalStatus, expectedCalls) => {
+        wrapper.vm.financialAssistance.approvalStatus = approvalStatus;
+        const newGroup = mockCaseFinancialAssistancePaymentGroups();
+        wrapper.vm.submitPaymentNameUpdate = jest.fn();
+
+        await wrapper.vm.savePaymentLine(newGroup[0]);
+        expect(wrapper.vm.submitPaymentNameUpdate).toBeCalledTimes(expectedCalls);
       });
     });
 
