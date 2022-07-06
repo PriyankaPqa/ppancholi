@@ -10,6 +10,7 @@ import { sessionStorageKeys } from '@/constants/sessionStorage';
 
 export default {
   name: 'App',
+
   async created() {
     // The values of environment variables are currently not loaded in components in production.
     localStorage.setItem(

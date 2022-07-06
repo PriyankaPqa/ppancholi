@@ -1,5 +1,5 @@
 <template>
-  <v-row no-gutters>
+  <v-row no-gutters class="d-flex flex-column">
     <v-col cols="12" class="pb-0">
       <h5 class="rc-heading-5">
         {{ $t('registration.addresses.homeAddress') }}
