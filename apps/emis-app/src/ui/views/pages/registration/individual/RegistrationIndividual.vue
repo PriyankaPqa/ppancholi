@@ -124,7 +124,7 @@ export default mixins(individual).extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if (this.currentTab.id !== 'confirmation' && this.currentTab.id !== 'review') {
+    if (this.currentTab.id !== 'confirmation') {
       const userChoice = await (this.$confirm({
         title: this.titleLeave,
         messages: this.messagesLeave,
