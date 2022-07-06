@@ -22,14 +22,14 @@
                     {{ $t('common.status') }}
                   </span>
 
-                  <span class="fw-medium text-uppercase mr-2">
+                  <span class="fw-medium text-uppercase mr-2" data-test="program-status-name">
                     {{ isStatusActive ? $t('common.program_status.Active') : $t('common.program_status.Inactive') }}
                   </span>
                 </div>
 
                 <v-switch
                   v-model="isStatusActive"
-                  data-test="program-status"
+                  data-test="program-status-toggle"
                   class="pt-0 mt-0"
                   hide-details
                   color="white"
@@ -59,21 +59,25 @@
               <v-col cols="12" md="4">
                 <v-checkbox
                   v-model="localProgram.eligibilityCriteria.authenticated"
+                  data-test="program-eligibility-authenticated"
                   :label="$t('event.programManagement.needAuthenticated')" />
               </v-col>
 
               <v-col cols="12" md="4">
                 <v-checkbox
                   v-model="localProgram.eligibilityCriteria.impacted"
+                  data-test="program-eligibility-impacted"
                   :label="$t('event.programManagement.needImpacted')" />
               </v-col>
 
               <v-col cols="12" md="4">
                 <v-checkbox
                   v-model="localProgram.eligibilityCriteria.completedAssessments"
+                  data-test="program-eligibility-hasCompletedAssessments"
                   :label="$t('event.programManagement.hasCompletedAssessments')" />
                 <v-select-with-validation
                   :label="$t('event.programManagement.selectAssessment')"
+                  data-test="program-selectAssessment"
                   disabled
                   background-color="white"
                   hide-details />
@@ -84,6 +88,7 @@
           <div class="grey-container px-4 py-1 my-8">
             <v-checkbox
               v-model="localProgram.approvalRequired"
+              data-test="program-approvalRequired"
               :label="$t('event.programManagement.approvalRequired')" />
           </div>
 
