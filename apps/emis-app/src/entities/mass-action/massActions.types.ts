@@ -7,6 +7,7 @@ export enum MassActionGroup {
   Group2 = 2,
   Group3 = 3,
   Group4 = 4,
+  Group5 = 5,
 }
 
 export enum MassActionType {
@@ -94,7 +95,7 @@ export interface IMassActionEntityData extends IEntity {
 
   details: IMassActionDetails;
 
-  type: MassActionType;
+  type: MassActionType | MassActionDataCorrectionType;
 
   group: MassActionGroup;
 

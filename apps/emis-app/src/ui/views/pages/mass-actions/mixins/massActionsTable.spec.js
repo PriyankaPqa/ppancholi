@@ -96,7 +96,6 @@ describe('massActionsTable', () => {
             ...params.filter,
             Entity: {
               Status: Status.Active,
-              Type: wrapper.vm.massActionTypeData,
             },
           },
           top: params.top,

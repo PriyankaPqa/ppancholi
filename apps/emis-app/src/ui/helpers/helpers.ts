@@ -54,12 +54,17 @@ export default {
     }
   },
 
-  // This function takes a enum in parameters and output a collection with [value: value of enum, text: the translation corresponding to the enum]
   getEnumKeys(myEnum: Record<string, unknown>) {
     // eslint-disable-next-line radix
     return Object.keys(myEnum).filter((x) => !(parseInt(x, 0) >= 0));
   },
 
+  getEnumValues(myEnum: Record<string, unknown>): Array<unknown> {
+    // eslint-disable-next-line radix
+    return Object.keys(myEnum).filter((x) => !(parseInt(x, 0) >= 0)).map((key) => myEnum[key]);
+  },
+
+  // This function takes am enum in parameters and output a collection with [value: value of enum, text: the translation corresponding to the enum]
   enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string, textToValue = false) {
     const enumKeys = this.getEnumKeys(myEnum);
     const data = [] as Array<{ value: unknown, text: string }>;

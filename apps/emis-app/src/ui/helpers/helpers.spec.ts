@@ -58,4 +58,15 @@ describe('>>>> helpers', () => {
       });
     });
   });
+
+  describe('getEnumValues', () => {
+    it('should return values of the enum in an array', () => {
+      enum Test {
+        A= 0,
+        B= 1,
+      }
+      const res = helpers.getEnumValues(Test);
+      expect(res).toEqual([0, 1]);
+    });
+  });
 });

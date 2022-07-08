@@ -168,6 +168,13 @@ describe('BaseStorage', () => {
         expect(storage.getters.getByIds(ids, { prependPinnedItems: true, parentId: { tenantId: 'nope' } as any }))
           .toEqual([]);
       });
+
+      it('filters newlycreated items pinned according to parentId when an array is passed', () => {
+        const ids: string[] = [];
+        store.getters['entityModule/getNewlyCreatedIds'] = jest.fn(() => [{ id: mockEntities[0].id }]);
+        const res = storage.getters.getByIds(ids, { prependPinnedItems: true, parentId: { tenantId: [mockEntities[0].tenantId] } });
+        expect(res).toEqual([{ entity: mockEntities[0], metadata: mockMetadatum[0], pinned: true }]);
+      });
     });
   });
 

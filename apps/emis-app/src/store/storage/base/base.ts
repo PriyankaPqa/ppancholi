@@ -108,8 +108,13 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
         let newEntities: TEntity[] = this.store.getters[`${this.entityModuleName}/getByIds`](pinnedIds);
         // eslint-disable-next-line
         for (const [key, value] of Object.entries(opts.parentId)) {
-          // eslint-disable-next-line
-          newEntities = newEntities.filter((e: any) => e[key] === value);
+          if (Array.isArray(value)) { // For a case where we want to include several values of a same property. Ex: parentId: {type: ['A', 'B']}
+            // eslint-disable-next-line
+            newEntities = newEntities.filter((e: any) => value.includes(e[key]));
+          } else {
+            // eslint-disable-next-line
+            newEntities = newEntities.filter((e: any) => e[key] === value);
+          }
         }
         pinnedIds = newEntities.map((e) => e.id);
       }

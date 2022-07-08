@@ -31,6 +31,7 @@
       :total-label="massActionBaseDetailsLabels.preProcessedTotalLabel"
       :successes-label="massActionBaseDetailsLabels.preProcessedSuccessesLabel"
       :failures-label="massActionBaseDetailsLabels.preProcessedFailuresLabel"
+      :disable-name="disableName"
       show-invalid-download-button
       show-process-button
       show-delete-icon
@@ -143,6 +144,11 @@ export default mixins(massActionDetails).extend({
     },
 
     showValidDownload: {
+      type: Boolean,
+      default: false,
+    },
+
+    disableName: {
       type: Boolean,
       default: false,
     },

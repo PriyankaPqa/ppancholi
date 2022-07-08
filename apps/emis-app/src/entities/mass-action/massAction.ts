@@ -1,6 +1,6 @@
 import { BaseEntity } from '@libs/core-lib/entities/base';
 import {
-  IMassActionDetails, IMassActionEntity, IMassActionEntityData, IMassActionRun, MassActionGroup, MassActionType,
+  IMassActionDetails, IMassActionEntity, IMassActionEntityData, IMassActionRun, MassActionDataCorrectionType, MassActionGroup, MassActionType,
 } from '@/entities/mass-action/massActions.types';
 
 export class MassActionEntity extends BaseEntity implements IMassActionEntity {
@@ -10,7 +10,7 @@ export class MassActionEntity extends BaseEntity implements IMassActionEntity {
 
   details: IMassActionDetails;
 
-  type: MassActionType;
+  type: MassActionType | MassActionDataCorrectionType;
 
   group: MassActionGroup;
 

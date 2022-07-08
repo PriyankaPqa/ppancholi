@@ -66,7 +66,7 @@ export default Vue.extend({
   computed: {
     massActionTypeText(): string {
       if (Object.keys(this.labels).includes(this.massAction.entity.type.toString())) {
-        return this.labels[this.massAction.entity.type];
+        return this.labels[this.massAction.entity.type as MassActionType];
       }
       return `enums.MassActionDataCorrectionType.${MassActionDataCorrectionType[this.massAction.entity.type]}`;
     },

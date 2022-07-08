@@ -13,6 +13,7 @@
 
       <mass-action-edit-title-description
         v-else
+        :disable-name="disableName"
         :mass-action="massAction"
         :mass-action-status="massActionStatus"
         @cancel="editMode = false"
@@ -218,6 +219,11 @@ export default Vue.extend({
     },
 
     showEditIcon: {
+      type: Boolean,
+      default: false,
+    },
+
+    disableName: {
       type: Boolean,
       default: false,
     },

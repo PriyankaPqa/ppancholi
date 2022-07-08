@@ -5,6 +5,7 @@
         <v-col cols="12">
           <v-text-field-with-validation
             v-model="name"
+            :disabled="disableName"
             data-test="name"
             :label="`${$t('massActions.importValidationStatus.create.name.label')} *`"
             persistent-hint
@@ -46,6 +47,10 @@ export default Vue.extend({
     massAction: {
       type: Object as () => IMassActionCombined,
       required: true,
+    },
+    disableName: {
+      type: Boolean,
+      default: false,
     },
   },
 

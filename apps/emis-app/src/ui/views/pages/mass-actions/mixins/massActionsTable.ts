@@ -106,7 +106,6 @@ export default Vue.extend({
           ...params.filter as Record<string, unknown>,
           Entity: {
             Status: Status.Active,
-            Type: this.massActionTypeData,
           },
         },
         top: params.top,

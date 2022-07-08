@@ -30,7 +30,7 @@ import massActions, { IMassActionCards } from '@/ui/views/pages/mass-actions/mix
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
 import { FeatureKeys } from '@/entities/tenantSettings';
 import helpers from '@/ui/helpers/helpers';
-import { MassActionDataCorrectionType } from '@/entities/mass-action';
+import { MassActionDataCorrectionType, MassActionGroup } from '@/entities/mass-action';
 
 export default mixins(massActions).extend({
   name: 'MassActionsHome',
@@ -55,7 +55,7 @@ export default mixins(massActions).extend({
           dataTest: 'massAction_financial',
           level: 'level6',
           roles: null,
-          group: 1,
+          group: MassActionGroup.Group1,
         },
         {
           title: 'mass_action.card.export_validation_impact',
@@ -65,7 +65,7 @@ export default mixins(massActions).extend({
           dataTest: 'massAction_export_validation_impact',
           level: 'level6',
           roles: ['contributorIM'],
-          group: 4,
+          group: MassActionGroup.Group4,
           onClick: 'exportImpactValidation',
         },
         {
@@ -76,7 +76,7 @@ export default mixins(massActions).extend({
           dataTest: 'massAction_import_validation_impact',
           level: 'level6',
           roles: ['contributorIM'],
-          group: 4,
+          group: MassActionGroup.Group4,
         },
         {
           title: 'mass_action.card.generate_funding',
@@ -86,7 +86,7 @@ export default mixins(massActions).extend({
           dataTest: 'massAction_generate_funding',
           level: 'level6',
           roles: ['contributorFinance'],
-          group: 4,
+          group: MassActionGroup.Group4,
           onClick: 'generateFundingRequest',
         },
         {
@@ -99,7 +99,7 @@ export default mixins(massActions).extend({
           dataTest: 'massAction_import_payment_statuses',
           level: 'level6',
           roles: ['contributorFinance'],
-          group: 4,
+          group: MassActionGroup.Group4,
           onSecondaryClick: 'downloadImportPaymentStatusesTemplate',
         },
         {
@@ -112,7 +112,7 @@ export default mixins(massActions).extend({
           dataTest: 'massAction_import_users',
           level: 'level6',
           roles: null,
-          group: 4,
+          group: MassActionGroup.Group4,
           onSecondaryClick: 'downloadImportUsersTemplate',
         },
         {
@@ -123,7 +123,7 @@ export default mixins(massActions).extend({
           dataTest: 'massAction_data_correction',
           level: 'level6',
           roles: null,
-          group: 5,
+          group: MassActionGroup.Group5,
           feature: FeatureKeys.MassActionCorrection,
           secondaryButton: 'mass_action.card.action.download_template',
           showSecondaryButton: true,
