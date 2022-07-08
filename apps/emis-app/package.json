@@ -33,7 +33,7 @@
     "fstream": "^1.0.12",
     "js-convert-case": "^4.1.1",
     "lodash": "^4.17.21",
-    "moment": "2.29.3",
+    "moment": "2.29.4",
     "register-service-worker": "^1.7.1",
     "roboto-fontface": "^0.10.0",
     "sanitize-html": "2.7.0",
