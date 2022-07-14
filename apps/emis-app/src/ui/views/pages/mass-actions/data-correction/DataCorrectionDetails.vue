@@ -30,6 +30,7 @@ export default mixins(massActionDetails).extend({
     massActionBaseDetailsLabels(): IMassActionBaseDetailsLabels {
       switch (this.massAction.entity.type as MassActionDataCorrectionType) {
         case MassActionDataCorrectionType.HomeAddress:
+        case MassActionDataCorrectionType.IdentitySet:
         default:
           return {
             preProcessingWaitTitle: '',
