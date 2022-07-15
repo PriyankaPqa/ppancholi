@@ -773,6 +773,7 @@
     "errors.impact-validation-method-should-not-batch-for-manual-validation": "Impact validation method should not batch for manual validation",
     "errors.impact-validation-method-should-not-be-not-applicable": "Impact validation method should not be not applicable",
     "errors.information-management-internal-id-max-length-exceeded": "InformationManagementInternalId length must be {MaxLength} or less",
+    "errors.invalid-authentication-specify-other-length": "Invalid authentication specify other length",
     "errors.invalid-case-file-document-type": "Invalid case file document type",
     "errors.invalid-case-file-id": "Invalid case file id",
     "errors.invalid-case-file-id-format": "Invalid case file id format",

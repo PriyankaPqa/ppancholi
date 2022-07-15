@@ -52,8 +52,21 @@ export default Vue.extend({
     };
   },
   computed: {
+
     massActionTypes() {
-      return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false);
+      const allTypes = helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false);
+
+      // TO DO : to remove once all data correction types are available
+      const availableTypes = [
+        MassActionDataCorrectionType.HomeAddress,
+        MassActionDataCorrectionType.IdentitySet,
+        MassActionDataCorrectionType.AuthenticationSpecifiedOther,
+        MassActionDataCorrectionType.Labels,
+        // MassActionDataCorrectionType.TemporaryAddress,
+        // MassActionDataCorrectionType.ContactInformation,
+      ];
+
+      return allTypes.filter((t) => availableTypes.includes(t.value as MassActionDataCorrectionType));
     },
   },
 

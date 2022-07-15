@@ -773,6 +773,7 @@
     "errors.impact-validation-method-should-not-batch-for-manual-validation": "Lors d'une vérification manuelle, la méthode de vérification de l'impact ne peut pas être « par lot ».",
     "errors.impact-validation-method-should-not-be-not-applicable": "La méthode de vérification de l'impact ne peut pas être « sans objet ».",
     "errors.information-management-internal-id-max-length-exceeded": "Le InformationManagementInternalId ne doit pas dépasser {MaxLength} caractères.",
+    "errors.invalid-authentication-specify-other-length": "La longueur du champ « Veuillez préciser » d'authentification n'est pas valide",
     "errors.invalid-case-file-document-type": "Type de document invalide",
     "errors.invalid-case-file-id": "Identifiant de dossier invalide",
     "errors.invalid-case-file-id-format": "Format d'identifiant de dossier invalide",
