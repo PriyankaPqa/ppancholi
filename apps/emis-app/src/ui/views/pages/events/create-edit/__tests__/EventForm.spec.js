@@ -293,7 +293,7 @@ describe('EventForm.vue', () => {
       it('set scheduledOpenDate to today if true, null otherwise', () => {
         wrapper.vm.localEvent.schedule.scheduledOpenDate = null;
         wrapper.vm.isStatusOpen = true;
-        expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toEqual(wrapper.vm.today);
+        expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toEqual(moment(new Date()).format());
 
         wrapper.vm.isStatusOpen = false;
         expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toEqual(null);
@@ -338,7 +338,7 @@ describe('EventForm.vue', () => {
 
         await wrapper.vm.$nextTick();
 
-        expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toBe(wrapper.vm.today);
+        expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toBe(moment(new Date()).format());
         expect(wrapper.vm.localEvent.schedule.scheduledCloseDate).toBe(initialCloseDate);
 
         wrapper.vm.isStatusOpen = false;

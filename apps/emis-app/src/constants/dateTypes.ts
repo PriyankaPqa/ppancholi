@@ -12,13 +12,14 @@ export const dateTypes = {
     'EventSchedule.timestamp',
     'IFinancialAssistancePaymentGroup.cancellationDate',
     'local',
+    'EventSchedule.scheduledOpenDate',
   ] as string[],
 
   convertToUtc: [
   ] as string[],
 
   static: [
-    'EventSchedule.scheduledOpenDate',
+
     'EventSchedule.scheduledCloseDate',
     'EventSchedule.openDate',
     'EventSchedule.closeDate',

@@ -257,6 +257,7 @@ import {
 } from '@/entities/event';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { IOptionItem } from '@/entities/optionItem';
+import moment from 'moment';
 
 export default Vue.extend({
   name: 'EventForm',
@@ -357,12 +358,12 @@ export default Vue.extend({
         this.localEvent.schedule.status = isOpen ? EEventStatus.Open : EEventStatus.OnHold;
 
         if (this.isEditMode) {
-          this.localEvent.schedule.scheduledOpenDate = isOpen ? this.today : this.initialOpenDate;
+          this.localEvent.schedule.scheduledOpenDate = isOpen ? moment(new Date()).format() : this.initialOpenDate;
           if (!isOpen) {
             this.localEvent.schedule.scheduledCloseDate = this.initialCloseDate;
           }
         } else {
-          this.localEvent.schedule.scheduledOpenDate = isOpen ? this.today : null;
+          this.localEvent.schedule.scheduledOpenDate = isOpen ? moment(new Date()).format() : null;
           if (!isOpen) {
             this.localEvent.schedule.scheduledCloseDate = null;
           }
