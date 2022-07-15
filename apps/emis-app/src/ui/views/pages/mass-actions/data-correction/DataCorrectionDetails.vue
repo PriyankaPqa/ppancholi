@@ -29,6 +29,22 @@ export default mixins(massActionDetails).extend({
   computed: {
     massActionBaseDetailsLabels(): IMassActionBaseDetailsLabels {
       switch (this.massAction.entity.type as MassActionDataCorrectionType) {
+        case MassActionDataCorrectionType.AuthenticationSpecifiedOther:
+        case MassActionDataCorrectionType.Labels:
+          return {
+            preProcessingWaitTitle: '',
+            preProcessingWaitLabelOne: 'massActions.preProcessing.info1',
+            preProcessingWaitLabelTwo: 'massActions.preProcessing.info2',
+            processingWaitTitle: 'massActions.authenticationSpecifiedOther.processing.files',
+            processingWaitLabelOne: 'massActions.authenticationSpecifiedOther.processing.info1',
+            processingWaitLabelTwo: 'massActions.homeAddress.processing.info2',
+            preProcessedTotalLabel: 'massAction.AuthenticationSpecifiedOther.pre_processed.title.1',
+            preProcessedSuccessesLabel: 'massAction.pre_processed.title.2',
+            preProcessedFailuresLabel: 'massAction.pre_processed.title.3',
+            processedTotalLabel: 'massAction.AuthenticationSpecifiedOther.processed.title.1',
+            processedSuccessesLabel: 'massAction.processed.title.2',
+            processedFailuresLabel: 'massAction.processed.title.3',
+          };
         case MassActionDataCorrectionType.HomeAddress:
         case MassActionDataCorrectionType.IdentitySet:
         default:
