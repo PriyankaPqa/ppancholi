@@ -31,7 +31,7 @@ export default Vue.extend({
       templateData: {
         [MassActionDataCorrectionType.ContactInformation]: {
           fileName: 'ContactInformationTemplate.csv',
-          blobsParts: 'PersonId,PreferredLanguageSpecifiedOther,PrimarySpokenLanguageSpecifiedOther,Email,HomePhoneNumber,MobilePhoneNumber,AlternatePhoneNumber,ETag',
+          blobsParts: 'PersonId,PrimarySpokenLanguageSpecifiedOther,HomePhoneNumber,MobilePhoneNumber,AlternatePhoneNumber,AlternatePhoneNumberExtension,ETag',
         },
         [MassActionDataCorrectionType.HomeAddress]: {
           fileName: 'HomeAddressTemplate.csv',

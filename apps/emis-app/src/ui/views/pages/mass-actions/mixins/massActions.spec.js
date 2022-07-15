@@ -158,7 +158,7 @@ describe('massActions', () => {
       it('should call downloadTemplate with proper data for ContactInformation', () => {
         wrapper.vm.downloadTemplate = jest.fn();
         wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.ContactInformation);
-        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('ContactInformationTemplate.csv', 'PersonId,PreferredLanguageSpecifiedOther,PrimarySpokenLanguageSpecifiedOther,Email,HomePhoneNumber,MobilePhoneNumber,AlternatePhoneNumber,ETag');
+        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('ContactInformationTemplate.csv', 'PersonId,PrimarySpokenLanguageSpecifiedOther,HomePhoneNumber,MobilePhoneNumber,AlternatePhoneNumber,AlternatePhoneNumberExtension,ETag');
       });
 
       it('should call downloadTemplate with proper data for HomeAddress', () => {
