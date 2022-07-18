@@ -62,7 +62,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         stubs: ['financial-assistance-items'],
       });
 
-      const statusSwitch = wrapper.find('[data-test="financial-assistance-status"]');
+      const statusSwitch = wrapper.find('[data-test="financial-assistance-table-status-toggle"]');
       const statusContainer = wrapper.find('.financial-status');
 
       expect(wrapper.vm.status).toBe(false);

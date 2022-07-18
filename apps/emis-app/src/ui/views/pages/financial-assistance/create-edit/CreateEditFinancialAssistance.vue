@@ -84,7 +84,7 @@
                       {{ $t('common.status') }}
                     </span>
 
-                    <span :class="`rc-body14 ${status ? 'white--text' : 'black--text'} ml-4`">
+                    <span :class="`rc-body14 ${status ? 'white--text' : 'black--text'} ml-4`" data-test="financial-assistance-table-status">
                       {{ status ? $t('enums.financialStatus.Active').toUpperCase() : $t('enums.financialStatus.Inactive').toUpperCase() }}
                     </span>
 
@@ -94,7 +94,7 @@
                         class="mt-0 ml-auto mr-3 pt-0"
                         flat
                         :disabled="(isEdit && isOperating)"
-                        data-test="financial-assistance-status"
+                        data-test="financial-assistance-table-status-toggle"
                         hide-details
                         color="white" />
                     </validation-provider>
