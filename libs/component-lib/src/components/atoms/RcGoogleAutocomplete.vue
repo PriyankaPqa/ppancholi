@@ -28,7 +28,7 @@ export default Vue.extend({
     },
 
     predictionCountriesRestriction: {
-      type: Array,
+      type: [Array, String],
       required: false,
       default: null,
     },
@@ -56,6 +56,10 @@ export default Vue.extend({
   },
 
   watch: {
+    predictionCountriesRestriction() {
+      this.setRequestCountryRestriction();
+    },
+
     predictionTypes() {
       this.setRequestPredictionTypes();
     },
@@ -95,6 +99,20 @@ export default Vue.extend({
         }
       }
     },
+    setRequestCountryRestriction() {
+      if (this.autocomplete) {
+        if (this.predictionCountriesRestriction) {
+          // Restrict predictions to only those within the parent component. For example, the country.
+          // See https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions.componentRestrictions
+          // See https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#ComponentRestrictions
+          // Country: ISO 3166-1 Alpha-2 country code, case insensitive
+          // see https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+          this.autocomplete.setComponentRestrictions({
+            country: this.predictionCountriesRestriction,
+          });
+        }
+      }
+    },
 
     setResponseFields() {
       if (this.autocomplete) {
@@ -103,7 +121,7 @@ export default Vue.extend({
         // See https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult
         // See https://developers.google.com/maps/documentation/javascript/reference/geocoder#GeocoderAddressComponent
         // See https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceGeometry
-        const fields = ['address_component', 'geometry'];
+        const fields = ['address_component', 'geometry', 'name'];
         if (this.includePlaceName) {
           fields.push('name');
         }
@@ -133,16 +151,7 @@ export default Vue.extend({
       // Set prediction types
       this.setRequestPredictionTypes();
 
-      if (this.predictionCountriesRestriction) {
-        // Restrict predictions to only those within the parent component. For example, the country.
-        // See https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions.componentRestrictions
-        // See https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#ComponentRestrictions
-        // Country: ISO 3166-1 Alpha-2 country code, case insensitive
-        // see https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
-        this.autocomplete.setComponentRestrictions({
-          country: this.predictionCountriesRestriction,
-        });
-      }
+      this.setRequestCountryRestriction();
 
       // we try to use the current user's position to order results
       try {
@@ -187,7 +196,10 @@ export default Vue.extend({
       if (this.place == null) {
         return null;
       }
-      return this.place.name;
+      if (this.place.name) {
+        return this.place.name;
+      }
+      return null;
     },
     getLocationFromPlaceDetails() {
       const location = { lat: null, lng: null };

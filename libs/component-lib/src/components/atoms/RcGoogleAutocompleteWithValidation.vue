@@ -7,6 +7,8 @@
       :class="classes"
       :api-key="apiKey"
       :error-messages="errors"
+      :prediction-types="predictionTypes"
+      :prediction-countries-restriction="predictionCountriesRestriction"
       v-bind="$attrs"
       v-on="$listeners" />
   </validation-provider>
@@ -42,6 +44,16 @@ export default {
     disableAutocomplete: {
       type: Boolean,
       default: false,
+    },
+    predictionTypes: {
+      type: Array,
+      required: false,
+      default: null,
+    },
+    predictionCountriesRestriction: {
+      type: [Array, String],
+      required: false,
+      default: null,
     },
   },
   data: () => ({

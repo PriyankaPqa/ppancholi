@@ -53,6 +53,8 @@
             :rules="rules.streetAddress"
             :api-key="apiKey"
             :disable-autocomplete="disableAutocomplete"
+            :prediction-types="predictionTypes"
+            :prediction-countries-restriction="form.address.country"
             :label="`${$t('registration.addresses.streetAddress')}`"
             @input="$resetGeoLocation()"
             @on-autocompleted="$streetCurrentAddressAutocomplete($event)" />
@@ -128,7 +130,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import {
   RcCountrySelectWithValidation,
   RcGoogleAutocompleteWithValidation,
@@ -136,6 +137,7 @@ import {
   VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
+import mixins from 'vue-typed-mixins';
 import { EOptionItemStatus, VForm } from '../../types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import {
@@ -147,7 +149,7 @@ import {
 
 import googleAutoCompleteMixin from './mixins/address';
 
-export default Vue.extend({
+export default mixins(googleAutoCompleteMixin).extend({
   name: 'CurrentAddressForm',
 
   components: {
@@ -156,8 +158,6 @@ export default Vue.extend({
     RcGoogleAutocompleteWithValidation,
     RcCountrySelectWithValidation,
   },
-
-  mixins: [googleAutoCompleteMixin],
 
   props: {
     prefixDataTest: {
@@ -266,7 +266,7 @@ export default Vue.extend({
     },
 
     isCanada(): boolean {
-      return this.form?.address.country === 'CA';
+      return this.form?.address?.country === 'CA';
     },
 
     placeNameLabel(): TranslateResult {
@@ -299,6 +299,20 @@ export default Vue.extend({
     currentShelterLocations(): IShelterLocationData[] {
       return this.shelterLocations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active
         || s.id === this.currentAddress?.shelterLocation?.id);
+    },
+
+    predictionTypes(): Array<string> {
+      const predictionForAddress = {
+        [ECurrentAddressTypes.Unknown]: [''],
+        [ECurrentAddressTypes.RemainingInHome]: [''],
+        [ECurrentAddressTypes.Campground]: ['establishment'],
+        [ECurrentAddressTypes.FriendsFamily]: ['address'],
+        [ECurrentAddressTypes.MedicalFacility]: ['establishment'],
+        [ECurrentAddressTypes.Other]: [''],
+        [ECurrentAddressTypes.Shelter]: [''],
+      } as Record<ECurrentAddressTypes, Array<string>>;
+
+      return predictionForAddress[this.addressType];
     },
   },
 

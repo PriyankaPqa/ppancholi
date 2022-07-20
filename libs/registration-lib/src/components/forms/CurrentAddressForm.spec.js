@@ -1,7 +1,7 @@
 import { i18n } from '@/ui/plugins/i18n';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import {
-  ECurrentAddressTypes, mockHouseholdCreate, mockCampGround, mockShelter,
+  ECurrentAddressTypes, mockHouseholdCreate, mockCampGround, mockShelter, mockUnknown, mockRemainingHome, mockFriendsFamily, mockMedicalFacility, mockOther,
 } from '../../entities/household-create';
 
 import { mockShelterLocations } from '../../entities/event';
@@ -11,23 +11,27 @@ import helpers from '../../ui/helpers/index';
 import Component from './CurrentAddressForm.vue';
 
 const localVue = createLocalVue();
+let wrapper;
 
+const doMount = (currentAddress = mockCampGround()) => {
+  const options = {
+    localVue,
+    propsData: {
+      apiKey: '12345',
+      currentAddress,
+      currentAddressTypeItems: helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes'),
+      canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
+      shelterLocations: mockShelterLocations(),
+      noFixedHome: false,
+      disableAutocomplete: false,
+    },
+  };
+
+  wrapper = shallowMount(Component, options);
+};
 describe('CurrentAddressForm.vue', () => {
-  let wrapper;
-
   beforeEach(() => {
-    wrapper = shallowMount(Component, {
-      localVue,
-      propsData: {
-        apiKey: '12345',
-        currentAddress: mockCampGround(),
-        currentAddressTypeItems: helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes'),
-        canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
-        shelterLocations: mockShelterLocations(),
-        noFixedHome: false,
-        disableAutocomplete: false,
-      },
-    });
+    doMount();
   });
 
   describe('Computed', () => {
@@ -107,6 +111,43 @@ describe('CurrentAddressForm.vue', () => {
             required: true,
           },
         });
+      });
+    });
+
+    describe('predictionTypes', () => {
+      it('should return correct types for Unknown', () => {
+        doMount(mockUnknown());
+        expect(wrapper.vm.predictionTypes).toEqual(['']);
+      });
+
+      it('should return correct types for RemainingInHome', () => {
+        doMount(mockRemainingHome());
+        expect(wrapper.vm.predictionTypes).toEqual(['']);
+      });
+
+      it('should return correct types for Campground', () => {
+        doMount(mockCampGround());
+        expect(wrapper.vm.predictionTypes).toEqual(['establishment']);
+      });
+
+      it('should return correct types for FriendsFamily', () => {
+        doMount(mockFriendsFamily());
+        expect(wrapper.vm.predictionTypes).toEqual(['address']);
+      });
+
+      it('should return correct types for MedicalFacility', () => {
+        doMount(mockMedicalFacility());
+        expect(wrapper.vm.predictionTypes).toEqual(['establishment']);
+      });
+
+      it('should return correct types for Other', () => {
+        doMount(mockOther());
+        expect(wrapper.vm.predictionTypes).toEqual(['']);
+      });
+
+      it('should return correct types for Shelter', () => {
+        doMount(mockShelter());
+        expect(wrapper.vm.predictionTypes).toEqual(['']);
       });
     });
   });

@@ -8,6 +8,8 @@
           :data-test="`${prefixDataTest}__street`"
           :rules="rules.streetAddress"
           :api-key="apiKey"
+          :prediction-types="['address']"
+          :prediction-countries-restriction="form.country"
           :disable-autocomplete="disableAutocomplete"
           :label="`${$t('registration.addresses.streetAddress')} *`"
           @input="$resetGeoLocation()"
@@ -71,7 +73,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 
 import {
   VSelectWithValidation,
@@ -79,11 +80,12 @@ import {
   RcGoogleAutocompleteWithValidation,
   RcCountrySelectWithValidation,
 } from '@libs/component-lib/components';
+import mixins from 'vue-typed-mixins';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import { IAddress } from '../../entities/household-create';
 import googleAutoCompleteMixin from './mixins/address';
 
-export default Vue.extend({
+export default mixins(googleAutoCompleteMixin).extend({
   name: 'AddressForm',
 
   components: {
@@ -92,8 +94,6 @@ export default Vue.extend({
     RcGoogleAutocompleteWithValidation,
     RcCountrySelectWithValidation,
   },
-
-  mixins: [googleAutoCompleteMixin],
 
   props: {
     prefixDataTest: {
