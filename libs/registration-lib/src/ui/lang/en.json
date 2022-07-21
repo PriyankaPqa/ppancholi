@@ -158,6 +158,7 @@
     "registration.personal_info.validations.birthdate": "This is not a valid date.",
     "registration.personal_info.validations.minimumAge": "Minimum age is {x} years old.",
     "registration.personal_info.validations.notInFuture": "Date of birth cannot be a future date.",
+    "registration.personal_info.contact_methods": "Contact methods",
     "registration.personal_info.year": "Year",
     "registration.privacy_statement.agreeCRC": "Beneficiary has stated “I agree” to the above statements.",
     "registration.privacy_statement.agreeSelf": "I agree to the above statements.",

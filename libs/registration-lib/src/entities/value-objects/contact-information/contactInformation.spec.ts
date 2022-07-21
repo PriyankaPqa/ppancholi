@@ -245,6 +245,7 @@ describe('>>> ContactInformation', () => {
         it('should not be valid', () => {
           const p = new ContactInformation();
 
+          p.email = 'mock-email';
           p.emailValidatedByBackend = false;
 
           expect(p.validate(false)).toContain('invalid email');

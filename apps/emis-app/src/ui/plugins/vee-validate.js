@@ -188,11 +188,11 @@ extend('minimumAge', {
   },
 });
 
-extend('requiredPhone', {
+extend('requiredContactInfo', {
   computesRequired: true,
   params: ['isMissing'],
   validate: (value, { isMissing }) => !isMissing,
-  message: (_, values) => i18n.t('validations.anyPhone', values),
+  message: () => '',
 });
 
 extend('requiredFile', {

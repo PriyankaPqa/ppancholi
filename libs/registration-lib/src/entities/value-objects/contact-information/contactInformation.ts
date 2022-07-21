@@ -77,7 +77,7 @@ export class ContactInformation implements IContactInformation {
       }
     }
 
-    if (!this.emailValidatedByBackend) {
+    if (this.email && !this.emailValidatedByBackend) {
       errors.push('invalid email');
     }
 

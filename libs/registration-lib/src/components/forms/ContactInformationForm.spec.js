@@ -1,20 +1,26 @@
+import { extend } from 'vee-validate';
+import { required, max } from 'vee-validate/dist/rules';
 import {
   mockContactInformation,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
 } from '../../entities/household-create';
 import { MAX_LENGTH_MD } from '../../constants/validations';
-import { createLocalVue, shallowMount } from '../../test/testSetup';
+import { createLocalVue, shallowMount, mount } from '../../test/testSetup';
 import Component from './ContactInformationForm.vue';
 import helpers from '../../ui/helpers';
 
-const localVue = createLocalVue();
+extend('required', required);
+extend('phone', required);
+extend('max', max);
+extend('customValidator', required);
 
+const localVue = createLocalVue();
 describe('ContactInformationForm.vue', () => {
   let wrapper;
 
-  beforeEach(() => {
-    wrapper = shallowMount(Component, {
+  const doMount = (shallow = true, additionalOptions = {}) => {
+    const options = {
       localVue,
       propsData: {
         form: mockContactInformation(),
@@ -24,8 +30,20 @@ describe('ContactInformationForm.vue', () => {
       },
       stubs: {
         'vue-programmatic-invisible-google-recaptcha': { template: '<div></div>' },
+        ValidationObserver: false,
       },
-    });
+      ...additionalOptions,
+    };
+
+    if (shallow) {
+      wrapper = shallowMount(Component, options);
+    } else {
+      wrapper = mount(Component, options);
+    }
+  };
+
+  beforeEach(() => {
+    doMount();
 
     wrapper.vm.$refs = {
       email: {
@@ -87,15 +105,46 @@ describe('ContactInformationForm.vue', () => {
       });
 
       test('homePhoneNumber', () => {
-        expect(wrapper.vm.rules.homePhoneNumber).toEqual(wrapper.vm.phoneRule);
+        doMount(true, {
+          computed: {
+            contactInfoRequired() {
+              return true;
+            },
+          },
+        });
+        expect(wrapper.vm.rules.homePhoneNumber).toEqual({
+          phone: true,
+          requiredContactInfo: true,
+        });
       });
 
       test('mobilePhoneNumber', () => {
-        expect(wrapper.vm.rules.mobilePhoneNumber).toEqual(wrapper.vm.phoneRule);
+        doMount(true, {
+          computed: {
+            contactInfoRequired() {
+              return true;
+            },
+          },
+        });
+
+        expect(wrapper.vm.rules.mobilePhoneNumber).toEqual({
+          phone: true,
+          requiredContactInfo: true,
+        });
       });
 
       test('alternatePhoneNumber', () => {
-        expect(wrapper.vm.rules.alternatePhoneNumber).toEqual(wrapper.vm.phoneRule);
+        doMount(true, {
+          computed: {
+            contactInfoRequired() {
+              return true;
+            },
+          },
+        });
+        expect(wrapper.vm.rules.alternatePhoneNumber).toEqual({
+          phone: true,
+          requiredContactInfo: true,
+        });
       });
 
       test('alternatePhoneNumberExtension', () => {
@@ -105,6 +154,13 @@ describe('ContactInformationForm.vue', () => {
       });
 
       test('email', async () => {
+        doMount(true, {
+          computed: {
+            contactInfoRequired() {
+              return true;
+            },
+          },
+        });
         await wrapper.setData({
           emailValidator: {
             isValid: true,
@@ -113,7 +169,7 @@ describe('ContactInformationForm.vue', () => {
         });
 
         expect(wrapper.vm.rules.email).toEqual({
-          required: wrapper.vm.emailRequired,
+          requiredContactInfo: true,
           customValidator: {
             isValid: true,
             messageKey: 'messageKey',
@@ -124,29 +180,85 @@ describe('ContactInformationForm.vue', () => {
 
     describe('emailLabel', () => {
       it('should return proper string', () => {
-        const expected = `${wrapper.vm.$t('registration.personal_info.emailAddress')}${wrapper.vm.hasAnyPhone ? '' : '*'}`;
-        expect(wrapper.vm.emailLabel).toEqual(expected);
+        doMount(true, {
+          computed: {
+            missingContactInfo() {
+              return true;
+            },
+          },
+        });
+        expect(wrapper.vm.emailLabel).toEqual('registration.personal_info.emailAddress*');
+        doMount(true, {
+          computed: {
+            missingContactInfo() {
+              return false;
+            },
+          },
+        });
+        expect(wrapper.vm.emailLabel).toEqual('registration.personal_info.emailAddress');
       });
     });
 
     describe('homePhoneNumberLabel', () => {
       it('should return proper string', () => {
-        const expected = `${wrapper.vm.$t('registration.personal_info.homePhoneNumber')}${wrapper.vm.phoneRequired ? '*' : ''}`;
-        expect(wrapper.vm.homePhoneNumberLabel).toEqual(expected);
+        doMount(true, {
+          computed: {
+            missingContactInfo() {
+              return true;
+            },
+          },
+        });
+        expect(wrapper.vm.homePhoneNumberLabel).toEqual('registration.personal_info.homePhoneNumber*');
+        doMount(true, {
+          computed: {
+            missingContactInfo() {
+              return false;
+            },
+          },
+        });
+        expect(wrapper.vm.homePhoneNumberLabel).toEqual('registration.personal_info.homePhoneNumber');
       });
     });
 
     describe('mobilePhoneNumberLabel', () => {
       it('should return proper string', () => {
-        const expected = `${wrapper.vm.$t('registration.personal_info.mobilePhoneNumber')}${wrapper.vm.phoneRequired ? '*' : ''}`;
-        expect(wrapper.vm.mobilePhoneNumberLabel).toEqual(expected);
+        doMount(true, {
+          computed: {
+            missingContactInfo() {
+              return true;
+            },
+          },
+        });
+        expect(wrapper.vm.mobilePhoneNumberLabel).toEqual('registration.personal_info.mobilePhoneNumber*');
+        doMount(true, {
+          computed: {
+            missingContactInfo() {
+              return false;
+            },
+          },
+        });
+        expect(wrapper.vm.mobilePhoneNumberLabel).toEqual('registration.personal_info.mobilePhoneNumber');
       });
     });
 
     describe('alternatePhoneNumberLabel', () => {
       it('should return proper string', () => {
-        const expected = `${wrapper.vm.$t('registration.personal_info.alternatePhoneNumber')}${wrapper.vm.phoneRequired ? '*' : ''}`;
-        expect(wrapper.vm.alternatePhoneNumberLabel).toEqual(expected);
+        doMount(true, {
+          computed: {
+            missingContactInfo() {
+              return true;
+            },
+          },
+        });
+        expect(wrapper.vm.alternatePhoneNumberLabel).toEqual('registration.personal_info.alternatePhoneNumber*');
+        doMount(true, {
+          computed: {
+            missingContactInfo() {
+              return false;
+            },
+          },
+        });
+        expect(wrapper.vm.alternatePhoneNumberLabel).toEqual('registration.personal_info.alternatePhoneNumber');
       });
     });
 
@@ -167,7 +279,56 @@ describe('ContactInformationForm.vue', () => {
       });
     });
 
-    describe('phoneRequired', () => {
+    describe('isCRCRegistration', () => {
+      it('returns correct value', async () => {
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
+        expect(wrapper.vm.isCRCRegistration).toBe(true);
+
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
+        expect(wrapper.vm.isCRCRegistration).toBe(false);
+      });
+    });
+
+    describe('contactInfoRequired', () => {
+      it('returns false if skipPhoneEmailRules is true', async () => {
+        await wrapper.setProps({ skipPhoneEmailRules: true });
+        expect(wrapper.vm.contactInfoRequired).toEqual(false);
+      });
+
+      it('returns the right value if missingContactInfo is true and is submitting', async () => {
+        doMount(true, {
+          computed: {
+            missingContactInfo() {
+              return true;
+            },
+          },
+        });
+        await wrapper.setProps({ skipPhoneEmailRules: false });
+        await wrapper.setData({ submitting: true });
+        expect(wrapper.vm.contactInfoRequired).toEqual({ isMissing: true });
+      });
+
+      it('returns the right value if focusPhoneCounter is bigger than triggerPhoneMessage', async () => {
+        await wrapper.setProps({ skipPhoneEmailRules: false });
+        await wrapper.setData({ focusPhoneCounter: 4, triggerPhoneMessage: 3 });
+        expect(wrapper.vm.contactInfoRequired).toEqual({ isMissing: wrapper.vm.missingContactInfo });
+      });
+
+      it('returns false if focusPhoneCounter is smaller than triggerPhoneMessage and missingContactInfo is false', async () => {
+        doMount(true, {
+          computed: {
+            missingContactInfo() {
+              return false;
+            },
+          },
+        });
+        await wrapper.setProps({ skipPhoneEmailRules: false });
+        await wrapper.setData({ focusPhoneCounter: 3, triggerPhoneMessage: 4 });
+        expect(wrapper.vm.contactInfoRequired).toEqual(false);
+      });
+    });
+
+    describe('missingContactInfo', () => {
       it('should return true if no phone and no email has been inputted', async () => {
         await wrapper.setProps({
           skipPhoneEmailRules: false,
@@ -177,7 +338,7 @@ describe('ContactInformationForm.vue', () => {
         wrapper.vm.formCopy.homePhoneNumber.number = '';
         wrapper.vm.formCopy.alternatePhoneNumber.number = '';
 
-        expect(wrapper.vm.phoneRequired).toBeTruthy();
+        expect(wrapper.vm.missingContactInfo).toBeTruthy();
       });
 
       it('should return false if a phone has been inputted', async () => {
@@ -186,7 +347,7 @@ describe('ContactInformationForm.vue', () => {
         });
         wrapper.vm.formCopy.mobilePhoneNumber.number = '12345';
         wrapper.vm.formCopy.email = '';
-        expect(wrapper.vm.phoneRequired).toBeFalsy();
+        expect(wrapper.vm.missingContactInfo).toBeFalsy();
       });
 
       it('should return false if a email has been inputted', async () => {
@@ -194,7 +355,7 @@ describe('ContactInformationForm.vue', () => {
           skipPhoneEmailRules: false,
         });
         wrapper.vm.formCopy.email = 'test@test.ca';
-        expect(wrapper.vm.phoneRequired).toBeFalsy();
+        expect(wrapper.vm.missingContactInfo).toBeFalsy();
       });
 
       it('should return false if skipPhoneEmailRules is true', async () => {
@@ -202,51 +363,7 @@ describe('ContactInformationForm.vue', () => {
           skipPhoneEmailRules: true,
         });
         wrapper.vm.formCopy.email = 'test@test.ca';
-        expect(wrapper.vm.phoneRequired).toBeFalsy();
-      });
-    });
-
-    describe('emailRequired', () => {
-      it('should return false if phoneEmailRules is disabled', () => {
-        expect(wrapper.vm.emailRequired).toBeFalsy();
-      });
-
-      it('should return result of !hasAnyPhone if skipPhoneEmailRules is false', async () => {
-        await wrapper.setProps({
-          skipPhoneEmailRules: false,
-        });
-        expect(wrapper.vm.emailRequired).toEqual(!wrapper.vm.hasAnyPhone);
-      });
-    });
-
-    describe('phoneRule', () => {
-      it('should correct rule if skipPhoneEmailRules is false', async () => {
-        await wrapper.setProps({
-          skipPhoneEmailRules: false,
-        });
-        expect(wrapper.vm.phoneRule).toEqual({
-          requiredPhone: wrapper.vm.focusPhoneCounter >= wrapper.vm.triggerPhoneMessage ? { isMissing: this.phoneRequired } : false,
-          phone: true,
-        });
-      });
-
-      it('should correct rule if skipPhoneEmailRules is true', async () => {
-        await wrapper.setProps({
-          skipPhoneEmailRules: true,
-        });
-        expect(wrapper.vm.phoneRule).toEqual({
-          phone: true,
-        });
-      });
-    });
-
-    describe('isCRCRegistration', () => {
-      it('returns correct value', async () => {
-        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
-        expect(wrapper.vm.isCRCRegistration).toBe(true);
-
-        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
-        expect(wrapper.vm.isCRCRegistration).toBe(false);
+        expect(wrapper.vm.missingContactInfo).toBeFalsy();
       });
     });
   });
@@ -299,6 +416,7 @@ describe('ContactInformationForm.vue', () => {
 
     describe('Home phone', () => {
       it('is linked to proper rules', () => {
+        doMount(false);
         const element = wrapper.findDataTest('personalInfo__homePhoneNumber');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.homePhoneNumber);
       });
@@ -306,6 +424,7 @@ describe('ContactInformationForm.vue', () => {
 
     describe('Mobile phone', () => {
       it('is linked to proper rules', () => {
+        doMount(false);
         const element = wrapper.findDataTest('personalInfo__mobilePhoneNumber');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.mobilePhoneNumber);
       });
@@ -313,6 +432,7 @@ describe('ContactInformationForm.vue', () => {
 
     describe('Other phone', () => {
       it('is linked to proper rules', () => {
+        doMount(false);
         const element = wrapper.findDataTest('personalInfo__alternatePhoneNumber');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.alternatePhoneNumber);
       });
@@ -320,6 +440,7 @@ describe('ContactInformationForm.vue', () => {
 
     describe('Other phone extension', () => {
       it('is linked to proper rules', () => {
+        doMount(false);
         const element = wrapper.findDataTest('personalInfo__alternatePhoneNumberExtension');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.alternatePhoneNumberExtension);
       });
@@ -327,6 +448,7 @@ describe('ContactInformationForm.vue', () => {
 
     describe('Email', () => {
       it('is linked to proper rules', () => {
+        doMount(false);
         const element = wrapper.findDataTest('personalInfo__email');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.email);
       });
@@ -360,7 +482,7 @@ describe('ContactInformationForm.vue', () => {
       });
     });
 
-    describe('onFocustOut', () => {
+    describe('onFocusOut', () => {
       it('should increment focusPhoneCounter', () => {
         expect(wrapper.vm.focusPhoneCounter).toEqual(0);
         wrapper.vm.onFocusOut();
@@ -368,24 +490,35 @@ describe('ContactInformationForm.vue', () => {
       });
 
       it('should be called when focusing out homePhoneNumber', () => {
+        doMount(false);
         wrapper.vm.onFocusOut = jest.fn();
         const element = wrapper.findDataTest('personalInfo__homePhoneNumber');
-        element.vm.$emit('focusout', null);
-        expect(wrapper.vm.onFocusOut).toBeCalledWith('homePhoneNumber', null);
+        element.vm.$emit('focusout');
+        expect(wrapper.vm.onFocusOut).toBeCalledTimes(1);
       });
 
       it('should be called when focusing out mobilePhoneNumber', () => {
+        doMount(false);
         wrapper.vm.onFocusOut = jest.fn();
         const element = wrapper.findDataTest('personalInfo__mobilePhoneNumber');
-        element.vm.$emit('focusout', null);
-        expect(wrapper.vm.onFocusOut).toBeCalledWith('mobilePhoneNumber', null);
+        element.vm.$emit('focusout');
+        expect(wrapper.vm.onFocusOut).toBeCalledTimes(1);
       });
 
       it('should be called when focusing out alternatePhoneNumber', () => {
+        doMount(false);
         wrapper.vm.onFocusOut = jest.fn();
         const element = wrapper.findDataTest('personalInfo__alternatePhoneNumber');
-        element.vm.$emit('focusout', null);
-        expect(wrapper.vm.onFocusOut).toBeCalledWith('alternatePhoneNumber', null);
+        element.vm.$emit('focusout');
+        expect(wrapper.vm.onFocusOut).toBeCalledTimes(1);
+      });
+
+      it('should be called when focusing out email', () => {
+        doMount(false);
+        wrapper.vm.onFocusOut = jest.fn();
+        const element = wrapper.findDataTest('personalInfo__email');
+        element.vm.$emit('focusout');
+        expect(wrapper.vm.onFocusOut).toBeCalledTimes(1);
       });
     });
 
@@ -396,7 +529,7 @@ describe('ContactInformationForm.vue', () => {
         expect(helpers.timeout).toHaveBeenCalledTimes(1);
       });
 
-      it('calls validateEmail if submitting is false', async () => {
+      it('calls validateEmail if submitting is false and there is no recaptcha key', async () => {
         wrapper.vm.validateEmail = jest.fn();
         await wrapper.setData({ submitting: true });
         await wrapper.vm.validateEmailOnBlur('mock-email');
@@ -406,12 +539,50 @@ describe('ContactInformationForm.vue', () => {
         expect(wrapper.vm.validateEmail).toHaveBeenCalledWith('mock-email');
       });
 
+      it('calls getTokenAndValidate if there is a recaptcha key', async () => {
+        await wrapper.setProps({
+          recaptchaKey: '12345',
+        });
+        wrapper.vm.getTokenAndValidate = jest.fn();
+        await wrapper.setData({ submitting: false });
+        await wrapper.vm.validateEmailOnBlur('mock-email');
+        expect(wrapper.vm.getTokenAndValidate).toHaveBeenCalledWith('mock-email');
+      });
+
       it('should be triggered when blurring email field if for CRC (no recaptcha key)', () => {
+        doMount(false);
         wrapper.vm.validateEmailOnBlur = jest.fn();
         const element = wrapper.findDataTest('personalInfo__email');
         element.vm.$emit('blur', { target: { value: 'email' } });
 
         expect(wrapper.vm.validateEmailOnBlur).toHaveBeenLastCalledWith('email');
+      });
+    });
+
+    describe('validateForm', () => {
+      it('calls the passed function if email was validated  by backend', async () => {
+        await wrapper.setData({ formCopy: { ...wrapper.vm.formCopy, emailValidatedByBackend: true } });
+        const mockFn = jest.fn(() => false);
+        await wrapper.vm.validateForm(mockFn);
+        expect(mockFn).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls getTokenAndValidate if email was not validated by backend and there is a recaptcha key', async () => {
+        await wrapper.setData({ formCopy: { ...wrapper.vm.formCopy, emailValidatedByBackend: false } });
+        await wrapper.setProps({ recaptchaKey: '12345' });
+        wrapper.vm.getTokenAndValidate = jest.fn();
+        const mockFn = jest.fn(() => false);
+        await wrapper.vm.validateForm(mockFn);
+        expect(wrapper.vm.getTokenAndValidate).toHaveBeenCalledWith(wrapper.vm.formCopy.email);
+      });
+
+      it('calls validateEmail if email was not validated by backend and there is no recaptcha key', async () => {
+        await wrapper.setData({ formCopy: { ...wrapper.vm.formCopy, emailValidatedByBackend: false } });
+        await wrapper.setProps({ recaptchaKey: null });
+        wrapper.vm.validateEmail = jest.fn();
+        const mockFn = jest.fn(() => false);
+        await wrapper.vm.validateForm(mockFn);
+        expect(wrapper.vm.validateEmail).toHaveBeenCalledWith(wrapper.vm.formCopy.email, '', true);
       });
     });
 
@@ -537,6 +708,7 @@ describe('ContactInformationForm.vue', () => {
 
     describe('getTokenAndValidate', () => {
       beforeEach(() => {
+        doMount(false);
         wrapper.vm.$refs = {
           recaptchaEmail: {
             execute: jest.fn(),
@@ -554,17 +726,6 @@ describe('ContactInformationForm.vue', () => {
       it('should call execute method from recaptcha', () => {
         wrapper.vm.getTokenAndValidate('test@test.ca');
         expect(wrapper.vm.$refs.recaptchaEmail.execute).toHaveBeenCalledTimes(1);
-      });
-
-      it('should be triggered when blurring email field if for Registration (with recaptcha key)', async () => {
-        await wrapper.setProps({
-          recaptchaKey: '12345',
-        });
-        wrapper.vm.getTokenAndValidate = jest.fn();
-        const element = wrapper.findDataTest('personalInfo__email');
-        element.vm.$emit('blur', { target: { value: 'email' } });
-
-        expect(wrapper.vm.getTokenAndValidate).toHaveBeenLastCalledWith('email');
       });
     });
 
@@ -587,7 +748,7 @@ describe('ContactInformationForm.vue', () => {
           messageKey: null,
         });
 
-        expect(wrapper.vm.formCopy.emailValidatedByBackend).toBeTruthy();
+        expect(wrapper.vm.formCopy.emailValidatedByBackend).toBeFalsy();
       });
     });
   });

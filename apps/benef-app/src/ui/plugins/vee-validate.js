@@ -72,11 +72,11 @@ extend('phone', {
   message: (_, values) => i18n.t('validations.phone', values),
 });
 
-extend('requiredPhone', {
+extend('requiredContactInfo', {
   computesRequired: true,
   params: ['isMissing'],
-  validate: (value, { isMissing }) => !isMissing,
-  message: (_, values) => i18n.t('validations.anyPhone', values),
+  validate: (_, { isMissing }) => !isMissing,
+  message: () => '',
 });
 
 extend('canadianPostalCode', {

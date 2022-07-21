@@ -40,76 +40,95 @@
         :label="`${$t('registration.personal_info.primarySpokenLanguage.pleaseSpecify')}*`" />
     </v-col>
 
-    <v-col cols="12" sm="6">
-      <rc-phone-with-validation
-        :value="formCopy.homePhoneNumber"
-        :rules="rules.homePhoneNumber"
-        outlined
-        :label="homePhoneNumberLabel"
-        :data-test="`${prefixDataTest}__homePhoneNumber`"
-        @focusout="onFocusOut('homePhoneNumber', $event)" />
-    </v-col>
+    <validation-observer ref="contactInfo" v-slot="{ failed }" tag="div" class="row px-3">
+      <v-col cols="12" class="pb-1 d-flex flex-column">
+        <div class="rc-body16 fw-bold">
+          {{ $t('registration.personal_info.contact_methods') }}
+        </div>
+        <div
+          v-if="!isCRCRegistration"
+          :class="[failed ? 'invalidClass' : 'validClass', 'rc-body14']">
+          <v-icon size="16" :class="[failed ? 'invalidClass' : 'validClass']">
+            mdi-information
+          </v-icon>
+          {{ $t('registration.personal_info.enter_contact_info_msg') }}
+        </div>
+      </v-col>
 
-    <v-col cols="12" sm="6">
-      <rc-phone-with-validation
-        :value="formCopy.mobilePhoneNumber"
-        :rules="rules.mobilePhoneNumber"
-        outlined
-        :label="mobilePhoneNumberLabel"
-        :data-test="`${prefixDataTest}__mobilePhoneNumber`"
-        @focusout="onFocusOut('mobilePhoneNumber', $event)" />
-    </v-col>
+      <v-col cols="12" sm="6">
+        <rc-phone-with-validation
+          v-model="formCopy.homePhoneNumber"
+          :rules="rules.homePhoneNumber"
+          outlined
+          :label="homePhoneNumberLabel"
+          :data-test="`${prefixDataTest}__homePhoneNumber`"
+          @focusout="onFocusOut()" />
+      </v-col>
 
-    <v-col cols="12" sm="6">
-      <rc-phone-with-validation
-        :value="formCopy.alternatePhoneNumber"
-        :rules="rules.alternatePhoneNumber"
-        outlined
-        :label="alternatePhoneNumberLabel"
-        :data-test="`${prefixDataTest}__alternatePhoneNumber`"
-        @focusout="onFocusOut('alternatePhoneNumber', $event)" />
-    </v-col>
+      <v-col cols="12" sm="6">
+        <rc-phone-with-validation
+          v-model="formCopy.mobilePhoneNumber"
+          :rules="rules.mobilePhoneNumber"
+          outlined
+          :label="mobilePhoneNumberLabel"
+          :data-test="`${prefixDataTest}__mobilePhoneNumber`"
+          @focusout="onFocusOut()" />
+      </v-col>
 
-    <v-col cols="12" sm="6">
-      <v-text-field-with-validation
-        v-if="formCopy.alternatePhoneNumber"
-        v-model="formCopy.alternatePhoneNumber.extension"
-        :data-test="`${prefixDataTest}__alternatePhoneNumberExtension`"
-        :rules="rules.alternatePhoneNumberExtension"
-        :label="$t('registration.personal_info.alternatePhoneNumberExtension')" />
-    </v-col>
+      <v-col cols="12" sm="6">
+        <rc-phone-with-validation
+          v-model="formCopy.alternatePhoneNumber"
+          :rules="rules.alternatePhoneNumber"
+          outlined
+          :label="alternatePhoneNumberLabel"
+          :data-test="`${prefixDataTest}__alternatePhoneNumber`"
+          @focusout="onFocusOut()" />
+      </v-col>
 
-    <v-col cols="12" sm="6">
-      <validation-observer ref="email">
-        <template v-if="recaptchaKey">
-          <vue-programmatic-invisible-google-recaptcha
-            ref="recaptchaEmail"
-            :sitekey="recaptchaKey"
-            element-id="recaptchaEmail"
-            badge-position="left"
-            :show-badge-mobile="false"
-            :show-badge-desktop="false"
-            @recaptcha-callback="recaptchaCallBack" />
-          <v-text-field-with-validation
-            v-model="formCopy.email"
-            :loading="emailChecking"
-            :data-test="`${prefixDataTest}__email`"
-            :rules="rules.email"
-            :label="emailLabel"
-            @blur="getTokenAndValidate($event.target.value)" />
-        </template>
-        <template v-else>
-          <v-text-field-with-validation
-            v-model="formCopy.email"
-            :loading="emailChecking"
-            :data-test="`${prefixDataTest}__email`"
-            :rules="rules.email"
-            :label="emailLabel"
-            @input="resetEmailValidation"
-            @blur="validateEmailOnBlur($event.target.value)" />
-        </template>
-      </validation-observer>
-    </v-col>
+      <v-col cols="12" sm="6">
+        <v-text-field-with-validation
+          v-if="formCopy.alternatePhoneNumber.number"
+          v-model="formCopy.alternatePhoneNumber.extension"
+          :data-test="`${prefixDataTest}__alternatePhoneNumberExtension`"
+          :rules="rules.alternatePhoneNumberExtension"
+          :label="$t('registration.personal_info.alternatePhoneNumberExtension')" />
+      </v-col>
+
+      <v-col cols="12" sm="6">
+        <validation-observer ref="email">
+          <template v-if="recaptchaKey">
+            <vue-programmatic-invisible-google-recaptcha
+              ref="recaptchaEmail"
+              :sitekey="recaptchaKey"
+              element-id="recaptchaEmail"
+              badge-position="left"
+              :show-badge-mobile="false"
+              :show-badge-desktop="false"
+              @recaptcha-callback="recaptchaCallBack" />
+            <v-text-field-with-validation
+              v-model="formCopy.email"
+              :loading="emailChecking"
+              :data-test="`${prefixDataTest}__email`"
+              :rules="rules.email"
+              :label="emailLabel"
+              @input="resetEmailValidation"
+              @focusout="onFocusOut()"
+              @blur="validateEmailOnBlur($event.target.value)" />
+          </template>
+          <template v-else>
+            <v-text-field-with-validation
+              v-model="formCopy.email"
+              :loading="emailChecking"
+              :data-test="`${prefixDataTest}__email`"
+              :rules="rules.email"
+              :label="emailLabel"
+              @input="resetEmailValidation"
+              @focusout="onFocusOut()"
+              @blur="validateEmailOnBlur($event.target.value)" />
+          </template>
+        </validation-observer>
+      </v-col>
+    </validation-observer>
   </v-row>
 </template>
 
@@ -123,7 +142,7 @@ import { ValidationObserver } from 'vee-validate';
 import { EventHub } from '@libs/core-lib/plugins/event-hub';
 import { IOptionItemData } from '../../types';
 import { MAX_LENGTH_MD } from '../../constants/validations';
-import { IContactInformation, IPhoneNumber, IValidateEmailResponse } from '../../entities/value-objects/contact-information';
+import { IContactInformation, IValidateEmailResponse } from '../../entities/value-objects/contact-information';
 
 export default Vue.extend({
   name: 'ContactInformationForm',
@@ -175,7 +194,7 @@ export default Vue.extend({
     return {
       formCopy: null as IContactInformation,
       focusPhoneCounter: 0,
-      triggerPhoneMessage: 3,
+      triggerPhoneMessage: 4,
       emailValidator: {
         isValid: true,
         messageKey: null,
@@ -185,6 +204,7 @@ export default Vue.extend({
       recaptchaRequired: false,
       recaptchaResolved: false,
       submitting: false,
+      validateEntireFormFn: null,
     };
   },
 
@@ -201,63 +221,55 @@ export default Vue.extend({
           required: this.formCopy.primarySpokenLanguage && this.formCopy.primarySpokenLanguage.isOther,
           max: MAX_LENGTH_MD,
         },
-        homePhoneNumber: this.phoneRule,
-        mobilePhoneNumber: this.phoneRule,
-        alternatePhoneNumber: this.phoneRule,
+        homePhoneNumber: {
+          phone: true,
+          requiredContactInfo: this.contactInfoRequired,
+        },
+        mobilePhoneNumber: {
+          phone: true,
+          requiredContactInfo: this.contactInfoRequired,
+        },
+        alternatePhoneNumber: {
+          phone: true,
+          requiredContactInfo: this.contactInfoRequired,
+        },
         alternatePhoneNumberExtension: {
           max: MAX_LENGTH_MD,
         },
         email: {
-          required: this.emailRequired,
           customValidator: this.emailValidator,
+          requiredContactInfo: this.contactInfoRequired,
         },
       };
     },
 
     emailLabel(): string {
-      return `${this.$t('registration.personal_info.emailAddress')}${this.emailRequired ? '*' : ''}`;
+      return `${this.$t('registration.personal_info.emailAddress')}${this.missingContactInfo ? '*' : ''}`;
     },
 
     homePhoneNumberLabel(): string {
-      return `${this.$t('registration.personal_info.homePhoneNumber')}${this.phoneRequired ? '*' : ''}`;
+      return `${this.$t('registration.personal_info.homePhoneNumber')}${this.missingContactInfo ? '*' : ''}`;
     },
 
     mobilePhoneNumberLabel(): string {
-      return `${this.$t('registration.personal_info.mobilePhoneNumber')}${this.phoneRequired ? '*' : ''}`;
+      return `${this.$t('registration.personal_info.mobilePhoneNumber')}${this.missingContactInfo ? '*' : ''}`;
     },
 
     alternatePhoneNumberLabel(): string {
-      return `${this.$t('registration.personal_info.alternatePhoneNumber')}${this.phoneRequired ? '*' : ''}`;
+      return `${this.$t('registration.personal_info.alternatePhoneNumber')}${this.missingContactInfo ? '*' : ''}`;
     },
 
     hasAnyPhone(): boolean {
       return !!(this.formCopy.homePhoneNumber?.number || this.formCopy.mobilePhoneNumber?.number || this.formCopy.alternatePhoneNumber?.number);
     },
 
-    phoneRequired(): boolean {
-      if (this.skipPhoneEmailRules) {
-        return false;
-      }
-      return (!this.hasAnyPhone && !this.formCopy.email);
+    contactInfoRequired(): {isMissing:boolean} | boolean {
+      return !this.skipPhoneEmailRules
+      && ((this.submitting && this.missingContactInfo) || this.focusPhoneCounter >= this.triggerPhoneMessage) ? { isMissing: this.missingContactInfo } : false;
     },
 
-    emailRequired(): boolean {
-      if (this.skipPhoneEmailRules) {
-        return false;
-      }
-      return !this.hasAnyPhone;
-    },
-
-    phoneRule(): Record<string, unknown> {
-      if (this.skipPhoneEmailRules) {
-        return {
-          phone: true,
-        };
-      }
-      return {
-        requiredPhone: (this.focusPhoneCounter >= this.triggerPhoneMessage) ? { isMissing: this.phoneRequired } : false,
-        phone: true,
-      };
+    missingContactInfo(): boolean {
+      return !this.skipPhoneEmailRules && !this.hasAnyPhone && !this.formCopy.email;
     },
 
     isCRCRegistration(): boolean {
@@ -309,8 +321,7 @@ export default Vue.extend({
       return source?.find((option) => option.isDefault);
     },
 
-    onFocusOut(target: 'mobilePhoneNumber' | 'homePhoneNumber' | 'alternatePhoneNumber', phone: IPhoneNumber) {
-      this.formCopy[target] = phone;
+    onFocusOut() {
       this.focusPhoneCounter += 1;
     },
 
@@ -348,16 +359,31 @@ export default Vue.extend({
     },
 
     async validateEmailOnBlur(email:string) {
+      // wait for the validation on submit to trigger before
       await helpers.timeout(300);
       if (!this.submitting) {
-        this.validateEmail(email);
+        if (this.recaptchaKey) {
+          this.getTokenAndValidate(email);
+        } else {
+          this.validateEmail(email);
+        }
       }
     },
 
     async validateForm(validateEntireForm: ()=> void) {
       this.submitting = true;
-      await this.validateEmail(this.formCopy.email, '', true);
-      validateEntireForm();
+      // Needed to trigger validation of all contact info fields
+      await helpers.timeout(10);
+      if (!this.formCopy.email || this.formCopy.emailValidatedByBackend) {
+        validateEntireForm();
+      } else {
+        this.validateEntireFormFn = validateEntireForm;
+        if (this.recaptchaKey) {
+          this.getTokenAndValidate(this.formCopy.email);
+        } else {
+          this.validateEmail(this.formCopy.email, '', true);
+        }
+      }
     },
 
     async validateEmail(formEmail?: string, recaptchaToken?: string, onSubmit?: boolean) {
@@ -387,6 +413,9 @@ export default Vue.extend({
         this.formCopy.emailValidatedByBackend = result.emailIsValid;
         this.setEmailValidator(result as IValidateEmailResponse);
         (this.$refs.email as InstanceType<typeof ValidationObserver>).validate();
+        if (this.validateEntireFormFn) {
+          this.validateEntireFormFn();
+        }
       }
     },
 
@@ -396,9 +425,18 @@ export default Vue.extend({
         errors: [],
       });
 
-      this.formCopy.emailValidatedByBackend = true;
+      this.formCopy.emailValidatedByBackend = false;
     },
   },
 
 });
 </script>
+
+<style scoped lang="scss">
+.validClass {
+  color: gray darken-2
+}
+.invalidClass {
+  color: var(--v-error-base)
+}
+</style>
