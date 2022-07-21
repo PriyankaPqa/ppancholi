@@ -1,4 +1,4 @@
-import { mockHouseholdCreate, CurrentAddress } from '@libs/registration-lib/entities/household-create';
+import { mockHouseholdCreate, CurrentAddress, ECurrentAddressTypes } from '@libs/registration-lib/entities/household-create';
 import { mockMember } from '@libs/registration-lib/entities/value-objects/member/index';
 import { mockShelterLocations } from '@libs/registration-lib/entities/event/event.mock';
 import libHelpers from '@libs/registration-lib/ui/helpers';
@@ -17,7 +17,12 @@ const shelterLocations = mockShelterLocations();
 describe('HouseholdCard.vue', () => {
   let wrapper;
   libHelpers.getCanadianProvincesWithoutOther = jest.fn(() => [{ id: '1' }]);
-  helpers.enumToTranslatedCollection = jest.fn(() => [{ id: 'foo' }]);
+
+  const mockAddressTypes = [
+    { value: ECurrentAddressTypes.Campground, text: 'Campground' },
+    { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
+  ];
+  helpers.enumToTranslatedCollection = jest.fn(() => mockAddressTypes);
 
   describe('Computed', () => {
     describe('members', () => {
@@ -274,7 +279,23 @@ describe('HouseholdCard.vue', () => {
           },
           mocks: { $storage: storage },
         });
-        expect(wrapper.vm.currentAddressTypeItems).toEqual([{ id: 'foo' }]);
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(mockAddressTypes);
+      });
+
+      it('excludes shelter', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            household: mockMovingHouseholdCreate(),
+            position: 'left',
+            shelterLocations: [],
+            enabledMove: true,
+            moveSubmitted: false,
+          },
+          mocks: { $storage: storage },
+        });
+
+        expect(wrapper.vm.currentAddressTypeItems).toEqual([{ value: ECurrentAddressTypes.Campground, text: 'Campground' }]);
       });
     });
   });

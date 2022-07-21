@@ -73,6 +73,7 @@ import helpers from '@/ui/helpers/helpers';
 import { localStorageKeys } from '@/constants/localStorage';
 import { FeatureKeys } from '@/entities/tenantSettings';
 import { EventHub } from '@libs/core-lib/plugins/event-hub';
+import { EEventLocationStatus } from '@/entities/event';
 
 export default Vue.extend({
   name: 'PrimaryMemberDialog',
@@ -146,7 +147,15 @@ export default Vue.extend({
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      return helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes');
+      let items = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes');
+
+      const shelterLocationAvailable = this.shelterLocations?.some((s) => s.status === EEventLocationStatus.Active)
+                                     || this.member.currentAddress.shelterLocation;
+      if (!shelterLocationAvailable) {
+        items = items.filter((i) => i.value !== ECurrentAddressTypes.Shelter);
+      }
+
+      return items;
     },
 
     memberName(): string {

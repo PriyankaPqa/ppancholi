@@ -1,5 +1,5 @@
 import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
-import { mockHouseholdCreate, mockIdentitySetData } from '@libs/registration-lib/entities/household-create';
+import { mockHouseholdCreate, mockIdentitySetData, ECurrentAddressTypes } from '@libs/registration-lib/entities/household-create';
 import libHelpers from '@libs/registration-lib/ui/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
@@ -7,6 +7,7 @@ import helpers from '@/ui/helpers/helpers';
 import { mockStorage } from '@/store/storage';
 
 import { EventHub } from '@libs/core-lib/plugins/event-hub';
+import { EEventLocationStatus } from '@/entities/event';
 import Component from '../PrimaryMemberDialog.vue';
 
 const localVue = createLocalVue();
@@ -33,7 +34,12 @@ describe('PrimaryMemberDialog', () => {
   storage.registration.getters.personalInformation = jest.fn(() => mockIdentitySetData());
 
   libHelpers.getCanadianProvincesWithoutOther = jest.fn(() => [{ id: '1' }]);
-  helpers.enumToTranslatedCollection = jest.fn(() => [{ id: 'foo' }]);
+
+  const mockAddressTypes = [
+    { value: ECurrentAddressTypes.Campground, text: 'Campground' },
+    { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
+  ];
+  helpers.enumToTranslatedCollection = jest.fn(() => mockAddressTypes);
 
   describe('Lifecycle', () => {
     describe('created', () => {
@@ -187,7 +193,37 @@ describe('PrimaryMemberDialog', () => {
 
     describe('currentAddressTypeItems', () => {
       it('returns the full list of temporary addresses types', async () => {
-        expect(wrapper.vm.currentAddressTypeItems).toEqual([{ id: 'foo' }]);
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [{ status: EEventLocationStatus.Active }],
+          },
+          data() {
+            return {
+              apiKey: '123',
+            };
+          },
+        });
+
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(mockAddressTypes);
+      });
+
+      it('excludes shelter', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+          },
+          data() {
+            return {
+              apiKey: '123',
+            };
+          },
+        });
+
+        expect(wrapper.vm.currentAddressTypeItems).toEqual([{ value: ECurrentAddressTypes.Campground, text: 'Campground' }]);
       });
     });
 

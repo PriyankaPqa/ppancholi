@@ -245,6 +245,7 @@ import { localStorageKeys } from '@/constants/localStorage';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { VForm } from '@/types';
 import routes from '@/constants/routes';
+import { EEventLocationStatus } from '@/entities/event';
 import { IMovingHouseholdCreate, IMovingMember } from './MoveHouseholdMembers.vue';
 
 export default Vue.extend({
@@ -341,7 +342,13 @@ export default Vue.extend({
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      return helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes');
+      let items = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes');
+
+      if (this.shelterLocations.every((s) => s.status === EEventLocationStatus.Inactive)) {
+        items = items.filter((i) => i.value !== ECurrentAddressTypes.Shelter);
+      }
+
+      return items;
     },
 
     movingAdditionalMembers():IMovingMember[] {
