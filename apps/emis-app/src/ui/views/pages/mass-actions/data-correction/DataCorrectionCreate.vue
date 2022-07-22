@@ -62,8 +62,9 @@ export default Vue.extend({
         MassActionDataCorrectionType.IdentitySet,
         MassActionDataCorrectionType.AuthenticationSpecifiedOther,
         MassActionDataCorrectionType.Labels,
+        MassActionDataCorrectionType.ContactInformation,
+
         // MassActionDataCorrectionType.TemporaryAddress,
-        // MassActionDataCorrectionType.ContactInformation,
       ];
 
       return allTypes.filter((t) => availableTypes.includes(t.value as MassActionDataCorrectionType));
