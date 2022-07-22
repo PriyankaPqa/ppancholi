@@ -31,6 +31,7 @@
           :sort-by.sync="options.sortBy"
           :sort-desc.sync="options.sortDesc"
           :custom-columns="Object.values(customColumns)"
+          :footer-props="{itemsPerPageOptions:[5,10,15,250] }"
           :options.sync="options">
           <template slot="default">
             <div>{{ $t('system_management.userAccounts.no_users_found') }}</div>
@@ -179,6 +180,7 @@ export default Vue.extend({
         page: 1,
         sortBy: ['metadata.displayName'],
         sortDesc: [false],
+        itemsPerPage: 10,
       },
       search: '',
       showAddEmisUserDialog: false,
@@ -193,6 +195,7 @@ export default Vue.extend({
       modifiedUsers: [] as IUserAccountCombined[],
       disallowedLevels: ['Level 6', 'ContributorIM', 'ContributorFinance', 'Contributor 3', 'Read Only'],
       disallowedRoles: [] as IOptionSubItem[],
+      tableName: 'user-accounts',
     };
   },
 
@@ -302,11 +305,25 @@ export default Vue.extend({
     },
 
     users(): IUserAccountCombined[] {
-      return this.$storage.userAccount.getters.getAll()?.filter((u) => u.entity.status === Status.Active) || [];
+      return this.$storage.userAccount.getters.getAll()?.filter((u : IUserAccountCombined) => u.entity.status === Status.Active) || [];
+    },
+  },
+
+  watch: {
+    'options.itemsPerPage': {
+      handler(value: string) {
+        this.$storage.uiState.mutations.setSearchTableState(this.tableName, _cloneDeep({
+          itemsPerPage: value,
+        }));
+      },
     },
   },
 
   async created() {
+    const prevState = this.$storage.uiState.getters.getSearchTableState(this.tableName);
+    if (prevState && prevState.itemsPerPage) {
+      this.options.itemsPerPage = prevState.itemsPerPage;
+    }
     await Promise.all([this.$storage.userAccount.actions.fetchRoles(), this.fetchAllEmisUsers()]);
     this.setRoles();
     this.loading = false;

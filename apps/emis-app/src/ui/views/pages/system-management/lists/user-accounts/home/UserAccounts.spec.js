@@ -32,6 +32,7 @@ describe('UserAccounts.vue', () => {
   storage.userAccount.actions.deactivate = jest.fn(() => usersTestData[0].entity);
   storage.userAccount.actions.assignRole = jest.fn(() => usersTestData[0].entity);
   storage.userAccount.actions.fetchAll = jest.fn(() => usersTestData);
+  storage.uiState.getters.getSearchTableState = jest.fn(() => ({ itemsPerPage: 25 }));
 
   const mountWrapper = async (additionalOverwrites = {}) => {
     wrapper = shallowMount(Component, {
@@ -77,6 +78,16 @@ describe('UserAccounts.vue', () => {
       expect(storage.userAccount.actions.fetchRoles).toHaveBeenCalled();
       expect(wrapper.vm.fetchAllEmisUsers).toHaveBeenCalled();
       expect(wrapper.vm.setRoles).toHaveBeenCalled();
+    });
+
+    it('sets the items per page from the store', () => {
+      jest.clearAllMocks();
+      mountWrapper();
+      for (let i = 0; i < wrapper.vm.$options.created.length; i += 1) {
+        wrapper.vm.$options.created[i].call(wrapper.vm);
+      }
+
+      expect(wrapper.vm.options.itemsPerPage).toEqual(25);
     });
   });
 
