@@ -7,7 +7,7 @@ parameters:
 
 stages:
   - stage: 'Post_Build_Stage'
-    displayName: 'Post Build'
+    displayName: 'Tests'
     condition: succeeded()
     jobs:
       - job: 'Test'

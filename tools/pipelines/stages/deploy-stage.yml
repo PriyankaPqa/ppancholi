@@ -3,18 +3,24 @@ parameters:
   cdnEndpoint: ''
   cdnProfile: ''
   dnsName: 'crc-tech.ca'
+  packageFeed: ''
+  nodeJsVersion: ''
+  testCommand: ''
+  disableCache: ''
+  appName: ''
+  runAcceptanceStage: true
 
 stages:
 - ${{ if eq( variables['build.reason'], 'PullRequest') }}:
   - stage: 'Deploy_to_storage'
-    displayName: 'Deployment'
+    displayName: 'Feature branch deployment'
     dependsOn: 'Build_Stage'
     condition: succeeded()
     pool:
       vmImage: 'windows-2022'
     jobs:
       - deployment: 'Deploy_WebApp_Storage'
-        displayName: 'Deployment to feature branch'
+        displayName: 'Deployment'
         environment: 'Dev'
         variables:
           - group: Env-Dev
@@ -132,6 +138,8 @@ stages:
                       $customDomains = az cdn custom-domain list --endpoint-name "$(cdnEndpointName)" --resource-group "$(featureResourceGroup)" --profile-name "$(cdnProfileName)" | ConvertFrom-Json
                       $exists = $customDomains.count -gt 0
                       
+                      echo "##vso[task.setvariable variable=customDomain]$customDomain"
+                      
                       if ($exists){
                         echo "Custom domain of $customDomain for $(cdnEndpointName) exists"
                       } else {
@@ -140,10 +148,21 @@ stages:
                       
                         echo "Enabling HTTPS for $customDomain"
                         az cdn custom-domain enable-https --endpoint-name "$(cdnEndpointName)" --resource-group "$(featureResourceGroup)" --profile-name "$(cdnProfileName)" -n "$(featureName)"
-                      } 
+                      }
 
 
-
+  - stage: 'AcceptanceTest'
+    displayName: 'Acceptance Tests'
+    dependsOn: 'Deploy_to_storage'
+    condition: and(succeeded(), eq('${{ parameters.runAcceptanceStage }}', true))
+    jobs:
+      - template: '../jobs/acceptance-tests-azure-jobs.yml'
+        parameters:
+          packageFeed: ${{ parameters.packageFeed }}
+          nodeJsVersion: ${{ parameters.nodeJsVersion }}
+          testCommand: ${{ parameters.testCommand }}
+          disableCache: ${{ parameters.disableCache }}
+          appName: ${{ parameters.appName }}
 
 - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
   - stage: 'Deploy_to_Dev'
@@ -202,12 +221,7 @@ stages:
                     scriptLocation: 'inlineScript'
                     inlineScript: |
                       az cdn endpoint purge -n "${{ parameters.cdnEndpoint }}-$(environment)" -g "$(ResourceGroup)" --profile-name "${{ parameters.cdnProfile }}-$(environment)" --content-paths "/*" --no-wait
-      - job: 'AutomatedTesting'
-        displayName: 'Automated testing'
-        steps:
-          - task: CmdLine@2
-            inputs:
-              script: 'echo testing job is working'
+
 
 - ${{ if eq(variables['build.sourceBranch'], 'refs/heads/master') }}:
   - stage: 'Deploy_to_Prod'

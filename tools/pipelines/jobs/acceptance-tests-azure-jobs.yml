@@ -1,0 +1,35 @@
+parameters:
+  nodeJsVersion: ''
+  disableCache: ''
+  packageFeed: ''
+  testCommand: ''
+  appName: ''
+
+jobs:
+  - job: 'SmokeTestAzure'
+    pool:
+      vmImage: 'windows-2022'
+    displayName: 'Run smoke tests'
+    strategy:
+      parallel: 2
+    steps:
+      - checkout: git://EMIS/crc-emis-frontend-tests@refs/heads/master
+
+      - template: '../steps/inject-url-acceptance-tests.yml'
+        parameters:
+          appName: ${{ parameters.appName }}
+
+      - powershell: |
+          echo "##vso[task.prependpath]$env:CHROMEWEBDRIVER"
+        displayName: "Adds ChromeWebDriver for Selenium to PATH"
+
+      - template: tools/pipelines/steps/tests-azure-steps.yml@emisFrontEnd
+        parameters:
+          nodeJsVersion: ${{ parameters.nodeJsVersion }}
+          disableCache: ${{ parameters.disableCache }}
+          packageFeed: ${{ parameters.packageFeed }}
+          testCommand: ${{ parameters.testCommand }}
+
+      - script: yarn debug:env # To display ENV
+        condition: succeededOrFailed()
+        displayName: 'Debug ENV'

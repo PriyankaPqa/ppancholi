@@ -1,0 +1,20 @@
+parameters:
+  nodeJsVersion: ''
+  disableCache: ''
+  packageFeed: ''
+  testCommand: ''
+  appName: ''
+
+stages:
+  - stage: 'AcceptanceTest'
+    displayName: 'Acceptance Tests'
+    pool:
+      vmImage: 'windows-2022'
+    jobs:
+      - template: '../jobs/acceptance-tests-azure-jobs.yml'
+        parameters:
+          nodeJsVersion: ${{ parameters.nodeJsVersion }}
+          disableCache: ${{ parameters.disableCache }}
+          packageFeed: ${{ parameters.packageFeed }}
+          testCommand: ${{ parameters.testCommand }}
+          appName: ${{ parameters.appName }}

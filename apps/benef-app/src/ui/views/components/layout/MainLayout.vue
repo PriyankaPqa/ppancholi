@@ -67,6 +67,14 @@ export default Vue.extend({
     },
 
     getCurrentDomain() : string {
+      // Used for test automation in feature branch
+      if (this.$route.query) {
+        const forceTenant = this.$route.query['force-tenant'] as string;
+        if (forceTenant) {
+          return forceTenant;
+        }
+      }
+
       let d = window.location.hostname;
       if (d.startsWith('localhost') || (/beneficiary-\d+\.crc-tech\.ca/i).test(d)) {
         d = 'beneficiary-dev.crc-tech.ca';

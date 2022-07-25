@@ -1,0 +1,20 @@
+parameters:
+    appName: ''
+
+steps:
+  - powershell: |
+      $branchNumber = '$(System.PullRequest.SourceBranch)'.Split('/')[3]
+      echo "##vso[task.setvariable variable=HEADLESS_MODE]true"
+        
+      if ("$(appName)" -eq "benef-app") {
+        $baseUrl = "https://beneficiary-$branchNumber.crc-tech.ca"
+        echo "##vso[task.setvariable variable=BENEF_APP_BASE_URL]$baseUrl"
+        echo Set BENEF_APP_BASE_URL to $baseUrl
+      } elseif ("$(appName)" -eq "emis-app") {
+        $baseUrl = "https://emis-$branchNumber.crc-tech.ca"
+        echo "##vso[task.setvariable variable=BASE_URL]$baseUrl"
+        echo Set BASE_URL to $baseUrl
+      } else {
+        echo "The application is not recognized. The URL won't be injected"
+      }
+    displayName: 'Set env URL for acceptance tests'

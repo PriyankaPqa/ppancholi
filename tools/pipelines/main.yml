@@ -13,8 +13,10 @@ parameters:
   nodeJsVersion: ''
   appVersion: ''
   disableCache: ''
+  testCommand: ''
 
 stages:
+
   # Trigger before the build
   - template: './stages/pre-build-stage.yml'
 
@@ -46,3 +48,9 @@ stages:
       storage: ${{ parameters.storage }}
       cdnEndpoint: ${{ parameters.cdnEndpoint }}
       cdnProfile: ${{ parameters.cdnProfile }}
+      nodeJsVersion: ${{ parameters.nodeJsVersion }}
+      appVersion: ${{ parameters.appVersion }}
+      disableCache: ${{ parameters.disableCache }}
+      packageFeed: ${{ parameters.packageFeed }}
+      testCommand: ${{ parameters.testCommand }}
+      appName: ${{ parameters.appName }}
