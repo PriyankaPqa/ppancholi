@@ -10,11 +10,7 @@
     "lokalise:up": "node ../../tools/scripts/lokalise.js up emis-app",
     "lokalise:upErrors": "node ../../tools/scripts/lokalise.js upErrors",
     "lokalise": "yarn lokalise:up && yarn lokalise:upErrors && yarn lokalise:down",
-    "lokalise:delete": "node ../../tools/scripts/lokalise.js delete benef-app -file ../../tools/scripts/i18n_keys_to_delete.txt -path src/ui/lang",
-    "test:e2e:headless": "cross-env VUE_APP_MOCK_AUTHENTICATION=true testcafe chrome:headless --reporter spec,xunit:report.xml",
-    "debug:e2e": "cross-env VUE_APP_MOCK_AUTHENTICATION=true testcafe $NODE_DEBUG_OPTION chrome",
-    "serve:e2e": "cross-env VUE_APP_MOCK_AUTHENTICATION=true yarn serve",
-    "test:e2e": "cross-env VUE_APP_MOCK_AUTHENTICATION=true testcafe chrome --live"
+    "lokalise:delete": "node ../../tools/scripts/lokalise.js delete benef-app -file ../../tools/scripts/i18n_keys_to_delete.txt -path src/ui/lang"
   },
   "dependencies": {
     "@azure/msal-browser": "2.26.0",
@@ -75,8 +71,6 @@
     "sass": "1.32.13",
     "sass-loader": "^10.0.2",
     "sinon": "^9.0.3",
-    "testcafe": "^1.18.2",
-    "testcafe-reporter-xunit": "^2.2.1",
     "vue-axe": "^2.4.3",
     "vue-cli-plugin-vuetify": "2.4.6",
     "vue-cli-plugin-webpack-bundle-analyzer": "^2.0.0",

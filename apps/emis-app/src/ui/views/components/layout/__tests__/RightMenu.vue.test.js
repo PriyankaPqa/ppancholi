@@ -27,18 +27,6 @@ describe('RightMenu.vue', () => {
         },
       },
     });
-
-    await wrapper.setData({
-      userAccount: {
-        metadata: {
-          roleName: {
-            translation: {
-              en: 'RoleName',
-            },
-          },
-        },
-      },
-    });
   };
 
   beforeEach(async () => {
@@ -76,6 +64,17 @@ describe('RightMenu.vue', () => {
         const element = wrapper.find('[data-test="rightMenu__role"]');
 
         expect(element.exists()).toBeTruthy();
+        await wrapper.setData({
+          userAccount: {
+            metadata: {
+              roleName: {
+                translation: {
+                  en: 'RoleName',
+                },
+              },
+            },
+          },
+        });
         expect(element.text()).toEqual('RoleName');
       });
 

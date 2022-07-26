@@ -11,10 +11,10 @@ describe('ReferralForm.vue', () => {
   let referral;
   let storage;
 
-  const doMount = (isEditMode = true) => {
+  const doMount = (isEditMode = true, shallow = true) => {
     storage = mockStorage();
     referral = referral || (isEditMode ? mockCombinedCaseFileReferral().entity : new CaseFileReferralEntity());
-    wrapper = shallowMount(Component, {
+    const options = {
       localVue,
       propsData: {
         isEditMode,
@@ -23,7 +23,12 @@ describe('ReferralForm.vue', () => {
       mocks: {
         $storage: storage,
       },
-    });
+    };
+    if (shallow) {
+      wrapper = shallowMount(Component, options);
+    } else {
+      wrapper = mount(Component, options);
+    }
   };
 
   beforeEach(() => {
@@ -126,14 +131,8 @@ describe('ReferralForm.vue', () => {
 
   describe('Validation', () => {
     let el;
-    beforeAll(() => {
-      wrapper = mount(Component, {
-        localVue,
-        propsData: {
-          isEditMode: false,
-          referral: new CaseFileReferralEntity(),
-        },
-      });
+    beforeEach(() => {
+      doMount(false, false);
     });
 
     test('referral name is required', async () => {

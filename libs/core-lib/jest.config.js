@@ -12,6 +12,5 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  name: packageJson.name,
   displayName: packageJson.name,
 };

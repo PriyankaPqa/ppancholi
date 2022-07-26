@@ -26,6 +26,7 @@ module.exports = {
     // Allow test environment to fire onload event
     // See https://github.com/jsdom/jsdom/issues/1816#issuecomment-355188615
     resources: 'usable',
+    url: 'http://localhost/',
   },
   reporters: [
     'default',
@@ -36,6 +37,11 @@ module.exports = {
         defaultUserName: 'user name to use if automatic detection fails',
       },
     ],
+    // ['jest-slow-test-reporter', {
+    //   numTests: 8, // how many slow tests to print
+    //   warnOnSlowerThan: 300, // will warn when a test exceeds this time in milliseconds
+    //   color: true, // will make the warnOnSlowerThan warning messages print in red
+    // }],
   ],
   moduleFileExtensions: [
     'js',
@@ -43,7 +49,6 @@ module.exports = {
     'json',
     'vue',
   ],
-  testURL: 'http://localhost/',
   snapshotSerializers: [
     'jest-serializer-vue',
   ],

@@ -11,6 +11,5 @@ module.exports = {
   collectCoverageFrom: [
     '**/components/**/*.{js,vue}',
   ],
-  name: packageJson.name,
   displayName: packageJson.name,
 };

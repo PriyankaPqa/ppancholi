@@ -54,7 +54,5 @@
   ],
   "exclude": [
     "node_modules",
-    "src/**/*.spec.ts", // Fixes testcafe + jest type collision
-    "src/e2e/**/*.ts" // Fixes testcafe + jest type collision
   ]
 }

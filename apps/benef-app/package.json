@@ -9,11 +9,7 @@
     "lokalise:down": "node ../../tools/scripts/lokalise.js down benef-app",
     "lokalise:up": "node ../../tools/scripts/lokalise.js up benef-app",
     "lokalise": "yarn lokalise:up && yarn lokalise:down",
-    "lokalise:delete": "node ../../tools/scripts/lokalise.js delete benef-app -file ../../tools/scripts/i18n_keys_to_delete.txt -path src/ui/lang",
-    "serve:e2e": "vue-cli-service serve --mode staging --open",
-    "test:e2e": "VUE_APP_SITE_URL=http://localhost:8080 testcafe chrome --live",
-    "test:e2e:headless": "testcafe chrome:headless --reporter spec,xunit:report.xml",
-    "debug:e2e": "testcafe $NODE_DEBUG_OPTION chrome"
+    "lokalise:delete": "node ../../tools/scripts/lokalise.js delete benef-app -file ../../tools/scripts/i18n_keys_to_delete.txt -path src/ui/lang"
   },
   "dependencies": {
     "@libs/component-lib": "*",
@@ -58,8 +54,6 @@
     "dotenv": "16.0.1",
     "sass": "1.32.13",
     "sass-loader": "^10.0.2",
-    "testcafe": "^1.18.2",
-    "testcafe-reporter-xunit": "^2.2.1",
     "vue-axe": "^2.4.3",
     "vue-cli-plugin-vuetify": "2.4.6",
     "vue-cli-plugin-webpack-bundle-analyzer": "^2.0.0",

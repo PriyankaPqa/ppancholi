@@ -429,10 +429,6 @@ const routes = {
       name: 'team.details',
     },
   },
-  e2e: {
-    path: '/e2e',
-    name: 'e2e',
-  },
 };
 
 export default routes;

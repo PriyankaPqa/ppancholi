@@ -1,4 +1,0 @@
-{
-  "src": ["./src/e2e/fixtures/*.e2e.ts"],
-  "skipJsErrors": true
-}

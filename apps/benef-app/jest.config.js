@@ -13,6 +13,5 @@ module.exports = {
     '^@libs/component-lib/(.*)$': '<rootDir>/../../libs/component-lib/src/$1',
     '^@libs/core-lib/(.*)$': '<rootDir>/../../libs/core-lib/src/$1',
   },
-  name: packageJson.name,
   displayName: packageJson.name,
 };

@@ -21,6 +21,5 @@ module.exports = {
     '^@libs/core-lib/(.*)$': '<rootDir>/../../libs/core-lib/src/$1',
   },
   setupFilesAfterEnv: ['./jest.setup.js'],
-  name: packageJson.name,
   displayName: packageJson.name,
 };

@@ -1,22 +1,17 @@
-0 silly argv {
-0 silly argv   _: [ 'clean' ],
-0 silly argv   lernaVersion: '4.0.0',
-0 silly argv   '$0': '/Users/administrator/Documents/Github/crc-emis-frontend/node_modules/.bin/lerna'
-0 silly argv }
+0 silly argv { _: [ 'clean' ], lernaVersion: '4.0.0', '$0': '/usr/local/bin/lerna' }
 1 notice cli v4.0.0
 2 verbose rootPath /Users/administrator/Documents/Github/crc-emis-frontend
 3 info versioning independent
-4 info Removing the following directories:
-5 info clean apps/benef-app/node_modules
-5 info clean apps/emis-app/node_modules
-5 info clean libs/registration-lib/node_modules
-6 info clean removing /Users/administrator/Documents/Github/crc-emis-frontend/apps/benef-app/node_modules
-7 silly rimrafDir /Users/administrator/Documents/Github/crc-emis-frontend/apps/benef-app/node_modules
-8 info clean removing /Users/administrator/Documents/Github/crc-emis-frontend/apps/emis-app/node_modules
-9 silly rimrafDir /Users/administrator/Documents/Github/crc-emis-frontend/apps/emis-app/node_modules
-10 info clean removing /Users/administrator/Documents/Github/crc-emis-frontend/libs/registration-lib/node_modules
-11 silly rimrafDir /Users/administrator/Documents/Github/crc-emis-frontend/libs/registration-lib/node_modules
-12 error Error: Command failed with exit code 1: /usr/local/Cellar/node/17.3.1/bin/node /Users/administrator/Documents/Github/crc-emis-frontend/node_modules/@lerna/rimraf-dir/node_modules/rimraf/bin.js --no-glob /Users/administrator/Documents/Github/crc-emis-frontend/apps/benef-app/node_modules/
-12 error     at makeError (/Users/administrator/Documents/Github/crc-emis-frontend/node_modules/@lerna/child-process/node_modules/execa/lib/error.js:60:11)
-12 error     at handlePromise (/Users/administrator/Documents/Github/crc-emis-frontend/node_modules/@lerna/child-process/node_modules/execa/index.js:118:26)
-12 error     at processTicksAndRejections (node:internal/process/task_queues:96:5)
+4 error JSONError: Unexpected token "}" (0x7D) in JSON at position 573 while parsing near "...ath src/ui/lang\",\n  },\n  \"dependencies\":..." in apps/benef-app/package.json
+4 error
+4 error [0m [90m 11 |[39m     [32m"lokalise"[39m[33m:[39m [32m"yarn lokalise:up && yarn lokalise:down"[39m[33m,[39m[0m
+4 error [0m [90m 12 |[39m     [32m"lokalise:delete"[39m[33m:[39m [32m"node ../../tools/scripts/lokalise.js delete benef-app -file ../../tools/scripts/i18n_keys_to_delete.txt -path src/ui/lang"[39m[33m,[39m[0m
+4 error [0m[31m[1m>[22m[39m[90m 13 |[39m   }[33m,[39m[0m
+4 error [0m [90m    |[39m   [31m[1m^[22m[39m[0m
+4 error [0m [90m 14 |[39m   [32m"dependencies"[39m[33m:[39m {[0m
+4 error [0m [90m 15 |[39m     [32m"@libs/component-lib"[39m[33m:[39m [32m"*"[39m[33m,[39m[0m
+4 error [0m [90m 16 |[39m     [32m"@libs/core-lib"[39m[33m:[39m [32m"*"[39m[33m,[39m[0m
+4 error
+4 error     at parseJson (/usr/local/lib/node_modules/lerna/node_modules/parse-json/index.js:29:21)
+4 error     at parse (/usr/local/lib/node_modules/lerna/node_modules/load-json-file/index.js:15:9)
+4 error     at module.exports (/usr/local/lib/node_modules/lerna/node_modules/load-json-file/index.js:18:47)

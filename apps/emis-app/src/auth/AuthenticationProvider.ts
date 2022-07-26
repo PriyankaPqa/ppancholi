@@ -1,8 +1,8 @@
 import { BrowserAuthOptions, BrowserSystemOptions } from '@azure/msal-browser/dist/config/Configuration';
 import { BrowserCacheLocation, CacheOptions, RedirectRequest } from '@azure/msal-browser';
 import { localStorageKeys } from '@/constants/localStorage';
+import MSALMock from './MSAL.mock';
 import { MSAL } from './MSAL';
-import MSALMock from '../e2e/utils/MSALMock';
 
 // eslint-disable-next-line import/no-mutable-exports
 let AuthenticationProvider = null as MSAL;

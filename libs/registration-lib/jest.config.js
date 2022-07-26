@@ -18,6 +18,5 @@ module.exports = {
     '**/ui/helpers/**/*.ts',
     '**/ui/mixins/**/*.{ts,js}',
   ],
-  name: packageJson.name,
   displayName: packageJson.name,
 };
