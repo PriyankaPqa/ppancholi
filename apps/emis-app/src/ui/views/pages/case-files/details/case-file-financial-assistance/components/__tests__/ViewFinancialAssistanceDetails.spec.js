@@ -3,6 +3,7 @@ import { mockCombinedFinancialAssistance } from '@/entities/financial-assistance
 import { ApprovalStatus, mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
 import { mockProgramEntity } from '@/entities/program';
 import { mockStorage } from '@/store/storage';
+import { mockCombinedEvent, EEventStatus } from '@/entities/event';
 import routes from '@/constants/routes';
 import Component from '../ViewFinancialAssistanceDetails.vue';
 
@@ -11,6 +12,8 @@ const storage = mockStorage();
 let financialAssistance = mockCaseFinancialAssistanceEntity();
 const financialAssistanceTable = mockCombinedFinancialAssistance().entity;
 const program = mockProgramEntity();
+const mockEvent = mockCombinedEvent();
+mockEvent.entity.schedule.status = EEventStatus.Open;
 
 describe('ViewFinancialAssistanceDetails.vue', () => {
   let wrapper;
@@ -26,6 +29,11 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
         financialAssistanceTable,
         program,
         id: 'cfid',
+      },
+      computed: {
+        event() {
+          return mockEvent;
+        },
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,

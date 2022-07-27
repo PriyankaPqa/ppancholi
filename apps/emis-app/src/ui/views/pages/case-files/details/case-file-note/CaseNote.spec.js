@@ -3,6 +3,7 @@ import { CaseNoteStorageMock } from '@/store/storage/case-note/storage.mock';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote } from '@/entities/case-note';
 import { mockStorage } from '@/store/storage';
+import { mockCombinedEvent, EEventStatus } from '@/entities/event';
 import * as searchEndpoints from '@/constants/searchEndpoints';
 import Component from './CaseNote.vue';
 import CaseNoteForm from './components/CaseNoteForm.vue';
@@ -10,6 +11,8 @@ import CaseNoteForm from './components/CaseNoteForm.vue';
 const localVue = createLocalVue();
 const caseNote = mockCombinedCaseNote();
 const storage = mockStorage();
+const mockEvent = mockCombinedEvent();
+mockEvent.entity.schedule.status = EEventStatus.Open;
 
 describe('CaseNote.vue', () => {
   let wrapper;
@@ -20,6 +23,11 @@ describe('CaseNote.vue', () => {
       localVue,
       propsData: {
         id: 'id',
+      },
+      computed: {
+        event() {
+          return mockEvent;
+        },
       },
       mocks: {
         $storage: storage,
@@ -123,6 +131,11 @@ describe('CaseNote.vue', () => {
           propsData: {
             id: 'id',
           },
+          computed: {
+            event() {
+              return mockEvent;
+            },
+          },
           mocks: {
             $storage: {
               caseNote: new CaseNoteStorageMock().make(),
@@ -168,6 +181,9 @@ describe('CaseNote.vue', () => {
             readonly() {
               return true;
             },
+            event() {
+              return mockEvent;
+            },
           },
         });
         await wrapper.setRole('level1');
@@ -193,6 +209,11 @@ describe('CaseNote.vue', () => {
           localVue,
           propsData: {
             id: 'id',
+          },
+          computed: {
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,

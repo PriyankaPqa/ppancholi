@@ -3,11 +3,14 @@ import { mockCombinedCaseFileDocuments } from '@/entities/case-file-document';
 import { mockStorage } from '@/store/storage';
 import { mockOptionItemData } from '@/entities/optionItem';
 import routes from '@/constants/routes';
+import { mockCombinedEvent, EEventStatus } from '@/entities/event';
 
 import Component from './CaseFileDocumentDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
+const mockEvent = mockCombinedEvent();
+mockEvent.entity.schedule.status = EEventStatus.Open;
 
 describe('CaseFileDocumentDetails', () => {
   let wrapper;
@@ -19,6 +22,11 @@ describe('CaseFileDocumentDetails', () => {
       propsData: {
         id: 'mock-caseFile-id',
         documentId: 'mock-document-id',
+      },
+      computed: {
+        event() {
+          return mockEvent;
+        },
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,

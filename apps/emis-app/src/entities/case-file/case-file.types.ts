@@ -1,5 +1,4 @@
 import { IMultilingual, IListOption, IIdMultilingualName } from '@/types';
-import { EEventStatus } from '@/entities/event';
 import { IEntity, IEntityCombined } from '@libs/core-lib/entities/base';
 
 /**
@@ -156,7 +155,7 @@ export interface ICaseFileEntity extends IEntity {
 
 export interface ICaseFileMetadata extends IEntity {
   caseFileStatusName?: IMultilingual;
-  event?: IIdMultilingualName & { status: EEventStatus };
+  event?: IIdMultilingualName;
   lastActionDate?: Date | string;
   triageName?: IMultilingual;
   tags: IIdMultilingualName[];

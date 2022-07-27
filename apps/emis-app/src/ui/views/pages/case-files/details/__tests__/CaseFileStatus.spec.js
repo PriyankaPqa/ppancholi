@@ -1,12 +1,14 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
-import { EEventStatus } from '@/entities/event';
+import { mockCombinedEvent, EEventStatus } from '@/entities/event';
 
 import Component from '../case-file-activity/components/CaseFileStatus.vue';
 
 const localVue = createLocalVue();
 const mockCaseFile = mockCombinedCaseFile();
+const mockEvent = mockCombinedEvent();
+mockEvent.entity.schedule.status = EEventStatus.Open;
 
 describe('CaseFileStatus.vue', () => {
   let wrapper;
@@ -16,6 +18,7 @@ describe('CaseFileStatus.vue', () => {
         localVue,
         propsData: {
           caseFile: mockCaseFile,
+          event: mockEvent,
         },
       });
     });
@@ -26,6 +29,7 @@ describe('CaseFileStatus.vue', () => {
           localVue,
           propsData: {
             caseFile: mockCaseFile,
+            event: mockEvent,
           },
         });
       });
@@ -52,6 +56,7 @@ describe('CaseFileStatus.vue', () => {
             localVue,
             propsData: {
               caseFile: altMockCaseFile,
+              event: mockEvent,
             },
           });
 
@@ -75,6 +80,7 @@ describe('CaseFileStatus.vue', () => {
             localVue,
             propsData: {
               caseFile: altMockCaseFile,
+              event: mockEvent,
             },
           });
           await wrapper.setRole('level4');
@@ -83,21 +89,22 @@ describe('CaseFileStatus.vue', () => {
         });
 
         it('returns the proper disable status value for L5 and lower when event status is not open', async () => {
-          let altMockCaseFile = _cloneDeep(mockCaseFile);
-          altMockCaseFile.metadata.event.status = EEventStatus.Open;
+          let altMockEvent = _cloneDeep(mockEvent);
+          altMockEvent.entity.schedule.status = EEventStatus.Open;
           wrapper = shallowMount(Component, {
             localVue,
             propsData: {
-              caseFile: altMockCaseFile,
+              caseFile: mockCaseFile,
+              event: altMockEvent,
             },
           });
           await wrapper.setRole('level5');
 
           expect(wrapper.vm.disableStatus).toBe(false);
 
-          altMockCaseFile = _cloneDeep(mockCaseFile);
-          altMockCaseFile.metadata.event.status = EEventStatus.OnHold;
-          await wrapper.setProps({ caseFile: altMockCaseFile });
+          altMockEvent = _cloneDeep(mockEvent);
+          altMockEvent.entity.schedule.status = EEventStatus.OnHold;
+          await wrapper.setProps({ event: altMockEvent });
           expect(wrapper.vm.disableStatus).toBe(true);
 
           await wrapper.setRole('level6');
@@ -152,6 +159,7 @@ describe('CaseFileStatus.vue', () => {
           localVue,
           propsData: {
             caseFile: mockCaseFile,
+            event: mockEvent,
           },
           store: {
             modules: {

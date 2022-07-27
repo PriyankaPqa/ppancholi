@@ -5,10 +5,13 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockCombinedCaseFinancialAssistance } from '@/entities/financial-assistance-payment';
 import routes from '@/constants/routes';
+import { mockCombinedEvent, EEventStatus } from '@/entities/event';
 import Component from './FinancialAssistancePaymentsList.vue';
 
 let storage = mockStorage();
 const localVue = createLocalVue();
+const mockEvent = mockCombinedEvent();
+mockEvent.entity.schedule.status = EEventStatus.Open;
 
 describe('FinancialAssistancePaymentsList.vue', () => {
   let wrapper;
@@ -17,6 +20,11 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       propsData: { id: 'mock-cf-id' },
+      computed: {
+        event() {
+          return mockEvent;
+        },
+      },
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,

@@ -25,6 +25,7 @@ import { mockOptionItemData } from '@/entities/optionItem';
 import routes from '@/constants/routes';
 import flushPromises from 'flush-promises';
 import { Status } from '@libs/core-lib/entities/base/index';
+import { mockCombinedEvent, EEventStatus } from '@/entities/event';
 import Component from '../CreateEditFinancialAssistance.vue';
 
 const localVue = createLocalVue();
@@ -37,6 +38,8 @@ const caseFileCombined = mockCombinedCaseFile();
 const items = mockItems();
 const optionItems = mockOptionItemData();
 const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGroups();
+const mockEvent = mockCombinedEvent();
+mockEvent.entity.schedule.status = EEventStatus.Open;
 
 describe('CreateEditFinancialAssistance.vue', () => {
   let wrapper;
@@ -53,6 +56,11 @@ describe('CreateEditFinancialAssistance.vue', () => {
         return {
           financialAssistance: { name: null },
         };
+      },
+      computed: {
+        event() {
+          return mockEvent;
+        },
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,

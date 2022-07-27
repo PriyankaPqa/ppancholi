@@ -3,6 +3,7 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@/entities/case-file';
 import { mockStorage } from '@/store/storage';
 import { mockOptionItemData } from '@/entities/optionItem';
+import { mockCombinedEvent, EEventStatus } from '@/entities/event';
 
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
@@ -10,6 +11,8 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCombinedCaseFile();
 const mockActivities = mockCaseFileActivities();
+const mockEvent = mockCombinedEvent();
+mockEvent.entity.schedule.status = EEventStatus.Open;
 
 describe('CaseFileActivity.vue', () => {
   let wrapper;
@@ -29,6 +32,9 @@ describe('CaseFileActivity.vue', () => {
         },
         caseFile() {
           return mockCaseFile;
+        },
+        event() {
+          return mockEvent;
         },
         tags() {
           return [{ id: '1', name: { translation: { en: 'name' } } }];
@@ -127,6 +133,9 @@ describe('CaseFileActivity.vue', () => {
             caseFile() {
               return mockCaseFile;
             },
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,
@@ -159,6 +168,9 @@ describe('CaseFileActivity.vue', () => {
             caseFile() {
               return mockCaseFile;
             },
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,
@@ -187,6 +199,9 @@ describe('CaseFileActivity.vue', () => {
             },
             caseFile() {
               return mockCaseFile;
+            },
+            event() {
+              return mockEvent;
             },
           },
           mocks: {
@@ -259,6 +274,9 @@ describe('CaseFileActivity.vue', () => {
             caseFile() {
               return mockCaseFile;
             },
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,
@@ -275,6 +293,9 @@ describe('CaseFileActivity.vue', () => {
             caseFile() {
               return mockCaseFile;
             },
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,
@@ -289,6 +310,9 @@ describe('CaseFileActivity.vue', () => {
           computed: {
             caseFile() {
               return mockCaseFile;
+            },
+            event() {
+              return mockEvent;
             },
             readonly() {
               return true;
@@ -319,6 +343,9 @@ describe('CaseFileActivity.vue', () => {
             caseFile() {
               return caseFile;
             },
+            event() {
+              return mockEvent;
+            },
           },
         });
 
@@ -341,6 +368,9 @@ describe('CaseFileActivity.vue', () => {
         computed: {
           caseFile() {
             return mockCaseFile;
+          },
+          event() {
+            return mockEvent;
           },
         },
       });
@@ -404,6 +434,9 @@ describe('CaseFileActivity.vue', () => {
         computed: {
           caseFile() {
             return mockCaseFile;
+          },
+          event() {
+            return mockEvent;
           },
         },
       });

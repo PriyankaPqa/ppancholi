@@ -7,12 +7,15 @@ import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { mockUserStateLevel } from '@/test/helpers';
+import { mockCombinedEvent, EEventStatus } from '@/entities/event';
 
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCombinedCaseFile();
+const mockEvent = mockCombinedEvent();
+mockEvent.entity.schedule.status = EEventStatus.Open;
 
 describe('CaseFileDetails.vue', () => {
   let wrapper;
@@ -30,6 +33,9 @@ describe('CaseFileDetails.vue', () => {
       computed: {
         caseFile() {
           return mockCaseFile;
+        },
+        event() {
+          return mockEvent;
         },
         primaryBeneficiaryFullName() {
           return 'mock-full-name';
@@ -230,6 +236,9 @@ describe('CaseFileDetails.vue', () => {
             caseFile() {
               return mockCaseFile;
             },
+            event() {
+              return mockEvent;
+            },
             primaryBeneficiary() {
               return { email: null };
             },
@@ -265,6 +274,9 @@ describe('CaseFileDetails.vue', () => {
           computed: {
             caseFile() {
               return mockCaseFile;
+            },
+            event() {
+              return mockEvent;
             },
             primaryBeneficiary() {
               return { homePhoneNumber: null };
@@ -302,6 +314,9 @@ describe('CaseFileDetails.vue', () => {
             caseFile() {
               return mockCaseFile;
             },
+            event() {
+              return mockEvent;
+            },
             primaryBeneficiary() {
               return { mobilePhoneNumber: null };
             },
@@ -337,6 +352,9 @@ describe('CaseFileDetails.vue', () => {
           computed: {
             caseFile() {
               return mockCaseFile;
+            },
+            event() {
+              return mockEvent;
             },
             primaryBeneficiary() {
               return { alternatePhoneNumber: null };
@@ -621,6 +639,12 @@ describe('CaseFileDetails.vue', () => {
                   fetch: jest.fn(() => [mockCaseFile]),
                 },
               },
+              event: {
+                getters: { get: jest.fn(() => mockEvent) },
+                actions: {
+                  fetch: jest.fn(() => [mockEvent]),
+                },
+              },
               household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
             },
           },
@@ -660,6 +684,12 @@ describe('CaseFileDetails.vue', () => {
                   fetch: jest.fn(() => [mockCaseFile]),
                 },
               },
+              event: {
+                getters: { get: jest.fn(() => mockEvent) },
+                actions: {
+                  fetch: jest.fn(() => [mockEvent]),
+                },
+              },
               household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
             },
           },
@@ -691,9 +721,10 @@ describe('CaseFileDetails.vue', () => {
 
     it('should call getHouseholdInfo', async () => {
       jest.spyOn(wrapper.vm, 'getHouseholdInfo').mockImplementation(() => {});
-      await wrapper.vm.$options.created.forEach((hook) => {
-        hook.call(wrapper.vm);
-      });
+      jest.clearAllMocks();
+      const hook = wrapper.vm.$options.created[0];
+      await hook.call(wrapper.vm);
+
       expect(wrapper.vm.getHouseholdInfo).toHaveBeenCalledTimes(1);
     });
   });
@@ -710,6 +741,9 @@ describe('CaseFileDetails.vue', () => {
         computed: {
           caseFile() {
             return mockCaseFile;
+          },
+          event() {
+            return mockEvent;
           },
         },
         mocks: {

@@ -1,5 +1,4 @@
 /* eslint-disable max-lines-per-function */
-import { EEventStatus } from '@/entities/event';
 import { IEntity, mockBaseData } from '@libs/core-lib/entities/base';
 import {
   ICaseFileMetadata,
@@ -95,7 +94,6 @@ export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICase
         fr: 'Event 1 FR',
       },
     },
-    status: EEventStatus.Open,
   },
   lastActionDate: '2021-04-30',
   triageName: {

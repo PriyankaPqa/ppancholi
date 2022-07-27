@@ -8,12 +8,15 @@ import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import moment from '@/ui/plugins/moment';
 import { mockCombinedCaseFile } from '@/entities/case-file';
+import { mockCombinedEvent, EEventStatus } from '@/entities/event';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();
 let storage;
 const document = mockCombinedCaseFileDocument();
 let mockDocumentMapped;
+const mockEvent = mockCombinedEvent();
+mockEvent.entity.schedule.status = EEventStatus.Open;
 
 describe('CaseFileDocument.vue', () => {
   let wrapper;
@@ -116,6 +119,9 @@ describe('CaseFileDocument.vue', () => {
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,
@@ -155,6 +161,9 @@ describe('CaseFileDocument.vue', () => {
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,
@@ -222,6 +231,9 @@ describe('CaseFileDocument.vue', () => {
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,
@@ -241,6 +253,9 @@ describe('CaseFileDocument.vue', () => {
               return true;
             },
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           store: {
             ...mockUserStateLevel(1),
@@ -275,6 +290,9 @@ describe('CaseFileDocument.vue', () => {
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,
@@ -298,6 +316,9 @@ describe('CaseFileDocument.vue', () => {
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,
@@ -316,6 +337,9 @@ describe('CaseFileDocument.vue', () => {
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,
@@ -333,6 +357,9 @@ describe('CaseFileDocument.vue', () => {
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           mocks: {
             $storage: storage,
@@ -353,6 +380,9 @@ describe('CaseFileDocument.vue', () => {
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           store: {
             modules: {
@@ -386,6 +416,9 @@ describe('CaseFileDocument.vue', () => {
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           store: {
             ...mockUserStateLevel(6),
@@ -428,6 +461,9 @@ describe('CaseFileDocument.vue', () => {
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           store: {
             ...mockUserStateLevel(5),

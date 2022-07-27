@@ -16,7 +16,8 @@
       <v-row class="ma-0 pa-0">
         <v-col cols="12" md="6" class="flex-row">
           <case-file-status
-            :case-file="caseFile" />
+            :case-file="caseFile"
+            :event="event" />
 
           <v-divider vertical class="ml-4 mr-4" />
 

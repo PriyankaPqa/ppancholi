@@ -40,6 +40,7 @@ import { EEventStatus } from '@libs/registration-lib/entities/event';
 import { ICaseFileCombined, CaseFileStatus } from '@/entities/case-file';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { IListOption } from '@/types/interfaces/IListOption';
+import { IEventCombined } from '@/entities/event';
 import CaseFileStatusDialog from './CaseFileStatusDialog.vue';
 
 export default Vue.extend({
@@ -54,6 +55,10 @@ export default Vue.extend({
   props: {
     caseFile: {
       type: Object as () => ICaseFileCombined,
+      required: true,
+    },
+    event: {
+      type: Object as () => IEventCombined,
       required: true,
     },
   },
@@ -81,7 +86,7 @@ export default Vue.extend({
     },
 
     disableStatus() {
-      if (this.caseFile.metadata?.event?.status !== EEventStatus.Open && !this.$hasLevel('level6')) {
+      if (this.event?.entity?.schedule?.status !== +EEventStatus.Open && !this.$hasLevel('level6')) {
         return true;
       }
       if (this.caseFile.entity.caseFileStatus === CaseFileStatus.Archived && !this.$hasLevel('level5')) {

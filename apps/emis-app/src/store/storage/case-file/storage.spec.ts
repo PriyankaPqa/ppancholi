@@ -10,7 +10,6 @@ import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStore } from '@/store';
 import { IListOption } from '@/types';
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
-import { EEventStatus } from '@/entities/event';
 import { CaseFileStorage } from './storage';
 
 const entityModuleName = CASE_FILE_ENTITIES;
@@ -48,14 +47,6 @@ describe('>>> Case File Storage', () => {
         const storageGetter = storage.getters.getAll() as ICaseFileCombined[];
         expect(storageGetter[0].readonly).toEqual(false);
         expect(storageGetter[1].readonly).toEqual(true);
-      });
-
-      it('should set readonly on the combined entry based on event.status', () => {
-        let storageGetter = storage.getters.getAll() as ICaseFileCombined[];
-        expect(storageGetter[0].readonly).toEqual(false);
-        store.state.caseFileMetadata.items[0].event.status = EEventStatus.OnHold;
-        storageGetter = storage.getters.getAll() as ICaseFileCombined[];
-        expect(storageGetter[0].readonly).toEqual(true);
       });
     });
 

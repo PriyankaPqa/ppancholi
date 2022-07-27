@@ -277,6 +277,7 @@ export default mixins(caseFileDetail).extend({
     this.loading = true;
     try {
       await this.$storage.caseFile.actions.fetch(this.caseFileId);
+      await this.$storage.event.actions.fetch(this.caseFile.entity.eventId);
       await this.getHouseholdInfo();
     } finally {
       this.loading = false;

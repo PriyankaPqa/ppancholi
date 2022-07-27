@@ -10,7 +10,6 @@ import { IOptionItem } from '@/entities/optionItem';
 import { IListOption } from '@/types';
 
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
-import { EEventStatus } from '@/entities/event';
 import { IEntityCombined } from '@libs/core-lib/entities/base';
 import { IStore, IState } from '../../store.types';
 import { Base } from '../base';
@@ -26,8 +25,7 @@ export class CaseFileStorage
     const result = super.combinedCollections(entities, metadata, pinnedIds) as Array<ICaseFileCombined>;
     if (result) {
       result.forEach((e) => {
-        e.readonly = e.entity?.caseFileStatus !== CaseFileStatus.Open
-          || +e.metadata?.event?.status !== +EEventStatus.Open;
+        e.readonly = e.entity?.caseFileStatus !== CaseFileStatus.Open;
       });
     }
     return result;

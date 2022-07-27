@@ -6,10 +6,13 @@ import routes from '@/constants/routes';
 import { mockUserStateLevel } from '@/test/helpers';
 
 import { mockCombinedCaseFile } from '@/entities/case-file';
+import { mockCombinedEvent, EEventStatus } from '@/entities/event';
 import Component from './CaseFileReferralDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
+const mockEvent = mockCombinedEvent();
+mockEvent.entity.schedule.status = EEventStatus.Open;
 
 describe('CaseFileReferralDetails', () => {
   let wrapper;
@@ -32,6 +35,11 @@ describe('CaseFileReferralDetails', () => {
           id: 'mock-caseFile-id',
           referralId: 'mock-referral-id',
         },
+        computed: {
+          event() {
+            return mockEvent;
+          },
+        },
         mocks: { $storage: storage },
       });
     });
@@ -46,6 +54,9 @@ describe('CaseFileReferralDetails', () => {
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
           },
           store: {
             ...mockUserStateLevel(1),
@@ -80,6 +91,11 @@ describe('CaseFileReferralDetails', () => {
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
+          },
+          computed: {
+            event() {
+              return mockEvent;
+            },
           },
           store: {
             modules: {
@@ -152,6 +168,9 @@ describe('CaseFileReferralDetails', () => {
             referral() {
               return mockCaseFileReferralEntity({ type: { optionItemId: mockOptionItemData()[0].id } });
             },
+            event() {
+              return mockEvent;
+            },
           },
           mocks: { $storage: storage },
         });
@@ -176,6 +195,9 @@ describe('CaseFileReferralDetails', () => {
             referral() {
               return mockCaseFileReferralEntity({ outcomeStatus: { optionItemId: mockOptionItemData()[0].id } });
             },
+            event() {
+              return mockEvent;
+            },
           },
           mocks: { $storage: storage },
         });
@@ -195,6 +217,9 @@ describe('CaseFileReferralDetails', () => {
           computed: {
             typeName() {
               return 'mock-type-name';
+            },
+            event() {
+              return mockEvent;
             },
           },
           mocks: { $storage: storage },
@@ -241,6 +266,11 @@ describe('CaseFileReferralDetails', () => {
           id: 'mock-caseFile-id',
           referralId: 'mock-referral-id',
         },
+        computed: {
+          event() {
+            return mockEvent;
+          },
+        },
         mocks: { $storage: storage },
       });
     });
@@ -283,6 +313,9 @@ describe('CaseFileReferralDetails', () => {
           },
           canEdit() {
             return true;
+          },
+          event() {
+            return mockEvent;
           },
         },
       });
