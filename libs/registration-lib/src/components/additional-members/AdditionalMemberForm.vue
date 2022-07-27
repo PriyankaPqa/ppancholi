@@ -16,28 +16,32 @@
     <v-row class="grey-container pa-2 pb-0">
       <v-col class="pt-4 px-4">
         <div class="rc-body16 fw-bold">
-          {{ $t('registration.household_member.sameAddress') }}
+          {{ $t('registration.household_member.sameAddress') }} *
         </div>
-
-        <v-radio-group :value="sameAddress" @change="$emit('update:sameAddress', $event)">
-          <div class="flex-contain">
-            <span>
-              <v-radio data-test="sameCurrentAddressYes" :label="$t('common.yes')" :value="true" />
-            </span>
-            <span class="rc-body12 ml-5">
-              {{ $t('registration.household_member.sameAddress.yes.detail') }}
-            </span>
-          </div>
-          <div class="flex-contain mt-2">
-            <span>
-              <v-radio data-test="sameCurrentAddressNo" :label="$t('common.no')" :value="false" />
-            </span>
-            <span class="rc-body12 ml-5">
-              {{ $t('registration.household_member.sameAddress.no.detail') }}
-            </span>
-          </div>
-        </v-radio-group>
-        <v-col v-if="!sameAddress" cols="12" class="pt-4 pb-0 px-4 pr-sm-0 pl-sm-6">
+        <validation-provider v-slot="{ errors }" :rules="rules.isSameAddress">
+          <v-radio-group
+            :value="sameAddress"
+            :error-messages="errors"
+            @change="$emit('update:sameAddress', $event)">
+            <div class="flex-contain">
+              <span>
+                <v-radio data-test="sameCurrentAddressYes" :label="$t('common.yes')" :value="true" />
+              </span>
+              <span class="rc-body12 ml-5">
+                {{ $t('registration.household_member.sameAddress.yes.detail') }}
+              </span>
+            </div>
+            <div class="flex-contain mt-2">
+              <span>
+                <v-radio data-test="sameCurrentAddressNo" :label="$t('common.no')" :value="false" />
+              </span>
+              <span class="rc-body12 ml-5">
+                {{ $t('registration.household_member.sameAddress.no.detail') }}
+              </span>
+            </div>
+          </v-radio-group>
+        </validation-provider>
+        <v-col v-if="sameAddress === false" cols="12" class="pt-4 pb-0 px-4 pr-sm-0 pl-sm-6">
           <current-address-form
             :shelter-locations="shelterLocations"
             :canadian-provinces-items="canadianProvincesItems"
@@ -81,7 +85,7 @@ export default Vue.extend({
 
     sameAddress: {
       type: Boolean,
-      required: true,
+      default: null,
     },
 
     genderItems: {
@@ -139,6 +143,14 @@ export default Vue.extend({
     return {
       months,
     };
+  },
+
+  computed: {
+    rules() {
+      return {
+        isSameAddress: { requiredCheckbox: true, oneOf: [false, true] },
+      };
+    },
   },
 });
 </script>

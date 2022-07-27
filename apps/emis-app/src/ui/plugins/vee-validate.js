@@ -51,6 +51,11 @@ extend('required', {
     ? i18n.t(values.messageKey) : i18n.t('validations.required', values)),
 });
 
+extend('requiredCheckbox', {
+  ...required,
+  message: (_, values) => i18n.t('validations.required', values),
+});
+
 extend('min', {
   ...min,
   message: (_, values) => i18n.t('validations.min', { value: values.length }),

@@ -213,9 +213,9 @@ describe('AddEditAdditionalMembers.vue', () => {
         );
       });
 
-      it('should call cancel if the call to updatePersonAddress  fails', async () => {
+      it('should call cancel if the call to updatePersonIdentity  fails', async () => {
         jest.spyOn(wrapper.vm, 'cancel').mockImplementation(() => {});
-        wrapper.vm.$storage.registration.actions.updatePersonAddress = jest.fn(() => null);
+        wrapper.vm.$storage.registration.actions.updatePersonIdentity = jest.fn(() => null);
         await wrapper.setData({ identityChanged: true });
         await wrapper.vm.submitChanges();
         expect(wrapper.vm.cancel).toHaveBeenCalledTimes(1);

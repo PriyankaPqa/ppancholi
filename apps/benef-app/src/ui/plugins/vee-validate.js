@@ -5,7 +5,7 @@ import {
 } from 'vee-validate';
 import PhoneNumber from 'awesome-phonenumber';
 import {
-  required, min, max, email, regex, min_value, max_value, numeric,
+  required, min, max, email, regex, min_value, max_value, numeric, oneOf,
 } from 'vee-validate/dist/rules.umd.min';
 import moment from 'moment';
 import Vue from 'vue';
@@ -31,6 +31,11 @@ extend('regex', {
 });
 
 extend('required', {
+  ...required,
+  message: (_, values) => i18n.t('validations.required', values),
+});
+
+extend('requiredCheckbox', {
   ...required,
   message: (_, values) => i18n.t('validations.required', values),
 });
@@ -127,6 +132,11 @@ extend('minimumAge', {
 
     return i18n.t('registration.personal_info.validations.minimumAge', { x: age });
   },
+});
+
+extend('oneOf', {
+  ...oneOf,
+  message: (_, values) => i18n.t('validations.oneOf', values),
 });
 
 extend('customValidator', {
