@@ -232,4 +232,5 @@ $url-rc-fr-logo: "../../public/img/logos/rc/rc-fr.svg";
     height: 64px;
   }
 }
+
 </style>
