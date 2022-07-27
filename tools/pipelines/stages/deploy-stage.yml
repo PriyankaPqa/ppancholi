@@ -8,7 +8,7 @@ parameters:
   testCommand: ''
   disableCache: ''
   appName: ''
-  runAcceptanceStage: true
+  runAcceptanceStage: false
 
 stages:
 - ${{ if eq( variables['build.reason'], 'PullRequest') }}:
