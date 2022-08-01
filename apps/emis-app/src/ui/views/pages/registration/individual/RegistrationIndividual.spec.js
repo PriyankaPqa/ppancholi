@@ -339,7 +339,29 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.nextDefault).toHaveBeenCalledTimes(1);
       });
 
-      it('calls handleErrors if there are submit errors that are not duplicate errors', async () => {
+      it('calls jump if there are submit errors that are not duplicate errors but contain errors code', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            submitErrors: () => ({ response: { data: { errors: [{ code: 'error.code' }] } } }),
+            associationMode: () => false,
+            householdAlreadyRegistered: () => false,
+            isDuplicateError: () => false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.handleErrors = jest.fn();
+        wrapper.vm.jump = jest.fn();
+
+        await wrapper.vm.nextOnReview();
+        expect(wrapper.vm.jump).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls handleErrors if there are submit errors that are not duplicate errors or do not contain errors code', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {

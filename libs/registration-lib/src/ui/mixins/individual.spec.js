@@ -76,7 +76,7 @@ describe('Individual.vue', () => {
         $storage: storage,
       },
       computed: {
-        submitErrors: () => (errorCode ? { response: { data: { errors: [{ code: errorCode }] } } } : null),
+        submitErrors: () => ({ response: { data: { errors: [{ code: errorCode }] } } }),
       },
     });
   };
@@ -207,6 +207,17 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.isDuplicateError).toEqual(true);
       });
     });
+
+    describe('containsErrorCode', () => {
+      it('should be true if an error is coming from the BE with a code', () => {
+        doMount({ errorCode: 'errors.example' });
+        expect(wrapper.vm.containsErrorCode).toEqual(true);
+      });
+      it('should be false if an error does not have an error code', () => {
+        doMount({ errorCode: '' });
+        expect(wrapper.vm.containsErrorCode).toEqual(false);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -276,52 +287,66 @@ describe('Individual.vue', () => {
     });
 
     describe('next', () => {
-      it('calls jump', async () => {
+      describe('Confirmation page', () => {
+        it('calls closeRegistration', async () => {
+          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+            id: 'confirmation',
+          }));
+          wrapper.vm.closeRegistration = jest.fn();
+          wrapper.vm.jump = jest.fn();
+
+          await wrapper.vm.next();
+
+          expect(wrapper.vm.closeRegistration).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.jump).toHaveBeenCalledTimes(0);
+        });
+      });
+
+      describe('Review page', () => {
+        it('should call submit registration with recaptchaToken', async () => {
+          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+            id: 'review',
+          }));
+          await wrapper.setData({ recaptchaToken: 'recaptchaToken' });
+          wrapper.vm.jump = jest.fn();
+
+          await wrapper.vm.next();
+
+          expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledWith('recaptchaToken');
+        });
+        it('calls handleErrors if there are submit errors with no errors code', async () => {
+          doMount({ errorCode: '' });
+          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+            id: 'review',
+          }));
+
+          wrapper.vm.handleErrors = jest.fn();
+
+          await wrapper.vm.next();
+          expect(wrapper.vm.handleErrors).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.handleErrors).toHaveBeenCalledWith(wrapper.vm.submitRegistration);
+        });
+        it('calls jump if there are submit errors with error code', async () => {
+          doMount({ errorCode: 'errors.example' });
+          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+            id: 'review',
+          }));
+
+          wrapper.vm.jump = jest.fn();
+
+          await wrapper.vm.next();
+          expect(wrapper.vm.jump).toHaveBeenCalledTimes(1);
+        });
+      });
+
+      it('calls jump otherwise', async () => {
         wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
         wrapper.vm.jump = jest.fn();
 
         await wrapper.vm.next();
 
         expect(wrapper.vm.jump).toHaveBeenCalledWith(3);
-      });
-
-      it('calls closeRegistration if it is confirmation', async () => {
-        wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
-          id: 'confirmation',
-        }));
-        wrapper.vm.closeRegistration = jest.fn();
-        wrapper.vm.jump = jest.fn();
-
-        await wrapper.vm.next();
-
-        expect(wrapper.vm.closeRegistration).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.jump).toHaveBeenCalledTimes(0);
-      });
-
-      it('should call submit registration with recaptchaToken if current tab is review', async () => {
-        wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
-          id: 'review',
-        }));
-        await wrapper.setData({ recaptchaToken: 'recaptchaToken' });
-        wrapper.vm.jump = jest.fn();
-
-        await wrapper.vm.next();
-
-        expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledWith('recaptchaToken');
-      });
-
-      it('calls handleErrors if there are submit errors that are not duplicate errors if current tab is review', async () => {
-        doMount({ errorCode: { response: { data: {} } } });
-        wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
-          id: 'review',
-        }));
-
-        wrapper.vm.handleErrors = jest.fn();
-
-        await wrapper.vm.next();
-        expect(wrapper.vm.handleErrors).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.handleErrors).toHaveBeenCalledWith(wrapper.vm.submitRegistration);
       });
     });
 

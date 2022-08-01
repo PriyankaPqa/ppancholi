@@ -104,6 +104,13 @@ export default Vue.extend({
       }
       return false;
     },
+    containsErrorCode(): boolean {
+      const errors = (this.submitErrors as IServerError)?.response?.data?.errors;
+      if (errors && Array.isArray(errors)) {
+        return errors.some((e) => e.code.length !== 0);
+      }
+      return false;
+    },
   },
 
   watch: {
@@ -156,9 +163,12 @@ export default Vue.extend({
 
       if (this.currentTab.id === 'review') { // The recaptchaToken is set in Individual.vue (benef app), in the callback
         await this.submitRegistration();
-
         if (this.submitErrors && !this.isDuplicateError) {
-          this.handleErrors(this.submitRegistration);
+          if (this.containsErrorCode) { // If no duplicate errors, but errors have a code
+            await this.jump(this.currentTabIndex + 1);
+            return;
+          }
+          await this.handleErrors(this.submitRegistration); // If we want to start the retry process
           return;
         }
       }

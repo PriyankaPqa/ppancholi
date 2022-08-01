@@ -139,7 +139,7 @@ export default mixins(individual).extend({
       } else if (this.currentTab.id === 'personalInfo') {
         EventHub.$emit('checkEmailValidation', this.validateAndNext);
       } else {
-        this.validateAndNext();
+        await this.validateAndNext();
       }
     },
 

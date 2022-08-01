@@ -256,7 +256,7 @@ export default mixins(individual).extend({
           return;
 
         case 'review':
-          this.nextOnReview();
+          await this.nextOnReview();
           return;
 
         case 'confirmation':
@@ -264,7 +264,7 @@ export default mixins(individual).extend({
           return;
 
         default:
-          this.nextDefault();
+          await this.nextDefault();
       }
     },
 
@@ -281,17 +281,21 @@ export default mixins(individual).extend({
           return;
         }
 
-        this.associateHousehold();
+        await this.associateHousehold();
 
         return;
       }
       await this.$storage.registration.actions.submitRegistration();
 
       if (this.submitErrors && !this.isDuplicateError) {
-        this.handleErrors(this.submitRegistration);
+        if (this.containsErrorCode) { // If no duplicate errors, but errors have a code
+          await this.jump(this.currentTabIndex + 1);
+          return;
+        }
+        await this.handleErrors(this.submitRegistration); // If we want to start the retry process
         return;
       }
-      this.nextDefault();
+      await this.nextDefault();
     },
 
     async nextDefault() {
