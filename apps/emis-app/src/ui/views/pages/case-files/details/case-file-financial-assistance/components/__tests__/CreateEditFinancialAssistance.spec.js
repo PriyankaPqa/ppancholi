@@ -1,5 +1,4 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { format } from 'date-fns';
 import { mockStorage } from '@/store/storage';
 import
 {
@@ -988,11 +987,10 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
       it('sets the right name to the financial assistance in create mode', async () => {
         wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
-        const dateNow = format(new Date(), 'yyyyMMdd HHmmss');
         await wrapper.setData({ isEditMode: false });
         await wrapper.setData({ selectedProgram: program });
         wrapper.vm.makePaymentName();
-        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - mock-payment-line - ${dateNow}`);
+        expect(wrapper.vm.financialAssistance.name).toContain(`${program.name.translation.en} - mock-payment-line -`);
       });
     });
 

@@ -10,6 +10,7 @@
             v-model="formCopy.event"
             :attach="true"
             clearable
+            data-test="payment_event_name"
             background-color="white"
             :loading="loadingEvent"
             :disabled="loadingEvent"
@@ -27,6 +28,7 @@
             v-model="formCopy.table"
             background-color="white"
             :attach="true"
+            data-test="payment_table_name"
             :disabled="isEmpty(formCopy.event)"
             clearable
             :label="`${$t('massActions.financialAssistance.create.table.label')} *`"
@@ -39,7 +41,7 @@
         <v-col cols="6">
           <div class="mt-4">
             {{ $t('massActions.financialAssistance.create.program.label') }}
-            <span v-if="program">{{ $m(program.entity.name) }}</span>
+            <span v-if="program" data-test="payment_program">{{ $m(program.entity.name) }}</span>
           </div>
         </v-col>
       </v-row>
@@ -51,6 +53,7 @@
             background-color="white"
             :disabled="isEmpty(formCopy.table)"
             clearable
+            data-test="payment_item"
             :label="`${$t('massActions.financialAssistance.create.item.label')} *`"
             :items="financialAssistanceTableItems"
             :item-text="(item) => $m(item.name)"
@@ -65,6 +68,7 @@
             background-color="white"
             :disabled="isEmpty(formCopy.item)"
             clearable
+            data-test="payment_subItem"
             :label="`${$t('massActions.financialAssistance.create.sub_item.label')} *`"
             :items="subItems"
             :item-text="(item) => $m(item.name)"
@@ -78,6 +82,7 @@
             v-model="formCopy.paymentModality"
             :attach="true"
             background-color="white"
+            data-test="payment_modality"
             :disabled="isEmpty(formCopy.table)"
             clearable
             :label="`${$t('massActions.financialAssistance.create.payment.label')} *`"
@@ -91,6 +96,7 @@
             v-model="formCopy.amount"
             :disabled="currentSubItem && currentSubItem.amountType === EFinancialAmountModes.Fixed"
             :rules="rules.amount"
+            data-test="payment_amount"
             type="number"
             prefix="$"
             :label="`${$t('massActions.financialAssistance.create.amount.label')} *`"
