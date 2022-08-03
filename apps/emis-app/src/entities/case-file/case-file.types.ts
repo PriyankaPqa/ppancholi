@@ -47,7 +47,7 @@ export enum CaseFileActivityType {
   TriageUpdated = 9,
   AssignedToCaseFile = 10,
   UnassignedFromCaseFile = 11,
-  IdentityAuthenticationUpdated = 12,
+  IdentityAuthenticationUpdatedStatus = 12,
   ImpactStatusValidationUpdated = 13,
   ReferralAdded = 14,
   ReferralUpdated = 15,
@@ -63,7 +63,8 @@ export enum CaseFileActivityType {
   HouseholdMovedMembersOut = 25,
   HouseholdMovedMembersIn = 26,
   HouseholdCreatedAfterSplit = 27,
-  PaymentCompleted = 28
+  PaymentCompleted = 28,
+  IdentityAuthenticationUpdatedId = 29,
 }
 
 export enum HouseholdCaseFileActivityType {

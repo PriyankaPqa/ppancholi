@@ -321,7 +321,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       user: { id: '1', name: 'Jane Doe' },
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       created: '2021-05-04',
-      activityType: CaseFileActivityType.IdentityAuthenticationUpdated,
+      activityType: CaseFileActivityType.IdentityAuthenticationUpdatedStatus,
       details: {
         status: 1,
       },
@@ -332,7 +332,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       user: { id: '1', name: 'Jane Doe' },
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       created: '2021-05-04',
-      activityType: CaseFileActivityType.IdentityAuthenticationUpdated,
+      activityType: CaseFileActivityType.IdentityAuthenticationUpdatedStatus,
       details: {
         status: 2,
       },
@@ -343,7 +343,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       user: { id: '1', name: 'Jane Doe' },
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       created: '2021-05-04',
-      activityType: CaseFileActivityType.IdentityAuthenticationUpdated,
+      activityType: CaseFileActivityType.IdentityAuthenticationUpdatedStatus,
       details: {
         status: 0,
       },
@@ -610,6 +610,17 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         paymentModality: EPaymentModalities.DirectDeposit,
         paymentName: 'mock payment',
         totalAmount: '100',
+      },
+    },
+    {
+      id: 'mock-activity-id-33',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.IdentityAuthenticationUpdatedId,
+      details: {
+        status: 0,
       },
     },
   ];

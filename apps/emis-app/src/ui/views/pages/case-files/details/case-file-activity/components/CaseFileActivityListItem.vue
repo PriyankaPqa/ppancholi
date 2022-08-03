@@ -80,8 +80,11 @@ export default Vue.extend({
         case CaseFileActivityType.UnassignedFromCaseFile:
           return this.makeContentForUnassignedFromCaseFile();
 
-        case CaseFileActivityType.IdentityAuthenticationUpdated:
-          return this.makeContentForIdentityAuthenticationUpdated();
+        case CaseFileActivityType.IdentityAuthenticationUpdatedStatus:
+          return this.makeContentForIdentityAuthenticationUpdatedStatus();
+
+        case CaseFileActivityType.IdentityAuthenticationUpdatedId:
+          return this.makeContentForIdentityAuthenticationUpdatedId();
 
         case CaseFileActivityType.ImpactStatusValidationUpdated:
           return this.makeContentForImpactStatusValidationUpdated();
@@ -161,7 +164,8 @@ export default Vue.extend({
         case CaseFileActivityType.CaseFileStatusReopened:
           return 'mdi-lock-open';
 
-        case CaseFileActivityType.IdentityAuthenticationUpdated:
+        case CaseFileActivityType.IdentityAuthenticationUpdatedStatus:
+        case CaseFileActivityType.IdentityAuthenticationUpdatedId:
           return 'mdi-shield-check';
 
         case CaseFileActivityType.ImpactStatusValidationUpdated:
@@ -306,7 +310,7 @@ export default Vue.extend({
       return { title, body: null };
     },
 
-    makeContentForIdentityAuthenticationUpdated():{title: TranslateResult, body: TranslateResult} {
+    makeContentForIdentityAuthenticationUpdatedStatus():{title: TranslateResult, body: TranslateResult} {
       const title = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdated');
 
       let body = `${this.$t('caseFileActivity.activityList.identity_authentication_updated')}: `;
@@ -322,6 +326,12 @@ export default Vue.extend({
           break;
       }
 
+      return { title, body };
+    },
+
+    makeContentForIdentityAuthenticationUpdatedId():{title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId');
+      const body = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId.idUpdated');
       return { title, body };
     },
 

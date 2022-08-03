@@ -249,9 +249,16 @@ describe('CaseFileActivityListItem.vue', () => {
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
-      it('returns the correct icon when action type is IdentityAuthenticationUpdated', async () => {
+      it('returns the correct icon when action type is IdentityAuthenticationUpdatedStatus', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdated)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedStatus)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-shield-check');
+      });
+
+      it('returns the correct icon when action type is IdentityAuthenticationUpdatedId', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedId)[0],
         });
         expect(wrapper.vm.icon).toEqual('mdi-shield-check');
       });
@@ -276,13 +283,6 @@ describe('CaseFileActivityListItem.vue', () => {
         });
 
         expect(wrapper.vm.icon).toEqual('mdi-message-text');
-      });
-
-      it('returns the correct icon when action type is IdentityAuthenticationUpdated', async () => {
-        await wrapper.setProps({
-          item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdated)[0],
-        });
-        expect(wrapper.vm.icon).toEqual('mdi-shield-check');
       });
 
       it('returns the correct icon when action type is ReferralAdded', async () => {
@@ -532,13 +532,13 @@ describe('CaseFileActivityListItem.vue', () => {
         });
       });
 
-      describe('makeContentForIdentityAuthenticationUpdated', () => {
+      describe('makeContentForIdentityAuthenticationUpdatedStatus', () => {
         it('returns the correct data when action type is IdentityAuthenticationUpdated and status is Passed', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdated)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedStatus)[0],
           });
 
-          expect(wrapper.vm.makeContentForIdentityAuthenticationUpdated()).toEqual({
+          expect(wrapper.vm.makeContentForIdentityAuthenticationUpdatedStatus()).toEqual({
             title: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdated',
             body: 'caseFileActivity.activityList.identity_authentication_updated: caseFile.beneficiaryIdentityVerificationStatus.Passed',
           });
@@ -546,10 +546,10 @@ describe('CaseFileActivityListItem.vue', () => {
 
         it('returns the correct data when action type is IdentityAuthenticationUpdated and status is Failed', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdated)[1],
+            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedStatus)[1],
           });
 
-          expect(wrapper.vm.makeContentForIdentityAuthenticationUpdated()).toEqual({
+          expect(wrapper.vm.makeContentForIdentityAuthenticationUpdatedStatus()).toEqual({
             title: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdated',
             body: 'caseFileActivity.activityList.identity_authentication_updated: caseFile.beneficiaryIdentityVerificationStatus.Failed',
           });
@@ -557,15 +557,29 @@ describe('CaseFileActivityListItem.vue', () => {
 
         it('returns the correct data when action type is IdentityAuthenticationUpdated and status is NotVerified', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdated)[2],
+            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedStatus)[2],
           });
 
-          expect(wrapper.vm.makeContentForIdentityAuthenticationUpdated()).toEqual({
+          expect(wrapper.vm.makeContentForIdentityAuthenticationUpdatedStatus()).toEqual({
             title: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdated',
             body: 'caseFileActivity.activityList.identity_authentication_updated: caseFile.beneficiaryIdentityVerificationStatus.NotVerified',
           });
         });
       });
+
+      describe('makeContentForIdentityAuthenticationUpdatedId', () => {
+        it('returns the correct data when action type is IdentityAuthenticationUpdatedId', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedId)[0],
+          });
+
+          expect(wrapper.vm.makeContentForIdentityAuthenticationUpdatedId()).toEqual({
+            title: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId',
+            body: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId.idUpdated',
+          });
+        });
+      });
+
       describe('makeContentForImpactStatusValidationUpdated', () => {
         it('returns the correct data when action type is ImpactStatusValidationUpdated and status is Impacted', async () => {
           await wrapper.setProps({
