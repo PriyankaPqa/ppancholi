@@ -1,4 +1,4 @@
-import { IVersionedEntity } from '@libs/registration-lib/entities/value-objects/versioned-entity';
+import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import {
@@ -8,7 +8,7 @@ import {
   PaymentStatus,
   EPaymentCancellationReason,
   PaymentsSummary,
-} from '@/entities/financial-assistance-payment';
+} from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistancePaymentsService } from './financial-assistance-payments.types';
 
 const API_URL_SUFFIX = 'finance';

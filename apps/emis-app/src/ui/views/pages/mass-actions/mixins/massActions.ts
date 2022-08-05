@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
 import { TranslateResult } from 'vue-i18n';
-import { FeatureKeys } from '@/entities/tenantSettings';
-import { MassActionDataCorrectionType } from '@/entities/mass-action';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 
 export interface IMassActionCards {
   title: string;

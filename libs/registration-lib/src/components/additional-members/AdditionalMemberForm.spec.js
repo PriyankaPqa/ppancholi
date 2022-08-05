@@ -1,12 +1,12 @@
 import { i18n } from '@/ui/plugins/i18n';
+import helpers from '@libs/entities-lib/helpers';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
-import helpers from '../../ui/helpers/index';
-import { ECurrentAddressTypes, mockCampGround } from '../../entities/value-objects/current-address/index';
+import { ECurrentAddressTypes, mockCampGround } from '../../../../entities-lib/src/value-objects/current-address/index';
 import {
   mockShelterLocations,
-} from '../../entities/event';
+} from '../../../../entities-lib/src/registration-event';
 import { mockStorage } from '../../store/storage/storage.mock';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import {
@@ -14,7 +14,7 @@ import {
   mockAdditionalMember,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems, mockMember,
-} from '../../entities/household-create';
+} from '../../../../entities-lib/src/household-create';
 import Component from './AdditionalMemberForm.vue';
 
 const localVue = createLocalVue();

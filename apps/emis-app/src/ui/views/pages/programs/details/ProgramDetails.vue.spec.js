@@ -1,8 +1,8 @@
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
-import { mockFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
+import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
+import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import Component from './ProgramDetails.vue';
 
 const localVue = createLocalVue();

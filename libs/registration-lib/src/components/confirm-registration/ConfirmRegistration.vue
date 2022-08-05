@@ -60,9 +60,9 @@
 import { TranslateResult } from 'vue-i18n';
 import Vue from 'vue';
 import { IRegistrationMenuItem } from '../../types';
-import { IHouseholdCreate, IHouseholdCreateData } from '../../entities/household-create';
-import { IEvent } from '../../entities/event';
-import { IHouseholdEntity } from '../../entities/household';
+import { IHouseholdCreate, IHouseholdCreateData } from '../../../../entities-lib/src/household-create';
+import { IEvent } from '../../../../entities-lib/src/registration-event';
+import { IHouseholdEntity } from '../../../../entities-lib/src/household';
 import ConfirmationError from './ConfirmationError.vue';
 import { IServerError } from '../../../../core-lib/src/types';
 

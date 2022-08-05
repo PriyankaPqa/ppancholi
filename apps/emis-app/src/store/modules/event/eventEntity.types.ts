@@ -1,5 +1,5 @@
-import { IEventEntity } from '@/entities/event';
-import { IOptionItemData } from '@/entities/optionItem';
+import { IEventEntity } from '@libs/entities-lib/event';
+import { IOptionItemData } from '@libs/entities-lib/optionItem';
 import { IState } from '../base/base.types';
 
 export interface IEventEntityState extends IState<IEventEntity> {

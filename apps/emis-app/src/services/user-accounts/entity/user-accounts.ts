@@ -2,7 +2,7 @@
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import {
   IFilter, IUserAccountEntity,
-} from '@/entities/user-account';
+} from '@libs/entities-lib/user-account';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';

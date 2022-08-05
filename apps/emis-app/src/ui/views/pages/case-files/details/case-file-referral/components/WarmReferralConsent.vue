@@ -38,8 +38,8 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { VCheckboxWithValidation, RcDialog } from '@libs/component-lib/components';
 
-import { IReferralConsentInformation } from '@/entities/case-file-referral';
-import { VForm } from '@/types';
+import { IReferralConsentInformation } from '@libs/entities-lib/case-file-referral';
+import { VForm } from '@libs/core-lib/types';
 
 export default Vue.extend({
   name: 'WarmReferralConsent',

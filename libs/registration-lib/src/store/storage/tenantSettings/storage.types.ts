@@ -9,7 +9,7 @@ import {
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
   IValidateCaptchaAllowedIpAddressResponse,
-} from '../../../entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';

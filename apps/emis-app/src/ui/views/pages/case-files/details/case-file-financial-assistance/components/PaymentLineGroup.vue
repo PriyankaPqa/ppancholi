@@ -87,18 +87,18 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcConfirmationDialog, VSelectWithValidation } from '@libs/component-lib/components';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { EPaymentModalities, IProgramEntity } from '@/entities/program';
+import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import {
   IFinancialAssistancePaymentLine,
   PaymentStatus,
   EPaymentCancellationReason,
   IFinancialAssistancePaymentGroup,
   ApprovalStatus,
-  FinancialAssistancePaymentGroup,
-} from '@/entities/financial-assistance-payment';
-import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
+  FinancialAssistancePaymentGroup, PayeeType,
+} from '@libs/entities-lib/financial-assistance-payment';
+import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 import PaymentLineItem from './PaymentLineItem.vue';
 
 export default Vue.extend({
@@ -155,7 +155,15 @@ export default Vue.extend({
 
   computed: {
     title(): string | TranslateResult {
-      return FinancialAssistancePaymentGroup.groupTitle(this.paymentGroup);
+      let key;
+      if (FinancialAssistancePaymentGroup.showPayee(this.paymentGroup)) {
+        const modality = this.$t(`enums.PaymentModality.${EPaymentModalities[this.paymentGroup.groupingInformation.modality]}`);
+        const payeeType = this.$t(`enums.payeeType.${PayeeType[this.paymentGroup.groupingInformation.payeeType]}`);
+        key = `${modality} (${payeeType}) - ${this.paymentGroup.groupingInformation.payeeName}`;
+      } else {
+        key = this.$t(`enums.PaymentModality.${EPaymentModalities[this.paymentGroup.groupingInformation.modality]}`);
+      }
+      return this.$t(`${key}`);
     },
 
     activeLines(): IFinancialAssistancePaymentLine[] {

@@ -3,7 +3,7 @@ import {
   mount,
 } from '@/test/testSetup';
 
-import { MassActionRunStatus, mockCombinedMassAction } from '@/entities/mass-action';
+import { MassActionRunStatus, mockCombinedMassAction } from '@libs/entities-lib/mass-action';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
 import Component from './MassActionProcessingBase.vue';
 

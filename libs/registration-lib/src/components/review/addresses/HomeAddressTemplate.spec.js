@@ -1,6 +1,6 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockAddress } from '../../../entities/household-create';
+import { mockAddress } from '@libs/entities-lib/household-create';
 import Component from './HomeAddressTemplate.vue';
 
 const localVue = createLocalVue();

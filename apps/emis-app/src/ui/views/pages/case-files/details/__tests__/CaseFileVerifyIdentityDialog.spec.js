@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
-import { IdentityAuthenticationMethod, IdentityAuthenticationStatus } from '@/entities/case-file';
+import { IdentityAuthenticationMethod, IdentityAuthenticationStatus } from '@libs/entities-lib/case-file';
 import Component from '../components/CaseFileVerifyIdentityDialog.vue';
 
 const localVue = createLocalVue();

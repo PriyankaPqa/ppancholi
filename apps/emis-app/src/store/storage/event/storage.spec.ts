@@ -4,9 +4,9 @@ import {
   EventEntity,
   mockEventEntities,
   mockEventEntity,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import { mockStore } from '@/store';
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { EEventSummarySections } from '@/types';
 import { EventStorage } from './storage';
 

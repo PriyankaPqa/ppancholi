@@ -22,8 +22,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VForm } from '@/types';
-import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
+import { VForm } from '@libs/core-lib/types';
+import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 
 export default Vue.extend({
   name: 'AddEditItemButtons',

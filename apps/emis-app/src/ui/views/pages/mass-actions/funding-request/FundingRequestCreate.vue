@@ -13,7 +13,7 @@ import Vue from 'vue';
 
 import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
-import { MassActionMode, MassActionType } from '@/entities/mass-action';
+import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
 
 export default Vue.extend({
   name: 'FundingRequestCreate',

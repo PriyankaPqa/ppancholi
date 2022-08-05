@@ -60,13 +60,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import { IShelterLocationData } from '../../entities/household-create';
-import { IOptionItemData } from '../../types';
+import { IOptionItemData } from '@libs/core-lib/types';
+import { IShelterLocationData } from '../../../../entities-lib/src/household-create';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import months from '../../constants/months';
-import { IMember } from '../../entities/value-objects/member';
+import { IMember } from '../../../../entities-lib/src/value-objects/member';
 
 export default Vue.extend({
   name: 'AdditionalMemberForm',

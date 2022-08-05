@@ -1,6 +1,6 @@
-import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
-import { mockIndigenousCommunitiesGetData, EIndigenousTypes } from '@libs/registration-lib/entities/household-create';
-import libHelpers from '@libs/registration-lib/ui/helpers';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
+import { mockIndigenousCommunitiesGetData, EIndigenousTypes } from '@libs/entities-lib/household-create';
+import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 

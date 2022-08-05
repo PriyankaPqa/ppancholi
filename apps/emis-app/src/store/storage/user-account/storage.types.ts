@@ -1,7 +1,7 @@
-import { IOptionItem } from '@/entities/optionItem';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import {
   FilterKey, IFilter, IUserAccountEntity, IUserAccountMetadata,
-} from '@/entities/user-account';
+} from '@libs/entities-lib/user-account';
 import {
   IBaseActions,
   IBaseGetters,

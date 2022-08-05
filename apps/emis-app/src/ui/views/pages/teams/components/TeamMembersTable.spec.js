@@ -1,10 +1,10 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
   mockCombinedTeams,
-} from '@/entities/team';
+} from '@libs/entities-lib/team';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { mockStorage } from '@/store/storage';
-import { mockCombinedUserAccount } from '@/entities/user-account';
+import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import _orderBy from 'lodash/orderBy';
 import Component from './TeamMembersTable.vue';
 

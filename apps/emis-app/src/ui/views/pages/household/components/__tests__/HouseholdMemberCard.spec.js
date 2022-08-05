@@ -1,7 +1,7 @@
-import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
 import {
   mockIndigenousCommunitiesGetData, mockSplitHousehold, mockHouseholdCreate,
-} from '@libs/registration-lib/entities/household-create';
+} from '@libs/entities-lib/household-create';
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';

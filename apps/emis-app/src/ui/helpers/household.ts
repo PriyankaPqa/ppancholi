@@ -2,10 +2,10 @@ import {
   EIndigenousTypes, IIndigenousCommunityData, IMember, HouseholdCreate,
   IAddressData,
   IPhoneNumber,
-} from '@libs/registration-lib/entities/household-create/index';
-import { IBirthDate } from '@libs/registration-lib/entities/value-objects/identity-set/identitySet.types';
-import libHelpers from '@libs/registration-lib/ui/helpers';
-import { IAddress } from '@libs/registration-lib/entities/value-objects/address/address.types';
+} from '@libs/entities-lib/household-create/index';
+import { IBirthDate } from '@libs/entities-lib/value-objects/identity-set/identitySet.types';
+import libHelpers from '@libs/entities-lib/helpers';
+import { IAddress } from '@libs/entities-lib/value-objects/address/address.types';
 import helpers from '@/ui/helpers/helpers';
 import { i18n } from '@/ui/plugins';
 

@@ -11,7 +11,7 @@ import {
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
   IValidateCaptchaAllowedIpAddressResponse,
-} from '../../../entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
 import { ITenantSettingsService } from './tenantSettings.types';
 
 const API_URL_SUFFIX = 'system-management';

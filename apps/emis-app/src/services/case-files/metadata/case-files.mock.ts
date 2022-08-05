@@ -1,6 +1,6 @@
 import {
   mockCaseFileMetadatum, mockCaseFileMetadata,
-} from '@/entities/case-file';
+} from '@libs/entities-lib/case-file';
 import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { ICaseFilesMetadataServiceMock } from './case-files.types';
 

@@ -1,4 +1,4 @@
-import { mockEvent } from '@libs/registration-lib/entities/event/event.mock';
+import { mockEvent } from '@libs/entities-lib/registration-event/registrationEvent.mock';
 import _sortBy from 'lodash/sortBy';
 import {
   createLocalVue,
@@ -6,14 +6,14 @@ import {
 } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import { EEventStatus, mockCombinedEvents } from '@/entities/event';
+import { EEventStatus, mockCombinedEvents } from '@libs/entities-lib/event';
 import {
   mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems,
-} from '@/entities/financial-assistance';
-import { EPaymentModalities, mockCombinedProgram } from '@/entities/program';
-import { mockCombinedOptionItems, mockOptionItem, mockOptionSubItem } from '@/entities/optionItem';
+} from '@libs/entities-lib/financial-assistance';
+import { EPaymentModalities, mockCombinedProgram } from '@libs/entities-lib/program';
+import { mockCombinedOptionItems, mockOptionItem, mockOptionSubItem } from '@libs/entities-lib/optionItem';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 import Component from './FinancialAssistancePaymentDetailsCreate.vue';
 
 const formCopy = {

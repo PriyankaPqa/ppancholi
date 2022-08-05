@@ -4,13 +4,13 @@ import { ActionContext } from 'vuex';
 import { UserAccountsService, IAddRoleToUserRequest } from '@/services/user-accounts/entity';
 import {
   FilterKey, mockUserAccountEntity, mockUserFilters, UserAccountEntity,
-} from '@/entities/user-account';
+} from '@libs/entities-lib/user-account';
 import { OptionItemsService } from '@/services/optionItems';
-import { OptionItem } from '@/entities/optionItem';
+import { OptionItem } from '@libs/entities-lib/optionItem';
 import { httpClient } from '@/services/httpClient';
 import { IUserAccountEntityState } from './userAccountEntity.types';
 import { UserAccountEntityModule } from './userAccountEntity';
-import { mockOptionItems } from '../../../entities/optionItem/optionItem.mock';
+import { mockOptionItems } from '../../../../../../libs/entities-lib/src/optionItem/optionItem.mock';
 import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const signalR = mockSignalR();

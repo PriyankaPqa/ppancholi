@@ -8,6 +8,7 @@ module.exports = {
     '<rootDir>/libs/registration-lib',
     '<rootDir>/libs/component-lib',
     '<rootDir>/libs/core-lib',
+    '<rootDir>/libs/entities-lib',
   ],
   coverageDirectory: '<rootDir>/coverage/',
 };

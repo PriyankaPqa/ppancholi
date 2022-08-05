@@ -1,4 +1,4 @@
-import libHelpers from '@libs/registration-lib/ui/helpers';
+import libHelpers from '@libs/entities-lib/helpers';
 import helpers from './helpers';
 
 describe('objectToQueryString', () => {

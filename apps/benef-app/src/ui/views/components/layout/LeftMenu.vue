@@ -55,7 +55,7 @@
 import Vue from 'vue';
 import {
   mockMember, mockAddress, mockContactInformation, mockCampGround,
-} from '@libs/registration-lib/entities/household-create';
+} from '@libs/entities-lib/household-create';
 import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 
 export default Vue.extend({

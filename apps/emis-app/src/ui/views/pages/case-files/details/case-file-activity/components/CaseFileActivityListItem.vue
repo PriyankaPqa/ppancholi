@@ -17,9 +17,9 @@ import { TranslateResult } from 'vue-i18n';
 import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/components/CaseFileListItemWrapper.vue';
 import {
   CaseFileActivityType, HouseholdCaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, RegistrationType, ValidationOfImpactStatus,
-} from '@/entities/case-file';
-import { IIdMultilingualName, IMultilingual } from '@/types';
-import { EPaymentModalities } from '@/entities/program';
+} from '@libs/entities-lib/case-file';
+import { IIdMultilingualName, IMultilingual } from '@libs/core-lib/types';
+import { EPaymentModalities } from '@libs/entities-lib/program';
 
 export interface IAssignInfo {
   id: string;

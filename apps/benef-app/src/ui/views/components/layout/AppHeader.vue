@@ -40,8 +40,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPhoneDisplay } from '@libs/component-lib/components';
-import { IEvent } from '@libs/registration-lib/entities/event';
-import { IBrandingEntity } from '@libs/registration-lib/entities/tenantSettings';
+import { IEvent } from '@libs/entities-lib/registration-event';
+import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';

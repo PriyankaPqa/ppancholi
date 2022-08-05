@@ -1,4 +1,4 @@
-import { mockCaseNoteEntities, mockCaseNoteEntity } from '@/entities/case-note';
+import { mockCaseNoteEntities, mockCaseNoteEntity } from '@libs/entities-lib/case-note';
 import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { ICaseNotesServiceMock } from './case-notes.types';
 

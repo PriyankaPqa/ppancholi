@@ -146,14 +146,14 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcNestedTable } from '@libs/component-lib/components';
-import { VForm } from '@/types';
+import { VForm } from '@libs/core-lib/types';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,
   IFinancialAssistanceTableItem,
   IFinancialAssistanceTableSubItem,
-} from '@/entities/financial-assistance';
-import { IOptionItem } from '@/entities/optionItem';
+} from '@libs/entities-lib/financial-assistance';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { INestedTableHeader } from './INestedTableHeader';
 import ManageList from './ManageList.vue';
 import TooltipFinancialAssistanceCategory from './TooltipFinancialAssistanceCategory.vue';

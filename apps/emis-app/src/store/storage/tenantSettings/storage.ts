@@ -2,8 +2,8 @@ import {
   FeatureKeys,
   IBrandingEntity,
   ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
-} from '@/entities/tenantSettings';
-import { IMultilingual } from '@libs/registration-lib/types';
+} from '@libs/entities-lib/tenantSettings';
+import { IMultilingual } from '@libs/core-lib/types';
 import { IStore, IState } from '../../store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';

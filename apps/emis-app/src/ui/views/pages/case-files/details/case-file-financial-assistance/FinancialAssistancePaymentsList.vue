@@ -81,7 +81,7 @@
               <template v-for="group in item.entity.groups">
                 <tr v-if="group.status === Status.Active" :key="group.id">
                   <td class="group-col">
-                    {{ groupTitle(group) }}
+                    {{ getGroupTitle(group) }}
                   </td>
                   <td class="text-right">
                     {{ $formatCurrency(groupTotal([group])) }}
@@ -169,7 +169,7 @@ import mixins from 'vue-typed-mixins';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { FilterKey } from '@/entities/user-account';
+import { FilterKey } from '@libs/entities-lib/user-account';
 import { IAzureSearchParams } from '@libs/core-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
@@ -177,10 +177,11 @@ import {
   ApprovalStatus,
   FinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentCombined,
-  IFinancialAssistancePaymentEntity,
+  IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PayeeType,
   PaymentStatus,
-} from '@/entities/financial-assistance-payment';
-import { Status } from '@libs/core-lib/entities/base';
+} from '@libs/entities-lib/financial-assistance-payment';
+import { Status } from '@libs/entities-lib/base';
+import { EPaymentModalities } from '@libs/entities-lib/program';
 import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
 import StatisticsDialog from './components/StatisticsDialog.vue';
 import caseFileDetail from '../caseFileDetail';
@@ -220,7 +221,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       selectedItems: [] as string[],
       Status,
       PaymentStatus,
-      groupTitle: FinancialAssistancePaymentGroup.groupTitle,
       groupTotal: FinancialAssistancePaymentGroup.total,
       showApprovalHistory: false,
       selectedItem: null as IFinancialAssistancePaymentEntity,
@@ -450,6 +450,17 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.multipleApprovalSubmitted', { nbSuccess }));
       }
       this.selectedItems = [];
+    },
+
+    getGroupTitle(paymentGroup: IFinancialAssistancePaymentGroup) {
+      if (FinancialAssistancePaymentGroup.showPayee(paymentGroup)) {
+        const modality = this.$t(`enums.PaymentModality.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`);
+        const payeeType = this.$t(`enums.payeeType.${PayeeType[paymentGroup.groupingInformation.payeeType]}`);
+
+        return `${modality} (${payeeType}) - ${paymentGroup.groupingInformation.payeeName}`;
+      }
+
+      return this.$t(`enums.PaymentModality.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`);
     },
   },
 });

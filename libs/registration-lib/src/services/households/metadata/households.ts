@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IHttpClient } from '@libs/core-lib/src/services/http-client';
 import { DomainBaseService } from '@libs/core-lib/services/base';
+import { IHouseholdMetadata } from '@libs/entities-lib/household';
 import { IHouseholdMetadataService } from './households.types';
-
-import { IHouseholdMetadata } from '../../../entities/household';
 
 const API_URL_SUFFIX = 'household';
 const CONTROLLER = 'households/metadata';

@@ -48,7 +48,7 @@ import Vue from 'vue';
 import { RcPageLoading } from '@libs/component-lib/components';
 import SecondaryLeftMenu from '@/ui/views/components/layout/SecondaryLeftMenu.vue';
 import SecondaryRightMenu from '@/ui/views/components/layout/SecondaryRightMenu.vue';
-import { INavigationTab } from '@/types';
+import { INavigationTab } from '@libs/core-lib/types';
 import routes from '@/constants/routes';
 
 export default Vue.extend({

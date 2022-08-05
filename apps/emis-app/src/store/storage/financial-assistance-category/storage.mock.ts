@@ -1,6 +1,6 @@
 import {
   IOptionItem, IOptionItemCombined, mockCombinedOptionItems, mockOptionItem,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 import { BaseMock } from '../base/base.mock';
 
 export class FinancialAssistanceCategoryStorageMock extends BaseMock<IOptionItemCombined, IOptionItem> {

@@ -1,4 +1,4 @@
-import { IHouseholdEntity } from '../../../entities/household';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
 
 import { IState } from '../base/base.types';
 

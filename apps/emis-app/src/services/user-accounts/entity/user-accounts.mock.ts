@@ -1,4 +1,4 @@
-import { mockUserAccountEntities, mockUserAccountEntity } from '@/entities/user-account';
+import { mockUserAccountEntities, mockUserAccountEntity } from '@libs/entities-lib/user-account';
 import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { IUserAccountsServiceMock } from './user-accounts.types';
 

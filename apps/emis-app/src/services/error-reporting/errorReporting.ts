@@ -1,4 +1,4 @@
-import { IErrorReport } from '@/types';
+import { IErrorReport } from '@libs/core-lib/types';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { IErrorReportingService } from './errorReporting.types';
 

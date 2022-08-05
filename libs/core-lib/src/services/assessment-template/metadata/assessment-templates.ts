@@ -1,4 +1,4 @@
-import { IAssessmentTemplateMetadata } from '../../../entities/assessment-template/assessment-template.types';
+import { IAssessmentTemplateMetadata } from '@libs/entities-lib/assessment-template/assessment-template.types';
 import { DomainBaseService } from '../../base';
 import { IHttpClient } from '../../http-client';
 import { IAssessmentTemplatesMetadataService } from './assessment-templates.types';

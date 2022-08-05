@@ -1,13 +1,13 @@
-import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
-import { mockHouseholdCreate, mockIdentitySetData, ECurrentAddressTypes } from '@libs/registration-lib/entities/household-create';
-import libHelpers from '@libs/registration-lib/ui/helpers';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
+import { mockHouseholdCreate, mockIdentitySetData, ECurrentAddressTypes } from '@libs/entities-lib/household-create';
+import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 
 import { mockStorage } from '@/store/storage';
 
 import { EventHub } from '@libs/core-lib/plugins/event-hub';
-import { EEventLocationStatus } from '@/entities/event';
+import { EEventLocationStatus } from '@libs/entities-lib/event';
 import Component from '../PrimaryMemberDialog.vue';
 
 const localVue = createLocalVue();

@@ -1,8 +1,8 @@
 import {
   mockOptionItemData, mockSubItem, EOptionLists,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 import { mockHttp } from '@libs/core-lib/services/http-client';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 import { OptionItemsService } from './optionItems';
 
 const http = mockHttp();

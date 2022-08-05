@@ -1,10 +1,10 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockCombinedMassAction } from '@/entities/mass-action';
-import { EPaymentModalities, mockCombinedProgram } from '@/entities/program';
-import { mockCombinedEvent } from '@/entities/event';
-import { mockCombinedFinancialAssistance } from '@/entities/financial-assistance';
-import { mockCombineOptionItem, mockOptionItem } from '@/entities/optionItem';
+import { mockCombinedMassAction } from '@libs/entities-lib/mass-action';
+import { EPaymentModalities, mockCombinedProgram } from '@libs/entities-lib/program';
+import { mockCombinedEvent } from '@libs/entities-lib/event';
+import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
+import { mockCombineOptionItem, mockOptionItem } from '@libs/entities-lib/optionItem';
 import Component from './FinancialAssistancePaymentDetailsTable.vue';
 
 const localVue = createLocalVue();

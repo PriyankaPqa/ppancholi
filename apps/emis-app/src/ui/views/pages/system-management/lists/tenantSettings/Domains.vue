@@ -129,9 +129,9 @@ import { RcConfirmationDialog, VTextFieldWithValidation } from '@libs/component-
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import { MAX_LENGTH_SM } from '@/constants/validations';
-import { IMultilingual } from '@/types';
-import entityUtils from '@libs/core-lib/entities/utils';
+import { MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
+import { IMultilingual } from '@libs/core-lib/types';
+import entityUtils from '@libs/entities-lib/utils';
 
 export default Vue.extend({
   name: 'Domains',

@@ -1,4 +1,4 @@
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { IOptionItemsServiceMock } from './optionItems.types';
 
 export const mockOptionItemsServiceService = (): IOptionItemsServiceMock => ({

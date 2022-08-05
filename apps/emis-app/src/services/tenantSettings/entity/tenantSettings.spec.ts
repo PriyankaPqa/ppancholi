@@ -3,7 +3,7 @@ import {
   mockEditColoursRequest,
   mockEditTenantDetailsRequest,
   mockSetDomainsRequest,
-} from '@/entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
 import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { TenantSettingsService } from './tenantSettings';
 

@@ -28,9 +28,9 @@ import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
 import massActions, { IMassActionCards } from '@/ui/views/pages/mass-actions/mixins/massActions';
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import helpers from '@/ui/helpers/helpers';
-import { MassActionDataCorrectionType, MassActionGroup } from '@/entities/mass-action';
+import { MassActionDataCorrectionType, MassActionGroup } from '@libs/entities-lib/mass-action';
 
 export default mixins(massActions).extend({
   name: 'MassActionsHome',

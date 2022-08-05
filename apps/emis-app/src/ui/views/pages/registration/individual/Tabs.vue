@@ -48,7 +48,7 @@ import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/I
 import Vue from 'vue';
 import {
   mockMember, mockAddress, mockContactInformation, mockCampGround, mockAdditionalMember,
-} from '@libs/registration-lib/entities/household-create';
+} from '@libs/entities-lib/household-create';
 
 export default Vue.extend({
   name: 'Tabs',

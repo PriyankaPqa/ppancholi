@@ -1,4 +1,4 @@
-import { mockHouseholdCreateData } from '@libs/registration-lib/entities/household-create';
+import { mockHouseholdCreateData } from '@libs/entities-lib/household-create';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';

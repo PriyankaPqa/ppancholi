@@ -3,7 +3,7 @@ import _sortBy from 'lodash/sortBy';
 import { mockStore, IRootState } from '@/store';
 import {
   OptionItem, mockOptionItemData, EOptionLists,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 
 import {
   EEventStatus,
@@ -11,14 +11,14 @@ import {
   IEventEntity,
   mockEventEntities,
   mockEventEntity,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import { httpClient } from '@/services/httpClient';
 import helpers from '@/ui/helpers/helpers';
 import { EventsService } from '@/services/events/entity';
 import { OptionItemsService } from '@/services/optionItems';
 import { EEventSummarySections } from '@/types';
 import { mockSignalR } from '@/ui/plugins/signal-r';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 import { EventEntityModule } from './eventEntity';
 
 import { IEventEntityState } from './eventEntity.types';

@@ -3,9 +3,9 @@ import _sortBy from 'lodash/sortBy';
 import { mockStore, IRootState } from '@/store';
 import {
   mockOptionItemData, mockSubItem, EOptionLists,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 describe('>>> Option List Module', () => {
   let store: Store<IRootState>;

@@ -14,10 +14,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import helpers from '../../../ui/helpers/index';
+import helpers from '@libs/entities-lib/helpers';
 import {
   EIndigenousTypes, IContactInformation, IIdentitySet, IIndigenousCommunityData, IPhoneNumber,
-} from '../../../entities/household-create';
+} from '@libs/entities-lib/household-create';
 
 export default Vue.extend({
   name: 'PersonalInformationTemplate',

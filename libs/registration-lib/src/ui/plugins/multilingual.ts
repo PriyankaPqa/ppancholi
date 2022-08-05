@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { IMultilingual } from '../../types';
+import { IMultilingual } from '@libs/core-lib/types';
 
 export default {
   install: (V: typeof Vue) => {

@@ -1,4 +1,4 @@
-import helpers from '@libs/registration-lib/ui/helpers';
+import helpers from '@libs/entities-lib/helpers';
 
 import { i18n } from './plugins/i18n';
 

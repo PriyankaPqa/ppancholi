@@ -1,9 +1,9 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockSubItemData } from '@/entities/financial-assistance';
-import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
+import { mockSubItemData } from '@libs/entities-lib/financial-assistance';
+import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups } from '@libs/entities-lib/financial-assistance-payment';
 import { mockStorage } from '@/store/storage';
 import flushPromises from 'flush-promises';
-import { EPaymentModalities } from '@/entities/program/program.types';
+import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import householdHelpers from '@/ui/helpers/household';
 import Component from '../ViewPaymentLineDetails.vue';
 

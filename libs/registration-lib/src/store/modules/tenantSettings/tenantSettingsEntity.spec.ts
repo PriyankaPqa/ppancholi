@@ -1,7 +1,4 @@
 import { ActionContext } from 'vuex';
-import { TenantSettingsEntityModule } from './tenantSettingsEntity';
-import { mockTenantSettingsService, TenantSettingsService } from '../../../services/tenantSettings/entity';
-import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 import {
   FeatureKeys,
   IBrandingEntityData,
@@ -17,7 +14,10 @@ import {
   mockTenantSettingsEntity,
   mockTenantSettingsEntityData,
   TenantSettingsEntity,
-} from '../../../entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
+import { TenantSettingsEntityModule } from './tenantSettingsEntity';
+import { mockTenantSettingsService, TenantSettingsService } from '../../../services/tenantSettings/entity';
+import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 import vuetify from '../../../plugins/vuetify/vuetify';
 
 const service = mockTenantSettingsService();

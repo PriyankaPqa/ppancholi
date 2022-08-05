@@ -152,9 +152,9 @@ import {
   IFinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentLine,
   PayeeType,
-} from '@/entities/financial-assistance-payment';
-import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
-import { EPaymentModalities } from '@/entities/program/program.types';
+} from '@libs/entities-lib/financial-assistance-payment';
+import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@libs/entities-lib/financial-assistance';
+import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import householdHelpers from '@/ui/helpers/household';
 import caseFileDetail from '../../caseFileDetail';
 

@@ -49,8 +49,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseNoteCombined } from '@/entities/case-note';
-import { IOptionItem } from '@/entities/optionItem';
+import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import CaseFileListItemWrapper from '../../components/CaseFileListItemWrapper.vue';
 import CaseNoteForm from './CaseNoteForm.vue';
 

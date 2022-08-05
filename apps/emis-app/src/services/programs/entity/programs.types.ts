@@ -1,4 +1,4 @@
-import { IProgramEntity } from '@/entities/program';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 interface UrlParams {

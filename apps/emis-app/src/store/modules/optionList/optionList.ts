@@ -5,11 +5,11 @@ import _sortBy from 'lodash/sortBy';
 import _findIndex from 'lodash/findIndex';
 import helpers from '@/ui/helpers/helpers';
 import { IRootState } from '@/store/store.types';
-import { IMultilingual } from '@/types';
+import { IMultilingual } from '@libs/core-lib/types';
 import {
   IOptionItemData, IOptionItem, OptionItem, EOptionLists, IOptionSubItem,
-} from '@/entities/optionItem';
-import { Status } from '@libs/core-lib/entities/base';
+} from '@libs/entities-lib/optionItem';
+import { Status } from '@libs/entities-lib/base';
 import {
   IState,
 } from './optionList.types';

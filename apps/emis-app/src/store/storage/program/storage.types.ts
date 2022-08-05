@@ -1,4 +1,4 @@
-import { IProgramEntity, IProgramMetadata } from '@/entities/program';
+import { IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';

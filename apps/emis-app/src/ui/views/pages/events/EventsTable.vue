@@ -76,14 +76,14 @@ import {
 import { DataTableHeader } from 'vuetify';
 import { EFilterType, IFilterSettings, ISearchData } from '@libs/component-lib/types';
 import mixins from 'vue-typed-mixins';
-import { FilterKey } from '@/entities/user-account';
+import { FilterKey } from '@libs/entities-lib/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import {
   EResponseLevel,
   EEventStatus,
   IEventCombined,
   IEventSchedule,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { IAzureSearchParams } from '@libs/core-lib/types';
 import routes from '@/constants/routes';

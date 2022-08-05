@@ -1,5 +1,6 @@
-import { IAddress } from '../../../entities/value-objects/address';
-import { IHouseholdEntity, IHouseholdMetadata } from '../../../entities/household';
+import { IAddress } from '@libs/entities-lib/value-objects/address';
+import { IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
+import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import {
   IBaseActions,
   IBaseGetters,
@@ -8,7 +9,6 @@ import {
   IBaseGettersMock,
   IBaseMutationsMock,
 } from '../base/base.types';
-import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity';
 
 export interface IActions extends IBaseActions<IHouseholdEntity, IHouseholdMetadata, uuid> {
   updateNoFixedHomeAddress (householdId: string, observation: string): Promise<IHouseholdEntity>;

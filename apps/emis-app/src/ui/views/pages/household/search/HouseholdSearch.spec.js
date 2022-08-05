@@ -1,5 +1,5 @@
 import Vuetify from 'vuetify';
-import { mockSplitHousehold } from '@libs/registration-lib/entities/household-create';
+import { mockSplitHousehold } from '@libs/entities-lib/household-create';
 import {
   createLocalVue,
   shallowMount, mount,
@@ -7,7 +7,7 @@ import {
 
 import { mockStorage } from '@/store/storage';
 
-import { MAX_LENGTH_MD } from '@/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
 import Component from './HouseholdSearch.vue';
 
 const localVue = createLocalVue();

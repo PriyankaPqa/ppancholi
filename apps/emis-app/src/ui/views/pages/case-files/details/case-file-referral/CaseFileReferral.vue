@@ -63,9 +63,9 @@ import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/core-lib/types';
 import routes from '@/constants/routes';
-import { IOptionItem } from '@/entities/optionItem';
-import { FilterKey } from '@/entities/user-account';
-import { ICaseFileReferralCombined } from '@/entities/case-file-referral';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { FilterKey } from '@libs/entities-lib/user-account';
+import { ICaseFileReferralCombined } from '@libs/entities-lib/case-file-referral';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import caseFileDetail from '../caseFileDetail';
 

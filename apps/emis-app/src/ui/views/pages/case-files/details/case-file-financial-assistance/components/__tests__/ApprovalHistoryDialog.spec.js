@@ -1,5 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockFinancialPaymentHistory, mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
+import { mockFinancialPaymentHistory, mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
 import { mockStorage } from '@/store/storage';
 import Component from '../ApprovalHistoryDialog.vue';
 

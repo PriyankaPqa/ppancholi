@@ -73,7 +73,7 @@ import { RcConfirmationDialog } from '@libs/component-lib/components';
 import VueI18n from 'vue-i18n';
 import { MAX_ADDITIONAL_MEMBERS } from '../../constants/validations';
 import AddEditAdditionalMembers from './AddEditAdditionalMembers.vue';
-import { IMember, Member } from '../../entities/value-objects/member';
+import { IMember, Member } from '../../../../entities-lib/src/value-objects/member';
 
 export default Vue.extend({
   name: 'AdditionalMembers',

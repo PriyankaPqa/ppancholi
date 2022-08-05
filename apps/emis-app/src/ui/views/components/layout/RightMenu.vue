@@ -154,12 +154,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IUser, NO_ROLE } from '@/entities/user';
+import { IUser, NO_ROLE } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
-import { IBrandingEntity } from '@/entities/tenantSettings';
-import { IUserAccountCombined } from '@/entities/user-account';
+import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
+import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({
   name: 'RightMenu',

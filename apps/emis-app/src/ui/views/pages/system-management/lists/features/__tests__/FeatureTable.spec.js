@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockFeatures } from '@/entities/tenantSettings';
+import { mockFeatures } from '@libs/entities-lib/tenantSettings';
 import Component from '../FeatureTable.vue';
 import FeatureWrapper from '../FeatureWrapper.vue';
 

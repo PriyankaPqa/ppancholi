@@ -2,13 +2,13 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import { mockOptionItemData, mockRoles } from '@/entities/optionItem';
+import { mockOptionItemData, mockRoles } from '@libs/entities-lib/optionItem';
 import { mockUserStateLevel } from '@/test/helpers';
 
 import {
   AccountStatus, mockCombinedUserAccounts, mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata,
-} from '@/entities/user-account';
-import { Status } from '@libs/core-lib/entities/base';
+} from '@libs/entities-lib/user-account';
+import { Status } from '@libs/entities-lib/base';
 import Component from './UserAccounts.vue';
 
 const localVue = createLocalVue();

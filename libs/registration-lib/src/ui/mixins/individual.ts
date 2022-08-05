@@ -3,9 +3,9 @@ import { IServerError } from '@libs/core-lib/types';
 import { TranslateResult } from 'vue-i18n';
 import _pickBy from 'lodash/pickBy';
 import Vue from 'vue';
+import helpers from '@libs/entities-lib/helpers';
 import { IRegistrationMenuItem, VForm } from '../../types';
-import { HouseholdCreate, IHouseholdCreateData } from '../../entities/household-create';
-import helpers from '../helpers/index';
+import { HouseholdCreate, IHouseholdCreateData } from '../../../../entities-lib/src/household-create';
 import { keysForDuplicateErrors } from '../../components/confirm-registration/keysForDuplicateErrors';
 
 export default Vue.extend({

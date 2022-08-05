@@ -166,10 +166,10 @@ import {
   RcPageContent,
   RcPageLoading,
 } from '@libs/component-lib/components';
-import { EPaymentModalities, IProgramEntity } from '@/entities/program';
+import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
-import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 
 export default Vue.extend({
   name: 'ProgramDetails',

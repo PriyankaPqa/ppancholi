@@ -30,7 +30,7 @@
 <script lang="ts">
 import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
 import { RcDialog } from '@libs/component-lib/components';
-import { IHouseholdCaseFile } from '@libs/registration-lib/entities/household';
+import { IHouseholdCaseFile } from '@libs/entities-lib/household';
 import mixins from 'vue-typed-mixins';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults.vue';
@@ -39,7 +39,7 @@ import PreviousEventsTemplate from '@/ui/views/pages/registration/review/Previou
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 
 import searchHousehold from '@/ui/mixins/searchHousehold';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(searchHousehold).extend({
   name: 'IsRegistered',

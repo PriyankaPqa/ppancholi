@@ -1,14 +1,13 @@
-import { IServerError } from '@libs/core-lib/types';
-import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';
-import { IOptionItemData } from '../../../types';
-import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
+import { IServerError, IOptionItemData } from '@libs/core-lib/types';
+import { ISplitHousehold } from '@libs/entities-lib/household-create/householdCreate.types';
 import {
   HouseholdCreate,
   IIndigenousCommunityData,
-} from '../../../entities/household-create';
+} from '@libs/entities-lib/household-create';
 
-import { IHouseholdEntity } from '../../../entities/household';
-import { IEventData } from '../../../entities/event';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
+import { IEventData } from '@libs/entities-lib/registration-event';
+import { IRegistrationMenuItem } from '../../../types';
 
 export type IState = {
   event: IEventData;

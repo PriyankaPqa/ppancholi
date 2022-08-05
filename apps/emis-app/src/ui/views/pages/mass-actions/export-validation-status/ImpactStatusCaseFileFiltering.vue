@@ -128,11 +128,11 @@ import { DataTableHeader } from 'vuetify';
 import mixins from 'vue-typed-mixins';
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { FilterKey } from '@/entities/user-account';
-import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
+import { FilterKey } from '@libs/entities-lib/user-account';
+import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 
-import { MassActionType } from '@/entities/mass-action';
+import { MassActionType } from '@libs/entities-lib/mass-action';
 import massActionCaseFileFiltering from '@/ui/views/pages/mass-actions/mixins/massActionCaseFileFiltering';
 
 export default mixins(massActionCaseFileFiltering).extend({

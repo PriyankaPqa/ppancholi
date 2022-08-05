@@ -1,7 +1,7 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
-import { mockIdentitySet } from '../../../entities/value-objects/identity-set/identitySet.mock';
-import { mockHouseholdEntity } from '../../../entities/household';
+import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set/identitySet.mock';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import {
   mockContactInformation,
   mockGenders, mockHouseholdCreate,
@@ -9,9 +9,9 @@ import {
   mockIndigenousTypesItems,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
-} from '../../../entities/household-create';
+} from '@libs/entities-lib/household-create';
 
-import { mockEvent } from '../../../entities/event';
+import { mockEvent } from '@libs/entities-lib/registration-event';
 import { IStorageMock } from './storage.types';
 
 export const mockStorageRegistration = (): IStorageMock => ({

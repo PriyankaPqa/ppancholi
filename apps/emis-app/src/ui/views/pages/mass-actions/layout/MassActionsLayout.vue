@@ -20,9 +20,9 @@ import metadata from '@/ui/mixins/metadata';
 import routes from '@/constants/routes';
 import { PageTemplate } from '@/ui/views/components/layout';
 import massActions from '@/ui/views/pages/mass-actions/mixins/massActions';
-import { INavigationTabGroup } from '@/types/interfaces/ui/INavigationTab';
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { INavigationTabGroup } from '@libs/core-lib/types';
 
 export default mixins(massActions).extend({
   name: 'MassActionsLayout',

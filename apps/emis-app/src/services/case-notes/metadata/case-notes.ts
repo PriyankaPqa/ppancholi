@@ -1,4 +1,4 @@
-import { ICaseNoteMetadata } from '@/entities/case-note';
+import { ICaseNoteMetadata } from '@libs/entities-lib/case-note';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { ICaseNotesMetadataService } from './case-notes.types';

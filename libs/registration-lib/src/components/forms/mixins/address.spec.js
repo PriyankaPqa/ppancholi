@@ -1,7 +1,7 @@
+import { mockAddress } from '@libs/entities-lib/household-create';
+import { ECanadaProvinces } from '@libs/core-lib/src/types';
 import { createLocalVue, shallowMount } from '../../../test/testSetup';
 import googleAutocomplete from './address';
-import { ECanadaProvinces } from '../../../types';
-import { mockAddress } from '../../../entities/household-create';
 
 const Component = {
   render() {},

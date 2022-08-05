@@ -25,9 +25,8 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcPageContent } from '@libs/component-lib/components';
-import { IServerError } from '@libs/core-lib/types';
-import { VForm } from '@/types';
-import { ProgramEntity } from '@/entities/program';
+import { IServerError, VForm } from '@libs/core-lib/types';
+import { ProgramEntity } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';

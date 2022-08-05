@@ -11,7 +11,7 @@ import {
   IEventGenericLocation,
   IEventLocation,
   IEventMainInfo,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@libs/core-lib/types';
 import { IEventsService } from './events.types';
 

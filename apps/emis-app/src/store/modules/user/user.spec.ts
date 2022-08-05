@@ -5,7 +5,7 @@ import { mockStore, IRootState } from '@/store';
 import { Toasted } from 'vue-toasted';
 import {
   mockUsersData, User,
-} from '@/entities/user';
+} from '@libs/entities-lib/user';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import {
   mockStoreUserLevel,

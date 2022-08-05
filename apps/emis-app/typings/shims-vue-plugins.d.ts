@@ -3,10 +3,9 @@ import { Store } from 'vuex';
 import { Toasted } from 'vue-toasted';
 import { TranslateResult } from 'vue-i18n';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
-import { IMultilingual } from '@/types';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { IMultilingual, IServerError } from '@libs/core-lib/types';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { SignalR } from '@/ui/plugins/signal-r';
-import { IServerError } from '@libs/core-lib/types';
 
 interface IFormatCurrency {
   (value: number): string;

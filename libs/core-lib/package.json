@@ -6,6 +6,7 @@
     "lint": "eslint . --fix --max-warnings=0"
   },
   "dependencies": {
+    "@libs/entities-lib": "*",
     "@microsoft/applicationinsights-web": "2.7.3",
     "axios": "0.27.2",
     "js-convert-case": "^4.1.1",

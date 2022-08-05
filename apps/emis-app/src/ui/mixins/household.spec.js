@@ -1,13 +1,13 @@
 import { mockStorage } from '@libs/registration-lib/store/storage';
-import { mockCombinedHousehold } from '@libs/registration-lib/entities/household/household.mocks';
-import { mockMemberData, mockMember } from '@libs/registration-lib/entities/value-objects/member';
-import { mockIndigenousCommunitiesGetData, mockGenders } from '@libs/registration-lib/entities/value-objects/identity-set';
-import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@libs/registration-lib/entities/value-objects/contact-information';
-import { mockShelterLocations } from '@libs/registration-lib/entities/event/event.mock';
-import { mockCombinedHouseholds } from '@libs/registration-lib/entities/household';
+import { mockCombinedHousehold } from '@libs/entities-lib/household/household.mocks';
+import { mockMemberData, mockMember } from '@libs/entities-lib/value-objects/member';
+import { mockIndigenousCommunitiesGetData, mockGenders } from '@libs/entities-lib/value-objects/identity-set';
+import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@libs/entities-lib/value-objects/contact-information';
+import { mockShelterLocations } from '@libs/entities-lib/registration-event/registrationEvent.mock';
+import { mockCombinedHouseholds } from '@libs/entities-lib/household';
 import household from '@/ui/mixins/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { EEventLocationStatus, mockEventMainInfo } from '@/entities/event';
+import { EEventLocationStatus, mockEventMainInfo } from '@libs/entities-lib/event';
 
 const Component = {
   render() {},

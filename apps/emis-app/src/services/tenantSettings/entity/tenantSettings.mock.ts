@@ -1,4 +1,4 @@
-import { mockBrandingEntityData, mockTenantSettingsEntity, mockTenantSettingsEntityData } from '@/entities/tenantSettings';
+import { mockBrandingEntityData, mockTenantSettingsEntity, mockTenantSettingsEntityData } from '@libs/entities-lib/tenantSettings';
 import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { ITenantSettingsServiceMock } from './tenantSettings.types';
 

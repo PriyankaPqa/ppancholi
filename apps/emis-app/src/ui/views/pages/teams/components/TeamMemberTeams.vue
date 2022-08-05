@@ -47,7 +47,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog } from '@libs/component-lib/components';
-import { IUserAccountTeamEvent, IUserAccountTeam, IUserAccountCombined } from '@/entities/user-account';
+import { IUserAccountTeamEvent, IUserAccountTeam, IUserAccountCombined } from '@libs/entities-lib/user-account';
 
 export default Vue.extend({
   name: 'TeamMemberTeams',

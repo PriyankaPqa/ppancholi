@@ -5,12 +5,12 @@ import {
 } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
+import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
-import { ECanadaProvinces } from '@/types';
-import { mockProgramEntities } from '@/entities/program';
+import { ECanadaProvinces } from '@libs/core-lib/types';
+import { mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
-import { MassActionMode } from '@/entities/mass-action';
+import { MassActionMode } from '@libs/entities-lib/mass-action';
 import Component from './FinancialAssistanceCaseFileFiltering.vue';
 
 const localVue = createLocalVue();

@@ -36,11 +36,11 @@ import Vue from 'vue';
 import {
   RcConfirmationDialog,
 } from '@libs/component-lib/components';
-import { EEventStatus } from '@libs/registration-lib/entities/event';
-import { ICaseFileCombined, CaseFileStatus } from '@/entities/case-file';
+import { EEventStatus } from '@libs/entities-lib/registration-event';
+import { ICaseFileCombined, CaseFileStatus } from '@libs/entities-lib/case-file';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { IListOption } from '@/types/interfaces/IListOption';
-import { IEventCombined } from '@/entities/event';
+import { IEventCombined } from '@libs/entities-lib/event';
+import { IListOption } from '@libs/core-lib/types';
 import CaseFileStatusDialog from './CaseFileStatusDialog.vue';
 
 export default Vue.extend({

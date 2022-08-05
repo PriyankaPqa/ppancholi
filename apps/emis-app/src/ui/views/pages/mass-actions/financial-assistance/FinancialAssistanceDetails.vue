@@ -19,7 +19,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import FinancialAssistancePaymentDetailsTable from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePaymentDetailsTable.vue';
-import { IMassActionCombined } from '@/entities/mass-action';
+import { IMassActionCombined } from '@libs/entities-lib/mass-action';
 import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
 import routes from '@/constants/routes';
 

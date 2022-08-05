@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { IHouseholdCaseFile } from '@libs/registration-lib/entities/household';
+import { IHouseholdCaseFile } from '@libs/entities-lib/household';
 import { RcPageContent } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { i18n } from '@/ui/plugins';

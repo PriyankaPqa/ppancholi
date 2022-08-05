@@ -1,13 +1,13 @@
 import { ActionContext, ActionTree } from 'vuex';
 
-import { IAddress } from '../../../entities/value-objects/address';
-import { IHouseholdEntity } from '../../../entities/household';
+import { IAddress } from '@libs/entities-lib/value-objects/address';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
+import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
+import { IVersionedEntity, IVersionedEntityCombined } from '@libs/entities-lib/value-objects/versioned-entity/versionedEntity.types';
 import { BaseModule, IState } from '../base';
 import { HouseholdsService } from '../../../services/households/entity';
-import utils from '../../../entities/value-objects/versioned-entity/versionedEntityUtils';
 
 import { IRootState } from '../../store.types';
-import { IVersionedEntity, IVersionedEntityCombined } from '../../../entities/value-objects/versioned-entity/versionedEntity.types';
 import { IHouseholdEntityState } from './householdEntity.types';
 
 export class HouseholdEntityModule extends BaseModule <IHouseholdEntity, uuid> {

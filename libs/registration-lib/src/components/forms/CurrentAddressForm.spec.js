@@ -1,12 +1,12 @@
 import { i18n } from '@/ui/plugins/i18n';
+import helpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import {
   ECurrentAddressTypes, mockHouseholdCreate, mockCampGround, mockShelter, mockUnknown, mockRemainingHome, mockFriendsFamily, mockMedicalFacility, mockOther,
-} from '../../entities/household-create';
+} from '../../../../entities-lib/src/household-create';
 
-import { mockShelterLocations } from '../../entities/event';
+import { mockShelterLocations } from '../../../../entities-lib/src/registration-event';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import helpers from '../../ui/helpers/index';
 
 import Component from './CurrentAddressForm.vue';
 

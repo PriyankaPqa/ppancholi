@@ -1,4 +1,7 @@
-import { IServerError } from '@libs/core-lib/types';
+import {
+  IServerError, ERegistrationMode,
+  EOptionItemStatus, ERegistrationMethod, IOptionItemData,
+} from '@libs/core-lib/types';
 /* eslint-disable max-lines-per-function */
 import {
   ActionContext, ActionTree, GetterTree, Module, MutationTree,
@@ -8,24 +11,11 @@ import VueI18n from 'vue-i18n';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
-import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';
-import {
-  isRegisteredValid,
-  privacyStatementValid,
-  personalInformationValid,
-  addressesValid,
-  additionalMembersValid,
-  reviewRegistrationValid,
-} from './registrationUtils';
+import { ISplitHousehold } from '@libs/entities-lib/household-create/householdCreate.types';
 
-import { IHouseholdEntity } from '../../../entities/household';
-import { ERegistrationMode } from '../../../types/enums/ERegistrationMode';
-import {
-  EOptionItemStatus, ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
-} from '../../../types';
-import { IRootState, IStore } from '../../store.types';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
 import {
   HouseholdCreate,
   EIndigenousTypes,
@@ -38,8 +28,18 @@ import {
   Member,
   IIdentitySetData,
   ICurrentAddress, IAddress, IHouseholdCreateData,
-} from '../../../entities/household-create';
-import { Event, IEvent, IEventData } from '../../../entities/event';
+} from '@libs/entities-lib/household-create';
+import { RegistrationEvent, IEvent, IEventData } from '@libs/entities-lib/registration-event';
+import { IRegistrationMenuItem } from '../../../types';
+import {
+  isRegisteredValid,
+  privacyStatementValid,
+  personalInformationValid,
+  addressesValid,
+  additionalMembersValid,
+  reviewRegistrationValid,
+} from './registrationUtils';
+import { IRootState, IStore } from '../../store.types';
 
 import { resetVuexModuleState } from '../../storeUtils';
 
@@ -74,7 +74,7 @@ const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(t
 const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules: boolean, mode: ERegistrationMode) => ({
   isCRCRegistration: () => mode === ERegistrationMode.CRC,
 
-  event: (state: IState) => new Event(state.event),
+  event: (state: IState) => new RegistrationEvent(state.event),
 
   isLeftMenuOpen: (state: IState) => state.isLeftMenuOpen,
 

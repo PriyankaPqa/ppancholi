@@ -2,16 +2,16 @@
 // In registration and also in household profile
 
 import Vue from 'vue';
-import { IHouseholdCombined } from '@libs/registration-lib/entities/household';
-import { IMemberEntity } from '@libs/registration-lib/entities/value-objects/member';
-import { IIndigenousCommunityData } from '@libs/registration-lib/entities/value-objects/identity-set';
-import { IAddressData, IHouseholdCreateData } from '@libs/registration-lib/entities/household-create';
+import { IHouseholdCombined } from '@libs/entities-lib/household';
+import { IMemberEntity } from '@libs/entities-lib/value-objects/member';
+import { IIndigenousCommunityData } from '@libs/entities-lib/value-objects/identity-set';
+import { IAddressData, IHouseholdCreateData } from '@libs/entities-lib/household-create';
 import deepmerge from 'deepmerge';
-import { ICurrentAddressCreateRequest } from '@libs/registration-lib/entities/value-objects/current-address';
+import { ICurrentAddressCreateRequest } from '@libs/entities-lib/value-objects/current-address';
 import householdHelpers from '@/ui/helpers/household';
-import { IOptionItemData } from '@/entities/optionItem';
-import { EEventLocationStatus, EEventStatus, IEventGenericLocation } from '@/entities/event';
-import { CaseFileStatus } from '@/entities/case-file';
+import { IOptionItemData } from '@libs/entities-lib/optionItem';
+import { EEventLocationStatus, EEventStatus, IEventGenericLocation } from '@libs/entities-lib/event';
+import { CaseFileStatus } from '@libs/entities-lib/case-file';
 
 export default Vue.extend({
   methods: {

@@ -6,7 +6,7 @@
 import Vue from 'vue';
 import LibAdditionalMembers from '@libs/registration-lib/components/additional-members/AdditionalMembers.vue';
 import { i18n } from '@/ui/plugins';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'AdditionalMembers',

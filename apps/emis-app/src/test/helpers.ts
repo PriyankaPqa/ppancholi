@@ -1,4 +1,4 @@
-import { IUserData, mockUsersData } from '@/entities/user';
+import { IUserData, mockUsersData } from '@libs/entities-lib/user';
 import { mockStore } from '@/store';
 import { IAzureSearchParams } from '@libs/core-lib/types';
 

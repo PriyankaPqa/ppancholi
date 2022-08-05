@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 
-import { IUserAccountMetadata } from '@/entities/user-account';
+import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IUserAccountsMetadataService } from './user-accounts.types';
 

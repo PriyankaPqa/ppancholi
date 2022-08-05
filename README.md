@@ -76,7 +76,7 @@ yarn lint
 - jest.config.js (root + new package)
 
 2) Update pipeline scripts
-
+   1) Update parallelize-tests
 
 3) Add script to package.json
    1) new_package:lint

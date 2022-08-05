@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockCombinedTenantSettings } from '@/entities/tenantSettings';
-import { mockUsersData } from '@/entities/user';
+import { mockCombinedTenantSettings } from '@libs/entities-lib/tenantSettings';
+import { mockUsersData } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
 import Component from '../RightMenu.vue';
 

@@ -3,10 +3,10 @@ import routes from '@/constants/routes';
 import {
   OptionItem,
   mockOptionItemData,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 import {
   mockCombinedEvents, mockEventEntity, mockRegionData, mockOtherProvinceData,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import { mockStorage } from '@/store/storage';
 import helpers from '@/ui/helpers/helpers';
 import Component from '../CreateEditEvent.vue';

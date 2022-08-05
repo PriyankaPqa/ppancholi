@@ -1,4 +1,4 @@
-import { IOptionItem } from '@/entities/optionItem';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import {
   IBaseActions,
   IBaseActionsMock,

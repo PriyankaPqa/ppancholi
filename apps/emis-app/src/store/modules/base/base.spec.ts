@@ -3,7 +3,7 @@ import applicationInsights from '@libs/core-lib/plugins/applicationInsights/appl
 import { ActionContext } from 'vuex';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { httpClient } from '@/services/httpClient';
-import { mockUserAccountEntities, mockUserAccountEntity } from '@/entities/user-account';
+import { mockUserAccountEntities, mockUserAccountEntity } from '@libs/entities-lib/user-account';
 import helpers from '@/ui/helpers/helpers';
 import { mockIRestResponse } from '@libs/core-lib/services/http-client';
 import { BaseModule } from './index';

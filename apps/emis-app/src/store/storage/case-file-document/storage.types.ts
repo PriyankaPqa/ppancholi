@@ -1,6 +1,6 @@
-import { ICaseFileDocumentEntity, ICaseFileDocumentMetadata } from '@/entities/case-file-document';
-import { IOptionItem, IOptionItemData } from '@/entities/optionItem';
-import { IEntityCombined } from '@libs/core-lib/entities/base';
+import { ICaseFileDocumentEntity, ICaseFileDocumentMetadata } from '@libs/entities-lib/case-file-document';
+import { IOptionItem, IOptionItemData } from '@libs/entities-lib/optionItem';
+import { IEntityCombined } from '@libs/entities-lib/base';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';

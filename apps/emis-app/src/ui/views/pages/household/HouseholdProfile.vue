@@ -176,18 +176,18 @@ import _isEmpty from 'lodash/isEmpty';
 
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
-import { IHouseholdCreate, Member } from '@libs/registration-lib/entities/household-create';
-import { IHouseholdCombined, IHouseholdCaseFile } from '@libs/registration-lib/entities/household';
+import { IHouseholdCreate, Member } from '@libs/entities-lib/household-create';
+import { IHouseholdCombined, IHouseholdCaseFile } from '@libs/entities-lib/household';
 import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
-import { CaseFileStatus } from '@/entities/case-file';
+import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
 import {
   EEventLocationStatus, EEventStatus, IEventGenericLocation, IEventMainInfo,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';

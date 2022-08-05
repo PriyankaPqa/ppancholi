@@ -2,16 +2,17 @@
 import { mockStore } from '@/store';
 import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import _merge from 'lodash/merge';
-import { mockContactInformation } from '@/entities/value-objects/contact-information';
-import { mockAdditionalMember, mockMember } from '@/entities/value-objects/member';
-import { mockIdentitySet } from '@/entities/value-objects/identity-set';
-import { mockAddress } from '@/entities/value-objects/address';
-import { mockCampGround } from '@/entities/value-objects/current-address';
-import { mockHouseholdCreateData, mockSplitHousehold } from '@/entities/household-create';
 import { mockHttpError } from '@libs/core-lib/services/http-client';
+import { mockEventData } from '@libs/entities-lib/registration-event';
+import { mockContactInformation } from '@libs/entities-lib/value-objects/contact-information';
+import { mockAdditionalMember, mockMember } from '@libs/entities-lib/value-objects/member';
+import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
+import { mockAddress } from '@libs/entities-lib/value-objects/address';
+import { mockCampGround } from '@libs/entities-lib/value-objects/current-address';
+import { mockHouseholdCreateData, mockSplitHousehold } from '@libs/entities-lib/household-create';
+import { ERegistrationMethod } from '@libs/core-lib/types';
+import { IRegistrationMenuItem } from '@/types';
 import { makeStorage } from './storage';
-import { mockEventData } from '../../../entities/event';
-import { ERegistrationMethod, IRegistrationMenuItem } from '../../../types';
 
 const store = mockStore({}, { commit: true, dispatch: true });
 const storage = makeStorage(store);

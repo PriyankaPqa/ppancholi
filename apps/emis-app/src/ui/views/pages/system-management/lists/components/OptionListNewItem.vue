@@ -87,13 +87,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMultilingual, VForm } from '@/types';
+import { IMultilingual, VForm } from '@libs/core-lib/types';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { MAX_LENGTH_MD } from '@/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import entityUtils from '@libs/core-lib/entities/utils';
-import { IOptionItem } from '@/entities/optionItem';
-import { Status } from '@libs/core-lib/entities/base';
+import entityUtils from '@libs/entities-lib/utils';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({
   name: 'OptionListNewItem',

@@ -13,7 +13,7 @@
 
 import Vue from 'vue';
 import routes from '@/constants/routes';
-import { MassActionType } from '@/entities/mass-action';
+import { MassActionType } from '@libs/entities-lib/mass-action';
 import MassActionBaseTable from '@/ui/views/pages/mass-actions/components/MassActionBaseTable.vue';
 
 export default Vue.extend({

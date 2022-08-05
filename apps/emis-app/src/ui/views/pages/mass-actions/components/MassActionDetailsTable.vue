@@ -35,7 +35,7 @@ import Vue from 'vue';
 import moment from 'moment';
 import {
   IMassActionCombined, MassActionDataCorrectionType, MassActionRunStatus, MassActionType,
-} from '@/entities/mass-action';
+} from '@libs/entities-lib/mass-action';
 
 export default Vue.extend({
   name: 'MassActionDetailsTable',

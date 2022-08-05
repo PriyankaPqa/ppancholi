@@ -1,5 +1,5 @@
 import Vuetify from 'vuetify';
-import { mockCombinedHousehold } from '@libs/registration-lib/entities/household';
+import { mockCombinedHousehold } from '@libs/entities-lib/household';
 import {
   createLocalVue,
   shallowMount,

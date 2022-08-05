@@ -1,7 +1,7 @@
 import {
   ICaseFileDocumentCombined, ICaseFileDocumentEntity, mockCaseFileDocumentEntity, mockCombinedCaseFileDocuments,
-} from '@/entities/case-file-document';
-import { mockOptionItemData } from '@/entities/optionItem';
+} from '@libs/entities-lib/case-file-document';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
 import { BaseMock } from '../base/base.mock';
 

@@ -1,7 +1,7 @@
-import { mockHouseholdCreate, mockShelterData } from '@libs/registration-lib/entities/household-create';
-import { mockCombinedHousehold } from '@libs/registration-lib/entities/household';
-import { mockShelterLocations } from '@libs/registration-lib/entities/event/event.mock';
-import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
+import { mockHouseholdCreate, mockShelterData } from '@libs/entities-lib/household-create';
+import { mockCombinedHousehold } from '@libs/entities-lib/household';
+import { mockShelterLocations } from '@libs/entities-lib/registration-event/registrationEvent.mock';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';

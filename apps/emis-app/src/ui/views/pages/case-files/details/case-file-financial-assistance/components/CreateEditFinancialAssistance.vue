@@ -176,20 +176,20 @@ import {
   IFinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentLine,
   PaymentStatus,
-} from '@/entities/financial-assistance-payment';
+} from '@libs/entities-lib/financial-assistance-payment';
 import
 {
   IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableCombined,
   IFinancialAssistanceTableItem,
-} from '@/entities/financial-assistance';
-import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
+} from '@libs/entities-lib/financial-assistance';
+import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
-import { IProgramEntity } from '@/entities/program';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
-import { VForm } from '@/types';
+import { VForm } from '@libs/core-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/core-lib/entities/base/index';
+import { Status } from '@libs/entities-lib/base';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';

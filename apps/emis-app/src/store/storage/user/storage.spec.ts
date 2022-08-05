@@ -1,5 +1,5 @@
 import { mockStore } from '@/store';
-import { mockUsersData } from '@/entities/user';
+import { mockUsersData } from '@libs/entities-lib/user';
 import { makeStorage } from './storage';
 
 const store = mockStore({

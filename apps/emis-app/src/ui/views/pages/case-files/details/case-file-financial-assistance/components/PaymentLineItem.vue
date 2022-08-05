@@ -51,10 +51,10 @@
 import Vue from 'vue';
 import {
   ApprovalStatus, FinancialAssistancePaymentGroup, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentLine, PayeeType,
-} from '@/entities/financial-assistance-payment';
-import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
+} from '@libs/entities-lib/financial-assistance-payment';
+import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@libs/entities-lib/financial-assistance';
 import routes from '@/constants/routes';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({
   name: 'PaymentLineItem',

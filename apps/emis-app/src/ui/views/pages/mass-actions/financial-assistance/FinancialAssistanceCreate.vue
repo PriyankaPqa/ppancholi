@@ -21,12 +21,12 @@
 import Vue from 'vue';
 import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
-import { IMassActionEntity, MassActionType } from '@/entities/mass-action';
-import { IEventEntity } from '@/entities/event';
-import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
-import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
+import { IMassActionEntity, MassActionType } from '@libs/entities-lib/mass-action';
+import { IEventEntity } from '@libs/entities-lib/event';
+import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
+import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import FinancialAssistancePaymentDetailsCreate from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePaymentDetailsCreate.vue';
-import { EPaymentModalities } from '@/entities/program';
+import { EPaymentModalities } from '@libs/entities-lib/program';
 import { IMassActionFinancialAssistanceCreatePayload } from '@/services/mass-actions/entity';
 import { buildQuery } from '@libs/core-lib/services/odata-query';
 

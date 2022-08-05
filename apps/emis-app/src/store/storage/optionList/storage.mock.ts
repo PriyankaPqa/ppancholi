@@ -1,4 +1,4 @@
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { IStorageMock } from './storage.types';
 
 export const mockStorageOptionList = () : IStorageMock => ({

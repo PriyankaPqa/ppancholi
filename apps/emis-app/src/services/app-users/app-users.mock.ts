@@ -1,4 +1,4 @@
-import { mockAppUserData } from '@/entities/app-user';
+import { mockAppUserData } from '@libs/entities-lib/app-user';
 import {
   IAppUsersServiceMock,
 } from './app-users.types';

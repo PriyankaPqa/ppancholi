@@ -85,8 +85,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ITeamEntity, ITeamMember } from '@/entities/team';
-import { IUserAccountCombined } from '@/entities/user-account';
+import { ITeamEntity, ITeamMember } from '@libs/entities-lib/team';
+import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 
 export interface IIndividual extends ITeamMember, IUserAccountCombined{
   translatedRoleName?: string;

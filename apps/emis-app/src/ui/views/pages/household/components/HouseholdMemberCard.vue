@@ -140,14 +140,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMember } from '@libs/registration-lib/entities/household-create';
+import { IMember } from '@libs/entities-lib/household-create';
 import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
 import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
 import { RcTooltip } from '@libs/component-lib/components';
 import householdHelpers from '@/ui/helpers/household';
-import { IEventGenericLocation } from '@/entities/event';
+import { IEventGenericLocation } from '@libs/entities-lib/event';
 
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import PrimaryMemberDialog from './PrimaryMemberDialog.vue';
 import SplitHouseholdDialog from '../split/SplitHouseholdDialog.vue';
 

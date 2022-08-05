@@ -10,11 +10,11 @@ import {
   IValidateEmailResponse,
   IValidateEmailRequest,
   IConsentInformation, IValidateEmailPublicRequest,
-} from '../../../entities/household-create';
-import { IOptionItemData } from '../../../types';
-import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
-import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity';
-import { IHouseholdActivity } from '../../../entities/value-objects/household-activity';
+} from '@libs/entities-lib/household-create';
+import { IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
+import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
+import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
+import { IOptionItemData } from '@libs/core-lib/types';
 
 export interface IHouseholdsService {
   getGenders(): Promise<IOptionItemData[]>;

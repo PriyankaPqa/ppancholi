@@ -62,9 +62,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcStatsTemplate, VAutocompleteWithValidation } from '@libs/component-lib/components';
-import { IEntityCombined } from '@libs/core-lib/entities/base';
-import { EEventStatus, IEventMainInfo } from '@/entities/event';
-import { ITeamEntity, ITeamMetadata } from '@/entities/team';
+import { IEntityCombined } from '@libs/entities-lib/base';
+import { EEventStatus, IEventMainInfo } from '@libs/entities-lib/event';
+import { ITeamEntity, ITeamMetadata } from '@libs/entities-lib/team';
 
 const defaultTeamStats = {
   countTeamMembers: 0,

@@ -1,14 +1,14 @@
-import { mockVersionedEntity } from '../../../entities/value-objects/versioned-entity';
-import { mockHouseholdEntity } from '../../../entities/household';
+import { mockVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import {
   mockGenders,
   mockIndigenousCommunitiesGetData, mockMemberData,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
   mockValidateEmailResponse,
-} from '../../../entities/household-create';
+} from '@libs/entities-lib/household-create';
+import { mockHouseholdActivities } from '@libs/entities-lib/value-objects/household-activity';
 import { IHouseholdsServiceMock } from './households.types';
-import { mockHouseholdActivities } from '../../../entities/value-objects/household-activity';
 
 export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   getGenders: jest.fn(() => mockGenders()),

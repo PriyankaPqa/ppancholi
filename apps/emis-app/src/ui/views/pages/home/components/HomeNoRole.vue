@@ -28,7 +28,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPageContent } from '@libs/component-lib/components';
-import { IUser } from '@/entities/user';
+import { IUser } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
 
 export default Vue.extend({

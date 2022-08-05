@@ -26,10 +26,10 @@
 import Vue from 'vue';
 
 import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@libs/component-lib/components';
-import { IShelterLocationData } from '@libs/registration-lib/entities/household-create';
-import { IEventData as IRegistrationEventData } from '@libs/registration-lib/entities/event';
+import { IShelterLocationData } from '@libs/entities-lib/household-create';
+import { IEventData as IRegistrationEventData } from '@libs/entities-lib/registration-event';
 import routes from '@/constants/routes';
-import { EEventStatus, IEventMainInfo } from '@/entities/event';
+import { EEventStatus, IEventMainInfo } from '@libs/entities-lib/event';
 import { tabs } from '@/store/modules/registration/tabs';
 
 export default Vue.extend({

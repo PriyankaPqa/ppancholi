@@ -5,15 +5,15 @@ import { mockStorage } from '@/store/storage';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@libs/component-lib/src/components';
+import helpers from '@libs/entities-lib/helpers';
 import { i18n } from '../../ui/plugins/i18n';
-import helpers from '../../ui/helpers/index';
 import {
   mockHouseholdCreate,
   mockContactInformation,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems,
   mockCampGround, mockIdentitySet, mockAddress, mockAdditionalMember, Member,
-} from '../../entities/household-create';
+} from '../../../../entities-lib/src/household-create';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
 import PersonalInformationTemplate from './personal-information/PersonalInformationTemplate.vue';
 import Component from './ReviewRegistration.vue';

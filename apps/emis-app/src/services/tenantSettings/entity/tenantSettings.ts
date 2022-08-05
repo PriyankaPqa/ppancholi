@@ -2,10 +2,10 @@ import applicationInsights from '@libs/core-lib/plugins/applicationInsights/appl
 import {
   IBrandingEntityData, ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest,
   ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
-} from '@/entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
-import { IMultilingual } from '@libs/registration-lib/types';
+import { IMultilingual } from '@libs/core-lib/types';
 import { ITenantSettingsService } from './tenantSettings.types';
 
 const API_URL_SUFFIX = 'system-management';

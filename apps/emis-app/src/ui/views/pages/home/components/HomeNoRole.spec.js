@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockUsersData, User } from '@/entities/user';
+import { mockUsersData, User } from '@libs/entities-lib/user';
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';
 import Component from './HomeNoRole.vue';

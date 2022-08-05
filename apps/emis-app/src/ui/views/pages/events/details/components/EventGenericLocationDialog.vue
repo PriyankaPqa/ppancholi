@@ -133,21 +133,21 @@ import {
   RcGoogleAutocomplete,
   RcCountrySelect,
 } from '@libs/component-lib/components';
-import { ECanadaProvinces, EEventSummarySections, VForm } from '@/types';
+import { EEventSummarySections } from '@/types';
+import { ECanadaProvinces, VForm, IServerError } from '@libs/core-lib/types';
 import {
   EEventLocationStatus,
   IEventEntity,
   IEventGenericLocation,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import entityUtils from '@libs/core-lib/entities/utils';
-import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
+import entityUtils from '@libs/entities-lib/utils';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
 import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@/ui/helpers/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import { FeatureKeys } from '@/entities/tenantSettings';
-import { IServerError } from '@libs/core-lib/types';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(handleUniqueNameSubmitError).extend({
 

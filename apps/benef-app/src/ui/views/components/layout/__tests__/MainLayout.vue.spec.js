@@ -1,4 +1,4 @@
-import { mockEvent } from '@libs/registration-lib/entities/event';
+import { mockEvent } from '@libs/entities-lib/registration-event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import Component from '../MainLayout.vue';

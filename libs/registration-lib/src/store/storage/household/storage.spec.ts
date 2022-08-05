@@ -1,6 +1,6 @@
 import { mockStore } from '@/store';
-import { mockAddress } from '@/entities/value-objects/address';
-import { mockHouseholdEntity } from '@/entities/household';
+import { mockAddress } from '@libs/entities-lib/value-objects/address';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { HouseholdStorage } from './storage';
 
 const store = mockStore({}, { commit: true, dispatch: true });

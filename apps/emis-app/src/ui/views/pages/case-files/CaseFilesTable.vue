@@ -107,12 +107,12 @@ import { IAzureSearchParams } from '@libs/core-lib/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import {
   ICaseFileCombined, CaseFileStatus, CaseFileTriage,
-} from '@/entities/case-file';
+} from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
-import { FilterKey } from '@/entities/user-account';
+import { FilterKey } from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { EEventStatus } from '@/entities/event';
+import { EEventStatus } from '@libs/entities-lib/event';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'CaseFilesTable',

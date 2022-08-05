@@ -149,14 +149,14 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
   IOptionItem,
   IOptionSubItem,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 
 import AddEmisUser from '@/ui/views/pages/system-management/lists/add-emis-user/AddEmisUser.vue';
 import routes from '@/constants/routes';
-import { IUserAccountCombined, IUserAccountEntity } from '@/entities/user-account';
-import { IMultilingual } from '@/types';
+import { IUserAccountCombined, IUserAccountEntity } from '@libs/entities-lib/user-account';
+import { IMultilingual } from '@libs/core-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({
   name: 'UserAccounts',

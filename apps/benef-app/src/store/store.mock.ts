@@ -9,7 +9,7 @@ import { makeRegistrationModule } from '@libs/registration-lib/store/modules/reg
 import { HouseholdEntityModule } from '@libs/registration-lib/store/modules/household';
 import { HouseholdsService } from '@libs/registration-lib/services/households/entity';
 
-import { ERegistrationMode } from '@libs/registration-lib/types';
+import { ERegistrationMode } from '@libs/core-lib/types';
 import { HouseholdMetadataModule } from '@libs/registration-lib/store/modules/household/householdMetadata';
 import { HouseholdMetadataService } from '@libs/registration-lib/services/households/metadata/index';
 import { TenantSettingsEntityModule } from '@libs/registration-lib/store/modules/tenantSettings/tenantSettingsEntity';

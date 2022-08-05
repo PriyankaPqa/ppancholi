@@ -1,13 +1,13 @@
 import { ActionContext } from 'vuex';
 
 import { HouseholdsService } from '@/services/households/entity';
-import { IHouseholdEntity, mockHouseholdEntity } from '@/entities/household';
-import { mockAddress } from '@/entities/value-objects/address';
 import { mockHttp } from '@libs/core-lib/src/services/http-client';
 import { mockStore } from '@/store';
 import { HouseholdEntityModule } from '@/store/modules/household/householdEntity';
-import { mockVersionedEntityCombined, mockVersionedEntity } from '../../../entities/value-objects/versioned-entity/versionedEntity.mock';
-import utils from '../../../entities/value-objects/versioned-entity/versionedEntityUtils';
+import { mockVersionedEntityCombined, mockVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity/versionedEntity.mock';
+import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
+import { mockAddress } from '@libs/entities-lib/value-objects/address';
+import { IHouseholdEntity, mockHouseholdEntity } from '@libs/entities-lib/household';
 import { IHouseholdEntityState } from './householdEntity.types';
 
 const myModule = new HouseholdEntityModule(new HouseholdsService(mockHttp()));

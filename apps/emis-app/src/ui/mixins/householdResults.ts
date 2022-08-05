@@ -2,8 +2,8 @@
 
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import { IHouseholdCombined } from '@libs/registration-lib/entities/household/index';
-import { IPhoneNumber } from '@libs/registration-lib/entities/value-objects/contact-information/index';
+import { IHouseholdCombined } from '@libs/entities-lib/household/index';
+import { IPhoneNumber } from '@libs/entities-lib/value-objects/contact-information/index';
 import moment from 'moment';
 import routes from '@/constants/routes';
 

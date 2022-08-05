@@ -1,4 +1,4 @@
-import { ITeamEntity, ITeamMember, ITeamMetadata } from '@/entities/team';
+import { ITeamEntity, ITeamMember, ITeamMetadata } from '@libs/entities-lib/team';
 import { IStorage } from '@/store/storage/team/storage.types';
 import { IStore, IState } from '../../store.types';
 import { Base } from '../base';

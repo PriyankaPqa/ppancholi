@@ -1,44 +1,44 @@
 import { Store } from 'vuex';
 import { IState as IRegistrationState } from '@libs/registration-lib/store/modules/registration/registration.types';
 import { IHouseholdEntityState } from '@libs/registration-lib/store/modules/household/householdEntity.types';
-import { IHouseholdMetadata } from '@libs/registration-lib/entities/household';
+import { IHouseholdMetadata } from '@libs/entities-lib/household';
 import { IProvider, IProviderMock } from '@/services/provider';
 import * as vuexModule from '@/constants/vuex-modules';
 import { IState as IDashboardState } from '@/store/modules/dashboard/dashboard.types';
 import { IState as IOptionListState } from '@/store/modules/optionList/optionList.types';
 
 import { IProgramEntityState } from '@/store/modules/program/programEntity.types';
-import { IProgramMetadata } from '@/entities/program';
+import { IProgramMetadata } from '@libs/entities-lib/program';
 
 import { IState as IBaseState } from '@/store/modules/base/base.types';
 import { IState as IUserState } from '@/store/modules/user/user.types';
 
 import { IUserAccountEntityState } from '@/store/modules/user-account/userAccountEntity.types';
-import { IUserAccountMetadata } from '@/entities/user-account';
+import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 
 import { ICaseFileEntityState } from '@/store/modules/case-file/caseFileEntity.types';
-import { ICaseFileMetadata } from '@/entities/case-file';
+import { ICaseFileMetadata } from '@libs/entities-lib/case-file';
 
 import { ICaseNoteEntityState } from '@/store/modules/case-note/caseNoteEntity.types';
-import { ICaseNoteMetadata } from '@/entities/case-note';
+import { ICaseNoteMetadata } from '@libs/entities-lib/case-note';
 
 import { IEventEntityState } from '@/store/modules/event/eventEntity.types';
-import { IEventMetadata } from '@/entities/event';
+import { IEventMetadata } from '@libs/entities-lib/event';
 
 import { ICaseFileReferralEntityState } from '@/store/modules/case-file-referral/caseFileReferralEntity.types';
-import { ICaseFileReferralMetadata } from '@/entities/case-file-referral';
+import { ICaseFileReferralMetadata } from '@libs/entities-lib/case-file-referral';
 
 import { ICaseFileDocumentEntityState } from '@/store/modules/case-file-document/caseFileDocumentEntity.types';
-import { ICaseFileDocumentMetadata } from '@/entities/case-file-document';
+import { ICaseFileDocumentMetadata } from '@libs/entities-lib/case-file-document';
 
 import { IFinancialAssistanceEntityState } from '@/store/modules/financial-assistance/financialAssistanceEntity.types';
-import { IFinancialAssistanceTableMetadata } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableMetadata } from '@libs/entities-lib/financial-assistance';
 
 import { ITeamEntityState } from '@/store/modules/team/teamEntity.types';
-import { ITeamMetadata } from '@/entities/team';
+import { ITeamMetadata } from '@libs/entities-lib/team';
 
 import { IFinancialAssistanceCategoryEntityState } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity.types';
-import { IFinancialAssistancePaymentMetadata } from '@/entities/financial-assistance-payment';
+import { IFinancialAssistancePaymentMetadata } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistancePaymentEntityState } from './modules/financial-assistance-payments/financialAssistancePaymentEntity.types';
 
 import { ITenantSettingsEntityState } from './modules/tenantSettings/tenantSettingsEntity.types';

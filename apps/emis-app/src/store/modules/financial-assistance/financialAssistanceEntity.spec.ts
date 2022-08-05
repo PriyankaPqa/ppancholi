@@ -6,12 +6,12 @@ import {
   mockItemData,
   mockItems,
   mockSubItems,
-} from '@/entities/financial-assistance';
-import { mockProgramEntity } from '@/entities/program';
+} from '@libs/entities-lib/financial-assistance';
+import { mockProgramEntity } from '@libs/entities-lib/program';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
 import { httpClient } from '@/services/httpClient';
-import { mockOptionItems } from '@/entities/optionItem';
-import { Status } from '@libs/core-lib/entities/base';
+import { mockOptionItems } from '@libs/entities-lib/optionItem';
+import { Status } from '@libs/entities-lib/base';
 import { FinancialAssistanceEntityModule } from './financialAssistanceEntity';
 
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';

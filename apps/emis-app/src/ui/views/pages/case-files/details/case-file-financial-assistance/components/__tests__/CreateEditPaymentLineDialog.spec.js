@@ -1,12 +1,12 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
-import { mockItemsWithBasicData } from '@/entities/financial-assistance';
-import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@/entities/financial-assistance-payment';
-import libHelpers from '@libs/registration-lib/ui/helpers';
+import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
+import { mockItemsWithBasicData } from '@libs/entities-lib/financial-assistance';
+import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@libs/entities-lib/financial-assistance-payment';
+import libHelpers from '@libs/entities-lib/helpers';
 import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
-import { mockAddressData, Address } from '@libs/registration-lib/entities/value-objects/address';
-import { Status } from '@libs/core-lib/entities/base';
+import { mockAddressData, Address } from '@libs/entities-lib/value-objects/address';
+import { Status } from '@libs/entities-lib/base';
 import Component from '../CreateEditPaymentLineDialog.vue';
 
 const localVue = createLocalVue();

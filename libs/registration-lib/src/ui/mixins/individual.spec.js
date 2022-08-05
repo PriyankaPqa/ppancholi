@@ -1,7 +1,7 @@
-import { mockEvent } from '../../entities/event/event.mock';
+import helpers from '@libs/entities-lib/helpers';
+import { mockEvent } from '../../../../entities-lib/src/registration-event/registrationEvent.mock';
 import { mockStorage } from '../../store/storage';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
-import helpers from '../helpers/index';
 
 import individual from './individual';
 

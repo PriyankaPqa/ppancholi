@@ -1,6 +1,6 @@
 import {
   IAssessmentTemplateCombined, IAssessmentTemplateEntity, mockCombinedAssessmentTemplates, mockAssessmentTemplateEntity,
-} from '@libs/core-lib/entities/assessment-template';
+} from '@libs/entities-lib/assessment-template';
 import { BaseMock } from '../base/base.mock';
 
 export class AssessmentTemplateStorageMock extends BaseMock<IAssessmentTemplateCombined, IAssessmentTemplateEntity> {

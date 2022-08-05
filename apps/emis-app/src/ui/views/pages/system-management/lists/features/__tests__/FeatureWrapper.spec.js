@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockFeatures } from '@/entities/tenantSettings';
+import { mockFeatures } from '@libs/entities-lib/tenantSettings';
 import Component from '../FeatureWrapper.vue';
 
 const localVue = createLocalVue();

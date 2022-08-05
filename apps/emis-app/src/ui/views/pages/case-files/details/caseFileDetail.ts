@@ -1,6 +1,6 @@
 import Vue from 'vue';
-import { ICaseFileCombined } from '@/entities/case-file';
-import { EEventStatus, IEventCombined } from '@/entities/event';
+import { ICaseFileCombined } from '@libs/entities-lib/case-file';
+import { EEventStatus, IEventCombined } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   props: {

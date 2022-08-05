@@ -1,7 +1,7 @@
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { DomainBaseService } from '@libs/core-lib/services/base';
-import { ICaseFileDocumentEntity, ICaseFileDocumentMetadata } from '@/entities/case-file-document';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
+import { ICaseFileDocumentEntity, ICaseFileDocumentMetadata } from '@libs/entities-lib/case-file-document';
 import { ICaseFileDocumentsService } from './case-file-documents.types';
 
 const API_URL_SUFFIX = 'case-file/case-files/{caseFileId}';

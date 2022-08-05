@@ -5,7 +5,7 @@ import {
   mockEditColoursRequest,
   mockEditTenantDetailsRequest,
   mockSetDomainsRequest,
-} from '@/entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
 import { mockStore } from '@/store';
 import { TenantSettingsStorage } from './storage';
 

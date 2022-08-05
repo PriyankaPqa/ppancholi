@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockCombinedUserAccount } from '@/entities/user-account';
-import { mockTeamEntity } from '@/entities/team';
+import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
+import { mockTeamEntity } from '@libs/entities-lib/team';
 
 import Component from '../case-file-activity/components/AssignedList.vue';
 

@@ -1,5 +1,5 @@
 import { IStore, IState } from '@/store/store.types';
-import { IOptionItem } from '@/entities/optionItem';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { Base } from '../base';
 import { IStorage } from './storage.types';
 

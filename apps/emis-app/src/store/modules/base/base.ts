@@ -8,7 +8,7 @@ import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/t
 import { ISignalRMock } from '@/ui/plugins/signal-r/signalR.types';
 import { SignalR } from '@/ui/plugins/signal-r/signalR';
 import { IRestResponse } from '@libs/core-lib/services/http-client';
-import { IEntity, Status } from '@libs/core-lib/entities/base';
+import { IEntity, Status } from '@libs/entities-lib/base';
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';
 

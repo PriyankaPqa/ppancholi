@@ -2,14 +2,14 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import {
   EEventStatus, mockEventEntity, mockCombinedEvent, EventEntity,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import { EEventSummarySections } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { mockUserStateLevel } from '@/test/helpers';
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
 import Component, { EDialogComponent } from '../EventSummary.vue';
 

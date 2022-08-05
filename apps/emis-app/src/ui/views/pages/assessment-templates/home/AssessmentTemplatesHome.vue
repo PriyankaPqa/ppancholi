@@ -83,12 +83,12 @@ import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTy
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/core-lib/types';
-import { FilterKey } from '@/entities/user-account';
-import { IAssessmentTemplateCombined, IAssessmentTemplateEntity } from '@libs/core-lib/entities/assessment-template';
+import { FilterKey } from '@libs/entities-lib/user-account';
+import { IAssessmentTemplateCombined, IAssessmentTemplateEntity } from '@libs/entities-lib/assessment-template';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'AssessmentTemplatesHome',

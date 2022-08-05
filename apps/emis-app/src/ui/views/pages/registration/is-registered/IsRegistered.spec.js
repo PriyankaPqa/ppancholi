@@ -1,7 +1,7 @@
 import Vuetify from 'vuetify';
 import { RcDialog } from '@libs/component-lib/components';
-import { mockSplitHousehold } from '@libs/registration-lib/entities/household-create';
-import { mockCombinedHousehold } from '@libs/registration-lib/entities/household';
+import { mockSplitHousehold } from '@libs/entities-lib/household-create';
+import { mockCombinedHousehold } from '@libs/entities-lib/household';
 import {
   createLocalVue,
   shallowMount,

@@ -56,7 +56,7 @@ import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@libs/component-lib/components';
 import moment from '@/ui/plugins/moment';
 import routes from '@/constants/routes';
-import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@/entities/case-file-document';
+import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import DownloadViewDocument from './DownloadViewDocument.vue';
 import caseFileDetail from '../../caseFileDetail';

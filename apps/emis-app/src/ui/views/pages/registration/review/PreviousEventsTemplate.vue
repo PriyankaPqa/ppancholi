@@ -31,7 +31,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from 'moment';
-import { IHouseholdCaseFile } from '@libs/registration-lib/entities/household';
+import { IHouseholdCaseFile } from '@libs/entities-lib/household';
 
 export default Vue.extend({
   name: 'PreviousEventsTemplate',

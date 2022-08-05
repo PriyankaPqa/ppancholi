@@ -3,7 +3,7 @@ import { mockStorage } from '@libs/registration-lib/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   MassActionRunStatus, mockCombinedMassAction, mockMassActionRun, mockMassActionRunMetadata,
-} from '@/entities/mass-action';
+} from '@libs/entities-lib/mass-action';
 import massActionDetails from './massActionDetails';
 
 const Component = {

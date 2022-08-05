@@ -1,8 +1,8 @@
-import { IVersionedEntityCombined } from '@libs/registration-lib/entities/value-objects/versioned-entity';
+import { IVersionedEntityCombined } from '@libs/entities-lib/value-objects/versioned-entity';
 import {
   EPaymentCancellationReason,
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentMetadata, PaymentStatus,
-} from '@/entities/financial-assistance-payment';
+} from '@libs/entities-lib/financial-assistance-payment';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';

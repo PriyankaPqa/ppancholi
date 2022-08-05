@@ -6,9 +6,9 @@ import {
   ISetDomainsRequest,
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
-} from '@/entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
-import { IMultilingual } from '@libs/registration-lib/types';
+import { IMultilingual } from '@libs/core-lib/types';
 
 export interface ITenantSettingsService extends IDomainBaseService<ITenantSettingsEntity, uuid> {
   getCurrentTenantSettings(): Promise<ITenantSettingsEntityData>;

@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { EEventStatus, mockEventEntityData, mockEventMainInfo } from '@/entities/event';
+import { EEventStatus, mockEventEntityData, mockEventMainInfo } from '@libs/entities-lib/event';
 import { mockStorage } from '@/store/storage';
-import { Event } from '@libs/registration-lib/entities/event';
+import { RegistrationEvent } from '@libs/entities-lib/registration-event';
 
 import Component from './SplitHouseholdEvent.vue';
 
@@ -87,7 +87,7 @@ describe('SplitHouseholdEvent', () => {
         wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({ value: events }));
 
         await wrapper.vm.fetchActiveEvents();
-        expect(wrapper.vm.events).toEqual(events.map((e) => new Event(e.entity)));
+        expect(wrapper.vm.events).toEqual(events.map((e) => new RegistrationEvent(e.entity)));
       });
     });
 

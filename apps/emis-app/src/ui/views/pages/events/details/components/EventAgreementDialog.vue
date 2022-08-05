@@ -111,14 +111,14 @@ import {
 import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 
-import { EEventSummarySections, VForm } from '@/types';
-import { IEventAgreement, IEventEntity } from '@/entities/event';
+import { EEventSummarySections } from '@/types';
+import { VForm, IServerError } from '@libs/core-lib/types';
+import { IEventAgreement, IEventEntity } from '@libs/entities-lib/event';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import entityUtils from '@libs/core-lib/entities/utils';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
-import { IOptionItem } from '@/entities/optionItem';
+import entityUtils from '@libs/entities-lib/utils';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import { IServerError } from '@libs/core-lib/types';
 
 export default mixins(handleUniqueNameSubmitError).extend({
 

@@ -1,6 +1,6 @@
 import { IStorage } from '@/store/storage/case-note/storage.types';
-import { IOptionItem } from '@/entities/optionItem';
-import { ICaseNoteEntity, ICaseNoteMetadata } from '@/entities/case-note';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { ICaseNoteEntity, ICaseNoteMetadata } from '@libs/entities-lib/case-note';
 import { ICombinedIndex, IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { IStore, IState } from '../../store.types';
 

@@ -2,7 +2,7 @@
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 
 import { DomainBaseService } from '@libs/core-lib/services/base';
-import { IFinancialAssistanceTableMetadata } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableMetadata } from '@libs/entities-lib/financial-assistance';
 import { IFinancialAssistanceTablesMetadataService } from './financialAssistanceTables.types';
 
 const apiUrlSuffix = 'finance';

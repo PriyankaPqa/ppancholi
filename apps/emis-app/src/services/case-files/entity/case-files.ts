@@ -3,10 +3,10 @@ import {
   IImpactStatusValidation,
   ICaseFileCount,
   ICaseFileDetailedCount, IAssignedTeamMembers,
-} from '@/entities/case-file';
+} from '@libs/entities-lib/case-file';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
-import { IListOption } from '@/types';
+import { IListOption } from '@libs/core-lib/types';
 import { ICaseFilesService, ICreateCaseFileRequest } from './case-files.types';
 
 const API_URL_SUFFIX = 'case-file';

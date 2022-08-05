@@ -109,17 +109,17 @@ import {
 } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 
-import { EEventSummarySections, VForm } from '@/types';
+import { EEventSummarySections } from '@/types';
+import { VForm, IServerError } from '@libs/core-lib/types';
 import {
   EEventCallCentreStatus,
   IEventCallCentre,
   IEventEntity,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import entityUtils from '@libs/core-lib/entities/utils';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
+import entityUtils from '@libs/entities-lib/utils';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import { IServerError } from '@libs/core-lib/types';
 
 export default mixins(handleUniqueNameSubmitError).extend({
   name: 'EventCallCentreDialog',

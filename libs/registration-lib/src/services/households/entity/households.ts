@@ -1,21 +1,21 @@
 import moment from 'moment';
 import { IHttpClient, IHttpMock } from '@libs/core-lib/services/http-client';
 import { DomainBaseService } from '@libs/core-lib/services/base';
-import { IConsentInformation, IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
-import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
-import {
-  ECanadaProvinces, ERegistrationMode, IOptionItemData,
-} from '../../../types';
+import { IConsentInformation, IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
+import { IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
 
 import {
   IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
   IIndigenousCommunityData, IMember, ICurrentAddress, ICurrentAddressCreateRequest, ECurrentAddressTypes,
   MemberCreateRequest, IIdentitySet, IIdentitySetCreateRequest, IMemberEntity, IAddress, IValidateEmailResponse,
   IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest, IValidateEmailPublicRequest, IHoneyPotIdentitySet,
-} from '../../../entities/household-create';
+} from '@libs/entities-lib/household-create';
+import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity/versionedEntity.types';
+import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
+import {
+  ECanadaProvinces, ERegistrationMode, IOptionItemData,
+} from '@libs/core-lib/types';
 import { IHouseholdsService } from './households.types';
-import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity/versionedEntity.types';
-import { IHouseholdActivity } from '../../../entities/value-objects/household-activity';
 
 const API_URL_SUFFIX = 'household';
 const CONTROLLER = 'households';

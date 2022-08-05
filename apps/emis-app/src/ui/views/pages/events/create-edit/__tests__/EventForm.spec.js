@@ -8,17 +8,17 @@ import {
   EEventStatus,
   mockEventEntity,
   mockCombinedEvents,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import {
   mockOptionItemData,
   OptionItem,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 import helpers from '@/ui/helpers/helpers';
 import {
   ECanadaProvinces,
-} from '@/types';
+} from '@libs/core-lib/types';
 import moment from '@/ui/plugins/moment';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
 import { mockStorage } from '@/store/storage';
 import Component from '../EventForm.vue';
 

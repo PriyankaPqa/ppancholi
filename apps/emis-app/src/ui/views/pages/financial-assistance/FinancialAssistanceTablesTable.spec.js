@@ -4,10 +4,10 @@ import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import { mockStorage } from '@/store/storage';
-import { mockCombinedFinancialAssistances } from '@/entities/financial-assistance';
-import { mockProgramEntities } from '@/entities/program';
+import { mockCombinedFinancialAssistances } from '@libs/entities-lib/financial-assistance';
+import { mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 import Component from './FinancialAssistanceTablesTable.vue';
 
 const storage = mockStorage();

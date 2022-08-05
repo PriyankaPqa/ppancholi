@@ -107,7 +107,7 @@
 import { ValidationObserver } from 'vee-validate';
 import Vue from 'vue';
 import { RcDialog } from '@libs/component-lib/components';
-import { ValidationOfImpactStatus, ImpactValidationMethod, CaseFileEntity } from '@/entities/case-file';
+import { ValidationOfImpactStatus, ImpactValidationMethod, CaseFileEntity } from '@libs/entities-lib/case-file';
 
 export default Vue.extend({
   name: 'ImpactValidationDialog',

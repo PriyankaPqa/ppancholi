@@ -1,15 +1,16 @@
-import { IServerError } from '@libs/core-lib/types';
+import {
+  IServerError,
+  ERegistrationMethod, IOptionItemData,
+} from '@libs/core-lib/types';
 import { IStore, IState } from '@libs/registration-lib/store/store.types';
 import { TranslateResult } from 'vue-i18n';
-import { IIdentitySet } from '../../../entities/value-objects/identity-set/identitySet.types';
-import { IHouseholdEntity } from '../../../entities/household';
-import {
-  ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
-} from '../../../types';
+import { IIdentitySet } from '@libs/entities-lib/value-objects/identity-set/identitySet.types';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
 import {
   IIndigenousCommunityData, EIndigenousTypes, IContactInformation, IMember, IIdentitySetData, IAddress, ICurrentAddress, IHouseholdCreateData,
-} from '../../../entities/household-create';
-import { IEvent, IEventData } from '../../../entities/event';
+} from '@libs/entities-lib/household-create';
+import { IEvent, IEventData } from '@libs/entities-lib/registration-event';
+import { IRegistrationMenuItem } from '../../../types';
 import { IStorage } from './storage.types';
 
 // eslint-disable-next-line

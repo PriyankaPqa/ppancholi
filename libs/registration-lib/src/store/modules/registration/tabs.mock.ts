@@ -1,4 +1,4 @@
-import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
+import { IRegistrationMenuItem } from '../../../types';
 
 export const mockTabs = (): IRegistrationMenuItem[] => [
   {

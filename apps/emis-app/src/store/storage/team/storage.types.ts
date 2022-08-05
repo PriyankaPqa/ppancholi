@@ -1,4 +1,4 @@
-import { ITeamEntity, ITeamMember, ITeamMetadata } from '@/entities/team';
+import { ITeamEntity, ITeamMember, ITeamMetadata } from '@libs/entities-lib/team';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';

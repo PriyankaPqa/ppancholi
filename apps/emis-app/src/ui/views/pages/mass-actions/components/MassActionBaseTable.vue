@@ -57,7 +57,7 @@ import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import massActionsTable from '@/ui/views/pages/mass-actions/mixins/massActionsTable';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { MassActionDataCorrectionType, MassActionType } from '@/entities/mass-action';
+import { MassActionDataCorrectionType, MassActionType } from '@libs/entities-lib/mass-action';
 
 export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
   name: 'MassActionBaseTable',

@@ -28,6 +28,9 @@
       "@libs/component-lib/*": [
         "src/*"
       ],
+      "@libs/core-lib/*": [
+        "../core-lib/src/*"
+      ]
     },
     "lib": [
       "esnext",

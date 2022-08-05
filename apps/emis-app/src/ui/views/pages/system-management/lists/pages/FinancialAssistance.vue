@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { EOptionLists } from '@/entities/optionItem';
+import { EOptionLists } from '@libs/entities-lib/optionItem';
 import OptionList from '../components/OptionList.vue';
 
 export default Vue.extend({

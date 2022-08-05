@@ -61,7 +61,7 @@
 import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
-import { CaseFileReferralEntity, ICaseFileReferralEntity, ReferralMethod } from '@/entities/case-file-referral';
+import { CaseFileReferralEntity, ICaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-file-referral';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({

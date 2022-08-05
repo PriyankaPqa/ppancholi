@@ -1,13 +1,13 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { mockCombinedHousehold } from '@libs/registration-lib/entities/household';
-import { ECanadaProvinces } from '@libs/registration-lib/types';
+import { mockCombinedHousehold } from '@libs/entities-lib/household';
+import { ECanadaProvinces } from '@libs/core-lib/types';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCombinedCaseFile } from '@/entities/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { mockUserStateLevel } from '@/test/helpers';
-import { mockCombinedEvent, EEventStatus } from '@/entities/event';
+import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
+import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 
 import Component from '../CaseFileDetails.vue';
 

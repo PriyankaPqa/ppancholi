@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCombinedUserAccounts } from '@/entities/user-account';
-import { mockCombinedTeams } from '@/entities/team';
+import { mockCombinedUserAccounts } from '@libs/entities-lib/user-account';
+import { mockCombinedTeams } from '@libs/entities-lib/team';
 import { mockStorage } from '@/store/storage';
 
 import Component from '../case-file-activity/components/ViewAssignedOld.vue';

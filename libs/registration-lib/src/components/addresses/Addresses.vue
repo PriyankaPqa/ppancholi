@@ -54,17 +54,17 @@ import Vue from 'vue';
 import { VCheckboxWithValidation } from '@libs/component-lib/components';
 
 import VueI18n from 'vue-i18n';
-import AddressForm from '../forms/AddressForm.vue';
-import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
-import { EOptionItemStatus } from '../../types';
-import helpers from '../../ui/helpers/index';
-import { localStorageKeys } from '../../constants/localStorage';
-import { Address, IAddress } from '../../entities/value-objects/address';
+import helpers from '@libs/entities-lib/helpers';
+import { EOptionItemStatus } from '@libs/core-lib/types';
+import { Address, IAddress } from '@libs/entities-lib/value-objects/address';
 import {
   ICurrentAddress,
   ECurrentAddressTypes,
   IShelterLocationData,
-} from '../../entities/value-objects/current-address';
+} from '@libs/entities-lib/value-objects/current-address';
+import AddressForm from '../forms/AddressForm.vue';
+import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
+import { localStorageKeys } from '../../constants/localStorage';
 
 export default Vue.extend({
   name: 'Addresses',

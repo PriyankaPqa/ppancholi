@@ -127,11 +127,11 @@ import {
   RcPageContent,
   RcTooltip,
 } from '@libs/component-lib/components';
-import { IUserAccountCombined, AccountStatus } from '@/entities/user-account';
+import { IUserAccountCombined, AccountStatus } from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
-import { Status } from '@libs/core-lib/entities/base';
-import { IUser } from '@/entities/user';
+import { Status } from '@libs/entities-lib/base';
+import { IUser } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'AccountSettings',

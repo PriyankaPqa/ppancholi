@@ -5,8 +5,8 @@ import { httpClient } from '@/services/httpClient';
 import { CaseNotesService } from '@/services/case-notes/entity';
 import { OptionItemsService } from '@/services/optionItems';
 
-import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
-import { mockCaseNoteCategories, mockCaseNoteEntity } from '@/entities/case-note';
+import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
+import { mockCaseNoteCategories, mockCaseNoteEntity } from '@libs/entities-lib/case-note';
 import { CaseNoteEntityModule } from './caseNoteEntity';
 import { ICaseNoteEntityState } from './caseNoteEntity.types';
 import { mockSignalR } from '../../../ui/plugins/signal-r';

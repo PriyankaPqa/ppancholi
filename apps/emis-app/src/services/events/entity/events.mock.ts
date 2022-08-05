@@ -3,7 +3,7 @@ import {
   mockEventEntity,
   mockOtherProvinceData,
   mockRegionData,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { IEventsServiceMock } from './events.types';
 

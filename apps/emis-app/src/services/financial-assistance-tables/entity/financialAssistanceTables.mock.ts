@@ -1,4 +1,4 @@
-import { mockFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
+import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { IFinancialAssistanceTablesServiceMock } from './financialAssistanceTables.types';
 

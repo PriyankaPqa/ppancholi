@@ -9,7 +9,7 @@ import {
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
   IValidateCaptchaAllowedIpAddressResponse,
-} from '../../../entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
 
 export interface ITenantSettingsService extends IDomainBaseService<ITenantSettingsEntity, uuid> {
   getCurrentTenantSettings(): Promise<ITenantSettingsEntityData>;

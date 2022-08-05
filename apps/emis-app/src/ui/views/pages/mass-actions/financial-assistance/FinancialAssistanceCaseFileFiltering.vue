@@ -129,13 +129,13 @@ import {
   EDateMode, EFilterKeyType, EFilterType, IFilterSettings,
 } from '@libs/component-lib/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { ECanadaProvinces } from '@/types';
-import { FilterKey } from '@/entities/user-account';
-import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
+import { ECanadaProvinces } from '@libs/core-lib/types';
+import { FilterKey } from '@libs/entities-lib/user-account';
+import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
-import { MassActionMode, MassActionType } from '@/entities/mass-action';
+import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
-import { IProgramEntity } from '@/entities/program';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import massActionCaseFileFiltering from '@/ui/views/pages/mass-actions/mixins/massActionCaseFileFiltering';
 
 export default mixins(massActionCaseFileFiltering).extend({

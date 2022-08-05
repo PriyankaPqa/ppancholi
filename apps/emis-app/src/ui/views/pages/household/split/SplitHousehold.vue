@@ -72,7 +72,7 @@ import { Route, NavigationGuardNext } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import individual from '@libs/registration-lib/ui/mixins/individual';
 import { RcPageContent } from '@libs/component-lib/components';
-import { ContactInformation, IMember, ISplitHousehold } from '@libs/registration-lib/entities/household-create';
+import { ContactInformation, IMember, ISplitHousehold } from '@libs/entities-lib/household-create';
 import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
@@ -87,7 +87,7 @@ import SplitHouseholdMembers from '@/ui/views/pages/household/split/SplitHouseho
 import ReviewSplit from '@/ui/views/pages/household/split/ReviewSplit.vue';
 
 import { tabs } from '@/store/modules/household/tabs';
-import { VForm } from '@/types';
+import { VForm } from '@libs/core-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { EventHub } from '@libs/core-lib/plugins/event-hub';
 

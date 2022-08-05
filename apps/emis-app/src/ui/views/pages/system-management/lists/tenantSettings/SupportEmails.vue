@@ -77,9 +77,9 @@ import Vue from 'vue';
 import { VTextFieldWithValidation } from '@libs/component-lib/components';
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEqual from 'lodash/isEqual';
-import entityUtils from '@libs/core-lib/entities/utils';
-import { IMultilingual } from '@/types';
-import { MAX_LENGTH_MD } from '@/constants/validations';
+import entityUtils from '@libs/entities-lib/utils';
+import { IMultilingual } from '@libs/core-lib/types';
+import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 
 export default Vue.extend({

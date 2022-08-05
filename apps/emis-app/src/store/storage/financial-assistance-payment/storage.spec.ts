@@ -1,6 +1,6 @@
 import { FINANCIAL_ASSISTANCE_PAYMENT_METADATA, FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';
-import { mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
+import { mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
 import { FinancialAssistancePaymentStorage } from './storage';
 
 const entityModuleName = FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES;

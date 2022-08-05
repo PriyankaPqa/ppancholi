@@ -87,7 +87,7 @@ import mixins from 'vue-typed-mixins';
 import individual from '@libs/registration-lib/ui/mixins/individual';
 import { Route, NavigationGuardNext } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
-import { IEvent } from '@libs/registration-lib/entities/event';
+import { IEvent } from '@libs/entities-lib/registration-event';
 import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
@@ -101,9 +101,9 @@ import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegis
 import ConfirmRegistration from '@/ui/views/pages/registration/confirmation/ConfirmRegistration.vue';
 import { tabs } from '@/store/modules/registration/tabs';
 import store from '@/store/store';
-import { VForm } from '@/types';
+import { VForm } from '@libs/core-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EventHub } from '@libs/core-lib/plugins/event-hub';
 import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
 

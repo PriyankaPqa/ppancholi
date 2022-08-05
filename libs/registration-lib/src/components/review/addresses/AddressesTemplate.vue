@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IHouseholdCreate } from '../../../entities/household-create';
+import { IHouseholdCreate } from '@libs/entities-lib/household-create';
 import HomeAddressTemplate from './HomeAddressTemplate.vue';
 import CurrentAddressTemplate from './CurrentAddressTemplate.vue';
 

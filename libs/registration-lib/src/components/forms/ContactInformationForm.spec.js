@@ -1,14 +1,14 @@
 import { extend } from 'vee-validate';
 import { required, max } from 'vee-validate/dist/rules';
+import helpers from '@libs/entities-lib/helpers';
 import {
   mockContactInformation,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
-} from '../../entities/household-create';
+} from '../../../../entities-lib/src/household-create';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { createLocalVue, shallowMount, mount } from '../../test/testSetup';
 import Component from './ContactInformationForm.vue';
-import helpers from '../../ui/helpers';
 
 extend('required', required);
 extend('phone', required);

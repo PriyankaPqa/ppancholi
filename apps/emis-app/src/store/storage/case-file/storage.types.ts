@@ -1,4 +1,4 @@
-import { IOptionItem, IOptionItemData } from '@/entities/optionItem';
+import { IOptionItem, IOptionItemData } from '@libs/entities-lib/optionItem';
 import {
   ICaseFileActivity, CaseFileStatus, ICaseFileLabel, CaseFileTriage,
   ICaseFileEntity,
@@ -7,8 +7,8 @@ import {
   IImpactStatusValidation,
   ICaseFileDetailedCount,
   ICaseFileCount, IAssignedTeamMembers,
-} from '@/entities/case-file/case-file.types';
-import { IListOption } from '@/types';
+} from '@libs/entities-lib/case-file/case-file.types';
+import { IListOption } from '@libs/core-lib/types';
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,

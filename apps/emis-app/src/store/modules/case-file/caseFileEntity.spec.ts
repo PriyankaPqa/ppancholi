@@ -8,8 +8,8 @@ import {
   CaseFileStatus, CaseFileTriage, mockCaseFileActivities, mockTagsOptions, mockCaseFileEntity,
   IIdentityAuthentication, IdentityAuthenticationStatus, IdentityAuthenticationMethod, IImpactStatusValidation,
   ImpactValidationMethod, ValidationOfImpactStatus, ICaseFileEntity, mockAssignedTeamMembers,
-} from '@/entities/case-file';
-import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
+} from '@libs/entities-lib/case-file';
+import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import { CaseFileEntityModule } from './caseFileEntity';
 import { ICaseFileEntityState } from './caseFileEntity.types';
 import { mockSignalR } from '../../../ui/plugins/signal-r';

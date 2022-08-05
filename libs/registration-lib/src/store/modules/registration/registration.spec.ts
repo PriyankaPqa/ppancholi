@@ -4,14 +4,10 @@ import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import { mockHttpError } from '@libs/core-lib/services/http-client';
-import { mockSplitHousehold } from '../../../entities/household-create/householdCreate.mock';
+import { mockSplitHousehold } from '@libs/entities-lib/household-create/householdCreate.mock';
 
-import { HouseholdCreate } from '../../../entities/household-create/householdCreate';
-import {
-  ERegistrationMethod, ERegistrationMode, IRegistrationMenuItem,
-} from '../../../types';
-import { Event, mockEventData, mockEvent } from '../../../entities/event';
-import { getDefaultState, makeRegistrationModule } from './registration';
+import { HouseholdCreate } from '@libs/entities-lib/household-create/householdCreate';
+import { RegistrationEvent, mockEventData, mockEvent } from '@libs/entities-lib/registration-event';
 import {
   EIndigenousTypes,
   mockGenders,
@@ -23,9 +19,14 @@ import {
   mockHouseholdCreate, mockContactInformation, mockIdentitySet,
   mockMember, mockAddress, mockAdditionalMember, mockHouseholdCreateData, ECurrentAddressTypes,
   Member,
-} from '../../../entities/household-create';
+} from '@libs/entities-lib/household-create';
 
-import { mockHouseholdEntity } from '../../../entities/household';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
+import { IRegistrationMenuItem } from '@/types';
+import {
+  ERegistrationMethod, ERegistrationMode,
+} from '@libs/core-lib/types';
+import { getDefaultState, makeRegistrationModule } from './registration';
 
 import * as registrationUtils from './registrationUtils';
 
@@ -83,7 +84,7 @@ describe('>>> Registration Module', () => {
 
     describe('event', () => {
       it('returns a default event', () => {
-        expect(store.getters['registration/event']).toEqual(new Event());
+        expect(store.getters['registration/event']).toEqual(new RegistrationEvent());
       });
     });
 
@@ -286,7 +287,7 @@ describe('>>> Registration Module', () => {
   describe('>> Mutations', () => {
     describe('setEvent', () => {
       it('sets the event', () => {
-        expect(store.getters['registration/event']).toEqual(new Event());
+        expect(store.getters['registration/event']).toEqual(new RegistrationEvent());
 
         store.commit('registration/setEvent', mockEventData());
 
@@ -702,7 +703,7 @@ describe('>>> Registration Module', () => {
       });
 
       it('maps IEventData to IEvent, and sets the event', async () => {
-        expect(store.getters['registration/event']).toEqual(new Event());
+        expect(store.getters['registration/event']).toEqual(new RegistrationEvent());
 
         await store.dispatch('registration/fetchEvent', {});
 

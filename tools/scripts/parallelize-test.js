@@ -39,6 +39,10 @@ function getAffectedTestFiles(affectedPackages) {
     allFiles = allFiles.concat(jetpack.find('libs/core-lib', { matching: globPattern }));
   }
 
+  if (affectedPackages.includes('@libs/entities-lib')) {
+    allFiles = allFiles.concat(jetpack.find('libs/entities-lib', { matching: globPattern }));
+  }
+
   if (affectedPackages.includes('@libs/registration-lib')) {
     allFiles = allFiles.concat(jetpack.find('libs/registration-lib', { matching: globPattern }));
   }
@@ -77,7 +81,7 @@ const affectedPackages = getAffectedPackages(isPullRequest);
 const files = getAffectedTestFiles(affectedPackages);
 const globPattern = getBlobPattern(files);
 
-const script = `jest "${globPattern}" --coverage --coverageDirectory=coverage --runInBand --logHeapUsage`;
+const script = `jest "${globPattern}" --coverage --coverageDirectory=coverage --runInBand --logHeapUsage --verbose`;
 
 shellAsync(script)
   .then()

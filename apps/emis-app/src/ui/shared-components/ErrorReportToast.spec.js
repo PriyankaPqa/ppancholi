@@ -1,6 +1,6 @@
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { User, mockUserData } from '@/entities/user';
+import { User, mockUserData } from '@libs/entities-lib/user';
 import helpers from '../helpers/helpers';
 import Component from './ErrorReportToast.vue';
 

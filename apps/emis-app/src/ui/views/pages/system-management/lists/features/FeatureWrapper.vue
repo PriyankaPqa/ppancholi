@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IFeatureEntity } from '@/entities/tenantSettings';
+import { IFeatureEntity } from '@libs/entities-lib/tenantSettings';
 import { RcTooltip } from '@libs/component-lib/components';
 
 export default Vue.extend({

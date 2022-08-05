@@ -1,4 +1,4 @@
-import { IFinancialAssistancePaymentEntity, mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
+import { IFinancialAssistancePaymentEntity, mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
 import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { FinancialAssistancePaymentsService } from './financial-assistance-payments';
 

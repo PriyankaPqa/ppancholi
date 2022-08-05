@@ -8,7 +8,7 @@ import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassA
 import routes from '@/constants/routes';
 import {
   MassActionDataCorrectionType, MassActionMode, MassActionRunType, mockMassActionEntity,
-} from '@/entities/mass-action';
+} from '@libs/entities-lib/mass-action';
 import { mockStorage } from '@/store/storage';
 import { format } from 'date-fns';
 import Component from './DataCorrectionCreate.vue';

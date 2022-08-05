@@ -1,12 +1,11 @@
 import Vue from 'vue';
 import axios, { CancelTokenStatic, CancelTokenSource } from 'axios';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
-import { VForm } from '@/types';
+import { VForm, IServerError } from '@libs/core-lib/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IRestResponse } from '@libs/core-lib/services/http-client';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
-import { IServerError } from '@libs/core-lib/types';
-import { IEntity } from '@libs/core-lib/entities/base';
+import { IEntity } from '@libs/entities-lib/base';
 
 const httpClient = axios.create({
   baseURL: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/`,

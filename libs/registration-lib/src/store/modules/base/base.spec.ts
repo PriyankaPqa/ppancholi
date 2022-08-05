@@ -2,11 +2,11 @@
 import { ActionContext } from 'vuex';
 import { mockHttp } from '@libs/core-lib/src/services/http-client';
 import { DomainBaseService } from '@libs/core-lib/services/base';
-import { mockBaseEntities, mockBaseData } from '@libs/core-lib/entities/base';
-import helpers from '../../../ui/helpers/index';
+import { mockBaseEntities, mockBaseData } from '@libs/entities-lib/base';
+import helpers from '@libs/entities-lib/helpers';
+import { mockUserAccountEntities } from '@libs/entities-lib/user-account/userAccount.mock';
 import { BaseModule } from './index';
 import { IState } from './base.types';
-import { mockUserAccountEntities } from '../../../entities/user-account/userAccount.mock';
 
 export class BaseModuleTest extends BaseModule<any, uuid> {
   declare public service: DomainBaseService<any, uuid>

@@ -133,9 +133,9 @@ import {
   IEventGenericLocation,
   EResponseLevel,
   EventEntity,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import { EEventSummarySections } from '@/types';
-import { IOptionItem } from '@/entities/optionItem';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
 import EventSummarySectionBody from './components/EventSummarySectionBody.vue';

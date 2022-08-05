@@ -38,18 +38,18 @@
 <script lang="ts">
 import Vue from 'vue';
 import AddressForm from '@libs/registration-lib/components/forms/AddressForm.vue';
-import libHelpers from '@libs/registration-lib/ui/helpers';
+import libHelpers from '@libs/entities-lib/helpers';
 import { RcDialog, VCheckboxWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
-import { IAddressData, IHouseholdCreate } from '@libs/registration-lib/entities/household-create';
+import { IAddressData, IHouseholdCreate } from '@libs/entities-lib/household-create';
 import _cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
-import { Address, IAddress } from '@libs/registration-lib/entities/value-objects/address';
-import { IHouseholdCombined } from '@libs/registration-lib/entities/household';
+import { Address, IAddress } from '@libs/entities-lib/value-objects/address';
+import { IHouseholdCombined } from '@libs/entities-lib/household';
 import { i18n } from '@/ui/plugins';
 import { localStorageKeys } from '@/constants/localStorage';
-import { VForm } from '@/types';
-import { MAX_LENGTH_LG } from '@/constants/validations';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { VForm } from '@libs/core-lib/types';
+import { MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'EditHouseholdAddressDialog',

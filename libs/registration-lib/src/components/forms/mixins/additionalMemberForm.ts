@@ -2,15 +2,15 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
-import helpers from '../../../ui/helpers/index';
-import { IOptionItemData, EOptionItemStatus } from '../../../types';
-import { localStorageKeys } from '../../../constants/localStorage';
+import helpers from '@libs/entities-lib/helpers';
 import {
   IShelterLocationData, IHouseholdCreate, IIdentitySet,
-} from '../../../entities/household-create';
+} from '@libs/entities-lib/household-create';
 
-import { IMember } from '../../../entities/value-objects/member/index';
-import { ECurrentAddressTypes, ICurrentAddress } from '../../../entities/value-objects/current-address/index';
+import { IMember } from '@libs/entities-lib/value-objects/member/index';
+import { ECurrentAddressTypes, ICurrentAddress } from '@libs/entities-lib/value-objects/current-address/index';
+import { IOptionItemData, EOptionItemStatus } from '@libs/core-lib/types';
+import { localStorageKeys } from '../../../constants/localStorage';
 
 /**
  * Mixin used for AdditionalMember form in review registration

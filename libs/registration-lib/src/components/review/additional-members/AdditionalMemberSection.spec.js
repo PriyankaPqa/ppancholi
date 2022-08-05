@@ -1,6 +1,6 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockMember } from '../../../entities/value-objects/member';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
 import Component from './AdditionalMemberSection.vue';
 
 const localVue = createLocalVue();

@@ -1,7 +1,7 @@
-import { mockHouseholdCreate, CurrentAddress, ECurrentAddressTypes } from '@libs/registration-lib/entities/household-create';
-import { mockMember } from '@libs/registration-lib/entities/value-objects/member/index';
-import { mockShelterLocations } from '@libs/registration-lib/entities/event/event.mock';
-import libHelpers from '@libs/registration-lib/ui/helpers';
+import { mockHouseholdCreate, CurrentAddress, ECurrentAddressTypes } from '@libs/entities-lib/household-create';
+import { mockMember } from '@libs/entities-lib/value-objects/member/index';
+import { mockShelterLocations } from '@libs/entities-lib/registration-event/registrationEvent.mock';
+import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 import { mockStorage } from '@/store/storage';

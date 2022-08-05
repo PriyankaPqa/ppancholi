@@ -233,19 +233,19 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
   ECurrentAddressTypes, IMember, CurrentAddress, ICurrentAddress,
-} from '@libs/registration-lib/entities/household-create';
+} from '@libs/entities-lib/household-create';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
-import libHelpers from '@libs/registration-lib/ui/helpers';
-import { IEventGenericLocation } from '@libs/registration-lib/entities/event';
+import libHelpers from '@libs/entities-lib/helpers';
+import { IEventGenericLocation } from '@libs/entities-lib/registration-event';
 import { RcDialog } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import householdHelpers from '@/ui/helpers/household';
 import { localStorageKeys } from '@/constants/localStorage';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
-import { VForm } from '@/types';
+import { VForm } from '@libs/core-lib/types';
 import routes from '@/constants/routes';
-import { EEventLocationStatus } from '@/entities/event';
+import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { IMovingHouseholdCreate, IMovingMember } from './MoveHouseholdMembers.vue';
 
 export default Vue.extend({

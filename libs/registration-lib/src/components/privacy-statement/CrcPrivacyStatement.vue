@@ -41,11 +41,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
-import helpers from '@libs/registration-lib/ui/helpers';
+import helpers from '@libs/entities-lib/helpers';
 import VueI18n from 'vue-i18n';
+import { ERegistrationMethod } from '@libs/core-lib/types';
 import PrivacyStatement from './PrivacyStatement.vue';
-import { ERegistrationMethod } from '../../types';
-import { EEventLocationStatus, IEvent, IEventGenericLocation } from '../../entities/event';
+import { EEventLocationStatus, IEvent, IEventGenericLocation } from '../../../../entities-lib/src/registration-event';
 
 export interface IUser {
   readonly id: string;

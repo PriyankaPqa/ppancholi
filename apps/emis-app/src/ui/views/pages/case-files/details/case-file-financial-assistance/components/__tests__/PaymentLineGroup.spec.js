@@ -1,10 +1,10 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockItems } from '@/entities/financial-assistance';
+import { mockItems } from '@libs/entities-lib/financial-assistance';
 import { mockStorage } from '@/store/storage';
-import { mockCaseFinancialAssistancePaymentGroups, PaymentStatus, EPaymentCancellationReason } from '@/entities/financial-assistance-payment';
-import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
+import { mockCaseFinancialAssistancePaymentGroups, PaymentStatus, EPaymentCancellationReason } from '@libs/entities-lib/financial-assistance-payment';
+import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 import Component from '../PaymentLineGroup.vue';
 
 const localVue = createLocalVue();
@@ -136,22 +136,22 @@ describe('PaymentLineGroup.vue', () => {
 
     describe('title', () => {
       it('should return the modality + payeeType + payee name when cheque', () => {
-        expect(wrapper.vm.title).toBe('Cheque (Beneficiary) - thl');
+        expect(wrapper.vm.title).toBe('enums.PaymentModality.Cheque (enums.payeeType.Beneficiary) - thl');
         wrapper.vm.paymentGroup.groupingInformation = {
-          modality: 2,
+          modality: EPaymentModalities.Cheque,
           payeeType: 2,
           payeeName: 'abc',
         };
-        expect(wrapper.vm.title).toBe('Cheque (Third-party) - abc');
+        expect(wrapper.vm.title).toBe('enums.PaymentModality.Cheque (enums.payeeType.ThirdParty) - abc');
       });
 
       it('should return the modality if it isnt Cheque', () => {
         wrapper.vm.paymentGroup.groupingInformation = {
-          modality: 1,
+          modality: EPaymentModalities.ETransfer,
           payeeType: 2,
           payeeName: 'abc',
         };
-        expect(wrapper.vm.title).toBe('E-Transfer');
+        expect(wrapper.vm.title).toBe('enums.PaymentModality.ETransfer');
       });
     });
 

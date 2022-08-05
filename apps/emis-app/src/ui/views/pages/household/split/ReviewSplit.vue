@@ -6,7 +6,7 @@
 import Vue from 'vue';
 import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
 
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'ReviewSplit',

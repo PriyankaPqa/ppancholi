@@ -117,14 +117,14 @@ import {
   IFinancialAssistanceTableCombined,
   IFinancialAssistanceTableEntity, IFinancialAssistanceTableItemData, IFinancialAssistanceTableSubItemData,
   EFinancialAmountModes,
-} from '@/entities/financial-assistance';
+} from '@libs/entities-lib/financial-assistance';
 import {
   IOptionItem, IOptionItemCombined, IOptionSubItem,
-} from '@/entities/optionItem';
-import { EEventStatus, IEventEntity } from '@/entities/event';
+} from '@libs/entities-lib/optionItem';
+import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
-import { EPaymentModalities } from '@/entities/program';
-import { Status } from '@libs/core-lib/entities/base';
+import { EPaymentModalities } from '@libs/entities-lib/program';
+import { Status } from '@libs/entities-lib/base';
 import { PaymentDetailsForm } from './FinancialAssistanceCreate.vue';
 
 export default Vue.extend({

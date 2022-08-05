@@ -1,7 +1,7 @@
 import {
   ICaseFileReferralCombined, ICaseFileReferralEntity, mockCaseFileReferralEntity, mockCombinedCaseFileReferrals,
-} from '@/entities/case-file-referral';
-import { mockOptionItemData } from '@/entities/optionItem';
+} from '@libs/entities-lib/case-file-referral';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
 import { BaseMock } from '../base/base.mock';
 

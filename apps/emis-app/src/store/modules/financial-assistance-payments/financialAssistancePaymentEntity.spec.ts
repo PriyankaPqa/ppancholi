@@ -1,9 +1,9 @@
 import { ActionContext } from 'vuex';
 import { httpClient } from '@/services/httpClient';
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
-import { mockCaseFinancialAssistanceEntity, mockFinancialPaymentHistory } from '@/entities/financial-assistance-payment';
-import utils from '@libs/registration-lib/entities/value-objects/versioned-entity/versionedEntityUtils';
-import { mockVersionedEntityCombined } from '@libs/registration-lib/entities/value-objects/versioned-entity';
+import { mockCaseFinancialAssistanceEntity, mockFinancialPaymentHistory } from '@libs/entities-lib/financial-assistance-payment';
+import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
+import { mockVersionedEntityCombined } from '@libs/entities-lib/value-objects/versioned-entity';
 import { FinancialAssistancePaymentEntityModule } from './financialAssistancePaymentEntity';
 import { IFinancialAssistancePaymentEntityState } from './financialAssistancePaymentEntity.types';
 import { mockSignalR } from '../../../ui/plugins/signal-r';

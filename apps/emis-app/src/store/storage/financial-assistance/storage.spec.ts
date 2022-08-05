@@ -4,11 +4,11 @@ import {
   EFinancialFrequency, mockCombinedFinancialAssistance,
   mockItems,
   mockSubItems,
-} from '@/entities/financial-assistance';
-import { mockProgramEntity } from '@/entities/program';
+} from '@libs/entities-lib/financial-assistance';
+import { mockProgramEntity } from '@libs/entities-lib/program';
 import { mockStore } from '@/store';
-import { mockOptionItems } from '@/entities/optionItem';
-import { Status } from '@libs/core-lib/entities/base';
+import { mockOptionItems } from '@libs/entities-lib/optionItem';
+import { Status } from '@libs/entities-lib/base';
 import { FinancialAssistanceStorage } from './storage';
 
 const entityModuleName = FINANCIAL_ASSISTANCE_ENTITIES;

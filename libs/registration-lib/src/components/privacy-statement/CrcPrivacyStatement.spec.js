@@ -1,7 +1,7 @@
+import { ERegistrationMethod } from '@libs/core-lib/src/types';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { mockStorage } from '../../store/storage';
-import { ERegistrationMethod } from '../../types';
-import { mockRegistrationLocations } from '../../entities/event';
+import { mockRegistrationLocations } from '../../../../entities-lib/src/registration-event';
 import Component from './CrcPrivacyStatement.vue';
 import { i18n } from '../../ui/plugins/i18n';
 

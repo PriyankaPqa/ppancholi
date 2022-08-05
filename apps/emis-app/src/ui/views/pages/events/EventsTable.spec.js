@@ -8,7 +8,7 @@ import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import {
   mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata, EResponseLevel, EEventStatus, mockEventEntity,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import Component from './EventsTable.vue';
 
 const storage = mockStorage();

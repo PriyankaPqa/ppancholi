@@ -1,0 +1,17 @@
+{
+  "name": "@libs/entities-lib",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --fix --max-warnings=0"
+  },
+  "dependencies": {
+    "@libs/core-lib": "*",
+    "awesome-phonenumber": "2.68.0",
+    "moment": "2.29.4",
+    "deepmerge": "^4.2.2",
+    "vue-i18n": "8.27.0",
+    "vue": "2.6.14",
+    "lodash": "^4.17.21"
+  }
+}

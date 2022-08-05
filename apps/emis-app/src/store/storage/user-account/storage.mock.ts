@@ -1,8 +1,8 @@
-import { mockOptionItems } from '@/entities/optionItem';
+import { mockOptionItems } from '@libs/entities-lib/optionItem';
 import { BaseMock } from '@/store/storage/base/base.mock';
 import {
   mockCombinedUserAccounts, mockUserAccountEntity, IUserAccountEntity, IUserAccountCombined, mockUserFilters,
-} from '@/entities/user-account';
+} from '@libs/entities-lib/user-account';
 
 export class UserAccountStorageMock extends BaseMock<IUserAccountCombined, IUserAccountEntity> {
   constructor() {

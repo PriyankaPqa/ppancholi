@@ -175,9 +175,9 @@ import {
   VSelectWithValidation,
 } from '@libs/component-lib/components';
 import AddressForm from '@libs/registration-lib/components/forms/AddressForm.vue';
-import libHelpers from '@libs/registration-lib/ui/helpers';
-import { Address } from '@libs/registration-lib/entities/value-objects/address';
-import { EFinancialAmountModes, IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
+import libHelpers from '@libs/entities-lib/helpers';
+import { Address, IAddress } from '@libs/entities-lib/value-objects/address';
+import { EFinancialAmountModes, IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@libs/entities-lib/financial-assistance';
 import {
   PayeeType,
   FinancialAssistancePaymentGroup,
@@ -186,14 +186,16 @@ import {
   FinancialAssistancePaymentLine,
   ApprovalStatus,
   IFinancialAssistancePaymentEntity,
-} from '@/entities/financial-assistance-payment';
-import { EPaymentModalities, IProgramEntity } from '@/entities/program';
+} from '@libs/entities-lib/financial-assistance-payment';
+import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
-import { ECanadaProvinces, IAddress, VForm } from '@/types';
+import { ECanadaProvinces, VForm } from '@libs/core-lib/types';
 import { localStorageKeys } from '@/constants/localStorage';
-import { MAX_LENGTH_MD } from '@/constants/validations';
-import { FeatureKeys } from '@/entities/tenantSettings';
-import { Status } from '@libs/core-lib/entities/base';
+import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { Status } from '@libs/entities-lib/base';
+import { IAddressData } from '@libs/entities-lib/household-create';
+import { i18n } from '@/ui/plugins';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
@@ -252,7 +254,7 @@ export default mixins(caseFileDetail).extend({
       payeeTypes: helpers.enumToTranslatedCollection(PayeeType, 'enums.payeeType'),
       loaded: false,
       defaultBeneficiaryData: {
-        address: null as IAddress,
+        address: null as IAddressData,
         name: '',
         email: '',
       },
@@ -325,7 +327,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return libHelpers.getCanadianProvincesWithoutOther(this.$i18n);
+      return libHelpers.getCanadianProvincesWithoutOther(i18n);
     },
 
     paymentApproved(): boolean {

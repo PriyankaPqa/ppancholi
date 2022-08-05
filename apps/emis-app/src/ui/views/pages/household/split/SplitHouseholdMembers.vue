@@ -19,7 +19,7 @@
 import Vue from 'vue';
 import AdditionalMemberTemplate from '@libs/registration-lib/components/review/additional-members/AdditionalMemberTemplate.vue';
 import AdditionalMemberSection from '@libs/registration-lib/components/review/additional-members/AdditionalMemberSection.vue';
-import { IMember } from '@libs/registration-lib/entities/value-objects/member';
+import { IMember } from '@libs/entities-lib/value-objects/member';
 
 export default Vue.extend({
   name: 'SplitHouseholdMembers',

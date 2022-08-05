@@ -3,7 +3,7 @@ import _orderBy from 'lodash/orderBy';
 import _isEmpty from 'lodash/isEmpty';
 import {
   IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, IMassActionRunResultMetadataModel, MassActionRunStatus,
-} from '@/entities/mass-action';
+} from '@libs/entities-lib/mass-action';
 
 export default Vue.extend({
   computed: {

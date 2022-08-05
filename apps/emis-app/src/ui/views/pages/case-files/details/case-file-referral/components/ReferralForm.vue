@@ -94,10 +94,10 @@ import {
   VTextFieldWithValidation,
   VTextAreaWithValidation,
 } from '@libs/component-lib/components';
-import { MAX_LENGTH_MD, MAX_LENGTH_XL } from '@/constants/validations';
-import { CaseFileReferralEntity, ReferralMethod } from '@/entities/case-file-referral';
-import { IOptionItem } from '@/entities/optionItem';
-import { IListOption } from '@/types';
+import { MAX_LENGTH_MD, MAX_LENGTH_XL } from '@libs/core-lib/constants/validations';
+import { CaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-file-referral';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { IListOption } from '@libs/core-lib/types';
 import WarmReferralConsent from './WarmReferralConsent.vue';
 
 export default Vue.extend({

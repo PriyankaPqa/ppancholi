@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { MassActionType } from '@/entities/mass-action';
-import { EEventStatus, mockCombinedEvents } from '@/entities/event';
+import { MassActionType } from '@libs/entities-lib/mass-action';
+import { EEventStatus, mockCombinedEvents } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import massActionCaseFileFiltering from './massActionCaseFileFiltering';
 

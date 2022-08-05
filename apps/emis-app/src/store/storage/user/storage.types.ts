@@ -1,6 +1,6 @@
 import {
   IUser, IUserData,
-} from '@/entities/user';
+} from '@libs/entities-lib/user';
 
 export interface IStorage {
   getters: {

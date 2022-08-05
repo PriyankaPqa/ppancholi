@@ -29,8 +29,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog, RcPageLoading } from '@libs/component-lib/components';
-import { ITeamEntity } from '@/entities/team';
-import { ICaseFileEntity } from '@/entities/case-file';
+import { ITeamEntity } from '@libs/entities-lib/team';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import AssignedList, { IIndividual } from './AssignedList.vue';
 
 export default Vue.extend({

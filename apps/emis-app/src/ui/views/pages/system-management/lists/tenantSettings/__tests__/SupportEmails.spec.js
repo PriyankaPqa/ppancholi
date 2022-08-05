@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import entityUtils from '@libs/core-lib/entities/utils';
+import entityUtils from '@libs/entities-lib/utils';
 import Component from '../SupportEmails.vue';
 
 const localVue = createLocalVue();

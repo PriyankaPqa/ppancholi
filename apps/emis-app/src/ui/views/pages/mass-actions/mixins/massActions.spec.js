@@ -1,7 +1,7 @@
 import { mockStorage } from '@libs/registration-lib/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
-import { MassActionDataCorrectionType } from '@/entities/mass-action';
+import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import massActions from './massActions';
 /* eslint-disable max-len */
 const Component = {

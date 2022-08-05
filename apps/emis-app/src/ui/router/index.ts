@@ -8,7 +8,7 @@ import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import store from '@/store/store';
 import { i18n } from '@/ui/plugins/i18n';
 import { TENANT_SETTINGS_ENTITIES, USER_ACCOUNT_ENTITIES } from '@/constants/vuex-modules';
-import { ITenantSettingsEntity } from '@/entities/tenantSettings';
+import { ITenantSettingsEntity } from '@libs/entities-lib/tenantSettings';
 import { httpClient } from '@/services/httpClient';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
 

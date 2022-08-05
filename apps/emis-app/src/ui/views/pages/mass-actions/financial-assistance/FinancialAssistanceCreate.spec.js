@@ -1,4 +1,4 @@
-import { mockEvent } from '@libs/registration-lib/entities/event/event.mock';
+import { mockEvent } from '@libs/entities-lib/registration-event/registrationEvent.mock';
 import {
   createLocalVue,
   mount,
@@ -7,10 +7,10 @@ import {
 
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import routes from '@/constants/routes';
-import { MassActionMode, MassActionType, mockMassActionEntity } from '@/entities/mass-action';
+import { MassActionMode, MassActionType, mockMassActionEntity } from '@libs/entities-lib/mass-action';
 import { mockStorage } from '@/store/storage';
-import { mockFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
-import { mockOptionItem, mockOptionSubItem } from '@/entities/optionItem';
+import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
+import { mockOptionItem, mockOptionSubItem } from '@libs/entities-lib/optionItem';
 import Component from './FinancialAssistanceCreate.vue';
 
 const localVue = createLocalVue();

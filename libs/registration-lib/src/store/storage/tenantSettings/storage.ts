@@ -5,7 +5,7 @@ import {
   IBrandingEntity,
   ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, IFeatureEntity, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
   IValidateCaptchaAllowedIpAddressResponse,
-} from '../../../entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
 

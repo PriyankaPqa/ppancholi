@@ -1,4 +1,4 @@
-import { mockProgramEntity } from '@/entities/program';
+import { mockProgramEntity } from '@libs/entities-lib/program';
 import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { ProgramsService } from './programs';
 

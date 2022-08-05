@@ -1,4 +1,4 @@
-import { mockProgramEntities } from '@/entities/program';
+import { mockProgramEntities } from '@libs/entities-lib/program';
 import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { IProgramsServiceMock } from './programs.types';
 

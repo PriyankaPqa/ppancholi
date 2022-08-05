@@ -4,7 +4,7 @@ import {
 } from '@/test/testSetup';
 
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './MassActionsLayout.vue';
 
 const localVue = createLocalVue();

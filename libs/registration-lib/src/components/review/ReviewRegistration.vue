@@ -137,14 +137,14 @@ import _cloneDeep from 'lodash/cloneDeep';
 import mixins from 'vue-typed-mixins';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
 import moment from 'moment';
-import { IHouseholdCreate, IIdentitySet, Member } from '@libs/registration-lib/entities/household-create';
+import { IHouseholdCreate, IIdentitySet, Member } from '@libs/entities-lib/household-create';
 import _isEqual from 'lodash/isEqual';
 
-import helpers from '@libs/registration-lib/ui/helpers';
+import helpers from '@libs/entities-lib/helpers';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
 import { EventHub } from '@libs/core-lib/plugins/event-hub';
-import { IContactInformation } from '../../entities/value-objects/contact-information';
+import { IContactInformation } from '../../../../entities-lib/src/value-objects/contact-information';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
 import Addresses from '../addresses/Addresses.vue';

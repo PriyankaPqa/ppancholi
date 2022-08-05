@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockTeamEvents } from '@/entities/team';
+import { mockTeamEvents } from '@libs/entities-lib/team';
 import { mockStorage } from '@/store/storage';
-import { mockCombinedUserAccounts } from '@/entities/user-account';
+import { mockCombinedUserAccounts } from '@libs/entities-lib/user-account';
 import Component from './TeamMemberTeams.vue';
 
 const localVue = createLocalVue();

@@ -1,5 +1,5 @@
-import { mockHouseholdCreate } from '@/entities/household-create';
-import { ERegistrationMethod, ERegistrationMode } from '../../../types';
+import { mockHouseholdCreate } from '@libs/entities-lib/household-create';
+import { ERegistrationMethod, ERegistrationMode } from '@libs/core-lib/types';
 import {
   addressesValid,
   additionalMembersValid,

@@ -1,6 +1,6 @@
-import { ICaseNoteEntity, ICaseNoteMetadata } from '@/entities/case-note';
+import { ICaseNoteEntity, ICaseNoteMetadata } from '@libs/entities-lib/case-note';
 
-import { IOptionItem, IOptionItemData } from '@/entities/optionItem';
+import { IOptionItem, IOptionItemData } from '@libs/entities-lib/optionItem';
 
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import {

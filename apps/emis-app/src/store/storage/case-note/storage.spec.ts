@@ -1,11 +1,15 @@
-import { mockCaseNoteCategories, mockCaseNoteEntity } from '@/entities/case-note';
+import { mockCaseNoteCategories, mockCaseNoteEntity } from '@libs/entities-lib/case-note';
 import { CASE_NOTE_ENTITIES, CASE_NOTE_METADATA } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';
-import { mockSearchParams } from '@/test/helpers';
+import { ISearchData } from '@libs/core-lib/types';
 import { CaseNoteStorage } from './storage';
 
 const entityModuleName = CASE_NOTE_ENTITIES;
 const metadataModuleName = CASE_NOTE_METADATA;
+
+export const mockSearchParams: ISearchData = {
+  filter: 'foo',
+};
 
 const store = mockStore({
   modules: {

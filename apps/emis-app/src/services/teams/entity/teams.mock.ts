@@ -1,6 +1,6 @@
 import {
   mockTeamEntity,
-} from '@/entities/team';
+} from '@libs/entities-lib/team';
 import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { ITeamsServiceMock } from './teams.types';
 

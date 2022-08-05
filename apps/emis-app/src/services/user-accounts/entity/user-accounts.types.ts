@@ -1,7 +1,7 @@
-import { IOptionSubItem } from '@/entities/optionItem';
+import { IOptionSubItem } from '@libs/entities-lib/optionItem';
 import {
   IFilter, IUserAccountEntity,
-} from '@/entities/user-account';
+} from '@libs/entities-lib/user-account';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface IAddRoleToUserRequest {

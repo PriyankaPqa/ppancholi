@@ -1,4 +1,4 @@
-import { ITenantSettingsEntity, IValidateCaptchaAllowedIpAddressResponse } from '../../../entities/tenantSettings';
+import { ITenantSettingsEntity, IValidateCaptchaAllowedIpAddressResponse } from '@libs/entities-lib/tenantSettings';
 import { IState } from '../base/base.types';
 
 export interface ITenantSettingsEntityState extends IState<ITenantSettingsEntity> {

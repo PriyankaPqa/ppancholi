@@ -28,11 +28,10 @@ import { RcPageContent } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import routes from '@/constants/routes';
-import { EventEntity } from '@/entities/event';
-import { VForm } from '@/types';
+import { EventEntity } from '@libs/entities-lib/event';
+import { VForm, IServerError } from '@libs/core-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import { IServerError } from '@libs/core-lib/types';
 import EventForm from './EventForm.vue';
 
 export default mixins(handleUniqueNameSubmitError).extend({

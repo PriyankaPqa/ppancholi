@@ -6,8 +6,8 @@ import {
 
 import { mockStorage } from '@/store/storage';
 import helpers from '@/ui/helpers/helpers';
-import { CaseFileStatus, ValidationOfImpactStatus } from '@/entities/case-file';
-import { MassActionType } from '@/entities/mass-action';
+import { CaseFileStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
+import { MassActionType } from '@libs/entities-lib/mass-action';
 import Component from './ImpactStatusCaseFileFiltering.vue';
 
 const localVue = createLocalVue();

@@ -1,5 +1,5 @@
-import { ICaseFileReferralEntity, ICaseFileReferralMetadata } from '@/entities/case-file-referral';
-import { IOptionItem } from '@/entities/optionItem';
+import { ICaseFileReferralEntity, ICaseFileReferralMetadata } from '@libs/entities-lib/case-file-referral';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IStore, IState } from '../../store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';

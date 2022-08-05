@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import ConfirmBeforeAction from '../ConfirmBeforeAction.vue';
 
 export default Vue.extend({

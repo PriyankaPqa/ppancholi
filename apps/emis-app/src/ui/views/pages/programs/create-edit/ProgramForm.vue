@@ -117,10 +117,10 @@ import {
   VTextAreaWithValidation,
 } from '@libs/component-lib/components';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import { EPaymentModalities, ProgramEntity } from '@/entities/program';
+import { EPaymentModalities, ProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
-import { Status } from '@libs/core-lib/entities/base';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({
   name: 'ProgramForm',

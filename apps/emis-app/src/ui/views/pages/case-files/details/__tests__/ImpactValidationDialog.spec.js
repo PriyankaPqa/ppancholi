@@ -1,7 +1,7 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 
-import { ValidationOfImpactStatus, ImpactValidationMethod } from '@/entities/case-file';
+import { ValidationOfImpactStatus, ImpactValidationMethod } from '@libs/entities-lib/case-file';
 import Component from '../components/ImpactValidationDialog.vue';
 
 const localVue = createLocalVue();

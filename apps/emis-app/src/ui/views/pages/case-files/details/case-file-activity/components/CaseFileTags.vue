@@ -107,10 +107,10 @@ import { RcDialog, RcConfirmationDialog, RcTooltip } from '@libs/component-lib/c
 
 import {
   IOptionItem,
-} from '@/entities/optionItem';
-import { IListOption, IIdMultilingualName } from '@/types';
+} from '@libs/entities-lib/optionItem';
+import { IListOption, IIdMultilingualName } from '@libs/core-lib/types';
 
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 interface IListTag extends IIdMultilingualName {
   existing: boolean;

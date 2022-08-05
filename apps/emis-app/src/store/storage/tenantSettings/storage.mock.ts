@@ -5,7 +5,7 @@ import {
   mockCombinedTenantSettings,
   mockTenantSettingsEntity,
   mockTenantSettingsEntityData,
-} from '@/entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
 import { BaseMock } from '../base/base.mock';
 
 export class TenantSettingsStorageMock extends BaseMock<ITenantSettingsCombined, ITenantSettingsEntity> {

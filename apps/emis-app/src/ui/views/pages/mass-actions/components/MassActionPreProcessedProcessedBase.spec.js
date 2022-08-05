@@ -6,8 +6,8 @@ import {
 
 import {
   MassActionRunStatus, MassActionRunType, mockMassActionEntity, mockMassActionMetadata,
-} from '@/entities/mass-action';
-import { mockCombinedUserAccount } from '@/entities/user-account';
+} from '@libs/entities-lib/mass-action';
+import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';

@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockBrandingEntity, mockEditColoursRequest } from '@/entities/tenantSettings';
+import { mockBrandingEntity, mockEditColoursRequest } from '@libs/entities-lib/tenantSettings';
 import Component from '../Colours.vue';
 
 const localVue = createLocalVue();

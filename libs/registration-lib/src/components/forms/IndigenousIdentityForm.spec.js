@@ -1,13 +1,13 @@
 import { i18n } from '@/ui/plugins/i18n';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import _merge from 'lodash/merge';
-import helpers from '../../ui/helpers/index';
+import helpers from '@libs/entities-lib/helpers';
 import {
   mockContactInformation,
   mockMember,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems, EIndigenousTypes,
-} from '../../entities/household-create';
+} from '../../../../entities-lib/src/household-create';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './IndigenousIdentityForm.vue';
 

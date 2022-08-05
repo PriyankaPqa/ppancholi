@@ -6,10 +6,10 @@ import {
   IFinancialAssistanceTableMetadata,
   IFinancialAssistanceTableItem,
   IFinancialAssistanceTableSubItem,
-} from '@/entities/financial-assistance';
-import { IProgramEntity } from '@/entities/program';
-import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
-import { Status } from '@libs/core-lib/entities/base';
+} from '@libs/entities-lib/financial-assistance';
+import { IProgramEntity } from '@libs/entities-lib/program';
+import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
+import { Status } from '@libs/entities-lib/base';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';

@@ -1,4 +1,4 @@
-import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
 
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 

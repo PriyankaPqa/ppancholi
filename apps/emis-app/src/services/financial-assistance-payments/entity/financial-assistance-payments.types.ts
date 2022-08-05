@@ -1,7 +1,7 @@
-import { IVersionedEntity } from '@libs/registration-lib/entities/value-objects/versioned-entity';
+import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import {
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentsSummary, PaymentStatus,
-} from '@/entities/financial-assistance-payment';
+} from '@libs/entities-lib/financial-assistance-payment';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface IFinancialAssistancePaymentsService extends IDomainBaseService<IFinancialAssistancePaymentEntity, uuid>{

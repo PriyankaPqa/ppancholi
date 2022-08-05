@@ -141,8 +141,8 @@ import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import {
   EEventStatus, EventEntity, IEventCombined, IEventMetadata,
-} from '@/entities/event';
-import { ECanadaProvinces, IMultilingual, INavigationTab } from '@/types';
+} from '@libs/entities-lib/event';
+import { ECanadaProvinces, IMultilingual, INavigationTab } from '@libs/core-lib/types';
 import routes from '@/constants/routes';
 
 export default Vue.extend({

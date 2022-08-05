@@ -4,8 +4,8 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockCombinedMassAction } from '@/entities/mass-action';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
+import { mockCombinedMassAction } from '@libs/entities-lib/mass-action';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
 import Component from './MassActionEditTitleDescription.vue';
 
 const localVue = createLocalVue();

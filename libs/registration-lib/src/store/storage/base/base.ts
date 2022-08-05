@@ -3,7 +3,7 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEmpty from 'lodash/isEmpty';
 import { IAzureSearchParams, IAzureTableSearchResults, ICombinedIndex } from '@libs/core-lib/types';
-import { IEntity, IEntityCombined, Status } from '@libs/core-lib/entities/base';
+import { IEntity, IEntityCombined, Status } from '@libs/entities-lib/base';
 import { IStore, IState } from '../..';
 import { IBaseStorage } from './base.types';
 

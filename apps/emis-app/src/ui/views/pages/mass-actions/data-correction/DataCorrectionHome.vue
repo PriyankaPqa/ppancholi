@@ -14,7 +14,7 @@
 import Vue from 'vue';
 import routes from '@/constants/routes';
 import MassActionBaseTable from '@/ui/views/pages/mass-actions/components/MassActionBaseTable.vue';
-import { MassActionDataCorrectionType } from '@/entities/mass-action';
+import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({

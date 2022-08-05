@@ -1,11 +1,11 @@
 import Vuetify from 'vuetify';
 import { mockStorage } from '@/store/storage';
-import { mockBrandingEntity } from '@/entities/tenantSettings';
+import { mockBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { mockUsersData } from '@/entities/user';
+import { mockUsersData } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
 import { mockUserStateContributor } from '@/test/helpers';
 

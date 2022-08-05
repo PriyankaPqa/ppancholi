@@ -29,11 +29,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import VueI18n, { TranslateResult } from 'vue-i18n';
-import { Status } from '@libs/core-lib/entities/base';
-import helpers from '../../ui/helpers/index';
-import { IOptionItemData } from '../../types';
-import { IContactInformation } from '../../entities/value-objects/contact-information';
-import { IIdentitySet, IMember } from '../../entities/household-create';
+import { Status } from '@libs/entities-lib/base';
+import helpers from '@libs/entities-lib/helpers';
+import { IOptionItemData } from '@libs/core-lib/types';
+import { IContactInformation } from '@libs/entities-lib/value-objects/contact-information';
+import { IIdentitySet, IMember } from '@libs/entities-lib/household-create';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';

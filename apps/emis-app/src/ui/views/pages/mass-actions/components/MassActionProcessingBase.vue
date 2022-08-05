@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMassActionCombined } from '@/entities/mass-action';
+import { IMassActionCombined } from '@libs/entities-lib/mass-action';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
 
 export default Vue.extend({

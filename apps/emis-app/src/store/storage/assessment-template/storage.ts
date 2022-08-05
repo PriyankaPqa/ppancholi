@@ -1,4 +1,4 @@
-import { IAssessmentTemplateEntity, IAssessmentTemplateMetadata } from '@libs/core-lib/entities/assessment-template';
+import { IAssessmentTemplateEntity, IAssessmentTemplateMetadata } from '@libs/entities-lib/assessment-template';
 import { IStore, IState } from '../../store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';

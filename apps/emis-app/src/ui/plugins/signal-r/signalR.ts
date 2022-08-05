@@ -7,12 +7,12 @@ import _omit from 'lodash/omit';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import Vue from 'vue';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
-import { IMassActionEntityData, MassActionRunStatus } from '@/entities/mass-action';
+import { IMassActionEntityData, MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { i18n } from '@/ui/plugins/i18n';
 import { ISignalRService, ISignalRServiceMock } from '@/services/signal-r';
 import { sub } from 'date-fns';
-import { IEntity } from '@libs/core-lib/entities/base';
-import helpers from '@libs/registration-lib/ui/helpers';
+import { IEntity } from '@libs/entities-lib/base';
+import helpers from '@libs/entities-lib/helpers';
 import { IStorage } from '../../../store/storage/storage.types';
 import { ISignalR } from './signalR.types';
 

@@ -4,11 +4,11 @@ import { CaseFileReferralsService } from '@/services/case-file-referrals/entity'
 import {
   EOptionLists,
   IOptionItem,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 import { IOptionItemsService } from '@/services/optionItems';
-import { ICaseFileReferralEntity } from '@/entities/case-file-referral';
+import { ICaseFileReferralEntity } from '@libs/entities-lib/case-file-referral';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';

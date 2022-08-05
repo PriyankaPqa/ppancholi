@@ -89,8 +89,8 @@ import Vue from 'vue';
 import _sortBy from 'lodash/sortBy';
 import { TranslateResult } from 'vue-i18n';
 import { RcStatsTemplate, VAutocompleteWithValidation } from '@libs/component-lib/components';
-import { IEventMainInfo } from '@/entities/event';
-import { ICaseFileDetailedCount } from '@/entities/case-file';
+import { IEventMainInfo } from '@libs/entities-lib/event';
+import { ICaseFileDetailedCount } from '@libs/entities-lib/case-file';
 
 export default Vue.extend({
   name: 'EventStats',

@@ -1,10 +1,10 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCaseFileEntity, CaseFileStatus } from '@/entities/case-file';
+import { mockCaseFileEntity, CaseFileStatus } from '@libs/entities-lib/case-file';
 // import { mockTeamsData, mockSearchTeams } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
 import { mockUserStateLevel } from '@/test/helpers';
-import { mockCombinedUserAccount } from '@/entities/user-account';
-import { mockTeamEntity } from '@/entities/team';
+import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
+import { mockTeamEntity } from '@libs/entities-lib/team';
 
 import Component from '../case-file-activity/components/CaseFileAssignmentsOld.vue';
 

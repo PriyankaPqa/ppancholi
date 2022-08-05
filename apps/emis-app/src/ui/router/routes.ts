@@ -7,7 +7,7 @@ import helpers from '@/ui/helpers/helpers';
 import {
   USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, TENANT_SETTINGS_ENTITIES,
 } from '@/constants/vuex-modules';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Routes from '../../constants/routes';
 import { SignalR } from '../plugins/signal-r/signalR';
 

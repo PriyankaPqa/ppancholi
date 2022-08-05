@@ -137,12 +137,12 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { RcPhoneWithValidation, VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
-import helpers from '@libs/registration-lib/ui/helpers';
+import helpers from '@libs/entities-lib/helpers';
 import { ValidationObserver } from 'vee-validate';
 import { EventHub } from '@libs/core-lib/plugins/event-hub';
-import { IOptionItemData } from '../../types';
+import { IOptionItemData } from '@libs/core-lib/types';
 import { MAX_LENGTH_MD } from '../../constants/validations';
-import { IContactInformation, IValidateEmailResponse } from '../../entities/value-objects/contact-information';
+import { IContactInformation, IValidateEmailResponse } from '../../../../entities-lib/src/value-objects/contact-information';
 
 export default Vue.extend({
   name: 'ContactInformationForm',

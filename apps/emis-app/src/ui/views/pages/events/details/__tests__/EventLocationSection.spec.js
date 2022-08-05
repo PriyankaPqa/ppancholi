@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockEventEntity } from '@/entities/event';
-import { ECanadaProvinces } from '@/types';
+import { mockEventEntity } from '@libs/entities-lib/event';
+import { ECanadaProvinces } from '@libs/core-lib/types';
 
 import Component from '../components/EventLocationSection.vue';
 

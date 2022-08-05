@@ -1,9 +1,9 @@
 import {
   IOptionItemData, EOptionLists, IOptionSubItem,
-} from '@/entities/optionItem';
-import { IMultilingual } from '@/types';
+} from '@libs/entities-lib/optionItem';
+import { IMultilingual } from '@libs/core-lib/types';
 
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 export interface IOptionItemsService {
   getOptionList(target: EOptionLists): Promise<IOptionItemData[]>;

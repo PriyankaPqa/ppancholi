@@ -1,6 +1,6 @@
 import { NavigationGuardNext } from 'vue-router';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import { IMultilingual } from '@/types';
+import { IMultilingual } from '@libs/core-lib/types';
 import { i18n } from '@/ui/plugins/i18n';
 import moment from '@/ui/plugins/moment';
 import { IRestResponse } from '@libs/core-lib/services/http-client';

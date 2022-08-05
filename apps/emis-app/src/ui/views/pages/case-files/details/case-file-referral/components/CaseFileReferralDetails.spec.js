@@ -1,12 +1,12 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCaseFileReferralEntity, mockCombinedCaseFileReferral, ReferralMethod } from '@/entities/case-file-referral';
+import { mockCaseFileReferralEntity, mockCombinedCaseFileReferral, ReferralMethod } from '@libs/entities-lib/case-file-referral';
 import { mockStorage } from '@/store/storage';
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
 import { mockUserStateLevel } from '@/test/helpers';
 
-import { mockCombinedCaseFile } from '@/entities/case-file';
-import { mockCombinedEvent, EEventStatus } from '@/entities/event';
+import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
+import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 import Component from './CaseFileReferralDetails.vue';
 
 const storage = mockStorage();

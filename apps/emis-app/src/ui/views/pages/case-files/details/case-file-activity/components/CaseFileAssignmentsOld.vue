@@ -47,10 +47,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseFileEntity } from '@/entities/case-file';
-import { ITeamEntity } from '@/entities/team';
-import { IAzureTableSearchResults } from '@libs/core-lib//types';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { ITeamEntity } from '@libs/entities-lib/team';
+import { IAzureTableSearchResults } from '@libs/core-lib/types';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import AssignCaseFileOld from './AssignCaseFileOld.vue';
 import ViewAssignedOld from './ViewAssignedOld.vue';
 

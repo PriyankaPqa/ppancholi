@@ -1,9 +1,9 @@
-import { mockOptionItems } from '@/entities/optionItem';
+import { mockOptionItems } from '@libs/entities-lib/optionItem';
 
 import { mockStore } from '@/store';
 import { UserAccountStorage } from '@/store/storage/user-account/storage';
 import { USER_ACCOUNT_ENTITIES, USER_ACCOUNT_METADATA } from '@/constants/vuex-modules';
-import { FilterKey, mockUserAccountEntity, mockUserFilters } from '@/entities/user-account';
+import { FilterKey, mockUserAccountEntity, mockUserFilters } from '@libs/entities-lib/user-account';
 import { IAddRoleToUserRequest } from '@/services/user-accounts/entity';
 
 const entityModuleName = USER_ACCOUNT_ENTITIES;

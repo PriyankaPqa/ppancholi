@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockItems, mockSubItems } from '@/entities/financial-assistance';
+import { mockItems, mockSubItems } from '@libs/entities-lib/financial-assistance';
 import Component from '../Templates/ItemButtons.vue';
 
 const localVue = createLocalVue();

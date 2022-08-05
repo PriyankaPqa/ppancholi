@@ -1,4 +1,4 @@
-import { mockAssessmentTemplateEntity, mockAssessmentTemplateEntities } from '../../../entities/assessment-template';
+import { mockAssessmentTemplateEntity, mockAssessmentTemplateEntities } from '@libs/entities-lib/assessment-template';
 import { mockDomainBaseService } from '../../base';
 import { IAssessmentTemplatesServiceMock } from './assessment-templates.types';
 

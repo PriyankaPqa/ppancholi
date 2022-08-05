@@ -1,6 +1,6 @@
 import {
   ICaseNoteCombined, ICaseNoteEntity, mockCaseNoteCategories, mockCaseNoteEntity, mockCombinedCaseNotes,
-} from '@/entities/case-note';
+} from '@libs/entities-lib/case-note';
 
 import { BaseMock } from '../base/base.mock';
 

@@ -11,15 +11,15 @@ import {
   ICaseFileLabel,
   IIdentityAuthentication,
   IImpactStatusValidation,
-} from '@/entities/case-file';
+} from '@libs/entities-lib/case-file';
 import { CaseFilesService, ICreateCaseFileRequest } from '@/services/case-files/entity';
 import {
   IOptionItem, EOptionLists,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 import { ICaseFileEntityState } from '@/store/modules/case-file/caseFileEntity.types';
 import { IOptionItemsService } from '@/services/optionItems';
-import { IListOption } from '@/types';
-import { IUserAccountEntity } from '@/entities/user-account';
+import { IListOption } from '@libs/core-lib/types';
+import { IUserAccountEntity } from '@libs/entities-lib/user-account';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule, filterAndSortActiveItems, IState } from '../base';
 import { IRootState } from '../../store.types';

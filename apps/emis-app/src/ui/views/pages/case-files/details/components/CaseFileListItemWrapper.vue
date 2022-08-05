@@ -61,8 +61,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from '@/ui/plugins/moment';
-import { ICaseFileActivity } from '@/entities/case-file';
-import { ICaseNoteCombined } from '@/entities/case-note';
+import { ICaseFileActivity } from '@libs/entities-lib/case-file';
+import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
 
 /**
  * Template used for case note and case file activity items

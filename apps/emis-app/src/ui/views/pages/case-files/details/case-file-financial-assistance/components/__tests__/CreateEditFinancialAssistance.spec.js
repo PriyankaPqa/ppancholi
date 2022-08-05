@@ -5,26 +5,30 @@ import
   mockFinancialAssistanceTableEntity,
   mockCombinedFinancialAssistance,
   mockItems,
-} from '@/entities/financial-assistance';
+} from '@libs/entities-lib/financial-assistance';
 import
 {
   FinancialAssistancePaymentEntity,
   mockCaseFinancialAssistanceEntity,
   mockCaseFinancialAssistancePaymentGroups,
   ApprovalStatus,
-} from '@/entities/financial-assistance-payment';
+} from '@libs/entities-lib/financial-assistance-payment';
 import {
   mockCombinedCaseFile,
   IdentityAuthenticationStatus,
   ValidationOfImpactStatus,
   mockCombinedCaseFiles,
-} from '@/entities/case-file';
-import { mockProgramEntity, mockCombinedPrograms } from '@/entities/program';
-import { mockOptionItemData } from '@/entities/optionItem';
-import routes from '@/constants/routes';
+} from '@libs/entities-lib/case-file';
+
+import { Status } from '@libs/entities-lib/base';
+
+import { mockProgramEntity, mockCombinedPrograms } from '@libs/entities-lib/program';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+
+import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 import flushPromises from 'flush-promises';
-import { Status } from '@libs/core-lib/entities/base/index';
-import { mockCombinedEvent, EEventStatus } from '@/entities/event';
+import routes from '@/constants/routes';
+
 import Component from '../CreateEditFinancialAssistance.vue';
 
 const localVue = createLocalVue();

@@ -131,8 +131,8 @@ import { RcPhoneWithValidation, VSelectWithValidation, VTextFieldWithValidation 
 import isEmpty from 'lodash/isEmpty';
 import months from '@libs/registration-lib/constants/months';
 import moment from 'moment';
-import { MAX_LENGTH_MD } from '@/constants/validations';
-import { VForm } from '@/types';
+import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { VForm } from '@libs/core-lib/types';
 import WithRoot from '@/ui/views/components/WithRoot';
 
 export default Vue.extend({

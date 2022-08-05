@@ -1,10 +1,10 @@
-import { IServerError } from '@libs/core-lib/types';
-import { TranslateResult } from 'vue-i18n';
 import {
-  ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
-} from '../../../types';
+  IServerError,
+  ERegistrationMethod, IOptionItemData,
+} from '@libs/core-lib/types';
+import { TranslateResult } from 'vue-i18n';
 
-import { IEvent, IEventData } from '../../../entities/event';
+import { IEvent, IEventData } from '@libs/entities-lib/registration-event';
 import {
   IIndigenousCommunityData,
   EIndigenousTypes,
@@ -14,8 +14,9 @@ import {
   IAddress,
   ICurrentAddress,
   HouseholdCreate, IHouseholdCreate, IHouseholdCreateData,
-} from '../../../entities/household-create';
-import { IHouseholdEntity } from '../../../entities/household';
+} from '@libs/entities-lib/household-create';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
+import { IRegistrationMenuItem } from '../../../types';
 
 export interface IStorage {
   getters: {

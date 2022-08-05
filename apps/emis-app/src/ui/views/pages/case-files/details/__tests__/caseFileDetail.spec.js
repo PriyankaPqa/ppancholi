@@ -1,6 +1,6 @@
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { EEventStatus } from '@/entities/event';
+import { EEventStatus } from '@libs/entities-lib/event';
 import caseFileDetail from '../caseFileDetail';
 
 const storage = mockStorage();

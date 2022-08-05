@@ -1,7 +1,7 @@
 import { TEAM_ENTITIES, TEAM_METADATA } from '@/constants/vuex-modules';
-import { mockEventEntityData } from '@/entities/event';
+import { mockEventEntityData } from '@libs/entities-lib/event';
 import { mockStore } from '@/store';
-import { mockTeamMembersData, mockTeamEntity } from '@/entities/team/team.mock';
+import { mockTeamMembersData, mockTeamEntity } from '@libs/entities-lib/team/team.mock';
 import { TeamStorage } from './storage';
 
 const entityModuleName = TEAM_ENTITIES;

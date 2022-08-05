@@ -1,6 +1,6 @@
 import {
   IEventCombined, IEventEntity, mockCombinedEvents, mockEventEntity,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import { BaseMock } from '../base/base.mock';
 
 export class EventStorageMock extends BaseMock<IEventCombined, IEventEntity> {

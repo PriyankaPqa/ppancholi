@@ -14,7 +14,7 @@ import {
   mockTenantSettingsEntity,
   mockTenantSettingsEntityData,
   TenantSettingsEntity,
-} from '@/entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
 import { TenantSettingsEntityModule } from './tenantSettingsEntity';
 import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 import { mockSignalR } from '../../../ui/plugins/signal-r';

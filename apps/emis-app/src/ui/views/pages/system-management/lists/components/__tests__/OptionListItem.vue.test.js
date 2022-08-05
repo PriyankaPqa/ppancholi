@@ -5,9 +5,9 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockOptionItemData, EOptionLists } from '@/entities/optionItem';
-import entityUtils from '@libs/core-lib/entities/utils';
-import { Status } from '@libs/core-lib/entities/base';
+import { mockOptionItemData, EOptionLists } from '@libs/entities-lib/optionItem';
+import entityUtils from '@libs/entities-lib/utils';
+import { Status } from '@libs/entities-lib/base';
 import Component from '../OptionListItem.vue';
 
 const localVue = createLocalVue();

@@ -6,7 +6,7 @@ import {
 
 import {
   MassActionRunStatus, mockCombinedMassAction,
-} from '@/entities/mass-action';
+} from '@libs/entities-lib/mass-action';
 import { mockStorage } from '@/store/storage';
 
 import MassActionPreProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessingBase.vue';

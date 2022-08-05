@@ -1,10 +1,11 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockEventEntity, EEventLocationStatus } from '@/entities/event';
-import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
+import { mockEventEntity, EEventLocationStatus } from '@libs/entities-lib/event';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
 import { mockStorage } from '@/store/storage';
-import entityUtils from '@libs/core-lib/entities/utils';
+import entityUtils from '@libs/entities-lib/utils';
 import helpers from '@/ui/helpers/helpers';
-import { ECanadaProvinces, EEventSummarySections } from '@/types';
+import { EEventSummarySections } from '@/types';
+import { ECanadaProvinces } from '@libs/core-lib/types';
 
 import Component from '../components/EventGenericLocationDialog.vue';
 

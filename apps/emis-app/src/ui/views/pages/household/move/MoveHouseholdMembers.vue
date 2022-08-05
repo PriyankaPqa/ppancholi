@@ -97,15 +97,15 @@ import mixins from 'vue-typed-mixins';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import {
   HouseholdCreate, ICurrentAddress, IHouseholdCreate, IMember,
-} from '@libs/registration-lib/entities/household-create';
-import { IHouseholdCombined } from '@libs/registration-lib/entities/household';
+} from '@libs/entities-lib/household-create';
+import { IHouseholdCombined } from '@libs/entities-lib/household';
 import { VForm, IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 import household from '@/ui/mixins/household';
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import HouseholdCard from '@/ui/views/pages/household/move/HouseholdCard.vue';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResults.vue';
-import { IEventGenericLocation } from '@/entities/event/event.types';
+import { IEventGenericLocation } from '@libs/entities-lib/event/event.types';
 import helpers from '@/ui/helpers/helpers';
 
 export interface IMovingAddressSelection {

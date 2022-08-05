@@ -68,16 +68,16 @@ import { TranslateResult } from 'vue-i18n';
 import { DataTableHeader } from 'vuetify';
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import _isEmpty from 'lodash/isEmpty';
-import { FilterKey } from '@/entities/user-account';
+import { FilterKey } from '@libs/entities-lib/user-account';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@libs/core-lib/types';
-import { IFinancialAssistanceTableCombined } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableCombined } from '@libs/entities-lib/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import { IProgramEntity, IProgramMetadata } from '@/entities/program';
-import { IEntityCombined, Status } from '@libs/core-lib/entities/base';
+import { IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
+import { IEntityCombined, Status } from '@libs/entities-lib/base';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'FinancialAssistanceTablesTable',

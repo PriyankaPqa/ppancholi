@@ -68,10 +68,10 @@ import {
   VTextFieldWithValidation, VSelectWithValidation, VTextAreaWithValidation, RcConfirmationDialog,
 } from '@libs/component-lib/components';
 import _cloneDeep from 'lodash/cloneDeep';
-import { IOptionItem } from '@/entities/optionItem';
-import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@/constants/validations';
-import { ICaseFileCombined } from '@/entities/case-file';
-import { CaseNoteEntity, ICaseNoteEntity } from '@/entities/case-note';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/core-lib/constants/validations';
+import { ICaseFileCombined } from '@libs/entities-lib/case-file';
+import { CaseNoteEntity, ICaseNoteEntity } from '@libs/entities-lib/case-note';
 
 export default Vue.extend({
   name: 'CaseNoteForm',

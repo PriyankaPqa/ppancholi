@@ -69,10 +69,10 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import { IProgramEntity } from '@/entities/program';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { ApprovalStatus, IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
-import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
+import { ApprovalStatus, IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import routes from '@/constants/routes';
 import ApprovalHistoryDialog from './ApprovalHistoryDialog.vue';
 import caseFileDetail from '../../caseFileDetail';

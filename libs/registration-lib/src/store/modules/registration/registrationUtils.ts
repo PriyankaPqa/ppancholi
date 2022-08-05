@@ -1,6 +1,6 @@
-import { ERegistrationMethod, ERegistrationMode } from '../../../types';
+import { IHouseholdCreate } from '@libs/entities-lib/household-create';
+import { ERegistrationMethod, ERegistrationMode } from '@libs/core-lib/types';
 import { IState } from './registration.types';
-import { IHouseholdCreate } from '../../../entities/household-create';
 
 export const isRegisteredValid = (): boolean => true;
 

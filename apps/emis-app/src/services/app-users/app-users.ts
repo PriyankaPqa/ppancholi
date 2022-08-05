@@ -1,7 +1,7 @@
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import {
   IAppUserData,
-} from '@/entities/app-user';
+} from '@libs/entities-lib/app-user';
 import { IAppUsersService } from './app-users.types';
 
 export class AppUsersService implements IAppUsersService {

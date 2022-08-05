@@ -1,10 +1,10 @@
 import { ActionContext, ActionTree } from 'vuex';
-import { IVersionedEntity, IVersionedEntityCombined } from '@libs/registration-lib/entities/value-objects/versioned-entity';
-import utils from '@libs/registration-lib/entities/value-objects/versioned-entity/versionedEntityUtils';
+import { IVersionedEntity, IVersionedEntityCombined } from '@libs/entities-lib/value-objects/versioned-entity';
+import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
 import {
   EPaymentCancellationReason, IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentStatus,
-} from '@/entities/financial-assistance-payment';
+} from '@libs/entities-lib/financial-assistance-payment';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';

@@ -48,8 +48,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import helpers from '@libs/registration-lib/ui/helpers';
-import { ECurrentAddressTypes, ICurrentAddress } from '../../../entities/value-objects/current-address';
+import helpers from '@libs/entities-lib/helpers';
+import { ECurrentAddressTypes, ICurrentAddress } from '@libs/entities-lib/value-objects/current-address';
 
 export default Vue.extend({
   name: 'CurrentAddressTemplate',

@@ -107,11 +107,11 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import { TeamType, ITeamEntity, ITeamMember } from '@/entities/team';
-import { ICaseFileEntity } from '@/entities/case-file';
+import { TeamType, ITeamEntity, ITeamMember } from '@libs/entities-lib/team';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
-import { AccountStatus, IUserAccountCombined } from '@/entities/user-account';
-import { Status } from '@libs/core-lib/entities/base';
+import { AccountStatus, IUserAccountCombined } from '@libs/entities-lib/user-account';
+import { Status } from '@libs/entities-lib/base';
 import AssignedListOld from './AssignedListOld.vue';
 
 interface TeamWithCount extends ITeamEntity {

@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
-import { mockProgramEntity } from '@/entities/program';
-import { mockCombinedFinancialAssistance } from '@/entities/financial-assistance';
+import { mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { mockProgramEntity } from '@libs/entities-lib/program';
+import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
 import Component from '../CreateEditFinancialAssistanceForm.vue';
 
 const localVue = createLocalVue();

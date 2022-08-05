@@ -1,9 +1,9 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockCombinedFinancialAssistance } from '@/entities/financial-assistance';
-import { ApprovalStatus, mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
-import { mockProgramEntity } from '@/entities/program';
+import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
+import { ApprovalStatus, mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { mockProgramEntity } from '@libs/entities-lib/program';
 import { mockStorage } from '@/store/storage';
-import { mockCombinedEvent, EEventStatus } from '@/entities/event';
+import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import Component from '../ViewFinancialAssistanceDetails.vue';
 

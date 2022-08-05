@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockEventEntity } from '@/entities/event';
+import { mockEventEntity } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 
 import Component from '../components/EventCallCentreSection.vue';

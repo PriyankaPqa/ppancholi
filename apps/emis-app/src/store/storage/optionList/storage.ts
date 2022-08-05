@@ -1,9 +1,9 @@
 import {
   OptionItem, IOptionItem, EOptionLists, ICreateOptionItemRequest, IOptionSubItem,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 import { IStore, IState } from '@/store/store.types';
-import { IMultilingual } from '@/types';
-import { Status } from '@libs/core-lib/entities/base';
+import { IMultilingual } from '@libs/core-lib/types';
+import { Status } from '@libs/entities-lib/base';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({

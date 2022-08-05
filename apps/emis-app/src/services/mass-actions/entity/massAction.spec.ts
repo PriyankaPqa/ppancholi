@@ -1,5 +1,5 @@
 import { MassActionService } from '@/services/mass-actions/entity/massAction';
-import { MassActionRunType, MassActionType } from '@/entities/mass-action';
+import { MassActionRunType, MassActionType } from '@libs/entities-lib/mass-action';
 import { mockMassActionCreatePayload } from '@/services/mass-actions/entity/massAction.mock';
 import { mockHttp } from '@libs/core-lib/services/http-client';
 

@@ -1,9 +1,9 @@
-import { mockHouseholdEntity } from '@libs/registration-lib/entities/household';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import {
   HouseholdActivity,
   mockHouseholdActivities,
   HouseholdActivityType,
-} from '@libs/registration-lib/entities/value-objects/household-activity';
+} from '@libs/entities-lib/value-objects/household-activity';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockProvider } from '@/services/provider';
 
@@ -18,7 +18,7 @@ displayedItem.templateData = [{ label: 'foo', value: 'bar' }];
 displayedItem.templatePreviousData = [{ label: 'foo1', value: 'bar1' }];
 displayedItem.activityName = 'Personal information changed';
 
-jest.mock('@libs/registration-lib/entities/value-objects/household-activity/householdActivity');
+jest.mock('@libs/entities-lib/value-objects/household-activity/householdActivity');
 
 describe('HouseholdProfileHistory', () => {
   let wrapper;

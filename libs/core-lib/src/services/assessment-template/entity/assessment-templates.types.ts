@@ -1,4 +1,4 @@
-import { IAssessmentTemplateEntity } from '../../../entities/assessment-template/assessment-template.types';
+import { IAssessmentTemplateEntity } from '@libs/entities-lib/assessment-template/assessment-template.types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface IAssessmentTemplatesService extends IDomainBaseService<IAssessmentTemplateEntity, { id: uuid, caseFileId: uuid }>{

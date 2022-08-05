@@ -78,7 +78,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPageContent } from '@libs/component-lib/components';
-import { TeamType, ITeamCombined, ITeamEvent } from '@/entities/team';
+import { TeamType, ITeamCombined, ITeamEvent } from '@libs/entities-lib/team';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';

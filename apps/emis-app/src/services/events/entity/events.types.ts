@@ -6,7 +6,7 @@ import {
   IEventGenericLocation,
   IEventLocation,
   IEventMainInfo,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 import { IAzureSearchParams, IAzureSearchResult } from '@libs/core-lib/types';
 

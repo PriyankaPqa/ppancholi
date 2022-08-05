@@ -1,5 +1,5 @@
 import { localStorageKeys } from '@/constants/localStorage';
-import { IMSALUserData } from '@/entities/user';
+import { IMSALUserData } from '@libs/entities-lib/user';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 
 export default {

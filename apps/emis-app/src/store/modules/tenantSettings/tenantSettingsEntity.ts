@@ -13,9 +13,9 @@ import {
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
   TenantSettingsEntity,
-} from '@/entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
-import { IMultilingual } from '@libs/registration-lib/types';
+import { IMultilingual } from '@libs/core-lib/types';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IState } from '../base/base.types';
 import { BaseModule } from '../base';

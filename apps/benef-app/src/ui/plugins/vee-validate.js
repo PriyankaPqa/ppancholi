@@ -9,7 +9,7 @@ import {
 } from 'vee-validate/dist/rules.umd.min';
 import moment from 'moment';
 import Vue from 'vue';
-import helpers from '@libs/registration-lib/ui/helpers';
+import helpers from '@libs/entities-lib/helpers';
 import { i18n } from './i18n';
 
 // Keep in mind that changing classes' name here will affect any binding done with those ones in the code

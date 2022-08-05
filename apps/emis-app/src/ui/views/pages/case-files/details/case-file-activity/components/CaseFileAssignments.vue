@@ -47,9 +47,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseFileEntity } from '@/entities/case-file';
-import { ITeamEntity } from '@/entities/team';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { ITeamEntity } from '@libs/entities-lib/team';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IAzureTableSearchResults } from '@libs/core-lib/types';
 import ViewAssigned from './ViewAssigned.vue';
 import AssignCaseFile from './AssignCaseFile.vue';

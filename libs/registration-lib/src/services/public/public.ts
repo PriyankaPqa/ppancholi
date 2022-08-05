@@ -2,7 +2,7 @@
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { IAzureSearchResult } from '@libs/core-lib/types';
-import { IEventData } from '../../entities/event';
+import { IEventData } from '../../../../entities-lib/src/registration-event';
 import { IPublicService } from './public.types';
 
 export class PublicService implements IPublicService {

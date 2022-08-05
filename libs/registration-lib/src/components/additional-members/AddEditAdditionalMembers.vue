@@ -43,20 +43,19 @@ import VueI18n, { TranslateResult } from 'vue-i18n';
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 
-import { IIdentitySet } from '@libs/registration-lib/entities/value-objects/identity-set';
+import { IIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
+import helpers from '@libs/entities-lib/helpers';
 import {
   EOptionItemStatus,
   IOptionItemData,
   VForm,
-} from '../../types';
+} from '@libs/core-lib/types';
 
-import helpers from '../../ui/helpers/index';
-
-import { localStorageKeys } from '../../constants/localStorage';
 import {
   ECurrentAddressTypes, ICurrentAddress, IShelterLocationData,
-} from '../../entities/value-objects/current-address/index';
-import { IMember } from '../../entities/value-objects/member';
+} from '@libs/entities-lib/value-objects/current-address';
+import { IMember } from '@libs/entities-lib/value-objects/member';
+import { localStorageKeys } from '../../constants/localStorage';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
 
 export default Vue.extend({

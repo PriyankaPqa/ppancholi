@@ -1,11 +1,11 @@
-import { mockMember } from '@libs/registration-lib/entities/value-objects/member/index';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
 import {
   EIndigenousTypes, IMember, mockIndigenousCommunitiesGetData, mockHouseholdCreate, HouseholdCreate,
-} from '@libs/registration-lib/entities/household-create';
+} from '@libs/entities-lib/household-create';
 import _cloneDeep from 'lodash/cloneDeep';
-import { mockCombinedHousehold } from '@libs/registration-lib/entities/household/index';
-import { ECanadaProvinces } from '@libs/registration-lib/types/index';
-import libHelpers from '@libs/registration-lib/ui/helpers';
+import { mockCombinedHousehold } from '@libs/entities-lib/household';
+import { ECanadaProvinces } from '@libs/core-lib/types';
+import libHelpers from '@libs/entities-lib/helpers';
 import householdHelpers from '@/ui/helpers/household';
 
 const member = mockMember({ id: 'id-1' });

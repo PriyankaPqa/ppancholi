@@ -17,7 +17,7 @@ import Vue from 'vue';
 
 import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
-import { IMassActionEntity, MassActionMode } from '@/entities/mass-action';
+import { IMassActionEntity, MassActionMode } from '@libs/entities-lib/mass-action';
 
 export default Vue.extend({
   name: 'ImportPaymentStatusCreate',

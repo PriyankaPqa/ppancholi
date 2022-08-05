@@ -1,7 +1,7 @@
-import { ECanadaProvinces, ERegistrationMethod, ERegistrationMode } from '@/types';
+import { ECanadaProvinces, ERegistrationMethod, ERegistrationMode } from '@libs/core-lib/types';
 import moment from 'moment';
 import { mockHttp } from '@libs/core-lib/src/services/http-client';
-import { IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
+import { IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
 import {
   ECurrentAddressTypes,
   IMember,
@@ -17,7 +17,7 @@ import {
   mockMember,
   mockMemberCreateRequest,
   mockSplitHouseholdRequest,
-} from '../../../entities/household-create';
+} from '@libs/entities-lib/household-create';
 import { HouseholdsService } from './households';
 
 const API_URL_SUFFIX = 'household';

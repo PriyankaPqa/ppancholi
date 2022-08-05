@@ -1,4 +1,4 @@
-import { IProgramEntity, IProgramMetadata } from '@/entities/program';
+import { IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
 import { IStore, IState } from '../../store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';

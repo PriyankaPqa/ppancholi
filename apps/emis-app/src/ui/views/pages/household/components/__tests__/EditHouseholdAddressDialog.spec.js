@@ -1,11 +1,11 @@
-import libHelpers from '@libs/registration-lib/ui/helpers';
-import { mockAddressData, Address } from '@libs/registration-lib/entities/value-objects/address';
-import { mockAddress, mockHouseholdCreate } from '@libs/registration-lib/entities/household-create';
+import libHelpers from '@libs/entities-lib/helpers';
+import { mockAddressData, Address } from '@libs/entities-lib/value-objects/address';
+import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/household-create';
 import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
-import { mockHouseholdEntity } from '@libs/registration-lib/entities/household';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { i18n } from '@/ui/plugins';
-import { MAX_LENGTH_LG } from '@/constants/validations';
+import { MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
 import { mockStorage } from '@/store/storage';
 import Component from '../EditHouseholdAddressDialog.vue';
 

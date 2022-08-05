@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from 'axios';
-import { IMultilingual } from '@/types/interfaces/IMultilingual';
+import { IMultilingual } from '../../types/interfaces/IMultilingual';
 /* eslint-disable */
 export interface IRestResponse<T> {
   headers?: any;

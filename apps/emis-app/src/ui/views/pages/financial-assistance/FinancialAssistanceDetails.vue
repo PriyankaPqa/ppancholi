@@ -104,9 +104,9 @@ import {
   EFinancialFrequency,
   IFinancialAssistanceTableItem,
   IFinancialAssistanceTableSubItem,
-} from '@/entities/financial-assistance';
+} from '@libs/entities-lib/financial-assistance';
 import routes from '@/constants/routes';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 import { INestedTableHeader } from './create-edit/INestedTableHeader';
 import TooltipFinancialAssistanceCategory from './create-edit/TooltipFinancialAssistanceCategory.vue';
 import ErrorPanel from './create-edit/ErrorPanel.vue';

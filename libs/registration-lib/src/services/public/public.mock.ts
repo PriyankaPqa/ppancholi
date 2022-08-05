@@ -1,4 +1,4 @@
-import { mockSearchEventsData } from '../../entities/event';
+import { mockSearchEventsData } from '../../../../entities-lib/src/registration-event';
 import { IPublicServiceMock } from './public.types';
 
 export const mockPublicService = (): IPublicServiceMock => ({

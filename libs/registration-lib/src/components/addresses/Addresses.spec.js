@@ -1,12 +1,12 @@
+import helpers from '@libs/entities-lib/helpers';
+import { EOptionItemStatus } from '@libs/core-lib/types';
 import { i18n } from '../../ui/plugins/i18n';
-import helpers from '../../ui/helpers/index';
 import { mockStorage } from '../../store/storage/storage.mock';
 import AddressForm from '../forms/AddressForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
-import { EOptionItemStatus } from '../../types';
-import { mockAddress, mockHouseholdCreate } from '../../entities/household-create';
-import { mockEvent } from '../../entities/event';
-import { ECurrentAddressTypes, mockCampGround } from '../../entities/value-objects/current-address';
+import { mockAddress, mockHouseholdCreate } from '../../../../entities-lib/src/household-create';
+import { mockEvent } from '../../../../entities-lib/src/registration-event';
+import { ECurrentAddressTypes, mockCampGround } from '../../../../entities-lib/src/value-objects/current-address';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './Addresses.vue';
 

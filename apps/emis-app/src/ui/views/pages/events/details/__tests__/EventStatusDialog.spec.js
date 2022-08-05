@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { EEventStatus } from '@/entities/event';
+import { EEventStatus } from '@libs/entities-lib/event';
 
 import Component from '../components/EventStatusDialog.vue';
 

@@ -140,7 +140,7 @@
 
 <script lang="ts">
 import moment from 'moment';
-import { IHouseholdCombined } from '@libs/registration-lib/entities/household';
+import { IHouseholdCombined } from '@libs/entities-lib/household';
 import { RcDataTable } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { tabs } from '@/store/modules/registration/tabs';

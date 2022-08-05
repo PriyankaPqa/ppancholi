@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { createLocalVue, mount, shallowMount } from '../../test/testSetup';
 import { mockStorage } from '../../store/storage';
-import { HouseholdCreate } from '../../entities/household-create';
+import { HouseholdCreate } from '../../../../entities-lib/src/household-create';
 import Component from './PrivacyStatement.vue';
 
 const localVue = createLocalVue();

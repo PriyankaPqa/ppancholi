@@ -24,8 +24,8 @@
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
 import { RcPageContent } from '@libs/component-lib/components';
-import { VForm } from '@/types';
-import { CaseFileReferralEntity, ICaseFileReferralEntity } from '@/entities/case-file-referral';
+import { VForm } from '@libs/core-lib/types';
+import { CaseFileReferralEntity, ICaseFileReferralEntity } from '@libs/entities-lib/case-file-referral';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';

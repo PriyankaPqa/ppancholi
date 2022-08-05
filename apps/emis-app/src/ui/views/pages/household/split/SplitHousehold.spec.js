@@ -1,6 +1,6 @@
-import { mockSplitHousehold, ContactInformation } from '@libs/registration-lib/entities/household-create';
-import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
-import { mockHouseholdEntity } from '@libs/registration-lib/entities/household';
+import { mockSplitHousehold, ContactInformation } from '@libs/entities-lib/household-create';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { tabs } from '@/store/modules/household/tabs';
 import { EventHub } from '@libs/core-lib/plugins/event-hub';

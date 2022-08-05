@@ -1,4 +1,4 @@
-import { ICaseNoteEntity } from '@/entities/case-note';
+import { ICaseNoteEntity } from '@libs/entities-lib/case-note';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface ICaseNotesService extends IDomainBaseService<ICaseNoteEntity, uuid>{

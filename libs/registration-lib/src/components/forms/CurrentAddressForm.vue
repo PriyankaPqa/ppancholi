@@ -138,14 +138,14 @@ import {
 } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import mixins from 'vue-typed-mixins';
-import { EOptionItemStatus, VForm } from '../../types';
+import { EOptionItemStatus, VForm } from '@libs/core-lib/types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import {
   ECurrentAddressTypes,
   IShelterLocationData,
   ICurrentAddress,
   CurrentAddress,
-} from '../../entities/household-create';
+} from '../../../../entities-lib/src/household-create';
 
 import googleAutoCompleteMixin from './mixins/address';
 

@@ -91,9 +91,9 @@ import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import isEmpty from 'lodash/isEmpty';
 import moment from '@/ui/plugins/moment';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined } from '@/entities/case-file-document';
+import { DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined } from '@libs/entities-lib/case-file-document';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { FilterKey } from '@/entities/user-account';
+import { FilterKey } from '@libs/entities-lib/user-account';
 import { IAzureSearchParams } from '@libs/core-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 

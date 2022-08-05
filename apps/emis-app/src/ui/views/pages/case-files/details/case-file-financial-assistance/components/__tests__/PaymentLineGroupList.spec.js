@@ -1,8 +1,8 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockItems } from '@/entities/financial-assistance';
-import { mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@/entities/financial-assistance-payment';
+import { mockItems } from '@libs/entities-lib/financial-assistance';
+import { mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { mockStorage } from '@/store/storage';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 import Component from '../PaymentLineGroupList.vue';
 
 const localVue = createLocalVue();

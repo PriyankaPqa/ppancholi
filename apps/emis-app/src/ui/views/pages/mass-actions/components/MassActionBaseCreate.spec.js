@@ -6,8 +6,8 @@ import {
 } from '@/test/testSetup';
 
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
-import { MassActionEntity, MassActionMode, MassActionRunType } from '@/entities/mass-action';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
+import { MassActionEntity, MassActionMode, MassActionRunType } from '@libs/entities-lib/mass-action';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
 import { mockStorage } from '@/store/storage';
 import Component from './MassActionBaseCreate.vue';
 

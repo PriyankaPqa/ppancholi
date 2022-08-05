@@ -5,9 +5,9 @@ import { httpClient } from '@/services/httpClient';
 import { CaseFileReferralsService } from '@/services/case-file-referrals/entity';
 import { OptionItemsService } from '@/services/optionItems';
 
-import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
-import { mockCaseFileReferralEntity, ICaseFileReferralEntity } from '@/entities/case-file-referral';
-import { Status } from '@libs/core-lib/entities/base';
+import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
+import { mockCaseFileReferralEntity, ICaseFileReferralEntity } from '@libs/entities-lib/case-file-referral';
+import { Status } from '@libs/entities-lib/base';
 import { CaseFileReferralEntityModule } from './caseFileReferralEntity';
 import { ICaseFileReferralEntityState } from './caseFileReferralEntity.types';
 import { mockSignalR } from '../../../ui/plugins/signal-r';

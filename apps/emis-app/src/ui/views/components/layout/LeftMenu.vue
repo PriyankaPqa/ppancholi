@@ -48,9 +48,9 @@ import Vue from 'vue';
 import { RcTooltip } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import { ui } from '@/constants/ui';
-import { INavigationTab } from '@/types';
-import { NO_ROLE } from '@/entities/user';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { INavigationTab } from '@libs/core-lib/types';
+import { NO_ROLE } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'LeftMenu',

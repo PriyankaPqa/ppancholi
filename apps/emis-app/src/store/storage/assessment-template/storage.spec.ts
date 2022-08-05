@@ -1,6 +1,6 @@
 import { ASSESSMENT_TEMPLATE_ENTITIES, ASSESSMENT_TEMPLATE_METADATA } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';
-import { mockAssessmentTemplateEntity, mockAssessmentTemplateMetadata } from '@libs/core-lib/entities/assessment-template';
+import { mockAssessmentTemplateEntity, mockAssessmentTemplateMetadata } from '@libs/entities-lib/assessment-template';
 import { AssessmentTemplateStorage } from './storage';
 
 const entityModuleName = ASSESSMENT_TEMPLATE_ENTITIES;

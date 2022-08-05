@@ -1,6 +1,6 @@
 import {
   TeamEntity, mockTeamMembersData, mockTeamEntity,
-} from '@/entities/team';
+} from '@libs/entities-lib/team';
 import { mockHttp } from '@libs/core-lib/services/http-client';
 import { TeamsService } from './teams';
 

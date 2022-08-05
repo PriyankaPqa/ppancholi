@@ -1,6 +1,6 @@
 import {
   IMassActionCombined, IMassActionEntity, mockCombinedMassActions, mockMassActionEntity,
-} from '@/entities/mass-action';
+} from '@libs/entities-lib/mass-action';
 import { BaseMock } from '../base/base.mock';
 
 export class MassActionStorageMock extends BaseMock<IMassActionCombined, IMassActionEntity> {

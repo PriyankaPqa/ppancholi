@@ -1,4 +1,4 @@
-import { mockCaseFileReferralEntity } from '@/entities/case-file-referral';
+import { mockCaseFileReferralEntity } from '@libs/entities-lib/case-file-referral';
 import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { CaseFileReferralsService } from './case-file-referrals';
 

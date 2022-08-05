@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import { mockTeamEvents } from '@/entities/team';
+import { mockTeamEvents } from '@libs/entities-lib/team';
 
 import { RcPageContent } from '@libs/component-lib/components';
 import Component from './TeamDetails.vue';

@@ -1,4 +1,4 @@
-import { ICaseFileDocumentEntity } from '@/entities/case-file-document';
+import { ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface ICaseFileDocumentsService extends IDomainBaseService<ICaseFileDocumentEntity, { id: uuid, caseFileId: uuid }>{

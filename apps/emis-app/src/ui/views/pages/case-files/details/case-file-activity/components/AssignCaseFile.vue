@@ -109,12 +109,12 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { RcDialog, RcPageLoading } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import { TeamType, ITeamEntity, ITeamMember } from '@/entities/team';
-import { ICaseFileEntity, IAssignedTeamMembers } from '@/entities/case-file';
+import { TeamType, ITeamEntity, ITeamMember } from '@libs/entities-lib/team';
+import { ICaseFileEntity, IAssignedTeamMembers } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
-import { AccountStatus, IUserAccountCombined } from '@/entities/user-account';
-import { Status } from '@libs/core-lib/entities/base';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { AccountStatus, IUserAccountCombined } from '@libs/entities-lib/user-account';
+import { Status } from '@libs/entities-lib/base';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import AssignedList from './AssignedList.vue';
 
 interface TeamWithCount extends ITeamEntity {

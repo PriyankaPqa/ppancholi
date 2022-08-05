@@ -1,9 +1,9 @@
 import { CASE_DOCUMENT_METADATA, CASE_DOCUMENT_ENTITIES } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';
-import { mockOptionItemData } from '@/entities/optionItem';
-import { mockCaseFileDocumentEntity } from '@/entities/case-file-document';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { mockCaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { CaseFileDocumentStorage } from './storage';
-import { mockCaseFileDocumentMetadata } from '../../../entities/case-file-document/case-file-document.mock';
+import { mockCaseFileDocumentMetadata } from '../../../../../../libs/entities-lib/src/case-file-document/case-file-document.mock';
 
 const entityModuleName = CASE_DOCUMENT_ENTITIES;
 const metadataModuleName = CASE_DOCUMENT_METADATA;

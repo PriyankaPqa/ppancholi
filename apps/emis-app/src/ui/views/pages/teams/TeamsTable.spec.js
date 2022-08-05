@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockCombinedTeams } from '@/entities/team';
+import { mockCombinedTeams } from '@libs/entities-lib/team';
 import { mockStorage } from '@/store/storage';
 import flushPromises from 'flush-promises';
 import Component from './TeamsTable.vue';

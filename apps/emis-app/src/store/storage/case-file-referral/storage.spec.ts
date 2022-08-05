@@ -1,9 +1,9 @@
 import { CASE_REFERRAL_ENTITIES, CASE_REFERRAL_METADATA } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';
-import { mockOptionItemData } from '@/entities/optionItem';
-import { mockCaseFileReferralEntity } from '@/entities/case-file-referral';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { mockCaseFileReferralEntity } from '@libs/entities-lib/case-file-referral';
 import { CaseFileReferralStorage } from './storage';
-import { mockCaseFileReferralMetadata } from '../../../entities/case-file-referral/case-file-referral.mock';
+import { mockCaseFileReferralMetadata } from '../../../../../../libs/entities-lib/src/case-file-referral/case-file-referral.mock';
 
 const entityModuleName = CASE_REFERRAL_ENTITIES;
 const metadataModuleName = CASE_REFERRAL_METADATA;

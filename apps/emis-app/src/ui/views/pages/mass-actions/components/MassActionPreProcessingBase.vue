@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMassActionCombined, MassActionRunStatus } from '@/entities/mass-action';
+import { IMassActionCombined, MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 

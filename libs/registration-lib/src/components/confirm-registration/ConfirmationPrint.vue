@@ -203,7 +203,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IEvent } from '../../entities/event';
+import { IEvent } from '../../../../entities-lib/src/registration-event';
 
 export default Vue.extend({
   name: 'ConfirmationPrint',

@@ -84,14 +84,14 @@ import { DataTableHeader } from 'vuetify';
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
 import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
-import { TeamType, ITeamCombined } from '@/entities/team';
-import { FilterKey } from '@/entities/user-account';
+import { TeamType, ITeamCombined } from '@libs/entities-lib/team';
+import { FilterKey } from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IAzureSearchParams } from '@libs/core-lib/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'TeamsTable',

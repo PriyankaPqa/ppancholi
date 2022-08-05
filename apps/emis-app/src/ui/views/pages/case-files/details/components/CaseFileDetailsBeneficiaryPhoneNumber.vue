@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IPhoneNumber } from '@libs/registration-lib/entities/household-create';
+import { IPhoneNumber } from '@libs/entities-lib/household-create';
 
 export default Vue.extend({
   name: 'CaseFileDetailsBeneficiaryPhoneNumber',

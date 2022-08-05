@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { CaseFileActivityType, mockCaseFileActivities, HouseholdCaseFileActivityType } from '@/entities/case-file';
+import { CaseFileActivityType, mockCaseFileActivities, HouseholdCaseFileActivityType } from '@libs/entities-lib/case-file';
 
 import Component from '../case-file-activity/components/CaseFileActivityListItem.vue';
 

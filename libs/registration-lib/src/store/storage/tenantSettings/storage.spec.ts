@@ -1,11 +1,11 @@
-import { mockStore } from '../../store.mock';
 import {
   FeatureKeys,
   mockCreateTenantSettingsRequest,
   mockEditColoursRequest,
   mockEditTenantDetailsRequest,
   mockSetDomainsRequest,
-} from '../../../entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
+import { mockStore } from '../../store.mock';
 import { TenantSettingsStorage } from './storage';
 
 const entityModuleName = 'tenantSettings';

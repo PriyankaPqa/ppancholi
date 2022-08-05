@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockSubItems, EFinancialFrequency } from '@/entities/financial-assistance';
+import { mockSubItems, EFinancialFrequency } from '@libs/entities-lib/financial-assistance';
 import Component from '../Templates/AddSubItemFrequency.vue';
 
 const localVue = createLocalVue();

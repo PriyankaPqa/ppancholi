@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMember } from '../../../entities/value-objects/member';
+import { IMember } from '@libs/entities-lib/value-objects/member';
 
 export default Vue.extend({
   name: 'AdditionalMemberSection',

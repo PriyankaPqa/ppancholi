@@ -77,7 +77,7 @@ import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/M
 import MassActionPreProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessingBase.vue';
 import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessedProcessedBase.vue';
 import massActionDetails from '@/ui/views/pages/mass-actions/mixins/massActionDetails';
-import { MassActionRunStatus } from '@/entities/mass-action';
+import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 
 export interface IMassActionBaseDetailsLabels {
   preProcessingWaitTitle: string;

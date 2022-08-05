@@ -5,9 +5,9 @@ import { httpClient } from '@/services/httpClient';
 import { CaseFileDocumentsService } from '@/services/case-file-documents/entity';
 import { OptionItemsService } from '@/services/optionItems';
 
-import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
-import { mockCaseFileDocumentEntity, ICaseFileDocumentEntity } from '@/entities/case-file-document';
-import { Status } from '@libs/core-lib/entities/base';
+import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
+import { mockCaseFileDocumentEntity, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
+import { Status } from '@libs/entities-lib/base';
 import { CaseFileDocumentEntityModule } from './caseFileDocumentEntity';
 import { ICaseFileDocumentEntityState } from './caseFileDocumentEntity.types';
 import { mockSignalR } from '../../../ui/plugins/signal-r';

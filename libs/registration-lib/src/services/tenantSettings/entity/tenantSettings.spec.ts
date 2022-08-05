@@ -1,10 +1,10 @@
+import { mockHttp, IHttpMock } from '@libs/core-lib/src/services/http-client';
 import {
   mockCreateTenantSettingsRequest,
   mockEditColoursRequest,
   mockEditTenantDetailsRequest,
   mockSetDomainsRequest,
-} from '@/entities/tenantSettings';
-import { mockHttp, IHttpMock } from '@libs/core-lib/src/services/http-client';
+} from '@libs/entities-lib/tenantSettings';
 import { TenantSettingsService } from './tenantSettings';
 
 describe('>>> TenantSettings service', () => {

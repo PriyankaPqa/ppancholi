@@ -12,7 +12,7 @@
 import routes from '@/constants/routes';
 import MassActionBaseDetails, { IMassActionBaseDetailsLabels } from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
 import mixins from 'vue-typed-mixins';
-import { MassActionDataCorrectionType } from '@/entities/mass-action';
+import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import massActionDetails from '../mixins/massActionDetails';
 
 export default mixins(massActionDetails).extend({

@@ -1,6 +1,6 @@
 import {
   mockUserL1,
-} from '@/entities/user';
+} from '@libs/entities-lib/user';
 import { IStorageMock } from './storage.types';
 
 export const mockStorageUser = () : IStorageMock => ({

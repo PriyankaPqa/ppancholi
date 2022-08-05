@@ -1,6 +1,6 @@
 import {
   mockCaseFileActivities, mockCaseFileEntity, mockCaseFileCount, mockCaseFileDetailedCount, mockCaseFileEntities,
-} from '@/entities/case-file';
+} from '@libs/entities-lib/case-file';
 import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { ICaseFilesServiceMock } from './case-files.types';
 

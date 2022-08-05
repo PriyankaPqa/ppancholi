@@ -87,8 +87,8 @@
 import Vue from 'vue';
 import { RcConfirmationDialog } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
-import { IEventAgreement } from '@/entities/event';
-import { IOptionItemData } from '@/entities/optionItem';
+import { IEventAgreement } from '@libs/entities-lib/event';
+import { IOptionItemData } from '@libs/entities-lib/optionItem';
 import EventSummarySectionInfoDialog from './EventSummarySectionInfoDialog.vue';
 
 export default Vue.extend({

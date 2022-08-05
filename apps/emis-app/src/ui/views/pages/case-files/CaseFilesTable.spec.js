@@ -4,9 +4,9 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 
-import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@/entities/case-file';
+import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
-import { EEventStatus, mockCombinedEvents } from '@/entities/event';
+import { EEventStatus, mockCombinedEvents } from '@libs/entities-lib/event';
 import Component from './CaseFilesTable.vue';
 
 const storage = mockStorage();

@@ -2,11 +2,11 @@ import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { MAX_LENGTH_SM } from '@/constants/validations';
+import { MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import { mockItems } from '@/entities/financial-assistance';
-import { ProgramEntity, mockProgramEntity, mockProgramEntities } from '@/entities/program';
-import { Status } from '@libs/core-lib/entities/base';
+import { mockItems } from '@libs/entities-lib/financial-assistance';
+import { ProgramEntity, mockProgramEntity, mockProgramEntities } from '@libs/entities-lib/program';
+import { Status } from '@libs/entities-lib/base';
 
 import Component from '../CreateEditFinancialAssistance.vue';
 

@@ -36,6 +36,9 @@
       ],
       "@libs/assets/*": [
         "../../libs/assets/*"
+      ],
+      "@libs/entities-lib/*": [
+        "../../libs/entities-lib/src/*"
       ]
     },
     "lib": [

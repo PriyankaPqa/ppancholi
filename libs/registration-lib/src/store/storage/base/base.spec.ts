@@ -1,5 +1,5 @@
+import { mockUserAccountEntities, mockUserAccountMetadatum } from '@libs/entities-lib/user-account/userAccount.mock';
 import { IState, IStore, mockStore } from '../..';
-import { mockUserAccountEntities, mockUserAccountMetadatum } from '../../../entities/user-account/userAccount.mock';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Base } from './index';

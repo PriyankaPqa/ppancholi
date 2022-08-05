@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionContext, ActionTree } from 'vuex';
 import Vuetify from 'vuetify/lib';
-import { IRootState } from '../../store.types';
-import { IState } from '../base/base.types';
-import { BaseModule } from '../base';
-import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 import {
   FeatureKeys,
   IBrandingEntity,
@@ -18,7 +14,11 @@ import {
   ITenantSettingsEntityData,
   IValidateCaptchaAllowedIpAddressResponse,
   TenantSettingsEntity,
-} from '../../../entities/tenantSettings';
+} from '@libs/entities-lib/tenantSettings';
+import { IRootState } from '../../store.types';
+import { IState } from '../base/base.types';
+import { BaseModule } from '../base';
+import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 import { TenantSettingsService } from '../../../services/tenantSettings/entity';
 
 export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity, never> {

@@ -1,4 +1,4 @@
-import { IEntity } from '@libs/core-lib/entities/base';
+import { IEntity } from '@libs/entities-lib/base';
 
 export interface IState<T extends IEntity> {
   items: Array<T>,

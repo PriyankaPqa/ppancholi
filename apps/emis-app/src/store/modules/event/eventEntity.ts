@@ -6,7 +6,7 @@ import {
   EOptionLists,
   IOptionItem,
   IOptionItemData,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 import {
   IEventCallCentre,
   IEventGenericLocation,
@@ -15,7 +15,7 @@ import {
   IEventAgreement,
   EventEntity,
   IEventLocation,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { EEventSummarySections } from '@/types';
 import { EventsService } from '@/services/events/entity';

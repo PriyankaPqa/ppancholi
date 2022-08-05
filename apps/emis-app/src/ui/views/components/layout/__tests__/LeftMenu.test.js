@@ -3,7 +3,7 @@ import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
-import { mockUsersData, NO_ROLE } from '@/entities/user';
+import { mockUsersData, NO_ROLE } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
 import Component from '../LeftMenu.vue';
 

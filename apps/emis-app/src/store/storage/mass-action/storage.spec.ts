@@ -1,6 +1,6 @@
 import { MASS_ACTION_ENTITIES, MASS_ACTION_METADATA } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';
-import { MassActionRunType, MassActionType } from '@/entities/mass-action';
+import { MassActionRunType, MassActionType } from '@libs/entities-lib/mass-action';
 import { mockMassActionCreatePayload } from '@/services/mass-actions/entity';
 import { MassActionStorage } from './storage';
 

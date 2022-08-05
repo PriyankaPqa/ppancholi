@@ -61,7 +61,7 @@ import Vue from 'vue';
 import { RcTooltip } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
-import { IBrandingEntity } from '@/entities/tenantSettings';
+import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'AppHeader',

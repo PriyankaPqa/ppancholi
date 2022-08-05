@@ -2,10 +2,10 @@ import { ActionContext, ActionTree } from 'vuex';
 import { CaseNotesService } from '@/services/case-notes/entity';
 import {
   IOptionItem, EOptionLists,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 import { ICaseNoteEntityState } from '@/store/modules/case-note/caseNoteEntity.types';
 import { IOptionItemsService } from '@/services/optionItems';
-import { ICaseNoteEntity } from '@/entities/case-note';
+import { ICaseNoteEntity } from '@libs/entities-lib/case-note';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IRootState } from '../../store.types';

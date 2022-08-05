@@ -3,7 +3,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './MassActionsHome.vue';
 
 const localVue = createLocalVue();

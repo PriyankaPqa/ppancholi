@@ -30,8 +30,8 @@
 import Vue from 'vue';
 import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
-import { IEventData, Event, IEvent } from '@libs/registration-lib/entities/event';
-import { EEventStatus, IEventMainInfo } from '@/entities/event';
+import { IEventData, RegistrationEvent, IEvent } from '@libs/entities-lib/registration-event';
+import { EEventStatus, IEventMainInfo } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'SplitHouseholdEvent',
@@ -54,7 +54,7 @@ export default Vue.extend({
     const { event } = this.$store.state.registration;
 
     if (event) {
-      this.event = new Event(event);
+      this.event = new RegistrationEvent(event);
     }
     await this.fetchActiveEvents();
   },
@@ -74,7 +74,7 @@ export default Vue.extend({
       });
       this.loading = false;
 
-      this.events = res?.value.map((e: IEventMainInfo) => new Event(e.entity as unknown as IEventData));
+      this.events = res?.value.map((e: IEventMainInfo) => new RegistrationEvent(e.entity as unknown as IEventData));
     },
 
     setEvent(event: IEvent) {

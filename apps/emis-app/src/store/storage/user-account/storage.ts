@@ -1,9 +1,9 @@
-import { IOptionItem } from '@/entities/optionItem';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 
 import {
   FilterKey,
   IFilter, IUserAccountEntity, IUserAccountMetadata,
-} from '@/entities/user-account';
+} from '@libs/entities-lib/user-account';
 import { IStorage } from '@/store/storage/user-account/storage.types';
 import { Base } from '@/store/storage/base/base';
 import { IAddRoleToUserRequest } from '@/services/user-accounts/entity';

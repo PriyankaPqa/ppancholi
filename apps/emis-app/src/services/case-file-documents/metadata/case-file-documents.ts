@@ -1,4 +1,4 @@
-import { ICaseFileDocumentMetadata } from '@/entities/case-file-document';
+import { ICaseFileDocumentMetadata } from '@libs/entities-lib/case-file-document';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { ICaseFileDocumentsMetadataService } from './case-file-documents.types';

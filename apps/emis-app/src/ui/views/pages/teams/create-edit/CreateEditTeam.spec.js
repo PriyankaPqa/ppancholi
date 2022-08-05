@@ -1,18 +1,18 @@
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { MAX_LENGTH_MD } from '@/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
 import {
   EEventStatus,
-} from '@/entities/event';
+} from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import { mockAppUsers } from '@/test/helpers';
 import {
   TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc,
-} from '@/entities/team';
+} from '@libs/entities-lib/team';
 import { mockStorage } from '@/store/storage';
 
-import { mockCombinedUserAccount } from '@/entities/user-account';
-import { Status } from '@libs/core-lib/entities/base';
+import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
+import { Status } from '@libs/entities-lib/base';
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();

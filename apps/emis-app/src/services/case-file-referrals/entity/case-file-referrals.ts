@@ -1,6 +1,6 @@
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { DomainBaseService } from '@libs/core-lib/services/base';
-import { ICaseFileReferralEntity, ICaseFileReferralMetadata } from '@/entities/case-file-referral';
+import { ICaseFileReferralEntity, ICaseFileReferralMetadata } from '@libs/entities-lib/case-file-referral';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { ICaseFileReferralsService } from './case-file-referrals.types';
 

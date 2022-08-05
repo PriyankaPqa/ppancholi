@@ -1,11 +1,11 @@
-import { mockHouseholdCreate, Member } from '@libs/registration-lib/entities/household-create';
-import { mockCombinedHousehold, mockHouseholdCaseFile } from '@libs/registration-lib/entities/household';
-import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
+import { mockHouseholdCreate, Member } from '@libs/entities-lib/household-create';
+import { mockCombinedHousehold, mockHouseholdCaseFile } from '@libs/entities-lib/household';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockEventMainInfo, EEventLocationStatus } from '@/entities/event';
-import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
+import { mockEventMainInfo, EEventLocationStatus } from '@libs/entities-lib/event';
+import { mockCombinedCaseFile, CaseFileStatus } from '@libs/entities-lib/case-file';
 import { mockUserStateLevel } from '@/test/helpers';
 import householdHelpers from '@/ui/helpers/household';
 import routes from '@/constants/routes';

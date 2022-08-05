@@ -2,7 +2,7 @@
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 
 import { DomainBaseService } from '@libs/core-lib/services/base';
-import { IEventMetadata } from '@/entities/event';
+import { IEventMetadata } from '@libs/entities-lib/event';
 import { IEventsMetadataService } from './events.types';
 
 const apiUrlSuffix = 'event';

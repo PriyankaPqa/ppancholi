@@ -50,11 +50,11 @@
 import Vue from 'vue';
 import { VTextAreaWithValidation, VAutocompleteWithValidation } from '@libs/component-lib/components';
 import _sortBy from 'lodash/sortBy';
-import { IProgramEntity } from '@/entities/program';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { MAX_LENGTH_LG } from '@/constants/validations';
-import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
-import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
+import { MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
+import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 
 export default Vue.extend({
   name: 'CreateEditFinancialAssistanceForm',

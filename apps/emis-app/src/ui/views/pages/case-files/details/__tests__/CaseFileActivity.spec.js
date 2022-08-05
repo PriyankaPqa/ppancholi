@@ -1,9 +1,9 @@
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@/entities/case-file';
+import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { mockStorage } from '@/store/storage';
-import { mockOptionItemData } from '@/entities/optionItem';
-import { mockCombinedEvent, EEventStatus } from '@/entities/event';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 
 import Component from '../case-file-activity/CaseFileActivity.vue';
 

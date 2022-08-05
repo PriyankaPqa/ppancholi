@@ -69,7 +69,7 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import massActionsTable from '@/ui/views/pages/mass-actions/mixins/massActionsTable';
-import { MassActionMode, MassActionType } from '@/entities/mass-action';
+import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
 import FinancialAssistanceCaseFileFiltering from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCaseFileFiltering.vue';
 
 export default mixins(TablePaginationSearchMixin, massActionsTable).extend({

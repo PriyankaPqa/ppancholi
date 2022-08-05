@@ -1,6 +1,6 @@
 import {
   ITeamCombined, ITeamEntity, mockCombinedTeams, mockTeamsDataStandard,
-} from '@/entities/team';
+} from '@libs/entities-lib/team';
 
 import { BaseMock } from '../base/base.mock';
 

@@ -1,5 +1,5 @@
 import { mockStorage } from '@libs/registration-lib/store/storage';
-import { mockCombinedHouseholds } from '@libs/registration-lib/entities/household';
+import { mockCombinedHouseholds } from '@libs/entities-lib/household';
 import householdResults from '@/ui/mixins/householdResults';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';

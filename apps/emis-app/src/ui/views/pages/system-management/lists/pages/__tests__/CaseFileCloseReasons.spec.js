@@ -3,7 +3,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { EOptionLists } from '@/entities/optionItem';
+import { EOptionLists } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/store/storage';
 import Component from '../CaseFileCloseReasons.vue';
 import OptionList from '../../components/OptionList.vue';

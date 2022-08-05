@@ -1,6 +1,6 @@
 import {
   ITeamEntity, ITeamMember,
-} from '@/entities/team';
+} from '@libs/entities-lib/team';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 
 import { IHttpClient } from '@libs/core-lib/services/http-client';

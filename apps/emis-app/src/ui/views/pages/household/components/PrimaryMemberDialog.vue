@@ -63,17 +63,17 @@ import {
   ContactInformation,
   CurrentAddress,
   ECurrentAddressTypes, IContactInformation, ICurrentAddress, IdentitySet, IIdentitySet, IMember,
-} from '@libs/registration-lib/entities/household-create';
+} from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
-import { IEventGenericLocation } from '@libs/registration-lib/entities/event';
-import libHelpers from '@libs/registration-lib/ui/helpers';
-import { IHouseholdEntity } from '@libs/registration-lib/entities/household';
-import { VForm } from '@/types';
+import { IEventGenericLocation } from '@libs/entities-lib/registration-event';
+import libHelpers from '@libs/entities-lib/helpers';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
+import { VForm } from '@libs/core-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { localStorageKeys } from '@/constants/localStorage';
-import { FeatureKeys } from '@/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EventHub } from '@libs/core-lib/plugins/event-hub';
-import { EEventLocationStatus } from '@/entities/event';
+import { EEventLocationStatus } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'PrimaryMemberDialog',

@@ -24,9 +24,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
+import helpers from '@libs/entities-lib/helpers';
+import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '@libs/entities-lib/household-create';
 import CurrentAddressTemplate from '../addresses/CurrentAddressTemplate.vue';
-import helpers from '../../../ui/helpers/index';
-import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '../../../entities/household-create';
 
 export default Vue.extend({
   name: 'AdditionalMemberTemplate',

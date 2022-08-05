@@ -3,12 +3,12 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import _merge from 'lodash/merge';
 import {
   EIndigenousTypes, mockGenderOther, mockIdentitySet,
-} from '../../../entities/household-create';
+} from '@libs/entities-lib/household-create';
 import {
   mockContactInformation,
   mockPreferredLanguageOther,
   mockPrimarySpokenLanguageOther,
-} from '../../../entities/value-objects/contact-information';
+} from '@libs/entities-lib/value-objects/contact-information';
 import Component from './PersonalInformationTemplate.vue';
 
 const localVue = createLocalVue();

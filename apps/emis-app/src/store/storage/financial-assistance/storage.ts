@@ -6,11 +6,11 @@ import {
   IFinancialAssistanceTableMetadata,
   IFinancialAssistanceTableItem,
   IFinancialAssistanceTableSubItem,
-} from '@/entities/financial-assistance';
-import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
-import { IProgramEntity } from '@/entities/program';
+} from '@libs/entities-lib/financial-assistance';
+import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import { IStore, IState } from '@/store/store.types';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 import { Base } from '../base';
 import { IStorage } from './storage.types';
 

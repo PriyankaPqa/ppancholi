@@ -1,10 +1,10 @@
 import { ActionContext, ActionTree } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
-import { EOptionLists, IOptionItem, OptionItem } from '@/entities/optionItem';
+import { EOptionLists, IOptionItem, OptionItem } from '@libs/entities-lib/optionItem';
 import {
   IFilter, IUserAccountEntity, FilterKey, UserAccountEntity,
-} from '@/entities/user-account';
+} from '@libs/entities-lib/user-account';
 import { IAddRoleToUserRequest, IEditFilterRequest, UserAccountsService } from '@/services/user-accounts/entity';
 import { IUserAccountEntityState } from '@/store/modules/user-account/userAccountEntity.types';
 import { OptionItemsService } from '@/services/optionItems';

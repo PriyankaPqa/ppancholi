@@ -33,7 +33,7 @@ import { RcFilterToolbar } from '@libs/component-lib/components';
 import {
   EFilterKeyType, EFilterOperator, EFilterType, IFilterData, IFilterSettings, IFilterToolbarLabels, IFilterTypeOperators,
 } from '@libs/component-lib/types';
-import { IFilter, IUserAccountEntity } from '@/entities/user-account';
+import { IFilter, IUserAccountEntity } from '@libs/entities-lib/user-account';
 
 // A wrapper around the web-ui filter component to make integration as easy and consistent as possible
 // Includes translations for labels as well as handling API requests to create/save/delete filters

@@ -1,4 +1,4 @@
-import { mockCaseNoteEntity } from '@/entities/case-note';
+import { mockCaseNoteEntity } from '@libs/entities-lib/case-note';
 import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { CaseNotesService } from './case-notes';
 

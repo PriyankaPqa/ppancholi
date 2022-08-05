@@ -1,9 +1,9 @@
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
-import { IOptionItemData, IOptionSubItem } from '@/entities/optionItem';
+import { IOptionItemData, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { IOptionItemBaseService } from '@/services/option-items-base/base.types';
-import { IMultilingual } from '@/types';
-import { Status } from '@libs/core-lib/entities/base';
+import { IMultilingual } from '@libs/core-lib/types';
+import { Status } from '@libs/entities-lib/base';
 
 export class OptionItemBaseService extends DomainBaseService<IOptionItemData, uuid> implements IOptionItemBaseService {
   constructor(http: IHttpClient, apiUrlSuffix: string, controller: string) {

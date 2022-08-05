@@ -3,7 +3,7 @@ import {
   IFinancialAssistancePaymentEntity,
   mockCaseFinancialAssistanceEntity,
   mockCombinedCaseFinancialAssistance,
-} from '@/entities/financial-assistance-payment';
+} from '@libs/entities-lib/financial-assistance-payment';
 
 import { BaseMock } from '../base/base.mock';
 

@@ -30,6 +30,9 @@
       "@libs/core-lib/*": [
         "../../libs/core-lib/src/*"
       ],
+      "@libs/entities-lib/*": [
+        "../../libs/entities-lib/src/*"
+      ],
       "@/*": [
         "src/*"
       ],

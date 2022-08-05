@@ -4,7 +4,7 @@ import {
   IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableItemData,
   IFinancialAssistanceTableSubItemData,
-} from '@/entities/financial-assistance';
+} from '@libs/entities-lib/financial-assistance';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { IFinancialAssistanceTablesService } from './financialAssistanceTables.types';

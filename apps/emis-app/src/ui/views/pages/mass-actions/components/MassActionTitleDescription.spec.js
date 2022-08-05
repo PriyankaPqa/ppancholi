@@ -3,7 +3,7 @@ import {
   mount,
 } from '@/test/testSetup';
 
-import { MassActionRunStatus, mockCombinedMassAction } from '@/entities/mass-action';
+import { MassActionRunStatus, mockCombinedMassAction } from '@libs/entities-lib/mass-action';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import Component from './MassActionTitleDescription.vue';
 

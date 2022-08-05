@@ -88,12 +88,12 @@
 
 import mixins from 'vue-typed-mixins';
 import { RcDataTable } from '@libs/component-lib/components';
-import { IHouseholdCombined } from '@libs/registration-lib/entities/household/index';
-import { HouseholdCreate } from '@libs/registration-lib/entities/household-create';
+import { IHouseholdCombined } from '@libs/entities-lib/household/index';
+import { HouseholdCreate } from '@libs/entities-lib/household-create';
 import householdResults from '@/ui/mixins/householdResults';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
-import { EEventLocationStatus, IEventGenericLocation } from '@/entities/event';
+import { EEventLocationStatus, IEventGenericLocation } from '@libs/entities-lib/event';
 
 export default mixins(householdResults, household).extend({
   name: 'HouseholdResults',

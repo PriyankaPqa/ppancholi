@@ -1,11 +1,10 @@
-import { ERegistrationMethod } from '@libs/registration-lib/types';
+import { ERegistrationMethod, IListOption } from '@libs/core-lib/types';
 import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
   ICaseFileCount,
   ICaseFileDetailedCount, IAssignedTeamMembers,
-} from '@/entities/case-file';
-import { IListOption } from '@/types';
+} from '@libs/entities-lib/case-file';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface ICreateCaseFileRequest {

@@ -1,6 +1,6 @@
 import {
   IUser, IUserData,
-} from '@/entities/user';
+} from '@libs/entities-lib/user';
 import { IStore, IState } from '@/store/store.types';
 import { IStorage } from './storage.types';
 

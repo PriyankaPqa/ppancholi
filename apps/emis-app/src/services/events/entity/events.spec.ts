@@ -2,10 +2,14 @@ import {
   EEventStatus,
   EventEntity,
   mockEventEntities,
-} from '@/entities/event';
-import { mockSearchParams } from '@/test/helpers';
+} from '@libs/entities-lib/event';
 import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
+import { ISearchData } from '@libs/core-lib/types';
 import { EventsService } from './events';
+
+export const mockSearchParams: ISearchData = {
+  filter: 'foo',
+};
 
 describe('>>> Events Service', () => {
   let http: IHttpMock;

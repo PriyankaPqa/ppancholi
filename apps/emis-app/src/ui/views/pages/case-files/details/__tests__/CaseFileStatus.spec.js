@@ -1,7 +1,7 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
-import { mockCombinedEvent, EEventStatus } from '@/entities/event';
+import { mockCombinedCaseFile, CaseFileStatus } from '@libs/entities-lib/case-file';
+import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 
 import Component from '../case-file-activity/components/CaseFileStatus.vue';
 

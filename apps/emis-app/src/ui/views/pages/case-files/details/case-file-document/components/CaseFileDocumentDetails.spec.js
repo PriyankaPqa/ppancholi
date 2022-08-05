@@ -1,9 +1,9 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCombinedCaseFileDocuments } from '@/entities/case-file-document';
+import { mockCombinedCaseFileDocuments } from '@libs/entities-lib/case-file-document';
 import { mockStorage } from '@/store/storage';
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
-import { mockCombinedEvent, EEventStatus } from '@/entities/event';
+import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 
 import Component from './CaseFileDocumentDetails.vue';
 

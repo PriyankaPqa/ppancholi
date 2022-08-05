@@ -243,20 +243,20 @@ import {
   RcAutosuggest,
   RcTooltip,
 } from '@libs/component-lib/components';
-import libHelpers from '@libs/registration-lib/ui/helpers';
+import libHelpers from '@libs/entities-lib/helpers';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import helpers from '@/ui/helpers/helpers';
-import utils from '@libs/core-lib/entities/utils';
-import { ECanadaProvinces, IMultilingual } from '@/types';
+import utils from '@libs/entities-lib/utils';
+import { ECanadaProvinces, IMultilingual } from '@libs/core-lib/types';
 import {
   EResponseLevel,
   EEventStatus,
   IEventCombined,
   EventEntity,
   IEventLocation,
-} from '@/entities/event';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
-import { IOptionItem } from '@/entities/optionItem';
+} from '@libs/entities-lib/event';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import moment from 'moment';
 
 export default Vue.extend({

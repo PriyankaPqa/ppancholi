@@ -22,9 +22,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import helpers from '@libs/registration-lib/ui/helpers';
-import { IAddress } from '../../../entities/household-create';
-import { ECanadaProvinces } from '../../../types';
+import helpers from '@libs/entities-lib/helpers';
+import { IAddress } from '@libs/entities-lib/household-create';
+import { ECanadaProvinces } from '@libs/core-lib/types';
 
 export default Vue.extend({
   name: 'HomeAddressTemplate',

@@ -1,6 +1,6 @@
 import { ActionContext } from 'vuex';
 import { httpClient } from '@/services/httpClient';
-import { mockProgramEntity } from '@/entities/program';
+import { mockProgramEntity } from '@libs/entities-lib/program';
 import { ProgramsService } from '@/services/programs/entity';
 import { ProgramEntityModule } from './programEntity';
 import { IProgramEntityState } from './programEntity.types';

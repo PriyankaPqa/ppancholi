@@ -1,8 +1,8 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import { mockItems, mockSubItems, mockCategories } from '@/entities/financial-assistance';
-import { Status } from '@libs/core-lib/entities/base';
+import { mockItems, mockSubItems, mockCategories } from '@libs/entities-lib/financial-assistance';
+import { Status } from '@libs/entities-lib/base';
 import Component from '../Templates/AddSubItemSubItem.vue';
 
 const localVue = createLocalVue();

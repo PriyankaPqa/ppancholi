@@ -1,8 +1,8 @@
-import { mockCombinedHouseholds, mockCombinedHousehold } from '@libs/registration-lib/entities/household';
-import { mockHouseholdCreateData } from '@libs/registration-lib/entities/household-create/householdCreate.mock';
-import { HouseholdCreate, mockShelterData } from '@libs/registration-lib/entities/household-create';
+import { mockCombinedHouseholds, mockCombinedHousehold } from '@libs/entities-lib/household';
+import { mockHouseholdCreateData } from '@libs/entities-lib/household-create/householdCreate.mock';
+import { HouseholdCreate, mockShelterData } from '@libs/entities-lib/household-create';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { EEventLocationStatus } from '@/entities/event';
+import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { mockStorage } from '@/store/storage';
 
 import Component from './HouseholdResults.vue';

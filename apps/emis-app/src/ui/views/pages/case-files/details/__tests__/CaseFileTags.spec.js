@@ -1,13 +1,13 @@
 import { RcDialog, RcConfirmationDialog } from '@libs/component-lib/components';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCombinedCaseFile, mockCaseFileEntity } from '@/entities/case-file';
+import { mockCombinedCaseFile, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import {
   mockOptionItemData,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 import Component from '../case-file-activity/components/CaseFileTags.vue';
 

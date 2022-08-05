@@ -1,4 +1,4 @@
-import { IEntity } from '../../entities/base';
+import { IEntity } from '@libs/entities-lib/base';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '../../types';
 import { IHttpClient, IRestResponse } from '../http-client';
 import { IDomainBaseService } from './base.types';

@@ -24,6 +24,9 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "@libs/entities-lib/*": [
+        "../../libs/entities-lib/src/*"
       ]
     },
     "lib": [

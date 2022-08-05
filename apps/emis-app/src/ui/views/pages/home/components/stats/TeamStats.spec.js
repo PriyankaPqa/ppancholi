@@ -2,8 +2,8 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import {
   mockCombinedTeams, mockTeamEvents, mockTeamsDataStandard, mockTeamsMetadataStandard,
-} from '@/entities/team';
-import { EEventStatus, mockCombinedEvent } from '@/entities/event';
+} from '@libs/entities-lib/team';
+import { EEventStatus, mockCombinedEvent } from '@libs/entities-lib/event';
 import Component from './TeamStats.vue';
 
 const storage = mockStorage();

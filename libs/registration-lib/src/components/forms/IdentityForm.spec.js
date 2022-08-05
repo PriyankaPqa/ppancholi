@@ -1,7 +1,7 @@
 import {
   mockGenders,
   mockIdentitySet,
-} from '../../entities/household-create';
+} from '../../../../entities-lib/src/household-create';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './IdentityForm.vue';

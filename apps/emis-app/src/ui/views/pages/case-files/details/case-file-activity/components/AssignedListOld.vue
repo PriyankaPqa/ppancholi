@@ -76,7 +76,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ITeamEntity, ITeamMemberAsUser } from '@/entities/team';
+import { ITeamEntity, ITeamMemberAsUser } from '@libs/entities-lib/team';
 
 export default Vue.extend({
   name: 'AssignedList',

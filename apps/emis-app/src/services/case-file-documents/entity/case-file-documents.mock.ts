@@ -1,4 +1,4 @@
-import { mockCaseFileDocumentEntities, mockCaseFileDocumentEntity } from '@/entities/case-file-document';
+import { mockCaseFileDocumentEntities, mockCaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { ICaseFileDocumentsServiceMock } from './case-file-documents.types';
 

@@ -1,4 +1,4 @@
-import { IProgramMetadata } from '@/entities/program';
+import { IProgramMetadata } from '@libs/entities-lib/program';
 import { IDomainBaseService } from '@libs/core-lib/services/base';
 
 interface UrlParams {

@@ -2,7 +2,7 @@ import { RcConfirmationDialog } from '@libs/component-lib/components';
 import { i18n } from '@/ui/plugins/i18n';
 import {
   mockHouseholdCreate, mockAdditionalMembers, mockAdditionalMember, Member,
-} from '../../entities/household-create';
+} from '../../../../entities-lib/src/household-create';
 import { mockStorage } from '../../store/storage/storage.mock';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AdditionalMembers.vue';

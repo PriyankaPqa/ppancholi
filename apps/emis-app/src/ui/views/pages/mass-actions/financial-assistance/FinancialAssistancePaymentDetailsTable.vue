@@ -19,12 +19,12 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { IMassActionCombined } from '@/entities/mass-action';
-import { EPaymentModalities, IProgramCombined } from '@/entities/program';
-import { IEventCombined } from '@/entities/event';
-import { IFinancialAssistanceTableCombined } from '@/entities/financial-assistance';
+import { IMassActionCombined } from '@libs/entities-lib/mass-action';
+import { EPaymentModalities, IProgramCombined } from '@libs/entities-lib/program';
+import { IEventCombined } from '@libs/entities-lib/event';
+import { IFinancialAssistanceTableCombined } from '@libs/entities-lib/financial-assistance';
 
-import { IOptionSubItem, IOptionItemCombined } from '@/entities/optionItem';
+import { IOptionSubItem, IOptionItemCombined } from '@libs/entities-lib/optionItem';
 
 export default Vue.extend({
   name: 'FinancialAssistancePaymentDetailsTable',

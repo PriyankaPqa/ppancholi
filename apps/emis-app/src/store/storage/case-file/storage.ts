@@ -4,13 +4,13 @@ import {
   ICaseFileDetailedCount,
   ICaseFileCount,
   ICaseFileCombined, IAssignedTeamMembers,
-} from '@/entities/case-file/case-file.types';
+} from '@libs/entities-lib/case-file/case-file.types';
 import { IStorage } from '@/store/storage/case-file/storage.types';
-import { IOptionItem } from '@/entities/optionItem';
-import { IListOption } from '@/types';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { IListOption } from '@libs/core-lib/types';
 
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
-import { IEntityCombined } from '@libs/core-lib/entities/base';
+import { IEntityCombined } from '@libs/entities-lib/base';
 import { IStore, IState } from '../../store.types';
 import { Base } from '../base';
 

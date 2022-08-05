@@ -37,9 +37,9 @@ import {
   IFinancialAssistancePaymentGroup,
   ApprovalStatus,
   FinancialAssistancePaymentGroup,
-} from '@/entities/financial-assistance-payment';
-import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
-import { IProgramEntity } from '@/entities/program';
+} from '@libs/entities-lib/financial-assistance-payment';
+import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import PaymentLineGroup from './PaymentLineGroup.vue';
 
 export default Vue.extend({

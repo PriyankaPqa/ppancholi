@@ -1,6 +1,6 @@
 import { ActionTree } from 'vuex';
 import { IRootState } from '@/store/store.types';
-import { IOptionItem } from '@/entities/optionItem';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { FinancialAssistanceCategoriesService } from '@/services/financial-assistance-categories/entity';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IState } from '../base/base.types';

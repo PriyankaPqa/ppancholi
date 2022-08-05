@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { ECanadaProvinces, VForm } from '../../../types';
+import { ECanadaProvinces, VForm } from '@libs/core-lib/types';
 
 /**
  * Mixin to inject when using google autocomplete

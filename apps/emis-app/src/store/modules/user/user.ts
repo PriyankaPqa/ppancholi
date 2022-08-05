@@ -9,7 +9,7 @@ import _intersection from 'lodash/intersection';
 import {
   IMSALUserData,
   User,
-} from '@/entities/user';
+} from '@libs/entities-lib/user';
 import helpers from '@/ui/helpers/helpers';
 import { i18n } from '@/ui/plugins';
 import { IRootState } from '../../store.types';

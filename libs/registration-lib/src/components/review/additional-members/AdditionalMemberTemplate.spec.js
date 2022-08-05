@@ -1,8 +1,8 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
+import { EIndigenousTypes, mockGenderOther } from '@libs/entities-lib/value-objects/identity-set';
 import CurrentAddressTemplate from '../addresses/CurrentAddressTemplate.vue';
-import { mockMember } from '../../../entities/value-objects/member';
-import { EIndigenousTypes, mockGenderOther } from '../../../entities/value-objects/identity-set';
 import Component from './AdditionalMemberTemplate.vue';
 
 const localVue = createLocalVue();

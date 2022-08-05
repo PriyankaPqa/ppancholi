@@ -4,7 +4,7 @@ import {
   IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableItemData,
   IFinancialAssistanceTableSubItemData,
-} from '@/entities/financial-assistance';
+} from '@libs/entities-lib/financial-assistance';
 import { IDomainBaseService } from '@libs/core-lib/services/base';
 
 export interface IFinancialAssistanceTablesService extends IDomainBaseService<IFinancialAssistanceTableEntity, uuid> {

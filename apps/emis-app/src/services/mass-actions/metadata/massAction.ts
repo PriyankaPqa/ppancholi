@@ -1,6 +1,6 @@
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
-import { IMassActionMetadata } from '@/entities/mass-action/massActions.types';
+import { IMassActionMetadata } from '@libs/entities-lib/mass-action/massActions.types';
 import { IMassActionMetadataService } from '@/services/mass-actions/metadata/massAction.types';
 
 const API_URL_SUFFIX = 'case-file';

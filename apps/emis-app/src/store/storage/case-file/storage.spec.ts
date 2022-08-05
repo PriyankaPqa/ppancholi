@@ -5,10 +5,10 @@ import {
   ICaseFileCombined,
   mockCaseFileEntity,
   mockCaseFileMetadata, mockAssignedTeamMembers,
-} from '@/entities/case-file';
-import { mockOptionItemData } from '@/entities/optionItem';
+} from '@libs/entities-lib/case-file';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { mockStore } from '@/store';
-import { IListOption } from '@/types';
+import { IListOption } from '@libs/core-lib/types';
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
 import { CaseFileStorage } from './storage';
 

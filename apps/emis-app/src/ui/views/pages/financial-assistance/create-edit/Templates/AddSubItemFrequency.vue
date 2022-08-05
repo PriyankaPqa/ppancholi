@@ -14,7 +14,7 @@
 import Vue from 'vue';
 import { VSelectWithValidation } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
-import { EFinancialFrequency } from '@/entities/financial-assistance';
+import { EFinancialFrequency } from '@libs/entities-lib/financial-assistance';
 
 export default Vue.extend({
   name: 'AddSubItemFrequency',

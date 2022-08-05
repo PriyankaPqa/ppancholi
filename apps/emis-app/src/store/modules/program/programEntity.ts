@@ -1,5 +1,5 @@
 import { ActionContext, ActionTree } from 'vuex';
-import { IProgramEntity } from '@/entities/program';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import { IRootState } from '@/store/store.types';
 import { ProgramsService } from '@/services/programs/entity';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';

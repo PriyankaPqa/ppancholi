@@ -4,8 +4,8 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { MassActionDataCorrectionType, MassActionType, mockCombinedMassAction } from '@/entities/mass-action';
-import { mockCombinedUserAccount } from '@/entities/user-account';
+import { MassActionDataCorrectionType, MassActionType, mockCombinedMassAction } from '@libs/entities-lib/mass-action';
+import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import Component from './MassActionDetailsTable.vue';
 
 const localVue = createLocalVue();

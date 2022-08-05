@@ -7,7 +7,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import LibPersonalInformation from '@libs/registration-lib/components/personal-information/PersonalInformation.vue';
-import { FeatureKeys } from '@libs/registration-lib/entities/tenantSettings';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { MIN_AGE_REGISTRATION } from '@/constants/validations';
 import { i18n } from '@/ui/plugins';
 import { localStorageKeys } from '@/constants/localStorage';

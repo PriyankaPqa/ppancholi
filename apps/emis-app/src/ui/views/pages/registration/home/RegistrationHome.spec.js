@@ -3,7 +3,7 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { EEventStatus, mockCombinedEvent } from '@/entities/event';
+import { EEventStatus, mockCombinedEvent } from '@libs/entities-lib/event';
 
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';

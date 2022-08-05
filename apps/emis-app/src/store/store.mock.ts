@@ -4,7 +4,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import VueI18n from 'vue-i18n';
 import { makeRegistrationModule } from '@libs/registration-lib/store/modules/registration';
-import { ERegistrationMode } from '@libs/registration-lib/types';
+import { ERegistrationMode } from '@libs/core-lib/types';
 import { HouseholdEntityModule } from '@libs/registration-lib/store/modules/household';
 import { HouseholdMetadataModule } from '@libs/registration-lib/store/modules/household/householdMetadata';
 import { HouseholdsService } from '@libs/registration-lib/services/households/entity';

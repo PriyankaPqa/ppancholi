@@ -1,6 +1,6 @@
 import {
   IProgramCombined, IProgramEntity, mockCombinedPrograms, mockProgramEntity,
-} from '@/entities/program';
+} from '@libs/entities-lib/program';
 import { BaseMock } from '../base/base.mock';
 
 export class ProgramStorageMock extends BaseMock<IProgramCombined, IProgramEntity> {

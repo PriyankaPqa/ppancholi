@@ -124,12 +124,12 @@ import { DataTableHeader } from 'vuetify';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
   IOptionSubItem,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 import { i18n } from '@/ui/plugins';
-import { IUserAccountCombined } from '@/entities/user-account';
-import { IAppUserData } from '@/entities/app-user';
-import { IMultilingual } from '@/types';
-import { Status } from '@libs/core-lib/entities/base';
+import { IUserAccountCombined } from '@libs/entities-lib/user-account';
+import { IAppUserData } from '@libs/entities-lib/app-user';
+import { IMultilingual } from '@libs/core-lib/types';
+import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({
   name: 'AddEmisUser',

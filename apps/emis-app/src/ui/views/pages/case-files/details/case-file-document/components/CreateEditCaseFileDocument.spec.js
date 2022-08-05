@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { CaseFileDocumentEntity, mockCombinedCaseFileDocument, mockCombinedCaseFileDocuments } from '@/entities/case-file-document';
+import { CaseFileDocumentEntity, mockCombinedCaseFileDocument, mockCombinedCaseFileDocuments } from '@libs/entities-lib/case-file-document';
 import { mockStorage } from '@/store/storage';
 import Component from './CreateEditCaseFileDocument.vue';
 

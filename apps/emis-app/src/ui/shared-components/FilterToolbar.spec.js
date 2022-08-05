@@ -2,7 +2,7 @@
 import { EFilterKeyType, EFilterOperator, EFilterType } from '@libs/component-lib/types/FilterTypes';
 import _set from 'lodash/set';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockUserAccountEntity, mockUserFilters, FilterKey } from '@/entities/user-account';
+import { mockUserAccountEntity, mockUserFilters, FilterKey } from '@libs/entities-lib/user-account';
 import { mockStorage } from '@/store/storage';
 import Component from './FilterToolbar.vue';
 

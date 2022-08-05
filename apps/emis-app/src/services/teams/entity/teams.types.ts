@@ -1,6 +1,6 @@
 import {
   ITeamEntity, ITeamMember,
-} from '@/entities/team';
+} from '@libs/entities-lib/team';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface ITeamsService extends IDomainBaseService<ITeamEntity, uuid>{

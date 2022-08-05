@@ -1,6 +1,6 @@
 import {
   IMassActionEntity, IMassActionMetadata, MassActionRunType, MassActionType,
-} from '@/entities/mass-action';
+} from '@libs/entities-lib/mass-action';
 import {
   IBaseActions,
   IBaseActionsMock,

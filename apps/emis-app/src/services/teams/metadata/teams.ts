@@ -1,4 +1,4 @@
-import { ITeamMetadata } from '@/entities/team';
+import { ITeamMetadata } from '@libs/entities-lib/team';
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { ITeamsMetadataService } from './teams.types';

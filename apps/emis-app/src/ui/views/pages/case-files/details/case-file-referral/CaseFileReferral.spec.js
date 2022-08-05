@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockSearchData } from '@/entities/case-file-referral';
+import { mockSearchData } from '@libs/entities-lib/case-file-referral';
 import { mockStorage } from '@/store/storage';
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
 import Component from './CaseFileReferral.vue';
 

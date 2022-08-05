@@ -13,14 +13,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcStatusChip } from '@libs/component-lib/components';
-import { EEventCallCentreStatus, EEventStatus } from '@/entities/event';
+import { EEventCallCentreStatus, EEventStatus } from '@libs/entities-lib/event';
 import colors from '@/ui/plugins/vuetify/colors';
-import { CaseFileStatus } from '@/entities/case-file';
-import { ApprovalStatus, PaymentStatus } from '@/entities/financial-assistance-payment';
-import { AccountStatus } from '@/entities/user-account';
-import { DocumentStatus } from '@/entities/case-file-document';
-import { MassActionRunStatus } from '@/entities/mass-action';
-import { Status } from '@libs/core-lib/entities/base';
+import { CaseFileStatus } from '@libs/entities-lib/case-file';
+import { ApprovalStatus, PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
+import { AccountStatus } from '@libs/entities-lib/user-account';
+import { DocumentStatus } from '@libs/entities-lib/case-file-document';
+import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
+import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({
   name: 'StatusChip',

@@ -142,14 +142,14 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import moment from 'moment';
-import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/registration-lib/entities/household';
+import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
 import {
   CaseFileActivityType, CaseFileStatus, ICaseFileActivity, ICaseFileEntity, ICaseFileMetadata,
-} from '@/entities/case-file';
-import { IIdMultilingualName } from '@/types';
+} from '@libs/entities-lib/case-file';
+import { IIdMultilingualName } from '@libs/core-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { PaymentsSummary } from '@/entities/financial-assistance-payment';
+import { PaymentsSummary } from '@libs/entities-lib/financial-assistance-payment';
 import CaseFileTags from './case-file-activity/components/CaseFileTags.vue';
 
 export interface CaseFileSummary {

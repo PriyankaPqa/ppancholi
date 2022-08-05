@@ -1,10 +1,10 @@
-import { IMultilingual } from '@/types';
+import { IMultilingual } from '@libs/core-lib/types';
 
 import {
   OptionItem, IOptionItem, EOptionLists, ICreateOptionItemRequest, IOptionSubItem,
-} from '@/entities/optionItem';
+} from '@libs/entities-lib/optionItem';
 
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 export interface IStorage {
   getters: {

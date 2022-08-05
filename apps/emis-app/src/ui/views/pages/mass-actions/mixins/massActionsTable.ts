@@ -4,9 +4,9 @@ import moment from 'moment';
 import { TranslateResult } from 'vue-i18n';
 import {
   IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
-} from '@/entities/mass-action';
+} from '@libs/entities-lib/mass-action';
 import { IAzureSearchParams } from '@libs/core-lib/types';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({
 

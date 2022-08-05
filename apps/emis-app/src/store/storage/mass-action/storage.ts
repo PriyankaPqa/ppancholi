@@ -1,7 +1,7 @@
 import { IStore, IState } from '@/store/store.types';
 import {
   IMassActionEntity, IMassActionMetadata, MassActionRunType, MassActionType,
-} from '@/entities/mass-action';
+} from '@libs/entities-lib/mass-action';
 import { Base } from '../base';
 import { IStorage } from './storage.types';
 

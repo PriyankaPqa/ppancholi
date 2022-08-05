@@ -58,7 +58,7 @@
 import Vue from 'vue';
 import { RcTooltip } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
-import { EEventStatus, IEventEntity } from '@/entities/event';
+import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'EventSummaryLink',

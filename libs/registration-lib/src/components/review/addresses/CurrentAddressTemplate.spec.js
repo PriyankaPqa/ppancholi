@@ -2,7 +2,7 @@ import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   mockRemainingHome, mockCampGround, mockUnknown, mockOther, mockFriendsFamily, mockShelter,
-} from '../../../entities/household-create';
+} from '@libs/entities-lib/household-create';
 import Component from './CurrentAddressTemplate.vue';
 
 const localVue = createLocalVue();

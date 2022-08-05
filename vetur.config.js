@@ -8,5 +8,6 @@ module.exports = {
     'apps/benef-app',
     'libs/registration-lib',
     'libs/component-lib',
+    'libs/entities-lib',
   ],
 };

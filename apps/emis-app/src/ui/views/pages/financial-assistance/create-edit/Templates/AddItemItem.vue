@@ -22,9 +22,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VSelectWithValidation } from '@libs/component-lib/components';
-import { IOptionItem } from '@/entities/optionItem';
-import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
-import { Status } from '@libs/core-lib/entities/base';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
+import { Status } from '@libs/entities-lib/base';
 import TooltipFinancialAssistanceCategory from '../TooltipFinancialAssistanceCategory.vue';
 
 export default Vue.extend({

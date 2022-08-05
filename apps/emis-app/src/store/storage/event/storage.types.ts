@@ -6,8 +6,8 @@ import {
   IEventGenericLocation,
   EEventStatus,
   IEventLocation,
-} from '@/entities/event';
-import { IOptionItem } from '@/entities/optionItem';
+} from '@libs/entities-lib/event';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { EEventSummarySections } from '@/types/enums/EEventSummarySections';
 import {
   IBaseActions,

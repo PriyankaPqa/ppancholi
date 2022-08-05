@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { ProgramEntity } from '@/entities/program';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
-import { Status } from '@libs/core-lib/entities/base';
+import { ProgramEntity } from '@libs/entities-lib/program';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
+import { Status } from '@libs/entities-lib/base';
 import Component from '../ProgramForm.vue';
 
 const localVue = createLocalVue();

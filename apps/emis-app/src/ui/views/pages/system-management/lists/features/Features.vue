@@ -30,7 +30,7 @@
 import Vue from 'vue';
 import { RcPageContent } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
-import { FeatureType, IFeatureEntity } from '@/entities/tenantSettings';
+import { FeatureType, IFeatureEntity } from '@libs/entities-lib/tenantSettings';
 import FeatureTable from './FeatureTable.vue';
 
 export default Vue.extend({

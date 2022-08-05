@@ -87,8 +87,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog } from '@libs/component-lib/components';
-import { PaymentsSummary } from '@/entities/financial-assistance-payment';
-import { EPaymentModalities } from '@/entities/program';
+import { PaymentsSummary } from '@libs/entities-lib/financial-assistance-payment';
+import { EPaymentModalities } from '@libs/entities-lib/program';
 
 export default Vue.extend({
   name: 'StatisticsDialog',

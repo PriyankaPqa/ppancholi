@@ -1,6 +1,6 @@
 import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
-import { IFinancialAssistancePaymentMetadata } from '@/entities/financial-assistance-payment';
+import { IFinancialAssistancePaymentMetadata } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistancePaymentsMetadataService } from './financial-assistance-payments.types';
 
 const API_URL_SUFFIX = 'finance';

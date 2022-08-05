@@ -1,4 +1,4 @@
-import { IProgramMetadata } from '@/entities/program';
+import { IProgramMetadata } from '@libs/entities-lib/program';
 import { BaseModule } from '@/store/modules/base';
 
 interface UrlParams {

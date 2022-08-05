@@ -5,9 +5,9 @@ import {
   mockCombinedFinancialAssistances,
   mockFinancialAssistanceTableEntity,
   mockItems,
-} from '@/entities/financial-assistance';
-import { mockProgramEntity } from '@/entities/program';
-import { Status } from '@libs/core-lib/entities/base';
+} from '@libs/entities-lib/financial-assistance';
+import { mockProgramEntity } from '@libs/entities-lib/program';
+import { Status } from '@libs/entities-lib/base';
 import { BaseMock } from '../base/base.mock';
 import { IActionsMock, IGettersMock, IMutationsMock } from './storage.types';
 

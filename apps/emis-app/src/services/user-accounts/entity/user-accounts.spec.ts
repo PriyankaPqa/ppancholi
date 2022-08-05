@@ -1,5 +1,5 @@
-import { IOptionSubItem } from '@/entities/optionItem';
-import { FilterKey, mockUserFilters } from '@/entities/user-account';
+import { IOptionSubItem } from '@libs/entities-lib/optionItem';
+import { FilterKey, mockUserFilters } from '@libs/entities-lib/user-account';
 import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { UserAccountsService } from './user-accounts';
 

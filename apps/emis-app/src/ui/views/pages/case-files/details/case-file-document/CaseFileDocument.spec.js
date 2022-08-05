@@ -1,14 +1,14 @@
 import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCombinedCaseFileDocument, DocumentStatus } from '@/entities/case-file-document';
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockCombinedCaseFileDocument, DocumentStatus } from '@libs/entities-lib/case-file-document';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
 
 import helpers from '@/ui/helpers/helpers';
 import moment from '@/ui/plugins/moment';
-import { mockCombinedCaseFile } from '@/entities/case-file';
-import { mockCombinedEvent, EEventStatus } from '@/entities/event';
+import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
+import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();

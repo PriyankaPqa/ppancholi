@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseFileDocumentEntity } from '@/entities/case-file-document';
+import { ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 
 export default Vue.extend({
   name: 'DownloadViewDocument',

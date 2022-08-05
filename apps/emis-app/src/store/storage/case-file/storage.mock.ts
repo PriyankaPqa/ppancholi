@@ -1,7 +1,7 @@
 import {
   ICaseFileCombined, ICaseFileEntity, mockCaseFileEntity, mockCombinedCaseFiles, mockCaseFileActivities, mockCaseFileDetailedCount, mockCaseFileCount,
-} from '@/entities/case-file';
-import { mockOptionItemData } from '@/entities/optionItem';
+} from '@libs/entities-lib/case-file';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { BaseMock } from '../base/base.mock';
 import { IStorageMock } from './storage.types';
 

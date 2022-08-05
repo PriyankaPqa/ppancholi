@@ -162,14 +162,14 @@ import {
   RcTab,
   RcPageContent,
 } from '@libs/component-lib/components';
-import { IMultilingual } from '@/types';
+import { IMultilingual } from '@libs/core-lib/types';
 import routes from '@/constants/routes';
-import entityUtils from '@libs/core-lib/entities/utils';
+import entityUtils from '@libs/entities-lib/utils';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import {
   IOptionItem, OptionItem, ICreateOptionItemRequest, IOptionSubItem,
-} from '@/entities/optionItem';
-import { Status } from '@libs/core-lib/entities/base';
+} from '@libs/entities-lib/optionItem';
+import { Status } from '@libs/entities-lib/base';
 import OptionListItem from './OptionListItem.vue';
 import OptionListNewItem from './OptionListNewItem.vue';
 

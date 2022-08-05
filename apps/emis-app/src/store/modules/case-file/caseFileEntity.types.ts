@@ -1,5 +1,5 @@
-import { ICaseFileEntity } from '@/entities/case-file';
-import { IOptionItem } from '@/entities/optionItem';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IState } from '../base/base.types';
 
 export interface ICaseFileEntityState extends IState<ICaseFileEntity> {

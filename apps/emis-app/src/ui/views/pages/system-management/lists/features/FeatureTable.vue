@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IFeatureEntity } from '@/entities/tenantSettings';
+import { IFeatureEntity } from '@libs/entities-lib/tenantSettings';
 import FeatureWrapper from './FeatureWrapper.vue';
 
 export default Vue.extend({

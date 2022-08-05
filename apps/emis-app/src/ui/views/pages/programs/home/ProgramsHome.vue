@@ -59,14 +59,14 @@ import mixins from 'vue-typed-mixins';
 import _isEmpty from 'lodash/isEmpty';
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import routes from '@/constants/routes';
-import { FilterKey } from '@/entities/user-account';
+import { FilterKey } from '@libs/entities-lib/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { IAzureSearchParams } from '@libs/core-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IProgramCombined, IProgramEntity } from '@/entities/program';
+import { IProgramCombined, IProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/core-lib/entities/base';
+import { Status } from '@libs/entities-lib/base';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ProgramsHome',

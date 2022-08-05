@@ -1,8 +1,7 @@
-import { BaseMock } from '../base/base.mock';
-
 import {
   IHouseholdCombined, IHouseholdEntity, mockCombinedHouseholds, mockHouseholdEntity,
-} from '../../../entities/household';
+} from '@libs/entities-lib/household';
+import { BaseMock } from '../base/base.mock';
 
 export class HouseholdStorageMock extends BaseMock<IHouseholdCombined, IHouseholdEntity> {
   constructor() {

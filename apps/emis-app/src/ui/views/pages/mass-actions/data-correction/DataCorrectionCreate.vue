@@ -27,7 +27,7 @@
 import Vue from 'vue';
 import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
-import { IMassActionEntity, MassActionDataCorrectionType, MassActionMode } from '@/entities/mass-action';
+import { IMassActionEntity, MassActionDataCorrectionType, MassActionMode } from '@libs/entities-lib/mass-action';
 import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import { format } from 'date-fns';
