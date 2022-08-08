@@ -124,14 +124,14 @@ export default mixins(individual).extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if (this.currentTab.id !== 'confirmation') {
+    if (this.currentTab.id === 'confirmation' || (this.currentTab.id === 'review' && this.householdAlreadyRegistered)) {
+      next();
+    } else {
       const userChoice = await (this.$confirm({
         title: this.titleLeave,
         messages: this.messagesLeave,
       }) as Promise<unknown>);
       next(userChoice);
-    } else {
-      next();
     }
   },
 

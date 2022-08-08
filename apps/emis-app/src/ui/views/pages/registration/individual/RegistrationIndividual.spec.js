@@ -673,4 +673,63 @@ describe('Individual.vue', () => {
       });
     });
   });
+
+  describe('beforeRouteLeave', () => {
+    let next;
+    beforeEach(() => {
+      next = jest.fn(() => {});
+    });
+
+    it('opens the dialog if not on the confirmation page and then calls next', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        computed: {
+          currentTab: () => ({ id: 'isRegistered', titleKey: '', nextButtonTextKey: '' }),
+        },
+        mocks: {
+          $storage: storage,
+        },
+      });
+
+      wrapper.vm.$confirm = jest.fn(() => true);
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+      expect(wrapper.vm.$confirm).toHaveBeenCalled();
+      expect(next).toBeCalled();
+    });
+
+    it('opens the dialog if on the review page and not already registered and then calls next', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        computed: {
+          currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
+          householdAlreadyRegistered: () => false,
+        },
+        mocks: {
+          $storage: storage,
+        },
+      });
+
+      wrapper.vm.$confirm = jest.fn(() => true);
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+      expect(wrapper.vm.$confirm).toHaveBeenCalled();
+      expect(next).toBeCalled();
+    });
+
+    it('does not open the dialog if on the review page and  already registered', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        computed: {
+          currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
+          householdAlreadyRegistered: () => true,
+        },
+        mocks: {
+          $storage: storage,
+        },
+      });
+
+      wrapper.vm.$confirm = jest.fn(() => true);
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+      expect(wrapper.vm.$confirm).not.toHaveBeenCalled();
+    });
+  });
 });
