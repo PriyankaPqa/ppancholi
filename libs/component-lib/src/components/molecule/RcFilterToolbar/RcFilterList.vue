@@ -75,7 +75,7 @@
         :data-test="`rcFilterList__radio--${index}`"
         :label="filter.name"
         :value="filter"
-        @click="onSelect(filter, index)" />
+        @click.native="onSelect(filter, index)" />
     </v-radio-group>
 
     <rc-confirmation-dialog
@@ -181,7 +181,7 @@ export default Vue.extend({
       this.showDeleteFilterDialog = true;
     },
 
-    onSelect(filter: IFilterDTO, index: number) {
+    async onSelect(filter: IFilterDTO, index: number) {
       this.currentFilter = filter;
       this.$emit(EFilterListEvents.loadFilter, { filter, index });
     },

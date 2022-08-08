@@ -29,7 +29,9 @@
           :count="itemsCount"
           :filter-options="filters"
           @update:appliedFilter="onApplyCaseFileFilter"
-          @change:autocomplete="onAutoCompleteChange($event)">
+          @update:autocomplete="onAutoCompleteUpdate($event)"
+          @change:autocomplete="onAutoCompleteChange($event)"
+          @load:filter="throttleOnLoadFilter($event)">
           <template #toolbarActions>
             <v-btn
               data-test="export"
@@ -242,9 +244,15 @@ export default mixins(massActionCaseFileFiltering).extend({
           key: 'Entity/EventId',
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.eventName') as string,
-          items: this.eventsFilter,
+          items: this.sortedEventsFilter,
           loading: this.eventsFilterLoading,
           disabled: this.eventsFilterLoading,
+          props: {
+            'no-data-text': !this.eventFilterQuery ? this.$t('common.inputs.start_typing_to_search') : this.$t('common.search.no_result'),
+            'search-input': this.eventFilterQuery,
+            'no-filter': true,
+            'return-object': true,
+          },
         },
         {
           key: 'Metadata/AppliedProgramIds',
@@ -348,13 +356,13 @@ export default mixins(massActionCaseFileFiltering).extend({
     /**
      * When an item has been selected or un-selected
      */
-    onAutoCompleteChange({ filterKey, value }: {filterKey: string, value: string; }) {
+    onAutoCompleteChange({ filterKey, value }: {filterKey: string, value: { text: string; value: string }; }) {
       if (filterKey === 'Entity/EventId') {
         if (value === null) {
           this.programsFilter = [];
           return;
         }
-        this.fetchProgramsFilters(value);
+        this.fetchProgramsFilters(value.value);
       }
     },
 

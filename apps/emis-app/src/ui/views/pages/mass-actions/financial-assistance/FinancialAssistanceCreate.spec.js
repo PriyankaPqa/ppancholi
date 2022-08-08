@@ -35,6 +35,9 @@ describe('FinancialAssistanceCreate.vue', () => {
             },
           },
         },
+        stubs: {
+          FinancialAssistancePaymentDetailsCreate: true,
+        },
       });
     });
 

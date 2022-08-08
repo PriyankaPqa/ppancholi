@@ -1,19 +1,15 @@
 <template>
-  <rc-stats-template :loading="loadingEvents" data-test-prefix="team" :title="$t('team_stats.title')">
-    <template slot="top">
-      <v-autocomplete-with-validation
+  <rc-stats-template data-test-prefix="team" :title="$t('team_stats.title')">
+    <template #top>
+      <events-selector
         v-model="selectedEventId"
+        async-mode
+        item-value="id"
         data-test="team_stats_select_event"
         class="pb-4"
-        clearable
         hide-details
         :label="$t('team_stats.event.select.label')"
-        :items="events"
-        :item-text="(item) => $m(item.entity.name)"
-        item-value="entity.id"
-        outlined
-        :placeholder="$t('team_stats.event.placeholder')"
-        @change="selectEvent" />
+        @change="selectEvent($event)" />
       <v-autocomplete-with-validation
         v-model="selectedTeam"
         data-test="team_stats_select_team"
@@ -32,7 +28,7 @@
         @change="selectTeam" />
     </template>
 
-    <template slot="stats">
+    <template #stats>
       <v-skeleton-loader v-if="loadingStats" type="list-item-two-line" />
       <div v-if="!loadingStats && statsLoaded && teamStats" data-test="team_stats_count">
         <div class="line rc-body14">
@@ -62,8 +58,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcStatsTemplate, VAutocompleteWithValidation } from '@libs/component-lib/components';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { IEntityCombined } from '@libs/entities-lib/base';
-import { EEventStatus, IEventMainInfo } from '@libs/entities-lib/event';
 import { ITeamEntity, ITeamMetadata } from '@libs/entities-lib/team';
 
 const defaultTeamStats = {
@@ -78,16 +74,15 @@ export default Vue.extend({
 
   components: {
     RcStatsTemplate,
+    EventsSelector,
     VAutocompleteWithValidation,
   },
 
   data() {
     return {
-      events: [] as Array<IEventMainInfo>,
       selectedEventId: null,
       selectedTeam: null,
       teamStats: defaultTeamStats,
-      loadingEvents: false,
       loadingTeams: false,
       statsLoaded: false,
       loadingStats: false,
@@ -99,28 +94,9 @@ export default Vue.extend({
       return this.selectedEventId !== null;
     },
   },
-  async mounted() {
-    this.loadingEvents = true;
-    await this.fetchActiveEvents();
-    this.loadingEvents = false;
-  },
   methods: {
-    async fetchActiveEvents() {
-      const res = await this.$services.events.searchMyEvents({
-        filter: {
-          Entity: {
-            Schedule: {
-              Status: EEventStatus.Open,
-            },
-          },
-        },
-        orderBy: `Entity/Name/Translation/${this.$i18n.locale} asc`,
-        top: 999,
-      });
-      this.events = res?.value;
-    },
-
-    async selectEvent() {
+    async selectEvent(id: string) {
+      this.selectedEventId = id;
       if (!this.selectedEventId) {
         this.selectedTeam = null;
         this.teamStats = null;

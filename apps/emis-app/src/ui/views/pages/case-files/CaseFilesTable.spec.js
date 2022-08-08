@@ -6,7 +6,6 @@ import { mockStorage } from '@/store/storage';
 
 import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
-import { EEventStatus, mockCombinedEvents } from '@libs/entities-lib/event';
 import Component from './CaseFilesTable.vue';
 
 const storage = mockStorage();
@@ -344,6 +343,12 @@ describe('CaseFilesTable.vue', () => {
             items: wrapper.vm.eventsFilter,
             loading: wrapper.vm.eventsFilterLoading,
             disabled: wrapper.vm.eventsFilterLoading,
+            props: {
+              'no-data-text': 'common.inputs.start_typing_to_search',
+              'search-input': null,
+              'no-filter': true,
+              'return-object': true,
+            },
           },
           {
             key: `Metadata/TriageName/Translation/${wrapper.vm.$i18n.locale}`,
@@ -471,55 +476,6 @@ describe('CaseFilesTable.vue', () => {
       });
     });
 
-    describe('fetchEventsFilter', () => {
-      it('should search user events with status onhold or open filtered by inputed name', async () => {
-        await wrapper.vm.fetchEventsFilter();
-
-        expect(wrapper.vm.$services.events.searchMyEvents)
-          .toHaveBeenCalledWith({
-            filter: {
-              or: [
-                {
-                  Entity: {
-                    Schedule: {
-                      Status: EEventStatus.Open,
-                    },
-                  },
-                },
-                {
-                  Entity: {
-                    Schedule: {
-                      Status: EEventStatus.OnHold,
-                    },
-                  },
-                },
-              ],
-            },
-            top: 999,
-            orderBy: 'Entity/Name/Translation/en asc',
-            queryType: 'full',
-            searchMode: 'all',
-          });
-      });
-
-      it('should set eventsFilter the search results', async () => {
-        wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({
-          odataCount: mockCombinedEvents().length,
-          odataContext: 'odataContext',
-          value: mockCombinedEvents(),
-        }));
-
-        await wrapper.vm.fetchEventsFilter();
-
-        const expected = mockCombinedEvents().map((e) => ({
-          text: wrapper.vm.$m(e.entity.name),
-          value: e.entity.id,
-        }));
-
-        expect(wrapper.vm.eventsFilter).toEqual(expected);
-      });
-    });
-
     describe('onApplyFilterLocal', () => {
       describe('when user is using my case file filter', () => {
         it('should call onApplyFilter with proper filters if filters panel also', async () => {
@@ -563,6 +519,14 @@ describe('CaseFilesTable.vue', () => {
               searchFilters: null,
             }, { name: 'filterState' });
         });
+      });
+    });
+
+    describe('onAutoCompleteUpdate', () => {
+      it('should update eventFilterQuery', async () => {
+        const params = { filterKey: 'Entity/EventId', search: 'event', selectedItem: { text: '', value: '' } };
+        await wrapper.vm.onAutoCompleteUpdate(params);
+        expect(wrapper.vm.eventFilterQuery).toEqual('event');
       });
     });
   });

@@ -26,6 +26,7 @@
       :user-filters="userFilters"
       @update:autocomplete="$emit('update:autocomplete', $event)"
       @change:autocomplete="$emit('change:autocomplete', $event)"
+      @load:filter="$emit('load:filter', $event)"
       v-on="$listeners" />
   </div>
 </template>

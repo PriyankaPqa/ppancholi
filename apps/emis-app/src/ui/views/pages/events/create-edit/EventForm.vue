@@ -197,16 +197,14 @@
 
           <v-row>
             <v-col cols="12">
-              <v-autocomplete-with-validation
+              <events-selector
+                fetch-all-events
+                async-mode
                 :value="localEvent.relatedEventIds"
-                data-test="event-related-events"
-                item-value="entity.id"
-                :item-text="(item) => item && item.entity? $m(item.entity.name): ''"
+                item-value="id"
                 :label="$t('event.create.related_events.label')"
-                :items="relatedEventsSorted"
-                :attach="true"
+                data-test="event-related-events"
                 multiple
-                hide-details
                 :disabled="inputDisabled"
                 @change="setRelatedEvents($event)"
                 @delete="setRelatedEvents($event)" />
@@ -237,7 +235,6 @@ import {
   VSelectWithValidation,
   VTextFieldWithValidation,
   VDateFieldWithValidation,
-  VAutocompleteWithValidation,
   VTextAreaWithValidation,
   RcPhoneWithValidation,
   RcAutosuggest,
@@ -258,6 +255,7 @@ import {
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import moment from 'moment';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 
 export default Vue.extend({
   name: 'EventForm',
@@ -267,11 +265,11 @@ export default Vue.extend({
     VSelectWithValidation,
     VTextFieldWithValidation,
     VDateFieldWithValidation,
-    VAutocompleteWithValidation,
     VTextAreaWithValidation,
     RcPhoneWithValidation,
     RcAutosuggest,
     RcTooltip,
+    EventsSelector,
   },
 
   props: {
@@ -600,8 +598,6 @@ export default Vue.extend({
     }
 
     await this.$storage.event.actions.fetchEventTypes();
-    await this.$storage.event.actions.fetchAll();
-
     this.otherProvinces = await this.$storage.event.actions.fetchOtherProvinces();
     this.regions = await this.$storage.event.actions.fetchRegions();
 

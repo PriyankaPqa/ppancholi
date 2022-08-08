@@ -24,7 +24,9 @@ describe('CreateEditFinancialAssistance.vue', () => {
       mocks: {
         $storage: storage,
       },
-      stubs: ['financial-assistance-items'],
+      stubs: {
+        FinancialAssistanceItems: true,
+      },
     });
   });
 

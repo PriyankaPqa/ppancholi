@@ -23,7 +23,7 @@
         <span class="rc-body14 fw-bold">{{ $t('massActions.created_by') }}</span>
       </v-col>
       <v-col md="7">
-        <span v-if="userAccount" class="rc-body14" data-test="createdBy">{{ userAccount.metadata.displayName }}</span>
+        <span v-if="userAccount && userAccount.metadata" class="rc-body14" data-test="createdBy">{{ userAccount.metadata.displayName }}</span>
         <v-progress-circular v-else indeterminate color="primary" />
       </v-col>
     </v-row>

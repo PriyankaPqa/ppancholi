@@ -5,19 +5,14 @@
       <div class="rc-body14 pb-4">
         {{ $t('household.split.event.select_an_event_text') }}
       </div>
-      <v-autocomplete-with-validation
+      <events-selector
         v-model="event"
-        outlined
-        :items="events"
-        :loading="loading"
-        :item-text="(item) => $m(item.name)"
         return-object
-        :attach="true"
-        :rules="{required:true}"
+        async-mode
         :label="`${$t('household.split.event.event_name')}*`"
         data-test="household_profile_split_event_select"
+        :rules="{required:true}"
         @change="setEvent($event)" />
-
       <h4 v-if="event" class="pb-3">
         {{ $t('household.split.privacy_policy') }}
       </h4>
@@ -28,57 +23,36 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
-import { IEventData, RegistrationEvent, IEvent } from '@libs/entities-lib/registration-event';
-import { EEventStatus, IEventMainInfo } from '@libs/entities-lib/event';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { RegistrationEvent, IEvent } from '@libs/entities-lib/registration-event';
 
 export default Vue.extend({
   name: 'SplitHouseholdEvent',
 
   components: {
-    VAutocompleteWithValidation,
     CrcPrivacyStatement,
+    EventsSelector,
   },
 
   data() {
     return {
       i18n: this.$i18n,
-      loading: false,
-      events: [] as Array<IEvent>,
       event: null as IEvent,
     };
   },
 
   async created() {
     const { event } = this.$store.state.registration;
-
     if (event) {
       this.event = new RegistrationEvent(event);
     }
-    await this.fetchActiveEvents();
   },
 
   methods: {
-    async fetchActiveEvents() {
-      this.loading = true;
-      const res = await this.$services.events.searchMyEvents({
-        filter: {
-          Entity: {
-            Schedule: {
-              Status: EEventStatus.Open,
-            },
-          },
-        },
-        top: 999,
-      });
-      this.loading = false;
-
-      this.events = res?.value.map((e: IEventMainInfo) => new RegistrationEvent(e.entity as unknown as IEventData));
-    },
-
     setEvent(event: IEvent) {
       this.$storage.registration.mutations.setEvent(event);
+      this.event = event;
     },
 
   },

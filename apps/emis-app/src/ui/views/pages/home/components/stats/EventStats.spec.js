@@ -1,5 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
+import { mockEventEntity } from '@libs/entities-lib/event';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import Component from './EventStats.vue';
 
 const storage = mockStorage();
@@ -15,23 +17,6 @@ describe('EventStats.vue', () => {
       mocks: {
         $storage: storage,
       },
-    });
-  });
-
-  describe('Live cycle', () => {
-    describe('created', () => {
-      it('calls searchMyEvents', async () => {
-        wrapper.vm.$services = {
-          events: {
-            searchMyEvents: jest.fn(),
-          },
-        };
-
-        wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledTimes(1);
-      });
     });
   });
 
@@ -63,77 +48,29 @@ describe('EventStats.vue', () => {
         expect(wrapper.vm.tip).toEqual(['event_stats.tip.number_of_case_file', 'event_stats.tip.case_file_group_by.triage']);
       });
     });
-
-    describe('eventPlaceholder', () => {
-      it('returns correct value', () => {
-        expect(wrapper.vm.eventPlaceholder).toEqual('event_stats.event.placeholder');
-      });
-    });
-
-    describe('sortedEvents', () => {
-      it('returns sorted value', async () => {
-        const mockEvents = [
-          {
-            entity: {
-              name: {
-                translation: {
-                  en: 'en name 1',
-                  fr: 'fr name 1',
-                },
-              },
-            },
-          },
-          {
-            entity: {
-              name: {
-                translation: {
-                  en: 'en name 2',
-                  fr: 'fr name 2',
-                },
-              },
-            },
-          },
-        ];
-
-        await wrapper.setData({
-          events: mockEvents,
-        });
-
-        expect(wrapper.vm.sortedEvents[0].entity.name.translation.en).toEqual('en name 1');
-
-        mockEvents[0].entity.name.translation.en = 'en name 3';
-        expect(wrapper.vm.sortedEvents[0].entity.name.translation.en).toEqual('en name 2');
-      });
-    });
   });
 
   describe('Methods', () => {
     describe('selectEvent', () => {
-      const selectedEventId = 'selectedEventId';
-
       beforeEach(async () => {
         jest.clearAllMocks();
-        await wrapper.setData({
-          selectedEventId,
-        });
       });
-
+      const event = mockEventEntity();
+      const selectedEventId = event.id;
       it('should call fetchCaseFileDetailedCounts', async () => {
-        await wrapper.vm.selectEvent();
-
+        await wrapper.vm.selectEvent(selectedEventId);
         expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFileDetailedCounts).toHaveBeenCalledWith(selectedEventId);
       });
 
       it('should call fetchCaseFileAssignedCounts', async () => {
-        await wrapper.vm.selectEvent();
-
+        await wrapper.vm.selectEvent(selectedEventId);
         expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFileAssignedCounts).toHaveBeenCalledWith(selectedEventId, null);
       });
 
       it('should not call fetchCaseFileDetailedCounts if no event selected', async () => {
         wrapper.vm.selectedEventId = null;
 
-        await wrapper.vm.selectEvent();
+        await wrapper.vm.selectEvent(null);
 
         expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFileDetailedCounts).toHaveBeenCalledTimes(0);
       });
@@ -147,10 +84,19 @@ describe('EventStats.vue', () => {
 
         wrapper.vm.selectedEventId = null;
 
-        await wrapper.vm.selectEvent();
+        await wrapper.vm.selectEvent(null);
 
         expect(wrapper.vm.quickStats).toBe(null);
         expect(wrapper.vm.openCount).toBe(0);
+      });
+    });
+  });
+
+  describe('Template', () => {
+    describe('Events Selector', () => {
+      it('should have fetch-all-events props', () => {
+        const component = wrapper.findComponent(EventsSelector);
+        expect(component.props('fetchAllEvents')).toBe(true);
       });
     });
   });

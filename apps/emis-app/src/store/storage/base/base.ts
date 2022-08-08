@@ -302,9 +302,9 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
           this.baseMutations.addNewlyCreatedId(entity);
         }
         this.baseMutations.setEntity(entity);
-        console.log(`${this.entityModuleName} - ${entity.lastAction}`, entity.id);
+        // console.log(`${this.entityModuleName} - ${entity.lastAction}`, entity.id);
       } else {
-        console.log(`${this.entityModuleName} - ignored`, entity.id);
+        // console.log(`${this.entityModuleName} - ignored`, entity.id);
       }
     },
 
@@ -327,9 +327,9 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       const knownEntity = this.baseGetters.get(entity.id);
       if (this.initiatedByCurrentUser(entity) || knownEntity?.entity?.id || knownEntity?.metadata?.id) {
         this.baseMutations.setMetadata(entity);
-        console.log(`${this.metadataModuleName} - ${entity.lastAction}`, entity.id);
+        // console.log(`${this.metadataModuleName} - ${entity.lastAction}`, entity.id);
       } else {
-        console.log(`${this.metadataModuleName} - ignored`, entity.id);
+        // console.log(`${this.metadataModuleName} - ignored`, entity.id);
       }
     },
 

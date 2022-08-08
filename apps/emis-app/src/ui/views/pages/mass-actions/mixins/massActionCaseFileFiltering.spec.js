@@ -1,7 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { MassActionType } from '@libs/entities-lib/mass-action';
-import { EEventStatus, mockCombinedEvents } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import massActionCaseFileFiltering from './massActionCaseFileFiltering';
 
@@ -100,56 +99,6 @@ describe('massActionCaseFileFiltering.vue', () => {
             queryType: 'full',
             searchMode: 'all',
           });
-      });
-    });
-
-    describe('fetchEventsFilter', () => {
-      it('should search case file events with status onhold or open filtered by inputed name', async () => {
-        await wrapper.vm.fetchEventsFilter('query');
-
-        expect(wrapper.vm.$services.events.search)
-          .toHaveBeenCalledWith({
-            filter: {
-              or: [
-                {
-                  Entity: {
-                    Schedule: {
-                      Status: EEventStatus.Open,
-                    },
-                  },
-                },
-                {
-                  Entity: {
-                    Schedule: {
-                      Status: EEventStatus.OnHold,
-                    },
-                  },
-                },
-              ],
-            },
-            select: ['Entity/Name', 'Entity/Id'],
-            top: 999,
-            orderBy: 'Entity/Name/Translation/en asc',
-            queryType: 'full',
-            searchMode: 'all',
-          });
-      });
-
-      it('should set eventsFilter the search results', async () => {
-        wrapper.vm.$services.events.search = jest.fn(() => ({
-          odataCount: mockCombinedEvents().length,
-          odataContext: 'odataContext',
-          value: mockCombinedEvents(),
-        }));
-
-        await wrapper.vm.fetchEventsFilter();
-
-        const expected = mockCombinedEvents().map((e) => ({
-          text: wrapper.vm.$m(e.entity.name),
-          value: e.entity.id,
-        }));
-
-        expect(wrapper.vm.eventsFilter).toEqual(expected);
       });
     });
 

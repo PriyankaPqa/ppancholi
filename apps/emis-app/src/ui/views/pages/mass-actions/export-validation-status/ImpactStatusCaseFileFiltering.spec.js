@@ -14,7 +14,7 @@ const localVue = createLocalVue();
 
 const storage = mockStorage();
 
-describe('FinancialAssistanceCaseFileFiltering.vue', () => {
+describe('ImpactStatusCaseFileFiltering.vue', () => {
   let wrapper;
 
   describe('Computed', () => {
@@ -131,6 +131,12 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
             items: wrapper.vm.eventsFilter,
             loading: wrapper.vm.eventsFilterLoading,
             disabled: wrapper.vm.eventsFilterLoading,
+            props: {
+              'no-data-text': 'common.inputs.start_typing_to_search',
+              'search-input': null,
+              'no-filter': true,
+              'return-object': true,
+            },
           },
           {
             key: `Metadata/CaseFileStatusName/Translation/${wrapper.vm.$i18n.locale}`,

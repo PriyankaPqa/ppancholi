@@ -3,31 +3,28 @@
     :current-tab.sync="currentTab"
     data-test-prefix="event"
     :title="title"
-    :loading="loadingEvents"
     :show-pagination="!!quickStats"
     :number-of-tabs="numberOfTabs">
-    <template slot="top">
-      <v-autocomplete-with-validation
+    <template #top>
+      <events-selector
         v-model="selectedEventId"
+        fetch-all-events
+        async-mode
+        item-value="id"
+        data-test="events-quick-stats"
         class="pb-4"
         hide-details
         :label="$t('event_stats.select.label')"
-        :item-text="(item) => $m(item.entity.name)"
-        item-value="entity.id"
-        outlined
-        :placeholder="eventPlaceholder"
-        :items="sortedEvents"
-        clearable
-        @change="selectEvent" />
+        @change="selectEvent($event)" />
     </template>
 
-    <template v-if="quickStats" slot="tip">
+    <template v-if="quickStats" #tip>
       {{ tip[0] }}
       <br>
       {{ tip[1] }}
     </template>
 
-    <template slot="stats">
+    <template #stats>
       <v-skeleton-loader v-if="loadingQuickStats" type="list-item-two-line" />
       <div v-if="quickStats">
         <div v-if="currentTab === 0" data-test="event_stats_tab_0">
@@ -86,9 +83,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import _sortBy from 'lodash/sortBy';
 import { TranslateResult } from 'vue-i18n';
-import { RcStatsTemplate, VAutocompleteWithValidation } from '@libs/component-lib/components';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { RcStatsTemplate } from '@libs/component-lib/components';
 import { IEventMainInfo } from '@libs/entities-lib/event';
 import { ICaseFileDetailedCount } from '@libs/entities-lib/case-file';
 
@@ -96,8 +93,8 @@ export default Vue.extend({
   name: 'EventStats',
 
   components: {
+    EventsSelector,
     RcStatsTemplate,
-    VAutocompleteWithValidation,
   },
 
   data() {
@@ -129,25 +126,10 @@ export default Vue.extend({
       }
       return null;
     },
-
-    eventPlaceholder(): TranslateResult {
-      return this.$t('event_stats.event.placeholder');
-    },
-
-    sortedEvents(): IEventMainInfo[] {
-      return _sortBy(this.events, (event: IEventMainInfo) => this.$m(event.entity.name));
-    },
-  },
-  async created() {
-    this.loadingEvents = true;
-    const res = await this.$services.events.searchMyEvents({ top: 999 });
-    this.loadingEvents = false;
-    if (res) {
-      this.events = res?.value;
-    }
   },
   methods: {
-    async selectEvent() {
+    async selectEvent(id: string) {
+      this.selectedEventId = id;
       if (!this.selectedEventId) {
         this.quickStats = null;
         this.openCount = 0;

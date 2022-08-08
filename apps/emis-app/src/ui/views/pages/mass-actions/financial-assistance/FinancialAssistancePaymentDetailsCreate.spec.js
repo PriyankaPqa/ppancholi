@@ -6,7 +6,6 @@ import {
 } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import { EEventStatus, mockCombinedEvents } from '@libs/entities-lib/event';
 import {
   mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems,
 } from '@libs/entities-lib/financial-assistance';
@@ -99,49 +98,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
       });
     });
 
-    describe('fetchEvents', () => {
-      it('should call service search with proper params', async () => {
-        await wrapper.vm.fetchEvents();
-        expect(wrapper.vm.$services.events.search).toHaveBeenCalledWith({
-          filter: {
-            or: [
-              {
-                Entity: {
-                  Schedule: {
-                    Status: EEventStatus.Open,
-                  },
-                },
-              },
-              {
-                Entity: {
-                  Schedule: {
-                    Status: EEventStatus.OnHold,
-                  },
-                },
-              },
-            ],
-          },
-          top: 999,
-          orderBy: 'Entity/Name/Translation/en asc',
-          queryType: 'full',
-          searchMode: 'all',
-          searchFields: 'Entity/Name/Translation/en',
-        });
-      });
-
-      it('should set events with the returned events filtered on whether they have a financial assistance table', async () => {
-        const expected = mockCombinedEvents()
-          .filter((e) => (wrapper.vm.eventIdsWithFinancialAssistanceTable.includes(e.entity.id)))
-          .map((e) => ({ id: e.entity.id, text: wrapper.vm.$m(e.entity.name) }));
-
-        wrapper.vm.$services.events.search = jest.fn(() => ({ value: mockCombinedEvents() }));
-
-        await wrapper.vm.fetchEvents();
-
-        expect(wrapper.vm.events).toEqual(expected);
-      });
-    });
-
     describe('fetchProgram', () => {
       it('should call action fetch with proper params', async () => {
         const fa = mockFinancialAssistanceTableEntity();
@@ -157,6 +113,30 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         await wrapper.vm.fetchProgram(mockFinancialAssistanceTableEntity());
 
         expect(wrapper.vm.program).toEqual(mockCombinedProgram());
+      });
+    });
+
+    describe('filterEvents', () => {
+      it('should set filteredEvents with events having a FA table', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            form: formCopy,
+          },
+          computed: {
+            eventIdsWithFinancialAssistanceTable: () => ['1'],
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        const events = [
+          { id: '1', name: 'event A' },
+          { id: '2', name: 'event B' },
+        ];
+
+        wrapper.vm.filterEvents(events);
+        expect(wrapper.vm.filteredEvents).toEqual([events[0]]);
       });
     });
   });
@@ -189,13 +169,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalledTimes(1);
-      });
-
-      it('should fetch all events', async () => {
-        wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.fetchEvents).toHaveBeenCalledTimes(1);
       });
     });
   });

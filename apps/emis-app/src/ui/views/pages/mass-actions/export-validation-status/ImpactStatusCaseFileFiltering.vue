@@ -29,7 +29,9 @@
           :count="itemsCount"
           :filter-options="filters"
           add-filter-label="caseFileTable.filter"
-          @update:appliedFilter="onApplyFilter" />
+          @update:appliedFilter="onApplyFilter"
+          @update:autocomplete="onAutoCompleteUpdate($event)"
+          @load:filter="throttleOnLoadFilter($event)" />
       </template>
 
       <template #no-data>
@@ -246,9 +248,15 @@ export default mixins(massActionCaseFileFiltering).extend({
           key: 'Entity/EventId',
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.eventName') as string,
-          items: this.eventsFilter,
+          items: this.sortedEventsFilter,
           loading: this.eventsFilterLoading,
           disabled: this.eventsFilterLoading,
+          props: {
+            'no-data-text': !this.eventFilterQuery ? this.$t('common.inputs.start_typing_to_search') : this.$t('common.search.no_result'),
+            'search-input': this.eventFilterQuery,
+            'no-filter': true,
+            'return-object': true,
+          },
         },
         {
           key: `Metadata/CaseFileStatusName/Translation/${this.$i18n.locale}`,

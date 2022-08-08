@@ -20,6 +20,8 @@ import userHelpers from './userHelpers';
 
 jest.mock('@libs/core-lib/plugins/applicationInsights/applicationInsights');
 
+console.info = jest.fn();
+
 describe('>>> Users Module', () => {
   let store: Store<IRootState>;
 

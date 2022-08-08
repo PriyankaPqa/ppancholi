@@ -10,7 +10,7 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 storage.registration.getters.currentTab = jest.fn(() => ({ titleKey: 'mock title', nextButtonTextKey: 'mock text' }));
 
-console.log.warn = jest.fn();
+console.warn = jest.fn();
 
 const computed = {
   response: () => mockHouseholdEntity(),
@@ -151,7 +151,7 @@ describe('ConfirmRegistration.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            errors: () => [],
+            errors: () => {},
             response: () => undefined,
           },
         });

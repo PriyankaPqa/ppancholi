@@ -17,7 +17,8 @@
     @import="$emit('import')"
     @open="$emit('open')"
     @update:autocomplete="$emit('update:autocomplete', $event)"
-    @change:autocomplete="$emit('change:autocomplete', $event)">
+    @change:autocomplete="$emit('change:autocomplete', $event)"
+    @load:filter="$emit('load:filter', $event)">
     <!-- Template for toolbar -->
     <template #toolbarActions>
       <slot name="toolbarActions" />

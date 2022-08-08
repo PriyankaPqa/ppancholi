@@ -298,7 +298,7 @@ describe('CaseNote.vue', () => {
         wrapper.vm.search = jest.fn();
 
         wrapper.vm.debounceSearch();
-        await new Promise((resolve) => setTimeout(resolve, 600));
+        await new Promise((resolve) => setTimeout(resolve, 800));
 
         expect(wrapper.vm.search).toHaveBeenCalledTimes(1);
       });

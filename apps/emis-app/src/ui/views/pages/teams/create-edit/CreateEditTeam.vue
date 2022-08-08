@@ -70,17 +70,18 @@
 
                 <v-row>
                   <v-col cols="12">
-                    <v-autocomplete-with-validation
-                      return-object
-                      data-test="events"
-                      :item-text="(item) => $m(item.name)"
-                      :item-value="(item) => item.id"
-                      :label="`${$t('teams.form.event')}${teamType === 'standard' ? '': '*'}`"
-                      :items="availableEvents"
+                    <events-selector
+                      async-mode
+                      fetch-all-events
                       :value="teamType === 'standard'? team.eventIds: team.eventIds[0]"
                       :multiple="teamType === 'standard'"
-                      :rules="rules.event"
                       :disabled="!$hasLevel('level5')"
+                      item-value="id"
+                      :rules="rules.event"
+                      return-object
+                      data-test="events"
+                      :label="`${$t('teams.form.event')}${teamType === 'standard' ? '': '*'}`"
+                      :force-events="availableEvents"
                       @change="setEvents($event)"
                       @delete="handleRemoveEvent($event)" />
                   </v-col>
@@ -186,6 +187,7 @@ import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { IError } from '@libs/core-lib/services/http-client';
 import { Status } from '@libs/entities-lib/base';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,
@@ -199,6 +201,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
   name: 'CreateEditTeam',
 
   components: {
+    EventsSelector,
     RcPageContent,
     VTextFieldWithValidation,
     VAutocompleteWithValidation,
@@ -316,7 +319,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   async mounted() {
     this.isLoading = true;
-    await Promise.all([this.fetchEvents(), this.fetchUserAccounts()]);
+    await Promise.all([this.fetchUserAccounts()]);
     if (!this.isEditMode) {
       this.prepareCreateTeam();
     } else {
@@ -335,10 +338,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
         events: this.teamType === 'standard' ? _sortBy(this.team.eventIds) : this.team.eventIds[0],
         primaryContact: (this.currentPrimaryContact || {}).email,
       });
-    },
-
-    async fetchEvents() {
-      await this.$storage.event.actions.fetchAllIncludingInactive();
     },
 
     getAvailableEvents() {

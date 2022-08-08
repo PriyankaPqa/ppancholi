@@ -81,7 +81,7 @@ const affectedPackages = getAffectedPackages(isPullRequest);
 const files = getAffectedTestFiles(affectedPackages);
 const globPattern = getBlobPattern(files);
 
-const script = `jest "${globPattern}" --coverage --coverageDirectory=coverage --runInBand --logHeapUsage --verbose`;
+const script = `jest "${globPattern}" --coverage --coverageDirectory=coverage --runInBand --logHeapUsage`;
 
 shellAsync(script)
   .then()

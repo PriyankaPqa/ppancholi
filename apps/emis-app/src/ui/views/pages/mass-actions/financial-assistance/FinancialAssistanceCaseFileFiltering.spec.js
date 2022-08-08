@@ -128,6 +128,12 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
             items: wrapper.vm.eventsFilter,
             loading: wrapper.vm.eventsFilterLoading,
             disabled: wrapper.vm.eventsFilterLoading,
+            props: {
+              'no-data-text': 'common.inputs.start_typing_to_search',
+              'search-input': null,
+              'no-filter': true,
+              'return-object': true,
+            },
           },
           {
             key: 'Metadata/AppliedProgramIds',
@@ -233,12 +239,12 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
       });
 
       it('should fetch programs filters if the selected events has some', async () => {
-        const data = { filterKey: 'Entity/EventId', value: 'uuid' };
+        const data = { filterKey: 'Entity/EventId', value: { text: '', value: 'uuid' } };
         wrapper.vm.fetchProgramsFilters = jest.fn();
 
         wrapper.vm.onAutoCompleteChange(data);
 
-        expect(wrapper.vm.fetchProgramsFilters).toHaveBeenCalledWith(data.value);
+        expect(wrapper.vm.fetchProgramsFilters).toHaveBeenCalledWith(data.value.value);
       });
     });
 

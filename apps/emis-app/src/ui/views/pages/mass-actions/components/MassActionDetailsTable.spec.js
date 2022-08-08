@@ -4,11 +4,13 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
+import { mockStorage } from '@/store/storage';
 import { MassActionDataCorrectionType, MassActionType, mockCombinedMassAction } from '@libs/entities-lib/mass-action';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import Component from './MassActionDetailsTable.vue';
 
 const localVue = createLocalVue();
+const storage = mockStorage();
 
 describe('MassActionDetailsTable.vue', () => {
   let wrapper;
@@ -24,6 +26,9 @@ describe('MassActionDetailsTable.vue', () => {
           return {
             userAccount: mockCombinedUserAccount(),
           };
+        },
+        mocks: {
+          $storage: storage,
         },
       });
     });

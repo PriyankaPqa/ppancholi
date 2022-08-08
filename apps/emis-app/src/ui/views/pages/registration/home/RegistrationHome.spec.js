@@ -3,15 +3,15 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { EEventStatus, mockCombinedEvent } from '@libs/entities-lib/event';
 
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';
 import { tabs } from '@/store/modules/registration/tabs';
+import { mockEventEntity } from '@libs/entities-lib/event';
 import Component from './RegistrationHome.vue';
 
 const localVue = createLocalVue();
-const mockEvent = mockCombinedEvent();
+const mockEvent = mockEventEntity();
 
 const storage = mockStorage();
 
@@ -47,14 +47,6 @@ describe('RegistrationHome.vue', () => {
 
   describe('Lifecycle', () => {
     describe('mounted', () => {
-      it('should call fetchActiveEvents', async () => {
-        wrapper.vm.fetchActiveEvents = jest.fn();
-        await wrapper.vm.$options.mounted.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.fetchActiveEvents).toHaveBeenCalledTimes(1);
-      });
-
       it('should call resetHouseholdCreate', () => {
         jest.spyOn(wrapper.vm, 'resetHouseholdCreate');
         wrapper.vm.$options.mounted.forEach((hook) => {
@@ -93,22 +85,13 @@ describe('RegistrationHome.vue', () => {
       it('should call setEvent mutations with proper params', () => {
         wrapper.vm.setEvent(mockEvent);
         expect(wrapper.vm.$storage.registration.mutations.setEvent).toHaveBeenCalledWith({
-          id: mockEvent.entity.id,
-          name: mockEvent.entity.name,
-          responseDetails: mockEvent.entity.responseDetails,
-          registrationLink: mockEvent.entity.registrationLink,
-          tenantId: mockEvent.entity.tenantId,
-          shelterLocations: mockEvent.entity.shelterLocations,
-          registrationLocations: mockEvent.entity.registrationLocations,
-        });
-      });
-    });
-
-    describe('fetchActiveEvents', () => {
-      it('should fetch the proper events', () => {
-        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
-          filter: { Entity: { Schedule: { Status: EEventStatus.Open } } },
-          top: 999,
+          id: mockEvent.id,
+          name: mockEvent.name,
+          responseDetails: mockEvent.responseDetails,
+          registrationLink: mockEvent.registrationLink,
+          tenantId: mockEvent.tenantId,
+          shelterLocations: mockEvent.shelterLocations,
+          registrationLocations: mockEvent.registrationLocations,
         });
       });
     });
@@ -152,7 +135,7 @@ describe('RegistrationHome.vue', () => {
 
     describe('assistanceNumber', () => {
       it('should return the phone number of the selected event', async () => {
-        expect(wrapper.vm.assistanceNumber).toBe(mockEvent.entity.responseDetails.assistanceNumber);
+        expect(wrapper.vm.assistanceNumber).toBe(mockEvent.responseDetails.assistanceNumber);
       });
     });
   });

@@ -3,7 +3,7 @@ import { mockStorage } from '@/store/storage';
 import {
   mockCombinedTeams, mockTeamEvents, mockTeamsDataStandard, mockTeamsMetadataStandard,
 } from '@libs/entities-lib/team';
-import { EEventStatus, mockCombinedEvent } from '@libs/entities-lib/event';
+import { mockCombinedEvent } from '@libs/entities-lib/event';
 import Component from './TeamStats.vue';
 
 const storage = mockStorage();
@@ -86,17 +86,6 @@ describe('TeamStats.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('fetchActiveEvents', () => {
-      it('should fetch the proper events', () => {
-        wrapper.vm.fetchActiveEvents();
-        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
-          filter: { Entity: { Schedule: { Status: EEventStatus.Open } } },
-          orderBy: 'Entity/Name/Translation/en asc',
-          top: 999,
-        });
-      });
-    });
-
     describe('selectEvent', () => {
       beforeEach(() => {
         wrapper = shallowMount(Component, {
@@ -126,8 +115,9 @@ describe('TeamStats.vue', () => {
       });
 
       it('should filter team based on event id', async () => {
-        await wrapper.setData({ selectedEventId: mockTeamEvents()[0].id });
-        await wrapper.vm.selectEvent();
+        const eventId = mockTeamEvents()[0].id;
+        await wrapper.setData({ selectedEventId: eventId });
+        await wrapper.vm.selectEvent({ entity: { id: eventId } });
         expect(wrapper.vm.statTeam).toEqual(mockCombinedTeams());
       });
 

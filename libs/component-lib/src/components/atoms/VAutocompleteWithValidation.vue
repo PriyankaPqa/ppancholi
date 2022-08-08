@@ -20,19 +20,9 @@
       v-bind="$attrs"
       onfocus="this.setAttribute('autocomplete','nope');"
       v-on="$listeners">
-      <template v-if="asyncMode" #no-data>
+      <template v-if="asyncMode && $attrs['loading']" #prepend-item>
         <div class="v-list-item">
-          <template v-if="$attrs['search-input']">
-            <template v-if="$attrs['loading']">
-              {{ $t(loadingLabel) }}  <v-progress-circular class="ml-2" size="20" width="3" color="primary" indeterminate />
-            </template>
-            <template v-else>
-              {{ $t(noResultLabel) }}
-            </template>
-          </template>
-          <template v-else>
-            {{ $t(initialLabel) }}
-          </template>
+          {{ $t(loadingLabel) }}  <v-progress-circular class="ml-2" size="20" width="3" color="primary" indeterminate />
         </div>
       </template>
 

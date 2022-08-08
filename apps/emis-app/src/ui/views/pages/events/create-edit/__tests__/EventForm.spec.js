@@ -20,6 +20,7 @@ import {
 import moment from '@/ui/plugins/moment';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
 import { mockStorage } from '@/store/storage';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import Component from '../EventForm.vue';
 
 const event = mockEventEntity();
@@ -871,6 +872,13 @@ describe('EventForm.vue', () => {
         const field = wrapper.findDataTest('event-description');
         await field.vm.$emit('click:clear');
         expect(wrapper.vm.clearDescription).toHaveBeenCalled();
+      });
+    });
+
+    describe('Events Selector', () => {
+      it('should have fetch-all-events props', () => {
+        const component = wrapper.findComponent(EventsSelector);
+        expect(component.props('fetchAllEvents')).toBe(true);
       });
     });
   });

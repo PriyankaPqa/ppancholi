@@ -5,16 +5,10 @@
     :can-register="canRegister"
     @redirect="redirect">
     <div class="dropdown-wrapper">
-      <v-autocomplete-with-validation
+      <events-selector
         v-model="event"
-        background-color="white"
-        outlined
-        :items="events"
-        :loading="loading"
-        :item-text="(item) => $m(item.entity.name)"
-        item-value="eventId"
+        async-mode
         return-object
-        :attach="true"
         :label="$t('registration.landingpage.selectEvent')"
         data-test="crcRegistrationLandingPage__event"
         @change="setEvent($event)" />
@@ -25,26 +19,24 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@libs/component-lib/components';
+import { RcRegistrationLandingPage } from '@libs/component-lib/components';
 import { IShelterLocationData } from '@libs/entities-lib/household-create';
-import { IEventData as IRegistrationEventData } from '@libs/entities-lib/registration-event';
+import { IEvent, IEventData as IRegistrationEventData } from '@libs/entities-lib/registration-event';
 import routes from '@/constants/routes';
-import { EEventStatus, IEventMainInfo } from '@libs/entities-lib/event';
 import { tabs } from '@/store/modules/registration/tabs';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 
 export default Vue.extend({
   name: 'RegistrationHome',
 
   components: {
-    VAutocompleteWithValidation,
+    EventsSelector,
     RcRegistrationLandingPage,
   },
 
   data() {
     return {
-      events: [] as Array<IEventMainInfo>,
       event: null,
-      loading: false,
     };
   },
 
@@ -57,7 +49,7 @@ export default Vue.extend({
       if (!this.event) {
         return '';
       }
-      return this.event.entity.responseDetails.assistanceNumber;
+      return this.event.responseDetails.assistanceNumber;
     },
   },
 
@@ -65,24 +57,21 @@ export default Vue.extend({
     this.resetHouseholdCreate();
     this.resetRegistrationModule();
     await this.fetchDataForRegistration();
-    await this.fetchActiveEvents();
   },
 
   methods: {
     redirect() {
       this.$router.push({ name: routes.registration.individual.name });
     },
-
-    setEvent(event: IEventMainInfo) {
-      const data = event.entity;
+    setEvent(event: IEvent) {
       const registrationEvent = {
-        id: data.id,
-        name: data.name,
-        responseDetails: data.responseDetails,
-        registrationLink: data.registrationLink,
-        tenantId: data.tenantId,
-        registrationLocations: data.registrationLocations,
-        shelterLocations: data.shelterLocations as unknown as IShelterLocationData[],
+        id: event.id,
+        name: event.name,
+        responseDetails: event.responseDetails,
+        registrationLink: event.registrationLink,
+        tenantId: event.tenantId,
+        registrationLocations: event.registrationLocations,
+        shelterLocations: event.shelterLocations as unknown as IShelterLocationData[],
       } as unknown as IRegistrationEventData;
 
       this.$storage.registration.mutations.setEvent(registrationEvent);
@@ -94,20 +83,6 @@ export default Vue.extend({
 
     resetHouseholdCreate() {
       this.$storage.registration.mutations.resetHouseholdCreate();
-    },
-
-    async fetchActiveEvents() {
-      const res = await this.$services.events.searchMyEvents({
-        filter: {
-          Entity: {
-            Schedule: {
-              Status: EEventStatus.Open,
-            },
-          },
-        },
-        top: 999,
-      });
-      this.events = res?.value;
     },
 
     async fetchDataForRegistration() {

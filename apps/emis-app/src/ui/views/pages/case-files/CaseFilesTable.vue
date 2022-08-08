@@ -23,7 +23,9 @@
         :initial-filter="filterState"
         add-filter-label="caseFileTable.filter"
         @open="fetchEventsFilter()"
-        @update:appliedFilter="onApplyFilterLocal">
+        @update:appliedFilter="onApplyFilterLocal"
+        @update:autocomplete="onAutoCompleteUpdate($event)"
+        @load:filter="throttleOnLoadFilter($event)">
         <template #toolbarActions>
           <div class="flex-row">
             <v-switch
@@ -112,9 +114,9 @@ import helpers from '@/ui/helpers/helpers';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { EEventStatus } from '@libs/entities-lib/event';
+import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 
-export default mixins(TablePaginationSearchMixin).extend({
+export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'CaseFilesTable',
 
   components: {
@@ -142,10 +144,8 @@ export default mixins(TablePaginationSearchMixin).extend({
       getLocalStringDate: helpers.getLocalStringDate,
       helpLink: 'zendesk.help_link.caseFilesTable',
       searchEventsResultIds: [] as string[],
-      eventsFilter: [],
-      eventFilterQuery: null,
-      eventsFilterLoading: false,
       searchLoading: false,
+      searchEventMethod: 'searchMyEvents',
       options: {
         page: 1,
         sortBy: ['Entity/Created'],
@@ -241,9 +241,15 @@ export default mixins(TablePaginationSearchMixin).extend({
           key: 'Entity/EventId',
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.eventName') as string,
-          items: this.eventsFilter,
+          items: this.sortedEventsFilter,
           loading: this.eventsFilterLoading,
           disabled: this.eventsFilterLoading,
+          props: {
+            'no-data-text': !this.eventFilterQuery ? this.$t('common.inputs.start_typing_to_search') : this.$t('common.search.no_result'),
+            'search-input': this.eventFilterQuery,
+            'no-filter': true,
+            'return-object': true,
+          },
         },
         {
           key: `Metadata/TriageName/Translation/${this.$i18n.locale}`,
@@ -383,46 +389,6 @@ export default mixins(TablePaginationSearchMixin).extend({
           id: caseFile.entity.id,
         },
       };
-    },
-
-    async fetchEventsFilter() {
-      this.eventsFilterLoading = true;
-
-      const params = {
-        filter: {
-          or: [
-            {
-              Entity: {
-                Schedule: {
-                  Status: EEventStatus.Open,
-                },
-              },
-            },
-            {
-              Entity: {
-                Schedule: {
-                  Status: EEventStatus.OnHold,
-                },
-              },
-            },
-          ],
-        },
-        top: 999,
-        orderBy: `Entity/Name/Translation/${this.$i18n.locale} asc`,
-        queryType: 'full',
-        searchMode: 'all',
-      };
-
-      const res = await this.$services.events.searchMyEvents(params);
-
-      this.eventsFilterLoading = false;
-
-      if (res?.value) {
-        this.eventsFilter = res.value.map((e) => ({
-          text: this.$m(e.entity.name),
-          value: e.entity.id,
-        }));
-      }
     },
 
     async onApplyFilterLocal(

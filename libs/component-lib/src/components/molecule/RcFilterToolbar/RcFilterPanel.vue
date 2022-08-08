@@ -245,6 +245,7 @@ export default Vue.extend({
       this.filterIndex = index;
       this.formData = this.getFormData(filter);
       this.currentFilterName = this.formData.name;
+      this.$emit('load:filter', this.formData);
     },
 
     clearForm() {

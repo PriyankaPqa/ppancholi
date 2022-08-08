@@ -154,7 +154,7 @@ describe('CreateEditTeam.vue', () => {
 
       describe('Events field', () => {
         let element;
-        beforeEach(() => {
+        beforeEach(async () => {
           element = wrapper.find('[data-test="events"]');
         });
 
@@ -174,10 +174,6 @@ describe('CreateEditTeam.vue', () => {
           await wrapper.vm.$nextTick();
           const label = element.find('label');
           expect(label.text()).toEqual('teams.form.event*');
-        });
-
-        it('is linked to the right rule attribute', () => {
-          expect(element.props('rules')).toEqual(wrapper.vm.rules.event);
         });
 
         it('calls setEvents when it is changed', () => {
@@ -608,13 +604,6 @@ describe('CreateEditTeam.vue', () => {
       wrapper.vm.fetchUserAccounts = jest.fn();
     });
 
-    it('calls fetchEvents', async () => {
-      await wrapper.vm.$options.mounted.forEach((hook) => {
-        hook.call(wrapper.vm);
-      });
-      expect(wrapper.vm.fetchEvents).toHaveBeenCalledTimes(1);
-    });
-
     it('calls getAvailableEvents', async () => {
       await wrapper.vm.$options.mounted.forEach((hook) => {
         hook.call(wrapper.vm);
@@ -634,14 +623,6 @@ describe('CreateEditTeam.vue', () => {
   describe('Methods', () => {
     beforeEach(async () => {
       await mountWrapper(false);
-    });
-
-    describe('fetchEvents', () => {
-      test('Events should be fetched', () => {
-        jest.clearAllMocks();
-        wrapper.vm.fetchEvents();
-        expect(wrapper.vm.$storage.event.actions.fetchAllIncludingInactive).toHaveBeenCalledTimes(1);
-      });
     });
 
     describe('getAvailableEvents', () => {

@@ -6,19 +6,18 @@
     <div class="grey-container pa-6">
       <v-row>
         <v-col cols="12">
-          <v-autocomplete-with-validation
+          <events-selector
             v-model="formCopy.event"
-            :attach="true"
-            clearable
-            data-test="payment_event_name"
-            background-color="white"
-            :loading="loadingEvent"
-            :disabled="loadingEvent"
-            :label="`${$t('massActions.financialAssistance.create.event.label')} *`"
-            :items="events"
+            async-mode
+            :force-events="filteredEvents"
             return-object
+            data-test="payment_event_name"
+            fetch-all-events
+            :label="`${$t('massActions.financialAssistance.create.event.label')} *`"
             :rules="rules.event"
-            @click:clear="onClearEvent()" />
+            @click:clear="onClearEvent()"
+            @fetch:done="filterEvents($event)"
+            @change="onSetEvent($event)" />
         </v-col>
       </v-row>
 
@@ -121,16 +120,19 @@ import {
 import {
   IOptionItem, IOptionItemCombined, IOptionSubItem,
 } from '@libs/entities-lib/optionItem';
-import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { IEventEntity } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
+import { IEvent } from '@libs/entities-lib/registration-event';
 import { PaymentDetailsForm } from './FinancialAssistanceCreate.vue';
 
 export default Vue.extend({
   name: 'FinancialAssistancePaymentDetailsCreate',
 
   components: {
+    EventsSelector,
     VAutocompleteWithValidation,
     VTextFieldWithValidation,
   },
@@ -145,7 +147,7 @@ export default Vue.extend({
   data() {
     return {
       loadingEvent: false,
-      events: [],
+      filteredEvents: [],
       formCopy: null as PaymentDetailsForm,
       program: null,
       isEmpty,
@@ -308,7 +310,6 @@ export default Vue.extend({
     this.formCopy = cloneDeep(this.form);
     await this.$storage.financialAssistance.actions.fetchAll();
     await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
-    await this.fetchEvents();
   },
 
   methods: {
@@ -348,47 +349,14 @@ export default Vue.extend({
       this.onSetItem(null);
     },
 
-    async fetchEvents() {
-      this.loadingEvent = true;
-      const params = {
-        filter: {
-          or: [
-            {
-              Entity: {
-                Schedule: {
-                  Status: EEventStatus.Open,
-                },
-              },
-            },
-            {
-              Entity: {
-                Schedule: {
-                  Status: EEventStatus.OnHold,
-                },
-              },
-            },
-          ],
-          // Entity: {
-          //   Id: { searchIn_az: this.eventIdsWithFinancialAssistanceTable }, // Could be too much params, so we filter below
-          // },
-        },
-        top: 999,
-        orderBy: `Entity/Name/Translation/${this.$i18n.locale} asc`,
-        queryType: 'full',
-        searchMode: 'all',
-        searchFields: `Entity/Name/Translation/${this.$i18n.locale}`,
-      };
-      const res = await this.$services.events.search(params);
-
-      this.loadingEvent = false;
-
-      this.events = res.value
-        .filter((e) => this.eventIdsWithFinancialAssistanceTable.includes(e.entity.id))
-        .map((e) => ({ id: e.entity.id, text: this.$m(e.entity.name) }));
-    },
-
     async fetchProgram(fa: IFinancialAssistanceTableEntity) {
       this.program = await this.$storage.program.actions.fetch({ id: fa.programId, eventId: fa.eventId });
+    },
+
+    filterEvents(events: Array<IEvent>) {
+      this.filteredEvents = events
+        .filter((e) => this.eventIdsWithFinancialAssistanceTable.includes(e.id))
+        .map((e) => ({ id: e.id, name: e.name }));
     },
   },
 });
