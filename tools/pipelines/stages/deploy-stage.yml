@@ -222,63 +222,63 @@ stages:
                     inlineScript: |
                       az cdn endpoint purge -n "${{ parameters.cdnEndpoint }}-$(environment)" -g "$(ResourceGroup)" --profile-name "${{ parameters.cdnProfile }}-$(environment)" --content-paths "/*" --no-wait
 
-- ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
-  - stage: 'Deploy_to_Stg'
-    displayName: 'Deploy to Stg'
-    dependsOn: 'Deploy_to_Dev'
-    condition: succeeded()
-    pool:
-      vmImage: 'windows-2022'
-    jobs:
-      - deployment: 'Deploy_WebApp_Stg'
-        displayName: 'Deploy WebApp to Stg'
-        environment: 'Stg'
-        variables:
-          - group: Env-Stg
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: replacetokens@3
-                  displayName: 'Replace Tokens'
-                  inputs:
-                    targetFiles: "$(Pipeline.Workspace)/dist/**/main*.js"
-                    encoding: "auto"
-                    writeBOM: true
-                    verbosity: "detailed"
-                    actionOnMissing: "warn"
-                    keepToken: false
-                    tokenPrefix: "#{"
-                    tokenSuffix: "}#"
-                    useLegacyPattern: false
-                    enableTelemetry: true
+#- ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
+#  - stage: 'Deploy_to_Stg'
+#    displayName: 'Deploy to Stg'
+#    dependsOn: 'Deploy_to_Dev'
+#    condition: succeeded()
+#    pool:
+#      vmImage: 'windows-2022'
+#    jobs:
+#      - deployment: 'Deploy_WebApp_Stg'
+#        displayName: 'Deploy WebApp to Stg'
+#        environment: 'Stg'
+#        variables:
+#          - group: Env-Stg
+#        strategy:
+#          runOnce:
+#            deploy:
+#              steps:
+#                - task: replacetokens@3
+#                  displayName: 'Replace Tokens'
+#                  inputs:
+#                    targetFiles: "$(Pipeline.Workspace)/dist/**/main*.js"
+#                    encoding: "auto"
+#                    writeBOM: true
+#                    verbosity: "detailed"
+#                    actionOnMissing: "warn"
+#                    keepToken: false
+#                    tokenPrefix: "#{"
+#                    tokenSuffix: "}#"
+#                    useLegacyPattern: false
+#                    enableTelemetry: true
 
-                - task: AzureCLI@2
-                  displayName: 'Clean Storage Folder'
-                  inputs:
-                    azureSubscription: 'CRC Tech Dev'
-                    scriptType: 'pscore'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage }}$(environment)
+#                - task: AzureCLI@2
+#                  displayName: 'Clean Storage Folder'
+#                  inputs:
+#                    azureSubscription: 'CRC Tech Dev'
+#                    scriptType: 'pscore'
+#                    scriptLocation: 'inlineScript'
+#                    inlineScript: |
+#                      az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage }}$(environment)
 
-                - task: AzureFileCopy@3
-                  displayName: 'Upload to Azure'
-                  inputs:
-                    sourcePath: '$(Pipeline.Workspace)/dist'
-                    azureSubscription: 'CRC Tech Dev'
-                    destination: 'AzureBlob'
-                    storage: '${{ parameters.storage }}$(environment)'
-                    containerName: '$web'
+#                - task: AzureFileCopy@3
+#                  displayName: 'Upload to Azure'
+#                  inputs:
+#                    sourcePath: '$(Pipeline.Workspace)/dist'
+#                    azureSubscription: 'CRC Tech Dev'
+#                    destination: 'AzureBlob'
+#                    storage: '${{ parameters.storage }}$(environment)'
+#                    containerName: '$web'
 
-                - task: AzureCLI@2
-                  displayName: 'Purge CDN'
-                  inputs:
-                    azureSubscription: 'CRC Tech Dev'
-                    scriptType: 'pscore'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      az cdn endpoint purge -n "${{ parameters.cdnEndpoint }}-$(environment)" -g "$(ResourceGroup)" --profile-name "${{ parameters.cdnProfile }}-$(environment)" --content-paths "/*" --no-wait
+#                - task: AzureCLI@2
+#                  displayName: 'Purge CDN'
+#                  inputs:
+#                    azureSubscription: 'CRC Tech Dev'
+#                    scriptType: 'pscore'
+#                    scriptLocation: 'inlineScript'
+#                    inlineScript: |
+#                      az cdn endpoint purge -n "${{ parameters.cdnEndpoint }}-$(environment)" -g "$(ResourceGroup)" --profile-name "${{ parameters.cdnProfile }}-$(environment)" --content-paths "/*" --no-wait
 
 
 
