@@ -1,6 +1,6 @@
 /* eslint-disable */
 import * as msal from '@azure/msal-browser';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import {
   AccountInfo,
   AuthenticationResult,

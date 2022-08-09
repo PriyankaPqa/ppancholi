@@ -108,15 +108,15 @@ import {
   VTextAreaWithValidation,
   VSelectWithValidation,
 } from '@libs/component-lib/components';
-import moment from '@/ui/plugins/moment';
+import moment from '@libs/shared-lib/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 
 import { EEventSummarySections } from '@/types';
-import { VForm, IServerError } from '@libs/core-lib/types';
+import { VForm, IServerError } from '@libs/shared-lib/types';
 import { IEventAgreement, IEventEntity } from '@libs/entities-lib/event';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@libs/entities-lib/utils';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 

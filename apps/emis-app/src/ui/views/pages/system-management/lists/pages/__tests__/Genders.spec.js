@@ -4,7 +4,7 @@ import {
 } from '@/test/testSetup';
 
 import { EOptionLists } from '@libs/entities-lib/optionItem';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import Component from '../Genders.vue';
 import OptionList from '../../components/OptionList.vue';
 

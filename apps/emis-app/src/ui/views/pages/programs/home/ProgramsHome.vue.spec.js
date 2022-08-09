@@ -3,7 +3,7 @@ import { EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockProgramEntities } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
 import Component from './ProgramsHome.vue';

@@ -39,11 +39,11 @@ import {
   RcDialog,
   VTextFieldWithValidation,
 } from '@libs/component-lib/components';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import { EEventStatus } from '@libs/entities-lib/event';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import colors from '@/ui/plugins/vuetify/colors';
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import colors from '@libs/shared-lib/plugins/vuetify/colors';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 
 export default Vue.extend({
   name: 'EventStatusDialog',

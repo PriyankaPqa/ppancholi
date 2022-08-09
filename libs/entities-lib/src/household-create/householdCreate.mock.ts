@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { ERegistrationMode } from '@libs/core-lib/types';
+import { ERegistrationMode } from '@libs/shared-lib/types';
 import {
   mockAdditionalMembers, mockMemberData, mockMemberCreateRequest, mockMember,
 } from '../value-objects/member';

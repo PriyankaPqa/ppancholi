@@ -89,12 +89,12 @@ import { RcDataTable } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import isEmpty from 'lodash/isEmpty';
-import moment from '@/ui/plugins/moment';
+import moment from '@libs/shared-lib/plugins/moment';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined } from '@libs/entities-lib/case-file-document';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { IAzureSearchParams } from '@libs/core-lib/types';
+import { IAzureSearchParams } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 import routes from '@/constants/routes';

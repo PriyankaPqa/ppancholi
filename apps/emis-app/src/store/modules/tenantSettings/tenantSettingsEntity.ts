@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionContext, ActionTree } from 'vuex';
 import { IRootState } from '@/store/store.types';
-import { TenantSettingsService } from '@/services/tenantSettings/entity';
+import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import {
   FeatureKeys,
   IBrandingEntity,
@@ -14,8 +14,8 @@ import {
   ITenantSettingsEntityData,
   TenantSettingsEntity,
 } from '@libs/entities-lib/tenantSettings';
-import vuetify from '@/ui/plugins/vuetify/vuetify';
-import { IMultilingual } from '@libs/core-lib/types';
+import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
+import { IMultilingual } from '@libs/shared-lib/types';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IState } from '../base/base.types';
 import { BaseModule } from '../base';

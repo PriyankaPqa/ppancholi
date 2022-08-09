@@ -1,0 +1,50 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": false,
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "declaration": true,
+    "declarationDir": "dist",
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "allowJs": true,
+    "types": [
+      "webpack-env",
+      "jest",
+    ],
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@libs/shared-lib/*": [
+        "../../libs/shared-lib/src/*"
+      ],
+      "@libs/entities-lib/*": [
+        "../../libs/entities-lib/src/*"
+      ]
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ],
+  },
+  "references": [{ "path": "../shared-lib/tsconfig.json"}],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "typings/**.ts",
+  ]
+
+}

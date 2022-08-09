@@ -1,4 +1,4 @@
-import { ECanadaProvinces, IMultilingual, IListOption } from '@libs/core-lib/types';
+import { ECanadaProvinces, IMultilingual, IListOption } from '@libs/shared-lib/types';
 import { IShelterLocationData } from '../household-create';
 
 /**

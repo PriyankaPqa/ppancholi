@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/core-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 
 import { IAddress, IAddressData } from '../address/address.types';
 

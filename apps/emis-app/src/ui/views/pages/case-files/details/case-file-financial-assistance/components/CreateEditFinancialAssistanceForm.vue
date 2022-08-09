@@ -52,7 +52,7 @@ import { VTextAreaWithValidation, VAutocompleteWithValidation } from '@libs/comp
 import _sortBy from 'lodash/sortBy';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 

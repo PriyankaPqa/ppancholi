@@ -1,13 +1,13 @@
 import { ActionContext, ActionTree } from 'vuex';
 import _sortBy from 'lodash/sortBy';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { EOptionLists, IOptionItem, OptionItem } from '@libs/entities-lib/optionItem';
 import {
   IFilter, IUserAccountEntity, FilterKey, UserAccountEntity,
 } from '@libs/entities-lib/user-account';
-import { IAddRoleToUserRequest, IEditFilterRequest, UserAccountsService } from '@/services/user-accounts/entity';
+import { IAddRoleToUserRequest, IEditFilterRequest, UserAccountsService } from '@libs/services-lib/user-accounts/entity';
 import { IUserAccountEntityState } from '@/store/modules/user-account/userAccountEntity.types';
-import { OptionItemsService } from '@/services/optionItems';
+import { OptionItemsService } from '@libs/services-lib/optionItems';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';

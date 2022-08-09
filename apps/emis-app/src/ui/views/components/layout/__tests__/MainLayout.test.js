@@ -1,5 +1,5 @@
 import { RcRouterViewTransition } from '@libs/component-lib/components';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { createLocalVue, mount } from '@/test/testSetup';
 import Component from '../MainLayout.vue';
 import AppHeader from '../AppHeader.vue';

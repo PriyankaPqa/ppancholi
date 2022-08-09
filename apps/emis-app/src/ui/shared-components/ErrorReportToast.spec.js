@@ -1,4 +1,4 @@
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { User, mockUserData } from '@libs/entities-lib/user';
 import helpers from '../helpers/helpers';

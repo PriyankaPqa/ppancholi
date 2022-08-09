@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
 import Component from './RcFileUpload.vue';
 

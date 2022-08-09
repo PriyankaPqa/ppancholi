@@ -27,8 +27,8 @@ import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-as
 import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import FinancialAssistancePaymentDetailsCreate from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePaymentDetailsCreate.vue';
 import { EPaymentModalities } from '@libs/entities-lib/program';
-import { IMassActionFinancialAssistanceCreatePayload } from '@/services/mass-actions/entity';
-import { buildQuery } from '@libs/core-lib/services/odata-query';
+import { IMassActionFinancialAssistanceCreatePayload } from '@libs/services-lib/mass-actions/entity';
+import { buildQuery } from '@libs/services-lib/odata-query';
 
 export interface PaymentDetailsForm {
   event: IEventEntity,

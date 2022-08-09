@@ -1,10 +1,10 @@
 import { ActionContext, ActionTree } from 'vuex';
-import { CaseNotesService } from '@/services/case-notes/entity';
+import { CaseNotesService } from '@libs/services-lib/case-notes/entity';
 import {
   IOptionItem, EOptionLists,
 } from '@libs/entities-lib/optionItem';
 import { ICaseNoteEntityState } from '@/store/modules/case-note/caseNoteEntity.types';
-import { IOptionItemsService } from '@/services/optionItems';
+import { IOptionItemsService } from '@libs/services-lib/optionItems';
 import { ICaseNoteEntity } from '@libs/entities-lib/case-note';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule, filterAndSortActiveItems } from '../base';

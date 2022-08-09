@@ -1,7 +1,7 @@
 import { RcDialog } from '@libs/component-lib/src/components';
 import { i18n } from '@/ui/plugins/i18n';
 import helpers from '@libs/entities-lib/helpers';
-import { EOptionItemStatus } from '@libs/core-lib/types';
+import { EOptionItemStatus } from '@libs/shared-lib/types';
 import { mockStorage } from '../../store/storage/storage.mock';
 import { mockEvent } from '../../../../entities-lib/src/registration-event';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';

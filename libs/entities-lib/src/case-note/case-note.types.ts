@@ -1,4 +1,4 @@
-import { IMultilingual, IListOption } from '@libs/core-lib/src/types';
+import { IMultilingual, IListOption } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 
 export interface ICaseNoteUser {

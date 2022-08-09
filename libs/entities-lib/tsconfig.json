@@ -25,8 +25,8 @@
       "@/*": [
         "src/*"
       ],
-      "@libs/core-lib/*": [
-        "../../libs/core-lib/src/*"
+      "@libs/shared-lib/*": [
+        "../../libs/shared-lib/src/*"
       ]
     },
     "lib": [
@@ -43,7 +43,6 @@
     "tests/**/*.ts",
     "tests/**/*.tsx",
     "typings/**.ts",
-    "../../libs/core-lib/src/**.ts"
   ]
 
 }

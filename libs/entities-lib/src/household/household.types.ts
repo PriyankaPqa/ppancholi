@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/core-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 import { IEventGenericLocation } from '../registration-event/registrationEvent.types';
 import { IPhoneNumber } from '../value-objects/contact-information';

@@ -4,7 +4,7 @@ import { mockShelterLocations } from '@libs/entities-lib/registration-event/regi
 import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 
 import Component from './HouseholdCard.vue';

@@ -134,7 +134,7 @@ import {
   RcCountrySelect,
 } from '@libs/component-lib/components';
 import { EEventSummarySections } from '@/types';
-import { ECanadaProvinces, VForm, IServerError } from '@libs/core-lib/types';
+import { ECanadaProvinces, VForm, IServerError } from '@libs/shared-lib/types';
 import {
   EEventLocationStatus,
   IEventEntity,
@@ -143,7 +143,7 @@ import {
 
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@libs/entities-lib/utils';
-import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@/ui/helpers/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';

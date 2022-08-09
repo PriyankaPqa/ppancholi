@@ -3,11 +3,11 @@ import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { tabs } from '@/store/modules/household/tabs';
-import { EventHub } from '@libs/core-lib/plugins/event-hub';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 
 import helpers from '@/ui/helpers/helpers';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import Component from './SplitHousehold.vue';
 

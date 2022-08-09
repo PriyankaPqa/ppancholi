@@ -185,10 +185,10 @@ import {
 import helpers from '@/ui/helpers/helpers';
 import routes from '@/constants/routes';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import { MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import { IProgramEntity } from '@libs/entities-lib/program';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
 import ConfirmBeforeAction, { ConfirmationDialog } from './ConfirmBeforeAction.vue';
 import ErrorPanel from './ErrorPanel.vue';

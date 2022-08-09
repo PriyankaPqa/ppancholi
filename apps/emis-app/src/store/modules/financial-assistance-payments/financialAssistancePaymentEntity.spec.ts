@@ -1,6 +1,6 @@
 import { ActionContext } from 'vuex';
 import { httpClient } from '@/services/httpClient';
-import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
+import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
 import { mockCaseFinancialAssistanceEntity, mockFinancialPaymentHistory } from '@libs/entities-lib/financial-assistance-payment';
 import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
 import { mockVersionedEntityCombined } from '@libs/entities-lib/value-objects/versioned-entity';

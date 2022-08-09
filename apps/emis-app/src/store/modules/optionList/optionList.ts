@@ -5,7 +5,7 @@ import _sortBy from 'lodash/sortBy';
 import _findIndex from 'lodash/findIndex';
 import helpers from '@/ui/helpers/helpers';
 import { IRootState } from '@/store/store.types';
-import { IMultilingual } from '@libs/core-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import {
   IOptionItemData, IOptionItem, OptionItem, EOptionLists, IOptionSubItem,
 } from '@libs/entities-lib/optionItem';

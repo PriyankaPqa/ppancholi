@@ -52,8 +52,8 @@ import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import { RcDialog, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { ICaseFileLabel } from '@libs/entities-lib/case-file';
-import { MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
-import { VForm } from '@libs/core-lib/types';
+import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
+import { VForm } from '@libs/shared-lib/types';
 
 const NUM_LABELS = 4;
 

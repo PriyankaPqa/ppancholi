@@ -1,5 +1,5 @@
 import Vuetify from 'vuetify';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import {
   createLocalVue,

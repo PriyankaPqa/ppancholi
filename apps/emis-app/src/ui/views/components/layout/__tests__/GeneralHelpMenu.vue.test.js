@@ -1,7 +1,7 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { i18n } from '@/ui/plugins/i18n';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import Component from '../GeneralHelpMenu.vue';
 
 const localVue = createLocalVue();

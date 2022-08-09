@@ -64,7 +64,7 @@ import { IHouseholdCreate, IHouseholdCreateData } from '../../../../entities-lib
 import { IEvent } from '../../../../entities-lib/src/registration-event';
 import { IHouseholdEntity } from '../../../../entities-lib/src/household';
 import ConfirmationError from './ConfirmationError.vue';
-import { IServerError } from '../../../../core-lib/src/types';
+import { IServerError } from '../../../../shared-lib/src/types';
 
 export default Vue.extend({
   name: 'ConfirmRegistration',

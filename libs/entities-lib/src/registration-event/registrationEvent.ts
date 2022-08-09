@@ -1,5 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { IMultilingual } from '@libs/core-lib/src/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import utils from '../utils';
 import { IShelterLocationData } from '../household-create';
 import {

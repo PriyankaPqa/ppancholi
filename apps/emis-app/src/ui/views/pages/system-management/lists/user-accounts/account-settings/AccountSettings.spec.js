@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockUsersData, User } from '@libs/entities-lib/user';
 
 import Component from './AccountSettings.vue';

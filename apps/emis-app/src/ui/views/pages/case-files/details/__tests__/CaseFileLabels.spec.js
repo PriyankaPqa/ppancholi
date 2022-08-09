@@ -1,7 +1,7 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
-import { mockStorage } from '@/store/storage';
-import { MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
+import { mockStorage } from '@/storage';
+import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 
 import Component from '../case-file-activity/components/CaseFileLabels.vue';
 

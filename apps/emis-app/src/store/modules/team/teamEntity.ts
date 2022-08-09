@@ -1,7 +1,7 @@
 import { ActionTree, ActionContext } from 'vuex';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { ITeamEntity, ITeamMember } from '@libs/entities-lib/team';
-import { TeamsService } from '@/services/teams/entity';
+import { TeamsService } from '@libs/services-lib/teams/entity';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';

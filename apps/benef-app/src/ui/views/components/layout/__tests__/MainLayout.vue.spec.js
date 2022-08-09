@@ -1,6 +1,6 @@
-import { mockEvent } from '@libs/entities-lib/registration-event';
+import { mockEvent } from '@libs/entities-lib/src/registration-event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import Component from '../MainLayout.vue';
 
 const storage = mockStorage();

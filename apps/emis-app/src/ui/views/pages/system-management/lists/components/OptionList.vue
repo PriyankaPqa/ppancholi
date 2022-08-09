@@ -162,7 +162,7 @@ import {
   RcTab,
   RcPageContent,
 } from '@libs/component-lib/components';
-import { IMultilingual } from '@libs/core-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import entityUtils from '@libs/entities-lib/utils';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';

@@ -1,4 +1,4 @@
-import { IServerError, IOptionItemData } from '@libs/core-lib/types';
+import { IServerError, IOptionItemData } from '@libs/shared-lib/types';
 import { ISplitHousehold } from '@libs/entities-lib/household-create/householdCreate.types';
 import {
   HouseholdCreate,

@@ -1,6 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
-import { IListOption } from '@libs/core-lib/types';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
+import { IListOption } from '@libs/shared-lib/types';
 import { BaseEntity } from '../base';
 import {
   AccessLevels, AccountStatus, IFilter, IUserAccountEntity,

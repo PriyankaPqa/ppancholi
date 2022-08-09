@@ -1,7 +1,7 @@
 import {
   IServerError,
   ERegistrationMethod, IOptionItemData,
-} from '@libs/core-lib/types';
+} from '@libs/shared-lib/types';
 import { TranslateResult } from 'vue-i18n';
 
 import { IEvent, IEventData } from '@libs/entities-lib/registration-event';

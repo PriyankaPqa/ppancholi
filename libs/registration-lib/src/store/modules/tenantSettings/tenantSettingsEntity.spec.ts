@@ -15,10 +15,10 @@ import {
   mockTenantSettingsEntityData,
   TenantSettingsEntity,
 } from '@libs/entities-lib/tenantSettings';
+import { mockTenantSettingsService, TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
+import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import { TenantSettingsEntityModule } from './tenantSettingsEntity';
-import { mockTenantSettingsService, TenantSettingsService } from '../../../services/tenantSettings/entity';
 import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
-import vuetify from '../../../plugins/vuetify/vuetify';
 
 const service = mockTenantSettingsService();
 let myModule: TenantSettingsEntityModule;

@@ -2,7 +2,7 @@ import { VSwitch } from 'vuetify/lib';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity, EEventStatus } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 
 import Component from '../components/EventSummaryLink.vue';
 

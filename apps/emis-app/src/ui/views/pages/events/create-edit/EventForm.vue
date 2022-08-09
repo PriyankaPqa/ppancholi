@@ -244,7 +244,7 @@ import libHelpers from '@libs/entities-lib/helpers';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import helpers from '@/ui/helpers/helpers';
 import utils from '@libs/entities-lib/utils';
-import { ECanadaProvinces, IMultilingual } from '@libs/core-lib/types';
+import { ECanadaProvinces, IMultilingual } from '@libs/shared-lib/types';
 import {
   EResponseLevel,
   EEventStatus,
@@ -252,7 +252,7 @@ import {
   EventEntity,
   IEventLocation,
 } from '@libs/entities-lib/event';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import moment from 'moment';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';

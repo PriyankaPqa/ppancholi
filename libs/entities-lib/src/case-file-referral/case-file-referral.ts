@@ -1,4 +1,4 @@
-import { IListOption } from '@libs/core-lib/src/types';
+import { IListOption } from '@libs/shared-lib/types';
 import { BaseEntity } from '../base';
 import { ICaseFileReferralEntity, IReferralConsentInformation, ReferralMethod } from './case-file-referral.types';
 

@@ -1,5 +1,5 @@
 import { mockAddress } from '@libs/entities-lib/household-create';
-import { ECanadaProvinces } from '@libs/core-lib/src/types';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { createLocalVue, shallowMount } from '../../../test/testSetup';
 import googleAutocomplete from './address';
 

@@ -1,5 +1,5 @@
-import { IMultilingual } from '@libs/core-lib/types';
-import { SUPPORTED_LANGUAGES_INFO } from '@libs/core-lib/constants/trans';
+import { IMultilingual } from '@libs/shared-lib/types';
+import { SUPPORTED_LANGUAGES_INFO } from '@libs/shared-lib/constants/trans';
 
 export default {
   /**

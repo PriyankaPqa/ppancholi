@@ -1,8 +1,8 @@
 import { EFilterType } from '@libs/component-lib/types';
-import { CaseNoteStorageMock } from '@/store/storage/case-note/storage.mock';
+import { CaseNoteStorageMock } from '@/storage/case-note/storage.mock';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 import * as searchEndpoints from '@/constants/searchEndpoints';
 import Component from './CaseNote.vue';

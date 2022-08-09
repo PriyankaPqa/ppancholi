@@ -87,9 +87,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMultilingual, VForm } from '@libs/core-lib/types';
+import { IMultilingual, VForm } from '@libs/shared-lib/types';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import entityUtils from '@libs/entities-lib/utils';
 import { IOptionItem } from '@libs/entities-lib/optionItem';

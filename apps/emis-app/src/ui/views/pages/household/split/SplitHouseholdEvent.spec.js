@@ -1,6 +1,10 @@
-import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockEventEntityData, mockEventMainInfo } from '@libs/entities-lib/event';
-import { mockStorage } from '@/store/storage';
+import {
+  createLocalVue, shallowMount, mount,
+} from '@/test/testSetup';
+import {
+  mockEventMainInfo, mockEventEntityData,
+} from '@libs/entities-lib/event';
+import { mockStorage } from '@/storage';
 
 import Component from './SplitHouseholdEvent.vue';
 

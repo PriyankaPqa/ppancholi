@@ -1,7 +1,7 @@
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { Toasted } from 'vue-toasted';
-import { IMultilingual } from '@libs/core-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 
 interface IMFunction {
   (value: IMultilingual): string;

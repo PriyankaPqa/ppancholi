@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity } from '@libs/entities-lib/event';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
-import { mockStorage } from '@/store/storage';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
+import { mockStorage } from '@/storage';
 import entityUtils from '@libs/entities-lib/utils';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { EEventSummarySections } from '@/types';

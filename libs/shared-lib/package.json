@@ -1,0 +1,25 @@
+{
+  "name": "@libs/shared-lib",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --fix --max-warnings=0"
+  },
+  "dependencies": {
+    "@libs/entities-lib": "*",
+    "@microsoft/applicationinsights-web": "2.7.3",
+    "tslib": "^2.3.1",
+    "vue": "2.6.14",
+    "vue-router": "3.5.3",
+    "vue-i18n": "8.27.0",
+    "deepmerge": "^4.2.2",
+    "vuetify": "2.6.3",
+    "@mdi/font": "6.5.95",
+    "roboto-fontface": "^0.10.0",
+    "vue-toasted": "1.1.28",
+    "moment": "2.29.4"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "^1.1.3"
+  }
+}

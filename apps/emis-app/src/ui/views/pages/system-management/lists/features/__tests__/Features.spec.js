@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { FeatureType } from '@libs/entities-lib/tenantSettings';
 import Component from '../Features.vue';

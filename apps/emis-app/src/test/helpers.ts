@@ -1,6 +1,6 @@
 import { IUserData, mockUsersData } from '@libs/entities-lib/user';
 import { mockStore } from '@/store';
-import { IAzureSearchParams } from '@libs/core-lib/types';
+import { IAzureSearchParams } from '@libs/shared-lib/types';
 
 export const mockStoreWithUserState = (state: IUserData) => mockStore({
   modules: {

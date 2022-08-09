@@ -1,6 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { ECanadaProvinces, IOptionItemData } from '@libs/core-lib/types';
-import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
+import { ECanadaProvinces, IOptionItemData } from '@libs/shared-lib/types';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import helpers from '../../helpers';
 import {
   maxLengthCheck, required, isValidBirthday, hasMinimumAge,

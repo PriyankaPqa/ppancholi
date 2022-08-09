@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { tabs } from '@/store/modules/registration/tabs';
 import Component from './ConfirmRegistration.vue';
 

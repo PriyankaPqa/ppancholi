@@ -1,7 +1,7 @@
 import { ActionContext, ActionTree } from 'vuex';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { IRootState } from '@/store/store.types';
-import { ProgramsService } from '@/services/programs/entity';
+import { ProgramsService } from '@libs/services-lib/programs/entity';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IProgramEntityState } from './programEntity.types';
 import { IState } from '../base/base.types';

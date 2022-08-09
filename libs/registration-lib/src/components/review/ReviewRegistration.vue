@@ -143,7 +143,7 @@ import _isEqual from 'lodash/isEqual';
 import helpers from '@libs/entities-lib/helpers';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
-import { EventHub } from '@libs/core-lib/plugins/event-hub';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { IContactInformation } from '../../../../entities-lib/src/value-objects/contact-information';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';

@@ -146,7 +146,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcNestedTable } from '@libs/component-lib/components';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,

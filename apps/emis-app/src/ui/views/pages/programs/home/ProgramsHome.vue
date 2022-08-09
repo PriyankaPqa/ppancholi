@@ -61,7 +61,7 @@ import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import routes from '@/constants/routes';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { IAzureSearchParams } from '@libs/core-lib/types';
+import { IAzureSearchParams } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IProgramCombined, IProgramEntity } from '@libs/entities-lib/program';

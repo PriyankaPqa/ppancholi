@@ -1,5 +1,5 @@
-import { ECanadaProvinces } from '@libs/core-lib/types';
-import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { IAddress, IAddressData } from './address.types';
 import { required, maxLengthCheck, isValidCanadianPostalCode } from '../../classValidation';
 

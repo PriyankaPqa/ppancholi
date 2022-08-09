@@ -1,4 +1,4 @@
-import { ERegistrationMethod } from '@libs/core-lib/src/types';
+import { ERegistrationMethod } from '@libs/shared-lib/types';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { mockStorage } from '../../store/storage';
 import { mockRegistrationLocations } from '../../../../entities-lib/src/registration-event';

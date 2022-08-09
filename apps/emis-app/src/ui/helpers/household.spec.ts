@@ -4,7 +4,7 @@ import {
 } from '@libs/entities-lib/household-create';
 import _cloneDeep from 'lodash/cloneDeep';
 import { mockCombinedHousehold } from '@libs/entities-lib/household';
-import { ECanadaProvinces } from '@libs/core-lib/types';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import libHelpers from '@libs/entities-lib/helpers';
 import householdHelpers from '@/ui/helpers/household';
 

@@ -210,8 +210,8 @@
 import Vue from 'vue';
 import { RcDialog } from '@libs/component-lib/components';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { IMultilingual, VForm } from '@libs/core-lib/types';
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { IMultilingual, VForm } from '@libs/shared-lib/types';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import entityUtils from '@libs/entities-lib/utils';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';

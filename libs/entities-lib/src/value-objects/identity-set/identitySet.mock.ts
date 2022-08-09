@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge';
 import {
   ECanadaProvinces, IOptionItemData,
-} from '@libs/core-lib/types';
+} from '@libs/shared-lib/types';
 import {
   EIndigenousTypes, IIndigenousCommunityData, IIdentitySetData, IIdentitySet, IIdentitySetCreateRequest,
 } from './identitySet.types';

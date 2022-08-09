@@ -1,17 +1,17 @@
 import _sortBy from 'lodash/sortBy';
 import { ActionContext } from 'vuex';
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { UserAccountsService, IAddRoleToUserRequest } from '@/services/user-accounts/entity';
+import { UserAccountsService, IAddRoleToUserRequest } from '@libs/services-lib/user-accounts/entity';
 import {
   FilterKey, mockUserAccountEntity, mockUserFilters, UserAccountEntity,
 } from '@libs/entities-lib/user-account';
-import { OptionItemsService } from '@/services/optionItems';
+import { OptionItemsService } from '@libs/services-lib/optionItems';
 import { OptionItem } from '@libs/entities-lib/optionItem';
 import { httpClient } from '@/services/httpClient';
+import { mockOptionItems } from '@libs/entities-lib/optionItem/optionItem.mock';
+import { mockSignalR } from '@/ui/plugins/signal-r';
 import { IUserAccountEntityState } from './userAccountEntity.types';
 import { UserAccountEntityModule } from './userAccountEntity';
-import { mockOptionItems } from '../../../../../../libs/entities-lib/src/optionItem/optionItem.mock';
-import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const signalR = mockSignalR();
 

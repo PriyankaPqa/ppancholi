@@ -30,14 +30,17 @@
       "@libs/component-lib/*": [
         "../../libs/component-lib/src/*"
       ],
-      "@libs/core-lib/*": [
-        "../../libs/core-lib/src/*"
+      "@libs/shared-lib/*": [
+        "../../libs/shared-lib/src/*"
       ],
       "@libs/assets": [
         "../../libs/assets/*"
       ],
       "@libs/entities-lib/*": [
         "../../libs/entities-lib/src/*"
+      ],
+      "@libs/services-lib/*": [
+        "../../libs/services-lib/src/*"
       ]
     },
     "lib": [

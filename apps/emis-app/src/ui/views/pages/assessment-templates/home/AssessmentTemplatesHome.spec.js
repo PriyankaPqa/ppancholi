@@ -1,7 +1,7 @@
 import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import Component from './AssessmentTemplatesHome.vue';
 
 const localVue = createLocalVue();

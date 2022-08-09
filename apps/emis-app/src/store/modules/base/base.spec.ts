@@ -1,11 +1,11 @@
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionContext } from 'vuex';
-import { DomainBaseService } from '@libs/core-lib/services/base';
+import { DomainBaseService } from '@libs/services-lib/base';
 import { httpClient } from '@/services/httpClient';
 import { mockUserAccountEntities, mockUserAccountEntity } from '@libs/entities-lib/user-account';
 import helpers from '@/ui/helpers/helpers';
-import { mockIRestResponse } from '@libs/core-lib/services/http-client';
+import { mockIRestResponse } from '@libs/services-lib/http-client';
 import { BaseModule } from './index';
 import { IState } from './base.types';
 import { ISignalRMock, mockSignalR } from '../../../ui/plugins/signal-r';

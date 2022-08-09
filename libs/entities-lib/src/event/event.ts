@@ -1,11 +1,11 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { ECanadaProvinces, IMultilingual } from '@libs/core-lib/types';
+import { ECanadaProvinces, IMultilingual } from '@libs/shared-lib/types';
 
 import {
   MAX_LENGTH_LG,
   MAX_LENGTH_MD,
   MAX_LENGTH_SM,
-} from '@libs/core-lib/constants/validations';
+} from '@libs/shared-lib/constants/validations';
 import { BaseEntity } from '../base';
 import utils from '../utils';
 import {

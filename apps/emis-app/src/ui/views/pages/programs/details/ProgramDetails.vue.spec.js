@@ -1,4 +1,4 @@
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';

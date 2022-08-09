@@ -1,5 +1,5 @@
 import VueI18n from 'vue-i18n';
-import { IMultilingual } from '@libs/core-lib/src/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import { IEntity } from '../../base';
 
 export interface IVersionedEntity {

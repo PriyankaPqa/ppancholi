@@ -5,9 +5,9 @@ import {
   shallowMount, mount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import Component from './HouseholdSearch.vue';
 
 const localVue = createLocalVue();

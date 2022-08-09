@@ -22,7 +22,7 @@
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
 import { RcPageContent } from '@libs/component-lib/components';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';

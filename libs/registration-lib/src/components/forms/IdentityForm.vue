@@ -99,7 +99,7 @@
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { VTextFieldWithValidation, VSelectWithValidation } from '@libs/component-lib/components';
-import { IOptionItemData } from '@libs/core-lib/types';
+import { IOptionItemData } from '@libs/shared-lib/types';
 import Pot from './HoneyPot.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import { IBirthDate, IHoneyPotIdentitySet, IIdentitySet } from '../../../../entities-lib/src/household-create';

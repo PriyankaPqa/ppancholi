@@ -14,8 +14,8 @@ import {
 } from '@libs/entities-lib/event';
 import { httpClient } from '@/services/httpClient';
 import helpers from '@/ui/helpers/helpers';
-import { EventsService } from '@/services/events/entity';
-import { OptionItemsService } from '@/services/optionItems';
+import { EventsService } from '@libs/services-lib/events/entity';
+import { OptionItemsService } from '@libs/services-lib/optionItems';
 import { EEventSummarySections } from '@/types';
 import { mockSignalR } from '@/ui/plugins/signal-r';
 import { Status } from '@libs/entities-lib/base';

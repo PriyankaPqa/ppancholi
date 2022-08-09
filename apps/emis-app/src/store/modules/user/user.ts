@@ -2,7 +2,7 @@ import Vue from 'vue';
 import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import _intersection from 'lodash/intersection';
 

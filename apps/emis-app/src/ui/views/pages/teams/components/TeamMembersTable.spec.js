@@ -3,7 +3,7 @@ import {
   mockCombinedTeams,
 } from '@libs/entities-lib/team';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import _orderBy from 'lodash/orderBy';
 import Component from './TeamMembersTable.vue';

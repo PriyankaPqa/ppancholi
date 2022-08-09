@@ -1,5 +1,5 @@
-import { ECanadaProvinces } from '@libs/core-lib/src/types';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { EventEntity } from './event';
 import { mockEventEntity } from './event.mock';
 import { EEventCallCentreStatus, EEventStatus, IEventEntity } from './event.types';

@@ -2,8 +2,8 @@ import { localeChanged } from 'vee-validate';
 import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from '@/constants/trans';
 import { i18n } from '@/ui/plugins/i18n';
 import { httpClient } from '@/services/httpClient';
-import moment from '@/ui/plugins/moment';
-import vuetify from '@/ui/plugins/vuetify/vuetify';
+import moment from '@libs/shared-lib/plugins/moment';
+import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 
 const Trans = {
   get defaultLanguage() {

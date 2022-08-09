@@ -146,7 +146,7 @@ import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '
 import {
   CaseFileActivityType, CaseFileStatus, ICaseFileActivity, ICaseFileEntity, ICaseFileMetadata,
 } from '@libs/entities-lib/case-file';
-import { IIdMultilingualName } from '@libs/core-lib/types';
+import { IIdMultilingualName } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { PaymentsSummary } from '@libs/entities-lib/financial-assistance-payment';

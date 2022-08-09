@@ -7,8 +7,9 @@
   },
   "dependencies": {
     "@libs/component-lib": "*",
-    "@libs/core-lib": "*",
+    "@libs/shared-lib": "*",
     "@libs/entities-lib": "*",
+    "@libs/services-lib": "*",
     "@mdi/font": "^6.5.95",
     "awesome-phonenumber": "2.68.0",
     "axios": "0.27.2",

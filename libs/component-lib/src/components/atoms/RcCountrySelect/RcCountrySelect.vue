@@ -46,7 +46,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import '../../styles/sprite.css';
-import { en, fr } from '../../../../../core-lib/src/constants/countries';
+import { en, fr } from '../../../../../shared-lib/src/constants/countries';
 
 /**
  * A country select built using v-autocomplete. Uses iso2 country names and codes.

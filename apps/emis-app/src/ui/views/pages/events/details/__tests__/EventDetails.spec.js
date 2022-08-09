@@ -4,8 +4,8 @@ import { mockCombinedEvent } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
-import { mockStorage } from '@/store/storage';
-import { ECanadaProvinces } from '@libs/core-lib/types';
+import { mockStorage } from '@/storage';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import Component from '../EventDetails.vue';
 
 const localVue = createLocalVue();

@@ -1,6 +1,6 @@
 import { RcNestedTable } from '@libs/component-lib/components';
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockItems, EFinancialAmountModes, EFinancialFrequency } from '@libs/entities-lib/financial-assistance';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';

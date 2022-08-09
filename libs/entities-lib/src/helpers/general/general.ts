@@ -1,5 +1,5 @@
 import VueI18n from 'vue-i18n';
-import { IMultilingual } from '@libs/core-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 
 export default {
   getMultilingualValue(m: IMultilingual, i18n: VueI18n, trim = false) {

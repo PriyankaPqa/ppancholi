@@ -180,12 +180,12 @@ import {
 import { EEventStatus, IEventCombined, IEventEntity } from '@libs/entities-lib/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { VForm, IServerError } from '@libs/core-lib/types';
+import { VForm, IServerError } from '@libs/shared-lib/types';
 import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import { IError } from '@libs/core-lib/services/http-client';
+import { IError } from '@libs/services-lib/http-client';
 import { Status } from '@libs/entities-lib/base';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 

@@ -18,8 +18,8 @@ import {
 } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { EEventSummarySections } from '@/types';
-import { EventsService } from '@/services/events/entity';
-import { OptionItemsService } from '@/services/optionItems';
+import { EventsService } from '@libs/services-lib/events/entity';
+import { OptionItemsService } from '@libs/services-lib/optionItems';
 import { IEventEntityState } from '@/store/modules/event/eventEntity.types';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { filterAndSortActiveItems, BaseModule } from '../base';

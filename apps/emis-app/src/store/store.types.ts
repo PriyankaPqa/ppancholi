@@ -2,7 +2,6 @@ import { Store } from 'vuex';
 import { IState as IRegistrationState } from '@libs/registration-lib/store/modules/registration/registration.types';
 import { IHouseholdEntityState } from '@libs/registration-lib/store/modules/household/householdEntity.types';
 import { IHouseholdMetadata } from '@libs/entities-lib/household';
-import { IProvider, IProviderMock } from '@/services/provider';
 import * as vuexModule from '@/constants/vuex-modules';
 import { IState as IDashboardState } from '@/store/modules/dashboard/dashboard.types';
 import { IState as IOptionListState } from '@/store/modules/optionList/optionList.types';
@@ -39,6 +38,7 @@ import { ITeamMetadata } from '@libs/entities-lib/team';
 
 import { IFinancialAssistanceCategoryEntityState } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity.types';
 import { IFinancialAssistancePaymentMetadata } from '@libs/entities-lib/financial-assistance-payment';
+import { IProvider, IProviderMock } from '@/services/provider';
 import { IFinancialAssistancePaymentEntityState } from './modules/financial-assistance-payments/financialAssistancePaymentEntity.types';
 
 import { ITenantSettingsEntityState } from './modules/tenantSettings/tenantSettingsEntity.types';

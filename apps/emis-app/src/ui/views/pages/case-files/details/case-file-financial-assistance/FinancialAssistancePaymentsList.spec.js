@@ -2,7 +2,7 @@ import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types';
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockCombinedCaseFinancialAssistance } from '@libs/entities-lib/financial-assistance-payment';
 import routes from '@/constants/routes';
 import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';

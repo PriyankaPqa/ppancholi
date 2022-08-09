@@ -18,7 +18,7 @@ import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/compone
 import {
   CaseFileActivityType, HouseholdCaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, RegistrationType, ValidationOfImpactStatus,
 } from '@libs/entities-lib/case-file';
-import { IIdMultilingualName, IMultilingual } from '@libs/core-lib/types';
+import { IIdMultilingualName, IMultilingual } from '@libs/shared-lib/types';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 
 export interface IAssignInfo {

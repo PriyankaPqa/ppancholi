@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
 import routes from '@/constants/routes';
 import Component from './FinancialAssistanceHome.vue';

@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import entityUtils from '@libs/entities-lib/utils';
-import { mockStorage } from '@/store/storage';
-import { MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
+import { mockStorage } from '@/storage';
+import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { mockTenantSettingsEntity } from '@libs/entities-lib/tenantSettings';
 import Component from '../Domains.vue';
 

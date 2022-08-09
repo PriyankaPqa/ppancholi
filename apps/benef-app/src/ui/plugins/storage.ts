@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { IStore, IState } from '@/store';
-import { makeStorage } from '@/store/storage';
+import { makeStorage } from '@/storage';
 
 export default (store: IStore<IState>): void => {
   Vue.mixin({

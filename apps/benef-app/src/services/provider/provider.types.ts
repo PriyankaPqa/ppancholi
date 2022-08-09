@@ -1,6 +1,6 @@
-import { IHouseholdsService, IHouseholdsServiceMock } from '@libs/registration-lib/services/households/entity';
-import { IPublicService, IPublicServiceMock } from '@libs/registration-lib/services/public';
-import { ITenantSettingsService, ITenantSettingsServiceMock } from '@libs/registration-lib/services/tenantSettings/entity';
+import { IHouseholdsService, IHouseholdsServiceMock } from '@libs/services-lib/households/entity';
+import { IPublicService, IPublicServiceMock } from '@libs/services-lib/public';
+import { ITenantSettingsService, ITenantSettingsServiceMock } from '@libs/services-lib/tenantSettings/entity';
 
 export interface IProvider {
   publicApi: IPublicService,

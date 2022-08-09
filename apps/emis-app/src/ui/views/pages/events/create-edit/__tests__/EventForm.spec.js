@@ -16,11 +16,11 @@ import {
 import helpers from '@/ui/helpers/helpers';
 import {
   ECanadaProvinces,
-} from '@libs/core-lib/types';
-import moment from '@/ui/plugins/moment';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
-import { mockStorage } from '@/store/storage';
+} from '@libs/shared-lib/types';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { mockStorage } from '@/storage';
+import moment from '@libs/shared-lib/plugins/moment';
 import Component from '../EventForm.vue';
 
 const event = mockEventEntity();

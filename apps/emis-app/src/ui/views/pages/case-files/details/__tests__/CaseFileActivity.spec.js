@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@libs/entities-lib/case-file';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 

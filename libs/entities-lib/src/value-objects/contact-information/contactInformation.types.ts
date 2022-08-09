@@ -1,4 +1,4 @@
-import { IListOption, IOptionItemData } from '@libs/core-lib/types';
+import { IListOption, IOptionItemData } from '@libs/shared-lib/types';
 
 export interface IPhoneNumber {
   number?: string;

@@ -7,7 +7,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults.vue';
 

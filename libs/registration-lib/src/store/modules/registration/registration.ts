@@ -1,7 +1,7 @@
 import {
   IServerError, ERegistrationMode,
   EOptionItemStatus, ERegistrationMethod, IOptionItemData,
-} from '@libs/core-lib/types';
+} from '@libs/shared-lib/types';
 /* eslint-disable max-lines-per-function */
 import {
   ActionContext, ActionTree, GetterTree, Module, MutationTree,
@@ -12,7 +12,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
 import { Status } from '@libs/entities-lib/base';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { ISplitHousehold } from '@libs/entities-lib/household-create/householdCreate.types';
 
 import { IHouseholdEntity } from '@libs/entities-lib/household';

@@ -3,7 +3,7 @@
  */
 
 import Vue from 'vue';
-import { IServerError } from '@libs/core-lib/types';
+import { IServerError } from '@libs/shared-lib/types';
 import helpers from '../helpers/helpers';
 
 export default Vue.extend({

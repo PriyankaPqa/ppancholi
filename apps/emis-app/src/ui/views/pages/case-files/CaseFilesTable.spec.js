@@ -2,7 +2,7 @@ import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 
 import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';

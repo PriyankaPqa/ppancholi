@@ -1,8 +1,8 @@
 import { ActionContext, ActionTree } from 'vuex';
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/core-lib/types';
-import { DomainBaseService } from '@libs/core-lib/services/base';
+import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
+import { DomainBaseService } from '@libs/services-lib/base';
 import { IEntity } from '@libs/entities-lib/base';
 import helpers from '@libs/entities-lib/helpers';
 import { IRootState } from '../../store.types';

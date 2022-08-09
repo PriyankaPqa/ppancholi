@@ -54,9 +54,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import { IError } from '@libs/core-lib/services/http-client';
+import { IError } from '@libs/services-lib/http-client';
+import { IServerError } from '@libs/shared-lib/types';
 import { keysForDuplicateErrors } from './keysForDuplicateErrors';
-import { IServerError } from '../../../../core-lib/src/types';
 
 type TranslateResult = VueI18n.TranslateResult;
 

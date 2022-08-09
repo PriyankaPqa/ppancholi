@@ -33,7 +33,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VTextAreaWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { IMassActionCombined } from '@libs/entities-lib/mass-action';
 
 export default Vue.extend({

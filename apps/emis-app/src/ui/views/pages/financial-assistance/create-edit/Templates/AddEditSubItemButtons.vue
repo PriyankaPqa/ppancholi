@@ -22,7 +22,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { cloneDeep } from 'lodash';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import { IFinancialAssistanceTableSubItem } from '@libs/entities-lib/financial-assistance';
 
 export default Vue.extend({

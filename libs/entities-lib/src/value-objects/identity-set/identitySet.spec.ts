@@ -1,5 +1,5 @@
-import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/core-lib/src/constants/validations';
-import { ECanadaProvinces } from '@libs/core-lib/src/types';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import helpers from '@/helpers';
 import {
   IdentitySet, EIndigenousTypes, mockIdentitySetData,

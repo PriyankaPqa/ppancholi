@@ -1,4 +1,4 @@
-import { IAzureCombinedSearchResult } from '@libs/core-lib/types';
+import { IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { mockBaseData, IEntity } from '../base';
 import { IAssessmentTemplateCombined, IAssessmentTemplateEntity, IAssessmentTemplateMetadata } from './assessment-template.types';
 

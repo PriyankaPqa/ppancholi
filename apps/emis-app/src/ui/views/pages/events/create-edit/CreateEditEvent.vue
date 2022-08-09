@@ -29,7 +29,7 @@ import mixins from 'vue-typed-mixins';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import routes from '@/constants/routes';
 import { EventEntity } from '@libs/entities-lib/event';
-import { VForm, IServerError } from '@libs/core-lib/types';
+import { VForm, IServerError } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import EventForm from './EventForm.vue';

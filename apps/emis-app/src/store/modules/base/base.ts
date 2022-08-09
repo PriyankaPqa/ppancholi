@@ -1,13 +1,13 @@
 import { ActionContext, ActionTree } from 'vuex';
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
-import { DomainBaseService } from '@libs/core-lib/services/base';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
+import { DomainBaseService } from '@libs/services-lib/base';
 import helpers from '@/ui/helpers/helpers';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import { ISignalRMock } from '@/ui/plugins/signal-r/signalR.types';
 import { SignalR } from '@/ui/plugins/signal-r/signalR';
-import { IRestResponse } from '@libs/core-lib/services/http-client';
+import { IRestResponse } from '@libs/services-lib/http-client';
 import { IEntity, Status } from '@libs/entities-lib/base';
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';

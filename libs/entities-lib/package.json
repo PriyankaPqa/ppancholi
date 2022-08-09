@@ -6,7 +6,7 @@
     "lint": "eslint . --fix --max-warnings=0"
   },
   "dependencies": {
-    "@libs/core-lib": "*",
+    "@libs/shared-lib": "*",
     "awesome-phonenumber": "2.68.0",
     "moment": "2.29.4",
     "deepmerge": "^4.2.2",

@@ -1,4 +1,4 @@
-import { HttpClient } from '@libs/core-lib/services/http-client';
+import { HttpClient } from '@libs/services-lib/http-client';
 import { i18n } from '@/ui/plugins/i18n';
 import { localStorageKeys } from '@/constants/localStorage';
 import routes from '@/constants/routes';

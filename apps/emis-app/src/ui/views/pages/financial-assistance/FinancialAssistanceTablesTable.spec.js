@@ -3,7 +3,7 @@ import { EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockCombinedFinancialAssistances } from '@libs/entities-lib/financial-assistance';
 import { mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';

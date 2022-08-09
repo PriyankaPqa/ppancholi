@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
 import Component from '../components/EventAgreementSection.vue';

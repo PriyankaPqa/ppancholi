@@ -1,6 +1,6 @@
 import { ActionContext } from 'vuex';
 import { httpClient } from '@/services/httpClient';
-import { TenantSettingsService } from '@/services/tenantSettings/entity';
+import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import {
   FeatureKeys,
   IBrandingEntityData,

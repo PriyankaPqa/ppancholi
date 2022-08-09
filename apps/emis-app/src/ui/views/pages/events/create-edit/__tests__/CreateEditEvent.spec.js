@@ -7,7 +7,7 @@ import {
 import {
   mockCombinedEvents, mockEventEntity, mockRegionData, mockOtherProvinceData,
 } from '@libs/entities-lib/event';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
 import Component from '../CreateEditEvent.vue';
 

@@ -87,9 +87,9 @@ import SplitHouseholdMembers from '@/ui/views/pages/household/split/SplitHouseho
 import ReviewSplit from '@/ui/views/pages/household/split/ReviewSplit.vue';
 
 import { tabs } from '@/store/modules/household/tabs';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { EventHub } from '@libs/core-lib/plugins/event-hub';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 
 export default mixins(individual).extend({
   name: 'SplitHousehold',

@@ -1,9 +1,9 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { mockCombinedHousehold } from '@libs/entities-lib/household';
-import { ECanadaProvinces } from '@libs/core-lib/types';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { mockUserStateLevel } from '@/test/helpers';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';

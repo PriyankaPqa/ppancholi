@@ -4,7 +4,7 @@ import { mockShelterLocations } from '@libs/entities-lib/registration-event/regi
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
 
 import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResults.vue';

@@ -1,6 +1,6 @@
 import {
   ECanadaProvinces, IListOption, IMultilingual,
-} from '@libs/core-lib/src/types';
+} from '@libs/shared-lib/types';
 
 import { IEntity, IEntityCombined } from '../base';
 import { IAddress, IAddressData } from '../value-objects/address';

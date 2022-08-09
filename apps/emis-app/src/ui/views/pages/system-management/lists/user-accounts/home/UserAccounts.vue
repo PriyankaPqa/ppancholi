@@ -154,7 +154,7 @@ import {
 import AddEmisUser from '@/ui/views/pages/system-management/lists/add-emis-user/AddEmisUser.vue';
 import routes from '@/constants/routes';
 import { IUserAccountCombined, IUserAccountEntity } from '@libs/entities-lib/user-account';
-import { IMultilingual } from '@libs/core-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 

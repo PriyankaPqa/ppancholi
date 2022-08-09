@@ -1,7 +1,7 @@
 import VueI18n from 'vue-i18n';
-import en from '@libs/core-lib/constants/countries/en';
-import fr from '@libs/core-lib/constants/countries/fr';
-import { ECanadaProvinces } from '@libs/core-lib/types';
+import en from '@libs/shared-lib/constants/countries/en';
+import fr from '@libs/shared-lib/constants/countries/fr';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { IAddress, IAddressData } from '../../value-objects/address';
 import generalHelper from '../general/general';
 

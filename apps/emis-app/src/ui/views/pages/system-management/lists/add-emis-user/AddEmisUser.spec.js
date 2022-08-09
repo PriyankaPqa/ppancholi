@@ -1,5 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockAppUserData, mockRolesData } from '@libs/entities-lib/app-user';
 import Component from './AddEmisUser.vue';
 

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { IStorage } from '@/store/storage';
+import { IStorage } from '@/storage';
 
 declare module 'vue/types/options' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

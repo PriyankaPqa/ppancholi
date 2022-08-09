@@ -1,31 +1,31 @@
-import { IHouseholdsService, IHouseholdsServiceMock } from '@libs/registration-lib/services/households/entity';
+import { IHouseholdsService, IHouseholdsServiceMock } from '@libs/services-lib/households/entity';
 import {
   IPublicService,
   IPublicServiceMock,
-} from '@libs/registration-lib/services/public';
-import { IHouseholdMetadataService } from '@libs/registration-lib/services/households/metadata';
-import { IMassActionService, IMassActionServiceMock } from '@/services/mass-actions/entity';
-import { ICaseFilesService, ICaseFilesServiceMock } from '../case-files/entity';
-import { IOptionItemsService, IOptionItemsServiceMock } from '../optionItems';
-import { ITeamsService, ITeamsServiceMock } from '../teams/entity';
-import { IAppUsersService, IAppUsersServiceMock } from '../app-users';
-import { IProgramsService, IProgramsServiceMock } from '../programs/entity';
-import { IUserAccountsServiceMock, UserAccountsService } from '../user-accounts/entity';
-import { IEventsService, IEventsServiceMock } from '../events/entity';
-import { ICaseNotesService, ICaseNotesServiceMock } from '../case-notes/entity';
-import { ICaseFileReferralsService, ICaseFileReferralsServiceMock } from '../case-file-referrals/entity';
-import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '../case-file-documents/entity';
-import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMock } from '../financial-assistance-tables/entity';
-import { IFinancialAssistanceCategoriesService, IFinancialAssistanceCategoriesServiceMock } from '../financial-assistance-categories/entity';
-import { IFinancialAssistancePaymentsService, IFinancialAssistancePaymentsServiceMock } from '../financial-assistance-payments/entity';
-import { ICaseFilesMetadataService, ICaseFilesMetadataServiceMock } from '../case-files/metadata';
-import { ICaseNotesMetadataService } from '../case-notes/metadata';
-import { ICaseFileReferralsMetadataService } from '../case-file-referrals/metadata';
-import { ICaseFileDocumentsMetadataService } from '../case-file-documents/metadata';
-import { IEventsMetadataService } from '../events/metadata';
-import { IFinancialAssistancePaymentsMetadataService } from '../financial-assistance-payments/metadata';
-import { ITenantSettingsService, ITenantSettingsServiceMock } from '../tenantSettings/entity';
-import { IErrorReportingService, IErrorReportingServiceMock } from '../error-reporting';
+} from '@libs/services-lib/public';
+import { IHouseholdMetadataService } from '@libs/services-lib/households/metadata';
+import { IMassActionService, IMassActionServiceMock } from '@libs/services-lib/mass-actions/entity';
+import { ICaseFilesService, ICaseFilesServiceMock } from '@libs/services-lib/case-files/entity';
+import { IOptionItemsService, IOptionItemsServiceMock } from '@libs/services-lib/optionItems';
+import { ITeamsService, ITeamsServiceMock } from '@libs/services-lib/teams/entity';
+import { IAppUsersService, IAppUsersServiceMock } from '@libs/services-lib/app-users';
+import { IProgramsService, IProgramsServiceMock } from '@libs/services-lib/programs/entity';
+import { IUserAccountsServiceMock, UserAccountsService } from '@libs/services-lib/user-accounts/entity';
+import { IEventsService, IEventsServiceMock } from '@libs/services-lib/events/entity';
+import { ICaseNotesService, ICaseNotesServiceMock } from '@libs/services-lib/case-notes/entity';
+import { ICaseFileReferralsService, ICaseFileReferralsServiceMock } from '@libs/services-lib/case-file-referrals/entity';
+import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '@libs/services-lib/case-file-documents/entity';
+import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMock } from '@libs/services-lib/financial-assistance-tables/entity';
+import { IFinancialAssistanceCategoriesService, IFinancialAssistanceCategoriesServiceMock } from '@libs/services-lib/financial-assistance-categories/entity';
+import { IFinancialAssistancePaymentsService, IFinancialAssistancePaymentsServiceMock } from '@libs/services-lib/financial-assistance-payments/entity';
+import { ICaseFilesMetadataService, ICaseFilesMetadataServiceMock } from '@libs/services-lib/case-files/metadata';
+import { ICaseNotesMetadataService } from '@libs/services-lib/case-notes/metadata';
+import { ICaseFileReferralsMetadataService } from '@libs/services-lib/case-file-referrals/metadata';
+import { ICaseFileDocumentsMetadataService } from '@libs/services-lib/case-file-documents/metadata';
+import { IEventsMetadataService } from '@libs/services-lib/events/metadata';
+import { IFinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
+import { ITenantSettingsService, ITenantSettingsServiceMock } from '@libs/services-lib/tenantSettings/entity';
+import { IErrorReportingService, IErrorReportingServiceMock } from '@libs/services-lib/error-reporting';
 
 export interface IProvider {
   appUsers: IAppUsersService,

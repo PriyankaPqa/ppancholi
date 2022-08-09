@@ -38,7 +38,7 @@
 import Vue from 'vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IEventGenericLocation } from '@libs/entities-lib/event';
-import { ECanadaProvinces } from '@libs/core-lib/types';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 
 export default Vue.extend({
   name: 'EventLocationSection',

@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/core-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import utils from '../utils';
 import { BaseEntity } from '../base';
 import { IAssessmentTemplateEntity } from './assessment-template.types';

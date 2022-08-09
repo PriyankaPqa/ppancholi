@@ -1,7 +1,7 @@
 // Mixin used for household search in registration (EMIS) and household profile move
 
 import Vue from 'vue';
-import moment from '@/ui/plugins/moment';
+import moment from '@libs/shared-lib/plugins/moment';
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 
 export default Vue.extend({

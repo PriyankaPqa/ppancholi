@@ -2,7 +2,7 @@ import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
 import _debounce from 'lodash/debounce';
 import _throttle from 'lodash/throttle';
-import { IAzureCombinedSearchResult } from '@libs/core-lib/types';
+import { IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { FilterFormData } from '@libs/component-lib/types';
 import _sortBy from 'lodash/sortBy';
 import {

@@ -1,5 +1,5 @@
 import { ActionContext, ActionTree } from 'vuex';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import {
   CaseFileStatus,
   CaseFileTriage,
@@ -12,13 +12,13 @@ import {
   IIdentityAuthentication,
   IImpactStatusValidation,
 } from '@libs/entities-lib/case-file';
-import { CaseFilesService, ICreateCaseFileRequest } from '@/services/case-files/entity';
+import { CaseFilesService, ICreateCaseFileRequest } from '@libs/services-lib/case-files/entity';
 import {
   IOptionItem, EOptionLists,
 } from '@libs/entities-lib/optionItem';
 import { ICaseFileEntityState } from '@/store/modules/case-file/caseFileEntity.types';
-import { IOptionItemsService } from '@/services/optionItems';
-import { IListOption } from '@libs/core-lib/types';
+import { IOptionItemsService } from '@libs/services-lib/optionItems';
+import { IListOption } from '@libs/shared-lib/types';
 import { IUserAccountEntity } from '@libs/entities-lib/user-account';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule, filterAndSortActiveItems, IState } from '../base';

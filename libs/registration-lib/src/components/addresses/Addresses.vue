@@ -55,7 +55,7 @@ import { VCheckboxWithValidation } from '@libs/component-lib/components';
 
 import VueI18n from 'vue-i18n';
 import helpers from '@libs/entities-lib/helpers';
-import { EOptionItemStatus } from '@libs/core-lib/types';
+import { EOptionItemStatus } from '@libs/shared-lib/types';
 import { Address, IAddress } from '@libs/entities-lib/value-objects/address';
 import {
   ICurrentAddress,

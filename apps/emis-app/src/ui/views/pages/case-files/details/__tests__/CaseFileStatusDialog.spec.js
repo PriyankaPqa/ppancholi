@@ -1,8 +1,8 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
-import colors from '@/ui/plugins/vuetify/colors';
+import colors from '@libs/shared-lib/plugins/vuetify/colors';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import Component from '../case-file-activity/components/CaseFileStatusDialog.vue';
 

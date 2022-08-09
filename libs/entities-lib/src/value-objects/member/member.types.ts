@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/core-lib/src/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import { IEntity } from '../../base';
 import { EIndigenousTypes } from '../identity-set/identitySet.types';
 import { IIdentitySet, IIdentitySetCreateRequest } from '../identity-set';

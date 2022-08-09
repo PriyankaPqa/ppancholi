@@ -62,28 +62,25 @@
     "emis-app:serve": "yarn --cwd apps/emis-app serve",
     "emis-app:lint": "yarn --cwd apps/emis-app lint",
     "emis-app:test": "yarn jest --projects apps/emis-app --runInBand --logHeapUsage",
-    "emis-app:coverage": "yarn emis-app:test --coverage",
     "emis-app:i18n-report": "node tools/scripts/i18n-report.js 'apps/emis-app/src/ui/lang/emis/en.json','apps/emis-app/src/ui/lang/registration/en.json' 'apps/emis-app/src'",
     "emis-app:lokalise": "yarn --cwd apps/emis-app lokalise",
     "benef-app:build": "yarn --cwd apps/benef-app build",
     "benef-app:serve": "yarn --cwd apps/benef-app serve",
     "benef-app:lint": "yarn --cwd apps/benef-app lint",
     "benef-app:test": "yarn jest --projects apps/benef-app --runInBand",
-    "benef-app:coverage": "yarn benef-app:test --coverage",
     "benef-app:i18n-report": "node tools/scripts/i18n-report.js 'apps/benef-app/src/ui/lang/en.json' 'apps/emis-app/src'",
     "benef-app:lokalise": "yarn --cwd apps/benef-app lokalise",
     "registration-lib:lint": "yarn --cwd libs/registration-lib lint",
     "registration-lib:test": "yarn jest --projects libs/registration-lib --runInBand",
-    "registration-lib:coverage": "yarn registration-lib:test --coverage",
     "registration-lib:i18n-report": "node tools/scripts/i18n-report.js 'libs/registration-lib/src/ui/lang/en.json' 'libs/registration-lib/src'",
     "component-lib:lint": "yarn --cwd libs/component-lib lint",
     "component-lib:test": "yarn jest --projects libs/component-lib --runInBand",
-    "component-lib:coverage": "yarn component-lib:test --coverage",
-    "core-lib:lint": "yarn --cwd libs/core-lib lint",
-    "core-lib:test": "yarn jest --projects libs/core-lib --runInBand",
-    "core-lib:coverage": "yarn core-lib:test --coverage",
+    "shared-lib:lint": "yarn --cwd libs/shared-lib lint",
+    "shared-lib:test": "yarn jest --projects libs/shared-lib --runInBand",
     "entities-lib:lint": "yarn --cwd libs/entities-lib lint",
     "entities-lib:test": "yarn jest --projects libs/entities-lib --runInBand",
+    "services-lib:lint": "yarn --cwd libs/services-lib lint",
+    "services-lib:test": "yarn jest --projects libs/services-lib --runInBand",
     "prepare": "husky install"
   },
   "workspaces": {
@@ -99,5 +96,6 @@
   },
   "resolutions": {
     "minimist": "1.2.6"
-  }
+  },
+  "dependencies": {}
 }

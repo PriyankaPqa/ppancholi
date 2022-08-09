@@ -1,7 +1,7 @@
 import {
   IServerError,
   ERegistrationMethod, IOptionItemData,
-} from '@libs/core-lib/types';
+} from '@libs/shared-lib/types';
 import { IStore, IState } from '@libs/registration-lib/store/store.types';
 import { TranslateResult } from 'vue-i18n';
 import { IIdentitySet } from '@libs/entities-lib/value-objects/identity-set/identitySet.types';

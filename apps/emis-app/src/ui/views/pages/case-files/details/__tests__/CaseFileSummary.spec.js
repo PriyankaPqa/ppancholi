@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import _orderBy from 'lodash/orderBy';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { CaseFileActivityType } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 import Component from '../CaseFileSummary.vue';

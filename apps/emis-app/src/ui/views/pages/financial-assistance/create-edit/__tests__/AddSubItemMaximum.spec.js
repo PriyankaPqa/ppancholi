@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockSubItems } from '@libs/entities-lib/financial-assistance';
 import Component from '../Templates/AddSubItemMaximum.vue';
 

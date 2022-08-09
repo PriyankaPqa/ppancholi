@@ -135,14 +135,14 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import _orderBy from 'lodash/orderBy';
 import { RcPhoneDisplay } from '@libs/component-lib/components';
-import moment from '@/ui/plugins/moment';
+import moment from '@libs/shared-lib/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import {
   EEventStatus, EventEntity, IEventCombined, IEventMetadata,
 } from '@libs/entities-lib/event';
-import { ECanadaProvinces, IMultilingual, INavigationTab } from '@libs/core-lib/types';
+import { ECanadaProvinces, IMultilingual, INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 
 export default Vue.extend({

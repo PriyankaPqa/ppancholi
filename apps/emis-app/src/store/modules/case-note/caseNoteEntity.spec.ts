@@ -2,8 +2,8 @@ import { ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 
 import { httpClient } from '@/services/httpClient';
-import { CaseNotesService } from '@/services/case-notes/entity';
-import { OptionItemsService } from '@/services/optionItems';
+import { CaseNotesService } from '@libs/services-lib/case-notes/entity';
+import { OptionItemsService } from '@libs/services-lib/optionItems';
 
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import { mockCaseNoteCategories, mockCaseNoteEntity } from '@libs/entities-lib/case-note';

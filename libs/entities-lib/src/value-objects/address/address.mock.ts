@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { ECanadaProvinces } from '@libs/core-lib/types';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { IAddress, IAddressData } from './address.types';
 import { Address } from './address';
 

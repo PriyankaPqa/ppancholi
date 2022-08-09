@@ -92,7 +92,7 @@ import _isEqual from 'lodash/isEqual';
 import entityUtils from '@libs/entities-lib/utils';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { IEditTenantDetailsRequest, ITenantDetailsEntity } from '@libs/entities-lib/tenantSettings';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 
 export default Vue.extend({
   name: 'TenantDetails',

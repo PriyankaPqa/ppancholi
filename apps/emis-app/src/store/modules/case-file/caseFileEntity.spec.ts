@@ -2,8 +2,8 @@ import { ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 
 import { httpClient } from '@/services/httpClient';
-import { CaseFilesService } from '@/services/case-files/entity';
-import { OptionItemsService } from '@/services/optionItems';
+import { CaseFilesService } from '@libs/services-lib/case-files/entity';
+import { OptionItemsService } from '@libs/services-lib/optionItems';
 import {
   CaseFileStatus, CaseFileTriage, mockCaseFileActivities, mockTagsOptions, mockCaseFileEntity,
   IIdentityAuthentication, IdentityAuthenticationStatus, IdentityAuthenticationMethod, IImpactStatusValidation,

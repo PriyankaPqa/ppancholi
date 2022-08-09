@@ -4,7 +4,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
 import { CaseFileStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import { MassActionType } from '@libs/entities-lib/mass-action';

@@ -24,7 +24,7 @@
 import Vue from 'vue';
 import helpers from '@libs/entities-lib/helpers';
 import { IAddress } from '@libs/entities-lib/household-create';
-import { ECanadaProvinces } from '@libs/core-lib/types';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 
 export default Vue.extend({
   name: 'HomeAddressTemplate',

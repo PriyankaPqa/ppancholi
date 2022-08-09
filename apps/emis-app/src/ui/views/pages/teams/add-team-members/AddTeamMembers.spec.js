@@ -1,6 +1,6 @@
 import { RcDialog } from '@libs/component-lib/components';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockTeamMembersData } from '@libs/entities-lib/team';
 import Component from './AddTeamMembers.vue';
 

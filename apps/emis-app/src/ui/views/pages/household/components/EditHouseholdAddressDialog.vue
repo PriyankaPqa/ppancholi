@@ -47,8 +47,8 @@ import { Address, IAddress } from '@libs/entities-lib/value-objects/address';
 import { IHouseholdCombined } from '@libs/entities-lib/household';
 import { i18n } from '@/ui/plugins';
 import { localStorageKeys } from '@/constants/localStorage';
-import { VForm } from '@libs/core-lib/types';
-import { MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
+import { VForm } from '@libs/shared-lib/types';
+import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({

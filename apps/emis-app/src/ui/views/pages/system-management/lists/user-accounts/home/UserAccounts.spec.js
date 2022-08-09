@@ -1,7 +1,7 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockOptionItemData, mockRoles } from '@libs/entities-lib/optionItem';
 import { mockUserStateLevel } from '@/test/helpers';
 

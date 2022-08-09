@@ -1,6 +1,6 @@
 import { i18n } from '@/ui/plugins/i18n';
 import helpers from '@libs/entities-lib/helpers';
-import { ECanadaProvinces } from '@libs/core-lib/src/types';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { mockAddress } from '../../../../entities-lib/src/household-create';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';

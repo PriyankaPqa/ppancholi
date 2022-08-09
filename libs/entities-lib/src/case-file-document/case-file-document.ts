@@ -1,4 +1,4 @@
-import { IListOption } from '@libs/core-lib/src/types';
+import { IListOption } from '@libs/shared-lib/types';
 import { BaseEntity } from '../base';
 import { ICaseFileDocumentEntity, DocumentStatus } from './case-file-document.types';
 

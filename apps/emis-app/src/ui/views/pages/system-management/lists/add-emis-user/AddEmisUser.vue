@@ -128,7 +128,7 @@ import {
 import { i18n } from '@/ui/plugins';
 import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import { IAppUserData } from '@libs/entities-lib/app-user';
-import { IMultilingual } from '@libs/core-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({

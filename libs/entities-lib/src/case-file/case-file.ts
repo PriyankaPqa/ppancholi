@@ -1,5 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { IListOption } from '@libs/core-lib/src/types';
+import { IListOption } from '@libs/shared-lib/types';
 import { BaseEntity } from '../base';
 import {
   CaseFileStatus, CaseFileTriage, IAssignedTeamMembers, ICaseFileEntity, ICaseFileLabel,

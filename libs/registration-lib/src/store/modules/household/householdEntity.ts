@@ -1,11 +1,10 @@
 import { ActionContext, ActionTree } from 'vuex';
-
 import { IAddress } from '@libs/entities-lib/value-objects/address';
 import { IHouseholdEntity } from '@libs/entities-lib/household';
 import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
 import { IVersionedEntity, IVersionedEntityCombined } from '@libs/entities-lib/value-objects/versioned-entity/versionedEntity.types';
+import { HouseholdsService } from '@libs/services-lib/households/entity';
 import { BaseModule, IState } from '../base';
-import { HouseholdsService } from '../../../services/households/entity';
 
 import { IRootState } from '../../store.types';
 import { IHouseholdEntityState } from './householdEntity.types';

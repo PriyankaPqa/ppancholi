@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { makeStorage, IStorage } from '@/store/storage';
+import { makeStorage, IStorage } from '@/storage';
 import { IStore, IState } from '@/store';
 
 export default (store: IStore<IState>): IStorage => {

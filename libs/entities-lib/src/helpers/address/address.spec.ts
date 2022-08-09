@@ -1,4 +1,4 @@
-import { ECanadaProvinces } from '@libs/core-lib/types';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import helpers from '../index';
 import { mockAddress } from '../../value-objects/address';
 

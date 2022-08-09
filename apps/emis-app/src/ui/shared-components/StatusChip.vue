@@ -14,7 +14,7 @@
 import Vue from 'vue';
 import { RcStatusChip } from '@libs/component-lib/components';
 import { EEventCallCentreStatus, EEventStatus } from '@libs/entities-lib/event';
-import colors from '@/ui/plugins/vuetify/colors';
+import colors from '@libs/shared-lib/plugins/vuetify/colors';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { ApprovalStatus, PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { AccountStatus } from '@libs/entities-lib/user-account';

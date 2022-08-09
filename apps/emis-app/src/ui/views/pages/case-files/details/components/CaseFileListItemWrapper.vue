@@ -60,7 +60,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import moment from '@/ui/plugins/moment';
+import moment from '@libs/shared-lib/plugins/moment';
 import { ICaseFileActivity } from '@libs/entities-lib/case-file';
 import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
 

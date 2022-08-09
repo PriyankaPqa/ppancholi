@@ -113,7 +113,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcTooltip } from '@libs/component-lib/components';
-import { INavigationTab } from '@libs/core-lib/types';
+import { INavigationTab } from '@libs/shared-lib/types';
 
 export default Vue.extend({
   name: 'SecondaryLeftMenu',

@@ -1,6 +1,6 @@
-import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { mockCaseNoteEntity, mockCaseNoteCategories } from '@libs/entities-lib/case-note';
 

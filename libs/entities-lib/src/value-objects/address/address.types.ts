@@ -1,4 +1,4 @@
-import { ECanadaProvinces } from '@libs/core-lib/types';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 
 export interface IAddressData {
   country?: string;

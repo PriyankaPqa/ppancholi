@@ -1,6 +1,6 @@
 import Vue from 'vue';
-import { provider } from '@/services/provider';
 import { IStore, IState } from '@/store';
+import { provider } from '@/services/provider';
 
 export default (store: IStore<IState>): void => {
   store.$services = provider();

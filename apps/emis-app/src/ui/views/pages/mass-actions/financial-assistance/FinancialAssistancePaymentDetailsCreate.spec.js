@@ -5,7 +5,6 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/store/storage';
 import {
   mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems,
 } from '@libs/entities-lib/financial-assistance';
@@ -13,6 +12,7 @@ import { EPaymentModalities, mockCombinedProgram } from '@libs/entities-lib/prog
 import { mockCombinedOptionItems, mockOptionItem, mockOptionSubItem } from '@libs/entities-lib/optionItem';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import { mockStorage } from '@/storage';
 import Component from './FinancialAssistancePaymentDetailsCreate.vue';
 
 const formCopy = {

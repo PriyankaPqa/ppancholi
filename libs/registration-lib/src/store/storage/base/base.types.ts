@@ -1,4 +1,4 @@
-import { IAzureSearchParams, IAzureTableSearchResults } from '@libs/core-lib/types';
+import { IAzureSearchParams, IAzureTableSearchResults } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '@libs/entities-lib/base';
 
 export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity, IdParams> {

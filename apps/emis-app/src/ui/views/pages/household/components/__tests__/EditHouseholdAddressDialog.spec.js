@@ -5,8 +5,8 @@ import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { i18n } from '@/ui/plugins';
-import { MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
-import { mockStorage } from '@/store/storage';
+import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
+import { mockStorage } from '@/storage';
 import Component from '../EditHouseholdAddressDialog.vue';
 
 const storage = mockStorage();

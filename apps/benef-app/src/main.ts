@@ -7,9 +7,9 @@ import {
   i18n, Trans,
 } from '@/ui/plugins';
 import Multilingual from '@/ui/plugins/multilingual';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
-import '@/ui/plugins/vue-toasted';
-import vuetify from '@/ui/plugins/vuetify/vuetify';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
+import '@libs/shared-lib/plugins/vue-toasted';
+import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import VueProgrammaticInvisibleGoogleRecaptcha from 'vue-programmatic-invisible-google-recaptcha';

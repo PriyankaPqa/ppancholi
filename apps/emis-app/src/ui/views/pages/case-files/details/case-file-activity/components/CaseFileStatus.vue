@@ -40,7 +40,7 @@ import { EEventStatus } from '@libs/entities-lib/registration-event';
 import { ICaseFileCombined, CaseFileStatus } from '@libs/entities-lib/case-file';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { IEventCombined } from '@libs/entities-lib/event';
-import { IListOption } from '@libs/core-lib/types';
+import { IListOption } from '@libs/shared-lib/types';
 import CaseFileStatusDialog from './CaseFileStatusDialog.vue';
 
 export default Vue.extend({

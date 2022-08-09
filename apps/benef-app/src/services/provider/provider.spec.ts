@@ -1,11 +1,11 @@
-import { PublicService } from '@libs/registration-lib/services/public';
-import { HouseholdsService } from '@libs/registration-lib/services/households/entity';
-import { TenantSettingsService } from '@libs/registration-lib/services/tenantSettings/entity';
+import { PublicService } from '@libs/services-lib/public';
+import { HouseholdsService } from '@libs/services-lib/households/entity';
+import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import { provider } from './index';
 
-jest.mock('@libs/registration-lib/services/public');
-jest.mock('@libs/registration-lib/services/households/entity');
-jest.mock('@libs/registration-lib/services/tenantSettings/entity');
+jest.mock('@libs/services-lib/public');
+jest.mock('@libs/services-lib/households/entity');
+jest.mock('@libs/services-lib/tenantSettings/entity');
 
 describe('Provider', () => {
   it('should instantiate PublicService', () => {

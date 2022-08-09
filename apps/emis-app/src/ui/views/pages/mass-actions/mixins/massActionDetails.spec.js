@@ -15,7 +15,7 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
-jest.mock('@libs/core-lib/plugins/applicationInsights/applicationInsights');
+jest.mock('@libs/shared-lib/plugins/applicationInsights/applicationInsights');
 
 describe('massActions', () => {
   describe('Computed', () => {

@@ -1,5 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 

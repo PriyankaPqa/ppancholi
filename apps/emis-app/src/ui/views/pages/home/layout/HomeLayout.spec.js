@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import DashboardCaseFile from '@/ui/views/pages/home/components/DashboardCaseFile.vue';
 import HomeLevel3 from '@/ui/views/pages/home/components/HomeLevel3.vue';
 import HomeLevel4 from '@/ui/views/pages/home/components/HomeLevel4.vue';

@@ -131,7 +131,7 @@ import {
   EDateMode, EFilterKeyType, EFilterType, IFilterSettings,
 } from '@libs/component-lib/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { ECanadaProvinces } from '@libs/core-lib/types';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';

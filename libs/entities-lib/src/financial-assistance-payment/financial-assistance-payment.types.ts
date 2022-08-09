@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/core-lib/src/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import { EPaymentModalities } from '../program/program.types';
 import { IAddress } from '../value-objects/address';
 import { IEntity, IEntityCombined } from '../base';

@@ -1,23 +1,23 @@
-import { mockPublicService } from '@libs/registration-lib/services/public';
-import { mockHouseholdsService } from '@libs/registration-lib/services/households/entity';
-import { mockMassActionService } from '@/services/mass-actions/entity';
+import { mockPublicService } from '@libs/services-lib/public';
+import { mockHouseholdsService } from '@libs/services-lib/households/entity';
+import { mockMassActionService } from '@libs/services-lib/mass-actions/entity';
+import { mockAppUsersService } from '@libs/services-lib/app-users';
+import { mockCaseFilesService } from '@libs/services-lib/case-files/entity';
+import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
+import { mockTeamsService } from '@libs/services-lib/teams/entity';
+import { mockProgramsService } from '@libs/services-lib/programs/entity';
+import { mockFinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
+import { mockUserAccountsService } from '@libs/services-lib/user-accounts/entity';
+import { mockEventsService } from '@libs/services-lib/events/entity';
+import { mockCaseNotesService } from '@libs/services-lib/case-notes/entity';
+import { mockCaseFileReferralsService } from '@libs/services-lib/case-file-referrals/entity';
+import { mockCaseFileDocumentsService } from '@libs/services-lib/case-file-documents/entity';
+import { mockFinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
+import { mockFinancialAssistanceService } from '@libs/services-lib/financial-assistance-payments/entity';
+import { mockTenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
+import { mockErrorReportingService } from '@libs/services-lib/error-reporting';
+import { mockCaseFilesMetadataService } from '@libs/services-lib/case-files/metadata';
 import { IProviderMock } from './provider.types';
-import { mockAppUsersService } from '../app-users';
-import { mockCaseFilesService } from '../case-files/entity';
-import { mockOptionItemsServiceService } from '../optionItems';
-import { mockTeamsService } from '../teams/entity';
-import { mockProgramsService } from '../programs/entity';
-import { mockFinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
-import { mockUserAccountsService } from '../user-accounts/entity';
-import { mockEventsService } from '../events/entity';
-import { mockCaseNotesService } from '../case-notes/entity';
-import { mockCaseFileReferralsService } from '../case-file-referrals/entity';
-import { mockCaseFileDocumentsService } from '../case-file-documents/entity';
-import { mockFinancialAssistanceCategoriesService } from '../financial-assistance-categories/entity';
-import { mockFinancialAssistanceService } from '../financial-assistance-payments/entity';
-import { mockTenantSettingsService } from '../tenantSettings/entity';
-import { mockErrorReportingService } from '../error-reporting';
-import { mockCaseFilesMetadataService } from '../case-files/metadata';
 
 export const mockProvider = (): IProviderMock => ({
   appUsers: mockAppUsersService(),

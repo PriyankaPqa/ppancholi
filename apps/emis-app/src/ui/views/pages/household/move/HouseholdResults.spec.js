@@ -3,7 +3,7 @@ import { mockHouseholdCreateData } from '@libs/entities-lib/household-create/hou
 import { HouseholdCreate, mockShelterData } from '@libs/entities-lib/household-create';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 
 import Component from './HouseholdResults.vue';
 

@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCaseFileEntity, CaseFileStatus } from '@libs/entities-lib/case-file';
 // import { mockTeamsData, mockSearchTeams } from '@/entities/team';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockUserStateLevel } from '@/test/helpers';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity } from '@libs/entities-lib/team';

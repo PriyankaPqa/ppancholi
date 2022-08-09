@@ -1,11 +1,11 @@
 import { ActionContext, ActionTree } from 'vuex';
 import _cloneDeep from 'lodash/cloneDeep';
-import { CaseFileDocumentsService } from '@/services/case-file-documents/entity';
+import { CaseFileDocumentsService } from '@libs/services-lib/case-file-documents/entity';
 import {
   EOptionLists,
   IOptionItem,
 } from '@libs/entities-lib/optionItem';
-import { IOptionItemsService } from '@/services/optionItems';
+import { IOptionItemsService } from '@libs/services-lib/optionItems';
 import { ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { Status } from '@libs/entities-lib/base';

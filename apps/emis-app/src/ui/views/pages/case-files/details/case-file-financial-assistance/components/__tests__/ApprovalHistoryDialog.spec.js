@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockFinancialPaymentHistory, mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import Component from '../ApprovalHistoryDialog.vue';
 
 const localVue = createLocalVue();

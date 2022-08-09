@@ -56,7 +56,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { INavigationTab } from '@libs/core-lib/types';
+import { INavigationTab } from '@libs/shared-lib/types';
 
 export default Vue.extend({
   name: 'GeneralHelpMenu',

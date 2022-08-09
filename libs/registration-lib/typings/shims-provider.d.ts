@@ -1,4 +1,4 @@
-import { IProvider, IProviderMock } from '../src/services/provider';
+import { IProvider, IProviderMock } from '../src/provider';
 /* eslint-disable */
 declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {

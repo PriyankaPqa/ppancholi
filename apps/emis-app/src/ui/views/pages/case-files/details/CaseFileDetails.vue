@@ -153,7 +153,7 @@ import { IHouseholdCombined, IHouseholdMemberMetadata } from '@libs/entities-lib
 import mixins from 'vue-typed-mixins';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { INavigationTab } from '@libs/core-lib/types';
+import { INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import householdHelpers from '@/ui/helpers/household';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';

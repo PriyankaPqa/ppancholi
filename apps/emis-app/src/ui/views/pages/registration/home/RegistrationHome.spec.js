@@ -4,7 +4,7 @@ import {
   mount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { tabs } from '@/store/modules/registration/tabs';
 import { mockEventEntity } from '@libs/entities-lib/event';

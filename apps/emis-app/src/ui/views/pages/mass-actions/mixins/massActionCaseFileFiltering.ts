@@ -2,10 +2,10 @@ import _isEmpty from 'lodash/isEmpty';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { ICaseFileCombined } from '@libs/entities-lib/case-file';
-import { IAzureSearchParams } from '@libs/core-lib/types';
+import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { MassActionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
-import { buildQuery } from '@libs/core-lib/services/odata-query';
+import { buildQuery } from '@libs/services-lib/odata-query';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({

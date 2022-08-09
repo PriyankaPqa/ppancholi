@@ -1,6 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
-import { IOptionItemData } from '@libs/core-lib/types';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
+import { IOptionItemData } from '@libs/shared-lib/types';
 import {
   IContactInformation,
   IContactInformationData,

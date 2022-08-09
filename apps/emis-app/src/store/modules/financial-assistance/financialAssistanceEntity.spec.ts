@@ -8,7 +8,7 @@ import {
   mockSubItems,
 } from '@libs/entities-lib/financial-assistance';
 import { mockProgramEntity } from '@libs/entities-lib/program';
-import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
+import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
 import { httpClient } from '@/services/httpClient';
 import { mockOptionItems } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';

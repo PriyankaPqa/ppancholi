@@ -4,7 +4,7 @@ import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 
 import Component from './SplitHouseholdDialog.vue';
 

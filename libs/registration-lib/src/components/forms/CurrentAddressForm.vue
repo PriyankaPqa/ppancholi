@@ -138,7 +138,7 @@ import {
 } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import mixins from 'vue-typed-mixins';
-import { EOptionItemStatus, VForm } from '@libs/core-lib/types';
+import { EOptionItemStatus, VForm } from '@libs/shared-lib/types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import {
   ECurrentAddressTypes,

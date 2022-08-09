@@ -2,7 +2,7 @@ import { RcDialog, RcConfirmationDialog } from '@libs/component-lib/components';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFile, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import {
   mockOptionItemData,
 } from '@libs/entities-lib/optionItem';

@@ -119,7 +119,7 @@ import {
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { EPaymentModalities, ProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({

@@ -1,4 +1,4 @@
-import { IServerError } from '@libs/core-lib/types';
+import { IServerError } from '@libs/shared-lib/types';
 // Mixin used for Individual.vue and RegistrationIndividual.vue
 import { TranslateResult } from 'vue-i18n';
 import _pickBy from 'lodash/pickBy';

@@ -2,7 +2,7 @@ import { ActionContext, ActionTree } from 'vuex';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IRootState } from '@libs/registration-lib/store';
 import { IAssessmentTemplateEntity } from '@libs/entities-lib/assessment-template';
-import { AssessmentTemplatesService } from '@libs/core-lib/services/assessment-template/entity';
+import { AssessmentTemplatesService } from '@libs/services-lib/assessment-template/entity';
 import { BaseModule } from '../base';
 import { IState } from '../base/base.types';
 import { IAssessmentTemplateEntityState } from './assessmentTemplateEntity.types';

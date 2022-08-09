@@ -243,7 +243,7 @@ import helpers from '@/ui/helpers/helpers';
 import householdHelpers from '@/ui/helpers/household';
 import { localStorageKeys } from '@/constants/localStorage';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { IMovingHouseholdCreate, IMovingMember } from './MoveHouseholdMembers.vue';

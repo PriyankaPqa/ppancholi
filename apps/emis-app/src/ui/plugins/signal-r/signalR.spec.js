@@ -1,6 +1,6 @@
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
+import { mockSignalRService } from '@libs/services-lib/signal-r';
 import { SignalR } from './signalR';
-import { mockSignalRService } from '../../../services/signal-r';
 
 const storage = mockStorage();
 const service = mockSignalRService();

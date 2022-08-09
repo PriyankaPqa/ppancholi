@@ -9,5 +9,6 @@ module.exports = {
     'libs/registration-lib',
     'libs/component-lib',
     'libs/entities-lib',
+    'libs/services-lib',
   ],
 };

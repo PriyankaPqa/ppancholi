@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import { ApprovalStatus, mockCaseFinancialAssistancePaymentGroups } from '@libs/entities-lib/financial-assistance-payment';
 import routes from '@/constants/routes';

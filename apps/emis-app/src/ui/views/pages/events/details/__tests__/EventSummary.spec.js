@@ -5,7 +5,7 @@ import {
 } from '@libs/entities-lib/event';
 
 import routes from '@/constants/routes';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { EEventSummarySections } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { mockUserStateLevel } from '@/test/helpers';

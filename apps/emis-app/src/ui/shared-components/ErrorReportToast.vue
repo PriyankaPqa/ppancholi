@@ -116,8 +116,8 @@ import { format } from 'date-fns';
 import _isEmpty from 'lodash/isEmpty';
 import { RcDialog, VTextAreaWithValidation, RcTooltip } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
-import { IServerError, IErrorReport, VForm } from '@libs/core-lib/types';
-import { MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
+import { IServerError, IErrorReport, VForm } from '@libs/shared-lib/types';
+import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import helpers from '../helpers/helpers';
 
 export default Vue.extend({

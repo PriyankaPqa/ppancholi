@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 
 export default Vue.extend({

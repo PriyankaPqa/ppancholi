@@ -75,7 +75,7 @@ import {
   IHouseholdActivity, HouseholdActivity, HouseholdActivityType, IHouseholdActivityMembers,
 }
   from '@libs/entities-lib/value-objects/household-activity';
-import moment from '@/ui/plugins/moment';
+import moment from '@libs/shared-lib/plugins/moment';
 
 interface IActivityItem extends IHouseholdActivity {
   activityName: string;

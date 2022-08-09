@@ -187,7 +187,7 @@ import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/en
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';

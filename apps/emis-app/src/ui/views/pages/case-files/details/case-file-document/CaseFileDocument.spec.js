@@ -6,9 +6,9 @@ import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
 
 import helpers from '@/ui/helpers/helpers';
-import moment from '@/ui/plugins/moment';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
+import moment from '@libs/shared-lib/plugins/moment';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();

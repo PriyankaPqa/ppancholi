@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@vue/test-utils';
-import multilingual from '../multilingual';
+import multilingual from '@libs/shared-lib/plugins/multilingual';
 
 const Component = {
   template: '<div></div>',

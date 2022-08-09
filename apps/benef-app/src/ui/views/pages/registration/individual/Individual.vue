@@ -84,9 +84,9 @@ import SystemErrorDialog from '@libs/registration-lib/components/review/SystemEr
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { localStorageKeys } from '@/constants/localStorage';
 import routes from '@/constants/routes';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import helpers from '@libs/entities-lib/helpers';
-import { EventHub } from '@libs/core-lib/plugins/event-hub';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';

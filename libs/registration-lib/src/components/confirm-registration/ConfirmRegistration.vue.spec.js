@@ -2,7 +2,7 @@ import { mockStorage } from '@/store/storage/storage.mock';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { mockEvent } from '@libs/entities-lib/registration-event';
-import { mockHttpError } from '@libs/core-lib/src/services/http-client';
+import { mockHttpError } from '@libs/services-lib/http-client';
 import Component from './ConfirmRegistration.vue';
 
 const localVue = createLocalVue();

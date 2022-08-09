@@ -1,4 +1,4 @@
-import { IListOption } from '@libs/core-lib/src/types';
+import { IListOption } from '@libs/shared-lib/types';
 import { IEntity, mockBaseData, Status } from '../base';
 
 import {

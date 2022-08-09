@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockCombinedMassAction } from '@libs/entities-lib/mass-action';
 import { EPaymentModalities, mockCombinedProgram } from '@libs/entities-lib/program';
 import { mockCombinedEvent } from '@libs/entities-lib/event';

@@ -1,10 +1,10 @@
 import { mockHouseholdCreateData } from '@libs/entities-lib/household-create';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { tabs } from '@/store/modules/registration/tabs';
-import { EventHub } from '@libs/core-lib/plugins/event-hub';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import helpers from '@/ui/helpers/helpers';
 import Component from './RegistrationIndividual.vue';
 

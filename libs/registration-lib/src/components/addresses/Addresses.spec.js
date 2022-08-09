@@ -1,5 +1,5 @@
 import helpers from '@libs/entities-lib/helpers';
-import { EOptionItemStatus } from '@libs/core-lib/types';
+import { EOptionItemStatus } from '@libs/shared-lib/types';
 import { i18n } from '../../ui/plugins/i18n';
 import { mockStorage } from '../../store/storage/storage.mock';
 import AddressForm from '../forms/AddressForm.vue';

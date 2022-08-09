@@ -3,7 +3,7 @@ import { mockCombinedHousehold, mockHouseholdCaseFile } from '@libs/entities-lib
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockEventMainInfo, EEventLocationStatus } from '@libs/entities-lib/event';
 import { mockCombinedCaseFile, CaseFileStatus } from '@libs/entities-lib/case-file';
 import { mockUserStateLevel } from '@/test/helpers';

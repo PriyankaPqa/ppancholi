@@ -9,7 +9,7 @@ import {
 
 import { IMember } from '@libs/entities-lib/value-objects/member/index';
 import { ECurrentAddressTypes, ICurrentAddress } from '@libs/entities-lib/value-objects/current-address/index';
-import { IOptionItemData, EOptionItemStatus } from '@libs/core-lib/types';
+import { IOptionItemData, EOptionItemStatus } from '@libs/shared-lib/types';
 import { localStorageKeys } from '../../../constants/localStorage';
 
 /**

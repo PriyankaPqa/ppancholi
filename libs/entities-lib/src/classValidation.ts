@@ -1,7 +1,7 @@
 import PhoneNumber from 'awesome-phonenumber';
 import moment from 'moment';
-import { IOptionItemData } from '@libs/core-lib/types';
-import { MIN_AGE_REGISTRATION } from '@libs/core-lib/constants/validations';
+import { IOptionItemData } from '@libs/shared-lib/types';
+import { MIN_AGE_REGISTRATION } from '@libs/shared-lib/constants/validations';
 import birthdateHelper from './helpers/birthdate/birthdate';
 import { IBirthDate } from './value-objects/identity-set/identitySet.types';
 import { IPhoneNumber } from './value-objects/contact-information/contactInformation.types';

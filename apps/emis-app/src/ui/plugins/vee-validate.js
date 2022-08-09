@@ -11,7 +11,7 @@ import {
 
 import helpers from '@libs/entities-lib/helpers';
 import Vue from 'vue';
-import moment from '@/ui/plugins/moment';
+import moment from '@libs/shared-lib/plugins/moment';
 
 import { i18n } from './i18n';
 

@@ -49,7 +49,7 @@ import {
   EOptionItemStatus,
   IOptionItemData,
   VForm,
-} from '@libs/core-lib/types';
+} from '@libs/shared-lib/types';
 
 import {
   ECurrentAddressTypes, ICurrentAddress, IShelterLocationData,

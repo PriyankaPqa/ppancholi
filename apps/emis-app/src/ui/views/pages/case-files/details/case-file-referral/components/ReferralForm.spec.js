@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { CaseFileReferralEntity, mockCombinedCaseFileReferral, ReferralMethod } from '@libs/entities-lib/case-file-referral';
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
-import { mockStorage } from '@/store/storage';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
+import { mockStorage } from '@/storage';
 import Component from './ReferralForm.vue';
 
 const localVue = createLocalVue();

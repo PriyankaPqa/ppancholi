@@ -2,7 +2,7 @@ import { mockEvent } from '@libs/entities-lib/registration-event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();

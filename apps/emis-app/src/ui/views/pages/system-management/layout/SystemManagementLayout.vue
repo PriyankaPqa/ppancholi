@@ -15,7 +15,7 @@ import { TranslateResult } from 'vue-i18n';
 import { RcRouterViewTransition } from '@libs/component-lib/components';
 import metadata from '@/ui/mixins/metadata';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { INavigationTab } from '@libs/core-lib/types';
+import { INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 
 export default Vue.extend({

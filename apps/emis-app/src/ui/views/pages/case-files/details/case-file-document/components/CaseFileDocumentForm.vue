@@ -120,7 +120,7 @@ import {
 } from '@libs/component-lib/components';
 import fileUpload from '@/ui/mixins/fileUpload';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
-import { MAX_LENGTH_MD, MAX_LENGTH_XL } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
 import { CASE_FILE_DOC_EXTENSIONS } from '@/constants/documentExtensions';
 import { CaseFileDocumentEntity, DocumentStatus, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { IOptionItem } from '@libs/entities-lib/optionItem';

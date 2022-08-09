@@ -61,13 +61,13 @@ import {
   VTextAreaWithValidation,
   VSelectWithValidation,
 } from '@libs/component-lib/components';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IUserAccountCombined } from '@libs/entities-lib/user-account';
-import colors from '@/ui/plugins/vuetify/colors';
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import colors from '@libs/shared-lib/plugins/vuetify/colors';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 
 export default Vue.extend({
   name: 'CaseFileStatusDialog',

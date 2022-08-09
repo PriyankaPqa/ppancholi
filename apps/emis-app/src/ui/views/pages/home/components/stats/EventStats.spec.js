@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { mockStorage } from '@/storage';
 import Component from './EventStats.vue';
 
 const storage = mockStorage();

@@ -98,7 +98,7 @@ import { DataTableHeader } from 'vuetify';
 import _difference from 'lodash/difference';
 import { ITeamMember } from '@libs/entities-lib/team';
 import { AccountStatus, IUserAccountCombined } from '@libs/entities-lib/user-account';
-import { IMultilingual } from '@libs/core-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
 
 interface UserTeamMember {

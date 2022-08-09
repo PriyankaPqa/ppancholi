@@ -122,7 +122,7 @@ import {
   IdentityAuthenticationMethod, IdentityAuthenticationStatus, ICaseFileEntity, IIdentityAuthentication,
 } from '@libs/entities-lib/case-file';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
-import { MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 
 export default Vue.extend({
   name: 'VerifyIdentity',

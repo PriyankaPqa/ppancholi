@@ -5,15 +5,15 @@ import Vue from 'vue';
 
 import VueI18n from 'vue-i18n';
 
-import { mockHttp } from '@libs/core-lib/src/services/http-client';
-import { ERegistrationMode } from '@libs/core-lib/types';
-import { TenantSettingsService } from '../services/tenantSettings/entity';
-import { mockProvider } from '../services/provider';
+import { ERegistrationMode } from '@libs/shared-lib/types';
+import { mockHttp } from '@libs/services-lib/http-client';
+import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
+import { HouseholdsService } from '@libs/services-lib/households/entity';
+import { mockProvider } from '../provider';
 import { mockTabs } from './modules/registration/tabs.mock';
 import { makeRegistrationModule } from './modules/registration';
 import { HouseholdEntityModule } from './modules/household';
 import { IState, IStore } from './store.types';
-import { HouseholdsService } from '../services/households/entity';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
 
 const i18n = {

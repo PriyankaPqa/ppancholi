@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import {
   EEventStatus,
 } from '@libs/entities-lib/event';
@@ -9,7 +9,7 @@ import { mockAppUsers } from '@/test/helpers';
 import {
   TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc,
 } from '@libs/entities-lib/team';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';

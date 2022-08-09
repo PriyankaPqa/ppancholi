@@ -27,11 +27,14 @@
       "@libs/component-lib/*": [
         "../../libs/component-lib/src/*"
       ],
-      "@libs/core-lib/*": [
-        "../../libs/core-lib/src/*"
+      "@libs/shared-lib/*": [
+        "../../libs/shared-lib/src/*"
       ],
       "@libs/entities-lib/*": [
         "../../libs/entities-lib/src/*"
+      ],
+      "@libs/services-lib/*": [
+        "../../libs/services-lib/src/*"
       ],
       "@/*": [
         "src/*"
@@ -51,6 +54,5 @@
     "tests/**/*.ts",
     "tests/**/*.tsx",
     "typings/**.ts",
-    "../../libs/core-lib/src/**.ts"
   ]
 }

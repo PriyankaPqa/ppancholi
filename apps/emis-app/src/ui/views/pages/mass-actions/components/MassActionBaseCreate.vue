@@ -91,12 +91,12 @@ import {
 } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import fileUpload from '@/ui/mixins/fileUpload';
 import {
   IMassActionEntity, MassActionEntity, MassActionMode, MassActionRunType,
 } from '@libs/entities-lib/mass-action';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import helpers from '@/ui/helpers/helpers';
 
 export default mixins(fileUpload).extend({

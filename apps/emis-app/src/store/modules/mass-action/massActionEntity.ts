@@ -2,9 +2,9 @@ import { ActionContext, ActionTree } from 'vuex';
 import { IRootState } from '@/store/store.types';
 
 import { IMassActionEntity, MassActionRunType, MassActionType } from '@libs/entities-lib/mass-action/massActions.types';
-import { MassActionService } from '@/services/mass-actions/entity/massAction';
+import { MassActionService } from '@libs/services-lib/mass-actions/entity/massAction';
 import { IMassActionEntityState } from '@/store/modules/mass-action/massActionEntity.types';
-import { IMassActionFinancialAssistanceCreatePayload, IMassActionFundingRequestCreatePayload } from '@/services/mass-actions/entity';
+import { IMassActionFinancialAssistanceCreatePayload, IMassActionFundingRequestCreatePayload } from '@libs/services-lib/mass-actions/entity';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule } from '../base';
 

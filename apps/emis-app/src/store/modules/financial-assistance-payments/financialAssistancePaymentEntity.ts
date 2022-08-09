@@ -1,7 +1,7 @@
 import { ActionContext, ActionTree } from 'vuex';
 import { IVersionedEntity, IVersionedEntityCombined } from '@libs/entities-lib/value-objects/versioned-entity';
 import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
-import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
+import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
 import {
   EPaymentCancellationReason, IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentStatus,
 } from '@libs/entities-lib/financial-assistance-payment';

@@ -101,10 +101,10 @@ import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegis
 import ConfirmRegistration from '@/ui/views/pages/registration/confirmation/ConfirmRegistration.vue';
 import { tabs } from '@/store/modules/registration/tabs';
 import store from '@/store/store';
-import { VForm } from '@libs/core-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { EventHub } from '@libs/core-lib/plugins/event-hub';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
 
 export default mixins(individual).extend({

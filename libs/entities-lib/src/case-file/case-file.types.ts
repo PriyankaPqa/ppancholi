@@ -1,4 +1,4 @@
-import { IMultilingual, IListOption, IIdMultilingualName } from '@libs/core-lib/src/types';
+import { IMultilingual, IListOption, IIdMultilingualName } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 
 /**

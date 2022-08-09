@@ -1,6 +1,6 @@
 import { ActionContext } from 'vuex';
 import { httpClient } from '@/services/httpClient';
-import { TeamsService } from '@/services/teams/entity';
+import { TeamsService } from '@libs/services-lib/teams/entity';
 import { mockTeamMembersData, mockTeamsDataStandard, mockTeamsDataAddHoc } from '@libs/entities-lib/team';
 import { TeamEntityModule } from './teamEntity';
 import { ITeamEntityState } from './teamEntity.types';

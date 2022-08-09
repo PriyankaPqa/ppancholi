@@ -2,7 +2,7 @@ import { mockMember } from '@libs/entities-lib/value-objects/member';
 
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 
 import Component from './SplitHouseholdMembers.vue';
 

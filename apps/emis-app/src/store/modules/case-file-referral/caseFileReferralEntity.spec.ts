@@ -2,8 +2,8 @@ import { ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 
 import { httpClient } from '@/services/httpClient';
-import { CaseFileReferralsService } from '@/services/case-file-referrals/entity';
-import { OptionItemsService } from '@/services/optionItems';
+import { CaseFileReferralsService } from '@libs/services-lib/case-file-referrals/entity';
+import { OptionItemsService } from '@libs/services-lib/optionItems';
 
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import { mockCaseFileReferralEntity, ICaseFileReferralEntity } from '@libs/entities-lib/case-file-referral';

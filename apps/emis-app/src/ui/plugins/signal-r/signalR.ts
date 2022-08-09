@@ -9,11 +9,11 @@ import Vue from 'vue';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import { IMassActionEntityData, MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { i18n } from '@/ui/plugins/i18n';
-import { ISignalRService, ISignalRServiceMock } from '@/services/signal-r';
+import { ISignalRService, ISignalRServiceMock } from '@libs/services-lib/signal-r';
 import { sub } from 'date-fns';
 import { IEntity } from '@libs/entities-lib/base';
 import helpers from '@libs/entities-lib/helpers';
-import { IStorage } from '../../../store/storage/storage.types';
+import { IStorage } from '../../../storage/storage.types';
 import { ISignalR } from './signalR.types';
 
 export interface IOptions {

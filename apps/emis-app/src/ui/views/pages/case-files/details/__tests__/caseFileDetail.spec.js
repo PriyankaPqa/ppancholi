@@ -1,4 +1,4 @@
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { EEventStatus } from '@libs/entities-lib/event';
 import caseFileDetail from '../caseFileDetail';

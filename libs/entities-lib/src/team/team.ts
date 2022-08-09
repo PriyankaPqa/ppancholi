@@ -1,5 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { BaseEntity } from '../base';
 import {
   TeamType, ITeamEntity, ITeamMember,

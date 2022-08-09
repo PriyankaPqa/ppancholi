@@ -1,6 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import VueI18n from 'vue-i18n';
-import { IMultilingual } from '@libs/core-lib/src/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import helpers from '../../helpers';
 import { IAddress } from '../address/address.types';
 import {

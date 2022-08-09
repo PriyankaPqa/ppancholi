@@ -1,6 +1,6 @@
 import { Store } from 'vuex';
 import Vue from 'vue';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { mockStore, IRootState } from '@/store';
 import { Toasted } from 'vue-toasted';
 import {
@@ -18,7 +18,7 @@ import {
 import helpers from '@/ui/helpers/helpers';
 import userHelpers from './userHelpers';
 
-jest.mock('@libs/core-lib/plugins/applicationInsights/applicationInsights');
+jest.mock('@libs/shared-lib/plugins/applicationInsights/applicationInsights');
 
 console.info = jest.fn();
 

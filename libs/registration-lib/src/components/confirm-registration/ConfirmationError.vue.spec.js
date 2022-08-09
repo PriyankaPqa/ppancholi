@@ -1,6 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-
-import { mockHttpError } from '@libs/core-lib/src/services/http-client';
+import { mockHttpError } from '@libs/services-lib/http-client';
 import Component from './ConfirmationError.vue';
 
 const localVue = createLocalVue();

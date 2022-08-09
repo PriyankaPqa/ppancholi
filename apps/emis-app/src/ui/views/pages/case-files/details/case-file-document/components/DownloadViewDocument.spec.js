@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { CaseFileDocumentEntity, mockCombinedCaseFileDocument } from '@libs/entities-lib/case-file-document';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import Component from './DownloadViewDocument.vue';
 
 const localVue = createLocalVue();

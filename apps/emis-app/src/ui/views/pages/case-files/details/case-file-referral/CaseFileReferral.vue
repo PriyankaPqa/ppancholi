@@ -61,7 +61,7 @@ import {
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IAzureSearchParams } from '@libs/core-lib/types';
+import { IAzureSearchParams } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { FilterKey } from '@libs/entities-lib/user-account';

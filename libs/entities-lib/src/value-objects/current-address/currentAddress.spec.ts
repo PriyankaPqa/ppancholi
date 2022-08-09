@@ -1,4 +1,4 @@
-import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/core-lib/src/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 
 import { ECurrentAddressTypes } from './currentAddress.types';
 import {

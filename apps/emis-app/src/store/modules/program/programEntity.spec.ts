@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import { httpClient } from '@/services/httpClient';
 import { mockProgramEntity } from '@libs/entities-lib/program';
-import { ProgramsService } from '@/services/programs/entity';
+import { ProgramsService } from '@libs/services-lib/programs/entity';
 import { ProgramEntityModule } from './programEntity';
 import { IProgramEntityState } from './programEntity.types';
 import { mockSignalR } from '../../../ui/plugins/signal-r';

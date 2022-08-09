@@ -8,27 +8,27 @@ import '../../../libs/assets/styles/main.scss';
 // Import i18n related files
 
 import VueAxe from 'vue-axe';
-import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import VueCookies from 'vue-cookies';
 import {
   i18n, Trans,
 } from '@/ui/plugins';
 
 // Import other plugins
-import '@/ui/plugins/vue-toasted';
+import '@libs/shared-lib/plugins/vue-toasted';
 import formatCurrency from '@/ui/plugins/formatCurrency';
-import Multilingual from '@/ui/plugins/multilingual';
+import Multilingual from '@libs/shared-lib/plugins/multilingual';
 import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
 import features from '@/ui/plugins/features';
 import '@/ui/plugins/vee-validate';
-import vuetify from '@/ui/plugins/vuetify/vuetify';
 
 import prepareServices from '@/ui/plugins/services';
 import prepareStorage from '@/ui/plugins/storage';
-import { SignalRService } from '@/services/signal-r';
+import { SignalRService } from '@libs/services-lib/signal-r';
 
 import { httpClient } from '@/services/httpClient';
-import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
+import { SignalR } from '@/ui/plugins/signal-r';
+import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import store from './store/store';
 import router from './ui/router';
 import App from './ui/App.vue';

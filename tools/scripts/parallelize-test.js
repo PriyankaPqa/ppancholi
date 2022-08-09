@@ -35,8 +35,8 @@ function getAffectedTestFiles(affectedPackages) {
 
   console.log(`Affected packages: ${affectedPackages}`);
 
-  if (affectedPackages.includes('@libs/core-lib')) {
-    allFiles = allFiles.concat(jetpack.find('libs/core-lib', { matching: globPattern }));
+  if (affectedPackages.includes('@libs/shared-lib')) {
+    allFiles = allFiles.concat(jetpack.find('libs/shared-lib', { matching: globPattern }));
   }
 
   if (affectedPackages.includes('@libs/entities-lib')) {
@@ -49,6 +49,10 @@ function getAffectedTestFiles(affectedPackages) {
 
   if (affectedPackages.includes('@libs/component-lib')) {
     allFiles = allFiles.concat(jetpack.find('libs/component-lib', { matching: globPattern }));
+  }
+
+  if (affectedPackages.includes('@libs/services-lib')) {
+    allFiles = allFiles.concat(jetpack.find('libs/services-lib', { matching: globPattern }));
   }
 
   if (affectedPackages.includes('@apps/benef-app') && applicationName === 'benef-app') {

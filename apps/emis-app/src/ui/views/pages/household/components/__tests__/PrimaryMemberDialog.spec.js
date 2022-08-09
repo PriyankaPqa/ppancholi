@@ -4,9 +4,9 @@ import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 
-import { EventHub } from '@libs/core-lib/plugins/event-hub';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
 import Component from '../PrimaryMemberDialog.vue';
 

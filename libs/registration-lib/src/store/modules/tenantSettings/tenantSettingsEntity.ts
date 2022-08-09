@@ -15,11 +15,11 @@ import {
   IValidateCaptchaAllowedIpAddressResponse,
   TenantSettingsEntity,
 } from '@libs/entities-lib/tenantSettings';
+import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 import { BaseModule } from '../base';
 import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
-import { TenantSettingsService } from '../../../services/tenantSettings/entity';
 
 export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity, never> {
   constructor(readonly service: TenantSettingsService, protected vuetify: Vuetify) {

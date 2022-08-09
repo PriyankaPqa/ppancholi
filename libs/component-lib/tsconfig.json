@@ -28,8 +28,8 @@
       "@libs/component-lib/*": [
         "src/*"
       ],
-      "@libs/core-lib/*": [
-        "../core-lib/src/*"
+      "@libs/shared-lib/*": [
+        "../shared-lib/src/*"
       ]
     },
     "lib": [

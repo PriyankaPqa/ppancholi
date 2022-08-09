@@ -134,7 +134,7 @@ import {
 } from '@libs/entities-lib/mass-action';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
-import colors from '@/ui/plugins/vuetify/colors';
+import colors from '@libs/shared-lib/plugins/vuetify/colors';
 
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
 import helpers from '@/ui/helpers/helpers';

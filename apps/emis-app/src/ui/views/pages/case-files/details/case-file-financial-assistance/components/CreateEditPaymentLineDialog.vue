@@ -189,9 +189,9 @@ import {
 } from '@libs/entities-lib/financial-assistance-payment';
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
-import { ECanadaProvinces, VForm } from '@libs/core-lib/types';
+import { ECanadaProvinces, VForm } from '@libs/shared-lib/types';
 import { localStorageKeys } from '@/constants/localStorage';
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Status } from '@libs/entities-lib/base';
 import { IAddressData } from '@libs/entities-lib/household-create';

@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { IOptionItemData } from '@libs/core-lib/types';
+import { IOptionItemData } from '@libs/shared-lib/types';
 import { ContactInformation } from './contactInformation';
 import {
   IContactInformationData, IContactInformation, IContactInformationCreateRequest, IValidateEmailResponse,

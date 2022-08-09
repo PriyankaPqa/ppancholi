@@ -3,7 +3,7 @@ import { mockStore } from '@/store';
 import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
-import { mockHttpError } from '@libs/core-lib/services/http-client';
+import { mockHttpError } from '@libs/services-lib/http-client';
 import { mockSplitHousehold } from '@libs/entities-lib/household-create/householdCreate.mock';
 
 import { HouseholdCreate } from '@libs/entities-lib/household-create/householdCreate';
@@ -25,7 +25,7 @@ import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { IRegistrationMenuItem } from '@/types';
 import {
   ERegistrationMethod, ERegistrationMode,
-} from '@libs/core-lib/types';
+} from '@libs/shared-lib/types';
 import { getDefaultState, makeRegistrationModule } from './registration';
 
 import * as registrationUtils from './registrationUtils';

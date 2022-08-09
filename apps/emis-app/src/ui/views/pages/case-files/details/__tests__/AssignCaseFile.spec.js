@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockAssignedTeamMembers, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { mockCombinedUserAccount, AccountStatus } from '@libs/entities-lib/user-account';
 import { mockTeamEntity, TeamType, mockTeamMembersData } from '@libs/entities-lib/team';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
 import Component from '../case-file-activity/components/AssignCaseFile.vue';
 

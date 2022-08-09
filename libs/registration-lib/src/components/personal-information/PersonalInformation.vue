@@ -31,7 +31,7 @@ import Vue from 'vue';
 import VueI18n, { TranslateResult } from 'vue-i18n';
 import { Status } from '@libs/entities-lib/base';
 import helpers from '@libs/entities-lib/helpers';
-import { IOptionItemData } from '@libs/core-lib/types';
+import { IOptionItemData } from '@libs/shared-lib/types';
 import { IContactInformation } from '@libs/entities-lib/value-objects/contact-information';
 import { IIdentitySet, IMember } from '@libs/entities-lib/household-create';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';

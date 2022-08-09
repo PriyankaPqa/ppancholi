@@ -60,7 +60,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import { IOptionItemData } from '@libs/core-lib/types';
+import { IOptionItemData } from '@libs/shared-lib/types';
 import { IShelterLocationData } from '../../../../entities-lib/src/household-create';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';

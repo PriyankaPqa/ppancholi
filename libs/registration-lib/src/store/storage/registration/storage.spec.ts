@@ -2,7 +2,7 @@
 import { mockStore } from '@/store';
 import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import _merge from 'lodash/merge';
-import { mockHttpError } from '@libs/core-lib/services/http-client';
+import { mockHttpError } from '@libs/services-lib/http-client';
 import { mockEventData } from '@libs/entities-lib/registration-event';
 import { mockContactInformation } from '@libs/entities-lib/value-objects/contact-information';
 import { mockAdditionalMember, mockMember } from '@libs/entities-lib/value-objects/member';
@@ -10,7 +10,7 @@ import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
 import { mockAddress } from '@libs/entities-lib/value-objects/address';
 import { mockCampGround } from '@libs/entities-lib/value-objects/current-address';
 import { mockHouseholdCreateData, mockSplitHousehold } from '@libs/entities-lib/household-create';
-import { ERegistrationMethod } from '@libs/core-lib/types';
+import { ERegistrationMethod } from '@libs/shared-lib/types';
 import { IRegistrationMenuItem } from '@/types';
 import { makeStorage } from './storage';
 

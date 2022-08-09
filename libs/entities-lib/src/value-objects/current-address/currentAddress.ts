@@ -1,5 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { isValidCanadianPostalCode, maxLengthCheck, required } from '../../classValidation';
 import { Address, IAddress } from '../address';
 import {

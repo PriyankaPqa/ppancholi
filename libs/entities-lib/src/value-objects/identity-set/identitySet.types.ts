@@ -1,4 +1,4 @@
-import { ECanadaProvinces, IListOption, IOptionItemData } from '@libs/core-lib/src/types';
+import { ECanadaProvinces, IListOption, IOptionItemData } from '@libs/shared-lib/types';
 
 export interface IBirthDate {
   month?: number | string;

@@ -139,8 +139,8 @@ import { RcPhoneWithValidation, VSelectWithValidation, VTextFieldWithValidation 
 import { TranslateResult } from 'vue-i18n';
 import helpers from '@libs/entities-lib/helpers';
 import { ValidationObserver } from 'vee-validate';
-import { EventHub } from '@libs/core-lib/plugins/event-hub';
-import { IOptionItemData } from '@libs/core-lib/types';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
+import { IOptionItemData } from '@libs/shared-lib/types';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { IContactInformation, IValidateEmailResponse } from '../../../../entities-lib/src/value-objects/contact-information';
 

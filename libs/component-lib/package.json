@@ -6,7 +6,7 @@
     "lint": "eslint . --fix --max-warnings=0"
   },
   "dependencies": {
-    "@libs/core-lib": "*",
+    "@libs/shared-lib": "*",
     "@googlemaps/js-api-loader": "^1.11.0",
     "@mdi/font": "^6.5.95",
     "awesome-phonenumber": "2.68.0",

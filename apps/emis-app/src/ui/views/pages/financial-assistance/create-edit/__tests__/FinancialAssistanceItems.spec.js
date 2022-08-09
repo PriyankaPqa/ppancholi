@@ -2,7 +2,7 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import {
   mockItems, mockCategories, EFinancialAmountModes, EFinancialFrequency,
 } from '@libs/entities-lib/financial-assistance';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import Component from '../FinancialAssistanceItems.vue';
 
 const localVue = createLocalVue();

@@ -1,4 +1,4 @@
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { TeamEntity } from './team';
 import {
   mockTeamMembersData, mockTeamsDataStandard, mockCombinedTeams,

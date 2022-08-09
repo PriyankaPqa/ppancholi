@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   MassActionRunStatus, mockCombinedMassAction, mockCombinedMassActions, mockMassActionRun,
 } from '@libs/entities-lib/mass-action';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { Status } from '@libs/entities-lib/base';
 import massActionsTable from './massActionsTable';
 

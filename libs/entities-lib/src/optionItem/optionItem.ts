@@ -1,6 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import _sortBy from 'lodash/sortBy';
-import { IMultilingual } from '@libs/core-lib/src/types';
+import { IMultilingual } from '@libs/shared-lib/types';
 import { BaseEntity } from '../base';
 import utils from '../utils';
 import {

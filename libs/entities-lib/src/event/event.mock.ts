@@ -1,4 +1,4 @@
-import { ECanadaProvinces, IMultilingual, IAzureSearchResult } from '@libs/core-lib/types';
+import { ECanadaProvinces, IMultilingual, IAzureSearchResult } from '@libs/shared-lib/types';
 import { IEntity, mockBaseData, Status } from '../base';
 import {
   IEventMainInfo,

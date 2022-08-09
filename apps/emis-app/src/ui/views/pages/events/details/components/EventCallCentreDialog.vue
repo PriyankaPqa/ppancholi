@@ -110,7 +110,7 @@ import {
 import helpers from '@/ui/helpers/helpers';
 
 import { EEventSummarySections } from '@/types';
-import { VForm, IServerError } from '@libs/core-lib/types';
+import { VForm, IServerError } from '@libs/shared-lib/types';
 import {
   EEventCallCentreStatus,
   IEventCallCentre,
@@ -118,7 +118,7 @@ import {
 } from '@libs/entities-lib/event';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@libs/entities-lib/utils';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/core-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 
 export default mixins(handleUniqueNameSubmitError).extend({

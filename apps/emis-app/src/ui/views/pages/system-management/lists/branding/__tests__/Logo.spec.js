@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { LOGO_EXTENSIONS } from '@/constants/documentExtensions';
 import Component from '../Logo.vue';

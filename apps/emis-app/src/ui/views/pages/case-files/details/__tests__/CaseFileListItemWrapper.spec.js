@@ -1,7 +1,7 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFileActivities } from '@libs/entities-lib/case-file';
 import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
-import moment from '@/ui/plugins/moment';
+import moment from '@libs/shared-lib/plugins/moment';
 
 import Component from '../components/CaseFileListItemWrapper.vue';
 

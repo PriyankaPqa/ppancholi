@@ -108,7 +108,7 @@ import { RcDialog, RcConfirmationDialog, RcTooltip } from '@libs/component-lib/c
 import {
   IOptionItem,
 } from '@libs/entities-lib/optionItem';
-import { IListOption, IIdMultilingualName } from '@libs/core-lib/types';
+import { IListOption, IIdMultilingualName } from '@libs/shared-lib/types';
 
 import { Status } from '@libs/entities-lib/base';
 

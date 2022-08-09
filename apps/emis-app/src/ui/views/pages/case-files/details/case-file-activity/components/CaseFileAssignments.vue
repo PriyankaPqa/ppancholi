@@ -50,7 +50,7 @@ import Vue from 'vue';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { IAzureTableSearchResults } from '@libs/core-lib/types';
+import { IAzureTableSearchResults } from '@libs/shared-lib/types';
 import ViewAssigned from './ViewAssigned.vue';
 import AssignCaseFile from './AssignCaseFile.vue';
 

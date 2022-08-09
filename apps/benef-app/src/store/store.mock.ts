@@ -7,17 +7,16 @@ import VueI18n from 'vue-i18n';
 
 import { makeRegistrationModule } from '@libs/registration-lib/store/modules/registration/';
 import { HouseholdEntityModule } from '@libs/registration-lib/store/modules/household';
-import { HouseholdsService } from '@libs/registration-lib/services/households/entity';
-
-import { ERegistrationMode } from '@libs/core-lib/types';
+import { HouseholdsService } from '@libs/services-lib/households/entity';
+import { ERegistrationMode } from '@libs/shared-lib/types';
 import { HouseholdMetadataModule } from '@libs/registration-lib/store/modules/household/householdMetadata';
-import { HouseholdMetadataService } from '@libs/registration-lib/services/households/metadata/index';
+import { HouseholdMetadataService } from '@libs/services-lib/households/metadata';
 import { TenantSettingsEntityModule } from '@libs/registration-lib/store/modules/tenantSettings/tenantSettingsEntity';
-import { TenantSettingsService } from '@libs/registration-lib/services/tenantSettings/entity';
+import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import * as vuexModule from '@/constants/vuex-modules';
 import { tabs } from '@/store/modules/registration/tabs';
 import { mockProvider } from '@/services/provider';
-import vuetify from '@/ui/plugins/vuetify/vuetify';
+import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import { httpClient } from '@/services/httpClient';
 
 const i18n = {

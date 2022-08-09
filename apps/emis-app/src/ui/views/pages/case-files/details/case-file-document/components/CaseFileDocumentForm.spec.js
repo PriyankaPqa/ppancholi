@@ -2,8 +2,8 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
   CaseFileDocumentEntity, mockCombinedCaseFileDocument, DocumentStatus,
 } from '@libs/entities-lib/case-file-document';
-import { MAX_LENGTH_MD } from '@libs/core-lib/constants/validations';
-import { mockStorage } from '@/store/storage';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
+import { mockStorage } from '@/storage';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import Component from './CaseFileDocumentForm.vue';
 import DownloadComponent from './DownloadViewDocument.vue';

@@ -8,7 +8,7 @@ import {
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import routes from '@/constants/routes';
 import { MassActionMode, MassActionType, mockMassActionEntity } from '@libs/entities-lib/mass-action';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockOptionItem, mockOptionSubItem } from '@libs/entities-lib/optionItem';
 import Component from './FinancialAssistanceCreate.vue';

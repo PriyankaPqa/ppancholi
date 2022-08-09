@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { ECanadaProvinces, EOptionItemStatus } from '@libs/core-lib/types';
+import { ECanadaProvinces, EOptionItemStatus } from '@libs/shared-lib/types';
 import {
   ECurrentAddressTypes, ICurrentAddress, ICurrentAddressData, ICurrentAddressCreateRequest,
 } from './currentAddress.types';

@@ -1,4 +1,4 @@
-import { ERegistrationMode, ERegistrationMethod } from '@libs/core-lib/types';
+import { ERegistrationMode, ERegistrationMethod } from '@libs/shared-lib/types';
 import { IAddress, IAddressData } from '../value-objects/address/address.types';
 import {
   IMemberEntity, IMember, MemberCreateRequest, IMemberMoveRequest,

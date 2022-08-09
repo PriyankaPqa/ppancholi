@@ -85,9 +85,9 @@ import {
   IEventSchedule,
 } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
-import { IAzureSearchParams } from '@libs/core-lib/types';
+import { IAzureSearchParams } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
-import moment from '@/ui/plugins/moment';
+import moment from '@libs/shared-lib/plugins/moment';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 

@@ -1,6 +1,6 @@
-import { PublicService } from '@libs/registration-lib/services/public';
-import { HouseholdsService } from '@libs/registration-lib/services/households/entity';
-import { TenantSettingsService } from '@libs/registration-lib/services/tenantSettings/entity';
+import { PublicService } from '@libs/services-lib/public';
+import { HouseholdsService } from '@libs/services-lib/households/entity';
+import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import { httpClient } from '@/services/httpClient';
 import { IProvider } from './provider.types';
 

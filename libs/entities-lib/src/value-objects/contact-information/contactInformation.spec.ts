@@ -1,4 +1,4 @@
-import { MAX_LENGTH_MD } from '@libs/core-lib/src/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { IContactInformation } from './index';
 import { mockContactInformation, mockContactInformationData } from './contactInformation.mock';
 import { ContactInformation } from './contactInformation';

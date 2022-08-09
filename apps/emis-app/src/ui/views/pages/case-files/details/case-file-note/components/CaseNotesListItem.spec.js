@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote, mockCaseNoteCategories, mockCaseNoteEntity } from '@libs/entities-lib/case-note';
-import { mockStorage } from '@/store/storage';
+import { mockStorage } from '@/storage';
 
 import Component from './CaseNotesListItem.vue';
 

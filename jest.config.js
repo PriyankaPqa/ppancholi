@@ -7,8 +7,9 @@ module.exports = {
     '<rootDir>/apps/benef-app',
     '<rootDir>/libs/registration-lib',
     '<rootDir>/libs/component-lib',
-    '<rootDir>/libs/core-lib',
+    '<rootDir>/libs/shared-lib',
     '<rootDir>/libs/entities-lib',
+    '<rootDir>/libs/services-lib',
   ],
   coverageDirectory: '<rootDir>/coverage/',
 };
