@@ -444,11 +444,12 @@ export default mixins(caseFileDetail).extend({
       if (resetRelatedFields) {
         this.currentPaymentLine.documentReceived = false;
       }
-      if (resetRelatedFields && this.fixedAmount !== (this.subItem?.amountType === EFinancialAmountModes.Fixed)) {
+      if (resetRelatedFields) {
         this.currentPaymentLine.amount = null;
       }
+
       this.fixedAmount = this.subItem?.amountType === EFinancialAmountModes.Fixed;
-      if (this.fixedAmount) {
+      if (this.fixedAmount && this.currentPaymentLine?.amount == null) {
         this.currentPaymentLine.amount = this.subItem?.maximumAmount;
       }
     },

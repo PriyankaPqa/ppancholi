@@ -531,6 +531,10 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
         expect(wrapper.vm.fixedAmount).toBeTruthy();
         await wrapper.setData({ currentPaymentLine: { amount: 567 } });
+        wrapper.vm.categorySelected(false);
+        expect(wrapper.vm.currentPaymentLine.amount).toBe(567);
+        expect(wrapper.vm.fixedAmount).toBeTruthy();
+        await wrapper.setData({ currentPaymentLine: { amount: 567 } });
         wrapper.vm.categorySelected();
         expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
         expect(wrapper.vm.fixedAmount).toBeTruthy();
@@ -540,7 +544,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.vm.currentPaymentLine.amount).toBeNull();
         expect(wrapper.vm.fixedAmount).toBeFalsy();
         await wrapper.setData({ currentPaymentLine: { amount: 123 } });
-        wrapper.vm.categorySelected();
+        wrapper.vm.categorySelected(false);
         expect(wrapper.vm.currentPaymentLine.amount).toBe(123);
         expect(wrapper.vm.fixedAmount).toBeFalsy();
       });
