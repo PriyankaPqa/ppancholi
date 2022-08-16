@@ -100,7 +100,14 @@
               {{ $t('household.profile.household_members') }} ({{ household.primaryBeneficiary? household.additionalMembers.length + 1 : 0 }})
             </h5>
             <div>
-              <v-btn v-if="canMove && household.primaryBeneficiary" color="grey lighten-5" small depressed class="mr-4" @click="moveMembers()">
+              <v-btn
+                v-if="canMove && household.primaryBeneficiary"
+                color="grey lighten-5"
+                small
+                depressed
+                class="mr-4"
+                data-test="household_profile_move_members"
+                @click="moveMembers()">
                 <v-icon left>
                   mdi-compare-horizontal
                 </v-icon>

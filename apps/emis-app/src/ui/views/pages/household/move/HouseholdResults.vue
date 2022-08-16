@@ -48,7 +48,13 @@
           <v-col cols="4">
             <div>
               {{ household.primaryBeneficiary.registrationNumber }}
-              <v-btn class="ml-4" small color="primary" :loading="selectedId === household.id && loadingSelect" @click="select(household.id)">
+              <v-btn
+                class="ml-4"
+                small
+                color="primary"
+                :loading="selectedId === household.id && loadingSelect"
+                data-test="household_move_results_select"
+                @click="select(household.id)">
                 <v-icon left>
                   mdi-check
                 </v-icon>
