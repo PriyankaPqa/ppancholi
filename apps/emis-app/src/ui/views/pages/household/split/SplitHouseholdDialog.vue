@@ -73,7 +73,7 @@
                 <th width="5%" class="pl-2">
                   <v-checkbox
                     v-model="selectedMembers"
-                    data-test="checkbox_member"
+                    :data-test="`checkbox_member_${member.identitySet.firstName}_${member.identitySet.lastName}`"
                     :value="member" />
                 </th>
                 <th class="py-4" style="text-align: left" width="35%">
