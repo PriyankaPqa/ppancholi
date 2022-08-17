@@ -30,8 +30,8 @@
           </v-simple-table>
         </v-sheet>
 
-        <v-sheet v-if="referral.outcomeStatus" rounded class="mt-10 background">
-          <v-simple-table class="background">
+        <v-sheet v-if="referral.outcomeStatus" rounded class="mt-10 grey-container">
+          <v-simple-table class="grey-container">
             <tbody>
               <tr data-test="referral_details_outcome">
                 <td class="label fw-bold">
@@ -164,16 +164,3 @@ export default mixins(caseFileDetail).extend({
 </script>
 
 <style scoped>
-
-.label {
-  white-space: nowrap;
-  width: 30%;
-}
-.data {
-  white-space: pre-line;
-}
-.background {
-  background-color: var(--v-grey-lighten4);
-}
-
-</style>

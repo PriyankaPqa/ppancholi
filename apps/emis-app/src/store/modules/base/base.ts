@@ -100,9 +100,9 @@ export class BaseModule<T extends IEntity, IdParams> {
       }
     },
 
-    fetchAllIncludingInactive: async (context: ActionContext<IState<T>, IState<T>>): Promise<T[]> => {
+    fetchAllIncludingInactive: async (context: ActionContext<IState<T>, IState<T>>, parentId?: Omit<IdParams, 'id'>): Promise<T[]> => {
       try {
-        const res = await this.service.getAllIncludingInactive();
+        const res = await this.service.getAllIncludingInactive(parentId);
         context.commit('setAll', res);
         return res;
       } catch (e) {

@@ -251,9 +251,10 @@ describe('BaseStorage', () => {
 
     describe('fetchAllIncludingInactive', () => {
       it('should call action fetchAllIncludingInactive from both module', async () => {
-        await storage.actions.fetchAllIncludingInactive();
-        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/fetchAllIncludingInactive`);
-        expect(store.dispatch).toBeCalledWith(`${storage.metadataModuleName}/fetchAllIncludingInactive`);
+        const params: uuid = null;
+        await storage.actions.fetchAllIncludingInactive(params);
+        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/fetchAllIncludingInactive`, params);
+        expect(store.dispatch).toBeCalledWith(`${storage.metadataModuleName}/fetchAllIncludingInactive`, params);
       });
 
       it('should return all entities combined with their metadata', async () => {

@@ -26,4 +26,18 @@ describe('>>> AssessmentTemplates Service', () => {
       expect(http.get).toHaveBeenCalledWith('assessment/search/assessment-templates', { params, isOData: true });
     });
   });
+
+  // to be implemented
+  describe('create', () => {
+    it('should call the proper endpoint', async () => {
+      expect(true).toBeTruthy();
+    });
+  });
+
+  // to be implemented
+  describe('update', () => {
+    it('should call the proper endpoint', async () => {
+      expect(true).toBeTruthy();
+    });
+  });
 });

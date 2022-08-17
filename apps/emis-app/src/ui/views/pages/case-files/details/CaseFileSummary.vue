@@ -108,7 +108,7 @@
       outlined>
       <v-simple-table>
         <tbody>
-          <tr class="background">
+          <tr class="grey-container">
             <td class="label fw-bold">
               {{ summary.closedArchivedActivity.isClosed ? $t('casefile.summary.closedBy') : $t('casefile.summary.archivedBy') }}
             </td>
@@ -300,18 +300,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style scoped>
-
-.label {
-  white-space: nowrap;
-  width: 30%;
-}
-.data {
-  white-space: pre-line;
-}
-.background {
-  background-color: var(--v-grey-lighten4);
-}
-
-</style>

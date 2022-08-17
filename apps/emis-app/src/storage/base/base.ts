@@ -205,11 +205,11 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       return this.combinedCollections(entities, metadata);
     },
 
-    fetchAllIncludingInactive: async (): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
-      const requests = [this.store.dispatch(`${this.entityModuleName}/fetchAllIncludingInactive`)];
+    fetchAllIncludingInactive: async (parentId?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
+      const requests = [this.store.dispatch(`${this.entityModuleName}/fetchAllIncludingInactive`, parentId)];
 
       if (this.metadataModuleName) {
-        requests.push(this.store.dispatch(`${this.metadataModuleName}/fetchAllIncludingInactive`));
+        requests.push(this.store.dispatch(`${this.metadataModuleName}/fetchAllIncludingInactive`, parentId));
       }
       const results = await Promise.all(requests);
       const entities = results[0];

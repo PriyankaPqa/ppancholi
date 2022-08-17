@@ -13,6 +13,8 @@ import { SignalR } from '../plugins/signal-r/signalR';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
 const AssessmentTemplatesHome = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/home/AssessmentTemplatesHome.vue');
+const AssessmentTemplatesEdit = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/CreateEditAssessmentTemplate.vue');
+const AssessmentTemplateDetails = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/AssessmentTemplateDetails.vue');
 
 const ApprovalsLayout = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/layout/ApprovalsLayout.vue');
 const ApprovalsTemplates = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/templates/ApprovalsTemplates.vue');
@@ -207,7 +209,33 @@ export const routes: Array<RouteConfig> = [
             meta: {
               level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
             },
-            children: [],
+          },
+          {
+            path: Routes.assessmentTemplates.create.path,
+            name: Routes.assessmentTemplates.create.name,
+            component: AssessmentTemplatesEdit,
+            meta: {
+              level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            },
+            props: true,
+          },
+          {
+            path: Routes.assessmentTemplates.edit.path,
+            name: Routes.assessmentTemplates.edit.name,
+            component: AssessmentTemplatesEdit,
+            meta: {
+              level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            },
+            props: true,
+          },
+          {
+            path: Routes.assessmentTemplates.details.path,
+            name: Routes.assessmentTemplates.details.name,
+            component: AssessmentTemplateDetails,
+            meta: {
+              level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            },
+            props: true,
           },
           {
             path: Routes.caseFile.layout.path, // case files
@@ -472,6 +500,45 @@ export const routes: Array<RouteConfig> = [
                   component: FinancialAssistanceDetails,
                   meta: { level: 'level6' },
                   props: true,
+                },
+                {
+                  path: Routes.events.assessments.home.path,
+                  name: Routes.events.assessments.home.name,
+                  component: AssessmentTemplatesHome,
+                  meta: {
+                    level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                  },
+                  props: true,
+                },
+                {
+                  path: Routes.events.assessments.create.path,
+                  name: Routes.events.assessments.create.name,
+                  component: AssessmentTemplatesEdit,
+                  meta: {
+                    level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                  },
+                  props: true,
+                  children: [],
+                },
+                {
+                  path: Routes.events.assessments.edit.path,
+                  name: Routes.events.assessments.edit.name,
+                  component: AssessmentTemplatesEdit,
+                  meta: {
+                    level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                  },
+                  props: true,
+                  children: [],
+                },
+                {
+                  path: Routes.events.assessments.details.path,
+                  name: Routes.events.assessments.details.name,
+                  component: AssessmentTemplateDetails,
+                  meta: {
+                    level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                  },
+                  props: true,
+                  children: [],
                 }],
               },
             ],

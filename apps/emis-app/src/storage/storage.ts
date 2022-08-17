@@ -21,6 +21,7 @@ import { FinancialAssistancePaymentStorage } from './financial-assistance-paymen
 import { TenantSettingsStorage } from './tenantSettings';
 import { UIStateStorage } from './ui-state';
 import { AssessmentTemplateStorage } from './assessment-template';
+import { AssessmentFormStorage } from './assessment-form';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   user: makeUserStorage(store),
@@ -60,5 +61,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     store,
     vuexModule.ASSESSMENT_TEMPLATE_ENTITIES,
     vuexModule.ASSESSMENT_TEMPLATE_METADATA,
+  ).make(),
+  assessmentForm: new AssessmentFormStorage(
+    store,
+    vuexModule.ASSESSMENT_FORM_ENTITIES,
+    vuexModule.ASSESSMENT_FORM_METADATA,
   ).make(),
 });

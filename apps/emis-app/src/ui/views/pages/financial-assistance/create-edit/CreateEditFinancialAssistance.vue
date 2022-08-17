@@ -416,17 +416,8 @@ export default Vue.extend({
     async loadActivePrograms(): Promise<void> {
       const { id } = this.$route.params;
 
-      const res = await this.$storage.program.actions.search({
-        filter: {
-          'Entity/EventId': id,
-          'Entity/Status': Status.Active,
-        },
-        count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      });
-
-      this.programs = this.$storage.program.getters.getByIds(res.ids).map((combined) => combined.entity);
+      const res = (await this.$storage.program.actions.fetchAll({ eventId: id })).map((e) => e.entity.id);
+      this.programs = this.$storage.program.getters.getByIds(res).map((combined) => combined.entity);
     },
 
     /**

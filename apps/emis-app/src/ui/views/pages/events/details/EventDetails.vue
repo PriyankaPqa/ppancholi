@@ -144,6 +144,7 @@ import {
 } from '@libs/entities-lib/event';
 import { ECanadaProvinces, IMultilingual, INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'EventDetails',
@@ -228,6 +229,15 @@ export default Vue.extend({
         disabled: false,
         to: routes.events.financialAssistance.home.name,
         level: 'level6',
+        exact: false,
+      }, {
+        text: this.$t('eventDetail.menu_assessments'),
+        test: 'event-assessments',
+        icon: '',
+        disabled: false,
+        to: routes.events.assessments.home.name,
+        level: 'level6',
+        feature: FeatureKeys.Assessments,
         exact: false,
       }];
     },

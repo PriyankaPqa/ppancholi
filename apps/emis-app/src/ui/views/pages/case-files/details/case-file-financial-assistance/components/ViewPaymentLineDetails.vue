@@ -262,13 +262,3 @@ export default mixins(caseFileDetail).extend({
   },
 });
 </script>
-
-<style scoped lang="scss">
-.label {
-  white-space: nowrap;
-  width: 30%;
-}
-.data {
-  white-space: pre-line;
-}
-</style>

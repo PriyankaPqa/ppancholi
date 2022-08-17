@@ -10,6 +10,18 @@ const routes = {
       path: 'assessment-templates',
       name: 'assessmenttemplates.home',
     },
+    details: {
+      path: 'assessment-templates/:assessmentTemplateId',
+      name: 'assessmenttemplates.assessments.details',
+    },
+    create: {
+      path: 'assessment-templates/create',
+      name: 'assessmenttemplates.assessments.create',
+    },
+    edit: {
+      path: 'assessment-templates/:assessmentTemplateId/edit',
+      name: 'assessmenttemplates.assessments.edit',
+    },
   },
   approvals: {
     layout: {
@@ -146,6 +158,24 @@ const routes = {
       details: {
         path: 'financial-assistance/:faId',
         name: 'events.financialAssistance.details',
+      },
+    },
+    assessments: {
+      home: {
+        path: 'assessments',
+        name: 'events.assessments.home',
+      },
+      details: {
+        path: 'assessments/:assessmentTemplateId',
+        name: 'events.assessments.details',
+      },
+      create: {
+        path: 'assessments/create',
+        name: 'events.assessments.create',
+      },
+      edit: {
+        path: 'assessments/:assessmentTemplateId/edit',
+        name: 'events.assessments.edit',
       },
     },
   },

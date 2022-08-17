@@ -19,6 +19,7 @@ import {
   ValidationOfImpactStatus,
   mockCombinedCaseFiles,
 } from '@libs/entities-lib/case-file';
+import { format } from 'date-fns';
 
 import { Status } from '@libs/entities-lib/base';
 
@@ -991,10 +992,13 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
       it('sets the right name to the financial assistance in create mode', async () => {
         wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
+        const dateNow = format(new Date(), 'yyyyMMdd HH');
         await wrapper.setData({ isEditMode: false });
         await wrapper.setData({ selectedProgram: program });
         wrapper.vm.makePaymentName();
-        expect(wrapper.vm.financialAssistance.name).toContain(`${program.name.translation.en} - mock-payment-line -`);
+        // ignore mmss (minutes-seconds) as test sometimes fail...
+        expect(wrapper.vm.financialAssistance.name.substr(0, wrapper.vm.financialAssistance.name.length - 4))
+          .toEqual(`${program.name.translation.en} - mock-payment-line - ${dateNow}`);
       });
     });
 

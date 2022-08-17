@@ -250,15 +250,3 @@ export default mixins(fileUpload).extend({
   },
 });
 </script>
-
-<style scoped>
-.status {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  padding-right: 4px;
-  height: 56px;
-  border-radius: 4px;
-}
-</style>

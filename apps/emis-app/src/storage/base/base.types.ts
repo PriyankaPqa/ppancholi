@@ -26,7 +26,7 @@ export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity
   }) : Promise<IFullResponseCombined<TEntity, TMetadata>>;
 
   fetchAll(id?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]>;
-  fetchAllIncludingInactive(): Promise<IEntityCombined<TEntity, TMetadata>[]>;
+  fetchAllIncludingInactive(id?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]>;
   deactivate(idParams: IdParams): Promise<TEntity>;
   activate(idParams: IdParams): Promise<TEntity>;
   search(params: IAzureSearchParams, searchEndpoint?: string, includeInactiveItems?: boolean): Promise<IAzureTableSearchResults>

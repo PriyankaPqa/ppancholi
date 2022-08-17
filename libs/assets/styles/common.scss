@@ -56,8 +56,16 @@
 }
 
 .grey-container {
-  background-color: var(--v-grey-lighten5);
+  background-color: var(--v-grey-lighten5) !important;
   border-radius: 4px!important;
+}
+
+.label {
+  white-space: nowrap;
+  width: 30%;
+}
+.data {
+  white-space: pre-line;
 }
 
 .list-row {
@@ -138,4 +146,18 @@
 /* error messages for disabled field dont appear red by default */
 .invalid.validated.failed .v-messages {
   color: var(--v-error-base) !important;
+}
+
+.v-messages {
+  min-height: auto !important;
+}
+
+div.status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-right: 4px;
+  height: 56px;
+  border-radius: 4px;
 }

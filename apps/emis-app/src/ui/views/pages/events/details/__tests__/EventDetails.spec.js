@@ -379,6 +379,15 @@ describe('EventDetails.vue', () => {
             to: routes.events.financialAssistance.home.name,
             level: 'level6',
             exact: false,
+          }, {
+            text: 'eventDetail.menu_assessments',
+            test: 'event-assessments',
+            icon: '',
+            disabled: false,
+            to: routes.events.assessments.home.name,
+            level: 'level6',
+            feature: 'Assessments',
+            exact: false,
           }],
         );
       });

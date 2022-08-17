@@ -1,0 +1,43 @@
+import { IHttpMock, mockHttp } from '../../http-client';
+import { AssessmentFormsService } from './assessment-forms';
+
+describe('>>> AssessmentForms Service', () => {
+  let http: IHttpMock;
+  let service: AssessmentFormsService;
+
+  beforeEach(() => {
+    process.env.VUE_APP_API_BASE_URL = 'www.test.com';
+    jest.clearAllMocks();
+    http = mockHttp();
+    service = new AssessmentFormsService(http as never);
+  });
+
+  describe('search', () => {
+    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      const searchEndpoint = 'mock-endpoint';
+      await service.search(params, searchEndpoint);
+      expect(http.get).toHaveBeenCalledWith(`assessment/search/${searchEndpoint}`, { params, isOData: true });
+    });
+
+    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      await service.search(params);
+      expect(http.get).toHaveBeenCalledWith('assessment/search/assessment-forms', { params, isOData: true });
+    });
+  });
+
+  // to be implemented
+  describe('create', () => {
+    it('should call the proper endpoint', async () => {
+      expect(true).toBeTruthy();
+    });
+  });
+
+  // to be implemented
+  describe('update', () => {
+    it('should call the proper endpoint', async () => {
+      expect(true).toBeTruthy();
+    });
+  });
+});

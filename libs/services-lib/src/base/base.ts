@@ -49,8 +49,8 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
     return this.http.get<T[]>(this.getItemUrl(`${this.baseUrl}`, parentId));
   }
 
-  async getAllIncludingInactive(): Promise<T[]> {
-    return this.http.get<T[]>(`${this.baseUrl}/all`);
+  async getAllIncludingInactive(parentId?: Omit<IdParams, 'id'>): Promise<T[]> {
+    return this.http.get<T[]>(this.getItemUrl(`${this.baseUrl}/all`, parentId));
   }
 
   async activate(idParams: IdParams): Promise<T> {

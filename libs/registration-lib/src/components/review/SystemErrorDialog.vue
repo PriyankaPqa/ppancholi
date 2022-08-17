@@ -55,7 +55,7 @@ import Vue from 'vue';
 import { RcDialog, RcPhoneDisplay } from '@libs/component-lib/components';
 
 export default Vue.extend({
-  name: 'ApprovalHistoryDialog',
+  name: 'SystemErrorDialog',
 
   components: {
     RcDialog,
