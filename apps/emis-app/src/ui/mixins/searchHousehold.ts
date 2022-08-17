@@ -36,14 +36,14 @@ export default Vue.extend({
 
     searchCriteria(): string {
       if (this.criteria.firstName && this.criteria.lastName) {
-        return `Metadata/MemberMetadata/FirstName:/.*${this.criteria.firstName}.*/
-        AND Metadata/MemberMetadata/LastName:/.*${this.criteria.lastName}.*/`;
+        return `(Metadata/MemberMetadata/FirstName:/.*${this.criteria.firstName}.*/ OR Metadata/MemberMetadata/FirstName:"\\"${this.criteria.firstName}\\"")
+        AND (Metadata/MemberMetadata/LastName:/.*${this.criteria.lastName}.*/ OR Metadata/MemberMetadata/LastName:"\\"${this.criteria.lastName}\\"")`;
       }
       if (this.criteria.firstName) {
-        return `Metadata/MemberMetadata/FirstName:/.*${this.criteria.firstName}.*/`;
+        return `Metadata/MemberMetadata/FirstName:/.*${this.criteria.firstName}.*/ OR Metadata/MemberMetadata/FirstName:"\\"${this.criteria.firstName}\\""`;
       }
       if (this.criteria.lastName) {
-        return `Metadata/MemberMetadata/LastName:/.*${this.criteria.lastName}.*/`;
+        return `Metadata/MemberMetadata/LastName:/.*${this.criteria.lastName}.*/ OR Metadata/MemberMetadata/LastName:"\\"${this.criteria.lastName}\\""`;
       }
       return '';
     },

@@ -102,7 +102,8 @@ describe('searchHousehold', () => {
             firstName: 'Mister',
           },
         });
-        const expected = `Metadata/MemberMetadata/FirstName:/.*${wrapper.vm.criteria.firstName}.*/`;
+        // eslint-disable-next-line max-len
+        const expected = `Metadata/MemberMetadata/FirstName:/.*${wrapper.vm.criteria.firstName}.*/ OR Metadata/MemberMetadata/FirstName:"\\"${wrapper.vm.criteria.firstName}\\""`;
         expect(wrapper.vm.searchCriteria).toEqual(expected);
       });
 
@@ -112,7 +113,8 @@ describe('searchHousehold', () => {
             lastName: 'Test',
           },
         });
-        const expected = `Metadata/MemberMetadata/LastName:/.*${wrapper.vm.criteria.lastName}.*/`;
+        // eslint-disable-next-line max-len
+        const expected = `Metadata/MemberMetadata/LastName:/.*${wrapper.vm.criteria.lastName}.*/ OR Metadata/MemberMetadata/LastName:"\\"${wrapper.vm.criteria.lastName}\\""`;
         expect(wrapper.vm.searchCriteria).toEqual(expected);
       });
 
@@ -123,8 +125,9 @@ describe('searchHousehold', () => {
             lastName: 'Test',
           },
         });
-        const expected = `Metadata/MemberMetadata/FirstName:/.*${wrapper.vm.criteria.firstName}.*/
-        AND Metadata/MemberMetadata/LastName:/.*${wrapper.vm.criteria.lastName}.*/`;
+        // eslint-disable-next-line max-len
+        const expected = `(Metadata/MemberMetadata/FirstName:/.*${wrapper.vm.criteria.firstName}.*/ OR Metadata/MemberMetadata/FirstName:"\\"${wrapper.vm.criteria.firstName}\\"")
+        AND (Metadata/MemberMetadata/LastName:/.*${wrapper.vm.criteria.lastName}.*/ OR Metadata/MemberMetadata/LastName:"\\"${wrapper.vm.criteria.lastName}\\"")`;
         expect(wrapper.vm.searchCriteria).toEqual(expected);
       });
     });
