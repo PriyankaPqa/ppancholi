@@ -1,11 +1,16 @@
 <template>
   <div class="pa-4 paymentLine__container">
     <div class="flex-row">
-      <span v-if="paymentLine.id" class="rc-link16 fw-bold" :class="{ 'error--text': isInactive }" @click="linkToPaymentLineDetails">
+      <span
+        v-if="paymentLine.id"
+        data-test="paymentLineItem__title"
+        class="rc-link16 fw-bold"
+        :class="{ 'error--text': isInactive }"
+        @click="linkToPaymentLineDetails">
         {{ title }}
       </span>
 
-      <span v-else class="rc-body16 fw-bold">
+      <span v-else class="rc-body16 fw-bold" data-test="paymentLineItem__title">
         {{ title }}
       </span>
 
@@ -18,12 +23,12 @@
           </v-icon>
         </template>
 
-        <span>
+        <span data-test="paymentLineItem__amount-exceeded">
           {{ $t('caseFile.financialAssistance.amountExceeded', { maximumAmount: subItem.maximumAmount }) }}
         </span>
       </v-tooltip>
 
-      <div :class="{ 'rc-body14': true, 'text-decoration-line-through': isCancelled }">
+      <div data-test="paymentLineItem__amount" :class="{ 'rc-body14': true, 'text-decoration-line-through': isCancelled }">
         {{ amounts }}
       </div>
 
@@ -40,7 +45,7 @@
       </v-btn>
     </div>
     <div v-if="showRelatedNumber(paymentGroup)" class="flex-row">
-      <span :class="{ 'rc-body14': true }">
+      <span :class="{ 'rc-body14': true }" data-test="paymentLineItem__related-number">
         {{ $t('caseFile.financialAssistance.relatedNumber') + ': ' + (paymentLine.relatedNumber || '—') }}
       </span>
     </div>

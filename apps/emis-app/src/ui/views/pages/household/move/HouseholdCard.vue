@@ -76,7 +76,7 @@
               v-if="showMoveButton(i)"
               :disabled="errorOutstandingPayments(i)"
               small
-              data-test="move"
+              :data-test="`move_${m.identitySet.firstName}_${m.identitySet.lastName}`"
               color="primary"
               class="ml-2 mt-1 mt-xl-0"
               @click="move(m)">
@@ -168,11 +168,11 @@
                     :label=" $t('household.move.same_as_primary')"
                     :value="1"
                     :disabled="i===0"
-                    data-test="household_move_same_address" />
+                    :data-test="`household_move_same_address_${m.identitySet.firstName}_${m.identitySet.lastName}`" />
                   <v-radio
                     :label=" $t('household.move.new_address')"
                     :value="0"
-                    data-test="household_move_new_address"
+                    :data-test="`household_move_new_address_${m.identitySet.firstName}_${m.identitySet.lastName}`"
                     @click="!m.selectedCurrentAddress.newAddress && openNewAddressDialog(m)" />
                 </v-radio-group>
               </validation-provider>
