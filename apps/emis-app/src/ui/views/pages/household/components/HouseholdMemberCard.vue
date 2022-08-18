@@ -5,7 +5,7 @@
     outlined
     class="mb-4 background">
     <div class="px-4 py-2 rc-body18 fw-bold d-flex  align-center justify-space-between">
-      <div data-test="household_profile_member_display_name">
+      <div :data-test="`household_profile_member_display_name_${displayName}`">
         <v-icon size="22" class="pr-2" color="secondary">
           mdi-account
         </v-icon>

@@ -69,6 +69,7 @@
 
             <household-card
               v-if="secondHousehold"
+              data-test="second_card"
               :household="secondHousehold"
               position="right"
               :enabled-move="secondHousehold !== null && !submitError && firstHousehold.primaryBeneficiary !== null"

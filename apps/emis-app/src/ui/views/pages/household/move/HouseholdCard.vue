@@ -35,7 +35,7 @@
           v-if="moveSubmitted"
           small
           color="primary"
-          data-test="household-profile-btn"
+          :data-test="`${dataTest}_household-profile-btn`"
           @click="goToHouseholdProfile()">
           {{ $t('household.move.view_household') }}
         </v-btn>
@@ -284,6 +284,11 @@ export default Vue.extend({
     moveSubmitted: {
       type: Boolean,
       default: false,
+    },
+
+    dataTest: {
+      type: String,
+      default: '',
     },
   },
 

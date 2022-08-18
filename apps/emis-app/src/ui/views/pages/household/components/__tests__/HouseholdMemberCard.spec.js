@@ -52,7 +52,7 @@ describe('HouseholdMemberCard.vue', () => {
       let element;
       beforeEach(() => {
         doMount(true);
-        element = wrapper.findDataTest('household_profile_member_display_name');
+        element = wrapper.findDataTest(`household_profile_member_display_name_${member.identitySet.firstName} ${member.identitySet.lastName}`);
       });
       it('renders', () => {
         expect(element.exists()).toBeTruthy();
