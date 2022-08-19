@@ -40,6 +40,13 @@ export default {
       type: String,
       default: 'aggressive',
     },
+    /**
+     * To show 0.10 instead of 0.1
+     */
+    showAllDecimal: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     innerValue: '',
@@ -47,7 +54,7 @@ export default {
   watch: {
     // Handles internal model changes.
     innerValue(newVal) {
-      this.$emit('input', newVal);
+      (this.showAllDecimal && typeof newVal === 'number') ? this.$emit('input', newVal.toFixed(2)) : this.$emit('input', newVal);
     },
     // Handles external model changes.
     value(newVal) {
@@ -56,7 +63,7 @@ export default {
   },
   created() {
     if (typeof this.value !== 'undefined' && this.value !== null) {
-      this.innerValue = this.value;
+      this.innerValue = (this.showAllDecimal && typeof this.value === 'number') ? this.value.toFixed(2) : this.value;
     }
   },
 };

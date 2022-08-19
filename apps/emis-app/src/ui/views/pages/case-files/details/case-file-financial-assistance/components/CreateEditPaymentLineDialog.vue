@@ -73,6 +73,7 @@
               <v-text-field-with-validation
                 v-model="currentPaymentLine.amount"
                 data-test="txt_amount"
+                show-all-decimal
                 autocomplete="nope"
                 type="number"
                 prefix="$"
@@ -87,6 +88,7 @@
               <v-text-field-with-validation
                 v-model="currentPaymentLine.actualAmount"
                 data-test="txt_actualamount"
+                show-all-decimal
                 autocomplete="nope"
                 type="number"
                 prefix="$"
@@ -469,6 +471,7 @@ export default mixins(caseFileDetail).extend({
         this.$emit('cancelChange');
       }
     },
+
   },
 });
 </script>

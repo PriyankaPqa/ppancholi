@@ -556,7 +556,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         caseFileFinancialAssistanceGroup.lines[0].amount = '100';
         await wrapper.setData({ paymentGroup: caseFileFinancialAssistanceGroup });
         await wrapper.vm.onSubmit();
-        expect(wrapper.vm.paymentGroup.lines[0].amount).toBe(100);
+        expect(wrapper.vm.paymentGroup.lines[0].amount).toBe('100.00');
       });
 
       it('doesnt proceed unless form validation succeeds', async () => {

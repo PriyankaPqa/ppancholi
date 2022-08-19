@@ -96,6 +96,7 @@
             :disabled="currentSubItem && currentSubItem.amountType === EFinancialAmountModes.Fixed"
             :rules="rules.amount"
             data-test="payment_amount"
+            show-all-decimal
             type="number"
             prefix="$"
             :label="`${$t('massActions.financialAssistance.create.amount.label')} *`"

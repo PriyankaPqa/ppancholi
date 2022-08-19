@@ -3,6 +3,7 @@
     v-model="maximum"
     data-test="financialAssistanceItems__addSubItemMaximum"
     type="number"
+    show-all-decimal
     hide-details
     dense
     background-color="white"

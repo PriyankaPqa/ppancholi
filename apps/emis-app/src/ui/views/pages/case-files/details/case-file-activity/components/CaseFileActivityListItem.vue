@@ -417,7 +417,7 @@ export default Vue.extend({
 
     makeContentForFinancialAssistancePaymentSubmit(): {title: TranslateResult, body: TranslateResult} {
       const title = this.$t('caseFileActivity.activityList.title.PaymentSubmitted');
-      const body = `${this.item.details.paymentName}: $${this.item.details.totalAmount}`;
+      const body = `${this.item.details.paymentName}: $${Number(this.item.details.totalAmount).toFixed(2)}`;
       return { title, body };
     },
 
@@ -460,7 +460,7 @@ export default Vue.extend({
       let body = `${this.$t('caseFileActivity.activityList.body.paymentCompleted.name')}: ${this.item.details.paymentName}`;
       body += `\n${this.$t('caseFileActivity.activityList.body.paymentCompleted.modality')}: `;
       body += this.$t(`enums.PaymentModality.${EPaymentModalities[this.item.details.paymentModality as number]}`);
-      body += `\n${this.$t('caseFileActivity.activityList.body.paymentCompleted.amount')}: $${this.item.details.totalAmount}`;
+      body += `\n${this.$t('caseFileActivity.activityList.body.paymentCompleted.amount')}: $${Number(this.item.details.totalAmount).toFixed(2)}`;
       return { title, body };
     },
 
