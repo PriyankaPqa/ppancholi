@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="title">
-      <span class="rc-heading-5 fw-bold"> {{ massAction.entity.name }}</span>
+      <span class="rc-heading-5 fw-bold" data-test="mass_action_name"> {{ massAction.entity.name }}</span>
       <div class="actions">
-        <status-chip :show-loading="loadingChip" status-name="MassActionRunStatus" :status="massActionStatus" />
+        <status-chip :show-loading="loadingChip" data-test="mass_action_status" status-name="MassActionRunStatus" :status="massActionStatus" />
         <div>
           <v-btn v-if="showEditIcon" class="ml-2" icon data-test="edit" @click="$emit('edit')">
             <v-icon size="24" color="grey darken-2">
