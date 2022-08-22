@@ -124,7 +124,6 @@ export default mixins(massActions).extend({
           level: 'level6',
           roles: null,
           group: MassActionGroup.Group5,
-          feature: FeatureKeys.MassActionCorrection,
           secondaryButton: 'mass_action.card.action.download_template',
           showSecondaryButton: true,
           secondaryButtonIsMenu: true,

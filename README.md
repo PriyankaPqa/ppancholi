@@ -32,9 +32,9 @@ For more information about their concepts: https://nx.dev/structure/applications
 | Actions / Package      |           benef-app           | emis-app                      | registration-lib                 | component-lib                 | entities-lib                 |
 |------------------------|:-----------------------------:|-------------------------------|----------------------------------|-------------------------------|------------------------------|
 | Run development server |  ```yarn benef-app:serve```   | ```yarn emis-app:serve```     | NA                               | NA                            | NA                           |
-| Test the code          |   ```yarn benef-app:test```   | ```yarn benef-app:test```     | ```yarn registration-lib:test``` | ```yarn component-lib:test``` | ```yarn entities-lib:test``` | 
-| Lint                   |   ```yarn benef-app:lint```   | ```yarn benef-app:lint```     | ```yarn registration-lib:lint``` | ```yarn component-lib:lint``` | ```yarn entities-lib:lint``` | 
-| Sync Lokalise          | ```yarn benef-app:lokalise``` | ```yarn benef-app:lokalise``` | NA                               | NA                            | NA                           | 
+| Test the code          |   ```yarn benef-app:test```   | ```yarn emis-app:test```     | ```yarn registration-lib:test``` | ```yarn component-lib:test``` | ```yarn entities-lib:test``` | 
+| Lint                   |   ```yarn benef-app:lint```   | ```yarn emis-app:lint```     | ```yarn registration-lib:lint``` | ```yarn component-lib:lint``` | ```yarn entities-lib:lint``` | 
+| Sync Lokalise          | ```yarn benef-app:lokalise``` | ```yarn emis-app:lokalise``` | NA                               | NA                            | NA                           | 
 
 NA: Not applicable
 

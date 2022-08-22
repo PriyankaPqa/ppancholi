@@ -98,7 +98,6 @@ describe('MassActionsHome.vue', () => {
             level: 'level6',
             roles: null,
             group: 5,
-            feature: FeatureKeys.MassActionCorrection,
             secondaryButton: 'mass_action.card.action.download_template',
             showSecondaryButton: true,
             secondaryButtonIsMenu: true,

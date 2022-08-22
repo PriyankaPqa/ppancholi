@@ -4,7 +4,6 @@ import { IEntity, IEntityCombined } from '../base';
 
 export enum FeatureKeys {
   AddressAutoFill = 'AddressAutoFill',
-  MassActionCorrection = 'massAction.correctData',
   TeamImprovements = 'teamsImprovements',
   Assessments = 'Assessments',
   BotProtection = 'BotProtection',

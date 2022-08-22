@@ -112,7 +112,6 @@ export default mixins(massActions).extend({
               to: routes.massActions.dataCorrection.home.name,
               exact: false,
               level: 'level6',
-              feature: FeatureKeys.MassActionCorrection,
             },
           ],
         },

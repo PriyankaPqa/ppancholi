@@ -89,7 +89,6 @@ describe('MassActionsLayout.vue', () => {
                 to: routes.massActions.dataCorrection.home.name,
                 exact: false,
                 level: 'level6',
-                feature: FeatureKeys.MassActionCorrection,
               },
             ],
           },
