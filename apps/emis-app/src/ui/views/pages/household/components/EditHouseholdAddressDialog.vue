@@ -7,7 +7,7 @@
       :submit-action-label="$t('common.save')"
       :persistent="true"
       :max-width="750"
-      :submit-button-disabled="failed || !hasChanged"
+      :submit-button-disabled="failed || !hasChanged || submitOnGoing"
       @cancel="cancel()"
       @close="close()"
       @submit="submit()">
@@ -76,6 +76,7 @@ export default Vue.extend({
       address: null as IAddress,
       noFixedHome: false,
       noFixedHomeDetails: '',
+      submitOnGoing: false,
     };
   },
 
@@ -129,10 +130,12 @@ export default Vue.extend({
     async submit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
+        this.submitOnGoing = true;
         const householdId = this.householdCreate.id;
         const res = this.noFixedHome
           ? await this.updateNoFixedHomeAddress(householdId, this.noFixedHomeDetails)
           : await this.updateHomeAddress(householdId, this.address);
+        this.submitOnGoing = false;
         if (res) {
           this.$toasted.global.success(this.$t('household.profile.edit.address.success'));
           this.close();
