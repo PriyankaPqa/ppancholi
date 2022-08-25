@@ -609,7 +609,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       details: {
         paymentModality: EPaymentModalities.DirectDeposit,
         paymentName: 'mock payment',
-        totalAmount: '100',
+        totalAmount: '5115.20',
       },
     },
     {

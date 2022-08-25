@@ -746,7 +746,8 @@ describe('CaseFileActivityListItem.vue', () => {
           await wrapper.setProps({
             item,
           });
-          const body = `${item.details.paymentName}: $${Number(item.details.totalAmount).toFixed(2)}`;
+          const amount = wrapper.vm.$formatCurrency(item.details.totalAmount);
+          const body = `${item.details.paymentName}: ${amount}`;
           expect(wrapper.vm.makeContentForFinancialAssistancePaymentSubmit()).toEqual({
             title: 'caseFileActivity.activityList.title.PaymentSubmitted',
             body,
@@ -828,7 +829,7 @@ describe('CaseFileActivityListItem.vue', () => {
 
           let body = 'caseFileActivity.activityList.body.paymentCompleted.name: mock payment';
           body += '\ncaseFileActivity.activityList.body.paymentCompleted.modality: enums.PaymentModality.DirectDeposit';
-          body += '\ncaseFileActivity.activityList.body.paymentCompleted.amount: $100.00';
+          body += '\ncaseFileActivity.activityList.body.paymentCompleted.amount: $5,115.20';
 
           expect(wrapper.vm.makeContentForFinancialAssistancePaymentCompleted()).toEqual({
             title: 'caseFileActivity.activityList.title.PaymentCompleted',
