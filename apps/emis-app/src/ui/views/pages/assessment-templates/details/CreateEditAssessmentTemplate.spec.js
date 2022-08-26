@@ -93,6 +93,15 @@ describe('CreateEditAssessmentTemplate', () => {
         expect(storage.assessmentTemplate.actions.update).toHaveBeenCalledTimes(1);
       });
 
+      test('submit calls the fillEmptyMultilingualAttributes method', async () => {
+        // eslint-disable-next-line no-underscore-dangle
+        await mountWrapper();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.assessmentForm.fillEmptyMultilingualAttributes = jest.fn();
+        await wrapper.vm.submit();
+        expect(wrapper.vm.assessmentForm.fillEmptyMultilingualAttributes).toHaveBeenCalled();
+      });
+
       test('after submitting, the user is redirected to the detail page', async () => {
         await mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);

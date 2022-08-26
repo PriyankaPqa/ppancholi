@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import {
-  IAssessmentBaseEntity, AssessmentTemplateEntity, AssessmentFormEntity, IAssessmentFormEntity, PublishStatus, AssessmentFrequencyType, IAssessmentFormMetadata,
+  AssessmentBaseEntity, AssessmentTemplateEntity, AssessmentFormEntity, IAssessmentFormEntity, PublishStatus, AssessmentFrequencyType, IAssessmentFormMetadata,
 } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import routes from '@/constants/routes';
@@ -20,7 +20,7 @@ export default Vue.extend({
   data() {
     return {
       assessmentTemplateLoading: true,
-      assessmentTemplate: null as IAssessmentBaseEntity,
+      assessmentTemplate: null as AssessmentBaseEntity,
       program: null as IProgramEntity,
       Status,
       PublishStatus,
@@ -38,7 +38,7 @@ export default Vue.extend({
     },
 
     assessmentForm(): IAssessmentFormEntity {
-      return this.isFormMode ? this.assessmentTemplate as IAssessmentFormEntity : null;
+      return this.isFormMode ? this.assessmentTemplate as AssessmentFormEntity : null;
     },
 
     assessmentFormMetadata(): IAssessmentFormMetadata {

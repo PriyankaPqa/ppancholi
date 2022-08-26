@@ -143,7 +143,7 @@ import {
   VTextAreaWithValidation,
   VAutocompleteWithValidation,
 } from '@libs/component-lib/components';
-import { MAX_LENGTH_MD, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import {
   AssessmentBaseEntity, IAssessmentBaseEntity, IAssessmentFormEntity, PublishStatus, AssessmentTemplateEntity, AssessmentFormEntity,
   AssessmentFrequencyType,
@@ -228,10 +228,10 @@ export default Vue.extend({
           customValidator: { isValid: this.isNameUnique, messageKey: 'validations.alreadyExists' },
         },
         description: {
-          max: MAX_LENGTH_XL,
+          max: MAX_LENGTH_LG,
         },
         messageIfUnavailable: {
-          max: MAX_LENGTH_XL,
+          max: MAX_LENGTH_LG,
         },
         frequency: {
           required: this.isFormMode,

@@ -15,11 +15,11 @@ export class AssessmentFormsService extends DomainBaseService<IAssessmentFormEnt
   }
 
   async create(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity> {
-    return this.http.post<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}`, item), item);
+    return this.http.post<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}`, item), item, { globalHandler: false });
   }
 
   async update(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity> {
-    return this.http.patch<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}/edit`, item), item);
+    return this.http.patch<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}/edit`, item), item, { globalHandler: false });
   }
 
   async search(params: IAzureSearchParams, searchEndpoint: string = null):

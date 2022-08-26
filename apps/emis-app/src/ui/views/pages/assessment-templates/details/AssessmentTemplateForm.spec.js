@@ -6,7 +6,7 @@ import {
   mockAssessmentFormEntity, mockAssessmentTemplateEntity, PublishStatus, AssessmentFormEntity, AssessmentTemplateEntity,
 } from '@libs/entities-lib/assessment-template';
 import { mockProgramEntities } from '@libs/entities-lib/program';
-import { MAX_LENGTH_MD, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import Component from './AssessmentTemplateForm.vue';
 
 const localVue = createLocalVue();
@@ -68,10 +68,10 @@ describe('AssessmentTemplateForm.vue', () => {
             customValidator: { isValid: wrapper.vm.isNameUnique, messageKey: 'validations.alreadyExists' },
           },
           description: {
-            max: MAX_LENGTH_XL,
+            max: MAX_LENGTH_LG,
           },
           messageIfUnavailable: {
-            max: MAX_LENGTH_XL,
+            max: MAX_LENGTH_LG,
           },
           frequency: {
             required: wrapper.vm.isFormMode,

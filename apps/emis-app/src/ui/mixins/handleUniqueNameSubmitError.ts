@@ -10,6 +10,7 @@ export default Vue.extend({
   data() {
     return {
       isNameUnique: false,
+      uniqueNameErrorCode: 'errors.an-entity-with-this-name-already-exists',
     };
   },
 
@@ -22,7 +23,7 @@ export default Vue.extend({
         errorData.forEach((error) => {
           // Used to display a validation error inside the form when an entity name is not unique, instead of the toaster that is displayed for global errors
           // The call should not use the global error handler
-          if (error.code === 'errors.an-entity-with-this-name-already-exists') {
+          if (error.code === this.uniqueNameErrorCode) {
             this.isNameUnique = false;
             setTimeout(() => {
               helpers.scrollToFirstError('scrollAnchor');

@@ -47,7 +47,11 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    await helpers.confirmBeforeLeaving(this, (this.$refs.form as VForm).flags.dirty, next);
+    if (!this.dataSaved) {
+      await helpers.confirmBeforeLeaving(this, (this.$refs.form as VForm).flags.dirty, next);
+    } else {
+      next();
+    }
   },
 
   data() {
@@ -55,6 +59,7 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
       loading: false,
       error: false,
       isNameUnique: true,
+      dataSaved: false,
     };
   },
 
@@ -72,6 +77,8 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
 
   async created() {
     await this.loadDetails();
+    this.uniqueNameErrorCode = this.isFormMode
+      ? 'errors.an-assessment-form-with-this-name-already-exists' : 'errors.an-assessment-template-with-this-name-already-exists';
   },
 
   methods: {
@@ -82,6 +89,7 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
     },
 
     async submit() {
+      this.assessmentTemplate.fillEmptyMultilingualAttributes();
       const isValid = await (this.$refs.form as VForm).validate();
 
       if (isValid) {
@@ -102,6 +110,7 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
           }
           if (assessmentTemplate) {
             this.$toasted.global.success(this.$t(this.isEditMode ? 'assessmentTemplate.edit.success' : 'assessmentTemplate.create.success'));
+            this.dataSaved = true;
             this.$router.replace({ name: this.baseRoute.details.name, params: { assessmentTemplateId: assessmentTemplate.id } });
           }
         } catch (e) {
