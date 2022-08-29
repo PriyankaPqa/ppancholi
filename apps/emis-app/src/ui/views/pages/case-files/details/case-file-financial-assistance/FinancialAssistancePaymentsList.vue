@@ -53,7 +53,7 @@
         <v-icon v-if="canViewHistory(item)" data-test="history-link" class="mr-2" @click="showApprovalDialog(item)">
           mdi-history
         </v-icon>
-        <status-chip status-name="ApprovalStatus" :status="item.entity.approvalStatus" />
+        <status-chip :data-test="`approval_status_${item.entity.id}`" status-name="ApprovalStatus" :status="item.entity.approvalStatus" />
       </template>
 
       <template #[`item.edit`]="{ item }">

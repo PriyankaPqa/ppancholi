@@ -53,7 +53,7 @@
         </v-icon>
         <router-link
           class="rc-link14 font-weight-bold px-1"
-          data-test="caseFileDetail-link"
+          :data-test="`caseFileDetail-link_${caseFile.entity.caseFileNumber}`"
           :to="getCaseFileRoute(caseFile)">
           {{ caseFile.entity.caseFileNumber }}
         </router-link>
@@ -71,7 +71,7 @@
       <router-link
         v-if="caseFile.metadata"
         class="rc-link14"
-        data-test="beneficiaryName-link"
+        :data-test="`beneficiaryName-link_${getBeneficiaryName(caseFile)}`"
         :to="getHouseholdProfileRoute(caseFile)">
         {{ getBeneficiaryName(caseFile) }}
       </router-link>
