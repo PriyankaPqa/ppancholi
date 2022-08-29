@@ -236,6 +236,31 @@ describe('TeamMembersTable.vue', () => {
         expect(wrapper.vm.computedTeamMembers.map((x) => x.entity.id)).toEqual([]);
       });
     });
+
+    describe('caseFileCount', () => {
+      it('returns the right assigned case file count object', async () => {
+        const caseFileCount = {
+          teamId: 'abc', openCaseFileCount: 10, closedCaseFileCount: 2, inactiveCaseFileCount: 3, allCaseFileCount: 15,
+        };
+
+        await mountWrapper(false, 6, {
+          computed: {
+            computedTeamMembers() {
+              return [{
+                ...mockCombinedUserAccount({ id: 'guid-member-1' }),
+                isPrimaryContact: true,
+                metadata: {
+                  ...userAccounts[0].metadata,
+                  assignedCaseFileCountByTeam: [caseFileCount],
+                },
+              }];
+            },
+          },
+        });
+
+        expect(wrapper.vm.caseFileCount('guid-member-1')).toEqual(caseFileCount);
+      });
+    });
   });
 
   describe('Methods', () => {

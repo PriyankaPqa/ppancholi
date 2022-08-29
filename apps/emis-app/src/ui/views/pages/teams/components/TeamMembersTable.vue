@@ -36,7 +36,7 @@
       :items-per-page="Math.max(computedTeamMembers.length, 1)"
       @update:sort-by="sortBy = $event"
       @update:sort-desc="sortDesc = $event">
-      <template #item.metadata.displayName="{ item }">
+      <template #[`item.metadata.displayName`]="{ item }">
         <v-icon v-if="item.isPrimaryContact" data-test="primary_icon" size="18" color="red">
           mdi-account
         </v-icon>
@@ -53,27 +53,27 @@
         {{ getRole(item) }}
       </template>
 
-      <template #item.metadata.phoneNumber="{ item }">
+      <template #[`item.metadata.phoneNumber`]="{ item }">
         <rc-phone-display :value="item.metadata.phoneNumber" />
       </template>
 
-      <template #item.metadata.teamCount="{ item }">
+      <template #[`item.metadata.teamCount`]="{ item }">
         {{ item.metadata.teamCount || '0' }}
       </template>
 
-      <template #item.metadata.caseFilesCount="{ item }">
-        {{ item.metadata.caseFilesCount || '0' }}
+      <template #[`item.caseFileCount`]="{ item }">
+        {{ $hasFeature(FeatureKeys.TeamImprovements)? caseFileCount(item.entity.id).allCaseFileCount : item.metadata.caseFilesCount || '0' }}
       </template>
 
-      <template #item.metadata.openCaseFilesCount="{ item }">
-        {{ item.metadata.openCaseFilesCount || '0' }}
+      <template #[`item.openCaseFileCount`]="{ item }">
+        {{ $hasFeature(FeatureKeys.TeamImprovements)? caseFileCount(item.entity.id).openCaseFileCount : item.metadata.openCaseFilesCount || '0' }}
       </template>
 
-      <template #item.metadata.inactiveCaseFilesCount="{ item }">
-        {{ item.metadata.inactiveCaseFilesCount || '0' }}
+      <template #[`item.inactiveCaseFileCount`]="{ item }">
+        {{ $hasFeature(FeatureKeys.TeamImprovements)? caseFileCount(item.entity.id).inactiveCaseFileCount : item.metadata.inactiveCaseFilesCount || '0' }}
       </template>
 
-      <template #item.delete="{ item }">
+      <template #[`item.delete`]="{ item }">
         <v-btn
           v-if="showDeleteIcon(item)"
           icon
@@ -134,6 +134,8 @@ import { ITeamCombined, ITeamMemberAsUser } from '@libs/entities-lib/team';
 import helpers from '@/ui/helpers/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IAssignedCaseFileCountByTeam } from '@libs/entities-lib/user-account';
 
 export default Vue.extend({
   name: 'TeamMembersTable',
@@ -202,6 +204,7 @@ export default Vue.extend({
       removeLoading: false,
       i18n: this.$i18n,
       loading: false,
+      FeatureKeys,
     };
   },
 
@@ -249,7 +252,7 @@ export default Vue.extend({
           class: 'team_member_header',
           filterable: false,
           sortable: true,
-          value: 'metadata.caseFilesCount',
+          value: 'caseFileCount',
           width: '20px',
         },
         {
@@ -257,7 +260,7 @@ export default Vue.extend({
           class: 'team_member_header',
           filterable: false,
           sortable: true,
-          value: 'metadata.openCaseFilesCount',
+          value: 'openCaseFileCount',
           width: '20px',
         },
         {
@@ -265,7 +268,7 @@ export default Vue.extend({
           class: 'team_member_header',
           filterable: false,
           sortable: true,
-          value: 'metadata.inactiveCaseFilesCount',
+          value: 'inactiveCaseFileCount',
           width: '20px',
         },
         {
@@ -296,6 +299,16 @@ export default Vue.extend({
 
     team(): ITeamCombined {
       return this.$storage.team.getters.get(this.teamId);
+    },
+
+    caseFileCount(): (id: string) => IAssignedCaseFileCountByTeam {
+      return (id) => {
+        const memberAssignedCaseFiles = this.computedTeamMembers.find((m) => m.entity.id === id)?.metadata?.assignedCaseFileCountByTeam;
+        return memberAssignedCaseFiles?.find((t:IAssignedCaseFileCountByTeam) => t.teamId === this.teamId)
+        || {
+          openCaseFileCount: 0, closedCaseFileCount: 0, inactiveCaseFileCount: 0, allCaseFileCount: 0, teamId: '',
+        };
+      };
     },
 
   },

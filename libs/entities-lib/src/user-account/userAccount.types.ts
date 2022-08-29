@@ -47,6 +47,14 @@ export interface IUserAccountTeam {
   events: Array<IUserAccountTeamEvent>;
 }
 
+export interface IAssignedCaseFileCountByTeam {
+  teamId: string;
+  openCaseFileCount: number;
+  closedCaseFileCount: number;
+  inactiveCaseFileCount: number;
+  allCaseFileCount: number;
+}
+
 export interface IUserAccountEntity extends IEntity {
   filters?: Array<IFilter>;
   roles?: Array<IListOption>;
@@ -70,6 +78,7 @@ export interface IUserAccountMetadata extends IEntity {
   givenName?: string;
   surname?: string;
   userPrincipalName?: string;
+  assignedCaseFileCountByTeam: IAssignedCaseFileCountByTeam[]
 }
 
 export type IUserAccountCombined = IEntityCombined<IUserAccountEntity, IUserAccountMetadata>

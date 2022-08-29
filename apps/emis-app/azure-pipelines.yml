@@ -7,7 +7,7 @@ trigger:
     - 'apps/emis-app/*'
 
 pool:
-  name: 'self-hosted-ubuntu-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
 - group: Build-Defaults

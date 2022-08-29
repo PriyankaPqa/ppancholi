@@ -68,6 +68,15 @@ export const mockUserAccountMetadata = (force?: Partial<IUserAccountMetadata>): 
   givenName: 'Ja',
   surname: 'JJ',
   userPrincipalName: 'Jane Smith',
+  assignedCaseFileCountByTeam: [
+    {
+      teamId: 'team-mock-id',
+      allCaseFileCount: 2,
+      openCaseFileCount: 1,
+      closedCaseFileCount: 1,
+      inactiveCaseFileCount: 0,
+    },
+  ],
   ...force,
 });
 
