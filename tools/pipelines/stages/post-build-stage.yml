@@ -12,7 +12,7 @@ stages:
     jobs:
       - job: 'Test'
         strategy:
-          parallel: 2
+          parallel: 3
         displayName: 'Test affected packages'
         steps:
           - template: '../steps/cache-install-npm.yml'
