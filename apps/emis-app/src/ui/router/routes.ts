@@ -19,6 +19,9 @@ const AssessmentTemplateDetails = () => import(/* webpackChunkName: "assessments
 const ApprovalsLayout = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/layout/ApprovalsLayout.vue');
 const ApprovalsTemplates = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/templates/ApprovalsTemplates.vue');
 const ApprovalsRequest = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/requests/ApprovalsRequest.vue');
+const ApprovalsTemplatesCreateEdit = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/create-edit/CreateEditApprovals.vue');
+const ApprovalsTableCreateEdit = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/create-edit/CreateEditApprovals.vue');
+const ApprovalsTablesTable = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/tables/ApprovalTablesTable.vue');
 
 const CaseFileLayout = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/layout/CaseFileLayout.vue');
 const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/home/CaseFileHome.vue');
@@ -189,10 +192,16 @@ export const routes: Array<RouteConfig> = [
             },
             children: [
               {
-                path: Routes.approvals.templates.path,
-                name: Routes.approvals.templates.name,
+                path: Routes.approvals.templates.home.path,
+                name: Routes.approvals.templates.home.name,
                 component: ApprovalsTemplates,
                 meta: { level: 'level6' },
+              },
+              {
+                path: Routes.approvals.templates.create.path,
+                name: Routes.approvals.templates.create.name,
+                component: ApprovalsTemplatesCreateEdit,
+                meta: { roles: ['level6'] },
               },
               {
                 path: Routes.approvals.request.path,
@@ -446,100 +455,123 @@ export const routes: Array<RouteConfig> = [
                 component: EventDetails,
                 meta: { level: 'level4' },
                 props: true,
-                children: [{
-                  path: Routes.events.summary.path,
-                  name: Routes.events.summary.name,
-                  component: EventSummary,
-                  meta: { level: 'level4' },
-                  props: true,
-                }, {
-                  path: Routes.programs.home.path,
-                  name: Routes.programs.home.name,
-                  component: ProgramsHome,
-                  meta: { level: 'level6' },
-                  props: true,
-                }, {
-                  path: Routes.programs.create.path,
-                  name: Routes.programs.create.name,
-                  component: CreateEditProgram,
-                  meta: { level: 'level6' },
-                  props: true,
-                }, {
-                  path: Routes.programs.edit.path,
-                  name: Routes.programs.edit.name,
-                  component: CreateEditProgram,
-                  meta: { level: 'level6' },
-                  props: true,
-                }, {
-                  path: Routes.programs.details.path,
-                  name: Routes.programs.details.name,
-                  component: ProgramDetails,
-                  meta: { level: 'level6' },
-                  props: true,
-                }, {
-                  path: Routes.events.financialAssistance.home.path,
-                  name: Routes.events.financialAssistance.home.name,
-                  component: EventFinancialAssistanceHome,
-                  meta: { level: 'level6' },
-                  props: true,
-                }, {
-                  path: Routes.events.financialAssistance.create.path,
-                  name: Routes.events.financialAssistance.create.name,
-                  component: CreateEditFinancialAssistance,
-                  meta: { level: 'level6' },
-                  props: true,
-                }, {
-                  path: Routes.events.financialAssistance.edit.path,
-                  name: Routes.events.financialAssistance.edit.name,
-                  component: CreateEditFinancialAssistance,
-                  meta: { level: 'level6' },
-                  props: true,
-                }, {
-                  path: Routes.events.financialAssistance.details.path,
-                  name: Routes.events.financialAssistance.details.name,
-                  component: FinancialAssistanceDetails,
-                  meta: { level: 'level6' },
-                  props: true,
-                },
-                {
-                  path: Routes.events.assessments.home.path,
-                  name: Routes.events.assessments.home.name,
-                  component: AssessmentTemplatesHome,
-                  meta: {
-                    level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                children: [
+                  {
+                    path: Routes.events.summary.path,
+                    name: Routes.events.summary.name,
+                    component: EventSummary,
+                    meta: { level: 'level4' },
+                    props: true,
                   },
-                  props: true,
-                },
-                {
-                  path: Routes.events.assessments.create.path,
-                  name: Routes.events.assessments.create.name,
-                  component: AssessmentTemplatesEdit,
-                  meta: {
-                    level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                  {
+                    path: Routes.programs.home.path,
+                    name: Routes.programs.home.name,
+                    component: ProgramsHome,
+                    meta: { level: 'level6' },
+                    props: true,
                   },
-                  props: true,
-                  children: [],
-                },
-                {
-                  path: Routes.events.assessments.edit.path,
-                  name: Routes.events.assessments.edit.name,
-                  component: AssessmentTemplatesEdit,
-                  meta: {
-                    level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                  {
+                    path: Routes.programs.create.path,
+                    name: Routes.programs.create.name,
+                    component: CreateEditProgram,
+                    meta: { level: 'level6' },
+                    props: true,
                   },
-                  props: true,
-                  children: [],
-                },
-                {
-                  path: Routes.events.assessments.details.path,
-                  name: Routes.events.assessments.details.name,
-                  component: AssessmentTemplateDetails,
-                  meta: {
-                    level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                  {
+                    path: Routes.programs.edit.path,
+                    name: Routes.programs.edit.name,
+                    component: CreateEditProgram,
+                    meta: { level: 'level6' },
+                    props: true,
                   },
-                  props: true,
-                  children: [],
-                }],
+                  {
+                    path: Routes.programs.details.path,
+                    name: Routes.programs.details.name,
+                    component: ProgramDetails,
+                    meta: { level: 'level6' },
+                    props: true,
+                  },
+                  {
+                    path: Routes.events.financialAssistance.home.path,
+                    name: Routes.events.financialAssistance.home.name,
+                    component: EventFinancialAssistanceHome,
+                    meta: { level: 'level6' },
+                    props: true,
+                  },
+                  {
+                    path: Routes.events.financialAssistance.create.path,
+                    name: Routes.events.financialAssistance.create.name,
+                    component: CreateEditFinancialAssistance,
+                    meta: { level: 'level6' },
+                    props: true,
+                  },
+                  {
+                    path: Routes.events.financialAssistance.edit.path,
+                    name: Routes.events.financialAssistance.edit.name,
+                    component: CreateEditFinancialAssistance,
+                    meta: { level: 'level6' },
+                    props: true,
+                  },
+                  {
+                    path: Routes.events.financialAssistance.details.path,
+                    name: Routes.events.financialAssistance.details.name,
+                    component: FinancialAssistanceDetails,
+                    meta: { level: 'level6' },
+                    props: true,
+                  },
+                  {
+                    path: Routes.events.approvals.home.path,
+                    name: Routes.events.approvals.home.name,
+                    component: ApprovalsTablesTable,
+                    meta: { level: 'level6', feature: FeatureKeys.ApprovalsWithinEvent },
+                    props: true,
+                  },
+                  {
+                    path: Routes.events.approvals.create.path,
+                    name: Routes.events.approvals.create.name,
+                    component: ApprovalsTableCreateEdit,
+                    meta: { level: 'level6', feature: FeatureKeys.ApprovalsWithinEvent },
+                    props: true,
+                  },
+                  {
+                    path: Routes.events.assessments.home.path,
+                    name: Routes.events.assessments.home.name,
+                    component: AssessmentTemplatesHome,
+                    meta: {
+                      level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                    },
+                    props: true,
+                  },
+                  {
+                    path: Routes.events.assessments.create.path,
+                    name: Routes.events.assessments.create.name,
+                    component: AssessmentTemplatesEdit,
+                    meta: {
+                      level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                    },
+                    props: true,
+                    children: [],
+                  },
+                  {
+                    path: Routes.events.assessments.edit.path,
+                    name: Routes.events.assessments.edit.name,
+                    component: AssessmentTemplatesEdit,
+                    meta: {
+                      level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                    },
+                    props: true,
+                    children: [],
+                  },
+                  {
+                    path: Routes.events.assessments.details.path,
+                    name: Routes.events.assessments.details.name,
+                    component: AssessmentTemplateDetails,
+                    meta: {
+                      level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                    },
+                    props: true,
+                    children: [],
+                  }],
               },
             ],
           },

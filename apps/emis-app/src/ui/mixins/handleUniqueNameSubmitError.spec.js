@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import { mockHttpError, mockServerError } from '@libs/services-lib/http-client';
 
 const Component = {
   render() {},
@@ -16,7 +17,7 @@ describe('handleUniqueNameSubmitError.vue', () => {
     });
 
     test('isNameUnique', () => {
-      expect(wrapper.vm.isNameUnique).toEqual(false);
+      expect(wrapper.vm.isNameUnique).toEqual(true);
     });
   });
 
@@ -29,7 +30,7 @@ describe('handleUniqueNameSubmitError.vue', () => {
       });
 
       it('sets isNameUnique to false if this is the error in its argument', async () => {
-        await wrapper.vm.handleSubmitError([{ code: 'errors.an-entity-with-this-name-already-exists' }]);
+        await wrapper.vm.handleSubmitError(mockServerError([mockHttpError({ code: 'errors.an-entity-with-this-name-already-exists' })]));
         expect(wrapper.vm.isNameUnique).toBeFalsy();
       });
 

@@ -6,6 +6,7 @@ export enum FeatureKeys {
   AddressAutoFill = 'AddressAutoFill',
   TeamImprovements = 'teamsImprovements',
   Assessments = 'Assessments',
+  ApprovalsWithinEvent = 'Approvals',
   BotProtection = 'BotProtection',
 }
 

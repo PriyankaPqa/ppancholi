@@ -207,7 +207,7 @@ export default Vue.extend({
     },
 
     tabs(): Array<INavigationTab> {
-      return [{
+      const tabs = [{
         text: this.$t('eventDetail.menu_summary'),
         test: 'event-summary',
         icon: '',
@@ -224,13 +224,24 @@ export default Vue.extend({
         exact: false,
       }, {
         text: this.$t('eventDetail.menu_financial'),
-        test: 'event-financial-assitance',
+        test: 'event-financial-assistance',
         icon: '',
         disabled: false,
         to: routes.events.financialAssistance.home.name,
         level: 'level6',
         exact: false,
-      }, {
+      },
+      {
+        text: this.$t('eventDetail.menu_approvals'),
+        test: 'event-approvals',
+        icon: '',
+        disabled: false,
+        to: routes.events.approvals.home.name,
+        level: 'level6',
+        feature: FeatureKeys.ApprovalsWithinEvent,
+        exact: false,
+      },
+      {
         text: this.$t('eventDetail.menu_assessments'),
         test: 'event-assessments',
         icon: '',
@@ -240,6 +251,8 @@ export default Vue.extend({
         feature: FeatureKeys.Assessments,
         exact: false,
       }];
+
+      return tabs;
     },
 
     statusHistory(): Array<Record<string, string>> {

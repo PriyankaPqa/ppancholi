@@ -24,9 +24,14 @@ import { EventsMetadataService } from '@libs/services-lib/events/metadata';
 import { FinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
 import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import { MassActionService } from '@libs/services-lib/mass-actions/entity';
+
+import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
+import { ApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalTables';
 import { IProvider } from './provider.types';
 
 export const provider = (): IProvider => ({
+  approvalTables: new ApprovalTablesService(httpClient),
+  approvalTablesMetadata: new ApprovalTablesMetadataService(httpClient),
   appUsers: new AppUsersService(httpClient),
   caseFiles: new CaseFilesService(httpClient),
   caseFilesMetadata: new CaseFilesMetadataService(httpClient),

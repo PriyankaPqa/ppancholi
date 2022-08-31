@@ -148,7 +148,7 @@ export const mockSubItem = (): IOptionSubItem => ({
 // eslint-disable-next-line max-lines-per-function
 export const mockRoles = (): IOptionItem[] => [
   {
-    name: { translation: { en: 'Level  4', fr: 'Niveau 4' } },
+    name: { translation: { en: 'Level 4', fr: 'Niveau 4' } },
     description: null,
     orderRank: 4,
     isOther: false,

@@ -68,22 +68,31 @@ import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financi
 import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
 import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
 import { FinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
+
 import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import { SignalR } from '@/ui/plugins/signal-r';
+
 import { AssessmentTemplatesService } from '@libs/services-lib/assessment-template/entity';
 import { AssessmentTemplatesMetadataService } from '@libs/services-lib/assessment-template/metadata';
+
+import { ApprovalTableEntityModule } from '@/store/modules/approval-table/approvalTableEntity';
+import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
+import { ApprovalTableMetadataModule } from '@/store/modules/approval-table/approvalTableMetadata';
+import { ApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalTables';
 import { AssessmentFormsService } from '@libs/services-lib/assessment-form/entity';
 import { AssessmentFormsMetadataService } from '@libs/services-lib/assessment-form/metadata';
 import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
 import { ProgramMetadataModule } from './modules/program/programMetadata';
-import { IRootState } from './store.types';
+
 import { UIStateModule } from './modules/ui-state/uiState';
 import { AssessmentTemplateEntityModule } from './modules/assessment-template/assessmentTemplateEntity';
 import { AssessmentTemplateMetadataModule } from './modules/assessment-template/assessmentTemplateMetadata';
 import { AssessmentFormEntityModule } from './modules/assessment-form/assessmentFormEntity';
 import { AssessmentFormMetadataModule } from './modules/assessment-form/assessmentFormMetadata';
+
+import { IRootState } from './store.types';
 
 Vue.use(Vuex);
 
@@ -239,10 +248,21 @@ const store: StoreOptions<IRootState> = {
       SignalR,
     ).getModule(),
 
+    [vuexModule.APPROVALS_TABLE_ENTITIES]: new ApprovalTableEntityModule(
+      new ApprovalTablesService(httpClient),
+      SignalR,
+    ).getModule(),
+
+    [vuexModule.APPROVALS_TABLE_METADATA]: new ApprovalTableMetadataModule(
+      new ApprovalTablesMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
+
     [vuexModule.ASSESSMENT_FORM_ENTITIES]: new AssessmentFormEntityModule(
       new AssessmentFormsService(httpClient),
       SignalR,
     ).getModule(),
+
     [vuexModule.ASSESSMENT_FORM_METADATA]: new AssessmentFormMetadataModule(
       new AssessmentFormsMetadataService(httpClient),
       SignalR,

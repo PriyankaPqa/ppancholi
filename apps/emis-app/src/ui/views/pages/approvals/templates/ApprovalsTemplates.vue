@@ -1,6 +1,7 @@
 <template>
   <div class="pa-4">
     <rc-data-table
+      show-add-button
       data-test="approvals-table"
       :items="items"
       :count="count"
@@ -8,6 +9,7 @@
       :labels="labels"
       sort-by="status"
       :sort-desc="true"
+      @add-button="createTemplate()"
       @search="search" />
   </div>
 </template>
@@ -17,6 +19,7 @@ import Vue from 'vue';
 import { RcDataTable } from '@libs/component-lib/components';
 
 import { TranslateResult } from 'vue-i18n';
+import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'ApprovalsTable',
@@ -48,6 +51,9 @@ export default Vue.extend({
   methods: {
     search() {
       return false;
+    },
+    createTemplate() {
+      this.$router.push({ name: routes.approvals.templates.create.name });
     },
   },
 

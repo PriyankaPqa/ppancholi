@@ -4,6 +4,8 @@ import { IStorage as IUserStorage, IStorageMock as IUserStorageMock } from './us
 import { IStorage as IDashboardStorage, IStorageMock as IDashboardStorageMock } from './dashboard';
 import { IStorage as IOptionListStorage, IStorageMock as IOptionListStorageMock } from './optionList';
 import { IStorageMake as IFinancialAssistanceMakeStorage, IStorageMakeMock as IFinancialAssistanceMakeStorageMock } from './financial-assistance';
+import { IStorageMake as IApprovalTableMakeStorage, IStorageMakeMock as IApprovalTableMakeStorageMock } from './approval-table';
+
 import {
   IStorageMake as IUserAccountMakeStorage,
   IStorageMakeMock as IUserAccountMakeStorageMock,
@@ -100,6 +102,7 @@ export interface IStorage {
   tenantSettings: ITenantSettingsMakeStorage;
   uiState: IUIStateMakeStorage;
   assessmentTemplate: IAssessmentTemplateMakeStorage;
+  approvalTable: IApprovalTableMakeStorage;
   assessmentForm: IAssessmentFormMakeStorage;
 }
 
@@ -124,5 +127,6 @@ export interface IStorageMock {
   tenantSettings: ITenantSettingsMakeStorageMock;
   uiState: IUIStateMakeStorageMock;
   assessmentTemplate: IAssessmentTemplateMakeStorageMock;
+  approvalTable: IApprovalTableMakeStorageMock;
   assessmentForm: IAssessmentFormMakeStorageMock;
 }

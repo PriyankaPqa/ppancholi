@@ -1,3 +1,4 @@
+import { IServerError } from '@libs/shared-lib/types';
 import { IRestResponse, IHttpMock, IError } from './httpClient.types';
 
 export const mockIRestResponse = (data: unknown, statusCode = 200): IRestResponse<unknown> => ({
@@ -27,10 +28,24 @@ export const mockHttpErrorResponse = (data: unknown, statusCode: number) => ({
   },
 });
 
-export const mockHttpError = (): IError => ({
+export const mockHttpError = (force?: Partial<IError>): IError => ({
   status: 'status',
   code: 'code',
   title: 'title',
   detail: 'detail',
   meta: { meta: 'x' },
+  ...force,
+});
+
+export const mockServerError = (errors?: Array<IError>): IServerError => ({
+  name: '',
+  message: '',
+  request: { responseURL: '' },
+  response: {
+    data: {
+      errors: errors || [mockHttpError()],
+    },
+    status: '',
+    config: { data: '' },
+  },
 });

@@ -9,7 +9,6 @@ import { IEventsServiceMock } from './events.types';
 
 export const mockEventsService = (): IEventsServiceMock => ({
   ...mockDomainBaseService(mockEventEntities()),
-
   createEvent: jest.fn(() => mockEventEntity()),
   updateEvent: jest.fn(() => mockEventEntity()),
   toggleSelfRegistration: jest.fn(() => mockEventEntity()),

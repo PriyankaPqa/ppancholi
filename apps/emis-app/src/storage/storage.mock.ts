@@ -5,6 +5,7 @@ import { CaseFileStorageMock } from '@/storage/case-file/storage.mock';
 import { CaseNoteStorageMock } from '@/storage/case-note/storage.mock';
 import { TeamStorageMock } from '@/storage/team/storage.mock';
 import { MassActionStorageMock } from '@/storage/mass-action';
+import { ApprovalTableStorageMock } from '@/storage/approval-table';
 import { IStorageMock } from './storage.types';
 import { mockStorageUser } from './user';
 import { mockStorageDashboard } from './dashboard';
@@ -42,5 +43,6 @@ export const mockStorage = (): IStorageMock => ({
   tenantSettings: new TenantSettingsStorageMock().make(),
   uiState: new UIStateStorageMock().make(),
   assessmentTemplate: new AssessmentTemplateStorageMock().make(),
+  approvalTable: new ApprovalTableStorageMock().make(),
   assessmentForm: new AssessmentFormStorageMock().make(),
 });

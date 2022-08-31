@@ -31,5 +31,7 @@ export const TENANT_SETTINGS_ENTITIES = 'tenantSettingsEntities';
 export const UI_STATE = 'uiState';
 export const ASSESSMENT_TEMPLATE_ENTITIES = 'assessmentTemplateEntities';
 export const ASSESSMENT_TEMPLATE_METADATA = 'assessmentTemplateMetadata';
+export const APPROVALS_TABLE_ENTITIES = 'approvalsTableEntities';
+export const APPROVALS_TABLE_METADATA = 'approvalsTableMetadata';
 export const ASSESSMENT_FORM_ENTITIES = 'assessmentFormEntities';
 export const ASSESSMENT_FORM_METADATA = 'assessmentFormMetadata';

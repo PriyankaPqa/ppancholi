@@ -6,6 +6,7 @@ import { CaseFileStorage } from '@/storage/case-file/storage';
 import { EventStorage } from '@/storage/event/storage';
 import { FinancialAssistanceStorage } from '@/storage/financial-assistance/storage';
 import { MassActionStorage } from '@/storage/mass-action';
+import { ApprovalStorage } from '@/storage/approval-table';
 import { IStore, IState } from '../store/store.types';
 import { IStorage } from './storage.types';
 import { makeStorage as makeUserStorage } from './user';
@@ -61,6 +62,11 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     store,
     vuexModule.ASSESSMENT_TEMPLATE_ENTITIES,
     vuexModule.ASSESSMENT_TEMPLATE_METADATA,
+  ).make(),
+  approvalTable: new ApprovalStorage(
+    store,
+    vuexModule.APPROVALS_TABLE_ENTITIES,
+    vuexModule.APPROVALS_TABLE_METADATA,
   ).make(),
   assessmentForm: new AssessmentFormStorage(
     store,

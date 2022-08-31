@@ -189,7 +189,7 @@ describe('LeftMenu.vue', () => {
             ...mockUserStateLevel(6),
           },
         });
-        expect(wrapper.vm.approvalRedirection).toEqual(routes.approvals.templates.name);
+        expect(wrapper.vm.approvalRedirection).toEqual(routes.approvals.templates.home.name);
       });
 
       it('returns approvals request for a level 3 user', () => {

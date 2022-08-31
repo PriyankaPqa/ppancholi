@@ -32,3 +32,4 @@ export { default as RcCountrySelectWithValidation } from './atoms/RcCountrySelec
 export { default as RcNestedTable } from './organism/RcNestedTable/RcNestedTable.vue';
 export { default as RcTooltip } from './atoms/RcTooltip.vue';
 export { default as RcMenu } from './atoms/RcMenu.vue';
+export { default as RcItemAmount } from './atoms/RcItemAmount.vue';

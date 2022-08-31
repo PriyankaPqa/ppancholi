@@ -198,7 +198,7 @@ export default Vue.extend({
 
     approvalRedirection(): string {
       if (this.$hasLevel('level6')) {
-        return routes.approvals.templates.name;
+        return routes.approvals.templates.home.name;
       } if (this.$hasRole('level3') || this.$hasRole('level4')) {
         return routes.approvals.request.name;
       }

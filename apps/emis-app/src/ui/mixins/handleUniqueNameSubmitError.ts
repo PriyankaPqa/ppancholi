@@ -9,13 +9,14 @@ import helpers from '../helpers/helpers';
 export default Vue.extend({
   data() {
     return {
-      isNameUnique: false,
+      isNameUnique: true,
       uniqueNameErrorCode: 'errors.an-entity-with-this-name-already-exists',
     };
   },
 
   methods: {
     handleSubmitError(e: IServerError | unknown) {
+      console.log(this.uniqueNameErrorCode);
       const errorData = (e as IServerError).response?.data?.errors;
       if (!errorData || !Array.isArray(errorData)) {
         this.$reportToasted(this.$t('error.submit_error'), e);

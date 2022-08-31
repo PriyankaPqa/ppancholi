@@ -233,5 +233,4 @@ $url-rc-fr-logo: "../../public/img/logos/rc/rc-fr.svg";
   }
 }
 
-
 </style>

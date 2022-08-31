@@ -26,8 +26,12 @@ import { IEventsMetadataService } from '@libs/services-lib/events/metadata';
 import { IFinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
 import { ITenantSettingsService, ITenantSettingsServiceMock } from '@libs/services-lib/tenantSettings/entity';
 import { IErrorReportingService, IErrorReportingServiceMock } from '@libs/services-lib/error-reporting';
+import { IApprovalTablesService, IApprovalTablesServiceMock } from '@libs/services-lib/approval-tables/entity';
+import { IApprovalTablesMetadataService, IApprovalTablesMetadataServiceMock } from '@libs/services-lib/approval-tables/metadata/approvals.types';
 
 export interface IProvider {
+  approvalTables: IApprovalTablesService,
+  approvalTablesMetadata: IApprovalTablesMetadataService,
   appUsers: IAppUsersService,
   caseFiles: ICaseFilesService,
   caseFilesMetadata: ICaseFilesMetadataService,
@@ -56,6 +60,8 @@ export interface IProvider {
 }
 
 export interface IProviderMock {
+  approvalTables: IApprovalTablesServiceMock,
+  approvalTablesMetadata: IApprovalTablesMetadataServiceMock,
   appUsers: IAppUsersServiceMock,
   caseFiles: ICaseFilesServiceMock,
   caseFilesMetadata: ICaseFilesMetadataServiceMock,

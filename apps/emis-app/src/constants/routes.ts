@@ -29,8 +29,14 @@ const routes = {
       name: 'approvals.layout',
     },
     templates: {
-      path: 'templates',
-      name: 'approvals.templates',
+      home: {
+        path: 'templates',
+        name: 'approvals.templates',
+      },
+      create: {
+        path: 'templates/create',
+        name: 'approvals.templates.create',
+      },
     },
     request: {
       path: 'request',
@@ -158,6 +164,16 @@ const routes = {
       details: {
         path: 'financial-assistance/:faId',
         name: 'events.financialAssistance.details',
+      },
+    },
+    approvals: {
+      home: {
+        path: 'approvals',
+        name: 'events.approvals.home',
+      },
+      create: {
+        path: 'approvals/create',
+        name: 'events.approvals.create',
       },
     },
     assessments: {

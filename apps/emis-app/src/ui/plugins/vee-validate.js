@@ -132,8 +132,8 @@ extend('phoneRequired', {
 });
 
 extend('customValidator', {
-  params: ['isValid', 'messageKey'],
-  message: (_, values) => i18n.t(values.messageKey),
+  params: ['isValid', 'messageKey', 'injection'],
+  message: (_, values) => i18n.t(values.messageKey, values.injection),
   validate: (value, { isValid }) => isValid,
 });
 

@@ -8,7 +8,7 @@
         :class="{ 'fixed-menu': leftMenuFixed }"
         :title="leftMenuTitle"
         :subtitle="leftMenuSubtitle"
-        :tabs="navigationTabsFilteredForPermissions"
+        :tabs="navigationTabsFilteredForPermissionsAndFeatures"
         :hide-dividers="hideDividers"
         :hide-back-button="hideBackButton"
         :group-mode="groupMode"
@@ -134,8 +134,10 @@ export default Vue.extend({
     },
   },
   computed: {
-    navigationTabsFilteredForPermissions(): Array<INavigationTab> {
-      return this.navigationTabs.filter((tab: INavigationTab) => this.$hasLevel(tab.level) || !tab.level);
+    navigationTabsFilteredForPermissionsAndFeatures(): Array<INavigationTab> {
+      return this.navigationTabs
+        .filter((tab: INavigationTab) => (this.$hasLevel(tab.level) || !tab.level))
+        .filter((tab: INavigationTab) => !tab.feature || (tab.feature && this.$hasFeature(tab.feature)));
     },
   },
   methods: {

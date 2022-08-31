@@ -6,6 +6,7 @@ import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../EventDetails.vue';
 
 const localVue = createLocalVue();
@@ -373,12 +374,22 @@ describe('EventDetails.vue', () => {
             exact: false,
           }, {
             text: 'eventDetail.menu_financial',
-            test: 'event-financial-assitance',
+            test: 'event-financial-assistance',
             icon: '',
             disabled: false,
             to: routes.events.financialAssistance.home.name,
             level: 'level6',
             exact: false,
+          },
+          {
+            text: 'eventDetail.menu_approvals',
+            test: 'event-approvals',
+            icon: '',
+            exact: false,
+            disabled: false,
+            feature: FeatureKeys.ApprovalsWithinEvent,
+            to: routes.events.approvals.home.name,
+            level: 'level6',
           }, {
             text: 'eventDetail.menu_assessments',
             test: 'event-assessments',
@@ -386,7 +397,7 @@ describe('EventDetails.vue', () => {
             disabled: false,
             to: routes.events.assessments.home.name,
             level: 'level6',
-            feature: 'Assessments',
+            feature: FeatureKeys.Assessments,
             exact: false,
           }],
         );
