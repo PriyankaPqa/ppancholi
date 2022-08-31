@@ -268,7 +268,12 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     tableData(): IAssessmentBaseCombined[] {
-      return (this.isFormMode ? this.$storage.assessmentForm : this.$storage.assessmentTemplate).getters.getByIds(this.searchResultIds,
+      if (this.isFormMode) {
+        return this.$storage.assessmentForm.getters.getByIds(this.searchResultIds,
+          { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.id } });
+      }
+
+      return this.$storage.assessmentTemplate.getters.getByIds(this.searchResultIds,
         { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 

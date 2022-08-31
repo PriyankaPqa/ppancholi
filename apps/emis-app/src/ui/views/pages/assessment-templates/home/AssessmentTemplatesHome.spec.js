@@ -102,6 +102,7 @@ describe('AssessmentTemplatesHome.vue', () => {
         expect(params[0]).toEqual(['abc']);
         expect(params[1].baseDate).toBeFalsy();
         expect(params[1].prependPinnedItems).toBeTruthy();
+        expect(params[1].parentId).toBeFalsy();
         expect(data.length).toBe(storage.assessmentTemplate.getters.getByIds().length);
       });
 
@@ -115,6 +116,7 @@ describe('AssessmentTemplatesHome.vue', () => {
         expect(params[0]).toEqual(['abc']);
         expect(params[1].baseDate).toBeFalsy();
         expect(params[1].prependPinnedItems).toBeTruthy();
+        expect(params[1].parentId).toEqual({ eventId: 'abc' });
         expect(data.length).toBe(storage.assessmentForm.getters.getByIds().length);
       });
     });

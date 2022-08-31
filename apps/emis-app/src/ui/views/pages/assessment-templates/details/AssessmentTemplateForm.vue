@@ -36,6 +36,18 @@
             </v-col>
           </v-row>
 
+          <v-row v-if="isFormMode">
+            <v-col cols="12">
+              <v-autocomplete-with-validation
+                v-model="localAssessment.programId"
+                :items="programsSorted"
+                :label="$t('assessmentTemplate.associate_program')"
+                :item-text="(item) => $m(item.name)"
+                :item-value="(item) => item.id"
+                data-test="assessmentTemplate__programSelect" />
+            </v-col>
+          </v-row>
+
           <v-row>
             <v-col cols="12">
               <v-text-area-with-validation
@@ -44,18 +56,6 @@
                 full-width
                 :label="$t('common.description')"
                 :rules="rules.description" />
-            </v-col>
-          </v-row>
-
-          <v-row v-if="isFormMode">
-            <v-col cols="12" md="6" lg="5">
-              <v-autocomplete-with-validation
-                v-model="localAssessment.programId"
-                :items="programsSorted"
-                :label="$t('assessmentTemplate.program')"
-                :item-text="(item) => $m(item.name)"
-                :item-value="(item) => item.id"
-                data-test="assessmentTemplate__programSelect" />
             </v-col>
           </v-row>
 
@@ -102,7 +102,7 @@
             <v-row>
               <v-col cols="12" class="d-flex justify-space-between align-center">
                 <div class="rc-body14 fw-bold">
-                  {{ $t('assessmentTemplate.frequency') }}
+                  {{ isFormMode ? $t('assessmentForm.frequency') : $t('assessmentTemplate.frequency') }}
                 </div>
                 <div class="d-flex">
                   <validation-provider v-slot="{ errors }" :rules="rules.frequency">
