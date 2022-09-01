@@ -13,7 +13,7 @@ parameters:
 stages:
 - ${{ if eq( variables['build.reason'], 'PullRequest') }}:
   - stage: 'Deploy_to_storage'
-    displayName: 'Feature branch deployment'
+    displayName: 'Deploy for testing'
     dependsOn: 'Build_Stage'
     condition: succeeded()
     pool:
@@ -152,7 +152,7 @@ stages:
 
 
   - stage: 'AcceptanceTest'
-    displayName: 'Acceptance Tests'
+    displayName: 'Acceptance Stage'
     dependsOn: 'Deploy_to_storage'
     condition: and(succeeded(), eq('${{ parameters.runAcceptanceStage }}', true))
     jobs:

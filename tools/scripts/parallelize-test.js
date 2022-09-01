@@ -14,10 +14,15 @@ const JOB_TOTAL_COUNT = parameters[2] || 2;
 // Identifies a particular slice. Should be 0-indexed, since System.JobPositionInPhase is 1-indexed we do minus 1
 const JOB_INDEX = (parameters[3] - 1) || 0;
 
+const unitTest = parameters[4] === 'unit';
+
+console.log('###############');
 console.log(`isPullRequest: ${isPullRequest}`);
 console.log(`applicationName: ${applicationName}`);
 console.log(`JOB_TOTAL_COUNT: ${JOB_TOTAL_COUNT}`);
 console.log(`JOB_INDEX: ${JOB_INDEX}`);
+console.log(`unitTest: ${unitTest}`);
+console.log('###############');
 
 if (isPullRequest === undefined || applicationName === undefined) {
   console.log(new Error('1st param should be isPullRequest. 2rd should be applicationName'));
@@ -29,9 +34,8 @@ if (isPullRequest === undefined || applicationName === undefined) {
  * @param affectedPackages {string[]}
  * @returns {string[]}
  */
-function getAffectedTestFiles(affectedPackages) {
+function getAffectedTestFiles(affectedPackages, globPattern) {
   let allFiles = [];
-  const globPattern = '*.{test,spec}.{js,ts}';
 
   console.log(`Affected packages: ${affectedPackages}`);
 
@@ -82,10 +86,20 @@ function getBlobPattern(files) {
 }
 
 const affectedPackages = getAffectedPackages(isPullRequest);
-const files = getAffectedTestFiles(affectedPackages);
-const globPattern = getBlobPattern(files);
 
-const script = `jest "${globPattern}" --coverage --coverageDirectory=coverage --runInBand --logHeapUsage`;
+// The assumption is that all true unit test will follow spec.ts, component tests will be spec.js
+const patternTestFiles = unitTest ? '*.spec.ts' : '*.{spec,test}.js';
+
+const files = getAffectedTestFiles(affectedPackages, patternTestFiles);
+
+if (files.length === 0) {
+  console.log(`No file matches for pattern ${patternTestFiles}`);
+  return;
+}
+
+const listOfFiles = getBlobPattern(files);
+
+const script = `jest "${listOfFiles}" --coverage --coverageDirectory=coverage --runInBand --logHeapUsage`;
 
 shellAsync(script)
   .then()

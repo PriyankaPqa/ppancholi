@@ -11,10 +11,10 @@ parameters:
 
 stages:
   - stage: 'Build_Stage'
-    displayName: 'Build'
+    displayName: 'Build Stage'
     jobs:
       - job: 'Build_Web_App'
-        displayName: 'Build WebApp'
+        displayName: 'Build application'
         steps:
           - template: '../steps/build-vue-steps.yml'
             parameters:

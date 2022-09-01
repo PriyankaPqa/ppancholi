@@ -7,40 +7,40 @@ parameters:
 
 stages:
   - stage: 'Post_Build_Stage'
-    displayName: 'Tests'
+    displayName: 'Commit Stage'
     condition: succeeded()
     jobs:
-      - job: 'Test'
-        strategy:
+      - template: '../jobs/commit-tests-jobs.yml'
+        parameters:
+          job: 'Unit_Test'
+          jobDisplayName: 'Unit tests'
+          scriptDisplayName: 'Run unit tests & Create coverage'
+          testKindParameter: 'unit'
+          packageFeed: ${{ parameters.packageFeed }}
+          nodeJsVersion: ${{ parameters.nodeJsVersion }}
+          disableCache: ${{ parameters.disableCache }}
+          isPullRequest: ${{parameters.isPullRequest}}
+          appName: ${{parameters.appName}}
+          parallel: 1
+
+      - template: '../jobs/commit-tests-jobs.yml'
+        parameters:
+          job: 'Component_Test'
+          jobDisplayName: 'UI components tests'
+          scriptDisplayName: 'Run tests & Create coverage'
+          testKindParameter: ''
+          packageFeed: ${{ parameters.packageFeed }}
+          nodeJsVersion: ${{ parameters.nodeJsVersion }}
+          disableCache: ${{ parameters.disableCache }}
+          isPullRequest: ${{parameters.isPullRequest}}
+          appName: ${{parameters.appName}}
           parallel: 3
-        displayName: 'Test affected packages'
-        steps:
-          - template: '../steps/cache-install-npm.yml'
-            parameters:
-              packageFeed: ${{ parameters.packageFeed }}
-              nodeJsVersion:  ${{ parameters.nodeJsVersion }}
-              disableCache: ${{ parameters.disableCache }}
-
-          - script: yarn test:parallel ${{parameters.isPullRequest}} ${{parameters.appName}} $(System.TotalJobsInPhase) $(System.JobPositionInPhase)
-            displayName: 'Run tests & Create coverage'
-
-          - task: PublishPipelineArtifact@1
-            condition: eq(variables['build.sourceBranch'], 'refs/heads/master') # We only publish coverage after merge, so no need to create the artifact here
-            displayName: 'Create coverage artifacts'
-            inputs:
-              path: $(Build.SourcesDirectory)/coverage/ # Create artifact with what's inside coverage folder
-
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Result'
-            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
-            inputs:
-              testRunner: VSTest
-              testResultsFiles: '**/*test*.trx'
-              failTaskOnFailedTests: false
 
       - job: 'Publish_Test_Coverage'
-        dependsOn: 'Test'
-        displayName: 'Publish Coverage'
+        dependsOn:
+          - Unit_Test
+          - Component_Test
+        displayName: 'Publish coverage'
         condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
         steps:
           - template: '../steps/cache-install-npm.yml'

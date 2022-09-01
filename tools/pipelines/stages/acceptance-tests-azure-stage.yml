@@ -7,7 +7,7 @@ parameters:
 
 stages:
   - stage: 'AcceptanceTest'
-    displayName: 'Acceptance Tests'
+    displayName: 'Acceptance Stage'
     pool:
       vmImage: 'windows-2022'
     jobs:

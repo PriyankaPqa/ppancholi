@@ -8,7 +8,7 @@ parameters:
 ## Requires browserStack to be true in azure-pipelines.yml ##
 stages:
   - stage: 'AcceptanceTest'
-    displayName: 'Acceptance Tests'
+    displayName: 'Acceptance Stage'
     jobs:
       - template: '../jobs/acceptance-tests-browserstack-jobs.yml'
         parameters:
