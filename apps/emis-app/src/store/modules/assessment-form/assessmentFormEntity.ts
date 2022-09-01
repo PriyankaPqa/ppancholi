@@ -53,5 +53,14 @@ export class AssessmentFormEntityModule extends BaseModule <IAssessmentFormEntit
       }
       return result;
     },
+
+    updateAssessmentStructure: async (context: ActionContext<IAssessmentFormEntityState, IAssessmentFormEntityState>,
+      payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity> => {
+      const result = await this.service.updateAssessmentStructure(payload);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
+    },
   }
 }

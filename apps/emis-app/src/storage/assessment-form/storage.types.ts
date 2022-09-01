@@ -12,11 +12,13 @@ export interface IGettersMock extends IBaseGettersMock<IAssessmentFormEntity, IA
 export interface IActions extends IBaseActions<IAssessmentFormEntity, IAssessmentFormMetadata, {id: uuid}> {
   create(payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
   update(payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
+  updateAssessmentStructure(payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<IAssessmentFormEntity, IAssessmentFormMetadata> {
   create: jest.Mock<IAssessmentFormEntity>;
   update: jest.Mock<IAssessmentFormEntity>;
+  updateAssessmentStructure: jest.Mock<IAssessmentFormEntity>;
 }
 
 export interface IMutations extends IBaseMutations<IAssessmentFormEntity, IAssessmentFormMetadata> {

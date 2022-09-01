@@ -29,7 +29,7 @@ export const mockAssessmentBaseEntity = (force? : Partial<IAssessmentTemplateEnt
   },
   publishStatus: PublishStatus.Published,
   assessmentFormType: AssessmentFormType.AssessmentForm,
-  externalToolState: new SurveyJsAssessmentFormState('{ json: json}'),
+  externalToolState: new SurveyJsAssessmentFormState('{"logoPosition":"right"}'),
   savePartialSurveyResults: false,
   frequency: AssessmentFrequencyType.Multiple,
   questions: [],

@@ -157,11 +157,19 @@ describe('AssessmentTemplateDetails', () => {
       });
     });
 
-    // to be implemented
     describe('goToEditor', () => {
       it('should redirect to editor page', async () => {
+        window.open = jest.fn();
         wrapper.vm.goToEditor();
-        expect(true).toBeTruthy();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.resolve).toHaveBeenCalledWith({
+          name: wrapper.vm.baseRoute.builder.name,
+          params: {
+            assessmentTemplateId: wrapper.vm.assessmentTemplateId,
+            id: wrapper.vm.eventId,
+          },
+        });
+        expect(window.open).toHaveBeenCalledWith(wrapper.vm.$router.resolve().href, '_blank');
       });
     });
   });

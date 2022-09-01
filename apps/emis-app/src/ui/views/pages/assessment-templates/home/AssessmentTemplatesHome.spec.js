@@ -366,5 +366,22 @@ describe('AssessmentTemplatesHome.vue', () => {
         });
       });
     });
+
+    describe('editorMode', () => {
+      it('should open new tab to editor page', async () => {
+        await mountWrapper();
+        window.open = jest.fn();
+        wrapper.vm.editorMode('editId');
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.resolve).toHaveBeenCalledWith({
+          name: wrapper.vm.baseRoute.builder.name,
+          params: {
+            assessmentTemplateId: 'editId',
+            id: wrapper.vm.id,
+          },
+        });
+        expect(window.open).toHaveBeenCalledWith(wrapper.vm.$router.resolve().href, '_blank');
+      });
+    });
   });
 });

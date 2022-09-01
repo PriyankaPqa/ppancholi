@@ -44,6 +44,7 @@ export const getWrapper = (Component, options, {
       push: jest.fn(),
       go: jest.fn(),
       back: jest.fn(),
+      resolve: jest.fn(() => ({ href: 'new url' })),
     },
     $route: {
       name: '',

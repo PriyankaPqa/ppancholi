@@ -16,11 +16,12 @@ export class AssessmentFormStorage
   private actions = {
     ...this.baseActions,
 
-    // eslint-disable-next-line
     create: (payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity> => this.store.dispatch(`${this.entityModuleName}/create`, payload),
 
-    // eslint-disable-next-line
     update: (payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity> => this.store.dispatch(`${this.entityModuleName}/update`, payload),
+
+    // eslint-disable-next-line
+    updateAssessmentStructure: (payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity> => this.store.dispatch(`${this.entityModuleName}/updateAssessmentStructure`, payload),
   }
 
   private mutations = {

@@ -10,7 +10,6 @@
       :options.sync="options"
       :initial-search="params && params.search"
       :custom-columns="Object.values(customColumns)"
-      :hide-footer="true"
       :show-add-button="!isFormMode"
       :add-button-label="$t('assessmentTemplate.addNew')"
       @add-button="goToAdd($event)"
@@ -73,7 +72,7 @@
               {{ $t('assessmentTemplate.editAssessment') }}
             </v-list-item>
 
-            <v-list-item @click="editorMode(item.entity)">
+            <v-list-item @click="editorMode(item.entity.id)">
               {{ $t('assessmentTemplate.gotoEditor') }}
             </v-list-item>
           </v-list>
@@ -121,6 +120,7 @@ import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
+import { IAssessmentBaseRoute } from '../IAssessmentBaseRoute.type';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'AssessmentTemplatesHome',
@@ -160,7 +160,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       return !!this.id;
     },
 
-    baseRoute() : { home: { name: string }, details: { name: string }, edit: { name: string }, create: { name: string } } {
+    baseRoute() : IAssessmentBaseRoute {
       return this.isFormMode ? routes.events.assessments : routes.assessmentTemplates;
     },
 
@@ -315,13 +315,14 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     editorMode(id: string) {
-      console.log('editor mode', id);
-      return {
-        // name: routes.caseFile.referrals.edit.name,
-        // params: {
-        //   referralId: id,
-        // },
-      };
+      const routeData = this.$router.resolve({
+        name: this.baseRoute.builder.name,
+        params: {
+          assessmentTemplateId: id,
+          id: this.id,
+        },
+      });
+      window.open(routeData.href, '_blank');
     },
 
     copySampleLink(item: IAssessmentTemplateEntity) {

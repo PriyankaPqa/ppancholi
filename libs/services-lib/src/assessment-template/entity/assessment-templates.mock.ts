@@ -6,4 +6,5 @@ export const mockAssessmentTemplatesService = (): IAssessmentTemplatesServiceMoc
   ...mockDomainBaseService(mockAssessmentTemplateEntities()),
   create: jest.fn(() => mockAssessmentTemplateEntity()),
   update: jest.fn(() => mockAssessmentTemplateEntity()),
+  updateAssessmentStructure: jest.fn(() => mockAssessmentTemplateEntity()),
 });

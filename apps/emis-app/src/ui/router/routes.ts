@@ -15,6 +15,7 @@ import { SignalR } from '../plugins/signal-r/signalR';
 const AssessmentTemplatesHome = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/home/AssessmentTemplatesHome.vue');
 const AssessmentTemplatesEdit = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/CreateEditAssessmentTemplate.vue');
 const AssessmentTemplateDetails = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/AssessmentTemplateDetails.vue');
+const AssessmentBuilder = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/AssessmentBuilder.vue');
 
 const ApprovalsLayout = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/layout/ApprovalsLayout.vue');
 const ApprovalsTemplates = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/templates/ApprovalsTemplates.vue');
@@ -164,6 +165,24 @@ export const routes: Array<RouteConfig> = [
         component: ConfirmationPrint,
       },
       {
+        path: Routes.assessmentTemplates.builder.path,
+        name: Routes.assessmentTemplates.builder.name,
+        component: AssessmentBuilder,
+        meta: {
+          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true,
+        },
+        props: true,
+      },
+      {
+        path: Routes.events.assessments.builder.path,
+        name: Routes.events.assessments.builder.name,
+        component: AssessmentBuilder,
+        meta: {
+          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true,
+        },
+        props: true,
+      },
+      {
         path: '',
         redirect: { name: Routes.home.name },
       },
@@ -216,7 +235,7 @@ export const routes: Array<RouteConfig> = [
             name: Routes.assessmentTemplates.home.name,
             component: AssessmentTemplatesHome,
             meta: {
-              level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+              level: 'level6', requiresAuthorization: true, requiresAuthentication: true, feature: FeatureKeys.Assessments,
             },
           },
           {
@@ -224,7 +243,7 @@ export const routes: Array<RouteConfig> = [
             name: Routes.assessmentTemplates.create.name,
             component: AssessmentTemplatesEdit,
             meta: {
-              level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+              level: 'level6', requiresAuthorization: true, requiresAuthentication: true, feature: FeatureKeys.Assessments,
             },
             props: true,
           },

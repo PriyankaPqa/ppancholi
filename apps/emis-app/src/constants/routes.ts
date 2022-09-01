@@ -22,6 +22,10 @@ const routes = {
       path: 'assessment-templates/:assessmentTemplateId/edit',
       name: 'assessmenttemplates.assessments.edit',
     },
+    builder: {
+      path: 'assessment-builder/:assessmentTemplateId',
+      name: 'assessmenttemplates.builder',
+    },
   },
   approvals: {
     layout: {
@@ -192,6 +196,10 @@ const routes = {
       edit: {
         path: 'assessments/:assessmentTemplateId/edit',
         name: 'events.assessments.edit',
+      },
+      builder: {
+        path: 'events/:id/assessment-builder/:assessmentTemplateId',
+        name: 'events.assessments.builder',
       },
     },
   },

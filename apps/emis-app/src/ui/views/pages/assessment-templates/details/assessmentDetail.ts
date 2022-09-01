@@ -5,6 +5,7 @@ import {
 import { Status } from '@libs/entities-lib/base';
 import routes from '@/constants/routes';
 import { IProgramEntity } from '@libs/entities-lib/program';
+import { IAssessmentBaseRoute } from '../IAssessmentBaseRoute.type';
 
 export default Vue.extend({
   props: {
@@ -45,7 +46,7 @@ export default Vue.extend({
       return this.assessmentTemplate?.id ? this.$storage.assessmentForm.getters.get(this.assessmentTemplate.id)?.metadata : null;
     },
 
-    baseRoute() : { home: { name: string }, details: { name: string }, edit: { name: string }, create: { name: string } } {
+    baseRoute() : IAssessmentBaseRoute {
       return this.isFormMode ? routes.events.assessments : routes.assessmentTemplates;
     },
   },

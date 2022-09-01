@@ -48,6 +48,18 @@ describe('AssessmentTemplate entity module', () => {
         expect(myModule.service.update).toBeCalledWith(payload);
         expect(actionContext.commit).toBeCalledWith('set', res);
       });
+
+      describe('updateAssessmentStructure', () => {
+        it('should call updateAssessmentStructure service with proper params', async () => {
+          const payload = {} as IAssessmentTemplateEntity;
+          const res = {} as IAssessmentTemplateEntity;
+          myModule.service.updateAssessmentStructure = jest.fn(() => Promise.resolve(res));
+          await myModule.actions.updateAssessmentStructure(actionContext, payload);
+
+          expect(myModule.service.updateAssessmentStructure).toBeCalledWith(payload);
+          expect(actionContext.commit).toBeCalledWith('set', res);
+        });
+      });
     });
   });
 });

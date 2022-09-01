@@ -49,5 +49,17 @@ describe('AssessmentForm entity module', () => {
         expect(actionContext.commit).toBeCalledWith('set', res);
       });
     });
+
+    describe('updateAssessmentStructure', () => {
+      it('should call updateAssessmentStructure service with proper params', async () => {
+        const payload = {} as IAssessmentFormEntity;
+        const res = {} as IAssessmentFormEntity;
+        myModule.service.updateAssessmentStructure = jest.fn(() => Promise.resolve(res));
+        await myModule.actions.updateAssessmentStructure(actionContext, payload);
+
+        expect(myModule.service.updateAssessmentStructure).toBeCalledWith(payload);
+        expect(actionContext.commit).toBeCalledWith('set', res);
+      });
+    });
   });
 });

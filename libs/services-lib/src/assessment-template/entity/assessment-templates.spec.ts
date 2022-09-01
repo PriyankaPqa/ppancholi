@@ -1,3 +1,4 @@
+import { mockAssessmentTemplateEntity } from '@libs/entities-lib/src/assessment-template';
 import { IHttpMock, mockHttp } from '../../http-client';
 import { AssessmentTemplatesService } from './assessment-templates';
 
@@ -27,17 +28,27 @@ describe('>>> AssessmentTemplates Service', () => {
     });
   });
 
-  // to be implemented
   describe('create', () => {
     it('should call the proper endpoint', async () => {
-      expect(true).toBeTruthy();
+      const entity = mockAssessmentTemplateEntity();
+      await service.create(entity);
+      expect(http.post).toHaveBeenCalledWith('www.test.com/assessment/assessment-templates', entity, { globalHandler: false });
     });
   });
 
-  // to be implemented
   describe('update', () => {
     it('should call the proper endpoint', async () => {
-      expect(true).toBeTruthy();
+      const entity = mockAssessmentTemplateEntity();
+      await service.update(entity);
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-templates/${entity.id}/edit`, entity, { globalHandler: false });
+    });
+  });
+
+  describe('updateAssessmentStructure', () => {
+    it('should call the proper endpoint', async () => {
+      const entity = mockAssessmentTemplateEntity();
+      await service.updateAssessmentStructure(entity);
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-templates/${entity.id}/updateAssessmentStructure`, entity);
     });
   });
 });

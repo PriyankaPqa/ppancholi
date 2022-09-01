@@ -41,5 +41,11 @@ describe('>>> AssessmentForm Storage', () => {
       storage.actions.update(payload);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/update`, payload);
     });
+
+    it('should proxy updateAssessmentStructure', () => {
+      const payload = mockAssessmentFormEntity();
+      storage.actions.updateAssessmentStructure(payload);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateAssessmentStructure`, payload);
+    });
   });
 });

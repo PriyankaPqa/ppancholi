@@ -53,5 +53,14 @@ export class AssessmentTemplateEntityModule extends BaseModule <IAssessmentTempl
       }
       return result;
     },
+
+    updateAssessmentStructure: async (context: ActionContext<IAssessmentTemplateEntityState, IAssessmentTemplateEntityState>,
+      payload: IAssessmentTemplateEntity): Promise<IAssessmentTemplateEntity> => {
+      const result = await this.service.updateAssessmentStructure(payload);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
+    },
   }
 }

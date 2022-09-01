@@ -152,9 +152,14 @@ export default mixins(assessmentDetail).extend({
     },
 
     goToEditor() {
-      // this.$router.push({
-      //   name: this.baseRoute.home.name,
-      // });
+      const routeData = this.$router.resolve({
+        name: this.baseRoute.builder.name,
+        params: {
+          assessmentTemplateId: this.assessmentTemplateId,
+          id: this.eventId,
+        },
+      });
+      window.open(routeData.href, '_blank');
     },
   },
 

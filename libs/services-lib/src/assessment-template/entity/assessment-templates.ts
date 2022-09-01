@@ -22,6 +22,10 @@ export class AssessmentTemplatesService extends DomainBaseService<IAssessmentTem
     return this.http.patch<IAssessmentTemplateEntity>(this.getItemUrl(`${this.baseUrl}/{id}/edit`, item), item, { globalHandler: false });
   }
 
+  async updateAssessmentStructure(item: IAssessmentTemplateEntity): Promise<IAssessmentTemplateEntity> {
+    return this.http.patch<IAssessmentTemplateEntity>(this.getItemUrl(`${this.baseUrl}/{id}/updateAssessmentStructure`, item), item);
+  }
+
   async search(params: IAzureSearchParams, searchEndpoint: string = null):
     Promise<IAzureCombinedSearchResult<IAssessmentTemplateEntity, IAssessmentTemplateMetadata>> {
     return this.http.get(`assessment/search/${searchEndpoint ?? 'assessment-templates'}`, { params, isOData: true });

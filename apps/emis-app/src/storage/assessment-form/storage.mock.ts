@@ -18,6 +18,7 @@ export class AssessmentFormStorageMock extends BaseMock<IAssessmentFormCombined,
     ...this.baseActions,
     create: jest.fn((payload: IAssessmentFormEntity) => payload),
     update: jest.fn((payload: IAssessmentFormEntity) => payload),
+    updateAssessmentStructure: jest.fn((payload: IAssessmentFormEntity) => payload),
   }
 
   protected mutations = {

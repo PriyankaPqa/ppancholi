@@ -161,3 +161,7 @@ div.status {
   height: 56px;
   border-radius: 4px;
 }
+
+.svc-logic-paneldynamic div.svc-logic-operator {
+  height: calc(5 * var(--base-unit, 8px)) !important;
+}

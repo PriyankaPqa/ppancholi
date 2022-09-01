@@ -41,5 +41,11 @@ describe('>>> AssessmentTemplate Storage', () => {
       storage.actions.update(payload);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/update`, payload);
     });
+
+    it('should proxy updateAssessmentStructure', () => {
+      const payload = mockAssessmentTemplateEntity();
+      storage.actions.updateAssessmentStructure(payload);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateAssessmentStructure`, payload);
+    });
   });
 });

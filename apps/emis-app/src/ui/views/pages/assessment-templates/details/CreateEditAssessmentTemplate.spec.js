@@ -94,7 +94,6 @@ describe('CreateEditAssessmentTemplate', () => {
       });
 
       test('submit calls the fillEmptyMultilingualAttributes method', async () => {
-        // eslint-disable-next-line no-underscore-dangle
         await mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.assessmentForm.fillEmptyMultilingualAttributes = jest.fn();
