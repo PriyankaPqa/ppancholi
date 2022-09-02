@@ -1,110 +1,117 @@
 <template>
-  <validation-observer ref="form" v-slot="{ failed }" slim>
-    <rc-page-content
-      :title="title"
-      :show-add-button="false">
-      <v-container>
-        <v-row class="justify-center">
-          <v-col :class="{ 'table-wrapper': isEditMode }" cols="12" xl="7" lg="9" md="11" sm="12">
-            <rc-tabs>
-              <rc-tab
-                v-for="lang in supportedLanguages"
-                :key="lang.key"
-                :label="$t(`tab.${lang.key}`)"
-                :data-test="`approvalTemplate__lang--${lang.key}`"
-                :active="languageMode === lang.key"
-                @click="setLanguageMode(lang.key)" />
-            </rc-tabs>
+  <div class="full-height">
+    <div v-if="isEditMode">
+      <v-alert type="info" prominent border="left">
+        This is edit page of approval {{ approvalId }}. It is not yet implemented.
+      </v-alert>
+    </div>
+    <validation-observer v-else ref="form" v-slot="{ failed }" slim>
+      <rc-page-content
+        :title="title"
+        :show-add-button="false">
+        <v-container>
+          <v-row class="justify-center">
+            <v-col :class="{ 'table-wrapper': isEditMode }" cols="12" xl="7" lg="9" md="11" sm="12">
+              <rc-tabs>
+                <rc-tab
+                  v-for="lang in supportedLanguages"
+                  :key="lang.key"
+                  :label="$t(`tab.${lang.key}`)"
+                  :data-test="`approvalTemplate__lang--${lang.key}`"
+                  :active="languageMode === lang.key"
+                  @click="setLanguageMode(lang.key)" />
+              </rc-tabs>
 
-            <v-row>
-              <v-col v-if="isTableMode" cols="12" md="8" lg="8">
-                <v-autocomplete-with-validation
-                  :value="selectedProgram"
-                  :items="availablePrograms"
-                  :label="`${$t('approvals.associate_program')}*`"
-                  :item-text="(item) => $m(item.name)"
-                  return-object
-                  :loading="isProgramLoading"
-                  :disabled="isProgramLoading"
-                  :rules="rules.program"
-                  data-test="approvals__programSelect"
-                  @change="setProgram($event)" />
-              </v-col>
-            </v-row>
+              <v-row>
+                <v-col v-if="isTableMode" cols="12" md="8" lg="8">
+                  <v-autocomplete-with-validation
+                    :value="selectedProgram"
+                    :items="availablePrograms"
+                    :label="`${$t('approvals.associate_program')}*`"
+                    :item-text="(item) => $m(item.name)"
+                    return-object
+                    :loading="isProgramLoading"
+                    :disabled="isProgramLoading"
+                    :rules="rules.program"
+                    data-test="approvals__programSelect"
+                    @change="setProgram($event)" />
+                </v-col>
+              </v-row>
 
-            <v-row>
-              <v-col cols="9" md="8" sm="7">
-                <v-text-field-with-validation
-                  v-model="approval.name.translation[languageMode]"
-                  data-test="approval-template-name"
-                  :label="`${isTableMode ? $t('approval.table_name') : $t('approval.template_name')} *`"
-                  :rules="rules.name"
-                  @input="resetAsUnique()" />
-              </v-col>
+              <v-row>
+                <v-col cols="9" md="8" sm="7">
+                  <v-text-field-with-validation
+                    v-model="approval.name.translation[languageMode]"
+                    data-test="approval-template-name"
+                    :label="`${isTableMode ? $t('approval.table_name') : $t('approval.template_name')} *`"
+                    :rules="rules.name"
+                    @input="resetAsUnique()" />
+                </v-col>
 
-              <v-col cols="3" md="4" sm="5">
-                <div :class="`flex-row approval-status py-2 pl-5 ${getStatusClasses}`">
-                  <span :class="`rc-body14 ${isActive ? 'white--text' : 'black--text'} ml-4`" data-test="approval-status">
-                    {{ isActive ?
-                      `${$t('common.status')} ${$t('enums.Status.Active').toUpperCase()}`
-                      : ` ${$t('common.status')} ${$t('enums.Status.Inactive').toUpperCase()}` }}
-                  </span>
+                <v-col cols="3" md="4" sm="5">
+                  <div :class="`flex-row approval-status py-2 pl-5 ${getStatusClasses}`">
+                    <span :class="`rc-body14 ${isActive ? 'white--text' : 'black--text'} ml-4`" data-test="approval-status">
+                      {{ isActive ?
+                        `${$t('common.status')} ${$t('enums.Status.Active').toUpperCase()}`
+                        : ` ${$t('common.status')} ${$t('enums.Status.Inactive').toUpperCase()}` }}
+                    </span>
 
-                  <validation-provider slim>
-                    <v-switch
-                      v-model="isActive"
-                      class="mt-0 ml-auto mr-3 pt-0"
-                      flat
-                      :disabled="disabledStatus"
-                      data-test="approval-status-toggle"
-                      hide-details
-                      color="white" />
-                  </validation-provider>
-                </div>
-              </v-col>
-            </v-row>
-            <div class="rc-body-14 fw-bold">
-              {{ $t('approvals.aggregated_by') }} *
-            </div>
+                    <validation-provider slim>
+                      <v-switch
+                        v-model="isActive"
+                        class="mt-0 ml-auto mr-3 pt-0"
+                        flat
+                        :disabled="disabledStatus"
+                        data-test="approval-status-toggle"
+                        hide-details
+                        color="white" />
+                    </validation-provider>
+                  </div>
+                </v-col>
+              </v-row>
+              <div class="rc-body-14 fw-bold">
+                {{ $t('approvals.aggregated_by') }} *
+              </div>
 
-            <validation-provider v-slot="{ errors }" :rules="rules.aggregatedBy">
-              <v-radio-group v-model="approval.aggregatedByType" :error-messages="errors" row>
-                <v-radio
-                  data-test="total_financialAssistance"
-                  :label="$t('enums.ApprovalAggregatedBy.TotalFinancialAssistanceOnCaseFile')"
-                  :value="ApprovalAggregatedBy.TotalFinancialAssistanceOnCaseFile" />
-                <v-radio
-                  data-test="individual_paymentTotal"
-                  :label="$t('enums.ApprovalAggregatedBy.IndividualPaymentTotal')"
-                  :value="ApprovalAggregatedBy.IndividualPaymentTotal" />
-              </v-radio-group>
-            </validation-provider>
+              <validation-provider v-slot="{ errors }" :rules="rules.aggregatedBy">
+                <v-radio-group v-model="approval.aggregatedByType" :error-messages="errors" row>
+                  <v-radio
+                    data-test="total_financialAssistance"
+                    :label="$t('enums.ApprovalAggregatedBy.TotalFinancialAssistanceOnCaseFile')"
+                    :value="ApprovalAggregatedBy.TotalFinancialAssistanceOnCaseFile" />
+                  <v-radio
+                    data-test="individual_paymentTotal"
+                    :label="$t('enums.ApprovalAggregatedBy.IndividualPaymentTotal')"
+                    :value="ApprovalAggregatedBy.IndividualPaymentTotal" />
+                </v-radio-group>
+              </validation-provider>
 
-            <v-row />
-          </v-col>
-        </v-row>
-      </v-container>
+              <v-row />
+            </v-col>
+          </v-row>
+        </v-container>
 
-      <div class="tableContainer">
-        <approval-group-table :approval="approval" :is-edit="false" />
-      </div>
+        <div class="tableContainer">
+          <approval-group-table :approval="approval" :is-edit="false" />
+        </div>
 
-      <template #actions>
-        <v-btn :disabled="isSaving" data-test="approval-cancelBtn" @click="cancel()">
-          {{ $t('common.buttons.cancel') }}
-        </v-btn>
+        <template #actions>
+          <v-btn :disabled="isSaving" data-test="approval-cancelBtn" @click="cancel()">
+            {{ $t('common.buttons.cancel') }}
+          </v-btn>
 
-        <v-btn
-          color="primary"
-          :disabled="failed || !approvalHasGroups || currentlyEditing"
-          data-test="approval-saveBtn"
-          :loading="isSaving"
-          @click="submit()">
-          {{ $t('common.buttons.create') }}
-        </v-btn>
-      </template>
-    </rc-page-content>
-  </validation-observer>
+          <v-btn
+            color="primary"
+            :disabled="failed || !approvalHasGroups || currentlyEditing"
+            data-test="approval-saveBtn"
+            :loading="isSaving"
+            @click="submit()">
+            {{ $t('common.buttons.create') }}
+          </v-btn>
+        </template>
+      </rc-page-content>
+    </validation-observer>
+  </div>
 </template>
 
 <script lang="ts">
@@ -141,7 +148,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    const isDirty = (this.$refs.form as VForm).flags.changed;
+    const isDirty = (this.$refs?.form as VForm)?.flags.changed;
 
     if (this.redirectedFromSave) { // If redirecting after create
       next();
@@ -213,7 +220,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     isEditMode(): boolean {
-      return false;
+      return this.$route.name === routes.events.approvals.edit.name;
     },
 
     isTableMode(): boolean {
@@ -246,6 +253,14 @@ export default mixins(handleUniqueNameSubmitError).extend({
     currentlyEditing(): boolean {
       return this.approval.groups.filter((i) => i.editMode === true).length > 0;
     },
+
+    eventId(): string {
+      return this.$route.params.id;
+    },
+
+    approvalId(): string {
+      return this.$route.params.approvalId;
+    },
   },
 
   watch: {
@@ -257,10 +272,10 @@ export default mixins(handleUniqueNameSubmitError).extend({
   async created() {
     if (this.isTableMode) {
       this.approval = new ApprovalTableEntity();
-      (this.approval as IApprovalTableEntity).eventId = this.$route.params.id;
+      (this.approval as IApprovalTableEntity).eventId = this.eventId;
       this.isProgramLoading = true;
-      await this.loadEventPrograms(this.$route.params.id);
-      await this.loadEventTables(this.$route.params.id);
+      await this.loadEventPrograms(this.eventId);
+      await this.loadEventTables(this.eventId);
       this.isProgramLoading = false;
     } else {
       this.approval = new ApprovalBaseEntity();

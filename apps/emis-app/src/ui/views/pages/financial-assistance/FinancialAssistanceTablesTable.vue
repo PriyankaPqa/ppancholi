@@ -6,8 +6,6 @@
     :labels="labels"
     :headers="headers"
     :footer-text="footerText"
-    sort-by="createdDate"
-    sort-desc
     :table-props="tableProps"
     :show-help="false"
     :help-link="$t('zendesk.help_link.financial_assistance_tables_list')"

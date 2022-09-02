@@ -22,10 +22,9 @@
 
     <v-list>
       <v-list-item v-for="item in items" :key="item.value" :data-test="item.dataTest" :disabled="item.disabled" @click="$emit('click-item', item)">
-        <v-icon class="mr-4" color="primary darken-1">
+        <v-icon class="mr-4" color="primary darken-1" :disabled="item.disabled">
           {{ item.icon }}
         </v-icon>
-
         {{ item.text }}
       </v-list-item>
     </v-list>

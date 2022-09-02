@@ -12,7 +12,9 @@ export interface IApprovalTableEntity extends IApprovalBaseEntity, IApprovalTabl
 }
 
 export interface IApprovalTableMetadata extends IEntity {
+  programId: uuid;
   programName: IMultilingual;
+  approvalTableStatusName: IMultilingual;
 }
 
 export type IApprovalTableCombined = IEntityCombined<IApprovalTableEntity, IApprovalTableMetadata>

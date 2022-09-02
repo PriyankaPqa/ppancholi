@@ -24,7 +24,9 @@ export const mockApprovalTableEntities = () => [
 
 export const mockApprovalTableMetadata = () => ({
   ...mockBaseData(),
+  programId: '1',
   programName: { translation: { en: 'Prog A en', fr: 'Prog A fr' } },
+  approvalTableStatusName: { translation: { en: 'Active', fr: 'Actif' } },
 });
 
 export const mockApprovalTableMetadatum = () => [

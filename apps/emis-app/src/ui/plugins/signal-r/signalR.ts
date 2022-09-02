@@ -148,6 +148,9 @@ export class SignalR implements ISignalR {
     this.massActionNotifications();
 
     this.listenForUserRoleChanges();
+
+    // Approvals Table
+    this.listenForApprovalTablesModuleChanges();
   }
 
   private listenForUserRoleChanges() {
@@ -453,6 +456,20 @@ export class SignalR implements ISignalR {
       domain: 'finance',
       entityName: 'FinancialAssistanceCategory',
       action: this.storage.financialAssistanceCategory.mutations.setEntityFromOutsideNotification,
+    });
+  }
+
+  private listenForApprovalTablesModuleChanges() {
+    this.listenForChanges({
+      domain: 'finance',
+      entityName: 'ApprovalTable',
+      action: this.storage.approvalTable.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'finance',
+      entityName: 'ApprovalTableMetadata',
+      action: this.storage.approvalTable.mutations.setMetadataFromOutsideNotification,
     });
   }
 

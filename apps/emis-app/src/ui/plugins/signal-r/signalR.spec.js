@@ -472,6 +472,25 @@ describe('signalR', () => {
     });
   });
 
+  describe('listenForApprovalTablesModuleChanges', () => {
+    it('calls listenForChanges', () => {
+      conn.listenForApprovalTablesModuleChanges();
+      expect(conn.listenForChanges)
+        .toHaveBeenCalledWith({
+          domain: 'finance',
+          entityName: 'ApprovalTable',
+          action: conn.storage.approvalTable.mutations.setEntityFromOutsideNotification,
+        });
+
+      expect(conn.listenForChanges)
+        .toHaveBeenCalledWith({
+          domain: 'finance',
+          entityName: 'ApprovalTableMetadata',
+          action: conn.storage.approvalTable.mutations.setMetadataFromOutsideNotification,
+        });
+    });
+  });
+
   describe('listenForChanges', () => {
     it('attaches the action to the connection', () => {
       SignalR.prototype.listenForChanges = listenForChangesFct;

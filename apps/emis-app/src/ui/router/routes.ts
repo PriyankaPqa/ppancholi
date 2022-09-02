@@ -22,7 +22,8 @@ const ApprovalsTemplates = () => import(/* webpackChunkName: "approvals" */ '@/u
 const ApprovalsRequest = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/requests/ApprovalsRequest.vue');
 const ApprovalsTemplatesCreateEdit = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/create-edit/CreateEditApprovals.vue');
 const ApprovalsTableCreateEdit = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/create-edit/CreateEditApprovals.vue');
-const ApprovalsTablesTable = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/tables/ApprovalTablesTable.vue');
+const ApprovalTablesHome = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/tables/ApprovalTablesHome.vue');
+const ApprovalDetails = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/details/ApprovalDetails.vue');
 
 const CaseFileLayout = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/layout/CaseFileLayout.vue');
 const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/home/CaseFileHome.vue');
@@ -537,7 +538,7 @@ export const routes: Array<RouteConfig> = [
                   {
                     path: Routes.events.approvals.home.path,
                     name: Routes.events.approvals.home.name,
-                    component: ApprovalsTablesTable,
+                    component: ApprovalTablesHome,
                     meta: { level: 'level6', feature: FeatureKeys.ApprovalsWithinEvent },
                     props: true,
                   },
@@ -545,6 +546,20 @@ export const routes: Array<RouteConfig> = [
                     path: Routes.events.approvals.create.path,
                     name: Routes.events.approvals.create.name,
                     component: ApprovalsTableCreateEdit,
+                    meta: { level: 'level6', feature: FeatureKeys.ApprovalsWithinEvent },
+                    props: true,
+                  },
+                  {
+                    path: Routes.events.approvals.edit.path,
+                    name: Routes.events.approvals.edit.name,
+                    component: ApprovalsTableCreateEdit,
+                    meta: { level: 'level6', feature: FeatureKeys.ApprovalsWithinEvent },
+                    props: true,
+                  },
+                  {
+                    path: Routes.events.approvals.details.path,
+                    name: Routes.events.approvals.details.name,
+                    component: ApprovalDetails,
                     meta: { level: 'level6', feature: FeatureKeys.ApprovalsWithinEvent },
                     props: true,
                   },

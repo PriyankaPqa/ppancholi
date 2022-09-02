@@ -227,23 +227,23 @@ describe('CreateEditApprovals', () => {
           expect(wrapper.vm.createTemplate).toBeCalled();
         });
       });
-      describe('Edit mode', () => {
-        it('should call editTable if valid and isTableMode', async () => {
-          doMount(true, true);
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
-          wrapper.vm.editTable = jest.fn();
-          await wrapper.vm.submit();
-          expect(wrapper.vm.editTable).toBeCalled();
-        });
-
-        it('should call editTemplate if valid and not isTableMode', async () => {
-          doMount(false, true);
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
-          wrapper.vm.editTemplate = jest.fn();
-          await wrapper.vm.submit();
-          expect(wrapper.vm.editTemplate).toBeCalled();
-        });
-      });
+      // describe('Edit mode', () => {
+      //   it('should call editTable if valid and isTableMode', async () => {
+      //     doMount(true, true);
+      //     wrapper.vm.$refs.form.validate = jest.fn(() => true);
+      //     wrapper.vm.editTable = jest.fn();
+      //     await wrapper.vm.submit();
+      //     expect(wrapper.vm.editTable).toBeCalled();
+      //   });
+      //
+      //   it('should call editTemplate if valid and not isTableMode', async () => {
+      //     doMount(false, true);
+      //     wrapper.vm.$refs.form.validate = jest.fn(() => true);
+      //     wrapper.vm.editTemplate = jest.fn();
+      //     await wrapper.vm.submit();
+      //     expect(wrapper.vm.editTemplate).toBeCalled();
+      //   });
+      // });
     });
 
     describe('createTable', () => {

@@ -179,6 +179,14 @@ const routes = {
         path: 'approvals/create',
         name: 'events.approvals.create',
       },
+      edit: {
+        path: 'approvals/:approvalId/edit',
+        name: 'events.approvals.edit',
+      },
+      details: {
+        path: 'approvals/details/:approvalId',
+        name: 'events.approvals.details',
+      },
     },
     assessments: {
       home: {
