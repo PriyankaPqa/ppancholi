@@ -37,12 +37,6 @@ describe('>>> TenantSettings Storage', () => {
       expect(storageGetter).toEqual(storeGetter);
     });
 
-    it('should proxy logoUrl', () => {
-      const storageGetter = storage.getters.logoUrl('en');
-      const storeGetter = store.getters[`${entityModuleName}/logoUrl`]('en');
-      expect(storageGetter).toEqual(storeGetter);
-    });
-
     it('should proxy validateCaptchaAllowedIpAddress', () => {
       const storageGetter = storage.getters.validateCaptchaAllowedIpAddress();
       const storeGetter = store.getters[`${entityModuleName}/validateCaptchaAllowedIpAddress`];
@@ -97,11 +91,6 @@ describe('>>> TenantSettings Storage', () => {
       const payload = mockEditTenantDetailsRequest();
       storage.actions.updateTenantDetails(payload);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateTenantDetails`, payload);
-    });
-
-    it('should proxy fetchLogoUrl', () => {
-      storage.actions.fetchLogoUrl('en');
-      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchLogoUrl`, 'en');
     });
 
     it('should proxy do validateCaptchaAllowedIpAddress', () => {

@@ -22,7 +22,7 @@ export interface ITenantSettingsService extends IDomainBaseService<ITenantSettin
   updateColours(payload: IEditColoursRequest): Promise<ITenantSettingsEntityData>;
   updateTenantDetails(payload: IEditTenantDetailsRequest): Promise<ITenantSettingsEntityData>;
   updateSupportEmails(payload: IMultilingual): Promise<ITenantSettingsEntityData>;
-  getLogoUrl(languageCode: string): Promise<string>;
+  getLogoUrl(languageCode: string, tenantId?: string): string;
   validateCaptchaAllowedIpAddress(): Promise<IValidateCaptchaAllowedIpAddressResponse>;
 }
 

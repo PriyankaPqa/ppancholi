@@ -18,7 +18,6 @@ export interface IGetters extends IBaseGetters<ITenantSettingsEntity, never> {
   currentTenantSettings(): ITenantSettingsEntity;
   isFeatureEnabled(featureKe: FeatureKeys): boolean;
   branding(): IBrandingEntity;
-  logoUrl(languageCode: string): string;
   validateCaptchaAllowedIpAddress(): IValidateCaptchaAllowedIpAddressResponse;
 }
 
@@ -26,7 +25,6 @@ export interface IGettersMock extends IBaseGettersMock<ITenantSettingsEntity, ne
   currentTenantSettings: jest.Mock<ITenantSettingsEntity>;
   branding(): IBrandingEntity;
   isFeatureEnabled: jest.Mock<boolean>;
-  logoUrl: jest.Mock<string>;
   validateCaptchaAllowedIpAddress: jest.Mock<IValidateCaptchaAllowedIpAddressResponse>;
 }
 
@@ -41,7 +39,6 @@ export interface IActions extends IBaseActions<ITenantSettingsEntity, never, uui
   fetchUserTenants(): Promise<IBrandingEntity[]>;
   updateColours(payload: IEditColoursRequest): Promise<ITenantSettingsEntity>;
   updateTenantDetails(payload: IEditTenantDetailsRequest): Promise<ITenantSettingsEntity>;
-  fetchLogoUrl(languageCode: string): Promise<string>;
   validateCaptchaAllowedIpAddress(): Promise<IValidateCaptchaAllowedIpAddressResponse>;
 }
 
@@ -56,7 +53,6 @@ export interface IActionsMock extends IBaseActionsMock<ITenantSettingsEntity, ne
   fetchUserTenants: jest.Mock<IBrandingEntity[]>;
   updateColours: jest.Mock<ITenantSettingsEntity>;
   updateTenantDetails: jest.Mock<ITenantSettingsEntity>;
-  fetchLogoUrl: jest.Mock<string>;
   validateCaptchaAllowedIpAddress: jest.Mock<IValidateCaptchaAllowedIpAddressResponse>;
 }
 

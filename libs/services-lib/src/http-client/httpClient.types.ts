@@ -51,6 +51,7 @@ export interface IHttpClient {
   delete: <T>(url: string, data?: any) => Promise<T>;
   setHeadersLanguage(lang: string): void;
   setHeadersTenant(tenantId: string): void;
+  getTenant(): string;
   getFormattedError(error: IError): string;
 }
 
@@ -64,5 +65,6 @@ export interface IHttpMock {
   delete: jest.Mock<Promise<any>>
   setHeadersLanguage: jest.Mock<void>;
   setHeadersTenant: jest.Mock<void>;
+  getTenant: jest.Mock<string>;
   getFormattedError: jest.Mock<string>;
 }

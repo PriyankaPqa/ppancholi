@@ -67,7 +67,7 @@ describe('Logo.vue', () => {
       it('returns false if tempLogoUrl is the same from storage', async () => {
         const testUrl = 'url';
 
-        wrapper.vm.getLogoUrlFromStore = jest.fn(() => testUrl);
+        wrapper.vm.getLogoUrl = jest.fn(() => testUrl);
 
         await wrapper.setData({
           tempLogoUrl: testUrl,
@@ -77,7 +77,7 @@ describe('Logo.vue', () => {
       });
 
       it('returns true if tempLogoUrl is different than storage', async () => {
-        wrapper.vm.getLogoUrlFromStore = jest.fn(() => 'url 1');
+        wrapper.vm.getLogoUrl = jest.fn(() => 'url 1');
         await wrapper.setData({
           tempLogoUrl: 'url 2',
         });
@@ -90,7 +90,7 @@ describe('Logo.vue', () => {
   describe('>> Methods', () => {
     describe('enterEditMode', () => {
       it('sets data properly', () => {
-        wrapper.vm.getLogoUrlFromStore = jest.fn(() => 'url');
+        wrapper.vm.getLogoUrl = jest.fn(() => 'url');
 
         wrapper.vm.enterEditMode('en');
 
@@ -118,11 +118,11 @@ describe('Logo.vue', () => {
       });
     });
 
-    describe('getLogoUrlFromStore', () => {
+    describe('getLogoUrl', () => {
       it('returns correct value', () => {
-        wrapper.vm.$storage.tenantSettings.getters.logoUrl = jest.fn(() => 'url');
+        wrapper.vm.$services.tenantSettings.getLogoUrl = jest.fn(() => 'url');
 
-        expect(wrapper.vm.getLogoUrlFromStore('en')).toEqual('url');
+        expect(wrapper.vm.getLogoUrl('en').startsWith('url')).toBeTruthy();
       });
     });
 
@@ -133,16 +133,6 @@ describe('Logo.vue', () => {
         await wrapper.vm.upload();
 
         expect(wrapper.vm.uploadForm).toHaveBeenCalledTimes(1);
-      });
-
-      it('fetches logo if upload success', async () => {
-        wrapper.vm.uploadForm = jest.fn(() => {
-          wrapper.vm.uploadSuccess = true;
-        });
-
-        await wrapper.vm.upload();
-
-        expect(wrapper.vm.$storage.tenantSettings.actions.fetchLogoUrl).toHaveBeenCalledTimes(1);
       });
     });
   });

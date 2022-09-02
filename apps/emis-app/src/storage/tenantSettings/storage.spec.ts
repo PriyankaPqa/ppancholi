@@ -38,12 +38,6 @@ describe('>>> TenantSettings Storage', () => {
       const storeGetter = store.getters[`${entityModuleName}/isFeatureEnabled`](featureKey);
       expect(storageGetter).toEqual(storeGetter);
     });
-
-    it('should proxy logoUrl', () => {
-      const storageGetter = storage.getters.logoUrl('en');
-      const storeGetter = store.getters[`${entityModuleName}/logoUrl`]('en');
-      expect(storageGetter).toEqual(storeGetter);
-    });
   });
 
   describe('>> Actions', () => {
@@ -104,11 +98,6 @@ describe('>>> TenantSettings Storage', () => {
       };
       storage.actions.updateSupportEmails(payload);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateSupportEmails`, payload);
-    });
-
-    it('should proxy fetchLogoUrl', () => {
-      storage.actions.fetchLogoUrl('en');
-      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchLogoUrl`, 'en');
     });
   });
 });

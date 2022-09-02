@@ -94,18 +94,6 @@ describe('>>> TenantSettings entity module', () => {
       });
     });
 
-    describe('logoUrl', () => {
-      it('returns the correct url', () => {
-        myModule.state.logoUrl = {
-          en: 'url en',
-          fr: 'url fr',
-        };
-
-        expect(myModule.getters.logoUrl(myModule.state)('en')).toEqual('url en');
-        expect(myModule.getters.logoUrl(myModule.state)('fr')).toEqual('url fr');
-      });
-    });
-
     describe('validateCaptchaAllowedIpAddress', () => {
       it('returns the validateCaptchaAllowedIpAddress', () => {
         myModule.state.validateCaptchaAllowedIpAddress = {
@@ -171,19 +159,6 @@ describe('>>> TenantSettings entity module', () => {
           ...brandingData,
           showName: !brandingData.hideName,
         });
-      });
-    });
-
-    describe('setLogoUrl', () => {
-      it('sets the logo url', () => {
-        const url = 'mock url';
-
-        myModule.mutations.setLogoUrl(myModule.state, {
-          languageCode: 'en',
-          url,
-        });
-
-        expect(myModule.state.logoUrl.en).toEqual('mock url');
       });
     });
 
@@ -405,27 +380,6 @@ describe('>>> TenantSettings entity module', () => {
         await myModule.actions.fetchBranding(actionContext);
 
         expect(actionContext.commit).toBeCalledWith('setBranding', mockBrandingEntityData());
-      });
-    });
-
-    describe('fetchLogoUrl', () => {
-      it('calls the getLogoUrl service', async () => {
-        myModule.service.getLogoUrl = jest.fn();
-
-        await myModule.actions.fetchLogoUrl(actionContext, 'en');
-
-        expect(myModule.service.getLogoUrl).toHaveBeenCalledWith('en');
-      });
-
-      it('commits the logoUrl', async () => {
-        myModule.service.getLogoUrl = jest.fn(() => Promise.resolve('mock url'));
-
-        await myModule.actions.fetchLogoUrl(actionContext, 'en');
-
-        expect(actionContext.commit).toBeCalledWith('setLogoUrl', {
-          languageCode: 'en',
-          url: 'mock url',
-        });
       });
     });
 

@@ -64,8 +64,8 @@ export default mixins(assessmentDetail).extend({
     getDefaultJson(): string {
       return `{
         "logo": {
-          "default": "${this.$storage.tenantSettings.getters.logoUrl('en')}",
-          "fr": "${this.$storage.tenantSettings.getters.logoUrl('fr')}"
+          "default": "${this.$services.tenantSettings.getLogoUrl('en')}",
+          "fr": "${this.$services.tenantSettings.getLogoUrl('fr')}"
         },
         "logoPosition": "right"
         }`;

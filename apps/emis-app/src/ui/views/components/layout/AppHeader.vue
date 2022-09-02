@@ -91,7 +91,8 @@ export default Vue.extend({
     },
 
     logoUrl(): string {
-      return this.$storage.tenantSettings.getters.logoUrl(this.$i18n.locale);
+      return `${this.$services.tenantSettings.getLogoUrl(this.$i18n.locale, this.$storage.tenantSettings.getters.currentTenantSettings().id)
+      }?d=${this.$storage.tenantSettings.getters.currentTenantSettings().timestamp}`;
     },
 
     branding(): IBrandingEntity {

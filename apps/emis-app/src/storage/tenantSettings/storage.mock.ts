@@ -17,7 +17,6 @@ export class TenantSettingsStorageMock extends BaseMock<ITenantSettingsCombined,
     ...this.baseGetters,
     currentTenantSettings: jest.fn(() => mockTenantSettingsEntity()),
     isFeatureEnabled: jest.fn(() => true),
-    logoUrl: jest.fn(),
   };
 
   protected actions = {
@@ -31,7 +30,6 @@ export class TenantSettingsStorageMock extends BaseMock<ITenantSettingsCombined,
     updateColours: jest.fn(() => mockTenantSettingsEntity()),
     updateTenantDetails: jest.fn(() => mockTenantSettingsEntity()),
     updateSupportEmails: jest.fn(() => mockTenantSettingsEntity()),
-    fetchLogoUrl: jest.fn(),
   };
 
   protected mutations = {

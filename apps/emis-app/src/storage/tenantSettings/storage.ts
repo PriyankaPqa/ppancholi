@@ -19,8 +19,6 @@ export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uu
     currentTenantSettings: () => this.store.getters[`${this.entityModuleName}/currentTenantSettings`],
 
     isFeatureEnabled: (featureKey: FeatureKeys): boolean => this.store.getters[`${this.entityModuleName}/isFeatureEnabled`](featureKey),
-
-    logoUrl: (languageCode: string) => this.store.getters[`${this.entityModuleName}/logoUrl`](languageCode),
   };
 
   private actions = {
@@ -50,8 +48,6 @@ export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uu
 
     updateSupportEmails: (payload: IMultilingual):
       Promise<ITenantSettingsEntity> => this.store.dispatch(`${this.entityModuleName}/updateSupportEmails`, payload),
-
-    fetchLogoUrl: (languageCode: string): Promise<string> => this.store.dispatch(`${this.entityModuleName}/fetchLogoUrl`, languageCode),
   };
 
   private mutations = {

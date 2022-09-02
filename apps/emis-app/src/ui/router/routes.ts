@@ -5,7 +5,7 @@ import { Trans } from '@/ui/plugins/translation';
 import store from '@/store/store';
 import helpers from '@/ui/helpers/helpers';
 import {
-  USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, TENANT_SETTINGS_ENTITIES,
+  USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE,
 } from '@/constants/vuex-modules';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Routes from '../../constants/routes';
@@ -146,10 +146,6 @@ export const routes: Array<RouteConfig> = [
         store.commit(`${DASHBOARD_MODULE}/setProperty`, { property: 'initLoading', value: true });
         const userAccount = await store.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchCurrentUserAccount`);
         if (userAccount) {
-          await Promise.all([
-            store.dispatch(`${TENANT_SETTINGS_ENTITIES}/fetchLogoUrl`, 'en'),
-            store.dispatch(`${TENANT_SETTINGS_ENTITIES}/fetchLogoUrl`, 'fr'),
-          ]);
           await SignalR.instance.buildHubConnection();
         } else {
           helpers.redirectToLoginErrorPage();

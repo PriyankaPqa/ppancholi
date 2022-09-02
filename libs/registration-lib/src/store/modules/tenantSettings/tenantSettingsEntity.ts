@@ -39,11 +39,6 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
 
     currentTenantSettings: new TenantSettingsEntity(),
 
-    logoUrl: {
-      en: '/img/placeholder-logo-en.png',
-      fr: '/img/placeholder-logo-fr.png',
-    },
-
     validateCaptchaAllowedIpAddress: {
       ipAddressIsAllowed: false,
       clientIpAddress: '',
@@ -59,13 +54,6 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
       .currentTenantSettings?.features?.find((f) => f.key === featureKey)?.enabled || false,
 
     branding: (state: ITenantSettingsEntityState) => state.currentTenantSettings.branding,
-
-    logoUrl: (state: ITenantSettingsEntityState) => (languageCode: 'en' | 'fr'): string => {
-      if (languageCode !== 'en' && languageCode !== 'fr') {
-        return state.logoUrl.en;
-      }
-      return state.logoUrl[languageCode];
-    },
 
     validateCaptchaAllowedIpAddress: (state: ITenantSettingsEntityState) => state.validateCaptchaAllowedIpAddress,
   };
@@ -90,10 +78,6 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
       };
 
       this.updateTheme(state.currentTenantSettings.branding);
-    },
-
-    setLogoUrl: (state: ITenantSettingsEntityState, { languageCode, url }: { languageCode: 'en' | 'fr'; url: string }) => {
-      state.logoUrl[languageCode] = url;
     },
 
     setValidateCaptchaAllowedIpAddress(state: ITenantSettingsEntityState, response: IValidateCaptchaAllowedIpAddressResponse) {
@@ -227,22 +211,6 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
       }
 
       return result;
-    },
-
-    fetchLogoUrl: async (context: ActionContext<ITenantSettingsEntityState, ITenantSettingsEntityState>, languageCode: string): Promise<string> => {
-      let lang = languageCode;
-
-      if (lang !== 'en' && lang !== 'fr') {
-        lang = 'en';
-      }
-
-      const url = await this.service.getLogoUrl(lang);
-
-      if (url) {
-        context.commit('setLogoUrl', { languageCode: lang, url });
-      }
-
-      return url;
     },
   };
 

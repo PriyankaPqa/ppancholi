@@ -20,6 +20,7 @@ describe('AssessmentBuilder', () => {
       },
       mocks: { $storage: storage },
     });
+    wrapper.vm.$services.tenantSettings.getLogoUrl = jest.fn((l) => `url ${l}`);
     await flushPromises();
   };
 
@@ -95,6 +96,19 @@ describe('AssessmentBuilder', () => {
         jest.clearAllMocks();
         await wrapper.vm.saveSurveyJson(null, () => {});
         expect(storage.assessmentTemplate.actions.updateAssessmentStructure).toHaveBeenCalledWith(wrapper.vm.assessmentTemplate);
+      });
+    });
+
+    describe('getDefaultJson', () => {
+      it('returns the urls for logos', () => {
+        const result = wrapper.vm.getDefaultJson();
+        expect(JSON.stringify(JSON.parse(result))).toEqual(JSON.stringify(JSON.parse(`{
+          "logo": {
+            "default": "url en",
+            "fr": "url fr"
+          },
+          "logoPosition": "right"
+          }`)));
       });
     });
   });

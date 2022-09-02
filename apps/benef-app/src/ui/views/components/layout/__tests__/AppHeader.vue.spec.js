@@ -67,7 +67,7 @@ describe('AppHeader.vue', () => {
     });
     describe('logoUrl', () => {
       it('should return the logoUrl', () => {
-        expect(wrapper.vm.logoUrl).toEqual(wrapper.vm.$storage.tenantSettings.getters.logoUrl('en'));
+        expect(wrapper.vm.logoUrl.startsWith(wrapper.vm.$services.tenantSettings.getLogoUrl('en'))).toBeTruthy();
       });
     });
 

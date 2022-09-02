@@ -20,7 +20,7 @@ export class HttpClient implements IHttpClient {
 
   private i18n: any;
 
-  private options: IHttpClientOptions
+  private options: IHttpClientOptions;
 
   constructor(i18n: any, options: IHttpClientOptions = {
     authentication: false, accessTokenKey: '', redirect403Url: '', timerBeforeRedirection: 3000, useErrorReport: false,
@@ -49,6 +49,10 @@ export class HttpClient implements IHttpClient {
 
   public setHeadersTenant(tenantId: string) {
     this.axios.defaults.headers.common['x-tenant-id'] = tenantId;
+  }
+
+  public getTenant(): string {
+    return this.axios.defaults.headers.common['x-tenant-id'].toString();
   }
 
   public setHeadersLanguage(lang: string) {

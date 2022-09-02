@@ -21,7 +21,7 @@
             </v-btn>
           </div>
           <div class="d-flex justify-center">
-            <v-img contain :max-width="maxWidth" height="120" :src="getLogoUrlFromStore(lang.key)" />
+            <v-img contain :max-width="maxWidth" height="120" :src="getLogoUrl(lang.key)" />
           </div>
         </v-col>
       </v-row>
@@ -70,6 +70,7 @@ import fileUpload from '@/ui/mixins/fileUpload';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { LOGO_EXTENSIONS } from '@/constants/documentExtensions';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
+import { ITenantSettingsEntity } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(fileUpload).extend({
   name: 'Logo',
@@ -122,7 +123,7 @@ export default mixins(fileUpload).extend({
     },
 
     isDirty(): boolean {
-      return !!this.tempLogoUrl && this.tempLogoUrl !== this.getLogoUrlFromStore(this.currentLogoLanguage);
+      return !!this.tempLogoUrl && this.tempLogoUrl !== this.getLogoUrl(this.currentLogoLanguage);
     },
   },
 
@@ -130,7 +131,7 @@ export default mixins(fileUpload).extend({
     enterEditMode(lang: string) {
       this.isEditing = true;
       this.currentLogoLanguage = lang;
-      this.tempLogoUrl = this.getLogoUrlFromStore(this.currentLogoLanguage);
+      this.tempLogoUrl = this.getLogoUrl(this.currentLogoLanguage);
     },
 
     exitEditMode() {
@@ -143,7 +144,7 @@ export default mixins(fileUpload).extend({
       this.errors = [];
 
       if (!file.size || !isValid) {
-        this.tempLogoUrl = this.getLogoUrlFromStore(this.currentLogoLanguage);
+        this.tempLogoUrl = this.getLogoUrl(this.currentLogoLanguage);
         return;
       }
 
@@ -153,7 +154,7 @@ export default mixins(fileUpload).extend({
       img.onload = function onload() {
         // eslint-disable-next-line
         if ((this as any).width > component.maxWidth || (this as any).height > component.maxHeight) {
-          component.tempLogoUrl = component.getLogoUrlFromStore(component.currentLogoLanguage);
+          component.tempLogoUrl = component.getLogoUrl(component.currentLogoLanguage);
           component.errors.push(component.dimensionsRuleText);
         } else {
           component.tempLogoUrl = img.src;
@@ -163,8 +164,8 @@ export default mixins(fileUpload).extend({
       img.src = URL.createObjectURL(file);
     },
 
-    getLogoUrlFromStore(key: string) {
-      return this.$storage.tenantSettings.getters.logoUrl(key);
+    getLogoUrl(key: string) {
+      return `${this.$services.tenantSettings.getLogoUrl(key)}?d=${this.$storage.tenantSettings.getters.currentTenantSettings().timestamp}`;
     },
 
     async upload() {
@@ -173,10 +174,10 @@ export default mixins(fileUpload).extend({
       formData.set('file', this.file);
 
       this.loading = true;
-      await this.uploadForm(formData, 'system-management/tenant-settings/logo');
+      await this.uploadForm(formData, 'system-management/tenant-settings/logo') as ITenantSettingsEntity;
 
       if (this.uploadSuccess) {
-        await this.$storage.tenantSettings.actions.fetchLogoUrl(this.currentLogoLanguage);
+        await this.$storage.tenantSettings.actions.fetchCurrentTenantSettings();
         this.exitEditMode();
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

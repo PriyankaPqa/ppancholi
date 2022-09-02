@@ -38,11 +38,6 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
     ...this.baseState,
 
     currentTenantSettings: new TenantSettingsEntity(),
-
-    logoUrl: {
-      en: '/img/placeholder-logo-en.png',
-      fr: '/img/placeholder-logo-fr.png',
-    },
   };
 
   public getters = {
@@ -52,13 +47,6 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
 
     isFeatureEnabled: (state: ITenantSettingsEntityState) => (featureKey: FeatureKeys): boolean => state
       .currentTenantSettings?.features?.find((f) => f.key === featureKey)?.enabled || false,
-
-    logoUrl: (state: ITenantSettingsEntityState) => (languageCode: 'en' | 'fr'): string => {
-      if (languageCode !== 'en' && languageCode !== 'fr') {
-        return state.logoUrl.en;
-      }
-      return state.logoUrl[languageCode];
-    },
   };
 
   public mutations = {
@@ -68,10 +56,6 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
       state.currentTenantSettings = new TenantSettingsEntity(tenantSettingsData);
 
       this.updateTheme(state.currentTenantSettings.branding);
-    },
-
-    setLogoUrl: (state: ITenantSettingsEntityState, { languageCode, url }: { languageCode: 'en' | 'fr'; url: string }) => {
-      state.logoUrl[languageCode] = url;
     },
   };
 
@@ -84,6 +68,8 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
       try {
         const result = await this.service.getCurrentTenantSettings();
         if (result) {
+          // force a new date because BE doesnt always update it
+          result.timestamp = new Date();
           context.commit('setCurrentTenantSettings', result);
         }
         return result;
@@ -191,22 +177,6 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
       }
 
       return new TenantSettingsEntity(result);
-    },
-
-    fetchLogoUrl: async (context: ActionContext<ITenantSettingsEntityState, ITenantSettingsEntityState>, languageCode: string): Promise<string> => {
-      let lang = languageCode;
-
-      if (lang !== 'en' && lang !== 'fr') {
-        lang = 'en';
-      }
-
-      const url = await this.service.getLogoUrl(lang);
-
-      if (url) {
-        context.commit('setLogoUrl', { languageCode: lang, url });
-      }
-
-      return url;
     },
   };
 

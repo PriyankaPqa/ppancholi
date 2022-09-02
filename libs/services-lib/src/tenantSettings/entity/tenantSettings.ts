@@ -1,4 +1,3 @@
-import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import {
   IBrandingEntityData, ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, IFeatureEntity,
   ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData, IValidateCaptchaAllowedIpAddressResponse,
@@ -22,7 +21,13 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
   }
 
   async getCurrentTenantSettings(): Promise<ITenantSettingsEntityData> {
-    return this.http.get(`${this.baseUrl}/current-tenant-settings`, { globalHandler: false });
+    return this.http.get<ITenantSettingsEntityData>(`${this.baseUrl}/current-tenant-settings`, { globalHandler: false })
+      .then((t) => {
+        if (t?.tenantId) {
+          this.http.setHeadersTenant(t.tenantId);
+        }
+        return t;
+      });
   }
 
   async createTenantSettings(payload: ICreateTenantSettingsRequest): Promise<ITenantSettingsEntityData> {
@@ -57,20 +62,8 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
     return this.http.patch(`${this.baseUrl}/support-emails`, { supportEmails: payload });
   }
 
-  async getLogoUrl(languageCode: string): Promise<string> {
-    const response = await this.http.getFullResponse<BlobPart>(`${this.baseUrl}/logo/${languageCode}`,
-      { responseType: 'blob', globalHandler: false }).catch((e) => {
-      applicationInsights.trackException(e, {}, 'tenantSettings', 'getLogoUrl');
-      return null;
-    });
-
-    if (!response?.data) {
-      return null;
-    }
-
-    const blob = new Blob([response.data], { type: response.headers['content-type'] });
-    const url = window.URL.createObjectURL(blob);
-    return url;
+  getLogoUrl(languageCode: string, tenantId?: string): string {
+    return `${this.baseUrl}/${tenantId || this.http.getTenant()}/logo/${languageCode}`;
   }
 
   async getPublicFeatures(): Promise<IFeatureEntity[]> {

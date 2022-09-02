@@ -18,7 +18,6 @@ import { EEventStatus, IEvent } from '@libs/entities-lib/registration-event';
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import { i18n } from '@/ui/plugins';
 import { httpClient } from '@/services/httpClient';
-import { SUPPORTED_LANGUAGES } from '@/constants/trans';
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -90,7 +89,6 @@ export default Vue.extend({
         this.$storage.tenantSettings.actions.fetchPublicFeatures(),
         this.$storage.tenantSettings.actions.fetchBranding(),
         this.$storage.tenantSettings.actions.validateCaptchaAllowedIpAddress(),
-        SUPPORTED_LANGUAGES.map((lang) => this.$storage.tenantSettings.actions.fetchLogoUrl(lang)),
       ]).then(() => {
         this.fetchingData = false;
       }).catch((error) => {

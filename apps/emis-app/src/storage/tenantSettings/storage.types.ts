@@ -11,13 +11,11 @@ import {
 export interface IGetters extends IBaseGetters<ITenantSettingsEntity, never> {
   currentTenantSettings(): ITenantSettingsEntity;
   isFeatureEnabled(featureKe: FeatureKeys): boolean;
-  logoUrl(languageCode: string): string;
 }
 
 export interface IGettersMock extends IBaseGettersMock<ITenantSettingsEntity, never> {
   currentTenantSettings: jest.Mock<ITenantSettingsEntity>;
   isFeatureEnabled: jest.Mock<boolean>;
-  logoUrl: jest.Mock<string>;
 }
 
 export interface IActions extends IBaseActions<ITenantSettingsEntity, never, uuid> {
@@ -30,7 +28,6 @@ export interface IActions extends IBaseActions<ITenantSettingsEntity, never, uui
   updateColours(payload: IEditColoursRequest): Promise<ITenantSettingsEntity>;
   updateTenantDetails(payload: IEditTenantDetailsRequest): Promise<ITenantSettingsEntity>;
   updateSupportEmails(payload: IMultilingual): Promise<ITenantSettingsEntity>;
-  fetchLogoUrl(languageCode: string): Promise<string>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<ITenantSettingsEntity, never> {
@@ -43,7 +40,6 @@ export interface IActionsMock extends IBaseActionsMock<ITenantSettingsEntity, ne
   updateColours: jest.Mock<ITenantSettingsEntity>;
   updateTenantDetails: jest.Mock<ITenantSettingsEntity>;
   updateSupportEmails: jest.Mock<ITenantSettingsEntity>;
-  fetchLogoUrl: jest.Mock<string>;
 }
 
 export interface IMutations extends IBaseMutations<ITenantSettingsEntity, never> {}

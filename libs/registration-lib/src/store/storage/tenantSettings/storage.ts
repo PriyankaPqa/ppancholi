@@ -23,8 +23,6 @@ export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uu
 
     isFeatureEnabled: (featureKey: FeatureKeys): boolean => this.store.getters[`${this.entityModuleName}/isFeatureEnabled`](featureKey),
 
-    logoUrl: (languageCode: string) => this.store.getters[`${this.entityModuleName}/logoUrl`](languageCode),
-
     validateCaptchaAllowedIpAddress: () => this.store.getters[`${this.entityModuleName}/validateCaptchaAllowedIpAddress`],
   };
 
@@ -56,8 +54,6 @@ export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uu
 
     updateTenantDetails: (payload: IEditTenantDetailsRequest):
       Promise<ITenantSettingsEntity> => this.store.dispatch(`${this.entityModuleName}/updateTenantDetails`, payload),
-
-    fetchLogoUrl: (languageCode: string): Promise<string> => this.store.dispatch(`${this.entityModuleName}/fetchLogoUrl`, languageCode),
 
     validateCaptchaAllowedIpAddress: ():
       Promise<IValidateCaptchaAllowedIpAddressResponse> => this.store.dispatch(`${this.entityModuleName}/validateCaptchaAllowedIpAddress`),

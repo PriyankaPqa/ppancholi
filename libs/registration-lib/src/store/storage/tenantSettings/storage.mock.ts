@@ -19,7 +19,6 @@ export class TenantSettingsStorageMock extends BaseMock<ITenantSettingsCombined,
     currentTenantSettings: jest.fn(() => mockTenantSettingsEntity()),
     branding: jest.fn(() => mockBrandingEntity()),
     isFeatureEnabled: jest.fn(() => true),
-    logoUrl: jest.fn(),
     validateCaptchaAllowedIpAddress: jest.fn(),
   };
 
@@ -35,7 +34,6 @@ export class TenantSettingsStorageMock extends BaseMock<ITenantSettingsCombined,
     fetchUserTenants: jest.fn(() => [mockBrandingEntity()]),
     updateColours: jest.fn(() => mockTenantSettingsEntity()),
     updateTenantDetails: jest.fn(() => mockTenantSettingsEntity()),
-    fetchLogoUrl: jest.fn(),
     validateCaptchaAllowedIpAddress: jest.fn(),
   };
 

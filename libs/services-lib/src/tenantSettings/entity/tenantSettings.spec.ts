@@ -98,20 +98,15 @@ describe('>>> TenantSettings service', () => {
   });
 
   describe('getLogoUrl', () => {
-    it('is linked to the correct url', async () => {
-      http.getFullResponse = jest.fn(() => Promise.resolve({
-        data: 'data',
-        headers: {},
-      }));
+    it('returns the built url', () => {
+      http.getTenant = jest.fn(() => 'your-id');
+      let url = service.getLogoUrl('en');
 
-      window.URL.createObjectURL = jest.fn();
+      expect(url).toBe('www.test.com/system-management/tenant-settings/your-id/logo/en');
 
-      await service.getLogoUrl('en');
+      url = service.getLogoUrl('fr', 'other-id');
 
-      expect(http.getFullResponse).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/logo/en', {
-        responseType: 'blob',
-        globalHandler: false,
-      });
+      expect(url).toBe('www.test.com/system-management/tenant-settings/other-id/logo/fr');
     });
   });
 

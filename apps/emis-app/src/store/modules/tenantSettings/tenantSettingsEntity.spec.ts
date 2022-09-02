@@ -84,18 +84,6 @@ describe('>>> TenantSettings entity module', () => {
         expect(res).toBe(false);
       });
     });
-
-    describe('logoUrl', () => {
-      it('returns the correct url', () => {
-        myModule.state.logoUrl = {
-          en: 'url en',
-          fr: 'url fr',
-        };
-
-        expect(myModule.getters.logoUrl(myModule.state)('en')).toEqual('url en');
-        expect(myModule.getters.logoUrl(myModule.state)('fr')).toEqual('url fr');
-      });
-    });
   });
 
   describe('>> Mutations', () => {
@@ -118,19 +106,6 @@ describe('>>> TenantSettings entity module', () => {
         expect(myModule.updateTheme).toHaveBeenCalledWith(new TenantSettingsEntity(tenantSettingsData).branding);
       });
     });
-
-    describe('setLogoUrl', () => {
-      it('sets the logo url', () => {
-        const url = 'mock url';
-
-        myModule.mutations.setLogoUrl(myModule.state, {
-          languageCode: 'en',
-          url,
-        });
-
-        expect(myModule.state.logoUrl.en).toEqual('mock url');
-      });
-    });
   });
 
   describe('>> Actions', () => {
@@ -141,14 +116,6 @@ describe('>>> TenantSettings entity module', () => {
         await myModule.actions.fetchCurrentTenantSettings(actionContext);
 
         expect(myModule.service.getCurrentTenantSettings).toHaveBeenCalledTimes(1);
-      });
-
-      it('commits the tenant settings', async () => {
-        myModule.service.getCurrentTenantSettings = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
-
-        await myModule.actions.fetchCurrentTenantSettings(actionContext);
-
-        expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
       });
     });
 
@@ -332,27 +299,6 @@ describe('>>> TenantSettings entity module', () => {
         await myModule.actions.updateSupportEmails(actionContext, payload);
 
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
-      });
-    });
-
-    describe('fetchLogoUrl', () => {
-      it('calls the getLogoUrl service', async () => {
-        myModule.service.getLogoUrl = jest.fn();
-
-        await myModule.actions.fetchLogoUrl(actionContext, 'en');
-
-        expect(myModule.service.getLogoUrl).toHaveBeenCalledWith('en');
-      });
-
-      it('commits the logoUrl', async () => {
-        myModule.service.getLogoUrl = jest.fn(() => Promise.resolve('mock url'));
-
-        await myModule.actions.fetchLogoUrl(actionContext, 'en');
-
-        expect(actionContext.commit).toBeCalledWith('setLogoUrl', {
-          languageCode: 'en',
-          url: 'mock url',
-        });
       });
     });
   });
