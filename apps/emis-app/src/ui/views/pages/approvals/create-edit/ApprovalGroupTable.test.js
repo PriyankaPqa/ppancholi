@@ -1,8 +1,9 @@
 import { shallowMount, createLocalVue } from '@/test/testSetup';
-import { mockBaseApprovalEntity } from '@libs/entities-lib/approvals/approvals-base';
 import { ApprovalGroup } from '@libs/entities-lib/approvals/approvals-group/approvalGroup';
 import { mockRoles } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
+import { Status } from '@libs/entities-lib/base';
+import { mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
 import Component from './ApprovalGroupTable.vue';
 
 const localVue = createLocalVue();
@@ -10,22 +11,32 @@ const storage = mockStorage();
 let wrapper;
 
 const doMount = () => {
+  const combinedApprovalTable = mockCombinedApprovalTable();
+  combinedApprovalTable.entity.groups[0].setRoles(['a6ffce22-8396-43c9-bdc3-6532925af251']);
+  combinedApprovalTable.entity.groups[1].setRoles(['85315955-e20e-40bd-a672-f60b2871a0ab']);
+  storage.approvalTable.actions.fetch = jest.fn(() => combinedApprovalTable);
+
+  const roles = mockRoles();
+  roles[0].subitems[0].status = Status.Inactive; // Disabled Operations Manager roles
+
   const options = {
     localVue,
     data: () => ({
-      roles: mockRoles(),
+      roles,
+      localApproval: combinedApprovalTable.entity,
     }),
     propsData: {
-      approval: mockBaseApprovalEntity(),
+      approval: combinedApprovalTable.entity,
     },
     mocks: {
       $storage: storage,
     },
   };
+
   wrapper = shallowMount(Component, options);
 };
 
-describe('ApprovalsLayout.vue', () => {
+describe('ApprovalGroupTable.vue', () => {
   describe('Computed', () => {
     describe('headers', () => {
       it('should return proper headers', () => {
@@ -73,6 +84,7 @@ describe('ApprovalsLayout.vue', () => {
       it('should return true if one group is being added', () => {
         doMount();
         const group = wrapper.vm.approval.groups[0];
+        group.setEditMode(false);
         expect(wrapper.vm.disableAddGroup).toEqual(false);
         group.setEditMode(true);
         expect(wrapper.vm.disableAddGroup).toEqual(true);
@@ -127,15 +139,6 @@ describe('ApprovalsLayout.vue', () => {
         wrapper.vm.deleteGroup = jest.fn();
         await wrapper.vm.deleteGroupWithConfirmation(0);
         expect(wrapper.vm.deleteGroup).toBeCalledWith(0);
-      });
-    });
-
-    describe('buildRoleString', () => {
-      it('should create a string of selected roles', () => {
-        doMount();
-        const group = wrapper.vm.approval.groups[0];
-        const expected = wrapper.vm.buildRoleString(group);
-        expect(expected).toEqual('Recovery Manager, Operations Manager');
       });
     });
 

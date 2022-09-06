@@ -137,7 +137,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { INestedTableHeader } from '@libs/component-lib/types/INestedTableHeader';
 import { IApprovalBaseEntity } from '@libs/entities-lib/approvals/approvals-base';
 import { IApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
@@ -146,10 +145,10 @@ import {
 } from '@libs/component-lib/components';
 import RcItemAmount from '@libs/component-lib/components/atoms/RcItemAmount.vue';
 import { VForm } from '@libs/shared-lib/types';
-import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
-import { Status } from '@libs/entities-lib/base';
+import mixins from 'vue-typed-mixins';
+import approvalRoles from '@/ui/views/pages/approvals/mixins/approvalRoles';
 
-export default Vue.extend({
+export default mixins(approvalRoles).extend({
   name: 'ApprovalGroupTable',
 
   components: {
@@ -209,23 +208,11 @@ export default Vue.extend({
     disableAddGroup(): boolean {
       return this.approval.groups.some((i) => i.editMode || i.addMode);
     },
-
-    availableRoles(): IOptionItem[] {
-      const level3And4Roles = this.roles.filter((r: IOptionItem) => r.name.translation.en === 'Level 3' || r.name.translation.en === 'Level 4');
-
-      if (level3And4Roles.length > 0) {
-        return level3And4Roles.map((r) => r.subitems)
-          .reduce((prev, current) => [...prev, ...current])
-          .filter((r: IOptionSubItem) => r.status === Status.Active)
-          .map((r: IOptionSubItem) => ({ name: r.name, id: r.id }))
-          .sort((a: IOptionSubItem, b: IOptionSubItem) => this.$m(a.name).localeCompare(this.$m(b.name)));
-      }
-      return [];
-    },
   },
 
   async created() {
     this.roles = await this.$storage.userAccount.actions.fetchRoles();
+    this.localApproval = this.approval; // For mixin approvalRoles
   },
 
   methods: {
@@ -246,16 +233,6 @@ export default Vue.extend({
       if (doDelete) {
         this.deleteGroup(index);
       }
-    },
-
-    buildRoleString(group: IApprovalGroup): string {
-      if (this.availableRoles) {
-        return group.roles.map((roleId) => {
-          const roleName = this.availableRoles.find((x) => x.id === roleId)?.name;
-          return this.$m(roleName);
-        }).join(', ');
-      }
-      return '';
     },
 
     editGroup(group: IApprovalGroup, index: number) {
@@ -340,7 +317,6 @@ export default Vue.extend({
           return { isValid, messageKey };
         }
       }
-
       return {
         isValid: true,
       };

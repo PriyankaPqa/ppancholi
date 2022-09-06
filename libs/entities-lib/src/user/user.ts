@@ -17,6 +17,21 @@ export enum UserRoles {
   'no_role'='no_role'
 }
 
+export enum UserRolesNames {
+  'noAccess' = 'No Access',
+  'level1'='Level 1',
+  'level2'='Level 2',
+  'level3'= 'Level 3',
+  'level4'='Level 4',
+  'level5'='Level 5',
+  'level6'='Level 6',
+  'contributorIM'='ContributorIM',
+  'contributorFinance'='ContributorFinance',
+  'contributor3'='ContributorAdvisor',
+  'readonly'='Read Only',
+  'no_access'='No Access'
+}
+
 export class User implements IUser {
   readonly id: string;
 

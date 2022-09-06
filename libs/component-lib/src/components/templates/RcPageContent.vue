@@ -3,7 +3,8 @@
     :class="{'outer-scroll': outerScroll, 'pageContent grey lighten-4': true, 'fullscreen': fullscreen}"
     v-bind="$attrs"
     class="pa-0">
-    <div :class="`d-flex flex-grow-1 flex-column fill-height pageContentCard__container ${fullscreen ? '' : 'pa-sm-4'}`">
+    <rc-page-loading v-if="loading" />
+    <div v-else :class="`d-flex flex-grow-1 flex-column fill-height pageContentCard__container ${fullscreen ? '' : 'pa-sm-4'}`">
       <slot name="top" />
 
       <v-card :class="{'pageContentCard full-width pageContent__card': true, 'height100': fullHeight}">
@@ -122,11 +123,13 @@
 import Vue from 'vue';
 import helpers from '@libs/component-lib/helpers';
 import RcTooltip from '@libs/component-lib/components/atoms/RcTooltip.vue';
+import RcPageLoading from '../atoms/RcPageLoading.vue';
 
 export default Vue.extend({
   name: 'RcPageContent',
 
   components: {
+    RcPageLoading,
     RcTooltip,
   },
 
@@ -230,6 +233,10 @@ export default Vue.extend({
      * Whether or not to show the edit button
      */
     showEditButton: {
+      type: Boolean,
+      default: false,
+    },
+    loading: {
       type: Boolean,
       default: false,
     },

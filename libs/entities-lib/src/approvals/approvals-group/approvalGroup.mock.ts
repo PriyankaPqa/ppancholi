@@ -4,7 +4,7 @@ import { ApprovalGroup } from './approvalGroup';
 
 export const mockApprovalGroupData = (force? : Partial<IApprovalGroupData>): IApprovalGroupData => ({
   ...mockBaseData(),
-  roles: ['1bdf0ed1-284d-47e3-9366-a515d6af910d', 'a6ffce22-8396-43c9-bdc3-6532925af251'],
+  roles: ['e626199b-7358-40d3-a246-c5f8759862c6', 'ebbf9e55-d817-4a35-8f4c-653993f73956'],
   minimumAmount: 1,
   maximumAmount: 10,
   editMode: false,

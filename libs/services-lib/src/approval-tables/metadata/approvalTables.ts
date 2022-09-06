@@ -3,8 +3,8 @@ import { DomainBaseService } from '../../base';
 import { IHttpClient } from '../../http-client';
 import { IApprovalTablesMetadataService } from './approvals.types';
 
-const apiUrlSuffix = 'approval-table';
-const controller = 'approvals/metadata';
+const apiUrlSuffix = 'finance';
+const controller = 'approval-tables/metadata';
 
 export class ApprovalTablesMetadataService extends DomainBaseService<IApprovalTableMetadata, uuid> implements IApprovalTablesMetadataService {
   constructor(http: IHttpClient) {
