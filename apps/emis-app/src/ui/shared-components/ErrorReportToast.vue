@@ -276,6 +276,7 @@ export default Vue.extend({
           this.report.description = this.makeDescription();
 
           await this.$services.errorReporting.sendErrorReport(this.report);
+          this.$appInsights.trackTrace('Sending report', { payload: this.report }, 'ErrorRepostToast', 'submitReport');
           this.$toasted.global.success(this.$t('errorReport.errorDialog.reportSentSuccess'));
           this.loadingSubmit = false;
           this.$emit('update:show', false);
@@ -283,6 +284,7 @@ export default Vue.extend({
       } catch (e) {
         this.$emit('update:show', false);
         this.$nextTick(() => {
+          this.$appInsights.trackException(e, {}, 'ErrorRepostToast', 'submitReport');
           this.$reportToasted(this.$t('errorReport.errorDialog.reportSentFail'), e);
         });
       }
