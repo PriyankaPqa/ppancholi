@@ -19,7 +19,7 @@ export class AssessmentTemplatesService extends DomainBaseService<IAssessmentTem
   }
 
   async update(item: IAssessmentTemplateEntity): Promise<IAssessmentTemplateEntity> {
-    return this.http.patch<IAssessmentTemplateEntity>(this.getItemUrl(`${this.baseUrl}/{id}/edit`, item), item, { globalHandler: false });
+    return this.http.patch<IAssessmentTemplateEntity>(this.getItemUrl(`${this.baseUrl}/{id}`, item), item, { globalHandler: false });
   }
 
   async updateAssessmentStructure(item: IAssessmentTemplateEntity): Promise<IAssessmentTemplateEntity> {

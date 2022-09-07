@@ -54,8 +54,10 @@
                 v-model="localAssessment.description.translation[languageMode]"
                 data-test="assessment-description"
                 full-width
+                clearable
                 :label="$t('common.description')"
-                :rules="rules.description" />
+                :rules="rules.description"
+                @click:clear="clearDescription()" />
             </v-col>
           </v-row>
 
@@ -126,8 +128,10 @@
                 v-model="localAssessment.messageIfUnavailable.translation[languageMode]"
                 data-test="assessment-messageIfUnavailable"
                 full-width
+                clearable
                 :label="$t('assessmentTemplate.messageIfUnavailable')"
-                :rules="rules.messageIfUnavailable" />
+                :rules="rules.messageIfUnavailable"
+                @click:clear="clearMessage()" />
             </v-col>
           </v-row>
         </v-col>
@@ -152,6 +156,7 @@ import { Status } from '@libs/entities-lib/base';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import _sortBy from 'lodash/sortBy';
+import utils from '@libs/entities-lib/utils';
 
 export default Vue.extend({
   name: 'AssessmentTemplateForm',
@@ -265,6 +270,14 @@ export default Vue.extend({
       if (!this.isNameUnique) {
         this.$emit('update:is-name-unique', true);
       }
+    },
+
+    clearDescription() {
+      this.localAssessment.description = utils.initMultilingualAttributes();
+    },
+
+    clearMessage() {
+      this.localAssessment.messageIfUnavailable = utils.initMultilingualAttributes();
     },
 
     async searchPrograms() {

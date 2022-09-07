@@ -177,6 +177,38 @@ describe('AssessmentTemplateForm.vue', () => {
       });
     });
 
+    describe('clearDescription', () => {
+      it('clears the field description', async () => {
+        await mountWrapper();
+        wrapper.setData({
+          localAssessment: { description: { en: 'foo', fr: 'bar' } },
+        });
+        await wrapper.vm.clearDescription();
+        expect(wrapper.vm.localAssessment.description).toEqual({
+          translation: {
+            en: '',
+            fr: '',
+          },
+        });
+      });
+    });
+
+    describe('clearMessage', () => {
+      it('clears the field message', async () => {
+        await mountWrapper();
+        wrapper.setData({
+          localAssessment: { messageIfUnavailable: { en: 'foo', fr: 'bar' } },
+        });
+        await wrapper.vm.clearMessage();
+        expect(wrapper.vm.localAssessment.messageIfUnavailable).toEqual({
+          translation: {
+            en: '',
+            fr: '',
+          },
+        });
+      });
+    });
+
     describe('resetAsUnique', () => {
       it('emits update:is-name-unique to true if it is false', async () => {
         await mountWrapper();

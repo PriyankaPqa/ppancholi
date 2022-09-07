@@ -111,7 +111,10 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
           if (assessmentTemplate) {
             this.$toasted.global.success(this.$t(this.isEditMode ? 'assessmentTemplate.edit.success' : 'assessmentTemplate.create.success'));
             this.dataSaved = true;
-            this.$router.replace({ name: this.baseRoute.details.name, params: { assessmentTemplateId: assessmentTemplate.id } });
+            this.$router.replace({
+              name: this.baseRoute.details.name,
+              params: { assessmentTemplateId: assessmentTemplate.id },
+            });
           }
         } catch (e) {
           this.$appInsights.trackTrace('AssessmentTemplate submit error', { error: e }, 'CreateEditAssessmentTemplate', 'submit');

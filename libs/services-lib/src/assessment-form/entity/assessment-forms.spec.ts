@@ -40,7 +40,7 @@ describe('>>> AssessmentForms Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentFormEntity();
       await service.update(entity);
-      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}/edit`, entity, { globalHandler: false });
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}`, entity, { globalHandler: false });
     });
   });
 

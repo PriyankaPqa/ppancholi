@@ -65,8 +65,11 @@ export default {
   },
   methods: {
     removeMultipleLine(text) {
-      // eslint-disable-next-line no-control-regex
-      return text.replace(new RegExp('[\r\n]+', 'gm'), '\n');
+      if (text != null) {
+        // eslint-disable-next-line no-control-regex
+        return text.replace(new RegExp('[\r\n]+', 'gm'), '\n');
+      }
+      return null;
     },
   },
 };
