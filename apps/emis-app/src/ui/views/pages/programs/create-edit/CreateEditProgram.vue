@@ -30,6 +30,7 @@ import { ProgramEntity } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
+import { Status } from '@libs/entities-lib/base';
 import ProgramForm from './ProgramForm.vue';
 
 export default Vue.extend({
@@ -137,11 +138,21 @@ export default Vue.extend({
       }
     },
 
-    async editProgram() {
-      const res = await this.$storage.program.actions.updateProgram(this.program);
+    async editProgram(program: ProgramEntity) {
+      if (program.status === Status.Inactive) {
+        const userChoice = await this.$confirm({
+          title: this.$t('editProgram.inactive.confirm.title'),
+          messages: this.$t('editProgram.inactive.confirm.message'),
+        });
+        if (!userChoice) {
+          return;
+        }
+      }
+
+      const res = await this.$storage.program.actions.updateProgram(program);
       if (res) {
         this.$toasted.global.success(this.$t('event.programManagement.updated'));
-        this.$router.replace({ name: routes.programs.details.name, params: { programId: this.program.id } });
+        this.$router.replace({ name: routes.programs.details.name, params: { programId: program.id } });
       } else {
         this.$toasted.global.error(this.$t('event.programManagement.update.failed'));
       }
@@ -157,10 +168,10 @@ export default Vue.extend({
 
       try {
         this.loading = true;
-        if (this.isEditMode) {
-          await this.editProgram();
-        } else {
+        if (!this.isEditMode) {
           await this.createProgram();
+        } else {
+          await this.editProgram(this.program);
         }
       } catch (e) {
         this.$appInsights.trackTrace('Program submit error', { error: e }, 'CreateEditProgram', 'submit');

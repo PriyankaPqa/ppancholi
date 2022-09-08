@@ -31,6 +31,7 @@
     "approvals.rules.maximum_next_cent": "Must be previous cent of next group minimum",
     "approvals.rules.minimum_next_cent": "Must be next cent of previous group maximum",
     "approvals.title": "Approvals",
+    "approvalsTable.filter.title": "Filter approval tables",
     "approvalsTable.name": "Name",
     "approvalsTable.programName": "Program",
     "approvalsTable.title": "Approval tables",
@@ -471,8 +472,12 @@
     "document.filter": "Filter documents",
     "documentDetails.back_to_documents": "Back to documents",
     "documentDetails.title": "Document details",
+    "editProgram.inactive.confirm.message": "By setting this program to inactive, the associated approval table and financial assistance table(s) will become inactive as well. Are you sure you want to proceed?",
+    "editProgram.inactive.confirm.title": "Are you sure?",
     "enums.ApprovalAggregatedBy.IndividualPaymentTotal": "Individual payment total",
     "enums.ApprovalAggregatedBy.TotalFinancialAssistanceOnCaseFile": "Total financial assistance on case file",
+    "enums.ApprovalBaseStatus.Active": "Active",
+    "enums.ApprovalBaseStatus.Inactive": "Inactive",
     "enums.ApprovalStatus.Approved": "Approved",
     "enums.ApprovalStatus.Declined": "Declined",
     "enums.ApprovalStatus.New": "New",
@@ -1002,6 +1007,7 @@
     "errors.the-alternate-phone-number-extension-should-have-a-value": "The alternate phone number extension should have a value",
     "errors.the-alternate-phone-number-is-not-valid-for-this-country-iso-2-code": "The alternate phone number is not valid for this country iso 2 code",
     "errors.the-approval-groups-should-have-increasing-amount": "The approval groups should have increasing amount",
+    "errors.the-approval-groups-should-have-increasing-amount-of-one-cent-between-group-max-and-min-value": "The approval groups should have increasing amount of one cent between group max and min value",
     "errors.the-approval-table-group-roles-should-not-be-empty": "The approval table group roles should not be empty",
     "errors.the-approval-table-group-roles-should-not-have-empty-value": "The approval table group roles should not have empty value",
     "errors.the-approval-table-groups-should-not-be-empty": "The approval table groups should not be empty",
@@ -2015,6 +2021,5 @@
     "zendesk.question.create_case_note": "How to create a case note?",
     "zendesk.question.forgot_password": "Forgot password?",
     "zendesk.question.register_a_beneficiary": "How to register a beneficiary?",
-    "zendesk.question.select_language_preferences": "How do I select my language preferences?",
-    "approvalsTable.filter.title": "Filter approval tables"
+    "zendesk.question.select_language_preferences": "How do I select my language preferences?"
 }

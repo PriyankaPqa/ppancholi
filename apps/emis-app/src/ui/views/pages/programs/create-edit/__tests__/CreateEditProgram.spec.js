@@ -2,33 +2,43 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
 import { mockProgramEntity } from '@libs/entities-lib/program';
+import { Status } from '@libs/entities-lib/base';
 import Component from '../CreateEditProgram.vue';
 
 const localVue = createLocalVue();
+let wrapper;
+
+const doMount = (editMode = false) => {
+  wrapper = shallowMount(Component, {
+    localVue,
+    propsData: {
+      id: 'EVENT_ID',
+      programId: 'PROGRAM_ID',
+    },
+    computed: {
+      isEditMode() {
+        return editMode;
+      },
+    },
+    mocks: {
+      $route: {
+        name: routes.programs.create.name,
+        params: {
+          id: 'EVENT_ID',
+        },
+      },
+      $storage: mockStorage(),
+    },
+  });
+};
 
 describe('CreateEditProgram', () => {
-  let wrapper;
   let mockProgram;
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockProgram = mockProgramEntity();
-
-    wrapper = shallowMount(Component, {
-      localVue,
-      propsData: {
-        id: 'EVENT_ID',
-      },
-      mocks: {
-        $route: {
-          name: routes.programs.create.name,
-          params: {
-            id: 'EVENT_ID',
-          },
-        },
-        $storage: mockStorage(),
-      },
-    });
+    doMount();
   });
 
   describe('Methods', () => {
@@ -81,21 +91,7 @@ describe('CreateEditProgram', () => {
       });
 
       it('calls updateProgram if isEditMode is true', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: 'EVENT_ID',
-            programId: 'PROGRAM_ID',
-          },
-          computed: {
-            isEditMode() {
-              return true;
-            },
-          },
-          mocks: {
-            $storage: mockStorage(),
-          },
-        });
+        doMount(true);
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
@@ -118,34 +114,26 @@ describe('CreateEditProgram', () => {
           },
         });
       });
+    });
+  });
 
-      test('after creating a program a toast notification is shown', async () => {
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        await wrapper.vm.submit();
-        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.programManagement.created');
-      });
+  describe('editProgram', () => {
+    it('should show a toast notification', async () => {
+      await wrapper.vm.editProgram(mockProgram);
+      expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.programManagement.updated');
+    });
 
-      test('after updating a program a toast notification is shown', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: 'EVENT_ID',
-            programId: 'PROGRAM_ID',
-          },
-          computed: {
-            isEditMode() {
-              return true;
-            },
-          },
-          mocks: {
-            $storage: mockStorage(),
-          },
-        });
+    it('should show a confirmation pop if editing the program to inactive', async () => {
+      doMount(true);
+      await wrapper.vm.editProgram(mockProgramEntity({ status: Status.Inactive }));
+      expect(wrapper.vm.$confirm).toHaveBeenCalledTimes(1);
+    });
+  });
 
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        await wrapper.vm.submit();
-        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.programManagement.updated');
-      });
+  describe('createProgram', () => {
+    it('should show a toast notification', async () => {
+      await wrapper.vm.createProgram();
+      expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.programManagement.created');
     });
   });
 
