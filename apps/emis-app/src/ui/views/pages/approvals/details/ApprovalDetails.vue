@@ -2,7 +2,7 @@
   <rc-page-content :title="$t('approvalTables.tableDetails')" :loading="loading">
     <v-container>
       <v-row no-gutters justify="center" class="mt-12">
-        <v-col xl="8" md="10" sm="12">
+        <v-col xl="10" lg="10" md="11" sm="12" xs="12">
           <v-row no-gutters>
             <v-col cols="8">
               <div v-if="approvalMetadata" class="rc-body14 mb-2">
@@ -32,7 +32,7 @@
               <v-icon color="primary">
                 mdi-check-circle-outline
               </v-icon>
-              {{ aggregatedBy.find(a => a.value === approval.aggregatedByType).text }}
+              {{ getAggregatedByText }}
             </span>
           </v-row>
 
@@ -51,40 +51,11 @@
                 @click:clear="search = ''" />
             </v-col>
           </v-row>
-          <v-simple-table class="approval_group_table">
-            <thead>
-              <tr>
-                <th class="text-left">
-                  {{ $t('approvals.nestedTable.headers.group') }}
-                </th>
-                <th class="text-left">
-                  {{ $t('approvals.nestedTable.headers.roles') }}
-                </th>
-                <th class="text-left">
-                  {{ $t('approvals.nestedTable.headers.minimum') }}
-                </th>
-                <th class="text-left">
-                  {{ $t('approvals.nestedTable.headers.maximum') }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(group, index) in filteredGroups" :key="index">
-                <td :data-test="`group_${index}`">
-                  {{ group.groupIndex }}
-                </td>
-                <td :data-test="`roles_${index}`">
-                  {{ group.roles }}
-                </td>
-                <td :data-test="`minimum_${index}`">
-                  {{ group.minimum }}
-                </td>
-                <td :data-test="`maximum_${index}`">
-                  {{ group.maximum }}
-                </td>
-              </tr>
-            </tbody>
-          </v-simple-table>
+          <v-data-table
+            class="approval_group_table"
+            :headers="headers"
+            :items="filteredGroups"
+            hide-default-footer />
         </v-col>
       </v-row>
     </v-container>
@@ -153,13 +124,45 @@ export default mixins(approvalRoles).extend({
     },
 
     filteredGroups(): IFilteredGroups[] {
-      const dataTable = this.approval.groups.map((g: IApprovalGroup, index: number) => ({
-        groupIndex: this.$t('approvals.nestedTable.group', { x: index + 1 }),
-        roles: this.buildRoleString(g),
-        minimum: this.$formatCurrency(g.minimumAmount),
-        maximum: this.$formatCurrency(g.maximumAmount),
-      }));
-      return helpers.filterCollectionByValue(dataTable, this.search, false, ['groupIndex', 'roles'], true);
+      if (this.approval.groups) {
+        const dataTable = this.approval.groups.map((g: IApprovalGroup, index: number) => ({
+          groupIndex: this.$t('approvals.nestedTable.group', { x: index + 1 }),
+          roles: this.buildRoleString(g),
+          minimum: this.$formatCurrency(g.minimumAmount),
+          maximum: this.$formatCurrency(g.maximumAmount),
+        }));
+        return helpers.filterCollectionByValue(dataTable, this.search, false, ['groupIndex', 'roles'], true);
+      }
+      return [];
+    },
+
+    getAggregatedByText(): string {
+      return this.aggregatedBy.find((a) => a.value === this.approval.aggregatedByType)?.text;
+    },
+
+    headers(): Record<string, unknown> [] {
+      return [
+        {
+          text: this.$t('approvals.nestedTable.headers.group'),
+          value: 'groupIndex',
+          sortable: false,
+        },
+        {
+          text: this.$t('approvals.nestedTable.headers.roles'),
+          value: 'roles',
+          sortable: false,
+        },
+        {
+          text: this.$t('approvals.nestedTable.headers.minimum'),
+          value: 'minimum',
+          sortable: false,
+        },
+        {
+          text: this.$t('approvals.nestedTable.headers.maximum'),
+          value: 'maximum',
+          sortable: false,
+        },
+      ];
     },
   },
 

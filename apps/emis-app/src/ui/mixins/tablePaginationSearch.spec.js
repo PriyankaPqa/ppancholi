@@ -385,6 +385,23 @@ describe('tablePaginationSearch.vue', () => {
         expect(wrapper.vm.userFilters).toEqual(preparedFilters);
       });
 
+      it('sets userFilters with preparedFilters and presetFilters if present', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            presetFilter: () => ({ preset: '1' }),
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        const preparedFilters = [{ key: 'name' }];
+        const searchFilters = 'search';
+        wrapper.vm.onApplyFilter({ preparedFilters, searchFilters });
+
+        expect(wrapper.vm.userFilters).toEqual({ ...preparedFilters, ...wrapper.vm.presetFilter });
+      });
+
       it('sets userSearchFilters with searchFilters', () => {
         const preparedFilters = [{ key: 'name' }];
         const searchFilters = 'search';

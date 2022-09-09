@@ -16,6 +16,7 @@
       <template #headerLeft>
         <rc-add-button-with-menu
           :items="menuItems"
+          :add-button-label="$t('common.add')"
           data-test="add-approval-table"
           @click-item="handleCreate($event)" />
       </template>
@@ -103,12 +104,15 @@ export default mixins(TablePaginationSearchMixin).extend({
       options: {
         page: 1,
         sortBy: [`Metadata/ApprovalTableStatusName/Translation/${this.$i18n.locale}`],
-        sortDesc: [true],
+        sortDesc: [false],
       },
     };
   },
 
   created() {
+    // So filters are retrieved
+    this.saveState = true;
+    this.loadState();
     this.fetchPrograms();
   },
 
@@ -157,7 +161,6 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (_isEmpty(params.filter)) {
         params.filter = this.presetFilter;
       }
-
       const res = await this.$storage.approvalTable.actions.search({
         search: params.search,
         filter: params.filter,

@@ -80,6 +80,10 @@ export default Vue.extend({
       const { pageIndex } = this.params;
       return this.previousPageIndex !== pageIndex;
     },
+
+    presetFilter() {
+      return null;
+    },
   },
 
   methods: {
@@ -217,6 +221,7 @@ export default Vue.extend({
       this.forceSkip = true;
       this.options.page = 1;
       this.userFilters = _isEmpty(preparedFilters) ? null : preparedFilters;
+      this.userFilters = this.presetFilter ? { ...this.userFilters, ...this.presetFilter } : this.userFilters;
       this.userSearchFilters = searchFilters;
       this.filterState = filterState;
       await this.search(this.params);

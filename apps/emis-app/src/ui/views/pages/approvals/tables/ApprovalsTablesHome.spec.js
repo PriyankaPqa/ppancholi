@@ -284,7 +284,7 @@ describe('ApprovalTablesHome.vue', () => {
     });
   });
 
-  describe('created', () => {
+  describe('Created', () => {
     it('should fetch programs for filters', async () => {
       doMount();
       wrapper.vm.fetchPrograms = jest.fn();
@@ -292,6 +292,14 @@ describe('ApprovalTablesHome.vue', () => {
         hook.call(wrapper.vm);
       });
       expect(wrapper.vm.fetchPrograms).toHaveBeenCalled();
+    });
+    it('should load state of the table', async () => {
+      doMount();
+      wrapper.vm.loadState = jest.fn();
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+      expect(wrapper.vm.loadState).toHaveBeenCalled();
     });
   });
 });

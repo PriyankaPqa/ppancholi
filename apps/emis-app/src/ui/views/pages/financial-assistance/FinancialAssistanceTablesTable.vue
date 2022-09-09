@@ -29,7 +29,7 @@
         :count="itemsCount"
         :initial-filter="filterState"
         add-filter-label="financialAssistance.filter"
-        @update:appliedFilter="onApplyFilterLocal" />
+        @update:appliedFilter="onApplyFilter" />
     </template>
 
     <template #[`item.${customColumns.program}`]="{ item }">
@@ -212,7 +212,6 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (_isEmpty(params.filter)) {
         params.filter = this.presetFilter;
       }
-
       const res = await this.$storage.financialAssistance.actions.search({
         search: params.search,
         filter: params.filter,
@@ -262,13 +261,6 @@ export default mixins(TablePaginationSearchMixin).extend({
 
       this.programs = this.$storage.program.getters.getByIds(res.ids)
         .map((combined: IEntityCombined<IProgramEntity, IProgramMetadata>) => (combined.entity));
-    },
-
-    async onApplyFilterLocal(
-      { preparedFilters, searchFilters }
-        : { preparedFilters: Record<string, unknown>, searchFilters: string },
-    ) {
-      await this.onApplyFilter({ preparedFilters: { ...preparedFilters, ...this.presetFilter }, searchFilters });
     },
   },
 });
