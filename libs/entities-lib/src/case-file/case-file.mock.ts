@@ -1,3 +1,4 @@
+import { ERegistrationMethod } from '../../../shared-lib/src/types/enums/ERegistrationMethod';
 /* eslint-disable max-lines-per-function */
 import { IEntity, mockBaseData } from '../base';
 import {
@@ -485,6 +486,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       activityType: CaseFileActivityType.Registration,
       details: {
         registrationType: RegistrationType.Crc,
+        registrationMethod: ERegistrationMethod.Phone,
       },
     },
     {

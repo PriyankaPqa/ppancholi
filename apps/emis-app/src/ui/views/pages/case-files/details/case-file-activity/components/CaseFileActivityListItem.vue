@@ -18,8 +18,9 @@ import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/compone
 import {
   CaseFileActivityType, HouseholdCaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, RegistrationType, ValidationOfImpactStatus,
 } from '@libs/entities-lib/case-file';
-import { IIdMultilingualName, IMultilingual } from '@libs/shared-lib/types';
+import { ERegistrationMethod, IIdMultilingualName, IMultilingual } from '@libs/shared-lib/types';
 import { EPaymentModalities } from '@libs/entities-lib/program';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export interface IAssignInfo {
   id: string;
@@ -402,15 +403,24 @@ export default Vue.extend({
 
     makeContentForRegistration(): {title: TranslateResult, body: TranslateResult} {
       const title = this.$t('caseFileActivity.activityList.title.Registration');
-      let body;
+      let body = '';
       if (this.item.details.registrationType === RegistrationType.Crc) {
-        body = this.$t('caseFileActivity.activityList.body.CRCRegistration',
+        body += this.$t('caseFileActivity.activityList.body.CRCRegistration',
           {
             By: this.item.user.name,
           });
+        if (this.$hasFeature(FeatureKeys.CaseFileActivityRegistrationLocation) && this.item.details.registrationMethod) {
+          body += `\n${this.$t('caseFileActivity.activityList.body.registrationMethod')}: `;
+          body += this.$t(`enums.RegistrationMethod.${ERegistrationMethod[this.item.details.registrationMethod as number]}`);
+          if (this.item.details.registrationMethod === ERegistrationMethod.InPerson && this.item.details.registrationLocation) {
+            body += `\n${this.$t('caseFileActivity.activityList.body.registrationLocation')}: `;
+            body += this.$m(this.item.details.registrationLocation as IMultilingual);
+          }
+        }
       } else {
-        body = this.$t('caseFileActivity.activityList.body.PublicRegistration');
+        body += this.$t('caseFileActivity.activityList.body.PublicRegistration');
       }
+
       return { title, body };
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     },

@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileActivityType, mockCaseFileActivities, HouseholdCaseFileActivityType } from '@libs/entities-lib/case-file';
+import { ERegistrationMethod } from '@libs/shared-lib/src/types/enums/ERegistrationMethod';
 
 import Component from '../case-file-activity/components/CaseFileActivityListItem.vue';
 
@@ -714,19 +715,43 @@ describe('CaseFileActivityListItem.vue', () => {
             body,
           });
         });
-        it('returns the correct data when action type is Registration and RegistrationType is crc', async () => {
+        it('returns the correct data when action type is Registration,  RegistrationType is crc and there is a registration method', async () => {
           const item = mockCaseFileActivities(CaseFileActivityType.Registration)[0];
-
+          wrapper.vm.$hasFeature = jest.fn(() => true);
           await wrapper.setProps({
             item,
           });
-          const body = 'caseFileActivity.activityList.body.CRCRegistration';
+          const body = 'caseFileActivity.activityList.body.CRCRegistration\ncaseFileActivity.activityList.body.registrationMethod: enums.RegistrationMethod.Phone';
 
           expect(wrapper.vm.makeContentForRegistration()).toEqual({
             title: 'caseFileActivity.activityList.title.Registration',
             body,
           });
         });
+
+        it('returns the correct data when action type is Registration,  RegistrationType is crc and registration method is in person and has location', async () => {
+          wrapper.vm.$hasFeature = jest.fn(() => true);
+          const item = {
+            ...mockCaseFileActivities(CaseFileActivityType.Registration)[0],
+            details: {
+              ...mockCaseFileActivities(CaseFileActivityType.Registration)[0].details,
+              registrationMethod: ERegistrationMethod.InPerson,
+              registrationLocation: { translation: { en: 'Town Hall', fr: '' } },
+            },
+          };
+          wrapper.vm.$hasFeature = jest.fn(() => true);
+          await wrapper.setProps({
+            item,
+          });
+          let body = 'caseFileActivity.activityList.body.CRCRegistration\ncaseFileActivity.activityList.body.registrationMethod: enums.RegistrationMethod.InPerson';
+          body += '\ncaseFileActivity.activityList.body.registrationLocation: Town Hall';
+
+          expect(wrapper.vm.makeContentForRegistration()).toEqual({
+            title: 'caseFileActivity.activityList.title.Registration',
+            body,
+          });
+        });
+
         it('returns the correct data when action type is Registration and RegistrationType is public', async () => {
           const item = mockCaseFileActivities(CaseFileActivityType.Registration)[1];
 
@@ -740,6 +765,22 @@ describe('CaseFileActivityListItem.vue', () => {
             body,
           });
         });
+
+        it('returns the correct data when action type is Registration and feature flag is off', async () => {
+          const item = mockCaseFileActivities(CaseFileActivityType.Registration)[0];
+          wrapper.vm.$hasFeature = jest.fn(() => false);
+
+          await wrapper.setProps({
+            item,
+          });
+          const body = 'caseFileActivity.activityList.body.CRCRegistration';
+
+          expect(wrapper.vm.makeContentForRegistration()).toEqual({
+            title: 'caseFileActivity.activityList.title.Registration',
+            body,
+          });
+        });
+
         it('returns the correct data when action type is PaymentSubmitted', async () => {
           const item = mockCaseFileActivities(CaseFileActivityType.PaymentSubmitted)[0];
 
