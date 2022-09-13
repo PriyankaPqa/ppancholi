@@ -330,7 +330,13 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     duplicateSurvey(item: IAssessmentTemplateEntity) {
-      console.log('duplicateSurvey: ', item);
+      this.$router.push({
+        name: this.baseRoute.duplicate.name,
+        params: {
+          cloneId: item.id,
+          id: this.id,
+        },
+      });
     },
 
     goToAdd(item: Record<string, string>) {

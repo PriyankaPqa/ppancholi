@@ -356,6 +356,21 @@ describe('AssessmentTemplatesHome.vue', () => {
       });
     });
 
+    describe('duplicateSurvey', () => {
+      it('should redirect to duplicate page with cloneid', async () => {
+        await mountWrapper();
+        wrapper.vm.duplicateSurvey({ id: 'surveyId' });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: wrapper.vm.baseRoute.duplicate.name,
+          params: {
+            cloneId: 'surveyId',
+            id: wrapper.vm.id,
+          },
+        });
+      });
+    });
+
     describe('goToAdd', () => {
       it('should redirect to create page', async () => {
         await mountWrapper();

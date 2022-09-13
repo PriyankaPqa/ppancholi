@@ -245,6 +245,15 @@ export const routes: Array<RouteConfig> = [
             props: true,
           },
           {
+            path: Routes.assessmentTemplates.duplicate.path,
+            name: Routes.assessmentTemplates.duplicate.name,
+            component: AssessmentTemplatesEdit,
+            meta: {
+              level: 'level6', requiresAuthorization: true, requiresAuthentication: true, feature: FeatureKeys.Assessments,
+            },
+            props: true,
+          },
+          {
             path: Routes.assessmentTemplates.edit.path,
             name: Routes.assessmentTemplates.edit.name,
             component: AssessmentTemplatesEdit,
@@ -575,6 +584,16 @@ export const routes: Array<RouteConfig> = [
                   {
                     path: Routes.events.assessments.create.path,
                     name: Routes.events.assessments.create.name,
+                    component: AssessmentTemplatesEdit,
+                    meta: {
+                      level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+                    },
+                    props: true,
+                    children: [],
+                  },
+                  {
+                    path: Routes.events.assessments.duplicate.path,
+                    name: Routes.events.assessments.duplicate.name,
                     component: AssessmentTemplatesEdit,
                     meta: {
                       level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,

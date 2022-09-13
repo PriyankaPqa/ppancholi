@@ -1,4 +1,4 @@
-import { IAssessmentFormMetadata, IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
+import { IAssessmentFormMetadata, IAssessmentFormEntity, IAssessmentBaseEntity } from '@libs/entities-lib/assessment-template';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';
@@ -12,7 +12,7 @@ export interface IGettersMock extends IBaseGettersMock<IAssessmentFormEntity, IA
 export interface IActions extends IBaseActions<IAssessmentFormEntity, IAssessmentFormMetadata, {id: uuid}> {
   create(payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
   update(payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
-  updateAssessmentStructure(payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
+  updateAssessmentStructure(payload: IAssessmentBaseEntity): Promise<IAssessmentFormEntity>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<IAssessmentFormEntity, IAssessmentFormMetadata> {

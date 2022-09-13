@@ -18,6 +18,10 @@ const routes = {
       path: 'assessment-templates/create',
       name: 'assessmenttemplates.assessments.create',
     },
+    duplicate: {
+      path: 'assessment-templates/duplicate/:cloneId',
+      name: 'assessmenttemplates.assessments.duplicate',
+    },
     edit: {
       path: 'assessment-templates/:assessmentTemplateId/edit',
       name: 'assessmenttemplates.assessments.edit',
@@ -200,6 +204,10 @@ const routes = {
       create: {
         path: 'assessments/create',
         name: 'events.assessments.create',
+      },
+      duplicate: {
+        path: 'assessments/duplicate/:cloneId?',
+        name: 'events.assessments.duplicate',
       },
       edit: {
         path: 'assessments/:assessmentTemplateId/edit',

@@ -3,5 +3,6 @@ export interface IAssessmentBaseRoute {
    details: { name: string },
    edit: { name: string },
    create: { name: string },
+   duplicate: { name: string },
    builder: { name: string },
 }

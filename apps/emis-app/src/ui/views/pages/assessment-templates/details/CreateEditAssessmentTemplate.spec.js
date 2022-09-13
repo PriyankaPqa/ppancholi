@@ -75,6 +75,7 @@ describe('CreateEditAssessmentTemplate', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
         expect(storage.assessmentForm.actions.update).toHaveBeenCalledTimes(1);
+        expect(storage.assessmentForm.actions.updateAssessmentStructure).not.toHaveBeenCalled();
       });
 
       it('calls assessmentTemplate.create if isEditMode is false without event', async () => {
@@ -91,6 +92,25 @@ describe('CreateEditAssessmentTemplate', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
         expect(storage.assessmentTemplate.actions.update).toHaveBeenCalledTimes(1);
+        expect(storage.assessmentTemplate.actions.updateAssessmentStructure).not.toHaveBeenCalled();
+      });
+
+      it('calls assessmentForm.updateAssessmentStructure if cloning with event', async () => {
+        await mountWrapper('id');
+        await wrapper.setProps({ cloneId: 'clonedId' });
+
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.submit();
+        expect(storage.assessmentForm.actions.updateAssessmentStructure).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls assessmentTemplate.updateAssessmentStructure if cloning without event', async () => {
+        await mountWrapper(null, null);
+        await wrapper.setProps({ cloneId: 'clonedId' });
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+
+        await wrapper.vm.submit();
+        expect(storage.assessmentTemplate.actions.updateAssessmentStructure).toHaveBeenCalledTimes(1);
       });
 
       test('submit calls the fillEmptyMultilingualAttributes method', async () => {
@@ -142,6 +162,34 @@ describe('CreateEditAssessmentTemplate', () => {
         await mountWrapper(null);
 
         expect(wrapper.vm.isEditMode).toBe(false);
+      });
+
+      it('returns false if cloneId', async () => {
+        await mountWrapper('id');
+        await wrapper.setProps({ cloneId: 'clonedId' });
+
+        expect(wrapper.vm.isEditMode).toBe(false);
+      });
+    });
+
+    describe('title', () => {
+      it('returns for create', async () => {
+        await mountWrapper(null, 'id');
+
+        expect(wrapper.vm.title).toBe('assessmentTemplate.add.title');
+      });
+
+      it('returns for edit', async () => {
+        await mountWrapper('assessmentId', null);
+
+        expect(wrapper.vm.title).toBe('assessmentTemplate.edit.title');
+      });
+
+      it('returns for clone', async () => {
+        await mountWrapper(null, null);
+        await wrapper.setProps({ cloneId: 'clonedId' });
+
+        expect(wrapper.vm.title).toBe('assessmentTemplate.clone.title');
       });
     });
 

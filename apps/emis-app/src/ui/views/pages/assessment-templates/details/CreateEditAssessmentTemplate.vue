@@ -1,8 +1,8 @@
 <template>
-  <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
+  <validation-observer ref="form" v-slot="{ failed }" slim>
     <page-template :loading="assessmentTemplateLoading" :show-left-menu="false">
       <rc-page-content
-        :title="isEditMode ? $t('assessmentTemplate.edit.title') : $t('assessmentTemplate.add.title')">
+        :title="title">
         <assessment-template-form
           v-if="assessmentTemplate"
           :assessment-template.sync="assessmentTemplate"
@@ -14,7 +14,7 @@
             {{ $t('common.cancel') }}
           </v-btn>
 
-          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed || !dirty" @click.stop="submit">
+          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed" @click.stop="submit">
             {{ submitLabel }}
           </v-btn>
         </template>
@@ -46,6 +46,13 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
     AssessmentTemplateForm,
   },
 
+  props: {
+    cloneId: {
+      type: String,
+      default: '',
+    },
+  },
+
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
     if (!this.dataSaved) {
       await helpers.confirmBeforeLeaving(this, (this.$refs.form as VForm).flags.dirty, next);
@@ -65,7 +72,13 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
 
   computed: {
     isEditMode(): boolean {
-      return !!this.assessmentTemplateId;
+      return !this.cloneId && !!this.assessmentTemplateId;
+    },
+
+    title(): string {
+      // eslint-disable-next-line no-nested-ternary
+      return (this.isEditMode ? this.$t('assessmentTemplate.edit.title')
+        : (this.cloneId ? this.$t('assessmentTemplate.clone.title') : this.$t('assessmentTemplate.add.title'))) as string;
     },
 
     submitLabel(): TranslateResult {
@@ -76,6 +89,9 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
   },
 
   async created() {
+    if (this.cloneId) {
+      this.assessmentTemplateId = this.cloneId;
+    }
     await this.loadDetails();
     this.uniqueNameErrorCode = this.isFormMode
       ? 'errors.an-assessment-form-with-this-name-already-exists' : 'errors.an-assessment-template-with-this-name-already-exists';
@@ -109,6 +125,13 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
             assessmentTemplate = await this.$storage.assessmentTemplate.actions.create(this.assessmentTemplate);
           }
           if (assessmentTemplate) {
+            if (this.cloneId) {
+              assessmentTemplate.externalToolState = this.assessmentTemplate.externalToolState;
+              assessmentTemplate.questions = this.assessmentTemplate.questions;
+              assessmentTemplate = (this.isFormMode) ? await this.$storage.assessmentForm.actions.updateAssessmentStructure(assessmentTemplate)
+                : await this.$storage.assessmentTemplate.actions.updateAssessmentStructure(assessmentTemplate);
+            }
+
             this.$toasted.global.success(this.$t(this.isEditMode ? 'assessmentTemplate.edit.success' : 'assessmentTemplate.create.success'));
             this.dataSaved = true;
             this.$router.replace({
