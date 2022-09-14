@@ -10,6 +10,7 @@ import { Status } from '@libs/entities-lib/base';
 import { mockApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
 import helpers from '@/ui/helpers/helpers';
 import { mockServerError } from '@libs/services-lib/http-client';
+import { mockProvider } from '@/services/provider';
 import Component from './CreateEditApprovals.vue';
 
 const localVue = createLocalVue();
@@ -112,23 +113,36 @@ describe('CreateEditApprovals', () => {
     });
 
     describe('availablePrograms', () => {
-      it('should return programs listed alphabetically not already used in an approval table', async () => {
-        doMount();
-        await wrapper.setData({
-          tablesForCurrentEvent: [{ programId: '10' }],
-          programs: [
-            mockProgramEntity({ id: '1' }),
-            mockProgramEntity({ id: '2' }),
-            mockProgramEntity({ id: '10' }),
-          ],
-        });
+      it('should return active programs listed alphabetically not already used in an approval table', async () => {
+        const provider = mockProvider();
+        provider.programs.getAllIncludingInactive = jest.fn();
+        const options = {
+          localVue,
+          data: () => ({
+            roles: mockRoles(),
+            tablesForCurrentEvent: [{ programId: '10' }],
+            programs: [
+              mockProgramEntity({ id: '10' }),
+              mockProgramEntity({ id: '11' }),
+              mockProgramEntity({ id: '12' }),
+            ],
+          }),
+          computed: {
+            isTableMode: () => true,
+            isEditMode: () => false,
+          },
+          mocks: {
+            $services: provider,
+          },
+        };
+        wrapper = shallowMount(Component, options);
 
         const expectedPrograms = [
-          mockProgramEntity({ id: '1' }),
-          mockProgramEntity({ id: '2' }),
+          mockProgramEntity({ id: '11' }),
+          mockProgramEntity({ id: '12' }),
         ];
 
-        expect(wrapper.vm.availablePrograms).toEqual([_sortBy(expectedPrograms, (program) => wrapper.vm.$m(program.name))]);
+        expect(wrapper.vm.availablePrograms).toEqual(_sortBy(expectedPrograms, (program) => wrapper.vm.$m(program.name)));
       });
     });
 
@@ -187,7 +201,7 @@ describe('CreateEditApprovals', () => {
     describe('loadEventPrograms', () => {
       it('should set programs with active programs for current event', async () => {
         doMount();
-        wrapper.vm.$services.programs.getAll = jest.fn(() => ['1']);
+        wrapper.vm.$services.programs.getAllIncludingInactive = jest.fn(() => ['1']);
         await wrapper.vm.loadEventPrograms('1');
         expect(wrapper.vm.programs).toEqual(['1']);
       });
@@ -300,16 +314,16 @@ describe('CreateEditApprovals', () => {
     });
 
     describe('setApprovalStatus', () => {
-      it('should set status to active is param is true', () => {
+      it('should set approvalBaseStatus to active is param is true', () => {
         doMount();
         wrapper.vm.setApprovalStatus(true);
-        expect(wrapper.vm.approval.status).toEqual(Status.Active);
+        expect(wrapper.vm.approval.approvalBaseStatus).toEqual(Status.Active);
       });
 
-      it('should set status to inactive is param is false', () => {
+      it('should set approvalBaseStatus to inactive is param is false', () => {
         doMount();
         wrapper.vm.setApprovalStatus(false);
-        expect(wrapper.vm.approval.status).toEqual(Status.Inactive);
+        expect(wrapper.vm.approval.approvalBaseStatus).toEqual(Status.Inactive);
       });
     });
 

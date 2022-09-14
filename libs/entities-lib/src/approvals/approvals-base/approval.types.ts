@@ -1,5 +1,5 @@
 import { IMultilingual } from '@libs/shared-lib/src/types';
-import { IEntity, IEntityCombined } from '../../base';
+import { IEntity, IEntityCombined, Status } from '../../base';
 import { IApprovalGroup } from '../approvals-group';
 
 export enum ApprovalAggregatedBy {
@@ -11,6 +11,7 @@ export interface IApprovalBaseEntityData extends IEntity {
   aggregatedByType: ApprovalAggregatedBy
   name: IMultilingual;
   groups: Array<IApprovalGroup>
+  approvalBaseStatus: Status;
 }
 
 export interface IApprovalBaseEntity extends IApprovalBaseEntityData {
@@ -20,6 +21,8 @@ export interface IApprovalBaseEntity extends IApprovalBaseEntityData {
   fillEmptyMultilingualAttributes(): void;
 }
 
-export type IApprovalBaseMetadata = unknown & IEntity;
+export interface IApprovalBaseMetadata extends IEntity {
+  approvalBaseStatusName: IMultilingual;
+}
 
 export type IApprovalCombined = IEntityCombined<IApprovalBaseEntity, IApprovalBaseMetadata>

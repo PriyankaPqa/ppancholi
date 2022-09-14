@@ -14,7 +14,7 @@
             </v-col>
             <v-col cols="4" align-self="end">
               <v-row no-gutters align="center" justify="end">
-                <status-chip status-name="Status" data-test="approval_status" :status="approval.status" />
+                <status-chip status-name="Status" data-test="approval_status" :status="approval.approvalBaseStatus" />
                 <v-btn icon class="ml-2" data-test="approval_edit_button" @click="goToEdit()">
                   <v-icon>
                     mdi-pencil

@@ -22,7 +22,7 @@ describe('>>> Approval Tables Service', () => {
         name: approvalTable.name,
         aggregatedByType: approvalTable.aggregatedByType,
         groups: approvalTable.groups.map((g) => g.toDto()),
-        status: approvalTable.status,
+        approvalBaseStatus: approvalTable.approvalBaseStatus,
       }, { globalHandler: false });
     });
   });

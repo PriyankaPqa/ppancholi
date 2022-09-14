@@ -2,9 +2,7 @@ import { IMultilingual } from '@libs/shared-lib/src/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import utils from '../../utils';
 import { BaseEntity, Status } from '../../base';
-import {
-  ApprovalAggregatedBy, IApprovalBaseEntity, IApprovalBaseEntityData,
-} from './approval.types';
+import { ApprovalAggregatedBy, IApprovalBaseEntity, IApprovalBaseEntityData } from './approval.types';
 import { ApprovalGroup, IApprovalGroup } from '../approvals-group';
 
 export class ApprovalBaseEntity extends BaseEntity implements IApprovalBaseEntity {
@@ -14,13 +12,15 @@ export class ApprovalBaseEntity extends BaseEntity implements IApprovalBaseEntit
 
   groups: Array<IApprovalGroup>;
 
+  approvalBaseStatus: Status;
+
   constructor(data?: IApprovalBaseEntityData) {
     if (data) {
       super(data);
       this.name = utils.initMultilingualAttributes(data.name);
-      this.status = data.status;
       this.aggregatedByType = data.aggregatedByType;
       this.groups = _cloneDeep(data.groups) || [];
+      this.approvalBaseStatus = data.approvalBaseStatus;
     } else {
       super();
       this.reset();
@@ -64,9 +64,9 @@ export class ApprovalBaseEntity extends BaseEntity implements IApprovalBaseEntit
 
   private reset() {
     this.name = utils.initMultilingualAttributes();
-    this.status = Status.Active;
     this.aggregatedByType = null;
     this.groups = [];
+    this.approvalBaseStatus = Status.Active;
   }
 
   public fillEmptyMultilingualAttributes() {

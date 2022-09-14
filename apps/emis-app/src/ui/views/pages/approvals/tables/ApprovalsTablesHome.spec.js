@@ -138,7 +138,7 @@ describe('ApprovalTablesHome.vue', () => {
 
         expect(wrapper.vm.$storage.program.actions.search).toHaveBeenLastCalledWith({
           filter: {
-            'Entity/EventId': 'EventId',
+            'Entity/EventId': wrapper.vm.eventId,
           },
           count: true,
           orderBy: 'Entity/Name/Translation/en',
@@ -162,6 +162,7 @@ describe('ApprovalTablesHome.vue', () => {
         doMount();
         expect(wrapper.vm.presetFilter).toEqual({
           'Entity/EventId': '1',
+          'Entity/Status': Status.Active, // We don't want to see deleted item
         });
       });
     });
@@ -180,7 +181,7 @@ describe('ApprovalTablesHome.vue', () => {
         expect(wrapper.vm.customColumns).toEqual({
           program: 'Metadata/ProgramName/Translation/en',
           name: 'Entity/Name/Translation/en',
-          status: 'Metadata/ApprovalTableStatusName/Translation/en',
+          approvalBaseStatus: 'Metadata/ApprovalBaseStatusName/Translation/en',
         });
       });
     });
@@ -220,7 +221,7 @@ describe('ApprovalTablesHome.vue', () => {
             text: 'common.status',
             align: 'center',
             sortable: true,
-            value: wrapper.vm.customColumns.status,
+            value: wrapper.vm.customColumns.approvalBaseStatus,
             width: '50px',
           },
           {
@@ -255,7 +256,7 @@ describe('ApprovalTablesHome.vue', () => {
           type: EFilterType.Text,
           label: 'common.name',
         }, {
-          key: 'Entity/Status',
+          key: 'Entity/ApprovalBaseStatus',
           type: EFilterType.MultiSelect,
           label: 'common.status',
           items: helpers.enumToTranslatedCollection(Status, 'enums.Status', false),

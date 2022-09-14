@@ -1,3 +1,4 @@
+import { Status } from '../../base';
 import { ApprovalBaseEntity } from './approval';
 import { mockBaseApprovalData } from './approval.mock';
 import { ApprovalGroup, mockApprovalGroupData } from '../approvals-group';
@@ -19,6 +20,11 @@ describe('>>> ApprovalBaseEntity', () => {
         const approval = new ApprovalBaseEntity(mockBaseApprovalData());
         expect(approval.groups).toEqual(mockBaseApprovalData().groups);
       });
+
+      it('should init approvalBaseStatus', () => {
+        const approval = new ApprovalBaseEntity(mockBaseApprovalData());
+        expect(approval.approvalBaseStatus).toEqual(mockBaseApprovalData().approvalBaseStatus);
+      });
     });
 
     describe('instantiate when no data is passed', () => {
@@ -35,6 +41,11 @@ describe('>>> ApprovalBaseEntity', () => {
       it('should init groups', () => {
         const approval = new ApprovalBaseEntity();
         expect(approval.groups).toEqual([]);
+      });
+
+      it('should init approvalBaseStatus', () => {
+        const approval = new ApprovalBaseEntity();
+        expect(approval.approvalBaseStatus).toEqual(Status.Active);
       });
     });
   });

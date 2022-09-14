@@ -21,7 +21,6 @@
                   :active="languageMode === lang.key"
                   @click="setLanguageMode(lang.key)" />
               </rc-tabs>
-
               <v-row>
                 <v-col v-if="isTableMode" cols="12" md="8" lg="8">
                   <v-autocomplete-with-validation
@@ -232,12 +231,14 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     availablePrograms(): Array<IProgramEntity> {
+      let availablePrograms = this.programs;
       if (this.tablesForCurrentEvent.length > 0) {
         const usedPrograms = this.tablesForCurrentEvent.map((t) => t.programId);
-        const availablePrograms = this.programs.filter((p) => !usedPrograms.includes(p.id));
+        availablePrograms = availablePrograms.filter((p) => p.status === Status.Active && !usedPrograms.includes(p.id));
         return _sortBy(availablePrograms, (program) => this.$m(program.name));
       }
-      return _sortBy(this.programs, (program) => this.$m(program.name));
+      availablePrograms = availablePrograms.filter((p) => p.status === Status.Active);
+      return _sortBy(availablePrograms, (program) => this.$m(program.name));
     },
 
     disabledStatus(): boolean {
@@ -284,7 +285,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   methods: {
     async loadEventPrograms(eventId: string): Promise<void> {
-      this.programs = await this.$services.programs.getAll({ eventId });
+      this.programs = await this.$services.programs.getAllIncludingInactive({ eventId });
     },
 
     async loadEventTables(eventId: string): Promise<void> {
@@ -347,7 +348,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     setApprovalStatus(status: boolean) {
-      this.approval.status = status ? Status.Active : Status.Inactive;
+      this.approval.approvalBaseStatus = status ? Status.Active : Status.Inactive;
     },
 
   },

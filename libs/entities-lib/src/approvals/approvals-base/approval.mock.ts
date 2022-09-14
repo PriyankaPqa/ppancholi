@@ -1,9 +1,9 @@
 import { mockApprovalGroup, mockApprovalGroupData } from '../approvals-group';
 import {
-  ApprovalAggregatedBy, IApprovalCombined, IApprovalBaseEntity, IApprovalBaseEntityData,
+  ApprovalAggregatedBy, IApprovalBaseEntity, IApprovalBaseEntityData, IApprovalCombined,
 } from './approval.types';
 import { ApprovalBaseEntity } from './approval';
-import { IEntity, mockBaseData } from '../../base';
+import { IEntity, mockBaseData, Status } from '../../base';
 
 export const mockBaseApprovalData = (force? : Partial<IApprovalBaseEntityData>): IApprovalBaseEntityData => ({
   ...mockBaseData(),
@@ -13,6 +13,7 @@ export const mockBaseApprovalData = (force? : Partial<IApprovalBaseEntityData>):
     mockApprovalGroup(),
     mockApprovalGroup({ ...mockApprovalGroupData({ minimumAmount: 11, maximumAmount: 100 }) }),
   ],
+  approvalBaseStatus: Status.Active,
   ...force,
 });
 
@@ -25,6 +26,7 @@ export const mockBaseApprovalsEntites = () => [
 
 export const mockBaseApprovalMetadata = () => ({
   ...mockBaseData(),
+  approvalBaseStatusName: { translation: { en: 'Active', fr: 'Inactive' } },
 });
 
 export const mockBaseApprovalMetadatum = () => [

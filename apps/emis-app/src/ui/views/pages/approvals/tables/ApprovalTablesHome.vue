@@ -44,8 +44,8 @@
         </router-link>
       </template>
 
-      <template #[`item.${customColumns.status}`]="{ item }">
-        <status-chip status-name="Status" :status="item.entity.status" />
+      <template #[`item.${customColumns.approvalBaseStatus}`]="{ item }">
+        <status-chip status-name="Status" :status="item.entity.approvalBaseStatus" />
       </template>
 
       <template #[`item.actions`]="{ item }">
@@ -54,7 +54,7 @@
             mdi-pencil
           </v-icon>
         </v-btn>
-        <v-btn icon class="mr-2" :disabled="true" data-test="delete_approval_table" @click="deleteItem(item.entity.id)">
+        <v-btn icon class="mr-2" data-test="delete_approval_table" @click="deleteItem(item.entity.id)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -103,7 +103,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       FilterKey,
       options: {
         page: 1,
-        sortBy: [`Metadata/ApprovalTableStatusName/Translation/${this.$i18n.locale}`],
+        sortBy: [`Metadata/ApprovalBaseStatusName/Translation/${this.$i18n.locale}`],
         sortDesc: [false],
       },
     };
@@ -135,7 +135,9 @@ export default mixins(TablePaginationSearchMixin).extend({
         messages: this.$t('approvalTables.confirm.delete.message'),
       });
 
-      userChoice && await this.$storage.approvalTable.actions.deactivate(id);
+      if (userChoice) {
+        await this.$storage.approvalTable.actions.deactivate(id);
+      }
     },
 
     getDetailsRoute(id: string) {
@@ -177,7 +179,9 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async fetchPrograms() {
       const res = await this.$storage.program.actions.search({
-        filter: this.presetFilter,
+        filter: {
+          'Entity/EventId': this.eventId,
+        },
         count: true,
         queryType: 'full',
         searchMode: 'all',
@@ -194,14 +198,16 @@ export default mixins(TablePaginationSearchMixin).extend({
       return this.$route.params.id;
     },
 
-    presetFilter(): Record<string, string> {
+    presetFilter(): Record<string, unknown> {
       return {
         'Entity/EventId': this.eventId,
+        'Entity/Status': Status.Active, // We don't want to see deleted item
       };
     },
 
     tableData(): IApprovalTableCombined[] {
       return this.$storage.approvalTable.getters.getByIds(this.searchResultIds, {
+        onlyActive: true,
         prependPinnedItems: true,
         baseDate: this.searchExecutionDate,
         parentId: { eventId: this.eventId },
@@ -212,7 +218,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       return {
         program: `Metadata/ProgramName/Translation/${this.$i18n.locale}`,
         name: `Entity/Name/Translation/${this.$i18n.locale}`,
-        status: `Metadata/ApprovalTableStatusName/Translation/${this.$i18n.locale}`,
+        approvalBaseStatus: `Metadata/ApprovalBaseStatusName/Translation/${this.$i18n.locale}`,
       };
     },
 
@@ -246,7 +252,7 @@ export default mixins(TablePaginationSearchMixin).extend({
           text: this.$t('common.status') as string,
           align: 'center',
           sortable: true,
-          value: this.customColumns.status,
+          value: this.customColumns.approvalBaseStatus,
           width: '50px',
         },
         {
@@ -273,7 +279,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         type: EFilterType.Text,
         label: this.$t('common.name') as string,
       }, {
-        key: 'Entity/Status',
+        key: 'Entity/ApprovalBaseStatus',
         type: EFilterType.MultiSelect,
         label: this.$t('common.status') as string,
         items: helpers.enumToTranslatedCollection(Status, 'enums.Status', false),

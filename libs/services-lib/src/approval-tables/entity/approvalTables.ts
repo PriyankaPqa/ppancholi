@@ -18,7 +18,7 @@ export class ApprovalTablesService extends DomainBaseService<IApprovalTableEntit
       name: payload.name,
       aggregatedByType: payload.aggregatedByType,
       groups: payload.groups.map((g) => g.toDto()),
-      status: payload.status,
+      approvalBaseStatus: payload.approvalBaseStatus,
     } as ICreateApprovalTableRequest;
     return this.http.post<IApprovalTableEntityData>(`${this.baseUrl}`, formattedPayload, { globalHandler: false });
   }

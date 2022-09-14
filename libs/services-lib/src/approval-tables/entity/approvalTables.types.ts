@@ -11,7 +11,7 @@ export interface ICreateApprovalTableRequest {
   name: IMultilingual,
   aggregatedByType: ApprovalAggregatedBy,
   groups: IApprovalGroupDTO[],
-  status: Status
+  approvalBaseStatus: Status
 }
 
 export interface IApprovalTablesService extends IDomainBaseService<IApprovalTableEntity, uuid>{
