@@ -9,10 +9,6 @@ import { IAssessmentBaseRoute } from '../IAssessmentBaseRoute.type';
 
 export default Vue.extend({
   props: {
-    assessmentTemplateId: {
-      type: String,
-      default: '',
-    },
     id: {
       type: String,
       default: '',
@@ -20,6 +16,7 @@ export default Vue.extend({
   },
   data() {
     return {
+      assessmentTemplateId: this.$route.params.assessmentTemplateId,
       assessmentTemplateLoading: true,
       assessmentTemplate: null as AssessmentBaseEntity,
       program: null as IProgramEntity,
@@ -60,9 +57,9 @@ export default Vue.extend({
           { id: this.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
         ) : null;
         const form = new AssessmentFormEntity(res?.entity);
-        if (!this.assessmentTemplateId) {
-          form.eventId = this.id;
-        }
+
+        form.eventId = this.id;
+
         this.assessmentTemplate = form;
 
         if (form.programId) {

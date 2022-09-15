@@ -309,6 +309,20 @@ export default {
     return encodeURIComponent(query.replace(/[-[\]{}&~!():*+?./\\,^$|#\s]/g, '\\$&'));
   },
 
+  toQuickSearch(query: string) {
+    if (query) {
+      // any quick search will be treated as a Contains on all searchable fields
+      // this splits the search by space and verifies Contains or Equal (like in filters)
+      let quickSearch = query.split(' ').filter((x) => x !== '')
+        .map((v) => this.sanitize(v))
+        .map((v) => `(/.*${v}.*/ OR "\\"${v}\\"")`)
+        .join(' AND ');
+      quickSearch = `(${quickSearch})`;
+      return quickSearch;
+    }
+    return '';
+  },
+
   decodeJwt(token: string) {
     try {
       const base64Url = token.split('.')[1];

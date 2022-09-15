@@ -16,9 +16,15 @@ describe('AssessmentBuilder', () => {
       propsData: {
         testMode: true,
         id: eventId,
-        assessmentTemplateId: 'mock-assessmentTemplate-id',
       },
-      mocks: { $storage: storage },
+      mocks: {
+        $storage: storage,
+        $route: {
+          params: {
+            assessmentTemplateId: 'mock-assessmentTemplate-id',
+          },
+        },
+      },
     });
     wrapper.vm.$services.tenantSettings.getLogoUrl = jest.fn((l) => `url ${l}`);
     await flushPromises();

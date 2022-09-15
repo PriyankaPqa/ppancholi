@@ -22,9 +22,15 @@ describe('AssessmentTemplateDetails', () => {
         localVue,
         propsData: {
           id: 'mock-event-id',
-          assessmentTemplateId: 'mock-assessmentTemplate-id',
         },
-        mocks: { $storage: storage },
+        mocks: {
+          $storage: storage,
+          $route: {
+            params: {
+              assessmentTemplateId: 'mock-assessmentTemplate-id',
+            },
+          },
+        },
       });
       await wrapper.setData({ assessmentTemplate: assessmentForm });
     });
@@ -68,10 +74,14 @@ describe('AssessmentTemplateDetails', () => {
       it('returns the right data when assessmentTemplate', async () => {
         wrapper = shallowMount(Component, {
           localVue,
-          propsData: {
-            assessmentTemplateId: 'mock-assessmentTemplate-id',
+          mocks: {
+            $storage: storage,
+            $route: {
+              params: {
+                assessmentTemplateId: 'mock-assessmentTemplate-id',
+              },
+            },
           },
-          mocks: { $storage: storage },
         });
 
         await wrapper.setData({ assessmentTemplate });
@@ -120,9 +130,15 @@ describe('AssessmentTemplateDetails', () => {
         localVue,
         propsData: {
           id: 'mock-event-id',
-          assessmentTemplateId: 'mock-assessmentTemplate-id',
         },
-        mocks: { $storage: storage },
+        mocks: {
+          $storage: storage,
+          $route: {
+            params: {
+              assessmentTemplateId: 'mock-assessmentTemplate-id',
+            },
+          },
+        },
       });
     });
 
@@ -141,9 +157,15 @@ describe('AssessmentTemplateDetails', () => {
         localVue,
         propsData: {
           id: 'mock-event-id',
-          assessmentTemplateId: 'mock-assessmentTemplate-id',
         },
-        mocks: { $storage: storage },
+        mocks: {
+          $storage: storage,
+          $route: {
+            params: {
+              assessmentTemplateId: 'mock-assessmentTemplate-id',
+            },
+          },
+        },
       });
     });
 
@@ -180,9 +202,15 @@ describe('AssessmentTemplateDetails', () => {
         localVue,
         propsData: {
           id: 'mock-event-id',
-          assessmentTemplateId: 'mock-assessmentTemplate-id',
         },
-        mocks: { $storage: storage },
+        mocks: {
+          $storage: storage,
+          $route: {
+            params: {
+              assessmentTemplateId: 'mock-assessmentTemplate-id',
+            },
+          },
+        },
         computed: {
           assessmentTemplateData() {
             return [{

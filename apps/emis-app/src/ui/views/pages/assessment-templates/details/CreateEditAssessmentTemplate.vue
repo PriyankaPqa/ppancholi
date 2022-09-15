@@ -76,9 +76,7 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
     },
 
     title(): string {
-      // eslint-disable-next-line no-nested-ternary
-      return (this.isEditMode ? this.$t('assessmentTemplate.edit.title')
-        : (this.cloneId ? this.$t('assessmentTemplate.clone.title') : this.$t('assessmentTemplate.add.title'))) as string;
+      return (this.isEditMode ? this.$t('assessmentTemplate.edit.title') : this.$t('assessmentTemplate.add.title')) as string;
     },
 
     submitLabel(): TranslateResult {

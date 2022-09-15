@@ -372,13 +372,20 @@ describe('AssessmentTemplatesHome.vue', () => {
     });
 
     describe('goToAdd', () => {
-      it('should redirect to create page', async () => {
+      it('should redirect to create page when not copying', async () => {
         await mountWrapper();
         wrapper.vm.goToAdd();
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
           name: wrapper.vm.baseRoute.create.name,
         });
+      });
+
+      it('should show popup when copying', async () => {
+        await mountWrapper();
+        expect(wrapper.vm.showCopyAssessmentDialog).toBeFalsy();
+        wrapper.vm.goToAdd({ value: 'Copy' });
+        expect(wrapper.vm.showCopyAssessmentDialog).toBeTruthy();
       });
     });
 

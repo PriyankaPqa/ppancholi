@@ -22,11 +22,16 @@ describe('assessmentDetail', () => {
   const mountWrapper = async (eventId = null, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = shallowMount(Component, {
       localVue,
-      propsData: { id: eventId, assessmentTemplateId: 'assId' },
+      propsData: { id: eventId },
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
         $storage: storage,
+        $route: {
+          params: {
+            assessmentTemplateId: 'assId',
+          },
+        },
       },
       ...additionalOverwrites,
     });
@@ -82,7 +87,7 @@ describe('assessmentDetail', () => {
   describe('Methods', () => {
     describe('loadDetails', () => {
       it('fetches from correct store depending on isFormMode', async () => {
-        await mountWrapper('eventId');
+        await mountWrapper(storage.assessmentForm.actions.fetch().entity.eventId);
         await wrapper.vm.loadDetails();
         expect(storage.assessmentForm.actions.fetch).toHaveBeenCalledWith(
           { id: wrapper.vm.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },

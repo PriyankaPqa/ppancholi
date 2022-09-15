@@ -99,6 +99,11 @@
         </v-menu>
       </template>
     </rc-data-table>
+
+    <copy-assessment
+      data-test="add-team-members"
+      :show.sync="showCopyAssessmentDialog"
+      @selected="duplicateSurvey" />
   </div>
 </template>
 
@@ -121,6 +126,7 @@ import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
 import { IAssessmentBaseRoute } from '../IAssessmentBaseRoute.type';
+import CopyAssessment from './CopyAssessment.vue';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'AssessmentTemplatesHome',
@@ -130,6 +136,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     RcAddButtonWithMenu,
     FilterToolbar,
     StatusChip,
+    CopyAssessment,
   },
 
   props: {
@@ -152,6 +159,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       programsFilterLoading: false,
       programsFilter: [],
       PublishStatus,
+      showCopyAssessmentDialog: false,
     };
   },
 
@@ -344,6 +352,8 @@ export default mixins(TablePaginationSearchMixin).extend({
         this.$router.push({
           name: this.baseRoute.create.name,
         });
+      } else {
+        this.showCopyAssessmentDialog = true;
       }
     },
 

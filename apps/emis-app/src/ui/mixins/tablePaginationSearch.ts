@@ -116,17 +116,7 @@ export default Vue.extend({
     },
 
     setSearchParams() {
-      let quickSearch = '';
-
-      if (this.params.search) {
-        // any quick search will be treated as a Contains on all searchable fields
-        // this splits the search by space and verifies Contains or Equal (like in filters)
-        quickSearch = this.params.search.split(' ').filter((x) => x !== '')
-          .map((v) => helpers.sanitize(v))
-          .map((v) => `(/.*${v}.*/ OR "\\"${v}\\"")`)
-          .join(' AND ');
-        quickSearch = `(${quickSearch})`;
-      }
+      const quickSearch = helpers.toQuickSearch(this.params.search);
 
       if (this.userSearchFilters && quickSearch) {
         this.azureSearchParams.search = `${this.userSearchFilters} AND ${quickSearch}`;

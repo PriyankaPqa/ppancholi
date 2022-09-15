@@ -15,12 +15,16 @@ describe('CreateEditAssessmentTemplate', () => {
       localVue,
       propsData: {
         id: eventId,
-        assessmentTemplateId,
       },
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
         $storage: storage,
+        $route: {
+          params: {
+            assessmentTemplateId,
+          },
+        },
       },
       ...additionalOverwrites,
     });
@@ -183,13 +187,6 @@ describe('CreateEditAssessmentTemplate', () => {
         await mountWrapper('assessmentId', null);
 
         expect(wrapper.vm.title).toBe('assessmentTemplate.edit.title');
-      });
-
-      it('returns for clone', async () => {
-        await mountWrapper(null, null);
-        await wrapper.setProps({ cloneId: 'clonedId' });
-
-        expect(wrapper.vm.title).toBe('assessmentTemplate.clone.title');
       });
     });
 

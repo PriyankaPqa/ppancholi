@@ -69,4 +69,14 @@ describe('>>>> helpers', () => {
       expect(res).toEqual([0, 1]);
     });
   });
+
+  describe('toQuickSearch', () => {
+    it('returns with sanitized quickSearch', () => {
+      expect(helpers.toQuickSearch('[search')).toEqual('((/.*%5C%5Bsearch.*/ OR "\\"%5C%5Bsearch\\""))');
+    });
+
+    it('sets azureSearchParams.search with quickSearch split by space', () => {
+      expect(helpers.toQuickSearch('search test')).toEqual('((/.*search.*/ OR "\\"search\\"") AND (/.*test.*/ OR "\\"test\\""))');
+    });
+  });
 });
