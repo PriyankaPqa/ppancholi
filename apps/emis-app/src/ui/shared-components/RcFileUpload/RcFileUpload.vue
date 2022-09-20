@@ -1,27 +1,29 @@
 <template>
   <div>
-    <v-file-input
-      id="inputUpload"
-      ref="input"
-      v-model="localFiles"
-      :counter="counter"
-      :multiple="multiple"
-      :show-size="showSize"
-      :accept="acceptedTypes"
-      :error-messages="[...errors, ...errorMessages]"
-      :error-count="2"
-      :label="$t(labelFileInput)"
-      :placeholder="$t(placeHolderFileInput)"
-      prepend-icon=""
-      outlined
-      @change="onChange($event)"
-      @focus="checkRules()">
-      <template #append class="pa-0">
-        <v-btn color="primary" class="uploadButton" @click="openSelection()">
-          {{ $t('common.button.browse') }}
-        </v-btn>
-      </template>
-    </v-file-input>
+    <validation-provider ref="fileUpload" :rules="rules.fileUpload" mode="aggressive">
+      <v-file-input
+        id="inputUpload"
+        ref="input"
+        v-model="localFiles"
+        :counter="counter"
+        :multiple="multiple"
+        :show-size="showSize"
+        :accept="acceptedTypes"
+        :error-messages="[...errors, ...errorMessages]"
+        :error-count="2"
+        :label="$t(labelFileInput)"
+        :placeholder="$t(placeHolderFileInput)"
+        prepend-icon=""
+        outlined
+        @change="onChange($event)"
+        @focus="checkRules()">
+        <template #append class="pa-0">
+          <v-btn color="primary" class="uploadButton" @click="openSelection()">
+            {{ $t('common.button.browse') }}
+          </v-btn>
+        </template>
+      </v-file-input>
+    </validation-provider>
     <div v-if="errors.length === 0 && errorMessages.length === 0 && showRules" class="rc-caption12 mt-n6">
       {{ $t('common.upload.max_file.size', {x: helpers.formatBytes(maxSize)}) }} {{ extensions }}
     </div>
@@ -31,6 +33,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
+import { VForm } from '@libs/shared-lib/types';
 
 export default Vue.extend({
   name: 'RcFileUpload',
@@ -140,6 +143,14 @@ export default Vue.extend({
     extensions(): string {
       return `(${this.allowedExtensions.map((ext) => `.${(ext as string).toUpperCase()}`).join(' ')})`;
     },
+
+    rules(): Record<string, unknown> {
+      return {
+        fileUpload: {
+          customValidator: { isValid: !this.errorMessages.length },
+        },
+      };
+    },
   },
   methods: {
     checkRules() {
@@ -148,7 +159,7 @@ export default Vue.extend({
 
       // File names should not have special characters, because the file name is part of the blob index tag:
       // https://docs.microsoft.com/en-us/azure/storage/blobs/storage-manage-find-blobs?tabs=azure-portal#setting-blob-index-tags
-      const allowedFileNameRegex = /^[a-zA-Z0-9+-._\s]*$/;
+      const allowedFileNameRegex = /^[a-zA-Z0-9+._\-\s]*$/;
       if (file?.name && !allowedFileNameRegex.test(file.name)) {
         this.errorMessages.push(this.$t('error.file.upload.fileName') as string);
       }
@@ -187,12 +198,12 @@ export default Vue.extend({
       return this.allowedExtensions.includes(ext);
     },
 
-    onChange(files: File[]) {
+    async onChange(files: File[]) {
       this.localFiles = files;
       this.checkRules();
-      const file = Array.isArray(files) ? files[0] : files;
 
-      const isValid = !this.errorMessages.length;
+      const file = Array.isArray(files) ? files[0] : files;
+      const isValid = await (this.$refs.fileUpload as VForm).validate();
       this.$emit('update:file', file || {}, isValid);
     },
 
