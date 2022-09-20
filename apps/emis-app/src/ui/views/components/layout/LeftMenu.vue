@@ -34,7 +34,11 @@
                 {{ item.icon }}
               </v-icon>
             </v-list-item-icon>
-            <v-list-item-content><v-list-item-title>{{ $t(item.text) }}</v-list-item-title></v-list-item-content>
+            <v-list-item-content>
+              <v-list-item-title class="menu-title">
+                {{ $t(item.text) }}
+              </v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
         </template>
         {{ $t(item.text) }}
@@ -234,12 +238,12 @@ export default Vue.extend({
   margin-left: 12px;
 }
 
-.menu-icon.expanded {
-  margin-left: 0px !important;
+.menu-title{
+  margin-left: 32px;
 }
 
-.menu-icon.shrink {
-  margin-left: 32px !important;
+.v-application--is-ltr .v-list-item__icon:first-child {
+  margin-right: 0px !important;
 }
 
 #left-menu-dashboard {
