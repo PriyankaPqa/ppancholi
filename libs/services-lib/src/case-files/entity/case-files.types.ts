@@ -1,9 +1,9 @@
-import { ERegistrationMethod, IListOption } from '@libs/shared-lib/types';
+import { ERegistrationMethod, IAzureCombinedSearchResult, IListOption } from '@libs/shared-lib/types';
 import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
   ICaseFileCount,
-  ICaseFileDetailedCount, IAssignedTeamMembers,
+  ICaseFileDetailedCount, IAssignedTeamMembers, ICaseFileMetadata,
 } from '@libs/entities-lib/case-file';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
@@ -34,6 +34,7 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   fetchCaseFileDetailedCounts(eventId: uuid): Promise<ICaseFileDetailedCount>;
   assignCaseFile(id: uuid, payload: {teamMembers: IAssignedTeamMembers[], teams: uuid[]}): Promise<ICaseFileEntity>
   getSummary(id: uuid): Promise<ICaseFileEntity>;
+  getAssignedCaseFiles(teamMemberId: uuid): Promise<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>>;
 }
 
 export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileEntity>{
@@ -51,4 +52,5 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   fetchCaseFileDetailedCounts: jest.Mock<ICaseFileDetailedCount>;
   assignCaseFile: jest.Mock<ICaseFileEntity>;
   getSummary: jest.Mock<ICaseFileEntity>;
+  getAssignedCaseFiles: jest.Mock<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>>;
 }

@@ -213,4 +213,12 @@ describe('>>> Case File Service', () => {
       expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}/summary`);
     });
   });
+
+  describe('getAssignedCaseFiles', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+      await service.getAssignedCaseFiles(id);
+      expect(http.get).toHaveBeenCalledWith('/case-file/case-files/get-assigned-case-files', { params: { teamMemberId: id } });
+    });
+  });
 });

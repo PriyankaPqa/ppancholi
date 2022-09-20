@@ -1,6 +1,6 @@
 import { ERegistrationMethod } from '../../../shared-lib/src/types/enums/ERegistrationMethod';
 /* eslint-disable max-lines-per-function */
-import { IEntity, mockBaseData } from '../base';
+import { mockBaseData } from '../base';
 import {
   ICaseFileMetadata,
   CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
@@ -42,13 +42,13 @@ export const mockAssignedTeamMembers = (): IAssignedTeamMembers[] => [
   },
 ];
 
-export const mockCaseFileEntity = (force? : Partial<IEntity>): ICaseFileEntity => ({
+export const mockCaseFileEntity = (force? : Partial<ICaseFileEntity>): ICaseFileEntity => ({
   ...mockBaseData(),
   assignedIndividualIds: ['mock-assigned-individual-id-1', 'mock-assigned-individual-id-2'],
   assignedTeamMembers: mockAssignedTeamMembers(),
   assignedTeamIds: ['mock-assigned-team-id-1'],
-  caseFileNumber: '1-000001',
-  caseFileStatus: 4,
+  caseFileNumber: '000000111-000001',
+  caseFileStatus: 2,
   eventId: 'e70da37e-67cd-4afb-9c36-530c7d8b191f',
   householdId: 'mock-household-id-1',
   impactStatusValidation: {
@@ -170,9 +170,9 @@ export const mockCaseFileMetadatum = () : ICaseFileMetadata[] => [
   mockCaseFileMetadata(),
 ];
 
-export const mockCombinedCaseFile = (force?: Partial<IEntity>, readonly = false): ICaseFileCombined => ({
-  entity: mockCaseFileEntity(force),
-  metadata: mockCaseFileMetadata(force),
+export const mockCombinedCaseFile = (force?: Partial<ICaseFileEntity>| Partial<ICaseFileMetadata>, readonly = false): ICaseFileCombined => ({
+  entity: mockCaseFileEntity(force as Partial<ICaseFileEntity>),
+  metadata: mockCaseFileMetadata(force as Partial<ICaseFileMetadata>),
   readonly,
 });
 export const mockCombinedCaseFiles = (): ICaseFileCombined[] => [

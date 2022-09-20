@@ -21,7 +21,6 @@ import routes from '@/constants/routes';
 import { PageTemplate } from '@/ui/views/components/layout';
 import massActions from '@/ui/views/pages/mass-actions/mixins/massActions';
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { INavigationTabGroup } from '@libs/shared-lib/types';
 
 export default mixins(massActions).extend({

@@ -37,6 +37,7 @@ export enum AccountStatus {
 }
 
 export interface IUserAccountTeamEvent {
+  id?:string,
   name: IMultilingual;
 }
 

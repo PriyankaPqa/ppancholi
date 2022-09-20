@@ -4,7 +4,8 @@ import {
   ICaseFileCount,
   ICaseFileDetailedCount, IAssignedTeamMembers,
 } from '@libs/entities-lib/case-file';
-import { IListOption } from '@libs/shared-lib/types';
+import { IAzureCombinedSearchResult, IListOption } from '@libs/shared-lib/types';
+import { ICaseFileMetadata } from '@libs/entities-lib/src/case-file/case-file.types';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { ICaseFilesService, ICreateCaseFileRequest } from './case-files.types';
@@ -97,5 +98,9 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
 
   async getSummary(id: uuid): Promise<ICaseFileEntity> {
     return this.http.get<ICaseFileEntity>(`${this.baseUrl}/${id}/summary`);
+  }
+
+  async getAssignedCaseFiles(teamMemberId: uuid): Promise<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>> {
+    return this.http.get('/case-file/case-files/get-assigned-case-files', { params: { teamMemberId } });
   }
 }

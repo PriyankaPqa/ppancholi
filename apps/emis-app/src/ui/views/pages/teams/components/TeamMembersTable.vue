@@ -41,10 +41,12 @@
           mdi-account
         </v-icon>
         <span
+          role="button"
+          tabindex="0"
           class="rc-link14 font-weight-bold"
           data-test="member_name"
-          @keydown.enter="viewMemberDetails(item)"
-          @click="viewMemberDetails(item)">
+          @keydown.enter="viewMemberCaseFiles(item)"
+          @click="viewMemberCaseFiles(item)">
           {{ item.metadata.displayName }}
         </span>
       </template>
@@ -57,8 +59,16 @@
         <rc-phone-display :value="item.metadata.phoneNumber" />
       </template>
 
-      <template #[`item.metadata.teamCount`]="{ item }">
-        {{ item.metadata.teamCount || '0' }}
+      <template #item.metadata.teamCount="{ item }">
+        <span
+          role="button"
+          tabindex="0"
+          class="rc-link14 font-weight-bold"
+          data-test="member_name"
+          @keydown.enter="viewMemberTeams(item)"
+          @click="viewMemberTeams(item)">
+          {{ item.metadata.teamCount || '0' }}
+        </span>
       </template>
 
       <template #[`item.caseFileCount`]="{ item }">
@@ -94,7 +104,8 @@
       :team-id="team.entity.id"
       :show.sync="showAddTeamMemberDialog" />
 
-    <team-member-teams v-if="showMemberDialog" :show.sync="showMemberDialog" :member="clickedMember" />
+    <team-member-teams v-if="showMemberTeamsDialog" :show.sync="showMemberTeamsDialog" :member="clickedMember" />
+    <team-member-case-files v-if="showMemberCaseFilesDialog" :show.sync="showMemberCaseFilesDialog" :member="clickedMember" />
 
     <rc-confirmation-dialog
       v-if="showRemoveMemberConfirmationDialog"
@@ -134,6 +145,7 @@ import { ITeamCombined, ITeamMemberAsUser } from '@libs/entities-lib/team';
 import helpers from '@/ui/helpers/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
+import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCaseFiles.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IAssignedCaseFileCountByTeam } from '@libs/entities-lib/user-account';
 
@@ -145,6 +157,7 @@ export default Vue.extend({
     RcConfirmationDialog,
     RcPhoneDisplay,
     TeamMemberTeams,
+    TeamMemberCaseFiles,
     RcDialog,
   },
 
@@ -199,7 +212,8 @@ export default Vue.extend({
         'metadata.inactiveCaseFilesCount',
         'metadata.roleName',
       ],
-      showMemberDialog: false,
+      showMemberTeamsDialog: false,
+      showMemberCaseFilesDialog: false,
       clickedMember: null as ITeamMemberAsUser,
       removeLoading: false,
       i18n: this.$i18n,
@@ -367,8 +381,13 @@ export default Vue.extend({
       return this.$hasLevel('level4');
     },
 
-    async viewMemberDetails(member: ITeamMemberAsUser) {
-      this.showMemberDialog = true;
+    async viewMemberTeams(member: ITeamMemberAsUser) {
+      this.showMemberTeamsDialog = true;
+      this.clickedMember = member;
+    },
+
+    async viewMemberCaseFiles(member: ITeamMemberAsUser) {
+      this.showMemberCaseFilesDialog = true;
       this.clickedMember = member;
     },
 

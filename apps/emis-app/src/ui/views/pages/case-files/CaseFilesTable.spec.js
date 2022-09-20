@@ -95,7 +95,7 @@ describe('CaseFilesTable.vue', () => {
 
     describe('table elements', () => {
       test('case file number redirects to getCaseFileRoute', () => {
-        const link = wrapper.findDataTest('caseFileDetail-link_1-000001');
+        const link = wrapper.findDataTest('caseFileDetail-link_000000111-000001');
         expect(link.props('to'))
           .toEqual({
             name: routes.caseFile.activity.name,

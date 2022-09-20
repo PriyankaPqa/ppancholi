@@ -374,5 +374,21 @@ describe('TeamMembersTable.vue', () => {
         expect(wrapper.vm.showDeleteIcon({ isPrimaryContact: false })).toBeTruthy();
       });
     });
+
+    describe('viewMemberTeams', () => {
+      it('sets the right values to the right variables', async () => {
+        await wrapper.vm.viewMemberTeams(mockTeamMembers[0]);
+        expect(wrapper.vm.showMemberTeamsDialog).toEqual(true);
+        expect(wrapper.vm.clickedMember).toEqual(mockTeamMembers[0]);
+      });
+    });
+
+    describe('viewMemberCaseFiles', () => {
+      it('sets the right values to the right variables', async () => {
+        await wrapper.vm.viewMemberCaseFiles(mockTeamMembers[0]);
+        expect(wrapper.vm.showMemberCaseFilesDialog).toEqual(true);
+        expect(wrapper.vm.clickedMember).toEqual(mockTeamMembers[0]);
+      });
+    });
   });
 });

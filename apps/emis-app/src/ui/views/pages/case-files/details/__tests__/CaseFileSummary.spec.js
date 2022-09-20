@@ -119,7 +119,7 @@ describe('CaseFileSummary.vue', () => {
       it('returns a complete object from storage - closed activity', async () => {
         await mountWrapper();
         const expected = {
-          caseFileStatus: 4,
+          caseFileStatus: 2,
           closedArchivedActivity: {
             date: 'May 4, 2021',
             isClosed: true,
@@ -127,7 +127,7 @@ describe('CaseFileSummary.vue', () => {
             reason: 'End of CRC support',
           },
           triage: 'Level 1',
-          caseFileNumber: '1-000001',
+          caseFileNumber: '000000111-000001',
           validationOfImpact: 'Impacted',
           tags: [{
             id: 'mock-tag-id-1',
@@ -151,7 +151,7 @@ describe('CaseFileSummary.vue', () => {
           closeActivity: wrapper.vm.activities.filter((a) => a.activityType !== CaseFileActivityType.CaseFileStatusClosed)[0],
         });
         const expected = {
-          caseFileStatus: 4,
+          caseFileStatus: 2,
           closedArchivedActivity: {
             date: 'May 4, 2021',
             isClosed: false,
@@ -159,7 +159,7 @@ describe('CaseFileSummary.vue', () => {
             reason: null,
           },
           triage: 'Level 1',
-          caseFileNumber: '1-000001',
+          caseFileNumber: '000000111-000001',
           validationOfImpact: 'Impacted',
           tags: [{
             id: 'mock-tag-id-1',
