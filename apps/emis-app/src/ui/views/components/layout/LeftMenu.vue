@@ -29,7 +29,7 @@
             :data-test="item.test"
             v-on="on"
             @click="onClickOutside">
-            <v-list-item-icon>
+            <v-list-item-icon :class="{expanded: !mini, 'shrink': mini, 'menu-icon': true}">
               <v-icon :disabled="item.disabled">
                 {{ item.icon }}
               </v-icon>
@@ -234,6 +234,14 @@ export default Vue.extend({
   margin-left: 12px;
 }
 
+.menu-icon.expanded {
+  margin-left: 0px !important;
+}
+
+.menu-icon.shrink {
+  margin-left: 32px !important;
+}
+
 #left-menu-dashboard {
   .v-list-item .v-list-item__title {
     font-weight: 400;
@@ -249,7 +257,7 @@ export default Vue.extend({
   }
 }
 
-.navMenu.v-list-item .v-icon {
+ .navMenu.v-list-item .v-icon {
   color: var(--v-primary-darken1);
 }
 
