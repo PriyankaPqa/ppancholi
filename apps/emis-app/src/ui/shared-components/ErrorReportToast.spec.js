@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { mockStorage } from '@/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { User, mockUserData } from '@libs/entities-lib/user';
@@ -21,6 +22,48 @@ describe('ErrorReportToast', () => {
       config: { data: '{"key1": { "key2": "value" }}' },
       status: 404,
     },
+  };
+
+  const errorWAFFormat = {
+    message: 'Network Error',
+    name: 'AxiosError',
+    config: {
+      transitional: {
+        silentJSONParsing: true,
+        forcedJSONParsing: true,
+        clarifyTimeoutError: false,
+      },
+      transformRequest: [
+        null,
+      ],
+      transformResponse: [
+        null,
+      ],
+      timeout: 0,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: {
+        FormData: null,
+      },
+      headers: {
+        Accept: 'application/json',
+        'x-tenant-id': 'c400f50d-7a56-4ef2-8e44-211bfa434724',
+        'Accept-Language': 'fr',
+        Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjJaUXBKM1VwYmpBWVhZR2FYRUpsOGxWMFRPSSJ9.eyJhdWQiOiI2MzI4ZDIzMC1hMWVlLTRmY2YtOTc5OS0zNTM5ZjE3MTU4ZTkiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vYzQwMGY1MGQtN2E1Ni00ZWYyLThlNDQtMjExYmZhNDM0NzI0L3YyLjAiLCJpYXQiOjE2NjMwOTQzMjEsIm5iZiI6MTY2MzA5NDMyMSwiZXhwIjoxNjYzMDk4OTI0LCJhaW8iOiJBWlFBYS84VEFBQUFRTTJyZ0t3ZkJaeWlKVCtobjVOL2ZzQ3FnNC9ad0E0S1hDaElJb0ZIQURDU0JwRkpJcEFLWFhvVFJMMzE5Vk1uMVNGek9QQW83ZzZhNFVQOFlraTNjSDRORzNjVndBSU90NisvYitQUXlBR0dPSTJKQ2EwRkwxQmdpSmR0dTRlS0VZUWc5dkJRMlhxSk8xYSt6bjlxbjZoZFI1NDdXczc0QWRrR0NNN3VNYW40ckhSSVFBT25QQUhISXVnVE5haE0iLCJhenAiOiIwMzBlNWEzMi1iNmVmLTQ5MjctOTRiYS03NGQ5MWVhYTI1MWUiLCJhenBhY3IiOiIwIiwibmFtZSI6Ik1hcmMtQW5kcsOpIERlc2Now6puZXMiLCJvaWQiOiIwZDIyZjUwYS1lMWFiLTQzNWQtYTlmMC1jZmRhNTAyODY2ZjQiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJtYWRlc2NoZW5lc0BjcmN0ZWNobWFpbi5vbm1pY3Jvc29mdC5jb20iLCJyaCI6IjAuQVgwQURmVUF4Rlo2OGs2T1JDRWIta05ISkREU0tHUHVvYzlQbDVrMU9mRnhXT2w5QUo4LiIsInJvbGVzIjpbImxldmVsNiJdLCJzY3AiOiJhcGlfYWNjZXNzIiwic3ViIjoiU2paNkllVTB2TjQzTjY5NGkxSlBkLVBvSmFrMDRjRW1EYzBJUGp4allvNCIsInRpZCI6ImM0MDBmNTBkLTdhNTYtNGVmMi04ZTQ0LTIxMWJmYTQzNDcyNCIsInV0aSI6IkI2ZEhuMnNVTVUteHBqN3JmTW95QUEiLCJ2ZXIiOiIyLjAifQ.HG1ur7k2TezfT_xPKvy5ZA35Ibb4t2OYojihli1xYLQHdLxAaUxcyNk9nhiZ2FR0O2MWydJqjtDsPCQSbGt_5xDXz8LvIW8FSWzKP2nn9FQER4JcrgU2mcNq_lgfP0VkR5dZV351jIbz8ciodCZuttZQz7ZIWAqXiVcief2IJronJ7PM6EqqUW1RUYETI-OJn2bMlTxv_WF_UFy80lJnjSUnSGX4uthParhvvNOESa4mTz3Z9W2-7q3AQpEpvZnC9g5rEhD9U4zi7BJ3kKlQpNUVyZiPksMpYh31nU3tRIyHfUqf3YG1ykjmR39PcIDppnsNUAxGGJEff6KMyBxFoA',
+        'X-Request-ID': '02d4d754-98c6-4873-9e7f-9c31d3016d32',
+        'X-Correlation-ID': '2bcd78ad-21e4-454f-90cd-4500a6d40ad2',
+        'Content-Type': 'application/json',
+      },
+      baseURL: 'https://api-lab.crc-tech.ca/',
+      withCredentials: true,
+      method: 'patch',
+      url: 'https://api-lab.crc-tech.ca/case-file/case-files/e6112152-be92-4d45-8b9a-69320dc7a835/labels',
+      data: '{"labels":[{"name":"<br>","order":1},{"name":"","order":2},{"name":"","order":3},{"name":"","order":4}]}',
+    },
+    code: 'ERR_NETWORK',
+    status: null,
   };
 
   const user = new User(mockUserData());
@@ -55,12 +98,35 @@ describe('ErrorReportToast', () => {
     describe('api', () => {
       it('returns the right value', async () => {
         expect(wrapper.vm.api).toEqual('mock-url');
+        await wrapper.setProps({ error: errorWAFFormat });
+        expect(wrapper.vm.api).toEqual('https://api-lab.crc-tech.ca/case-file/case-files/e6112152-be92-4d45-8b9a-69320dc7a835/labels');
       });
     });
 
     describe('callPayload', () => {
       it('returns the right value', async () => {
         expect(wrapper.vm.callPayload).toEqual({ key1: { key2: 'value' } });
+        await wrapper.setProps({ error: errorWAFFormat });
+        expect(wrapper.vm.callPayload).toEqual({
+          labels: [
+            {
+              name: '<br>',
+              order: 1,
+            },
+            {
+              name: '',
+              order: 2,
+            },
+            {
+              name: '',
+              order: 3,
+            },
+            {
+              name: '',
+              order: 4,
+            },
+          ],
+        });
       });
     });
 
@@ -269,16 +335,29 @@ describe('ErrorReportToast', () => {
             $storage: storage,
           },
         });
-        JSON.stringify = jest.fn(() => 'mocks-stringified-json-value');
 
         await wrapper.vm.makeReportPayload();
         expect(wrapper.vm.report).toEqual(expect.objectContaining({
           user,
           api: wrapper.vm.api,
-          status: wrapper.vm.error.response.status,
+          status: error.response.status,
           payload: '{"key1": { "key2": "value" }}',
-          errorResponse: 'mocks-stringified-json-value',
-          description: '',
+          errorResponse: JSON.stringify(error.response, null, 2),
+          description: JSON.stringify(wrapper.vm.errorType),
+          appUrl: wrapper.vm.$route.fullPath,
+          tenantId: 'mock-tenant-id',
+          languageCode: 'en',
+        }));
+
+        await wrapper.setProps({ error: errorWAFFormat });
+        await wrapper.vm.makeReportPayload();
+        expect(wrapper.vm.report).toEqual(expect.objectContaining({
+          user,
+          api: wrapper.vm.api,
+          status: errorWAFFormat.response?.status,
+          payload: '{"key1": { "key2": "value" }}',
+          errorResponse: JSON.stringify(errorWAFFormat.response, null, 2),
+          description: JSON.stringify(wrapper.vm.errorType),
           appUrl: wrapper.vm.$route.fullPath,
           tenantId: 'mock-tenant-id',
           languageCode: 'en',

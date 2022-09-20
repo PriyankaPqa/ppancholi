@@ -44,6 +44,7 @@
 
     <error-report-toast
       v-if="showReportToast"
+      :key="lastErrorTime"
       :show.sync="showReportToast"
       :message="errorToastMessage"
       :error="toastError" />
@@ -89,6 +90,7 @@ export default {
       showMessage: false,
       showReportToast: false,
       errorToastMessage: '',
+      lastErrorTime: null,
       toastError: null,
       dialogTitle: '',
       dialogMessages: '',
@@ -168,9 +170,13 @@ export default {
       };
 
       Vue.prototype.$reportToasted = (message, error) => {
-        this.errorToastMessage = message;
-        this.showReportToast = true;
-        this.toastError = error;
+        setTimeout(() => {
+          this.lastErrorTime = new Date().getTime();
+          this.errorToastMessage = message;
+          this.showReportToast = true;
+          this.toastError = error;
+        },
+        1500);
       };
     },
 

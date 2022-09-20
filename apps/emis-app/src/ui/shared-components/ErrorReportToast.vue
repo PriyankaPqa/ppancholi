@@ -111,6 +111,8 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import Vue from 'vue';
 import { format } from 'date-fns';
 import _isEmpty from 'lodash/isEmpty';
@@ -170,13 +172,17 @@ export default Vue.extend({
       };
     },
 
+    serverError(): IServerError {
+      return (this.error as IServerError);
+    },
+
     api(): string {
-      return (this.error as IServerError)?.request?.responseURL || '';
+      return this.serverError?.request?.responseURL || (this.error as any)?.config?.url || '';
     },
 
     callPayload(): unknown {
       try {
-        const stringPayload = (this.error as IServerError).response?.config?.data;
+        const stringPayload = this.serverError.response?.config?.data || (this.error as any)?.config?.data;
         const payload = JSON.parse(stringPayload);
         return !_isEmpty(payload) ? payload : '';
       } catch {
@@ -185,7 +191,7 @@ export default Vue.extend({
     },
 
     errorType(): string | TranslateResult {
-      return (this.error as IServerError).message;
+      return this.serverError.message;
     },
 
     hasSupportAddress(): boolean {
@@ -214,6 +220,11 @@ export default Vue.extend({
   },
 
   mounted() {
+    if (!this.api && !this.serverError.response?.status && !this.callPayload) {
+      this.closeDialog();
+      return;
+    }
+
     const element = this.$refs.errorToast as HTMLElement;
 
     const e = (this.$refs.errorToast as HTMLElement).outerHTML;
@@ -298,10 +309,10 @@ export default Vue.extend({
         user: this.$storage.user.getters.user(),
         timestamp: timeNow.toISOString(),
         api: this.api,
-        status: (this.error as IServerError).response?.status,
+        status: this.serverError.response?.status,
         payload: this.stringifiedCallPayload,
-        errorResponse: JSON.stringify((this.error as IServerError).response, null, 2),
-        description: '',
+        errorResponse: JSON.stringify(this.serverError.response, null, 2),
+        description: this.errorType ? JSON.stringify(this.errorType) : '',
         appUrl: this.$route.fullPath,
         tenantId: this.tenantId,
         languageCode: this.languageCode,
@@ -318,7 +329,7 @@ export default Vue.extend({
       // Replace the stringified properties by the corresponding objects, in order to be well displayed when the whole report is stringified
       const copiedReport = this.report;
       copiedReport.payload = this.callPayload;
-      copiedReport.errorResponse = (this.error as IServerError).response;
+      copiedReport.errorResponse = this.serverError.response;
 
       const stringifiedReport = JSON.stringify(copiedReport, null, 2);
       helpers.copyToClipBoard(stringifiedReport);
