@@ -26,7 +26,7 @@
     <v-data-table
       v-if="showMembers"
       id="table_member"
-      class="table border-radius-bottom"
+      :class="{'table border-radius-bottom': true, loading: true}"
       data-test="teamMembers__table"
       hide-default-footer
       must-sort
@@ -326,6 +326,7 @@ export default Vue.extend({
     },
 
   },
+
   async mounted() {
     await this.loadUsers();
   },
