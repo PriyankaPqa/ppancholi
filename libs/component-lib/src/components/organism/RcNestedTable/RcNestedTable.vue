@@ -23,6 +23,7 @@
       <template v-for="(item, $index) in items">
         <v-row
           :key="`item__${$index}`"
+          :data-test="`${dataTest}_item__${$index}`"
           :class="{
             rcnestedtable__row: true,
             rcnestedtable__parentRow: true,
@@ -32,6 +33,7 @@
           <v-col
             v-for="(header, $headerIndex) in headers"
             :key="`item__${$index}__${header.value}`"
+            :data-test="`${dataTest}_item__${$index}__${header.value}`"
             :class="{
               right: header.align === 'right',
               left: header.align === 'left',
@@ -92,6 +94,7 @@
               <v-row
                 v-for="(subItem, $subIndex) in getSubItems(item)"
                 :key="`subItem__${$index}__${$subIndex}`"
+                :data-test="`${dataTest}__subItem__${$index}__${$subIndex}`"
                 align="center"
                 :class="{
                   rcnestedtable__row: true,
@@ -100,6 +103,7 @@
                 <v-col
                   v-for="(header, $headerIndex) in headers"
                   :key="`subItem__${$index}__${$subIndex}__${header.value}`"
+                  :data-test="`${dataTest}__subItem__${$index}__${$subIndex}__${header.value}`"
                   :class="{
                     right: header.align === 'right',
                     left: header.align === 'left',

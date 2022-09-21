@@ -50,7 +50,11 @@
     </template>
 
     <template #[`item.editButton`]="{ item }">
-      <v-btn icon class="mr-2" data-test="edit_financial_assistance" @click="goToEdit(item)">
+      <v-btn
+        icon
+        class="mr-2"
+        :data-test="`edit_financial_assistance_${ $m(item.entity.name) }`"
+        @click="goToEdit(item)">
         <v-icon size="24" color="grey darken-2">
           mdi-pencil
         </v-icon>

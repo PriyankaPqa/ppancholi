@@ -135,7 +135,7 @@ describe('EventsTable.vue', () => {
 
       describe('table elements', () => {
         test('event title redirects to getEventRoute', () => {
-          const link = wrapper.findDataTest('eventDetail-link');
+          const link = wrapper.findDataTest(`eventDetail-link_${mockEvents()[0].entity.name.translation.en}`);
           expect(link.props('to')).toEqual({
             name: routes.events.summary.name,
             params: {
