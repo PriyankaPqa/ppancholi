@@ -8,8 +8,6 @@
 import { SurveyCreator } from 'survey-creator-knockout';
 import 'survey-core/defaultV2.min.css';
 import 'survey-creator-core/survey-creator-core.min.css';
-import 'survey-core/survey.i18n';
-import 'survey-creator-core/survey-creator-core.i18n';
 import mixins from 'vue-typed-mixins';
 import { SurveyJsHelper } from './SurveyJsHelper';
 import assessmentDetail from './assessmentDetail';

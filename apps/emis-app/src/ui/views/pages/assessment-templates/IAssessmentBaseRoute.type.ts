@@ -5,4 +5,5 @@ export interface IAssessmentBaseRoute {
    create: { name: string },
    duplicate: { name: string },
    builder: { name: string },
+   runner: { name: string },
 }

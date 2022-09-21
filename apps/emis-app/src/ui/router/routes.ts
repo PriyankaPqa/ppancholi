@@ -16,6 +16,7 @@ const AssessmentTemplatesHome = () => import(/* webpackChunkName: "assessments" 
 const AssessmentTemplatesEdit = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/CreateEditAssessmentTemplate.vue');
 const AssessmentTemplateDetails = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/AssessmentTemplateDetails.vue');
 const AssessmentBuilder = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/AssessmentBuilder.vue');
+const AssessmentRunner = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/AssessmentRunner.vue');
 
 const ApprovalsLayout = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/layout/ApprovalsLayout.vue');
 const ApprovalsTemplates = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/templates/ApprovalsTemplates.vue');
@@ -174,6 +175,33 @@ export const routes: Array<RouteConfig> = [
         path: Routes.events.assessments.builder.path,
         name: Routes.events.assessments.builder.name,
         component: AssessmentBuilder,
+        meta: {
+          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true,
+        },
+        props: true,
+      },
+      {
+        path: Routes.assessmentTemplates.runner.path,
+        name: Routes.assessmentTemplates.runner.name,
+        component: AssessmentRunner,
+        meta: {
+          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true,
+        },
+        props: true,
+      },
+      {
+        path: Routes.events.assessments.runner.path,
+        name: Routes.events.assessments.runner.name,
+        component: AssessmentRunner,
+        meta: {
+          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true,
+        },
+        props: true,
+      },
+      {
+        path: Routes.events.assessments.complete.path,
+        name: Routes.events.assessments.complete.name,
+        component: AssessmentRunner,
         meta: {
           level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true,
         },

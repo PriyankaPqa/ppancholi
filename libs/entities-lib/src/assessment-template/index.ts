@@ -3,3 +3,4 @@ export * from './assessment-form';
 export * from './assessment-template';
 export * from './assessment-template.types';
 export * from './assessment-template.mock';
+export * from './assessment-response.mock';

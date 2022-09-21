@@ -74,6 +74,8 @@ import { SignalR } from '@/ui/plugins/signal-r';
 
 import { AssessmentTemplatesService } from '@libs/services-lib/assessment-template/entity';
 import { AssessmentTemplatesMetadataService } from '@libs/services-lib/assessment-template/metadata';
+import { AssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
+import { AssessmentResponsesMetadataService } from '@libs/services-lib/assessment-response/metadata';
 
 import { ApprovalTableEntityModule } from '@/store/modules/approval-table/approvalTableEntity';
 import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
@@ -91,6 +93,8 @@ import { AssessmentTemplateEntityModule } from './modules/assessment-template/as
 import { AssessmentTemplateMetadataModule } from './modules/assessment-template/assessmentTemplateMetadata';
 import { AssessmentFormEntityModule } from './modules/assessment-form/assessmentFormEntity';
 import { AssessmentFormMetadataModule } from './modules/assessment-form/assessmentFormMetadata';
+import { AssessmentResponseEntityModule } from './modules/assessment-response/assessmentResponseEntity';
+import { AssessmentResponseMetadataModule } from './modules/assessment-response/assessmentResponseMetadata';
 
 import { IRootState } from './store.types';
 
@@ -265,6 +269,16 @@ const store: StoreOptions<IRootState> = {
 
     [vuexModule.ASSESSMENT_FORM_METADATA]: new AssessmentFormMetadataModule(
       new AssessmentFormsMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
+
+    [vuexModule.ASSESSMENT_RESPONSE_ENTITIES]: new AssessmentResponseEntityModule(
+      new AssessmentResponsesService(httpClient),
+      SignalR,
+    ).getModule(),
+
+    [vuexModule.ASSESSMENT_RESPONSE_METADATA]: new AssessmentResponseMetadataModule(
+      new AssessmentResponsesMetadataService(httpClient),
       SignalR,
     ).getModule(),
   },

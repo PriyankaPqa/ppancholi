@@ -21,6 +21,7 @@ import { TenantSettingsStorageMock } from './tenantSettings';
 import { UIStateStorageMock } from './ui-state';
 import { AssessmentTemplateStorageMock } from './assessment-template';
 import { AssessmentFormStorageMock } from './assessment-form';
+import { AssessmentResponseStorageMock } from './assessment-response';
 
 export const mockStorage = (): IStorageMock => ({
   caseFile: new CaseFileStorageMock().make(),
@@ -45,4 +46,5 @@ export const mockStorage = (): IStorageMock => ({
   assessmentTemplate: new AssessmentTemplateStorageMock().make(),
   approvalTable: new ApprovalTableStorageMock().make(),
   assessmentForm: new AssessmentFormStorageMock().make(),
+  assessmentResponse: new AssessmentResponseStorageMock().make(),
 });

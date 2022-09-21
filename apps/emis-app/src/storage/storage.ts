@@ -23,6 +23,7 @@ import { TenantSettingsStorage } from './tenantSettings';
 import { UIStateStorage } from './ui-state';
 import { AssessmentTemplateStorage } from './assessment-template';
 import { AssessmentFormStorage } from './assessment-form';
+import { AssessmentResponseStorage } from './assessment-response';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   user: makeUserStorage(store),
@@ -72,5 +73,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     store,
     vuexModule.ASSESSMENT_FORM_ENTITIES,
     vuexModule.ASSESSMENT_FORM_METADATA,
+  ).make(),
+  assessmentResponse: new AssessmentResponseStorage(
+    store,
+    vuexModule.ASSESSMENT_RESPONSE_ENTITIES,
+    vuexModule.ASSESSMENT_RESPONSE_METADATA,
   ).make(),
 });

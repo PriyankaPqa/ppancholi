@@ -35,3 +35,5 @@ export const APPROVALS_TABLE_ENTITIES = 'approvalsTableEntities';
 export const APPROVALS_TABLE_METADATA = 'approvalsTableMetadata';
 export const ASSESSMENT_FORM_ENTITIES = 'assessmentFormEntities';
 export const ASSESSMENT_FORM_METADATA = 'assessmentFormMetadata';
+export const ASSESSMENT_RESPONSE_ENTITIES = 'assessmentResponseEntities';
+export const ASSESSMENT_RESPONSE_METADATA = 'assessmentResponseMetadata';

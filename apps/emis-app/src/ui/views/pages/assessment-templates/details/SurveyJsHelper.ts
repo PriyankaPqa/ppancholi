@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 import {
-  FunctionFactory, JsonObject, Question, StylesManager, SurveyModel,
+  FunctionFactory, JsonObject, Question, QuestionSelectBase, StylesManager, SurveyModel,
 } from 'survey-core';
 import helpers from '@/ui/helpers/helpers';
 import {
-  IAssessmentAnswerChoice, IAssessmentQuestion,
+  CompletionStatus,
+  IAnsweredQuestion,
+  IAssessmentAnswerChoice, IAssessmentQuestion, IAssessmentResponseEntity, SurveyJsAssessmentResponseState,
 } from '@libs/entities-lib/assessment-template';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { SurveyCreator, localization } from 'survey-creator-knockout';
 import { CreatorBase } from 'survey-creator-core';
 import _merge from 'lodash/merge';
+import 'survey-core/survey.i18n';
+import 'survey-creator-core/survey-creator-core.i18n';
 
 type TextValue = (string | { value: string; text?: string | Record<string, string>; score?: number; });
 
@@ -31,10 +35,24 @@ interface ISimpleQuestion {
     otherPlaceHolder?: string | Record<string, string>;
 }
 
+interface ISurveyJsPlainData {
+  displayValue: string | Record<string, string>,
+  name: string,
+  questionType: string,
+  title: string,
+  value: string | Record<string, string>,
+  isNode: boolean,
+  data?: { name: string, title: string, value: string, displayValue: string, isNode: boolean }[],
+}
+
+interface ISurveyModel extends SurveyModel { _totalScore?: number }
+
 export class SurveyJsHelper {
   totalScore = 0;
 
   creator = null as SurveyCreator;
+
+  survey = null as ISurveyModel;
 
   initializeSurveyJsCreator(locale?: string) {
     StylesManager.applyTheme('defaultV2');
@@ -58,6 +76,23 @@ export class SurveyJsHelper {
     this.totalScore = 0;
 
     return this.creator;
+  }
+
+  initializeSurveyJsRunner(locale: string, surveyJson: string) {
+    StylesManager.applyTheme('defaultV2');
+
+    JsonObject.metaData.addProperty('question', { name: 'score:number' });
+    JsonObject.metaData.addProperty('itemvalue', { name: 'score:number' });
+
+    this.registerCustomSurveyJsFunctions();
+
+    this.survey = new SurveyModel(surveyJson);
+    this.survey.locale = locale;
+    this.survey._totalScore = 0;
+    this.totalScore = 0;
+    this.survey.onValueChanged.add(this.valueChangedNewScore);
+
+    return this.survey;
   }
 
   initializeTranslations(locale?: string) {
@@ -121,7 +156,7 @@ export class SurveyJsHelper {
         if (choices) {
           if (simpleQuestion.hasOther) {
             choices.push({
-              value: 'Other',
+              value: 'other',
               text: simpleQuestion.otherText || {
                 en: 'Other (describe)',
                 fr: 'Autre (préciser)',
@@ -132,7 +167,7 @@ export class SurveyJsHelper {
           }
           if (simpleQuestion.hasNone) {
             choices.push({
-              value: 'None',
+              value: 'none',
               text: simpleQuestion.noneText || {
                 en: 'None',
                 fr: 'Aucun',
@@ -213,13 +248,87 @@ export class SurveyJsHelper {
     return result;
   }
 
-  previewCreated(_sender: CreatorBase, options : { survey: SurveyModel & { _totalScore?: number } }) {
+  surveyToAssessmentResponse(sender: ISurveyModel, assessmentResponseOriginal?: IAssessmentResponseEntity) : IAssessmentResponseEntity {
+    const assessmentResponse = assessmentResponseOriginal || {
+      dateAssigned: new Date(),
+    } as IAssessmentResponseEntity;
+
+    assessmentResponse.completionStatus = CompletionStatus.Partial;
+    assessmentResponse.externalToolState = new SurveyJsAssessmentResponseState(JSON.stringify(sender.data),
+      JSON.stringify(sender.getPlainData({ includeEmpty: false, includeQuestionTypes: true })));
+    assessmentResponse.totalScore = sender._totalScore;
+    assessmentResponse.answeredQuestions = [];
+
+    const r = JSON.parse(assessmentResponse.externalToolState.data.denormalizedJson) as ISurveyJsPlainData[];
+
+    r.forEach((question) => this.questionToAssessmentResponse(sender, assessmentResponse, question));
+
+    return assessmentResponse;
+  }
+
+  private questionToAssessmentResponse(sender: ISurveyModel, assessmentResponse: IAssessmentResponseEntity, question: ISurveyJsPlainData): void {
+    const questionObj : Question = sender.getQuestionByName(question.name);
+    (typeof question.value === 'object' && !Array.isArray(question.value) ? Object.keys(question.value) : [null]).forEach((subQuestion, ix) => {
+      const response = {
+        assessmentQuestionIdentifier: question.name + (subQuestion != null ? `|${subQuestion}` : ''),
+        responses: [],
+      } as IAnsweredQuestion;
+      if (!question.isNode) {
+        if (subQuestion == null) {
+          response.responses = [{
+            displayValue: question.displayValue as string,
+            textValue: question.value.toString() as string,
+          }];
+        } else {
+          response.responses = [{
+            displayValue: Object.values(question.displayValue as Record<string, string>)[ix],
+            textValue: (question.value as Record<string, string>)[subQuestion],
+          }];
+        }
+      } else {
+        response.responses = question.data.filter((q) => (!questionObj.comment || q.value !== '-Comment') && (!subQuestion || subQuestion === q.name))
+          .map((x) => ({
+            displayValue: x.displayValue,
+            textValue: x.value.toString(),
+          }));
+      }
+
+      if (questionObj.hasOther) {
+        const responseOther = response.responses.filter((r) => r.textValue === 'other')[0];
+        if (responseOther) {
+          responseOther.displayValue = (questionObj as QuestionSelectBase).otherText;
+        }
+      }
+
+      response.responses.forEach((userResponse) => {
+        userResponse.numericValue = `${userResponse.textValue}`.trim() !== '' && !Number.isNaN(+userResponse.textValue) ? +userResponse.textValue : null;
+      });
+      assessmentResponse.answeredQuestions.push(response);
+
+      if (questionObj.comment) {
+        this.addCommentResponse(assessmentResponse, question, subQuestion, questionObj);
+      }
+    });
+  }
+
+  private addCommentResponse(assessmentResponse: IAssessmentResponseEntity, question: ISurveyJsPlainData, subQuestion: string, questionObj: Question): void {
+    const commentResponse = {
+      assessmentQuestionIdentifier: `${question.name + (subQuestion != null ? `|${subQuestion}` : '')}|Comment`,
+      responses: [{
+        displayValue: questionObj.comment,
+        textValue: questionObj.comment,
+      }],
+    } as IAnsweredQuestion;
+    assessmentResponse.answeredQuestions.push(commentResponse);
+  }
+
+  previewCreated(_sender: CreatorBase, options : { survey: ISurveyModel }) {
     options.survey._totalScore = 0;
     this.totalScore = 0;
     options.survey.onValueChanged.add(this.valueChangedNewScore);
   }
 
-  valueChangedNewScore(survey: SurveyModel & { _totalScore?: number }) {
+  valueChangedNewScore(survey: ISurveyModel) {
     survey._totalScore = 0;
     const data = survey.data;
 
@@ -241,7 +350,5 @@ export class SurveyJsHelper {
       }
     });
     this.totalScore = survey._totalScore;
-
-    console.log(`total score: ${JSON.stringify(survey._totalScore)}`);
   }
 }

@@ -1926,6 +1926,7 @@
     "teams.phone_number": "teams.phone_number",
     "teams.primary_contact": "teams.primary_contact",
     "teams.related_events": "teams.related_events",
+    "teams.remove_last_team_members_confirm": "",
     "teams.remove_team_member_with_case_files_confirm": "teams.remove_team_member_with_case_files_confirm",
     "teams.remove_team_members": "teams.remove_team_members",
     "teams.remove_team_members_case_files": "teams.remove_team_members_case_files",

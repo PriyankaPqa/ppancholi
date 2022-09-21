@@ -389,6 +389,23 @@ describe('AssessmentTemplatesHome.vue', () => {
       });
     });
 
+    describe('copySampleLink', () => {
+      it('should copy the url to runner page', async () => {
+        navigator.clipboard = { writeText: jest.fn() };
+        await mountWrapper();
+        wrapper.vm.copySampleLink({ id: 'testId' });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.resolve).toHaveBeenCalledWith({
+          name: wrapper.vm.baseRoute.runner.name,
+          params: {
+            assessmentTemplateId: 'testId',
+            id: wrapper.vm.id,
+          },
+        });
+        expect(navigator.clipboard.writeText).toHaveBeenCalledWith(`http://localhost${wrapper.vm.$router.resolve().href}`);
+      });
+    });
+
     describe('editorMode', () => {
       it('should open new tab to editor page', async () => {
         await mountWrapper();

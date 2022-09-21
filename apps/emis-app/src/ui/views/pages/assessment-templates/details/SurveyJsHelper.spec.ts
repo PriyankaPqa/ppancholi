@@ -1,5 +1,7 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
 import {
   JsonObject,
 } from 'survey-core';
@@ -31,6 +33,10 @@ const textQuestion = JSON.stringify({
     },
   ],
 });
+
+const textAnswers = {
+  question1: 'test text',
+};
 
 const checkboxQuestion = JSON.stringify({
   logo: {
@@ -80,6 +86,27 @@ const checkboxQuestion = JSON.stringify({
   ],
 });
 
+const checkboxAnswers = {
+  question1: [
+    'other',
+    'item2',
+  ],
+  'question1-Comment': 'test',
+};
+
+const checkboxAnswersNoComment = {
+  question1: [
+    'other',
+    'item2',
+  ],
+};
+
+const checkboxAnswersNone = {
+  question1: [
+    'none',
+  ],
+};
+
 const radiogroupQuestion = JSON.stringify({
   logo: {
     default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
@@ -123,6 +150,11 @@ const radiogroupQuestion = JSON.stringify({
     },
   ],
 });
+
+const radiogroupAnswers = {
+  question1: 'other',
+  'question1-Comment': 'test',
+};
 
 const dropdownQuestion = JSON.stringify({
   logo: {
@@ -175,6 +207,11 @@ const dropdownQuestion = JSON.stringify({
   ],
 });
 
+const dropdownAnswer = {
+  question1: 1,
+  'question1-Comment': 'zzzzzz',
+};
+
 const commentQuestion = JSON.stringify({
   logo: {
     default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
@@ -194,6 +231,10 @@ const commentQuestion = JSON.stringify({
     },
   ],
 });
+
+const commentAnswer = {
+  question1: 'fdgdfg\nfdfkdjhgkf\n\n\nfdgdfgdf',
+};
 
 const booleanQuestion = JSON.stringify({
   logo: {
@@ -223,6 +264,14 @@ const booleanQuestion = JSON.stringify({
   ],
 });
 
+const booleanAnswer = {
+  question1: true,
+};
+
+const booleanAnswerNo = {
+  question1: false,
+};
+
 const htmlQuestion = JSON.stringify({
   logo: {
     default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
@@ -247,6 +296,8 @@ const htmlQuestion = JSON.stringify({
     },
   ],
 });
+
+const htmlAnswer = {};
 
 const multipleTextQuestion = JSON.stringify({
   logo: {
@@ -284,6 +335,13 @@ const multipleTextQuestion = JSON.stringify({
     },
   ],
 });
+
+const multipleTextAnswer = {
+  question1: {
+    'sub q 1': 'sub answer 1',
+    text2: 'sub answer 2',
+  },
+};
 
 const matrixQuestion = JSON.stringify({
   logo: {
@@ -333,6 +391,13 @@ const matrixQuestion = JSON.stringify({
     },
   ],
 });
+
+const matrixAnswer = {
+  question1: {
+    'sub q 1': 'answer 1',
+    'Row 2': 'Column 3',
+  },
+};
 
 const complexJson = JSON.stringify({
   logoPosition: 'right',
@@ -444,7 +509,7 @@ const complexJson = JSON.stringify({
         {
           type: 'rating',
           name: 'recommend friends',
-          visibleIf: '{satisfaction} > 3',
+          visibleIf: '{satisfaction} > 2',
           title: 'How likely are you to recommend the Product to a friend or co-worker?',
           minRateDescription: 'Will not recommend',
           maxRateDescription: 'I will recommend',
@@ -527,6 +592,31 @@ const complexJson = JSON.stringify({
   ],
 });
 
+const complexJsonAnswers = {
+  Quality: {
+    affordable: 1,
+    'does what it claims': 2,
+    'better then others': 3,
+    'easy to use': 5,
+  },
+  satisfaction: '3',
+  'recommend friends': 4,
+  suggestions: 'tests',
+  'price to competitors': 'Priced about the same',
+  price: 'low',
+  pricelimit: {
+    mostamount: '124.34',
+    leastamount: '1223$',
+  },
+  email: 'mmmm@mail.com',
+};
+
+// const allQuestions = [textQuestion, checkboxQuestion, radiogroupQuestion, dropdownQuestion, commentQuestion, booleanQuestion, htmlQuestion, multipleTextQuestion,
+//   matrixQuestion, complexJson];
+
+// const allAnswers = [textAnswers, checkboxAnswers, radiogroupAnswers, dropdownAnswer, commentAnswer, booleanAnswer, htmlAnswer, multipleTextAnswer,
+//   matrixAnswer, complexJsonAnswers];
+
 describe('SurveyJsHelper', () => {
   beforeEach(async () => {
     helper = new SurveyJsHelper();
@@ -555,6 +645,31 @@ describe('SurveyJsHelper', () => {
     it('calls registerCustomSurveyJsFunctions', () => {
       helper.registerCustomSurveyJsFunctions = jest.fn();
       helper.initializeSurveyJsCreator('en');
+      expect(helper.registerCustomSurveyJsFunctions).toHaveBeenCalled();
+    });
+  });
+
+  describe('initializeSurveyJsRunner', () => {
+    it('initializes the survey', () => {
+      const survey = helper.initializeSurveyJsRunner('zz', complexJson);
+      expect(survey.locale).toEqual('zz');
+      expect(survey._totalScore).toEqual(0);
+    });
+    it('adds score in surveyjs', () => {
+      helper.initializeSurveyJsRunner('en', complexJson);
+      expect(JsonObject.metaData.getProperty('question', 'score')).not.toBeNull();
+      expect(JsonObject.metaData.getProperty('itemvalue', 'score')).not.toBeNull();
+      expect(helper.totalScore).toBe(0);
+    });
+    it('initializes survey locale', () => {
+      let survey = helper.initializeSurveyJsRunner('fr', complexJson);
+      expect(survey.locale).toBe('fr');
+      survey = helper.initializeSurveyJsRunner('zz', complexJson);
+      expect(survey.locale).toBe('zz');
+    });
+    it('calls registerCustomSurveyJsFunctions', () => {
+      helper.registerCustomSurveyJsFunctions = jest.fn();
+      helper.initializeSurveyJsRunner('en', complexJson);
       expect(helper.registerCustomSurveyJsFunctions).toHaveBeenCalled();
     });
   });
@@ -1141,9 +1256,9 @@ describe('SurveyJsHelper', () => {
                 fr: 'other fr',
               },
             },
-            identifier: 'Other',
+            identifier: 'other',
             score: null,
-            textValue: 'Other',
+            textValue: 'other',
           },
           {
             displayValue: {
@@ -1152,9 +1267,9 @@ describe('SurveyJsHelper', () => {
                 fr: 'Aucun',
               },
             },
-            identifier: 'None',
+            identifier: 'none',
             score: null,
-            textValue: 'None',
+            textValue: 'none',
           },
         ],
         identifier: 'question1',
@@ -1225,9 +1340,9 @@ describe('SurveyJsHelper', () => {
                 fr: 'Autre (préciser)',
               },
             },
-            identifier: 'Other',
+            identifier: 'other',
             score: null,
-            textValue: 'Other',
+            textValue: 'other',
           },
           {
             displayValue: {
@@ -1236,9 +1351,9 @@ describe('SurveyJsHelper', () => {
                 fr: 'Aucun',
               },
             },
-            identifier: 'None',
+            identifier: 'none',
             score: null,
-            textValue: 'None',
+            textValue: 'none',
           },
         ],
         identifier: 'question1',
@@ -1344,9 +1459,9 @@ describe('SurveyJsHelper', () => {
                 fr: 'Aucun',
               },
             },
-            identifier: 'None',
+            identifier: 'none',
             score: null,
-            textValue: 'None',
+            textValue: 'none',
           },
         ],
         identifier: 'question1',
@@ -1615,6 +1730,300 @@ describe('SurveyJsHelper', () => {
       helper.valueChangedNewScore(helper.creator.survey as any);
       // for now we support price correct (radio) to score a 10... more in the future story...
       expect(helper.totalScore).toEqual(10);
+    });
+  });
+
+  describe('surveyToAssessmentResponse', () => {
+    const checkQuestionIdentifiers = (surveyModelData: any, answerData: any) => {
+      helper.initializeSurveyJsCreator();
+      helper.creator.text = surveyModelData;
+      helper.initializeSurveyJsRunner('en', surveyModelData);
+      helper.survey.data = answerData;
+      const questions = helper.getAssessmentQuestions();
+      const answers = helper.surveyToAssessmentResponse(helper.survey);
+      expect({ type: questions[0]?.questionType, i: answers.answeredQuestions.map((a) => a.assessmentQuestionIdentifier) })
+        .toEqual({ type: questions[0]?.questionType, i: questions.map((q) => q.identifier) });
+    };
+
+    const checkQuestionAnswers = (surveyModelData: any, answerData: any, expected: IAnsweredQuestion[]) => {
+      helper.initializeSurveyJsCreator();
+      helper.creator.text = surveyModelData;
+      helper.initializeSurveyJsRunner('fr', surveyModelData);
+      helper.survey.data = answerData;
+      const questions = helper.getAssessmentQuestions();
+      const answers = helper.surveyToAssessmentResponse(helper.survey);
+      expect({ type: questions[0]?.questionType, i: answers.answeredQuestions })
+        .toEqual({ type: questions[0]?.questionType, i: expected });
+    };
+
+    describe('question identifiers', () => {
+      it('returns the same list of question identifiers for complexJson', () => {
+        checkQuestionIdentifiers(complexJson, complexJsonAnswers);
+      });
+
+      it('returns the same list of question identifiers for textQuestion', () => {
+        checkQuestionIdentifiers(textQuestion, textAnswers);
+      });
+
+      it('returns the same list of question identifiers for checkboxQuestion', () => {
+        checkQuestionIdentifiers(checkboxQuestion, checkboxAnswers);
+      });
+
+      it('returns the same list of question identifiers for radiogroupQuestion', () => {
+        checkQuestionIdentifiers(radiogroupQuestion, radiogroupAnswers);
+      });
+
+      it('returns the same list of question identifiers for dropdownQuestion', () => {
+        checkQuestionIdentifiers(dropdownQuestion, dropdownAnswer);
+      });
+
+      it('returns the same list of question identifiers for commentQuestion', () => {
+        checkQuestionIdentifiers(commentQuestion, commentAnswer);
+      });
+
+      it('returns the same list of question identifiers for booleanQuestion', () => {
+        checkQuestionIdentifiers(booleanQuestion, booleanAnswer);
+      });
+
+      it('returns the same list of question identifiers for htmlQuestion', () => {
+        checkQuestionIdentifiers(htmlQuestion, htmlAnswer);
+      });
+
+      it('returns the same list of question identifiers for multipleTextQuestion', () => {
+        checkQuestionIdentifiers(multipleTextQuestion, multipleTextAnswer);
+      });
+
+      it('returns the same list of question identifiers for matrixQuestion', () => {
+        checkQuestionIdentifiers(matrixQuestion, matrixAnswer);
+      });
+    });
+
+    describe('question answers', () => {
+      it('returns the answer for complexJson', () => {
+        checkQuestionAnswers(complexJson, complexJsonAnswers, [
+          {
+            assessmentQuestionIdentifier: 'Quality|affordable',
+            responses: [
+              {
+                displayValue: 'Très en désaccord',
+                textValue: '1',
+                numericValue: 1,
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'Quality|does what it claims',
+            responses: [
+              {
+                displayValue: 'En désaccord',
+                textValue: '2',
+                numericValue: 2,
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'Quality|better then others',
+            responses: [
+              {
+                displayValue: 'Neutre',
+                textValue: '3',
+                numericValue: 3,
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'Quality|easy to use',
+            responses: [
+              {
+                displayValue: 'Très en accord',
+                textValue: '5',
+                numericValue: 5,
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'satisfaction',
+            responses: [
+              {
+                displayValue: 'val 3',
+                textValue: '3',
+                numericValue: 3,
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'recommend friends',
+            responses: [
+              {
+                displayValue: '4',
+                textValue: '4',
+                numericValue: 4,
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'suggestions',
+            responses: [
+              {
+                displayValue: 'tests',
+                textValue: 'tests',
+                numericValue: null,
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'price to competitors',
+            responses: [
+              {
+                displayValue: 'Priced about the same',
+                textValue: 'Priced about the same',
+                numericValue: null,
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'price',
+            responses: [
+              {
+                displayValue: 'No, the price is too low for your product',
+                textValue: 'low',
+                numericValue: null,
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'pricelimit|mostamount',
+            responses: [
+              {
+                displayValue: '124.34',
+                textValue: '124.34',
+                numericValue: 124.34,
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'pricelimit|leastamount',
+            responses: [
+              {
+                displayValue: '1223$',
+                textValue: '1223$',
+                numericValue: null,
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'email',
+            responses: [
+              {
+                displayValue: 'mmmm@mail.com',
+                textValue: 'mmmm@mail.com',
+                numericValue: null,
+              },
+            ],
+          },
+        ]);
+      });
+
+      it('returns the answer for textQuestion', () => {
+        checkQuestionAnswers(textQuestion, textAnswers, [{
+          assessmentQuestionIdentifier: 'question1',
+          responses: [{ displayValue: 'test text', textValue: 'test text', numericValue: null }],
+        }]);
+      });
+
+      it('returns the answer for checkboxQuestion', () => {
+        checkQuestionAnswers(checkboxQuestion, checkboxAnswers, [{
+          assessmentQuestionIdentifier: 'question1',
+          responses: [{ textValue: 'other', displayValue: 'other fr', numericValue: null },
+            { textValue: 'item2', displayValue: 'item 2 fr', numericValue: null }],
+        }, {
+          assessmentQuestionIdentifier: 'question1|Comment',
+          responses: [{ textValue: 'test', displayValue: 'test' }],
+        }]);
+
+        checkQuestionAnswers(checkboxQuestion, checkboxAnswersNoComment, [{
+          assessmentQuestionIdentifier: 'question1',
+          responses: [{ textValue: 'other', displayValue: 'other fr', numericValue: null },
+            { textValue: 'item2', displayValue: 'item 2 fr', numericValue: null }],
+        }]);
+
+        checkQuestionAnswers(checkboxQuestion, checkboxAnswersNone, [{
+          assessmentQuestionIdentifier: 'question1',
+          responses: [{ textValue: 'none', displayValue: 'Aucun', numericValue: null }],
+        }]);
+      });
+
+      it('returns the answer for radiogroupQuestion', () => {
+        checkQuestionAnswers(radiogroupQuestion, radiogroupAnswers, [{
+          assessmentQuestionIdentifier: 'question1',
+          responses: [{ textValue: 'other', displayValue: 'Autre (préciser)', numericValue: null }],
+        }, {
+          assessmentQuestionIdentifier: 'question1|Comment',
+          responses: [{ textValue: 'test', displayValue: 'test' }],
+        }]);
+      });
+
+      it('returns the answer for dropdownQuestion', () => {
+        checkQuestionAnswers(dropdownQuestion, dropdownAnswer, [{
+          assessmentQuestionIdentifier: 'question1',
+          responses: [{ textValue: '1', displayValue: '1', numericValue: 1 }],
+        }, {
+          assessmentQuestionIdentifier: 'question1|Comment',
+          responses: [{ textValue: 'zzzzzz', displayValue: 'zzzzzz' }],
+        }]);
+      });
+
+      it('returns the answer for commentQuestion', () => {
+        checkQuestionAnswers(commentQuestion, commentAnswer, [{
+          assessmentQuestionIdentifier: 'question1',
+          responses: [{ displayValue: 'fdgdfg\nfdfkdjhgkf\n\n\nfdgdfgdf', textValue: 'fdgdfg\nfdfkdjhgkf\n\n\nfdgdfgdf', numericValue: null }],
+        }]);
+      });
+
+      it('returns the answer for booleanQuestion', () => {
+        checkQuestionAnswers(booleanQuestion, booleanAnswer, [
+          {
+            assessmentQuestionIdentifier: 'question1',
+            responses: [{ displayValue: 'ouiii', textValue: 'true', numericValue: null }],
+          },
+        ]);
+        checkQuestionAnswers(booleanQuestion, booleanAnswerNo, [
+          {
+            assessmentQuestionIdentifier: 'question1',
+            responses: [{ displayValue: 'Non', textValue: 'false', numericValue: null }],
+          },
+        ]);
+      });
+
+      it('returns the answer for htmlQuestion', () => {
+        checkQuestionAnswers(htmlQuestion, htmlAnswer, []);
+      });
+
+      it('returns the answer for multipleTextQuestion', () => {
+        checkQuestionAnswers(multipleTextQuestion, multipleTextAnswer, [
+          {
+            assessmentQuestionIdentifier: 'question1|sub q 1',
+            responses: [{ displayValue: 'sub answer 1', textValue: 'sub answer 1', numericValue: null }],
+          },
+          {
+            assessmentQuestionIdentifier: 'question1|text2',
+            responses: [{ displayValue: 'sub answer 2', textValue: 'sub answer 2', numericValue: null }],
+          },
+        ]);
+      });
+
+      it('returns the answer for matrixQuestion', () => {
+        checkQuestionAnswers(matrixQuestion, matrixAnswer, [
+          {
+            assessmentQuestionIdentifier: 'question1|sub q 1',
+            responses: [{ displayValue: '1 fr', textValue: 'answer 1', numericValue: null }],
+          },
+          {
+            assessmentQuestionIdentifier: 'question1|Row 2',
+            responses: [{ displayValue: 'Column 3', textValue: 'Column 3', numericValue: null }],
+          },
+        ]);
+      });
     });
   });
 });

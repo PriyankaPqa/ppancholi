@@ -30,10 +30,10 @@ export enum PublishStatus {
 }
 
 export enum CompletionStatus {
-  Pending,
-  Partial,
-  Completed,
-  Obsolete
+  Pending = 1,
+  Partial = 2,
+  Completed = 3,
+  Obsolete = 4
 }
 
 export interface IExternalToolState {
@@ -123,6 +123,10 @@ export interface IAssessmentResponseEntity extends IEntity {
   dateCompleted?: Date;
 }
 
+export interface IAssessmentResponseMetadata extends IEntity {
+}
+
+export type IAssessmentResponseCombined = IEntityCombined<IAssessmentResponseEntity, IAssessmentResponseMetadata>
 export type IAssessmentTemplateCombined = IEntityCombined<IAssessmentTemplateEntity, IAssessmentTemplateMetadata>
 export type IAssessmentFormCombined = IEntityCombined<IAssessmentFormEntity, IAssessmentFormMetadata>
 export type IAssessmentBaseCombined = IEntityCombined<IAssessmentBaseEntity, IAssessmentBaseMetadata>

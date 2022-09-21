@@ -81,6 +81,11 @@ import {
   IStorageMakeMock as IAssessmentFormMakeStorageMock,
 } from './assessment-form';
 
+import {
+  IStorageMake as IAssessmentResponseMakeStorage,
+  IStorageMakeMock as IAssessmentResponseMakeStorageMock,
+} from './assessment-response';
+
 export interface IStorage {
   user: IUserStorage;
   caseFile: ICaseFileMakeStorage;
@@ -104,6 +109,7 @@ export interface IStorage {
   assessmentTemplate: IAssessmentTemplateMakeStorage;
   approvalTable: IApprovalTableMakeStorage;
   assessmentForm: IAssessmentFormMakeStorage;
+  assessmentResponse: IAssessmentResponseMakeStorage;
 }
 
 export interface IStorageMock {
@@ -129,4 +135,5 @@ export interface IStorageMock {
   assessmentTemplate: IAssessmentTemplateMakeStorageMock;
   approvalTable: IApprovalTableMakeStorageMock;
   assessmentForm: IAssessmentFormMakeStorageMock;
+  assessmentResponse: IAssessmentResponseMakeStorageMock;
 }

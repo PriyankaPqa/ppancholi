@@ -334,7 +334,15 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     copySampleLink(item: IAssessmentTemplateEntity) {
-      console.log('copy: ', item);
+      const routeData = this.$router.resolve({
+        name: this.baseRoute.runner.name,
+        params: {
+          assessmentTemplateId: item.id,
+          id: this.id,
+        },
+      });
+      navigator.clipboard.writeText(`${window.location.origin}${routeData.href}`);
+      this.$toasted.global.success(this.$t('assessmentTemplate.copiedLink'));
     },
 
     duplicateSurvey(item: IAssessmentTemplateEntity) {

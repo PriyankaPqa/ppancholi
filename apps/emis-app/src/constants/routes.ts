@@ -30,6 +30,10 @@ const routes = {
       path: 'assessment-builder/:assessmentTemplateId',
       name: 'assessmenttemplates.builder',
     },
+    runner: {
+      path: 'assessment-runner/:assessmentTemplateId',
+      name: 'assessmenttemplates.runner',
+    },
   },
   approvals: {
     layout: {
@@ -216,6 +220,14 @@ const routes = {
       builder: {
         path: 'events/:id/assessment-builder/:assessmentTemplateId',
         name: 'events.assessments.builder',
+      },
+      runner: {
+        path: 'events/:id/assessment-runner/:assessmentTemplateId',
+        name: 'events.assessments.runner',
+      },
+      complete: {
+        path: 'events/:id/assessment-complete/:assessmentTemplateId/:assessmentResponseId',
+        name: 'events.assessments.complete',
       },
     },
   },
