@@ -26,7 +26,7 @@
     <v-data-table
       v-if="showMembers"
       id="table_member"
-      :class="{'table border-radius-bottom': true, loading: true}"
+      :class="{'table border-radius-bottom': true, loading: loading}"
       data-test="teamMembers__table"
       hide-default-footer
       must-sort
