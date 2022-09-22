@@ -1,4 +1,4 @@
-import { IAssessmentResponseEntity, IAssessmentResponseMetadata } from '@libs/entities-lib/assessment-template';
+import { IAssessmentResponseCreateRequest, IAssessmentResponseEntity, IAssessmentResponseMetadata } from '@libs/entities-lib/assessment-template';
 import { IStore, IState } from '../../store/store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
@@ -16,7 +16,7 @@ export class AssessmentResponseStorage
   private actions = {
     ...this.baseActions,
 
-    create: (payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> => this.store.dispatch(`${this.entityModuleName}/create`, payload),
+    create: (payload: IAssessmentResponseCreateRequest): Promise<IAssessmentResponseEntity> => this.store.dispatch(`${this.entityModuleName}/create`, payload),
 
     update: (payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> => this.store.dispatch(`${this.entityModuleName}/update`, payload),
 

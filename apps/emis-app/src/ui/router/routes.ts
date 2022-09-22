@@ -30,6 +30,7 @@ const CaseFileLayout = () => import(/* webpackChunkName: "case-file" */ '@/ui/vi
 const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/home/CaseFileHome.vue');
 const CaseFileDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/CaseFileDetails.vue');
 const CaseFileActivity = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-activity/CaseFileActivity.vue');
+const CaseFileAssessments = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-assessment/CaseFileAssessment.vue');
 const FinancialAssistancePaymentsList = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/FinancialAssistancePaymentsList.vue');
 const CreateEditCaseFileFinancialAssistance = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistance.vue');
 const ViewPaymentLineDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/ViewPaymentLineDetails.vue');
@@ -323,6 +324,13 @@ export const routes: Array<RouteConfig> = [
                     name: Routes.caseFile.activity.name,
                     component: CaseFileActivity,
                     meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                    props: true,
+                  },
+                  {
+                    path: Routes.caseFile.assessments.home.path,
+                    name: Routes.caseFile.assessments.home.name,
+                    component: CaseFileAssessments,
+                    meta: { level: 'level1' },
                     props: true,
                   },
                   {

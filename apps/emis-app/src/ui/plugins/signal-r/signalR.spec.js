@@ -73,6 +73,13 @@ describe('signalR', () => {
         .toHaveBeenCalled();
     });
 
+    it('calls listenForCaseReferralModuleChanges', () => {
+      conn.listenForCaseReferralModuleChanges = jest.fn();
+      conn.createBindings();
+      expect(conn.listenForCaseReferralModuleChanges)
+        .toHaveBeenCalled();
+    });
+
     it('calls listenForFinancialAssistanceModuleChanges', () => {
       conn.listenForFinancialAssistanceModuleChanges = jest.fn();
       conn.createBindings();
@@ -391,6 +398,24 @@ describe('signalR', () => {
           optionItemName: 'ReferralOutcomeStatus',
           cacheResetMutationName: 'setOutcomeStatusesFetched',
           mutationDomain: 'caseFileReferral',
+        });
+    });
+  });
+
+  describe('listenForAssessmentResponseModuleChanges', () => {
+    it('calls listenForChanges', () => {
+      conn.listenForAssessmentResponseModuleChanges();
+      expect(conn.listenForChanges)
+        .toHaveBeenCalledWith({
+          domain: 'assessment',
+          entityName: 'AssessmentResponse',
+          action: conn.storage.assessmentResponse.mutations.setEntityFromOutsideNotification,
+        });
+      expect(conn.listenForChanges)
+        .toHaveBeenCalledWith({
+          domain: 'assessment',
+          entityName: 'AssessmentResponseMetadata',
+          action: conn.storage.assessmentResponse.mutations.setMetadataFromOutsideNotification,
         });
     });
   });

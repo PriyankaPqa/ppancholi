@@ -1,7 +1,7 @@
 import { ActionContext, ActionTree } from 'vuex';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IRootState } from '@libs/registration-lib/store';
-import { IAssessmentResponseEntity } from '@libs/entities-lib/assessment-template';
+import { IAssessmentResponseCreateRequest, IAssessmentResponseEntity } from '@libs/entities-lib/assessment-template';
 import { AssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
 import { BaseModule } from '../base';
 import { IState } from '../base/base.types';
@@ -36,7 +36,7 @@ export class AssessmentResponseEntityModule extends BaseModule <IAssessmentRespo
     ...this.baseActions,
 
     create: async (context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
-      payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> => {
+      payload: IAssessmentResponseCreateRequest): Promise<IAssessmentResponseEntity> => {
       const result = await this.service.create(payload);
       if (result) {
         context.commit('addNewlyCreatedId', result);

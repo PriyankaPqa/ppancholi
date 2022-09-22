@@ -6,6 +6,7 @@ import {
   IEntity, IEntityCombined, Status,
 } from '@libs/entities-lib/base';
 import { IFullResponseCombined } from '@libs/services-lib/http-client';
+import helpers from '@libs/entities-lib/helpers';
 import { IStore, IState } from '../../store/store.types';
 import { IBaseStorage } from './base.types';
 
@@ -111,10 +112,10 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
         for (const [key, value] of Object.entries(opts.parentId)) {
           if (Array.isArray(value)) { // For a case where we want to include several values of a same property. Ex: parentId: {type: ['A', 'B']}
             // eslint-disable-next-line
-            newEntities = newEntities.filter((e: any) => value.includes(e[key]));
+            newEntities = newEntities.filter((e: any) => value.includes(helpers.getValueByPath(e, key)));
           } else {
             // eslint-disable-next-line
-            newEntities = newEntities.filter((e: any) => e[key] === value);
+            newEntities = newEntities.filter((e: any) => helpers.getValueByPath(e, key) === value);
           }
         }
         pinnedIds = newEntities.map((e) => e.id);

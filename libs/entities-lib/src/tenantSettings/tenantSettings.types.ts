@@ -8,7 +8,8 @@ export enum FeatureKeys {
   Assessments = 'Assessments',
   ApprovalsWithinEvent = 'Approvals',
   BotProtection = 'BotProtection',
-  CaseFileActivityRegistrationLocation='caseFileActivityRegistrationLocation'
+  CaseFileActivityRegistrationLocation='caseFileActivityRegistrationLocation',
+  AssessmentsWithinCasefiles = 'AssessmentsWithinCasefiles',
 }
 
 export enum FeatureType {

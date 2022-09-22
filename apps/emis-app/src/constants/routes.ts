@@ -116,6 +116,12 @@ const routes = {
         name: 'casefile.referrals.add',
       },
     },
+    assessments: {
+      home: {
+        path: 'assessments',
+        name: 'casefile.assessments',
+      },
+    },
     documents: {
       home: {
         path: 'documents',

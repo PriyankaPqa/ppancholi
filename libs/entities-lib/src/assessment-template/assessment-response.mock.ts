@@ -10,6 +10,7 @@ import {
 export const mockAssessmentResponseEntity = (force?: Partial<IAssessmentResponseEntity>): IAssessmentResponseEntity => ({
   ...mockBaseData(),
   assessmentFormId: '044fcd68-3d70-4a3a-b5c8-22da9e01730f',
+  association: { id: 'CaseFileId', type: 1 },
   completionStatus: CompletionStatus.Partial,
   uniqueUrl: 'http://localhost:8080/fr/events/38ff3de1-89d5-4437-993b-30da7448d9d3/assessment-complete/88435161-e658-4f9b-82bc-6ce3f94e358f/88435161-e658-4f9b-82bc-6ce3f94e358c',
   externalToolState: {

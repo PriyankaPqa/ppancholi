@@ -156,6 +156,7 @@ import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import householdHelpers from '@/ui/helpers/household';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
@@ -257,8 +258,9 @@ export default mixins(caseFileDetail).extend({
       }, {
         text: this.$t('caseFileDetail.menu_assessments') as string,
         test: 'assessments',
-        // to: routes.caseFileAssessments.name,
-        disabled: true,
+        to: routes.caseFile.assessments.home.name,
+        exact: false,
+        disabled: !this.$hasFeature(FeatureKeys.AssessmentsWithinCasefiles),
       }, {
         text: this.$t('caseFileDetail.menu_referrals') as string,
         test: 'referrals',

@@ -130,6 +130,9 @@ export class SignalR implements ISignalR {
     this.listenForCaseDocumentModuleChanges();
     this.listenForFinancialAssistancePaymentModuleChanges();
 
+    // Assessments
+    this.listenForAssessmentResponseModuleChanges();
+
     // Financial Assistance
     this.listenForFinancialAssistanceModuleChanges();
     this.listenForFinancialAssistanceCategoryModuleChanges();
@@ -434,6 +437,20 @@ export class SignalR implements ISignalR {
       optionItemName: 'DocumentCategory',
       cacheResetMutationName: 'setCategoriesFetched',
       mutationDomain: 'caseFileDocument',
+    });
+  }
+
+  private listenForAssessmentResponseModuleChanges() {
+    this.listenForChanges({
+      domain: 'assessment',
+      entityName: 'AssessmentResponse',
+      action: this.storage.assessmentResponse.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'assessment',
+      entityName: 'AssessmentResponseMetadata',
+      action: this.storage.assessmentResponse.mutations.setMetadataFromOutsideNotification,
     });
   }
 

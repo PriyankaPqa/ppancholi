@@ -36,6 +36,10 @@ export enum CompletionStatus {
   Obsolete = 4
 }
 
+export enum AssociationType {
+  CaseFile = 1
+}
+
 export interface IExternalToolState {
   tool: string;
   data: { [key: string]: string; };
@@ -110,7 +114,18 @@ export interface IAnsweredQuestion {
   answeredOn?: string;
 }
 
+export interface IAssessmentAssociation {
+  id: string;
+  type: AssociationType;
+}
+
+export interface IAssessmentResponseCreateRequest {
+  association: IAssessmentAssociation;
+  assessmentFormId: uuid;
+}
+
 export interface IAssessmentResponseEntity extends IEntity {
+  association: IAssessmentAssociation;
   assessmentFormId: uuid;
   completionStatus: CompletionStatus;
   uniqueUrl: string;

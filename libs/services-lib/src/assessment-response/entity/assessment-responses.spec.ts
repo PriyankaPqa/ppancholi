@@ -32,7 +32,7 @@ describe('>>> AssessmentResponses Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentResponseEntity();
       await service.create(entity);
-      expect(http.post).toHaveBeenCalledWith('www.test.com/assessment/assessment-responses', entity, { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith('www.test.com/assessment/assessment-responses', entity);
     });
   });
 

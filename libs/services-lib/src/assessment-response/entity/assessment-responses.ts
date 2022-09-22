@@ -1,4 +1,4 @@
-import { IAssessmentResponseEntity, IAssessmentResponseMetadata } from '@libs/entities-lib/assessment-template';
+import { IAssessmentResponseCreateRequest, IAssessmentResponseEntity, IAssessmentResponseMetadata } from '@libs/entities-lib/assessment-template';
 import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -14,8 +14,8 @@ export class AssessmentResponsesService extends DomainBaseService<IAssessmentRes
     super(http, API_URL_SUFFIX, ENTITY);
   }
 
-  async create(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> {
-    return this.http.post<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}`, item), item, { globalHandler: false });
+  async create(item: IAssessmentResponseCreateRequest): Promise<IAssessmentResponseEntity> {
+    return this.http.post<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}`, item), item);
   }
 
   async update(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> {
