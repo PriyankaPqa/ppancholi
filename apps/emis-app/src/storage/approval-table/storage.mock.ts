@@ -14,6 +14,10 @@ export class ApprovalTableStorageMock extends BaseMock<IApprovalTableCombined, I
   protected actions = {
     ...this.baseActions,
     createApprovalTable: jest.fn(() => mockApprovalTableData()),
+    editApprovalTable: jest.fn(() => mockApprovalTableData()),
+    addGroup: jest.fn(() => mockApprovalTableData()),
+    editGroup: jest.fn(() => mockApprovalTableData()),
+    removeGroup: jest.fn(() => mockApprovalTableData()),
   }
 
   protected mutations = {

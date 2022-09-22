@@ -1,15 +1,11 @@
 <template>
   <div class="full-height">
-    <div v-if="isEditMode">
-      <v-alert type="info" prominent border="left">
-        This is edit page of approval {{ approvalId }}. It is not yet implemented.
-      </v-alert>
-    </div>
-    <validation-observer v-else ref="form" v-slot="{ failed }" slim>
+    <validation-observer ref="form" v-slot="{ failed }" slim>
       <rc-page-content
         :title="title"
+        :loading="loading"
         :show-add-button="false">
-        <v-container>
+        <v-container v-if="!loading">
           <v-row class="justify-center">
             <v-col :class="{ 'table-wrapper': isEditMode }" cols="12" xl="7" lg="9" md="11" sm="12">
               <rc-tabs>
@@ -30,7 +26,7 @@
                     :item-text="(item) => $m(item.name)"
                     return-object
                     :loading="isProgramLoading"
-                    :disabled="isProgramLoading"
+                    :disabled="isProgramLoading || disableUpperForm"
                     :rules="rules.program"
                     data-test="approvals__programSelect"
                     @change="setProgram($event)" />
@@ -42,13 +38,20 @@
                   <v-text-field-with-validation
                     v-model="approval.name.translation[languageMode]"
                     data-test="approval-template-name"
+                    :disabled="disableUpperForm"
                     :label="`${isTableMode ? $t('approval.table_name') : $t('approval.template_name')} *`"
                     :rules="rules.name"
                     @input="resetAsUnique()" />
                 </v-col>
 
                 <v-col cols="3" md="4" sm="5">
-                  <div :class="`flex-row approval-status py-2 pl-5 ${getStatusClasses}`">
+                  <div v-if="disabledStatus" :class="`flex-row approval-status py-2 pl-4 ${getStatusClasses} lighten-3 black--text`">
+                    <span class="rc-body14">
+                      {{ $t('financialAssistance.programIsInactive') }}
+                    </span>
+                  </div>
+
+                  <div v-else :class="`flex-row approval-status py-2 pl-5 ${getStatusClasses}`">
                     <span :class="`rc-body14 ${isActive ? 'white--text' : 'black--text'} ml-4`" data-test="approval-status">
                       {{ isActive ?
                         `${$t('common.status')} ${$t('enums.Status.Active').toUpperCase()}`
@@ -60,7 +63,7 @@
                         v-model="isActive"
                         class="mt-0 ml-auto mr-3 pt-0"
                         flat
-                        :disabled="disabledStatus"
+                        :disabled="disabledStatus || disableUpperForm"
                         data-test="approval-status-toggle"
                         hide-details
                         color="white" />
@@ -73,7 +76,7 @@
               </div>
 
               <validation-provider v-slot="{ errors }" :rules="rules.aggregatedBy">
-                <v-radio-group v-model="approval.aggregatedByType" :error-messages="errors" row>
+                <v-radio-group v-model="approval.aggregatedByType" :disabled="disableUpperForm" :error-messages="errors" row>
                   <v-radio
                     data-test="total_financialAssistance"
                     :label="$t('enums.ApprovalAggregatedBy.TotalFinancialAssistanceOnCaseFile')"
@@ -85,27 +88,49 @@
                 </v-radio-group>
               </validation-provider>
 
+              <v-row v-if="isEditMode">
+                <v-spacer />
+                <div class="mr-3 mb-3">
+                  <v-btn :disabled="isSaving || disableUpperForm" data-test="approval-cancelBtn" @click="cancel()">
+                    {{ $t('common.buttons.cancel') }}
+                  </v-btn>
+
+                  <v-btn
+                    class="ml-4"
+                    color="primary"
+                    :disabled="!changesInEdit"
+                    data-test="approval-saveBtn"
+                    :loading="isSaving"
+                    @click="submit()">
+                    {{ $t('common.buttons.save') }}
+                  </v-btn>
+                </div>
+              </v-row>
               <v-row />
             </v-col>
           </v-row>
         </v-container>
-
         <div class="tableContainer">
-          <approval-group-table :approval="approval" :is-edit="false" />
+          <approval-group-table :approval="approval" :edit-mode="isEditMode" @edit:success="refreshApproval($event)" @group:changed="groupHasChanged = $event" />
         </div>
 
-        <template #actions>
+        <template v-if="!isEditMode" #actions>
           <v-btn :disabled="isSaving" data-test="approval-cancelBtn" @click="cancel()">
             {{ $t('common.buttons.cancel') }}
           </v-btn>
 
           <v-btn
             color="primary"
-            :disabled="failed || !approvalHasGroups || currentlyEditing"
+            :disabled="failed || !approvalHasGroups || currentlyEditingGroup || currentlyAddingGroup"
             data-test="approval-saveBtn"
             :loading="isSaving"
             @click="submit()">
             {{ $t('common.buttons.create') }}
+          </v-btn>
+        </template>
+        <template v-else #actions>
+          <v-btn color="primary" data-test="back-btn" @click="cancel()">
+            {{ $t('approvalTables.details.back') }}
           </v-btn>
         </template>
       </rc-page-content>
@@ -133,6 +158,8 @@ import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { IApprovalTableEntity, IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import _isEqual from 'lodash/isEqual';
+import cloneDeep from 'lodash/cloneDeep';
 
 export default mixins(handleUniqueNameSubmitError).extend({
   name: 'CreateEditApprovals',
@@ -147,31 +174,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    const isDirty = (this.$refs?.form as VForm)?.flags.changed;
-
-    if (this.redirectedFromSave) { // If redirecting after create
-      next();
-      return;
-    }
-
-    if (!isDirty && !this.approvalHasGroups) { // If nothing has changed
-      next();
-      return;
-    }
-
-    const leavingConfirmed = await this.$confirm({
-      title: this.$t('confirmLeaveDialog.title'),
-      messages: this.$t('confirmLeaveDialog.message_1'),
-    });
-
-    if (!isDirty && this.approvalHasGroups && leavingConfirmed) { // If at least a group has been created
-      next();
-      return;
-    }
-
-    if (isDirty && leavingConfirmed) { // If program, name or aggregated by has been changed
-      next();
-    }
+    this.isEditMode ? await this.beforeLeavingEdit(to, from, next) : await this.beforeLeavingCreate(to, from, next);
   },
 
   data() {
@@ -186,6 +189,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
       isProgramLoading: false,
       uniqueNameErrorCode: 'errors.a-table-with-this-name-already-exists',
       redirectedFromSave: false,
+      backupUpperForm: null,
+      loading: false,
+      groupHasChanged: false, // if group is being edited and values have changed
       ApprovalAggregatedBy,
     };
   },
@@ -209,9 +215,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     title(): TranslateResult {
       if (this.isTableMode) {
-        return this.$t('approvals.create_table');
+        return this.isEditMode ? this.$t('approvals.edit_table') : this.$t('approvals.create_table');
       }
-      return this.$t('approvals.create_template');
+      return this.isEditMode ? this.$t('approvals.edit_template') : this.$t('approvals.create_template');
     },
 
     supportedLanguages() {
@@ -223,7 +229,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     isTableMode(): boolean {
-      return this.$route.name === routes.events.approvals.create.name;
+      return this.$route.name === routes.events.approvals.create.name || this.$route.name === routes.events.approvals.edit.name;
     },
 
     getStatusClasses(): string {
@@ -234,11 +240,16 @@ export default mixins(handleUniqueNameSubmitError).extend({
       let availablePrograms = this.programs;
       if (this.tablesForCurrentEvent.length > 0) {
         const usedPrograms = this.tablesForCurrentEvent.map((t) => t.programId);
-        availablePrograms = availablePrograms.filter((p) => p.status === Status.Active && !usedPrograms.includes(p.id));
+        if (this.isEditMode) {
+          // should return active programs not already used or the current one (even if inactive)
+          availablePrograms = availablePrograms?.filter((p) => (p.status === Status.Active || p.id === this.backupUpperForm?.programId)
+            && (!usedPrograms.includes(p.id) || p.id === this.backupUpperForm?.programId));
+        } else {
+          availablePrograms = availablePrograms.filter((p) => p.status === Status.Active && !usedPrograms.includes(p.id));
+        }
         return _sortBy(availablePrograms, (program) => this.$m(program.name));
       }
-      availablePrograms = availablePrograms.filter((p) => p.status === Status.Active);
-      return _sortBy(availablePrograms, (program) => this.$m(program.name));
+      return _sortBy(availablePrograms.filter((p) => p.status === Status.Active), (program) => this.$m(program.name));
     },
 
     disabledStatus(): boolean {
@@ -251,8 +262,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
       return this.approval.groups.filter((i) => i.addMode === false).length > 0;
     },
 
-    currentlyEditing(): boolean {
+    currentlyEditingGroup(): boolean {
       return this.approval.groups.filter((i) => i.editMode === true).length > 0;
+    },
+
+    currentlyAddingGroup(): boolean {
+      return this.approval.groups.filter((i) => i.addMode === true).length > 0;
     },
 
     eventId(): string {
@@ -261,6 +276,22 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     approvalId(): string {
       return this.$route.params.approvalId;
+    },
+
+    changesInEdit(): boolean {
+      if (this.isTableMode) {
+        return !_isEqual(this.backupUpperForm, {
+          name: { ...this.approval.name },
+          programId: (this.approval as IApprovalTableEntity).programId,
+          aggregatedByType: this.approval.aggregatedByType,
+          approvalBaseStatus: this.approval.approvalBaseStatus,
+        });
+      }
+      return false;
+    },
+
+    disableUpperForm(): boolean {
+      return this.currentlyEditingGroup || (this.isEditMode && this.currentlyAddingGroup);
     },
   },
 
@@ -272,12 +303,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   async created() {
     if (this.isTableMode) {
-      this.approval = new ApprovalTableEntity();
-      (this.approval as IApprovalTableEntity).eventId = this.eventId;
-      this.isProgramLoading = true;
-      await this.loadEventPrograms(this.eventId);
-      await this.loadEventTables(this.eventId);
-      this.isProgramLoading = false;
+      this.loading = true;
+      this.isEditMode ? await this.initTableDataEdit() : await this.initTableDataCreate();
+      this.loading = false;
     } else {
       this.approval = new ApprovalBaseEntity();
     }
@@ -293,7 +321,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async createTable() {
-      this.isSaving = true;
       this.approval.fillEmptyMultilingualAttributes();
       try {
         await this.$storage.approvalTable.actions.createApprovalTable(this.approval as IApprovalTableEntity);
@@ -301,8 +328,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
         await this.$router.push({ name: routes.events.approvals.home.name });
       } catch (e) {
         this.handleSubmitError(e);
-      } finally {
-        this.isSaving = false;
       }
     },
 
@@ -311,7 +336,15 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async editTable() {
-      // TODO in a next story
+      try {
+        const res = await this.$storage.approvalTable.actions.editApprovalTable(this.approval as IApprovalTableEntity);
+        if (res) {
+          this.$toasted.global.success(this.$t('approval_table.edit.success'));
+          this.createBackupApproval(res);
+        }
+      } catch (e) {
+        this.handleSubmitError(e);
+      }
     },
 
     async editTemplate() {
@@ -321,11 +354,13 @@ export default mixins(handleUniqueNameSubmitError).extend({
     async submit(): Promise<void> {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
+        this.isSaving = true;
         if (this.isEditMode) {
           this.isTableMode ? await this.editTable() : await this.editTemplate();
         } else {
           this.isTableMode ? await this.createTable() : await this.createTemplate();
         }
+        this.isSaving = false;
       } else {
         helpers.scrollToFirstError('scrollAnchor');
       }
@@ -351,6 +386,88 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.approval.approvalBaseStatus = status ? Status.Active : Status.Inactive;
     },
 
+    async loadProgramsAndEventTables() {
+      this.isProgramLoading = true;
+      await this.loadEventPrograms(this.eventId);
+      await this.loadEventTables(this.eventId);
+      this.isProgramLoading = false;
+    },
+
+    async initTableDataCreate() {
+      this.approval = new ApprovalTableEntity();
+      (this.approval as IApprovalTableEntity).eventId = this.eventId;
+      await this.loadProgramsAndEventTables();
+    },
+
+    async initTableDataEdit() {
+      const combinedApproval = await this.$storage.approvalTable.actions.fetch(this.approvalId);
+      this.approval = new ApprovalTableEntity(combinedApproval?.entity);
+      (this.approval as IApprovalTableEntity).eventId = this.eventId;
+      await this.loadProgramsAndEventTables();
+      this.createBackupApproval(this.approval as IApprovalTableEntity);
+
+      this.selectedProgram = this.availablePrograms.find((p) => p.id === this.backupUpperForm.programId);
+      this.isActive = this.approval.approvalBaseStatus === Status.Active;
+    },
+
+    createBackupApproval(approval: IApprovalTableEntity | IApprovalTableEntityData) {
+      this.backupUpperForm = cloneDeep({
+        name: approval.name,
+        programId: approval.programId,
+        aggregatedByType: approval.aggregatedByType,
+        approvalBaseStatus: approval.approvalBaseStatus,
+      });
+    },
+
+    async beforeLeavingCreate(to: Route, from: Route, next: NavigationGuardNext) {
+      const isDirty = (this.$refs?.form as VForm)?.flags.changed;
+
+      if (this.redirectedFromSave) { // If redirecting after create
+        next();
+        return;
+      }
+
+      if (!isDirty && !this.approvalHasGroups) { // If nothing has changed
+        next();
+        return;
+      }
+
+      const leavingConfirmed = await this.$confirm({
+        title: this.$t('confirmLeaveDialog.title'),
+        messages: this.$t('confirmLeaveDialog.message_1'),
+      });
+
+      if (!isDirty && this.approvalHasGroups && leavingConfirmed) { // If at least a group has been created
+        next();
+        return;
+      }
+
+      if (isDirty && leavingConfirmed) { // If program, name or aggregated by has been changed
+        next();
+      }
+    },
+
+    async beforeLeavingEdit(to: Route, from: Route, next: NavigationGuardNext) {
+      const isDirty = this.changesInEdit || this.groupHasChanged;
+
+      if (!isDirty) { // If nothing has changed
+        next();
+        return;
+      }
+
+      const leavingConfirmed = await this.$confirm({
+        title: this.$t('confirmLeaveDialog.title'),
+        messages: this.$t('confirmLeaveDialog.message_1'),
+      });
+
+      if (isDirty && leavingConfirmed) {
+        next();
+      }
+    },
+
+    refreshApproval(approval: IApprovalTableEntityData) {
+      this.approval = new ApprovalTableEntity(approval);
+    },
   },
 });
 </script>

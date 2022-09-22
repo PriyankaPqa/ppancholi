@@ -82,7 +82,7 @@
           <v-col :cols="2">
             <div style="float: right;">
               <template v-if="group.editMode">
-                <v-btn color="primary" :disabled="failed" small @click="applyEdit($index)">
+                <v-btn color="primary" :disabled="failed || groupSameAsBackup(group)" :loading="editGroupLoading" small @click="applyEdit($index)">
                   {{ $t('common.apply') }}
                 </v-btn>
 
@@ -94,7 +94,7 @@
               </template>
 
               <template v-if="group.addMode">
-                <v-btn color="primary" :disabled="failed" small @click="addGroup(group)">
+                <v-btn color="primary" :disabled="failed" :loading="addGroupLoading" small @click="addGroup(group)">
                   {{ $t('common.add') }}
                 </v-btn>
 
@@ -111,7 +111,12 @@
                     mdi-pencil
                   </v-icon>
                 </v-btn>
-                <v-btn icon data-test="cancel" :disabled="disableAction($index)" @click="deleteGroupWithConfirmation($index)">
+                <v-btn
+                  icon
+                  data-test="cancel"
+                  :loading="deleteGroupLoadingIndex === $index"
+                  :disabled="disableAction($index) || editMode && hasOnlyOneGroup"
+                  @click="deleteGroupWithConfirmation($index)">
                   <v-icon size="20">
                     mdi-delete
                   </v-icon>
@@ -124,7 +129,7 @@
 
       <v-row :class="{rcnestedtable__row: true, rcnestedtable__parentRow: false }">
         <v-col>
-          <v-btn color="primary" small :disabled="disableAddGroup" @click="addNewGroup()">
+          <v-btn color="primary" small :disabled="disableAddGroup" @click="addNewGroupRow()">
             <v-icon left>
               mdi-plus
             </v-icon>
@@ -147,6 +152,7 @@ import RcItemAmount from '@libs/component-lib/components/atoms/RcItemAmount.vue'
 import { VForm } from '@libs/shared-lib/types';
 import mixins from 'vue-typed-mixins';
 import approvalRoles from '@/ui/views/pages/approvals/mixins/approvalRoles';
+import isEqual from 'lodash/isEqual';
 
 export default mixins(approvalRoles).extend({
   name: 'ApprovalGroupTable',
@@ -161,6 +167,10 @@ export default mixins(approvalRoles).extend({
       type: Object as () => IApprovalBaseEntity,
       required: true,
     },
+    editMode: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -168,10 +178,18 @@ export default mixins(approvalRoles).extend({
       dataTest: 'approvals_group_table',
       lines: [] as Array<IApprovalGroup>,
       roles: [],
-      loading: false,
-      editBackup: null,
+      addGroupLoading: false,
+      deleteGroupLoadingIndex: -1,
+      editGroupLoading: false,
+      editBackup: null as IApprovalGroup,
       groupIndexBeingEdited: -1,
     };
+  },
+
+  watch: {
+    groupBeingEdited(groupHasChanged) {
+      this.$emit('group:changed', groupHasChanged);
+    },
   },
 
   computed: {
@@ -208,6 +226,18 @@ export default mixins(approvalRoles).extend({
     disableAddGroup(): boolean {
       return this.approval.groups.some((i) => i.editMode || i.addMode);
     },
+
+    hasOnlyOneGroup(): boolean {
+      const groups = this.approval.groups.filter((g) => !g.addMode && !g.editMode);
+      return groups.length === 1;
+    },
+
+    groupBeingEdited(): boolean { // If a group is being editing with a change in it
+      if (this.editBackup === null) {
+        return false;
+      }
+      return this.approval.groups.map((group) => group.editMode && !this.groupSameAsBackup(group)).includes(true);
+    },
   },
 
   async created() {
@@ -216,7 +246,7 @@ export default mixins(approvalRoles).extend({
   },
 
   methods: {
-    addNewGroup() {
+    async addNewGroupRow() {
       this.approval.addGroup();
     },
 
@@ -231,7 +261,17 @@ export default mixins(approvalRoles).extend({
       });
 
       if (doDelete) {
-        this.deleteGroup(index);
+        if (this.editMode) {
+          this.deleteGroupLoadingIndex = index;
+          const res = await this.$storage.approvalTable.actions.removeGroup(this.approval.id, this.approval.groups[index].id);
+          this.deleteGroupLoadingIndex = -1;
+          if (res) {
+            this.$toasted.global.success(this.$t('approval_table.group.remove.success'));
+            this.$emit('edit:success', res);
+          }
+        } else {
+          await this.deleteGroup(index);
+        }
       }
     },
 
@@ -247,15 +287,36 @@ export default mixins(approvalRoles).extend({
       this.groupIndexBeingEdited = -1;
     },
 
-    applyEdit(index: number) {
-      this.approval.groups[index].setEditMode(false);
-      this.groupIndexBeingEdited = -1;
+    async applyEdit(index: number) {
+      if (this.editMode) {
+        this.editGroupLoading = true;
+        const res = await this.$storage.approvalTable.actions.editGroup(this.approval.id, this.approval.groups[index]);
+        this.editGroupLoading = false;
+        if (res) {
+          this.$toasted.global.success(this.$t('approval_table.group.edit.success'));
+          this.$emit('edit:success', res);
+          this.groupIndexBeingEdited = -1;
+        }
+      } else {
+        this.approval.groups[index].setEditMode(false);
+        this.groupIndexBeingEdited = -1;
+      }
     },
 
     async addGroup(group: IApprovalGroup) {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        group.setAddMode(false);
+        if (this.editMode) {
+          this.addGroupLoading = true;
+          const res = await this.$storage.approvalTable.actions.addGroup(this.approval.id, group);
+          this.addGroupLoading = false;
+          if (res) {
+            this.$toasted.global.success(this.$t('approval_table.group.add.success'));
+            this.$emit('edit:success', res);
+          }
+        } else {
+          group.setAddMode(false);
+        }
       }
     },
 
@@ -327,7 +388,13 @@ export default mixins(approvalRoles).extend({
     },
 
     disableAction(index: number) {
-      return this.groupIndexBeingEdited !== -1 && this.groupIndexBeingEdited !== index;
+      return (this.groupIndexBeingEdited !== -1 && this.groupIndexBeingEdited !== index);
+    },
+
+    groupSameAsBackup(group: IApprovalGroup) {
+      return isEqual(group.roles, this.editBackup.roles)
+        && this.editBackup.minimumAmount === group.minimumAmount
+        && this.editBackup.maximumAmount === group.maximumAmount;
     },
   },
 });

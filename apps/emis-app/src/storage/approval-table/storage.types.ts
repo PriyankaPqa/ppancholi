@@ -1,4 +1,5 @@
 import { IApprovalTableEntity, IApprovalTableEntityData, IApprovalTableMetadata } from '@libs/entities-lib/approvals/approvals-table/approvalTable.types';
+import { IApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
 import {
   IBaseActions,
   IBaseActionsMock,
@@ -10,10 +11,18 @@ import {
 
 export interface IActions extends IBaseActions<IApprovalTableEntity, IApprovalTableMetadata, uuid> {
   createApprovalTable (payload: IApprovalTableEntity): Promise<IApprovalTableEntityData>
+  editApprovalTable (payload: IApprovalTableEntity): Promise<IApprovalTableEntityData>
+  addGroup(approvalId: uuid, group: IApprovalGroup): Promise<IApprovalTableEntityData>
+  editGroup(approvalId: uuid, group: IApprovalGroup): Promise<IApprovalTableEntityData>
+  removeGroup (approvalId: uuid, groupId: uuid): Promise<IApprovalTableEntityData>
 }
 
 export interface IActionsMock extends IBaseActionsMock<IApprovalTableEntity, IApprovalTableMetadata> {
   createApprovalTable: jest.Mock<IApprovalTableEntityData>;
+  editApprovalTable: jest.Mock<IApprovalTableEntityData>;
+  addGroup: jest.Mock<IApprovalTableEntityData>;
+  editGroup: jest.Mock<IApprovalTableEntityData>;
+  removeGroup: jest.Mock<IApprovalTableEntityData>;
 }
 
 export type IGetters = IBaseGetters<IApprovalTableEntity, IApprovalTableMetadata>

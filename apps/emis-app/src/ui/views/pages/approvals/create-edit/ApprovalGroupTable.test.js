@@ -3,14 +3,14 @@ import { ApprovalGroup } from '@libs/entities-lib/approvals/approvals-group/appr
 import { mockRoles } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
 import { Status } from '@libs/entities-lib/base';
-import { mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
+import { mockApprovalTableEntity, mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
 import Component from './ApprovalGroupTable.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
-const doMount = () => {
+const doMount = (editMode = false) => {
   const combinedApprovalTable = mockCombinedApprovalTable();
   combinedApprovalTable.entity.groups[0].setRoles(['a6ffce22-8396-43c9-bdc3-6532925af251']);
   combinedApprovalTable.entity.groups[1].setRoles(['85315955-e20e-40bd-a672-f60b2871a0ab']);
@@ -27,6 +27,7 @@ const doMount = () => {
     }),
     propsData: {
       approval: combinedApprovalTable.entity,
+      editMode,
     },
     mocks: {
       $storage: storage,
@@ -102,6 +103,22 @@ describe('ApprovalGroupTable.vue', () => {
         );
       });
     });
+
+    describe('groupBeingEdited', () => {
+      it('should return true if a group is being edited with a change', () => {
+        doMount();
+        const group = { roles: ['1'], minimumAmount: 10, maximumAmount: 20 };
+        wrapper.setData({ editBackup: { ...group } });
+        wrapper.vm.approval.groups[0].editMode = true;
+        group.minimumAmount = 15;
+        expect(wrapper.vm.groupBeingEdited).toBe(true);
+      });
+
+      it('should return false otherwise', () => {
+        doMount();
+        expect(wrapper.vm.groupBeingEdited).toBe(false);
+      });
+    });
   });
 
   describe('Lifecycle', () => {
@@ -114,11 +131,11 @@ describe('ApprovalGroupTable.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('addNewGroup', () => {
-      it('should add a new group', () => {
+    describe('addNewGroupRow', () => {
+      it('should add a new group row', () => {
         doMount();
         wrapper.vm.approval.addGroup = jest.fn();
-        wrapper.vm.addNewGroup();
+        wrapper.vm.addNewGroupRow();
         expect(wrapper.vm.approval.addGroup).toBeCalled();
       });
     });
@@ -139,6 +156,15 @@ describe('ApprovalGroupTable.vue', () => {
         wrapper.vm.deleteGroup = jest.fn();
         await wrapper.vm.deleteGroupWithConfirmation(0);
         expect(wrapper.vm.deleteGroup).toBeCalledWith(0);
+      });
+
+      it('should delete a group if user confirmed in edit mode', async () => {
+        doMount(true);
+        wrapper.vm.$confirm = jest.fn(() => true);
+        wrapper.vm.deleteGroup = jest.fn();
+        await wrapper.vm.deleteGroupWithConfirmation(0);
+        expect(wrapper.vm.$storage.approvalTable.actions.removeGroup).toBeCalledWith(wrapper.vm.approval.id, wrapper.vm.approval.groups[0].id);
+        expect(wrapper.emitted('edit:success')[0][0]).toEqual(mockApprovalTableEntity());
       });
     });
 
@@ -178,12 +204,21 @@ describe('ApprovalGroupTable.vue', () => {
     });
 
     describe('applyEdit', () => {
-      it('should set editMode to false', () => {
+      it('should set editMode to false', async () => {
         doMount();
         const group = wrapper.vm.approval.groups[0];
         group.setEditMode = jest.fn();
-        wrapper.vm.applyEdit(0);
+        await wrapper.vm.applyEdit(0);
         expect(group.setEditMode).toBeCalledWith(false);
+      });
+
+      it('should update the group in editMode', async () => {
+        doMount(true);
+        const group = wrapper.vm.approval.groups[0];
+        group.setEditMode = jest.fn();
+        await wrapper.vm.applyEdit(0);
+        expect(wrapper.vm.$storage.approvalTable.actions.editGroup).toBeCalledWith(wrapper.vm.approval.id, wrapper.vm.approval.groups[0]);
+        expect(wrapper.emitted('edit:success')[0][0]).toEqual(mockApprovalTableEntity());
       });
     });
 
@@ -195,6 +230,16 @@ describe('ApprovalGroupTable.vue', () => {
         group.setAddMode = jest.fn();
         await wrapper.vm.addGroup(group);
         expect(group.setAddMode).toBeCalledWith(false);
+      });
+
+      it('should add a group if the form is valid in edit mode', async () => {
+        doMount(true);
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        const group = wrapper.vm.approval.groups[0];
+        group.setAddMode = jest.fn();
+        await wrapper.vm.addGroup(group);
+        expect(wrapper.vm.$storage.approvalTable.actions.addGroup).toBeCalledWith(wrapper.vm.approval.id, group);
+        expect(wrapper.emitted('edit:success')[0][0]).toEqual(mockApprovalTableEntity());
       });
 
       it('should do nothing if form is not valid', async () => {
@@ -304,6 +349,39 @@ describe('ApprovalGroupTable.vue', () => {
           groupIndexBeingEdited: 0,
         });
         expect(wrapper.vm.disableAction(1)).toEqual(true);
+      });
+    });
+
+    describe('groupSameAsBackup', () => {
+      it('should return false if roles are different', () => {
+        doMount();
+        const group = { roles: ['1'], minimumAmount: 10, maximumAmount: 20 };
+        wrapper.setData({ editBackup: { ...group } });
+        group.roles = ['1', '2'];
+        expect(wrapper.vm.groupSameAsBackup(group)).toBe(false);
+      });
+
+      it('should return false if minimum amount is different', () => {
+        doMount();
+        const group = { roles: ['1'], minimumAmount: 10, maximumAmount: 20 };
+        wrapper.setData({ editBackup: { ...group } });
+        group.minimumAmount = 15;
+        expect(wrapper.vm.groupSameAsBackup(group)).toBe(false);
+      });
+
+      it('should return false if maximum amount is different', () => {
+        doMount();
+        const group = { roles: ['1'], minimumAmount: 10, maximumAmount: 20 };
+        wrapper.setData({ editBackup: { ...group } });
+        group.maximumAmount = 25;
+        expect(wrapper.vm.groupSameAsBackup(group)).toBe(false);
+      });
+
+      it('should return true if the group has no changes', () => {
+        doMount();
+        const group = { roles: ['1'], minimumAmount: 10, maximumAmount: 20 };
+        wrapper.setData({ editBackup: { ...group } });
+        expect(wrapper.vm.groupSameAsBackup(group)).toBe(true);
       });
     });
   });

@@ -6,4 +6,8 @@ export const mockApprovalTablesService = (): IApprovalTablesServiceMock => ({
   ...mockDomainBaseService(mockApprovalTableEntities()),
   create: jest.fn(() => mockApprovalTableData()),
   getApprovalsTableByEventId: jest.fn(() => mockApprovalTablesData()),
+  edit: jest.fn(() => mockApprovalTableData()),
+  addGroup: jest.fn(() => mockApprovalTableData()),
+  removeGroup: jest.fn(() => mockApprovalTableData()),
+  editGroup: jest.fn(() => mockApprovalTableData()),
 });

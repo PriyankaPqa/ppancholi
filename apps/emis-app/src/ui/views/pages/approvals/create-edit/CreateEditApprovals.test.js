@@ -1,5 +1,7 @@
 import { shallowMount, createLocalVue } from '@/test/testSetup';
-import { mockApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table';
+import {
+  ApprovalTableEntity, mockApprovalTableData, mockApprovalTableEntity, mockCombinedApprovalTable,
+} from '@libs/entities-lib/approvals/approvals-table';
 import { mockRoles } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
@@ -14,10 +16,9 @@ import { mockProvider } from '@/services/provider';
 import Component from './CreateEditApprovals.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 let wrapper;
 
-const doMount = (tableMode = true, editMode = false) => {
+const doMount = (tableMode = true, editMode = false, availablePrograms = null, storage = mockStorage()) => {
   const options = {
     localVue,
     data: () => ({
@@ -27,11 +28,19 @@ const doMount = (tableMode = true, editMode = false) => {
     computed: {
       isTableMode: () => tableMode,
       isEditMode: () => editMode,
+      eventId: () => 'eventId',
     },
     mocks: {
       $storage: storage,
     },
   };
+
+  if (availablePrograms) {
+    options.computed = {
+      ...options.computed,
+      availablePrograms: () => availablePrograms,
+    };
+  }
   wrapper = shallowMount(Component, options);
 };
 
@@ -57,14 +66,24 @@ describe('CreateEditApprovals', () => {
     });
 
     describe('title', () => {
-      it('should return correct in table mode', () => {
-        doMount(true);
+      it('should return correct in create table mode', () => {
+        doMount(true, false);
         expect(wrapper.vm.title).toEqual('approvals.create_table');
       });
 
-      it('should return correct in template mode', () => {
-        doMount(false);
+      it('should return correct in edit table mode', () => {
+        doMount(true, true);
+        expect(wrapper.vm.title).toEqual('approvals.edit_table');
+      });
+
+      it('should return correct in create template mode', () => {
+        doMount(false, false);
         expect(wrapper.vm.title).toEqual('approvals.create_template');
+      });
+
+      it('should return correct in edit template mode', () => {
+        doMount(false, true);
+        expect(wrapper.vm.title).toEqual('approvals.edit_template');
       });
     });
 
@@ -76,16 +95,33 @@ describe('CreateEditApprovals', () => {
     });
 
     describe('isTableMode', () => {
-      it('should return true if table mode in events', () => {
+      it('should return true if route is create table', () => {
         const options = {
           localVue,
           data: () => ({
             roles: mockRoles(),
           }),
           mocks: {
-            $storage: storage,
+            $storage: mockStorage(),
             $route: {
               name: routes.events.approvals.create.name,
+            },
+          },
+        };
+        wrapper = shallowMount(Component, options);
+        expect(wrapper.vm.isTableMode).toBe(true);
+      });
+
+      it('should return true if route is edit table', () => {
+        const options = {
+          localVue,
+          data: () => ({
+            roles: mockRoles(),
+          }),
+          mocks: {
+            $storage: mockStorage(),
+            $route: {
+              name: routes.events.approvals.edit.name,
             },
           },
         };
@@ -113,36 +149,107 @@ describe('CreateEditApprovals', () => {
     });
 
     describe('availablePrograms', () => {
-      it('should return active programs listed alphabetically not already used in an approval table', async () => {
-        const provider = mockProvider();
-        provider.programs.getAllIncludingInactive = jest.fn();
-        const options = {
-          localVue,
-          data: () => ({
-            roles: mockRoles(),
-            tablesForCurrentEvent: [{ programId: '10' }],
-            programs: [
-              mockProgramEntity({ id: '10' }),
-              mockProgramEntity({ id: '11' }),
-              mockProgramEntity({ id: '12' }),
-            ],
-          }),
-          computed: {
-            isTableMode: () => true,
-            isEditMode: () => false,
-          },
-          mocks: {
-            $services: provider,
-          },
-        };
-        wrapper = shallowMount(Component, options);
+      describe('Create mode', () => {
+        it('should return active programs listed alphabetically not already used in an approval table', async () => {
+          const provider = mockProvider();
+          provider.programs.getAllIncludingInactive = jest.fn();
+          const options = {
+            localVue,
+            data: () => ({
+              roles: mockRoles(),
+              tablesForCurrentEvent: [{ programId: '10' }],
+              programs: [
+                mockProgramEntity({ id: '10' }),
+                mockProgramEntity({ id: '11' }),
+                mockProgramEntity({ id: '12' }),
+              ],
+            }),
+            computed: {
+              isTableMode: () => true,
+              isEditMode: () => false,
+            },
+            mocks: {
+              $services: provider,
+            },
+          };
+          wrapper = shallowMount(Component, options);
 
-        const expectedPrograms = [
-          mockProgramEntity({ id: '11' }),
-          mockProgramEntity({ id: '12' }),
-        ];
+          const expectedPrograms = [
+            mockProgramEntity({ id: '11' }),
+            mockProgramEntity({ id: '12' }),
+          ];
 
-        expect(wrapper.vm.availablePrograms).toEqual(_sortBy(expectedPrograms, (program) => wrapper.vm.$m(program.name)));
+          expect(wrapper.vm.availablePrograms).toEqual(_sortBy(expectedPrograms, (program) => wrapper.vm.$m(program.name)));
+        });
+
+        it('should return active programs listed alphabetically if no used programs', async () => {
+          const provider = mockProvider();
+          provider.programs.getAllIncludingInactive = jest.fn();
+          const options = {
+            localVue,
+            data: () => ({
+              roles: mockRoles(),
+              tablesForCurrentEvent: [],
+              programs: [
+                mockProgramEntity({ id: '10', status: Status.Inactive }),
+                mockProgramEntity({ id: '11' }),
+                mockProgramEntity({ id: '12' }),
+              ],
+            }),
+            computed: {
+              isTableMode: () => true,
+              isEditMode: () => false,
+            },
+            mocks: {
+              $services: provider,
+            },
+          };
+          wrapper = shallowMount(Component, options);
+
+          const expectedPrograms = [
+            mockProgramEntity({ id: '11' }),
+            mockProgramEntity({ id: '12' }),
+          ];
+
+          expect(wrapper.vm.availablePrograms).toEqual(_sortBy(expectedPrograms, (program) => wrapper.vm.$m(program.name)));
+        });
+      });
+
+      describe('Edit Mode', () => {
+        it('should return active programs listed alphabetically not already used or the current one even if inactive', async () => {
+          const provider = mockProvider();
+          provider.programs.getAllIncludingInactive = jest.fn();
+          const options = {
+            localVue,
+            data: () => ({
+              backupUpperForm: {
+                programId: '11',
+              },
+              roles: mockRoles(),
+              tablesForCurrentEvent: [{ programId: '10' }],
+              programs: [
+                mockProgramEntity({ id: '10' }),
+                mockProgramEntity({ id: '11', status: Status.Inactive }),
+                mockProgramEntity({ id: '12' }),
+              ],
+            }),
+            computed: {
+              isTableMode: () => true,
+              isEditMode: () => true,
+            },
+            mocks: {
+              $services: provider,
+            },
+          };
+          wrapper = shallowMount(Component, options);
+
+          const expectedPrograms = [
+            mockProgramEntity({ id: '11', status: Status.Inactive }),
+            mockProgramEntity({ id: '12' }),
+          ];
+
+          expect(wrapper.vm.availablePrograms).toEqual(_sortBy(expectedPrograms, (program) => wrapper.vm.$m(program.name)));
+        });
       });
     });
 
@@ -185,15 +292,33 @@ describe('CreateEditApprovals', () => {
       });
     });
 
-    describe('currentlyEditing', () => {
+    describe('currentlyEditingGroup', () => {
       it('should return true if a group is being edited', async () => {
         doMount();
         await wrapper.setData({ approval: mockApprovalTableEntity({ groups: [mockApprovalGroup({ editMode: true })] }) });
+        expect(wrapper.vm.currentlyEditingGroup).toEqual(true);
       });
       it('should return false otherwise', async () => {
         doMount();
         await wrapper.setData({ approval: mockApprovalTableEntity({ groups: [mockApprovalGroup({ editMode: false })] }) });
+        expect(wrapper.vm.currentlyEditingGroup).toEqual(false);
       });
+    });
+
+    describe('changesInEdit', () => {
+      it('should return true if current approval differs from the backup', async () => {
+        doMount(true, true);
+        const approval = mockApprovalTableData();
+        wrapper.vm.createBackupApproval(approval);
+        await wrapper.setData({ approval });
+        wrapper.vm.approval.name.translation.en = 'Change';
+        expect(wrapper.vm.changesInEdit).toEqual(true);
+      });
+    });
+
+    it('should return false if not in table mode', async () => {
+      doMount(false, true);
+      expect(wrapper.vm.changesInEdit).toEqual(false);
     });
   });
 
@@ -241,23 +366,24 @@ describe('CreateEditApprovals', () => {
           expect(wrapper.vm.createTemplate).toBeCalled();
         });
       });
-      // describe('Edit mode', () => {
-      //   it('should call editTable if valid and isTableMode', async () => {
-      //     doMount(true, true);
-      //     wrapper.vm.$refs.form.validate = jest.fn(() => true);
-      //     wrapper.vm.editTable = jest.fn();
-      //     await wrapper.vm.submit();
-      //     expect(wrapper.vm.editTable).toBeCalled();
-      //   });
-      //
-      //   it('should call editTemplate if valid and not isTableMode', async () => {
-      //     doMount(false, true);
-      //     wrapper.vm.$refs.form.validate = jest.fn(() => true);
-      //     wrapper.vm.editTemplate = jest.fn();
-      //     await wrapper.vm.submit();
-      //     expect(wrapper.vm.editTemplate).toBeCalled();
-      //   });
-      // });
+
+      describe('Edit mode', () => {
+        it('should call editTable if valid and isTableMode', async () => {
+          doMount(true, true);
+          wrapper.vm.$refs.form.validate = jest.fn(() => true);
+          wrapper.vm.editTable = jest.fn();
+          await wrapper.vm.submit();
+          expect(wrapper.vm.editTable).toBeCalled();
+        });
+
+        it('should call editTemplate if valid and not isTableMode', async () => {
+          doMount(false, true);
+          wrapper.vm.$refs.form.validate = jest.fn(() => true);
+          wrapper.vm.editTemplate = jest.fn();
+          await wrapper.vm.submit();
+          expect(wrapper.vm.editTemplate).toBeCalled();
+        });
+      });
     });
 
     describe('createTable', () => {
@@ -341,6 +467,118 @@ describe('CreateEditApprovals', () => {
         expect(wrapper.vm.approval.setProgramId).toBeCalledWith(mockProgramEntity().id);
       });
     });
+
+    describe('loadProgramsAndEventTables', () => {
+      it('should call loadEventPrograms', async () => {
+        doMount();
+        wrapper.vm.loadEventPrograms = jest.fn();
+        await wrapper.vm.loadProgramsAndEventTables();
+        expect(wrapper.vm.loadEventPrograms).toBeCalled();
+      });
+
+      it('should call loadEventTables', async () => {
+        doMount();
+        wrapper.vm.loadEventTables = jest.fn();
+        await wrapper.vm.loadProgramsAndEventTables();
+        expect(wrapper.vm.loadEventTables).toBeCalled();
+      });
+    });
+
+    describe('initTableDataCreate', () => {
+      it('should init empty approval with eventId', async () => {
+        doMount(true, false);
+        await wrapper.vm.initTableDataCreate();
+        const approval = new ApprovalTableEntity();
+        approval.eventId = 'eventId';
+        expect(wrapper.vm.approval).toEqual(approval);
+      });
+
+      it('should call loadProgramsAndEventTables', async () => {
+        doMount(true, false);
+        wrapper.vm.loadProgramsAndEventTables = jest.fn();
+        await wrapper.vm.initTableDataCreate();
+        expect(wrapper.vm.loadProgramsAndEventTables).toBeCalled();
+      });
+    });
+
+    describe('initTableDataEdit', () => {
+      it('should init approval with approval being edited', async () => {
+        doMount(true, true);
+        await wrapper.vm.initTableDataEdit();
+        const approval = mockApprovalTableEntity(); // return by storage by default
+        approval.eventId = 'eventId';
+        expect(wrapper.vm.approval).toEqual(approval);
+      });
+
+      it('should call loadProgramsAndEventTables', async () => {
+        doMount(true, true);
+        wrapper.vm.loadProgramsAndEventTables = jest.fn();
+        await wrapper.vm.initTableDataEdit();
+        expect(wrapper.vm.loadProgramsAndEventTables).toBeCalled();
+      });
+
+      it('should create a backup of the form to know the state of editing', async () => {
+        doMount(true, true);
+        const approval = mockApprovalTableEntity(); // return by storage by default
+        await wrapper.vm.initTableDataEdit();
+        expect(wrapper.vm.backupUpperForm).toMatchObject({
+          name: approval.name,
+          programId: approval.programId,
+          aggregatedByType: approval.aggregatedByType,
+          approvalBaseStatus: approval.approvalBaseStatus,
+        });
+      });
+
+      it('should set selectedProgram', async () => {
+        const fakeProgram = { id: mockApprovalTableEntity().programId };
+        doMount(true, true, [fakeProgram]);
+        await wrapper.vm.initTableDataEdit();
+        expect(wrapper.vm.selectedProgram).toEqual(fakeProgram);
+      });
+
+      it('should set isActive depending on approvalBaseStatus', async () => {
+        const storage = mockStorage();
+        const combinedApproval = mockCombinedApprovalTable();
+        combinedApproval.entity.approvalBaseStatus = Status.Inactive;
+        storage.approvalTable.actions.fetch = jest.fn(() => combinedApproval);
+
+        doMount(true, true, [], storage);
+        await wrapper.vm.initTableDataEdit();
+        expect(wrapper.vm.isActive).toEqual(false);
+      });
+    });
+
+    describe('editTable', () => {
+      it('should edit the table', async () => {
+        doMount();
+        await wrapper.vm.editTable();
+        expect(wrapper.vm.$storage.approvalTable.actions.editApprovalTable).toBeCalledWith(wrapper.vm.approval);
+      });
+    });
+
+    describe('createBackupApproval', () => {
+      it('should set backupUpperForm', () => {
+        doMount();
+        const approval = mockApprovalTableData();
+        expect(wrapper.vm.backupUpperForm).toBe(null);
+        wrapper.vm.createBackupApproval(approval);
+        expect(wrapper.vm.backupUpperForm).toEqual({
+          name: approval.name,
+          programId: approval.programId,
+          aggregatedByType: approval.aggregatedByType,
+          approvalBaseStatus: approval.approvalBaseStatus,
+        });
+      });
+    });
+
+    describe('refreshApproval', () => {
+      it('should update the approval with a new entity after the edit', () => {
+        doMount(true, true);
+        const approval = mockApprovalTableData({ id: '1234' });
+        wrapper.vm.refreshApproval(approval);
+        expect(wrapper.vm.approval).toMatchObject(approval);
+      });
+    });
   });
 
   describe('Watcher', () => {
@@ -352,6 +590,28 @@ describe('CreateEditApprovals', () => {
           isActive: false,
         });
         expect(wrapper.vm.setApprovalStatus).toBeCalledWith(false);
+      });
+    });
+  });
+
+  describe('Created', () => {
+    describe('Table Mode', () => {
+      it('should call initTableDataEdit in edit mode', async () => {
+        doMount(true, true);
+        wrapper.vm.initTableDataEdit = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.initTableDataEdit).toBeCalled();
+      });
+
+      it('should call initTableDataCreate in create mode', async () => {
+        doMount(true, false);
+        wrapper.vm.initTableDataCreate = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.initTableDataCreate).toBeCalled();
       });
     });
   });

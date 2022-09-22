@@ -1,12 +1,13 @@
 import { IApprovalTableEntity, IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
-import { IApprovalTablesService, ICreateApprovalTableRequest } from './approvalTables.types';
+import { IApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
+import { IApprovalTablesService, ICreateApprovalTableRequest, IEditApprovalTableRequest } from './approvalTables.types';
 import { DomainBaseService } from '../../base';
 import { IHttpClient } from '../../http-client';
 
 const API_URL_SUFFIX = 'finance'; // Located in finance domain in the BE
 const CONTROLLER = 'approval-tables';
 
-export class ApprovalTablesService extends DomainBaseService<IApprovalTableEntity, uuid> implements IApprovalTablesService {
+export class ApprovalTablesService extends DomainBaseService<IApprovalTableEntityData, uuid> implements IApprovalTablesService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, CONTROLLER);
   }
@@ -25,5 +26,29 @@ export class ApprovalTablesService extends DomainBaseService<IApprovalTableEntit
 
   getApprovalsTableByEventId(eventId: uuid) {
     return this.http.get<IApprovalTableEntityData[]>(`${this.baseApi}/events/${eventId}/approval-tables`);
+  }
+
+  edit(approvalId: uuid, payload: IApprovalTableEntity): Promise<IApprovalTableEntityData> {
+    const formattedPayload = {
+      eventId: payload.eventId,
+      programId: payload.programId,
+      name: payload.name,
+      aggregatedByType: payload.aggregatedByType,
+      approvalBaseStatus: payload.approvalBaseStatus,
+    } as IEditApprovalTableRequest;
+
+    return this.http.patch(`${this.baseUrl}/${approvalId}`, formattedPayload, { globalHandler: false });
+  }
+
+  addGroup(approvalId: uuid, group: IApprovalGroup): Promise<IApprovalTableEntityData> {
+    return this.http.post(`${this.baseUrl}/${approvalId}/groups`, group.toDto());
+  }
+
+  removeGroup(approvalId: uuid, groupId: uuid): Promise<IApprovalTableEntityData> {
+    return this.http.delete(`${this.baseUrl}/${approvalId}/groups/${groupId}`);
+  }
+
+  editGroup(approvalId: uuid, group: IApprovalGroup): Promise<IApprovalTableEntityData> {
+    return this.http.patch(`${this.baseUrl}/${approvalId}/groups/${group.id}`, group.toDto());
   }
 }

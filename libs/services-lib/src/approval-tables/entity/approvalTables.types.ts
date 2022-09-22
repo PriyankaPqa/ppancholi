@@ -1,7 +1,7 @@
 import { IApprovalTableEntity, IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { ApprovalAggregatedBy } from '@libs/entities-lib/approvals/approvals-base';
-import { IApprovalGroupDTO } from '@libs/entities-lib/approvals/approvals-group';
+import { IApprovalGroup, IApprovalGroupDTO } from '@libs/entities-lib/approvals/approvals-group';
 import { Status } from '@libs/entities-lib/base';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
@@ -14,12 +14,27 @@ export interface ICreateApprovalTableRequest {
   approvalBaseStatus: Status
 }
 
-export interface IApprovalTablesService extends IDomainBaseService<IApprovalTableEntity, uuid>{
-  create(data: IApprovalTableEntityData): Promise<IApprovalTableEntityData>;
-  getApprovalsTableByEventId(eventId: uuid): Promise<IApprovalTableEntityData[]>;
+export interface IEditApprovalTableRequest {
+  programId: uuid;
+  name: IMultilingual,
+  aggregatedByType: ApprovalAggregatedBy,
+  approvalBaseStatus: Status
 }
 
-export interface IApprovalTablesServiceMock extends IDomainBaseServiceMock<IApprovalTableEntity> {
+export interface IApprovalTablesService extends IDomainBaseService<IApprovalTableEntityData, uuid>{
+  create(data: IApprovalTableEntity): Promise<IApprovalTableEntityData>;
+  getApprovalsTableByEventId(eventId: uuid): Promise<IApprovalTableEntityData[]>;
+  edit(approvalId: uuid, payload: IApprovalTableEntity): Promise<IApprovalTableEntityData>
+  addGroup(approvalId: uuid, group: IApprovalGroup): Promise<IApprovalTableEntityData>
+  removeGroup(approvalId: uuid, groupId: uuid): Promise<IApprovalTableEntityData>
+  editGroup(approvalId: uuid, group: IApprovalGroup): Promise<IApprovalTableEntityData>
+}
+
+export interface IApprovalTablesServiceMock extends IDomainBaseServiceMock<IApprovalTableEntityData> {
   create: jest.Mock<IApprovalTableEntityData>;
   getApprovalsTableByEventId: jest.Mock<IApprovalTableEntityData[]>;
+  edit: jest.Mock<IApprovalTableEntityData>;
+  addGroup: jest.Mock<IApprovalTableEntityData>;
+  removeGroup: jest.Mock<IApprovalTableEntityData>;
+  editGroup: jest.Mock<IApprovalTableEntityData>;
 }

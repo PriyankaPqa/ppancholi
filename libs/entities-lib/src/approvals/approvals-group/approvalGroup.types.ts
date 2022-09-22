@@ -1,6 +1,7 @@
 import { IEntity } from '../../base';
 
 export interface IApprovalGroupDTO {
+  id?: uuid;
   roles: Array<uuid>;
   minimum: number;
   maximum: number;

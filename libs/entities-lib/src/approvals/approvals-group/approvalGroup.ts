@@ -18,8 +18,8 @@ export class ApprovalGroup extends BaseEntity implements IApprovalGroup {
       this.roles = data.roles;
       this.minimumAmount = data.minimumAmount;
       this.maximumAmount = data.maximumAmount;
-      this.editMode = data.editMode;
-      this.addMode = data.addMode;
+      this.editMode = data.editMode || false;
+      this.addMode = data.addMode || false;
     } else {
       super();
       this.reset();
