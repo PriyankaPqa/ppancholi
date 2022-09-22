@@ -95,6 +95,39 @@ describe('ProgramDetails.vue', () => {
         expect(col.text()).toBe(mockFinancialAssistanceTableEntity().name.translation.en);
       });
     });
+
+    describe('assessments', () => {
+      it('displays correct text if no assessments', async () => {
+        await wrapper.setData({
+          assessmentIds: [],
+        });
+
+        const col = wrapper.findDataTest('no-Assessments');
+
+        expect(col.exists()).toBeTruthy();
+      });
+
+      it('displays assessment name', async () => {
+        const col = wrapper.findDataTest('assessment-0');
+
+        expect(col.exists()).toBeTruthy();
+        expect(col.text()).toBe(wrapper.vm.assessments[0].name.translation.en);
+      });
+    });
+  });
+
+  describe('Computed', () => {
+    describe('assessments', () => {
+      it('calls getter', async () => {
+        jest.clearAllMocks();
+        await wrapper.setData({
+          assessmentIds: ['newId'],
+        });
+        const assessments = wrapper.vm.assessments;
+        expect(storage.assessmentForm.getters.getByIds).toHaveBeenCalledWith(['newId']);
+        expect(assessments).toEqual(storage.assessmentForm.getters.getByIds().map((x) => x.entity));
+      });
+    });
   });
 
   describe('Life cycle', () => {
@@ -164,6 +197,29 @@ describe('ProgramDetails.vue', () => {
         expect(wrapper.vm.$storage.financialAssistance.actions.fetchByProgramId).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$storage.financialAssistance.actions.fetchByProgramId).toHaveBeenCalledWith('PROGRAM_ID');
         expect(wrapper.vm.financialAssistanceTables).toEqual([mockFinancialAssistanceTableEntity()]);
+      });
+
+      it('calls method to search assessmentForms', async () => {
+        jest.clearAllMocks();
+
+        await wrapper.setData({
+          assessmentIds: [],
+        });
+        expect(wrapper.vm.assessmentIds).toEqual([]);
+
+        for (let i = 0; i < wrapper.vm.$options.created.length; i += 1) {
+          // eslint-disable-next-line no-await-in-loop
+          await wrapper.vm.$options.created[i].call(wrapper.vm);
+        }
+
+        expect(storage.assessmentForm.actions.search).toHaveBeenCalledTimes(1);
+        expect(storage.assessmentForm.actions.search).toHaveBeenCalledWith({
+          filter: { 'Entity/ProgramId': wrapper.vm.programId },
+          top: 999,
+          queryType: 'full',
+          orderBy: 'Entity/Name/Translation/en',
+        }, null, true);
+        expect(wrapper.vm.assessmentIds).toEqual(storage.assessmentForm.actions.search().ids);
       });
     });
   });

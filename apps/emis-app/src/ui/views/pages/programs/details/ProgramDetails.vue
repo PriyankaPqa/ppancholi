@@ -136,15 +136,20 @@
 
         <v-col class="mt-4" cols="12" md="10">
           <h5 class="rc-heading-5">
-            {{ $t('event.programManagement.assessments.title') }} (0)
+            {{ $t('event.programManagement.assessments.title') }} ({{ assessmentIds.length }})
           </h5>
         </v-col>
 
-        <v-col class="disabled" cols="12" md="10">
+        <v-col cols="12" md="10">
           <v-container>
-            <v-row class="list-row">
-              <v-col class="rc-body14 fw-bold" cols="12" md="5">
+            <v-row v-if="assessmentIds.length === 0" class="list-row">
+              <v-col data-test="no-Assessments" class="rc-body14 fw-bold disabled" cols="12">
                 {{ $t('event.programManagement.noAssessments') }}
+              </v-col>
+            </v-row>
+            <v-row v-for="(assessment, index) in assessments" :key="assessment.id" class="list-row">
+              <v-col :data-test="`assessment-${index}`" class="rc-body14 fw-bold" cols="12">
+                {{ $m(assessment.name) }}
               </v-col>
             </v-row>
           </v-container>
@@ -170,6 +175,7 @@ import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
+import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 
 export default Vue.extend({
   name: 'ProgramDetails',
@@ -196,12 +202,16 @@ export default Vue.extend({
     return {
       loading: false,
       financialAssistanceTables: [] as IFinancialAssistanceTableEntity[],
+      assessmentIds: [] as string[],
     };
   },
 
   computed: {
     program(): IProgramEntity {
       return this.$storage.program.getters.get(this.programId).entity;
+    },
+    assessments(): IAssessmentFormEntity[] {
+      return this.$storage.assessmentForm.getters.getByIds(this.assessmentIds).map((a) => a.entity);
     },
   },
 
@@ -215,6 +225,12 @@ export default Vue.extend({
       }
 
       this.financialAssistanceTables = await this.$storage.financialAssistance.actions.fetchByProgramId(this.programId);
+      this.assessmentIds = (await this.$storage.assessmentForm.actions.search({
+        filter: { 'Entity/ProgramId': this.programId },
+        top: 999,
+        queryType: 'full',
+        orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
+      }, null, true)).ids;
     } finally {
       this.loading = false;
     }
