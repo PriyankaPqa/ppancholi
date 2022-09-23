@@ -132,6 +132,13 @@
   }
 }
 
+.v-data-table tbody tr td > .v-btn:not(.v-btn--round).v-size--default, .v-data-table tbody tr td > div > .v-btn:not(.v-btn--round).v-size--default {
+  height: 28px;
+  min-width: 50px;
+  padding: 0 12.4444444444px;
+  font-size: 0.75rem;
+}
+
 .row_disabled {
   background-color: var(--v-grey-lighten4);
   color: var(--v-grey-base)

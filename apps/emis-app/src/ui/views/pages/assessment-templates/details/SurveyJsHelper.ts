@@ -65,6 +65,7 @@ export class SurveyJsHelper {
     this.registerCustomSurveyJsFunctions();
 
     this.creator = new SurveyCreator({
+      haveCommercialLicense: true,
       showLogicTab: true,
       isAutoSave: true,
       showTranslationTab: true,

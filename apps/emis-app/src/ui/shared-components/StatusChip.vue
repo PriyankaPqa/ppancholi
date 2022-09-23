@@ -21,6 +21,7 @@ import { AccountStatus } from '@libs/entities-lib/user-account';
 import { DocumentStatus } from '@libs/entities-lib/case-file-document';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { Status } from '@libs/entities-lib/base';
+import { CompletionStatus as AssessmentResponseCompletionStatus } from '@libs/entities-lib/assessment-template';
 
 export default Vue.extend({
   name: 'StatusChip',
@@ -47,6 +48,7 @@ export default Vue.extend({
           'FinancialAssistancePaymentStatus',
           'Status',
           'MassActionRunStatus',
+          'AssessmentResponseCompletionStatus',
         ].indexOf(value) > -1
       ),
     },
@@ -94,7 +96,8 @@ export default Vue.extend({
           return this.getStatusColor();
         case 'MassActionRunStatus':
           return this.getMassActionRunStatusColor();
-
+        case 'AssessmentResponseCompletionStatus':
+          return this.getAssessmentResponseCompletionStatusColor();
         default:
           return colors.chips.green;
       }
@@ -134,6 +137,8 @@ export default Vue.extend({
           return `enums.Status.${Status[this.status]}`;
         case 'MassActionRunStatus':
           return `enums.MassActionRunStatus.${MassActionRunStatus[this.status]}`;
+        case 'AssessmentResponseCompletionStatus':
+          return `enums.completionStatus.${AssessmentResponseCompletionStatus[this.status]}`;
 
         default:
           return '';
@@ -270,6 +275,25 @@ export default Vue.extend({
 
         case MassActionRunStatus.PreProcessed:
           return colors.chips.green_pale;
+
+        default:
+          return colors.chips.green;
+      }
+    },
+
+    getAssessmentResponseCompletionStatusColor(): string {
+      switch (this.status) {
+        case AssessmentResponseCompletionStatus.Pending:
+          return colors.chips.orange;
+
+        case AssessmentResponseCompletionStatus.Partial:
+          return colors.chips.green_pale;
+
+        case AssessmentResponseCompletionStatus.Completed:
+          return colors.chips.green;
+
+        case AssessmentResponseCompletionStatus.Obsolete:
+          return colors.chips.light_grey;
 
         default:
           return colors.chips.green;

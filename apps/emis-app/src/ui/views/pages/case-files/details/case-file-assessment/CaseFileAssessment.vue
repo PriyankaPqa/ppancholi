@@ -1,25 +1,133 @@
 <template>
   <div class="pa-4">
-    ALL THIS IS TEMPORARY! Just to show that you can create and reload the new data
+    <div class="dataTable__container elevation-2">
+      <v-card>
+        <rc-data-table-header
+          v-bind="headerOptions"
+          :search="options.search"
+          :labels="labels.header"
+          @update:search="updateSearch">
+          <template #headerLeft>
+            <rc-tooltip v-if="canAdd" bottom>
+              <template #activator="{ on }">
+                <v-btn
+                  class="mr-3"
+                  data-test="table__addButton"
+                  fab
+                  color="white"
+                  small
+                  v-on="on"
+                  @click="addAssessment">
+                  <v-icon color="primary">
+                    mdi-plus
+                  </v-icon>
+                </v-btn>
+              </template>
+              {{ labels.header.addButtonLabel }}
+            </rc-tooltip>
+          </template>
+        </rc-data-table-header>
 
-    <rc-data-table
-      data-test="case-file-assessment-table"
-      :items="assessments"
-      :count="assessments.length"
-      :show-add-button="canAdd"
-      :labels="labels"
-      :headers="headers"
-      :footer-text="footerText"
-      :table-props="tableProps"
-      :options.sync="options"
-      :initial-search="params && params.search"
-      :custom-columns="Object.values(customColumns)"
-      @add-button="addAssessment"
-      @search="search">
-      <template #[`item.${customColumns.name}`]="{ item }">
-        {{ $m(item.form.name) }}
-      </template>
-    </rc-data-table>
+        <h3 class="pa-2 pt-12 rc-heading-5">
+          {{ $t('assessment.pending.title') }}
+        </h3>
+        <rc-data-table
+          data-test="pending-assessment-table"
+          :items="pendingAssessments"
+          :count="pendingAssessments.length"
+          :headers="pendingAssessmentsHeaders"
+          :hide-header="true"
+          :hide-footer="true"
+          :table-props="tableProps"
+          :options.sync="pendingOptions"
+          :custom-columns="Object.values(customColumns)"
+          @search="search">
+          <template #[`item.${customColumns.name}`]="{ item }">
+            {{ item.name }}
+          </template>
+
+          <template #[`item.${customColumns.dateAssigned}`]="{ item }">
+            {{ item.dateAssignedFormatted }}
+          </template>
+
+          <template #[`item.${customColumns.completionStatus}`]="{ item }">
+            <status-chip status-name="AssessmentResponseCompletionStatus" :status="item.completionStatus" />
+          </template>
+
+          <template #[`item.${customColumns.actions}`]="{ item }">
+            <div class="d-flex">
+              <v-btn v-if="item.canLaunch" data-test="start-link" color="primary" class="mr-2" @click="launchAssessment(item)">
+                {{ $t('assessmentResponse.start') }}
+              </v-btn>
+              <v-btn data-test="copy-link" @click="copyLink(item)">
+                <v-icon size="18" color="grey darken-2">
+                  mdi-content-copy
+                </v-icon>
+                {{ $t('assessmentResponse.copyLink') }}
+              </v-btn>
+            </div>
+          </template>
+
+          <template #[`item.${customColumns.actions_icons}`]="{ item }">
+            <v-btn icon data-test="delete-link" @click="deleteAssessment(item)">
+              <v-icon size="24" color="grey darken-2">
+                mdi-delete
+              </v-icon>
+            </v-btn>
+          </template>
+        </rc-data-table>
+
+        <h3 class="pa-2 pt-12 rc-heading-5">
+          {{ $t('assessment.completed.title') }}
+        </h3>
+        <rc-data-table
+          data-test="completed-assessment-table"
+          :items="completedAssessments"
+          :count="completedAssessments.length"
+          :headers="completedAssessmentsHeaders"
+          :hide-header="true"
+          :hide-footer="true"
+          :table-props="tableProps"
+          :options.sync="completedOptions"
+          :custom-columns="Object.values(customColumns)"
+          @search="search">
+          <template #[`item.${customColumns.name}`]="{ item }">
+            <router-link
+              class="rc-link14 font-weight-bold pr-1"
+              data-test="assessmentDetail-link"
+              :to="getAssessmentDetailsRoute(item.id)">
+              {{ item.name }}
+            </router-link>
+          </template>
+
+          <template #[`item.${customColumns.dateAssigned}`]="{ item }">
+            {{ item.dateAssignedFormatted }}
+          </template>
+
+          <template #[`item.${customColumns.dateCompleted}`]="{ item }">
+            {{ item.dateCompletedFormatted }}
+          </template>
+
+          <template #[`item.${customColumns.completionStatus}`]="{ item }">
+            <status-chip status-name="AssessmentResponseCompletionStatus" :status="item.completionStatus" />
+          </template>
+
+          <template #[`item.${customColumns.actions}`]="{ item }">
+            <v-btn v-if="item.canLaunch" data-test="resume-link" color="primary" class="mr-2" @click="launchAssessment(item)">
+              {{ $t('assessmentResponse.resume') }}
+            </v-btn>
+          </template>
+
+          <template #[`item.${customColumns.actions_icons}`]="{ item }">
+            <v-btn v-if="item.canEdit" icon data-test="edit-link" @click="editAssessment(item)">
+              <v-icon size="24" color="grey darken-2">
+                mdi-pencil
+              </v-icon>
+            </v-btn>
+          </template>
+        </rc-data-table>
+      </v-card>
+    </div>
 
     <add-case-file-assessment
       v-if="showAddPopup"
@@ -32,34 +140,69 @@
 </template>
 
 <script lang="ts">
+import _orderBy from 'lodash/orderBy';
+import _cloneDeep from 'lodash/cloneDeep';
 import { DataTableHeader } from 'vuetify';
-import { RcDataTable } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
+import { RcDataTable, RcDataTableHeader, RcTooltip } from '@libs/component-lib/components';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
+import helpers from '@/ui/helpers/helpers';
+import moment from '@libs/shared-lib/plugins/moment';
 import {
-  AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType, IAssessmentResponseCombined,
+  AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType, IAssessmentResponseCombined, CompletionStatus,
 } from '@libs/entities-lib/assessment-template';
-import { Status } from '@libs/entities-lib/base';
+import routes from '@/constants/routes';
 import caseFileDetail from '../caseFileDetail';
 import AddCaseFileAssessment from './components/AddCaseFileAssessment.vue';
+
+interface MappedAssessment {
+  id: string,
+  formId: string,
+  name: string,
+  nameLowerCase: string,
+  dateAssigned: Date,
+  dateAssignedFormatted: string,
+  dateCompleted: Date,
+  dateCompletedFormatted: string,
+  completionStatus: CompletionStatus,
+  formFrequency: AssessmentFrequencyType,
+  pinned: boolean,
+  canEdit: boolean,
+  canLaunch: boolean,
+}
 
 export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   name: 'CaseFileAssessment',
 
   components: {
     RcDataTable,
+    RcDataTableHeader,
+    RcTooltip,
+    StatusChip,
     AddCaseFileAssessment,
   },
 
   data() {
     return {
-      options: {
-        // sortBy: ['Entity/Name'],
-        // sortDesc: [false],
+      headerOptions: {
+        color: 'primary darken-1',
+        dark: true,
+        height: 56,
+      },
+      pendingOptions: {
+        search: '',
+        sortBy: ['name'],
+        sortDesc: [false],
+      },
+      completedOptions: {
+        search: '',
+        sortBy: ['name'],
+        sortDesc: [false],
       },
       tableProps: {
-        itemClass: (item: { response: { pinned: boolean } }) => (item.response.pinned ? 'pinned' : ''),
+        itemClass: (item: MappedAssessment) => (item.pinned ? 'pinned' : ''),
       },
       showAddPopup: false,
     };
@@ -78,54 +221,108 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       return items;
     },
 
-    assessments(): { form: IAssessmentBaseEntity, response: IAssessmentResponseCombined, id: string }[] {
+    assessments(): MappedAssessment[] {
       const assessments = this.$storage.assessmentForm.getters.getByIds(this.items?.map((i) => i.entity.assessmentFormId),
         {
-          onlyActive: true,
+          onlyActive: false,
         });
-      return this.items.map((r) => ({
+      const formAndResponses = this.items.map((r) => ({
         form: assessments.find((i) => r.entity.assessmentFormId === i.entity.id)?.entity || {} as IAssessmentBaseEntity,
         response: r,
-        id: r.entity.id,
       }));
+      return this.mapAssessments(formAndResponses);
+    },
+
+    pendingAssessments(): MappedAssessment[] {
+      const items = helpers.filterCollectionByValue(
+        this.assessments.filter((a) => a.completionStatus === CompletionStatus.Pending),
+        this.pendingOptions.search, false, ['name'],
+      );
+      return _orderBy(items, ['pinned', this.pendingOptions.sortBy[0]], ['desc', this.pendingOptions.sortDesc[0] ? 'desc' : 'asc']);
+    },
+
+    completedAssessments(): MappedAssessment[] {
+      const items = helpers.filterCollectionByValue(
+        this.assessments.filter((a) => a.completionStatus !== CompletionStatus.Pending),
+        this.completedOptions.search, false, ['name'],
+      );
+      return _orderBy(items, ['pinned', this.completedOptions.sortBy[0]], ['desc', this.completedOptions.sortDesc[0] ? 'desc' : 'asc']);
     },
 
     oneTimeAssessmentsIds(): string[] {
-      return this.assessments.filter((a) => a.form.frequency === AssessmentFrequencyType.OneTime).map((e) => e.form.id);
+      return this.assessments.filter((a) => a.formFrequency === AssessmentFrequencyType.OneTime).map((e) => e.formId);
     },
 
     customColumns(): Record<string, string> {
       return {
-        name: 'Entity/Name',
+        name: 'nameLowerCase',
+        dateAssigned: 'dateAssigned',
+        completionStatus: 'completionStatus',
+        dateCompleted: 'dateCompleted',
+        actions: 'actions',
+        actions_icons: 'actions_icons',
       };
     },
 
-    headers(): Array<DataTableHeader> {
+    pendingAssessmentsHeaders(): Array<DataTableHeader> {
       const headers = [
         {
           text: this.$t('common.name') as string,
           value: this.customColumns.name,
+          width: '100%',
+        },
+        {
+          text: this.$t('assessmentResponse.dateAssigned') as string,
+          value: this.customColumns.dateAssigned,
+          width: '150px',
+        },
+        {
+          text: this.$t('common.status') as string,
+          value: this.customColumns.completionStatus,
+          sortable: false,
+          width: '50px',
+        },
+        {
+          text: '',
+          value: this.customColumns.actions,
+          sortable: false,
+        },
+        {
+          text: '',
+          value: this.customColumns.actions_icons,
+          sortable: false,
+          width: '30px',
         },
       ];
 
       return headers;
     },
 
+    completedAssessmentsHeaders(): Array<DataTableHeader> {
+      const headers = _cloneDeep(this.pendingAssessmentsHeaders);
+      headers.splice(2, 0, {
+        text: this.$t('assessmentResponse.dateCompleted') as string,
+        value: this.customColumns.dateCompleted,
+        sortable: true,
+        width: '180px',
+      });
+      return headers;
+    },
+
     labels(): Record<string, unknown> {
       return {
         header: {
-          // title: `${this.$t('caseFile.document.title')} (${this.caseFileDocumentsMapped.length})`,
+          title: this.$t('assessments.title'),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
-          addButtonLabel: this.$t('document.add.title'),
+          addButtonLabel: this.$t('assessmentTemplate.add_assessment'),
         },
       };
     },
   },
 
   async created() {
-    this.saveState = true;
+    this.saveState = false;
     this.loadState();
-    this.fetchAssessments();
   },
 
   watch: {
@@ -135,13 +332,33 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   methods: {
+    mapAssessments(formAndResponses: { form: IAssessmentBaseEntity, response: IAssessmentResponseCombined }[]): MappedAssessment[] {
+      return formAndResponses.map((r) => ({
+        id: r.response.entity.id,
+        name: this.$m(r.form?.name) as string,
+        nameLowerCase: (this.$m(r.form?.name) as string || '').toLowerCase(),
+        dateAssigned: r.response.entity.dateAssigned,
+        dateAssignedFormatted: moment(r.response.entity.dateAssigned).format('ll'),
+        // default to crazy date because _orderBy sorts empty differently then normal BE search
+        dateCompleted: r.response.entity.dateCompleted ? new Date(r.response.entity.dateCompleted) : new Date(1950, 0, 1),
+        dateCompletedFormatted: r.response.entity.dateCompleted ? moment(r.response.entity.dateCompleted).format('ll') : '',
+        completionStatus: r.response.entity.completionStatus,
+        formFrequency: r.form?.frequency,
+        formId: r.form?.id,
+        pinned: r.response.pinned,
+        canEdit: !this.readonly && this.$hasLevel('level3') && r.response.entity.completionStatus === CompletionStatus.Completed,
+        canLaunch: !this.readonly && this.$hasLevel('level1')
+          && (r.response.entity.completionStatus === CompletionStatus.Pending || r.response.entity.completionStatus === CompletionStatus.Partial),
+      }));
+    },
+
     async fetchAssessments() {
       if (!this.items?.length) {
         return;
       }
 
       await this.$storage.assessmentForm.actions.search({
-        filter: { 'Entity/Status': Status.Active, 'Entity/Id': { searchIn_az: this.items.map((i) => i.entity.assessmentFormId) || [] } },
+        filter: { 'Entity/Id': { searchIn_az: this.items.map((i) => i.entity.assessmentFormId) || [] } },
         top: 999,
         queryType: 'full',
         searchMode: 'all',
@@ -168,6 +385,49 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     addAssessment() {
       this.showAddPopup = true;
+    },
+
+    updateSearch($event: string) {
+      this.pendingOptions.search = $event;
+      this.completedOptions.search = $event;
+    },
+
+    getAssessmentDetailsRoute(id: string) {
+      // todo in future story
+      return {
+        name: '', // routes.events.assessments,
+        params: {
+          assessmentResponseId: id,
+        },
+      };
+    },
+
+    editAssessment(item: MappedAssessment) {
+      // todo in future story
+      this.$toasted.global.success(`this will go to edit for ${item.id}`);
+    },
+
+    deleteAssessment(item: MappedAssessment) {
+      // todo in future story
+      this.$toasted.global.success(`this will delete ${item.id}`);
+    },
+
+    launchAssessment(item: MappedAssessment) {
+      const routeData = this.$router.resolve({
+        name: routes.events.assessments.complete.name,
+        params: {
+          assessmentTemplateId: item.formId,
+          id: this.event.entity.id,
+          assessmentResponseId: item.id,
+        },
+      });
+      window.open(routeData.href, '_blank');
+    },
+
+    copyLink(item: MappedAssessment) {
+      const assessment = this.items.find((i) => i.entity.id === item.id);
+      navigator.clipboard.writeText(`${window.location.origin}${assessment.entity.uniqueUrl}`);
+      this.$toasted.global.success(this.$t('assessmentTemplate.copiedLink'));
     },
   },
 });

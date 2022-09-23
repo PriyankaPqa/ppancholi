@@ -18,6 +18,7 @@ export { default as VSelectWithValidation } from './atoms/VSelectWithValidation.
 export { default as VTextAreaWithValidation } from './atoms/VTextAreaWithValidation.vue';
 export { default as VTextFieldWithValidation } from './atoms/VTextFieldWithValidation.vue';
 export { default as RcDataTable } from './organism/RcDataTable/RcDataTable.vue';
+export { default as RcDataTableHeader } from './organism/RcDataTable/components/RcDataTableHeader.vue';
 export { default as RcStatsTemplate } from './molecule/RcStatsTemplate.vue';
 export { default as RcAutosuggest } from './atoms/RcAutosuggest.vue';
 export { default as RcRegistrationLandingPage } from './pages/RcRegistrationLandingPage/RcRegistrationLandingPage.vue';
