@@ -45,8 +45,8 @@
           tabindex="0"
           class="rc-link14 font-weight-bold"
           data-test="member_name"
-          @keydown.enter="viewMemberCaseFiles(item)"
-          @click="viewMemberCaseFiles(item)">
+          @keydown.enter="$hasFeature(FeatureKeys.TeamImprovements)? viewMemberCaseFiles(item) : viewMemberTeams(item)"
+          @click="$hasFeature(FeatureKeys.TeamImprovements)? viewMemberCaseFiles(item) : viewMemberTeams(item)">
           {{ item.metadata.displayName }}
         </span>
       </template>
@@ -61,12 +61,18 @@
 
       <template #item.metadata.teamCount="{ item }">
         <span
+          v-if="$hasFeature(FeatureKeys.TeamImprovements)"
           role="button"
           tabindex="0"
           class="rc-link14 font-weight-bold"
           data-test="member_name"
           @keydown.enter="viewMemberTeams(item)"
           @click="viewMemberTeams(item)">
+          {{ item.metadata.teamCount || '0' }}
+        </span>
+        <span
+          v-else
+          data-test="member_name">
           {{ item.metadata.teamCount || '0' }}
         </span>
       </template>
@@ -105,7 +111,10 @@
       :show.sync="showAddTeamMemberDialog" />
 
     <team-member-teams v-if="showMemberTeamsDialog" :show.sync="showMemberTeamsDialog" :member="clickedMember" />
-    <team-member-case-files v-if="showMemberCaseFilesDialog" :show.sync="showMemberCaseFilesDialog" :member="clickedMember" />
+    <team-member-case-files
+      v-if="$hasFeature(FeatureKeys.TeamImprovements) && showMemberCaseFilesDialog"
+      :show.sync="showMemberCaseFilesDialog"
+      :member="clickedMember" />
 
     <rc-confirmation-dialog
       v-if="showRemoveMemberConfirmationDialog"
