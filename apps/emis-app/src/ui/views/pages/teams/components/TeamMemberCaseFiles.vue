@@ -201,7 +201,8 @@ export default Vue.extend({
       const caseFiles = await this.$services.caseFiles.getAssignedCaseFiles(this.member.entity.id);
 
       if (caseFiles?.value) {
-        this.fetchedCaseFiles = caseFiles.value;
+        this.fetchedCaseFiles = caseFiles.value
+          .filter((f: ICaseFileCombined) => f.entity.caseFileStatus === CaseFileStatus.Open || f.entity.caseFileStatus === CaseFileStatus.Inactive);
       }
     },
 

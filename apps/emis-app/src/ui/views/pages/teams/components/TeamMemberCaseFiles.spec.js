@@ -77,7 +77,11 @@ describe('TeamMemberCaseFiles.vue', () => {
 
     describe('fetchAllCaseFiles', () => {
       it('calls the service getAssignedCaseFiles and saves the data', async () => {
-        wrapper.vm.$services.caseFiles.getAssignedCaseFiles = jest.fn(() => ({ value: [mockCaseFile] }));
+        const caseFiles = [mockCaseFile,
+          { ...mockCaseFile, entity: { id: 'mock-1', caseFileStatus: CaseFileStatus.Closed } },
+          { ...mockCaseFile, entity: { id: 'mock-2', caseFileStatus: CaseFileStatus.Archived } },
+        ];
+        wrapper.vm.$services.caseFiles.getAssignedCaseFiles = jest.fn(() => ({ value: caseFiles }));
         await wrapper.vm.fetchAllCaseFiles();
         expect(wrapper.vm.$services.caseFiles.getAssignedCaseFiles).toBeCalledTimes(1);
         expect(wrapper.vm.fetchedCaseFiles).toEqual([mockCaseFile]);
