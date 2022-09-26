@@ -41,13 +41,13 @@
               <tr
                 v-for="(item, index) in group"
                 :key="item.caseFile.id"
-                :class="{isDisabledRow: !item.canAssign}">
+                :class="{isDisabledRow: !item.canAccessFile}">
                 <td>
                   <router-link
                     :data-test="`team_member_caseFile_number_${index}`"
                     :to="getCaseFileRoute(item.caseFile.id)"
                     class="rc-link14 font-weight-bold"
-                    :class="{'isDisabled':!item.canAssign}">
+                    :class="{'isDisabled':!item.canAccessFile}">
                     {{ item.caseFile.caseFileNumber }}
                   </router-link>
                 </td>
@@ -101,7 +101,8 @@ interface IMemberCaseFile {
     event: {id: string, name: IMultilingual },
     teamName: string,
     caseFile: ICaseFileEntity,
-    canAssign: boolean
+    canAssign: boolean,
+    canAccessFile: boolean,
 }
 
 export default Vue.extend({
@@ -165,7 +166,8 @@ export default Vue.extend({
                 },
                 teamName,
                 caseFile: cf.entity,
-                canAssign: this.caseFilesIdsWithAllowedAccess.includes(cf.entity.id),
+                canAccessFile: this.caseFilesIdsWithAllowedAccess.includes(cf.entity.id),
+                canAssign: this.caseFilesIdsWithAllowedAccess.includes(cf.entity.id) && (cf.entity.caseFileStatus === CaseFileStatus.Open || this.$hasLevel('level6')),
               };
             }
             return null;
