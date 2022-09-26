@@ -56,7 +56,7 @@ describe('EventsSelector.vue', () => {
           filter: null,
           search: '((/.*test.*/ OR "\\"test\\""))',
           searchFields: 'Entity/Name/Translation/en',
-          orderBy: 'Entity/Schedule/OpenDate',
+          orderBy: 'Entity/Schedule/OpenDate desc',
           queryType: 'full',
           searchMode: 'all',
           top: 10,
@@ -68,7 +68,7 @@ describe('EventsSelector.vue', () => {
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
           search: '((/.*test.*/ OR "\\"test\\""))',
           searchFields: 'Entity/Name/Translation/en',
-          orderBy: 'Entity/Schedule/OpenDate',
+          orderBy: 'Entity/Schedule/OpenDate desc',
           queryType: 'full',
           searchMode: 'all',
           filter: { Entity: { Schedule: { Status: EEventStatus.Open } } },

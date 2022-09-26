@@ -150,7 +150,7 @@ export default Vue.extend({
       const res = await this.$services.events.searchMyEvents({
         search: querySearch ? `(${searchParam})` : '',
         searchFields: `Entity/Name/Translation/${this.$i18n.locale}`,
-        orderBy: 'Entity/Schedule/OpenDate',
+        orderBy: 'Entity/Schedule/OpenDate desc',
         queryType: 'full',
         searchMode: 'all',
         filter,
