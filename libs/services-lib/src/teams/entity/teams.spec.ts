@@ -65,6 +65,12 @@ describe('>>> Teams Service', () => {
     expect(http.delete).toHaveBeenCalledWith(`/team/teams/${teamId}/member/${teamMemberId}`);
   });
 
+  test('emptyTeam is linked to the correct URL', async () => {
+    const teamId = '123';
+    await service.emptyTeam(teamId);
+    expect(http.patch).toHaveBeenCalledWith(`/team/teams/${teamId}/empty-team`);
+  });
+
   describe('search', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
       const params = { filter: { Foo: 'foo' } };

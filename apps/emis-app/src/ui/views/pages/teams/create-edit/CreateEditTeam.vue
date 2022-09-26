@@ -51,7 +51,7 @@
                   <v-col cols="12" md="4">
                     <v-autocomplete-with-validation
                       data-test="team-contact"
-                      :label="`${$t('teams.form.primary_contact')}*`"
+                      :label="`${$t('teams.form.primary_contact')}${canBeEmpty? '': '*'}`"
                       :items="primaryContactUsers"
                       item-text="displayName"
                       :search-input.sync="primaryContactQuery"
@@ -114,7 +114,8 @@
                   :team-id="team.id"
                   :show-members="isEditMode"
                   :show-search="isEditMode"
-                  :disable-add-members="!isEditMode" />
+                  :disable-add-members="!allowAddMembers"
+                  @reloadTeam="reloadTeam" />
               </v-col>
             </v-row>
           </v-col>
@@ -282,7 +283,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
           customValidator: { isValid: this.isNameUnique, messageKey: 'validations.alreadyExists' },
         },
         primaryContact: {
-          required: true,
+          required: !this.canBeEmpty,
         },
         event: {
           required: this.teamType === 'adhoc',
@@ -308,6 +309,14 @@ export default mixins(handleUniqueNameSubmitError).extend({
         events: this.teamType === 'standard' ? _sortBy(this.team.eventIds) : this.team.eventIds[0],
         primaryContact: (this.currentPrimaryContact || {}).email,
       });
+    },
+
+    allowAddMembers():boolean {
+      return this.isEditMode && !!this.team.teamMembers.length;
+    },
+
+    canBeEmpty(): boolean {
+      return this.isEditMode && this.team.status === Status.Inactive && !this.original.primaryContact;
     },
   },
 
@@ -379,6 +388,11 @@ export default mixins(handleUniqueNameSubmitError).extend({
         await this.$storage.team.actions.fetch(teamId);
         this.loadTeamFromState();
       }
+    },
+
+    async reloadTeam() {
+      await this.loadTeam();
+      this.setOriginalData();
     },
 
     loadTeamFromState(errors? : IError[]) {
@@ -457,7 +471,10 @@ export default mixins(handleUniqueNameSubmitError).extend({
         return;
       }
 
-      this.setPrimaryContactTeam();
+      if (this.currentPrimaryContact) {
+        this.setPrimaryContactTeam();
+      }
+
       if (!this.isEditMode) {
         await this.submitCreateTeam();
       } else {

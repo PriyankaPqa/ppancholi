@@ -16,6 +16,7 @@ export interface IActions extends IBaseActions<ITeamEntity, ITeamMetadata, uuid>
   editTeam(payload: ITeamEntity): Promise<ITeamEntity>;
   addTeamMembers(teamId: uuid, teamMembers: ITeamMember[]): Promise<ITeamEntity>;
   removeTeamMember(teamId: uuid, teamMemberId: uuid): Promise<ITeamEntity>;
+  emptyTeam(teamId: uuid): Promise<ITeamEntity>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<ITeamEntity, ITeamMetadata> {
@@ -25,6 +26,7 @@ export interface IActionsMock extends IBaseActionsMock<ITeamEntity, ITeamMetadat
   editTeam: jest.Mock<ITeamEntity>;
   addTeamMembers: jest.Mock<ITeamEntity>;
   removeTeamMember: jest.Mock<ITeamEntity>;
+  emptyTeam: jest.Mock<ITeamEntity>;
 }
 
 export interface IMutations extends IBaseMutations<ITeamEntity, ITeamMetadata> {

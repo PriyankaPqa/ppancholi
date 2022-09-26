@@ -129,10 +129,11 @@ export class HttpClient implements IHttpClient {
     if (errorData && Array.isArray(errorData)) {
       errorData.forEach((error: IError) => {
         const formattedError = this.getFormattedError(error);
+
         if (this.options.useErrorReport && !formattedError) {
           Vue.prototype.$reportToasted('error.unexpected_error', e);
         } else {
-          Vue.toasted.global.error(this.getFormattedError(error));
+          Vue.toasted.global.error(formattedError);
         }
       });
     } else if (this.options.useErrorReport) {

@@ -39,6 +39,10 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
     return this.http.delete(`/team/teams/${teamId}/member/${teamMemberId}`);
   }
 
+  async emptyTeam(teamId: uuid): Promise<ITeamEntity> {
+    return this.http.patch(`/team/teams/${teamId}/empty-team`);
+  }
+
   private teamToEditTeamRequestPayload(team: ITeamEntity) {
     return {
       name: team.name,

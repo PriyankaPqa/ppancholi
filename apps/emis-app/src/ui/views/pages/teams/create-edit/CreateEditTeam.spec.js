@@ -500,9 +500,29 @@ describe('CreateEditTeam.vue', () => {
         });
       });
 
-      it('should have the correct primaryContact rule', () => {
+      it('should have the correct primaryContact rule if team cannot be empty', async () => {
+        await mountWrapper(false, 6, {
+          computed: {
+            canBeEmpty() {
+              return false;
+            },
+          },
+        });
         expect(wrapper.vm.rules.primaryContact).toEqual({
           required: true,
+        });
+      });
+
+      it('should have the correct primaryContact rule if team can be empty', async () => {
+        await mountWrapper(false, 6, {
+          computed: {
+            canBeEmpty() {
+              return true;
+            },
+          },
+        });
+        expect(wrapper.vm.rules.primaryContact).toEqual({
+          required: false,
         });
       });
 
@@ -579,6 +599,94 @@ describe('CreateEditTeam.vue', () => {
       it('should return the right label when we are in edit mode', () => {
         wrapper.vm.$route.name = routes.teams.edit.name;
         expect(wrapper.vm.submitLabel).toBe('common.save');
+      });
+    });
+
+    describe('allowAddMembers', () => {
+      it('returns true if the team is not empty and is in edit mode', async () => {
+        await mountWrapper(false, 6, {
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+        });
+        await wrapper.setData({ team: mockTeamEntity() });
+        expect(wrapper.vm.allowAddMembers).toBeTruthy();
+      });
+
+      it('returns false if the team is empty', async () => {
+        await mountWrapper(false, 6, {
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+        });
+        await wrapper.setData(({ team: { ...mockTeamEntity(), teamMembers: [] } }));
+        expect(wrapper.vm.allowAddMembers).toBeFalsy();
+      });
+
+      it('returns false if not in edit mode', async () => {
+        await mountWrapper(false, 6, {
+          computed: {
+            isEditMode() {
+              return false;
+            },
+          },
+        });
+        await wrapper.setData({ team: mockTeamEntity() });
+        expect(wrapper.vm.allowAddMembers).toBeFalsy();
+      });
+    });
+
+    describe('canBeEmpty', () => {
+      it('return true if team is inactive and is in edit mode and the original data had no primary contact', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+        });
+        await wrapper.setData({ team: { ...mockTeamEntity(), status: Status.Inactive }, original: { primaryContact: null } });
+        expect(wrapper.vm.canBeEmpty).toBeTruthy();
+      });
+
+      it('return false if team is active', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+        });
+        await wrapper.setData({ team: { ...mockTeamEntity(), status: Status.Active }, original: { primaryContact: null } });
+        expect(wrapper.vm.canBeEmpty).toBeFalsy();
+      });
+
+      it('return false if is not in edit mode', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            isEditMode() {
+              return false;
+            },
+          },
+        });
+        await wrapper.setData({ team: { ...mockTeamEntity(), status: Status.Inactive }, original: { primaryContact: null } });
+        expect(wrapper.vm.canBeEmpty).toBeFalsy();
+      });
+
+      it('return false if the original data had a primary contact', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            isEditMode() {
+              return false;
+            },
+          },
+        });
+        await wrapper.setData({ team: { ...mockTeamEntity(), status: Status.Inactive }, original: { primaryContact: { id: '1' } } });
+        expect(wrapper.vm.canBeEmpty).toBeFalsy();
       });
     });
   });
@@ -794,6 +902,16 @@ describe('CreateEditTeam.vue', () => {
         expect(wrapper.vm.loadTeamFromState).toBeCalled();
       });
     }));
+
+    describe('reloadTeam', () => {
+      it('calls loadTeam and setOriginalData', async () => {
+        wrapper.vm.loadTeam = jest.fn();
+        wrapper.vm.setOriginalData = jest.fn();
+        await wrapper.vm.reloadTeam();
+        expect(wrapper.vm.loadTeam).toBeCalledTimes(1);
+        expect(wrapper.vm.setOriginalData).toBeCalledTimes(1);
+      });
+    });
 
     describe('loadTeamFromState', (() => {
       beforeEach(async () => {

@@ -21,6 +21,7 @@ export class TeamStorageMock extends BaseMock<ITeamCombined, ITeamEntity> {
     editTeam: jest.fn(() => this.entity),
     addTeamMembers: jest.fn(() => this.entity),
     removeTeamMember: jest.fn(() => this.entity),
+    emptyTeam: jest.fn(() => this.entity),
   }
 
   protected mutations = {

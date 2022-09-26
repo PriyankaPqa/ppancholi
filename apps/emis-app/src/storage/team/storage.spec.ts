@@ -53,5 +53,13 @@ describe('>>> Team Storage', () => {
       storage.actions.removeTeamMember('abc', payload.teamMemberId);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/removeTeamMember`, payload);
     });
+
+    it('should proxy emptyTeam', () => {
+      const payload = {
+        teamId: 'abc',
+      };
+      storage.actions.emptyTeam('abc');
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/emptyTeam`, payload);
+    });
   });
 });

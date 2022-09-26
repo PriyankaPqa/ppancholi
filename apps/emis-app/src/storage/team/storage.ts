@@ -31,6 +31,9 @@ export class TeamStorage
 
     removeTeamMember: (teamId: uuid, teamMemberId: uuid):
       Promise<ITeamEntity> => this.store.dispatch(`${this.entityModuleName}/removeTeamMember`, { teamId, teamMemberId }),
+
+    emptyTeam: (teamId: uuid):
+      Promise<ITeamEntity> => this.store.dispatch(`${this.entityModuleName}/emptyTeam`, { teamId }),
   }
 
   private mutations = {

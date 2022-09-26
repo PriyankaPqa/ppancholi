@@ -80,5 +80,15 @@ describe('Team entity module', () => {
         expect(actionContext.commit).toBeCalledWith('set', mockTeamsDataAddHoc());
       });
     });
+
+    describe('emptyTeam', () => {
+      it('should call editTeam service with proper params and commit results', async () => {
+        myModule.service.emptyTeam = jest.fn(() => Promise.resolve(mockTeamsDataAddHoc()));
+        await myModule.actions.emptyTeam(actionContext, { teamId: 'abc' });
+
+        expect(myModule.service.emptyTeam).toBeCalledWith('abc');
+        expect(actionContext.commit).toBeCalledWith('set', mockTeamsDataAddHoc());
+      });
+    });
   });
 });

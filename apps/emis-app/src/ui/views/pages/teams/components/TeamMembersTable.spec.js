@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
-  mockCombinedTeams,
+  mockCombinedTeams, mockTeamMembersData,
 } from '@libs/entities-lib/team';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { mockStorage } from '@/storage';
@@ -132,26 +132,11 @@ describe('TeamMembersTable.vue', () => {
             });
           });
 
-          test('clicking the bin will show remove confirmation dialog if not a primary contact', async () => {
-            jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
-            const button = wrapper.findDataTest('remove_team_member_guid-member-2');
-            await button.trigger('click');
-            expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledTimes(1);
-          });
-
-          test('clicking the bin will call showPrimaryContactMessage if primary contact', async () => {
-            jest.spyOn(wrapper.vm, 'showPrimaryContactMessage').mockImplementation(() => null);
-
-            const button = wrapper.findDataTest('remove_team_member_guid-member-1');
-            await button.trigger('click');
-            expect(wrapper.vm.showPrimaryContactMessage).toHaveBeenCalledTimes(1);
-          });
-          test('clicking the bin will call showRemoveConfirmationDialogWithCaseFiles if has case files', async () => {
-            jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialogWithCaseFiles').mockImplementation(() => null);
-
+          test('clicking the bin will call handleRemoveTeamMember', async () => {
+            jest.spyOn(wrapper.vm, 'handleRemoveTeamMember').mockImplementation(() => null);
             const button = wrapper.findDataTest('remove_team_member_guid-member-3');
             await button.trigger('click');
-            expect(wrapper.vm.showRemoveConfirmationDialogWithCaseFiles).toHaveBeenCalledTimes(1);
+            expect(wrapper.vm.handleRemoveTeamMember).toHaveBeenCalledTimes(1);
           });
         });
       });
@@ -181,19 +166,6 @@ describe('TeamMembersTable.vue', () => {
         it('is hidden if showSearch is false', async () => {
           await wrapper.setProps({ showSearch: false });
           expect(wrapper.findDataTest('search').exists()).toBeFalsy();
-        });
-      });
-
-      describe('Delete confirmation dialog', () => {
-        test('submit is linked to removeTeamMember', async () => {
-          wrapper.vm.showRemoveMemberConfirmationDialog = true;
-          await wrapper.vm.$nextTick();
-          jest.spyOn(wrapper.vm, 'removeTeamMember').mockImplementation(() => true);
-
-          const element = wrapper.findDataTest('removeTeamMember_confirmDialog');
-          element.vm.$emit('submit');
-
-          expect(wrapper.vm.removeTeamMember).toHaveBeenCalledTimes(1);
         });
       });
     });
@@ -274,86 +246,109 @@ describe('TeamMembersTable.vue', () => {
       });
     });
 
-    describe('showRemoveConfirmationDialog', () => {
-      it('assigns removeMemberId', () => {
-        wrapper.vm.showRemoveConfirmationDialog('123');
-        expect(wrapper.vm.removeMemberId).toBe('123');
-      });
-
-      it('sets showRemoveMemberConfirmationDialog to true', () => {
-        expect(wrapper.vm.showRemoveMemberConfirmationDialog).toBeFalsy();
-        wrapper.vm.showRemoveConfirmationDialog('123');
-        expect(wrapper.vm.showRemoveMemberConfirmationDialog).toBeTruthy();
-      });
-      it('sets hasCaseFiles to false', async () => {
-        await wrapper.setData({
-          hasCaseFiles: true,
-        });
-        wrapper.vm.showRemoveConfirmationDialog('123');
-        expect(wrapper.vm.hasCaseFiles).toBeFalsy();
-      });
-    });
-    describe('showRemoveConfirmationDialogWithCaseFiles', () => {
-      it('assigns removeMemberId', () => {
-        wrapper.vm.showRemoveConfirmationDialogWithCaseFiles('123');
-        expect(wrapper.vm.removeMemberId).toBe('123');
-      });
-
-      it('sets showRemoveMemberConfirmationDialog to true', () => {
-        expect(wrapper.vm.showRemoveMemberConfirmationDialog).toBeFalsy();
-        wrapper.vm.showRemoveConfirmationDialogWithCaseFiles('123');
-        expect(wrapper.vm.showRemoveMemberConfirmationDialog).toBeTruthy();
-      });
-
-      it('sets hasCaseFiles to true', () => {
-        expect(wrapper.vm.hasCaseFiles).toBeFalsy();
-        wrapper.vm.showRemoveConfirmationDialogWithCaseFiles('123');
-        expect(wrapper.vm.hasCaseFiles).toBeTruthy();
-      });
-    });
-
-    describe('hideConfirmationDialog', () => {
-      it('remove member confirmation dialog', () => {
-        jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
-        wrapper.vm.handleRemoveTeamMember(wrapper.vm.computedTeamMembers[1]);
-        expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledWith(wrapper.vm.computedTeamMembers[1].entity.id);
-      });
-    });
-
     describe('removeTeamMember', () => {
-      it('calls removeTeamMember action with correct params', async () => {
-        await wrapper.setData({
-          removeMemberId: 'guid-member-1',
-        });
-        wrapper.vm.removeTeamMember();
+      it('calls removeTeamMember action with correct params if argument is false', async () => {
+        wrapper.vm.removeTeamMember('guid-member-1', false);
         expect(storage.team.actions.removeTeamMember).toHaveBeenCalledWith('abc', 'guid-member-1');
       });
 
-      describe('handleRemoveTeamMember', () => {
-        it('called showPrimaryContactMessage if user is a primary contact', () => {
-          jest.spyOn(wrapper.vm, 'showPrimaryContactMessage').mockImplementation(() => null);
-          wrapper.vm.handleRemoveTeamMember(wrapper.vm.computedTeamMembers[0]);
-          expect(wrapper.vm.showPrimaryContactMessage).toHaveBeenCalledTimes(1);
-        });
-
-        it('called showRemoveConfirmationDialog if open case files count is zero', () => {
-          jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
-          wrapper.vm.handleRemoveTeamMember(wrapper.vm.computedTeamMembers[1]);
-          expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledWith(wrapper.vm.computedTeamMembers[1].entity.id);
-        });
-
-        it('called showRemoveConfirmationDialogWithCaseFiles if user has case file linked', () => {
-          jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialogWithCaseFiles').mockImplementation(() => null);
-          wrapper.vm.handleRemoveTeamMember(wrapper.vm.computedTeamMembers[2]);
-          expect(wrapper.vm.showRemoveConfirmationDialogWithCaseFiles).toHaveBeenCalledWith(wrapper.vm.computedTeamMembers[2].entity.id);
-        });
+      it('calls emptyTeam action with correct params if argument is true and emits reloadTeam', async () => {
+        wrapper.vm.$emit = jest.fn();
+        await wrapper.vm.removeTeamMember(null, true);
+        expect(storage.team.actions.emptyTeam).toHaveBeenCalledWith('abc');
+        expect(wrapper.vm.$emit).toHaveBeenCalledWith('reloadTeam');
       });
     });
 
-    describe('showPrimaryContactMessage', () => {
-      it('should display a warning notification', () => {
-        wrapper.vm.showPrimaryContactMessage();
-        expect(wrapper.vm.$toasted.global.warning).toHaveBeenLastCalledWith('teams.remove_team_members_change_contact');
+    describe('canRemovePrimary', () => {
+      it('returns true if the feature flag is on, the user has level 5 and the team has only one member', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            team() {
+              return mockTeam;
+            },
+          },
+        });
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        expect(wrapper.vm.canRemovePrimary()).toEqual(true);
+      });
+
+      it('returns false if the feature flag is off', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            team() {
+              return mockTeam;
+            },
+          },
+        });
+        wrapper.vm.$hasFeature = jest.fn(() => false);
+        expect(wrapper.vm.canRemovePrimary()).toEqual(false);
+      });
+
+      it('returns false if  the user has less than level 5', async () => {
+        await mountWrapper(false, 4, {
+          computed: {
+            team() {
+              return mockTeam;
+            },
+          },
+        });
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        expect(wrapper.vm.canRemovePrimary()).toEqual(false);
+      });
+
+      it('returns false if  the team has more than one member', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            team() {
+              return { ...mockTeam, entity: { ...mockTeam.entity, teamMembers: mockTeamMembersData() } };
+            },
+          },
+        });
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        expect(wrapper.vm.canRemovePrimary()).toEqual(false);
+      });
+    });
+
+    describe('handleRemoveTeamMember', () => {
+      it('calls confirm with the right message and calls empty team if deletion is confirmed, if user is deleting the primary contact and is allowed to', async () => {
+        wrapper.vm.hasAssignedActiveCaseFiles = jest.fn(() => false);
+        wrapper.vm.canRemovePrimary = jest.fn(() => true);
+        wrapper.vm.$confirm = jest.fn(() => true);
+        const item = mockTeamMembers[0];
+        wrapper.vm.removeTeamMember = jest.fn();
+
+        await wrapper.vm.handleRemoveTeamMember(item);
+
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          messages: 'teams.remove_last_team_members_confirm',
+          title: 'teams.remove_team_members',
+        });
+        expect(wrapper.vm.removeTeamMember).toBeCalledTimes(1);
+      });
+
+      it('shows the toaster warning if user is deleting the primary contact and is not allowed to', async () => {
+        wrapper.vm.hasAssignedActiveCaseFiles = jest.fn(() => false);
+        wrapper.vm.canRemovePrimary = jest.fn(() => false);
+        const item = mockTeamMembers[0];
+        wrapper.vm.$toasted.global.warning = jest.fn();
+
+        await wrapper.vm.handleRemoveTeamMember(item);
+        expect(wrapper.vm.$toasted.global.warning).toHaveBeenCalledWith('teams.remove_team_members_change_contact');
+      });
+
+      it('shows the right confirmation message if the user deletes a nonprimary contact and calls removeTeamMember if confirmed', async () => {
+        const item = mockTeamMembers[1];
+        wrapper.vm.hasAssignedActiveCaseFiles = jest.fn(() => false);
+        wrapper.vm.$confirm = jest.fn(() => true);
+        wrapper.vm.removeTeamMember = jest.fn();
+
+        await wrapper.vm.handleRemoveTeamMember(item);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          messages: 'teams.remove_team_members_confirm',
+          title: 'teams.remove_team_members',
+        });
+        expect(wrapper.vm.removeTeamMember).toBeCalledTimes(1);
       });
     });
 

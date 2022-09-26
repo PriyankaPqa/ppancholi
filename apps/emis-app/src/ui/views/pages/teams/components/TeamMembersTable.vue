@@ -115,33 +115,6 @@
       v-if="$hasFeature(FeatureKeys.TeamImprovements) && showMemberCaseFilesDialog"
       :show.sync="showMemberCaseFilesDialog"
       :member="clickedMember" />
-
-    <rc-confirmation-dialog
-      v-if="showRemoveMemberConfirmationDialog"
-      data-test="removeTeamMember_confirmDialog"
-      :show.sync="showRemoveMemberConfirmationDialog"
-      :title="$t('teams.remove_team_members')"
-      :messages="$t('teams.remove_team_members_confirm')"
-      :loading="removeLoading"
-      @submit="removeTeamMember()"
-      @cancel="showRemoveMemberConfirmationDialog = false"
-      @close="showRemoveMemberConfirmationDialog = false" />
-
-    <rc-dialog
-      v-if="showRemoveMemberConfirmationDialog && hasCaseFiles"
-      :title="$t('teams.remove_team_members_case_files')"
-      :show-cancel="false"
-      :submit-action-label="$t('common.buttons.ok')"
-      :show="showRemoveMemberConfirmationDialog && hasCaseFiles"
-      :persistent="true"
-      :tooltip-label="$t('common.tooltip_label')"
-      :max-width="750"
-      @submit="hideConfirmationDialog()"
-      @close="showRemoveMemberConfirmationDialog = false">
-      <div class="rc-body14 pre-formatted" data-test="message__line_0">
-        <span>{{ $t('teams.remove_team_member_with_case_files_confirm') }}</span>
-      </div>
-    </rc-dialog>
   </div>
 </template>
 
@@ -149,7 +122,7 @@
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import _orderBy from 'lodash/orderBy';
-import { RcConfirmationDialog, RcPhoneDisplay, RcDialog } from '@libs/component-lib/components';
+import { RcPhoneDisplay } from '@libs/component-lib/components';
 import { ITeamCombined, ITeamMemberAsUser } from '@libs/entities-lib/team';
 import helpers from '@/ui/helpers/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
@@ -163,11 +136,9 @@ export default Vue.extend({
 
   components: {
     AddTeamMembers,
-    RcConfirmationDialog,
     RcPhoneDisplay,
     TeamMemberTeams,
     TeamMemberCaseFiles,
-    RcDialog,
   },
 
   props: {
@@ -208,8 +179,6 @@ export default Vue.extend({
       sortBy: 'metadata.displayName',
       search: '',
       showAddTeamMemberDialog: false,
-      showRemoveMemberConfirmationDialog: false,
-      hasCaseFiles: false,
       removeMemberId: '',
       searchAmong: [
         'metadata.displayName',
@@ -333,7 +302,6 @@ export default Vue.extend({
         };
       };
     },
-
   },
 
   async mounted() {
@@ -347,32 +315,17 @@ export default Vue.extend({
       this.loading = false;
     },
 
-    showRemoveConfirmationDialog(id: string) {
-      this.removeMemberId = id;
-      this.showRemoveMemberConfirmationDialog = true;
-      this.hasCaseFiles = false;
-    },
-    showRemoveConfirmationDialogWithCaseFiles(id: string) {
-      this.removeMemberId = id;
-      this.showRemoveMemberConfirmationDialog = true;
-      this.hasCaseFiles = true;
-    },
-    showPrimaryContactMessage() {
-      this.$toasted.global.warning(this.$t('teams.remove_team_members_change_contact'));
-    },
-    hideConfirmationDialog() {
-      this.showRemoveMemberConfirmationDialog = false;
-    },
-
-    async removeTeamMember() {
+    async removeTeamMember(id: string, isLastMember = false) {
       try {
         this.removeLoading = true;
-        const res = await this.$storage.team.actions.removeTeamMember(this.teamId, this.removeMemberId);
+        const res = isLastMember ? await this.$storage.team.actions.emptyTeam(this.teamId) : await this.$storage.team.actions.removeTeamMember(this.teamId, id);
+        if (isLastMember) {
+          this.$emit('reloadTeam');
+        }
         if (res) {
           this.$toasted.global.success(this.$t('teams.remove_team_members_success'));
         }
       } finally {
-        this.showRemoveMemberConfirmationDialog = false;
         this.removeLoading = false;
       }
     },
@@ -401,15 +354,33 @@ export default Vue.extend({
       this.clickedMember = member;
     },
 
-    handleRemoveTeamMember(item: ITeamMemberAsUser) {
+    canRemovePrimary():boolean {
+      return this.$hasFeature(FeatureKeys.TeamImprovements) && this.$hasLevel('level5') && this.team.entity.teamMembers.length === 1;
+    },
+
+    async handleRemoveTeamMember(item: ITeamMemberAsUser) {
       if (item.isPrimaryContact) {
-        this.showPrimaryContactMessage();
-      } else if (item.metadata.openCaseFilesCount === 0) {
-        this.showRemoveConfirmationDialog(item.entity.id);
-      } else if (item.metadata.caseFilesCount) {
-        this.showRemoveConfirmationDialogWithCaseFiles(item.entity.id);
+        if (this.canRemovePrimary()) {
+          const doDelete = await this.$confirm({
+            title: this.$t('teams.remove_team_members'),
+            messages: this.$t('teams.remove_last_team_members_confirm'),
+          });
+
+          if (doDelete) {
+            await this.removeTeamMember(null, true);
+          }
+        } else {
+          this.$toasted.global.warning(this.$t('teams.remove_team_members_change_contact'));
+        }
       } else {
-        this.showRemoveConfirmationDialog(item.entity.id);
+        const doDelete = await this.$confirm({
+          title: this.$t('teams.remove_team_members'),
+          messages: this.$t('teams.remove_team_members_confirm'),
+        });
+
+        if (doDelete) {
+          await this.removeTeamMember(item.entity.id);
+        }
       }
     },
 

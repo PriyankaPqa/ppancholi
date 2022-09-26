@@ -101,14 +101,20 @@ export class TeamEntityModule extends BaseModule <ITeamEntity, uuid> {
       context: ActionContext<ITeamEntityState, ITeamEntityState>,
       payload: { teamId: uuid, teamMemberId: uuid },
     ): Promise<ITeamEntity> => {
-      try {
-        const res = await this.service.removeTeamMember(payload.teamId, payload.teamMemberId);
-        context.commit('set', res);
-        return res;
-      } catch (e) {
-        applicationInsights.trackException(e, { payload }, 'module.teamEntity', 'removeTeamMembers');
-        return null;
-      }
+    // error will be thrown to UI on purpose
+      const res = await this.service.removeTeamMember(payload.teamId, payload.teamMemberId);
+      context.commit('set', res);
+      return res;
+    },
+
+    emptyTeam: async (
+      context: ActionContext<ITeamEntityState, ITeamEntityState>,
+      payload: { teamId: uuid },
+    ): Promise<ITeamEntity> => {
+      // error will be thrown to UI on purpose
+      const res = await this.service.emptyTeam(payload.teamId);
+      context.commit('set', res);
+      return res;
     },
   }
 }
