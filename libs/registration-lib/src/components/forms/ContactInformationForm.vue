@@ -289,6 +289,9 @@ export default Vue.extend({
     formCopy: {
       deep: true,
       handler(form: IContactInformation) {
+        if (form.email) {
+          form.email = form.email.trim();
+        }
         this.$emit('change', form);
       },
     },
@@ -387,12 +390,15 @@ export default Vue.extend({
     },
 
     async validateEmail(formEmail?: string, recaptchaToken?: string, onSubmit?: boolean) {
-      const email = formEmail || this.formCopy.email;
+      let email = formEmail || this.formCopy.email;
+
       if (!email) {
         this.resetEmailValidation();
+        return;
       }
 
-      if (email && (email !== this.previousEmail || onSubmit)) {
+      email = email.trim();
+      if (email !== this.previousEmail || onSubmit) {
         this.previousEmail = email;
         this.emailChecking = true;
         let result = null;

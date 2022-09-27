@@ -64,7 +64,6 @@ import helpers from '@/ui/helpers/helpers';
 import ErrorReportToast from '@/ui/shared-components/ErrorReportToast.vue';
 
 export default {
-
   name: 'App',
 
   components: {
