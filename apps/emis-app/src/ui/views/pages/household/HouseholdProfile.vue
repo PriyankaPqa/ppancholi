@@ -118,6 +118,7 @@
                 :disabled="disabledAddMembers"
                 color="primary"
                 small
+                data-test="household_profile_add_new_member"
                 @click.native="addAdditionalMember()">
                 <v-icon left>
                   mdi-plus
