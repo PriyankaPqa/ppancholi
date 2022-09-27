@@ -48,8 +48,8 @@
         </div>
 
         <div
-          :data-test="`${$attrs['data-test']}__item--${getItemDataTest(item)}`"
-          :data-test-index="`${$attrs['data-test']}__itemIndex--${getItemIndex(item)}`">
+          :class="`${$attrs['data-test']}__item`"
+          :data-test="`${$attrs['data-test']}__item--${getItemDataTest(item)}`">
           {{ getItemText(item) }}
         </div>
       </template>
