@@ -60,7 +60,7 @@
     "test:parallel": "node ./tools/scripts/parallelize-test.js",
     "emis-app:build": "yarn --cwd apps/emis-app build",
     "emis-app:serve": "yarn --cwd apps/emis-app serve",
-    "emis-app:serve:lab": "cross-env VUE_APP_API_BASE_URL=https://api-lab.crc-tech.ca VUE_APP_AUTH_AAD_API_PERMISSIONS='https://crctechmain.onmicrosoft.com/emis-lab/api/api_access' VUE_APP_SIGNALR_CONNECTION_HUB_URI='https://api-lab.crc-tech.ca/hub' yarn emis-app:serve",
+    "emis-app:serve:lab": "cross-env VUE_APP_API_BASE_URL=https://api-lab.crc-tech.ca VUE_APP_AUTH_AAD_API_PERMISSIONS='https://crctechmain.onmicrosoft.com/emis-lab/api/api_access' VUE_APP_SIGNALR_CONNECTION_HUB_URI='https://api-lab.crc-tech.ca/hub' VUE_APP_AUTH_AAD_CLIENTID='89df9274-b34c-441d-b9bd-dc9a8064a960' VUE_APP_AUTH_AAD_OBJECTID='0ab8a20a-a00f-4c9f-817a-f17022eb107b' yarn emis-app:serve",
     "emis-app:lint": "yarn --cwd apps/emis-app lint",
     "emis-app:test": "yarn jest --projects apps/emis-app --runInBand --logHeapUsage",
     "emis-app:i18n-report": "node tools/scripts/i18n-report.js 'apps/emis-app/src/ui/lang/emis/en.json','apps/emis-app/src/ui/lang/registration/en.json' 'apps/emis-app/src'",

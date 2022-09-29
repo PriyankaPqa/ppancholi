@@ -9,7 +9,6 @@ import { localStorageKeys } from '@/constants/localStorage';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
 
 export default {
-
   name: 'App',
 
   async created() {

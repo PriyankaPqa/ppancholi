@@ -88,7 +88,7 @@ export default Vue.extend({
 
   methods: {
     setRequestPredictionTypes() {
-      if (this.autocomplete) {
+      if (this.autocomplete && typeof this.autocomplete.setTypes === 'function') {
         if (this.predictionTypes && this.predictionTypes.length) {
           // The types of predictions to be returned.
           // See https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions.types
@@ -100,7 +100,7 @@ export default Vue.extend({
       }
     },
     setRequestCountryRestriction() {
-      if (this.autocomplete) {
+      if (this.autocomplete && typeof this.autocomplete.setComponentRestrictions === 'function') {
         if (this.predictionCountriesRestriction) {
           // Restrict predictions to only those within the parent component. For example, the country.
           // See https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions.componentRestrictions
@@ -126,7 +126,7 @@ export default Vue.extend({
           fields.push('name');
         }
 
-        if (this.autocomplete.setFields) {
+        if (this.autocomplete.setFields && typeof this.autocomplete.setFields === 'function') {
           this.autocomplete.setFields(fields);
         }
       }
@@ -145,33 +145,37 @@ export default Vue.extend({
         );
       }
 
-      // Autocomplete options, see https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions
-      // const autocompleteOptions = {};
+      if (this.autocomplete) {
+        // Autocomplete options, see https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions
+        // const autocompleteOptions = {};
 
-      // Set prediction types
-      this.setRequestPredictionTypes();
+        // Set prediction types
+        this.setRequestPredictionTypes();
 
-      this.setRequestCountryRestriction();
+        this.setRequestCountryRestriction();
 
-      // we try to use the current user's position to order results
-      try {
+        // we try to use the current user's position to order results
+        try {
         // eslint-disable-next-line no-undef
-        this.geolocate(google);
-      // eslint-disable-next-line no-empty
-      } catch { }
+          this.geolocate(google);
+          // eslint-disable-next-line no-empty
+        } catch { }
 
-      if (this.strictBounds) {
+        if (this.strictBounds && typeof this.autocomplete.setOptions === 'function') {
         // indicating that the Autocomplete widget should only return those places that are inside the bounds of the Autocomplete widget at the time the query is sent
         // See https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions.strictBounds
-        this.autocomplete.setOptions({ strictBounds: true });
+          this.autocomplete.setOptions({ strictBounds: true });
+        }
+
+        // Set fields
+        this.setResponseFields();
+
+        if (typeof this.autocomplete.addListener === 'function') {
+          // When the user selects an address from the drop-down, populate the
+          // address fields in the form.
+          this.autocomplete.addListener('place_changed', this.onPlaceChanged);
+        }
       }
-
-      // Set fields
-      this.setResponseFields();
-
-      // When the user selects an address from the drop-down, populate the
-      // address fields in the form.
-      this.autocomplete.addListener('place_changed', this.onPlaceChanged);
     },
     onPlaceChanged() {
       // Get the place details from the autocomplete object.
@@ -278,7 +282,7 @@ export default Vue.extend({
     geolocate(google) {
       // Bias the autocomplete object to the user's geographical location,
       // as supplied by the browser's 'navigator.geolocation' object.
-      if (navigator.geolocation) {
+      if (navigator.geolocation && typeof this.autocomplete.setBounds === 'function') {
         navigator.geolocation.getCurrentPosition((position) => {
           const geolocation = {
             lat: position.coords.latitude,
