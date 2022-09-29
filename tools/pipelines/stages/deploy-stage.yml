@@ -279,7 +279,7 @@ stages:
                     inlineScript: |
                       az cdn endpoint purge -n "${{ parameters.cdnEndpoint }}-$(environment)" -g "$(ResourceGroup)" --profile-name "${{ parameters.cdnProfile }}-$(environment)" --content-paths "/*" --no-wait
 
-- stage: 'Deploy_to_mmmm'
+  - stage: 'Deploy_to_mmmm'
     displayName: 'Deploy to mmmm'
     dependsOn: 'Post_Build_Stage'
     condition: succeeded()
