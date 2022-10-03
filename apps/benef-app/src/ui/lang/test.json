@@ -1,6 +1,8 @@
 {
     "aria.header.language_select": "aria.header.language_select",
     "aria.label.menu": "aria.label.menu",
+    "assessment.messageUnavailable": "",
+    "assessment.surveyAlreadyCompleted": "",
     "common.add": "common.add",
     "common.button.back": "common.button.back",
     "common.button.next": "common.button.next",
@@ -484,6 +486,7 @@
     "errors.validation-of-impact-status-is-invalid": "errors.validation-of-impact-status-is-invalid",
     "event.beneficiaries.registration_number": "event.beneficiaries.registration_number",
     "event.registration_link": "event.registration_link",
+    "events.selector.placeholder": "",
     "metaInfo.app.short": "metaInfo.app.short",
     "metaInfo.app.title": "metaInfo.app.title",
     "metaInfo.crc_registration.description": "metaInfo.crc_registration.description",

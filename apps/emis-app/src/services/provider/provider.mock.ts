@@ -19,6 +19,8 @@ import { mockErrorReportingService } from '@libs/services-lib/error-reporting';
 import { mockCaseFilesMetadataService } from '@libs/services-lib/case-files/metadata';
 import { mockApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
 import { mockApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalsTables.mock';
+import { mockAssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
+import { mockAssessmentFormsService } from '@libs/services-lib/assessment-form/entity';
 import { IProviderMock } from './provider.types';
 
 export const mockProvider = (): IProviderMock => ({
@@ -43,4 +45,6 @@ export const mockProvider = (): IProviderMock => ({
   massActions: mockMassActionService(),
   tenantSettings: mockTenantSettingsService(),
   errorReporting: mockErrorReportingService(),
+  assessmentResponses: mockAssessmentResponsesService(),
+  assessmentForms: mockAssessmentFormsService(),
 });

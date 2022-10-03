@@ -62,6 +62,14 @@ describe('AssessmentBuilder', () => {
     });
   });
 
+  describe('Computed', () => {
+    describe('metaTitle', () => {
+      it('returns the correct value', () => {
+        expect(wrapper.vm.metaTitle).toBe('metaInfo.assessment_builder.title');
+      });
+    });
+  });
+
   describe('methods', () => {
     describe('saveSurveyJson', () => {
       it('sets rawJson and questions properties', async () => {

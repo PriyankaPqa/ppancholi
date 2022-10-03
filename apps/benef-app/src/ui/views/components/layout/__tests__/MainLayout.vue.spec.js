@@ -1,6 +1,7 @@
 import { mockEvent } from '@libs/entities-lib/src/registration-event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
+import helpers from '@/ui/helpers';
 import Component from '../MainLayout.vue';
 
 const storage = mockStorage();
@@ -41,7 +42,7 @@ describe('MainLayout.vue', () => {
         it('gets the tenant from the current url', async () => {
           wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' }, query: {} };
           await wrapper.vm.verifyLocation();
-          expect(wrapper.vm.$services.publicApi.getTenantByRegistrationDomain).toHaveBeenCalledWith(wrapper.vm.getCurrentDomain());
+          expect(wrapper.vm.$services.publicApi.getTenantByRegistrationDomain).toHaveBeenCalledWith(helpers.getCurrentDomain(wrapper.vm.$route));
         });
 
         it('gets the event from storage', async () => {
@@ -105,44 +106,6 @@ describe('MainLayout.vue', () => {
           await wrapper.vm.fetchData();
 
           expect(wrapper.vm.$appInsights.trackException).toHaveBeenCalledWith(testError, {}, 'MainLayout', 'fetchData');
-        });
-      });
-
-      describe('getCurrentDomain', () => {
-        it('should return dev tenant if localhost', () => {
-          global.window = Object.create(window);
-          wrapper.vm.$route.query = undefined;
-          Object.defineProperty(window, 'location', {
-            value: {
-              href: 'http://localhost:8080/en/registration/bc-fire-event/',
-              hostname: 'localhost',
-            },
-          });
-          expect(wrapper.vm.getCurrentDomain()).toBe('beneficiary-dev.crc-tech.ca');
-        });
-
-        it('should dev tenant if beneficiary feature branch', () => {
-          global.window = Object.create(window);
-          wrapper.vm.$route.query = undefined;
-          Object.defineProperty(window, 'location', {
-            value: {
-              href: 'http://beneficiary-1234.crc-tech.ca/en/registration/bc-fire-event/',
-              hostname: 'beneficiary-1234.crc-tech.ca',
-            },
-          });
-          expect(wrapper.vm.getCurrentDomain()).toBe('beneficiary-dev.crc-tech.ca');
-        });
-
-        it('should return the tenant if specified in a query params', () => {
-          wrapper.vm.$route.query['force-tenant'] = 'forceTenant';
-          global.window = Object.create(window);
-          Object.defineProperty(window, 'location', {
-            value: {
-              href: 'http://beneficiary-1234.crc-tech.ca/en/registration/bc-fire-event/?force-tenant=forceTenant',
-              hostname: 'beneficiary-1234',
-            },
-          });
-          expect(wrapper.vm.getCurrentDomain()).toBe('forceTenant');
         });
       });
     });

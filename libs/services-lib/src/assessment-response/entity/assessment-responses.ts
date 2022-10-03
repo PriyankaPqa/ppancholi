@@ -14,6 +14,10 @@ export class AssessmentResponsesService extends DomainBaseService<IAssessmentRes
     super(http, API_URL_SUFFIX, ENTITY);
   }
 
+  async getForBeneficiary(id: string): Promise<IAssessmentResponseEntity> {
+    return this.http.get<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/public`, { id }));
+  }
+
   async create(item: IAssessmentResponseCreateRequest): Promise<IAssessmentResponseEntity> {
     return this.http.post<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}`, item), item);
   }
@@ -24,6 +28,14 @@ export class AssessmentResponsesService extends DomainBaseService<IAssessmentRes
 
   async saveAssessmentAnsweredQuestions(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> {
     return this.http.patch<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/saveAssessmentAnsweredQuestions`, item), item);
+  }
+
+  async completeSurvey(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> {
+    return this.http.patch<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/submit`, item));
+  }
+
+  async completeSurveyByBeneficiary(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> {
+    return this.http.patch<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/submit/public`, item));
   }
 
   async search(params: IAzureSearchParams, searchEndpoint: string = null):

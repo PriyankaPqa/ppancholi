@@ -6,6 +6,7 @@ const MainLayout = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/
 const LandingPage = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/registration/landing-page/LandingPage.vue');
 const Individual = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/registration/individual/Individual.vue');
 const ConfirmationPrint = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/confirmation/ConfirmationPrint.vue');
+const AssessmentRunner = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/assessment/AssessmentRunner.vue');
 
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 
@@ -45,6 +46,12 @@ export const routes: Array<RouteConfig> = [
             component: Individual,
           },
         ],
+      },
+      {
+        path: Routes.assessmentRunner.path,
+        name: Routes.assessmentRunner.name,
+        component: AssessmentRunner,
+        props: true,
       },
       {
         path: '*',

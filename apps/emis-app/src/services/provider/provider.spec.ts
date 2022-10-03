@@ -18,6 +18,9 @@ import { EventsMetadataService } from '@libs/services-lib/events/metadata';
 import { FinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
 import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
 import { ApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalTables';
+import { AssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
+import { AssessmentFormsService } from '@libs/services-lib/assessment-form/entity';
+
 import { provider } from './index';
 
 jest.mock('@libs/services-lib/user-accounts/entity');
@@ -42,6 +45,8 @@ jest.mock('@libs/services-lib/financial-assistance-payments/metadata');
 
 jest.mock('@libs/services-lib/approval-tables/entity');
 jest.mock('@libs/services-lib/approval-tables/metadata/approvalTables');
+jest.mock('@libs/services-lib/assessment-response/entity');
+jest.mock('@libs/services-lib/assessment-form/entity');
 
 describe('Provider', () => {
   it('should instantiate AppUsersService', () => {
@@ -147,5 +152,15 @@ describe('Provider', () => {
   it('should instantiate ApprovalMetadataService', () => {
     provider();
     expect(ApprovalTablesMetadataService.prototype.constructor).toBeCalled();
+  });
+
+  it('should instantiate AssessmentFormsService', () => {
+    provider();
+    expect(AssessmentFormsService.prototype.constructor).toBeCalled();
+  });
+
+  it('should instantiate AssessmentResponsesService', () => {
+    provider();
+    expect(AssessmentResponsesService.prototype.constructor).toBeCalled();
   });
 });

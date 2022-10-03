@@ -1,4 +1,5 @@
 import helpers from '@libs/entities-lib/helpers';
+import { Route } from 'vue-router';
 
 import { i18n } from './plugins/i18n';
 
@@ -35,5 +36,21 @@ export default {
       `directories=no, titlebar=no, toolbar=no, location=no, status=no,
       menubar=no, scrollbars=yes, resizable=yes ,width=${popupWidth}, height=1040, top=0, left=${leftPos}`,
     );
+  },
+
+  getCurrentDomain($route: Route) : string {
+    // Used for test automation in feature branch
+    if ($route.query) {
+      const forceTenant = $route.query['force-tenant'] as string;
+      if (forceTenant) {
+        return forceTenant;
+      }
+    }
+
+    let d = window.location.hostname;
+    if (d.startsWith('localhost') || (/beneficiary-\d+\.crc-tech\.ca/i).test(d)) {
+      d = 'beneficiary-dev.crc-tech.ca';
+    }
+    return d;
   },
 };

@@ -11,6 +11,9 @@ module.exports = {
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@libs/shared-lib/(.*)$': '<rootDir>/src/$1',
+    '^@libs/entities-lib//src/(.*)$': '<rootDir>/../../libs/entities-lib/src/$1', // in javascript file there is path like there is for TS so we need that
+    '^@libs/entities-lib/(.*)$': '<rootDir>/../../libs/entities-lib/src/$1',
   },
   displayName: packageJson.name,
 };

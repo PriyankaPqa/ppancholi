@@ -35,7 +35,10 @@
     "vue-router": "3.5.3",
     "vue-toasted": "1.1.28",
     "vuetify": "2.6.10",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "survey-core": "^1.9.45",
+    "survey-creator-core": "^1.9.45",
+    "survey-creator-knockout": "^1.9.45"
   },
   "devDependencies": {
     "@babel/core": "7.17.5",
@@ -53,6 +56,7 @@
     "cache-loader": "^4.1.0",
     "css-loader": "^4.3.0",
     "dotenv": "16.0.1",
+    "flush-promises": "^1.0.2",
     "sass": "1.32.13",
     "sass-loader": "^10.0.2",
     "vue-axe": "^2.4.3",

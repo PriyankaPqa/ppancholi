@@ -9,10 +9,12 @@ import { SurveyCreator } from 'survey-creator-knockout';
 import 'survey-core/defaultV2.min.css';
 import 'survey-creator-core/survey-creator-core.min.css';
 import mixins from 'vue-typed-mixins';
-import { SurveyJsHelper } from './SurveyJsHelper';
+// import { SurveyJsHelper } from './SurveyJsHelper';
+import { SurveyJsHelper } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
+import metadata from '@/ui/mixins/metadata';
 import assessmentDetail from './assessmentDetail';
 
-export default mixins(assessmentDetail).extend({
+export default mixins(assessmentDetail, metadata).extend({
   name: 'AssessmentBuilder',
 
   props: {
@@ -28,6 +30,12 @@ export default mixins(assessmentDetail).extend({
       creator: null as SurveyCreator,
       surveyJsHelper: new SurveyJsHelper(),
     };
+  },
+
+  computed: {
+    metaTitle(): string {
+      return this.$t('metaInfo.assessment_builder.title') as string;
+    },
   },
 
   async mounted() {
@@ -75,5 +83,18 @@ export default mixins(assessmentDetail).extend({
 <style scoped>
 #surveyCreator {
   height: 99vh;
+}
+
+::v-deep .svd-simulator-main {
+  display: flex;
+  justify-content: center;
+}
+
+::v-deep .svc-creator__content-holder {
+  background-color: white;
+}
+
+::v-deep .svd-simulator-content {
+  max-width: 1500px;
 }
 </style>

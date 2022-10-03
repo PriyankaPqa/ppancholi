@@ -3,7 +3,7 @@ import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib
 import { IRestResponse } from '../http-client';
 
 export interface IDomainBaseService<T extends IEntity, IdParams> {
-  get(idParams: IdParams, useGlobalHandler?: boolean): Promise<T | IRestResponse<T>>;
+  get(idParams: IdParams, useGlobalHandler?: boolean): Promise<T>;
   getFullResponse(idParams: IdParams, useGlobalHandler?: boolean): Promise<IRestResponse<T>>;
   getAll(parentId?: Omit<IdParams, 'id'>): Promise<T[]>;
   getAllIncludingInactive(parentId?: Omit<IdParams, 'id'>): Promise<T[]>;

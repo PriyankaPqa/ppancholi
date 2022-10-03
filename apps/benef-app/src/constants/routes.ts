@@ -11,6 +11,10 @@ const routes = {
     path: 'individual',
     name: 'individual.name',
   },
+  assessmentRunner: {
+    path: 'assessment/:eventId/:assessmentTemplateId/:assessmentResponseId',
+    name: 'assessmentRunner',
+  },
 };
 
 export default routes;

@@ -1,4 +1,5 @@
 import { IMultilingual } from '@libs/shared-lib/types';
+import _cloneDeep from 'lodash/cloneDeep';
 import utils from '../utils';
 import { BaseEntity, Status } from '../base';
 import {
@@ -36,7 +37,7 @@ export class AssessmentBaseEntity extends BaseEntity implements IAssessmentBaseE
     this.messageIfUnavailable = utils.initMultilingualAttributes(data?.messageIfUnavailable);
     this.publishStatus = data?.publishStatus || PublishStatus.Unpublished;
     this.assessmentFormType = data?.assessmentFormType;
-    this.externalToolState = data?.externalToolState || new SurveyJsAssessmentFormState(null);
+    this.externalToolState = data?.externalToolState ? _cloneDeep(data?.externalToolState) : new SurveyJsAssessmentFormState(null);
     this.questions = data?.questions || [];
   }
 

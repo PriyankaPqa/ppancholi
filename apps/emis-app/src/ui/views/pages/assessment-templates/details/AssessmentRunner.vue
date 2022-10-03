@@ -1,5 +1,7 @@
 <template>
-  <div class="pa-4" style="max-width: 1000px">
+  <div class="pa-4">
+    <!-- eslint-disable -->
+    <div v-if="errorMessage" class="error-message" v-html="errorMessage"></div>
     <div id="surveyContainer" />
   </div>
 </template>
@@ -10,11 +12,17 @@
 import 'survey-core/defaultV2.min.css';
 
 import mixins from 'vue-typed-mixins';
+import _debounce from 'lodash/debounce';
 import { SurveyModel } from 'survey-core';
 import { IAssessmentResponseEntity } from '@libs/entities-lib/assessment-template';
 import { cloneDeep } from 'lodash';
-import { SurveyJsHelper } from './SurveyJsHelper';
+import { SurveyJsHelper } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
 import assessmentDetail from './assessmentDetail';
+
+const DEBOUNCE_RATE = 500;
+const debouncedSave = _debounce((context) => {
+  context._this.saveAnswers(context.sender);
+}, DEBOUNCE_RATE);
 
 export default mixins(assessmentDetail).extend({
   name: 'AssessmentRunner',
@@ -30,6 +38,7 @@ export default mixins(assessmentDetail).extend({
       survey: null as SurveyModel,
       surveyJsHelper: new SurveyJsHelper(),
       response: null as IAssessmentResponseEntity,
+      errorMessage: null as string,
     };
   },
 
@@ -39,13 +48,22 @@ export default mixins(assessmentDetail).extend({
         { useEntityGlobalHandler: true, useMetadataGlobalHandler: false }))?.entity);
     }
     await this.loadDetails();
-    this.survey = this.surveyJsHelper.initializeSurveyJsRunner(this.$i18n.locale, this.assessmentTemplate.externalToolState?.data?.rawJson);
-    this.survey.render('surveyContainer');
+    this.errorMessage = this.surveyJsHelper.getSurveyCanBeCompletedErrorMessage(this.assessmentTemplate, this.response, this, this.$m);
+    if (!this.errorMessage) {
+      this.survey = this.surveyJsHelper.initializeSurveyJsRunner(this.$i18n.locale, this.assessmentTemplate.externalToolState?.data?.rawJson);
+      this.survey.render('surveyContainer');
 
-    if (this.response?.externalToolState?.data?.rawJson) {
-      this.survey.data = JSON.parse(this.response.externalToolState.data.rawJson);
+      if (this.response?.externalToolState?.data?.rawJson) {
+        this.survey.data = JSON.parse(this.response.externalToolState.data.rawJson);
+        if (this.survey.data._currentPageNo) {
+          this.survey.currentPageNo = this.survey.data._currentPageNo;
+        }
+      }
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      const _this = this;
+      this.survey.onValueChanged.add((sender: SurveyModel) => debouncedSave({ _this, sender }));
+      this.survey.onComplete.add(this.completeSurvey);
     }
-    this.survey.onValueChanged.add(this.saveAnswers);
   },
 
   methods: {
@@ -55,6 +73,23 @@ export default mixins(assessmentDetail).extend({
         this.response = await this.$storage.assessmentResponse.actions.saveAssessmentAnsweredQuestions(this.response);
       }
     },
+
+    async completeSurvey(sender: SurveyModel) {
+      debouncedSave.cancel();
+      await this.saveAnswers(sender);
+      await this.$services.assessmentResponses.completeSurvey(this.response);
+    },
   },
 });
 </script>
+
+<style scoped>
+#surveyContainer {
+  display: flex;
+  justify-content: center;
+}
+
+#surveyContainer :first-child {
+  max-width: 1500px;
+}
+</style>

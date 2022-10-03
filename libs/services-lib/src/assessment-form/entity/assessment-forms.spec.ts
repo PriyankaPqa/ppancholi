@@ -13,6 +13,14 @@ describe('>>> AssessmentForms Service', () => {
     service = new AssessmentFormsService(http as never);
   });
 
+  describe('getForBeneficiary', () => {
+    it('should call the proper endpoint', async () => {
+      const entity = mockAssessmentFormEntity();
+      await service.getForBeneficiary(entity.id);
+      expect(http.get).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}/public`);
+    });
+  });
+
   describe('search', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
       const params = { filter: { Foo: 'foo' } };

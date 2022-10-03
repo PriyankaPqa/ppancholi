@@ -18,6 +18,7 @@ import { EEventStatus, IEvent } from '@libs/entities-lib/registration-event';
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import { i18n } from '@/ui/plugins';
 import { httpClient } from '@/services/httpClient';
+import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -45,7 +46,7 @@ export default Vue.extend({
     async verifyLocation() : Promise<boolean> {
       const { lang, registrationLink } = this.$route.params;
 
-      const currentdomain = this.getCurrentDomain();
+      const currentdomain = helpers.getCurrentDomain(this.$route);
 
       const tenantId = await this.$services.publicApi.getTenantByRegistrationDomain(currentdomain);
 
@@ -63,22 +64,6 @@ export default Vue.extend({
 
       httpClient.setHeadersTenant(event.tenantId);
       return true;
-    },
-
-    getCurrentDomain() : string {
-      // Used for test automation in feature branch
-      if (this.$route.query) {
-        const forceTenant = this.$route.query['force-tenant'] as string;
-        if (forceTenant) {
-          return forceTenant;
-        }
-      }
-
-      let d = window.location.hostname;
-      if (d.startsWith('localhost') || (/beneficiary-\d+\.crc-tech\.ca/i).test(d)) {
-        d = 'beneficiary-dev.crc-tech.ca';
-      }
-      return d;
     },
 
     async fetchData() {

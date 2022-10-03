@@ -1,9 +1,11 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
+import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';
 import Component from './AssessmentRunner.vue';
 
 let storage = mockStorage();
+let services = mockProvider();
 const localVue = createLocalVue();
 
 describe('AssessmentRunner', () => {
@@ -19,7 +21,7 @@ describe('AssessmentRunner', () => {
         assessmentTemplateId: 'mock-assessmentTemplate-id',
         assessmentResponseId,
       },
-      mocks: { $storage: storage },
+      mocks: { $storage: storage, $services: services },
     });
 
     await flushPromises();
@@ -27,6 +29,7 @@ describe('AssessmentRunner', () => {
 
   beforeEach(async () => {
     storage = mockStorage();
+    services = mockProvider();
     await mount();
   });
 
@@ -67,6 +70,15 @@ describe('AssessmentRunner', () => {
         await wrapper.vm.saveAnswers(null);
         expect(storage.assessmentResponse.actions.saveAssessmentAnsweredQuestions).not.toHaveBeenCalled();
         expect(wrapper.vm.response).toEqual('some object');
+      });
+    });
+
+    describe('completeSurvey', () => {
+      it('calls save answers and completeSurvey', async () => {
+        wrapper.vm.saveAnswers = jest.fn(() => 'some object');
+        await wrapper.vm.completeSurvey(null);
+        expect(wrapper.vm.saveAnswers).toHaveBeenCalled();
+        expect(services.assessmentResponses.completeSurvey).toHaveBeenCalled();
       });
     });
   });

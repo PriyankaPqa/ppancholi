@@ -28,6 +28,8 @@ import { ITenantSettingsService, ITenantSettingsServiceMock } from '@libs/servic
 import { IErrorReportingService, IErrorReportingServiceMock } from '@libs/services-lib/error-reporting';
 import { IApprovalTablesService, IApprovalTablesServiceMock } from '@libs/services-lib/approval-tables/entity';
 import { IApprovalTablesMetadataService, IApprovalTablesMetadataServiceMock } from '@libs/services-lib/approval-tables/metadata/approvals.types';
+import { IAssessmentResponsesService, IAssessmentResponsesServiceMock } from '@libs/services-lib/assessment-response/entity';
+import { IAssessmentFormsService, IAssessmentFormsServiceMock } from '@libs/services-lib/assessment-form/entity';
 
 export interface IProvider {
   approvalTables: IApprovalTablesService,
@@ -57,6 +59,8 @@ export interface IProvider {
   massActions: IMassActionService;
   tenantSettings: ITenantSettingsService;
   errorReporting: IErrorReportingService;
+  assessmentForms: IAssessmentFormsService;
+  assessmentResponses: IAssessmentResponsesService;
 }
 
 export interface IProviderMock {
@@ -81,4 +85,6 @@ export interface IProviderMock {
   massActions: IMassActionServiceMock,
   tenantSettings: ITenantSettingsServiceMock;
   errorReporting: IErrorReportingServiceMock;
+  assessmentForms: IAssessmentFormsServiceMock;
+  assessmentResponses: IAssessmentResponsesServiceMock;
 }

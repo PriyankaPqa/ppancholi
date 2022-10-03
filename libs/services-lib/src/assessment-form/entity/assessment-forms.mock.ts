@@ -4,6 +4,7 @@ import { IAssessmentFormsServiceMock } from './assessment-forms.types';
 
 export const mockAssessmentFormsService = (): IAssessmentFormsServiceMock => ({
   ...mockDomainBaseService(mockAssessmentFormEntities()),
+  getForBeneficiary: jest.fn(() => mockAssessmentFormEntity()),
   create: jest.fn(() => mockAssessmentFormEntity()),
   update: jest.fn(() => mockAssessmentFormEntity()),
   updateAssessmentStructure: jest.fn(() => mockAssessmentFormEntity()),

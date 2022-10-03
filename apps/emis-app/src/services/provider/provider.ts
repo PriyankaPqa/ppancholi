@@ -27,6 +27,8 @@ import { MassActionService } from '@libs/services-lib/mass-actions/entity';
 
 import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
 import { ApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalTables';
+import { AssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
+import { AssessmentFormsService } from '@libs/services-lib/assessment-form/entity';
 import { IProvider } from './provider.types';
 
 export const provider = (): IProvider => ({
@@ -57,4 +59,6 @@ export const provider = (): IProvider => ({
   massActions: new MassActionService(httpClient),
   tenantSettings: new TenantSettingsService(httpClient),
   errorReporting: new ErrorReportingService(httpClient),
+  assessmentForms: new AssessmentFormsService(httpClient),
+  assessmentResponses: new AssessmentResponsesService(httpClient),
 });

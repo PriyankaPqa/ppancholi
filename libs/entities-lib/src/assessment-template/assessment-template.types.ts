@@ -40,6 +40,11 @@ export enum AssociationType {
   CaseFile = 1
 }
 
+export enum CompletedByType {
+  Crc = 1,
+  Public = 2
+}
+
 export interface IExternalToolState {
   tool: string;
   data: { [key: string]: string; };
@@ -136,6 +141,11 @@ export interface IAssessmentResponseEntity extends IEntity {
   dateAssigned: Date;
   dateStarted?: Date;
   dateCompleted?: Date;
+  completedBy?: {
+    type: CompletedByType,
+    crcUserId: string,
+    crcUserName: string,
+  };
 }
 
 export interface IAssessmentResponseMetadata extends IEntity {

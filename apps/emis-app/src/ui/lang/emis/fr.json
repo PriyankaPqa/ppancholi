@@ -1666,6 +1666,7 @@
     "metaInfo.crc_registration.description": "Description pour crc_inscription",
     "metaInfo.crc_registration.title": "Inscription CRC",
     "metaInfo.dashboard_caseFile.description": "Description du dossier",
+    "metaInfo.assessment_builder.title": "Éditeur d'analyse",
     "metaInfo.dashboard_caseFile.title": "Dossier",
     "metaInfo.dashboard_event.description": "Description de l'événement",
     "metaInfo.dashboard_event.title": "Événements",

@@ -1,11 +1,15 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
+import {
+  CompletionStatus, IAnsweredQuestion, mockAssessmentFormEntity, mockAssessmentResponseEntity,
+} from '@libs/entities-lib/assessment-template';
+import { Status } from '@libs/entities-lib/base';
 import {
   JsonObject,
 } from 'survey-core';
 import { SurveyCreator } from 'survey-creator-knockout';
+import Vue from 'vue';
 import { SurveyJsHelper } from './SurveyJsHelper';
 
 let helper = new SurveyJsHelper();
@@ -671,6 +675,28 @@ describe('SurveyJsHelper', () => {
       helper.registerCustomSurveyJsFunctions = jest.fn();
       helper.initializeSurveyJsRunner('en', complexJson);
       expect(helper.registerCustomSurveyJsFunctions).toHaveBeenCalled();
+    });
+  });
+
+  describe('getSurveyCanBeCompletedErrorMessage', () => {
+    const mockAssessment = mockAssessmentFormEntity();
+    const mockResponse = mockAssessmentResponseEntity();
+    const $m = jest.fn(() => 'lang');
+    it('returns no error normally', () => {
+      mockResponse.status = Status.Active;
+      mockAssessment.status = Status.Active;
+      expect(helper.getSurveyCanBeCompletedErrorMessage(mockAssessment, mockResponse, new Vue(), $m)).toBeNull();
+    });
+    it('returns false and sets error when response or assessment is not active', () => {
+      mockResponse.status = Status.Inactive;
+      expect(helper.getSurveyCanBeCompletedErrorMessage(mockAssessment, mockResponse, new Vue(), $m)).not.toBeNull();
+      mockResponse.status = Status.Active;
+      mockAssessment.status = Status.Inactive;
+      expect(helper.getSurveyCanBeCompletedErrorMessage(mockAssessment, mockResponse, new Vue(), $m)).not.toBeNull();
+    });
+    it('returns false when survey was already completed', () => {
+      mockResponse.completionStatus = CompletionStatus.Completed;
+      expect(helper.getSurveyCanBeCompletedErrorMessage(mockAssessment, mockResponse, new Vue(), $m)).not.toBeNull();
     });
   });
 

@@ -27,6 +27,9 @@
       ],
       "@libs/entities-lib/*": [
         "../../libs/entities-lib/src/*"
+      ],
+      "@libs/shared-lib/*": [
+        "src/*"
       ]
     },
     "lib": [

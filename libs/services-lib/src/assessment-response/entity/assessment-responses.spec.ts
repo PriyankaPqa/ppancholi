@@ -28,6 +28,14 @@ describe('>>> AssessmentResponses Service', () => {
     });
   });
 
+  describe('getForBeneficiary', () => {
+    it('should call the proper endpoint', async () => {
+      const entity = mockAssessmentResponseEntity();
+      await service.getForBeneficiary(entity.id);
+      expect(http.get).toHaveBeenCalledWith(`www.test.com/assessment/assessment-responses/${entity.id}/public`);
+    });
+  });
+
   describe('create', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentResponseEntity();
@@ -49,6 +57,22 @@ describe('>>> AssessmentResponses Service', () => {
       const entity = mockAssessmentResponseEntity();
       await service.saveAssessmentAnsweredQuestions(entity);
       expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-responses/${entity.id}/saveAssessmentAnsweredQuestions`, entity);
+    });
+  });
+
+  describe('completeSurvey', () => {
+    it('should call the proper endpoint', async () => {
+      const entity = mockAssessmentResponseEntity();
+      await service.completeSurvey(entity);
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-responses/${entity.id}/submit`);
+    });
+  });
+
+  describe('completeSurveyByBeneficiary', () => {
+    it('should call the proper endpoint', async () => {
+      const entity = mockAssessmentResponseEntity();
+      await service.completeSurveyByBeneficiary(entity);
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-responses/${entity.id}/submit/public`);
     });
   });
 });

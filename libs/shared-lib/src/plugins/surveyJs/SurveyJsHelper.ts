@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-console */
 import {
   FunctionFactory, JsonObject, Question, QuestionSelectBase, StylesManager, SurveyModel,
 } from 'survey-core';
-import helpers from '@/ui/helpers/helpers';
 import {
   CompletionStatus,
   IAnsweredQuestion,
-  IAssessmentAnswerChoice, IAssessmentQuestion, IAssessmentResponseEntity, SurveyJsAssessmentResponseState,
+  IAssessmentAnswerChoice, IAssessmentBaseEntity, IAssessmentQuestion, IAssessmentResponseEntity, SurveyJsAssessmentResponseState,
 } from '@libs/entities-lib/assessment-template';
-import { IMultilingual } from '@libs/shared-lib/types';
 import { SurveyCreator, localization } from 'survey-creator-knockout';
 import { CreatorBase } from 'survey-creator-core';
-import _merge from 'lodash/merge';
+import { Status } from '@libs/entities-lib/base';
+// import _merge from 'lodash/merge';
+import { IMultilingual } from '../../types';
 import 'survey-core/survey.i18n';
 import 'survey-creator-core/survey-creator-core.i18n';
 
@@ -65,7 +64,6 @@ export class SurveyJsHelper {
     this.registerCustomSurveyJsFunctions();
 
     this.creator = new SurveyCreator({
-      haveCommercialLicense: true,
       showLogicTab: true,
       isAutoSave: true,
       showTranslationTab: true,
@@ -92,8 +90,21 @@ export class SurveyJsHelper {
     this.survey._totalScore = 0;
     this.totalScore = 0;
     this.survey.onValueChanged.add(this.valueChangedNewScore);
+    document.title = this.survey.title;
 
     return this.survey;
+  }
+
+  getSurveyCanBeCompletedErrorMessage(assessmentTemplate: IAssessmentBaseEntity, response: IAssessmentResponseEntity, vue: Vue,
+    $m: (s: IMultilingual) => string) {
+    if (response?.status !== Status.Active || assessmentTemplate?.status !== Status.Active) {
+      return $m.call(vue, assessmentTemplate?.messageIfUnavailable) || vue.$t('assessment.messageUnavailable') as string;
+    }
+    if (response.completionStatus === CompletionStatus.Completed) {
+      const survey = this.initializeSurveyJsRunner(vue.$i18n.locale, assessmentTemplate.externalToolState.data.rawJson);
+      return survey.processedCompletedBeforeHtml || vue.$t('assessment.surveyAlreadyCompleted') as string;
+    }
+    return null;
   }
 
   initializeTranslations(locale?: string) {
@@ -102,7 +113,8 @@ export class SurveyJsHelper {
       // localization.getLocale('fr').ed.surveyPlaceHolder = ' Ajoutez des questions...';
       // localization.getLocale('fr').qt.signaturepad = 'Pad de signature';
       // what we end up with in localization
-      console.log('current french', _merge(localization.getLocale('en'), localization.getLocale('fr')));
+      localization.getLocale('fr');
+      // console.log('current french', _merge(localization.getLocale('en'), localization.getLocale('fr')));
     } else {
       // console.log('current english', localization.getLocale('en'));
       localization.getLocale('en');
@@ -119,7 +131,9 @@ export class SurveyJsHelper {
     // as this is a FunctionFactory method we dont have access to the correct "this"
     // and as it is async we must return with the callback returnResult
     const method = this as any;
-    await helpers.timeout(50);
+    await new Promise((resolve) => {
+      setTimeout(resolve, 50);
+    });
     method.returnResult(+method.survey._totalScore);
   }
 
@@ -255,7 +269,9 @@ export class SurveyJsHelper {
     } as IAssessmentResponseEntity;
 
     assessmentResponse.completionStatus = CompletionStatus.Partial;
-    assessmentResponse.externalToolState = new SurveyJsAssessmentResponseState(JSON.stringify(sender.data),
+    const data = sender.data;
+    data._currentPageNo = sender.currentPageNo;
+    assessmentResponse.externalToolState = new SurveyJsAssessmentResponseState(JSON.stringify(data),
       JSON.stringify(sender.getPlainData({ includeEmpty: false, includeQuestionTypes: true })));
     assessmentResponse.totalScore = sender._totalScore;
     assessmentResponse.answeredQuestions = [];
