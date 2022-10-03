@@ -27,11 +27,19 @@
             class="triage-select"
             data-test="caseFileActivity-triage-select"
             :readonly="!canEdit || saving"
-            :menu-props="{ bottom: true, offsetY: true, contentClass: 'case-file-activity-dropdown', maxWidth: 'fit-content' }"
+            :menu-props="{ bottom: true, offsetY: true, contentClass: 'case-file-triage-dropdown', maxWidth: 'fit-content' }"
             :items="triageLevels"
             :loading="loading"
             hide-details
-            @change="setCaseFileTriage($event)" />
+            @change="setCaseFileTriage($event)">
+            <template #item="{ item }">
+              <div
+                class="caseFileActivity-triage-select__item rc-body14"
+                :data-test="`caseFileActivity-triage-select__item--${item.text}`">
+                {{ item.text }}
+              </div>
+            </template>
+          </v-select>
 
           <v-divider
             vertical
