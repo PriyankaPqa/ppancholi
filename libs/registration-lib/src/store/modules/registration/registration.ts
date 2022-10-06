@@ -146,13 +146,25 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   indigenousCommunitiesItems: (state: IState) => (indigenousType: EIndigenousTypes) => {
     const commmunities = state.indigenousCommunities;
     if (commmunities) {
-      const items = commmunities
-        .filter((i: IIndigenousCommunityData) => i.communityType === indigenousType)
-        .map((i: IIndigenousCommunityData) => ({
-          value: i.id,
-          text: i.communityName,
-        }));
-      return _sortBy(items, 'text');
+      let items = commmunities.filter((i: IIndigenousCommunityData) => i.communityType === indigenousType);
+      let otherCommunity = null as IIndigenousCommunityData;
+
+      if (indigenousType === EIndigenousTypes.FirstNation) {
+        otherCommunity = commmunities.find((i: IIndigenousCommunityData) => i.communityName === 'Other');
+        items = items.filter((i: IIndigenousCommunityData) => i.id !== otherCommunity?.id);
+      }
+
+      const mapItems = items.map((i: IIndigenousCommunityData) => ({
+        value: i.id,
+        text: i.communityName,
+      }));
+
+      const sortedCommunities = _sortBy(mapItems, 'text');
+
+      if (indigenousType === EIndigenousTypes.FirstNation && otherCommunity) {
+        return [{ value: otherCommunity.id, text: i18n.locale === 'fr' ? 'Autre' : 'Other' }, ...sortedCommunities];
+      }
+      return sortedCommunities;
     }
     return [];
   },

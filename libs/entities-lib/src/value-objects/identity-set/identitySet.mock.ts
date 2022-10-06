@@ -52,15 +52,27 @@ export const mockGenders = (): IOptionItemData[] => [
 
 export const mockIndigenousCommunitiesGetData = (): IIndigenousCommunityData[] => [
   {
-    communityType: 1,
+    communityType: EIndigenousTypes.FirstNation,
     communityName: 'Eel River Bar First Nation',
     id: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
     status: 1,
   },
   {
-    communityType: 1,
+    communityType: EIndigenousTypes.FirstNation,
     communityName: "Metepenagiag Mi'kmaq Nation",
     id: 'c68b30e0-e348-544d-ba7e-7e8486972774',
+    status: 1,
+  },
+  {
+    communityType: EIndigenousTypes.FirstNation,
+    communityName: 'Other',
+    id: 'other_id',
+    status: 1,
+  },
+  {
+    communityType: EIndigenousTypes.Metis,
+    communityName: 'Metis',
+    id: '',
     status: 1,
   },
 ];
@@ -69,6 +81,10 @@ export const mockIndigenousTypesItems = (): Record<string, unknown>[] => [
   {
     value: EIndigenousTypes.FirstNation,
     text: 'common.indigenous.types.FirstNation',
+  },
+  {
+    value: EIndigenousTypes.Metis,
+    text: 'common.indigenous.types.Metis',
   },
 ];
 

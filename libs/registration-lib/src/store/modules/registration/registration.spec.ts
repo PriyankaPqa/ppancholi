@@ -178,8 +178,21 @@ describe('>>> Registration Module', () => {
     describe('indigenousCommunitiesItems', () => {
       it('returns indigenousCommunitiesItems', () => {
         store.state.registration.indigenousCommunities = mockIndigenousCommunitiesGetData();
+        expect(store.getters['registration/indigenousCommunitiesItems'](EIndigenousTypes.Metis))
+          .toEqual([
+            {
+              text: 'Metis',
+              value: '',
+            },
+          ]);
+      });
+
+      it('returns indigenousCommunitiesItems with other first if type is First Nation', () => {
+        store.state.registration.indigenousCommunities = mockIndigenousCommunitiesGetData();
         expect(store.getters['registration/indigenousCommunitiesItems'](EIndigenousTypes.FirstNation))
-          .toEqual(mockIndigenousCommunitiesItems());
+          .toEqual(
+            [{ value: 'other_id', text: 'Other' }, ...mockIndigenousCommunitiesItems()],
+          );
       });
     });
 
