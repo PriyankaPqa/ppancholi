@@ -8,6 +8,7 @@
       :api-key="apiKey"
       :error-messages="errors"
       :prediction-types="predictionTypes"
+      :min-length="minLength"
       :prediction-countries-restriction="predictionCountriesRestriction"
       v-bind="$attrs"
       v-on="$listeners" />
@@ -54,6 +55,11 @@ export default {
       type: [Array, String],
       required: false,
       default: null,
+    },
+
+    minLength: {
+      type: Number,
+      default: 3,
     },
   },
   data: () => ({

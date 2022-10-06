@@ -1,15 +1,32 @@
 <template>
-  <v-text-field
-    ref="input"
-    onfocus="this.setAttribute('autocomplete','nope');"
-    :placeholder="''"
-    v-bind="$attrs"
-    @input="$emit('input', $event)"
-    @change="$emit('change', $event)" />
+  <div class="autocomplete_container">
+    <v-text-field
+      ref="input"
+      onfocus="this.setAttribute('autocomplete','nope');"
+      :placeholder="''"
+      v-bind="$attrs"
+      @input="onInput($event)" />
+    <v-list v-if="showList" v-click-outside="{ handler: () => showList = false }" dense elevation="4" class="predictions_list pa-0">
+      <v-list-item v-for="(p, index) in predictions" :key="index" class="pl-1 border" @click="onPlaceChanged(p.place_id)">
+        <v-list-item-icon class="mr-0">
+          <v-icon size="14">
+            mdi-map-marker
+          </v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title class="pl-0">
+            {{ p.description }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+  </div>
 </template>
 
 <script>
+/* eslint-disable no-undef */
 import Vue from 'vue';
+import _debounce from 'lodash/debounce';
 import GoogleMapsPlugin from '../../plugins/google-maps';
 
 export default Vue.extend({
@@ -33,15 +50,14 @@ export default Vue.extend({
       default: null,
     },
 
-    strictBounds: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-
     disableAutocomplete: {
       type: Boolean,
       default: false,
+    },
+
+    minLength: {
+      type: Number,
+      default: 2,
     },
 
     includePlaceName: Boolean,
@@ -49,23 +65,20 @@ export default Vue.extend({
 
   data() {
     return {
-      autocomplete: {
-        type: Object,
-      },
+      autocompleteService: null,
+      placeService: null,
+      inputRef: null,
+      predictions: [],
+      sessionToken: '',
+      place: null,
+      showList: false,
+      query: '',
     };
   },
 
-  watch: {
-    predictionCountriesRestriction() {
-      this.setRequestCountryRestriction();
-    },
-
-    predictionTypes() {
-      this.setRequestPredictionTypes();
-    },
-
-    includePlaceName() {
-      this.setResponseFields();
+  computed: {
+    placeResponseFields() {
+      return ['address_component', 'geometry', 'name'];
     },
   },
 
@@ -87,137 +100,51 @@ export default Vue.extend({
   },
 
   methods: {
-    setRequestPredictionTypes() {
-      if (this.autocomplete && typeof this.autocomplete.setTypes === 'function') {
-        if (this.predictionTypes && this.predictionTypes.length) {
-          // The types of predictions to be returned.
-          // See https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions.types
-          // See https://developers.google.com/places/supported_types#table3
-          this.autocomplete.setTypes(this.predictionTypes);
-        } else {
-          this.autocomplete.setTypes([]);
-        }
-      }
+    generateSessionToken() {
+      this.sessionToken = new google.maps.places.AutocompleteSessionToken();
     },
-    setRequestCountryRestriction() {
-      if (this.autocomplete && typeof this.autocomplete.setComponentRestrictions === 'function') {
-        if (this.predictionCountriesRestriction) {
-          // Restrict predictions to only those within the parent component. For example, the country.
-          // See https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions.componentRestrictions
-          // See https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#ComponentRestrictions
-          // Country: ISO 3166-1 Alpha-2 country code, case insensitive
-          // see https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
-          this.autocomplete.setComponentRestrictions({
-            country: this.predictionCountriesRestriction,
-          });
-        }
-      }
-    },
-
-    setResponseFields() {
-      if (this.autocomplete) {
-        // Fields to be included for the Place in the details response when the details are successfully retrieved
-        // See https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions.fields
-        // See https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult
-        // See https://developers.google.com/maps/documentation/javascript/reference/geocoder#GeocoderAddressComponent
-        // See https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceGeometry
-        const fields = ['address_component', 'geometry', 'name'];
-        if (this.includePlaceName) {
-          fields.push('name');
-        }
-
-        if (this.autocomplete.setFields && typeof this.autocomplete.setFields === 'function') {
-          this.autocomplete.setFields(fields);
-        }
-      }
-    },
-
     initAutocompleteFeature() {
       if (this.$refs.input) {
-        // eslint-disable-next-line no-undef
-        this.autocomplete = new google.maps.places.Autocomplete(
-          this.$refs.input.$el.getElementsByTagName('input')[0],
-        );
+        this.inputRef = this.$refs.input.$el.getElementsByTagName('input')[0];
       } else {
-        // eslint-disable-next-line no-undef
-        this.autocomplete = new google.maps.places.Autocomplete(
-          this.$el.getElementsByTagName('input')[0],
-        );
+        this.inputRef = this.$el.getElementsByTagName('input')[0];
       }
+      // Create a new session token.
+      this.generateSessionToken();
 
-      if (this.autocomplete) {
-        // Autocomplete options, see https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions
-        // const autocompleteOptions = {};
+      this.autocompleteService = new google.maps.places.AutocompleteService();
 
-        // Set prediction types
-        this.setRequestPredictionTypes();
-
-        this.setRequestCountryRestriction();
-
-        // we try to use the current user's position to order results
-        try {
-        // eslint-disable-next-line no-undef
-          this.geolocate(google);
-          // eslint-disable-next-line no-empty
-        } catch { }
-
-        if (this.strictBounds && typeof this.autocomplete.setOptions === 'function') {
-        // indicating that the Autocomplete widget should only return those places that are inside the bounds of the Autocomplete widget at the time the query is sent
-        // See https://developers.google.com/maps/documentation/javascript/reference/places-widget#AutocompleteOptions.strictBounds
-          this.autocomplete.setOptions({ strictBounds: true });
-        }
-
-        // Set fields
-        this.setResponseFields();
-
-        if (typeof this.autocomplete.addListener === 'function') {
-          // When the user selects an address from the drop-down, populate the
-          // address fields in the form.
-          this.autocomplete.addListener('place_changed', this.onPlaceChanged);
-        }
+      if (this.autocompleteService && typeof this.autocompleteService.addListener === 'function') {
+        // When the user selects an address from the drop-down, populate the address fields in the form.
+        this.autocompleteService.addListener('place_changed', this.onPlaceChanged);
       }
     },
-    onPlaceChanged() {
-      // Get the place details from the autocomplete object.
-      // See https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult
-      // See https://developers.google.com/maps/documentation/javascript/reference/geocoder#GeocoderAddressComponent
-      // See https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceGeometry
-      this.place = this.autocomplete.getPlace();
-
-      const placeData = {
-        name: this.getNameFromPlaceDetails(),
-        location: this.getLocationFromPlaceDetails(),
-        street: this.getStreetFromPlaceDetails(),
-        city: this.getCityFromPlaceDetails(),
-        province: this.getProvinceFromPlaceDetails(),
-        country: this.getCountryFromPlaceDetails(),
-        postalCode: this.getPostalCodeFromPlaceDetails(),
-      };
-
-      this.$emit('on-autocompleted', placeData);
+    displaySuggestions(predictions) {
+      this.predictions = predictions;
+      this.showList = this.query && predictions?.length > 0;
     },
-    getNameFromPlaceDetails() {
-      if (this.place == null) {
+    getNameFromPlaceDetails(placeResults) {
+      if (placeResults == null) {
         return null;
       }
-      if (this.place.name) {
-        return this.place.name;
+      if (placeResults.name) {
+        return placeResults.name;
       }
       return null;
     },
-    getLocationFromPlaceDetails() {
+    getLocationFromPlaceDetails(placeResults) {
       const location = { lat: null, lng: null };
-      if (this.place?.geometry?.location) {
-        location.lat = this.place.geometry.location.lat();
-        location.lng = this.place.geometry.location.lng();
+      if (placeResults?.geometry?.location) {
+        location.lat = placeResults.geometry.location.lat();
+        location.lng = placeResults.geometry.location.lng();
       }
       return location;
     },
-    getStreetFromPlaceDetails() {
+    getStreetFromPlaceDetails(placeResults) {
       let street = '';
-      if (this.place && this.place.address_components) {
-        const streetNumberObj = this.place.address_components.find((element) => element.types.includes('street_number'));
-        const streetNameObj = this.place.address_components.find((element) => element.types.includes('route'));
+      if (placeResults?.address_components) {
+        const streetNumberObj = placeResults.address_components.find((element) => element.types.includes('street_number'));
+        const streetNameObj = placeResults.address_components.find((element) => element.types.includes('route'));
         if (streetNumberObj) {
           street = streetNumberObj.long_name;
         }
@@ -230,10 +157,10 @@ export default Vue.extend({
       }
       return street;
     },
-    getCityFromPlaceDetails() {
+    getCityFromPlaceDetails(placeResults) {
       let city = null;
-      if (this.place && this.place.address_components) {
-        const cityObj = this.place.address_components.find((element) => (
+      if (placeResults?.address_components) {
+        const cityObj = placeResults.address_components.find((element) => (
           element.types.includes('locality')
           && element.types.includes('political')
         ));
@@ -243,10 +170,10 @@ export default Vue.extend({
       }
       return city;
     },
-    getProvinceFromPlaceDetails() {
+    getProvinceFromPlaceDetails(placeResults) {
       let province = null;
-      if (this.place && this.place.address_components) {
-        const provinceObj = this.place.address_components.find((element) => (
+      if (placeResults?.address_components) {
+        const provinceObj = placeResults.address_components.find((element) => (
           element.types.includes('administrative_area_level_1')
           && element.types.includes('political')
         ));
@@ -256,10 +183,10 @@ export default Vue.extend({
       }
       return province;
     },
-    getCountryFromPlaceDetails() {
+    getCountryFromPlaceDetails(placeResults) {
       let country = null;
-      if (this.place && this.place.address_components) {
-        const countryObj = this.place.address_components.find((element) => (
+      if (placeResults?.address_components) {
+        const countryObj = placeResults.address_components.find((element) => (
           element.types.includes('country')
           && element.types.includes('political')
         ));
@@ -269,33 +196,110 @@ export default Vue.extend({
       }
       return country;
     },
-    getPostalCodeFromPlaceDetails() {
+    getPostalCodeFromPlaceDetails(placeResults) {
       let postalCode = null;
-      if (this.place && this.place.address_components) {
-        const postalCodeObj = this.place.address_components.find((element) => element.types.includes('postal_code'));
+      if (placeResults?.address_components) {
+        const postalCodeObj = placeResults.address_components.find((element) => element.types.includes('postal_code'));
         if (postalCodeObj) {
           postalCode = postalCodeObj.long_name;
         }
       }
       return postalCode;
     },
-    geolocate(google) {
-      // Bias the autocomplete object to the user's geographical location,
-      // as supplied by the browser's 'navigator.geolocation' object.
-      if (navigator.geolocation && typeof this.autocomplete.setBounds === 'function') {
-        navigator.geolocation.getCurrentPosition((position) => {
-          const geolocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          const circle = new google.maps.Circle({
-            center: geolocation,
-            radius: position.coords.accuracy,
+
+    async getLocationAndRadius() {
+      if (navigator.geolocation) {
+        return new Promise((resolve) => {
+          navigator.geolocation.getCurrentPosition((position) => {
+            resolve({
+              location: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+              radius: position.coords.accuracy,
+            });
+          }, () => {
+            resolve({
+              location: null,
+              radius: null,
+            });
           });
-          this.autocomplete.setBounds(circle.getBounds());
         });
       }
+      return {
+        location: null,
+        radius: null,
+      };
     },
+
+    async getPlacePredictions(query) {
+      const { location, radius } = await this.getLocationAndRadius();
+      await this.autocompleteService.getPlacePredictions({
+        input: query,
+        location,
+        radius,
+        types: this.predictionTypes,
+        componentRestrictions: {
+          country: this.predictionCountriesRestriction,
+        },
+        sessionToken: this.sessionToken,
+      }, this.displaySuggestions);
+    },
+
+    onPlaceChanged(placeId) {
+      this.showList = false;
+      const placeService = new google.maps.places.PlacesService(document.getElementById(this.inputRef.id));
+
+      placeService.getDetails({
+        placeId,
+        fields: this.placeResponseFields,
+        sessionToken: this.sessionToken,
+      }, (results) => {
+        const placeData = {
+          name: this.getNameFromPlaceDetails(results),
+          location: this.getLocationFromPlaceDetails(results),
+          street: this.getStreetFromPlaceDetails(results),
+          city: this.getCityFromPlaceDetails(results),
+          province: this.getProvinceFromPlaceDetails(results),
+          country: this.getCountryFromPlaceDetails(results),
+          postalCode: this.getPostalCodeFromPlaceDetails(results),
+        };
+        this.$emit('on-autocompleted', placeData);
+        this.generateSessionToken();
+      });
+    },
+
+    async onInput(query) {
+      this.query = query;
+      this.$emit('input', query);
+
+      if (query.length === 0) {
+        this.showList = false;
+      }
+
+      if (query.length >= this.minLength) {
+        await this.debounceGetPlacePredictions(query);
+      }
+    },
+
+    debounceGetPlacePredictions: _debounce(function fc(query) {
+      this.getPlacePredictions(query);
+    }, 300),
   },
 });
 </script>
+
+<style lang="scss">
+.autocomplete_container {
+  position: relative;
+}
+
+.predictions_list {
+  position: absolute;
+  top: 42px;
+  z-index: 9999999;
+  left: 10px;
+  width: 90%;
+}
+
+.border{
+  border-bottom: solid 1px var(--v-grey-lighten2);
+}
+</style>
