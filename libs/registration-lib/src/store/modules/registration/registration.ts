@@ -135,10 +135,9 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
             value: typeNumber,
             text: i18n.t(`common.indigenous.types.${indigenousType}`),
           };
-        })
-        .sort(((a, b) => (a.text < b.text && a.text !== 'Autre' ? -1 : 1)));
+        });
 
-      return a;
+      return _sortBy(a, 'text');
     }
     return [];
   },
@@ -149,10 +148,8 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
       let items = commmunities.filter((i: IIndigenousCommunityData) => i.communityType === indigenousType);
       let otherCommunity = null as IIndigenousCommunityData;
 
-      if (indigenousType === EIndigenousTypes.FirstNation) {
-        otherCommunity = commmunities.find((i: IIndigenousCommunityData) => i.communityName === 'Other');
-        items = items.filter((i: IIndigenousCommunityData) => i.id !== otherCommunity?.id);
-      }
+      otherCommunity = items.find((i: IIndigenousCommunityData) => i.communityName === 'Other');
+      items = items.filter((i: IIndigenousCommunityData) => i.id !== otherCommunity?.id);
 
       const mapItems = items.map((i: IIndigenousCommunityData) => ({
         value: i.id,
@@ -161,7 +158,7 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
 
       const sortedCommunities = _sortBy(mapItems, 'text');
 
-      if (indigenousType === EIndigenousTypes.FirstNation && otherCommunity) {
+      if (otherCommunity) {
         return [{ value: otherCommunity.id, text: i18n.locale === 'fr' ? 'Autre' : 'Other' }, ...sortedCommunities];
       }
       return sortedCommunities;

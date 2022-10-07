@@ -66,13 +66,19 @@ export const mockIndigenousCommunitiesGetData = (): IIndigenousCommunityData[] =
   {
     communityType: EIndigenousTypes.FirstNation,
     communityName: 'Other',
-    id: 'other_id',
+    id: 'other_id_firstNation',
     status: 1,
   },
   {
     communityType: EIndigenousTypes.Metis,
     communityName: 'Metis',
     id: '',
+    status: 1,
+  },
+  {
+    communityType: EIndigenousTypes.Metis,
+    communityName: 'Other',
+    id: 'other_id_metis',
     status: 1,
   },
 ];
@@ -96,6 +102,10 @@ export const mockIndigenousCommunitiesItems = (): Record<string, string>[] => [
   {
     value: 'c68b30e0-e348-544d-ba7e-7e8486972774',
     text: "Metepenagiag Mi'kmaq Nation",
+  },
+  {
+    value: '',
+    text: 'Other',
   },
 ];
 

@@ -11,7 +11,6 @@ import { RegistrationEvent, mockEventData, mockEvent } from '@libs/entities-lib/
 import {
   EIndigenousTypes,
   mockGenders,
-  mockIndigenousCommunitiesItems,
   mockIndigenousCommunitiesGetData,
   mockIndigenousTypesItems,
   mockPreferredLanguages,
@@ -176,10 +175,14 @@ describe('>>> Registration Module', () => {
     });
 
     describe('indigenousCommunitiesItems', () => {
-      it('returns indigenousCommunitiesItems', () => {
+      it('returns indigenousCommunitiesItems with other first', () => {
         store.state.registration.indigenousCommunities = mockIndigenousCommunitiesGetData();
         expect(store.getters['registration/indigenousCommunitiesItems'](EIndigenousTypes.Metis))
           .toEqual([
+            {
+              text: 'Other',
+              value: 'other_id_metis',
+            },
             {
               text: 'Metis',
               value: '',
@@ -187,12 +190,23 @@ describe('>>> Registration Module', () => {
           ]);
       });
 
-      it('returns indigenousCommunitiesItems with other first if type is First Nation', () => {
+      it('returns indigenousCommunitiesItems with other first', () => {
         store.state.registration.indigenousCommunities = mockIndigenousCommunitiesGetData();
         expect(store.getters['registration/indigenousCommunitiesItems'](EIndigenousTypes.FirstNation))
-          .toEqual(
-            [{ value: 'other_id', text: 'Other' }, ...mockIndigenousCommunitiesItems()],
-          );
+          .toEqual([
+            {
+              text: 'Other',
+              value: 'other_id_firstNation',
+            },
+            {
+              text: 'Eel River Bar First Nation',
+              value: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
+            },
+            {
+              text: "Metepenagiag Mi'kmaq Nation",
+              value: 'c68b30e0-e348-544d-ba7e-7e8486972774',
+            },
+          ]);
       });
     });
 

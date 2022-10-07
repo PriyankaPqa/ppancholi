@@ -60,25 +60,25 @@ describe('IndigenousIdentityForm.vue', () => {
       });
     });
 
-    describe('indigenousCommunityId', () => {
-      it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('personalInfo__indigenousCommunityId');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.indigenousCommunityId);
-      });
-    });
+    // describe('indigenousCommunityId', () => {
+    //   it('is linked to proper rules', () => {
+    //     const element = wrapper.findDataTest('personalInfo__indigenousCommunityId');
+    //     expect(element.props('rules')).toEqual(wrapper.vm.rules.indigenousCommunityId);
+    //   });
+    // });
 
-    describe('indigenousCommunityOther', () => {
-      it('is linked to proper rules', async () => {
-        await wrapper.setData({
-          formCopy: {
-            indigenousType: EIndigenousTypes.Other,
-          },
-        });
-
-        const element = wrapper.findDataTest('personalInfo__indigenousCommunityOther');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.indigenousCommunityOther);
-      });
-    });
+    // describe('indigenousCommunityOther', () => {
+    //   it('is linked to proper rules', async () => {
+    //     await wrapper.setData({
+    //       formCopy: {
+    //         indigenousType: EIndigenousTypes.Other,
+    //       },
+    //     });
+    //
+    //     const element = wrapper.findDataTest('personalInfo__indigenousCommunityOther');
+    //     expect(element.props('rules')).toEqual(wrapper.vm.rules.indigenousCommunityOther);
+    //   });
+    // });
 
     test('change event is emitted when form changes', async () => {
       wrapper.vm.formCopy.indigenousCommunityId = 'test';
@@ -88,18 +88,17 @@ describe('IndigenousIdentityForm.vue', () => {
 
   describe('Methods', () => {
     describe('onIndigenousTypeChange', () => {
-      it('clears the community id and other field', async () => {
-        wrapper.vm.formCopy.indigenousCommunityId = 'test';
-        wrapper.vm.formCopy.indigenousCommunityOther = 'test';
-        await wrapper.vm.onIndigenousTypeChange(EIndigenousTypes.FirstNation);
-        expect(wrapper.vm.formCopy.indigenousCommunityId).toBeNull();
-        expect(wrapper.vm.formCopy.indigenousCommunityOther).toBeNull();
-      });
-
       it('sets the community id if other has been picked ', async () => {
         wrapper.vm.formCopy.indigenousCommunityId = 'test';
         await wrapper.vm.onIndigenousTypeChange(EIndigenousTypes.Other);
         const otherCommunity = mockIndigenousCommunitiesItems()[0];
+        expect(wrapper.vm.formCopy.indigenousCommunityId).toBe(otherCommunity.value);
+      });
+
+      it('should default the choice to other for all types', async () => {
+        wrapper.vm.formCopy.indigenousCommunityId = 'test';
+        await wrapper.vm.onIndigenousTypeChange(EIndigenousTypes.Metis);
+        const otherCommunity = mockIndigenousCommunitiesItems().find((i) => i.text === 'Other');
         expect(wrapper.vm.formCopy.indigenousCommunityId).toBe(otherCommunity.value);
       });
     });

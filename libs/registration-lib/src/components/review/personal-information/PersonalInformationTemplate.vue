@@ -170,11 +170,13 @@ export default Vue.extend({
         .find((i: IIndigenousCommunityData) => i.id === p.indigenousCommunityId);
 
       if (this.otherIndigenousType) {
-        return `${type}, ${p.indigenousCommunityOther}`;
+        // return `${type}, ${p.indigenousCommunityOther}`;
+        return `${type}`;
       }
 
       if (p.indigenousType && community) {
-        return `${type}, ${community?.communityName}`;
+        // return `${type}, ${community?.communityName}`;
+        return `${type}`;
       }
       return '';
     },

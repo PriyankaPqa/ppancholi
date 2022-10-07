@@ -70,8 +70,8 @@ export default {
   },
 
   indigenousIdentity(member: IMember, pCommunities = [] as IIndigenousCommunityData[]): string {
-    const type = member.identitySet.indigenousType
-      ? `${i18n.t(`common.indigenous.types.${EIndigenousTypes[member.identitySet.indigenousType]}`)}, ` : '';
+    // const type = member.identitySet.indigenousType ? `${i18n.t(`common.indigenous.types.${EIndigenousTypes[member.identitySet.indigenousType]}`)}, ` : '';
+    const type = member.identitySet.indigenousType ? `${i18n.t(`common.indigenous.types.${EIndigenousTypes[member.identitySet.indigenousType]}`)}` : '';
 
     let communities = [];
     if (pCommunities.length === 0) {
@@ -89,7 +89,8 @@ export default {
     } else if (member.identitySet.indigenousType && community) {
       communityName = `${community.communityName}`;
     }
-    return type && communityName ? type + communityName : '-';
+    // return type && communityName ? type + communityName : '-';
+    return type && communityName ? type : '-';
   },
 
   countryName(countryCode: string): string {

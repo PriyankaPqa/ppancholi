@@ -142,7 +142,7 @@ describe('householdHelpers', () => {
       };
 
       expect(householdHelpers.indigenousIdentity(altMember, mockIndigenousCommunitiesGetData()))
-        .toEqual(`Inuit Community, ${mockIndigenousCommunitiesGetData()[0].communityName}`);
+        .toEqual('Inuit Community');
     });
 
     it('returns the right data if member has indigenousType other', () => {
@@ -155,7 +155,7 @@ describe('householdHelpers', () => {
         },
       };
       expect(householdHelpers.indigenousIdentity(altMember, mockIndigenousCommunitiesGetData()))
-        .toEqual('Other, mock-community');
+        .toEqual('Other');
     });
 
     it('returns a dash if member has no indigenous data', () => {

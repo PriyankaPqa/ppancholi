@@ -19,13 +19,14 @@
     </v-col>
     <v-col cols="12">
       <v-text-field-with-validation
-        v-if="otherIndigenousType"
+        v-if="false && otherIndigenousType"
         v-model="formCopy.indigenousCommunityOther"
         :rules="rules.indigenousCommunityOther"
         :data-test="`${prefixDataTest}__indigenousCommunityOther`"
         :label="`${$t('registration.personal_info.indigenousCommunityOther.label')}*`" />
+
       <v-autocomplete-with-validation
-        v-else
+        v-if="false"
         v-model="formCopy.indigenousCommunityId"
         clearable
         :loading="loading"
@@ -139,6 +140,16 @@ export default Vue.extend({
         await this.$nextTick();
         // There is only one community for other
         const otherCommunity = this.indigenousCommunitiesItems[0];
+        this.formCopy.indigenousCommunityId = otherCommunity.value;
+        this.formCopy.indigenousCommunityOther = 'Default';
+      } else {
+        /**
+         * Change request to hide communities until the list is complete
+         */
+        await this.$nextTick();
+        // Communities are pre-filtered by type in the store, so we just need to search by name
+        const otherCommunityName = this.$i18n.locale === 'fr' ? 'Autre' : 'Other';
+        const otherCommunity = this.indigenousCommunitiesItems.find((i) => i.text === otherCommunityName);
         this.formCopy.indigenousCommunityId = otherCommunity.value;
       }
     },
