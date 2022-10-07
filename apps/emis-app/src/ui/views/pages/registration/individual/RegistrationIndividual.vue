@@ -231,6 +231,9 @@ export default mixins(individual).extend({
       }
 
       if (this.currentTab.id === 'review' && this.associationMode) {
+        if (this.householdAlreadyRegistered) {
+          this.$storage.registration.mutations.setHouseholdAlreadyRegistered(false);
+        }
         this.backToHouseholdResults();
         return;
       }
@@ -311,6 +314,7 @@ export default mixins(individual).extend({
     backToHouseholdResults() {
       this.$storage.registration.mutations.resetHouseholdCreate();
       this.$storage.registration.mutations.setHouseholdAssociationMode(false);
+      this.$storage.registration.mutations.setHouseholdAlreadyRegistered(false);
       this.$storage.registration.mutations.setCurrentTabIndex(tabs().findIndex((t) => t.id === 'isRegistered'));
     },
 

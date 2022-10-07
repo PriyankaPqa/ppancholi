@@ -149,6 +149,24 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.backToHouseholdResults).toHaveBeenCalled();
       });
 
+      it('should set setHouseholdAlreadyRegistered mutation to false if user is seeing the review page in association mode and household is already registered',
+        async () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            computed: {
+              currentTab: () => ({ id: 'review' }),
+              associationMode: () => true,
+              householdAlreadyRegistered: () => true,
+            },
+            mocks: {
+              $storage: storage,
+            },
+          });
+          wrapper.vm.backToHouseholdResults = jest.fn();
+          await wrapper.vm.back();
+          expect(wrapper.vm.$storage.registration.mutations.setHouseholdAlreadyRegistered).toHaveBeenCalledWith(false);
+        });
+
       it('should return to registration home page if user is at the first page of registration', async () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -179,6 +197,11 @@ describe('Individual.vue', () => {
       it('should call setHouseholdAssociationMode with false', () => {
         wrapper.vm.backToHouseholdResults();
         expect(wrapper.vm.$storage.registration.mutations.setHouseholdAssociationMode).toHaveBeenCalledWith(false);
+      });
+
+      it('should call setHouseholdAlreadyRegistered with false', () => {
+        wrapper.vm.backToHouseholdResults();
+        expect(wrapper.vm.$storage.registration.mutations.setHouseholdAlreadyRegistered).toHaveBeenCalledWith(false);
       });
 
       it('should set current tab to isRegistered', () => {
