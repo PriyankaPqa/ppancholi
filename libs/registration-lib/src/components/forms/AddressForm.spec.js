@@ -99,7 +99,7 @@ describe('AddressForm.vue', () => {
     describe('Event handlers', () => {
       test('autocomplete triggers $streetAddressAutocomplete', async () => {
         wrapper.vm.$streetAddressAutocomplete = jest.fn();
-        const element = wrapper.findDataTest('address__street');
+        const element = wrapper.findDataTest('address_autocomplete');
         await element.vm.$emit('on-autocompleted');
         expect(wrapper.vm.$streetAddressAutocomplete).toHaveBeenCalledTimes(1);
       });

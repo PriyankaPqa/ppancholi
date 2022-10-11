@@ -117,37 +117,37 @@ describe('CurrentAddressForm.vue', () => {
     describe('predictionTypes', () => {
       it('should return correct types for Unknown', () => {
         doMount(mockUnknown());
-        expect(wrapper.vm.predictionTypes).toEqual(['']);
+        expect(wrapper.vm.predictionTypes).toEqual(null);
       });
 
       it('should return correct types for RemainingInHome', () => {
         doMount(mockRemainingHome());
-        expect(wrapper.vm.predictionTypes).toEqual(['']);
+        expect(wrapper.vm.predictionTypes).toEqual(null);
       });
 
       it('should return correct types for Campground', () => {
         doMount(mockCampGround());
-        expect(wrapper.vm.predictionTypes).toEqual(['establishment']);
+        expect(wrapper.vm.predictionTypes).toEqual(null);
       });
 
       it('should return correct types for FriendsFamily', () => {
         doMount(mockFriendsFamily());
-        expect(wrapper.vm.predictionTypes).toEqual(['address']);
+        expect(wrapper.vm.predictionTypes).toEqual(null);
       });
 
       it('should return correct types for MedicalFacility', () => {
         doMount(mockMedicalFacility());
-        expect(wrapper.vm.predictionTypes).toEqual(['establishment']);
+        expect(wrapper.vm.predictionTypes).toEqual(null);
       });
 
       it('should return correct types for Other', () => {
         doMount(mockOther());
-        expect(wrapper.vm.predictionTypes).toEqual(['']);
+        expect(wrapper.vm.predictionTypes).toEqual(null);
       });
 
       it('should return correct types for Shelter', () => {
         doMount(mockShelter());
-        expect(wrapper.vm.predictionTypes).toEqual(['']);
+        expect(wrapper.vm.predictionTypes).toEqual(null);
       });
     });
   });
@@ -161,7 +161,7 @@ describe('CurrentAddressForm.vue', () => {
 
       test('autocomplete triggers $streetCurrentAddressAutocomplete', async () => {
         wrapper.vm.$streetCurrentAddressAutocomplete = jest.fn();
-        const element = wrapper.findDataTest('tempAddress__street');
+        const element = wrapper.findDataTest('temporary_address_autocomplete');
         await element.vm.$emit('on-autocompleted');
         expect(wrapper.vm.$streetCurrentAddressAutocomplete).toHaveBeenCalledTimes(1);
       });

@@ -20,6 +20,7 @@
       <v-col cols="12" sm="6" md="8" :class="{'pb-0':compactView}">
         <v-select-with-validation
           ref="addressType"
+          background-color="white"
           :value="form.addressType"
           :rules="rules.addressType"
           item-value="value"
@@ -29,10 +30,24 @@
           @change="changeType($event)" />
       </v-col>
 
+      <v-col v-if="form.hasStreet()" cols="12">
+        <rc-google-autocomplete-with-validation
+          prepend-inner-icon="mdi-map-marker"
+          background-color="white"
+          data-test="temporary_address_autocomplete"
+          :api-key="apiKey"
+          :disable-autocomplete="disableAutocomplete"
+          :prediction-types="predictionTypes"
+          :prediction-countries-restriction="form.address.country"
+          :label="`${$t('search_autocomplete.label')}`"
+          @on-autocompleted="$streetCurrentAddressAutocomplete($event)" />
+      </v-col>
+
       <template v-if="addressType">
         <v-col v-if="form.requiresPlaceName()" cols="12" sm="9" md="8" :class="{'py-0':compactView}">
           <v-text-field-with-validation
             v-model="form.placeName"
+            background-color="white"
             :rules="rules.placeName"
             :data-test="`${prefixDataTest}__placeName`"
             :label="placeNameLabel" />
@@ -41,28 +56,26 @@
         <v-col v-if="form.hasPlaceNumber()" cols="6" sm="3" md="4" :class="{'py-0':compactView}">
           <v-text-field-with-validation
             v-model="form.placeNumber"
+            background-color="white"
             :rules="rules.placeNumber"
             :data-test="`${prefixDataTest}__placeNumber`"
             :label="placeNumberLabel" />
         </v-col>
 
         <v-col v-if="form.hasStreet()" cols="12" sm="9" md="8" :class="{'py-0':compactView}">
-          <rc-google-autocomplete-with-validation
+          <v-text-field-with-validation
             v-model="form.address.streetAddress"
+            background-color="white"
             :data-test="`${prefixDataTest}__street`"
             :rules="rules.streetAddress"
-            :api-key="apiKey"
-            :disable-autocomplete="disableAutocomplete"
-            :prediction-types="predictionTypes"
-            :prediction-countries-restriction="form.address.country"
             :label="`${$t('registration.addresses.streetAddress')}`"
-            @input="$resetGeoLocation()"
-            @on-autocompleted="$streetCurrentAddressAutocomplete($event)" />
+            @input="$resetGeoLocation()" />
         </v-col>
 
         <v-col v-if="form.hasUnitSuite()" cols="6" sm="3" md="4" :class="{'py-0':compactView}">
           <v-text-field-with-validation
             v-model="form.address.unitSuite"
+            background-color="white"
             :rules="rules.unitSuite"
             :data-test="`${prefixDataTest}__unitSuite`"
             :label="$t('registration.addresses.unit')" />
@@ -72,6 +85,7 @@
         <v-col v-if="form.requiresCity()" cols="12" sm="6" md="4" :class="{'py-0':compactView}">
           <v-text-field-with-validation
             v-model="form.address.city"
+            background-color="white"
             :rules="rules.city"
             :data-test="`${prefixDataTest}__city`"
             :label="`${$t('registration.addresses.city')} *`"
@@ -82,6 +96,7 @@
           <v-select-with-validation
             v-if="isCanada"
             v-model="form.address.province"
+            background-color="white"
             :rules="rules.province"
             :data-test="`${prefixDataTest}__province`"
             :label="`${$t('registration.addresses.province')} *`"
@@ -90,6 +105,7 @@
           <v-text-field-with-validation
             v-else
             v-model="form.address.specifiedOtherProvince"
+            background-color="white"
             :rules="rules.specifiedOtherProvince"
             :data-test="`${prefixDataTest}__specifiedOtherProvince`"
             :label="`${$t('registration.addresses.province')}*`"
@@ -99,6 +115,7 @@
         <v-col v-if="form.hasPostalCode()" cols="6" sm="6" md="4" :class="{'py-0':compactView}">
           <v-text-field-with-validation
             v-model="form.address.postalCode"
+            background-color="white"
             :rules="rules.postalCode"
             :data-test="`${prefixDataTest}__postalCode`"
             :label="`${$t('registration.addresses.postalCode')}`"
@@ -108,6 +125,7 @@
         <v-col v-if="form.requiresCountry()" cols="12" sm="6" md="8" :class="{'py-0':compactView}">
           <rc-country-select-with-validation
             v-model="form.address.country"
+            background-color="white"
             :rules="rules.country"
             :data-test="`${prefixDataTest}__country`"
             :label="`${$t('registration.addresses.country')} *`"
@@ -117,6 +135,7 @@
         <v-col v-if="form.requiresShelterLocation() && currentShelterLocations.length > 0" cols="12" sm="6" md="8" :class="{'py-0':compactView}">
           <v-select-with-validation
             v-model="form.shelterLocation"
+            background-color="white"
             :rules="rules.shelterLocation"
             :item-text="(e) => $m(e.name)"
             return-object
@@ -303,13 +322,13 @@ export default mixins(googleAutoCompleteMixin).extend({
 
     predictionTypes(): Array<string> {
       const predictionForAddress = {
-        [ECurrentAddressTypes.Unknown]: [''],
-        [ECurrentAddressTypes.RemainingInHome]: [''],
-        [ECurrentAddressTypes.Campground]: ['establishment'],
-        [ECurrentAddressTypes.FriendsFamily]: ['address'],
-        [ECurrentAddressTypes.MedicalFacility]: ['establishment'],
-        [ECurrentAddressTypes.Other]: [''],
-        [ECurrentAddressTypes.Shelter]: [''],
+        [ECurrentAddressTypes.Unknown]: null,
+        [ECurrentAddressTypes.RemainingInHome]: null,
+        [ECurrentAddressTypes.Campground]: null,
+        [ECurrentAddressTypes.FriendsFamily]: null,
+        [ECurrentAddressTypes.MedicalFacility]: null,
+        [ECurrentAddressTypes.Other]: null,
+        [ECurrentAddressTypes.Shelter]: null,
       } as Record<ECurrentAddressTypes, Array<string>>;
 
       return predictionForAddress[this.addressType];
@@ -349,8 +368,3 @@ export default mixins(googleAutoCompleteMixin).extend({
 });
 
 </script>
-<style scoped  lang="scss">
-  ::v-deep fieldset {
-    background-color: white;
-  }
-</style>

@@ -1,6 +1,8 @@
 {
     "aria.header.language_select": "aria.header.language_select",
     "aria.label.menu": "aria.label.menu",
+    "assessment.messageUnavailable": "",
+    "assessment.surveyAlreadyCompleted": "",
     "common.add": "common.add",
     "common.button.back": "common.button.back",
     "common.button.next": "common.button.next",
@@ -611,6 +613,7 @@
     "registration.version": "registration.version",
     "registration.zendesk.householdmembers": "registration.zendesk.householdmembers",
     "registration.zendesk.privacyStatement": "registration.zendesk.privacyStatement",
+    "search_autocomplete.label": "",
     "test-leo-benef-app": "test-leo-benef-app",
     "tooltip.home_address": "tooltip.home_address",
     "tooltip.temporary_address": "tooltip.temporary_address",

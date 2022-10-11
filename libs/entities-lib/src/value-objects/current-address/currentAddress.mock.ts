@@ -34,19 +34,23 @@ export const mockFriendsFamilyData = (): ICurrentAddressData => ({
 
 export const mockUnknownData = (): ICurrentAddressData => ({
   addressType: ECurrentAddressTypes.Unknown,
+  address: mockAddress(),
 });
 
 export const mockRemainingHomeData = (): ICurrentAddressData => ({
   addressType: ECurrentAddressTypes.RemainingInHome,
+  address: mockAddress(),
 });
 
 export const mockOtherData = (): ICurrentAddressData => ({
   addressType: ECurrentAddressTypes.Other,
   placeName: 'Other address',
+  address: mockAddress(),
 });
 
 export const mockShelterData = (): ICurrentAddressData => ({
   addressType: ECurrentAddressTypes.Shelter,
+  address: mockAddress(),
   shelterLocation: {
     address: {
       country: 'CA',

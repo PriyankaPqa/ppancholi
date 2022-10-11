@@ -61,6 +61,11 @@ export default Vue.extend({
     },
 
     includePlaceName: Boolean,
+
+    clearAfterSelection: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
@@ -79,6 +84,10 @@ export default Vue.extend({
   computed: {
     placeResponseFields() {
       return ['address_component', 'geometry', 'name'];
+    },
+
+    hasPredictionTypes() {
+      return !!this.predictionTypes;
     },
   },
 
@@ -231,16 +240,25 @@ export default Vue.extend({
 
     async getPlacePredictions(query) {
       const { location, radius } = await this.getLocationAndRadius();
-      await this.autocompleteService.getPlacePredictions({
+
+      let payload = {
         input: query,
         location,
         radius,
-        types: this.predictionTypes,
         componentRestrictions: {
           country: this.predictionCountriesRestriction,
         },
         sessionToken: this.sessionToken,
-      }, this.displaySuggestions);
+      };
+
+      if (this.hasPredictionTypes) {
+        payload = {
+          ...payload,
+          types: this.predictionTypes,
+        };
+      }
+
+      await this.autocompleteService.getPlacePredictions(payload, this.displaySuggestions);
     },
 
     onPlaceChanged(placeId) {
@@ -262,7 +280,12 @@ export default Vue.extend({
           postalCode: this.getPostalCodeFromPlaceDetails(results),
         };
         this.$emit('on-autocompleted', placeData);
+
         this.generateSessionToken();
+
+        if (this.clearAfterSelection) {
+          this.$refs.input.reset();
+        }
       });
     },
 
@@ -270,12 +293,12 @@ export default Vue.extend({
       this.query = query;
       this.$emit('input', query);
 
-      if (query.length === 0) {
+      if (query?.length === 0) {
         this.showList = false;
       }
 
-      if (query.length >= this.minLength) {
-        await this.debounceGetPlacePredictions(query);
+      if (query?.length >= this.minLength) {
+        this.debounceGetPlacePredictions(query);
       }
     },
 

@@ -1,19 +1,24 @@
 <template>
   <validation-observer ref="form" slim>
     <v-row>
-      <v-col cols="12" sm="9" md="8">
+      <v-col cols="12">
         <rc-google-autocomplete-with-validation
           ref="address__street_autocomplete"
+          prepend-inner-icon="mdi-map-marker"
+          data-test="address_autocomplete"
+          :api-key="apiKey"
+          :prediction-countries-restriction="form.country"
+          :disable-autocomplete="disableAutocomplete"
+          :label="`${$t('search_autocomplete.label')}`"
+          @on-autocompleted="$streetAddressAutocomplete($event)" />
+      </v-col>
+      <v-col cols="12" sm="9" md="8">
+        <v-text-field-with-validation
           v-model="form.streetAddress"
           :data-test="`${prefixDataTest}__street`"
           :rules="rules.streetAddress"
-          :api-key="apiKey"
-          :prediction-types="['address']"
-          :prediction-countries-restriction="form.country"
-          :disable-autocomplete="disableAutocomplete"
           :label="`${$t('registration.addresses.streetAddress')} *`"
-          @input="$resetGeoLocation()"
-          @on-autocompleted="$streetAddressAutocomplete($event)" />
+          @input="$resetGeoLocation()" />
       </v-col>
 
       <v-col cols="6" sm="3" md="4">

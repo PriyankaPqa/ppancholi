@@ -1,6 +1,8 @@
 {
     "aria.header.language_select": "Language selector, {currentLanguage} is currently selected",
     "aria.label.menu": "Menu",
+    "assessment.messageUnavailable": "This assessment is no longer active.",
+    "assessment.surveyAlreadyCompleted": "This assessment was completed previously.",
     "common.add": "Add",
     "common.button.back": "Back",
     "common.button.next": "Next",
@@ -611,6 +613,7 @@
     "registration.version": "Version",
     "registration.zendesk.householdmembers": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242173",
     "registration.zendesk.privacyStatement": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360053455734",
+    "search_autocomplete.label": "Start typing to search an address",
     "test-leo-benef-app": "test",
     "tooltip.home_address": "Your home \/ permanent address should be your primary place of residence",
     "tooltip.temporary_address": "If you are temporarily staying outside of your home \/ permanent residence, please provide the address of your current location.",

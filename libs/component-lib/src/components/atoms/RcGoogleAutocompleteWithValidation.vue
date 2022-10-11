@@ -59,7 +59,7 @@ export default {
 
     minLength: {
       type: Number,
-      default: 3,
+      default: 2,
     },
   },
   data: () => ({

@@ -1,6 +1,8 @@
 {
     "aria.header.language_select": "Sélecteur de langue: {currentlanguage} est actuellement choisi",
     "aria.label.menu": "Menu",
+    "assessment.messageUnavailable": "Cette analyse n'est plus active.",
+    "assessment.surveyAlreadyCompleted": "Cette analyse a déjà été complétée.",
     "common.add": "Ajouter",
     "common.button.back": "Précédent",
     "common.button.next": "Suivant",
@@ -611,6 +613,7 @@
     "registration.version": "Version",
     "registration.zendesk.householdmembers": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360055242173",
     "registration.zendesk.privacyStatement": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360053455734",
+    "search_autocomplete.label": "Commencez à taper pour rechercher une adresse",
     "test-leo-benef-app": "",
     "tooltip.home_address": "Votre domicile \/ adresse permanente doit être votre lieu de résidence principal",
     "tooltip.temporary_address": "Si vous séjournez temporairement à l'extérieur de votre domicile \/ résidence permanente, veuillez fournir l'adresse de votre emplacement actuel.",

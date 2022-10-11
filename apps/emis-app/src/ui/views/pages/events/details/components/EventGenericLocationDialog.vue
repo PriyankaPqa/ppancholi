@@ -61,6 +61,7 @@
                     v-model="location.address.streetAddress"
                     data-test="location-streetAddress"
                     :class="classes"
+                    :clear-after-selection="false"
                     :error-messages="errors"
                     :api-key="apiKey"
                     outlined

@@ -1,8 +1,8 @@
 {
     "aria.header.language_select": "Sélecteur de langue: {currentlanguage} est actuellement choisi",
     "aria.label.menu": "Menu",
-    "assessment.messageUnavailable": "",
-    "assessment.surveyAlreadyCompleted": "",
+    "assessment.messageUnavailable": "Cette analyse n'est plus active.",
+    "assessment.surveyAlreadyCompleted": "Cette analyse a déjà été complétée.",
     "common.add": "Ajouter",
     "common.button.back": "Précédent",
     "common.button.next": "Suivant",
