@@ -68,7 +68,7 @@
                   :payment-groups="activePaymentGroups"
                   :transaction-approval-status="financialAssistance.approvalStatus"
                   :items="items"
-                  :disable-submit-payment="dirty"
+                  :disable-submit-payment="dirty || !financialAssistance.id"
                   :program="selectedProgram"
                   data-test="paymentGroupList"
                   @submit-payment="onClickSubmitPayment"
