@@ -97,7 +97,7 @@ describe('AssessmentBuilder', () => {
           ],
         });
         expect(wrapper.vm.assessmentTemplate.externalToolState?.data?.rawJson).not.toEqual(wrapper.vm.creator.text);
-        expect(wrapper.vm.assessmentTemplate.questions).toEqual([]);
+        expect(wrapper.vm.assessmentTemplate.questions).not.toEqual(wrapper.vm.surveyJsHelper.getAssessmentQuestions());
         await wrapper.vm.saveSurveyJson(null, () => {});
         expect(wrapper.vm.assessmentTemplate.externalToolState?.data?.rawJson).toEqual(wrapper.vm.creator.text);
         expect(wrapper.vm.assessmentTemplate.questions).toEqual(wrapper.vm.surveyJsHelper.getAssessmentQuestions());

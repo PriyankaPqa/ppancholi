@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { mockBaseData, IEntity } from '../base';
 import {
@@ -32,7 +33,142 @@ export const mockAssessmentBaseEntity = (force? : Partial<IAssessmentTemplateEnt
   externalToolState: new SurveyJsAssessmentFormState('{"logoPosition":"right"}'),
   savePartialSurveyResults: false,
   frequency: AssessmentFrequencyType.Multiple,
-  questions: [],
+  questions: [
+    {
+      identifier: 'question1',
+      questionType: 'text',
+      question: {
+        translation: {
+          en: 'question1',
+          fr: 'question1',
+        },
+      },
+      answerChoices: null,
+    },
+    {
+      identifier: 'question2',
+      questionType: 'checkbox',
+      question: {
+        translation: {
+          en: 'question2',
+          fr: 'question2',
+        },
+      },
+      answerChoices: [
+        {
+          identifier: 'item1',
+          displayValue: {
+            translation: {
+              en: 'item1',
+              fr: 'item1',
+            },
+          },
+          textValue: 'item1',
+          score: null,
+        },
+        {
+          identifier: 'item2',
+          displayValue: {
+            translation: {
+              en: 'item2',
+              fr: 'item2',
+            },
+          },
+          textValue: 'item2',
+          score: null,
+        },
+        {
+          identifier: 'item3',
+          displayValue: {
+            translation: {
+              en: 'item3',
+              fr: 'item3',
+            },
+          },
+          textValue: 'item3',
+          score: null,
+        },
+        {
+          identifier: 'other',
+          displayValue: {
+            translation: {
+              en: 'Other (describe)',
+              fr: 'Autre (préciser)',
+            },
+          },
+          textValue: 'other',
+          score: null,
+        },
+      ],
+    },
+    {
+      identifier: 'question2|Comment',
+      questionType: 'text',
+      question: {
+        translation: {
+          en: 'question2|Comment',
+          fr: 'question2|Commentaires',
+        },
+      },
+      answerChoices: null,
+    },
+    {
+      identifier: 'question3',
+      questionType: 'checkbox',
+      question: {
+        translation: {
+          en: 'question3',
+          fr: 'question3',
+        },
+      },
+      answerChoices: [
+        {
+          identifier: 'item1',
+          displayValue: {
+            translation: {
+              en: 'item1',
+              fr: 'item1',
+            },
+          },
+          textValue: 'item1',
+          score: null,
+        },
+        {
+          identifier: 'item2',
+          displayValue: {
+            translation: {
+              en: 'item2',
+              fr: 'item2',
+            },
+          },
+          textValue: 'item2',
+          score: null,
+        },
+        {
+          identifier: 'item3',
+          displayValue: {
+            translation: {
+              en: 'item3',
+              fr: 'item3',
+            },
+          },
+          textValue: 'item3',
+          score: null,
+        },
+      ],
+    },
+    {
+      identifier: 'question4',
+      questionType: 'text',
+      question: {
+        translation: {
+          en: 'question4',
+          fr: 'question4',
+        },
+      },
+      answerChoices: null,
+    },
+  ],
   ...force,
 });
 

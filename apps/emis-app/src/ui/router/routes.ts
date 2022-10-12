@@ -31,6 +31,7 @@ const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/view
 const CaseFileDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/CaseFileDetails.vue');
 const CaseFileActivity = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-activity/CaseFileActivity.vue');
 const CaseFileAssessments = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-assessment/CaseFileAssessment.vue');
+const CaseFileAssessmentDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-assessment/components/AssessmentDetails.vue');
 const FinancialAssistancePaymentsList = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/FinancialAssistancePaymentsList.vue');
 const CreateEditCaseFileFinancialAssistance = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistance.vue');
 const ViewPaymentLineDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/ViewPaymentLineDetails.vue');
@@ -330,6 +331,13 @@ export const routes: Array<RouteConfig> = [
                     path: Routes.caseFile.assessments.home.path,
                     name: Routes.caseFile.assessments.home.name,
                     component: CaseFileAssessments,
+                    meta: { level: 'level1' },
+                    props: true,
+                  },
+                  {
+                    path: Routes.caseFile.assessments.details.path,
+                    name: Routes.caseFile.assessments.details.name,
+                    component: CaseFileAssessmentDetails,
                     meta: { level: 'level1' },
                     props: true,
                   },

@@ -53,6 +53,15 @@ export class SurveyJsHelper {
 
   survey = null as ISurveyModel;
 
+  // we currently will only support these types.  other stories will add to this
+  static supportedQuestionTypes(): string[] {
+    return ['text', 'checkbox', 'radiogroup', 'dropdown', 'comment', 'boolean', 'html', 'multipletext', 'matrix'];
+  }
+
+  static questionTypesThatCannotBeAnswered(): string[] {
+    return ['html'];
+  }
+
   initializeSurveyJsCreator(locale?: string) {
     StylesManager.applyTheme('defaultV2');
 
@@ -64,11 +73,11 @@ export class SurveyJsHelper {
     this.registerCustomSurveyJsFunctions();
 
     this.creator = new SurveyCreator({
+      haveCommercialLicense: true,
       showLogicTab: true,
       isAutoSave: true,
       showTranslationTab: true,
-      // we currently will only support these types.  other stories will add to this
-      questionTypes: ['text', 'checkbox', 'radiogroup', 'dropdown', 'comment', 'boolean', 'html', 'multipletext', 'matrix'],
+      questionTypes: SurveyJsHelper.supportedQuestionTypes(),
     });
     this.creator.locale = locale;
     this.creator.onPreviewSurveyCreated.add((_sender, options) => this.previewCreated(_sender, options));
@@ -194,7 +203,8 @@ export class SurveyJsHelper {
         (choices || []).forEach((c) => {
           const choice = {
             identifier: typeof c === 'string' ? c : c.value,
-            displayValue: this.getPropertyAsMultilingual(typeof c === 'string' ? c : (c.text || c.value.toString())),
+            displayValue: typeof c === 'string'
+              ? this.getPropertyAsMultilingual(c) : this.getPropertyAsMultilingual(c.text || c.value.toString(), null, c.value?.toString()),
             textValue: typeof c === 'string' ? c : c.value,
             score: typeof c === 'string' ? null : c.score || null,
           } as IAssessmentAnswerChoice;
@@ -232,7 +242,7 @@ export class SurveyJsHelper {
     return commentQuestion;
   }
 
-  getPropertyAsMultilingual(prop: string | Record<string, string>, suffix?: string | Record<string, string>): IMultilingual {
+  getPropertyAsMultilingual(prop: string | Record<string, string>, suffix?: string | Record<string, string>, defaultEnglish?: string): IMultilingual {
     const result = {
       translation: {
         en: '',
@@ -246,7 +256,7 @@ export class SurveyJsHelper {
     }
 
     if (prop != null && typeof prop === 'object') {
-      result.translation.en = prop.en || prop.default;
+      result.translation.en = prop.en || prop.default || defaultEnglish;
       result.translation.fr = prop.fr || result.translation.en;
     }
 

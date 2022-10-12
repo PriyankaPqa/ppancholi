@@ -74,15 +74,15 @@ export interface IAssessmentAnswerChoice {
   identifier: string;
   displayValue: IMultilingual;
   textValue: string;
-  numericValue: number | null;
-  score: number | null;
+  numericValue?: number | null;
+  score?: number | null;
 }
 
 export interface IAssessmentQuestion {
   identifier: string;
   question: IMultilingual;
   questionType: string;
-  score: number | null;
+  score?: number | null;
   answerChoices: IAssessmentAnswerChoice[];
 }
 

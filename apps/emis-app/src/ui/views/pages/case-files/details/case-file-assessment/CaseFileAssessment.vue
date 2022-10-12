@@ -393,9 +393,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     getAssessmentDetailsRoute(id: string) {
-      // todo in future story
       return {
-        name: '', // routes.events.assessments,
+        name: routes.caseFile.assessments.details.name,
         params: {
           assessmentResponseId: id,
         },
