@@ -64,6 +64,9 @@ export default Vue.extend({
       this.$router.push({ name: routes.registration.individual.name });
     },
     setEvent(event: IEvent) {
+      if (!event) {
+        return;
+      }
       const registrationEvent = {
         id: event.id,
         name: event.name,

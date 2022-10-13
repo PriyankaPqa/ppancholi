@@ -71,7 +71,7 @@ export default Vue.extend({
           ],
         },
         top,
-        orderBy: 'Entity/Schedule/OpenDate',
+        orderBy: 'Entity/Schedule/OpenDate desc',
         queryType: 'full',
         searchMode: 'all',
       };

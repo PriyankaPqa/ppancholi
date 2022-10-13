@@ -310,7 +310,7 @@ export default {
   },
 
   toQuickSearch(query: string) {
-    if (query) {
+    if (query?.trim()) {
       // any quick search will be treated as a Contains on all searchable fields
       // this splits the search by space and verifies Contains or Equal (like in filters)
       let quickSearch = query.split(' ').filter((x) => x !== '')

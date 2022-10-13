@@ -130,10 +130,13 @@ export default Vue.extend({
 
     async fetchEvents(querySearch = '', top: number) {
       this.loading = true;
-      const searchParam = querySearch.split(' ').filter((x) => x !== '')
-        .map((v) => helpers.sanitize(v))
-        .map((v) => `(/.*${v}.*/ OR "\\"${v}\\"")`)
-        .join(' AND ');
+      let searchParam = '';
+      if (querySearch.trim()) {
+        searchParam = querySearch.split(' ').filter((x) => x !== '')
+          .map((v) => helpers.sanitize(v))
+          .map((v) => `(/.*${v}.*/ OR "\\"${v}\\"")`)
+          .join(' AND ');
+      }
 
       let filter = {
         Entity: {
@@ -148,7 +151,7 @@ export default Vue.extend({
       }
 
       const res = await this.$services.events.searchMyEvents({
-        search: querySearch ? `(${searchParam})` : '',
+        search: searchParam ? `(${searchParam})` : '',
         searchFields: `Entity/Name/Translation/${this.$i18n.locale}`,
         orderBy: 'Entity/Schedule/OpenDate desc',
         queryType: 'full',
@@ -158,6 +161,7 @@ export default Vue.extend({
       });
       this.events = res?.value.map((e: IEventMainInfo) => new RegistrationEvent(e.entity as unknown as IEventData));
       this.$emit('fetch:done', this.events);
+
       await helpers.timeout(this.visualDelay);
       this.loading = false;
     },

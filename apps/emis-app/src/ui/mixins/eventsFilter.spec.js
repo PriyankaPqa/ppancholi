@@ -41,7 +41,7 @@ describe('eventsFilter', () => {
             ],
           },
           top: 10,
-          orderBy: 'Entity/Schedule/OpenDate',
+          orderBy: 'Entity/Schedule/OpenDate desc',
           queryType: 'full',
           searchMode: 'all',
         });
