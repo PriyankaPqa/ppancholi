@@ -7,8 +7,9 @@
     content-padding="0"
     fullscreen
     persistent
-    :show-cancel="false"
     :show-submit="false"
+    :cancel-action-label="$t('common.buttons.close')"
+    @cancel="$emit('update:show', false)"
     @close="$emit('update:show', false)">
     <v-row v-if="loading" class="d-flex align-center justify-start no-gutter flex-column mx-0 my-6">
       <v-col col="12" md="6" class="eventTable mb-2">
@@ -16,7 +17,7 @@
         <v-skeleton-loader class="my-6" type="article" />
       </v-col>
     </v-row>
-    <v-row v-if="!loading && !isEmpty(caseFileGroups)" class="d-flex align-center justify-start no-gutter flex-column mx-0 my-6">
+    <v-row v-if="!loading && !isEmpty(caseFileGroups)" class="d-flex align-center justify-start no-gutter flex-column no-wrap mx-0 my-6">
       <v-col v-for="group in caseFileGroups" :key="group[0] && group[0].event.id || 0" col="12" md="6" class="eventTable mb-2">
         <h5 class=" fw-bold rc-heading-5 mb-4 align-left" data-test="team_member_caseFile_event_name">
           {{ group[0] ? $m(group[0].event.name) : '' }}
@@ -72,6 +73,11 @@
           </v-simple-table>
         </v-sheet>
       </v-col>
+    </v-row>
+    <v-row v-if="!loading && isEmpty(caseFileGroups)" class="d-flex align-center justify-start no-gutter flex-column mx-0 my-14">
+      <h5 class="rc-heading-5">
+        {{ $t('teams.member.caseFile.noCaseFiles') }}
+      </h5>
     </v-row>
 
     <assign-case-file
@@ -151,7 +157,7 @@ export default Vue.extend({
       // information for the table in this modal (i.e. as IMemberCaseFile)}
       Object.keys(caseFilesByEvent).forEach((key) => {
         if (caseFilesByEvent[key].length) {
-          mappedCaseFiles[key] = caseFilesByEvent[key].map((cf: ICaseFileCombined): IMemberCaseFile => {
+          const mappedCaseFilesByEvent = caseFilesByEvent[key].map((cf: ICaseFileCombined): IMemberCaseFile => {
             const memberDataInAssignedTeamMembersList = cf.entity?.assignedTeamMembers.find((item) => item.teamMembersIds.includes(this.member.entity.id));
             if (memberDataInAssignedTeamMembersList) {
               const teamId = memberDataInAssignedTeamMembersList.teamId;
@@ -172,6 +178,10 @@ export default Vue.extend({
             }
             return null;
           }).filter((e) => e);
+
+          if (mappedCaseFilesByEvent.length) {
+            mappedCaseFiles[key] = mappedCaseFilesByEvent;
+          }
         }
       });
 
@@ -238,6 +248,10 @@ td {
 
 .eventTable {
   flex: 0;
+}
+
+.no-wrap{
+  flex-wrap: nowrap;
 }
 
 a.rc-link14.isDisabled {
