@@ -262,6 +262,7 @@ const booleanQuestion = JSON.stringify({
             default: 'why yes',
             fr: 'ouiii',
           },
+          valueTrue: '123',
         },
       ],
     },
@@ -269,7 +270,7 @@ const booleanQuestion = JSON.stringify({
 });
 
 const booleanAnswer = {
-  question1: true,
+  question1: '123',
 };
 
 const booleanAnswerNo = {
@@ -1534,7 +1535,28 @@ describe('SurveyJsHelper', () => {
       helper.creator.text = booleanQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([{
-        answerChoices: null,
+        answerChoices: [{
+          displayValue: {
+            translation: {
+              en: 'why yes',
+              fr: 'ouiii',
+            },
+          },
+          identifier: '123',
+          numericValue: 123,
+          score: null,
+          textValue: '123',
+        }, {
+          displayValue: {
+            translation: {
+              en: 'No',
+              fr: 'Non',
+            },
+          },
+          identifier: 'false',
+          score: null,
+          textValue: 'false',
+        }],
         identifier: 'question1',
         question: {
           translation: {
@@ -2010,7 +2032,7 @@ describe('SurveyJsHelper', () => {
         checkQuestionAnswers(booleanQuestion, booleanAnswer, [
           {
             assessmentQuestionIdentifier: 'question1',
-            responses: [{ displayValue: 'ouiii', textValue: 'true', numericValue: null }],
+            responses: [{ displayValue: 'ouiii', textValue: '123', numericValue: 123 }],
           },
         ]);
         checkQuestionAnswers(booleanQuestion, booleanAnswerNo, [

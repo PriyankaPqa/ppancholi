@@ -1,6 +1,6 @@
 <template>
   <rc-page-content
-    :title=" $t('assessmentTemplateDetails.title')">
+    :title="canEdit ? $t('assessmentTemplateEdit.title') : $t('assessmentTemplateDetails.title')">
     <div v-if="assessmentForm">
       <div class="ma-4">
         <v-row class="justify-space-between">
@@ -38,31 +38,13 @@
           @click="selectedTab = tab" />
       </rc-tabs>
 
-      <div v-if="selectedTab === 'Questions'" class="question-section rc-body14">
-        <v-simple-table data-test="question-list">
-          <thead>
-            <tr>
-              <th>{{ $t('assessment.questions') }}</th>
-              <th>{{ $t('assessment.responses') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(qAndA, $index) in questionsAndAnswers"
-              :key="`item__${$index}`">
-              <td class="question">
-                <div>{{ $m(qAndA.question.question).split('|')[0] }}</div>
-                <div class="pl-6">
-                  {{ $m(qAndA.question.question).split('|')[1] }}
-                </div>
-              </td>
-              <td class="answer">
-                {{ qAndA.displayAnswer }}
-              </td>
-            </tr>
-          </tbody>
-        </v-simple-table>
-      </div>
+      <question-tab
+        v-if="selectedTab === 'Questions'"
+        :can-edit="canEdit"
+        :assessment-response="assessmentResponse"
+        :assessment-form="assessmentForm"
+        data-test="question-list"
+        @pending-changes="hasPendingChanges = $event" />
     </div>
 
     <template slot="actions">
@@ -78,21 +60,18 @@
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
 import moment from 'moment';
-import { RcPageContent, RcTab, RcTabs } from '@libs/component-lib/components';
+import {
+  RcPageContent, RcTab, RcTabs,
+} from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import {
-  CompletedByType, IAnsweredQuestion, IAssessmentFormEntity, IAssessmentQuestion, IAssessmentResponseEntity,
+  CompletedByType, CompletionStatus, IAssessmentFormEntity, IAssessmentResponseEntity,
 } from '@libs/entities-lib/assessment-template';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { SurveyJsHelper } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
+import { Route, NavigationGuardNext } from 'vue-router';
+import helpers from '@/ui/helpers/helpers';
 import caseFileDetail from '../../caseFileDetail';
-
-interface QuestionAndAnswer {
-  question: IAssessmentQuestion,
-  answer: IAnsweredQuestion,
-  displayAnswer: string,
-  history: IAnsweredQuestion[],
-}
+import QuestionTab from './QuestionTab.vue';
 
 export default mixins(caseFileDetail).extend({
   name: 'AssessmentDetails',
@@ -102,6 +81,7 @@ export default mixins(caseFileDetail).extend({
     StatusChip,
     RcTab,
     RcTabs,
+    QuestionTab,
   },
 
   props: {
@@ -111,49 +91,31 @@ export default mixins(caseFileDetail).extend({
     },
   },
 
+  async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
+    await helpers.confirmBeforeLeaving(this, this.hasPendingChanges, next);
+  },
+
   data() {
     return {
       CompletedByType,
       moment,
       selectedTab: 'Questions',
       tabs: ['Questions', 'Scoring'],
+      hasPendingChanges: false,
     };
   },
 
   computed: {
     canEdit(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
+      return this.$hasLevel('level3') && !this.readonly
+      && this.$route.name === routes.caseFile.assessments.edit.name
+      && this.assessmentResponse?.completionStatus === CompletionStatus.Completed;
     },
     assessmentResponse(): IAssessmentResponseEntity {
       return this.$storage.assessmentResponse.getters.get(this.assessmentResponseId)?.entity;
     },
     assessmentForm(): IAssessmentFormEntity {
       return this.$storage.assessmentForm.getters.get(this.assessmentResponse?.assessmentFormId)?.entity;
-    },
-    questionsAndAnswers(): QuestionAndAnswer[] {
-      if (!this.assessmentForm?.questions) {
-        return [];
-      }
-
-      const qAndAs = this.assessmentForm.questions
-        .filter((q) => SurveyJsHelper.questionTypesThatCannotBeAnswered().indexOf(q.questionType) === -1)
-        .map((q) => ({
-          question: q,
-          answer: this.assessmentResponse.answeredQuestions?.find((a) => a.assessmentQuestionIdentifier === q.identifier),
-          displayAnswer: null,
-          history: this.assessmentResponse.answeredQuestionsHistory?.filter((a) => a.assessmentQuestionIdentifier === q.identifier),
-        }) as QuestionAndAnswer);
-
-      qAndAs.forEach((qAndA) => {
-        qAndA.displayAnswer = (qAndA.answer?.responses || [])
-          .map((r) => this.$m(qAndA.question.answerChoices?.find((ac) => ac.identifier === r.textValue)?.displayValue)).join(', ');
-        if (qAndA.displayAnswer == null || qAndA.displayAnswer === '') {
-          qAndA.displayAnswer = (qAndA.answer?.responses || [])
-            .map((r) => r.displayValue).join(', ');
-        }
-      });
-
-      return qAndAs;
     },
   },
 
@@ -183,11 +145,5 @@ export default mixins(caseFileDetail).extend({
   }
   .stacked-details > div:last-child {
     border-right: initial;
-  }
-  .question {
-    font-weight: bold;
-  }
-  .answer {
-    white-space: pre-wrap;
   }
 </style>

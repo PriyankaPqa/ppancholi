@@ -116,6 +116,7 @@ export interface IAnsweredQuestion {
   assessmentQuestionIdentifier: string;
   responses: IQuestionResponse[];
   crcUserId?: uuid;
+  crcUserName?: string;
   answeredOn?: string;
 }
 

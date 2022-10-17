@@ -1,5 +1,5 @@
 import { ActionContext } from 'vuex';
-import { IAssessmentResponseEntity } from '@libs/entities-lib/assessment-template';
+import { IAssessmentResponseEntity, IQuestionResponse } from '@libs/entities-lib/assessment-template';
 import { AssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
 import { mockSignalR } from '@/ui/plugins/signal-r';
 import { httpClient } from '@/services/httpClient';
@@ -58,6 +58,18 @@ describe('AssessmentResponse entity module', () => {
         await myModule.actions.saveAssessmentAnsweredQuestions(actionContext, payload);
 
         expect(myModule.service.saveAssessmentAnsweredQuestions).toBeCalledWith(payload);
+        expect(actionContext.commit).toBeCalledWith('set', res);
+      });
+    });
+
+    describe('editAssessmentAnsweredQuestion', () => {
+      it('should call editAssessmentAnsweredQuestion service with proper params', async () => {
+        const payload = { id: 'id', responses: [{} as IQuestionResponse], assessmentQuestionIdentifier: 'assessmentQuestionIdentifier' };
+        const res = {} as IAssessmentResponseEntity;
+        myModule.service.editAssessmentAnsweredQuestion = jest.fn(() => Promise.resolve(res));
+        await myModule.actions.editAssessmentAnsweredQuestion(actionContext, payload);
+
+        expect(myModule.service.editAssessmentAnsweredQuestion).toBeCalledWith(payload.id, payload);
         expect(actionContext.commit).toBeCalledWith('set', res);
       });
     });

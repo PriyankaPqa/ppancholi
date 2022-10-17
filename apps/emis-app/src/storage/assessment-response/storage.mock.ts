@@ -19,6 +19,7 @@ export class AssessmentResponseStorageMock extends BaseMock<IAssessmentResponseC
     create: jest.fn((payload: IAssessmentResponseEntity) => payload),
     update: jest.fn((payload: IAssessmentResponseEntity) => payload),
     saveAssessmentAnsweredQuestions: jest.fn((payload: IAssessmentResponseEntity) => payload),
+    editAssessmentAnsweredQuestion: jest.fn((payload: IAssessmentResponseEntity) => payload),
   }
 
   protected mutations = {

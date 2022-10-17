@@ -402,8 +402,10 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     editAssessment(item: MappedAssessment) {
-      // todo in future story
-      this.$toasted.global.success(`this will go to edit for ${item.id}`);
+      this.$router.push({
+        name: routes.caseFile.assessments.edit.name,
+        params: { assessmentResponseId: item.id },
+      });
     },
 
     deleteAssessment(item: MappedAssessment) {

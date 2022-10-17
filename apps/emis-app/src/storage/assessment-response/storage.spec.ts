@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ASSESSMENT_FORM_ENTITIES, ASSESSMENT_FORM_METADATA } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';
 import { mockAssessmentResponseEntity, mockAssessmentResponseMetadata } from '@libs/entities-lib/assessment-template';
@@ -46,6 +47,12 @@ describe('>>> AssessmentResponse Storage', () => {
       const payload = mockAssessmentResponseEntity();
       storage.actions.saveAssessmentAnsweredQuestions(payload);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/saveAssessmentAnsweredQuestions`, payload);
+    });
+
+    it('should proxy editAssessmentAnsweredQuestion', () => {
+      const payload = {} as any;
+      storage.actions.editAssessmentAnsweredQuestion(payload);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/editAssessmentAnsweredQuestion`, payload);
     });
   });
 });

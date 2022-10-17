@@ -342,6 +342,13 @@ export const routes: Array<RouteConfig> = [
                     props: true,
                   },
                   {
+                    path: Routes.caseFile.assessments.edit.path,
+                    name: Routes.caseFile.assessments.edit.name,
+                    component: CaseFileAssessmentDetails,
+                    meta: { level: 'level3' },
+                    props: true,
+                  },
+                  {
                     path: Routes.caseFile.note.path,
                     name: Routes.caseFile.note.name,
                     component: CaseNote,

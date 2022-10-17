@@ -1,4 +1,6 @@
-import { IAssessmentResponseCreateRequest, IAssessmentResponseEntity, IAssessmentResponseMetadata } from '@libs/entities-lib/assessment-template';
+import {
+  IAssessmentResponseCreateRequest, IAssessmentResponseEntity, IAssessmentResponseMetadata, IQuestionResponse,
+} from '@libs/entities-lib/assessment-template';
 import { IStore, IState } from '../../store/store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
@@ -22,6 +24,9 @@ export class AssessmentResponseStorage
 
     // eslint-disable-next-line
     saveAssessmentAnsweredQuestions: (payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> => this.store.dispatch(`${this.entityModuleName}/saveAssessmentAnsweredQuestions`, payload),
+
+    // eslint-disable-next-line
+    editAssessmentAnsweredQuestion: (payload: { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string }): Promise<IAssessmentResponseEntity> => this.store.dispatch(`${this.entityModuleName}/editAssessmentAnsweredQuestion`, payload),
   }
 
   private mutations = {

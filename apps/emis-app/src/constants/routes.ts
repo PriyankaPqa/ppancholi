@@ -125,6 +125,10 @@ const routes = {
         path: 'assessments/:assessmentResponseId',
         name: 'casefile.assessments.details',
       },
+      edit: {
+        path: 'assessments/:assessmentResponseId/edit',
+        name: 'casefile.assessments.edit',
+      },
     },
     documents: {
       home: {

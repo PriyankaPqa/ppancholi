@@ -215,12 +215,14 @@ export default mixins(caseFileDetail).extend({
 
   methods: {
     attachToChanges(on: boolean) {
-      if (on) {
-        this.$signalR.connection.on('case-file.CaseFileActivityCreated', this.activityChanged);
-        this.$signalR.connection.on('case-file.CaseFileActivityUpdated', this.activityChanged);
-      } else {
-        this.$signalR.connection.off('case-file.CaseFileActivityCreated', this.activityChanged);
-        this.$signalR.connection.off('case-file.CaseFileActivityUpdated', this.activityChanged);
+      if (this.$signalR.connection) {
+        if (on) {
+          this.$signalR.connection.on('case-file.CaseFileActivityCreated', this.activityChanged);
+          this.$signalR.connection.on('case-file.CaseFileActivityUpdated', this.activityChanged);
+        } else {
+          this.$signalR.connection.off('case-file.CaseFileActivityCreated', this.activityChanged);
+          this.$signalR.connection.off('case-file.CaseFileActivityUpdated', this.activityChanged);
+        }
       }
     },
 

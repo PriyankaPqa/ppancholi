@@ -1,7 +1,7 @@
 import { ActionContext, ActionTree } from 'vuex';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IRootState } from '@libs/registration-lib/store';
-import { IAssessmentResponseCreateRequest, IAssessmentResponseEntity } from '@libs/entities-lib/assessment-template';
+import { IAssessmentResponseCreateRequest, IAssessmentResponseEntity, IQuestionResponse } from '@libs/entities-lib/assessment-template';
 import { AssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
 import { BaseModule } from '../base';
 import { IState } from '../base/base.types';
@@ -57,6 +57,15 @@ export class AssessmentResponseEntityModule extends BaseModule <IAssessmentRespo
     saveAssessmentAnsweredQuestions: async (context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
       payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> => {
       const result = await this.service.saveAssessmentAnsweredQuestions(payload);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
+    },
+
+    editAssessmentAnsweredQuestion: async (context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
+      payload: { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string }): Promise<IAssessmentResponseEntity> => {
+      const result = await this.service.editAssessmentAnsweredQuestion(payload.id, payload);
       if (result) {
         context.commit('set', result);
       }

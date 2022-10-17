@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   FunctionFactory, JsonObject, Question, QuestionSelectBase, StylesManager, SurveyModel,
@@ -32,6 +33,8 @@ interface ISimpleQuestion {
     hasComment?: boolean;
     commentText?: string | Record<string, string>;
     otherPlaceHolder?: string | Record<string, string>;
+    labelTrue?: string | Record<string, string>;
+    labelFalse?: string | Record<string, string>;
 }
 
 interface ISurveyJsPlainData {
@@ -60,6 +63,10 @@ export class SurveyJsHelper {
 
   static questionTypesThatCannotBeAnswered(): string[] {
     return ['html'];
+  }
+
+  static questionTypeIsMultipleAnswer(questionType: string): boolean {
+    return ['checkbox'].indexOf(questionType) > -1;
   }
 
   initializeSurveyJsCreator(locale?: string) {
@@ -148,7 +155,7 @@ export class SurveyJsHelper {
 
   getAssessmentQuestions() : IAssessmentQuestion[] {
     const result = [] as IAssessmentQuestion[];
-    this.creator.survey.getAllQuestions().filter((q) => q.getType() !== 'html').forEach((q: Question) => {
+    this.creator.survey.getAllQuestions().filter((q) => SurveyJsHelper.questionTypesThatCannotBeAnswered().indexOf(q.getType()) === -1).forEach((q: Question) => {
       const qJson = q.toJSON() as ISimpleQuestion;
 
       // eslint-disable-next-line no-nested-ternary
@@ -158,10 +165,27 @@ export class SurveyJsHelper {
       subQuestions.forEach((subQuestion) => {
         const simpleQuestion = { ...qJson, suffix: subQuestion } as ISimpleQuestion;
 
-        const choices = (q as any).getChoices
+        let choices = (q as any).getChoices
           ? JSON.parse(JSON.stringify((q as any).getChoices())) as TextValue[]
         // to extract instead when ratings or matrix...
           : simpleQuestion.rateValues || simpleQuestion.columns;
+
+        if (q.getType() === 'boolean') {
+          choices = [{
+            value: (q as any).getValueTrue().toString(),
+            text: qJson.labelTrue || {
+              en: 'Yes',
+              fr: 'Oui',
+            },
+          }, {
+            value: (q as any).getValueFalse().toString(),
+            text: qJson.labelFalse || {
+              en: 'No',
+              fr: 'Non',
+            },
+          },
+          ];
+        }
 
         const assessmentQuestion = {
           identifier: simpleQuestion.name + (simpleQuestion.suffix != null ? `|${simpleQuestion.suffix.name}` : ''),

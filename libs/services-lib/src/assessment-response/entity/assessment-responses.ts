@@ -1,4 +1,6 @@
-import { IAssessmentResponseCreateRequest, IAssessmentResponseEntity, IAssessmentResponseMetadata } from '@libs/entities-lib/assessment-template';
+import {
+  IAssessmentResponseCreateRequest, IAssessmentResponseEntity, IAssessmentResponseMetadata, IQuestionResponse,
+} from '@libs/entities-lib/assessment-template';
 import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -36,6 +38,10 @@ export class AssessmentResponsesService extends DomainBaseService<IAssessmentRes
 
   async completeSurveyByBeneficiary(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> {
     return this.http.patch<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/submit/public`, item));
+  }
+
+  async editAssessmentAnsweredQuestion(id: string, request: { responses: IQuestionResponse[], assessmentQuestionIdentifier: string }) {
+    return this.http.patch<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/editAssessmentAnsweredQuestion`, { id }), request);
   }
 
   async search(params: IAzureSearchParams, searchEndpoint: string = null):

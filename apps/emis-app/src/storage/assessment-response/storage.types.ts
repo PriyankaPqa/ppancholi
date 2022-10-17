@@ -1,4 +1,6 @@
-import { IAssessmentResponseMetadata, IAssessmentResponseEntity, IAssessmentResponseCreateRequest } from '@libs/entities-lib/assessment-template';
+import {
+  IAssessmentResponseMetadata, IAssessmentResponseEntity, IAssessmentResponseCreateRequest, IQuestionResponse,
+} from '@libs/entities-lib/assessment-template';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';
@@ -13,12 +15,14 @@ export interface IActions extends IBaseActions<IAssessmentResponseEntity, IAsses
   create(payload: IAssessmentResponseCreateRequest): Promise<IAssessmentResponseEntity>;
   update(payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity>;
   saveAssessmentAnsweredQuestions(payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity>;
+  editAssessmentAnsweredQuestion(payload: { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string }): Promise<IAssessmentResponseEntity>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<IAssessmentResponseEntity, IAssessmentResponseMetadata> {
   create: jest.Mock<IAssessmentResponseEntity>;
   update: jest.Mock<IAssessmentResponseEntity>;
   saveAssessmentAnsweredQuestions: jest.Mock<IAssessmentResponseEntity>;
+  editAssessmentAnsweredQuestion: jest.Mock<IAssessmentResponseEntity>;
 }
 
 export interface IMutations extends IBaseMutations<IAssessmentResponseEntity, IAssessmentResponseMetadata> {
