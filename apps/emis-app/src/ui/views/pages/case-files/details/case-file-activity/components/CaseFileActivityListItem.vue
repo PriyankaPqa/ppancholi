@@ -20,7 +20,6 @@ import {
 } from '@libs/entities-lib/case-file';
 import { ERegistrationMethod, IIdMultilingualName, IMultilingual } from '@libs/shared-lib/types';
 import { EPaymentModalities } from '@libs/entities-lib/program';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export interface IAssignInfo {
   id: string;
@@ -409,7 +408,7 @@ export default Vue.extend({
           {
             By: this.item.user.name,
           });
-        if (this.$hasFeature(FeatureKeys.CaseFileActivityRegistrationLocation) && this.item.details.registrationMethod) {
+        if (this.item.details.registrationMethod) {
           body += `\n${this.$t('caseFileActivity.activityList.body.registrationMethod')}: `;
           body += this.$t(`enums.RegistrationMethod.${ERegistrationMethod[this.item.details.registrationMethod as number]}`);
           if (this.item.details.registrationMethod === ERegistrationMethod.InPerson && this.item.details.registrationLocation) {

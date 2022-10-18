@@ -715,9 +715,11 @@ describe('CaseFileActivityListItem.vue', () => {
             body,
           });
         });
+      });
+
+      describe('makeContentForRegistration', () => {
         it('returns the correct data when action type is Registration,  RegistrationType is crc and there is a registration method', async () => {
           const item = mockCaseFileActivities(CaseFileActivityType.Registration)[0];
-          wrapper.vm.$hasFeature = jest.fn(() => true);
           await wrapper.setProps({
             item,
           });
@@ -730,7 +732,6 @@ describe('CaseFileActivityListItem.vue', () => {
         });
 
         it('returns the correct data when action type is Registration,  RegistrationType is crc and registration method is in person and has location', async () => {
-          wrapper.vm.$hasFeature = jest.fn(() => true);
           const item = {
             ...mockCaseFileActivities(CaseFileActivityType.Registration)[0],
             details: {
@@ -739,7 +740,6 @@ describe('CaseFileActivityListItem.vue', () => {
               registrationLocation: { translation: { en: 'Town Hall', fr: '' } },
             },
           };
-          wrapper.vm.$hasFeature = jest.fn(() => true);
           await wrapper.setProps({
             item,
           });
@@ -765,117 +765,102 @@ describe('CaseFileActivityListItem.vue', () => {
             body,
           });
         });
-
-        it('returns the correct data when action type is Registration and feature flag is off', async () => {
-          const item = mockCaseFileActivities(CaseFileActivityType.Registration)[0];
-          wrapper.vm.$hasFeature = jest.fn(() => false);
-
-          await wrapper.setProps({
-            item,
-          });
-          const body = 'caseFileActivity.activityList.body.CRCRegistration';
-
-          expect(wrapper.vm.makeContentForRegistration()).toEqual({
-            title: 'caseFileActivity.activityList.title.Registration',
-            body,
-          });
-        });
-
-        it('returns the correct data when action type is PaymentSubmitted', async () => {
-          const item = mockCaseFileActivities(CaseFileActivityType.PaymentSubmitted)[0];
-
-          await wrapper.setProps({
-            item,
-          });
-          const amount = wrapper.vm.$formatCurrency(item.details.totalAmount);
-          const body = `${item.details.paymentName}: ${amount}`;
-          expect(wrapper.vm.makeContentForFinancialAssistancePaymentSubmit()).toEqual({
-            title: 'caseFileActivity.activityList.title.PaymentSubmitted',
-            body,
-          });
-        });
-        it('returns the correct data when action type is HouseholdEdited', async () => {
-          const item = mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0];
-          wrapper.vm.makeHouseholdEditedBody = jest.fn(() => 'mock-body');
-
-          await wrapper.setProps({
-            item,
-          });
-          expect(wrapper.vm.makeContentForHouseholdEdited()).toEqual({
-            title: 'caseFileActivity.activityList.title.HouseholdEdited',
-            body: 'mock-body',
-          });
-        });
       });
 
-      describe('makeContentForHouseholdSplit', () => {
-        it('returns the correct data when action type is HouseholdSplit', async () => {
-          const item = mockCaseFileActivities(CaseFileActivityType.HouseholdSplit)[0];
+      it('returns the correct data when action type is PaymentSubmitted', async () => {
+        const item = mockCaseFileActivities(CaseFileActivityType.PaymentSubmitted)[0];
 
-          await wrapper.setProps({
-            item,
-          });
-          expect(wrapper.vm.makeContentForHouseholdSplit()).toEqual({
-            title: 'caseFileActivity.activityList.title.HouseholdSplitTo',
-            body: 'caseFileActivity.activityList.body.HouseholdSplitfirstname1 lastname, firstname2 lastname',
-          });
+        await wrapper.setProps({
+          item,
+        });
+        const amount = wrapper.vm.$formatCurrency(item.details.totalAmount);
+        const body = `${item.details.paymentName}: ${amount}`;
+        expect(wrapper.vm.makeContentForFinancialAssistancePaymentSubmit()).toEqual({
+          title: 'caseFileActivity.activityList.title.PaymentSubmitted',
+          body,
         });
       });
+      it('returns the correct data when action type is HouseholdEdited', async () => {
+        const item = mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0];
+        wrapper.vm.makeHouseholdEditedBody = jest.fn(() => 'mock-body');
 
-      describe('makeContentForHouseholdCreatedAfterSplit', () => {
-        it('returns the correct data when action type is HouseholdCreatedAfterSplit', async () => {
-          const item = mockCaseFileActivities(CaseFileActivityType.HouseholdCreatedAfterSplit)[0];
-
-          await wrapper.setProps({
-            item,
-          });
-          expect(wrapper.vm.makeContentForHouseholdCreatedAfterSplit()).toEqual({
-            title: 'caseFileActivity.activityList.title.HouseholdSplitFrom',
-            body: 'caseFileActivity.activityList.body.HouseholdSplitfirstname1 lastname, firstname2 lastname',
-          });
+        await wrapper.setProps({
+          item,
+        });
+        expect(wrapper.vm.makeContentForHouseholdEdited()).toEqual({
+          title: 'caseFileActivity.activityList.title.HouseholdEdited',
+          body: 'mock-body',
         });
       });
+    });
 
-      describe('makeContentForHouseholdMovedMembersOut', () => {
-        it('returns the correct data when activity type is HouseholdMovedMembersOut', async () => {
-          await wrapper.setProps({
-            item: mockCaseFileActivities(CaseFileActivityType.HouseholdMovedMembersOut)[0],
-          });
+    describe('makeContentForHouseholdSplit', () => {
+      it('returns the correct data when action type is HouseholdSplit', async () => {
+        const item = mockCaseFileActivities(CaseFileActivityType.HouseholdSplit)[0];
 
-          expect(wrapper.vm.makeContentForHouseholdMovedMembersOut()).toEqual({
-            title: 'caseFileActivity.activityList.title.HouseholdMovedMembersOut',
-            body: 'caseFileActivity.activityList.body.HouseholdMovedMembersfirstname1 lastname, firstname2 lastname',
-          });
+        await wrapper.setProps({
+          item,
+        });
+        expect(wrapper.vm.makeContentForHouseholdSplit()).toEqual({
+          title: 'caseFileActivity.activityList.title.HouseholdSplitTo',
+          body: 'caseFileActivity.activityList.body.HouseholdSplitfirstname1 lastname, firstname2 lastname',
         });
       });
+    });
 
-      describe('makeContentForHouseholdMovedMembersIn', () => {
-        it('returns the correct data when activity type is HouseholdMovedMembersIn', async () => {
-          await wrapper.setProps({
-            item: mockCaseFileActivities(CaseFileActivityType.HouseholdMovedMembersIn)[0],
-          });
+    describe('makeContentForHouseholdCreatedAfterSplit', () => {
+      it('returns the correct data when action type is HouseholdCreatedAfterSplit', async () => {
+        const item = mockCaseFileActivities(CaseFileActivityType.HouseholdCreatedAfterSplit)[0];
 
-          expect(wrapper.vm.makeContentForHouseholdMovedMembersIn()).toEqual({
-            title: 'caseFileActivity.activityList.title.HouseholdMovedMembersIn',
-            body: 'caseFileActivity.activityList.body.HouseholdMovedMembersfirstname1 lastname, firstname2 lastname',
-          });
+        await wrapper.setProps({
+          item,
+        });
+        expect(wrapper.vm.makeContentForHouseholdCreatedAfterSplit()).toEqual({
+          title: 'caseFileActivity.activityList.title.HouseholdSplitFrom',
+          body: 'caseFileActivity.activityList.body.HouseholdSplitfirstname1 lastname, firstname2 lastname',
         });
       });
+    });
 
-      describe('makeContentForFinancialAssistancePaymentCompleted', () => {
-        it('returns the correct data when activity type is PaymentCompleted', async () => {
-          await wrapper.setProps({
-            item: mockCaseFileActivities(CaseFileActivityType.PaymentCompleted)[0],
-          });
+    describe('makeContentForHouseholdMovedMembersOut', () => {
+      it('returns the correct data when activity type is HouseholdMovedMembersOut', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.HouseholdMovedMembersOut)[0],
+        });
 
-          let body = 'caseFileActivity.activityList.body.paymentCompleted.name: mock payment';
-          body += '\ncaseFileActivity.activityList.body.paymentCompleted.modality: enums.PaymentModality.DirectDeposit';
-          body += '\ncaseFileActivity.activityList.body.paymentCompleted.amount: $5,115.20';
+        expect(wrapper.vm.makeContentForHouseholdMovedMembersOut()).toEqual({
+          title: 'caseFileActivity.activityList.title.HouseholdMovedMembersOut',
+          body: 'caseFileActivity.activityList.body.HouseholdMovedMembersfirstname1 lastname, firstname2 lastname',
+        });
+      });
+    });
 
-          expect(wrapper.vm.makeContentForFinancialAssistancePaymentCompleted()).toEqual({
-            title: 'caseFileActivity.activityList.title.PaymentCompleted',
-            body,
-          });
+    describe('makeContentForHouseholdMovedMembersIn', () => {
+      it('returns the correct data when activity type is HouseholdMovedMembersIn', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.HouseholdMovedMembersIn)[0],
+        });
+
+        expect(wrapper.vm.makeContentForHouseholdMovedMembersIn()).toEqual({
+          title: 'caseFileActivity.activityList.title.HouseholdMovedMembersIn',
+          body: 'caseFileActivity.activityList.body.HouseholdMovedMembersfirstname1 lastname, firstname2 lastname',
+        });
+      });
+    });
+
+    describe('makeContentForFinancialAssistancePaymentCompleted', () => {
+      it('returns the correct data when activity type is PaymentCompleted', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.PaymentCompleted)[0],
+        });
+
+        let body = 'caseFileActivity.activityList.body.paymentCompleted.name: mock payment';
+        body += '\ncaseFileActivity.activityList.body.paymentCompleted.modality: enums.PaymentModality.DirectDeposit';
+        body += '\ncaseFileActivity.activityList.body.paymentCompleted.amount: $5,115.20';
+
+        expect(wrapper.vm.makeContentForFinancialAssistancePaymentCompleted()).toEqual({
+          title: 'caseFileActivity.activityList.title.PaymentCompleted',
+          body,
         });
       });
 
