@@ -240,6 +240,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       minimumContactQueryLength: 1,
       eventsAfterRemoval: null as string[],
       team: null as ITeamEntity,
+      currentEvents: [] as ITeamEvent[],
       isLoading: true,
       availableEvents: [] as ITeamEvent[],
       original: {
@@ -350,6 +351,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     getAvailableEvents() {
+      let availableEvents = this.currentEvents ?? [];
+
       const allEvents:IEventEntity[] = this.$storage.event.getters.getAll().map((e: IEventCombined) => e.entity);
       const eventsByStatus:IEventEntity[] = this.$storage.event.getters.eventsByStatus([EEventStatus.Open, EEventStatus.OnHold]);
       if (eventsByStatus) {
@@ -363,8 +366,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
           const selectedEvents = allEvents.filter((e) => this.team.eventIds.indexOf(e.id) > -1);
           existingInactiveEvents = selectedEvents.filter((ev: ITeamEvent) => !activeEvents.find((e) => e.id === ev.id));
         }
-        this.availableEvents = [...existingInactiveEvents, ...activeEvents];
+        availableEvents = availableEvents.concat([...existingInactiveEvents, ...activeEvents]);
       }
+      this.availableEvents = availableEvents;
     },
 
     handleRemoveEvent(leftEvents: (ITeamEvent | string)[]) {
@@ -401,7 +405,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
         return;
       }
 
-      this.team = new TeamEntity(_cloneDeep(this.$storage.team.getters.get(this.id).entity));
+      const storeTeam = _cloneDeep(this.$storage.team.getters.get(this.id));
+      this.team = new TeamEntity(storeTeam.entity);
+      this.currentEvents = storeTeam.metadata?.events;
       this.currentPrimaryContact = !this.team.getPrimaryContact() ? null
         : this.mapToTeamMember(this.$storage.userAccount.getters.get(this.team.getPrimaryContact().id), true);
       if (this.currentPrimaryContact) {
@@ -461,6 +467,10 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     setEvents(events: (ITeamEvent | string) | (ITeamEvent | string)[]) {
+      if (!events) {
+        this.team.setEventIds([]);
+        return;
+      }
       const ids = (Array.isArray(events) ? events : [events]).map((x) => (typeof x === 'string' ? x : x.id));
       this.team.setEventIds(ids);
     },

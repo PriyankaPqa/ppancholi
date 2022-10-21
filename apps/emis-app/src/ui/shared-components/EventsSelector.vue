@@ -75,13 +75,13 @@ export default Vue.extend({
     },
     forceEvents: { // So we can do additional manipulation on the search results. To be used with @fetch:done on external component
       type: Array as () => Array<IEvent>,
-      default: null,
+      default: () => [] as Array<IEvent>,
     },
   },
 
   data() {
     return {
-      events: [] as Array<IEvent>,
+      events: this.forceEvents as Array<IEvent>,
       selectedItem: this.value,
       loading: false,
       search: '',

@@ -7,7 +7,7 @@ import {
 import routes from '@/constants/routes';
 import { mockAppUsers } from '@/test/helpers';
 import {
-  TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc,
+  TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc, mockCombinedTeams,
 } from '@libs/entities-lib/team';
 import { mockStorage } from '@/storage';
 
@@ -44,6 +44,7 @@ describe('CreateEditTeam.vue', () => {
   storage.event.getters.eventsByStatus = jest.fn(() => teamEventsMock);
   const allEvents = storage.event.getters.getAll();
   storage.event.getters.getAll = jest.fn(() => [...allEvents, inactiveEvent, inactiveEvent2]);
+  storage.team.getters.get = jest.fn(() => mockCombinedTeams()[0]);
 
   describe('Template', () => {
     beforeEach(async () => {
@@ -752,7 +753,7 @@ describe('CreateEditTeam.vue', () => {
             },
           },
         });
-        await wrapper.setData({ team: myTeam });
+        await wrapper.setData({ team: myTeam, currentEvents: [] });
 
         wrapper.vm.getAvailableEvents();
 
@@ -760,6 +761,13 @@ describe('CreateEditTeam.vue', () => {
           inactiveEvent.entity,
           ...teamEventsMock,
         ]);
+      });
+
+      it('sets current events into available events', async () => {
+        const mockTeamEvent = { entity: { id: 'foo', name: { translation: { en: 'current-event' } } } };
+        await wrapper.setData({ currentEvents: [mockTeamEvent] });
+        await wrapper.vm.getAvailableEvents();
+        expect(wrapper.vm.availableEvents).toContain(mockTeamEvent);
       });
     });
 
@@ -926,6 +934,11 @@ describe('CreateEditTeam.vue', () => {
           id: '1',
           isPrimaryContact: true,
         });
+      });
+
+      it('sets currentEvents from the team metadata', async () => {
+        await wrapper.vm.loadTeamFromState();
+        expect(wrapper.vm.currentEvents).toEqual(mockCombinedTeams()[0].metadata.events);
       });
 
       it('should do nothing if it receives an error of existing name as argument ', async () => {
