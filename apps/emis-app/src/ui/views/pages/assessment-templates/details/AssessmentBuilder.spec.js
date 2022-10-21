@@ -121,7 +121,8 @@ describe('AssessmentBuilder', () => {
             "default": "url en",
             "fr": "url fr"
           },
-          "logoPosition": "right"
+          "logoPosition": "right",
+          "clearInvisibleValues": "onHiddenContainer"
           }`)));
       });
     });

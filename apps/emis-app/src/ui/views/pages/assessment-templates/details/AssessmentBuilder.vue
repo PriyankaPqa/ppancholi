@@ -73,7 +73,8 @@ export default mixins(assessmentDetail, metadata).extend({
           "default": "${this.$services.tenantSettings.getLogoUrl('en')}",
           "fr": "${this.$services.tenantSettings.getLogoUrl('fr')}"
         },
-        "logoPosition": "right"
+        "logoPosition": "right",
+         "clearInvisibleValues": "onHiddenContainer"
         }`;
     },
   },

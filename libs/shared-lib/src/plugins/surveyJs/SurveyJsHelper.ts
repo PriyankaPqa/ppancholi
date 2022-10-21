@@ -1,7 +1,9 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable complexity */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  FunctionFactory, JsonObject, Question, QuestionSelectBase, StylesManager, SurveyModel,
+  FunctionFactory, Question, QuestionSelectBase, StylesManager, SurveyModel,
+  Serializer,
 } from 'survey-core';
 import {
   CompletionStatus,
@@ -35,6 +37,8 @@ interface ISimpleQuestion {
     otherPlaceHolder?: string | Record<string, string>;
     labelTrue?: string | Record<string, string>;
     labelFalse?: string | Record<string, string>;
+    scoreTrue?: number;
+    scoreFalse?: number;
 }
 
 interface ISurveyJsPlainData {
@@ -72,8 +76,7 @@ export class SurveyJsHelper {
   initializeSurveyJsCreator(locale?: string) {
     StylesManager.applyTheme('defaultV2');
 
-    JsonObject.metaData.addProperty('question', { name: 'score:number' });
-    JsonObject.metaData.addProperty('itemvalue', { name: 'score:number' });
+    this.registerCustomProperties();
 
     this.initializeTranslations(locale);
 
@@ -96,9 +99,7 @@ export class SurveyJsHelper {
   initializeSurveyJsRunner(locale: string, surveyJson: string) {
     StylesManager.applyTheme('defaultV2');
 
-    JsonObject.metaData.addProperty('question', { name: 'score:number' });
-    JsonObject.metaData.addProperty('itemvalue', { name: 'score:number' });
-
+    this.registerCustomProperties();
     this.registerCustomSurveyJsFunctions();
 
     this.survey = new SurveyModel(surveyJson);
@@ -129,12 +130,33 @@ export class SurveyJsHelper {
       // localization.getLocale('fr').ed.surveyPlaceHolder = ' Ajoutez des questions...';
       // localization.getLocale('fr').qt.signaturepad = 'Pad de signature';
       // what we end up with in localization
+      localization.getLocale('fr').pe.labelTrue = 'Valeur pour "Vrai"';
+      localization.getLocale('fr').pe.labelFalse = 'Valeur pour "Faux"';
       localization.getLocale('fr');
       // console.log('current french', _merge(localization.getLocale('en'), localization.getLocale('fr')));
     } else {
       // console.log('current english', localization.getLocale('en'));
       localization.getLocale('en');
     }
+  }
+
+  registerCustomProperties() {
+    Serializer.addProperty('itemvalue', {
+      name: 'score:number',
+      displayName: { default: 'Score', fr: 'Points' },
+    });
+
+    Serializer.addProperty('boolean', {
+      name: 'scoreTrue:number',
+      displayName: { default: '"True" score', fr: 'Points pour "Vrai"' },
+      category: 'general',
+    });
+
+    Serializer.addProperty('boolean', {
+      name: 'scoreFalse:number',
+      displayName: { default: '"False" score', fr: 'Points pour "Faux"' },
+      category: 'general',
+    });
   }
 
   registerCustomSurveyJsFunctions() {
@@ -159,8 +181,9 @@ export class SurveyJsHelper {
       const qJson = q.toJSON() as ISimpleQuestion;
 
       // eslint-disable-next-line no-nested-ternary
-      const subQuestions = qJson.items?.length ? qJson.items : (qJson.rows?.length
-        ? qJson.rows.map((r) => (typeof r === 'string' ? { name: r, title: r } : { name: r.value, title: r.text })) : [null]);
+      const subQuestions: { name: string, title?: string | Record<string, string>, rowscore?: number }[] = qJson.items?.length
+        ? qJson.items : (qJson.rows?.length
+          ? qJson.rows.map((r) => (typeof r === 'string' ? { name: r, title: r } : { name: r.value, title: r.text, rowscore: r.score })) : [null]);
 
       subQuestions.forEach((subQuestion) => {
         const simpleQuestion = { ...qJson, suffix: subQuestion } as ISimpleQuestion;
@@ -177,12 +200,14 @@ export class SurveyJsHelper {
               en: 'Yes',
               fr: 'Oui',
             },
+            score: qJson.scoreTrue,
           }, {
             value: (q as any).getValueFalse().toString(),
             text: qJson.labelFalse || {
               en: 'No',
               fr: 'Non',
             },
+            score: qJson.scoreFalse,
           },
           ];
         }
@@ -234,6 +259,10 @@ export class SurveyJsHelper {
           } as IAssessmentAnswerChoice;
           if (+choice.textValue as any === choice.textValue || (choice.textValue.trim() !== '' && !Number.isNaN(+choice.textValue))) {
             choice.numericValue = +choice.textValue;
+          }
+
+          if (subQuestion?.rowscore) {
+            choice.score = subQuestion?.rowscore + (choice.score || 0);
           }
 
           assessmentQuestion.answerChoices.push(choice);
@@ -384,17 +413,23 @@ export class SurveyJsHelper {
     const data = survey.data;
 
     Object.keys(data).forEach((qName) => {
-      const question = survey.getQuestionByName(qName) as any;
+      const question = survey.getQuestionByName(qName) as
+        (Question & { choices?: any[], rows?: any[], columns? : any[], scoreTrue?: number, scoreFalse?: number, score?: number });
       const qValue = data[qName];
-      if (question) {
+      if (question && question.visible) {
         if (question.choices) {
           question.choices.filter((c: any) => c.score).forEach((choice: any) => {
             if (choice.value === qValue || (Array.isArray(qValue) && qValue.indexOf(choice.value) > -1)) {
-              // if (choice.value === qValue || (Array.isArray(qValue) && qValue.indexOf(question.choices[0].value) > -1)) {
-              // debugger;
               survey._totalScore += +choice.score || 0;
             }
           });
+        } else if (question.rows && question.columns) {
+          Object.keys(qValue).forEach((rowId) => {
+            survey._totalScore += +question.rows.find((r: any) => r.value === rowId)?.score || 0;
+            survey._totalScore += +question.columns.find((r: any) => r.value === qValue[rowId])?.score || 0;
+          });
+        } else if (question.getType() === 'boolean') {
+          survey._totalScore += +(qValue ? question.scoreTrue : question.scoreFalse) || 0;
         } else {
           survey._totalScore += +question.score || 0;
         }

@@ -229,7 +229,6 @@ const commentQuestion = JSON.stringify({
         {
           type: 'comment',
           name: 'question1',
-          score: 34,
         },
       ],
     },
@@ -257,7 +256,8 @@ const booleanQuestion = JSON.stringify({
             default: 'dddd',
             fr: 'xxx',
           },
-          score: 34,
+          scoreTrue: 1,
+          scoreFalse: 2,
           labelTrue: {
             default: 'why yes',
             fr: 'ouiii',
@@ -294,7 +294,6 @@ const htmlQuestion = JSON.stringify({
             default: 'dddd',
             fr: 'xxx',
           },
-          score: 34,
           html: 'hello',
         },
       ],
@@ -321,7 +320,6 @@ const multipleTextQuestion = JSON.stringify({
             default: 'dddd',
             fr: 'xxx',
           },
-          score: 34,
           items: [
             {
               name: 'sub q 1',
@@ -388,8 +386,10 @@ const matrixQuestion = JSON.stringify({
                 default: 'en',
                 fr: 'fr',
               },
+              score: 1,
             },
             'Row 2',
+            'Row 3',
           ],
         },
       ],
@@ -401,6 +401,7 @@ const matrixAnswer = {
   question1: {
     'sub q 1': 'answer 1',
     'Row 2': 'Column 3',
+    'Row 3': 'answer 1',
   },
 };
 
@@ -635,10 +636,11 @@ describe('SurveyJsHelper', () => {
       expect(creator.isAutoSave).toBeTruthy();
       expect(creator.showTranslationTab).toBeTruthy();
     });
-    it('adds score in surveyjs', () => {
+    it('adds properties in surveyjs', () => {
       helper.initializeSurveyJsCreator('en');
-      expect(JsonObject.metaData.getProperty('question', 'score')).not.toBeNull();
       expect(JsonObject.metaData.getProperty('itemvalue', 'score')).not.toBeNull();
+      expect(JsonObject.metaData.getProperty('boolean', 'scoreTrue')).not.toBeNull();
+      expect(JsonObject.metaData.getProperty('boolean', 'scoreFalse')).not.toBeNull();
       expect(helper.totalScore).toBe(0);
     });
     it('initializes creator locale', () => {
@@ -662,8 +664,9 @@ describe('SurveyJsHelper', () => {
     });
     it('adds score in surveyjs', () => {
       helper.initializeSurveyJsRunner('en', complexJson);
-      expect(JsonObject.metaData.getProperty('question', 'score')).not.toBeNull();
       expect(JsonObject.metaData.getProperty('itemvalue', 'score')).not.toBeNull();
+      expect(JsonObject.metaData.getProperty('boolean', 'scoreTrue')).not.toBeNull();
+      expect(JsonObject.metaData.getProperty('boolean', 'scoreFalse')).not.toBeNull();
       expect(helper.totalScore).toBe(0);
     });
     it('initializes survey locale', () => {
@@ -1234,7 +1237,6 @@ describe('SurveyJsHelper', () => {
           },
         },
         questionType: 'text',
-        score: 1,
       }]);
     });
     it('extracts for checkbox question type', () => {
@@ -1527,7 +1529,6 @@ describe('SurveyJsHelper', () => {
           },
         },
         questionType: 'comment',
-        score: 34,
       }]);
     });
     it('extracts for boolean question type', () => {
@@ -1544,7 +1545,7 @@ describe('SurveyJsHelper', () => {
           },
           identifier: '123',
           numericValue: 123,
-          score: null,
+          score: 1,
           textValue: '123',
         }, {
           displayValue: {
@@ -1554,7 +1555,7 @@ describe('SurveyJsHelper', () => {
             },
           },
           identifier: 'false',
-          score: null,
+          score: 2,
           textValue: 'false',
         }],
         identifier: 'question1',
@@ -1565,7 +1566,6 @@ describe('SurveyJsHelper', () => {
           },
         },
         questionType: 'boolean',
-        score: 34,
       }]);
     });
     it('ignores for html question type', () => {
@@ -1589,7 +1589,6 @@ describe('SurveyJsHelper', () => {
             },
           },
           questionType: 'multipletext',
-          score: 34,
         },
         {
           answerChoices: null,
@@ -1601,7 +1600,6 @@ describe('SurveyJsHelper', () => {
             },
           },
           questionType: 'multipletext',
-          score: 34,
         },
       ]);
     });
@@ -1620,7 +1618,7 @@ describe('SurveyJsHelper', () => {
                 },
               },
               identifier: 'answer 1',
-              score: 10,
+              score: 11,
               textValue: 'answer 1',
             },
             {
@@ -1631,7 +1629,7 @@ describe('SurveyJsHelper', () => {
                 },
               },
               identifier: 'answer 2',
-              score: 20,
+              score: 21,
               textValue: 'answer 2',
             },
             {
@@ -1642,7 +1640,7 @@ describe('SurveyJsHelper', () => {
                 },
               },
               identifier: 'Column 3',
-              score: null,
+              score: 1,
               textValue: 'Column 3',
             },
           ],
@@ -1654,6 +1652,7 @@ describe('SurveyJsHelper', () => {
             },
           },
           questionType: 'matrix',
+          score: undefined,
         },
         {
           answerChoices: [
@@ -1696,6 +1695,52 @@ describe('SurveyJsHelper', () => {
             translation: {
               en: 'dddd|Row 2',
               fr: 'xxx|Row 2',
+            },
+          },
+          questionType: 'matrix',
+          score: undefined,
+        },
+        {
+          answerChoices: [
+            {
+              displayValue: {
+                translation: {
+                  en: '1 en',
+                  fr: '1 fr',
+                },
+              },
+              identifier: 'answer 1',
+              score: 10,
+              textValue: 'answer 1',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: '2 en',
+                  fr: '2 en',
+                },
+              },
+              identifier: 'answer 2',
+              score: 20,
+              textValue: 'answer 2',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: 'Column 3',
+                  fr: 'Column 3',
+                },
+              },
+              identifier: 'Column 3',
+              score: null,
+              textValue: 'Column 3',
+            },
+          ],
+          identifier: 'question1|Row 3',
+          question: {
+            translation: {
+              en: 'dddd|Row 3',
+              fr: 'xxx|Row 3',
             },
           },
           questionType: 'matrix',
@@ -1776,8 +1821,17 @@ describe('SurveyJsHelper', () => {
       };
 
       helper.valueChangedNewScore(helper.creator.survey as any);
-      // for now we support price correct (radio) to score a 10... more in the future story...
-      expect(helper.totalScore).toEqual(10);
+      // for now we support price correct (radio) and quality-4 (matrix) to score a 10... more in the future story...
+      expect(helper.totalScore).toEqual(20);
+    });
+
+    it('gets a new score that sums scores on both rows and columns for matrix', () => {
+      helper.initializeSurveyJsCreator();
+      helper.creator.text = matrixQuestion;
+      helper.creator.survey.data = matrixAnswer;
+
+      helper.valueChangedNewScore(helper.creator.survey as any);
+      expect(helper.totalScore).toEqual(21);
     });
   });
 
@@ -2069,6 +2123,10 @@ describe('SurveyJsHelper', () => {
           {
             assessmentQuestionIdentifier: 'question1|Row 2',
             responses: [{ displayValue: 'Column 3', textValue: 'Column 3', numericValue: null }],
+          },
+          {
+            assessmentQuestionIdentifier: 'question1|Row 3',
+            responses: [{ displayValue: '1 fr', textValue: 'answer 1', numericValue: null }],
           },
         ]);
       });

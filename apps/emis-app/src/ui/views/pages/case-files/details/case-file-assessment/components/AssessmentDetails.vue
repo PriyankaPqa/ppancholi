@@ -25,6 +25,10 @@
             <div>{{ $t('assessmentResponse.dateCompleted') }}:</div>
             <div>{{ assessmentResponse.dateCompleted ? moment(assessmentResponse.dateCompleted).format('ll') : '' }}</div>
           </div>
+          <div>
+            <div>{{ $t('assessmentResponse.scoring') }}:</div>
+            <div>{{ assessmentResponse.totalScore }}</div>
+          </div>
         </v-row>
       </div>
 
@@ -100,7 +104,7 @@ export default mixins(caseFileDetail).extend({
       CompletedByType,
       moment,
       selectedTab: 'Questions',
-      tabs: ['Questions', 'Scoring'],
+      tabs: ['Questions'],
       hasPendingChanges: false,
     };
   },
