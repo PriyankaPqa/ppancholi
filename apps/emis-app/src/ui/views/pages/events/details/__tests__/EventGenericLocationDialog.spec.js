@@ -352,6 +352,7 @@ describe('EventGenericLocationDialog.vue', () => {
 
         expect(wrapper.vm.rules.postalCode).toEqual({
           max: MAX_LENGTH_MD,
+          canadianPostalCode: true,
         });
       });
     });

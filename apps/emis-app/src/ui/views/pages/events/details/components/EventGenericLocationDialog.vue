@@ -231,6 +231,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         },
         postalCode: {
           max: MAX_LENGTH_MD,
+          canadianPostalCode: this.isCanada,
         },
       };
     },
