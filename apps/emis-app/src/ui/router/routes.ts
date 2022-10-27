@@ -169,7 +169,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.assessmentTemplates.builder.name,
         component: AssessmentBuilder,
         meta: {
-          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true,
+          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -178,7 +178,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.events.assessments.builder.name,
         component: AssessmentBuilder,
         meta: {
-          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true,
+          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -187,7 +187,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.assessmentTemplates.runner.name,
         component: AssessmentRunner,
         meta: {
-          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true,
+          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -196,7 +196,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.events.assessments.runner.name,
         component: AssessmentRunner,
         meta: {
-          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true,
+          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -205,7 +205,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.events.assessments.complete.name,
         component: AssessmentRunner,
         meta: {
-          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true,
+          level: 'level1', feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -331,14 +331,14 @@ export const routes: Array<RouteConfig> = [
                     path: Routes.caseFile.assessments.home.path,
                     name: Routes.caseFile.assessments.home.name,
                     component: CaseFileAssessments,
-                    meta: { level: 'level1' },
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                     props: true,
                   },
                   {
                     path: Routes.caseFile.assessments.details.path,
                     name: Routes.caseFile.assessments.details.name,
                     component: CaseFileAssessmentDetails,
-                    meta: { level: 'level1' },
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                     props: true,
                   },
                   {
