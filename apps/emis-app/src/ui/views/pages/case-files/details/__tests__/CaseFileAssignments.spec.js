@@ -6,14 +6,14 @@ import { mockUserStateLevel } from '@/test/helpers';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 
-import Component from '../case-file-activity/components/CaseFileAssignmentsOld.vue';
+import Component from '../case-file-activity/components/CaseFileAssignments.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCaseFileEntity();
 const mockTeam = mockTeamEntity();
 
-describe('CaseFileAssignmentsOld.vue', () => {
+describe('CaseFileAssignments.vue', () => {
   let wrapper;
   storage.userAccount.actions.search = jest.fn(() => ({ ids: [mockCombinedUserAccount().entity.id] }));
   storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
@@ -360,9 +360,16 @@ describe('CaseFileAssignmentsOld.vue', () => {
       });
 
       it('returns the right value', async () => {
-        wrapper.vm.$storage.team.actions.getTeamsAssigned = jest.fn(() => [mockTeam]);
+        const team1 = mockTeamEntity({ id: '1', name: 'A' });
+        const team2 = mockTeamEntity({ id: '2', name: 'B' });
+        const mockTeams = [team1, team2];
+        wrapper.vm.$storage.team.actions.getTeamsAssigned = jest.fn(() => mockTeams);
+
+        const caseFile = { ...mockCaseFile, assignedTeamIds: ['2'] };
+        await wrapper.setProps({ caseFile });
+
         const name = await wrapper.vm.getAssignedTeamInfo();
-        expect(name).toEqual(mockTeam.name);
+        expect(name).toEqual('B');
       });
     });
 

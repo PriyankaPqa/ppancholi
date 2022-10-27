@@ -80,7 +80,6 @@ export default Vue.extend({
       showAssignmentsDialog: false,
       showViewAssignmentsDialog: false,
       loading: false,
-      assignedTeams: [] as ITeamEntity[],
       FeatureKeys,
     };
   },
@@ -112,7 +111,6 @@ export default Vue.extend({
      * Set the assignment info by using the data sent back from the assign-case-file dialog after an assignment was done
      */
     setAssignmentsInfoFromData({ individuals, teams }: {individuals: {displayName: string}[], teams: ITeamEntity[]}) {
-      this.assignedTeams = teams || [];
       this.assignedTeamInfo = teams[0] ? teams[0].name : '';
       const individualsNames = individuals?.map((i) => (i.displayName));
       if (individualsNames) {
@@ -132,8 +130,9 @@ export default Vue.extend({
       if (!this.caseFile.assignedTeamIds.length) {
         return null;
       }
-      this.assignedTeams = await this.$storage.team.actions.getTeamsAssigned(this.caseFile.id);
-      return this.assignedTeams?.[0]?.name;
+      const assignedTeamsData = await this.$storage.team.actions.getTeamsAssigned(this.caseFile.id);
+      const firstTeamId: string = this.caseFile.assignedTeamIds[0];
+      return assignedTeamsData.find((team) => team.id === firstTeamId)?.name;
     },
 
     async getAssignedIndividualsInfo() {
@@ -141,7 +140,9 @@ export default Vue.extend({
         return null;
       }
 
-      const filter = `search.in(Entity/Id, '${this.caseFile.assignedIndividualIds.slice(0, 2).join('|')}', '|')`;
+      const allMemberIds = this.caseFile.assignedTeamMembers.reduce((acc, i) => i.teamMembersIds.concat(acc), []);
+      const firstMemberIds = allMemberIds.slice(0, 2);
+      const filter = `search.in(Entity/Id, '${firstMemberIds.join('|')}', '|')`;
 
       const individualsData: IAzureTableSearchResults = await this.$storage.userAccount.actions.search({ filter });
       const { ids } = individualsData;
