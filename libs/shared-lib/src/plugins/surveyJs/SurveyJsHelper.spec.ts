@@ -303,6 +303,28 @@ const htmlQuestion = JSON.stringify({
 
 const htmlAnswer = {};
 
+const imageQuestion = JSON.stringify({
+  logo: {
+    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
+    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
+  },
+  logoPosition: 'right',
+  pages: [
+    {
+      name: 'page1',
+      elements: [
+        {
+          type: 'image',
+          name: 'question4',
+          imageLink: 'https://surveyjs.io/Content/Images/examples/image-picker/lion.jpg',
+        },
+      ],
+    },
+  ],
+});
+
+const imageAnswer = {};
+
 const multipleTextQuestion = JSON.stringify({
   logo: {
     default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
@@ -404,6 +426,261 @@ const matrixAnswer = {
     'Row 3': 'answer 1',
   },
 };
+
+const matrixDropdownQuestion = JSON.stringify({
+  logo: {
+    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+  },
+  logoPosition: 'right',
+  pages: [
+    {
+      name: 'page1',
+      elements: [
+        {
+          type: 'matrixdropdown',
+          name: 'question3',
+          columns: [
+            {
+              name: 'Column 1',
+              title: {
+                default: 'col 1 en',
+                fr: 'col 1 fr',
+              },
+            },
+            {
+              name: 'Column 2',
+              cellType: 'dropdown',
+              choices: [
+                {
+                  value: 1,
+                  text: {
+                    fr: 'hello',
+                    default: 'hello en',
+                  },
+                },
+                {
+                  value: 2,
+                  score: 5,
+                },
+                3,
+              ],
+              hasOther: true,
+              otherText: {
+                default: 'Other (describe)zzz',
+                fr: 'autre',
+              },
+              storeOthersAsComment: true,
+            },
+            {
+              name: 'col3',
+              title: {
+                fr: 'col 3 fr',
+              },
+            },
+          ],
+          choices: [
+            {
+              value: 1,
+              text: {
+                default: 'val 1 en',
+                fr: 'val fr',
+              },
+              score: 5,
+            },
+            2,
+            {
+              value: 'Yep',
+              score: 7,
+            },
+            4,
+            'nope',
+          ],
+          rows: [
+            {
+              value: 'Row 1',
+              text: 'lig 1 en',
+              score: 10,
+            },
+            {
+              value: 'Row 2',
+              text: {
+                fr: 'ligne 2',
+              },
+              score: 20,
+            },
+            'Row 3',
+          ],
+        },
+      ],
+    },
+  ],
+});
+
+const matrixDropdownAnswers = {
+  question3: {
+    'Row 1': {
+      'Column 1': 1,
+      'Column 2': 'other',
+      'Column 2-Comment': 'fdgdfg',
+      col3: 1,
+    },
+    'Row 2': {
+      'Column 2-Comment': 'cvbc',
+      'Column 1': 2,
+      'Column 2': 'other',
+      col3: 'Yep',
+    },
+    'Row 3': {
+      'Column 2-Comment': 'hfghfghf',
+      'Column 1': 'Yep',
+      'Column 2': 'other',
+      col3: 2,
+    },
+  },
+};
+
+const matrixDropdownSomeAnswers = {
+  question3: {
+    'Row 1': {
+      'Column 2-Comment': 'etst',
+      'Column 1': 2,
+      'Column 2': 'other',
+      col3: 2,
+    },
+    'Row 2': {
+      'Column 2': 3,
+    },
+    'Row 3': {
+      'Column 1': 'Yep',
+      col3: 'nope',
+    },
+  },
+};
+
+const ratingQuestion = JSON.stringify({
+  logo: {
+    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+  },
+  logoPosition: 'right',
+  pages: [
+    {
+      name: 'page1',
+      elements: [{
+        type: 'rating',
+        name: 'question5',
+        title: 'rating with range',
+        hasComment: true,
+        rateMax: 3,
+      },
+      ],
+    },
+  ],
+});
+
+const ratingQuestionWithStep = JSON.stringify({
+  logo: {
+    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+  },
+  logoPosition: 'right',
+  pages: [
+    {
+      name: 'page1',
+      elements: [{
+        type: 'rating',
+        name: 'question5',
+        title: 'rating with range',
+        hasComment: true,
+        rateMin: 2,
+        rateMax: 9,
+        rateStep: 2,
+      },
+      ],
+    },
+  ],
+});
+
+const ratingAnswer = {
+  question5: 2,
+  'question5-Comment': 'desc',
+};
+
+const ratingQuestionWithChoices = JSON.stringify({
+  logo: {
+    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+  },
+  logoPosition: 'right',
+  pages: [
+    {
+      name: 'page1',
+      elements: [{
+        type: 'rating',
+        name: 'question7',
+        title: {
+          default: 'rating with choices',
+          fr: 'avec choix',
+        },
+        rateValues: [
+          {
+            value: 'item1',
+            score: 123,
+          },
+          {
+            value: 'item2',
+            text: {
+              default: 'snd',
+              fr: '2e',
+            },
+            score: 456,
+          },
+          {
+            value: 'item3',
+            text: 'trd',
+            score: 4,
+          },
+        ],
+      },
+      ],
+    },
+  ],
+});
+
+const ratingAnswerWithChoices = {
+  question7: 'item2',
+};
+
+const panelQuestion = JSON.stringify({
+  logo: {
+    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+  },
+  logoPosition: 'right',
+  pages: [
+    {
+      name: 'page1',
+      elements: [
+        {
+          type: 'panel',
+          name: 'panel1',
+          elements: [
+            {
+              type: 'rating',
+              name: 'question5',
+              title: 'rating with range',
+              rateMin: 2,
+              rateMax: 9,
+              rateStep: 2,
+            },
+          ],
+          title: 'hello',
+        },
+      ],
+    },
+  ],
+});
 
 const complexJson = JSON.stringify({
   logoPosition: 'right',
@@ -617,12 +894,6 @@ const complexJsonAnswers = {
   email: 'mmmm@mail.com',
 };
 
-// const allQuestions = [textQuestion, checkboxQuestion, radiogroupQuestion, dropdownQuestion, commentQuestion, booleanQuestion, htmlQuestion, multipleTextQuestion,
-//   matrixQuestion, complexJson];
-
-// const allAnswers = [textAnswers, checkboxAnswers, radiogroupAnswers, dropdownAnswer, commentAnswer, booleanAnswer, htmlAnswer, multipleTextAnswer,
-//   matrixAnswer, complexJsonAnswers];
-
 describe('SurveyJsHelper', () => {
   beforeEach(async () => {
     helper = new SurveyJsHelper();
@@ -726,10 +997,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Très en désaccord',
                 },
               },
-              identifier: 1,
+              identifier: '1',
               numericValue: 1,
               score: null,
-              textValue: 1,
+              textValue: '1',
             },
             {
               displayValue: {
@@ -738,10 +1009,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'En désaccord',
                 },
               },
-              identifier: 2,
+              identifier: '2',
               numericValue: 2,
               score: null,
-              textValue: 2,
+              textValue: '2',
             },
             {
               displayValue: {
@@ -750,10 +1021,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Neutre',
                 },
               },
-              identifier: 3,
+              identifier: '3',
               numericValue: 3,
               score: null,
-              textValue: 3,
+              textValue: '3',
             },
             {
               displayValue: {
@@ -762,10 +1033,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'En accord',
                 },
               },
-              identifier: 4,
+              identifier: '4',
               numericValue: 4,
               score: 10,
-              textValue: 4,
+              textValue: '4',
             },
             {
               displayValue: {
@@ -774,10 +1045,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Très en accord',
                 },
               },
-              identifier: 5,
+              identifier: '5',
               numericValue: 5,
               score: null,
-              textValue: 5,
+              textValue: '5',
             },
           ],
           identifier: 'Quality|affordable',
@@ -799,10 +1070,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Très en désaccord',
                 },
               },
-              identifier: 1,
+              identifier: '1',
               numericValue: 1,
               score: null,
-              textValue: 1,
+              textValue: '1',
             },
             {
               displayValue: {
@@ -811,10 +1082,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'En désaccord',
                 },
               },
-              identifier: 2,
+              identifier: '2',
               numericValue: 2,
               score: null,
-              textValue: 2,
+              textValue: '2',
             },
             {
               displayValue: {
@@ -823,10 +1094,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Neutre',
                 },
               },
-              identifier: 3,
+              identifier: '3',
               numericValue: 3,
               score: null,
-              textValue: 3,
+              textValue: '3',
             },
             {
               displayValue: {
@@ -835,10 +1106,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'En accord',
                 },
               },
-              identifier: 4,
+              identifier: '4',
               numericValue: 4,
               score: 10,
-              textValue: 4,
+              textValue: '4',
             },
             {
               displayValue: {
@@ -847,10 +1118,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Très en accord',
                 },
               },
-              identifier: 5,
+              identifier: '5',
               numericValue: 5,
               score: null,
-              textValue: 5,
+              textValue: '5',
             },
           ],
           identifier: 'Quality|does what it claims',
@@ -872,10 +1143,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Très en désaccord',
                 },
               },
-              identifier: 1,
+              identifier: '1',
               numericValue: 1,
               score: null,
-              textValue: 1,
+              textValue: '1',
             },
             {
               displayValue: {
@@ -884,10 +1155,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'En désaccord',
                 },
               },
-              identifier: 2,
+              identifier: '2',
               numericValue: 2,
               score: null,
-              textValue: 2,
+              textValue: '2',
             },
             {
               displayValue: {
@@ -896,10 +1167,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Neutre',
                 },
               },
-              identifier: 3,
+              identifier: '3',
               numericValue: 3,
               score: null,
-              textValue: 3,
+              textValue: '3',
             },
             {
               displayValue: {
@@ -908,10 +1179,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'En accord',
                 },
               },
-              identifier: 4,
+              identifier: '4',
               numericValue: 4,
               score: 10,
-              textValue: 4,
+              textValue: '4',
             },
             {
               displayValue: {
@@ -920,10 +1191,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Très en accord',
                 },
               },
-              identifier: 5,
+              identifier: '5',
               numericValue: 5,
               score: null,
-              textValue: 5,
+              textValue: '5',
             },
           ],
           identifier: 'Quality|better then others',
@@ -945,10 +1216,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Très en désaccord',
                 },
               },
-              identifier: 1,
+              identifier: '1',
               numericValue: 1,
               score: null,
-              textValue: 1,
+              textValue: '1',
             },
             {
               displayValue: {
@@ -957,10 +1228,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'En désaccord',
                 },
               },
-              identifier: 2,
+              identifier: '2',
               numericValue: 2,
               score: null,
-              textValue: 2,
+              textValue: '2',
             },
             {
               displayValue: {
@@ -969,10 +1240,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Neutre',
                 },
               },
-              identifier: 3,
+              identifier: '3',
               numericValue: 3,
               score: null,
-              textValue: 3,
+              textValue: '3',
             },
             {
               displayValue: {
@@ -981,10 +1252,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'En accord',
                 },
               },
-              identifier: 4,
+              identifier: '4',
               numericValue: 4,
               score: 10,
-              textValue: 4,
+              textValue: '4',
             },
             {
               displayValue: {
@@ -993,10 +1264,10 @@ describe('SurveyJsHelper', () => {
                   fr: 'Très en accord',
                 },
               },
-              identifier: 5,
+              identifier: '5',
               numericValue: 5,
               score: null,
-              textValue: 5,
+              textValue: '5',
             },
           ],
           identifier: 'Quality|easy to use',
@@ -1059,7 +1330,68 @@ describe('SurveyJsHelper', () => {
           score: undefined,
         },
         {
-          answerChoices: null,
+          answerChoices: [
+            {
+              displayValue: {
+                translation: {
+                  en: '1',
+                  fr: '1',
+                },
+              },
+              identifier: '1',
+              numericValue: 1,
+              score: null,
+              textValue: '1',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: '2',
+                  fr: '2',
+                },
+              },
+              identifier: '2',
+              numericValue: 2,
+              score: null,
+              textValue: '2',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: '3',
+                  fr: '3',
+                },
+              },
+              identifier: '3',
+              numericValue: 3,
+              score: null,
+              textValue: '3',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: '4',
+                  fr: '4',
+                },
+              },
+              identifier: '4',
+              numericValue: 4,
+              score: null,
+              textValue: '4',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: '5',
+                  fr: '5',
+                },
+              },
+              identifier: '5',
+              numericValue: 5,
+              score: null,
+              textValue: '5',
+            },
+          ],
           identifier: 'recommend friends',
           question: {
             translation: {
@@ -1320,7 +1652,7 @@ describe('SurveyJsHelper', () => {
             fr: 'Text fr|Commentaires',
           },
         },
-        questionType: 'text',
+        questionType: 'comment',
       }]);
     });
     it('extracts for radiogroup question type', () => {
@@ -1404,7 +1736,7 @@ describe('SurveyJsHelper', () => {
             fr: 'Text fr|Commentaires',
           },
         },
-        questionType: 'text',
+        questionType: 'comment',
       }]);
     });
     it('extracts for dropdown question type', () => {
@@ -1452,10 +1784,10 @@ describe('SurveyJsHelper', () => {
                 fr: '1',
               },
             },
-            identifier: 1,
+            identifier: '1',
             numericValue: 1,
             score: null,
-            textValue: 1,
+            textValue: '1',
           },
           {
             displayValue: {
@@ -1464,10 +1796,10 @@ describe('SurveyJsHelper', () => {
                 fr: '3',
               },
             },
-            identifier: 3,
+            identifier: '3',
             numericValue: 3,
             score: null,
-            textValue: 3,
+            textValue: '3',
           },
           {
             displayValue: {
@@ -1476,10 +1808,10 @@ describe('SurveyJsHelper', () => {
                 fr: '5',
               },
             },
-            identifier: 5,
+            identifier: '5',
             numericValue: 5,
             score: null,
-            textValue: 5,
+            textValue: '5',
           },
           {
             displayValue: {
@@ -1512,7 +1844,7 @@ describe('SurveyJsHelper', () => {
             fr: 'Text fr|xxx',
           },
         },
-        questionType: 'text',
+        questionType: 'comment',
       }]);
     });
     it('extracts for comment question type', () => {
@@ -1571,6 +1903,12 @@ describe('SurveyJsHelper', () => {
     it('ignores for html question type', () => {
       helper.initializeSurveyJsCreator('en');
       helper.creator.text = htmlQuestion;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions).toEqual([]);
+    });
+    it('ignores for image question type', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = imageQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([]);
     });
@@ -1748,6 +2086,847 @@ describe('SurveyJsHelper', () => {
         },
       ]);
     });
+    it('extracts for matrixdropdown question type', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = matrixDropdownQuestion;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions).toEqual(
+        [
+          {
+            identifier: 'question3|Row 1|Column 1',
+            questionType: 'matrixdropdown',
+            question: {
+              translation: {
+                en: 'question3|lig 1 en|col 1 en',
+                fr: 'question3|lig 1 en|col 1 fr',
+              },
+            },
+            answerChoices: [
+              {
+                identifier: '1',
+                displayValue: {
+                  translation: {
+                    en: 'val 1 en',
+                    fr: 'val fr',
+                  },
+                },
+                textValue: '1',
+                score: 15,
+                numericValue: 1,
+              },
+              {
+                identifier: '2',
+                displayValue: {
+                  translation: {
+                    en: '2',
+                    fr: '2',
+                  },
+                },
+                textValue: '2',
+                score: 10,
+                numericValue: 2,
+              },
+              {
+                identifier: 'Yep',
+                displayValue: {
+                  translation: {
+                    en: 'Yep',
+                    fr: 'Yep',
+                  },
+                },
+                textValue: 'Yep',
+                score: 17,
+              },
+              {
+                identifier: '4',
+                displayValue: {
+                  translation: {
+                    en: '4',
+                    fr: '4',
+                  },
+                },
+                textValue: '4',
+                score: 10,
+                numericValue: 4,
+              },
+              {
+                identifier: 'nope',
+                displayValue: {
+                  translation: {
+                    en: 'nope',
+                    fr: 'nope',
+                  },
+                },
+                textValue: 'nope',
+                score: 10,
+              },
+            ],
+          },
+          {
+            identifier: 'question3|Row 1|Column 2',
+            questionType: 'matrixdropdown',
+            question: {
+              translation: {
+                en: 'question3|lig 1 en|Column 2',
+                fr: 'question3|lig 1 en|Column 2',
+              },
+            },
+            answerChoices: [
+              {
+                identifier: '1',
+                displayValue: {
+                  translation: {
+                    en: 'hello en',
+                    fr: 'hello',
+                  },
+                },
+                textValue: '1',
+                score: 10,
+                numericValue: 1,
+              },
+              {
+                identifier: '2',
+                displayValue: {
+                  translation: {
+                    en: '2',
+                    fr: '2',
+                  },
+                },
+                textValue: '2',
+                score: 15,
+                numericValue: 2,
+              },
+              {
+                identifier: '3',
+                displayValue: {
+                  translation: {
+                    en: '3',
+                    fr: '3',
+                  },
+                },
+                textValue: '3',
+                score: 10,
+                numericValue: 3,
+              }, {
+                displayValue: {
+                  translation: {
+                    en: 'Other (describe)zzz',
+                    fr: 'autre',
+                  },
+                },
+                identifier: 'other',
+                score: 10,
+                textValue: 'other',
+              },
+            ],
+          },
+          {
+            answerChoices: null,
+            identifier: 'question3|Row 1|Column 2|Comment',
+            question: {
+              translation: {
+                en: 'question3|lig 1 en|Column 2|Comment',
+                fr: 'question3|lig 1 en|Column 2|Commentaires',
+              },
+            },
+            questionType: 'comment',
+          },
+          {
+            identifier: 'question3|Row 1|col3',
+            questionType: 'matrixdropdown',
+            question: {
+              translation: {
+                en: 'question3|lig 1 en|col3',
+                fr: 'question3|lig 1 en|col 3 fr',
+              },
+            },
+            answerChoices: [
+              {
+                identifier: '1',
+                displayValue: {
+                  translation: {
+                    en: 'val 1 en',
+                    fr: 'val fr',
+                  },
+                },
+                textValue: '1',
+                score: 15,
+                numericValue: 1,
+              },
+              {
+                identifier: '2',
+                displayValue: {
+                  translation: {
+                    en: '2',
+                    fr: '2',
+                  },
+                },
+                textValue: '2',
+                score: 10,
+                numericValue: 2,
+              },
+              {
+                identifier: 'Yep',
+                displayValue: {
+                  translation: {
+                    en: 'Yep',
+                    fr: 'Yep',
+                  },
+                },
+                textValue: 'Yep',
+                score: 17,
+              },
+              {
+                identifier: '4',
+                displayValue: {
+                  translation: {
+                    en: '4',
+                    fr: '4',
+                  },
+                },
+                textValue: '4',
+                score: 10,
+                numericValue: 4,
+              },
+              {
+                identifier: 'nope',
+                displayValue: {
+                  translation: {
+                    en: 'nope',
+                    fr: 'nope',
+                  },
+                },
+                textValue: 'nope',
+                score: 10,
+              },
+            ],
+          },
+          {
+            identifier: 'question3|Row 2|Column 1',
+            questionType: 'matrixdropdown',
+            question: {
+              translation: {
+                en: 'question3|Row 2|col 1 en',
+                fr: 'question3|ligne 2|col 1 fr',
+              },
+            },
+            answerChoices: [
+              {
+                identifier: '1',
+                displayValue: {
+                  translation: {
+                    en: 'val 1 en',
+                    fr: 'val fr',
+                  },
+                },
+                textValue: '1',
+                score: 25,
+                numericValue: 1,
+              },
+              {
+                identifier: '2',
+                displayValue: {
+                  translation: {
+                    en: '2',
+                    fr: '2',
+                  },
+                },
+                textValue: '2',
+                score: 20,
+                numericValue: 2,
+              },
+              {
+                identifier: 'Yep',
+                displayValue: {
+                  translation: {
+                    en: 'Yep',
+                    fr: 'Yep',
+                  },
+                },
+                textValue: 'Yep',
+                score: 27,
+              },
+              {
+                identifier: '4',
+                displayValue: {
+                  translation: {
+                    en: '4',
+                    fr: '4',
+                  },
+                },
+                textValue: '4',
+                score: 20,
+                numericValue: 4,
+              },
+              {
+                identifier: 'nope',
+                displayValue: {
+                  translation: {
+                    en: 'nope',
+                    fr: 'nope',
+                  },
+                },
+                textValue: 'nope',
+                score: 20,
+              },
+            ],
+          },
+          {
+            identifier: 'question3|Row 2|Column 2',
+            questionType: 'matrixdropdown',
+            question: {
+              translation: {
+                en: 'question3|Row 2|Column 2',
+                fr: 'question3|ligne 2|Column 2',
+              },
+            },
+            answerChoices: [
+              {
+                identifier: '1',
+                displayValue: {
+                  translation: {
+                    en: 'hello en',
+                    fr: 'hello',
+                  },
+                },
+                textValue: '1',
+                score: 20,
+                numericValue: 1,
+              },
+              {
+                identifier: '2',
+                displayValue: {
+                  translation: {
+                    en: '2',
+                    fr: '2',
+                  },
+                },
+                textValue: '2',
+                score: 25,
+                numericValue: 2,
+              },
+              {
+                identifier: '3',
+                displayValue: {
+                  translation: {
+                    en: '3',
+                    fr: '3',
+                  },
+                },
+                textValue: '3',
+                score: 20,
+                numericValue: 3,
+              }, {
+                displayValue: {
+                  translation: {
+                    en: 'Other (describe)zzz',
+                    fr: 'autre',
+                  },
+                },
+                identifier: 'other',
+                score: 20,
+                textValue: 'other',
+              },
+            ],
+          },
+          {
+            answerChoices: null,
+            identifier: 'question3|Row 2|Column 2|Comment',
+            question: {
+              translation: {
+                en: 'question3|Row 2|Column 2|Comment',
+                fr: 'question3|ligne 2|Column 2|Commentaires',
+              },
+            },
+            questionType: 'comment',
+          },
+          {
+            identifier: 'question3|Row 2|col3',
+            questionType: 'matrixdropdown',
+            question: {
+              translation: {
+                en: 'question3|Row 2|col3',
+                fr: 'question3|ligne 2|col 3 fr',
+              },
+            },
+            answerChoices: [
+              {
+                identifier: '1',
+                displayValue: {
+                  translation: {
+                    en: 'val 1 en',
+                    fr: 'val fr',
+                  },
+                },
+                textValue: '1',
+                score: 25,
+                numericValue: 1,
+              },
+              {
+                identifier: '2',
+                displayValue: {
+                  translation: {
+                    en: '2',
+                    fr: '2',
+                  },
+                },
+                textValue: '2',
+                score: 20,
+                numericValue: 2,
+              },
+              {
+                identifier: 'Yep',
+                displayValue: {
+                  translation: {
+                    en: 'Yep',
+                    fr: 'Yep',
+                  },
+                },
+                textValue: 'Yep',
+                score: 27,
+              },
+              {
+                identifier: '4',
+                displayValue: {
+                  translation: {
+                    en: '4',
+                    fr: '4',
+                  },
+                },
+                textValue: '4',
+                score: 20,
+                numericValue: 4,
+              },
+              {
+                identifier: 'nope',
+                displayValue: {
+                  translation: {
+                    en: 'nope',
+                    fr: 'nope',
+                  },
+                },
+                textValue: 'nope',
+                score: 20,
+              },
+            ],
+          },
+          {
+            identifier: 'question3|Row 3|Column 1',
+            questionType: 'matrixdropdown',
+            question: {
+              translation: {
+                en: 'question3|Row 3|col 1 en',
+                fr: 'question3|Row 3|col 1 fr',
+              },
+            },
+            answerChoices: [
+              {
+                identifier: '1',
+                displayValue: {
+                  translation: {
+                    en: 'val 1 en',
+                    fr: 'val fr',
+                  },
+                },
+                textValue: '1',
+                score: 5,
+                numericValue: 1,
+              },
+              {
+                identifier: '2',
+                displayValue: {
+                  translation: {
+                    en: '2',
+                    fr: '2',
+                  },
+                },
+                textValue: '2',
+                score: null,
+                numericValue: 2,
+              },
+              {
+                identifier: 'Yep',
+                displayValue: {
+                  translation: {
+                    en: 'Yep',
+                    fr: 'Yep',
+                  },
+                },
+                textValue: 'Yep',
+                score: 7,
+              },
+              {
+                identifier: '4',
+                displayValue: {
+                  translation: {
+                    en: '4',
+                    fr: '4',
+                  },
+                },
+                textValue: '4',
+                score: null,
+                numericValue: 4,
+              },
+              {
+                identifier: 'nope',
+                displayValue: {
+                  translation: {
+                    en: 'nope',
+                    fr: 'nope',
+                  },
+                },
+                textValue: 'nope',
+                score: null,
+              },
+            ],
+          },
+          {
+            identifier: 'question3|Row 3|Column 2',
+            questionType: 'matrixdropdown',
+            question: {
+              translation: {
+                en: 'question3|Row 3|Column 2',
+                fr: 'question3|Row 3|Column 2',
+              },
+            },
+            answerChoices: [
+              {
+                identifier: '1',
+                displayValue: {
+                  translation: {
+                    en: 'hello en',
+                    fr: 'hello',
+                  },
+                },
+                textValue: '1',
+                score: null,
+                numericValue: 1,
+              },
+              {
+                identifier: '2',
+                displayValue: {
+                  translation: {
+                    en: '2',
+                    fr: '2',
+                  },
+                },
+                textValue: '2',
+                score: 5,
+                numericValue: 2,
+              },
+              {
+                identifier: '3',
+                displayValue: {
+                  translation: {
+                    en: '3',
+                    fr: '3',
+                  },
+                },
+                textValue: '3',
+                score: null,
+                numericValue: 3,
+              }, {
+                displayValue: {
+                  translation: {
+                    en: 'Other (describe)zzz',
+                    fr: 'autre',
+                  },
+                },
+                identifier: 'other',
+                score: null,
+                textValue: 'other',
+              },
+            ],
+          },
+          {
+            answerChoices: null,
+            identifier: 'question3|Row 3|Column 2|Comment',
+            question: {
+              translation: {
+                en: 'question3|Row 3|Column 2|Comment',
+                fr: 'question3|Row 3|Column 2|Commentaires',
+              },
+            },
+            questionType: 'comment',
+          },
+          {
+            identifier: 'question3|Row 3|col3',
+            questionType: 'matrixdropdown',
+            question: {
+              translation: {
+                en: 'question3|Row 3|col3',
+                fr: 'question3|Row 3|col 3 fr',
+              },
+            },
+            answerChoices: [
+              {
+                identifier: '1',
+                displayValue: {
+                  translation: {
+                    en: 'val 1 en',
+                    fr: 'val fr',
+                  },
+                },
+                textValue: '1',
+                score: 5,
+                numericValue: 1,
+              },
+              {
+                identifier: '2',
+                displayValue: {
+                  translation: {
+                    en: '2',
+                    fr: '2',
+                  },
+                },
+                textValue: '2',
+                score: null,
+                numericValue: 2,
+              },
+              {
+                identifier: 'Yep',
+                displayValue: {
+                  translation: {
+                    en: 'Yep',
+                    fr: 'Yep',
+                  },
+                },
+                textValue: 'Yep',
+                score: 7,
+              },
+              {
+                identifier: '4',
+                displayValue: {
+                  translation: {
+                    en: '4',
+                    fr: '4',
+                  },
+                },
+                textValue: '4',
+                score: null,
+                numericValue: 4,
+              },
+              {
+                identifier: 'nope',
+                displayValue: {
+                  translation: {
+                    en: 'nope',
+                    fr: 'nope',
+                  },
+                },
+                textValue: 'nope',
+                score: null,
+              },
+            ],
+          },
+        ],
+
+      );
+    });
+    it('extracts for rating question type', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = ratingQuestion;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions).toEqual([
+        {
+          answerChoices: [
+            {
+              displayValue: {
+                translation: {
+                  en: '1',
+                  fr: '1',
+                },
+              },
+              identifier: '1',
+              score: null,
+              textValue: '1',
+              numericValue: 1,
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: '2',
+                  fr: '2',
+                },
+              },
+              identifier: '2',
+              score: null,
+              textValue: '2',
+              numericValue: 2,
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: '3',
+                  fr: '3',
+                },
+              },
+              identifier: '3',
+              score: null,
+              textValue: '3',
+              numericValue: 3,
+            },
+          ],
+          identifier: 'question5',
+          question: {
+            translation: {
+              en: 'rating with range',
+              fr: 'rating with range',
+            },
+          },
+          questionType: 'rating',
+        },
+        {
+          answerChoices: null,
+          identifier: 'question5|Comment',
+          question: {
+            translation: {
+              en: 'rating with range|Comment',
+              fr: 'rating with range|Commentaires',
+            },
+          },
+          questionType: 'comment',
+        },
+      ]);
+    });
+    it('extracts for rating question type with steps', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = ratingQuestionWithStep;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions).toEqual([
+        {
+          answerChoices: [
+            {
+              displayValue: {
+                translation: {
+                  en: '2',
+                  fr: '2',
+                },
+              },
+              identifier: '2',
+              score: null,
+              textValue: '2',
+              numericValue: 2,
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: '4',
+                  fr: '4',
+                },
+              },
+              identifier: '4',
+              score: null,
+              textValue: '4',
+              numericValue: 4,
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: '6',
+                  fr: '6',
+                },
+              },
+              identifier: '6',
+              score: null,
+              textValue: '6',
+              numericValue: 6,
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: '8',
+                  fr: '8',
+                },
+              },
+              identifier: '8',
+              score: null,
+              textValue: '8',
+              numericValue: 8,
+            },
+          ],
+          identifier: 'question5',
+          question: {
+            translation: {
+              en: 'rating with range',
+              fr: 'rating with range',
+            },
+          },
+          questionType: 'rating',
+        },
+        {
+          answerChoices: null,
+          identifier: 'question5|Comment',
+          question: {
+            translation: {
+              en: 'rating with range|Comment',
+              fr: 'rating with range|Commentaires',
+            },
+          },
+          questionType: 'comment',
+        },
+      ]);
+    });
+    it('extracts for rating question type with choices', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = ratingQuestionWithChoices;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions).toEqual([
+        {
+          answerChoices: [
+            {
+              displayValue: {
+                translation: {
+                  en: 'item1',
+                  fr: 'item1',
+                },
+              },
+              identifier: 'item1',
+              score: 123,
+              textValue: 'item1',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: 'snd',
+                  fr: '2e',
+                },
+              },
+              identifier: 'item2',
+              score: 456,
+              textValue: 'item2',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: 'trd',
+                  fr: 'trd',
+                },
+              },
+              identifier: 'item3',
+              score: 4,
+              textValue: 'item3',
+            },
+          ],
+          identifier: 'question7',
+          question: {
+            translation: {
+              en: 'rating with choices',
+              fr: 'avec choix',
+            },
+          },
+          questionType: 'rating',
+        },
+      ]);
+    });
+
+    it('ignores panels and extracts questions in it', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = panelQuestion;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions.length).toEqual(1);
+      expect(questions[0].questionType).toEqual('rating');
+    });
   });
 
   describe('getPropertyAsMultilingual', () => {
@@ -1891,12 +3070,24 @@ describe('SurveyJsHelper', () => {
         checkQuestionIdentifiers(htmlQuestion, htmlAnswer);
       });
 
+      it('returns the same list of question identifiers for imageQuestion', () => {
+        checkQuestionIdentifiers(imageQuestion, htmlAnswer);
+      });
+
       it('returns the same list of question identifiers for multipleTextQuestion', () => {
         checkQuestionIdentifiers(multipleTextQuestion, multipleTextAnswer);
       });
 
       it('returns the same list of question identifiers for matrixQuestion', () => {
         checkQuestionIdentifiers(matrixQuestion, matrixAnswer);
+      });
+
+      it('returns the same list of question identifiers for matrixDropdownQuestion', () => {
+        checkQuestionIdentifiers(matrixDropdownQuestion, matrixDropdownAnswers);
+      });
+
+      it('returns the same list of question identifiers for ratingQuestion', () => {
+        checkQuestionIdentifiers(ratingQuestion, ratingAnswer);
       });
     });
 
@@ -2101,6 +3292,10 @@ describe('SurveyJsHelper', () => {
         checkQuestionAnswers(htmlQuestion, htmlAnswer, []);
       });
 
+      it('returns the answer for imageQuestion', () => {
+        checkQuestionAnswers(imageQuestion, imageAnswer, []);
+      });
+
       it('returns the answer for multipleTextQuestion', () => {
         checkQuestionAnswers(multipleTextQuestion, multipleTextAnswer, [
           {
@@ -2129,6 +3324,53 @@ describe('SurveyJsHelper', () => {
             responses: [{ displayValue: '1 fr', textValue: 'answer 1', numericValue: null }],
           },
         ]);
+      });
+
+      it('returns the answer for matrixDropdownQuestion', () => {
+        checkQuestionAnswers(matrixDropdownQuestion, matrixDropdownSomeAnswers, [
+          {
+            assessmentQuestionIdentifier: 'question3|Row 1|Column 1',
+            responses: [{ displayValue: '2', textValue: '2', numericValue: 2 }],
+          },
+          {
+            assessmentQuestionIdentifier: 'question3|Row 1|Column 2',
+            responses: [{ displayValue: 'autre', textValue: 'other', numericValue: null }],
+          },
+          {
+            assessmentQuestionIdentifier: 'question3|Row 1|Column 2|Comment',
+            responses: [{ displayValue: 'etst', textValue: 'etst' }],
+          },
+          {
+            assessmentQuestionIdentifier: 'question3|Row 1|col3',
+            responses: [{ displayValue: '2', textValue: '2', numericValue: 2 }],
+          },
+          {
+            assessmentQuestionIdentifier: 'question3|Row 2|Column 2',
+            responses: [{ displayValue: '3', textValue: '3', numericValue: 3 }],
+          },
+          {
+            assessmentQuestionIdentifier: 'question3|Row 3|Column 1',
+            responses: [{ displayValue: 'Yep', textValue: 'Yep', numericValue: null }],
+          },
+          {
+            assessmentQuestionIdentifier: 'question3|Row 3|col3',
+            responses: [{ displayValue: 'nope', textValue: 'nope', numericValue: null }],
+          },
+        ]);
+      });
+
+      it('returns the answer for ratingQuestion', () => {
+        checkQuestionAnswers(ratingQuestion, ratingAnswer, [{
+          assessmentQuestionIdentifier: 'question5',
+          responses: [{ textValue: '2', displayValue: '2', numericValue: 2 }],
+        }, {
+          assessmentQuestionIdentifier: 'question5|Comment',
+          responses: [{ textValue: 'desc', displayValue: 'desc' }],
+        }]);
+        checkQuestionAnswers(ratingQuestionWithChoices, ratingAnswerWithChoices, [{
+          assessmentQuestionIdentifier: 'question7',
+          responses: [{ textValue: 'item2', displayValue: '2e', numericValue: null }],
+        }]);
       });
     });
   });

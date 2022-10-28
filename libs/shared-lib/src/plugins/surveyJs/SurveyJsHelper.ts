@@ -4,6 +4,8 @@
 import {
   FunctionFactory, Question, QuestionSelectBase, StylesManager, SurveyModel,
   Serializer,
+  QuestionMatrixDropdownModelBase,
+  QuestionRatingModel,
 } from 'survey-core';
 import {
   CompletionStatus,
@@ -41,6 +43,8 @@ interface ISimpleQuestion {
     scoreFalse?: number;
 }
 
+interface ISurveyJsDataNode { name: string, title: string, value: string, displayValue: string, isNode: boolean, data?: ISurveyJsDataNode[] }
+
 interface ISurveyJsPlainData {
   displayValue: string | Record<string, string>,
   name: string,
@@ -48,7 +52,7 @@ interface ISurveyJsPlainData {
   title: string,
   value: string | Record<string, string>,
   isNode: boolean,
-  data?: { name: string, title: string, value: string, displayValue: string, isNode: boolean }[],
+  data?: ISurveyJsDataNode[],
 }
 
 interface ISurveyModel extends SurveyModel { _totalScore?: number }
@@ -62,11 +66,12 @@ export class SurveyJsHelper {
 
   // we currently will only support these types.  other stories will add to this
   static supportedQuestionTypes(): string[] {
-    return ['text', 'checkbox', 'radiogroup', 'dropdown', 'comment', 'boolean', 'html', 'multipletext', 'matrix'];
+    return ['text', 'checkbox', 'radiogroup', 'dropdown', 'comment', 'boolean', 'html', 'multipletext',
+      'matrix', 'rating', 'image', 'matrixdropdown', 'panel'];
   }
 
   static questionTypesThatCannotBeAnswered(): string[] {
-    return ['html'];
+    return ['html', 'panel', 'image'];
   }
 
   static questionTypeIsMultipleAnswer(questionType: string): boolean {
@@ -157,6 +162,10 @@ export class SurveyJsHelper {
       displayName: { default: '"False" score', fr: 'Points pour "Faux"' },
       category: 'general',
     });
+
+    Serializer.getProperty('matrixdropdown', 'cellType').visible = false;
+    Serializer.getProperty('matrixdropdown', 'detailPanelMode').visible = false;
+    Serializer.getProperty('matrixdropdowncolumn', 'cellType').visible = false;
   }
 
   registerCustomSurveyJsFunctions() {
@@ -181,17 +190,40 @@ export class SurveyJsHelper {
       const qJson = q.toJSON() as ISimpleQuestion;
 
       // eslint-disable-next-line no-nested-ternary
-      const subQuestions: { name: string, title?: string | Record<string, string>, rowscore?: number }[] = qJson.items?.length
-        ? qJson.items : (qJson.rows?.length
-          ? qJson.rows.map((r) => (typeof r === 'string' ? { name: r, title: r } : { name: r.value, title: r.text, rowscore: r.score })) : [null]);
+      let subQuestions: { name: string, title?: string | Record<string, string>, rowscore?: number, overriddenProperties?: any }[] = [null];
+
+      if (qJson.items?.length) {
+        subQuestions = qJson.items;
+      } else if (qJson.rows?.length) {
+        if (q.getType() === 'matrixdropdown') {
+          const rowsAsSubquestion = qJson.rows.map((r: any) => (typeof r === 'string' ? { name: r, title: r }
+            : { name: r.value, title: r.text || r.value, rowscore: r.score }));
+          const colsAsSubquestion = qJson.columns.map((r: any) => (typeof r === 'string' ? { name: r, title: r }
+            : {
+              name: r.name, title: r.title || r.name, rowscore: r.score, overriddenProperties: r,
+            }));
+          subQuestions = (rowsAsSubquestion.map((r) => colsAsSubquestion
+            .map((c) => ({
+              overriddenProperties: c.overriddenProperties,
+              name: `${r.name}|${c.name}`,
+              title: this.getPropertyAsMultilingual(typeof r.title === 'string' ? r.title : { default: r.name, ...r.title },
+                typeof c.title === 'string' ? c.title : { default: c.name, ...c.title }).translation,
+              rowscore: r.rowscore,
+            })))).flat();
+        } else {
+          subQuestions = qJson.rows.map((r) => (typeof r === 'string' ? { name: r, title: r } : { name: r.value, title: r.text, rowscore: r.score }));
+        }
+      }
 
       subQuestions.forEach((subQuestion) => {
-        const simpleQuestion = { ...qJson, suffix: subQuestion } as ISimpleQuestion;
+        const simpleQuestion = {
+          ...qJson, ...(subQuestion?.overriddenProperties || {}), name: qJson.name, title: qJson.title, suffix: subQuestion,
+        } as ISimpleQuestion;
 
         let choices = (q as any).getChoices
           ? JSON.parse(JSON.stringify((q as any).getChoices())) as TextValue[]
         // to extract instead when ratings or matrix...
-          : simpleQuestion.rateValues || simpleQuestion.columns;
+          : simpleQuestion.rateValues || simpleQuestion.choices || simpleQuestion.columns;
 
         if (q.getType() === 'boolean') {
           choices = [{
@@ -212,6 +244,17 @@ export class SurveyJsHelper {
           ];
         }
 
+        if (!choices && q.getType() === 'rating') {
+          choices = [];
+          const qRating = q as QuestionRatingModel;
+          for (let i = qRating.rateMin; i <= qRating.rateMax; i += qRating.rateStep) {
+            choices.push({
+              value: i.toString(),
+              text: i.toString(),
+            });
+          }
+        }
+
         const assessmentQuestion = {
           identifier: simpleQuestion.name + (simpleQuestion.suffix != null ? `|${simpleQuestion.suffix.name}` : ''),
           questionType: q.getType(),
@@ -227,6 +270,8 @@ export class SurveyJsHelper {
         result.push(assessmentQuestion);
 
         if (choices) {
+          choices = choices.map((c) => (typeof (c as any) === 'number' ? c.toString() : c));
+
           if (simpleQuestion.hasOther) {
             choices.push({
               value: 'other',
@@ -251,10 +296,10 @@ export class SurveyJsHelper {
 
         (choices || []).forEach((c) => {
           const choice = {
-            identifier: typeof c === 'string' ? c : c.value,
+            identifier: typeof c === 'string' ? c : c.value?.toString(),
             displayValue: typeof c === 'string'
-              ? this.getPropertyAsMultilingual(c) : this.getPropertyAsMultilingual(c.text || c.value.toString(), null, c.value?.toString()),
-            textValue: typeof c === 'string' ? c : c.value,
+              ? this.getPropertyAsMultilingual(c) : this.getPropertyAsMultilingual(c.text || c.value?.toString(), null, c.value?.toString()),
+            textValue: typeof c === 'string' ? c : c.value?.toString(),
             score: typeof c === 'string' ? null : c.score || null,
           } as IAssessmentAnswerChoice;
           if (+choice.textValue as any === choice.textValue || (choice.textValue.trim() !== '' && !Number.isNaN(+choice.textValue))) {
@@ -280,7 +325,7 @@ export class SurveyJsHelper {
     const text = this.getPropertyAsMultilingual(simpleQuestion.commentText || simpleQuestion.otherPlaceHolder || { en: 'Comment', fr: 'Commentaires' });
     const commentQuestion = {
       identifier: `${simpleQuestion.name + (simpleQuestion.suffix != null ? `|${simpleQuestion.suffix.name}` : '')}|Comment`,
-      questionType: 'text',
+      questionType: 'comment',
       question: this.getPropertyAsMultilingual(
         // eslint-disable-next-line
         simpleQuestion.title != null ? simpleQuestion.title : (simpleQuestion.html != null ? simpleQuestion.html : simpleQuestion.name),
@@ -348,12 +393,31 @@ export class SurveyJsHelper {
 
   private questionToAssessmentResponse(sender: ISurveyModel, assessmentResponse: IAssessmentResponseEntity, question: ISurveyJsPlainData): void {
     const questionObj : Question = sender.getQuestionByName(question.name);
-    (typeof question.value === 'object' && !Array.isArray(question.value) ? Object.keys(question.value) : [null]).forEach((subQuestion, ix) => {
+
+    let subQuestions: { name: string, path: string[], overriddenProperties?: any }[] = [null];
+
+    if (typeof question.value === 'object' && !Array.isArray(question.value)) {
+      subQuestions = Object.keys(question.value).map((qName) => {
+        const qValue = (question.value as any)[qName];
+        if (typeof qValue === 'object' && !Array.isArray(qValue)) {
+          return Object.keys(qValue).map((sub) => ({ name: `${qName}|${sub}`, path: [qName, sub] }));
+        }
+        return [{ name: qName, path: [qName] }];
+      }).flat();
+    }
+
+    subQuestions.forEach((subQuestion, ix) => {
+      const columnName = (subQuestion?.path || [])[1];
+      const currentQuestionOrColumn = questionObj.getType() === 'matrixdropdown'
+        ? (questionObj as QuestionMatrixDropdownModelBase).getColumnByName(columnName) : questionObj;
+      if (!currentQuestionOrColumn) {
+        return;
+      }
       const response = {
-        assessmentQuestionIdentifier: question.name + (subQuestion != null ? `|${subQuestion}` : ''),
+        assessmentQuestionIdentifier: question.name + (subQuestion != null ? `|${subQuestion.name}` : ''),
         responses: [],
       } as IAnsweredQuestion;
-      if (!question.isNode) {
+      if (!question.isNode || questionObj.getType() === 'rating') {
         if (subQuestion == null) {
           response.responses = [{
             displayValue: question.displayValue as string,
@@ -362,21 +426,25 @@ export class SurveyJsHelper {
         } else {
           response.responses = [{
             displayValue: Object.values(question.displayValue as Record<string, string>)[ix],
-            textValue: (question.value as Record<string, string>)[subQuestion],
+            textValue: (question.value as Record<string, string>)[subQuestion.name],
           }];
         }
       } else {
-        response.responses = question.data.filter((q) => (!questionObj.comment || q.value !== '-Comment') && (!subQuestion || subQuestion === q.name))
+        response.responses = question.data.filter((q) => (!questionObj.comment || q.value !== '-Comment') && (!subQuestion || subQuestion.path[0] === q.name))
+          .map((d) => (columnName ? d.data.filter((d2) => subQuestion.path[1] === d2.name) : [d])).flat()
           .map((x) => ({
             displayValue: x.displayValue,
             textValue: x.value.toString(),
           }));
       }
 
-      if (questionObj.hasOther) {
+      let commentOrOtherDescribe = questionObj.comment;
+
+      if (currentQuestionOrColumn.hasOther) {
         const responseOther = response.responses.filter((r) => r.textValue === 'other')[0];
-        if (responseOther) {
-          responseOther.displayValue = (questionObj as QuestionSelectBase).otherText;
+        if (responseOther && responseOther.displayValue !== (currentQuestionOrColumn as QuestionSelectBase).otherText) {
+          commentOrOtherDescribe = responseOther.displayValue;
+          responseOther.displayValue = (currentQuestionOrColumn as QuestionSelectBase).otherText;
         }
       }
 
@@ -385,18 +453,18 @@ export class SurveyJsHelper {
       });
       assessmentResponse.answeredQuestions.push(response);
 
-      if (questionObj.comment) {
-        this.addCommentResponse(assessmentResponse, question, subQuestion, questionObj);
+      if (commentOrOtherDescribe) {
+        this.addCommentResponse(assessmentResponse, response.assessmentQuestionIdentifier, commentOrOtherDescribe);
       }
     });
   }
 
-  private addCommentResponse(assessmentResponse: IAssessmentResponseEntity, question: ISurveyJsPlainData, subQuestion: string, questionObj: Question): void {
+  private addCommentResponse(assessmentResponse: IAssessmentResponseEntity, questionName: string, comment: string): void {
     const commentResponse = {
-      assessmentQuestionIdentifier: `${question.name + (subQuestion != null ? `|${subQuestion}` : '')}|Comment`,
+      assessmentQuestionIdentifier: `${questionName}|Comment`,
       responses: [{
-        displayValue: questionObj.comment,
-        textValue: questionObj.comment,
+        displayValue: comment,
+        textValue: comment,
       }],
     } as IAnsweredQuestion;
     assessmentResponse.answeredQuestions.push(commentResponse);

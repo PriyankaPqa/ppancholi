@@ -48,7 +48,7 @@ export default mixins(assessmentDetail).extend({
         { useEntityGlobalHandler: true, useMetadataGlobalHandler: false }))?.entity);
     }
     await this.loadDetails();
-    this.errorMessage = this.surveyJsHelper.getSurveyCanBeCompletedErrorMessage(this.assessmentTemplate, this.response, this, this.$m);
+    this.errorMessage = this.assessmentResponseId ? this.surveyJsHelper.getSurveyCanBeCompletedErrorMessage(this.assessmentTemplate, this.response, this, this.$m) : null;
     if (!this.errorMessage) {
       this.survey = this.surveyJsHelper.initializeSurveyJsRunner(this.$i18n.locale, this.assessmentTemplate.externalToolState?.data?.rawJson);
       this.survey.render('surveyContainer');
@@ -68,9 +68,12 @@ export default mixins(assessmentDetail).extend({
 
   methods: {
     async saveAnswers(sender: SurveyModel) {
-      this.response = cloneDeep(this.surveyJsHelper.surveyToAssessmentResponse(sender, this.response));
+      this.response = cloneDeep(this.surveyJsHelper.surveyToAssessmentResponse(sender, cloneDeep(this.response)));
       if (this.assessmentResponseId) {
-        this.response = await this.$storage.assessmentResponse.actions.saveAssessmentAnsweredQuestions(this.response);
+        const result = await this.$storage.assessmentResponse.actions.saveAssessmentAnsweredQuestions(this.response);
+        if (result) {
+          this.response = result;
+        }
       }
     },
 

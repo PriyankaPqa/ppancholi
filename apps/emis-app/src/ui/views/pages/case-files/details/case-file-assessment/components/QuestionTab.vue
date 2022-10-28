@@ -13,9 +13,11 @@
           v-for="(qAndA, $index) in questionsAndAnswers"
           :key="`item__${$index}`">
           <td class="question">
-            <div>{{ $m(qAndA.question.question).split('|')[0] }}</div>
-            <div class="pl-6">
-              {{ $m(qAndA.question.question).split('|')[1] }}
+            <div
+              v-for="(qDescription, $descindex) in $m(qAndA.question.question).split('|')"
+              :key="`item__desc__${$descindex}`"
+              :style="`padding-left:${$descindex * 20}px`">
+              {{ qDescription }}
             </div>
           </td>
           <td v-if="editedQuestion == qAndA" class="answer">

@@ -72,7 +72,10 @@ export default Vue.extend({
     async saveAnswers(sender: SurveyModel) {
       this.response = cloneDeep(this.surveyJsHelper.surveyToAssessmentResponse(sender, this.response));
       if (this.assessmentResponseId) {
-        this.response = await this.$services.assessmentResponses.saveAssessmentAnsweredQuestions(this.response);
+        const result = await this.$services.assessmentResponses.saveAssessmentAnsweredQuestions(this.response);
+        if (result) {
+          this.response = result;
+        }
       }
     },
 
