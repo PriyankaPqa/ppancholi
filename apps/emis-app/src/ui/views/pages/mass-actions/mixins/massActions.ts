@@ -53,6 +53,10 @@ export default Vue.extend({
           fileName: 'TemporaryAddressTemplate.csv',
           blobsParts: 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,ETag',
         },
+        [MassActionDataCorrectionType.FinancialAssistance]: {
+          fileName: 'FinancialAssistanceTemplate.csv',
+          blobsParts: 'TBD,ETag',
+        },
         importPaymentStatuses: {
           fileName: 'ImportPaymentStatusesTemplate.csv', blobsParts: 'PaymentGroupId,Status,CancellationReason',
         },

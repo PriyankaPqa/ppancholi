@@ -3,6 +3,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 import routes from '@/constants/routes';
+import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import Component from './MassActionsHome.vue';
 
 const localVue = createLocalVue();
@@ -112,6 +113,18 @@ describe('MassActionsHome.vue', () => {
       it('should return result of filterItems ', () => {
         wrapper.vm.filterItems = jest.fn(() => []);
         expect(wrapper.vm.availableCards).toEqual([]);
+      });
+    });
+
+    describe('massActionTypes', () => {
+      it('should contain Financial Assistance data correction type when feature is enabled', () => {
+        wrapper.vm.isFinancialAssistanceDataCorrectionEnabled = true;
+        expect(wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance)).toBeTruthy();
+      });
+
+      it('should not contain Financial Assistance data correction type when feature is disabled', () => {
+        wrapper.vm.isFinancialAssistanceDataCorrectionEnabled = false;
+        expect(wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance)).toBeFalsy();
       });
     });
   });

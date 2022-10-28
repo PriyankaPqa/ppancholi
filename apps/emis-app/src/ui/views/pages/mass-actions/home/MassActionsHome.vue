@@ -30,6 +30,7 @@ import massActions, { IMassActionCards } from '@/ui/views/pages/mass-actions/mix
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
 import helpers from '@/ui/helpers/helpers';
 import { MassActionDataCorrectionType, MassActionGroup } from '@libs/entities-lib/mass-action';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(massActions).extend({
   name: 'MassActionsHome',
@@ -37,6 +38,12 @@ export default mixins(massActions).extend({
   components: {
     ImpactStatusCaseFileFiltering,
     RcMenuCard,
+  },
+
+  data() {
+    return {
+      isFinancialAssistanceDataCorrectionEnabled: this.$hasFeature(FeatureKeys.FinancialAssistanceDataCorrection),
+    };
   },
 
   computed: {
@@ -137,7 +144,11 @@ export default mixins(massActions).extend({
     },
 
     massActionTypes(): Array<Record<string, unknown>> {
-      return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false);
+      let types = helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false);
+      if (!this.isFinancialAssistanceDataCorrectionEnabled) {
+        types = types.filter((t) => t.value !== MassActionDataCorrectionType.FinancialAssistance);
+      }
+      return types;
     },
   },
 });

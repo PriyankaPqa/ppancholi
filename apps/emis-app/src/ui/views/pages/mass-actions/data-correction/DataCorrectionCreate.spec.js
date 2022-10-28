@@ -72,6 +72,26 @@ describe('DataCorrectionCreate.vue', () => {
     });
   });
 
+  describe('Computed', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+      });
+    });
+
+    describe('massActionTypes', () => {
+      it('should contain Financial Assistance data correction type when feature is enabled', () => {
+        wrapper.vm.isFinancialAssistanceDataCorrectionEnabled = true;
+        expect(wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance)).toBeTruthy();
+      });
+
+      it('should not contain Financial Assistance data correction type when feature is disabled', () => {
+        wrapper.vm.isFinancialAssistanceDataCorrectionEnabled = false;
+        expect(wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance)).toBeFalsy();
+      });
+    });
+  });
+
   describe('Methods', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {

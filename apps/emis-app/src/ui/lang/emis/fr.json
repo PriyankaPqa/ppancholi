@@ -534,6 +534,7 @@
     "enums.IdentityAuthenticationStatus.Passed": "Réussi",
     "enums.MassActionDataCorrectionType.AuthenticationSpecifiedOther": "Vérification de l’identité autre",
     "enums.MassActionDataCorrectionType.ContactInformation": "Coordonnées",
+    "enums.MassActionDataCorrectionType.FinancialAssistance": "Aide financière",
     "enums.MassActionDataCorrectionType.HomeAddress": "Adresse",
     "enums.MassActionDataCorrectionType.IdentitySet": "Renseignements personnels",
     "enums.MassActionDataCorrectionType.Labels": "Étiquettes",

@@ -9,6 +9,7 @@ export enum FeatureKeys {
   ApprovalsWithinEvent = 'Approvals',
   BotProtection = 'BotProtection',
   AssessmentsWithinCasefiles = 'AssessmentsWithinCasefiles',
+  FinancialAssistanceDataCorrection = 'FinancialAssistanceDataCorrection',
 }
 
 export enum FeatureType {

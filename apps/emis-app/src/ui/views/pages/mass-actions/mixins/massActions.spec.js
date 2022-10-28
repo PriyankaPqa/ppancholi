@@ -190,6 +190,12 @@ describe('massActions', () => {
         wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.TemporaryAddress);
         expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('TemporaryAddressTemplate.csv', 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,ETag');
       });
+
+      it('should call downloadTemplate with proper data for FinancialAssistance', () => {
+        wrapper.vm.downloadTemplate = jest.fn();
+        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.FinancialAssistance);
+        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('FinancialAssistanceTemplate.csv', 'TBD,ETag');
+      });
     });
 
     describe('downloadTemplate', () => {

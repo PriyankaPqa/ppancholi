@@ -29,6 +29,7 @@ import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import { IMassActionEntity, MassActionDataCorrectionType, MassActionMode } from '@libs/entities-lib/mass-action';
 import { VAutocompleteWithValidation } from '@libs/component-lib/components';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import helpers from '@/ui/helpers/helpers';
 import { format } from 'date-fns';
 
@@ -49,12 +50,17 @@ export default Vue.extend({
       selectedType: null,
       MassActionMode,
       MassActionDataCorrectionType,
+      isFinancialAssistanceDataCorrectionEnabled: this.$hasFeature(FeatureKeys.FinancialAssistanceDataCorrection),
     };
   },
   computed: {
 
     massActionTypes() {
-      return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false);
+      let types = helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false);
+      if (!this.isFinancialAssistanceDataCorrectionEnabled) {
+        types = types.filter((t) => t.value !== MassActionDataCorrectionType.FinancialAssistance);
+      }
+      return types;
     },
   },
 

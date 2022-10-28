@@ -26,7 +26,8 @@ export enum MassActionDataCorrectionType {
   TemporaryAddress = 9,
   AuthenticationSpecifiedOther = 10,
   IdentitySet = 11,
-  ContactInformation = 12
+  ContactInformation = 12,
+  FinancialAssistance = 13
 }
 
 export enum MassActionMode {

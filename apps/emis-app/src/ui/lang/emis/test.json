@@ -534,6 +534,7 @@
     "enums.IdentityAuthenticationStatus.Passed": "enums.IdentityAuthenticationStatus.Passed",
     "enums.MassActionDataCorrectionType.AuthenticationSpecifiedOther": "enums.MassActionDataCorrectionType.AuthenticationSpecifiedOther",
     "enums.MassActionDataCorrectionType.ContactInformation": "enums.MassActionDataCorrectionType.ContactInformation",
+    "enums.MassActionDataCorrectionType.FinancialAssistance": "enums.MassActionDataCorrectionType.FinancialAssistance",
     "enums.MassActionDataCorrectionType.HomeAddress": "enums.MassActionDataCorrectionType.HomeAddress",
     "enums.MassActionDataCorrectionType.IdentitySet": "enums.MassActionDataCorrectionType.IdentitySet",
     "enums.MassActionDataCorrectionType.Labels": "enums.MassActionDataCorrectionType.Labels",
