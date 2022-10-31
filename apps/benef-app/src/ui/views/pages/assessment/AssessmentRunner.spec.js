@@ -46,6 +46,15 @@ describe('AssessmentRunner', () => {
         expect(wrapper.vm.initializeSurvey).toHaveBeenCalled();
         expect(wrapper.vm.initializeTenant).toHaveBeenCalled();
       });
+      it('sets color scheme', async () => {
+        jest.clearAllMocks();
+        wrapper.vm.surveyJsHelper.setColorScheme = jest.fn();
+
+        const hook = wrapper.vm.$options.mounted[wrapper.vm.$options.mounted.length - 1];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.surveyJsHelper.setColorScheme).toHaveBeenCalledWith('#surveyContainer',
+          storage.tenantSettings.getters.currentTenantSettings().branding.colours);
+      });
     });
   });
 
@@ -87,10 +96,11 @@ describe('AssessmentRunner', () => {
     });
 
     describe('initializeTenant', () => {
-      it('gets the tenant from the current url', async () => {
+      it('gets the tenant from the current url and fetches branding', async () => {
         wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' }, query: {} };
         await wrapper.vm.initializeTenant();
         expect(wrapper.vm.$services.publicApi.getTenantByRegistrationDomain).toHaveBeenCalledWith(helpers.getCurrentDomain(wrapper.vm.$route));
+        expect(wrapper.vm.$storage.tenantSettings.actions.fetchBranding).toHaveBeenCalled();
       });
     });
 

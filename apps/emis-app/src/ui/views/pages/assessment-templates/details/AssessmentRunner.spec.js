@@ -52,6 +52,15 @@ describe('AssessmentRunner', () => {
         expect(wrapper.vm.survey).not.toBeNull();
         expect(wrapper.vm.survey.data).toEqual(JSON.parse(wrapper.vm.response.externalToolState.data.rawJson));
       });
+      it('sets color scheme', async () => {
+        jest.clearAllMocks();
+        wrapper.vm.surveyJsHelper.setColorScheme = jest.fn();
+
+        const hook = wrapper.vm.$options.mounted[wrapper.vm.$options.mounted.length - 1];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.surveyJsHelper.setColorScheme).toHaveBeenCalledWith('#surveyContainer',
+          storage.tenantSettings.getters.currentTenantSettings().branding.colours);
+      });
     });
   });
 

@@ -177,3 +177,8 @@ div.status {
 .svc-logic-paneldynamic div.svc-logic-operator {
   height: calc(5 * var(--base-unit, 8px)) !important;
 }
+
+/* knockout surveyjs bug - wont be required in a future version */
+.sv-list__item--selected {
+  background-color: var(--v-primary-base) !important;
+}

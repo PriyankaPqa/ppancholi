@@ -102,6 +102,7 @@ export default Vue.extend({
         }
         this.survey.onValueChanged.add((sender: SurveyModel) => debouncedSave({ _this, sender }));
         this.survey.onComplete.add(this.completeSurvey);
+        this.surveyJsHelper.setColorScheme('#surveyContainer', this.$storage.tenantSettings.getters.currentTenantSettings().branding.colours);
       }
     },
 
@@ -110,6 +111,8 @@ export default Vue.extend({
 
       const tenantId = await this.$services.publicApi.getTenantByRegistrationDomain(currentdomain);
       httpClient.setHeadersTenant(tenantId);
+
+      await this.$storage.tenantSettings.actions.fetchBranding();
     },
 
     async loadDetails() {

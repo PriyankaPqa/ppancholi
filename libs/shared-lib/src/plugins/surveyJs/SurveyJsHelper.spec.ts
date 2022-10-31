@@ -986,6 +986,19 @@ describe('SurveyJsHelper', () => {
     });
   });
 
+  describe('setColorScheme', () => {
+    it('sets the colors', () => {
+      const setProperty = jest.fn();
+      document.querySelector = jest.fn(() => ({ style: { setProperty } }));
+      helper.setColorScheme('mySelector', {
+        primary: 'primary', primaryDark: 'primaryDark', primaryLight: 'primaryLight', secondary: 'secondary',
+      });
+      expect(setProperty).toHaveBeenCalledWith('--primary', 'primaryDark');
+      expect(setProperty).toHaveBeenCalledWith('--primary-light', 'primaryLight');
+      expect(setProperty).toHaveBeenCalledWith('--secondary', 'secondary');
+    });
+  });
+
   describe('getSurveyCanBeCompletedErrorMessage', () => {
     const mockAssessment = mockAssessmentFormEntity();
     const mockResponse = mockAssessmentResponseEntity();

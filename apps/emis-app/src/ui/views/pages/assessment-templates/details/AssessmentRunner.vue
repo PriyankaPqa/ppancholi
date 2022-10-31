@@ -63,6 +63,7 @@ export default mixins(assessmentDetail).extend({
       const _this = this;
       this.survey.onValueChanged.add((sender: SurveyModel) => debouncedSave({ _this, sender }));
       this.survey.onComplete.add(this.completeSurvey);
+      this.surveyJsHelper.setColorScheme('#surveyContainer', this.$storage.tenantSettings.getters.currentTenantSettings().branding.colours);
     }
   },
 

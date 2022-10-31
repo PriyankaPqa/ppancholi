@@ -13,6 +13,7 @@ import {
   IAnsweredQuestion,
   IAssessmentAnswerChoice, IAssessmentBaseEntity, IAssessmentQuestion, IAssessmentResponseEntity, SurveyJsAssessmentResponseState,
 } from '@libs/entities-lib/assessment-template';
+import { IColoursEntity } from '@libs/entities-lib/tenantSettings';
 import { SurveyCreator, localization } from 'survey-creator-knockout';
 import { CreatorBase } from 'survey-creator-core';
 import { Status } from '@libs/entities-lib/base';
@@ -118,6 +119,16 @@ export class SurveyJsHelper {
     document.title = this.survey.title;
 
     return this.survey;
+  }
+
+  setColorScheme(selector: string, colours: IColoursEntity) {
+    const elementStyle = (document.querySelector(selector) as HTMLElement)?.style;
+    if (elementStyle && colours) {
+      // theme color variables can be found here https://github.com/surveyjs/survey-library/blob/master/src/defaultV2-theme/variables.scss
+      elementStyle.setProperty('--primary', colours.primaryDark);
+      elementStyle.setProperty('--primary-light', colours.primaryLight);
+      elementStyle.setProperty('--secondary', colours.secondary);
+    }
   }
 
   getSurveyCanBeCompletedErrorMessage(assessmentTemplate: IAssessmentBaseEntity, response: IAssessmentResponseEntity, vue: Vue,

@@ -59,6 +59,15 @@ describe('AssessmentBuilder', () => {
       it('sets save function', () => {
         expect(wrapper.vm.creator.saveSurveyFunc).toBe(wrapper.vm.saveSurveyJson);
       });
+      it('sets color scheme', async () => {
+        jest.clearAllMocks();
+        wrapper.vm.surveyJsHelper.setColorScheme = jest.fn();
+
+        const hook = wrapper.vm.$options.mounted[wrapper.vm.$options.mounted.length - 1];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.surveyJsHelper.setColorScheme).toHaveBeenCalledWith('#surveyCreator',
+          storage.tenantSettings.getters.currentTenantSettings().branding.colours);
+      });
     });
   });
 

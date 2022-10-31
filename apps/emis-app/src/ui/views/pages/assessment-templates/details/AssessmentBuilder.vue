@@ -52,6 +52,7 @@ export default mixins(assessmentDetail, metadata).extend({
     if (!this.testMode) {
       this.creator.render('surveyCreator');
     }
+    this.surveyJsHelper.setColorScheme('#surveyCreator', this.$storage.tenantSettings.getters.currentTenantSettings().branding.colours);
   },
 
   methods: {
