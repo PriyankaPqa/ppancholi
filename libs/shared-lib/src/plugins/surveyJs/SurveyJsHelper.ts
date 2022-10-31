@@ -6,6 +6,7 @@ import {
   Serializer,
   QuestionMatrixDropdownModelBase,
   QuestionRatingModel,
+  ComponentCollection,
 } from 'survey-core';
 import {
   CompletionStatus,
@@ -67,7 +68,7 @@ export class SurveyJsHelper {
   // we currently will only support these types.  other stories will add to this
   static supportedQuestionTypes(): string[] {
     return ['text', 'checkbox', 'radiogroup', 'dropdown', 'comment', 'boolean', 'html', 'multipletext',
-      'matrix', 'rating', 'image', 'matrixdropdown', 'panel'];
+      'matrix', 'rating', 'image', 'matrixdropdown', 'panel', 'yes-no'];
   }
 
   static questionTypesThatCannotBeAnswered(): string[] {
@@ -82,9 +83,8 @@ export class SurveyJsHelper {
     StylesManager.applyTheme('defaultV2');
 
     this.registerCustomProperties();
-
+    this.registerCustomComponents();
     this.initializeTranslations(locale);
-
     this.registerCustomSurveyJsFunctions();
 
     this.creator = new SurveyCreator({
@@ -97,6 +97,8 @@ export class SurveyJsHelper {
     this.creator.locale = locale;
     this.creator.onPreviewSurveyCreated.add((_sender, options) => this.previewCreated(_sender, options));
     this.totalScore = 0;
+    this.removeAllDataCategory();
+    this.creator.toolbox.getItemByName('yes-no').title = locale === 'fr' ? 'Oui-Non' : 'Yes-No';
 
     return this.creator;
   }
@@ -105,6 +107,7 @@ export class SurveyJsHelper {
     StylesManager.applyTheme('defaultV2');
 
     this.registerCustomProperties();
+    this.registerCustomComponents();
     this.registerCustomSurveyJsFunctions();
 
     this.survey = new SurveyModel(surveyJson);
@@ -135,8 +138,10 @@ export class SurveyJsHelper {
       // localization.getLocale('fr').ed.surveyPlaceHolder = ' Ajoutez des questions...';
       // localization.getLocale('fr').qt.signaturepad = 'Pad de signature';
       // what we end up with in localization
-      localization.getLocale('fr').pe.labelTrue = 'Valeur pour "Vrai"';
-      localization.getLocale('fr').pe.labelFalse = 'Valeur pour "Faux"';
+      localization.getLocale('fr').pe.labelTrue = 'Texte pour "Vrai"';
+      localization.getLocale('fr').pe.labelFalse = 'Texte pour "Faux"';
+      localization.getLocale('fr').pe.valueTrue = 'Valeur pour "Vrai"';
+      localization.getLocale('fr').pe.valueFalse = 'Valeur pour "Faux"';
       localization.getLocale('fr');
       // console.log('current french', _merge(localization.getLocale('en'), localization.getLocale('fr')));
     } else {
@@ -166,6 +171,63 @@ export class SurveyJsHelper {
     Serializer.getProperty('matrixdropdown', 'cellType').visible = false;
     Serializer.getProperty('matrixdropdown', 'detailPanelMode').visible = false;
     Serializer.getProperty('matrixdropdowncolumn', 'cellType').visible = false;
+    Serializer.getProperty('matrixdropdowncolumn', 'cellType').visible = false;
+    Serializer.getProperty('checkbox', 'valuePropertyName').visible = false;
+  }
+
+  removeAllDataCategory() {
+    if (!this.creator) {
+      return;
+    }
+    // A black list of properties displayed in Data categories for different survey elements
+    // list taken from https://github.com/surveyjs/survey-creator/blob/master/packages/survey-creator/src/questionEditors/questionEditorDefinition.ts
+    const propertyStopList = [
+      'valueName',
+      'defaultValue',
+      'correctAnswer',
+      'useDisplayValuesInTitle',
+      'clearIfInvisible',
+      'storeOthersAsComment',
+      'textUpdateMode',
+      'sendResultOnPageNext',
+    ];
+
+    // FYI we are keeping some Data values by choice
+    // 'clearInvisibleValues' at survey level; 'defaultRowValue', 'defaultValueFromLastRow' at matrixdynamic, 'valueTrue', 'valueFalse' at boolean
+    // 'defaultPanelValue', 'defaultValueFromLastPanel' at paneldynamic
+
+    // Hide properties contained in the black list, show all other properties
+    this.creator.onShowingProperty.add((_sender, options) => {
+      options.canShow = propertyStopList.indexOf(options.property.name) === -1;
+    });
+  }
+
+  registerCustomComponents() {
+    ComponentCollection.Instance.clear();
+    // boolean component that switches the order of the boolean - which looks weird in code but presents the user with a yes-no, with yes as the first answer
+    // saves a response not of true or false but yes or no
+    ComponentCollection.Instance.add({
+      name: 'yes-no',
+      questionJSON: {
+        type: 'boolean',
+        labelTrue: { default: 'No', fr: 'Non' },
+        labelFalse: { default: 'Yes', fr: 'Oui' },
+        valueTrue: 'no',
+        valueFalse: 'yes',
+      },
+    } as any);
+
+    Serializer.addProperty('yes-no', {
+      name: 'scoreFalse:number',
+      displayName: { default: '"Yes" score', fr: 'Points pour "Oui"' },
+      category: 'general',
+    });
+
+    Serializer.addProperty('yes-no', {
+      name: 'scoreTrue:number',
+      displayName: { default: '"No" score', fr: 'Points pour "Non"' },
+      category: 'general',
+    });
   }
 
   registerCustomSurveyJsFunctions() {
@@ -242,6 +304,29 @@ export class SurveyJsHelper {
             score: qJson.scoreFalse,
           },
           ];
+        }
+        if (q.getType() === 'yes-no') {
+          choices = [{
+            value: 'yes',
+            text: { en: 'Yes', fr: 'Oui' },
+            score: qJson.scoreFalse,
+          }, {
+            value: 'no',
+            text: { en: 'No', fr: 'Non' },
+            score: qJson.scoreTrue,
+          },
+          ];
+        }
+
+        if (!choices && q.getType() === 'rating') {
+          choices = [];
+          const qRating = q as QuestionRatingModel;
+          for (let i = qRating.rateMin; i <= qRating.rateMax; i += qRating.rateStep) {
+            choices.push({
+              value: i.toString(),
+              text: i.toString(),
+            });
+          }
         }
 
         if (!choices && q.getType() === 'rating') {
@@ -496,8 +581,10 @@ export class SurveyJsHelper {
             survey._totalScore += +question.rows.find((r: any) => r.value === rowId)?.score || 0;
             survey._totalScore += +question.columns.find((r: any) => r.value === qValue[rowId])?.score || 0;
           });
-        } else if (question.getType() === 'boolean') {
-          survey._totalScore += +(qValue ? question.scoreTrue : question.scoreFalse) || 0;
+        } else if (question.getType() === 'boolean' || question.getType() === 'yes-no') {
+          // yes-no questionWrapper is boolean
+          survey._totalScore += +(qValue.toString() === ((question as any).questionWrapper || question as any)
+            .getValueTrue().toString() ? question.scoreTrue : question.scoreFalse) || 0;
         } else {
           survey._totalScore += +question.score || 0;
         }

@@ -277,6 +277,39 @@ const booleanAnswerNo = {
   question1: false,
 };
 
+const yesnoQuestion = JSON.stringify({
+  logo: {
+    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
+    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
+  },
+  logoPosition: 'right',
+  pages: [
+    {
+      name: 'page1',
+      elements: [
+        {
+          type: 'yes-no',
+          name: 'question1',
+          title: {
+            default: 'dddd',
+            fr: 'xxx',
+          },
+          scoreFalse: 12,
+          scoreTrue: -5,
+        },
+      ],
+    },
+  ],
+});
+
+const yesnoAnswer = {
+  question1: 'yes',
+};
+
+const yesnoAnswerNo = {
+  question1: 'no',
+};
+
 const htmlQuestion = JSON.stringify({
   logo: {
     default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
@@ -1900,6 +1933,42 @@ describe('SurveyJsHelper', () => {
         questionType: 'boolean',
       }]);
     });
+    it('extracts for yes-no question type', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = yesnoQuestion;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions).toEqual([{
+        answerChoices: [{
+          displayValue: {
+            translation: {
+              en: 'Yes',
+              fr: 'Oui',
+            },
+          },
+          identifier: 'yes',
+          score: 12,
+          textValue: 'yes',
+        }, {
+          displayValue: {
+            translation: {
+              en: 'No',
+              fr: 'Non',
+            },
+          },
+          identifier: 'no',
+          score: -5,
+          textValue: 'no',
+        }],
+        identifier: 'question1',
+        question: {
+          translation: {
+            en: 'dddd',
+            fr: 'xxx',
+          },
+        },
+        questionType: 'yes-no',
+      }]);
+    });
     it('ignores for html question type', () => {
       helper.initializeSurveyJsCreator('en');
       helper.creator.text = htmlQuestion;
@@ -3066,6 +3135,10 @@ describe('SurveyJsHelper', () => {
         checkQuestionIdentifiers(booleanQuestion, booleanAnswer);
       });
 
+      it('returns the same list of question identifiers for yesnoQuestion', () => {
+        checkQuestionIdentifiers(yesnoQuestion, yesnoAnswer);
+      });
+
       it('returns the same list of question identifiers for htmlQuestion', () => {
         checkQuestionIdentifiers(htmlQuestion, htmlAnswer);
       });
@@ -3284,6 +3357,21 @@ describe('SurveyJsHelper', () => {
           {
             assessmentQuestionIdentifier: 'question1',
             responses: [{ displayValue: 'Non', textValue: 'false', numericValue: null }],
+          },
+        ]);
+      });
+
+      it('returns the answer for yesnoQuestion', () => {
+        checkQuestionAnswers(yesnoQuestion, yesnoAnswer, [
+          {
+            assessmentQuestionIdentifier: 'question1',
+            responses: [{ displayValue: 'Oui', textValue: 'yes', numericValue: null }],
+          },
+        ]);
+        checkQuestionAnswers(yesnoQuestion, yesnoAnswerNo, [
+          {
+            assessmentQuestionIdentifier: 'question1',
+            responses: [{ displayValue: 'Non', textValue: 'no', numericValue: null }],
           },
         ]);
       });
