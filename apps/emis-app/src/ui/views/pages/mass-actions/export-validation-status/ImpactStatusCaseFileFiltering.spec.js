@@ -130,7 +130,7 @@ describe('ImpactStatusCaseFileFiltering.vue', () => {
             label: 'caseFileTable.filters.eventName',
             items: wrapper.vm.eventsFilter,
             loading: wrapper.vm.eventsFilterLoading,
-            disabled: wrapper.vm.eventsFilterLoading,
+            disabled: wrapper.vm.eventsFilterDisabled,
             props: {
               'no-data-text': 'common.inputs.start_typing_to_search',
               'search-input': null,

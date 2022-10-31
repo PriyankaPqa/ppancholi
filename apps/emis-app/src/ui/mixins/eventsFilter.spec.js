@@ -51,6 +51,10 @@ describe('eventsFilter', () => {
         await wrapper.vm.fetchEventsFilter();
         expect(wrapper.vm.eventsFilter).toEqual([{ text: 'Gatineau Floods 2021', value: '7c076603-580a-4400-bef2-5ddececb0931' }]);
       });
+      it('should change isInitialLoad to false the first time the method is called', async () => {
+        await wrapper.vm.fetchEventsFilter();
+        expect(wrapper.vm.isInitialLoad).toEqual(false);
+      });
     });
 
     describe('fetchEventsByIds', () => {

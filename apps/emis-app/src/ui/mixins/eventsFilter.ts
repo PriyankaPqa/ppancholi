@@ -23,6 +23,8 @@ export default Vue.extend({
       eventsFilter: [],
       eventFilterQuery: null,
       eventsFilterLoading: false,
+      eventsFilterDisabled: false,
+      isInitialLoad: true,
       searchEventMethod: '', // Defined in component using the mixin
       selectedEvent: [],
     };
@@ -44,6 +46,9 @@ export default Vue.extend({
   methods: {
     async fetchEventsFilter(query = '', top = INITIAL_NUMBER_ITEMS) {
       this.eventsFilterLoading = true;
+      if (this.isInitialLoad) {
+        this.eventsFilterDisabled = true;
+      }
       const searchParam = query.split(' ').filter((x) => x !== '')
         .map((v) => helpers.sanitize(v))
         .map((v) => `(/.*${v}.*/ OR "\\"${v}\\"")`)
@@ -79,6 +84,10 @@ export default Vue.extend({
       const res = await this.$services.events.search(params) as IAzureCombinedSearchResult<IEventEntity, IEventMetadata>;
       await helpers.timeout(VISUAL_DELAY);
       this.eventsFilterLoading = false;
+      if (this.isInitialLoad) {
+        this.eventsFilterDisabled = false;
+        this.isInitialLoad = false;
+      }
 
       if (res?.value) {
         this.eventsFilter = res.value.map((e) => ({

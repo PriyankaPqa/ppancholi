@@ -250,7 +250,7 @@ export default mixins(massActionCaseFileFiltering).extend({
           label: this.$t('caseFileTable.filters.eventName') as string,
           items: this.sortedEventsFilter,
           loading: this.eventsFilterLoading,
-          disabled: this.eventsFilterLoading,
+          disabled: this.eventsFilterDisabled,
           props: {
             'no-data-text': !this.eventFilterQuery ? this.$t('common.inputs.start_typing_to_search') : this.$t('common.search.no_result'),
             'search-input': this.eventFilterQuery,

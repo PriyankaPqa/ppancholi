@@ -102,6 +102,7 @@
           class="pa-0"
           cols="12">
           <v-autocomplete
+            :ref="`searchInput_${filter.key}`"
             v-model="filterValues[filter.key].value"
             :menu-props="menuProps"
             outlined
