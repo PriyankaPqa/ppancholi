@@ -1,4 +1,5 @@
 import { mockHouseholdMetadata } from '@libs/entities-lib/household';
+import { mockEventMainInfo } from '@libs/entities-lib/event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 
@@ -6,6 +7,16 @@ import Component from '../HouseholdCaseFileCard.vue';
 
 const localVue = createLocalVue();
 const caseFile = mockHouseholdMetadata().caseFiles[0];
+const events = [
+  mockEventMainInfo({
+    id: caseFile.eventId,
+  }),
+  mockEventMainInfo({
+    id: '2',
+  })];
+const allEventNames = { };
+allEventNames[events[0].entity.id] = events[0].entity.name;
+allEventNames[events[1].entity.id] = events[1].entity.name;
 
 describe('HouseholdCaseFileCard.vue', () => {
   let wrapper;
@@ -16,6 +27,7 @@ describe('HouseholdCaseFileCard.vue', () => {
       propsData: {
         caseFile,
         isActive,
+        eventNames: allEventNames,
       },
       computed: {
         hasAccessToEvent() {
@@ -44,7 +56,8 @@ describe('HouseholdCaseFileCard.vue', () => {
       it('displays the name of the event', () => {
         doMount(true);
         const span = wrapper.find("span[data-test='household_profile_case_file_event_name']");
-        expect(span.text()).toContain(wrapper.vm.caseFile.eventName.translation.en);
+
+        expect(span.text()).toContain(wrapper.vm.eventName.translation.en);
       });
     });
 
@@ -134,6 +147,13 @@ describe('HouseholdCaseFileCard.vue', () => {
         });
 
         expect(wrapper.vm.hasAccessToEvent).toBeFalsy();
+      });
+    });
+
+    describe('eventName', () => {
+      it('returns the event name for the case file', () => {
+        doMount();
+        expect(wrapper.vm.eventName).toEqual(events[0].entity.name);
       });
     });
   });

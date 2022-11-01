@@ -132,6 +132,16 @@ describe('>>> Events Service', () => {
     expect(http.get).toHaveBeenCalledWith('event/search/events', { params, isOData: true });
   });
 
+  test('searchMyEventsById is linked to the correct URL and params', async () => {
+    const ids = ['id-1', 'id-2'];
+    const params = {
+      filter: "search.in(Entity/Id, 'id-1|id-2', '|')",
+      top: 999,
+    };
+    await service.searchMyEventsById(ids);
+    expect(http.get).toHaveBeenCalledWith('event/search/events', { params, isOData: true });
+  });
+
   describe('setEventStatus', () => {
     it('calls the open endpoint if the status is open and hasBeenOpen is false', async () => {
       await service.setEventStatus('ID', EEventStatus.Open, false);

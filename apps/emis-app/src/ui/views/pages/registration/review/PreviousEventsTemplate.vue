@@ -13,7 +13,7 @@
         <div v-for="(c, index) in caseFiles" :key="index" class="row-data">
           <v-row dense>
             <v-col cols="6" class="rc-body14 fw-bold" :data-test="`previous_event_${index}`">
-              {{ $m(c.eventName) }}
+              {{ $m(eventNames[c.eventId]) }}
             </v-col>
             <v-col cols="3" class="rc-body14" :data-test="`previous_event_registered_${index}`">
               {{ $t('registration.details.registered') }}: {{ moment(c.registeredDate).format('ll') }}
@@ -32,6 +32,8 @@
 import Vue from 'vue';
 import moment from 'moment';
 import { IHouseholdCaseFile } from '@libs/entities-lib/household';
+import { IMultilingual } from '@libs/shared-lib/types';
+import { IEventMainInfo } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'PreviousEventsTemplate',
@@ -48,7 +50,32 @@ export default Vue.extend({
   data() {
     return {
       moment,
+      events: [] as IEventMainInfo[],
     };
+  },
+  computed: {
+    eventNames(): Record<string, IMultilingual> {
+      const names: Record<string, IMultilingual> = {};
+      this.events?.forEach((e) => {
+        names[e.entity.id] = e.entity.name;
+      });
+      return names;
+    },
+  },
+  watch: {
+    caseFiles() {
+      this.fetchEvents();
+    },
+  },
+  methods: {
+    async fetchEvents() {
+      const eventIds = this.caseFiles.map((cf) => cf.eventId);
+      if (!eventIds.length) {
+        return;
+      }
+      const results = await this.$services.publicApi.searchEventsById(eventIds);
+      this.events = results?.value as IEventMainInfo[];
+    },
   },
 });
 </script>

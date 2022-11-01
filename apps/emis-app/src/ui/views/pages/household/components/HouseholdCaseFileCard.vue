@@ -20,7 +20,7 @@
               :class="[isActive? 'rc-body18': 'rc-link14' ]"
               data-test="household_profile_case_file_event_name"
               @click="openCaseFileSummary = true">
-              {{ $m(caseFile.eventName) }}
+              {{ eventName? $m(eventName): 'm' }}
             </component>
           </td>
           <td class="icon">
@@ -81,6 +81,7 @@ import { IHouseholdCaseFile } from '@libs/entities-lib/household';
 import { RcDialog } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import { IEventMainInfo } from '@libs/entities-lib/event';
+import { IMultilingual } from '@libs/shared-lib/types';
 import CaseFileSummary from '../../case-files/details/CaseFileSummary.vue';
 
 export default Vue.extend({
@@ -96,15 +97,22 @@ export default Vue.extend({
      * The case file of the household
      */
     caseFile: {
-      type: Object as ()=> IHouseholdCaseFile,
+      type: Object as () => IHouseholdCaseFile,
       required: true,
     },
     /**
      * The list of events to which the user has access
      */
     myEvents: {
-      type: Array as ()=> IEventMainInfo[],
+      type: Array as () => IEventMainInfo[],
       default: () => [] as IEventMainInfo[],
+    },
+    /**
+     * Names of events in the context, whether the user has access or not
+     */
+    eventNames: {
+      type: Object as () => Record<string, IMultilingual>,
+      default: () => ({}),
     },
     /**
      * Whether the case file is active
@@ -136,8 +144,11 @@ export default Vue.extend({
       const { eventId } = this.caseFile;
       return this.myEvents.map((e) => e.entity.id).includes(eventId);
     },
-  },
 
+    eventName():IMultilingual {
+      return this.eventNames[this.caseFile.eventId];
+    },
+  },
 });
 </script>
 

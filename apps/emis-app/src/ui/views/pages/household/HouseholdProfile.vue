@@ -91,7 +91,7 @@
 
           <v-row class="pt-4">
             <v-col v-for="caseFile in activeCaseFiles" :key="caseFile.caseFileId" cols="12" md="6">
-              <household-case-file-card :my-events="events" :case-file="caseFile" :is-active="true" />
+              <household-case-file-card :my-events="myEvents" :event-names="eventNames" :case-file="caseFile" :is-active="true" />
             </v-col>
           </v-row>
 
@@ -150,7 +150,7 @@
           </h5>
           <v-row>
             <v-col v-for="caseFile in inactiveCaseFiles" :key="caseFile.caseFileId" cols="12" md="6">
-              <household-case-file-card :case-file="caseFile" :is-active="false" />
+              <household-case-file-card :event-names="eventNames" :case-file="caseFile" :is-active="false" />
             </v-col>
           </v-row>
         </v-col>
@@ -196,6 +196,7 @@ import {
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 import routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IMultilingual } from '@libs/shared-lib/types';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
@@ -229,7 +230,17 @@ export default mixins(household).extend({
       moment,
       loading: true,
       caseFileIds: [] as string[],
-      events: [] as IEventMainInfo[],
+      /*
+       * Events to which the user has access. For most users this access is limited by
+       * membership in teams assigned to events. This access cannot be inferred from the
+       * data, so there are separate requests for "my" and "all" events.
+       */
+      myEvents: [] as IEventMainInfo[],
+      /*
+       * Events for all case files, regardless of user access. Data in these events may be
+       * obfuscated depending on the user's roles.
+      */
+      allEvents: [] as IEventMainInfo[],
       showAddAdditionalMember: false,
       newAdditionalMember: null,
       disabledAddMembers: false,
@@ -242,6 +253,7 @@ export default mixins(household).extend({
     householdData(newValue) {
       if (newValue && !_isEmpty(newValue.metadata)) {
         this.fetchMyEvents();
+        this.fetchAllEvents();
         this.setHouseholdCreate();
       }
     },
@@ -249,12 +261,19 @@ export default mixins(household).extend({
 
   computed: {
     registrationLocations() : IEventGenericLocation[] {
-      const locations:IEventGenericLocation[] = [];
+      // active registration locations from events associated with active case files
+      const locations: IEventGenericLocation[] = [];
+      if (!this.allEvents) {
+        return locations;
+      }
+
       this.activeCaseFiles.forEach((cf) => {
-        if (cf.registrationLocations?.length) {
-          const activeLocations = cf.registrationLocations.filter((s) => s.status === EEventLocationStatus.Active);
-          locations.push(...activeLocations);
-        }
+        const event = this.allEvents.find((e) => e.entity.id === cf.eventId)?.entity;
+        event?.registrationLocations?.forEach((rl) => {
+          if (rl.status === EEventLocationStatus.Active) {
+            locations.push(rl);
+          }
+        });
       });
 
       return locations;
@@ -266,8 +285,8 @@ export default mixins(household).extend({
 
     shelterLocations() :IEventGenericLocation[] {
       const locations:IEventGenericLocation[] = [];
-      if (this.events) {
-        this.events.filter((e) => e.entity?.schedule?.status === EEventStatus.Open).forEach((e) => {
+      if (this.myEvents) {
+        this.myEvents.filter((e) => e.entity?.schedule?.status === EEventStatus.Open).forEach((e) => {
           if (e.entity.shelterLocations) {
             const activeLocations = e.entity.shelterLocations
               .filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active
@@ -343,6 +362,14 @@ export default mixins(household).extend({
     enableAutocomplete(): boolean {
       return this.$hasFeature(FeatureKeys.AddressAutoFill);
     },
+
+    eventNames(): Record<string, IMultilingual> {
+      const names: Record<string, IMultilingual> = {};
+      this.allEvents?.forEach((e) => {
+        names[e.entity.id] = e.entity.name;
+      });
+      return names;
+    },
   },
 
   async created() {
@@ -354,6 +381,7 @@ export default mixins(household).extend({
     ]);
     await this.fetchHouseholdData();
     await this.fetchMyEvents();
+    await this.fetchAllEvents();
     this.loading = false;
   },
 
@@ -361,13 +389,16 @@ export default mixins(household).extend({
     async fetchMyEvents() {
       if (this.activeCaseFiles.length) {
         const eventIds = this.activeCaseFiles.map((cf) => cf.eventId);
-        const filter = `search.in(Entity/Id, '${eventIds.join('|')}', '|')`;
-        const eventsData = await this.$services.events.searchMyEvents({
-          filter,
-          top: 999,
-        });
+        const results = await this.$services.events.searchMyEventsById(eventIds);
+        this.myEvents = results?.value;
+      }
+    },
 
-        this.events = eventsData?.value;
+    async fetchAllEvents() {
+      if (this.activeCaseFiles.length) {
+        const eventIds = this.activeCaseFiles.map((cf) => cf.eventId);
+        const results = await this.$services.publicApi.searchEventsById(eventIds);
+        this.allEvents = results?.value as IEventMainInfo[];
       }
     },
 

@@ -117,6 +117,15 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
     return this.http.get(`${API_URL_SUFFIX}/search/${CONTROLLER}`, { params, isOData: true });
   }
 
+  async searchMyEventsById(ids: string[]): Promise<IAzureSearchResult<IEventMainInfo>> {
+    const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
+    const params = {
+      filter,
+      top: 999,
+    };
+    return this.searchMyEvents(params);
+  }
+
   private eventToCreateEventRequestPayload(event: IEventEntity): ICreateEventRequest {
     const payload: ICreateEventRequest = {
       assistanceNumber: event.responseDetails.assistanceNumber,

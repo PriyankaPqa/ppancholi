@@ -23,13 +23,18 @@ const events = [
   mockEventMainInfo({
     id: '1',
     shelterLocations: [{ id: 'loc-1', status: EEventLocationStatus.Active }],
+    registrationLocations: [{ id: ' loc-id-1-active', status: EEventLocationStatus.Active }, { id: ' loc-id-2-inactive', status: EEventLocationStatus.Inactive }],
   }),
-  mockEventMainInfo(
-    {
-      id: '2',
-      shelterLocations: [{ id: 'loc-2', status: EEventLocationStatus.Inactive }, { id: 'loc-3', status: EEventLocationStatus.Active }],
-    },
-  )];
+  mockEventMainInfo({
+    id: '2',
+    shelterLocations: [{ id: 'loc-2', status: EEventLocationStatus.Inactive }, { id: 'loc-3', status: EEventLocationStatus.Active }],
+    registrationLocations: [{ id: ' loc-id-3-active', status: EEventLocationStatus.Active }, { id: ' loc-id-4-inactive', status: EEventLocationStatus.Inactive }],
+  }),
+];
+const otherEvent = mockEventMainInfo({
+  id: '3',
+  registrationLocations: [{ id: ' loc-id-5-active', status: EEventLocationStatus.Active }, { id: ' loc-id-6-inactive', status: EEventLocationStatus.Inactive }],
+});
 
 describe('HouseholdProfile.vue', () => {
   let wrapper;
@@ -196,38 +201,40 @@ describe('HouseholdProfile.vue', () => {
   describe('Computed', () => {
     describe('registrationLocations', () => {
       it('returns the right data', () => {
-        const caseFiles = [mockHouseholdCaseFile(
-          {
-            caseFileId: 'id-1',
-            registrationLocations: [
-              { id: ' loc-id-1-active', status: EEventLocationStatus.Active },
-              { id: ' loc-id-2-inactive', status: EEventLocationStatus.Inactive },
-            ],
-          },
-        ),
-        mockHouseholdCaseFile(
-          {
-            registrationLocations: [
-              { id: ' loc-id-3-active', status: EEventLocationStatus.Active },
-              { id: ' loc-id-4-inactive', status: EEventLocationStatus.Inactive },
-            ],
-          },
-        )];
+        const caseFiles = [
+          mockHouseholdCaseFile(
+            {
+              caseFileId: 'id-1',
+              eventId: '1',
+            },
+          ),
+          mockHouseholdCaseFile(
+            {
+              caseFileId: 'id-2',
+              eventId: '2',
+            },
+          ),
+          mockHouseholdCaseFile(
+            {
+              caseFileId: 'id-3',
+              eventId: '3',
+            },
+          )];
 
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             id: household.entity.id,
           },
+          data() {
+            return {
+              allEvents: events,
+            };
+          },
           computed: {
             activeCaseFiles() {
               return caseFiles;
             },
-          },
-          data() {
-            return {
-              events,
-            };
           },
           mocks: {
             $storage: storage,
@@ -235,7 +242,8 @@ describe('HouseholdProfile.vue', () => {
         });
 
         expect(wrapper.vm.registrationLocations).toEqual([
-          { id: ' loc-id-1-active', status: EEventLocationStatus.Active }, { id: ' loc-id-3-active', status: EEventLocationStatus.Active },
+          { id: ' loc-id-1-active', status: EEventLocationStatus.Active },
+          { id: ' loc-id-3-active', status: EEventLocationStatus.Active },
         ]);
       });
     });
@@ -257,7 +265,7 @@ describe('HouseholdProfile.vue', () => {
           },
           data() {
             return {
-              events: [...events,
+              myEvents: [...events,
                 mockEventMainInfo(
                   {
                     id: '2',
@@ -620,6 +628,30 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });
+
+    describe('eventNames', () => {
+      beforeEach(() => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          data() {
+            return {
+              allEvents: [...events, otherEvent],
+            };
+          },
+          propsData: {
+            id: household.entity.id,
+          },
+        });
+      });
+      it('returns expected number of names', () => {
+        expect(Object.keys(wrapper.vm.eventNames).length).toBe(3);
+      });
+      it('includes expected values', () => {
+        expect(wrapper.vm.eventNames[events[0].entity.id]).toBeTruthy();
+        expect(wrapper.vm.eventNames[events[1].entity.id]).toBeTruthy();
+        expect(wrapper.vm.eventNames[otherEvent.entity.id]).toBeTruthy();
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -660,7 +692,7 @@ describe('HouseholdProfile.vue', () => {
 
   describe('Methods', () => {
     describe('fetchMyEvents', () => {
-      it('calls searchMyEvents service with the right filter', async () => {
+      it('calls searchMyEventsById with the expected parameters', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -678,10 +710,39 @@ describe('HouseholdProfile.vue', () => {
             $storage: storage,
           },
         });
-
-        const expectedFilter = 'search.in(Entity/Id, \'id-1|id-2\', \'|\')';
+        jest.spyOn(wrapper.vm.$services.events, 'searchMyEventsById').mockImplementation(() => {});
         await wrapper.vm.fetchMyEvents();
-        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({ filter: expectedFilter, top: 999 });
+        expect(wrapper.vm.$services.events.searchMyEventsById).toHaveBeenCalledWith(['id-1', 'id-2']);
+      });
+    });
+
+    describe('fetchAllEvents', () => {
+      it('calls public searchEventsById with the expected parameters', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          data() {
+            return {
+              myEvents: events,
+            };
+          },
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            activeCaseFiles() {
+              return [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }];
+            },
+            household() {
+              return householdCreate;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        jest.spyOn(wrapper.vm.$services.publicApi, 'searchEventsById').mockImplementation(() => {});
+        await wrapper.vm.fetchAllEvents();
+        expect(wrapper.vm.$services.publicApi.searchEventsById).toHaveBeenCalledWith(['1', '2', '3', '4']);
       });
     });
 
@@ -777,7 +838,7 @@ describe('HouseholdProfile.vue', () => {
           },
           data() {
             return {
-              events,
+              myEvents: events,
             };
           },
           computed: {

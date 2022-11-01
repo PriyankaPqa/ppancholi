@@ -42,6 +42,8 @@ export interface IEventsService extends IDomainBaseService<IEventEntity, uuid>{
   editShelterLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity>;
 
   searchMyEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventMainInfo>>;
+
+  searchMyEventsById(ids: string[]): Promise<IAzureSearchResult<IEventMainInfo>>;
 }
 
 export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity> {
@@ -61,4 +63,5 @@ export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity>
   addShelterLocation: jest.Mock<IEventEntity>;
   editShelterLocation: jest.Mock<IEventEntity>;
   searchMyEvents: jest.Mock<IAzureSearchResult<IEventMainInfo>>;
+  searchMyEventsById: jest.Mock<IAzureSearchResult<IEventMainInfo>>;
 }

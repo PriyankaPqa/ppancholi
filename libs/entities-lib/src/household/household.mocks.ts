@@ -1,5 +1,4 @@
 import { IEntity, mockBaseData } from '../base';
-import { mockRegistrationLocations } from '../registration-event/registrationEvent.mock';
 import {
   IHouseholdCombined, IHouseholdEntity, IHouseholdMetadata, IHouseholdMemberMetadata,
   IHouseholdCaseFile,
@@ -71,12 +70,10 @@ export const mockHouseholdMemberMetadata = (force?: Partial<IHouseholdMemberMeta
 
 export const mockHouseholdCaseFile = (force?: Partial<IHouseholdCaseFile>): IHouseholdCaseFile => ({
   eventId: '60983874-18bb-467d-b55a-94dc55818151',
-  eventName: { translation: { en: 'my event 1', fr: ' my event fr' } },
   caseFileId: '11-22-334',
   caseFileNumber: '111',
   caseFileStatus: 1,
   registeredDate: '2021-02-02',
-  registrationLocations: mockRegistrationLocations(),
   ...force,
 });
 

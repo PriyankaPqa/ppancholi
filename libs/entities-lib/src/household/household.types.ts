@@ -1,6 +1,4 @@
-import { IMultilingual } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
-import { IEventGenericLocation } from '../registration-event/registrationEvent.types';
 import { IPhoneNumber } from '../value-objects/contact-information';
 import { IAddressData } from '../value-objects/address';
 
@@ -32,12 +30,10 @@ export interface IHouseholdMemberMetadata {
 
 export interface IHouseholdCaseFile {
   eventId: uuid;
-  eventName: IMultilingual;
   caseFileId: uuid;
   caseFileNumber: string;
   caseFileStatus: number;
   registeredDate: string | Date;
-  registrationLocations: IEventGenericLocation[];
 }
 
 export interface IHouseholdMetadata extends IEntity {
