@@ -8,6 +8,7 @@ import {
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
 import { EPaymentModalities } from '../program';
+import { CompletedByType } from '../assessment-template';
 
 export const mockCaseFileCount = (): ICaseFileCount => ({
   inactiveCount: 0, openCount: 1, closedCount: 1, archivedCount: 0,
@@ -623,6 +624,18 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       activityType: CaseFileActivityType.IdentityAuthenticationUpdatedId,
       details: {
         status: 0,
+      },
+    },
+    {
+      id: 'mock-activity-id-34',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.AssessmentCompleted,
+      details: {
+        assessmentName: { translation: { en: 'mock assessment', fr: 'mock assessment' } },
+        CompletedByType: CompletedByType.Crc,
       },
     },
   ];

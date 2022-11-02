@@ -341,6 +341,13 @@ describe('CaseFileActivityListItem.vue', () => {
         });
         expect(wrapper.vm.icon).toEqual('mdi-currency-usd');
       });
+
+      it('returns the correct icon when action type is AssessmentCompleted', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.AssessmentCompleted)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-message-text');
+      });
     });
 
     describe('Methods', () => {
@@ -780,6 +787,7 @@ describe('CaseFileActivityListItem.vue', () => {
           body,
         });
       });
+
       it('returns the correct data when action type is HouseholdEdited', async () => {
         const item = mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0];
         wrapper.vm.makeHouseholdEditedBody = jest.fn(() => 'mock-body');
@@ -790,6 +798,21 @@ describe('CaseFileActivityListItem.vue', () => {
         expect(wrapper.vm.makeContentForHouseholdEdited()).toEqual({
           title: 'caseFileActivity.activityList.title.HouseholdEdited',
           body: 'mock-body',
+        });
+      });
+
+      describe('makeContentForAssessmentCompleted', () => {
+        it('returns the correct data when activity type is AssessmentCompleted', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.AssessmentCompleted)[0],
+          });
+
+          const body = wrapper.vm.$t('caseFileActivity.activityList.body.assessmentCompleted.name', { x: 'mock assessment' });
+
+          expect(wrapper.vm.makeContentForAssessmentCompleted()).toEqual({
+            title: 'caseFileActivity.activityList.title.AssessmentCompleted',
+            body,
+          });
         });
       });
     });
@@ -863,58 +886,58 @@ describe('CaseFileActivityListItem.vue', () => {
           body,
         });
       });
+    });
 
-      describe('makeHouseholdEditedBody', () => {
-        it('returns the right string', async () => {
-          let item = {
-            ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
-            details: { householdActivityType: HouseholdCaseFileActivityType.IdentitySetEdited },
-          };
-          await wrapper.setProps({ item });
-          expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.personal_information_changed');
+    describe('makeHouseholdEditedBody', () => {
+      it('returns the right string', async () => {
+        let item = {
+          ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
+          details: { householdActivityType: HouseholdCaseFileActivityType.IdentitySetEdited },
+        };
+        await wrapper.setProps({ item });
+        expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.personal_information_changed');
 
-          item = {
-            ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
-            details: { householdActivityType: HouseholdCaseFileActivityType.ContactInformationEdited },
-          };
-          await wrapper.setProps({ item });
-          expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.contact_information_changed');
+        item = {
+          ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
+          details: { householdActivityType: HouseholdCaseFileActivityType.ContactInformationEdited },
+        };
+        await wrapper.setProps({ item });
+        expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.contact_information_changed');
 
-          item = {
-            ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
-            details: { householdActivityType: HouseholdCaseFileActivityType.TempAddressEdited },
-          };
-          await wrapper.setProps({ item });
-          expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.temporary_address_changed');
+        item = {
+          ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
+          details: { householdActivityType: HouseholdCaseFileActivityType.TempAddressEdited },
+        };
+        await wrapper.setProps({ item });
+        expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.temporary_address_changed');
 
-          item = {
-            ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
-            details: { householdActivityType: HouseholdCaseFileActivityType.HomeAddressEdited },
-          };
-          await wrapper.setProps({ item });
-          expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.address_information_changed');
+        item = {
+          ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
+          details: { householdActivityType: HouseholdCaseFileActivityType.HomeAddressEdited },
+        };
+        await wrapper.setProps({ item });
+        expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.address_information_changed');
 
-          item = {
-            ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
-            details: { householdActivityType: HouseholdCaseFileActivityType.MemberAdded, member: { id: '1', name: 'Jane Doe' } },
-          };
-          await wrapper.setProps({ item });
-          expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.household_member_added: Jane Doe');
+        item = {
+          ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
+          details: { householdActivityType: HouseholdCaseFileActivityType.MemberAdded, member: { id: '1', name: 'Jane Doe' } },
+        };
+        await wrapper.setProps({ item });
+        expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.household_member_added: Jane Doe');
 
-          item = {
-            ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
-            details: { householdActivityType: HouseholdCaseFileActivityType.MemberRemoved, member: { id: '1', name: 'Jane Doe' } },
-          };
-          await wrapper.setProps({ item });
-          expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.household_member_removed: Jane Doe');
+        item = {
+          ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
+          details: { householdActivityType: HouseholdCaseFileActivityType.MemberRemoved, member: { id: '1', name: 'Jane Doe' } },
+        };
+        await wrapper.setProps({ item });
+        expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.household_member_removed: Jane Doe');
 
-          item = {
-            ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
-            details: { householdActivityType: HouseholdCaseFileActivityType.PrimaryAssigned, member: { id: '1', name: 'Jane Doe' } },
-          };
-          await wrapper.setProps({ item });
-          expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.household_member_assign_primary: Jane Doe');
-        });
+        item = {
+          ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
+          details: { householdActivityType: HouseholdCaseFileActivityType.PrimaryAssigned, member: { id: '1', name: 'Jane Doe' } },
+        };
+        await wrapper.setProps({ item });
+        expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.household_member_assign_primary: Jane Doe');
       });
     });
   });
