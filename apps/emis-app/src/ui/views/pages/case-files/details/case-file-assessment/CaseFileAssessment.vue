@@ -69,7 +69,7 @@
           </template>
 
           <template #[`item.${customColumns.actions_icons}`]="{ item }">
-            <v-btn icon data-test="delete-link" @click="deleteAssessment(item)">
+            <v-btn v-if="canDelete" icon data-test="delete-link" @click="deleteAssessment(item)">
               <v-icon size="24" color="grey darken-2">
                 mdi-delete
               </v-icon>
@@ -210,6 +210,10 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
   computed: {
     canAdd(): boolean {
+      return this.$hasLevel('level1') && !this.readonly;
+    },
+
+    canDelete(): boolean {
       return this.$hasLevel('level1') && !this.readonly;
     },
 
@@ -408,9 +412,15 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       });
     },
 
-    deleteAssessment(item: MappedAssessment) {
-      // todo in future story
-      this.$toasted.global.success(`this will delete ${item.id}`);
+    async deleteAssessment(item: MappedAssessment) {
+      const doDelete = await this.$confirm({
+        title: this.$t('assessmentResponse.confirm.delete.title'),
+        messages: this.$t('assessmentResponse.confirm.delete.message'),
+      });
+
+      if (doDelete) {
+        await this.$storage.assessmentResponse.actions.deactivate(item);
+      }
     },
 
     launchAssessment(item: MappedAssessment) {

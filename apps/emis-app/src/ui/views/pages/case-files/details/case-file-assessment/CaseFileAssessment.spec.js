@@ -130,6 +130,30 @@ describe('CaseFileAssessment.vue', () => {
       });
     });
 
+    describe('canDelete', () => {
+      it('returns true for level1+ when not readonly', async () => {
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.canDelete).toBeTruthy();
+        await mountWrapper(false, 1, null,
+          {
+            computed: {
+              readonly() {
+                return true;
+              },
+            },
+          });
+        expect(wrapper.vm.canDelete).toBeFalsy();
+        await mountWrapper(false, null);
+        expect(wrapper.vm.canDelete).toBeFalsy();
+        await mountWrapper(false, null, 'readonly');
+        expect(wrapper.vm.canDelete).toBeFalsy();
+        await mountWrapper(false, null, 'contributor3');
+        expect(wrapper.vm.canDelete).toBeFalsy();
+        await mountWrapper(false, null, 'contributorFinance');
+        expect(wrapper.vm.canDelete).toBeFalsy();
+      });
+    });
+
     describe('items', () => {
       it('should call getById', async () => {
         await mountWrapper();
@@ -434,6 +458,30 @@ describe('CaseFileAssessment.vue', () => {
           queryType: 'full',
           searchMode: 'all',
         }, null, true);
+      });
+    });
+
+    describe('deleteAssessment', () => {
+      it('calls deactivate after confirmation', async () => {
+        mountWrapper();
+        const response = {};
+        await wrapper.vm.deleteAssessment(response);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'assessmentResponse.confirm.delete.title',
+          messages: 'assessmentResponse.confirm.delete.message',
+        });
+        expect(storage.assessmentResponse.actions.deactivate).toHaveBeenCalledWith(response);
+      });
+      it('doesnt call deactivate if no confirmation', async () => {
+        mountWrapper();
+        wrapper.vm.$confirm = jest.fn(() => false);
+        const response = {};
+        await wrapper.vm.deleteAssessment(response);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'assessmentResponse.confirm.delete.title',
+          messages: 'assessmentResponse.confirm.delete.message',
+        });
+        expect(storage.assessmentResponse.actions.deactivate).toHaveBeenCalledTimes(0);
       });
     });
   });
