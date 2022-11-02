@@ -164,14 +164,17 @@ const store: StoreOptions<IRootState> = {
       new HouseholdMetadataService(httpClient),
     ).getModule(),
 
+    // User Accounts: do not include SignalR to skip subscribing to changes in this data.
+    // The number of entities is too large in the prod CRC tenant, so this cannot be used
+    // unless calls to getAll are removed.
     [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(
       new UserAccountsService(httpClient),
       new OptionItemsService(httpClient),
-      SignalR,
+      null, // SignalR,
     ).getModule(),
     [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(
       new UserAccountsMetadataService(httpClient),
-      SignalR,
+      null, // SignalR,
     ).getModule(),
 
     [vuexModule.EVENT_ENTITIES]: new EventEntityModule(

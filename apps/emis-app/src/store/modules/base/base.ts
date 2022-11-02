@@ -28,7 +28,7 @@ export class BaseModule<T extends IEntity, IdParams> {
     } else if (stateItem.timestamp < item.timestamp) {
       Vue.set(state.items, index, item);
     }
-    this.signalR.instance.addSubscription(item.id);
+    this.signalR?.instance.addSubscription(item.id);
   }
 
   protected baseState = {
