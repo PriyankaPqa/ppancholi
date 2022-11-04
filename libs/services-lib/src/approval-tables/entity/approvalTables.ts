@@ -24,8 +24,12 @@ export class ApprovalTablesService extends DomainBaseService<IApprovalTableEntit
     return this.http.post<IApprovalTableEntityData>(`${this.baseUrl}`, formattedPayload, { globalHandler: false });
   }
 
-  getApprovalsTableByEventId(eventId: uuid) {
+  getApprovalsTableByEventId(eventId: uuid): Promise<IApprovalTableEntityData[]> {
     return this.http.get<IApprovalTableEntityData[]>(`${this.baseApi}/events/${eventId}/approval-tables`);
+  }
+
+  getApprovalTableByProgramId(programId: uuid): Promise<IApprovalTableEntityData> {
+    return this.http.get<IApprovalTableEntityData>(`${this.baseApi}/programs/${programId}/approval-table`, { globalHandler: false });
   }
 
   edit(approvalId: uuid, payload: IApprovalTableEntity): Promise<IApprovalTableEntityData> {

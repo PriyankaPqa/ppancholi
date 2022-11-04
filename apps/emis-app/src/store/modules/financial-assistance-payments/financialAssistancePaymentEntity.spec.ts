@@ -83,6 +83,18 @@ describe('Financial assistance payment entity module', () => {
       });
     });
 
+    describe('submitApprovalRequest', () => {
+      it('calls the right service and returns the result', async () => {
+        const serviceRes = mockCaseFinancialAssistanceEntity();
+
+        myModule.service.submitApprovalRequest = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await myModule.actions.submitApprovalRequest(actionContext, { paymentId: '1', submitTo: '2' });
+
+        expect(myModule.service.submitApprovalRequest).toBeCalledWith('1', '2');
+        expect(res).toEqual(serviceRes);
+      });
+    });
+
     describe('addFinancialAssistancePaymentLine', () => {
       it('calls the right service and returns the result', async () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();

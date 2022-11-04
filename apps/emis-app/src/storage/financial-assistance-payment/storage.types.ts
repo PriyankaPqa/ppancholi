@@ -19,6 +19,7 @@ export interface IActions extends IBaseActions<IFinancialAssistancePaymentEntity
   updatePaymentStatus(entityId: uuid, paymentGroupId: uuid, status: PaymentStatus,
     cancellationReason?: EPaymentCancellationReason): Promise<IFinancialAssistancePaymentEntity>;
   submitFinancialAssistancePayment(entityId: uuid): Promise<IFinancialAssistancePaymentEntity>;
+  submitApprovalRequest(paymentId: uuid, submitTo: uuid): Promise<IFinancialAssistancePaymentEntity>;
   addFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
     Promise<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
@@ -34,6 +35,7 @@ export interface IActionsMock extends IBaseActionsMock<IFinancialAssistancePayme
   editFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
   updatePaymentStatus: jest.Mock<IFinancialAssistancePaymentEntity>;
   submitFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
+  submitApprovalRequest: jest.Mock<IFinancialAssistancePaymentEntity>;
   addFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   deleteFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;

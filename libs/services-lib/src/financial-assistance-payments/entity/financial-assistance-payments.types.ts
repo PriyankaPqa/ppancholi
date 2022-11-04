@@ -9,6 +9,7 @@ export interface IFinancialAssistancePaymentsService extends IDomainBaseService<
   editFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
   updatePaymentStatus(entityId: uuid, paymentGroupId: uuid, status: PaymentStatus): Promise<IFinancialAssistancePaymentEntity>
   submitFinancialAssistancePayment(entityId: uuid): Promise<IFinancialAssistancePaymentEntity>;
+  submitApprovalRequest(paymentId: uuid, submitTo: uuid): Promise<IFinancialAssistancePaymentEntity>
   addFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
     Promise<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
@@ -25,6 +26,7 @@ export interface IFinancialAssistancePaymentsServiceMock extends IDomainBaseServ
   editFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
   updatePaymentStatus: jest.Mock<IFinancialAssistancePaymentEntity>;
   submitFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
+  submitApprovalRequest: jest.Mock<IFinancialAssistancePaymentEntity>;
   addFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   deleteFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;

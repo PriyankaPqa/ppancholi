@@ -24,6 +24,7 @@ export interface IEditApprovalTableRequest {
 export interface IApprovalTablesService extends IDomainBaseService<IApprovalTableEntityData, uuid>{
   create(data: IApprovalTableEntity): Promise<IApprovalTableEntityData>;
   getApprovalsTableByEventId(eventId: uuid): Promise<IApprovalTableEntityData[]>;
+  getApprovalTableByProgramId(programId: uuid): Promise<IApprovalTableEntityData>
   edit(approvalId: uuid, payload: IApprovalTableEntity): Promise<IApprovalTableEntityData>
   addGroup(approvalId: uuid, group: IApprovalGroup): Promise<IApprovalTableEntityData>
   removeGroup(approvalId: uuid, groupId: uuid): Promise<IApprovalTableEntityData>
@@ -33,6 +34,7 @@ export interface IApprovalTablesService extends IDomainBaseService<IApprovalTabl
 export interface IApprovalTablesServiceMock extends IDomainBaseServiceMock<IApprovalTableEntityData> {
   create: jest.Mock<IApprovalTableEntityData>;
   getApprovalsTableByEventId: jest.Mock<IApprovalTableEntityData[]>;
+  getApprovalTableByProgramId: jest.Mock<IApprovalTableEntityData>;
   edit: jest.Mock<IApprovalTableEntityData>;
   addGroup: jest.Mock<IApprovalTableEntityData>;
   removeGroup: jest.Mock<IApprovalTableEntityData>;

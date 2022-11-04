@@ -3,7 +3,7 @@ import { EFilterType } from '@libs/component-lib/types';
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
-import { mockCombinedCaseFinancialAssistance } from '@libs/entities-lib/financial-assistance-payment';
+import { mockCombinedCaseFinancialAssistance, ApprovalStatus } from '@libs/entities-lib/financial-assistance-payment';
 import routes from '@/constants/routes';
 import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 import Component from './FinancialAssistancePaymentsList.vue';
@@ -105,11 +105,11 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       await flushPromises();
       expect(wrapper.findDataTest('edit-link').exists()).toBeTruthy();
 
-      storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = 2;
+      storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = ApprovalStatus.Approved;
       await wrapper.vm.$nextTick();
       expect(wrapper.findDataTest('edit-link').exists()).toBeFalsy();
 
-      storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = 1;
+      storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = ApprovalStatus.New;
       await wrapper.vm.$nextTick();
 
       await mountWrapper(true, 6, null, {
@@ -129,11 +129,11 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       await flushPromises();
       expect(wrapper.findDataTest('delete-link').exists()).toBeTruthy();
 
-      storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = 2;
+      storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = ApprovalStatus.Approved;
       await wrapper.vm.$nextTick();
       expect(wrapper.findDataTest('delete-link').exists()).toBeFalsy();
 
-      storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = 1;
+      storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = ApprovalStatus.New;
       await wrapper.vm.$nextTick();
 
       await mountWrapper(true, 6, null, {
@@ -359,12 +359,14 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     });
 
     describe('isModifiable', () => {
-      it('checks for isNew', async () => {
+      it('returns true if approval status is new or pending', async () => {
         await mountWrapper();
         const mock = mockCombinedCaseFinancialAssistance();
-        mock.entity.approvalStatus = 2;
+        mock.entity.approvalStatus = ApprovalStatus.Approved;
         expect(wrapper.vm.isModifiable(mock)).toBeFalsy();
-        mock.entity.approvalStatus = 1;
+        mock.entity.approvalStatus = ApprovalStatus.New;
+        expect(wrapper.vm.isModifiable(mock)).toBeTruthy();
+        mock.entity.approvalStatus = ApprovalStatus.Pending;
         expect(wrapper.vm.isModifiable(mock)).toBeTruthy();
       });
     });

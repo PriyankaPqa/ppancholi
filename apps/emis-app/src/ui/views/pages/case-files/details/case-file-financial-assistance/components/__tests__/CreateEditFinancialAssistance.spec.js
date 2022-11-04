@@ -608,27 +608,6 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.items).toEqual(items);
       });
     });
-
-    describe('rules', () => {
-      test('agree', async () => {
-        expect(wrapper.vm.rules.agree).toEqual({
-          required: { allowFalse: false },
-        });
-      });
-    });
-  });
-
-  describe('Validation rules', () => {
-    describe('agree', () => {
-      it('is linked to proper rules', async () => {
-        await wrapper.setData({
-          showSubmitPaymentDialog: true,
-        });
-
-        const element = wrapper.findDataTest('checkbox_agreed');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.agree);
-      });
-    });
   });
 
   describe('Methods', () => {
@@ -906,25 +885,6 @@ describe('CreateEditFinancialAssistance.vue', () => {
       });
     });
 
-    describe('onSubmitPayment', () => {
-      it('calls service if form is valid', async () => {
-        wrapper.vm.$refs.submitPaymentForm.validate = jest.fn(() => true);
-        wrapper.vm.closeSubmitPaymentDialog = jest.fn();
-
-        await wrapper.vm.onSubmitPayment();
-        expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance.id);
-        expect(wrapper.vm.financialAssistance)
-          .toEqual(new FinancialAssistancePaymentEntity(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment()));
-      });
-
-      it('does not call service if form is not valid', async () => {
-        wrapper.vm.$refs.submitPaymentForm.validate = jest.fn(() => false);
-
-        await wrapper.vm.onSubmitPayment();
-        expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment).not.toHaveBeenCalled();
-      });
-    });
-
     describe('updatePaymentStatus', () => {
       it('calls service', async () => {
         const newGroup = mockCaseFinancialAssistancePaymentGroups()[0];
@@ -951,26 +911,6 @@ describe('CreateEditFinancialAssistance.vue', () => {
         wrapper.vm.onClickSubmitPayment({ total: '$10.00' });
 
         expect(wrapper.vm.showSubmitPaymentDialog).toBe(true);
-      });
-    });
-
-    describe('closeSubmitPaymentDialog', () => {
-      it('clears totalAmountToSubmit', async () => {
-        wrapper.vm.$refs.submitPaymentForm.reset = jest.fn();
-        wrapper.vm.totalAmountToSubmit = '$10.00';
-
-        wrapper.vm.closeSubmitPaymentDialog();
-
-        expect(wrapper.vm.totalAmountToSubmit).toBe('');
-      });
-
-      it('sets showSubmitPaymentDialog', async () => {
-        wrapper.vm.$refs.submitPaymentForm.reset = jest.fn();
-        wrapper.vm.showSubmitPaymentDialog = true;
-
-        wrapper.vm.closeSubmitPaymentDialog();
-
-        expect(wrapper.vm.showSubmitPaymentDialog).toBe(false);
       });
     });
 

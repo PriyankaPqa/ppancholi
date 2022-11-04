@@ -49,6 +49,10 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
     return this.http.patch(`${this.baseUrl}/${entityId}/submit`);
   }
 
+  async submitApprovalRequest(paymentId: uuid, submitTo: uuid): Promise<IFinancialAssistancePaymentEntity> {
+    return this.http.patch(`${this.baseUrl}/${paymentId}/start-approval/${submitTo}`);
+  }
+
   async addFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
     Promise<IFinancialAssistancePaymentEntity> {
     const payload = {

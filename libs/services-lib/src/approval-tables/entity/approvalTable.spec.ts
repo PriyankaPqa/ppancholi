@@ -37,6 +37,14 @@ describe('>>> Approval Tables Service', () => {
     });
   });
 
+  describe('getApprovalsTableByProgramId', () => {
+    it('is linked to the correct URL and params', async () => {
+      const programId = '1';
+      await service.getApprovalTableByProgramId('1');
+      expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/programs/${programId}/approval-table`, { globalHandler: false });
+    });
+  });
+
   describe('edit', () => {
     it('is linked to the correct URL and params', async () => {
       const payload = mockApprovalTableEntity();

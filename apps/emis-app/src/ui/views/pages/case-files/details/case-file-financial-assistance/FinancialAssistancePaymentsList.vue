@@ -45,7 +45,7 @@
 
       <template #[`item.${customColumns.totals}`]="{ item }">
         <div data-test="fap_total" class="amount">
-          {{ $formatCurrency(item.metadata.total) }}
+          {{ item.metadata? $formatCurrency(item.metadata.total): '-' }}
         </div>
       </template>
 
@@ -394,7 +394,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     isModifiable(item: IFinancialAssistancePaymentCombined) {
-      return item.entity.approvalStatus === ApprovalStatus.New;
+      return item.entity.approvalStatus === ApprovalStatus.New || item.entity.approvalStatus === ApprovalStatus.Pending;
     },
 
     routeToCreate() {

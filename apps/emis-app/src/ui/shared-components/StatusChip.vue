@@ -202,6 +202,8 @@ export default Vue.extend({
       switch (this.status) {
         case ApprovalStatus.New:
           return colors.chips.green_pale;
+        case ApprovalStatus.Pending:
+          return colors.chips.orange;
         default:
           return colors.chips.green;
       }

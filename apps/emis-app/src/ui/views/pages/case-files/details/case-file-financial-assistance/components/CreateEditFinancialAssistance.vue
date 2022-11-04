@@ -115,46 +115,14 @@
       </rc-page-content>
     </validation-observer>
 
-    <validation-observer ref="submitPaymentForm" v-slot="{ failed }" slim>
-      <rc-dialog
-        :title="$t('caseFile.financialAssistance.submitAssistance.confirmTitle')"
-        :submit-action-label="$t('common.submit')"
-        :cancel-action-label="$t('common.buttons.cancel')"
-        :submit-button-disabled="failed || submittingPayment"
-        :show.sync="showSubmitPaymentDialog"
-        :max-width="750"
-        content-padding="10"
-        persistent
-        :show-close="false"
-        :show-help="false"
-        :loading="submittingPayment"
-        @close="closeSubmitPaymentDialog()"
-        @cancel="closeSubmitPaymentDialog()"
-        @submit="onSubmitPayment">
-        <v-row>
-          <v-col cols="12" class="mb-4 pa-0">
-            {{ $t('caseFile.financialAssistance.submitAssistance.confirmMessage') }}
-          </v-col>
-          <v-col cols="12" class="list-row d-flex justify-space-between rc-body14 px-6 py-3">
-            <span class="fw-bold">
-              {{ financialAssistance ? financialAssistance.name : '' }}
-            </span>
-            <span>
-              {{ totalAmountToSubmit }}
-            </span>
-          </v-col>
-        </v-row>
-        <v-row class="grey-container mt-8 pl-2">
-          <v-checkbox-with-validation
-            v-model="agree"
-            :rules="rules.agree"
-            data-test="checkbox_agreed"
-            class="rc-body12"
-            dense
-            :label="$t('caseFile.financialAssistance.submitAssistance.agree')" />
-        </v-row>
-      </rc-dialog>
-    </validation-observer>
+    <submit-financial-assistance-payment-dialog
+      v-if="showSubmitPaymentDialog"
+      :show.sync="showSubmitPaymentDialog"
+      :total-amount-to-submit.sync="totalAmountToSubmit"
+      :approval-required="program.entity.approvalRequired"
+      :program-id="program.entity.id"
+      :event-id="event.entity.id"
+      :financial-assistance.sync="financialAssistance" />
   </div>
 </template>
 
@@ -185,11 +153,13 @@ import
 } from '@libs/entities-lib/financial-assistance';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
-import { IProgramEntity } from '@libs/entities-lib/program';
+import { IProgramEntity, IProgramCombined } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import SubmitFinancialAssistancePaymentDialog
+  from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/SubmitFinancialAssistancePaymentDialog.vue';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
@@ -200,6 +170,7 @@ export default mixins(caseFileDetail).extend({
   name: 'CreateEditFinancialAssistance',
 
   components: {
+    SubmitFinancialAssistancePaymentDialog,
     RcPageContent,
     CreateEditFinancialAssistanceForm,
     MessageBox,
@@ -222,7 +193,6 @@ export default mixins(caseFileDetail).extend({
       financialTables: [] as IFinancialAssistanceTableEntity[],
       selectedProgram: null as IProgramEntity,
       selectedTable: null as IFinancialAssistanceTableEntity,
-      programs: null as IProgramEntity[],
       lineToEdit: null as IFinancialAssistancePaymentLine,
       groupToEdit: null as IFinancialAssistancePaymentGroup,
       showAddPaymentLineForm: false,
@@ -233,9 +203,9 @@ export default mixins(caseFileDetail).extend({
       showSubmitPaymentDialog: false,
       submittingPayment: false,
       totalAmountToSubmit: '',
-      agree: false,
       submittingPaymentLine: false,
       savingFinancialAssistance: false,
+      program: null as IProgramCombined,
     };
   },
 
@@ -287,13 +257,6 @@ export default mixins(caseFileDetail).extend({
         .reduce((acc, element) => acc + element.length, 0);
     },
 
-    rules(): Record<string, unknown> {
-      return {
-        agree: {
-          required: { allowFalse: false },
-        },
-      };
-    },
   },
 
   async created() {
@@ -310,6 +273,7 @@ export default mixins(caseFileDetail).extend({
 
     await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
     this.isEditMode || this.isAddMode ? await this.searchTables() : await this.fetchTable();
+    await this.fetchProgram(this.financialTables[0].programId, this.caseFile.entity.eventId);
     this.loading = false;
     this.warnIfInvalid();
   },
@@ -430,31 +394,6 @@ export default mixins(caseFileDetail).extend({
     onClickSubmitPayment(event: { total: string }) {
       this.totalAmountToSubmit = event.total;
       this.showSubmitPaymentDialog = true;
-    },
-
-    closeSubmitPaymentDialog() {
-      this.showSubmitPaymentDialog = false;
-      this.totalAmountToSubmit = '';
-      this.agree = false;
-      (this.$refs.submitPaymentForm as VForm).reset();
-    },
-
-    async onSubmitPayment() {
-      const isValid = await (this.$refs.submitPaymentForm as VForm).validate();
-
-      if (!isValid) {
-        return;
-      }
-
-      this.submittingPayment = true;
-      const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions
-        .submitFinancialAssistancePayment(this.financialAssistance.id);
-      if (updatedFinancialAssistance) {
-        this.financialAssistance = new FinancialAssistancePaymentEntity(updatedFinancialAssistance);
-        this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.approvalSubmitted'));
-        this.closeSubmitPaymentDialog();
-      }
-      this.submittingPayment = false;
     },
 
     mergePaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
@@ -585,6 +524,10 @@ export default mixins(caseFileDetail).extend({
           this.$toasted.global.success(this.$t('financialAssistancePayment_edit.success'));
         }
       }
+    },
+
+    async fetchProgram(programId: string, eventId: string) {
+      this.program = await this.$storage.program.actions.fetch({ id: programId, eventId });
     },
   },
 });

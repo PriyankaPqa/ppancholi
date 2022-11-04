@@ -176,6 +176,14 @@ describe('CaseFilePaymentLineItem.vue', () => {
         await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.Approved });
         expect(wrapper.vm.showEditButton).toBeTruthy();
       });
+
+      it('returns true when status = pending and modality allow for issuedAmount or related number', async () => {
+        await mountWrapper(false, 1);
+        // modality allows for issuedAmount or related number
+        await wrapper.setProps({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.Pending });
+        expect(wrapper.vm.showEditButton).toBeTruthy();
+      });
     });
 
     describe('showDeleteButton', () => {

@@ -30,6 +30,8 @@ export class FinancialAssistancePaymentStorage
       })),
     submitFinancialAssistancePayment: (entityId: uuid):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/submitFinancialAssistancePayment`, entityId),
+    submitApprovalRequest: (paymentId: uuid, submitTo: uuid):
+      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/submitApprovalRequest`, { paymentId, submitTo }),
     addFinancialAssistancePaymentLine: (financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/addFinancialAssistancePaymentLine`
       , ({ entity, financialAssistanceId })),

@@ -29,7 +29,7 @@
                 :label="`${$t('financialAssistance.nestedTable.headers.item')} *`"
                 :item-text="(item) => item.mainCategory ? $m(item.mainCategory.name) : ''"
                 :item-value="(item) => item.mainCategory ? item.mainCategory.id : null"
-                :disabled="paymentApproved"
+                :disabled="paymentApproved || paymentPending"
                 :items="activeItems"
                 :rules="rules.item"
                 data-test="payment_item"
@@ -42,7 +42,7 @@
                 :item-text="(item) => item.subCategory ? $m(item.subCategory.name) : ''"
                 :item-value="(item) => item.subCategory ? item.subCategory.id : null"
                 :items="subItems"
-                :disabled="!currentPaymentLine.mainCategoryId || paymentApproved"
+                :disabled="!currentPaymentLine.mainCategoryId ||paymentApproved || paymentPending"
                 :rules="rules.subitem"
                 data-test="payment_subItem"
                 @change="categorySelected" />
@@ -53,7 +53,7 @@
               <v-select-with-validation
                 v-model="paymentGroup.groupingInformation.modality"
                 :items="paymentModalities"
-                :disabled="paymentApproved"
+                :disabled="paymentApproved || paymentPending"
                 :rules="rules.modalities"
                 :label="`${$t('caseFile.financialAssistance.paymentModality')} *`"
                 data-test="payment_modalities" />
@@ -62,7 +62,7 @@
               <v-checkbox-with-validation
                 v-model="currentPaymentLine.documentReceived"
                 :rules="rules.documentReceived"
-                :disabled="!currentPaymentLine.subCategoryId || paymentApproved"
+                :disabled="!currentPaymentLine.subCategoryId ||paymentApproved || paymentPending"
                 data-test="checkbox_documentReceived"
                 class="rc-body12"
                 :label="`${$t('caseFile.financialAssistance.supportingDocuments')} *`" />
@@ -77,7 +77,7 @@
                 autocomplete="nope"
                 type="number"
                 prefix="$"
-                :disabled="fixedAmount || paymentApproved"
+                :disabled="fixedAmount ||paymentApproved || paymentPending"
                 :rules="rules.amount"
                 :label="`${$t(showIssuedActualAmounts(paymentGroup) ? 'caseFile.financialAssistance.issuedAmount'
                   : 'caseFile.financialAssistance.amount')} *`" />
@@ -122,7 +122,7 @@
                   v-model="paymentGroup.groupingInformation.payeeType"
                   :items="payeeTypes"
                   :label="`${$t('caseFile.financialAssistance.payee.paymentMadeTo')} *`"
-                  :disabled="paymentApproved"
+                  :disabled="paymentApproved || paymentPending"
                   data-test="payment_payeetypes"
                   @change="resetPayeeInformation" />
               </v-col>
@@ -132,7 +132,7 @@
                   data-test="payment_payeename"
                   autocomplete="nope"
                   :rules="rules.payeeName"
-                  :disabled="paymentApproved"
+                  :disabled="paymentApproved || paymentPending"
                   :label="`${$t('caseFile.financialAssistance.payee.payeeName')} *`" />
               </v-col>
             </v-row>
@@ -143,7 +143,7 @@
                   data-test="payment_careof"
                   autocomplete="nope"
                   :rules="rules.careOf"
-                  :disabled="paymentApproved"
+                  :disabled="paymentApproved || paymentPending"
                   :label="`${$t('caseFile.financialAssistance.payee.careOf')}`" />
               </v-col>
             </v-row>
@@ -336,6 +336,10 @@ export default mixins(caseFileDetail).extend({
       return this.financialAssistance.approvalStatus === ApprovalStatus.Approved;
     },
 
+    paymentPending(): boolean {
+      return this.financialAssistance.approvalStatus === ApprovalStatus.Pending;
+    },
+
     rules(): Record<string, unknown> {
       return {
         item: {
@@ -414,7 +418,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     async onSubmit() {
-      if (!this.paymentApproved) {
+      if (!this.paymentApproved && !this.paymentPending) {
         if (this.showPayee(this.paymentGroup)) {
           this.currentPaymentLine.address = this.address;
           this.currentPaymentLine.address.province = this.address.province ?? ECanadaProvinces.OT;

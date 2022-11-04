@@ -62,6 +62,13 @@ describe('>>> Financial assistance payment Service', () => {
     });
   });
 
+  describe('submitApprovalRequest', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.submitApprovalRequest('1', '2');
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/1/start-approval/2');
+    });
+  });
+
   describe('addFinancialAssistancePaymentLine', () => {
     it('is linked to the correct URL and params', async () => {
       await service.addFinancialAssistancePaymentLine('myParent', entity.groups[0]);

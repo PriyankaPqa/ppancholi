@@ -163,7 +163,7 @@ export default Vue.extend({
       if (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New) {
         return true;
       }
-      if ((this.transactionApprovalStatus === ApprovalStatus.Approved)
+      if ((this.transactionApprovalStatus === ApprovalStatus.Approved || this.transactionApprovalStatus === ApprovalStatus.Pending)
         && (this.showRelatedNumber(this.paymentGroup) || this.showIssuedActualAmounts(this.paymentGroup))) {
         return true;
       }
