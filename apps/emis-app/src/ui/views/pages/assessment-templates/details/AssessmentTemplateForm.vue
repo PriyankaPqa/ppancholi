@@ -15,8 +15,14 @@
                 @input="resetAsUnique()" />
             </v-col>
             <v-col cols="4">
-              <div :class="['status', isStatusActive ? 'status_success' : 'grey']">
-                <div class="pl-4 white--text">
+              <div v-if="isFormMode && programInactive" class="flex-row status py-2 pl-4 grey lighten-3 black--text">
+                <span class="rc-body14">
+                  {{ $t('assessmentForm.programIsInactive') }}
+                </span>
+              </div>
+
+              <div v-else :class="['status', isStatusActive ? 'status_success' : 'grey']">
+                <div class="pl-5 white--text">
                   {{ $t('common.status') }}
                   <span class="rc-body14 fw-bold white--text text-uppercase" :data-test="`assessment-status`">
                     {{ $t(`enums.Status.${Status[localAssessment.status]}`) }}
@@ -213,6 +219,20 @@ export default Vue.extend({
 
     programsSorted(): Array<IProgramEntity> {
       return _sortBy(this.programs, (program) => this.$m(program.name));
+    },
+
+    /**
+     * Returns true if the program status is Inactive
+     */
+    programInactive(): boolean {
+      if (this.isFormMode) {
+        const assessmentForm = this.localAssessment as AssessmentFormEntity;
+        const program = this.programs.filter((t) => t.id === assessmentForm.programId)[0];
+
+        return program && program.status === Status.Inactive;
+      }
+
+      return false;
     },
 
     isPublished: {

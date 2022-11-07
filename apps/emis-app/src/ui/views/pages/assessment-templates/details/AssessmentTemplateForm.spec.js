@@ -58,6 +58,23 @@ describe('AssessmentTemplateForm.vue', () => {
       });
     });
 
+    describe('programInactive', () => {
+      it('returns the right value', async () => {
+        const programs = mockProgramEntities();
+        programs[0].status = Status.Active;
+        assessmentForm.programId = programs[0].id;
+        await mountWrapper(assessmentForm);
+        await wrapper.setData({ programs });
+
+        expect(wrapper.vm.programInactive).toEqual(false);
+
+        programs[0].status = Status.Inactive;
+        await wrapper.setData({ programs });
+
+        expect(wrapper.vm.programInactive).toEqual(true);
+      });
+    });
+
     describe('rules', () => {
       it('returns the right value', async () => {
         await mountWrapper(assessmentForm);
