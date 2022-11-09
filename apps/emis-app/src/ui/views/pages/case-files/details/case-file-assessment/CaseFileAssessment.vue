@@ -59,7 +59,7 @@
               <v-btn v-if="item.canLaunch" data-test="start-link" color="primary" class="mr-2" @click="launchAssessment(item)">
                 {{ $t('assessmentResponse.start') }}
               </v-btn>
-              <v-btn data-test="copy-link" @click="copyLink(item)">
+              <v-btn v-if="item.canCopy" data-test="copy-link" @click="copyLink(item)">
                 <v-icon size="18" color="grey darken-2">
                   mdi-content-copy
                 </v-icon>
@@ -151,7 +151,7 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import moment from '@libs/shared-lib/plugins/moment';
 import {
-  AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType, IAssessmentResponseCombined, CompletionStatus,
+  AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType, IAssessmentResponseCombined, CompletionStatus, PublishStatus,
 } from '@libs/entities-lib/assessment-template';
 import routes from '@/constants/routes';
 import caseFileDetail from '../caseFileDetail';
@@ -171,6 +171,7 @@ interface MappedAssessment {
   pinned: boolean,
   canEdit: boolean,
   canLaunch: boolean,
+  canCopy: boolean,
 }
 
 export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
@@ -350,6 +351,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         formFrequency: r.form?.frequency,
         formId: r.form?.id,
         pinned: r.response.pinned,
+        canCopy: !this.readonly && this.$hasLevel('level1') && r.form?.publishStatus === PublishStatus.Published,
         canEdit: !this.readonly && this.$hasLevel('level3') && r.response.entity.completionStatus === CompletionStatus.Completed,
         canLaunch: !this.readonly && this.$hasLevel('level1')
           && (r.response.entity.completionStatus === CompletionStatus.Pending || r.response.entity.completionStatus === CompletionStatus.Partial),
@@ -435,9 +437,17 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       window.open(routeData.href, '_blank');
     },
 
-    copyLink(item: MappedAssessment) {
+    async copyLink(item: MappedAssessment) {
       const assessment = this.items.find((i) => i.entity.id === item.id);
-      navigator.clipboard.writeText(`${window.location.origin}${assessment.entity.uniqueUrl}`);
+      const settings = this.$storage.tenantSettings.getters.currentTenantSettings();
+      const member = await this.$services.households.getPerson(this.$storage.household.getters.get(this.caseFile.entity.householdId).entity.primaryBeneficiary);
+      const languages = await this.$storage.registration.actions.fetchPreferredLanguages();
+      let languageCode = languages.find((l) => l.id === member.contactInformation.preferredLanguage.optionItemId)?.languageCode;
+      languageCode = languageCode === 'fr' ? 'fr' : 'en';
+      // route is benef website's 'assessment/:eventId/:assessmentTemplateId/:assessmentResponseId'
+      navigator.clipboard.writeText(
+        `https://${settings.registrationDomain.translation[languageCode]}/${languageCode}/assessment/${this.event.entity.id}/${assessment.entity.assessmentFormId}/${assessment.entity.id}`,
+      );
       this.$toasted.global.success(this.$t('assessmentTemplate.copiedLink'));
     },
   },

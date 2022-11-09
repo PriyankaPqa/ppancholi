@@ -134,7 +134,6 @@ export interface IAssessmentResponseEntity extends IEntity {
   association: IAssessmentAssociation;
   assessmentFormId: uuid;
   completionStatus: CompletionStatus;
-  uniqueUrl: string;
   externalToolState: SurveyJsAssessmentResponseState;
   answeredQuestions: IAnsweredQuestion[];
   answeredQuestionsHistory: IAnsweredQuestion[];

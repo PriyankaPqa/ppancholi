@@ -84,7 +84,7 @@ export interface IStorage {
   actions: {
     fetchEvent(lang: string, registrationLink: string): Promise<IEvent>;
     fetchGenders(): Promise<IOptionItemData[]>;
-    fetchPreferredLanguages(): Promise<IOptionItemData[]>;
+    fetchPreferredLanguages(): Promise<(IOptionItemData & { languageCode: string })[]>;
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
     fetchIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
     submitRegistration(recaptchaToken?: string): Promise<IHouseholdEntity>;

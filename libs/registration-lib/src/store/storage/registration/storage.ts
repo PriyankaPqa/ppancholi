@@ -252,7 +252,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('registration/fetchGenders');
     },
 
-    fetchPreferredLanguages(): Promise<IOptionItemData[]> {
+    fetchPreferredLanguages(): Promise<(IOptionItemData & { languageCode: string })[]> {
       return store.dispatch('registration/fetchPreferredLanguages');
     },
 

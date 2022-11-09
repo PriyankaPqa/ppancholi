@@ -2,7 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 import {
-  AssociationType, AssessmentFrequencyType, CompletionStatus,
+  AssociationType, AssessmentFrequencyType, CompletionStatus, PublishStatus,
 } from '@libs/entities-lib/assessment-template';
 import routes from '@/constants/routes';
 import Component from './CaseFileAssessment.vue';
@@ -26,6 +26,7 @@ const mockMappedAssessments = [
     formFrequency: AssessmentFrequencyType.OneTime,
     pinned: false,
     canEdit: false,
+    canCopy: false,
     canLaunch: false,
   },
   {
@@ -41,6 +42,7 @@ const mockMappedAssessments = [
     formFrequency: AssessmentFrequencyType.OneTime,
     pinned: false,
     canEdit: false,
+    canCopy: false,
     canLaunch: false,
   },
   {
@@ -56,6 +58,7 @@ const mockMappedAssessments = [
     formFrequency: AssessmentFrequencyType.Multiple,
     pinned: false,
     canEdit: false,
+    canCopy: false,
     canLaunch: false,
   },
   {
@@ -71,6 +74,7 @@ const mockMappedAssessments = [
     formFrequency: AssessmentFrequencyType.Multiple,
     pinned: false,
     canEdit: false,
+    canCopy: false,
     canLaunch: false,
   },
 ];
@@ -319,6 +323,7 @@ describe('CaseFileAssessment.vue', () => {
         expect(wrapper.vm.mapAssessments([{ form, response }])).toEqual([{
           canEdit: false,
           canLaunch: true,
+          canCopy: true,
           completionStatus: 2,
           dateAssigned: new Date('2022-09-09T16:33:11.700Z'),
           dateAssignedFormatted: 'Sep 9, 2022',
@@ -336,10 +341,12 @@ describe('CaseFileAssessment.vue', () => {
         response.pinned = true;
         response.entity.id = '2';
         response.entity.completionStatus = CompletionStatus.Completed;
+        form.publishStatus = PublishStatus.Unpublished;
 
         expect(wrapper.vm.mapAssessments([{ form, response }])).toEqual([{
           canEdit: true,
           canLaunch: false,
+          canCopy: false,
           completionStatus: 3,
           dateAssigned: new Date('2022-09-09T16:33:11.700Z'),
           dateAssignedFormatted: 'Sep 9, 2022',
@@ -356,6 +363,7 @@ describe('CaseFileAssessment.vue', () => {
         await mountWrapper(false, null, 'readonly');
         expect(wrapper.vm.mapAssessments([{ form, response }])).toEqual([{
           canEdit: false,
+          canCopy: false,
           canLaunch: false,
           completionStatus: 3,
           dateAssigned: new Date('2022-09-09T16:33:11.700Z'),
@@ -421,13 +429,22 @@ describe('CaseFileAssessment.vue', () => {
     });
 
     describe('copyLink', () => {
-      it('should copy the url', async () => {
+      it('should copy the url by fetching all the right parameters', async () => {
         navigator.clipboard = { writeText: jest.fn() };
         const item = storage.assessmentResponse.getters.getByIds()[0];
         await mountWrapper();
+        wrapper.vm.$storage.tenantSettings.getters.currentTenantSettings = jest.fn(() => ({ registrationDomain: { translation: { fr: 'test.com' } } }));
+        wrapper.vm.$storage.household.getters.get = jest.fn(() => ({ entity: { primaryBeneficiary: 'benefId' } }));
+        wrapper.vm.$services.households.getPerson = jest.fn(() => ({ contactInformation: { preferredLanguage: { optionItemId: 'frId' } } }));
+        wrapper.vm.$storage.registration.actions.fetchPreferredLanguages = jest.fn(() => ([{ id: 'frId', languageCode: 'fr' }]));
+        debugger;
         wrapper.vm.copyLink({ id: item.entity.id });
         await wrapper.vm.$nextTick();
-        expect(navigator.clipboard.writeText).toHaveBeenCalledWith(`http://localhost${item.entity.uniqueUrl}`);
+        expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://test.com/fr/assessment/1dea3c36-d6a5-4e6c-ac36-078677b7da5f0/044fcd68-3d70-4a3a-b5c8-22da9e01730f/1');
+        expect(wrapper.vm.$storage.tenantSettings.getters.currentTenantSettings).toHaveBeenCalled();
+        expect(wrapper.vm.$storage.household.getters.get).toHaveBeenCalledWith(wrapper.vm.caseFile.entity.householdId);
+        expect(wrapper.vm.$services.households.getPerson).toHaveBeenCalledWith('benefId');
+        expect(wrapper.vm.$storage.registration.actions.fetchPreferredLanguages).toHaveBeenCalled();
       });
     });
 

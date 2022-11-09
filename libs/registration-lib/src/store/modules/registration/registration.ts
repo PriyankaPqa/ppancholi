@@ -462,7 +462,7 @@ const actions = (mode: ERegistrationMode) => ({
     return context.getters.genders;
   },
 
-  async fetchPreferredLanguages(this: IStore<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
+  async fetchPreferredLanguages(this: IStore<IState>, context: ActionContext<IState, IState>): Promise<(IOptionItemData & { languageCode: string })[]> {
     if (!context.state.preferredLanguages?.length) {
       const data: IOptionItemData[] = await this.$services.households.getPreferredLanguages();
 

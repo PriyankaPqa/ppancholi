@@ -9,7 +9,7 @@ import { IAddressData, IHouseholdCreateData } from '@libs/entities-lib/household
 import deepmerge from 'deepmerge';
 import { ICurrentAddressCreateRequest } from '@libs/entities-lib/value-objects/current-address';
 import householdHelpers from '@/ui/helpers/household';
-import { IOptionItemData } from '@libs/entities-lib/optionItem';
+import { IOptionItemData } from '@libs/shared-lib/types';
 import { EEventLocationStatus, EEventStatus, IEventGenericLocation } from '@libs/entities-lib/event';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 
