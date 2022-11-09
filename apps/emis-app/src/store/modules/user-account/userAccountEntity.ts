@@ -1,7 +1,9 @@
 import { ActionContext, ActionTree } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
-import { EOptionLists, IOptionItem, OptionItem } from '@libs/entities-lib/optionItem';
+import {
+  EOptionLists, IOptionItem, IOptionSubItem, OptionItem,
+} from '@libs/entities-lib/optionItem';
 import {
   IFilter, IUserAccountEntity, FilterKey, UserAccountEntity,
 } from '@libs/entities-lib/user-account';
@@ -45,6 +47,21 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
     },
 
     roles: (state: IUserAccountEntityState) => (state.roles ? _sortBy(state.roles.map((e) => new OptionItem(e)), 'orderRank') : []),
+
+    rolesByLevels: (state: IUserAccountEntityState) => (levels?: Array<string>) => {
+      let res = state.roles;
+      if (res) {
+        if (levels) {
+          res = res.filter((r: IOptionItem) => levels.includes(r.name.translation.en));
+        }
+        if (res.length > 0) {
+          return res.map((r) => r.subitems)
+            .reduce((prev, current) => [...prev, ...current])
+            .map((r: IOptionSubItem) => ({ name: r.name, id: r.id, status: r.status }));
+        }
+      }
+      return [];
+    },
   }
 
   public mutations = {

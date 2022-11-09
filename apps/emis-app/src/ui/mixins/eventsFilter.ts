@@ -49,13 +49,9 @@ export default Vue.extend({
       if (this.isInitialLoad) {
         this.eventsFilterDisabled = true;
       }
-      const searchParam = query.split(' ').filter((x) => x !== '')
-        .map((v) => helpers.sanitize(v))
-        .map((v) => `(/.*${v}.*/ OR "\\"${v}\\"")`)
-        .join(' AND ');
-
+      const searchParam = helpers.toQuickSearch(query);
       const params = {
-        search: query ? `(${searchParam})` : '',
+        search: searchParam,
         searchFields: `Entity/Name/Translation/${this.$i18n.locale}`,
         filter: {
           or: [
@@ -101,12 +97,12 @@ export default Vue.extend({
      * When loading a filter, we need to fetch the selected event in case it is not contains in the initial load
      * @param filterFormData
      */
-    async onLoadFilter(filterFormData: FilterFormData) {
+    async onLoadFilter(filterFormData: FilterFormData, filterKey = 'Entity/EventId') {
       const filterItems = filterFormData.values;
       if (!filterItems) {
         return;
       }
-      const eventFilter = filterItems['Entity/EventId'];
+      const eventFilter = filterItems[filterKey];
       if (eventFilter) {
         const selectedId = ((eventFilter.value) as unknown as IDropdownItem).value;
         this.selectedEvent = await this.fetchEventsByIds([selectedId]);

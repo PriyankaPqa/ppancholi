@@ -249,6 +249,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
             'search-input': this.eventFilterQuery,
             'no-filter': true,
             'return-object': true,
+            placeholder: this.$t('common.filters.autocomplete.placeholder'),
           },
         },
         {

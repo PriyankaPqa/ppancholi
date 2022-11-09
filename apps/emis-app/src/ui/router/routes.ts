@@ -20,7 +20,7 @@ const AssessmentRunner = () => import(/* webpackChunkName: "assessments" */ '@/u
 
 const ApprovalsLayout = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/layout/ApprovalsLayout.vue');
 const ApprovalsTemplates = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/templates/ApprovalsTemplates.vue');
-const ApprovalsRequest = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/requests/ApprovalsRequest.vue');
+const ApprovalRequestsHome = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/requests/ApprovalRequestsHome.vue');
 const ApprovalsTemplatesCreateEdit = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/create-edit/CreateEditApprovals.vue');
 const ApprovalsTableCreateEdit = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/create-edit/CreateEditApprovals.vue');
 const ApprovalTablesHome = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/tables/ApprovalTablesHome.vue');
@@ -252,7 +252,7 @@ export const routes: Array<RouteConfig> = [
               {
                 path: Routes.approvals.request.path,
                 name: Routes.approvals.request.name,
-                component: ApprovalsRequest,
+                component: ApprovalRequestsHome,
                 meta: { roles: ['level3', 'level4'] },
               },
             ],

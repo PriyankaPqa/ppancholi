@@ -6,10 +6,11 @@ import {
   FilterKey, mockUserAccountEntity, mockUserFilters, UserAccountEntity,
 } from '@libs/entities-lib/user-account';
 import { OptionItemsService } from '@libs/services-lib/optionItems';
-import { OptionItem } from '@libs/entities-lib/optionItem';
+import { mockRoles, OptionItem } from '@libs/entities-lib/optionItem';
 import { httpClient } from '@/services/httpClient';
 import { mockOptionItems } from '@libs/entities-lib/optionItem/optionItem.mock';
 import { mockSignalR } from '@/ui/plugins/signal-r';
+import { UserRolesNames } from '@libs/entities-lib/user';
 import { IUserAccountEntityState } from './userAccountEntity.types';
 import { UserAccountEntityModule } from './userAccountEntity';
 
@@ -130,6 +131,35 @@ describe('User account entity module', () => {
           mockOptionItems().map((e) => new OptionItem(e)),
           'orderRank',
         ));
+      });
+    });
+
+    describe('rolesByLevels', () => {
+      it('returns the roles list for specific levels', () => {
+        myModule.mutations.setRoles(myModule.state, mockRoles());
+        const res = myModule.getters.rolesByLevels(myModule.state)([UserRolesNames.level5]);
+        expect(res).toEqual([
+          {
+            id: 'abafdc5b-09ea-42d2-9d96-2ecdb36a7e24',
+            name: {
+              translation: {
+                en: 'Systems Team Member',
+                fr: "Membre de l'équipe Systèmes",
+              },
+            },
+            status: 1,
+          },
+          {
+            id: 'b1a85314-d88b-496d-a8c6-ebe462244311',
+            name: {
+              translation: {
+                en: 'Test edited',
+                fr: 'Test',
+              },
+            },
+            status: 2,
+          },
+        ]);
       });
     });
   });

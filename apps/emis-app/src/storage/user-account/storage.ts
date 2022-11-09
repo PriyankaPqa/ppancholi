@@ -7,6 +7,8 @@ import {
 import { IStorage } from '@/storage/user-account/storage.types';
 import { Base } from '@/storage/base/base';
 import { IAddRoleToUserRequest } from '@libs/services-lib/user-accounts/entity';
+import { IMultilingual } from '@libs/shared-lib/types';
+import { Status } from '@libs/entities-lib/base';
 import { IStore, IState } from '../../store/store.types';
 
 export class UserAccountStorage
@@ -20,6 +22,8 @@ export class UserAccountStorage
     currentUserFiltersByKey: (key: FilterKey): IFilter[] => this.store.getters[`${this.entityModuleName}/currentUserFiltersByKey`](key),
 
     roles: () : IOptionItem[] => this.store.getters[`${this.entityModuleName}/roles`],
+
+    rolesByLevels: (levels?: Array<string>) : {name: IMultilingual, id: string, status: Status}[] => this.store.getters[`${this.entityModuleName}/rolesByLevels`](levels),
   }
 
   private actions = {

@@ -1,4 +1,6 @@
-import { mockOptionItems } from '@libs/entities-lib/optionItem';
+import {
+  mockOptionItems, mockRolesByLevel,
+} from '@libs/entities-lib/optionItem';
 import { BaseMock } from '@/storage/base/base.mock';
 import {
   mockCombinedUserAccounts, mockUserAccountEntity, IUserAccountEntity, IUserAccountCombined, mockUserFilters,
@@ -13,6 +15,7 @@ export class UserAccountStorageMock extends BaseMock<IUserAccountCombined, IUser
     ...this.baseGetters,
     currentUserFiltersByKey: jest.fn(() => [mockUserFilters()[2]]),
     roles: jest.fn(() => mockOptionItems()),
+    rolesByLevels: jest.fn(() => mockRolesByLevel()),
   }
 
   protected actions = {

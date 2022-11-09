@@ -355,3 +355,7 @@ export const mockRoles = (): IOptionItem[] => [
     lastActionCorrelationId: '00000000-0000-0000-0000-000000000000',
   },
 ];
+
+export const mockRolesByLevel = () => mockRoles().map((r) => r.subitems)
+  .reduce((prev, current) => [...prev, ...current])
+  .map((r: IOptionSubItem) => ({ name: r.name, id: r.id, status: r.status }));

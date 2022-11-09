@@ -1,4 +1,4 @@
-import { mockOptionItems } from '@libs/entities-lib/optionItem';
+import { mockOptionItems, mockRoles } from '@libs/entities-lib/optionItem';
 
 import { mockStore } from '@/store';
 import { UserAccountStorage } from '@/storage/user-account/storage';
@@ -79,6 +79,13 @@ describe('>>> User Account Storage', () => {
         store.commit(`${entityModuleName}/setRoles`, mockOptionItems());
         const storageGetter = storage.getters.roles();
         const storeGetter = store.getters[`${entityModuleName}/roles`];
+        expect(storageGetter).toEqual(storeGetter);
+      });
+
+      it('should proxy rolesByLevels', () => {
+        store.commit(`${entityModuleName}/setRoles`, mockRoles());
+        const storageGetter = storage.getters.rolesByLevels();
+        const storeGetter = store.getters[`${entityModuleName}/rolesByLevels`]();
         expect(storageGetter).toEqual(storeGetter);
       });
     });

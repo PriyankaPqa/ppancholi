@@ -132,6 +132,7 @@ export default Vue.extend({
           test: 'approvals',
           exact: false,
           roles: ['level3', 'level4', 'level6'],
+          feature: FeatureKeys.ApprovalsWithinEvent,
         },
         {
           to: routes.massActions.home.name,

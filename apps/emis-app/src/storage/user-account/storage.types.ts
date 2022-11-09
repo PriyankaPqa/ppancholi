@@ -11,6 +11,8 @@ import {
   IBaseMutationsMock,
 } from '@/storage/base/base.types';
 import { IAddRoleToUserRequest } from '@libs/services-lib/user-accounts/entity';
+import { IMultilingual } from '@libs/shared-lib/types';
+import { Status } from '@libs/entities-lib/base';
 
 export interface IActions extends IBaseActions<IUserAccountEntity, IUserAccountMetadata, uuid> {
   addFilter(filter: IFilter): Promise<IUserAccountEntity>;
@@ -33,11 +35,13 @@ export interface IActionsMock extends IBaseActionsMock<IUserAccountEntity, IUser
 export interface IGetters extends IBaseGetters<IUserAccountEntity, IUserAccountMetadata> {
   currentUserFiltersByKey(key: FilterKey): IFilter[];
   roles(): IOptionItem[];
+  rolesByLevels(levels?: Array<string>): {name: IMultilingual, id: string, status: Status}[];
 }
 
 export interface IGettersMock extends IBaseGettersMock<IUserAccountEntity, IUserAccountMetadata> {
   currentUserFiltersByKey: jest.Mock<IFilter[]>,
   roles: jest.Mock<IOptionItem[]>,
+  rolesByLevels: jest.Mock<{name: IMultilingual, id: string, status: Status}[]>,
 }
 
 export interface IMutations extends IBaseMutations<IUserAccountEntity, IUserAccountMetadata> {

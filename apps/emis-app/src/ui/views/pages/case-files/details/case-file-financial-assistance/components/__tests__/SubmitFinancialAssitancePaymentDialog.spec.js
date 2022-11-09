@@ -10,7 +10,7 @@ const financialAssistance = mockFinancialAssistanceTableEntity();
 
 let wrapper;
 
-const doMount = (shallow = true, approvalRequired = false, useApprovalFlow = false) => {
+const doMount = (shallow = true, approvalRequired = false, approvalTable = null, hasFeature = true) => {
   const options = {
     localVue,
     propsData: {
@@ -21,11 +21,12 @@ const doMount = (shallow = true, approvalRequired = false, useApprovalFlow = fal
       programId: 'programId',
       eventId: 'eventId',
     },
-    computed: {
-      useApprovalFlow: () => useApprovalFlow,
-    },
+    data: () => ({
+      approvalTable,
+    }),
     mocks: {
       $storage: storage,
+      $hasFeature: () => hasFeature,
     },
   };
   if (shallow) {
@@ -47,6 +48,78 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
         expect(wrapper.vm.rules.supervisor).toEqual({
           required: true,
         });
+      });
+    });
+
+    describe('useApprovalFlow', () => {
+      it('returns true if approval is required and there is a table and feature flag is on', async () => {
+        doMount(true, true, {}, true);
+
+        expect(wrapper.vm.useApprovalFlow).toBeTruthy();
+      });
+
+      it('returns false if there is no table', async () => {
+        doMount(true, true, null, true);
+
+        expect(wrapper.vm.useApprovalFlow).toBeFalsy();
+      });
+
+      it('returns false if approvalRequired is false', async () => {
+        doMount(true, false, {}, true);
+
+        expect(wrapper.vm.useApprovalFlow).toBeFalsy();
+      });
+
+      it('returns false if feature flag is off', async () => {
+        doMount(true, true, {}, false);
+
+        expect(wrapper.vm.useApprovalFlow).toBeFalsy();
+      });
+    });
+
+    describe('hasInvalidTable', () => {
+      it('returns true if approval is required and there is no table and feature flag is on', async () => {
+        doMount(true, true, null, true);
+
+        expect(wrapper.vm.hasInvalidTable).toBeTruthy();
+      });
+
+      it('returns false if approvalRequired is false', async () => {
+        doMount(true, false, {}, true);
+
+        expect(wrapper.vm.hasInvalidTable).toBeFalsy();
+      });
+
+      it('returns false if there is a table', async () => {
+        doMount(true, true, {}, true);
+
+        expect(wrapper.vm.hasInvalidTable).toBeFalsy();
+      });
+
+      it('returns false if feature flag is off', async () => {
+        doMount(true, true, null, false);
+
+        expect(wrapper.vm.hasInvalidTable).toBeFalsy();
+      });
+    });
+
+    describe('approvalNotRequired', () => {
+      it('returns true if approval is not required ', async () => {
+        doMount(true, false, null, true);
+
+        expect(wrapper.vm.approvalNotRequired).toBeTruthy();
+      });
+
+      it('returns true if feature flag is off', async () => {
+        doMount(true, true, {}, false);
+
+        expect(wrapper.vm.approvalNotRequired).toBeTruthy();
+      });
+
+      it('returns false if feature flag is on and approvalRequired is true', async () => {
+        doMount(true, true, null, true);
+
+        expect(wrapper.vm.approvalNotRequired).toBeFalsy();
       });
     });
   });
@@ -167,27 +240,18 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
                 },
               ],
             },
-          },
-          {
-            entity: {
-              roles: [{ optionItemId: '2' }],
-            },
-            metadata: {
-              teams: [
-                {
-                  events: [
-                    { id: 'A' },
-                  ],
-                },
-              ],
-            },
-          },
-        ];
+          }];
         const targetRoles = ['1', '2'];
         const targetEvent = 'B';
-        wrapper.vm.$storage.userAccount.actions.fetchAll = jest.fn(() => users);
+        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: [] }));
+        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => users);
+
+        // eslint-disable-next-line max-len
+        const filter = 'Entity/Roles/any(role:role/OptionItemId eq \'1\' or role/OptionItemId eq \'2\') and Metadata/Teams/any(team:team/Events/any(event:event/Id eq \'B\'))';
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
-        expect(wrapper.vm.users).toEqual([users[1]]);
+
+        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({ filter });
+        expect(wrapper.vm.users).toEqual(users);
       });
     });
 

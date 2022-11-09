@@ -25,12 +25,12 @@
           <div v-if="useApprovalFlow">
             {{ $t('caseFile.financialAssistance.startApproval.confirmMessage') }}
           </div>
-          <div v-if="$hasFeature(FeatureKeys.ApprovalsWithinEvent) && approvalRequired && !approvalTable" class="msg-box">
+          <div v-if="hasInvalidTable" class="msg-box">
             <message-box
               icon="mdi-alert"
               :message=" $t('caseFile.financialAssistance.submitAssistance.noApprovalTables')" />
           </div>
-          <div v-if="!approvalRequired || !$hasFeature(FeatureKeys.ApprovalsWithinEvent)">
+          <div v-if="approvalNotRequired">
             {{ $t('caseFile.financialAssistance.submitAssistance.confirmMessage') }}
           </div>
         </v-col>
@@ -71,10 +71,10 @@
 
 <script lang="ts">
 import { FinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
-import { VForm } from '@libs/shared-lib/types';
+import { IAzureTableSearchResults, VForm } from '@libs/shared-lib/types';
 import { RcDialog, VAutocompleteWithValidation, VCheckboxWithValidation } from '@libs/component-lib/components';
 import Vue from 'vue';
-import { IUserAccountCombined, IUserAccountTeam, IUserAccountTeamEvent } from '@libs/entities-lib/user-account';
+import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Status } from '@libs/entities-lib/base';
@@ -137,11 +137,20 @@ export default Vue.extend({
     },
 
     useApprovalFlow(): boolean {
-      return this.$hasFeature(FeatureKeys.ApprovalsWithinEvent) && this.approvalRequired && this.approvalTable;
+      return this.$hasFeature(FeatureKeys.ApprovalsWithinEvent) && this.approvalRequired && !!this.approvalTable;
+    },
+
+    hasInvalidTable(): boolean {
+      return this.$hasFeature(FeatureKeys.ApprovalsWithinEvent) && this.approvalRequired && !this.approvalTable;
+    },
+
+    approvalNotRequired():boolean {
+      return !this.approvalRequired || !this.$hasFeature(FeatureKeys.ApprovalsWithinEvent);
     },
   },
+
   async mounted() {
-    if (this.approvalRequired) {
+    if (this.$hasFeature(FeatureKeys.ApprovalsWithinEvent) && this.approvalRequired) {
       await this.fetchDataForApproval();
     }
   },
@@ -181,9 +190,21 @@ export default Vue.extend({
     },
 
     async getUsersByRolesAndEvent(targetRoles: Array<string>, targetEvent: string) {
-      const users = await this.$storage.userAccount.actions.fetchAll(); // TODO: Use userAccount search in the next stories
-      this.users = users.filter((u: IUserAccountCombined) => targetRoles.indexOf(u.entity.roles[0].optionItemId) !== -1
-        && u.metadata.teams.some((t: IUserAccountTeam) => t.events.some((e: IUserAccountTeamEvent) => e.id === targetEvent)));
+      let rolesSearchString = '';
+      targetRoles.forEach((r, i) => {
+        rolesSearchString += `role/OptionItemId eq '${r}'`;
+        if (i < targetRoles.length - 1) {
+          rolesSearchString += ' or ';
+        }
+      });
+
+      const rolesFilter = `Entity/Roles/any(role:${rolesSearchString})`;
+      const eventFilter = `Metadata/Teams/any(team:team/Events/any(event:event/Id eq '${targetEvent}'))`;
+      const filter = `${rolesFilter} and ${eventFilter}`;
+      const usersData: IAzureTableSearchResults = await this.$storage.userAccount.actions.search({ filter });
+      if (usersData?.ids) {
+        this.users = this.$storage.userAccount.getters.getByIds(usersData.ids);
+      }
     },
 
     async fetchDataForApproval() {
@@ -208,7 +229,6 @@ export default Vue.extend({
       return '';
     },
   },
-
 });
 </script>
 

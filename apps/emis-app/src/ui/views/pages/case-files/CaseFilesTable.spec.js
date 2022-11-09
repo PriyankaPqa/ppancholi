@@ -351,6 +351,7 @@ describe('CaseFilesTable.vue', () => {
               'search-input': null,
               'no-filter': true,
               'return-object': true,
+              placeholder: 'common.filters.autocomplete.placeholder',
             },
           },
           {
