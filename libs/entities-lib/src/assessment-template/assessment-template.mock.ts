@@ -186,6 +186,241 @@ export const mockAssessmentFormEntity = (force? : Partial<IAssessmentFormEntity>
   ...force,
 });
 
+export const mockAssessmentFormEntityWithPanels = (force? : Partial<IAssessmentFormEntity>) : IAssessmentFormEntity => ({
+  ...mockAssessmentBaseEntity(),
+  assessmentFormType: AssessmentFormType.AssessmentForm,
+  eventId: '044fcd68-3d70-4a3a-b5c8-22da9e01730f',
+  programId: '0f6c1714-045a-4054-8133-c96abb94782a',
+  externalToolState: {
+    tool: 'SurveyJs',
+    data: {
+      rawJson: '{\n "logo": {\n  "default": "https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en",\n  "fr": "https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr"\n },\n "logoPosition": "right",\n "pages": [\n  {\n   "name": "page1",\n   "elements": [\n    {\n     "type": "paneldynamic",\n     "name": "panel1",\n     "title": "panel 1 title en",\n     "templateElements": [\n      {\n       "type": "dropdown",\n       "name": "ddq",\n       "hasComment": true,\n       "choices": [\n        {\n         "value": "item1",\n         "score": 1\n        },\n        {\n         "value": "item2",\n         "score": 2\n        },\n        {\n         "value": "item3",\n         "score": 3\n        }\n       ],\n       "hasNone": true\n      },\n      {\n       "type": "text",\n       "name": "question4"\n      },\n      {\n       "type": "paneldynamic",\n       "name": "question1",\n       "templateElements": [\n        {\n         "type": "checkbox",\n         "name": "question2",\n         "choices": [\n          {\n           "value": "item1",\n           "text": {\n            "default": "nom en",\n            "fr": "nopm fr"\n           },\n           "score": 10\n          },\n          {\n           "value": "item2",\n           "score": 20\n          },\n          {\n           "value": "item3",\n           "score": 30\n          }\n         ],\n         "hasOther": true\n        }\n       ]\n      }\n     ]\n    },\n    {\n     "type": "boolean",\n     "name": "question3"\n    }\n   ]\n  }\n ],\n "clearInvisibleValues": "onHiddenContainer"\n}',
+    },
+  },
+  questions: [
+    {
+      identifier: 'panel1',
+      question: {
+        translation: {
+          en: 'panel 1 title en',
+          fr: 'panel 1 title en',
+        },
+      },
+      questionType: 'paneldynamic',
+      score: null,
+      answerChoices: null,
+    },
+    {
+      identifier: 'panel1|ddq',
+      question: {
+        translation: {
+          en: 'ddq',
+          fr: 'ddq',
+        },
+      },
+      questionType: 'dropdown',
+      score: null,
+      answerChoices: [
+        {
+          identifier: 'item1',
+          displayValue: {
+            translation: {
+              en: 'item1',
+              fr: 'item1',
+            },
+          },
+          textValue: 'item1',
+          numericValue: null,
+          score: 1,
+        },
+        {
+          identifier: 'item2',
+          displayValue: {
+            translation: {
+              en: 'item2',
+              fr: 'item2',
+            },
+          },
+          textValue: 'item2',
+          numericValue: null,
+          score: 2,
+        },
+        {
+          identifier: 'item3',
+          displayValue: {
+            translation: {
+              en: 'item3',
+              fr: 'item3',
+            },
+          },
+          textValue: 'item3',
+          numericValue: null,
+          score: 3,
+        },
+        {
+          identifier: 'none',
+          displayValue: {
+            translation: {
+              en: 'None',
+              fr: 'Aucun',
+            },
+          },
+          textValue: 'none',
+          numericValue: null,
+          score: null,
+        },
+      ],
+    },
+    {
+      identifier: 'panel1|ddq|Comment',
+      question: {
+        translation: {
+          en: 'ddq|Comment',
+          fr: 'ddq|Commentaires',
+        },
+      },
+      questionType: 'comment',
+      score: null,
+      answerChoices: null,
+    },
+    {
+      identifier: 'panel1|question4',
+      question: {
+        translation: {
+          en: 'question4',
+          fr: 'question4',
+        },
+      },
+      questionType: 'text',
+      score: null,
+      answerChoices: null,
+    },
+    {
+      identifier: 'panel1|question1',
+      question: {
+        translation: {
+          en: 'question1',
+          fr: 'question1',
+        },
+      },
+      questionType: 'paneldynamic',
+      score: null,
+      answerChoices: null,
+    },
+    {
+      identifier: 'panel1|question1|question2',
+      question: {
+        translation: {
+          en: 'question2',
+          fr: 'question2',
+        },
+      },
+      questionType: 'checkbox',
+      score: null,
+      answerChoices: [
+        {
+          identifier: 'item1',
+          displayValue: {
+            translation: {
+              en: 'nom en',
+              fr: 'nopm fr',
+            },
+          },
+          textValue: 'item1',
+          numericValue: null,
+          score: 10,
+        },
+        {
+          identifier: 'item2',
+          displayValue: {
+            translation: {
+              en: 'item2',
+              fr: 'item2',
+            },
+          },
+          textValue: 'item2',
+          numericValue: null,
+          score: 20,
+        },
+        {
+          identifier: 'item3',
+          displayValue: {
+            translation: {
+              en: 'item3',
+              fr: 'item3',
+            },
+          },
+          textValue: 'item3',
+          numericValue: null,
+          score: 30,
+        },
+        {
+          identifier: 'other',
+          displayValue: {
+            translation: {
+              en: 'Other (describe)',
+              fr: 'Autre (préciser)',
+            },
+          },
+          textValue: 'other',
+          numericValue: null,
+          score: null,
+        },
+      ],
+    },
+    {
+      identifier: 'panel1|question1|question2|Comment',
+      question: {
+        translation: {
+          en: 'question2|Comment',
+          fr: 'question2|Commentaires',
+        },
+      },
+      questionType: 'comment',
+      score: null,
+      answerChoices: null,
+    },
+    {
+      identifier: 'question3',
+      question: {
+        translation: {
+          en: 'question3',
+          fr: 'question3',
+        },
+      },
+      questionType: 'boolean',
+      score: null,
+      answerChoices: [
+        {
+          identifier: 'true',
+          displayValue: {
+            translation: {
+              en: 'Yes',
+              fr: 'Oui',
+            },
+          },
+          textValue: 'true',
+          numericValue: null,
+          score: null,
+        },
+        {
+          identifier: 'false',
+          displayValue: {
+            translation: {
+              en: 'No',
+              fr: 'Non',
+            },
+          },
+          textValue: 'false',
+          numericValue: null,
+          score: null,
+        },
+      ],
+    },
+  ],
+  ...force,
+});
+
 export const mockAssessmentBaseMetadata = (force? : Partial<IAssessmentBaseMetadata>) : IAssessmentBaseMetadata => ({
   ...mockBaseData(),
   assessmentTemplateStatusName: {

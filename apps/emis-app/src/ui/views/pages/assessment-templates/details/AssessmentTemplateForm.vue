@@ -50,6 +50,7 @@
                 :label="$t('assessmentTemplate.associate_program')"
                 :item-text="(item) => $m(item.name)"
                 :item-value="(item) => item.id"
+                clearable
                 data-test="assessmentTemplate__programSelect" />
             </v-col>
           </v-row>

@@ -118,6 +118,7 @@ export interface IAnsweredQuestion {
   crcUserId?: uuid;
   crcUserName?: string;
   answeredOn?: string;
+  parentIndexPath?: string;
 }
 
 export interface IAssessmentAssociation {

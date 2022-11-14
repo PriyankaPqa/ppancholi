@@ -481,6 +481,7 @@ describe('CaseFileAssessment.vue', () => {
     describe('deleteAssessment', () => {
       it('calls deactivate after confirmation', async () => {
         mountWrapper();
+        wrapper.vm.$toasted.global.success = jest.fn();
         const response = {};
         await wrapper.vm.deleteAssessment(response);
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
@@ -488,10 +489,12 @@ describe('CaseFileAssessment.vue', () => {
           messages: 'assessmentResponse.confirm.delete.message',
         });
         expect(storage.assessmentResponse.actions.deactivate).toHaveBeenCalledWith(response);
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalled();
       });
       it('doesnt call deactivate if no confirmation', async () => {
         mountWrapper();
         wrapper.vm.$confirm = jest.fn(() => false);
+        wrapper.vm.$toasted.global.success = jest.fn();
         const response = {};
         await wrapper.vm.deleteAssessment(response);
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
@@ -499,6 +502,7 @@ describe('CaseFileAssessment.vue', () => {
           messages: 'assessmentResponse.confirm.delete.message',
         });
         expect(storage.assessmentResponse.actions.deactivate).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$toasted.global.success).not.toHaveBeenCalled();
       });
     });
   });

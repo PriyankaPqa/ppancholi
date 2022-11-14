@@ -421,7 +421,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       });
 
       if (doDelete) {
-        await this.$storage.assessmentResponse.actions.deactivate(item);
+        if (await this.$storage.assessmentResponse.actions.deactivate(item)) {
+          this.$toasted.global.success(this.$t('assessmentResponse.delete.success'));
+        }
       }
     },
 

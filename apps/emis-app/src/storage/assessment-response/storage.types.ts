@@ -15,7 +15,8 @@ export interface IActions extends IBaseActions<IAssessmentResponseEntity, IAsses
   create(payload: IAssessmentResponseCreateRequest): Promise<IAssessmentResponseEntity>;
   update(payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity>;
   saveAssessmentAnsweredQuestions(payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity>;
-  editAssessmentAnsweredQuestion(payload: { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string }): Promise<IAssessmentResponseEntity>;
+  editAssessmentAnsweredQuestion(payload: { id: string, responses: IQuestionResponse[],
+    assessmentQuestionIdentifier: string, parentIndexPath: string }): Promise<IAssessmentResponseEntity>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<IAssessmentResponseEntity, IAssessmentResponseMetadata> {

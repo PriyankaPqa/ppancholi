@@ -927,6 +927,192 @@ const complexJsonAnswers = {
   email: 'mmmm@mail.com',
 };
 
+const dynamicPanelQuestion = JSON.stringify({
+  logo: {
+    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+  },
+  logoPosition: 'right',
+  pages: [
+    {
+      name: 'page1',
+      elements: [
+        {
+          type: 'text',
+          name: 'your name',
+          title: 'your name',
+        },
+        {
+          type: 'paneldynamic',
+          name: 'additional member panel',
+          title: {
+            default: 'Add additional members',
+            fr: 'Ajouter membres',
+          },
+          templateElements: [
+            {
+              type: 'text',
+              name: 'additional member fname',
+              title: {
+                default: 'first name',
+                fr: 'Prénom',
+              },
+            },
+            {
+              type: 'text',
+              name: 'additional member lname',
+              title: {
+                default: 'last name',
+                fr: 'Nom de famille',
+              },
+            },
+            {
+              type: 'paneldynamic',
+              name: 'complaint panel',
+              title: {
+                default: 'every complaint that person has',
+                fr: 'Chaque plainte',
+              },
+              templateElements: [
+                {
+                  type: 'comment',
+                  name: 'describe the issue',
+                  title: {
+                    default: 'describe the issue',
+                    fr: 'décrire',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  clearInvisibleValues: 'onHiddenContainer',
+});
+
+const dynamicPanelAnswers = {
+  'your name': 'test',
+  'additional member panel': [
+    {
+      'additional member fname': 'Marc-Andre',
+      'additional member lname': 'Deschenes',
+      'complaint panel': [
+        {
+          'describe the issue': 'issue 1\ndescription',
+        },
+        {
+          'describe the issue': 'issue 2 desc',
+        },
+      ],
+    },
+    {
+      'additional member fname': 'Dana',
+      'additional member lname': 'Melania',
+      'complaint panel': [
+        {
+          'describe the issue': 'Complain 1 dana',
+        },
+      ],
+    },
+    {
+      'additional member lname': 'last',
+    },
+  ],
+};
+
+const matrixdynamicQuestion = JSON.stringify({
+  logo: {
+    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+  },
+  logoPosition: 'right',
+  pages: [
+    {
+      name: 'page1',
+      elements: [{
+        type: 'matrixdynamic',
+        name: 'relativeillness',
+        title: 'Describe the illness or condition.',
+        columns: [{
+          name: 'illness',
+          title: 'Illness/Condition',
+          cellType: 'dropdown',
+          isRequired: true,
+          choices: [
+            {
+              value: 'Heart Disease',
+              text: {
+                fr: 'Maladie du coeur',
+              },
+            }, {
+              value: 'Diabetes',
+              text: 'Diabetes type A',
+            }, {
+              value: 'Stroke/TIA',
+              text: {
+                default: 'Stroke en',
+                fr: 'Stroke fr',
+              },
+            },
+            'High Blood Pressure',
+          ],
+        }, {
+          name: 'really',
+          title: {
+            default: 'reallly ?? en',
+            fr: 'vraiment ??',
+          },
+          cellType: 'dropdown',
+          choices: [{
+            value: 'yes',
+            text: {
+              default: 'yes en',
+              fr: 'oui',
+            },
+            score: 10,
+          }, {
+            value: 'no',
+            text: 'en',
+          }, {
+            value: 'maybe',
+            text: {
+              fr: 'maybe fr',
+            },
+            score: 5,
+          },
+          ],
+          hasOther: true,
+          hasNone: true,
+          storeOthersAsComment: true,
+        },
+        ],
+        rowCount: 1,
+      },
+      ],
+    },
+  ],
+});
+
+const matrixdynamicAnswers = {
+  relativeillness: [
+    {
+      illness: 'Diabetes',
+      really: 'other',
+      'really-Comment': 'zzzz',
+    },
+    {
+      illness: 'Heart Disease',
+      really: 'yes',
+    },
+    {
+      illness: 'Stroke/TIA',
+      really: 'none',
+    },
+  ],
+};
+
 describe('SurveyJsHelper', () => {
   beforeEach(async () => {
     helper = new SurveyJsHelper();
@@ -2949,6 +3135,7 @@ describe('SurveyJsHelper', () => {
         },
       ]);
     });
+
     it('extracts for rating question type with choices', () => {
       helper.initializeSurveyJsCreator('en');
       helper.creator.text = ratingQuestionWithChoices;
@@ -3008,6 +3195,233 @@ describe('SurveyJsHelper', () => {
       const questions = helper.getAssessmentQuestions();
       expect(questions.length).toEqual(1);
       expect(questions[0].questionType).toEqual('rating');
+    });
+
+    it('extracts from dynamicPanelQuestion', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = dynamicPanelQuestion;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions).toEqual([
+        {
+          identifier: 'your name',
+          question: {
+            translation: {
+              en: 'your name',
+              fr: 'your name',
+            },
+          },
+          questionType: 'text',
+          answerChoices: null,
+        },
+        {
+          identifier: 'additional member panel',
+          question: {
+            translation: {
+              en: 'Add additional members',
+              fr: 'Ajouter membres',
+            },
+          },
+          questionType: 'paneldynamic',
+          answerChoices: null,
+        },
+        {
+          identifier: 'additional member panel|additional member fname',
+          question: {
+            translation: {
+              en: 'first name',
+              fr: 'Prénom',
+            },
+          },
+          questionType: 'text',
+          answerChoices: null,
+        },
+        {
+          identifier: 'additional member panel|additional member lname',
+          question: {
+            translation: {
+              en: 'last name',
+              fr: 'Nom de famille',
+            },
+          },
+          questionType: 'text',
+          answerChoices: null,
+        },
+        {
+          identifier: 'additional member panel|complaint panel',
+          question: {
+            translation: {
+              en: 'every complaint that person has',
+              fr: 'Chaque plainte',
+            },
+          },
+          questionType: 'paneldynamic',
+          answerChoices: null,
+        },
+        {
+          identifier: 'additional member panel|complaint panel|describe the issue',
+          question: {
+            translation: {
+              en: 'describe the issue',
+              fr: 'décrire',
+            },
+          },
+          questionType: 'comment',
+          answerChoices: null,
+        },
+      ]);
+    });
+
+    it('extracts from matrixdynamicQuestion', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = matrixdynamicQuestion;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions).toEqual([
+        {
+          identifier: 'relativeillness',
+          question: {
+            translation: {
+              en: 'Describe the illness or condition.',
+              fr: 'Describe the illness or condition.',
+            },
+          },
+          questionType: 'matrixdynamic',
+          answerChoices: null,
+        },
+        {
+          identifier: 'relativeillness|illness',
+          question: {
+            translation: {
+              en: 'Describe the illness or condition.|Illness/Condition',
+              fr: 'Describe the illness or condition.|Illness/Condition',
+            },
+          },
+          questionType: 'dropdown',
+          answerChoices: [
+            {
+              displayValue: {
+                translation: {
+                  en: 'Heart Disease',
+                  fr: 'Maladie du coeur',
+                },
+              },
+              identifier: 'Heart Disease',
+              score: null,
+              textValue: 'Heart Disease',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: 'Diabetes type A',
+                  fr: 'Diabetes type A',
+                },
+              },
+              identifier: 'Diabetes',
+              score: null,
+              textValue: 'Diabetes',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: 'Stroke en',
+                  fr: 'Stroke fr',
+                },
+              },
+              identifier: 'Stroke/TIA',
+              score: null,
+              textValue: 'Stroke/TIA',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: 'High Blood Pressure',
+                  fr: 'High Blood Pressure',
+                },
+              },
+              identifier: 'High Blood Pressure',
+              score: null,
+              textValue: 'High Blood Pressure',
+            },
+          ],
+        },
+        {
+          identifier: 'relativeillness|really',
+          question: {
+            translation: {
+              en: 'Describe the illness or condition.|reallly ?? en',
+              fr: 'Describe the illness or condition.|vraiment ??',
+            },
+          },
+          questionType: 'dropdown',
+          answerChoices: [
+            {
+              displayValue: {
+                translation: {
+                  en: 'yes en',
+                  fr: 'oui',
+                },
+              },
+              identifier: 'yes',
+              score: 10,
+              textValue: 'yes',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: 'en',
+                  fr: 'en',
+                },
+              },
+              identifier: 'no',
+              score: null,
+              textValue: 'no',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: 'maybe',
+                  fr: 'maybe fr',
+                },
+              },
+              identifier: 'maybe',
+              score: 5,
+              textValue: 'maybe',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: 'Other (describe)',
+                  fr: 'Autre (préciser)',
+                },
+              },
+              identifier: 'other',
+              score: null,
+              textValue: 'other',
+            },
+            {
+              displayValue: {
+                translation: {
+                  en: 'None',
+                  fr: 'Aucun',
+                },
+              },
+              identifier: 'none',
+              score: null,
+              textValue: 'none',
+            },
+          ],
+        },
+        {
+          answerChoices: null,
+          identifier: 'relativeillness|really|Comment',
+          question: {
+            translation: {
+              en: 'Describe the illness or condition.|reallly ?? en|Comment',
+              fr: 'Describe the illness or condition.|vraiment ??|Commentaires',
+            },
+          },
+          questionType: 'comment',
+        },
+      ]);
     });
   });
 
@@ -3473,6 +3887,184 @@ describe('SurveyJsHelper', () => {
           responses: [{ textValue: 'item2', displayValue: '2e', numericValue: null }],
         }]);
       });
+
+      it('returns the answer for dynamicPanelQuestion', () => {
+        checkQuestionAnswers(dynamicPanelQuestion, dynamicPanelAnswers, [
+          {
+            assessmentQuestionIdentifier: 'your name',
+            responses: [
+              {
+                displayValue: 'test',
+                numericValue: null,
+                textValue: 'test',
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'additional member panel|additional member fname',
+            parentIndexPath: 'additional member panel[0]|',
+            responses: [
+              {
+                displayValue: 'Marc-Andre',
+                numericValue: null,
+                textValue: 'Marc-Andre',
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'additional member panel|additional member lname',
+            parentIndexPath: 'additional member panel[0]|',
+            responses: [
+              {
+                displayValue: 'Deschenes',
+                numericValue: null,
+                textValue: 'Deschenes',
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'additional member panel|complaint panel|describe the issue',
+            parentIndexPath: 'additional member panel[0]|complaint panel[0]|',
+            responses: [
+              {
+                displayValue: 'issue 1\ndescription',
+                numericValue: null,
+                textValue: 'issue 1\ndescription',
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'additional member panel|complaint panel|describe the issue',
+            parentIndexPath: 'additional member panel[0]|complaint panel[1]|',
+            responses: [
+              {
+                displayValue: 'issue 2 desc',
+                numericValue: null,
+                textValue: 'issue 2 desc',
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'additional member panel|additional member fname',
+            parentIndexPath: 'additional member panel[1]|',
+            responses: [
+              {
+                displayValue: 'Dana',
+                numericValue: null,
+                textValue: 'Dana',
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'additional member panel|additional member lname',
+            parentIndexPath: 'additional member panel[1]|',
+            responses: [
+              {
+                displayValue: 'Melania',
+                numericValue: null,
+                textValue: 'Melania',
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'additional member panel|complaint panel|describe the issue',
+            parentIndexPath: 'additional member panel[1]|complaint panel[0]|',
+            responses: [
+              {
+                displayValue: 'Complain 1 dana',
+                numericValue: null,
+                textValue: 'Complain 1 dana',
+              },
+            ],
+          },
+          {
+            assessmentQuestionIdentifier: 'additional member panel|additional member lname',
+            parentIndexPath: 'additional member panel[2]|',
+            responses: [
+              {
+                displayValue: 'last',
+                numericValue: null,
+                textValue: 'last',
+              },
+            ],
+          },
+        ]);
+      });
+    });
+
+    it('returns the answer for matrixdynamicQuestion', () => {
+      checkQuestionAnswers(matrixdynamicQuestion, matrixdynamicAnswers, [
+        {
+          assessmentQuestionIdentifier: 'relativeillness|illness',
+          parentIndexPath: 'relativeillness[0]|',
+          responses: [
+            {
+              displayValue: 'Diabetes type A',
+              numericValue: null,
+              textValue: 'Diabetes',
+            },
+          ],
+        },
+        {
+          assessmentQuestionIdentifier: 'relativeillness|really',
+          parentIndexPath: 'relativeillness[0]|',
+          responses: [{ displayValue: 'Autre (préciser)', textValue: 'other', numericValue: null }],
+        },
+        {
+          assessmentQuestionIdentifier: 'relativeillness|really|Comment',
+          parentIndexPath: 'relativeillness[0]|',
+          responses: [
+            {
+              displayValue: 'zzzz',
+              textValue: 'zzzz',
+            },
+          ],
+        },
+        {
+          assessmentQuestionIdentifier: 'relativeillness|illness',
+          parentIndexPath: 'relativeillness[1]|',
+          responses: [
+            {
+              displayValue: 'Maladie du coeur',
+              numericValue: null,
+              textValue: 'Heart Disease',
+            },
+          ],
+        },
+        {
+          assessmentQuestionIdentifier: 'relativeillness|really',
+          parentIndexPath: 'relativeillness[1]|',
+          responses: [
+            {
+              displayValue: 'oui',
+              numericValue: null,
+              textValue: 'yes',
+            },
+          ],
+        },
+        {
+          assessmentQuestionIdentifier: 'relativeillness|illness',
+          parentIndexPath: 'relativeillness[2]|',
+          responses: [
+            {
+              displayValue: 'Stroke fr',
+              numericValue: null,
+              textValue: 'Stroke/TIA',
+            },
+          ],
+        },
+        {
+          assessmentQuestionIdentifier: 'relativeillness|really',
+          parentIndexPath: 'relativeillness[2]|',
+          responses: [
+            {
+              displayValue: 'Aucun',
+              numericValue: null,
+              textValue: 'none',
+            },
+          ],
+        },
+      ]);
     });
   });
 });

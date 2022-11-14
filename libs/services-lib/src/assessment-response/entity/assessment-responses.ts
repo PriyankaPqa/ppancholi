@@ -40,7 +40,8 @@ export class AssessmentResponsesService extends DomainBaseService<IAssessmentRes
     return this.http.patch<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/submit/public`, item));
   }
 
-  async editAssessmentAnsweredQuestion(id: string, request: { responses: IQuestionResponse[], assessmentQuestionIdentifier: string }) {
+  async editAssessmentAnsweredQuestion(id: string,
+    request: { responses: IQuestionResponse[], assessmentQuestionIdentifier: string, parentIndexPath: string }) {
     return this.http.patch<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/editAssessmentAnsweredQuestion`, { id }), request);
   }
 
