@@ -15,6 +15,7 @@ export interface IEligibilityCriteria {
   authenticated: boolean;
   impacted: boolean;
   completedAssessments: boolean;
+  completedAssessmentIds: uuid[];
 }
 
 export interface IProgramEntityData extends IEntity {
@@ -24,7 +25,6 @@ export interface IProgramEntityData extends IEntity {
   approvalRequired: boolean;
   eligibilityCriteria: IEligibilityCriteria;
   paymentModalities: EPaymentModalities[];
-
 }
 
 export interface IProgramEntity extends IProgramEntityData {

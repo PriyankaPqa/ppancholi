@@ -8,4 +8,5 @@ export const mockAssessmentFormsService = (): IAssessmentFormsServiceMock => ({
   create: jest.fn(() => mockAssessmentFormEntity()),
   update: jest.fn(() => mockAssessmentFormEntity()),
   updateAssessmentStructure: jest.fn(() => mockAssessmentFormEntity()),
+  fetchByProgramId: jest.fn(() => [mockAssessmentFormEntity()]),
 });

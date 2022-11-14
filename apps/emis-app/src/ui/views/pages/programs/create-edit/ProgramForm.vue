@@ -1,5 +1,6 @@
 <template>
-  <v-container>
+  <rc-page-loading v-if="loading" />
+  <v-container v-else>
     <validation-observer ref="form">
       <v-row justify="center">
         <v-col cols="12" xl="8" lg="9" md="11">
@@ -74,13 +75,17 @@
                 <v-checkbox
                   v-model="localProgram.eligibilityCriteria.completedAssessments"
                   data-test="program-eligibility-hasCompletedAssessments"
-                  :label="$t('event.programManagement.hasCompletedAssessments')" />
+                  :label="$t('event.programManagement.hasCompletedAssessments')"
+                  :disabled="!isEditMode || assessmentForms.length === 0" />
                 <v-select-with-validation
+                  v-model="localProgram.eligibilityCriteria.completedAssessmentIds"
+                  :items="assessmentFormItems"
+                  :rules="rules.assessmentForms"
+                  multiple
                   :label="$t('event.programManagement.selectAssessment')"
                   data-test="program-selectAssessment"
-                  disabled
-                  background-color="white"
-                  hide-details />
+                  :disabled="!isEditMode || assessmentForms.length === 0 || !localProgram.eligibilityCriteria.completedAssessments"
+                  background-color="white" />
               </v-col>
             </v-row>
           </div>
@@ -115,12 +120,14 @@ import {
   VSelectWithValidation,
   VTextFieldWithValidation,
   VTextAreaWithValidation,
+  RcPageLoading,
 } from '@libs/component-lib/components';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { EPaymentModalities, ProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { Status } from '@libs/entities-lib/base';
+import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 
 export default Vue.extend({
   name: 'ProgramForm',
@@ -130,6 +137,7 @@ export default Vue.extend({
     VSelectWithValidation,
     VTextFieldWithValidation,
     VTextAreaWithValidation,
+    RcPageLoading,
   },
 
   props: {
@@ -158,8 +166,10 @@ export default Vue.extend({
     const localProgram = _cloneDeep(this.program);
 
     return {
+      loading: true,
       localProgram,
       languageMode: 'en',
+      assessmentForms: [] as IAssessmentFormEntity[],
     };
   },
 
@@ -177,6 +187,9 @@ export default Vue.extend({
         description: {
           required: true,
           max: MAX_LENGTH_LG,
+        },
+        assessmentForms: {
+          required: this.localProgram.eligibilityCriteria.completedAssessments,
         },
       };
     },
@@ -202,6 +215,20 @@ export default Vue.extend({
       const paymentModalities = helpers.enumToTranslatedCollection(EPaymentModalities, 'enums.PaymentModality');
       return _orderBy(paymentModalities, 'text');
     },
+
+    assessmentFormItems(): Array<{ text: string, value: string }> {
+      const items = [] as Array<{ text: string, value: string }>;
+      this.assessmentForms.forEach((x) => {
+        let text = this.$m(x.name);
+        if (x.status === Status.Inactive) {
+          text += ` (${this.$t('enums.Status.Inactive')})`;
+        }
+
+        items.push({ text, value: x.id });
+      });
+
+      return _orderBy(items, 'text');
+    },
   },
 
   watch: {
@@ -212,6 +239,19 @@ export default Vue.extend({
       },
       deep: true,
     },
+  },
+
+  async created() {
+    if (this.isEditMode) {
+      try {
+        this.loading = true;
+        this.assessmentForms = await this.$storage.assessmentForm.actions.fetchByProgramId(this.localProgram.id);
+      } finally {
+        this.loading = false;
+      }
+    } else {
+      this.loading = false;
+    }
   },
 
   methods: {

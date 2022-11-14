@@ -32,6 +32,7 @@ export class ProgramEntity extends BaseEntity implements IProgramEntity {
         authenticated: data.eligibilityCriteria.authenticated,
         impacted: data.eligibilityCriteria.impacted,
         completedAssessments: data.eligibilityCriteria.completedAssessments,
+        completedAssessmentIds: data.eligibilityCriteria.completedAssessmentIds,
       };
       this.paymentModalities = data.paymentModalities ? [...data.paymentModalities] : [];
     } else {
@@ -49,8 +50,9 @@ export class ProgramEntity extends BaseEntity implements IProgramEntity {
     this.approvalRequired = true;
     this.eligibilityCriteria = {
       authenticated: false,
-      completedAssessments: false,
       impacted: false,
+      completedAssessments: false,
+      completedAssessmentIds: [] as uuid[],
     };
   }
 

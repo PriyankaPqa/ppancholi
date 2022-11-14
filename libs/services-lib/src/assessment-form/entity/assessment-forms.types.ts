@@ -6,6 +6,7 @@ export interface IAssessmentFormsService extends IDomainBaseService<IAssessmentF
   create(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
   update(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
   updateAssessmentStructure(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity>
+  fetchByProgramId(programId: uuid): Promise<IAssessmentFormEntity[]>;
 }
 
 export interface IAssessmentFormsServiceMock extends IDomainBaseServiceMock<IAssessmentFormEntity>{
@@ -13,4 +14,5 @@ export interface IAssessmentFormsServiceMock extends IDomainBaseServiceMock<IAss
   create: jest.Mock<IAssessmentFormEntity>;
   update: jest.Mock<IAssessmentFormEntity>;
   updateAssessmentStructure: jest.Mock<IAssessmentFormEntity>;
+  fetchByProgramId: jest.Mock<IAssessmentFormEntity[]>;
 }

@@ -21,6 +21,13 @@ describe('>>> AssessmentForms Service', () => {
     });
   });
 
+  describe('fetchByProgramId', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.fetchByProgramId('programId');
+      expect(http.get).toHaveBeenCalledWith('assessment/programs/programId/assessment-forms');
+    });
+  });
+
   describe('search', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
       const params = { filter: { Foo: 'foo' } };

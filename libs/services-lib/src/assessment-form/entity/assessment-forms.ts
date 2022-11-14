@@ -30,6 +30,10 @@ export class AssessmentFormsService extends DomainBaseService<IAssessmentFormEnt
     return this.http.patch<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}/updateAssessmentStructure`, item), item);
   }
 
+  async fetchByProgramId(programId: uuid): Promise<IAssessmentFormEntity[]> {
+    return this.http.get(`${API_URL_SUFFIX}/programs/${programId}/${ENTITY}`);
+  }
+
   async search(params: IAzureSearchParams, searchEndpoint: string = null):
     Promise<IAzureCombinedSearchResult<IAssessmentFormEntity, IAssessmentFormMetadata>> {
     return this.http.get(`assessment/search/${searchEndpoint ?? 'assessment-forms'}`, { params, isOData: true });

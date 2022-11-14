@@ -22,6 +22,8 @@ export class AssessmentFormStorage
 
     // eslint-disable-next-line
     updateAssessmentStructure: (payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity> => this.store.dispatch(`${this.entityModuleName}/updateAssessmentStructure`, payload),
+
+    fetchByProgramId: (programId: uuid): Promise<IAssessmentFormEntity[]> => this.store.dispatch(`${this.entityModuleName}/fetchByProgramId`, { programId }),
   }
 
   private mutations = {

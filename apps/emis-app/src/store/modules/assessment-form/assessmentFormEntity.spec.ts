@@ -61,5 +61,18 @@ describe('AssessmentForm entity module', () => {
         expect(actionContext.commit).toBeCalledWith('set', res);
       });
     });
+
+    describe('fetchByProgramId', () => {
+      it('calls the service with proper parameters', async () => {
+        myModule.service.fetchByProgramId = jest.fn();
+
+        expect(myModule.service.fetchByProgramId).toHaveBeenCalledTimes(0);
+
+        await myModule.actions.fetchByProgramId(actionContext, { programId: 'programId' });
+
+        expect(myModule.service.fetchByProgramId).toHaveBeenCalledTimes(1);
+        expect(myModule.service.fetchByProgramId).toHaveBeenCalledWith('programId');
+      });
+    });
   });
 });

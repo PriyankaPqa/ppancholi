@@ -47,5 +47,13 @@ describe('>>> AssessmentForm Storage', () => {
       storage.actions.updateAssessmentStructure(payload);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateAssessmentStructure`, payload);
     });
+
+    it('should proxy fetchByProgramId', () => {
+      jest.clearAllMocks();
+
+      const programId = 'programId';
+      storage.actions.fetchByProgramId(programId);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchByProgramId`, { programId });
+    });
   });
 });

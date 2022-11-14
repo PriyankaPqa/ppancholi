@@ -21,8 +21,9 @@ export const mockProgramEntityData = (force?: Partial<IProgramEntityData>): IPro
   approvalRequired: true,
   eligibilityCriteria: {
     authenticated: true,
-    completedAssessments: false,
     impacted: false,
+    completedAssessments: false,
+    completedAssessmentIds: [] as uuid[],
   },
   eventId: 'd3becde1-6ec7-4b59-85c0-6e7fa3511e2e',
   paymentModalities: [

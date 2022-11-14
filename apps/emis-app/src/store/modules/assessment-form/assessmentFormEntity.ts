@@ -62,5 +62,12 @@ export class AssessmentFormEntityModule extends BaseModule <IAssessmentFormEntit
       }
       return result;
     },
+
+    fetchByProgramId: async (context: ActionContext<IAssessmentFormEntityState, IAssessmentFormEntityState>,
+      { programId }: { programId: uuid }): Promise<IAssessmentFormEntity[]> => {
+      const res: IAssessmentFormEntity[] = await this.service.fetchByProgramId(programId);
+
+      return res;
+    },
   }
 }
