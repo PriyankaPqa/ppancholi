@@ -15,7 +15,7 @@ export class AssessmentFormsService extends DomainBaseService<IAssessmentFormEnt
   }
 
   async getForBeneficiary(id: string): Promise<IAssessmentFormEntity> {
-    return this.http.get<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}/public`, { id }));
+    return this.http.get<IAssessmentFormEntity>(this.getItemUrl(`${this.baseUrl}/{id}/public`, { id }), { globalHandler: false });
   }
 
   async create(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity> {

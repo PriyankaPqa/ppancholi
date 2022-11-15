@@ -4,6 +4,7 @@ import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 import {
   AssociationType, AssessmentFrequencyType, CompletionStatus, PublishStatus,
 } from '@libs/entities-lib/assessment-template';
+import { Status } from '@libs/entities-lib/base';
 import routes from '@/constants/routes';
 import Component from './CaseFileAssessment.vue';
 
@@ -337,6 +338,25 @@ describe('CaseFileAssessment.vue', () => {
           dateCompletedFormatted: '',
         }]);
 
+        form.status = Status.Inactive;
+        expect(wrapper.vm.mapAssessments([{ form, response }])).toEqual([{
+          canEdit: false,
+          canLaunch: true,
+          canCopy: false,
+          completionStatus: 2,
+          dateAssigned: new Date('2022-09-09T16:33:11.700Z'),
+          dateAssignedFormatted: 'Sep 9, 2022',
+          formFrequency: 2,
+          formId: '1',
+          id: '1',
+          name: 'Assessment Floods 2021',
+          nameLowerCase: 'assessment floods 2021',
+          pinned: undefined,
+          dateCompleted: new Date(1950, 0, 1),
+          dateCompletedFormatted: '',
+        }]);
+
+        form.status = Status.Active;
         response.entity.dateCompleted = new Date('2022-09-09T16:33:11.700Z');
         response.pinned = true;
         response.entity.id = '2';

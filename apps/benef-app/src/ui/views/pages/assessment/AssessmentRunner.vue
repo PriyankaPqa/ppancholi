@@ -116,12 +116,15 @@ export default Vue.extend({
     },
 
     async loadDetails() {
-      this.response = cloneDeep((await this.$services.assessmentResponses.getForBeneficiary(this.assessmentResponseId)));
+      try {
+        this.response = cloneDeep((await this.$services.assessmentResponses.getForBeneficiary(this.assessmentResponseId)));
+        const res = await this.$services.assessmentForms.getForBeneficiary(this.assessmentTemplateId);
+        const form = new AssessmentFormEntity(res);
 
-      const res = await this.$services.assessmentForms.getForBeneficiary(this.assessmentTemplateId);
-      const form = new AssessmentFormEntity(res);
-
-      this.assessmentTemplate = form;
+        this.assessmentTemplate = form;
+      } catch {
+        // forms are not available
+      }
     },
   },
 });

@@ -113,9 +113,17 @@
           </template>
 
           <template #[`item.${customColumns.actions}`]="{ item }">
-            <v-btn v-if="item.canLaunch" data-test="resume-link" color="primary" class="mr-2" @click="launchAssessment(item)">
-              {{ $t('assessmentResponse.resume') }}
-            </v-btn>
+            <div class="d-flex">
+              <v-btn v-if="item.canLaunch" data-test="resume-link" color="primary" class="mr-2" @click="launchAssessment(item)">
+                {{ $t('assessmentResponse.resume') }}
+              </v-btn>
+              <v-btn v-if="item.canCopy" data-test="copy-link" @click="copyLink(item)">
+                <v-icon size="18" color="grey darken-2">
+                  mdi-content-copy
+                </v-icon>
+                {{ $t('assessmentResponse.copyLink') }}
+              </v-btn>
+            </div>
           </template>
 
           <template #[`item.${customColumns.actions_icons}`]="{ item }">
@@ -154,6 +162,7 @@ import {
   AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType, IAssessmentResponseCombined, CompletionStatus, PublishStatus,
 } from '@libs/entities-lib/assessment-template';
 import routes from '@/constants/routes';
+import { Status } from '@libs/entities-lib/base';
 import caseFileDetail from '../caseFileDetail';
 import AddCaseFileAssessment from './components/AddCaseFileAssessment.vue';
 
@@ -351,7 +360,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         formFrequency: r.form?.frequency,
         formId: r.form?.id,
         pinned: r.response.pinned,
-        canCopy: !this.readonly && this.$hasLevel('level1') && r.form?.publishStatus === PublishStatus.Published,
+        canCopy: !this.readonly && this.$hasLevel('level1') && r.form?.publishStatus === PublishStatus.Published && r.form?.status === Status.Active
+          && (r.response.entity.completionStatus === CompletionStatus.Pending || r.response.entity.completionStatus === CompletionStatus.Partial),
         canEdit: !this.readonly && this.$hasLevel('level3') && r.response.entity.completionStatus === CompletionStatus.Completed,
         canLaunch: !this.readonly && this.$hasLevel('level1')
           && (r.response.entity.completionStatus === CompletionStatus.Pending || r.response.entity.completionStatus === CompletionStatus.Partial),

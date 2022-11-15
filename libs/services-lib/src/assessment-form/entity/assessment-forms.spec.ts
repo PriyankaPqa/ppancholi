@@ -17,7 +17,7 @@ describe('>>> AssessmentForms Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentFormEntity();
       await service.getForBeneficiary(entity.id);
-      expect(http.get).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}/public`);
+      expect(http.get).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}/public`, { globalHandler: false });
     });
   });
 

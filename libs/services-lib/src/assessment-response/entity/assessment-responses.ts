@@ -17,7 +17,7 @@ export class AssessmentResponsesService extends DomainBaseService<IAssessmentRes
   }
 
   async getForBeneficiary(id: string): Promise<IAssessmentResponseEntity> {
-    return this.http.get<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/public`, { id }));
+    return this.http.get<IAssessmentResponseEntity>(this.getItemUrl(`${this.baseUrl}/{id}/public`, { id }), { globalHandler: false });
   }
 
   async create(item: IAssessmentResponseCreateRequest): Promise<IAssessmentResponseEntity> {
