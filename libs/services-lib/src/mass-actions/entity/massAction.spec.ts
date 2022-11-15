@@ -1,5 +1,5 @@
 import { MassActionService } from '@/mass-actions/entity/massAction';
-import { MassActionRunType, MassActionType } from '@libs/entities-lib/mass-action';
+import { MassActionDataCorrectionType, MassActionRunType, MassActionType } from '@libs/entities-lib/mass-action';
 import { mockMassActionCreatePayload } from '@/mass-actions/entity/massAction.mock';
 import { mockHttp } from '../../http-client';
 
@@ -99,6 +99,17 @@ describe('>>> Mass Action Service', () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
       expect(http.get).toHaveBeenCalledWith('case-file/search/mass-actions', { params, isOData: true });
+    });
+  });
+
+  test('downloadTemplate should call the endpoint with expected values', async () => {
+    const maType = MassActionDataCorrectionType.FinancialAssistance;
+    await service.downloadTemplate(maType);
+    expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/templates`, {
+      responseType: 'blob',
+      params: {
+        MassActionType: maType,
+      },
     });
   });
 });

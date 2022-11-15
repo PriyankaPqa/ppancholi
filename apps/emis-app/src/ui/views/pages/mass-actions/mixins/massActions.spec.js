@@ -191,10 +191,10 @@ describe('massActions', () => {
         expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('TemporaryAddressTemplate.csv', 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,ETag');
       });
 
-      it('should call downloadTemplate with proper data for FinancialAssistance', () => {
-        wrapper.vm.downloadTemplate = jest.fn();
+      it('should call downloadApiTemplate for FinancialAssistance', () => {
+        wrapper.vm.downloadApiTemplate = jest.fn();
         wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.FinancialAssistance);
-        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('FinancialAssistanceTemplate.csv', 'TBD,ETag');
+        expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(MassActionDataCorrectionType.FinancialAssistance);
       });
     });
 

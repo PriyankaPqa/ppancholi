@@ -1,4 +1,6 @@
-import { IMassActionEntity, MassActionRunType, MassActionType } from '@libs/entities-lib/mass-action/massActions.types';
+import {
+  IMassActionEntity, MassActionDataCorrectionType, MassActionRunType, MassActionType,
+} from '@libs/entities-lib/mass-action/massActions.types';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import { IMassActionExportListPayload, IMassActionService } from './massAction.types';
 import { IHttpClient, IRestResponse } from '../../http-client';
@@ -55,6 +57,15 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
       params: {
         runId,
         language,
+      },
+    });
+  }
+
+  async downloadTemplate(massActionDataCorrectionType: MassActionType | MassActionDataCorrectionType): Promise<IRestResponse<BlobPart>> {
+    return this.http.getFullResponse(`${this.baseUrl}/templates`, {
+      responseType: 'blob',
+      params: {
+        MassActionType: massActionDataCorrectionType,
       },
     });
   }
