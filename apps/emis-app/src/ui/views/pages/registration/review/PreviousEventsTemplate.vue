@@ -31,19 +31,16 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from 'moment';
-import { IHouseholdCaseFile } from '@libs/entities-lib/household';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { IEventMainInfo } from '@libs/entities-lib/event';
 
 export default Vue.extend({
   name: 'PreviousEventsTemplate',
+
   props: {
-    caseFiles: {
-      type: Array as () => Array<IHouseholdCaseFile>,
-      required: true,
-    },
-    loading: {
-      type: Boolean,
+    householdId: {
+      type: String,
       required: true,
     },
   },
@@ -51,6 +48,8 @@ export default Vue.extend({
     return {
       moment,
       events: [] as IEventMainInfo[],
+      caseFiles: [] as ICaseFileEntity[],
+      loading: false,
     };
   },
   computed: {
@@ -67,6 +66,11 @@ export default Vue.extend({
       this.fetchEvents();
     },
   },
+  async mounted() {
+    if (this.householdId) {
+      await this.fetchCaseFilesInformation(this.householdId);
+    }
+  },
   methods: {
     async fetchEvents() {
       const eventIds = this.caseFiles.map((cf) => cf.eventId);
@@ -75,6 +79,18 @@ export default Vue.extend({
       }
       const results = await this.$services.publicApi.searchEventsById(eventIds);
       this.events = results?.value as IEventMainInfo[];
+    },
+
+    async fetchCaseFilesInformation(householdId: string) {
+      this.loading = true;
+      try {
+        const results = await this.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId(householdId);
+        if (results) {
+          this.caseFiles = results;
+        }
+      } finally {
+        this.loading = false;
+      }
     },
   },
 });

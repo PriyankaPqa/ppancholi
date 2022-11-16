@@ -1,4 +1,4 @@
-import { mockHouseholdMetadata } from '@libs/entities-lib/household';
+import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { mockEventMainInfo } from '@libs/entities-lib/event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
@@ -6,7 +6,7 @@ import routes from '@/constants/routes';
 import Component from '../HouseholdCaseFileCard.vue';
 
 const localVue = createLocalVue();
-const caseFile = mockHouseholdMetadata().caseFiles[0];
+const caseFile = mockCaseFileEntity();
 const events = [
   mockEventMainInfo({
     id: caseFile.eventId,
@@ -104,7 +104,7 @@ describe('HouseholdCaseFileCard.vue', () => {
       });
 
       it('displays the creation date of the case file', () => {
-        expect(element.text()).toContain('Feb 2, 2021');
+        expect(element.text()).toContain('Apr 6, 2021');
       });
     });
   });
@@ -116,7 +116,7 @@ describe('HouseholdCaseFileCard.vue', () => {
         expect(wrapper.vm.caseFileRoute).toEqual({
           name: routes.caseFile.activity.name,
           params: {
-            id: wrapper.vm.caseFile.caseFileId,
+            id: wrapper.vm.caseFile.id,
           },
         });
       });

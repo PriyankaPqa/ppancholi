@@ -18,7 +18,7 @@
         <v-col cols="12" lg="8">
           <lib-review-registration :i18n="i18n" show-age-in-review skip-phone-email-rules :disable-autocomplete="!enableAutocomplete">
             <template #previous-events>
-              <previous-events-template :case-files="caseFiles" :loading="loading" />
+              <previous-events-template :household-id="selectedHouseholdId" />
             </template>
           </lib-review-registration>
         </v-col>
@@ -30,7 +30,6 @@
 <script lang="ts">
 import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
 import { RcDialog } from '@libs/component-lib/components';
-import { IHouseholdCaseFile } from '@libs/entities-lib/household';
 import mixins from 'vue-typed-mixins';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults.vue';
@@ -50,8 +49,7 @@ export default mixins(searchHousehold).extend({
     return {
       i18n,
       showDetailsDialog: false,
-      caseFiles: null as IHouseholdCaseFile[],
-      loading: false,
+      selectedHouseholdId: '',
     };
   },
   computed: {
@@ -89,7 +87,7 @@ export default mixins(searchHousehold).extend({
     },
 
     async showDetails(id:string) {
-      await this.fetchCaseFilesInformation(id);
+      this.selectedHouseholdId = id;
       this.showDetailsDialog = true;
     },
 
@@ -98,18 +96,6 @@ export default mixins(searchHousehold).extend({
       const splitHouseholdId = this.$store.state.registration.splitHousehold?.originHouseholdId;
       if (splitHouseholdId) {
         this.searchResults = this.searchResults.filter((r) => r.entity.id !== splitHouseholdId);
-      }
-    },
-
-    async fetchCaseFilesInformation(householdId: string) {
-      this.loading = true;
-      try {
-        const household = await this.$storage.household.actions.fetch(householdId);
-        if (household) {
-          this.caseFiles = household.metadata.caseFiles;
-        }
-      } finally {
-        this.loading = false;
       }
     },
   },

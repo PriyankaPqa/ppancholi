@@ -81,7 +81,6 @@ export const mockHouseholdMetadata = (force?: Partial<IHouseholdMetadata>): IHou
   ...mockBaseData(),
   memberMetadata: [mockHouseholdMemberMetadata()],
   eventIds: ['1', '2'],
-  caseFiles: [mockHouseholdCaseFile()],
   ...force,
 });
 

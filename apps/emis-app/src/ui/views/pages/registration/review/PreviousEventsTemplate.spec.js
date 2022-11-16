@@ -1,5 +1,5 @@
 import Vuetify from 'vuetify';
-import { mockHouseholdCaseFile } from '@libs/entities-lib/household';
+import { mockCaseFileEntities, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { mockEventMainInfo } from '@libs/entities-lib/event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
@@ -11,8 +11,8 @@ const storage = mockStorage();
 const vuetify = new Vuetify();
 
 const mockCaseFiles = [
-  mockHouseholdCaseFile({ caseFileId: 'id-1', eventId: '1' }),
-  mockHouseholdCaseFile({ caseFileId: 'id-2', eventId: '2' }),
+  mockCaseFileEntity({ id: '1', eventId: '11' }),
+  mockCaseFileEntity({ id: '2', eventId: '22' }),
 ];
 const mockEvents = [
   mockEventMainInfo({
@@ -35,8 +35,13 @@ describe('PreviousEventsTemplate.vue', () => {
       localVue,
       vuetify,
       propsData: {
-        caseFiles: mockCaseFiles,
-        loading: false,
+        householdId: 'household-12345-test',
+      },
+      data() {
+        return {
+          caseFiles: mockCaseFiles,
+          loading: false,
+        };
       },
       mocks: {
         $storage: storage,
@@ -67,9 +72,41 @@ describe('PreviousEventsTemplate.vue', () => {
   describe('methods', () => {
     describe('fetchEvents', () => {
       it('calls public event search with expected parameters', async () => {
-        jest.spyOn(wrapper.vm.$services.publicApi, 'searchEventsById').mockImplementation(() => {});
+        wrapper.vm.caseFiles = mockCaseFiles;
         await wrapper.vm.fetchEvents();
-        expect(wrapper.vm.$services.publicApi.searchEventsById).toHaveBeenCalledWith(['1', '2']);
+        expect(wrapper.vm.$services.publicApi.searchEventsById).toHaveBeenCalledWith(['11', '22']);
+      });
+    });
+    describe('fetchCaseFilesInformation', () => {
+      it('calls caseFile service method getAllCaseFilesRelatedToHouseholdId', () => {
+        wrapper.vm.fetchCaseFilesInformation('1');
+        expect(wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId).toHaveBeenCalledWith('1');
+      });
+
+      it('updates caseFiles with the call result', async () => {
+        const caseFiles = mockCaseFileEntities();
+        wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId = jest.fn(() => caseFiles);
+        await wrapper.vm.fetchCaseFilesInformation('1');
+        expect(wrapper.vm.caseFiles).toEqual(caseFiles);
+      });
+    });
+  });
+  describe('Lifecycle', () => {
+    describe('mounted', () => {
+      it('should call fetchCaseFilesInformation with householdID from props', async () => {
+        jest.clearAllMocks();
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            householdId: 'household-12345-test',
+          },
+        });
+        wrapper.vm.fetchCaseFilesInformation = jest.fn();
+        await wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.fetchCaseFilesInformation).toHaveBeenCalledWith('household-12345-test');
       });
     });
   });

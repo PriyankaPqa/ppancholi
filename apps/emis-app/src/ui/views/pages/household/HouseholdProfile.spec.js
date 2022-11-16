@@ -5,7 +5,7 @@ import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validat
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockEventMainInfo, EEventLocationStatus } from '@libs/entities-lib/event';
-import { mockCombinedCaseFile, CaseFileStatus } from '@libs/entities-lib/case-file';
+import { mockCombinedCaseFile, CaseFileStatus, mockCaseFileEntities } from '@libs/entities-lib/case-file';
 import { mockUserStateLevel } from '@/test/helpers';
 import householdHelpers from '@/ui/helpers/household';
 import routes from '@/constants/routes';
@@ -336,10 +336,12 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: household.entity.id,
           },
+          data() {
+            return {
+              caseFiles: [...caseFiles],
+            };
+          },
           computed: {
-            caseFiles() {
-              return caseFiles;
-            },
             household() {
               return householdCreate;
             },
@@ -363,33 +365,9 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: household.entity.id,
           },
-          computed: {
-            caseFiles() {
-              return caseFiles;
-            },
-            household() {
-              return householdCreate;
-            },
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-
-        expect(wrapper.vm.inactiveCaseFiles).toEqual([cfClosed]);
-      });
-    });
-
-    describe('caseFiles', () => {
-      it('returns the right data', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
           data() {
             return {
-              caseFileIds: ['1'],
+              caseFiles: [...caseFiles],
             };
           },
           computed: {
@@ -402,7 +380,7 @@ describe('HouseholdProfile.vue', () => {
           },
         });
 
-        expect(wrapper.vm.caseFiles).toEqual(wrapper.vm.householdData.metadata.caseFiles);
+        expect(wrapper.vm.inactiveCaseFiles).toEqual([cfClosed]);
       });
     });
 
@@ -938,6 +916,28 @@ describe('HouseholdProfile.vue', () => {
         });
         wrapper.vm.moveMembers();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.household.householdMembersMove.name });
+      });
+    });
+
+    describe('fetchCaseFiles', () => {
+      beforeEach(() => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+        });
+      });
+      it('calls fetchCaseFiles with the id', async () => {
+        await wrapper.vm.fetchCaseFiles();
+        expect(wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId).toHaveBeenCalledWith(household.entity.id);
+      });
+
+      it('updates caseFiles with the call result', async () => {
+        const caseFiles = mockCaseFileEntities();
+        wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId = jest.fn(() => caseFiles);
+        await wrapper.vm.fetchCaseFiles('1');
+        expect(wrapper.vm.caseFiles).toEqual(caseFiles);
       });
     });
   });

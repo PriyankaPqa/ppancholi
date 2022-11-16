@@ -7,7 +7,7 @@
           {{ $t('registration.details.registered') }} {{ moment(householdCreate.primaryBeneficiary.created).format('ll') }}
         </div>
       </div>
-      <slot name="previous-events" />
+      <slot name="previous-events" :householdId="householdCreate.id" />
       <template v-if="!householdAlreadyRegistered && !splitMode">
         <div data-test="title" class="rc-heading-5 fw-bold  mb-2 mt-8">
           {{ $t('registration.menu.privacy') }}

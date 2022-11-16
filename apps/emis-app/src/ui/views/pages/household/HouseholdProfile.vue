@@ -185,9 +185,9 @@ import _isEmpty from 'lodash/isEmpty';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { IHouseholdCreate, Member } from '@libs/entities-lib/household-create';
-import { IHouseholdCombined, IHouseholdCaseFile } from '@libs/entities-lib/household';
+import { IHouseholdCombined } from '@libs/entities-lib/household';
 import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
-import { CaseFileStatus } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
 import {
@@ -230,6 +230,7 @@ export default mixins(household).extend({
       moment,
       loading: true,
       caseFileIds: [] as string[],
+      caseFiles: [] as ICaseFileEntity[],
       /*
        * Events to which the user has access. For most users this access is limited by
        * membership in teams assigned to events. This access cannot be inferred from the
@@ -304,20 +305,13 @@ export default mixins(household).extend({
       return this.$storage.household.getters.get(this.id);
     },
 
-    activeCaseFiles():IHouseholdCaseFile[] {
+    activeCaseFiles():ICaseFileEntity[] {
       return this.caseFiles.filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive);
     },
 
-    inactiveCaseFiles():IHouseholdCaseFile[] {
+    inactiveCaseFiles():ICaseFileEntity[] {
       return this.caseFiles
         .filter((c) => c.caseFileStatus === CaseFileStatus.Archived || c.caseFileStatus === CaseFileStatus.Closed);
-    },
-
-    caseFiles(): IHouseholdCaseFile[] {
-      if (this.householdData?.metadata?.caseFiles) {
-        return this.householdData.metadata.caseFiles;
-      }
-      return [];
     },
 
     addressLine1(): string {
@@ -379,6 +373,7 @@ export default mixins(household).extend({
       this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
       this.$storage.registration.actions.fetchIndigenousCommunities(),
     ]);
+    await this.fetchCaseFiles();
     await this.fetchHouseholdData();
     await this.fetchMyEvents();
     await this.fetchAllEvents();
@@ -439,6 +434,13 @@ export default mixins(household).extend({
 
     moveMembers() {
       return this.$router.push({ name: routes.household.householdMembersMove.name });
+    },
+
+    async fetchCaseFiles() {
+      const results = await this.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId(this.id);
+      if (results) {
+        this.caseFiles = results;
+      }
     },
   },
 });

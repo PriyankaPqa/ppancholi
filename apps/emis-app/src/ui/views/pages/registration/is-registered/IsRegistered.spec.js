@@ -150,12 +150,6 @@ describe('IsRegistered.vue', () => {
     });
 
     describe('showDetails', () => {
-      it('calls fetchCaseFilesInformation', () => {
-        jest.spyOn(wrapper.vm, 'fetchCaseFilesInformation').mockImplementation(() => {});
-        wrapper.vm.showDetails('mock-id');
-        expect(wrapper.vm.fetchCaseFilesInformation).toHaveBeenCalledWith('mock-id');
-      });
-
       it('calls fetchCaseFilesInformation if isSplitMode is true', async () => {
         expect(wrapper.vm.showDetailsDialog).toBeFalsy();
         await wrapper.vm.showDetails('mock-id');
@@ -188,18 +182,6 @@ describe('IsRegistered.vue', () => {
 
         await wrapper.vm.filterOutSplitHousehold();
         expect(wrapper.vm.searchResults).toEqual([{ entity: { id: 'foo' } }]);
-      });
-    });
-
-    describe('fetchCaseFilesInformation', () => {
-      it('calls household actions fetch', () => {
-        wrapper.vm.fetchCaseFilesInformation();
-        expect(storage.household.actions.fetch).toHaveBeenCalled();
-      });
-
-      it('updates caseFiles with the call result', async () => {
-        await wrapper.vm.fetchCaseFilesInformation();
-        expect(wrapper.vm.caseFiles).toEqual(mockCombinedHousehold().metadata.caseFiles);
       });
     });
   });

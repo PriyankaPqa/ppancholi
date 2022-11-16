@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { IHouseholdCaseFile } from '@libs/entities-lib/household';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { RcPageContent } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { i18n } from '@/ui/plugins';
@@ -48,7 +48,7 @@ export default mixins(searchHousehold).extend({
     return {
       i18n,
       showDetailsDialog: false,
-      caseFiles: null as IHouseholdCaseFile[],
+      caseFiles: null as ICaseFileEntity[],
       loading: false,
     };
   },

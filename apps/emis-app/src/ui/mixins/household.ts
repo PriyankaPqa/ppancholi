@@ -49,7 +49,7 @@ export default Vue.extend({
 
     async fetchShelterLocations(household: IHouseholdCombined, onlyActive = true) {
       const shelters = [] as IEventGenericLocation[];
-      const householdCaseFiles = household.metadata.caseFiles;
+      const householdCaseFiles = await this.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId(household.entity.id);
       if (householdCaseFiles) {
         const eventIds = householdCaseFiles
           .filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive)

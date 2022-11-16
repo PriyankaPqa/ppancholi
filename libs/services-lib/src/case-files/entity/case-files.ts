@@ -103,4 +103,8 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
   async getAssignedCaseFiles(teamMemberId: uuid): Promise<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>> {
     return this.http.get('/case-file/case-files/get-assigned-case-files', { params: { teamMemberId } });
   }
+
+  async getAllCaseFilesRelatedToHouseholdId(householdId: uuid): Promise<ICaseFileEntity[]> {
+    return this.http.get('/case-file/case-files/get-all-case-files-related-to-household-id', { params: { householdId } });
+  }
 }

@@ -221,4 +221,12 @@ describe('>>> Case File Service', () => {
       expect(http.get).toHaveBeenCalledWith('/case-file/case-files/get-assigned-case-files', { params: { teamMemberId: id } });
     });
   });
+
+  describe('getAllCaseFilesRelatedToHouseholdId', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+      await service.getAllCaseFilesRelatedToHouseholdId(id);
+      expect(http.get).toHaveBeenCalledWith('/case-file/case-files/get-all-case-files-related-to-household-id', { params: { householdId: id } });
+    });
+  });
 });

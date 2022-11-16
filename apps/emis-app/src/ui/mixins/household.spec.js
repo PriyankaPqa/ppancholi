@@ -8,6 +8,7 @@ import { mockCombinedHouseholds } from '@libs/entities-lib/household';
 import household from '@/ui/mixins/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EEventLocationStatus, mockEventMainInfo } from '@libs/entities-lib/event';
+import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 
 const Component = {
   render() {},
@@ -378,9 +379,11 @@ describe('household', () => {
 
     describe('fetchShelterLocations', () => {
       it('calls searchMyEvents service with the right filter', async () => {
-        const expectedFilter = 'search.in(Entity/Id, \'60983874-18bb-467d-b55a-94dc55818151\', \'|\') and Entity/Schedule/Status eq 2';
-
-        await wrapper.vm.fetchShelterLocations(mockCombinedHousehold());
+        const expectedFilter = 'search.in(Entity/Id, \'e70da37e-67cd-4afb-9c36-530c7d8b191f\', \'|\') and Entity/Schedule/Status eq 2';
+        const mockCombineHousehold = mockCombinedHousehold();
+        const householdCaseFiles = [mockCaseFileEntity()];
+        wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId = jest.fn(() => householdCaseFiles);
+        await wrapper.vm.fetchShelterLocations(mockCombineHousehold);
 
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({ filter: expectedFilter, top: 999 });
       });
@@ -404,6 +407,11 @@ describe('household', () => {
           { id: 'loc-1', status: EEventLocationStatus.Active },
           { id: 'loc-2', status: EEventLocationStatus.Inactive },
           { id: 'loc-3', status: EEventLocationStatus.Active }]);
+      });
+
+      it('calls caseFile service method getAllCaseFilesRelatedToHouseholdId', async () => {
+        await wrapper.vm.fetchShelterLocations(mockCombinedHousehold());
+        expect(wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId).toHaveBeenCalledWith(mockCombinedHousehold().entity.id);
       });
     });
   });

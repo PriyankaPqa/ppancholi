@@ -51,7 +51,7 @@
         <tr>
           <td />
           <td data-test="household_profile_case_file_registered_date">
-            {{ `${$t('household.profile.registered')}: ${moment(caseFile.registeredDate).format('ll')}` }}
+            {{ `${$t('household.profile.registered')}: ${moment(caseFile.created).format('ll')}` }}
           </td>
         </tr>
       </tbody>
@@ -77,7 +77,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from 'moment';
-import { IHouseholdCaseFile } from '@libs/entities-lib/household';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { RcDialog } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import { IEventMainInfo } from '@libs/entities-lib/event';
@@ -97,7 +97,7 @@ export default Vue.extend({
      * The case file of the household
      */
     caseFile: {
-      type: Object as () => IHouseholdCaseFile,
+      type: Object as () => ICaseFileEntity,
       required: true,
     },
     /**
@@ -135,7 +135,7 @@ export default Vue.extend({
       return {
         name: routes.caseFile.activity.name,
         params: {
-          id: this.caseFile.caseFileId,
+          id: this.caseFile.id,
         },
       };
     },

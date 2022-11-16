@@ -39,7 +39,6 @@ export interface IHouseholdCaseFile {
 export interface IHouseholdMetadata extends IEntity {
   memberMetadata: Array<IHouseholdMemberMetadata>;
   eventIds: Array<uuid>;
-  caseFiles: IHouseholdCaseFile[];
 }
 
 export type IHouseholdCombined = IEntityCombined<IHouseholdEntity, IHouseholdMetadata>
