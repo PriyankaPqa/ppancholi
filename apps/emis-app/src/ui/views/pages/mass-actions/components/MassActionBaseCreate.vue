@@ -31,7 +31,7 @@
             <validation-provider v-if="mode === MassActionMode.File" v-slot="{ errors }" ref="file" :rules="rules.file" mode="aggressive">
               <rc-file-upload
                 ref="fileUpload"
-                :allowed-extensions="['csv']"
+                :allowed-extensions="allowedExtensions"
                 :max-size="10000000"
                 :errors="errors"
                 @update:file="onUpdateFile" />
@@ -165,6 +165,11 @@ export default mixins(fileUpload).extend({
     hideName: {
       type: Boolean,
       default: false,
+    },
+
+    allowedExtensions: {
+      type: Array as () => string[],
+      default: () => ['csv'],
     },
   },
 

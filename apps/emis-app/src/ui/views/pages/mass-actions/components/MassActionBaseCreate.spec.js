@@ -59,7 +59,7 @@ describe('MassActionBaseCreate.vue', () => {
         expect(wrapper.findComponent(RcFileUpload).exists()).toBe(true);
       });
 
-      it('should allow csv upload', () => {
+      it('should allow csv upload by default', () => {
         expect(wrapper.findComponent(RcFileUpload).props('allowedExtensions')).toEqual(['csv']);
       });
     });

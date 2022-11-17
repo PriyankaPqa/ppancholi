@@ -36,6 +36,17 @@ describe('DataCorrectionCreate.vue', () => {
         expect(wrapper.findDataTest('massActionType').exists()).toBe(true);
       });
 
+      it('should have not have events dropdown initially', () => {
+        expect(wrapper.findDataTest('data-correction-events').exists()).toBe(false);
+      });
+
+      it('should have events dropdown when financial assistance chosen', async () => {
+        await wrapper.setData({
+          selectedType: MassActionDataCorrectionType.FinancialAssistance,
+        });
+        expect(wrapper.findDataTest('data-correction-events').exists()).toBe(true);
+      });
+
       it('should be linked the correct props url', () => {
         expect(wrapper.findComponent(MassActionBaseCreate).props('uploadUrl')).toBe('case-file/mass-actions/data-correction');
       });
@@ -88,6 +99,49 @@ describe('DataCorrectionCreate.vue', () => {
       it('should not contain Financial Assistance data correction type when feature is disabled', () => {
         wrapper.vm.isFinancialAssistanceDataCorrectionEnabled = false;
         expect(wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance)).toBeFalsy();
+      });
+    });
+
+    describe('rules', () => {
+      it('should only require events when data correction type is Financial Assistance', () => {
+        const types = [
+          null,
+          MassActionDataCorrectionType.HomeAddress,
+          MassActionDataCorrectionType.Labels,
+          MassActionDataCorrectionType.TemporaryAddress,
+          MassActionDataCorrectionType.AuthenticationSpecifiedOther,
+          MassActionDataCorrectionType.IdentitySet,
+          MassActionDataCorrectionType.ContactInformation,
+          MassActionDataCorrectionType.FinancialAssistance,
+        ];
+        types.forEach((t) => {
+          wrapper.vm.selectedType = t;
+          expect(wrapper.vm.rules.event.required).toBe(t === MassActionDataCorrectionType.FinancialAssistance);
+        });
+      });
+    });
+
+    describe('isEventRequired', () => {
+      it('should be true when selected type is Financial Assistance', () => {
+        wrapper.vm.selectedType = MassActionDataCorrectionType.FinancialAssistance;
+        expect(wrapper.vm.isEventRequired).toBe(true);
+      });
+
+      it('should be false when selected type is not Financial Assistance', () => {
+        wrapper.vm.selectedType = MassActionDataCorrectionType.HomeAddress;
+        expect(wrapper.vm.isEventRequired).toBe(false);
+      });
+    });
+
+    describe('allowedExtensions', () => {
+      it('should be xlsx when selected type is Financial Assistance', () => {
+        wrapper.vm.selectedType = MassActionDataCorrectionType.FinancialAssistance;
+        expect(wrapper.vm.allowedExtensions).toEqual(['xlsx']);
+      });
+
+      it('should be csv when selected type is not Financial Assistance', () => {
+        wrapper.vm.selectedType = MassActionDataCorrectionType.ContactInformation;
+        expect(wrapper.vm.allowedExtensions).toEqual(['csv']);
       });
     });
   });
@@ -145,12 +199,27 @@ describe('DataCorrectionCreate.vue', () => {
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('name', 'generatedName');
       });
 
-      it('should add the name to the form', async () => {
+      it('should add the mass action type to the form', async () => {
         wrapper.vm.$refs.base.upload = jest.fn();
         wrapper.vm.formData.set = jest.fn();
         await wrapper.setData({ selectedType: MassActionDataCorrectionType.ContactInformation });
         await wrapper.vm.onUploadStart();
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('massActionType', MassActionDataCorrectionType.ContactInformation);
+      });
+
+      it('should add the event id to the form if selected', async () => {
+        wrapper.vm.$refs.base.upload = jest.fn();
+        wrapper.vm.formData.set = jest.fn();
+        await wrapper.setData({ selectedEventId: 'eventId' });
+        await wrapper.vm.onUploadStart();
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('eventId', 'eventId');
+      });
+
+      it('should not add the event id to the form if not selected', async () => {
+        wrapper.vm.$refs.base.upload = jest.fn();
+        wrapper.vm.formData.set = jest.fn();
+        await wrapper.vm.onUploadStart();
+        expect(wrapper.vm.formData.set).not.toBeCalledWith('eventId');
       });
 
       it('should call upload method of the child', async () => {

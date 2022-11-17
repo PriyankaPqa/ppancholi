@@ -8,6 +8,7 @@
     :mode="MassActionMode.File"
     :form-data="formData"
     :loading="loading"
+    :allowed-extensions="allowedExtensions"
     @back="back()"
     @upload:start="onUploadStart()"
     @upload:success="onSuccess($event)">
@@ -19,6 +20,15 @@
         item-value="value"
         data-test="massActionType"
         :label="`${$t('massActions.dataCorrection.type.label')} *`" />
+      <events-selector
+        v-if="isEventRequired"
+        v-model="selectedEventId"
+        item-value="id"
+        async-mode
+        data-test="data-correction-events"
+        fetch-all-events
+        :label="`${$t('massActions.financialAssistance.create.event.label')} *`"
+        :rules="rules.event" />
     </template>
   </mass-action-base-create>
 </template>
@@ -29,6 +39,7 @@ import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import { IMassActionEntity, MassActionDataCorrectionType, MassActionMode } from '@libs/entities-lib/mass-action';
 import { VAutocompleteWithValidation } from '@libs/component-lib/components';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import helpers from '@/ui/helpers/helpers';
 import { format } from 'date-fns';
@@ -39,6 +50,7 @@ export default Vue.extend({
   components: {
     MassActionBaseCreate,
     VAutocompleteWithValidation,
+    EventsSelector,
   },
 
   data() {
@@ -51,6 +63,7 @@ export default Vue.extend({
       MassActionMode,
       MassActionDataCorrectionType,
       isFinancialAssistanceDataCorrectionEnabled: this.$hasFeature(FeatureKeys.FinancialAssistanceDataCorrection),
+      selectedEventId: null,
     };
   },
   computed: {
@@ -61,6 +74,24 @@ export default Vue.extend({
         types = types.filter((t) => t.value !== MassActionDataCorrectionType.FinancialAssistance);
       }
       return types;
+    },
+
+    rules(): Record<string, unknown> {
+      return {
+        event: {
+          required: this.isEventRequired,
+        },
+      };
+    },
+
+    isEventRequired() : boolean {
+      return this.selectedType === MassActionDataCorrectionType.FinancialAssistance;
+    },
+
+    allowedExtensions() : string[] {
+      return this.selectedType === MassActionDataCorrectionType.FinancialAssistance
+        ? ['xlsx']
+        : ['csv'];
     },
   },
 
@@ -89,6 +120,11 @@ export default Vue.extend({
     async onUploadStart() {
       this.formData.set('name', this.generateName());
       this.formData.set('massActionType', this.selectedType);
+      if (this.selectedEventId) {
+        this.formData.set('eventId', this.selectedEventId);
+      } else {
+        this.formData.delete('eventId');
+      }
       this.loading = true;
       await (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();
       this.loading = false;
