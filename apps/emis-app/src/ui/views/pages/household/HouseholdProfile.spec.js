@@ -714,6 +714,12 @@ describe('HouseholdProfile.vue', () => {
         await wrapper.vm.fetchAllEvents();
         expect(wrapper.vm.$services.publicApi.searchEventsById).toHaveBeenCalledWith(['1', '2', '3', '4']);
       });
+
+      it('calls setHouseholdCreate', async () => {
+        jest.spyOn(wrapper.vm, 'setHouseholdCreate').mockImplementation(() => {});
+        await wrapper.vm.fetchHouseholdData();
+        expect(wrapper.vm.setHouseholdCreate).toHaveBeenCalledTimes(1);
+      });
     });
 
     describe('fetchHouseholdData', () => {

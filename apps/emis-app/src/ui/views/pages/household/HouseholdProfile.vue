@@ -373,6 +373,7 @@ export default mixins(household).extend({
       this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
       this.$storage.registration.actions.fetchIndigenousCommunities(),
     ]);
+    this.$storage.registration.mutations.resetHouseholdCreate();
     await this.fetchCaseFiles();
     await this.fetchHouseholdData();
     await this.fetchMyEvents();
@@ -401,6 +402,7 @@ export default mixins(household).extend({
       this.loading = true;
       try {
         await this.$storage.household.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+        await this.setHouseholdCreate();
       } finally {
         this.loading = false;
       }
