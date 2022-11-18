@@ -733,12 +733,6 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.$storage.household.actions.fetch).toHaveBeenCalledWith(household.entity.id,
           { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
       });
-
-      it('calls setHouseholdCreate', async () => {
-        jest.spyOn(wrapper.vm, 'setHouseholdCreate').mockImplementation(() => {});
-        await wrapper.vm.fetchHouseholdData();
-        expect(wrapper.vm.setHouseholdCreate).toHaveBeenCalledTimes(1);
-      });
     });
 
     describe('setHouseholdCreate', () => {

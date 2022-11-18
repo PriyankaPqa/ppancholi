@@ -252,7 +252,7 @@ export default mixins(household).extend({
 
   watch: {
     householdData(newValue) {
-      if (newValue && !_isEmpty(newValue.metadata)) {
+      if (newValue && !_isEmpty(newValue.entity) && !_isEmpty(newValue.metadata)) {
         this.fetchMyEvents();
         this.fetchAllEvents();
         this.setHouseholdCreate();
@@ -401,7 +401,6 @@ export default mixins(household).extend({
       this.loading = true;
       try {
         await this.$storage.household.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
-        await this.setHouseholdCreate();
       } finally {
         this.loading = false;
       }
