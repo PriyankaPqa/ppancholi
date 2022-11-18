@@ -90,7 +90,7 @@
           </h5>
 
           <v-row class="pt-4">
-            <v-col v-for="caseFile in activeCaseFiles" :key="caseFile.caseFileId" cols="12" md="6">
+            <v-col v-for="caseFile in activeCaseFiles" :key="caseFile.id" cols="12" md="6">
               <household-case-file-card :my-events="myEvents" :event-names="eventNames" :case-file="caseFile" :is-active="true" />
             </v-col>
           </v-row>
@@ -149,7 +149,7 @@
             {{ $t('household.profile.registered_previous_events') }} ({{ inactiveCaseFiles.length }})
           </h5>
           <v-row>
-            <v-col v-for="caseFile in inactiveCaseFiles" :key="caseFile.caseFileId" cols="12" md="6">
+            <v-col v-for="caseFile in inactiveCaseFiles" :key="caseFile.id" cols="12" md="6">
               <household-case-file-card :event-names="eventNames" :case-file="caseFile" :is-active="false" />
             </v-col>
           </v-row>
@@ -390,8 +390,8 @@ export default mixins(household).extend({
     },
 
     async fetchAllEvents() {
-      if (this.activeCaseFiles.length) {
-        const eventIds = this.activeCaseFiles.map((cf) => cf.eventId);
+      if (this.caseFiles.length) {
+        const eventIds = this.caseFiles.map((cf) => cf.eventId);
         const results = await this.$services.publicApi.searchEventsById(eventIds);
         this.allEvents = results?.value as IEventMainInfo[];
       }

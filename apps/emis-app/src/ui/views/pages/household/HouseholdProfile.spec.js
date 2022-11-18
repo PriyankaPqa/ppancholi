@@ -700,19 +700,11 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           data() {
             return {
-              myEvents: events,
+              caseFiles: [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }],
             };
           },
           propsData: {
             id: household.entity.id,
-          },
-          computed: {
-            activeCaseFiles() {
-              return [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }];
-            },
-            household() {
-              return householdCreate;
-            },
           },
           mocks: {
             $storage: storage,

@@ -14,14 +14,19 @@
             </v-icon>
           </td>
           <td style="width:100%">
-            <component
-              :is="isActive ? 'span': 'button'"
-              class="fw-bold"
-              :class="[isActive? 'rc-body18': 'rc-link14' ]"
+            <span
+              v-if="isActive"
+              class="fw-bold rc-body18"
+              data-test="household_profile_case_file_event_name">
+              {{ eventName? $m(eventName): '-' }}
+            </span>
+            <button
+              v-else
+              class="fw-bold rc-link14"
               data-test="household_profile_case_file_event_name"
               @click="openCaseFileSummary = true">
-              {{ eventName? $m(eventName): 'm' }}
-            </component>
+              {{ eventName? $m(eventName): '-' }}
+            </button>
           </td>
           <td class="icon">
             <v-tooltip v-if="isActive && !hasAccessToEvent" bottom data-test="household-profile-no-access-icon">
@@ -69,7 +74,7 @@
       :show-submit="false"
       @close="openCaseFileSummary = false"
       @cancel="openCaseFileSummary = false">
-      <case-file-summary :case-file-id="caseFile.caseFileId" />
+      <case-file-summary :case-file-id="caseFile.id" />
     </rc-dialog>
   </v-sheet>
 </template>
