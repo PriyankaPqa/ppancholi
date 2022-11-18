@@ -104,6 +104,10 @@
             {{ item.dateAssignedFormatted }}
           </template>
 
+          <template #[`item.${customColumns.dateModified}`]="{ item }">
+            {{ item.dateModifiedFormatted }}
+          </template>
+
           <template #[`item.${customColumns.dateCompleted}`]="{ item }">
             {{ item.dateCompletedFormatted }}
           </template>
@@ -173,6 +177,8 @@ interface MappedAssessment {
   nameLowerCase: string,
   dateAssigned: Date,
   dateAssignedFormatted: string,
+  dateModified: Date,
+  dateModifiedFormatted: string,
   dateCompleted: Date,
   dateCompletedFormatted: string,
   completionStatus: CompletionStatus,
@@ -271,6 +277,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       return {
         name: 'nameLowerCase',
         dateAssigned: 'dateAssigned',
+        dateModified: 'dateModified',
         completionStatus: 'completionStatus',
         dateCompleted: 'dateCompleted',
         actions: 'actions',
@@ -314,12 +321,21 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     completedAssessmentsHeaders(): Array<DataTableHeader> {
       const headers = _cloneDeep(this.pendingAssessmentsHeaders);
+
       headers.splice(2, 0, {
+        text: this.$t('assessmentResponse.dateModified') as string,
+        value: this.customColumns.dateModified,
+        sortable: true,
+        width: '150px',
+      });
+
+      headers.splice(3, 0, {
         text: this.$t('assessmentResponse.dateCompleted') as string,
         value: this.customColumns.dateCompleted,
         sortable: true,
         width: '180px',
       });
+
       return headers;
     },
 
@@ -353,6 +369,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         nameLowerCase: (this.$m(r.form?.name) as string || '').toLowerCase(),
         dateAssigned: r.response.entity.dateAssigned,
         dateAssignedFormatted: moment(r.response.entity.dateAssigned).format('ll'),
+        dateModified: r.response.entity.timestamp as Date,
+        dateModifiedFormatted: moment(r.response.entity.timestamp).format('ll'),
         // default to crazy date because _orderBy sorts empty differently then normal BE search
         dateCompleted: r.response.entity.dateCompleted ? new Date(r.response.entity.dateCompleted) : new Date(1950, 0, 1),
         dateCompletedFormatted: r.response.entity.dateCompleted ? moment(r.response.entity.dateCompleted).format('ll') : '',

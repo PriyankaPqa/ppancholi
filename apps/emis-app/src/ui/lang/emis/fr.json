@@ -83,6 +83,7 @@
     "assessmentResponse.copyLink": "Copier l'hyperlien",
     "assessmentResponse.dateAssigned": "Date d'ajout",
     "assessmentResponse.dateCompleted": "Date de complétion",
+    "assessmentResponse.dateModified": "Date modifiée",
     "assessmentResponse.delete.success": "L'analyse a été supprimée",
     "assessmentResponse.resume": "Continuer",
     "assessmentResponse.scoring": "Pointage",

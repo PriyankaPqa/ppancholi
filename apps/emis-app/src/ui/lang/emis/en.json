@@ -83,6 +83,7 @@
     "assessmentResponse.copyLink": "Copy link",
     "assessmentResponse.dateAssigned": "Date added",
     "assessmentResponse.dateCompleted": "Completed date",
+    "assessmentResponse.dateModified": "Modified date",
     "assessmentResponse.delete.success": "The assessment was successfully deleted",
     "assessmentResponse.resume": "Resume",
     "assessmentResponse.scoring": "Scoring",

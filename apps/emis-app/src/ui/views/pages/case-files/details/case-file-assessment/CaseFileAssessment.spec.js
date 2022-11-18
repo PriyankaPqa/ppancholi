@@ -21,6 +21,8 @@ const mockMappedAssessments = [
     nameLowerCase: 'name completed',
     dateAssigned: new Date(2020, 1, 1),
     dateAssignedFormatted: 'Sep 9, 2020',
+    dateModified: new Date(2021, 9, 9),
+    dateModifiedFormatted: 'Sep 9, 2021',
     dateCompleted: new Date(2021, 1, 1),
     dateCompletedFormatted: 'Sep 9, 2022',
     completionStatus: CompletionStatus.Completed,
@@ -37,6 +39,8 @@ const mockMappedAssessments = [
     nameLowerCase: 'name partial',
     dateAssigned: new Date(2020, 1, 1),
     dateAssignedFormatted: 'Sep 9, 2020',
+    dateModified: new Date(2021, 9, 9),
+    dateModifiedFormatted: 'Sep 9, 2021',
     dateCompleted: new Date(2021, 1, 1),
     dateCompletedFormatted: 'Sep 9, 2022',
     completionStatus: CompletionStatus.Partial,
@@ -53,6 +57,8 @@ const mockMappedAssessments = [
     nameLowerCase: 'Name Pending',
     dateAssigned: new Date(2020, 1, 1),
     dateAssignedFormatted: 'Sep 9, 2020',
+    dateModified: new Date(2021, 9, 9),
+    dateModifiedFormatted: 'Sep 9, 2021',
     dateCompleted: new Date(2021, 1, 1),
     dateCompletedFormatted: 'Sep 9, 2022',
     completionStatus: CompletionStatus.Pending,
@@ -69,6 +75,8 @@ const mockMappedAssessments = [
     nameLowerCase: 'aaa name Pending',
     dateAssigned: new Date(2020, 1, 1),
     dateAssignedFormatted: 'Sep 9, 2020',
+    dateModified: new Date(2021, 9, 9),
+    dateModifiedFormatted: 'Sep 9, 2021',
     dateCompleted: new Date(2021, 1, 1),
     dateCompletedFormatted: 'Sep 9, 2022',
     completionStatus: CompletionStatus.Pending,
@@ -296,9 +304,9 @@ describe('CaseFileAssessment.vue', () => {
       it('contains the right items', async () => {
         await mountWrapper();
         expect(wrapper.vm.completedAssessmentsHeaders.map((h) => h.text))
-          .toEqual(['common.name', 'assessmentResponse.dateAssigned', 'assessmentResponse.dateCompleted', 'common.status', '', '']);
+          .toEqual(['common.name', 'assessmentResponse.dateAssigned', 'assessmentResponse.dateModified', 'assessmentResponse.dateCompleted', 'common.status', '', '']);
         expect(wrapper.vm.completedAssessmentsHeaders.filter((h) => h.sortable !== false).map((h) => h.text))
-          .toEqual(['common.name', 'assessmentResponse.dateAssigned', 'assessmentResponse.dateCompleted']);
+          .toEqual(['common.name', 'assessmentResponse.dateAssigned', 'assessmentResponse.dateModified', 'assessmentResponse.dateCompleted']);
       });
     });
   });
@@ -321,6 +329,8 @@ describe('CaseFileAssessment.vue', () => {
         await mountWrapper();
         const form = storage.assessmentForm.getters.getByIds()[0].entity;
         const response = storage.assessmentResponse.getters.getByIds()[0];
+        response.entity.timestamp = new Date('2022-09-09T16:33:11.700Z');
+
         expect(wrapper.vm.mapAssessments([{ form, response }])).toEqual([{
           canEdit: false,
           canLaunch: true,
@@ -328,6 +338,8 @@ describe('CaseFileAssessment.vue', () => {
           completionStatus: 2,
           dateAssigned: new Date('2022-09-09T16:33:11.700Z'),
           dateAssignedFormatted: 'Sep 9, 2022',
+          dateModified: new Date('2022-09-09T16:33:11.700Z'),
+          dateModifiedFormatted: 'Sep 9, 2022',
           formFrequency: 2,
           formId: '1',
           id: '1',
@@ -346,6 +358,8 @@ describe('CaseFileAssessment.vue', () => {
           completionStatus: 2,
           dateAssigned: new Date('2022-09-09T16:33:11.700Z'),
           dateAssignedFormatted: 'Sep 9, 2022',
+          dateModified: new Date('2022-09-09T16:33:11.700Z'),
+          dateModifiedFormatted: 'Sep 9, 2022',
           formFrequency: 2,
           formId: '1',
           id: '1',
@@ -370,6 +384,8 @@ describe('CaseFileAssessment.vue', () => {
           completionStatus: 3,
           dateAssigned: new Date('2022-09-09T16:33:11.700Z'),
           dateAssignedFormatted: 'Sep 9, 2022',
+          dateModified: new Date('2022-09-09T16:33:11.700Z'),
+          dateModifiedFormatted: 'Sep 9, 2022',
           formFrequency: 2,
           formId: '1',
           id: '2',
@@ -388,6 +404,8 @@ describe('CaseFileAssessment.vue', () => {
           completionStatus: 3,
           dateAssigned: new Date('2022-09-09T16:33:11.700Z'),
           dateAssignedFormatted: 'Sep 9, 2022',
+          dateModified: new Date('2022-09-09T16:33:11.700Z'),
+          dateModifiedFormatted: 'Sep 9, 2022',
           formFrequency: 2,
           formId: '1',
           id: '2',
