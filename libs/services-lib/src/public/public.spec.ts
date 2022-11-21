@@ -18,7 +18,16 @@ describe('>>> Public Service', () => {
       registrationLink: 'link',
     };
 
-    await service.searchEvents(params.language, params.registrationLink);
+    await service.fetchRegistrationEvent(params.language, params.registrationLink);
+    expect(http.get).toHaveBeenCalledWith('/event/public/search/events', { params, containsEncodedURL: true });
+  });
+
+  test('searchEvents is linked to the correct URL', async () => {
+    const params: searchEventsParams = {
+      top: 999,
+    };
+
+    await service.searchEvents(params);
     expect(http.get).toHaveBeenCalledWith('/event/public/search/events', { params, containsEncodedURL: true, isOData: true });
   });
 

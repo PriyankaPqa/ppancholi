@@ -442,7 +442,7 @@ const actions = (mode: ERegistrationMode) => ({
     context: ActionContext<IState, IState>,
     { lang, registrationLink }: { lang: string; registrationLink: string },
   ): Promise<IEvent> {
-    const result = await this.$services.publicApi.searchEvents(lang, registrationLink);
+    const result = await this.$services.publicApi.fetchRegistrationEvent(lang, registrationLink);
     const eventData = result?.value?.length > 0 ? (result.value[0] as { entity: IEvent }).entity : null;
     context.commit('setEvent', eventData);
 

@@ -8,13 +8,19 @@ import { IPublicService } from './public.types';
 export class PublicService implements IPublicService {
   constructor(private readonly http: IHttpClient) {}
 
-  async searchEvents(lang?: string, registrationLink?: string, searchParams?: IAzureSearchParams): Promise<IAzureSearchResult<IEventData>> {
+  async fetchRegistrationEvent(lang: string, registrationLink: string): Promise<IAzureSearchResult<IEventData>> {
     return this.http.get<IAzureSearchResult<IEventData>>('/event/public/search/events', {
       params: {
         language: lang,
         registrationLink,
-        ...(searchParams),
       },
+      containsEncodedURL: true,
+    });
+  }
+
+  async searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventData>> {
+    return this.http.get<IAzureSearchResult<IEventData>>('/event/public/search/events', {
+      params,
       containsEncodedURL: true,
       isOData: true,
     });
@@ -22,7 +28,7 @@ export class PublicService implements IPublicService {
 
   async searchEventsById(ids: string[]): Promise<IAzureSearchResult<IEventData>> {
     const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
-    const eventsData = await this.searchEvents(undefined, undefined, {
+    const eventsData = await this.searchEvents({
       filter,
       top: 999,
     });
