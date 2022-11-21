@@ -378,13 +378,13 @@ export default Vue.extend({
       // Needed to trigger validation of all contact info fields
       await helpers.timeout(10);
       if (!this.formCopy.email || this.formCopy.emailValidatedByBackend) {
-        validateEntireForm();
+        await validateEntireForm();
       } else {
         this.validateEntireFormFn = validateEntireForm;
         if (this.recaptchaKey) {
-          this.getTokenAndValidate(this.formCopy.email);
+          await this.getTokenAndValidate(this.formCopy.email);
         } else {
-          this.validateEmail(this.formCopy.email, '', true);
+          await this.validateEmail(this.formCopy.email, '', true);
         }
       }
     },

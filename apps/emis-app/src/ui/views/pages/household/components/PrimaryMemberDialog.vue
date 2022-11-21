@@ -195,13 +195,13 @@ export default Vue.extend({
     },
 
     validateEmailAndSubmit() {
+      this.submitLoading = true;
       EventHub.$emit('checkEmailValidation', this.onSubmit);
     },
 
     async onSubmit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        this.submitLoading = true;
         let ok = true;
         if (this.changedIdentitySet) {
           ok = !!await this.$storage.registration.actions.updatePersonIdentity({ member: this.member, isPrimaryMember: true });
