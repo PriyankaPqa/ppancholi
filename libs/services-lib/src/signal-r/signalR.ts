@@ -8,19 +8,19 @@ export class SignalRService implements ISignalRService {
     await this.http.post('/hub/subscribe', {
       entityIds: ids,
       connectionId,
-    });
+    }, { globalHandler: false });
   }
 
   async unsubscribe(connectionId: string, ids: uuid[]) {
     await this.http.post('/hub/unsubscribe', {
       entityIds: ids,
       connectionId,
-    });
+    }, { globalHandler: false });
   }
 
   async unsubscribeAll(connectionId: string) {
     await this.http.post('/hub/unsubscribe-all', {
       connectionId,
-    });
+    }, { globalHandler: false });
   }
 }
