@@ -14,16 +14,16 @@ export class UIStateStorage implements IStorage {
   private getters = {
     getSearchTableState: (key: string) => this.store.getters[`${this.entityModuleName}/getSearchTableState`](key),
     getAllSearchIds: () => this.store.getters[`${this.entityModuleName}/getAllSearchIds`],
-  }
+  };
 
   private mutations = {
     setSearchTableState: (key: string, state: unknown) => {
       this.store.commit(`${this.entityModuleName}/setSearchTableState`, { key, state });
     },
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     mutations: this.mutations,
-  })
+  });
 }

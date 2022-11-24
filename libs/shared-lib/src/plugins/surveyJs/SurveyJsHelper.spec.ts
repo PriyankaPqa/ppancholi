@@ -202,6 +202,7 @@ const dropdownQuestion = JSON.stringify({
             'item3',
           ],
           hasNone: true,
+          noneText: 'Nonez',
           choicesMin: 1,
           choicesMax: 5,
           choicesStep: 2,
@@ -901,6 +902,7 @@ const complexJson = JSON.stringify({
         {
           type: 'text',
           name: 'email',
+          // eslint-disable-next-line vue/max-len
           title: "Thank you for taking our survey. Your survey is almost complete, please enter your email address in the box below if you wish to participate in our drawing, then press the 'Submit' button.",
         },
       ],
@@ -1778,7 +1780,9 @@ describe('SurveyJsHelper', () => {
           identifier: 'email',
           question: {
             translation: {
+              // eslint-disable-next-line vue/max-len
               en: "Thank you for taking our survey. Your survey is almost complete, please enter your email address in the box below if you wish to participate in our drawing, then press the 'Submit' button.",
+              // eslint-disable-next-line vue/max-len
               fr: "Thank you for taking our survey. Your survey is almost complete, please enter your email address in the box below if you wish to participate in our drawing, then press the 'Submit' button.",
             },
           },
@@ -2048,8 +2052,8 @@ describe('SurveyJsHelper', () => {
           {
             displayValue: {
               translation: {
-                en: 'None',
-                fr: 'Aucun',
+                en: 'Nonez',
+                fr: 'Nonez',
               },
             },
             identifier: 'none',
@@ -3468,7 +3472,7 @@ describe('SurveyJsHelper', () => {
     it('sets score to 0 and attaches to onValueChanged', () => {
       const creator = new SurveyCreator();
       creator.survey.onValueChanged.add = jest.fn();
-      helper.previewCreated(null, creator);
+      helper.previewCreated(null, creator as any);
       expect(helper.totalScore).toEqual(0);
       expect((creator.survey as any)._totalScore).toEqual(0);
       expect(creator.survey.onValueChanged.add).toHaveBeenCalledWith(helper.valueChangedNewScore);
@@ -3507,6 +3511,29 @@ describe('SurveyJsHelper', () => {
 
       helper.valueChangedNewScore(helper.creator.survey as any);
       expect(helper.totalScore).toEqual(21);
+    });
+
+    it('applies also to survey runner', () => {
+      helper.initializeSurveyJsRunner('en', complexJson);
+      helper.survey.data = {
+        Quality: {
+          affordable: 1,
+          'does what it claims': 4,
+          'better then others': 1,
+          'easy to use': 2,
+        },
+        satisfaction: '3',
+        suggestions: 'test',
+        'price to competitors': 'Less expensive',
+        price: 'correct',
+        pricelimit: {
+          mostamount: '234',
+        },
+      };
+
+      helper.valueChangedNewScore(helper.survey);
+      // for now we support price correct (radio) and quality-4 (matrix) to score a 10... more in the future story...
+      expect(helper.totalScore).toEqual(20);
     });
   });
 

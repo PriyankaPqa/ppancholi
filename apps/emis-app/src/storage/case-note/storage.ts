@@ -18,7 +18,7 @@ export class CaseNoteStorage
     caseNoteCategories: (filterOutInactive = true, actualValue?: string[] | string)
     : Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/caseNoteCategories`](filterOutInactive, actualValue),
 
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -39,14 +39,16 @@ export class CaseNoteStorage
       try {
         this.store.commit(`${this.entityModuleName}/setSearchLoading`, true);
 
-        const res = await this.store.dispatch(`${this.entityModuleName}/search`,
-          { params, searchEndpoint });
+        const res = await this.store.dispatch(
+          `${this.entityModuleName}/search`,
+          { params, searchEndpoint },
+        );
 
         const data = res?.value;
         if (data) {
-          const value = data.map((res: ICombinedIndex<ICaseNoteEntity, ICaseNoteMetadata>) => {
-            const entity = { ...res.entity };
-            const metadata = { ...res.metadata };
+          const value = data.map((r: ICombinedIndex<ICaseNoteEntity, ICaseNoteMetadata>) => {
+            const entity = { ...r.entity };
+            const metadata = { ...r.metadata };
 
             return { entity, metadata };
           });
@@ -62,17 +64,17 @@ export class CaseNoteStorage
       }
     },
 
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
 
     setCaseNoteCategoriesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setCaseNoteCategoriesFetched`, payload),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

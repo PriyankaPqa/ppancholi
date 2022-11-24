@@ -77,8 +77,10 @@ describe('Household entity module', () => {
         expect(myModule.service.getMemberMetadataHistory).toHaveBeenCalledWith('id-2');
 
         expect(utils.mapResponses).toHaveBeenCalledTimes(2);
-        expect(utils.combineEntities).toHaveBeenCalledWith([mockVersionedEntity('household', { versionId: '1' })],
-          [mockVersionedEntity('household', { versionId: '1' })]);
+        expect(utils.combineEntities).toHaveBeenCalledWith(
+[mockVersionedEntity('household', { versionId: '1' })],
+          [mockVersionedEntity('household', { versionId: '1' })],
+);
         expect(expectedRes).toEqual([combinedEntity]);
       });
     });

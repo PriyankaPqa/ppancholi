@@ -1,5 +1,5 @@
 <template>
-  <validation-provider v-slot="{errors, classes}" :name="$attrs.name" :rules="rules" :mode="mode">
+  <validation-provider v-slot="{ errors, classes }" :name="$attrs.name" :rules="rules" :mode="mode">
     <v-combobox
       v-model="innerValue"
       outlined

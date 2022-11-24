@@ -34,7 +34,7 @@ export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity
 
 export interface IBaseGetters<TEntity extends IEntity, TMetadata extends IEntity> {
   get(id: uuid): IEntityCombined<TEntity, TMetadata>;
-  getNewlyCreatedIds(maxDate?: Date): Array<{id: uuid, createdOn: number}>,
+  getNewlyCreatedIds(maxDate?: Date): Array<{ id: uuid, createdOn: number }>,
   getAll(): Array<IEntityCombined<TEntity, TMetadata>>;
   getByCriteria (query: string, searchAll: boolean, searchAmong: string[]): Array<IEntityCombined<TEntity, TMetadata>>;
   getByIds (ids: uuid[], options?: { onlyActive?: boolean, prependPinnedItems?: boolean, baseDate?: Date, parentId?: Record<string, unknown> }):
@@ -66,7 +66,7 @@ export interface IBaseStorage <TEntity extends IEntity, TMetadata extends IEntit
 
 export interface IBaseGettersMock<TEntity extends IEntity, TMetadata extends IEntity> {
   get: jest.Mock<IEntityCombined<TEntity, TMetadata>>,
-  getNewlyCreatedIds: jest.Mock<Array<{id: uuid, createdOn: number}>>,
+  getNewlyCreatedIds: jest.Mock<Array<{ id: uuid, createdOn: number }>>,
   getAll: jest.Mock<IEntityCombined<TEntity, TMetadata>[]>,
   getByCriteria: jest.Mock<IEntityCombined<TEntity, TMetadata>[]>,
   getByIds: jest.Mock<IEntityCombined<TEntity, TMetadata>[]>,

@@ -180,6 +180,7 @@ describe('approvalRequestsFilter', () => {
         wrapper.vm.fetchUsers = jest.fn();
 
         wrapper.vm.debounceSearchUsersFilter();
+        // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 600));
 
         expect(wrapper.vm.fetchUsers).toHaveBeenCalledTimes(1);
@@ -191,6 +192,7 @@ describe('approvalRequestsFilter', () => {
         wrapper.vm.onLoadApprovalFilters = jest.fn();
 
         wrapper.vm.throttleOnLoadFilter();
+        // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 300));
         wrapper.vm.throttleOnLoadFilter();
 

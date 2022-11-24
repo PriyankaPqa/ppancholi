@@ -76,7 +76,9 @@
                   </v-list-item-action>
 
                   <v-list-item-content>
-                    <v-list-item-title class="rc-body14 fw-bold" v-text="$m(tag.name)" />
+                    <v-list-item-title class="rc-body14 fw-bold">
+                      {{ $m(tag.name) }}
+                    </v-list-item-title>
                   </v-list-item-content>
                 </template>
               </v-list-item>

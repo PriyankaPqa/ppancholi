@@ -10,7 +10,7 @@ import {
 import { IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
-export interface IEventsService extends IDomainBaseService<IEventEntity, uuid>{
+export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
   createEvent(payload: IEventEntity): Promise<IEventEntity>;
 
   updateEvent(payload: IEventEntity): Promise<IEventEntity>;

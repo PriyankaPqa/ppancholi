@@ -110,7 +110,7 @@ export default Vue.extend({
     /**
      * Set the assignment info by using the data sent back from the assign-case-file dialog after an assignment was done
      */
-    setAssignmentsInfoFromData({ individuals, teams }: {individuals: {displayName: string}[], teams: ITeamEntity[]}) {
+    setAssignmentsInfoFromData({ individuals, teams }: { individuals: { displayName: string }[], teams: ITeamEntity[] }) {
       this.assignedTeamInfo = teams[0] ? teams[0].name : '';
       const individualsNames = individuals?.map((i) => (i.displayName));
       if (individualsNames) {

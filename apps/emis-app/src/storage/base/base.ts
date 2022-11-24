@@ -23,8 +23,11 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     this.entityModuleName = pEntityModuleName;
   }
 
-  protected combinedCollections(entities: Array<TEntity>,
-    metadata: Array<TMetadata>, pinnedIds: Array<string> = []): Array<IEntityCombined<TEntity, TMetadata>> {
+  protected combinedCollections(
+    entities: Array<TEntity>,
+    metadata: Array<TMetadata>,
+    pinnedIds: Array<string> = [],
+  ): Array<IEntityCombined<TEntity, TMetadata>> {
     if (!Array.isArray(entities)) {
       return [];
     }
@@ -56,7 +59,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     },
 
     // eslint-disable-next-line arrow-body-style
-    getNewlyCreatedIds: (maxDate?: Date): Array<{id: uuid, createdOn: number}> => {
+    getNewlyCreatedIds: (maxDate?: Date): Array<{ id: uuid, createdOn: number }> => {
       return this.store.getters[`${this.entityModuleName}/getNewlyCreatedIds`](maxDate);
     },
 
@@ -128,7 +131,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
 
       return this.combinedCollections(entities, metadata, pinnedIds);
     },
-  }
+  };
 
   protected baseActions = {
     fetch: async (idParams: IdParams, {
@@ -265,10 +268,10 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
         const entities = [] as TEntity[];
         const metadata = [] as TMetadata[];
 
-        filteredData.forEach((res: ICombinedIndex<TEntity, TMetadata>) => {
-          ids.push(res.entity.id);
-          entities.push({ ...res.entity });
-          metadata.push({ ...res.metadata });
+        filteredData.forEach((r: ICombinedIndex<TEntity, TMetadata>) => {
+          ids.push(r.entity.id);
+          entities.push({ ...r.entity });
+          metadata.push({ ...r.metadata });
         });
 
         this.store.commit(`${this.entityModuleName}/setAll`, entities);
@@ -281,7 +284,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       this.store.commit(`${this.entityModuleName}/setSearchLoading`, false);
       return { ids: [], count: 0, date: new Date() };
     },
-  }
+  };
 
   protected baseMutations = {
     addNewlyCreatedId: (entity: TEntity) => {
@@ -340,11 +343,11 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
         this.store.commit(`${this.metadataModuleName}/setAll`, payload);
       }
     },
-  }
+  };
 
   public make = () => ({
     getters: this.baseGetters,
     actions: this.baseActions,
     mutations: this.baseMutations,
-  })
+  });
 }

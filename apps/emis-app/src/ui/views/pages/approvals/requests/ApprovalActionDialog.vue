@@ -12,7 +12,7 @@
       :show-close="true"
       :show-help="false"
       must-sort
-      :loading="loadingUsers ||submitLoading"
+      :loading="loadingUsers || submitLoading"
       @close="closeActionApprovalDialog()"
       @cancel="closeActionApprovalDialog()"
       @submit="onSubmit()">
@@ -57,7 +57,7 @@
           <v-text-area-with-validation
             v-model="action.rationale"
             :rules="rules.rationale"
-            :label="`${$t('approval.requests.action.rationale')} ${!action.approvalAction || isApproved? '': '*'}`"
+            :label="`${$t('approval.requests.action.rationale')} ${!action.approvalAction || isApproved ? '' : '*'}`"
             data-test="approval_action_rationale" />
         </v-col>
         <v-col v-if="needsNextApprover" cols="12" class="px-0 py-0">

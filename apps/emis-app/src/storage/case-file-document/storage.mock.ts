@@ -13,23 +13,23 @@ export class CaseFileDocumentStorageMock extends BaseMock<ICaseFileDocumentCombi
   protected getters = {
     ...this.baseGetters,
     categories: jest.fn(() => mockOptionItemData()),
-  }
+  };
 
   protected actions = {
     ...this.baseActions,
     fetchCategories: jest.fn(() => mockOptionItemData()),
     updateDocument: jest.fn((payload: ICaseFileDocumentEntity) => payload),
     downloadDocumentAsUrl: jest.fn(() => 'fake url'),
-  }
+  };
 
   protected mutations = {
     ...this.baseMutations,
     setCategoriesFetched: jest.fn(),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

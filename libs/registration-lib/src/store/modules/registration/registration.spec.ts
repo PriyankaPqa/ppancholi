@@ -843,6 +843,7 @@ describe('>>> Registration Module', () => {
         const error = { response: { data: { errors: 'mock-errors' } } };
         await store.commit('registration/setEvent', mockEventData());
         store.$services.households.submitRegistration = jest.fn(() => {
+          // eslint-disable-next-line @typescript-eslint/no-throw-literal
           throw error;
         });
         await store.dispatch('registration/submitRegistration');
@@ -859,8 +860,10 @@ describe('>>> Registration Module', () => {
         store.state.registration.householdCreate.editAdditionalMember = jest.fn();
         await store.dispatch('registration/updatePersonIdentity', { member, isPrimaryMember, index });
 
-        expect(store.$services.households.updatePersonIdentity).toHaveBeenCalledWith(member.id,
-          { identitySet: member.identitySet, contactInformation: member.contactInformation });
+        expect(store.$services.households.updatePersonIdentity).toHaveBeenCalledWith(
+member.id,
+          { identitySet: member.identitySet, contactInformation: member.contactInformation },
+);
       });
 
       it('calls the right mutation when member is primary', async () => {
@@ -896,8 +899,10 @@ describe('>>> Registration Module', () => {
         store.state.registration.householdCreate.editAdditionalMember = jest.fn();
         await store.dispatch('registration/updatePersonContactInformation', { member, isPrimaryMember, index });
 
-        expect(store.$services.households.updatePersonContactInformation).toHaveBeenCalledWith(member.id,
-          { contactInformation: member.contactInformation, identitySet: member.identitySet, isPrimaryBeneficiary: isPrimaryMember });
+        expect(store.$services.households.updatePersonContactInformation).toHaveBeenCalledWith(
+member.id,
+          { contactInformation: member.contactInformation, identitySet: member.identitySet, isPrimaryBeneficiary: isPrimaryMember },
+);
       });
 
       it('calls the right mutation when member is primary', async () => {
@@ -1012,8 +1017,11 @@ describe('>>> Registration Module', () => {
 
         await store.dispatch('registration/addAdditionalMember', { householdId, member, sameAddress });
 
-        expect(store.commit).toHaveBeenCalledWith('registration/addAdditionalMember',
-          { payload: new Member({ ...member, id: mockhousehold.members[mockhousehold.members.length - 1] }), sameAddress }, undefined);
+        expect(store.commit).toHaveBeenCalledWith(
+'registration/addAdditionalMember',
+          { payload: new Member({ ...member, id: mockhousehold.members[mockhousehold.members.length - 1] }), sameAddress },
+undefined,
+);
       });
     });
 

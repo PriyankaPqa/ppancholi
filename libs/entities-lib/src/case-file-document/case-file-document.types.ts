@@ -22,4 +22,4 @@ export interface ICaseFileDocumentMetadata extends IEntity {
   documentStatusName: IMultilingual;
 }
 
-export type ICaseFileDocumentCombined = IEntityCombined<ICaseFileDocumentEntity, ICaseFileDocumentMetadata>
+export type ICaseFileDocumentCombined = IEntityCombined<ICaseFileDocumentEntity, ICaseFileDocumentMetadata>;

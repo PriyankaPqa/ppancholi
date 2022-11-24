@@ -13,7 +13,7 @@ export class AssessmentResponseStorage
 
   private getters = {
     ...this.baseGetters,
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -27,15 +27,15 @@ export class AssessmentResponseStorage
 
     // eslint-disable-next-line
     editAssessmentAnsweredQuestion: (payload: { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string, parentIndexPath: string }): Promise<IAssessmentResponseEntity> => this.store.dispatch(`${this.entityModuleName}/editAssessmentAnsweredQuestion`, payload),
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

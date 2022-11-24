@@ -534,7 +534,8 @@ describe('HouseholdMemberCard.vue', () => {
 
     describe('initSplitView', () => {
       // eslint-disable-next-line max-len
-      it('sets showSplitDialog to true if there are split household members and the card corresponds to the new primary member of the split household',
+      it(
+        'sets showSplitDialog to true if there are split household members and the card corresponds to the new primary member of the split household',
         async () => {
           doMount(false, true, {
             propsData: {
@@ -550,7 +551,8 @@ describe('HouseholdMemberCard.vue', () => {
           });
           await wrapper.vm.initSplitView();
           expect(wrapper.vm.showSplitDialog).toBeTruthy();
-        });
+        },
+      );
     });
 
     describe('deleteAdditionalMember', () => {

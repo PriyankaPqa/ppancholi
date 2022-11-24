@@ -123,14 +123,18 @@ describe('CaseFileAssessment.vue', () => {
       it('returns true for level1+ when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canAdd).toBeTruthy();
-        await mountWrapper(false, 1, null,
+        await mountWrapper(
+          false,
+          1,
+          null,
           {
             computed: {
               readonly() {
                 return true;
               },
             },
-          });
+          },
+        );
         expect(wrapper.vm.canAdd).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canAdd).toBeFalsy();
@@ -147,14 +151,18 @@ describe('CaseFileAssessment.vue', () => {
       it('returns true for level1+ when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canDelete).toBeTruthy();
-        await mountWrapper(false, 1, null,
+        await mountWrapper(
+          false,
+          1,
+          null,
           {
             computed: {
               readonly() {
                 return true;
               },
             },
-          });
+          },
+        );
         expect(wrapper.vm.canDelete).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canDelete).toBeFalsy();
@@ -475,7 +483,6 @@ describe('CaseFileAssessment.vue', () => {
         wrapper.vm.$storage.household.getters.get = jest.fn(() => ({ entity: { primaryBeneficiary: 'benefId' } }));
         wrapper.vm.$services.households.getPerson = jest.fn(() => ({ contactInformation: { preferredLanguage: { optionItemId: 'frId' } } }));
         wrapper.vm.$storage.registration.actions.fetchPreferredLanguages = jest.fn(() => ([{ id: 'frId', languageCode: 'fr' }]));
-        debugger;
         wrapper.vm.copyLink({ id: item.entity.id });
         await wrapper.vm.$nextTick();
         expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://test.com/fr/assessment/1dea3c36-d6a5-4e6c-ac36-078677b7da5f0/044fcd68-3d70-4a3a-b5c8-22da9e01730f/1');

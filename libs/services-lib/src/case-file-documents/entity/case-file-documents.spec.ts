@@ -8,7 +8,7 @@ describe('>>> Case File Document Service', () => {
   let entity: ICaseFileDocumentEntity;
 
   beforeEach(() => {
-    process.env.VUE_APP_API_BASE_URL = 'www.test.com';
+    process.env.VITE_API_BASE_URL = 'www.test.com';
     entity = mockCaseFileDocumentEntity();
     entity.id = 'myId';
     entity.caseFileId = 'myParent';
@@ -20,8 +20,10 @@ describe('>>> Case File Document Service', () => {
   describe('updateDocument', () => {
     it('is linked to the correct URL and params', async () => {
       await service.updateDocument(entity);
-      expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/documents/myId/edit',
-        entity);
+      expect(http.patch).toHaveBeenCalledWith(
+'www.test.com/case-file/case-files/myParent/documents/myId/edit',
+        entity,
+);
     });
   });
 

@@ -23,7 +23,7 @@ stages:
         displayName: 'Deployment'
         environment: 'Dev'
         variables:
-          - group: Env-Dev
+          - group: Env-Dev-Vite
           - name: featureStorageName
             value: ''
         strategy:
@@ -53,7 +53,7 @@ stages:
                       echo $feature;
                       echo $feature_name;
                       
-                      $redirect_uri = "$(VUE_APP_AUTH_AAD_REDIRECT_URI)" -replace "$(Environment)", $branchname
+                      $redirect_uri = "$(VITE_AUTH_AAD_REDIRECT_URI)" -replace "$(Environment)", $branchname
                       
                       $cdn_endpoint = $cdnEndpointSplit[0] + "-" + $cdnEndpointSplit[1] + "-" + $feature
                       $cdn_profile = $cdnProfileSplit[0] + "-" + $cdnProfileSplit[1] + "-" + $feature
@@ -72,8 +72,8 @@ stages:
                       echo "##vso[task.setvariable variable=featureStorageName]$feature"
                       echo "##vso[task.setvariable variable=featureName]$feature_name"
                       echo "##vso[task.setvariable variable=featureResourceGroup]$resourceGroup"
-                      echo "##vso[task.setvariable variable=VUE_APP_AUTH_AAD_POSTLOGOUT_REDIRECT_URI]$redirect_uri"
-                      echo "##vso[task.setvariable variable=VUE_APP_AUTH_AAD_REDIRECT_URI]$redirect_uri"
+                      echo "##vso[task.setvariable variable=VITE_AUTH_AAD_POSTLOGOUT_REDIRECT_URI]$redirect_uri"
+                      echo "##vso[task.setvariable variable=VITE_AUTH_AAD_REDIRECT_URI]$redirect_uri"
                       
                       $account = az storage account list --query "[?name=='$feature']" | ConvertFrom-Json
                       $exists = $account.length -gt 0 
@@ -87,7 +87,7 @@ stages:
                 - task: replacetokens@3
                   displayName: 'Replace Tokens'
                   inputs:
-                    targetFiles: "$(Pipeline.Workspace)/dist/**/main*.js"
+                    targetFiles: "$(Pipeline.Workspace)/dist/**/index*.js"
                     encoding: "auto"
                     writeBOM: true
                     verbosity: "detailed"
@@ -176,7 +176,7 @@ stages:
         displayName: 'Deploy WebApp to Dev'
         environment: 'Dev'
         variables:
-          - group: Env-Dev
+          - group: Env-Dev-Vite
         strategy:
           runOnce:
             deploy:
@@ -184,7 +184,7 @@ stages:
                 - task: replacetokens@3
                   displayName: 'Replace Tokens'
                   inputs:
-                    targetFiles: "$(Pipeline.Workspace)/dist/**/main*.js"
+                    targetFiles: "$(Pipeline.Workspace)/dist/**/index*.js"
                     encoding: "auto"
                     writeBOM: true
                     verbosity: "detailed"
@@ -233,7 +233,7 @@ stages:
         displayName: 'Deploy WebApp to Lab'
         environment: 'Lab'
         variables:
-          - group: Env-Lab
+          - group: Env-Lab-Vite
         strategy:
           runOnce:
             deploy:
@@ -241,7 +241,7 @@ stages:
                 - task: replacetokens@3
                   displayName: 'Replace Tokens'
                   inputs:
-                    targetFiles: "$(Pipeline.Workspace)/dist/**/main*.js"
+                    targetFiles: "$(Pipeline.Workspace)/dist/**/index*.js"
                     encoding: "auto"
                     writeBOM: true
                     verbosity: "detailed"
@@ -251,7 +251,7 @@ stages:
                     tokenSuffix: "}#"
                     useLegacyPattern: false
                     enableTelemetry: true
-  
+
                 - task: AzureCLI@2
                   displayName: 'Clean Storage Folder'
                   inputs:
@@ -260,7 +260,7 @@ stages:
                     scriptLocation: 'inlineScript'
                     inlineScript: |
                       az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage }}$(environment)
-  
+
                 - task: AzureFileCopy@3
                   displayName: 'Upload to Azure'
                   inputs:
@@ -269,7 +269,7 @@ stages:
                     destination: 'AzureBlob'
                     storage: '${{ parameters.storage }}$(environment)'
                     containerName: '$web'
-  
+
                 - task: AzureCLI@2
                   displayName: 'Purge CDN'
                   inputs:
@@ -290,7 +290,7 @@ stages:
         displayName: 'Deploy WebApp to mmmm'
         environment: 'mmmm'
         variables:
-          - group: Env-MMMM
+          - group: Env-MMMM-Vite
         strategy:
           runOnce:
             deploy:
@@ -298,7 +298,7 @@ stages:
                 - task: replacetokens@3
                   displayName: 'Replace Tokens'
                   inputs:
-                    targetFiles: "$(Pipeline.Workspace)/dist/**/main*.js"
+                    targetFiles: "$(Pipeline.Workspace)/dist/**/index*.js"
                     encoding: "auto"
                     writeBOM: true
                     verbosity: "detailed"
@@ -308,7 +308,7 @@ stages:
                     tokenSuffix: "}#"
                     useLegacyPattern: false
                     enableTelemetry: true
-  
+
                 - task: AzureCLI@2
                   displayName: 'Clean Storage Folder'
                   inputs:
@@ -317,7 +317,7 @@ stages:
                     scriptLocation: 'inlineScript'
                     inlineScript: |
                       az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage }}$(environment)
-  
+
                 - task: AzureFileCopy@3
                   displayName: 'Upload to Azure'
                   inputs:
@@ -326,7 +326,7 @@ stages:
                     destination: 'AzureBlob'
                     storage: '${{ parameters.storage }}$(environment)'
                     containerName: '$web'
-  
+
                 - task: AzureCLI@2
                   displayName: 'Purge CDN'
                   inputs:
@@ -349,7 +349,7 @@ stages:
         displayName: 'Deploy WebApp to Prod'
         environment: 'Prod-UI'
         variables:
-          - group: Env-Prod
+          - group: Env-Prod-Vite
         strategy:
           runOnce:
             deploy:
@@ -357,7 +357,7 @@ stages:
                 - task: replacetokens@3
                   displayName: 'Replace Tokens'
                   inputs:
-                    targetFiles: "$(Pipeline.Workspace)/dist/**/main*.js"
+                    targetFiles: "$(Pipeline.Workspace)/dist/**/index*.js"
                     encoding: "auto"
                     writeBOM: true
                     verbosity: "detailed"

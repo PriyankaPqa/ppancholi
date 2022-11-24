@@ -424,7 +424,8 @@ describe('EventForm.vue', () => {
         expect(wrapper.vm.newProvince).toEqual({ translation: {} });
       });
 
-      it('sets the correct value into localEvent if the input is a string that is  not in the provinces list and updates the values in newRegion',
+      it(
+        'sets the correct value into localEvent if the input is a string that is  not in the provinces list and updates the values in newRegion',
         () => {
           const otherProvinces = mockOtherProvinceData();
           wrapper = shallowMount(Component, {
@@ -456,7 +457,8 @@ describe('EventForm.vue', () => {
 
           expect(wrapper.vm.localEvent.location.provinceOther).toEqual({ translation: { en: 'New province EN' } });
           expect(wrapper.vm.newProvince).toEqual({ translation: { en: 'New province EN' } });
-        });
+        },
+      );
     });
 
     describe('otherProvincesSorted', () => {
@@ -535,7 +537,8 @@ describe('EventForm.vue', () => {
         expect(wrapper.vm.newRegion).toEqual({ translation: {} });
       });
 
-      it('sets the correct value into localEvent if the input is a string that is  not in the regions list and updates the values in newRegion',
+      it(
+        'sets the correct value into localEvent if the input is a string that is  not in the regions list and updates the values in newRegion',
         () => {
           const region1 = { region: { translation: { en: 'TEST EN', fr: 'TEST FR' } } };
           const region2 = { region: { translation: { en: 'TEST_B EN', fr: 'TEST_B FR' } } };
@@ -569,7 +572,8 @@ describe('EventForm.vue', () => {
 
           expect(wrapper.vm.localEvent.location.region).toEqual({ translation: { en: 'New region EN' } });
           expect(wrapper.vm.newRegion).toEqual({ translation: { en: 'New region EN' } });
-        });
+        },
+      );
     });
 
     describe('regionsSorted', () => {

@@ -89,16 +89,14 @@ describe('assessmentDetail', () => {
       it('fetches from correct store depending on isFormMode', async () => {
         await mountWrapper(storage.assessmentForm.actions.fetch().entity.eventId);
         await wrapper.vm.loadDetails();
-        expect(storage.assessmentForm.actions.fetch).toHaveBeenCalledWith(
-          { id: wrapper.vm.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-        );
+        expect(storage.assessmentForm.actions.fetch)
+          .toHaveBeenCalledWith({ id: wrapper.vm.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
         expect(wrapper.vm.assessmentTemplate).toEqual(new AssessmentFormEntity(storage.assessmentForm.actions.fetch().entity));
         jest.clearAllMocks();
         await mountWrapper();
         await wrapper.vm.loadDetails();
-        expect(storage.assessmentTemplate.actions.fetch).toHaveBeenCalledWith(
-          { id: wrapper.vm.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-        );
+        expect(storage.assessmentTemplate.actions.fetch)
+          .toHaveBeenCalledWith({ id: wrapper.vm.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
         expect(wrapper.vm.assessmentTemplate).toEqual(new AssessmentTemplateEntity(storage.assessmentTemplate.actions.fetch().entity));
       });
 

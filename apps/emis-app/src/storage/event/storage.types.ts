@@ -26,9 +26,9 @@ export interface IActions extends IBaseActions<IEventEntity, IEventMetadata, uui
   updateEventSection({
     eventId, payload, section, action,
   }:
-    {eventId: uuid, payload: IEventCallCentre | IEventAgreement | IEventGenericLocation, section: EEventSummarySections, action: string})
+    { eventId: uuid, payload: IEventCallCentre | IEventAgreement | IEventGenericLocation, section: EEventSummarySections, action: string })
     : Promise<IEventEntity>;
-  deleteAgreement({ eventId, agreementId }:{eventId: uuid, agreementId: uuid}): Promise<IEventEntity>,
+  deleteAgreement({ eventId, agreementId }:{ eventId: uuid, agreementId: uuid }): Promise<IEventEntity>,
   toggleSelfRegistration(payload: { id: uuid, selfRegistrationEnabled: boolean }): Promise<IEventEntity>,
   setEventStatus(payload: { event: IEventEntity, status: EEventStatus, reason: string }): Promise<IEventEntity>,
   createEvent(event: IEventEntity): Promise<IEventEntity>,

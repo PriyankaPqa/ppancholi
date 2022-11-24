@@ -2,18 +2,18 @@ import { RcDialog } from '@libs/component-lib/src/components';
 import { i18n } from '@/ui/plugins/i18n';
 import helpers from '@libs/entities-lib/helpers';
 import { EOptionItemStatus } from '@libs/shared-lib/types';
-import { mockStorage } from '../../store/storage/storage.mock';
-import { mockEvent } from '../../../../entities-lib/src/registration-event';
-import AdditionalMemberForm from './AdditionalMemberForm.vue';
+import { mockEvent } from '@libs/entities-lib/src/registration-event';
 import {
   ECurrentAddressTypes,
   mockCampGround,
-} from '../../../../entities-lib/src/value-objects/current-address';
-import { mockAdditionalMember } from '../../../../entities-lib/src/value-objects/member';
+} from '@libs/entities-lib/src/value-objects/current-address';
+import { mockAdditionalMember } from '@libs/entities-lib/value-objects/member';
+import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
+import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/household-create';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AddEditAdditionalMembers.vue';
-import { mockIdentitySet } from '../../../../entities-lib/src/value-objects/identity-set';
-import { mockAddress, mockHouseholdCreate } from '../../../../entities-lib/src/household-create';
+import AdditionalMemberForm from './AdditionalMemberForm.vue';
+import { mockStorage } from '../../store/storage/storage.mock';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

@@ -32,7 +32,7 @@
           </v-col>
         </v-row>
 
-        <v-row no-gutters :class="[isPreprocessed ? 'green-background': '', 'row-data']">
+        <v-row no-gutters :class="[isPreprocessed ? 'green-background' : '', 'row-data']">
           <v-col cols="12" md="5">
             <span class="rc-body14 fw-bold green-text" data-test="successesLabel=">
               <v-icon class="mr-2" small :color="colors.status.success">mdi-check-circle</v-icon>
@@ -67,8 +67,8 @@
           </v-col>
         </v-row>
 
-        <v-row no-gutters :class="[isPreprocessed ? 'red-background': '', 'row-data']">
-          <v-row no-gutters :class="[showErrors ? 'mt-4': '', 'full-width']">
+        <v-row no-gutters :class="[isPreprocessed ? 'red-background' : '', 'row-data']">
+          <v-row no-gutters :class="[showErrors ? 'mt-4' : '', 'full-width']">
             <v-col cols="12" md="5">
               <span class="rc-body14 fw-bold red-text">
                 <v-icon class="mr-2" small :color="colors.status.error">mdi-alert-circle</v-icon>
@@ -83,7 +83,7 @@
             <v-col md="2" class="d-flex justify-end">
               <template v-if="hasErrors">
                 <v-btn icon class="mr-2" small @click="showErrors = !showErrors">
-                  <v-icon>{{ showErrors ? 'mdi-chevron-up': 'mdi-chevron-down' }}</v-icon>
+                  <v-icon>{{ showErrors ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                 </v-btn>
 
                 <v-divider vertical class="mr-5" />
@@ -104,8 +104,8 @@
           <div v-if="showErrors" class="full-width">
             <v-row v-for="(item, index) in massAction.metadata.lastRun.errors" :key="index" no-gutters>
               <v-col cols="12" md="5" class="pl-7 mb-2 pr-12">
-                <span class="rc-body14">{{ $te(`errors.${item.error}-mass-action`) ?
-                  $t(`errors.${item.error}-mass-action`)
+                <span class="rc-body14">{{ $te(`errors.${item.error}-mass-action`)
+                  ? $t(`errors.${item.error}-mass-action`)
                   : $t(`errors.${item.error}`) }}</span>
               </v-col>
               <v-col class="pl-n7">
@@ -264,7 +264,7 @@ export default Vue.extend({
   },
 
   methods: {
-    async update(payload: {name: string; description: string}) {
+    async update(payload: { name: string; description: string }) {
       this.editMode = false;
 
       const res = await this.$storage.massAction.actions.update(this.massAction.entity.id, payload);

@@ -101,7 +101,7 @@ import { IRootState } from './store.types';
 Vue.use(Vuex);
 
 const store: StoreOptions<IRootState> = {
-  strict: process.env.NODE_ENV !== 'production',
+  strict: process.env.VITE_APP_ENV !== 'production',
   state: {
     version: '1.0.0', // a simple property
   },
@@ -243,8 +243,7 @@ const store: StoreOptions<IRootState> = {
       SignalR,
     ).getModule(),
 
-    [vuexModule.UI_STATE]: new UIStateModule(
-    ).getModule(),
+    [vuexModule.UI_STATE]: new UIStateModule().getModule(),
 
     [vuexModule.ASSESSMENT_TEMPLATE_ENTITIES]: new AssessmentTemplateEntityModule(
       new AssessmentTemplatesService(httpClient),

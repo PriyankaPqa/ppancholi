@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable max-len, vue/max-len */
 
 import { RouteConfig } from 'vue-router';
 import { Trans } from '@/ui/plugins/translation';
@@ -12,123 +12,127 @@ import Routes from '../../constants/routes';
 import { SignalR } from '../plugins/signal-r/signalR';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
-const AssessmentTemplatesHome = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/home/AssessmentTemplatesHome.vue');
-const AssessmentTemplatesEdit = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/CreateEditAssessmentTemplate.vue');
-const AssessmentTemplateDetails = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/AssessmentTemplateDetails.vue');
-const AssessmentBuilder = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/AssessmentBuilder.vue');
-const AssessmentRunner = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessment-templates/details/AssessmentRunner.vue');
+const AssessmentTemplatesHome = () => import('@/ui/views/pages/assessment-templates/home/AssessmentTemplatesHome.vue');
+const AssessmentTemplatesEdit = () => import('@/ui/views/pages/assessment-templates/details/CreateEditAssessmentTemplate.vue');
+const AssessmentTemplateDetails = () => import('@/ui/views/pages/assessment-templates/details/AssessmentTemplateDetails.vue');
+const AssessmentBuilder = () => import('@/ui/views/pages/assessment-templates/details/AssessmentBuilder.vue');
+const AssessmentRunner = () => import('@/ui/views/pages/assessment-templates/details/AssessmentRunner.vue');
 
-const ApprovalsLayout = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/layout/ApprovalsLayout.vue');
-const ApprovalsTemplates = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/templates/ApprovalsTemplates.vue');
-const ApprovalRequestsHome = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/requests/ApprovalRequestsHome.vue');
-const ApprovalsTemplatesCreateEdit = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/create-edit/CreateEditApprovals.vue');
-const ApprovalsTableCreateEdit = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/create-edit/CreateEditApprovals.vue');
-const ApprovalTablesHome = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/tables/ApprovalTablesHome.vue');
-const ApprovalDetails = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/details/ApprovalDetails.vue');
+const ApprovalsLayout = () => import('@/ui/views/pages/approvals/layout/ApprovalsLayout.vue');
+const ApprovalsTemplates = () => import('@/ui/views/pages/approvals/templates/ApprovalsTemplates.vue');
+const ApprovalRequestsHome = () => import('@/ui/views/pages/approvals/requests/ApprovalRequestsHome.vue');
+const ApprovalsTemplatesCreateEdit = () => import('@/ui/views/pages/approvals/create-edit/CreateEditApprovals.vue');
+const ApprovalsTableCreateEdit = () => import('@/ui/views/pages/approvals/create-edit/CreateEditApprovals.vue');
+const ApprovalTablesHome = () => import('@/ui/views/pages/approvals/tables/ApprovalTablesHome.vue');
+const ApprovalDetails = () => import('@/ui/views/pages/approvals/details/ApprovalDetails.vue');
 
-const CaseFileLayout = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/layout/CaseFileLayout.vue');
-const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/home/CaseFileHome.vue');
-const CaseFileDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/CaseFileDetails.vue');
-const CaseFileActivity = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-activity/CaseFileActivity.vue');
-const CaseFileAssessments = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-assessment/CaseFileAssessment.vue');
-const CaseFileAssessmentDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-assessment/components/AssessmentDetails.vue');
-const FinancialAssistancePaymentsList = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/FinancialAssistancePaymentsList.vue');
-const CreateEditCaseFileFinancialAssistance = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistance.vue');
-const ViewPaymentLineDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/ViewPaymentLineDetails.vue');
-const CaseNote = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-note/CaseNote.vue');
-const CaseFileReferral = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/CaseFileReferral.vue');
-const CaseFileReferralDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/components/CaseFileReferralDetails.vue');
-const CreateEditCaseFileReferral = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/components/CreateEditReferral.vue');
-const CaseFileDocument = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-document/CaseFileDocument.vue');
-const CreateEditCaseFileDocument = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-document/components/CreateEditCaseFileDocument.vue');
-const CaseFileDocumentDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-document/components/CaseFileDocumentDetails.vue');
+const CaseFileLayout = () => import('@/ui/views/pages/case-files/layout/CaseFileLayout.vue');
+const HomeCaseFile = () => import('@/ui/views/pages/case-files/home/CaseFileHome.vue');
+const CaseFileDetails = () => import('@/ui/views/pages/case-files/details/CaseFileDetails.vue');
+const CaseFileActivity = () => import('@/ui/views/pages/case-files/details/case-file-activity/CaseFileActivity.vue');
+const CaseNote = () => import('@/ui/views/pages/case-files/details/case-file-note/CaseNote.vue');
 
-const EventsLayout = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/layout/EventsLayout.vue');
-const HomeEvents = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/home/EventsHome.vue');
-const CreateEditEvent = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/create-edit/CreateEditEvent.vue');
-const EventDetails = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/details/EventDetails.vue');
-const EventSummary = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/details/EventSummary.vue');
-const ProgramsHome = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/programs/home/ProgramsHome.vue');
-const CreateEditProgram = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/programs/create-edit/CreateEditProgram.vue');
-const ProgramDetails = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/programs/details/ProgramDetails.vue');
+const CaseFileAssessments = () => import('@/ui/views/pages/case-files/details/case-file-assessment/CaseFileAssessment.vue');
+const CaseFileAssessmentDetails = () => import('@/ui/views/pages/case-files/details/case-file-assessment/components/AssessmentDetails.vue');
 
-const MainLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/components/layout/MainLayout.vue');
-const HomeLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/pages/home/layout/HomeLayout.vue');
+const FinancialAssistancePaymentsList = () => import('@/ui/views/pages/case-files/details/case-file-financial-assistance/FinancialAssistancePaymentsList.vue');
+const CreateEditCaseFileFinancialAssistance = () => import('@/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistance.vue');
+const ViewPaymentLineDetails = () => import('@/ui/views/pages/case-files/details/case-file-financial-assistance/components/ViewPaymentLineDetails.vue');
 
-const HouseholdProfile = () => import(/* webpackChunkName: "household" */ '@/ui/views/pages/household/HouseholdProfile.vue');
-const SplitHousehold = () => import(/* webpackChunkName: "household" */ '@/ui/views/pages/household/split/SplitHousehold.vue');
-const MoveHouseholdMembers = () => import(/* webpackChunkName: "household" */ '@/ui/views/pages/household/move/MoveHouseholdMembers.vue');
-const MainHouseholdSearch = () => import(/* webpackChunkName: "household" */ '@/ui/views/pages/household/search/MainHouseholdSearch.vue');
+const CaseFileReferral = () => import('@/ui/views/pages/case-files/details/case-file-referral/CaseFileReferral.vue');
+const CaseFileReferralDetails = () => import('@/ui/views/pages/case-files/details/case-file-referral/components/CaseFileReferralDetails.vue');
+const CreateEditCaseFileReferral = () => import('@/ui/views/pages/case-files/details/case-file-referral/components/CreateEditReferral.vue');
 
-const FinancialAssistanceLayout = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/layout/FinancialAssistanceLayout.vue');
-const FinancialAssistanceHome = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/home/FinancialAssistanceHome.vue');
-const EventFinancialAssistanceHome = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/events/details/components/EventFinancialAssistanceHome.vue');
-const CreateEditFinancialAssistance = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/create-edit/CreateEditFinancialAssistance.vue');
-const FinancialAssistanceDetails = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/FinancialAssistanceDetails.vue');
+const CaseFileDocument = () => import('@/ui/views/pages/case-files/details/case-file-document/CaseFileDocument.vue');
+const CreateEditCaseFileDocument = () => import('@/ui/views/pages/case-files/details/case-file-document/components/CreateEditCaseFileDocument.vue');
+const CaseFileDocumentDetails = () => import('@/ui/views/pages/case-files/details/case-file-document/components/CaseFileDocumentDetails.vue');
 
-const MassActionsLayout = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/layout/MassActionsLayout.vue');
-const MassActionsHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/home/MassActionsHome.vue');
+const EventsLayout = () => import('@/ui/views/pages/events/layout/EventsLayout.vue');
+const HomeEvents = () => import('@/ui/views/pages/events/home/EventsHome.vue');
+const CreateEditEvent = () => import('@/ui/views/pages/events/create-edit/CreateEditEvent.vue');
+const EventDetails = () => import('@/ui/views/pages/events/details/EventDetails.vue');
+const EventSummary = () => import('@/ui/views/pages/events/details/EventSummary.vue');
+const ProgramsHome = () => import('@/ui/views/pages/programs/home/ProgramsHome.vue');
+const CreateEditProgram = () => import('@/ui/views/pages/programs/create-edit/CreateEditProgram.vue');
+const ProgramDetails = () => import('@/ui/views/pages/programs/details/ProgramDetails.vue');
 
-const MassActionsFinancialAssistanceHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceHome.vue');
-const FinancialAssistanceCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCreate.vue');
-const MassActionsFinancialAssistanceDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceDetails.vue');
+const MainLayout = () => import('@/ui/views/components/layout/MainLayout.vue');
+const HomeLayout = () => import('@/ui/views/pages/home/layout/HomeLayout.vue');
 
-const MassActionsImportValidationStatusHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusHome.vue');
-const MassActionsImportValidationStatusCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusCreate.vue');
-const MassActionsImportValidationStatusDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusDetails.vue');
+const HouseholdProfile = () => import('@/ui/views/pages/household/HouseholdProfile.vue');
+const SplitHousehold = () => import('@/ui/views/pages/household/split/SplitHousehold.vue');
+const MoveHouseholdMembers = () => import('@/ui/views/pages/household/move/MoveHouseholdMembers.vue');
+const MainHouseholdSearch = () => import('@/ui/views/pages/household/search/MainHouseholdSearch.vue');
 
-const MassActionsImportPaymentStatusHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusHome.vue');
-const MassActionsImportPaymentStatusCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusCreate.vue');
-const MassActionsImportPaymentStatusDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusDetails.vue');
+const FinancialAssistanceLayout = () => import('@/ui/views/pages/financial-assistance/layout/FinancialAssistanceLayout.vue');
+const FinancialAssistanceHome = () => import('@/ui/views/pages/financial-assistance/home/FinancialAssistanceHome.vue');
+const EventFinancialAssistanceHome = () => import('@/ui/views/pages/events/details/components/EventFinancialAssistanceHome.vue');
+const CreateEditFinancialAssistance = () => import('@/ui/views/pages/financial-assistance/create-edit/CreateEditFinancialAssistance.vue');
+const FinancialAssistanceDetails = () => import('@/ui/views/pages/financial-assistance/FinancialAssistanceDetails.vue');
 
-const MassActionsImportUsersHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-users/ImportUsersHome.vue');
-const MassActionsImportUsersCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-users/ImportUsersCreate.vue');
-const MassActionsImportUsersDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-users/ImportUsersDetails.vue');
+const MassActionsLayout = () => import('@/ui/views/pages/mass-actions/layout/MassActionsLayout.vue');
+const MassActionsHome = () => import('@/ui/views/pages/mass-actions/home/MassActionsHome.vue');
 
-const MassActionsFundingRequestHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestHome.vue');
-const MassActionsFundingRequestCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestCreate.vue');
-const MassActionsFundingRequestDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestDetails.vue');
+const MassActionsFinancialAssistanceHome = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceHome.vue');
+const FinancialAssistanceCreate = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCreate.vue');
+const MassActionsFinancialAssistanceDetails = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceDetails.vue');
 
-const MassActionsDataCorrectionHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/data-correction/DataCorrectionHome.vue');
-const MassActionsDataCorrectionCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/data-correction/DataCorrectionCreate.vue');
-const MassActionsDataCorrectionDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/data-correction/DataCorrectionDetails.vue');
+const MassActionsImportValidationStatusHome = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusHome.vue');
+const MassActionsImportValidationStatusCreate = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusCreate.vue');
+const MassActionsImportValidationStatusDetails = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusDetails.vue');
 
-const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
-const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/views/pages/login-error/LoginError.vue');
+const MassActionsImportPaymentStatusHome = () => import('@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusHome.vue');
+const MassActionsImportPaymentStatusCreate = () => import('@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusCreate.vue');
+const MassActionsImportPaymentStatusDetails = () => import('@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusDetails.vue');
 
-const RegistrationLayout = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/layout/RegistrationLayout.vue');
-const RegistrationHome = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/home/RegistrationHome.vue');
-const RegistrationIndividual = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/individual/RegistrationIndividual.vue');
-const ConfirmationPrint = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/confirmation/ConfirmationPrint.vue');
+const MassActionsImportUsersHome = () => import('@/ui/views/pages/mass-actions/import-users/ImportUsersHome.vue');
+const MassActionsImportUsersCreate = () => import('@/ui/views/pages/mass-actions/import-users/ImportUsersCreate.vue');
+const MassActionsImportUsersDetails = () => import('@/ui/views/pages/mass-actions/import-users/ImportUsersDetails.vue');
 
-const SystemManagementLayout = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/layout/SystemManagementLayout.vue');
-const SystemManagementHome = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/home/SystemManagementHome.vue');
-const SystemManagementLists = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/SystemManagementLists.vue');
-const CaseFileTags = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileTags.vue');
-const EventTypes = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/EventTypes.vue');
-const Genders = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/Genders.vue');
-const PreferredLanguages = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/PreferredLanguages.vue');
-const PrimarySpokenLanguages = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/PrimarySpokenLanguages.vue');
-const AgreementTypes = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/AgreementTypes.vue');
-const CaseFileInactiveReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileInactiveReasons.vue');
-const UserAccounts = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/user-accounts/home/UserAccounts.vue');
-const AccountSettings = () => import(/* webpackChunkName: "account-settings" */ '@/ui/views/pages/system-management/lists/user-accounts/account-settings/AccountSettings.vue');
-const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/Roles.vue');
-const Branding = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/branding/Branding.vue');
-const TenantSettings = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/tenantSettings/TenantSettings.vue');
-const FeaturesComponent = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/features/Features.vue');
-const CaseNoteCategories = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseNoteCategories.vue');
-const CaseFileCloseReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileCloseReasons.vue');
-const ReferralOutcomeStatuses = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ReferralOutcomeStatuses.vue');
-const ReferralTypes = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ReferralTypes.vue');
-const FinancialAssistanceItems = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/FinancialAssistance.vue');
-const ScreeningId = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ScreeningId.vue');
-const DocumentCategories = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/DocumentCategories.vue');
+const MassActionsFundingRequestHome = () => import('@/ui/views/pages/mass-actions/funding-request/FundingRequestHome.vue');
+const MassActionsFundingRequestCreate = () => import('@/ui/views/pages/mass-actions/funding-request/FundingRequestCreate.vue');
+const MassActionsFundingRequestDetails = () => import('@/ui/views/pages/mass-actions/funding-request/FundingRequestDetails.vue');
 
-const TeamsLayout = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/layout/TeamsLayout.vue');
-const TeamsHome = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/home/TeamsHome.vue');
-const CreateEditTeam = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/create-edit/CreateEditTeam.vue');
-const TeamDetails = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/details/TeamDetails.vue');
+const MassActionsDataCorrectionHome = () => import('@/ui/views/pages/mass-actions/data-correction/DataCorrectionHome.vue');
+const MassActionsDataCorrectionCreate = () => import('@/ui/views/pages/mass-actions/data-correction/DataCorrectionCreate.vue');
+const MassActionsDataCorrectionDetails = () => import('@/ui/views/pages/mass-actions/data-correction/DataCorrectionDetails.vue');
+
+const PageNotFound = () => import('@/ui/views/pages/page-not-found/PageNotFound.vue');
+const LoginError = () => import('@/ui/views/pages/login-error/LoginError.vue');
+
+const RegistrationLayout = () => import('@/ui/views/pages/registration/layout/RegistrationLayout.vue');
+const RegistrationHome = () => import('@/ui/views/pages/registration/home/RegistrationHome.vue');
+const RegistrationIndividual = () => import('@/ui/views/pages/registration/individual/RegistrationIndividual.vue');
+const ConfirmationPrint = () => import('@/ui/views/pages/registration/confirmation/ConfirmationPrint.vue');
+
+const SystemManagementLayout = () => import('@/ui/views/pages/system-management/layout/SystemManagementLayout.vue');
+const SystemManagementHome = () => import('@/ui/views/pages/system-management/home/SystemManagementHome.vue');
+const SystemManagementLists = () => import('@/ui/views/pages/system-management/lists/SystemManagementLists.vue');
+const CaseFileTags = () => import('@/ui/views/pages/system-management/lists/pages/CaseFileTags.vue');
+const EventTypes = () => import('@/ui/views/pages/system-management/lists/pages/EventTypes.vue');
+const Genders = () => import('@/ui/views/pages/system-management/lists/pages/Genders.vue');
+const PreferredLanguages = () => import('@/ui/views/pages/system-management/lists/pages/PreferredLanguages.vue');
+const PrimarySpokenLanguages = () => import('@/ui/views/pages/system-management/lists/pages/PrimarySpokenLanguages.vue');
+const AgreementTypes = () => import('@/ui/views/pages/system-management/lists/pages/AgreementTypes.vue');
+const CaseFileInactiveReasons = () => import('@/ui/views/pages/system-management/lists/pages/CaseFileInactiveReasons.vue');
+const UserAccounts = () => import('@/ui/views/pages/system-management/lists/user-accounts/home/UserAccounts.vue');
+const AccountSettings = () => import('@/ui/views/pages/system-management/lists/user-accounts/account-settings/AccountSettings.vue');
+const Roles = () => import('@/ui/views/pages/system-management/lists/Roles.vue');
+const Branding = () => import('@/ui/views/pages/system-management/lists/branding/Branding.vue');
+const TenantSettings = () => import('@/ui/views/pages/system-management/lists/tenantSettings/TenantSettings.vue');
+const FeaturesComponent = () => import('@/ui/views/pages/system-management/lists/features/Features.vue');
+const CaseNoteCategories = () => import('@/ui/views/pages/system-management/lists/pages/CaseNoteCategories.vue');
+const CaseFileCloseReasons = () => import('@/ui/views/pages/system-management/lists/pages/CaseFileCloseReasons.vue');
+const ReferralOutcomeStatuses = () => import('@/ui/views/pages/system-management/lists/pages/ReferralOutcomeStatuses.vue');
+const ReferralTypes = () => import('@/ui/views/pages/system-management/lists/pages/ReferralTypes.vue');
+const FinancialAssistanceItems = () => import('@/ui/views/pages/system-management/lists/pages/FinancialAssistance.vue');
+const ScreeningId = () => import('@/ui/views/pages/system-management/lists/pages/ScreeningId.vue');
+const DocumentCategories = () => import('@/ui/views/pages/system-management/lists/pages/DocumentCategories.vue');
+
+const TeamsLayout = () => import('@/ui/views/pages/teams/layout/TeamsLayout.vue');
+const TeamsHome = () => import('@/ui/views/pages/teams/home/TeamsHome.vue');
+const CreateEditTeam = () => import('@/ui/views/pages/teams/create-edit/CreateEditTeam.vue');
+const TeamDetails = () => import('@/ui/views/pages/teams/details/TeamDetails.vue');
 
 // NOTE: Be aware of the importance of routes order. Details pages have the route pattern 'entityName/:entityId'
 // and create pages have the route pattern 'entityName/add'. Therefore, the create pages for an entity need to place before the details pages,

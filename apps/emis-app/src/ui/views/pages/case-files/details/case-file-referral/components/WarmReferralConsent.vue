@@ -22,7 +22,7 @@
           :rules="rules.consent"
           data-test="checkbox-consent">
           <template #label>
-            <span :class="{'rc-body14': true, 'red-text': failed}"> {{ $t('referral.consent') }}</span>
+            <span :class="{ 'rc-body14': true, 'red-text': failed }"> {{ $t('referral.consent') }}</span>
           </template>
         </v-checkbox-with-validation>
         <div v-if="localConsentInfo" class="rc-body12 grey--text pl-8 mt-n4">

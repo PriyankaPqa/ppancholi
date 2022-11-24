@@ -22,24 +22,23 @@ export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<ICaseNoteEntity>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
-    caseNoteCategories: []as IOptionItem[],
+    caseNoteCategories: [] as IOptionItem[],
     isSavingCaseNote: false,
     isLoadingCaseNotes: false,
     caseNoteCategoriesFetched: false,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
 
-    caseNoteCategories: (state: ICaseNoteEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(
-      state.caseNoteCategories, filterOutInactive, actualValue,
-    ),
+    // eslint-disable-next-line max-len,vue/max-len
+    caseNoteCategories: (state: ICaseNoteEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.caseNoteCategories, filterOutInactive, actualValue),
 
-  }
+  };
 
   public mutations = {
     ...this.baseMutations,
@@ -59,7 +58,7 @@ export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
     setIsLoadingCaseNotes(state: ICaseNoteEntityState, payload: boolean) {
       state.isLoadingCaseNotes = payload;
     },
-  }
+  };
 
   public actions = {
     ...this.baseActions,
@@ -114,5 +113,5 @@ export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
       return result;
     },
 
-  }
+  };
 }

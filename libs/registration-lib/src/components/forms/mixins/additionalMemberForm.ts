@@ -21,7 +21,7 @@ export default Vue.extend({
     return {
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
-        : process.env.VUE_APP_GOOGLE_API_KEY,
+        : process.env.VITE_GOOGLE_API_KEY,
 
       additionalMembers: [],
       showAdditionalMemberDelete: false,
@@ -131,9 +131,7 @@ export default Vue.extend({
         this.additionalMembers[index].inlineEdit = false;
         this.additionalMembers[index].sameAddress = this.additionalMembers[index].backupSameAddress;
         this.$storage.registration.mutations.decreaseInlineEditCounter();
-        this.$storage.registration.mutations.editAdditionalMember(
-          this.additionalMembers[index].backup, index, this.additionalMembers[index].backupSameAddress,
-        );
+        this.$storage.registration.mutations.editAdditionalMember(this.additionalMembers[index].backup, index, this.additionalMembers[index].backupSameAddress);
       }
     },
 
@@ -142,9 +140,7 @@ export default Vue.extend({
       const isValid = await ((this.$refs[`additionalMember_${index}`] as any)[0]).validate();
       if (isValid) {
         // Not watcher on this form to mutate so we need to do it here
-        this.$storage.registration.mutations.editAdditionalMember(
-          this.additionalMembersCopy[index], index, this.additionalMembers[index].sameAddress,
-        );
+        this.$storage.registration.mutations.editAdditionalMember(this.additionalMembersCopy[index], index, this.additionalMembers[index].sameAddress);
 
         if (this.associationMode) {
           await this.updateMember(index);
@@ -160,8 +156,10 @@ export default Vue.extend({
       this.additionalMembers[index].loading = true;
       const member = this.householdCreate.additionalMembers[index];
 
-      const resIdentity = await this.$services.households.updatePersonIdentity(member.id,
-        { identitySet: member.identitySet, contactInformation: member.contactInformation });
+      const resIdentity = await this.$services.households.updatePersonIdentity(
+member.id,
+        { identitySet: member.identitySet, contactInformation: member.contactInformation },
+);
       if (!resIdentity) {
         this.$storage.registration.mutations.editAdditionalMember(this.additionalMembers[index].backup, index, !this.additionalMembers[index].sameAddress);
         this.additionalMembers[index].loading = false;

@@ -43,8 +43,8 @@
       <template #[`item.${customColumns.previousValue}`]="{ item }">
         <div class="py-2 full-height d-flex flex-column" data-test="household_history_previous-value">
           <div v-for="(data, index) in item.templatePreviousData" :key="index + data.label" class="pre-line">
-            {{ data.label === "—" || data.label === "\n"? data.label : $t(data.label) }}
-            {{ data.label && data.value? ":" : "" }}
+            {{ data.label === "—" || data.label === "\n" ? data.label : $t(data.label) }}
+            {{ data.label && data.value ? ":" : "" }}
             {{ data.value ? data.value : "" }}
           </div>
         </div>
@@ -53,8 +53,8 @@
       <template #[`item.${customColumns.newValue}`]="{ item }">
         <div class="py-2 full-height  d-flex flex-column" data-test="household_history_new-value">
           <div v-for="(data, index) in item.templateData" :key="index + data.label" class="pre-line">
-            {{ data.label === "—" || data.label === "\n"? data.label : $t(data.label) }}
-            {{ data.label && data.value? ":" : "" }}
+            {{ data.label === "—" || data.label === "\n" ? data.label : $t(data.label) }}
+            {{ data.label && data.value ? ":" : "" }}
             {{ data.value ? data.value : "" }}
           </div>
         </div>

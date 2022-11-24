@@ -25,14 +25,14 @@ export enum CaseFileTriage {
 export enum IdentityAuthenticationStatus {
   NotVerified = 0,
   Passed = 1,
-  Failed = 2
+  Failed = 2,
 }
 
 export enum IdentityAuthenticationMethod {
   NotApplicable = 0,
   Exceptional = 1,
   InPerson = 2,
-  System = 3
+  System = 3,
 }
 
 export enum CaseFileActivityType {
@@ -58,7 +58,7 @@ export enum CaseFileActivityType {
   CaseNoteUpdated = 20,
   Registration = 21,
   PaymentSubmitted = 22,
-  HouseholdEdited =23,
+  HouseholdEdited = 23,
   HouseholdSplit = 24,
   HouseholdMovedMembersOut = 25,
   HouseholdMovedMembersIn = 26,
@@ -75,7 +75,7 @@ export enum HouseholdCaseFileActivityType {
   MemberRemoved = 4,
   HomeAddressEdited = 5,
   TempAddressEdited = 6,
-  PrimaryAssigned = 7
+  PrimaryAssigned = 7,
 }
 
 export enum RegistrationType {
@@ -87,13 +87,13 @@ export enum ImpactValidationMethod {
   NotApplicable = 0,
   Manual = 1,
   Exception = 2,
-  Batch = 3
+  Batch = 3,
 }
 
 export enum ValidationOfImpactStatus {
   Undetermined = 0,
   Impacted = 1,
-  NotImpacted = 2
+  NotImpacted = 2,
 }
 
 /**
@@ -191,7 +191,7 @@ export interface ICaseFileMetadata extends IEntity {
   appliedProgramIds: uuid[]
 }
 
-export type ICaseFileCombined = IEntityCombined<ICaseFileEntity, ICaseFileMetadata> & { readonly?: boolean }
+export type ICaseFileCombined = IEntityCombined<ICaseFileEntity, ICaseFileMetadata> & { readonly?: boolean };
 
 export interface ICaseFileCount {
   inactiveCount: number;

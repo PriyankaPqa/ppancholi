@@ -2,7 +2,7 @@
   <v-menu offset-y>
     <template #activator="{ on }">
       <v-btn
-        :aria-label="$t('aria.header.language_select', {currentLanguage: currentLanguage })"
+        :aria-label="$t('aria.header.language_select', { currentLanguage: currentLanguage })"
         text
         data-test="appHeader__changeLanguage"
         v-on="on">
@@ -50,11 +50,6 @@ export default Vue.extend({
       const locales: Array<Record<string, unknown>> = [];
 
       Trans.supportedLanguages.forEach((language) => {
-        // // 'test' is not a valid language in production
-        // if (process.env.NODE_ENV === 'production' && language === 'test') {
-        //   return;
-        // }
-
         switch (language) {
           case 'fr':
             locales.push({

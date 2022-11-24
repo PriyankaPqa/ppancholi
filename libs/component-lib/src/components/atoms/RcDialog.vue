@@ -9,7 +9,7 @@
     @keydown.stop="persistentClose">
     <v-card
       class="dialog-card"
-      :class="{'content-only-scroll': contentOnlyScrolling}">
+      :class="{ 'content-only-scroll': contentOnlyScrolling }">
       <v-toolbar
         :height="toolbarHeight"
         color="primary darken-1"

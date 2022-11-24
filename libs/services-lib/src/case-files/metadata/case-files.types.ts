@@ -5,6 +5,6 @@ export interface ICaseFilesMetadataService extends IDomainBaseService<ICaseFileM
   getSummary(id: uuid): Promise<ICaseFileMetadata>;
 }
 
-export interface ICaseFilesMetadataServiceMock extends IDomainBaseServiceMock<ICaseFileMetadata>{
+export interface ICaseFilesMetadataServiceMock extends IDomainBaseServiceMock<ICaseFileMetadata> {
   getSummary: jest.Mock<ICaseFileMetadata>;
 }

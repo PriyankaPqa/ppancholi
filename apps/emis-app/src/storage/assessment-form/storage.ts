@@ -11,7 +11,7 @@ export class AssessmentFormStorage
 
   private getters = {
     ...this.baseGetters,
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -24,15 +24,15 @@ export class AssessmentFormStorage
     updateAssessmentStructure: (payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity> => this.store.dispatch(`${this.entityModuleName}/updateAssessmentStructure`, payload),
 
     fetchByProgramId: (programId: uuid): Promise<IAssessmentFormEntity[]> => this.store.dispatch(`${this.entityModuleName}/fetchByProgramId`, { programId }),
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

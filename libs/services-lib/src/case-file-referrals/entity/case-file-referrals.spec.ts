@@ -7,7 +7,7 @@ describe('>>> Case File Referral Service', () => {
   let service: CaseFileReferralsService;
 
   beforeEach(() => {
-    process.env.VUE_APP_API_BASE_URL = 'www.test.com';
+    process.env.VITE_API_BASE_URL = 'www.test.com';
     jest.clearAllMocks();
     http = mockHttp();
     service = new CaseFileReferralsService(http as never);
@@ -26,8 +26,10 @@ describe('>>> Case File Referral Service', () => {
       const entity = mockCaseFileReferralEntity();
       entity.caseFileId = 'myParent';
       await service.createReferral(entity);
-      expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/referrals',
-        service.cleanReferral(entity));
+      expect(http.post).toHaveBeenCalledWith(
+'www.test.com/case-file/case-files/myParent/referrals',
+        service.cleanReferral(entity),
+);
     });
   });
 
@@ -37,8 +39,10 @@ describe('>>> Case File Referral Service', () => {
       entity.id = 'myId';
       entity.caseFileId = 'myParent';
       await service.updateReferral(entity);
-      expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/referrals/myId/edit',
-        service.cleanReferral(entity));
+      expect(http.patch).toHaveBeenCalledWith(
+'www.test.com/case-file/case-files/myParent/referrals/myId/edit',
+        service.cleanReferral(entity),
+);
     });
   });
 

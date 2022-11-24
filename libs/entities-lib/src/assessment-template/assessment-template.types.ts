@@ -16,33 +16,33 @@ export interface IAssessmentFormMetadata extends IAssessmentBaseMetadata {
 
 export enum AssessmentFormType {
   AssessmentTemplate = 1,
-  AssessmentForm = 2
+  AssessmentForm = 2,
 }
 
 export enum AssessmentFrequencyType {
   OneTime = 1,
-  Multiple = 2
+  Multiple = 2,
 }
 
 export enum PublishStatus {
   Unpublished = 1,
-  Published = 2
+  Published = 2,
 }
 
 export enum CompletionStatus {
   Pending = 1,
   Partial = 2,
   Completed = 3,
-  Obsolete = 4
+  Obsolete = 4,
 }
 
 export enum AssociationType {
-  CaseFile = 1
+  CaseFile = 1,
 }
 
 export enum CompletedByType {
   Crc = 1,
-  Public = 2
+  Public = 2,
 }
 
 export interface IExternalToolState {
@@ -152,7 +152,7 @@ export interface IAssessmentResponseEntity extends IEntity {
 export interface IAssessmentResponseMetadata extends IEntity {
 }
 
-export type IAssessmentResponseCombined = IEntityCombined<IAssessmentResponseEntity, IAssessmentResponseMetadata>
-export type IAssessmentTemplateCombined = IEntityCombined<IAssessmentTemplateEntity, IAssessmentTemplateMetadata>
-export type IAssessmentFormCombined = IEntityCombined<IAssessmentFormEntity, IAssessmentFormMetadata>
-export type IAssessmentBaseCombined = IEntityCombined<IAssessmentBaseEntity, IAssessmentBaseMetadata>
+export type IAssessmentResponseCombined = IEntityCombined<IAssessmentResponseEntity, IAssessmentResponseMetadata>;
+export type IAssessmentTemplateCombined = IEntityCombined<IAssessmentTemplateEntity, IAssessmentTemplateMetadata>;
+export type IAssessmentFormCombined = IEntityCombined<IAssessmentFormEntity, IAssessmentFormMetadata>;
+export type IAssessmentBaseCombined = IEntityCombined<IAssessmentBaseEntity, IAssessmentBaseMetadata>;

@@ -205,7 +205,8 @@ describe('CaseFileStatus.vue', () => {
       });
 
       describe('onSubmitDialog', () => {
-        it('sets the rationale and reason property as the argument and sets showCaseFileStatusDialog to false and  showConfirmationDialog to be true',
+        it(
+          'sets the rationale and reason property as the argument and sets showCaseFileStatusDialog to false and  showConfirmationDialog to be true',
           () => {
             wrapper.vm.showCaseFileStatusDialog = true;
             wrapper.vm.showConfirmationDialog = false;
@@ -217,7 +218,8 @@ describe('CaseFileStatus.vue', () => {
             expect(wrapper.vm.showCaseFileStatusDialog).toBeFalsy();
             expect(wrapper.vm.rationale).toEqual(payload.rationale);
             expect(wrapper.vm.reason).toEqual(payload.reason);
-          });
+          },
+        );
       });
 
       describe('submitStatusChange', () => {

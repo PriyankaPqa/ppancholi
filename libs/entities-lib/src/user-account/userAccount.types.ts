@@ -83,4 +83,4 @@ export interface IUserAccountMetadata extends IEntity {
   assignedCaseFileCountByTeam: IAssignedCaseFileCountByTeam[]
 }
 
-export type IUserAccountCombined = IEntityCombined<IUserAccountEntity, IUserAccountMetadata>
+export type IUserAccountCombined = IEntityCombined<IUserAccountEntity, IUserAccountMetadata>;

@@ -38,8 +38,10 @@ export class PublicService implements IPublicService {
   async getTenantByEmisDomain(domain: string): Promise<string> {
     let tenantId = null;
     try {
-      tenantId = await this.http.get<string>(`/system-management/tenants/id-from-domain?domain=${domain}`,
-        { globalHandler: false, noErrorLogging: true, ignoreJwt: true });
+      tenantId = await this.http.get<string>(
+`/system-management/tenants/id-from-domain?domain=${domain}`,
+        { globalHandler: false, noErrorLogging: true, ignoreJwt: true },
+);
     } catch (e) {
       // allow to fail silently - probably dev...
       applicationInsights.trackTrace('PublicService.getTenantByEmisDomain', { error: e }, 'public', 'getTenantByEmisDomain');
@@ -50,8 +52,10 @@ export class PublicService implements IPublicService {
   async getTenantByRegistrationDomain(domain: string): Promise<string> {
     let tenantId = null;
     try {
-      tenantId = await this.http.get<string>(`/system-management/tenants/id-from-registration-domain?registrationDomain=${domain}`,
-        { globalHandler: false, noErrorLogging: true, ignoreJwt: true });
+      tenantId = await this.http.get<string>(
+`/system-management/tenants/id-from-registration-domain?registrationDomain=${domain}`,
+        { globalHandler: false, noErrorLogging: true, ignoreJwt: true },
+);
     } catch (e) {
       // allow to fail silently - probably dev...
       applicationInsights.trackTrace('PublicService.getTenantByRegistrationDomain', { error: e }, 'public', 'getTenantByRegistrationDomain');

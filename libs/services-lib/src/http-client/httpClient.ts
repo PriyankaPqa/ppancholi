@@ -26,7 +26,7 @@ export class HttpClient implements IHttpClient {
     authentication: false, accessTokenKey: '', redirect403Url: '', timerBeforeRedirection: 3000, useErrorReport: false,
   }) {
     this.axios = axios.create({
-      baseURL: `${process.env.VUE_APP_API_BASE_URL}/`,
+      baseURL: `${process.env.VITE_API_BASE_URL}/`,
       withCredentials: true,
       headers: {
         Accept: 'application/json',

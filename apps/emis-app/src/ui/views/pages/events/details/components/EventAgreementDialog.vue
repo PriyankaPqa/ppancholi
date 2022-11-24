@@ -4,7 +4,7 @@
       :title="title"
       :show="true"
       :cancel-action-label="$t('common.buttons.cancel')"
-      :submit-action-label="isEditMode? $t('common.save'): $t('common.add')"
+      :submit-action-label="isEditMode ? $t('common.save') : $t('common.add')"
       :content-only-scrolling="true"
       :persistent="true"
       :max-width="750"

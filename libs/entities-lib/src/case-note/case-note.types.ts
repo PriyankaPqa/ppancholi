@@ -34,4 +34,4 @@ export interface ICaseNoteMetadata extends IEntity {
   caseNoteCategoryName: IMultilingual,
 }
 
-export type ICaseNoteCombined = IEntityCombined<ICaseNoteEntity, ICaseNoteMetadata>
+export type ICaseNoteCombined = IEntityCombined<ICaseNoteEntity, ICaseNoteMetadata>;

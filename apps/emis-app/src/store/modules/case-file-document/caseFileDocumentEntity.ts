@@ -25,13 +25,13 @@ export class CaseFileDocumentEntityModule extends BaseModule <ICaseFileDocumentE
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<ICaseFileDocumentEntity>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
-    categories: []as IOptionItem[],
+    categories: [] as IOptionItem[],
     categoriesFetched: false,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
@@ -41,7 +41,7 @@ export class CaseFileDocumentEntityModule extends BaseModule <ICaseFileDocumentE
 
     // eslint-disable-next-line
     getByCaseFile: (state: ICaseFileDocumentEntityState) => (caseFileId: uuid) => _cloneDeep(state.items.filter((x) => x.caseFileId === caseFileId && x.status === Status.Active)),
-  }
+  };
 
   public mutations = {
     ...this.baseMutations,
@@ -53,7 +53,7 @@ export class CaseFileDocumentEntityModule extends BaseModule <ICaseFileDocumentE
     setCategoriesFetched(state: ICaseFileDocumentEntityState, payload: boolean) {
       state.categoriesFetched = payload;
     },
-  }
+  };
 
   public actions = {
     ...this.baseActions,
@@ -67,8 +67,10 @@ export class CaseFileDocumentEntityModule extends BaseModule <ICaseFileDocumentE
       return context.getters.categories();
     },
 
-    updateDocument: async (context: ActionContext<ICaseFileDocumentEntityState, ICaseFileDocumentEntityState>,
-      payload: ICaseFileDocumentEntity): Promise<ICaseFileDocumentEntity> => {
+    updateDocument: async (
+      context: ActionContext<ICaseFileDocumentEntityState, ICaseFileDocumentEntityState>,
+      payload: ICaseFileDocumentEntity,
+    ): Promise<ICaseFileDocumentEntity> => {
       const result = await this.service.updateDocument(payload);
       if (result) {
         context.commit('set', result);
@@ -76,11 +78,13 @@ export class CaseFileDocumentEntityModule extends BaseModule <ICaseFileDocumentE
       return result;
     },
 
-    downloadDocumentAsUrl: async (context: ActionContext<ICaseFileDocumentEntityState, ICaseFileDocumentEntityState>,
-      payload: { item: ICaseFileDocumentEntity, saveDownloadedFile: boolean }): Promise<string> => {
+    downloadDocumentAsUrl: async (
+      context: ActionContext<ICaseFileDocumentEntityState, ICaseFileDocumentEntityState>,
+      payload: { item: ICaseFileDocumentEntity, saveDownloadedFile: boolean },
+    ): Promise<string> => {
       const result = await this.service.downloadDocumentAsUrl(payload.item, payload.saveDownloadedFile);
       return result;
     },
 
-  }
+  };
 }

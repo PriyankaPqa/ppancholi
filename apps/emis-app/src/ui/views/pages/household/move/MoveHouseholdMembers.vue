@@ -191,7 +191,7 @@ export default mixins(searchHousehold, household).extend({
       this.$storage.household.mutations.setSearchResultsShown(false);
     },
 
-    async onSelect({ household, shelterLocations }:{household: IMovingHouseholdCreate, shelterLocations:IEventGenericLocation[]}) {
+    async onSelect({ household, shelterLocations }:{ household: IMovingHouseholdCreate, shelterLocations:IEventGenericLocation[] }) {
       this.submitError = false;
 
       const secondHousehold = _cloneDeep(household) as IMovingHouseholdCreate;
@@ -215,7 +215,7 @@ export default mixins(searchHousehold, household).extend({
       this.firstHousehold.hasOutstandingPayments = hasOutstandingPayments;
     },
 
-    move({ member, direction }: {member: IMember, direction: string}) {
+    move({ member, direction }: { member: IMember, direction: string }) {
       if (direction === 'left') {
         const { originHousehold, targetHousehold } = this.moveMember(member, this.secondHousehold, this.firstHousehold);
         this.firstHousehold = targetHousehold;

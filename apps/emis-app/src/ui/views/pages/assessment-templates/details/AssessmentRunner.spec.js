@@ -44,9 +44,8 @@ describe('AssessmentRunner', () => {
         expect(wrapper.vm.loadDetails).toHaveBeenCalled();
       });
       it('fetches assessmentResponse when id is passed', async () => {
-        expect(storage.assessmentResponse.actions.fetch).toHaveBeenCalledWith(
-          { id: wrapper.vm.assessmentResponseId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-        );
+        expect(storage.assessmentResponse.actions.fetch)
+          .toHaveBeenCalledWith({ id: wrapper.vm.assessmentResponseId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
       });
       it('sets survey object', () => {
         expect(wrapper.vm.survey).not.toBeNull();
@@ -58,8 +57,10 @@ describe('AssessmentRunner', () => {
 
         const hook = wrapper.vm.$options.mounted[wrapper.vm.$options.mounted.length - 1];
         await hook.call(wrapper.vm);
-        expect(wrapper.vm.surveyJsHelper.setColorScheme).toHaveBeenCalledWith('#surveyContainer',
-          storage.tenantSettings.getters.currentTenantSettings().branding.colours);
+        expect(wrapper.vm.surveyJsHelper.setColorScheme).toHaveBeenCalledWith(
+          '#surveyContainer',
+          storage.tenantSettings.getters.currentTenantSettings().branding.colours,
+        );
       });
     });
   });

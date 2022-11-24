@@ -73,7 +73,8 @@ describe('HouseholdProfileHistory', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should call  fetchHouseholdHistory action store, call handleMoveActivity with the result, and save the result into activityItems',
+      it(
+        'should call  fetchHouseholdHistory action store, call handleMoveActivity with the result, and save the result into activityItems',
         async () => {
           wrapper = shallowMount(Component, {
             localVue,
@@ -92,7 +93,8 @@ describe('HouseholdProfileHistory', () => {
           expect(wrapper.vm.handleMoveActivity).toHaveBeenCalledWith([householdActivity]);
           expect(wrapper.vm.activityItems.toString())
             .toEqual([new HouseholdActivity({ ...householdActivity, timestamp: '2021-11-16T16:20:03.7678072Z' })].toString());
-        });
+        },
+      );
     });
   });
 

@@ -1,4 +1,4 @@
-export interface IHouseholdSearchCriteria{
+export interface IHouseholdSearchCriteria {
   firstName?: string;
   lastName?: string;
   emailAddress?: string;

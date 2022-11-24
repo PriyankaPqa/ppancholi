@@ -28,11 +28,11 @@ export class BaseModule<T extends IEntity, IdParams> {
 
   protected baseState = {
     items: [] as Array<T>,
-    newlyCreatedIds: [] as Array<{id: uuid; createdOn: number}>,
+    newlyCreatedIds: [] as Array<{ id: uuid; createdOn: number }>,
     searchLoading: false,
     actionLoading: false,
     maxTimeInSecondsForNewlyCreatedIds: 60,
-  }
+  };
 
   protected baseGetters = {
     getAll: (state: IState<T>) => _cloneDeep(state.items),
@@ -44,10 +44,10 @@ export class BaseModule<T extends IEntity, IdParams> {
       const maxTime = (baseDate || new Date()).getTime() - state.maxTimeInSecondsForNewlyCreatedIds * 1000;
       return _cloneDeep(state.newlyCreatedIds.filter((i) => i.createdOn > maxTime));
     },
-  }
+  };
 
   protected baseActions = {
-    fetch: async (context: ActionContext<IState<T>, IState<T>>, { idParams, useGlobalHandler }: {idParams: IdParams; useGlobalHandler: boolean}): Promise<T> => {
+    fetch: async (context: ActionContext<IState<T>, IState<T>>, { idParams, useGlobalHandler }: { idParams: IdParams; useGlobalHandler: boolean }): Promise<T> => {
       const res = await this.service.get(idParams, useGlobalHandler);
       context.commit('set', res);
       return res;
@@ -77,12 +77,12 @@ export class BaseModule<T extends IEntity, IdParams> {
       return res;
     },
 
-    search: async (context: ActionContext<IState<T>, IState<T>>, { params, searchEndpoint }: {params: IAzureSearchParams; searchEndpoint?: string}):
+    search: async (context: ActionContext<IState<T>, IState<T>>, { params, searchEndpoint }: { params: IAzureSearchParams; searchEndpoint?: string }):
       Promise<IAzureCombinedSearchResult<T, unknown>> => {
       const res = await this.service.search(params, searchEndpoint);
       return res;
     },
-  }
+  };
 
   protected baseMutations = {
 
@@ -111,7 +111,7 @@ export class BaseModule<T extends IEntity, IdParams> {
     reset: (state: IState<T>) => {
       state.items = [];
     },
-  }
+  };
 
   public getModule = () => ({
     namespaced: true,
@@ -119,5 +119,5 @@ export class BaseModule<T extends IEntity, IdParams> {
     getters: this.baseGetters,
     actions: this.baseActions as unknown as ActionTree<IState<T>, IRootState>,
     mutations: this.baseMutations,
-  })
+  });
 }

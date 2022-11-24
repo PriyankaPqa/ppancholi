@@ -21,11 +21,11 @@ export class MassActionEntityModule extends BaseModule <IMassActionEntity, uuid>
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<IMassActionEntity>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
@@ -40,7 +40,7 @@ export class MassActionEntityModule extends BaseModule <IMassActionEntity, uuid>
 
     process: async (
       context: ActionContext<IMassActionEntityState, IMassActionEntityState>,
-      { id, runType }: {id: string; runType: MassActionRunType},
+      { id, runType }: { id: string; runType: MassActionRunType },
     ): Promise<IMassActionEntity> => {
       const data = await this.service.process(id, runType);
 
@@ -53,7 +53,7 @@ export class MassActionEntityModule extends BaseModule <IMassActionEntity, uuid>
 
     update: async (
       context: ActionContext<IMassActionEntityState, IMassActionEntityState>,
-      { id, payload }: {id: string; payload: { name: string; description: string }},
+      { id, payload }: { id: string; payload: { name: string; description: string } },
     ): Promise<IMassActionEntity> => {
       const data = await this.service.update(id, payload);
 
@@ -66,7 +66,7 @@ export class MassActionEntityModule extends BaseModule <IMassActionEntity, uuid>
 
     create: async (
       context: ActionContext<IMassActionEntityState, IMassActionEntityState>,
-      { massActionType, payload }: {massActionType: MassActionType; payload: unknown},
+      { massActionType, payload }: { massActionType: MassActionType; payload: unknown },
     ): Promise<IMassActionEntity> => {
       let data = null;
 

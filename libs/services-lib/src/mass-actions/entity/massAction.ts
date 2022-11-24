@@ -22,11 +22,11 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     return this.http.post(`${this.baseUrl}/${id}/run`, { runType });
   }
 
-  async update(id: uuid, payload: {name: string; description: string}): Promise<IMassActionEntity> {
+  async update(id: uuid, payload: { name: string; description: string }): Promise<IMassActionEntity> {
     return this.http.patch(`${this.baseUrl}/${id}`, payload);
   }
 
-  async getInvalidFile({ massActionId, runId, language }: {massActionId: uuid; runId: uuid; language: string}): Promise<IRestResponse<string>> {
+  async getInvalidFile({ massActionId, runId, language }: { massActionId: uuid; runId: uuid; language: string }): Promise<IRestResponse<string>> {
     return this.http.getFullResponse(`${this.baseUrl}/${massActionId}/invalid-file`, {
       params: {
         runId,
@@ -52,7 +52,7 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     return this.http.postFullResponse(`${this.baseUrl}/${urlSuffix}`, payload, { timeout: 600000 });
   }
 
-  async getValidFile({ massActionId, runId, language }: {massActionId: uuid; runId: uuid; language: string}): Promise<IRestResponse<string>> {
+  async getValidFile({ massActionId, runId, language }: { massActionId: uuid; runId: uuid; language: string }): Promise<IRestResponse<string>> {
     return this.http.getFullResponse(`${this.baseUrl}/${massActionId}/valid-file`, {
       params: {
         runId,

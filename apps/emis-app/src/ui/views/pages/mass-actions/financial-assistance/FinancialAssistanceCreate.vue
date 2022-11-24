@@ -83,7 +83,7 @@ export default Vue.extend({
     /**
      * Triggered when creating a mass action from a filtered list
      */
-    async onPost({ name, description }: {name: string; description: string}) {
+    async onPost({ name, description }: { name: string; description: string }) {
       const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
 
       const filter = buildQuery({ filter: azureSearchParams.filter }).replace('?$filter=', '');

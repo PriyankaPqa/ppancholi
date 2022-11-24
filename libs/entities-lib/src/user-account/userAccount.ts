@@ -39,8 +39,12 @@ export class UserAccountEntity extends BaseEntity {
         criteria: f.criteria.map((c: string) => JSON.parse(c)),
       }));
     } catch (e) {
-      applicationInsights.trackException(new Error('Could not parse filters'),
-        { originalError: e, filters }, 'userAccount', 'parseFilters');
+      applicationInsights.trackException(
+new Error('Could not parse filters'),
+        { originalError: e, filters },
+'userAccount',
+'parseFilters',
+);
       return [];
     }
   }

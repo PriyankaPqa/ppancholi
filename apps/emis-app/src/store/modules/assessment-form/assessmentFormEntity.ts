@@ -18,25 +18,27 @@ export class AssessmentFormEntityModule extends BaseModule <IAssessmentFormEntit
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<IAssessmentFormEntity>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
-  }
+  };
 
   public mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public actions = {
     ...this.baseActions,
 
-    create: async (context: ActionContext<IAssessmentFormEntityState, IAssessmentFormEntityState>,
-      payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity> => {
+    create: async (
+      context: ActionContext<IAssessmentFormEntityState, IAssessmentFormEntityState>,
+      payload: IAssessmentFormEntity,
+    ): Promise<IAssessmentFormEntity> => {
       const result = await this.service.create(payload);
       if (result) {
         context.commit('addNewlyCreatedId', result);
@@ -45,8 +47,10 @@ export class AssessmentFormEntityModule extends BaseModule <IAssessmentFormEntit
       return result;
     },
 
-    update: async (context: ActionContext<IAssessmentFormEntityState, IAssessmentFormEntityState>,
-      payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity> => {
+    update: async (
+      context: ActionContext<IAssessmentFormEntityState, IAssessmentFormEntityState>,
+      payload: IAssessmentFormEntity,
+    ): Promise<IAssessmentFormEntity> => {
       const result = await this.service.update(payload);
       if (result) {
         context.commit('set', result);
@@ -54,8 +58,10 @@ export class AssessmentFormEntityModule extends BaseModule <IAssessmentFormEntit
       return result;
     },
 
-    updateAssessmentStructure: async (context: ActionContext<IAssessmentFormEntityState, IAssessmentFormEntityState>,
-      payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity> => {
+    updateAssessmentStructure: async (
+      context: ActionContext<IAssessmentFormEntityState, IAssessmentFormEntityState>,
+      payload: IAssessmentFormEntity,
+    ): Promise<IAssessmentFormEntity> => {
       const result = await this.service.updateAssessmentStructure(payload);
       if (result) {
         context.commit('set', result);
@@ -63,11 +69,13 @@ export class AssessmentFormEntityModule extends BaseModule <IAssessmentFormEntit
       return result;
     },
 
-    fetchByProgramId: async (context: ActionContext<IAssessmentFormEntityState, IAssessmentFormEntityState>,
-      { programId }: { programId: uuid }): Promise<IAssessmentFormEntity[]> => {
+    fetchByProgramId: async (
+context: ActionContext<IAssessmentFormEntityState, IAssessmentFormEntityState>,
+      { programId }: { programId: uuid },
+): Promise<IAssessmentFormEntity[]> => {
       const res: IAssessmentFormEntity[] = await this.service.fetchByProgramId(programId);
 
       return res;
     },
-  }
+  };
 }

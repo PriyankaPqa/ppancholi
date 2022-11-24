@@ -1,5 +1,4 @@
 <template>
-  <!-- App.vue -->
   <v-app>
     <div v-if="isLoading || checkingAccount" class="loading_container">
       <div>
@@ -57,11 +56,13 @@ import { localStorageKeys } from '@/constants/localStorage';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@libs/component-lib/components';
 import sanitizeHtml from 'sanitize-html';
-
 import ActivityWatcher from '@/ui/ActivityWatcher.vue';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import helpers from '@/ui/helpers/helpers';
 import ErrorReportToast from '@/ui/shared-components/ErrorReportToast.vue';
+import { Survey } from 'survey-vue';
+
+Vue.component('Survey', Survey);
 
 export default {
 
@@ -121,9 +122,9 @@ export default {
 
     this.subscribeSignalR();
     // The values of environment variables are currently not loaded in components in production TODO: investigate why and find a fix
-    localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VUE_APP_GOOGLE_API_KEY);
-    localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VUE_APP_API_BASE_URL);
-    sessionStorage.setItem(sessionStorageKeys.appVersion.name, process.env.VUE_APP_VERSION);
+    localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VITE_GOOGLE_API_KEY);
+    localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VITE_API_BASE_URL);
+    sessionStorage.setItem(sessionStorageKeys.appVersion.name, process.env.VITE_VERSION);
 
     // The access token will be refreshed automatically every 5 minutes.
     AuthenticationProvider.startAccessTokenAutoRenewal(60000 * 5);
@@ -170,13 +171,15 @@ export default {
       };
 
       Vue.prototype.$reportToasted = (message, error) => {
-        setTimeout(() => {
-          this.lastErrorTime = new Date().getTime();
-          this.errorToastMessage = message;
-          this.showReportToast = true;
-          this.toastError = error;
-        },
-        1500);
+        setTimeout(
+          () => {
+            this.lastErrorTime = new Date().getTime();
+            this.errorToastMessage = message;
+            this.showReportToast = true;
+            this.toastError = error;
+          },
+          1500,
+        );
       };
     },
 
@@ -205,9 +208,9 @@ export default {
   }
 }
 
-$url-logo: "../../public/img/logo.png";
-$url-rc-en-logo: "../../public/img/logos/rc/rc-en.svg";
-$url-rc-fr-logo: "../../public/img/logos/rc/rc-fr.svg";
+$url-logo: "../../img/logo.png";
+$url-rc-en-logo: "../img/logos/rc/rc-en.svg";
+$url-rc-fr-logo: "../../img/logos/rc/rc-fr.svg";
 
 .logoEn {
   background-size: cover;

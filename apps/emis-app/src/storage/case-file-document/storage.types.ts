@@ -14,7 +14,7 @@ export interface IGettersMock extends IBaseGettersMock<ICaseFileDocumentEntity, 
   categories: jest.Mock<Array<IOptionItem>>;
 }
 
-export interface IActions extends IBaseActions<ICaseFileDocumentEntity, ICaseFileDocumentMetadata, {id: uuid, caseFileId: uuid}> {
+export interface IActions extends IBaseActions<ICaseFileDocumentEntity, ICaseFileDocumentMetadata, { id: uuid, caseFileId: uuid }> {
   fetchCategories(): Promise<IOptionItem[]>;
   updateDocument(payload: ICaseFileDocumentEntity): Promise<ICaseFileDocumentEntity>;
   downloadDocumentAsUrl(item: ICaseFileDocumentEntity, saveDownloadedFile: boolean): Promise<string>;

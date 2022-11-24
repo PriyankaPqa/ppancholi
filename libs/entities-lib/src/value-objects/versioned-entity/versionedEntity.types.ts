@@ -4,7 +4,7 @@ import { IEntity } from '../../base';
 
 export interface IVersionedEntity {
   versionId: uuid;
-  timestamp: string |Date;
+  timestamp: string | Date;
   userName: string;
   roleName: IMultilingual;
   entityType?: string;
@@ -14,7 +14,7 @@ export interface IVersionedEntity {
 
 export interface IVersionedEntityCombined {
   versionId: uuid;
-  timestamp: string |Date;
+  timestamp: string | Date;
   userName: string;
   roleName: IMultilingual;
   entityType?: string;
@@ -24,7 +24,7 @@ export interface IVersionedEntityCombined {
   previousMetadata?: IEntity;
 
   getLastActionName? (): string;
-  getTemplateData?(historyItems: IVersionedEntityCombined[], isPreviousValue: boolean, i18n: VueI18n): {label: string; value: unknown}[];
+  getTemplateData?(historyItems: IVersionedEntityCombined[], isPreviousValue: boolean, i18n: VueI18n): { label: string; value: unknown }[];
 }
 
 export interface IHistoryItemTemplateData {

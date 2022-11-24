@@ -10,6 +10,7 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 storage.registration.getters.currentTab = jest.fn(() => ({ titleKey: 'mock title', nextButtonTextKey: 'mock text' }));
 
+// eslint-disable-next-line no-console
 console.warn = jest.fn();
 
 const computed = {

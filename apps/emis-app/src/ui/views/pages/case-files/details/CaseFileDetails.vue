@@ -16,7 +16,7 @@
           mdi-calendar
         </v-icon>
         <span data-test="caseFileDetails-event">
-          {{ caseFile.metadata.event? $m(caseFile.metadata.event.name): 'm' }}
+          {{ caseFile.metadata.event ? $m(caseFile.metadata.event.name) : 'm' }}
         </span>
       </div>
       <div class="divider" />

@@ -25,7 +25,7 @@
 
           <template slot="actions">
             <div class="actions">
-              <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
+              <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
                 <v-btn
                   v-if="currentTab.id === 'confirmation'"
                   class="printButton"
@@ -44,7 +44,7 @@
                 <span class="ml-2 d-sm-inline d-md-none">{{ previousTabName }}</span>
               </div>
 
-              <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
+              <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
                 <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
                 <v-btn
                   color="primary"

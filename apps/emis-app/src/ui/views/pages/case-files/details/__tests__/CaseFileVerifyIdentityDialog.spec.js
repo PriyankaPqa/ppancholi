@@ -135,10 +135,8 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
     describe('verificationOptions', () => {
       it('calls storage for screeningIds and passes current value', async () => {
         await wrapper.setData({ form: { identificationIds: ['abc'] } });
-        let opt = wrapper.vm.verificationOptions;
         expect(wrapper.vm.$storage.caseFile.getters.screeningIds).toHaveBeenCalledWith(true, ['abc']);
         await wrapper.setData({ form: { identificationIds: [] } });
-        opt = wrapper.vm.verificationOptions;
         expect(wrapper.vm.$storage.caseFile.getters.screeningIds).toHaveBeenCalledWith(true, []);
       });
     });

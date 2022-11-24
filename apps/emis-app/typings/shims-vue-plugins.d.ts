@@ -41,7 +41,7 @@ declare module 'vue/types/vue' {
 
     $message: ({
       title, message, submitActionLabel, minHeight, maxWidth,
-    } :{title: TranslateResult,
+    } :{ title: TranslateResult,
       message: TranslateResult,
       submitActionLabel?: TranslateResult,
       minHeight?: number | string,

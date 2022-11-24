@@ -263,7 +263,8 @@ export default mixins(caseFileDetail).extend({
     this.loading = true;
     if (this.$route.params.financialAssistancePaymentId) {
       const faPayment = (await this.$storage.financialAssistancePayment.actions.fetch(
-        this.$route.params.financialAssistancePaymentId, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
+        this.$route.params.financialAssistancePaymentId,
+        { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
       ));
       this.financialAssistance = new FinancialAssistancePaymentEntity(faPayment.entity);
     } else {
@@ -384,6 +385,7 @@ export default mixins(caseFileDetail).extend({
       if (!this.isAddMode) {
         await this.savePaymentLine(submittedPaymentGroup);
       } else {
+        // eslint-disable-next-line no-promise-executor-return
         await new Promise((s) => setTimeout(s, 1000)); // force user to stay on the dialog, in order to avoid hitting the Create button underneath
         this.mergePaymentLine(submittedPaymentGroup);
         this.makePaymentName();
@@ -437,13 +439,9 @@ export default mixins(caseFileDetail).extend({
     async savePaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
       let updatedFinancialAssistance = null as IFinancialAssistancePaymentEntity;
       if (!submittedPaymentGroup.lines[0].id) {
-        updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine(
-          this.financialAssistance.id, submittedPaymentGroup,
-        );
+        updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine(this.financialAssistance.id, submittedPaymentGroup);
       } else {
-        updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePaymentLine(
-          this.financialAssistance.id, submittedPaymentGroup,
-        );
+        updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePaymentLine(this.financialAssistance.id, submittedPaymentGroup);
       }
       if (updatedFinancialAssistance) {
         this.showAddPaymentLineForm = false;
@@ -461,9 +459,7 @@ export default mixins(caseFileDetail).extend({
 
     async deletePaymentLine(event : { line: IFinancialAssistancePaymentLine, group: IFinancialAssistancePaymentGroup }) {
       if (event.line.id) {
-        const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine(
-          this.financialAssistance.id, event.line.id,
-        );
+        const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine(this.financialAssistance.id, event.line.id);
         if (updatedFinancialAssistance) {
           this.financialAssistance.groups = updatedFinancialAssistance.groups;
           this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.paymentLineDeleted'));

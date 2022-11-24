@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      :class="['table_top_header', showMembers? 'border-radius-top no-bottom-border' : 'border-radius-all']">
+      :class="['table_top_header', showMembers ? 'border-radius-top no-bottom-border' : 'border-radius-all']">
       <div class="team_member_toolbar">
         <v-btn v-if="showAddMember" color="primary" data-test="add-new-member" :disabled="disableAddMembers" @click="showAddTeamMemberDialog = true">
           {{ $t('teams.add_new_members') }}
@@ -26,7 +26,7 @@
     <v-data-table
       v-if="showMembers"
       id="table_member"
-      :class="{'table border-radius-bottom': true, loading: loading}"
+      :class="{ 'table border-radius-bottom': true, loading: loading }"
       data-test="teamMembers__table"
       hide-default-footer
       must-sort
@@ -45,8 +45,8 @@
           tabindex="0"
           class="rc-link14 font-weight-bold"
           data-test="member_name"
-          @keydown.enter="$hasFeature(FeatureKeys.TeamImprovements)? viewMemberCaseFiles(item) : viewMemberTeams(item)"
-          @click="$hasFeature(FeatureKeys.TeamImprovements)? viewMemberCaseFiles(item) : viewMemberTeams(item)">
+          @keydown.enter="$hasFeature(FeatureKeys.TeamImprovements) ? viewMemberCaseFiles(item) : viewMemberTeams(item)"
+          @click="$hasFeature(FeatureKeys.TeamImprovements) ? viewMemberCaseFiles(item) : viewMemberTeams(item)">
           {{ item.metadata.displayName }}
         </span>
       </template>
@@ -78,15 +78,15 @@
       </template>
 
       <template #[`item.caseFileCount`]="{ item }">
-        {{ $hasFeature(FeatureKeys.TeamImprovements)? caseFileCount(item.entity.id).allCaseFileCount : item.metadata.caseFilesCount || '0' }}
+        {{ $hasFeature(FeatureKeys.TeamImprovements) ? caseFileCount(item.entity.id).allCaseFileCount : item.metadata.caseFilesCount || '0' }}
       </template>
 
       <template #[`item.openCaseFileCount`]="{ item }">
-        {{ $hasFeature(FeatureKeys.TeamImprovements)? caseFileCount(item.entity.id).openCaseFileCount : item.metadata.openCaseFilesCount || '0' }}
+        {{ $hasFeature(FeatureKeys.TeamImprovements) ? caseFileCount(item.entity.id).openCaseFileCount : item.metadata.openCaseFilesCount || '0' }}
       </template>
 
       <template #[`item.inactiveCaseFileCount`]="{ item }">
-        {{ $hasFeature(FeatureKeys.TeamImprovements)? caseFileCount(item.entity.id).inactiveCaseFileCount : item.metadata.inactiveCaseFilesCount || '0' }}
+        {{ $hasFeature(FeatureKeys.TeamImprovements) ? caseFileCount(item.entity.id).inactiveCaseFileCount : item.metadata.inactiveCaseFilesCount || '0' }}
       </template>
 
       <template #[`item.delete`]="{ item }">

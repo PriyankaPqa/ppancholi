@@ -41,8 +41,8 @@
                   <v-icon size="18" :class="[paymentLine.documentReceived ? 'status_success--text' : 'status_error--text']">
                     {{ paymentLine.documentReceived ? 'mdi-checkbox-marked-circle' : 'mdi-alert-circle' }}
                   </v-icon>
-                  {{ paymentLine.documentReceived ? $t("caseFile.financialAssistance.paymentLineDetails.supportingDocuments.received") :
-                    $t("caseFile.financialAssistance.paymentLineDetails.supportingDocuments.notReceived") }}
+                  {{ paymentLine.documentReceived ? $t("caseFile.financialAssistance.paymentLineDetails.supportingDocuments.received")
+                    : $t("caseFile.financialAssistance.paymentLineDetails.supportingDocuments.notReceived") }}
                 </td>
               </tr>
               <tr v-if="showRelatedNumber(paymentGroup)" data-test="related_number">
@@ -53,9 +53,9 @@
                   {{ (paymentLine.relatedNumber || '—') }}
                 </td>
               </tr>
-              <tr :class="{ 'grey-container' : !showIssuedActualAmounts(paymentGroup) }">
+              <tr :class="{ 'grey-container': !showIssuedActualAmounts(paymentGroup) }">
                 <td class="label fw-bold">
-                  {{ $t(showIssuedActualAmounts(paymentGroup) ? 'caseFile.financialAssistance.issuedAmount': 'caseFile.financialAssistance.amount') }}
+                  {{ $t(showIssuedActualAmounts(paymentGroup) ? 'caseFile.financialAssistance.issuedAmount' : 'caseFile.financialAssistance.amount') }}
                 </td>
                 <td class="data">
                   <v-tooltip v-if="showTooltip" v-bind="$attrs" bottom>

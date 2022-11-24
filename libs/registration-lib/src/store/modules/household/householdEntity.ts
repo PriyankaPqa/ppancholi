@@ -20,16 +20,16 @@ export class HouseholdEntityModule extends BaseModule <IHouseholdEntity, uuid> {
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<IHouseholdEntity>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
     searchResultsShown: false,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
-  }
+  };
 
   public mutations = {
     ...this.baseMutations,
@@ -37,7 +37,7 @@ export class HouseholdEntityModule extends BaseModule <IHouseholdEntity, uuid> {
     setSearchResultsShown(state: IHouseholdEntityState, payload: boolean) {
       state.searchResultsShown = payload;
     },
-  }
+  };
 
   public actions = {
     ...this.baseActions,
@@ -111,5 +111,5 @@ export class HouseholdEntityModule extends BaseModule <IHouseholdEntity, uuid> {
 
       return combinedEntities;
     },
-  }
+  };
 }

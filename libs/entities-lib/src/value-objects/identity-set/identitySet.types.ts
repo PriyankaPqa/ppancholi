@@ -19,7 +19,7 @@ export enum EIndigenousTypes {
   InuitHamlet,
   Metis,
   Other,
-  Inuit
+  Inuit,
 }
 
 export interface IIndigenousIdentityOption {
@@ -27,7 +27,7 @@ export interface IIndigenousIdentityOption {
   specifiedOther: string;
 }
 
-export interface IIdentitySetCreateRequest{
+export interface IIdentitySetCreateRequest {
   firstName: string;
   middleName?: string;
   lastName: string;

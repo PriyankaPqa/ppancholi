@@ -185,7 +185,7 @@ export default Vue.extend({
   },
 
   methods: {
-    makeContentForTags(activityType:CaseFileActivityType): {title: TranslateResult, body: TranslateResult} {
+    makeContentForTags(activityType:CaseFileActivityType): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t(`caseFileActivity.activityList.title.${CaseFileActivityType[activityType]}`);
 
       const tagsString = (this.item.details.tags as IIdMultilingualName[]).map((tag) => this.$m(tag.name)).join(', ');
@@ -194,28 +194,28 @@ export default Vue.extend({
       return { title, body };
     },
 
-    makeContentForAddedDuplicateFlag(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForAddedDuplicateFlag(): { title: TranslateResult, body: TranslateResult } {
       return {
         title: this.$t('caseFileActivity.activityList.title.addedDuplicateFlag'),
         body: this.$t('DuplicateStatus.Added'),
       };
     },
 
-    makeContentForRemovedDuplicateFlag(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForRemovedDuplicateFlag(): { title: TranslateResult, body: TranslateResult } {
       return {
         title: this.$t('caseFileActivity.activityList.title.removedDuplicateFlag'),
         body: this.$t('DuplicateStatus.Removed'),
       };
     },
 
-    makeContentForTriageUpdated(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForTriageUpdated(): { title: TranslateResult, body: TranslateResult } {
       return {
         title: this.$t('caseFileActivity.activityList.title.triageUpdated'),
         body: `${this.$t('caseFileActivity.activityList.triage.new_triage')}: ${this.$m(this.item.details.triageName as IMultilingual)}`,
       };
     },
 
-    makeContentForCaseFileStatusDeactivated(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForCaseFileStatusDeactivated(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.CaseFileStatusDeactivated');
 
       const reasonString = this.$m((this.item.details.reason as IIdMultilingualName).name);
@@ -227,7 +227,7 @@ export default Vue.extend({
       return { title, body };
     },
 
-    makeContentForCaseFileStatusClosed(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForCaseFileStatusClosed(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.CaseFileStatusClosed');
 
       const reasonString = this.$m((this.item.details.reason as IIdMultilingualName).name);
@@ -238,24 +238,24 @@ export default Vue.extend({
       return { title, body };
     },
 
-    makeContentForCaseFileStatusReopened(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForCaseFileStatusReopened(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.CaseFileStatusReopened');
       const rationaleString = this.item.details.rationale as string;
       const body = `${this.$t('caseFileActivity.activityList.status.rationale')}: ${rationaleString}`;
       return { title, body };
     },
 
-    makeContentForCaseFileStatusArchived(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForCaseFileStatusArchived(): { title: TranslateResult, body: TranslateResult } {
       return {
         title: this.$t('caseFileActivity.activityList.title.CaseFileStatusArchived'),
         body: null,
       };
     },
 
-    makeContentForAssignedToCaseFile():{title: TranslateResult, body: TranslateResult} {
+    makeContentForAssignedToCaseFile():{ title: TranslateResult, body: TranslateResult } {
       let title = null;
       let body = null;
-      const teams = (this.item.details.teams as {name: string}[]).map((i) => i.name);
+      const teams = (this.item.details.teams as { name: string }[]).map((i) => i.name);
 
       if (this.item.details.teamMembers) {
         const usersWithTeams = [] as string[];
@@ -274,7 +274,7 @@ export default Vue.extend({
             + `\n${this.$t('caseFileActivity.activityList.assign.new_team')}: ${teams.length ? teams.join('; ') : '-'}`;
         }
       } else { // TODO: Remove when EMISV2-4373
-        const individuals = (this.item.details.individuals as {name: string}[]).map((i) => i.name);
+        const individuals = (this.item.details.individuals as { name: string }[]).map((i) => i.name);
         if ((individuals).length + (teams).length === 1) {
           const name = individuals[0] || teams[0];
           title = this.$t('caseFileActivity.activityList.title.AssignedToCaseFile', { x: name });
@@ -288,7 +288,7 @@ export default Vue.extend({
       return { title, body };
     },
 
-    makeContentForUnassignedFromCaseFile(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForUnassignedFromCaseFile(): { title: TranslateResult, body: TranslateResult } {
       if (this.item.details.teamMembers) {
         const usersWithTeams = [] as string[];
         (this.item.details.teamMembers as IAssignTeamMembersActivity[]).forEach((t) => {
@@ -297,14 +297,14 @@ export default Vue.extend({
           });
         });
 
-        const names = [...usersWithTeams, ...(this.item.details.teams as {name: string}[]).map((i) => i.name)]
+        const names = [...usersWithTeams, ...(this.item.details.teams as { name: string }[]).map((i) => i.name)]
           .join(', ');
 
         const title = this.$t('caseFileActivity.activityList.title.UnassignedFromCaseFile', { x: names });
         return { title, body: null };
       }
       // TODO: Remove when EMISV2-4373
-      const names = ([...this.item.details.individuals as {name: string}[], ...this.item.details.teams as {name: string}[]])
+      const names = ([...this.item.details.individuals as { name: string }[], ...this.item.details.teams as { name: string }[]])
         .map((i) => i.name)
         .join(', ');
 
@@ -313,7 +313,7 @@ export default Vue.extend({
       return { title, body: null };
     },
 
-    makeContentForIdentityAuthenticationUpdatedStatus():{title: TranslateResult, body: TranslateResult} {
+    makeContentForIdentityAuthenticationUpdatedStatus():{ title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdated');
 
       let body = `${this.$t('caseFileActivity.activityList.identity_authentication_updated')}: `;
@@ -332,13 +332,13 @@ export default Vue.extend({
       return { title, body };
     },
 
-    makeContentForIdentityAuthenticationUpdatedId():{title: TranslateResult, body: TranslateResult} {
+    makeContentForIdentityAuthenticationUpdatedId():{ title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId');
       const body = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId.idUpdated');
       return { title, body };
     },
 
-    makeContentForImpactStatusValidationUpdated():{title: TranslateResult, body: TranslateResult} {
+    makeContentForImpactStatusValidationUpdated():{ title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.ImpactStatusValidationUpdated');
 
       let body = `${this.$t('caseFileActivity.activityList.impact_status_validation_updated')}: `;
@@ -357,42 +357,42 @@ export default Vue.extend({
       return { title, body };
     },
 
-    makeContentForReferralAdded(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForReferralAdded(): { title: TranslateResult, body: TranslateResult } {
       return {
         title: this.$t('caseFileActivity.activityList.title.ReferralAdded'),
         body: `${this.$t('caseFileActivity.activityList.referral.referral_name')}: ${this.item.details.name}`,
       };
     },
 
-    makeContentForReferralUpdated(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForReferralUpdated(): { title: TranslateResult, body: TranslateResult } {
       return {
         title: this.$t('caseFileActivity.activityList.title.ReferralUpdated'),
         body: `${this.$t('caseFileActivity.activityList.referral.referral_name')}: ${this.item.details.name}`,
       };
     },
 
-    makeContentForDocumentDeactivated(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForDocumentDeactivated(): { title: TranslateResult, body: TranslateResult } {
       return {
         title: this.$t('caseFileActivity.activityList.title.DocumentDeactivated'),
         body: `${this.$t('caseFileActivity.activityList.document.document_name')}: ${this.item.details.name}`,
       };
     },
 
-    makeContentForDocumentUpdated(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForDocumentUpdated(): { title: TranslateResult, body: TranslateResult } {
       return {
         title: this.$t('caseFileActivity.activityList.title.DocumentUpdated'),
         body: `${this.$t('caseFileActivity.activityList.document.document_name')}: ${this.item.details.name}`,
       };
     },
 
-    makeContentForDocumentAdded(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForDocumentAdded(): { title: TranslateResult, body: TranslateResult } {
       return {
         title: this.$t('caseFileActivity.activityList.title.DocumentAdded'),
         body: `${this.$t('caseFileActivity.activityList.document.document_name')}: ${this.item.details.name}`,
       };
     },
 
-    makeContentForCaseNote(activityType:CaseFileActivityType): {title: TranslateResult, body: TranslateResult} {
+    makeContentForCaseNote(activityType:CaseFileActivityType): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t(`caseFileActivity.activityList.title.${CaseFileActivityType[activityType]}`);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -403,14 +403,16 @@ export default Vue.extend({
       return { title, body };
     },
 
-    makeContentForRegistration(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForRegistration(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.Registration');
       let body = '';
       if (this.item.details.registrationType === RegistrationType.Crc) {
-        body += this.$t('caseFileActivity.activityList.body.CRCRegistration',
+        body += this.$t(
+          'caseFileActivity.activityList.body.CRCRegistration',
           {
             By: this.item.user.name,
-          });
+          },
+        );
         if (this.item.details.registrationMethod) {
           body += `\n${this.$t('caseFileActivity.activityList.body.registrationMethod')}: `;
           body += this.$t(`enums.RegistrationMethod.${ERegistrationMethod[this.item.details.registrationMethod as number]}`);
@@ -427,48 +429,48 @@ export default Vue.extend({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     },
 
-    makeContentForFinancialAssistancePaymentSubmit(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForFinancialAssistancePaymentSubmit(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.PaymentSubmitted');
       const amount = this.$formatCurrency(Number(this.item.details.totalAmount));
       const body = `${this.item.details.paymentName}: ${amount}`;
       return { title, body };
     },
 
-    makeContentForHouseholdEdited(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForHouseholdEdited(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.HouseholdEdited');
       const body = this.makeHouseholdEditedBody();
       return { title, body };
     },
 
-    makeContentForHouseholdSplit(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForHouseholdSplit(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.HouseholdSplitTo', { x: this.item.details.registrationNumber });
       const body = this.$t('caseFileActivity.activityList.body.HouseholdSplit')
-        + (this.item.details?.removedMembers as [] || []).map((m: {name: string}) => m.name).join(', ');
+        + (this.item.details?.removedMembers as [] || []).map((m: { name: string }) => m.name).join(', ');
       return { title, body };
     },
 
-    makeContentForHouseholdCreatedAfterSplit(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForHouseholdCreatedAfterSplit(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.HouseholdSplitFrom', { x: this.item.details.registrationNumber });
       const body = this.$t('caseFileActivity.activityList.body.HouseholdSplit')
-        + (this.item.details?.removedMembers as [] || []).map((m: {name: string}) => m.name).join(', ');
+        + (this.item.details?.removedMembers as [] || []).map((m: { name: string }) => m.name).join(', ');
       return { title, body };
     },
 
-    makeContentForHouseholdMovedMembersOut(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForHouseholdMovedMembersOut(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.HouseholdMovedMembersOut', { x: this.item.details.registrationNumber });
       const body = this.$t('caseFileActivity.activityList.body.HouseholdMovedMembers')
-        + (this.item.details?.members as [] || []).map((m: {name: string}) => m.name).join(', ');
+        + (this.item.details?.members as [] || []).map((m: { name: string }) => m.name).join(', ');
       return { title, body };
     },
 
-    makeContentForHouseholdMovedMembersIn(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForHouseholdMovedMembersIn(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.HouseholdMovedMembersIn', { x: this.item.details.registrationNumber });
       const body = this.$t('caseFileActivity.activityList.body.HouseholdMovedMembers')
-        + (this.item.details?.members as [] || []).map((m: {name: string}) => m.name).join(', ');
+        + (this.item.details?.members as [] || []).map((m: { name: string }) => m.name).join(', ');
       return { title, body };
     },
 
-    makeContentForFinancialAssistancePaymentCompleted(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForFinancialAssistancePaymentCompleted(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.PaymentCompleted');
       const amount = this.$formatCurrency(Number(this.item.details.totalAmount));
       let body = `${this.$t('caseFileActivity.activityList.body.paymentCompleted.name')}: ${this.item.details.paymentName}`;
@@ -479,7 +481,7 @@ export default Vue.extend({
     },
 
     makeHouseholdEditedBody(): TranslateResult {
-      const name = (this.item.details?.member as {name:string})?.name;
+      const name = (this.item.details?.member as { name:string })?.name;
       const displayedName = name ? `: ${name}` : '';
 
       switch (this.item.details?.householdActivityType as HouseholdCaseFileActivityType) {
@@ -503,7 +505,7 @@ export default Vue.extend({
       }
     },
 
-    makeContentForAssessmentCompleted(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForAssessmentCompleted(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.AssessmentCompleted');
       const name = this.$m(this.item.details.assessmentName as IMultilingual);
       const body = this.$t('caseFileActivity.activityList.body.assessmentCompleted.name', { x: name });

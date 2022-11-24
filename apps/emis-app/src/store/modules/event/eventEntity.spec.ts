@@ -38,10 +38,10 @@ const actionContext = {
 } as ActionContext<IEventEntityState, IEventEntityState>;
 
 describe('>>> Event Module', () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let store: Store<IRootState>;
 
   beforeEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     store = mockStore({
       modules: {
         event: {
@@ -263,7 +263,8 @@ describe('>>> Event Module', () => {
         expect(actionContext.commit).toBeCalledWith('set', res);
       });
 
-      it('calls the addRegistrationLocation service and returns the new Event entity, if section is registration location and action is add',
+      it(
+        'calls the addRegistrationLocation service and returns the new Event entity, if section is registration location and action is add',
         async () => {
           const event = mockEventEntity();
           const location = event.registrationLocations[0];
@@ -278,7 +279,8 @@ describe('>>> Event Module', () => {
           expect(myModule.service.addRegistrationLocation).toHaveBeenCalledWith(event.id, location);
           expect(actionContext.commit).toBeCalledWith('set', event);
           expect(res).toEqual(event);
-        });
+        },
+      );
 
       it('calls the editRegistrationLocation service and returns the new Event entity', async () => {
         const event = mockEventEntity();

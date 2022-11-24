@@ -395,7 +395,8 @@ describe('HouseholdCard.vue', () => {
 
     describe('setAddress', () => {
       // eslint-disable-next-line max-len
-      it('sets the data from newAddress into the current address of the member that has been selected, if the form is valid and calls closeNewAddressDialog',
+      it(
+        'sets the data from newAddress into the current address of the member that has been selected, if the form is valid and calls closeNewAddressDialog',
         async () => {
           const address = new CurrentAddress({ address: 'bar' });
           const member = { ...mockMember({ id: 'mock-member-id' }), selectedCurrentAddress: { newAddress: null } };
@@ -427,7 +428,8 @@ describe('HouseholdCard.vue', () => {
           await wrapper.vm.setAddress();
           expect(wrapper.vm.members[0].selectedCurrentAddress.newAddress).toEqual(address);
           expect(wrapper.vm.closeNewAddressDialog).toHaveBeenCalledTimes(1);
-        });
+        },
+      );
     });
 
     describe('closeNewAddressDialog', () => {

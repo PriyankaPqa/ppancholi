@@ -1,21 +1,23 @@
-/* eslint-disable no-plusplus */
-/* eslint-disable complexity */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable */
+
 import {
-  FunctionFactory, Question, QuestionSelectBase, StylesManager, SurveyModel,
+  FunctionFactory,  Question as QModel, StylesManager, SurveyModel,
   Serializer,
-  QuestionMatrixDropdownModelBase,
-  QuestionRatingModel,
   ComponentCollection,
-  QuestionPanelDynamicModel,
 } from 'survey-core';
+import {
+  QuestionMatrixDropdownModelBase, StylesManager as RunnerStylesManager, FunctionFactory as RunnerFunctionFactory,
+  Question, QuestionSelectBase, Model,
+  QuestionRatingModel,
+  QuestionPanelDynamicModel, ComponentCollection as RunnerComponentCollection, Serializer as RunnerSerializer,
+} from 'survey-vue';
 import {
   CompletionStatus,
   IAnsweredQuestion,
   IAssessmentAnswerChoice, IAssessmentBaseEntity, IAssessmentQuestion, IAssessmentResponseEntity, SurveyJsAssessmentResponseState,
 } from '@libs/entities-lib/assessment-template';
 import { IColoursEntity } from '@libs/entities-lib/tenantSettings';
-import { SurveyCreator, localization } from 'survey-creator-knockout';
+import { SurveyCreator } from 'survey-creator-knockout';
 import { CreatorBase } from 'survey-creator-core';
 import { Status } from '@libs/entities-lib/base';
 import { IMultilingual } from '../../types';
@@ -34,11 +36,13 @@ interface ISimpleQuestion {
     items?: { name: string; title?: string | Record<string, string>; }[];
     rows?: TextValue[];
     columns?: TextValue[];
-    hasOther?: boolean; otherText?: string | Record<string, string>;
-    hasNone?: boolean; noneText?: string | Record<string, string>;
-    hasComment?: boolean;
+    showOtherItem?: boolean;
+    otherText?: string | Record<string, string>;
+    showNoneItem?: boolean;
+    noneText?: string | Record<string, string>;
+    showCommentArea?: boolean;
     commentText?: string | Record<string, string>;
-    otherPlaceHolder?: string | Record<string, string>;
+    otherPlaceholder?: string | Record<string, string>;
     labelTrue?: string | Record<string, string>;
     labelFalse?: string | Record<string, string>;
     scoreTrue?: number;
@@ -57,7 +61,7 @@ interface ISurveyJsPlainData {
   data?: ISurveyJsDataNode[],
 }
 
-interface ISurveyModel extends SurveyModel { _totalScore?: number }
+export interface ISurveyModel extends Model { _totalScore?: number }
 
 export class SurveyJsHelper {
   totalScore = 0;
@@ -109,13 +113,13 @@ export class SurveyJsHelper {
   }
 
   initializeSurveyJsRunner(locale: string, surveyJson: string) {
-    StylesManager.applyTheme('defaultV2');
+    RunnerStylesManager.applyTheme('defaultV2');
 
-    this.registerCustomProperties();
-    this.registerCustomComponents();
-    this.registerCustomSurveyJsFunctions();
+    this.registerCustomProperties(true);
+    this.registerCustomComponents(true);
+    this.registerCustomSurveyJsFunctions(true);
 
-    this.survey = new SurveyModel(surveyJson);
+    this.survey = new Model(surveyJson);
     this.survey.locale = locale;
     this.survey._totalScore = 0;
     this.totalScore = 0;
@@ -153,43 +157,44 @@ export class SurveyJsHelper {
       // localization.getLocale('fr').ed.surveyPlaceHolder = ' Ajoutez des questions...';
       // localization.getLocale('fr').qt.signaturepad = 'Pad de signature';
       // what we end up with in localization
-      localization.getLocale('fr').pe.labelTrue = 'Texte pour "Vrai"';
-      localization.getLocale('fr').pe.labelFalse = 'Texte pour "Faux"';
-      localization.getLocale('fr').pe.valueTrue = 'Valeur pour "Vrai"';
-      localization.getLocale('fr').pe.valueFalse = 'Valeur pour "Faux"';
-      localization.getLocale('fr');
+      // surveyLocalization.getLocale('fr').pe.labelTrue = 'Texte pour "Vrai"';
+      // surveyLocalization.getLocale('fr').pe.labelFalse = 'Texte pour "Faux"';
+      // surveyLocalization.getLocale('fr').pe.valueTrue = 'Valeur pour "Vrai"';
+      // localization.getLocale('fr').pe.valueFalse = 'Valeur pour "Faux"';
+      // localization.getLocale('fr');
       // console.log('current french', _merge(localization.getLocale('en'), localization.getLocale('fr')));
     } else {
       // console.log('current english', localization.getLocale('en'));
-      localization.getLocale('en');
+      // localization.getLocale('en');
     }
   }
 
-  registerCustomProperties() {
-    Serializer.addProperty('itemvalue', {
+  registerCustomProperties(runnerMode = false) {
+    const serializer = runnerMode ? RunnerSerializer: Serializer;
+    serializer.addProperty('itemvalue', {
       name: 'score:number',
       displayName: { default: 'Score', fr: 'Points' },
     });
 
-    Serializer.addProperty('boolean', {
+    serializer.addProperty('boolean', {
       name: 'scoreTrue:number',
       displayName: { default: '"True" score', fr: 'Points pour "Vrai"' },
       category: 'general',
     });
 
-    Serializer.addProperty('boolean', {
+    serializer.addProperty('boolean', {
       name: 'scoreFalse:number',
       displayName: { default: '"False" score', fr: 'Points pour "Faux"' },
       category: 'general',
     });
 
-    Serializer.getProperty('matrixdropdown', 'cellType').visible = false;
-    Serializer.getProperty('matrixdropdown', 'detailPanelMode').visible = false;
-    Serializer.getProperty('matrixdropdowncolumn', 'cellType').visible = false;
-    Serializer.getProperty('matrixdropdowncolumn', 'cellType').visible = false;
-    Serializer.getProperty('checkbox', 'valuePropertyName').visible = false;
-    Serializer.getProperty('matrixdynamic', 'cellType').visible = false;
-    Serializer.getProperty('matrixdynamic', 'detailPanelMode').visible = false;
+    serializer.getProperty('matrixdropdown', 'cellType').visible = false;
+    serializer.getProperty('matrixdropdown', 'detailPanelMode').visible = false;
+    serializer.getProperty('matrixdropdowncolumn', 'cellType').visible = false;
+    serializer.getProperty('matrixdropdowncolumn', 'cellType').visible = false;
+    serializer.getProperty('checkbox', 'valuePropertyName').visible = false;
+    serializer.getProperty('matrixdynamic', 'cellType').visible = false;
+    serializer.getProperty('matrixdynamic', 'detailPanelMode').visible = false;
   }
 
   removeAllDataCategory() {
@@ -219,11 +224,13 @@ export class SurveyJsHelper {
     });
   }
 
-  registerCustomComponents() {
-    ComponentCollection.Instance.clear();
+  registerCustomComponents(runnerMode = false) {
+    const componentCollection = runnerMode ? RunnerComponentCollection.Instance: ComponentCollection.Instance;
+    const serializer = runnerMode ? RunnerSerializer: Serializer;
+    componentCollection.clear();
     // boolean component that switches the order of the boolean - which looks weird in code but presents the user with a yes-no, with yes as the first answer
     // saves a response not of true or false but yes or no
-    ComponentCollection.Instance.add({
+    componentCollection.add({
       name: 'yes-no',
       questionJSON: {
         type: 'boolean',
@@ -234,21 +241,22 @@ export class SurveyJsHelper {
       },
     } as any);
 
-    Serializer.addProperty('yes-no', {
+    serializer.addProperty('yes-no', {
       name: 'scoreFalse:number',
       displayName: { default: '"Yes" score', fr: 'Points pour "Oui"' },
       category: 'general',
     });
 
-    Serializer.addProperty('yes-no', {
+    serializer.addProperty('yes-no', {
       name: 'scoreTrue:number',
       displayName: { default: '"No" score', fr: 'Points pour "Non"' },
       category: 'general',
     });
   }
 
-  registerCustomSurveyJsFunctions() {
-    FunctionFactory
+  registerCustomSurveyJsFunctions(runnerMode = false) {
+    const factory = runnerMode ? RunnerFunctionFactory : FunctionFactory;
+    factory
       .Instance
       .register('totalScore', this.getTotalScore, true);
   }
@@ -260,6 +268,7 @@ export class SurveyJsHelper {
     await new Promise((resolve) => {
       setTimeout(resolve, 50);
     });
+
     method.returnResult(+method.survey._totalScore);
   }
 
@@ -342,7 +351,7 @@ export class SurveyJsHelper {
           if (choices) {
             choices = choices.map((c) => (typeof (c as any) === 'number' ? c.toString() : c));
 
-            if (simpleQuestion.hasOther) {
+            if (simpleQuestion.showOtherItem) {
               choices.push({
                 value: 'other',
                 text: simpleQuestion.otherText || {
@@ -353,7 +362,7 @@ export class SurveyJsHelper {
               // there is a comment section that appears then
               result.push(this.getCommentSubquestion(simpleQuestion, qIdentifierPrefix));
             }
-            if (simpleQuestion.hasNone) {
+            if (simpleQuestion.showNoneItem) {
               choices.push({
                 value: 'none',
                 text: simpleQuestion.noneText || {
@@ -383,7 +392,7 @@ export class SurveyJsHelper {
             assessmentQuestion.answerChoices.push(choice);
           });
 
-          if (simpleQuestion.hasComment) {
+          if (simpleQuestion.showCommentArea) {
             result.push(this.getCommentSubquestion(simpleQuestion, qIdentifierPrefix));
           }
 
@@ -458,7 +467,7 @@ export class SurveyJsHelper {
   }
 
   getCommentSubquestion(simpleQuestion: ISimpleQuestion, qIdentifierPrefix: string): IAssessmentQuestion {
-    const text = this.getPropertyAsMultilingual(simpleQuestion.commentText || simpleQuestion.otherPlaceHolder || { en: 'Comment', fr: 'Commentaires' });
+    const text = this.getPropertyAsMultilingual(simpleQuestion.commentText || simpleQuestion.otherPlaceholder || { en: 'Comment', fr: 'Commentaires' });
     const commentQuestion = {
       identifier: `${qIdentifierPrefix}${simpleQuestion.name + (simpleQuestion.suffix != null ? `|${simpleQuestion.suffix.name}` : '')}|Comment`,
       questionType: 'comment',

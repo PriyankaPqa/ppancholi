@@ -74,7 +74,8 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
     setSubItem: (
       subItem: IFinancialAssistanceTableSubItem,
-      index: number, parentIndex: number,
+      index: number,
+      parentIndex: number,
     ) => this.store.commit(`${this.entityModuleName}/setSubItem`, { subItem, index, parentIndex }),
 
     setNewItemItem: (item: IOptionItem) => this.store.commit(`${this.entityModuleName}/setNewItemItem`, { item }),
@@ -97,9 +98,7 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
     addItem: (item: IFinancialAssistanceTableItem) => this.store.commit(`${this.entityModuleName}/addItem`, { item }),
 
-    addSubItem: (
-      subItem: IFinancialAssistanceTableSubItem, index: number,
-    ) => this.store.commit(`${this.entityModuleName}/addSubItem`, { subItem, index }),
+    addSubItem: (subItem: IFinancialAssistanceTableSubItem, index: number) => this.store.commit(`${this.entityModuleName}/addSubItem`, { subItem, index }),
 
     setEditedItem: (editedItem: IFinancialAssistanceTableItem) => this.store.commit(`${this.entityModuleName}/setEditedItem`, { editedItem }),
 

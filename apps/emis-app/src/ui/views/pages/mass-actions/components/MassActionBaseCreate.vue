@@ -37,7 +37,7 @@
                 @update:file="onUpdateFile" />
             </validation-provider>
             <div v-else-if="mode === MassActionMode.List" class="grey-container px-6 py-4">
-              {{ $t('massAction.common.apply_to_x_caseFiles', {x: $route.query.total}) }}
+              {{ $t('massAction.common.apply_to_x_caseFiles', { x: $route.query.total }) }}
             </div>
           </v-col>
         </v-row>

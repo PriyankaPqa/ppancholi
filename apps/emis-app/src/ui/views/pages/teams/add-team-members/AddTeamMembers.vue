@@ -175,9 +175,7 @@ export default Vue.extend({
     },
 
     availableMembers(): UserTeamMember[] {
-      const result:IUserAccountCombined[] = this.$storage.userAccount.getters.getByCriteria(
-        this.search, false, ['displayName', 'emailAddress'],
-      ) || [];
+      const result:IUserAccountCombined[] = this.$storage.userAccount.getters.getByCriteria(this.search, false, ['displayName', 'emailAddress']) || [];
       return result.filter(
         (u) => u.entity.status === Status.Active && u.entity.accountStatus === AccountStatus.Active,
       ).map(
@@ -215,7 +213,7 @@ export default Vue.extend({
       return this.selectedUsers.findIndex((u) => user.id === u.id) !== -1;
     },
 
-    onSelectAll({ items, value }: {items: Array<UserTeamMember>; value: boolean}) {
+    onSelectAll({ items, value }: { items: Array<UserTeamMember>; value: boolean }) {
       if (value) { // select all, get the new ones + old ones
         this.selectedUsers = [...this.selectedUsers, ...items.filter((i) => !this.isAlreadyInTeam(i))];
       } else { // deselect, only remove what is currently removed

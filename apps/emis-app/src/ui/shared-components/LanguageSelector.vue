@@ -2,7 +2,7 @@
   <v-menu offset-y>
     <template #activator="{ on }">
       <v-btn
-        :aria-label="$t('aria.header.language_select', {currentLanguage: currentLanguage })"
+        :aria-label="$t('aria.header.language_select', { currentLanguage: currentLanguage })"
         text
         data-test="appHeader__changeLanguage"
         v-on="on">

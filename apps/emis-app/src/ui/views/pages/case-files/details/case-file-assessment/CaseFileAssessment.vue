@@ -234,18 +234,22 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     items(): IAssessmentResponseCombined[] {
-      const items = this.$storage.assessmentResponse.getters.getByIds(this.searchResultIds,
+      const items = this.$storage.assessmentResponse.getters.getByIds(
+        this.searchResultIds,
         {
           onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { 'association.id': this.caseFileId },
-        });
+        },
+      );
       return items;
     },
 
     assessments(): MappedAssessment[] {
-      const assessments = this.$storage.assessmentForm.getters.getByIds(this.items?.map((i) => i.entity.assessmentFormId),
+      const assessments = this.$storage.assessmentForm.getters.getByIds(
+        this.items?.map((i) => i.entity.assessmentFormId),
         {
           onlyActive: false,
-        });
+        },
+      );
       const formAndResponses = this.items.map((r) => ({
         form: assessments.find((i) => r.entity.assessmentFormId === i.entity.id)?.entity || {} as IAssessmentBaseEntity,
         response: r,
@@ -256,7 +260,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     pendingAssessments(): MappedAssessment[] {
       const items = helpers.filterCollectionByValue(
         this.assessments.filter((a) => a.completionStatus === CompletionStatus.Pending),
-        this.pendingOptions.search, false, ['name'],
+        this.pendingOptions.search,
+        false,
+        ['name'],
       );
       return _orderBy(items, ['pinned', this.pendingOptions.sortBy[0]], ['desc', this.pendingOptions.sortDesc[0] ? 'desc' : 'asc']);
     },
@@ -264,7 +270,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     completedAssessments(): MappedAssessment[] {
       const items = helpers.filterCollectionByValue(
         this.assessments.filter((a) => a.completionStatus !== CompletionStatus.Pending),
-        this.completedOptions.search, false, ['name'],
+        this.completedOptions.search,
+        false,
+        ['name'],
       );
       return _orderBy(items, ['pinned', this.completedOptions.sortBy[0]], ['desc', this.completedOptions.sortDesc[0] ? 'desc' : 'asc']);
     },

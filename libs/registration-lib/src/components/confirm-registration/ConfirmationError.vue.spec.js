@@ -5,6 +5,7 @@ import Component from './ConfirmationError.vue';
 const localVue = createLocalVue();
 const errors = { response: { data: { errors: [mockHttpError()] } } };
 
+// eslint-disable-next-line no-console
 console.warn = jest.fn();
 
 describe('ConfirmRegistration.vue', () => {

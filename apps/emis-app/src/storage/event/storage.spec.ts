@@ -59,10 +59,12 @@ describe('>>> Event Storage', () => {
       storage.actions.updateEventSection({
         eventId: event.id, payload: callCentre, section: EEventSummarySections.CallCentre, action: 'add',
       });
-      expect(store.dispatch).toHaveBeenCalledWith(`${entityModuleName}/updateEventSection`,
+      expect(store.dispatch).toHaveBeenCalledWith(
+        `${entityModuleName}/updateEventSection`,
         {
           eventId: event.id, payload: callCentre, section: EEventSummarySections.CallCentre, action: 'add',
-        });
+        },
+      );
     });
 
     it('should proxy deleteAgreement', () => {

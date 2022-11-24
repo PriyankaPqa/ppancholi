@@ -65,8 +65,10 @@ describe('AssessmentBuilder', () => {
 
         const hook = wrapper.vm.$options.mounted[wrapper.vm.$options.mounted.length - 1];
         await hook.call(wrapper.vm);
-        expect(wrapper.vm.surveyJsHelper.setColorScheme).toHaveBeenCalledWith('#surveyCreator',
-          storage.tenantSettings.getters.currentTenantSettings().branding.colours);
+        expect(wrapper.vm.surveyJsHelper.setColorScheme).toHaveBeenCalledWith(
+          '#surveyCreator',
+          storage.tenantSettings.getters.currentTenantSettings().branding.colours,
+        );
       });
     });
   });

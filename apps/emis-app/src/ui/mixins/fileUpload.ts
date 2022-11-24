@@ -80,11 +80,19 @@ export default Vue.extend({
           this.uploadSuccess = false;
           if (e?.response?.data.errors) {
             this.errors = e.response.data.errors;
-            applicationInsights.trackTrace(`File upload error ${e.response.status}`, { error: this.errors },
-              'fileUpload', 'uploadForm');
+            applicationInsights.trackTrace(
+              `File upload error ${e.response.status}`,
+              { error: this.errors },
+              'fileUpload',
+              'uploadForm',
+            );
           } else {
-            applicationInsights.trackException(`File upload error ${e.response.status}`, { error: e },
-              'fileUpload', 'uploadForm');
+            applicationInsights.trackException(
+              `File upload error ${e.response.status}`,
+              { error: e },
+              'fileUpload',
+              'uploadForm',
+            );
             this.errors = [{ code: 'error.upload_unexpected_error' }];
           }
         }

@@ -1,6 +1,6 @@
 <template>
   <div class="mt-4">
-    <div :class="{ 'item__header': true, 'item__header--pinned': listItem.isPinned }">
+    <div :class="{ item__header: true, 'item__header--pinned': listItem.isPinned }">
       <div>
         <span class="rc-caption12 fw-bold" data-test="caseFileItem__userName">
           {{ listItem.userName }}

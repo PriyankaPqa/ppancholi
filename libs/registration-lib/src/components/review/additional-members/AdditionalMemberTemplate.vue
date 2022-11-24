@@ -61,8 +61,8 @@ export default Vue.extend({
     },
 
     getBirthDateLine(): string {
-      // eslint-disable-next-line max-len
-      return `${this.$t('registration.personal_info.birthdate')}: ${helpers.displayBirthDate(this.member.identitySet.birthDate)} (${helpers.getAge(this.member.identitySet.birthDate)} ${this.$t('common.years')})`;
+      // eslint-disable-next-line vue/max-len
+      return `${this.$t('registration.personal_info.birthdate')} : ${helpers.displayBirthDate(this.member.identitySet.birthDate)} (${helpers.getAge(this.member.identitySet.birthDate)} ${this.$t('common.years')})`;
     },
 
     getGender(): TranslateResult {
@@ -77,7 +77,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-@import "../../libs/assets/styles/breakpoints";
+@import "@libs/shared-lib/assets/styles/breakpoints";
 
 @media only screen and (min-width: $breakpoint-xs-min) and (max-width: $breakpoint-xs-max) {
   .column {

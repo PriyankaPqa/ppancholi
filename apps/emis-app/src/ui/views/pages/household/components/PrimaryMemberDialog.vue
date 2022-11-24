@@ -17,7 +17,7 @@
       <v-row class="justify-center">
         <v-col cols="12" md="8">
           <div v-if="makePrimaryMode" class="mb-6">
-            <span class=" fw-bold rc-body14"> {{ $t('household.profile.member.make_primary.missing_info', {name: memberName}) }} </span>
+            <span class=" fw-bold rc-body14"> {{ $t('household.profile.member.make_primary.missing_info', { name: memberName }) }} </span>
             <h3 class="pt-6 pb-3">
               {{ $t('registration.menu.privacy') }}
             </h3>
@@ -124,7 +124,7 @@ export default Vue.extend({
       submitLoading: false,
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
-        : process.env.VUE_APP_GOOGLE_API_KEY,
+        : process.env.VITE_GOOGLE_API_KEY,
     };
   },
 
@@ -180,6 +180,7 @@ export default Vue.extend({
 
   created() {
     const household = this.$storage.registration.getters.householdCreate();
+    // eslint-disable-next-line no-unsafe-optional-chaining
     this.allMembers = [household?.primaryBeneficiary, ...household?.additionalMembers];
     this.member = this.allMembers.filter((m) => m.id === this.memberId)[0] || this.allMembers[0];
     this.additionalMembers = this.allMembers.filter((m) => m !== this.member);

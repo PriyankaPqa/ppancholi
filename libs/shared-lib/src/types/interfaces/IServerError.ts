@@ -1,10 +1,18 @@
-import { IError } from '../../../../services-lib/src/http-client/httpClient.types';
+import { IMultilingual } from './IMultilingual';
+
+interface IError {
+  status: string,
+  code: string,
+  title: string,
+  detail: string,
+  meta: Record<string, string | IMultilingual>
+}
 
 export interface IServerError extends Error {
-  request?: { responseURL: string},
+  request?: { responseURL: string },
   response?: {
-    data?: {errors: IError[]},
+    data?: { errors: IError[] },
     status?: string,
-    config?: { data: string}
+    config?: { data: string }
   }
 }

@@ -113,7 +113,7 @@ export default Vue.extend({
       sameAddress: null,
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
-        : process.env.VUE_APP_GOOGLE_API_KEY,
+        : process.env.VITE_GOOGLE_API_KEY,
       backupPerson: null as IMember,
       backupSameAddress: null as boolean,
       addressChanged: false,
@@ -282,7 +282,7 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-@import "../../libs/assets/styles/breakpoints";
+@import "@libs/shared-lib/assets/styles/breakpoints";
 
 @media only screen and (min-width: $breakpoint-xs-min) and (max-width: $breakpoint-xs-max) {
   .additionalMembersForm {

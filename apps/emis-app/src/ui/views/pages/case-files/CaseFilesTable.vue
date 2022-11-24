@@ -78,11 +78,11 @@
     </template>
 
     <template #[`item.${customColumns.event}`]="{ item: caseFile }">
-      {{ caseFile.metadata && caseFile.metadata.event? $m(caseFile.metadata.event.name): "" }}
+      {{ caseFile.metadata && caseFile.metadata.event ? $m(caseFile.metadata.event.name) : "" }}
     </template>
 
     <template #[`item.${customColumns.triage}`]="{ item: caseFile }">
-      {{ caseFile.metadata? $m(caseFile.metadata.triageName): "" }}
+      {{ caseFile.metadata ? $m(caseFile.metadata.triageName) : "" }}
     </template>
 
     <template #[`item.${customColumns.status}`]="{ item: caseFile }">
@@ -392,10 +392,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       };
     },
 
-    async onApplyFilterLocal(
-      { preparedFilters, searchFilters }
-        : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown,
-    ) {
+    async onApplyFilterLocal({ preparedFilters, searchFilters }
+        : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown) {
       let finalFilters = {};
       if (this.myCaseFiles) {
         finalFilters = isEmpty(preparedFilters) ? this.myCaseFilesFilter : { ...preparedFilters, ...this.myCaseFilesFilter };

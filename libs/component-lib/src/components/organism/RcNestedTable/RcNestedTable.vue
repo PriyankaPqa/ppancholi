@@ -126,7 +126,7 @@
                     :item="subItem"
                     :index="$subIndex"
                     :parent="item"
-                    :parentIndex="$index"
+                    :parent-index="$index"
                     :name="`edit-sub-item.${header.value}`">
                     <!-- Use the add-sub-item slot if available to avoid duplication -->
                     <slot
@@ -134,7 +134,7 @@
                       :item="subItem"
                       :index="$subIndex"
                       :parent="item"
-                      :parentIndex="$index"
+                      :parent-index="$index"
                       :name="`add-sub-item.${header.value}`" />
 
                     <span v-else class="rc-body14 break-word">
@@ -143,7 +143,7 @@
                   </slot>
 
                   <!-- Slot sub-item -->
-                  <slot v-else :item="subItem" :index="$subIndex" :parent="item" :parentIndex="$index" :name="`sub-item.${header.value}`">
+                  <slot v-else :item="subItem" :index="$subIndex" :parent="item" :parent-index="$index" :name="`sub-item.${header.value}`">
                     <span class="rc-body14 break-word">
                       {{ subItem[header.value] }}
                     </span>

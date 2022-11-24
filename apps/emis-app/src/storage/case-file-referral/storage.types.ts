@@ -16,7 +16,7 @@ export interface IGettersMock extends IBaseGettersMock<ICaseFileReferralEntity, 
   outcomeStatuses: jest.Mock<void>;
 }
 
-export interface IActions extends IBaseActions<ICaseFileReferralEntity, ICaseFileReferralMetadata, {id: uuid, caseFileId: uuid}> {
+export interface IActions extends IBaseActions<ICaseFileReferralEntity, ICaseFileReferralMetadata, { id: uuid, caseFileId: uuid }> {
   fetchTypes(): Promise<IOptionItem[]>;
   fetchOutcomeStatuses(): Promise<IOptionItem[]>;
   createReferral(payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity>;

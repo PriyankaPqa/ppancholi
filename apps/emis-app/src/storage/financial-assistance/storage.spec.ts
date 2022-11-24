@@ -290,10 +290,12 @@ describe('>>> Financial Assistance Storage', () => {
       const program = mockProgramEntity();
 
       storage.mutations.setFinancialAssistance(fa, categories, program);
-      expect(store.commit).toBeCalledWith(`${entityModuleName}/setFinancialAssistance`,
+      expect(store.commit).toBeCalledWith(
+        `${entityModuleName}/setFinancialAssistance`,
         {
           fa, categories, program, removeInactiveItems: true,
-        });
+        },
+      );
     });
   });
 

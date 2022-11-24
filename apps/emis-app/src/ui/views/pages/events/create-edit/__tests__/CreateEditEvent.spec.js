@@ -27,6 +27,7 @@ describe('CreatEditEvent.vue', () => {
   storage.event.actions.fetchRegions = jest.fn(() => mockRegionData());
   storage.event.getters.eventTypes = jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e)));
 
+  // eslint-disable-next-line @typescript-eslint/default-param-last
   const doMount = (shallow = true, editMode) => {
     const options = {
       localVue,

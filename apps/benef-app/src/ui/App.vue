@@ -15,17 +15,17 @@ export default {
     // The values of environment variables are currently not loaded in components in production.
     localStorage.setItem(
       localStorageKeys.googleMapsAPIKey.name,
-      process.env.VUE_APP_GOOGLE_API_KEY,
+      process.env.VITE_GOOGLE_API_KEY,
     );
 
     localStorage.setItem(
       localStorageKeys.recaptchaKey.name,
-      process.env.VUE_APP_GOOGLE_RECAPTCHA_KEY,
+      process.env.VITE_GOOGLE_RECAPTCHA_KEY,
     );
 
     sessionStorage.setItem(
       sessionStorageKeys.appVersion.name,
-      process.env.VUE_APP_VERSION,
+      process.env.VITE_VERSION,
     );
   },
 };

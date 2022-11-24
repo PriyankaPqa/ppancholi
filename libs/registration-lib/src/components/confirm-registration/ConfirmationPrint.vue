@@ -1,4 +1,4 @@
-<!-- eslint-disable max-len -->
+<!-- eslint-disable max-len vue/max-len -->
 <template>
   <div style="display: none">
     <div class="page-container">
@@ -191,11 +191,11 @@
           {{ $t('registration.confirmation.registration_id') }}: <span class="fw-bold" data-test="confirmation-id">{{ registrationNumber }}</span>
         </div>
         <div class="rc-body14 pl-8">
-          {{ $t('registration.confirmation.event') }} <span class="fw-bold" data-test="event-name">{{ event? $m(event.name): "" }}</span>
+          {{ $t('registration.confirmation.event') }} <span class="fw-bold" data-test="event-name">{{ event ? $m(event.name) : "" }}</span>
         </div>
       </div>
       <div class="rc-body14 text-center footer" data-test="phone-assistance">
-        {{ $t('registration.confirmation.additional_assistance', { phone:event && event.responseDetails? event.responseDetails.assistanceNumber: ""}) }}
+        {{ $t('registration.confirmation.additional_assistance', { phone: event && event.responseDetails ? event.responseDetails.assistanceNumber : "" }) }}
       </div>
     </div>
   </div>
@@ -203,7 +203,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IEvent } from '../../../../entities-lib/src/registration-event';
+import { IEvent } from '@libs/entities-lib/src/registration-event';
 
 export default Vue.extend({
   name: 'ConfirmationPrint',

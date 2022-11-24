@@ -1,5 +1,5 @@
 <template>
-  <validation-observer ref="form" v-slot="{failed }" slim>
+  <validation-observer ref="form" v-slot="{ failed }" slim>
     <v-container fluid :data-test="dataTest" class="approvals_group_table">
       <v-row class="rcnestedtable__header" align="center">
         <v-col
@@ -23,10 +23,10 @@
       <template v-for="(group, $index) in approval.groups">
         <v-row
           :key="`item__${$index}`"
-          :class="{rcnestedtable__row: true, rcnestedtable__parentRow: true, large: isRowOpened(group)}"
+          :class="{ rcnestedtable__row: true, rcnestedtable__parentRow: true, large: isRowOpened(group) }"
           align="center">
           <v-col :key="`item__${$index}__group`" class="pl-6" :cols="2">
-            {{ $t('approvals.nestedTable.group', {x: $index + 1 }) }}
+            {{ $t('approvals.nestedTable.group', { x: $index + 1 }) }}
           </v-col>
 
           <v-col :key="`item__${$index}__roles`" class="pr-3" :cols="4">
@@ -38,7 +38,7 @@
               outlined
               :label="`${$t('approvals.nestedTable.headers.roles')}*`"
               multiple
-              :rules="{required: true}"
+              :rules="{ required: true }"
               :attach="false"
               data-test="user_roleId"
               :item-value="(group) => group.id"
@@ -56,7 +56,9 @@
               v-if="group.addMode || group.editMode"
               :value="group.minimumAmount"
               :disabled="$index > 0"
-              :rules="{required: true, min_value: 0.01, max_value: 9999999.99, customValidator: getMinAmountRules(group.minimumAmount, $index)}"
+              :rules="{
+                required: true, min_value: 0.01, max_value: 9999999.99, customValidator: getMinAmountRules(group.minimumAmount, $index),
+              }"
               :label="`${$t('approvals.nestedTable.headers.minimum')}*`"
               :data-test="`approvals_item${$index}__minimum`"
               @input="group.setMinimum($event)" />
@@ -70,7 +72,7 @@
               v-if="group.addMode || group.editMode"
               :value="group.maximumAmount"
               :disabled="$index < approval.groups.length - 1"
-              :rules="{required: true, max_value: 9999999.99, customValidator: getMaxAmountRules(group.maximumAmount, $index)}"
+              :rules="{ required: true, max_value: 9999999.99, customValidator: getMaxAmountRules(group.maximumAmount, $index) }"
               :label="`${$t('approvals.nestedTable.headers.maximum')}*`"
               :data-test="`approvals_item${$index}__maximum`"
               @input="group.setMaximum($event)" />
@@ -127,7 +129,7 @@
         </v-row>
       </template>
 
-      <v-row :class="{rcnestedtable__row: true, rcnestedtable__parentRow: false }">
+      <v-row :class="{ rcnestedtable__row: true, rcnestedtable__parentRow: false }">
         <v-col>
           <v-btn color="primary" small :disabled="disableAddGroup" @click="addNewGroupRow()">
             <v-icon left>

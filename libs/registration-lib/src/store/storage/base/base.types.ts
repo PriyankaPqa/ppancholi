@@ -3,7 +3,7 @@ import { IEntity, IEntityCombined } from '@libs/entities-lib/base';
 
 export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity, IdParams> {
   fetch(idParams: IdParams, { useEntityGlobalHandler, useMetadataGlobalHandler }?
-    : {useEntityGlobalHandler: boolean; useMetadataGlobalHandler: boolean}): Promise<IEntityCombined<TEntity, TMetadata>>;
+    : { useEntityGlobalHandler: boolean; useMetadataGlobalHandler: boolean }): Promise<IEntityCombined<TEntity, TMetadata>>;
   fetchAll(id?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]>;
   fetchAllIncludingInactive(): Promise<IEntityCombined<TEntity, TMetadata>[]>;
   deactivate(idParams: IdParams): Promise<TEntity>;
@@ -13,7 +13,7 @@ export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity
 
 export interface IBaseGetters<TEntity extends IEntity, TMetadata extends IEntity> {
   get(id: uuid): IEntityCombined<TEntity, TMetadata>;
-  getNewlyCreatedIds(maxDate?: Date): Array<{id: uuid; createdOn: number}>;
+  getNewlyCreatedIds(maxDate?: Date): Array<{ id: uuid; createdOn: number }>;
   getAll(): Array<IEntityCombined<TEntity, TMetadata>>;
   getByCriteria (query: string, searchAll: boolean, searchAmong: string[]): Array<IEntityCombined<TEntity, TMetadata>>;
   getByIds (ids: uuid[], options?: { onlyActive?: boolean; prependPinnedItems?: boolean; baseDate?: Date; parentId?: Record<string, unknown> }):

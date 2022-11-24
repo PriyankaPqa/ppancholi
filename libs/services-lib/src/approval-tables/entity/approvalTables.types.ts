@@ -21,7 +21,7 @@ export interface IEditApprovalTableRequest {
   approvalBaseStatus: Status
 }
 
-export interface IApprovalTablesService extends IDomainBaseService<IApprovalTableEntityData, uuid>{
+export interface IApprovalTablesService extends IDomainBaseService<IApprovalTableEntityData, uuid> {
   create(data: IApprovalTableEntity): Promise<IApprovalTableEntityData>;
   getApprovalsTableByEventId(eventId: uuid): Promise<IApprovalTableEntityData[]>;
   getApprovalTableByProgramId(programId: uuid): Promise<IApprovalTableEntityData>

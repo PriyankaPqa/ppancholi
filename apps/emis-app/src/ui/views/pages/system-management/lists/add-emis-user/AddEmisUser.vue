@@ -150,7 +150,7 @@ export default Vue.extend({
       required: true,
     },
     allAccessLevelRoles: {
-      type: Array as ()=> {header?: string, value?: string, name?: IMultilingual}[],
+      type: Array as ()=> { header?: string, value?: string, name?: IMultilingual }[],
       required: true,
     },
     allEmisUsers: {
@@ -290,7 +290,7 @@ export default Vue.extend({
       return '';
     },
 
-    onSelectAll({ items, value }: {items: Array<IAppUserData>; value: boolean}) {
+    onSelectAll({ items, value }: { items: Array<IAppUserData>; value: boolean }) {
       if (value) { // select all, get the new ones + old ones
         const selectedUsers = [...this.selectedUsers, ...items.filter((i) => !this.isAlreadyInEmis(i))];
         this.selectedUsers = selectedUsers.filter((user, index) => selectedUsers.findIndex((u) => u.id === user.id) === index); // deduplicate the list of users
@@ -305,7 +305,7 @@ export default Vue.extend({
       }
     },
 
-    assignRoleToUser(roleData: {text: IMultilingual, value: string}, user: IAppUserData) {
+    assignRoleToUser(roleData: { text: IMultilingual, value: string }, user: IAppUserData) {
       if (roleData) {
         const { locale } = i18n;
         user.roles = [

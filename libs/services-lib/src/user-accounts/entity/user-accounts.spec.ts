@@ -43,7 +43,8 @@ describe('>>> UserAccounts Service', () => {
       },
     };
     await service.editFilter(request);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/filter`,
+    expect(http.patch).toHaveBeenCalledWith(
+`${service.baseUrl}/filter`,
       {
         oldFilter: {
           name: request.oldFilter.name,
@@ -55,7 +56,8 @@ describe('>>> UserAccounts Service', () => {
           filterKey: request.newFilter.filterKey,
           criteria: request.newFilter.criteria.map((c) => JSON.stringify(c)),
         },
-      });
+      },
+);
   });
 
   test('deleteFilter is linked to the correct URL and payload', async () => {

@@ -714,8 +714,10 @@ describe('ReviewRegistration.vue', () => {
         wrapper.vm.isNewMemberCurrentAddress = jest.fn(() => false);
         const member = wrapper.vm.householdCreate.additionalMembers[index];
         await wrapper.vm.updateMember(index);
-        expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(member.id,
-          { identitySet: member.identitySet, contactInformation: member.contactInformation });
+        expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(
+          member.id,
+          { identitySet: member.identitySet, contactInformation: member.contactInformation },
+        );
       });
 
       it('should editAdditionalMember with backup if updateHomeAddress failed', async () => {

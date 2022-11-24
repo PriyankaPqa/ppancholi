@@ -94,6 +94,7 @@ describe('AddCaseFileAssessment.vue', () => {
         wrapper.vm.doSearch = jest.fn();
         jest.clearAllMocks();
         await wrapper.setData({ search: 'hello' });
+        // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 750));
         expect(wrapper.vm.doSearch).toHaveBeenCalled();
       });

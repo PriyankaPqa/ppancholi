@@ -298,6 +298,7 @@ describe('CaseNote.vue', () => {
         wrapper.vm.search = jest.fn();
 
         wrapper.vm.debounceSearch();
+        // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 800));
 
         expect(wrapper.vm.search).toHaveBeenCalledTimes(1);

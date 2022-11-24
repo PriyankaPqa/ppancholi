@@ -7,6 +7,6 @@ declare module '*.vue' {
   export type VForm = Vue & {
     validate: (type?: { silent?: boolean }) => boolean;
     reset: () => void;
-  }
+  };
 
 }

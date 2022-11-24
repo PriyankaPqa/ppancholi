@@ -20,8 +20,11 @@ export class CaseFileStorage
     super(pStore, pEntityModuleName, pMetadataModuleName);
   }
 
-  protected combinedCollections(entities: Array<ICaseFileEntity>, metadata: Array<ICaseFileMetadata>,
-    pinnedIds: Array<string> = []): Array<ICaseFileCombined> {
+  protected combinedCollections(
+    entities: Array<ICaseFileEntity>,
+    metadata: Array<ICaseFileMetadata>,
+    pinnedIds: Array<string> = [],
+  ): Array<ICaseFileCombined> {
     const result = super.combinedCollections(entities, metadata, pinnedIds) as Array<ICaseFileCombined>;
     if (result) {
       result.forEach((e) => {
@@ -54,7 +57,7 @@ export class CaseFileStorage
 
     // eslint-disable-next-line
     closeReasons: (filterOutInactive = true, actualValue?: string[] | string): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/closeReasons`](filterOutInactive, actualValue),
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -79,13 +82,15 @@ export class CaseFileStorage
       Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileTags`, { id, tags }),
 
     setCaseFileStatus: (id: uuid, status: CaseFileStatus, rationale?: string, reason?: IListOption):
-      Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileStatus`,
+      Promise<ICaseFileEntity> => this.store.dispatch(
+      `${this.entityModuleName}/setCaseFileStatus`,
       {
         id,
         status,
         rationale,
         reason,
-      }),
+      },
+    ),
 
     setCaseFileLabels: (id: uuid, labels: ICaseFileLabel[]):
       Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileLabels`, { id, labels }),
@@ -110,7 +115,7 @@ export class CaseFileStorage
 
     assignCaseFile: (id: uuid, teamMembers: IAssignedTeamMembers[], teams: uuid[]):
       Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/assignCaseFile`, { id, teamMembers, teams }),
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
@@ -122,11 +127,11 @@ export class CaseFileStorage
     setScreeningIdsFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setScreeningIdsFetched`, payload),
 
     setCloseReasonsFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setCloseReasonsFetched`, payload),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

@@ -39,8 +39,8 @@
       </template>
 
       <template #[`item.${customColumns.totalAmount}`]="{ item }">
-        {{ getLastRunMetadata(item) ?
-          $formatCurrency(getLastRunMetadata(item) && getLastRunMetadata(item).totalAmount)
+        {{ getLastRunMetadata(item)
+          ? $formatCurrency(getLastRunMetadata(item) && getLastRunMetadata(item).totalAmount)
           : $t('common.toBeDetermined')
         }}
       </template>

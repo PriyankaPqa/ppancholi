@@ -16,7 +16,7 @@
       <v-row
         v-for="filter in filterOptions"
         :key="filter.key"
-        :class="{'complex-filter': isComplexFilter(filter.type)}">
+        :class="{ 'complex-filter': isComplexFilter(filter.type) }">
         <template v-if="filter.type === EFilterType.Text">
           <v-col cols="12" class="pa-0 mb-4">
             <div class="rc-body16 fw-bold">
@@ -95,10 +95,10 @@
         </template>
 
         <v-col
-          v-if="filter.type === EFilterType.Select ||
-            filter.type === EFilterType.MultiSelect ||
-            filter.type === EFilterType.SelectExclude ||
-            filter.type === EFilterType.MultiSelectExclude"
+          v-if="filter.type === EFilterType.Select
+            || filter.type === EFilterType.MultiSelect
+            || filter.type === EFilterType.SelectExclude
+            || filter.type === EFilterType.MultiSelectExclude"
           class="pa-0"
           cols="12">
           <v-autocomplete
@@ -185,8 +185,10 @@ import DateRange from './inputs/DateRange.vue';
  * @param {Array<IFilterSettings>} filterOptions The list of filter settings from the filterOptions prop
  * @param {IFilterTypeOperators} operators The list of available operators per filter type
  */
-function generateFilters(filterOptions: Array<IFilterSettings>,
-  operators: IFilterTypeOperators): FilterItems {
+function generateFilters(
+filterOptions: Array<IFilterSettings>,
+  operators: IFilterTypeOperators,
+): FilterItems {
   const filterItems: FilterItems = {};
 
   filterOptions.forEach((filter) => {

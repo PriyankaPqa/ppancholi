@@ -9,7 +9,7 @@ export interface IGetters extends IBaseGetters<IAssessmentFormEntity, IAssessmen
 export interface IGettersMock extends IBaseGettersMock<IAssessmentFormEntity, IAssessmentFormMetadata> {
 }
 
-export interface IActions extends IBaseActions<IAssessmentFormEntity, IAssessmentFormMetadata, {id: uuid}> {
+export interface IActions extends IBaseActions<IAssessmentFormEntity, IAssessmentFormMetadata, { id: uuid }> {
   create(payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
   update(payload: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
   updateAssessmentStructure(payload: IAssessmentBaseEntity): Promise<IAssessmentFormEntity>;

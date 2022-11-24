@@ -1,13 +1,13 @@
 <template>
   <div
-    :class="{'outer-scroll': outerScroll, 'pageContent grey lighten-4': true, 'fullscreen': fullscreen}"
+    :class="{ 'outer-scroll': outerScroll, 'pageContent grey lighten-4': true, fullscreen: fullscreen }"
     v-bind="$attrs"
     class="pa-0">
     <rc-page-loading v-if="loading" />
     <div v-else :class="`d-flex flex-grow-1 flex-column fill-height pageContentCard__container ${fullscreen ? '' : 'pa-sm-4'}`">
       <slot name="top" />
 
-      <v-card :class="{'pageContentCard full-width pageContent__card': true, 'height100': fullHeight}">
+      <v-card :class="{ 'pageContentCard full-width pageContent__card': true, height100: fullHeight }">
         <v-toolbar color="primary darken-1" dark flat class="flex-grow-0 toolbar">
           <rc-tooltip v-if="showAddButton" bottom>
             <template #activator="{ on }">
@@ -266,7 +266,7 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 
-@import "../../libs/assets/styles/breakpoints";
+@import "@libs/shared-lib/assets/styles/breakpoints";
 
 .outer-scroll {
   &.pageContent {

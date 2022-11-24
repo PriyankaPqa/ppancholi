@@ -91,7 +91,7 @@ export default Vue.extend({
     return {
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
-        : process.env.VUE_APP_GOOGLE_API_KEY,
+        : process.env.VITE_GOOGLE_API_KEY,
       emptyAddress: {
         country: 'CA',
         streetAddress: '',

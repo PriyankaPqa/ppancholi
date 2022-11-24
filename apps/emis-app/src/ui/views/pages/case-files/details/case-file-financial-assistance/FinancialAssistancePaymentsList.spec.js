@@ -163,14 +163,18 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       it('returns true for level1+ when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canAdd).toBeTruthy();
-        await mountWrapper(false, 1, null,
+        await mountWrapper(
+          false,
+          1,
+          null,
           {
             computed: {
               readonly() {
                 return true;
               },
             },
-          });
+          },
+        );
         expect(wrapper.vm.canAdd).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canAdd).toBeFalsy();
@@ -187,14 +191,18 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       it('returns true for level1+ only when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canEdit).toBeTruthy();
-        await mountWrapper(false, 1, null,
+        await mountWrapper(
+          false,
+          1,
+          null,
           {
             computed: {
               readonly() {
                 return true;
               },
             },
-          });
+          },
+        );
         expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canEdit).toBeFalsy();
@@ -211,14 +219,18 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       it('returns true for level1+ when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canDelete).toBeTruthy();
-        await mountWrapper(false, 1, null,
+        await mountWrapper(
+          false,
+          1,
+          null,
           {
             computed: {
               readonly() {
                 return true;
               },
             },
-          });
+          },
+        );
         expect(wrapper.vm.canDelete).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canDelete).toBeFalsy();
@@ -236,10 +248,12 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await mountWrapper();
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.tableData;
-        expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc'],
+        expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(
+          ['abc'],
           {
             baseDate: null, onlyActive: true, prependPinnedItems: true, parentId: { caseFileId: 'mock-cf-id' },
-          });
+          },
+        );
         expect(data.length).toBe(storage.financialAssistancePayment.getters.getByIds().length);
       });
     });
@@ -253,10 +267,12 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         jest.clearAllMocks();
         await wrapper.setData({ allItemsIds: ['abc'] });
         expect(wrapper.vm.itemsToSubmit).toEqual([data[0], data[2]]);
-        expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc'],
+        expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(
+          ['abc'],
           {
             baseDate: null, onlyActive: true, prependPinnedItems: true, parentId: { caseFileId: 'mock-cf-id' },
-          });
+          },
+        );
       });
     });
 

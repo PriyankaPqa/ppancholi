@@ -26,7 +26,7 @@ export class CaseFileReferralStorage
 
       return this.combinedCollections(entities, metadata);
     },
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -40,7 +40,7 @@ export class CaseFileReferralStorage
 
     // eslint-disable-next-line
     updateReferral: (payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity> => this.store.dispatch(`${this.entityModuleName}/updateReferral`, payload),
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
@@ -48,11 +48,11 @@ export class CaseFileReferralStorage
     setTypesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setTypesFetched`, payload),
 
     setOutcomeStatusesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setOutcomeStatusesFetched`, payload),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

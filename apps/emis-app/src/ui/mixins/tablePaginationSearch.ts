@@ -207,7 +207,7 @@ export default Vue.extend({
     /**
      * Triggered when a user apply or un-apply a filter
      */
-    async onApplyFilter({ preparedFilters, searchFilters }: {preparedFilters: Record<string, unknown>; searchFilters?: string}, filterState?: any) {
+    async onApplyFilter({ preparedFilters, searchFilters }: { preparedFilters: Record<string, unknown>; searchFilters?: string }, filterState?: any) {
       this.forceSkip = true;
       this.options.page = 1;
       this.userFilters = _isEmpty(preparedFilters) ? null : preparedFilters;

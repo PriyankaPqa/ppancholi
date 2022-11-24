@@ -312,7 +312,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
     createFinancialAssistance: async (
       context: ActionContext<IFinancialAssistanceEntityState, IFinancialAssistanceEntityState>,
-      { table }: { table: boolean},
+      { table }: { table: boolean },
     ): Promise<IFinancialAssistanceTableEntity> => {
       const items: IFinancialAssistanceTableItemData[] = context.state.mainItems.map(this.itemToItemData);
 

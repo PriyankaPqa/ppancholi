@@ -248,8 +248,10 @@ describe('EventsTable.vue', () => {
         wrapper.vm.itemsCount = mockEvents().length;
 
         expect(JSON.stringify(wrapper.vm.tableData)).toEqual(JSON.stringify(mockEvents()));
-        expect(wrapper.vm.$storage.event.getters.getByIds).toHaveBeenCalledWith(wrapper.vm.searchResultIds,
-          { baseDate: null, prependPinnedItems: true });
+        expect(wrapper.vm.$storage.event.getters.getByIds).toHaveBeenCalledWith(
+          wrapper.vm.searchResultIds,
+          { baseDate: null, prependPinnedItems: true },
+        );
       });
     });
 

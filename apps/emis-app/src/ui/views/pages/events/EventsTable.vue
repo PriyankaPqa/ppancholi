@@ -19,7 +19,7 @@
       customColumns.openDate,
       customColumns.daysOpen,
       customColumns.eventStatus,
-      'editButton'
+      'editButton',
     ]"
     @add-button="addEvent"
     @search="search">
@@ -55,7 +55,7 @@
     </template>
 
     <template #[`item.${customColumns.eventStatus}`]="{ item: event }">
-      <status-chip status-name="EEventStatus" :status="event.entity.schedule? event.entity.schedule.status: 0" />
+      <status-chip status-name="EEventStatus" :status="event.entity.schedule ? event.entity.schedule.status : 0" />
     </template>
 
     <template #[`item.editButton`]="{ item }">

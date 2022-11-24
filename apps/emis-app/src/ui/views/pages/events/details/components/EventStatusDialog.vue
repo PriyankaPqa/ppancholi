@@ -19,7 +19,7 @@
         <v-col
           cols="12"
           class=" mb-8 pa-3 border-radius-all"
-          :style="{backgroundColor: toStatus=== EEventStatus.Open? colors.chips.green_pale : colors.chips.red_pale}">
+          :style="{ backgroundColor: toStatus === EEventStatus.Open ? colors.chips.green_pale : colors.chips.red_pale }">
           <status-chip status-name="EEventStatus" :status="toStatus" data-test="event-summary-status-chip" />
         </v-col>
 
@@ -80,7 +80,7 @@ export default Vue.extend({
           title: this.$t('event.status.confirmation.title.close'),
           label: `${this.$t('event.status.confirmation.label.close')}*`,
         },
-      } as Record<string, {title: string, label: string}>,
+      } as Record<string, { title: string, label: string }>,
     };
   },
 

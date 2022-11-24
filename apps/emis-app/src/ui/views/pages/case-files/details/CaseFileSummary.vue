@@ -51,7 +51,7 @@
           </tr>
           <tr>
             <td class="label fw-bold">
-              {{ $t('casefile.summary.totalHousehold', { x: householdMembers.length + (primary ? 1: 0) }) }}
+              {{ $t('casefile.summary.totalHousehold', { x: householdMembers.length + (primary ? 1 : 0) }) }}
             </td>
             <td class="data py-2">
               <div v-if="primary" class="d-flex">
@@ -87,7 +87,7 @@
               {{ $t('casefile.summary.financialAssistance') }}
             </td>
             <td class="data">
-              {{ summary.financialTotal != null ? $formatCurrency(summary.financialTotal): '' }}
+              {{ summary.financialTotal != null ? $formatCurrency(summary.financialTotal) : '' }}
             </td>
           </tr>
           <tr>
@@ -95,7 +95,7 @@
               {{ $t('casefile.summary.referrals') }}
             </td>
             <td class="data">
-              {{ summary.hasReferrals === null ? '' : $t(summary.hasReferrals ? 'common.yes': 'common.no') }}
+              {{ summary.hasReferrals === null ? '' : $t(summary.hasReferrals ? 'common.yes' : 'common.no') }}
             </td>
           </tr>
         </tbody>

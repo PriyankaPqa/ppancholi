@@ -88,7 +88,7 @@ import Vue from 'vue';
 import { ITeamEntity, ITeamMember } from '@libs/entities-lib/team';
 import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 
-export interface IIndividual extends ITeamMember, IUserAccountCombined{
+export interface IIndividual extends ITeamMember, IUserAccountCombined {
   translatedRoleName?: string;
   teamName: string;
   teamId: string;

@@ -32,7 +32,7 @@
 
           <template slot="actions">
             <div class="actions">
-              <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
+              <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
                 <template v-if="currentTab.id === 'confirmation'">
                   <v-btn
                     v-if="registrationSuccess"
@@ -53,7 +53,7 @@
                 <span class="ml-2 d-sm-inline d-md-none">{{ previousTabName }}</span>
               </div>
 
-              <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
+              <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
                 <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
                 <v-btn v-if="currentTab.id === 'confirmation' && registrationSuccess" data-test="new-registration-button" @click="routeToNewRegistration">
                   {{ $t('registration.new_registration.label') }}

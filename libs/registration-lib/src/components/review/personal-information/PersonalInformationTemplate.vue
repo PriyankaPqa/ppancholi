@@ -195,7 +195,7 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-@import "../../libs/assets/styles/breakpoints";
+@import "@libs/shared-lib/assets/styles/breakpoints";
 
 @media only screen and (min-width: $breakpoint-xs-min) and (max-width: $breakpoint-xs-max) {
   .row-data {

@@ -174,8 +174,8 @@ export default Vue.extend({
         }
       }
 
-      if (typeof param === 'object' && (param as {id: string}).id) {
-        newIds = [(param as {id: string}).id];
+      if (typeof param === 'object' && (param as { id: string }).id) {
+        newIds = [(param as { id: string }).id];
       }
 
       this.loading = true;

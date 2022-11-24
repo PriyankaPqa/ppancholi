@@ -111,7 +111,8 @@ describe('Individual.vue', () => {
     });
 
     describe('goNext', () => {
-      it('should called execute from recaptcha if on review stage and if BotProtection is enabled and if ip address is not in allowed list',
+      it(
+        'should called execute from recaptcha if on review stage and if BotProtection is enabled and if ip address is not in allowed list',
         async () => {
           wrapper.vm.$refs.recaptchaSubmit = {};
           wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
@@ -125,7 +126,8 @@ describe('Individual.vue', () => {
           }));
           await wrapper.vm.goNext();
           expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(1);
-        });
+        },
+      );
       it('should call next from mixin otherwise', async () => {
         wrapper.vm.next = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);

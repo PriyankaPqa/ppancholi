@@ -14,7 +14,7 @@ export class MassActionEntity extends BaseEntity implements IMassActionEntity {
 
   group: MassActionGroup;
 
-  runs: Array<IMassActionRun>
+  runs: Array<IMassActionRun>;
 
   constructor(data?: IMassActionEntityData) {
     if (data) {

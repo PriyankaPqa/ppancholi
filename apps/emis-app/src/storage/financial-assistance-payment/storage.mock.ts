@@ -14,7 +14,7 @@ export class FinancialAssistancePaymentStorageMock extends BaseMock<IFinancialAs
 
   protected getters = {
     ...this.baseGetters,
-  }
+  };
 
   protected actions = {
     ...this.baseActions,
@@ -32,15 +32,15 @@ export class FinancialAssistancePaymentStorageMock extends BaseMock<IFinancialAs
       jest.fn(() => this.baseGetters.get().entity),
     fetchHistory:
       jest.fn(() => []),
-  }
+  };
 
   protected mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

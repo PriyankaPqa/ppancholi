@@ -16,7 +16,7 @@
       :error-messages="errors"
       outlined
       :attach="attach"
-      :menu-props="{contentClass:'v-autocomplete-with-validation-dropdown'}"
+      :menu-props="{ contentClass: 'v-autocomplete-with-validation-dropdown' }"
       v-bind="$attrs"
       onfocus="this.setAttribute('autocomplete','nope');"
       v-on="$listeners">

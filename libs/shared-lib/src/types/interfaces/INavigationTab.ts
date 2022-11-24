@@ -1,5 +1,4 @@
 import { TranslateResult } from 'vue-i18n';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export interface INavigationTab {
   text: string | TranslateResult;
@@ -11,6 +10,6 @@ export interface INavigationTab {
   level?: string;
   roles?: string[];
   active?: boolean;
-  feature?: FeatureKeys;
+  feature?: string; // FeatureKeys
   onClick?: string;
 }

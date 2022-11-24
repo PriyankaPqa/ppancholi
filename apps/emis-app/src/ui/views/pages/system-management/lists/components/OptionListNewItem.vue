@@ -3,8 +3,8 @@
     <v-row
       data-test="optionListNewItem__row"
       :class="{
-        'optionsList__itemAdd': true,
-        'active': !isSubItem || addMode,
+        optionsList__itemAdd: true,
+        active: !isSubItem || addMode,
       }">
       <v-col v-if="isSubItem" cols="3" />
 

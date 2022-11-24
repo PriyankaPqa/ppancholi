@@ -22,7 +22,7 @@
       </template>
       <template #filter>
         <filter-toolbar
-          :filter-key="isFormMode ? FilterKey.AssessmentForms: FilterKey.AssessmentTemplates"
+          :filter-key="isFormMode ? FilterKey.AssessmentForms : FilterKey.AssessmentTemplates"
           :count="itemsCount"
           :initial-filter="filterState"
           :filter-options="filters"
@@ -39,7 +39,7 @@
       </template>
 
       <template #[`item.${customColumns.program}`]="{ item }">
-        {{ item.metadata ? $m(item.metadata.programName): '' }}
+        {{ item.metadata ? $m(item.metadata.programName) : '' }}
       </template>
 
       <template #[`item.${customColumns.published}`]="{ item }">
@@ -277,12 +277,16 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     tableData(): IAssessmentBaseCombined[] {
       if (this.isFormMode) {
-        return this.$storage.assessmentForm.getters.getByIds(this.searchResultIds,
-          { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.id } });
+        return this.$storage.assessmentForm.getters.getByIds(
+          this.searchResultIds,
+          { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.id } },
+        );
       }
 
-      return this.$storage.assessmentTemplate.getters.getByIds(this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+      return this.$storage.assessmentTemplate.getters.getByIds(
+        this.searchResultIds,
+        { prependPinnedItems: true, baseDate: this.searchExecutionDate },
+      );
     },
 
     menuItems(): Array<Record<string, string>> {

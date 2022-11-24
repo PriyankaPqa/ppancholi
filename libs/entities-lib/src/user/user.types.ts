@@ -12,7 +12,7 @@ export interface IMSALUserData {
   homeAccountId: string;
 }
 
-export interface IUserData extends IMSALUserData{}
+export interface IUserData extends IMSALUserData {}
 
 export interface IUser {
   readonly id: string;

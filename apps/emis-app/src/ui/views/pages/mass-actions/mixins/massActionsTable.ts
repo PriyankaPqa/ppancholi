@@ -31,10 +31,12 @@ export default Vue.extend({
 
   computed: {
     tableData(): IMassActionCombined[] {
-      return this.$storage.massAction.getters.getByIds(this.searchResultIds,
+      return this.$storage.massAction.getters.getByIds(
+        this.searchResultIds,
         {
           onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { type: this.massActionTypeData },
-        });
+        },
+      );
     },
 
     tableProps(): Record<string, unknown> {

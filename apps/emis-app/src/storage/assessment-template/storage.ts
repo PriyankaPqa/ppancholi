@@ -11,7 +11,7 @@ export class AssessmentTemplateStorage
 
   private getters = {
     ...this.baseGetters,
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -22,15 +22,15 @@ export class AssessmentTemplateStorage
 
     // eslint-disable-next-line
     updateAssessmentStructure: (payload: IAssessmentTemplateEntity): Promise<IAssessmentTemplateEntity> => this.store.dispatch(`${this.entityModuleName}/updateAssessmentStructure`, payload),
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

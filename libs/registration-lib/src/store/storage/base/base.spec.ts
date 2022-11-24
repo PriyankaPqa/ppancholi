@@ -266,26 +266,34 @@ describe('BaseStorage', () => {
       it('should filter out inactive by default or if specified', async () => {
         const params = { filter: { Foo: 'foo' } };
         await storage.actions.search(params);
-        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`,
-          { params: { filter: { Foo: 'foo', 'Entity/Status': 1 } }, searchEndpoint: null });
+        expect(store.dispatch).toBeCalledWith(
+`${storage.entityModuleName}/search`,
+          { params: { filter: { Foo: 'foo', 'Entity/Status': 1 } }, searchEndpoint: null },
+);
         jest.clearAllMocks();
 
         await storage.actions.search(params, null, false);
-        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`,
-          { params: { filter: { Foo: 'foo', 'Entity/Status': 1 } }, searchEndpoint: null });
+        expect(store.dispatch).toBeCalledWith(
+`${storage.entityModuleName}/search`,
+          { params: { filter: { Foo: 'foo', 'Entity/Status': 1 } }, searchEndpoint: null },
+);
         jest.clearAllMocks();
 
         const paramsNoFilter = { filter: '' };
         await storage.actions.search(paramsNoFilter, null, false);
-        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`,
-          { params: { filter: { 'Entity/Status': 1 } }, searchEndpoint: null });
+        expect(store.dispatch).toBeCalledWith(
+`${storage.entityModuleName}/search`,
+          { params: { filter: { 'Entity/Status': 1 } }, searchEndpoint: null },
+);
       });
 
       it('should filterout inactives by default or if specified and build the correct filter when the filter is a string', async () => {
         const params = { filter: 'filter string' };
         await storage.actions.search(params);
-        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`,
-          { params: { filter: 'filter string and Entity/Status eq 1' }, searchEndpoint: null });
+        expect(store.dispatch).toBeCalledWith(
+`${storage.entityModuleName}/search`,
+          { params: { filter: 'filter string and Entity/Status eq 1' }, searchEndpoint: null },
+);
       });
 
       it('should call commit setAll for both entity and metadata', async () => {

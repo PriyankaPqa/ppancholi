@@ -12,7 +12,7 @@ export class AssessmentFormStorageMock extends BaseMock<IAssessmentFormCombined,
     ...this.baseGetters,
     types: jest.fn(),
     outcomeStatuses: jest.fn(),
-  }
+  };
 
   protected actions = {
     ...this.baseActions,
@@ -20,15 +20,15 @@ export class AssessmentFormStorageMock extends BaseMock<IAssessmentFormCombined,
     update: jest.fn((payload: IAssessmentFormEntity) => payload),
     updateAssessmentStructure: jest.fn((payload: IAssessmentFormEntity) => payload),
     fetchByProgramId: jest.fn(() => [mockAssessmentFormEntity()]),
-  }
+  };
 
   protected mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

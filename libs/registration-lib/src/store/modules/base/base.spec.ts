@@ -9,7 +9,7 @@ import { BaseModule } from './index';
 import { IState } from './base.types';
 
 export class BaseModuleTest extends BaseModule<any, uuid> {
-  declare public service: DomainBaseService<any, uuid>
+  declare public service: DomainBaseService<any, uuid>;
 
   constructor(protected pService: DomainBaseService<any, uuid>) {
     super(pService);

@@ -7,7 +7,7 @@
           {{ $t('registration.details.registered') }} {{ moment(householdCreate.primaryBeneficiary.created).format('ll') }}
         </div>
       </div>
-      <slot name="previous-events" :householdId="householdCreate.id" />
+      <slot name="previous-events" :household-id="householdCreate.id" />
       <template v-if="!householdAlreadyRegistered && !splitMode">
         <div data-test="title" class="rc-heading-5 fw-bold  mb-2 mt-8">
           {{ $t('registration.menu.privacy') }}
@@ -17,7 +17,7 @@
         </validation-observer>
       </template>
     </template>
-    <validation-observer ref="personalInfo" v-slot="{failed}">
+    <validation-observer ref="personalInfo" v-slot="{ failed }">
       <summary-section
         :show-edit-button="!householdAlreadyRegistered && !splitMode"
         data-test="personalInformation"
@@ -35,7 +35,7 @@
       </summary-section>
     </validation-observer>
 
-    <validation-observer ref="addresses" v-slot="{failed}">
+    <validation-observer ref="addresses" v-slot="{ failed }">
       <summary-section
         :show-edit-button="!householdAlreadyRegistered && !splitMode"
         data-test="addresses"
@@ -144,7 +144,7 @@ import helpers from '@libs/entities-lib/helpers';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
-import { IContactInformation } from '../../../../entities-lib/src/value-objects/contact-information';
+import { IContactInformation } from '@libs/entities-lib/src/value-objects/contact-information';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
 import Addresses from '../addresses/Addresses.vue';

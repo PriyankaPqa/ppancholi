@@ -18,19 +18,19 @@ export class ApprovalTableEntityModule extends BaseModule <IApprovalTableEntityD
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<IApprovalTableEntityData>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
-  }
+  };
 
   public mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public actions = {
     ...this.baseActions,
@@ -90,5 +90,5 @@ export class ApprovalTableEntityModule extends BaseModule <IApprovalTableEntityD
       }
       return res;
     },
-  }
+  };
 }

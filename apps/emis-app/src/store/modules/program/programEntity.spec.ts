@@ -39,6 +39,7 @@ describe('>>> Program entity module', () => {
       it('calls sets the result', async () => {
         const program = mockProgramEntity();
 
+        // eslint-disable-next-line no-promise-executor-return
         myModule.service.createProgram = jest.fn(() => new Promise((resolve) => resolve(program)));
 
         await myModule.actions.createProgram(actionContext, program);
@@ -62,6 +63,7 @@ describe('>>> Program entity module', () => {
       it('calls sets the result', async () => {
         const program = mockProgramEntity();
 
+        // eslint-disable-next-line no-promise-executor-return
         myModule.service.updateProgram = jest.fn(() => new Promise((resolve) => resolve(program)));
 
         await myModule.actions.updateProgram(actionContext, program);

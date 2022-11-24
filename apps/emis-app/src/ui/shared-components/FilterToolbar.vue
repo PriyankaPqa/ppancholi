@@ -419,7 +419,7 @@ export default Vue.extend({
         return _set({}, filter.key, { arrayEmpty: filter.value });
         // WHen using autocomplete returning an object, we need to extract the real value
       } if (Object.prototype.toString.call(filter.value) === '[object Object]' && Object.prototype.hasOwnProperty.call(filter.value, 'value')) {
-        return _set({}, filter.key, (filter.value as {text: string, value: string}).value);
+        return _set({}, filter.key, (filter.value as { text: string, value: string }).value);
       }
       return _set({}, filter.key, filter.value);
     },

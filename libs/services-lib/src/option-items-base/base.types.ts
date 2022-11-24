@@ -3,7 +3,7 @@ import { IOptionItemData, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../base';
 
-export interface IOptionItemBaseService extends IDomainBaseService<IOptionItemData, uuid>{
+export interface IOptionItemBaseService extends IDomainBaseService<IOptionItemData, uuid> {
   createOptionItem(optionItem: IOptionItemData): Promise<IOptionItemData>
   addSubItem(itemId: string, subItem: IOptionSubItem): Promise<IOptionItemData>
   updateOptionItem(id: string, name: IMultilingual, description: IMultilingual): Promise<IOptionItemData>

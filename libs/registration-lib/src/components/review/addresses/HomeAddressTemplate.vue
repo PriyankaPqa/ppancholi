@@ -5,7 +5,7 @@
     </div>
     <template v-if="!noHomeAddress">
       <div data-test="homeAddress__street">
-        {{ address.streetAddress }} {{ address.unitSuite ? `#${address.unitSuite}`: '' }}
+        {{ address.streetAddress }} {{ address.unitSuite ? `#${address.unitSuite}` : '' }}
       </div>
       <div data-test="homeAddress__line">
         {{ addressLine }}

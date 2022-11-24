@@ -16,7 +16,7 @@ export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEn
     inactiveReasons: jest.fn(),
     closeReasons: jest.fn(),
     screeningIds: jest.fn(),
-  }
+  };
 
   protected actions = {
     ...this.baseActions,
@@ -37,7 +37,7 @@ export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEn
     setCaseFileIdentityAuthentication: jest.fn(() => this.entity),
     setCaseFileValidationOfImpact: jest.fn(() => this.entity),
     assignCaseFile: jest.fn(() => this.entity),
-  }
+  };
 
   protected mutations = {
     ...this.baseMutations,
@@ -45,11 +45,11 @@ export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEn
     setInactiveReasonsFetched: jest.fn(),
     setScreeningIdsFetched: jest.fn(),
     setCloseReasonsFetched: jest.fn(),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

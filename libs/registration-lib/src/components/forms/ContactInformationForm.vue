@@ -141,8 +141,8 @@ import helpers from '@libs/entities-lib/helpers';
 import { ValidationObserver } from 'vee-validate';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { IOptionItemData } from '@libs/shared-lib/types';
+import { IContactInformation, IValidateEmailResponse } from '@libs/entities-lib/value-objects/contact-information';
 import { MAX_LENGTH_MD } from '../../constants/validations';
-import { IContactInformation, IValidateEmailResponse } from '../../../../entities-lib/src/value-objects/contact-information';
 
 export default Vue.extend({
   name: 'ContactInformationForm',
@@ -263,7 +263,7 @@ export default Vue.extend({
       return !!(this.formCopy.homePhoneNumber?.number || this.formCopy.mobilePhoneNumber?.number || this.formCopy.alternatePhoneNumber?.number);
     },
 
-    contactInfoRequired(): {isMissing:boolean} | boolean {
+    contactInfoRequired(): { isMissing:boolean } | boolean {
       return !this.skipPhoneEmailRules
       && ((this.submitting && this.missingContactInfo) || this.focusPhoneCounter >= this.triggerPhoneMessage) ? { isMissing: this.missingContactInfo } : false;
     },

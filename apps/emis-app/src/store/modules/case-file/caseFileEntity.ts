@@ -35,7 +35,7 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<ICaseFileEntity>, IRootState>,
-  })
+  });
 
   public state: ICaseFileEntityState = {
     ...this.baseState,
@@ -47,7 +47,7 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
     inactiveReasonsFetched: false,
     closeReasonsFetched: false,
     screeningIdsFetched: false,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
@@ -63,7 +63,7 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
 
     // eslint-disable-next-line
     screeningIds: (state:ICaseFileEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.allScreeningIds, filterOutInactive, actualValue),
-  }
+  };
 
   public mutations = {
     ...this.baseMutations,
@@ -98,7 +98,7 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
     setCloseReasonsFetched(state: ICaseFileEntityState, payload: boolean) {
       state.closeReasonsFetched = payload;
     },
-  }
+  };
 
   public actions = {
     ...this.baseActions,
@@ -147,7 +147,7 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
 
     genericSetAction: async (
       context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>,
-      { id, payload, element }: {id: uuid, payload: unknown, element: string},
+      { id, payload, element }: { id: uuid, payload: unknown, element: string },
     ): Promise<ICaseFileEntityState> => {
       try {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -218,8 +218,10 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
       payload: { id: uuid, individuals: uuid[]; teams: uuid[] },
     ): Promise<ICaseFileEntity> {
       const { id, ...payloadData } = payload;
-      return context.dispatch('genericSetAction',
-        { id, payload: payloadData, element: 'Assign' });
+      return context.dispatch(
+        'genericSetAction',
+        { id, payload: payloadData, element: 'Assign' },
+      );
     },
 
     createCaseFile: async (
@@ -284,5 +286,5 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
         return null;
       }
     },
-  }
+  };
 }

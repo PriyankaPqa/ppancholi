@@ -16,7 +16,7 @@ export class UserAccountStorageMock extends BaseMock<IUserAccountCombined, IUser
     currentUserFiltersByKey: jest.fn(() => [mockUserFilters()[2]]),
     roles: jest.fn(() => mockOptionItems()),
     rolesByLevels: jest.fn(() => mockRolesByLevel()),
-  }
+  };
 
   protected actions = {
     ...this.baseActions,
@@ -26,17 +26,17 @@ export class UserAccountStorageMock extends BaseMock<IUserAccountCombined, IUser
     assignRole: jest.fn(() => this.entity),
     fetchCurrentUserAccount: jest.fn(() => this.entity),
     fetchRoles: jest.fn(() => mockOptionItems()),
-  }
+  };
 
   protected mutations = {
     ...this.baseMutations,
     setCurrentUserAccount: jest.fn(),
     setRolesFetched: jest.fn(),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

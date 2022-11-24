@@ -1,5 +1,5 @@
 <script>
-/* eslint-disable max-len */
+/* eslint-disable */
 export default {
   name: 'DuplicateIcon',
 };

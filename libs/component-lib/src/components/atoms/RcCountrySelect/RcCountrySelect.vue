@@ -7,9 +7,9 @@
     :items="countries"
     v-on="{
       ...$listeners,
-      input: onInput
+      input: onInput,
     }">
-    <template #selection="{item}">
+    <template #selection="{ item }">
       <div
         v-if="innerValue"
         :class="[
@@ -46,7 +46,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import '../../styles/sprite.css';
-import { en, fr } from '../../../../../shared-lib/src/constants/countries';
+import en from '@libs/shared-lib/constants/countries/en';
+import fr from '@libs/shared-lib/constants/countries/fr';
 
 /**
  * A country select built using v-autocomplete. Uses iso2 country names and codes.

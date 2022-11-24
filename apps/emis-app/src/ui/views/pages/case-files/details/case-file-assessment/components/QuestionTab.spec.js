@@ -95,10 +95,14 @@ describe('QuestionTab.vue', () => {
             isDynamicRoot: false,
             childEntryIndexes: [],
             question: {
+              // eslint-disable-next-line vue/max-len
               answerChoices: null, identifier: 'question1', childEntryIndexes: [], path: null, question: { translation: { en: 'question1', fr: 'question1' } }, questionType: 'text',
             },
           }, {
-            answer: { assessmentQuestionIdentifier: 'question2', responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }, { displayValue: 'item2', numericValue: null, textValue: 'item2' }] },
+            answer: {
+              assessmentQuestionIdentifier: 'question2',
+              responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }, { displayValue: 'item2', numericValue: null, textValue: 'item2' }],
+            },
             displayAnswer: 'item1, item2',
             history: [],
             isMultiple: true,
@@ -130,6 +134,7 @@ describe('QuestionTab.vue', () => {
             isDynamicRoot: false,
             childEntryIndexes: [],
             question: {
+              // eslint-disable-next-line vue/max-len
               answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question2|Comment', question: { translation: { en: 'question2|Comment', fr: 'question2|Commentaires' } }, questionType: 'text',
             },
           }, {
@@ -163,6 +168,7 @@ describe('QuestionTab.vue', () => {
             isDynamicRoot: false,
             childEntryIndexes: [],
             question: {
+              // eslint-disable-next-line vue/max-len
               answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question4', question: { translation: { en: 'question4', fr: 'question4' } }, questionType: 'text',
             },
           }],
@@ -189,7 +195,9 @@ describe('QuestionTab.vue', () => {
           crcUserName: 'myuser',
           responses: [{ displayValue: 'my typed text', numericValue: null, textValue: 'my typed text' }],
         }];
-        mockResponse.answeredQuestions.push({ assessmentQuestionIdentifier: 'question4', responses: [{ displayValue: 'my typed text', numericValue: null, textValue: 'my typed text' }] });
+        mockResponse.answeredQuestions.push({
+          assessmentQuestionIdentifier: 'question4', responses: [{ displayValue: 'my typed text', numericValue: null, textValue: 'my typed text' }],
+        });
 
         await mountWrapper();
         const data = wrapper.vm.questionsAndAnswers;
@@ -204,10 +212,14 @@ describe('QuestionTab.vue', () => {
             isDynamicRoot: false,
             childEntryIndexes: [],
             question: {
+              // eslint-disable-next-line vue/max-len
               answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question1', question: { translation: { en: 'question1', fr: 'question1' } }, questionType: 'text',
             },
           }, {
-            answer: { assessmentQuestionIdentifier: 'question2', responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }, { displayValue: 'item2', numericValue: null, textValue: 'item2' }] },
+            answer: {
+              assessmentQuestionIdentifier: 'question2',
+              responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }, { displayValue: 'item2', numericValue: null, textValue: 'item2' }],
+            },
             displayAnswer: 'item1, item2',
             history: [{
               assessmentQuestionIdentifier: 'question2',
@@ -252,6 +264,7 @@ describe('QuestionTab.vue', () => {
             isDynamicRoot: false,
             childEntryIndexes: [],
             question: {
+              // eslint-disable-next-line vue/max-len
               answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question2|Comment', question: { translation: { en: 'question2|Comment', fr: 'question2|Commentaires' } }, questionType: 'text',
             },
           }, {
@@ -280,13 +293,18 @@ describe('QuestionTab.vue', () => {
             answer: { assessmentQuestionIdentifier: 'question4', responses: [{ displayValue: 'my typed text', numericValue: null, textValue: 'my typed text' }] },
             displayAnswer: 'my typed text',
             history: [{
-              assessmentQuestionIdentifier: 'question4', answeredOn: '2022-10-11T17:20:35.568709Z', displayAnswer: 'my typed text', crcUserName: 'myuser', responses: [{ displayValue: 'my typed text', numericValue: null, textValue: 'my typed text' }],
+              assessmentQuestionIdentifier: 'question4',
+              answeredOn: '2022-10-11T17:20:35.568709Z',
+              displayAnswer: 'my typed text',
+              crcUserName: 'myuser',
+              responses: [{ displayValue: 'my typed text', numericValue: null, textValue: 'my typed text' }],
             }],
             isMultiple: false,
             path: null,
             isDynamicRoot: false,
             childEntryIndexes: [],
             question: {
+              // eslint-disable-next-line vue/max-len
               answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question4', question: { translation: { en: 'question4', fr: 'question4' } }, questionType: 'text',
             },
           }],

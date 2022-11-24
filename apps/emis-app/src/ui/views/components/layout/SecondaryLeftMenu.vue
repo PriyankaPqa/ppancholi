@@ -47,7 +47,7 @@
                 v-for="(tab, index) in group.items"
                 :key="`${group.name}_${index}`"
                 :class="{
-                  'secondaryLeftMenuTab': true,
+                  secondaryLeftMenuTab: true,
                   'secondaryLeftMenuTab__active--manual': tab.active,
                   'v-list-item--active': tab.active,
                 }"
@@ -78,7 +78,7 @@
             v-else
             :key="index"
             :class="{
-              'secondaryLeftMenuTab': true,
+              secondaryLeftMenuTab: true,
               'secondaryLeftMenuTab__active--manual': tab.active,
               'v-list-item--active': tab.active,
             }"

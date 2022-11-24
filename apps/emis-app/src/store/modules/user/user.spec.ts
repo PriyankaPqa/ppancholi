@@ -20,6 +20,7 @@ import userHelpers from './userHelpers';
 
 jest.mock('@libs/shared-lib/plugins/applicationInsights/applicationInsights');
 
+// eslint-disable-next-line no-console
 console.info = jest.fn();
 
 describe('>>> Users Module', () => {

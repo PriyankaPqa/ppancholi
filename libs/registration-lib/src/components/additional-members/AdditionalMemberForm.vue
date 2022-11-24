@@ -61,12 +61,12 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import { IOptionItemData } from '@libs/shared-lib/types';
-import { IShelterLocationData } from '../../../../entities-lib/src/household-create';
+import { IShelterLocationData } from '@libs/entities-lib/src/household-create';
+import { IMember } from '@libs/entities-lib//value-objects/member';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import months from '../../constants/months';
-import { IMember } from '../../../../entities-lib/src/value-objects/member';
 
 export default Vue.extend({
   name: 'AdditionalMemberForm',

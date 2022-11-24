@@ -20,7 +20,7 @@
                 :label="$t('registration.personal_info.firstName')"
                 @keyup.enter.native="search" />
             </v-col>
-            <v-col :col=" sameLine ? 12 : 6" :class="[sameLine ? 'mt-n6': '']">
+            <v-col :col=" sameLine ? 12 : 6" :class="[sameLine ? 'mt-n6' : '']">
               <v-text-field-with-validation
                 v-model="form.lastName"
                 data-test="isRegistered__lastName"
@@ -34,7 +34,7 @@
 
         <with-root :show="!sameLine">
           <v-row>
-            <v-col :col=" sameLine ? 12 : 6" :class="[sameLine ? 'mt-n6': '']">
+            <v-col :col=" sameLine ? 12 : 6" :class="[sameLine ? 'mt-n6' : '']">
               <v-text-field-with-validation
                 v-model="form.emailAddress"
                 data-test="isRegistered__emailAddress"
@@ -43,7 +43,7 @@
                 :label="$t('registration.personal_info.emailAddress')"
                 @keyup.enter.native="search" />
             </v-col>
-            <v-col :col=" sameLine ? 12 : 6" :class="[sameLine ? 'mt-n6': '']">
+            <v-col :col=" sameLine ? 12 : 6" :class="[sameLine ? 'mt-n6' : '']">
               <rc-phone-with-validation
                 :value="phone"
                 :rules="rules.phone"
@@ -58,7 +58,7 @@
 
         <with-root :show="!sameLine">
           <v-row>
-            <v-col :col=" sameLine ? 12 : 6" :class="[sameLine ? 'mt-n6': '']">
+            <v-col :col=" sameLine ? 12 : 6" :class="[sameLine ? 'mt-n6' : '']">
               <v-text-field-with-validation
                 v-model="form.registrationNumber"
                 data-test="isRegistered__registrationNumber"
@@ -100,7 +100,7 @@
           </v-row>
         </with-root>
 
-        <div :class="[sameLine ? 'mb-4 mt-n4 pl-3': '']">
+        <div :class="[sameLine ? 'mb-4 mt-n4 pl-3' : '']">
           <v-btn
             data-test="search"
             :disabled="isEmpty(nonEmptySearchCriteria) || !valid"
@@ -191,7 +191,7 @@ export default Vue.extend({
   },
   computed: {
     // Will return only non empty properties from the form object, Ex: {firstName: 'x', lastName: 'y'}
-    nonEmptySearchCriteria(): {[key: string]: string} {
+    nonEmptySearchCriteria(): { [key: string]: string } {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       // eslint-disable-next-line

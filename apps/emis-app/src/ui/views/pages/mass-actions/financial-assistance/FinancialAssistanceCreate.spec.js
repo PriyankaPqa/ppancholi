@@ -15,7 +15,7 @@ import Component from './FinancialAssistanceCreate.vue';
 
 const localVue = createLocalVue();
 
-// eslint-disable-next-line max-len
+// eslint-disable-next-line max-len,vue/max-len
 const filtersString = '{"search":"Metadata/PrimaryBeneficiary/ContactInformation/Email: /.*tammy.*/","skip":0,"top":10,"orderBy":"","filter":{"and":{"Entity/EventId":"60983874-18bb-467d-b55a-94dc55818151"}}}';
 
 const storage = mockStorage();

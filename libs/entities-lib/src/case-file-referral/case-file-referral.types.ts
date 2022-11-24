@@ -3,7 +3,7 @@ import { IEntity, IEntityCombined } from '../base';
 
 export enum ReferralMethod {
   Referral = 1,
-  Warm = 2
+  Warm = 2,
 }
 
 export interface IReferralConsentInformation {
@@ -29,4 +29,4 @@ export interface ICaseFileReferralMetadata extends IEntity {
   referralOutcomeStatusName: IMultilingual;
 }
 
-export type ICaseFileReferralCombined = IEntityCombined<ICaseFileReferralEntity, ICaseFileReferralMetadata>
+export type ICaseFileReferralCombined = IEntityCombined<ICaseFileReferralEntity, ICaseFileReferralMetadata>;

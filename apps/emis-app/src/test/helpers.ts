@@ -35,7 +35,7 @@ export const mockUserStateLevel = (level: number) => ({
 });
 
 export enum Contributor {
-  'IM' =1,
+  'IM' = 1,
   'Finance' = 2,
   'Three' = 3,
 

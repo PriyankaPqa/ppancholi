@@ -10,13 +10,13 @@ export enum EOptionLists {
   Roles = 6,
   CaseFileTags = 7,
   CaseFileInactiveReasons = 8,
-  CaseNoteCategories= 9,
+  CaseNoteCategories = 9,
   CaseFileCloseReasons = 10,
   FinancialAssistance = 11,
   ScreeningId = 12,
   ReferralOutcomeStatus = 13,
   ReferralTypes = 14,
-  DocumentCategories= 15
+  DocumentCategories = 15,
 }
 
 export interface IOptionSubItem extends IEntity {
@@ -48,4 +48,4 @@ export interface ICreateOptionItemRequest {
   description?: IMultilingual;
 }
 
-export type IOptionItemCombined = IEntityCombined<IOptionItem, never>
+export type IOptionItemCombined = IEntityCombined<IOptionItem, never>;

@@ -12,7 +12,7 @@ export class HouseholdStorage extends Base<IHouseholdEntity, IHouseholdMetadata,
 
   private getters = {
     ...this.baseGetters,
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -22,17 +22,17 @@ export class HouseholdStorage extends Base<IHouseholdEntity, IHouseholdMetadata,
     // eslint-disable-next-line
     updateHomeAddress: (householdId: string, address: IAddress): Promise<IHouseholdEntity> => this.store.dispatch(`${this.entityModuleName}/updateHomeAddress`, { householdId, address }),
     fetchHouseholdHistory: (household: IHouseholdEntity): Promise<IVersionedEntity[]> => this.store.dispatch(`${this.entityModuleName}/fetchHouseholdHistory`, household),
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
 
     setSearchResultsShown: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setSearchResultsShown`, payload),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

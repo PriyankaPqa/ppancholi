@@ -12,7 +12,7 @@ export class CaseNoteStorageMock extends BaseMock<ICaseNoteCombined, ICaseNoteEn
   protected getters = {
     ...this.baseGetters,
     caseNoteCategories: jest.fn(() => mockCaseNoteCategories()),
-  }
+  };
 
   protected actions = {
     ...this.baseActions,
@@ -21,16 +21,16 @@ export class CaseNoteStorageMock extends BaseMock<ICaseNoteCombined, ICaseNoteEn
     pinCaseNote: jest.fn(() => mockCaseNoteEntity()),
     editCaseNote: jest.fn(() => mockCaseNoteEntity()),
     searchCaseNotes: jest.fn(),
-  }
+  };
 
   protected mutations = {
     ...this.baseMutations,
     setCaseNoteCategoriesFetched: jest.fn(),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

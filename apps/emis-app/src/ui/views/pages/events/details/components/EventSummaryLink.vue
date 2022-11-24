@@ -11,7 +11,7 @@
       <span class="rc-body12">{{ $t('eventSummary.registrationLink') }}: </span>
 
       <a
-        :class="{'rc-link12 fw-bold mx-1 text-no-wrap': true}"
+        :class="{ 'rc-link12 fw-bold mx-1 text-no-wrap': true }"
         data-test="event-summary-registration-link"
         :href="registrationUrl">
         {{ registrationUrl }}

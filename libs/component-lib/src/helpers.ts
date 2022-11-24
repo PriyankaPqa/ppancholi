@@ -11,7 +11,7 @@ export default {
   },
   // Check if one attributes has been added by user
   // Example : persistent or :persistent=true or :persistent=false for the dialog
-  checkAttrs(componentAttributes: {[key: string]: string}, attributeName: string): boolean {
+  checkAttrs(componentAttributes: { [key: string]: string }, attributeName: string): boolean {
     if (Object.prototype.hasOwnProperty.call(componentAttributes, attributeName)) {
       return componentAttributes[attributeName] === '' || (componentAttributes[attributeName] as unknown as boolean);
     } return false;

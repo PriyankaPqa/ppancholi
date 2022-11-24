@@ -86,8 +86,8 @@ import {
   RcCountrySelectWithValidation,
 } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
+import { IAddress } from '@libs/entities-lib/household-create';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import { IAddress } from '../../../../entities-lib/src/household-create';
 import googleAutoCompleteMixin from './mixins/address';
 
 export default mixins(googleAutoCompleteMixin).extend({

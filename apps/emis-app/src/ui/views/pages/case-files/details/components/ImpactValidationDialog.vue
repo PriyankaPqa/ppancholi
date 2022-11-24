@@ -1,5 +1,5 @@
 <template>
-  <validation-observer ref="impactValidation" v-slot="{failed, pristine}">
+  <validation-observer ref="impactValidation" v-slot="{ failed, pristine }">
     <rc-dialog
       :show-help="false"
       :help-link="helpLink"

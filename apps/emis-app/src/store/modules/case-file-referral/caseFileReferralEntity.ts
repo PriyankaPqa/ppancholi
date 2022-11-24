@@ -25,15 +25,15 @@ export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralE
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<ICaseFileReferralEntity>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
-    types: []as IOptionItem[],
-    outcomeStatuses: []as IOptionItem[],
+    types: [] as IOptionItem[],
+    outcomeStatuses: [] as IOptionItem[],
     typesFetched: false,
     outcomeStatusesFetched: false,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
@@ -46,7 +46,7 @@ export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralE
 
     // eslint-disable-next-line
     getByCaseFile: (state: ICaseFileReferralEntityState) => (caseFileId: uuid) => _cloneDeep(state.items.filter((x) => x.caseFileId === caseFileId && x.status === Status.Active)),
-  }
+  };
 
   public mutations = {
     ...this.baseMutations,
@@ -66,7 +66,7 @@ export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralE
     setOutcomeStatusesFetched(state: ICaseFileReferralEntityState, payload: boolean) {
       state.outcomeStatusesFetched = payload;
     },
-  }
+  };
 
   public actions = {
     ...this.baseActions,
@@ -89,8 +89,10 @@ export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralE
       return context.getters.outcomeStatuses();
     },
 
-    createReferral: async (context: ActionContext<ICaseFileReferralEntityState, ICaseFileReferralEntityState>,
-      payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity> => {
+    createReferral: async (
+      context: ActionContext<ICaseFileReferralEntityState, ICaseFileReferralEntityState>,
+      payload: ICaseFileReferralEntity,
+    ): Promise<ICaseFileReferralEntity> => {
       const result = await this.service.createReferral(payload);
       if (result) {
         context.commit('addNewlyCreatedId', result);
@@ -99,13 +101,15 @@ export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralE
       return result;
     },
 
-    updateReferral: async (context: ActionContext<ICaseFileReferralEntityState, ICaseFileReferralEntityState>,
-      payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity> => {
+    updateReferral: async (
+      context: ActionContext<ICaseFileReferralEntityState, ICaseFileReferralEntityState>,
+      payload: ICaseFileReferralEntity,
+    ): Promise<ICaseFileReferralEntity> => {
       const result = await this.service.updateReferral(payload);
       if (result) {
         context.commit('set', result);
       }
       return result;
     },
-  }
+  };
 }

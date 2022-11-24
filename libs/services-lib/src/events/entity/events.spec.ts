@@ -211,7 +211,9 @@ describe('>>> Events Service', () => {
     const agreement = event.agreements[0];
     const { id } = event;
     await service.editAgreement(id, agreement);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/agreement/${agreement.id}`, {
+    expect(http.patch).toHaveBeenCalledWith(
+`${service.baseUrl}/${id}/agreement/${agreement.id}`,
+{
       name: agreement.name,
       details: agreement.details,
       startDate: new Date(agreement.startDate).toISOString(),
@@ -221,7 +223,8 @@ describe('>>> Events Service', () => {
         specifiedOther: agreement.agreementType.specifiedOther,
       },
     },
-    { globalHandler: false });
+{ globalHandler: false },
+);
   });
 
   test('removeAgreement calls the correct URL with the right payload', async () => {

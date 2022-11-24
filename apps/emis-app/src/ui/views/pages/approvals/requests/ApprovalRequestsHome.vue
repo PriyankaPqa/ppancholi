@@ -60,20 +60,20 @@
       </template>
 
       <template #[`item.${customColumns.submittedBy}`]="{ item }">
-        {{ item.entity.submittedBy? item.entity.submittedBy.userName : '' }}
+        {{ item.entity.submittedBy ? item.entity.submittedBy.userName : '' }}
       </template>
 
       <template #[`item.${customColumns.submittedTo}`]="{ item }">
-        {{ item.entity.submittedTo? item.entity.submittedTo.userName: '' }}
+        {{ item.entity.submittedTo ? item.entity.submittedTo.userName : '' }}
       </template>
 
       <template #[`item.${customColumns.event}`]="{ item }">
-        {{ item.metadata? $m(item.metadata.eventName) : '' }}
+        {{ item.metadata ? $m(item.metadata.eventName) : '' }}
       </template>
 
       <template #[`item.${customColumns.submissionStartedDate}`]="{ item }">
         <div class="text-no-wrap">
-          {{ item.entity.submissionStartedDate ? getLocalStringDate(item.entity.submissionStartedDate , '', 'll'): '-' }}
+          {{ item.entity.submissionStartedDate ? getLocalStringDate(item.entity.submissionStartedDate, '', 'll') : '-' }}
         </div>
       </template>
 
@@ -181,7 +181,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
       };
     },
 
-    submittedToMeFilter(): {'Entity/SubmittedTo': {UserId: string}} {
+    submittedToMeFilter(): { 'Entity/SubmittedTo': { UserId: string } } {
       return {
         'Entity/SubmittedTo': {
           UserId: this.myUserId,
@@ -202,7 +202,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
       };
     },
 
-    labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult} } {
+    labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
       return {
         header: {
           title: this.$t('approval.title'),
@@ -394,10 +394,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
       this.showActionDialog = true;
     },
 
-    async onApplyFilterLocal(
-      { preparedFilters, searchFilters }
-        : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown,
-    ) {
+    async onApplyFilterLocal({ preparedFilters, searchFilters }
+        : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown) {
       let finalFilters = {};
       if (this.submittedToMeSwitch) {
         finalFilters = _isEmpty(preparedFilters) ? this.submittedToMeFilter : { ...preparedFilters, ...this.submittedToMeFilter };
@@ -432,7 +430,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
       return { submittedToMeFilter: this.submittedToMeSwitch };
     },
 
-    setAdditionalFilters(state: {submittedToMeFilter: boolean}) {
+    setAdditionalFilters(state: { submittedToMeFilter: boolean }) {
       this.submittedToMeSwitch = !!state?.submittedToMeFilter || false;
     },
   },

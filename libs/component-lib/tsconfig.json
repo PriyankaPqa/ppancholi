@@ -17,9 +17,10 @@
     "baseUrl": ".",
     "allowJs": true,
     "types": [
-      "webpack-env",
       "jest",
-      "vuetify"
+      "vuetify",
+      "vite/client",
+      "node"
     ],
     "paths": {
       "@/*": [
@@ -44,5 +45,6 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "typings/**.ts"
-  ]
+  ],
+  "references": [{ "path": "../../libs/shared-lib/tsconfig.json" }]
 }

@@ -459,9 +459,11 @@ describe('CaseFileActivity.vue', () => {
       it('calls fetchCaseFileActivities when the activity has the same case file id after debounce', async () => {
         jest.clearAllMocks();
         wrapper.vm.activityChanged({ caseFileId: 'nope' });
+        // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 1500));
         expect(storage.caseFile.actions.fetchCaseFileActivities).toHaveBeenCalledTimes(0);
         wrapper.vm.activityChanged({ caseFileId: wrapper.vm.id });
+        // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 1500));
         expect(storage.caseFile.actions.fetchCaseFileActivities).toHaveBeenCalled();
       });

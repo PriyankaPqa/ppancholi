@@ -17,7 +17,7 @@
         outlined
         @change="onChange($event)"
         @focus="checkRules()">
-        <template #append class="pa-0">
+        <template #append>
           <v-btn color="primary" class="uploadButton" @click="openSelection()">
             {{ $t('common.button.browse') }}
           </v-btn>
@@ -25,7 +25,7 @@
       </v-file-input>
     </validation-provider>
     <div v-if="errors.length === 0 && errorMessages.length === 0 && showRules" class="rc-caption12 mt-n6">
-      {{ $t('common.upload.max_file.size', {x: helpers.formatBytes(maxSize)}) }} {{ extensions }}
+      {{ $t('common.upload.max_file.size', { x: helpers.formatBytes(maxSize) }) }} {{ extensions }}
     </div>
   </div>
 </template>

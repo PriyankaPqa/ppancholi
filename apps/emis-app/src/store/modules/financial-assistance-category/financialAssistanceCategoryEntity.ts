@@ -17,11 +17,11 @@ export class FinancialAssistanceCategoryEntityModule extends BaseModule <IOption
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<IOptionItem>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,

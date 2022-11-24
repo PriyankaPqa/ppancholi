@@ -27,10 +27,15 @@
 /* eslint-disable no-undef */
 import Vue from 'vue';
 import _debounce from 'lodash/debounce';
+import { ClickOutside } from 'vuetify/es5/directives';
 import GoogleMapsPlugin from '../../plugins/google-maps';
 
 export default Vue.extend({
   name: 'RcGoogleAutocomplete',
+
+  directives: {
+    ClickOutside,
+  },
 
   props: {
     apiKey: {

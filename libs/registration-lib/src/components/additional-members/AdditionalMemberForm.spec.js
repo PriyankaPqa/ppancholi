@@ -1,20 +1,20 @@
 import { i18n } from '@/ui/plugins/i18n';
 import helpers from '@libs/entities-lib/helpers';
-import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
-import IdentityForm from '../forms/IdentityForm.vue';
-import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
-import { ECurrentAddressTypes, mockCampGround } from '../../../../entities-lib/src/value-objects/current-address/index';
+import { ECurrentAddressTypes, mockCampGround } from '@libs/entities-lib/src/value-objects/current-address';
 import {
   mockShelterLocations,
-} from '../../../../entities-lib/src/registration-event';
-import { mockStorage } from '../../store/storage/storage.mock';
-import { createLocalVue, shallowMount } from '../../test/testSetup';
+} from '@libs/entities-lib/src/registration-event';
 import {
   mockGenders,
   mockAdditionalMember,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems, mockMember,
-} from '../../../../entities-lib/src/household-create';
+} from '@libs/entities-lib/src/household-create';
+import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
+import IdentityForm from '../forms/IdentityForm.vue';
+import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
+import { mockStorage } from '../../store/storage';
+import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AdditionalMemberForm.vue';
 
 const localVue = createLocalVue();

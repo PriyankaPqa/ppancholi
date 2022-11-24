@@ -72,8 +72,8 @@
           must-sort
           :no-data-text="$t('caseFile.assign.no_data_table')"
           item-key="itemKey"
-          :options="{sortBy: ['displayName'], sortDesc: [false]}"
-          :item-class="(item)=> item.disabled ? 'disabled': isUserSelected(item) ? 'disabled row_active': ''"
+          :options="{ sortBy: ['displayName'], sortDesc: [false] }"
+          :item-class="(item)=> item.disabled ? 'disabled' : isUserSelected(item) ? 'disabled row_active' : ''"
           :items="displayedIndividuals"
           :items-per-page="Math.max(allIndividuals.length, 1)"
           @update:sort-by="sortBy = $event"
@@ -85,10 +85,10 @@
             <v-simple-checkbox
               :data-test="`select_${item.id}`"
               :ripple="false"
-              :class="{disabled: isUserSelected(item)}"
+              :class="{ disabled: isUserSelected(item) }"
               :value="item.disabled ? false : isUserSelected(item)"
               :disabled="item.disabled"
-              @input="onSelectIndividuals({item, value: $event})" />
+              @input="onSelectIndividuals({ item, value: $event })" />
           </template>
         </v-data-table>
       </v-col>
@@ -121,7 +121,7 @@ interface TeamWithCount extends ITeamEntity {
   activeMemberCount: number;
 }
 
-interface IIndividual extends ITeamMember, IUserAccountCombined{
+interface IIndividual extends ITeamMember, IUserAccountCombined {
   translatedRoleName?: string;
   displayName: string;
   teamName: string;
@@ -315,7 +315,7 @@ export default Vue.extend({
       this.assignedIndividuals = this.assignedIndividuals.filter((i) => i.id !== individual.id);
     },
 
-    removeTeam(team: {name: string, id: string, type: string}) {
+    removeTeam(team: { name: string, id: string, type: string }) {
       this.assignedTeams = this.assignedTeams.filter((t) => t.id !== team.id);
     },
 
@@ -375,7 +375,7 @@ export default Vue.extend({
         });
     },
 
-    onSelectIndividuals({ item, value }: {item: IIndividual, value: boolean}) {
+    onSelectIndividuals({ item, value }: { item: IIndividual, value: boolean }) {
       if (value) { // Selected
         this.assignIndividual(item);
       } else { // Unselected

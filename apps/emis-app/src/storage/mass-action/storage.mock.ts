@@ -10,22 +10,22 @@ export class MassActionStorageMock extends BaseMock<IMassActionCombined, IMassAc
 
   protected getters = {
     ...this.baseGetters,
-  }
+  };
 
   protected actions = {
     ...this.baseActions,
     process: jest.fn(() => this.entity),
     update: jest.fn(() => this.entity),
     create: jest.fn(() => this.entity),
-  }
+  };
 
   protected mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

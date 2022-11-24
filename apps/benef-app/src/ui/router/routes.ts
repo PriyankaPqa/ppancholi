@@ -2,13 +2,13 @@ import { RouteConfig } from 'vue-router';
 import { Trans } from '@/ui/plugins';
 import Routes from '@/constants/routes';
 
-const MainLayout = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/components/layout/MainLayout.vue');
-const LandingPage = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/registration/landing-page/LandingPage.vue');
-const Individual = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/registration/individual/Individual.vue');
-const ConfirmationPrint = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/confirmation/ConfirmationPrint.vue');
-const AssessmentRunner = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/assessment/AssessmentRunner.vue');
+const MainLayout = () => import('@/ui/views/components/layout/MainLayout.vue');
+const LandingPage = () => import('@/ui/views/pages/registration/landing-page/LandingPage.vue');
+const Individual = () => import('@/ui/views/pages/registration/individual/Individual.vue');
+const ConfirmationPrint = () => import('@/ui/views/pages/registration/confirmation/ConfirmationPrint.vue');
+const AssessmentRunner = () => import('@/ui/views/pages/assessment/AssessmentRunner.vue');
 
-const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
+const PageNotFound = () => import('@/ui/views/pages/page-not-found/PageNotFound.vue');
 
 export const routes: Array<RouteConfig> = [
   {

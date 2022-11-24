@@ -88,8 +88,11 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
   }
 
   async editAgreement(eventId:uuid, payload: IEventAgreement): Promise<IEventEntity> {
-    return this.http.patch(`${this.baseUrl}/${eventId}/agreement/${payload.id}`,
-      this.makeAgreementPayload(payload), { globalHandler: false });
+    return this.http.patch(
+`${this.baseUrl}/${eventId}/agreement/${payload.id}`,
+      this.makeAgreementPayload(payload),
+{ globalHandler: false },
+);
   }
 
   async removeAgreement(eventId:uuid, agreementId: uuid): Promise<IEventEntity> {

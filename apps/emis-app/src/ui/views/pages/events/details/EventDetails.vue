@@ -70,7 +70,7 @@
 
       <div class="d-flex justify-center pt-1 pb-3">
         <v-icon size="26" class="toggle-left-menu-icon" color="gray darken-2" data-test="expand-button" @click="toggleExpandLeftMenu">
-          {{ `mdi-chevron-${showExpandedLeftMenu? 'up': 'down'}` }}
+          {{ `mdi-chevron-${showExpandedLeftMenu ? 'up' : 'down'}` }}
         </v-icon>
       </div>
     </template>
@@ -86,7 +86,7 @@
       </div>
 
       <div ref="dates" v-resize="onResize" class="dates">
-        <div :class="['date', 'block-date', removeBorder? 'no-border': '']">
+        <div :class="['date', 'block-date', removeBorder ? 'no-border' : '']">
           <div class="rc-body12">
             {{ $t('eventDetail.created') }}
           </div>
@@ -100,8 +100,8 @@
             {{ $t('eventDetail.reported') }}
           </div>
           <div class="rc-body14 fw-bold" data-test="event-reported-date">
-            {{ event.entity.responseDetails?
-              getLocalStringDate(event.entity.responseDetails.dateReported, 'EventResponseDetails.dateReported'): "-" }}
+            {{ event.entity.responseDetails
+              ? getLocalStringDate(event.entity.responseDetails.dateReported, 'EventResponseDetails.dateReported') : "-" }}
           </div>
         </div>
 
@@ -146,8 +146,14 @@ import { ECanadaProvinces, IMultilingual, INavigationTab } from '@libs/shared-li
 import routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
+import { Resize } from 'vuetify/es5/directives';
+
 export default Vue.extend({
   name: 'EventDetails',
+
+  directives: {
+    Resize,
+  },
 
   components: {
     RcPhoneDisplay,

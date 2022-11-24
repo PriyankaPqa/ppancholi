@@ -1,5 +1,5 @@
 <template>
-  <validation-provider v-slot="{ errors, classes}" :name="$attrs.name" :rules="rules" :mode="mode">
+  <validation-provider v-slot="{ errors, classes }" :name="$attrs.name" :rules="rules" :mode="mode">
     <v-textarea
       v-model="innerValue"
       outlined
@@ -66,8 +66,7 @@ export default {
   methods: {
     removeMultipleLine(text) {
       if (text != null) {
-        // eslint-disable-next-line no-control-regex
-        return text.replace(new RegExp('[\r\n]+', 'gm'), '\n');
+        return text.replace(/[\r\n]+/gm, '\n');
       }
       return null;
     },

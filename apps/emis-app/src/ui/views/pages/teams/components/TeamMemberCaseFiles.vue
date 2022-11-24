@@ -1,7 +1,7 @@
 <template>
   <rc-dialog
     v-if="show"
-    :title="$t('teams.member.caseFile.title', {member: member.metadata.displayName})"
+    :title="$t('teams.member.caseFile.title', { member: member.metadata.displayName })"
     :show="show"
     content-only-scrolling
     content-padding="0"
@@ -42,13 +42,13 @@
               <tr
                 v-for="(item, index) in group"
                 :key="item.caseFile.id"
-                :class="{isDisabledRow: !item.canAccessFile}">
+                :class="{ isDisabledRow: !item.canAccessFile }">
                 <td>
                   <router-link
                     :data-test="`team_member_caseFile_number_${index}`"
                     :to="getCaseFileRoute(item.caseFile.id)"
                     class="rc-link14 font-weight-bold"
-                    :class="{'isDisabled':!item.canAccessFile}">
+                    :class="{ isDisabled: !item.canAccessFile }">
                     {{ item.caseFile.caseFileNumber }}
                   </router-link>
                 </td>
@@ -104,7 +104,7 @@ import AssignCaseFile from '@/ui/views/pages/case-files/details/case-file-activi
 import { Dictionary } from 'lodash';
 
 interface IMemberCaseFile {
-    event: {id: string, name: IMultilingual },
+    event: { id: string, name: IMultilingual },
     teamName: string,
     caseFile: ICaseFileEntity,
     canAssign: boolean,

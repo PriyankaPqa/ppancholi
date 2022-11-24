@@ -23,8 +23,9 @@ export class UserAccountStorage
 
     roles: () : IOptionItem[] => this.store.getters[`${this.entityModuleName}/roles`],
 
-    rolesByLevels: (levels?: Array<string>) : {name: IMultilingual, id: string, status: Status}[] => this.store.getters[`${this.entityModuleName}/rolesByLevels`](levels),
-  }
+    // eslint-disable-next-line max-len,vue/max-len
+    rolesByLevels: (levels?: Array<string>) : { name: IMultilingual, id: string, status: Status }[] => this.store.getters[`${this.entityModuleName}/rolesByLevels`](levels),
+  };
 
   private actions = {
     ...this.baseActions,
@@ -40,7 +41,7 @@ export class UserAccountStorage
     fetchCurrentUserAccount: (): Promise<IUserAccountEntity> => this.store.dispatch(`${this.entityModuleName}/fetchCurrentUserAccount`),
 
     fetchRoles: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchRoles`),
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
@@ -52,11 +53,11 @@ export class UserAccountStorage
     setRolesFetched: (payload: boolean) => {
       this.store.commit(`${this.entityModuleName}/setRolesFetched`, payload);
     },
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

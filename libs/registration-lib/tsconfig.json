@@ -16,9 +16,10 @@
     "baseUrl": ".",
     "allowJs": true,
     "types": [
-      "webpack-env",
       "jest",
-      "vuetify"
+      "vuetify",
+      "vite/client",
+      "node"
     ],
     "paths": {
       "@libs/registration-lib/*": [

@@ -15,7 +15,7 @@ export enum HouseholdActivityType {
   HouseholdMoved = 6,
   HomeAddressEdited = 7,
   TempAddressEdited = 8,
-  PrimaryAssigned = 9
+  PrimaryAssigned = 9,
 }
 
 export interface IHouseholdActivityPerson {
@@ -49,7 +49,7 @@ export interface IHouseholdActivityMembers {
 
 export interface IHouseholdActivity {
   householdId: uuid;
-  timestamp: string |Date;
+  timestamp: string | Date;
   user: {
     id: uuid;
     name: string;

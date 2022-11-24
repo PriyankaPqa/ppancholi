@@ -59,12 +59,12 @@
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
 import Vue from 'vue';
-import { IRegistrationMenuItem } from '../../types';
-import { IHouseholdCreate, IHouseholdCreateData } from '../../../../entities-lib/src/household-create';
-import { IEvent } from '../../../../entities-lib/src/registration-event';
-import { IHouseholdEntity } from '../../../../entities-lib/src/household';
+import { IHouseholdCreate, IHouseholdCreateData } from '@libs/entities-lib/src/household-create';
+import { IEvent } from '@libs/entities-lib/src/registration-event';
+import { IHouseholdEntity } from '@libs/entities-lib/src/household';
+import { IServerError } from '@libs/shared-lib/src/types';
 import ConfirmationError from './ConfirmationError.vue';
-import { IServerError } from '../../../../shared-lib/src/types';
+import { IRegistrationMenuItem } from '../../types';
 
 export default Vue.extend({
   name: 'ConfirmRegistration',

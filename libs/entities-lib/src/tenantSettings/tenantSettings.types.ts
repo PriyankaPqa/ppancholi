@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IMultilingual } from '@libs/shared-lib/types/interfaces/IMultilingual';
 
 import { IEntity, IEntityCombined } from '../base';
 
@@ -10,7 +10,7 @@ export enum FeatureKeys {
   BotProtection = 'BotProtection',
   AssessmentsWithinCasefiles = 'AssessmentsWithinCasefiles',
   FinancialAssistanceDataCorrection = 'FinancialAssistanceDataCorrection',
-  ActionApprovals='ActionApprovals'
+  ActionApprovals = 'ActionApprovals',
 }
 
 export enum FeatureType {

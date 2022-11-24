@@ -36,7 +36,7 @@
               {{ $m(item.entity.name) }}
             </template>
             <template #[`item.program`]="{ item }">
-              {{ item.metadata ? $m(item.metadata.programName): '' }}
+              {{ item.metadata ? $m(item.metadata.programName) : '' }}
             </template>
             <template #[`item.select`]="{ item }">
               <v-btn

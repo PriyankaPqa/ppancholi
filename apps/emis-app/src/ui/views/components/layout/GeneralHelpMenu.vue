@@ -25,6 +25,7 @@
           :data-test="`general-help-item-${link.test}`"
           link
           :href="link.to"
+          rel="noopener noreferrer"
           target="_blank">
           <v-list-item-title class="rc-link14" :data-test="`general-help-link-${link.test}`">
             {{ link.text }}
@@ -45,6 +46,7 @@
           color="primary"
           data-test="help-center-button"
           :href="helpCenterLink"
+          rel="noopener noreferrer"
           target="_blank">
           {{ $t('common.help_center.label') }}
         </v-btn>

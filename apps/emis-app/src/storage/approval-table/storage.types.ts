@@ -25,13 +25,13 @@ export interface IActionsMock extends IBaseActionsMock<IApprovalTableEntity, IAp
   removeGroup: jest.Mock<IApprovalTableEntityData>;
 }
 
-export type IGetters = IBaseGetters<IApprovalTableEntity, IApprovalTableMetadata>
+export type IGetters = IBaseGetters<IApprovalTableEntity, IApprovalTableMetadata>;
 
-export type IGettersMock = IBaseGettersMock<IApprovalTableEntity, IApprovalTableMetadata>
+export type IGettersMock = IBaseGettersMock<IApprovalTableEntity, IApprovalTableMetadata>;
 
-export type IMutations = IBaseMutations<IApprovalTableEntity, IApprovalTableMetadata>
+export type IMutations = IBaseMutations<IApprovalTableEntity, IApprovalTableMetadata>;
 
-export type IMutationsMock = IBaseMutationsMock<IApprovalTableEntity, IApprovalTableMetadata>
+export type IMutationsMock = IBaseMutationsMock<IApprovalTableEntity, IApprovalTableMetadata>;
 
 export interface IStorageMake {
   getters: IGetters;

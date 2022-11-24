@@ -39,7 +39,7 @@ export default Vue.extend({
       this.$router.push({ name: routes.massActions.fundingRequest.details.name, params: { id } });
     },
 
-    async onPost({ name, description }: {name: string; description: string}) {
+    async onPost({ name, description }: { name: string; description: string }) {
       this.loading = true;
       const entity = await this.$storage.massAction.actions.create(MassActionType.GenerateFundingRequest, { name, description });
       this.loading = false;

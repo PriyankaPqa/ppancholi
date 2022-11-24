@@ -14,7 +14,7 @@ describe('>>> TenantSettings service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    process.env.VUE_APP_API_BASE_URL = 'www.test.com';
+    process.env.VITE_API_BASE_URL = 'www.test.com';
     jest.clearAllMocks();
     http = mockHttp();
     service = new TenantSettingsService(http as never);

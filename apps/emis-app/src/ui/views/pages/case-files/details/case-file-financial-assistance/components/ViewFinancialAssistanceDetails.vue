@@ -121,7 +121,7 @@ export default mixins(caseFileDetail).extend({
       return !this.readonly && this.$hasLevel('level1') && this.financialAssistance.approvalStatus === ApprovalStatus.New;
     },
 
-    editRoute(): {name: string, params: Record<string, string>} {
+    editRoute(): { name: string, params: Record<string, string> } {
       return {
         name: routes.caseFile.financialAssistance.edit.name,
         params: {

@@ -27,13 +27,13 @@ export enum MassActionDataCorrectionType {
   AuthenticationSpecifiedOther = 10,
   IdentitySet = 11,
   ContactInformation = 12,
-  FinancialAssistance = 13
+  FinancialAssistance = 13,
 }
 
 export enum MassActionMode {
   File = 'file',
   List = 'list',
-  NoAttachment = 'noAttachment'
+  NoAttachment = 'noAttachment',
 }
 
 export enum MassActionRunType {

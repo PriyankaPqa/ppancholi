@@ -62,7 +62,7 @@ export default Vue.extend({
           title: 'eventSummary.agreement',
           buttonCaption: 'eventSummary.addAgreement',
         },
-      } as Record<string, {title: string, buttonCaption: string}>,
+      } as Record<string, { title: string, buttonCaption: string }>,
     };
   },
   computed: {

@@ -47,7 +47,7 @@ import { TranslateResult } from 'vue-i18n';
 import _cloneDeep from 'lodash/cloneDeep';
 
 import { VAutocompleteWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
-import { EIndigenousTypes, IIdentitySet } from '../../../../entities-lib/src/household-create';
+import { EIndigenousTypes, IIdentitySet } from '@libs/entities-lib/household-create';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 
 export default Vue.extend({

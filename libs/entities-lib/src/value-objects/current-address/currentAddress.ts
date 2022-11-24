@@ -13,7 +13,7 @@ export class CurrentAddress implements ICurrentAddress {
 
   placeNumber?: string;
 
-  address?: IAddress
+  address?: IAddress;
 
   shelterLocation?: IShelterLocationData;
 

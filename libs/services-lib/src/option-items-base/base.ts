@@ -2,14 +2,10 @@ import { IOptionItemData, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
 import { IOptionItemBaseService } from './base.types';
-import { IHttpClient } from '../http-client';
+
 import { DomainBaseService } from '../base';
 
 export class OptionItemBaseService extends DomainBaseService<IOptionItemData, uuid> implements IOptionItemBaseService {
-  constructor(http: IHttpClient, apiUrlSuffix: string, controller: string) {
-    super(http, apiUrlSuffix, controller);
-  }
-
   async createOptionItem(optionItem: IOptionItemData): Promise<IOptionItemData> {
     return this.http.post(`${this.baseUrl}`, optionItem);
   }

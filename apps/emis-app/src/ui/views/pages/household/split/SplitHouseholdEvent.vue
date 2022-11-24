@@ -11,7 +11,7 @@
         async-mode
         :label="`${$t('household.split.event.event_name')}*`"
         data-test="household_profile_split_event_select"
-        :rules="{required:true}"
+        :rules="{ required: true }"
         @change="setEvent($event)" />
       <h4 v-if="event" class="pb-3">
         {{ $t('household.split.privacy_policy') }}

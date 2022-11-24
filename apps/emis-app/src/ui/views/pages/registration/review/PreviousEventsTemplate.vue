@@ -7,7 +7,7 @@
     </div>
     <template v-if="caseFiles.length > 0">
       <div data-test="title__previousEvents" class="rc-heading-5 fw-bold mb-2">
-        {{ $t('household.split.title.beneficiary_details.registered_in_events', {x:caseFiles.length}) }}
+        {{ $t('household.split.title.beneficiary_details.registered_in_events', { x: caseFiles.length }) }}
       </div>
       <div class="info-container mb-8">
         <div v-for="(c, index) in caseFiles" :key="index" class="row-data">

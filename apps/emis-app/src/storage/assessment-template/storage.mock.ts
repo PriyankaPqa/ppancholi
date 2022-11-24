@@ -12,22 +12,22 @@ export class AssessmentTemplateStorageMock extends BaseMock<IAssessmentTemplateC
     ...this.baseGetters,
     types: jest.fn(),
     outcomeStatuses: jest.fn(),
-  }
+  };
 
   protected actions = {
     ...this.baseActions,
     create: jest.fn((payload: IAssessmentTemplateEntity) => payload),
     update: jest.fn((payload: IAssessmentTemplateEntity) => payload),
     updateAssessmentStructure: jest.fn((payload: IAssessmentTemplateEntity) => payload),
-  }
+  };
 
   protected mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

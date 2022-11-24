@@ -10,7 +10,7 @@
     v-on="{
       ...$listeners,
       input: event => {},
-      focusout: event => emitPhoneObject('focusout')
+      focusout: event => emitPhoneObject('focusout'),
     }"
     @keypress="isNumber($event)">
     <template #prepend-inner>
@@ -20,6 +20,7 @@
         transition="slide-y-transition">
         <template #activator="{ on }">
           <button
+            type="button"
             class="countryButton"
             :disabled="disabled"
             :aria-label="selectedCountry.name"
@@ -27,7 +28,7 @@
             <div
               :class="[
                 'vti__flag',
-                selectedCountry.iso2.toLowerCase()
+                selectedCountry.iso2.toLowerCase(),
               ]" />
             <v-icon>
               mdi-menu-down

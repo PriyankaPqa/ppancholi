@@ -4,6 +4,7 @@
       <v-row class="d-flex justify-space-between">
         <v-col col="12" class="pt-0 pb-1 px-2 d-flex align-center justify-space-between">
           <button
+            type="button"
             class="rc-link16 font-weight-bold call-centre-title pa-1"
             :data-test="`event-call-centre-section-name-${index}`"
             @click="showInfoDialog = true">

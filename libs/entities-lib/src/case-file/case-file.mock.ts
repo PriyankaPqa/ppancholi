@@ -1,4 +1,4 @@
-import { ERegistrationMethod } from '../../../shared-lib/src/types/enums/ERegistrationMethod';
+import { ERegistrationMethod } from '@libs/shared-lib/types/enums/ERegistrationMethod';
 /* eslint-disable max-lines-per-function */
 import { mockBaseData } from '../base';
 import {
@@ -171,7 +171,7 @@ export const mockCaseFileMetadatum = () : ICaseFileMetadata[] => [
   mockCaseFileMetadata(),
 ];
 
-export const mockCombinedCaseFile = (force?: Partial<ICaseFileEntity>| Partial<ICaseFileMetadata>, readonly = false): ICaseFileCombined => ({
+export const mockCombinedCaseFile = (force?: Partial<ICaseFileEntity> | Partial<ICaseFileMetadata>, readonly = false): ICaseFileCombined => ({
   entity: mockCaseFileEntity(force as Partial<ICaseFileEntity>),
   metadata: mockCaseFileMetadata(force as Partial<ICaseFileMetadata>),
   readonly,

@@ -8,40 +8,39 @@ import { IEntity, IEntityCombined } from '../base';
  */
 export enum PayeeType {
   Beneficiary = 1,
-  ThirdParty = 2
+  ThirdParty = 2,
 }
 
-export enum PaymentStatus
-{
+export enum PaymentStatus {
   New = 1,
   InProgress = 2,
   Sent = 3,
   Issued = 4,
   Completed = 5,
-  Cancelled = 6
+  Cancelled = 6,
 }
 
 export enum ApprovalStatus {
   New = 1,
   Pending = 2,
   Approved = 3,
-  Declined = 4
+  Declined = 4,
 }
 
 export enum ApprovalAction {
     Submitted = 1,
     RequestAdditionalInfo = 2,
     Approved = 3,
-    Declined = 4
+    Declined = 4,
 }
 
 export enum EPaymentCancellationReason {
   AdminCancellation0 = 0,
   RecipientRejected = 1,
-  InvalidPIN= 2,
-  Expired= 3,
+  InvalidPIN = 2,
+  Expired = 3,
   AdminCancellation4 = 4,
-  FailedDelivery = 5
+  FailedDelivery = 5,
 }
 
 /**
@@ -81,7 +80,7 @@ export interface IApprovalTableGroupsSnapshot {
   isApproved: boolean;
 }
 
-export interface IApprovalActionPayload{
+export interface IApprovalActionPayload {
   approvalAction: ApprovalAction;
   submittedTo: uuid;
   rationale: string;
@@ -98,8 +97,8 @@ export interface IFinancialAssistancePaymentEntity extends IEntity {
   approvalTableGroupsSnapshots? : Array<IApprovalTableGroupsSnapshot>,
   submissionStartedDate?: string | Date;
   initialSubmitter?: uuid;
-  submittedBy?: {userId: string, userName: string, roleName: IMultilingual};
-  submittedTo?: {userId: string, userName: string, roleName: IMultilingual};
+  submittedBy?: { userId: string, userName: string, roleName: IMultilingual };
+  submittedTo?: { userId: string, userName: string, roleName: IMultilingual };
 }
 
 export interface IFinancialAssistancePaymentMetadata extends IEntity {
@@ -111,7 +110,7 @@ export interface IFinancialAssistancePaymentMetadata extends IEntity {
   submittedToName?: string;
 }
 
-export type IFinancialAssistancePaymentCombined = IEntityCombined<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata>
+export type IFinancialAssistancePaymentCombined = IEntityCombined<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata>;
 
 export interface CreatePaymentGroupServiceRequest {
   modality: EPaymentModalities;

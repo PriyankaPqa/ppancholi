@@ -129,7 +129,7 @@ export default mixins(assessmentDetail).extend({
       return data;
     },
 
-    assessmentTemplateEditRoute(): {name: string, params: Record<string, string>} {
+    assessmentTemplateEditRoute(): { name: string, params: Record<string, string> } {
       return {
         name: this.baseRoute.edit.name,
         params: {

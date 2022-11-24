@@ -134,7 +134,7 @@ export default mixins(caseFileDetail).extend({
       ];
     },
 
-    referralEditRoute(): {name: string, params: Record<string, string>} {
+    referralEditRoute(): { name: string, params: Record<string, string> } {
       return {
         name: routes.caseFile.referrals.edit.name,
         params: {
@@ -148,8 +148,10 @@ export default mixins(caseFileDetail).extend({
   async created() {
     await this.$storage.caseFileReferral.actions.fetchTypes();
     await this.$storage.caseFileReferral.actions.fetchOutcomeStatuses();
-    await this.$storage.caseFileReferral.actions.fetch({ caseFileId: this.id, id: this.referralId },
-      { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+    await this.$storage.caseFileReferral.actions.fetch(
+      { caseFileId: this.id, id: this.referralId },
+      { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
+    );
   },
 
   methods: {

@@ -22,7 +22,7 @@ export default {
 
   enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string, i18n: VueI18n = null) {
     const enumKeys = this.getEnumKeys(myEnum);
-    const data = [] as Array<{value: unknown; text: string}>;
+    const data = [] as Array<{ value: unknown; text: string }>;
     enumKeys.forEach((val) => {
       if (i18n) {
         data.push({ value: myEnum[val], text: i18n.t(`${translationPath}.${val}`).toString() });

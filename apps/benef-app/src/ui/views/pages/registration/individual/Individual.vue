@@ -20,7 +20,7 @@
 
         <template slot="actions">
           <div class="actions">
-            <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
+            <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
               <template v-if="currentTab.id === 'confirmation'">
                 <v-btn
                   v-if="registrationSuccess"
@@ -41,7 +41,7 @@
               <span class="ml-2 d-sm-inline d-md-none">{{ previousTabName }}</span>
             </div>
 
-            <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
+            <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
               <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
               <vue-programmatic-invisible-google-recaptcha
                 v-if="$hasFeature(FeatureKeys.BotProtection) && !isCaptchaAllowedIpAddress"

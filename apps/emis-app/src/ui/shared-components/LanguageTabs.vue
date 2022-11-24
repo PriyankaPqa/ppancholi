@@ -6,7 +6,7 @@
       :label="$t(`tab.${lang.key}`)"
       :data-test="`tab-lang-${lang.key}`"
       :active="language === lang.key"
-      @click="$emit('click',lang.key)" />
+      @click="$emit('click', lang.key)" />
   </rc-tabs>
 </template>
 

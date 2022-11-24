@@ -4,7 +4,7 @@ import { IApprovalGroup } from '../approvals-group';
 
 export enum ApprovalAggregatedBy {
   TotalFinancialAssistanceOnCaseFile = 1,
-  IndividualPaymentTotal = 2
+  IndividualPaymentTotal = 2,
 }
 
 export interface IApprovalBaseEntityData extends IEntity {
@@ -25,4 +25,4 @@ export interface IApprovalBaseMetadata extends IEntity {
   approvalBaseStatusName: IMultilingual;
 }
 
-export type IApprovalCombined = IEntityCombined<IApprovalBaseEntity, IApprovalBaseMetadata>
+export type IApprovalCombined = IEntityCombined<IApprovalBaseEntity, IApprovalBaseMetadata>;

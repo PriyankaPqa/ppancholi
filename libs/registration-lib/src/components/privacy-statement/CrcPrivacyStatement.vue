@@ -44,8 +44,8 @@ import { VSelectWithValidation, VTextFieldWithValidation } from '@libs/component
 import helpers from '@libs/entities-lib/helpers';
 import VueI18n from 'vue-i18n';
 import { ERegistrationMethod } from '@libs/shared-lib/types';
+import { EEventLocationStatus, IEvent, IEventGenericLocation } from '@libs/entities-lib/registration-event';
 import PrivacyStatement from './PrivacyStatement.vue';
-import { EEventLocationStatus, IEvent, IEventGenericLocation } from '../../../../entities-lib/src/registration-event';
 
 export interface IUser {
   readonly id: string;

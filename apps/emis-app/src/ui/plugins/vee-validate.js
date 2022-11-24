@@ -147,8 +147,8 @@ extend('hasPhoneOrEmail', {
 extend('canadianPostalCode', {
   message: (_, values) => i18n.t('validations.canadianPostalCode', values),
   validate: (value) => {
-    const regex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
-    return regex.test(value);
+    const regexExpression = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
+    return regexExpression.test(value);
   },
 });
 

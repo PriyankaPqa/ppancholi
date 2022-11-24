@@ -20,7 +20,7 @@ describe('LandingPage.vue', () => {
   });
 
   describe('Template', () => {
-    describe('Elements on page', () => {
+    describe('Elements on page ', () => {
       test('The title is displayed correctly', async () => {
         const element = wrapper.find('[data-test="registration-title"]');
         expect(element.text()).toBe('registration.landingpage.welcome_self');

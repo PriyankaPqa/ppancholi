@@ -1,5 +1,5 @@
 <template>
-  <button :class="{ 'optionsList__tab': true, active }" @click="$emit('click')">
+  <button type="button" :class="{ optionsList__tab: true, active }" @click="$emit('click')">
     <span class="rc-body14 fw-bold">
       {{ label }}
     </span>

@@ -1,13 +1,14 @@
-import { ERegistrationMethod } from '@libs/shared-lib/types';
+import { ERegistrationMethod } from '@libs/shared-lib/src/types';
+import { mockRegistrationLocations } from '@libs/entities-lib/src/registration-event';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { mockStorage } from '../../store/storage';
-import { mockRegistrationLocations } from '../../../../entities-lib/src/registration-event';
 import Component from './CrcPrivacyStatement.vue';
 import { i18n } from '../../ui/plugins/i18n';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
+// eslint-disable-next-line no-console
 console.warn = jest.fn();
 
 const mockUserL6 = () => ({

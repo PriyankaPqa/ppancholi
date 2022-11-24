@@ -163,8 +163,10 @@ describe('PaymentLineGroup.vue', () => {
         wrapper.vm.paymentGroup.cancellationBy = '0d22f50a-e1ab-435d-a9f0-cfda502866f4';
         const c = wrapper.vm.cancellationByText;
         expect(c).toBe('caseFile.financialAssistance.cancellationReason.byOn');
-        expect(wrapper.vm.$t).toHaveBeenCalledWith('caseFile.financialAssistance.cancellationReason.byOn',
-          { by: 'Jane Smith', on: helpers.getLocalStringDate(wrapper.vm.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'll') });
+        expect(wrapper.vm.$t).toHaveBeenCalledWith(
+          'caseFile.financialAssistance.cancellationReason.byOn',
+          { by: 'Jane Smith', on: helpers.getLocalStringDate(wrapper.vm.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'll') },
+        );
       });
     });
 
@@ -253,7 +255,7 @@ describe('PaymentLineGroup.vue', () => {
         based on the excel grid of statuses available according to your role and current modality
         see https://rctech.atlassian.net/browse/EMISV2-673
       */
-      // eslint-disable-next-line max-len
+      // eslint-disable-next-line max-len,vue/max-len
       it('etransfer level6 PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress only if not new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.ETransfer;
         paymentGroup.paymentStatus = PaymentStatus.New;
@@ -266,7 +268,7 @@ describe('PaymentLineGroup.vue', () => {
         );
       });
 
-      // eslint-disable-next-line max-len
+      // eslint-disable-next-line max-len,vue/max-len
       it('etransfer contributor finance PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress only if not new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.ETransfer;
         paymentGroup.paymentStatus = PaymentStatus.New;
@@ -309,7 +311,7 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
 
-      // eslint-disable-next-line max-len
+      // eslint-disable-next-line max-len,vue/max-len
       it('Cheque contributorFinance PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress only if not new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Cheque;
         paymentGroup.paymentStatus = PaymentStatus.New;
@@ -340,6 +342,7 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
 
+      // eslint-disable-next-line vue/max-len
       it('DirectDeposit level6 PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress even if not new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
         paymentGroup.paymentStatus = PaymentStatus.New;
@@ -350,7 +353,7 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
 
-      // eslint-disable-next-line max-len
+      // eslint-disable-next-line max-len,vue/max-len
       it('DirectDeposit contributorFinance PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress even if not new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
         paymentGroup.paymentStatus = PaymentStatus.New;

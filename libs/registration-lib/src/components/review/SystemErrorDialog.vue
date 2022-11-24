@@ -37,7 +37,7 @@
             </div>
 
             <div class="mt-7">
-              {{ $t('error.system.dialog.pleaseClose') }} {{ isCRCRegistration? $t('error.system.dialog.contactManager'):$t('error.system.dialog.contactRedCross') }}
+              {{ $t('error.system.dialog.pleaseClose') }} {{ isCRCRegistration ? $t('error.system.dialog.contactManager') : $t('error.system.dialog.contactRedCross') }}
             </div>
 
             <div v-if="!isCRCRegistration && phone" class="fw-bold rc-body18">

@@ -5,7 +5,7 @@ import {
 import { IApprovalActionPayload } from '@libs/entities-lib/src/financial-assistance-payment/financial-assistance-payment.types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
-export interface IFinancialAssistancePaymentsService extends IDomainBaseService<IFinancialAssistancePaymentEntity, uuid>{
+export interface IFinancialAssistancePaymentsService extends IDomainBaseService<IFinancialAssistancePaymentEntity, uuid> {
   addFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
   updatePaymentStatus(entityId: uuid, paymentGroupId: uuid, status: PaymentStatus): Promise<IFinancialAssistancePaymentEntity>
@@ -24,7 +24,7 @@ export interface IFinancialAssistancePaymentsService extends IDomainBaseService<
   getNextApprovalGroupRoles(financialAssistanceId: uuid): Promise<uuid[]>;
 }
 
-export interface IFinancialAssistancePaymentsServiceMock extends IDomainBaseServiceMock<IFinancialAssistancePaymentEntity>{
+export interface IFinancialAssistancePaymentsServiceMock extends IDomainBaseServiceMock<IFinancialAssistancePaymentEntity> {
   addFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
   updatePaymentStatus: jest.Mock<IFinancialAssistancePaymentEntity>;

@@ -31,7 +31,7 @@
           :sort-by.sync="options.sortBy"
           :sort-desc.sync="options.sortDesc"
           :custom-columns="Object.values(customColumns)"
-          :footer-props="{itemsPerPageOptions:[5,10,15,250] }"
+          :footer-props="{ itemsPerPageOptions: [5, 10, 15, 250] }"
           :options.sync="options">
           <template slot="default">
             <div>{{ $t('system_management.userAccounts.no_users_found') }}</div>
@@ -60,7 +60,7 @@
               data-test="user_roleId"
               :disabled="canNotManageRoleForUser(item)"
               :value="getRoleValue(item)"
-              :item-text="(item) => item ? $m(item.text): ''"
+              :item-text="(item) => item ? $m(item.text) : ''"
               :item-disabled="(item) => item.isInactive"
               :label="$t('system_management.userAccounts.role_header')"
               :items="getRolesForUser(item)"
@@ -354,7 +354,7 @@ export default Vue.extend({
       return (this.allSubRoles as IOptionSubItem[]).find((r) => r.id === roleId);
     },
 
-    getRoleListItem(roleId: string) : {text:IMultilingual, value: string, isInactive: boolean} {
+    getRoleListItem(roleId: string) : { text:IMultilingual, value: string, isInactive: boolean } {
       const role = this.getSubRoleById(roleId);
       if (role) {
         return {
@@ -363,7 +363,7 @@ export default Vue.extend({
           isInactive: role.status === Status.Inactive,
         };
       }
-      return { } as {text:IMultilingual, value: string, isInactive: boolean};
+      return { } as { text:IMultilingual, value: string, isInactive: boolean };
     },
 
     getRolesForUser(user: IUserAccountCombined) {
@@ -380,7 +380,7 @@ export default Vue.extend({
       return [this.getRoleListItem(user.entity.roles[0]?.optionItemId), ...this.allAccessLevelRoles];
     },
 
-    updateUserRole(roleData: {text: IMultilingual, value: string}, user: IUserAccountCombined) {
+    updateUserRole(roleData: { text: IMultilingual, value: string }, user: IUserAccountCombined) {
       if (!roleData || !user) {
         return;
       }
@@ -492,7 +492,7 @@ export default Vue.extend({
           return;
         }
 
-        const activeSubRoles: {text: IMultilingual, value: string}[] = [];
+        const activeSubRoles: { text: IMultilingual, value: string }[] = [];
         accessLevel.subitems.forEach((role: IOptionSubItem) => {
           if (role.status === Status.Active) {
             activeSubRoles.push({

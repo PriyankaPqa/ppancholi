@@ -22,7 +22,7 @@
         <v-btn data-test="cancel" @click="$emit('cancel')">
           {{ $t('common.cancel') }}
         </v-btn>
-        <v-btn data-test="save" :disabled="!hasChanged || failed" color="primary" @click="$emit('update', {name, description})">
+        <v-btn data-test="save" :disabled="!hasChanged || failed" color="primary" @click="$emit('update', { name, description })">
           {{ $t('common.save') }}
         </v-btn>
       </div>

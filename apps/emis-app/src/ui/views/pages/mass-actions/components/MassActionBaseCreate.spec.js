@@ -16,6 +16,7 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 const doMount = (shallow = false, propsData) => {
   const options = {
     localVue,

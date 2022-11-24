@@ -16,7 +16,7 @@
       <v-autocomplete-with-validation
         v-model="selectedType"
         :items="massActionTypes"
-        :rules="{required: true}"
+        :rules="{ required: true }"
         item-value="value"
         data-test="massActionType"
         :label="`${$t('massActions.dataCorrection.type.label')} *`" />

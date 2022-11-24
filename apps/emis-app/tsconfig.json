@@ -15,11 +15,13 @@
     "sourceMap": true,
     "baseUrl": ".",
     "skipLibCheck": true, // Fixes testcafe + jest type collision
+    "isolatedModules": true,
     "types": [
-      "webpack-env",
       "jest",
       "vuetify",
-      "vue-meta"
+      "vue-meta",
+      "vite/client",
+      "node",
     ],
     "paths": {
       "@/*": [
@@ -45,7 +47,7 @@
       ]
     },
     "lib": [
-      "es2019",
+      "es2021",
       "dom",
       "dom.iterable",
       "scripthost"
@@ -53,9 +55,10 @@
   },
   "include": [
     "src/**/*.ts",
+    "src/**/*.js",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "typings/**.ts"
+    "typings/**.ts",
   ],
   "exclude": [
     "node_modules",

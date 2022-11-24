@@ -736,8 +736,10 @@ describe('HouseholdProfile.vue', () => {
       });
       it('calls household storage action fetch with the id', async () => {
         await wrapper.vm.fetchHouseholdData();
-        expect(wrapper.vm.$storage.household.actions.fetch).toHaveBeenCalledWith(household.entity.id,
-          { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+        expect(wrapper.vm.$storage.household.actions.fetch).toHaveBeenCalledWith(
+          household.entity.id,
+          { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
+        );
       });
     });
 

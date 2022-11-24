@@ -4,7 +4,7 @@
       :title="title"
       :show="true"
       :cancel-action-label="$t('common.buttons.cancel')"
-      :submit-action-label="isEditMode? $t('common.save'): $t('common.add')"
+      :submit-action-label="isEditMode ? $t('common.save') : $t('common.add')"
       :content-only-scrolling="true"
       :persistent="true"
       :max-width="750"
@@ -30,7 +30,7 @@
               </v-col>
 
               <v-col cols="4" md="4" sm="12">
-                <div :class="['status', isActive ? 'status_success': 'grey' ]">
+                <div :class="['status', isActive ? 'status_success' : 'grey']">
                   <div class="pl-4 white--text" sm="12" md="9">
                     {{ $t('eventSummary.status') }}
                     <span class="rc-body14 fw-bold white--text text-uppercase" data-test="callCentre-status">

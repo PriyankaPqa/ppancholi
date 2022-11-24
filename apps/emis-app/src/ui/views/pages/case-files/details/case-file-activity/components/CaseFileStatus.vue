@@ -95,7 +95,7 @@ export default Vue.extend({
       return !this.$hasLevel('level2');
     },
 
-    confirmationDialogText() : {title:string, message:string} {
+    confirmationDialogText() : { title:string, message:string } {
       switch (this.newStatus) {
         case CaseFileStatus.Inactive:
           return {

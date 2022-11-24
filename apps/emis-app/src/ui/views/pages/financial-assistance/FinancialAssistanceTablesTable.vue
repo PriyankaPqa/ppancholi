@@ -15,7 +15,7 @@
       customColumns.program,
       customColumns.name,
       customColumns.status,
-      'editButton'
+      'editButton',
     ]"
     @search="search">
     <template v-if="$hasLevel('level6')" #headerLeft>
@@ -166,8 +166,10 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     tableData(): IFinancialAssistanceTableCombined[] {
-      return this.$storage.financialAssistance.getters.getByIds(this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.eventId } });
+      return this.$storage.financialAssistance.getters.getByIds(
+        this.searchResultIds,
+        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.eventId } },
+      );
     },
 
     tableProps(): Record<string, unknown> {

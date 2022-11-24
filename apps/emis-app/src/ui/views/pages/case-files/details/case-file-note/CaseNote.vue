@@ -123,8 +123,10 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     caseNotes(): ICaseNoteCombined[] {
-      return this.$storage.caseNote.getters.getByIds(this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId } });
+      return this.$storage.caseNote.getters.getByIds(
+        this.searchResultIds,
+        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId } },
+      );
     },
 
     title(): string {

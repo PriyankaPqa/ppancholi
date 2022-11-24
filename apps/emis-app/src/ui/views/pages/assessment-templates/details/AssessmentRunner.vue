@@ -2,7 +2,9 @@
   <div class="pa-4">
     <!-- eslint-disable -->
     <div v-if="errorMessage" class="error-message" v-html="errorMessage"></div>
-    <div id="surveyContainer" />
+    <div id="surveyContainer">
+      <Survey v-if="survey" :survey="survey" />
+    </div>
   </div>
 </template>
 
@@ -13,10 +15,9 @@ import 'survey-core/defaultV2.min.css';
 
 import mixins from 'vue-typed-mixins';
 import _debounce from 'lodash/debounce';
-import { SurveyModel } from 'survey-core';
 import { IAssessmentResponseEntity } from '@libs/entities-lib/assessment-template';
 import { cloneDeep } from 'lodash';
-import { SurveyJsHelper } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
+import { SurveyJsHelper, ISurveyModel } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
 import assessmentDetail from './assessmentDetail';
 
 const DEBOUNCE_RATE = 500;
@@ -35,7 +36,7 @@ export default mixins(assessmentDetail).extend({
 
   data() {
     return {
-      survey: null as SurveyModel,
+      survey: null as ISurveyModel,
       surveyJsHelper: new SurveyJsHelper(),
       response: null as IAssessmentResponseEntity,
       errorMessage: null as string,
@@ -44,14 +45,15 @@ export default mixins(assessmentDetail).extend({
 
   async mounted() {
     if (this.assessmentResponseId) {
-      this.response = cloneDeep((await this.$storage.assessmentResponse.actions.fetch({ id: this.assessmentResponseId },
-        { useEntityGlobalHandler: true, useMetadataGlobalHandler: false }))?.entity);
+      this.response = cloneDeep((await this.$storage.assessmentResponse.actions.fetch(
+        { id: this.assessmentResponseId },
+        { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
+      ))?.entity);
     }
     await this.loadDetails();
     this.errorMessage = this.assessmentResponseId ? this.surveyJsHelper.getSurveyCanBeCompletedErrorMessage(this.assessmentTemplate, this.response, this, this.$m) : null;
     if (!this.errorMessage) {
       this.survey = this.surveyJsHelper.initializeSurveyJsRunner(this.$i18n.locale, this.assessmentTemplate.externalToolState?.data?.rawJson);
-      this.survey.render('surveyContainer');
 
       if (this.response?.externalToolState?.data?.rawJson) {
         this.survey.data = JSON.parse(this.response.externalToolState.data.rawJson);
@@ -61,14 +63,14 @@ export default mixins(assessmentDetail).extend({
       }
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       const _this = this;
-      this.survey.onValueChanged.add((sender: SurveyModel) => debouncedSave({ _this, sender }));
+      this.survey.onValueChanged.add((sender: ISurveyModel) => debouncedSave({ _this, sender }));
       this.survey.onComplete.add(this.completeSurvey);
       this.surveyJsHelper.setColorScheme('#surveyContainer', this.$storage.tenantSettings.getters.currentTenantSettings().branding.colours);
     }
   },
 
   methods: {
-    async saveAnswers(sender: SurveyModel) {
+    async saveAnswers(sender: ISurveyModel) {
       this.response = cloneDeep(this.surveyJsHelper.surveyToAssessmentResponse(sender, cloneDeep(this.response)));
       if (this.assessmentResponseId) {
         const result = await this.$storage.assessmentResponse.actions.saveAssessmentAnsweredQuestions(this.response);
@@ -78,7 +80,7 @@ export default mixins(assessmentDetail).extend({
       }
     },
 
-    async completeSurvey(sender: SurveyModel) {
+    async completeSurvey(sender: ISurveyModel) {
       debouncedSave.cancel();
       await this.saveAnswers(sender);
       await this.$services.assessmentResponses.completeSurvey(this.response);

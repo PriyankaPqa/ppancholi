@@ -14,7 +14,7 @@ export class EventStorageMock extends BaseMock<IEventCombined, IEventEntity> {
     agreementTypes: jest.fn(),
     eventTypes: jest.fn(),
     eventsByStatus: jest.fn(),
-  }
+  };
 
   protected actions = {
     ...this.baseActions,
@@ -29,17 +29,17 @@ export class EventStorageMock extends BaseMock<IEventCombined, IEventEntity> {
     setEventStatus: jest.fn(() => this.entity),
     createEvent: jest.fn(() => this.entity),
     updateEvent: jest.fn(() => this.entity),
-  }
+  };
 
   protected mutations = {
     ...this.baseMutations,
     setAgreementTypesFetched: jest.fn(),
     setEventTypesFetched: jest.fn(),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

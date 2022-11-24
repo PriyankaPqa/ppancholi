@@ -28,7 +28,7 @@
           v-model="selectedReason"
           data-test="reason"
 
-          :label="`${toStatus == CaseFileStatus.Closed ? $t('caseFileDetails.reason.Closed') :$t('caseFileDetails.reason.Inactive') } *`"
+          :label="`${toStatus == CaseFileStatus.Closed ? $t('caseFileDetails.reason.Closed') : $t('caseFileDetails.reason.Inactive') } *`"
           :items="reasons"
           :item-text="(item) => $m(item.name)"
           return-object

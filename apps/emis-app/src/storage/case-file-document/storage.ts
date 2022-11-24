@@ -23,7 +23,7 @@ export class CaseFileDocumentStorage
 
       return this.combinedCollections(entities, metadata);
     },
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -36,17 +36,17 @@ export class CaseFileDocumentStorage
     // eslint-disable-next-line
     downloadDocumentAsUrl: (item: ICaseFileDocumentEntity, saveDownloadedFile: boolean): Promise<string> => this.store.dispatch(`${this.entityModuleName}/downloadDocumentAsUrl`, { item, saveDownloadedFile }),
 
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
 
     setCategoriesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setCategoriesFetched`, payload),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

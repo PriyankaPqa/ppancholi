@@ -37,9 +37,9 @@ export class SignalR implements ISignalR {
 
   public subscriptions: Record<string, uuid[]>;
 
-  private lastSubscribedIds: uuid[]
+  private lastSubscribedIds: uuid[];
 
-  private lastSubscribedNewlyCreatedIds: uuid[]
+  private lastSubscribedNewlyCreatedIds: uuid[];
 
   constructor({
     service, storage, showConsole,
@@ -85,7 +85,7 @@ export class SignalR implements ISignalR {
       try {
         const connection = new HubConnectionBuilder()
         // .configureLogging(LogLevel.Debug)
-          .withUrl(process.env.VUE_APP_SIGNALR_CONNECTION_HUB_URI, {
+          .withUrl(process.env.VITE_SIGNALR_CONNECTION_HUB_URI, {
             accessTokenFactory: async () => AuthenticationProvider.accessToken,
           })
         // https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-3.1#reconnect-clients
@@ -490,7 +490,7 @@ export class SignalR implements ISignalR {
     });
   }
 
-  private listenForChanges<T extends IEntity>({ domain, entityName, action }: {domain: string, entityName: string, action?: (entity: T)=> void}) {
+  private listenForChanges<T extends IEntity>({ domain, entityName, action }: { domain: string, entityName: string, action?: (entity: T)=> void }) {
     this.connection.on(`${domain}.${entityName}Updated`, (entity) => {
       if (action) {
         action(entity);
@@ -508,7 +508,7 @@ export class SignalR implements ISignalR {
 
   private listenForOptionItemChanges({
     domain, optionItemName, cacheResetMutationName, mutationDomain = null,
-  }: {domain: string, optionItemName: string, cacheResetMutationName: string, mutationDomain?: string}) {
+  }: { domain: string, optionItemName: string, cacheResetMutationName: string, mutationDomain?: string }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const storage = this.storage as any;
     const storageDomain = mutationDomain || _camelCase(domain);
@@ -623,7 +623,7 @@ export class SignalR implements ISignalR {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const storageModule = this.storage[module] as any;
       if (storageModule?.getters?.getNewlyCreatedIds) {
-        const items = storageModule.getters.getNewlyCreatedIds(baseDate) as Array<{id: uuid, createdOn: number}>;
+        const items = storageModule.getters.getNewlyCreatedIds(baseDate) as Array<{ id: uuid, createdOn: number }>;
         items.forEach((item) => {
           if (item.id) {
             ids.push(item.id);
@@ -695,6 +695,7 @@ export class SignalR implements ISignalR {
     const pathsToRemove: string[] = [];
 
     // For all subscription path, we keep only ids that need to be preserved, or we remove the path
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     unrelatedPath.forEach((path) => {
       const filteredIds = unrelatedSubscriptions[path].filter((id) => idsToKeep.indexOf(id) !== -1);
       if (filteredIds.length > 0) {
@@ -709,6 +710,7 @@ export class SignalR implements ISignalR {
       this.subscriptions = _omit(this.subscriptions, pathsToRemove);
     }
     // We keep only ids from state UI if not removed
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     Object.keys(subscriptionsWithSearchState).forEach((path) => {
       this.subscriptions[path] = subscriptionsWithSearchState[path];
     });

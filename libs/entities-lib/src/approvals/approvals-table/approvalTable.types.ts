@@ -16,4 +16,4 @@ export interface IApprovalTableMetadata extends IApprovalBaseMetadata {
   programName: IMultilingual;
 }
 
-export type IApprovalTableCombined = IEntityCombined<IApprovalTableEntity, IApprovalTableMetadata>
+export type IApprovalTableCombined = IEntityCombined<IApprovalTableEntity, IApprovalTableMetadata>;

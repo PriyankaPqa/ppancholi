@@ -14,7 +14,7 @@ export class BaseMock<T, S> {
     getByCriteria: jest.fn(() => this.combinedEntitiesAndMetaData),
     getByIds: jest.fn(() => this.combinedEntitiesAndMetaData),
     getNewlyCreatedIds: jest.fn(() => []),
-  }
+  };
 
   protected baseActions = {
     fetch: jest.fn(() => this.combinedEntitiesAndMetaData[0]),
@@ -24,7 +24,7 @@ export class BaseMock<T, S> {
     deactivate: jest.fn(() => this.entity),
     activate: jest.fn(() => this.entity),
     search: jest.fn(() => ({ ids: ['1'], count: 1 })),
-  }
+  };
 
   protected baseMutations = {
     addNewlyCreatedId: jest.fn(),
@@ -32,5 +32,5 @@ export class BaseMock<T, S> {
     setAllEntities: jest.fn(),
     setMetadata: jest.fn(),
     setAllMetadata: jest.fn(),
-  }
+  };
 }

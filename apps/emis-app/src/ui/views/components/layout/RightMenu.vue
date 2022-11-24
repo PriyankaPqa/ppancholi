@@ -104,15 +104,15 @@
         v-if="isDev"
         outlined
         :items="[
-          {text: 'No role', value: ''},
-          {text: 'level1', value: 'level1'},
-          {text: 'level2', value: 'level2'},
-          {text: 'level3', value: 'level3'},
-          {text: 'level4', value: 'level4'},
-          {text: 'level5', value: 'level5'},
-          {text: 'level6', value: 'level6'},
-          {text: 'contributorIM', value: 'contributorIM'},
-          {text: 'contributorFinance', value: 'contributorFinance'},
+          { text: 'No role', value: '' },
+          { text: 'level1', value: 'level1' },
+          { text: 'level2', value: 'level2' },
+          { text: 'level3', value: 'level3' },
+          { text: 'level4', value: 'level4' },
+          { text: 'level5', value: 'level5' },
+          { text: 'level6', value: 'level6' },
+          { text: 'contributorIM', value: 'contributorIM' },
+          { text: 'contributorFinance', value: 'contributorFinance' },
         ]"
         @change="$store.commit('user/setRole', $event);" />
     </div>
@@ -182,7 +182,7 @@ export default Vue.extend({
       return this.$storage.user.getters.user();
     },
     isDev() {
-      return process.env.NODE_ENV === 'development';
+      return process.env.VITE_APP_ENV === 'development';
     },
   },
 
@@ -190,8 +190,10 @@ export default Vue.extend({
     const noAccess = this.$storage.user.getters.user().hasRole('noAccess');
     this.appVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
     if (!noAccess) {
-      this.userAccount = await this.$storage.userAccount.actions.fetch(this.$storage.user.getters.userId(),
-        { useEntityGlobalHandler: false, useMetadataGlobalHandler: false });
+      this.userAccount = await this.$storage.userAccount.actions.fetch(
+        this.$storage.user.getters.userId(),
+        { useEntityGlobalHandler: false, useMetadataGlobalHandler: false },
+      );
       this.currentTenantId = this.userAccount.entity?.tenantId;
       this.tenants = await this.$storage.tenantSettings.actions.fetchUserTenants();
       this.tenants = this.tenants.filter((t) => t.status === Status.Active);

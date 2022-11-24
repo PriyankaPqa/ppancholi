@@ -39,7 +39,7 @@
               {{ household.primaryBeneficiary.firstName }} {{ household.primaryBeneficiary.lastName }}
             </span>
           </div>
-          <div v-for="(member,i) in household.additionalMembers" :key="i" class="ml-5 my-2">
+          <div v-for="(member, i) in household.additionalMembers" :key="i" class="ml-5 my-2">
             <v-icon data-test="iconType" small color="grey" class="mr-1">
               mdi-account-supervisor
             </v-icon>
@@ -75,21 +75,21 @@
             </span>
           </div>
           <div v-if="hasAdditionalMember(household)">
-            <div v-for="(member,i) in household.additionalMembers" :key="i">
+            <div v-for="(member, i) in household.additionalMembers" :key="i">
               <span :data-test="`birthdate__houseHoldMember_${i}`">
                 {{ moment(member.dateOfBirth).utc().format('ll') }}
               </span>
             </div>
           </div>
         </template>
-        <template #item.registrationNumber="{item: household}">
+        <template #item.registrationNumber="{ item: household }">
           <div>
             <span data-test="registrationNumber">
               {{ household.primaryBeneficiary.registrationNumber }}
             </span>
           </div>
           <div v-if="hasAdditionalMember(household)">
-            <div v-for="(member,i) in household.additionalMembers" :key="i">
+            <div v-for="(member, i) in household.additionalMembers" :key="i">
               <span :data-test="`registrationNumber__houseHoldMember_${i}`">
                 {{ member.registrationNumber }}
               </span>
@@ -101,7 +101,7 @@
             mdi-check-circle-outline
           </v-icon>
         </template>
-        <template #item.actions="{item: household}">
+        <template #item.actions="{ item: household }">
           <div>
             <v-btn
               small

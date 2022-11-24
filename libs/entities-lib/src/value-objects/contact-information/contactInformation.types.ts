@@ -50,7 +50,7 @@ export interface IValidateEmailRequest {
   emailAddress: string;
 }
 
-export interface IValidateEmailPublicRequest extends IValidateEmailRequest{
+export interface IValidateEmailPublicRequest extends IValidateEmailRequest {
   recaptchaToken: string;
 }
 

@@ -356,7 +356,7 @@ export default mixins(massActionCaseFileFiltering).extend({
     /**
      * When an item has been selected or un-selected
      */
-    onAutoCompleteChange({ filterKey, value }: {filterKey: string, value: { text: string; value: string }; }) {
+    onAutoCompleteChange({ filterKey, value }: { filterKey: string, value: { text: string; value: string }; }) {
       if (filterKey === 'Entity/EventId') {
         if (value === null) {
           this.programsFilter = [];
@@ -366,7 +366,7 @@ export default mixins(massActionCaseFileFiltering).extend({
       }
     },
 
-    async onApplyCaseFileFilter({ preparedFilters, searchFilters }: {preparedFilters: Record<string, unknown>; searchFilters?: string }) {
+    async onApplyCaseFileFilter({ preparedFilters, searchFilters }: { preparedFilters: Record<string, unknown>; searchFilters?: string }) {
       const emailFilter = preparedFilters[this.customColumns.email];
 
       if (emailFilter) {
@@ -385,7 +385,7 @@ export default mixins(massActionCaseFileFiltering).extend({
 });
 </script>
 
-<style lang="scss" >
+<style lang="scss">
  .massAction__caseFile_table {
    .export {
      color: white !important;

@@ -11,7 +11,7 @@ export interface IProgramsService extends IDomainBaseService<IProgramEntity, Url
   updateProgram(payload: IProgramEntity): Promise<IProgramEntity>;
 }
 
-export interface IProgramsServiceMock extends IDomainBaseServiceMock<IProgramEntity>{
+export interface IProgramsServiceMock extends IDomainBaseServiceMock<IProgramEntity> {
   createProgram: jest.Mock<IProgramEntity>;
   updateProgram: jest.Mock<IProgramEntity>;
 }

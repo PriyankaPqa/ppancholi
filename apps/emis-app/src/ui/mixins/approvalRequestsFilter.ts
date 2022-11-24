@@ -59,7 +59,7 @@ export default mixins(EventsFilterMixin).extend({
 
       const levels = toOrBy === 'to' ? [UserRolesNames.level3, UserRolesNames.level4] : null;
       const roles = this.$storage.userAccount.getters.rolesByLevels(levels);
-      const res = await this.fetchUsersFilter(query, roles.map((r: {name: IMultilingual, id: string, status: Status}) => r.id), top);
+      const res = await this.fetchUsersFilter(query, roles.map((r: { name: IMultilingual, id: string, status: Status }) => r.id), top);
 
       if (toOrBy === 'to') {
         this.submittedToUsers = [...res, ...this.selectedSubmittedToUsers];
@@ -92,6 +92,7 @@ export default mixins(EventsFilterMixin).extend({
       return [];
     },
 
+    // eslint-disable-next-line @typescript-eslint/default-param-last
     async fetchUsersFilter(query = '', rolesId: Array<string>, top = 6) {
       const searchParam = helpers.toQuickSearch(query);
       const filter = `Entity/Roles/any(r: search.in(r/OptionItemId, '${rolesId.join(',')}'))`;

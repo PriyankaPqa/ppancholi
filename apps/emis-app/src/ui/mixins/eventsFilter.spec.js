@@ -110,6 +110,7 @@ describe('eventsFilter', () => {
         wrapper.vm.fetchEventsFilter = jest.fn();
 
         wrapper.vm.debounceSearchEventsFilter();
+        // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 600));
 
         expect(wrapper.vm.fetchEventsFilter).toHaveBeenCalledTimes(1);
@@ -121,6 +122,7 @@ describe('eventsFilter', () => {
         wrapper.vm.onLoadFilter = jest.fn();
 
         wrapper.vm.throttleOnLoadFilter();
+        // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 300));
         wrapper.vm.throttleOnLoadFilter();
 

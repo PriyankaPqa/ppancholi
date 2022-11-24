@@ -61,9 +61,11 @@ describe('>>> Beneficiaries Service', () => {
       recaptchaToken: 'token',
     });
 
-    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/public`,
+    expect(http.post).toHaveBeenCalledWith(
+`${service.baseUrl}/public`,
       { ...createBeneficiaryRequest, recaptchaToken: 'token' },
-      { globalHandler: false });
+      { globalHandler: false },
+);
   });
 
   test('submitCRCRegistration is linked to the correct URL', async () => {

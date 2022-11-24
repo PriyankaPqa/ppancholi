@@ -51,14 +51,18 @@ describe('CaseFileDocumentDetails', () => {
         expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(false, null, 'contributor3');
         expect(wrapper.vm.canEdit).toBeFalsy();
-        await mountWrapper(false, 1, null,
+        await mountWrapper(
+          false,
+          1,
+          null,
           {
             computed: {
               readonly() {
                 return true;
               },
             },
-          });
+          },
+        );
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });

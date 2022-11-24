@@ -52,4 +52,4 @@ export interface ITeamMetadata extends IEntity {
   teamStatusName: IMultilingual;
 }
 
-export type ITeamCombined = IEntityCombined<ITeamEntity, ITeamMetadata>
+export type ITeamCombined = IEntityCombined<ITeamEntity, ITeamMetadata>;

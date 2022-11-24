@@ -41,7 +41,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     return this.http.get(`${API_URL_SUFFIX}/indigenous-communities`);
   }
 
-  async submitRegistration({ household, eventId, recaptchaToken }: {household: IHouseholdCreate; eventId: string; recaptchaToken: string}): Promise<IHouseholdEntity> {
+  async submitRegistration({ household, eventId, recaptchaToken }: { household: IHouseholdCreate; eventId: string; recaptchaToken: string }): Promise<IHouseholdEntity> {
     const payload = this.parseHouseholdPayload(household, eventId);
     return this.http.post(`${this.baseUrl}/public`, { ...payload, recaptchaToken }, { globalHandler: false });
   }
@@ -55,8 +55,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     return this.http.get<IMemberEntity>(`${this.baseApi}/persons/${id}`);
   }
 
-  async updatePersonContactInformation(id: string,
-    payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet }): Promise<IHouseholdEntity> {
+  async updatePersonContactInformation(
+id: string,
+    payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet },
+): Promise<IHouseholdEntity> {
     return this.http.patch(`${this.baseApi}/persons/${id}/contact-information`, {
       isPrimaryBeneficiary: payload.isPrimaryBeneficiary,
       contactInformation: this.parseContactInformation(payload.contactInformation),
@@ -64,8 +66,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     });
   }
 
-  async updatePersonIdentity(id: string,
-    payload: { contactInformation: IContactInformation; identitySet: IIdentitySet }): Promise<IHouseholdEntity> {
+  async updatePersonIdentity(
+id: string,
+    payload: { contactInformation: IContactInformation; identitySet: IIdentitySet },
+): Promise<IHouseholdEntity> {
     return this.http.patch(`${this.baseApi}/persons/${id}/identity-set`, {
       contactInformation: this.parseContactInformation(payload.contactInformation),
       identitySet: this.parseIdentitySet(payload.identitySet),

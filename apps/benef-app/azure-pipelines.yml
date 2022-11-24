@@ -25,7 +25,7 @@ variables:
   value: 'benef-app'
 - name: isPullRequest # Can't be used in condition
   value: $[eq(variables['Build.Reason'], 'PullRequest')]
-- name: VUE_APP_VERSION
+- name: VITE_VERSION
   value: $(Major).$(Minor).$(Patch)
 - name: nodeJsVersion
   value: '16.10.0'

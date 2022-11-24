@@ -4,12 +4,12 @@
     rounded
     :outlined="!isActive"
     class="pa-3"
-    :class="{ 'activeBackground': isActive, 'noAccessBackground':isActive && !hasAccessToEvent }">
+    :class="{ activeBackground: isActive, noAccessBackground: isActive && !hasAccessToEvent }">
     <table>
       <tbody class="rc-body14">
         <tr>
           <td>
-            <v-icon :size="isActive? '22':'16'" class="pr-2" color="secondary">
+            <v-icon :size="isActive ? '22' : '16'" class="pr-2" color="secondary">
               mdi-calendar
             </v-icon>
           </td>
@@ -18,14 +18,15 @@
               v-if="isActive"
               class="fw-bold rc-body18"
               data-test="household_profile_case_file_event_name">
-              {{ eventName? $m(eventName): '-' }}
+              {{ eventName ? $m(eventName) : '-' }}
             </span>
             <button
               v-else
+              type="button"
               class="fw-bold rc-link14"
               data-test="household_profile_case_file_event_name"
               @click="openCaseFileSummary = true">
-              {{ eventName? $m(eventName): '-' }}
+              {{ eventName ? $m(eventName) : '-' }}
             </button>
           </td>
           <td class="icon">
@@ -44,10 +45,10 @@
           <td />
           <td>
             <component
-              :is="isActive && hasAccessToEvent? 'router-link': 'span'"
+              :is="isActive && hasAccessToEvent ? 'router-link' : 'span'"
               :to="caseFileRoute"
               data-test="household_profile_case_file_number"
-              :class="{'rc-link14': isActive && hasAccessToEvent, 'fw-bold': !hasAccessToEvent}">
+              :class="{ 'rc-link14': isActive && hasAccessToEvent, 'fw-bold': !hasAccessToEvent }">
               {{ `${$t('household.profile.case_file')}: ${caseFile.caseFileNumber}` }}
             </component>
           </td>
@@ -136,7 +137,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    caseFileRoute(): {name: string, params: {id: string} } {
+    caseFileRoute(): { name: string, params: { id: string } } {
       return {
         name: routes.caseFile.activity.name,
         params: {

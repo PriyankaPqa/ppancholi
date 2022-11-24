@@ -131,7 +131,7 @@ export default mixins(caseFileDetail).extend({
       ];
     },
 
-    documentEditRoute(): {name: string, params: Record<string, string>} {
+    documentEditRoute(): { name: string, params: Record<string, string> } {
       return {
         name: routes.caseFile.documents.edit.name,
         params: {
@@ -144,8 +144,10 @@ export default mixins(caseFileDetail).extend({
 
   async created() {
     await this.$storage.caseFileDocument.actions.fetchCategories();
-    await this.$storage.caseFileDocument.actions.fetch({ caseFileId: this.caseFileId, id: this.documentId },
-      { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+    await this.$storage.caseFileDocument.actions.fetch(
+      { caseFileId: this.caseFileId, id: this.documentId },
+      { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
+    );
   },
 
   methods: {

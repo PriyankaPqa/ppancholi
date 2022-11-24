@@ -308,7 +308,7 @@ describe('MoveHouseholdMembers.vue', () => {
         });
       });
 
-      // eslint-disable-next-line max-len
+      // eslint-disable-next-line max-len,vue/max-len
       it('should remove the moving member from the origin household additionalMembers list, if member does not move back and the origin household has a primary member', async () => {
         const movingMember = { ...mockMember(), id: 'moving' };
         const originHousehold = {
@@ -325,7 +325,8 @@ describe('MoveHouseholdMembers.vue', () => {
       });
 
       // eslint-disable-next-line max-len
-      it('should remove the moving member as primary member of origin household, if member does not move back and the origin household has no additional members',
+      it(
+        'should remove the moving member as primary member of origin household, if member does not move back and the origin household has no additional members',
         async () => {
           const movingMember = { ...mockMember(), id: 'moving' };
           const originHousehold = {
@@ -339,7 +340,8 @@ describe('MoveHouseholdMembers.vue', () => {
           await wrapper.vm.moveMember(movingMember, originHousehold, targetHousehold);
 
           expect(originHousehold.setPrimaryBeneficiary).toHaveBeenCalledWith(null);
-        });
+        },
+      );
 
       it('should remove the moving member from the list of moving members of origin household, if member moves back', async () => {
         const movingMember = { ...mockMember(), id: 'moving' };

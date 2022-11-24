@@ -17,7 +17,7 @@
         </h5>
       </v-col>
 
-      <v-col cols="12" sm="6" md="8" :class="{'pb-0':compactView}">
+      <v-col cols="12" sm="6" md="8" :class="{ 'pb-0': compactView }">
         <v-select-with-validation
           ref="addressType"
           background-color="white"
@@ -44,7 +44,7 @@
       </v-col>
 
       <template v-if="addressType">
-        <v-col v-if="form.requiresPlaceName()" cols="12" sm="9" md="8" :class="{'py-0':compactView}">
+        <v-col v-if="form.requiresPlaceName()" cols="12" sm="9" md="8" :class="{ 'py-0': compactView }">
           <v-text-field-with-validation
             v-model="form.placeName"
             background-color="white"
@@ -53,7 +53,7 @@
             :label="placeNameLabel" />
         </v-col>
 
-        <v-col v-if="form.hasPlaceNumber()" cols="6" sm="3" md="4" :class="{'py-0':compactView}">
+        <v-col v-if="form.hasPlaceNumber()" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
           <v-text-field-with-validation
             v-model="form.placeNumber"
             background-color="white"
@@ -62,7 +62,7 @@
             :label="placeNumberLabel" />
         </v-col>
 
-        <v-col v-if="form.hasStreet()" cols="12" sm="9" md="8" :class="{'py-0':compactView}">
+        <v-col v-if="form.hasStreet()" cols="12" sm="9" md="8" :class="{ 'py-0': compactView }">
           <v-text-field-with-validation
             v-model="form.address.streetAddress"
             background-color="white"
@@ -72,7 +72,7 @@
             @input="$resetGeoLocation()" />
         </v-col>
 
-        <v-col v-if="form.hasUnitSuite()" cols="6" sm="3" md="4" :class="{'py-0':compactView}">
+        <v-col v-if="form.hasUnitSuite()" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
           <v-text-field-with-validation
             v-model="form.address.unitSuite"
             background-color="white"
@@ -82,7 +82,7 @@
         </v-col>
         <v-col v-else cols="6" sm="3" md="4" />
 
-        <v-col v-if="form.requiresCity()" cols="12" sm="6" md="4" :class="{'py-0':compactView}">
+        <v-col v-if="form.requiresCity()" cols="12" sm="6" md="4" :class="{ 'py-0': compactView }">
           <v-text-field-with-validation
             v-model="form.address.city"
             background-color="white"
@@ -92,7 +92,7 @@
             @input="$resetGeoLocation()" />
         </v-col>
 
-        <v-col v-if="form.requiresProvince()" cols="12" sm="6" md="4" :class="{'py-0':compactView}">
+        <v-col v-if="form.requiresProvince()" cols="12" sm="6" md="4" :class="{ 'py-0': compactView }">
           <v-select-with-validation
             v-if="isCanada"
             v-model="form.address.province"
@@ -112,7 +112,7 @@
             @input="$resetGeoLocation()" />
         </v-col>
 
-        <v-col v-if="form.hasPostalCode()" cols="6" sm="6" md="4" :class="{'py-0':compactView}">
+        <v-col v-if="form.hasPostalCode()" cols="6" sm="6" md="4" :class="{ 'py-0': compactView }">
           <v-text-field-with-validation
             v-model="form.address.postalCode"
             background-color="white"
@@ -122,7 +122,7 @@
             @input="$resetGeoLocation()" />
         </v-col>
 
-        <v-col v-if="form.requiresCountry()" cols="12" sm="6" md="8" :class="{'py-0':compactView}">
+        <v-col v-if="form.requiresCountry()" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
           <rc-country-select-with-validation
             v-model="form.address.country"
             background-color="white"
@@ -132,7 +132,7 @@
             @change="onCountryChange()" />
         </v-col>
 
-        <v-col v-if="form.requiresShelterLocation() && currentShelterLocations.length > 0" cols="12" sm="6" md="8" :class="{'py-0':compactView}">
+        <v-col v-if="form.requiresShelterLocation() && currentShelterLocations.length > 0" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
           <v-select-with-validation
             v-model="form.shelterLocation"
             background-color="white"
@@ -158,13 +158,13 @@ import {
 import { TranslateResult } from 'vue-i18n';
 import mixins from 'vue-typed-mixins';
 import { EOptionItemStatus, VForm } from '@libs/shared-lib/types';
-import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import {
   ECurrentAddressTypes,
   IShelterLocationData,
   ICurrentAddress,
   CurrentAddress,
-} from '../../../../entities-lib/src/household-create';
+} from '@libs/entities-lib/household-create';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 
 import googleAutoCompleteMixin from './mixins/address';
 

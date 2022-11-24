@@ -4,7 +4,7 @@
     <left-menu :mini.sync="miniLeftMenu" :show.sync="showLeftMenu" @update-mini="updateMini" />
     <right-menu />
     <general-help-menu :menu-links="helpMenuLinks" />
-    <v-main :class="{'menu-container': paddingLeft}">
+    <v-main :class="{ 'menu-container': paddingLeft }">
       <rc-router-view-transition />
     </v-main>
   </div>

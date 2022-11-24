@@ -51,7 +51,7 @@
                   <v-col cols="12" md="4">
                     <v-autocomplete-with-validation
                       data-test="team-contact"
-                      :label="`${$t('teams.form.primary_contact')}${canBeEmpty? '': '*'}`"
+                      :label="`${$t('teams.form.primary_contact')}${canBeEmpty ? '' : '*'}`"
                       :items="primaryContactUsers"
                       item-text="displayName"
                       :search-input.sync="primaryContactQuery"
@@ -73,14 +73,14 @@
                     <events-selector
                       async-mode
                       fetch-all-events
-                      :value="teamType === 'standard'? team.eventIds: team.eventIds[0]"
+                      :value="teamType === 'standard' ? team.eventIds : team.eventIds[0]"
                       :multiple="teamType === 'standard'"
                       :disabled="!$hasLevel('level5')"
                       item-value="id"
                       :rules="rules.event"
                       return-object
                       data-test="events"
-                      :label="`${$t('teams.form.event')}${teamType === 'standard' ? '': '*'}`"
+                      :label="`${$t('teams.form.event')}${teamType === 'standard' ? '' : '*'}`"
                       :force-events="availableEvents"
                       @change="setEvents($event)"
                       @delete="handleRemoveEvent($event)" />

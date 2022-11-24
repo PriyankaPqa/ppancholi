@@ -144,8 +144,10 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     tableData(): IProgramCombined[] {
-      return this.$storage.program.getters.getByIds(this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.id } });
+      return this.$storage.program.getters.getByIds(
+        this.searchResultIds,
+        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.id } },
+      );
     },
 
     filterOptions(): Array<IFilterSettings> {

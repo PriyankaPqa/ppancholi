@@ -188,11 +188,13 @@ export default Vue.extend({
     },
 
     cancellationByText() {
-      return this.$t('caseFile.financialAssistance.cancellationReason.byOn',
+      return this.$t(
+        'caseFile.financialAssistance.cancellationReason.byOn',
         {
           by: this.$storage.userAccount.getters.get(this.paymentGroup.cancellationBy)?.metadata?.displayName,
           on: helpers.getLocalStringDate(this.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'll'),
-        });
+        },
+      );
     },
 
     cancellationReasonText(): string {

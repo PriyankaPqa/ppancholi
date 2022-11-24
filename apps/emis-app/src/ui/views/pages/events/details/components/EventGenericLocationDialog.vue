@@ -257,7 +257,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     apiKey(): string {
       return localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
-        : process.env.VUE_APP_GOOGLE_API_KEY;
+        : process.env.VITE_GOOGLE_API_KEY;
     },
 
     allLocations(): IEventGenericLocation[] {

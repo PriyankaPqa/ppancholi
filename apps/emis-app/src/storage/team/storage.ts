@@ -11,7 +11,7 @@ export class TeamStorage
 
   private getters = {
     ...this.baseGetters,
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -34,15 +34,15 @@ export class TeamStorage
 
     emptyTeam: (teamId: uuid):
       Promise<ITeamEntity> => this.store.dispatch(`${this.entityModuleName}/emptyTeam`, { teamId }),
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

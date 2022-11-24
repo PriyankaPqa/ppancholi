@@ -131,7 +131,7 @@
                     <span
                       data-test="event-status-text"
                       class="fw-medium text-uppercase mr-2">{{ isStatusOpen ? $t('event.status.open') : $t('event.status.on_hold') }}</span>
-                    <span v-if="isStatusOpen">{{ $t('event.start_on_a_date',) }}
+                    <span v-if="isStatusOpen">{{ $t('event.start_on_a_date') }}
                       {{ getLocalStringDate(event.schedule.scheduledOpenDate, 'EventSchedule.scheduledOpenDate', 'll') }}</span>
                   </div>
 
@@ -627,7 +627,7 @@ export default Vue.extend({
       this.localEvent.fillEmptyMultilingualAttributes();
     },
 
-    setAssistanceNumber(p: {number: string; countryCode: string; e164Number: string}) {
+    setAssistanceNumber(p: { number: string; countryCode: string; e164Number: string }) {
       this.assistanceNumber = p;
       this.localEvent.responseDetails.assistanceNumber = p.e164Number;
     },

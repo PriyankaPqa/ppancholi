@@ -14,7 +14,7 @@ export class CaseFileReferralStorageMock extends BaseMock<ICaseFileReferralCombi
     ...this.baseGetters,
     types: jest.fn(),
     outcomeStatuses: jest.fn(),
-  }
+  };
 
   protected actions = {
     ...this.baseActions,
@@ -22,17 +22,17 @@ export class CaseFileReferralStorageMock extends BaseMock<ICaseFileReferralCombi
     fetchOutcomeStatuses: jest.fn(() => mockOptionItemData()),
     createReferral: jest.fn((payload: ICaseFileReferralEntity) => payload),
     updateReferral: jest.fn((payload: ICaseFileReferralEntity) => payload),
-  }
+  };
 
   protected mutations = {
     ...this.baseMutations,
     setTypesFetched: jest.fn(),
     setOutcomeStatusesFetched: jest.fn(),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

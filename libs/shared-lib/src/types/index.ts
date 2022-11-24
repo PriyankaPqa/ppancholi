@@ -17,8 +17,8 @@ export type { IErrorReport } from './interfaces/IErrorReport';
 export type { IIdMultilingualName } from './interfaces/IIdMultilingualName';
 export type { IListOption } from './interfaces/IListOption';
 export type { IMultilingual } from './interfaces/IMultilingual';
-export type { INavigationTabGroup } from './interfaces/INavigationTabGroup';
 export type { INavigationTab } from './interfaces/INavigationTab';
+export type { INavigationTabGroup } from './interfaces/INavigationTabGroup';
 export type { IOptionItemData } from './interfaces/IOptionItemData';
 export type { IRestResponse } from './interfaces/IRestResponse';
 export type { ISearchData } from './interfaces/ISearchData';
@@ -43,4 +43,4 @@ export type VForm = Vue & {
     passed: boolean,
     failed: boolean,
   }
-}
+};

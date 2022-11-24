@@ -4,7 +4,9 @@ import applicationInsights from './applicationInsights';
 
 jest.mock('@microsoft/applicationinsights-web');
 
+// eslint-disable-next-line no-console
 console.error = jest.fn();
+// eslint-disable-next-line no-console
 console.log = jest.fn();
 
 describe('ApplicationInsights', () => {
@@ -136,13 +138,16 @@ describe('ApplicationInsights', () => {
 
       expect(() => vue.config.errorHandler(error)).toThrow('Whoopsie!');
 
-      expect(appInsights.trackException).toHaveBeenCalledWith({ exception: error },
+      expect(appInsights.trackException).toHaveBeenCalledWith(
+        { exception: error },
         {
           host: 'my_host', url: 'my_current_url', one: 'more', yep: 2, hello: 'hello', filename: '', methodName: '',
-        });
+        },
+      );
 
       applicationInsights.trackTrace('my_trace', { additional: 'data' }, 'file', 'method');
-      expect(appInsights.trackTrace).toHaveBeenCalledWith({ message: 'my_trace' },
+      expect(appInsights.trackTrace).toHaveBeenCalledWith(
+        { message: 'my_trace' },
         {
           host: 'my_host',
           url: 'my_current_url',
@@ -152,7 +157,8 @@ describe('ApplicationInsights', () => {
           additional: 'data',
           filename: 'file',
           methodName: 'method',
-        });
+        },
+      );
     });
   });
 });

@@ -15,10 +15,11 @@
     "baseUrl": ".",
     "skipLibCheck": true, // Fixes testcafe + jest type collision
     "types": [
-      "webpack-env",
       "jest",
       "vuetify",
       "vue-meta",
+      "vite/client",
+      "node"
     ],
     "paths": {
       "@/*": [

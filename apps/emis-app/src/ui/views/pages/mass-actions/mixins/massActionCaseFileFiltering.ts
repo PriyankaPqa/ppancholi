@@ -29,8 +29,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     tableData(): ICaseFileCombined[] {
-      return this.$storage.caseFile.getters.getByIds(this.searchResultIds,
-        { onlyActive: true });
+      return this.$storage.caseFile.getters.getByIds(
+        this.searchResultIds,
+        { onlyActive: true },
+      );
     },
 
     tableProps(): Record<string, unknown> {

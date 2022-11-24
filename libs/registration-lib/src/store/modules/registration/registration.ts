@@ -416,8 +416,10 @@ const mutations = (): MutationTree<IState> => ({
     state.householdCreate = new HouseholdCreate(payload);
   },
 
-  setSplitHousehold(state: IState,
-    { originHouseholdId, primaryMember, additionalMembers }: { originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }) {
+  setSplitHousehold(
+state: IState,
+    { originHouseholdId, primaryMember, additionalMembers }: { originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] },
+) {
     state.splitHousehold = { originHouseholdId, splitMembers: { primaryMember, additionalMembers } };
   },
 
@@ -547,8 +549,10 @@ const actions = (mode: ERegistrationMode) => ({
     context: ActionContext<IState, IState>,
     { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number },
   ): Promise<IHouseholdEntity> {
-    const result = await this.$services.households.updatePersonContactInformation(member.id,
-      { contactInformation: member.contactInformation, identitySet: member.identitySet, isPrimaryBeneficiary: isPrimaryMember });
+    const result = await this.$services.households.updatePersonContactInformation(
+member.id,
+      { contactInformation: member.contactInformation, identitySet: member.identitySet, isPrimaryBeneficiary: isPrimaryMember },
+);
 
     if (result) {
       if (isPrimaryMember) {
@@ -566,8 +570,10 @@ const actions = (mode: ERegistrationMode) => ({
     context: ActionContext<IState, IState>,
     { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number },
   ): Promise<IHouseholdEntity> {
-    const result = await this.$services.households.updatePersonIdentity(member.id,
-      { contactInformation: member.contactInformation, identitySet: member.identitySet });
+    const result = await this.$services.households.updatePersonIdentity(
+member.id,
+      { contactInformation: member.contactInformation, identitySet: member.identitySet },
+);
 
     if (result) {
       if (isPrimaryMember) {

@@ -5,7 +5,7 @@ import {
   mockContactInformation,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
-} from '../../../../entities-lib/src/household-create';
+} from '@libs/entities-lib/src/household-create';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { createLocalVue, shallowMount, mount } from '../../test/testSetup';
 import Component from './ContactInformationForm.vue';

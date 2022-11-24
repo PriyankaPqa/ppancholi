@@ -14,7 +14,7 @@ export interface IEditFilterRequest {
   newFilter: IFilter;
 }
 
-export interface IUserAccountsService extends IDomainBaseService<IUserAccountEntity, uuid>{
+export interface IUserAccountsService extends IDomainBaseService<IUserAccountEntity, uuid> {
   fetchCurrentUserAccount(): Promise<IUserAccountEntity>;
   addFilter(filter: IFilter): Promise<IUserAccountEntity>;
   editFilter(payload: IEditFilterRequest): Promise<IUserAccountEntity>;

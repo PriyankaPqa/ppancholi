@@ -283,7 +283,8 @@ describe('CaseFileTags.vue', () => {
     });
 
     describe('makeInitialListTags', () => {
-      it('assigns into list tags the right tag object with property existing equal to true if existingTags contains a tag with the same id',
+      it(
+        'assigns into list tags the right tag object with property existing equal to true if existingTags contains a tag with the same id',
         async () => {
           const optionsTag = {
             id: 'mock-id',
@@ -304,9 +305,11 @@ describe('CaseFileTags.vue', () => {
             selected: false,
             active: true,
           }]);
-        });
+        },
+      );
 
-      it('assigns into list tags the right tag object with property existing equal to false if existingTags does not contain a tag with the same id',
+      it(
+        'assigns into list tags the right tag object with property existing equal to false if existingTags does not contain a tag with the same id',
         async () => {
           const optionsTag = {
             id: 'mock-id',
@@ -327,9 +330,11 @@ describe('CaseFileTags.vue', () => {
             selected: false,
             active: true,
           }]);
-        });
+        },
+      );
 
-      it('assigns into list tags the right tag object with property active  equal to false if the option tag has other than active',
+      it(
+        'assigns into list tags the right tag object with property active  equal to false if the option tag has other than active',
         async () => {
           const optionsTag = {
             id: 'mock-id',
@@ -350,7 +355,8 @@ describe('CaseFileTags.vue', () => {
             selected: false,
             active: false,
           }]);
-        });
+        },
+      );
     });
 
     describe('initDeleteTag', () => {
@@ -382,7 +388,8 @@ describe('CaseFileTags.vue', () => {
 
     describe('onSelectTag', () => {
       // eslint-disable-next-line max-len
-      it('sets the property of a tag in listTags to selected equal to true if the argument contains a tag with the same id and a property of existing equal to false',
+      it(
+        'sets the property of a tag in listTags to selected equal to true if the argument contains a tag with the same id and a property of existing equal to false',
         async () => {
           const tags = [
             { id: 'mock-id-1', existing: true },
@@ -402,7 +409,8 @@ describe('CaseFileTags.vue', () => {
             { id: 'mock-id-2', selected: true },
             { id: 'mock-id-3', selected: false },
           ]);
-        });
+        },
+      );
     });
 
     describe('submitAddTags', () => {

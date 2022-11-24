@@ -101,8 +101,14 @@ import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
 import { EEventLocationStatus, IEventGenericLocation } from '@libs/entities-lib/event';
 
+import { Resize } from 'vuetify/es5/directives';
+
 export default mixins(householdResults, household).extend({
   name: 'HouseholdResults',
+
+  directives: {
+    Resize,
+  },
 
   data() {
     return {

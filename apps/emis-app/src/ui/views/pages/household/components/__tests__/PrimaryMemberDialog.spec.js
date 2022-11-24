@@ -536,7 +536,8 @@ describe('PrimaryMemberDialog', () => {
     });
 
     describe('updateAdditionalMembersWithSameAddress', () => {
-      it('calls the service updatePersonAddress for each additional member that has the same address as the primary member and sets address',
+      it(
+        'calls the service updatePersonAddress for each additional member that has the same address as the primary member and sets address',
         async () => {
           jest.clearAllMocks();
           wrapper = shallowMount(Component, {
@@ -564,7 +565,8 @@ describe('PrimaryMemberDialog', () => {
             isPrimaryMember: false,
             index: 1,
           });
-        });
+        },
+      );
     });
   });
 });

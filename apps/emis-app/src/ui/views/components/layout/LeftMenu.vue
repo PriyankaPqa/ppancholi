@@ -4,7 +4,7 @@
     v-click-outside="{ handler: onClickOutside, include: hamburgerMenu }"
     :value="show"
     :mini-variant="mini"
-    :class="{expanded: !mini}"
+    :class="{ expanded: !mini }"
     mini-variant-width="80"
     :mobile-breakpoint="$vuetify.breakpoint.thresholds.sm"
     app
@@ -29,7 +29,7 @@
             :data-test="item.test"
             v-on="on"
             @click="onClickOutside">
-            <v-list-item-icon :class="{expanded: !mini, 'shrink': mini, 'menu-icon': true}">
+            <v-list-item-icon :class="{ expanded: !mini, shrink: mini, 'menu-icon': true }">
               <v-icon :disabled="item.disabled">
                 {{ item.icon }}
               </v-icon>
@@ -56,8 +56,14 @@ import { INavigationTab } from '@libs/shared-lib/types';
 import { NO_ROLE } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
+import { ClickOutside } from 'vuetify/es5/directives';
+
 export default Vue.extend({
   name: 'LeftMenu',
+
+  directives: {
+    ClickOutside,
+  },
 
   components: {
     RcTooltip,

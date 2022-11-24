@@ -1,10 +1,6 @@
 import { i18n } from '@/ui/plugins/i18n';
 import { Status } from '@libs/entities-lib/base';
 import helpers from '@libs/entities-lib/helpers';
-import { mockStorage } from '../../store/storage/storage.mock';
-import IdentityForm from '../forms/IdentityForm.vue';
-import ContactInformationForm from '../forms/ContactInformationForm.vue';
-import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import {
   mockMember,
   mockContactInformation,
@@ -15,7 +11,11 @@ import {
   mockIdentitySet,
   mockPrimarySpokenLanguages,
   mockGenders,
-} from '../../../../entities-lib/src/household-create';
+} from '@libs/entities-lib/src/household-create';
+import { mockStorage } from '../../store/storage/storage.mock';
+import IdentityForm from '../forms/IdentityForm.vue';
+import ContactInformationForm from '../forms/ContactInformationForm.vue';
+import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './PersonalInformation.vue';

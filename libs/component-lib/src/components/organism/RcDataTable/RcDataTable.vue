@@ -1,6 +1,6 @@
 <template>
   <div class="dataTable__container elevation-2">
-    <v-card :class="{'has-footer': !!footerText}">
+    <v-card :class="{ 'has-footer': !!footerText }">
       <rc-data-table-header
         v-if="!hideHeader"
         v-bind="headerOptions"
@@ -65,7 +65,7 @@
       </rc-data-table-body>
       <div v-if="footerText" class="rc-caption12 fw-light table-footer">
         {{ footerText }}
-        <button class="rc-link12 refresh-button" @click="emitSearchEvent">
+        <button type="button" class="rc-link12 refresh-button" @click="emitSearchEvent">
           {{ $t("table.refresh") }}
         </button>
       </div>

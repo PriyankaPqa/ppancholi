@@ -18,25 +18,27 @@ export class AssessmentTemplateEntityModule extends BaseModule <IAssessmentTempl
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<IAssessmentTemplateEntity>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
-  }
+  };
 
   public mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public actions = {
     ...this.baseActions,
 
-    create: async (context: ActionContext<IAssessmentTemplateEntityState, IAssessmentTemplateEntityState>,
-      payload: IAssessmentTemplateEntity): Promise<IAssessmentTemplateEntity> => {
+    create: async (
+      context: ActionContext<IAssessmentTemplateEntityState, IAssessmentTemplateEntityState>,
+      payload: IAssessmentTemplateEntity,
+    ): Promise<IAssessmentTemplateEntity> => {
       const result = await this.service.create(payload);
       if (result) {
         context.commit('addNewlyCreatedId', result);
@@ -45,8 +47,10 @@ export class AssessmentTemplateEntityModule extends BaseModule <IAssessmentTempl
       return result;
     },
 
-    update: async (context: ActionContext<IAssessmentTemplateEntityState, IAssessmentTemplateEntityState>,
-      payload: IAssessmentTemplateEntity): Promise<IAssessmentTemplateEntity> => {
+    update: async (
+      context: ActionContext<IAssessmentTemplateEntityState, IAssessmentTemplateEntityState>,
+      payload: IAssessmentTemplateEntity,
+    ): Promise<IAssessmentTemplateEntity> => {
       const result = await this.service.update(payload);
       if (result) {
         context.commit('set', result);
@@ -54,13 +58,15 @@ export class AssessmentTemplateEntityModule extends BaseModule <IAssessmentTempl
       return result;
     },
 
-    updateAssessmentStructure: async (context: ActionContext<IAssessmentTemplateEntityState, IAssessmentTemplateEntityState>,
-      payload: IAssessmentTemplateEntity): Promise<IAssessmentTemplateEntity> => {
+    updateAssessmentStructure: async (
+      context: ActionContext<IAssessmentTemplateEntityState, IAssessmentTemplateEntityState>,
+      payload: IAssessmentTemplateEntity,
+    ): Promise<IAssessmentTemplateEntity> => {
       const result = await this.service.updateAssessmentStructure(payload);
       if (result) {
         context.commit('set', result);
       }
       return result;
     },
-  }
+  };
 }

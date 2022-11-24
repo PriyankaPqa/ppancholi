@@ -5,7 +5,9 @@
     </div>
     <!-- eslint-disable -->
     <div v-if="errorMessage" class="error-message" v-html="errorMessage"></div>
-    <div id="surveyContainer" />
+    <div id="surveyContainer">
+      <Survey v-if="survey" :survey="survey" />
+    </div>
   </div>
 </template>
 
@@ -15,11 +17,10 @@
 import 'survey-core/defaultV2.min.css';
 
 import Vue from 'vue';
-import { SurveyModel } from 'survey-core';
 import _debounce from 'lodash/debounce';
 import { AssessmentFormEntity, IAssessmentResponseEntity } from '@libs/entities-lib/assessment-template';
 import { cloneDeep } from 'lodash';
-import { SurveyJsHelper } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
+import { SurveyJsHelper, ISurveyModel } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
 import { httpClient } from '@/services/httpClient';
 import helpers from '@/ui/helpers';
 import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue';
@@ -48,7 +49,7 @@ export default Vue.extend({
 
   data() {
     return {
-      survey: null as SurveyModel,
+      survey: null as ISurveyModel,
       surveyJsHelper: new SurveyJsHelper(),
       response: null as IAssessmentResponseEntity,
       assessmentTemplate: null as AssessmentFormEntity,
@@ -69,7 +70,7 @@ export default Vue.extend({
   },
 
   methods: {
-    async saveAnswers(sender: SurveyModel) {
+    async saveAnswers(sender: ISurveyModel) {
       this.response = cloneDeep(this.surveyJsHelper.surveyToAssessmentResponse(sender, this.response));
       if (this.assessmentResponseId) {
         const result = await this.$services.assessmentResponses.saveAssessmentAnsweredQuestions(this.response);
@@ -79,14 +80,14 @@ export default Vue.extend({
       }
     },
 
-    async completeSurvey(sender: SurveyModel) {
+    async completeSurvey(sender: ISurveyModel) {
       debouncedSave.cancel();
       await this.saveAnswers(sender);
       await this.$services.assessmentResponses.completeSurveyByBeneficiary(this.response);
     },
 
     async initializeSurvey() {
-      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      // eslint-disable-next-line @typescript-eslint/no-this-alias,@typescript-eslint/naming-convention
       const _this = this;
       await this.loadDetails();
       this.errorMessage = this.surveyJsHelper.getSurveyCanBeCompletedErrorMessage(this.assessmentTemplate, this.response, this, this.$m);
@@ -100,7 +101,7 @@ export default Vue.extend({
             this.survey.currentPageNo = this.survey.data._currentPageNo;
           }
         }
-        this.survey.onValueChanged.add((sender: SurveyModel) => debouncedSave({ _this, sender }));
+        this.survey.onValueChanged.add((sender: ISurveyModel) => debouncedSave({ _this, sender }));
         this.survey.onComplete.add(this.completeSurvey);
         this.surveyJsHelper.setColorScheme('#surveyContainer', this.$storage.tenantSettings.getters.currentTenantSettings().branding.colours);
       }

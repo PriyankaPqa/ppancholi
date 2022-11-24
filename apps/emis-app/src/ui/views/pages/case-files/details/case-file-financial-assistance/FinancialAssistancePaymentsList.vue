@@ -47,7 +47,7 @@
 
       <template #[`item.${customColumns.totals}`]="{ item }">
         <div data-test="fap_total" class="amount">
-          {{ item.metadata? $formatCurrency(item.metadata.total): '-' }}
+          {{ item.metadata ? $formatCurrency(item.metadata.total) : '-' }}
         </div>
       </template>
 
@@ -233,17 +233,21 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   computed: {
 
     tableData(): IFinancialAssistancePaymentCombined[] {
-      return this.$storage.financialAssistancePayment.getters.getByIds(this.searchResultIds,
+      return this.$storage.financialAssistancePayment.getters.getByIds(
+        this.searchResultIds,
         {
           onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
-        });
+        },
+      );
     },
 
     itemsToSubmit() : IFinancialAssistancePaymentCombined[] {
-      return this.$storage.financialAssistancePayment.getters.getByIds(this.allItemsIds,
+      return this.$storage.financialAssistancePayment.getters.getByIds(
+        this.allItemsIds,
         {
           onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
-        }).filter((fa) => fa.entity.approvalStatus === ApprovalStatus.New);
+        },
+      ).filter((fa) => fa.entity.approvalStatus === ApprovalStatus.New);
     },
 
     itemsToSubmitSelectAll: {

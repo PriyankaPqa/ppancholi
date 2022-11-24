@@ -47,7 +47,7 @@
         :section="EEventSummarySections.CallCentre"
         :can-add="canEditSections"
         @click-add-button="onSectionAdd($event)" />
-      <event-summary-section-body v-slot="{item, index}" :items="sortedCallCentres">
+      <event-summary-section-body v-slot="{ item, index }" :items="sortedCallCentres">
         <event-call-centre-section
           data-test="call-centre-section"
           :call-centre="item"
@@ -61,7 +61,7 @@
         :can-add="canEditSections"
         @click-add-button="onSectionAdd($event)" />
 
-      <event-summary-section-body v-slot="{item, index}" :items="sortedRegistrationLocations">
+      <event-summary-section-body v-slot="{ item, index }" :items="sortedRegistrationLocations">
         <event-location-section
           data-test="registration-location-section"
           data-test-prefix="registration"
@@ -75,7 +75,7 @@
         :section="EEventSummarySections.ShelterLocation"
         :can-add="canEditSections"
         @click-add-button="onSectionAdd($event)" />
-      <event-summary-section-body v-slot="{item, index}" :items="sortedShelterLocations">
+      <event-summary-section-body v-slot="{ item, index }" :items="sortedShelterLocations">
         <event-location-section
           data-test="shelter-location-section"
           data-test-prefix="shelter"
@@ -89,7 +89,7 @@
         :section="EEventSummarySections.Agreement"
         :can-add="canEditSections"
         @click-add-button="onSectionAdd($event)" />
-      <event-summary-section-body v-slot="{item, index}" :items="sortedAgreements">
+      <event-summary-section-body v-slot="{ item, index }" :items="sortedAgreements">
         <event-agreement-section
           data-test="agreement-section"
           :agreement="item"
@@ -283,7 +283,7 @@ export default Vue.extend({
       }
     },
 
-    onStatusChange({ status, reason }: {status: EEventStatus, reason: string}) {
+    onStatusChange({ status, reason }: { status: EEventStatus, reason: string }) {
       this.showEventStatusDialog = false;
 
       this.$storage.event.actions.setEventStatus({

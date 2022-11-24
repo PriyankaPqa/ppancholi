@@ -16,7 +16,7 @@ Vue.use(VueRouter);
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: process.env.VITE_BASE_URL,
   routes,
   scrollBehavior: (to) => {
     if (to.hash) {
@@ -65,14 +65,19 @@ const featureGuard = async (to: Route) => {
   }
 
   if (to.meta.feature) {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const { features } = store.getters[`${TENANT_SETTINGS_ENTITIES}/currentTenantSettings`] as ITenantSettingsEntity;
     const feature = features.find((f) => f.key === to.meta.feature);
     featureEnabled = feature?.enabled;
   }
 
   if (!featureEnabled) {
-    applicationInsights.trackTrace(`feature disabled ${to.fullPath}`, { to },
-      'router', 'featureGuard');
+    applicationInsights.trackTrace(
+      `feature disabled ${to.fullPath}`,
+      { to },
+      'router',
+      'featureGuard',
+    );
     Vue.toasted.global.error(i18n.t('error.feature_disabled'));
   }
 
@@ -154,6 +159,7 @@ router.beforeEach(async (to, from, next) => {
           return;
         }
         const featureEnabled = await featureGuard(to);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         featureEnabled ? next() : next(from);
       } else {
         next(from);

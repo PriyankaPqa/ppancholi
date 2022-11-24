@@ -36,7 +36,7 @@
       </template>
 
       <!-- ADD ITEM -->
-      <template #[`add-item.mainCategory`]="{item, index}">
+      <template #[`add-item.mainCategory`]="{ item, index }">
         <add-item-item :item="item" :items="items" :index="index" :financial-assistance-categories="faCategories" />
       </template>
 
@@ -84,7 +84,10 @@
         </span>
       </template>
 
-      <template #[`sub-item.buttons`]="{ item, index, parent, parentIndex }">
+      <template
+        #[`sub-item.buttons`]="{
+          item, index, parent, parentIndex,
+        }">
         <sub-item-buttons
           :item="item"
           :index="index"

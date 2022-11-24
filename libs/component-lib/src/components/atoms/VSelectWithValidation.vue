@@ -7,7 +7,7 @@
     tag="div">
     <v-select
       v-model="selectedItem"
-      :menu-props="{ bottom: true, offsetY: true, contentClass:'v-select-with-validation-dropdown'}"
+      :menu-props="{ bottom: true, offsetY: true, contentClass: 'v-select-with-validation-dropdown' }"
       :items="items"
       :class="[$attrs.class, classes]"
       :chips="multiple"

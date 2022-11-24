@@ -10,19 +10,19 @@ export class FinancialAssistanceCategoryStorage extends Base<IOptionItem, never,
 
   private getters = {
     ...this.baseGetters,
-  }
+  };
 
   private actions = {
     ...this.baseActions,
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

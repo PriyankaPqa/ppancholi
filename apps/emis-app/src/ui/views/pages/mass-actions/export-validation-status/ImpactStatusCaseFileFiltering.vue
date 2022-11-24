@@ -49,13 +49,13 @@
       </template>
 
       <template #[`item.${customColumns.firstName}`]="{ item: caseFile }">
-        {{ caseFile.metadata.primaryBeneficiary &&
-          caseFile.metadata.primaryBeneficiary.identitySet && caseFile.metadata.primaryBeneficiary.identitySet.firstName }}
+        {{ caseFile.metadata.primaryBeneficiary
+          && caseFile.metadata.primaryBeneficiary.identitySet && caseFile.metadata.primaryBeneficiary.identitySet.firstName }}
       </template>
 
       <template #[`item.${customColumns.lastName}`]="{ item: caseFile }">
-        {{ caseFile.metadata.primaryBeneficiary &&
-          caseFile.metadata.primaryBeneficiary.identitySet && caseFile.metadata.primaryBeneficiary.identitySet.lastName }}
+        {{ caseFile.metadata.primaryBeneficiary
+          && caseFile.metadata.primaryBeneficiary.identitySet && caseFile.metadata.primaryBeneficiary.identitySet.lastName }}
       </template>
 
       <template #[`item.${customColumns.street}`]="{ item: caseFile }">
@@ -284,7 +284,7 @@ export default mixins(massActionCaseFileFiltering).extend({
 });
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 .massAction__caseFile_table {
   .export {
     color: white !important;

@@ -48,7 +48,7 @@ mockEvent.entity.schedule.status = EEventStatus.Open;
 describe('CreateEditFinancialAssistance.vue', () => {
   let wrapper;
 
-  // eslint-disable-next-line no-unused-vars,max-params
+  // eslint-disable-next-line no-unused-vars,max-params,@typescript-eslint/no-unused-vars
   const mountWrapper = async (_fullMount = false, mode = 'edit', level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (mount)(Component, {
       shallow: true,
@@ -275,8 +275,10 @@ describe('CreateEditFinancialAssistance.vue', () => {
       });
 
       it('inits financialAssistance from storage when id is passed', () => {
-        expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith('myId',
-          { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+        expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith(
+          'myId',
+          { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
+        );
         expect(wrapper.vm.financialAssistance.id).toBe(caseFileFinancialAssistance.id);
         expect(wrapper.vm.financialAssistance.name).toBe(caseFileFinancialAssistance.name);
       });
@@ -305,14 +307,19 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await mountWrapper(false, 'edit', null, 'contributorFinance');
         expect(wrapper.vm.canAddNewLines).toBeFalsy();
 
-        await mountWrapper(false, 'edit', 1, null,
+        await mountWrapper(
+          false,
+          'edit',
+          1,
+          null,
           {
             computed: {
               readonly() {
                 return true;
               },
             },
-          });
+          },
+        );
         expect(wrapper.vm.canAddNewLines).toBeFalsy();
       });
 

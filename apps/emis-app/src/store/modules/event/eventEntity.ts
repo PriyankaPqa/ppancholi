@@ -37,7 +37,7 @@ export class EventEntityModule extends BaseModule <IEventEntity, uuid> {
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<IEventEntity>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
@@ -46,15 +46,15 @@ export class EventEntityModule extends BaseModule <IEventEntity, uuid> {
     eventTypes: [] as IOptionItemData[],
     agreementTypesFetched: false,
     eventTypesFetched: false,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
 
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line max-len,vue/max-len
     agreementTypes: (state: IEventEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.agreementTypes, filterOutInactive, actualValue),
 
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line max-len,vue/max-len
     eventTypes: (state: IEventEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.eventTypes, filterOutInactive, actualValue),
 
     eventsByStatus: (state:IState<IEventEntity>) => (statuses: Array<EEventStatus>) => {
@@ -114,15 +114,13 @@ export class EventEntityModule extends BaseModule <IEventEntity, uuid> {
 
     fetchRegions: async (): Promise<IEventLocation[]> => this.service.getRegions(),
 
-    updateEventSection: async (
-      context: ActionContext<IEventEntityState, IEventEntityState>, {
-        eventId, payload, section, action,
-      }:
+    updateEventSection: async (context: ActionContext<IEventEntityState, IEventEntityState>, {
+      eventId, payload, section, action,
+    }:
       { eventId:uuid,
         payload: IEventCallCentre | IEventAgreement | IEventGenericLocation,
         section: EEventSummarySections, action: 'add' | 'edit'
-      },
-    )
+      })
       : Promise<IEventEntity> => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

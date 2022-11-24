@@ -27,7 +27,9 @@
             class="triage-select"
             data-test="caseFileActivity-triage-select"
             :readonly="!canEdit || saving"
-            :menu-props="{ bottom: true, offsetY: true, contentClass: 'case-file-triage-dropdown', maxWidth: 'fit-content' }"
+            :menu-props="{
+              bottom: true, offsetY: true, contentClass: 'case-file-triage-dropdown', maxWidth: 'fit-content',
+            }"
             :items="triageLevels"
             :loading="loading"
             hide-details
@@ -95,7 +97,9 @@
                   class="case-file-activity-sort-select"
                   :placeholder="$t('caseFileActivity.date')"
                   data-test="caseFileActivity-case-file-activity-sort-select"
-                  :menu-props="{ bottom: true, offsetY: true, contentClass: 'case-file-activity-dropdown', maxWidth: 'fit-content' }"
+                  :menu-props="{
+                    bottom: true, offsetY: true, contentClass: 'case-file-activity-dropdown', maxWidth: 'fit-content',
+                  }"
                   :items="sortingListItems"
                   :min-width="500"
                   hide-details
@@ -178,7 +182,7 @@ export default mixins(caseFileDetail).extend({
       return this.$hasLevel('level1') && !this.readonly;
     },
 
-    triageLevels(): {value: unknown, text: string}[] {
+    triageLevels(): { value: unknown, text: string }[] {
       const levels = helpers.enumToTranslatedCollection(CaseFileTriage, 'enums.Triage');
       return _sortBy(levels, 'value');
     },

@@ -20,6 +20,7 @@ const storage = mockStorage();
 
 let wrapper;
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 const doMount = (fullMount = false, {
   processing, preProcessing, preProcessed, processed, showValidDownload = false,
 }) => {

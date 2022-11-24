@@ -6,6 +6,7 @@
         data-test="paymentLineItem__title"
         class="rc-link16 fw-bold"
         :class="{ 'error--text': isInactive }"
+        @keypress.enter="linkToPaymentLineDetails"
         @click="linkToPaymentLineDetails">
         {{ title }}
       </span>
@@ -150,10 +151,8 @@ export default Vue.extend({
     },
 
     amounts(): string {
-      return this.showIssuedActualAmounts(this.paymentGroup)
-        // eslint-disable-next-line max-len
-        ? `${this.$t('caseFile.financialAssistance.issuedAmountSmall')}: ${this.$formatCurrency(this.paymentLine.amount)} ${this.$t('caseFile.financialAssistance.actualAmountSmall')}: ${(this.paymentLine.actualAmount !== null ? this.$formatCurrency(this.paymentLine.actualAmount) : '—')}`
-        : this.$formatCurrency(this.paymentLine.amount);
+      // eslint-disable-next-line vue/max-len
+      return this.showIssuedActualAmounts(this.paymentGroup) ? `${this.$t('caseFile.financialAssistance.issuedAmountSmall')}: ${this.$formatCurrency(this.paymentLine.amount)} ${this.$t('caseFile.financialAssistance.actualAmountSmall')}: ${(this.paymentLine.actualAmount !== null ? this.$formatCurrency(this.paymentLine.actualAmount) : '—')}` : this.$formatCurrency(this.paymentLine.amount);
     },
 
     showEditButton(): boolean {

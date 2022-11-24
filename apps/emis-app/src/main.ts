@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Vue from 'vue';
 import VueMeta from 'vue-meta';
-import './registerServiceWorker';
 
 // asset imports
-import '../../../libs/assets/styles/main.scss';
+import '@libs/shared-lib/assets/styles/main.scss';
 // Import i18n related files
 
-import VueAxe from 'vue-axe';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import VueCookies from 'vue-cookies';
 import {
@@ -45,7 +43,7 @@ SignalR.Initialize({
 });
 
 applicationInsights.initialize({
-  connectionString: process.env.VUE_APP_APPLICATION_INSIGHTS_CONNECTION_STRING,
+  connectionString: process.env.VITE_APPLICATION_INSIGHTS_CONNECTION_STRING,
   router,
   appName: 'EMISv2',
 });
@@ -61,12 +59,6 @@ Vue.use(formatCurrency);
 Vue.use(rolesAndPermissions);
 Vue.use(features);
 Vue.use(VueCookies);
-
-if (process.env.NODE_ENV === 'development') {
-  Vue.use(VueAxe, {
-    auto: false, // Disable auto check.
-  });
-}
 
 new Vue({
   render: (h) => h(App),

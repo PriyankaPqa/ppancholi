@@ -486,7 +486,8 @@ describe('CaseFileActivityListItem.vue', () => {
           });
         });
 
-        it('returns the correct data when action type is makeContentForAssignedToCaseFile and there are several individuals and no team',
+        it(
+          'returns the correct data when action type is makeContentForAssignedToCaseFile and there are several individuals and no team',
           async () => {
             const activity = {
               ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
@@ -504,9 +505,11 @@ describe('CaseFileActivityListItem.vue', () => {
               title: 'caseFileActivity.activityList.title.assigned_new_users_teams',
               body: 'caseFileActivity.activityList.assign.new_user: Jack White, Joe Black\ncaseFileActivity.activityList.assign.new_team: -',
             });
-          });
+          },
+        );
 
-        it('returns the correct data when action type is makeContentForAssignedToCaseFile and there are several teams and no individuals',
+        it(
+          'returns the correct data when action type is makeContentForAssignedToCaseFile and there are several teams and no individuals',
           async () => {
             const activity = {
               ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
@@ -524,7 +527,8 @@ describe('CaseFileActivityListItem.vue', () => {
               title: 'caseFileActivity.activityList.title.assigned_new_users_teams',
               body: 'caseFileActivity.activityList.assign.new_user: -\ncaseFileActivity.activityList.assign.new_team: Team 1, Team 2',
             });
-          });
+          },
+        );
       });
 
       describe('makeContentForUnassignedFromCaseFile', () => {

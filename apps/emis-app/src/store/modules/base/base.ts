@@ -33,10 +33,10 @@ export class BaseModule<T extends IEntity, IdParams> {
 
   protected baseState = {
     items: [] as Array<T>,
-    newlyCreatedIds: [] as Array<{id: uuid, createdOn: number}>,
+    newlyCreatedIds: [] as Array<{ id: uuid, createdOn: number }>,
     searchLoading: false,
     maxTimeInSecondsForNewlyCreatedIds: 60,
-  }
+  };
 
   protected baseGetters = {
     getNewlyCreatedIds: (state:IState<T>) => (baseDate?: Date) => {
@@ -53,12 +53,12 @@ export class BaseModule<T extends IEntity, IdParams> {
       }
       return ids.map((id) => _cloneDeep(state.items.find((e) => e.id === id)) || {});
     },
-  }
+  };
 
   protected baseActions = {
     fetch: async (
       context: ActionContext<IState<T>, IState<T>>,
-      { idParams, useGlobalHandler, returnFullResponse }: {idParams: IdParams, useGlobalHandler: boolean, returnFullResponse?: boolean},
+      { idParams, useGlobalHandler, returnFullResponse }: { idParams: IdParams, useGlobalHandler: boolean, returnFullResponse?: boolean },
     )
     : Promise<T | IRestResponse<T>> => {
       try {
@@ -133,12 +133,12 @@ export class BaseModule<T extends IEntity, IdParams> {
       }
     },
 
-    search: async (context: ActionContext<IState<T>, IState<T>>, { params, searchEndpoint }: {params: IAzureSearchParams, searchEndpoint?: string}):
+    search: async (context: ActionContext<IState<T>, IState<T>>, { params, searchEndpoint }: { params: IAzureSearchParams, searchEndpoint?: string }):
       Promise<IAzureCombinedSearchResult<T, unknown>> => {
       const res = await this.service.search(params, searchEndpoint);
       return res;
     },
-  }
+  };
 
   protected baseMutations = {
 
@@ -163,7 +163,7 @@ export class BaseModule<T extends IEntity, IdParams> {
     setSearchLoading(state: IState<T>, payload: boolean) {
       state.searchLoading = payload;
     },
-  }
+  };
 
   public getModule = () => ({
     namespaced: true,
@@ -171,5 +171,5 @@ export class BaseModule<T extends IEntity, IdParams> {
     getters: this.baseGetters,
     actions: this.baseActions as unknown as ActionTree<IState<T>, IRootState>,
     mutations: this.baseMutations,
-  })
+  });
 }

@@ -97,7 +97,7 @@ describe('AdditionalMemberTemplate.vue', () => {
 
     describe('getBirthDateLine', () => {
       it('should return the proper data', () => {
-        const expected = 'registration.personal_info.birthdate: Feb 12, 1999 (23 common.years)';
+        const expected = 'registration.personal_info.birthdate : Feb 12, 1999 (23 common.years)';
         expect(wrapper.vm.getBirthDateLine).toEqual(expected);
       });
     });

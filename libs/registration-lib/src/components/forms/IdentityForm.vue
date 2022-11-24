@@ -100,9 +100,9 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { VTextFieldWithValidation, VSelectWithValidation } from '@libs/component-lib/components';
 import { IOptionItemData } from '@libs/shared-lib/types';
+import { IBirthDate, IHoneyPotIdentitySet, IIdentitySet } from '@libs/entities-lib/household-create';
 import Pot from './HoneyPot.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import { IBirthDate, IHoneyPotIdentitySet, IIdentitySet } from '../../../../entities-lib/src/household-create';
 import months from '../../constants/months';
 
 export default Vue.extend({

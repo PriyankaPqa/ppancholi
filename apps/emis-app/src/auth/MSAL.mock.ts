@@ -12,7 +12,7 @@ export default class MSALMock {
     setNavigationClient(navigationClient: string) {
       return navigationClient;
     },
-  }
+  };
 
   constructor() {
     this.account = JSON.parse(localStorage.getItem(localStorageKeys.msalAccount.name));

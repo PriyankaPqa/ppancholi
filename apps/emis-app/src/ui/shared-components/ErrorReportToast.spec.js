@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable vue/max-len, max-len */
 import { mockStorage } from '@/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { User, mockUserData } from '@libs/entities-lib/user';

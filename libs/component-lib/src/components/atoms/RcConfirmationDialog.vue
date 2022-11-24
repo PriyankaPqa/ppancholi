@@ -22,7 +22,7 @@
         <div
           v-for="(m, i) in messages"
           :key="i"
-          :class="{'rc-body14': true, 'pre-formatted': true, 'mt-4': i >= 1}"
+          :class="{ 'rc-body14': true, 'pre-formatted': true, 'mt-4': i >= 1 }"
           :data-test="`message__line_${i}`">
           <span>{{ m }}</span>
         </div>

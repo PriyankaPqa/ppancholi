@@ -11,7 +11,7 @@ export class TeamStorageMock extends BaseMock<ITeamCombined, ITeamEntity> {
 
   protected getters = {
     ...this.baseGetters,
-  }
+  };
 
   protected actions = {
     ...this.baseActions,
@@ -22,15 +22,15 @@ export class TeamStorageMock extends BaseMock<ITeamCombined, ITeamEntity> {
     addTeamMembers: jest.fn(() => this.entity),
     removeTeamMember: jest.fn(() => this.entity),
     emptyTeam: jest.fn(() => this.entity),
-  }
+  };
 
   protected mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

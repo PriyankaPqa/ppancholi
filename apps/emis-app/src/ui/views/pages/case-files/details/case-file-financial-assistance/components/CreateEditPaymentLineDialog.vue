@@ -2,10 +2,10 @@
   <validation-observer ref="form" v-slot="{ failed }" slim>
     <rc-dialog
       v-if="loaded"
-      :title="currentLine ? $t('caseFile.financialAssistance.editPaymentLine'): $t('caseFile.financialAssistance.addNewPaymentLine')"
+      :title="currentLine ? $t('caseFile.financialAssistance.editPaymentLine') : $t('caseFile.financialAssistance.addNewPaymentLine')"
       :show.sync="show"
       :cancel-action-label="$t('common.buttons.cancel')"
-      :submit-action-label="currentLine ? $t('common.buttons.save'): $t('common.buttons.add')"
+      :submit-action-label="currentLine ? $t('common.buttons.save') : $t('common.buttons.add')"
       :submit-button-disabled="failed"
       :loading="submittingPaymentLine"
       :persistent="true"
@@ -42,7 +42,7 @@
                 :item-text="(item) => item.subCategory ? $m(item.subCategory.name) : ''"
                 :item-value="(item) => item.subCategory ? item.subCategory.id : null"
                 :items="subItems"
-                :disabled="!currentPaymentLine.mainCategoryId ||paymentApproved || paymentPending"
+                :disabled="!currentPaymentLine.mainCategoryId || paymentApproved || paymentPending"
                 :rules="rules.subitem"
                 data-test="payment_subItem"
                 @change="categorySelected" />
@@ -62,7 +62,7 @@
               <v-checkbox-with-validation
                 v-model="currentPaymentLine.documentReceived"
                 :rules="rules.documentReceived"
-                :disabled="!currentPaymentLine.subCategoryId ||paymentApproved || paymentPending"
+                :disabled="!currentPaymentLine.subCategoryId || paymentApproved || paymentPending"
                 data-test="checkbox_documentReceived"
                 class="rc-body12"
                 :label="`${$t('caseFile.financialAssistance.supportingDocuments')} *`" />
@@ -77,7 +77,7 @@
                 autocomplete="nope"
                 type="number"
                 prefix="$"
-                :disabled="fixedAmount ||paymentApproved || paymentPending"
+                :disabled="fixedAmount || paymentApproved || paymentPending"
                 :rules="rules.amount"
                 :label="`${$t(showIssuedActualAmounts(paymentGroup) ? 'caseFile.financialAssistance.issuedAmount'
                   : 'caseFile.financialAssistance.amount')} *`" />
@@ -325,7 +325,7 @@ export default mixins(caseFileDetail).extend({
     apiKey(): string {
       return localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
-        : process.env.VUE_APP_GOOGLE_API_KEY;
+        : process.env.VITE_GOOGLE_API_KEY;
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {

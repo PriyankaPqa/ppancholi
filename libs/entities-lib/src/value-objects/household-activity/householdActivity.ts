@@ -20,7 +20,7 @@ import { IHistoryItemTemplateData } from '../versioned-entity/versionedEntity.ty
 export class HouseholdActivity implements IHouseholdActivity {
   householdId: uuid;
 
-  timestamp: string |Date;
+  timestamp: string | Date;
 
   user: {
     id: uuid;

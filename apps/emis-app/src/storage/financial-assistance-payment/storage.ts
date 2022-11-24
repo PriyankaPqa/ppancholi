@@ -15,7 +15,7 @@ export class FinancialAssistancePaymentStorage
 
   private getters = {
     ...this.baseGetters,
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -25,10 +25,12 @@ export class FinancialAssistancePaymentStorage
     editFinancialAssistancePayment: (entity: IFinancialAssistancePaymentEntity):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/editFinancialAssistancePayment`, entity),
     updatePaymentStatus: (entityId: uuid, paymentGroupId: uuid, status: PaymentStatus, cancellationReason?: EPaymentCancellationReason):
-      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/updatePaymentStatus`
+      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(
+      `${this.entityModuleName}/updatePaymentStatus`
       , ({
         entityId, paymentGroupId, status, cancellationReason,
-      })),
+      }),
+    ),
     submitFinancialAssistancePayment: (entityId: uuid):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/submitFinancialAssistancePayment`, entityId),
     submitApprovalRequest: (paymentId: uuid, submitTo: uuid):
@@ -36,27 +38,35 @@ export class FinancialAssistancePaymentStorage
     submitApprovalAction: (paymentId: uuid, action: IApprovalActionPayload):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/submitApprovalAction`, { paymentId, action }),
     addFinancialAssistancePaymentLine: (financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
-      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/addFinancialAssistancePaymentLine`
-      , ({ entity, financialAssistanceId })),
+      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(
+      `${this.entityModuleName}/addFinancialAssistancePaymentLine`
+      , ({ entity, financialAssistanceId }),
+    ),
     editFinancialAssistancePaymentLine: (financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
-      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/editFinancialAssistancePaymentLine`
-      , ({ entity, financialAssistanceId })),
+      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(
+      `${this.entityModuleName}/editFinancialAssistancePaymentLine`
+      , ({ entity, financialAssistanceId }),
+    ),
     deleteFinancialAssistancePaymentLine: (financialAssistanceId: uuid, paymentId: uuid):
-      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/deleteFinancialAssistancePaymentLine`
-      , ({ paymentId, financialAssistanceId })),
+      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(
+      `${this.entityModuleName}/deleteFinancialAssistancePaymentLine`
+      , ({ paymentId, financialAssistanceId }),
+    ),
     fetchHistory: async (financialAssistanceId: uuid, includeMetadata: boolean):
-      Promise<IVersionedEntityCombined[]> => this.store.dispatch(`${this.entityModuleName}/fetchHistory`,
-      ({ financialAssistanceId, includeMetadata })),
+      Promise<IVersionedEntityCombined[]> => this.store.dispatch(
+      `${this.entityModuleName}/fetchHistory`,
+      ({ financialAssistanceId, includeMetadata }),
+    ),
 
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

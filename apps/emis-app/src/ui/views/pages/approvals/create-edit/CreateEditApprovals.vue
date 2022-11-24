@@ -53,8 +53,8 @@
 
                   <div v-else :class="`flex-row approval-status py-2 pl-5 ${getStatusClasses}`">
                     <span :class="`rc-body14 ${isActive ? 'white--text' : 'black--text'} ml-4`" data-test="approval-status">
-                      {{ isActive ?
-                        `${$t('common.status')} ${$t('enums.Status.Active').toUpperCase()}`
+                      {{ isActive
+                        ? `${$t('common.status')} ${$t('enums.Status.Active').toUpperCase()}`
                         : ` ${$t('common.status')} ${$t('enums.Status.Inactive').toUpperCase()}` }}
                     </span>
 

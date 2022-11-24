@@ -240,7 +240,7 @@ export default Vue.extend({
       this.$emit(EFilterPanelEvents.Load);
     },
 
-    onLoad({ filter, index }: {filter: IFilterDTO; index: number}) {
+    onLoad({ filter, index }: { filter: IFilterDTO; index: number }) {
       this.editMode = true;
       this.filterIndex = index;
       this.formData = this.getFormData(filter);
@@ -265,7 +265,7 @@ export default Vue.extend({
       let filter: FilterFormData = { name: this.labels.defaultFilterName, values: {} };
 
       // structure: <key, {operator, value1}> or <key, {operator, [value1, value2...]}>
-      const dic: Record<string, {operator: string; value: string | Array<string>}> = {};
+      const dic: Record<string, { operator: string; value: string | Array<string> }> = {};
       if (dto && dto.criteria) {
         filter = { name: dto.name, values: {} }; // set values
 

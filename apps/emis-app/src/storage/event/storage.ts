@@ -23,14 +23,14 @@ export class EventStorage
   private getters = {
     ...this.baseGetters,
 
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line vue/max-len,max-len
     agreementTypes: (filterOutInactive = true, actualValue?: string[] | string): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/agreementTypes`](filterOutInactive, actualValue),
 
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line vue/max-len,max-len
     eventTypes: (filterOutInactive = true, actualValue?: string[] | string): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/eventTypes`](filterOutInactive, actualValue),
 
     eventsByStatus: (statuses: Array<EEventStatus>): Array<IEventEntity> => this.store.getters[`${this.entityModuleName}/eventsByStatus`](statuses),
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -45,12 +45,12 @@ export class EventStorage
 
     updateEventSection: ({
       eventId, payload, section, action,
-    } : {eventId: uuid, payload: IEventCallCentre | IEventAgreement | IEventGenericLocation, section: EEventSummarySections, action: string})
+    } : { eventId: uuid, payload: IEventCallCentre | IEventAgreement | IEventGenericLocation, section: EEventSummarySections, action: string })
       : Promise<IEventEntity> => this.store.dispatch(`${this.entityModuleName}/updateEventSection`, {
       eventId, payload, section, action,
     }),
 
-    deleteAgreement: ({ eventId, agreementId }:{eventId: uuid, agreementId: uuid})
+    deleteAgreement: ({ eventId, agreementId }:{ eventId: uuid, agreementId: uuid })
     : Promise<IEventEntity> => this.store.dispatch(`${this.entityModuleName}/deleteAgreement`, { eventId, agreementId }),
 
     // eslint-disable-next-line
@@ -62,7 +62,7 @@ export class EventStorage
     createEvent: (event: IEventEntity): Promise<IEventEntity> => this.store.dispatch(`${this.entityModuleName}/createEvent`, event),
 
     updateEvent: (event: IEventEntity): Promise<IEventEntity> => this.store.dispatch(`${this.entityModuleName}/updateEvent`, event),
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
@@ -70,11 +70,11 @@ export class EventStorage
     setAgreementTypesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setAgreementTypesFetched`, payload),
 
     setEventTypesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setEventTypesFetched`, payload),
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

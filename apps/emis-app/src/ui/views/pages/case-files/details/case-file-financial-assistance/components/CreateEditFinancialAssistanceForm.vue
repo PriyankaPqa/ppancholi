@@ -30,7 +30,7 @@
           @change="triggerUpdateSelectedData" />
       </v-col>
       <v-col class="mt-4">
-        {{ $t('financialAssistance.program') }}: {{ program? $m(program.name) : '' }}
+        {{ $t('financialAssistance.program') }}: {{ program ? $m(program.name) : '' }}
       </v-col>
     </v-row>
 

@@ -9,7 +9,8 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
-const doMount = (shallow = false, storage) => {
+// eslint-disable-next-line @typescript-eslint/default-param-last
+const doMount = (shallow = false, pStorage) => {
   const options = {
     localVue,
     propsData: {
@@ -21,7 +22,7 @@ const doMount = (shallow = false, storage) => {
       show: true,
     },
     mocks: {
-      $storage: storage,
+      $storage: pStorage,
     },
   };
   if (shallow) {

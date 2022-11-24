@@ -25,7 +25,7 @@ variables:
   value: 'emis-app'
 - name: isPullRequest # Can't be used in condition
   value: $[eq(variables['Build.Reason'], 'PullRequest')]
-- name: VUE_APP_VERSION
+- name: VITE_VERSION
   value: $(Major).$(Minor).$(Patch)
 - name: nodeJsVersion
   value: '16.10.0'
@@ -63,6 +63,6 @@ stages:
     distDir: $(distDir)
     isPullRequest: $(isPullRequest)
     nodeJsVersion: $(nodeJsVersion)
-    appVersion: $(VUE_APP_VERSION)
+    appVersion: $(VITE_VERSION)
     disableCache: $(disableCache)
     testCommand: $(testCommand)

@@ -7,7 +7,7 @@ import {
   mockMember,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems, EIndigenousTypes,
-} from '../../../../entities-lib/src/household-create';
+} from '@libs/entities-lib/household-create';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './IndigenousIdentityForm.vue';
 

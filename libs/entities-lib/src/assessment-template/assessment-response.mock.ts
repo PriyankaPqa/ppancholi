@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable max-len, vue/max-len */
 import { IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { mockBaseData, IEntity } from '../base';
 import {

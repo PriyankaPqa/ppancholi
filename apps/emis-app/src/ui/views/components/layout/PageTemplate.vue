@@ -27,7 +27,7 @@
         <template slot="bottom" />
       </secondary-left-menu>
 
-      <div :class="{ 'pageTemplate__content': true, 'fixed-content': leftMenuFixed, 'left__menu': showLeftMenu}">
+      <div :class="{ pageTemplate__content: true, 'fixed-content': leftMenuFixed, left__menu: showLeftMenu }">
         <slot name="default" />
       </div>
 

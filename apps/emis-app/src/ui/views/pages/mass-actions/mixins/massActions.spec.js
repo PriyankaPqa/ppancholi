@@ -158,13 +158,16 @@ describe('massActions', () => {
       it('should call downloadTemplate with proper data for ContactInformation', () => {
         wrapper.vm.downloadTemplate = jest.fn();
         wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.ContactInformation);
-        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('ContactInformationTemplate.csv', 'PersonId,PrimarySpokenLanguageSpecifiedOther,HomePhoneNumber,MobilePhoneNumber,AlternatePhoneNumber,AlternatePhoneNumberExtension,ETag');
+        expect(wrapper.vm.downloadTemplate)
+          // eslint-disable-next-line vue/max-len
+          .toHaveBeenCalledWith('ContactInformationTemplate.csv', 'PersonId,PrimarySpokenLanguageSpecifiedOther,HomePhoneNumber,MobilePhoneNumber,AlternatePhoneNumber,AlternatePhoneNumberExtension,ETag');
       });
 
       it('should call downloadTemplate with proper data for HomeAddress', () => {
         wrapper.vm.downloadTemplate = jest.fn();
         wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.HomeAddress);
-        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('HomeAddressTemplate.csv', 'HouseholdId,StreetAddress,UnitSuite,City,ProvinceEn,PostalCode,SpecifiedOtherProvince,Country,ETag');
+        expect(wrapper.vm.downloadTemplate)
+          .toHaveBeenCalledWith('HomeAddressTemplate.csv', 'HouseholdId,StreetAddress,UnitSuite,City,ProvinceEn,PostalCode,SpecifiedOtherProvince,Country,ETag');
       });
 
       it('should call downloadTemplate with proper data for AuthenticationSpecifiedOther', () => {
@@ -188,7 +191,9 @@ describe('massActions', () => {
       it('should call downloadTemplate with proper data for TemporaryAddress', () => {
         wrapper.vm.downloadTemplate = jest.fn();
         wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.TemporaryAddress);
-        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('TemporaryAddressTemplate.csv', 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,ETag');
+        expect(wrapper.vm.downloadTemplate)
+          // eslint-disable-next-line vue/max-len
+          .toHaveBeenCalledWith('TemporaryAddressTemplate.csv', 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,ETag');
       });
 
       it('should call downloadApiTemplate for FinancialAssistance', () => {

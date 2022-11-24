@@ -22,19 +22,19 @@ export class FinancialAssistancePaymentEntityModule extends BaseModule<IFinancia
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<IFinancialAssistancePaymentEntity>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
-  }
+  };
 
   public mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public actions = {
     ...this.baseActions,
@@ -155,5 +155,5 @@ export class FinancialAssistancePaymentEntityModule extends BaseModule<IFinancia
 
       return combinedEntities;
     },
-  }
+  };
 }

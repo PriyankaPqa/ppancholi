@@ -11,7 +11,7 @@
             color="white"
             small
             v-on="{ ...tooltip, ...menu }">
-            <v-icon color="primary" :class="{ 'addButton': true, 'active': value }">
+            <v-icon color="primary" :class="{ addButton: true, active: value }">
               mdi-plus
             </v-icon>
           </v-btn>

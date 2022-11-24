@@ -99,8 +99,11 @@ const actions = {
     return null;
   },
 
-  async addSubItem(this: Store<IState>, context: ActionContext<IState, IState>,
-    payload: { itemId: string, subItem: IOptionSubItem }): Promise<IOptionItem> {
+  async addSubItem(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    payload: { itemId: string, subItem: IOptionSubItem },
+  ): Promise<IOptionItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
@@ -114,9 +117,11 @@ const actions = {
     return null;
   },
 
-  async updateItem(this: Store<IState>,
+  async updateItem(
+    this: Store<IState>,
     context: ActionContext<IState, IState>,
-    payload: { id: string, name: IMultilingual, description: IMultilingual }): Promise<IOptionItem> {
+    payload: { id: string, name: IMultilingual, description: IMultilingual },
+  ): Promise<IOptionItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
@@ -131,9 +136,11 @@ const actions = {
     return null;
   },
 
-  async updateSubItem(this: Store<IState>,
+  async updateSubItem(
+    this: Store<IState>,
     context: ActionContext<IState, IState>,
-    payload: { itemId: string, subItemId: string, name: IMultilingual, description: IMultilingual }): Promise<IOptionItem> {
+    payload: { itemId: string, subItemId: string, name: IMultilingual, description: IMultilingual },
+  ): Promise<IOptionItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }

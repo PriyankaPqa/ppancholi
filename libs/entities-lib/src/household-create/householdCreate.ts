@@ -12,7 +12,7 @@ export class HouseholdCreate implements IHouseholdCreate {
 
   primaryBeneficiary: IMember;
 
-  homeAddress: IAddress
+  homeAddress: IAddress;
 
   additionalMembers: IMember[];
 

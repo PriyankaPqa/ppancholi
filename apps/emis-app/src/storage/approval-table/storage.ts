@@ -12,7 +12,7 @@ export class ApprovalStorage
 
   private getters = {
     ...this.baseGetters,
-  }
+  };
 
   private actions = {
     ...this.baseActions,
@@ -26,15 +26,15 @@ export class ApprovalStorage
       Promise<IApprovalTableEntityData> => this.store.dispatch(`${this.entityModuleName}/editGroup`, { approvalId, group }),
     removeGroup: (approvalId: uuid, groupId: uuid):
       Promise<IApprovalTableEntityData> => this.store.dispatch(`${this.entityModuleName}/removeGroup`, { approvalId, groupId }),
-  }
+  };
 
   private mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public make = () => ({
     getters: this.getters,
     actions: this.actions,
     mutations: this.mutations,
-  })
+  });
 }

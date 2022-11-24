@@ -27,8 +27,9 @@
           <v-icon
             :disabled="tab.disabled"
             :color="currentTab.id === tab.id ? 'secondary' : 'primary darken-1'"
-            :data-test="`registration-tab-icon-${tab.id}`"
-            v-text="tab.icon" />
+            :data-test="`registration-tab-icon-${tab.id}`">
+            {{ tab.icon }}
+          </v-icon>
         </v-list-item-icon>
 
         <v-list-item-content>
@@ -87,7 +88,7 @@ export default Vue.extend({
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm;
     },
     isDev() {
-      return process.env.NODE_ENV === 'development';
+      return process.env.VITE_APP_ENV === 'development';
     },
   },
 

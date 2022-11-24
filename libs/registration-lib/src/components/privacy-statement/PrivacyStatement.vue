@@ -2,7 +2,7 @@
   <div>
     <i18n path="registration.privacy_consent" tag="p" class="rc-body14 consent">
       <template #website>
-        <a :href="$t('registration.privacy_statement.website')" target="_blank">{{ $t('registration.privacy_statement.website') }}</a>
+        <a :href="$t('registration.privacy_statement.website')" target="_blank" rel="noopener noreferrer">{{ $t('registration.privacy_statement.website') }}</a>
       </template>
       <template #email>
         <a :href="`mailto:${$t('registration.privacy_statement.email')}`">{{ $t('registration.privacy_statement.email') }}</a>

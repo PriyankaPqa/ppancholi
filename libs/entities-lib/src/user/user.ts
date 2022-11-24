@@ -4,32 +4,32 @@ export const NO_ROLE = 'no_role';
 
 export enum UserRoles {
   'noAccess' = 'noAccess',
-  'level1'='level1',
-  'level2'='level2',
-  'level3'= 'level3',
-  'level4'='level4',
-  'level5'='level5',
-  'level6'='level6',
-  'contributorIM'='contributorIM',
-  'contributorFinance'='contributorFinance',
-  'contributor3'='contributor3',
-  'readonly'='readonly',
-  'no_role'='no_role'
+  'level1' = 'level1',
+  'level2' = 'level2',
+  'level3' = 'level3',
+  'level4' = 'level4',
+  'level5' = 'level5',
+  'level6' = 'level6',
+  'contributorIM' = 'contributorIM',
+  'contributorFinance' = 'contributorFinance',
+  'contributor3' = 'contributor3',
+  'readonly' = 'readonly',
+  'no_role' = 'no_role',
 }
 
 export enum UserRolesNames {
   'noAccess' = 'No Access',
-  'level1'='Level 1',
-  'level2'='Level 2',
-  'level3'= 'Level 3',
-  'level4'='Level 4',
-  'level5'='Level 5',
-  'level6'='Level 6',
-  'contributorIM'='ContributorIM',
-  'contributorFinance'='ContributorFinance',
-  'contributor3'='ContributorAdvisor',
-  'readonly'='Read Only',
-  'no_access'='No Access'
+  'level1' = 'Level 1',
+  'level2' = 'Level 2',
+  'level3' = 'Level 3',
+  'level4' = 'Level 4',
+  'level5' = 'Level 5',
+  'level6' = 'Level 6',
+  'contributorIM' = 'ContributorIM',
+  'contributorFinance' = 'ContributorFinance',
+  'contributor3' = 'ContributorAdvisor',
+  'readonly' = 'Read Only',
+  'no_access' = 'No Access',
 }
 
 export class User implements IUser {

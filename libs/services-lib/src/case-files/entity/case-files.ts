@@ -23,7 +23,7 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
   }
 
   async setCaseFileStatus(id: uuid, { status, rationale, reason }:
-     {status: CaseFileStatus, rationale?: string, reason?: IListOption}): Promise<ICaseFileEntity> {
+     { status: CaseFileStatus, rationale?: string, reason?: IListOption }): Promise<ICaseFileEntity> {
     if (status === CaseFileStatus.Open) {
       return this.http.patch(`${this.baseUrl}/${id}/reopen`, {
         rationale,
@@ -76,7 +76,7 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
   }
 
   // TODO: Remove all references to setCaseFileAssign when EMISV2-4373
-  async setCaseFileAssign(id: uuid, payload: {individuals: uuid[], teams: uuid[]}): Promise<ICaseFileEntity> {
+  async setCaseFileAssign(id: uuid, payload: { individuals: uuid[], teams: uuid[] }): Promise<ICaseFileEntity> {
     return this.http.patch<ICaseFileEntity>(`${this.baseUrl}/${id}/assign`, payload);
   }
 
@@ -84,7 +84,7 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
     return this.http.post<ICaseFileEntity>(`${this.baseUrl}`, payload);
   }
 
-  async getCaseFileAssignedCounts(params: {eventId: uuid, teamId: uuid}): Promise<ICaseFileCount> {
+  async getCaseFileAssignedCounts(params: { eventId: uuid, teamId: uuid }): Promise<ICaseFileCount> {
     return this.http.get('case-file/case-files/assigned-counts', { params });
   }
 
@@ -92,7 +92,7 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
     return this.http.get(`${this.baseUrl}/detailed-assigned-counts`, { params: { eventId } });
   }
 
-  async assignCaseFile(id: uuid, payload: {teamMembers: IAssignedTeamMembers[], teams: uuid[]}): Promise<ICaseFileEntity> {
+  async assignCaseFile(id: uuid, payload: { teamMembers: IAssignedTeamMembers[], teams: uuid[] }): Promise<ICaseFileEntity> {
     return this.http.patch<ICaseFileEntity>(`${this.baseUrl}/${id}/assign-case-file-teams-and-team-members`, payload);
   }
 

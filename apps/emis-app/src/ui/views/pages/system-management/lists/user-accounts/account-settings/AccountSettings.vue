@@ -46,7 +46,7 @@
                   {{ $t('user.accountSettings.role') }}
                 </td>
                 <td colspan="2" class="fw-bold" data-test="userAccount-status-roleName">
-                  {{ user.metadata.roleName? $m(user.metadata.roleName) : basicUserData.roles[0] }}
+                  {{ user.metadata.roleName ? $m(user.metadata.roleName) : basicUserData.roles[0] }}
                 </td>
               </tr>
             </tbody>

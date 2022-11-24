@@ -79,7 +79,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
     if (this.isEditMode) {
       try {
         const res = await this.$storage.caseFileDocument.actions.fetch(
-          { id: this.documentId, caseFileId: this.id }, { useMetadataGlobalHandler: false, useEntityGlobalHandler: true },
+          { id: this.documentId, caseFileId: this.id },
+          { useMetadataGlobalHandler: false, useEntityGlobalHandler: true },
         );
         this.document = new CaseFileDocumentEntity(res.entity);
       } finally {

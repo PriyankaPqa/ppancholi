@@ -27,14 +27,14 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<IUserAccountEntity>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
     currentUserAccount: null as IUserAccountEntity,
     roles: [] as IOptionItem[],
     rolesFetched: false,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
@@ -62,7 +62,7 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
       }
       return [];
     },
-  }
+  };
 
   public mutations = {
     ...this.baseMutations,
@@ -77,14 +77,14 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
     setRolesFetched(state: IUserAccountEntityState, payload: boolean) {
       state.rolesFetched = payload;
     },
-  }
+  };
 
   public actions = {
     ...this.baseActions,
 
     genericFilterAction: async (
       context: ActionContext<IUserAccountEntityState, IUserAccountEntityState>,
-      { payload, methodName }: {payload: IFilter | IEditFilterRequest, methodName: string},
+      { payload, methodName }: { payload: IFilter | IEditFilterRequest, methodName: string },
     ): Promise<IUserAccountEntity> => {
       try {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

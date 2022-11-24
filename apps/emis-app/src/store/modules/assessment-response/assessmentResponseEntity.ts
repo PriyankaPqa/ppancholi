@@ -18,25 +18,27 @@ export class AssessmentResponseEntityModule extends BaseModule <IAssessmentRespo
     getters: this.getters,
     mutations: this.mutations,
     actions: this.actions as unknown as ActionTree<IState<IAssessmentResponseEntity>, IRootState>,
-  })
+  });
 
   public state = {
     ...this.baseState,
-  }
+  };
 
   public getters = {
     ...this.baseGetters,
-  }
+  };
 
   public mutations = {
     ...this.baseMutations,
-  }
+  };
 
   public actions = {
     ...this.baseActions,
 
-    create: async (context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
-      payload: IAssessmentResponseCreateRequest): Promise<IAssessmentResponseEntity> => {
+    create: async (
+      context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
+      payload: IAssessmentResponseCreateRequest,
+    ): Promise<IAssessmentResponseEntity> => {
       const result = await this.service.create(payload);
       if (result) {
         context.commit('addNewlyCreatedId', result);
@@ -45,8 +47,10 @@ export class AssessmentResponseEntityModule extends BaseModule <IAssessmentRespo
       return result;
     },
 
-    update: async (context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
-      payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> => {
+    update: async (
+      context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
+      payload: IAssessmentResponseEntity,
+    ): Promise<IAssessmentResponseEntity> => {
       const result = await this.service.update(payload);
       if (result) {
         context.commit('set', result);
@@ -54,8 +58,10 @@ export class AssessmentResponseEntityModule extends BaseModule <IAssessmentRespo
       return result;
     },
 
-    saveAssessmentAnsweredQuestions: async (context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
-      payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> => {
+    saveAssessmentAnsweredQuestions: async (
+      context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
+      payload: IAssessmentResponseEntity,
+    ): Promise<IAssessmentResponseEntity> => {
       const result = await this.service.saveAssessmentAnsweredQuestions(payload);
       if (result) {
         context.commit('set', result);
@@ -63,13 +69,15 @@ export class AssessmentResponseEntityModule extends BaseModule <IAssessmentRespo
       return result;
     },
 
-    editAssessmentAnsweredQuestion: async (context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
-      payload: { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string, parentIndexPath: string }): Promise<IAssessmentResponseEntity> => {
+    editAssessmentAnsweredQuestion: async (
+context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
+      payload: { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string, parentIndexPath: string },
+): Promise<IAssessmentResponseEntity> => {
       const result = await this.service.editAssessmentAnsweredQuestion(payload.id, payload);
       if (result) {
         context.commit('set', result);
       }
       return result;
     },
-  }
+  };
 }

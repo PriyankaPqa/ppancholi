@@ -74,8 +74,8 @@
           hide-default-footer
           must-sort
           item-key="id"
-          :options="{sortBy: ['displayName'], sortDesc: [false]}"
-          :item-class="(item)=> isSelected(item)? 'row_active': ''"
+          :options="{ sortBy: ['displayName'], sortDesc: [false] }"
+          :item-class="(item)=> isSelected(item) ? 'row_active' : ''"
           :items="displayedIndividuals"
           :items-per-page="Math.max(allIndividuals.length, 1)"
           @update:sort-by="sortBy = $event"
@@ -118,7 +118,7 @@ interface TeamWithCount extends ITeamEntity {
   activeMemberCount: number;
 }
 
-interface IIndividual extends ITeamMember, IUserAccountCombined{
+interface IIndividual extends ITeamMember, IUserAccountCombined {
   translatedRoleName?: string;
   displayName: string;
 }
@@ -259,7 +259,7 @@ export default Vue.extend({
       this.assignedIndividuals = this.assignedIndividuals.filter((i) => i.id !== individual.id);
     },
 
-    removeTeam(team: {name: string, id: string, type: string}) {
+    removeTeam(team: { name: string, id: string, type: string }) {
       this.assignedTeams = this.assignedTeams.filter((t) => t.id !== team.id);
     },
 
@@ -268,9 +268,7 @@ export default Vue.extend({
         const individualsPayload = this.assignedIndividuals.map((i) => i.id);
         const teamsPayload = this.assignedTeams.map((t) => t.id);
         this.loading = true;
-        await this.$storage.caseFile.actions.setCaseFileAssign(
-          this.caseFile.id, individualsPayload, teamsPayload,
-        );
+        await this.$storage.caseFile.actions.setCaseFileAssign(this.caseFile.id, individualsPayload, teamsPayload);
         this.$emit('updateAssignmentsInfo', { teams: this.assignedTeams, individuals: this.assignedIndividuals });
       } finally {
         this.loading = false;

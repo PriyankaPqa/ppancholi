@@ -41,7 +41,7 @@
         </v-btn>
       </v-col>
     </v-row>
-    <div v-for="(m, i) in members" :key="i" :class="[ i !== members.length-1 ? 'border-bottom' : '', 'pa-4']">
+    <div v-for="(m, i) in members" :key="i" :class="[i !== members.length - 1 ? 'border-bottom' : '', 'pa-4']">
       <v-row>
         <v-col cols="9" sm="7" xs>
           <v-btn
@@ -51,7 +51,7 @@
             :disabled="expandDisabled(m)"
             @click="showHide(m.id)">
             <v-icon>
-              {{ expand.includes(m.id) ? 'mdi-menu-up': 'mdi-menu-down' }}
+              {{ expand.includes(m.id) ? 'mdi-menu-up' : 'mdi-menu-down' }}
             </v-icon>
           </v-btn>
           <span class="rc-heading-5">{{ m.identitySet.firstName }} {{ m.identitySet.lastName }}</span>
@@ -81,7 +81,7 @@
               class="ml-2 mt-1 mt-xl-0"
               @click="move(m)">
               <v-icon left>
-                {{ position === 'left' ? 'mdi-arrow-right': 'mdi-arrow-left' }}
+                {{ position === 'left' ? 'mdi-arrow-right' : 'mdi-arrow-left' }}
               </v-icon>
               {{ $t('household.move.action.button') }}
             </v-btn>
@@ -120,7 +120,7 @@
           </v-col>
         </v-row>
 
-        <v-row v-if="i ===0" no-gutters class="rc-body14 mb-1">
+        <v-row v-if="i === 0" no-gutters class="rc-body14 mb-1">
           <v-col cols="5">
             <span class="fw-bold">{{ $t('household.move.card.email') }}</span>
           </v-col>
@@ -129,7 +129,7 @@
           </v-col>
         </v-row>
 
-        <v-row v-if="i ===0" no-gutters class="rc-body14 mb-1">
+        <v-row v-if="i === 0" no-gutters class="rc-body14 mb-1">
           <v-col cols="5">
             <span class="fw-bold">{{ $t('household.move.card.phone') }}</span>
           </v-col>
@@ -167,7 +167,7 @@
                   <v-radio
                     :label=" $t('household.move.same_as_primary')"
                     :value="1"
-                    :disabled="i===0"
+                    :disabled="i === 0"
                     :data-test="`household_move_same_address_${m.identitySet.firstName}_${m.identitySet.lastName}`" />
                   <v-radio
                     :label=" $t('household.move.new_address')"
@@ -300,7 +300,7 @@ export default Vue.extend({
       householdHelpers,
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
-        : process.env.VUE_APP_GOOGLE_API_KEY,
+        : process.env.VITE_GOOGLE_API_KEY,
       selectedMember: null as IMovingMember,
       newAddress: null as ICurrentAddress,
       CurrentAddress,

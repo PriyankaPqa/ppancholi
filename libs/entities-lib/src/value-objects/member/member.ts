@@ -7,7 +7,7 @@ import { CurrentAddress, ICurrentAddress } from '../current-address';
 import { IMember, IMemberEntity } from './member.types';
 
 export class Member extends BaseEntity implements IMember {
-  identitySet: IIdentitySet
+  identitySet: IIdentitySet;
 
   currentAddress: ICurrentAddress;
 

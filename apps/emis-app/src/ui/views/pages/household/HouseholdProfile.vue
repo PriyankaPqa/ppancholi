@@ -86,7 +86,7 @@
         </v-col>
         <v-col cols="10" class="pa-6">
           <h5 class="rc-heading-5">
-            {{ $t('household.profile.active_in_events', {x : activeCaseFiles.length}) }}
+            {{ $t('household.profile.active_in_events', { x: activeCaseFiles.length }) }}
           </h5>
 
           <v-row class="pt-4">
@@ -97,7 +97,7 @@
 
           <v-row class="no-gutters pt-8 pb-4 d-flex justify-space-between">
             <h5 class="rc-heading-5 ">
-              {{ $t('household.profile.household_members') }} ({{ household.primaryBeneficiary? household.additionalMembers.length + 1 : 0 }})
+              {{ $t('household.profile.household_members') }} ({{ household.primaryBeneficiary ? household.additionalMembers.length + 1 : 0 }})
             </h5>
             <div>
               <v-btn

@@ -12,7 +12,7 @@ export enum EEventStatus {
   OnHold = 1,
   Open = 2,
   Closed = 3,
-  Archived = 4
+  Archived = 4,
 }
 
 export enum EResponseLevel {
@@ -219,4 +219,4 @@ export interface IEventMetadata extends IEntity {
   responseLevelName?: IMultilingual;
 }
 
-export type IEventCombined = IEntityCombined<IEventEntity, IEventMetadata>
+export type IEventCombined = IEntityCombined<IEventEntity, IEventMetadata>;

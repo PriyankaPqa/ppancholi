@@ -312,7 +312,7 @@ export default Vue.extend({
       return `${this.member.identitySet.firstName} ${this.member.identitySet.lastName}`;
     },
 
-    splitHouseholdMembers() : {primaryMember: IMember, additionalMembers: IMember[]} {
+    splitHouseholdMembers() : { primaryMember: IMember, additionalMembers: IMember[] } {
       return this.$store.state.registration.splitHousehold?.splitMembers;
     },
 

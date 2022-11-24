@@ -53,9 +53,8 @@ export default Vue.extend({
       this.assessmentTemplateLoading = true;
       this.program = null;
       if (this.isFormMode) {
-        const res = this.assessmentTemplateId ? await this.$storage.assessmentForm.actions.fetch(
-          { id: this.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-        ) : null;
+        // eslint-disable-next-line max-len,vue/max-len
+        const res = this.assessmentTemplateId ? await this.$storage.assessmentForm.actions.fetch({ id: this.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false }) : null;
         const form = new AssessmentFormEntity(res?.entity);
 
         form.eventId = this.id;
@@ -66,9 +65,8 @@ export default Vue.extend({
           this.program = (await this.$storage.program.actions.fetch({ id: form.programId, eventId: form.eventId }))?.entity;
         }
       } else {
-        const res = this.assessmentTemplateId ? await this.$storage.assessmentTemplate.actions.fetch(
-          { id: this.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-        ) : null;
+        // eslint-disable-next-line max-len,vue/max-len
+        const res = this.assessmentTemplateId ? await this.$storage.assessmentTemplate.actions.fetch({ id: this.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false }) : null;
         this.assessmentTemplate = new AssessmentTemplateEntity(res?.entity);
       }
       this.assessmentTemplateLoading = false;

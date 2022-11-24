@@ -135,7 +135,7 @@ export default Vue.extend({
      */
     onAutoCompleteUpdate(
       { filterKey, search, selectedItem }:
-        {filterKey: string, search: string, selectedItem: IDropdownItem},
+        { filterKey: string, search: string, selectedItem: IDropdownItem },
     ) {
       if (filterKey === 'Entity/EventId' && search !== selectedItem?.text) {
         this.eventFilterQuery = search;
