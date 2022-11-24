@@ -1,5 +1,5 @@
 <template>
-  <lib-additional-members :i18n="i18n" :disable-autocomplete="!enableAutocomplete" />
+  <lib-additional-members :i18n="i18n" :disable-autocomplete="!enableAutocomplete" :show-beneficiary-name="true" />
 </template>
 
 <script lang="ts">
@@ -14,7 +14,6 @@ export default Vue.extend({
   components: {
     LibAdditionalMembers,
   },
-
   data() {
     return {
       i18n,

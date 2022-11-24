@@ -3,6 +3,9 @@
     <div class="rc-body14 mt-n8 mb-12">
       {{ $t('registration.household_member.definition') }}
     </div>
+    <div v-if="showBeneficiaryName" class="primaryBeneficiaryName rc-title-1  pa-0 ml-0 mb-4" data-test="primary_beneficiary_name">
+      {{ primaryBeneficiary.identitySet.firstName }} {{ primaryBeneficiary.identitySet.lastName }}
+    </div>
     <v-row justify="center" class="additionalMembers pa-0 ma-0">
       <v-col class="ma-0 pa-0">
         <div class="rc-heading-5 mb-4">
@@ -73,7 +76,7 @@ import { RcConfirmationDialog } from '@libs/component-lib/components';
 import VueI18n from 'vue-i18n';
 import { MAX_ADDITIONAL_MEMBERS } from '../../constants/validations';
 import AddEditAdditionalMembers from './AddEditAdditionalMembers.vue';
-import { IMember, Member } from '../../../../entities-lib/src/value-objects/member';
+import { IMemberEntity, IMember, Member } from '../../../../entities-lib/src/value-objects/member';
 
 export default Vue.extend({
   name: 'AdditionalMembers',
@@ -93,6 +96,11 @@ export default Vue.extend({
       type: Boolean,
       required: true,
     },
+
+    showBeneficiaryName: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -108,6 +116,10 @@ export default Vue.extend({
   computed: {
     additionalMembers(): IMember[] {
       return this.$storage.registration.getters.householdCreate().additionalMembers;
+    },
+
+    primaryBeneficiary(): IMemberEntity {
+      return this.$storage.registration.getters.householdCreate().primaryBeneficiary;
     },
   },
 
@@ -168,5 +180,9 @@ export default Vue.extend({
   .row-data:only-child {
     border-width: 1px 1px 1px 1px;
   }
+}
+
+.primaryBeneficiaryName {
+  margin-top: -32px !important;
 }
 </style>

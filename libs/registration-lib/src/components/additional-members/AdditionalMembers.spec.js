@@ -19,6 +19,7 @@ describe('AdditionalMembers.vue', () => {
       propsData: {
         i18n,
         disableAutocomplete: false,
+        showBeneficiaryName: false,
       },
       computed: {
         additionalMembers() {
@@ -35,6 +36,12 @@ describe('AdditionalMembers.vue', () => {
     describe('additionalMembers', () => {
       it('should be linked to household members from the store', () => {
         expect(wrapper.vm.additionalMembers).toEqual(mockHouseholdCreate().additionalMembers);
+      });
+    });
+
+    describe('primaryBeneficiary', () => {
+      it('should be linked to household member from the store', () => {
+        expect(wrapper.vm.primaryBeneficiary).toEqual(mockHouseholdCreate().primaryBeneficiary);
       });
     });
   });
@@ -187,6 +194,15 @@ describe('AdditionalMembers.vue', () => {
       await dialog.vm.$emit('submit');
 
       expect(wrapper.vm.deleteAdditionalMember).toHaveBeenCalledTimes(1);
+    });
+
+    test('Should show primary beneficiary name in EMIS app', async () => {
+      wrapper.setProps({
+        showBeneficiaryName: true,
+      });
+      await wrapper.vm.$nextTick();
+      const element = wrapper.find('[data-test="primary_beneficiary_name"]');
+      expect(element.exists()).toBe(true);
     });
   });
 });
