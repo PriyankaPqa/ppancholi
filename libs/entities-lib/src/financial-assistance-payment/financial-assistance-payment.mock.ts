@@ -52,6 +52,17 @@ export const mockCaseFinancialAssistanceEntity = (force?: Partial<IFinancialAssi
   groups: mockCaseFinancialAssistancePaymentGroups(),
   approvalStatus: ApprovalStatus.New,
   approvalAction: null,
+  submittedTo: {
+    userId: '6b0c8642-257b-473a-bc82-3da2829ffebb',
+    userName: 'John Smith',
+    roleName: { translation: { en: 'System Admin', fr: 'Administrateur(-trice) de système' } },
+  },
+  submittedBy: {
+    userId: '6b0c8642-257b-473a-bc82-3da2829ffebd',
+    userName: 'Jane Smith',
+    roleName: { translation: { en: 'System Admin', fr: 'Administrateur(-trice) de système' } },
+  },
+  initialSubmitter: '6b0c8642-257b-473a-bc82-3da2829ffeba',
   ...force,
 });
 
@@ -98,6 +109,15 @@ export const mockFinancialPaymentHistory = () : any[] => [{
     approvalStatus: 3,
     approvalAction: 1,
     rationale: 'ApprovalActionRationale.PaymentSubmitted',
+    submittedTo: {
+      userId: '6b0c8642-257b-473a-bc82-3da2829ffebb',
+      userName: 'John Smith',
+    },
+    submittedBy: {
+      userId: '6b0c8642-257b-473a-bc82-3da2829ffebd',
+      userName: 'Jane Smith',
+    },
+    initialApprover: '6b0c8642-257b-473a-bc82-3da2829ffeba',
     groups: [{
       groupingInformation: {
         modality: 2,

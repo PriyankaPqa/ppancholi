@@ -69,6 +69,14 @@ describe('>>> Financial assistance payment Service', () => {
     });
   });
 
+  describe('submitApprovalAction', () => {
+    it('is linked to the correct URL and params', async () => {
+      const payload = { approvalAction: 1, submittedTo: '2', rationale: 'my reason' };
+      await service.submitApprovalAction('1', payload);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/1/action', payload);
+    });
+  });
+
   describe('addFinancialAssistancePaymentLine', () => {
     it('is linked to the correct URL and params', async () => {
       await service.addFinancialAssistancePaymentLine('myParent', entity.groups[0]);
@@ -116,6 +124,13 @@ describe('>>> Financial assistance payment Service', () => {
     it('is linked to the correct URL and params', async () => {
       await service.getPaymentSummary('myCaseId');
       expect(http.get).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/payments-summary?caseFileId=myCaseId');
+    });
+  });
+
+  describe('getNextApprovalGroupRoles', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.getNextApprovalGroupRoles('myId');
+      expect(http.get).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/myId/next-approval-group-roles');
     });
   });
 

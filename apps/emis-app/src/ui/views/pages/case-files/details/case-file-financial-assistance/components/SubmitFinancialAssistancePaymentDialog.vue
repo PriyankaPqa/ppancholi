@@ -4,7 +4,7 @@
       :title="$t('caseFile.financialAssistance.submitAssistance.confirmTitle')"
       :submit-action-label="$t('common.submit')"
       :cancel-action-label="$t('common.buttons.cancel')"
-      :submit-button-disabled="failed || submitLoading || ($hasFeature(FeatureKeys.ApprovalsWithinEvent) && approvalRequired && !approvalTable)"
+      :submit-button-disabled="failed || submitLoading || ($hasFeature(FeatureKeys.ActionApprovals) && approvalRequired && !approvalTable)"
       :show.sync="show"
       :max-width="750"
       content-padding="10"
@@ -55,7 +55,7 @@
             background-color="white"
             :items="users" />
         </v-col>
-        <v-col v-if="!$hasFeature(FeatureKeys.ApprovalsWithinEvent)" class="grey-container mt-3 pl-2">
+        <v-col v-if="!$hasFeature(FeatureKeys.ActionApprovals)" class="grey-container mt-3 pl-2">
           <v-checkbox-with-validation
             v-model="agree"
             :rules="rules.agree"
@@ -137,20 +137,20 @@ export default Vue.extend({
     },
 
     useApprovalFlow(): boolean {
-      return this.$hasFeature(FeatureKeys.ApprovalsWithinEvent) && this.approvalRequired && !!this.approvalTable;
+      return this.$hasFeature(FeatureKeys.ActionApprovals) && this.approvalRequired && !!this.approvalTable;
     },
 
     hasInvalidTable(): boolean {
-      return this.$hasFeature(FeatureKeys.ApprovalsWithinEvent) && this.approvalRequired && !this.approvalTable;
+      return this.$hasFeature(FeatureKeys.ActionApprovals) && this.approvalRequired && !this.approvalTable;
     },
 
     approvalNotRequired():boolean {
-      return !this.approvalRequired || !this.$hasFeature(FeatureKeys.ApprovalsWithinEvent);
+      return !this.approvalRequired || !this.$hasFeature(FeatureKeys.ActionApprovals);
     },
   },
 
   async mounted() {
-    if (this.$hasFeature(FeatureKeys.ApprovalsWithinEvent) && this.approvalRequired) {
+    if (this.$hasFeature(FeatureKeys.ActionApprovals) && this.approvalRequired) {
       await this.fetchDataForApproval();
     }
   },
@@ -190,20 +190,12 @@ export default Vue.extend({
     },
 
     async getUsersByRolesAndEvent(targetRoles: Array<string>, targetEvent: string) {
-      let rolesSearchString = '';
-      targetRoles.forEach((r, i) => {
-        rolesSearchString += `role/OptionItemId eq '${r}'`;
-        if (i < targetRoles.length - 1) {
-          rolesSearchString += ' or ';
-        }
-      });
-
-      const rolesFilter = `Entity/Roles/any(role:${rolesSearchString})`;
+      const rolesFilter = `Entity/Roles/any(r: search.in(r/OptionItemId, '${targetRoles.join(',')}'))`;
       const eventFilter = `Metadata/Teams/any(team:team/Events/any(event:event/Id eq '${targetEvent}'))`;
       const filter = `${rolesFilter} and ${eventFilter}`;
       const usersData: IAzureTableSearchResults = await this.$storage.userAccount.actions.search({ filter });
       if (usersData?.ids) {
-        this.users = this.$storage.userAccount.getters.getByIds(usersData.ids);
+        this.users = this.$storage.userAccount.getters.getByIds(usersData.ids).filter((u) => u.entity.id !== this.$storage.user.getters.userId());
       }
     },
 

@@ -1,7 +1,9 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
 import { mockStorage } from '@/storage';
-import { mockCaseFinancialAssistancePaymentGroups, PaymentStatus, EPaymentCancellationReason } from '@libs/entities-lib/financial-assistance-payment';
+import {
+  mockCaseFinancialAssistancePaymentGroups, PaymentStatus, EPaymentCancellationReason, ApprovalStatus,
+} from '@libs/entities-lib/financial-assistance-payment';
 import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
@@ -75,24 +77,24 @@ describe('PaymentLineGroup.vue', () => {
     });
 
     describe('paymentLineGroup__status', () => {
-      it('renders when not new payment', async () => {
-        await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
-        await wrapper.vm.$nextTick();
-        expect(wrapper.findDataTest('paymentLineGroup__status').exists()).toBeFalsy();
-        await wrapper.setProps({ transactionApprovalStatus: 2 });
+      it('renders when payment is approved', async () => {
+        await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.Approved });
         await wrapper.vm.$nextTick();
         expect(wrapper.findDataTest('paymentLineGroup__status').exists()).toBeTruthy();
+        await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.New });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findDataTest('paymentLineGroup__status').exists()).toBeFalsy();
       });
     });
 
     describe('warning paymentLineGroup__paymentMustBeSubmitted', () => {
-      it('renders when new payment', async () => {
-        await wrapper.setProps({ transactionApprovalStatus: 2 });
+      it('renders when payment is not approved', async () => {
+        await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.Approved });
         await wrapper.vm.$nextTick();
-        expect(wrapper.findDataTest('paymentLineGroup__paymentMustBeSubmitted').exists()).toBeFalsy();
-        await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
+        expect(wrapper.findDataTest('paymentLineGroup__statusMessage').exists()).toBeFalsy();
+        await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.New });
         await wrapper.vm.$nextTick();
-        expect(wrapper.findDataTest('paymentLineGroup__paymentMustBeSubmitted').exists()).toBeTruthy();
+        expect(wrapper.findDataTest('paymentLineGroup__statusMessage').exists()).toBeTruthy();
       });
     });
   });
@@ -219,6 +221,17 @@ describe('PaymentLineGroup.vue', () => {
     describe('modality', () => {
       it('should return name of the selected modality in lowercase', () => {
         expect(wrapper.vm.modality).toEqual('enums.paymentmodality.cheque');
+      });
+    });
+
+    describe('statusMessage', () => {
+      it('returns the right text, depending on approval Status', async () => {
+        await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.New });
+        expect(wrapper.vm.statusMessage).toEqual('financialAssistancePayment.paymentMustBeSubmitted');
+        await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.Pending });
+        expect(wrapper.vm.statusMessage).toEqual('financialAssistancePayment.paymentMustBeApproved');
+        await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.Declined });
+        expect(wrapper.vm.statusMessage).toEqual('financialAssistancePayment.paymentWasDeclined');
       });
     });
 

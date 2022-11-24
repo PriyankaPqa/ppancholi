@@ -74,6 +74,19 @@ export interface IFinancialAssistancePaymentGroup extends IEntity {
   lines: IFinancialAssistancePaymentLine[];
 }
 
+export interface IApprovalTableGroupsSnapshot {
+  roles: Array<uuid>;
+  minimumAmount: number;
+  maximumAmount: number;
+  isApproved: boolean;
+}
+
+export interface IApprovalActionPayload{
+  approvalAction: ApprovalAction;
+  submittedTo: uuid;
+  rationale: string;
+}
+
 export interface IFinancialAssistancePaymentEntity extends IEntity {
   caseFileId: uuid,
   financialAssistanceTableId: uuid,
@@ -82,11 +95,20 @@ export interface IFinancialAssistancePaymentEntity extends IEntity {
   approvalStatus: ApprovalStatus,
   approvalAction: ApprovalAction,
   groups?: Array<IFinancialAssistancePaymentGroup>,
+  approvalTableGroupsSnapshots? : Array<IApprovalTableGroupsSnapshot>,
+  submissionStartedDate?: string | Date;
+  initialSubmitter?: uuid;
+  submittedBy?: {userId: string, userName: string, roleName: IMultilingual};
+  submittedTo?: {userId: string, userName: string, roleName: IMultilingual};
 }
 
 export interface IFinancialAssistancePaymentMetadata extends IEntity {
   total: number;
   approvalStatusName: IMultilingual;
+  eventId?: string;
+  eventName? : string;
+  submittedByName?: string;
+  submittedToName?: string;
 }
 
 export type IFinancialAssistancePaymentCombined = IEntityCombined<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata>

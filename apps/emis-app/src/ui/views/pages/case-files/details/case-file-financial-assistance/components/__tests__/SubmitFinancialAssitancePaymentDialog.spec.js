@@ -217,41 +217,53 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
             entity: {
               roles: [{ optionItemId: '1' }],
             },
-            metadata: {
-              teams: [
-                {
-                  events: [
-                    { id: 'A' },
-                  ],
-                },
-              ],
-            },
           },
           {
             entity: {
               roles: [{ optionItemId: '1' }],
-            },
-            metadata: {
-              teams: [
-                {
-                  events: [
-                    { id: 'B' },
-                  ],
-                },
-              ],
             },
           }];
         const targetRoles = ['1', '2'];
         const targetEvent = 'B';
         wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: [] }));
         wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => users);
+        wrapper.vm.$storage.user.getters.userId = jest.fn(() => 'my-id');
 
         // eslint-disable-next-line max-len
-        const filter = 'Entity/Roles/any(role:role/OptionItemId eq \'1\' or role/OptionItemId eq \'2\') and Metadata/Teams/any(team:team/Events/any(event:event/Id eq \'B\'))';
+        const filter = "Entity/Roles/any(r: search.in(r/OptionItemId, '1,2')) and Metadata/Teams/any(team:team/Events/any(event:event/Id eq 'B'))";
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
 
         expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({ filter });
         expect(wrapper.vm.users).toEqual(users);
+      });
+
+      it('should exclude the id of the current user', async () => {
+        doMount();
+        const users = [
+          {
+            entity: {
+              id: '1',
+              roles: [{ optionItemId: '1' }],
+            },
+          },
+          {
+            entity: {
+              id: 'my-id',
+              roles: [{ optionItemId: '1' }],
+            },
+          }];
+        const targetRoles = ['1', '2'];
+        const targetEvent = 'B';
+        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: [] }));
+        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => users);
+        wrapper.vm.$storage.user.getters.userId = jest.fn(() => 'my-id');
+
+        // eslint-disable-next-line max-len
+        const filter = "Entity/Roles/any(r: search.in(r/OptionItemId, '1,2')) and Metadata/Teams/any(team:team/Events/any(event:event/Id eq 'B'))";
+        await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
+
+        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({ filter });
+        expect(wrapper.vm.users).toEqual([users[0]]);
       });
     });
 

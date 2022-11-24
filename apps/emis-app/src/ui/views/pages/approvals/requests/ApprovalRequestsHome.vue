@@ -72,7 +72,9 @@
       </template>
 
       <template #[`item.${customColumns.submissionStartedDate}`]="{ item }">
-        {{ item.entity.submissionStartedDate ? getLocalStringDate(item.entity.submissionStartedDate , '', 'll'): '-' }}
+        <div class="text-no-wrap">
+          {{ item.entity.submissionStartedDate ? getLocalStringDate(item.entity.submissionStartedDate , '', 'll'): '-' }}
+        </div>
       </template>
 
       <template #[`item.${customColumns.amount}`]="{ item }">
@@ -81,12 +83,18 @@
         </div>
       </template>
 
-      <template #[`item.actions`]="{ item }">
-        <v-btn color="primary" data-test="action_button" @click="openActionDialog(item.entity.id)">
+      <template #[`item.${customColumns.actionable}`]="{ item }">
+        <v-btn color="primary" data-test="action_button" @click="openActionDialog(item)">
           {{ $t('approval.requests.action.label') }}
         </v-btn>
       </template>
     </rc-data-table>
+
+    <approval-action-dialog
+      v-if="showActionDialog"
+      :show.sync="showActionDialog"
+      :financial-assistance-payment="paymentToAction"
+      :my-role-id="myRoleId" />
   </div>
 </template>
 
@@ -103,7 +111,9 @@ import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import { IApprovalTableCombined } from '@libs/entities-lib/approvals/approvals-table';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { ApprovalStatus, IFinancialAssistancePaymentCombined } from '@libs/entities-lib/financial-assistance-payment';
+import {
+  ApprovalStatus, IFinancialAssistancePaymentCombined,
+} from '@libs/entities-lib/financial-assistance-payment';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
@@ -112,15 +122,15 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import ApprovalActionDialog from './ApprovalActionDialog.vue';
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalRequestsFilter).extend({
-  name: 'ApprovalRequestsHome',
-
   components: {
     FilterToolbar,
     RcAddButtonWithMenu,
     RcDataTable,
     StatusChip,
+    ApprovalActionDialog,
   },
 
   data() {
@@ -130,9 +140,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
       programs: [],
       FilterKey,
       submittedToMeSwitch: false,
+      showActionDialog: false,
+      paymentToAction: null as IFinancialAssistancePaymentCombined,
       options: {
         page: 1,
-        sortBy: ['Entity/SubmissionStartedDate'],
+        sortBy: ['Entity/ApprovalStatus'],
         sortDesc: [false],
       },
     };
@@ -144,21 +156,25 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
     },
 
     myRoleId():string {
-      return this.$store.state.userAccountEntities?.currentUserAccount?.roles[0]?.optionItemId;
+      return this.$store.state.userAccountEntities?.currentUserAccount?.roles[0]?.optionItemId || '';
+    },
+
+    tableData(): IFinancialAssistancePaymentCombined[] {
+      return this.$storage.financialAssistancePayment.getters.getByIds(this.searchResultIds, {
+        onlyActive: true,
+        prependPinnedItems: false,
+        baseDate: this.searchExecutionDate,
+      });
     },
 
     presetFilter(): Record<string, unknown> {
       return {
         'Entity/ApprovalStatus': ApprovalStatus.Pending,
         'Entity/Status': Status.Active,
-        Entity: {
-          ApprovalTableGroupsSnapshots: {
+        Metadata: {
+          CurrentApprovalGroupRoles: {
             any: {
-              Roles: {
-                any: {
-                  [ITEM_ROOT]: this.myRoleId,
-                },
-              },
+              [ITEM_ROOT]: this.myRoleId,
             },
           },
         },
@@ -173,14 +189,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
       };
     },
 
-    tableData(): IFinancialAssistancePaymentCombined[] {
-      return this.$storage.financialAssistancePayment.getters.getByIds(this.searchResultIds, {
-        onlyActive: true,
-        prependPinnedItems: false,
-        baseDate: this.searchExecutionDate,
-      });
-    },
-
     customColumns(): Record<string, string> {
       return {
         caseFileNumber: 'Metadata/CaseFileNumber',
@@ -190,6 +198,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
         event: `Metadata/EventName/Translation/${this.$i18n.locale}`,
         submissionStartedDate: 'Entity/SubmissionStartedDate',
         amount: 'Metadata/Total',
+        actionable: 'Entity/ApprovalStatus',
       };
     },
 
@@ -241,11 +250,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
           value: this.customColumns.amount,
         },
         {
+          text: this.$t('approvalRequestsTable.action') as string,
           align: 'end',
-          text: '',
-          value: 'actions',
           sortable: false,
           width: '120px',
+          value: this.customColumns.actionable,
         },
       ];
     },
@@ -318,6 +327,16 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
         itemClass: (item: IApprovalTableCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
+
+    getOrderBy(): string {
+      const { orderBy, descending } = this.params;
+      const direction = descending ? 'desc' : 'asc';
+      if (orderBy === 'Entity/ApprovalStatus') {
+        return `Entity/ApprovalStatus ${direction}, Entity/SubmissionStartedDate asc`;
+      }
+
+      return `${orderBy} ${direction}`;
+    },
   },
 
   created() {
@@ -370,8 +389,9 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
       };
     },
 
-    openActionDialog(id: string) { // TO DO in a future story
-      return id;
+    openActionDialog(payment: IFinancialAssistancePaymentCombined) {
+      this.paymentToAction = payment;
+      this.showActionDialog = true;
     },
 
     async onApplyFilterLocal(
@@ -412,9 +432,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
       return { submittedToMeFilter: this.submittedToMeSwitch };
     },
 
-    setAdditionalFilters(state: unknown) {
-      // eslint-disable-next-line
-      this.submittedToMeSwitch = !!(state as any)?.submittedToMeFilter || false;
+    setAdditionalFilters(state: {submittedToMeFilter: boolean}) {
+      this.submittedToMeSwitch = !!state?.submittedToMeFilter || false;
     },
   },
 

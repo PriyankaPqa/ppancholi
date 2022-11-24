@@ -3,7 +3,7 @@ import { IVersionedEntity, IVersionedEntityCombined } from '@libs/entities-lib/v
 import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
 import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
 import {
-  EPaymentCancellationReason, IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentStatus,
+  EPaymentCancellationReason, IApprovalActionPayload, IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule } from '../base';
@@ -85,6 +85,16 @@ export class FinancialAssistancePaymentEntityModule extends BaseModule<IFinancia
       IFinancialAssistancePaymentEntityState>, payload: { paymentId: uuid, submitTo: uuid })
       : Promise<IFinancialAssistancePaymentEntity> => {
       const result = await this.service.submitApprovalRequest(payload.paymentId, payload.submitTo);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
+    },
+
+    submitApprovalAction: async (context: ActionContext<IFinancialAssistancePaymentEntityState,
+      IFinancialAssistancePaymentEntityState>, payload: { paymentId: uuid, action: IApprovalActionPayload })
+      : Promise<IFinancialAssistancePaymentEntity> => {
+      const result = await this.service.submitApprovalAction(payload.paymentId, payload.action);
       if (result) {
         context.commit('set', result);
       }

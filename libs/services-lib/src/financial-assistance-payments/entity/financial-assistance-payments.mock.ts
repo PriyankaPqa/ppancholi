@@ -13,6 +13,7 @@ export const mockFinancialAssistanceService = (): IFinancialAssistancePaymentsSe
   editFinancialAssistancePayment: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   submitFinancialAssistancePayment: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   submitApprovalRequest: jest.fn(() => mockCaseFinancialAssistanceEntity()),
+  submitApprovalAction: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   updatePaymentStatus: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   addFinancialAssistancePaymentLine: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   editFinancialAssistancePaymentLine: jest.fn(() => mockCaseFinancialAssistanceEntity()),
@@ -20,4 +21,5 @@ export const mockFinancialAssistanceService = (): IFinancialAssistancePaymentsSe
   getHistory: jest.fn(() => mockFinancialPaymentHistory()),
   getMetadataHistory: jest.fn(() => []),
   getPaymentSummary: jest.fn(() => mockPaymentSummary()),
+  getNextApprovalGroupRoles: jest.fn(() => []),
 });

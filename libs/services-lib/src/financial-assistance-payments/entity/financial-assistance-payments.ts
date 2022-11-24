@@ -7,6 +7,7 @@ import {
   EPaymentCancellationReason,
   PaymentsSummary,
 } from '@libs/entities-lib/financial-assistance-payment';
+import { IApprovalActionPayload } from '@libs/entities-lib/src/financial-assistance-payment/financial-assistance-payment.types';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { IFinancialAssistancePaymentsService } from './financial-assistance-payments.types';
@@ -53,6 +54,10 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
     return this.http.patch(`${this.baseUrl}/${paymentId}/start-approval/${submitTo}`);
   }
 
+  async submitApprovalAction(paymentId: uuid, payload: IApprovalActionPayload): Promise<IFinancialAssistancePaymentEntity> {
+    return this.http.patch(`${this.baseUrl}/${paymentId}/action`, payload);
+  }
+
   async addFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
     Promise<IFinancialAssistancePaymentEntity> {
     const payload = {
@@ -86,5 +91,9 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
 
   async getPaymentSummary(caseFileId: uuid): Promise<PaymentsSummary> {
     return this.http.get(`${this.baseUrl}/payments-summary?caseFileId=${caseFileId}`);
+  }
+
+  async getNextApprovalGroupRoles(financialAssistanceId: uuid): Promise<uuid[]> {
+    return this.http.get(`${this.baseUrl}/${financialAssistanceId}/next-approval-group-roles`);
   }
 }

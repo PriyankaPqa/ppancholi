@@ -40,7 +40,9 @@
       </template>
 
       <template #[`item.${customColumns.created}`]="{ item }">
-        <span data-test="fap_created"> {{ getLocalStringDate(item.entity.created, 'Entity.created', 'll') }}</span>
+        <span data-test="fap_created" class="text-no-wrap">
+          {{ getLocalStringDate(item.entity.created, 'Entity.created', 'll') }}
+        </span>
       </template>
 
       <template #[`item.${customColumns.totals}`]="{ item }">
@@ -290,6 +292,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         headers.push({
           text: '',
           sortable: false,
+          align: 'end',
           value: this.customColumns.edit,
           width: '5%',
         });
@@ -389,12 +392,12 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       this.showApprovalHistory = true;
     },
 
-    canViewHistory(item: IFinancialAssistancePaymentCombined): boolean {
-      return item.entity.approvalStatus === ApprovalStatus.Approved;
+    canViewHistory(item: IFinancialAssistancePaymentCombined): boolean { // TO DO: change for payments that are new because the approver required more info
+      return item.entity.approvalStatus !== ApprovalStatus.New;
     },
 
     isModifiable(item: IFinancialAssistancePaymentCombined) {
-      return item.entity.approvalStatus === ApprovalStatus.New || item.entity.approvalStatus === ApprovalStatus.Pending;
+      return item.entity.approvalStatus === ApprovalStatus.New;
     },
 
     routeToCreate() {
@@ -481,6 +484,11 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   border-bottom: 0px !important;
 }
 
+::v-deep .v-data-table > .v-data-table__wrapper tbody tr:not(.v-data-table__expanded) td:nth-last-child(1),
+::v-deep .v-data-table > .v-data-table__wrapper tbody tr:not(.v-data-table__expanded) td:nth-last-child(2){
+    padding:0;
+}
+
 ::v-deep .v-data-table > .v-data-table__wrapper tbody tr.v-data-table__expanded__content {
   box-shadow: initial !important;
   & td {
@@ -492,7 +500,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   min-width: 500px;
   & td {
     border: 0px !important;
-    padding: 0px 6px;
+    padding: 0px 6px !important;
   }
   & .group-col {
     min-width: 280px;

@@ -229,6 +229,15 @@ describe('ApprovalRequestsHome', () => {
       });
     });
 
+    describe('openActionDialog', () => {
+      it('sets the right values into the right properties', async () => {
+        const payment = { nextRoleGroup: ['1'] };
+        await wrapper.vm.openActionDialog(payment);
+        expect(wrapper.vm.paymentToAction).toEqual(payment);
+        expect(wrapper.vm.showActionDialog).toEqual(true);
+      });
+    });
+
     describe('onApplyFilterLocal', () => {
       describe('when user is using submittedToMe filter', () => {
         it('should call onApplyFilter with proper filters if filters panel also', async () => {
@@ -320,7 +329,7 @@ describe('ApprovalRequestsHome', () => {
       wrapper = mount(Component, {
         localVue,
         computed: {
-          tableData: () => [FAPayment],
+          mappedPayments: () => [FAPayment],
         },
         mocks: { $storage: storage },
       });

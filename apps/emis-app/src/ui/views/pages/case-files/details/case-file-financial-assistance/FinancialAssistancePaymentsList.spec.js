@@ -359,7 +359,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     });
 
     describe('isModifiable', () => {
-      it('returns true if approval status is new or pending', async () => {
+      it('returns true if approval status is new', async () => {
         await mountWrapper();
         const mock = mockCombinedCaseFinancialAssistance();
         mock.entity.approvalStatus = ApprovalStatus.Approved;
@@ -367,7 +367,9 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         mock.entity.approvalStatus = ApprovalStatus.New;
         expect(wrapper.vm.isModifiable(mock)).toBeTruthy();
         mock.entity.approvalStatus = ApprovalStatus.Pending;
-        expect(wrapper.vm.isModifiable(mock)).toBeTruthy();
+        expect(wrapper.vm.isModifiable(mock)).toBeFalsy();
+        mock.entity.approvalStatus = ApprovalStatus.Declined;
+        expect(wrapper.vm.isModifiable(mock)).toBeFalsy();
       });
     });
 
@@ -384,12 +386,16 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     });
 
     describe('canViewHistory', () => {
-      it('checks for Approved', async () => {
+      it('checks for all statuses except new', async () => {
         await mountWrapper();
         const mock = mockCombinedCaseFinancialAssistance();
-        mock.entity.approvalStatus = 2;
+        mock.entity.approvalStatus = ApprovalStatus.New;
         expect(wrapper.vm.canViewHistory(mock)).toBeFalsy();
-        mock.entity.approvalStatus = 3;
+        mock.entity.approvalStatus = ApprovalStatus.Pending;
+        expect(wrapper.vm.canViewHistory(mock)).toBeTruthy();
+        mock.entity.approvalStatus = ApprovalStatus.Declined;
+        expect(wrapper.vm.canViewHistory(mock)).toBeTruthy();
+        mock.entity.approvalStatus = ApprovalStatus.Approved;
         expect(wrapper.vm.canViewHistory(mock)).toBeTruthy();
       });
     });

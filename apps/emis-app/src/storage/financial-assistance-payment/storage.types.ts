@@ -1,3 +1,4 @@
+import { IApprovalActionPayload } from '@libs/entities-lib/src/financial-assistance-payment/financial-assistance-payment.types';
 import { IVersionedEntityCombined } from '@libs/entities-lib/value-objects/versioned-entity';
 import {
   EPaymentCancellationReason,
@@ -20,6 +21,7 @@ export interface IActions extends IBaseActions<IFinancialAssistancePaymentEntity
     cancellationReason?: EPaymentCancellationReason): Promise<IFinancialAssistancePaymentEntity>;
   submitFinancialAssistancePayment(entityId: uuid): Promise<IFinancialAssistancePaymentEntity>;
   submitApprovalRequest(paymentId: uuid, submitTo: uuid): Promise<IFinancialAssistancePaymentEntity>;
+  submitApprovalAction(paymentId: uuid, action: IApprovalActionPayload): Promise<IFinancialAssistancePaymentEntity>;
   addFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
     Promise<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
@@ -36,6 +38,7 @@ export interface IActionsMock extends IBaseActionsMock<IFinancialAssistancePayme
   updatePaymentStatus: jest.Mock<IFinancialAssistancePaymentEntity>;
   submitFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
   submitApprovalRequest: jest.Mock<IFinancialAssistancePaymentEntity>;
+  submitApprovalAction: jest.Mock<IFinancialAssistancePaymentEntity>;
   addFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   deleteFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;

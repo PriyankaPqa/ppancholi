@@ -10,7 +10,7 @@
           {{ $t('common.status') }}:
         </span>
 
-        <span v-if="transactionApprovalStatus !== ApprovalStatus.New">
+        <span v-if="transactionApprovalStatus === ApprovalStatus.Approved">
           <status-select
             data-test="paymentLineGroup__status"
             :value="paymentGroup.paymentStatus"
@@ -21,11 +21,11 @@
         </span>
         <span
           v-else
-          data-test="paymentLineGroup__paymentMustBeSubmitted">
+          data-test="paymentLineGroup__statusMessage">
           <v-icon small class="mt-n1" color="red">
             mdi-alert-outline
           </v-icon>
-          {{ $t('financialAssistancePayment.paymentMustBeSubmitted') }}
+          {{ $t(`${statusMessage}`) }}
         </span>
       </span>
     </div>
@@ -206,6 +206,19 @@ export default Vue.extend({
         return true;
       }
       return false;
+    },
+
+    statusMessage():string {
+      switch (this.transactionApprovalStatus) {
+        case ApprovalStatus.New:
+          return 'financialAssistancePayment.paymentMustBeSubmitted';
+        case ApprovalStatus.Pending:
+          return 'financialAssistancePayment.paymentMustBeApproved';
+        case ApprovalStatus.Declined:
+          return 'financialAssistancePayment.paymentWasDeclined';
+        default:
+          return '-';
+      }
     },
 
     // eslint-disable-next-line complexity

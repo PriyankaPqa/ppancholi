@@ -2,6 +2,7 @@ import { IVersionedEntityCombined } from '@libs/entities-lib/value-objects/versi
 import {
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, PaymentStatus, EPaymentCancellationReason, IFinancialAssistancePaymentGroup,
 } from '@libs/entities-lib/financial-assistance-payment';
+import { IApprovalActionPayload } from '@libs/entities-lib/src/financial-assistance-payment/financial-assistance-payment.types';
 import { IStore, IState } from '../../store/store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
@@ -32,6 +33,8 @@ export class FinancialAssistancePaymentStorage
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/submitFinancialAssistancePayment`, entityId),
     submitApprovalRequest: (paymentId: uuid, submitTo: uuid):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/submitApprovalRequest`, { paymentId, submitTo }),
+    submitApprovalAction: (paymentId: uuid, action: IApprovalActionPayload):
+      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/submitApprovalAction`, { paymentId, action }),
     addFinancialAssistancePaymentLine: (financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/addFinancialAssistancePaymentLine`
       , ({ entity, financialAssistanceId })),

@@ -164,10 +164,13 @@ export default Vue.extend({
         return true;
       }
       if ((this.transactionApprovalStatus === ApprovalStatus.Approved || this.transactionApprovalStatus === ApprovalStatus.Pending)
-        && (this.showRelatedNumber(this.paymentGroup) || this.showIssuedActualAmounts(this.paymentGroup))) {
+        && (this.showRelatedNumber(this.paymentGroup))) {
         return true;
       }
-
+      if (this.transactionApprovalStatus === ApprovalStatus.Approved
+        && this.showIssuedActualAmounts(this.paymentGroup)) {
+        return true;
+      }
       return false;
     },
 

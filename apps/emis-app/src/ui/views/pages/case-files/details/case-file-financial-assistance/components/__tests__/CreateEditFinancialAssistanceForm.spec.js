@@ -108,8 +108,7 @@ describe('CreateEditFinancialAssistanceForm.vue', () => {
 
     describe('updateBasicData', () => {
       it('emits update:financialAssistance', async () => {
-        wrapper.vm.localFinancialAssistance = financialAssistance;
-        await wrapper.vm.$nextTick();
+        await wrapper.setData({ localFinancialAssistance: financialAssistance });
         await wrapper.vm.updateBasicData();
         expect(wrapper.emitted('update:financialAssistance')[0][0]).toEqual(financialAssistance);
       });
