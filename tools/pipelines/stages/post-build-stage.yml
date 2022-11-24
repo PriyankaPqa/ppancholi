@@ -36,31 +36,31 @@ stages:
           appName: ${{parameters.appName}}
           parallel: 3
 
-      - job: 'Publish_Test_Coverage'
-        dependsOn:
-          - Unit_Test
-          - Component_Test
-        displayName: 'Publish coverage'
-        condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
-        steps:
-          - template: '../steps/cache-install-npm.yml'
-            parameters:
-              packageFeed: ${{ parameters.packageFeed }}
-              disableCache: ${{ parameters.disableCache }}
-              nodeJsVersion: ${{ parameters.nodeJsVersion }}
-
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download coverage artifacts'
-            inputs:
-              downloadPath: $(Build.SourcesDirectory) # Download code coverage artifact
-              itemPattern: '**/**/cobertura-coverage.xml'
-
-          - script: node ./tools/scripts/merge-test-coverage.js $(Build.SourcesDirectory) # Look for coverage file in Build.SourcesDirectory
-            displayName: 'Merge code coverage reports'
-
-          - task: PublishCodeCoverageResults@1
-            displayName: 'Publish code coverage'
-            inputs:
-              codeCoverageTool: 'Cobertura'
-              summaryFileLocation: '$(Build.SourcesDirectory)/coverage/merged-cobertura-coverage.xml'
-              failIfCoverageEmpty: false
+#      - job: 'Publish_Test_Coverage'
+#        dependsOn:
+#          - Unit_Test
+#          - Component_Test
+#        displayName: 'Publish coverage'
+#        condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
+#        steps:
+#          - template: '../steps/cache-install-npm.yml'
+#            parameters:
+#              packageFeed: ${{ parameters.packageFeed }}
+#              disableCache: ${{ parameters.disableCache }}
+#              nodeJsVersion: ${{ parameters.nodeJsVersion }}
+#
+#          - task: DownloadPipelineArtifact@2
+#            displayName: 'Download coverage artifacts'
+#            inputs:
+#              downloadPath: $(Build.SourcesDirectory) # Download code coverage artifact
+#              itemPattern: '**/**/cobertura-coverage.xml'
+#
+#          - script: node ./tools/scripts/merge-test-coverage.js $(Build.SourcesDirectory) # Look for coverage file in Build.SourcesDirectory
+#            displayName: 'Merge code coverage reports'
+#
+#          - task: PublishCodeCoverageResults@1
+#            displayName: 'Publish code coverage'
+#            inputs:
+#              codeCoverageTool: 'Cobertura'
+#              summaryFileLocation: '$(Build.SourcesDirectory)/coverage/merged-cobertura-coverage.xml'
+#              failIfCoverageEmpty: false

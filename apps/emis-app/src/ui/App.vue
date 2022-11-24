@@ -78,7 +78,7 @@ export default {
 
   metaInfo() {
     return {
-      // if no subcomponents specify a metaInfo.title, this title will be used.
+      // if no subcomponents specify a metaInfo.title, this title will be used
       title: this.$t('metaInfo.app.title'),
       // all titles will be injected into this template
       titleTemplate: `${this.$t('metaInfo.app.short')} | %s`,
