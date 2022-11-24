@@ -47,6 +47,7 @@ stages:
             parameters:
               packageFeed: ${{ parameters.packageFeed }}
               disableCache: ${{ parameters.disableCache }}
+              nodeJsVersion: ${{ parameters.nodeJsVersion }}
 
           - task: DownloadPipelineArtifact@2
             displayName: 'Download coverage artifacts'
