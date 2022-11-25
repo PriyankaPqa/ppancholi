@@ -6,7 +6,7 @@
       :cancel-action-label="$t('common.buttons.cancel')"
       :submit-button-disabled="failed || submitLoading || ($hasFeature(FeatureKeys.ActionApprovals) && approvalRequired && !approvalTable)"
       :show.sync="show"
-      :max-width="750"
+      :max-width="760"
       content-padding="10"
       persistent
       :show-close="false"
@@ -22,13 +22,15 @@
       </v-row>
       <v-row v-else>
         <v-col cols="12" class="mb-4 pa-0">
-          <div v-if="useApprovalFlow">
-            {{ $t('caseFile.financialAssistance.startApproval.confirmMessage') }}
-          </div>
-          <div v-if="hasInvalidTable" class="msg-box">
+          <div v-if="hasNoUsers || hasInvalidTable" class="msg-box mb-1">
             <message-box
               icon="mdi-alert"
-              :message=" $t('caseFile.financialAssistance.submitAssistance.noApprovalTables')" />
+              data-test="approval_action_warning"
+              :message="hasInvalidTable? $t('caseFile.financialAssistance.submitAssistance.noApprovalTables') :
+                $t('caseFile.financialAssistance.submitAssistance.noActiveUsers')" />
+          </div>
+          <div v-if="useApprovalFlow">
+            {{ $t('caseFile.financialAssistance.startApproval.confirmMessage') }}
           </div>
           <div v-if="approvalNotRequired">
             {{ $t('caseFile.financialAssistance.submitAssistance.confirmMessage') }}
@@ -146,6 +148,10 @@ export default Vue.extend({
 
     approvalNotRequired():boolean {
       return !this.approvalRequired || !this.$hasFeature(FeatureKeys.ActionApprovals);
+    },
+
+    hasNoUsers():boolean {
+      return this.$hasFeature(FeatureKeys.ActionApprovals) && this.approvalRequired && !this.loadingUsers && !this.users?.length;
     },
   },
 

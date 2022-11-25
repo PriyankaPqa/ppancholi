@@ -122,6 +122,35 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
         expect(wrapper.vm.approvalNotRequired).toBeFalsy();
       });
     });
+
+    describe('hasNoUsers', () => {
+      it('returns false if feature flag is off', async () => {
+        doMount(true, true, {}, false);
+        expect(wrapper.vm.hasNoUsers).toBeFalsy();
+      });
+
+      it('returns false if approval is not required', async () => {
+        doMount(true, false, {}, true);
+        expect(wrapper.vm.hasNoUsers).toBeFalsy();
+      });
+
+      it('returns false if it requires approval and there are users to approve', async () => {
+        doMount(true, true, {}, true);
+        await wrapper.setData({ users: ['user-id-1'] });
+        expect(wrapper.vm.hasNoUsers).toBeFalsy();
+      });
+      it('returns false if it requires approval and the users are loading', async () => {
+        doMount(true, true, {}, true);
+        await wrapper.setData({ loadingUsers: true });
+        expect(wrapper.vm.hasNoUsers).toBeFalsy();
+      });
+
+      it('returns true if it requires approval and there are no users to approve', async () => {
+        doMount(true, true, {}, true);
+        await wrapper.setData({ users: [], loadingUsers: false });
+        expect(wrapper.vm.hasNoUsers).toBeTruthy();
+      });
+    });
   });
 
   describe('Methods', () => {
