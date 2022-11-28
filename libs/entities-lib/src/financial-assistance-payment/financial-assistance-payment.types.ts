@@ -87,6 +87,20 @@ export interface IApprovalActionPayload {
   rationale: string;
 }
 
+export interface IApprover {
+  userId: string;
+  userName: string;
+  roleName: IMultilingual;
+}
+
+export interface IApprovalStatusHistory {
+  submittedBy?: IApprover;
+  submittedTo?: IApprover;
+  approvalAction: ApprovalAction;
+  dateOfApprovalAction: string | Date;
+  rationale: string;
+}
+
 export interface IFinancialAssistancePaymentEntity extends IEntity {
   caseFileId: uuid,
   financialAssistanceTableId: uuid,
@@ -98,8 +112,9 @@ export interface IFinancialAssistancePaymentEntity extends IEntity {
   approvalTableGroupsSnapshots? : Array<IApprovalTableGroupsSnapshot>,
   submissionStartedDate?: string | Date;
   initialSubmitter?: uuid;
-  submittedBy?: { userId: string, userName: string, roleName: IMultilingual };
-  submittedTo?: { userId: string, userName: string, roleName: IMultilingual };
+  submittedBy?: IApprover;
+  submittedTo?: IApprover;
+  approvalStatusHistory?: IApprovalStatusHistory[];
 }
 
 export interface IFinancialAssistancePaymentMetadata extends IEntity {

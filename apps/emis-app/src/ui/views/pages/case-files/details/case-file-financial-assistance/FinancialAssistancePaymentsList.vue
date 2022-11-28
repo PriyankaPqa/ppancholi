@@ -176,6 +176,7 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
+  ApprovalAction,
   ApprovalStatus,
   FinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentCombined,
@@ -330,7 +331,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     labels(): Record<string, Record<string, TranslateResult>> {
       return {
         header: {
-          title: this.$t('caseFile.financialAssistance.overview', { count: this.itemsCount }),
+          title: this.$t('caseFile.financialAssistance.overview', { count: this.tableData ? this.tableData.length : 0 }),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
           addButtonLabel: this.$t('caseFile.financialAssistance.create.title'),
         },
@@ -396,8 +397,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       this.showApprovalHistory = true;
     },
 
-    canViewHistory(item: IFinancialAssistancePaymentCombined): boolean { // TO DO: change for payments that are new because the approver required more info
-      return item.entity.approvalStatus !== ApprovalStatus.New;
+    canViewHistory(item: IFinancialAssistancePaymentCombined): boolean {
+      return (item.entity.approvalStatus !== ApprovalStatus.New || item.entity.approvalAction === ApprovalAction.RequestAdditionalInfo)
+      && !!item.entity.approvalStatusHistory?.length;
     },
 
     isModifiable(item: IFinancialAssistancePaymentCombined) {

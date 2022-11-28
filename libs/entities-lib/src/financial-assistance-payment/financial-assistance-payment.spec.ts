@@ -6,13 +6,13 @@ const mockData = mockCaseFinancialAssistanceEntity();
 
 describe('>>> Case Financial Assistance', () => {
   describe('>> constructor', () => {
-    describe('>> instantitate when data is passed', () => {
+    describe('>> instantiate when data is passed', () => {
       it('should instantiate caseFileId', () => {
         const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity(mockData);
         expect(caseFinancialAssistanceEntity.caseFileId).toEqual(mockData.caseFileId);
       });
 
-      it('should instantitate financialAsssistanceTablleId', () => {
+      it('should instantiate financialAsssistanceTablleId', () => {
         const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity(mockData);
         expect(caseFinancialAssistanceEntity.financialAssistanceTableId).toEqual(mockData.financialAssistanceTableId);
       });
@@ -27,17 +27,22 @@ describe('>>> Case Financial Assistance', () => {
         expect(caseFinancialAssistanceEntity.description).toEqual(mockData.description);
       });
 
-      it('should instanciate paymentStatus', () => {
+      it('should instantiate paymentStatus', () => {
         const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity(mockData);
         expect(caseFinancialAssistanceEntity.approvalStatus).toEqual(mockData.approvalStatus);
       });
 
-      it('should instanciate groups', () => {
+      it('should instantiate groups', () => {
         const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity(mockData);
         expect(caseFinancialAssistanceEntity.groups).toEqual(mockData.groups);
       });
 
-      it('should instanciate approvalAction', () => {
+      it('should instantiate approvalStatusHistory', () => {
+        const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity(mockData);
+        expect(caseFinancialAssistanceEntity.approvalStatusHistory).toEqual(mockData.approvalStatusHistory);
+      });
+
+      it('should instantiate approvalAction', () => {
         const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity(mockData);
         expect(caseFinancialAssistanceEntity.approvalAction).toEqual(null);
 
@@ -46,13 +51,13 @@ describe('>>> Case Financial Assistance', () => {
       });
     });
 
-    describe('>> instantitate when data is not passed', () => {
+    describe('>> instantiate when data is not passed', () => {
       it('should instantiate caseFileId', () => {
         const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity();
         expect(caseFinancialAssistanceEntity.caseFileId).toEqual(null);
       });
 
-      it('should instantitate financialAsssistanceTablleId', () => {
+      it('should instantiate financialAsssistanceTablleId', () => {
         const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity();
         expect(caseFinancialAssistanceEntity.financialAssistanceTableId).toEqual(null);
       });
@@ -67,14 +72,19 @@ describe('>>> Case Financial Assistance', () => {
         expect(caseFinancialAssistanceEntity.description).toEqual(null);
       });
 
-      it('should instanciate paymentStatus', () => {
+      it('should instantiate paymentStatus', () => {
         const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity();
         expect(caseFinancialAssistanceEntity.approvalStatus).toEqual(ApprovalStatus.New);
       });
 
-      it('should instanciate groups', () => {
+      it('should instantiate groups', () => {
         const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity();
         expect(caseFinancialAssistanceEntity.groups).toEqual([]);
+      });
+
+      it('should instantiate approvalStatusHistory', () => {
+        const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity();
+        expect(caseFinancialAssistanceEntity.approvalStatusHistory).toEqual(null);
       });
     });
   });

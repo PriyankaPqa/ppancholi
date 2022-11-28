@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
-import { ApprovalStatus, mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { ApprovalStatus, mockCaseFinancialAssistanceEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { mockProgramEntity } from '@libs/entities-lib/program';
 import { mockStorage } from '@/storage';
 import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
@@ -151,11 +151,35 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
     });
 
     describe('canViewHistory', () => {
-      it('checks for Approved', async () => {
+      it('checks for approval status', async () => {
         await mountWrapper();
+        financialAssistance.approvalStatusHistory = [{ ApprovalStatus: 1 }];
         financialAssistance.approvalStatus = ApprovalStatus.New;
         expect(wrapper.vm.canViewHistory).toBeFalsy();
+        financialAssistance.approvalStatus = ApprovalStatus.Pending;
+        expect(wrapper.vm.canViewHistory).toBeTruthy();
+        financialAssistance.approvalStatus = ApprovalStatus.RequestAdditionalInfo;
+        expect(wrapper.vm.canViewHistory).toBeTruthy();
         financialAssistance.approvalStatus = ApprovalStatus.Approved;
+        expect(wrapper.vm.canViewHistory).toBeTruthy();
+      });
+
+      it('returns false if  approvalStatusHistory is empty or null', async () => {
+        await mountWrapper();
+        financialAssistance.approvalStatus = ApprovalStatus.Pending;
+        financialAssistance.approvalStatusHistory = [];
+        expect(wrapper.vm.canViewHistory).toBeFalsy();
+        financialAssistance.approvalStatusHistory = null;
+        expect(wrapper.vm.canViewHistory).toBeFalsy();
+        financialAssistance.approvalStatusHistory = [{ ApprovalStatus: 1 }];
+        expect(wrapper.vm.canViewHistory).toBeTruthy();
+      });
+
+      it('return true if approval status is new and  ApprovalAction is RequestAdditionalInfo', async () => {
+        await mountWrapper();
+        financialAssistance.approvalStatusHistory = [{ ApprovalStatus: 1 }];
+        financialAssistance.approvalStatus = ApprovalStatus.New;
+        financialAssistance.approvalAction = ApprovalAction.RequestAdditionalInfo;
         expect(wrapper.vm.canViewHistory).toBeTruthy();
       });
     });

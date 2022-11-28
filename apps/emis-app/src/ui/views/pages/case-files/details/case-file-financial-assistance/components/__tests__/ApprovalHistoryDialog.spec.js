@@ -1,5 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockFinancialPaymentHistory, mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { mockFinancialPaymentHistory, mockCaseFinancialAssistanceEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { mockStorage } from '@/storage';
 import Component from '../ApprovalHistoryDialog.vue';
 
@@ -53,56 +53,50 @@ describe('ApprovalHistoryDialog.vue', () => {
       });
     });
 
-    describe('formattedHistory', () => {
-      it('returns this data (temporarily...) - to fix when new specs arrive...', async () => {
+    describe('approvalHistoryItems', () => {
+      it('returns the right data', async () => {
         await mountWrapper();
-        expect(wrapper.vm.formattedHistory).toEqual([
-          {
-            username: 'Thi Hung Lieu',
-            roleName: 'System Admin',
-            rationale: 'caseFile.financialAssistance.approvalHistory.rationale.created',
-            date: new Date('2021-10-15T14:27:07.000Z'),
-            formattedDate: 'Oct 15, 2021',
-            action: 'caseFile.financialAssistance.approvalHistory.action.submitted',
-          },
-          {
-            username: 'caseFile.financialAssistance.approvalHistory.system',
-            rationale: 'caseFile.financialAssistance.approvalHistory.rationale.approved',
-            formattedDate: 'Oct 15, 2021',
-            date: new Date('2021-10-15T14:27:07.000Z'),
-            action: 'caseFile.financialAssistance.approvalHistory.action.approved',
-          },
-        ]);
+        expect(wrapper.vm.approvalHistoryItems).toEqual(wrapper.vm.financialAssistance.approvalStatusHistory);
       });
     });
   });
 
-  describe('Lifecycle', () => {
-    describe('created', () => {
-      it('calls storage to fetch history', async () => {
+  describe('Methods', () => {
+    describe('getRationaleText', () => {
+      it('returns - when there is no rationale', async () => {
         await mountWrapper();
-        expect(storage.financialAssistancePayment.actions.fetchHistory).toHaveBeenCalled();
-        expect(wrapper.vm.submittedHistory).toEqual(storage.financialAssistancePayment.actions.fetchHistory()[0]);
+        const item = {
+          rationale: null,
+          submittedBy: { userId: '11111111-1234-1111-1111-111111111111' },
+          approvalAction: ApprovalAction.Submitted,
+        };
+        expect(wrapper.vm.getRationaleText(item)).toEqual('-');
       });
 
-      it('sets submittedHistory to the action with Submit or if none, Created and approvalAction Submitted', async () => {
-        const hist = mockFinancialPaymentHistory();
-        hist[0].lastAction = 'Submit';
-        hist[0].entity.lastAction = 'Submit';
-        storage.financialAssistancePayment.actions.fetchHistory = jest.fn(() => hist);
+      it('returns the right text when there is no rationale and the user is system and the approval action is approved final', async () => {
         await mountWrapper();
-        expect(wrapper.vm.submittedHistory).toEqual(hist[0]);
-        hist[0].lastAction = 'Created';
-        hist[0].entity.lastAction = 'Created';
-        hist[0].entity.approvalAction = null;
-        await mountWrapper();
-        expect(wrapper.vm.submittedHistory).toBeFalsy();
-        hist[0].entity.approvalAction = 1;
-        await mountWrapper();
-        expect(wrapper.vm.submittedHistory).toEqual(hist[0]);
+        const item = {
+          rationale: null,
+          submittedBy: { userId: '11111111-1111-1111-1111-111111111111' },
+          approvalAction: ApprovalAction.ApprovedFinal,
+        };
+        expect(wrapper.vm.getRationaleText(item)).toEqual('caseFile.financialAssistance.approvalHistory.rationale.approved');
+      });
 
-        // reset for other tests
-        storage.financialAssistancePayment.actions.fetchHistory = jest.fn(() => mockFinancialPaymentHistory());
+      it('returns the right text when there is no rationale and the action is submitted and it is submitted to someone', async () => {
+        await mountWrapper();
+        const item = {
+          rationale: null,
+          submittedBy: { userId: '11111111-1111-1234-1111-111111111111' },
+          submittedTo: { userId: '11111111-1234-1111-1111-111111111111', userName: 'John Smith' },
+          approvalAction: ApprovalAction.Submitted,
+        };
+        expect(wrapper.vm.getRationaleText(item)).toEqual('caseFile.financialAssistance.approvalHistory.rationale.submittedTo');
+      });
+
+      it('returns the rationale', async () => {
+        await mountWrapper();
+        expect(wrapper.vm.getRationaleText({ rationale: 'need more info' })).toEqual('need more info');
       });
     });
   });

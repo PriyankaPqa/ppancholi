@@ -8,6 +8,7 @@ import {
   PaymentsSummary,
   IFinancialAssistancePaymentCombined,
   IFinancialAssistancePaymentMetadata,
+  ApprovalAction,
 } from './financial-assistance-payment.types';
 import { EPaymentModalities } from '../program';
 
@@ -63,6 +64,23 @@ export const mockCaseFinancialAssistanceEntity = (force?: Partial<IFinancialAssi
     roleName: { translation: { en: 'System Admin', fr: 'Administrateur(-trice) de système' } },
   },
   initialSubmitter: '6b0c8642-257b-473a-bc82-3da2829ffeba',
+  approvalStatusHistory: [
+    {
+      submittedTo: {
+        userId: '6b0c8642-257b-473a-bc82-3da2829ffebb',
+        userName: 'John Smith',
+        roleName: { translation: { en: 'System Admin', fr: 'Administrateur(-trice) de système' } },
+      },
+      submittedBy: {
+        userId: '6b0c8642-257b-473a-bc82-3da2829ffebd',
+        userName: 'Jane Smith',
+        roleName: { translation: { en: 'System Admin', fr: 'Administrateur(-trice) de système' } },
+      },
+      approvalAction: ApprovalAction.Approved,
+      dateOfApprovalAction: '2021-10-15T14:27:07Z',
+      rationale: 'rationale',
+    },
+  ],
   ...force,
 });
 

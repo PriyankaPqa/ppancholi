@@ -26,13 +26,23 @@
       :headers="headers"
       hide-default-footer
       must-sort
-      :items="formattedHistory">
+      :items="approvalHistoryItems">
       <template #[`item.username`]="{ item }">
-        <b>{{ item.username }}</b>
-        <span v-if="item.roleName" class="pl-2">({{ item.roleName }})</span>
+        <b class="no-word-break">{{ item.submittedBy.userName }}</b>
+        <span v-if="item.submittedBy.roleName" class="pl-2 no-word-break">({{ $m(item.submittedBy.roleName) }})</span>
+      </template>
+      <template #[`item.rationale`]="{ item }">
+        {{ getRationaleText(item) }}
       </template>
       <template #[`item.date`]="{ item }">
-        {{ item.formattedDate }}
+        <div class="text-no-wrap">
+          {{ getLocalStringDate(item.dateOfApprovalAction, 'Entity.timestamp', 'll') }}
+        </div>
+      </template>
+      <template #[`item.action`]="{ item }">
+        <div class="no-word-break">
+          {{ $t(`enums.approvalAction.${ApprovalAction[item.approvalAction]}`) }}
+        </div>
       </template>
     </v-data-table>
   </rc-dialog>
@@ -40,21 +50,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { system } from '@/constants/system';
 import { RcDialog } from '@libs/component-lib/components';
 import { IVersionedEntityCombined } from '@libs/entities-lib/src/value-objects/versioned-entity';
 import { DataTableHeader } from 'vuetify';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import { ApprovalAction, IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
-
-interface IApprovalHistory {
-  username: string,
-  roleName?: string,
-  rationale: string,
-  date: Date,
-  formattedDate: string,
-  action: string,
-}
+import {
+ ApprovalAction, IFinancialAssistancePaymentEntity, IApprovalStatusHistory,
+} from '@libs/entities-lib/financial-assistance-payment';
 
 export default Vue.extend({
   name: 'ApprovalHistoryDialog',
@@ -79,10 +83,16 @@ export default Vue.extend({
     return {
       historyItems: [] as IVersionedEntityCombined[],
       submittedHistory: null as IVersionedEntityCombined,
+      getLocalStringDate: helpers.getLocalStringDate,
+      ApprovalAction,
     };
   },
 
   computed: {
+    approvalHistoryItems(): IApprovalStatusHistory[] {
+      return this.financialAssistance.approvalStatusHistory || [];
+    },
+
     headers(): Array<DataTableHeader> {
       return [
         {
@@ -94,6 +104,7 @@ export default Vue.extend({
           text: this.$t('caseFile.financialAssistance.approvalHistory.rationale') as string,
           filterable: false,
           value: 'rationale',
+          width: '50%',
         },
         {
           text: this.$t('caseFile.financialAssistance.approvalHistory.date') as string,
@@ -107,39 +118,22 @@ export default Vue.extend({
         },
       ];
     },
-
-    /// note that this method covers the requirements for release 1 - it WILL NOT reflect new approval stories without rework
-    formattedHistory(): IApprovalHistory[] {
-      if (!this.submittedHistory) {
-        return [];
-      }
-      // totally static data - this feature will EVENTUALLY be rewritten...
-      return [{
-        username: this.submittedHistory.userName,
-        roleName: this.$m(this.submittedHistory.roleName),
-        rationale: this.$t('caseFile.financialAssistance.approvalHistory.rationale.created') as string,
-        date: new Date(this.submittedHistory.timestamp),
-        formattedDate: helpers.getLocalStringDate(this.submittedHistory.timestamp, 'Entity.timestamp', 'll'),
-        action: this.$t('caseFile.financialAssistance.approvalHistory.action.submitted') as string,
-      }, {
-        username: this.$t('caseFile.financialAssistance.approvalHistory.system') as string,
-        rationale: this.$t('caseFile.financialAssistance.approvalHistory.rationale.approved') as string,
-        formattedDate: helpers.getLocalStringDate(this.submittedHistory.timestamp, 'Entity.timestamp', 'll'),
-        date: new Date(this.submittedHistory.timestamp),
-        action: this.$t('caseFile.financialAssistance.approvalHistory.action.approved') as string,
-      }];
-    },
-  },
-
-  async created() {
-    this.historyItems = await this.$storage.financialAssistancePayment.actions.fetchHistory(this.financialAssistance.id, false);
-    /// we find the one history line we want... and massactions doesnt create a submitted last action...
-    this.submittedHistory = this.historyItems.find((h) => h.entity.lastAction === 'Submit')
-      || this.historyItems.find((h) => h.entity.lastAction === 'Created'
-        && (h.entity as IFinancialAssistancePaymentEntity).approvalAction === ApprovalAction.Submitted);
   },
 
   methods: {
+    getRationaleText(item: IApprovalStatusHistory): string {
+      if (!item.rationale) {
+        if (item.submittedBy.userId === system.system_user_id && item.approvalAction === ApprovalAction.ApprovedFinal) {
+          return this.$t('caseFile.financialAssistance.approvalHistory.rationale.approved') as string;
+        }
+        if (item.approvalAction === ApprovalAction.Submitted && item.submittedTo?.userId) {
+          return this.$t('caseFile.financialAssistance.approvalHistory.rationale.submittedTo', { user: item.submittedTo?.userName }) as string;
+        }
+        return '-';
+      }
+      return item.rationale;
+    },
+
     close() {
       this.$emit('update:show', false);
     },
@@ -147,3 +141,9 @@ export default Vue.extend({
 });
 
 </script>
+
+<style lang="scss" scoped>
+  .no-word-break{
+    word-break: initial;
+  }
+</style>

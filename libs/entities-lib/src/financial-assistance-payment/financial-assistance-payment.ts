@@ -5,6 +5,7 @@ import {
   ApprovalStatus,
   IFinancialAssistancePaymentEntity,
   IFinancialAssistancePaymentGroup,
+  IApprovalStatusHistory,
 } from './financial-assistance-payment.types';
 
 export class FinancialAssistancePaymentEntity extends BaseEntity implements IFinancialAssistancePaymentEntity {
@@ -22,6 +23,8 @@ export class FinancialAssistancePaymentEntity extends BaseEntity implements IFin
 
   approvalAction: ApprovalAction;
 
+  approvalStatusHistory: IApprovalStatusHistory[];
+
   constructor(data?: IFinancialAssistancePaymentEntity) {
     if (data) {
       super(data);
@@ -32,6 +35,7 @@ export class FinancialAssistancePaymentEntity extends BaseEntity implements IFin
       this.approvalStatus = data.approvalStatus;
       this.approvalAction = data.approvalAction;
       this.groups = _cloneDeep(data.groups) || [];
+      this.approvalStatusHistory = data.approvalStatusHistory;
     } else {
       super();
       this.caseFileId = null;
@@ -41,6 +45,7 @@ export class FinancialAssistancePaymentEntity extends BaseEntity implements IFin
       this.approvalStatus = ApprovalStatus.New;
       this.approvalAction = null;
       this.groups = [];
+      this.approvalStatusHistory = null;
     }
   }
 

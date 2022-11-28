@@ -71,7 +71,7 @@
 import mixins from 'vue-typed-mixins';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { ApprovalStatus, IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { ApprovalStatus, IFinancialAssistancePaymentEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import routes from '@/constants/routes';
 import ApprovalHistoryDialog from './ApprovalHistoryDialog.vue';
@@ -110,7 +110,8 @@ export default mixins(caseFileDetail).extend({
 
   computed: {
     canViewHistory(): boolean {
-      return this.financialAssistance.approvalStatus === ApprovalStatus.Approved;
+      return (this.financialAssistance.approvalStatus !== ApprovalStatus.New || this.financialAssistance.approvalAction === ApprovalAction.RequestAdditionalInfo)
+      && !!this.financialAssistance.approvalStatusHistory?.length;
     },
 
     canEdit(): boolean {
