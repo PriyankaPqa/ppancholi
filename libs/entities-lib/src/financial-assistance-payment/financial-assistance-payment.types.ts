@@ -32,6 +32,7 @@ export enum ApprovalAction {
     RequestAdditionalInfo = 2,
     Approved = 3,
     Declined = 4,
+    ApprovedFinal = 5,
 }
 
 export enum EPaymentCancellationReason {

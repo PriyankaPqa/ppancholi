@@ -638,6 +638,45 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         CompletedByType: CompletedByType.Crc,
       },
     },
+    {
+      id: 'mock-activity-id-35',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.FinancialAssistancePayment,
+      details: {
+        approvalAction: 2,
+        paymentName: 'mock payment',
+        totalAmount: '5115.20',
+      },
+    },
+    {
+      id: 'mock-activity-id-36',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.FinancialAssistancePayment,
+      details: {
+        approvalAction: 3,
+        paymentName: 'mock payment',
+        totalAmount: '5115.20',
+      },
+    },
+    {
+      id: 'mock-activity-id-37',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.FinancialAssistancePayment,
+      details: {
+        approvalAction: 4,
+        paymentName: 'mock payment',
+        totalAmount: '5115.20',
+      },
+    },
   ];
 
   if (type) {

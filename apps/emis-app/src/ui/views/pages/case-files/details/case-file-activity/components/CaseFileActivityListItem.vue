@@ -16,10 +16,16 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/components/CaseFileListItemWrapper.vue';
 import {
-  CaseFileActivityType, HouseholdCaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, RegistrationType, ValidationOfImpactStatus,
+  CaseFileActivityType,
+  HouseholdCaseFileActivityType,
+  ICaseFileActivity,
+  IdentityAuthenticationStatus,
+  RegistrationType,
+  ValidationOfImpactStatus,
 } from '@libs/entities-lib/case-file';
 import { ERegistrationMethod, IIdMultilingualName, IMultilingual } from '@libs/shared-lib/types';
 import { EPaymentModalities } from '@libs/entities-lib/program';
+import { ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 
 export interface IAssignInfo {
   id: string;
@@ -135,6 +141,9 @@ export default Vue.extend({
         case CaseFileActivityType.AssessmentCompleted:
           return this.makeContentForAssessmentCompleted();
 
+        case CaseFileActivityType.FinancialAssistancePayment:
+          return this.makeContentForFinancialAssistancePayment();
+
         default:
           return null;
       }
@@ -175,6 +184,7 @@ export default Vue.extend({
           return 'mdi-map-check';
 
         case CaseFileActivityType.PaymentCompleted:
+        case CaseFileActivityType.FinancialAssistancePayment:
           return 'mdi-currency-usd';
 
         default:
@@ -476,6 +486,15 @@ export default Vue.extend({
       let body = `${this.$t('caseFileActivity.activityList.body.paymentCompleted.name')}: ${this.item.details.paymentName}`;
       body += `\n${this.$t('caseFileActivity.activityList.body.paymentCompleted.modality')}: `;
       body += this.$t(`enums.PaymentModality.${EPaymentModalities[this.item.details.paymentModality as number]}`);
+      body += `\n${this.$t('caseFileActivity.activityList.body.paymentCompleted.amount')}: ${amount}`;
+      return { title, body };
+    },
+
+    makeContentForFinancialAssistancePayment(): {title: TranslateResult, body: TranslateResult} {
+      let title = `${this.$t('caseFileActivity.activityList.title.FinancialAssistancePayment')} - `;
+      title += this.$t(`enums.approvalAction.${ApprovalAction[this.item.details.approvalAction as number]}`);
+      const amount = this.$formatCurrency(Number(this.item.details.totalAmount));
+      let body = `${this.$t('caseFileActivity.activityList.body.paymentCompleted.name')}: ${this.item.details.paymentName}`;
       body += `\n${this.$t('caseFileActivity.activityList.body.paymentCompleted.amount')}: ${amount}`;
       return { title, body };
     },

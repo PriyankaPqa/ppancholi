@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileActivityType, mockCaseFileActivities, HouseholdCaseFileActivityType } from '@libs/entities-lib/case-file';
 import { ERegistrationMethod } from '@libs/shared-lib/src/types/enums/ERegistrationMethod';
-
+import { ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import Component from '../case-file-activity/components/CaseFileActivityListItem.vue';
 
 const localVue = createLocalVue();
@@ -167,6 +167,16 @@ describe('CaseFileActivityListItem.vue', () => {
           item: mockCaseFileActivities(CaseFileActivityType.CaseNoteUpdated)[0],
         });
         expect(wrapper.vm.makeContentForCaseNote).toHaveBeenCalledWith(CaseFileActivityType.CaseNoteUpdated);
+        expect(wrapper.vm.content).toEqual(mockContent);
+      });
+
+      it('returns the correct data when activity type is FinancialAssistancePayment', async () => {
+        const mockContent = { title: 'mock-title', body: 'mock-body' };
+        jest.spyOn(wrapper.vm, 'makeContentForFinancialAssistancePayment').mockImplementation(() => (mockContent));
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
+        });
+        expect(wrapper.vm.makeContentForFinancialAssistancePayment).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.content).toEqual(mockContent);
       });
     });
@@ -347,6 +357,13 @@ describe('CaseFileActivityListItem.vue', () => {
           item: mockCaseFileActivities(CaseFileActivityType.AssessmentCompleted)[0],
         });
         expect(wrapper.vm.icon).toEqual('mdi-message-text');
+      });
+
+      it('returns the correct icon when activity type is FinancialAssistancePayment', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-currency-usd');
       });
     });
 
@@ -887,6 +904,23 @@ describe('CaseFileActivityListItem.vue', () => {
 
         expect(wrapper.vm.makeContentForFinancialAssistancePaymentCompleted()).toEqual({
           title: 'caseFileActivity.activityList.title.PaymentCompleted',
+          body,
+        });
+      });
+    });
+
+    describe('makeContentForFinancialAssistancePayment', () => {
+      it('returns the correct data when action type is PaymentRequestAdditionalInfo', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
+        });
+        let title = `${wrapper.vm.$t('caseFileActivity.activityList.title.FinancialAssistancePayment')} - `;
+        title += wrapper.vm.$t(`enums.approvalAction.${ApprovalAction[wrapper.vm.item.details.approvalAction]}`);
+        let body = 'caseFileActivity.activityList.body.paymentCompleted.name: mock payment';
+        body += '\ncaseFileActivity.activityList.body.paymentCompleted.amount: $5,115.20';
+
+        expect(wrapper.vm.makeContentForFinancialAssistancePayment()).toEqual({
+          title,
           body,
         });
       });
