@@ -151,13 +151,21 @@ import
   IFinancialAssistanceTableCombined,
   IFinancialAssistanceTableItem,
 } from '@libs/entities-lib/financial-assistance';
+import
+{
+  IAssessmentFormEntity,
+  IAssessmentResponseEntity,
+  IAssessmentResponseMetadata,
+  AssociationType,
+  CompletionStatus,
+} from '@libs/entities-lib/assessment-template';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { IProgramEntity, IProgramCombined } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@libs/entities-lib/base';
+import { IEntityCombined, Status } from '@libs/entities-lib/base';
 import SubmitFinancialAssistancePaymentDialog
   from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/SubmitFinancialAssistancePaymentDialog.vue';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
@@ -206,6 +214,8 @@ export default mixins(caseFileDetail).extend({
       submittingPaymentLine: false,
       savingFinancialAssistance: false,
       program: null as IProgramCombined,
+      programAssessmentForms: [] as IAssessmentFormEntity[],
+      caseFileAssessmentResponses: [] as IAssessmentResponseEntity[],
     };
   },
 
@@ -222,19 +232,32 @@ export default mixins(caseFileDetail).extend({
     },
 
     showWarning() : boolean {
-      return !(this.isImpacted && this.isAuthenticated) && this.financialAssistance.approvalStatus !== ApprovalStatus.Approved;
+      return !(this.isImpacted && this.isAuthenticated && this.hasCompletedAssessments) && this.financialAssistance.approvalStatus !== ApprovalStatus.Approved;
     },
 
     isAuthenticated(): boolean {
       if (this.selectedProgram?.eligibilityCriteria?.authenticated) {
         return this.caseFile?.entity?.identityAuthentication?.status === IdentityAuthenticationStatus.Passed;
       }
+
       return true;
     },
 
     isImpacted(): boolean {
       if (this.selectedProgram?.eligibilityCriteria?.impacted) {
         return this.caseFile?.entity?.impactStatusValidation?.status === ValidationOfImpactStatus.Impacted;
+      }
+
+      return true;
+    },
+
+    hasCompletedAssessments(): boolean {
+      if (this.selectedProgram?.eligibilityCriteria?.completedAssessments) {
+        const requiredAssessmentForms = this.programAssessmentForms
+          .filter((f) => this.selectedProgram.eligibilityCriteria.completedAssessmentIds.some((cid) => cid === f.id));
+
+        return requiredAssessmentForms
+          .every((f) => this.caseFileAssessmentResponses.some((r) => r.assessmentFormId === f.id && r.completionStatus === CompletionStatus.Completed));
       }
 
       return true;
@@ -275,6 +298,7 @@ export default mixins(caseFileDetail).extend({
     await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
     this.isEditMode || this.isAddMode ? await this.searchTables() : await this.fetchTable();
     await this.fetchProgram(this.financialTables[0].programId, this.caseFile.entity.eventId);
+
     this.loading = false;
     this.warnIfInvalid();
   },
@@ -359,6 +383,12 @@ export default mixins(caseFileDetail).extend({
 
         const combinedProgram = await this.$storage.program.actions.fetch({ id: selectedProgramId, eventId: this.caseFile.entity.eventId });
         this.selectedProgram = combinedProgram.entity;
+
+        if (this.selectedProgram?.eligibilityCriteria?.completedAssessments) {
+          await this.fetchAssessmentResponseByCaseFileId(this.caseFileId);
+          await this.fetchAssessmentFormByProgramId(this.selectedProgram.id);
+        }
+
         if (originalProgram) {
           this.makePaymentName();
         }
@@ -524,6 +554,27 @@ export default mixins(caseFileDetail).extend({
 
     async fetchProgram(programId: string, eventId: string) {
       this.program = await this.$storage.program.actions.fetch({ id: programId, eventId });
+    },
+
+    async fetchAssessmentFormByProgramId(programId: string) {
+      this.programAssessmentForms = await this.$storage.assessmentForm.actions.fetchByProgramId(programId);
+    },
+
+    async fetchAssessmentResponseByCaseFileId(caseFileId: string) {
+      const caseFileFilter = {
+        'Entity/Association/Id': caseFileId,
+        'Entity/Association/Type': AssociationType.CaseFile,
+      };
+
+      const res = await this.$storage.assessmentResponse.actions.search({
+        filter: caseFileFilter,
+        top: 999,
+        queryType: 'full',
+        searchMode: 'all',
+      }, null, true);
+
+      this.caseFileAssessmentResponses = this.$storage.assessmentResponse.getters.getByIds(res.ids)
+        .map((combined: IEntityCombined<IAssessmentResponseEntity, IAssessmentResponseMetadata>) => (combined.entity));
     },
   },
 });

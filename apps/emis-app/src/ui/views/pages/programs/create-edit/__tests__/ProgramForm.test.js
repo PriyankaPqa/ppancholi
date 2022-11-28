@@ -127,6 +127,21 @@ describe('ProgramForm.vue', () => {
   });
 
   describe('created', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          isEditMode: false,
+          program: new ProgramEntity(),
+          isNameUnique: true,
+          isDirty: false,
+        },
+        mocks: {
+          $storage: storage,
+        },
+      });
+    });
+
     it('calls method to fetch and set assessment forms when is editing', async () => {
       await wrapper.setProps({
         isEditMode: true,

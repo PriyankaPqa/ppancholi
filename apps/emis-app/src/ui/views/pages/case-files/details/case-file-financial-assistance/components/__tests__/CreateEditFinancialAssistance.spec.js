@@ -19,6 +19,14 @@ import {
   ValidationOfImpactStatus,
   mockCombinedCaseFiles,
 } from '@libs/entities-lib/case-file';
+import {
+  mockAssessmentFormEntity,
+  mockAssessmentResponseEntity,
+  mockAssessmentResponseEntities,
+  AssociationType,
+  CompletionStatus,
+} from '@libs/entities-lib/assessment-template';
+
 import { format } from 'date-fns';
 
 import { Status } from '@libs/entities-lib/base';
@@ -96,6 +104,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
     storage.caseFile.actions.fetch = jest.fn(() => caseFileCombined);
     storage.financialAssistance.getters.items = jest.fn(() => items);
     storage.financialAssistanceCategory.getters.getAll = jest.fn(() => optionItems);
+    storage.assessmentResponse.actions.search = jest.fn(() => mockAssessmentResponseEntities());
 
     await mountWrapper();
   });
@@ -355,6 +364,9 @@ describe('CreateEditFinancialAssistance.vue', () => {
             isImpacted() {
               return true;
             },
+            hasCompletedAssessments() {
+              return true;
+            },
           },
         });
 
@@ -373,23 +385,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
             isImpacted() {
               return false;
             },
-          },
-        });
-
-        expect(wrapper.vm.showWarning).toBe(true);
-      });
-
-      it('return true if both condition is not meet', async () => {
-        await mountWrapper(false, 'edit', 6, '', {
-          computed: {
-            caseFile() {
-              return caseFileCombined;
-            },
-            isAuthenticated() {
-              return false;
-            },
-            isImpacted() {
-              return false;
+            hasCompletedAssessments() {
+              return true;
             },
           },
         });
@@ -397,7 +394,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.showWarning).toBe(true);
       });
 
-      it('return false if both conditions are meet', async () => {
+      it('return true if any condition is not meet', async () => {
         await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
@@ -407,6 +404,51 @@ describe('CreateEditFinancialAssistance.vue', () => {
               return true;
             },
             isImpacted() {
+              return true;
+            },
+            hasCompletedAssessments() {
+              return false;
+            },
+          },
+        });
+
+        expect(wrapper.vm.showWarning).toBe(true);
+      });
+
+      it('return true if all conditions are not meet', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
+          computed: {
+            caseFile() {
+              return caseFileCombined;
+            },
+            isAuthenticated() {
+              return false;
+            },
+            isImpacted() {
+              return false;
+            },
+            hasCompletedAssessments() {
+              return false;
+            },
+          },
+        });
+
+        expect(wrapper.vm.showWarning).toBe(true);
+      });
+
+      it('return false if all conditions are meet', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
+          computed: {
+            caseFile() {
+              return caseFileCombined;
+            },
+            isAuthenticated() {
+              return true;
+            },
+            isImpacted() {
+              return true;
+            },
+            hasCompletedAssessments() {
               return true;
             },
           },
@@ -422,6 +464,9 @@ describe('CreateEditFinancialAssistance.vue', () => {
               return false;
             },
             isImpacted() {
+              return true;
+            },
+            hasCompletedAssessments() {
               return true;
             },
           },
@@ -443,6 +488,9 @@ describe('CreateEditFinancialAssistance.vue', () => {
               return false;
             },
             isImpacted() {
+              return true;
+            },
+            hasCompletedAssessments() {
               return true;
             },
           },
@@ -590,6 +638,85 @@ describe('CreateEditFinancialAssistance.vue', () => {
       });
     });
 
+    describe('hasCompletedAssessments', () => {
+      it('should return true if there is no selectedProgram selected', () => {
+        wrapper.vm.selectedProgram = null;
+        expect(wrapper.vm.hasCompletedAssessments).toBe(true);
+      });
+
+      it('should return true if the program doesnt require to have completed assessments', () => {
+        wrapper.vm.selectedProgram = program;
+        wrapper.vm.selectedProgram.eligibilityCriteria.completedAssessments = false;
+        expect(wrapper.vm.hasCompletedAssessments).toBe(true);
+      });
+
+      it('should return true if program requires to have completed assessments and user has completed the required assessments', async () => {
+        await wrapper.setData({
+          programAssessmentForms: [
+            {
+              ...mockAssessmentFormEntity,
+              id: 'assessmentId1',
+            },
+            {
+              ...mockAssessmentFormEntity,
+              id: 'assessmentId2',
+            },
+          ],
+          caseFileAssessmentResponses: [
+            {
+              ...mockAssessmentResponseEntity,
+              assessmentFormId: 'assessmentId1',
+              completionStatus: CompletionStatus.Completed,
+            },
+            {
+              ...mockAssessmentResponseEntity,
+              assessmentFormId: 'assessmentId2',
+              completionStatus: CompletionStatus.Completed,
+            },
+          ],
+        });
+
+        wrapper.vm.selectedProgram = program;
+        wrapper.vm.selectedProgram.eligibilityCriteria.completedAssessments = true;
+        wrapper.vm.selectedProgram.eligibilityCriteria.completedAssessmentIds = ['assessmentId1', 'assessmentId2'];
+
+        expect(wrapper.vm.hasCompletedAssessments).toBe(true);
+      });
+
+      it('should return false if program requires to have completed assessments and user has not completed the required assessments', async () => {
+        await wrapper.setData({
+          programAssessmentForms: [
+            {
+              ...mockAssessmentFormEntity,
+              id: 'assessmentId1',
+            },
+            {
+              ...mockAssessmentFormEntity,
+              id: 'assessmentId2',
+            },
+          ],
+          caseFileAssessmentResponses: [
+            {
+              ...mockAssessmentResponseEntity,
+              assessmentFormId: 'assessmentId1',
+              completionStatus: CompletionStatus.Completed,
+            },
+            {
+              ...mockAssessmentResponseEntity,
+              assessmentFormId: 'assessmentId2',
+              completionStatus: CompletionStatus.Partial,
+            },
+          ],
+        });
+
+        wrapper.vm.selectedProgram = program;
+        wrapper.vm.selectedProgram.eligibilityCriteria.completedAssessments = true;
+        wrapper.vm.selectedProgram.eligibilityCriteria.completedAssessmentIds = ['assessmentId1', 'assessmentId2'];
+
+        expect(wrapper.vm.hasCompletedAssessments).toBe(false);
+      });
+    });
+
     describe('isDisabled', () => {
       it('returns true or false if the create should be disabled', () => {
         wrapper.vm.financialAssistance = new FinancialAssistancePaymentEntity(caseFileFinancialAssistance);
@@ -629,6 +756,36 @@ describe('CreateEditFinancialAssistance.vue', () => {
       it('fetches financial table by id', async () => {
         await wrapper.vm.fetchTable();
         expect(storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(caseFileFinancialAssistance.financialAssistanceTableId);
+      });
+    });
+
+    describe('fetchProgram', () => {
+      it('fetches program program by id', async () => {
+        await wrapper.vm.fetchProgram('programId', 'eventId');
+        expect(storage.program.actions.fetch).toHaveBeenCalledWith({ id: 'programId', eventId: 'eventId' });
+      });
+    });
+
+    describe('fetchAssessmentFormByProgramId', () => {
+      it('fetches assessment forms by program id', async () => {
+        await wrapper.vm.fetchAssessmentFormByProgramId('programId');
+        expect(storage.assessmentForm.actions.fetchByProgramId).toHaveBeenCalledWith('programId');
+      });
+    });
+
+    describe('fetchAssessmentResponseByCaseFileId', () => {
+      it('searches storage', async () => {
+        await mountWrapper();
+        await wrapper.vm.fetchAssessmentResponseByCaseFileId('caseFileId');
+        expect(storage.assessmentResponse.actions.search).toHaveBeenCalledWith({
+          filter: {
+            'Entity/Association/Id': 'caseFileId',
+            'Entity/Association/Type': AssociationType.CaseFile,
+          },
+          top: 999,
+          queryType: 'full',
+          searchMode: 'all',
+        }, null, true);
       });
     });
 
@@ -695,6 +852,40 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await wrapper.setData({ selectedProgram: program });
         await wrapper.vm.updateSelectedProgram(financialAssistance);
         expect(wrapper.vm.makePaymentName).toBeCalledTimes(1);
+      });
+
+      it('calls fetchAssessmentResponseByCaseFileId if completedAssessments eligibility criteria is needed', async () => {
+        program.eligibilityCriteria.completedAssessments = true;
+        const combinedProgram = {
+          entity: program,
+        };
+
+        jest.clearAllMocks();
+        storage.program.actions.fetch = jest.fn(() => combinedProgram);
+        await mountWrapper();
+        wrapper.vm.fetchAssessmentResponseByCaseFileId = jest.fn();
+
+        await wrapper.vm.updateSelectedProgram(financialAssistance);
+
+        expect(wrapper.vm.fetchAssessmentResponseByCaseFileId).toBeCalledTimes(1);
+        expect(wrapper.vm.fetchAssessmentResponseByCaseFileId).toHaveBeenCalledWith(wrapper.vm.caseFileId);
+      });
+
+      it('calls fetchAssessmentFormByProgramId if completedAssessments eligibility criteria is needed', async () => {
+        program.eligibilityCriteria.completedAssessments = true;
+        const combinedProgram = {
+          entity: program,
+        };
+
+        jest.clearAllMocks();
+        storage.program.actions.fetch = jest.fn(() => combinedProgram);
+        await mountWrapper();
+        wrapper.vm.fetchAssessmentFormByProgramId = jest.fn();
+
+        await wrapper.vm.updateSelectedProgram(financialAssistance);
+
+        expect(wrapper.vm.fetchAssessmentFormByProgramId).toBeCalledTimes(1);
+        expect(wrapper.vm.fetchAssessmentFormByProgramId).toHaveBeenCalledWith(wrapper.vm.selectedProgram.id);
       });
     });
 
