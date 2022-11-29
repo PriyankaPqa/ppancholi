@@ -17,7 +17,6 @@ const store = mockStore({
       state: {
         caseNoteCategories: mockCaseNoteCategories(),
         isSavingCaseNote: false,
-        isLoadingCaseNotes: false,
       },
     },
   },

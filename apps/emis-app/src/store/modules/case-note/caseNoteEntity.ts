@@ -28,7 +28,6 @@ export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
     ...this.baseState,
     caseNoteCategories: [] as IOptionItem[],
     isSavingCaseNote: false,
-    isLoadingCaseNotes: false,
     caseNoteCategoriesFetched: false,
   };
 
@@ -54,10 +53,6 @@ export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
     setIsSavingCaseNote(state: ICaseNoteEntityState, payload: boolean) {
       state.isSavingCaseNote = payload;
     },
-
-    setIsLoadingCaseNotes(state: ICaseNoteEntityState, payload: boolean) {
-      state.isLoadingCaseNotes = payload;
-    },
   };
 
   public actions = {
@@ -65,9 +60,7 @@ export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
 
     fetchCaseNoteCategories: async (context:ActionContext<ICaseNoteEntityState, ICaseNoteEntityState>): Promise<IOptionItem[]> => {
       if (!context.state.caseNoteCategoriesFetched) {
-        context.commit('setIsLoadingCaseNotes', true);
         const results = await this.optionItemService.getOptionList(EOptionLists.CaseNoteCategories);
-        context.commit('setIsLoadingCaseNotes', false);
         const categories = results ?? [];
         context.commit('setCaseNoteCategories', categories);
         context.commit('setCaseNoteCategoriesFetched', true);
@@ -91,12 +84,12 @@ export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
       context:ActionContext<ICaseNoteEntityState, ICaseNoteEntityState>,
       payload: { caseFileId: uuid; caseNoteId: uuid, isPinned: boolean },
     ): Promise<ICaseNoteEntity> => {
-      context.commit('setIsLoadingCaseNotes', true);
+      context.commit('setIsSavingCaseNote', true);
       const result = await this.service.pinCaseNote(payload.caseFileId, payload.caseNoteId, payload.isPinned);
       if (result) {
         context.commit('set', result);
       }
-      context.commit('setIsLoadingCaseNotes', false);
+      context.commit('setIsSavingCaseNote', false);
       return result;
     },
 

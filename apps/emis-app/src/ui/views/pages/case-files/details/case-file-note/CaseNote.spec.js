@@ -227,7 +227,10 @@ describe('CaseNote.vue', () => {
     });
 
     describe('title', () => {
-      it('should return proper data', async () => {
+      it('should return proper data', () => {
+        wrapper.vm.$store.state.caseNoteEntities.searchLoading = true;
+        expect(wrapper.vm.title).toEqual('caseNote.caseNotes (...)');
+        wrapper.vm.$store.state.caseNoteEntities.searchLoading = false;
         wrapper.vm.itemsCount = 99;
         expect(wrapper.vm.title).toEqual('caseNote.caseNotes (99)');
       });
@@ -255,10 +258,10 @@ describe('CaseNote.vue', () => {
 
     describe('loading', () => {
       it('should be linked to proper state', () => {
-        wrapper.vm.$store.state.caseNoteEntities.isLoadingCaseNotes = true;
+        wrapper.vm.$store.state.caseNoteEntities.searchLoading = true;
         expect(wrapper.vm.loading).toEqual(true);
 
-        wrapper.vm.$store.state.caseNoteEntities.isLoadingCaseNotes = false;
+        wrapper.vm.$store.state.caseNoteEntities.searchLoading = false;
         expect(wrapper.vm.loading).toEqual(false);
       });
     });

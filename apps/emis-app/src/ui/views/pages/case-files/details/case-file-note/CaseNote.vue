@@ -130,7 +130,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     title(): string {
-      return `${this.$t('caseNote.caseNotes')} (${this.itemsCount})`;
+      return `${this.$t('caseNote.caseNotes')} (${this.loading ? '...' : this.itemsCount})`;
     },
 
     filterOptions(): Array<IFilterSettings> {
@@ -150,7 +150,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     loading(): boolean {
-      return this.$store.state.caseNoteEntities.isLoadingCaseNotes;
+      return this.$store.state.caseNoteEntities.searchLoading;
     },
 
     titleLeave(): TranslateResult {

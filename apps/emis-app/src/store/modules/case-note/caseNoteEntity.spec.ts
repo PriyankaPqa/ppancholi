@@ -64,14 +64,6 @@ describe('Case file entity module', () => {
         expect(myModule.state.isSavingCaseNote).toBe(true);
       });
     });
-
-    describe('setIsLoadingCaseNotes', () => {
-      test('the setIsLoadingCaseNotes mutation sets the isLoadingCaseNotes state', () => {
-        expect(myModule.state.isLoadingCaseNotes).toBe(false);
-        myModule.mutations.setIsLoadingCaseNotes(myModule.state, true);
-        expect(myModule.state.isLoadingCaseNotes).toBe(true);
-      });
-    });
   });
 
   describe('actions', () => {
