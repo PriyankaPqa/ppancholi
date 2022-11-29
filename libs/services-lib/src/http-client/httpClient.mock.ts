@@ -21,6 +21,7 @@ export const mockHttp = (): IHttpMock => ({
   setHeadersTenant: jest.fn(),
   getTenant: jest.fn(() => 'tenantId'),
   getFormattedError: jest.fn(),
+  getRestResponseAsFile: jest.fn(() => 'myUrl'),
 });
 
 export const mockHttpErrorResponse = (data: unknown, statusCode: number) => ({

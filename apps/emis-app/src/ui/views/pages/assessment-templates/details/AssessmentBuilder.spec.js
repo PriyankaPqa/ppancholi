@@ -1,5 +1,6 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
+import { SurveyJsTextExtractor } from '@libs/shared-lib/plugins/surveyJs/SurveyJsTextExtractor';
 import flushPromises from 'flush-promises';
 import Component from './AssessmentBuilder.vue';
 
@@ -9,9 +10,9 @@ const localVue = createLocalVue();
 describe('AssessmentBuilder', () => {
   let wrapper;
 
-  const mount = async (eventId = 'mock-event-id') => {
+  const mountWrapper = async (fullMount = false, eventId = 'mock-event-id') => {
     jest.clearAllMocks();
-    wrapper = shallowMount(Component, {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       propsData: {
         testMode: true,
@@ -33,7 +34,7 @@ describe('AssessmentBuilder', () => {
   beforeEach(async () => {
     storage = mockStorage();
     storage.tenantSettings.getters.logoUrl = jest.fn((lang) => `some url ${lang}`);
-    await mount();
+    await mountWrapper();
   });
 
   describe('Lifecycle', () => {
@@ -48,7 +49,7 @@ describe('AssessmentBuilder', () => {
       });
       it('sets creator with default value when no existing data', async () => {
         storage.assessmentForm.actions.fetch = jest.fn(() => null);
-        await mount();
+        await mountWrapper();
         expect(wrapper.vm.creator).not.toBeNull();
         expect(JSON.stringify(JSON.parse(wrapper.vm.creator.text))).toBe(JSON.stringify(JSON.parse(wrapper.vm.getDefaultJson())));
       });
@@ -56,8 +57,9 @@ describe('AssessmentBuilder', () => {
         expect(wrapper.vm.creator).not.toBeNull();
         expect(JSON.stringify(JSON.parse(wrapper.vm.creator.text))).toBe(JSON.stringify(JSON.parse(wrapper.vm.assessmentTemplate.externalToolState?.data?.rawJson)));
       });
-      it('sets save function', () => {
+      it('sets save and export function', () => {
         expect(wrapper.vm.creator.saveSurveyFunc).toBe(wrapper.vm.saveSurveyJson);
+        expect(wrapper.vm.creator.onExtractSurvey.length).toBe(1);
       });
       it('sets color scheme', async () => {
         jest.clearAllMocks();
@@ -135,6 +137,26 @@ describe('AssessmentBuilder', () => {
           "logoPosition": "right",
           "clearInvisibleValues": "onHiddenContainer"
           }`)));
+      });
+    });
+
+    describe('extract', () => {
+      it('calls the endpoint with the html', async () => {
+        const extractFct = jest.fn(() => ({
+          type: 'survey',
+          identifier: 'survey',
+          title: 'title',
+          description: 'description',
+          elements: [],
+        }));
+        SurveyJsTextExtractor.prototype.extractAllText = extractFct;
+        const backup = document.getElementById;
+        document.getElementById = jest.fn(() => ({ innerHTML: 'htmlcontent' }));
+        await wrapper.vm.extract();
+        expect(wrapper.vm.$services.assessmentForms.htmlToWord).toHaveBeenCalledWith('<html>htmlcontent</html>', 'title.docx');
+        expect(extractFct).toHaveBeenCalledWith(wrapper.vm.creator.survey.toJSON());
+        expect(wrapper.vm.extractedData).toEqual(extractFct());
+        document.getElementById = backup;
       });
     });
   });

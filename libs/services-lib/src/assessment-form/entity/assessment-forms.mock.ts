@@ -9,4 +9,5 @@ export const mockAssessmentFormsService = (): IAssessmentFormsServiceMock => ({
   update: jest.fn(() => mockAssessmentFormEntity()),
   updateAssessmentStructure: jest.fn(() => mockAssessmentFormEntity()),
   fetchByProgramId: jest.fn(() => [mockAssessmentFormEntity()]),
+  htmlToWord: jest.fn(() => 'url'),
 });

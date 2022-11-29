@@ -11,1109 +11,9 @@ import {
 import { SurveyCreator } from 'survey-creator-knockout';
 import Vue from 'vue';
 import { SurveyJsHelper } from './SurveyJsHelper';
+import { surveyData } from './SurveyJs.specdata';
 
 let helper = new SurveyJsHelper();
-
-const textQuestion = JSON.stringify({
-  logo: {
-    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
-    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'text',
-          name: 'question1',
-          title: {
-            default: 'Text eng',
-            fr: 'Text fr',
-          },
-          score: 1,
-        },
-      ],
-    },
-  ],
-});
-
-const textAnswers = {
-  question1: 'test text',
-};
-
-const checkboxQuestion = JSON.stringify({
-  logo: {
-    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
-    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'checkbox',
-          name: 'question1',
-          title: {
-            default: 'Text eng',
-            fr: 'Text fr',
-          },
-          choices: [
-            {
-              value: 'item1',
-              text: {
-                default: 'item 1 en',
-                fr: 'item 1 fr',
-              },
-              score: 1,
-            },
-            {
-              value: 'item2',
-              text: {
-                default: 'item 2 en',
-                fr: 'item 2 fr',
-              },
-              score: 2,
-            },
-            'item3',
-          ],
-          hasOther: true,
-          hasNone: true,
-          otherText: {
-            default: 'Other (describe) en',
-            fr: 'other fr',
-          },
-        },
-      ],
-    },
-  ],
-});
-
-const checkboxAnswers = {
-  question1: [
-    'other',
-    'item2',
-  ],
-  'question1-Comment': 'test',
-};
-
-const checkboxAnswersNoComment = {
-  question1: [
-    'other',
-    'item2',
-  ],
-};
-
-const checkboxAnswersNone = {
-  question1: [
-    'none',
-  ],
-};
-
-const radiogroupQuestion = JSON.stringify({
-  logo: {
-    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
-    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'radiogroup',
-          name: 'question1',
-          title: {
-            default: 'Text eng',
-            fr: 'Text fr',
-          },
-          choices: [
-            {
-              value: 'item1',
-              text: {
-                default: 'item 1 en',
-                fr: 'item 1 fr',
-              },
-              score: 1,
-            },
-            {
-              value: 'item2',
-              text: {
-                default: 'item 2 en',
-                fr: 'item 2 fr',
-              },
-              score: 2,
-            },
-            'item3',
-          ],
-          hasOther: true,
-          hasNone: true,
-        },
-      ],
-    },
-  ],
-});
-
-const radiogroupAnswers = {
-  question1: 'other',
-  'question1-Comment': 'test',
-};
-
-const dropdownQuestion = JSON.stringify({
-  logo: {
-    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
-    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'dropdown',
-          name: 'question1',
-          title: {
-            default: 'Text eng',
-            fr: 'Text fr',
-          },
-          hasComment: true,
-          commentText: {
-            default: 'zzz',
-            fr: 'xxx',
-          },
-          choices: [
-            {
-              value: 'item1',
-              text: {
-                default: 'item 1 en',
-                fr: 'item 1 fr',
-              },
-              score: 1,
-            },
-            {
-              value: 'item2',
-              text: {
-                default: 'item 2 en',
-                fr: 'item 2 fr',
-              },
-              score: 2,
-            },
-            'item3',
-          ],
-          hasNone: true,
-          noneText: 'Nonez',
-          choicesMin: 1,
-          choicesMax: 5,
-          choicesStep: 2,
-        },
-      ],
-    },
-  ],
-});
-
-const dropdownAnswer = {
-  question1: 1,
-  'question1-Comment': 'zzzzzz',
-};
-
-const commentQuestion = JSON.stringify({
-  logo: {
-    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
-    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'comment',
-          name: 'question1',
-        },
-      ],
-    },
-  ],
-});
-
-const commentAnswer = {
-  question1: 'fdgdfg\nfdfkdjhgkf\n\n\nfdgdfgdf',
-};
-
-const booleanQuestion = JSON.stringify({
-  logo: {
-    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
-    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'boolean',
-          name: 'question1',
-          title: {
-            default: 'dddd',
-            fr: 'xxx',
-          },
-          scoreTrue: 1,
-          scoreFalse: 2,
-          labelTrue: {
-            default: 'why yes',
-            fr: 'ouiii',
-          },
-          valueTrue: '123',
-        },
-      ],
-    },
-  ],
-});
-
-const booleanAnswer = {
-  question1: '123',
-};
-
-const booleanAnswerNo = {
-  question1: false,
-};
-
-const yesnoQuestion = JSON.stringify({
-  logo: {
-    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
-    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'yes-no',
-          name: 'question1',
-          title: {
-            default: 'dddd',
-            fr: 'xxx',
-          },
-          scoreFalse: 12,
-          scoreTrue: -5,
-        },
-      ],
-    },
-  ],
-});
-
-const yesnoAnswer = {
-  question1: 'yes',
-};
-
-const yesnoAnswerNo = {
-  question1: 'no',
-};
-
-const htmlQuestion = JSON.stringify({
-  logo: {
-    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
-    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'html',
-          name: 'question1',
-          title: {
-            default: 'dddd',
-            fr: 'xxx',
-          },
-          html: 'hello',
-        },
-      ],
-    },
-  ],
-});
-
-const htmlAnswer = {};
-
-const imageQuestion = JSON.stringify({
-  logo: {
-    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
-    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'image',
-          name: 'question4',
-          imageLink: 'https://surveyjs.io/Content/Images/examples/image-picker/lion.jpg',
-        },
-      ],
-    },
-  ],
-});
-
-const imageAnswer = {};
-
-const multipleTextQuestion = JSON.stringify({
-  logo: {
-    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
-    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'multipletext',
-          name: 'question1',
-          title: {
-            default: 'dddd',
-            fr: 'xxx',
-          },
-          items: [
-            {
-              name: 'sub q 1',
-              title: {
-                default: 'sub q 1 text',
-                fr: 'sub q1 fr',
-              },
-            },
-            {
-              name: 'text2',
-              title: 'sub q 2 text',
-            },
-          ],
-        },
-      ],
-    },
-  ],
-});
-
-const multipleTextAnswer = {
-  question1: {
-    'sub q 1': 'sub answer 1',
-    text2: 'sub answer 2',
-  },
-};
-
-const matrixQuestion = JSON.stringify({
-  logo: {
-    default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
-    fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'matrix',
-          name: 'question1',
-          title: {
-            default: 'dddd',
-            fr: 'xxx',
-          },
-          columns: [
-            {
-              value: 'answer 1',
-              text: {
-                default: '1 en',
-                fr: '1 fr',
-              },
-              score: 10,
-            },
-            {
-              value: 'answer 2',
-              text: '2 en',
-              score: 20,
-            },
-            'Column 3',
-          ],
-          rows: [
-            {
-              value: 'sub q 1',
-              text: {
-                default: 'en',
-                fr: 'fr',
-              },
-              score: 1,
-            },
-            'Row 2',
-            'Row 3',
-          ],
-        },
-      ],
-    },
-  ],
-});
-
-const matrixAnswer = {
-  question1: {
-    'sub q 1': 'answer 1',
-    'Row 2': 'Column 3',
-    'Row 3': 'answer 1',
-  },
-};
-
-const matrixDropdownQuestion = JSON.stringify({
-  logo: {
-    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'matrixdropdown',
-          name: 'question3',
-          columns: [
-            {
-              name: 'Column 1',
-              title: {
-                default: 'col 1 en',
-                fr: 'col 1 fr',
-              },
-            },
-            {
-              name: 'Column 2',
-              cellType: 'dropdown',
-              choices: [
-                {
-                  value: 1,
-                  text: {
-                    fr: 'hello',
-                    default: 'hello en',
-                  },
-                },
-                {
-                  value: 2,
-                  score: 5,
-                },
-                3,
-              ],
-              hasOther: true,
-              otherText: {
-                default: 'Other (describe)zzz',
-                fr: 'autre',
-              },
-              storeOthersAsComment: true,
-            },
-            {
-              name: 'col3',
-              title: {
-                fr: 'col 3 fr',
-              },
-            },
-          ],
-          choices: [
-            {
-              value: 1,
-              text: {
-                default: 'val 1 en',
-                fr: 'val fr',
-              },
-              score: 5,
-            },
-            2,
-            {
-              value: 'Yep',
-              score: 7,
-            },
-            4,
-            'nope',
-          ],
-          rows: [
-            {
-              value: 'Row 1',
-              text: 'lig 1 en',
-              score: 10,
-            },
-            {
-              value: 'Row 2',
-              text: {
-                fr: 'ligne 2',
-              },
-              score: 20,
-            },
-            'Row 3',
-          ],
-        },
-      ],
-    },
-  ],
-});
-
-const matrixDropdownAnswers = {
-  question3: {
-    'Row 1': {
-      'Column 1': 1,
-      'Column 2': 'other',
-      'Column 2-Comment': 'fdgdfg',
-      col3: 1,
-    },
-    'Row 2': {
-      'Column 2-Comment': 'cvbc',
-      'Column 1': 2,
-      'Column 2': 'other',
-      col3: 'Yep',
-    },
-    'Row 3': {
-      'Column 2-Comment': 'hfghfghf',
-      'Column 1': 'Yep',
-      'Column 2': 'other',
-      col3: 2,
-    },
-  },
-};
-
-const matrixDropdownSomeAnswers = {
-  question3: {
-    'Row 1': {
-      'Column 2-Comment': 'etst',
-      'Column 1': 2,
-      'Column 2': 'other',
-      col3: 2,
-    },
-    'Row 2': {
-      'Column 2': 3,
-    },
-    'Row 3': {
-      'Column 1': 'Yep',
-      col3: 'nope',
-    },
-  },
-};
-
-const ratingQuestion = JSON.stringify({
-  logo: {
-    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [{
-        type: 'rating',
-        name: 'question5',
-        title: 'rating with range',
-        hasComment: true,
-        rateMax: 3,
-      },
-      ],
-    },
-  ],
-});
-
-const ratingQuestionWithStep = JSON.stringify({
-  logo: {
-    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [{
-        type: 'rating',
-        name: 'question5',
-        title: 'rating with range',
-        hasComment: true,
-        rateMin: 2,
-        rateMax: 9,
-        rateStep: 2,
-      },
-      ],
-    },
-  ],
-});
-
-const ratingAnswer = {
-  question5: 2,
-  'question5-Comment': 'desc',
-};
-
-const ratingQuestionWithChoices = JSON.stringify({
-  logo: {
-    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [{
-        type: 'rating',
-        name: 'question7',
-        title: {
-          default: 'rating with choices',
-          fr: 'avec choix',
-        },
-        rateValues: [
-          {
-            value: 'item1',
-            score: 123,
-          },
-          {
-            value: 'item2',
-            text: {
-              default: 'snd',
-              fr: '2e',
-            },
-            score: 456,
-          },
-          {
-            value: 'item3',
-            text: 'trd',
-            score: 4,
-          },
-        ],
-      },
-      ],
-    },
-  ],
-});
-
-const ratingAnswerWithChoices = {
-  question7: 'item2',
-};
-
-const panelQuestion = JSON.stringify({
-  logo: {
-    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'panel',
-          name: 'panel1',
-          elements: [
-            {
-              type: 'rating',
-              name: 'question5',
-              title: 'rating with range',
-              rateMin: 2,
-              rateMax: 9,
-              rateStep: 2,
-            },
-          ],
-          title: 'hello',
-        },
-      ],
-    },
-  ],
-});
-
-const complexJson = JSON.stringify({
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'matrix',
-          name: 'Quality',
-          title: {
-            default: 'Please indicate if you agree or disagree with the following statements',
-            fr: 'Veuillez indiquer si vous êtes en accord ou en désaccord avec',
-          },
-          columns: [
-            {
-              value: 1,
-              text: {
-                default: 'Strongly Disagree',
-                fr: 'Très en désaccord',
-              },
-            },
-            {
-              value: 2,
-              text: {
-                default: 'Disagree',
-                fr: 'En désaccord',
-              },
-            },
-            {
-              value: 3,
-              text: {
-                default: 'Neutral',
-                fr: 'Neutre',
-              },
-            },
-            {
-              value: 4,
-              text: {
-                default: 'Agree',
-                fr: 'En accord',
-              },
-              score: 10,
-            },
-            {
-              value: 5,
-              text: {
-                default: 'Strongly Agree',
-                fr: 'Très en accord',
-              },
-            },
-          ],
-          rows: [
-            {
-              value: 'affordable',
-              text: {
-                default: 'Product is affordable',
-                fr: 'Le produit est pas trop cher',
-              },
-            },
-            {
-              value: 'does what it claims',
-              text: {
-                default: 'Product does what it claims',
-                fr: "Le produit fait ce qu'il doit faire",
-              },
-            },
-            {
-              value: 'better then others',
-              text: 'Product is better than other products on the market',
-            },
-            {
-              value: 'easy to use',
-              text: 'Product is easy to use',
-            },
-          ],
-        },
-        {
-          type: 'rating',
-          name: 'satisfaction',
-          title: {
-            default: 'How satisfied are you with the Product?',
-            fr: 'Comment êtes vous satisfaits',
-          },
-          isRequired: true,
-          rateValues: [
-            {
-              value: '1',
-              text: 'val 1',
-              score: 10,
-            },
-            {
-              value: '2',
-              text: 'val 2',
-              score: '2',
-            },
-            {
-              value: '3',
-              text: 'val 3',
-              score: '3',
-            },
-          ],
-          minRateDescription: {
-            default: 'Not Satisfied',
-            fr: 'Pas satisfait',
-          },
-          maxRateDescription: 'Completely satisfied',
-        },
-        {
-          type: 'rating',
-          name: 'recommend friends',
-          visibleIf: '{satisfaction} > 2',
-          title: 'How likely are you to recommend the Product to a friend or co-worker?',
-          minRateDescription: 'Will not recommend',
-          maxRateDescription: 'I will recommend',
-        },
-        {
-          type: 'comment',
-          name: 'suggestions',
-          title: 'What would make you more satisfied with the Product?',
-        },
-      ],
-    },
-    {
-      name: 'page2',
-      elements: [
-        {
-          type: 'radiogroup',
-          name: 'price to competitors',
-          title: 'Compared to our competitors, do you feel the Product is',
-          choices: [
-            'Less expensive',
-            'Priced about the same',
-            'More expensive',
-            'Not sure',
-          ],
-        },
-        {
-          type: 'radiogroup',
-          name: 'price',
-          title: 'Do you feel our current price is merited by our product?',
-          choices: [
-            {
-              value: 'correct',
-              text: 'Yes, the price is about right',
-              score: 10,
-            },
-            {
-              value: 'low',
-              text: 'No, the price is too low for your product',
-              score: 5,
-            },
-            {
-              value: 'high',
-              text: 'No, the price is too high for your product',
-            },
-          ],
-        },
-        {
-          type: 'multipletext',
-          name: 'pricelimit',
-          title: {
-            default: 'What is the... ',
-            fr: 'Quel est le',
-          },
-          items: [
-            {
-              name: 'mostamount',
-              title: {
-                default: 'Most amount you would every pay for a product like ours',
-                fr: 'Plus cher que vous paieriez',
-              },
-            },
-            {
-              name: 'leastamount',
-              title: 'The least amount you would feel comfortable paying',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: 'page3',
-      elements: [
-        {
-          type: 'text',
-          name: 'email',
-          // eslint-disable-next-line vue/max-len
-          title: "Thank you for taking our survey. Your survey is almost complete, please enter your email address in the box below if you wish to participate in our drawing, then press the 'Submit' button.",
-        },
-      ],
-    },
-  ],
-});
-
-const complexJsonAnswers = {
-  Quality: {
-    affordable: 1,
-    'does what it claims': 2,
-    'better then others': 3,
-    'easy to use': 5,
-  },
-  satisfaction: '3',
-  'recommend friends': 4,
-  suggestions: 'tests',
-  'price to competitors': 'Priced about the same',
-  price: 'low',
-  pricelimit: {
-    mostamount: '124.34',
-    leastamount: '1223$',
-  },
-  email: 'mmmm@mail.com',
-};
-
-const dynamicPanelQuestion = JSON.stringify({
-  logo: {
-    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [
-        {
-          type: 'text',
-          name: 'your name',
-          title: 'your name',
-        },
-        {
-          type: 'paneldynamic',
-          name: 'additional member panel',
-          title: {
-            default: 'Add additional members',
-            fr: 'Ajouter membres',
-          },
-          templateElements: [
-            {
-              type: 'text',
-              name: 'additional member fname',
-              title: {
-                default: 'first name',
-                fr: 'Prénom',
-              },
-            },
-            {
-              type: 'text',
-              name: 'additional member lname',
-              title: {
-                default: 'last name',
-                fr: 'Nom de famille',
-              },
-            },
-            {
-              type: 'paneldynamic',
-              name: 'complaint panel',
-              title: {
-                default: 'every complaint that person has',
-                fr: 'Chaque plainte',
-              },
-              templateElements: [
-                {
-                  type: 'comment',
-                  name: 'describe the issue',
-                  title: {
-                    default: 'describe the issue',
-                    fr: 'décrire',
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ],
-  clearInvisibleValues: 'onHiddenContainer',
-});
-
-const dynamicPanelAnswers = {
-  'your name': 'test',
-  'additional member panel': [
-    {
-      'additional member fname': 'Marc-Andre',
-      'additional member lname': 'Deschenes',
-      'complaint panel': [
-        {
-          'describe the issue': 'issue 1\ndescription',
-        },
-        {
-          'describe the issue': 'issue 2 desc',
-        },
-      ],
-    },
-    {
-      'additional member fname': 'Dana',
-      'additional member lname': 'Melania',
-      'complaint panel': [
-        {
-          'describe the issue': 'Complain 1 dana',
-        },
-      ],
-    },
-    {
-      'additional member lname': 'last',
-    },
-  ],
-};
-
-const matrixdynamicQuestion = JSON.stringify({
-  logo: {
-    default: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
-    fr: 'https://api-lab.crc-tech.ca/system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
-  },
-  logoPosition: 'right',
-  pages: [
-    {
-      name: 'page1',
-      elements: [{
-        type: 'matrixdynamic',
-        name: 'relativeillness',
-        title: 'Describe the illness or condition.',
-        columns: [{
-          name: 'illness',
-          title: 'Illness/Condition',
-          cellType: 'dropdown',
-          isRequired: true,
-          choices: [
-            {
-              value: 'Heart Disease',
-              text: {
-                fr: 'Maladie du coeur',
-              },
-            }, {
-              value: 'Diabetes',
-              text: 'Diabetes type A',
-            }, {
-              value: 'Stroke/TIA',
-              text: {
-                default: 'Stroke en',
-                fr: 'Stroke fr',
-              },
-            },
-            'High Blood Pressure',
-          ],
-        }, {
-          name: 'really',
-          title: {
-            default: 'reallly ?? en',
-            fr: 'vraiment ??',
-          },
-          cellType: 'dropdown',
-          choices: [{
-            value: 'yes',
-            text: {
-              default: 'yes en',
-              fr: 'oui',
-            },
-            score: 10,
-          }, {
-            value: 'no',
-            text: 'en',
-          }, {
-            value: 'maybe',
-            text: {
-              fr: 'maybe fr',
-            },
-            score: 5,
-          },
-          ],
-          hasOther: true,
-          hasNone: true,
-          storeOthersAsComment: true,
-        },
-        ],
-        rowCount: 1,
-      },
-      ],
-    },
-  ],
-});
-
-const matrixdynamicAnswers = {
-  relativeillness: [
-    {
-      illness: 'Diabetes',
-      really: 'other',
-      'really-Comment': 'zzzz',
-    },
-    {
-      illness: 'Heart Disease',
-      really: 'yes',
-    },
-    {
-      illness: 'Stroke/TIA',
-      really: 'none',
-    },
-  ],
-};
 
 describe('SurveyJsHelper', () => {
   beforeEach(async () => {
@@ -1150,26 +50,26 @@ describe('SurveyJsHelper', () => {
 
   describe('initializeSurveyJsRunner', () => {
     it('initializes the survey', () => {
-      const survey = helper.initializeSurveyJsRunner('zz', complexJson);
+      const survey = helper.initializeSurveyJsRunner('zz', surveyData.complexJson);
       expect(survey.locale).toEqual('zz');
       expect(survey._totalScore).toEqual(0);
     });
     it('adds score in surveyjs', () => {
-      helper.initializeSurveyJsRunner('en', complexJson);
+      helper.initializeSurveyJsRunner('en', surveyData.complexJson);
       expect(JsonObject.metaData.getProperty('itemvalue', 'score')).not.toBeNull();
       expect(JsonObject.metaData.getProperty('boolean', 'scoreTrue')).not.toBeNull();
       expect(JsonObject.metaData.getProperty('boolean', 'scoreFalse')).not.toBeNull();
       expect(helper.totalScore).toBe(0);
     });
     it('initializes survey locale', () => {
-      let survey = helper.initializeSurveyJsRunner('fr', complexJson);
+      let survey = helper.initializeSurveyJsRunner('fr', surveyData.complexJson);
       expect(survey.locale).toBe('fr');
-      survey = helper.initializeSurveyJsRunner('zz', complexJson);
+      survey = helper.initializeSurveyJsRunner('zz', surveyData.complexJson);
       expect(survey.locale).toBe('zz');
     });
     it('calls registerCustomSurveyJsFunctions', () => {
       helper.registerCustomSurveyJsFunctions = jest.fn();
-      helper.initializeSurveyJsRunner('en', complexJson);
+      helper.initializeSurveyJsRunner('en', surveyData.complexJson);
       expect(helper.registerCustomSurveyJsFunctions).toHaveBeenCalled();
     });
   });
@@ -1218,7 +118,7 @@ describe('SurveyJsHelper', () => {
       // - some scores
       // - multi-text questions for subquestions
       // - some questions with answer choices
-      helper.creator.text = complexJson;
+      helper.creator.text = surveyData.complexJson;
 
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([
@@ -1793,7 +693,7 @@ describe('SurveyJsHelper', () => {
     });
     it('extracts for text question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = textQuestion;
+      helper.creator.text = surveyData.textQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([{
         answerChoices: null,
@@ -1809,7 +709,7 @@ describe('SurveyJsHelper', () => {
     });
     it('extracts for checkbox question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = checkboxQuestion;
+      helper.creator.text = surveyData.checkboxQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([{
         answerChoices: [
@@ -1893,7 +793,7 @@ describe('SurveyJsHelper', () => {
     });
     it('extracts for radiogroup question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = radiogroupQuestion;
+      helper.creator.text = surveyData.radiogroupQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([{
         answerChoices: [
@@ -1977,7 +877,7 @@ describe('SurveyJsHelper', () => {
     });
     it('extracts for dropdown question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = dropdownQuestion;
+      helper.creator.text = surveyData.dropdownQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([{
         answerChoices: [
@@ -2085,7 +985,7 @@ describe('SurveyJsHelper', () => {
     });
     it('extracts for comment question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = commentQuestion;
+      helper.creator.text = surveyData.commentQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([{
         answerChoices: null,
@@ -2101,7 +1001,7 @@ describe('SurveyJsHelper', () => {
     });
     it('extracts for boolean question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = booleanQuestion;
+      helper.creator.text = surveyData.booleanQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([{
         answerChoices: [{
@@ -2138,7 +1038,7 @@ describe('SurveyJsHelper', () => {
     });
     it('extracts for yes-no question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = yesnoQuestion;
+      helper.creator.text = surveyData.yesnoQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([{
         answerChoices: [{
@@ -2174,19 +1074,19 @@ describe('SurveyJsHelper', () => {
     });
     it('ignores for html question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = htmlQuestion;
+      helper.creator.text = surveyData.htmlQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([]);
     });
     it('ignores for image question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = imageQuestion;
+      helper.creator.text = surveyData.imageQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([]);
     });
     it('extracts for multipletext question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = multipleTextQuestion;
+      helper.creator.text = surveyData.multipleTextQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([
         {
@@ -2215,7 +1115,7 @@ describe('SurveyJsHelper', () => {
     });
     it('extracts for matrix question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = matrixQuestion;
+      helper.creator.text = surveyData.matrixQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([
         {
@@ -2360,7 +1260,7 @@ describe('SurveyJsHelper', () => {
     });
     it('extracts for matrixdropdown question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = matrixDropdownQuestion;
+      helper.creator.text = surveyData.matrixDropdownQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual(
         [
@@ -2997,7 +1897,7 @@ describe('SurveyJsHelper', () => {
     });
     it('extracts for rating question type', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = ratingQuestion;
+      helper.creator.text = surveyData.ratingQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([
         {
@@ -3063,7 +1963,7 @@ describe('SurveyJsHelper', () => {
     });
     it('extracts for rating question type with steps', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = ratingQuestionWithStep;
+      helper.creator.text = surveyData.ratingQuestionWithStep;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([
         {
@@ -3142,7 +2042,7 @@ describe('SurveyJsHelper', () => {
 
     it('extracts for rating question type with choices', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = ratingQuestionWithChoices;
+      helper.creator.text = surveyData.ratingQuestionWithChoices;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([
         {
@@ -3195,7 +2095,7 @@ describe('SurveyJsHelper', () => {
 
     it('ignores panels and extracts questions in it', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = panelQuestion;
+      helper.creator.text = surveyData.panelQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions.length).toEqual(1);
       expect(questions[0].questionType).toEqual('rating');
@@ -3203,7 +2103,7 @@ describe('SurveyJsHelper', () => {
 
     it('extracts from dynamicPanelQuestion', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = dynamicPanelQuestion;
+      helper.creator.text = surveyData.dynamicPanelQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([
         {
@@ -3277,7 +2177,7 @@ describe('SurveyJsHelper', () => {
 
     it('extracts from matrixdynamicQuestion', () => {
       helper.initializeSurveyJsCreator('en');
-      helper.creator.text = matrixdynamicQuestion;
+      helper.creator.text = surveyData.matrixdynamicQuestion;
       const questions = helper.getAssessmentQuestions();
       expect(questions).toEqual([
         {
@@ -3482,7 +2382,7 @@ describe('SurveyJsHelper', () => {
   describe('valueChangedNewScore', () => {
     it('gets a new score that sums all answers', () => {
       helper.initializeSurveyJsCreator();
-      helper.creator.text = complexJson;
+      helper.creator.text = surveyData.complexJson;
       helper.creator.survey.data = {
         Quality: {
           affordable: 1,
@@ -3506,15 +2406,15 @@ describe('SurveyJsHelper', () => {
 
     it('gets a new score that sums scores on both rows and columns for matrix', () => {
       helper.initializeSurveyJsCreator();
-      helper.creator.text = matrixQuestion;
-      helper.creator.survey.data = matrixAnswer;
+      helper.creator.text = surveyData.matrixQuestion;
+      helper.creator.survey.data = surveyData.matrixAnswer;
 
       helper.valueChangedNewScore(helper.creator.survey as any);
       expect(helper.totalScore).toEqual(21);
     });
 
     it('applies also to survey runner', () => {
-      helper.initializeSurveyJsRunner('en', complexJson);
+      helper.initializeSurveyJsRunner('en', surveyData.complexJson);
       helper.survey.data = {
         Quality: {
           affordable: 1,
@@ -3562,65 +2462,65 @@ describe('SurveyJsHelper', () => {
 
     describe('question identifiers', () => {
       it('returns the same list of question identifiers for complexJson', () => {
-        checkQuestionIdentifiers(complexJson, complexJsonAnswers);
+        checkQuestionIdentifiers(surveyData.complexJson, surveyData.complexJsonAnswers);
       });
 
       it('returns the same list of question identifiers for textQuestion', () => {
-        checkQuestionIdentifiers(textQuestion, textAnswers);
+        checkQuestionIdentifiers(surveyData.textQuestion, surveyData.textAnswers);
       });
 
       it('returns the same list of question identifiers for checkboxQuestion', () => {
-        checkQuestionIdentifiers(checkboxQuestion, checkboxAnswers);
+        checkQuestionIdentifiers(surveyData.checkboxQuestion, surveyData.checkboxAnswers);
       });
 
       it('returns the same list of question identifiers for radiogroupQuestion', () => {
-        checkQuestionIdentifiers(radiogroupQuestion, radiogroupAnswers);
+        checkQuestionIdentifiers(surveyData.radiogroupQuestion, surveyData.radiogroupAnswers);
       });
 
       it('returns the same list of question identifiers for dropdownQuestion', () => {
-        checkQuestionIdentifiers(dropdownQuestion, dropdownAnswer);
+        checkQuestionIdentifiers(surveyData.dropdownQuestion, surveyData.dropdownAnswer);
       });
 
       it('returns the same list of question identifiers for commentQuestion', () => {
-        checkQuestionIdentifiers(commentQuestion, commentAnswer);
+        checkQuestionIdentifiers(surveyData.commentQuestion, surveyData.commentAnswer);
       });
 
       it('returns the same list of question identifiers for booleanQuestion', () => {
-        checkQuestionIdentifiers(booleanQuestion, booleanAnswer);
+        checkQuestionIdentifiers(surveyData.booleanQuestion, surveyData.booleanAnswer);
       });
 
       it('returns the same list of question identifiers for yesnoQuestion', () => {
-        checkQuestionIdentifiers(yesnoQuestion, yesnoAnswer);
+        checkQuestionIdentifiers(surveyData.yesnoQuestion, surveyData.yesnoAnswer);
       });
 
       it('returns the same list of question identifiers for htmlQuestion', () => {
-        checkQuestionIdentifiers(htmlQuestion, htmlAnswer);
+        checkQuestionIdentifiers(surveyData.htmlQuestion, surveyData.htmlAnswer);
       });
 
       it('returns the same list of question identifiers for imageQuestion', () => {
-        checkQuestionIdentifiers(imageQuestion, htmlAnswer);
+        checkQuestionIdentifiers(surveyData.imageQuestion, surveyData.htmlAnswer);
       });
 
       it('returns the same list of question identifiers for multipleTextQuestion', () => {
-        checkQuestionIdentifiers(multipleTextQuestion, multipleTextAnswer);
+        checkQuestionIdentifiers(surveyData.multipleTextQuestion, surveyData.multipleTextAnswer);
       });
 
       it('returns the same list of question identifiers for matrixQuestion', () => {
-        checkQuestionIdentifiers(matrixQuestion, matrixAnswer);
+        checkQuestionIdentifiers(surveyData.matrixQuestion, surveyData.matrixAnswer);
       });
 
       it('returns the same list of question identifiers for matrixDropdownQuestion', () => {
-        checkQuestionIdentifiers(matrixDropdownQuestion, matrixDropdownAnswers);
+        checkQuestionIdentifiers(surveyData.matrixDropdownQuestion, surveyData.matrixDropdownAnswers);
       });
 
       it('returns the same list of question identifiers for ratingQuestion', () => {
-        checkQuestionIdentifiers(ratingQuestion, ratingAnswer);
+        checkQuestionIdentifiers(surveyData.ratingQuestion, surveyData.ratingAnswer);
       });
     });
 
     describe('question answers', () => {
       it('returns the answer for complexJson', () => {
-        checkQuestionAnswers(complexJson, complexJsonAnswers, [
+        checkQuestionAnswers(surveyData.complexJson, surveyData.complexJsonAnswers, [
           {
             assessmentQuestionIdentifier: 'Quality|affordable',
             responses: [
@@ -3745,14 +2645,14 @@ describe('SurveyJsHelper', () => {
       });
 
       it('returns the answer for textQuestion', () => {
-        checkQuestionAnswers(textQuestion, textAnswers, [{
+        checkQuestionAnswers(surveyData.textQuestion, surveyData.textAnswers, [{
           assessmentQuestionIdentifier: 'question1',
           responses: [{ displayValue: 'test text', textValue: 'test text', numericValue: null }],
         }]);
       });
 
       it('returns the answer for checkboxQuestion', () => {
-        checkQuestionAnswers(checkboxQuestion, checkboxAnswers, [{
+        checkQuestionAnswers(surveyData.checkboxQuestion, surveyData.checkboxAnswers, [{
           assessmentQuestionIdentifier: 'question1',
           responses: [{ textValue: 'other', displayValue: 'other fr', numericValue: null },
             { textValue: 'item2', displayValue: 'item 2 fr', numericValue: null }],
@@ -3761,20 +2661,20 @@ describe('SurveyJsHelper', () => {
           responses: [{ textValue: 'test', displayValue: 'test' }],
         }]);
 
-        checkQuestionAnswers(checkboxQuestion, checkboxAnswersNoComment, [{
+        checkQuestionAnswers(surveyData.checkboxQuestion, surveyData.checkboxAnswersNoComment, [{
           assessmentQuestionIdentifier: 'question1',
           responses: [{ textValue: 'other', displayValue: 'other fr', numericValue: null },
             { textValue: 'item2', displayValue: 'item 2 fr', numericValue: null }],
         }]);
 
-        checkQuestionAnswers(checkboxQuestion, checkboxAnswersNone, [{
+        checkQuestionAnswers(surveyData.checkboxQuestion, surveyData.checkboxAnswersNone, [{
           assessmentQuestionIdentifier: 'question1',
           responses: [{ textValue: 'none', displayValue: 'Aucun', numericValue: null }],
         }]);
       });
 
       it('returns the answer for radiogroupQuestion', () => {
-        checkQuestionAnswers(radiogroupQuestion, radiogroupAnswers, [{
+        checkQuestionAnswers(surveyData.radiogroupQuestion, surveyData.radiogroupAnswers, [{
           assessmentQuestionIdentifier: 'question1',
           responses: [{ textValue: 'other', displayValue: 'Autre (préciser)', numericValue: null }],
         }, {
@@ -3784,7 +2684,7 @@ describe('SurveyJsHelper', () => {
       });
 
       it('returns the answer for dropdownQuestion', () => {
-        checkQuestionAnswers(dropdownQuestion, dropdownAnswer, [{
+        checkQuestionAnswers(surveyData.dropdownQuestion, surveyData.dropdownAnswer, [{
           assessmentQuestionIdentifier: 'question1',
           responses: [{ textValue: '1', displayValue: '1', numericValue: 1 }],
         }, {
@@ -3794,20 +2694,20 @@ describe('SurveyJsHelper', () => {
       });
 
       it('returns the answer for commentQuestion', () => {
-        checkQuestionAnswers(commentQuestion, commentAnswer, [{
+        checkQuestionAnswers(surveyData.commentQuestion, surveyData.commentAnswer, [{
           assessmentQuestionIdentifier: 'question1',
           responses: [{ displayValue: 'fdgdfg\nfdfkdjhgkf\n\n\nfdgdfgdf', textValue: 'fdgdfg\nfdfkdjhgkf\n\n\nfdgdfgdf', numericValue: null }],
         }]);
       });
 
       it('returns the answer for booleanQuestion', () => {
-        checkQuestionAnswers(booleanQuestion, booleanAnswer, [
+        checkQuestionAnswers(surveyData.booleanQuestion, surveyData.booleanAnswer, [
           {
             assessmentQuestionIdentifier: 'question1',
             responses: [{ displayValue: 'ouiii', textValue: '123', numericValue: 123 }],
           },
         ]);
-        checkQuestionAnswers(booleanQuestion, booleanAnswerNo, [
+        checkQuestionAnswers(surveyData.booleanQuestion, surveyData.booleanAnswerNo, [
           {
             assessmentQuestionIdentifier: 'question1',
             responses: [{ displayValue: 'Non', textValue: 'false', numericValue: null }],
@@ -3816,13 +2716,13 @@ describe('SurveyJsHelper', () => {
       });
 
       it('returns the answer for yesnoQuestion', () => {
-        checkQuestionAnswers(yesnoQuestion, yesnoAnswer, [
+        checkQuestionAnswers(surveyData.yesnoQuestion, surveyData.yesnoAnswer, [
           {
             assessmentQuestionIdentifier: 'question1',
             responses: [{ displayValue: 'Oui', textValue: 'yes', numericValue: null }],
           },
         ]);
-        checkQuestionAnswers(yesnoQuestion, yesnoAnswerNo, [
+        checkQuestionAnswers(surveyData.yesnoQuestion, surveyData.yesnoAnswerNo, [
           {
             assessmentQuestionIdentifier: 'question1',
             responses: [{ displayValue: 'Non', textValue: 'no', numericValue: null }],
@@ -3831,15 +2731,15 @@ describe('SurveyJsHelper', () => {
       });
 
       it('returns the answer for htmlQuestion', () => {
-        checkQuestionAnswers(htmlQuestion, htmlAnswer, []);
+        checkQuestionAnswers(surveyData.htmlQuestion, surveyData.htmlAnswer, []);
       });
 
       it('returns the answer for imageQuestion', () => {
-        checkQuestionAnswers(imageQuestion, imageAnswer, []);
+        checkQuestionAnswers(surveyData.imageQuestion, surveyData.imageAnswer, []);
       });
 
       it('returns the answer for multipleTextQuestion', () => {
-        checkQuestionAnswers(multipleTextQuestion, multipleTextAnswer, [
+        checkQuestionAnswers(surveyData.multipleTextQuestion, surveyData.multipleTextAnswer, [
           {
             assessmentQuestionIdentifier: 'question1|sub q 1',
             responses: [{ displayValue: 'sub answer 1', textValue: 'sub answer 1', numericValue: null }],
@@ -3852,7 +2752,7 @@ describe('SurveyJsHelper', () => {
       });
 
       it('returns the answer for matrixQuestion', () => {
-        checkQuestionAnswers(matrixQuestion, matrixAnswer, [
+        checkQuestionAnswers(surveyData.matrixQuestion, surveyData.matrixAnswer, [
           {
             assessmentQuestionIdentifier: 'question1|sub q 1',
             responses: [{ displayValue: '1 fr', textValue: 'answer 1', numericValue: null }],
@@ -3869,7 +2769,7 @@ describe('SurveyJsHelper', () => {
       });
 
       it('returns the answer for matrixDropdownQuestion', () => {
-        checkQuestionAnswers(matrixDropdownQuestion, matrixDropdownSomeAnswers, [
+        checkQuestionAnswers(surveyData.matrixDropdownQuestion, surveyData.matrixDropdownSomeAnswers, [
           {
             assessmentQuestionIdentifier: 'question3|Row 1|Column 1',
             responses: [{ displayValue: '2', textValue: '2', numericValue: 2 }],
@@ -3902,21 +2802,21 @@ describe('SurveyJsHelper', () => {
       });
 
       it('returns the answer for ratingQuestion', () => {
-        checkQuestionAnswers(ratingQuestion, ratingAnswer, [{
+        checkQuestionAnswers(surveyData.ratingQuestion, surveyData.ratingAnswer, [{
           assessmentQuestionIdentifier: 'question5',
           responses: [{ textValue: '2', displayValue: '2', numericValue: 2 }],
         }, {
           assessmentQuestionIdentifier: 'question5|Comment',
           responses: [{ textValue: 'desc', displayValue: 'desc' }],
         }]);
-        checkQuestionAnswers(ratingQuestionWithChoices, ratingAnswerWithChoices, [{
+        checkQuestionAnswers(surveyData.ratingQuestionWithChoices, surveyData.ratingAnswerWithChoices, [{
           assessmentQuestionIdentifier: 'question7',
           responses: [{ textValue: 'item2', displayValue: '2e', numericValue: null }],
         }]);
       });
 
       it('returns the answer for dynamicPanelQuestion', () => {
-        checkQuestionAnswers(dynamicPanelQuestion, dynamicPanelAnswers, [
+        checkQuestionAnswers(surveyData.dynamicPanelQuestion, surveyData.dynamicPanelAnswers, [
           {
             assessmentQuestionIdentifier: 'your name',
             responses: [
@@ -4020,7 +2920,7 @@ describe('SurveyJsHelper', () => {
     });
 
     it('returns the answer for matrixdynamicQuestion', () => {
-      checkQuestionAnswers(matrixdynamicQuestion, matrixdynamicAnswers, [
+      checkQuestionAnswers(surveyData.matrixdynamicQuestion, surveyData.matrixdynamicAnswers, [
         {
           assessmentQuestionIdentifier: 'relativeillness|illness',
           parentIndexPath: 'relativeillness[0]|',

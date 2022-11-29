@@ -34,6 +34,12 @@ export class AssessmentFormsService extends DomainBaseService<IAssessmentFormEnt
     return this.http.get(`${API_URL_SUFFIX}/programs/${programId}/${ENTITY}`);
   }
 
+  async htmlToWord(data: string, filename: string) {
+    return this.http.postFullResponse<BlobPart>(`${API_URL_SUFFIX}/tools/HtmlToWord/extract.docx`, data, { responseType: 'blob' }).then(
+      (response) => this.http.getRestResponseAsFile(response, true, filename),
+    );
+  }
+
   async search(params: IAzureSearchParams, searchEndpoint: string = null):
     Promise<IAzureCombinedSearchResult<IAssessmentFormEntity, IAssessmentFormMetadata>> {
     return this.http.get(`assessment/search/${searchEndpoint ?? 'assessment-forms'}`, { params, isOData: true });

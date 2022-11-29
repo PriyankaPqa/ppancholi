@@ -262,4 +262,19 @@ export class HttpClient implements IHttpClient {
     }
     return text;
   }
+
+  public getRestResponseAsFile(response: IRestResponse<BlobPart>, saveDownloadedFile = false, fileName: string = null) : string {
+    const blob = response.headers && response.headers['content-type']
+      ? new Blob([response.data], { type: response.headers['content-type'] }) : new Blob([response.data]);
+    const url = window.URL.createObjectURL(blob);
+    if (saveDownloadedFile) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    return url;
+  }
 }

@@ -178,7 +178,13 @@ div.status {
   height: calc(5 * var(--base-unit, 8px)) !important;
 }
 
-/* knockout surveyjs bug - wont be required in a future version */
+/* knockout surveyjs bug - wont be required in a future version - start */
 .sv-list__item--selected {
   background-color: var(--v-primary-base) !important;
 }
+.sv-popup {
+  --primary: var(--v-primary-base);
+  --primary-light: var(--v-primary-lighten);
+  --secondary: var(--v-secondary-base);
+}
+/* knockout surveyjs bug - wont be required in a future version - end */

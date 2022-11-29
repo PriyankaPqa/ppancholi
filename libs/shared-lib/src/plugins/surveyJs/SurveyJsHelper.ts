@@ -1,15 +1,20 @@
 /* eslint-disable */
 
 import {
-  FunctionFactory,  Question as QModel, StylesManager, SurveyModel,
+  FunctionFactory,
+  StylesManager,
   Serializer,
   ComponentCollection,
+  Action,
+  Event,
+  Question as CreatorQuestion,
+  QuestionPanelDynamicModel,
 } from 'survey-core';
 import {
   QuestionMatrixDropdownModelBase, StylesManager as RunnerStylesManager, FunctionFactory as RunnerFunctionFactory,
   Question, QuestionSelectBase, Model,
   QuestionRatingModel,
-  QuestionPanelDynamicModel, ComponentCollection as RunnerComponentCollection, Serializer as RunnerSerializer,
+  ComponentCollection as RunnerComponentCollection, Serializer as RunnerSerializer,
 } from 'survey-vue';
 import {
   CompletionStatus,
@@ -17,7 +22,7 @@ import {
   IAssessmentAnswerChoice, IAssessmentBaseEntity, IAssessmentQuestion, IAssessmentResponseEntity, SurveyJsAssessmentResponseState,
 } from '@libs/entities-lib/assessment-template';
 import { IColoursEntity } from '@libs/entities-lib/tenantSettings';
-import { SurveyCreator } from 'survey-creator-knockout';
+import { SurveyCreator, localization } from 'survey-creator-knockout';
 import { CreatorBase } from 'survey-creator-core';
 import { Status } from '@libs/entities-lib/base';
 import { IMultilingual } from '../../types';
@@ -27,30 +32,33 @@ import 'survey-creator-core/survey-creator-core.i18n';
 type TextValue = (string | { value: string; text?: string | Record<string, string>; score?: number; });
 
 interface ISimpleQuestion {
-    name: string; html?: string | Record<string, string>;
-    title?: string | Record<string, string>;
-    suffix?: { name: string; title?: string | Record<string, string>; };
-    score: number;
-    rateValues?: TextValue[];
-    choices?: TextValue[];
-    items?: { name: string; title?: string | Record<string, string>; }[];
-    rows?: TextValue[];
-    columns?: TextValue[];
-    showOtherItem?: boolean;
-    otherText?: string | Record<string, string>;
-    showNoneItem?: boolean;
-    noneText?: string | Record<string, string>;
-    showCommentArea?: boolean;
-    commentText?: string | Record<string, string>;
-    otherPlaceholder?: string | Record<string, string>;
-    labelTrue?: string | Record<string, string>;
-    labelFalse?: string | Record<string, string>;
-    scoreTrue?: number;
-    scoreFalse?: number;
+  name: string; html?: string | Record<string, string>;
+  title?: string | Record<string, string>;
+  suffix?: { name: string; title?: string | Record<string, string>; };
+  score: number;
+  rateValues?: TextValue[];
+  choices?: TextValue[];
+  items?: { name: string; title?: string | Record<string, string>; }[];
+  rows?: TextValue[];
+  columns?: TextValue[];
+  showOtherItem?: boolean;
+  otherText?: string | Record<string, string>;
+  showNoneItem?: boolean;
+  noneText?: string | Record<string, string>;
+  showCommentArea?: boolean;
+  commentText?: string | Record<string, string>;
+  otherPlaceholder?: string | Record<string, string>;
+  labelTrue?: string | Record<string, string>;
+  labelFalse?: string | Record<string, string>;
+  scoreTrue?: number;
+  scoreFalse?: number;
 }
 
-interface ISurveyJsDataNode { name: string, title: string, value: string, displayValue: string,
-  isNode: boolean, isComment?: boolean, data?: ISurveyJsDataNode[] }
+interface ISurveyJsDataNode {
+  name: string, title: string, value: string, displayValue: string,
+  isNode: boolean, isComment?: boolean, data?: ISurveyJsDataNode[],
+}
+export interface ISurveyCreator extends SurveyCreator { onExtractSurvey: Event<(sender: CreatorBase, options: any) => any, any>; }
 
 interface ISurveyJsPlainData {
   displayValue: string | Record<string, string>,
@@ -64,9 +72,15 @@ interface ISurveyJsPlainData {
 export interface ISurveyModel extends Model { _totalScore?: number }
 
 export class SurveyJsHelper {
+  constructor(public $t?: (key: string) => (string)) {
+    if (!this.$t) {
+      this.$t = (k) => k;
+    }
+  }
+
   totalScore = 0;
 
-  creator = null as SurveyCreator;
+  creator = null as ISurveyCreator;
 
   survey = null as ISurveyModel;
 
@@ -102,14 +116,30 @@ export class SurveyJsHelper {
       isAutoSave: true,
       showTranslationTab: true,
       questionTypes: SurveyJsHelper.supportedQuestionTypes(),
-    });
+    }) as ISurveyCreator;
+    this.creator.onExtractSurvey = new Event();
     this.creator.locale = locale;
     this.creator.onPreviewSurveyCreated.add((_sender, options) => this.previewCreated(_sender, options));
     this.totalScore = 0;
     this.removeAllDataCategory();
     this.creator.toolbox.getItemByName('yes-no').title = locale === 'fr' ? 'Oui-Non' : 'Yes-No';
 
+    this.registerCustomToolbarButtons();
+
     return this.creator;
+  }
+
+  registerCustomToolbarButtons() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const helper = this;
+    this.creator.toolbarItems.push(new Action({
+      id: 'custom-extract-logic',
+      visible: true,
+      title: this.$t('assessmentTemplate.extractText'),
+      action() {
+        helper.creator.onExtractSurvey.fire(helper.creator, null);
+      },
+    }));
   }
 
   initializeSurveyJsRunner(locale: string, surveyJson: string) {
@@ -139,8 +169,7 @@ export class SurveyJsHelper {
     }
   }
 
-  getSurveyCanBeCompletedErrorMessage(assessmentTemplate: IAssessmentBaseEntity, response: IAssessmentResponseEntity, vue: Vue,
-    $m: (s: IMultilingual) => string) {
+  getSurveyCanBeCompletedErrorMessage(assessmentTemplate: IAssessmentBaseEntity, response: IAssessmentResponseEntity, vue: Vue, $m: (s: IMultilingual) => string) {
     if (response?.status !== Status.Active || assessmentTemplate?.status !== Status.Active) {
       return $m.call(vue, assessmentTemplate?.messageIfUnavailable) || vue.$t('assessment.messageUnavailable') as string;
     }
@@ -157,20 +186,20 @@ export class SurveyJsHelper {
       // localization.getLocale('fr').ed.surveyPlaceHolder = ' Ajoutez des questions...';
       // localization.getLocale('fr').qt.signaturepad = 'Pad de signature';
       // what we end up with in localization
-      // surveyLocalization.getLocale('fr').pe.labelTrue = 'Texte pour "Vrai"';
-      // surveyLocalization.getLocale('fr').pe.labelFalse = 'Texte pour "Faux"';
-      // surveyLocalization.getLocale('fr').pe.valueTrue = 'Valeur pour "Vrai"';
-      // localization.getLocale('fr').pe.valueFalse = 'Valeur pour "Faux"';
-      // localization.getLocale('fr');
+      localization.getLocale('fr').pe.labelTrue = 'Texte pour "Vrai"';
+      localization.getLocale('fr').pe.labelFalse = 'Texte pour "Faux"';
+      localization.getLocale('fr').pe.valueTrue = 'Valeur pour "Vrai"';
+      localization.getLocale('fr').pe.valueFalse = 'Valeur pour "Faux"';
+      localization.getLocale('fr');
       // console.log('current french', _merge(localization.getLocale('en'), localization.getLocale('fr')));
     } else {
       // console.log('current english', localization.getLocale('en'));
-      // localization.getLocale('en');
+      localization.getLocale('en');
     }
   }
 
   registerCustomProperties(runnerMode = false) {
-    const serializer = runnerMode ? RunnerSerializer: Serializer;
+    const serializer = runnerMode ? RunnerSerializer : Serializer;
     serializer.addProperty('itemvalue', {
       name: 'score:number',
       displayName: { default: 'Score', fr: 'Points' },
@@ -225,8 +254,8 @@ export class SurveyJsHelper {
   }
 
   registerCustomComponents(runnerMode = false) {
-    const componentCollection = runnerMode ? RunnerComponentCollection.Instance: ComponentCollection.Instance;
-    const serializer = runnerMode ? RunnerSerializer: Serializer;
+    const componentCollection = runnerMode ? RunnerComponentCollection.Instance : ComponentCollection.Instance;
+    const serializer = runnerMode ? RunnerSerializer : Serializer;
     componentCollection.clear();
     // boolean component that switches the order of the boolean - which looks weird in code but presents the user with a yes-no, with yes as the first answer
     // saves a response not of true or false but yes or no
@@ -272,12 +301,11 @@ export class SurveyJsHelper {
     method.returnResult(+method.survey._totalScore);
   }
 
-  getAssessmentQuestions(currentRoot: QuestionPanelDynamicModel = null,
-    currentResults: IAssessmentQuestion[] = [], currentIdentifier: string = null) : IAssessmentQuestion[] {
+  getAssessmentQuestions(questionsList: CreatorQuestion[] = null, currentResults: IAssessmentQuestion[] = [], currentIdentifier: string = null): IAssessmentQuestion[] {
     let result = currentResults;
     const qIdentifierPrefix = currentIdentifier !== null ? `${currentIdentifier}|` : '';
-    (currentRoot ? currentRoot.panels[0].questions : this.creator.survey.getAllQuestions())
-      .filter((q: Question) => SurveyJsHelper.questionTypesThatCannotBeAnswered().indexOf(q.getType()) === -1).forEach((q: Question) => {
+    (questionsList || this.creator.survey.getAllQuestions())
+      .filter((q) => SurveyJsHelper.questionTypesThatCannotBeAnswered().indexOf(q.getType()) === -1).forEach((q) => {
         const qJson = q.toJSON() as ISimpleQuestion;
         let qType = q.getType();
 
@@ -315,7 +343,8 @@ export class SurveyJsHelper {
                 overriddenProperties: c.overriddenProperties,
                 name: `${r.name}|${c.name}`,
                 title: this.getPropertyAsMultilingual(typeof r.title === 'string' ? r.title : { default: r.name, ...r.title },
-                  typeof c.title === 'string' ? c.title : { default: c.name, ...c.title }).translation,
+                  typeof c.title === 'string' ? c.title : { default: c.name, ...c.title },
+                ).translation,
                 rowscore: r.rowscore,
               })))).flat();
           } else {
@@ -338,8 +367,8 @@ export class SurveyJsHelper {
             identifier: qIdentifierPrefix + simpleQuestion.name + (simpleQuestion.suffix != null ? `|${simpleQuestion.suffix.name}` : ''),
             questionType: qType,
             question: this.getPropertyAsMultilingual(
-            // eslint-disable-next-line
-            simpleQuestion.title != null ? simpleQuestion.title : (simpleQuestion.html != null ? simpleQuestion.html : simpleQuestion.name),
+              // eslint-disable-next-line
+              simpleQuestion.title != null ? simpleQuestion.title : (simpleQuestion.html != null ? simpleQuestion.html : simpleQuestion.name),
               simpleQuestion.suffix?.title != null ? simpleQuestion.suffix?.title : simpleQuestion.suffix?.name,
             ),
             score: simpleQuestion.score,
@@ -386,7 +415,7 @@ export class SurveyJsHelper {
             }
 
             if (subQuestion?.rowscore) {
-              choice.score = subQuestion?.rowscore + (choice.score || 0);
+              choice.score = subQuestion.rowscore + (choice.score || 0);
             }
 
             assessmentQuestion.answerChoices.push(choice);
@@ -397,7 +426,7 @@ export class SurveyJsHelper {
           }
 
           if (qType === 'paneldynamic') {
-            result = this.getAssessmentQuestions(q as QuestionPanelDynamicModel, result, assessmentQuestion.identifier);
+            result = this.getAssessmentQuestions((q as QuestionPanelDynamicModel).panels[0].questions, result, assessmentQuestion.identifier);
           }
         });
       });
@@ -407,7 +436,7 @@ export class SurveyJsHelper {
   getChoicesList(q: any, simpleQuestion: ISimpleQuestion, qType: string): TextValue[] {
     let choices = (q as any).getChoices
       ? JSON.parse(JSON.stringify((q as any).getChoices())) as TextValue[]
-    // to extract instead when ratings or matrix...
+      // to extract instead when ratings or matrix...
       : simpleQuestion.rateValues || simpleQuestion.choices || simpleQuestion.columns;
 
     if (qType === 'boolean') {
@@ -527,7 +556,7 @@ export class SurveyJsHelper {
     return result;
   }
 
-  surveyToAssessmentResponse(sender: ISurveyModel, assessmentResponseOriginal?: IAssessmentResponseEntity) : IAssessmentResponseEntity {
+  surveyToAssessmentResponse(sender: ISurveyModel, assessmentResponseOriginal?: IAssessmentResponseEntity): IAssessmentResponseEntity {
     const assessmentResponse = assessmentResponseOriginal || {
       dateAssigned: new Date(),
     } as IAssessmentResponseEntity;
@@ -550,7 +579,7 @@ export class SurveyJsHelper {
   // eslint-disable-next-line max-params
   private questionToAssessmentResponse(sender: ISurveyModel, assessmentResponse: IAssessmentResponseEntity, question: ISurveyJsPlainData,
     currentPanel: any = null, currentIdentifier: string = null, parentIndexPath: string = null, forcedType: string = null, rootQuestion: Question = null): void {
-    const questionObj : Question = rootQuestion || (currentPanel || sender).getQuestionByName(question.name);
+    const questionObj: Question = rootQuestion || (currentPanel || sender).getQuestionByName(question.name);
     const qType = forcedType || questionObj.getType();
 
     if (SurveyJsHelper.questionTypeIsDynamic(qType)) {
@@ -560,8 +589,14 @@ export class SurveyJsHelper {
           const indexPath = `${(parentIndexPath || '') + question.name}[${i}]|`;
           // eslint-disable-next-line max-depth
           if (qType === 'paneldynamic') {
-            question.data[i].data.forEach((sub) => this.questionToAssessmentResponse(sender, assessmentResponse, sub,
-              (questionObj as any).panels[i], identifier, indexPath));
+            question.data[i].data.forEach((sub) => this.questionToAssessmentResponse(
+              sender,
+              assessmentResponse,
+              sub,
+              (questionObj as any).panels[i],
+              identifier,
+              indexPath,
+            ));
           } else {
             question.data[i].data.forEach((sub) => this.questionToAssessmentResponse(sender, assessmentResponse, sub,
               null, identifier, indexPath, 'matrixdropdown', questionObj));
@@ -657,7 +692,7 @@ export class SurveyJsHelper {
     assessmentResponse.answeredQuestions.push(commentResponse);
   }
 
-  previewCreated(_sender: CreatorBase, options : { survey: ISurveyModel }) {
+  previewCreated(_sender: CreatorBase, options: { survey: ISurveyModel }) {
     options.survey._totalScore = 0;
     this.totalScore = 0;
     options.survey.onValueChanged.add(this.valueChangedNewScore);
@@ -669,7 +704,7 @@ export class SurveyJsHelper {
 
     Object.keys(data).forEach((qName) => {
       const question = survey.getQuestionByName(qName) as
-        (Question & { choices?: any[], rows?: any[], columns? : any[], scoreTrue?: number, scoreFalse?: number, score?: number });
+        (Question & { choices?: any[], rows?: any[], columns?: any[], scoreTrue?: number, scoreFalse?: number, score?: number });
       const qValue = data[qName];
       if (question && question.visible) {
         if (question.choices) {

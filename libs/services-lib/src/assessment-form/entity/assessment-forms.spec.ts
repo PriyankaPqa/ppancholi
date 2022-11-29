@@ -66,4 +66,13 @@ describe('>>> AssessmentForms Service', () => {
       expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}/updateAssessmentStructure`, entity);
     });
   });
+
+  describe('htmlToWord', () => {
+    it('is linked to the correct URL and params', async () => {
+      const ret = await service.htmlToWord('some data', 'file.docx');
+      expect(http.postFullResponse).toHaveBeenCalledWith('assessment/tools/HtmlToWord/extract.docx', 'some data', { responseType: 'blob' });
+      expect(http.getRestResponseAsFile).toHaveBeenCalled();
+      expect(ret).toEqual('myUrl');
+    });
+  });
 });

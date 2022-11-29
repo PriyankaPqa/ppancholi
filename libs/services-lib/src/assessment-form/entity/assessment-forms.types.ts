@@ -7,6 +7,7 @@ export interface IAssessmentFormsService extends IDomainBaseService<IAssessmentF
   update(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
   updateAssessmentStructure(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity>
   fetchByProgramId(programId: uuid): Promise<IAssessmentFormEntity[]>;
+  htmlToWord(data: string, filename: string): Promise<string>;
 }
 
 export interface IAssessmentFormsServiceMock extends IDomainBaseServiceMock<IAssessmentFormEntity> {
@@ -15,4 +16,5 @@ export interface IAssessmentFormsServiceMock extends IDomainBaseServiceMock<IAss
   update: jest.Mock<IAssessmentFormEntity>;
   updateAssessmentStructure: jest.Mock<IAssessmentFormEntity>;
   fetchByProgramId: jest.Mock<IAssessmentFormEntity[]>;
+  htmlToWord: jest.Mock<string>;
 }

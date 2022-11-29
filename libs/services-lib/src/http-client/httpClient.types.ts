@@ -53,6 +53,7 @@ export interface IHttpClient {
   setHeadersTenant(tenantId: string): void;
   getTenant(): string;
   getFormattedError(error: IError): string;
+  getRestResponseAsFile(response: IRestResponse<BlobPart>, saveFile?: boolean, fileName?: string) : string;
 }
 
 export interface IHttpMock {
@@ -67,4 +68,5 @@ export interface IHttpMock {
   setHeadersTenant: jest.Mock<void>;
   getTenant: jest.Mock<string>;
   getFormattedError: jest.Mock<string>;
+  getRestResponseAsFile: jest.Mock<string>;
 }

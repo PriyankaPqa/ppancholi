@@ -425,6 +425,15 @@ describe('httpClient', () => {
       });
     });
 
+    describe('getRestResponseAsFile', () => {
+      it('returns the objecturl', () => {
+        window.URL.createObjectURL = jest.fn(() => 'new url');
+
+        const res = mockHttpClient.getRestResponseAsFile({});
+        expect(res).toEqual('new url');
+      });
+    });
+
     describe('post', () => {
       it('returns correct value', async () => {
         mockHttpClient.axios.post = mockHttp().post;
