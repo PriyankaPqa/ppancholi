@@ -113,7 +113,6 @@ describe('householdResults', () => {
                 registrationNumber: household.entity.registrationNumber,
               });
             }
-            final.eventIds = household.metadata.eventIds;
             final.id = household.entity.id;
           });
           return final;

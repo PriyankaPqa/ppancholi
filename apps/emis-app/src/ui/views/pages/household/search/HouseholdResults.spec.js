@@ -1,5 +1,6 @@
 import Vuetify from 'vuetify';
-import { mockCombinedHouseholds } from '@libs/entities-lib/household';
+import { mockCombinedHouseholds, mockCombinedHousehold } from '@libs/entities-lib/household';
+import _range from 'lodash/range';
 import {
   createLocalVue,
   shallowMount,
@@ -21,7 +22,6 @@ const parsedHousehold = {
   primaryBeneficiary: {},
   additionalMembers: [],
   id: '1',
-  eventIds: ['222'],
 };
 
 describe('HouseholdResultsMove.vue', () => {
@@ -42,13 +42,155 @@ describe('HouseholdResultsMove.vue', () => {
     });
   });
 
+  describe('Lifecycle', () => {
+    describe('mounted', () => {
+      it('calls getCaseFilesInEvent', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            items: mockCombinedHouseholds(),
+            isSplitMode: false,
+            hideEventInfo: false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.getCaseFilesInEvent = jest.fn();
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.getCaseFilesInEvent).toHaveBeenCalled();
+      });
+
+      it('does not call getCaseFilesInEvent if is split mode', () => {
+        jest.clearAllMocks();
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            items: mockCombinedHouseholds(),
+            isSplitMode: true,
+            hideEventInfo: false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.getCaseFilesInEvent = jest.fn();
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.getCaseFilesInEvent).not.toHaveBeenCalled();
+      });
+
+      it('does not call getCaseFilesInEvent if hideEventInfo is true', () => {
+        jest.clearAllMocks();
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            items: mockCombinedHouseholds(),
+            isSplitMode: false,
+            hideEventInfo: true,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.getCaseFilesInEvent = jest.fn();
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.getCaseFilesInEvent).not.toHaveBeenCalled();
+      });
+    });
+  });
+
   describe('Methods', () => {
+    describe('isRegisteredInCurrentEvent', () => {
+      it('should return  true if the household passed is part of householdsInEvent', async () => {
+        await wrapper.setData({ householdsInEvent: ['household-id'] });
+        expect(wrapper.vm.isRegisteredInCurrentEvent('household-id')).toEqual(true);
+      });
+      it('should return  false if the household passed is not part of householdsInEvent', async () => {
+        await wrapper.setData({ householdsInEvent: ['household-id'] });
+        expect(wrapper.vm.isRegisteredInCurrentEvent('not-household-id')).toEqual(false);
+      });
+    });
+
+    describe('getCaseFilesInEvent', () => {
+      it('calls casefile search with the right filter', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            items: [mockCombinedHousehold({ id: 'mock-id-1' }), mockCombinedHousehold({ id: 'mock-id-2' })],
+            isSplitMode: false,
+          },
+          computed: {
+            currentEventId() {
+              return 'event-id';
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.$storage.caseFile.actions.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
+        wrapper.vm.getCaseFilesInEvent();
+
+        expect(wrapper.vm.$storage.caseFile.actions.search)
+          .toHaveBeenCalledWith({ filter: "search.in(Entity/HouseholdId, 'mock-id-1|mock-id-2', '|') and Entity/EventId eq 'event-id'" });
+      });
+
+      it('calls casefile search multiple times if there are more than 20 household ids', async () => {
+        const range = _range(41);
+        const households = range.map((i) => mockCombinedHousehold({ id: i }));
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            items: households,
+            isSplitMode: false,
+          },
+          computed: {
+            currentEventId() {
+              return 'event-id';
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.$storage.caseFile.actions.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
+        wrapper.vm.getCaseFilesInEvent();
+
+        expect(wrapper.vm.$storage.caseFile.actions.search)
+          .toHaveBeenCalledTimes(3);
+      });
+
+      it('calls the casefile getter and saves the household ids of the returned casefiles into householdsInEvent', async () => {
+        const caseFiles = [{ entity: { householdId: 'h-id-1' } }, { entity: { householdId: 'h-id-2' } }];
+        wrapper.vm.$storage.caseFile.actions.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
+        wrapper.vm.$storage.caseFile.getters.getByIds = jest.fn(() => caseFiles);
+
+        await wrapper.vm.getCaseFilesInEvent();
+        expect(wrapper.vm.$storage.caseFile.getters.getByIds).toHaveBeenCalledWith(['id-1', 'id-2']);
+        expect(wrapper.vm.householdsInEvent).toEqual(['h-id-1', 'h-id-2']);
+      });
+    });
+
     describe('hasAdditionalMember', () => {
       it('should return true if additional member', () => {
         const household = {
           primaryBeneficiary: {},
           additionalMembers: [{}, {}],
-          eventIds: ['1'],
         };
         expect(wrapper.vm.hasAdditionalMember(household)).toBe(true);
       });
@@ -56,31 +198,8 @@ describe('HouseholdResultsMove.vue', () => {
         const household = {
           primaryBeneficiary: {},
           additionalMembers: [],
-          eventIds: ['1'],
         };
         expect(wrapper.vm.hasAdditionalMember(household)).toBe(false);
-      });
-    });
-
-    describe('isRegisteredInCurrentEvent', () => {
-      it('should return true if household is registered for current event', () => {
-        const currentEvent = wrapper.vm.$storage.registration.getters.event();
-        const household = {
-          primaryBeneficiary: {},
-          eventIds: [currentEvent.id],
-        };
-
-        const res = wrapper.vm.isRegisteredInCurrentEvent(household);
-        expect(res).toBe(true);
-      });
-      it('should return false if not', () => {
-        const household = {
-          primaryBeneficiary: {},
-          eventIds: ['1'],
-        };
-
-        const res = wrapper.vm.isRegisteredInCurrentEvent(household);
-        expect(res).toBe(false);
       });
     });
 
@@ -143,6 +262,20 @@ describe('HouseholdResultsMove.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('isRegisteredInCurrentEvent', () => {
+      it('should return a function that returns true if the household passed is part of householdsInEvent', async () => {
+        await wrapper.setData({ householdsInEvent: ['household-id'] });
+        const fn = wrapper.vm.isRegisteredInCurrentEvent;
+        expect(fn('household-id')).toEqual(true);
+      });
+
+      it('should return a function that returns false if the household passed is not part of householdsInEvent', async () => {
+        await wrapper.setData({ householdsInEvent: ['household-id'] });
+        const fn = wrapper.vm.isRegisteredInCurrentEvent;
+        expect(fn('not-household-id')).toEqual(false);
+      });
+    });
+
     describe('currentEventId', () => {
       it('should return id of the current event', () => {
         const currentEvent = wrapper.vm.$storage.registration.getters.event();

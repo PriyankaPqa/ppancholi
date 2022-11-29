@@ -65,7 +65,7 @@ export default mixins(searchHousehold).extend({
     },
   },
 
-  mounted() {
+  created() {
     // We get back results
     this.searchResults = this.$storage.household.getters.getAll();
     if (this.isSplitMode) {

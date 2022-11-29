@@ -80,7 +80,6 @@ export const mockHouseholdCaseFile = (force?: Partial<IHouseholdCaseFile>): IHou
 export const mockHouseholdMetadata = (force?: Partial<IHouseholdMetadata>): IHouseholdMetadata => ({
   ...mockBaseData(),
   memberMetadata: [mockHouseholdMemberMetadata()],
-  eventIds: ['1', '2'],
   ...force,
 });
 

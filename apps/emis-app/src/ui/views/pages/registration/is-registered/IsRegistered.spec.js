@@ -76,6 +76,8 @@ describe('IsRegistered.vue', () => {
       });
 
       it('should pass searchResults as props', () => {
+        const households = [{ entity: { id: 'foo' } }];
+        storage.household.getters.getAll = jest.fn(() => households);
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -87,7 +89,7 @@ describe('IsRegistered.vue', () => {
           },
         });
         const component = wrapper.findComponent(HouseholdResults);
-        expect(component.props().items).toEqual([]);
+        expect(component.props().items).toEqual(households);
       });
     });
 
@@ -219,10 +221,10 @@ describe('IsRegistered.vue', () => {
   });
 
   describe('Lifecycle', () => {
-    describe('mounted', () => {
+    describe('created', () => {
       it('sets results so we can come back on page with results', () => {
         jest.clearAllMocks();
-        wrapper.vm.$options.mounted.forEach((hook) => {
+        wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
@@ -239,7 +241,7 @@ describe('IsRegistered.vue', () => {
           },
         });
         jest.spyOn(wrapper.vm, 'filterOutSplitHousehold').mockImplementation(() => {});
-        wrapper.vm.$options.mounted.forEach((hook) => {
+        wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 

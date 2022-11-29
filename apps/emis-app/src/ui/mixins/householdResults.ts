@@ -23,7 +23,6 @@ export interface IFormattedHousehold {
   id: string;
   primaryBeneficiary: IMember;
   additionalMembers: IMember[];
-  eventIds: string[];
 }
 
 export default Vue.extend({
@@ -49,7 +48,6 @@ export default Vue.extend({
           primaryBeneficiary: {},
           additionalMembers: [],
           id: household.entity.id,
-          eventIds: household.metadata.eventIds,
         } as IFormattedHousehold;
 
         household.metadata.memberMetadata.forEach((member) => {

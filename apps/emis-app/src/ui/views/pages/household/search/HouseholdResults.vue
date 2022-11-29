@@ -16,6 +16,7 @@
         data-test="resultsTable"
         :headers="headers"
         :items="formattedItems"
+        :loading="loading"
         :hide-toolbar="true"
         :custom-columns="['name', 'actions', 'birthDate', 'phone', 'isRegisteredToEvent', 'registrationNumber', 'emailAddress']"
         must-sort
@@ -44,7 +45,7 @@
               mdi-account-supervisor
             </v-icon>
             <span :data-test="`name__houseHoldMember_${i}`" class="fw-bold ">
-              {{ member.firstName }}  {{ member.lastName }}
+              {{ member.firstName }} {{ member.lastName }}
             </span>
           </div>
         </template>
@@ -97,7 +98,7 @@
           </div>
         </template>
         <template #item.isRegisteredToEvent="{ item: household }">
-          <v-icon v-if="isRegisteredInCurrentEvent(household)" width="48" data-test="isRegistered" small>
+          <v-icon v-if="isRegisteredInCurrentEvent(household.id)" width="48" data-test="isRegistered" small>
             mdi-check-circle-outline
           </v-icon>
         </template>
@@ -107,6 +108,7 @@
               small
               color="primary"
               data-test="details__button"
+              :disabled="loading"
               :loading="detailsLoading && detailsId === household.id"
               @click="viewDetails(household)">
               {{ $t('registration.isRegistered.details') }}
@@ -140,12 +142,14 @@
 
 <script lang="ts">
 import moment from 'moment';
+import _chunk from 'lodash/chunk';
 import { IHouseholdCombined } from '@libs/entities-lib/household';
 import { RcDataTable } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { tabs } from '@/store/modules/registration/tabs';
 import household from '@/ui/mixins/household';
 import householdResults, { IFormattedHousehold } from '@/ui/mixins/householdResults';
+import { IAzureTableSearchResults } from '@libs/shared-lib/types';
 
 export default mixins(household, householdResults).extend({
   name: 'HouseholdResults',
@@ -177,8 +181,10 @@ export default mixins(household, householdResults).extend({
   data() {
     return {
       moment,
+      loading: false,
       detailsLoading: false,
       detailsId: '',
+      householdsInEvent: [] as string[],
     };
   },
   computed: {
@@ -241,7 +247,39 @@ export default mixins(household, householdResults).extend({
     },
   },
 
+  async mounted() {
+    if (!this.isSplitMode && !this.hideEventInfo) {
+      await this.getCaseFilesInEvent();
+    }
+  },
+
   methods: {
+    async getCaseFilesInEvent() {
+      this.loading = true;
+      try {
+        const householdIds = this.items.map((h) => h.entity.id);
+        // The search fails if there are too many parameters in the filter. TO DO: create an endpoint to replace the search calls
+        // (eg. modify getAllCaseFilesRelatedToHouseholdId to accept multiple household ids) - EMISV2-6020
+        const idBatches = _chunk(householdIds, 20);
+        const calls = [] as Promise<IAzureTableSearchResults>[];
+        idBatches.forEach((b) => {
+          const filter = `search.in(Entity/HouseholdId, '${b.join('|')}', '|') and Entity/EventId eq '${this.currentEventId}'`;
+          const call = this.$storage.caseFile.actions.search({ filter });
+          calls.push(call);
+        });
+
+        const res = await Promise.all(calls);
+        const ids = res.reduce((acc, currentValue) => acc.concat(currentValue.ids), []);
+        this.householdsInEvent = this.$storage.caseFile.getters.getByIds(ids).map((cf) => cf.entity.householdId);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    isRegisteredInCurrentEvent(householdId: string) {
+      return this.householdsInEvent.includes(householdId);
+    },
+
     async viewDetails(household: IFormattedHousehold) {
       try {
         this.detailsLoading = true;
@@ -258,16 +296,12 @@ export default mixins(household, householdResults).extend({
       if (this.isSplitMode) {
         this.$emit('showDetails', household.id);
       } else {
-        this.$storage.registration.mutations.setHouseholdAlreadyRegistered(this.isRegisteredInCurrentEvent(household));
+        this.$storage.registration.mutations.setHouseholdAlreadyRegistered(this.isRegisteredInCurrentEvent(household.id));
         this.$storage.registration.mutations.setHouseholdAssociationMode(true);
         this.$storage.registration.mutations.setCurrentTabIndex(tabs().findIndex((t) => t.id === 'review'));
       }
 
       return true;
-    },
-
-    isRegisteredInCurrentEvent(household: IFormattedHousehold) {
-      return household.eventIds.includes(this.currentEventId);
     },
 
     hasAdditionalMember(household: IFormattedHousehold) {
@@ -285,22 +319,23 @@ export default mixins(household, householdResults).extend({
 .icon {
   margin-top: -3px;
 }
+
 .legend {
-  display:flex;
+  display: flex;
   margin-left: 16px;
   margin-top: 20px;
 }
-.no-wrap{
-      white-space: nowrap;
+
+.no-wrap {
+  white-space: nowrap;
 }
 
-.break-spaces{
-    white-space: break-spaces;
-    word-break: initial;
+.break-spaces {
+  white-space: break-spaces;
+  word-break: initial;
 }
 
- .max-width {
-   max-width: 200px;
- }
-
+.max-width {
+  max-width: 200px;
+}
 </style>
