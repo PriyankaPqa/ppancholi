@@ -14,7 +14,7 @@ const storage = mockStorage();
 
 const vuetify = new Vuetify();
 
-describe('ReviewRegistration.vue', () => {
+describe('ReviewRegistrationLib.vue', () => {
   let wrapper;
 
   beforeEach(async () => {

@@ -24,7 +24,7 @@ const parsedHousehold = {
   eventIds: ['222'],
 };
 
-describe('HouseholdResults.vue', () => {
+describe('HouseholdResultsMove.vue', () => {
   let wrapper;
 
   beforeEach(async () => {

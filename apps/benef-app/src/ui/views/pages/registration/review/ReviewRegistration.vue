@@ -1,5 +1,5 @@
 <template>
-  <lib-review-registration
+  <review-registration-lib
     :i18n="i18n"
     :recaptcha-key="$hasFeature(FeatureKeys.BotProtection) && !isCaptchaAllowedIpAddress ? recaptchaKey : ''"
     :disable-autocomplete="disableAutocomplete" />
@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
+import ReviewRegistrationLib from '@libs/registration-lib/components/review/ReviewRegistrationLib.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { i18n } from '@/ui/plugins';
 import { localStorageKeys } from '@/constants/localStorage';
@@ -16,7 +16,7 @@ export default Vue.extend({
   name: 'ReviewRegistration',
 
   components: {
-    LibReviewRegistration,
+    ReviewRegistrationLib,
   },
 
   props: {

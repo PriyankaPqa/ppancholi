@@ -94,7 +94,7 @@
     ]
   },
   "lint-staged": {
-    "**/*.+(js|jx|ts|tsx|vue)": [
+    "**/!(*components.d).+(js|jx|ts|tsx|vue)": [
       "eslint --fix --max-warnings=0"
     ]
   },

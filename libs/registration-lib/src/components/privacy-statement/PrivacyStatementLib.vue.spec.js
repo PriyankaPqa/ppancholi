@@ -2,12 +2,12 @@ import moment from 'moment';
 import { HouseholdCreate } from '@libs/entities-lib/src/household-create';
 import { createLocalVue, mount, shallowMount } from '../../test/testSetup';
 import { mockStorage } from '../../store/storage';
-import Component from './PrivacyStatement.vue';
+import Component from './PrivacyStatementLib.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-describe('PrivacyStatement.vue', () => {
+describe('PrivacyStatementLib.vue', () => {
   let wrapper;
 
   describe('Computed', () => {

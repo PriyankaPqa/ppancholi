@@ -8,7 +8,7 @@ const errors = { response: { data: { errors: [mockHttpError()] } } };
 // eslint-disable-next-line no-console
 console.warn = jest.fn();
 
-describe('ConfirmRegistration.vue', () => {
+describe('ConfirmRegistrationLib.vue', () => {
   let wrapper;
 
   describe('Template', () => {

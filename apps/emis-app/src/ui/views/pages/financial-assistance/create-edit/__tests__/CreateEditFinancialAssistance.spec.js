@@ -13,7 +13,7 @@ import Component from '../CreateEditFinancialAssistance.vue';
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-describe('CreateEditFinancialAssistance.vue', () => {
+describe('CreateEditFinancialAssistanceTable.vue', () => {
   let wrapper;
 
   beforeEach(() => {

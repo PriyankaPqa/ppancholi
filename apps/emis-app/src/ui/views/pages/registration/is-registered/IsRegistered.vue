@@ -16,11 +16,11 @@
       @submit="showDetailsDialog = false">
       <v-row justify="center">
         <v-col cols="12" lg="8">
-          <lib-review-registration :i18n="i18n" show-age-in-review skip-phone-email-rules :disable-autocomplete="!enableAutocomplete">
+          <review-registration-lib :i18n="i18n" show-age-in-review skip-phone-email-rules :disable-autocomplete="!enableAutocomplete">
             <template #previous-events>
               <previous-events-template :household-id="selectedHouseholdId" />
             </template>
-          </lib-review-registration>
+          </review-registration-lib>
         </v-col>
       </v-row>
     </rc-dialog>
@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
+import ReviewRegistrationLib from '@libs/registration-lib/components/review/ReviewRegistrationLib.vue';
 import { RcDialog } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
@@ -43,7 +43,7 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 export default mixins(searchHousehold).extend({
   name: 'IsRegistered',
   components: {
-    HouseholdSearch, HouseholdResults, LibReviewRegistration, PreviousEventsTemplate, RcDialog,
+    HouseholdSearch, HouseholdResults, ReviewRegistrationLib, PreviousEventsTemplate, RcDialog,
   },
   data() {
     return {

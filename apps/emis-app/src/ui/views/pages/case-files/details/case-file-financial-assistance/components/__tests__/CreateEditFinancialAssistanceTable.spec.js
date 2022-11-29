@@ -38,7 +38,7 @@ import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 import flushPromises from 'flush-promises';
 import routes from '@/constants/routes';
 
-import Component from '../CreateEditFinancialAssistance.vue';
+import Component from '../CreateEditFinancialAssistanceTable.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -53,7 +53,7 @@ const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGrou
 const mockEvent = mockCombinedEvent();
 mockEvent.entity.schedule.status = EEventStatus.Open;
 
-describe('CreateEditFinancialAssistance.vue', () => {
+describe('CreateEditFinancialAssistanceTable.vue', () => {
   let wrapper;
 
   // eslint-disable-next-line no-unused-vars,max-params,@typescript-eslint/no-unused-vars

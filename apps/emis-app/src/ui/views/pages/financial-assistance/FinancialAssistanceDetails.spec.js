@@ -9,7 +9,7 @@ import Component from './FinancialAssistanceDetails.vue';
 const storage = mockStorage();
 const localVue = createLocalVue();
 
-describe('FinancialAssistanceDetails.vue', () => {
+describe('FinancialAssistanceDetailsMassAction.vue', () => {
   let wrapper;
 
   beforeEach(() => {

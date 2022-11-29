@@ -5,11 +5,11 @@ import {
 
 import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
 import routes from '@/constants/routes';
-import Component from './FinancialAssistanceDetails.vue';
+import Component from './FinancialAssistanceDetailsMassAction.vue';
 
 const localVue = createLocalVue();
 
-describe('FinancialAssistanceDetails.vue', () => {
+describe('FinancialAssistanceDetailsMassAction.vue', () => {
   let wrapper;
 
   describe('Template', () => {

@@ -7,7 +7,7 @@ import Component from './ConfirmRegistration.vue';
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-describe('ConfirmRegistration.vue', () => {
+describe('ConfirmRegistrationLib.vue', () => {
   let wrapper;
 
   beforeEach(() => {

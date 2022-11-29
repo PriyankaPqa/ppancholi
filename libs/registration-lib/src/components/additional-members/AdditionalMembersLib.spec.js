@@ -5,12 +5,12 @@ import {
 } from '@libs/entities-lib/src/household-create';
 import { mockStorage } from '../../store/storage/storage.mock';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
-import Component from './AdditionalMembers.vue';
+import Component from './AdditionalMembersLib.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-describe('AdditionalMembers.vue', () => {
+describe('AdditionalMembersLib.vue', () => {
   let wrapper;
 
   beforeEach(() => {

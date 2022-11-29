@@ -36,7 +36,7 @@ const CaseFileAssessments = () => import('@/ui/views/pages/case-files/details/ca
 const CaseFileAssessmentDetails = () => import('@/ui/views/pages/case-files/details/case-file-assessment/components/AssessmentDetails.vue');
 
 const FinancialAssistancePaymentsList = () => import('@/ui/views/pages/case-files/details/case-file-financial-assistance/FinancialAssistancePaymentsList.vue');
-const CreateEditCaseFileFinancialAssistance = () => import('@/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistance.vue');
+const CreateEditCaseFileFinancialAssistance = () => import('@/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistanceTable.vue');
 const ViewPaymentLineDetails = () => import('@/ui/views/pages/case-files/details/case-file-financial-assistance/components/ViewPaymentLineDetails.vue');
 
 const CaseFileReferral = () => import('@/ui/views/pages/case-files/details/case-file-referral/CaseFileReferral.vue');
@@ -73,9 +73,9 @@ const FinancialAssistanceDetails = () => import('@/ui/views/pages/financial-assi
 const MassActionsLayout = () => import('@/ui/views/pages/mass-actions/layout/MassActionsLayout.vue');
 const MassActionsHome = () => import('@/ui/views/pages/mass-actions/home/MassActionsHome.vue');
 
-const MassActionsFinancialAssistanceHome = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceHome.vue');
+const MassActionsFinancialAssistanceHome = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceHomeMassAction.vue');
 const FinancialAssistanceCreate = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCreate.vue');
-const MassActionsFinancialAssistanceDetails = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceDetails.vue');
+const MassActionsFinancialAssistanceDetails = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceDetailsMassAction.vue');
 
 const MassActionsImportValidationStatusHome = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusHome.vue');
 const MassActionsImportValidationStatusCreate = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusCreate.vue');
@@ -108,7 +108,7 @@ const ConfirmationPrint = () => import('@/ui/views/pages/registration/confirmati
 const SystemManagementLayout = () => import('@/ui/views/pages/system-management/layout/SystemManagementLayout.vue');
 const SystemManagementHome = () => import('@/ui/views/pages/system-management/home/SystemManagementHome.vue');
 const SystemManagementLists = () => import('@/ui/views/pages/system-management/lists/SystemManagementLists.vue');
-const CaseFileTags = () => import('@/ui/views/pages/system-management/lists/pages/CaseFileTags.vue');
+const CaseFileTags = () => import('@/ui/views/pages/system-management/lists/pages/CaseFileTagsList.vue');
 const EventTypes = () => import('@/ui/views/pages/system-management/lists/pages/EventTypes.vue');
 const Genders = () => import('@/ui/views/pages/system-management/lists/pages/Genders.vue');
 const PreferredLanguages = () => import('@/ui/views/pages/system-management/lists/pages/PreferredLanguages.vue');

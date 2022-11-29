@@ -118,7 +118,7 @@
       @cancel="closeAndReload"
       @close="closeAndReload" />
 
-    <add-edit-additional-members
+    <add-edit-additional-members-lib
       v-if="showAdditionalMemberDialog"
       :i18n="i18n"
       :show="showAdditionalMemberDialog"
@@ -142,7 +142,7 @@
 import Vue from 'vue';
 import { IMember } from '@libs/entities-lib/household-create';
 import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
-import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
+import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import { RcTooltip } from '@libs/component-lib/components';
 import householdHelpers from '@/ui/helpers/household';
 import { IEventGenericLocation } from '@libs/entities-lib/event';
@@ -156,7 +156,7 @@ export default Vue.extend({
   components: {
     CurrentAddressTemplate,
     PrimaryMemberDialog,
-    AddEditAdditionalMembers,
+    AddEditAdditionalMembersLib,
     SplitHouseholdDialog,
     RcTooltip,
   },

@@ -31,6 +31,11 @@ export default defineConfig(({ mode }) => {
       // eslintPlugin(),
       splitVendorChunkPlugin(),
       Components({
+        dirs: [
+          'src',
+          '../../libs/component-lib/src/components',
+          '../../libs/registration-lib/src/components',
+        ],
         resolvers: [
           {
             type: 'component',

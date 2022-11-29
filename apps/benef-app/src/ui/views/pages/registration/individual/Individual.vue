@@ -67,7 +67,7 @@
         </template>
       </rc-page-content>
     </ValidationObserver>
-    <confirmation-print ref="printConfirm" :event="event" :registration-number="registrationNumber" />
+    <confirmation-print-lib ref="printConfirm" :event="event" :registration-number="registrationNumber" />
     <system-error-dialog
       v-if="showErrorDialog"
       :show.sync="showErrorDialog"
@@ -79,7 +79,7 @@
 import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@libs/component-lib/components';
 import individual from '@libs/registration-lib/ui/mixins/individual';
-import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
+import ConfirmationPrintLib from '@libs/registration-lib/components/confirm-registration/ConfirmationPrintLib.vue';
 import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { localStorageKeys } from '@/constants/localStorage';
@@ -106,7 +106,7 @@ export default mixins(individual).extend({
     AdditionalMembers,
     ReviewRegistration,
     ConfirmRegistration,
-    ConfirmationPrint,
+    ConfirmationPrintLib,
     SystemErrorDialog,
   },
 

@@ -50,7 +50,7 @@
         </v-btn>
       </v-col>
     </v-row>
-    <add-edit-additional-members
+    <add-edit-additional-members-lib
       v-if="showAddAdditionalMember"
       :i18n="i18n"
       :show.sync="showAddAdditionalMember"
@@ -76,13 +76,13 @@ import { RcConfirmationDialog } from '@libs/component-lib/components';
 import VueI18n from 'vue-i18n';
 import { IMember, Member, IMemberEntity } from '@libs/entities-lib/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '../../constants/validations';
-import AddEditAdditionalMembers from './AddEditAdditionalMembers.vue';
+import AddEditAdditionalMembersLib from './AddEditAdditionalMembersLib.vue';
 
 export default Vue.extend({
   name: 'AdditionalMembers',
 
   components: {
-    AddEditAdditionalMembers,
+    AddEditAdditionalMembersLib,
     RcConfirmationDialog,
   },
 

@@ -4,7 +4,7 @@ import Component from './FinancialAssistanceHome.vue';
 
 const localVue = createLocalVue();
 
-describe('FinancialAssistanceHome.vue', () => {
+describe('FinancialAssistanceHomeMassAction.vue', () => {
   let wrapper;
 
   describe('Template', () => {

@@ -15,7 +15,7 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCombinedCaseFile();
 
-describe('CaseFileTags.vue', () => {
+describe('CaseFileTagsList.vue', () => {
   let wrapper;
 
   storage.caseFile.actions.fetchTagsOptions.mockReturnValueOnce(mockOptionItemData());

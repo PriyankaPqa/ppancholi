@@ -157,7 +157,7 @@
       </v-row>
     </template>
 
-    <add-edit-additional-members
+    <add-edit-additional-members-lib
       v-if="showAddAdditionalMember"
       :show.sync="showAddAdditionalMember"
       :member="newAdditionalMember"
@@ -186,7 +186,7 @@ import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validat
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { IHouseholdCreate, Member } from '@libs/entities-lib/household-create';
 import { IHouseholdCombined } from '@libs/entities-lib/household';
-import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
+import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
@@ -211,7 +211,7 @@ export default mixins(household).extend({
     HouseholdCaseFileCard,
     HouseholdMemberCard,
     HouseholdProfileHistory,
-    AddEditAdditionalMembers,
+    AddEditAdditionalMembersLib,
   },
 
   props: {

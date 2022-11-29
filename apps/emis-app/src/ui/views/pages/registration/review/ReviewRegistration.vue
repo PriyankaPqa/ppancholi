@@ -1,14 +1,14 @@
 <template>
-  <lib-review-registration :i18n="i18n" show-age-in-review skip-phone-email-rules :disable-autocomplete="!enableAutocomplete">
+  <review-registration-lib :i18n="i18n" show-age-in-review skip-phone-email-rules :disable-autocomplete="!enableAutocomplete">
     <template #previous-events="slotProps">
       <previous-events-template :household-id="slotProps.householdId" />
     </template>
-  </lib-review-registration>
+  </review-registration-lib>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
+import ReviewRegistrationLib from '@libs/registration-lib/components/review/ReviewRegistrationLib.vue';
 import { i18n } from '@/ui/plugins';
 import PreviousEventsTemplate from '@/ui/views/pages/registration/review/PreviousEventsTemplate.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -18,7 +18,7 @@ export default Vue.extend({
 
   components: {
     PreviousEventsTemplate,
-    LibReviewRegistration,
+    ReviewRegistrationLib,
   },
 
   data() {

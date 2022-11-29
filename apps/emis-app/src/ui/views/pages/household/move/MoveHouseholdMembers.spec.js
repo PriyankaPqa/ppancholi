@@ -7,7 +7,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
 
-import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResults.vue';
+import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResultsMove.vue';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import Component from './MoveHouseholdMembers.vue';
 

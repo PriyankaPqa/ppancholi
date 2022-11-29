@@ -26,7 +26,7 @@
           <h3 v-if="makePrimaryMode" class="py-4">
             {{ $t('registration.menu.personal_info') }}
           </h3>
-          <lib-personal-information
+          <personal-information-lib
             :i18n="i18n"
             :member-props="member"
             skip-phone-email-rules
@@ -54,7 +54,7 @@
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEqual from 'lodash/isEqual';
-import LibPersonalInformation from '@libs/registration-lib/components/personal-information/PersonalInformation.vue';
+import PersonalInformationLib from '@libs/registration-lib/components/personal-information/PersonalInformationLib.vue';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
 
@@ -79,7 +79,7 @@ export default Vue.extend({
   name: 'PrimaryMemberDialog',
 
   components: {
-    LibPersonalInformation,
+    PersonalInformationLib,
     RcDialog,
     CurrentAddressForm,
     CrcPrivacyStatement,

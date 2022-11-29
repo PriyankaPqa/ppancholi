@@ -5,12 +5,12 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { mockStorage } from '@/storage';
 
-import Component from './HouseholdResults.vue';
+import Component from './HouseholdResultsMove.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-describe('HouseholdResults.vue', () => {
+describe('HouseholdResultsMove.vue', () => {
   let wrapper;
   storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
 

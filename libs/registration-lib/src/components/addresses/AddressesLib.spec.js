@@ -8,13 +8,13 @@ import { mockStorage } from '../../store/storage/storage.mock';
 import AddressForm from '../forms/AddressForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
-import Component from './Addresses.vue';
+import Component from './AddressesLib.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const household = mockHouseholdCreate();
 
-describe('Addresses.vue', () => {
+describe('AddressesLib.vue', () => {
   let wrapper;
 
   beforeEach(() => {

@@ -490,7 +490,7 @@ export default Vue.extend({
       return { title, body };
     },
 
-    makeContentForFinancialAssistancePayment(): {title: TranslateResult, body: TranslateResult} {
+    makeContentForFinancialAssistancePayment(): { title: TranslateResult, body: TranslateResult } {
       let title = `${this.$t('caseFileActivity.activityList.title.FinancialAssistancePayment')} - `;
       title += this.$t(`enums.approvalAction.${ApprovalAction[this.item.details.approvalAction as number]}`);
       const amount = this.$formatCurrency(Number(this.item.details.totalAmount));

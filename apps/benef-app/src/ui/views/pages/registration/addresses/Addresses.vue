@@ -1,17 +1,17 @@
 <template>
-  <lib-addresses :i18n="i18n" :disable-autocomplete="disableAutocomplete" />
+  <addresses-lib :i18n="i18n" :disable-autocomplete="disableAutocomplete" />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import LibAddresses from '@libs/registration-lib/components/addresses/Addresses.vue';
+import AddressesLib from '@libs/registration-lib/components/addresses/AddressesLib.vue';
 import { i18n } from '@/ui/plugins';
 
 export default Vue.extend({
   name: 'Addresses',
 
   components: {
-    LibAddresses,
+    AddressesLib,
   },
 
   props: {

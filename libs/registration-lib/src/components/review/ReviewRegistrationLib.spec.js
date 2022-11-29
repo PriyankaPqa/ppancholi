@@ -16,13 +16,13 @@ import {
 import { i18n } from '../../ui/plugins/i18n';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
 import PersonalInformationTemplate from './personal-information/PersonalInformationTemplate.vue';
-import Component from './ReviewRegistration.vue';
+import Component from './ReviewRegistrationLib.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const vuetify = new Vuetify();
 
-describe('ReviewRegistration.vue', () => {
+describe('ReviewRegistrationLib.vue', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(Component, {

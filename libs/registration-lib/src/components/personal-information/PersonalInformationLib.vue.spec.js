@@ -18,12 +18,12 @@ import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 
 import { createLocalVue, shallowMount } from '../../test/testSetup';
-import Component from './PersonalInformation.vue';
+import Component from './PersonalInformationLib.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-describe('PersonalInformation.vue', () => {
+describe('PersonalInformationLib.vue', () => {
   let wrapper;
 
   beforeEach(() => {

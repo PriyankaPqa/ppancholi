@@ -1,5 +1,5 @@
 <template>
-  <privacy-statement :checkbox-label="$t('registration.privacy_statement.agreeCRC')">
+  <privacy-statement-lib :checkbox-label="$t('registration.privacy_statement.agreeCRC')">
     <div class="grey-container py-3 px-3">
       <v-row>
         <v-col cols="12" md="6">
@@ -35,7 +35,7 @@
         </v-col>
       </v-row>
     </div>
-  </privacy-statement>
+  </privacy-statement-lib>
 </template>
 
 <script lang="ts">
@@ -45,7 +45,7 @@ import helpers from '@libs/entities-lib/helpers';
 import VueI18n from 'vue-i18n';
 import { ERegistrationMethod } from '@libs/shared-lib/types';
 import { EEventLocationStatus, IEvent, IEventGenericLocation } from '@libs/entities-lib/registration-event';
-import PrivacyStatement from './PrivacyStatement.vue';
+import PrivacyStatementLib from './PrivacyStatementLib.vue';
 
 export interface IUser {
   readonly id: string;
@@ -63,7 +63,7 @@ export default Vue.extend({
   name: 'CrcPrivacyStatement',
 
   components: {
-    PrivacyStatement,
+    PrivacyStatementLib,
     VSelectWithValidation,
     VTextFieldWithValidation,
   },

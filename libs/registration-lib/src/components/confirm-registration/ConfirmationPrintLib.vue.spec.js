@@ -1,9 +1,9 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import Component from './ConfirmationPrint.vue';
+import Component from './ConfirmationPrintLib.vue';
 
 const localVue = createLocalVue();
 
-describe('ConfirmationPrint.vue', () => {
+describe('ConfirmationPrintLib.vue', () => {
   let wrapper;
 
   const event = {

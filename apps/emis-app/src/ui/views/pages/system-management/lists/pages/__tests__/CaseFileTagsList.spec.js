@@ -5,13 +5,13 @@ import {
 
 import { EOptionLists } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
-import Component from '../CaseFileTags.vue';
+import Component from '../CaseFileTagsList.vue';
 import OptionList from '../../components/OptionList.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-describe('CaseFileTags.vue', () => {
+describe('CaseFileTagsList.vue', () => {
   let wrapper;
 
   beforeEach(() => {

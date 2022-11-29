@@ -1,15 +1,15 @@
 <template>
-  <lib-confirmation-print />
+  <confirmation-print-lib />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import LibConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
+import ConfirmationPrintLib from '@libs/registration-lib/components/confirm-registration/ConfirmationPrintLib.vue';
 
 export default Vue.extend({
   name: 'ConfirmationPrint',
   components: {
-    LibConfirmationPrint,
+    ConfirmationPrintLib,
   },
 });
 </script>

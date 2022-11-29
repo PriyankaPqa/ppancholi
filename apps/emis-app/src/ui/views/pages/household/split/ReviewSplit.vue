@@ -1,10 +1,10 @@
 <template>
-  <lib-review-registration :i18n="i18n" show-age-in-review hide-name :disable-autocomplete="!enableAutocomplete" />
+  <review-registration-lib :i18n="i18n" show-age-in-review hide-name :disable-autocomplete="!enableAutocomplete" />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
+import ReviewRegistrationLib from '@libs/registration-lib/components/review/ReviewRegistrationLib.vue';
 
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
@@ -12,7 +12,7 @@ export default Vue.extend({
   name: 'ReviewSplit',
 
   components: {
-    LibReviewRegistration,
+    ReviewRegistrationLib,
   },
 
   data() {

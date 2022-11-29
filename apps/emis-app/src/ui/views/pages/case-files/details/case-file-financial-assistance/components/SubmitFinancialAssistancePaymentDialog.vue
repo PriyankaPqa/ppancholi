@@ -26,8 +26,8 @@
             <message-box
               icon="mdi-alert"
               data-test="approval_action_warning"
-              :message="hasInvalidTable? $t('caseFile.financialAssistance.submitAssistance.noApprovalTables') :
-                $t('caseFile.financialAssistance.submitAssistance.noActiveUsers')" />
+              :message="hasInvalidTable ? $t('caseFile.financialAssistance.submitAssistance.noApprovalTables')
+                : $t('caseFile.financialAssistance.submitAssistance.noActiveUsers')" />
           </div>
           <div v-if="useApprovalFlow">
             {{ $t('caseFile.financialAssistance.startApproval.confirmMessage') }}

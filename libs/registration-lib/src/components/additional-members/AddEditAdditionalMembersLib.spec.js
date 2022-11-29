@@ -11,7 +11,7 @@ import { mockAdditionalMember } from '@libs/entities-lib/value-objects/member';
 import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
 import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/household-create';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
-import Component from './AddEditAdditionalMembers.vue';
+import Component from './AddEditAdditionalMembersLib.vue';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
 import { mockStorage } from '../../store/storage/storage.mock';
 
@@ -19,7 +19,7 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 const householdId = '4113a553-13ed-41da-a692-f39c934bee05';
 
-describe('AddEditAdditionalMembers.vue', () => {
+describe('AddEditAdditionalMembersLib.vue', () => {
   let wrapper;
   storage.registration.getters.householdCreate = jest.fn(() => mockHouseholdCreate());
 

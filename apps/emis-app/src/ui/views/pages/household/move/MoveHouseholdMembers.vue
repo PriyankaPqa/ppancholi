@@ -45,7 +45,7 @@
             </div>
           </template>
 
-          <household-results
+          <household-results-move
             v-if="showResults && !secondHousehold"
             :items="searchResultsWithoutFirst"
             @reset="onReset()"
@@ -105,7 +105,7 @@ import household from '@/ui/mixins/household';
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import HouseholdCard from '@/ui/views/pages/household/move/HouseholdCard.vue';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
-import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResults.vue';
+import HouseholdResultsMove from '@/ui/views/pages/household/move/HouseholdResultsMove.vue';
 import { IEventGenericLocation } from '@libs/entities-lib/event/event.types';
 import helpers from '@/ui/helpers/helpers';
 
@@ -127,7 +127,7 @@ export default mixins(searchHousehold, household).extend({
   name: 'MoveHouseholdMembers',
 
   components: {
-    HouseholdResults,
+    HouseholdResultsMove,
     HouseholdSearch,
     HouseholdCard,
     RcPageContent,

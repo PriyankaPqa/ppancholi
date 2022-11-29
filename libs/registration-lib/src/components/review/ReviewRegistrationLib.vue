@@ -47,7 +47,7 @@
         @cancel="cancelAddresses()"
         @submit="submitAddresses()">
         <template #inline>
-          <addresses :i18n="i18n" :disable-autocomplete="disableAutocomplete" />
+          <addresses-lib :i18n="i18n" :disable-autocomplete="disableAutocomplete" />
         </template>
         <addresses-template :household="householdCreate" />
       </summary-section>
@@ -118,7 +118,7 @@
       @cancel="showAdditionalMemberDelete = false"
       @submit="deleteAdditionalMember()" />
 
-    <add-edit-additional-members
+    <add-edit-additional-members-lib
       v-if="showAddAdditionalMember"
       :i18n="i18n"
       :household-id="householdCreate.id"
@@ -142,12 +142,12 @@ import _isEqual from 'lodash/isEqual';
 
 import helpers from '@libs/entities-lib/helpers';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
-import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { IContactInformation } from '@libs/entities-lib/src/value-objects/contact-information';
+import AddEditAdditionalMembersLib from '../additional-members/AddEditAdditionalMembersLib.vue';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
-import PersonalInformation from '../personal-information/PersonalInformation.vue';
-import Addresses from '../addresses/Addresses.vue';
+import PersonalInformation from '../personal-information/PersonalInformationLib.vue';
+import AddressesLib from '../addresses/AddressesLib.vue';
 import PersonalInformationTemplate from './personal-information/PersonalInformationTemplate.vue';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
 import SummarySection from './SummarySection.vue';
@@ -166,10 +166,10 @@ export default mixins(additionalMemberForm).extend({
     PersonalInformationTemplate,
     SummarySection,
     PersonalInformation,
-    Addresses,
+    AddressesLib,
     RcConfirmationDialog,
     CrcPrivacyStatement,
-    AddEditAdditionalMembers,
+    AddEditAdditionalMembersLib,
   },
 
   props: {

@@ -73,7 +73,7 @@ import { TranslateResult } from 'vue-i18n';
 import individual from '@libs/registration-lib/ui/mixins/individual';
 import { RcPageContent } from '@libs/component-lib/components';
 import { ContactInformation, IMember, ISplitHousehold } from '@libs/entities-lib/household-create';
-import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
+import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrintLib.vue';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import Tabs from '@/ui/views/pages/registration/individual/Tabs.vue';
