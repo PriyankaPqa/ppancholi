@@ -54,6 +54,7 @@ export default Vue.extend({
       response: null as IAssessmentResponseEntity,
       assessmentTemplate: null as AssessmentFormEntity,
       errorMessage: null as string,
+      surveyCompleted: false,
     };
   },
 
@@ -62,6 +63,10 @@ export default Vue.extend({
       // to rebind language
       this.initializeSurvey();
     },
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('beforeunload', this.beforeAssessmentRunnerWindowUnload);
   },
 
   async mounted() {
@@ -84,6 +89,14 @@ export default Vue.extend({
       debouncedSave.cancel();
       await this.saveAnswers(sender);
       await this.$services.assessmentResponses.completeSurveyByBeneficiary(this.response);
+      this.surveyCompleted = true;
+    },
+
+    beforeAssessmentRunnerWindowUnload(e : any) {
+      if (!this.surveyCompleted) {
+        e.preventDefault(); // prompt the user
+        e.returnValue = ''; // prompt the user deprecated compatiblity with Chrome and Edge
+      }
     },
 
     async initializeSurvey() {
@@ -101,9 +114,16 @@ export default Vue.extend({
             this.survey.currentPageNo = this.survey.data._currentPageNo;
           }
         }
-        this.survey.onValueChanged.add((sender: ISurveyModel) => debouncedSave({ _this, sender }));
+        if (this.assessmentTemplate.savePartialSurveyResults) {
+          this.survey.onValueChanged.add((sender: ISurveyModel) => debouncedSave({ _this, sender }));
+        }
         this.survey.onComplete.add(this.completeSurvey);
         this.surveyJsHelper.setColorScheme('#surveyContainer', this.$storage.tenantSettings.getters.currentTenantSettings().branding.colours);
+
+        if (!this.assessmentTemplate.savePartialSurveyResults) {
+          // confirm leaving when navigating to another wbesite or closing the tab
+          window.addEventListener('beforeunload', this.beforeAssessmentRunnerWindowUnload);
+        }
       }
     },
 

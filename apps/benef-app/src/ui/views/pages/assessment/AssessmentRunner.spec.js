@@ -9,7 +9,7 @@ let storage = mockStorage();
 let services = mockProvider();
 const localVue = createLocalVue();
 
-describe('AssessmentRunner', () => {
+describe('AssessmentRunner.vue', () => {
   let wrapper;
 
   const mount = async (eventId = 'mock-event-id', assessmentResponseId = 'mock-assessmentResponse-id') => {
@@ -71,11 +71,12 @@ describe('AssessmentRunner', () => {
     });
 
     describe('completeSurvey', () => {
-      it('calls save answers and completeSurveyByBeneficiary', async () => {
+      it('calls save answers and completeSurveyByBeneficiary and sets surveyCompleted flag', async () => {
         wrapper.vm.saveAnswers = jest.fn(() => 'some object');
         await wrapper.vm.completeSurvey(null);
         expect(wrapper.vm.saveAnswers).toHaveBeenCalled();
         expect(services.assessmentResponses.completeSurveyByBeneficiary).toHaveBeenCalled();
+        expect(wrapper.vm.surveyCompleted).toEqual(true);
       });
     });
 
@@ -94,6 +95,20 @@ describe('AssessmentRunner', () => {
       it('sets survey object', () => {
         expect(wrapper.vm.survey).not.toBeNull();
         expect(wrapper.vm.survey.data).toEqual(JSON.parse(wrapper.vm.response.externalToolState.data.rawJson));
+      });
+      it('sets survey onValueChanged if saving partial survey results is allowed', async () => {
+        wrapper.vm.assessmentTemplate.savePartialSurveyResults = true;
+        jest.clearAllMocks();
+        wrapper.vm.loadDetails = jest.fn();
+        await wrapper.vm.initializeSurvey();
+        expect(wrapper.vm.survey.onValueChanged.callbacks).toHaveLength(2);
+      });
+      it('not sets survey onValueChanged if saving partial survey results is not allowed', async () => {
+        wrapper.vm.assessmentTemplate.savePartialSurveyResults = false;
+        jest.clearAllMocks();
+        wrapper.vm.loadDetails = jest.fn();
+        await wrapper.vm.initializeSurvey();
+        expect(wrapper.vm.survey.onValueChanged.callbacks).toHaveLength(1);
       });
     });
 
@@ -114,6 +129,18 @@ describe('AssessmentRunner', () => {
       it('fetches assessmentForm', async () => {
         await wrapper.vm.initializeSurvey();
         expect(services.assessmentForms.getForBeneficiary).toHaveBeenCalledWith(wrapper.vm.assessmentTemplateId);
+      });
+    });
+
+    describe('beforeAssessmentRunnerWindowUnload', () => {
+      it('calls preventDefault and sets returnValue when survey is not completed', async () => {
+        const event = {
+          preventDefault: jest.fn(),
+          returnValue: null,
+        };
+        wrapper.vm.beforeAssessmentRunnerWindowUnload(event);
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(event.returnValue).toEqual('');
       });
     });
   });

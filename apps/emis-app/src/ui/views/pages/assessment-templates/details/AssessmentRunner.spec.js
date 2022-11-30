@@ -8,7 +8,7 @@ let storage = mockStorage();
 let services = mockProvider();
 const localVue = createLocalVue();
 
-describe('AssessmentRunner', () => {
+describe('AssessmentRunner.vue', () => {
   let wrapper;
 
   const mount = async (eventId = 'mock-event-id', assessmentResponseId = 'mock-assessmentResponse-id') => {
@@ -34,6 +34,52 @@ describe('AssessmentRunner', () => {
   });
 
   describe('Lifecycle', () => {
+    describe('beforeRouteLeave', () => {
+      let next;
+      beforeEach(() => {
+        next = jest.fn(() => {});
+      });
+
+      it('opens the dialog if partial saving is not allowed and survey is not yet completed', async () => {
+        wrapper.vm.assessmentTemplate.savePartialSurveyResults = false;
+        wrapper.vm.surveyCompleted = false;
+        await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+        expect(wrapper.vm.$confirm).toHaveBeenCalled();
+      });
+
+      it('calls next if the confirmation dialog returns true', async () => {
+        wrapper.vm.assessmentTemplate.savePartialSurveyResults = false;
+        wrapper.vm.surveyCompleted = false;
+        wrapper.vm.$confirm = jest.fn(() => true);
+        await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+        expect(next).toBeCalled();
+      });
+
+      it('does not call next if the confirmation dialog returns false', async () => {
+        wrapper.vm.assessmentTemplate.savePartialSurveyResults = false;
+        wrapper.vm.surveyCompleted = false;
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+        expect(next).not.toBeCalled();
+      });
+
+      it('calls next if partial saving is allowed', async () => {
+        wrapper.vm.assessmentTemplate.savePartialSurveyResults = true;
+        wrapper.vm.surveyCompleted = false;
+        await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+        expect(wrapper.vm.$confirm).not.toHaveBeenCalled();
+        expect(next).toBeCalled();
+      });
+
+      it('calls next if survey is completed', async () => {
+        wrapper.vm.assessmentTemplate.savePartialSurveyResults = false;
+        wrapper.vm.surveyCompleted = true;
+        await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+        expect(wrapper.vm.$confirm).not.toHaveBeenCalled();
+        expect(next).toBeCalled();
+      });
+    });
+
     describe('mounted', () => {
       it('calls loadDetails', async () => {
         jest.clearAllMocks();
@@ -62,6 +108,22 @@ describe('AssessmentRunner', () => {
           storage.tenantSettings.getters.currentTenantSettings().branding.colours,
         );
       });
+      it('sets survey onValueChanged if saving partial survey results is allowed', async () => {
+        wrapper.vm.assessmentTemplate.savePartialSurveyResults = true;
+        jest.clearAllMocks();
+        wrapper.vm.loadDetails = jest.fn();
+        const hook = wrapper.vm.$options.mounted[wrapper.vm.$options.mounted.length - 1];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.survey.onValueChanged.callbacks).toHaveLength(2);
+      });
+      it('not sets survey onValueChanged if saving partial survey results is not allowed', async () => {
+        wrapper.vm.assessmentTemplate.savePartialSurveyResults = false;
+        jest.clearAllMocks();
+        wrapper.vm.loadDetails = jest.fn();
+        const hook = wrapper.vm.$options.mounted[wrapper.vm.$options.mounted.length - 1];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.survey.onValueChanged.callbacks).toHaveLength(1);
+      });
     });
   });
 
@@ -84,11 +146,24 @@ describe('AssessmentRunner', () => {
     });
 
     describe('completeSurvey', () => {
-      it('calls save answers and completeSurvey', async () => {
+      it('calls save answers and completeSurvey and sets surveyCompleted flag', async () => {
         wrapper.vm.saveAnswers = jest.fn(() => 'some object');
         await wrapper.vm.completeSurvey(null);
         expect(wrapper.vm.saveAnswers).toHaveBeenCalled();
         expect(services.assessmentResponses.completeSurvey).toHaveBeenCalled();
+        expect(wrapper.vm.surveyCompleted).toEqual(true);
+      });
+    });
+
+    describe('beforeAssessmentRunnerWindowUnload', () => {
+      it('calls preventDefault and sets returnValue when survey is not completed', async () => {
+        const event = {
+          preventDefault: jest.fn(),
+          returnValue: null,
+        };
+        wrapper.vm.beforeAssessmentRunnerWindowUnload(event);
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(event.returnValue).toEqual('');
       });
     });
   });
