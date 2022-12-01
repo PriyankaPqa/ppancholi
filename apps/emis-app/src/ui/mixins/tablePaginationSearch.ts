@@ -1,5 +1,6 @@
 import _isEmpty from 'lodash/isEmpty';
 import _cloneDeep from 'lodash/cloneDeep';
+import _debounce from 'lodash/debounce';
 import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
 import { IAzureTableSearchResults, IAzureSearchParams } from '@libs/shared-lib/types';
@@ -28,6 +29,7 @@ export default Vue.extend({
       itemsCount: 0,
       searchExecutionDate: null as Date,
       filterState: null as unknown,
+      searchTerm: '', // Custom search from outside the data table
     };
   },
 
@@ -116,8 +118,7 @@ export default Vue.extend({
     },
 
     setSearchParams() {
-      const quickSearch = helpers.toQuickSearch(this.params.search);
-
+      const quickSearch = helpers.toQuickSearch(this.params.search || this.searchTerm);
       if (this.userSearchFilters && quickSearch) {
         this.azureSearchParams.search = `${this.userSearchFilters} AND ${quickSearch}`;
       } else if (this.userSearchFilters) {
@@ -132,7 +133,6 @@ export default Vue.extend({
      */
     async search(params: IAzureSearchParams) {
       this.params = params;
-
       this.setPaginationParams();
 
       this.setFilterParams();
@@ -217,6 +217,26 @@ export default Vue.extend({
       await this.search(this.params);
       this.forceSkip = false;
     },
+
+    onSearchTermInput(value: string) {
+      const oldValue = this.searchTerm;
+      this.searchTerm = value;
+      if (value == null || (value != null && oldValue != null && value.trim() === oldValue.trim())) {
+        return;
+      }
+
+      this.forceSkip = true;
+      this.options.page = 1;
+      this.params = this.params || {};
+      this.params.search = value;
+      this.debounceSearch(this.params);
+      this.forceSkip = false;
+    },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    debounceSearch: _debounce(function func(this:any, value) {
+      this.search(value);
+    }, 500),
 
     getTableName() {
       return '';

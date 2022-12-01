@@ -152,7 +152,7 @@ describe('ApprovalActionDialog', () => {
     });
 
     describe('onSubmit', () => {
-      it('calls submitApprovalAction action, toaster and closeActionApprovalDialog', async () => {
+      it('calls submitApprovalAction action, toaster and closeActionApprovalDialog, and emits updateItems', async () => {
         doMount();
         await wrapper.setData({ action: { approvalAction: ApprovalAction.Declined, rationale: 'mock-rationale', submittedTo: 'id-1' }, confirm: true });
         wrapper.vm.$refs.actionApprovalForm.validate = jest.fn(() => true);
@@ -163,9 +163,10 @@ describe('ApprovalActionDialog', () => {
         expect(wrapper.vm.$storage.financialAssistancePayment.actions.submitApprovalAction).toHaveBeenCalledWith(FAPayment.entity.id, wrapper.vm.action);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('approval.requests.action.approvalStatusUpdated');
         expect(wrapper.vm.closeActionApprovalDialog).toHaveBeenCalledTimes(1);
+        expect(wrapper.emitted('updateItems')[0][0]).toEqual(FAPayment.entity.id);
       });
 
-      it('does nothing if form is invalid', async () => {
+      it('does not call the action if validation fails', async () => {
         jest.clearAllMocks();
         doMount();
         wrapper.vm.$refs.actionApprovalForm.validate = jest.fn(() => false);

@@ -219,6 +219,7 @@ export default Vue.extend({
       const res = await this.$storage.financialAssistancePayment.actions.submitApprovalAction(this.financialAssistancePayment.entity.id, this.action);
       if (res) {
         this.$toasted.global.success(this.$t('approval.requests.action.approvalStatusUpdated'));
+        this.$emit('updateItems', this.financialAssistancePayment.entity.id);
         this.closeActionApprovalDialog();
       }
       this.submitLoading = false;

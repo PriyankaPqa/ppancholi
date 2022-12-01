@@ -241,6 +241,16 @@ describe('tablePaginationSearch.vue', () => {
         expect(wrapper.vm.azureSearchParams.search).toEqual('filter AND ((/.*search.*/ OR "\\"search\\""))');
       });
 
+      it('sets azureSearchParams.search with userSearchFilters and custom search term if no search from data table', () => {
+        wrapper.vm.userSearchFilters = 'filter';
+        wrapper.vm.params.search = null;
+        wrapper.vm.searchTerm = 'search';
+
+        wrapper.vm.setSearchParams();
+
+        expect(wrapper.vm.azureSearchParams.search).toEqual('filter AND ((/.*search.*/ OR "\\"search\\""))');
+      });
+
       it('sets azureSearchParams.search with sanitized quickSearch', () => {
         wrapper.vm.userSearchFilters = '';
         wrapper.vm.params.search = '[search';
@@ -423,6 +433,35 @@ describe('tablePaginationSearch.vue', () => {
         wrapper.vm.options.page = 10;
         await wrapper.vm.onApplyFilter({ preparedFilters: {}, searchFilters: {} });
         expect(wrapper.vm.options.page).toBe(1);
+      });
+    });
+
+    describe('onSearchTermInput', () => {
+      it('does nothing if the new searchTerm is null', async () => {
+        wrapper.vm.debounceSearch = jest.fn();
+        await wrapper.vm.onSearchTermInput(null);
+        expect(wrapper.vm.debounceSearch).not.toBeCalled();
+      });
+
+      it('launches search with the search term and sets pagination to first page if the new searchTerm is not empty string', async () => {
+        wrapper.vm.debounceSearch = jest.fn();
+        await wrapper.setData({ params: { search: '' } });
+        await wrapper.vm.onSearchTermInput('test');
+
+        expect(wrapper.vm.searchTerm).toEqual('test');
+        expect(wrapper.vm.options.page).toEqual(1);
+        expect(wrapper.vm.params.search).toEqual('test');
+        expect(wrapper.vm.debounceSearch).toBeCalledWith(wrapper.vm.params);
+      });
+    });
+
+    describe('debounceSearch', () => {
+      it('should call fetchEventsFilter', async () => {
+        wrapper.vm.search = jest.fn();
+        wrapper.vm.debounceSearch();
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 600));
+        expect(wrapper.vm.search).toHaveBeenCalledTimes(1);
       });
     });
   });
