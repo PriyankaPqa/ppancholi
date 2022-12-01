@@ -342,26 +342,26 @@ export default mixins(caseFileDetail).extend({
 
     async saveFinancialAssistance() {
       this.savingFinancialAssistance = true;
-      const result = this.isEditMode ? (
-        await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePayment(this.financialAssistance))
-        : (await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePayment(this.financialAssistance)
-        );
-      if (result) {
-        this.$toasted.global.success(
-          this.isEditMode ? this.$t('financialAssistancePayment_edit.success') : this.$t('financialAssistancePayment_create.success'),
-        );
-        // so we can leave without warning
-        (this.$refs.form as VForm).reset();
-        // reset actually takes a few ms but isnt awaitable...
-        setTimeout(() => {
-          this.$router.replace({
-            name: routes.caseFile.financialAssistance.details.name,
-            params: {
-              financialAssistancePaymentId: result.id,
-            },
-          });
-        }, 150);
-      }
+        const result = this.isEditMode ? (
+          await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePayment(this.financialAssistance))
+          : (await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePayment(this.financialAssistance)
+          );
+        if (result) {
+          this.$toasted.global.success(
+            this.isEditMode ? this.$t('financialAssistancePayment_edit.success') : this.$t('financialAssistancePayment_create.success'),
+          );
+          // so we can leave without warning
+          (this.$refs.form as VForm).reset();
+          // reset actually takes a few ms but isnt awaitable...
+          setTimeout(() => {
+            this.$router.replace({
+              name: routes.caseFile.financialAssistance.details.name,
+              params: {
+                financialAssistancePaymentId: result.id,
+              },
+            });
+          }, 150);
+        }
       this.savingFinancialAssistance = false;
     },
 

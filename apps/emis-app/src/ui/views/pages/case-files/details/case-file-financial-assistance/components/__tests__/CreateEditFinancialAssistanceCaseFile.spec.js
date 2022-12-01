@@ -38,7 +38,7 @@ import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
 import flushPromises from 'flush-promises';
 import routes from '@/constants/routes';
 
-import Component from '../CreateEditFinancialAssistanceTable.vue';
+import Component from '../CreateEditFinancialAssistanceCaseFile.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -53,7 +53,7 @@ const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGrou
 const mockEvent = mockCombinedEvent();
 mockEvent.entity.schedule.status = EEventStatus.Open;
 
-describe('CreateEditFinancialAssistanceTable.vue', () => {
+describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   let wrapper;
 
   // eslint-disable-next-line no-unused-vars,max-params,@typescript-eslint/no-unused-vars
@@ -904,17 +904,17 @@ describe('CreateEditFinancialAssistanceTable.vue', () => {
     describe('saveFinancialAssistance', () => {
       it('should call the storage depending when adding', async () => {
         await mountWrapper(false, 'create');
-        wrapper.vm.financialAssistance = financialAssistance;
+        wrapper.vm.financialAssistance = caseFileFinancialAssistance;
         wrapper.vm.$refs.form.reset = jest.fn();
         await wrapper.vm.saveFinancialAssistance();
-        expect(storage.financialAssistancePayment.actions.addFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance);
+        expect(storage.financialAssistancePayment.actions.addFinancialAssistancePayment).toHaveBeenCalledWith(caseFileFinancialAssistance);
       });
 
       it('should call the storage depending when editing', async () => {
-        wrapper.vm.financialAssistance = financialAssistance;
+        wrapper.vm.financialAssistance = caseFileFinancialAssistance;
         wrapper.vm.$refs.form.reset = jest.fn();
         await wrapper.vm.saveFinancialAssistance();
-        expect(storage.financialAssistancePayment.actions.editFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance);
+        expect(storage.financialAssistancePayment.actions.editFinancialAssistancePayment).toHaveBeenCalledWith(caseFileFinancialAssistance);
       });
     });
 

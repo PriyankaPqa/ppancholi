@@ -111,7 +111,16 @@
           </v-row>
         </v-container>
         <div class="tableContainer">
-          <approval-group-table :approval="approval" :edit-mode="isEditMode" @edit:success="refreshApproval($event)" @group:changed="groupHasChanged = $event" />
+          <approval-group-table
+            :approval="approval"
+            :edit-mode="isEditMode"
+            @edit:success="refreshApproval($event)"
+            @group:changed="groupHasChanged = $event"
+            @add:success="showNoGroupErr = false"
+            @deleteGroup="handleGroupDeteted" />
+          <div v-if="showNoGroupErr" class="error--text ma-4" data-test="approvalsTable-error-requiredApprovalGroup">
+            {{ $t('approvalsTable.error.requiredApprovalGroup') }}
+          </div>
         </div>
 
         <template v-if="!isEditMode" #actions>
@@ -121,7 +130,7 @@
 
           <v-btn
             color="primary"
-            :disabled="failed || !approvalHasGroups || currentlyEditingGroup || currentlyAddingGroup"
+            :disabled="showNoGroupErr || failed"
             data-test="approval-saveBtn"
             :loading="isSaving"
             @click="submit()">
@@ -193,6 +202,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       loading: false,
       groupHasChanged: false, // if group is being edited and values have changed
       ApprovalAggregatedBy,
+      showNoGroupErr: false,
     };
   },
 
@@ -352,8 +362,11 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async submit(): Promise<void> {
+      if (!this.approvalHasGroups) {
+        this.showNoGroupErr = true;
+      }
       const isValid = await (this.$refs.form as VForm).validate();
-      if (isValid) {
+      if (isValid && this.approvalHasGroups) {
         this.isSaving = true;
         if (this.isEditMode) {
           this.isTableMode ? await this.editTable() : await this.editTemplate();
@@ -362,6 +375,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         }
         this.isSaving = false;
       } else {
+        await this.$nextTick();
         helpers.scrollToFirstError('scrollAnchor');
       }
     },
@@ -467,6 +481,10 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     refreshApproval(approval: IApprovalTableEntityData) {
       this.approval = new ApprovalTableEntity(approval);
+    },
+
+    handleGroupDeteted() {
+      this.showNoGroupErr = !this.approvalHasGroups;
     },
   },
 });

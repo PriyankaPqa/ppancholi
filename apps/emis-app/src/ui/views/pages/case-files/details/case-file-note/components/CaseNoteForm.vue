@@ -9,7 +9,7 @@
       </span>
     </div>
 
-    <validation-observer ref="form" v-slot="{ invalid, changed }" slim>
+    <validation-observer ref="form" v-slot="{ failed, changed }" slim>
       <v-form class="full-width">
         <v-row dense>
           <v-col cols="12">
@@ -44,7 +44,7 @@
         <v-btn class="mr-3" data-test="case-note-form-cancel" :disabled="isSaving" @click="closeCaseNoteForm(changed)">
           {{ $t('common.cancel') }}
         </v-btn>
-        <v-btn class="ml-3" color="primary" data-test="case-note-form-save" :loading="isSaving" :disabled="invalid" @click="save">
+        <v-btn class="ml-3" color="primary" data-test="case-note-form-save" :loading="isSaving" :disabled="failed || isSaving || (isEdit && !changed)" @click.stop="save">
           {{ isEdit ? $t('common.save') : $t('common.add') }}
         </v-btn>
       </div>
@@ -72,6 +72,8 @@ import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
 import { ICaseFileCombined } from '@libs/entities-lib/case-file';
 import { CaseNoteEntity, ICaseNoteEntity } from '@libs/entities-lib/case-note';
+import { VForm } from '@libs/shared-lib/types';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   name: 'CaseNoteForm',
@@ -158,11 +160,16 @@ export default Vue.extend({
     },
 
     async save() {
-      if (this.$hasLevel('level4')) {
-        await this.addOrEdit();
-      } else {
-        this.showConfirmationDialog = true;
+      const isValid = await (this.$refs.form as VForm).validate();
+      if (!isValid) {
+        helpers.scrollToFirstError('app');
+        return;
       }
+        if (this.$hasLevel('level4')) {
+          await this.addOrEdit();
+        } else {
+          this.showConfirmationDialog = true;
+        }
     },
 
     async addOrEdit() {

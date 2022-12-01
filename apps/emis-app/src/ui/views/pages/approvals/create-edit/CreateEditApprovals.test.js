@@ -344,6 +344,7 @@ describe('CreateEditApprovals', () => {
     describe('submit', () => {
       it('should scroll to first error if not valid', async () => {
         doMount();
+        await wrapper.setData({ approval: mockApprovalTableEntity() });
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
         helpers.scrollToFirstError = jest.fn();
         await wrapper.vm.submit();
@@ -352,6 +353,7 @@ describe('CreateEditApprovals', () => {
       describe('Create mode', () => {
         it('should call createTable if valid and isTableMode', async () => {
           doMount();
+          await wrapper.setData({ approval: mockApprovalTableEntity() });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
           wrapper.vm.createTable = jest.fn();
           await wrapper.vm.submit();
@@ -360,16 +362,26 @@ describe('CreateEditApprovals', () => {
 
         it('should call createTemplate if valid and not isTableMode', async () => {
           doMount(false);
+          await wrapper.setData({ approval: mockApprovalTableEntity() });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
           wrapper.vm.createTemplate = jest.fn();
           await wrapper.vm.submit();
           expect(wrapper.vm.createTemplate).toBeCalled();
+        });
+
+        it('should set showNoGroupErr to true when there is no group', async () => {
+          doMount(true);
+          await wrapper.setData({ approval: mockApprovalTableEntity({ groups: [] }) });
+          wrapper.vm.$refs.form.validate = jest.fn(() => true);
+          await wrapper.vm.submit();
+          expect(wrapper.vm.showNoGroupErr).toEqual(true);
         });
       });
 
       describe('Edit mode', () => {
         it('should call editTable if valid and isTableMode', async () => {
           doMount(true, true);
+          await wrapper.setData({ approval: mockApprovalTableEntity() });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
           wrapper.vm.editTable = jest.fn();
           await wrapper.vm.submit();
@@ -378,6 +390,7 @@ describe('CreateEditApprovals', () => {
 
         it('should call editTemplate if valid and not isTableMode', async () => {
           doMount(false, true);
+          await wrapper.setData({ approval: mockApprovalTableEntity() });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
           wrapper.vm.editTemplate = jest.fn();
           await wrapper.vm.submit();

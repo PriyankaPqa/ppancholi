@@ -16,14 +16,14 @@
       </error-panel>
     </div>
 
-    <rc-page-content
-      v-else
-      :title="title"
-      :show-help="false"
-      :help-link="$t('zendesk.help_link.create_financial_assistance_table')"
-      :show-add-button="false">
-      <v-container>
-        <validation-observer ref="form" v-slot="{ changed, invalid }" slim>
+    <validation-observer ref="form" v-slot="{ changed, invalid, failed }" slim>
+      <rc-page-content
+        v-if="!loading && !error"
+        :title="title"
+        :show-help="false"
+        :help-link="$t('zendesk.help_link.create_financial_assistance_table')"
+        :show-add-button="false">
+        <v-container>
           <v-row class="justify-center">
             <v-col :class="{ 'table-wrapper': isEdit }" cols="12" xl="7" lg="9" md="11" sm="12">
               <rc-tabs>
@@ -129,33 +129,36 @@
               </v-row>
             </v-col>
           </v-row>
-        </validation-observer>
-      </v-container>
+        </v-container>
 
-      <div class="tableContainer">
-        <financial-assistance-items :is-edit="isEdit" :is-table-mode="isTableMode" @form-active="setIsFormActive" />
-      </div>
+        <div class="tableContainer">
+          <financial-assistance-items :is-edit="isEdit" :is-table-mode="isTableMode" @form-active="setIsFormActive" />
+          <div v-if="tableEditActive || !isValidItemsSubItems" class="error--text ma-4" data-test="financialAssistance-error-requiredItem">
+            {{ $t('financialAssistance.error.requiredItem') }}
+          </div>
+        </div>
 
-      <template #actions>
-        <v-btn v-if="!isEdit" :disabled="isSaving" data-test="financial-assistance-cancelBtn" @click="cancelChanges()">
-          {{ $t('common.buttons.cancel') }}
-        </v-btn>
+        <template #actions>
+          <v-btn v-if="!isEdit" :disabled="isSaving" data-test="financial-assistance-cancelBtn" @click="cancelChanges()">
+            {{ $t('common.buttons.cancel') }}
+          </v-btn>
 
-        <v-btn
-          v-if="!isEdit"
-          color="primary"
-          data-test="financial-assistance-saveBtn"
-          :loading="isSaving"
-          :disabled="tableEditActive || !isValidItemsSubItems"
-          @click="save">
-          {{ $t('common.buttons.create') }}
-        </v-btn>
+          <v-btn
+            v-if="!isEdit"
+            color="primary"
+            data-test="financial-assistance-saveBtn"
+            :loading="isSaving"
+            :disabled="!isValidItemsSubItems || failed"
+            @click="save">
+            {{ $t('common.buttons.create') }}
+          </v-btn>
 
-        <v-btn v-if="isEdit" color="primary" :disabled="isOperating" data-test="back-to-financial-assistance-btn" @click="cancelChanges()">
-          {{ $t('financialAssistance.back') }}
-        </v-btn>
-      </template>
-    </rc-page-content>
+          <v-btn v-if="isEdit" color="primary" :disabled="isOperating" data-test="back-to-financial-assistance-btn" @click="cancelChanges()">
+            {{ $t('financialAssistance.back') }}
+          </v-btn>
+        </template>
+      </rc-page-content>
+    </validation-observer>
 
     <confirm-before-action
       data-test="financialCreate__confirmTemplateDialog"
@@ -429,14 +432,10 @@ export default Vue.extend({
 
       const isValid = await (this.$refs.form as VForm).validate();
 
-      if (isValid) {
-        if (!this.validateItemsAndSubItems()) {
-          this.$toasted.global.error(this.$t('financialAssistance.errors.needItemSubItem'));
-          return;
-        }
-
+      if (isValid && this.validateItemsAndSubItems()) {
         await this.dispatchSaveAction();
       } else {
+        await this.$nextTick();
         helpers.scrollToFirstError('scrollAnchor');
       }
     },

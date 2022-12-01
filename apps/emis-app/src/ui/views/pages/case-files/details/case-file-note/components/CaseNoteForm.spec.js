@@ -3,7 +3,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { mockCaseNoteEntity, mockCaseNoteCategories } from '@libs/entities-lib/case-note';
-
+import helpers from '@/ui/helpers/helpers';
 import Component from './CaseNoteForm.vue';
 
 const localVue = createLocalVue();
@@ -53,6 +53,13 @@ describe('CaseNoteForm.vue', () => {
       it('is rendered', async () => {
         expect(wrapper.findDataTest('case-note-form-description').exists()).toBeTruthy();
       });
+    });
+
+    it('Submit calls validate method', async () => {
+      wrapper.vm.$refs.form.validate = jest.fn(() => true);
+      const button = wrapper.findDataTest('case-note-form-save');
+      await button.trigger('click');
+      expect(wrapper.vm.$refs.form.validate).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -186,11 +193,19 @@ describe('CaseNoteForm.vue', () => {
     });
 
     describe('save', () => {
+      it('should scroll to first error if not valid', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => false);
+        helpers.scrollToFirstError = jest.fn();
+        await wrapper.vm.save();
+        expect(helpers.scrollToFirstError).toHaveBeenCalledWith('app');
+      });
+
       describe('user level is level 1 or level 2 or level 3', () => {
         it('shows confirmation dialog', async () => {
+          wrapper.vm.$refs.form.validate = jest.fn(() => true);
           wrapper.vm.$hasLevel = jest.fn(() => false);
 
-          wrapper.vm.save();
+          await wrapper.vm.save();
           expect(wrapper.vm.showConfirmationDialog).toBeTruthy();
         });
 
@@ -205,17 +220,19 @@ describe('CaseNoteForm.vue', () => {
 
       describe('user level higher than 3', () => {
         it('does not show confirmation dialog', async () => {
+          wrapper.vm.$refs.form.validate = jest.fn(() => true);
           wrapper.vm.$hasLevel = jest.fn(() => true);
 
-          wrapper.vm.save();
+          await wrapper.vm.save();
           expect(wrapper.vm.showConfirmationDialog).toBeFalsy();
         });
 
         it('calls addOrEdit', async () => {
+          wrapper.vm.$refs.form.validate = jest.fn(() => true);
           wrapper.vm.$hasLevel = jest.fn(() => true);
           wrapper.vm.addOrEdit = jest.fn();
 
-          wrapper.vm.save();
+          await wrapper.vm.save();
           expect(wrapper.vm.addOrEdit).toHaveBeenCalledTimes(1);
         });
       });

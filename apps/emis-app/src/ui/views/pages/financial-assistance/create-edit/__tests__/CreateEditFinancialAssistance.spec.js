@@ -13,7 +13,7 @@ import Component from '../CreateEditFinancialAssistance.vue';
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-describe('CreateEditFinancialAssistanceTable.vue', () => {
+describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -338,15 +338,15 @@ describe('CreateEditFinancialAssistanceTable.vue', () => {
 
   describe('Methods', () => {
     describe('save', () => {
-      it('toasts error if validate items and subitems fails', async () => {
+      it('show error message if validate items and subitems fails', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.validateItemsAndSubItems = jest.fn(() => false);
 
         jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
 
         await wrapper.vm.save();
-
-        expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('financialAssistance.errors.needItemSubItem');
+        const element = wrapper.findDataTest('financialAssistance-error-requiredItem');
+        expect(element.exists()).toBe(true);
       });
     });
 

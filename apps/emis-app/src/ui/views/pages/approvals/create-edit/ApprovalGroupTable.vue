@@ -254,6 +254,7 @@ export default mixins(approvalRoles).extend({
 
     deleteGroup(index: number) {
       this.approval.deleteGroup(index);
+      this.$emit('deleteGroup');
     },
 
     async deleteGroupWithConfirmation(index:number) {
@@ -317,6 +318,7 @@ export default mixins(approvalRoles).extend({
             this.$emit('edit:success', res);
           }
         } else {
+          this.$emit('add:success');
           group.setAddMode(false);
         }
       }

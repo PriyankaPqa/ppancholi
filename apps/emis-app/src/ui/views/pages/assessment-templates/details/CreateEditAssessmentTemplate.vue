@@ -1,5 +1,5 @@
 <template>
-  <validation-observer ref="form" v-slot="{ failed }" slim>
+  <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
     <page-template :loading="assessmentTemplateLoading" :show-left-menu="false">
       <rc-page-content
         :title="title">
@@ -14,7 +14,7 @@
             {{ $t('common.cancel') }}
           </v-btn>
 
-          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed" @click.stop="submit">
+          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed || !dirty" @click.stop="submit">
             {{ submitLabel }}
           </v-btn>
         </template>

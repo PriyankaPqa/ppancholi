@@ -36,7 +36,7 @@ const CaseFileAssessments = () => import('@/ui/views/pages/case-files/details/ca
 const CaseFileAssessmentDetails = () => import('@/ui/views/pages/case-files/details/case-file-assessment/components/AssessmentDetails.vue');
 
 const FinancialAssistancePaymentsList = () => import('@/ui/views/pages/case-files/details/case-file-financial-assistance/FinancialAssistancePaymentsList.vue');
-const CreateEditCaseFileFinancialAssistance = () => import('@/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistanceTable.vue');
+const CreateEditCaseFileFinancialAssistance = () => import('@/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistanceCaseFile.vue');
 const ViewPaymentLineDetails = () => import('@/ui/views/pages/case-files/details/case-file-financial-assistance/components/ViewPaymentLineDetails.vue');
 
 const CaseFileReferral = () => import('@/ui/views/pages/case-files/details/case-file-referral/CaseFileReferral.vue');

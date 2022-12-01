@@ -12,7 +12,7 @@
             {{ $t('common.cancel') }}
           </v-btn>
 
-          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed || (!dirty && !isDirty)" @click.stop="submit">
+          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed || (isEditMode && !dirty && !isDirty) || loading" @click.stop="submit">
             {{ submitLabel }}
           </v-btn>
         </template>
