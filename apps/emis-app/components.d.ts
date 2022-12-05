@@ -2,13 +2,12 @@
 // We suggest you to commit this file into source control
 // Read more: https://github.com/vuejs/core/pull/3399
 export {}
-
+        
 declare module 'vue' {
   export interface GlobalComponents {
     AccountSettings: typeof import('./src/ui/views/pages/system-management/lists/user-accounts/account-settings/AccountSettings.vue')['default']
     ActivityWatcher: typeof import('./src/ui/ActivityWatcher.vue')['default']
     AddCaseFileAssessment: typeof import('./src/ui/views/pages/case-files/details/case-file-assessment/components/AddCaseFileAssessment.vue')['default']
-    AddEditAdditionalMembers: typeof import('../../libs/registration-lib/src/components/additional-members/AddEditAdditionalMembersLib.vue')['default']
     AddEditAdditionalMembersLib: typeof import('./../../libs/registration-lib/src/components/additional-members/AddEditAdditionalMembersLib.vue')['default']
     AddEditItemButtons: typeof import('./src/ui/views/pages/financial-assistance/create-edit/Templates/AddEditItemButtons.vue')['default']
     AddEditSubItemButtons: typeof import('./src/ui/views/pages/financial-assistance/create-edit/Templates/AddEditSubItemButtons.vue')['default']
@@ -37,6 +36,7 @@ declare module 'vue' {
     ApprovalGroupTable: typeof import('./src/ui/views/pages/approvals/create-edit/ApprovalGroupTable.vue')['default']
     ApprovalHistoryDialog: typeof import('./src/ui/views/pages/case-files/details/case-file-financial-assistance/components/ApprovalHistoryDialog.vue')['default']
     ApprovalRequestsHome: typeof import('./src/ui/views/pages/approvals/requests/ApprovalRequestsHome.vue')['default']
+    ApprovalRequestsTable: typeof import('./src/ui/views/pages/approvals/requests/ApprovalRequestsTable.vue')['default']
     ApprovalsLayout: typeof import('./src/ui/views/pages/approvals/layout/ApprovalsLayout.vue')['default']
     ApprovalsTemplates: typeof import('./src/ui/views/pages/approvals/templates/ApprovalsTemplates.vue')['default']
     ApprovalTablesHome: typeof import('./src/ui/views/pages/approvals/tables/ApprovalTablesHome.vue')['default']
@@ -286,8 +286,6 @@ declare module 'vue' {
     Roles: typeof import('./src/ui/views/pages/system-management/lists/Roles.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-<<<<<<< HEAD
-=======
     ScreeningId: typeof import('./src/ui/views/pages/system-management/lists/pages/ScreeningId.vue')['default']
     SecondaryLeftMenu: typeof import('./src/ui/views/components/layout/SecondaryLeftMenu.vue')['default']
     SecondaryRightMenu: typeof import('./src/ui/views/components/layout/SecondaryRightMenu.vue')['default']
@@ -320,8 +318,6 @@ declare module 'vue' {
     TenantSettings: typeof import('./src/ui/views/pages/system-management/lists/tenantSettings/TenantSettings.vue')['default']
     TooltipFinancialAssistanceCategory: typeof import('./src/ui/views/pages/financial-assistance/create-edit/TooltipFinancialAssistanceCategory.vue')['default']
     UserAccounts: typeof import('./src/ui/views/pages/system-management/lists/user-accounts/home/UserAccounts.vue')['default']
-    VAlert: typeof import('vuetify/lib')['VAlert']
->>>>>>> f608ce108eb632fdabb43c3e023fb67e2eb8734c
     VApp: typeof import('vuetify/lib')['VApp']
     VAppBar: typeof import('vuetify/lib')['VAppBar']
     VAppBarNavIcon: typeof import('vuetify/lib')['VAppBarNavIcon']
@@ -353,11 +349,8 @@ declare module 'vue' {
     ViewPaymentLineDetails: typeof import('./src/ui/views/pages/case-files/details/case-file-financial-assistance/components/ViewPaymentLineDetails.vue')['default']
     VList: typeof import('vuetify/lib')['VList']
     VListItem: typeof import('vuetify/lib')['VListItem']
-    VListItemAction: typeof import('vuetify/lib')['VListItemAction']
     VListItemContent: typeof import('vuetify/lib')['VListItemContent']
-    VListItemGroup: typeof import('vuetify/lib')['VListItemGroup']
     VListItemIcon: typeof import('vuetify/lib')['VListItemIcon']
-    VListItemSubtitle: typeof import('vuetify/lib')['VListItemSubtitle']
     VListItemTitle: typeof import('vuetify/lib')['VListItemTitle']
     VMain: typeof import('vuetify/lib')['VMain']
     VMenu: typeof import('vuetify/lib')['VMenu']
@@ -370,10 +363,10 @@ declare module 'vue' {
     VSelect: typeof import('vuetify/lib')['VSelect']
     VSelectWithValidation: typeof import('./../../libs/component-lib/src/components/atoms/VSelectWithValidation.vue')['default']
     VSheet: typeof import('vuetify/lib')['VSheet']
-    VSimpleCheckbox: typeof import('vuetify/lib')['VSimpleCheckbox']
     VSimpleTable: typeof import('vuetify/lib')['VSimpleTable']
     VSkeletonLoader: typeof import('vuetify/lib')['VSkeletonLoader']
     VSpacer: typeof import('vuetify/lib')['VSpacer']
+    VSwitch: typeof import('vuetify/lib')['VSwitch']
     VTextarea: typeof import('vuetify/lib')['VTextarea']
     VTextAreaWithValidation: typeof import('./../../libs/component-lib/src/components/atoms/VTextAreaWithValidation.vue')['default']
     VTextField: typeof import('vuetify/lib')['VTextField']

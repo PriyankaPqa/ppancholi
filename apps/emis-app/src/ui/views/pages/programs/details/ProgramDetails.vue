@@ -82,6 +82,19 @@
                   </v-icon>
                   {{ $t('event.programManagement.hasCompletedAssessments') }}
                 </div>
+
+                <div
+                  v-for="requiredAssessmentForm in requiredAssessmentForms"
+                  :key="requiredAssessmentForm.id"
+                  class="ml-6 mr-4">
+                  <v-icon
+                    class="mr-1"
+                    :color="getEligibilityIconColor(program.eligibilityCriteria.completedAssessments)"
+                    x-small>
+                    mdi-circle
+                  </v-icon>
+                  {{ getRequiredAssessmentFormName(requiredAssessmentForm) }}
+                </div>
               </v-col>
             </v-row>
 
@@ -176,6 +189,8 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
+import { Status } from '@libs/entities-lib/base';
+import _sortBy from 'lodash/sortBy';
 
 export default Vue.extend({
   name: 'ProgramDetails',
@@ -210,8 +225,20 @@ export default Vue.extend({
     program(): IProgramEntity {
       return this.$storage.program.getters.get(this.programId).entity;
     },
+
     assessments(): IAssessmentFormEntity[] {
       return this.$storage.assessmentForm.getters.getByIds(this.assessmentIds).map((a) => a.entity);
+    },
+
+    requiredAssessmentForms(): IAssessmentFormEntity[] {
+      if (this.program.eligibilityCriteria.completedAssessmentIds == null) {
+        return [] as IAssessmentFormEntity[];
+      }
+
+      return _sortBy(
+        this.$storage.assessmentForm.getters.getByIds(this.program.eligibilityCriteria.completedAssessmentIds).map((a) => a.entity),
+        (assessmentForm) => this.$m(assessmentForm.name),
+      );
     },
   },
 
@@ -247,6 +274,15 @@ export default Vue.extend({
 
     getEligibilityIconColor(checked: boolean) {
       return checked ? 'status_success' : 'grey-darken-2';
+    },
+
+    getRequiredAssessmentFormName(assessmentForm: IAssessmentFormEntity) {
+      let name = this.$m(assessmentForm.name);
+      if (assessmentForm.status === Status.Inactive) {
+        name += ` (${this.$t('enums.Status.Inactive')})`;
+      }
+
+      return name;
     },
 
     getEditRoute() {

@@ -3,6 +3,8 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
+import { Status } from '@libs/entities-lib/base';
+import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import Component from './ProgramDetails.vue';
 
 const localVue = createLocalVue();
@@ -126,6 +128,83 @@ describe('ProgramDetails.vue', () => {
         const assessments = wrapper.vm.assessments;
         expect(storage.assessmentForm.getters.getByIds).toHaveBeenCalledWith(['newId']);
         expect(assessments).toEqual(storage.assessmentForm.getters.getByIds().map((x) => x.entity));
+      });
+    });
+
+    describe('requiredAssessmentForms', () => {
+      it('calls getter when completedAssessmentIds is not null', async () => {
+        jest.clearAllMocks();
+        program.eligibilityCriteria.completedAssessmentIds = ['newId'];
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            programId: 'PROGRAM_ID',
+            id: 'EVENT_ID',
+          },
+          computed: {
+            program() {
+              return program;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        const assessments = wrapper.vm.requiredAssessmentForms;
+        expect(storage.assessmentForm.getters.getByIds).toHaveBeenCalledWith(['newId']);
+        expect(assessments).toEqual(storage.assessmentForm.getters.getByIds(['newId']).map((x) => x.entity));
+      });
+
+      it('calls getter when completedAssessmentIds is empty', async () => {
+        jest.clearAllMocks();
+        program.eligibilityCriteria.completedAssessmentIds = [];
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            programId: 'PROGRAM_ID',
+            id: 'EVENT_ID',
+          },
+          computed: {
+            program() {
+              return program;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const assessments = wrapper.vm.requiredAssessmentForms;
+        expect(storage.assessmentForm.getters.getByIds).toHaveBeenCalledWith([]);
+      });
+
+      it('returns empty array when completedAssessmentIds is null', async () => {
+        jest.clearAllMocks();
+        program.eligibilityCriteria.completedAssessmentIds = null;
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            programId: 'PROGRAM_ID',
+            id: 'EVENT_ID',
+          },
+          computed: {
+            program() {
+              return program;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        const assessments = wrapper.vm.requiredAssessmentForms;
+        expect(storage.assessmentForm.getters.getByIds).not.toHaveBeenCalled();
+        expect(assessments).toEqual([]);
       });
     });
   });
@@ -261,6 +340,25 @@ describe('ProgramDetails.vue', () => {
 
       it('returns grey-darken-2 for false', () => {
         expect(wrapper.vm.getEligibilityIconColor(false)).toBe('grey-darken-2');
+      });
+    });
+
+    describe('getRequiredAssessmentFormName', () => {
+      it('returns the correct name for an active assessment form', async () => {
+        const assessmentFormEntity = mockAssessmentFormEntity();
+
+        const name = wrapper.vm.getRequiredAssessmentFormName(assessmentFormEntity);
+        expect(name).toEqual(wrapper.vm.$m(assessmentFormEntity.name));
+      });
+
+      it('returns the correct name for an inactive assessment form', async () => {
+        const assessmentFormEntity = mockAssessmentFormEntity();
+        assessmentFormEntity.status = Status.Inactive;
+
+        const name = wrapper.vm.getRequiredAssessmentFormName(assessmentFormEntity);
+        let expectedName = wrapper.vm.$m(assessmentFormEntity.name);
+        expectedName += ` (${wrapper.vm.$t('enums.Status.Inactive')})`;
+        expect(name).toEqual(expectedName);
       });
     });
 
