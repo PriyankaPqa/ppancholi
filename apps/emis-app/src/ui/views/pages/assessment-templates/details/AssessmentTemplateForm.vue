@@ -190,6 +190,11 @@ export default Vue.extend({
       type: Boolean,
       required: true,
     },
+
+    showEligibilityCriteriaWarning: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   data() {
@@ -200,6 +205,9 @@ export default Vue.extend({
       PublishStatus,
       Frequency: AssessmentFrequencyType,
       programs: [] as IProgramEntity[],
+      isSelectedAsProgramEligibilityCriteria: false,
+      originalAssessmentFormProgramId: null as string,
+      originalAssessmentFormStatus: Status.Active,
     };
   },
 
@@ -228,7 +236,7 @@ export default Vue.extend({
     programInactive(): boolean {
       if (this.isFormMode) {
         const assessmentForm = this.localAssessment as AssessmentFormEntity;
-        const program = this.programs.filter((t) => t.id === assessmentForm.programId)[0];
+        const program = this.programs.filter((p) => p.id === assessmentForm.programId)[0];
 
         return program && program.status === Status.Inactive;
       }
@@ -270,15 +278,34 @@ export default Vue.extend({
     localAssessment: {
       handler(newAssessmentTemplate) {
         this.$emit('update:assessmentTemplate', newAssessmentTemplate);
+
+        if (this.isFormMode && this.isSelectedAsProgramEligibilityCriteria) {
+          const newAssessmentForm = newAssessmentTemplate as AssessmentFormEntity;
+          if (newAssessmentForm.programId !== this.originalAssessmentFormProgramId
+              || (newAssessmentForm.status !== this.originalAssessmentFormStatus && newAssessmentForm.status === Status.Inactive)) {
+            this.$emit('update:show-eligibility-criteria-warning', true);
+          } else {
+            this.$emit('update:show-eligibility-criteria-warning', false);
+          }
+        }
       },
       deep: true,
     },
   },
 
   async created() {
-    this.localAssessment = this.isFormMode
-      ? new AssessmentFormEntity(this.assessmentTemplate as IAssessmentFormEntity) : new AssessmentTemplateEntity(this.assessmentTemplate);
+    if (this.isFormMode) {
+      this.localAssessment = new AssessmentFormEntity(this.assessmentTemplate as IAssessmentFormEntity);
+      const assessmentForm = this.localAssessment as AssessmentFormEntity;
+      this.originalAssessmentFormProgramId = assessmentForm.programId;
+      this.originalAssessmentFormStatus = assessmentForm.status;
+    } else {
+      this.localAssessment = new AssessmentTemplateEntity(this.assessmentTemplate);
+    }
+
     await this.searchPrograms();
+
+    this.setIsSelectedAsProgramEligibilityCriteria();
   },
 
   methods: {
@@ -290,6 +317,16 @@ export default Vue.extend({
     resetAsUnique() {
       if (!this.isNameUnique) {
         this.$emit('update:is-name-unique', true);
+      }
+    },
+
+    setIsSelectedAsProgramEligibilityCriteria() {
+      if (this.isFormMode) {
+        const program = this.programs.filter((p) => p.id === this.originalAssessmentFormProgramId)[0];
+
+        this.isSelectedAsProgramEligibilityCriteria = program && program.eligibilityCriteria.completedAssessmentIds.some((caid) => caid === this.localAssessment.id);
+      } else {
+        this.isSelectedAsProgramEligibilityCriteria = false;
       }
     },
 

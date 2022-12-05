@@ -7,7 +7,8 @@
           v-if="assessmentTemplate"
           :assessment-template.sync="assessmentTemplate"
           :is-edit-mode="isEditMode"
-          :is-name-unique.sync="isNameUnique" />
+          :is-name-unique.sync="isNameUnique"
+          :show-eligibility-criteria-warning.sync="showEligibilityCriteriaWarning" />
 
         <template slot="actions">
           <v-btn data-test="cancel" @click.stop="back()">
@@ -67,6 +68,7 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
       error: false,
       isNameUnique: true,
       dataSaved: false,
+      showEligibilityCriteriaWarning: false,
     };
   },
 
@@ -107,41 +109,51 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
       const isValid = await (this.$refs.form as VForm).validate();
 
       if (isValid) {
-        try {
-          this.loading = true;
-          let assessmentTemplate: IAssessmentBaseEntity;
+        let doSubmit = true;
+        if (this.showEligibilityCriteriaWarning) {
+          doSubmit = await this.$confirm({
+            title: this.$t('assessmentForm.eligibilityCriteria.confirm.save.title'),
+            messages: this.$t('assessmentForm.eligibilityCriteria.confirm.save.message'),
+          });
+        }
 
-          if (this.isFormMode) {
-            if (this.isEditMode) {
-              assessmentTemplate = await this.$storage.assessmentForm.actions.update(this.assessmentForm);
+        if (doSubmit) {
+          try {
+            this.loading = true;
+            let assessmentTemplate: IAssessmentBaseEntity;
+
+            if (this.isFormMode) {
+              if (this.isEditMode) {
+                assessmentTemplate = await this.$storage.assessmentForm.actions.update(this.assessmentForm);
+              } else {
+                assessmentTemplate = await this.$storage.assessmentForm.actions.create(this.assessmentForm);
+              }
+            } else if (this.isEditMode) {
+              assessmentTemplate = await this.$storage.assessmentTemplate.actions.update(this.assessmentTemplate);
             } else {
-              assessmentTemplate = await this.$storage.assessmentForm.actions.create(this.assessmentForm);
+              assessmentTemplate = await this.$storage.assessmentTemplate.actions.create(this.assessmentTemplate);
             }
-          } else if (this.isEditMode) {
-            assessmentTemplate = await this.$storage.assessmentTemplate.actions.update(this.assessmentTemplate);
-          } else {
-            assessmentTemplate = await this.$storage.assessmentTemplate.actions.create(this.assessmentTemplate);
-          }
-          if (assessmentTemplate) {
-            if (this.cloneId) {
-              assessmentTemplate.externalToolState = this.assessmentTemplate.externalToolState;
-              assessmentTemplate.questions = this.assessmentTemplate.questions;
-              assessmentTemplate = (this.isFormMode) ? await this.$storage.assessmentForm.actions.updateAssessmentStructure(assessmentTemplate)
-                : await this.$storage.assessmentTemplate.actions.updateAssessmentStructure(assessmentTemplate);
-            }
+            if (assessmentTemplate) {
+              if (this.cloneId) {
+                assessmentTemplate.externalToolState = this.assessmentTemplate.externalToolState;
+                assessmentTemplate.questions = this.assessmentTemplate.questions;
+                assessmentTemplate = (this.isFormMode) ? await this.$storage.assessmentForm.actions.updateAssessmentStructure(assessmentTemplate)
+                  : await this.$storage.assessmentTemplate.actions.updateAssessmentStructure(assessmentTemplate);
+              }
 
-            this.$toasted.global.success(this.$t(this.isEditMode ? 'assessmentTemplate.edit.success' : 'assessmentTemplate.create.success'));
-            this.dataSaved = true;
-            this.$router.replace({
-              name: this.baseRoute.details.name,
-              params: { assessmentTemplateId: assessmentTemplate.id },
-            });
+              this.$toasted.global.success(this.$t(this.isEditMode ? 'assessmentTemplate.edit.success' : 'assessmentTemplate.create.success'));
+              this.dataSaved = true;
+              this.$router.replace({
+                name: this.baseRoute.details.name,
+                params: { assessmentTemplateId: assessmentTemplate.id },
+              });
+            }
+          } catch (e) {
+            this.$appInsights.trackTrace('AssessmentTemplate submit error', { error: e }, 'CreateEditAssessmentTemplate', 'submit');
+            this.handleSubmitError(e);
+          } finally {
+            this.loading = false;
           }
-        } catch (e) {
-          this.$appInsights.trackTrace('AssessmentTemplate submit error', { error: e }, 'CreateEditAssessmentTemplate', 'submit');
-          this.handleSubmitError(e);
-        } finally {
-          this.loading = false;
         }
       } else {
         helpers.scrollToFirstError('scrollAnchor');

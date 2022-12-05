@@ -6,7 +6,7 @@ import Component from './CreateEditAssessmentTemplate.vue';
 const localVue = createLocalVue();
 let storage = mockStorage();
 
-describe('CreateEditAssessmentTemplate', () => {
+describe('CreateEditAssessmentTemplate.vue', () => {
   let wrapper;
 
   // eslint-disable-next-line max-params
@@ -63,6 +63,15 @@ describe('CreateEditAssessmentTemplate', () => {
 
         await wrapper.vm.submit();
         expect(storage.assessmentForm.actions.create).toHaveBeenCalledTimes(0);
+      });
+
+      it('shows prompt message if showEligibilityCriteriaWarning is true', async () => {
+        await mountWrapper();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.showEligibilityCriteriaWarning = true;
+
+        await wrapper.vm.submit();
+        expect(wrapper.vm.$confirm).toHaveBeenCalled();
       });
 
       it('calls assessmentForm.create if isEditMode is false with event', async () => {

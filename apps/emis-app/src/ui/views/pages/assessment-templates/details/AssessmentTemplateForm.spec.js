@@ -21,7 +21,9 @@ describe('AssessmentTemplateForm.vue', () => {
   const mountWrapper = async (assessmentTemplate = assessmentForm, fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
-      propsData: { assessmentTemplate, isEditMode: true, isNameUnique: true },
+      propsData: {
+        assessmentTemplate, isEditMode: true, isNameUnique: true, showEligibilityCriteriaWarning: false,
+      },
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
@@ -160,12 +162,32 @@ describe('AssessmentTemplateForm.vue', () => {
 
         expect(wrapper.vm.localAssessment).toEqual(new AssessmentTemplateEntity(assessmentTemplate));
       });
+
+      it('should set originalAssessmentFormProgramId and originalAssessmentFormStatus', async () => {
+        await mountWrapper(assessmentForm);
+
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+
+        expect(wrapper.vm.originalAssessmentFormProgramId).toEqual(assessmentForm.programId);
+        expect(wrapper.vm.originalAssessmentFormStatus).toEqual(assessmentForm.status);
+      });
+
+      it('calls setIsSelectedAsProgramEligibilityCriteria', async () => {
+        await mountWrapper(assessmentForm);
+        wrapper.vm.setIsSelectedAsProgramEligibilityCriteria = jest.fn();
+
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+
+        expect(wrapper.vm.setIsSelectedAsProgramEligibilityCriteria).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
   describe('Watch', () => {
     describe('localAssessment', () => {
-      it('emits when localAssessment is changed', async () => {
+      it('emits assessmentTemplate when localAssessment is changed', async () => {
         await mountWrapper();
 
         expect(wrapper.emitted('update:assessmentTemplate').length).toBe(1);
@@ -174,6 +196,15 @@ describe('AssessmentTemplateForm.vue', () => {
           localAssessment: { name: 'newName' },
         });
         expect(wrapper.emitted('update:assessmentTemplate').length).toBe(2);
+      });
+
+      it('emits showEligibilityCriteriaWarning when localAssessment is changed for a form and isSelectedAsProgramEligibilityCriteria', async () => {
+        await mountWrapper(assessmentForm);
+        await wrapper.setData({
+          localAssessment: { name: 'newName' },
+          isSelectedAsProgramEligibilityCriteria: true,
+        });
+        expect(wrapper.emitted('update:show-eligibility-criteria-warning').length).toBe(1);
       });
     });
   });
@@ -197,7 +228,7 @@ describe('AssessmentTemplateForm.vue', () => {
     describe('clearDescription', () => {
       it('clears the field description', async () => {
         await mountWrapper();
-        wrapper.setData({
+        await wrapper.setData({
           localAssessment: { description: { en: 'foo', fr: 'bar' } },
         });
         await wrapper.vm.clearDescription();
@@ -213,7 +244,7 @@ describe('AssessmentTemplateForm.vue', () => {
     describe('clearMessage', () => {
       it('clears the field message', async () => {
         await mountWrapper();
-        wrapper.setData({
+        await wrapper.setData({
           localAssessment: { messageIfUnavailable: { en: 'foo', fr: 'bar' } },
         });
         await wrapper.vm.clearMessage();
@@ -233,6 +264,24 @@ describe('AssessmentTemplateForm.vue', () => {
         await wrapper.vm.$nextTick();
         await wrapper.vm.resetAsUnique();
         expect(wrapper.emitted('update:is-name-unique')[0][0]).toBe(true);
+      });
+    });
+
+    describe('setIsSelectedAsProgramEligibilityCriteria', () => {
+      it('sets isSelectedAsProgramEligibilityCriteria flag', async () => {
+        const programs = mockProgramEntities();
+        programs[0].eligibilityCriteria.completedAssessmentIds = [assessmentForm.id];
+        assessmentForm.programId = programs[0].id;
+        await mountWrapper(assessmentForm);
+        await wrapper.setData({
+          localAssessment: assessmentForm,
+          programs,
+          originalAssessmentFormProgramId: assessmentForm.programId,
+        });
+
+        await wrapper.vm.setIsSelectedAsProgramEligibilityCriteria();
+
+        expect(wrapper.vm.isSelectedAsProgramEligibilityCriteria).toEqual(true);
       });
     });
 
