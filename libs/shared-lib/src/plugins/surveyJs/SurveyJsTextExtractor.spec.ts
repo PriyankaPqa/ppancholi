@@ -29,6 +29,7 @@ describe('SurveyJsTextExtractor', () => {
         isRequired: false,
         title: 'Text eng',
         type: 'text',
+        validators: null,
       }]);
 
       extractor.locale = 'fr';
@@ -41,6 +42,7 @@ describe('SurveyJsTextExtractor', () => {
         isRequired: false,
         title: 'Text fr',
         type: 'text',
+        validators: null,
       }]);
     });
 
@@ -80,6 +82,7 @@ describe('SurveyJsTextExtractor', () => {
         isRequired: false,
         title: 'Text eng',
         type: 'checkbox',
+        validators: null,
       }]);
 
       extractor.locale = 'fr';
@@ -118,6 +121,7 @@ describe('SurveyJsTextExtractor', () => {
         isRequired: false,
         title: 'Text fr',
         type: 'checkbox',
+        validators: null,
       }]);
     });
 
@@ -157,6 +161,7 @@ describe('SurveyJsTextExtractor', () => {
         isRequired: false,
         title: 'Text eng',
         type: 'radiogroup',
+        validators: null,
       }]);
 
       extractor.locale = 'fr';
@@ -195,6 +200,7 @@ describe('SurveyJsTextExtractor', () => {
         isRequired: false,
         title: 'Text fr',
         type: 'radiogroup',
+        validators: null,
       }]);
     });
 
@@ -253,6 +259,7 @@ describe('SurveyJsTextExtractor', () => {
               score: null,
             },
           ],
+          validators: null,
         },
       ]);
 
@@ -310,6 +317,7 @@ describe('SurveyJsTextExtractor', () => {
         isRequired: false,
         title: 'Text fr',
         type: 'dropdown',
+        validators: null,
       }]);
     });
 
@@ -324,6 +332,7 @@ describe('SurveyJsTextExtractor', () => {
           isRequired: false,
           elements: [],
           choices: [],
+          validators: null,
         },
       ]);
 
@@ -338,6 +347,7 @@ describe('SurveyJsTextExtractor', () => {
           isRequired: false,
           elements: [],
           choices: [],
+          validators: null,
         }]);
     });
 
@@ -363,6 +373,7 @@ describe('SurveyJsTextExtractor', () => {
               score: 2,
             },
           ],
+          validators: null,
         },
       ]);
 
@@ -388,6 +399,7 @@ describe('SurveyJsTextExtractor', () => {
               score: 2,
             },
           ],
+          validators: null,
         },
       ]);
     });
@@ -414,6 +426,7 @@ describe('SurveyJsTextExtractor', () => {
               score: -5,
             },
           ],
+          validators: null,
         },
       ]);
 
@@ -439,6 +452,7 @@ describe('SurveyJsTextExtractor', () => {
               score: -5,
             },
           ],
+          validators: null,
         },
       ]);
     });
@@ -454,6 +468,7 @@ describe('SurveyJsTextExtractor', () => {
           isRequired: false,
           elements: [],
           choices: [],
+          validators: null,
         },
       ]);
 
@@ -468,6 +483,7 @@ describe('SurveyJsTextExtractor', () => {
           isRequired: false,
           elements: [],
           choices: [],
+          validators: null,
         },
       ]);
     });
@@ -483,6 +499,7 @@ describe('SurveyJsTextExtractor', () => {
           isRequired: false,
           elements: [],
           choices: [],
+          validators: null,
         },
       ]);
 
@@ -497,6 +514,7 @@ describe('SurveyJsTextExtractor', () => {
           isRequired: false,
           elements: [],
           choices: [],
+          validators: null,
         },
       ]);
     });
@@ -527,6 +545,7 @@ describe('SurveyJsTextExtractor', () => {
             },
           ],
           choices: [],
+          validators: null,
         },
       ]);
 
@@ -556,6 +575,7 @@ describe('SurveyJsTextExtractor', () => {
             },
           ],
           choices: [],
+          validators: null,
         },
       ]);
     });
@@ -641,6 +661,7 @@ describe('SurveyJsTextExtractor', () => {
             },
           ],
           choices: [],
+          validators: null,
         },
       ]);
 
@@ -725,6 +746,7 @@ describe('SurveyJsTextExtractor', () => {
             },
           ],
           choices: [],
+          validators: null,
         },
       ]);
     });
@@ -1044,6 +1066,7 @@ describe('SurveyJsTextExtractor', () => {
             },
           ],
           choices: [],
+          validators: null,
         },
       ]);
 
@@ -1362,6 +1385,7 @@ describe('SurveyJsTextExtractor', () => {
             },
           ],
           choices: [],
+          validators: null,
         },
       ]);
     });
@@ -1401,6 +1425,7 @@ describe('SurveyJsTextExtractor', () => {
               score: null,
             },
           ],
+          validators: null,
         },
       ]);
 
@@ -1439,6 +1464,7 @@ describe('SurveyJsTextExtractor', () => {
               score: null,
             },
           ],
+          validators: null,
         },
       ]);
     });
@@ -1482,8 +1508,10 @@ describe('SurveyJsTextExtractor', () => {
                   score: null,
                 },
               ],
+              validators: null,
             },
           ],
+          validators: null,
         },
       ]);
 
@@ -1526,8 +1554,10 @@ describe('SurveyJsTextExtractor', () => {
                   score: null,
                 },
               ],
+              validators: null,
             },
           ],
+          validators: null,
         },
       ]);
     });
@@ -1543,6 +1573,7 @@ describe('SurveyJsTextExtractor', () => {
           isRequired: false,
           elements: [],
           choices: [],
+          validators: null,
         },
         {
           type: 'paneldynamic',
@@ -1559,6 +1590,7 @@ describe('SurveyJsTextExtractor', () => {
               isRequired: false,
               elements: [],
               choices: [],
+              validators: null,
             },
             {
               type: 'text',
@@ -1568,6 +1600,7 @@ describe('SurveyJsTextExtractor', () => {
               isRequired: false,
               elements: [],
               choices: [],
+              validators: null,
             },
             {
               type: 'paneldynamic',
@@ -1584,10 +1617,13 @@ describe('SurveyJsTextExtractor', () => {
                   isRequired: false,
                   elements: [],
                   choices: [],
+                  validators: null,
                 },
               ],
+              validators: null,
             },
           ],
+          validators: null,
         },
       ]);
 
@@ -1602,6 +1638,7 @@ describe('SurveyJsTextExtractor', () => {
           isRequired: false,
           elements: [],
           choices: [],
+          validators: null,
         },
         {
           type: 'paneldynamic',
@@ -1618,6 +1655,7 @@ describe('SurveyJsTextExtractor', () => {
               isRequired: false,
               elements: [],
               choices: [],
+              validators: null,
             },
             {
               type: 'text',
@@ -1627,6 +1665,7 @@ describe('SurveyJsTextExtractor', () => {
               isRequired: false,
               elements: [],
               choices: [],
+              validators: null,
             },
             {
               type: 'paneldynamic',
@@ -1643,10 +1682,13 @@ describe('SurveyJsTextExtractor', () => {
                   isRequired: false,
                   elements: [],
                   choices: [],
+                  validators: null,
                 },
               ],
+              validators: null,
             },
           ],
+          validators: null,
         },
       ]);
     });
@@ -1724,6 +1766,7 @@ describe('SurveyJsTextExtractor', () => {
             },
           ],
           choices: [],
+          validators: null,
         },
       ]);
 
@@ -1800,6 +1843,7 @@ describe('SurveyJsTextExtractor', () => {
             },
           ],
           choices: [],
+          validators: null,
         },
       ]);
     });
@@ -1822,6 +1866,47 @@ describe('SurveyJsTextExtractor', () => {
           ],
         },
       );
+    });
+  });
+
+  describe('extractValidators', () => {
+    it('extracts the validators set on a question', () => {
+      extractor.surveyJsHelper.creator.JSON = JSON.parse(surveyData.surveyForExtract);
+      const validators = extractor.extractValidators(extractor.surveyJsHelper.creator.survey.getQuestionByName('Attest'));
+      expect(validators).toEqual([
+        {
+          type: 'answercountvalidator',
+          typename: 'Answer count',
+          properties: [
+            {
+              name: 'Text',
+              value: 'You must attest to each item to continue',
+            },
+            {
+              name: 'Minimum count',
+              value: 3,
+            },
+            {
+              name: 'Maximum count',
+              value: 3,
+            },
+          ],
+        },
+        {
+          type: 'expressionvalidator',
+          typename: 'Expression',
+          properties: [
+            {
+              name: 'Expression',
+              value: "{Attest} allof ['item1', 'item2', 'item3']",
+            },
+            {
+              name: 'Text',
+              value: "The expression: {Attest} allof ['item1', 'item2', 'item3'] should return 'true'.",
+            },
+          ],
+        },
+      ]);
     });
   });
 });

@@ -1266,7 +1266,7 @@ export class surveyData {
               fr: 'consent title fr',
             },
             isRequired: true,
-            hasComment: true,
+            showCommentArea: true,
             choices: [
               {
                 value: 'item1',
@@ -1358,6 +1358,21 @@ export class surveyData {
               fr: "j'atteste",
             },
             isRequired: true,
+            validators: [
+              {
+                type: 'answercount',
+                text: {
+                  default: 'You must attest to each item to continue',
+                  fr: 'Consentir à tout',
+                },
+                minCount: 3,
+                maxCount: 3,
+              },
+              {
+                type: 'expression',
+                expression: "{Attest} allof ['item1', 'item2', 'item3']",
+              },
+            ],
             choices: [
               {
                 value: 'item1',
@@ -1424,8 +1439,8 @@ export class surveyData {
               'item2',
               'item3',
             ],
-            hasOther: true,
-            hasNone: true,
+            showOtherItem: true,
+            showNoneItem: true,
           },
           {
             type: 'comment',
@@ -1434,23 +1449,25 @@ export class surveyData {
           {
             type: 'rating',
             name: 'question5',
-            hasComment: true,
+            showCommentArea: true,
             commentText: 'Other (describe)zz',
           },
           {
             type: 'boolean',
             name: 'question6',
+            visibleIf: "{Benef_consents} = ['item1']",
             scoreTrue: 213,
           },
           {
             type: 'image',
             name: 'question7',
             imageLink: 'https://surveyjs.io/Content/Images/examples/image-picker/lion.jpg',
-            text: 'texte img en',
+            altText: 'texte img en',
           },
           {
             type: 'matrix',
             name: 'question1',
+            enableIf: "{date_consent} > '2022-11-09' and {Name.text1} notempty",
             columns: [
               {
                 value: 'Column 1',
@@ -1479,6 +1496,18 @@ export class surveyData {
           {
             type: 'yes-no',
             name: 'question2',
+            requiredIf: "{Attest} = ['item1', 'item2', 'item3']",
+            requiredErrorText: {
+              default: 'required error message content',
+              fr: 'requis!',
+            },
+            validators: [
+              {
+                type: 'expression',
+                text: 'q must be yes',
+                expression: "{question2} = 'yes'",
+              },
+            ],
           },
         ],
       },
@@ -1502,7 +1531,7 @@ export class surveyData {
                     score: 23,
                   },
                 ],
-                hasOther: true,
+                showOtherItem: true,
                 storeOthersAsComment: true,
               },
               {
@@ -1573,8 +1602,8 @@ export class surveyData {
                   },
                   2,
                 ],
-                hasOther: true,
-                hasNone: true,
+                showOtherItem: true,
+                showNoneItem: true,
                 storeOthersAsComment: true,
               },
               {
@@ -1619,6 +1648,7 @@ export class surveyData {
             isRequired: false,
             elements: [],
             choices: [],
+            validators: null,
           },
           {
             type: 'checkbox',
@@ -1642,8 +1672,10 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: null,
           },
         ],
+        validators: null,
       },
       {
         type: 'page',
@@ -1673,6 +1705,7 @@ export class surveyData {
                     score: 1,
                   },
                 ],
+                validators: null,
               },
               {
                 type: 'text',
@@ -1682,6 +1715,7 @@ export class surveyData {
                 isRequired: true,
                 elements: [],
                 choices: [],
+                validators: null,
               },
               {
                 type: 'text',
@@ -1691,6 +1725,7 @@ export class surveyData {
                 isRequired: true,
                 elements: [],
                 choices: [],
+                validators: null,
               },
               {
                 type: 'text',
@@ -1700,10 +1735,13 @@ export class surveyData {
                 isRequired: true,
                 elements: [],
                 choices: [],
+                validators: null,
               },
             ],
+            validators: null,
           },
         ],
+        validators: null,
       },
       {
         type: 'page',
@@ -1736,6 +1774,40 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: [
+              {
+                type: 'answercountvalidator',
+                typename: 'Answer count',
+                properties: [
+                  {
+                    name: 'Text',
+                    value: 'You must attest to each item to continue',
+                  },
+                  {
+                    name: 'Minimum count',
+                    value: 3,
+                  },
+                  {
+                    name: 'Maximum count',
+                    value: 3,
+                  },
+                ],
+              },
+              {
+                type: 'expressionvalidator',
+                typename: 'Expression',
+                properties: [
+                  {
+                    name: 'Expression',
+                    value: "{Attest} allof ['item1', 'item2', 'item3']",
+                  },
+                  {
+                    name: 'Text',
+                    value: "The expression: {Attest} allof ['item1', 'item2', 'item3'] should return 'true'.",
+                  },
+                ],
+              },
+            ],
           },
           {
             type: 'multipletext',
@@ -1760,6 +1832,7 @@ export class surveyData {
               },
             ],
             choices: [],
+            validators: null,
           },
           {
             type: 'text',
@@ -1769,8 +1842,39 @@ export class surveyData {
             isRequired: true,
             elements: [],
             choices: [],
+            validators: [
+              {
+                type: 'numericvalidator',
+                typename: 'Number',
+                properties: [
+                  {
+                    name: 'Text',
+                    value: "The 'value' should be at most null",
+                  },
+                ],
+              },
+              {
+                type: 'textvalidator',
+                typename: 'Text',
+                properties: [
+                  {
+                    name: 'Minimum length (in characters)',
+                    value: 9,
+                  },
+                  {
+                    name: 'Maximum length (in characters)',
+                    value: 9,
+                  },
+                  {
+                    name: 'Text',
+                    value: 'Please enter at least 9 and no more than 9 characters.',
+                  },
+                ],
+              },
+            ],
           },
         ],
+        validators: null,
       },
       {
         type: 'page',
@@ -1813,6 +1917,7 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: null,
           },
           {
             type: 'comment',
@@ -1822,6 +1927,7 @@ export class surveyData {
             isRequired: false,
             elements: [],
             choices: [],
+            validators: null,
           },
           {
             type: 'rating',
@@ -1865,6 +1971,7 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: null,
           },
           {
             type: 'boolean',
@@ -1885,6 +1992,7 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: null,
           },
           {
             type: 'image',
@@ -1894,6 +2002,7 @@ export class surveyData {
             isRequired: false,
             elements: [],
             choices: [],
+            validators: null,
           },
           {
             type: 'matrix',
@@ -1950,6 +2059,7 @@ export class surveyData {
               },
             ],
             choices: [],
+            validators: null,
           },
           {
             type: 'yes-no',
@@ -1970,8 +2080,35 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: [
+              {
+                type: 'requiredErrorText',
+                typename: '"Required" error message',
+                properties: [
+                  {
+                    name: 'Text',
+                    value: 'required error message content',
+                  },
+                ],
+              },
+              {
+                type: 'expressionvalidator',
+                typename: 'Expression',
+                properties: [
+                  {
+                    name: 'Text',
+                    value: 'q must be yes',
+                  },
+                  {
+                    name: 'Expression',
+                    value: "{question2} = 'yes'",
+                  },
+                ],
+              },
+            ],
           },
         ],
+        validators: null,
       },
       {
         type: 'page',
@@ -2191,6 +2328,7 @@ export class surveyData {
               },
             ],
             choices: [],
+            validators: null,
           },
           {
             type: 'paneldynamic',
@@ -2207,6 +2345,7 @@ export class surveyData {
                 isRequired: false,
                 elements: [],
                 choices: [],
+                validators: null,
               },
               {
                 type: 'paneldynamic',
@@ -2234,12 +2373,16 @@ export class surveyData {
                         score: null,
                       },
                     ],
+                    validators: null,
                   },
                 ],
+                validators: null,
               },
             ],
+            validators: null,
           },
         ],
+        validators: null,
       },
       {
         type: 'page',
@@ -2351,9 +2494,16 @@ export class surveyData {
               },
             ],
             choices: [],
+            validators: null,
           },
         ],
+        validators: null,
       },
+    ],
+    logic: [
+      "If 'Benef_consents' == ['item1'], make question 'question6' visible",
+      "If ('date_consent' > '2022-11-09') and 'Name.text1' Not empty, make question 'question1' enable",
+      "If 'Attest' == ['item1', 'item2', 'item3'], make question 'question2' required",
     ],
   };
 
@@ -2378,6 +2528,7 @@ export class surveyData {
             isRequired: false,
             elements: [],
             choices: [],
+            validators: null,
           },
           {
             type: 'checkbox',
@@ -2401,8 +2552,10 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: null,
           },
         ],
+        validators: null,
       },
       {
         type: 'page',
@@ -2432,6 +2585,7 @@ export class surveyData {
                     score: 1,
                   },
                 ],
+                validators: null,
               },
               {
                 type: 'text',
@@ -2441,6 +2595,7 @@ export class surveyData {
                 isRequired: true,
                 elements: [],
                 choices: [],
+                validators: null,
               },
               {
                 type: 'text',
@@ -2450,6 +2605,7 @@ export class surveyData {
                 isRequired: true,
                 elements: [],
                 choices: [],
+                validators: null,
               },
               {
                 type: 'text',
@@ -2459,10 +2615,13 @@ export class surveyData {
                 isRequired: true,
                 elements: [],
                 choices: [],
+                validators: null,
               },
             ],
+            validators: null,
           },
         ],
+        validators: null,
       },
       {
         type: 'page',
@@ -2495,6 +2654,40 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: [
+              {
+                type: 'answercountvalidator',
+                typename: 'total de réponses',
+                properties: [
+                  {
+                    name: 'Texte',
+                    value: 'Consentir à tout',
+                  },
+                  {
+                    name: 'Nombre minimum',
+                    value: 3,
+                  },
+                  {
+                    name: 'Nombre maximum',
+                    value: 3,
+                  },
+                ],
+              },
+              {
+                type: 'expressionvalidator',
+                typename: 'Expression',
+                properties: [
+                  {
+                    name: 'Expression',
+                    value: "{Attest} allof ['item1', 'item2', 'item3']",
+                  },
+                  {
+                    name: 'Texte',
+                    value: "L'expression: {Attest} allof ['item1', 'item2', 'item3'] doit retourner 'true'.",
+                  },
+                ],
+              },
+            ],
           },
           {
             type: 'multipletext',
@@ -2519,6 +2712,7 @@ export class surveyData {
               },
             ],
             choices: [],
+            validators: null,
           },
           {
             type: 'text',
@@ -2528,8 +2722,39 @@ export class surveyData {
             isRequired: true,
             elements: [],
             choices: [],
+            validators: [
+              {
+                type: 'numericvalidator',
+                typename: 'numérique',
+                properties: [
+                  {
+                    name: 'Texte',
+                    value: "Votre réponse 'valeur' doit être inférieure ou égale à null",
+                  },
+                ],
+              },
+              {
+                type: 'textvalidator',
+                typename: 'texte',
+                properties: [
+                  {
+                    name: 'Longueur minimum',
+                    value: 9,
+                  },
+                  {
+                    name: 'Longueur maximum',
+                    value: 9,
+                  },
+                  {
+                    name: 'Texte',
+                    value: 'Merci de saisir entre 9 et 9 caractères.',
+                  },
+                ],
+              },
+            ],
           },
         ],
+        validators: null,
       },
       {
         type: 'page',
@@ -2572,6 +2797,7 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: null,
           },
           {
             type: 'comment',
@@ -2581,6 +2807,7 @@ export class surveyData {
             isRequired: false,
             elements: [],
             choices: [],
+            validators: null,
           },
           {
             type: 'rating',
@@ -2624,6 +2851,7 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: null,
           },
           {
             type: 'boolean',
@@ -2644,6 +2872,7 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: null,
           },
           {
             type: 'image',
@@ -2653,6 +2882,7 @@ export class surveyData {
             isRequired: false,
             elements: [],
             choices: [],
+            validators: null,
           },
           {
             type: 'matrix',
@@ -2709,6 +2939,7 @@ export class surveyData {
               },
             ],
             choices: [],
+            validators: null,
           },
           {
             type: 'yes-no',
@@ -2729,8 +2960,35 @@ export class surveyData {
                 score: null,
               },
             ],
+            validators: [
+              {
+                type: 'requiredErrorText',
+                typename: "Message d'erreur lorsque obligatoire",
+                properties: [
+                  {
+                    name: 'Texte',
+                    value: 'requis!',
+                  },
+                ],
+              },
+              {
+                type: 'expressionvalidator',
+                typename: 'Expression',
+                properties: [
+                  {
+                    name: 'Texte',
+                    value: 'q must be yes',
+                  },
+                  {
+                    name: 'Expression',
+                    value: "{question2} = 'yes'",
+                  },
+                ],
+              },
+            ],
           },
         ],
+        validators: null,
       },
       {
         type: 'page',
@@ -2950,6 +3208,7 @@ export class surveyData {
               },
             ],
             choices: [],
+            validators: null,
           },
           {
             type: 'paneldynamic',
@@ -2966,6 +3225,7 @@ export class surveyData {
                 isRequired: false,
                 elements: [],
                 choices: [],
+                validators: null,
               },
               {
                 type: 'paneldynamic',
@@ -2993,12 +3253,16 @@ export class surveyData {
                         score: null,
                       },
                     ],
+                    validators: null,
                   },
                 ],
+                validators: null,
               },
             ],
+            validators: null,
           },
         ],
+        validators: null,
       },
       {
         type: 'page',
@@ -3110,9 +3374,16 @@ export class surveyData {
               },
             ],
             choices: [],
+            validators: null,
           },
         ],
+        validators: null,
       },
+    ],
+    logic: [
+      "If 'Benef_consents' == ['item1'], Rendre la question 'question6' visible",
+      "If ('date_consent' > '2022-11-09') and 'Name.text1' n'est pas vide, Activer la question 'question1'",
+      "If 'Attest' == ['item1', 'item2', 'item3'], Rendre la question 'question2' obligatoire",
     ],
   };
 }

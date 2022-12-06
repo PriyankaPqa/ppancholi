@@ -1,6 +1,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IAssessmentQuestion } from '@libs/entities-lib/src/assessment-template';
+import { isObject } from 'lodash';
 import {
   Question,
   QuestionMatrixDropdownModelBase,
@@ -14,10 +15,13 @@ import {
   ItemValue,
   MatrixDropdownColumn,
   MatrixDropdownRowModel,
+  SurveyValidator,
 } from 'survey-core';
-import { CreatorBase } from 'survey-creator-core';
+import { CreatorBase, localization } from 'survey-creator-core';
 import { SurveyCreator } from 'survey-creator-knockout';
 import { SurveyJsHelper } from './SurveyJsHelper';
+
+export interface validator { type: string, typename: string, properties: { name: string, value: any }[] }
 
 export interface IExtractedSurveyObject {
   type: string,
@@ -27,6 +31,8 @@ export interface IExtractedSurveyObject {
   isRequired?: boolean,
   elements: IExtractedSurveyObject[],
   choices?: { text: string, value: string, score?: number }[],
+  logic?: string[],
+  validators?: validator[],
 }
 
 export class SurveyJsTextExtractor {
@@ -47,6 +53,7 @@ export class SurveyJsTextExtractor {
       title: survey.title,
       description: survey.description,
       elements: [],
+      logic: this.extractLogic(json)?.logicItems,
     };
 
     extract.elements = (survey.pages as PageModel[]).map((p) => this.extractPanel(p));
@@ -63,6 +70,7 @@ export class SurveyJsTextExtractor {
       description: panel.description,
       isRequired: panel.isRequired,
       elements: [],
+      validators: panel instanceof QuestionPanelDynamicModel ? this.extractValidators(panel) : null,
     };
 
     const elements = panel instanceof QuestionPanelDynamicModel ? (panel.getElementsInDesign(true)[0] as any).getElementsInDesign(true)
@@ -98,6 +106,7 @@ export class SurveyJsTextExtractor {
         text: ac.displayValue.translation[this.locale || 'en'],
         score: ac.score,
       })),
+      validators: this.extractValidators(question),
     };
 
     if (question.getType() === 'image') {
@@ -199,6 +208,48 @@ export class SurveyJsTextExtractor {
         }),
       }) as IExtractedSurveyObject);
     }
+  }
+
+  extractValidators(item: Question) : validator[] {
+    if (!item.getValidators()?.length && !item.requiredErrorText) {
+      return null;
+    }
+
+    let validators : validator[] = [];
+    if (item.requiredErrorText) {
+      validators.push({
+        type: 'requiredErrorText',
+        typename: localization.getLocale(this.locale).pe.requiredErrorText || localization.getLocale('en').pe.requiredErrorText || 'requiredErrorText',
+        properties: [{
+          name: localization.getLocale(this.locale).pe.text || localization.getLocale('en').pe.text,
+          value: item.requiredErrorText,
+        }],
+      });
+    }
+
+    validators = validators.concat(((item.getValidators() || []) as []).map((v: SurveyValidator & { getErrorText?: () => string }) => {
+      const details = v.toJSON();
+      const validator: validator = {
+        type: v.getType(),
+        typename: localization.getLocale(this.locale).validators[v.getType()] || localization.getLocale('en').validators[v.getType()] || v.getType(),
+        properties: [],
+      };
+
+      if (v.getErrorText && v.getErrorText()) {
+        details.text = v.getErrorText();
+      }
+      if (details.text && isObject(details.text)) {
+        details.text = details.text[this.locale] || details.text.default || details.text;
+      }
+
+      validator.properties = Object.keys(details).map((k) => ({
+        name: localization.getLocale(this.locale).pe[k] || localization.getLocale('en').pe[k] || k,
+        value: isObject(details[k]) ? JSON.stringify(details[k]) : details[k],
+      }));
+      return validator;
+    }));
+
+    return validators;
   }
 
   extractLogic(jsonData: any) {

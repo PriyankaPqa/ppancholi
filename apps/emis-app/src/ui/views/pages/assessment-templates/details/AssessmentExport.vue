@@ -1,4 +1,5 @@
 <!-- This is for extraction to a docx file.  Keep the html as simple as possible and integrate styling in it -->
+<!-- eslint is disabled because we purposefully decided to inject html in this -->
 <!-- eslint-disable -->
 <template>
   <div id="assessmentexport" :style="{ 'margin-left': level * 10 + 'px'}">
@@ -8,7 +9,7 @@
     </div>
     <div v-else-if="extractedData.type == 'page' || extractedData.type == 'panel'">
       <hr v-if="extractedData.type == 'page'">
-      <h3>{{ extractedData.title }}</h3> 
+      <h3>{{ extractedData.title }} <span v-if="extractedData.isRequired" style="color:red">*</span></h3>
       <small>
         ({{ $t('assessmentTemplate.extract.identifier') }}: <i>{{ extractedData.identifier }}</i> - 
           {{ $t('assessmentTemplate.extract.type') }}: <i>{{ extractedData.type }}</i>)
@@ -16,7 +17,7 @@
       <h4 v-if="extractedData.description">{{ extractedData.description }}</h4>
     </div>
     <div v-else>
-      <span style="font-weight: bold" v-html="extractedData.title"></span>
+      <span style="font-weight: bold" v-html="extractedData.title"></span> <span v-if="extractedData.isRequired" style="color:red">*</span>
       <small>
         ({{ $t('assessmentTemplate.extract.identifier') }}: <i>{{ extractedData.identifier }}</i> - 
           {{ $t('assessmentTemplate.extract.type') }}: <i>{{ extractedData.type }}</i>)
@@ -32,8 +33,25 @@
         </li>
       </ul>
       <div v-else-if="extractedData.type != 'image' && extractedData.type != 'html' && !extractedData.elements.length">[___________________________________]</div>
+      <div v-if="extractedData.validators && extractedData.validators.length" style="margin: 24px; padding: 6px; border: 1px solid purple">
+        <b>{{ $t('assessmentTemplate.extract.validators') }}</b>
+        <small>
+          <div v-for="(validator, $index) in extractedData.validators" :key="$index">
+            <b>{{ validator.typename }}</b>:
+            <span v-for="(property, $propindex) in validator.properties" :key="$propindex">
+              <br/>{{ property.name }}: {{ property.value }}
+            </span>
+          </div>
+        </small>
+      </div>
     </div>
     <assessment-export v-for="(item, $index) in extractedData.elements" :key="$index" :extractedData="item" :level="level + 1"></assessment-export>
+    <div v-if="extractedData.logic && extractedData.logic.length" style="margin: 24px; padding: 6px; border: 1px solid purple">
+      {{ $t('assessmentTemplate.extract.logic') }}
+      <div v-for="(logic, $index) in extractedData.logic" :key="$index">
+        {{ logic }}
+      </div>
+    </div>
   </div>
 </template>
 <!-- eslint-enable -->
