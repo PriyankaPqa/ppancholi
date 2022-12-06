@@ -52,7 +52,7 @@
     "flush-promises": "^1.0.2",
     "sass": "1.32.13",
     "vue-typed-mixins": "^0.2.0",
-    "unplugin-vue-components": "^0.22.9",
+    "unplugin-vue-components": "^0.22.11",
     "vite-plugin-eslint": "^1.8.1"
   }
 }

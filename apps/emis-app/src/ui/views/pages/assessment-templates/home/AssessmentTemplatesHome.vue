@@ -47,7 +47,7 @@
           {{ $t(`enums.assessmentPublishStatus.${PublishStatus[item.entity.publishStatus]}`) }}
         </div>
       </template>
-      
+
       <template #[`item.${customColumns.status}`]="{ item }">
         <status-chip status-name="Status" :status="item.entity.status" />
       </template>

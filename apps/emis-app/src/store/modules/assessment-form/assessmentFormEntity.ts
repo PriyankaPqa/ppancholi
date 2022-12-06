@@ -1,7 +1,7 @@
 import { ActionContext, ActionTree } from 'vuex';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IRootState } from '@libs/registration-lib/store';
-import { IAssessmentFormEntity, IAssessmentTotalSubmissions } from '@libs/entities-lib/assessment-template';
+import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { AssessmentFormsService } from '@libs/services-lib/assessment-form/entity';
 import { BaseModule } from '../base';
 import { IState } from '../base/base.types';

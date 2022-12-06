@@ -189,7 +189,7 @@ export const mockAssessmentFormEntity = (force? : Partial<IAssessmentFormEntity>
 export const mockAssessmentTotalSubmissions = (force? : Partial<IAssessmentTotalSubmissions>) : IAssessmentTotalSubmissions => ({
   ...mockAssessmentBaseEntity(),
   totalCompleted: 1,
-  totalPartialCompleted:1,
+  totalPartialCompleted: 1,
   ...force,
 });
 

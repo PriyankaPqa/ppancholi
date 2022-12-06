@@ -66,25 +66,23 @@ describe('AssessmentTemplatesHome.vue', () => {
         await mountWrapper(true, 6, 'role', { propsData: { id: 'abc' } });
         const headers = wrapper.findAll('th');
 
-        expect(headers.length).toBe(6);
+        expect(headers.length).toBe(5);
 
         expect(headers.wrappers[0].find('span').text()).toBe('assessmentTemplate.program');
         expect(headers.wrappers[1].find('span').text()).toBe('common.name');
-        expect(headers.wrappers[2].find('span').text()).toBe('assessmentTemplate.totalSubmissions');
-        expect(headers.wrappers[3].find('span').text()).toBe('assessmentTemplate.published');
-        expect(headers.wrappers[4].find('span').text()).toBe('common.status');
-        expect(headers.wrappers[5].find('span').text()).toBe('');
+        expect(headers.wrappers[2].find('span').text()).toBe('assessmentTemplate.published');
+        expect(headers.wrappers[3].find('span').text()).toBe('common.status');
+        expect(headers.wrappers[4].find('span').text()).toBe('');
       });
 
-      it('displays the correct row for templates mode', async () => {
+      it('displays the correct row for forms mode', async () => {
         await mountWrapper(true, 6, 'role', { propsData: { id: 'abc' } });
         const tds = wrapper.findAll('td');
 
         expect(tds.wrappers[0].text()).toBe('Prog EN');
         expect(tds.wrappers[1].text()).toBe('Assessment Floods 2021');
-        expect(tds.wrappers[2].text()).toBe('8');
-        expect(tds.wrappers[3].text()).toBe('enums.assessmentPublishStatus.Published');
-        expect(tds.wrappers[4].text()).toBe('enums.Status.Active');
+        expect(tds.wrappers[2].text()).toBe('enums.assessmentPublishStatus.Published');
+        expect(tds.wrappers[3].text()).toBe('enums.Status.Active');
       });
     });
   });

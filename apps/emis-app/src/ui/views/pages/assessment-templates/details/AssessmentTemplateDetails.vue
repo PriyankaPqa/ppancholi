@@ -1,18 +1,22 @@
 <template>
-  <rc-page-content
-    :title=" $t('assessmentTemplateDetails.title')">
+  <rc-page-content :title="$t('assessmentTemplateDetails.title')">
     <div v-if="assessmentTemplate">
       <v-row class="justify-center mt-10">
         <v-col cols="12" lg="7">
           <div class="pb-4 d-flex justify-space-between">
             <h3>
-              {{ $m(assessmentTemplate.name) }} 
-            </h3> 
+              {{ $m(assessmentTemplate.name) }}
+            </h3>
             <div>
               <status-chip status-name="Status" :status="assessmentTemplate.status" class="mr-4" />
               <v-tooltip bottom>
                 <template #activator="{ on }">
-                  <v-btn icon :to="assessmentTemplateEditRoute" bottom data-test="editAssessmentTemplate-link" v-on="on">
+                  <v-btn
+                    icon
+                    :to="assessmentTemplateEditRoute"
+                    bottom
+                    data-test="editAssessmentTemplate-link"
+                    v-on="on">
                     <v-icon>
                       mdi-pencil
                     </v-icon>
@@ -39,7 +43,10 @@
           <v-sheet rounded outlined>
             <v-simple-table>
               <tbody>
-                <tr v-for="item in assessmentTemplateData" :key="item.test" :data-test="`assessmentTemplate_details_${item.test}`">
+                <tr
+                  v-for="item in assessmentTemplateData"
+                  :key="item.test"
+                  :data-test="`assessmentTemplate_details_${item.test}`">
                   <td class="label fw-bold">
                     {{ $t(item.label) }}
                   </td>
@@ -54,15 +61,10 @@
       </v-row>
     </div>
     <template slot="actions">
-      <v-btn
-        data-test="assessmentTemplate_details_back_btn"
-        @click="goToAssessmentTemplates()">
+      <v-btn data-test="assessmentTemplate_details_back_btn" @click="goToAssessmentTemplates()">
         {{ $t('assessmentTemplateDetails.back_to_assessmentTemplates') }}
       </v-btn>
-      <v-btn
-        color="primary"
-        data-test="assessmentTemplate_details_editor_btn"
-        @click="goToEditor()">
+      <v-btn color="primary" data-test="assessmentTemplate_details_editor_btn" @click="goToEditor()">
         {{ $t('assessmentTemplate.gotoEditor') }}
       </v-btn>
     </template>
@@ -72,10 +74,9 @@
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@libs/component-lib/components';
-import { TranslateResult } from 'vue-i18n';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import assessmentDetail from './assessmentDetail';
 import { IAssessmentTotalSubmissions } from '@libs/entities-lib/src/assessment-template/assessment-template.types';
+import assessmentDetail from './assessmentDetail';
 
 export default mixins(assessmentDetail).extend({
   name: 'AssessmentTemplateDetails',
@@ -92,7 +93,7 @@ export default mixins(assessmentDetail).extend({
   },
 
   computed: {
-    assessmentTemplateData(): Record<string, string | TranslateResult | number>[] {
+    assessmentTemplateData(): Record<string, string>[] {
       const data = [
         {
           label: 'common.description',
@@ -116,20 +117,18 @@ export default mixins(assessmentDetail).extend({
           data: this.$m(this.assessmentTemplate.messageIfUnavailable),
           test: 'messageIfUnavailable',
         },
-      ] as Record<string, string | TranslateResult | number>[];
-      
+      ] as Record<string, string>[];
+
       if (this.assessmentForm) {
         data.splice(3, 0, {
           label: 'assessmentTemplate.totalSubmissionsCompleted',
-          data: this.assessmentTotalSubmissions?.totalCompleted,
+          data: `${this.assessmentTotalSubmissions?.totalCompleted}`,
           test: 'totalSubmissionsCompleted',
-        },
-        {
+        }, {
           label: 'assessmentTemplate.totalSubmissionsPartialCompleted',
-          data: this.assessmentTotalSubmissions?.totalPartialCompleted,
+          data: `${this.assessmentTotalSubmissions?.totalPartialCompleted}`,
           test: 'totalSubmissionsPartialCompleted',
-        }
-        );
+        });
       }
 
       if (this.program) {
@@ -155,7 +154,7 @@ export default mixins(assessmentDetail).extend({
 
   async created() {
     await this.loadDetails();
-    if (this.assessmentForm){
+    if (this.assessmentForm) {
       await this.getAssessmentTotalSubmissions();
     }
   },
@@ -178,11 +177,10 @@ export default mixins(assessmentDetail).extend({
       window.open(routeData.href, '_blank');
     },
 
-    async getAssessmentTotalSubmissions(){
+    async getAssessmentTotalSubmissions() {
       const response = await this.$services.assessmentForms.assessmentTotalSubmissions(this.assessmentTemplateId);
       this.assessmentTotalSubmissions = response;
     },
   },
-
 });
 </script>

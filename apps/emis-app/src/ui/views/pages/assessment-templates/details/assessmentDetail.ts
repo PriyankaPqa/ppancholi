@@ -69,7 +69,7 @@ export default Vue.extend({
         const res = this.assessmentTemplateId ? await this.$storage.assessmentTemplate.actions.fetch({ id: this.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false }) : null;
         this.assessmentTemplate = new AssessmentTemplateEntity(res?.entity);
       }
-     
+
       this.assessmentTemplateLoading = false;
     },
   },

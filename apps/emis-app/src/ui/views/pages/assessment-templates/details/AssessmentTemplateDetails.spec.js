@@ -62,12 +62,12 @@ describe('AssessmentTemplateDetails', () => {
           },
           {
             label: 'assessmentTemplate.totalSubmissionsCompleted',
-            data: 0,
+            data: '1',
             test: 'totalSubmissionsCompleted',
           },
           {
             label: 'assessmentTemplate.totalSubmissionsPartialCompleted',
-            data: 0,
+            data: '1',
             test: 'totalSubmissionsPartialCompleted',
           },
           {
@@ -204,11 +204,10 @@ describe('AssessmentTemplateDetails', () => {
       describe('getAssessmentTotalSubmissions', () => {
         it('should get assessment total submissions', async () => {
           expect(wrapper.vm.$services.assessmentForms.assessmentTotalSubmissions).toHaveBeenCalledWith('mock-assessmentTemplate-id');
-          expect(wrapper.vm.assessmentTotalSubmissions).toEqual(assessmentTotalSubmissions)
+          expect(wrapper.vm.assessmentTotalSubmissions).toEqual(assessmentTotalSubmissions);
           expect(wrapper.vm.getAssessmentTotalSubmissions).toBeTruthy();
         });
       });
-
     });
   });
 
@@ -262,7 +261,7 @@ describe('AssessmentTemplateDetails', () => {
       });
 
       it('calls goToAssessmentTemplates when clicked', async () => {
-        jest.spyOn(wrapper.vm, 'goToAssessmentTemplates').mockImplementation(() => {});
+        jest.spyOn(wrapper.vm, 'goToAssessmentTemplates').mockImplementation(() => { });
         await element.vm.$emit('click');
         expect(wrapper.vm.goToAssessmentTemplates).toHaveBeenCalledTimes(1);
       });
