@@ -1,4 +1,4 @@
-import { IAssessmentFormEntity, IAssessmentFormMetadata } from '@libs/entities-lib/assessment-template';
+import { IAssessmentFormEntity, IAssessmentFormMetadata, IAssessmentTotalSubmissions } from '@libs/entities-lib/assessment-template';
 import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -43,5 +43,10 @@ export class AssessmentFormsService extends DomainBaseService<IAssessmentFormEnt
   async search(params: IAzureSearchParams, searchEndpoint: string = null):
     Promise<IAzureCombinedSearchResult<IAssessmentFormEntity, IAssessmentFormMetadata>> {
     return this.http.get(`assessment/search/${searchEndpoint ?? 'assessment-forms'}`, { params, isOData: true });
+  }
+
+  async assessmentTotalSubmissions(id: uuid):
+    Promise<IAssessmentTotalSubmissions> {
+    return this.http.get<IAssessmentTotalSubmissions>(this.getItemUrl(`${this.baseUrl}/{id}/assessment-total-submissions`, id));
   }
 }

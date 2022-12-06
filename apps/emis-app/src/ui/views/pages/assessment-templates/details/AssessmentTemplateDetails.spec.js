@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
+  mockAssessmentTotalSubmissions,
   mockCombinedAssessmentForm, mockCombinedAssessmentTemplate,
 } from '@libs/entities-lib/assessment-template';
 import { mockStorage } from '@/storage';
@@ -13,6 +14,7 @@ describe('AssessmentTemplateDetails', () => {
   const combinedAssessmentForm = mockCombinedAssessmentForm();
   const assessmentForm = combinedAssessmentForm.entity;
   const combinedAssessmentTemplate = mockCombinedAssessmentTemplate();
+  const assessmentTotalSubmissions = mockAssessmentTotalSubmissions();
   const assessmentTemplate = combinedAssessmentTemplate.entity;
 
   describe('Computed', () => {
@@ -59,9 +61,14 @@ describe('AssessmentTemplateDetails', () => {
             test: 'frequency',
           },
           {
-            label: 'assessmentTemplate.totalSubmissions',
-            data: 8,
-            test: 'totalSubmissions',
+            label: 'assessmentTemplate.totalSubmissionsCompleted',
+            data: 0,
+            test: 'totalSubmissionsCompleted',
+          },
+          {
+            label: 'assessmentTemplate.totalSubmissionsPartialCompleted',
+            data: 0,
+            test: 'totalSubmissionsPartialCompleted',
           },
           {
             label: 'assessmentTemplate.messageIfUnavailable',
@@ -193,6 +200,15 @@ describe('AssessmentTemplateDetails', () => {
         });
         expect(window.open).toHaveBeenCalledWith(wrapper.vm.$router.resolve().href, '_blank');
       });
+
+      describe('getAssessmentTotalSubmissions', () => {
+        it('should get assessment total submissions', async () => {
+          expect(wrapper.vm.$services.assessmentForms.assessmentTotalSubmissions).toHaveBeenCalledWith('mock-assessmentTemplate-id');
+          expect(wrapper.vm.assessmentTotalSubmissions).toEqual(assessmentTotalSubmissions)
+          expect(wrapper.vm.getAssessmentTotalSubmissions).toBeTruthy();
+        });
+      });
+
     });
   });
 

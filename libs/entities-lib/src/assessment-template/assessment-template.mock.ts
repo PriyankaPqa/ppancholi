@@ -5,7 +5,7 @@ import {
   AssessmentFormType, AssessmentFrequencyType, IAssessmentBaseEntity,
   IAssessmentBaseMetadata, IAssessmentFormCombined, IAssessmentFormEntity,
   IAssessmentFormMetadata, IAssessmentTemplateCombined, IAssessmentTemplateEntity,
-  IAssessmentTemplateMetadata, PublishStatus, SurveyJsAssessmentFormState,
+  IAssessmentTemplateMetadata, IAssessmentTotalSubmissions, PublishStatus, SurveyJsAssessmentFormState,
 } from './assessment-template.types';
 
 export const mockAssessmentBaseEntity = (force? : Partial<IAssessmentTemplateEntity>) : IAssessmentBaseEntity => ({
@@ -183,6 +183,13 @@ export const mockAssessmentFormEntity = (force? : Partial<IAssessmentFormEntity>
   assessmentFormType: AssessmentFormType.AssessmentForm,
   eventId: '044fcd68-3d70-4a3a-b5c8-22da9e01730f',
   programId: '0f6c1714-045a-4054-8133-c96abb94782a',
+  ...force,
+});
+
+export const mockAssessmentTotalSubmissions = (force? : Partial<IAssessmentTotalSubmissions>) : IAssessmentTotalSubmissions => ({
+  ...mockAssessmentBaseEntity(),
+  totalCompleted: 1,
+  totalPartialCompleted:1,
   ...force,
 });
 

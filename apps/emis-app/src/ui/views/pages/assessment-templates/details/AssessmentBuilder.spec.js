@@ -57,9 +57,10 @@ describe('AssessmentBuilder', () => {
         expect(wrapper.vm.creator).not.toBeNull();
         expect(JSON.stringify(JSON.parse(wrapper.vm.creator.text))).toBe(JSON.stringify(JSON.parse(wrapper.vm.assessmentTemplate.externalToolState?.data?.rawJson)));
       });
-      it('sets save and export function', () => {
+      it('sets save and export function and lastRawJsonSaved', () => {
         expect(wrapper.vm.creator.saveSurveyFunc).toBe(wrapper.vm.saveSurveyJson);
         expect(wrapper.vm.creator.onExtractSurvey.length).toBe(1);
+        expect(wrapper.vm.lastRawJsonSaved).toEqual(wrapper.vm.creator.text);
       });
       it('sets color scheme', async () => {
         jest.clearAllMocks();
@@ -116,13 +117,15 @@ describe('AssessmentBuilder', () => {
         expect(wrapper.vm.assessmentTemplate.questions).toEqual(wrapper.vm.surveyJsHelper.getAssessmentQuestions());
       });
 
-      it('calls save method for correct storage', async () => {
+      it('calls save method for correct storage and sets lastRawJsonSaved', async () => {
+        wrapper.vm.lastRawJsonSaved = 'nope';
         await wrapper.vm.saveSurveyJson(null, () => {});
         expect(storage.assessmentForm.actions.updateAssessmentStructure).toHaveBeenCalledWith(wrapper.vm.assessmentForm);
         await wrapper.setProps({ id: null });
         jest.clearAllMocks();
         await wrapper.vm.saveSurveyJson(null, () => {});
         expect(storage.assessmentTemplate.actions.updateAssessmentStructure).toHaveBeenCalledWith(wrapper.vm.assessmentTemplate);
+        expect(wrapper.vm.lastRawJsonSaved).toEqual(wrapper.vm.creator.text);
       });
     });
 
@@ -157,6 +160,19 @@ describe('AssessmentBuilder', () => {
         expect(extractFct).toHaveBeenCalledWith(wrapper.vm.creator.survey.toJSON());
         expect(wrapper.vm.extractedData).toEqual(extractFct());
         document.getElementById = backup;
+      });
+    });
+
+    describe('beforeWindowUnload', () => {
+      it('calls preventDefault and sets returnValue when survey is not saved', async () => {
+        const event = {
+          preventDefault: jest.fn(),
+          returnValue: null,
+        };
+        wrapper.vm.lastRawJsonSaved = 'nope';
+        wrapper.vm.beforeWindowUnload(event);
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(event.returnValue).toEqual('');
       });
     });
   });

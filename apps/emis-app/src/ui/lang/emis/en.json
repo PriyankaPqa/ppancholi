@@ -133,6 +133,8 @@
     "assessmentTemplate.search_assessment": "Search assessments",
     "assessmentTemplate.title": "Assessment templates",
     "assessmentTemplate.totalSubmissions": "Total submissions",
+    "assessmentTemplate.totalSubmissionsCompleted": "Completed assessments",
+    "assessmentTemplate.totalSubmissionsPartialCompleted": "Partially completed assessments",
     "assessmentTemplateDetails.back_to_assessmentTemplates": "Back to assessments",
     "assessmentTemplateDetails.title": "Assessment details",
     "assessmentTemplateEdit.title": "Edit assessment responses",

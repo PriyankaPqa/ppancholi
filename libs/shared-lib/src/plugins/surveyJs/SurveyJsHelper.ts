@@ -113,7 +113,7 @@ export class SurveyJsHelper {
     this.creator = new SurveyCreator({
       haveCommercialLicense: true,
       showLogicTab: true,
-      isAutoSave: true,
+      isAutoSave: false,
       showTranslationTab: true,
       questionTypes: SurveyJsHelper.supportedQuestionTypes(),
     }) as ISurveyCreator;

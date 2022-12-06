@@ -6,8 +6,8 @@
         <v-col cols="12" lg="7">
           <div class="pb-4 d-flex justify-space-between">
             <h3>
-              {{ $m(assessmentTemplate.name) }}
-            </h3>
+              {{ $m(assessmentTemplate.name) }} 
+            </h3> 
             <div>
               <status-chip status-name="Status" :status="assessmentTemplate.status" class="mr-4" />
               <v-tooltip bottom>
@@ -75,6 +75,7 @@ import { RcPageContent } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import assessmentDetail from './assessmentDetail';
+import { IAssessmentTotalSubmissions } from '@libs/entities-lib/src/assessment-template/assessment-template.types';
 
 export default mixins(assessmentDetail).extend({
   name: 'AssessmentTemplateDetails',
@@ -82,6 +83,12 @@ export default mixins(assessmentDetail).extend({
   components: {
     RcPageContent,
     StatusChip,
+  },
+
+  data() {
+    return {
+      assessmentTotalSubmissions: null as IAssessmentTotalSubmissions,
+    };
   },
 
   computed: {
@@ -110,13 +117,19 @@ export default mixins(assessmentDetail).extend({
           test: 'messageIfUnavailable',
         },
       ] as Record<string, string | TranslateResult | number>[];
-
+      
       if (this.assessmentForm) {
         data.splice(3, 0, {
-          label: 'assessmentTemplate.totalSubmissions',
-          data: this.assessmentFormMetadata?.totalSubmissions || 0,
-          test: 'totalSubmissions',
-        });
+          label: 'assessmentTemplate.totalSubmissionsCompleted',
+          data: this.assessmentTotalSubmissions?.totalCompleted,
+          test: 'totalSubmissionsCompleted',
+        },
+        {
+          label: 'assessmentTemplate.totalSubmissionsPartialCompleted',
+          data: this.assessmentTotalSubmissions?.totalPartialCompleted,
+          test: 'totalSubmissionsPartialCompleted',
+        }
+        );
       }
 
       if (this.program) {
@@ -142,6 +155,9 @@ export default mixins(assessmentDetail).extend({
 
   async created() {
     await this.loadDetails();
+    if (this.assessmentForm){
+      await this.getAssessmentTotalSubmissions();
+    }
   },
 
   methods: {
@@ -160,6 +176,11 @@ export default mixins(assessmentDetail).extend({
         },
       });
       window.open(routeData.href, '_blank');
+    },
+
+    async getAssessmentTotalSubmissions(){
+      const response = await this.$services.assessmentForms.assessmentTotalSubmissions(this.assessmentTemplateId);
+      this.assessmentTotalSubmissions = response;
     },
   },
 

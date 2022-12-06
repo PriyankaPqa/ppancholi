@@ -149,6 +149,11 @@ export interface IAssessmentResponseEntity extends IEntity {
   };
 }
 
+export interface IAssessmentTotalSubmissions {
+  totalCompleted: number;
+  totalPartialCompleted: number;
+}
+
 export interface IAssessmentResponseMetadata extends IEntity {
 }
 

@@ -47,11 +47,7 @@
           {{ $t(`enums.assessmentPublishStatus.${PublishStatus[item.entity.publishStatus]}`) }}
         </div>
       </template>
-
-      <template #[`item.${customColumns.submissions}`]="{ item }">
-        {{ item.metadata ? item.metadata.totalSubmissions : '' }}
-      </template>
-
+      
       <template #[`item.${customColumns.status}`]="{ item }">
         <status-chip status-name="Status" :status="item.entity.status" />
       </template>
@@ -217,13 +213,6 @@ export default mixins(TablePaginationSearchMixin).extend({
           value: this.customColumns.program,
           width: '30%',
           sortable: true,
-        });
-
-        columns.splice(2, 0, {
-          text: this.$t('assessmentTemplate.totalSubmissions') as string,
-          value: this.customColumns.submissions,
-          width: '150px',
-          sortable: false,
         });
       }
 

@@ -25,7 +25,7 @@ describe('SurveyJsHelper', () => {
     it('initializes the creator', () => {
       const creator = helper.initializeSurveyJsCreator('en');
       expect(creator.showLogicTab).toBeTruthy();
-      expect(creator.isAutoSave).toBeTruthy();
+      expect(creator.isAutoSave).toBeFalsy();
       expect(creator.showTranslationTab).toBeTruthy();
     });
     it('adds properties in surveyjs', () => {

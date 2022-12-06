@@ -74,5 +74,6 @@ describe('AssessmentForm entity module', () => {
         expect(myModule.service.fetchByProgramId).toHaveBeenCalledWith('programId');
       });
     });
+
   });
 });

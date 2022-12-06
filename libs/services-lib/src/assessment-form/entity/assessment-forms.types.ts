@@ -1,4 +1,4 @@
-import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template/assessment-template.types';
+import { IAssessmentFormEntity, IAssessmentTotalSubmissions } from '@libs/entities-lib/assessment-template/assessment-template.types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface IAssessmentFormsService extends IDomainBaseService<IAssessmentFormEntity, { id: uuid }> {
@@ -8,6 +8,7 @@ export interface IAssessmentFormsService extends IDomainBaseService<IAssessmentF
   updateAssessmentStructure(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity>
   fetchByProgramId(programId: uuid): Promise<IAssessmentFormEntity[]>;
   htmlToWord(data: string, filename: string): Promise<string>;
+  assessmentTotalSubmissions(id: uuid): Promise<IAssessmentTotalSubmissions>;
 }
 
 export interface IAssessmentFormsServiceMock extends IDomainBaseServiceMock<IAssessmentFormEntity> {
@@ -17,4 +18,5 @@ export interface IAssessmentFormsServiceMock extends IDomainBaseServiceMock<IAss
   updateAssessmentStructure: jest.Mock<IAssessmentFormEntity>;
   fetchByProgramId: jest.Mock<IAssessmentFormEntity[]>;
   htmlToWord: jest.Mock<string>;
+  assessmentTotalSubmissions: jest.Mock<IAssessmentTotalSubmissions>;
 }

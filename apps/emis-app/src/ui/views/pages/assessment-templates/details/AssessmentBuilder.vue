@@ -42,6 +42,7 @@ export default mixins(assessmentDetail, metadata).extend({
       creator: null as ISurveyCreator,
       surveyJsHelper: new SurveyJsHelper((k: string) => this.$t(k) as string),
       extractedData: null as IExtractedSurveyObject,
+      lastRawJsonSaved: null as string,
     };
   },
 
@@ -49,6 +50,10 @@ export default mixins(assessmentDetail, metadata).extend({
     metaTitle(): string {
       return this.$t('metaInfo.assessment_builder.title') as string;
     },
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('beforeunload', this.beforeWindowUnload);
   },
 
   async mounted() {
@@ -63,6 +68,11 @@ export default mixins(assessmentDetail, metadata).extend({
     } else {
       this.creator.text = this.getDefaultJson();
     }
+
+    this.lastRawJsonSaved = this.creator.text;
+    // confirm leaving when navigating to another wbesite or closing the tab
+    window.addEventListener('beforeunload', this.beforeWindowUnload);
+
     if (!this.testMode) {
       this.creator.render('surveyCreator');
     }
@@ -70,6 +80,13 @@ export default mixins(assessmentDetail, metadata).extend({
   },
 
   methods: {
+    beforeWindowUnload(e : any) {
+      if (this.lastRawJsonSaved !== this.creator.text) {
+        e.preventDefault(); // prompt the user
+        e.returnValue = ''; // prompt the user deprecated compatiblity with Chrome and Edge
+      }
+    },
+
     async saveSurveyJson(saveNo: any, callback: (saveNo: any, something: boolean) => void) {
       this.assessmentTemplate.externalToolState.data.rawJson = this.creator.text;
       this.assessmentTemplate.questions = this.surveyJsHelper.getAssessmentQuestions();
@@ -79,6 +96,7 @@ export default mixins(assessmentDetail, metadata).extend({
       } else {
         await this.$storage.assessmentTemplate.actions.updateAssessmentStructure(this.assessmentTemplate);
       }
+      this.lastRawJsonSaved = this.assessmentTemplate.externalToolState?.data?.rawJson;
       callback(saveNo, true);
     },
 

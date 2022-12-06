@@ -1,4 +1,4 @@
-import { IAssessmentFormMetadata, IAssessmentFormEntity, IAssessmentBaseEntity } from '@libs/entities-lib/assessment-template';
+import { IAssessmentFormMetadata, IAssessmentFormEntity, IAssessmentBaseEntity, IAssessmentTotalSubmissions} from '@libs/entities-lib/assessment-template';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';
