@@ -128,7 +128,9 @@ const checkAppVersion = () => {
       .then((response) => response.json())
       .then((json) => {
         const newVersion = json.app_version;
-        if (sessionStorage.getItem(sessionStorageKeys.appVersion.name) !== newVersion) {
+        const cacheVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
+        if (cacheVersion !== newVersion) {
+          applicationInsights.trackTrace(`Version mismatch - session cache ${cacheVersion}, blog storage ${newVersion}`, { }, 'router', 'checkAppVersion');
           Vue.toasted.global.info(i18n.t('application_update.refreshing'));
           setTimeout(() => {
             window.location.reload();
