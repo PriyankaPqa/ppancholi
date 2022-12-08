@@ -90,6 +90,7 @@ import routes from '@/constants/routes';
 import moment from '@libs/shared-lib/plugins/moment';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'EventsTable',
@@ -255,6 +256,15 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     getEventRoute(event: IEventCombined) {
+      const isFeatureFlagEnabled = this.$hasFeature(FeatureKeys.LetIMViewEventDetails); // TODO EMISV2-6088
+      if (isFeatureFlagEnabled && this.$hasRole('contributorIM')) {
+        return {
+          name: routes.events.summaryForIM.name,
+          params: {
+            id: event.entity.id,
+          },
+        };
+      }
       return {
         name: routes.events.summary.name,
         params: {

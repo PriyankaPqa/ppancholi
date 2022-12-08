@@ -11,6 +11,7 @@ export enum FeatureKeys {
   AssessmentsWithinCasefiles = 'AssessmentsWithinCasefiles',
   FinancialAssistanceDataCorrection = 'FinancialAssistanceDataCorrection',
   ActionApprovals = 'ActionApprovals',
+  LetIMViewEventDetails = 'letIMViewEventDetails',
 }
 
 export enum FeatureType {

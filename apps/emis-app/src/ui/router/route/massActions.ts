@@ -1,0 +1,160 @@
+import Routes from '@/constants/routes';
+import { RouteConfig } from 'vue-router/types/router';
+
+const MassActionsLayout = () => import('@/ui/views/pages/mass-actions/layout/MassActionsLayout.vue');
+const MassActionsHome = () => import('@/ui/views/pages/mass-actions/home/MassActionsHome.vue');
+
+const MassActionsFinancialAssistanceHome = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceHomeMassAction.vue');
+const FinancialAssistanceCreate = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCreate.vue');
+const MassActionsFinancialAssistanceDetails = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceDetailsMassAction.vue');
+
+const MassActionsImportValidationStatusHome = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusHome.vue');
+const MassActionsImportValidationStatusCreate = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusCreate.vue');
+const MassActionsImportValidationStatusDetails = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusDetails.vue');
+
+const MassActionsImportPaymentStatusHome = () => import('@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusHome.vue');
+const MassActionsImportPaymentStatusCreate = () => import('@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusCreate.vue');
+const MassActionsImportPaymentStatusDetails = () => import('@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusDetails.vue');
+
+const MassActionsImportUsersHome = () => import('@/ui/views/pages/mass-actions/import-users/ImportUsersHome.vue');
+const MassActionsImportUsersCreate = () => import('@/ui/views/pages/mass-actions/import-users/ImportUsersCreate.vue');
+const MassActionsImportUsersDetails = () => import('@/ui/views/pages/mass-actions/import-users/ImportUsersDetails.vue');
+
+const MassActionsFundingRequestHome = () => import('@/ui/views/pages/mass-actions/funding-request/FundingRequestHome.vue');
+const MassActionsFundingRequestCreate = () => import('@/ui/views/pages/mass-actions/funding-request/FundingRequestCreate.vue');
+const MassActionsFundingRequestDetails = () => import('@/ui/views/pages/mass-actions/funding-request/FundingRequestDetails.vue');
+
+const MassActionsDataCorrectionHome = () => import('@/ui/views/pages/mass-actions/data-correction/DataCorrectionHome.vue');
+const MassActionsDataCorrectionCreate = () => import('@/ui/views/pages/mass-actions/data-correction/DataCorrectionCreate.vue');
+const MassActionsDataCorrectionDetails = () => import('@/ui/views/pages/mass-actions/data-correction/DataCorrectionDetails.vue');
+
+export const massActions: RouteConfig = {
+  path: Routes.massActions.layout.path,
+  component: MassActionsLayout,
+  meta: {
+    requiresAuthorization: true,
+  },
+  children: [
+    {
+      path: Routes.massActions.home.path,
+      name: Routes.massActions.home.name,
+      component: MassActionsHome,
+      meta: { level: 'level6', roles: ['contributorIM', 'contributorFinance'] },
+    },
+    {
+      path: Routes.massActions.financialAssistance.home.path,
+      name: Routes.massActions.financialAssistance.home.name,
+      component: MassActionsFinancialAssistanceHome,
+      meta: { level: 'level6' },
+    },
+    {
+      path: Routes.massActions.financialAssistance.create.path,
+      name: Routes.massActions.financialAssistance.create.name,
+      component: FinancialAssistanceCreate,
+      meta: { level: 'level6' },
+      props: true,
+    },
+    {
+      path: Routes.massActions.financialAssistance.details.path,
+      name: Routes.massActions.financialAssistance.details.name,
+      component: MassActionsFinancialAssistanceDetails,
+      meta: { level: 'level6' },
+      props: true,
+    },
+    {
+      path: Routes.massActions.importValidationStatus.home.path,
+      name: Routes.massActions.importValidationStatus.home.name,
+      component: MassActionsImportValidationStatusHome,
+      meta: { level: 'level6', roles: ['contributorIM'] },
+    },
+    {
+      path: Routes.massActions.importValidationStatus.create.path,
+      name: Routes.massActions.importValidationStatus.create.name,
+      component: MassActionsImportValidationStatusCreate,
+      meta: { level: 'level6', roles: ['contributorIM'] },
+    },
+    {
+      path: Routes.massActions.importValidationStatus.details.path,
+      name: Routes.massActions.importValidationStatus.details.name,
+      component: MassActionsImportValidationStatusDetails,
+      meta: { level: 'level6', roles: ['contributorIM'] },
+      props: true,
+    },
+    {
+      path: Routes.massActions.importPaymentStatus.home.path,
+      name: Routes.massActions.importPaymentStatus.home.name,
+      component: MassActionsImportPaymentStatusHome,
+      meta: { level: 'level6', roles: ['contributorFinance'] },
+    },
+    {
+      path: Routes.massActions.importPaymentStatus.create.path,
+      name: Routes.massActions.importPaymentStatus.create.name,
+      component: MassActionsImportPaymentStatusCreate,
+      meta: { level: 'level6', roles: ['contributorFinance'] },
+    },
+    {
+      path: Routes.massActions.importPaymentStatus.details.path,
+      name: Routes.massActions.importPaymentStatus.details.name,
+      component: MassActionsImportPaymentStatusDetails,
+      meta: { level: 'level6', roles: ['contributorFinance'] },
+      props: true,
+    },
+    {
+      path: Routes.massActions.importUsers.home.path,
+      name: Routes.massActions.importUsers.home.name,
+      component: MassActionsImportUsersHome,
+      meta: { level: 'level6' },
+    },
+    {
+      path: Routes.massActions.importUsers.create.path,
+      name: Routes.massActions.importUsers.create.name,
+      component: MassActionsImportUsersCreate,
+      meta: { level: 'level6' },
+    },
+    {
+      path: Routes.massActions.importUsers.details.path,
+      name: Routes.massActions.importUsers.details.name,
+      component: MassActionsImportUsersDetails,
+      meta: { level: 'level6' },
+      props: true,
+    },
+    {
+      path: Routes.massActions.fundingRequest.home.path,
+      name: Routes.massActions.fundingRequest.home.name,
+      component: MassActionsFundingRequestHome,
+      meta: { level: 'level6', roles: ['contributorFinance'] },
+    },
+    {
+      path: Routes.massActions.fundingRequest.create.path,
+      name: Routes.massActions.fundingRequest.create.name,
+      component: MassActionsFundingRequestCreate,
+      meta: { level: 'level6', roles: ['contributorFinance'] },
+    },
+    {
+      path: Routes.massActions.fundingRequest.details.path,
+      name: Routes.massActions.fundingRequest.details.name,
+      component: MassActionsFundingRequestDetails,
+      meta: { level: 'level6', roles: ['contributorFinance'] },
+      props: true,
+    },
+    {
+      path: Routes.massActions.dataCorrection.home.path,
+      name: Routes.massActions.dataCorrection.home.name,
+      component: MassActionsDataCorrectionHome,
+      meta: { level: 'level6' },
+    },
+    {
+      path: Routes.massActions.dataCorrection.create.path,
+      name: Routes.massActions.dataCorrection.create.name,
+      component: MassActionsDataCorrectionCreate,
+      meta: { level: 'level6' },
+    },
+    {
+      path: Routes.massActions.dataCorrection.details.path,
+      name: Routes.massActions.dataCorrection.details.name,
+      component: MassActionsDataCorrectionDetails,
+      meta: { level: 'level6' },
+      props: true,
+    },
+  ],
+};

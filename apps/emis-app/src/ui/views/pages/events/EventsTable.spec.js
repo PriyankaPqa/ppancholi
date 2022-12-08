@@ -9,6 +9,7 @@ import { mockStorage } from '@/storage';
 import {
   mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata, EResponseLevel, EEventStatus, mockEventEntity,
 } from '@libs/entities-lib/event';
+import { mockUsercontributorIM } from '@libs/entities-lib/user';
 import Component from './EventsTable.vue';
 
 const storage = mockStorage();
@@ -698,9 +699,21 @@ describe('EventsTable.vue', () => {
     });
 
     describe('getEventRoute', () => {
-      it('returns the right route object', () => {
+      it('returns the right route object when feature flag is off', () => {
+        wrapper.vm.$hasFeature = jest.fn(() => false);
         expect(wrapper.vm.getEventRoute(mockEvents()[0])).toEqual({
           name: routes.events.summary.name,
+          params: {
+            id: mockEvents()[0].entity.id,
+          },
+        });
+      });
+
+      it('returns the right route object when feature flag is on, and the user is contributorIM', () => {
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.$storage.user.getters.user = jest.fn(() => mockUsercontributorIM());
+        expect(wrapper.vm.getEventRoute(mockEvents()[0])).toEqual({
+          name: routes.events.summaryForIM.name,
           params: {
             id: mockEvents()[0].entity.id,
           },

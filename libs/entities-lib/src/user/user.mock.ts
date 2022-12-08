@@ -108,3 +108,4 @@ export const mockUserL3 = (): IUser => new User(mockUsersData()[2]);
 export const mockUserL4 = (): IUser => new User(mockUsersData()[3]);
 export const mockUserL5 = (): IUser => new User(mockUsersData()[4]);
 export const mockUserL6 = (): IUser => new User(mockUsersData()[5]);
+export const mockUsercontributorIM = (): IUser => new User(mockUsersData()[6]);
