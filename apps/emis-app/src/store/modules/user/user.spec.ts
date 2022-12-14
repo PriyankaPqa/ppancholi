@@ -92,7 +92,7 @@ describe('>>> Users Module', () => {
 
       it('returns proper landing page for contributorIM user', () => {
         store = mockStoreUserContributorIM();
-        expect(store.getters['user/landingPage']).toEqual('DashboardCaseFile');
+        expect(store.getters['user/landingPage']).toEqual('HomeContributorIM');
       });
 
       it('returns proper landing page for contributorFinance user', () => {

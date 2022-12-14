@@ -164,6 +164,7 @@ declare module 'vue' {
     Genders: typeof import('./src/ui/views/pages/system-management/lists/pages/Genders.vue')['default']
     GeneralHelpMenu: typeof import('./src/ui/views/components/layout/GeneralHelpMenu.vue')['default']
     HomeAddressTemplate: typeof import('./../../libs/registration-lib/src/components/review/addresses/HomeAddressTemplate.vue')['default']
+    HomeContributorIM: typeof import('./src/ui/views/pages/home/components/HomeContributorIM.vue')['default']
     HomeLayout: typeof import('./src/ui/views/pages/home/layout/HomeLayout.vue')['default']
     HomeLevel3: typeof import('./src/ui/views/pages/home/components/HomeLevel3.vue')['default']
     HomeLevel4: typeof import('./src/ui/views/pages/home/components/HomeLevel4.vue')['default']

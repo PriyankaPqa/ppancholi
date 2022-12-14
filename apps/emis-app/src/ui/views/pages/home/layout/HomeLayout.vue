@@ -13,6 +13,7 @@ import HomeLevel4 from '@/ui/views/pages/home/components/HomeLevel4.vue';
 import HomeLevel5 from '@/ui/views/pages/home/components/HomeLevel5.vue';
 import HomeLevel6 from '@/ui/views/pages/home/components/HomeLevel6.vue';
 import HomeNoRole from '@/ui/views/pages/home/components/HomeNoRole.vue';
+import HomeContributorIM from '@/ui/views/pages/home/components/HomeContributorIM.vue';
 
 export default Vue.extend({
   name: 'HomeLayout',
@@ -24,6 +25,7 @@ export default Vue.extend({
     HomeLevel5,
     HomeLevel6,
     HomeNoRole,
+    HomeContributorIM,
   },
 
   mixins: [metadata],

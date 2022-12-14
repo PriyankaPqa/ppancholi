@@ -13,5 +13,6 @@ export default Vue.extend({
   components: {
     CaseFileTable,
   },
+
 });
 </script>

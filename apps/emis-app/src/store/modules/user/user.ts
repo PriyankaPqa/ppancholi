@@ -48,11 +48,12 @@ const getters = {
     switch (role) {
       case 'level1':
       case 'level2':
-      case 'contributorIM':
       case 'contributorFinance':
       case 'contributor3':
       case 'readonly':
         return 'DashboardCaseFile';
+      case 'contributorIM':
+        return 'HomeContributorIM';
       case 'level3': return 'HomeLevel3';
       case 'level4': return 'HomeLevel4';
       case 'level5': return 'HomeLevel5';
