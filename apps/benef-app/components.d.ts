@@ -18,7 +18,6 @@ declare module 'vue' {
     AppHeader: typeof import('./src/ui/views/components/layout/AppHeader.vue')['default']
     AssessmentRunner: typeof import('./src/ui/views/pages/assessment/AssessmentRunner.vue')['default']
     ConfirmationError: typeof import('./../../libs/registration-lib/src/components/confirm-registration/ConfirmationError.vue')['default']
-    ConfirmationPrint: typeof import('./src/ui/views/pages/registration/confirmation/ConfirmationPrint.vue')['default']
     ConfirmationPrintLib: typeof import('./../../libs/registration-lib/src/components/confirm-registration/ConfirmationPrintLib.vue')['default']
     ConfirmRegistration: typeof import('./src/ui/views/pages/registration/confirmation/ConfirmRegistration.vue')['default']
     ConfirmRegistrationLib: typeof import('./../../libs/registration-lib/src/components/confirm-registration/ConfirmRegistrationLib.vue')['default']

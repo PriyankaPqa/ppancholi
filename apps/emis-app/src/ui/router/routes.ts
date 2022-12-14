@@ -32,8 +32,6 @@ const LoginError = () => import('@/ui/views/pages/login-error/LoginError.vue');
 
 const MainHouseholdSearch = () => import('@/ui/views/pages/household/search/MainHouseholdSearch.vue');
 
-const ConfirmationPrint = () => import('@/ui/views/pages/registration/confirmation/ConfirmationPrint.vue');
-
 const AccountSettings = () => import('@/ui/views/pages/system-management/lists/user-accounts/account-settings/AccountSettings.vue');
 
 // NOTE: Be aware of the importance of routes order. Details pages have the route pattern 'entityName/:entityId'
@@ -65,11 +63,6 @@ export const routes: Array<RouteConfig> = [
       Trans.routeMiddleware(to, from, next);
     },
     children: [
-      {
-        path: 'print-confirmation',
-        name: 'print-confirmation',
-        component: ConfirmationPrint,
-      },
       {
         path: Routes.assessmentTemplates.builder.path,
         name: Routes.assessmentTemplates.builder.name,
