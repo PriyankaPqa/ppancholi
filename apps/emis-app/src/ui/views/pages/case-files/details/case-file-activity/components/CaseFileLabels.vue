@@ -100,52 +100,72 @@ export default Vue.extend({
       return {
         label: {
           max: MAX_LENGTH_SM,
+
         },
       };
     },
   },
 
   mounted() {
-    this.copyLabels();
+    this.labels = this.copyLabels(this.caseFileLabels);
   },
 
   methods: {
     closeDialog() {
       this.showLabelsDialog = false;
-      this.copyLabels();
-    },
+      this.labels = this.copyLabels(this.caseFileLabels);
+      },
 
-    copyLabels() {
-      this.labels = [];
-
+    copyLabels(labels: ICaseFileLabel[]) {
+      const mappedLabels = [];
       for (let x = 0; x < NUM_LABELS; x += 1) {
-        if (this.caseFileLabels && this.caseFileLabels[x]) {
-          this.labels.push({
-            name: this.caseFileLabels[x].name,
+        if (labels && labels[x]) {
+          mappedLabels.push({
+            name: this.caseFileLabels[x].name.trim(),
             order: x + 1,
           });
         } else {
-          this.labels.push({
+          mappedLabels.push({
             name: '',
             order: x + 1,
           });
         }
       }
+      return mappedLabels;
     },
 
     async submitAddLabels() {
       const isValid = await (this.$refs.form as VForm).validate();
 
       if (isValid) {
+          const copyOriginalLabels = this.copyLabels(this.caseFileLabels);
+          if (!this.isNewLabelChangeValid(copyOriginalLabels, this.labels)) {
+            this.labels = copyOriginalLabels;
+            this.$toasted.global.info(this.$t('caseFileActivity.labels.info.labelNotModified'));
+            this.showLabelsDialog = false;
+            return;
+          }
+
         this.loading = true;
 
         try {
           await this.$storage.caseFile.actions.setCaseFileLabels(this.caseFileId, this.labels);
+          this.$toasted.global.success(this.$t('caseFileActivity.labels.success.labelsModified'));
           this.showLabelsDialog = false;
         } finally {
           this.loading = false;
         }
       }
+    },
+
+    // To check if the update of labels is valid, avoiding generate invalid activity when only white spaces added or deleted
+    isNewLabelChangeValid(oldLabels: ICaseFileLabel[], newLabels: ICaseFileLabel[]) :Boolean {
+      for (let i = 0; i < NUM_LABELS; i += 1) {
+        if (oldLabels[i].name.trim().replace(/\s+/g, ' ') !== newLabels[i].name.trim().replace(/\s+/g, ' ')) {
+          return true;
+        }
+      }
+      return false;
     },
   },
 });

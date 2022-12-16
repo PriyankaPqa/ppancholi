@@ -67,6 +67,7 @@ export enum CaseFileActivityType {
   IdentityAuthenticationUpdatedId = 29,
   AssessmentCompleted = 30,
   FinancialAssistancePayment = 31,
+  CaseFileLabelsUpdated = 32,
 
 }
 

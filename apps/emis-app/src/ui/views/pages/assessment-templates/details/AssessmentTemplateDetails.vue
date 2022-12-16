@@ -120,15 +120,20 @@ export default mixins(assessmentDetail).extend({
       ] as Record<string, string>[];
 
       if (this.assessmentForm) {
-        data.splice(3, 0, {
+        data.splice(
+3,
+0,
+{
           label: 'assessmentTemplate.totalSubmissionsCompleted',
           data: `${this.assessmentTotalSubmissions?.totalCompleted}`,
           test: 'totalSubmissionsCompleted',
-        }, {
+        },
+{
           label: 'assessmentTemplate.totalSubmissionsPartialCompleted',
           data: `${this.assessmentTotalSubmissions?.totalPartialCompleted}`,
           test: 'totalSubmissionsPartialCompleted',
-        });
+        },
+);
       }
 
       if (this.program) {

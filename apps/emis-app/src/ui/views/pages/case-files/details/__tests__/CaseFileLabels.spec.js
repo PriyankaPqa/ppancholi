@@ -72,21 +72,38 @@ describe('CaseFileLabels.vue', () => {
 
   describe('Methods', () => {
     describe('copyLabels', () => {
-      it('copies the labels from the case file to data', async () => {
+      it('maps the labels from the case file', async () => {
         await wrapper.setProps({
           caseFileLabels: [{
             name: 'Label One',
             order: 1,
           }],
         });
-        await wrapper.setData({
-          labels: [],
+
+        const result = await wrapper.vm.copyLabels(wrapper.vm.caseFileLabels);
+        expect(result).toEqual([{
+          name: 'Label One',
+          order: 1,
+        }, {
+          name: '',
+          order: 2,
+        }, {
+          name: '',
+          order: 3,
+        }, {
+          name: '',
+          order: 4,
+        }]);
+      });
+
+      it('returns original array of labels if caseFileLabels is an empty array', async () => {
+        await wrapper.setProps({
+          caseFileLabels: [],
         });
 
-        await wrapper.vm.copyLabels();
-
-        expect(wrapper.vm.labels).toEqual([{
-          name: 'Label One',
+        const result = await wrapper.vm.copyLabels(wrapper.vm.caseFileLabels);
+        expect(result).toEqual([{
+          name: '',
           order: 1,
         }, {
           name: '',
@@ -112,11 +129,12 @@ describe('CaseFileLabels.vue', () => {
         expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledTimes(0);
       });
 
-      it('calls the setCaseFileLabels action', async () => {
+      it('calls the setCaseFileLabels action if the change of labels is valid', async () => {
         jest.clearAllMocks();
         expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledTimes(0);
 
         jest.spyOn(wrapper.vm.$refs.form, 'validate').mockImplementation(() => true);
+        wrapper.vm.isNewLabelChangeValid = jest.fn(() => true);
 
         await wrapper.vm.submitAddLabels();
 
@@ -126,6 +144,18 @@ describe('CaseFileLabels.vue', () => {
           mockCaseFile.id,
           wrapper.vm.labels,
         );
+      });
+
+      it('should not call the setCaseFileLabels action if the change of labels is invalid', async () => {
+        jest.clearAllMocks();
+        expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledTimes(0);
+
+        jest.spyOn(wrapper.vm.$refs.form, 'validate').mockImplementation(() => true);
+        wrapper.vm.isNewLabelChangeValid = jest.fn(() => false);
+
+        await wrapper.vm.submitAddLabels();
+
+        expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledTimes(0);
       });
     });
   });

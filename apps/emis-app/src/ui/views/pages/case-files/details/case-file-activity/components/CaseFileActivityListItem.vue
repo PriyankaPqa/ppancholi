@@ -144,6 +144,9 @@ export default Vue.extend({
         case CaseFileActivityType.FinancialAssistancePayment:
           return this.makeContentForFinancialAssistancePayment();
 
+        case CaseFileActivityType.CaseFileLabelsUpdated:
+          return this.makeContentForCaseFileLabelsUpdated();
+
         default:
           return null;
       }
@@ -528,6 +531,21 @@ export default Vue.extend({
       const title = this.$t('caseFileActivity.activityList.title.AssessmentCompleted');
       const name = this.$m(this.item.details.assessmentName as IMultilingual);
       const body = this.$t('caseFileActivity.activityList.body.assessmentCompleted.name', { x: name });
+
+      return { title, body };
+    },
+
+    makeContentForCaseFileLabelsUpdated(): { title: TranslateResult, body: TranslateResult } {
+      const title = this.$t('caseFileActivity.activityList.title.CaseFileLabelsUpdated');
+      let body = `${this.$t('caseFileActivity.activityList.body.PreviousLabels')}: `;
+      body += (this.item.details.previousLabels as [])
+        .filter((label : Record<string, any>) => (label.name as string).trim().length > 0)
+        .map((label : Record<string, any>) => label.name).join(' | ');
+
+      body += `\n${this.$t('caseFileActivity.activityList.body.NewLabels')}: `;
+      body += (this.item.details.newLabels as [])
+        .filter((label : Record<string, any>) => (label.name as string).trim().length > 0)
+        .map((label : Record<string, any>) => label.name).join(' | ');
 
       return { title, body };
     },

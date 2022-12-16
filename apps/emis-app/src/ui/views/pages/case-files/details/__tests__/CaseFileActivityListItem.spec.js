@@ -365,6 +365,13 @@ describe('CaseFileActivityListItem.vue', () => {
         });
         expect(wrapper.vm.icon).toEqual('mdi-currency-usd');
       });
+
+      it('returns the correct icon when activity type is CaseFileLabelsUpdated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.CaseFileLabelsUpdated)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-message-text');
+      });
     });
 
     describe('Methods', () => {
@@ -976,6 +983,26 @@ describe('CaseFileActivityListItem.vue', () => {
         };
         await wrapper.setProps({ item });
         expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.household_member_assign_primary: Jane Doe');
+      });
+    });
+
+    describe('makeContentForCaseFileLabelsUpdated', () => {
+      it('returns the correct data when action type is CaseFileLabelsUpdated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.CaseFileLabelsUpdated)[0],
+        });
+
+        const title = wrapper.vm.$t('caseFileActivity.activityList.title.CaseFileLabelsUpdated');
+        let body = `${wrapper.vm.$t('caseFileActivity.activityList.body.PreviousLabels')}: `;
+        body += wrapper.vm.item.details.previousLabels.filter((label) => label.name.trim().length > 0).map((label) => label.name).join(' | ');
+
+        body += `\n${wrapper.vm.$t('caseFileActivity.activityList.body.NewLabels')}: `;
+        body += wrapper.vm.item.details.newLabels.filter((label) => label.name.trim().length > 0).map((label) => label.name).join(' | ');
+
+        expect(wrapper.vm.makeContentForCaseFileLabelsUpdated()).toEqual({
+          title,
+          body,
+        });
       });
     });
   });

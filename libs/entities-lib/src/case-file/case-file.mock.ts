@@ -677,6 +677,52 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         totalAmount: '5115.20',
       },
     },
+    {
+      id: 'mock-activity-id-38',
+      caseFileId: 'mock-id-11',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.CaseFileLabelsUpdated,
+      details: {
+        previousLabels: [
+          {
+            name: 'label 1',
+            order: '1',
+          },
+          {
+            name: 'label 2',
+            order: '2',
+          },
+          {
+            name: 'label 3',
+            order: '3',
+          },
+          {
+            name: 'label 4',
+            order: '4',
+          },
+        ],
+        newLabels: [
+          {
+            name: 'new label 1',
+            order: '1',
+          },
+          {
+            name: '',
+            order: '2',
+          },
+          {
+            name: '    ',
+            order: '3',
+          },
+          {
+            name: 'label 4',
+            order: '4',
+          },
+        ],
+      },
+    },
   ];
 
   if (type) {
