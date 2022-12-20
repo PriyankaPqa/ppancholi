@@ -448,7 +448,13 @@ describe('Individual.vue', () => {
 
         await wrapper.vm.associateHousehold();
 
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ title: wrapper.vm.titleLeave, messages: wrapper.vm.messagesLeave });
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: wrapper.vm.$t('registration.associate.confirmation.title'),
+          messages: [
+            wrapper.vm.$t('registration.associate.confirmation.message1'),
+            wrapper.vm.$t('registration.associate.confirmation.message2'),
+          ],
+        });
       });
 
       it('calls createNewCaseFile if user confirms', async () => {
@@ -540,71 +546,6 @@ describe('Individual.vue', () => {
       it('should return the even name', () => {
         const event = wrapper.vm.$storage.registration.getters.event();
         expect(wrapper.vm.eventName).toEqual(wrapper.vm.$m(event.name));
-      });
-    });
-
-    describe('titleLeave', () => {
-      it('should return proper text for association household', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            associationMode: () => true,
-            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-        expect(wrapper.vm.titleLeave).toEqual('registration.associate.confirmation.title');
-      });
-
-      it('should return proper text otherwise', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            associationMode: () => false,
-            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-        expect(wrapper.vm.titleLeave).toEqual('confirmLeaveDialog.title');
-      });
-    });
-
-    describe('messagesLeave', () => {
-      it('should return proper text for association household', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            associationMode: () => true,
-            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-        expect(wrapper.vm.messagesLeave).toEqual([
-          'registration.associate.confirmation.message1',
-          'registration.associate.confirmation.message2',
-        ]);
-      });
-      it('should return proper text otherwise', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            associationMode: () => false,
-            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-        expect(wrapper.vm.messagesLeave).toEqual([
-          'confirmLeaveDialog.message_1',
-          'confirmLeaveDialog.message_2',
-        ]);
       });
     });
 

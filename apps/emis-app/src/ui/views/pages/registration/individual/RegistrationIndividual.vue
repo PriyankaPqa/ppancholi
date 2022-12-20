@@ -128,8 +128,11 @@ export default mixins(individual).extend({
       next();
     } else {
       const userChoice = await (this.$confirm({
-        title: this.titleLeave,
-        messages: this.messagesLeave,
+        title: this.$t('confirmLeaveDialog.title'),
+        messages: [
+          this.$t('confirmLeaveDialog.message_1'),
+          this.$t('confirmLeaveDialog.message_2'),
+        ],
       }) as Promise<unknown>);
       next(userChoice);
     }
@@ -164,26 +167,6 @@ export default mixins(individual).extend({
 
     eventName(): string {
       return this.$m(this.event.name);
-    },
-
-    titleLeave(): TranslateResult {
-      if (this.currentTab.id === 'review' && this.associationMode) {
-        return this.$t('registration.associate.confirmation.title');
-      }
-      return this.$t('confirmLeaveDialog.title');
-    },
-
-    messagesLeave(): Array<TranslateResult> {
-      if (this.currentTab.id === 'review' && this.associationMode) {
-        return [
-          this.$t('registration.associate.confirmation.message1'),
-          this.$t('registration.associate.confirmation.message2'),
-        ];
-      }
-      return [
-        this.$t('confirmLeaveDialog.message_1'),
-        this.$t('confirmLeaveDialog.message_2'),
-      ];
     },
 
     getTitle(): TranslateResult {
@@ -283,7 +266,6 @@ export default mixins(individual).extend({
           helpers.scrollToFirstError('app');
           return;
         }
-
         await this.associateHousehold();
 
         return;
@@ -329,8 +311,11 @@ export default mixins(individual).extend({
 
     async associateHousehold() {
       const userChoice = await (this.$confirm({
-        title: this.titleLeave,
-        messages: this.messagesLeave,
+        title: this.$t('registration.associate.confirmation.title'),
+        messages: [
+          this.$t('registration.associate.confirmation.message1'),
+          this.$t('registration.associate.confirmation.message2'),
+        ],
       }));
       if (userChoice) {
         const success = await this.createNewCaseFile();
