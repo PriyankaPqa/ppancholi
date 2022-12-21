@@ -76,6 +76,7 @@ import routes from '@/constants/routes';
 import { IApprovalTableEntity, IApprovalTableMetadata } from '@libs/entities-lib/approvals/approvals-table';
 import { IApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
 import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { ApprovalAggregatedBy, IApprovalBaseEntity } from '@libs/entities-lib/approvals/approvals-base';
 import mixins from 'vue-typed-mixins';
 import approvalRoles from '@/ui/views/pages/approvals/mixins/approvalRoles';
@@ -131,7 +132,7 @@ export default mixins(approvalRoles).extend({
           minimum: this.$formatCurrency(g.minimumAmount),
           maximum: this.$formatCurrency(g.maximumAmount),
         }));
-        return helpers.filterCollectionByValue(dataTable, this.search, false, ['groupIndex', 'roles'], true);
+        return sharedHelpers.filterCollectionByValue(dataTable, this.search, false, ['groupIndex', 'roles'], true);
       }
       return [];
     },

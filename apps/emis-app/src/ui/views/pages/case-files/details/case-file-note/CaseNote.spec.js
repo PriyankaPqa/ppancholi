@@ -3,16 +3,17 @@ import { CaseNoteStorageMock } from '@/storage/case-note/storage.mock';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
 import { mockStorage } from '@/storage';
-import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
+import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import * as searchEndpoints from '@/constants/searchEndpoints';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from './CaseNote.vue';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 
 const localVue = createLocalVue();
 const caseNote = mockCombinedCaseNote();
 const storage = mockStorage();
-const mockEvent = mockCombinedEvent();
-mockEvent.entity.schedule.status = EEventStatus.Open;
+const mockEvent = mockEventEntity();
+mockEvent.schedule.status = EEventStatus.Open;
 
 describe('CaseNote.vue', () => {
   let wrapper;
@@ -126,22 +127,25 @@ describe('CaseNote.vue', () => {
   describe('Computed', () => {
     describe('showAddButton', () => {
       it('returns correct value', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: 'id',
-          },
-          computed: {
-            event() {
-              return mockEvent;
+        const doMount = (level) => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            pinia: getPiniaForUser(level),
+            propsData: {
+              id: 'id',
             },
-          },
-          mocks: {
-            $storage: {
-              caseNote: new CaseNoteStorageMock().make(),
+            computed: {
+              event() {
+                return mockEvent;
+              },
             },
-          },
-        });
+            mocks: {
+              $storage: {
+                caseNote: new CaseNoteStorageMock().make(),
+              },
+            },
+          });
+        };
 
         await wrapper.setData({
           caseFile: {
@@ -149,26 +153,27 @@ describe('CaseNote.vue', () => {
             readonly: false,
           },
         });
-        await wrapper.setRole('level1');
+        doMount('level1');
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        await wrapper.setRole('level6');
+        doMount('level6');
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        await wrapper.setRole('contributorFinance');
+        doMount('contributorFinance');
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        await wrapper.setRole('contributor3');
+        doMount('contributor3');
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        await wrapper.setRole('contributorIM');
+        doMount('contributorIM');
         expect(wrapper.vm.showAddButton).toBe(false);
 
-        await wrapper.setRole('read only');
+        doMount('readOnly');
         expect(wrapper.vm.showAddButton).toBe(false);
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser('level1'),
           propsData: {
             id: 'id',
           },
@@ -186,7 +191,7 @@ describe('CaseNote.vue', () => {
             },
           },
         });
-        await wrapper.setRole('level1');
+
         expect(wrapper.vm.showAddButton).toBe(false);
       });
     });

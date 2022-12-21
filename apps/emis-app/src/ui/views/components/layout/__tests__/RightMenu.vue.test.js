@@ -1,24 +1,25 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedTenantSettings } from '@libs/entities-lib/tenantSettings';
-import { mockUsersData } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { useUserStore } from '@/pinia/user/user';
 import Component from '../RightMenu.vue';
 
 const localVue = createLocalVue();
 
+const pinia = getPiniaForUser('level6');
+const userStore = useUserStore(pinia);
+userStore.signOut = jest.fn();
+
 describe('RightMenu.vue', () => {
   let wrapper;
-  let actions;
 
   const mountWrapper = async (fullMount = false) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       store: {
         modules: {
-          user: {
-            actions,
-            state: mockUsersData()[0],
-          },
           dashboard: {
             state: {
               rightMenuVisible: true,
@@ -30,9 +31,6 @@ describe('RightMenu.vue', () => {
   };
 
   beforeEach(async () => {
-    actions = {
-      signOut: jest.fn(() => true),
-    };
     await mountWrapper(true);
   });
 
@@ -45,13 +43,13 @@ describe('RightMenu.vue', () => {
       test('the avatar is displayed correctly', async () => {
         const avatar = wrapper.find('[data-test="rightMenu__avatar"]');
 
-        expect(avatar.text()).toBe('JW');
+        expect(avatar.text()).toBe('OJ');
       });
 
       test('the user name is displayed correctly', async () => {
         const avatar = wrapper.find('[data-test="rightMenu__userName"]');
 
-        expect(avatar.text()).toBe('John White');
+        expect(avatar.text()).toBe('Orange Jack');
       });
 
       test('the email is displayed correctly', async () => {
@@ -81,12 +79,9 @@ describe('RightMenu.vue', () => {
       test('no role is displayed correctly ', async () => {
         wrapper = mount(Component, {
           localVue,
+          pinia: getPiniaForUser('noRole'),
           store: {
             modules: {
-              user: {
-                actions,
-                state: mockUsersData()[10],
-              },
               dashboard: {
                 state: {
                   rightMenuVisible: true,
@@ -130,7 +125,7 @@ describe('RightMenu.vue', () => {
 
         await button.trigger('click');
 
-        expect(actions.signOut).toHaveBeenCalledTimes(1);
+        expect(userStore.signOut).toHaveBeenCalledTimes(1);
       });
 
       test('the account settings button redirects to account settings page', async () => {

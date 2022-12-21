@@ -6,10 +6,10 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockEventMainInfo, EEventLocationStatus } from '@libs/entities-lib/event';
 import { mockCombinedCaseFile, CaseFileStatus, mockCaseFileEntities } from '@libs/entities-lib/case-file';
-import { mockUserStateLevel } from '@/test/helpers';
 import householdHelpers from '@/ui/helpers/household';
 import routes from '@/constants/routes';
 import flushPromises from 'flush-promises';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();
@@ -390,9 +390,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          store: {
-            ...mockUserStateLevel(1),
-          },
+          pinia: getPiniaForUser('level1'),
           mocks: {
             $storage: {
               registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
@@ -411,6 +409,7 @@ describe('HouseholdProfile.vue', () => {
       it('returns false if user does not have level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser('contributorIM'),
           propsData: {
             id: household.entity.id,
           },
@@ -461,9 +460,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          store: {
-            ...mockUserStateLevel(2),
-          },
+          pinia: getPiniaForUser('level2'),
           mocks: {
             $storage: {
               registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
@@ -490,9 +487,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          store: {
-            ...mockUserStateLevel(1),
-          },
+          pinia: getPiniaForUser('level1'),
           mocks: {
             $storage: {
               registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },

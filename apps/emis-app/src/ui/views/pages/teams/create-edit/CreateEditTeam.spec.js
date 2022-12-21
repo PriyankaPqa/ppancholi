@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import {
-  EEventStatus,
+  EEventStatus, mockEventEntities,
 } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import { mockAppUsers } from '@/test/helpers';
@@ -13,17 +13,30 @@ import { mockStorage } from '@/storage';
 
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
+import { createTestingPinia } from '@pinia/testing';
+import { useEventStore } from '@/pinia/event/event';
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
+const teamEventsMock = mockTeamEvents();
+const inactiveEvent = { id: 'foo', name: { translation: { en: 'mock-name' } } };
+const inactiveEvent2 = { id: 'foo2', name: { translation: { en: 'mock-name2' } } };
+const allEvents = mockEventEntities();
+
 describe('CreateEditTeam.vue', () => {
   let wrapper;
+  let eventStore;
 
   const mountWrapper = async (fullMount = true, level = 5, additionalOverwrites = {}) => {
+    const pinia = createTestingPinia({ stubActions: false });
+    eventStore = useEventStore(pinia);
+    eventStore.getEventsByStatus = jest.fn(() => teamEventsMock);
+    eventStore.getAll = jest.fn(() => [...allEvents, inactiveEvent, inactiveEvent2]);
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         id: 'abc',
         teamType: 'standard',
@@ -38,12 +51,6 @@ describe('CreateEditTeam.vue', () => {
     await flushPromises();
   };
 
-  const teamEventsMock = mockTeamEvents();
-  const inactiveEvent = { entity: { id: 'foo', name: { translation: { en: 'mock-name' } } } };
-  const inactiveEvent2 = { entity: { id: 'foo2', name: { translation: { en: 'mock-name2' } } } };
-  storage.event.getters.eventsByStatus = jest.fn(() => teamEventsMock);
-  const allEvents = storage.event.getters.getAll();
-  storage.event.getters.getAll = jest.fn(() => [...allEvents, inactiveEvent, inactiveEvent2]);
   storage.team.getters.get = jest.fn(() => mockCombinedTeams()[0]);
 
   describe('Template', () => {
@@ -735,8 +742,8 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('getAvailableEvents', () => {
-      it('calls the storage getter to get the events with on hold and active status', async () => {
-        expect(wrapper.vm.$storage.event.getters.eventsByStatus).toHaveBeenCalledWith([EEventStatus.Open, EEventStatus.OnHold]);
+      it('calls getAll to get the events with on hold and active status', async () => {
+        expect(eventStore.getEventsByStatus).toHaveBeenCalledWith([EEventStatus.Open, EEventStatus.OnHold]);
       });
 
       it('sets into availableEvents the events returned by the storage in the right form', async () => {
@@ -745,7 +752,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('adds into availableEvents the events that are existing in the team but are not currently active/on hold, only for edit mode', async () => {
         const myTeam = mockTeamEntity();
-        myTeam.eventIds = [inactiveEvent.entity.id];
+        myTeam.eventIds = [inactiveEvent.id];
         await mountWrapper(false, 5, {
           computed: {
             isEditMode() {
@@ -758,7 +765,7 @@ describe('CreateEditTeam.vue', () => {
         wrapper.vm.getAvailableEvents();
 
         expect(wrapper.vm.availableEvents).toEqual([
-          inactiveEvent.entity,
+          inactiveEvent,
           ...teamEventsMock,
         ]);
       });

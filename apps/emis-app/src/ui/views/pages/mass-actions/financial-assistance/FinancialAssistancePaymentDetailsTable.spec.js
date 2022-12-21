@@ -2,14 +2,15 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockCombinedMassAction } from '@libs/entities-lib/mass-action';
 import { EPaymentModalities, mockCombinedProgram } from '@libs/entities-lib/program';
-import { mockCombinedEvent } from '@libs/entities-lib/event';
+import { mockEventEntity } from '@libs/entities-lib/event';
 import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
 import { mockCombineOptionItem, mockOptionItem } from '@libs/entities-lib/optionItem';
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from './FinancialAssistancePaymentDetailsTable.vue';
 
 const localVue = createLocalVue();
-
 const storage = mockStorage();
+const { pinia, eventStore } = useMockEventStore();
 
 describe('FinancialAssistancePaymentDetailsTable.vue', () => {
   let wrapper;
@@ -18,12 +19,13 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           massAction: mockCombinedMassAction(),
         },
         data() {
           return {
-            event: mockCombinedEvent(),
+            event: mockEventEntity(),
             table: mockCombinedFinancialAssistance(),
             program: mockCombinedProgram(),
             item: mockCombineOptionItem(),
@@ -40,7 +42,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
         expect(wrapper.vm.rows).toEqual([
           {
             label: 'massActions.financialAssistance.create.event.label',
-            value: mockCombinedEvent().entity.name.translation.en,
+            value: mockEventEntity().name.translation.en,
             dataTest: 'event',
             loading: wrapper.vm.eventLoading,
           },
@@ -94,6 +96,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
   describe('Methods', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
+        pinia,
         localVue,
         propsData: {
           massAction: mockCombinedMassAction(),
@@ -108,7 +111,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
       it('should fetch the event', async () => {
         const id = mockCombinedMassAction().entity.details.eventId;
         await wrapper.vm.fetchEvent();
-        expect(wrapper.vm.$storage.event.actions.fetch).toHaveBeenCalledWith(id);
+        expect(eventStore.fetch).toHaveBeenCalledWith(id);
       });
     });
 

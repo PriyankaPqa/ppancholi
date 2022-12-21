@@ -3,13 +3,13 @@ import moment from 'moment';
 import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
 import {
   mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata, EResponseLevel, EEventStatus, mockEventEntity,
 } from '@libs/entities-lib/event';
-import { mockUsercontributorIM } from '@libs/entities-lib/user';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from './EventsTable.vue';
 
 const storage = mockStorage();
@@ -20,12 +20,10 @@ describe('EventsTable.vue', () => {
   let wrapper;
 
   describe('Template', () => {
-    beforeEach(() => {
+    const doMount = (pinia = getPiniaForUser('level6')) => {
       wrapper = mount(Component, {
+        pinia,
         localVue,
-        store: {
-          ...mockUserStateLevel(6),
-        },
         propsData: {
           isDashboard: false,
         },
@@ -58,6 +56,9 @@ describe('EventsTable.vue', () => {
           id: 'test-id',
         },
       }));
+    };
+    beforeEach(() => {
+      doMount();
     });
 
     describe('data table', () => {
@@ -72,8 +73,6 @@ describe('EventsTable.vue', () => {
 
       it('displays the correct header values when in edit mode', () => {
         const headers = wrapper.findAll('th');
-
-        expect(headers.length).toBe(6);
 
         expect(headers.wrappers[0].find('span').text()).toBe('eventsTable.name');
         expect(headers.wrappers[1].find('span').text()).toBe('eventsTable.levelInteger');
@@ -90,9 +89,7 @@ describe('EventsTable.vue', () => {
         it('is false for level 5 users and lower', () => {
           wrapper = mount(Component, {
             localVue,
-            store: {
-              ...mockUserStateLevel(5),
-            },
+            pinia: getPiniaForUser('level5'),
             mocks: {
               $storage: {
                 event: {
@@ -129,7 +126,7 @@ describe('EventsTable.vue', () => {
         });
 
         it('does not display the help button for users level 5 and below', async () => {
-          await wrapper.setRole('level5');
+          doMount(getPiniaForUser('level5'));
           expect(dataTable.props('showHelp')).toBe(false);
         });
       });
@@ -155,9 +152,7 @@ describe('EventsTable.vue', () => {
         test('edit button is visible for level 5 users', async () => {
           wrapper = mount(Component, {
             localVue,
-            store: {
-              ...mockUserStateLevel(5),
-            },
+            pinia: getPiniaForUser('level5'),
             propsData: {
               isDashboard: false,
             },
@@ -190,9 +185,7 @@ describe('EventsTable.vue', () => {
         test('edit button is not visible for level 4 users', async () => {
           wrapper = mount(Component, {
             localVue,
-            store: {
-              ...mockUserStateLevel(4),
-            },
+            pinia: getPiniaForUser('level4'),
             propsData: {
               isDashboard: false,
             },
@@ -230,6 +223,7 @@ describe('EventsTable.vue', () => {
       it('should return the correct values', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia: getPiniaForUser('level6'),
           store: {
             event: {
               searchLoading: false,
@@ -244,12 +238,12 @@ describe('EventsTable.vue', () => {
             isDashboard: false,
           },
         });
-        wrapper.vm.$storage.event.getters.getByIds = jest.fn(mockCombinedEvents);
+        wrapper.vm.combinedEventStore.getByIds = jest.fn(mockCombinedEvents);
         wrapper.vm.searchResultIds = mockEvents().map((e) => e.entity.id);
         wrapper.vm.itemsCount = mockEvents().length;
 
         expect(JSON.stringify(wrapper.vm.tableData)).toEqual(JSON.stringify(mockEvents()));
-        expect(wrapper.vm.$storage.event.getters.getByIds).toHaveBeenCalledWith(
+        expect(wrapper.vm.combinedEventStore.getByIds).toHaveBeenCalledWith(
           wrapper.vm.searchResultIds,
           { baseDate: null, prependPinnedItems: true },
         );
@@ -260,6 +254,7 @@ describe('EventsTable.vue', () => {
       it('should return the correct column names', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia: getPiniaForUser('level6'),
           store: {
             event: {
               searchLoading: false,
@@ -291,6 +286,7 @@ describe('EventsTable.vue', () => {
       it('returns the right labels', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia: getPiniaForUser('level6'),
           store: {
             event: {
               searchLoading: false,
@@ -318,7 +314,7 @@ describe('EventsTable.vue', () => {
       it('returns the correct headers data', () => {
         wrapper = mount(Component, {
           localVue,
-
+          pinia: getPiniaForUser('level6'),
           propsData: {
             isDashboard: false,
           },
@@ -371,11 +367,12 @@ describe('EventsTable.vue', () => {
         ]);
       });
     });
+
     describe('filters', () => {
       it('should have correct filters', () => {
         wrapper = mount(Component, {
           localVue,
-
+          pinia: getPiniaForUser('level6'),
           propsData: {
             isDashboard: false,
           },
@@ -426,14 +423,11 @@ describe('EventsTable.vue', () => {
 
     describe('tableProps', () => {
       it('returns the correct object', () => {
+        const { pinia, eventStore } = useMockEventStore(getPiniaForUser('level6'));
+        eventStore.searchLoading = false;
         wrapper = mount(Component, {
           localVue,
-          store: {
-            event: {
-              searchLoading: false,
-              entities: mockEvents(),
-            },
-          },
+          pinia,
           mocks: {
             $storage: storage,
           },
@@ -450,9 +444,7 @@ describe('EventsTable.vue', () => {
       it('returns true if user is level 5 and event is on hold', () => {
         wrapper = mount(Component, {
           localVue,
-          store: {
-            ...mockUserStateLevel(5),
-          },
+          pinia: getPiniaForUser('level5'),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -487,9 +479,7 @@ describe('EventsTable.vue', () => {
       it('returns true if user is level 5 and event is on hold', () => {
         wrapper = mount(Component, {
           localVue,
-          store: {
-            ...mockUserStateLevel(5),
-          },
+          pinia: getPiniaForUser('level5'),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -523,9 +513,7 @@ describe('EventsTable.vue', () => {
       it('returns false if user is level 5 and event is not open or on hold', () => {
         wrapper = mount(Component, {
           localVue,
-          store: {
-            ...mockUserStateLevel(5),
-          },
+          pinia: getPiniaForUser('level5'),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -559,9 +547,7 @@ describe('EventsTable.vue', () => {
       it('returns false if user is not level 5', () => {
         wrapper = mount(Component, {
           localVue,
-          store: {
-            ...mockUserStateLevel(4),
-          },
+          pinia: getPiniaForUser('level4'),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -595,19 +581,10 @@ describe('EventsTable.vue', () => {
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
-      storage.event.actions.search = jest.fn(() => ({
-        ids: [mockEvents()[0].id, mockEvents()[1].id],
-        count: mockEvents().length,
-      }));
-
+    const doMount = (pinia = getPiniaForUser('level6')) => {
       wrapper = mount(Component, {
         localVue,
-        store: {
-          event: {
-            searchLoading: false,
-          },
-        },
+        pinia,
         propsData: {
           isDashboard: false,
         },
@@ -615,7 +592,17 @@ describe('EventsTable.vue', () => {
           $storage: storage,
         },
       });
+
+      wrapper.vm.combinedEventStore.search = jest.fn(() => ({
+        ids: [mockEvents()[0].id, mockEvents()[1].id],
+        count: mockEvents().length,
+      }));
+    };
+
+    beforeEach(() => {
+      doMount();
     });
+
     describe('addEvent', () => {
       it('redirects to the right page', async () => {
         jest.spyOn(wrapper.vm.$router, 'push').mockImplementation(() => {});
@@ -626,13 +613,13 @@ describe('EventsTable.vue', () => {
     });
 
     describe('fetchData', () => {
-      it('should call storage actions with proper parameters', async () => {
+      it('should call combinedEventStore search with proper parameters', async () => {
         const params = {
           search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
         };
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.event.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedEventStore.search).toHaveBeenCalledWith({
           search: params.search,
           filter: params.filter,
           top: params.top,
@@ -651,9 +638,6 @@ describe('EventsTable.vue', () => {
           localVue,
           propsData: {
             isDashboard: false,
-          },
-          store: {
-            ...mockUserStateLevel(6),
           },
           mocks: {
             $storage: {
@@ -710,8 +694,8 @@ describe('EventsTable.vue', () => {
       });
 
       it('returns the right route object when feature flag is on, and the user is contributorIM', () => {
+        doMount(getPiniaForUser('contributorIM'));
         wrapper.vm.$hasFeature = jest.fn(() => true);
-        wrapper.vm.$storage.user.getters.user = jest.fn(() => mockUsercontributorIM());
         expect(wrapper.vm.getEventRoute(mockEvents()[0])).toEqual({
           name: routes.events.summaryForIM.name,
           params: {

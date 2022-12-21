@@ -3,13 +3,11 @@ import { HouseholdStorage } from '@libs/registration-lib/store/storage/household
 import * as vuexModule from '@/constants/vuex-modules';
 import { UserAccountStorage } from '@/storage/user-account/storage';
 import { CaseFileStorage } from '@/storage/case-file/storage';
-import { EventStorage } from '@/storage/event/storage';
 import { FinancialAssistanceStorage } from '@/storage/financial-assistance/storage';
 import { MassActionStorage } from '@/storage/mass-action';
 import { ApprovalStorage } from '@/storage/approval-table';
 import { IStore, IState } from '../store/store.types';
 import { IStorage } from './storage.types';
-import { makeStorage as makeUserStorage } from './user';
 import { makeStorage as makeDashboardStorage } from './dashboard';
 import { makeStorage as makeOptionListStorage } from './optionList';
 import { TeamStorage } from './team';
@@ -26,7 +24,6 @@ import { AssessmentFormStorage } from './assessment-form';
 import { AssessmentResponseStorage } from './assessment-response';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
-  user: makeUserStorage(store),
   caseFile: new CaseFileStorage(store, vuexModule.CASE_FILE_ENTITIES, vuexModule.CASE_FILE_METADATA).make(),
   caseNote: new CaseNoteStorage(store, vuexModule.CASE_NOTE_ENTITIES, vuexModule.CASE_NOTE_METADATA).make(),
   caseFileReferral: new CaseFileReferralStorage(store, vuexModule.CASE_REFERRAL_ENTITIES, vuexModule.CASE_REFERRAL_METADATA).make(),
@@ -43,7 +40,6 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   ).make(),
   household: new HouseholdStorage(store, vuexModule.HOUSEHOLD_ENTITIES, vuexModule.HOUSEHOLD_METADATA).make(),
   userAccount: new UserAccountStorage(store, vuexModule.USER_ACCOUNT_ENTITIES, vuexModule.USER_ACCOUNT_METADATA).make(),
-  event: new EventStorage(store, vuexModule.EVENT_ENTITIES, vuexModule.EVENT_METADATA).make(),
   massAction: new MassActionStorage(store, vuexModule.MASS_ACTION_ENTITIES, vuexModule.MASS_ACTION_METADATA).make(),
   financialAssistanceCategory: new FinancialAssistanceCategoryStorage(store, vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES).make(),
   financialAssistancePayment: new FinancialAssistancePaymentStorage(

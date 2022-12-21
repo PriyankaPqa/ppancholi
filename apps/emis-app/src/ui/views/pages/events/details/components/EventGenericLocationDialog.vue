@@ -141,6 +141,7 @@ import {
   IEventEntity,
   IEventGenericLocation,
 } from '@libs/entities-lib/event';
+import { useEventStore } from '@/pinia/event/event';
 
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@libs/entities-lib/utils';
@@ -343,7 +344,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         action: this.isEditMode ? 'edit' : 'add',
       };
 
-      await this.$storage.event.actions.updateEventSection(params);
+      await useEventStore().updateEventSection(params);
     },
 
     setLanguageMode(lang: string) {

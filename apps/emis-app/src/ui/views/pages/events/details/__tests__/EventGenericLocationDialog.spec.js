@@ -7,6 +7,7 @@ import helpers from '@/ui/helpers/helpers';
 import { EEventSummarySections } from '@/types';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from '../components/EventGenericLocationDialog.vue';
 
 const localVue = createLocalVue();
@@ -19,7 +20,7 @@ describe('EventGenericLocationDialog.vue', () => {
   describe('Template', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
-        localVue: createLocalVue(),
+        localVue,
         propsData: {
           event: mockEvent,
           isEditMode: false,
@@ -525,9 +526,11 @@ describe('EventGenericLocationDialog.vue', () => {
   });
 
   describe('Methods', () => {
+    const { pinia, eventStore } = useMockEventStore();
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           event: mockEvent,
           isEditMode: false,
@@ -760,10 +763,10 @@ describe('EventGenericLocationDialog.vue', () => {
     });
 
     describe('submitLocation', () => {
-      it('calls the storage action updateEventSection with the right payload', async () => {
+      it('calls updateEventSection with the right payload', async () => {
         await wrapper.vm.submitLocation();
 
-        expect(wrapper.vm.$storage.event.actions.updateEventSection).toHaveBeenCalledWith({
+        expect(eventStore.updateEventSection).toHaveBeenCalledWith({
           eventId: wrapper.vm.event.id,
           payload: wrapper.vm.location,
           section: EEventSummarySections.RegistrationLocation,
@@ -771,11 +774,11 @@ describe('EventGenericLocationDialog.vue', () => {
         });
       });
 
-      it('calls the storage action updateEventSection with the right payload if location is a shelter location', async () => {
+      it('calls updateEventSection with the right payload if location is a shelter location', async () => {
         await wrapper.setProps({ isRegistrationLocation: false });
         await wrapper.vm.submitLocation();
 
-        expect(wrapper.vm.$storage.event.actions.updateEventSection).toHaveBeenCalledWith({
+        expect(eventStore.updateEventSection).toHaveBeenCalledWith({
           eventId: wrapper.vm.event.id,
           payload: wrapper.vm.location,
           section: EEventSummarySections.ShelterLocation,

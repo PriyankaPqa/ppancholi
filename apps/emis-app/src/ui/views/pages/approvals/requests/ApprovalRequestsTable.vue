@@ -138,6 +138,7 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import { useUserStore } from '@/pinia/user/user';
 import ApprovalActionDialog from './ApprovalActionDialog.vue';
 
 interface IMappedPayment extends IFinancialAssistancePaymentCombined {
@@ -182,7 +183,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
 
   computed: {
     myUserId():string {
-      return this.$storage.user.getters.userId();
+      return useUserStore().getUserId();
     },
 
     myRoleId():string {

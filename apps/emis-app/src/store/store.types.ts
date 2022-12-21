@@ -10,7 +10,6 @@ import { IProgramEntityState } from '@/store/modules/program/programEntity.types
 import { IProgramMetadata } from '@libs/entities-lib/program';
 
 import { IState as IBaseState } from '@/store/modules/base/base.types';
-import { IState as IUserState } from '@/store/modules/user/user.types';
 
 import { IUserAccountEntityState } from '@/store/modules/user-account/userAccountEntity.types';
 import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
@@ -20,9 +19,6 @@ import { ICaseFileMetadata } from '@libs/entities-lib/case-file';
 
 import { ICaseNoteEntityState } from '@/store/modules/case-note/caseNoteEntity.types';
 import { ICaseNoteMetadata } from '@libs/entities-lib/case-note';
-
-import { IEventEntityState } from '@/store/modules/event/eventEntity.types';
-import { IEventMetadata } from '@libs/entities-lib/event';
 
 import { ICaseFileReferralEntityState } from '@/store/modules/case-file-referral/caseFileReferralEntity.types';
 import { ICaseFileReferralMetadata } from '@libs/entities-lib/case-file-referral';
@@ -57,14 +53,11 @@ export interface IRootState {
   [vuexModule.CASE_DOCUMENT_METADATA]?: IBaseState<ICaseFileDocumentMetadata>
   [vuexModule.USER_ACCOUNT_ENTITIES]?: IUserAccountEntityState,
   [vuexModule.USER_ACCOUNT_METADATA]?: IBaseState<IUserAccountMetadata>,
-  [vuexModule.EVENT_ENTITIES]?: IEventEntityState,
-  [vuexModule.EVENT_METADATA]?: IBaseState<IEventMetadata>
   [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]?: IFinancialAssistanceEntityState,
   [vuexModule.FINANCIAL_ASSISTANCE_METADATA]?: IBaseState<IFinancialAssistanceTableMetadata>,
   [vuexModule.HOUSEHOLD_ENTITIES]?: IHouseholdEntityState
   [vuexModule.HOUSEHOLD_METADATA]?: IBaseState<IHouseholdMetadata>
 
-  [vuexModule.USER_MODULE]?: IUserState,
   [vuexModule.DASHBOARD_MODULE]?: IDashboardState,
   [vuexModule.OPTION_LIST_MODULE]?: IOptionListState,
   [vuexModule.TEAM_ENTITIES]?: ITeamEntityState,

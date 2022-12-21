@@ -4,7 +4,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { DomainBaseService } from '@libs/services-lib/base';
 import { IEntity } from '@libs/entities-lib/base';
-import helpers from '@libs/entities-lib/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';
 
@@ -38,7 +38,7 @@ export class BaseModule<T extends IEntity, IdParams> {
     getAll: (state: IState<T>) => _cloneDeep(state.items),
     get: (state: IState<T>) => (id: uuid) => _cloneDeep(state.items.find((e) => e.id === id)) || {},
     // eslint-disable-next-line
-    getByCriteria: (state:IState<T>) => (query: string, searchAll: boolean, searchAmong: string[]) => helpers.filterCollectionByValue(state.items, query, searchAll, searchAmong),
+    getByCriteria: (state:IState<T>) => (query: string, searchAll: boolean, searchAmong: string[]) => sharedHelpers.filterCollectionByValue(state.items, query, searchAll, searchAmong),
     getByIds: (state: IState<T>) => (ids: uuid[]) => ids.map((id) => _cloneDeep(state.items.find((e) => e.id === id))),
     getNewlyCreatedIds: (state:IState<T>) => (baseDate?: Date) => {
       const maxTime = (baseDate || new Date()).getTime() - state.maxTimeInSecondsForNewlyCreatedIds * 1000;

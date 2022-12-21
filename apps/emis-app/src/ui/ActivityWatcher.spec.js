@@ -1,5 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
+import { createTestingPinia } from '@pinia/testing';
+import { useUserStore } from '@/pinia/user/user';
 import Component from './ActivityWatcher.vue';
 
 const localVue = createLocalVue();
@@ -7,12 +9,15 @@ const storage = mockStorage();
 
 let wrapper;
 
+const pinia = createTestingPinia({ stubActions: false });
+const userStore = useUserStore();
 const doMount = (maxInactivity = 1) => {
   const options = {
     propsData: {
       maxInactivity,
     },
     localVue,
+    pinia,
     mocks: {
       $storage: storage,
     },
@@ -79,9 +84,9 @@ describe('ActivityWatcher', () => {
     });
 
     describe('signOut', () => {
-      it('should call signOut from storage', () => {
+      it('should call signOut', () => {
         wrapper.vm.signOut();
-        expect(wrapper.vm.$storage.user.actions.signOut).toHaveBeenCalledTimes(1);
+        expect(userStore.signOut).toHaveBeenCalledTimes(1);
       });
 
       it('should call unsubscribeAll from signalR', () => {

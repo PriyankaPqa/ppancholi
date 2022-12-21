@@ -7,6 +7,7 @@ import {
 } from '@libs/entities-lib/base';
 import { IFullResponseCombined } from '@libs/services-lib/http-client';
 import helpers from '@libs/entities-lib/helpers';
+import { useUserStore } from '@/pinia/user/user';
 import { IStore, IState } from '../../store/store.types';
 import { IBaseStorage } from './base.types';
 
@@ -43,7 +44,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
   }
 
   protected userId() {
-    return this.store.getters['user/userId'];
+    return useUserStore().getUserId();
   }
 
   protected initiatedByCurrentUser(entity: IEntity) {

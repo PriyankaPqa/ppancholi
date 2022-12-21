@@ -1,25 +1,31 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockUsersData, User } from '@libs/entities-lib/user';
-import { mockStorage } from '@/storage';
+
 import routes from '@/constants/routes';
+
+import { createTestingPinia } from '@pinia/testing';
+import { useUserStore } from '@/pinia/user/user';
 import Component from './HomeNoRole.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
+let wrapper;
+let store;
+const doMount = (shallow = true) => {
+  const options = {
+    localVue,
+    pinia: createTestingPinia({ stubActions: false }),
+  };
+
+  wrapper = shallow ? shallowMount(Component, options) : mount(Component, options);
+  store = useUserStore();
+};
 
 describe('HomeNoRole.vue', () => {
-  let wrapper;
-
   describe('Template', () => {
     beforeEach(() => {
-      storage.user.getters.user.mockReturnValueOnce(new User({ ...mockUsersData()[10] }));
-
-      wrapper = shallowMount(Component, {
-        localVue,
-        mocks: {
-          $storage: storage,
-        },
-      });
+      doMount();
+      store.getUser = jest.fn(() => new User({ ...mockUsersData()[10] }));
     });
 
     it('displays proper title', () => {
@@ -44,17 +50,9 @@ describe('HomeNoRole.vue', () => {
 
   describe('Computed properties', () => {
     describe('user', () => {
-      it('equals storage.user.getters.user', () => {
+      it('is linked to getUser', () => {
         const user = new User({ ...mockUsersData()[10] });
-        storage.user.getters.user.mockReturnValueOnce(new User(user));
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
-        });
-
+        store.getUser = jest.fn(() => new User(user));
         expect(wrapper.vm.user).toEqual(new User(user));
       });
     });
@@ -63,18 +61,8 @@ describe('HomeNoRole.vue', () => {
   describe('Methods', () => {
     describe('redirect', () => {
       it('redirects to account setting page', () => {
-        const user = new User({ ...mockUsersData()[10] });
-        storage.user.getters.user.mockReturnValueOnce(new User(user));
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
-        });
-
+        doMount();
         wrapper.vm.redirect();
-
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.accountSettings.home.name });
       });
     });

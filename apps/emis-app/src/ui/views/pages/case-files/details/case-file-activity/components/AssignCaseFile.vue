@@ -111,7 +111,7 @@ import { RcDialog, RcPageLoading } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import { TeamType, ITeamEntity, ITeamMember } from '@libs/entities-lib/team';
 import { ICaseFileEntity, IAssignedTeamMembers } from '@libs/entities-lib/case-file';
-import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { AccountStatus, IUserAccountCombined } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -193,7 +193,7 @@ export default Vue.extend({
     },
 
     displayedIndividuals(): IIndividual[] {
-      return helpers.filterCollectionByValue(this.currentTeamMembers, this.searchTerm || '', true);
+      return sharedHelpers.filterCollectionByValue(this.currentTeamMembers, this.searchTerm || '', true);
     },
 
     currentTeamMembers(): IIndividual[] {

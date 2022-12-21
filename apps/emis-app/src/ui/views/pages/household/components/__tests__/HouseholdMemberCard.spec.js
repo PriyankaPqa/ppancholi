@@ -4,9 +4,9 @@ import {
 } from '@libs/entities-lib/household-create';
 import { mockStorage } from '@/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockUserStateLevel } from '@/test/helpers';
 
 import householdHelpers from '@/ui/helpers/household';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from '../HouseholdMemberCard.vue';
 
 const localVue = createLocalVue();
@@ -322,9 +322,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          store: {
-            ...mockUserStateLevel(2),
-          },
+          pinia: getPiniaForUser('level2'),
 
         });
         expect(wrapper.vm.canSplit).toBeTruthy();
@@ -337,11 +335,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          store: {
-            modules: {
-              ...mockUserStateLevel(1),
-            },
-          },
+          pinia: getPiniaForUser('level1'),
 
         });
         expect(wrapper.vm.canSplit).toBeFalsy();
@@ -357,9 +351,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          store: {
-            ...mockUserStateLevel(2),
-          },
+          pinia: getPiniaForUser('level2'),
 
         });
         expect(wrapper.vm.canChangePrimary).toBeTruthy();
@@ -372,11 +364,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          store: {
-            modules: {
-              ...mockUserStateLevel(1),
-            },
-          },
+          pinia: getPiniaForUser('level1'),
 
         });
         expect(wrapper.vm.canChangePrimary).toBeFalsy();
@@ -392,9 +380,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          store: {
-            ...mockUserStateLevel(1),
-          },
+          pinia: getPiniaForUser('level1'),
 
         });
         expect(wrapper.vm.canEdit).toBeTruthy();
@@ -402,26 +388,12 @@ describe('HouseholdMemberCard.vue', () => {
       it('returns false if the user has level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser('contributorIM'),
           propsData: {
             member,
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          store: {
-            modules: {
-              user: {
-                state:
-                  {
-                    oid: '7',
-                    email: 'test@test.ca',
-                    family_name: 'Joe',
-                    given_name: 'Pink',
-                    roles: ['contributorIM'],
-                  },
-              },
-            },
-          },
-
         });
         expect(wrapper.vm.canEdit).toBeFalsy();
       });

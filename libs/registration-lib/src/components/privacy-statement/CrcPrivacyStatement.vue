@@ -78,6 +78,11 @@ export default Vue.extend({
       type: Array as () => IEventGenericLocation[],
       default: null,
     },
+
+    user: {
+      type: Object as () => IUser,
+      required: true,
+    },
   },
 
   data() {
@@ -104,10 +109,6 @@ export default Vue.extend({
       set(method: ERegistrationMethod) {
         this.$storage.registration.mutations.setPrivacyRegistrationMethod(method);
       },
-    },
-
-    user(): IUser {
-      return this.$storage.user.getters.user();
     },
 
     rules(): Record<string, unknown> {

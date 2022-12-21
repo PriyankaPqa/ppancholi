@@ -3,12 +3,14 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity, EEventStatus } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { mockStorage } from '@/storage';
-
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from '../components/EventSummaryLink.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 const storage = mockStorage();
+
+const { pinia, eventStore } = useMockEventStore();
 
 describe('EventSummaryLink.vue', () => {
   let wrapper;
@@ -16,6 +18,7 @@ describe('EventSummaryLink.vue', () => {
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         event: mockEvent,
       },
@@ -112,13 +115,13 @@ describe('EventSummaryLink.vue', () => {
             },
           },
         });
-        expect(storage.event.actions.toggleSelfRegistration).toHaveBeenCalledTimes(0);
+        expect(eventStore.toggleSelfRegistration).toHaveBeenCalledTimes(0);
 
         const element = wrapper.findComponent(VSwitch);
 
         element.vm.$emit('change');
 
-        expect(storage.event.actions.toggleSelfRegistration).toHaveBeenCalledTimes(1);
+        expect(eventStore.toggleSelfRegistration).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -189,14 +192,14 @@ describe('EventSummaryLink.vue', () => {
     describe('toggleSelfRegistration', () => {
       it('calls the actions toggleSelfRegistration', async () => {
         await wrapper.vm.toggleSelfRegistration(true);
-        expect(wrapper.vm.$storage.event.actions.toggleSelfRegistration).toHaveBeenCalledWith({
+        expect(eventStore.toggleSelfRegistration).toHaveBeenCalledWith({
           id: wrapper.vm.event.id,
           selfRegistrationEnabled: true,
         });
       });
 
       it('shows a toast notification when toggleSelfRegistration completes successfully', async () => {
-        wrapper.vm.$storage.event.actions.toggleSelfRegistration = jest.fn(() => true);
+        eventStore.toggleSelfRegistration = jest.fn(() => true);
         await wrapper.vm.toggleSelfRegistration(true);
 
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.registrationLinkEnabled');
@@ -207,7 +210,7 @@ describe('EventSummaryLink.vue', () => {
       });
 
       it('resets the value of when toggleSelfRegistration completes successfully', async () => {
-        wrapper.vm.$storage.event.actions.toggleSelfRegistration = jest.fn(() => false);
+        eventStore.toggleSelfRegistration = jest.fn(() => false);
         wrapper.setProps({ event: { selfRegistrationEnabled: false } });
         wrapper.setData({ selfRegistrationEnabled: true });
 

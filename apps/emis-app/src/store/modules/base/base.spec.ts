@@ -4,7 +4,7 @@ import { ActionContext } from 'vuex';
 import { DomainBaseService } from '@libs/services-lib/base';
 import { httpClient } from '@/services/httpClient';
 import { mockUserAccountEntities, mockUserAccountEntity } from '@libs/entities-lib/user-account';
-import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { mockIRestResponse } from '@libs/services-lib/http-client';
 import { BaseModule } from './index';
 import { IState } from './base.types';
@@ -76,9 +76,9 @@ describe('Base Module', () => {
 
     describe('getByCriteria', () => {
       it('should call filterCollectionByValue with correct params', () => {
-        helpers.filterCollectionByValue = jest.fn();
+        sharedHelpers.filterCollectionByValue = jest.fn();
         baseModule.getters.getByCriteria(baseModule.state)('query', false, ['id', 'emailAddress']);
-        expect(helpers.filterCollectionByValue).toHaveBeenCalledWith(baseModule.state.items, 'query', false, ['id', 'emailAddress']);
+        expect(sharedHelpers.filterCollectionByValue).toHaveBeenCalledWith(baseModule.state.items, 'query', false, ['id', 'emailAddress']);
       });
     });
 

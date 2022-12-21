@@ -16,7 +16,7 @@
       <h4 v-if="event" class="pb-3">
         {{ $t('household.split.privacy_policy') }}
       </h4>
-      <crc-privacy-statement v-if="event" :i18n="i18n" />
+      <crc-privacy-statement v-if="event" :i18n="i18n" :user="user" />
     </v-col>
   </v-row>
 </template>
@@ -26,6 +26,8 @@ import Vue from 'vue';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { RegistrationEvent, IEvent } from '@libs/entities-lib/registration-event';
+import { IUser } from '@libs/entities-lib/user';
+import { useUserStore } from '@/pinia/user/user';
 
 export default Vue.extend({
   name: 'SplitHouseholdEvent',
@@ -40,6 +42,11 @@ export default Vue.extend({
       i18n: this.$i18n,
       event: null as IEvent,
     };
+  },
+  computed: {
+    user(): IUser {
+      return useUserStore().getUser();
+    },
   },
 
   async created() {

@@ -19,6 +19,7 @@ export interface IUser {
   readonly email: string;
   readonly lastName: string;
   readonly firstName: string;
+  readonly homeAccountId: string;
   readonly roles: Array<string>;
   getFullName(): string;
   getInitials(): string;

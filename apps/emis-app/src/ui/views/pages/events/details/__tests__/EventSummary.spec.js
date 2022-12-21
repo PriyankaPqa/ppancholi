@@ -1,52 +1,42 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import {
-  EEventStatus, mockEventEntity, mockCombinedEvent, EventEntity,
+  EEventStatus, mockEventEntity, EventEntity, mockEventEntities,
 } from '@libs/entities-lib/event';
 
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
 import { EEventSummarySections } from '@/types';
 import helpers from '@/ui/helpers/helpers';
-import { mockUserStateLevel } from '@/test/helpers';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
+import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component, { EDialogComponent } from '../EventSummary.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockEvent = mockEventEntity();
+const mockEvent = mockEventEntities()[0];
 
-storage.event.actions.fetch = jest.fn(() => mockCombinedEvent());
-storage.event.actions.fetchAgreementTypes = jest.fn(() => mockOptionItemData());
-storage.event.getters.get = jest.fn(() => mockCombinedEvent());
-storage.event.getters.agreementTypes = jest.fn(() => mockOptionItemData());
+const pinia = getPiniaForUser('level5');
+
+const initEventStore = (pinia) => {
+  const { eventStore } = useMockEventStore(pinia);
+
+  return eventStore;
+};
 
 const mountWithStatus = (status) => {
   const event = mockEventEntity();
-
+  initEventStore(pinia);
   return shallowMount(Component, {
     localVue,
-    store: {
-      ...mockUserStateLevel(5),
-    },
+    pinia,
     mocks: {
       $route: {
         name: routes.events.edit.name,
         params: {
           id: '7c076603-580a-4400-bef2-5ddececb0931',
-        },
-      },
-      $storage: {
-        event: {
-          actions: {
-            fetch: jest.fn(() => mockCombinedEvent()),
-            fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
-          },
-          getters: {
-            get: jest.fn(() => mockCombinedEvent()),
-            agreementTypes: jest.fn(() => mockOptionItemData()),
-          },
         },
       },
     },
@@ -69,9 +59,10 @@ describe('EventSummary.vue', () => {
   let wrapper;
 
   describe('Template', () => {
-    beforeEach(() => {
+    const doMount = (pinia = getPiniaForUser('level5')) => {
       wrapper = mount(Component, {
         localVue,
+        pinia,
         computed: {
           event() {
             return mockEvent;
@@ -89,9 +80,6 @@ describe('EventSummary.vue', () => {
             return true;
           },
         },
-        store: {
-          ...mockUserStateLevel(5),
-        },
         mocks: {
           $route: {
             name: routes.events.edit.name,
@@ -99,23 +87,14 @@ describe('EventSummary.vue', () => {
               id: '7c076603-580a-4400-bef2-5ddececb0931',
             },
           },
-          $storage: {
-            event: {
-              actions: {
-                fetch: jest.fn(() => mockCombinedEvent()),
-                fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
-              },
-              getters: {
-                get: jest.fn(() => mockCombinedEvent()),
-                agreementTypes: jest.fn(() => mockOptionItemData()),
-              },
-            },
-          },
         },
         stubs: {
           EventStatusDialog: true,
         },
       });
+    };
+    beforeEach(() => {
+      doMount();
     });
 
     describe('status select', () => {
@@ -125,11 +104,8 @@ describe('EventSummary.vue', () => {
       });
 
       it('is disabled for users with level below 5', async () => {
+        doMount(getPiniaForUser('level4'));
         const element = wrapper.findDataTest('event-detail-status');
-
-        expect(element.props('disabled')).toBeFalsy();
-        await wrapper.setRole('level4');
-
         expect(element.props('disabled')).toBeTruthy();
       });
 
@@ -425,8 +401,10 @@ describe('EventSummary.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
+      initEventStore(pinia);
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         mocks: {
           $route: {
             name: routes.events.edit.name,
@@ -508,30 +486,16 @@ describe('EventSummary.vue', () => {
       beforeEach(() => {
         event = mockEventEntity();
       });
+
       it('returns true if user is level 6 and event is on hold', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          store: {
-            ...mockUserStateLevel(6),
-          },
+          pinia: getPiniaForUser('level6'),
           mocks: {
             $route: {
               name: routes.events.edit.name,
               params: {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-            $storage: {
-              event: {
-                actions: {
-                  fetch: jest.fn(() => mockCombinedEvent()),
-                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
-                  setEventStatus: jest.fn(() => null),
-                },
-                getters: {
-                  get: jest.fn(() => mockCombinedEvent()),
-                  agreementTypes: jest.fn(() => mockOptionItemData()),
-                },
               },
             },
           },
@@ -554,27 +518,12 @@ describe('EventSummary.vue', () => {
       it('returns false if user is level 6 and event is not open or on hold', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          store: {
-            ...mockUserStateLevel(6),
-          },
+          pinia: getPiniaForUser('level6'),
           mocks: {
             $route: {
               name: routes.events.edit.name,
               params: {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-            $storage: {
-              event: {
-                actions: {
-                  fetch: jest.fn(() => mockCombinedEvent()),
-                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
-                  setEventStatus: jest.fn(() => null),
-                },
-                getters: {
-                  get: jest.fn(() => mockCombinedEvent()),
-                  agreementTypes: jest.fn(() => mockOptionItemData()),
-                },
               },
             },
           },
@@ -603,27 +552,12 @@ describe('EventSummary.vue', () => {
       it('returns false if user is level 5 and event is not open', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          store: {
-            ...mockUserStateLevel(5),
-          },
+          pinia: getPiniaForUser('level5'),
           mocks: {
             $route: {
               name: routes.events.edit.name,
               params: {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-            $storage: {
-              event: {
-                actions: {
-                  fetch: jest.fn(() => mockCombinedEvent()),
-                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
-                  setEventStatus: jest.fn(() => null),
-                },
-                getters: {
-                  get: jest.fn(() => mockCombinedEvent()),
-                  agreementTypes: jest.fn(() => mockOptionItemData()),
-                },
               },
             },
           },
@@ -644,29 +578,17 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is not level 5', () => {
+        const pinia = getPiniaForUser('level3');
+        initEventStore(pinia);
+
         wrapper = shallowMount(Component, {
           localVue,
-          store: {
-            ...mockUserStateLevel(4),
-          },
+          pinia,
           mocks: {
             $route: {
               name: routes.events.edit.name,
               params: {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-            $storage: {
-              event: {
-                actions: {
-                  fetch: jest.fn(() => mockCombinedEvent()),
-                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
-                  setEventStatus: jest.fn(() => null),
-                },
-                getters: {
-                  get: jest.fn(() => mockCombinedEvent()),
-                  agreementTypes: jest.fn(() => mockOptionItemData()),
-                },
               },
             },
           },
@@ -681,30 +603,16 @@ describe('EventSummary.vue', () => {
       beforeEach(() => {
         event = mockEventEntity();
       });
+
       it('returns true if user is level 5 and event is on hold', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          store: {
-            ...mockUserStateLevel(5),
-          },
+          pinia: getPiniaForUser('level5'),
           mocks: {
             $route: {
               name: routes.events.edit.name,
               params: {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-            $storage: {
-              event: {
-                actions: {
-                  fetch: jest.fn(() => mockCombinedEvent()),
-                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
-                  setEventStatus: jest.fn(() => null),
-                },
-                getters: {
-                  get: jest.fn(() => mockCombinedEvent()),
-                  agreementTypes: jest.fn(() => mockOptionItemData()),
-                },
               },
             },
           },
@@ -727,27 +635,12 @@ describe('EventSummary.vue', () => {
       it('returns false if user is level 5 and event is not open or on hold', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          store: {
-            ...mockUserStateLevel(5),
-          },
+          pinia: getPiniaForUser('level5'),
           mocks: {
             $route: {
               name: routes.events.edit.name,
               params: {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-            $storage: {
-              event: {
-                actions: {
-                  fetch: jest.fn(() => mockCombinedEvent()),
-                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
-                  setEventStatus: jest.fn(() => null),
-                },
-                getters: {
-                  get: jest.fn(() => mockCombinedEvent()),
-                  agreementTypes: jest.fn(() => mockOptionItemData()),
-                },
               },
             },
           },
@@ -774,29 +667,16 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is not level 5', () => {
+        const pinia = getPiniaForUser('level3');
+        initEventStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
-          store: {
-            ...mockUserStateLevel(4),
-          },
+          pinia,
           mocks: {
             $route: {
               name: routes.events.edit.name,
               params: {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-            $storage: {
-              event: {
-                actions: {
-                  fetch: jest.fn(() => mockCombinedEvent()),
-                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
-                  setEventStatus: jest.fn(() => null),
-                },
-                getters: {
-                  get: jest.fn(() => mockCombinedEvent()),
-                  agreementTypes: jest.fn(() => mockOptionItemData()),
-                },
               },
             },
           },
@@ -808,11 +688,11 @@ describe('EventSummary.vue', () => {
   });
 
   describe('Methods', () => {
-    storage.event.actions.setEventStatus = jest.fn();
-
+    const eventStore = initEventStore(pinia);
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         computed: {
           event() {
             return mockEvent;
@@ -871,9 +751,8 @@ describe('EventSummary.vue', () => {
           reason: 'Re-open',
         });
 
-        expect(wrapper.vm.$storage.event.actions.setEventStatus).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.event.actions.setEventStatus).toHaveBeenCalledWith(
-          // expect.anything(),
+        expect(eventStore.setEventStatus).toHaveBeenCalledTimes(1);
+        expect(eventStore.setEventStatus).toHaveBeenCalledWith(
           {
             event: wrapper.vm.event,
             status: EEventStatus.Open,

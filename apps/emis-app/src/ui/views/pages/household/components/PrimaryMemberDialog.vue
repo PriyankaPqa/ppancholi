@@ -21,7 +21,7 @@
             <h3 class="pt-6 pb-3">
               {{ $t('registration.menu.privacy') }}
             </h3>
-            <crc-privacy-statement :i18n="i18n" :registration-locations="registrationLocations" />
+            <crc-privacy-statement :i18n="i18n" :registration-locations="registrationLocations" :user="user" />
           </div>
           <h3 v-if="makePrimaryMode" class="py-4">
             {{ $t('registration.menu.personal_info') }}
@@ -74,6 +74,8 @@ import { localStorageKeys } from '@/constants/localStorage';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
+import { IUser } from '@libs/entities-lib/user';
+import { useUserStore } from '@/pinia/user/user';
 
 export default Vue.extend({
   name: 'PrimaryMemberDialog',
@@ -175,6 +177,10 @@ export default Vue.extend({
 
     enableAutocomplete(): boolean {
       return this.$hasFeature(FeatureKeys.AddressAutoFill);
+    },
+
+    user(): IUser {
+      return useUserStore().getUser();
     },
   },
 

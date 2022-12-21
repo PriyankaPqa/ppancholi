@@ -1,38 +1,4 @@
-import { IUserData, mockUsersData } from '@libs/entities-lib/user';
-import { mockStore } from '@/store';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
-
-export const mockStoreWithUserState = (state: IUserData) => mockStore({
-  modules: {
-    user: {
-      state: {
-        ...state,
-      },
-    },
-  },
-});
-
-export const mockStoreUserLevel = (level: number) => mockStoreWithUserState(mockUsersData()[level - 1]);
-
-export const mockStoreUserContributorIM = () => mockStoreWithUserState(mockUsersData()[6]);
-
-export const mockStoreUserContributorFinance = () => mockStoreWithUserState(mockUsersData()[7]);
-
-export const mockStoreUserContributor3 = () => mockStoreWithUserState(mockUsersData()[8]);
-
-export const mockStoreUserReadOnly = () => mockStoreWithUserState(mockUsersData()[9]);
-
-export const mockStoreUserNoRole = () => mockStoreWithUserState(mockUsersData()[10]);
-
-export const mockUserStateLevel = (level: number) => ({
-  modules: {
-    user: {
-      state: {
-        ...mockUsersData()[level - 1],
-      },
-    },
-  },
-});
 
 export enum Contributor {
   'IM' = 1,
@@ -40,34 +6,6 @@ export enum Contributor {
   'Three' = 3,
 
 }
-
-export const mockUserStateContributor = (number: number) => {
-  let mockUser;
-  switch (number) {
-    case Contributor.IM:
-      mockUser = mockUsersData()[6]; // contributorIM
-      break;
-    case Contributor.Finance:
-      mockUser = mockUsersData()[7]; // contributorFinance
-      break;
-    case Contributor.Three:
-      mockUser = mockUsersData()[8]; // contributor3
-      break;
-    default:
-      break;
-  }
-
-  return {
-    modules: {
-      user: {
-        state: {
-          ...mockUser,
-        },
-      },
-    },
-  };
-};
-
 export const mockSearchParams: IAzureSearchParams = {
   filter: { Foo: 'foo' },
 };

@@ -2,10 +2,14 @@
 import { mockStorage } from '@/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { User, mockUserData } from '@libs/entities-lib/user';
+import { createTestingPinia } from '@pinia/testing';
+import { useUserStore } from '@/pinia/user/user';
+
 import helpers from '../helpers/helpers';
 import Component from './ErrorReportToast.vue';
 
 const localVue = createLocalVue();
+
 const storage = mockStorage();
 let onLineGetter;
 
@@ -23,7 +27,7 @@ describe('ErrorReportToast', () => {
       status: 404,
     },
   };
-
+  const user = new User(mockUserData());
   const errorWAFFormat = {
     message: 'Network Error',
     name: 'AxiosError',
@@ -66,15 +70,17 @@ describe('ErrorReportToast', () => {
     status: null,
   };
 
-  const user = new User(mockUserData());
-  storage.user.getters.user = jest.fn(() => user);
+  const pinia = createTestingPinia({ stubActions: false });
+  const userStore = useUserStore(pinia);
 
   beforeEach(() => {
     jest.spyOn(document, 'getElementsByClassName').mockImplementation(() => [({ style: { display: '' } })]);
     onLineGetter = jest.spyOn(window.navigator, 'onLine', 'get');
+    userStore.getUser = jest.fn(() => user);
 
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         error,
         show: true,
@@ -321,6 +327,7 @@ describe('ErrorReportToast', () => {
       it('sets the right value into report', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             error,
             show: true,

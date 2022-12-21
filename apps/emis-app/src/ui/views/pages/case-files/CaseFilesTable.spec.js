@@ -6,6 +6,9 @@ import { mockStorage } from '@/storage';
 
 import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
+
+import { createTestingPinia } from '@pinia/testing';
+import { useUserStore } from '@/pinia/user/user';
 import Component from './CaseFilesTable.vue';
 
 const storage = mockStorage();
@@ -15,6 +18,7 @@ const localVue = createLocalVue();
 
 describe('CaseFilesTable.vue', () => {
   let wrapper;
+  let userStore;
   const mockParams = {
     id: 'test-id',
   };
@@ -25,6 +29,7 @@ describe('CaseFilesTable.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
+        pinia: createTestingPinia({ stubActions: false }),
         computed: {
           tableData: () => mockCombinedCaseFiles(),
         },
@@ -118,6 +123,7 @@ describe('CaseFilesTable.vue', () => {
     beforeEach(async () => {
       wrapper = mount(Component, {
         localVue,
+        pinia: createTestingPinia({ stubActions: false }),
         mocks: {
           $storage: storage,
         },
@@ -185,9 +191,9 @@ describe('CaseFilesTable.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      storage.user.getters.userId = jest.fn(() => 'mock-id');
       wrapper = mount(Component, {
         localVue,
+        pinia: createTestingPinia({ stubActions: false }),
         store: {
           caseFile: {
             searchLoading: false,
@@ -197,12 +203,15 @@ describe('CaseFilesTable.vue', () => {
           $storage: storage,
         },
       });
+      userStore = useUserStore();
+      userStore.getUserId = jest.fn(() => 'mock-id');
     });
 
     describe('customColumns', () => {
       it('should return the correct column names', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia: createTestingPinia({ stubActions: false }),
           computed: {
             locale() {
               return 'en';
@@ -250,6 +259,7 @@ describe('CaseFilesTable.vue', () => {
       it('returns the correct headers data', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia: createTestingPinia({ stubActions: false }),
           propsData: {
             isDashboard: false,
           },
@@ -416,6 +426,7 @@ describe('CaseFilesTable.vue', () => {
 
       wrapper = mount(Component, {
         localVue,
+        pinia: createTestingPinia({ stubActions: false }),
         mocks: {
           $storage: storage,
         },

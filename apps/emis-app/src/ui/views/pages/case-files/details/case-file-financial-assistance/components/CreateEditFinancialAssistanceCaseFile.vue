@@ -121,7 +121,7 @@
       :total-amount-to-submit.sync="totalAmountToSubmit"
       :approval-required="program.entity.approvalRequired"
       :program-id="program.entity.id"
-      :event-id="event.entity.id"
+      :event-id="event.id"
       :financial-assistance.sync="financialAssistance" />
   </div>
 </template>

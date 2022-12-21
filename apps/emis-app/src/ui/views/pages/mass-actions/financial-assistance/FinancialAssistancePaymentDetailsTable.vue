@@ -21,10 +21,10 @@ import Vue from 'vue';
 
 import { IMassActionCombined } from '@libs/entities-lib/mass-action';
 import { EPaymentModalities, IProgramCombined } from '@libs/entities-lib/program';
-import { IEventCombined } from '@libs/entities-lib/event';
+import { IEventEntity } from '@libs/entities-lib/event';
 import { IFinancialAssistanceTableCombined } from '@libs/entities-lib/financial-assistance';
-
 import { IOptionSubItem, IOptionItemCombined } from '@libs/entities-lib/optionItem';
+import { useEventStore } from '@/pinia/event/event';
 
 export default Vue.extend({
   name: 'FinancialAssistancePaymentDetailsTable',
@@ -38,7 +38,7 @@ export default Vue.extend({
 
   data() {
     return {
-      event: null as IEventCombined,
+      event: null as IEventEntity,
       table: null as IFinancialAssistanceTableCombined,
       program: null as IProgramCombined,
       item: null as IOptionItemCombined,
@@ -53,7 +53,7 @@ export default Vue.extend({
       return [
         {
           label: 'massActions.financialAssistance.create.event.label',
-          value: this.event?.entity && this.$m(this.event.entity.name),
+          value: this.$m(this.event?.name),
           dataTest: 'event',
           loading: this.eventLoading,
         },
@@ -113,7 +113,7 @@ export default Vue.extend({
   methods: {
     async fetchEvent() {
       this.eventLoading = true;
-      this.event = await this.$storage.event.actions.fetch(this.massAction.entity.details.eventId);
+      this.event = await useEventStore().fetch(this.massAction.entity.details.eventId) as IEventEntity;
       this.eventLoading = false;
     },
 

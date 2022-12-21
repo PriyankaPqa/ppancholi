@@ -2,7 +2,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
-import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
+import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import {
   CompletionStatus,
 } from '@libs/entities-lib/assessment-template';
@@ -10,8 +10,8 @@ import Component from './AssessmentDetails.vue';
 
 const localVue = createLocalVue();
 let storage = mockStorage();
-const mockEvent = mockCombinedEvent();
-mockEvent.entity.schedule.status = EEventStatus.Open;
+const mockEvent = mockEventEntity();
+mockEvent.schedule.status = EEventStatus.Open;
 const assessment = storage.assessmentResponse.getters.get();
 
 describe('AssessmentDetails.vue', () => {

@@ -14,13 +14,10 @@ import { mockStore } from '@/store';
 import { makeStorage } from '@/storage';
 import { mockProvider } from '@/services/provider';
 import { getLocalVue, getWrapper } from '@libs/shared-lib/tests/testBase';
+import { PiniaVuePlugin } from 'pinia';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 
 jest.setTimeout(10000);
-
-async function setRole(role) {
-  this.vm.$store.commit('user/setRole', role);
-  await this.vm.$nextTick();
-}
 
 const plugins = [
   Vuetify,
@@ -28,28 +25,35 @@ const plugins = [
   features,
   formatCurrency,
   rolesAndPermissions,
+  PiniaVuePlugin,
 ];
 
 export const createLocalVue = () => getLocalVue(plugins);
 
 export const mount = (Component, options) => {
-  const wrapper = getWrapper(Component, options, {
+  const opts = {
+    pinia: getPiniaForUser('level6'),
+    ...options,
+  };
+  const wrapper = getWrapper(Component, opts, {
     mockStore,
     mockProviderInstance: mockProvider(),
     makeStorage,
     mountMethod: m,
   });
-  wrapper.setRole = setRole;
   return wrapper;
 };
 
 export const shallowMount = (Component, options) => {
-  const wrapper = getWrapper(Component, options, {
+  const opts = {
+    pinia: getPiniaForUser('level6'),
+    ...options,
+  };
+  const wrapper = getWrapper(Component, opts, {
     mockStore,
     mockProviderInstance: mockProvider(),
     makeStorage,
     mountMethod: sm,
   });
-  wrapper.setRole = setRole;
   return wrapper;
 };

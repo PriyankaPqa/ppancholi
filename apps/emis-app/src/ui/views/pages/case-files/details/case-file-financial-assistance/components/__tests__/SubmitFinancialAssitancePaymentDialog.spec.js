@@ -2,6 +2,8 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalTableData } from '@libs/entities-lib/approvals/approvals-table';
+import { createTestingPinia } from '@pinia/testing';
+import { useUserStore } from '@/pinia/user/user';
 import Component from '../SubmitFinancialAssistancePaymentDialog.vue';
 
 const localVue = createLocalVue();
@@ -10,9 +12,13 @@ const financialAssistance = mockFinancialAssistanceTableEntity();
 
 let wrapper;
 
+const pinia = createTestingPinia({ stubActions: false });
+const userStore = useUserStore(pinia);
+
 const doMount = (shallow = true, approvalRequired = false, approvalTable = null, hasFeature = true) => {
   const options = {
     localVue,
+    pinia,
     propsData: {
       financialAssistance,
       show: true,
@@ -240,6 +246,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
 
     describe('getUsersByRolesAndEvent', () => {
       it('should return all users having a role for an event', async () => {
+        userStore.getUserId = jest.fn(() => 'my-id');
         doMount();
         const users = [
           {
@@ -256,7 +263,6 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
         const targetEvent = 'B';
         wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: [] }));
         wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => users);
-        wrapper.vm.$storage.user.getters.userId = jest.fn(() => 'my-id');
 
         // eslint-disable-next-line max-len
         const filter = "Entity/Roles/any(r: search.in(r/OptionItemId, '1,2')) and Metadata/Teams/any(team:team/Events/any(event:event/Id eq 'B'))";
@@ -267,6 +273,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
       });
 
       it('should exclude the id of the current user', async () => {
+        userStore.getUserId = jest.fn(() => 'my-id');
         doMount();
         const users = [
           {
@@ -285,7 +292,6 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
         const targetEvent = 'B';
         wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: [] }));
         wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => users);
-        wrapper.vm.$storage.user.getters.userId = jest.fn(() => 'my-id');
 
         // eslint-disable-next-line max-len
         const filter = "Entity/Roles/any(r: search.in(r/OptionItemId, '1,2')) and Metadata/Teams/any(team:team/Events/any(event:event/Id eq 'B'))";

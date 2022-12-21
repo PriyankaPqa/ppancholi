@@ -33,6 +33,8 @@ export class SignalR implements ISignalR {
 
   private readonly storage: IStorage;
 
+  private pinia: any;
+
   private service: ISignalRService;
 
   public subscriptions: Record<string, uuid[]>;
@@ -46,6 +48,7 @@ export class SignalR implements ISignalR {
   }: IOptions) {
     this.service = service;
     this.storage = storage;
+    this.pinia = null;
     this.showConsole = showConsole && false;
     this.lastSubscribedIds = [];
     this.lastSubscribedNewlyCreatedIds = [];
@@ -70,6 +73,10 @@ export class SignalR implements ISignalR {
     return SignalR._instance;
   }
 
+  public setPinia(pinia: any) {
+    this.pinia = pinia;
+  }
+
   public async buildHubConnection() {
     this.showConsole && console.log('building connection signalr');
 
@@ -79,7 +86,7 @@ export class SignalR implements ISignalR {
     }
 
     const isSignedIn = await AuthenticationProvider.isAuthenticated();
-    const noAccess = this.storage.user.getters.user().hasRole('noAccess');
+    const noAccess = this.pinia.userStore.getUser().hasRole('noAccess');
 
     if (isSignedIn && !noAccess) {
       try {
@@ -116,6 +123,11 @@ export class SignalR implements ISignalR {
         console.error('There was an error connecting to signalR', e);
       }
     }
+  }
+
+  private initiatedByCurrentUser(entity: IEntity) {
+    const userId = this.pinia.userStore.getUserId();
+    return userId === entity.lastUpdatedBy || userId === entity.createdBy;
   }
 
   private createBindings() {
@@ -158,13 +170,13 @@ export class SignalR implements ISignalR {
 
   private listenForUserRoleChanges() {
     this.connection.on('user-account.UserAccountUpdated', async (entity) => {
-      const userId = this.storage.user.getters.userId();
+      const userId = this.pinia.userStore.getUserId();
       if (entity.id === userId) {
         // Wait for the role change to take effect in the BE and the token to get updated
         // This code only displays the notification that the role has changed in AD, the log out is done after the page navigation.
         // Therefore, it is only an additional UX improvement to keep the user aware of the change, it doesn't need to be 100% reliable
         await helpers.timeout(15000);
-        const roleChanged = await this.storage.user.actions.isRoleChanged(await this.storage.user.actions.getCurrentRoles());
+        const roleChanged = this.pinia.userStore.isRoleChanged(await this.pinia.userStore.getCurrentRoles());
         if (roleChanged) {
           Vue.toasted.global.error(i18n.t('errors.access-change.log-out-on-navigation'));
         }
@@ -175,9 +187,8 @@ export class SignalR implements ISignalR {
   private massActionNotifications() {
     this.connection.on('case-file.MassActionRunCompleted', (entity: IMassActionEntityData) => {
       const lastRun = _orderBy(entity.runs, 'timestamp', 'desc')[0];
-      const currentUserId = this.storage.user.getters.userId();
 
-      const initiatedByCurrentUser = currentUserId === lastRun.lastUpdatedBy || currentUserId === lastRun.createdBy;
+      const initiatedByCurrentUser = this.initiatedByCurrentUser(lastRun);
 
       if (lastRun.runStatus === MassActionRunStatus.PreProcessed && initiatedByCurrentUser) {
         Vue.toasted.success(i18n.t('massAction.notification.preprocessed', { x: entity.name }) as string);
@@ -268,13 +279,13 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'event',
       entityName: 'Event',
-      action: this.storage.event.mutations.setEntityFromOutsideNotification,
+      action: this.pinia.eventStore.setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'event',
       entityName: 'EventMetadata',
-      action: this.storage.event.mutations.setMetadataFromOutsideNotification,
+      action: this.pinia.eventMetadataStore.setItemFromOutsideNotification,
     });
 
     this.listenForOptionItemChanges({
@@ -490,17 +501,17 @@ export class SignalR implements ISignalR {
     });
   }
 
-  private listenForChanges<T extends IEntity>({ domain, entityName, action }: { domain: string, entityName: string, action?: (entity: T)=> void }) {
+  private listenForChanges<T extends IEntity>({ domain, entityName, action }: { domain: string, entityName: string, action?: (entity: T, byUser: boolean)=> void }) {
     this.connection.on(`${domain}.${entityName}Updated`, (entity) => {
       if (action) {
-        action(entity);
+        action(entity, this.initiatedByCurrentUser(entity));
       }
       this.log(`${domain}.${entityName}Updated`, entity);
     });
 
     this.connection.on(`${domain}.${entityName}Created`, (entity) => {
       if (action) {
-        action(entity);
+        action(entity, this.initiatedByCurrentUser(entity));
       }
       this.log(`${domain}.${entityName}Created`, entity);
     });
@@ -631,6 +642,22 @@ export class SignalR implements ISignalR {
         });
       }
     });
+
+    const piniaStores = Object.keys(this.pinia) as Array<string>;
+
+    piniaStores.forEach((storeId) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const store = this.pinia[storeId] as any;
+      if (store?.getNewlyCreatedIds) {
+        const items = store.getNewlyCreatedIds(baseDate) as Array<{ id: uuid, createdOn: number }>;
+        items.forEach((item) => {
+          if (item.id) {
+            ids.push(item.id);
+          }
+        });
+      }
+    });
+
     return ids;
   }
 

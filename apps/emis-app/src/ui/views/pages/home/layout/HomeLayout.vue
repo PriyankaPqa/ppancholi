@@ -13,6 +13,7 @@ import HomeLevel4 from '@/ui/views/pages/home/components/HomeLevel4.vue';
 import HomeLevel5 from '@/ui/views/pages/home/components/HomeLevel5.vue';
 import HomeLevel6 from '@/ui/views/pages/home/components/HomeLevel6.vue';
 import HomeNoRole from '@/ui/views/pages/home/components/HomeNoRole.vue';
+import { useUserStore } from '@/pinia/user/user';
 import HomeContributorIM from '@/ui/views/pages/home/components/HomeContributorIM.vue';
 
 export default Vue.extend({
@@ -32,7 +33,7 @@ export default Vue.extend({
 
   computed: {
     component(): string {
-      return this.$storage.user.getters.landingPage();
+      return useUserStore().getLandingPage();
     },
     metaTitle(): TranslateResult {
       return this.$t('metaInfo.dashboard_home.title');

@@ -124,7 +124,7 @@ import { DataTableHeader } from 'vuetify';
 import _orderBy from 'lodash/orderBy';
 import { RcPhoneDisplay } from '@libs/component-lib/components';
 import { ITeamCombined, ITeamMemberAsUser } from '@libs/entities-lib/team';
-import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
 import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCaseFiles.vue';
@@ -284,7 +284,7 @@ export default Vue.extend({
         isPrimaryContact: this.team.entity.teamMembers.find((tm) => tm.id === x.entity?.id)?.isPrimaryContact,
       }));
       const direction = this.sortDesc ? 'desc' : 'asc';
-      const filtered = helpers.filterCollectionByValue(users, this.search, false, this.searchAmong, true);
+      const filtered = sharedHelpers.filterCollectionByValue(users, this.search, false, this.searchAmong, true);
 
       return _orderBy(filtered, this.sortBy, direction);
     },

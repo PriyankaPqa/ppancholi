@@ -59,6 +59,7 @@ import Vue from 'vue';
 import { RcTooltip } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
+import { useEventStore } from '@/pinia/event/event';
 
 export default Vue.extend({
   name: 'EventSummaryLink',
@@ -108,7 +109,7 @@ export default Vue.extend({
     async toggleSelfRegistration(selfRegistrationEnabled: boolean) {
       this.updatingSelfRegistration = true;
 
-      const response = await this.$storage.event.actions.toggleSelfRegistration({
+      const response = await useEventStore().toggleSelfRegistration({
         id: this.event.id,
         selfRegistrationEnabled,
       });

@@ -7,23 +7,30 @@ import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import { Status } from '@libs/entities-lib/base';
 import { EFilterType } from '@libs/component-lib/types';
 
+import { createTestingPinia } from '@pinia/testing';
+import { useUserStore } from '@/pinia/user/user';
+
 import Component from './ApprovalRequestsTable.vue';
 
 const localVue = createLocalVue();
+
 const storage = mockStorage();
 let wrapper;
+let userStore;
 
 const FAPayment = mockCombinedCaseFinancialAssistance();
-storage.user.getters.userId = jest.fn(() => '1234');
 storage.financialAssistancePayment.getters.getByIds = jest.fn(() => [FAPayment]);
 
 const doMount = (otherOptions = {}) => {
   const options = {
     localVue,
+    pinia: createTestingPinia({ stubActions: false }),
     mocks: { $storage: storage },
     ...otherOptions,
   };
   wrapper = shallowMount(Component, options);
+  userStore = useUserStore();
+  userStore.getUserId = jest.fn(() => '1234');
 };
 
 describe('ApprovalRequestsTable', () => {

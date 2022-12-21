@@ -1,7 +1,8 @@
 import { mockStorage } from '@libs/registration-lib/store/storage';
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import massActions from './massActions';
 /* eslint-disable max-len */
 const Component = {
@@ -13,15 +14,21 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
+const doMount = (fullMount = false, pinia = getPiniaForUser('level6'), additionalOverwrites = {}) => {
+  wrapper = (fullMount ? mount : shallowMount)(Component, {
+    localVue,
+    pinia,
+    ...additionalOverwrites,
+    mocks: {
+      $storage: storage,
+    },
+  });
+};
+
 describe('massActions', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
-    wrapper = shallowMount(Component, {
-      localVue,
-      mocks: {
-        $storage: storage,
-      },
-    });
+    doMount();
   });
 
   describe('Methods', () => {
@@ -75,7 +82,7 @@ describe('massActions', () => {
             level: 'level6',
           },
         ];
-        await wrapper.setRole('level1');
+        doMount(false, getPiniaForUser('level1'));
         expect(wrapper.vm.filterItems(items)).toMatchObject([items[0]]);
       });
 
@@ -97,7 +104,7 @@ describe('massActions', () => {
             roles: ['contributorIM'],
           },
         ];
-        await wrapper.setRole('contributorIM');
+        doMount(false, getPiniaForUser('contributorIM'));
         expect(wrapper.vm.filterItems(items)).toMatchObject([items[1]]);
       });
 
@@ -119,7 +126,7 @@ describe('massActions', () => {
             roles: ['contributorIM'],
           },
         ];
-        await wrapper.setRole('contributorIM');
+        doMount(false, getPiniaForUser('contributorIM'));
         expect(wrapper.vm.filterItems(items)).toMatchObject([items[1]]);
       });
 
@@ -135,7 +142,7 @@ describe('massActions', () => {
             feature: 'feature key-2',
           },
         ];
-        await wrapper.setRole('level6');
+        doMount(false, getPiniaForUser('level6'));
         expect(wrapper.vm.filterItems(items)).toMatchObject(items);
       });
     });

@@ -25,13 +25,9 @@ describe('CrcPrivacyStatement.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
-      computed: {
-        user() {
-          return mockUserL6();
-        },
-      },
       propsData: {
         i18n,
+        user: mockUserL6(),
       },
       mocks: {
         $storage: storage,
@@ -87,14 +83,10 @@ describe('CrcPrivacyStatement.vue', () => {
         const location = { ...mockRegistrationLocations()[0], name: { translation: { en: 'mock-name' } } };
         wrapper = shallowMount(Component, {
           localVue,
-          computed: {
-            user() {
-              return mockUserL6();
-            },
-          },
           propsData: {
             i18n,
             registrationLocations: [location],
+            user: mockUserL6(),
           },
           mocks: {
             $storage: storage,
@@ -109,15 +101,13 @@ describe('CrcPrivacyStatement.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            user() {
-              return mockUserL6();
-            },
             privacyRegistrationMethod() {
               return ERegistrationMethod.InPerson;
             },
           },
           propsData: {
             i18n,
+            user: mockUserL6(),
           },
         });
         expect(wrapper.vm.isRegistrationMethodInPerson).toEqual(true);
@@ -127,15 +117,13 @@ describe('CrcPrivacyStatement.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            user() {
-              return mockUserL6();
-            },
             privacyRegistrationMethod() {
               return ERegistrationMethod.Phone;
             },
           },
           propsData: {
             i18n,
+            user: mockUserL6(),
           },
         });
         expect(wrapper.vm.isRegistrationMethodInPerson).toEqual(false);
@@ -183,7 +171,6 @@ describe('CrcPrivacyStatement.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            user: () => mockUserL6(),
             isRegistrationMethodInPerson: () => true,
           },
           mocks: {
@@ -191,6 +178,7 @@ describe('CrcPrivacyStatement.vue', () => {
           },
           propsData: {
             i18n,
+            user: mockUserL6(),
           },
         });
         jest.spyOn(wrapper.vm, 'setRegistrationLocation').mockImplementation(() => {});
@@ -206,11 +194,9 @@ describe('CrcPrivacyStatement.vue', () => {
           localVue,
           propsData: {
             i18n,
+            user: mockUserL6(),
           },
           computed: {
-            user() {
-              return mockUserL6();
-            },
             activeRegistrationLocations() {
               return [{
                 id: 'location_id',

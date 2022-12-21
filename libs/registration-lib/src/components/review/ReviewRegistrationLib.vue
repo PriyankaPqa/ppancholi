@@ -13,7 +13,7 @@
           {{ $t('registration.menu.privacy') }}
         </div>
         <validation-observer ref="privacyStatement">
-          <crc-privacy-statement :i18n="i18n" />
+          <crc-privacy-statement :i18n="i18n" :user="user" />
         </validation-observer>
       </template>
     </template>
@@ -144,6 +144,7 @@ import helpers from '@libs/entities-lib/helpers';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { IContactInformation } from '@libs/entities-lib/src/value-objects/contact-information';
+import { IUser } from '@libs/entities-lib/user';
 import AddEditAdditionalMembersLib from '../additional-members/AddEditAdditionalMembersLib.vue';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
 import PersonalInformation from '../personal-information/PersonalInformationLib.vue';
@@ -196,6 +197,10 @@ export default mixins(additionalMemberForm).extend({
     disableAutocomplete: {
       type: Boolean,
       required: true,
+    },
+    user: {
+      type: Object as () => IUser,
+      default: null,
     },
   },
 

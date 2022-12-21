@@ -3,7 +3,7 @@ import { mockAssignedTeamMembers, mockCaseFileEntity } from '@libs/entities-lib/
 import { mockCombinedUserAccount, AccountStatus } from '@libs/entities-lib/user-account';
 import { mockTeamEntity, TeamType, mockTeamMembersData } from '@libs/entities-lib/team';
 import { mockStorage } from '@/storage';
-import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import Component from '../case-file-activity/components/AssignCaseFile.vue';
 
 const localVue = createLocalVue();
@@ -112,7 +112,7 @@ describe('AssignCaseFile.vue', () => {
 
     describe('displayedIndividuals', () => {
       beforeEach(() => {
-        helpers.filterCollectionByValue = jest.fn(() => ['mock-displayed-individuals']);
+        sharedHelpers.filterCollectionByValue = jest.fn(() => ['mock-displayed-individuals']);
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {

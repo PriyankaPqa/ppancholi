@@ -157,6 +157,7 @@ import { INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import householdHelpers from '@/ui/helpers/household';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useEventStore } from '@/pinia/event/event';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
@@ -279,7 +280,7 @@ export default mixins(caseFileDetail).extend({
     this.loading = true;
     try {
       await this.$storage.caseFile.actions.fetch(this.caseFileId);
-      await this.$storage.event.actions.fetch(this.caseFile.entity.eventId);
+      await useEventStore().fetch(this.caseFile.entity.eventId);
       await this.getHouseholdInfo();
     } finally {
       this.loading = false;

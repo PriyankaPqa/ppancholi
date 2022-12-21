@@ -5,17 +5,18 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { mockUserStateLevel } from '@/test/helpers';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
-import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
+import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 
+import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { useEventStore } from '@/pinia/event/event';
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCombinedCaseFile();
-const mockEvent = mockCombinedEvent();
-mockEvent.entity.schedule.status = EEventStatus.Open;
+const mockEvent = mockEventEntity();
+mockEvent.schedule.status = EEventStatus.Open;
 
 describe('CaseFileDetails.vue', () => {
   let wrapper;
@@ -27,6 +28,7 @@ describe('CaseFileDetails.vue', () => {
   const doMount = async () => {
     const params = {
       localVue,
+      pinia: getPiniaForUser('level1'),
       propsData: {
         id: mockCaseFile.entity.id,
       },
@@ -73,7 +75,6 @@ describe('CaseFileDetails.vue', () => {
     };
 
     wrapper = mount(Component, params);
-    await wrapper.setRole('level1');
   };
 
   describe('Template', () => {
@@ -119,7 +120,6 @@ describe('CaseFileDetails.vue', () => {
     describe('verify-identity', () => {
       let element;
       it('is rendered when level 1+', async () => {
-        await wrapper.setRole('level1');
         element = wrapper.findDataTest('caseFileDetails-verify-identity-icon');
         expect(element.exists()).toBeTruthy();
       });
@@ -127,6 +127,7 @@ describe('CaseFileDetails.vue', () => {
       it('is not rendered when level is not 1', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser('contributorIM'),
           propsData: {
             id: mockCaseFile.entity.id,
           },
@@ -134,16 +135,6 @@ describe('CaseFileDetails.vue', () => {
             modules: {
               caseFile: {
                 searchLoading: false,
-              },
-              user: {
-                state:
-                  {
-                    oid: '7',
-                    email: 'test@test.ca',
-                    family_name: 'Joe',
-                    given_name: 'Pink',
-                    roles: ['contributorIM'],
-                  },
               },
             },
           },
@@ -166,7 +157,6 @@ describe('CaseFileDetails.vue', () => {
     describe('verify-impact', () => {
       let element;
       it('is rendered when level 1+', async () => {
-        await wrapper.setRole('level1');
         element = wrapper.findDataTest('caseFileDetails-verify-impact-icon');
         expect(element.exists()).toBeTruthy();
       });
@@ -174,6 +164,7 @@ describe('CaseFileDetails.vue', () => {
       it('is not rendered when level is not 1', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser('contributorIM'),
           propsData: {
             id: mockCaseFile.entity.id,
           },
@@ -181,16 +172,6 @@ describe('CaseFileDetails.vue', () => {
             modules: {
               caseFile: {
                 searchLoading: false,
-              },
-              user: {
-                state:
-                  {
-                    oid: '7',
-                    email: 'test@test.ca',
-                    family_name: 'Joe',
-                    given_name: 'Pink',
-                    roles: ['contributorIM'],
-                  },
               },
             },
           },
@@ -620,13 +601,15 @@ describe('CaseFileDetails.vue', () => {
 
     describe('canEdit', () => {
       it('returns true if user has level 1', () => {
+        const { pinia } = useEventStore(getPiniaForUser('level1'));
+
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             id: mockCaseFile.entity.id,
           },
+          pinia,
           store: {
-            ...mockUserStateLevel(1),
             caseFile: {
               searchLoading: false,
             },
@@ -637,12 +620,6 @@ describe('CaseFileDetails.vue', () => {
                 getters: { get: jest.fn(() => mockCaseFile) },
                 actions: {
                   fetch: jest.fn(() => [mockCaseFile]),
-                },
-              },
-              event: {
-                getters: { get: jest.fn(() => mockEvent) },
-                actions: {
-                  fetch: jest.fn(() => [mockEvent]),
                 },
               },
               household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
@@ -656,6 +633,7 @@ describe('CaseFileDetails.vue', () => {
       it('returns false if user does not have level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser('contributorIM'),
           propsData: {
             id: mockCaseFile.entity.id,
           },
@@ -663,16 +641,6 @@ describe('CaseFileDetails.vue', () => {
             modules: {
               caseFile: {
                 searchLoading: false,
-              },
-              user: {
-                state:
-                  {
-                    oid: '7',
-                    email: 'test@test.ca',
-                    family_name: 'Joe',
-                    given_name: 'Pink',
-                    roles: ['contributorIM'],
-                  },
               },
             },
           },
@@ -682,12 +650,6 @@ describe('CaseFileDetails.vue', () => {
                 getters: { get: jest.fn(() => mockCaseFile) },
                 actions: {
                   fetch: jest.fn(() => [mockCaseFile]),
-                },
-              },
-              event: {
-                getters: { get: jest.fn(() => mockEvent) },
-                actions: {
-                  fetch: jest.fn(() => [mockEvent]),
                 },
               },
               household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },

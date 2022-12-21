@@ -109,7 +109,7 @@ import { RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import { TeamType, ITeamEntity, ITeamMember } from '@libs/entities-lib/team';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
-import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { AccountStatus, IUserAccountCombined } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
 import AssignedListOld from './AssignedListOld.vue';
@@ -175,7 +175,7 @@ export default Vue.extend({
     },
 
     displayedIndividuals():IIndividual[] {
-      return helpers.filterCollectionByValue(this.allIndividuals, this.searchTerm || '', true);
+      return sharedHelpers.filterCollectionByValue(this.allIndividuals, this.searchTerm || '', true);
     },
 
   },

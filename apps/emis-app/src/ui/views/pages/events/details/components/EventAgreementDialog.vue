@@ -119,6 +119,7 @@ import entityUtils from '@libs/entities-lib/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import { useEventStore } from '@/pinia/event/event';
 
 export default mixins(handleUniqueNameSubmitError).extend({
 
@@ -169,7 +170,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   computed: {
     agreementTypes(): Array<IOptionItem> {
-      return this.$storage.event.getters.agreementTypes(true, this.isEditMode ? this.agreement.agreementType.optionItemId : null);
+      return useEventStore().getAgreementTypes(true, this.isEditMode ? this.agreement.agreementType.optionItemId : null);
     },
 
     dayAfterStartDate(): string {
@@ -291,7 +292,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async submitAgreement() {
-      await this.$storage.event.actions.updateEventSection({
+      await useEventStore().updateEventSection({
         eventId: this.event.id,
         payload: this.agreement,
         section: EEventSummarySections.Agreement,

@@ -81,6 +81,8 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import {
   EResponseLevel,
   EEventStatus,
+  IEventEntity,
+  IEventMetadata,
   IEventCombined,
   IEventSchedule,
 } from '@libs/entities-lib/event';
@@ -90,7 +92,9 @@ import routes from '@/constants/routes';
 import moment from '@libs/shared-lib/plugins/moment';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
+import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'EventsTable',
@@ -121,12 +125,13 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: ['Entity/Schedule/OpenDate'],
         sortDesc: [true],
       },
+      combinedEventStore: new CombinedStoreFactory<IEventEntity, IEventMetadata>(useEventStore(), useEventMetadataStore()),
     };
   },
 
   computed: {
     tableData(): IEventCombined[] {
-      return this.$storage.event.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+      return this.combinedEventStore.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
     customColumns(): Record<string, string> {
@@ -204,7 +209,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     tableProps(): Record<string, unknown> {
       return {
-        loading: this.$store.state.eventEntities.searchLoading,
+        loading: useEventStore().searchLoading,
         itemClass: (item: IEventCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
@@ -226,7 +231,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     async fetchData(params: IAzureSearchParams) {
-      const res = await this.$storage.event.actions.search({
+      const res = await this.combinedEventStore.search({
         search: params.search,
         filter: params.filter,
         top: params.top,

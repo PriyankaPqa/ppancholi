@@ -4,24 +4,29 @@ import colors from '@libs/shared-lib/plugins/vuetify/colors';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+
+import { createTestingPinia } from '@pinia/testing';
+import { useUserStore } from '@/pinia/user/user';
 import Component from '../case-file-activity/components/CaseFileStatusDialog.vue';
 
 const localVue = createLocalVue();
+
 const mockUser = mockCombinedUserAccount();
 const storage = mockStorage();
 
 describe('CaseFileStatusDialog.vue', () => {
   let wrapper;
+  let userStore;
 
   describe('Computed', () => {
     beforeEach(() => {
       storage.caseFile.actions.fetchInactiveReasons = jest.fn(() => mockOptionItemData());
       storage.caseFile.actions.fetchCloseReasons = jest.fn(() => mockOptionItemData());
-      storage.user.getters.userId = jest.fn(() => 'mock-id');
       storage.userAccount.actions.fetch = jest.fn(() => mockUser);
 
       wrapper = shallowMount(Component, {
         localVue,
+        pinia: createTestingPinia({ stubActions: false }),
         computed: {
           user() {
             return mockUser;
@@ -35,6 +40,9 @@ describe('CaseFileStatusDialog.vue', () => {
           $storage: storage,
         },
       });
+
+      userStore = useUserStore();
+      userStore.getUserId = jest.fn(() => 'mock-id');
     });
 
     describe('title', () => {
@@ -138,6 +146,7 @@ describe('CaseFileStatusDialog.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia: createTestingPinia({ stubActions: false }),
         propsData: {
           toStatus: CaseFileStatus.Open,
           show: true,

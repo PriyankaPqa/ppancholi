@@ -1,14 +1,11 @@
-import Vue from 'vue';
-import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockUserStateLevel } from '@/test/helpers';
-import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
-import { mockUsersData, NO_ROLE } from '@libs/entities-lib/user';
+import { NO_ROLE } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
+import { createTestingPinia } from '@pinia/testing';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from '../LeftMenu.vue';
 
-Vue.use(Vuetify);
-Vue.use(rolesAndPermissions);
+const localVue = createLocalVue();
 
 describe('LeftMenu.vue', () => {
   describe('Computed properties', () => {
@@ -29,7 +26,8 @@ describe('LeftMenu.vue', () => {
           },
         ];
         const wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
+          localVue,
+          pinia: createTestingPinia({ stubActions: false }),
           computed: {
             items() {
               return items;
@@ -56,11 +54,10 @@ describe('LeftMenu.vue', () => {
             level: 'level6',
           },
         ];
+        const pinia = getPiniaForUser('level1');
         const wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
-          store: {
-            ...mockUserStateLevel(1),
-          },
+          localVue,
+          pinia,
           computed: {
             items() {
               return items;
@@ -88,17 +85,10 @@ describe('LeftMenu.vue', () => {
             roles: ['contributorIM'],
           },
         ];
+        const pinia = getPiniaForUser('contributorIM');
         const wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
-          store: {
-            modules: {
-              user: {
-                state: {
-                  ...mockUsersData()[6],
-                },
-              },
-            },
-          },
+          localVue,
+          pinia,
           computed: {
             items() {
               return items;
@@ -120,9 +110,10 @@ describe('LeftMenu.vue', () => {
             feature: 'feature',
           },
         ];
-
+        const pinia = getPiniaForUser('level6');
         const wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
+          localVue,
+          pinia,
           computed: {
             items() {
               return items;
@@ -158,7 +149,7 @@ describe('LeftMenu.vue', () => {
         ];
 
         const wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
+          localVue,
           computed: {
             items() {
               return items;
@@ -183,31 +174,28 @@ describe('LeftMenu.vue', () => {
 
     describe('approvalRedirection', () => {
       it('returns approvals home for a level 6 user', () => {
+        const pinia = getPiniaForUser('level6');
         const wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
-          store: {
-            ...mockUserStateLevel(6),
-          },
+          localVue,
+          pinia,
         });
         expect(wrapper.vm.approvalRedirection).toEqual(routes.approvals.templates.home.name);
       });
 
       it('returns approvals request for a level 3 user', () => {
+        const pinia = getPiniaForUser('level3');
         const wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
-          store: {
-            ...mockUserStateLevel(3),
-          },
+          localVue,
+          pinia,
         });
         expect(wrapper.vm.approvalRedirection).toEqual(routes.approvals.request.name);
       });
 
       it('returns approvals request for a level 4 user', () => {
+        const pinia = getPiniaForUser('level4');
         const wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
-          store: {
-            ...mockUserStateLevel(4),
-          },
+          localVue,
+          pinia,
         });
         expect(wrapper.vm.approvalRedirection).toEqual(routes.approvals.request.name);
       });
@@ -216,11 +204,10 @@ describe('LeftMenu.vue', () => {
     describe('items', () => {
       let wrapper;
       beforeEach(() => {
+        const pinia = getPiniaForUser('level6');
         wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
-          store: {
-            ...mockUserStateLevel(6),
-          },
+          localVue,
+          pinia,
         });
       });
 
@@ -246,15 +233,10 @@ describe('LeftMenu.vue', () => {
           expect(item.roles).toEqual(['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE]);
         });
         test('It is disabled if user has no role', () => {
+          const pinia = getPiniaForUser('noRole');
           const wrapper = shallowMount(Component, {
-            localVue: createLocalVue(),
-            store: {
-              modules: {
-                user: {
-                  state: mockUsersData()[10],
-                },
-              },
-            },
+            localVue,
+            pinia,
           });
           const item = wrapper.vm.items[1];
           expect(item.disabled).toBe(true);

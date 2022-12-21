@@ -404,7 +404,7 @@ function buildExpand<T>(expands: Expand<T>): string {
       return expands;
     }
 
-    // Change `Foo/Bar/Baz` to `Foo($expand=Bar($expand=Baz))`
+    // Change `Events/Bar/Baz` to `Events($expand=Bar($expand=Baz))`
     return expands
       .split('/')
       .reverse()

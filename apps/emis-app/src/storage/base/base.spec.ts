@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IState, IStore, mockStore } from '@/store';
 import { mockUserAccountEntities, mockUserAccountMetadatum } from '@libs/entities-lib/user-account';
+import { createPinia } from 'pinia';
+import { useUserStore } from '@/pinia/user/user';
 import { Base } from './index';
 
 export type CombinedTest = any;
@@ -35,13 +37,12 @@ const metadataModuleName = 'metadataModule';
 const mockEntities = mockUserAccountEntities();
 const mockMetadatum = mockUserAccountMetadatum();
 
+const pinia = createPinia();
+const userStore = useUserStore(pinia);
+userStore.getUserId = jest.fn(() => 'its me');
+
 const store = mockStore({
   modules: {
-    user: {
-      getters: {
-        userId: () => 'its me',
-      },
-    },
     entityModule: {
       getters: {
         'entityModule/getAll': () => mockEntities,

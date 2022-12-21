@@ -2,21 +2,21 @@ import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseFileDocument, DocumentStatus } from '@libs/entities-lib/case-file-document';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
-import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
 
 import helpers from '@/ui/helpers/helpers';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
-import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
+import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import moment from '@libs/shared-lib/plugins/moment';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();
 let storage;
 const document = mockCombinedCaseFileDocument();
 let mockDocumentMapped;
-const mockEvent = mockCombinedEvent();
-mockEvent.entity.schedule.status = EEventStatus.Open;
+const mockEvent = mockEventEntity();
+mockEvent.schedule.status = EEventStatus.Open;
 
 describe('CaseFileDocument.vue', () => {
   let wrapper;
@@ -114,9 +114,7 @@ describe('CaseFileDocument.vue', () => {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
           },
-          store: {
-            ...mockUserStateLevel(1),
-          },
+          pinia: getPiniaForUser('level1'),
           computed: {
             caseFile: () => mockCombinedCaseFile(),
             event() {
@@ -141,9 +139,7 @@ describe('CaseFileDocument.vue', () => {
               return true;
             },
           },
-          store: {
-            ...mockUserStateLevel(1),
-          },
+          pinia: getPiniaForUser('level1'),
           mocks: {
             $storage: storage,
           },
@@ -192,22 +188,10 @@ describe('CaseFileDocument.vue', () => {
       it('returns false if user does not have level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser('contributorIM'),
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
-          },
-          store: {
-            modules: {
-              user: {
-                state: {
-                  oid: '7',
-                  email: 'test@test.ca',
-                  family_name: 'Joe',
-                  given_name: 'Pink',
-                  roles: ['contributorIM'],
-                },
-              },
-            },
           },
           mocks: {
             $storage: storage,
@@ -226,9 +210,7 @@ describe('CaseFileDocument.vue', () => {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
           },
-          store: {
-            ...mockUserStateLevel(1),
-          },
+          pinia: getPiniaForUser('level1'),
           computed: {
             caseFile: () => mockCombinedCaseFile(),
             event() {
@@ -257,9 +239,7 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          store: {
-            ...mockUserStateLevel(1),
-          },
+          pinia: getPiniaForUser('level2'),
           mocks: {
             $storage: storage,
           },
@@ -271,22 +251,10 @@ describe('CaseFileDocument.vue', () => {
       it('returns false if user does not have level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser('contributorIM'),
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
-          },
-          store: {
-            modules: {
-              user: {
-                state: {
-                  oid: '7',
-                  email: 'test@test.ca',
-                  family_name: 'Joe',
-                  given_name: 'Pink',
-                  roles: ['contributorIM'],
-                },
-              },
-            },
           },
           computed: {
             caseFile: () => mockCombinedCaseFile(),
@@ -311,9 +279,7 @@ describe('CaseFileDocument.vue', () => {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
           },
-          store: {
-            ...mockUserStateLevel(1),
-          },
+          pinia: getPiniaForUser('level1'),
           computed: {
             caseFile: () => mockCombinedCaseFile(),
             event() {
@@ -374,6 +340,7 @@ describe('CaseFileDocument.vue', () => {
       it('returns false if user does not have level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser('contributorIM'),
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -382,19 +349,6 @@ describe('CaseFileDocument.vue', () => {
             caseFile: () => mockCombinedCaseFile(),
             event() {
               return mockEvent;
-            },
-          },
-          store: {
-            modules: {
-              user: {
-                state: {
-                  oid: '7',
-                  email: 'test@test.ca',
-                  family_name: 'Joe',
-                  given_name: 'Pink',
-                  roles: ['contributorIM'],
-                },
-              },
             },
           },
           mocks: {
@@ -420,9 +374,6 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          store: {
-            ...mockUserStateLevel(6),
-          },
           mocks: {
             $storage: storage,
           },
@@ -440,9 +391,6 @@ describe('CaseFileDocument.vue', () => {
             readonly() {
               return true;
             },
-          },
-          store: {
-            ...mockUserStateLevel(6),
           },
           mocks: {
             $storage: storage,
@@ -465,9 +413,7 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          store: {
-            ...mockUserStateLevel(5),
-          },
+          pinia: getPiniaForUser('level5'),
           mocks: {
             $storage: storage,
           },

@@ -2,6 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote, mockCaseNoteCategories, mockCaseNoteEntity } from '@libs/entities-lib/case-note';
 import { mockStorage } from '@/storage';
 
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from './CaseNotesListItem.vue';
 
 const localVue = createLocalVue();
@@ -121,23 +122,26 @@ describe('CaseNotesListItem.vue', () => {
 
     describe('canEditCaseNote', () => {
       it('returns the correct value', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            item: caseNote,
-          },
+        const doMount = (pinia) => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            pinia,
+            propsData: {
+              item: caseNote,
+            },
+          });
+        };
 
-        });
+        doMount(getPiniaForUser('level4'));
 
-        await wrapper.setRole('level4');
         expect(wrapper.vm.canEditCaseNote).toBeTruthy();
 
-        await wrapper.setRole('level3');
+        doMount(getPiniaForUser('level3'));
 
         expect(wrapper.vm.canEditCaseNote).toBeFalsy();
 
+        doMount(getPiniaForUser('level4'));
         await wrapper.setProps({ readonly: true });
-        await wrapper.setRole('level4');
         expect(wrapper.vm.canEditCaseNote).toBeFalsy();
       });
     });

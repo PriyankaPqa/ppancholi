@@ -4,6 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { useUserStore } from '@/pinia/user/user';
 
 export default Vue.extend({
   name: 'ActivityWatcher',
@@ -112,7 +113,7 @@ export default Vue.extend({
 
     signOut() {
       this.$signalR.unsubscribeAll();
-      this.$storage.user.actions.signOut();
+      useUserStore().signOut();
     },
   },
 });

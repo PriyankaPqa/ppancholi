@@ -1,11 +1,10 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCaseFileEntity, CaseFileStatus } from '@libs/entities-lib/case-file';
-// import { mockTeamsData, mockSearchTeams } from '@/entities/team';
 import { mockStorage } from '@/storage';
-import { mockUserStateLevel } from '@/test/helpers';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from '../case-file-activity/components/CaseFileAssignmentsOld.vue';
 
 const localVue = createLocalVue();
@@ -22,6 +21,7 @@ describe('CaseFileAssignmentsOld.vue', () => {
     beforeEach(async () => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia: getPiniaForUser('level3'),
         propsData: {
           caseFile: mockCaseFile,
         },
@@ -34,7 +34,6 @@ describe('CaseFileAssignmentsOld.vue', () => {
           $storage: storage,
         },
       });
-      await wrapper.setRole('level3');
       wrapper.vm.loading = false;
     });
 
@@ -197,9 +196,6 @@ describe('CaseFileAssignmentsOld.vue', () => {
           propsData: {
             caseFile: mockCaseFile,
           },
-          store: {
-            ...mockUserStateLevel(6),
-          },
           mocks: {
             $storage: {
               userAccount: {
@@ -224,9 +220,7 @@ describe('CaseFileAssignmentsOld.vue', () => {
           propsData: {
             caseFile: mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open }),
           },
-          store: {
-            ...mockUserStateLevel(4),
-          },
+          pinia: getPiniaForUser('level4'),
           mocks: {
             $storage: {
               userAccount: {
@@ -252,9 +246,7 @@ describe('CaseFileAssignmentsOld.vue', () => {
             caseFile: mockCaseFileEntity(),
             readonly: false,
           },
-          store: {
-            ...mockUserStateLevel(4),
-          },
+          pinia: getPiniaForUser('level4'),
           mocks: {
             $storage: {
               userAccount: {
@@ -295,9 +287,7 @@ describe('CaseFileAssignmentsOld.vue', () => {
               },
             },
           },
-          store: {
-            ...mockUserStateLevel(2),
-          },
+          pinia: getPiniaForUser('level2'),
         });
         expect(wrapper.vm.canAssign).toBeFalsy();
       });

@@ -11,6 +11,7 @@ import { TENANT_SETTINGS_ENTITIES, USER_ACCOUNT_ENTITIES } from '@/constants/vue
 import { ITenantSettingsEntity } from '@libs/entities-lib/tenantSettings';
 import { httpClient } from '@/services/httpClient';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
+import { useUserStore } from '@/pinia/user/user';
 
 Vue.use(VueRouter);
 
@@ -27,12 +28,12 @@ const router = new VueRouter({
 });
 
 const hasLevel = (levelToCheck: string) => {
-  const user = store.getters['user/user'];
+  const user = useUserStore().getUser();
   return user.hasLevel(levelToCheck);
 };
 
 const hasRole = (roleToCheck: string) => {
-  const user = store.getters['user/user'];
+  const user = useUserStore().getUser();
   return user.hasRole(roleToCheck);
 };
 
@@ -46,7 +47,7 @@ const authenticationGuard = async (to: Route) => {
 
     // Dispatch the action to the store to fetch the user data from the JWT token
     // and store it in module state
-    const loggedIn = await store.dispatch('user/fetchUserData');
+    const loggedIn = await useUserStore().fetchUserData();
     // if a currentUser is properly fetched, it means the user is allowed access to the app
     // (in the default tenants, even if the user has no access, his token is valid. Therefore, authentication check
     // based only on token check will pass, even if the user should not be allowed access)

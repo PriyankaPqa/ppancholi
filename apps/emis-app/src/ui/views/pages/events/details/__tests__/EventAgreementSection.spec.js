@@ -3,13 +3,15 @@ import { mockEventEntity } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
-
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from '../components/EventAgreementSection.vue';
 
 const localVue = createLocalVue();
 
 const mockEvent = mockEventEntity();
 const storage = mockStorage();
+
+const { pinia, eventStore } = useMockEventStore();
 
 describe('EventAgreementSection.vue', () => {
   let wrapper;
@@ -18,6 +20,7 @@ describe('EventAgreementSection.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
+        pinia,
         propsData: {
           agreement: mockEvent.agreements[0],
           agreementTypes: [],
@@ -264,10 +267,11 @@ describe('EventAgreementSection.vue', () => {
   });
 
   describe('Methods', () => {
-    storage.event.actions.deleteAgreement = jest.fn(() => {});
+    eventStore.deleteAgreement = jest.fn(() => {});
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           agreement: mockEvent.agreements[0],
           eventId: mockEvent.id,
@@ -295,9 +299,9 @@ describe('EventAgreementSection.vue', () => {
     });
 
     describe('deleteAgreement', () => {
-      it('calls storage action deleteAgreement with the right payload', async () => {
+      it('calls deleteAgreement with the right payload', async () => {
         await wrapper.vm.deleteAgreement();
-        expect(wrapper.vm.$storage.event.actions.deleteAgreement).toHaveBeenCalledWith({
+        expect(eventStore.deleteAgreement).toHaveBeenCalledWith({
           eventId: wrapper.vm.eventId,
           agreementId: wrapper.vm.agreement.id,
         });

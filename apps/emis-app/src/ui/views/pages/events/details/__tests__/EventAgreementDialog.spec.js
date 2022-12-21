@@ -6,6 +6,7 @@ import entityUtils from '@libs/entities-lib/utils';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { EEventSummarySections } from '@/types';
 
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from '../components/EventAgreementDialog.vue';
 
 const localVue = createLocalVue();
@@ -202,10 +203,14 @@ describe('EventAgreementDialog.vue', () => {
   });
 
   describe('Computed', () => {
+    const { pinia, eventStore } = useMockEventStore();
+
+    eventStore.getAgreementTypes = jest.fn(() => mockOptionItemData());
+
     beforeEach(() => {
-      storage.event.getters.agreementTypes = jest.fn(() => mockOptionItemData());
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           event: mockEvent,
           isEditMode: false,
@@ -221,6 +226,7 @@ describe('EventAgreementDialog.vue', () => {
       it('calls the getter with the current agreement type id if in edit more', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             event: mockEvent,
             isEditMode: true,
@@ -236,11 +242,11 @@ describe('EventAgreementDialog.vue', () => {
           },
         });
 
-        expect(storage.event.getters.agreementTypes).toHaveBeenCalledWith(true, wrapper.vm.agreement.agreementType.optionItemId);
+        expect(eventStore.getAgreementTypes).toHaveBeenCalledWith(true, wrapper.vm.agreement.agreementType.optionItemId);
       });
 
       it('calls the getter without the current agreement type id if not in edit more', () => {
-        expect(storage.event.getters.agreementTypes).toHaveBeenCalledWith(true, null);
+        expect(eventStore.getAgreementTypes).toHaveBeenCalledWith(true, null);
       });
     });
 
@@ -354,9 +360,12 @@ describe('EventAgreementDialog.vue', () => {
   });
 
   describe('Methods', () => {
+    const { pinia, eventStore } = useMockEventStore();
+
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           event: mockEvent,
           isEditMode: false,
@@ -497,7 +506,7 @@ describe('EventAgreementDialog.vue', () => {
       it('calls the storage action updateEventSection with the right payload', async () => {
         await wrapper.vm.submitAgreement();
 
-        expect(wrapper.vm.$storage.event.actions.updateEventSection).toHaveBeenCalledWith({
+        expect(eventStore.updateEventSection).toHaveBeenCalledWith({
           eventId: wrapper.vm.event.id,
           payload: wrapper.vm.agreement,
           section: EEventSummarySections.Agreement,

@@ -3,7 +3,7 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { DomainBaseService } from '@libs/services-lib/base';
-import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import { ISignalRMock } from '@/ui/plugins/signal-r/signalR.types';
 import { SignalR } from '@/ui/plugins/signal-r/signalR';
@@ -20,6 +20,7 @@ export class BaseModule<T extends IEntity, IdParams> {
     if (!item) {
       return;
     }
+
     const index = state.items.findIndex((x) => x?.id === item.id);
     const stateItem = state.items[index];
 
@@ -46,7 +47,7 @@ export class BaseModule<T extends IEntity, IdParams> {
     getAll: (state:IState<T>) => _cloneDeep(state.items),
     get: (state:IState<T>) => (id: uuid) => _cloneDeep(state.items.find((e) => e.id === id) || {}),
     // eslint-disable-next-line
-    getByCriteria: (state:IState<T>) => (query: string, searchAll: boolean, searchAmong: string[]) => helpers.filterCollectionByValue(state.items, query, searchAll, searchAmong),
+    getByCriteria: (state:IState<T>) => (query: string, searchAll: boolean, searchAmong: string[]) => sharedHelpers.filterCollectionByValue(state.items, query, searchAll, searchAmong),
     getByIds: (state:IState<T>) => (ids: uuid[], onlyActive?: boolean) => {
       if (onlyActive) {
         return ids.map((id) => _cloneDeep(state.items.find((e) => e.id === id && e.status === Status.Active)) || {});

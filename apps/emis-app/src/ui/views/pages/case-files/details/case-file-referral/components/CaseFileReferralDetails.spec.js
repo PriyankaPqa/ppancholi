@@ -3,16 +3,16 @@ import { mockCaseFileReferralEntity, mockCombinedCaseFileReferral, ReferralMetho
 import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
-import { mockUserStateLevel } from '@/test/helpers';
 
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
-import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
+import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from './CaseFileReferralDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
-const mockEvent = mockCombinedEvent();
-mockEvent.entity.schedule.status = EEventStatus.Open;
+const mockEvent = mockEventEntity();
+mockEvent.schedule.status = EEventStatus.Open;
 
 describe('CaseFileReferralDetails', () => {
   let wrapper;
@@ -45,49 +45,10 @@ describe('CaseFileReferralDetails', () => {
     });
 
     describe('canEdit', () => {
-      it('returns true if user has level 1', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: 'mock-caseFile-id',
-            referralId: 'mock-referral-id',
-          },
-          computed: {
-            caseFile: () => mockCombinedCaseFile(),
-            event() {
-              return mockEvent;
-            },
-          },
-          store: {
-            ...mockUserStateLevel(1),
-            caseFile: {
-              searchLoading: false,
-            },
-          },
-          mocks: {
-            $storage: {
-              caseFileReferral: {
-                actions: {
-                  fetchTypes: jest.fn(() => mockOptionItemData()),
-                  fetchOutcomeStatuses: jest.fn(() => mockOptionItemData()),
-                  fetch: jest.fn(() => mockCombinedCaseFileReferral()),
-                },
-                getters: {
-                  types: jest.fn(() => mockOptionItemData()),
-                  outcomeStatuses: jest.fn(() => mockOptionItemData()),
-                  get: jest.fn(() => combinedReferral),
-                },
-              },
-            },
-          },
-        });
-
-        expect(wrapper.vm.canEdit).toBeTruthy();
-      });
-
       it('returns false if user does not have level 1', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser('contributorIM'),
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -101,16 +62,6 @@ describe('CaseFileReferralDetails', () => {
             modules: {
               caseFile: {
                 searchLoading: false,
-              },
-              user: {
-                state:
-                  {
-                    oid: '7',
-                    email: 'test@test.ca',
-                    family_name: 'Joe',
-                    given_name: 'Pink',
-                    roles: ['contributorIM'],
-                  },
               },
             },
           },
@@ -140,6 +91,46 @@ describe('CaseFileReferralDetails', () => {
         });
 
         expect(wrapper.vm.canEdit).toBeFalsy();
+      });
+
+      it('returns true if user has level 1', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+            referralId: 'mock-referral-id',
+          },
+          computed: {
+            caseFile: () => mockCombinedCaseFile(),
+            event() {
+              return mockEvent;
+            },
+          },
+          pinia: getPiniaForUser('level1'),
+          store: {
+            caseFile: {
+              searchLoading: false,
+            },
+          },
+          mocks: {
+            $storage: {
+              caseFileReferral: {
+                actions: {
+                  fetchTypes: jest.fn(() => mockOptionItemData()),
+                  fetchOutcomeStatuses: jest.fn(() => mockOptionItemData()),
+                  fetch: jest.fn(() => mockCombinedCaseFileReferral()),
+                },
+                getters: {
+                  types: jest.fn(() => mockOptionItemData()),
+                  outcomeStatuses: jest.fn(() => mockOptionItemData()),
+                  get: jest.fn(() => combinedReferral),
+                },
+              },
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEdit).toBeTruthy();
       });
     });
 

@@ -68,6 +68,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import colors from '@libs/shared-lib/plugins/vuetify/colors';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
+import { useUserStore } from '@/pinia/user/user';
 
 export default Vue.extend({
   name: 'CaseFileStatusDialog',
@@ -191,7 +192,7 @@ export default Vue.extend({
       await this.$storage.caseFile.actions.fetchCloseReasons();
     }
 
-    const userId = this.$storage.user.getters.userId();
+    const userId = useUserStore().getUserId();
     this.userId = userId;
     if (userId) {
       await this.$storage.userAccount.actions.fetch(userId);

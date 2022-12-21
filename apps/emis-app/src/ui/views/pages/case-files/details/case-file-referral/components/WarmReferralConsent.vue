@@ -40,6 +40,7 @@ import { VCheckboxWithValidation, RcDialog } from '@libs/component-lib/component
 
 import { IReferralConsentInformation } from '@libs/entities-lib/case-file-referral';
 import { VForm } from '@libs/shared-lib/types';
+import { useUserStore } from '@/pinia/user/user';
 
 export default Vue.extend({
   name: 'WarmReferralConsent',
@@ -81,7 +82,7 @@ export default Vue.extend({
   watch: {
     consentChecked(checked) {
       if (checked) {
-        const user = this.$storage.user.getters.user();
+        const user = useUserStore().getUser();
         this.localConsentInfo = {
           crcUserId: user.id, crcUserName: user.getFullName(), dateTimeConsent: new Date(),
         };

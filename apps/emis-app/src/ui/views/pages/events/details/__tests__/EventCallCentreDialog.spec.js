@@ -6,12 +6,14 @@ import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validat
 import { mockStorage } from '@/storage';
 import entityUtils from '@libs/entities-lib/utils';
 import { EEventSummarySections } from '@/types';
-
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from '../components/EventCallCentreDialog.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 const storage = mockStorage();
+
+const { pinia, eventStore } = useMockEventStore();
 
 describe('EventCallCentreDialog.vue', () => {
   let wrapper;
@@ -278,6 +280,7 @@ describe('EventCallCentreDialog.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           event: mockEvent,
           isEditMode: false,
@@ -324,7 +327,12 @@ describe('EventCallCentreDialog.vue', () => {
           },
         });
         await wrapper.vm.initEditMode();
-        expect(wrapper.vm.callCentre).toMatchObject({ ...mockEvent.callCentres[0], startDate: helpers.getLocalStringDate('2021-03-01T00:00:00Z') });
+        expect(wrapper.vm.callCentre).toMatchObject(
+          {
+            ...mockEvent.callCentres[0],
+            startDate: helpers.getLocalStringDate(mockEvent.callCentres[0].startDate, 'EventCallCentre.startDate'),
+          },
+        );
         expect(wrapper.vm.isActive).toBeTruthy();
       });
     });
@@ -422,11 +430,11 @@ describe('EventCallCentreDialog.vue', () => {
     });
 
     describe('submitCallCentre', () => {
-      it('calls the storage action updateEventSection with the right payload', async () => {
+      it('calls updateEventSection with the right payload', async () => {
         wrapper.vm.callCentre = { ...mockEvent.callCentres[0], startDate: '2020-01-01', endDate: null };
         await wrapper.vm.submitCallCentre();
 
-        expect(wrapper.vm.$storage.event.actions.updateEventSection).toHaveBeenCalledWith({
+        expect(eventStore.updateEventSection).toHaveBeenCalledWith({
           eventId: wrapper.vm.event.id,
           payload: { ...mockEvent.callCentres[0], startDate: new Date('2020-01-01').toISOString() },
           section: EEventSummarySections.CallCentre,

@@ -80,6 +80,7 @@ import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Status } from '@libs/entities-lib/base';
+import { useUserStore } from '@/pinia/user/user';
 
 export default Vue.extend({
   name: 'SubmitFinancialAssistancePaymentDialog',
@@ -201,7 +202,7 @@ export default Vue.extend({
       const filter = `${rolesFilter} and ${eventFilter}`;
       const usersData: IAzureTableSearchResults = await this.$storage.userAccount.actions.search({ filter });
       if (usersData?.ids) {
-        this.users = this.$storage.userAccount.getters.getByIds(usersData.ids).filter((u) => u.entity.id !== this.$storage.user.getters.userId());
+        this.users = this.$storage.userAccount.getters.getByIds(usersData.ids).filter((u) => u.entity.id !== useUserStore().getUserId());
       }
     },
 

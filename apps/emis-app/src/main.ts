@@ -27,20 +27,19 @@ import { SignalRService } from '@libs/services-lib/signal-r';
 import { httpClient } from '@/services/httpClient';
 import { SignalR } from '@/ui/plugins/signal-r';
 import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
+import { createPinia, PiniaVuePlugin } from 'pinia';
+import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
+import { useUserStore } from '@/pinia/user/user';
 import store from './store/store';
 import router from './ui/router';
 import App from './ui/App.vue';
 
+Vue.use(PiniaVuePlugin);
+const pinia = createPinia();
 prepareServices(store);
 
 const storage = prepareStorage(store);
 const signalRService = new SignalRService(httpClient);
-
-SignalR.Initialize({
-  service: signalRService,
-  storage,
-  showConsole: false,
-});
 
 applicationInsights.initialize({
   connectionString: process.env.VITE_APPLICATION_INSIGHTS_CONNECTION_STRING,
@@ -60,13 +59,26 @@ Vue.use(rolesAndPermissions);
 Vue.use(features);
 Vue.use(VueCookies);
 
+SignalR.Initialize({
+  service: signalRService,
+  storage,
+  showConsole: false,
+});
+
 new Vue({
   render: (h) => h(App),
   router,
   i18n,
   vuetify,
   store,
+  pinia,
 }).$mount('#app');
+
+SignalR.instance.setPinia({
+  userStore: useUserStore(),
+  eventStore: useEventStore(),
+  eventMetadataStore: useEventMetadataStore(),
+});
 
 // Directive fo v-visible so component is hidden but still take its place
 Vue.directive('visible', (el, binding) => {

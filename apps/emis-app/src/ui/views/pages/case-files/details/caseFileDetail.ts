@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import { ICaseFileCombined } from '@libs/entities-lib/case-file';
-import { EEventStatus, IEventCombined } from '@libs/entities-lib/event';
+import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
+import { useEventStore } from '@/pinia/event/event';
 
 export default Vue.extend({
   props: {
@@ -19,15 +20,15 @@ export default Vue.extend({
       return this.$storage.caseFile.getters.get(this.caseFileId);
     },
 
-    event(): IEventCombined {
+    event(): IEventEntity {
       if (!this.caseFile?.entity?.eventId) {
         return null;
       }
-      return this.$storage.event.getters.get(this.caseFile.entity.eventId);
+      return useEventStore().getById(this.caseFile.entity.eventId);
     },
 
     readonly(): boolean {
-      return (this.caseFile?.readonly || this.event?.entity?.schedule?.status !== +EEventStatus.Open) && !this.$hasLevel('level6');
+      return (this.caseFile?.readonly || this.event?.schedule?.status !== +EEventStatus.Open) && !this.$hasLevel('level6');
     },
   },
 });

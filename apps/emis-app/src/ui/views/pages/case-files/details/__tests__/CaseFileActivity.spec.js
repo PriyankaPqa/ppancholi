@@ -3,7 +3,7 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
-import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
+import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
@@ -11,8 +11,8 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCombinedCaseFile();
 const mockActivities = mockCaseFileActivities();
-const mockEvent = mockCombinedEvent();
-mockEvent.entity.schedule.status = EEventStatus.Open;
+const mockEvent = mockEventEntity();
+mockEvent.schedule.status = EEventStatus.Open;
 
 describe('CaseFileActivity.vue', () => {
   let wrapper;
@@ -416,7 +416,7 @@ describe('CaseFileActivity.vue', () => {
 
         expect(wrapper.vm.attachToChanges).toHaveBeenCalledTimes(0);
 
-        await wrapper.vm.$options.destroyed[0].call(wrapper.vm);
+        wrapper.destroy();
 
         expect(wrapper.vm.attachToChanges).toHaveBeenCalledWith(false);
       });

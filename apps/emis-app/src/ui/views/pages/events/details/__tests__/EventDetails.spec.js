@@ -1,31 +1,35 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCombinedEvent } from '@libs/entities-lib/event';
+import { mockEventEntity, mockEventMetadata } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import flushPromises from 'flush-promises';
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from '../EventDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockEvent = mockCombinedEvent();
+const mockEvent = mockEventEntity();
 
+const { pinia, eventStore, eventMetadataStore } = useMockEventStore();
+
+eventStore.getById = jest.fn(() => mockEvent);
+eventMetadataStore.getById = jest.fn(() => mockEventMetadata()[0]);
 describe('EventDetails.vue', () => {
   let wrapper;
   describe('Template', () => {
-    beforeEach(async () => {
+    const doMount = async () => {
       wrapper = mount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
         },
         computed: {
-          event() {
-            return mockEvent;
-          },
           eventId() {
             return '000001';
           },
@@ -49,6 +53,10 @@ describe('EventDetails.vue', () => {
           $storage: storage,
         },
       });
+      await flushPromises();
+    };
+    beforeEach(async () => {
+      await doMount();
     });
 
     describe('Rendered elements', () => {
@@ -96,47 +104,14 @@ describe('EventDetails.vue', () => {
 
       describe('event location region', () => {
         let element;
-        describe('if the event has no region', () => {
-          it('does not render', () => {
-            element = wrapper.findDataTest('event-location-region');
-
-            expect(element.exists()).toBeFalsy();
-          });
-        });
 
         describe('if the event has a region', () => {
-          beforeEach(() => {
-            wrapper = mount(Component, {
-              localVue,
-              propsData: {
-                id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
-              },
-              computed: {
-                event() {
-                  const event = _cloneDeep(mockEvent);
-                  event.entity.location.region = { translation: { en: 'mock region' } };
-                  return event;
-                },
-                eventId() {
-                  return '000001';
-                },
-                provinceName() {
-                  return 'Alberta';
-                },
-                eventTypeName() {
-                  return { translation: { en: 'Flood' } };
-                },
-              },
-              mocks: {
-                $route: {
-                  name: routes.events.edit.name,
-                  params: {
-                    id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
-                  },
-                },
-                $storage: storage,
-              },
-            });
+          const event = _cloneDeep(mockEvent);
+          event.location.region = { translation: { en: 'mock region', fr: 'mock region-fr' } };
+          eventStore.getById = jest.fn(() => event);
+
+          beforeEach(async () => {
+            await doMount();
           });
 
           it('is rendered', async () => {
@@ -147,6 +122,17 @@ describe('EventDetails.vue', () => {
           it('displays the correct data when the event has a region', async () => {
             element = wrapper.findDataTest('event-location-region');
             expect(element.text()).toEqual('mock region');
+          });
+        });
+
+        describe('if the event has no region', () => {
+          it('does not render', () => {
+            const event = mockEvent;
+            event.location.region = {};
+            eventStore.getById = jest.fn(() => event);
+            doMount();
+            element = wrapper.findDataTest('event-location-region');
+            expect(element.exists()).toBeFalsy();
           });
         });
       });
@@ -178,7 +164,7 @@ describe('EventDetails.vue', () => {
           expect(element.exists()).toBeTruthy();
         });
         it('displays the right number', () => {
-          expect(element.props().value).toEqual(mockEvent.entity.responseDetails.assistanceNumber);
+          expect(element.props().value).toEqual(mockEvent.responseDetails.assistanceNumber);
         });
       });
 
@@ -193,7 +179,7 @@ describe('EventDetails.vue', () => {
           expect(element.exists()).toBeTruthy();
         });
         it('displays the related event name', () => {
-          const relatedEvent = wrapper.vm.event.metadata.relatedEventsInfos[0];
+          const relatedEvent = wrapper.vm.eventMetadata.relatedEventsInfos[0];
           const element = wrapper.findDataTest('related-event-0');
           expect(element.text()).toEqual(relatedEvent.eventName.translation.en);
         });
@@ -217,7 +203,7 @@ describe('EventDetails.vue', () => {
         });
         it('contains the correct date', () => {
           const element = wrapper.findDataTest('event-reported-date');
-          expect(element.text()).toEqual(helpers.getLocalStringDate('2021-01-01T00:00:00Z'));
+          expect(element.text()).toEqual(helpers.getLocalStringDate(mockEvent.responseDetails.dateReported, 'EventResponseDetails.dateReported'));
         });
       });
 
@@ -227,21 +213,14 @@ describe('EventDetails.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      storage.event.getters.get = jest.fn(() => mockEvent);
-      storage.event.getters.eventTypes = jest.fn(() => mockOptionItemData());
+      eventStore.getById = jest.fn(() => mockEvent);
+      eventStore.getEventTypes = jest.fn(() => mockOptionItemData());
 
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
-        },
-        store: {
-          modules: {
-            event: {
-              state: {
-              },
-            },
-          },
         },
         mocks: {
           $storage: storage,
@@ -256,7 +235,7 @@ describe('EventDetails.vue', () => {
 
     describe('eventId', () => {
       it('return the right format for eventID', () => {
-        expect(wrapper.vm.eventId).toEqual(`000${wrapper.vm.event.entity.number}`);
+        expect(wrapper.vm.eventId).toEqual(`000${wrapper.vm.event.number}`);
       });
     });
 
@@ -264,20 +243,13 @@ describe('EventDetails.vue', () => {
       it('returns the right event type name', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
           },
           computed: {
             event() {
-              return { ...mockEvent, entity: { ...mockEvent.entity, responseDetails: { eventType: { optionItemId: mockOptionItemData()[0].id } } } };
-            },
-          },
-          store: {
-            modules: {
-              event: {
-                state: {
-                },
-              },
+              return { ...mockEvent, responseDetails: { eventType: { optionItemId: mockOptionItemData()[0].id } } };
             },
           },
           mocks: {
@@ -293,20 +265,13 @@ describe('EventDetails.vue', () => {
       it('returns the right province name when province is not other', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
           },
-          store: {
-            modules: {
-              event: {
-                state: {
-                },
-              },
-            },
-          },
           computed: {
             event() {
-              return { ...mockEvent, entity: { ...mockEvent.entity, location: { province: ECanadaProvinces.QC } } };
+              return { ...mockEvent, location: { province: ECanadaProvinces.QC } };
             },
           },
           mocks: {
@@ -319,28 +284,18 @@ describe('EventDetails.vue', () => {
       it('returns the right province name when province is not other', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
-          },
-          store: {
-            modules: {
-              event: {
-                state: {
-                },
-              },
-            },
           },
           computed: {
             event() {
               return {
                 ...mockEvent,
-                entity: {
-                  ...mockEvent.entity,
-                  location: {
-                    province: ECanadaProvinces.OT,
-                    provinceOther: {
-                      translation: { en: 'other-province' },
-                    },
+                location: {
+                  province: ECanadaProvinces.OT,
+                  provinceOther: {
+                    translation: { en: 'other-province' },
                   },
                 },
               };
@@ -429,14 +384,14 @@ describe('EventDetails.vue', () => {
 
   describe('lifecycle', () => {
     beforeEach(() => {
-      storage.event.actions.fetchAll = jest.fn(() => {});
-      storage.event.actions.fetchEventTypes = jest.fn(() => {});
-      storage.event.actions.fetchFullResponse = jest.fn(() => ({
-        entity: { status: 403 },
-      }));
+      eventStore.fetchEventTypes = jest.fn(() => {});
+      eventStore.fetchAll = jest.fn(() => {});
+      eventStore.fetch = jest.fn();
+      eventStore.fetchFullResponse = jest.fn(() => {});
 
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
         },
@@ -453,19 +408,19 @@ describe('EventDetails.vue', () => {
     });
 
     it('should call fetchEvent', () => {
-      expect(wrapper.vm.$storage.event.actions.fetch)
-        .toHaveBeenCalledWith(wrapper.vm.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+      expect(eventStore.fetch).toHaveBeenCalledWith(wrapper.vm.id, true);
     });
   });
 
   describe('Methods', () => {
     beforeEach(() => {
-      storage.event.actions.fetchEventTypes = jest.fn(() => {});
-      storage.event.actions.fetchAll = jest.fn(() => {});
-      storage.event.actions.fetch = jest.fn(() => {});
+      eventStore.fetchEventTypes = jest.fn(() => {});
+      eventStore.fetchAll = jest.fn(() => {});
+      eventStore.fetch = jest.fn(() => {});
 
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
         },

@@ -129,7 +129,7 @@ import {
 } from '@libs/component-lib/components';
 import { IUserAccountCombined, AccountStatus } from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-
+import { useUserStore } from '@/pinia/user/user';
 import { Status } from '@libs/entities-lib/base';
 import { IUser } from '@libs/entities-lib/user';
 
@@ -155,7 +155,7 @@ export default Vue.extend({
       if (this.$route.params.id) {
         return { roles: [] } as IUser;
       }
-      return this.$storage.user.getters.user();
+      return useUserStore().getUser();
     },
 
     user(): IUserAccountCombined {
@@ -163,7 +163,7 @@ export default Vue.extend({
     },
 
     id(): string {
-      return this.$route.params.id || this.$storage.user.getters.userId();
+      return this.$route.params.id || useUserStore().getUserId();
     },
 
     preferredLanguage(): string {

@@ -90,6 +90,7 @@ import { RcConfirmationDialog } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import { IEventAgreement } from '@libs/entities-lib/event';
 import { IOptionItemData } from '@libs/entities-lib/optionItem';
+import { useEventStore } from '@/pinia/event/event';
 import EventSummarySectionInfoDialog from './EventSummarySectionInfoDialog.vue';
 
 export default Vue.extend({
@@ -175,7 +176,7 @@ export default Vue.extend({
     },
 
     deleteAgreement() {
-      this.$storage.event.actions.deleteAgreement({ eventId: this.eventId, agreementId: this.agreement.id });
+      useEventStore().deleteAgreement({ eventId: this.eventId, agreementId: this.agreement.id });
       this.showDeleteConfirmationDialog = false;
     },
   },

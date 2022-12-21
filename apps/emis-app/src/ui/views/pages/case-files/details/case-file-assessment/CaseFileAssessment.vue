@@ -160,7 +160,7 @@ import { RcDataTable, RcDataTableHeader, RcTooltip } from '@libs/component-lib/c
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
-import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import moment from '@libs/shared-lib/plugins/moment';
 import {
   AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType, IAssessmentResponseCombined, CompletionStatus, PublishStatus,
@@ -258,7 +258,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     pendingAssessments(): MappedAssessment[] {
-      const items = helpers.filterCollectionByValue(
+      const items = sharedHelpers.filterCollectionByValue(
         this.assessments.filter((a) => a.completionStatus === CompletionStatus.Pending),
         this.pendingOptions.search,
         false,
@@ -268,7 +268,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     completedAssessments(): MappedAssessment[] {
-      const items = helpers.filterCollectionByValue(
+      const items = sharedHelpers.filterCollectionByValue(
         this.assessments.filter((a) => a.completionStatus !== CompletionStatus.Pending),
         this.completedOptions.search,
         false,
@@ -468,7 +468,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         name: routes.events.assessments.complete.name,
         params: {
           assessmentTemplateId: item.formId,
-          id: this.event.entity.id,
+          id: this.event.id,
           assessmentResponseId: item.id,
         },
       });
@@ -484,7 +484,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       languageCode = languageCode === 'fr' ? 'fr' : 'en';
       // route is benef website's 'assessment/:eventId/:assessmentTemplateId/:assessmentResponseId'
       navigator.clipboard.writeText(
-        `https://${settings.registrationDomain.translation[languageCode]}/${languageCode}/assessment/${this.event.entity.id}/${assessment.entity.assessmentFormId}/${assessment.entity.id}`,
+        `https://${settings.registrationDomain.translation[languageCode]}/${languageCode}/assessment/${this.event.id}/${assessment.entity.assessmentFormId}/${assessment.entity.id}`,
       );
       this.$toasted.global.success(this.$t('assessmentTemplate.copiedLink'));
     },

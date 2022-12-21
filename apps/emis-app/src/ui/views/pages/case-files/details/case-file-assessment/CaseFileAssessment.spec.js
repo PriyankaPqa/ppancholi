@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
-import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
+import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import {
   AssociationType, AssessmentFrequencyType, CompletionStatus, PublishStatus,
 } from '@libs/entities-lib/assessment-template';
@@ -10,8 +10,8 @@ import Component from './CaseFileAssessment.vue';
 
 const localVue = createLocalVue();
 let storage = mockStorage();
-const mockEvent = mockCombinedEvent();
-mockEvent.entity.schedule.status = EEventStatus.Open;
+const mockEvent = mockEventEntity();
+mockEvent.schedule.status = EEventStatus.Open;
 
 const mockMappedAssessments = [
   {
@@ -454,7 +454,7 @@ describe('CaseFileAssessment.vue', () => {
           name: routes.events.assessments.complete.name,
           params: {
             assessmentTemplateId: mockMappedAssessments[0].formId,
-            id: wrapper.vm.event.entity.id,
+            id: wrapper.vm.event.id,
             assessmentResponseId: mockMappedAssessments[0].id,
           },
         });

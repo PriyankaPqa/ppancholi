@@ -120,6 +120,7 @@ import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@libs/entities-lib/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import { useEventStore } from '@/pinia/event/event';
 
 export default mixins(handleUniqueNameSubmitError).extend({
   name: 'EventCallCentreDialog',
@@ -262,7 +263,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     async submitCallCentre() {
       const callCentrePayload = this.makePayload(this.callCentre);
-      await this.$storage.event.actions.updateEventSection(
+      await useEventStore().updateEventSection(
         {
           eventId: this.event.id,
           payload: callCentrePayload,

@@ -4,22 +4,27 @@ import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
 import { mockUsersData, User } from '@libs/entities-lib/user';
 
+import { createTestingPinia } from '@pinia/testing';
+import { useUserStore } from '@/pinia/user/user';
 import Component from './AccountSettings.vue';
 
 const localVue = createLocalVue();
+
 const storage = mockStorage();
 const mockUser = mockCombinedUserAccount();
+
+let userStore;
 
 describe('AccountSettings.vue', () => {
   let wrapper;
   storage.userAccount.getters.roles = jest.fn(() => mockOptionItemData());
   storage.userAccount.actions.fetch = jest.fn(() => mockCombinedUserAccount());
   storage.userAccount.getters.get = jest.fn(() => mockCombinedUserAccount());
-  storage.user.getters.user = jest.fn(() => new User(mockUsersData()[0]));
 
   const doMount = async (id = null, emptyUser = false) => {
     wrapper = mount(Component, {
       localVue,
+      pinia: createTestingPinia({ stubActions: false }),
       computed: {
         user: () => (emptyUser ? { entity: {}, metadata: {} } : mockUser),
         basicUserData: () => new User(mockUsersData()[0]),
@@ -33,6 +38,9 @@ describe('AccountSettings.vue', () => {
         },
       },
     });
+
+    userStore = useUserStore();
+    userStore.getUser = jest.fn(() => new User(mockUsersData()[0]));
   };
 
   describe('Template', () => {
@@ -170,6 +178,7 @@ describe('AccountSettings.vue', () => {
 
       wrapper = shallowMount(Component, {
         localVue,
+        pinia: createTestingPinia({ stubActions: false }),
         mocks: {
           $storage: storage,
         },
@@ -179,6 +188,8 @@ describe('AccountSettings.vue', () => {
           },
         },
       });
+      userStore = useUserStore();
+      userStore.getUser = jest.fn(() => new User(mockUsersData()[0]));
     });
 
     describe('basicUserData', () => {
@@ -198,6 +209,7 @@ describe('AccountSettings.vue', () => {
         const user = mockCombinedUserAccount({ preferredLanguage: 'en-CA' });
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: createTestingPinia({ stubActions: false }),
           computed: {
             user() {
               return user;
@@ -215,6 +227,7 @@ describe('AccountSettings.vue', () => {
         const user = mockCombinedUserAccount({ preferredLanguage: 'fr-CA' });
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: createTestingPinia({ stubActions: false }),
           computed: {
             user() {
               return user;
@@ -232,6 +245,7 @@ describe('AccountSettings.vue', () => {
         const user = mockCombinedUserAccount({ preferredLanguage: null });
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: createTestingPinia({ stubActions: false }),
           computed: {
             user() {
               return user;

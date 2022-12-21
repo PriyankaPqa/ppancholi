@@ -248,7 +248,6 @@ import { ECanadaProvinces, IMultilingual } from '@libs/shared-lib/types';
 import {
   EResponseLevel,
   EEventStatus,
-  IEventCombined,
   EventEntity,
   IEventLocation,
 } from '@libs/entities-lib/event';
@@ -256,6 +255,7 @@ import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validat
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import moment from 'moment';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { useEventStore } from '@/pinia/event/event';
 
 export default Vue.extend({
   name: 'EventForm',
@@ -453,11 +453,7 @@ export default Vue.extend({
     },
 
     eventTypesSorted(): Array<IOptionItem> {
-      return this.$storage.event.getters.eventTypes(true, this.localEvent.responseDetails?.eventType?.optionItemId);
-    },
-
-    relatedEventsSorted(): Array<IEventCombined> {
-      return this.$storage.event.getters.getAll();
+      return useEventStore().getEventTypes(true, this.localEvent.responseDetails?.eventType?.optionItemId);
     },
 
     rules(): Record<string, unknown> {
@@ -597,9 +593,9 @@ export default Vue.extend({
       this.localEvent.responseDetails.dateReported = this.today;
     }
 
-    await this.$storage.event.actions.fetchEventTypes();
-    this.otherProvinces = await this.$storage.event.actions.fetchOtherProvinces();
-    this.regions = await this.$storage.event.actions.fetchRegions();
+    await useEventStore().fetchEventTypes();
+    this.otherProvinces = await useEventStore().fetchOtherProvinces();
+    this.regions = await useEventStore().fetchRegions();
 
     if (this.localEvent && this.localEvent.responseDetails.eventType.optionItemId) {
       this.eventType = this.eventTypesSorted.find((e) => e.id === this.localEvent.responseDetails.eventType.optionItemId);

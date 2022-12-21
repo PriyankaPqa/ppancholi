@@ -5,13 +5,13 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { mockUsersData } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
-import { mockUserStateContributor } from '@/test/helpers';
 
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();
+
 const storage = mockStorage();
 
 describe('AppHeader.vue', () => {
@@ -27,6 +27,7 @@ describe('AppHeader.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
+      pinia: getPiniaForUser('level6'),
       vuetify,
       store: {
         modules: {
@@ -38,9 +39,6 @@ describe('AppHeader.vue', () => {
               generalHelpMenuVisible: false,
             },
             mutations,
-          },
-          user: {
-            state: mockUsersData()[0],
           },
         },
       },
@@ -56,7 +54,7 @@ describe('AppHeader.vue', () => {
   describe('Computed', () => {
     describe('getAvatarName', () => {
       it('should return the user initials', () => {
-        expect(wrapper.vm.getAvatarName).toEqual('JW');
+        expect(wrapper.vm.getAvatarName).toEqual('OJ');
       });
     });
 
@@ -159,9 +157,7 @@ describe('AppHeader.vue', () => {
       test('If the user does not have level 1, the page does not contain a Register beneficiaries button ', () => {
         const wrapper = mount(Component, {
           localVue: createLocalVue(),
-          store: {
-            ...mockUserStateContributor(1),
-          },
+          pinia: getPiniaForUser('contributor'),
           computed: {
             branding() {
               return mockBrandingEntity();

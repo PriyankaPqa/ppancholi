@@ -1,5 +1,6 @@
 import { mockStorage } from '@/storage';
 import { mockSignalRService } from '@libs/services-lib/signal-r';
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import { SignalR } from './signalR';
 
 const storage = mockStorage();
@@ -13,6 +14,8 @@ SignalR.prototype.listenForOptionItemChanges = jest.fn();
 
 let conn = new SignalR({ service, storage, showConsole: true });
 
+const { eventStore, eventMetadataStore } = useMockEventStore();
+
 describe('signalR', () => {
   beforeEach(() => {
     conn = new SignalR({
@@ -20,7 +23,13 @@ describe('signalR', () => {
       storage,
       showConsole: false,
     });
+
+    eventStore.getNewlyCreatedIds = jest.fn(() => [{ id: '2', createdOn: 0 }]);
     conn.connection = { on: jest.fn(), stop: jest.fn() };
+    conn.setPinia({
+      eventStore,
+      eventMetadataStore,
+    });
   });
 
   describe('createBindings', () => {
@@ -228,13 +237,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'event',
           entityName: 'Event',
-          action: conn.storage.event.mutations.setEntityFromOutsideNotification,
+          action: conn.pinia.eventStore.setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'event',
           entityName: 'EventMetadata',
-          action: conn.storage.event.mutations.setMetadataFromOutsideNotification,
+          action: conn.pinia.eventMetadataStore.setItemFromOutsideNotification,
         });
     });
 
@@ -679,9 +688,7 @@ describe('signalR', () => {
       conn.storage.caseFile.getters.getNewlyCreatedIds = jest.fn(() => [
         { id: '1', createdOn: 0 },
       ]);
-      conn.storage.event.getters.getNewlyCreatedIds = jest.fn(() => [
-        { id: '2', createdOn: 0 },
-      ]);
+
       const res = conn.getNewlyCreatedItemsSince();
 
       expect(res).toEqual(['1', '2']);

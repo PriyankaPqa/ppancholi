@@ -136,6 +136,7 @@ import {
 } from '@libs/entities-lib/event';
 import { EEventSummarySections } from '@/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { useEventStore } from '@/pinia/event/event';
 import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
 import EventSummarySectionBody from './components/EventSummarySectionBody.vue';
@@ -194,15 +195,15 @@ export default Vue.extend({
     agreementTypes(): Array<IOptionItem> {
       const currentAgreementTypeIds = this.event.agreements?.map((a) => a.agreementType.optionItemId);
       if (currentAgreementTypeIds) {
-        return this.$storage.event.getters.agreementTypes(true, currentAgreementTypeIds);
+        return useEventStore().getAgreementTypes(true, currentAgreementTypeIds);
       }
       return [];
     },
 
     event(): EventEntity {
       const { id } = this.$route.params;
-      const storeEvent = this.$storage.event.getters.get(id);
-      return new EventEntity(storeEvent?.entity);
+      const storeEvent = useEventStore().getById(id);
+      return new EventEntity(storeEvent);
     },
 
     responseLevelName():TranslateResult {
@@ -258,7 +259,7 @@ export default Vue.extend({
   async created() {
     try {
       // No need to fetch event again, because event is already fetched in EventDetails.vue
-      await this.$storage.event.actions.fetchAgreementTypes();
+      await useEventStore().fetchAgreementTypes();
     } catch (e) {
       this.$appInsights.trackException(e, {}, 'EventSummary', 'created');
     }
@@ -286,7 +287,7 @@ export default Vue.extend({
     onStatusChange({ status, reason }: { status: EEventStatus, reason: string }) {
       this.showEventStatusDialog = false;
 
-      this.$storage.event.actions.setEventStatus({
+      useEventStore().setEventStatus({
         event: this.event,
         status,
         reason,

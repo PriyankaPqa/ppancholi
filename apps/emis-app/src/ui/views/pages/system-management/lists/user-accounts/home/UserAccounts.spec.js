@@ -3,12 +3,12 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
 import { mockOptionItemData, mockRoles } from '@libs/entities-lib/optionItem';
-import { mockUserStateLevel } from '@/test/helpers';
 
 import {
   AccountStatus, mockCombinedUserAccounts, mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from './UserAccounts.vue';
 
 const localVue = createLocalVue();
@@ -572,9 +572,6 @@ describe('UserAccounts.vue', () => {
               ],
             };
           },
-          store: {
-            ...mockUserStateLevel(6),
-          },
           mocks: {
             $storage: {
               userAccount: {
@@ -616,9 +613,6 @@ describe('UserAccounts.vue', () => {
                 },
               ],
             };
-          },
-          store: {
-            ...mockUserStateLevel(6),
           },
           mocks: {
             $storage: {
@@ -676,9 +670,7 @@ describe('UserAccounts.vue', () => {
               ],
             };
           },
-          store: {
-            ...mockUserStateLevel(5),
-          },
+          pinia: getPiniaForUser('level5'),
           mocks: {
             $storage: {
               userAccount: {
@@ -735,9 +727,7 @@ describe('UserAccounts.vue', () => {
               ],
             };
           },
-          store: {
-            ...mockUserStateLevel(5),
-          },
+          pinia: getPiniaForUser('level5'),
           mocks: {
             $storage: {
               userAccount: {

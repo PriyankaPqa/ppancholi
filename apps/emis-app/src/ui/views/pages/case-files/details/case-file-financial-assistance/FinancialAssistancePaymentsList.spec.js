@@ -5,13 +5,13 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockCombinedCaseFinancialAssistance, ApprovalStatus } from '@libs/entities-lib/financial-assistance-payment';
 import routes from '@/constants/routes';
-import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
+import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import Component from './FinancialAssistancePaymentsList.vue';
 
 let storage = mockStorage();
 const localVue = createLocalVue();
-const mockEvent = mockCombinedEvent();
-mockEvent.entity.schedule.status = EEventStatus.Open;
+const mockEvent = mockEventEntity();
+mockEvent.schedule.status = EEventStatus.Open;
 
 describe('FinancialAssistancePaymentsList.vue', () => {
   let wrapper;

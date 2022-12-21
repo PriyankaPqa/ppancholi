@@ -111,8 +111,7 @@ describe('MassActionsHome.vue', () => {
 
     describe('availableCards', () => {
       it('should return result of filterItems ', () => {
-        wrapper.vm.filterItems = jest.fn(() => []);
-        expect(wrapper.vm.availableCards).toEqual([]);
+        expect(wrapper.vm.availableCards).toEqual(wrapper.vm.filterItems(wrapper.vm.cards));
       });
     });
 

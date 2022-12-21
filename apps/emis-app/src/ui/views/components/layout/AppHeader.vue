@@ -62,6 +62,7 @@ import { RcTooltip } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
 import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
+import { useUserStore } from '@/pinia/user/user';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -80,7 +81,7 @@ export default Vue.extend({
 
   computed: {
     getAvatarName() {
-      const user = this.$storage.user.getters.user();
+      const user = useUserStore().getUser();
       return user.getInitials();
     },
 

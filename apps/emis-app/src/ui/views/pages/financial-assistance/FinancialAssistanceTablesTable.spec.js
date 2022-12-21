@@ -2,12 +2,12 @@ import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockUserStateLevel } from '@/test/helpers';
 import { mockStorage } from '@/storage';
 import { mockCombinedFinancialAssistances } from '@libs/entities-lib/financial-assistance';
 import { mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from './FinancialAssistanceTablesTable.vue';
 
 const storage = mockStorage();
@@ -19,11 +19,9 @@ describe('FinancialAssistanceTablesTable.vue', () => {
   beforeEach(() => {
     wrapper = mount(Component, {
       localVue,
+      pinia: getPiniaForUser('level6'),
       mocks: {
         $storage: storage,
-      },
-      store: {
-        ...mockUserStateLevel(6),
       },
       computed: {
         tableData: () => mockCombinedFinancialAssistances(),
@@ -71,6 +69,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       it('returns the correct headers data', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia: getPiniaForUser('level6'),
           mocks: {
             $storage: storage,
           },
@@ -164,6 +163,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       it('should return the correct values', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia: getPiniaForUser('level6'),
           mocks: {
             $storage: storage,
           },
@@ -177,6 +177,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       it('returns the correct object', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia: getPiniaForUser('level6'),
           mocks: {
             $storage: storage,
           },
@@ -196,6 +197,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
         wrapper = mount(Component, {
           localVue,
+          pinia: getPiniaForUser('level6'),
           mocks: {
             $storage: storage,
           },
@@ -229,6 +231,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       it('returns correct data', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia: getPiniaForUser('level6'),
           mocks: {
             $route: {
               params: {
@@ -272,6 +275,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
         wrapper = mount(Component, {
           localVue,
+          pinia: getPiniaForUser('level6'),
           mocks: {
             $storage: storage,
           },
@@ -357,6 +361,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       it('calls search action', async () => {
         wrapper = mount(Component, {
           localVue,
+          pinia: getPiniaForUser('level6'),
           mocks: {
             $storage: storage,
           },

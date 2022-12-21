@@ -3,26 +3,24 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import MassActionBaseTable from '@/ui/views/pages/mass-actions/components/MassActionBaseTable.vue';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import routes from '@/constants/routes';
-import { mockUserStateLevel } from '@/test/helpers';
 import helpers from '@/ui/helpers/helpers';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from './DataCorrectionHome.vue';
 
 const localVue = createLocalVue();
 let wrapper;
 
-const doMount = async (fullMount = false, store = {}, additionalOverwrites = {}) => {
+const doMount = async (fullMount = false, pinia = {}, additionalOverwrites = {}) => {
   wrapper = (fullMount ? mount : shallowMount)(Component, {
     localVue,
-    store: {
-      ...store,
-    },
+    pinia,
     ...additionalOverwrites,
   });
 };
 
 describe('DataCorrectionHome.vue', () => {
   beforeEach(() => {
-    doMount(false);
+    doMount(false, getPiniaForUser('level6'));
   });
 
   describe('Template', () => {
@@ -67,12 +65,12 @@ describe('DataCorrectionHome.vue', () => {
 
     describe('showAddButton', () => {
       it('should be true if level 6', () => {
-        doMount(false, mockUserStateLevel(6));
+        doMount(false, getPiniaForUser('level6'));
         expect(wrapper.findComponent(MassActionBaseTable).props('showAddButton')).toEqual(true);
       });
 
       it('should be false if not level 6', () => {
-        doMount(false, mockUserStateLevel(5));
+        doMount(false, getPiniaForUser('level5'));
         expect(wrapper.findComponent(MassActionBaseTable).props('showAddButton')).toEqual(false);
       });
     });

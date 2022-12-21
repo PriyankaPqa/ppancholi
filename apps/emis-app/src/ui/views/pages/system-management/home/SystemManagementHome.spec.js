@@ -3,6 +3,7 @@ import {
   shallowMount,
   mount,
 } from '@/test/testSetup';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from './SystemManagementHome.vue';
 
 const localVue = createLocalVue();
@@ -13,10 +14,9 @@ describe('SystemManagementHome.vue', () => {
   describe('Template', () => {
     beforeEach(async () => {
       wrapper = mount(Component, {
+        pinia: getPiniaForUser('level6'),
         localVue,
       });
-
-      await wrapper.setRole('level6');
     });
 
     describe('Option lists card', () => {

@@ -178,7 +178,7 @@ import _sortBy from 'lodash/sortBy';
 import {
   TeamType, ITeamEvent, TeamEntity, ITeamEntity,
 } from '@libs/entities-lib/team';
-import { EEventStatus, IEventCombined, IEventEntity } from '@libs/entities-lib/event';
+import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
@@ -189,6 +189,7 @@ import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError
 import { IError } from '@libs/services-lib/http-client';
 import { Status } from '@libs/entities-lib/base';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { useEventStore } from '@/pinia/event/event';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,
@@ -352,9 +353,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     getAvailableEvents() {
       let availableEvents = this.currentEvents ?? [];
+      const allEvents = useEventStore().getAll().map((e: IEventEntity) => e);
+      const eventsByStatus = useEventStore().getEventsByStatus([EEventStatus.Open, EEventStatus.OnHold]);
 
-      const allEvents:IEventEntity[] = this.$storage.event.getters.getAll().map((e: IEventCombined) => e.entity);
-      const eventsByStatus:IEventEntity[] = this.$storage.event.getters.eventsByStatus([EEventStatus.Open, EEventStatus.OnHold]);
       if (eventsByStatus) {
         const activeEvents: ITeamEvent[] = eventsByStatus.map((e: IEventEntity) => ({
           id: e.id,
@@ -362,6 +363,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         }));
 
         let existingInactiveEvents = [] as ITeamEvent[];
+
         if (this.isEditMode) {
           const selectedEvents = allEvents.filter((e) => this.team.eventIds.indexOf(e.id) > -1);
           existingInactiveEvents = selectedEvents.filter((ev: ITeamEvent) => !activeEvents.find((e) => e.id === ev.id));

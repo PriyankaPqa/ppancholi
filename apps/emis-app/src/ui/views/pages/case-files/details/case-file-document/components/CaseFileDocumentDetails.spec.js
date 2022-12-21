@@ -3,14 +3,14 @@ import { mockCombinedCaseFileDocuments } from '@libs/entities-lib/case-file-docu
 import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
-import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
+import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 
 import Component from './CaseFileDocumentDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
-const mockEvent = mockCombinedEvent();
-mockEvent.entity.schedule.status = EEventStatus.Open;
+const mockEvent = mockEventEntity();
+mockEvent.schedule.status = EEventStatus.Open;
 
 describe('CaseFileDocumentDetails', () => {
   let wrapper;

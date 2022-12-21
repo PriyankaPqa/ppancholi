@@ -115,6 +115,7 @@ import { FilterKey } from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
+import { useUserStore } from '@/pinia/user/user';
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'CaseFilesTable',
@@ -162,7 +163,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
   computed: {
     userId():string {
-      return this.$storage.user.getters.userId();
+      return useUserStore().getUserId();
     },
 
     myCaseFilesFilter(): Record<string, unknown> {

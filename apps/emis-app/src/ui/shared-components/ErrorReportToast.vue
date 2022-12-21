@@ -120,6 +120,7 @@ import { RcDialog, VTextAreaWithValidation, RcTooltip } from '@libs/component-li
 import { TranslateResult } from 'vue-i18n';
 import { IServerError, IErrorReport, VForm } from '@libs/shared-lib/types';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
+import { useUserStore } from '@/pinia/user/user';
 import helpers from '../helpers/helpers';
 
 export default Vue.extend({
@@ -306,7 +307,7 @@ export default Vue.extend({
 
       this.report = {
         id: format(timeNow, 'yyyy-MM-dd_H:mm:ss'),
-        user: this.$storage.user.getters.user(),
+        user: useUserStore().getUser(),
         timestamp: timeNow.toISOString(),
         api: this.api,
         status: this.serverError.response?.status,

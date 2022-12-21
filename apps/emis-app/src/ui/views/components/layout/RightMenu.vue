@@ -160,6 +160,7 @@ import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { Status } from '@libs/entities-lib/base';
+import { useUserStore } from '@/pinia/user/user';
 
 export default Vue.extend({
   name: 'RightMenu',
@@ -179,7 +180,7 @@ export default Vue.extend({
       return this.$store.state.dashboard.rightMenuVisible;
     },
     user(): IUser {
-      return this.$storage.user.getters.user();
+      return useUserStore().getUser();
     },
     isDev() {
       return process.env.VITE_APP_ENV === 'development';
@@ -187,11 +188,11 @@ export default Vue.extend({
   },
 
   async mounted() {
-    const noAccess = this.$storage.user.getters.user().hasRole('noAccess');
+    const noAccess = useUserStore().getUser().hasRole('noAccess');
     this.appVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
     if (!noAccess) {
       this.userAccount = await this.$storage.userAccount.actions.fetch(
-        this.$storage.user.getters.userId(),
+        useUserStore().getUserId(),
         { useEntityGlobalHandler: false, useMetadataGlobalHandler: false },
       );
       this.currentTenantId = this.userAccount.entity?.tenantId;
@@ -219,7 +220,7 @@ export default Vue.extend({
 
     async logout() {
       await this.$signalR.unsubscribeAll();
-      this.$storage.user.actions.signOut();
+      useUserStore().signOut();
     },
 
     changeTenant() {

@@ -13,7 +13,6 @@ import { OptionItemsService } from '@libs/services-lib/optionItems/optionItems';
 import { tabs } from '@/store/modules/registration/tabs';
 import { optionList } from '@/store/modules/optionList';
 import { dashboard } from '@/store/modules/dashboard';
-import { user } from '@/store/modules/user';
 
 import { UserAccountEntityModule } from '@/store/modules/user-account/userAccountEntity';
 import { UserAccountMetadataModule } from '@/store/modules/user-account/userAccountMetadata';
@@ -29,11 +28,6 @@ import { CaseNoteEntityModule } from '@/store/modules/case-note/caseNoteEntity';
 import { CaseNoteMetadataModule } from '@/store/modules/case-note/caseNoteMetadata';
 import { CaseNotesService } from '@libs/services-lib/case-notes/entity';
 import { CaseNotesMetadataService } from '@libs/services-lib/case-notes/metadata';
-
-import { EventEntityModule } from '@/store/modules/event/eventEntity';
-import { EventMetadataModule } from '@/store/modules/event/eventMetadata';
-import { EventsService } from '@libs/services-lib/events/entity';
-import { EventsMetadataService } from '@libs/services-lib/events/metadata';
 
 import { CaseFileReferralEntityModule } from '@/store/modules/case-file-referral/caseFileReferralEntity';
 import { CaseFileReferralMetadataModule } from '@/store/modules/case-file-referral/caseFileReferralMetadata';
@@ -177,17 +171,6 @@ const store: StoreOptions<IRootState> = {
       null, // SignalR,
     ).getModule(),
 
-    [vuexModule.EVENT_ENTITIES]: new EventEntityModule(
-      new EventsService(httpClient),
-      new OptionItemsService(httpClient),
-      SignalR,
-    ).getModule(),
-    [vuexModule.EVENT_METADATA]: new EventMetadataModule(
-      new EventsMetadataService(httpClient),
-      SignalR,
-    ).getModule(),
-
-    [vuexModule.USER_MODULE]: user,
     [vuexModule.DASHBOARD_MODULE]: dashboard,
     [vuexModule.OPTION_LIST_MODULE]: optionList,
     [vuexModule.TEAM_ENTITIES]: new TeamEntityModule(

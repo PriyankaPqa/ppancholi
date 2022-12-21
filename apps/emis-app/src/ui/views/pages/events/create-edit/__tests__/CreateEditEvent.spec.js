@@ -5,32 +5,36 @@ import {
   mockOptionItemData,
 } from '@libs/entities-lib/optionItem';
 import {
-  mockCombinedEvents, mockEventEntity, mockRegionData, mockOtherProvinceData,
+  mockEventEntity, mockRegionData, mockOtherProvinceData, mockEventEntities,
 } from '@libs/entities-lib/event';
 import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from '../CreateEditEvent.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+
+const { pinia, eventStore } = useMockEventStore();
 
 describe('CreatEditEvent.vue', () => {
   let wrapper;
 
   const mockEvent = mockEventEntity();
 
-  storage.event.actions.fetchEventTypes = jest.fn(() => mockOptionItemData());
-  storage.event.actions.fetchAll = jest.fn(() => mockCombinedEvents());
-  storage.event.actions.fetchOtherProvinces = jest.fn(() => mockOtherProvinceData());
-  storage.event.actions.createEvent = jest.fn(() => mockEvent);
-  storage.event.actions.updateEvent = jest.fn(() => mockEvent);
-  storage.event.actions.fetchRegions = jest.fn(() => mockRegionData());
-  storage.event.getters.eventTypes = jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e)));
+  eventStore.fetchEventTypes = jest.fn(() => mockOptionItemData());
+  eventStore.fetchAll = jest.fn(() => mockEventEntities());
+  eventStore.fetchOtherProvinces = jest.fn(() => mockOtherProvinceData());
+  eventStore.createEvent = jest.fn(() => mockEvent);
+  eventStore.updateEvent = jest.fn(() => mockEvent);
+  eventStore.fetchRegions = jest.fn(() => mockRegionData());
+  eventStore.getEventTypes = jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e)));
 
   // eslint-disable-next-line @typescript-eslint/default-param-last
   const doMount = (shallow = true, editMode) => {
     const options = {
       localVue,
+      pinia,
       propsData: {
         id: '',
       },
@@ -116,7 +120,7 @@ describe('CreatEditEvent.vue', () => {
       it('should call updateEvent', async () => {
         doMount(true, true);
         await wrapper.vm.submitEdit();
-        expect(wrapper.vm.$storage.event.actions.updateEvent).toBeCalled();
+        expect(eventStore.updateEvent).toBeCalled();
       });
 
       it('should redirect to details page in case of success', async () => {
@@ -130,7 +134,7 @@ describe('CreatEditEvent.vue', () => {
       it('should call createEvent', async () => {
         doMount(true, false);
         await wrapper.vm.submitCreate();
-        expect(wrapper.vm.$storage.event.actions.createEvent).toBeCalled();
+        expect(eventStore.createEvent).toBeCalled();
       });
 
       it('should redirect to details page in case of success', async () => {
@@ -212,7 +216,7 @@ describe('CreatEditEvent.vue', () => {
   describe('Created', () => {
     doMount(true, true);
     it('calls the fetch action on created', async () => {
-      expect(wrapper.vm.$storage.event.actions.fetch).toHaveBeenCalledWith('');
+      expect(eventStore.fetch).toHaveBeenCalledWith('');
     });
   });
 });

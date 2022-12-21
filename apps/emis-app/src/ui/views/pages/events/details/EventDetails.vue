@@ -3,7 +3,7 @@
     data-test="event-details-page"
     :loading="loading"
     :show-right-menu="showRightMenu"
-    :left-menu-title="$m(event.entity.name)"
+    :left-menu-title="$m(event.name)"
     :navigation-tabs="tabs">
     <template v-if="event" #left-menu>
       <div>
@@ -39,10 +39,10 @@
         </div>
 
         <div
-          v-if="event.entity.location && event.entity.location.region && $m(event.entity.location.region)"
+          v-if="event.location && event.location.region && $m(event.location.region)"
           class="rc-body14 pl-6"
           data-test="event-location-region">
-          {{ $m(event.entity.location.region) }}
+          {{ $m(event.location.region) }}
         </div>
       </div>
 
@@ -53,16 +53,16 @@
           </v-icon>
           <span class="fw-bold">{{ $t('eventDetail.phone') }}</span>
           <div>
-            <rc-phone-display class="pl-6" data-test="event-phone" :value="event.entity.responseDetails.assistanceNumber" />
+            <rc-phone-display class="pl-6" data-test="event-phone" :value="event.responseDetails.assistanceNumber" />
           </div>
         </div>
 
-        <div v-if="event.metadata && event.metadata.relatedEventsInfos && event.metadata.relatedEventsInfos.length" class="rc-body14 pb-2">
+        <div v-if="eventMetadata && eventMetadata.relatedEventsInfos && eventMetadata.relatedEventsInfos.length" class="rc-body14 pb-2">
           <v-icon size="16" class="pr-2" color="gray darken-2">
             mdi-calendar
           </v-icon>
           <span class="fw-bold">{{ $t('eventDetail.relatedEvents') }}</span>
-          <div v-for="(relatedEvent, i) in event.metadata.relatedEventsInfos" :key="relatedEvent.id" class="pl-6" :data-test="`related-event-${i}`">
+          <div v-for="(relatedEvent, i) in eventMetadata.relatedEventsInfos" :key="relatedEvent.id" class="pl-6" :data-test="`related-event-${i}`">
             {{ $m(relatedEvent.eventName) }}
           </div>
         </div>
@@ -91,7 +91,7 @@
             {{ $t('eventDetail.created') }}
           </div>
           <div class="rc-body14 fw-bold" data-test="event-created-date">
-            {{ getLocalStringDate(event.entity.created, 'Entity.created') }}
+            {{ getLocalStringDate(event.created, 'Entity.created') }}
           </div>
         </div>
 
@@ -100,8 +100,8 @@
             {{ $t('eventDetail.reported') }}
           </div>
           <div class="rc-body14 fw-bold" data-test="event-reported-date">
-            {{ event.entity.responseDetails
-              ? getLocalStringDate(event.entity.responseDetails.dateReported, 'EventResponseDetails.dateReported') : "-" }}
+            {{ event.responseDetails
+              ? getLocalStringDate(event.responseDetails.dateReported, 'EventResponseDetails.dateReported') : "-" }}
           </div>
         </div>
 
@@ -140,12 +140,12 @@ import helpers from '@/ui/helpers/helpers';
 
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import {
-  EEventStatus, EventEntity, IEventCombined, IEventMetadata,
+  EEventStatus, EventEntity, IEventEntity, IEventMetadata,
 } from '@libs/entities-lib/event';
 import { ECanadaProvinces, IMultilingual, INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-
+import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
 import { Resize } from 'vuetify/es5/directives';
 
 export default Vue.extend({
@@ -182,32 +182,36 @@ export default Vue.extend({
   },
 
   computed: {
-    event(): IEventCombined {
-      return this.$storage.event.getters.get(this.id) || { entity: new EventEntity(), metadata: {} as IEventMetadata };
+    event(): IEventEntity {
+      return useEventStore().getById(this.id) || new EventEntity();
+    },
+
+    eventMetadata(): IEventMetadata {
+      return useEventMetadataStore().getById(this.id);
     },
 
     eventId() : string {
-      return this.event?.entity.number?.toString().padStart(this.idDigitsCount, '0');
+      return this.event?.number?.toString().padStart(this.idDigitsCount, '0');
     },
 
     eventTypeName(): IMultilingual {
-      if (this.event.entity.responseDetails?.eventType?.optionItemId == null) {
+      if (this.event.responseDetails?.eventType?.optionItemId == null) {
         return null;
       }
-      const eventTypes = this.$storage.event.getters.eventTypes(false);
+      const eventTypes = useEventStore().getEventTypes(false);
 
-      const currentType = eventTypes?.find((t) => t.id === this.event.entity.responseDetails.eventType.optionItemId);
+      const currentType = eventTypes?.find((t) => t.id === this.event.responseDetails.eventType.optionItemId);
       return currentType?.name;
     },
 
     provinceName(): TranslateResult {
-      const provinceCode = this.event?.entity?.location?.province;
+      const provinceCode = this.event?.location?.province;
       if (!provinceCode) {
         return null;
       }
       const isOther = provinceCode === ECanadaProvinces.OT;
       if (isOther) {
-        return this.$m(this.event.entity.location.provinceOther);
+        return this.$m(this.event.location.provinceOther);
       }
       return this.$t(`common.provinces.${ECanadaProvinces[provinceCode]}`);
     },
@@ -262,7 +266,7 @@ export default Vue.extend({
     },
 
     statusHistory(): Array<Record<string, string>> {
-      const sorted = _orderBy(this.event.entity.scheduleHistory, 'timestamp');
+      const sorted = _orderBy(this.event.scheduleHistory, 'timestamp');
 
       return sorted.map((s) => {
         const item = {
@@ -293,8 +297,9 @@ export default Vue.extend({
   async created() {
     this.loading = true;
     try {
-      await this.$storage.event.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
-      await this.$storage.event.actions.fetchEventTypes();
+      await useEventStore().fetch(this.id, true);
+      await useEventMetadataStore().fetch(this.id);
+      await useEventStore().fetchEventTypes();
     } finally {
       this.loading = false;
     }

@@ -8,7 +8,6 @@ const storage = mockStorage();
 let wrapper;
 
 const FAPayment = mockCombinedCaseFinancialAssistance();
-storage.user.getters.userId = jest.fn(() => '1234');
 storage.financialAssistancePayment.getters.getByIds = jest.fn(() => [FAPayment]);
 
 const doMount = (otherOptions = {}) => {

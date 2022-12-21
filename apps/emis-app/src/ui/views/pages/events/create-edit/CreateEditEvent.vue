@@ -28,10 +28,11 @@ import { RcPageContent } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import routes from '@/constants/routes';
-import { EventEntity } from '@libs/entities-lib/event';
+import { EventEntity, IEventEntity } from '@libs/entities-lib/event';
 import { VForm, IServerError } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import { useEventStore } from '@/pinia/event/event';
 import EventForm from './EventForm.vue';
 
 export default mixins(handleUniqueNameSubmitError).extend({
@@ -82,8 +83,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.eventLoading = true;
 
       try {
-        const storeEvent = await this.$storage.event.actions.fetch(this.id);
-        this.event = new EventEntity(storeEvent.entity);
+        const storeEvent = await useEventStore().fetch(this.id) as IEventEntity;
+        this.event = new EventEntity(storeEvent);
       } finally {
         this.eventLoading = false;
       }
@@ -128,7 +129,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async submitEdit() {
-      const res = await this.$storage.event.actions.updateEvent(this.event);
+      const res = await useEventStore().updateEvent(this.event);
       if (res) {
         this.$toasted.global.success(this.$t('event_edit.success'));
         this.$router.replace({ name: routes.events.summary.name, params: { id: this.event.id } });
@@ -136,7 +137,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async submitCreate() {
-      const newEvent = await this.$storage.event.actions.createEvent(this.event);
+      const newEvent = await useEventStore().createEvent(this.event);
       if (newEvent) {
         this.event = new EventEntity(newEvent);
         this.$toasted.global.success(this.$t('event_create.success'));

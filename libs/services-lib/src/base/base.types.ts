@@ -2,7 +2,7 @@ import { IEntity } from '@libs/entities-lib/base';
 import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { IRestResponse } from '../http-client';
 
-export interface IDomainBaseService<T extends IEntity, IdParams> {
+export interface IDomainBaseService<T, IdParams> {
   get(idParams: IdParams, useGlobalHandler?: boolean): Promise<T>;
   getFullResponse(idParams: IdParams, useGlobalHandler?: boolean): Promise<IRestResponse<T>>;
   getAll(parentId?: Omit<IdParams, 'id'>): Promise<T[]>;
@@ -14,6 +14,7 @@ export interface IDomainBaseService<T extends IEntity, IdParams> {
 
 export interface IDomainBaseServiceMock <T extends IEntity> {
   get: jest.Mock<T>;
+  getFullResponse: jest.Mock<IRestResponse<T>>;
   getAll: jest.Mock<Array<T>>;
   getAllIncludingInactive: jest.Mock<Array<T>>;
   activate: jest.Mock<T>;

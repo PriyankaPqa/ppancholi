@@ -3,7 +3,7 @@ import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-as
 import { ApprovalStatus, mockCaseFinancialAssistanceEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { mockProgramEntity } from '@libs/entities-lib/program';
 import { mockStorage } from '@/storage';
-import { mockCombinedEvent, EEventStatus } from '@libs/entities-lib/event';
+import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import Component from '../ViewFinancialAssistanceDetails.vue';
 
@@ -12,8 +12,8 @@ const storage = mockStorage();
 let financialAssistance = mockCaseFinancialAssistanceEntity();
 const financialAssistanceTable = mockCombinedFinancialAssistance().entity;
 const program = mockProgramEntity();
-const mockEvent = mockCombinedEvent();
-mockEvent.entity.schedule.status = EEventStatus.Open;
+const mockEvent = mockEventEntity();
+mockEvent.schedule.status = EEventStatus.Open;
 
 describe('ViewFinancialAssistanceDetails.vue', () => {
   let wrapper;

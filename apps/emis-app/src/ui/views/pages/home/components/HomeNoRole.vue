@@ -30,6 +30,7 @@ import Vue from 'vue';
 import { RcPageContent } from '@libs/component-lib/components';
 import { IUser } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
+import { useUserStore } from '@/pinia/user/user';
 
 export default Vue.extend({
   name: 'HomeNoRole',
@@ -40,7 +41,7 @@ export default Vue.extend({
 
   computed: {
     user(): IUser {
-      return this.$storage.user.getters.user();
+      return useUserStore().getUser();
     },
   },
 

@@ -3,21 +3,17 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import MassActionBaseTable from '@/ui/views/pages/mass-actions/components/MassActionBaseTable.vue';
 import { MassActionType } from '@libs/entities-lib/mass-action';
 import routes from '@/constants/routes';
-import {
-  Contributor, mockUserStateContributor, mockUserStateLevel,
-} from '@/test/helpers';
+import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from './ImportValidationStatusHome.vue';
 
 const localVue = createLocalVue();
 
 let wrapper;
 
-const doMount = async (fullMount = false, store = {}, additionalOverwrites = {}) => {
+const doMount = async (fullMount = false, pinia = getPiniaForUser('level6'), additionalOverwrites = {}) => {
   wrapper = (fullMount ? mount : shallowMount)(Component, {
     localVue,
-    store: {
-      ...store,
-    },
+    pinia,
     ...additionalOverwrites,
   });
 };
@@ -71,22 +67,22 @@ describe('ImportValidationStatusHome.vue', () => {
 
     describe('showAddButton', () => {
       it('should be true if level 6', () => {
-        doMount(false, mockUserStateLevel(6));
+        doMount(false);
         expect(wrapper.findComponent(MassActionBaseTable).props('showAddButton')).toEqual(true);
       });
 
       it('should be true if contributorIM ', () => {
-        doMount(false, mockUserStateContributor(Contributor.IM));
+        doMount(false, getPiniaForUser('contributorIM'));
         expect(wrapper.findComponent(MassActionBaseTable).props('showAddButton')).toEqual(true);
       });
 
       it('should be false if not level 6', () => {
-        doMount(false, mockUserStateLevel(5));
+        doMount(false, getPiniaForUser('level5'));
         expect(wrapper.findComponent(MassActionBaseTable).props('showAddButton')).toEqual(false);
       });
 
       it('should be false if not contributorIM', () => {
-        doMount(false, mockUserStateContributor(Contributor.Finance));
+        doMount(false, getPiniaForUser('contributorFinance'));
         expect(wrapper.findComponent(MassActionBaseTable).props('showAddButton')).toEqual(false);
       });
     });
