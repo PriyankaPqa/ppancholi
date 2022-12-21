@@ -156,6 +156,7 @@ export default Vue.extend({
         specifiedOther: null as string,
       },
       helpLink: this.$t('zendesk.authentication_identity'),
+      isInitialLoading: true,
     };
   },
   computed: {
@@ -218,10 +219,12 @@ export default Vue.extend({
       }
     },
     'form.status': {
-      handler(status) {
-        if (status === IdentityAuthenticationStatus.Failed || status === IdentityAuthenticationStatus.NotVerified) {
-          this.form.method = IdentityAuthenticationMethod.NotApplicable;
+      handler() {
+        // isInitialLoading is to disable this watcher during the Initialization, then we can see the status and method from BE data. -- [EMISV2-6099]
+        if (!this.isInitialLoading) {
+            this.form.method = IdentityAuthenticationMethod.NotApplicable;
         }
+        this.isInitialLoading = false;
       },
     },
   },

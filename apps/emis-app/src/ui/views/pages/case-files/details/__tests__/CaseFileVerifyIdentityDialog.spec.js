@@ -118,6 +118,28 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
       it('calls fetchScreeningIds', async () => {
         expect(storage.caseFile.actions.fetchScreeningIds).toHaveBeenCalled();
       });
+
+      it('should display the status and method from with the data from BE during the initial loading', async () => {
+        await wrapper.setProps({
+          show: true,
+          caseFile: {
+            id: 'a612c472-95b7-4983-99c0-3ee9c4946b45',
+            identityAuthentication: {
+              method: IdentityAuthenticationMethod.System,
+              status: IdentityAuthenticationStatus.Failed,
+              identificationIds: [],
+            },
+          },
+        });
+        await wrapper.setData({
+          isInitialLoading: true,
+        });
+        await wrapper.vm.$nextTick();
+        wrapper.vm.form.method = wrapper.vm.caseFile.identityAuthentication.method;
+        wrapper.vm.form.status = wrapper.vm.caseFile.identityAuthentication.status;
+        expect(wrapper.vm.form.status).toEqual(IdentityAuthenticationStatus.Failed);
+        expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.System);
+      });
     });
   });
 
@@ -297,7 +319,24 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
 
   describe('Watcher', () => {
     describe('form.status', () => {
+      test('If user put status as Passed, the method should be switched to not applicable', async () => {
+        await wrapper.setData({
+          isInitialLoading: false,
+        });
+        wrapper.vm.form.method = IdentityAuthenticationMethod.System;
+        await wrapper.vm.$nextTick();
+        wrapper.vm.form.status = IdentityAuthenticationStatus.NotVerified;
+        await wrapper.vm.$nextTick();
+        wrapper.vm.form.status = IdentityAuthenticationStatus.Passed;
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.NotApplicable);
+      });
+
       test('If user put status as failed, the method should be switched to not applicable', async () => {
+        await wrapper.setData({
+          isInitialLoading: false,
+        });
         wrapper.vm.form.method = IdentityAuthenticationMethod.System;
         await wrapper.vm.$nextTick();
         wrapper.vm.form.status = IdentityAuthenticationStatus.NotVerified;
@@ -309,6 +348,9 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
       });
 
       test('If user put status as not verified, the method should be switched to not applicable', async () => {
+        await wrapper.setData({
+          isInitialLoading: false,
+        });
         wrapper.vm.form.method = IdentityAuthenticationMethod.System;
         await wrapper.vm.$nextTick();
         wrapper.vm.form.status = IdentityAuthenticationStatus.Passed;
