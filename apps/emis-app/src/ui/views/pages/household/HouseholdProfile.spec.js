@@ -54,6 +54,7 @@ describe('HouseholdProfile.vue', () => {
           return {
             events,
             loading: false,
+            caseFiles: mockCaseFileEntities(),
           };
         },
         computed: {
@@ -113,6 +114,7 @@ describe('HouseholdProfile.vue', () => {
             return {
               events,
               loading: false,
+              caseFiles: mockCaseFileEntities(),
             };
           },
           computed: {
@@ -143,6 +145,7 @@ describe('HouseholdProfile.vue', () => {
             return {
               events,
               loading: false,
+              caseFiles: mockCaseFileEntities(),
             };
           },
           computed: {
@@ -248,43 +251,6 @@ describe('HouseholdProfile.vue', () => {
       });
     });
 
-    describe('shelterLocations', () => {
-      it('returns the correct list of shelter locations', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          computed: {
-            country() {
-              return 'mock-country';
-            },
-            household() {
-              return householdCreate;
-            },
-          },
-          data() {
-            return {
-              myEvents: [...events,
-                mockEventMainInfo(
-                  {
-                    id: '2',
-                    schedule: { status: 0 },
-                    shelterLocations: [{ id: 'loc-5', status: EEventLocationStatus.Active }],
-                  },
-                )],
-            };
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-
-        expect(wrapper.vm.shelterLocations).toEqual([
-          { id: 'loc-1', status: EEventLocationStatus.Active }, { id: 'loc-3', status: EEventLocationStatus.Active }]);
-      });
-    });
-
     describe('household', () => {
       it('returns the right data', () => {
         wrapper = shallowMount(Component, {
@@ -323,35 +289,6 @@ describe('HouseholdProfile.vue', () => {
           },
         });
         expect(wrapper.vm.householdData).toEqual(household);
-      });
-    });
-
-    describe('activeCaseFiles', () => {
-      it('returns the open case files', () => {
-        const cfOpen = { caseFileId: '1', caseFileStatus: CaseFileStatus.Open };
-        const cfClosed = { caseFileId: '2', caseFileStatus: CaseFileStatus.Closed };
-        const caseFiles = [cfOpen, cfClosed];
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          data() {
-            return {
-              caseFiles: [...caseFiles],
-            };
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-
-        expect(wrapper.vm.activeCaseFiles).toEqual([cfOpen]);
       });
     });
 
@@ -645,7 +582,6 @@ describe('HouseholdProfile.vue', () => {
             $storage: storage,
           },
         });
-        jest.spyOn(wrapper.vm, 'fetchHouseholdData').mockImplementation(() => { });
       });
       it('calls registration storage action fetchGenders', () => {
         expect(wrapper.vm.$storage.registration.actions.fetchGenders).toHaveBeenCalledTimes(1);
@@ -659,38 +595,33 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
       });
 
-      it('calls fetchHouseholdData', async () => {
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.fetchHouseholdData).toHaveBeenCalledTimes(1);
+      it('calls fetchHouseholdData, fetchMyEvents, fetchAllEvents, fetchCaseFiles, fetchShelterLocations', async () => {
+        wrapper.vm.fetchHouseholdData = jest.fn();
+        wrapper.vm.fetchMyEvents = jest.fn();
+        wrapper.vm.fetchAllEvents = jest.fn();
+        wrapper.vm.fetchCaseFiles = jest.fn();
+        wrapper.vm.fetchShelterLocations = jest.fn();
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.fetchHouseholdData).toHaveBeenCalled();
+        expect(wrapper.vm.fetchMyEvents).toHaveBeenCalled();
+        expect(wrapper.vm.fetchAllEvents).toHaveBeenCalled();
+        expect(wrapper.vm.fetchCaseFiles).toHaveBeenCalled();
+        expect(wrapper.vm.fetchShelterLocations).toHaveBeenCalled();
       });
     });
   });
 
   describe('Methods', () => {
-    describe('fetchMyEvents', () => {
-      it('calls searchMyEventsById with the expected parameters', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          computed: {
-            activeCaseFiles() {
-              return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
-            },
-            household() {
-              return householdCreate;
-            },
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-        jest.spyOn(wrapper.vm.$services.events, 'searchMyEventsById').mockImplementation(() => {});
-        await wrapper.vm.fetchMyEvents();
-        expect(wrapper.vm.$services.events.searchMyEventsById).toHaveBeenCalledWith(['id-1', 'id-2']);
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          id: household.entity.id,
+        },
+        mocks: {
+          $storage: storage,
+        },
       });
     });
 
@@ -723,17 +654,6 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('fetchHouseholdData', () => {
-      beforeEach(() => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-      });
       it('calls household storage action fetch with the id', async () => {
         await wrapper.vm.fetchHouseholdData();
         expect(wrapper.vm.$storage.household.actions.fetch).toHaveBeenCalledWith(
@@ -770,29 +690,11 @@ describe('HouseholdProfile.vue', () => {
 
     describe('addAdditionalMember', () => {
       it('should set newAdditionalMember to new instance of member', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
         wrapper.vm.addAdditionalMember();
         expect(wrapper.vm.newAdditionalMember).toEqual(new Member());
       });
 
       it('should set showAddAdditionalMember to true', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
         wrapper.vm.addAdditionalMember();
         expect(wrapper.vm.showAddAdditionalMember).toEqual(true);
       });
@@ -862,15 +764,6 @@ describe('HouseholdProfile.vue', () => {
 
     describe('navigateBack', () => {
       it('should call router back method to new instance of member', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
         wrapper.vm.$router.back = jest.fn();
         wrapper.vm.navigateBack();
         expect(wrapper.vm.$router.back).toHaveBeenCalledTimes(1);
@@ -901,37 +794,24 @@ describe('HouseholdProfile.vue', () => {
 
     describe('moveMembers', () => {
       it('should redirect to proper page', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          mocks: { $storage: storage },
-        });
         wrapper.vm.moveMembers();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.household.householdMembersMove.name });
       });
     });
 
-    describe('fetchCaseFiles', () => {
-      beforeEach(() => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-        });
-      });
-      it('calls fetchCaseFiles with the id', async () => {
-        await wrapper.vm.fetchCaseFiles();
-        expect(wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId).toHaveBeenCalledWith(household.entity.id);
+    describe('makeShelterLocationsListForMember', () => {
+      it('adds the current member shelter location to the shelter locations list if the member has a shelter location as address', async () => {
+        const member = { currentAddress: { shelterLocation: { id: 'sl-m-1' } } };
+        await wrapper.setData({ shelterLocations: [{ id: 'sl-1' }] });
+        const result = await wrapper.vm.makeShelterLocationsListForMember(member);
+        expect(result).toEqual([{ id: 'sl-m-1' }, { id: 'sl-1' }]);
       });
 
-      it('updates caseFiles with the call result', async () => {
-        const caseFiles = mockCaseFileEntities();
-        wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId = jest.fn(() => caseFiles);
-        await wrapper.vm.fetchCaseFiles('1');
-        expect(wrapper.vm.caseFiles).toEqual(caseFiles);
+      it('returns shelter location  if the member has no shelter location as address', async () => {
+        const member = { currentAddress: { shelterLocation: null } };
+        await wrapper.setData({ shelterLocations: [{ id: 'sl-1' }] });
+        const result = await wrapper.vm.makeShelterLocationsListForMember(member);
+        expect(result).toEqual([{ id: 'sl-1' }]);
       });
     });
   });

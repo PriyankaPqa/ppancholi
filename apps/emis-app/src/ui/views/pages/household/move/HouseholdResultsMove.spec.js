@@ -1,8 +1,5 @@
 import { mockCombinedHouseholds, mockCombinedHousehold } from '@libs/entities-lib/household';
-import { mockHouseholdCreateData } from '@libs/entities-lib/household-create/householdCreate.mock';
-import { HouseholdCreate, mockShelterData } from '@libs/entities-lib/household-create';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { mockStorage } from '@/storage';
 
 import Component from './HouseholdResultsMove.vue';
@@ -48,39 +45,9 @@ describe('HouseholdResultsMove.vue', () => {
     });
 
     describe('select', () => {
-      it('should set selectedId', async () => {
+      it('should emit select event with the householdid', async () => {
         await wrapper.vm.select('1');
-        expect(wrapper.vm.selectedId).toBe('1');
-      });
-
-      it('should call the household action fetch', async () => {
-        await wrapper.vm.select('1');
-        expect(storage.household.actions.fetch).toHaveBeenCalledWith('1');
-      });
-
-      it('should call fetchShelterLocations', async () => {
-        wrapper.vm.fetchShelterLocations = jest.fn(() => []);
-        await wrapper.vm.select('1');
-        expect(wrapper.vm.fetchShelterLocations).toHaveBeenCalledWith(mockCombinedHousehold(), false);
-      });
-
-      it('should call buildHouseholdCreateData', async () => {
-        wrapper.vm.fetchShelterLocations = jest.fn(() => [mockShelterData()]);
-        wrapper.vm.buildHouseholdCreateData = jest.fn(() => {});
-        await wrapper.vm.select('1');
-        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(mockCombinedHousehold(), [mockShelterData()]);
-      });
-
-      it('should emit select event with built household and active shelter locations', async () => {
-        const shelters = [{ ...mockShelterData(), id: 'id-1', status: EEventLocationStatus.Active },
-          { ...mockShelterData(), id: 'id-2', status: EEventLocationStatus.Inactive }];
-        wrapper.vm.buildHouseholdCreateData = jest.fn(() => mockHouseholdCreateData());
-        wrapper.vm.fetchShelterLocations = jest.fn(() => shelters);
-        await wrapper.vm.select('1');
-        expect(wrapper.emitted('select')[0][0]).toEqual({
-          household: new HouseholdCreate(mockHouseholdCreateData()),
-          shelterLocations: [{ ...mockShelterData(), id: 'id-1', status: EEventLocationStatus.Active }],
-        });
+        expect(wrapper.emitted('select')[0][0]).toEqual('1');
       });
     });
   });

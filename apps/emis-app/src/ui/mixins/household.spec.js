@@ -3,12 +3,10 @@ import { mockCombinedHousehold } from '@libs/entities-lib/household/household.mo
 import { mockMemberData, mockMember } from '@libs/entities-lib/value-objects/member';
 import { mockIndigenousCommunitiesGetData, mockGenders } from '@libs/entities-lib/value-objects/identity-set';
 import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@libs/entities-lib/value-objects/contact-information';
-import { mockShelterLocations } from '@libs/entities-lib/registration-event/registrationEvent.mock';
 import { mockCombinedHouseholds } from '@libs/entities-lib/household';
 import household from '@/ui/mixins/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { EEventLocationStatus, mockEventMainInfo } from '@libs/entities-lib/event';
-import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, mockCaseFileEntities } from '@libs/entities-lib/case-file';
 
 const Component = {
   render() {},
@@ -19,18 +17,6 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 const member = mockMember();
 
-const events = [
-  mockEventMainInfo({
-    id: '1',
-    shelterLocations: [{ id: 'loc-1', status: EEventLocationStatus.Active }],
-  }),
-  mockEventMainInfo(
-    {
-      id: '2',
-      shelterLocations: [{ id: 'loc-2', status: EEventLocationStatus.Inactive }, { id: 'loc-3', status: EEventLocationStatus.Active }],
-    },
-  )];
-
 let wrapper;
 
 describe('household', () => {
@@ -38,9 +24,25 @@ describe('household', () => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
       localVue,
+      propsData: {
+        id: 'id-1',
+      },
       mocks: {
         $storage: storage,
       },
+    });
+  });
+
+  describe('Computed', () => {
+    describe('activeCaseFiles', () => {
+      it('returns the open case files', async () => {
+        const cfOpen = { caseFileId: '1', caseFileStatus: CaseFileStatus.Open };
+        const cfClosed = { caseFileId: '2', caseFileStatus: CaseFileStatus.Closed };
+        const caseFiles = [cfOpen, cfClosed];
+        await wrapper.setData({ caseFiles });
+
+        expect(wrapper.vm.activeCaseFiles).toEqual([cfOpen]);
+      });
     });
   });
 
@@ -55,8 +57,79 @@ describe('household', () => {
         const id = 1;
         wrapper.vm.buildHouseholdCreateData = jest.fn(() => ({}));
         const res = await wrapper.vm.fetchHouseholdCreate(id);
-        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(mockCombinedHouseholds()[0], null);
+        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(mockCombinedHouseholds()[0]);
         expect(res).toEqual({});
+      });
+    });
+
+    describe('fetchCaseFiles', () => {
+      it('calls fetchCaseFiles with the props id if no argument is passed', async () => {
+        await wrapper.vm.fetchCaseFiles();
+        expect(wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId).toHaveBeenCalledWith(wrapper.vm.id);
+      });
+
+      it('calls fetchCaseFiles with the id in the argument', async () => {
+        await wrapper.vm.fetchCaseFiles('mock-id');
+        expect(wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId).toHaveBeenCalledWith('mock-id');
+      });
+
+      it('updates caseFiles with the call result if no argument is passed and returns the result', async () => {
+        const caseFiles = mockCaseFileEntities();
+        wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId = jest.fn(() => caseFiles);
+        const result = await wrapper.vm.fetchCaseFiles();
+        expect(wrapper.vm.caseFiles).toEqual(caseFiles);
+        expect(result).toEqual(caseFiles);
+      });
+    });
+
+    describe('fetchMyEvents', () => {
+      it('calls searchMyEventsById with the expected parameters if no argument is passed', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'hh-id',
+          },
+          computed: {
+            activeCaseFiles() {
+              return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        jest.spyOn(wrapper.vm.$services.events, 'searchMyEventsById').mockImplementation(() => {});
+        await wrapper.vm.fetchMyEvents();
+        expect(wrapper.vm.$services.events.searchMyEventsById).toHaveBeenCalledWith(['id-1', 'id-2']);
+      });
+
+      it('calls searchMyEventsById with the expected parameters from the argument', async () => {
+        const caseFiles = [{ eventId: 'id-1' }, { eventId: 'id-2' }];
+        jest.spyOn(wrapper.vm.$services.events, 'searchMyEventsById').mockImplementation(() => {});
+        await wrapper.vm.fetchMyEvents(caseFiles);
+        expect(wrapper.vm.$services.events.searchMyEventsById).toHaveBeenCalledWith(['id-1', 'id-2']);
+      });
+
+      it('stores the result in myEvents if there is no argument and returns the result', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'hh-id',
+          },
+          computed: {
+            activeCaseFiles() {
+              return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        jest.spyOn(wrapper.vm.$services.events, 'searchMyEventsById').mockImplementation(() => ({ value: [{ id: 'eventId' }] }));
+        const result = await wrapper.vm.fetchMyEvents();
+        expect(wrapper.vm.myEvents).toEqual([{ id: 'eventId' }]);
+        expect(result).toEqual([{ id: 'eventId' }]);
       });
     });
 
@@ -82,10 +155,31 @@ describe('household', () => {
         };
         jest.spyOn(wrapper.vm, 'addShelterLocationData').mockImplementation(() => [member]);
         wrapper.vm.$services.households.getPerson = jest.fn(() => member);
-        const shelterLocations = [{ id: 'loc-1' }];
 
-        await wrapper.vm.fetchMembersInformation(household, shelterLocations);
-        expect(wrapper.vm.addShelterLocationData).toHaveBeenCalledWith([member], shelterLocations);
+        await wrapper.vm.fetchMembersInformation(household);
+        expect(wrapper.vm.addShelterLocationData).toHaveBeenCalledWith([member]);
+      });
+    });
+
+    describe('fetchShelterLocations', () => {
+      it('gets the shelterLocations from my events', async () => {
+        const events = [{ entity: { shelterLocations: [{ id: 'sl-1' }] } }, { entity: { shelterLocations: [{ id: 'sl-2' }] } }];
+        await wrapper.setData({ myEvents: events });
+        const result = await wrapper.vm.fetchShelterLocations();
+        expect(result).toEqual([{ id: 'sl-1' }, { id: 'sl-2' }]);
+      });
+
+      it('calls fetchCaseFiles and fetchMyEvents the shelterLocations from my events if an argument is passed and there are no myEvents in the state', async () => {
+        const caseFiles = [{ eventId: 'id-1', caseFileStatus: CaseFileStatus.Open }, { eventId: 'id-2', caseFileStatus: CaseFileStatus.Closed }];
+        const events = [{ entity: { shelterLocations: [{ id: 'sl-1' }] } }, { entity: { shelterLocations: [{ id: 'sl-2' }] } }];
+        await wrapper.setData({ myEvents: null });
+        wrapper.vm.fetchCaseFiles = jest.fn(() => caseFiles);
+        wrapper.vm.fetchMyEvents = jest.fn(() => events);
+        const result = await wrapper.vm.fetchShelterLocations('hh-id');
+
+        expect(wrapper.vm.fetchCaseFiles).toHaveBeenCalledWith('hh-id');
+        expect(wrapper.vm.fetchMyEvents).toHaveBeenCalledWith([{ eventId: 'id-1', caseFileStatus: CaseFileStatus.Open }]);
+        expect(result).toEqual([{ id: 'sl-1' }, { id: 'sl-2' }]);
       });
     });
 
@@ -112,29 +206,10 @@ describe('household', () => {
         wrapper.vm.fetchMembersInformation = jest.fn(() => []);
         wrapper.vm.parseIdentitySet = jest.fn();
         wrapper.vm.parseContactInformation = jest.fn();
-        const shelterLocations = [{ id: 'loc-1', status: EEventLocationStatus.Active }, { id: 'loc-2', status: EEventLocationStatus.Active }];
         const household = mockCombinedHousehold();
-        await wrapper.vm.buildHouseholdCreateData(household, shelterLocations);
-
-        expect(wrapper.vm.fetchMembersInformation).toHaveBeenCalledWith(household, shelterLocations);
-      });
-
-      it('should call fetchShelterLocations if shelterLocations is null', async () => {
-        const household = mockCombinedHousehold();
-        wrapper.vm.fetchShelterLocations = jest.fn();
-
         await wrapper.vm.buildHouseholdCreateData(household);
 
-        expect(wrapper.vm.fetchShelterLocations).toBeCalled();
-      });
-
-      it('should not call fetchShelterLocations if shelterLocations are passed', async () => {
-        const household = mockCombinedHousehold();
-        wrapper.vm.fetchShelterLocations = jest.fn();
-
-        await wrapper.vm.buildHouseholdCreateData(household, mockShelterLocations());
-
-        expect(wrapper.vm.fetchShelterLocations).not.toBeCalled();
+        expect(wrapper.vm.fetchMembersInformation).toHaveBeenCalledWith(household);
       });
 
       it('should return the final object of household to be used in the UI', async () => {
@@ -366,52 +441,35 @@ describe('household', () => {
     });
 
     describe('addShelterLocationData', () => {
-      it('returns the right member data', () => {
-        const shelterLocations = [{ id: 'loc-1', status: EEventLocationStatus.Active }, { id: 'loc-2', status: EEventLocationStatus.Active }];
-        const altMember = { ...member, currentAddress: { shelterLocationId: 'loc-1' } };
-
-        expect(wrapper.vm.addShelterLocationData([altMember], shelterLocations)).toEqual([{
-          ...member,
-          currentAddress: { shelterLocation: { id: 'loc-1', status: EEventLocationStatus.Active }, shelterLocationId: 'loc-1' },
-        }]);
+      it('calls getShelterLocationDatafromId and stores the data in the right place in the member object, if the member has a shelterLocationId', async () => {
+        wrapper.vm.getShelterLocationDatafromId = jest.fn(() => ({ id: 'sl-1', name: 'SL 1' }));
+        const members = [{ currentAddress: { shelterLocationId: 'sl-1' } }];
+        const result = await wrapper.vm.addShelterLocationData(members);
+        expect(wrapper.vm.getShelterLocationDatafromId).toHaveBeenCalledWith('sl-1');
+        expect(result).toEqual([{ currentAddress: { shelterLocationId: 'sl-1', shelterLocation: { id: 'sl-1', name: 'SL 1' } } }]);
       });
     });
 
-    describe('fetchShelterLocations', () => {
-      it('calls searchMyEvents service with the right filter', async () => {
-        const expectedFilter = 'search.in(Entity/Id, \'e70da37e-67cd-4afb-9c36-530c7d8b191f\', \'|\') and Entity/Schedule/Status eq 2';
-        const mockCombineHousehold = mockCombinedHousehold();
-        const householdCaseFiles = [mockCaseFileEntity()];
-        wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId = jest.fn(() => householdCaseFiles);
-        await wrapper.vm.fetchShelterLocations(mockCombineHousehold);
-
-        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({ filter: expectedFilter, top: 999 });
+    describe('getShelterLocationDatafromId', () => {
+      it('returns the shelterLocation data from the state if it finds one', async () => {
+        await wrapper.setData({ shelterLocations: [{ id: 'sl-1', name: 'SL-1' }] });
+        expect(await wrapper.vm.getShelterLocationDatafromId('sl-1')).toEqual({ id: 'sl-1', name: 'SL-1' });
       });
 
-      it('returns the correct list of shelter locations with onlyActive true', async () => {
-        wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({ value: events }));
-
-        const res = await wrapper.vm.fetchShelterLocations(mockCombinedHousehold());
-
-        expect(res).toEqual([
-          { id: 'loc-1', status: EEventLocationStatus.Active },
-          { id: 'loc-3', status: EEventLocationStatus.Active }]);
-      });
-
-      it('returns the correct list of shelter locations with onlyActive false', async () => {
-        wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({ value: events }));
-
-        const res = await wrapper.vm.fetchShelterLocations(mockCombinedHousehold(), false);
-
-        expect(res).toEqual([
-          { id: 'loc-1', status: EEventLocationStatus.Active },
-          { id: 'loc-2', status: EEventLocationStatus.Inactive },
-          { id: 'loc-3', status: EEventLocationStatus.Active }]);
-      });
-
-      it('calls caseFile service method getAllCaseFilesRelatedToHouseholdId', async () => {
-        await wrapper.vm.fetchShelterLocations(mockCombinedHousehold());
-        expect(wrapper.vm.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId).toHaveBeenCalledWith(mockCombinedHousehold().entity.id);
+      it('calls the events search with the right filter if it does not find the shelter in the state and stores the result in otherShelterLocations', async () => {
+        await wrapper.setData({ shelterLocations: [] });
+        wrapper.vm.$services.publicApi.searchEvents = jest.fn(() => ({ value: [{ entity: { shelterLocations: [{ id: 'sl-1', name: 'SL-1' }] } }] }));
+        await wrapper.vm.getShelterLocationDatafromId('sl-1');
+        expect(wrapper.vm.$services.publicApi.searchEvents).toHaveBeenCalledWith({
+          filter: {
+            Entity: {
+              ShelterLocations: {
+                any: { Id: 'sl-1' },
+              },
+            },
+          },
+        });
+        expect(wrapper.vm.otherShelterLocations).toEqual([{ id: 'sl-1', name: 'SL-1' }]);
       });
     });
   });

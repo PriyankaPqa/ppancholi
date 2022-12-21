@@ -132,7 +132,7 @@
             v-if="household.primaryBeneficiary"
             :member="household.primaryBeneficiary"
             is-primary-member
-            :shelter-locations="shelterLocations"
+            :shelter-locations="makeShelterLocationsListForMember(household.primaryBeneficiary)"
             :registration-locations="registrationLocations"
             @reload-household-create="fetchHouseholdData" />
 
@@ -141,7 +141,7 @@
             :key="member.id"
             :member="member"
             :index="index"
-            :shelter-locations="shelterLocations"
+            :shelter-locations="makeShelterLocationsListForMember(member)"
             :registration-locations="registrationLocations"
             @reload-household-create="fetchHouseholdData" />
 
@@ -184,14 +184,14 @@ import _isEmpty from 'lodash/isEmpty';
 
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
-import { IHouseholdCreate, Member } from '@libs/entities-lib/household-create';
+import { IHouseholdCreate, IMember, Member } from '@libs/entities-lib/household-create';
 import { IHouseholdCombined } from '@libs/entities-lib/household';
 import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
 import {
-  EEventLocationStatus, EEventStatus, IEventGenericLocation, IEventMainInfo,
+  EEventLocationStatus, IEventGenericLocation, IEventMainInfo,
 } from '@libs/entities-lib/event';
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 import routes from '@/constants/routes';
@@ -229,18 +229,6 @@ export default mixins(household).extend({
       i18n: this.$i18n,
       moment,
       loading: true,
-      caseFileIds: [] as string[],
-      caseFiles: [] as ICaseFileEntity[],
-      /*
-       * Events to which the user has access. For most users this access is limited by
-       * membership in teams assigned to events. This access cannot be inferred from the
-       * data, so there are separate requests for "my" and "all" events.
-       */
-      myEvents: [] as IEventMainInfo[],
-      /*
-       * Events for all case files, regardless of user access. Data in these events may be
-       * obfuscated depending on the user's roles.
-      */
       allEvents: [] as IEventMainInfo[],
       showAddAdditionalMember: false,
       newAdditionalMember: null,
@@ -251,12 +239,15 @@ export default mixins(household).extend({
   },
 
   watch: {
-    householdData(newValue) {
-      if (newValue && !_isEmpty(newValue.entity) && !_isEmpty(newValue.metadata)) {
-        this.fetchMyEvents();
-        this.fetchAllEvents();
-        this.setHouseholdCreate();
-      }
+    householdData: {
+      handler(newValue) {
+        if (newValue && !_isEmpty(newValue.entity) && !_isEmpty(newValue.metadata)) {
+          this.fetchMyEvents();
+          this.fetchAllEvents();
+          this.setHouseholdCreate();
+        }
+      },
+      deep: true,
     },
   },
 
@@ -284,29 +275,8 @@ export default mixins(household).extend({
       return this.$storage.registration.getters.householdCreate();
     },
 
-    shelterLocations() :IEventGenericLocation[] {
-      const locations:IEventGenericLocation[] = [];
-      if (this.myEvents) {
-        this.myEvents.filter((e) => e.entity?.schedule?.status === EEventStatus.Open).forEach((e) => {
-          if (e.entity.shelterLocations) {
-            const activeLocations = e.entity.shelterLocations
-              .filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active
-                || this.household.primaryBeneficiary?.currentAddress?.shelterLocation?.id === s.id
-                || (this.household.additionalMembers || []).filter((a) => a.currentAddress?.shelterLocation?.id === s.id).length);
-            locations.push(...activeLocations);
-          }
-        });
-      }
-
-      return locations;
-    },
-
     householdData() : IHouseholdCombined {
       return this.$storage.household.getters.get(this.id);
-    },
-
-    activeCaseFiles():ICaseFileEntity[] {
-      return this.caseFiles.filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive);
     },
 
     inactiveCaseFiles():ICaseFileEntity[] {
@@ -375,21 +345,14 @@ export default mixins(household).extend({
     ]);
     this.$storage.registration.mutations.resetHouseholdCreate();
     await this.fetchCaseFiles();
-    await this.fetchHouseholdData();
     await this.fetchMyEvents();
+    await this.fetchShelterLocations();
+    await this.fetchHouseholdData();
     await this.fetchAllEvents();
     this.loading = false;
   },
 
   methods: {
-    async fetchMyEvents() {
-      if (this.activeCaseFiles.length) {
-        const eventIds = this.activeCaseFiles.map((cf) => cf.eventId);
-        const results = await this.$services.events.searchMyEventsById(eventIds);
-        this.myEvents = results?.value;
-      }
-    },
-
     async fetchAllEvents() {
       if (this.caseFiles.length) {
         const eventIds = this.caseFiles.map((cf) => cf.eventId);
@@ -437,11 +400,11 @@ export default mixins(household).extend({
       return this.$router.push({ name: routes.household.householdMembersMove.name });
     },
 
-    async fetchCaseFiles() {
-      const results = await this.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId(this.id);
-      if (results) {
-        this.caseFiles = results;
+    makeShelterLocationsListForMember(m: IMember) {
+      if (m.currentAddress?.shelterLocation) {
+        return [m.currentAddress.shelterLocation, ...this.shelterLocations];
       }
+      return this.shelterLocations;
     },
   },
 });

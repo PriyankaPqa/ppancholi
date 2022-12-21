@@ -69,6 +69,7 @@
 
             <household-card
               v-if="secondHousehold"
+              :loading="householdLoading"
               data-test="second_card"
               :household="secondHousehold"
               position="right"
@@ -134,16 +135,10 @@ export default mixins(searchHousehold, household).extend({
     RcPageLoading,
   },
 
-  props: {
-    id: {
-      type: String,
-      required: true,
-    },
-  },
-
   data() {
     return {
       loading: true,
+      householdLoading: true,
       submitLoading: false,
       showResults: false,
       searchResultsWithoutFirst: [] as unknown as IHouseholdCombined[],
@@ -164,15 +159,12 @@ export default mixins(searchHousehold, household).extend({
 
   async created() {
     // We assume the first household is in the store already. User is coming from household profile page
-    if (this.currentHousehold.id === '') {
+    if (!this.currentHousehold || this.currentHousehold.id === '') {
       this.back();
     } else {
-      this.firstHousehold = _cloneDeep(this.currentHousehold) as IMovingHouseholdCreate;
-      this.firstHousehold.movingAdditionalMembers = [];
-      const firstHouseholdData = await this.$storage.household.actions.fetch(this.currentHousehold.id);
-      this.firstHouseholdShelterLocations = await this.fetchShelterLocations(firstHouseholdData, true) || [];
-      this.firstHousehold.hasOutstandingPayments = (await this.$services.households.hasOutstandingPayments(this.currentHousehold.id))
-        ?.hasOutstandingPayments;
+      const { household, shelterLocations } = await this.makeHousehold();
+      this.firstHousehold = household;
+      this.firstHouseholdShelterLocations = shelterLocations;
       this.loading = false;
     }
   },
@@ -191,16 +183,30 @@ export default mixins(searchHousehold, household).extend({
       this.$storage.household.mutations.setSearchResultsShown(false);
     },
 
-    async onSelect({ household, shelterLocations }:{ household: IMovingHouseholdCreate, shelterLocations:IEventGenericLocation[] }) {
+    async onSelect(householdId: string) {
       this.submitError = false;
+      this.householdLoading = true;
+      try {
+        const { household, shelterLocations } = await this.makeHousehold(householdId);
+        this.secondHousehold = household;
+        this.secondHouseholdShelterLocations = shelterLocations;
+      } finally {
+        this.householdLoading = false;
+      }
+    },
 
-      const secondHousehold = _cloneDeep(household) as IMovingHouseholdCreate;
-      secondHousehold.movingAdditionalMembers = [];
-      secondHousehold.hasOutstandingPayments = (await this.$services.households.hasOutstandingPayments(household.id))
+    async makeHousehold(householdId?:string): Promise<{ household: IMovingHouseholdCreate, shelterLocations: IEventGenericLocation[] }> {
+      let movingHousehold = this.currentHousehold as IMovingHouseholdCreate;
+      if (householdId) {
+        const householdCreateData = await this.fetchHouseholdCreate(householdId);
+        movingHousehold = new HouseholdCreate(householdCreateData) as IMovingHouseholdCreate;
+      }
+
+      const shelterLocations = await this.fetchShelterLocations(movingHousehold.id);
+      movingHousehold.movingAdditionalMembers = [];
+      movingHousehold.hasOutstandingPayments = (await this.$services.households.hasOutstandingPayments(movingHousehold.id))
         ?.hasOutstandingPayments;
-      this.secondHousehold = secondHousehold;
-
-      this.secondHouseholdShelterLocations = shelterLocations || [];
+      return { household: movingHousehold, shelterLocations };
     },
 
     onReset() {

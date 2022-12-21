@@ -52,7 +52,6 @@
                 class="ml-4"
                 small
                 color="primary"
-                :loading="selectedId === household.id && loadingSelect"
                 data-test="household_move_results_select"
                 @click="select(household.id)">
                 <v-icon left>
@@ -94,12 +93,9 @@
 
 import mixins from 'vue-typed-mixins';
 import { RcDataTable } from '@libs/component-lib/components';
-import { IHouseholdCombined } from '@libs/entities-lib/household/index';
-import { HouseholdCreate } from '@libs/entities-lib/household-create';
 import householdResults from '@/ui/mixins/householdResults';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
-import { EEventLocationStatus, IEventGenericLocation } from '@libs/entities-lib/event';
 
 import { Resize } from 'vuetify/es5/directives';
 
@@ -113,10 +109,6 @@ export default mixins(householdResults, household).extend({
   data() {
     return {
       householdHelpers,
-      selectedId: null,
-      loadingSelect: false,
-      // Used to build householdCreate data
-      householdData: null as IHouseholdCombined,
       maxHeight: 0,
     };
   },
@@ -143,19 +135,8 @@ export default mixins(householdResults, household).extend({
       this.$emit('reset');
     },
 
-    async select(id: string) {
-      this.selectedId = id;
-
-      this.loadingSelect = true;
-
-      const householdData = await this.$storage.household.actions.fetch(id);
-      const allShelterLocations = await this.fetchShelterLocations(householdData, false);
-      const householdCreateData = await this.buildHouseholdCreateData(householdData, allShelterLocations);
-      const activeShelterLocations = allShelterLocations.filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active);
-
-      this.loadingSelect = false;
-
-      this.$emit('select', { household: new HouseholdCreate(householdCreateData), shelterLocations: activeShelterLocations });
+    select(id: string) {
+      this.$emit('select', id);
     },
 
     onResize() {

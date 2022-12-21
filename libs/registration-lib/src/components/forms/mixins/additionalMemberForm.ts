@@ -80,16 +80,6 @@ export default Vue.extend({
       return this.additionalMembersCopy[this.indexAdditionalMember];
     },
 
-    currentAddressTypeItems(): Record<string, unknown>[] {
-      // eslint-disable-next-line
-      let list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', (this as any).i18n);
-      list = list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
-      if (this.shelterLocations.length === 0) {
-        list = list.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
-      }
-      return list;
-    },
-
     associationMode(): boolean {
       return this.$store.state.registration.householdAssociationMode;
     },
@@ -157,9 +147,9 @@ export default Vue.extend({
       const member = this.householdCreate.additionalMembers[index];
 
       const resIdentity = await this.$services.households.updatePersonIdentity(
-member.id,
+        member.id,
         { identitySet: member.identitySet, contactInformation: member.contactInformation },
-);
+      );
       if (!resIdentity) {
         this.$storage.registration.mutations.editAdditionalMember(this.additionalMembers[index].backup, index, !this.additionalMembers[index].sameAddress);
         this.additionalMembers[index].loading = false;
@@ -243,6 +233,23 @@ member.id,
 
     isNewMemberCurrentAddress(index: number): boolean {
       return !_isEqual(this.householdCreate.additionalMembers[index].currentAddress, this.additionalMembers[index].backup.currentAddress);
+    },
+
+    makeShelterLocationsListForMember(m: IMember) {
+      if (m.currentAddress?.shelterLocation) {
+        return [m.currentAddress.shelterLocation, ...this.shelterLocations];
+      }
+      return this.shelterLocations;
+    },
+
+    makeCurrentAddressTypeItems(m: IMember): Record<string, unknown>[] {
+      // eslint-disable-next-line
+      let list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', (this as any).i18n);
+      list = list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
+      if (this.makeShelterLocationsListForMember(m).length === 0) {
+        list = list.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
+      }
+      return list;
     },
   },
 });

@@ -1,6 +1,5 @@
-import { mockHouseholdCreate, mockShelterData } from '@libs/entities-lib/household-create';
+import { mockHouseholdCreate } from '@libs/entities-lib/household-create';
 import { mockCombinedHousehold } from '@libs/entities-lib/household';
-import { mockShelterLocations } from '@libs/entities-lib/registration-event/registrationEvent.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
@@ -64,52 +63,15 @@ describe('MoveHouseholdMembers.vue', () => {
         expect(wrapper.vm.back).toHaveBeenCalledTimes(1);
       });
 
-      it('sets the firstHousehold data', async () => {
+      it('calls makeHousehold and stores the results in firstHousehold and firstHouseholdShelterLocations', async () => {
+        wrapper.vm.makeHousehold = jest.fn(() => ({ household: { id: 'hh-1' }, shelterLocations: [{ id: 'sl-1' }] }));
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
-
-        expect(wrapper.vm.firstHousehold).toEqual({ ...householdCreate, movingAdditionalMembers: [], hasOutstandingPayments: false });
-      });
-
-      it('should call the household action fetch', async () => {
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        await flushPromises();
-
-        expect(storage.household.actions.fetch).toHaveBeenCalledWith(householdCreate.id);
-      });
-
-      it('should call fetchShelterLocations', async () => {
-        wrapper.vm.fetchShelterLocations = jest.fn(() => []);
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        await flushPromises();
-
-        expect(wrapper.vm.fetchShelterLocations).toHaveBeenCalledWith(mockCombinedHousehold(), true);
-      });
-
-      it('should call hasOutstandingPayments', async () => {
-        wrapper.vm.$services.households.hasOutstandingPayments = jest.fn(() => ({ hasOutstandingPayments: true }));
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        await flushPromises();
-
-        expect(wrapper.vm.$services.households.hasOutstandingPayments).toHaveBeenCalledWith(householdCreate.id);
-        expect(wrapper.vm.firstHousehold.hasOutstandingPayments).toEqual(true);
-      });
-
-      it('should set firstHouseholdShelterLocations', async () => {
-        wrapper.vm.fetchShelterLocations = jest.fn(() => [mockShelterData()]);
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        await flushPromises();
-        expect(wrapper.vm.firstHouseholdShelterLocations).toEqual([mockShelterData()]);
+        expect(wrapper.vm.makeHousehold).toHaveBeenCalled();
+        expect(wrapper.vm.firstHousehold).toEqual({ id: 'hh-1' });
+        expect(wrapper.vm.firstHouseholdShelterLocations).toEqual([{ id: 'sl-1' }]);
       });
     });
   });
@@ -196,13 +158,52 @@ describe('MoveHouseholdMembers.vue', () => {
         expect(wrapper.vm.onSelect).toBeCalled();
       });
 
-      it('should set the selected household and shelterLocations', async () => {
-        expect(wrapper.vm.secondHousehold).toBe(null);
-        const shelterLocations = mockShelterLocations();
-        await wrapper.vm.onSelect({ household: mockHouseholdCreate(), shelterLocations });
-        expect(wrapper.vm.secondHousehold).toEqual({ ...mockHouseholdCreate(), movingAdditionalMembers: [], hasOutstandingPayments: false });
-        expect(wrapper.vm.secondHouseholdShelterLocations).toEqual(shelterLocations);
-        expect(wrapper.vm.$services.households.hasOutstandingPayments).toHaveBeenLastCalledWith(mockHouseholdCreate().id);
+      it('calls makeHousehold with the household id and stores the results in secondHousehold and secondHouseholdShelterLocations', async () => {
+        wrapper.vm.makeHousehold = jest.fn(() => ({ household: { id: 'hh-2' }, shelterLocations: [{ id: 'sl-2' }] }));
+        await wrapper.vm.onSelect('id-2');
+        await flushPromises();
+        expect(wrapper.vm.makeHousehold).toHaveBeenCalledWith('id-2');
+        expect(wrapper.vm.secondHousehold).toEqual({ id: 'hh-2' });
+        expect(wrapper.vm.secondHouseholdShelterLocations).toEqual([{ id: 'sl-2' }]);
+      });
+    });
+
+    describe('makeHousehold', () => {
+      it('should call fetchHouseholdCreate if it receives an id as argument', async () => {
+        wrapper.vm.fetchHouseholdCreate = jest.fn(() => householdCreate);
+        await wrapper.vm.makeHousehold('hh-id');
+        expect(wrapper.vm.fetchHouseholdCreate).toHaveBeenCalledWith('hh-id');
+      });
+
+      it('should use currentHousehold if it does not receive an id as argument', async () => {
+        wrapper.vm.$services.households.hasOutstandingPayments = jest.fn(() => ({ hasOutstandingPayments: true }));
+        const result = await wrapper.vm.makeHousehold();
+        expect(result.household).toEqual({ ...householdCreate, movingAdditionalMembers: [], hasOutstandingPayments: true });
+      });
+
+      it('should call fetchShelterLocations', async () => {
+        wrapper.vm.fetchShelterLocations = jest.fn(() => []);
+        await wrapper.vm.makeHousehold();
+        expect(wrapper.vm.fetchShelterLocations).toHaveBeenCalledWith(householdCreate.id);
+      });
+
+      it('should call hasOutstandingPayments', async () => {
+        wrapper.vm.$services.households.hasOutstandingPayments = jest.fn(() => ({ hasOutstandingPayments: true }));
+        await wrapper.vm.makeHousehold();
+        expect(wrapper.vm.$services.households.hasOutstandingPayments).toHaveBeenCalledWith(householdCreate.id);
+      });
+
+      it('should return the right data', async () => {
+        wrapper.vm.fetchShelterLocations = jest.fn(() => [{ id: 'sl-1' }]);
+        wrapper.vm.$services.households.hasOutstandingPayments = jest.fn(() => ({ hasOutstandingPayments: true }));
+        wrapper.vm.fetchHouseholdCreate = jest.fn(() => householdCreate);
+        const result = await wrapper.vm.makeHousehold('hh-id');
+        expect(result).toEqual(
+          {
+            household: { ...householdCreate, movingAdditionalMembers: [], hasOutstandingPayments: true },
+            shelterLocations: [{ id: 'sl-1' }],
+          },
+        );
       });
     });
 

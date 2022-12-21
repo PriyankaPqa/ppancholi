@@ -7,21 +7,82 @@ import { IMemberEntity } from '@libs/entities-lib/value-objects/member';
 import { IIndigenousCommunityData } from '@libs/entities-lib/value-objects/identity-set';
 import { IAddressData, IHouseholdCreateData } from '@libs/entities-lib/household-create';
 import deepmerge from 'deepmerge';
-import { ICurrentAddressCreateRequest } from '@libs/entities-lib/value-objects/current-address';
 import householdHelpers from '@/ui/helpers/household';
 import { IOptionItemData } from '@libs/shared-lib/types';
-import { EEventLocationStatus, EEventStatus, IEventGenericLocation } from '@libs/entities-lib/event';
-import { CaseFileStatus } from '@libs/entities-lib/case-file';
+import { IEventGenericLocation, IEventMainInfo } from '@libs/entities-lib/event';
+import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 
 export default Vue.extend({
+  props: {
+    id: {
+      type: String,
+      default: null,
+    },
+  },
+
+  data() {
+    return {
+      caseFiles: null as ICaseFileEntity[],
+      /*
+      * Events to which the user has access. For most users this access is limited by
+      * membership in teams assigned to events. This access cannot be inferred from the
+      * data, so there are separate requests for "my" and "all" events.
+      */
+      myEvents: null as IEventMainInfo[],
+      shelterLocations: [] as IEventGenericLocation[],
+      otherShelterLocations: [] as IEventGenericLocation[],
+    };
+  },
+
+  computed: {
+    activeCaseFiles():ICaseFileEntity[] {
+      return this.caseFiles.filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive);
+    },
+  },
+
   methods: {
-    async fetchHouseholdCreate(id: string, shelterLocations: IEventGenericLocation[] = null) {
+    async fetchHouseholdCreate(id: string) {
       const householdRes = await this.$storage.household.actions.fetch(id);
-      const householdCreateData = await this.buildHouseholdCreateData(householdRes, shelterLocations);
+      const householdCreateData = await this.buildHouseholdCreateData(householdRes);
       return householdCreateData;
     },
 
-    async fetchMembersInformation(household: IHouseholdCombined, shelterLocations: IEventGenericLocation[]): Promise<IMemberEntity[]> {
+    /**
+     * @param {string} [id] Optional. Id of the household for which to fetch the case files.
+     * To pass if the method is not called in a component that needs the case files saved in its state, it only needs the data returned from this call.
+     * @returns {Promise<ICaseFileEntity[]>} Case files related to a household
+     */
+    async fetchCaseFiles(id?:string): Promise<ICaseFileEntity[]> {
+      const results = await this.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId(id || this.id);
+      if (results) {
+        // If no argument was passed, the mixin is used with state properties (caseFiles, myEvents), so the payload of this call is saved in the state
+        if (!id) {
+          this.caseFiles = results;
+        }
+        return results;
+      }
+      return null;
+    },
+
+    /**
+     * @param {string} [caseFiles] Optional. Case files for which to fetch the events to which the user has access.
+     * To pass if the method is not called in a component that needs the events saved in its state, it only needs the data returned from this call.
+     * @returns {Promise<IEventMainInfo[]>} Case files related to a household
+     */
+    async fetchMyEvents(caseFiles?: ICaseFileEntity[]): Promise<IEventMainInfo[]> {
+      const cf = caseFiles || this.activeCaseFiles;
+      if (cf?.length) {
+        const eventIds = cf.map((f) => f.eventId);
+        const results = await this.$services.events.searchMyEventsById(eventIds);
+        if (!caseFiles) {
+          this.myEvents = results?.value;
+        }
+        return results?.value;
+      }
+      return [];
+    },
+
+    async fetchMembersInformation(household: IHouseholdCombined): Promise<IMemberEntity[]> {
       if (!household.entity.members?.length) {
         return [];
       }
@@ -40,77 +101,58 @@ export default Vue.extend({
 
       let members: IMemberEntity[] = await Promise.all([primaryBeneficiaryPromise, ...additionalMembersPromises]);
 
-      if (shelterLocations) {
-        members = this.addShelterLocationData(members, shelterLocations);
-      }
-
+      members = await this.addShelterLocationData(members);
       return members;
     },
 
-    async fetchShelterLocations(household: IHouseholdCombined, onlyActive = true) {
-      const shelters = [] as IEventGenericLocation[];
-      const householdCaseFiles = await this.$services.caseFiles.getAllCaseFilesRelatedToHouseholdId(household.entity.id);
-      if (householdCaseFiles) {
-        const eventIds = householdCaseFiles
-          .filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive)
-          .map((cf) => cf.eventId);
-
-        const resEvents = await this.$services.events.searchMyEvents({
-          filter: `search.in(Entity/Id, '${eventIds.join('|')}', '|') and Entity/Schedule/Status eq ${EEventStatus.Open}`,
-          top: 999,
-        });
-
-        const events = resEvents?.value;
-
-        if (events) {
-          events.forEach((e) => {
-            if (e.entity.shelterLocations) {
-              if (onlyActive) {
-                const activeLocations = e.entity.shelterLocations.filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active);
-                shelters.push(...activeLocations);
-              } else {
-                shelters.push(...e.entity.shelterLocations);
-              }
-            }
-          });
-        }
-        return shelters;
+    /**
+     * @param {string} [householdId] Optional. Id of the household for which we fetch the shelter locations.
+     * To pass if the mixin is not used in a component that stores the case files and myEvents in the state (eg. for household move).
+     * @returns {Promise<IEventMainInfo[]>} Shelter location data for the active case files of the household, for events to which the user has access.
+     * They are usually fetched to be displayed in the shelter dropdown for the household member's temporary address
+     */
+    async fetchShelterLocations(householdId?: string): Promise<IEventGenericLocation[]> {
+      let events = this.myEvents;
+      if (!this.myEvents && householdId) {
+        const caseFiles: ICaseFileEntity[] = await this.fetchCaseFiles(householdId);
+        const activeCaseFiles = caseFiles.filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive);
+        events = await this.fetchMyEvents(activeCaseFiles);
       }
-      return [];
+
+      const shelters = [] as IEventGenericLocation[];
+      if (events?.length) {
+        events.forEach((e) => {
+          if (e.entity.shelterLocations) {
+            shelters.push(...e.entity.shelterLocations);
+          }
+        });
+      }
+      this.shelterLocations = shelters;
+      return shelters;
     },
 
     async buildHouseholdCreateData(
       household: IHouseholdCombined,
-      shelterLocations: IEventGenericLocation[] = null,
     ): Promise<IHouseholdCreateData> {
       let primaryBeneficiary;
       const additionalMembers = [] as Array<IMemberEntity>;
 
-      let shelters = [] as IEventGenericLocation[];
-
-      // We get all shelter locations of all events linked to the household case files
-      if (shelterLocations === null) {
-        shelters = await this.fetchShelterLocations(household, false);
-      }
-
       let genderItems = this.$storage.registration.getters.genders(true) as IOptionItemData[];
-
       if (genderItems.length === 0) {
         genderItems = await this.$storage.registration.actions.fetchGenders() as IOptionItemData[];
       }
 
       let preferredLanguagesItems = this.$storage.registration.getters.preferredLanguages() as IOptionItemData[];
-
       if (preferredLanguagesItems.length === 0) {
         preferredLanguagesItems = await this.$storage.registration.actions.fetchPreferredLanguages() as IOptionItemData[];
       }
-      let primarySpokenLanguagesItems = this.$storage.registration.getters.primarySpokenLanguages(true) as IOptionItemData[];
 
+      let primarySpokenLanguagesItems = this.$storage.registration.getters.primarySpokenLanguages(true) as IOptionItemData[];
       if (primarySpokenLanguagesItems.length === 0) {
         primarySpokenLanguagesItems = await this.$storage.registration.actions.fetchPrimarySpokenLanguages() as IOptionItemData[];
       }
 
-      const members = await this.fetchMembersInformation(household, shelterLocations || shelters);
+      const members = await this.fetchMembersInformation(household);
 
       const communitiesItems = await this.$storage.registration.actions.fetchIndigenousCommunities();
 
@@ -206,15 +248,51 @@ export default Vue.extend({
       };
     },
 
-    addShelterLocationData(members: IMemberEntity[], shelterLocations: IEventGenericLocation[]): IMemberEntity[] {
-      return members.map((m) => ({
-        ...m,
-        currentAddress: {
-          ...m.currentAddress,
-          shelterLocation: shelterLocations
-            .find((s: IEventGenericLocation) => s.id === (m.currentAddress as unknown as ICurrentAddressCreateRequest).shelterLocationId),
-        },
+    async addShelterLocationData(members: IMemberEntity[]): Promise<IMemberEntity[]> {
+      const mem = await Promise.all(members.map(async (m) => {
+        if (m.currentAddress?.shelterLocationId) {
+          const shelterLocation = await this.getShelterLocationDatafromId(m.currentAddress?.shelterLocationId);
+          return {
+            ...m,
+            currentAddress: {
+              ...m.currentAddress,
+              shelterLocation,
+            },
+          };
+        }
+        return m;
       }));
+
+      return mem;
+    },
+
+    async getShelterLocationDatafromId(shelterLocationId: string): Promise<IEventGenericLocation> {
+      const locationFromState = [...this.shelterLocations, ...this.otherShelterLocations].find((l) => l.id === shelterLocationId);
+      if (locationFromState) {
+        return locationFromState;
+      }
+
+      const filter = {
+        Entity: {
+          ShelterLocations: {
+            any: {
+              Id: shelterLocationId,
+            },
+          },
+        },
+      };
+
+      const events = await this.$services.publicApi.searchEvents({ filter });
+      if (events?.value?.length) {
+        const event = events?.value[0] as IEventMainInfo;
+        const location = event.entity.shelterLocations.find((l) => l.id === shelterLocationId);
+        // cache the shelter location data, so that the next member that has the same shelter location id doesn't need to refetch the data
+        this.otherShelterLocations.push(location);
+        return location;
+      }
+
+      return null;
     },
   },
+
 });

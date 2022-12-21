@@ -232,6 +232,29 @@ describe('AddressesLib.vue', () => {
         expect(wrapper.vm.shelterLocations).toEqual(filtered);
         expect(wrapper.vm.shelterLocations.filter((s) => s.status === EOptionItemStatus.Inactive)).toHaveLength(0);
       });
+
+      it('should add to the locations the current location if there is one', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          data() {
+            return {
+              apiKey: 'google-api-key',
+            };
+          },
+          computed: {
+            currentAddress() {
+              return { shelterLocation: { id: 'sl-1' } };
+            },
+          },
+          propsData: {
+            i18n,
+            disableAutocomplete: false,
+          },
+        });
+        const location = { id: 'sl-event', status: EOptionItemStatus.Active };
+        wrapper.vm.$storage.registration.getters.event = jest.fn(() => ({ shelterLocations: [location] }));
+        expect(wrapper.vm.shelterLocations).toEqual([{ id: 'sl-1' }, location]);
+      });
     });
   });
 
