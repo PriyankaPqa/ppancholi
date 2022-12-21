@@ -712,6 +712,7 @@
     "enums.paymentCancellationReason.InvalidPIN": "2 - Invalid PIN",
     "enums.paymentCancellationReason.InvalidPin": "2 - Invalid PIN",
     "enums.paymentCancellationReason.RecipientRejected": "1 - Recipient rejected",
+    "enums.paymentCancellationReason.Unknown": "6 - Unknown",
     "enums.paymentStatus.Active": "Active",
     "enums.paymentStatus.Cancelled": "Cancelled",
     "enums.paymentStatus.Completed": "Completed",

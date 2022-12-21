@@ -710,6 +710,7 @@
     "enums.paymentCancellationReason.InvalidPIN": "2 - NIP inexact",
     "enums.paymentCancellationReason.InvalidPin": "2 - NIP inexact",
     "enums.paymentCancellationReason.RecipientRejected": "1 - Refus du destinataire",
+    "enums.paymentCancellationReason.Unknown": "6 - Inconnu",
     "enums.paymentStatus.Active": "Actif",
     "enums.paymentStatus.Cancelled": "Annulé",
     "enums.paymentStatus.Completed": "Terminé",

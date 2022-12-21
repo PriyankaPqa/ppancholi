@@ -98,7 +98,9 @@ declare module 'vue' {
     CreateEditCaseFileDocument: typeof import('./src/ui/views/pages/case-files/details/case-file-document/components/CreateEditCaseFileDocument.vue')['default']
     CreateEditEvent: typeof import('./src/ui/views/pages/events/create-edit/CreateEditEvent.vue')['default']
     CreateEditFinancialAssistance: typeof import('./src/ui/views/pages/financial-assistance/create-edit/CreateEditFinancialAssistance.vue')['default']
+    // eslint-disable-next-line vue/max-len
     CreateEditFinancialAssistanceCaseFile: typeof import('./src/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistanceCaseFile.vue')['default']
+    // eslint-disable-next-line vue/max-len
     CreateEditFinancialAssistanceForm: typeof import('./src/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistanceForm.vue')['default']
     CreateEditPaymentLineDialog: typeof import('./src/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditPaymentLineDialog.vue')['default']
     CreateEditProgram: typeof import('./src/ui/views/pages/programs/create-edit/CreateEditProgram.vue')['default']
@@ -299,6 +301,7 @@ declare module 'vue' {
     StatusChip: typeof import('./src/ui/shared-components/StatusChip.vue')['default']
     StatusSelect: typeof import('./src/ui/shared-components/StatusSelect.vue')['default']
     SubItemButtons: typeof import('./src/ui/views/pages/financial-assistance/create-edit/Templates/SubItemButtons.vue')['default']
+    // eslint-disable-next-line vue/max-len
     SubmitFinancialAssistancePaymentDialog: typeof import('./src/ui/views/pages/case-files/details/case-file-financial-assistance/components/SubmitFinancialAssistancePaymentDialog.vue')['default']
     SummarySection: typeof import('./../../libs/registration-lib/src/components/review/SummarySection.vue')['default']
     SupportEmails: typeof import('./src/ui/views/pages/system-management/lists/tenantSettings/SupportEmails.vue')['default']

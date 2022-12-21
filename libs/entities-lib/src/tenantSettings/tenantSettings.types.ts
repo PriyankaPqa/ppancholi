@@ -12,6 +12,7 @@ export enum FeatureKeys {
   FinancialAssistanceDataCorrection = 'FinancialAssistanceDataCorrection',
   ActionApprovals = 'ActionApprovals',
   LetIMViewEventDetails = 'letIMViewEventDetails',
+  ETransferCancellationHaveOptionForUnknown = 'ETransferCancellationHaveOptionForUnknown',
 }
 
 export enum FeatureType {

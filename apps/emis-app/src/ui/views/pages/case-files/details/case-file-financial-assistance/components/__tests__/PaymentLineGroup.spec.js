@@ -547,6 +547,30 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
     });
+
+    describe('cancellationReasons', () => {
+      const mockReasons = [
+        { value: 0, text: '0 - Admin cancellation' },
+        { value: 1, text: '1 - Recipient rejected' },
+        { value: 2, text: '2 - Invalid PIN' },
+        { value: 3, text: '3 - Expired' },
+        { value: 4, text: '4 - Admin cancellation' },
+        { value: 5, text: '5 - Failed delivery' },
+        { value: 6, text: '6 - Unknown' },
+      ];
+      it('should return cancellation reasons with Unknown when feature flag is on', async () => {
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.helpers = jest.fn(() => mockReasons);
+        expect(wrapper.vm.cancellationReasons).toEqual(mockReasons);
+      });
+
+      it('should return cancellation reasons without Unknown when feature flag is off', async () => {
+        wrapper.vm.$hasFeature = jest.fn(() => false);
+        const mockReasonsWithoutUnknown = mockReasons.filter((reason) => reason.value !== EPaymentCancellationReason.Unknown);
+        wrapper.vm.helpers = jest.fn(() => mockReasonsWithoutUnknown);
+        expect(wrapper.vm.cancellationReasons).toEqual(mockReasonsWithoutUnknown);
+      });
+    });
   });
 
   describe('Methods', () => {

@@ -83,18 +83,20 @@
 </template>
 
 <script lang="ts">
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcConfirmationDialog, VSelectWithValidation } from '@libs/component-lib/components';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import {
-  IFinancialAssistancePaymentLine,
-  PaymentStatus,
-  EPaymentCancellationReason,
-  IFinancialAssistancePaymentGroup,
   ApprovalStatus,
-  FinancialAssistancePaymentGroup, PayeeType,
+  EPaymentCancellationReason,
+  FinancialAssistancePaymentGroup,
+  IFinancialAssistancePaymentGroup,
+  IFinancialAssistancePaymentLine,
+  PayeeType,
+  PaymentStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import helpers from '@/ui/helpers/helpers';
@@ -147,7 +149,6 @@ export default Vue.extend({
     return {
       loading: false,
       cancellationReason: null as EPaymentCancellationReason,
-      cancellationReasons: helpers.enumToTranslatedCollection(EPaymentCancellationReason, 'enums.paymentCancellationReason'),
       ApprovalStatus,
       showCancelConfirmationReason: false,
     };
@@ -316,6 +317,16 @@ export default Vue.extend({
       }
 
       return statusArr.filter((s) => s);
+    },
+
+    cancellationReasons() {
+      // TODO: EMISV2-6124 remove feature flag
+      // when remove this feature flag, please move 'cancellationReasons' to data(){}
+      const reasons = helpers.enumToTranslatedCollection(EPaymentCancellationReason, 'enums.paymentCancellationReason');
+      if (this.$hasFeature(FeatureKeys.ETransferCancellationHaveOptionForUnknown)) {
+        return reasons;
+      }
+      return reasons.filter((reason) => reason.value !== EPaymentCancellationReason.Unknown);
     },
   },
 
