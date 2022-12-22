@@ -61,14 +61,14 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
             error: false,
           };
         },
+        mocks: {
+          $storage: storage,
+        },
         stubs: ['financial-assistance-items'],
       });
 
       const statusSwitch = wrapper.find('[data-test="financial-assistance-table-status-toggle"]');
       const statusContainer = wrapper.find('.financial-status');
-
-      expect(wrapper.vm.status).toBe(false);
-      expect(statusContainer.classes('status_success')).toBe(false);
 
       await statusSwitch.trigger('click');
 

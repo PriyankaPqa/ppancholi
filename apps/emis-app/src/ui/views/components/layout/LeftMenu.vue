@@ -57,6 +57,7 @@ import { NO_ROLE } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import { ClickOutside } from 'vuetify/es5/directives';
+import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 
 export default Vue.extend({
   name: 'LeftMenu',
@@ -169,8 +170,8 @@ export default Vue.extend({
     },
 
     mini(): boolean {
-      this.$emit('update-mini', this.smAndDown ? false : this.$store.state.dashboard.leftMenuExpanded);
-      return this.smAndDown ? false : !this.$store.state.dashboard.leftMenuExpanded;
+      this.$emit('update-mini', this.smAndDown ? false : useDashboardStore().leftMenuExpanded);
+      return this.smAndDown ? false : !useDashboardStore().leftMenuExpanded;
     },
 
     smAndDown(): boolean {
@@ -178,7 +179,7 @@ export default Vue.extend({
     },
 
     show(): boolean {
-      return this.smAndDown ? this.$store.state.dashboard.leftMenuVisible : true;
+      return this.smAndDown ? useDashboardStore().leftMenuVisible : true;
     },
 
     uiConstants() {
@@ -219,17 +220,11 @@ export default Vue.extend({
 
   methods: {
     updateShow(value: boolean) {
-      this.$storage.dashboard.mutations.setProperty({
-        property: 'leftMenuVisible',
-        value,
-      });
+      useDashboardStore().leftMenuVisible = value;
     },
 
     onClickOutside() {
-      this.$storage.dashboard.mutations.setProperty({
-        property: 'leftMenuExpanded',
-        value: false,
-      });
+      useDashboardStore().leftMenuExpanded = false;
     },
 
     hamburgerMenu() {

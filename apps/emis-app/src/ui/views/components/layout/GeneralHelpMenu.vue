@@ -59,6 +59,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { INavigationTab } from '@libs/shared-lib/types';
+import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 
 export default Vue.extend({
   name: 'GeneralHelpMenu',
@@ -72,10 +73,7 @@ export default Vue.extend({
 
   computed: {
     show(): boolean {
-      if (this.$store.state.dashboard) {
-        return this.$store.state.dashboard.generalHelpMenuVisible;
-      }
-      return false;
+      return useDashboardStore().generalHelpMenuVisible;
     },
 
     helpCenterLink(): TranslateResult {
@@ -85,10 +83,7 @@ export default Vue.extend({
 
   methods: {
     updateShow(val: boolean) {
-      this.$storage.dashboard.mutations.setProperty({
-        property: 'generalHelpMenuVisible',
-        value: val,
-      });
+      useDashboardStore().generalHelpMenuVisible = val;
     },
   },
 });

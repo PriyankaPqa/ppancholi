@@ -27,6 +27,11 @@ describe('ReviewRegistrationLib.vue', () => {
       mocks: {
         $storage: storage,
       },
+      stubs: {
+        'previous-events-template': {
+          template: '<div />',
+        },
+      },
     });
   });
 

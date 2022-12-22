@@ -161,6 +161,7 @@ import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { Status } from '@libs/entities-lib/base';
 import { useUserStore } from '@/pinia/user/user';
+import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 
 export default Vue.extend({
   name: 'RightMenu',
@@ -177,7 +178,7 @@ export default Vue.extend({
 
   computed: {
     show(): boolean {
-      return this.$store.state.dashboard.rightMenuVisible;
+      return useDashboardStore().rightMenuVisible;
     },
     user(): IUser {
       return useUserStore().getUser();
@@ -204,10 +205,7 @@ export default Vue.extend({
 
   methods: {
     updateShow(value: boolean) {
-      this.$storage.dashboard.mutations.setProperty({
-        property: 'rightMenuVisible',
-        value,
-      });
+      useDashboardStore().rightMenuVisible = value;
     },
 
     accountSettings() {

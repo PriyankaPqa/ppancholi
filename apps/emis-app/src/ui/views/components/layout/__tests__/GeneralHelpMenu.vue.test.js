@@ -2,28 +2,20 @@ import Vuetify from 'vuetify';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { i18n } from '@/ui/plugins/i18n';
 import { mockStorage } from '@/storage';
+import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import Component from '../GeneralHelpMenu.vue';
 
 const localVue = createLocalVue();
-
+const vuetify = new Vuetify();
+const { pinia, dashboardStore } = useMockDashboardStore();
 describe('GeneralHelpMenu.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
-    const vuetify = new Vuetify();
-
     wrapper = mount(Component, {
       localVue,
+      pinia,
       vuetify,
-      store: {
-        modules: {
-          dashboard: {
-            state: {
-              generalHelpMenuVisible: true,
-            },
-          },
-        },
-      },
       mocks: {
         $storage: mockStorage(),
       },
@@ -94,9 +86,6 @@ describe('GeneralHelpMenu.vue', () => {
   test('updateShow will trigger set the value for generalHelpMenuVisible', async () => {
     wrapper.vm.updateShow(true);
     await wrapper.vm.$nextTick();
-    expect(wrapper.vm.$storage.dashboard.mutations.setProperty).toHaveBeenCalledWith({
-      property: 'generalHelpMenuVisible',
-      value: true,
-    });
+    expect(dashboardStore.generalHelpMenuVisible).toBe(true);
   });
 });

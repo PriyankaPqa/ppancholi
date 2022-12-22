@@ -1,16 +1,14 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
-import { createTestingPinia } from '@pinia/testing';
-import { useUserStore } from '@/pinia/user/user';
+import { useMockUserStore } from '@/pinia/user/user.mock';
 import Component from './ActivityWatcher.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
 let wrapper;
+const { pinia, userStore } = useMockUserStore();
 
-const pinia = createTestingPinia({ stubActions: false });
-const userStore = useUserStore();
 const doMount = (maxInactivity = 1) => {
   const options = {
     propsData: {

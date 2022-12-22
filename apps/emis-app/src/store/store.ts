@@ -12,7 +12,6 @@ import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@libs/services-lib/optionItems/optionItems';
 import { tabs } from '@/store/modules/registration/tabs';
 import { optionList } from '@/store/modules/optionList';
-import { dashboard } from '@/store/modules/dashboard';
 
 import { UserAccountEntityModule } from '@/store/modules/user-account/userAccountEntity';
 import { UserAccountMetadataModule } from '@/store/modules/user-account/userAccountMetadata';
@@ -171,7 +170,6 @@ const store: StoreOptions<IRootState> = {
       null, // SignalR,
     ).getModule(),
 
-    [vuexModule.DASHBOARD_MODULE]: dashboard,
     [vuexModule.OPTION_LIST_MODULE]: optionList,
     [vuexModule.TEAM_ENTITIES]: new TeamEntityModule(
       new TeamsService(httpClient),

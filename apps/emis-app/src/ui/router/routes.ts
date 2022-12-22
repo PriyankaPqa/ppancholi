@@ -5,7 +5,7 @@ import { Trans } from '@/ui/plugins/translation';
 import store from '@/store/store';
 import helpers from '@/ui/helpers/helpers';
 import {
-  USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE,
+  USER_ACCOUNT_ENTITIES,
 } from '@/constants/vuex-modules';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { events } from '@/ui/router/route/events';
@@ -17,6 +17,7 @@ import { financialAssistance } from '@/ui/router/route/financialAssistance';
 import { registration } from '@/ui/router/route/registration';
 import { teams } from '@/ui/router/route/teams';
 import { assessmentTemplates } from '@/ui/router/route/assessmentTemplates';
+import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import Routes from '../../constants/routes';
 import { SignalR } from '../plugins/signal-r/signalR';
 
@@ -49,9 +50,10 @@ export const routes: Array<RouteConfig> = [
       },
     },
     beforeEnter: async (to, from, next) => {
-      store.commit(`${DASHBOARD_MODULE}/setProperty`, { property: 'checkingAccount', value: false });
+      const dashboardStore = useDashboardStore();
+      dashboardStore.checkingAccount = false;
       if (to.name !== Routes.loginError.name) {
-        store.commit(`${DASHBOARD_MODULE}/setProperty`, { property: 'initLoading', value: true });
+        dashboardStore.initLoading = true;
         const userAccount = await store.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchCurrentUserAccount`);
         if (userAccount) {
           await SignalR.instance.buildHubConnection();
@@ -59,7 +61,7 @@ export const routes: Array<RouteConfig> = [
           helpers.redirectToLoginErrorPage();
         }
       }
-      store.commit(`${DASHBOARD_MODULE}/setProperty`, { property: 'initLoading', value: false });
+      dashboardStore.initLoading = false;
       Trans.routeMiddleware(to, from, next);
     },
     children: [

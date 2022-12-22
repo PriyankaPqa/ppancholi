@@ -8,7 +8,6 @@ import { MassActionStorage } from '@/storage/mass-action';
 import { ApprovalStorage } from '@/storage/approval-table';
 import { IStore, IState } from '../store/store.types';
 import { IStorage } from './storage.types';
-import { makeStorage as makeDashboardStorage } from './dashboard';
 import { makeStorage as makeOptionListStorage } from './optionList';
 import { TeamStorage } from './team';
 import { ProgramStorage } from './program';
@@ -28,7 +27,6 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   caseNote: new CaseNoteStorage(store, vuexModule.CASE_NOTE_ENTITIES, vuexModule.CASE_NOTE_METADATA).make(),
   caseFileReferral: new CaseFileReferralStorage(store, vuexModule.CASE_REFERRAL_ENTITIES, vuexModule.CASE_REFERRAL_METADATA).make(),
   caseFileDocument: new CaseFileDocumentStorage(store, vuexModule.CASE_DOCUMENT_ENTITIES, vuexModule.CASE_DOCUMENT_METADATA).make(),
-  dashboard: makeDashboardStorage(store),
   optionList: makeOptionListStorage(store),
   team: new TeamStorage(store, vuexModule.TEAM_ENTITIES, vuexModule.TEAM_METADATA).make(),
   program: new ProgramStorage(store, vuexModule.PROGRAM_ENTITIES, vuexModule.PROGRAM_METADATA).make(),

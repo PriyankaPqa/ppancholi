@@ -405,7 +405,7 @@ export default Vue.extend({
     if (this.isEdit) {
       const fa = await this.$storage.financialAssistance.actions.fetch(this.$route.params.faId);
       const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
-      const program = await this.$storage.program.actions.fetch({ id: fa.entity.programId, eventId: fa.entity.eventId });
+      const program = await this.$storage.program.actions.fetch({ id: fa.entity?.programId, eventId: fa.entity?.eventId });
       this.$storage.financialAssistance.mutations.setFinancialAssistance(fa, categories, program.entity);
 
       this.programs = [this.$storage.financialAssistance.getters.program()];

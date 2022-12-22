@@ -61,6 +61,7 @@ import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import helpers from '@/ui/helpers/helpers';
 import ErrorReportToast from '@/ui/shared-components/ErrorReportToast.vue';
 import { Survey } from 'survey-vue';
+import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 
 Vue.component('Survey', Survey);
 
@@ -109,10 +110,10 @@ export default {
 
   computed: {
     isLoading() {
-      return this.$store.state.dashboard.initLoading;
+      return useDashboardStore().initLoading;
     },
     checkingAccount() {
-      return this.$store.state.dashboard.checkingAccount;
+      return useDashboardStore().checkingAccount;
     },
 
   },

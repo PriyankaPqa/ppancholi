@@ -3,7 +3,6 @@ import { IState as IRegistrationState } from '@libs/registration-lib/store/modul
 import { IHouseholdEntityState } from '@libs/registration-lib/store/modules/household/householdEntity.types';
 import { IHouseholdMetadata } from '@libs/entities-lib/household';
 import * as vuexModule from '@/constants/vuex-modules';
-import { IState as IDashboardState } from '@/store/modules/dashboard/dashboard.types';
 import { IState as IOptionListState } from '@/store/modules/optionList/optionList.types';
 
 import { IProgramEntityState } from '@/store/modules/program/programEntity.types';
@@ -57,8 +56,6 @@ export interface IRootState {
   [vuexModule.FINANCIAL_ASSISTANCE_METADATA]?: IBaseState<IFinancialAssistanceTableMetadata>,
   [vuexModule.HOUSEHOLD_ENTITIES]?: IHouseholdEntityState
   [vuexModule.HOUSEHOLD_METADATA]?: IBaseState<IHouseholdMetadata>
-
-  [vuexModule.DASHBOARD_MODULE]?: IDashboardState,
   [vuexModule.OPTION_LIST_MODULE]?: IOptionListState,
   [vuexModule.TEAM_ENTITIES]?: ITeamEntityState,
   [vuexModule.TEAM_METADATA]?: IBaseState<ITeamMetadata>,

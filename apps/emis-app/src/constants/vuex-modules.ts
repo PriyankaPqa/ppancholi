@@ -2,7 +2,6 @@ export const CASE_FILE_ENTITIES = 'caseFileEntities';
 export const CASE_FILE_METADATA = 'caseFileMetadata';
 export const CASE_NOTE_ENTITIES = 'caseNoteEntities';
 export const CASE_NOTE_METADATA = 'caseNoteMetadata';
-export const DASHBOARD_MODULE = 'dashboard';
 export const OPTION_LIST_MODULE = 'optionList';
 export const PROGRAM_ENTITIES = 'programEntities';
 export const PROGRAM_METADATA = 'programMetadata';

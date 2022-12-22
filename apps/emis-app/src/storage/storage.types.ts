@@ -1,6 +1,5 @@
 import { IStorage as IRegistrationStorage, IStorageMock as IRegistrationMock } from '@libs/registration-lib/store/storage/registration';
 import { IStorageMake, IStorageMakeMock } from '@libs/registration-lib/store/storage/household';
-import { IStorage as IDashboardStorage, IStorageMock as IDashboardStorageMock } from './dashboard';
 import { IStorage as IOptionListStorage, IStorageMock as IOptionListStorageMock } from './optionList';
 import { IStorageMake as IFinancialAssistanceMakeStorage, IStorageMakeMock as IFinancialAssistanceMakeStorageMock } from './financial-assistance';
 import { IStorageMake as IApprovalTableMakeStorage, IStorageMakeMock as IApprovalTableMakeStorageMock } from './approval-table';
@@ -85,7 +84,6 @@ export interface IStorage {
   caseNote: ICaseNoteMakeStorage;
   caseFileReferral: ICaseFileReferralMakeStorage;
   caseFileDocument: ICaseFileDocumentMakeStorage;
-  dashboard: IDashboardStorage;
   optionList: IOptionListStorage;
   team: ITeamMakeStorage;
   program: IProgramMakeStorage;
@@ -109,7 +107,6 @@ export interface IStorageMock {
   caseNote: ICaseNoteMakeStorageMock;
   caseFileReferral: ICaseFileReferralMakeStorageMock;
   caseFileDocument: ICaseFileDocumentMakeStorageMock;
-  dashboard: IDashboardStorageMock;
   optionList: IOptionListStorageMock;
   team: ITeamMakeStorageMock;
   program: IProgramMakeStorageMock;

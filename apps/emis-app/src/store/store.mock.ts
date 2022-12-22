@@ -15,7 +15,6 @@ import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@libs/services-lib/optionItems/optionItems';
 import { tabs } from '@/store/modules/registration/tabs';
 import { optionList } from '@/store/modules/optionList';
-import { dashboard } from '@/store/modules/dashboard';
 
 import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
 import { ApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalTables';
@@ -145,7 +144,6 @@ const mockConfig = {
       mockSignalR(),
     ).getModule(),
 
-    [vuexModule.DASHBOARD_MODULE]: dashboard,
     [vuexModule.OPTION_LIST_MODULE]: optionList,
     [vuexModule.TEAM_ENTITIES]: new TeamEntityModule(
       new TeamsService(httpClient),

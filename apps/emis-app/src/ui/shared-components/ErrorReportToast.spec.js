@@ -2,9 +2,8 @@
 import { mockStorage } from '@/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { User, mockUserData } from '@libs/entities-lib/user';
-import { createTestingPinia } from '@pinia/testing';
-import { useUserStore } from '@/pinia/user/user';
 
+import { useMockUserStore } from '@/pinia/user/user.mock';
 import helpers from '../helpers/helpers';
 import Component from './ErrorReportToast.vue';
 
@@ -70,8 +69,7 @@ describe('ErrorReportToast', () => {
     status: null,
   };
 
-  const pinia = createTestingPinia({ stubActions: false });
-  const userStore = useUserStore(pinia);
+  const { pinia, userStore } = useMockUserStore();
 
   beforeEach(() => {
     jest.spyOn(document, 'getElementsByClassName').mockImplementation(() => [({ style: { display: '' } })]);

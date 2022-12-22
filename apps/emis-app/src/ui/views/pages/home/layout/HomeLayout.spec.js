@@ -1,17 +1,12 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-
-import { createTestingPinia } from '@pinia/testing';
-
-import { useUserStore } from '@/pinia/user/user';
+import { useMockUserStore } from '@/pinia/user/user.mock';
 import Component from './HomeLayout.vue';
 
 const localVue = createLocalVue();
 
 let wrapper;
 const doMount = () => {
-  const pinia = createTestingPinia({ stubActions: false });
-  const userStore = useUserStore(pinia);
-  userStore.getLandingPage = jest.fn().mockImplementation(() => 'HomeLevel4');
+  const { pinia } = useMockUserStore();
 
   wrapper = mount(Component, {
     localVue,

@@ -8,40 +8,21 @@ import {
 import routes from '@/constants/routes';
 
 import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();
-
+const { pinia, dashboardStore } = useMockDashboardStore(getPiniaForUser('level6'));
 const storage = mockStorage();
-
+const vuetify = new Vuetify();
 describe('AppHeader.vue', () => {
   let wrapper;
-  let mutations;
 
   beforeEach(() => {
-    const vuetify = new Vuetify();
-
-    mutations = {
-      setProperty: jest.fn(),
-    };
-
     wrapper = mount(Component, {
       localVue,
-      pinia: getPiniaForUser('level6'),
+      pinia,
       vuetify,
-      store: {
-        modules: {
-          dashboard: {
-            state: {
-              rightMenuVisible: false,
-              leftMenuVisible: false,
-              leftMenuExpanded: false,
-              generalHelpMenuVisible: false,
-            },
-            mutations,
-          },
-        },
-      },
       mocks: {
         $route: {
           name: routes.events.home.name,
@@ -49,6 +30,9 @@ describe('AppHeader.vue', () => {
         $storage: storage,
       },
     });
+  });
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('Computed', () => {
@@ -75,32 +59,31 @@ describe('AppHeader.vue', () => {
     describe('handleLeftMenu', () => {
       it('if device size is medium and up, sets into the store the opposite state of leftMenuVisible', async () => {
         wrapper.vm.$vuetify.breakpoint.mdAndUp = true;
+        dashboardStore.leftMenuVisible = false;
+        dashboardStore.leftMenuExpanded = false;
         wrapper.vm.handleLeftMenu();
         await wrapper.vm.$nextTick();
 
-        expect(storage.dashboard.mutations.setProperty).toHaveBeenNthCalledWith(1, { property: 'leftMenuVisible', value: true });
-
-        expect(storage.dashboard.mutations.setProperty).toHaveBeenNthCalledWith(2, { property: 'leftMenuExpanded', value: true });
+        expect(dashboardStore.leftMenuVisible).toBeTruthy();
+        expect(dashboardStore.leftMenuExpanded).toBeTruthy();
       });
 
       it('if device size is not medium and down, does not change leftMenuVisible state in the store', async () => {
         wrapper.vm.$vuetify.breakpoint.mdAndDown = false;
+        dashboardStore.leftMenuVisible = false;
         await wrapper.vm.$nextTick();
         wrapper.vm.handleLeftMenu();
         await wrapper.vm.$nextTick();
-        expect(storage.dashboard.mutations.setProperty).not.toHaveBeenCalledWith(expect.anything(), {
-          property: 'leftMenuVisible',
-          value: true,
-        });
+        expect(dashboardStore.leftMenuVisible).toBeFalsy();
       });
 
       it('sets into the store the opposite state of leftMenuExpanded', async () => {
+        dashboardStore.leftMenuVisible = false;
+        dashboardStore.leftMenuExpanded = false;
         wrapper.vm.handleLeftMenu();
         await wrapper.vm.$nextTick();
-
-        expect(storage.dashboard.mutations.setProperty).toHaveBeenNthCalledWith(1, { property: 'leftMenuVisible', value: true });
-
-        expect(storage.dashboard.mutations.setProperty).toHaveBeenNthCalledWith(2, { property: 'leftMenuExpanded', value: true });
+        expect(dashboardStore.leftMenuVisible).toBeTruthy();
+        expect(dashboardStore.leftMenuExpanded).toBeTruthy();
       });
     });
 
@@ -108,21 +91,16 @@ describe('AppHeader.vue', () => {
       it('sets into the store the opposite state of rightMenuVisible ', async () => {
         wrapper.vm.handleRightMenu();
         await wrapper.vm.$nextTick();
-        expect(storage.dashboard.mutations.setProperty).toHaveBeenCalledWith({
-          property: 'rightMenuVisible',
-          value: true,
-        });
+        expect(dashboardStore.rightMenuVisible).toBeTruthy();
       });
     });
 
     describe('handleGeneralHelpMenu', () => {
       it('sets into the store the opposite state of generalHelpMenuVisible', async () => {
+        dashboardStore.generalHelpMenuVisible = false;
         wrapper.vm.handleGeneralHelpMenu();
         await wrapper.vm.$nextTick();
-        expect(storage.dashboard.mutations.setProperty).toHaveBeenCalledWith({
-          property: 'generalHelpMenuVisible',
-          value: true,
-        });
+        expect(dashboardStore.generalHelpMenuVisible).toBeTruthy();
       });
     });
 

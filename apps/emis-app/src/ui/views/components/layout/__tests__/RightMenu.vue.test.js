@@ -2,14 +2,14 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedTenantSettings } from '@libs/entities-lib/tenantSettings';
 import routes from '@/constants/routes';
 import { getPiniaForUser } from '@/pinia/user/user.spec';
-import { useUserStore } from '@/pinia/user/user';
+import { useMockUserStore } from '@/pinia/user/user.mock';
+import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import Component from '../RightMenu.vue';
 
 const localVue = createLocalVue();
 
-const pinia = getPiniaForUser('level6');
-const userStore = useUserStore(pinia);
-userStore.signOut = jest.fn();
+const { pinia, userStore } = useMockUserStore(getPiniaForUser('level6'));
+const { dashboardStore } = useMockDashboardStore(pinia);
 
 describe('RightMenu.vue', () => {
   let wrapper;
@@ -18,15 +18,6 @@ describe('RightMenu.vue', () => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       pinia,
-      store: {
-        modules: {
-          dashboard: {
-            state: {
-              rightMenuVisible: true,
-            },
-          },
-        },
-      },
     });
   };
 
@@ -80,15 +71,6 @@ describe('RightMenu.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia: getPiniaForUser('noRole'),
-          store: {
-            modules: {
-              dashboard: {
-                state: {
-                  rightMenuVisible: true,
-                },
-              },
-            },
-          },
         });
         const role = wrapper.find('[data-test="rightMenu__role"]');
 
@@ -112,12 +94,12 @@ describe('RightMenu.vue', () => {
       });
 
       test('close button closes the sidebar', async () => {
-        expect(wrapper.vm.$store.state.dashboard.rightMenuVisible).toBe(true);
+        dashboardStore.rightMenuVisible = true;
 
         const button = wrapper.find('[data-test="closeButton"]');
         await button.trigger('click');
 
-        expect(wrapper.vm.$store.state.dashboard.rightMenuVisible).toBe(false);
+        expect(dashboardStore.rightMenuVisible).toBe(false);
       });
 
       test('the logout button dispatches the logout action and redirects to the sign in page', async () => {

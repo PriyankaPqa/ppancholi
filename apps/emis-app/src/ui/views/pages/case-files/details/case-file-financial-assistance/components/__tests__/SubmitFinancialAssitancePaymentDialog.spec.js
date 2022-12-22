@@ -2,8 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalTableData } from '@libs/entities-lib/approvals/approvals-table';
-import { createTestingPinia } from '@pinia/testing';
-import { useUserStore } from '@/pinia/user/user';
+import { useMockUserStore } from '@/pinia/user/user.mock';
 import Component from '../SubmitFinancialAssistancePaymentDialog.vue';
 
 const localVue = createLocalVue();
@@ -12,8 +11,7 @@ const financialAssistance = mockFinancialAssistanceTableEntity();
 
 let wrapper;
 
-const pinia = createTestingPinia({ stubActions: false });
-const userStore = useUserStore(pinia);
+const { pinia, userStore } = useMockUserStore();
 
 const doMount = (shallow = true, approvalRequired = false, approvalTable = null, hasFeature = true) => {
   const options = {

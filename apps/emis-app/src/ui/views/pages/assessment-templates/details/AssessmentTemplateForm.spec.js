@@ -193,7 +193,7 @@ describe('AssessmentTemplateForm.vue', () => {
         expect(wrapper.emitted('update:assessmentTemplate').length).toBe(1);
 
         await wrapper.setData({
-          localAssessment: { name: 'newName' },
+          localAssessment: { name: { translation: { en: 'newName ' } } },
         });
         expect(wrapper.emitted('update:assessmentTemplate').length).toBe(2);
       });
@@ -201,7 +201,7 @@ describe('AssessmentTemplateForm.vue', () => {
       it('emits showEligibilityCriteriaWarning when localAssessment is changed for a form and isSelectedAsProgramEligibilityCriteria', async () => {
         await mountWrapper(assessmentForm);
         await wrapper.setData({
-          localAssessment: { name: 'newName' },
+          localAssessment: { name: { translation: { en: 'newName ' } } },
           isSelectedAsProgramEligibilityCriteria: true,
         });
         expect(wrapper.emitted('update:show-eligibility-criteria-warning').length).toBe(1);

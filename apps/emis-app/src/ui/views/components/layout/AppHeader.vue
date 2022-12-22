@@ -63,6 +63,7 @@ import routes from '@/constants/routes';
 import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
 import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import { useUserStore } from '@/pinia/user/user';
+import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -107,31 +108,21 @@ export default Vue.extend({
 
   methods: {
     handleLeftMenu() {
+      const dashboardStore = useDashboardStore();
       if (this.$vuetify.breakpoint.mdAndDown) {
-        this.$storage.dashboard.mutations.setProperty({
-          property: 'leftMenuVisible',
-          value: !this.$store.state.dashboard.leftMenuVisible,
-        });
+        dashboardStore.leftMenuVisible = !dashboardStore.leftMenuVisible;
       }
-
-      this.$storage.dashboard.mutations.setProperty({
-        property: 'leftMenuExpanded',
-        value: !this.$store.state.dashboard.leftMenuExpanded,
-      });
+      dashboardStore.leftMenuExpanded = !dashboardStore.leftMenuExpanded;
     },
 
     handleRightMenu() {
-      this.$storage.dashboard.mutations.setProperty({
-        property: 'rightMenuVisible',
-        value: !this.$store.state.dashboard.rightMenuVisible,
-      });
+      const dashboardStore = useDashboardStore();
+      dashboardStore.rightMenuVisible = !dashboardStore.rightMenuVisible;
     },
 
     handleGeneralHelpMenu() {
-      this.$storage.dashboard.mutations.setProperty({
-        property: 'generalHelpMenuVisible',
-        value: !this.$store.state.dashboard.generalHelpMenuVisible,
-      });
+      const dashboardStore = useDashboardStore();
+      dashboardStore.generalHelpMenuVisible = !dashboardStore.generalHelpMenuVisible;
     },
 
     routeToRegistration() {
