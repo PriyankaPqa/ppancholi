@@ -1183,6 +1183,80 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         expect(storage.financialAssistancePayment.actions.editFinancialAssistancePayment).toHaveBeenCalledWith(newFA);
       });
     });
+
+    describe('confirmBeforeLeavingWithoutSubmittingPayment', () => {
+      let next;
+      beforeEach(() => {
+        next = jest.fn(() => {});
+      });
+      it('does not call next if the confirmation dialog returns false in DetailMode when approvalStatus is New', async () => {
+        wrapper.vm.to = {
+          name: 'mockRoute.name',
+        };
+        await wrapper.setData({
+          isDetailsMode: true,
+        });
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.confirmBeforeLeavingWithoutSubmittingPayment(next, ApprovalStatus.New);
+        expect(next).not.toBeCalled();
+      });
+
+      it('calls next if the confirmation dialog returns false in DetailMode when approvalStatus is New', async () => {
+        wrapper.vm.to = {
+          name: 'mockRoute.name',
+        };
+        await wrapper.setData({
+          isDetailsMode: true,
+        });
+        wrapper.vm.$confirm = jest.fn(() => true);
+        await wrapper.vm.confirmBeforeLeavingWithoutSubmittingPayment(next, ApprovalStatus.New);
+        expect(next).toBeCalled();
+      });
+
+      it('displays correct message in confirmation dialog in DetailMode when approvalStatus is New', async () => {
+        wrapper.vm.to = {
+          name: 'mockRoute.name',
+        };
+        await wrapper.setData({
+          isDetailsMode: true,
+        });
+        await wrapper.vm.confirmBeforeLeavingWithoutSubmittingPayment(next, ApprovalStatus.New);
+        expect(wrapper.vm.$confirm).toBeCalledWith({
+          title: wrapper.vm.$t('confirmLeaveDialog.title'),
+          messages: [
+            wrapper.vm.$t('confirmLeaveDialog.paymentUnSubmitted'),
+          ],
+        });
+      });
+
+      it('calls next in DetailMode when the approvalStatus is New and navigating to FinancialAssistance.Edit', async () => {
+        wrapper.vm.to = {
+          name: 'casefile.financialAssistance.edit',
+        };
+        await wrapper.setData({
+          isDetailsMode: true,
+        });
+        await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, wrapper.vm.to, undefined, next);
+        expect(next).toBeCalled();
+      });
+
+      it('displays correct message in confirmation dialog in EditMode when the approvalStatus is New and navigating away from the current page', async () => {
+        wrapper.vm.to = {
+          name: 'mockRoute.name',
+        };
+        await wrapper.setData({
+          isEditMode: true,
+        });
+        wrapper.vm.$refs.form.flags = { dirty: false };
+        await wrapper.vm.confirmBeforeLeavingWithoutSubmittingPayment(next, ApprovalStatus.New);
+        expect(wrapper.vm.$confirm).toBeCalledWith({
+          title: wrapper.vm.$t('confirmLeaveDialog.title'),
+          messages: [
+            wrapper.vm.$t('confirmLeaveDialog.paymentUnSubmitted'),
+          ],
+        });
+      });
+    });
   });
 
   describe('beforeRouteLeave', () => {
@@ -1192,21 +1266,42 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     });
 
     it('calls next if the confirmation dialog returns true', async () => {
+      wrapper.vm.to = {
+        name: 'mockRoute.name',
+      };
       wrapper.vm.$refs.form.flags = { dirty: true };
-      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, wrapper.vm.to, undefined, next);
       expect(next).toBeCalled();
     });
 
     it('does not call next if the confirmation dialog returns false', async () => {
+      wrapper.vm.to = {
+        name: 'mockRoute.name',
+      };
       wrapper.vm.$refs.form.flags = { dirty: true };
       wrapper.vm.$confirm = jest.fn(() => false);
-      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, wrapper.vm.to, undefined, next);
       expect(next).not.toBeCalled();
     });
 
     it('calls next if dirty is false', async () => {
+      wrapper.vm.to = {
+        name: 'mockRoute.name',
+      };
       wrapper.vm.$refs.form.flags = { dirty: false };
-      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, wrapper.vm.to, undefined, next);
+      expect(next).toBeCalled();
+    });
+
+    it('calls next in EditMode when the approvalStatus is New and navigating to Financial Assistance Details', async () => {
+      wrapper.vm.to = {
+        name: 'casefile.financialAssistance.details',
+      };
+      await wrapper.setData({
+        isEditMode: true,
+      });
+      wrapper.vm.$refs.form.flags = { dirty: false };
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, wrapper.vm.to, undefined, next);
       expect(next).toBeCalled();
     });
   });

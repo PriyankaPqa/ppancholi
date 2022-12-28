@@ -564,6 +564,7 @@
     "confirmCancelDialog.title": "Annuler les modifications",
     "confirmLeaveDialog.message_1": "Les renseignements que vous avez saisis seront perdus si vous quittez la page.",
     "confirmLeaveDialog.message_2": "Voulez-vous vraiment quitter?",
+    "confirmLeaveDialog.paymentUnSubmitted": " Le paiement n'a pas été soumis.",
     "confirmLeaveDialog.title": "Voulez-vous vraiment quitter?",
     "document.add.title": "Ajouter un nouveau document",
     "document.create.success": "Le document a été créé.",

@@ -100,6 +100,11 @@ export default mixins(caseFileDetail).extend({
       type: Object as () => IProgramEntity,
       default: null,
     },
+
+    isDeletingPayment: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -142,6 +147,7 @@ export default mixins(caseFileDetail).extend({
       if (doDelete) {
         const result = await this.$storage.financialAssistancePayment.actions.deactivate(this.financialAssistance.id);
         if (result) {
+          this.$emit('update:isDeletingPayment', true);
           this.$router.push({
             name: routes.caseFile.financialAssistance.home.name,
           });

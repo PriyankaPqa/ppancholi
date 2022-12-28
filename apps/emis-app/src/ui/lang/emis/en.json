@@ -566,6 +566,7 @@
     "confirmCancelDialog.title": "Cancel changes",
     "confirmLeaveDialog.message_1": "The information you entered will be lost if you leave the page.",
     "confirmLeaveDialog.message_2": "Are you sure you want to leave?",
+    "confirmLeaveDialog.paymentUnSubmitted": "The payment has not been submitted.",
     "confirmLeaveDialog.title": "Are you sure you want to leave?",
     "document.add.title": "Add document",
     "document.create.success": "The document has been successfully created.",

@@ -208,6 +208,7 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
         });
         expect(storage.financialAssistancePayment.actions.deactivate)
           .toHaveBeenCalledWith(financialAssistance.id);
+        expect(wrapper.emitted('update:isDeletingPayment')[0][0]).toEqual(true);
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
           name: routes.caseFile.financialAssistance.home.name,
         });

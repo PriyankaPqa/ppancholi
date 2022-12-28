@@ -40,6 +40,7 @@
                 :financial-assistance.sync="financialAssistance"
                 :financial-assistance-table="selectedTable"
                 :program="selectedProgram"
+                :is-deleting-payment.sync="isDeletingPayment"
                 data-test="financial-assistance-details" />
             </v-sheet>
             <!-- Add payment line -->
@@ -191,7 +192,15 @@ export default mixins(caseFileDetail).extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    await helpers.confirmBeforeLeaving(this, (this.$refs.form as VForm).flags.dirty, next);
+    // In DetailsMode we want to notify users to submit payment before they navigate away from the current page.
+    // In EditMode we want to notify users to submit payment before they navigate away from the current page without changing anything,
+    // but if the destination is Financial Assistance Details, this notification won't show.
+    if ((to.name !== 'casefile.financialAssistance.edit' && to.name !== 'caseFile.financialAssistance.paymentLineDetails' && this.isDetailsMode && !this.isDeletingPayment)
+      || (this.isEditMode && !(this.$refs.form as VForm).flags.dirty && to.name !== 'casefile.financialAssistance.details')) {
+      await this.confirmBeforeLeavingWithoutSubmittingPayment(next, this.financialAssistance.approvalStatus);
+    } else {
+      await helpers.confirmBeforeLeaving(this, (this.$refs.form as VForm).flags.dirty, next);
+    }
   },
 
   data() {
@@ -216,6 +225,7 @@ export default mixins(caseFileDetail).extend({
       program: null as IProgramCombined,
       programAssessmentForms: [] as IAssessmentFormEntity[],
       caseFileAssessmentResponses: [] as IAssessmentResponseEntity[],
+      isDeletingPayment: false,
     };
   },
 
@@ -575,6 +585,22 @@ export default mixins(caseFileDetail).extend({
 
       this.caseFileAssessmentResponses = this.$storage.assessmentResponse.getters.getByIds(res.ids)
         .map((combined: IEntityCombined<IAssessmentResponseEntity, IAssessmentResponseMetadata>) => (combined.entity));
+    },
+
+    async confirmBeforeLeavingWithoutSubmittingPayment(next: NavigationGuardNext = null, approvalStatus: ApprovalStatus) {
+      let leavingWithoutSummitedPayment = true;
+      if (approvalStatus === ApprovalStatus.New) {
+        leavingWithoutSummitedPayment = await this.$confirm({
+          title: this.$t('confirmLeaveDialog.title'),
+          messages: [
+            this.$t('confirmLeaveDialog.paymentUnSubmitted'),
+          ],
+        });
+      }
+      if (next && leavingWithoutSummitedPayment) {
+        next();
+      }
+      return leavingWithoutSummitedPayment;
     },
   },
 });
