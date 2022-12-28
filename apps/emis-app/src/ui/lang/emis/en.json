@@ -189,6 +189,8 @@
     "caseFile.document.title": "Documents",
     "caseFile.financialAssistance.ETransfer.moreThanX": "The total amount for E-Transfer cannot exceed ${maximumAmount} across payment lines.",
     "caseFile.financialAssistance.ETransfer.noEmail": "Beneficiary does not have an email address.",
+    "caseFile.financialAssistance.ETransfer.email": "Email address",
+    "caseFile.financialAssistance.ETransfer.noEmailNotification": "Beneficiary does not have an email address. E-transfer cannot be sent.",
     "caseFile.financialAssistance.actualAmount": "Actual amount",
     "caseFile.financialAssistance.actualAmountSmall": "Actual",
     "caseFile.financialAssistance.addNewPaymentLine": "Add new payment line",

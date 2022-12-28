@@ -94,6 +94,21 @@ describe('ViewPaymentLineDetails.vue', () => {
       });
     });
 
+    describe('eTransfer-email', () => {
+      it('shows if payment modality is ETransfer', async () => {
+        const paymentGroup = mockCaseFinancialAssistanceEntity().groups[0];
+        paymentGroup.groupingInformation.modality = EPaymentModalities.ETransfer;
+        await mountWrapper(false, 6, null, {
+          computed: {
+            paymentGroup() {
+              return paymentGroup;
+            },
+          },
+        });
+        expect(wrapper.findDataTest('eTransfer-email').exists()).toBeTruthy();
+      });
+    });
+
     describe('related_number', () => {
       it('shows depending on modality', async () => {
         expect(wrapper.findDataTest('related_number').exists()).toBeFalsy();

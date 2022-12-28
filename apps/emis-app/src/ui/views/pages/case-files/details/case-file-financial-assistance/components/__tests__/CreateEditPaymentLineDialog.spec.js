@@ -222,6 +222,26 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.vm.setAddress).toHaveBeenCalledTimes(1);
       });
     });
+
+    describe('E-transfer', () => {
+      it('should display email information when payment method is E-transfer and there is an email', async () => {
+        await wrapper.setData({
+          paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } },
+          defaultBeneficiaryData: { email: 'mockemail@gmail.com' },
+        });
+        const element = wrapper.findDataTest('payment_eTransfer_email');
+        expect(element.exists()).toBe(true);
+      });
+
+      it('should not display no-email notification when payment method is E-transfer and there is not an email', async () => {
+        await wrapper.setData({
+          paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } },
+          defaultBeneficiaryData: { email: '' },
+        });
+        const element = wrapper.findDataTest('payment_eTransfer_noEmail');
+        expect(element.exists()).toBe(true);
+      });
+    });
   });
 
   describe('Validation rules', () => {

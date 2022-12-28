@@ -68,6 +68,29 @@
                 :label="`${$t('caseFile.financialAssistance.supportingDocuments')} *`" />
             </v-col>
           </v-row>
+          <v-row v-if="paymentGroup.groupingInformation.modality === EPaymentModalities.ETransfer" class="pt-0 mt-0">
+            <message-box
+              v-if="defaultBeneficiaryData.email"
+              icon="mdi-information"
+              small-icon
+              :message="`${$t('caseFile.financialAssistance.ETransfer.email')}: ${defaultBeneficiaryData.email}`"
+              :styles="{
+                'background-color': 'var(--v-grey-lighten4)',
+                color: 'var(--v-grey-darken4)',
+              }"
+              icon-color="black"
+              data-test="payment_eTransfer_email" />
+            <message-box
+              v-else
+              icon="mdi-information-outline"
+              small-icon
+              :message="$t('caseFile.financialAssistance.ETransfer.noEmailNotification')"
+              :styles="{
+                'background-color': 'var(--v-status_yellow_pale-base)',
+                color: 'var(--v-grey-darken4)',
+              }"
+              data-test="payment_eTransfer_noEmail" />
+          </v-row>
           <v-row>
             <v-col cols="3">
               <v-text-field-with-validation
@@ -176,6 +199,7 @@ import {
   VTextFieldWithValidation,
   VSelectWithValidation,
 } from '@libs/component-lib/components';
+import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import AddressForm from '@libs/registration-lib/components/forms/AddressForm.vue';
 import libHelpers from '@libs/entities-lib/helpers';
 import { Address, IAddress } from '@libs/entities-lib/value-objects/address';
@@ -210,6 +234,7 @@ export default mixins(caseFileDetail).extend({
     VTextFieldWithValidation,
     VSelectWithValidation,
     AddressForm,
+    MessageBox,
   },
 
   props: {
@@ -264,6 +289,7 @@ export default mixins(caseFileDetail).extend({
       showIssuedActualAmounts: FinancialAssistancePaymentGroup.showIssuedActualAmounts,
       showPayee: FinancialAssistancePaymentGroup.showPayee,
       fixedAmount: false,
+      EPaymentModalities,
     };
   },
 
@@ -350,7 +376,7 @@ export default mixins(caseFileDetail).extend({
         },
         modalities: {
           required: true,
-          customValidator: { isValid: !this.modalityError, messageKey: this.modalityError },
+          customValidator: { isValid: !this.modalityError },
         },
         documentReceived: {
           required: { allowFalse: false },

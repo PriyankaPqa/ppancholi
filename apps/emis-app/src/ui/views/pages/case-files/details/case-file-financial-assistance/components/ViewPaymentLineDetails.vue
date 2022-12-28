@@ -45,6 +45,14 @@
                     : $t("caseFile.financialAssistance.paymentLineDetails.supportingDocuments.notReceived") }}
                 </td>
               </tr>
+              <tr v-if="paymentGroup.groupingInformation.modality === EPaymentModalities.ETransfer" data-test="eTransfer-email">
+                <td class="label fw-bold">
+                  {{ $t('caseFile.financialAssistance.ETransfer.email') }}
+                </td>
+                <td class="data" data-test="eTransfer-email-data">
+                  {{ caseFile.metadata.primaryBeneficiary.contactInformation.email }}
+                </td>
+              </tr>
               <tr v-if="showRelatedNumber(paymentGroup)" data-test="related_number">
                 <td class="label fw-bold">
                   {{ $t("caseFile.financialAssistance.relatedNumber") }}

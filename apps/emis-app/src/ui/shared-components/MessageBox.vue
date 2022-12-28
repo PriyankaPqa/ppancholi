@@ -1,18 +1,15 @@
 <template>
   <v-container>
-    <v-sheet rounded class="mb-3 pt-4" style="background-color: rgb(255 230 230);">
-      <v-row>
-        <v-col cols="1" class="d-flex justify-center">
-          <v-icon
-            class="ml-6"
-            color="red">
-            {{ icon }}
-          </v-icon>
-        </v-col>
-        <v-col cols="10" style="text-align: justify;font-weight: bold;">
-          {{ message }}
-        </v-col>
-      </v-row>
+    <v-sheet rounded class="mb-3 pa-4" :style="styles">
+      <div class="d-flex  pl-1" style="text-align: justify;font-weight: bold;">
+        <v-icon
+          class="pr-2"
+          :small="smallIcon"
+          :color="iconColor">
+          {{ icon }}
+        </v-icon>
+        {{ message }}
+      </div>
     </v-sheet>
   </v-container>
 </template>
@@ -32,6 +29,25 @@ export default Vue.extend({
     message: {
       type: String,
       required: true,
+    },
+
+    styles: {
+      type: Object as () => Record<string, string>,
+      default() {
+        return { 'background-color': 'rgb(255 230 230)' };
+      },
+    },
+
+    iconColor: {
+      type: String,
+      default() {
+        return 'red';
+      },
+    },
+
+    smallIcon: {
+      type: Boolean,
+      default: false,
     },
   },
 });

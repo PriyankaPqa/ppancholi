@@ -323,6 +323,7 @@ declare module 'vue' {
     Test: typeof import('./src/pinia/Test.vue')['default']
     TooltipFinancialAssistanceCategory: typeof import('./src/ui/views/pages/financial-assistance/create-edit/TooltipFinancialAssistanceCategory.vue')['default']
     UserAccounts: typeof import('./src/ui/views/pages/system-management/lists/user-accounts/home/UserAccounts.vue')['default']
+    VAlert: typeof import('vuetify/lib')['VAlert']
     VApp: typeof import('vuetify/lib')['VApp']
     VAppBar: typeof import('vuetify/lib')['VAppBar']
     VAppBarNavIcon: typeof import('vuetify/lib')['VAppBarNavIcon']

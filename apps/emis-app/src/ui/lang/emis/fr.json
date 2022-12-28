@@ -187,6 +187,8 @@
     "caseFile.document.title": "Documents",
     "caseFile.financialAssistance.ETransfer.moreThanX": "Le total du virement électronique ne peut dépasser {maximumAmount}$, toutes lignes de paiement confondues.",
     "caseFile.financialAssistance.ETransfer.noEmail": "Le ou la bénéficiaire n’a pas d’adresse électronique.",
+    "caseFile.financialAssistance.ETransfer.email": "Adresse électronique",
+    "caseFile.financialAssistance.ETransfer.noEmailNotification": "Le bénéficiaire n'a pas d'adresse électronique. Le virement électronique ne peut pas être envoyé.",
     "caseFile.financialAssistance.actualAmount": "Montant réel",
     "caseFile.financialAssistance.actualAmountSmall": "Réel",
     "caseFile.financialAssistance.addNewPaymentLine": "Ajouter une ligne de paiement",
