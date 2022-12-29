@@ -74,7 +74,6 @@ import { mockProvider } from '@/services/provider';
 import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
-import { UIStateModule } from './modules/ui-state/uiState';
 
 const i18n = {
   t: jest.fn(),
@@ -192,8 +191,6 @@ const mockConfig = {
         new TenantSettingsService(httpClient),
         mockSignalR(),
       ).getModule(),
-
-    [vuexModule.UI_STATE]: new UIStateModule().getModule(),
 
     [vuexModule.APPROVALS_TABLE_ENTITIES]: new ApprovalTableEntityModule(
       new ApprovalTablesService(httpClient),

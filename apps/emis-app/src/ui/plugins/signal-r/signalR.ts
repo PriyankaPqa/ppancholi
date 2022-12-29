@@ -692,7 +692,7 @@ export class SignalR implements ISignalR {
    */
   public async updateSubscriptions() {
     const currentPath = window.location.pathname;
-    const idsToKeep = [...this.storage.uiState.getters.getAllSearchIds(), ...this.lastSubscribedNewlyCreatedIds];
+    const idsToKeep = [...this.pinia.uiStateStore.getAllSearchIds(), ...this.lastSubscribedNewlyCreatedIds];
     const idsToUnsubscribe = this.getIdsToUnsubscribe(currentPath, idsToKeep);
 
     // We unsubscribe ids

@@ -8,12 +8,15 @@ import {
   AccountStatus, mockCombinedUserAccounts, mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
+import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { getPiniaForUser } from '@/pinia/user/user.spec';
 import Component from './UserAccounts.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const usersTestData = mockCombinedUserAccounts();
+const { pinia, uiStateStore } = useMockUiStateStore();
+
 const fakeSubRole = {
   id: '123',
   name: {
@@ -32,11 +35,12 @@ describe('UserAccounts.vue', () => {
   storage.userAccount.actions.deactivate = jest.fn(() => usersTestData[0].entity);
   storage.userAccount.actions.assignRole = jest.fn(() => usersTestData[0].entity);
   storage.userAccount.actions.fetchAll = jest.fn(() => usersTestData);
-  storage.uiState.getters.getSearchTableState = jest.fn(() => ({ itemsPerPage: 25 }));
+  uiStateStore.getSearchTableState = jest.fn(() => ({ itemsPerPage: 25 }));
 
   const mountWrapper = async (additionalOverwrites = {}) => {
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       data() {
         return {
           routes,

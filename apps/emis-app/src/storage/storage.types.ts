@@ -60,11 +60,6 @@ import {
 } from './tenantSettings';
 
 import {
-  IStorageMake as IUIStateMakeStorage,
-  IStorageMakeMock as IUIStateMakeStorageMock,
-} from './ui-state';
-
-import {
   IStorageMake as IAssessmentTemplateMakeStorage,
   IStorageMakeMock as IAssessmentTemplateMakeStorageMock,
 } from './assessment-template';
@@ -95,7 +90,6 @@ export interface IStorage {
   userAccount: IUserAccountMakeStorage;
   massAction: IMassActionMakeStorage;
   tenantSettings: ITenantSettingsMakeStorage;
-  uiState: IUIStateMakeStorage;
   assessmentTemplate: IAssessmentTemplateMakeStorage;
   approvalTable: IApprovalTableMakeStorage;
   assessmentForm: IAssessmentFormMakeStorage;
@@ -118,7 +112,6 @@ export interface IStorageMock {
   userAccount: IUserAccountMakeStorageMock;
   massAction: IMassActionMakeStorageMock;
   tenantSettings: ITenantSettingsMakeStorageMock;
-  uiState: IUIStateMakeStorageMock;
   assessmentTemplate: IAssessmentTemplateMakeStorageMock;
   approvalTable: IApprovalTableMakeStorageMock;
   assessmentForm: IAssessmentFormMakeStorageMock;

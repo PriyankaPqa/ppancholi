@@ -30,6 +30,7 @@ import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import { createPinia, PiniaVuePlugin } from 'pinia';
 import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
 import { useUserStore } from '@/pinia/user/user';
+import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import store from './store/store';
 import router from './ui/router';
 import App from './ui/App.vue';
@@ -78,6 +79,7 @@ SignalR.instance.setPinia({
   userStore: useUserStore(),
   eventStore: useEventStore(),
   eventMetadataStore: useEventMetadataStore(),
+  uiStateStore: useUiStateStore(),
 });
 
 // Directive fo v-visible so component is hidden but still take its place

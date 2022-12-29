@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IState, IStore, mockStore } from '@/store';
 import { mockUserAccountEntities, mockUserAccountMetadatum } from '@libs/entities-lib/user-account';
 import { useMockUserStore } from '@/pinia/user/user.mock';

@@ -81,7 +81,6 @@ import { FinancialAssistancePaymentMetadataModule } from './modules/financial-as
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
 import { ProgramMetadataModule } from './modules/program/programMetadata';
 
-import { UIStateModule } from './modules/ui-state/uiState';
 import { AssessmentTemplateEntityModule } from './modules/assessment-template/assessmentTemplateEntity';
 import { AssessmentTemplateMetadataModule } from './modules/assessment-template/assessmentTemplateMetadata';
 import { AssessmentFormEntityModule } from './modules/assessment-form/assessmentFormEntity';
@@ -223,8 +222,6 @@ const store: StoreOptions<IRootState> = {
       new TenantSettingsService(httpClient),
       SignalR,
     ).getModule(),
-
-    [vuexModule.UI_STATE]: new UIStateModule().getModule(),
 
     [vuexModule.ASSESSMENT_TEMPLATE_ENTITIES]: new AssessmentTemplateEntityModule(
       new AssessmentTemplatesService(httpClient),

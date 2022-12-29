@@ -1,5 +1,6 @@
 import { mockStorage } from '@/storage';
 import { mockSignalRService } from '@libs/services-lib/signal-r';
+import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { SignalR } from './signalR';
 
@@ -15,6 +16,7 @@ SignalR.prototype.listenForOptionItemChanges = jest.fn();
 let conn = new SignalR({ service, storage, showConsole: true });
 
 const { eventStore, eventMetadataStore } = useMockEventStore();
+const { uiStateStore } = useMockUiStateStore();
 
 describe('signalR', () => {
   beforeEach(() => {
@@ -29,6 +31,7 @@ describe('signalR', () => {
     conn.setPinia({
       eventStore,
       eventMetadataStore,
+      uiStateStore,
     });
   });
 
@@ -723,8 +726,8 @@ describe('signalR', () => {
 
   describe('updateSubscriptions', () => {
     it('should call unsubscribe with correct ids', async () => {
-      conn.storage.uiState.getters.getAllSearchIds = jest.fn(() => ['2']);
       conn.getIdsToUnsubscribe = jest.fn(() => ['1']);
+      conn.pinia.uiStateStore.getAllSearchIds = jest.fn(() => ['2']);
       conn.unsubscribe = jest.fn();
       await conn.updateSubscriptions();
       expect(conn.unsubscribe).toBeCalledWith(['1']);
@@ -732,7 +735,7 @@ describe('signalR', () => {
 
     it('should call cleanSubscriptionsObjectButSpecified with path and ids to keep', async () => {
       conn.cleanSubscriptionsObjectButSpecified = jest.fn();
-      conn.storage.uiState.getters.getAllSearchIds = jest.fn(() => ['1']);
+      conn.pinia.uiStateStore.getAllSearchIds = jest.fn(() => ['1']);
       conn.lastSubscribedNewlyCreatedIds = ['2'];
       await conn.updateSubscriptions();
       expect(conn.cleanSubscriptionsObjectButSpecified).toBeCalledWith('/', ['1', '2']);

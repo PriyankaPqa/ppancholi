@@ -2,6 +2,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { mockStorage } from '@/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
+import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 
 const params = {
   pageIndex: 2,
@@ -30,11 +31,14 @@ const Component = {
 const localVue = createLocalVue();
 let wrapper;
 
+const { pinia, uiStateStore } = useMockUiStateStore();
+
 describe('tablePaginationSearch.vue', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       mocks: {
         $storage: storage,
       },
@@ -329,7 +333,7 @@ describe('tablePaginationSearch.vue', () => {
       it('calls setSearchTableState when saveState is true', () => {
         wrapper.setData({ saveState: true });
         wrapper.vm.setState();
-        expect(wrapper.vm.$storage.uiState.mutations.setSearchTableState).toHaveBeenCalledWith(wrapper.vm.route, _cloneDeep({
+        expect(uiStateStore.setSearchTableState).toHaveBeenCalledWith(wrapper.vm.route, _cloneDeep({
           azureSearchParams: wrapper.vm.azureSearchParams,
           previousPageIndex: wrapper.vm.previousPageIndex,
           userFilters: wrapper.vm.userFilters,
@@ -346,13 +350,13 @@ describe('tablePaginationSearch.vue', () => {
       it('does not call setSearchTableState when saveState is false', () => {
         wrapper.setData({ saveState: false });
         wrapper.vm.setState();
-        expect(wrapper.vm.$storage.uiState.mutations.setSearchTableState).not.toHaveBeenCalled();
+        expect(uiStateStore.setSearchTableState).not.toHaveBeenCalled();
       });
     });
 
     describe('loadState', () => {
       it('calls getSearchTableState when saveState is true', () => {
-        wrapper.vm.$storage.uiState.getters.getSearchTableState = jest.fn(() => ({
+        uiStateStore.getSearchTableState = jest.fn(() => ({
           azureSearchParams: 'azureSearchParams',
           previousPageIndex: 'previousPageIndex',
           userFilters: 'userFilters',
@@ -366,7 +370,7 @@ describe('tablePaginationSearch.vue', () => {
         }));
         wrapper.setData({ saveState: true });
         wrapper.vm.loadState();
-        expect(wrapper.vm.$storage.uiState.getters.getSearchTableState).toHaveBeenCalledWith(wrapper.vm.route);
+        expect(uiStateStore.getSearchTableState).toHaveBeenCalledWith(wrapper.vm.route);
         expect(wrapper.vm.azureSearchParams).toEqual('azureSearchParams');
         expect(wrapper.vm.previousPageIndex).toEqual('previousPageIndex');
         expect(wrapper.vm.userFilters).toEqual('userFilters');
@@ -382,7 +386,7 @@ describe('tablePaginationSearch.vue', () => {
       it('does not call getSearchTableState when saveState is false', () => {
         wrapper.setData({ saveState: false });
         wrapper.vm.loadState();
-        expect(wrapper.vm.$storage.uiState.mutations.setSearchTableState).not.toHaveBeenCalled();
+        expect(uiStateStore.setSearchTableState).not.toHaveBeenCalled();
       });
     });
 

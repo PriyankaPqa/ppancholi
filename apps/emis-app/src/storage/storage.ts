@@ -17,7 +17,6 @@ import { CaseFileDocumentStorage } from './case-file-document';
 import { FinancialAssistanceCategoryStorage } from './financial-assistance-category';
 import { FinancialAssistancePaymentStorage } from './financial-assistance-payment';
 import { TenantSettingsStorage } from './tenantSettings';
-import { UIStateStorage } from './ui-state';
 import { AssessmentTemplateStorage } from './assessment-template';
 import { AssessmentFormStorage } from './assessment-form';
 import { AssessmentResponseStorage } from './assessment-response';
@@ -48,10 +47,6 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   tenantSettings: new TenantSettingsStorage(
     store,
     vuexModule.TENANT_SETTINGS_ENTITIES,
-  ).make(),
-  uiState: new UIStateStorage(
-    store,
-    vuexModule.UI_STATE,
   ).make(),
   assessmentTemplate: new AssessmentTemplateStorage(
     store,

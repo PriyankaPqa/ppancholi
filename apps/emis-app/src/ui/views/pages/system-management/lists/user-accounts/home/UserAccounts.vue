@@ -157,6 +157,7 @@ import { IUserAccountCombined, IUserAccountEntity } from '@libs/entities-lib/use
 import { IMultilingual } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import { useUiStateStore } from '@/pinia/ui-state/uiState';
 
 export default Vue.extend({
   name: 'UserAccounts',
@@ -311,8 +312,8 @@ export default Vue.extend({
 
   watch: {
     'options.itemsPerPage': {
-      handler(value: string) {
-        this.$storage.uiState.mutations.setSearchTableState(this.tableName, _cloneDeep({
+      handler(value: number) {
+        useUiStateStore().setSearchTableState(this.tableName, _cloneDeep({
           itemsPerPage: value,
         }));
       },
@@ -320,7 +321,7 @@ export default Vue.extend({
   },
 
   async created() {
-    const prevState = this.$storage.uiState.getters.getSearchTableState(this.tableName);
+    const prevState = useUiStateStore().getSearchTableState(this.tableName);
     if (prevState && prevState.itemsPerPage) {
       this.options.itemsPerPage = prevState.itemsPerPage;
     }

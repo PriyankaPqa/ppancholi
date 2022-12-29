@@ -4,6 +4,7 @@ import _debounce from 'lodash/debounce';
 import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
 import { IAzureTableSearchResults, IAzureSearchParams } from '@libs/shared-lib/types';
+import { useUiStateStore } from '@/pinia/ui-state/uiState';
 
 export default Vue.extend({
   data() {
@@ -156,7 +157,7 @@ export default Vue.extend({
       }
 
       const uiStateKey = this.getTableName() + this.route;
-      this.$storage.uiState.mutations.setSearchTableState(uiStateKey, _cloneDeep({
+      useUiStateStore().setSearchTableState(uiStateKey, _cloneDeep({
         azureSearchParams: this.azureSearchParams,
         previousPageIndex: this.previousPageIndex,
         userFilters: this.userFilters,
@@ -182,7 +183,7 @@ export default Vue.extend({
 
       const uiStateKey = this.getTableName() + this.route;
       // eslint-disable-next-line
-      let state = this.$storage.uiState.getters.getSearchTableState(uiStateKey) as any;
+      let state = useUiStateStore().getSearchTableState(uiStateKey) as any;
       if (state) {
         state = _cloneDeep(state);
         this.azureSearchParams = state.azureSearchParams;
