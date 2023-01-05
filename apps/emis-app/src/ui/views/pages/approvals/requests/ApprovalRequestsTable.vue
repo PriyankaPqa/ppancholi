@@ -310,7 +310,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
         ...this.isPendingRequests ? [{
           text: this.$t('approvalRequestsTable.action') as string,
           align: 'center' as 'start' | 'center' | 'end',
-          sortable: true,
+          sortable: false,
           width: '120px',
           value: this.customColumns.actionable,
         }] : [],
@@ -442,7 +442,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
     },
 
     async onApplyFilterLocal({ preparedFilters, searchFilters }
-        : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown) {
+    : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown) {
       let finalFilters = {};
       if (this.submittedToMeSwitch) {
         finalFilters = _isEmpty(preparedFilters) ? this.submittedToMeFilter : { ...preparedFilters, ...this.submittedToMeFilter };

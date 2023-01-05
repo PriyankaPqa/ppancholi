@@ -191,7 +191,7 @@ describe('ApprovalRequestsTable', () => {
             {
               text: 'approvalRequestsTable.action',
               align: 'center',
-              sortable: true,
+              sortable: false,
               width: '120px',
               value: wrapper.vm.customColumns.actionable,
             }],

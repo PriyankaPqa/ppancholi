@@ -73,12 +73,12 @@ describe('ApprovalGroupTable.vue', () => {
     });
 
     describe('disableAddGroup', () => {
-      it('should return true if one group is being edited', () => {
+      it('should return true if one group is being added', () => {
         doMount();
         const group = wrapper.vm.approval.groups[0];
         group.setAddMode(false);
         expect(wrapper.vm.disableAddGroup).toEqual(false);
-        group.setEditMode(true);
+        group.setAddMode(true);
         expect(wrapper.vm.disableAddGroup).toEqual(true);
       });
 
@@ -87,6 +87,7 @@ describe('ApprovalGroupTable.vue', () => {
         const group = wrapper.vm.approval.groups[0];
         group.setEditMode(false);
         expect(wrapper.vm.disableAddGroup).toEqual(false);
+        wrapper.setData({ editBackup: group });
         group.setEditMode(true);
         expect(wrapper.vm.disableAddGroup).toEqual(true);
       });
