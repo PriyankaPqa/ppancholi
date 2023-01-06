@@ -4,14 +4,11 @@ import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
-import { mockCombinedPrograms, mockProgramEntities } from '@libs/entities-lib/program';
+import { mockProgramEntities } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
-import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './ProgramsHome.vue';
 
 const localVue = createLocalVue();
-
-const { pinia, programStore } = useMockProgramStore();
 
 describe('ProgramsHome.vue', () => {
   let wrapper;
@@ -27,7 +24,6 @@ describe('ProgramsHome.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
-        pinia,
         propsData: {
           id: 'event-id',
         },
@@ -183,7 +179,7 @@ describe('ProgramsHome.vue', () => {
 
     describe('tableProps', () => {
       it('returns the correct object', () => {
-        expect(wrapper.vm.tableProps.loading).toEqual(programStore.searchLoading);
+        expect(wrapper.vm.tableProps.loading).toEqual(wrapper.vm.$store.state.programEntities.searchLoading);
         expect(wrapper.vm.tableProps.itemClass).toBeDefined();
       });
     });
@@ -192,16 +188,15 @@ describe('ProgramsHome.vue', () => {
       it('returns the correct value', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia,
           propsData: {
             id: 'event-id',
           },
+          mocks: {
+            $storage: mockStorage(),
+          },
         });
 
-        wrapper.vm.combinedProgramStore.getByIds = jest.fn(() => mockCombinedPrograms());
-        wrapper.vm.searchResultIds = mockCombinedPrograms().map((e) => e.entity.id);
-
-        expect(wrapper.vm.tableData).toEqual(mockCombinedPrograms());
+        expect(wrapper.vm.tableData).toEqual(mockStorage().program.getters.getByIds());
       });
     });
 
@@ -243,11 +238,6 @@ describe('ProgramsHome.vue', () => {
           $storage: storage,
         },
       });
-
-      wrapper.vm.combinedProgramStore.search = jest.fn(() => ({
-        ids: [mockProgramEntities()[0].id, mockProgramEntities()[1].id],
-        count: mockProgramEntities().length,
-      }));
     });
 
     describe('fetchData', () => {
@@ -259,10 +249,10 @@ describe('ProgramsHome.vue', () => {
         };
       });
 
-      it('should call combinedProgramStore search with proper parameters', async () => {
+      it('should call storage actions with proper parameters', async () => {
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.combinedProgramStore.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.$storage.program.actions.search).toHaveBeenCalledWith({
           search: params.search,
           filter: {
             'Entity/EventId': 'event-id',

@@ -39,7 +39,6 @@ import flushPromises from 'flush-promises';
 import routes from '@/constants/routes';
 
 import { getPiniaForUser } from '@/pinia/user/user.spec';
-import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from '../CreateEditFinancialAssistanceCaseFile.vue';
 
 const localVue = createLocalVue();
@@ -54,8 +53,6 @@ const optionItems = mockOptionItemData();
 const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGroups();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
-
-const { programStore, pinia } = useMockProgramStore(getPiniaForUser('level6'));
 
 describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   let wrapper;
@@ -102,12 +99,14 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     storage.financialAssistance.actions.addFinancialAssistance = jest.fn(() => combinedFinancialAssistance);
+    storage.program.actions.fetchProgram = jest.fn(() => program);
     storage.caseFile.getters.get = jest.fn(() => caseFileCombined);
     storage.caseFile.actions.fetch = jest.fn(() => caseFileCombined);
     storage.financialAssistance.getters.items = jest.fn(() => items);
     storage.financialAssistanceCategory.getters.getAll = jest.fn(() => optionItems);
     storage.assessmentResponse.actions.search = jest.fn(() => mockAssessmentResponseEntities());
-    await mountWrapper(false, 'edit', pinia);
+
+    await mountWrapper();
   });
 
   describe('Template', () => {
@@ -760,7 +759,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     describe('fetchProgram', () => {
       it('fetches program program by id', async () => {
         await wrapper.vm.fetchProgram('programId', 'eventId');
-        expect(programStore.fetch).toHaveBeenCalledWith({ id: 'programId', eventId: 'eventId' });
+        expect(storage.program.actions.fetch).toHaveBeenCalledWith({ id: 'programId', eventId: 'eventId' });
       });
     });
 
@@ -832,7 +831,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     describe('updateSelectedProgram', () => {
       it('should call storage actions with proper parameters', async () => {
         await wrapper.vm.updateSelectedProgram(financialAssistance);
-        expect(programStore.fetch).toHaveBeenCalledWith({
+        expect(storage.program.actions.fetch).toHaveBeenCalledWith({
           id: financialAssistance.programId,
           eventId: mockCombinedCaseFiles()[0].entity.eventId,
         });
@@ -853,8 +852,14 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('calls fetchAssessmentResponseByCaseFileId if completedAssessments eligibility criteria is needed', async () => {
-        programStore.fetch = jest.fn(() => program);
         program.eligibilityCriteria.completedAssessments = true;
+        const combinedProgram = {
+          entity: program,
+        };
+
+        jest.clearAllMocks();
+        storage.program.actions.fetch = jest.fn(() => combinedProgram);
+        await mountWrapper();
         wrapper.vm.fetchAssessmentResponseByCaseFileId = jest.fn();
 
         await wrapper.vm.updateSelectedProgram(financialAssistance);
@@ -865,9 +870,15 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
       it('calls fetchAssessmentFormByProgramId if completedAssessments eligibility criteria is needed', async () => {
         program.eligibilityCriteria.completedAssessments = true;
-        programStore.fetch = jest.fn(() => program);
+        const combinedProgram = {
+          entity: program,
+        };
+
+        jest.clearAllMocks();
+        storage.program.actions.fetch = jest.fn(() => combinedProgram);
+        await mountWrapper();
         wrapper.vm.fetchAssessmentFormByProgramId = jest.fn();
-        wrapper.vm.fetchAssessmentResponseByCaseFileId = jest.fn();
+
         await wrapper.vm.updateSelectedProgram(financialAssistance);
 
         expect(wrapper.vm.fetchAssessmentFormByProgramId).toBeCalledTimes(1);

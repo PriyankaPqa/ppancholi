@@ -120,8 +120,8 @@
       v-if="showSubmitPaymentDialog"
       :show.sync="showSubmitPaymentDialog"
       :total-amount-to-submit.sync="totalAmountToSubmit"
-      :approval-required="program.approvalRequired"
-      :program-id="program.id"
+      :approval-required="program.entity.approvalRequired"
+      :program-id="program.entity.id"
       :event-id="event.id"
       :financial-assistance.sync="financialAssistance" />
   </div>
@@ -162,14 +162,13 @@ import
 } from '@libs/entities-lib/assessment-template';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
-import { IProgramEntity } from '@libs/entities-lib/program';
+import { IProgramEntity, IProgramCombined } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { IEntityCombined, Status } from '@libs/entities-lib/base';
 import SubmitFinancialAssistancePaymentDialog
   from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/SubmitFinancialAssistancePaymentDialog.vue';
-import { useProgramStore } from '@/pinia/program/program';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
@@ -223,7 +222,7 @@ export default mixins(caseFileDetail).extend({
       totalAmountToSubmit: '',
       submittingPaymentLine: false,
       savingFinancialAssistance: false,
-      program: null as IProgramEntity,
+      program: null as IProgramCombined,
       programAssessmentForms: [] as IAssessmentFormEntity[],
       caseFileAssessmentResponses: [] as IAssessmentResponseEntity[],
       isDeletingPayment: false,
@@ -392,8 +391,8 @@ export default mixins(caseFileDetail).extend({
       if (selectedProgramId && this.selectedProgram?.id !== selectedProgramId) {
         const originalProgram = this.selectedProgram;
 
-        const program = await useProgramStore().fetch({ id: selectedProgramId, eventId: this.caseFile.entity.eventId }) as IProgramEntity;
-        this.selectedProgram = program;
+        const combinedProgram = await this.$storage.program.actions.fetch({ id: selectedProgramId, eventId: this.caseFile.entity.eventId });
+        this.selectedProgram = combinedProgram.entity;
 
         if (this.selectedProgram?.eligibilityCriteria?.completedAssessments) {
           await this.fetchAssessmentResponseByCaseFileId(this.caseFileId);
@@ -564,7 +563,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     async fetchProgram(programId: string, eventId: string) {
-      this.program = await useProgramStore().fetch({ id: programId, eventId }) as IProgramEntity;
+      this.program = await this.$storage.program.actions.fetch({ id: programId, eventId });
     },
 
     async fetchAssessmentFormByProgramId(programId: string) {

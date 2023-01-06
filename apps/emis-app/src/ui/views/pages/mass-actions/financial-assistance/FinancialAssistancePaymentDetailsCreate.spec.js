@@ -13,7 +13,6 @@ import { mockCombinedOptionItems, mockOptionItem, mockOptionSubItem } from '@lib
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import { mockStorage } from '@/storage';
-import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './FinancialAssistancePaymentDetailsCreate.vue';
 
 const formCopy = {
@@ -37,8 +36,6 @@ const localVue = createLocalVue();
 
 const storage = mockStorage();
 
-const { pinia, programStore } = useMockProgramStore();
-
 describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
   let wrapper;
 
@@ -46,7 +43,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        pinia,
         propsData: {
           form: formCopy,
         },
@@ -108,11 +104,11 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
 
         await wrapper.vm.fetchProgram(fa);
 
-        expect(programStore.fetch).toHaveBeenLastCalledWith({ id: fa.programId, eventId: fa.eventId });
+        expect(wrapper.vm.$storage.program.actions.fetch).toHaveBeenLastCalledWith({ id: fa.programId, eventId: fa.eventId });
       });
 
       it('should set program', async () => {
-        programStore.fetch = jest.fn(() => mockCombinedProgram());
+        wrapper.vm.$storage.program.actions.fetch = jest.fn(() => mockCombinedProgram());
 
         await wrapper.vm.fetchProgram(mockFinancialAssistanceTableEntity());
 
@@ -124,7 +120,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
       it('should set filteredEvents with events having a FA table', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia,
           propsData: {
             form: formCopy,
           },
@@ -151,7 +146,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
       beforeEach(() => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia,
           propsData: {
             form: formCopy,
           },
@@ -183,7 +177,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        pinia,
         propsData: {
           form: formCopy,
         },
@@ -236,7 +229,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
       it('should reset the amount if the select sub-item has a variable amount', async () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia,
           propsData: {
             form: formCopy,
           },
@@ -263,7 +255,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        pinia,
         propsData: {
           form: formCopy,
         },
@@ -350,7 +341,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
     describe('financialAssistanceTableItems', () => {
       wrapper = shallowMount(Component, {
         localVue,
-        pinia,
         propsData: {
           form: formCopy,
         },
@@ -379,7 +369,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
     describe('paymentModalities', () => {
       wrapper = shallowMount(Component, {
         localVue,
-        pinia,
         propsData: {
           form: formCopy,
         },
@@ -404,7 +393,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
     describe('subItems', () => {
       wrapper = shallowMount(Component, {
         localVue,
-        pinia,
         propsData: {
           form: formCopy,
         },

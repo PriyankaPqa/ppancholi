@@ -3,17 +3,14 @@ import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
 import { mockProgramEntity } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
-import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from '../CreateEditProgram.vue';
 
 const localVue = createLocalVue();
 let wrapper;
-const { pinia, programStore } = useMockProgramStore();
 
 const doMount = (editMode = false) => {
   wrapper = shallowMount(Component, {
     localVue,
-    pinia,
     propsData: {
       id: 'EVENT_ID',
       programId: 'PROGRAM_ID',
@@ -84,13 +81,13 @@ describe('CreateEditProgram', () => {
       it('does not call createProgram unless form validation succeeds', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
         await wrapper.vm.submit();
-        expect(programStore.createProgram).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$storage.program.actions.createProgram).toHaveBeenCalledTimes(0);
       });
 
       it('calls createProgram if isEditMode is false', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
-        expect(programStore.createProgram).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.program.actions.createProgram).toHaveBeenCalledTimes(1);
       });
 
       it('calls updateProgram if isEditMode is true', async () => {
@@ -98,7 +95,7 @@ describe('CreateEditProgram', () => {
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
-        expect(programStore.updateProgram).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.program.actions.updateProgram).toHaveBeenCalledTimes(1);
       });
 
       test('after submitting, the user is redirected to the event details page', async () => {

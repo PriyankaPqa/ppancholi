@@ -3,20 +3,17 @@ import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
-import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './AssessmentTemplatesHome.vue';
 
 const localVue = createLocalVue();
 let storage = mockStorage();
 
-const { pinia, programStore } = useMockProgramStore();
 describe('AssessmentTemplatesHome.vue', () => {
   let wrapper;
 
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
-      pinia,
       propsData: { },
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
@@ -321,12 +318,12 @@ describe('AssessmentTemplatesHome.vue', () => {
     });
 
     describe('fetchProgramsFilter', () => {
-      it('should call fetchAllIncludingInactive', async () => {
-        await mountWrapper(false, 6, 'role', { propsData: { id: 'abc' } });
+      it('should call storage actions', async () => {
+        await mountWrapper(true, 6, 'role', { propsData: { id: 'abc' } });
         await wrapper.vm.fetchProgramsFilter();
 
-        expect(programStore.fetchAllIncludingInactive).toHaveBeenCalledWith({ eventId: wrapper.vm.id });
-        expect(wrapper.vm.programsFilter).toEqual([{ text: 'Program A', value: '1' }, { text: 'Program A', value: '2' }]);
+        expect(wrapper.vm.$storage.program.actions.fetchAllIncludingInactive).toHaveBeenCalledWith({ eventId: wrapper.vm.id });
+        expect(wrapper.vm.programsFilter).toEqual([{ text: 'Program A', value: '1' }, { text: 'Program A', value: '2' }, { text: 'Program A', value: '3' }]);
       });
     });
 

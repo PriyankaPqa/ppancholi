@@ -20,12 +20,11 @@
 import Vue from 'vue';
 
 import { IMassActionCombined } from '@libs/entities-lib/mass-action';
-import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
+import { EPaymentModalities, IProgramCombined } from '@libs/entities-lib/program';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { IFinancialAssistanceTableCombined } from '@libs/entities-lib/financial-assistance';
 import { IOptionSubItem, IOptionItemCombined } from '@libs/entities-lib/optionItem';
 import { useEventStore } from '@/pinia/event/event';
-import { useProgramStore } from '@/pinia/program/program';
 
 export default Vue.extend({
   name: 'FinancialAssistancePaymentDetailsTable',
@@ -41,7 +40,7 @@ export default Vue.extend({
     return {
       event: null as IEventEntity,
       table: null as IFinancialAssistanceTableCombined,
-      program: null as IProgramEntity,
+      program: null as IProgramCombined,
       item: null as IOptionItemCombined,
       eventLoading: false,
       tableLoading: false,
@@ -66,7 +65,7 @@ export default Vue.extend({
         },
         {
           label: 'massActions.financialAssistance.create.program.label',
-          value: this.program && this.$m(this.program.name),
+          value: this.program?.entity && this.$m(this.program.entity.name),
           dataTest: 'program',
           loading: this.programLoading,
         },
@@ -126,10 +125,10 @@ export default Vue.extend({
 
     async fetchProgram() {
       this.programLoading = true;
-      this.program = await useProgramStore().fetch({
+      this.program = await this.$storage.program.actions.fetch({
         id: this.massAction.entity.details.programId,
         eventId: this.massAction.entity.details.eventId,
-      }) as IProgramEntity;
+      });
       this.programLoading = false;
     },
 

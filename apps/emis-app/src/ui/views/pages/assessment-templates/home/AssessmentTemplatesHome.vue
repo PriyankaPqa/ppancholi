@@ -121,7 +121,6 @@ import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
-import { useProgramStore } from '@/pinia/program/program';
 import { IAssessmentBaseRoute } from '../IAssessmentBaseRoute.type';
 import CopyAssessment from './CopyAssessment.vue';
 
@@ -380,12 +379,13 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
       this.programsFilterLoading = true;
 
-      const res = (await useProgramStore().fetchAllIncludingInactive({ eventId: this.id })).map((e) => e.id);
+      const res = (await this.$storage.program.actions.fetchAllIncludingInactive({ eventId: this.id })).map((e) => e.entity.id);
       this.programsFilterLoading = false;
+
       if (res?.length) {
-        this.programsFilter = _sortBy(useProgramStore().getByIds(res).map((e) => ({
-          text: this.$m(e.name),
-          value: e.id,
+        this.programsFilter = _sortBy(this.$storage.program.getters.getByIds(res).map((e) => ({
+          text: this.$m(e.entity.name),
+          value: e.entity.id,
         })), (p) => p.text);
       }
     },

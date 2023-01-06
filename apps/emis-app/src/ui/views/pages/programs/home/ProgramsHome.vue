@@ -64,11 +64,9 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IProgramCombined, IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
+import { IProgramCombined, IProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
-import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
-import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ProgramsHome',
@@ -94,7 +92,6 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [true],
       },
       FilterKey,
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata>(useProgramStore(), useProgramMetadataStore()),
     };
   },
 
@@ -141,13 +138,13 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     tableProps(): Record<string, unknown> {
       return {
-        loading: useProgramStore().searchLoading,
+        loading: this.$store.state.programEntities.searchLoading,
         itemClass: (item: { pinned: boolean }) => (item.pinned ? 'pinned' : ''),
       };
     },
 
     tableData(): IProgramCombined[] {
-      return this.combinedProgramStore.getByIds(
+      return this.$storage.program.getters.getByIds(
         this.searchResultIds,
         { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.id } },
       );
@@ -179,7 +176,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     async fetchData(params: IAzureSearchParams) {
       const filter = _isEmpty(params.filter) ? {} : params.filter;
 
-      const res = await this.combinedProgramStore.search({
+      const res = await this.$storage.program.actions.search({
         search: params.search,
         filter: { ...filter as Record<string, unknown>, 'Entity/EventId': this.id },
         top: params.top,

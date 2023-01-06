@@ -5,7 +5,6 @@ import { mockStorage } from '@/storage';
 import flushPromises from 'flush-promises';
 import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import householdHelpers from '@/ui/helpers/household';
-import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from '../ViewPaymentLineDetails.vue';
 
 const localVue = createLocalVue();
@@ -13,8 +12,6 @@ const storage = mockStorage();
 let financialAssistance = mockCaseFinancialAssistanceEntity();
 let paymentGroup = financialAssistance.groups[0];
 let line = paymentGroup.lines[0];
-
-const { pinia, programStore } = useMockProgramStore();
 
 describe('ViewPaymentLineDetails.vue', () => {
   let wrapper;
@@ -28,7 +25,6 @@ describe('ViewPaymentLineDetails.vue', () => {
 
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
-      pinia,
       propsData: {
         financialAssistancePaymentLineId: line.id,
         financialAssistancePaymentId: financialAssistance.id,
@@ -246,14 +242,14 @@ describe('ViewPaymentLineDetails.vue', () => {
         expect(storage.financialAssistanceCategory.actions.fetchAll).toHaveBeenCalled();
         expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith(financialAssistance.id);
         expect(storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(financialAssistance.financialAssistanceTableId);
-        expect(programStore.fetch).toHaveBeenCalledWith({
+        expect(storage.program.actions.fetch).toHaveBeenCalledWith({
           id: storage.financialAssistance.getters.get().entity.programId,
           eventId: storage.caseFile.getters.get().entity.eventId,
         });
         expect(storage.financialAssistance.mutations.setFinancialAssistance).toHaveBeenLastCalledWith(
           storage.financialAssistance.getters.get(),
           storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity),
-          programStore.fetch(),
+          storage.program.actions.fetch().entity,
           false,
         );
       });

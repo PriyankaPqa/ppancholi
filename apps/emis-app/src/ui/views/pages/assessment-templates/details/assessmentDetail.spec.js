@@ -4,7 +4,6 @@ import {
   mockAssessmentFormEntity, AssessmentFormEntity, AssessmentTemplateEntity,
 } from '@libs/entities-lib/assessment-template';
 import routes from '@/constants/routes';
-import { useMockProgramStore } from '@/pinia/program/program.mock';
 import assessmentDetail from './assessmentDetail';
 
 const Component = {
@@ -16,7 +15,6 @@ const assessmentForm = mockAssessmentFormEntity();
 
 const localVue = createLocalVue();
 let storage = mockStorage();
-const { pinia, programStore } = useMockProgramStore();
 
 describe('assessmentDetail', () => {
   let wrapper;
@@ -24,7 +22,6 @@ describe('assessmentDetail', () => {
   const mountWrapper = async (eventId = null, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = shallowMount(Component, {
       localVue,
-      pinia,
       propsData: { id: eventId },
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
@@ -106,7 +103,7 @@ describe('assessmentDetail', () => {
       it('fetches the program if one is associated', async () => {
         await mountWrapper('eventId');
         await wrapper.vm.loadDetails();
-        expect(programStore.fetch).toHaveBeenCalledWith(
+        expect(storage.program.actions.fetch).toHaveBeenCalledWith(
           { id: wrapper.vm.assessmentTemplate.programId, eventId: wrapper.vm.assessmentTemplate.eventId },
         );
       });

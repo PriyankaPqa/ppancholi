@@ -26,12 +26,11 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcPageContent } from '@libs/component-lib/components';
 import { IServerError, VForm } from '@libs/shared-lib/types';
-import { IProgramEntity, ProgramEntity } from '@libs/entities-lib/program';
+import { ProgramEntity } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { Status } from '@libs/entities-lib/base';
-import { useProgramStore } from '@/pinia/program/program';
 import ProgramForm from './ProgramForm.vue';
 
 export default Vue.extend({
@@ -89,8 +88,8 @@ export default Vue.extend({
 
     if (this.isEditMode) {
       try {
-        const res = await useProgramStore().fetch({ id: this.programId, eventId: this.id }) as IProgramEntity;
-        this.program = new ProgramEntity(res);
+        const res = await this.$storage.program.actions.fetch({ id: this.programId, eventId: this.id });
+        this.program = new ProgramEntity(res.entity);
       } finally {
         this.programLoading = false;
       }
@@ -130,7 +129,7 @@ export default Vue.extend({
     },
 
     async createProgram() {
-      const newProgram = await useProgramStore().createProgram(this.program);
+      const newProgram = await this.$storage.program.actions.createProgram(this.program);
       if (newProgram) {
         this.$toasted.global.success(this.$t('event.programManagement.created'));
         this.$router.replace({ name: routes.programs.details.name, params: { programId: newProgram.id } });
@@ -150,7 +149,7 @@ export default Vue.extend({
         }
       }
 
-      const res = await useProgramStore().updateProgram(program);
+      const res = await this.$storage.program.actions.updateProgram(program);
       if (res) {
         this.$toasted.global.success(this.$t('event.programManagement.updated'));
         this.$router.replace({ name: routes.programs.details.name, params: { programId: program.id } });

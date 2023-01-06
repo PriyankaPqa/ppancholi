@@ -5,7 +5,6 @@ import {
 import { Status } from '@libs/entities-lib/base';
 import routes from '@/constants/routes';
 import { IProgramEntity } from '@libs/entities-lib/program';
-import { useProgramStore } from '@/pinia/program/program';
 import { IAssessmentBaseRoute } from '../IAssessmentBaseRoute.type';
 
 export default Vue.extend({
@@ -63,7 +62,7 @@ export default Vue.extend({
         this.assessmentTemplate = form;
 
         if (form.programId) {
-          this.program = (await useProgramStore().fetch({ id: form.programId, eventId: form.eventId })) as IProgramEntity;
+          this.program = (await this.$storage.program.actions.fetch({ id: form.programId, eventId: form.eventId }))?.entity;
         }
       } else {
         // eslint-disable-next-line max-len,vue/max-len

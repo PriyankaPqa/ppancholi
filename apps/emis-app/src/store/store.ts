@@ -53,6 +53,10 @@ import { MassActionService } from '@libs/services-lib/mass-actions/entity';
 import { MassActionMetadataModule } from '@/store/modules/mass-action/massActionMetadata';
 import { MassActionMetadataService } from '@libs/services-lib/mass-actions/metadata';
 
+import { ProgramEntityModule } from '@/store/modules/program/programEntity';
+import { ProgramsService } from '@libs/services-lib/programs/entity';
+import { ProgramsMetadataService } from '@libs/services-lib/programs/metadata';
+
 import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
 import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
 import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
@@ -75,6 +79,7 @@ import { AssessmentFormsMetadataService } from '@libs/services-lib/assessment-fo
 import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
+import { ProgramMetadataModule } from './modules/program/programMetadata';
 
 import { AssessmentTemplateEntityModule } from './modules/assessment-template/assessmentTemplateEntity';
 import { AssessmentTemplateMetadataModule } from './modules/assessment-template/assessmentTemplateMetadata';
@@ -187,6 +192,15 @@ const store: StoreOptions<IRootState> = {
     ).getModule(),
     [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(
       new MassActionMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
+
+    [vuexModule.PROGRAM_ENTITIES]: new ProgramEntityModule(
+      new ProgramsService(httpClient),
+      SignalR,
+    ).getModule(),
+    [vuexModule.PROGRAM_METADATA]: new ProgramMetadataModule(
+      new ProgramsMetadataService(httpClient),
       SignalR,
     ).getModule(),
 
