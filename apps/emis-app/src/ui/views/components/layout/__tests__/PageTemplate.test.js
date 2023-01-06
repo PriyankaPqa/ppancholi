@@ -3,7 +3,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import SecondaryLeftMenu from '@/ui/views/components/layout/SecondaryLeftMenu.vue';
 import SecondaryRightMenu from '@/ui/views/components/layout/SecondaryRightMenu.vue';
 
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from '../PageTemplate.vue';
 
 describe('PageTemplate.vue', () => {

@@ -256,9 +256,8 @@ describe('ProgramForm.vue', () => {
       });
 
       const elCheckbox = wrapper.findDataTest('program-eligibility-hasCompletedAssessments');
-      elCheckbox.element.checked = true;
+      elCheckbox.setChecked();
       expect(elCheckbox.element.checked).toBe(true);
-      expect(elCheckbox.element).toBeChecked();
 
       wrapper.vm.localProgram.eligibilityCriteria.completedAssessments = true;
       expect(wrapper.vm.localProgram.eligibilityCriteria.completedAssessments).toBe(true);
@@ -289,7 +288,6 @@ describe('ProgramForm.vue', () => {
 
       const el = wrapper.findDataTest('program-eligibility-hasCompletedAssessments');
       expect(el.element).toHaveProperty('disabled', true);
-      expect(el.element).toBeDisabled();
     });
 
     test('the completedAssessments checkbox is disabled when assessment forms list is empty', async () => {
@@ -299,7 +297,6 @@ describe('ProgramForm.vue', () => {
 
       const el = wrapper.findDataTest('program-eligibility-hasCompletedAssessments');
       expect(el.element).toHaveProperty('disabled', true);
-      expect(el.element).toBeDisabled();
     });
 
     test('the completedAssessmentIds select is disabled when is not editing', async () => {
@@ -310,7 +307,7 @@ describe('ProgramForm.vue', () => {
       wrapper.vm.localProgram.eligibilityCriteria.completedAssessments = true;
 
       const el = wrapper.findDataTest('program-selectAssessment');
-      expect(el.element).toHaveAttribute('disabled', 'disabled');
+      expect(el.attributes('disabled')).toBe('disabled');
     });
 
     test('the completedAssessmentIds select is disabled when assessment forms list is empty', async () => {
@@ -321,7 +318,7 @@ describe('ProgramForm.vue', () => {
       wrapper.vm.localProgram.eligibilityCriteria.completedAssessments = true;
 
       const el = wrapper.findDataTest('program-selectAssessment');
-      expect(el.element).toHaveAttribute('disabled', 'disabled');
+      expect(el.attributes('disabled')).toBe('disabled');
     });
 
     test('the completedAssessmentIds select is disabled when the completedAssessments checkbox is not checked', async () => {
@@ -336,7 +333,7 @@ describe('ProgramForm.vue', () => {
       wrapper.vm.localProgram.eligibilityCriteria.completedAssessments = false;
 
       const el = wrapper.findDataTest('program-selectAssessment');
-      expect(el.element).toHaveAttribute('disabled', 'disabled');
+      expect(el.attributes('disabled')).toBe('disabled');
     });
   });
 });

@@ -3,7 +3,6 @@ import {
   mount as m,
   shallowMount as sm,
 } from '@vue/test-utils';
-import '@testing-library/jest-dom';
 import Vuetify from 'vuetify';
 import Vuex from 'vuex';
 import '@/ui/plugins/vee-validate';

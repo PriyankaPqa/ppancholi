@@ -8,7 +8,7 @@ import { mockStorage } from '@/storage';
 import {
   mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata, EResponseLevel, EEventStatus, mockEventEntity,
 } from '@libs/entities-lib/event';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from './EventsTable.vue';
 

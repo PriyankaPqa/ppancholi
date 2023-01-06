@@ -38,7 +38,7 @@ import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import flushPromises from 'flush-promises';
 import routes from '@/constants/routes';
 
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from '../CreateEditFinancialAssistanceCaseFile.vue';
 
 const localVue = createLocalVue();

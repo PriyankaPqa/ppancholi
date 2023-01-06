@@ -4,7 +4,7 @@ import MassActionBaseTable from '@/ui/views/pages/mass-actions/components/MassAc
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './DataCorrectionHome.vue';
 
 const localVue = createLocalVue();

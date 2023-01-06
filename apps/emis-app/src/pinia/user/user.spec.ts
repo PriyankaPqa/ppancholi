@@ -2,11 +2,10 @@ import Vue from 'vue';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { Toasted } from 'vue-toasted';
 import {
-   IUserData,
   mockUserL1,
   mockUsersData, User,
 } from '@libs/entities-lib/user';
-import { createTestingPinia } from '@pinia/testing';
+import { getPiniaForUser, Role } from '@/pinia/user/user.mock';
 import { useUserStore } from './user';
 import helpers from '../../ui/helpers/helpers';
 import AuthenticationProvider from '../../auth/AuthenticationProvider';
@@ -15,33 +14,6 @@ jest.mock('@libs/shared-lib/plugins/applicationInsights/applicationInsights');
 
 // eslint-disable-next-line no-console
 console.info = jest.fn();
-
-type Role = 'level1' | 'level2' | 'level3' | 'level4' | 'level5' | 'level6' | 'contributorIM' | 'contributorFinance' | 'contributor3' | 'readOnly' | 'noRole';
-
-export const getPiniaForUser = (level: Role, stubActions = false) => {
-  const mockData = {
-    level1: mockUsersData()[0],
-    level2: mockUsersData()[1],
-    level3: mockUsersData()[2],
-    level4: mockUsersData()[3],
-    level5: mockUsersData()[4],
-    level6: mockUsersData()[5],
-    contributorIM: mockUsersData()[6],
-    contributorFinance: mockUsersData()[7],
-    contributor3: mockUsersData()[8],
-    readOnly: mockUsersData()[9],
-    noRole: mockUsersData()[10],
-  } as Record<Role, IUserData>;
-
-  const pinia = createTestingPinia({
-    initialState: {
-      user: { ...mockData[level] },
-    },
-    stubActions,
-  });
-
-  return pinia;
-};
 
 const createUserTestStore = (mockTarget: Role, stubActions = false) => {
   const pinia = getPiniaForUser(mockTarget, stubActions);

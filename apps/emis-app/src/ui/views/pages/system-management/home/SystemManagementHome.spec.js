@@ -3,7 +3,7 @@ import {
   shallowMount,
   mount,
 } from '@/test/testSetup';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './SystemManagementHome.vue';
 
 const localVue = createLocalVue();

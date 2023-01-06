@@ -7,7 +7,7 @@ import {
 } from '@/test/testSetup';
 import routes from '@/constants/routes';
 
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import Component from '../AppHeader.vue';
 

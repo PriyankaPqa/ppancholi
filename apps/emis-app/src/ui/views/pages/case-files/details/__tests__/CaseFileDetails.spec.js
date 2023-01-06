@@ -8,7 +8,7 @@ import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useEventStore } from '@/pinia/event/event';
 import Component from '../CaseFileDetails.vue';
 

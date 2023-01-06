@@ -4,7 +4,7 @@ import { mockStorage } from '@/storage';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from '../case-file-activity/components/CaseFileAssignmentsOld.vue';
 
 const localVue = createLocalVue();

@@ -3,7 +3,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import MassActionBaseTable from '@/ui/views/pages/mass-actions/components/MassActionBaseTable.vue';
 import { MassActionType } from '@libs/entities-lib/mass-action';
 import routes from '@/constants/routes';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './ImportUsersHome.vue';
 
 const localVue = createLocalVue();

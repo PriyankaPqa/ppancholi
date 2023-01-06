@@ -7,7 +7,7 @@ import { mockCombinedFinancialAssistances } from '@libs/entities-lib/financial-a
 import { mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './FinancialAssistanceTablesTable.vue';
 
 const storage = mockStorage();

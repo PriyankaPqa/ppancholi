@@ -2,7 +2,7 @@ import { mockStorage } from '@libs/registration-lib/store/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import massActions from './massActions';
 /* eslint-disable max-len */
 const Component = {

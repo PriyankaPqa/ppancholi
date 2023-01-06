@@ -9,7 +9,7 @@ import { mockCombinedCaseFile, CaseFileStatus, mockCaseFileEntities } from '@lib
 import householdHelpers from '@/ui/helpers/household';
 import routes from '@/constants/routes';
 import flushPromises from 'flush-promises';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();

@@ -6,7 +6,7 @@ import routes from '@/constants/routes';
 
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './CaseFileReferralDetails.vue';
 
 const storage = mockStorage();

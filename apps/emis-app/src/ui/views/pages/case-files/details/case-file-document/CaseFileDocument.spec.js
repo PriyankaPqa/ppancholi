@@ -8,7 +8,7 @@ import helpers from '@/ui/helpers/helpers';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import moment from '@libs/shared-lib/plugins/moment';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();

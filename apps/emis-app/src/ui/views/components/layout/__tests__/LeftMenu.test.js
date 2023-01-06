@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { NO_ROLE } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
 import { createTestingPinia } from '@pinia/testing';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from '../LeftMenu.vue';
 
 const localVue = createLocalVue();

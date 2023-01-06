@@ -3,7 +3,6 @@ import {
   mount as m,
   shallowMount as sm,
 } from '@vue/test-utils';
-import '@testing-library/jest-dom';
 import Vuetify from 'vuetify';
 import Vuex from 'vuex';
 import '@/ui/plugins/vee-validate';
@@ -15,7 +14,7 @@ import { makeStorage } from '@/storage';
 import { mockProvider } from '@/services/provider';
 import { getLocalVue, getWrapper } from '@libs/shared-lib/tests/testBase';
 import { PiniaVuePlugin } from 'pinia';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 
 jest.setTimeout(10000);
 

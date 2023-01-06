@@ -21,7 +21,7 @@ import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import moment from '@libs/shared-lib/plugins/moment';
 import { createTestingPinia } from '@pinia/testing';
 import { mockStorage } from '@/storage';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from '../EventForm.vue';
 

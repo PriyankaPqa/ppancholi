@@ -3,7 +3,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseFile, CaseFileStatus } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from '../case-file-activity/components/CaseFileStatus.vue';
 
 const localVue = createLocalVue();

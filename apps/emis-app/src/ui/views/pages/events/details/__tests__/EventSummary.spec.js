@@ -10,7 +10,7 @@ import { EEventSummarySections } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component, { EDialogComponent } from '../EventSummary.vue';
 

@@ -6,7 +6,7 @@ import { mockStorage } from '@/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 
 import householdHelpers from '@/ui/helpers/household';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from '../HouseholdMemberCard.vue';
 
 const localVue = createLocalVue();

@@ -9,7 +9,7 @@ import {
 } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
 import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './UserAccounts.vue';
 
 const localVue = createLocalVue();

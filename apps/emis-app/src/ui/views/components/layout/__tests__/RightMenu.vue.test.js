@@ -1,8 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedTenantSettings } from '@libs/entities-lib/tenantSettings';
 import routes from '@/constants/routes';
-import { getPiniaForUser } from '@/pinia/user/user.spec';
-import { useMockUserStore } from '@/pinia/user/user.mock';
+import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import Component from '../RightMenu.vue';
 

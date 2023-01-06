@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote, mockCaseNoteCategories, mockCaseNoteEntity } from '@libs/entities-lib/case-note';
 import { mockStorage } from '@/storage';
 
-import { getPiniaForUser } from '@/pinia/user/user.spec';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './CaseNotesListItem.vue';
 
 const localVue = createLocalVue();
