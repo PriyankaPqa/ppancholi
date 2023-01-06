@@ -211,7 +211,7 @@ export function getEntityStoreComponents<T extends IEntity, IdParams>(
   }
 
   return {
-    ...getBaseStoreComponents(service, signalR),
+    ...readOnlyComponents,
     searchLoading,
     deactivate,
     activate,

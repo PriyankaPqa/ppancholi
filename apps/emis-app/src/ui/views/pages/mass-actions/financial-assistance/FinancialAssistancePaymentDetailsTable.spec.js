@@ -6,11 +6,13 @@ import { mockEventEntity } from '@libs/entities-lib/event';
 import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
 import { mockCombineOptionItem, mockOptionItem } from '@libs/entities-lib/optionItem';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './FinancialAssistancePaymentDetailsTable.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const { pinia, eventStore } = useMockEventStore();
+const { programStore } = useMockProgramStore(pinia);
 
 describe('FinancialAssistancePaymentDetailsTable.vue', () => {
   let wrapper;
@@ -128,7 +130,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
         const id = mockCombinedMassAction().entity.details.programId;
         const { eventId } = mockCombinedMassAction().entity.details;
         await wrapper.vm.fetchProgram();
-        expect(wrapper.vm.$storage.program.actions.fetch).toHaveBeenCalledWith({ id, eventId });
+        expect(programStore.fetch).toHaveBeenCalledWith({ id, eventId });
       });
     });
 

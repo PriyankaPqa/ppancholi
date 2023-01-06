@@ -5,8 +5,10 @@ import { Status } from '@libs/entities-lib/base';
 import {
   mockAssessmentFormEntity, mockAssessmentTemplateEntity, PublishStatus, AssessmentFormEntity, AssessmentTemplateEntity,
 } from '@libs/entities-lib/assessment-template';
-import { mockProgramEntities } from '@libs/entities-lib/program';
+import { mockCombinedPrograms, mockProgramEntities } from '@libs/entities-lib/program';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
+import flushPromises from 'flush-promises';
 import Component from './AssessmentTemplateForm.vue';
 
 const localVue = createLocalVue();
@@ -14,6 +16,7 @@ let storage = mockStorage();
 const assessmentTemplate = mockAssessmentTemplateEntity();
 const assessmentForm = mockAssessmentFormEntity();
 
+const { pinia } = useMockProgramStore();
 describe('AssessmentTemplateForm.vue', () => {
   let wrapper;
 
@@ -21,6 +24,7 @@ describe('AssessmentTemplateForm.vue', () => {
   const mountWrapper = async (assessmentTemplate = assessmentForm, fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         assessmentTemplate, isEditMode: true, isNameUnique: true, showEligibilityCriteriaWarning: false,
       },
@@ -32,7 +36,15 @@ describe('AssessmentTemplateForm.vue', () => {
       ...additionalOverwrites,
     });
 
+    wrapper.vm.combinedProgramStore.search = jest.fn(() => ({
+      ids: [mockProgramEntities()[0].id, mockProgramEntities()[1].id],
+      count: mockProgramEntities().length,
+    }));
+    wrapper.vm.combinedProgramStore.getByIds = jest.fn(() => mockCombinedPrograms());
+    wrapper.vm.searchResultIds = mockCombinedPrograms().map((e) => e.entity.id);
+
     await wrapper.vm.$nextTick();
+    await flushPromises();
   };
 
   beforeEach(async () => {
@@ -204,7 +216,7 @@ describe('AssessmentTemplateForm.vue', () => {
           localAssessment: { name: { translation: { en: 'newName ' } } },
           isSelectedAsProgramEligibilityCriteria: true,
         });
-        expect(wrapper.emitted('update:show-eligibility-criteria-warning').length).toBe(1);
+        expect(wrapper.emitted('update:show-eligibility-criteria-warning')?.length).toBe(1);
       });
     });
   });
@@ -290,15 +302,15 @@ describe('AssessmentTemplateForm.vue', () => {
         await mountWrapper();
         await wrapper.vm.searchPrograms();
 
-        expect(wrapper.vm.$storage.program.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedProgramStore.search).toHaveBeenCalledWith({
           filter: {
             'Entity/EventId': assessmentForm.eventId,
           },
         }, null, true);
 
-        expect(wrapper.vm.$storage.program.getters.getByIds).toHaveBeenCalledWith(wrapper.vm.$storage.program.actions.search().ids);
+        expect(wrapper.vm.combinedProgramStore.getByIds).toHaveBeenCalledWith(['1', '2']);
 
-        expect(wrapper.vm.programs).toEqual(wrapper.vm.$storage.program.getters.getByIds().map((t) => t.entity));
+        expect(wrapper.vm.programs).toEqual(wrapper.vm.combinedProgramStore.getByIds().map((t) => t.entity));
       });
     });
   });

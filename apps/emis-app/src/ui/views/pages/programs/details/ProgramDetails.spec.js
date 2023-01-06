@@ -5,9 +5,11 @@ import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/progra
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { Status } from '@libs/entities-lib/base';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './ProgramDetails.vue';
 
 const localVue = createLocalVue();
+const { pinia, programStore } = useMockProgramStore();
 
 describe('ProgramDetails.vue', () => {
   let wrapper;
@@ -18,6 +20,7 @@ describe('ProgramDetails.vue', () => {
   beforeEach(() => {
     wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         programId: 'PROGRAM_ID',
         id: 'EVENT_ID',
@@ -211,56 +214,6 @@ describe('ProgramDetails.vue', () => {
 
   describe('Life cycle', () => {
     describe('created', () => {
-      it('tries to get program from local', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            programId: 'PROGRAM_ID',
-            id: 'EVENT_ID',
-          },
-          computed: {
-            program() {
-              return program;
-            },
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-
-        wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-
-        expect(wrapper.vm.$storage.program.actions.fetch).toHaveBeenCalledTimes(0);
-      });
-
-      it('fetches program if not found locally', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            programId: 'PROGRAM_ID',
-            id: 'EVENT_ID',
-          },
-          computed: {
-            program() {
-              return program;
-            },
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-
-        wrapper.vm.$storage.program.getters.get = jest.fn(() => null);
-
-        wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-
-        expect(wrapper.vm.$storage.program.actions.fetch).toHaveBeenCalledTimes(1);
-      });
-
       it('calls method to fetch and set financial assistance tables', async () => {
         jest.clearAllMocks();
 
@@ -276,6 +229,58 @@ describe('ProgramDetails.vue', () => {
         expect(wrapper.vm.$storage.financialAssistance.actions.fetchByProgramId).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$storage.financialAssistance.actions.fetchByProgramId).toHaveBeenCalledWith('PROGRAM_ID');
         expect(wrapper.vm.financialAssistanceTables).toEqual([mockFinancialAssistanceTableEntity()]);
+      });
+
+      it('tries to get program from local', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            programId: 'PROGRAM_ID',
+            id: 'EVENT_ID',
+          },
+          computed: {
+            program() {
+              return program;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(programStore.fetch).toHaveBeenCalledTimes(0);
+      });
+
+      it('fetches program if not found locally', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            programId: 'PROGRAM_ID',
+            id: 'EVENT_ID',
+          },
+          computed: {
+            program() {
+              return program;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        programStore.getById = jest.fn(() => null);
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(programStore.fetch).toHaveBeenCalledTimes(1);
       });
 
       it('calls method to search assessmentForms', async () => {

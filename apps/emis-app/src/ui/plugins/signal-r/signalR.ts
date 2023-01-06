@@ -251,13 +251,13 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'event',
       entityName: 'Program',
-      action: this.storage.program.mutations.setEntityFromOutsideNotification,
+      action: this.pinia.programStore.setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'event',
       entityName: 'ProgramMetadata',
-      action: this.storage.program.mutations.setMetadataFromOutsideNotification,
+      action: this.pinia.programMetadataStore.setItemFromOutsideNotification,
     });
   }
 

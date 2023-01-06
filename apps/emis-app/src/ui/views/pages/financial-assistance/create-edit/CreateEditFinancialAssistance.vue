@@ -193,6 +193,7 @@ import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem } from '
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { VForm } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
+import { useProgramStore } from '@/pinia/program/program';
 import ConfirmBeforeAction, { ConfirmationDialog } from './ConfirmBeforeAction.vue';
 import ErrorPanel from './ErrorPanel.vue';
 import FinancialAssistanceItems from './FinancialAssistanceItems.vue';
@@ -405,8 +406,8 @@ export default Vue.extend({
     if (this.isEdit) {
       const fa = await this.$storage.financialAssistance.actions.fetch(this.$route.params.faId);
       const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
-      const program = await this.$storage.program.actions.fetch({ id: fa.entity?.programId, eventId: fa.entity?.eventId });
-      this.$storage.financialAssistance.mutations.setFinancialAssistance(fa, categories, program.entity);
+      const program = await useProgramStore().fetch({ id: fa.entity?.programId, eventId: fa.entity?.eventId }) as IProgramEntity;
+      this.$storage.financialAssistance.mutations.setFinancialAssistance(fa, categories, program);
 
       this.programs = [this.$storage.financialAssistance.getters.program()];
     } else {
@@ -419,8 +420,8 @@ export default Vue.extend({
     async loadActivePrograms(): Promise<void> {
       const { id } = this.$route.params;
 
-      const res = (await this.$storage.program.actions.fetchAll({ eventId: id })).map((e) => e.entity.id);
-      this.programs = this.$storage.program.getters.getByIds(res).map((combined) => combined.entity);
+      const res = (await useProgramStore().fetchAll({ eventId: id })).map((e) => e.id);
+      this.programs = useProgramStore().getByIds(res).map((p) => p);
     },
 
     /**

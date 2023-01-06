@@ -59,11 +59,6 @@ import { TeamMetadataModule } from '@/store/modules/team/teamMetadata';
 import { TeamsService } from '@libs/services-lib/teams/entity';
 import { TeamsMetadataService } from '@libs/services-lib/teams/metadata';
 
-import { ProgramEntityModule } from '@/store/modules/program/programEntity';
-import { ProgramMetadataModule } from '@/store/modules/program/programMetadata';
-import { ProgramsService } from '@libs/services-lib/programs/entity';
-import { ProgramsMetadataService } from '@libs/services-lib/programs/metadata';
-
 import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
 import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
 import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
@@ -160,15 +155,6 @@ const mockConfig = {
       mockSignalR(),
     ).getModule(),
     [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(null, mockSignalR()).getModule(),
-
-    [vuexModule.PROGRAM_ENTITIES]: new ProgramEntityModule(
-      new ProgramsService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-    [vuexModule.PROGRAM_METADATA]: new ProgramMetadataModule(
-      new ProgramsMetadataService(httpClient),
-      mockSignalR(),
-    ).getModule(),
 
     [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
       new FinancialAssistanceCategoriesService(httpClient),

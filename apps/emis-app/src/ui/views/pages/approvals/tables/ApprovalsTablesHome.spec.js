@@ -2,19 +2,21 @@ import { shallowMount, createLocalVue } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { EFilterType } from '@libs/component-lib/types';
-import { mockProgramEntity } from '@libs/entities-lib/program';
+import { mockProgramEntities, mockProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import { mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './ApprovalTablesHome.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
-
+const { pinia } = useMockProgramStore();
 const doMount = () => {
   const options = {
     localVue,
+    pinia,
     mocks: {
       $storage: storage,
       $route: {
@@ -25,6 +27,11 @@ const doMount = () => {
     },
   };
   wrapper = shallowMount(Component, options);
+
+  wrapper.vm.combinedProgramStore.search = jest.fn(() => ({
+    ids: [mockProgramEntities()[0].id, mockProgramEntities()[1].id],
+    count: mockProgramEntities().length,
+  }));
 };
 
 describe('ApprovalTablesHome.vue', () => {
@@ -126,8 +133,9 @@ describe('ApprovalTablesHome.vue', () => {
     });
 
     describe('fetchPrograms', () => {
-      it('calls search action', async () => {
+      it('calls combinedProgramStore search', async () => {
         doMount();
+
         await wrapper.setData({
           presetFilter: {
             'Entity/EventId': 'EventId',
@@ -136,7 +144,7 @@ describe('ApprovalTablesHome.vue', () => {
 
         await wrapper.vm.fetchPrograms();
 
-        expect(wrapper.vm.$storage.program.actions.search).toHaveBeenLastCalledWith({
+        expect(wrapper.vm.combinedProgramStore.search).toHaveBeenLastCalledWith({
           filter: {
             'Entity/EventId': wrapper.vm.eventId,
           },

@@ -2,6 +2,7 @@ import { mockStorage } from '@/storage';
 import { mockSignalRService } from '@libs/services-lib/signal-r';
 import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { SignalR } from './signalR';
 
 const storage = mockStorage();
@@ -17,6 +18,7 @@ let conn = new SignalR({ service, storage, showConsole: true });
 
 const { eventStore, eventMetadataStore } = useMockEventStore();
 const { uiStateStore } = useMockUiStateStore();
+const { programStore, programMetadataStore } = useMockProgramStore();
 
 describe('signalR', () => {
   beforeEach(() => {
@@ -32,6 +34,8 @@ describe('signalR', () => {
       eventStore,
       eventMetadataStore,
       uiStateStore,
+      programStore,
+      programMetadataStore,
     });
   });
 
@@ -204,13 +208,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'event',
           entityName: 'Program',
-          action: conn.storage.program.mutations.setEntityFromOutsideNotification,
+          action: programStore.setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'event',
           entityName: 'ProgramMetadata',
-          action: conn.storage.program.mutations.setMetadataFromOutsideNotification,
+          action: programMetadataStore.setItemFromOutsideNotification,
         });
     });
   });

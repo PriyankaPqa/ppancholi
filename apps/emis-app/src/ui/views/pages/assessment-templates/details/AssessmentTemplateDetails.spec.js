@@ -4,10 +4,12 @@ import {
   mockCombinedAssessmentForm, mockCombinedAssessmentTemplate,
 } from '@libs/entities-lib/assessment-template';
 import { mockStorage } from '@/storage';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './AssessmentTemplateDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
+const { pinia } = useMockProgramStore();
 
 describe('AssessmentTemplateDetails', () => {
   let wrapper;
@@ -22,6 +24,7 @@ describe('AssessmentTemplateDetails', () => {
       jest.clearAllMocks();
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: 'mock-event-id',
         },

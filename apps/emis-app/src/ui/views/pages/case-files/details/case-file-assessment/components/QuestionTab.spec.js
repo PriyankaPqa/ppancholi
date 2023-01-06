@@ -32,7 +32,7 @@ describe('QuestionTab.vue', () => {
     await wrapper.vm.$nextTick();
   };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     storage = mockStorage();
     mockResponse = mockAssessmentResponseEntity();
     mockForm = mockAssessmentFormEntity();
