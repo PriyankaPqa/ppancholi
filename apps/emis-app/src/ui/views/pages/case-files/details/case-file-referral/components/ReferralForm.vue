@@ -98,6 +98,7 @@ import { MAX_LENGTH_MD, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validat
 import { CaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-file-referral';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IListOption } from '@libs/shared-lib/types';
+import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import WarmReferralConsent from './WarmReferralConsent.vue';
 
 export default Vue.extend({
@@ -137,11 +138,11 @@ export default Vue.extend({
 
   computed: {
     referralTypes(): Array<IOptionItem> {
-      return this.$storage.caseFileReferral.getters.types(true, this.localReferral.type?.optionItemId);
+      return useCaseFileReferralStore().getAllTypes(true, this.localReferral.type?.optionItemId);
     },
 
     outcomeStatuses(): Array<IOptionItem> {
-      return this.$storage.caseFileReferral.getters.outcomeStatuses(true, this.localReferral.outcomeStatus?.optionItemId);
+      return useCaseFileReferralStore().getAllOutcomeStatuses(true, this.localReferral.outcomeStatus?.optionItemId);
     },
 
     rules(): Record<string, unknown> {
@@ -179,8 +180,8 @@ export default Vue.extend({
   },
 
   async created() {
-    await this.$storage.caseFileReferral.actions.fetchTypes();
-    await this.$storage.caseFileReferral.actions.fetchOutcomeStatuses();
+    await useCaseFileReferralStore().fetchTypes();
+    await useCaseFileReferralStore().fetchOutcomeStatuses();
   },
 
   methods: {

@@ -62,6 +62,7 @@ import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import { CaseFileReferralEntity, ICaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-file-referral';
+import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
@@ -92,15 +93,15 @@ export default mixins(caseFileDetail).extend({
     },
 
     referral(): ICaseFileReferralEntity {
-      const combinedReferral = this.$storage.caseFileReferral.getters.get(this.referralId);
-      return combinedReferral?.entity || new CaseFileReferralEntity();
+      const referralEntity = useCaseFileReferralStore().getById(this.referralId);
+      return referralEntity || new CaseFileReferralEntity();
     },
 
     typeName(): string {
       if (!this.referral?.type?.optionItemId) {
         return null;
       }
-      const types = this.$storage.caseFileReferral.getters.types(false);
+      const types = useCaseFileReferralStore().getAllTypes(false);
       const type = types.find((t) => t.id === this.referral.type.optionItemId);
       return this.$m(type?.name);
     },
@@ -109,7 +110,7 @@ export default mixins(caseFileDetail).extend({
       if (!this.referral?.outcomeStatus?.optionItemId) {
         return null;
       }
-      const statuses = this.$storage.caseFileReferral.getters.outcomeStatuses(false);
+      const statuses = useCaseFileReferralStore().getAllOutcomeStatuses(false);
       const status = statuses.find((t) => t.id === this.referral.outcomeStatus.optionItemId);
       return this.$m(status?.name);
     },
@@ -146,11 +147,10 @@ export default mixins(caseFileDetail).extend({
   },
 
   async created() {
-    await this.$storage.caseFileReferral.actions.fetchTypes();
-    await this.$storage.caseFileReferral.actions.fetchOutcomeStatuses();
-    await this.$storage.caseFileReferral.actions.fetch(
+    await useCaseFileReferralStore().fetchTypes();
+    await useCaseFileReferralStore().fetchOutcomeStatuses();
+    await useCaseFileReferralStore().fetch(
       { caseFileId: this.id, id: this.referralId },
-      { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
     );
   },
 

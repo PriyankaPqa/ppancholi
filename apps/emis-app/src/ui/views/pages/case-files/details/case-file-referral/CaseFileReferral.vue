@@ -65,8 +65,10 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { ICaseFileReferralCombined } from '@libs/entities-lib/case-file-referral';
+import { ICaseFileReferralCombined, ICaseFileReferralEntity, ICaseFileReferralMetadata } from '@libs/entities-lib/case-file-referral';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
+import { useCaseFileReferralMetadataStore, useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
+import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
 import caseFileDetail from '../caseFileDetail';
 
 export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
@@ -84,6 +86,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         sortBy: ['Entity/Name'],
         sortDesc: [false],
       },
+      combinedCaseFileReferralStore: new CombinedStoreFactory<ICaseFileReferralEntity, ICaseFileReferralMetadata>(useCaseFileReferralStore(), useCaseFileReferralMetadataStore()),
     };
   },
 
@@ -159,22 +162,22 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     referralTypes(): Array<IOptionItem> {
-      return this.$storage.caseFileReferral.getters.types(false, null);
+      return useCaseFileReferralStore().getAllTypes(false, null);
     },
 
     outcomeStatuses(): Array<IOptionItem> {
-      return this.$storage.caseFileReferral.getters.outcomeStatuses(false, null);
+      return useCaseFileReferralStore().getAllOutcomeStatuses(false, null);
     },
 
     tableProps(): Record<string, unknown> {
       return {
-        loading: this.$store.state.caseReferralEntities.searchLoading,
+        loading: useCaseFileReferralStore().searchLoading,
         itemClass: (item: ICaseFileReferralCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
 
     tableData(): ICaseFileReferralCombined[] {
-      return this.$storage.caseFileReferral.getters.getByIds(
+      return this.combinedCaseFileReferralStore.getByIds(
         this.searchResultIds,
         { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId } },
       );
@@ -185,8 +188,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   async created() {
     this.saveState = true;
     this.loadState();
-    await this.$storage.caseFileReferral.actions.fetchTypes();
-    await this.$storage.caseFileReferral.actions.fetchOutcomeStatuses();
+    await useCaseFileReferralStore().fetchTypes();
+    await useCaseFileReferralStore().fetchOutcomeStatuses();
   },
 
   methods: {
@@ -216,7 +219,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     async fetchData(params: IAzureSearchParams) {
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
-      const res = await this.$storage.caseFileReferral.actions.search({
+      const res = await this.combinedCaseFileReferralStore.search({
         search: params.search,
         filter: { 'Entity/CaseFileId': this.$route.params.id, ...filterParams },
         top: 1000,

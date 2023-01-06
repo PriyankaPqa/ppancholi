@@ -146,6 +146,7 @@ import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '
 import {
   CaseFileActivityType, CaseFileStatus, ICaseFileActivity, ICaseFileEntity, ICaseFileMetadata,
 } from '@libs/entities-lib/case-file';
+import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
@@ -253,8 +254,8 @@ export default Vue.extend({
     },
 
     async getReferrals() {
-      await this.$storage.caseFileReferral.actions.fetchAll({ caseFileId: this.caseFileId });
-      this.hasReferrals = this.$storage.caseFileReferral.getters.getByCaseFile(this.caseFileId).length > 0;
+      await useCaseFileReferralStore().fetchAll({ caseFileId: this.caseFileId });
+      this.hasReferrals = useCaseFileReferralStore().getByCaseFile(this.caseFileId).length > 0;
     },
 
     async getActivities() {

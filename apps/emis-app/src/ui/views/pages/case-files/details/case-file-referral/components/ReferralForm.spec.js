@@ -1,10 +1,12 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { CaseFileReferralEntity, mockCombinedCaseFileReferral, ReferralMethod } from '@libs/entities-lib/case-file-referral';
+import { CaseFileReferralEntity, mockCaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-file-referral';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { mockStorage } from '@/storage';
+import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import Component from './ReferralForm.vue';
 
 const localVue = createLocalVue();
+const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
 
 describe('ReferralForm.vue', () => {
   let wrapper;
@@ -13,9 +15,10 @@ describe('ReferralForm.vue', () => {
 
   const doMount = (isEditMode = true, shallow = true) => {
     storage = mockStorage();
-    referral = referral || (isEditMode ? mockCombinedCaseFileReferral().entity : new CaseFileReferralEntity());
+    referral = referral || (isEditMode ? mockCaseFileReferralEntity() : new CaseFileReferralEntity());
     const options = {
       localVue,
+      pinia,
       propsData: {
         isEditMode,
         referral: new CaseFileReferralEntity(referral),
@@ -39,7 +42,7 @@ describe('ReferralForm.vue', () => {
   describe('created', () => {
     describe('data', () => {
       it('is initialized with props', () => {
-        referral = mockCombinedCaseFileReferral().entity;
+        referral = mockCaseFileReferralEntity();
         referral.outcomeStatus = null;
         referral.referralConsentInformation = null;
         doMount();
@@ -57,8 +60,8 @@ describe('ReferralForm.vue', () => {
       it('it fetches from store', async () => {
         doMount();
         await wrapper.vm.$nextTick();
-        expect(storage.caseFileReferral.actions.fetchTypes).toHaveBeenCalled();
-        expect(storage.caseFileReferral.actions.fetchOutcomeStatuses).toHaveBeenCalled();
+        expect(caseFileReferralStore.fetchTypes).toHaveBeenCalled();
+        expect(caseFileReferralStore.fetchOutcomeStatuses).toHaveBeenCalled();
       });
     });
   });
@@ -67,18 +70,18 @@ describe('ReferralForm.vue', () => {
     describe('referralTypes', () => {
       it('calls storage and passes current value', async () => {
         doMount();
-        expect(wrapper.vm.$storage.caseFileReferral.getters.types).toHaveBeenCalledWith(true, '09bda590-ad8b-4f29-af4e-c63eedd337a0');
+        expect(caseFileReferralStore.getAllTypes).toHaveBeenCalledWith(true, '09bda590-ad8b-4f29-af4e-c63eedd337a0');
         await wrapper.setData({ localReferral: { type: { optionItemId: null } } });
-        expect(wrapper.vm.$storage.caseFileReferral.getters.types).toHaveBeenCalledWith(true, null);
+        expect(caseFileReferralStore.getAllTypes).toHaveBeenCalledWith(true, null);
       });
     });
     describe('outcomeStatuses', () => {
       it('calls storage and passes current value', async () => {
         doMount();
         await wrapper.setData({ localReferral: { outcomeStatus: { optionItemId: 'abc' } } });
-        expect(wrapper.vm.$storage.caseFileReferral.getters.outcomeStatuses).toHaveBeenCalledWith(true, 'abc');
+        expect(caseFileReferralStore.getAllOutcomeStatuses).toHaveBeenCalledWith(true, 'abc');
         await wrapper.setData({ localReferral: { outcomeStatus: { optionItemId: null } } });
-        expect(wrapper.vm.$storage.caseFileReferral.getters.outcomeStatuses).toHaveBeenCalledWith(true, null);
+        expect(caseFileReferralStore.getAllOutcomeStatuses).toHaveBeenCalledWith(true, null);
       });
     });
   });

@@ -1,8 +1,10 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
+import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import Component from './WarmReferralConsent.vue';
 
 const localVue = createLocalVue();
+const { pinia } = useMockCaseFileReferralStore();
 
 describe('WarmReferralConsent.vue', () => {
   let wrapper;
@@ -12,6 +14,7 @@ describe('WarmReferralConsent.vue', () => {
     storage = mockStorage();
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         show: true,
         referralConsentInformation: null,

@@ -1,22 +1,22 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockSearchData } from '@libs/entities-lib/case-file-referral';
 import { mockStorage } from '@/storage';
-import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import routes from '@/constants/routes';
 import Component from './CaseFileReferral.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
+const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
+
 describe('CaseFileReferral.vue', () => {
   let wrapper;
-  const options = mockOptionItemData();
-  storage.caseFileReferral.getters.types = jest.fn(() => options);
-  storage.caseFileReferral.getters.outcomeStatuses = jest.fn(() => options);
 
   const mountWrapper = (canEdit = true) => {
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       computed: {
         canEdit() {
           return canEdit;
@@ -143,16 +143,15 @@ describe('CaseFileReferral.vue', () => {
   describe('Lifecycle', () => {
     describe('created', () => {
       it('should call fetchTypes and fetchOutcomeStatuses', async () => {
-        storage.caseFileReferral.actions.fetchTypes = jest.fn();
-        storage.caseFileReferral.actions.fetchOutcomeStatuses = jest.fn();
-
+        const spyFetchTypes = jest.spyOn(caseFileReferralStore, 'fetchTypes');
+        const spyFetchOutcomeStatuses = jest.spyOn(caseFileReferralStore, 'fetchOutcomeStatuses');
         mountWrapper();
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
-        expect(storage.caseFileReferral.actions.fetchTypes).toHaveBeenCalled();
-        expect(storage.caseFileReferral.actions.fetchOutcomeStatuses).toHaveBeenCalled();
+        expect(spyFetchTypes).toHaveBeenCalled();
+        expect(spyFetchOutcomeStatuses).toHaveBeenCalled();
       });
     });
   });
@@ -199,7 +198,7 @@ describe('CaseFileReferral.vue', () => {
     describe('fetchData', () => {
       beforeEach(() => {
         const storage = mockStorage();
-        storage.caseFileReferral.actions.search = jest.fn().mockImplementation(() => mockSearchData);
+        caseFileReferralStore.search = jest.fn().mockImplementation(() => mockSearchData);
 
         wrapper = shallowMount(Component, {
           localVue,
@@ -219,8 +218,9 @@ describe('CaseFileReferral.vue', () => {
       };
 
       it('should call storage actions with proper parameters', async () => {
+        jest.spyOn(wrapper.vm.combinedCaseFileReferralStore, 'search');
         await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.$storage.caseFileReferral.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedCaseFileReferralStore.search).toHaveBeenCalledWith({
           search: 'query',
           searchMode: 'all',
           queryType: 'full',

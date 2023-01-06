@@ -28,11 +28,6 @@ import { CaseNoteMetadataModule } from '@/store/modules/case-note/caseNoteMetada
 import { CaseNotesService } from '@libs/services-lib/case-notes/entity';
 import { CaseNotesMetadataService } from '@libs/services-lib/case-notes/metadata';
 
-import { CaseFileReferralEntityModule } from '@/store/modules/case-file-referral/caseFileReferralEntity';
-import { CaseFileReferralMetadataModule } from '@/store/modules/case-file-referral/caseFileReferralMetadata';
-import { CaseFileReferralsService } from '@libs/services-lib/case-file-referrals/entity';
-import { CaseFileReferralsMetadataService } from '@libs/services-lib/case-file-referrals/metadata';
-
 import { CaseFileDocumentEntityModule } from '@/store/modules/case-file-document/caseFileDocumentEntity';
 import { CaseFileDocumentMetadataModule } from '@/store/modules/case-file-document/caseFileDocumentMetadata';
 import { CaseFileDocumentsService } from '@libs/services-lib/case-file-documents/entity';
@@ -116,17 +111,6 @@ const store: StoreOptions<IRootState> = {
     ).getModule(),
     [vuexModule.CASE_NOTE_METADATA]: new CaseNoteMetadataModule(
       new CaseNotesMetadataService(httpClient),
-      SignalR,
-    ).getModule(),
-
-    [vuexModule.CASE_REFERRAL_ENTITIES]: new CaseFileReferralEntityModule(
-      new CaseFileReferralsService(httpClient),
-      new OptionItemsService(httpClient),
-      SignalR,
-    ).getModule(),
-
-    [vuexModule.CASE_REFERRAL_METADATA]: new CaseFileReferralMetadataModule(
-      new CaseFileReferralsMetadataService(httpClient),
       SignalR,
     ).getModule(),
 

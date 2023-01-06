@@ -1,18 +1,20 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
+import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import Component from './CreateEditReferral.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
 
 describe('CreateEditReferral', () => {
   let wrapper;
-  let actions;
 
   const doMount = (isEditMode) => {
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         id: 'CASEFILE_ID',
       },
@@ -35,7 +37,6 @@ describe('CreateEditReferral', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    actions = storage.caseFileReferral.actions;
     doMount(false);
   });
 
@@ -53,13 +54,13 @@ describe('CreateEditReferral', () => {
       it('does not call createReferral unless form validation succeeds', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
         await wrapper.vm.submit();
-        expect(actions.createReferral).toHaveBeenCalledTimes(0);
+        expect(caseFileReferralStore.createReferral).toHaveBeenCalledTimes(0);
       });
 
       it('calls createReferral if isEditMode is false', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
-        expect(actions.createReferral).toHaveBeenCalledTimes(1);
+        expect(caseFileReferralStore.createReferral).toHaveBeenCalledTimes(1);
       });
 
       it('calls updateReferral if isEditMode is true', async () => {
@@ -67,12 +68,12 @@ describe('CreateEditReferral', () => {
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
-        expect(actions.updateReferral).toHaveBeenCalledTimes(1);
+        expect(caseFileReferralStore.updateReferral).toHaveBeenCalledTimes(1);
       });
 
       test('after submitting, the user is redirected to the referral detail page', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.$storage.caseFileReferral.actions.createReferral = jest.fn(() => ({ id: 'abc' }));
+        caseFileReferralStore.createReferral = jest.fn(() => ({ id: 'abc' }));
         await wrapper.vm.submit();
 
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({

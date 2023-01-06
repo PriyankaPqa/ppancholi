@@ -31,6 +31,7 @@ import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import ReferralForm from './ReferralForm.vue';
 
 export default mixins(handleUniqueNameSubmitError).extend({
@@ -86,8 +87,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     if (this.isEditMode) {
       try {
-        const res = await this.$storage.caseFileReferral.actions.fetch({ id: this.referralId, caseFileId: this.id });
-        this.referral = new CaseFileReferralEntity(res.entity);
+        const res = await useCaseFileReferralStore().fetch({ id: this.referralId, caseFileId: this.id });
+        this.referral = new CaseFileReferralEntity(res as ICaseFileReferralEntity);
       } finally {
         this.referralLoading = false;
       }
@@ -114,9 +115,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
           let referral: ICaseFileReferralEntity;
 
           if (this.isEditMode) {
-            referral = await this.$storage.caseFileReferral.actions.updateReferral(this.referral);
+            referral = await useCaseFileReferralStore().updateReferral(this.referral);
           } else {
-            referral = await this.$storage.caseFileReferral.actions.createReferral(this.referral);
+            referral = await useCaseFileReferralStore().createReferral(this.referral);
           }
           if (referral) {
             this.$toasted.global.success(this.$t(this.isEditMode ? 'referral.edit.success' : 'referral.create.success'));

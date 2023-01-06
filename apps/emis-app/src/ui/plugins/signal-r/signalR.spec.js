@@ -2,6 +2,7 @@ import { mockStorage } from '@/storage';
 import { mockSignalRService } from '@libs/services-lib/signal-r';
 import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import { SignalR } from './signalR';
 
 const storage = mockStorage();
@@ -16,6 +17,7 @@ SignalR.prototype.listenForOptionItemChanges = jest.fn();
 let conn = new SignalR({ service, storage, showConsole: true });
 
 const { eventStore, eventMetadataStore } = useMockEventStore();
+const { caseFileReferralStore, caseFileReferralMetadataStore } = useMockCaseFileReferralStore();
 const { uiStateStore } = useMockUiStateStore();
 
 describe('signalR', () => {
@@ -31,6 +33,8 @@ describe('signalR', () => {
     conn.setPinia({
       eventStore,
       eventMetadataStore,
+      caseFileReferralStore,
+      caseFileReferralMetadataStore,
       uiStateStore,
     });
   });
@@ -385,13 +389,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'Referral',
-          action: conn.storage.caseFileReferral.mutations.setEntityFromOutsideNotification,
+          action: conn.pinia.caseFileReferralStore.setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'ReferralMetadata',
-          action: conn.storage.caseFileReferral.mutations.setMetadataFromOutsideNotification,
+          action: conn.pinia.caseFileReferralMetadataStore.setItemFromOutsideNotification,
         });
     });
 

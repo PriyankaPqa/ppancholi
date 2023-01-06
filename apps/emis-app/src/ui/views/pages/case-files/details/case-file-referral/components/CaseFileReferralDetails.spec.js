@@ -1,9 +1,9 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCaseFileReferralEntity, mockCombinedCaseFileReferral, ReferralMethod } from '@libs/entities-lib/case-file-referral';
+import { mockCaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-file-referral';
 import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
-
+import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
@@ -13,24 +13,18 @@ const storage = mockStorage();
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
+const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
 
 describe('CaseFileReferralDetails', () => {
   let wrapper;
-  const combinedReferral = mockCombinedCaseFileReferral();
-  const referral = combinedReferral.entity;
-
-  storage.caseFileReferral.actions.fetchTypes = jest.fn(() => mockOptionItemData());
-  storage.caseFileReferral.actions.fetchOutcomeStatuses = jest.fn(() => mockOptionItemData());
-  storage.caseFileReferral.getters.types = jest.fn(() => mockOptionItemData());
-  storage.caseFileReferral.getters.outcomeStatuses = jest.fn(() => mockOptionItemData());
-  storage.caseFileReferral.getters.get = jest.fn(() => combinedReferral);
-  storage.caseFileReferral.actions.fetch = jest.fn(() => mockCombinedCaseFileReferral());
+  const referral = mockCaseFileReferralEntity({ id: '1' });
 
   describe('Computed', () => {
     beforeEach(() => {
       jest.clearAllMocks();
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: 'mock-caseFile-id',
           referralId: 'mock-referral-id',
@@ -65,22 +59,6 @@ describe('CaseFileReferralDetails', () => {
               },
             },
           },
-          mocks: {
-            $storage: {
-              caseFileReferral: {
-                actions: {
-                  fetchTypes: jest.fn(() => mockOptionItemData()),
-                  fetchOutcomeStatuses: jest.fn(() => mockOptionItemData()),
-                  fetch: jest.fn(() => mockCombinedCaseFileReferral()),
-                },
-                getters: {
-                  types: jest.fn(() => mockOptionItemData()),
-                  outcomeStatuses: jest.fn(() => mockOptionItemData()),
-                  get: jest.fn(() => combinedReferral),
-                },
-              },
-            },
-          },
         });
 
         await wrapper.setData({
@@ -112,22 +90,6 @@ describe('CaseFileReferralDetails', () => {
               searchLoading: false,
             },
           },
-          mocks: {
-            $storage: {
-              caseFileReferral: {
-                actions: {
-                  fetchTypes: jest.fn(() => mockOptionItemData()),
-                  fetchOutcomeStatuses: jest.fn(() => mockOptionItemData()),
-                  fetch: jest.fn(() => mockCombinedCaseFileReferral()),
-                },
-                getters: {
-                  types: jest.fn(() => mockOptionItemData()),
-                  outcomeStatuses: jest.fn(() => mockOptionItemData()),
-                  get: jest.fn(() => combinedReferral),
-                },
-              },
-            },
-          },
         });
 
         expect(wrapper.vm.canEdit).toBeTruthy();
@@ -136,21 +98,22 @@ describe('CaseFileReferralDetails', () => {
 
     describe('referral', () => {
       it('calls the referral getter', () => {
-        expect(storage.caseFileReferral.getters.get).toHaveBeenCalledTimes(1);
+        expect(caseFileReferralStore.getById).toHaveBeenCalledTimes(1);
       });
       it('sets the right data', () => {
-        expect(wrapper.vm.referral).toEqual(referral);
+        expect(JSON.stringify(wrapper.vm.referral)).toEqual(JSON.stringify(referral));
       });
     });
 
     describe('typeName', () => {
       it('calls the getter types', () => {
-        expect(storage.caseFileReferral.getters.types).toHaveBeenCalledTimes(1);
+        expect(caseFileReferralStore.getAllTypes).toHaveBeenCalledTimes(1);
       });
 
       it('returns the right type', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -172,12 +135,13 @@ describe('CaseFileReferralDetails', () => {
 
     describe('outcomeStatus', () => {
       it('calls the getter types', () => {
-        expect(storage.caseFileReferral.getters.outcomeStatuses).toHaveBeenCalledTimes(1);
+        expect(caseFileReferralStore.getAllOutcomeStatuses).toHaveBeenCalledTimes(1);
       });
 
       it('returns the right status', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -201,6 +165,7 @@ describe('CaseFileReferralDetails', () => {
       it('returns the right data', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -253,6 +218,7 @@ describe('CaseFileReferralDetails', () => {
       jest.clearAllMocks();
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: 'mock-caseFile-id',
           referralId: 'mock-referral-id',
@@ -267,17 +233,16 @@ describe('CaseFileReferralDetails', () => {
     });
 
     it('should call fetchTypes', () => {
-      expect(wrapper.vm.$storage.caseFileReferral.actions.fetchTypes).toHaveBeenCalledTimes(1);
+      expect(caseFileReferralStore.fetchTypes).toHaveBeenCalledTimes(1);
     });
 
     it('should call fetchOutcomeStatuses', () => {
-      expect(wrapper.vm.$storage.caseFileReferral.actions.fetchOutcomeStatuses).toHaveBeenCalledTimes(1);
+      expect(caseFileReferralStore.fetchOutcomeStatuses).toHaveBeenCalledTimes(1);
     });
 
     it('should call fetch', () => {
-      expect(wrapper.vm.$storage.caseFileReferral.actions.fetch).toHaveBeenCalledWith(
+      expect(caseFileReferralStore.fetch).toHaveBeenCalledWith(
         { caseFileId: 'mock-caseFile-id', id: 'mock-referral-id' },
-        { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
       );
     });
   });
@@ -286,6 +251,7 @@ describe('CaseFileReferralDetails', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: 'mock-caseFile-id',
           referralId: 'mock-referral-id',

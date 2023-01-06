@@ -12,7 +12,6 @@ import { makeStorage as makeOptionListStorage } from './optionList';
 import { TeamStorage } from './team';
 import { ProgramStorage } from './program';
 import { CaseNoteStorage } from './case-note';
-import { CaseFileReferralStorage } from './case-file-referral';
 import { CaseFileDocumentStorage } from './case-file-document';
 import { FinancialAssistanceCategoryStorage } from './financial-assistance-category';
 import { FinancialAssistancePaymentStorage } from './financial-assistance-payment';
@@ -24,7 +23,6 @@ import { AssessmentResponseStorage } from './assessment-response';
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   caseFile: new CaseFileStorage(store, vuexModule.CASE_FILE_ENTITIES, vuexModule.CASE_FILE_METADATA).make(),
   caseNote: new CaseNoteStorage(store, vuexModule.CASE_NOTE_ENTITIES, vuexModule.CASE_NOTE_METADATA).make(),
-  caseFileReferral: new CaseFileReferralStorage(store, vuexModule.CASE_REFERRAL_ENTITIES, vuexModule.CASE_REFERRAL_METADATA).make(),
   caseFileDocument: new CaseFileDocumentStorage(store, vuexModule.CASE_DOCUMENT_ENTITIES, vuexModule.CASE_DOCUMENT_METADATA).make(),
   optionList: makeOptionListStorage(store),
   team: new TeamStorage(store, vuexModule.TEAM_ENTITIES, vuexModule.TEAM_METADATA).make(),

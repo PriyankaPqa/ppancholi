@@ -1,5 +1,5 @@
-import { mockBaseData, IEntity } from '../base';
-import { ICaseFileReferralCombined, ICaseFileReferralEntity, ICaseFileReferralMetadata } from './case-file-referral.types';
+import { mockBaseData } from '../base';
+import { ICaseFileReferralEntity, ICaseFileReferralMetadata } from './case-file-referral.types';
 
 export const mockCaseFileReferralEntity = (force? : Partial<ICaseFileReferralEntity>) : ICaseFileReferralEntity => ({
   ...mockBaseData(),
@@ -45,17 +45,6 @@ export const mockCaseFileReferralEntities = () : ICaseFileReferralEntity[] => [
 export const mockCaseFileReferralMetadatum = () : ICaseFileReferralMetadata[] => [
   mockCaseFileReferralMetadata({ id: '1' }),
   mockCaseFileReferralMetadata({ id: '2' }),
-];
-
-export const mockCombinedCaseFileReferral = (force?: Partial<IEntity>): ICaseFileReferralCombined => ({
-  metadata: mockCaseFileReferralMetadata(force),
-  entity: mockCaseFileReferralEntity(force),
-});
-
-export const mockCombinedCaseFileReferrals = (): ICaseFileReferralCombined[] => [
-  mockCombinedCaseFileReferral({ id: '1' }),
-  mockCombinedCaseFileReferral({ id: '2' }),
-  mockCombinedCaseFileReferral({ id: '3' }),
 ];
 
 export const mockSearchData = {

@@ -133,9 +133,9 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
     const knownItem = getById(item.id) as T;
     if (initiatedByCurrentUser || knownItem?.id) {
      set(item);
-      // console.log(`${storeMetadata.$id} - ${entity.lastAction}`, entity.id);
+      // console.log(`Metadata - ${knownItem.lastAction}`, knownItem.id);
     } else {
-      // console.log(`${storeMetadata.$id} - ignored`, entity.id);
+      // console.log('Metadata - ignored', knownItem.id);
     }
   }
 
@@ -157,6 +157,7 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
     setItemFromOutsideNotification,
   } as BaseStoreComponents<T, IdParams>;
 }
+
 export function getEntityStoreComponents<T extends IEntity, IdParams>(
   service: DomainBaseService<T, IdParams>,
   signalR: typeof SignalR,
@@ -194,6 +195,7 @@ export function getEntityStoreComponents<T extends IEntity, IdParams>(
     searchLoading.value = payload;
   }
 
+  // In "entity" store the behavior of setItemFromOutsideNotification is different from basic store. Hence, we override this metthod
   function setItemFromOutsideNotification(entity: T, initiatedByCurrentUser: boolean) {
     if (!entity?.id) {
       return;
@@ -204,9 +206,9 @@ export function getEntityStoreComponents<T extends IEntity, IdParams>(
         readOnlyComponents.addNewlyCreatedId(entity);
       }
       readOnlyComponents.set(entity);
-      // console.log(`${storeEntity.$id} - ${entity.lastAction}`, entity.id);
+      // console.log(`Entity - ${entity.lastAction}`, entity.id);
     } else {
-      // console.log(`${storeEntity.$id} - ignored`, entity.id);
+      // console.log('Entity - ignored', entity.id);
     }
   }
 

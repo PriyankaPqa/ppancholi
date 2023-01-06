@@ -2,12 +2,14 @@ import flushPromises from 'flush-promises';
 import _orderBy from 'lodash/orderBy';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
+import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import { CaseFileActivityType } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 import Component from '../CaseFileSummary.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
 
 describe('CaseFileSummary.vue', () => {
   let wrapper;
@@ -15,6 +17,7 @@ describe('CaseFileSummary.vue', () => {
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         caseFileId: 'abcd',
       },
@@ -31,7 +34,7 @@ describe('CaseFileSummary.vue', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    storage.caseFileReferral.getters.getByCaseFile = jest.fn(() => [{ entity: {} }]);
+    caseFileReferralStore.getByCaseFile = jest.fn(() => [{ entity: {} }]);
   });
 
   describe('Lifecycle', () => {
@@ -45,8 +48,8 @@ describe('CaseFileSummary.vue', () => {
         expect(storage.userAccount.actions.search).toHaveBeenCalledWith({
           filter: "search.in(Entity/Id, 'mock-assigned-individual-id-1|mock-assigned-individual-id-2', '|')",
         });
-        expect(storage.caseFileReferral.actions.fetchAll).toHaveBeenCalledWith({ caseFileId: 'abcd' });
-        expect(storage.caseFileReferral.getters.getByCaseFile).toHaveBeenCalledWith('abcd');
+        expect(caseFileReferralStore.fetchAll).toHaveBeenCalledWith({ caseFileId: 'abcd' });
+        expect(caseFileReferralStore.getByCaseFile).toHaveBeenCalledWith('abcd');
         expect(wrapper.vm.hasReferrals).toEqual(true);
         expect(storage.caseFile.actions.fetchCaseFileActivities).toHaveBeenCalledWith('abcd');
         expect(wrapper.vm.activities).toEqual(_orderBy(storage.caseFile.actions.fetchCaseFileActivities('abcd'), 'created', 'desc'));
