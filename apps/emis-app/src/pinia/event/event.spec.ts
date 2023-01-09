@@ -38,8 +38,6 @@ const getPinia = () => {
 };
 
 const useEventTestStore = (opts = {}) => {
-  const baseComponents = getBaseStoreComponents<Entity, IdParams>(entityService, mockSignalR());
-
   const newBaseComponents = {
     ...baseComponents,
     ...opts,

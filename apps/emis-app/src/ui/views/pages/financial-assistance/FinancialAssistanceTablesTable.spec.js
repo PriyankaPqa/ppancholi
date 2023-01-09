@@ -4,7 +4,7 @@ import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockCombinedFinancialAssistances } from '@libs/entities-lib/financial-assistance';
-import { mockProgramEntities } from '@libs/entities-lib/program';
+import { mockCombinedPrograms, mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
@@ -367,6 +367,13 @@ describe('FinancialAssistanceTablesTable.vue', () => {
           },
         });
 
+        wrapper.vm.combinedProgramStore.search = jest.fn(() => ({
+          ids: [mockProgramEntities()[0].id, mockProgramEntities()[1].id],
+          count: mockProgramEntities().length,
+        }));
+        wrapper.vm.combinedProgramStore.getByIds = jest.fn(() => mockCombinedPrograms());
+        wrapper.vm.searchResultIds = mockCombinedPrograms().map((e) => e.entity.id);
+
         await wrapper.setData({
           presetFilter: {
             'Entity/EventId': 'EventId',
@@ -377,7 +384,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
         await wrapper.vm.fetchPrograms();
 
-        expect(wrapper.vm.$storage.program.actions.search).toHaveBeenLastCalledWith({
+        expect(wrapper.vm.combinedProgramStore.search).toHaveBeenLastCalledWith({
           filter: {
             'Entity/EventId': 'EventId',
           },

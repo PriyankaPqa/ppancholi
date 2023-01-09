@@ -10,7 +10,6 @@ import { IStore, IState } from '../store/store.types';
 import { IStorage } from './storage.types';
 import { makeStorage as makeOptionListStorage } from './optionList';
 import { TeamStorage } from './team';
-import { ProgramStorage } from './program';
 import { CaseNoteStorage } from './case-note';
 import { CaseFileDocumentStorage } from './case-file-document';
 import { FinancialAssistanceCategoryStorage } from './financial-assistance-category';
@@ -26,7 +25,6 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   caseFileDocument: new CaseFileDocumentStorage(store, vuexModule.CASE_DOCUMENT_ENTITIES, vuexModule.CASE_DOCUMENT_METADATA).make(),
   optionList: makeOptionListStorage(store),
   team: new TeamStorage(store, vuexModule.TEAM_ENTITIES, vuexModule.TEAM_METADATA).make(),
-  program: new ProgramStorage(store, vuexModule.PROGRAM_ENTITIES, vuexModule.PROGRAM_METADATA).make(),
   registration: makeRegistrationStorage(store),
   financialAssistance: new FinancialAssistanceStorage(
     store,

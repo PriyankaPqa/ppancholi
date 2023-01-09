@@ -162,8 +162,9 @@ import {
   PayeeType,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@libs/entities-lib/financial-assistance';
-import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
+import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program/program.types';
 import householdHelpers from '@/ui/helpers/household';
+import { useProgramStore } from '@/pinia/program/program';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
@@ -261,11 +262,11 @@ export default mixins(caseFileDetail).extend({
     async setFinancialAssistance() {
       const tableWithMetadata = this.$storage.financialAssistance.getters.get(this.financialAssistance.financialAssistanceTableId);
       const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
-      const combinedProgram = await this.$storage.program.actions.fetch({
+      const program = await useProgramStore().fetch({
         id: tableWithMetadata.entity.programId,
         eventId: this.caseFile.entity.eventId,
-      });
-      this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, combinedProgram.entity, false);
+      }) as IProgramEntity;
+      this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, program, false);
     },
   },
 });

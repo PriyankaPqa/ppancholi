@@ -8,11 +8,12 @@ import { mockItems } from '@libs/entities-lib/financial-assistance';
 import { ProgramEntity, mockProgramEntity, mockProgramEntities } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
 
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from '../CreateEditFinancialAssistance.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-
+const { pinia } = useMockProgramStore();
 describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   let wrapper;
 
@@ -21,6 +22,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
+      pinia,
       mocks: {
         $storage: storage,
       },
@@ -44,6 +46,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
       wrapper = mount(Component, {
         localVue,
+        pinia,
         computed: {
           isEdit() {
             return true;
@@ -96,6 +99,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
         wrapper = mount(Component, {
           localVue,
+          pinia,
           computed: {
             isEdit() {
               return true;
@@ -171,6 +175,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           mocks: {
             $route: {
               name: routes.events.financialAssistance.edit.name,
@@ -224,6 +229,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       it('returns the right value', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             program() {
               return {
@@ -241,6 +247,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             program() {
               return {
@@ -297,6 +304,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     it('calls fetchAllIncludingInactive in edit mode', async () => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         computed: {
           isEdit() {
             return true;
@@ -317,6 +325,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
     it('fetches financial assistance in edit mode', async () => {
       wrapper = shallowMount(Component, {
+        pinia,
         localVue,
         computed: {
           isEdit() {
@@ -420,6 +429,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       it('sets name for other language', async () => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           mocks: {
             $storage: storage,
           },

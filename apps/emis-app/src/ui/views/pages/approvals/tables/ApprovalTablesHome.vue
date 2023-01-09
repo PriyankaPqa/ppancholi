@@ -85,6 +85,8 @@ import helpers from '@/ui/helpers/helpers';
 import { IEntityCombined, Status } from '@libs/entities-lib/base';
 import _isEmpty from 'lodash/isEmpty';
 import { IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
+import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
+import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ApprovalTablesHome',
@@ -106,6 +108,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: [`Metadata/ApprovalBaseStatusName/Translation/${this.$i18n.locale}`],
         sortDesc: [false],
       },
+      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata>(useProgramStore(), useProgramMetadataStore()),
     };
   },
 
@@ -178,7 +181,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     async fetchPrograms() {
-      const res = await this.$storage.program.actions.search({
+      const res = await this.combinedProgramStore.search({
         filter: {
           'Entity/EventId': this.eventId,
         },
@@ -188,8 +191,10 @@ export default mixins(TablePaginationSearchMixin).extend({
         orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
       }, null, true);
 
-      this.programs = this.$storage.program.getters.getByIds(res.ids)
-        .map((combined: IEntityCombined<IProgramEntity, IProgramMetadata>) => (combined.entity));
+      if (res) {
+        this.programs = this.combinedProgramStore.getByIds(res.ids)
+          .map((combined: IEntityCombined<IProgramEntity, IProgramMetadata>) => (combined.entity));
+      }
     },
   },
 

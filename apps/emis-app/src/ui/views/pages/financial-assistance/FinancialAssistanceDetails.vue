@@ -107,6 +107,8 @@ import {
 } from '@libs/entities-lib/financial-assistance';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
+import { useProgramStore } from '@/pinia/program/program';
+import { IProgramEntity } from '@libs/entities-lib/program';
 import { INestedTableHeader } from './create-edit/INestedTableHeader';
 import TooltipFinancialAssistanceCategory from './create-edit/TooltipFinancialAssistanceCategory.vue';
 import ErrorPanel from './create-edit/ErrorPanel.vue';
@@ -245,8 +247,8 @@ export default Vue.extend({
     await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
     const res = await this.$storage.financialAssistance.actions.fetch(this.$route.params.faId);
     const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
-    const program = await this.$storage.program.actions.fetch({ id: res.entity.programId, eventId: res.entity.eventId });
-    this.$storage.financialAssistance.mutations.setFinancialAssistance(res, categories, program.entity);
+    const program = await useProgramStore().fetch({ id: res.entity.programId, eventId: res.entity.eventId }) as IProgramEntity;
+    this.$storage.financialAssistance.mutations.setFinancialAssistance(res, categories, program);
 
     if (!res) {
       this.error = true;

@@ -191,6 +191,7 @@ import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-as
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
+import { useProgramStore } from '@/pinia/program/program';
 
 export default Vue.extend({
   name: 'ProgramDetails',
@@ -223,7 +224,7 @@ export default Vue.extend({
 
   computed: {
     program(): IProgramEntity {
-      return this.$storage.program.getters.get(this.programId).entity;
+      return useProgramStore().getById(this.programId);
     },
 
     assessments(): IAssessmentFormEntity[] {
@@ -246,9 +247,9 @@ export default Vue.extend({
     this.loading = true;
 
     try {
-      const program = this.$storage.program.getters.get(this.programId);
-      if (!program?.entity?.id) {
-        await this.$storage.program.actions.fetch({ id: this.programId, eventId: this.id });
+      const program = useProgramStore().getById(this.programId);
+      if (!program?.id) {
+        await useProgramStore().fetch({ id: this.programId, eventId: this.id });
       }
 
       this.financialAssistanceTables = await this.$storage.financialAssistance.actions.fetchByProgramId(this.programId);

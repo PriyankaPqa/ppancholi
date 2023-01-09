@@ -8,11 +8,12 @@ import {
 import {
   mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems,
 } from '@libs/entities-lib/financial-assistance';
-import { EPaymentModalities, mockCombinedProgram } from '@libs/entities-lib/program';
+import { EPaymentModalities, mockCombinedProgram, mockProgramEntity } from '@libs/entities-lib/program';
 import { mockCombinedOptionItems, mockOptionItem, mockOptionSubItem } from '@libs/entities-lib/optionItem';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import { mockStorage } from '@/storage';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './FinancialAssistancePaymentDetailsCreate.vue';
 
 const formCopy = {
@@ -36,225 +37,16 @@ const localVue = createLocalVue();
 
 const storage = mockStorage();
 
+const { pinia, programStore } = useMockProgramStore();
+
 describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
   let wrapper;
-
-  describe('Methods', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          form: formCopy,
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
-    });
-
-    describe('onClearEvent', () => {
-      it('should call onSetEvent with null', () => {
-        wrapper.vm.onSetEvent = jest.fn();
-        wrapper.vm.onClearEvent();
-        expect(wrapper.vm.onSetEvent).toHaveBeenLastCalledWith(null);
-      });
-    });
-
-    describe('onSetEvent', () => {
-      it('should set the event and reset other fields', () => {
-        wrapper.vm.onSetEvent(mockEvent());
-        expect(wrapper.vm.formCopy).toEqual({ ...formCopyNull, event: mockEvent() });
-      });
-    });
-
-    describe('onClearFinancialAssistanceTable', () => {
-      it('should call onSetFinancialAssistanceTable with null ', () => {
-        wrapper.vm.onSetFinancialAssistanceTable = jest.fn();
-        wrapper.vm.onClearFinancialAssistanceTable();
-        expect(wrapper.vm.onSetFinancialAssistanceTable).toHaveBeenLastCalledWith(null);
-      });
-    });
-
-    describe('onSetFinancialAssistanceTable', () => {
-      it('should set the table and reset below fields', () => {
-        wrapper.vm.onSetFinancialAssistanceTable(mockFinancialAssistanceTableEntity());
-        expect(wrapper.vm.formCopy).toEqual({ ...formCopyNull, event: formCopy.event, table: mockFinancialAssistanceTableEntity() });
-      });
-    });
-
-    describe('onClearItem', () => {
-      it('should call onSetItem with null', () => {
-        wrapper.vm.onSetItem = jest.fn();
-        wrapper.vm.onClearItem();
-        expect(wrapper.vm.onSetItem).toHaveBeenLastCalledWith(null);
-      });
-    });
-
-    describe('onSetItem', () => {
-      it('should set the item and reset the sub item', () => {
-        wrapper.vm.onSetItem(mockOptionItem());
-        expect(wrapper.vm.formCopy.item).toEqual(mockOptionItem());
-        expect(wrapper.vm.formCopy.subItem).toEqual(null);
-      });
-    });
-
-    describe('fetchProgram', () => {
-      it('should call action fetch with proper params', async () => {
-        const fa = mockFinancialAssistanceTableEntity();
-
-        await wrapper.vm.fetchProgram(fa);
-
-        expect(wrapper.vm.$storage.program.actions.fetch).toHaveBeenLastCalledWith({ id: fa.programId, eventId: fa.eventId });
-      });
-
-      it('should set program', async () => {
-        wrapper.vm.$storage.program.actions.fetch = jest.fn(() => mockCombinedProgram());
-
-        await wrapper.vm.fetchProgram(mockFinancialAssistanceTableEntity());
-
-        expect(wrapper.vm.program).toEqual(mockCombinedProgram());
-      });
-    });
-
-    describe('filterEvents', () => {
-      it('should set filteredEvents with events having a FA table', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            form: formCopy,
-          },
-          computed: {
-            eventIdsWithFinancialAssistanceTable: () => ['1'],
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-        const events = [
-          { id: '1', name: 'event A' },
-          { id: '2', name: 'event B' },
-        ];
-
-        wrapper.vm.filterEvents(events);
-        expect(wrapper.vm.filteredEvents).toEqual([events[0]]);
-      });
-    });
-  });
-
-  describe('Life cycle', () => {
-    describe('Create', () => {
-      beforeEach(() => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            form: formCopy,
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-        wrapper.vm.fetchEvents = jest.fn();
-        jest.clearAllMocks();
-      });
-
-      it('should fetch all financial assistance table', async () => {
-        wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.$storage.financialAssistance.actions.fetchAll).toHaveBeenCalledTimes(1);
-      });
-
-      it('should fetch all financial assistance categories - including inactive ones', async () => {
-        wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalledTimes(1);
-      });
-    });
-  });
-
-  describe('Watch', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          form: formCopy,
-        },
-        mocks: {
-          $storage: storage,
-        },
-        computed: {
-          currentSubItem: () => mockSubItemData(),
-        },
-      });
-      wrapper.vm.fetchProgram = jest.fn();
-      wrapper.vm.onSetFinancialAssistanceTable = jest.fn();
-      wrapper.vm.onSetEvent = jest.fn();
-      wrapper.vm.onSetItem = jest.fn();
-    });
-
-    describe('formCopy', () => {
-      it('should emit update event with proper params', () => {
-        expect(wrapper.emitted('update')[0][0]).toEqual(wrapper.vm.formCopy);
-      });
-    });
-
-    describe('formCopy.table', () => {
-      it('should fetch program when table is changed', () => {
-        expect(wrapper.vm.fetchProgram).toBeCalled();
-      });
-
-      it('should call onSetFinancialAssistanceTable with proper param ', async () => {
-        expect(wrapper.vm.onSetFinancialAssistanceTable).toHaveBeenLastCalledWith(wrapper.vm.formCopy.table);
-      });
-    });
-
-    describe('formCopy.event', () => {
-      it('should call onSetEvent with proper param ', async () => {
-        expect(wrapper.vm.onSetEvent).toHaveBeenLastCalledWith(wrapper.vm.formCopy.event);
-      });
-    });
-
-    describe('formCopy.item', () => {
-      it('should call onSetItem with proper param', async () => {
-        expect(wrapper.vm.onSetItem).toHaveBeenLastCalledWith(wrapper.vm.formCopy.item);
-      });
-    });
-
-    describe('formCopy.subItem', () => {
-      it('should assign the amount if the select sub-item has a fixed amount', async () => {
-        expect(wrapper.vm.formCopy.amount).toEqual(wrapper.vm.currentSubItem.maximumAmount);
-      });
-
-      it('should reset the amount if the select sub-item has a variable amount', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            form: formCopy,
-          },
-          mocks: {
-            $storage: storage,
-          },
-          computed: {
-            currentSubItem: () => mockSubItems()[1],
-          },
-        });
-
-        await wrapper.setData({
-          formCopy: {
-            subItem: mockSubItems()[1],
-          },
-        });
-
-        expect(wrapper.vm.formCopy.amount).toEqual(0);
-      });
-    });
-  });
 
   describe('Computed', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           form: formCopy,
         },
@@ -262,6 +54,10 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
           $storage: storage,
         },
       });
+    });
+
+    afterEach(() => {
+      wrapper = null;
     });
 
     describe('rules', () => {
@@ -325,8 +121,8 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         + 'for which document is not required', () => {
         const expected = [mockCombinedFinancialAssistance()]
           .filter((t) => t.entity.items.length > 0
-          && t.entity.status === Status.Active
-          && t.entity.items.some((item) => item.subItems.some((subItem) => subItem.documentationRequired === false)));
+            && t.entity.status === Status.Active
+            && t.entity.items.some((item) => item.subItems.some((subItem) => subItem.documentationRequired === false)));
 
         expect(wrapper.vm.financialAssistanceTables).toEqual(expected);
       });
@@ -341,6 +137,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
     describe('financialAssistanceTableItems', () => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           form: formCopy,
         },
@@ -369,12 +166,13 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
     describe('paymentModalities', () => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           form: formCopy,
         },
         data() {
           return {
-            program: mockCombinedProgram(),
+            program: mockProgramEntity(),
           };
         },
         mocks: {
@@ -384,7 +182,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
 
       it('should return all payment modalities included in the program', () => {
         const expected = helpers.enumToTranslatedCollection(EPaymentModalities, 'enums.PaymentModality')
-          .filter((p) => mockCombinedProgram().entity.paymentModalities.includes(p.value));
+          .filter((p) => mockProgramEntity().paymentModalities.includes(p.value));
 
         expect(wrapper.vm.paymentModalities).toEqual(expected);
       });
@@ -393,6 +191,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
     describe('subItems', () => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           form: formCopy,
         },
@@ -428,6 +227,231 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
           },
         });
         expect(wrapper.vm.subItems[0]?.id).toEqual(expected[0].id);
+      });
+    });
+  });
+
+  describe('Methods', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          form: formCopy,
+        },
+        mocks: {
+          $storage: storage,
+        },
+      });
+    });
+
+    afterEach(() => {
+      wrapper = null;
+    });
+
+    describe('onClearEvent', () => {
+      it('should call onSetEvent with null', () => {
+        wrapper.vm.onSetEvent = jest.fn();
+        wrapper.vm.onClearEvent();
+        expect(wrapper.vm.onSetEvent).toHaveBeenLastCalledWith(null);
+      });
+    });
+
+    describe('onSetEvent', () => {
+      it('should set the event and reset other fields', () => {
+        wrapper.vm.onSetEvent(mockEvent());
+        expect(wrapper.vm.formCopy).toEqual({ ...formCopyNull, event: mockEvent() });
+      });
+    });
+
+    describe('onClearFinancialAssistanceTable', () => {
+      it('should call onSetFinancialAssistanceTable with null ', () => {
+        wrapper.vm.onSetFinancialAssistanceTable = jest.fn();
+        wrapper.vm.onClearFinancialAssistanceTable();
+        expect(wrapper.vm.onSetFinancialAssistanceTable).toHaveBeenLastCalledWith(null);
+      });
+    });
+
+    describe('onSetFinancialAssistanceTable', () => {
+      it('should set the table and reset below fields', () => {
+        wrapper.vm.onSetFinancialAssistanceTable(mockFinancialAssistanceTableEntity());
+        expect(wrapper.vm.formCopy).toEqual({ ...formCopyNull, event: formCopy.event, table: mockFinancialAssistanceTableEntity() });
+      });
+    });
+
+    describe('onClearItem', () => {
+      it('should call onSetItem with null', () => {
+        wrapper.vm.onSetItem = jest.fn();
+        wrapper.vm.onClearItem();
+        expect(wrapper.vm.onSetItem).toHaveBeenLastCalledWith(null);
+      });
+    });
+
+    describe('onSetItem', () => {
+      it('should set the item and reset the sub item', () => {
+        wrapper.vm.onSetItem(mockOptionItem());
+        expect(wrapper.vm.formCopy.item).toEqual(mockOptionItem());
+        expect(wrapper.vm.formCopy.subItem).toEqual(null);
+      });
+    });
+
+    describe('fetchProgram', () => {
+      it('should call action fetch with proper params', async () => {
+        const fa = mockFinancialAssistanceTableEntity();
+
+        await wrapper.vm.fetchProgram(fa);
+
+        expect(programStore.fetch).toHaveBeenLastCalledWith({ id: fa.programId, eventId: fa.eventId });
+      });
+
+      it('should set program', async () => {
+        programStore.fetch = jest.fn(() => mockCombinedProgram());
+
+        await wrapper.vm.fetchProgram(mockFinancialAssistanceTableEntity());
+
+        expect(wrapper.vm.program).toEqual(mockCombinedProgram());
+      });
+    });
+
+    describe('filterEvents', () => {
+      it('should set filteredEvents with events having a FA table', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            form: formCopy,
+          },
+          computed: {
+            eventIdsWithFinancialAssistanceTable: () => ['1'],
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        const events = [
+          { id: '1', name: 'event A' },
+          { id: '2', name: 'event B' },
+        ];
+
+        wrapper.vm.filterEvents(events);
+        expect(wrapper.vm.filteredEvents).toEqual([events[0]]);
+      });
+    });
+  });
+
+  describe('Life cycle', () => {
+    describe('Create', () => {
+      beforeEach(() => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            form: formCopy,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.fetchEvents = jest.fn();
+        jest.clearAllMocks();
+      });
+
+      it('should fetch all financial assistance table', async () => {
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.$storage.financialAssistance.actions.fetchAll).toHaveBeenCalledTimes(1);
+      });
+
+      it('should fetch all financial assistance categories - including inactive ones', async () => {
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('Watch', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          form: formCopy,
+        },
+        mocks: {
+          $storage: storage,
+        },
+        computed: {
+          currentSubItem: () => mockSubItemData(),
+        },
+      });
+      wrapper.vm.fetchProgram = jest.fn();
+      wrapper.vm.onSetFinancialAssistanceTable = jest.fn();
+      wrapper.vm.onSetEvent = jest.fn();
+      wrapper.vm.onSetItem = jest.fn();
+    });
+
+    afterEach(() => {
+      wrapper = null;
+    });
+
+    describe('formCopy', () => {
+      it('should emit update event with proper params', () => {
+        expect(wrapper.emitted('update')[0][0]).toEqual(wrapper.vm.formCopy);
+      });
+    });
+
+    describe('formCopy.table', () => {
+      it('should fetch program when table is changed', () => {
+        expect(wrapper.vm.fetchProgram).toBeCalled();
+      });
+
+      it('should call onSetFinancialAssistanceTable with proper param ', async () => {
+        expect(wrapper.vm.onSetFinancialAssistanceTable).toHaveBeenLastCalledWith(wrapper.vm.formCopy.table);
+      });
+    });
+
+    describe('formCopy.event', () => {
+      it('should call onSetEvent with proper param ', async () => {
+        expect(wrapper.vm.onSetEvent).toHaveBeenLastCalledWith(wrapper.vm.formCopy.event);
+      });
+    });
+
+    describe('formCopy.item', () => {
+      it('should call onSetItem with proper param', async () => {
+        expect(wrapper.vm.onSetItem).toHaveBeenLastCalledWith(wrapper.vm.formCopy.item);
+      });
+    });
+
+    describe('formCopy.subItem', () => {
+      it('should assign the amount if the select sub-item has a fixed amount', async () => {
+        expect(wrapper.vm.formCopy.amount).toEqual(wrapper.vm.currentSubItem.maximumAmount);
+      });
+
+      it('should reset the amount if the select sub-item has a variable amount', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            form: formCopy,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            currentSubItem: () => mockSubItems()[1],
+          },
+        });
+
+        await wrapper.setData({
+          formCopy: {
+            subItem: mockSubItems()[1],
+          },
+        });
+
+        expect(wrapper.vm.formCopy.amount).toEqual(0);
       });
     });
   });
