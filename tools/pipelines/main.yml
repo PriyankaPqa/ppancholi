@@ -41,9 +41,6 @@ stages:
       isPullRequest: ${{ parameters.isPullRequest }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
       disableCache: ${{ parameters.disableCache }}
-      workingDir: ${{ parameters.workingDir }}
-      distDir: ${{ parameters.distDir }}
-
 
   # Deploy to feature branch, dev, production
   - template: './stages/deploy-stage.yml'

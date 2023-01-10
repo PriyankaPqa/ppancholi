@@ -10,7 +10,7 @@ import {
   IEventLocation,
   IEventMainInfo,
 } from '@libs/entities-lib/event';
-import { IAzureSearchParams, IAzureSearchResult, ICombinedIndex } from '@libs/shared-lib/types';
+import { IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { IEventsService } from './events.types';
@@ -127,26 +127,6 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
       top: 999,
     };
     return this.searchMyEvents(params);
-  }
-
-  async fetchOneOpenEvent(): Promise<ICombinedIndex<IEventEntity, unknown> & { id: uuid, tenantId: uuid }> {
-    const params = {
-      orderBy: 'Entity/Schedule/OpenDate desc',
-      filter: {
-        Entity: {
-          Schedule: {
-            Status: EEventStatus.Open,
-          },
-        },
-      },
-      select: ['Entity/Id'],
-      top: 1,
-      queryType: 'full',
-      searchMode: 'all',
-    };
-
-    const response = await this.search(params);
-    return response.value[0];
   }
 
   private eventToCreateEventRequestPayload(event: IEventEntity): ICreateEventRequest {

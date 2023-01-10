@@ -24,7 +24,6 @@ export const mockEventsService = (): IEventsServiceMock => ({
   editRegistrationLocation: jest.fn(() => mockEventEntity()),
   addShelterLocation: jest.fn(() => mockEventEntity()),
   editShelterLocation: jest.fn(() => mockEventEntity()),
-  fetchOneOpenEvent: jest.fn(),
   searchMyEvents: jest.fn(),
   searchMyEventsById: jest.fn(),
 });

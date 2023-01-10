@@ -40,17 +40,16 @@ describe('httpClient', () => {
 
       mockHttpClient = new HttpClient(mockI18n, {
         authentication: true,
-        accessToken: 'accessToken',
+        accessTokenKey: 'accessTokenKey',
         redirect403Url: 'redirect403',
         timerBeforeRedirection: 1000,
         useErrorReport: true,
-        baseUrl: 'baseUrl',
       });
     });
 
     it('creates AxiosInstance with correct params', () => {
       expect(axios.create).toHaveBeenLastCalledWith({
-        baseURL: 'baseUrl',
+        baseURL: `${process.env.VITE_API_BASE_URL}/`,
         withCredentials: true,
         headers: {
           Accept: 'application/json',
@@ -66,10 +65,6 @@ describe('httpClient', () => {
     it('inits response handler', () => {
       expect(mockAxios.interceptors.response.use).toHaveBeenCalledTimes(1);
     });
-
-    it('sets baseUrl with the one provider in options', () => {
-      expect(mockHttpClient.baseUrl).toBe('baseUrl');
-    });
   });
 
   describe('Methods', () => {
@@ -81,11 +76,10 @@ describe('httpClient', () => {
 
       mockHttpClient = new HttpClient(mockI18n, {
         authentication: true,
-        accessToken: 'accessToken',
+        accessTokenKey: 'accessTokenKey',
         redirect403Url: 'redirect403',
         timerBeforeRedirection: 10000,
         useErrorReport: true,
-        baseUrl: 'baseUrl',
       });
 
       Vue.toasted = {
@@ -303,6 +297,8 @@ describe('httpClient', () => {
       jest.spyOn(uuid, 'v4').mockImplementation(() => 'uuid-mock');
 
       it('should set accessToken if existing and authentication is activated', () => {
+        Storage.prototype.getItem = jest.fn(() => 'test access token');
+
         const request = {
           headers: {
             common: {
@@ -314,7 +310,7 @@ describe('httpClient', () => {
 
         const res = mockHttpClient.requestHandler(request);
 
-        expect(res.headers.common.Authorization).toEqual('Bearer accessToken');
+        expect(res.headers.common.Authorization).toEqual('Bearer test access token');
       });
 
       it('should not set accessToken if ignoreJwt is true', () => {

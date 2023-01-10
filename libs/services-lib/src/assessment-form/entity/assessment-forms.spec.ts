@@ -7,6 +7,7 @@ describe('>>> AssessmentForms Service', () => {
   let service: AssessmentFormsService;
 
   beforeEach(() => {
+    process.env.VITE_API_BASE_URL = 'www.test.com';
     jest.clearAllMocks();
     http = mockHttp();
     service = new AssessmentFormsService(http as never);

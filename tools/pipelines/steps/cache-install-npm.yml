@@ -1,16 +1,11 @@
 parameters:
   packageFeed: ''
   nodeJsVersion: ''
-  disableCache: 'false'
+  disableCache: ''
 
 steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '${{ parameters.nodeJsVersion }}'
-    displayName: 'Install Node.js'
-
   - task: Cache@2
-    displayName: Cache NPM packages
+    displayName: Cache yarn packages
     condition: eq(variables['disableCache'], 'false')
     inputs:
       key: '"$(Agent.OS)" | "${{parameters.nodeJsVersion}}" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
@@ -18,7 +13,7 @@ steps:
       cacheHitVar: CACHE_HIT
 
   - task: Yarn@3
-    displayName: 'Install NPM packages'
+    displayName: 'Install yarn packages'
     condition: ne(variables['CACHE_HIT'], 'true')
     inputs:
       customRegistry: 'useFeed'

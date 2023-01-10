@@ -39,6 +39,7 @@ variables:
   ${{ else }}:
     value: 'yarn test:benef --passWithNoTests'
 
+
 name: Benef App - $(Major).$(Minor).$(Patch)
 
 resources:

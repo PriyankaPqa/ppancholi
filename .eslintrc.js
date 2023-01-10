@@ -17,7 +17,6 @@ module.exports = {
     '@vue/eslint-config-airbnb',
     'plugin:vuejs-accessibility/recommended',
     'airbnb-typescript/base',
-    'plugin:cypress/recommended',
   ],
   rules: {
     'no-console': 'error',
@@ -32,9 +31,8 @@ module.exports = {
     'max-len': 'off',
     'vue/max-len': ['error', {
       code: 180, tabWidth: 4, ignoreUrls: true, ignoreComments: true,
-    }],
+    },],
     'prefer-destructuring': ['error', { object: false, array: false }],
-    'no-restricted-syntax': 'off',
     'max-lines-per-function': ['error', { max: 155, skipBlankLines: true, skipComments: true }],
     'vue/max-attributes-per-line': ['error', {
       singleline: 8,
@@ -59,8 +57,8 @@ module.exports = {
     curly: ['error', 'all'],
     'no-underscore-dangle': 'off',
     'brace-style': [1, '1tbs', { allowSingleLine: false }],
-    'vue/multi-word-component-names': 0,
-    'vue/no-mutating-props': 0, // TODO Should eventually enable it and fix existing errors (false negative were there before the update)
+    "vue/multi-word-component-names": 0,
+    "vue/no-mutating-props": 0, // TODO Should eventually enable it and fix existing errors (false negative were there before the update)
   },
 
   overrides: [

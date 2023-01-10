@@ -13,8 +13,8 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
   apiUrlSuffix: string;
 
   constructor(protected readonly http: IHttpClient, apiUrlSuffix: string, controller: string) {
-    this.baseApi = `${http.baseUrl}/${apiUrlSuffix}`;
-    this.baseUrl = `${http.baseUrl}/${apiUrlSuffix}/${controller}`;
+    this.baseApi = `${process.env.VITE_API_BASE_URL}/${apiUrlSuffix}`;
+    this.baseUrl = `${process.env.VITE_API_BASE_URL}/${apiUrlSuffix}/${controller}`;
     this.controller = controller;
     this.apiUrlSuffix = apiUrlSuffix;
   }

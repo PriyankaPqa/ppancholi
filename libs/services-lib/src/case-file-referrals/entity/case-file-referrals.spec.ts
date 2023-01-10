@@ -7,6 +7,7 @@ describe('>>> Case File Referral Service', () => {
   let service: CaseFileReferralsService;
 
   beforeEach(() => {
+    process.env.VITE_API_BASE_URL = 'www.test.com';
     jest.clearAllMocks();
     http = mockHttp();
     service = new CaseFileReferralsService(http as never);

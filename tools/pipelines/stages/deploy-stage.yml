@@ -13,7 +13,7 @@ parameters:
 stages:
 - ${{ if eq( variables['build.reason'], 'PullRequest') }}:
   - stage: 'Deploy_to_storage'
-    displayName: 'Deploy for manual testing'
+    displayName: 'Deploy for testing'
     dependsOn: 'Build_Stage'
     condition: succeeded()
     pool:
@@ -151,22 +151,22 @@ stages:
                       }
 
 
-#  - stage: 'AcceptanceTest'
-#    displayName: 'Acceptance Stage'
-#    dependsOn: 'Deploy_to_storage'
-#    condition: and(succeeded(), eq('${{ parameters.runAcceptanceStage }}', true))
-#    jobs:
-#      - template: '../jobs/acceptance-tests-azure-jobs.yml'
-#        parameters:
-#          packageFeed: ${{ parameters.packageFeed }}
-#          nodeJsVersion: ${{ parameters.nodeJsVersion }}
-#          testCommand: ${{ parameters.testCommand }}
-#          disableCache: ${{ parameters.disableCache }}
-#          appName: ${{ parameters.appName }}
+  - stage: 'AcceptanceTest'
+    displayName: 'Acceptance Stage'
+    dependsOn: 'Deploy_to_storage'
+    condition: and(succeeded(), eq('${{ parameters.runAcceptanceStage }}', true))
+    jobs:
+      - template: '../jobs/acceptance-tests-azure-jobs.yml'
+        parameters:
+          packageFeed: ${{ parameters.packageFeed }}
+          nodeJsVersion: ${{ parameters.nodeJsVersion }}
+          testCommand: ${{ parameters.testCommand }}
+          disableCache: ${{ parameters.disableCache }}
+          appName: ${{ parameters.appName }}
 - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
   - stage: 'Deploy_to_Dev'
     displayName: 'Deploy to Dev'
-    dependsOn: 'Acceptance_Test_Stage'
+    dependsOn: 'Post_Build_Stage'
     condition: succeeded()
     pool:
       vmImage: 'windows-2022'
