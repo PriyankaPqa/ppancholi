@@ -39,7 +39,7 @@ stages:
           appName: ${{parameters.appName}}
           parallel: 3
 
-  - stage: 'AcceptanceTest'
+  - stage: 'Acceptance_Test_Stage'
     condition: and(succeeded(), eq('${{ parameters.runAcceptanceStage }}', true))
     displayName: 'Acceptance Stage'
     jobs:
@@ -50,7 +50,7 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         strategy:
-          parallel: 3
+          parallel: 2
         steps:
           - template: '../steps/cypress-steps.yml'
             parameters:
