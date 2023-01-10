@@ -32,6 +32,7 @@
               <rc-file-upload
                 ref="fileUpload"
                 :allowed-extensions="allowedExtensions"
+                :sanitize-file-name="true"
                 :max-size="10000000"
                 :errors="errors"
                 @update:file="onUpdateFile" />

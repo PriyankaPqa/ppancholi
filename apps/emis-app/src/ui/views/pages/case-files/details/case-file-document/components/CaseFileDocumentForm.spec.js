@@ -238,6 +238,12 @@ describe('CaseFileDocumentForm.vue', () => {
         expect(wrapper.findComponent(RcFileUpload).props('allowedExtensions'))
           .toEqual(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'rtf', 'ppt', 'pptx', 'jpeg', 'jpg', 'png', 'bmp', 'tiff', 'msg']);
       });
+
+      it('should sanitize the file name', async () => {
+        await (mountWrapper(false, true));
+        expect(wrapper.findComponent(RcFileUpload).props('sanitizeFileName'))
+          .toEqual(true);
+      });
     });
 
     describe('download view document', () => {

@@ -1,17 +1,16 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { LOGO_EXTENSIONS } from '@/constants/documentExtensions';
+import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import Component from '../Logo.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
-beforeEach(() => {
-  jest.clearAllMocks();
-
-  wrapper = shallowMount(Component, {
+const doMount = (shallow = true) => {
+  const opts = {
     localVue,
     propsData: {
       disableEditBtn: false,
@@ -19,7 +18,18 @@ beforeEach(() => {
     mocks: {
       $storage: storage,
     },
-  });
+
+  };
+  if (shallow) {
+    wrapper = shallowMount(Component, opts);
+  } else {
+    wrapper = mount(Component, opts);
+  }
+};
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  doMount();
 });
 
 describe('Logo.vue', () => {
@@ -133,6 +143,18 @@ describe('Logo.vue', () => {
         await wrapper.vm.upload();
 
         expect(wrapper.vm.uploadForm).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('Template', () => {
+    describe('RcFileUpload', () => {
+      it('should sanitize file name before upload', async () => {
+        doMount(false);
+        await wrapper.setData({
+          isEditing: true,
+        });
+        expect(wrapper.findComponent(RcFileUpload).props('sanitizeFileName')).toEqual(true);
       });
     });
   });

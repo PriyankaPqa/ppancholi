@@ -116,13 +116,28 @@ describe('RcFileUpload.spec', () => {
     });
 
     describe('onChange', () => {
+      it('should call sanitizeFile if sanitizeFileName is true', async () => {
+        const mockFile = new File(['foo'], 'mock-name');
+        doMount(mockFile, {
+          propsData: {
+            sanitizeFileName: true,
+          },
+        });
+        wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
+        wrapper.vm.sanitizeFile = jest.fn();
+        await wrapper.vm.onChange(mockFile);
+        expect(wrapper.vm.sanitizeFile).toBeCalledTimes(1);
+      });
+
       it('calls checkRules and validate', async () => {
         const mockFile = new File(['foo'], 'mock-name');
         doMount();
         wrapper.vm.checkRules = jest.fn();
+        wrapper.vm.sanitizeFile = jest.fn();
         wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
         await wrapper.vm.onChange(mockFile);
         expect(wrapper.vm.checkRules).toBeCalledTimes(1);
+        expect(wrapper.vm.sanitizeFile).toBeCalledTimes(0);
         expect(wrapper.vm.$refs.fileUpload.validate).toBeCalledTimes(1);
       });
 
@@ -134,6 +149,21 @@ describe('RcFileUpload.spec', () => {
         wrapper.vm.$emit = jest.fn();
         await wrapper.vm.onChange(mockFile);
         expect(wrapper.vm.$emit).toHaveBeenCalledWith('update:file', mockFile, false);
+      });
+    });
+
+    describe('sanitizeFile', () => {
+      it('should return a new file without accent and apostrophe', () => {
+        doMount();
+        const fileName = "c'est àéèêîïâêîôûùëiïü.txt";
+
+        const file = new File(['foo'], fileName, {
+          type: 'text/plain',
+        });
+
+        const res = wrapper.vm.sanitizeFile(file);
+
+        expect(res.name).toEqual('cest aeeeiiaeiouueiiu.txt');
       });
     });
   });

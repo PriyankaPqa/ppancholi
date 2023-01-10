@@ -117,6 +117,11 @@ export default Vue.extend({
       type: Array,
       default: () => [] as Array<string>,
     },
+
+    sanitizeFileName: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -159,7 +164,9 @@ export default Vue.extend({
 
       // File names should not have special characters, because the file name is part of the blob index tag:
       // https://docs.microsoft.com/en-us/azure/storage/blobs/storage-manage-find-blobs?tabs=azure-portal#setting-blob-index-tags
+
       const allowedFileNameRegex = /^[a-zA-Z0-9+._\-\s]*$/;
+
       if (file?.name && !allowedFileNameRegex.test(file.name)) {
         this.errorMessages.push(this.$t('error.file.upload.fileName') as string);
       }
@@ -198,11 +205,23 @@ export default Vue.extend({
       return this.allowedExtensions.includes(ext);
     },
 
+    // Will remove accents characters from a file and apostrophe
+    sanitizeFile(file: File): File {
+      return new File([file], file.name.normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/'/g, ''));
+    },
+
     async onChange(files: File[]) {
-      this.localFiles = files;
+      let file = Array.isArray(files) ? files[0] : files;
+      if (file && this.sanitizeFileName) {
+        file = this.sanitizeFile(file);
+      }
+
+     this.localFiles = file ? [file] : null;
+
       this.checkRules();
 
-      const file = Array.isArray(files) ? files[0] : files;
       const isValid = await (this.$refs.fileUpload as VForm).validate();
       this.$emit('update:file', file || {}, isValid);
     },

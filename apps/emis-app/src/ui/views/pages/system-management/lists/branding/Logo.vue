@@ -49,6 +49,7 @@
 
         <rc-file-upload
           :allowed-extensions="allowedExtensions"
+          :sanitize-file-name="true"
           :errors="errors"
           :show-size="false"
           :show-rules="false"
@@ -101,7 +102,6 @@ export default mixins(fileUpload).extend({
     return {
       isEditing: false,
       loading: false,
-
       allowedExtensions: LOGO_EXTENSIONS,
       tempLogoUrl: null,
       currentLogoLanguage: '',
