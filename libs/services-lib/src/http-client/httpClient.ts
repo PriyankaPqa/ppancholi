@@ -8,6 +8,7 @@ import axios, {
 import { camelKeys } from 'js-convert-case';
 import { IAzureSearchParams, IServerError } from '@libs/shared-lib/types';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
+import { localStorageKeys } from '@libs/shared-lib/constants/localStorage';
 import { sanitize932115 } from '../utils/owasp';
 import { buildQuery } from '../odata-query';
 
@@ -22,11 +23,11 @@ export class HttpClient implements IHttpClient {
 
   private options: IHttpClientOptions;
 
-  constructor(i18n: any, options: IHttpClientOptions = {
-    authentication: false, accessTokenKey: '', redirect403Url: '', timerBeforeRedirection: 3000, useErrorReport: false,
-  }) {
+  public baseUrl: string;
+
+  constructor(i18n: any, options: IHttpClientOptions) {
     this.axios = axios.create({
-      baseURL: `${process.env.VITE_API_BASE_URL}/`,
+      baseURL: options.baseUrl,
       withCredentials: true,
       headers: {
         Accept: 'application/json',
@@ -45,6 +46,7 @@ export class HttpClient implements IHttpClient {
 
     this.i18n = i18n;
     this.options = options;
+    this.baseUrl = options.baseUrl;
   }
 
   public setHeadersTenant(tenantId: string) {
@@ -164,10 +166,7 @@ export class HttpClient implements IHttpClient {
   private requestHandler(request: any) {
     if (this.options.authentication) {
       if (!request.ignoreJwt) {
-        const accessToken = localStorage.getItem(this.options.accessTokenKey);
-        if (accessToken) {
-          request.headers.common.Authorization = `Bearer ${accessToken}`;
-        }
+        request.headers.common.Authorization = `Bearer ${this.options.accessToken || localStorage.getItem(localStorageKeys.accessToken.name)}`;
       }
     }
     // Add 'X-Request-ID' and 'X-Correlation-ID' headers to each request

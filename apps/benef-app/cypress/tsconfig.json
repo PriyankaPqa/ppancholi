@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["cypress", "cypress-xpath"]
+  },
+  "include": [
+    // add all files in which you see the "parserOptions.project" error
+    "**/**.js",
+    "**/**.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

@@ -1,7 +1,7 @@
 import { PublicService } from '@libs/services-lib/public';
 import { HouseholdsService } from '@libs/services-lib/households/entity';
 import { HouseholdMetadataService } from '@libs/services-lib/households/metadata';
-import { httpClient } from '@/services/httpClient';
+import { httpClient as client } from '@/services/httpClient';
 import { CaseFilesService } from '@libs/services-lib/case-files/entity';
 import { AppUsersService } from '@libs/services-lib/app-users';
 import { OptionItemsService } from '@libs/services-lib/optionItems';
@@ -24,14 +24,13 @@ import { EventsMetadataService } from '@libs/services-lib/events/metadata';
 import { FinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
 import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import { MassActionService } from '@libs/services-lib/mass-actions/entity';
-
 import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
 import { ApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalTables';
 import { AssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
 import { AssessmentFormsService } from '@libs/services-lib/assessment-form/entity';
 import { IProvider } from './provider.types';
 
-export const provider = (): IProvider => ({
+export const provider = (httpClient = client): IProvider => ({
   approvalTables: new ApprovalTablesService(httpClient),
   approvalTablesMetadata: new ApprovalTablesMetadataService(httpClient),
   appUsers: new AppUsersService(httpClient),

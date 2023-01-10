@@ -4,10 +4,13 @@ parameters:
   isPullRequest: ''
   nodeJsVersion: ''
   disableCache: ''
+  runAcceptanceStage: true
+  distDir: ''
+  workingDir: ''
 
 stages:
   - stage: 'Post_Build_Stage'
-    displayName: 'Commit Stage'
+    displayName: 'Post build Stage'
     condition: succeeded()
     jobs:
       - template: '../jobs/commit-tests-jobs.yml'
@@ -35,6 +38,27 @@ stages:
           isPullRequest: ${{parameters.isPullRequest}}
           appName: ${{parameters.appName}}
           parallel: 3
+
+  - stage: 'AcceptanceTest'
+    condition: and(succeeded(), eq('${{ parameters.runAcceptanceStage }}', true))
+    displayName: 'Acceptance Stage'
+    jobs:
+      - job: Cypress
+        displayName: 'Run smoke tests'
+        variables:
+          - group: Env-Dev-Vite
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          parallel: 3
+        steps:
+          - template: '../steps/cypress-steps.yml'
+            parameters:
+              packageFeed: ${{ parameters.packageFeed }}
+              nodeJsVersion: ${{ parameters.nodeJsVersion }}
+              disableCache: ${{ parameters.disableCache }}
+              distDir: ${{ parameters.distDir }}
+              workingDir: ${{ parameters.workingDir }}
 
 #      - job: 'Publish_Test_Coverage'
 #        dependsOn:

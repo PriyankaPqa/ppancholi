@@ -1,0 +1,10 @@
+{
+  "include": [
+    // add all files in which you see the "parserOptions.project" error
+    "tools/**/*.js",
+    "tools/**/*.ts",
+    "**.js",
+    "**.ts",
+  ],
+  "exclude": ["node_modules"]
+}

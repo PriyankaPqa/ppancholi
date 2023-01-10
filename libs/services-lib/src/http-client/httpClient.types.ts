@@ -35,13 +35,15 @@ export interface IError {
 
 export interface IHttpClientOptions {
   authentication: boolean;
-  accessTokenKey: string;
+  accessToken: string;
   redirect403Url: string;
   timerBeforeRedirection: number;
   useErrorReport: boolean;
+  baseUrl: string;
 }
 
 export interface IHttpClient {
+  baseUrl: string;
   getFullResponse: <T>(url: string, config?: RequestConfig) => Promise<IRestResponse<T>>;
   postFullResponse: <T>(url: string, data?: any, config?: RequestConfig) => Promise<IRestResponse<T>>;
   get: <T>(url: string, config?: RequestConfig) => Promise<T>;
@@ -57,6 +59,7 @@ export interface IHttpClient {
 }
 
 export interface IHttpMock {
+  baseUrl: string;
   getFullResponse: jest.Mock<Promise<any>>;
   get: jest.Mock<Promise<any>>
   post: jest.Mock<Promise<any>>

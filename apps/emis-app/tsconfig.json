@@ -2,7 +2,7 @@
   "compilerOptions": {
     "preserveSymlinks": true,
     "strictNullChecks": false,
-    "target": "esnext",
+    "target": "es2019",
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",
@@ -48,6 +48,7 @@
     },
     "lib": [
       "es2021",
+      "esnext",
       "dom",
       "dom.iterable",
       "scripthost"
@@ -62,5 +63,7 @@
   ],
   "exclude": [
     "node_modules",
+    "cypress",
+    "cypress.config.ts"
   ]
 }

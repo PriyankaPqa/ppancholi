@@ -9,11 +9,6 @@ parameters:
   disableCache: ''
 
 steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '${{ parameters.nodeJsVersion }}'
-    displayName: 'Install Node.js'
-
   - template: '../steps/cache-install-npm.yml'
     parameters:
       packageFeed: ${{ parameters.packageFeed }}
@@ -31,4 +26,6 @@ steps:
   - script: yarn ${{ parameters.buildCommand }}
     displayName: 'Build'
     workingDirectory: ${{ parameters.workingDir }}
+
+
 

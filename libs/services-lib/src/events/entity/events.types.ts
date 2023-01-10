@@ -7,7 +7,7 @@ import {
   IEventLocation,
   IEventMainInfo,
 } from '@libs/entities-lib/event';
-import { IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
+import { IAzureSearchParams, IAzureSearchResult, ICombinedIndex } from '@libs/shared-lib/types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
@@ -44,6 +44,8 @@ export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
   searchMyEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventMainInfo>>;
 
   searchMyEventsById(ids: string[]): Promise<IAzureSearchResult<IEventMainInfo>>;
+
+  fetchOneOpenEvent(): Promise<ICombinedIndex<IEventEntity, unknown> & { id: uuid, tenantId: uuid }>
 }
 
 export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity> {
@@ -64,4 +66,6 @@ export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity>
   editShelterLocation: jest.Mock<IEventEntity>;
   searchMyEvents: jest.Mock<IAzureSearchResult<IEventMainInfo>>;
   searchMyEventsById: jest.Mock<IAzureSearchResult<IEventMainInfo>>;
+
+  fetchOneOpenEvent: jest.Mock<IAzureSearchResult<IEventMainInfo>>;
 }
