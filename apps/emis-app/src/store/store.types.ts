@@ -16,9 +16,6 @@ import { ICaseFileMetadata } from '@libs/entities-lib/case-file';
 import { ICaseNoteEntityState } from '@/store/modules/case-note/caseNoteEntity.types';
 import { ICaseNoteMetadata } from '@libs/entities-lib/case-note';
 
-import { ICaseFileDocumentEntityState } from '@/store/modules/case-file-document/caseFileDocumentEntity.types';
-import { ICaseFileDocumentMetadata } from '@libs/entities-lib/case-file-document';
-
 import { IFinancialAssistanceEntityState } from '@/store/modules/financial-assistance/financialAssistanceEntity.types';
 import { IFinancialAssistanceTableMetadata } from '@libs/entities-lib/financial-assistance';
 
@@ -40,8 +37,6 @@ export interface IRootState {
   [vuexModule.CASE_FILE_METADATA]?: IBaseState<ICaseFileMetadata>
   [vuexModule.CASE_NOTE_ENTITIES]?: ICaseNoteEntityState,
   [vuexModule.CASE_NOTE_METADATA]?: IBaseState<ICaseNoteMetadata>
-  [vuexModule.CASE_DOCUMENT_ENTITIES]?: ICaseFileDocumentEntityState,
-  [vuexModule.CASE_DOCUMENT_METADATA]?: IBaseState<ICaseFileDocumentMetadata>
   [vuexModule.USER_ACCOUNT_ENTITIES]?: IUserAccountEntityState,
   [vuexModule.USER_ACCOUNT_METADATA]?: IBaseState<IUserAccountMetadata>,
   [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]?: IFinancialAssistanceEntityState,

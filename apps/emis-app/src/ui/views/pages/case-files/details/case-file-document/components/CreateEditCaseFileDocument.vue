@@ -29,6 +29,7 @@ import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import DocumentForm from './CaseFileDocumentForm.vue';
 
 export default mixins(handleUniqueNameSubmitError).extend({
@@ -78,11 +79,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     if (this.isEditMode) {
       try {
-        const res = await this.$storage.caseFileDocument.actions.fetch(
-          { id: this.documentId, caseFileId: this.id },
-          { useMetadataGlobalHandler: false, useEntityGlobalHandler: true },
-        );
-        this.document = new CaseFileDocumentEntity(res.entity);
+        const res = await useCaseFileDocumentStore().fetch({ id: this.documentId, caseFileId: this.id }, true) as ICaseFileDocumentEntity;
+        this.document = new CaseFileDocumentEntity(res);
       } finally {
         this.documentLoading = false;
       }
@@ -107,16 +105,16 @@ export default mixins(handleUniqueNameSubmitError).extend({
           let document: ICaseFileDocumentEntity;
 
           if (this.isEditMode) {
-            document = await this.$storage.caseFileDocument.actions.updateDocument(this.document);
+            document = await useCaseFileDocumentStore().updateDocument(this.document);
           } else {
             document = await this.tryUpload();
           }
           if (document) {
             // eslint-disable-next-line max-depth
             if (!this.isEditMode) {
-              this.$storage.caseFileDocument.mutations.addNewlyCreatedId(document);
+              useCaseFileDocumentStore().addNewlyCreatedId(document);
             }
-            this.$storage.caseFileDocument.mutations.setEntity(document);
+            useCaseFileDocumentStore().set(document);
             this.$toasted.global.success(this.$t(this.isEditMode ? 'document.edit.success' : 'document.create.success'));
             this.isEditMode ? this.back()
               : this.$router.replace({ name: routes.caseFile.documents.details.name, params: { documentId: document.id } });

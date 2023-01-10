@@ -1,20 +1,25 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { CaseFileDocumentEntity, mockCombinedCaseFileDocument, mockCombinedCaseFileDocuments } from '@libs/entities-lib/case-file-document';
+import {
+  CaseFileDocumentEntity, mockCaseFileDocumentEntities, mockCaseFileDocumentEntity,
+} from '@libs/entities-lib/case-file-document';
 import { mockStorage } from '@/storage';
+import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import Component from './CreateEditCaseFileDocument.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
+const { pinia, caseFileDocumentStore } = useMockCaseFileDocumentStore();
+
 describe('CreateEditDocument', () => {
   let wrapper;
   let mockDocument;
-  let actions;
 
   const mountWrapper = async (isEditMode = true, fullMount = false, level = 5, additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         id: 'CASEFILE_ID',
         documentId: 'DOC_ID',
@@ -37,27 +42,25 @@ describe('CreateEditDocument', () => {
       ...additionalOverwrites,
     });
 
-    actions = storage.caseFileDocument.actions;
-
     wrapper.vm.$refs.documentForm.upload = jest.fn(() => mockDocument);
   };
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    mockDocument = new CaseFileDocumentEntity(mockCombinedCaseFileDocument().entity);
+    mockDocument = new CaseFileDocumentEntity(mockCaseFileDocumentEntity());
   });
 
   describe('LifeCycle', () => {
     describe('created', () => {
       it('calls and loads from the storage on edit and allows for no metadata', async () => {
         await mountWrapper(true);
-        expect(actions.fetch).toHaveBeenCalledWith({ id: 'DOC_ID', caseFileId: 'CASEFILE_ID' }, { useMetadataGlobalHandler: false, useEntityGlobalHandler: true });
-        expect(wrapper.vm.document).toEqual(new CaseFileDocumentEntity(mockCombinedCaseFileDocuments()[0].entity));
+        expect(caseFileDocumentStore.fetch).toHaveBeenCalledWith({ id: 'DOC_ID', caseFileId: 'CASEFILE_ID' }, true);
+        expect(wrapper.vm.document).toEqual(new CaseFileDocumentEntity(mockCaseFileDocumentEntities()[0]));
       });
 
       it('sets a new entity with the casefileid on creating', async () => {
         await mountWrapper(false);
-        expect(wrapper.vm.document).not.toEqual(new CaseFileDocumentEntity(mockCombinedCaseFileDocuments()[0].entity));
+        expect(wrapper.vm.document).not.toEqual(new CaseFileDocumentEntity(mockCaseFileDocumentEntity()));
         expect(wrapper.vm.document.name).toEqual(null);
         expect(wrapper.vm.document.caseFileId).toEqual('CASEFILE_ID');
       });
@@ -101,7 +104,7 @@ describe('CreateEditDocument', () => {
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
-        expect(actions.updateDocument).toHaveBeenCalledTimes(1);
+        expect(caseFileDocumentStore.updateDocument).toHaveBeenCalledTimes(1);
       });
 
       test('after submitting, the user is redirected to the details page when adding', async () => {

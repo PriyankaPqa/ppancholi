@@ -9,35 +9,20 @@ import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import moment from '@libs/shared-lib/plugins/moment';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();
-let storage;
 const document = mockCombinedCaseFileDocument();
 let mockDocumentMapped;
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
+const { pinia, caseFileDocumentStore } = useMockCaseFileDocumentStore();
+
 describe('CaseFileDocument.vue', () => {
   let wrapper;
   const options = mockOptionItemData();
-
-  storage = {
-    caseFileDocument: {
-      getters: {
-        getByIds: jest.fn(() => [document]),
-        categories: jest.fn(() => options),
-        getByCaseFile: jest.fn(() => [document]),
-      },
-      actions: {
-        search: jest.fn(),
-        fetchCategories: jest.fn(() => options),
-        fetchAll: jest.fn(() => [document]),
-        deactivate: jest.fn(() => document),
-        downloadDocumentAsUrl: jest.fn(() => 'url'),
-      },
-    },
-  };
 
   const mountWrapper = (canEdit = true, canAdd = true, canDelete = true, canDownload = true) => {
     jest.clearAllMocks();
@@ -54,6 +39,7 @@ describe('CaseFileDocument.vue', () => {
 
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: { id: 'mock-id' },
       computed: {
         canEdit() {
@@ -72,7 +58,6 @@ describe('CaseFileDocument.vue', () => {
           return [mockDocumentMapped];
         },
       },
-      mocks: { $storage: storage },
     });
   };
 
@@ -121,9 +106,7 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.canAdd).toBeTruthy();
@@ -140,9 +123,7 @@ describe('CaseFileDocument.vue', () => {
             },
           },
           pinia: getPiniaForUser('level1'),
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.canAdd).toBeFalsy();
@@ -162,7 +143,6 @@ describe('CaseFileDocument.vue', () => {
             },
           },
           mocks: {
-            $storage: storage,
             $hasLevel: () => false,
             $hasRole: (r) => r === 'contributor3',
           },
@@ -176,7 +156,6 @@ describe('CaseFileDocument.vue', () => {
             referralId: 'mock-referral-id',
           },
           mocks: {
-            $storage: storage,
             $hasLevel: () => false,
             $hasRole: (r) => r !== 'contributor3',
           },
@@ -193,9 +172,7 @@ describe('CaseFileDocument.vue', () => {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.canAdd).toBeFalsy();
@@ -217,9 +194,7 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.canEdit).toBeTruthy();
@@ -240,9 +215,7 @@ describe('CaseFileDocument.vue', () => {
             },
           },
           pinia: getPiniaForUser('level2'),
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.canEdit).toBeFalsy();
@@ -262,9 +235,7 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.canEdit).toBeFalsy();
@@ -286,9 +257,7 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.canDownload).toBeTruthy();
@@ -308,7 +277,6 @@ describe('CaseFileDocument.vue', () => {
             },
           },
           mocks: {
-            $storage: storage,
             $hasLevel: () => false,
             $hasRole: (r) => r === 'contributor3',
           },
@@ -328,7 +296,7 @@ describe('CaseFileDocument.vue', () => {
             },
           },
           mocks: {
-            $storage: storage,
+
             $hasLevel: () => false,
             $hasRole: (r) => r !== 'contributor3',
           },
@@ -351,9 +319,7 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.canDownload).toBeFalsy();
@@ -374,9 +340,7 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.canDelete).toBeTruthy();
@@ -392,9 +356,7 @@ describe('CaseFileDocument.vue', () => {
               return true;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.canDelete).toBeFalsy();
@@ -414,9 +376,7 @@ describe('CaseFileDocument.vue', () => {
             },
           },
           pinia: getPiniaForUser('level5'),
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.canDelete).toBeFalsy();
@@ -568,32 +528,29 @@ describe('CaseFileDocument.vue', () => {
     });
 
     describe('caseFileDocumentsMapped', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
           },
-          mocks: {
-            $storage: storage,
-          },
         });
+        wrapper.vm.combinedCaseFileDocumentStore.getByIds = jest.fn(() => [document]);
       });
-      it('calls the getByIds getter', async () => {
+
+      it('calls the getByIds and return correct data', async () => {
         await wrapper.setData({
           searchResultIds: ['mock-id'],
         });
 
-        expect(storage.caseFileDocument.getters.getByIds).toHaveBeenCalledWith(['mock-id'], {
+        expect(wrapper.vm.combinedCaseFileDocumentStore.getByIds).toHaveBeenCalledWith(['mock-id'], {
           onlyActive: true,
           prependPinnedItems: true,
           baseDate: null,
           parentId: { caseFileId: 'mock-caseFile-id' },
         });
-      });
 
-      it('return the mapped documents', async () => {
-        await wrapper.vm.$nextTick();
         expect(wrapper.vm.caseFileDocumentsMapped).toEqual([
           {
             name: document.entity.name,
@@ -624,6 +581,7 @@ describe('CaseFileDocument.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
           },
@@ -631,9 +589,6 @@ describe('CaseFileDocument.vue', () => {
             customColumns() {
               return customColumns;
             },
-          },
-          mocks: {
-            $storage: storage,
           },
         });
 
@@ -647,8 +602,8 @@ describe('CaseFileDocument.vue', () => {
             key: 'Entity/Category/OptionItemId',
             type: EFilterType.MultiSelect,
             label: 'caseFile.document.category',
-            items: wrapper.vm.$storage.caseFileDocument.getters
-              .categories(false)
+            items: caseFileDocumentStore
+              .getCategories(false)
               .map((c) => ({ text: wrapper.vm.$m(c.name), value: c.id }))
               .sort((a, b) => a.value.localeCompare(b.value)),
           },
@@ -672,7 +627,7 @@ describe('CaseFileDocument.vue', () => {
     describe('created', () => {
       it('should call fetchCategories', () => {
         mountWrapper();
-        expect(storage.caseFileDocument.actions.fetchCategories).toHaveBeenCalled();
+        expect(caseFileDocumentStore.fetchCategories).toHaveBeenCalled();
       });
     });
   });
@@ -694,6 +649,7 @@ describe('CaseFileDocument.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
           },
@@ -702,14 +658,14 @@ describe('CaseFileDocument.vue', () => {
               return 'caseFileId';
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
+
+        wrapper.vm.combinedCaseFileDocumentStore.search = jest.fn();
 
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.caseFileDocument.actions.search).toHaveBeenCalledWith(
+        expect(wrapper.vm.combinedCaseFileDocumentStore.search).toHaveBeenCalledWith(
           {
             search: params.search,
             filter: {
@@ -739,7 +695,7 @@ describe('CaseFileDocument.vue', () => {
           title: 'caseFile.document.confirm.delete.title',
           messages: 'caseFile.document.confirm.delete.message',
         });
-        expect(storage.caseFileDocument.actions.deactivate).toHaveBeenCalledWith({ id: mockDocumentMapped.id, caseFileId: wrapper.vm.caseFileId });
+        expect(caseFileDocumentStore.deactivate).toHaveBeenCalledWith({ id: mockDocumentMapped.id, caseFileId: wrapper.vm.caseFileId });
       });
       it('doesnt call deactivate if no confirmation', async () => {
         mountWrapper();
@@ -749,7 +705,7 @@ describe('CaseFileDocument.vue', () => {
           title: 'caseFile.document.confirm.delete.title',
           messages: 'caseFile.document.confirm.delete.message',
         });
-        expect(storage.caseFileDocument.actions.deactivate).toHaveBeenCalledTimes(0);
+        expect(caseFileDocumentStore.deactivate).toHaveBeenCalledTimes(0);
       });
     });
 
@@ -757,7 +713,7 @@ describe('CaseFileDocument.vue', () => {
       it('calls storage on download', () => {
         mountWrapper(false);
         wrapper.vm.download(document);
-        expect(storage.caseFileDocument.actions.downloadDocumentAsUrl).toHaveBeenCalledWith(document.entity, true);
+        expect(caseFileDocumentStore.downloadDocumentAsUrl).toHaveBeenCalledWith({ item: document.entity, saveDownloadedFile: true });
       });
     });
 
@@ -766,7 +722,7 @@ describe('CaseFileDocument.vue', () => {
         mountWrapper(false);
         window.open = jest.fn();
         wrapper.vm.preview(document);
-        expect(storage.caseFileDocument.actions.downloadDocumentAsUrl).toHaveBeenCalledWith(document.entity, false);
+        expect(caseFileDocumentStore.downloadDocumentAsUrl).toHaveBeenCalledWith({ item: document.entity, saveDownloadedFile: false });
       });
     });
 

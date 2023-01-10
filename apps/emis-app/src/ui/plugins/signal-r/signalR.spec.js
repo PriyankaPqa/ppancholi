@@ -4,6 +4,7 @@ import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
+import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import { SignalR } from './signalR';
 
 const storage = mockStorage();
@@ -21,6 +22,7 @@ const { eventStore, eventMetadataStore } = useMockEventStore();
 const { caseFileReferralStore, caseFileReferralMetadataStore } = useMockCaseFileReferralStore();
 const { uiStateStore } = useMockUiStateStore();
 const { programStore, programMetadataStore } = useMockProgramStore();
+const { caseFileDocumentStore, caseFileDocumentMetadataStore } = useMockCaseFileDocumentStore();
 
 describe('signalR', () => {
   beforeEach(() => {
@@ -40,6 +42,8 @@ describe('signalR', () => {
       uiStateStore,
       programStore,
       programMetadataStore,
+      caseFileDocumentStore,
+      caseFileDocumentMetadataStore,
     });
   });
 
@@ -465,13 +469,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'Document',
-          action: conn.storage.caseFileDocument.mutations.setEntityFromOutsideNotification,
+          action: conn.pinia.caseFileDocumentStore.setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'DocumentMetadata',
-          action: conn.storage.caseFileDocument.mutations.setMetadataFromOutsideNotification,
+          action: conn.pinia.caseFileDocumentMetadataStore.setItemFromOutsideNotification,
         });
     });
 

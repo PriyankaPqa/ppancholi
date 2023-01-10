@@ -31,6 +31,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
+import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 
 export default Vue.extend({
   name: 'DownloadViewDocument',
@@ -53,11 +54,11 @@ export default Vue.extend({
 
   methods: {
     download() {
-      this.$storage.caseFileDocument.actions.downloadDocumentAsUrl(this.document, true);
+      useCaseFileDocumentStore().downloadDocumentAsUrl({ item: this.document, saveDownloadedFile: true });
     },
 
     async preview() {
-      const documentUrl = await this.$storage.caseFileDocument.actions.downloadDocumentAsUrl(this.document, false);
+      const documentUrl = await useCaseFileDocumentStore().downloadDocumentAsUrl({ item: this.document, saveDownloadedFile: false });
       window.open(documentUrl);
     },
   },

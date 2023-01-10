@@ -58,6 +58,7 @@ import moment from '@libs/shared-lib/plugins/moment';
 import routes from '@/constants/routes';
 import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import DownloadViewDocument from './DownloadViewDocument.vue';
 import caseFileDetail from '../../caseFileDetail';
 
@@ -95,15 +96,15 @@ export default mixins(caseFileDetail).extend({
     },
 
     document(): ICaseFileDocumentEntity {
-      const combinedDocument = this.$storage.caseFileDocument.getters.get(this.documentId);
-      return combinedDocument?.entity?.id ? combinedDocument?.entity : new CaseFileDocumentEntity();
+      const document = useCaseFileDocumentStore().getById(this.documentId);
+      return document || new CaseFileDocumentEntity();
     },
 
     category(): string {
       if (!this.document?.category?.optionItemId) {
         return null;
       }
-      const types = this.$storage.caseFileDocument.getters.categories(false);
+      const types = useCaseFileDocumentStore().getCategories(false);
       const type = types.find((t) => t.id === this.document.category.optionItemId);
       if (type.isOther && this.document.category.specifiedOther) {
         return this.document.category.specifiedOther;
@@ -143,11 +144,8 @@ export default mixins(caseFileDetail).extend({
   },
 
   async created() {
-    await this.$storage.caseFileDocument.actions.fetchCategories();
-    await this.$storage.caseFileDocument.actions.fetch(
-      { caseFileId: this.caseFileId, id: this.documentId },
-      { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-    );
+    await useCaseFileDocumentStore().fetchCategories();
+    await useCaseFileDocumentStore().fetch({ caseFileId: this.caseFileId, id: this.documentId }, true);
   },
 
   methods: {
@@ -163,7 +161,7 @@ export default mixins(caseFileDetail).extend({
         messages: this.$t('caseFile.document.confirm.delete.message'),
       });
       if (userChoice) {
-        await this.$storage.caseFileDocument.actions.deactivate({ caseFileId: this.caseFileId, id: this.documentId });
+        await useCaseFileDocumentStore().deactivate({ caseFileId: this.caseFileId, id: this.documentId });
         this.goToDocuments();
       }
     },

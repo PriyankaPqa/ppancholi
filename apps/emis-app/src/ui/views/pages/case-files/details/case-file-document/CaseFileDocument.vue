@@ -91,14 +91,18 @@ import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import isEmpty from 'lodash/isEmpty';
 import moment from '@libs/shared-lib/plugins/moment';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined } from '@libs/entities-lib/case-file-document';
+import {
+ DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined, ICaseFileDocumentMetadata,
+} from '@libs/entities-lib/case-file-document';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import { useCaseFileDocumentStore, useCaseFileDocumentMetadataStore } from '@/pinia/case-file-document/case-file-document';
 
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
+import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
 import caseFileDetail from '../caseFileDetail';
 
 interface caseFileDocumentsMapped {
@@ -128,6 +132,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       tableProps: {
         itemClass: (item: { pinned: boolean }) => (item.pinned ? 'pinned' : ''),
       },
+      combinedCaseFileDocumentStore: new CombinedStoreFactory<ICaseFileDocumentEntity, ICaseFileDocumentMetadata>(useCaseFileDocumentStore(), useCaseFileDocumentMetadataStore()),
     };
   },
 
@@ -148,13 +153,16 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       return this.$hasLevel('level6') && !this.readonly;
     },
 
-    caseFileDocumentsMapped():caseFileDocumentsMapped[] {
-      const documents = this.$storage.caseFileDocument.getters.getByIds(
+    caseFileDocumentsMapped(): caseFileDocumentsMapped[] {
+      const documents = this.combinedCaseFileDocumentStore.getByIds(
         this.searchResultIds,
         {
           onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
         },
       );
+      if (!documents) {
+        return [];
+      }
       return documents.map((d: ICaseFileDocumentCombined) => ({
         name: d.entity?.name || '-',
         id: d.entity?.id,
@@ -252,8 +260,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
           key: 'Entity/Category/OptionItemId',
           type: EFilterType.MultiSelect,
           label: this.$t('caseFile.document.category') as string,
-          items: this.$storage.caseFileDocument.getters
-            .categories(false)
+          items: useCaseFileDocumentStore()
+            .getCategories(false)
             .map((c) => ({ text: this.$m(c.name), value: c.id }))
             .sort((a, b) => a.value.localeCompare(b.value)),
         },
@@ -285,7 +293,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   async created() {
     this.saveState = true;
     this.loadState();
-    await this.$storage.caseFileDocument.actions.fetchCategories();
+    await useCaseFileDocumentStore().fetchCategories();
   },
 
   methods: {
@@ -300,7 +308,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         (params.filter as Record<string, unknown>).and = Object.assign((params.filter as Record<string, unknown>).and, caseFileFilter);
       }
 
-      const res = await this.$storage.caseFileDocument.actions.search({
+      const res = await this.combinedCaseFileDocumentStore.search({
         search: params.search,
         filter: params.filter,
         top: 999,
@@ -326,7 +334,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       });
 
       if (userChoice) {
-        await this.$storage.caseFileDocument.actions.deactivate({ id: item.id, caseFileId: this.caseFileId });
+        await useCaseFileDocumentStore().deactivate({ id: item.id, caseFileId: this.caseFileId });
       }
     },
 
@@ -349,11 +357,11 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     download(item: caseFileDocumentsMapped) {
-      this.$storage.caseFileDocument.actions.downloadDocumentAsUrl(item.entity, true);
+      useCaseFileDocumentStore().downloadDocumentAsUrl({ item: item.entity, saveDownloadedFile: true });
     },
 
     async preview(item: caseFileDocumentsMapped) {
-      const documentUrl = await this.$storage.caseFileDocument.actions.downloadDocumentAsUrl(item.entity, false);
+      const documentUrl = await useCaseFileDocumentStore().downloadDocumentAsUrl({ item: item.entity, saveDownloadedFile: false });
       window.open(documentUrl);
     },
   },

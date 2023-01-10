@@ -1,10 +1,13 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { CaseFileDocumentEntity, mockCombinedCaseFileDocument } from '@libs/entities-lib/case-file-document';
 import { mockStorage } from '@/storage';
+import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import Component from './DownloadViewDocument.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+
+const { pinia, caseFileDocumentStore } = useMockCaseFileDocumentStore();
 
 describe('DownloadViewDocument', () => {
   let wrapper;
@@ -13,6 +16,7 @@ describe('DownloadViewDocument', () => {
   const mountWrapper = async (fullMount = false, level = 5, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         document: mockDocument,
       },
@@ -76,7 +80,7 @@ describe('DownloadViewDocument', () => {
       it('calls storage on download', async () => {
         await mountWrapper(false);
         wrapper.vm.download();
-        expect(storage.caseFileDocument.actions.downloadDocumentAsUrl).toHaveBeenCalledWith(mockDocument, true);
+        expect(caseFileDocumentStore.downloadDocumentAsUrl).toHaveBeenCalledWith({ item: mockDocument, saveDownloadedFile: true });
       });
     });
 
@@ -85,7 +89,7 @@ describe('DownloadViewDocument', () => {
         await mountWrapper();
         window.open = jest.fn();
         wrapper.vm.preview();
-        expect(storage.caseFileDocument.actions.downloadDocumentAsUrl).toHaveBeenCalledWith(mockDocument, false);
+        expect(caseFileDocumentStore.downloadDocumentAsUrl).toHaveBeenCalledWith({ item: mockDocument, saveDownloadedFile: false });
       });
     });
   });

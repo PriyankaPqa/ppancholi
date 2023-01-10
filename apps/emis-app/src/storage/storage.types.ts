@@ -20,11 +20,6 @@ import {
 } from './case-note/storage.types';
 
 import {
-  IStorageMake as ICaseFileDocumentMakeStorage,
-  IStorageMakeMock as ICaseFileDocumentMakeStorageMock,
-} from './case-file-document';
-
-import {
   IStorageMake as ITeamMakeStorage,
   IStorageMakeMock as ITeamMakeStorageMock,
 } from './team';
@@ -67,7 +62,6 @@ import {
 export interface IStorage {
   caseFile: ICaseFileMakeStorage;
   caseNote: ICaseNoteMakeStorage;
-  caseFileDocument: ICaseFileDocumentMakeStorage;
   optionList: IOptionListStorage;
   team: ITeamMakeStorage;
   registration: IRegistrationStorage;
@@ -87,7 +81,6 @@ export interface IStorage {
 export interface IStorageMock {
   caseFile: ICaseFileMakeStorageMock;
   caseNote: ICaseNoteMakeStorageMock;
-  caseFileDocument: ICaseFileDocumentMakeStorageMock;
   optionList: IOptionListStorageMock;
   team: ITeamMakeStorageMock;
   registration: IRegistrationMock;

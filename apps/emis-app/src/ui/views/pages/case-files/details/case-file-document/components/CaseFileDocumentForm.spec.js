@@ -1,25 +1,28 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
-  CaseFileDocumentEntity, mockCombinedCaseFileDocument, DocumentStatus,
+  CaseFileDocumentEntity, DocumentStatus, mockCaseFileDocumentEntity,
 } from '@libs/entities-lib/case-file-document';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { mockStorage } from '@/storage';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
+import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import Component from './CaseFileDocumentForm.vue';
 import DownloadComponent from './DownloadViewDocument.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, caseFileDocumentStore } = useMockCaseFileDocumentStore();
 
 describe('CaseFileDocumentForm.vue', () => {
   let wrapper;
   let document;
 
   const mountWrapper = async (isEditMode = true, fullMount = false, level = 5, additionalOverwrites = {}) => {
-    document = document || (isEditMode ? mockCombinedCaseFileDocument().entity : new CaseFileDocumentEntity());
+    document = document || (isEditMode ? mockCaseFileDocumentEntity() : new CaseFileDocumentEntity());
 
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         isEditMode,
         document: new CaseFileDocumentEntity(document),
@@ -43,7 +46,7 @@ describe('CaseFileDocumentForm.vue', () => {
   describe('created', () => {
     describe('data', () => {
       it('is initialized with props', async () => {
-        document = new CaseFileDocumentEntity(mockCombinedCaseFileDocument().entity);
+        document = new CaseFileDocumentEntity(mockCaseFileDocumentEntity());
         document.documentStatus = DocumentStatus.Past;
         await mountWrapper();
         expect(wrapper.vm.localDocument).toEqual(document);
@@ -60,7 +63,7 @@ describe('CaseFileDocumentForm.vue', () => {
     describe('fetches', () => {
       it('it fetches from store', async () => {
         await mountWrapper();
-        expect(storage.caseFileDocument.actions.fetchCategories).toHaveBeenCalled();
+        expect(caseFileDocumentStore.fetchCategories).toHaveBeenCalled();
       });
     });
   });
@@ -70,9 +73,9 @@ describe('CaseFileDocumentForm.vue', () => {
       it('calls storage and passes current value', async () => {
         await mountWrapper();
         await wrapper.setData({ localDocument: { category: { optionItemId: 'abc' } } });
-        expect(storage.caseFileDocument.getters.categories).toHaveBeenCalledWith(true, 'abc');
+        expect(caseFileDocumentStore.getCategories).toHaveBeenCalledWith(true, 'abc');
         await wrapper.setData({ localDocument: { category: { optionItemId: null } } });
-        expect(storage.caseFileDocument.getters.categories).toHaveBeenCalledWith(true, null);
+        expect(caseFileDocumentStore.getCategories).toHaveBeenCalledWith(true, null);
       });
     });
 

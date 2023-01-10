@@ -32,6 +32,7 @@ import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
 import { useUserStore } from '@/pinia/user/user';
 import { useCaseFileReferralMetadataStore, useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
+import { useCaseFileDocumentMetadataStore, useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 import store from './store/store';
 import router from './ui/router';
@@ -84,6 +85,8 @@ SignalR.instance.setPinia({
   caseFileReferralStore: useCaseFileReferralStore(),
   caseFileReferralMetadataStore: useCaseFileReferralMetadataStore(),
   uiStateStore: useUiStateStore(),
+  caseFileDocumentStore: useCaseFileDocumentStore(),
+  caseFileDocumentMetadataStore: useCaseFileDocumentMetadataStore(),
   programStore: useProgramStore(),
   programMetadataStore: useProgramMetadataStore(),
 });

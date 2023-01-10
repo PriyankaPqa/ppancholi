@@ -124,6 +124,7 @@ import { MAX_LENGTH_MD, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validat
 import { CASE_FILE_DOC_EXTENSIONS } from '@/constants/documentExtensions';
 import { CaseFileDocumentEntity, DocumentStatus, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import DownloadViewDocument from './DownloadViewDocument.vue';
 
 export default mixins(fileUpload).extend({
@@ -164,7 +165,7 @@ export default mixins(fileUpload).extend({
   computed: {
 
     documentCategories(): Array<IOptionItem> {
-      return this.$storage.caseFileDocument.getters.categories(true, this.localDocument.category?.optionItemId);
+      return useCaseFileDocumentStore().getCategories(true, this.localDocument.category?.optionItemId);
     },
 
     categoryIsOther(): (id: string) => boolean {
@@ -238,7 +239,7 @@ export default mixins(fileUpload).extend({
   },
 
   async created() {
-    await this.$storage.caseFileDocument.actions.fetchCategories();
+    await useCaseFileDocumentStore().fetchCategories();
   },
 
   methods: {

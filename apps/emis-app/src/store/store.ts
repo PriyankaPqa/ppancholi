@@ -28,11 +28,6 @@ import { CaseNoteMetadataModule } from '@/store/modules/case-note/caseNoteMetada
 import { CaseNotesService } from '@libs/services-lib/case-notes/entity';
 import { CaseNotesMetadataService } from '@libs/services-lib/case-notes/metadata';
 
-import { CaseFileDocumentEntityModule } from '@/store/modules/case-file-document/caseFileDocumentEntity';
-import { CaseFileDocumentMetadataModule } from '@/store/modules/case-file-document/caseFileDocumentMetadata';
-import { CaseFileDocumentsService } from '@libs/services-lib/case-file-documents/entity';
-import { CaseFileDocumentsMetadataService } from '@libs/services-lib/case-file-documents/metadata';
-
 import { FinancialAssistanceEntityModule } from '@/store/modules/financial-assistance/financialAssistanceEntity';
 import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-assistance/financialAssistanceMetadata';
 import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
@@ -106,16 +101,6 @@ const store: StoreOptions<IRootState> = {
     ).getModule(),
     [vuexModule.CASE_NOTE_METADATA]: new CaseNoteMetadataModule(
       new CaseNotesMetadataService(httpClient),
-      SignalR,
-    ).getModule(),
-
-    [vuexModule.CASE_DOCUMENT_ENTITIES]: new CaseFileDocumentEntityModule(
-      new CaseFileDocumentsService(httpClient),
-      new OptionItemsService(httpClient),
-      SignalR,
-    ).getModule(),
-    [vuexModule.CASE_DOCUMENT_METADATA]: new CaseFileDocumentMetadataModule(
-      new CaseFileDocumentsMetadataService(httpClient),
       SignalR,
     ).getModule(),
 

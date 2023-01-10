@@ -9,7 +9,6 @@ import { ApprovalTableStorageMock } from '@/storage/approval-table';
 import { IStorageMock } from './storage.types';
 import { mockStorageOptionList } from './optionList';
 import { FinancialAssistanceStorageMock } from './financial-assistance/storage.mock';
-import { CaseFileDocumentStorageMock } from './case-file-document';
 import { FinancialAssistanceCategoryStorageMock } from './financial-assistance-category/storage.mock';
 import { FinancialAssistancePaymentStorageMock } from './financial-assistance-payment';
 import { TenantSettingsStorageMock } from './tenantSettings';
@@ -20,7 +19,6 @@ import { AssessmentResponseStorageMock } from './assessment-response';
 export const mockStorage = (): IStorageMock => ({
   caseFile: new CaseFileStorageMock().make(),
   caseNote: new CaseNoteStorageMock().make(),
-  caseFileDocument: new CaseFileDocumentStorageMock().make(),
   optionList: mockStorageOptionList(),
   team: new TeamStorageMock().make(),
   registration: mockStorageRegistration(),

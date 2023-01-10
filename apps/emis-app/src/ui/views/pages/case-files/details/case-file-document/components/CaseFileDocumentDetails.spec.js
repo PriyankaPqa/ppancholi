@@ -5,12 +5,15 @@ import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 
+import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import Component from './CaseFileDocumentDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
+
+const { pinia, caseFileDocumentStore } = useMockCaseFileDocumentStore();
 
 describe('CaseFileDocumentDetails', () => {
   let wrapper;
@@ -19,6 +22,7 @@ describe('CaseFileDocumentDetails', () => {
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         id: 'mock-caseFile-id',
         documentId: 'mock-document-id',
@@ -83,7 +87,7 @@ describe('CaseFileDocumentDetails', () => {
     describe('document', () => {
       it('calls the document getter', async () => {
         await mountWrapper();
-        expect(storage.caseFileDocument.getters.get).toHaveBeenCalledTimes(1);
+        expect(caseFileDocumentStore.getById).toHaveBeenCalledTimes(1);
       });
       it('sets the right data', async () => {
         await mountWrapper();
@@ -94,7 +98,7 @@ describe('CaseFileDocumentDetails', () => {
     describe('category', () => {
       it('calls the getter categories', async () => {
         await mountWrapper();
-        expect(storage.caseFileDocument.getters.categories).toHaveBeenCalledWith(false);
+        expect(caseFileDocumentStore.getCategories).toHaveBeenCalledWith(false);
       });
 
       it('returns the right category', async () => {
@@ -103,7 +107,7 @@ describe('CaseFileDocumentDetails', () => {
       });
 
       it('returns the right category if category is other', async () => {
-        storage.caseFileDocument.getters.categories = jest.fn(() => ([{ ...mockOptionItemData()[0], isOther: true }]));
+        caseFileDocumentStore.getCategories = jest.fn(() => ([{ ...mockOptionItemData()[0], isOther: true }]));
         await mountWrapper(false, 6, null, {
           computed:
            {
@@ -159,15 +163,12 @@ describe('CaseFileDocumentDetails', () => {
   describe('lifecycle - create', () => {
     it('should call fetchCategories', async () => {
       await mountWrapper();
-      expect(wrapper.vm.$storage.caseFileDocument.actions.fetchCategories).toHaveBeenCalledTimes(1);
+      expect(caseFileDocumentStore.fetchCategories).toHaveBeenCalledTimes(1);
     });
 
     it('should call fetch', async () => {
       await mountWrapper();
-      expect(wrapper.vm.$storage.caseFileDocument.actions.fetch).toHaveBeenCalledWith(
-        { caseFileId: 'mock-caseFile-id', id: 'mock-document-id' },
-        { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-      );
+      expect(caseFileDocumentStore.fetch).toHaveBeenCalledWith({ caseFileId: 'mock-caseFile-id', id: 'mock-document-id' }, true);
     });
   });
 
@@ -271,7 +272,7 @@ describe('CaseFileDocumentDetails', () => {
   describe('Methods', () => {
     describe('goToDocuments', () => {
       it('should redirect to the case document home page', async () => {
-        mountWrapper();
+        await mountWrapper();
         wrapper.vm.goToDocuments();
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
@@ -282,20 +283,20 @@ describe('CaseFileDocumentDetails', () => {
 
     describe('deleteDocument', () => {
       it('calls deactivate after confirmation and then goes to documents', async () => {
-        mountWrapper();
+        await mountWrapper();
         await wrapper.vm.deleteDocument();
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
           title: 'caseFile.document.confirm.delete.title',
           messages: 'caseFile.document.confirm.delete.message',
         });
-        expect(storage.caseFileDocument.actions.deactivate)
+        expect(caseFileDocumentStore.deactivate)
           .toHaveBeenCalledWith({ caseFileId: 'mock-caseFile-id', id: 'mock-document-id' });
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
           name: routes.caseFile.documents.home.name,
         });
       });
       it('doesnt call deactivate if no confirmation', async () => {
-        mountWrapper();
+        await mountWrapper();
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.deleteDocument();
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith(
@@ -304,7 +305,7 @@ describe('CaseFileDocumentDetails', () => {
             messages: 'caseFile.document.confirm.delete.message',
           },
         );
-        expect(storage.caseFileDocument.actions.deactivate)
+        expect(caseFileDocumentStore.deactivate)
           .toHaveBeenCalledTimes(0);
       });
     });
