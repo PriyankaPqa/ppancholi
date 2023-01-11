@@ -207,22 +207,32 @@ export default Vue.extend({
 
     // Will remove accents characters from a file and apostrophe
     sanitizeFile(file: File): File {
-      return new File([file], file.name.normalize('NFD')
+      const sanitizedName = file.name.normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
-        .replace(/'/g, ''));
+        .replace(/'/g, '');
+
+      return new File([file], sanitizedName, { type: file.type });
+    },
+
+    addMissingTypeMsg(file: File): File {
+      return new File([file], file.name, { type: 'application/vnd.ms-outlook' });
     },
 
     async onChange(files: File[]) {
       let file = Array.isArray(files) ? files[0] : files;
+
+      if (file && file.name.endsWith('.msg')) {
+        file = this.addMissingTypeMsg(file);
+      }
+
       if (file && this.sanitizeFileName) {
         file = this.sanitizeFile(file);
       }
-
      this.localFiles = file ? [file] : null;
-
       this.checkRules();
 
       const isValid = await (this.$refs.fileUpload as VForm).validate();
+
       this.$emit('update:file', file || {}, isValid);
     },
 

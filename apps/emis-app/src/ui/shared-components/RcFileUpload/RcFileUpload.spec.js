@@ -129,6 +129,15 @@ describe('RcFileUpload.spec', () => {
         expect(wrapper.vm.sanitizeFile).toBeCalledTimes(1);
       });
 
+      it('should call addMissingTypeMsg if file extension is .msg', async () => {
+        const mockFile = new File(['foo'], 'test.msg');
+        doMount(mockFile);
+        wrapper.vm.$refs.fileUpload.validate = jest.fn(() => true);
+        wrapper.vm.addMissingTypeMsg = jest.fn();
+        await wrapper.vm.onChange(mockFile);
+        expect(wrapper.vm.addMissingTypeMsg).toBeCalledTimes(1);
+      });
+
       it('calls checkRules and validate', async () => {
         const mockFile = new File(['foo'], 'mock-name');
         doMount();
@@ -164,6 +173,22 @@ describe('RcFileUpload.spec', () => {
         const res = wrapper.vm.sanitizeFile(file);
 
         expect(res.name).toEqual('cest aeeeiiaeiouueiiu.txt');
+        expect(res.type).toEqual('text/plain');
+      });
+    });
+
+    describe('addMissingTypeMsg', () => {
+      it('should return a new file with force type outlook if file is .msg', () => {
+        doMount();
+        const fileName = 'test.msg';
+
+        const file = new File(['foo'], fileName, {
+          type: '',
+        });
+
+        const res = wrapper.vm.addMissingTypeMsg(file);
+
+        expect(res.type).toEqual('application/vnd.ms-outlook');
       });
     });
   });
