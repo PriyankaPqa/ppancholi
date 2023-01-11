@@ -23,7 +23,7 @@ stages:
         displayName: 'Deployment'
         environment: 'Dev'
         variables:
-          - group: Env-Dev-Vite
+          - group: Env-Dev
           - name: featureStorageName
             value: ''
         strategy:
@@ -175,7 +175,7 @@ stages:
         displayName: 'Deploy WebApp to Dev'
         environment: 'Dev'
         variables:
-          - group: Env-Dev-Vite
+          - group: Env-Dev
         strategy:
           runOnce:
             deploy:
@@ -232,7 +232,7 @@ stages:
         displayName: 'Deploy WebApp to Lab'
         environment: 'Lab'
         variables:
-          - group: Env-Lab-Vite
+          - group: Env-Lab
         strategy:
           runOnce:
             deploy:
@@ -291,7 +291,7 @@ stages:
         displayName: 'Deploy WebApp to Prod'
         environment: 'Prod-UI'
         variables:
-          - group: Env-Prod-Vite
+          - group: Env-Prod
         strategy:
           runOnce:
             deploy:
