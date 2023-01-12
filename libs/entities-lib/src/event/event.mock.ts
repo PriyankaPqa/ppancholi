@@ -114,6 +114,15 @@ export const mockEventEntityData = (): IEventEntity[] => [
       dateReported: '2021-01-01T00:00:00Z',
       assistanceNumber: '+15144544545',
     },
+    registrationAssessments: [
+      {
+        ...mockBaseData(),
+        id: '1dea3c36-d6a5-4e6c-ac36-078677b7d212',
+        assessmentId: '1dea3c36-d6a5-4e6c-ac36-078677b7d210',
+        details: { translation: { en: 'detail en', fr: 'detail fr' } },
+        sectionTitle: { translation: { en: 'title en', fr: 'title fr' } },
+      },
+    ],
     registrationLocations: [
       {
         id: 'registration-location-1',
@@ -694,6 +703,7 @@ const getEventEntity = (index = 0) : IEventEntity => ({
   location: mockEventEntityData()[index].location,
   schedule: mockEventEntityData()[index].schedule,
   responseDetails: mockEventEntityData()[index].responseDetails,
+  registrationAssessments: mockEventEntityData()[index].registrationAssessments,
   registrationLocations: mockEventEntityData()[index].registrationLocations,
   shelterLocations: mockEventEntityData()[index].shelterLocations,
   callCentres: mockEventEntityData()[index].callCentres,

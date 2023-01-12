@@ -17,6 +17,7 @@ import {
   IEventResponseDetails,
   IEventSchedule,
   IEventAgreement,
+  IRegistrationAssessment,
 } from './event.types';
 
 export class EventEntity extends BaseEntity {
@@ -37,6 +38,8 @@ export class EventEntity extends BaseEntity {
   responseDetails: IEventResponseDetails;
 
   registrationLocations: Array<IEventGenericLocation>;
+
+  registrationAssessments: Array<IRegistrationAssessment>;
 
   callCentres: Array<IEventCallCentre>;
 
@@ -88,6 +91,7 @@ export class EventEntity extends BaseEntity {
       this.eventStatus = data.eventStatus;
       this.tenantId = data.tenantId;
       this.registrationLocations = _cloneDeep(data.registrationLocations) || [];
+      this.registrationAssessments = _cloneDeep(data.registrationAssessments) || [];
       this.shelterLocations = _cloneDeep(data.shelterLocations) || [];
       this.callCentres = data.callCentres.map((centre) => ({
         ...centre,
@@ -152,6 +156,7 @@ export class EventEntity extends BaseEntity {
     this.callCentres = [];
     this.agreements = [];
     this.registrationLocations = [];
+    this.registrationAssessments = [];
     this.shelterLocations = [];
   }
 

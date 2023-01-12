@@ -12,6 +12,7 @@ import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+import { Status } from '@libs/entities-lib/base';
 import Component, { EDialogComponent } from '../EventSummary.vue';
 
 const localVue = createLocalVue();
@@ -423,6 +424,49 @@ describe('EventSummary.vue', () => {
       });
     });
 
+    describe('activeAssessments', () => {
+      it('return the active assessments', () => {
+        const event = mockEventEntities()[0];
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: storage,
+          },
+          computed: {
+            event() {
+              return new EventEntity(event);
+            },
+          },
+        });
+        expect(wrapper.vm.activeAssessments.length).toEqual(event.registrationAssessments.length);
+        event.registrationAssessments[0].status = Status.Inactive;
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: storage,
+          },
+          computed: {
+            event() {
+              return new EventEntity(event);
+            },
+          },
+        });
+        expect(wrapper.vm.activeAssessments.length).toEqual(event.registrationAssessments.length - 1);
+      });
+    });
+
     describe('event', () => {
       it('return the event by id from the storage', () => {
         expect(wrapper.vm.event).toEqual(new EventEntity(mockEvent));
@@ -595,6 +639,103 @@ describe('EventSummary.vue', () => {
         });
 
         expect(wrapper.vm.canEditSections).toBeFalsy();
+      });
+    });
+
+    describe('canEditAssessmentSection', () => {
+      let event;
+      beforeEach(() => {
+        event = mockEventEntity();
+      });
+
+      it('returns true if user is level 6 and event is on hold', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser('level6'),
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+          },
+          computed: {
+            event() {
+              return new EventEntity({
+                ...event,
+                schedule: {
+                  ...event.schedule,
+                  status: EEventStatus.OnHold,
+                },
+              });
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEditAssessmentSection).toBeTruthy();
+      });
+
+      it('returns false if user is level 6 and event is not open or on hold', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser('level6'),
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+          },
+          computed: {
+            event() {
+              return new EventEntity({
+                ...event,
+                schedule: {
+                  ...event.schedule,
+                  status: EEventStatus.Closed,
+                },
+              });
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEditAssessmentSection).toBeFalsy();
+      });
+
+      it('returns true if user is level 6 and event is open', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser('level6'),
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+          },
+          computed: {
+            event() {
+              return new EventEntity({
+                ...event,
+                schedule: {
+                  ...event.schedule,
+                  status: EEventStatus.Open,
+                },
+              });
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEditAssessmentSection).toBeTruthy();
+      });
+
+      it('returns false if user is level 5', () => {
+        wrapper = mountWithStatus(EEventStatus.Open);
+
+        expect(wrapper.vm.canEditAssessmentSection).toBeFalsy();
       });
     });
 

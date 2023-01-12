@@ -22,6 +22,7 @@ export function getMockExtensionComponents() {
     fetchRegions: jest.fn(() => Promise.resolve(mockRegionData())),
     updateEventSection: jest.fn(),
     deleteAgreement: jest.fn(),
+    deleteRegistrationAssessment: jest.fn(() => Promise.resolve(mockEventEntity())),
     toggleSelfRegistration: jest.fn(),
     setEventStatus: jest.fn(),
     createEvent: jest.fn(() => Promise.resolve(mockEventEntity())),

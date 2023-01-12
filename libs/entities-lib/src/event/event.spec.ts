@@ -93,6 +93,11 @@ describe('>>> EventEntity', () => {
       expect(event.shelterLocations).toEqual(mockEvent.shelterLocations);
     });
 
+    it('should instantiate registrationAssessments', () => {
+      const event = new EventEntity(mockEvent);
+      expect(event.registrationAssessments).toEqual(mockEvent.registrationAssessments);
+    });
+
     it('should instantiate description', () => {
       const event = new EventEntity(mockEvent);
       expect(event.description).toEqual(mockEvent.description);

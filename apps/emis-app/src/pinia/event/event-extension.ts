@@ -5,7 +5,7 @@ import { Ref, ref } from 'vue';
 import { EOptionLists, IOptionItem, IOptionItemData } from '@libs/entities-lib/optionItem';
 import { filterAndSortActiveItems } from '@/store/modules/base';
 import {
-  EEventStatus, EventEntity, IEventAgreement, IEventCallCentre, IEventEntity, IEventGenericLocation, IEventLocation,
+  EEventStatus, EventEntity, IEventAgreement, IEventCallCentre, IEventEntity, IEventGenericLocation, IEventLocation, IRegistrationAssessment,
 } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { EEventSummarySections } from '@/types';
@@ -82,7 +82,7 @@ export function getExtensionComponents(
     eventId, payload, section, action,
   }: {
     eventId:uuid,
-    payload: IEventCallCentre | IEventAgreement | IEventGenericLocation,
+    payload: IEventCallCentre | IEventAgreement | IEventGenericLocation | IRegistrationAssessment,
     section: EEventSummarySections,
     action: 'add' | 'edit'
   }): Promise<IEventEntity> {
@@ -98,6 +98,15 @@ export function getExtensionComponents(
 
   async function deleteAgreement({ eventId, agreementId }: { eventId: uuid, agreementId: uuid }): Promise<IEventEntity> {
     const data = await entityService.removeAgreement(eventId, agreementId);
+    if (data) {
+      baseComponents.set(data);
+      return data;
+    }
+    return null;
+  }
+
+  async function deleteRegistrationAssessment({ eventId, registrationAssessmentId }: { eventId: uuid, registrationAssessmentId: uuid }): Promise<IEventEntity> {
+    const data = await entityService.removeRegistrationAssessment(eventId, registrationAssessmentId);
     if (data) {
       baseComponents.set(data);
       return data;
@@ -162,6 +171,7 @@ export function getExtensionComponents(
     fetchRegions,
     updateEventSection,
     deleteAgreement,
+    deleteRegistrationAssessment,
     toggleSelfRegistration,
     setEventStatus,
     createEvent,

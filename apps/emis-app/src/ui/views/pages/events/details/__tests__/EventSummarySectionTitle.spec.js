@@ -97,6 +97,10 @@ describe('EventSummarySectionTitle.vue', () => {
             title: 'eventSummary.agreement',
             buttonCaption: 'eventSummary.addAgreement',
           },
+          [EEventSummarySections.RegistrationAssessment]: {
+            title: 'eventSummary.registrationAssessment',
+            buttonCaption: 'eventSummary.addRegistrationAssessment',
+          },
         });
       });
     });

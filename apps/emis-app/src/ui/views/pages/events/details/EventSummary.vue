@@ -43,6 +43,23 @@
         </div>
       </div>
 
+      <div v-if="$hasFeature(FeatureKeys.CouplingAssessmentsWithRegistration)">
+        <event-summary-section-title
+          :section="EEventSummarySections.RegistrationAssessment"
+          :can-add="canEditAssessmentSection && activeAssessments.length == 0"
+          @click-add-button="onSectionAdd($event)" />
+        <event-summary-section-body v-slot="{ item, index }" :items="activeAssessments">
+          <event-registration-assessment-section
+            :key="item.assessmentId"
+            data-test="registration-assessment-section"
+            :registration-assessment="item"
+            :event-id="event.id"
+            :index="index"
+            :can-edit="canEditAssessmentSection"
+            @edit="editSection($event, EEventSummarySections.RegistrationAssessment)" />
+        </event-summary-section-body>
+      </div>
+
       <event-summary-section-title
         :section="EEventSummarySections.CallCentre"
         :can-add="canEditSections"
@@ -133,10 +150,13 @@ import {
   IEventGenericLocation,
   EResponseLevel,
   EventEntity,
+  IRegistrationAssessment,
 } from '@libs/entities-lib/event';
 import { EEventSummarySections } from '@/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useEventStore } from '@/pinia/event/event';
+import { Status } from '@libs/entities-lib/base';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
 import EventSummarySectionBody from './components/EventSummarySectionBody.vue';
@@ -148,12 +168,15 @@ import EventAgreementDialog from './components/EventAgreementDialog.vue';
 import EventCallCentreSection from './components/EventCallCentreSection.vue';
 import EventAgreementSection from './components/EventAgreementSection.vue';
 import EventLocationSection from './components/EventLocationSection.vue';
+import EventRegistrationAssessmentSection from './components/EventRegistrationAssessmentSection.vue';
+import EventRegistrationAssessmentDialog from './components/EventRegistrationAssessmentDialog.vue';
 
 export enum EDialogComponent {
   CallCentre = 'EventCallCentreDialog',
   RegistrationLocation = 'EventRegistrationLocationDialog',
   ShelterLocation = 'EventShelterLocationDialog',
   Agreement = 'EventAgreementDialog',
+  RegistrationAssessment = 'EventRegistrationAssessmentDialog',
 }
 
 interface DialogData {
@@ -178,6 +201,8 @@ export default Vue.extend({
     EventAgreementSection,
     EventAgreementDialog,
     EventLocationSection,
+    EventRegistrationAssessmentSection,
+    EventRegistrationAssessmentDialog,
   },
 
   data() {
@@ -188,6 +213,7 @@ export default Vue.extend({
       showEventStatusDialog: false,
       loading: false,
       currentDialog: null as DialogData,
+      FeatureKeys,
     };
   },
 
@@ -245,9 +271,18 @@ export default Vue.extend({
       return helpers.sortMultilingualArray(this.event.shelterLocations, 'name');
     },
 
+    activeAssessments(): Array<IRegistrationAssessment> {
+      return (this.event.registrationAssessments || []).filter((r: IRegistrationAssessment) => r.status === Status.Active);
+    },
+
     canEditSections(): boolean {
       return (this.$hasLevel('level6') && this.event.schedule.status === EEventStatus.OnHold)
       || (this.$hasLevel('level5') && this.event.schedule.status === EEventStatus.Open);
+    },
+
+    canEditAssessmentSection(): boolean {
+      return (this.$hasLevel('level6') && (this.event.schedule.status === EEventStatus.OnHold
+      || this.event.schedule.status === EEventStatus.Open));
     },
 
     canEdit(): boolean {

@@ -3,4 +3,5 @@ export enum EEventSummarySections {
   RegistrationLocation = 'RegistrationLocation',
   ShelterLocation = 'ShelterLocation',
   Agreement = 'Agreement',
+  RegistrationAssessment = 'RegistrationAssessment',
 }

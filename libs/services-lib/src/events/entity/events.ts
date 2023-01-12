@@ -9,6 +9,7 @@ import {
   IEventGenericLocation,
   IEventLocation,
   IEventMainInfo,
+  IRegistrationAssessment,
 } from '@libs/entities-lib/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
 import { IHttpClient } from '../../http-client';
@@ -113,6 +114,18 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
 
   async editShelterLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity> {
     return this.http.patch(`${this.baseUrl}/${eventId}/shelter-location/${payload.id}`, payload, { globalHandler: false });
+  }
+
+  async addRegistrationAssessment(eventId:uuid, payload: IRegistrationAssessment): Promise<IEventEntity> {
+    return this.http.post(`${this.baseUrl}/${eventId}/registration-assessment`, payload);
+  }
+
+  async editRegistrationAssessment(eventId:uuid, payload: IRegistrationAssessment): Promise<IEventEntity> {
+    return this.http.patch(`${this.baseUrl}/${eventId}/registration-assessment/${payload.id}`, payload);
+  }
+
+  async removeRegistrationAssessment(eventId:uuid, registrationId: uuid): Promise<IEventEntity> {
+    return this.http.delete(`${this.baseUrl}/${eventId}/registration-assessment/${registrationId}`);
   }
 
   // events that a user has access to

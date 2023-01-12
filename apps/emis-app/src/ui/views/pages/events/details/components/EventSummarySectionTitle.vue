@@ -1,9 +1,9 @@
 <template>
   <v-row class="flex-row justify-space-between ma-0 pa-2 pt-6">
-    <v-col class="d-flex ma-0 pa-1" md="12" lg="6">
+    <v-col class="d-flex ma-0 pa-1" md="12" lg="8">
       <span class="rc-heading-5" :data-test="`event-summary-section-title-${section}`">{{ $t(title) }}</span>
     </v-col>
-    <v-col class="d-flex justify-end ma-0 pa-0" md="12" lg="6">
+    <v-col class="d-flex justify-end ma-0 pa-0" md="12" lg="4">
       <v-btn
         v-if="canAdd"
         class="pl-3 pr-4"
@@ -61,6 +61,10 @@ export default Vue.extend({
         [EEventSummarySections.Agreement]: {
           title: 'eventSummary.agreement',
           buttonCaption: 'eventSummary.addAgreement',
+        },
+        [EEventSummarySections.RegistrationAssessment]: {
+          title: 'eventSummary.registrationAssessment',
+          buttonCaption: 'eventSummary.addRegistrationAssessment',
         },
       } as Record<string, { title: string, buttonCaption: string }>,
     };

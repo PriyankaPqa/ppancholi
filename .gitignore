@@ -22,3 +22,9 @@ yarn-error.log*
 *.sln
 *.sw?
 .vs
+
+
+.yalc
+yalc.lock
+apps/emis-app/components.d.ts
+apps/benef-app/components.d.ts

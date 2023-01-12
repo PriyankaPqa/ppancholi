@@ -93,6 +93,12 @@ export interface IRelatedEventsInfos {
   eventName: IMultilingual;
 }
 
+export interface IRegistrationAssessment extends IEntity {
+  assessmentId: string;
+  sectionTitle: IMultilingual;
+  details: IMultilingual;
+}
+
 /**
  * Interface that maps to the response structure from the entity API
  */
@@ -196,6 +202,7 @@ export interface IEventEntity extends IEntity {
    location?: IEventLocation;
    schedule?: IEventSchedule;
    responseDetails?: IEventResponseDetails;
+   registrationAssessments?: Array<IRegistrationAssessment>;
    registrationLocations?: Array<IEventGenericLocation>;
    callCentres?: Array<IEventCallCentre>;
    scheduleHistory?: IEventSchedule[];

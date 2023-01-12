@@ -367,6 +367,21 @@ describe('>>> Event Store', () => {
     });
   });
 
+  describe('deleteRegistrationAssessment', () => {
+    it('calls the removeRegistrationAssessment service and returns the new Event entity', async () => {
+      const event = mockEventEntity();
+      const store = createTestStore();
+
+      const registrationAssessmentId = 'myid';
+      expect(entityService.removeRegistrationAssessment).toHaveBeenCalledTimes(0);
+
+      await store.deleteRegistrationAssessment({ eventId: event.id, registrationAssessmentId });
+
+      expect(entityService.removeRegistrationAssessment).toHaveBeenCalledTimes(1);
+      expect(entityService.removeRegistrationAssessment).toHaveBeenCalledWith(event.id, registrationAssessmentId);
+    });
+  });
+
   describe('toggleSelfRegistration', () => {
     it('calls the setEventSelfRegistration service', async () => {
       const event = mockEventEntity();

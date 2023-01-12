@@ -251,6 +251,30 @@ describe('>>> Events Service', () => {
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/registration-location/${location.id}`, location, { globalHandler: false });
   });
 
+  test('addRegistrationAssessment is linked to the correct URL', async () => {
+    const event = new EventEntity(mockEventEntities()[0]);
+    const assessment = event.registrationAssessments[0];
+    const { id } = event;
+    await service.addRegistrationAssessment(id, assessment);
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/registration-assessment`, assessment);
+  });
+
+  test('editRegistrationLocation is linked to the correct URL', async () => {
+    const event = new EventEntity(mockEventEntities()[0]);
+    const assessment = event.registrationAssessments[0];
+    const { id } = event;
+    await service.editRegistrationAssessment(id, assessment);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/registration-assessment/${assessment.id}`, assessment);
+  });
+
+  test('removeAgreement calls the correct URL with the right payload', async () => {
+    const event = new EventEntity(mockEventEntities()[0]);
+    const assessment = event.registrationAssessments[0];
+    const { id } = event;
+    await service.removeRegistrationAssessment(id, assessment.id);
+    expect(http.delete).toHaveBeenCalledWith(`${service.baseUrl}/${id}/registration-assessment/${assessment.id}`);
+  });
+
   test('addShelterLocation is linked to the correct URL', async () => {
     const event = new EventEntity(mockEventEntities()[0]);
     const location = event.shelterLocations[0];
