@@ -3,7 +3,7 @@ import { mockMassActionCreatePayload, mockMassActionService } from '@libs/servic
 import { IMassActionEntityState } from '@/store/modules/mass-action/massActionEntity.types';
 import { MassActionEntityModule } from '@/store/modules/mass-action/massActionEntity';
 import { MassActionRunType, MassActionType } from '@libs/entities-lib/mass-action';
-import { mockSignalR } from '../../../ui/plugins/signal-r';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 
 const signalR = mockSignalR();
 const service = mockMassActionService();

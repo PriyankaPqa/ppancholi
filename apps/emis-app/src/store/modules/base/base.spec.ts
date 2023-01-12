@@ -6,9 +6,9 @@ import { httpClient } from '@/services/httpClient';
 import { mockUserAccountEntities, mockUserAccountEntity } from '@libs/entities-lib/user-account';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { mockIRestResponse } from '@libs/services-lib/http-client';
+import { ISignalRMock, mockSignalR } from '@libs/shared-lib/signal-r';
 import { BaseModule } from './index';
 import { IState } from './base.types';
-import { ISignalRMock, mockSignalR } from '../../../ui/plugins/signal-r';
 
 export class BaseModuleTest extends BaseModule<any, uuid> {
   declare public service: DomainBaseService<any, uuid>;

@@ -1,5 +1,6 @@
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Vue from 'vue';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export type VuePlugin = Vue & {
   $hasFeature: (featureKey: FeatureKeys) => boolean;
@@ -8,7 +9,7 @@ export type VuePlugin = Vue & {
 export default {
   install: (V: typeof Vue) => {
     function hasFeature(this: Vue, featureKey: FeatureKeys) {
-      return this.$storage.tenantSettings.getters.isFeatureEnabled(featureKey);
+      return useTenantSettingsStore().isFeatureEnabled(featureKey);
     }
 
     V.prototype.$hasFeature = hasFeature;

@@ -12,10 +12,10 @@ import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-a
 import { httpClient } from '@/services/httpClient';
 import { mockOptionItems } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { FinancialAssistanceEntityModule } from './financialAssistanceEntity';
 
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
-import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const service = new FinancialAssistanceTablesService(httpClient);
 let myModule: FinancialAssistanceEntityModule;

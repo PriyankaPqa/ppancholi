@@ -72,6 +72,7 @@ import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { LOGO_EXTENSIONS } from '@/constants/documentExtensions';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { ITenantSettingsEntity } from '@libs/entities-lib/tenantSettings';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default mixins(fileUpload).extend({
   name: 'Logo',
@@ -165,7 +166,7 @@ export default mixins(fileUpload).extend({
     },
 
     getLogoUrl(key: string) {
-      return `${this.$services.tenantSettings.getLogoUrl(key)}?d=${this.$storage.tenantSettings.getters.currentTenantSettings().timestamp}`;
+      return `${this.$services.tenantSettings.getLogoUrl(key)}?d=${useTenantSettingsStore().currentTenantSettings.timestamp}`;
     },
 
     async upload() {
@@ -177,7 +178,7 @@ export default mixins(fileUpload).extend({
       await this.uploadForm(formData, 'system-management/tenant-settings/logo') as ITenantSettingsEntity;
 
       if (this.uploadSuccess) {
-        await this.$storage.tenantSettings.actions.fetchCurrentTenantSettings();
+        await useTenantSettingsStore().fetchCurrentTenantSettings();
         this.exitEditMode();
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

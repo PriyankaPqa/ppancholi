@@ -1,17 +1,17 @@
-import { BaseStoreComponents } from '@/pinia/base/base.types';
+import { BaseStoreComponents } from '@libs/stores-lib/base';
 import { EventsService, IEventsServiceMock } from '@libs/services-lib/events/entity';
 import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/optionItems';
 import { Ref, ref } from 'vue';
 import { EOptionLists, IOptionItem, IOptionItemData } from '@libs/entities-lib/optionItem';
 import { filterAndSortActiveItems } from '@/store/modules/base';
 import {
-  EEventStatus, EventEntity, IEventAgreement, IEventCallCentre, IEventEntity, IEventGenericLocation, IEventLocation, IRegistrationAssessment,
+  EEventStatus, EventEntity, IEventAgreement, IEventCallCentre, IEventEntity, IEventGenericLocation, IEventLocation, IRegistrationAssessment, IdParams,
 } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { EEventSummarySections } from '@/types';
 
 export function getExtensionComponents(
-  baseComponents: BaseStoreComponents<IEventEntity, uuid>,
+  baseComponents: BaseStoreComponents<IEventEntity, IdParams>,
   entityService: EventsService | IEventsServiceMock,
   optionsService: OptionItemsService | IOptionItemsServiceMock,
 ) {

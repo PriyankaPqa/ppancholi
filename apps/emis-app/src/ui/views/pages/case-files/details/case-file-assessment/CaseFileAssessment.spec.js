@@ -6,12 +6,15 @@ import {
 } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import routes from '@/constants/routes';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from './CaseFileAssessment.vue';
 
 const localVue = createLocalVue();
 let storage = mockStorage();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
+
+const { pinia } = useMockTenantSettingsStore();
 
 const mockMappedAssessments = [
   {
@@ -94,6 +97,7 @@ describe('CaseFileAssessment.vue', () => {
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         id: 'cfId',
       },
@@ -464,7 +468,7 @@ describe('CaseFileAssessment.vue', () => {
 
     describe('editAssessment', () => {
       it('should redirect to the edit page', async () => {
-        mountWrapper();
+        await mountWrapper();
         wrapper.vm.editAssessment({ id: 'myid' });
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
@@ -479,14 +483,12 @@ describe('CaseFileAssessment.vue', () => {
         navigator.clipboard = { writeText: jest.fn() };
         const item = storage.assessmentResponse.getters.getByIds()[0];
         await mountWrapper();
-        wrapper.vm.$storage.tenantSettings.getters.currentTenantSettings = jest.fn(() => ({ registrationDomain: { translation: { fr: 'test.com' } } }));
         wrapper.vm.$storage.household.getters.get = jest.fn(() => ({ entity: { primaryBeneficiary: 'benefId' } }));
         wrapper.vm.$services.households.getPerson = jest.fn(() => ({ contactInformation: { preferredLanguage: { optionItemId: 'frId' } } }));
         wrapper.vm.$storage.registration.actions.fetchPreferredLanguages = jest.fn(() => ([{ id: 'frId', languageCode: 'fr' }]));
-        wrapper.vm.copyLink({ id: item.entity.id });
+        await wrapper.vm.copyLink({ id: item.entity.id });
         await wrapper.vm.$nextTick();
-        expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://test.com/fr/assessment/1dea3c36-d6a5-4e6c-ac36-078677b7da5f0/044fcd68-3d70-4a3a-b5c8-22da9e01730f/1');
-        expect(wrapper.vm.$storage.tenantSettings.getters.currentTenantSettings).toHaveBeenCalled();
+        expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://registration domain fr/fr/assessment/1dea3c36-d6a5-4e6c-ac36-078677b7da5f0/044fcd68-3d70-4a3a-b5c8-22da9e01730f/1');
         expect(wrapper.vm.$storage.household.getters.get).toHaveBeenCalledWith(wrapper.vm.caseFile.entity.householdId);
         expect(wrapper.vm.$services.households.getPerson).toHaveBeenCalledWith('benefId');
         expect(wrapper.vm.$storage.registration.actions.fetchPreferredLanguages).toHaveBeenCalled();
@@ -525,7 +527,7 @@ describe('CaseFileAssessment.vue', () => {
 
     describe('deleteAssessment', () => {
       it('calls deactivate after confirmation', async () => {
-        mountWrapper();
+        await mountWrapper();
         wrapper.vm.$toasted.global.success = jest.fn();
         const response = {};
         await wrapper.vm.deleteAssessment(response);
@@ -537,7 +539,7 @@ describe('CaseFileAssessment.vue', () => {
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalled();
       });
       it('doesnt call deactivate if no confirmation', async () => {
-        mountWrapper();
+        await mountWrapper();
         wrapper.vm.$confirm = jest.fn(() => false);
         wrapper.vm.$toasted.global.success = jest.fn();
         const response = {};

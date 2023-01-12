@@ -10,6 +10,7 @@ module.exports = {
     '<rootDir>/libs/shared-lib',
     '<rootDir>/libs/entities-lib',
     '<rootDir>/libs/services-lib',
+    '<rootDir>/libs/stores-lib',
   ],
   coverageDirectory: '<rootDir>/coverage/',
 };

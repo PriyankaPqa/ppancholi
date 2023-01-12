@@ -1,17 +1,21 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import entityUtils from '@libs/entities-lib/utils';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from '../SupportEmails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
+const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
+
 beforeEach(() => {
   jest.clearAllMocks();
 
   wrapper = shallowMount(Component, {
     localVue,
+    pinia,
     propsData: {
       disableEditBtn: false,
     },
@@ -63,7 +67,7 @@ describe('SupportEmails.vue', () => {
   describe('Computed', () => {
     describe('emails', () => {
       it('returns correct value', () => {
-        expect(wrapper.vm.emails).toEqual(storage.tenantSettings.getters.currentTenantSettings()?.supportEmails);
+        expect(wrapper.vm.emails).toEqual(tenantSettingsStore.currentTenantSettings.supportEmails);
       });
     });
 
@@ -121,7 +125,7 @@ describe('SupportEmails.vue', () => {
     });
   });
 
-  describe('>> Methods', () => {
+  describe('Methods', () => {
     describe('enterEditMode', () => {
       it('sets data properly', () => {
         const mockEmails = { translation: { en: 'mock@email.com' } };
@@ -216,7 +220,7 @@ describe('SupportEmails.vue', () => {
 
         await wrapper.vm.submit();
 
-        expect(wrapper.vm.$storage.tenantSettings.actions.updateSupportEmails).toHaveBeenCalledWith({
+        expect(tenantSettingsStore.updateSupportEmails).toHaveBeenCalledWith({
           translation: { en: 'mock_en@email.com', fr: 'mock_fr@email.com' },
         });
       });

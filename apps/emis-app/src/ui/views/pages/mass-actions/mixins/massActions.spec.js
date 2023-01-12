@@ -3,6 +3,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import massActions from './massActions';
 /* eslint-disable max-len */
 const Component = {
@@ -15,6 +16,7 @@ const storage = mockStorage();
 let wrapper;
 
 const doMount = (fullMount = false, pinia = getPiniaForUser('level6'), additionalOverwrites = {}) => {
+  useMockTenantSettingsStore(pinia);
   wrapper = (fullMount ? mount : shallowMount)(Component, {
     localVue,
     pinia,

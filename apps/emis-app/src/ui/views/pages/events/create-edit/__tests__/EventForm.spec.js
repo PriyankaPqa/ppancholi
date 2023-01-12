@@ -23,6 +23,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { mockStorage } from '@/storage';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from '../EventForm.vue';
 
 const event = mockEventEntity();
@@ -36,6 +37,8 @@ const localVue = createLocalVue();
 const pinia = createTestingPinia({
   stubActions: false,
 });
+
+useMockTenantSettingsStore(pinia);
 
 describe('EventForm.vue', () => {
   let wrapper;
@@ -843,7 +846,6 @@ describe('EventForm.vue', () => {
                 fetchRegions: jest.fn(() => mockRegionData()),
               },
             },
-            tenantSettings: storage.tenantSettings,
           },
         },
       });
@@ -908,11 +910,6 @@ describe('EventForm.vue', () => {
               e164Number: '',
             },
           };
-        },
-        mocks: {
-          $storage: {
-            tenantSettings: storage.tenantSettings,
-          },
         },
       });
     });
@@ -1026,7 +1023,6 @@ describe('EventForm.vue', () => {
                 fetchRegions: jest.fn(() => mockRegionData()),
               },
             },
-            tenantSettings: storage.tenantSettings,
           },
         },
       });

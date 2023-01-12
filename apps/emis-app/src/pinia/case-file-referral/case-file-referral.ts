@@ -1,16 +1,15 @@
 import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@libs/services-lib/optionItems';
-import { ICaseFileReferralEntity, ICaseFileReferralMetadata } from '@libs/entities-lib/case-file-referral';
+import { ICaseFileReferralEntity, ICaseFileReferralMetadata, IdParams } from '@libs/entities-lib/case-file-referral';
 import { CaseFileReferralsService } from '@libs/services-lib/case-file-referrals/entity';
 import { CaseFileReferralsMetadataService } from '@libs/services-lib/case-file-referrals/metadata';
-import { getBaseStoreComponents, getEntityStoreComponents } from '@/pinia/base';
+import { getBaseStoreComponents, getEntityStoreComponents } from '@libs/stores-lib/base';
 import { SignalR } from '@/ui/plugins/signal-r';
 import { defineStore } from 'pinia';
 import { getExtensionComponents } from '@/pinia/case-file-referral/case-file-referral-extension';
 
 export type Entity = ICaseFileReferralEntity;
 export type Metadata = ICaseFileReferralMetadata;
-export type IdParams = { id: uuid, caseFileId: uuid };
 
 const storeId = 'case-file-referral';
 const entityService = new CaseFileReferralsService(httpClient);

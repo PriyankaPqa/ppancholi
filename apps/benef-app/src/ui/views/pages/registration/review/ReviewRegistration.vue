@@ -11,6 +11,7 @@ import ReviewRegistrationLib from '@libs/registration-lib/components/review/Revi
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { i18n } from '@/ui/plugins';
 import { localStorageKeys } from '@/constants/localStorage';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'ReviewRegistration',
@@ -36,7 +37,7 @@ export default Vue.extend({
 
   computed: {
     isCaptchaAllowedIpAddress(): boolean {
-      return this.$storage.tenantSettings.getters.validateCaptchaAllowedIpAddress().ipAddressIsAllowed;
+      return useTenantSettingsStore().recaptcha.ipAddressIsAllowed;
     },
   },
 });

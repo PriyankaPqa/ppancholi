@@ -5,7 +5,8 @@ import { IMassActionEntity, MassActionRunType, MassActionType } from '@libs/enti
 import { MassActionService } from '@libs/services-lib/mass-actions/entity/massAction';
 import { IMassActionEntityState } from '@/store/modules/mass-action/massActionEntity.types';
 import { IMassActionFinancialAssistanceCreatePayload, IMassActionFundingRequestCreatePayload } from '@libs/services-lib/mass-actions/entity';
-import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
+import { SignalR } from '@/ui/plugins/signal-r';
+import { ISignalRMock } from '@libs/shared-lib/signal-r';
 import { BaseModule } from '../base';
 
 import { IState } from '../base/base.types';

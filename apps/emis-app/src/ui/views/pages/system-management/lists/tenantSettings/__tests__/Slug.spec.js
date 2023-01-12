@@ -1,16 +1,19 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from '../Slug.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
+const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
 beforeEach(() => {
   jest.clearAllMocks();
 
   wrapper = shallowMount(Component, {
     localVue,
+    pinia,
     propsData: {
       disableEditBtn: false,
     },
@@ -62,7 +65,7 @@ describe('Slug.vue', () => {
   describe('Computed', () => {
     describe('slug', () => {
       it('returns correct value', () => {
-        expect(wrapper.vm.slug).toBe(storage.tenantSettings.getters.currentTenantSettings()?.slug);
+        expect(wrapper.vm.slug).toBe(tenantSettingsStore.currentTenantSettings.slug);
       });
     });
 
@@ -246,7 +249,7 @@ describe('Slug.vue', () => {
 
         await wrapper.vm.submit();
 
-        expect(wrapper.vm.$storage.tenantSettings.actions.createTenantSettings).toHaveBeenCalledWith({
+        expect(tenantSettingsStore.createTenantSettings).toHaveBeenCalledWith({
           slug: 'slug',
         });
       });

@@ -13,7 +13,6 @@ import { TeamStorage } from './team';
 import { CaseNoteStorage } from './case-note';
 import { FinancialAssistanceCategoryStorage } from './financial-assistance-category';
 import { FinancialAssistancePaymentStorage } from './financial-assistance-payment';
-import { TenantSettingsStorage } from './tenantSettings';
 import { AssessmentTemplateStorage } from './assessment-template';
 import { AssessmentFormStorage } from './assessment-form';
 import { AssessmentResponseStorage } from './assessment-response';
@@ -37,10 +36,6 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     store,
     vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES,
     vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA,
-  ).make(),
-  tenantSettings: new TenantSettingsStorage(
-    store,
-    vuexModule.TENANT_SETTINGS_ENTITIES,
   ).make(),
   assessmentTemplate: new AssessmentTemplateStorage(
     store,

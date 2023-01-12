@@ -99,3 +99,5 @@ export interface IValidateCaptchaAllowedIpAddressResponse {
 }
 
 export type ITenantSettingsCombined = IEntityCombined<ITenantSettingsEntity, never>;
+
+export type IdParams = uuid;

@@ -4,9 +4,9 @@ import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial
 import { mockCaseFinancialAssistanceEntity, mockFinancialPaymentHistory } from '@libs/entities-lib/financial-assistance-payment';
 import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
 import { mockVersionedEntityCombined } from '@libs/entities-lib/value-objects/versioned-entity';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { FinancialAssistancePaymentEntityModule } from './financialAssistancePaymentEntity';
 import { IFinancialAssistancePaymentEntityState } from './financialAssistancePaymentEntity.types';
-import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const service = new FinancialAssistancePaymentsService(httpClient);
 let myModule: FinancialAssistancePaymentEntityModule;

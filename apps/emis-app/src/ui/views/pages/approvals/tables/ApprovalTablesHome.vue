@@ -84,8 +84,8 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { IEntityCombined, Status } from '@libs/entities-lib/base';
 import _isEmpty from 'lodash/isEmpty';
-import { IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
-import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
+import { IProgramEntity, IProgramMetadata, IdParams } from '@libs/entities-lib/program';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 
 export default mixins(TablePaginationSearchMixin).extend({
@@ -108,7 +108,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: [`Metadata/ApprovalBaseStatusName/Translation/${this.$i18n.locale}`],
         sortDesc: [false],
       },
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata>(useProgramStore(), useProgramMetadataStore()),
+      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata, IdParams>(useProgramStore(), useProgramMetadataStore()),
     };
   },
 

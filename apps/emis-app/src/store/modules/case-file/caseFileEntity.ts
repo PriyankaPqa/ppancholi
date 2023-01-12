@@ -20,7 +20,8 @@ import { ICaseFileEntityState } from '@/store/modules/case-file/caseFileEntity.t
 import { IOptionItemsService } from '@libs/services-lib/optionItems';
 import { IListOption } from '@libs/shared-lib/types';
 import { IUserAccountEntity } from '@libs/entities-lib/user-account';
-import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
+import { SignalR } from '@/ui/plugins/signal-r';
+import { ISignalRMock } from '@libs/shared-lib/signal-r';
 import { BaseModule, filterAndSortActiveItems, IState } from '../base';
 import { IRootState } from '../../store.types';
 

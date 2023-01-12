@@ -1,5 +1,6 @@
 import { ActionContext, ActionTree } from 'vuex';
-import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
+import { SignalR } from '@/ui/plugins/signal-r';
+import { ISignalRMock } from '@libs/shared-lib/signal-r';
 import { IRootState } from '@libs/registration-lib/store';
 import { IAssessmentTemplateEntity } from '@libs/entities-lib/assessment-template';
 import { AssessmentTemplatesService } from '@libs/services-lib/assessment-template/entity';

@@ -27,6 +27,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Trans } from '@/ui/plugins';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'LanguageSelector',
@@ -44,8 +45,7 @@ export default Vue.extend({
     },
 
     tenantLanguages(): Array<string> {
-      const currentTenantSettings = this.$storage.tenantSettings.getters.currentTenantSettings();
-      return currentTenantSettings?.availableLanguages;
+      return useTenantSettingsStore().currentTenantSettings.availableLanguages;
     },
     /**
      * Get the list of available locales from the Translation plugin and use them

@@ -20,6 +20,7 @@ import { cloneDeep } from 'lodash';
 import { SurveyJsHelper, ISurveyModel } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
 import { NavigationGuardNext, Route } from 'vue-router';
 import helpers from '@/ui/helpers/helpers';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import assessmentDetail from './assessmentDetail';
 
 const DEBOUNCE_RATE = 500;
@@ -80,7 +81,7 @@ export default mixins(assessmentDetail).extend({
         this.survey.onValueChanged.add((sender: ISurveyModel) => debouncedSave({ _this, sender }));
       }
       this.survey.onComplete.add(this.completeSurvey);
-      this.surveyJsHelper.setColorScheme('#surveyContainer', this.$storage.tenantSettings.getters.currentTenantSettings().branding.colours);
+      this.surveyJsHelper.setColorScheme('#surveyContainer', useTenantSettingsStore().currentTenantSettings.branding.colours);
     }
 
     if (!this.assessmentTemplate.savePartialSurveyResults) {

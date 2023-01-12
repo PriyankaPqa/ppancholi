@@ -1,6 +1,6 @@
 import { IProgramsServiceMock, ProgramsService } from '@libs/services-lib/programs/entity';
 import { IProgramEntity } from '@libs/entities-lib/program';
-import { BaseStoreComponents } from '@/pinia/base';
+import { BaseStoreComponents } from '@libs/stores-lib/base';
 
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<IProgramEntity, { id: string; eventId: string }>,

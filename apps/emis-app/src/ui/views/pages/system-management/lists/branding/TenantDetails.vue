@@ -93,6 +93,7 @@ import entityUtils from '@libs/entities-lib/utils';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { IEditTenantDetailsRequest, ITenantDetailsEntity } from '@libs/entities-lib/tenantSettings';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'TenantDetails',
@@ -122,7 +123,7 @@ export default Vue.extend({
 
   computed: {
     tenantDetails(): ITenantDetailsEntity {
-      return this.$storage.tenantSettings.getters.currentTenantSettings().branding as ITenantDetailsEntity;
+      return useTenantSettingsStore().currentTenantSettings.branding as ITenantDetailsEntity;
     },
 
     rules(): Record<string, unknown> {
@@ -171,7 +172,7 @@ export default Vue.extend({
         hideName: !this.tempTenantDetails.showName,
       };
 
-      const result = await this.$storage.tenantSettings.actions.updateTenantDetails(editTenantDetailsRequest);
+      const result = await useTenantSettingsStore().updateTenantDetails(editTenantDetailsRequest);
 
       if (result) {
         this.exitEditMode();

@@ -19,6 +19,9 @@ module.exports = {
     '^@libs/entities-lib/(.*)$': '<rootDir>/../../libs/entities-lib/src/$1',
     '^@libs/services-lib/src/(.*)$': '<rootDir>/../../libs/services-lib/src/$1', // in javascript file there is path like there is for TS so we need that
     '^@libs/services-lib/(.*)$': '<rootDir>/../../libs/services-lib/src/$1',
+    '^@libs/stores-lib/src/(.*)$': '<rootDir>/../../libs/stores-lib/src/$1', // in javascript file there is path like there is for TS so we need that
+    '^@libs/stores-lib/(.*)$': '<rootDir>/../../libs/stores-lib/src/$1',
+
   },
   displayName: packageJson.name,
 };

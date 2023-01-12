@@ -1,4 +1,4 @@
-import { BaseStoreComponents } from '@/pinia/base';
+import { BaseStoreComponents } from '@libs/stores-lib/base';
 import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/optionItems';
 import { ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '@libs/services-lib/case-file-documents/entity';

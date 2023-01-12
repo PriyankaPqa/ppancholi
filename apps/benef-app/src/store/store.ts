@@ -6,12 +6,9 @@ import { ERegistrationMode } from '@libs/shared-lib/types';
 import { HouseholdsService } from '@libs/services-lib/households/entity';
 import { HouseholdMetadataModule } from '@libs/registration-lib/store/modules/household/householdMetadata';
 import { HouseholdMetadataService } from '@libs/services-lib/households/metadata';
-import { TenantSettingsEntityModule } from '@libs/registration-lib/store/modules/tenantSettings/tenantSettingsEntity';
-import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
 import { i18n } from '@/ui/plugins';
-import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import { IRootState } from './store.types';
 import { tabs } from './modules/registration/tabs';
 
@@ -28,10 +25,6 @@ const store: StoreOptions<IRootState> = {
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: false, skipEmailPhoneRules: false, mode: ERegistrationMode.Self,
     }),
-    [vuexModule.TENANT_SETTINGS_ENTITIES]: new TenantSettingsEntityModule(
-      new TenantSettingsService(httpClient),
-      vuetify,
-    ).getModule(),
   },
 };
 

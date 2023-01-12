@@ -121,6 +121,7 @@ import { TranslateResult } from 'vue-i18n';
 import { IServerError, IErrorReport, VForm } from '@libs/shared-lib/types';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { useUserStore } from '@/pinia/user/user';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import helpers from '../helpers/helpers';
 
 export default Vue.extend({
@@ -196,7 +197,7 @@ export default Vue.extend({
     },
 
     hasSupportAddress(): boolean {
-      return !!this.$store.state.tenantSettingsEntities.currentTenantSettings?.supportEmails?.translation?.[this.languageCode];
+      return !!useTenantSettingsStore().currentTenantSettings.supportEmails?.translation?.[this.languageCode];
     },
 
     languageCode(): string {
@@ -216,7 +217,7 @@ export default Vue.extend({
     },
 
     tenantId(): string {
-      return this.$store.state.tenantSettingsEntities.currentTenantSettings.tenantId;
+      return useTenantSettingsStore().currentTenantSettings.tenantId;
     },
   },
 

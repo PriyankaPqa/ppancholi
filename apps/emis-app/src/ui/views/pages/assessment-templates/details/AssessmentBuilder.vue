@@ -20,6 +20,7 @@ import { SurveyJsHelper, ISurveyCreator } from '@libs/shared-lib/plugins/surveyJ
 import { SurveyJsTextExtractor, IExtractedSurveyObject } from '@libs/shared-lib/plugins/surveyJs/SurveyJsTextExtractor';
 import metadata from '@/ui/mixins/metadata';
 import helpers from '@/ui/helpers/helpers';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import assessmentDetail from './assessmentDetail';
 import AssessmentExport from './AssessmentExport.vue';
 
@@ -76,7 +77,7 @@ export default mixins(assessmentDetail, metadata).extend({
     if (!this.testMode) {
       this.creator.render('surveyCreator');
     }
-    this.surveyJsHelper.setColorScheme('#surveyCreator', this.$storage.tenantSettings.getters.currentTenantSettings().branding.colours);
+    this.surveyJsHelper.setColorScheme('#surveyCreator', useTenantSettingsStore().currentTenantSettings.branding.colours);
   },
 
   methods: {

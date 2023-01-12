@@ -2,11 +2,14 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from './AssessmentRunner.vue';
 
 let storage = mockStorage();
 let services = mockProvider();
 const localVue = createLocalVue();
+
+const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
 
 describe('AssessmentRunner.vue', () => {
   let wrapper;
@@ -15,6 +18,7 @@ describe('AssessmentRunner.vue', () => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         testMode: true,
         id: eventId,
@@ -105,7 +109,7 @@ describe('AssessmentRunner.vue', () => {
         await hook.call(wrapper.vm);
         expect(wrapper.vm.surveyJsHelper.setColorScheme).toHaveBeenCalledWith(
           '#surveyContainer',
-          storage.tenantSettings.getters.currentTenantSettings().branding.colours,
+          tenantSettingsStore.currentTenantSettings.branding.colours,
         );
       });
       it('sets survey onValueChanged if saving partial survey results is allowed', async () => {

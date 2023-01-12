@@ -87,6 +87,7 @@ import routes from '@/constants/routes';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@libs/entities-lib/helpers';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
@@ -119,7 +120,7 @@ export default mixins(individual).extend({
 
   computed: {
     isCaptchaAllowedIpAddress(): boolean {
-      return this.$storage.tenantSettings.getters.validateCaptchaAllowedIpAddress().ipAddressIsAllowed;
+      return useTenantSettingsStore().recaptcha.ipAddressIsAllowed;
     },
   },
 

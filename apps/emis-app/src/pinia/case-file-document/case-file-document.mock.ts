@@ -1,5 +1,5 @@
 import { createTestingPinia, TestingPinia } from '@pinia/testing';
-import { getMockBaseStoreComponents, getMockEntityStoreComponents } from '@/pinia/base';
+import { getMockBaseStoreComponents, getMockEntityStoreComponents } from '@libs/stores-lib/base';
 import { defineStore } from 'pinia';
 import { getMockExtensionComponents } from '@/pinia/case-file-document/case-file-document-extension.mock';
 import { mockCaseFileDocumentEntities, mockCaseFileDocumentMetadatum } from '@libs/entities-lib/case-file-document';

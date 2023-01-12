@@ -60,6 +60,7 @@ import { RcTooltip } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import { useEventStore } from '@/pinia/event/event';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'EventSummaryLink',
@@ -84,7 +85,7 @@ export default Vue.extend({
 
   computed: {
     registrationUrl(): string {
-      const prefixRegistrationLink = this.$storage.tenantSettings.getters.currentTenantSettings();
+      const prefixRegistrationLink = useTenantSettingsStore().currentTenantSettings;
       if (!prefixRegistrationLink?.registrationDomain) {
         return null;
       }

@@ -40,11 +40,6 @@ import {
 } from './financial-assistance-payment';
 
 import {
-  IStorageMake as ITenantSettingsMakeStorage,
-  IStorageMakeMock as ITenantSettingsMakeStorageMock,
-} from './tenantSettings';
-
-import {
   IStorageMake as IAssessmentTemplateMakeStorage,
   IStorageMakeMock as IAssessmentTemplateMakeStorageMock,
 } from './assessment-template';
@@ -71,7 +66,6 @@ export interface IStorage {
   household: IStorageMake;
   userAccount: IUserAccountMakeStorage;
   massAction: IMassActionMakeStorage;
-  tenantSettings: ITenantSettingsMakeStorage;
   assessmentTemplate: IAssessmentTemplateMakeStorage;
   approvalTable: IApprovalTableMakeStorage;
   assessmentForm: IAssessmentFormMakeStorage;
@@ -90,7 +84,6 @@ export interface IStorageMock {
   household: IStorageMakeMock;
   userAccount: IUserAccountMakeStorageMock;
   massAction: IMassActionMakeStorageMock;
-  tenantSettings: ITenantSettingsMakeStorageMock;
   assessmentTemplate: IAssessmentTemplateMakeStorageMock;
   approvalTable: IApprovalTableMakeStorageMock;
   assessmentForm: IAssessmentFormMakeStorageMock;

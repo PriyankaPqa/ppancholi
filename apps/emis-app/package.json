@@ -20,6 +20,7 @@
     "@libs/registration-lib": "*",
     "@libs/services-lib": "*",
     "@libs/shared-lib": "*",
+    "@libs/stores-lib": "*",
     "@microsoft/signalr": "5.0.16",
     "@types/uuid": "8.3.4",
     "@vitejs/plugin-vue2": "^2.0.1",

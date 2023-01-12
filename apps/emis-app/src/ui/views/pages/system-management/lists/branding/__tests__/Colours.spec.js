@@ -1,17 +1,21 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockBrandingEntity, mockEditColoursRequest } from '@libs/entities-lib/tenantSettings';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from '../Colours.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
+const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
+
 beforeEach(() => {
   jest.clearAllMocks();
 
   wrapper = shallowMount(Component, {
     localVue,
+    pinia,
     propsData: {
       disableEditBtn: false,
     },
@@ -44,8 +48,6 @@ describe('Colours.vue', () => {
     describe('isDirty', () => {
       it('compares the colours with store', async () => {
         const { colours } = mockEditColoursRequest();
-
-        jest.spyOn(storage.tenantSettings.getters, 'currentTenantSettings').mockImplementation(() => ({ branding: { colours } }));
 
         await wrapper.setData({
           colours: [
@@ -146,7 +148,7 @@ describe('Colours.vue', () => {
 
         await wrapper.vm.saveEdit();
 
-        expect(storage.tenantSettings.actions.updateColours).toHaveBeenCalledWith({
+        expect(tenantSettingsStore.updateColours).toHaveBeenCalledWith({
           colours: {
             primary: 'primary',
             primaryLight: 'primaryLight',

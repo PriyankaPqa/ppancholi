@@ -86,6 +86,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcConfirmationDialog, VTextFieldWithValidation } from '@libs/component-lib/components';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'Slug',
@@ -114,7 +115,7 @@ export default Vue.extend({
 
   computed: {
     slug(): string {
-      return this.$storage.tenantSettings.getters.currentTenantSettings()?.slug;
+      return useTenantSettingsStore().currentTenantSettings?.slug;
     },
 
     rules(): Record<string, unknown> {
@@ -148,7 +149,7 @@ export default Vue.extend({
     async submit() {
       this.loading = true;
 
-      const result = await this.$storage.tenantSettings.actions.createTenantSettings({
+      const result = await useTenantSettingsStore().createTenantSettings({
         slug: this.tempSlug,
       });
 

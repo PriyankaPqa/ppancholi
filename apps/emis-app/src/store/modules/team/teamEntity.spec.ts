@@ -2,9 +2,9 @@ import { ActionContext } from 'vuex';
 import { httpClient } from '@/services/httpClient';
 import { TeamsService } from '@libs/services-lib/teams/entity';
 import { mockTeamMembersData, mockTeamsDataStandard, mockTeamsDataAddHoc } from '@libs/entities-lib/team';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { TeamEntityModule } from './teamEntity';
 import { ITeamEntityState } from './teamEntity.types';
-import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const signalR = mockSignalR();
 const service = new TeamsService(httpClient);

@@ -227,3 +227,5 @@ export interface IEventMetadata extends IEntity {
 }
 
 export type IEventCombined = IEntityCombined<IEventEntity, IEventMetadata>;
+
+export type IdParams = uuid;

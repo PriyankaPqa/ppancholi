@@ -1,4 +1,5 @@
-import { ISignalRMock, SignalR } from '@/ui/plugins/signal-r';
+import { SignalR } from '@/ui/plugins/signal-r';
+import { ISignalRMock } from '@libs/shared-lib/signal-r';
 import { ActionContext, ActionTree } from 'vuex';
 import { IApprovalTableEntity, IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
 import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';

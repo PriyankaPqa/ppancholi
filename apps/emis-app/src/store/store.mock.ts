@@ -53,12 +53,10 @@ import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financi
 import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
 import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
 import { FinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
-import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
-import { mockSignalR } from '@/ui/plugins/signal-r';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { mockProvider } from '@/services/provider';
 import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
-import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
 
 const i18n = {
   t: jest.fn(),
@@ -138,12 +136,6 @@ const mockConfig = {
     [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA]:
       new FinancialAssistancePaymentMetadataModule(
         new FinancialAssistancePaymentsMetadataService(httpClient),
-        mockSignalR(),
-      ).getModule(),
-
-    [vuexModule.TENANT_SETTINGS_ENTITIES]:
-      new TenantSettingsEntityModule(
-        new TenantSettingsService(httpClient),
         mockSignalR(),
       ).getModule(),
 

@@ -3,11 +3,14 @@ import { mockStorage } from '@/storage';
 import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
 import helpers from '@/ui/helpers';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from './AssessmentRunner.vue';
 
 let storage = mockStorage();
 let services = mockProvider();
 const localVue = createLocalVue();
+
+const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
 
 describe('AssessmentRunner.vue', () => {
   let wrapper;
@@ -16,6 +19,7 @@ describe('AssessmentRunner.vue', () => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         testMode: true,
         id: eventId,
@@ -54,7 +58,7 @@ describe('AssessmentRunner.vue', () => {
         await hook.call(wrapper.vm);
         expect(wrapper.vm.surveyJsHelper.setColorScheme).toHaveBeenCalledWith(
           '#surveyContainer',
-          storage.tenantSettings.getters.currentTenantSettings().branding.colours,
+          tenantSettingsStore.currentTenantSettings.branding.colours,
         );
       });
     });
@@ -117,7 +121,7 @@ describe('AssessmentRunner.vue', () => {
         wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' }, query: {} };
         await wrapper.vm.initializeTenant();
         expect(wrapper.vm.$services.publicApi.getTenantByRegistrationDomain).toHaveBeenCalledWith(helpers.getCurrentDomain(wrapper.vm.$route));
-        expect(wrapper.vm.$storage.tenantSettings.actions.fetchBranding).toHaveBeenCalled();
+        expect(tenantSettingsStore.fetchBranding).toHaveBeenCalled();
       });
     });
 

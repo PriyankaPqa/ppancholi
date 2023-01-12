@@ -10,9 +10,9 @@ import {
   ImpactValidationMethod, ValidationOfImpactStatus, ICaseFileEntity, mockAssignedTeamMembers,
 } from '@libs/entities-lib/case-file';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { CaseFileEntityModule } from './caseFileEntity';
 import { ICaseFileEntityState } from './caseFileEntity.types';
-import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const signalR = mockSignalR();
 const service = new CaseFilesService(httpClient);

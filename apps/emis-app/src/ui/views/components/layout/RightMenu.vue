@@ -162,6 +162,7 @@ import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { Status } from '@libs/entities-lib/base';
 import { useUserStore } from '@/pinia/user/user';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'RightMenu',
@@ -197,9 +198,9 @@ export default Vue.extend({
         { useEntityGlobalHandler: false, useMetadataGlobalHandler: false },
       );
       this.currentTenantId = this.userAccount.entity?.tenantId;
-      this.tenants = await this.$storage.tenantSettings.actions.fetchUserTenants();
+      this.tenants = await useTenantSettingsStore().fetchUserTenants();
       this.tenants = this.tenants.filter((t) => t.status === Status.Active);
-      (await this.$storage.tenantSettings.actions.fetchAll());
+      (await useTenantSettingsStore().fetchAll());
     }
   },
 
@@ -222,12 +223,12 @@ export default Vue.extend({
     },
 
     changeTenant() {
-      const tenant = this.$storage.tenantSettings.getters.get(this.currentTenantId).entity;
+      useTenantSettingsStore();
+      const tenant = useTenantSettingsStore().getById(this.currentTenantId);
       // while testing we might want to switch to localhost... localhost is not https
       // outside of localhost everything is https.
       const url = this.$m(tenant.emisDomain).indexOf('localhost') > -1 ? `http://${this.$m(tenant.emisDomain)}` : `https://${this.$m(tenant.emisDomain)}`;
-
-      window.location.href = url;
+       window.location.href = url;
     },
   },
 });

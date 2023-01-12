@@ -102,7 +102,7 @@ import { useCaseFileDocumentStore, useCaseFileDocumentMetadataStore } from '@/pi
 
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
-import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import caseFileDetail from '../caseFileDetail';
 
 interface caseFileDocumentsMapped {

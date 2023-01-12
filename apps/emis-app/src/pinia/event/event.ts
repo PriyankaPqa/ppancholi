@@ -1,17 +1,16 @@
 import { httpClient } from '@/services/httpClient';
 import { SignalR } from '@/ui/plugins/signal-r';
 import { EventsService } from '@libs/services-lib/events/entity';
-import { getBaseStoreComponents, getEntityStoreComponents } from '@/pinia/base';
+import { getBaseStoreComponents, getEntityStoreComponents } from '@libs/stores-lib/base';
 import { EventsMetadataService } from '@libs/services-lib/events/metadata';
 import { OptionItemsService } from '@libs/services-lib/optionItems';
 
-import { IEventEntity, IEventMetadata } from '@libs/entities-lib/event';
+import { IEventEntity, IEventMetadata, IdParams } from '@libs/entities-lib/event';
 import { defineStore } from 'pinia';
 import { getExtensionComponents } from './event-extension';
 
 export type Entity = IEventEntity;
 export type Metadata = IEventMetadata;
-export type IdParams = uuid;
 
 const storeId = 'event';
 const entityService = new EventsService(httpClient);

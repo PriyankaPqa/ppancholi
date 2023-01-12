@@ -92,6 +92,9 @@
     "services-lib:lint": "yarn --cwd libs/services-lib lint",
     "services-lib:test": "yarn jest --projects libs/services-lib --maxWorkers=50%",
     "services-lib:test:graph": "jest-heap-graph 'yarn services-lib:test --logHeapUsage --no-cache'",
+    "stores-lib:lint": "yarn --cwd libs/stores-lib lint",
+    "stores-lib:test": "yarn jest --projects libs/stores-lib --maxWorkers=50%",
+    "stores-lib:test:graph": "jest-heap-graph 'yarn stores-lib:test --logHeapUsage --no-cache'",
     "prepare": "husky install"
   },
   "workspaces": {

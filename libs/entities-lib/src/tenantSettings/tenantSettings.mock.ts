@@ -173,6 +173,11 @@ export const mockTenantSettingsEntity = (force?: Partial<ITenantSettingsEntity>)
   ...force,
 });
 
+export const mockTenantSettingsEntities = () => [
+  mockTenantSettingsEntity({ id: '1' }),
+  mockTenantSettingsEntity({ id: '2' }),
+];
+
 export const mockCombinedTenantSettings = (force?: Partial<IEntity>): ITenantSettingsCombined => ({
   metadata: null as never,
   entity: mockTenantSettingsEntity(force),

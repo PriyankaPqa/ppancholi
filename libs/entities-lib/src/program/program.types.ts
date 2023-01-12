@@ -37,3 +37,5 @@ export interface IProgramMetadata extends IEntity {
 }
 
 export type IProgramCombined = IEntityCombined<IProgramEntity, IProgramMetadata>;
+
+export type IdParams = { id: string; eventId: string };

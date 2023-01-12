@@ -31,6 +31,7 @@ import Vue from 'vue';
 import { RcPageContent } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import { FeatureType, IFeatureEntity } from '@libs/entities-lib/tenantSettings';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import FeatureTable from './FeatureTable.vue';
 
 export default Vue.extend({
@@ -43,10 +44,10 @@ export default Vue.extend({
 
   computed: {
     temporaryFeatures(): IFeatureEntity[] {
-      return this.$storage.tenantSettings.getters.currentTenantSettings().features.filter((f) => f.type === FeatureType.Temporary);
+      return useTenantSettingsStore().currentTenantSettings.features.filter((f: IFeatureEntity) => f.type === FeatureType.Temporary);
     },
     permanentFeatures(): IFeatureEntity[] {
-      return this.$storage.tenantSettings.getters.currentTenantSettings().features.filter((f) => f.type === FeatureType.Permanent);
+      return useTenantSettingsStore().currentTenantSettings.features.filter((f: IFeatureEntity) => f.type === FeatureType.Permanent);
     },
   },
 

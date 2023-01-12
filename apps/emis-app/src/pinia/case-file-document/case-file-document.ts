@@ -1,6 +1,6 @@
 import { httpClient } from '@/services/httpClient';
 import { SignalR } from '@/ui/plugins/signal-r';
-import { getBaseStoreComponents, getEntityStoreComponents } from '@/pinia/base';
+import { getBaseStoreComponents, getEntityStoreComponents } from '@libs/stores-lib/base';
 
 import { ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { defineStore } from 'pinia';

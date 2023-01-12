@@ -78,9 +78,9 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { IFinancialAssistanceTableCombined } from '@libs/entities-lib/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import { IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
+import { IdParams, IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
 import { IEntityCombined, Status } from '@libs/entities-lib/base';
-import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 
 export default mixins(TablePaginationSearchMixin).extend({
@@ -102,7 +102,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [false],
       },
       programs: [],
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata>(useProgramStore(), useProgramMetadataStore()),
+      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata, IdParams>(useProgramStore(), useProgramMetadataStore()),
     };
   },
 

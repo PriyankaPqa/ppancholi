@@ -1,5 +1,5 @@
 import { createTestingPinia, TestingPinia } from '@pinia/testing';
-import { getMockBaseStoreComponents, getMockEntityStoreComponents } from '@/pinia/base';
+import { getMockBaseStoreComponents, getMockEntityStoreComponents } from '@libs/stores-lib/base';
 import { defineStore } from 'pinia';
 import { mockProgramEntities, mockProgramMetadataArray } from '@libs/entities-lib/program';
 import { getMockExtensionComponents } from '@/pinia/program/program-extension.mock';

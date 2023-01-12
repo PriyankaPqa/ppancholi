@@ -45,6 +45,7 @@ import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -66,7 +67,7 @@ export default Vue.extend({
     },
 
     branding(): IBrandingEntity {
-      return this.$storage.tenantSettings.getters.branding();
+      return useTenantSettingsStore().getBranding();
     },
 
     event(): IEvent {

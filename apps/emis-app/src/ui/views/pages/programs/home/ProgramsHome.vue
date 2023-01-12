@@ -64,10 +64,12 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IProgramCombined, IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
+import {
+ IdParams, IProgramCombined, IProgramEntity, IProgramMetadata,
+} from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
-import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 
 export default mixins(TablePaginationSearchMixin).extend({
@@ -94,7 +96,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [true],
       },
       FilterKey,
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata>(useProgramStore(), useProgramMetadataStore()),
+      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata, IdParams>(useProgramStore(), useProgramMetadataStore()),
     };
   },
 

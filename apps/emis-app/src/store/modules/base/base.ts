@@ -5,7 +5,7 @@ import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/ap
 import { DomainBaseService } from '@libs/services-lib/base';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
-import { ISignalRMock } from '@/ui/plugins/signal-r/signalR.types';
+import { ISignalRMock } from '@libs/shared-lib/signal-r/signalR.types';
 import { SignalR } from '@/ui/plugins/signal-r/signalR';
 import { IRestResponse } from '@libs/services-lib/http-client';
 import { IEntity, Status } from '@libs/entities-lib/base';

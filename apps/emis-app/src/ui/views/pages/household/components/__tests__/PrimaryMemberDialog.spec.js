@@ -346,7 +346,6 @@ describe('PrimaryMemberDialog', () => {
 
     describe('enableAutocomplete', () => {
       it('return correct value', () => {
-        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -359,11 +358,13 @@ describe('PrimaryMemberDialog', () => {
               submitLoading: true,
             };
           },
-          mocks: { $storage: storage },
+          mocks: {
+            $storage: storage,
+            $hasFeature: () => true,
+          },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(true);
 
-        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -376,7 +377,10 @@ describe('PrimaryMemberDialog', () => {
               submitLoading: true,
             };
           },
-          mocks: { $storage: storage },
+          mocks: {
+            $storage: storage,
+            $hasFeature: () => false,
+          },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });

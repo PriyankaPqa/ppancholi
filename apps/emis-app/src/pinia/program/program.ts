@@ -1,15 +1,14 @@
 import { httpClient } from '@/services/httpClient';
 import { SignalR } from '@/ui/plugins/signal-r';
-import { getBaseStoreComponents, getEntityStoreComponents } from '@/pinia/base';
+import { getBaseStoreComponents, getEntityStoreComponents } from '@libs/stores-lib/base';
 import { defineStore } from 'pinia';
-import { IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
+import { IProgramEntity, IProgramMetadata, IdParams } from '@libs/entities-lib/program';
 import { ProgramsService } from '@libs/services-lib/programs/entity';
 import { ProgramsMetadataService } from '@libs/services-lib/programs/metadata';
 import { getExtensionComponents } from './program-extension';
 
 export type Entity = IProgramEntity;
 export type Metadata = IProgramMetadata;
-export type IdParams = { id: string; eventId: string };
 
 const storeId = 'program';
 const entityService = new ProgramsService(httpClient);

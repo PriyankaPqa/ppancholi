@@ -9,7 +9,7 @@ import { OptionItemsService } from '@libs/services-lib/optionItems';
 import { mockRoles, OptionItem } from '@libs/entities-lib/optionItem';
 import { httpClient } from '@/services/httpClient';
 import { mockOptionItems } from '@libs/entities-lib/optionItem/optionItem.mock';
-import { mockSignalR } from '@/ui/plugins/signal-r';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { UserRolesNames } from '@libs/entities-lib/user';
 import { IUserAccountEntityState } from './userAccountEntity.types';
 import { UserAccountEntityModule } from './userAccountEntity';

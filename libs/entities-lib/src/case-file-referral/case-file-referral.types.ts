@@ -30,3 +30,5 @@ export interface ICaseFileReferralMetadata extends IEntity {
 }
 
 export type ICaseFileReferralCombined = IEntityCombined<ICaseFileReferralEntity, ICaseFileReferralMetadata>;
+
+export type IdParams = { id: uuid, caseFileId: uuid };

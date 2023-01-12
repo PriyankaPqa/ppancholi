@@ -64,6 +64,7 @@ import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
 import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import { useUserStore } from '@/pinia/user/user';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -93,12 +94,13 @@ export default Vue.extend({
     },
 
     logoUrl(): string {
-      return `${this.$services.tenantSettings.getLogoUrl(this.$i18n.locale, this.$storage.tenantSettings.getters.currentTenantSettings().id)
-      }?d=${this.$storage.tenantSettings.getters.currentTenantSettings().timestamp}`;
+      const tenantSettings = useTenantSettingsStore().currentTenantSettings.id;
+      return `${this.$services.tenantSettings.getLogoUrl(this.$i18n.locale, tenantSettings)
+      }?d=${useTenantSettingsStore().currentTenantSettings.timestamp}`;
     },
 
     branding(): IBrandingEntity {
-      return this.$storage.tenantSettings.getters.currentTenantSettings().branding;
+      return useTenantSettingsStore().currentTenantSettings.branding;
     },
 
     hasRole():boolean {

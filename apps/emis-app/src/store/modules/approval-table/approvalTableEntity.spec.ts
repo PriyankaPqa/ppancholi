@@ -5,7 +5,7 @@ import { ApprovalTableEntityModule } from '@/store/modules/approval-table/approv
 
 import { IApprovalTableEntityState } from '@/store/modules/approval-table/approvalTableEntity.types';
 import { IApprovalTableEntityData, mockApprovalTableEntity } from '@libs/entities-lib/approvals/approvals-table';
-import { mockSignalR } from '@/ui/plugins/signal-r';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { mockApprovalGroup } from '@libs/entities-lib/approvals/approvals-group';
 
 const signalR = mockSignalR();

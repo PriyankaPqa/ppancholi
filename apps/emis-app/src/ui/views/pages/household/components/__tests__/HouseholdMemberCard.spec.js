@@ -444,12 +444,12 @@ describe('HouseholdMemberCard.vue', () => {
 
     describe('enableAutocomplete', () => {
       it('return correct value', () => {
-        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
         doMount();
+        wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(wrapper.vm.enableAutocomplete).toBe(true);
 
-        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
         doMount();
+        wrapper.vm.$hasFeature = jest.fn(() => false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });

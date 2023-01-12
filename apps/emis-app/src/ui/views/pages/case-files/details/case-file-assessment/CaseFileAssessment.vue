@@ -167,6 +167,7 @@ import {
 } from '@libs/entities-lib/assessment-template';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import caseFileDetail from '../caseFileDetail';
 import AddCaseFileAssessment from './components/AddCaseFileAssessment.vue';
 
@@ -477,7 +478,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     async copyLink(item: MappedAssessment) {
       const assessment = this.items.find((i) => i.entity.id === item.id);
-      const settings = this.$storage.tenantSettings.getters.currentTenantSettings();
+      const settings = useTenantSettingsStore().currentTenantSettings;
       const member = await this.$services.households.getPerson(this.$storage.household.getters.get(this.caseFile.entity.householdId).entity.primaryBeneficiary);
       const languages = await this.$storage.registration.actions.fetchPreferredLanguages();
       let languageCode = languages.find((l) => l.id === member.contactInformation.preferredLanguage.optionItemId)?.languageCode;

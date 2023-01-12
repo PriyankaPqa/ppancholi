@@ -6,7 +6,8 @@ import {
 import { ICaseNoteEntityState } from '@/store/modules/case-note/caseNoteEntity.types';
 import { IOptionItemsService } from '@libs/services-lib/optionItems';
 import { ICaseNoteEntity } from '@libs/entities-lib/case-note';
-import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
+import { SignalR } from '@/ui/plugins/signal-r';
+import { ISignalRMock } from '@libs/shared-lib/signal-r';
 import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';

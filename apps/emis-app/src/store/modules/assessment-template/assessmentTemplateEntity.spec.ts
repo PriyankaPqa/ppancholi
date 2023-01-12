@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import { IAssessmentTemplateEntity } from '@libs/entities-lib/assessment-template';
 import { AssessmentTemplatesService } from '@libs/services-lib/assessment-template/entity';
-import { mockSignalR } from '@/ui/plugins/signal-r';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { httpClient } from '@/services/httpClient';
 import { AssessmentTemplateEntityModule } from './assessmentTemplateEntity';
 import { IAssessmentTemplateEntityState } from './assessmentTemplateEntity.types';

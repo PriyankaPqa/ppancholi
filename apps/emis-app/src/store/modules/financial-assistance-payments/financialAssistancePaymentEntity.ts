@@ -5,7 +5,8 @@ import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial
 import {
   EPaymentCancellationReason, IApprovalActionPayload, IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
-import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
+import { SignalR } from '@/ui/plugins/signal-r';
+import { ISignalRMock } from '@libs/shared-lib/signal-r';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';

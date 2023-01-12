@@ -11,12 +11,9 @@ import { HouseholdsService } from '@libs/services-lib/households/entity';
 import { ERegistrationMode } from '@libs/shared-lib/types';
 import { HouseholdMetadataModule } from '@libs/registration-lib/store/modules/household/householdMetadata';
 import { HouseholdMetadataService } from '@libs/services-lib/households/metadata';
-import { TenantSettingsEntityModule } from '@libs/registration-lib/store/modules/tenantSettings/tenantSettingsEntity';
-import { TenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import * as vuexModule from '@/constants/vuex-modules';
 import { tabs } from '@/store/modules/registration/tabs';
 import { mockProvider } from '@/services/provider';
-import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import { httpClient } from '@/services/httpClient';
 
 const i18n = {
@@ -32,8 +29,6 @@ const mockConfig = {
     }),
     [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
     [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(new HouseholdMetadataService(httpClient)).getModule(),
-    [vuexModule.TENANT_SETTINGS_ENTITIES]:
-    new TenantSettingsEntityModule(new TenantSettingsService(httpClient), vuetify).getModule(),
   },
 };
 

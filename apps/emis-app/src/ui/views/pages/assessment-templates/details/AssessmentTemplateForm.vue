@@ -161,10 +161,10 @@ import {
 } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import { IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
+import { IProgramEntity, IProgramMetadata, IdParams } from '@libs/entities-lib/program';
 import _sortBy from 'lodash/sortBy';
 import utils from '@libs/entities-lib/utils';
-import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 
 export default Vue.extend({
@@ -210,7 +210,7 @@ export default Vue.extend({
       isSelectedAsProgramEligibilityCriteria: false,
       originalAssessmentFormProgramId: null as string,
       originalAssessmentFormStatus: Status.Active,
-      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata>(useProgramStore(), useProgramMetadataStore()),
+      combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata, IdParams>(useProgramStore(), useProgramMetadataStore()),
     };
   },
 

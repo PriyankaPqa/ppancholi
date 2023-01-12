@@ -62,8 +62,6 @@ describe('PaymentLineGroup.vue', () => {
         await mountWrapper(true);
         await wrapper.setData({ showCancelConfirmationReason: true });
         expect(wrapper.findDataTest('paymentGroup__cancellationReason').props('items')).toEqual(wrapper.vm.cancellationReasons);
-        expect(wrapper.findDataTest('paymentGroup__cancellationReason').props('items'))
-          .toEqual(helpers.enumToTranslatedCollection(EPaymentCancellationReason, 'enums.paymentCancellationReason'));
       });
     });
 

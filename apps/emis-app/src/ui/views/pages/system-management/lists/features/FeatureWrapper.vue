@@ -40,6 +40,7 @@
 import Vue from 'vue';
 import { IFeatureEntity } from '@libs/entities-lib/tenantSettings';
 import { RcTooltip } from '@libs/component-lib/components';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'FeatureWrapper',
@@ -107,8 +108,8 @@ export default Vue.extend({
       this.loading = true;
       this.$nextTick(async () => { // Use nextTick to be able to roll back switch button if api call fails
         const result = toEnable
-          ? await this.$storage.tenantSettings.actions.enableFeature(this.feature.id)
-          : await this.$storage.tenantSettings.actions.disableFeature(this.feature.id);
+          ? await useTenantSettingsStore().enableFeature(this.feature.id)
+          : await useTenantSettingsStore().disableFeature(this.feature.id);
 
         if (!result) {
           this.enabled = !toEnable; // roll back

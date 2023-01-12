@@ -44,6 +44,7 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
+    "src/plugins/vuetify/vuetify.js",
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",

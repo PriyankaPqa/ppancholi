@@ -81,6 +81,7 @@ import entityUtils from '@libs/entities-lib/utils';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'SupportEmails',
@@ -108,7 +109,7 @@ export default Vue.extend({
 
   computed: {
     emails(): IMultilingual {
-      return this.$storage.tenantSettings.getters.currentTenantSettings()?.supportEmails;
+      return useTenantSettingsStore().currentTenantSettings?.supportEmails;
     },
 
     rules(): Record<string, unknown> {
@@ -145,7 +146,7 @@ export default Vue.extend({
       this.loading = true;
       this.tempEmails = entityUtils.getFilledMultilingualField(this.tempEmails);
 
-      const result = await this.$storage.tenantSettings.actions.updateSupportEmails(this.tempEmails);
+      const result = await useTenantSettingsStore().updateSupportEmails(this.tempEmails);
 
       if (result) {
         this.exitEditMode();

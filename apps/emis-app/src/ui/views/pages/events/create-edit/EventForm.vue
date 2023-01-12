@@ -256,6 +256,7 @@ import { IOptionItem } from '@libs/entities-lib/optionItem';
 import moment from 'moment';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { useEventStore } from '@/pinia/event/event';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'EventForm',
@@ -537,7 +538,7 @@ export default Vue.extend({
     },
 
     prefixRegistrationLink(): string {
-      const prefix = this.$storage.tenantSettings.getters.currentTenantSettings();
+      const prefix = useTenantSettingsStore().currentTenantSettings;
       if (!prefix?.registrationDomain) {
         return null;
       }

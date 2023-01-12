@@ -7,9 +7,9 @@ import { OptionItemsService } from '@libs/services-lib/optionItems';
 
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import { mockCaseNoteCategories, mockCaseNoteEntity } from '@libs/entities-lib/case-note';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { CaseNoteEntityModule } from './caseNoteEntity';
 import { ICaseNoteEntityState } from './caseNoteEntity.types';
-import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const signalR = mockSignalR();
 const service = new CaseNotesService(httpClient);

@@ -13,8 +13,8 @@ import { ISignalRService, ISignalRServiceMock } from '@libs/services-lib/signal-
 import { sub } from 'date-fns';
 import { IEntity } from '@libs/entities-lib/base';
 import helpers from '@libs/entities-lib/helpers';
+import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
 import { IStorage } from '../../../storage/storage.types';
-import { ISignalR } from './signalR.types';
 
 export interface IOptions {
   service: ISignalRService | ISignalRServiceMock,

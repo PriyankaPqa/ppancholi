@@ -1,4 +1,4 @@
-import { BaseStoreComponents } from '@/pinia/base';
+import { BaseStoreComponents } from '@libs/stores-lib/base';
 import { CaseFileReferralsService, ICaseFileReferralsServiceMock } from '@libs/services-lib/case-file-referrals/entity';
 import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/optionItems';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
@@ -6,10 +6,10 @@ import { ref, Ref } from 'vue';
 import { filterAndSortActiveItems } from '@/store/modules/base';
 import _cloneDeep from 'lodash/cloneDeep';
 import { Status } from '@libs/entities-lib/base';
-import { ICaseFileReferralEntity } from '@libs/entities-lib/case-file-referral';
+import { ICaseFileReferralEntity, IdParams } from '@libs/entities-lib/case-file-referral';
 
 export function getExtensionComponents(
-  baseComponents: BaseStoreComponents<ICaseFileReferralEntity, { id: uuid, caseFileId: uuid }>,
+  baseComponents: BaseStoreComponents<ICaseFileReferralEntity, IdParams>,
   service: CaseFileReferralsService | ICaseFileReferralsServiceMock,
   optionItemService: OptionItemsService | IOptionItemsServiceMock,
 ) {

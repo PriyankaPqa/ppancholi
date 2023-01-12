@@ -3,17 +3,21 @@ import entityUtils from '@libs/entities-lib/utils';
 import { mockStorage } from '@/storage';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { mockTenantSettingsEntity } from '@libs/entities-lib/tenantSettings';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from '../Domains.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
+const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
+
 beforeEach(() => {
   jest.clearAllMocks();
 
   wrapper = shallowMount(Component, {
     localVue,
+    pinia,
     propsData: {
       disableEditBtn: false,
     },
@@ -65,10 +69,9 @@ describe('Domains.vue', () => {
   describe('Computed', () => {
     describe('hasNoSlug', () => {
       it('returns correct value', () => {
-        jest.spyOn(storage.tenantSettings.getters, 'currentTenantSettings').mockImplementation(() => ({ slug: 'slug' }));
-
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             disableEditBtn: false,
           },
@@ -79,17 +82,7 @@ describe('Domains.vue', () => {
 
         expect(wrapper.vm.hasNoSlug).toBeFalsy();
 
-        jest.spyOn(storage.tenantSettings.getters, 'currentTenantSettings').mockImplementation(() => ({ }));
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            disableEditBtn: false,
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
+        tenantSettingsStore.currentTenantSettings = {};
 
         expect(wrapper.vm.hasNoSlug).toBeTruthy();
       });
@@ -97,13 +90,13 @@ describe('Domains.vue', () => {
 
     describe('emisDomain', () => {
       it('returns correct value', () => {
-        expect(wrapper.vm.emisDomain).toEqual(storage.tenantSettings.getters.currentTenantSettings()?.emisDomain);
+        expect(wrapper.vm.emisDomain).toEqual(tenantSettingsStore.currentTenantSettings.emisDomain);
       });
     });
 
     describe('registrationDomain', () => {
       it('returns correct value', () => {
-        expect(wrapper.vm.registrationDomain).toEqual(storage.tenantSettings.getters.currentTenantSettings()?.registrationDomain);
+        expect(wrapper.vm.registrationDomain).toEqual(tenantSettingsStore.currentTenantSettings.registrationDomain);
       });
     });
 
@@ -123,6 +116,7 @@ describe('Domains.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             disableEditBtn: false,
           },
@@ -151,6 +145,7 @@ describe('Domains.vue', () => {
       it('returns false if isEditing is false', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             disableEditBtn: false,
           },
@@ -179,6 +174,7 @@ describe('Domains.vue', () => {
       it('returns true if tempEmisDomain is different than storage', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             disableEditBtn: false,
           },
@@ -312,7 +308,7 @@ describe('Domains.vue', () => {
 
         await wrapper.vm.submit();
 
-        expect(storage.tenantSettings.actions.createTenantDomains).toHaveBeenCalledWith({
+        expect(tenantSettingsStore.createTenantDomains).toHaveBeenCalledWith({
           emis: emisDomain,
           registration: registrationDomain,
         });
@@ -323,6 +319,7 @@ describe('Domains.vue', () => {
       it('pop confirmation dialog', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             disableEditBtn: false,
           },

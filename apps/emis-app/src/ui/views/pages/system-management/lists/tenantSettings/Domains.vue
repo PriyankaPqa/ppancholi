@@ -132,6 +132,7 @@ import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { IMultilingual } from '@libs/shared-lib/types';
 import entityUtils from '@libs/entities-lib/utils';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'Domains',
@@ -163,16 +164,16 @@ export default Vue.extend({
 
   computed: {
     hasNoSlug(): boolean {
-      const currentSettings = this.$storage.tenantSettings.getters.currentTenantSettings();
+      const currentSettings = useTenantSettingsStore().currentTenantSettings;
       return !currentSettings?.slug;
     },
 
     emisDomain(): IMultilingual {
-      return this.$storage.tenantSettings.getters.currentTenantSettings()?.emisDomain;
+      return useTenantSettingsStore().currentTenantSettings.emisDomain;
     },
 
     registrationDomain(): IMultilingual {
-      return this.$storage.tenantSettings.getters.currentTenantSettings()?.registrationDomain;
+      return useTenantSettingsStore().currentTenantSettings.registrationDomain;
     },
 
     rules(): Record<string, unknown> {
@@ -217,7 +218,7 @@ export default Vue.extend({
 
       this.loading = true;
 
-      const result = await this.$storage.tenantSettings.actions.createTenantDomains({
+      const result = await useTenantSettingsStore().createTenantDomains({
         emis: this.tempEmisDomain,
         registration: this.tempRegistrationDomain,
       });

@@ -38,22 +38,22 @@ describe('ReviewRegistrationLib.vue', () => {
   describe('Computed', () => {
     describe('enableAutocomplete', () => {
       it('return correct value', () => {
-        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
           mocks: {
             $storage: storage,
+            $hasFeature: () => true,
           },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(true);
 
-        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
           mocks: {
             $storage: storage,
+            $hasFeature: () => false,
           },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(false);

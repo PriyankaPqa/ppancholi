@@ -7,11 +7,12 @@ import routeConstants from '@/constants/routes';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import store from '@/store/store';
 import { i18n } from '@/ui/plugins/i18n';
-import { TENANT_SETTINGS_ENTITIES, USER_ACCOUNT_ENTITIES } from '@/constants/vuex-modules';
-import { ITenantSettingsEntity } from '@libs/entities-lib/tenantSettings';
+import { USER_ACCOUNT_ENTITIES } from '@/constants/vuex-modules';
+import { IFeatureEntity } from '@libs/entities-lib/tenantSettings';
 import { httpClient } from '@/services/httpClient';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { useUserStore } from '@/pinia/user/user';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 Vue.use(VueRouter);
 
@@ -60,15 +61,15 @@ const authenticationGuard = async (to: Route) => {
 
 const featureGuard = async (to: Route) => {
   let featureEnabled = true;
-  const { features } = store.getters[`${TENANT_SETTINGS_ENTITIES}/currentTenantSettings`] as ITenantSettingsEntity;
+
+  const features = useTenantSettingsStore().currentTenantSettings.features;
   if (!features?.length) {
-    await store.dispatch(`${TENANT_SETTINGS_ENTITIES}/fetchCurrentTenantSettings`);
+    await useTenantSettingsStore().fetchCurrentTenantSettings();
   }
 
   if (to.meta.feature) {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    const { features } = store.getters[`${TENANT_SETTINGS_ENTITIES}/currentTenantSettings`] as ITenantSettingsEntity;
-    const feature = features.find((f) => f.key === to.meta.feature);
+    const features = useTenantSettingsStore().currentTenantSettings.features;
+    const feature = features.find((f: IFeatureEntity) => f.key === to.meta.feature);
     featureEnabled = feature?.enabled;
   }
 

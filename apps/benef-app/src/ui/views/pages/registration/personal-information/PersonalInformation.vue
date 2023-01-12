@@ -11,6 +11,7 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { MIN_AGE_REGISTRATION } from '@/constants/validations';
 import { i18n } from '@/ui/plugins';
 import { localStorageKeys } from '@/constants/localStorage';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'PersonalInformation',
@@ -29,7 +30,7 @@ export default Vue.extend({
 
   computed: {
     isCaptchaAllowedIpAddress(): boolean {
-      return this.$storage.tenantSettings.getters.validateCaptchaAllowedIpAddress().ipAddressIsAllowed;
+      return useTenantSettingsStore().recaptcha.ipAddressIsAllowed;
     },
   },
 });

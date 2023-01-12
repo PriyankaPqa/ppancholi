@@ -2,17 +2,20 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { FeatureType } from '@libs/entities-lib/tenantSettings';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from '../Features.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
+const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
 beforeEach(() => {
   jest.clearAllMocks();
 
   wrapper = shallowMount(Component, {
     localVue,
+    pinia,
     mocks: {
       $storage: storage,
     },
@@ -34,7 +37,7 @@ describe('Features.vue', () => {
     describe('temporaryFeatures', () => {
       it('returns correct value', () => {
         expect(wrapper.vm.temporaryFeatures).toEqual(
-          storage.tenantSettings.getters.currentTenantSettings().features.filter((f) => f.type === FeatureType.Temporary),
+          tenantSettingsStore.currentTenantSettings.features.filter((f) => f.type === FeatureType.Temporary),
         );
       });
     });
@@ -42,7 +45,7 @@ describe('Features.vue', () => {
     describe('permanentFeatures', () => {
       it('returns correct value', () => {
         expect(wrapper.vm.permanentFeatures).toEqual(
-          storage.tenantSettings.getters.currentTenantSettings().features.filter((f) => f.type === FeatureType.Permanent),
+          tenantSettingsStore.currentTenantSettings.features.filter((f) => f.type === FeatureType.Permanent),
         );
       });
     });

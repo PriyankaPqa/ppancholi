@@ -17,7 +17,8 @@ import {
 import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
-import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
+import { SignalR } from '@/ui/plugins/signal-r';
+import { ISignalRMock } from '@libs/shared-lib/signal-r';
 import { Status } from '@libs/entities-lib/base';
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
 import { BaseModule, filterAndSortActiveItems } from '../base';

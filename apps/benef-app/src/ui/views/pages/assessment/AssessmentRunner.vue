@@ -24,6 +24,7 @@ import { SurveyJsHelper, ISurveyModel } from '@libs/shared-lib/plugins/surveyJs/
 import { httpClient } from '@/services/httpClient';
 import helpers from '@/ui/helpers';
 import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 const DEBOUNCE_RATE = 500;
 const debouncedSave = _debounce((context) => {
@@ -118,7 +119,7 @@ export default Vue.extend({
           this.survey.onValueChanged.add((sender: ISurveyModel) => debouncedSave({ _this, sender }));
         }
         this.survey.onComplete.add(this.completeSurvey);
-        this.surveyJsHelper.setColorScheme('#surveyContainer', this.$storage.tenantSettings.getters.currentTenantSettings().branding.colours);
+        this.surveyJsHelper.setColorScheme('#surveyContainer', useTenantSettingsStore().currentTenantSettings.branding.colours);
 
         if (!this.assessmentTemplate.savePartialSurveyResults) {
           // confirm leaving when navigating to another wbesite or closing the tab
@@ -133,7 +134,7 @@ export default Vue.extend({
       const tenantId = await this.$services.publicApi.getTenantByRegistrationDomain(currentdomain);
       httpClient.setHeadersTenant(tenantId);
 
-      await this.$storage.tenantSettings.actions.fetchBranding();
+      await useTenantSettingsStore().fetchBranding();
     },
 
     async loadDetails() {

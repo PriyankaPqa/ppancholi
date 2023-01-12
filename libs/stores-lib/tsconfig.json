@@ -1,0 +1,60 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": false,
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "declaration": true,
+    "declarationDir": "dist",
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "allowJs": true,
+    "types": [
+      "jest",
+      "vuetify",
+      "vite/client",
+      "node"
+    ],
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@libs/entities-lib/*": [
+        "../../libs/entities-lib/src/*"
+      ],
+      "@libs/services-lib/*": [
+        "../../libs/services-lib/src/*"
+      ],
+      "@libs/shared-lib/*": [
+        "../../libs/shared-lib/src/*"
+      ],
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ],
+  },
+  "references": [
+    { "path": "../shared-lib/tsconfig.json"},
+    { "path": "../services-lib/tsconfig.json"},
+    { "path": "../entities-lib/tsconfig.json"}
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "typings/**.ts",
+  ]
+
+}

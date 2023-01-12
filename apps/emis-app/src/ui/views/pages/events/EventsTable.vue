@@ -84,7 +84,7 @@ import {
   IEventEntity,
   IEventMetadata,
   IEventCombined,
-  IEventSchedule,
+  IEventSchedule, IdParams,
 } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
@@ -94,7 +94,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'EventsTable',
@@ -125,7 +125,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: ['Entity/Schedule/OpenDate'],
         sortDesc: [true],
       },
-      combinedEventStore: new CombinedStoreFactory<IEventEntity, IEventMetadata>(useEventStore(), useEventMetadataStore()),
+      combinedEventStore: new CombinedStoreFactory<IEventEntity, IEventMetadata, IdParams>(useEventStore(), useEventMetadataStore()),
     };
   },
 

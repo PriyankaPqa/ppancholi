@@ -65,10 +65,12 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { ICaseFileReferralCombined, ICaseFileReferralEntity, ICaseFileReferralMetadata } from '@libs/entities-lib/case-file-referral';
+import {
+ ICaseFileReferralCombined, ICaseFileReferralEntity, ICaseFileReferralMetadata, IdParams,
+} from '@libs/entities-lib/case-file-referral';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { useCaseFileReferralMetadataStore, useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
-import { CombinedStoreFactory } from '@/pinia/base/combinedStoreFactory';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import caseFileDetail from '../caseFileDetail';
 
 export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
@@ -86,7 +88,10 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         sortBy: ['Entity/Name'],
         sortDesc: [false],
       },
-      combinedCaseFileReferralStore: new CombinedStoreFactory<ICaseFileReferralEntity, ICaseFileReferralMetadata>(useCaseFileReferralStore(), useCaseFileReferralMetadataStore()),
+      combinedCaseFileReferralStore: new CombinedStoreFactory<ICaseFileReferralEntity, ICaseFileReferralMetadata, IdParams>(
+        useCaseFileReferralStore(),
+        useCaseFileReferralMetadataStore(),
+      ),
     };
   },
 

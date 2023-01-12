@@ -76,6 +76,7 @@ export default defineConfig(({ mode }) => {
         '@libs/component-lib': path.resolve(__dirname, '../../libs/component-lib/src'),
         '@libs/shared-lib': path.resolve(__dirname, '../../libs/shared-lib/src'),
         '@libs/entities-lib': path.resolve(__dirname, '../../libs/entities-lib/src'),
+        '@libs/stores-lib': path.resolve(__dirname, '../../libs/stores-lib/src'),
         '@libs/services-lib': path.resolve(__dirname, '../../libs/services-lib/src'),
         '@libs/assets': path.resolve(__dirname, '../../libs/assets'),
       },

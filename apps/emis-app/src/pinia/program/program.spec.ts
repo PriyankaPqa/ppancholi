@@ -1,13 +1,13 @@
-import { getBaseStoreComponents } from '@/pinia/base';
-import { mockSignalR } from '@/ui/plugins/signal-r';
+import { getBaseStoreComponents } from '@libs/stores-lib/base';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { getExtensionComponents } from '@/pinia/program/program-extension';
 import { defineStore } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import {
  IProgramEntity, mockProgramEntity,
+IdParams,
 } from '@libs/entities-lib/program';
 import { mockProgramsService } from '@libs/services-lib/programs/entity';
-import { IdParams } from './program';
 
 const entityService = mockProgramsService();
 const baseComponents = getBaseStoreComponents<IProgramEntity, IdParams>(entityService, mockSignalR());

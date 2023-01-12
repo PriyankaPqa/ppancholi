@@ -2,17 +2,20 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import entityUtils from '@libs/entities-lib/utils';
 import { mockStorage } from '@/storage';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from '../TenantDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
+const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
 beforeEach(() => {
   jest.clearAllMocks();
 
   wrapper = shallowMount(Component, {
     localVue,
+    pinia,
     propsData: {
       disableEditBtn: false,
     },
@@ -64,7 +67,7 @@ describe('TenantDetails.vue', () => {
   describe('Computed', () => {
     describe('tenantDetails', () => {
       it('returns correct value', () => {
-        expect(wrapper.vm.tenantDetails).toEqual(storage.tenantSettings.getters.currentTenantSettings().branding);
+        expect(wrapper.vm.tenantDetails).toEqual(tenantSettingsStore.currentTenantSettings.branding);
       });
     });
   });
@@ -144,7 +147,7 @@ describe('TenantDetails.vue', () => {
 
         await wrapper.vm.submit();
 
-        expect(storage.tenantSettings.actions.updateTenantDetails).toHaveBeenCalledWith({
+        expect(tenantSettingsStore.updateTenantDetails).toHaveBeenCalledWith({
           ...mockBrandingEntity(),
           hideName: !mockBrandingEntity().showName,
         });

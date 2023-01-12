@@ -43,6 +43,10 @@ function getAffectedTestFiles(affectedPackages, globPattern) {
     allFiles = allFiles.concat(jetpack.find('libs/shared-lib', { matching: globPattern }));
   }
 
+  if (affectedPackages.includes('@libs/stores-lib')) {
+    allFiles = allFiles.concat(jetpack.find('libs/stores-lib', { matching: globPattern }));
+  }
+
   if (affectedPackages.includes('@libs/entities-lib')) {
     allFiles = allFiles.concat(jetpack.find('libs/entities-lib', { matching: globPattern }));
   }

@@ -1,6 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockFeatures } from '@libs/entities-lib/tenantSettings';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from '../FeatureWrapper.vue';
 
 const localVue = createLocalVue();
@@ -9,11 +10,14 @@ let wrapper;
 
 const mockFeature = mockFeatures()[0];
 
+const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
+
 beforeEach(() => {
   jest.clearAllMocks();
 
   wrapper = shallowMount(Component, {
     localVue,
+    pinia,
     propsData: {
       feature: mockFeature,
     },
@@ -46,6 +50,7 @@ describe('FeatureWrapper.vue', () => {
       it('returns true if feature is disabled and cannot be enabled', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             feature: {
               enabled: false,
@@ -60,6 +65,7 @@ describe('FeatureWrapper.vue', () => {
       it('returns true if feature is enabled and cannot be disabled', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             feature: {
               enabled: true,
@@ -82,6 +88,7 @@ describe('FeatureWrapper.vue', () => {
       it('calls confirmBeforeChange if can no longer be enabled', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             feature: {
               enabled: true,
@@ -103,6 +110,7 @@ describe('FeatureWrapper.vue', () => {
       it('calls confirmBeforeChange if can no longer be disabled', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             feature: {
               enabled: false,
@@ -161,19 +169,19 @@ describe('FeatureWrapper.vue', () => {
       it('calls storage to enable feature', async () => {
         await wrapper.vm.change(true);
 
-        expect(storage.tenantSettings.actions.enableFeature).toHaveBeenCalledTimes(1);
-        expect(storage.tenantSettings.actions.enableFeature).toHaveBeenCalledWith(mockFeature.id);
+        expect(tenantSettingsStore.enableFeature).toHaveBeenCalledTimes(1);
+        expect(tenantSettingsStore.enableFeature).toHaveBeenCalledWith(mockFeature.id);
       });
 
       it('calls storage to disable feature', async () => {
         await wrapper.vm.change(false);
 
-        expect(storage.tenantSettings.actions.disableFeature).toHaveBeenCalledTimes(1);
-        expect(storage.tenantSettings.actions.disableFeature).toHaveBeenCalledWith(mockFeature.id);
+        expect(tenantSettingsStore.disableFeature).toHaveBeenCalledTimes(1);
+        expect(tenantSettingsStore.disableFeature).toHaveBeenCalledWith(mockFeature.id);
       });
 
       it('roll back data if request failed', async () => {
-        storage.tenantSettings.actions.enableFeature.mockReturnValueOnce(null);
+        tenantSettingsStore.enableFeature.mockReturnValueOnce(null);
 
         await wrapper.vm.change(true);
 

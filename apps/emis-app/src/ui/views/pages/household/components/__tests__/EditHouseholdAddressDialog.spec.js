@@ -16,7 +16,7 @@ const localVue = createLocalVue();
 describe('EditHouseholdAddressDialog.vue', () => {
   let wrapper;
 
-  const doMount = (mountMode = false) => {
+  const doMount = (mountMode = false, hasFeature = true) => {
     const options = {
       localVue,
       propsData: {
@@ -24,6 +24,7 @@ describe('EditHouseholdAddressDialog.vue', () => {
       },
       mocks: {
         $storage: storage,
+        $hasFeature: () => hasFeature,
       },
       data() {
         return {
@@ -112,12 +113,9 @@ describe('EditHouseholdAddressDialog.vue', () => {
 
     describe('enableAutocomplete', () => {
       it('return correct value', () => {
-        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
-        doMount(false);
+        doMount(false, true);
         expect(wrapper.vm.enableAutocomplete).toBe(true);
-
-        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
-        doMount(false);
+        doMount(false, false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });

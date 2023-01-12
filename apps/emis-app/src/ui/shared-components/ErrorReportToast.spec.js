@@ -4,6 +4,8 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { User, mockUserData } from '@libs/entities-lib/user';
 
 import { useMockUserStore } from '@/pinia/user/user.mock';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { createTestingPinia } from '@pinia/testing';
 import helpers from '../helpers/helpers';
 import Component from './ErrorReportToast.vue';
 
@@ -68,8 +70,9 @@ describe('ErrorReportToast', () => {
     code: 'ERR_NETWORK',
     status: null,
   };
-
-  const { pinia, userStore } = useMockUserStore();
+  const pinia = createTestingPinia({ stubActions: false });
+  const { userStore } = useMockUserStore(pinia);
+  const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
 
   beforeEach(() => {
     jest.spyOn(document, 'getElementsByClassName').mockImplementation(() => [({ style: { display: '' } })]);
@@ -142,7 +145,7 @@ describe('ErrorReportToast', () => {
 
     describe('hasSupportAddress', () => {
       it('returns the right value', async () => {
-        wrapper.vm.$store.state.tenantSettingsEntities.currentTenantSettings.supportEmails = { translation: { en: 'mock-email-en' } };
+        tenantSettingsStore.currentTenantSettings.supportEmails = { translation: { en: 'mock-email-en' } };
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.hasSupportAddress).toBeTruthy();
       });
@@ -187,7 +190,7 @@ describe('ErrorReportToast', () => {
 
     describe('tenantId', () => {
       it('returns the right value', async () => {
-        wrapper.vm.$store.state.tenantSettingsEntities.currentTenantSettings.tenantId = '12345';
+        tenantSettingsStore.currentTenantSettings.tenantId = '12345';
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.tenantId).toEqual('12345');
       });
@@ -244,6 +247,7 @@ describe('ErrorReportToast', () => {
           addEventListener: jest.fn(),
         }));
         wrapper.vm.initReport = jest.fn();
+        tenantSettingsStore.currentTenantSettings.supportEmails = {};
         await wrapper.vm.addToastReportButton();
         expect(wrapper.vm.toast.el.appendChild).toBeCalledWith(expect.objectContaining({
           className: 'v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small report-error-btn',

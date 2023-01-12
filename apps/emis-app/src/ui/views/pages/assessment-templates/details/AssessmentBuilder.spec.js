@@ -2,11 +2,13 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { SurveyJsTextExtractor } from '@libs/shared-lib/plugins/surveyJs/SurveyJsTextExtractor';
 import flushPromises from 'flush-promises';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from './AssessmentBuilder.vue';
 
 let storage = mockStorage();
 const localVue = createLocalVue();
 
+const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
 describe('AssessmentBuilder', () => {
   let wrapper;
 
@@ -14,6 +16,7 @@ describe('AssessmentBuilder', () => {
     jest.clearAllMocks();
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         testMode: true,
         id: eventId,
@@ -33,7 +36,6 @@ describe('AssessmentBuilder', () => {
 
   beforeEach(async () => {
     storage = mockStorage();
-    storage.tenantSettings.getters.logoUrl = jest.fn((lang) => `some url ${lang}`);
     await mountWrapper();
   });
 
@@ -70,7 +72,7 @@ describe('AssessmentBuilder', () => {
         await hook.call(wrapper.vm);
         expect(wrapper.vm.surveyJsHelper.setColorScheme).toHaveBeenCalledWith(
           '#surveyCreator',
-          storage.tenantSettings.getters.currentTenantSettings().branding.colours,
+          tenantSettingsStore.currentTenantSettings.branding.colours,
         );
       });
     });

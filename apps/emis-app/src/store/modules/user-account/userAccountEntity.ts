@@ -10,7 +10,8 @@ import {
 import { IAddRoleToUserRequest, IEditFilterRequest, UserAccountsService } from '@libs/services-lib/user-accounts/entity';
 import { IUserAccountEntityState } from '@/store/modules/user-account/userAccountEntity.types';
 import { OptionItemsService } from '@libs/services-lib/optionItems';
-import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
+import { SignalR } from '@/ui/plugins/signal-r';
+import { ISignalRMock } from '@libs/shared-lib/signal-r';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 

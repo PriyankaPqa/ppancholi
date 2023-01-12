@@ -1,16 +1,16 @@
 import { mockEventsService } from '@libs/services-lib/events/entity';
 import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
-import { getBaseStoreComponents } from '@/pinia/base';
-import { mockSignalR } from '@/ui/plugins/signal-r';
+import { getBaseStoreComponents } from '@libs/stores-lib/base';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { getExtensionComponents } from '@/pinia/event/event-extension';
-import { Entity, IdParams } from '@/pinia/event/event';
+import { Entity } from '@/pinia/event/event';
 import { defineStore, setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import _sortBy from 'lodash/sortBy';
 import { Status } from '@libs/entities-lib/base';
 import {
-  EEventStatus, EventEntity, IEventEntity, mockEventEntities, mockEventEntity,
+  EEventStatus, EventEntity, IEventEntity, mockEventEntities, mockEventEntity, IdParams,
 } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { EEventSummarySections } from '@/types';

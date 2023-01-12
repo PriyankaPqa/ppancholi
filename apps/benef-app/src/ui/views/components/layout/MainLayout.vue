@@ -19,6 +19,7 @@ import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import { i18n } from '@/ui/plugins';
 import { httpClient } from '@/services/httpClient';
 import helpers from '@/ui/helpers';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -71,9 +72,9 @@ export default Vue.extend({
         this.$storage.registration.actions.fetchGenders(),
         this.$storage.registration.actions.fetchPreferredLanguages(),
         this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
-        this.$storage.tenantSettings.actions.fetchPublicFeatures(),
-        this.$storage.tenantSettings.actions.fetchBranding(),
-        this.$storage.tenantSettings.actions.validateCaptchaAllowedIpAddress(),
+        useTenantSettingsStore().fetchPublicFeatures(),
+        useTenantSettingsStore().fetchBranding(),
+        useTenantSettingsStore().validateCaptchaAllowedIpAddress(),
       ]).then(() => {
         this.fetchingData = false;
       }).catch((error) => {

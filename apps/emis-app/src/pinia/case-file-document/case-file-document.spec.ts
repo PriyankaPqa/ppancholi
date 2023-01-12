@@ -1,7 +1,7 @@
 import { mockCaseFileDocumentsService } from '@libs/services-lib/case-file-documents/entity';
-import { getBaseStoreComponents } from '@/pinia/base';
+import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { ICaseFileDocumentEntity, mockCaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
-import { mockSignalR } from '@/ui/plugins/signal-r';
+import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { getExtensionComponents } from '@/pinia/case-file-document/case-file-document-extension';
 import { createTestingPinia } from '@pinia/testing';
 import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';

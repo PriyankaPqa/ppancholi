@@ -1,9 +1,12 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from './LanguageSelector.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+
+const { pinia } = useMockTenantSettingsStore();
 
 describe('Language Selector', () => {
   let wrapper;
@@ -11,6 +14,7 @@ describe('Language Selector', () => {
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       mocks: {
         $storage: storage,
       },
@@ -25,11 +29,9 @@ describe('Language Selector', () => {
       });
 
       it('should return Trans.supportedLanguages otherwise', () => {
-        wrapper.vm.$storage.tenantSettings.getters.currentTenantSettings = jest.fn(() => {});
         const expected = [
           { disabled: true, label: 'English', value: 'en' },
           { disabled: false, label: 'Français', value: 'fr' },
-          { disabled: false, label: 'Test', value: 'test' },
         ];
         expect(wrapper.vm.locales).toEqual(expected);
       });

@@ -360,8 +360,6 @@ describe('EventGenericLocationDialog.vue', () => {
 
     describe('enableAutocomplete', () => {
       it('returns true if storage returns true', () => {
-        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
-
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -372,6 +370,7 @@ describe('EventGenericLocationDialog.vue', () => {
           },
           mocks: {
             $storage: storage,
+            $hasFeature: () => true,
           },
         });
 
@@ -379,8 +378,6 @@ describe('EventGenericLocationDialog.vue', () => {
       });
 
       it('returns false if storage returns false', () => {
-        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
-
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -391,6 +388,7 @@ describe('EventGenericLocationDialog.vue', () => {
           },
           mocks: {
             $storage: storage,
+            $hasFeature: () => false,
           },
         });
 
