@@ -61,6 +61,7 @@ describe('>>> Registration Module', () => {
           splitHousehold: null,
           primarySpokenLanguagesFetched: false,
           gendersFetched: false,
+          informationFromBeneficiarySearch: {},
         });
       });
     });
@@ -715,6 +716,28 @@ describe('>>> Registration Module', () => {
         const tabs = mockTabs();
         store.commit('registration/setTabs', tabs);
         expect(store.state.registration.tabs).toEqual(tabs);
+      });
+    });
+
+    describe('setInformationFromBeneficiarySearch', () => {
+      it('should set informationFromBeneficiarySearch', () => {
+        const mockInfoObject = {
+          firstName: '',
+          lastName: '',
+          phone: {
+            number: '',
+            countryISO2: '',
+            e164Number: '',
+          },
+          emailAddress: '',
+          birthDate: {
+            month: '',
+            day: '',
+            year: '',
+          },
+        };
+        store.commit('registration/setInformationFromBeneficiarySearch', mockInfoObject);
+        expect(store.state.registration.informationFromBeneficiarySearch).toEqual(mockInfoObject);
       });
     });
   });

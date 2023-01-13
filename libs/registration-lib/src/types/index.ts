@@ -16,3 +16,4 @@ export type RcConfirmationDialogType = Vue & {
 
 export type { IRegistrationMenuItem } from './interfaces/IRegistrationMenuItem';
 export type { IHouseholdSearchCriteria } from './interfaces/IHouseholdSearchCriteria';
+export type { IInformationFromBeneficiarySearch } from './interfaces/IInformationFromBeneficiarySearch';

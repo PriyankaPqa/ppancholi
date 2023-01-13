@@ -13,6 +13,7 @@ import {
   mockIndigenousTypesItems,
   mockCampGround, mockIdentitySet, mockAddress, mockAdditionalMember, Member,
 } from '@libs/entities-lib/src/household-create';
+import { mockUserL6 } from '@libs/entities-lib/src/user';
 import { i18n } from '../../ui/plugins/i18n';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
 import PersonalInformationTemplate from './personal-information/PersonalInformationTemplate.vue';
@@ -31,6 +32,7 @@ describe('ReviewRegistrationLib.vue', () => {
       propsData: {
         i18n,
         disableAutocomplete: false,
+        user: mockUserL6(),
       },
       mocks: {
         $storage: storage,
@@ -51,6 +53,7 @@ describe('ReviewRegistrationLib.vue', () => {
           propsData: {
             i18n,
             disableAutocomplete: false,
+            user: mockUserL6(),
           },
           mocks: {
             $storage: storage,
@@ -96,6 +99,7 @@ describe('ReviewRegistrationLib.vue', () => {
           propsData: {
             i18n,
             disableAutocomplete: false,
+            user: mockUserL6(),
           },
           mocks: {
             $storage: storage,
@@ -373,6 +377,7 @@ describe('ReviewRegistrationLib.vue', () => {
           propsData: {
             i18n,
             disableAutocomplete: false,
+            user: mockUserL6(),
           },
           mocks: {
             $storage: storage,
@@ -452,6 +457,7 @@ describe('ReviewRegistrationLib.vue', () => {
           propsData: {
             i18n,
             disableAutocomplete: false,
+            user: mockUserL6(),
           },
           mocks: {
             $storage: storage,
@@ -530,6 +536,7 @@ describe('ReviewRegistrationLib.vue', () => {
           propsData: {
             i18n,
             disableAutocomplete: false,
+            user: mockUserL6(),
           },
           mocks: {
             $storage: storage,
@@ -607,6 +614,7 @@ describe('ReviewRegistrationLib.vue', () => {
           propsData: {
             i18n,
             disableAutocomplete: false,
+            user: mockUserL6(),
           },
           mocks: {
             $storage: storage,
@@ -823,6 +831,7 @@ describe('ReviewRegistrationLib.vue', () => {
           propsData: {
             i18n,
             disableAutocomplete: false,
+            user: mockUserL6(),
           },
           computed: {
             householdCreate() {
@@ -843,6 +852,7 @@ describe('ReviewRegistrationLib.vue', () => {
           propsData: {
             i18n,
             disableAutocomplete: false,
+            user: mockUserL6(),
           },
           computed: {
             householdCreate() {

@@ -79,6 +79,7 @@ export interface IStorage {
     setPrimarySpokenLanguagesFetched(payload: boolean): void;
     setGendersFetched(payload: boolean): void;
     setRegistrationResponse(payload: unknown): void;
+    setInformationFromBeneficiarySearch(payload: unknown): void;
   };
 
   actions: {

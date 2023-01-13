@@ -14,6 +14,7 @@ export enum FeatureKeys {
   LetIMViewEventDetails = 'letIMViewEventDetails',
   CouplingAssessmentsWithRegistration = 'CouplingAssessmentsWithRegistration',
   ETransferCancellationHaveOptionForUnknown = 'ETransferCancellationHaveOptionForUnknown',
+  PreFillPersonalInformation = 'PreFillPersonalInformation',
 }
 
 export enum FeatureType {

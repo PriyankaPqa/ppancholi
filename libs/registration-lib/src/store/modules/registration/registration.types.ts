@@ -7,7 +7,7 @@ import {
 
 import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { IEventData } from '@libs/entities-lib/registration-event';
-import { IRegistrationMenuItem } from '../../../types';
+import { IRegistrationMenuItem, IInformationFromBeneficiarySearch } from '../../../types';
 
 export type IState = {
   event: IEventData;
@@ -31,4 +31,5 @@ export type IState = {
   splitHousehold: ISplitHousehold;
   primarySpokenLanguagesFetched: boolean;
   gendersFetched: boolean;
+  informationFromBeneficiarySearch: IInformationFromBeneficiarySearch;
 };

@@ -10,15 +10,16 @@ import {
   mockIndigenousCommunitiesItems,
   mockIdentitySet,
   mockPrimarySpokenLanguages,
-  mockGenders,
+  mockGenders, mockSplitHousehold,
 } from '@libs/entities-lib/src/household-create';
 import { mockStorage } from '../../store/storage/storage.mock';
 import IdentityForm from '../forms/IdentityForm.vue';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 
-import { createLocalVue, shallowMount } from '../../test/testSetup';
+import { createLocalVue, shallowMount, mount } from '../../test/testSetup';
 import Component from './PersonalInformationLib.vue';
+import { mockTabs } from '../../store/modules/registration/tabs.mock';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -26,20 +27,42 @@ const storage = mockStorage();
 describe('PersonalInformationLib.vue', () => {
   let wrapper;
 
-  beforeEach(() => {
-    wrapper = shallowMount(Component, {
+  const doMount = (shallow, {
+    otherProps, otherData, otherComputed, otherOptions,
+  }) => {
+    const options = {
       localVue,
       data() {
         return {
-          form: storage.registration.getters.personalInformation(),
+          ...otherData,
         };
       },
       propsData: {
         i18n,
+        ...otherProps,
+      },
+      computed: {
+        ...otherComputed,
       },
       mocks: {
         $storage: storage,
       },
+      ...otherOptions,
+    };
+    if (shallow === true) {
+      wrapper = shallowMount(Component, options);
+    } else {
+      wrapper = mount(Component, options);
+    }
+  };
+  beforeEach(() => {
+    doMount(true, {
+      otherProps: null,
+      otherData: {
+        form: storage.registration.getters.personalInformation(),
+      },
+      otherComputed: null,
+      otherOptions: null,
     });
   });
 
@@ -163,31 +186,34 @@ describe('PersonalInformationLib.vue', () => {
 
     describe('primarySpokenLanguagesItems', () => {
       it('returns active items only if no primarySpokenLanguage selected', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            i18n,
-          },
+        doMount(true, {
+          otherProps: null,
+          otherData: null,
+          otherComputed: null,
+          otherOptions: null,
         });
 
         expect(wrapper.vm.primarySpokenLanguagesItems).toEqual(mockPrimarySpokenLanguages().filter((g) => g.status === Status.Active));
       });
 
       it('returns active items and selected inactive primarySpokenLanguage', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            i18n,
-            includeInactiveOptions: true,
+        doMount(
+          true,
+          {
+            otherProps: {
+              includeInactiveOptions: true,
+            },
+            otherData: null,
+            otherComputed: {
+              contactInformation: () => ({
+                primarySpokenLanguage: {
+                  id: '14718e75-2ae0-4a2a-8647-326edee4bb32',
+                },
+              }),
+            },
+            otherOptions: null,
           },
-          computed: {
-            contactInformation: () => ({
-              primarySpokenLanguage: {
-                id: '14718e75-2ae0-4a2a-8647-326edee4bb32',
-              },
-            }),
-          },
-        });
+        );
 
         expect(wrapper.vm.primarySpokenLanguagesItems).toEqual(mockPrimarySpokenLanguages());
       });
@@ -195,32 +221,28 @@ describe('PersonalInformationLib.vue', () => {
 
     describe('genderItems', () => {
       it('returns active items only if no gender selected', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            i18n,
-          },
+        doMount(true, {
+          otherProps: null,
+          otherData: null,
+          otherComputed: null,
+          otherOptions: null,
         });
-
         expect(wrapper.vm.genderItems).toEqual(mockGenders().filter((g) => g.status === Status.Active));
       });
 
       it('returns active items and selected inactive gender', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            i18n,
-            includeInactiveOptions: true,
-          },
-          computed: {
+        doMount(true, {
+          otherProps: { includeInactiveOptions: true },
+          otherData: null,
+          otherComputed: {
             identitySet: () => ({
               gender: {
                 id: '14718e75-2ae0-4a2a-8647-326edee4bb32',
               },
             }),
           },
+          otherOptions: null,
         });
-
         expect(wrapper.vm.genderItems).toEqual(mockGenders());
       });
     });
@@ -240,6 +262,161 @@ describe('PersonalInformationLib.vue', () => {
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
         expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(i18n));
+      });
+    });
+
+    describe('splitHousehold', () => {
+      it('returns the proper data', async () => {
+        doMount(true, {
+          otherProps: null,
+          otherData: null,
+          otherComputed: null,
+          otherOptions: {
+            store: {
+              modules: {
+                registration: {
+                  state: {
+                    householdResultsShown: true,
+                    splitHousehold: mockSplitHousehold(),
+                  },
+                },
+              },
+            },
+          },
+        });
+        expect(wrapper.vm.splitHousehold).toEqual(mockSplitHousehold());
+      });
+    });
+
+    describe('isTouched', () => {
+      it('should return isTouched of personalInformaiton tab', () => {
+        storage.registration.getters.tabs = jest.fn(() => mockTabs());
+        doMount(true, {
+          otherProps: null,
+          otherData: null,
+          otherComputed: null,
+          otherOptions: null,
+        });
+        expect(wrapper.vm.isTouched).toEqual(false);
+      });
+    });
+  });
+
+  describe('Lifecycle', () => {
+    describe('Created', () => {
+      it('should call action function fetchIndigenousCommunities', async () => {
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.$storage.registration.actions.fetchIndigenousCommunities).toHaveBeenCalled();
+      });
+
+      it('should call function loadInitialDataFromBeneficiarySearch when props prefillPersonalInformation is true', async () => {
+        doMount(true, {
+          otherProps: { prefillPersonalInformation: true },
+          otherData: null,
+          otherComputed: { isTouched: () => false },
+          otherOptions: null,
+        });
+        wrapper.vm.loadInitialDataFromBeneficiarySearch = jest.fn();
+        await wrapper.setProps({
+          prefillPersonalInformation: true,
+          isEditMode: false,
+        });
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.loadInitialDataFromBeneficiarySearch).toHaveBeenCalled();
+      });
+
+      it('should not call function loadInitialDataFromBeneficiarySearch when props prefillPersonalInformation is false', async () => {
+        wrapper.vm.loadInitialDataFromBeneficiarySearch = jest.fn();
+        await wrapper.setProps({
+          prefillPersonalInformation: false,
+          isEditMode: false,
+        });
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.loadInitialDataFromBeneficiarySearch).not.toHaveBeenCalled();
+      });
+
+      it('should not call function loadInitialDataFromBeneficiarySearch when props isEditMode is true', async () => {
+        doMount(
+          true,
+          {
+            otherProps: {
+              prefillPersonalInformation: true,
+              isEditMode: true,
+            },
+            otherData: null,
+            otherComputed: { isSplitMode: () => true },
+            otherOptions: null,
+          },
+        );
+        wrapper.vm.loadInitialDataFromBeneficiarySearch = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.loadInitialDataFromBeneficiarySearch).not.toHaveBeenCalled();
+      });
+
+      it('should call function loadInitialDataUnderSplitMode when props isSplitMode is true and prefillPersonalInformation is true', async () => {
+        doMount(
+          true,
+          {
+            otherProps: {
+              prefillPersonalInformation: true,
+              isEditMode: false,
+            },
+            otherData: null,
+            otherComputed: {
+              isSplitMode: () => true,
+              isTouched: () => false,
+            },
+            otherOptions: null,
+          },
+        );
+        wrapper.vm.loadInitialDataUnderSplitMode = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.loadInitialDataUnderSplitMode).toHaveBeenCalled();
+      });
+
+      it('should not call function loadInitialDataUnderSplitMode when is touched', async () => {
+        doMount(
+          true,
+          {
+            otherProps: {
+              prefillPersonalInformation: true,
+            },
+            otherData: null,
+            otherComputed: {
+              isTouched: () => true,
+            },
+            otherOptions: null,
+          },
+        );
+        wrapper.vm.loadInitialDataUnderSplitMode = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.loadInitialDataUnderSplitMode).not.toHaveBeenCalled();
+      });
+
+      it('should not call function loadInitialDataFromBeneficiarySearch when is touched', async () => {
+        wrapper.vm.loadInitialDataFromBeneficiarySearch = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.loadInitialDataFromBeneficiarySearch).not.toHaveBeenCalled();
       });
     });
   });

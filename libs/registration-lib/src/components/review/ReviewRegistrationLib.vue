@@ -29,7 +29,7 @@
         @cancel="cancelPersonalInformation()"
         @submit="validateEmailAndSubmitPersonalInfo()">
         <template #inline>
-          <personal-information :recaptcha-key="recaptchaKey" :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" />
+          <personal-information :recaptcha-key="recaptchaKey" :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" is-edit-mode />
         </template>
         <personal-information-template :personal-information="getPersonalInformation" :show-age-in-review="showAgeInReview" />
       </summary-section>

@@ -134,6 +134,9 @@ import moment from 'moment';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { VForm } from '@libs/shared-lib/types';
 import WithRoot from '@/ui/views/components/WithRoot';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import _omit from 'lodash/omit';
+import _cloneDeep from 'lodash/cloneDeep';
 
 export default Vue.extend({
   name: 'HouseholdSearch',
@@ -195,7 +198,7 @@ export default Vue.extend({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       // eslint-disable-next-line
-      return Object.entries(this.form).reduce((a, [k, v]) => (v ? (a[k] = v, a) : a), {});
+        return Object.entries(this.form).reduce((a, [k, v]) => (v ? (a[k] = v, a) : a), {});
     },
 
     rules(): Record<string, unknown> {
@@ -277,6 +280,13 @@ export default Vue.extend({
     }
   },
 
+  beforeDestroy() {
+    // TODO EMISV2-6226 remove feature flag
+    if (this.$hasFeature(FeatureKeys.PreFillPersonalInformation)) {
+      this.storeBeneficiarySearchData();
+    }
+  },
+
   methods: {
     clear() {
       this.form = {
@@ -311,7 +321,15 @@ export default Vue.extend({
       if (splitHouseholdMembers) {
         this.form.firstName = splitHouseholdMembers.primaryMember.identitySet.firstName;
         this.form.lastName = splitHouseholdMembers.primaryMember.identitySet.lastName;
+        this.birthDate = _cloneDeep(splitHouseholdMembers.primaryMember.identitySet.birthDate);
       }
+    },
+
+    storeBeneficiarySearchData() {
+      const formWithOriginalDataStructure = _omit(this.form, 'registrationNumber');
+      formWithOriginalDataStructure.phone = this.phone;
+      formWithOriginalDataStructure.birthDate = this.birthDate;
+      this.$storage.registration.mutations.setInformationFromBeneficiarySearch(formWithOriginalDataStructure);
     },
   },
 });

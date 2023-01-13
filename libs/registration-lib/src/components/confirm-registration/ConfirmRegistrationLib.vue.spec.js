@@ -2,7 +2,7 @@ import { mockStorage } from '@/store/storage/storage.mock';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { mockEvent } from '@libs/entities-lib/registration-event';
-import { mockHttpError } from '@libs/services-lib/http-client';
+import { mockServerError } from '@libs/services-lib/src/http-client';
 import Component from './ConfirmRegistrationLib.vue';
 
 const localVue = createLocalVue();
@@ -141,7 +141,7 @@ describe('ConfirmRegistrationLib.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            errors: () => ({ response: { data: { errors: [mockHttpError()] } } }),
+            errors: () => mockServerError(),
             phoneAssistance: () => 'phone',
           },
         });
@@ -152,7 +152,7 @@ describe('ConfirmRegistrationLib.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            errors: () => {},
+            errors: () => mockServerError(),
             response: () => undefined,
           },
         });

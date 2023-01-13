@@ -106,6 +106,7 @@ import helpers from '@/ui/helpers/helpers';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
+import { IRegistrationMenuItem } from '@libs/registration-lib/types';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -204,6 +205,10 @@ export default mixins(individual).extend({
       return this.$hasFeature(FeatureKeys.AddressAutoFill);
     },
 
+    isPersonalInfoTouched(): boolean {
+      return this.$storage.registration?.getters?.tabs()?.filter((el) => el.id === 'personalInfo')[0].isTouched;
+    },
+
   },
 
   methods: {
@@ -237,6 +242,10 @@ export default mixins(individual).extend({
 
     async next() {
       switch (this.currentTab.id) {
+        case 'isRegistered':
+          await this.resetPersonalInfoTab();
+          return;
+
         case 'personalInfo':
           EventHub.$emit('checkEmailValidation', this.nextDefault);
           return;
@@ -341,6 +350,17 @@ export default mixins(individual).extend({
 
       this.$storage.registration.mutations.setRegistrationResponse(res);
       return !!res;
+    },
+
+    async resetPersonalInfoTab() {
+      if (this.isPersonalInfoTouched) {
+        this.$storage.registration.mutations.mutateTabAtIndex(2, (tab: IRegistrationMenuItem) => {
+          tab.disabled = false;
+          tab.isValid = true;
+          tab.isTouched = false;
+        });
+      }
+      await this.nextDefault();
     },
   },
 });

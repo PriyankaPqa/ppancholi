@@ -30,7 +30,7 @@ import {
   ICurrentAddress, IAddress, IHouseholdCreateData,
 } from '@libs/entities-lib/household-create';
 import { RegistrationEvent, IEvent, IEventData } from '@libs/entities-lib/registration-event';
-import { IRegistrationMenuItem } from '../../../types';
+import { IRegistrationMenuItem, IInformationFromBeneficiarySearch } from '../../../types';
 import {
   isRegisteredValid,
   privacyStatementValid,
@@ -67,6 +67,7 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   splitHousehold: null as ISplitHousehold,
   primarySpokenLanguagesFetched: false,
   gendersFetched: false,
+  informationFromBeneficiarySearch: {} as IInformationFromBeneficiarySearch,
 });
 
 const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
@@ -435,6 +436,10 @@ state: IState,
 
   setTabs(state: IState, tabs: IRegistrationMenuItem[]) {
     state.tabs = tabs;
+  },
+
+  setInformationFromBeneficiarySearch(state: IState, infoObject: IInformationFromBeneficiarySearch) {
+    state.informationFromBeneficiarySearch = infoObject;
   },
 });
 

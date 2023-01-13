@@ -190,6 +190,30 @@ describe('HouseholdSearch.vue', () => {
         await wrapper.vm.fillInSplitHouseholdData();
         expect(wrapper.vm.form.firstName).toEqual(mockSplitHousehold().splitMembers.primaryMember.identitySet.firstName);
         expect(wrapper.vm.form.lastName).toEqual(mockSplitHousehold().splitMembers.primaryMember.identitySet.lastName);
+        expect(wrapper.vm.birthDate).toEqual(mockSplitHousehold().splitMembers.primaryMember.identitySet.birthDate);
+      });
+    });
+
+    describe('storeBeneficiarySearchData', () => {
+      const formWithOriginalDataStructure = {
+        firstName: '',
+        lastName: '',
+        phone: {
+          number: '',
+          countryISO2: '',
+          e164Number: '',
+        },
+        emailAddress: '',
+        birthDate: {
+          month: null,
+          day: null,
+          year: null,
+        },
+      };
+      it('should call mutations function setInformationFromBeneficiarySearch', async () => {
+        wrapper.vm.$storage.registration.mutations.setInformationFromBeneficiarySearch = jest.fn();
+        await wrapper.vm.storeBeneficiarySearchData();
+        expect(wrapper.vm.$storage.registration.mutations.setInformationFromBeneficiarySearch).toHaveBeenCalledWith(formWithOriginalDataStructure);
       });
     });
   });
@@ -214,6 +238,26 @@ describe('HouseholdSearch.vue', () => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.fillInSplitHouseholdData).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('beforeDestroy', () => {
+      it('should call storeBeneficiarySearchData when the feature flag is on', () => {
+        wrapper.vm.storeBeneficiarySearchData = jest.fn();
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.$options.beforeDestroy.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.storeBeneficiarySearchData).toHaveBeenCalled();
+      });
+
+      it('should not call storeBeneficiarySearchData when the feature flag is off', () => {
+        wrapper.vm.storeBeneficiarySearchData = jest.fn();
+        wrapper.vm.$hasFeature = jest.fn(() => false);
+        wrapper.vm.$options.beforeDestroy.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.storeBeneficiarySearchData).not.toHaveBeenCalled();
       });
     });
   });

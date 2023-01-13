@@ -6,6 +6,7 @@ import routes from '@/constants/routes';
 import { tabs } from '@/store/modules/registration/tabs';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import helpers from '@/ui/helpers/helpers';
+import { mockTabs } from '@libs/registration-lib/store/modules/registration/tabs.mock';
 import Component from './RegistrationIndividual.vue';
 
 const localVue = createLocalVue();
@@ -13,6 +14,23 @@ const storage = mockStorage();
 
 describe('Individual.vue', () => {
   let wrapper;
+  const doMount = (shallow, otherComputed = {}, otherOptions = {}) => {
+    const options = {
+      localVue,
+      computed: {
+        ...otherComputed,
+      },
+      mocks: {
+        $storage: storage,
+      },
+      ...otherOptions,
+    };
+    if (shallow === true) {
+      wrapper = shallowMount(Component, options);
+    } else {
+      wrapper = mount(Component, options);
+    }
+  };
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -20,38 +38,29 @@ describe('Individual.vue', () => {
   describe('Template', () => {
     describe('print button', () => {
       it('is rendered if is on confirmation tab and no error', () => {
-        wrapper = mount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'confirmation' }),
-            registrationSuccess: () => true,
-            getTitle: () => 'title',
-          },
+        doMount(false, {
+          currentTab: () => ({ id: 'confirmation' }),
+          registrationSuccess: () => true,
+          getTitle: () => 'title',
         });
         expect(wrapper.findDataTest('printButton').exists()).toBe(true);
       });
 
       it('is not rendered if is on confirmation tab but has error', () => {
-        wrapper = mount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'confirmation' }),
-            registrationSuccess: () => false,
-            getTitle: () => 'title',
-          },
+        doMount(false, {
+          currentTab: () => ({ id: 'confirmation' }),
+          registrationSuccess: () => false,
+          getTitle: () => 'title',
         });
 
         expect(wrapper.findDataTest('printButton').exists()).toBe(false);
       });
 
       it('is not rendered if is not on confirmation tab', () => {
-        wrapper = mount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review' }),
-            registrationSuccess: () => true,
-            getTitle: () => 'title',
-          },
+        doMount(false, {
+          currentTab: () => ({ id: 'review' }),
+          registrationSuccess: () => true,
+          getTitle: () => 'title',
         });
 
         expect(wrapper.findDataTest('printButton').exists()).toBe(false);
@@ -60,38 +69,29 @@ describe('Individual.vue', () => {
 
     describe('new registration button', () => {
       it('is rendered if is on confirmation tab and no error', () => {
-        wrapper = mount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'confirmation' }),
-            registrationSuccess: () => true,
-            getTitle: () => 'title',
-          },
+        doMount(false, {
+          currentTab: () => ({ id: 'confirmation' }),
+          registrationSuccess: () => true,
+          getTitle: () => 'title',
         });
         expect(wrapper.findDataTest('new-registration-button').exists()).toBe(true);
       });
 
       it('is not rendered if is on confirmation tab but has error', () => {
-        wrapper = mount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'confirmation' }),
-            registrationSuccess: () => false,
-            getTitle: () => 'title',
-          },
+        doMount(false, {
+          currentTab: () => ({ id: 'confirmation' }),
+          registrationSuccess: () => false,
+          getTitle: () => 'title',
         });
 
         expect(wrapper.findDataTest('new-registration-button').exists()).toBe(false);
       });
 
       it('is not rendered if is not on confirmation tab', () => {
-        wrapper = mount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review' }),
-            registrationSuccess: () => true,
-            getTitle: () => 'title',
-          },
+        doMount(false, {
+          currentTab: () => ({ id: 'review' }),
+          registrationSuccess: () => true,
+          getTitle: () => 'title',
         });
 
         expect(wrapper.findDataTest('new-registration-button').exists()).toBe(false);
@@ -101,48 +101,38 @@ describe('Individual.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        computed: {
-          currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
-        },
-        mocks: {
-          $storage: storage,
-        },
+      doMount(true, {
+        currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
       });
     });
 
     describe('back', () => {
       it('should return to search household page if user is seeing results', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
+        doMount(
+          true,
+          {
             currentTab: () => ({ id: 'isRegistered' }),
           },
-          store: {
-            modules: {
-              registration: {
-                state: {
-                  householdResultsShown: true,
+          {
+            store: {
+              modules: {
+                registration: {
+                  state: {
+                    householdResultsShown: true,
+                  },
                 },
               },
             },
           },
-          mocks: {
-            $storage: storage,
-          },
-        });
+        );
         await wrapper.vm.back();
         expect(wrapper.vm.$storage.registration.mutations.setHouseholdResultsShown).toHaveBeenCalledWith(false);
       });
 
       it('should return to household results if user is seeing review of the registration in association mode', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review' }),
-            associationMode: () => true,
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'review' }),
+          associationMode: () => true,
         });
         wrapper.vm.backToHouseholdResults = jest.fn();
         await wrapper.vm.back();
@@ -152,16 +142,10 @@ describe('Individual.vue', () => {
       it(
         'should set setHouseholdAlreadyRegistered mutation to false if user is seeing the review page in association mode and household is already registered',
         async () => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            computed: {
-              currentTab: () => ({ id: 'review' }),
-              associationMode: () => true,
-              householdAlreadyRegistered: () => true,
-            },
-            mocks: {
-              $storage: storage,
-            },
+          doMount(true, {
+            currentTab: () => ({ id: 'review' }),
+            associationMode: () => true,
+            householdAlreadyRegistered: () => true,
           });
           wrapper.vm.backToHouseholdResults = jest.fn();
           await wrapper.vm.back();
@@ -219,11 +203,8 @@ describe('Individual.vue', () => {
 
     describe('next', () => {
       it('calls eventhub emit if current tab is personalInfo', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'personalInfo' }),
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'personalInfo' }),
         });
 
         EventHub.$emit = jest.fn();
@@ -233,11 +214,8 @@ describe('Individual.vue', () => {
       });
 
       it('calls nextOnReview if current tab is review', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review' }),
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'review' }),
         });
         wrapper.vm.nextOnReview = jest.fn();
         await wrapper.vm.next();
@@ -245,11 +223,8 @@ describe('Individual.vue', () => {
       });
 
       it('calls nextOnReview if current tab is review', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review' }),
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'review' }),
         });
         wrapper.vm.nextOnReview = jest.fn();
         await wrapper.vm.next();
@@ -257,11 +232,8 @@ describe('Individual.vue', () => {
       });
 
       it('calls closeRegistration if current tab is confirmation', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'confirmation' }),
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'confirmation' }),
         });
         wrapper.vm.closeRegistration = jest.fn();
         await wrapper.vm.next();
@@ -269,14 +241,8 @@ describe('Individual.vue', () => {
       });
 
       it('calls nextDefault by default', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: '' }),
-          },
-          mocks: {
-            $storage: storage,
-          },
+        doMount(true, {
+          currentTab: () => ({ id: '' }),
         });
         wrapper.vm.nextDefault = jest.fn();
         await wrapper.vm.next();
@@ -286,14 +252,8 @@ describe('Individual.vue', () => {
 
     describe('nextOnReview', () => {
       it('should call goToHouseholdProfile if household is already registered', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            householdAlreadyRegistered: () => true,
-          },
-          mocks: {
-            $storage: storage,
-          },
+        doMount(true, {
+          householdAlreadyRegistered: () => true,
         });
         wrapper.vm.goToHouseholdProfile = jest.fn();
 
@@ -304,15 +264,9 @@ describe('Individual.vue', () => {
 
       describe('Association mode', () => {
         it('should validate the form', async () => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            computed: {
-              householdAlreadyRegistered: () => false,
-              associationMode: () => true,
-            },
-            mocks: {
-              $storage: storage,
-            },
+          doMount(true, {
+            householdAlreadyRegistered: () => false,
+            associationMode: () => true,
           });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
           wrapper.vm.jump = jest.fn();
@@ -324,15 +278,9 @@ describe('Individual.vue', () => {
         });
 
         it('should call associateHousehold', async () => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            computed: {
-              householdAlreadyRegistered: () => false,
-              associationMode: () => true,
-            },
-            mocks: {
-              $storage: storage,
-            },
+          doMount(true, {
+            householdAlreadyRegistered: () => false,
+            associationMode: () => true,
           });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
           wrapper.vm.associateHousehold = jest.fn();
@@ -344,15 +292,9 @@ describe('Individual.vue', () => {
       });
 
       it('should call submit registration and nextDefault otherwise', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            householdAlreadyRegistered: () => false,
-            associationMode: () => false,
-          },
-          mocks: {
-            $storage: storage,
-          },
+        doMount(true, {
+          householdAlreadyRegistered: () => false,
+          associationMode: () => false,
         });
         wrapper.vm.jump = jest.fn();
         wrapper.vm.nextDefault = jest.fn();
@@ -365,17 +307,11 @@ describe('Individual.vue', () => {
       });
 
       it('calls jump if there are submit errors that are not duplicate errors but contain errors code', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            submitErrors: () => ({ response: { data: { errors: [{ code: 'error.code' }] } } }),
-            associationMode: () => false,
-            householdAlreadyRegistered: () => false,
-            isDuplicateError: () => false,
-          },
-          mocks: {
-            $storage: storage,
-          },
+        doMount(true, {
+          submitErrors: () => ({ response: { data: { errors: [{ code: 'error.code' }] } } }),
+          associationMode: () => false,
+          householdAlreadyRegistered: () => false,
+          isDuplicateError: () => false,
         });
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -387,17 +323,11 @@ describe('Individual.vue', () => {
       });
 
       it('calls handleErrors if there are submit errors that are not duplicate errors or do not contain errors code', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            submitErrors: () => ({ response: { data: {} } }),
-            associationMode: () => false,
-            householdAlreadyRegistered: () => false,
-            isDuplicateError: () => false,
-          },
-          mocks: {
-            $storage: storage,
-          },
+        doMount(true, {
+          submitErrors: () => ({ response: { data: {} } }),
+          associationMode: () => false,
+          householdAlreadyRegistered: () => false,
+          isDuplicateError: () => false,
         });
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -507,35 +437,51 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.$storage.registration.mutations.setRegistrationErrors).toHaveBeenCalledWith(null);
       });
     });
+
+    describe('resetPersonalInfoTab', () => {
+      it('should reset personalInfo tab if it is touched, and then call nextDefault', async () => {
+        storage.registration.getters.tabs = jest.fn(() => mockTabs());
+        doMount(true, {
+          isPersonalInfoTouched: () => true,
+        });
+        wrapper.vm.$storage.registration.mutations.mutateTabAtIndex = jest.fn();
+        wrapper.vm.nextDefault = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+
+        await wrapper.vm.resetPersonalInfoTab();
+        expect(wrapper.vm.$storage.registration.mutations.mutateTabAtIndex).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.nextDefault).toBeCalledTimes(1);
+      });
+      it('should not reset personalInfo tab if it is not touched, and then call nextDefault', async () => {
+        storage.registration.getters.tabs = jest.fn(() => mockTabs());
+        doMount(true, {
+          isPersonalInfoTouched: () => false,
+        });
+        wrapper.vm.$storage.registration.mutations.mutateTabAtIndex = jest.fn();
+        wrapper.vm.nextDefault = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+
+        await wrapper.vm.resetPersonalInfoTab();
+        expect(wrapper.vm.$storage.registration.mutations.mutateTabAtIndex).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.nextDefault).toBeCalledTimes(1);
+      });
+    });
   });
 
   describe('Computed', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        computed: {
-          currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-          associationMode: () => true,
-        },
-        mocks: {
-          $storage: storage,
-        },
+      doMount(true, {
+        currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+        associationMode: () => true,
       });
     });
 
     describe('showBackButton', () => {
       it('should return the proper value', () => {
         expect(wrapper.vm.showBackButton).toEqual(true);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'confirmation', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-            associationMode: () => true,
-          },
-          mocks: {
-            $storage: storage,
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'confirmation', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          associationMode: () => true,
         });
 
         expect(wrapper.vm.showBackButton).toEqual(false);
@@ -551,23 +497,17 @@ describe('Individual.vue', () => {
 
     describe('getTitle', () => {
       it('should return proper text if reviewing an association', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-            associationMode: () => true,
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          associationMode: () => true,
         });
         expect(wrapper.vm.getTitle).toEqual('registration.details.associateBeneficiaryButton.label');
       });
 
       it('should return proper text otherwise', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-            associationMode: () => false,
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          associationMode: () => false,
         });
         expect(wrapper.vm.getTitle).toEqual(wrapper.vm.currentTab.titleKey);
       });
@@ -575,35 +515,26 @@ describe('Individual.vue', () => {
 
     describe('getNextButtonLabel', () => {
       it('should return proper text if reviewing an association', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-            associationMode: () => true,
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          associationMode: () => true,
         });
         expect(wrapper.vm.getNextButtonLabel).toEqual('registration.details.associateBeneficiaryButton.label');
       });
 
       it('should return proper text if household is already registered', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-            associationMode: () => true,
-            householdAlreadyRegistered: () => true,
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          associationMode: () => true,
+          householdAlreadyRegistered: () => true,
         });
         expect(wrapper.vm.getNextButtonLabel).toEqual('registration.associate.confirmation.next.label');
       });
 
       it('should return proper text otherwise', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-            associationMode: () => false,
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          associationMode: () => false,
         });
         expect(wrapper.vm.getNextButtonLabel).toEqual(wrapper.vm.currentTab.nextButtonTextKey);
       });
@@ -611,31 +542,26 @@ describe('Individual.vue', () => {
 
     describe('enableAutocomplete', () => {
       it('return correct value', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-            associationMode: () => true,
-          },
-          mocks: {
-            $storage: storage,
-            $hasFeature: () => true,
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          associationMode: () => true,
         });
+        wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(wrapper.vm.enableAutocomplete).toBe(true);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-            associationMode: () => true,
-          },
-          mocks: {
-            $storage: storage,
-            $hasFeature: () => false,
-          },
+        doMount(true, {
+          currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          associationMode: () => true,
         });
+        wrapper.vm.$hasFeature = jest.fn(() => false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
+      });
+    });
+
+    describe('isPersonalInfoTouched', () => {
+      it('should return isPersonalInfoTouched of personalInformation tab', () => {
+        storage.registration.getters.tabs = jest.fn(() => mockTabs());
+        doMount(true);
+        expect(wrapper.vm.isPersonalInfoTouched).toEqual(false);
       });
     });
   });
@@ -647,14 +573,8 @@ describe('Individual.vue', () => {
     });
 
     it('opens the dialog if not on the confirmation page and then calls next', async () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        computed: {
-          currentTab: () => ({ id: 'isRegistered', titleKey: '', nextButtonTextKey: '' }),
-        },
-        mocks: {
-          $storage: storage,
-        },
+      doMount(true, {
+        currentTab: () => ({ id: 'isRegistered', titleKey: '', nextButtonTextKey: '' }),
       });
 
       wrapper.vm.$confirm = jest.fn(() => true);
@@ -664,15 +584,9 @@ describe('Individual.vue', () => {
     });
 
     it('opens the dialog if on the review page and not already registered and then calls next', async () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        computed: {
-          currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
-          householdAlreadyRegistered: () => false,
-        },
-        mocks: {
-          $storage: storage,
-        },
+      doMount(true, {
+        currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
+        householdAlreadyRegistered: () => false,
       });
 
       wrapper.vm.$confirm = jest.fn(() => true);
@@ -682,15 +596,9 @@ describe('Individual.vue', () => {
     });
 
     it('does not open the dialog if on the review page and  already registered', async () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        computed: {
-          currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
-          householdAlreadyRegistered: () => true,
-        },
-        mocks: {
-          $storage: storage,
-        },
+      doMount(true, {
+        currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
+        householdAlreadyRegistered: () => true,
       });
 
       wrapper.vm.$confirm = jest.fn(() => true);

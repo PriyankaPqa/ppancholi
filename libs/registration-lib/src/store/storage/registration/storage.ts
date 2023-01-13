@@ -241,6 +241,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     setRegistrationResponse(payload: unknown) {
       store.commit('registration/setRegistrationResponse', payload);
     },
+
+    setInformationFromBeneficiarySearch(payload: unknown) {
+      store.commit('registration/setInformationFromBeneficiarySearch', payload);
+    },
   },
 
   actions: {

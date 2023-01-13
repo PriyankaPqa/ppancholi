@@ -302,6 +302,26 @@ describe('>>> Registration Storage', () => {
       storage.mutations.setRegistrationResponse(null);
       expect(store.commit).toBeCalledWith('registration/setRegistrationResponse', null);
     });
+
+    it('should proxy setInformationFromBeneficiarySearch', () => {
+      const mockInfoObject = {
+        firstName: '',
+        lastName: '',
+        phone: {
+          number: '',
+          countryISO2: '',
+          e164Number: '',
+        },
+        emailAddress: '',
+        birthDate: {
+          month: '',
+          day: '',
+          year: '',
+        },
+      };
+      storage.mutations.setInformationFromBeneficiarySearch(mockInfoObject);
+      expect(store.commit).toBeCalledWith('registration/setInformationFromBeneficiarySearch', mockInfoObject);
+    });
   });
 
   describe('>> Actions', () => {
