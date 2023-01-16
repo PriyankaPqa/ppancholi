@@ -7,6 +7,9 @@
     "src/**/*.js",
     "src/**/*.ts",
     "src/**/*.vue",
-    "typings/*.ts"
+    "typings/*.ts",
+    "cypress/**/*.ts",
+    "cypress/**/*.js"
   ],
+  "exclude": ["node_modules"]
 }

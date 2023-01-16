@@ -38,7 +38,7 @@
       "dom",
       "dom.iterable",
       "scripthost"
-    ],
+    ]
   },
   "references": [{ "path": "../../libs/entities-lib/tsconfig.json" }],
   "include": [
@@ -49,6 +49,8 @@
     "tests/**/*.ts",
     "tests/**/*.tsx",
     "typings/**.ts",
+  ],
+  "exclude": [
+    "node_modules"
   ]
-
 }

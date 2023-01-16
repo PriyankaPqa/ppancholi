@@ -8,7 +8,6 @@ describe('>>> Financial assistance payment Service', () => {
   let entity: IFinancialAssistancePaymentEntity;
 
   beforeEach(() => {
-    process.env.VITE_API_BASE_URL = 'www.test.com';
     entity = mockCaseFinancialAssistanceEntity();
     entity.id = 'myId';
     entity.caseFileId = 'myParent';

@@ -3,6 +3,10 @@ node_modules
 **/dist
 **/coverage
 
+**/cypress/screenshots
+**/cypress/videos
+**/cypress/results
+
 # local env files
 .env.local
 .env.*.local

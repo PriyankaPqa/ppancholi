@@ -4,13 +4,16 @@ parameters:
   isPullRequest: ''
   nodeJsVersion: ''
   disableCache: ''
+  runAcceptanceStage: true
+  distDir: ''
+  workingDir: ''
 
 stages:
   - stage: 'Post_Build_Stage'
-    displayName: 'Commit Stage'
+    displayName: 'Post build Stage'
     condition: succeeded()
     jobs:
-      - template: '../jobs/commit-tests-jobs.yml'
+      - template: '../jobs/unit-tests-jobs.yml'
         parameters:
           job: 'Unit_Test'
           jobDisplayName: 'Unit tests'
@@ -23,7 +26,7 @@ stages:
           appName: ${{parameters.appName}}
           parallel: 1
 
-      - template: '../jobs/commit-tests-jobs.yml'
+      - template: '../jobs/unit-tests-jobs.yml'
         parameters:
           job: 'Component_Test'
           jobDisplayName: 'UI components tests'

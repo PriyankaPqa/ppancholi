@@ -14,8 +14,8 @@ describe('>>> Domain Base Service', () => {
   });
 
   describe('constructor', () => {
-    it('should build baseUrl correctly', () => {
-      expect(service.baseUrl).toBe(`${process.env.VITE_API_BASE_URL}/${API_URL_SUFFIX}/${CONTROLLER}`);
+    it('should build baseUrl from the httpClient', () => {
+      expect(service.baseUrl).toBe(`${http.baseUrl}/${API_URL_SUFFIX}/${CONTROLLER}`);
     });
   });
 

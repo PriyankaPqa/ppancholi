@@ -1,0 +1,29 @@
+parameters:
+  packageFeed: ''
+  nodeJsVersion: ''
+  disableCache: ''
+  runAcceptanceStage: true
+  distDir: ''
+  workingDir: ''
+
+stages:
+  - stage: 'Acceptance_Test_Stage'
+    condition: and(succeeded(), eq('${{ parameters.runAcceptanceStage }}', true))
+    displayName: 'Acceptance Stage'
+    jobs:
+      - job: Cypress
+        displayName: 'Run smoke tests'
+        variables:
+          - group: Env-Dev
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          parallel: 2
+        steps:
+          - template: '../steps/cypress-steps.yml'
+            parameters:
+              packageFeed: ${{ parameters.packageFeed }}
+              nodeJsVersion: ${{ parameters.nodeJsVersion }}
+              disableCache: ${{ parameters.disableCache }}
+              distDir: ${{ parameters.distDir }}
+              workingDir: ${{ parameters.workingDir }}

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const jetpack = require('fs-jetpack');
 const { getAffectedPackages, shellAsync } = require('./helpers');
 

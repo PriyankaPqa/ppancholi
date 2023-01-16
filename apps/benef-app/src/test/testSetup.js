@@ -12,6 +12,7 @@ import { mockStore } from '@/store';
 import { makeStorage } from '@/storage';
 import { getLocalVue, getWrapper } from '@libs/shared-lib/tests/testBase';
 import { mockProvider } from '@/services/provider';
+import { PiniaVuePlugin } from 'pinia';
 
 jest.setTimeout(10000);
 
@@ -20,6 +21,7 @@ const plugins = [
   Vuex,
   features,
   VueI18n,
+  PiniaVuePlugin,
 ];
 
 export const createLocalVue = () => getLocalVue(plugins);

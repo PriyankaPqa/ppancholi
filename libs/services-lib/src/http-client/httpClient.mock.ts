@@ -10,6 +10,7 @@ export const mockIRestResponse = (data: unknown, statusCode = 200): IRestRespons
 });
 
 export const mockHttp = (): IHttpMock => ({
+  baseUrl: 'www.test.com',
   getFullResponse: jest.fn(() => Promise.resolve(mockIRestResponse('resolved'))),
   get: jest.fn(() => Promise.resolve('resolved')),
   post: jest.fn(() => Promise.resolve('resolved')),

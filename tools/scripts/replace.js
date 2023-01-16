@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const fs = require('fs');
 const path = require('path');
 
@@ -15,9 +16,9 @@ fs.readFile(filePath, 'utf8', (err, data) => {
   const regex = new RegExp(replace, 'g');
   const result = data.replace(regex, replacement);
 
-  fs.writeFile(filePath, result, 'utf8', (err) => {
-    if (err) {
-      console.log(err);
+  fs.writeFile(filePath, result, 'utf8', (errWrite) => {
+    if (errWrite) {
+      console.log(errWrite);
     }
   });
 });

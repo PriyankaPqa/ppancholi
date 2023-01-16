@@ -41,6 +41,18 @@ stages:
       isPullRequest: ${{ parameters.isPullRequest }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
       disableCache: ${{ parameters.disableCache }}
+      workingDir: ${{ parameters.workingDir }}
+      distDir: ${{ parameters.distDir }}
+
+  # Run E2E Tests (acceptance, smoke etc)
+  - template: './stages/acceptance-tests-cypress-stage.yml'
+    parameters:
+      packageFeed: ${{ parameters.packageFeed }}
+      nodeJsVersion: ${{ parameters.nodeJsVersion }}
+      disableCache: ${{ parameters.disableCache }}
+      workingDir: ${{ parameters.workingDir }}
+      distDir: ${{ parameters.distDir }}
+
 
   # Deploy to feature branch, dev, production
   - template: './stages/deploy-stage.yml'

@@ -1,0 +1,28 @@
+parameters:
+  job: ''
+  jobDisplayName: ''
+  scriptDisplayName: ''
+  testKindParameter: ''
+  packageFeed: ''
+  nodeJsVersion: ''
+  disableCache: ''
+  isPullRequest: ''
+  appName: ''
+  parallel: ''
+
+
+jobs:
+  - job: ${{ parameters.job }}
+    strategy:
+      parallel: ${{ parameters.parallel }}
+    displayName: ${{ parameters.jobDisplayName }}
+    steps:
+      - template: '../steps/unit-tests-steps.yml'
+        parameters:
+          packageFeed: ${{ parameters.packageFeed }}
+          nodeJsVersion:  ${{ parameters.nodeJsVersion }}
+          disableCache: ${{ parameters.disableCache }}
+          scriptDisplayName: ${{ parameters.scriptDisplayName }}
+          testKindParameter: ${{ parameters.testKindParameter }}
+          isPullRequest: ${{ parameters.isPullRequest }}
+          appName: ${{ parameters.appName }}

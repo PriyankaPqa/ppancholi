@@ -8,7 +8,6 @@ describe('>>> Case File Document Service', () => {
   let entity: ICaseFileDocumentEntity;
 
   beforeEach(() => {
-    process.env.VITE_API_BASE_URL = 'www.test.com';
     entity = mockCaseFileDocumentEntity();
     entity.id = 'myId';
     entity.caseFileId = 'myParent';

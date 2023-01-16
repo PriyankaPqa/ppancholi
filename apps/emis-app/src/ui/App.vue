@@ -130,6 +130,11 @@ export default {
 
     // The access token will be refreshed automatically every 5 minutes.
     AuthenticationProvider.startAccessTokenAutoRenewal(60000 * 5);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // eslint-disable-next-line no-console
+      console.log('DOM ready!');
+    });
   },
 
   methods: {

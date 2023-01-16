@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const jetpack = require('fs-jetpack');
 const { execSync } = require('child_process');
 const fs = require('fs');

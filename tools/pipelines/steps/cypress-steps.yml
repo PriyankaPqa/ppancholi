@@ -1,0 +1,80 @@
+parameters:
+  packageFeed: ''
+  nodeJsVersion: ''
+  disableCache: ''
+  distDir: ''
+  workingDir: ''
+
+steps:
+  - template: '../steps/cache-install-npm.yml'
+    parameters:
+      packageFeed: ${{ parameters.packageFeed }}
+      nodeJsVersion: ${{ parameters.nodeJsVersion }}
+      disableCache: ${{ parameters.disableCache }}
+
+  # Caching the binary takes roughly same amount of time as always downloading it
+  - script: yarn cypress install
+    displayName: 'Install cypress binary'
+
+  # Optional
+  - script: yarn emis-app:cy:verify
+    displayName: 'Cypress verify'
+
+  # Optional
+  - script: yarn emis-app:cy:cache:list
+    displayName: 'Cypress cache List'
+
+  # Optional
+  - script: yarn emis-app:cy:info
+    displayName: 'Cypress info'
+
+  # The WebApp artifact (dist) was created in a previous stage/job
+  # We need to download it again in app folder before running the server
+  - task: DownloadPipelineArtifact@2
+    displayName: 'Download web app'
+    inputs:
+      buildType: 'current'
+      artifactName: 'dist'
+      targetPath: ${{ parameters.distDir }}
+
+  # Will replace the env variables placeholders by the one contained in the library used by this stage here: Env-Dev
+  - task: replacetokens@5
+    displayName: 'Replace Tokens'
+    inputs:
+      targetFiles: "index*.js"
+      rootDirectory: '${{ parameters.distDir }}/assets'
+      tokenPattern: 'default'
+      encoding: "auto"
+      writeBOM: true
+      verbosity: "detailed"
+      actionOnMissing: "warn"
+      keepToken: false
+      useLegacyPattern: false
+      enableTelemetry: true
+
+  # Run a local server, wait for it and then start testing with cypress
+  # Kill the server after it's done
+  - script: |
+      yarn start-server-and-test 'yarn vite preview' http-get://localhost:8080 'yarn cy:report --record --parallel --ci-build-id "$BUILD_BUILDNUMBER" --group "Azure CI"'
+    workingDirectory: ${{ parameters.workingDir }}
+    displayName: 'Run cypress tests'
+    env:
+      # avoid warnings about terminal
+      TERM: xterm
+      # map the secret Cypress record key (see variables in the pipeline)
+      CYPRESS_RECORD_KEY: $(CYPRESS_RECORD_KEY)
+
+  # Combine results, so they can be published in Azure Devops
+  # Note that this could be optional as we can see results in Cypress Cloud
+  - script: yarn cy:combine:reports
+    workingDirectory: ${{ parameters.workingDir }}
+    displayName: 'Combine test results'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish test results'
+#    condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+    condition: succeededOrFailed()
+    inputs:
+      testRunner: JUnit
+      testResultsFiles: '**/combined-report.xml'
+      failTaskOnFailedTests: false
