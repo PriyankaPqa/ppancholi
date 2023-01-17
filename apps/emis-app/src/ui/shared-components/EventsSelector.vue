@@ -15,6 +15,7 @@
     :attach="true"
     :label="label"
     :data-test="dataTest"
+    :disable-chip-delete="disableEventDelete"
     v-bind="$attrs"
     clearable
     @change="$emit('change', $event)"
@@ -76,6 +77,10 @@ export default Vue.extend({
     forceEvents: { // So we can do additional manipulation on the search results. To be used with @fetch:done on external component
       type: Array as () => Array<IEvent>,
       default: () => [] as Array<IEvent>,
+    },
+    disableEventDelete: {
+      type: Boolean,
+      default: false,
     },
   },
 

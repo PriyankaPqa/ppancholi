@@ -5,6 +5,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 import { EEventStatus } from '@libs/entities-lib/event';
+import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import Component from './EventsSelector.vue';
 
 const localVue = createLocalVue();
@@ -33,6 +34,28 @@ describe('EventsSelector.vue', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     doMount();
+  });
+
+  describe('Template', () => {
+    describe('VAutocompleteWithValidation', () => {
+      it('should pass props disable-chip-delete', async () => {
+        doMount();
+        await wrapper.setProps({
+          disableEventDelete: true,
+        });
+
+        const component = wrapper.findComponent(VAutocompleteWithValidation);
+        const props = 'disableChipDelete';
+
+        expect(component.props(props)).toBe(true);
+
+        await wrapper.setProps({
+          disableEventDelete: false,
+        });
+
+        expect(component.props(props)).toBe(false);
+      });
+    });
   });
 
   describe('Lifecycle', () => {

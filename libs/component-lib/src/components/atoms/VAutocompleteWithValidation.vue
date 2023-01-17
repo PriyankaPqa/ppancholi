@@ -32,6 +32,7 @@
           close
           color="primary"
           class="white--text"
+          :disabled="disableChipDelete"
           @click:close="removeItem(index)">
           <span :data-test="`${$attrs['data-test']}__selection--${getItemDataTest(item)}`">
             {{ getItemText(item) }}
@@ -163,6 +164,11 @@ export default Vue.extend({
     initialLabel: {
       type: String,
       default: 'common.inputs.start_typing_to_search',
+    },
+
+    disableChipDelete: {
+      type: Boolean,
+      default: false,
     },
   },
 

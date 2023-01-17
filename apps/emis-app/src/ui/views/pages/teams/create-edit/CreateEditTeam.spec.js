@@ -15,6 +15,7 @@ import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
 import { createTestingPinia } from '@pinia/testing';
 import { useEventStore } from '@/pinia/event/event';
+import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();
@@ -255,6 +256,24 @@ describe('CreateEditTeam.vue', () => {
           element.vm.$emit('close');
           expect(wrapper.vm.handleRemoveEventConfirmation).toHaveBeenCalledWith(false);
         });
+      });
+    });
+
+    describe('DisableEventDelete', () => {
+      it('should be false when use level is 5', async () => {
+        await mountWrapper(false, 5);
+        const component = wrapper.findComponent(EventsSelector);
+        const props = 'disableEventDelete';
+
+        expect(component.props(props)).toBe(false);
+      });
+
+      it('should be true when use level is 4', async () => {
+        await mountWrapper(false, 4);
+        const component = wrapper.findComponent(EventsSelector);
+        const props = 'disableEventDelete';
+
+        expect(component.props(props)).toBe(true);
       });
     });
   });

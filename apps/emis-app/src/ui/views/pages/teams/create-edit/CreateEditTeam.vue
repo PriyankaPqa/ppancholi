@@ -76,6 +76,7 @@
                       :value="teamType === 'standard' ? team.eventIds : team.eventIds[0]"
                       :multiple="teamType === 'standard'"
                       :disabled="!$hasLevel('level5')"
+                      :disable-event-delete="!$hasLevel('level5')"
                       item-value="id"
                       :rules="rules.event"
                       return-object
