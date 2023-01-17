@@ -1,6 +1,6 @@
 <template>
-  <div class="dataTable__container elevation-2">
-    <v-card :class="{ 'has-footer': !!footerText }">
+  <div :class="{ dataTable__container: true, 'elevation-2': hasBorder }">
+    <v-card :class="{ 'has-footer': !!footerText }" :flat="!hasBorder">
       <rc-data-table-header
         v-if="!hideHeader"
         v-bind="headerOptions"
@@ -40,6 +40,7 @@
         :hide-default-footer="hideFooter"
         :value="value"
         v-bind="tableOptions"
+        :item-class="itemClass || tableOptions.itemClass"
         :items="items"
         :headers="headers"
         :count="Math.max(count, items.length)"
@@ -252,9 +253,19 @@ export default Vue.extend({
       }),
     },
 
+    itemClass: {
+      type: Function,
+      default: () => '',
+    },
+
     initialSearch: {
       type: String,
       default: '',
+    },
+
+    hasBorder: {
+      type: Boolean,
+      default: true,
     },
   },
 

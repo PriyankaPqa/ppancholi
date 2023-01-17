@@ -51,6 +51,7 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IAzureTableSearchResults } from '@libs/shared-lib/types';
+import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import ViewAssigned from './ViewAssigned.vue';
 import AssignCaseFile from './AssignCaseFile.vue';
 
@@ -110,9 +111,9 @@ export default Vue.extend({
     /**
      * Set the assignment info by using the data sent back from the assign-case-file dialog after an assignment was done
      */
-    setAssignmentsInfoFromData({ individuals, teams }: { individuals: { displayName: string }[], teams: ITeamEntity[] }) {
+    setAssignmentsInfoFromData({ individuals, teams }: { individuals: IUserAccountCombined[], teams: ITeamEntity[] }) {
       this.assignedTeamInfo = teams[0] ? teams[0].name : '';
-      const individualsNames = individuals?.map((i) => (i.displayName));
+      const individualsNames = individuals?.map((i) => (i.metadata.displayName));
       if (individualsNames) {
         this.assignedIndividualsInfo = this.createAssignedIndividualsInfo([individualsNames[0], individualsNames[1]]);
       }

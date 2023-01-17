@@ -53,9 +53,9 @@
             :disabled="isViewOnly"
             class="pl-3 assigned-list-item"
             :data-test="`assigned-individuals-list-item-${individual.entity.id}`">
-            <v-list-item-content class="py-1">
+            <v-list-item-content class="py-2">
               <span class="rc-body14 fw-bold">{{ individual.metadata.displayName }}</span>
-              <span class="rc-body14">{{ individual.teamName }}</span>
+              <span class="rc-body14">{{ individual.assignedTeamName }}</span>
             </v-list-item-content>
 
             <v-list-item-action v-if="!isViewOnly" class="my-1">
@@ -90,8 +90,8 @@ import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 
 export interface IIndividual extends ITeamMember, IUserAccountCombined {
   translatedRoleName?: string;
-  teamName: string;
-  teamId: string;
+  assignedTeamName: string;
+  assignedTeamId: string;
 }
 
 export default Vue.extend({

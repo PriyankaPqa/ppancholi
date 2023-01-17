@@ -227,8 +227,8 @@ export default Vue.extend({
       }
 
       this.forceSkip = true;
-      this.options.page = 1;
       this.params = this.params || {};
+      this.goToFirstPage();
       this.params.search = value;
       this.debounceSearch(this.params);
       this.forceSkip = false;
@@ -239,8 +239,14 @@ export default Vue.extend({
       this.search(value);
     }, 500),
 
+    goToFirstPage() {
+      this.params.pageIndex = 1;
+      this.options.page = 1;
+    },
+
     getTableName() {
       return '';
     },
+
   },
 });

@@ -449,11 +449,12 @@ describe('tablePaginationSearch.vue', () => {
 
       it('launches search with the search term and sets pagination to first page if the new searchTerm is not empty string', async () => {
         wrapper.vm.debounceSearch = jest.fn();
+        wrapper.vm.goToFirstPage = jest.fn();
         await wrapper.setData({ params: { search: '' } });
         await wrapper.vm.onSearchTermInput('test');
 
         expect(wrapper.vm.searchTerm).toEqual('test');
-        expect(wrapper.vm.options.page).toEqual(1);
+        expect(wrapper.vm.goToFirstPage).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.params.search).toEqual('test');
         expect(wrapper.vm.debounceSearch).toBeCalledWith(wrapper.vm.params);
       });
@@ -466,6 +467,15 @@ describe('tablePaginationSearch.vue', () => {
         // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 600));
         expect(wrapper.vm.search).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('goToFirstPage', () => {
+      it('resets page in options and params', async () => {
+        await wrapper.setData({ params: { pageIndex: 2 }, options: { page: 2 } });
+        await wrapper.vm.goToFirstPage();
+        expect(wrapper.vm.options.page).toEqual(1);
+        expect(wrapper.vm.params.pageIndex).toEqual(1);
       });
     });
   });
