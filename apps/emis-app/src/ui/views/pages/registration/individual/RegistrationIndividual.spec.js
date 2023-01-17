@@ -495,6 +495,15 @@ describe('Individual.vue', () => {
       });
     });
 
+    describe('registrationAssessment', () => {
+      it('should return the registrationAssessment', () => {
+        jest.clearAllMocks();
+        const registrationAssessment = wrapper.vm.registrationAssessment;
+        expect(wrapper.vm.$storage.registration.getters.assessmentToComplete).toHaveBeenCalled();
+        expect(registrationAssessment).toEqual(wrapper.vm.$storage.registration.getters.assessmentToComplete().registrationAssessment);
+      });
+    });
+
     describe('getTitle', () => {
       it('should return proper text if reviewing an association', () => {
         doMount(true, {
@@ -514,14 +523,6 @@ describe('Individual.vue', () => {
     });
 
     describe('getNextButtonLabel', () => {
-      it('should return proper text if reviewing an association', () => {
-        doMount(true, {
-          currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-          associationMode: () => true,
-        });
-        expect(wrapper.vm.getNextButtonLabel).toEqual('registration.details.associateBeneficiaryButton.label');
-      });
-
       it('should return proper text if household is already registered', () => {
         doMount(true, {
           currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),

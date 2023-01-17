@@ -3,7 +3,7 @@ import {
   ERegistrationMethod, IOptionItemData,
 } from '@libs/shared-lib/types';
 import { TranslateResult } from 'vue-i18n';
-
+import { IRegistrationAssessment } from '@libs/entities-lib/event';
 import { IEvent, IEventData } from '@libs/entities-lib/registration-event';
 import {
   IIndigenousCommunityData,
@@ -16,12 +16,14 @@ import {
   HouseholdCreate, IHouseholdCreate, IHouseholdCreateData,
 } from '@libs/entities-lib/household-create';
 import { IHouseholdEntity } from '@libs/entities-lib/household';
+import { IAssessmentFormEntity } from '@libs/entities-lib/src/assessment-template';
 import { IRegistrationMenuItem } from '../../../types';
 
 export interface IStorage {
   getters: {
     isCRCRegistration(): boolean;
     event(): IEvent;
+    assessmentToComplete(): { registrationAssessment: IRegistrationAssessment, assessmentForm: IAssessmentFormEntity };
     isLeftMenuOpen(): boolean;
     tabs(): IRegistrationMenuItem[];
     currentTab(): IRegistrationMenuItem;
@@ -50,6 +52,7 @@ export interface IStorage {
     setIsPrivacyAgreed(payload: boolean): void;
     setDateTimeConsent(payload: string): void;
     setEvent(payload: IEventData): void;
+    setAssessmentToComplete(payload: { registrationAssessment: IRegistrationAssessment, assessmentForm: IAssessmentFormEntity }): void;
     setPrivacyCRCUsername(payload: string): void;
     setPrivacyRegistrationMethod(payload: ERegistrationMethod): void;
     setPrivacyRegistrationLocationId(payload: string): void;
@@ -121,6 +124,7 @@ export interface IStorageMock {
     householdCreate: jest.Mock<IHouseholdCreate>;
     personalInformation: jest.Mock<IContactInformation & IIdentitySet>;
     isSplitMode: jest.Mock<boolean>;
+    assessmentToComplete: jest.Mock<any>;
   };
 
   mutations: {
@@ -162,6 +166,7 @@ export interface IStorageMock {
     setPrimarySpokenLanguagesFetched: jest.Mock<void>;
     setGendersFetched: jest.Mock<void>;
     setRegistrationResponse: jest.Mock<void>;
+    setAssessmentToComplete: jest.Mock<void>;
   };
 
   actions: {

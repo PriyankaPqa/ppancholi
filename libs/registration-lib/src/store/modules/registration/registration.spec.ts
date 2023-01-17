@@ -25,6 +25,8 @@ import { IRegistrationMenuItem } from '@/types';
 import {
   ERegistrationMethod, ERegistrationMode,
 } from '@libs/shared-lib/types';
+import { Status } from '@libs/entities-lib/src/base';
+import { PublishStatus } from '@libs/entities-lib/src/assessment-template';
 import { getDefaultState, makeRegistrationModule } from './registration';
 
 import * as registrationUtils from './registrationUtils';
@@ -43,6 +45,7 @@ describe('>>> Registration Module', () => {
           isPrivacyAgreed: false,
           event: null,
           isLeftMenuOpen: true,
+          allTabs: mockTabs(),
           tabs: mockTabs(),
           currentTabIndex: 0,
           genders: [],
@@ -61,6 +64,7 @@ describe('>>> Registration Module', () => {
           splitHousehold: null,
           primarySpokenLanguagesFetched: false,
           gendersFetched: false,
+          assessmentToComplete: null,
           informationFromBeneficiarySearch: {},
         });
       });
@@ -85,6 +89,13 @@ describe('>>> Registration Module', () => {
     describe('event', () => {
       it('returns a default event', () => {
         expect(store.getters['registration/event']).toEqual(new RegistrationEvent());
+      });
+    });
+
+    describe('assessmentToComplete', () => {
+      it('returns assessmentToComplete', () => {
+        store.state.registration.assessmentToComplete = { registrationAssessment: {}, assessmentForm: {} } as any;
+        expect(store.getters['registration/assessmentToComplete']).toEqual(store.state.registration.assessmentToComplete);
       });
     });
 
@@ -320,6 +331,46 @@ describe('>>> Registration Module', () => {
         store.commit('registration/setEvent', mockEventData());
 
         expect(store.state.registration.event).toEqual(mockEventData());
+      });
+    });
+
+    describe('setAssessmentToComplete', () => {
+      it('sets assessmentToComplete and adjusts tabs', () => {
+        store.commit('registration/setAssessmentToComplete', null);
+        expect(store.state.registration.assessmentToComplete).toEqual(null);
+        expect(store.state.registration.tabs).not.toEqual(store.state.registration.allTabs);
+        expect(store.state.registration.tabs).toEqual(store.state.registration.allTabs.filter((t) => t.id !== 'assessment'));
+
+        const assessment = { assessmentForm: { status: Status.Active, publishStatus: PublishStatus.Unpublished } };
+        store.commit('registration/setAssessmentToComplete', assessment);
+
+        expect(store.state.registration.assessmentToComplete).toEqual(assessment);
+        expect(store.state.registration.tabs).toEqual(store.state.registration.allTabs.filter((t) => t.id !== 'assessment'));
+
+        assessment.assessmentForm.publishStatus = PublishStatus.Published;
+        store.commit('registration/setAssessmentToComplete', assessment);
+
+        expect(store.state.registration.assessmentToComplete).toEqual(assessment);
+        const allTabsWithNextLabel = _cloneDeep(store.state.registration.allTabs);
+        allTabsWithNextLabel.find((t) => t.id === 'confirmation').nextButtonTextKey = 'common.button.next';
+        expect(store.state.registration.tabs).toEqual(allTabsWithNextLabel);
+
+        store = mockStore({
+          modules: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            registration: makeRegistrationModule({ mode: ERegistrationMode.CRC, tabs: mockTabs() } as any),
+          },
+        });
+        store.commit('registration/setAssessmentToComplete', assessment);
+
+        expect(store.state.registration.assessmentToComplete).toEqual(assessment);
+        expect(store.state.registration.tabs).toEqual(store.state.registration.allTabs);
+
+        assessment.assessmentForm.publishStatus = PublishStatus.Unpublished;
+        store.commit('registration/setAssessmentToComplete', assessment);
+
+        expect(store.state.registration.assessmentToComplete).toEqual(assessment);
+        expect(store.state.registration.tabs).toEqual(store.state.registration.allTabs);
       });
     });
 

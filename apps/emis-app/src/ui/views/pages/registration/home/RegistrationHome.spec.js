@@ -82,16 +82,17 @@ describe('RegistrationHome.vue', () => {
     });
 
     describe('setEvent', () => {
-      it('should call setEvent mutations with proper params', () => {
-        wrapper.vm.setEvent(mockEvent);
-        expect(wrapper.vm.$storage.registration.mutations.setEvent).toHaveBeenCalledWith({
-          id: mockEvent.id,
-          name: mockEvent.name,
-          responseDetails: mockEvent.responseDetails,
-          registrationLink: mockEvent.registrationLink,
-          tenantId: mockEvent.tenantId,
-          shelterLocations: mockEvent.shelterLocations,
-          registrationLocations: mockEvent.registrationLocations,
+      it('should call setEvent mutations with proper params', async () => {
+        await wrapper.vm.setEvent(mockEvent);
+        expect(wrapper.vm.$storage.registration.mutations.setEvent).toHaveBeenCalledWith(mockEvent);
+      });
+
+      it('should call setAssessmentToComplete mutations with proper params', async () => {
+        await wrapper.vm.setEvent(mockEvent);
+        expect(wrapper.vm.$services.assessmentForms.get).toHaveBeenCalledWith({ id: mockEvent.registrationAssessments[0].assessmentId });
+        expect(wrapper.vm.$storage.registration.mutations.setAssessmentToComplete).toHaveBeenCalledWith({
+          assessmentForm: wrapper.vm.$services.assessmentForms.get(),
+          registrationAssessment: mockEvent.registrationAssessments[0],
         });
       });
     });

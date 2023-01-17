@@ -31,6 +31,10 @@ describe('>>> Registration Storage', () => {
       expect(storage.getters.event()).toEqual(store.getters['registration/event']);
     });
 
+    it('should proxy assessmentToComplete', () => {
+      expect(storage.getters.assessmentToComplete()).toEqual(store.getters['registration/assessmentToComplete']);
+    });
+
     it('should proxy left menu status', () => {
       expect(storage.getters.isLeftMenuOpen()).toEqual(store.getters['registration/isLeftMenuOpen']);
     });
@@ -102,6 +106,11 @@ describe('>>> Registration Storage', () => {
   });
 
   describe('>> Mutations', () => {
+    it('should proxy setAssessmentToComplete', () => {
+      const payload = {} as any;
+      storage.mutations.setAssessmentToComplete(payload);
+      expect(store.commit).toBeCalledWith('registration/setAssessmentToComplete', payload);
+    });
     it('should proxy toggleLeftMenu', () => {
       const payload = true;
       storage.mutations.toggleLeftMenu(payload);

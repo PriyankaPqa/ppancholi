@@ -10,9 +10,11 @@ import {
   IIndigenousCommunityData, EIndigenousTypes, IContactInformation, IMember, IIdentitySetData, IAddress, ICurrentAddress, IHouseholdCreateData,
 } from '@libs/entities-lib/household-create';
 import { IEvent, IEventData } from '@libs/entities-lib/registration-event';
+import { IAssessmentFormEntity } from '@libs/entities-lib/src/assessment-template';
+import { IRegistrationAssessment } from '@libs/entities-lib/src/event';
+
 import { IRegistrationMenuItem } from '../../../types';
 import { IStorage } from './storage.types';
-
 // eslint-disable-next-line
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   getters: {
@@ -22,6 +24,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     event(): IEvent {
       return store.getters['registration/event'];
+    },
+
+    assessmentToComplete(): { registrationAssessment: IRegistrationAssessment, assessmentForm: IAssessmentFormEntity } {
+      return store.getters['registration/assessmentToComplete'];
     },
 
     isLeftMenuOpen(): boolean {
@@ -124,6 +130,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     setEvent(payload: IEventData): void {
       store.commit('registration/setEvent', payload);
+    },
+
+    setAssessmentToComplete(payload: { registrationAssessment: IRegistrationAssessment, assessmentForm: IAssessmentFormEntity }) {
+      store.commit('registration/setAssessmentToComplete', payload);
     },
 
     setPrivacyCRCUsername(payload: string): void {

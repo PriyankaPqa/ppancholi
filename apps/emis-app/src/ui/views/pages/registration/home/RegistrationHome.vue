@@ -20,8 +20,7 @@
 import Vue from 'vue';
 
 import { RcRegistrationLandingPage } from '@libs/component-lib/components';
-import { IShelterLocationData } from '@libs/entities-lib/household-create';
-import { IEvent, IEventData as IRegistrationEventData } from '@libs/entities-lib/registration-event';
+import { IEvent } from '@libs/entities-lib/registration-event';
 import routes from '@/constants/routes';
 import { tabs } from '@/store/modules/registration/tabs';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
@@ -37,12 +36,13 @@ export default Vue.extend({
   data() {
     return {
       event: null,
+      assessmentLoading: false,
     };
   },
 
   computed: {
     canRegister(): boolean {
-      return !!this.event;
+      return !!this.event && !this.assessmentLoading;
     },
 
     assistanceNumber(): string {
@@ -63,21 +63,19 @@ export default Vue.extend({
     redirect() {
       this.$router.push({ name: routes.registration.individual.name });
     },
-    setEvent(event: IEvent) {
+    async setEvent(event: IEvent) {
       if (!event) {
         return;
       }
-      const registrationEvent = {
-        id: event.id,
-        name: event.name,
-        responseDetails: event.responseDetails,
-        registrationLink: event.registrationLink,
-        tenantId: event.tenantId,
-        registrationLocations: event.registrationLocations,
-        shelterLocations: event.shelterLocations as unknown as IShelterLocationData[],
-      } as unknown as IRegistrationEventData;
 
-      this.$storage.registration.mutations.setEvent(registrationEvent);
+      if (event.registrationAssessments?.length) {
+        const assessment = await this.$services.assessmentForms.get({ id: event.registrationAssessments[0].assessmentId });
+        this.$storage.registration.mutations.setAssessmentToComplete({ assessmentForm: assessment, registrationAssessment: event.registrationAssessments[0] });
+      } else {
+        this.$storage.registration.mutations.setAssessmentToComplete(null);
+      }
+
+      this.$storage.registration.mutations.setEvent(event);
     },
 
     resetRegistrationModule() {

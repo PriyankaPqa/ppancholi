@@ -12,6 +12,7 @@ import {
 } from '@libs/entities-lib/household-create';
 
 import { mockEvent } from '@libs/entities-lib/registration-event';
+import { mockAssessmentFormEntities } from '@libs/entities-lib/assessment-template';
 import { IStorageMock } from './storage.types';
 
 export const mockStorageRegistration = (): IStorageMock => ({
@@ -35,6 +36,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     householdCreate: jest.fn(() => _cloneDeep(mockHouseholdCreate())),
     personalInformation: jest.fn(() => _merge(mockContactInformation(), mockIdentitySet())),
     isSplitMode: jest.fn(() => false),
+    assessmentToComplete: jest.fn(() => ({ registrationAssessment: { }, assessmentForm: mockAssessmentFormEntities() })),
   },
 
   mutations: {
@@ -76,6 +78,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     setPrimarySpokenLanguagesFetched: jest.fn(),
     setGendersFetched: jest.fn(),
     setRegistrationResponse: jest.fn(),
+    setAssessmentToComplete: jest.fn(),
   },
 
   actions: {

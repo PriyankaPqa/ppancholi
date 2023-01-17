@@ -38,13 +38,13 @@ export default Vue.extend({
 
   async created() {
     this.fetchingData = true;
-    if (await this.verifyLocation()) {
+    if (await this.initializeEvent()) {
       await this.fetchData();
     }
   },
 
   methods: {
-    async verifyLocation() : Promise<boolean> {
+    async initializeEvent() : Promise<boolean> {
       const { lang, registrationLink } = this.$route.params;
 
       const currentdomain = helpers.getCurrentDomain(this.$route);
@@ -58,9 +58,21 @@ export default Vue.extend({
       this.$appInsights.setBasicContext({ event });
 
       if (_isEmpty(event) || !event.selfRegistrationEnabled || event.schedule.status !== EEventStatus.Open) {
-        this.$appInsights.trackTrace('trying to register with invalid event', {}, 'MainLayout', 'verifyLocation');
+        this.$appInsights.trackTrace('trying to register with invalid event', {}, 'MainLayout', 'initializeEvent');
         window.location.replace(i18n.t('registration.redirection_link') as string);
         return false;
+      }
+
+      if (event.registrationAssessments?.length) {
+        try {
+          const assessment = await this.$services.assessmentForms.getForBeneficiary(event.registrationAssessments[0].assessmentId);
+          this.$storage.registration.mutations.setAssessmentToComplete({ assessmentForm: assessment, registrationAssessment: event.registrationAssessments[0] });
+        } catch {
+          // forms are not available
+          this.$storage.registration.mutations.setAssessmentToComplete(null);
+        }
+      } else {
+        this.$storage.registration.mutations.setAssessmentToComplete(null);
       }
 
       httpClient.setHeadersTenant(event.tenantId);

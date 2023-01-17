@@ -156,7 +156,8 @@ export default Vue.extend({
     },
 
     async next() {
-      if (this.currentTab.id === 'confirmation') {
+      if ((this.currentTab.id === 'confirmation' && this.$storage.registration.getters.isCRCRegistration())
+        || this.currentTabIndex === this.allTabs.length - 1) {
         await this.closeRegistration();
         return;
       }
@@ -241,7 +242,10 @@ export default Vue.extend({
     },
 
     handleConfirmationScreen(confirmationScreenIndex: number) {
-      this.disableOtherTabs(confirmationScreenIndex);
+      // for crc we show the assessment tab after but we keep it disabled as we never access it
+      // it's only there to show that the event includes an assessment
+      // the confirmation screen will include the assessment button
+      this.disableOtherTabs(confirmationScreenIndex, !this.$storage.registration.getters.isCRCRegistration());
 
       this.$storage.registration.mutations.mutateTabAtIndex(confirmationScreenIndex, (tab: IRegistrationMenuItem) => {
         if (this.$store.state.registration.householdAssociationMode) {
@@ -254,10 +258,10 @@ export default Vue.extend({
       this.$storage.registration.mutations.jump(confirmationScreenIndex);
     },
 
-    disableOtherTabs(toIndex: number) {
+    disableOtherTabs(toIndex: number, activateFutureTabs: boolean) {
       for (let index = 0; index < this.allTabs.length; index += 1) {
         this.$storage.registration.mutations.mutateTabAtIndex(index, (tab: IRegistrationMenuItem) => {
-          tab.disabled = index !== toIndex;
+          tab.disabled = activateFutureTabs ? index < toIndex : index !== toIndex;
         });
       }
     },

@@ -41,22 +41,22 @@ describe('MainLayout.vue', () => {
     });
 
     describe('Methods', () => {
-      describe('verifyLocation', () => {
+      describe('initializeEvent', () => {
         it('gets the tenant from the current url', async () => {
           wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' }, query: {} };
-          await wrapper.vm.verifyLocation();
+          await wrapper.vm.initializeEvent();
           expect(wrapper.vm.$services.publicApi.getTenantByRegistrationDomain).toHaveBeenCalledWith(helpers.getCurrentDomain(wrapper.vm.$route));
         });
 
         it('gets the event from storage', async () => {
           wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' }, query: {} };
-          await wrapper.vm.verifyLocation();
+          await wrapper.vm.initializeEvent();
           expect(storage.registration.actions.fetchEvent).toHaveBeenCalledWith('lang', 'reg');
         });
 
         it('set the tenantId to appInsights', async () => {
           wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' }, query: {} };
-          await wrapper.vm.verifyLocation();
+          await wrapper.vm.initializeEvent();
 
           expect(wrapper.vm.$appInsights.setBasicContext).toHaveBeenCalledTimes(2);
           expect(wrapper.vm.$appInsights.setBasicContext.mock.calls).toEqual([
@@ -71,6 +71,16 @@ describe('MainLayout.vue', () => {
               },
             ],
           ]);
+        });
+
+        it('sets registration assessment to complete', async () => {
+          wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' }, query: {} };
+          await wrapper.vm.initializeEvent();
+          expect(wrapper.vm.$services.assessmentForms.getForBeneficiary).toHaveBeenCalledWith(mockEvent().registrationAssessments[0].assessmentId);
+          expect(wrapper.vm.$storage.registration.mutations.setAssessmentToComplete).toHaveBeenCalledWith({
+            assessmentForm: wrapper.vm.$services.assessmentForms.getForBeneficiary(),
+            registrationAssessment: mockEvent().registrationAssessments[0],
+          });
         });
       });
 

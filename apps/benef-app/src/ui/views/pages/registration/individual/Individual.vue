@@ -95,6 +95,7 @@ import Addresses from '../addresses/Addresses.vue';
 import AdditionalMembers from '../additional-members/AdditionalMembers.vue';
 import ReviewRegistration from '../review/ReviewRegistration.vue';
 import ConfirmRegistration from '../confirmation/ConfirmRegistration.vue';
+import CompleteAssessment from '../complete-assessment/CompleteAssessment.vue';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -107,6 +108,7 @@ export default mixins(individual).extend({
     AdditionalMembers,
     ReviewRegistration,
     ConfirmRegistration,
+    CompleteAssessment,
     ConfirmationPrintLib,
     SystemErrorDialog,
   },

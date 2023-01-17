@@ -40,5 +40,9 @@ describe('>>> Event', () => {
     it('should instantiate selfRegistrationEnabled', () => {
       expect(event.selfRegistrationEnabled).toEqual(mockEventData().selfRegistrationEnabled);
     });
+
+    it('should instantiate registrationAssessments', () => {
+      expect(event.registrationAssessments).toEqual(mockEventData().registrationAssessments);
+    });
   });
 });

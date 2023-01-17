@@ -281,7 +281,8 @@ describe('Individual.vue', () => {
 
         wrapper.vm.handleConfirmationScreen(toIndex);
 
-        expect(wrapper.vm.disableOtherTabs).toHaveBeenCalledWith(toIndex);
+        expect(wrapper.vm.disableOtherTabs).toHaveBeenCalledWith(toIndex, false);
+        expect(wrapper.vm.$storage.registration.getters.isCRCRegistration).toHaveBeenCalled();
         expect(wrapper.vm.$storage.registration.mutations.jump).toHaveBeenCalledWith(toIndex);
       });
     });
@@ -297,6 +298,7 @@ describe('Individual.vue', () => {
 
           await wrapper.vm.next();
 
+          expect(wrapper.vm.$storage.registration.getters.isCRCRegistration).toHaveBeenCalled();
           expect(wrapper.vm.closeRegistration).toHaveBeenCalledTimes(1);
           expect(wrapper.vm.jump).toHaveBeenCalledTimes(0);
         });

@@ -55,10 +55,23 @@
 
               <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
                 <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
-                <v-btn v-if="currentTab.id === 'confirmation' && registrationSuccess" data-test="new-registration-button" @click="routeToNewRegistration">
-                  {{ $t('registration.new_registration.label') }}
-                </v-btn>
+                <div v-if="currentTab.id === 'confirmation' && registrationSuccess">
+                  <v-btn data-test="new-registration-button" @click="routeToNewRegistration">
+                    {{ $t('registration.new_registration.label') }}
+                  </v-btn>
+                  <v-btn
+                    data-test="nextButton"
+                    :color="registrationAssessment ? '' : 'primary'"
+                    :aria-label="getNextButtonLabel"
+                    @click="next()">
+                    {{ getNextButtonLabel }}
+                  </v-btn>
+                  <v-btn v-if="registrationAssessment" color="primary" data-test="new-registration-button" @click="routeToAssessment">
+                    {{ $t('registration.start_assessment.label') }}
+                  </v-btn>
+                </div>
                 <v-btn
+                  v-else
                   color="primary"
                   data-test="nextButton"
                   :aria-label="getNextButtonLabel"
@@ -106,6 +119,7 @@ import helpers from '@/ui/helpers/helpers';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
+import { IRegistrationAssessment } from '@libs/entities-lib/event';
 import { IRegistrationMenuItem } from '@libs/registration-lib/types';
 
 export default mixins(individual).extend({
@@ -182,9 +196,6 @@ export default mixins(individual).extend({
         if (this.householdAlreadyRegistered) {
           return this.$t('registration.associate.confirmation.next.label');
         }
-        if (this.associationMode) {
-          return this.$t('registration.details.associateBeneficiaryButton.label');
-        }
       }
       return this.$t(this.currentTab.nextButtonTextKey);
     },
@@ -203,6 +214,10 @@ export default mixins(individual).extend({
 
     enableAutocomplete(): boolean {
       return this.$hasFeature(FeatureKeys.AddressAutoFill);
+    },
+
+    registrationAssessment(): IRegistrationAssessment {
+      return this.$storage.registration.getters.assessmentToComplete()?.registrationAssessment;
     },
 
     isPersonalInfoTouched(): boolean {
@@ -238,6 +253,12 @@ export default mixins(individual).extend({
       this.$router.replace({
         name: routes.registration.home.name,
       });
+    },
+
+    routeToAssessment() {
+      // future dev
+      // eslint-disable-next-line no-alert
+      alert('assessment');
     },
 
     async next() {

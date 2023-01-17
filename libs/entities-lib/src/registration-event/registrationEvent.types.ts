@@ -1,4 +1,5 @@
 import { ECanadaProvinces, IMultilingual, IListOption } from '@libs/shared-lib/types';
+import { IRegistrationAssessment } from '../event';
 import { IShelterLocationData } from '../household-create';
 
 /**
@@ -78,6 +79,7 @@ export interface IEventData {
   shelterLocations: IShelterLocationData[];
   selfRegistrationEnabled: boolean;
   schedule: IEventSchedule;
+  registrationAssessments: IRegistrationAssessment[];
 }
 
 /**
@@ -93,4 +95,5 @@ export interface IEvent {
   registrationLocations: IEventGenericLocation[];
   selfRegistrationEnabled: boolean;
   schedule: IEventSchedule;
+  registrationAssessments: IRegistrationAssessment[];
 }

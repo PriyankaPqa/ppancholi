@@ -14,7 +14,7 @@ import _isEqual from 'lodash/isEqual';
 import { Status } from '@libs/entities-lib/base';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { ISplitHousehold } from '@libs/entities-lib/household-create/householdCreate.types';
-
+import { PublishStatus } from '@libs/entities-lib/assessment-template';
 import { IHouseholdEntity } from '@libs/entities-lib/household';
 import {
   HouseholdCreate,
@@ -30,6 +30,8 @@ import {
   ICurrentAddress, IAddress, IHouseholdCreateData,
 } from '@libs/entities-lib/household-create';
 import { RegistrationEvent, IEvent, IEventData } from '@libs/entities-lib/registration-event';
+import { IRegistrationAssessment } from '@libs/entities-lib/src/event';
+import { IAssessmentFormEntity } from '@libs/entities-lib/src/assessment-template';
 import { IRegistrationMenuItem, IInformationFromBeneficiarySearch } from '../../../types';
 import {
   isRegisteredValid,
@@ -49,6 +51,7 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   isPrivacyAgreed: false,
   event: null,
   isLeftMenuOpen: true,
+  allTabs: tabs,
   tabs,
   currentTabIndex: 0,
   genders: [],
@@ -67,6 +70,7 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   splitHousehold: null as ISplitHousehold,
   primarySpokenLanguagesFetched: false,
   gendersFetched: false,
+  assessmentToComplete: null,
   informationFromBeneficiarySearch: {} as IInformationFromBeneficiarySearch,
 });
 
@@ -76,6 +80,8 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   isCRCRegistration: () => mode === ERegistrationMode.CRC,
 
   event: (state: IState) => new RegistrationEvent(state.event),
+
+  assessmentToComplete: (state: IState) => _cloneDeep(state.assessmentToComplete),
 
   isLeftMenuOpen: (state: IState) => state.isLeftMenuOpen,
 
@@ -201,11 +207,10 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
             break;
           case 'SplitHouseholdMembers':
           case 'ReviewSplit':
-            isValid = true;
-            break;
           case 'ConfirmRegistration':
           default:
-          // Do nothing
+            isValid = true;
+            break;
         }
         // Return on first error found
         if (!isValid) {
@@ -237,9 +242,31 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   isSplitMode: (state: IState) => !!(state.splitHousehold),
 });
 
-const mutations = (): MutationTree<IState> => ({
+const mutations = (mode: ERegistrationMode): MutationTree<IState> => ({
   setEvent(state: IState, payload: IEventData) {
     state.event = payload;
+  },
+
+  setAssessmentToComplete(state: IState, payload: { registrationAssessment: IRegistrationAssessment, assessmentForm: IAssessmentFormEntity }) {
+    state.assessmentToComplete = payload;
+    if (state.assessmentToComplete?.assessmentForm?.status !== Status.Active) {
+      state.assessmentToComplete = null;
+    }
+
+    // we keep the Assessment tab only if we have an assessment that can be completed
+    // rules say that it must be active and published to be visible to self-registration
+    // but can be unpublished if CRC is doing the registration
+    const tabs = _cloneDeep(state.allTabs.filter((t) => t.id !== 'assessment'
+      || (state.assessmentToComplete?.assessmentForm?.status === Status.Active
+        && (mode === ERegistrationMode.CRC || state.assessmentToComplete.assessmentForm.publishStatus === PublishStatus.Published))));
+    if (tabs.find((t) => t.id === 'assessment')) {
+      // for self registration the confirmation will not be the last step so we rename the button
+      const confTab = tabs.find((t) => t.id === 'confirmation' && mode === ERegistrationMode.Self);
+      if (confTab) {
+        confTab.nextButtonTextKey = 'common.button.next';
+      }
+    }
+    state.tabs = tabs;
   },
 
   toggleLeftMenu(state: IState, payload: boolean) {
@@ -679,6 +706,6 @@ export const makeRegistrationModule = (
   namespaced: true,
   state: moduleState(tabs) as IState,
   getters: getters(i18n, skipAgeRestriction, skipEmailPhoneRules, mode),
-  mutations: mutations(),
+  mutations: mutations(mode),
   actions: actions(mode) as unknown as ActionTree<IState, IRootState>,
 });

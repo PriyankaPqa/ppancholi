@@ -2,43 +2,48 @@
   <div class="fixed-height pb-12">
     <template v-if="success">
       <div class="fixed-height mb-n8 flex-container">
-        <v-row no-gutters class="flex-body">
-          <v-col cols="12" class="rc-body16 mb-3" data-test="confirm-registration-message">
-            <i18n :path="confirmationMessagePath" tag="div">
-              <template #x>
-                <span class="fw-bold" data-test="confirm-registration-full-name">{{ fullName }}</span>
-              </template>
-            </i18n>
-          </v-col>
+        <div class="flex-body">
+          <v-row no-gutters>
+            <v-col cols="12" class="registration-result mb-3" data-test="confirm-registration-message">
+              <i18n :path="confirmationMessagePath" tag="div">
+                <template #x>
+                  <span class="fw-bold" data-test="confirm-registration-full-name">{{ fullName }}</span>
+                </template>
+              </i18n>
+            </v-col>
+          </v-row>
 
-          <v-col cols="12" sm="6" class="grey-container pt-6 pl-6">
-            <span class="rc-body12">{{ $t('event.beneficiaries.registration_number') }}</span>
-            <br>
-            <span class="registration-result" data-test="confirm-registration-number">{{ registrationNumber }}</span>
-          </v-col>
-          <v-col cols="12" sm="6" class="grey-container pa-6">
-            <span class="rc-body12">{{ $t('registration.confirmation.event') }}</span>
-            <br>
-            <span class="registration-result" data-test="confirm-registration-event-name">{{ $m(event.name) }}</span>
-          </v-col>
+          <v-row no-gutters class="grey-container pa-6">
+            <v-col cols="12" sm="6">
+              <span class="rc-body12">{{ $t('event.beneficiaries.registration_number') }}</span>
+              <br>
+              <span class="registration-result" data-test="confirm-registration-number">{{ registrationNumber }}</span>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <span class="rc-body12">{{ $t('registration.confirmation.event') }}</span>
+              <br>
+              <span class="registration-result" data-test="confirm-registration-event-name">{{ $m(event.name) }}</span>
+            </v-col>
+          </v-row>
 
-          <v-col v-if="!isCRCRegistration" cols="12" class="rc-body14 mt-3">
-            <i18n path="registration.confirmation.additional_assistance" tag="div">
-              <template #phone>
-                <span class="fw-bold" data-test="confirm-registration-phoneAssistance">{{ phoneAssistance }}</span>
-              </template>
-            </i18n>
-          </v-col>
+          <v-row no-gutters>
+            <v-col v-if="!isCRCRegistration" cols="12" class="rc-body14 mt-3">
+              <i18n path="registration.confirmation.additional_assistance" tag="div">
+                <template #phone>
+                  <span class="fw-bold" data-test="confirm-registration-phoneAssistance">{{ phoneAssistance }}</span>
+                </template>
+              </i18n>
+            </v-col>
 
-          <v-col v-if="isCRCRegistration" cols="12" class="rc-body14 mt-3" data-test="confirm-registration-additional_assistance-fullname">
-            <i18n path="registration.crc_confirmation.additional_assistance" tag="div">
-              <template #x>
-                <span class="fw-bold" data-test="confirm-registration-additional_assistance">{{ fullName }}</span>
-              </template>
-            </i18n>
-          </v-col>
-        </v-row>
-
+            <v-col v-if="isCRCRegistration" cols="12" class="rc-body14 mt-3" data-test="confirm-registration-additional_assistance-fullname">
+              <i18n path="registration.crc_confirmation.additional_assistance" tag="div">
+                <template #x>
+                  <span class="fw-bold" data-test="confirm-registration-additional_assistance">{{ fullName }}</span>
+                </template>
+              </i18n>
+            </v-col>
+          </v-row>
+        </div>
         <div v-if="isCRCRegistration">
           <v-icon>mdi-information</v-icon>
           <span class="rc-body14 ml-2">{{ $t('registration.crc_confirmation.email_sent') }}</span>

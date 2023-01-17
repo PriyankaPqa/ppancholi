@@ -42,21 +42,12 @@
           </v-icon>
         </v-list-item-icon>
       </v-list-item>
-
-      <div v-if="isDev" class="dev-container">
-        <v-btn @click="prefill">
-          Fill data
-        </v-btn>
-      </div>
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {
-  mockMember, mockAddress, mockContactInformation, mockCampGround,
-} from '@libs/entities-lib/household-create';
 import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 
 export default Vue.extend({
@@ -86,19 +77,6 @@ export default Vue.extend({
     },
     xSmallOrSmallMenu(): boolean {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm;
-    },
-    isDev() {
-      return process.env.VITE_APP_ENV === 'development';
-    },
-  },
-
-  methods: {
-    prefill() {
-      this.$storage.registration.mutations.setIsPrivacyAgreed(true);
-      this.$storage.registration.mutations.setPrimaryBeneficiary(mockMember());
-      this.$storage.registration.mutations.setContactInformation(mockContactInformation());
-      this.$storage.registration.mutations.setHomeAddress(mockAddress());
-      this.$storage.registration.mutations.setCurrentAddress(mockCampGround());
     },
   },
 });

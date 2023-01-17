@@ -6,6 +6,7 @@ import {
 
 import { RegistrationEvent } from './registrationEvent';
 import { IShelterLocationData } from '../household-create';
+import { IRegistrationAssessment } from '../event';
 
 export const mockShelterLocations = (): IShelterLocationData[] => ([
   {
@@ -76,6 +77,7 @@ export const mockEventData = (): IEventData => ({
     status: EEventStatus.Open,
   },
   selfRegistrationEnabled: true,
+  registrationAssessments: [{ assessmentId: 'assessmentId', id: 'id' } as IRegistrationAssessment],
 });
 
 export const mockSearchEventsData = (): IAzureSearchResult<unknown> => ({

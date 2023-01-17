@@ -1,5 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { IMultilingual } from '@libs/shared-lib/types';
+import { IRegistrationAssessment } from '../event';
 import utils from '../utils';
 import { IShelterLocationData } from '../household-create';
 import {
@@ -21,6 +22,8 @@ export class RegistrationEvent implements IEvent {
 
   registrationLocations: IEventGenericLocation[];
 
+  registrationAssessments: IRegistrationAssessment[];
+
   selfRegistrationEnabled: boolean;
 
   schedule: IEventSchedule;
@@ -36,6 +39,7 @@ export class RegistrationEvent implements IEvent {
       this.registrationLocations = _cloneDeep(data.registrationLocations) || [];
       this.schedule = _cloneDeep(data.schedule);
       this.selfRegistrationEnabled = data.selfRegistrationEnabled;
+      this.registrationAssessments = data.registrationAssessments;
     }
   }
 }

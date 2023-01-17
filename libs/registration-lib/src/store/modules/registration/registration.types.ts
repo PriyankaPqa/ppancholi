@@ -7,11 +7,14 @@ import {
 
 import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { IEventData } from '@libs/entities-lib/registration-event';
+import { IAssessmentFormEntity } from '@libs/entities-lib/src/assessment-template';
+import { IRegistrationAssessment } from '@libs/entities-lib/src/event';
 import { IRegistrationMenuItem, IInformationFromBeneficiarySearch } from '../../../types';
 
 export type IState = {
   event: IEventData;
   isLeftMenuOpen: boolean;
+  allTabs: IRegistrationMenuItem[];
   tabs: IRegistrationMenuItem[];
   currentTabIndex: number;
   genders: IOptionItemData[];
@@ -31,5 +34,6 @@ export type IState = {
   splitHousehold: ISplitHousehold;
   primarySpokenLanguagesFetched: boolean;
   gendersFetched: boolean;
+  assessmentToComplete: { registrationAssessment: IRegistrationAssessment, assessmentForm: IAssessmentFormEntity };
   informationFromBeneficiarySearch: IInformationFromBeneficiarySearch;
 };
