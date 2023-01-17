@@ -297,8 +297,8 @@ export default Vue.extend({
   async created() {
     this.loading = true;
     try {
-      await useEventStore().fetch(this.id, true);
-      await useEventMetadataStore().fetch(this.id);
+      await useEventStore().fetch(this.id);
+      await useEventMetadataStore().fetch(this.id, false);
       await useEventStore().fetchEventTypes();
     } finally {
       this.loading = false;

@@ -407,8 +407,12 @@ describe('EventDetails.vue', () => {
       });
     });
 
-    it('should call fetchEvent', () => {
-      expect(eventStore.fetch).toHaveBeenCalledWith(wrapper.vm.id, true);
+    it('should fetch event entity', () => {
+      expect(eventStore.fetch).toHaveBeenCalledWith(wrapper.vm.id);
+    });
+
+    it('should fetch event metadata', () => {
+      expect(eventMetadataStore.fetch).toHaveBeenCalledWith(wrapper.vm.id, false);
     });
   });
 
