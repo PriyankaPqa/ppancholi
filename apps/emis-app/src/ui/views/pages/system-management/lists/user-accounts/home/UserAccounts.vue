@@ -1,124 +1,99 @@
 <template>
-  <rc-page-content
-    :full-height="false"
-    :outer-scroll="true"
-    :title="$t('system_management.leftMenu.user_accounts_title')"
-    :help-link="$t('zendesk.help_link.manageEMISUsers')"
-    :show-add-button="true"
-    :add-button-label="$t('system_management.userAccounts.add_user_account_title')"
-    :labels="labels"
-    :table-props="tableProps"
-    :search="search"
-    :show-help="false"
-    show-search
-    content-padding="0"
-    @search="setSearch($event)"
-    @clear-search="clearSearch()"
-    @add-button="addUser()">
-    <div class="lists__container">
-      <div>
-        <v-data-table
-          data-test="users-table"
-          hide-header
-          must-sort
-          :loading="loading"
-          :loading-text="loadingText"
-          :items="filteredUserAccounts"
-          :table-props="tableProps"
-          :count="filteredUserAccounts.length"
-          :labels="labels"
-          :headers="headers"
-          :sort-by.sync="options.sortBy"
-          :sort-desc.sync="options.sortDesc"
-          :custom-columns="Object.values(customColumns)"
-          :footer-props="{ itemsPerPageOptions: [5, 10, 15, 250] }"
-          :options.sync="options">
-          <template slot="default">
-            <div>{{ $t('system_management.userAccounts.no_users_found') }}</div>
-          </template>
+  <div class="ma-0 pa-0">
+    <rc-data-table
+      ref="userAccountsTable"
+      data-test="user-accounts-table"
+      :items="tableData"
+      :count="itemsCount"
+      :headers="headers"
+      :footer-text="footerText"
+      :labels="labels"
+      :table-props="tableProps"
+      :show-add-button="true"
+      :options.sync="options"
+      :initial-search="params && params.search"
+      :custom-columns="Object.values(customColumns)"
+      @search="search"
+      @add-button="addUser()">
+      <template #[`item.${customColumns.displayName}`]="{ item }">
+        <router-link
+          class="rc-link14 font-weight-bold"
+          :data-test="`user_link_${item.entity.id}`"
+          :to="getUserAccountDetailsRoute(item.entity.id)">
+          <span data-test="user_displayName"> {{ item.metadata.displayName }}</span>
+        </router-link>
+      </template>
 
-          <template #[`item.${customColumns.displayName}`]="{ item }">
-            <router-link
-              class="rc-link14 font-weight-bold"
-              :data-test="`user_link_${item.entity.id}`"
-              :to="getUserAccountDetailsRoute(item.entity.id)">
-              <span data-test="user_displayName"> {{ item.metadata.displayName }}</span>
-            </router-link>
-          </template>
+      <template #[`item.${customColumns.email}`]="{ item }">
+        <span data-test="user_email"> {{ item.metadata.emailAddress || item.metadata.userPrincipalName }} </span>
+      </template>
 
-          <template #[`item.${customColumns.email}`]="{ item }">
-            <span data-test="user_email"> {{ item.metadata.emailAddress || item.metadata.userPrincipalName }} </span>
-          </template>
+      <template #[`item.${customColumns.role}`]="{ item }">
+        <v-select-with-validation
+          dense
+          outlined
+          return-object
+          hide-details
+          :attach="false"
+          data-test="user_roleId"
+          :disabled="canNotManageRoleForUser(item)"
+          :value="getRoleValue(item)"
+          :item-text="(item) => item ? $m(item.text) : ''"
+          :item-disabled="(item) => item.isInactive"
+          :label="$t('system_management.userAccounts.role_header')"
+          :items="getRolesForUser(item)"
+          @change="updateUserRole($event, item)" />
+      </template>
 
-          <template #[`item.${customColumns.roleId}`]="{ item }">
-            <v-select-with-validation
-              dense
-              outlined
-              return-object
-              hide-details
-              :attach="false"
-              data-test="user_roleId"
-              :disabled="canNotManageRoleForUser(item)"
-              :value="getRoleValue(item)"
-              :item-text="(item) => item ? $m(item.text) : ''"
-              :item-disabled="(item) => item.isInactive"
-              :label="$t('system_management.userAccounts.role_header')"
-              :items="getRolesForUser(item)"
-              @change="updateUserRole($event, item)" />
-          </template>
+      <template #[`item.${customColumns.accountStatus}`]="{ item }">
+        <status-chip
+          data-test="user_status"
+          status-name="AccountStatus"
+          :status="item.entity.accountStatus" />
+      </template>
 
-          <template #[`item.${customColumns.accountStatus}`]="{ item }">
-            <status-chip
-              data-test="user_status"
-              status-name="AccountStatus"
-              :status="item.entity.accountStatus" />
-          </template>
+      <template #[`item.${customColumns.edit}`]="{ item }">
+        <div v-if="modifiedUser(item)" class="inline-flex align-vertical-centre">
+          <v-btn
+            small
+            color="primary"
+            :loading="submitting[item.entity.id]"
+            data-test="apply-role-button"
+            @click="applyRoleChange(item)">
+            {{ $t('common.apply') }}
+          </v-btn>
+          <v-btn
+            icon
+            data-test="cancel-role-change"
+            @click="cancelRoleChange(item)">
+            <v-icon>
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </div>
+      </template>
 
-          <template #[`item.${customColumns.edit}`]="{ item }">
-            <div v-if="modifiedUser(item)" class="inline-flex align-vertical-centre">
-              <v-btn
-                small
-                color="primary"
-                :loading="submitting[item.entity.id]"
-                data-test="apply-role-button"
-                @click="applyRoleChange(item)">
-                {{ $t('common.apply') }}
-              </v-btn>
-              <v-btn
-                icon
-                data-test="cancel-role-change"
-                @click="cancelRoleChange(item)">
-                <v-icon>
-                  mdi-close
-                </v-icon>
-              </v-btn>
-            </div>
-          </template>
-
-          <template #[`item.${customColumns.delete}`]="{ item }">
-            <v-btn
-              icon
-              :disabled="canNotManageRoleForUser(item)"
-              data-test="delete-user"
-              @click="deleteUserAccount(item)">
-              <v-icon>
-                mdi-delete
-              </v-icon>
-            </v-btn>
-          </template>
-        </v-data-table>
-      </div>
-    </div>
+      <template #[`item.${customColumns.delete}`]="{ item }">
+        <v-btn
+          icon
+          :disabled="canNotManageRoleForUser(item)"
+          data-test="delete-user"
+          @click="deleteUserAccount(item)">
+          <v-icon>
+            mdi-delete
+          </v-icon>
+        </v-btn>
+      </template>
+    </rc-data-table>
 
     <add-emis-user
       v-if="showAddEmisUserDialog"
       data-test="add-emis-user"
       :all-sub-roles="allActiveSubRoles"
       :all-access-level-roles="allAccessLevelRoles"
-      :all-emis-users="users"
       :show.sync="showAddEmisUserDialog"
       @hide="showAddEmisUserDialog = false"
-      @users-added="fetchAllEmisUsers" />
+      @users-added="search(params)" />
 
     <rc-confirmation-dialog
       v-if="showDeleteUserAccountDialog"
@@ -130,19 +105,18 @@
       @submit="applyDeleteUserAccount()"
       @cancel="clearDeletionStatus()"
       @close="clearDeletionStatus()" />
-  </rc-page-content>
+  </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import {
   RcPageContent,
   VSelectWithValidation,
   RcConfirmationDialog,
+  RcDataTable,
 } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import { TranslateResult } from 'vue-i18n';
-import { isEmpty } from 'lodash';
 import _cloneDeep from 'lodash/cloneDeep';
 import { Route, NavigationGuardNext } from 'vue-router';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
@@ -153,17 +127,19 @@ import {
 
 import AddEmisUser from '@/ui/views/pages/system-management/lists/add-emis-user/AddEmisUser.vue';
 import routes from '@/constants/routes';
+import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IUserAccountCombined, IUserAccountEntity } from '@libs/entities-lib/user-account';
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IAzureSearchParams, IMultilingual } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
 
-export default Vue.extend({
+export default mixins(TablePaginationSearchMixin).extend({
   name: 'UserAccounts',
 
   components: {
     RcPageContent,
+    RcDataTable,
     AddEmisUser,
     StatusChip,
     VSelectWithValidation,
@@ -176,14 +152,12 @@ export default Vue.extend({
 
   data() {
     return {
-      routes,
       options: {
         page: 1,
-        sortBy: ['metadata.displayName'],
+        sortBy: ['Metadata/DisplayName'],
         sortDesc: [false],
         itemsPerPage: 10,
       },
-      search: '',
       showAddEmisUserDialog: false,
       showDeleteUserAccountDialog: false,
       userToDelete: null as IUserAccountCombined,
@@ -201,6 +175,10 @@ export default Vue.extend({
   },
 
   computed: {
+    tableData(): IUserAccountCombined[] {
+      return this.$storage.userAccount.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+    },
+
     roles(): IOptionItem[] {
       return this.$storage.userAccount.getters.roles();
     },
@@ -213,7 +191,7 @@ export default Vue.extend({
           filterable: true,
           sortable: true,
           align: 'start',
-          value: 'metadata.displayName',
+          value: this.customColumns.displayName,
           width: '25%',
         },
         {
@@ -221,7 +199,7 @@ export default Vue.extend({
           class: 'emis_member_header',
           filterable: true,
           sortable: true,
-          value: 'metadata.emailAddress',
+          value: this.customColumns.email,
           width: '25%',
         },
         {
@@ -229,7 +207,7 @@ export default Vue.extend({
           class: 'emis_member_header',
           filterable: false,
           sortable: true,
-          value: 'metadata.roleId',
+          value: this.customColumns.role,
           width: '25%',
         },
         {
@@ -237,7 +215,7 @@ export default Vue.extend({
           class: 'emis_member_header',
           filterable: false,
           sortable: true,
-          value: 'entity.accountStatus',
+          value: this.customColumns.accountStatus,
         },
         {
           text: '',
@@ -259,54 +237,30 @@ export default Vue.extend({
 
     customColumns(): Record<string, string> {
       return {
-        displayName: 'metadata.displayName',
-        email: 'metadata.emailAddress',
-        roleId: 'metadata.roleId',
-        accountStatus: 'entity.accountStatus',
+        displayName: 'Metadata/DisplayName',
+        email: 'Metadata/EmailAddress',
+        role: `Metadata/RoleName/Translation/${this.$i18n.locale}`,
+        accountStatus: 'Entity/AccountStatus',
         edit: 'edit',
         delete: 'delete',
       };
     },
 
-    loadingText(): TranslateResult {
-      return this.$t('system_management.userAccounts.loading_users');
-    },
-
-    tableProps(): Record<string, boolean> {
+    tableProps(): Record<string, unknown> {
       return {
         loading: this.loading,
+        footerProps: { itemsPerPageOptions: [5, 10, 15, 250] },
       };
     },
 
-    itemsPerPage(): number {
-      return this.users ? this.users.length : 0;
-    },
-
-    labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
+    labels(): Record<string, unknown> {
       return {
         header: {
           title: this.$t('system_management.leftMenu.user_accounts_title'),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
+          addButtonLabel: this.$t('system_management.userAccounts.add_user_account_title'),
         },
       };
-    },
-
-    filteredUserAccounts(): IUserAccountCombined[] {
-      let filteredUsers:IUserAccountCombined[];
-
-      if (isEmpty(this.search) || !this.users) {
-        filteredUsers = this.users || [];
-      } else {
-        filteredUsers = this.users.filter(
-          (user) => user.metadata.displayName && user.metadata.displayName.toLowerCase().indexOf(this.search.toLowerCase()) >= 0,
-        );
-      }
-
-      return filteredUsers;
-    },
-
-    users(): IUserAccountCombined[] {
-      return this.$storage.userAccount.getters.getAll()?.filter((u : IUserAccountCombined) => u.entity.status === Status.Active) || [];
     },
   },
 
@@ -325,22 +279,24 @@ export default Vue.extend({
     if (prevState && prevState.itemsPerPage) {
       this.options.itemsPerPage = prevState.itemsPerPage;
     }
-    await Promise.all([this.$storage.userAccount.actions.fetchRoles(), this.fetchAllEmisUsers()]);
+    await this.$storage.userAccount.actions.fetchRoles();
     this.setRoles();
     this.loading = false;
   },
 
   methods: {
-    /**
-     * Clear the search related data.
-     * @public
-     */
-    clearSearch() {
-      this.search = '';
-    },
-
-    setSearch(search: string): void {
-      this.search = search;
+    async fetchData(params: IAzureSearchParams) {
+      const res = await this.$storage.userAccount.actions.search({
+        search: params.search,
+        filter: params.filter,
+        top: params.top,
+        skip: params.skip,
+        orderBy: params.orderBy,
+        count: true,
+        queryType: 'full',
+        searchMode: 'all',
+      });
+      return res;
     },
 
     addUser() {
@@ -422,7 +378,7 @@ export default Vue.extend({
       try {
         const resultAccount:IUserAccountEntity = await this.$storage.userAccount.actions.assignRole(request);
         if (resultAccount) {
-          this.fetchAllEmisUsers();
+          this.search(this.params);
           this.modifiedUsers.splice(this.modifiedUsers.findIndex((u) => u.entity.id === user.entity.id), 1);
           this.$toasted.global.success(this.$t('system_management.userAccounts.role_update_success'));
         }
@@ -450,7 +406,7 @@ export default Vue.extend({
           const response = await this.$storage.userAccount.actions.deactivate(this.userToDelete.entity.id);
 
           if (response) {
-            this.fetchAllEmisUsers();
+            this.search(this.params);
             this.clearDeletionStatus();
             this.$toasted.global.success(this.$t('system_management.userAccounts.delete_success'));
           }
@@ -463,10 +419,6 @@ export default Vue.extend({
     clearDeletionStatus() {
       this.userToDelete = null;
       this.showDeleteUserAccountDialog = false;
-    },
-
-    async fetchAllEmisUsers() {
-      await this.$storage.userAccount.actions.fetchAll();
     },
 
     setRoles() {
@@ -530,11 +482,9 @@ export default Vue.extend({
 
     getRoleValue(user: IUserAccountCombined) {
       const modifiedUser = this.modifiedUsers.length && this.modifiedUser(user);
-
       if (modifiedUser) {
         return this.getRoleListItem(modifiedUser.entity.roles[0].optionItemId);
       }
-
       return this.getRoleListItem(user.entity.roles[0].optionItemId);
     },
   },

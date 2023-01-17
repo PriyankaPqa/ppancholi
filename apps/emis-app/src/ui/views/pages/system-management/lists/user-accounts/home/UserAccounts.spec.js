@@ -36,6 +36,7 @@ describe('UserAccounts.vue', () => {
   storage.userAccount.actions.assignRole = jest.fn(() => usersTestData[0].entity);
   storage.userAccount.actions.fetchAll = jest.fn(() => usersTestData);
   uiStateStore.getSearchTableState = jest.fn(() => ({ itemsPerPage: 25 }));
+  storage.userAccount.getters.getByIds = jest.fn(() => usersTestData);
 
   const mountWrapper = async (additionalOverwrites = {}) => {
     wrapper = shallowMount(Component, {
@@ -46,10 +47,9 @@ describe('UserAccounts.vue', () => {
           routes,
           options: {
             page: 1,
-            sortBy: ['displayName'],
+            sortBy: ['Metadata/DisplayName'],
             sortDesc: [false],
           },
-          search: '',
           showAddEmisUserDialog: false,
           showDeleteUserAccountDialog: false,
           userToDelete: null,
@@ -70,8 +70,6 @@ describe('UserAccounts.vue', () => {
     it('loads lookup lists', async () => {
       jest.clearAllMocks();
       mountWrapper();
-
-      jest.spyOn(wrapper.vm, 'fetchAllEmisUsers').mockImplementation(() => usersTestData);
       jest.spyOn(wrapper.vm, 'setRoles').mockImplementation(() => mockOptionItemData());
 
       for (let i = 0; i < wrapper.vm.$options.created.length; i += 1) {
@@ -80,7 +78,6 @@ describe('UserAccounts.vue', () => {
       }
 
       expect(storage.userAccount.actions.fetchRoles).toHaveBeenCalled();
-      expect(wrapper.vm.fetchAllEmisUsers).toHaveBeenCalled();
       expect(wrapper.vm.setRoles).toHaveBeenCalled();
     });
 
@@ -96,12 +93,20 @@ describe('UserAccounts.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('tableData', () => {
+      it('should return result of getByIds', () => {
+        mountWrapper();
+        expect(wrapper.vm.tableData).toEqual(usersTestData);
+      });
+    });
+
     describe('roles', () => {
       it('returns theroles from the store ', async () => {
         mountWrapper();
         expect(wrapper.vm.roles).toEqual(mockOptionItemData());
       });
     });
+
     describe('headers', () => {
       it('is correctly defined', async () => {
         mountWrapper();
@@ -112,7 +117,7 @@ describe('UserAccounts.vue', () => {
             filterable: true,
             sortable: true,
             align: 'start',
-            value: 'metadata.displayName',
+            value: wrapper.vm.customColumns.displayName,
             width: '25%',
           },
           {
@@ -120,7 +125,7 @@ describe('UserAccounts.vue', () => {
             class: 'emis_member_header',
             filterable: true,
             sortable: true,
-            value: 'metadata.emailAddress',
+            value: wrapper.vm.customColumns.email,
             width: '25%',
           },
           {
@@ -128,7 +133,7 @@ describe('UserAccounts.vue', () => {
             class: 'emis_member_header',
             filterable: false,
             sortable: true,
-            value: 'metadata.roleId',
+            value: wrapper.vm.customColumns.role,
             width: '25%',
           },
           {
@@ -136,7 +141,7 @@ describe('UserAccounts.vue', () => {
             class: 'emis_member_header',
             filterable: false,
             sortable: true,
-            value: 'entity.accountStatus',
+            value: wrapper.vm.customColumns.accountStatus,
           },
           {
             text: '',
@@ -162,21 +167,14 @@ describe('UserAccounts.vue', () => {
         mountWrapper();
         expect(wrapper.vm.customColumns).toEqual(
           {
-            displayName: 'metadata.displayName',
-            email: 'metadata.emailAddress',
-            roleId: 'metadata.roleId',
-            accountStatus: 'entity.accountStatus',
+            displayName: 'Metadata/DisplayName',
+            email: 'Metadata/EmailAddress',
+            role: 'Metadata/RoleName/Translation/en',
+            accountStatus: 'Entity/AccountStatus',
             edit: 'edit',
             delete: 'delete',
           },
         );
-      });
-    });
-
-    describe('loadingText', () => {
-      it('is correctly defined', async () => {
-        mountWrapper();
-        expect(wrapper.vm.loadingText).toEqual('system_management.userAccounts.loading_users');
       });
     });
 
@@ -185,20 +183,8 @@ describe('UserAccounts.vue', () => {
         mountWrapper();
         expect(wrapper.vm.tableProps).toEqual({
           loading: wrapper.vm.loading,
+          footerProps: { itemsPerPageOptions: [5, 10, 15, 250] },
         });
-      });
-    });
-
-    describe('itemsPerPage', () => {
-      it('returns correct count for populated array', async () => {
-        mountWrapper({
-          computed: {
-            users() {
-              return usersTestData;
-            },
-          },
-        });
-        expect(wrapper.vm.itemsPerPage).toEqual(usersTestData.length);
       });
     });
 
@@ -209,56 +195,9 @@ describe('UserAccounts.vue', () => {
           header: {
             title: 'system_management.leftMenu.user_accounts_title',
             searchPlaceholder: 'common.inputs.quick_search',
+            addButtonLabel: 'system_management.userAccounts.add_user_account_title',
           },
         });
-      });
-    });
-
-    describe('filteredUserAccounts', () => {
-      it('returns correct count for populated array', async () => {
-        mountWrapper({
-          computed: {
-            users() {
-              return usersTestData;
-            },
-          },
-        });
-        await wrapper.setData({ search: usersTestData[0].metadata.displayName.substring(3) });
-        expect(wrapper.vm.filteredUserAccounts[0]).toEqual(usersTestData[0]);
-      });
-
-      it('returns empty array if nothing matches', async () => {
-        mountWrapper({
-          computed: {
-            users() {
-              return usersTestData;
-            },
-          },
-        });
-        wrapper.vm.search = 'this string will match nothing';
-        wrapper.vm.$nextTick();
-        expect(wrapper.vm.filteredUserAccounts.length).toEqual(0);
-      });
-      it('returns all users if no search filter exists', async () => {
-        mountWrapper({
-          computed: {
-            users() {
-              return usersTestData;
-            },
-          },
-        });
-        wrapper.vm.search = '';
-        wrapper.vm.$nextTick();
-        expect(wrapper.vm.filteredUserAccounts).toEqual(usersTestData);
-      });
-    });
-
-    describe('users', () => {
-      it('returns the filtered users from the store filtered ', async () => {
-        storage.userAccount.getters.getAll = jest.fn(() => [...usersTestData,
-          mockCombinedUserAccount({ id: 3, status: Status.Inactive }), mockCombinedUserAccount({ id: 4, status: Status.Active })]);
-        mountWrapper();
-        expect(wrapper.vm.users).toEqual([...usersTestData, mockCombinedUserAccount({ id: 4, status: Status.Active })]);
       });
     });
   });
@@ -268,11 +207,27 @@ describe('UserAccounts.vue', () => {
       mountWrapper();
     });
 
-    describe('clearSearch', () => {
-      it('clears search string', () => {
-        wrapper.vm.search = 'test string';
-        wrapper.vm.clearSearch();
-        expect(wrapper.vm.search).toEqual('');
+    describe('fetchData', () => {
+      it('should call search with proper params', () => {
+        const params = {
+          search: 'query',
+          top: 10,
+          skip: 10,
+          orderBy: 'name asc',
+        };
+
+        wrapper.vm.fetchData(params);
+
+        expect(wrapper.vm.$storage.userAccount.actions.search).toBeCalledWith({
+          search: params.search,
+          filter: params.filter,
+          top: params.top,
+          skip: params.skip,
+          orderBy: params.orderBy,
+          count: true,
+          queryType: 'full',
+          searchMode: 'all',
+        });
       });
     });
 
@@ -404,14 +359,14 @@ describe('UserAccounts.vue', () => {
         };
 
         wrapper.vm.modifiedUser = jest.fn(() => changedUser);
-        wrapper.vm.fetchAllEmisUsers = jest.fn();
+        wrapper.vm.search = jest.fn();
         wrapper.vm.getSubRoleById = jest.fn(() => fakeSubRole);
         wrapper.vm.$storage.userAccount.actions.assignRole = jest.fn(() => changedUser.entity);
         wrapper.vm.getSubRoleById = jest.fn(() => fakeSubRole);
         await wrapper.vm.applyRoleChange(user);
 
         expect(wrapper.vm.$storage.userAccount.actions.assignRole).toHaveBeenCalledWith({ subRole: fakeSubRole, userId: user.entity.id });
-        expect(wrapper.vm.fetchAllEmisUsers).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.search).toHaveBeenCalledWith(wrapper.vm.params);
         expect(wrapper.vm.modifiedUsers.indexOf(changedUser)).not.toBeGreaterThanOrEqual(0); // Not found
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);
       });
@@ -456,7 +411,7 @@ describe('UserAccounts.vue', () => {
         storage.userAccount.actions.deactivate = jest.fn(() => {});
         wrapper.vm.$toasted.global.success = jest.fn();
         wrapper.vm.clearDeletionStatus = jest.fn();
-        wrapper.vm.fetchAllEmisUsers = jest.fn();
+        wrapper.vm.search = jest.fn();
 
         const user = { entity: { id: '12345', accountStatus: AccountStatus.Active, status: Status.Active } };
         wrapper.vm.userToDelete = user;
@@ -465,7 +420,7 @@ describe('UserAccounts.vue', () => {
         await wrapper.vm.applyDeleteUserAccount();
 
         expect(wrapper.vm.$storage.userAccount.actions.deactivate).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.fetchAllEmisUsers).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.search).toHaveBeenCalledWith(wrapper.vm.params);
         expect(wrapper.vm.clearDeletionStatus).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);
       });
@@ -478,14 +433,6 @@ describe('UserAccounts.vue', () => {
         wrapper.vm.clearDeletionStatus();
         expect(wrapper.vm.userToDelete).toEqual(null);
         expect(wrapper.vm.showDeleteUserAccountDialog).toEqual(false);
-      });
-    });
-
-    describe('fetchAllEmisUsers', () => {
-      it('invokes the correct storage function', async () => {
-        jest.clearAllMocks();
-        await wrapper.vm.fetchAllEmisUsers();
-        expect(wrapper.vm.$storage.userAccount.actions.fetchAll).toHaveBeenCalledTimes(1);
       });
     });
 

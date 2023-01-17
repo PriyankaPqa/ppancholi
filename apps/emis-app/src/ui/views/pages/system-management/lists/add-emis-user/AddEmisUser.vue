@@ -29,7 +29,6 @@
               outlined
               prepend-inner-icon="mdi-magnify"
               data-test="team-search-input"
-              :disabled="!formReady"
               :label="$t('common.search')"
               @input="debounceSearch($event)" />
           </div>
@@ -37,7 +36,6 @@
             <v-data-table
               v-if="searchTerm"
               ref="userResultTable"
-              :key="componentKey"
               data-test="table"
               class="search_members"
               show-select
@@ -46,8 +44,7 @@
               :loading-text="loadingText"
               :headers="headers"
               :item-class="getClassRow"
-              :items="searchResults"
-              :items-per-page="itemsPerPage"
+              :items="orderedUsers"
               :loading="loading"
               @toggle-select-all="onSelectAll">
               <template slot="no-data">
@@ -57,9 +54,9 @@
                 <v-simple-checkbox
                   :data-test="`select_${item.id}`"
                   :ripple="false"
-                  :value="isSelected(item) || isAlreadyInEmis(item)"
-                  :readonly="isAlreadyInEmis(item)"
-                  :disabled="isAlreadyInEmis(item)"
+                  :value="isSelected(item) || item.isEMISUser"
+                  :readonly="item.isEMISUser"
+                  :disabled="item.isEMISUser"
                   @input="toggleUserSelection(item)" />
               </template>
               <template #[`item.displayName`]="{ item }">
@@ -78,36 +75,49 @@
           <div class="rc-body16 fw-bold pb-4">
             {{ $t('system_management.userAccounts.selected_members') }}
           </div>
-          <ul class="selected__members_container">
-            <li v-for="user in selectedUsers" :key="user.id">
-              <div class="py-2">
-                <span class="rc-body14 fw-bold"> {{ user.displayName }}</span>
-                <v-select-with-validation
-                  dense
-                  outlined
-                  return-object
-                  hide-details
-                  :item-text="(item) => item ? $m(item.text) : ''"
-                  :label="$t('system_management.userAccounts.role_header')"
-                  :items="allAccessLevelRoles"
-                  @change="assignRoleToUser($event, user)" />
-                <v-tooltip bottom>
-                  <template #activator="{ on }">
-                    <v-btn
-                      icon
-                      x-small
-                      class="mr-4"
-                      :data-test="`unselect_${user.id}`"
-                      @click="toggleUserSelection(user)"
-                      v-on="on">
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>{{ $t('eventSummary.deleteLinkTooltip') }}</span>
-                </v-tooltip>
-              </div>
-            </li>
-          </ul>
+          <div class="selected__members_container pa-4">
+            <table>
+              <tbody>
+                <tr v-for="(user) in orderedSelectedUsers" :key="user.id">
+                  <td class="mb-4 selected-name">
+                    <div class="rc-body14 fw-bold mb-4">
+                      {{ user.displayName }}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="mb-4 pl-3">
+                      <v-select-with-validation
+                        dense
+                        outlined
+                        return-object
+                        hide-details
+                        :item-text="(item) => item ? $m(item.text) : ''"
+                        :label="$t('system_management.userAccounts.role_header')"
+                        :items="allAccessLevelRoles"
+                        @change="assignRoleToUser($event, user)" />
+                    </div>
+                  </td>
+                  <td>
+                    <div class="mb-4 d-flex justify-end">
+                      <v-tooltip bottom>
+                        <template #activator="{ on }">
+                          <v-btn
+                            icon
+                            x-small
+                            :data-test="`unselect_${user.id}`"
+                            @click="toggleUserSelection(user)"
+                            v-on="on">
+                            <v-icon>mdi-close</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>{{ $t('eventSummary.deleteLinkTooltip') }}</span>
+                      </v-tooltip>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -116,20 +126,24 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import _orderBy from 'lodash/orderBy';
+import _difference from 'lodash/difference';
 import { RcDialog, VSelectWithValidation } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
-import _difference from 'lodash/difference';
 import _debounce from 'lodash/debounce';
 import { DataTableHeader } from 'vuetify';
-import _cloneDeep from 'lodash/cloneDeep';
+import helpers from '@/ui/helpers/helpers';
 import {
   IOptionSubItem,
 } from '@libs/entities-lib/optionItem';
-import { i18n } from '@/ui/plugins';
 import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import { IAppUserData } from '@libs/entities-lib/app-user';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
+
+interface IAppUser extends IAppUserData {
+  isEMISUser: boolean;
+}
 
 export default Vue.extend({
   name: 'AddEmisUser',
@@ -153,22 +167,14 @@ export default Vue.extend({
       type: Array as ()=> { header?: string, value?: string, name?: IMultilingual }[],
       required: true,
     },
-    allEmisUsers: {
-      type: Array,
-      default: () => [] as IUserAccountCombined[],
-      required: true,
-    },
   },
 
   data() {
     return {
-      error: false,
-      formReady: false,
-      searchTerm: '', // The search term
-      appUsers: [] as IUserAccountCombined[],
-      searchResults: [] as IAppUserData[],
+      searchTerm: '',
+      filteredActiveDirectoryUsers: [] as IAppUser[],
+      filteredAppUsers: [] as IUserAccountCombined[],
       selectedUsers: [] as IAppUserData[],
-      componentKey: 0,
       loading: false,
       isSubmitAllowed: false as boolean,
     };
@@ -199,14 +205,6 @@ export default Vue.extend({
       return this.$t('system_management.userAccounts.loading_users');
     },
 
-    submitLabel(): TranslateResult {
-      return this.$t('common.add');
-    },
-
-    helpLink(): TranslateResult {
-      return this.$t('zendesk.help_link.addEMISUser');
-    },
-
     customColumns(): Record<string, string> {
       return {
         name: `EventName/Translation/${this.$i18n.locale}`,
@@ -214,59 +212,62 @@ export default Vue.extend({
       };
     },
 
-    itemsPerPage(): number {
-      return this.searchResults ? this.searchResults.length : 10;
+    orderedUsers():IAppUser[] {
+      return _orderBy(this.filteredActiveDirectoryUsers, 'displayName');
+    },
+
+    orderedSelectedUsers():IAppUserData[] {
+      return _orderBy(this.selectedUsers, 'displayName');
     },
   },
 
-  mounted() {
-    this.fetchAllAppUsers();
+  watch: {
+    searchTerm(newVal, oldVal) {
+      if (newVal && newVal.trim() !== oldVal?.trim()) {
+        this.debounceSearch(newVal.trim());
+      } else {
+        this.filteredActiveDirectoryUsers = [];
+      }
+    },
   },
 
   methods: {
+    async fetchAppUsers(searchTerm: string) {
+      const res = await this.$storage.userAccount.actions.search({
+        search: helpers.toQuickSearch(searchTerm),
+        queryType: 'full',
+        searchMode: 'all',
+      });
+      if (res?.ids?.length) {
+        this.filteredAppUsers = this.$storage.userAccount.getters.getByIds(res.ids);
+      }
+    },
+
     close() {
       this.$emit('update:show', false);
     },
 
-    back() {
-      this.$emit('hide');
-    },
-
-    async fetchAllAppUsers() {
-      this.appUsers = await this.$storage.userAccount.actions.fetchAll();
-      this.formReady = true;
-    },
-
-    async findUsers() {
-      if (this.searchTerm) {
-        this.loading = true;
-        // Exception here since we should normally not call the service directly
-        const result:IAppUserData[] = await this.$services.appUsers.findAppUsers(this.searchTerm);
-        this.searchResults = _cloneDeep(result);
-        this.sortOnDisplayName(this.searchResults);
-        this.componentKey = new Date().getTime(); // Force a redraw of the results list
-        this.loading = false;
-      } else {
-        this.searchResults = [];
+    async fetchActiveDirectoryUsers(searchTerm: string) {
+      try {
+        const ActiveDirectoryUsers = await this.$services.appUsers.findAppUsers(searchTerm);
+        this.filteredActiveDirectoryUsers = ActiveDirectoryUsers.map((u) => ({
+          ...u,
+          isEMISUser: this.isAlreadyInEmis(u),
+        }));
+      } catch {
+        this.filteredActiveDirectoryUsers = [];
       }
     },
 
     isAlreadyInEmis(user: IAppUserData): boolean {
-      if (this.appUsers && this.allEmisUsers) {
-        const foundUser = this.appUsers.find((u) => user.id === u.entity.id);
-        const emisUser = (this.allEmisUsers as IUserAccountCombined[]).find((u) => user.id === u.entity.id);
-        if (foundUser && emisUser && emisUser.entity.status === Status.Active) {
-          return true;
-        }
-      }
-      return false;
+      return this.filteredAppUsers.some((u) => u.entity.id === user.id && u.entity.status === Status.Active);
     },
 
     isSelected(user: IAppUserData):boolean {
       return this.selectedUsers && this.selectedUsers.findIndex((u) => user.id === u.id) > -1;
     },
 
-    toggleUserSelection(user: IAppUserData) {
+    toggleUserSelection(user: IAppUser) {
       if (user) {
         user.roles = []; // Reset role assignment
         const indexOfSelectedUser:number = this.selectedUsers.findIndex((item) => item.id === user.id);
@@ -275,13 +276,12 @@ export default Vue.extend({
         } else {
           this.selectedUsers.push(user);
         }
-        this.sortOnDisplayName(this.selectedUsers);
         this.updateIsSubmitAllowed();
       }
     },
 
-    getClassRow(user: IAppUserData): string {
-      if (this.isAlreadyInEmis(user)) {
+    getClassRow(user: IAppUser): string {
+      if (user.isEMISUser) {
         return 'row_disabled';
       }
       if (this.isSelected(user)) {
@@ -290,28 +290,21 @@ export default Vue.extend({
       return '';
     },
 
-    onSelectAll({ items, value }: { items: Array<IAppUserData>; value: boolean }) {
+    onSelectAll({ items, value }: { items: Array<IAppUser>; value: boolean }) {
       if (value) { // select all, get the new ones + old ones
-        const selectedUsers = [...this.selectedUsers, ...items.filter((i) => !this.isAlreadyInEmis(i))];
-        this.selectedUsers = selectedUsers.filter((user, index) => selectedUsers.findIndex((u) => u.id === user.id) === index); // deduplicate the list of users
+        this.selectedUsers = [...this.selectedUsers, ...items.filter((i) => !i.isEMISUser && !this.selectedUsers.find((u) => u.id === i.id))];
       } else { // deselect, only remove what is currently removed
         this.selectedUsers = _difference(this.selectedUsers, items);
       }
-    },
-
-    sortOnDisplayName(users: IAppUserData[]) {
-      if (users && users.length > 0) {
-        users.sort((a, b) => a.displayName.localeCompare(b.displayName));
-      }
+      this.updateIsSubmitAllowed();
     },
 
     assignRoleToUser(roleData: { text: IMultilingual, value: string }, user: IAppUserData) {
       if (roleData) {
-        const { locale } = i18n;
         user.roles = [
           {
             id: roleData.value,
-            displayName: roleData.text.translation[locale],
+            displayName: this.$m(roleData.text),
             value: null,
           },
         ];
@@ -319,29 +312,15 @@ export default Vue.extend({
       }
     },
 
-    allSelectedUsersHaveRole(users: IAppUserData[]): boolean {
-      return !users
-        || users.length === 0
-        || (users.filter((u) => u.roles?.length > 0).length === users.length);
-    },
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    debounceSearch: _debounce(function func(this:any, value) {
-      this.findUsers(value);
-    }, 500),
-
     async submit() {
       if (this.isSubmitAllowed) {
-        this.loading = true; // So the user knows we're working
-        // eslint-disable-next-line
-        for (let user of this.selectedUsers) {
+        this.loading = true;
+        this.selectedUsers.forEach(async (user) => {
           // eslint-disable-next-line no-await-in-loop
           await this.setUserRole(user);
-        }
+        });
         this.close();
         this.$emit('users-added');
-        this.selectedUsers = [];
-        this.loading = false;
       }
     },
 
@@ -367,9 +346,20 @@ export default Vue.extend({
       }
     },
 
+    // Recheck if the Submit button should be enabled or not. It should be disabled if some selected users don't have a role set (their roles list is empty)
     updateIsSubmitAllowed() {
-      this.isSubmitAllowed = this.selectedUsers?.length > 0 && this.allSelectedUsersHaveRole(this.selectedUsers);
+      this.isSubmitAllowed = this.selectedUsers?.length && !this.selectedUsers.find((u) => !u.roles?.length);
     },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    debounceSearch: _debounce(async function func(this:any, value) {
+      if (value) {
+        this.loading = true;
+        await this.fetchAppUsers(value);
+        await this.fetchActiveDirectoryUsers(value);
+        this.loading = false;
+      }
+    }, 500),
   },
 });
 </script>
@@ -392,13 +382,12 @@ export default Vue.extend({
   border-radius: 4px;
   height: 100%;
 
-  & > li {
-    list-style-type:none;
-    & div {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
+  & table {
+    width: 100%;
+  }
+
+  .selected-name {
+    width: 25%;
   }
 }
 </style>

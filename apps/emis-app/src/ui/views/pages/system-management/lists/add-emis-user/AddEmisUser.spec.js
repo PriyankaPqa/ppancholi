@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
-import { mockAppUserData, mockRolesData } from '@libs/entities-lib/app-user';
+import { mockAppUserData } from '@libs/entities-lib/app-user';
 import Component from './AddEmisUser.vue';
 
 const localVue = createLocalVue();
@@ -135,24 +135,20 @@ const optionData = [
 
 let wrapper;
 
-const doMount = (shallow = false, { allEmisUsers, appUsers } = { allEmisUsers: [], appUsers: [] }) => {
+const doMount = (shallow = true, otherOptions = {}) => {
   const options = {
     localVue,
     propsData: {
-      allEmisUsers,
       show: true,
       allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
       allAccessLevelRoles: [],
     },
     data() {
       return {
-        error: false,
-        formReady: false,
         searchTerm: '',
-        appUsers,
-        searchResults: [],
+        filteredActiveDirectoryUsers: [],
+        filteredAppUsers: [],
         selectedUsers: [],
-        componentKey: 0,
         loading: false,
         isSubmitAllowed: false,
       };
@@ -160,6 +156,7 @@ const doMount = (shallow = false, { allEmisUsers, appUsers } = { allEmisUsers: [
     mocks: {
       $storage: storage,
     },
+    ...otherOptions,
   };
   if (shallow) {
     wrapper = shallowMount(Component, options);
@@ -169,20 +166,8 @@ const doMount = (shallow = false, { allEmisUsers, appUsers } = { allEmisUsers: [
 };
 
 describe('AddEmisUser.vue', () => {
-  describe('Mounted', () => {
-    doMount(true);
-    it('loads lookup lists', async () => {
-      jest.spyOn(wrapper.vm, 'fetchAllAppUsers').mockImplementation(() => true);
-
-      wrapper.vm.$options.mounted.forEach((hook) => {
-        hook.call(wrapper.vm);
-      });
-
-      expect(wrapper.vm.fetchAllAppUsers).toHaveBeenCalledTimes(1);
-    });
-  });
-
   describe('Computed', () => {
+    beforeEach(() => doMount());
     describe('headers', () => {
       it('is correctly defined', async () => {
         expect(wrapper.vm.headers).toEqual([
@@ -211,18 +196,6 @@ describe('AddEmisUser.vue', () => {
       });
     });
 
-    describe('submitLabel', () => {
-      it('is correctly defined', async () => {
-        expect(wrapper.vm.submitLabel).toEqual('common.add');
-      });
-    });
-
-    describe('helpLink', () => {
-      it('is correctly defined', async () => {
-        expect(wrapper.vm.helpLink).toEqual('zendesk.help_link.addEMISUser');
-      });
-    });
-
     describe('customColumns', () => {
       it('is correctly defined', async () => {
         expect(wrapper.vm.customColumns).toEqual(
@@ -234,20 +207,60 @@ describe('AddEmisUser.vue', () => {
       });
     });
 
-    describe('itemsPerPage', () => {
-      it('gives correct default for empty list', async () => {
-        wrapper.vm.searchResults = null;
-        expect(wrapper.vm.itemsPerPage).toEqual(10);
+    describe('orderedUsers', () => {
+      it('returns the right data', async () => {
+        await wrapper.setData({ filteredActiveDirectoryUsers: [{ displayName: 'ZZ', id: '2' }, { displayName: 'AA', id: '1' }] });
+        expect(wrapper.vm.orderedUsers).toEqual([{ displayName: 'AA', id: '1' }, { displayName: 'ZZ', id: '2' }]);
       });
-      it('gives correct value for populated list', async () => {
-        wrapper.vm.searchResults = [{ name: 'me' }, { name: 'you' }];
-        expect(wrapper.vm.itemsPerPage).toEqual(2);
+    });
+
+    describe('orderedSelectedUsers', () => {
+      it('returns the right data', async () => {
+        await wrapper.setData({ selectedUsers: [{ displayName: 'ZZ', id: '2' }, { displayName: 'AA', id: '1' }] });
+        expect(wrapper.vm.orderedSelectedUsers).toEqual([{ displayName: 'AA', id: '1' }, { displayName: 'ZZ', id: '2' }]);
+      });
+    });
+  });
+
+  describe('Watch', () => {
+    describe('searchTerm', () => {
+      it('calls debounceSearch if there is a new value', async () => {
+        doMount();
+        wrapper.vm.debounceSearch = jest.fn();
+        await wrapper.setData({ searchTerm: '' });
+        expect(wrapper.vm.debounceSearch).not.toHaveBeenCalled();
+        await wrapper.setData({ searchTerm: 'abc' });
+        expect(wrapper.vm.debounceSearch).toHaveBeenCalledTimes(1);
+        jest.clearAllMocks();
+        await wrapper.setData({ searchTerm: '' });
+        await wrapper.setData({ searchTerm: ' ' });
+        expect(wrapper.vm.debounceSearch).not.toHaveBeenCalled();
+        jest.clearAllMocks();
+        await wrapper.setData({ searchTerm: '  ' });
+        expect(wrapper.vm.debounceSearch).not.toHaveBeenCalled();
+        await wrapper.setData({ searchTerm: 'abc ' });
+        jest.clearAllMocks();
+        await wrapper.setData({ searchTerm: 'abc' });
+        expect(wrapper.vm.debounceSearch).not.toHaveBeenCalled();
       });
     });
   });
 
   describe('Methods', () => {
-    beforeEach(() => doMount(true));
+    beforeEach(() => doMount());
+
+    describe('fetchAppUsers', () => {
+      it('calls userAccount search and saves the data in filteredAppUsers ', async () => {
+        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: ['id-1'] }));
+        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => usersTestData);
+
+        await wrapper.vm.fetchAppUsers('query');
+        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.userAccount.getters.getByIds).toHaveBeenCalledWith(['id-1']);
+        expect(wrapper.vm.filteredAppUsers).toEqual(usersTestData);
+      });
+    });
+
     describe('close', () => {
       it('emit update:show with false', () => {
         wrapper.vm.close();
@@ -255,37 +268,23 @@ describe('AddEmisUser.vue', () => {
       });
     });
 
-    describe('back', () => {
-      it('emit hide', () => {
-        wrapper.vm.back();
-        expect(wrapper.emitted('hide')).toBeTruthy();
-      });
-    });
-
-    describe('fetchAllAppUsers', () => {
-      it('appUsers.fetchAllAppUsers has been called and formReady is true', async () => {
-        jest.spyOn(wrapper.vm.$storage.userAccount.actions, 'fetchAll').mockImplementation(() => usersTestData());
-        wrapper.vm.fetchAllAppUsers();
-        expect(wrapper.vm.$storage.userAccount.actions.fetchAll).toHaveBeenCalled();
-        expect(wrapper.vm.formReady).toBeTruthy();
-      });
-    });
-
-    describe('findUsers', () => {
-      it('empty results with no search term', async () => {
-        jest.spyOn(wrapper.vm.$services.appUsers, 'findAppUsers').mockImplementation(() => mockAppUserData());
-        wrapper.vm.searchTerm = '';
-        wrapper.vm.findUsers();
-        expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledTimes(0);
-        expect(wrapper.vm.$data.searchResults).toEqual([]);
+    describe('fetchActiveDirectoryUsers', () => {
+      it('calls findAppUsers', async () => {
+        wrapper.vm.$services.appUsers.findAppUsers = jest.fn(() => [appUsersTestData[0]]);
+        wrapper.vm.isAlreadyInEmis = jest.fn(() => true);
+        await wrapper.vm.fetchActiveDirectoryUsers('query');
+        expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledWith('query');
       });
 
-      it('correct service call with valid search term', async () => {
-        jest.spyOn(wrapper.vm.$services.appUsers, 'findAppUsers').mockImplementation(() => mockAppUserData());
-        wrapper.vm.searchTerm = 't';
-        wrapper.vm.findUsers();
-        expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledWith('t');
+      it('maps the data by calling and saves the mapped data in filteredActiveDirectoryUsers ', async () => {
+        wrapper.vm.$services.appUsers.findAppUsers = jest.fn(() => [appUsersTestData[0]]);
+        wrapper.vm.isAlreadyInEmis = jest.fn(() => true);
+
+        await wrapper.vm.fetchActiveDirectoryUsers('query');
+        expect(wrapper.vm.isAlreadyInEmis).toHaveBeenCalledWith(appUsersTestData[0]);
+        expect(wrapper.vm.filteredActiveDirectoryUsers).toEqual([
+          { ...appUsersTestData[0], isEMISUser: true },
+        ]);
       });
     });
 
@@ -321,22 +320,19 @@ describe('AddEmisUser.vue', () => {
 
     describe('getClassRow', () => {
       it('returns row_disabled if the user is already in the team', () => {
-        jest.spyOn(wrapper.vm, 'isAlreadyInEmis').mockImplementation(() => true);
-        const user = mockAppUserData()[0];
+        const user = { ...mockAppUserData()[0], isEMISUser: true };
         expect(wrapper.vm.getClassRow(user)).toEqual('row_disabled');
       });
 
       it('returns row_active if the user is currently selected', () => {
-        jest.spyOn(wrapper.vm, 'isAlreadyInEmis').mockImplementation(() => false);
+        const user = { ...mockAppUserData()[0], isEMISUser: false };
         jest.spyOn(wrapper.vm, 'isSelected').mockImplementation(() => true);
-        const user = mockAppUserData()[0];
         expect(wrapper.vm.getClassRow(user)).toEqual('row_active');
       });
 
       it('returns "" otherwise', () => {
-        jest.spyOn(wrapper.vm, 'isAlreadyInEmis').mockImplementation(() => false);
+        const user = { ...mockAppUserData()[0], isEMISUser: false };
         jest.spyOn(wrapper.vm, 'isSelected').mockImplementation(() => false);
-        const user = mockAppUserData()[0];
         expect(wrapper.vm.getClassRow(user)).toEqual('');
       });
     });
@@ -356,9 +352,9 @@ describe('AddEmisUser.vue', () => {
             jobTitle: 'jobTitle',
             mail: null,
             userPrincipalName: 'test@test.com',
+            isEMISUser: false,
           },
         ];
-        wrapper.vm.isAlreadyInEmis = jest.fn(() => false);
         wrapper.vm.onSelectAll({ items, value: true });
         expect(wrapper.vm.selectedUsers).toEqual([...appUsersTestData(), ...items]);
       });
@@ -376,6 +372,7 @@ describe('AddEmisUser.vue', () => {
           jobTitle: 'jobTitle',
           mail: null,
           userPrincipalName: 'test@test.com',
+          isEMISUser: false,
         };
 
         const item2 = {
@@ -388,10 +385,10 @@ describe('AddEmisUser.vue', () => {
           jobTitle: 'jobTitle',
           mail: null,
           userPrincipalName: 'test2@test.com',
+          isEMISUser: false,
         };
 
         const items = [item1, item2];
-        wrapper.vm.isAlreadyInEmis = jest.fn(() => false);
 
         wrapper.vm.selectedUsers = [...appUsersTestData(), item1];
 
@@ -419,19 +416,6 @@ describe('AddEmisUser.vue', () => {
       });
     });
 
-    describe('sortOnDisplayName', () => {
-      it('returns Users in ascending alphabetical order by displayName', () => {
-        const appUsers = appUsersTestData();
-        expect(appUsers[0].id).toEqual('1');
-        expect(appUsers[1].id).toEqual('2');
-        expect(appUsers[2].id).toEqual('3');
-        wrapper.vm.sortOnDisplayName(appUsers);
-        expect(appUsers[0].id).toEqual('3');
-        expect(appUsers[1].id).toEqual('2');
-        expect(appUsers[2].id).toEqual('1');
-      });
-    });
-
     describe('assignRoleToUser', () => {
       it('updates selected user with correct role and enables submit button', () => {
         wrapper.vm.selectedUsers = [...appUsersTestData()];
@@ -447,27 +431,6 @@ describe('AddEmisUser.vue', () => {
           },
         );
         expect(wrapper.vm.isSubmitAllowed).toBeTruthy();
-      });
-    });
-
-    describe('allSelectedUsersHaveRole', () => {
-      it('returns true for no selected users', () => {
-        wrapper.vm.selectedUsers = [];
-        expect(wrapper.vm.allSelectedUsersHaveRole()).toBeTruthy();
-      });
-
-      it('returns false if a selected user has no role', () => {
-        wrapper.vm.selectedUsers = usersTestData();
-        wrapper.vm.selectedUsers[0].roles = [];
-        expect(wrapper.vm.allSelectedUsersHaveRole(wrapper.vm.selectedUsers)).toBeFalsy();
-      });
-
-      it('returns true if all selected users have roles', () => {
-        wrapper.vm.selectedUsers = usersTestData();
-        wrapper.vm.selectedUsers.forEach((user) => {
-          user.roles = [mockRolesData[0]];
-        });
-        expect(wrapper.vm.allSelectedUsersHaveRole()).toBeTruthy();
       });
     });
 
@@ -576,14 +539,14 @@ describe('AddEmisUser.vue', () => {
     });
 
     describe('isAlreadyInEmis', () => {
-      beforeEach(() => doMount(true, { appUsers: appUsersTestData, allEmisUsers: usersTestData() }));
-      it('returns true for an active user that is in the appUsers and allEmisUsers arrays', () => {
-        const tempUser = appUsersTestData()[0];
+      it('returns true for an active user that is in filteredAppUsers', async () => {
+        const tempUser = usersTestData()[0];
         tempUser.status = 1;
-        expect(wrapper.vm.isAlreadyInEmis(tempUser)).toBeTruthy();
+        await wrapper.setData({ filteredAppUsers: [tempUser] });
+        expect(wrapper.vm.isAlreadyInEmis({ id: tempUser.entity.id })).toBeTruthy();
       });
 
-      it('returns false for a user that is not in the appUsers array', () => {
+      it('returns false for a user that is not in the appUsers array', async () => {
         const testUser = {
           entity: {
             id: '9393-39393-39393-help',
@@ -593,15 +556,20 @@ describe('AddEmisUser.vue', () => {
             displayName: 'Some Person',
           },
         };
-        wrapper.vm.appUsers = usersTestData();
+        await wrapper.setData({ filteredAppUsers: usersTestData() });
         expect(wrapper.vm.isAlreadyInEmis({ id: testUser.entity.id })).toBeFalsy();
       });
+    });
 
-      it('returns false for a user that is not in the allEmisUsers array', () => {
-        wrapper.setProps({ allEmisUsers: usersTestData() });
-        const testUser = { entity: { id: '9393-39393-39393-help' }, metadata: { displayName: 'Some Person', id: '9393-39393-39393-help' } };
-        wrapper.vm.appUsers = usersTestData();
-        expect(wrapper.vm.isAlreadyInEmis(testUser)).toBeFalsy();
+    describe('debounceSearch', () => {
+      it('should call fetchAppUsers and fetchActiveDirectoryUsers', async () => {
+        wrapper.vm.fetchAppUsers = jest.fn();
+        wrapper.vm.fetchActiveDirectoryUsers = jest.fn();
+        wrapper.vm.debounceSearch('query');
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 600));
+        expect(wrapper.vm.fetchAppUsers).toHaveBeenCalledWith('query');
+        expect(wrapper.vm.fetchActiveDirectoryUsers).toHaveBeenCalledWith('query');
       });
     });
   });
