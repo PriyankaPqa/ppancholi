@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import _isEmpty from 'lodash/isEmpty';
 import {
-  IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, IMassActionRunResultMetadataModel, MassActionRunStatus,
+  IMassActionEntity, IMassActionMetadata, IMassActionRun, IMassActionRunMetadataModel, IMassActionRunResultMetadataModel, MassActionRunStatus,
 } from '@libs/entities-lib/mass-action';
+import { useMassActionMetadataStore, useMassActionStore } from '@/pinia/mass-action/mass-action';
 
 export default Vue.extend({
   computed: {
@@ -11,17 +11,21 @@ export default Vue.extend({
       return this.$route.params.id;
     },
 
-    massAction(): IMassActionCombined {
-      return this.$storage.massAction.getters.get(this.massActionId);
+    massAction(): IMassActionEntity {
+      return useMassActionStore().getById(this.massActionId);
+    },
+
+    massActionMetadata(): IMassActionMetadata {
+      return useMassActionMetadataStore().getById(this.massActionId);
     },
 
     lastRunEntity(): IMassActionRun {
-      return _orderBy(this.massAction.entity.runs, 'timestamp', 'desc')[0];
+      return _orderBy(this.massAction?.runs, 'timestamp', 'desc')[0];
     },
 
     lastRunMetadata(): IMassActionRunMetadataModel {
-      if (this.massAction.metadata) {
-        return this.massAction.metadata.lastRun;
+      if (this.massActionMetadata) {
+        return this.massActionMetadata?.lastRun;
       }
       return null;
     },
@@ -47,9 +51,10 @@ export default Vue.extend({
     },
   },
 
-  created() {
-    if (_isEmpty(this.massAction.entity)) {
-      this.$storage.massAction.actions.fetch(this.massActionId);
+  async created() {
+    if (!this.massAction) {
+      await useMassActionStore().fetch(this.massActionId);
+      await useMassActionMetadataStore().fetch(this.massActionId, false);
     }
   },
 });

@@ -1,9 +1,10 @@
 import { mockStorage } from '@libs/registration-lib/store/storage';
 
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
-  MassActionRunStatus, mockCombinedMassAction, mockMassActionRun, mockMassActionRunMetadata,
+  MassActionRunStatus, mockMassActionEntity, mockMassActionMetadata, mockMassActionRun, mockMassActionRunMetadata,
 } from '@libs/entities-lib/mass-action';
+import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import massActionDetails from './massActionDetails';
 
 const Component = {
@@ -13,18 +14,40 @@ const Component = {
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, massActionStore, massActionMetadataStore } = useMockMassActionStore();
 let wrapper;
 
 jest.mock('@libs/shared-lib/plugins/applicationInsights/applicationInsights');
 
 describe('massActions', () => {
+  const doMount = (shallow, {
+    otherComputed, otherOptions,
+  }) => {
+    const options = {
+      localVue,
+      pinia,
+      mocks: {
+        $storage: storage,
+      },
+      computed: {
+        ...otherComputed,
+      },
+      ...otherOptions,
+    };
+    if (shallow === true) {
+      wrapper = shallowMount(Component, options);
+    } else {
+      wrapper = mount(Component, options);
+    }
+  };
   describe('Computed', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        mocks: {
-          $storage: storage,
+      doMount(true, {
+        otherComputed: {
+          massAction: () => mockMassActionEntity(),
+          massActionMetadata: () => mockMassActionMetadata(),
         },
+        otherOptions: null,
       });
     });
 
@@ -37,46 +60,37 @@ describe('massActions', () => {
       });
     });
 
-    describe('massAction', () => {
-      it('should be linked to massAction get', () => {
-        wrapper.vm.$storage.massAction.getters.get = jest.fn(() => mockCombinedMassAction());
-        expect(wrapper.vm.massAction).toEqual(mockCombinedMassAction());
-      });
-    });
-
     describe('lastRunEntity', () => {
-      it('should return the most recent run of the entity', () => {
-        wrapper.vm.$storage.massAction.getters.get = jest.fn(() => mockCombinedMassAction());
-        const lastRun = mockCombinedMassAction().entity.runs[1];
+      it('should return the most recent run of the entity', async () => {
+        const lastRun = mockMassActionEntity().runs[1];
         expect(wrapper.vm.lastRunEntity).toEqual(lastRun);
       });
     });
 
     describe('lastRunMetadata', () => {
-      it('should return the metadata run corresponding to the entity one', () => {
-        wrapper.vm.$storage.massAction.getters.get = jest.fn(() => mockCombinedMassAction());
-        const lastRun = mockCombinedMassAction().metadata.runs[0];
+      it('should return the metadata run corresponding to the entity one', async () => {
+        const lastRun = mockMassActionMetadata().runs[0];
         expect(wrapper.vm.lastRunMetadata).toEqual(lastRun);
       });
     });
 
     describe('preProcessing', () => {
       it('should return true if lastRun is pre processing', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
+        doMount(true, {
+          otherComputed: {
             lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.PreProcessing }),
           },
+          otherOptions: null,
         });
         expect(wrapper.vm.preProcessing).toBe(true);
       });
 
       it('should return false otherwise', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
+        doMount(true, {
+          otherComputed: {
             lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processed }),
           },
+          otherOptions: null,
         });
         expect(wrapper.vm.preProcessing).toBe(false);
       });
@@ -84,21 +98,21 @@ describe('massActions', () => {
 
     describe('processing', () => {
       it('should return true if lastRun is processing', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
+        doMount(true, {
+          otherComputed: {
             lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processing }),
           },
+          otherOptions: null,
         });
         expect(wrapper.vm.processing).toBe(true);
       });
 
       it('should return false otherwise', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
+        doMount(true, {
+          otherComputed: {
             lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processed }),
           },
+          otherOptions: null,
         });
         expect(wrapper.vm.processing).toBe(false);
       });
@@ -106,23 +120,23 @@ describe('massActions', () => {
 
     describe('preProcessed', () => {
       it('should return true if lastRun is pre-processed', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
+        doMount(true, {
+          otherComputed: {
             lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.PreProcessed }),
             lastRunMetadata: () => mockMassActionRunMetadata(),
           },
+          otherOptions: null,
         });
         expect(wrapper.vm.preProcessed).toBe(true);
       });
 
       it('should return false otherwise', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
+        doMount(true, {
+          otherComputed: {
             lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processed }),
             lastRunMetadata: () => mockMassActionRunMetadata(),
           },
+          otherOptions: null,
         });
         expect(wrapper.vm.preProcessed).toBe(false);
       });
@@ -130,23 +144,24 @@ describe('massActions', () => {
 
     describe('processed', () => {
       it('should return true if lastRun is processed', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
+        doMount(true, {
+          otherComputed: {
             lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processed }),
             lastRunMetadata: () => mockMassActionRunMetadata(),
           },
+          otherOptions: null,
         });
         expect(wrapper.vm.processed).toBe(true);
       });
 
       it('should return false otherwise', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
+        doMount(true, {
+          otherData: null,
+          otherComputed: {
             lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.PreProcessing }),
             lastRunMetadata: () => mockMassActionRunMetadata(),
           },
+          otherOptions: null,
         });
         expect(wrapper.vm.processed).toBe(false);
       });
@@ -155,22 +170,41 @@ describe('massActions', () => {
 
   describe('Lifecycle', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        computed: {
-          massAction: () => ({ entity: {} }),
+      doMount(true, {
+        otherComputed: {
+          massAction: () => {},
         },
+        otherOptions: null,
       });
     });
-
     describe('Created', () => {
       it('should fetch the mass action if not already in the store', async () => {
-        wrapper.vm.$storage.massAction.actions.fetch = jest.fn();
+        massActionStore.fetch = jest.fn();
+        massActionMetadataStore.fetch = jest.fn();
 
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-        expect(wrapper.vm.$storage.massAction.actions.fetch).toHaveBeenCalledWith(wrapper.vm.massActionId);
+        expect(massActionStore.fetch).toHaveBeenCalledWith(wrapper.vm.massActionId);
+        expect(massActionMetadataStore.fetch).toHaveBeenCalledWith(wrapper.vm.massActionId, false);
+      });
+
+      it('should not fetch the mass action if already in the store', async () => {
+        doMount(true, {
+          otherComputed: {
+            massAction: () => mockMassActionRunMetadata(),
+          },
+          otherOptions: null,
+        });
+        massActionStore.fetch = jest.fn();
+        massActionMetadataStore.fetch = jest.fn();
+
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(massActionStore.fetch).not.toHaveBeenCalled();
+        expect(massActionMetadataStore.fetch).not.toHaveBeenCalled();
       });
     });
   });

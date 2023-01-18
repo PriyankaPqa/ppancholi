@@ -5,18 +5,20 @@ import {
 } from '@/test/testSetup';
 
 import {
-  MassActionRunStatus, mockCombinedMassAction,
+  MassActionRunStatus, mockMassActionEntity, mockMassActionMetadata,
 } from '@libs/entities-lib/mass-action';
 import { mockStorage } from '@/storage';
 
 import MassActionPreProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessingBase.vue';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessedProcessedBase.vue';
+import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import Component from './MassActionBaseDetails.vue';
 
 const localVue = createLocalVue();
 
 const storage = mockStorage();
+const { pinia } = useMockMassActionStore();
 
 let wrapper;
 
@@ -26,12 +28,14 @@ const doMount = (fullMount = false, {
 }) => {
   const options = {
     localVue,
+    pinia,
     computed: {
-      massAction: () => mockCombinedMassAction(),
       processing: () => processing,
       preProcessing: () => preProcessing,
       preProcessed: () => preProcessed,
       processed: () => processed,
+      massAction: () => mockMassActionEntity(),
+      massActionMetadata: () => mockMassActionMetadata(),
 
     },
     propsData: {

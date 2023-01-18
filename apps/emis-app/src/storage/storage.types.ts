@@ -25,11 +25,6 @@ import {
 } from './team';
 
 import {
-  IStorageMake as IMassActionMakeStorage,
-  IStorageMakeMock as IMassActionMakeStorageMock,
-} from './mass-action';
-
-import {
   IStorageMake as IFinancialAssistanceCategoryMakeStorage,
   IStorageMakeMock as IFinancialAssistanceCategoryMakeStorageMock,
 } from './financial-assistance-category';
@@ -65,7 +60,6 @@ export interface IStorage {
   financialAssistancePayment: IFinancialAssistancePaymentMakeStorage;
   household: IStorageMake;
   userAccount: IUserAccountMakeStorage;
-  massAction: IMassActionMakeStorage;
   assessmentTemplate: IAssessmentTemplateMakeStorage;
   approvalTable: IApprovalTableMakeStorage;
   assessmentForm: IAssessmentFormMakeStorage;
@@ -83,7 +77,6 @@ export interface IStorageMock {
   financialAssistancePayment: IFinancialAssistancePaymentMakeStorageMock;
   household: IStorageMakeMock;
   userAccount: IUserAccountMakeStorageMock;
-  massAction: IMassActionMakeStorageMock;
   assessmentTemplate: IAssessmentTemplateMakeStorageMock;
   approvalTable: IApprovalTableMakeStorageMock;
   assessmentForm: IAssessmentFormMakeStorageMock;

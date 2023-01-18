@@ -102,7 +102,7 @@
           </v-row>
 
           <div v-if="showErrors" class="full-width">
-            <v-row v-for="(item, index) in massAction.metadata.lastRun.errors" :key="index" no-gutters>
+            <v-row v-for="(item, index) in massActionMetadata.lastRun.errors" :key="index" no-gutters>
               <v-col cols="12" md="5" class="pl-7 mb-2 pr-12">
                 <span class="rc-body14">{{ $te(`errors.${item.error}-mass-action`)
                   ? $t(`errors.${item.error}-mass-action`)
@@ -130,7 +130,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import {
-  IMassActionCombined, MassActionRunStatus, MassActionRunType, MassActionType,
+  IMassActionEntity, IMassActionMetadata, MassActionRunStatus, MassActionRunType, MassActionType,
 } from '@libs/entities-lib/mass-action';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
@@ -138,6 +138,7 @@ import colors from '@libs/shared-lib/plugins/vuetify/colors';
 
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
 import helpers from '@/ui/helpers/helpers';
+import { useMassActionStore } from '@/pinia/mass-action/mass-action';
 
 export default Vue.extend({
   name: 'MassActionPreProcessedProcessedBase',
@@ -149,7 +150,7 @@ export default Vue.extend({
 
   props: {
     massAction: {
-      type: Object as () => IMassActionCombined,
+      type: Object as () => IMassActionEntity,
       required: true,
     },
 
@@ -227,6 +228,11 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+
+    massActionMetadata: {
+      type: Object as () =>IMassActionMetadata,
+      required: true,
+    },
   },
 
   data() {
@@ -239,35 +245,35 @@ export default Vue.extend({
 
   computed: {
     hasErrors(): boolean {
-      return this.massAction.metadata.lastRun.errors.length > 0;
+      return this.massActionMetadata.lastRun.errors.length > 0;
     },
 
     hasFailures(): boolean {
-      return this.massAction.metadata.lastRun.results?.failures > 0;
+      return this.massActionMetadata.lastRun.results?.failures > 0;
     },
 
     isPreprocessed(): boolean {
-      return this.massAction.metadata.lastRun.runStatus === MassActionRunStatus.PreProcessed;
+      return this.massActionMetadata.lastRun.runStatus === MassActionRunStatus.PreProcessed;
     },
 
     isProcessed(): boolean {
-      return this.massAction.metadata.lastRun.runStatus === MassActionRunStatus.Processed;
+      return this.massActionMetadata.lastRun.runStatus === MassActionRunStatus.Processed;
     },
 
     isFinancial(): boolean {
-      return this.massAction.entity.type === MassActionType.FinancialAssistance;
+      return this.massAction.type === MassActionType.FinancialAssistance;
     },
   },
 
-  mounted() {
+  async mounted() {
     this.showErrors = !this.isPreprocessed;
   },
 
-  methods: {
+   methods: {
     async update(payload: { name: string; description: string }) {
       this.editMode = false;
 
-      const res = await this.$storage.massAction.actions.update(this.massAction.entity.id, payload);
+      const res = await useMassActionStore().update(this.massAction.id, payload);
 
       if (res) {
         this.$toasted.global.success(this.$t('massAction.update.success'));
@@ -280,7 +286,7 @@ export default Vue.extend({
         messages: this.$t('massAction.confirm.processing.message'),
       });
       if (userChoice) {
-        await this.$storage.massAction.actions.process(this.massAction.entity.id, MassActionRunType.Process);
+        await useMassActionStore().process(this.massAction.id, MassActionRunType.Process);
       }
     },
 
@@ -290,7 +296,7 @@ export default Vue.extend({
         messages: this.$t('massAction.confirm.delete.message'),
       });
       if (userChoice) {
-        const res = await this.$storage.massAction.actions.deactivate(this.massAction.entity.id);
+        const res = await useMassActionStore().deactivate(this.massAction.id);
         if (res) {
           this.$emit('delete:success');
           this.$toasted.global.success(this.$t('massAction.delete.success'));
@@ -300,24 +306,24 @@ export default Vue.extend({
 
     async downloadInvalid() {
       const res = await this.$services.massActions.getInvalidFile({
-        massActionId: this.massAction.entity.id,
-        runId: this.massAction.metadata.lastRun.runId,
+        massActionId: this.massAction.id,
+        runId: this.massActionMetadata.lastRun.runId,
         language: this.$i18n.locale,
       });
 
       if (res) {
-        helpers.downloadFile(res, `${this.massAction.entity.name}.invalid.csv`);
+        helpers.downloadFile(res, `${this.massAction.name}.invalid.csv`);
       }
     },
 
     async downloadValid() {
       const res = await this.$services.massActions.getValidFile({
-        massActionId: this.massAction.entity.id,
-        runId: this.massAction.metadata.lastRun.runId,
+        massActionId: this.massAction.id,
+        runId: this.massActionMetadata.lastRun.runId,
         language: this.$i18n.locale,
       });
       if (res) {
-        helpers.downloadFile(res, `${this.massAction.entity.name}.valid.csv`);
+        helpers.downloadFile(res, `${this.massAction.name}.valid.csv`);
       }
     },
   },

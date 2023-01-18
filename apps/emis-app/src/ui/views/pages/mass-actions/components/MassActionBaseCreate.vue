@@ -97,6 +97,7 @@ import fileUpload from '@/ui/mixins/fileUpload';
 import {
   IMassActionEntity, MassActionEntity, MassActionMode, MassActionRunType,
 } from '@libs/entities-lib/mass-action';
+import { useMassActionStore } from '@/pinia/mass-action/mass-action';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import helpers from '@/ui/helpers/helpers';
 
@@ -283,8 +284,8 @@ export default mixins(fileUpload).extend({
       if (this.uploadSuccess) {
         const entity = new MassActionEntity(this.response.data as IMassActionEntity);
 
-        this.$storage.massAction.mutations.addNewlyCreatedId(entity);
-        this.$storage.massAction.mutations.setEntity(entity);
+        useMassActionStore().addNewlyCreatedId(entity);
+        useMassActionStore().set(entity);
 
         // So the parent can redirect where needed
         this.$emit('upload:success', entity);

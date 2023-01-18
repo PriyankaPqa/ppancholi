@@ -1,6 +1,6 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
-import { mockCombinedMassAction } from '@libs/entities-lib/mass-action';
+import { mockCombinedMassAction, mockMassActionEntity } from '@libs/entities-lib/mass-action';
 import { EPaymentModalities, mockCombinedProgram } from '@libs/entities-lib/program';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
@@ -17,28 +17,38 @@ const { programStore } = useMockProgramStore(pinia);
 describe('FinancialAssistancePaymentDetailsTable.vue', () => {
   let wrapper;
 
+  const doMount = (shallow, otherData) => {
+    const options = {
+      localVue,
+      pinia,
+      propsData: {
+        massAction: mockMassActionEntity(),
+      },
+      data() {
+        return {
+          ...otherData,
+        };
+      },
+      mocks: {
+        $storage: storage,
+      },
+    };
+    if (shallow === true) {
+      wrapper = shallowMount(Component, options);
+    } else {
+      wrapper = mount(Component, options);
+    }
+  };
+
   describe('Computed', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        pinia,
-        propsData: {
-          massAction: mockCombinedMassAction(),
-        },
-        data() {
-          return {
-            event: mockEventEntity(),
-            table: mockCombinedFinancialAssistance(),
-            program: mockCombinedProgram(),
-            item: mockCombineOptionItem(),
-          };
-        },
-        mocks: {
-          $storage: storage,
-        },
+      doMount(true, {
+        event: mockEventEntity(),
+        table: mockCombinedFinancialAssistance(),
+        program: mockCombinedProgram(),
+        item: mockCombineOptionItem(),
       });
     });
-
     describe('rows', () => {
       it('should return proper rows', () => {
         expect(wrapper.vm.rows).toEqual([
@@ -74,12 +84,12 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
           },
           {
             label: 'massActions.financialAssistance.create.payment.label',
-            value: `enums.PaymentModality.${EPaymentModalities[wrapper.vm.massAction.entity.details.paymentModality]}`,
+            value: `enums.PaymentModality.${EPaymentModalities[wrapper.vm.massAction.details.paymentModality]}`,
             dataTest: 'payment',
           },
           {
             label: 'massActions.financialAssistance.create.amount.label',
-            value: wrapper.vm.$formatCurrency(wrapper.vm.massAction.entity.details.amount),
+            value: wrapper.vm.$formatCurrency(wrapper.vm.massAction.details.amount),
             dataTest: 'amount',
             customClass: 'grey-back',
             customClassValue: 'fw-bold',
@@ -97,18 +107,8 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        pinia,
-        localVue,
-        propsData: {
-          massAction: mockCombinedMassAction(),
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
+      doMount(true);
     });
-
     describe('fetchEvent', () => {
       it('should fetch the event', async () => {
         const id = mockCombinedMassAction().entity.details.eventId;
@@ -145,15 +145,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
 
   describe('Lifecycle', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          massAction: mockCombinedMassAction(),
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
+      doMount(true);
     });
     describe('created', () => {
       it('fetches all data', () => {

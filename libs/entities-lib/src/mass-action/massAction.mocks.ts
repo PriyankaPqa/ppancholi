@@ -12,7 +12,7 @@ import {
 } from './massActions.types';
 import { MassActionEntity } from './massAction';
 import { EPaymentModalities } from '../program';
-import { mockBaseData } from '../base';
+import { IEntity, mockBaseData } from '../base';
 
 export const mockMassActionRun = (force?: Partial<IMassActionRun>): IMassActionRun => ({
   ...mockBaseData(),
@@ -72,11 +72,16 @@ export const mockMassActionMetadata = (
   ...force,
 });
 
+export const mockMassActionMetadataArray = () : IMassActionMetadata[] => ([
+mockMassActionMetadata({ id: '1' }), mockMassActionMetadata({ id: '2' }),
+]);
+
 export const mockMassActionEntity = (force?: Partial<IMassActionEntity>): IMassActionEntity => new MassActionEntity(mockMassActionEntityData(force));
 
-export const mockCombinedMassAction = (force?: Partial<IMassActionEntity>): IMassActionCombined => ({
+export const mockCombinedMassAction = (force?: Partial<IEntity>): IMassActionCombined => ({
   entity: mockMassActionEntity(force),
-  metadata: mockMassActionMetadata(),
+  metadata: mockMassActionMetadata(force),
+  pinned: false,
 });
 
 export const mockMassActionEntities = (): IMassActionEntity[] => [mockMassActionEntity({ id: '1' }), mockMassActionEntity({ id: '2' })];

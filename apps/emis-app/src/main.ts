@@ -34,6 +34,7 @@ import { useCaseFileReferralMetadataStore, useCaseFileReferralStore } from '@/pi
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { useCaseFileDocumentMetadataStore, useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
+import { useMassActionMetadataStore, useMassActionStore } from '@/pinia/mass-action/mass-action';
 import store from './store/store';
 import router from './ui/router';
 import App from './ui/App.vue';
@@ -89,6 +90,8 @@ SignalR.instance.setPinia({
   caseFileDocumentMetadataStore: useCaseFileDocumentMetadataStore(),
   programStore: useProgramStore(),
   programMetadataStore: useProgramMetadataStore(),
+  massActionStore: useMassActionStore(),
+  massActionMetadataStore: useMassActionMetadataStore(),
 });
 
 // Directive fo v-visible so component is hidden but still take its place

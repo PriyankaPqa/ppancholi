@@ -10,9 +10,8 @@
               <div class="mb-6">
                 <v-progress-circular indeterminate :size="55" :width="6" color="primary" />
               </div>
-
               <div v-if="processTitle" class="rc-body14 fw-bold" data-test="processTitle">
-                {{ $t(processTitle, { x: massAction.metadata.lastRun.results && massAction.metadata.lastRun.results.successes }) }}
+                {{ $t(processTitle, { x: massActionMetadata.lastRun.results && massActionMetadata.lastRun.results.successes }) }}
               </div>
 
               <div class="rc-body12" data-test="processLabelOne">
@@ -34,7 +33,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMassActionCombined } from '@libs/entities-lib/mass-action';
+import { IMassActionEntity, IMassActionMetadata } from '@libs/entities-lib/mass-action';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
 
 export default Vue.extend({
@@ -45,7 +44,7 @@ export default Vue.extend({
 
   props: {
     massAction: {
-      type: Object as () => IMassActionCombined,
+      type: Object as () => IMassActionEntity,
       required: true,
     },
 
@@ -66,6 +65,11 @@ export default Vue.extend({
 
     massActionStatus: {
       type: Number,
+      required: true,
+    },
+
+    massActionMetadata: {
+      type: Object as () => IMassActionMetadata,
       required: true,
     },
   },

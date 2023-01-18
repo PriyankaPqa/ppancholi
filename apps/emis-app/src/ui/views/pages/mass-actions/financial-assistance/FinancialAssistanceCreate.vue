@@ -29,6 +29,7 @@ import FinancialAssistancePaymentDetailsCreate from '@/ui/views/pages/mass-actio
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { IMassActionFinancialAssistanceCreatePayload } from '@libs/services-lib/mass-actions/entity';
 import { buildQuery } from '@libs/services-lib/odata-query';
+import { useMassActionStore } from '@/pinia/mass-action/mass-action';
 
 export interface PaymentDetailsForm {
   event: IEventEntity,
@@ -103,7 +104,7 @@ export default Vue.extend({
       } as IMassActionFinancialAssistanceCreatePayload;
 
       this.loading = true;
-      const entity = await this.$storage.massAction.actions.create(MassActionType.FinancialAssistance, payload);
+      const entity = await useMassActionStore().create(MassActionType.FinancialAssistance, payload);
       this.loading = false;
 
       if (entity) {

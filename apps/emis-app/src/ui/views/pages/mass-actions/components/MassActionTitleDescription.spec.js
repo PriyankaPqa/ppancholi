@@ -3,7 +3,7 @@ import {
   mount,
 } from '@/test/testSetup';
 
-import { MassActionRunStatus, mockCombinedMassAction } from '@libs/entities-lib/mass-action';
+import { MassActionRunStatus, mockMassActionEntity } from '@libs/entities-lib/mass-action';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import Component from './MassActionTitleDescription.vue';
 
@@ -17,7 +17,7 @@ describe('MassActionTitleDescription.vue', () => {
       wrapper = mount(Component, {
         localVue,
         propsData: {
-          massAction: mockCombinedMassAction(),
+          massAction: mockMassActionEntity(),
           massActionStatus: MassActionRunStatus.PreProcessed,
         },
       });
@@ -59,7 +59,7 @@ describe('MassActionTitleDescription.vue', () => {
 
       it('should show description if there is one', () => {
         const component = wrapper.findDataTest('description');
-        expect(component.text()).toBe(wrapper.vm.massAction.entity.description);
+        expect(component.text()).toBe(wrapper.vm.massAction.description);
       });
     });
   });

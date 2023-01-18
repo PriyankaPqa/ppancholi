@@ -9,17 +9,20 @@ import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { MassActionEntity, MassActionMode, MassActionRunType } from '@libs/entities-lib/mass-action';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { mockStorage } from '@/storage';
+import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import Component from './MassActionBaseCreate.vue';
 
 const localVue = createLocalVue();
 
 const storage = mockStorage();
+const { pinia, massActionStore } = useMockMassActionStore();
 let wrapper;
 
 // eslint-disable-next-line @typescript-eslint/default-param-last
 const doMount = (shallow = false, propsData) => {
   const options = {
     localVue,
+    pinia,
     propsData: {
       title: 'title',
       formData: new FormData(),
@@ -136,6 +139,7 @@ describe('MassActionBaseCreate.vue', () => {
       it('should confirm before emitting or uploading with message for processing when run type is process', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             title: 'title',
             formData: new FormData(),
@@ -177,6 +181,7 @@ describe('MassActionBaseCreate.vue', () => {
       it('should not show the upload dialog in list mode', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             title: 'title',
             formData: new FormData(),
@@ -269,7 +274,7 @@ describe('MassActionBaseCreate.vue', () => {
         wrapper.vm.uploadForm = jest.fn();
         await wrapper.setData({ uploadSuccess: true });
         await wrapper.vm.upload();
-        expect(wrapper.vm.$storage.massAction.mutations.setEntity).toHaveBeenCalledWith(new MassActionEntity(wrapper.vm.response.data));
+        expect(massActionStore.set).toHaveBeenCalledWith(new MassActionEntity(wrapper.vm.response.data));
       });
 
       it('should emit upload:success in case of successful upload with proper params', async () => {

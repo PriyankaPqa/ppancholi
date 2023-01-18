@@ -34,7 +34,7 @@
 import Vue from 'vue';
 import { VTextAreaWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { IMassActionCombined } from '@libs/entities-lib/mass-action';
+import { IMassActionEntity } from '@libs/entities-lib/mass-action';
 
 export default Vue.extend({
   name: 'MassActionEditTitleDescription',
@@ -45,7 +45,7 @@ export default Vue.extend({
 
   props: {
     massAction: {
-      type: Object as () => IMassActionCombined,
+      type: Object as () => IMassActionEntity,
       required: true,
     },
     disableName: {
@@ -56,8 +56,8 @@ export default Vue.extend({
 
   data() {
     return {
-      name: this.massAction.entity.name,
-      description: this.massAction.entity.description,
+      name: this.massAction.name,
+      description: this.massAction.description,
       backup: {
         name: '',
         description: '',
@@ -84,8 +84,8 @@ export default Vue.extend({
   },
 
   mounted() {
-    this.backup.name = this.massAction.entity.name;
-    this.backup.description = this.massAction.entity.description;
+    this.backup.name = this.massAction.name;
+    this.backup.description = this.massAction.description;
   },
 });
 </script>

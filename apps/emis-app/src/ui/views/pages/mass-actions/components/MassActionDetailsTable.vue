@@ -14,7 +14,7 @@
         <span class="rc-body14 fw-bold">{{ $t('massActions.date_created') }}</span>
       </v-col>
       <v-col md="7">
-        <span class="rc-body14" data-test="dateCreated">{{ moment(massAction.entity.created).local().format('ll') }}</span>
+        <span class="rc-body14" data-test="dateCreated">{{ moment(massAction.created).local().format('ll') }}</span>
       </v-col>
     </v-row>
 
@@ -34,7 +34,7 @@
 import Vue from 'vue';
 import moment from 'moment';
 import {
-  IMassActionCombined, MassActionDataCorrectionType, MassActionRunStatus, MassActionType,
+  IMassActionEntity, MassActionDataCorrectionType, MassActionRunStatus, MassActionType,
 } from '@libs/entities-lib/mass-action';
 
 export default Vue.extend({
@@ -42,7 +42,7 @@ export default Vue.extend({
 
   props: {
     massAction: {
-      type: Object as () => IMassActionCombined,
+      type: Object as () => IMassActionEntity,
       required: true,
     },
   },
@@ -65,16 +65,16 @@ export default Vue.extend({
 
   computed: {
     massActionTypeText(): string {
-      if (Object.keys(this.labels).includes(this.massAction.entity.type.toString())) {
-        return this.labels[this.massAction.entity.type as MassActionType];
+      if (Object.keys(this.labels).includes(this.massAction.type.toString())) {
+        return this.labels[this.massAction.type as MassActionType];
       }
-      return `enums.MassActionDataCorrectionType.${MassActionDataCorrectionType[this.massAction.entity.type]}`;
+      return `enums.MassActionDataCorrectionType.${MassActionDataCorrectionType[this.massAction.type]}`;
     },
   },
 
   async mounted() {
     this.loading = true;
-    this.userAccount = await this.$storage.userAccount.actions.fetch(this.massAction.entity.createdBy);
+    this.userAccount = await this.$storage.userAccount.actions.fetch(this.massAction.createdBy);
     this.loading = false;
   },
 });

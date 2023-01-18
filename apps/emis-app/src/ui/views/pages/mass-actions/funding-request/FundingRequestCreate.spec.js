@@ -8,11 +8,13 @@ import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassA
 import routes from '@/constants/routes';
 import { MassActionMode, MassActionType, mockMassActionEntity } from '@libs/entities-lib/mass-action';
 import { mockStorage } from '@/storage';
+import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import Component from './FundingRequestCreate.vue';
 
 const localVue = createLocalVue();
 
 const storage = mockStorage();
+const { pinia, massActionStore } = useMockMassActionStore();
 
 describe('FundingRequestCreate.vue', () => {
   let wrapper;
@@ -21,6 +23,7 @@ describe('FundingRequestCreate.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
+        pinia,
       });
     });
 
@@ -46,6 +49,7 @@ describe('FundingRequestCreate.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         mocks: {
           $storage: storage,
         },
@@ -72,10 +76,9 @@ describe('FundingRequestCreate.vue', () => {
       it('should call create action with proper parameters', async () => {
         const name = 'Mass action';
         const description = '';
-
         await wrapper.vm.onPost({ name, description });
 
-        expect(wrapper.vm.$storage.massAction.actions.create).toHaveBeenCalledWith(MassActionType.GenerateFundingRequest, { name, description });
+        expect(massActionStore.create).toHaveBeenCalledWith(MassActionType.GenerateFundingRequest, { name, description });
       });
 
       it('should call goToDetail method with proper parameters', async () => {

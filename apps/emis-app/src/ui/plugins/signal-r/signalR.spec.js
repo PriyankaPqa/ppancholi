@@ -4,6 +4,7 @@ import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
+import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import { SignalR } from './signalR';
 
@@ -22,6 +23,7 @@ const { eventStore, eventMetadataStore } = useMockEventStore();
 const { caseFileReferralStore, caseFileReferralMetadataStore } = useMockCaseFileReferralStore();
 const { uiStateStore } = useMockUiStateStore();
 const { programStore, programMetadataStore } = useMockProgramStore();
+const { massActionStore, massActionMetadataStore } = useMockMassActionStore();
 const { caseFileDocumentStore, caseFileDocumentMetadataStore } = useMockCaseFileDocumentStore();
 
 describe('signalR', () => {
@@ -42,6 +44,8 @@ describe('signalR', () => {
       uiStateStore,
       programStore,
       programMetadataStore,
+      massActionStore,
+      massActionMetadataStore,
       caseFileDocumentStore,
       caseFileDocumentMetadataStore,
     });
@@ -304,13 +308,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'MassAction',
-          action: conn.storage.massAction.mutations.setEntityFromOutsideNotification,
+          action: conn.pinia.massActionStore.setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'MassActionMetadata',
-          action: conn.storage.massAction.mutations.setMetadataFromOutsideNotification,
+          action: conn.pinia.massActionMetadataStore.setItemFromOutsideNotification,
         });
     });
   });

@@ -38,11 +38,6 @@ import { TeamMetadataModule } from '@/store/modules/team/teamMetadata';
 import { TeamsService } from '@libs/services-lib/teams/entity';
 import { TeamsMetadataService } from '@libs/services-lib/teams/metadata';
 
-import { MassActionEntityModule } from '@/store/modules/mass-action/massActionEntity';
-import { MassActionService } from '@libs/services-lib/mass-actions/entity';
-import { MassActionMetadataModule } from '@/store/modules/mass-action/massActionMetadata';
-import { MassActionMetadataService } from '@libs/services-lib/mass-actions/metadata';
-
 import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
 import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
 import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
@@ -147,15 +142,6 @@ const store: StoreOptions<IRootState> = {
       skipEmailPhoneRules: true,
       mode: ERegistrationMode.CRC,
     }),
-
-    [vuexModule.MASS_ACTION_ENTITIES]: new MassActionEntityModule(
-      new MassActionService(httpClient),
-      SignalR,
-    ).getModule(),
-    [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(
-      new MassActionMetadataService(httpClient),
-      SignalR,
-    ).getModule(),
 
     [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
       new FinancialAssistanceCategoriesService(httpClient),

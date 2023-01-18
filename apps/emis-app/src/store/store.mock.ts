@@ -40,9 +40,6 @@ import { FinancialAssistanceEntityModule } from '@/store/modules/financial-assis
 import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-assistance/financialAssistanceMetadata';
 import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
 import { FinancialAssistanceTablesMetadataService } from '@libs/services-lib/financial-assistance-tables/metadata';
-import { MassActionEntityModule } from '@/store/modules/mass-action/massActionEntity';
-import { MassActionService } from '@libs/services-lib/mass-actions/entity';
-import { MassActionMetadataModule } from '@/store/modules/mass-action/massActionMetadata';
 
 import { TeamEntityModule } from '@/store/modules/team/teamEntity';
 import { TeamMetadataModule } from '@/store/modules/team/teamMetadata';
@@ -117,11 +114,6 @@ const mockConfig = {
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,
     }),
-    [vuexModule.MASS_ACTION_ENTITIES]: new MassActionEntityModule(
-      new MassActionService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-    [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(null, mockSignalR()).getModule(),
 
     [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
       new FinancialAssistanceCategoriesService(httpClient),

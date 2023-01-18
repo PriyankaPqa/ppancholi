@@ -3,6 +3,7 @@
     <mass-action-pre-processing-base
       v-if="preProcessing"
       :mass-action="massAction"
+      :mass-action-metadata="massActionMetadata"
       :process-title="massActionBaseDetailsLabels.preProcessingWaitTitle"
       :process-label-one="massActionBaseDetailsLabels.preProcessingWaitLabelOne"
       :process-label-two="massActionBaseDetailsLabels.preProcessingWaitLabelTwo">
@@ -15,6 +16,7 @@
       v-else-if="processing && lastRunMetadata"
       :mass-action-status="MassActionRunStatus.Processing"
       :mass-action="massAction"
+      :mass-action-metadata="massActionMetadata"
       :process-title="massActionBaseDetailsLabels.processingWaitTitle"
       :process-label-one="massActionBaseDetailsLabels.processingWaitLabelOne"
       :process-label-two="massActionBaseDetailsLabels.processingWaitLabelTwo" />
@@ -23,6 +25,7 @@
       v-else-if="lastRunMetadata && preProcessed"
       :mass-action-status="MassActionRunStatus.PreProcessed"
       :mass-action="massAction"
+      :mass-action-metadata="massActionMetadata"
       :total="lastRunResults.total"
       :successes="lastRunResults.successes"
       :successes-amount="lastRunMetadata.totalAmount"
@@ -46,6 +49,7 @@
       v-else-if="lastRunMetadata && processed"
       :mass-action-status="MassActionRunStatus.Processed"
       :mass-action="massAction"
+      :mass-action-metadata="massActionMetadata"
       :total="lastRunResults.total"
       :successes="lastRunResults.successes"
       :successes-amount="lastRunMetadata.totalAmount"

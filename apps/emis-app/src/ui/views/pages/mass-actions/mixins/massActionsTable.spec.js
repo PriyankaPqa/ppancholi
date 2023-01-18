@@ -4,6 +4,7 @@ import {
 } from '@libs/entities-lib/mass-action';
 import { mockStorage } from '@/storage';
 import { Status } from '@libs/entities-lib/base';
+import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import massActionsTable from './massActionsTable';
 
 const Component = {
@@ -13,6 +14,7 @@ const Component = {
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, massActionStore } = useMockMassActionStore();
 
 let wrapper;
 
@@ -21,6 +23,7 @@ describe('massActionsTable', () => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       mocks: {
         $storage: storage,
       },
@@ -31,6 +34,7 @@ describe('massActionsTable', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         mocks: {
           $storage: storage,
         },
@@ -87,10 +91,10 @@ describe('massActionsTable', () => {
         const params = {
           search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
         };
-
+        wrapper.vm.combinedMassActionStore.search = jest.fn();
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.massAction.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedMassActionStore.search).toHaveBeenCalledWith({
           search: params.search,
           filter: {
             ...params.filter,
@@ -116,11 +120,20 @@ describe('massActionsTable', () => {
 
       it('should trigger deactivate action with correct params', async () => {
         await wrapper.vm.onDelete(mockCombinedMassAction());
-        expect(wrapper.vm.$storage.massAction.actions.deactivate).toHaveBeenCalledWith(mockCombinedMassAction().entity.id);
+        expect(massActionStore.deactivate).toHaveBeenCalledWith(mockCombinedMassAction().entity.id);
       });
 
       it('should reduce the itemCount by 1', async () => {
-        wrapper.vm.itemsCount = 1;
+        await wrapper.setData({
+          itemsCount: 1,
+        });
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          mocks: {
+            $storage: storage,
+          },
+        });
         await wrapper.vm.onDelete(mockCombinedMassAction());
         expect(wrapper.vm.itemsCount).toEqual(0);
       });
@@ -131,6 +144,7 @@ describe('massActionsTable', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         mocks: {
           $storage: storage,
         },
@@ -139,14 +153,14 @@ describe('massActionsTable', () => {
 
     describe('tableData', () => {
       it('should return result of getByIds', () => {
-        wrapper.vm.$storage.massAction.getters.getByIds = jest.fn(() => mockCombinedMassActions());
+        wrapper.vm.combinedMassActionStore.getByIds = jest.fn(() => mockCombinedMassActions());
         expect(wrapper.vm.tableData).toEqual(mockCombinedMassActions());
       });
     });
 
     describe('tableProps', () => {
       it('should return correct tableProps', () => {
-        expect(wrapper.vm.tableProps.loading).toEqual(wrapper.vm.$store.state.massActionEntities.searchLoading);
+        expect(wrapper.vm.tableProps.loading).toEqual(massActionStore.searchLoading);
         expect(wrapper.vm.tableProps.itemClass).toBeDefined();
       });
     });

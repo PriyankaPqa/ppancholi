@@ -13,20 +13,21 @@ import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/Mas
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
 import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
+import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import Component from './MassActionPreProcessedProcessedBase.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, massActionStore } = useMockMassActionStore();
 let wrapper;
 
-const doMount = (mountMode = false, runStatus = MassActionRunStatus.Processed) => {
+const doMount = ({ otherProps, otherData }, mountMode = false, runStatus = MassActionRunStatus.Processed) => {
   const options = {
     localVue,
+    pinia,
     propsData: {
-      massAction: {
-        entity: mockMassActionEntity(),
-        metadata: mockMassActionMetadata({}, { runStatus }),
-      },
+      massAction: mockMassActionEntity(),
+      massActionMetadata: mockMassActionMetadata({}, { runStatus }),
       massActionStatus: MassActionRunStatus.PreProcessed,
       total: 100,
       successes: 50,
@@ -34,10 +35,12 @@ const doMount = (mountMode = false, runStatus = MassActionRunStatus.Processed) =
       failuresLabel: 'failuresLabel',
       successesLabel: 'successesLabel',
       totalLabel: 'totalLabel',
+      ...otherProps,
     },
     data() {
       return {
         userAccount: mockCombinedUserAccount(),
+        ...otherData,
       };
     },
     mocks: {
@@ -54,7 +57,7 @@ const doMount = (mountMode = false, runStatus = MassActionRunStatus.Processed) =
 describe('MassActionPreProcessedProcessedBase.vue', () => {
   describe('Template', () => {
     beforeEach(() => {
-      doMount(true);
+      doMount({ otherProps: null, otherData: null }, true);
     });
 
     describe('Template', () => {
@@ -63,9 +66,8 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
       });
 
       it('should render MassActionTitleDescription if editMode is true', async () => {
-        await wrapper.setData({
-          editMode: true,
-        });
+        doMount({ otherProps: null, otherData: { editMode: true } }, true, null);
+
         expect(wrapper.findComponent(MassActionEditTitleDescription).exists()).toBe(true);
       });
 
@@ -93,18 +95,13 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         expect(wrapper.findDataTest('failures').text()).toEqual(wrapper.vm.failures.toString());
       });
 
-      it('should display processButton if the props showProcessButton is true and status is different from Processed', async () => {
-        doMount(true, MassActionRunStatus.PreProcessed);
-        await wrapper.setProps({
-          showProcessButton: true,
-        });
+      it('should display processButton if the props showProcessButton is true and status is different from Processed', () => {
+        doMount({ otherProps: { showProcessButton: true }, otherData: null }, true, MassActionRunStatus.PreProcessed);
         expect(wrapper.findDataTest('processButton').exists()).toBe(true);
       });
 
-      it('should display invalidDownloadButton if the props showInvalidDownloadButton is true and status is Processed ', async () => {
-        await wrapper.setProps({
-          showInvalidDownloadButton: true,
-        });
+      it('should display invalidDownloadButton if the props showInvalidDownloadButton is true and status is Processed ', () => {
+        doMount({ otherProps: { showInvalidDownloadButton: true }, otherData: null }, true, MassActionRunStatus.Processed);
         expect(wrapper.findDataTest('invalidDownloadButton').exists()).toBe(true);
       });
     });
@@ -112,7 +109,7 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      doMount(false);
+      doMount({ otherProps: null, otherData: null }, false);
     });
 
     describe('update', () => {
@@ -127,7 +124,7 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
       it('should trigger update action update', async () => {
         const payload = { name: 'test', description: 'test' };
         await wrapper.vm.update(payload);
-        expect(wrapper.vm.$storage.massAction.actions.update).toHaveBeenLastCalledWith(wrapper.vm.massAction.entity.id, payload);
+        expect(massActionStore.update).toHaveBeenLastCalledWith(wrapper.vm.massAction.id, payload);
       });
     });
 
@@ -144,7 +141,7 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
 
       it('should call process actions with proper params', async () => {
         await wrapper.vm.onProcess();
-        expect(wrapper.vm.$storage.massAction.actions.process).toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, MassActionRunType.Process);
+        expect(massActionStore.process).toHaveBeenCalledWith(wrapper.vm.massAction.id, MassActionRunType.Process);
       });
     });
 
@@ -156,10 +153,12 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
 
       it('should trigger deactivate action with correct params', async () => {
         await wrapper.vm.onDelete();
-        expect(wrapper.vm.$storage.massAction.actions.deactivate).toHaveBeenCalledWith(wrapper.vm.massAction.entity.id);
+        expect(massActionStore.deactivate).toHaveBeenCalledWith(wrapper.vm.massAction.id);
       });
 
       it('should emit delete:success to home page', async () => {
+        doMount({ otherProps: null, otherData: null }, false);
+        massActionStore.deactivate = jest.fn(() => mockMassActionEntity());
         await wrapper.vm.onDelete();
         expect(wrapper.emitted('delete:success')).toBeTruthy();
       });
@@ -169,7 +168,7 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
       it('should trigger update action with correct params', async () => {
         const payload = { name: 'test', description: 'description' };
         await wrapper.vm.update(payload);
-        expect(wrapper.vm.$storage.massAction.actions.update).toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, payload);
+        expect(massActionStore.update).toHaveBeenCalledWith(wrapper.vm.massAction.id, payload);
       });
     });
 
@@ -178,8 +177,8 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         await wrapper.vm.downloadInvalid();
         expect(wrapper.vm.$services.massActions.getInvalidFile)
           .toHaveBeenCalledWith({
-            massActionId: wrapper.vm.massAction.entity.id,
-            runId: wrapper.vm.massAction.metadata.lastRun.runId,
+            massActionId: wrapper.vm.massAction.id,
+            runId: wrapper.vm.massActionMetadata.lastRun.runId,
             language: 'en',
           });
       });
@@ -199,8 +198,8 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         await wrapper.vm.downloadValid();
         expect(wrapper.vm.$services.massActions.getValidFile)
           .toHaveBeenCalledWith({
-            massActionId: wrapper.vm.massAction.entity.id,
-            runId: wrapper.vm.massAction.metadata.lastRun.runId,
+            massActionId: wrapper.vm.massAction.id,
+            runId: wrapper.vm.massActionMetadata.lastRun.runId,
             language: 'en',
           });
       });
@@ -218,7 +217,7 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      doMount(false, MassActionRunStatus.PreProcessed);
+      doMount({ otherProps: null, otherData: null }, false, MassActionRunStatus.PreProcessed);
     });
 
     describe('hasErrors', () => {
@@ -235,6 +234,7 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
 
     describe('isPreprocessed', () => {
       it('should return true if the last run status is preprocessed', () => {
+        doMount({ otherProps: null, otherData: null }, true, MassActionRunStatus.PreProcessed);
         expect(wrapper.vm.isPreprocessed).toBe(true);
       });
     });

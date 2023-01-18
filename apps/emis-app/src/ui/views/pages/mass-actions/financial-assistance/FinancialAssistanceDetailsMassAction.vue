@@ -19,9 +19,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import FinancialAssistancePaymentDetailsTable from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePaymentDetailsTable.vue';
-import { IMassActionCombined } from '@libs/entities-lib/mass-action';
+import {
+ IMassActionEntity,
+} from '@libs/entities-lib/mass-action';
 import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
 import routes from '@/constants/routes';
+import { useMassActionStore } from '@/pinia/mass-action/mass-action';
 
 export default Vue.extend({
   name: 'FinancialAssistanceDetails',
@@ -41,8 +44,8 @@ export default Vue.extend({
       return this.$route.params.id;
     },
 
-    massAction(): IMassActionCombined {
-      return this.$storage.massAction.getters.get(this.massActionId);
+    massAction(): IMassActionEntity {
+      return useMassActionStore().getById(this.massActionId);
     },
   },
 });

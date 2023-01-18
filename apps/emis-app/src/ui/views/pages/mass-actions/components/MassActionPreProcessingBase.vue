@@ -2,6 +2,7 @@
   <div>
     <mass-action-processing-base
       :mass-action="massAction"
+      :mass-action-metadata="massActionMetadata"
       :mass-action-status="MassActionRunStatus.PreProcessing"
       :process-title="processTitle"
       :process-label-one="processLabelOne"
@@ -21,7 +22,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMassActionCombined, MassActionRunStatus } from '@libs/entities-lib/mass-action';
+import { IMassActionEntity, IMassActionMetadata, MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 
@@ -34,7 +35,7 @@ export default Vue.extend({
 
   props: {
     massAction: {
-      type: Object as () => IMassActionCombined,
+      type: Object as () => IMassActionEntity,
       required: true,
     },
 
@@ -51,6 +52,11 @@ export default Vue.extend({
     processLabelTwo: {
       type: String,
       default: 'massActions.preProcessing.info2',
+    },
+
+    massActionMetadata: {
+      type: Object as () => IMassActionMetadata,
+      required: true,
     },
   },
 

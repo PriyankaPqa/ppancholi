@@ -28,7 +28,7 @@ export default mixins(massActionDetails).extend({
 
   computed: {
     massActionBaseDetailsLabels(): IMassActionBaseDetailsLabels {
-      switch (this.massAction.entity.type as MassActionDataCorrectionType) {
+      switch (this.massAction.type as MassActionDataCorrectionType) {
         case MassActionDataCorrectionType.AuthenticationSpecifiedOther:
         case MassActionDataCorrectionType.Labels:
           return {

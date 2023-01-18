@@ -11,6 +11,7 @@ import { MassActionMode, MassActionType, mockMassActionEntity } from '@libs/enti
 import { mockStorage } from '@/storage';
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockOptionItem, mockOptionSubItem } from '@libs/entities-lib/optionItem';
+import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import Component from './FinancialAssistanceCreate.vue';
 
 const localVue = createLocalVue();
@@ -19,22 +20,36 @@ const localVue = createLocalVue();
 const filtersString = '{"search":"Metadata/PrimaryBeneficiary/ContactInformation/Email: /.*tammy.*/","skip":0,"top":10,"orderBy":"","filter":{"and":{"Entity/EventId":"60983874-18bb-467d-b55a-94dc55818151"}}}';
 
 const storage = mockStorage();
+const { pinia, massActionStore } = useMockMassActionStore();
 
 describe('FinancialAssistanceCreate.vue', () => {
   let wrapper;
 
-  describe('Template', () => {
-    beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-        mocks: {
-          $route: {
-            query: {
-              azureSearchParams: filtersString,
-              mode: MassActionMode.List,
-            },
+  const doMount = (shallow, otherOptions = {}) => {
+    const option = {
+      localVue,
+      pinia,
+      mocks: {
+        $storage: storage,
+        $route: {
+          query: {
+            azureSearchParams: filtersString,
+            mode: MassActionMode.List,
           },
         },
+      },
+      ...otherOptions,
+    };
+    if (shallow === true) {
+      wrapper = shallowMount(Component, option);
+    } else {
+      wrapper = mount(Component, option);
+    }
+  };
+
+  describe('Template', () => {
+    beforeEach(() => {
+      doMount(false, {
         stubs: {
           FinancialAssistancePaymentDetailsCreate: true,
         },
@@ -83,18 +98,7 @@ describe('FinancialAssistanceCreate.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        mocks: {
-          $storage: storage,
-          $route: {
-            query: {
-              azureSearchParams: filtersString,
-              mode: MassActionMode.List,
-            },
-          },
-        },
-      });
+      doMount(true);
     });
 
     describe('back', () => {
@@ -187,7 +191,9 @@ describe('FinancialAssistanceCreate.vue', () => {
 
     describe('onPost', () => {
       it('should call create action with proper parameters', async () => {
+        doMount(true);
         wrapper.vm.formData.append = jest.fn();
+        massActionStore.create = jest.fn();
 
         const name = 'Mass action';
         const description = '';
@@ -218,27 +224,41 @@ describe('FinancialAssistanceCreate.vue', () => {
           search: azureSearchParams.search,
           filter: "Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 1",
         };
-
         await wrapper.vm.onPost({ name, description });
 
-        expect(wrapper.vm.$storage.massAction.actions.create).toHaveBeenCalledWith(MassActionType.FinancialAssistance, payload);
+        expect(massActionStore.create).toHaveBeenCalledWith(MassActionType.FinancialAssistance, payload);
       });
 
       it('should call onSuccess method with proper parameters', async () => {
         const name = 'Mass action';
         const description = '';
-        await wrapper.setData({
-          form: {
-            event: mockEvent(),
-            table: mockFinancialAssistanceTableEntity(),
-            item: mockOptionItem(),
-            subItem: mockOptionSubItem(),
-            amount: 25,
-            paymentModality: 1,
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          data() {
+            return {
+              form: {
+                event: mockEvent(),
+                table: mockFinancialAssistanceTableEntity(),
+                item: mockOptionItem(),
+                subItem: mockOptionSubItem(),
+                amount: 25,
+                paymentModality: 1,
+              },
+            };
+          },
+          mocks: {
+            $storage: storage,
+            $route: {
+              query: {
+                azureSearchParams: filtersString,
+                mode: MassActionMode.List,
+              },
+            },
           },
         });
         wrapper.vm.onSuccess = jest.fn();
-
+        massActionStore.create = jest.fn(() => mockMassActionEntity());
         await wrapper.vm.onPost({ name, description });
 
         expect(wrapper.vm.onSuccess).toHaveBeenLastCalledWith(mockMassActionEntity());

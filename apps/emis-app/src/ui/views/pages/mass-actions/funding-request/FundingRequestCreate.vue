@@ -14,6 +14,7 @@ import Vue from 'vue';
 import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
+import { useMassActionStore } from '@/pinia/mass-action/mass-action';
 
 export default Vue.extend({
   name: 'FundingRequestCreate',
@@ -41,7 +42,7 @@ export default Vue.extend({
 
     async onPost({ name, description }: { name: string; description: string }) {
       this.loading = true;
-      const entity = await this.$storage.massAction.actions.create(MassActionType.GenerateFundingRequest, { name, description });
+      const entity = await useMassActionStore().create(MassActionType.GenerateFundingRequest, { name, description });
       this.loading = false;
       if (entity) {
         this.goToDetail(entity.id);

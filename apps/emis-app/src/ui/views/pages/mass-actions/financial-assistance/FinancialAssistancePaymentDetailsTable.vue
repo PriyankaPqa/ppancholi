@@ -19,7 +19,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { IMassActionCombined } from '@libs/entities-lib/mass-action';
+import { IMassActionEntity } from '@libs/entities-lib/mass-action';
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { IFinancialAssistanceTableCombined } from '@libs/entities-lib/financial-assistance';
@@ -32,7 +32,7 @@ export default Vue.extend({
 
   props: {
     massAction: {
-      type: Object as () => IMassActionCombined,
+      type: Object as () => IMassActionEntity,
       required: true,
     },
   },
@@ -84,12 +84,12 @@ export default Vue.extend({
         },
         {
           label: 'massActions.financialAssistance.create.payment.label',
-          value: this.$t(`enums.PaymentModality.${EPaymentModalities[this.massAction.entity.details.paymentModality]}`),
+          value: this.$t(`enums.PaymentModality.${EPaymentModalities[this.massAction.details.paymentModality]}`),
           dataTest: 'payment',
         },
         {
           label: 'massActions.financialAssistance.create.amount.label',
-          value: this.$formatCurrency(this.massAction.entity.details.amount),
+          value: this.$formatCurrency(this.massAction.details.amount),
           dataTest: 'amount',
           customClass: 'grey-back',
           customClassValue: 'fw-bold',
@@ -99,7 +99,7 @@ export default Vue.extend({
 
     subItem(): IOptionSubItem {
       if (this.item?.entity) {
-        return this.item.entity.subitems.find((s) => s.id === this.massAction.entity.details.subCategoryId);
+        return this.item.entity.subitems.find((s) => s.id === this.massAction.details.subCategoryId);
       }
       return null;
     },
@@ -114,28 +114,28 @@ export default Vue.extend({
   methods: {
     async fetchEvent() {
       this.eventLoading = true;
-      this.event = await useEventStore().fetch(this.massAction.entity.details.eventId) as IEventEntity;
+      this.event = await useEventStore().fetch(this.massAction.details.eventId) as IEventEntity;
       this.eventLoading = false;
     },
 
     async fetchTable() {
       this.tableLoading = true;
-      this.table = await this.$storage.financialAssistance.actions.fetch(this.massAction.entity.details.tableId);
+      this.table = await this.$storage.financialAssistance.actions.fetch(this.massAction.details.tableId);
       this.tableLoading = false;
     },
 
     async fetchProgram() {
       this.programLoading = true;
       this.program = await useProgramStore().fetch({
-        id: this.massAction.entity.details.programId,
-        eventId: this.massAction.entity.details.eventId,
+        id: this.massAction.details.programId,
+        eventId: this.massAction.details.eventId,
       }) as IProgramEntity;
       this.programLoading = false;
     },
 
     async fetchItem() {
       this.itemLoading = true;
-      this.item = await this.$storage.financialAssistanceCategory.actions.fetch(this.massAction.entity.details.mainCategoryId);
+      this.item = await this.$storage.financialAssistanceCategory.actions.fetch(this.massAction.details.mainCategoryId);
       this.itemLoading = false;
     },
   },

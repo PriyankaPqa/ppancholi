@@ -319,13 +319,13 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'MassAction',
-      action: this.storage.massAction.mutations.setEntityFromOutsideNotification,
+      action: this.pinia.massActionStore.setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'MassActionMetadata',
-      action: this.storage.massAction.mutations.setMetadataFromOutsideNotification,
+      action: this.pinia.massActionMetadataStore.setItemFromOutsideNotification,
     });
   }
 
