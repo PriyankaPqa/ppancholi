@@ -28,6 +28,7 @@ export const mockAssessmentResponseEntity = (force?: Partial<IAssessmentResponse
   answeredQuestions: [
     {
       assessmentQuestionIdentifier: 'question2',
+      questionId: 'question2id',
       responses: [
         {
           displayValue: 'item1',
@@ -43,6 +44,7 @@ export const mockAssessmentResponseEntity = (force?: Partial<IAssessmentResponse
     },
     {
       assessmentQuestionIdentifier: 'question3',
+      questionId: 'question3id',
       responses: [
         {
           displayValue: 'item2',
@@ -65,6 +67,7 @@ export const mockAssessmentResponseEntityWithPanels = (force?: Partial<IAssessme
   answeredQuestions: [
     {
       assessmentQuestionIdentifier: 'panel1|ddq',
+      questionId: 'panel1|ddqid',
       responses: [
         {
           displayValue: 'item2',
@@ -79,6 +82,7 @@ export const mockAssessmentResponseEntityWithPanels = (force?: Partial<IAssessme
     },
     {
       assessmentQuestionIdentifier: 'panel1|ddq|Comment',
+      questionId: 'panel1|ddq|Commentid',
       responses: [
         {
           displayValue: 'tsetz',
@@ -93,6 +97,7 @@ export const mockAssessmentResponseEntityWithPanels = (force?: Partial<IAssessme
     },
     {
       assessmentQuestionIdentifier: 'panel1|ddq',
+      questionId: 'panel1|ddqid',
       responses: [
         {
           displayValue: 'Aucun',
@@ -107,6 +112,7 @@ export const mockAssessmentResponseEntityWithPanels = (force?: Partial<IAssessme
     },
     {
       assessmentQuestionIdentifier: 'panel1|question4',
+      questionId: 'panel1|question4id',
       responses: [
         {
           displayValue: 'seteestet',
@@ -121,6 +127,7 @@ export const mockAssessmentResponseEntityWithPanels = (force?: Partial<IAssessme
     },
     {
       assessmentQuestionIdentifier: 'panel1|question1|question2',
+      questionId: 'panel1|question1|question2id',
       responses: [
         {
           displayValue: 'Autre (préciser)',
@@ -150,6 +157,7 @@ export const mockAssessmentResponseEntityWithPanels = (force?: Partial<IAssessme
     },
     {
       assessmentQuestionIdentifier: 'panel1|question1|question2|Comment',
+      questionId: 'panel1|question1|question2|Commentid',
       responses: [
         {
           displayValue: 'sd',
@@ -164,6 +172,7 @@ export const mockAssessmentResponseEntityWithPanels = (force?: Partial<IAssessme
     },
     {
       assessmentQuestionIdentifier: 'panel1|question1|question2',
+      questionId: 'panel1|question1|question2id',
       responses: [
         {
           displayValue: 'nopm fr',
@@ -183,6 +192,7 @@ export const mockAssessmentResponseEntityWithPanels = (force?: Partial<IAssessme
     },
     {
       assessmentQuestionIdentifier: 'question3',
+      questionId: 'question3id',
       responses: [
         {
           displayValue: 'Non',

@@ -80,10 +80,13 @@ export interface IAssessmentAnswerChoice {
 
 export interface IAssessmentQuestion {
   identifier: string;
+  id?: uuid;
   question: IMultilingual;
   questionType: string;
   score?: number | null;
   answerChoices: IAssessmentAnswerChoice[];
+  startDate?: Date;
+  endDate?: Date | null;
 }
 
 export interface IAssessmentBaseEntity extends IEntity {
@@ -114,10 +117,11 @@ export interface IQuestionResponse {
 
 export interface IAnsweredQuestion {
   assessmentQuestionIdentifier: string;
+  questionId?: uuid;
   responses: IQuestionResponse[];
   crcUserId?: uuid;
   crcUserName?: string;
-  answeredOn?: string;
+  answeredOn?: Date;
   parentIndexPath?: string;
 }
 
@@ -152,6 +156,7 @@ export interface IAssessmentResponseEntity extends IEntity {
 export interface IAssessmentTotalSubmissions {
   totalCompleted: number;
   totalPartialCompleted: number;
+  totalAssigned: number;
 }
 
 export interface IAssessmentResponseMetadata extends IEntity {

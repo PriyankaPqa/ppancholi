@@ -26,7 +26,7 @@ export class AssessmentResponseStorage
     saveAssessmentAnsweredQuestions: (payload: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity> => this.store.dispatch(`${this.entityModuleName}/saveAssessmentAnsweredQuestions`, payload),
 
     // eslint-disable-next-line
-    editAssessmentAnsweredQuestion: (payload: { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string, parentIndexPath: string }): Promise<IAssessmentResponseEntity> => this.store.dispatch(`${this.entityModuleName}/editAssessmentAnsweredQuestion`, payload),
+    editAssessmentAnsweredQuestion: (payload: { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string, parentIndexPath: string, questionId: uuid }): Promise<IAssessmentResponseEntity> => this.store.dispatch(`${this.entityModuleName}/editAssessmentAnsweredQuestion`, payload),
   };
 
   private mutations = {

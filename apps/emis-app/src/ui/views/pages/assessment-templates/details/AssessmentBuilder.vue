@@ -61,7 +61,24 @@ export default mixins(assessmentDetail, metadata).extend({
     await this.loadDetails();
     this.creator = this.surveyJsHelper.initializeSurveyJsCreator(this.$i18n.locale);
 
-    this.creator.saveSurveyFunc = this.saveSurveyJson;
+    if (this.assessmentForm) {
+      if ((await this.$services.assessmentForms.assessmentTotalSubmissions(this.assessmentTemplateId)).totalAssigned) {
+        if (await this.$confirm({
+          title: this.$t('assessmentTemplate.assessmentInUse.title'),
+          messages: this.$t('assessmentTemplate.assessmentInUse.message'),
+          submitActionLabel: this.$t('assessmentTemplate.assessmentInUse.readonly'),
+          cancelActionLabel: this.$t('assessmentTemplate.assessmentInUse.edit'),
+        })) {
+          this.creator.readOnly = true;
+        }
+      }
+    }
+
+    if (!this.creator.readOnly) {
+      this.creator.saveSurveyFunc = this.saveSurveyJson;
+      // confirm leaving when navigating to another wbesite or closing the tab
+      window.addEventListener('beforeunload', this.beforeWindowUnload);
+    }
     this.creator.onExtractSurvey.add(() => this.extract());
 
     if (this.assessmentTemplate.externalToolState?.data?.rawJson) {
@@ -71,8 +88,6 @@ export default mixins(assessmentDetail, metadata).extend({
     }
 
     this.lastRawJsonSaved = this.creator.text;
-    // confirm leaving when navigating to another wbesite or closing the tab
-    window.addEventListener('beforeunload', this.beforeWindowUnload);
 
     if (!this.testMode) {
       this.creator.render('surveyCreator');

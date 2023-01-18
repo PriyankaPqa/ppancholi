@@ -1,16 +1,20 @@
 <template>
   <div class="question-section rc-body14">
-    <v-simple-table data-test="question-list">
+    <v-simple-table
+      v-for="(group, index) in questionGroups"
+      :key="`qGroup_${index}`"
+      data-test="question-list"
+      class="mb-6">
       <thead>
         <tr>
-          <th>{{ $t('assessment.questions') }}</th>
-          <th>{{ $t('assessment.responses') }}</th>
+          <th>{{ index ? $t('assessment.obsoleteQuestions') : $t('assessment.questions') }}</th>
+          <th>{{ index ? $t('assessment.obsoleteAnswers') : $t('assessment.responses') }}</th>
           <th v-if="canEdit" />
         </tr>
       </thead>
       <tbody>
         <tr
-          v-for="(qAndA, $index) in questionsAndAnswers"
+          v-for="(qAndA, $index) in group"
           :key="`item__${$index}`">
           <td class="question">
             <div class="d-flex">
@@ -18,7 +22,7 @@
                 v-for="(childIndex, $sub) in qAndA.childEntryIndexes"
                 :key="`item__${$index}__childindex__${$sub}`"
                 :class="`question-dynamic ${childIndex % 2 === 0 ? 'even' : 'odd'}`" />
-              <div>
+              <div :class="qAndA.question.endDate ? 'obsolete' : ''">
                 <div
                   v-for="(qDescription, $descindex) in $m(qAndA.question.question).split('|')"
                   :key="`item__${$index}__desc__${$descindex}`"
@@ -208,7 +212,7 @@ export default Vue.extend({
       editedQuestion: null as IQuestionAndAnswer,
       currentAnswer: [] as string[],
       editedAnswer: [] as string[],
-      currentHistoryData: null as IAnsweredQuestion[],
+      currentHistoryData: null as (IAnsweredQuestion & { displayAnswer: string })[],
       showHistoryDialog: false,
       additionalDynamicPaths: [] as string[],
     };
@@ -224,15 +228,15 @@ export default Vue.extend({
         IAssessmentQuestion & { path?: string, childEntryIndexes?: number[] }
       )[];
 
-      const qAndAs = questionsList
+      let qAndAs = questionsList
         .map((q) => ({
           question: q,
           path: q.path,
           childEntryIndexes: q.childEntryIndexes,
-          answer: this.assessmentResponse.answeredQuestions?.find((a) => a.assessmentQuestionIdentifier === q.identifier
+          answer: this.assessmentResponse.answeredQuestions?.find((a) => a.questionId === q.id
             && (q.path == null || a.parentIndexPath?.indexOf(q.path) === 0)),
           displayAnswer: null,
-          history: this.assessmentResponse.answeredQuestionsHistory?.filter((a) => a.assessmentQuestionIdentifier === q.identifier
+          history: this.assessmentResponse.answeredQuestionsHistory?.filter((a) => a.questionId === q.id
             && (q.path == null || a.parentIndexPath?.indexOf(q.path) === 0)) || [],
           isMultiple: SurveyJsHelper.questionTypeIsMultipleAnswer(q.questionType),
           isDynamicRoot: SurveyJsHelper.questionTypeIsDynamic(q.questionType),
@@ -245,6 +249,7 @@ export default Vue.extend({
             assessmentQuestionIdentifier: qAndA.question.identifier,
             responses: [],
             displayAnswer: null,
+            questionId: qAndA.question.id,
           });
         }
 
@@ -255,7 +260,17 @@ export default Vue.extend({
         qAndA.displayAnswer = this.getDisplayAnswer(qAndA.answer, qAndA.question);
       });
 
+      qAndAs = qAndAs.filter((q) => !q.question.endDate || q.answer || q.history?.length > 1);
+
       return qAndAs;
+    },
+    questionGroups(): IQuestionAndAnswer[][] {
+      const groups = [this.questionsAndAnswers.filter((q) => !q.question.endDate)];
+      const obsoletes = this.questionsAndAnswers.filter((q) => q.question.endDate);
+      if (obsoletes.length) {
+        groups.push(obsoletes);
+      }
+      return groups;
     },
     answerHasntChanged(): boolean {
       return _xor(this.editedAnswer, this.currentAnswer).length === 0;
@@ -274,6 +289,7 @@ export default Vue.extend({
       this.currentAnswer = q?.answer?.responses?.map((r) => r.textValue) || [];
       this.editedAnswer = q?.answer?.responses?.map((r) => r.textValue) || [];
     },
+
     async applyEdit() {
       const newAnswer = {
         assessmentQuestionIdentifier: this.editedQuestion.question.identifier,
@@ -292,6 +308,7 @@ export default Vue.extend({
         responses: newAnswer.responses,
         assessmentQuestionIdentifier: this.editedQuestion.question.identifier,
         parentIndexPath: this.editedQuestion.path != null ? `${this.editedQuestion.path}|` : null,
+        questionId: this.editedQuestion.question.id,
       })) {
         this.cancelEdit();
       }
@@ -414,5 +431,10 @@ export default Vue.extend({
     width: 10px;
     margin: 0 4px;
     height: 100%;
+  }
+
+  .obsolete {
+    color: var(--v-grey-base);
+    font-style: italic;
   }
 </style>

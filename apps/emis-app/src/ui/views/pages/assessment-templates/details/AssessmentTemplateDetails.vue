@@ -93,7 +93,7 @@ export default mixins(assessmentDetail).extend({
   },
 
   computed: {
-    assessmentTemplateData(): Record<string, string>[] {
+    assessmentTemplateData(): Record<string, any>[] {
       const data = [
         {
           label: 'common.description',
@@ -117,23 +117,22 @@ export default mixins(assessmentDetail).extend({
           data: this.$m(this.assessmentTemplate.messageIfUnavailable),
           test: 'messageIfUnavailable',
         },
-      ] as Record<string, string>[];
+      ] as Record<string, any>[];
 
       if (this.assessmentForm) {
-        data.splice(
-3,
-0,
-{
+        data.splice(3, 0, {
+          label: 'assessmentTemplate.totalAssigned',
+          data: this.assessmentTotalSubmissions?.totalAssigned,
+          test: 'totalAssigned',
+        }, {
           label: 'assessmentTemplate.totalSubmissionsCompleted',
-          data: `${this.assessmentTotalSubmissions?.totalCompleted}`,
+          data: this.assessmentTotalSubmissions?.totalCompleted,
           test: 'totalSubmissionsCompleted',
-        },
-{
+        }, {
           label: 'assessmentTemplate.totalSubmissionsPartialCompleted',
-          data: `${this.assessmentTotalSubmissions?.totalPartialCompleted}`,
+          data: this.assessmentTotalSubmissions?.totalPartialCompleted,
           test: 'totalSubmissionsPartialCompleted',
-        },
-);
+        });
       }
 
       if (this.program) {

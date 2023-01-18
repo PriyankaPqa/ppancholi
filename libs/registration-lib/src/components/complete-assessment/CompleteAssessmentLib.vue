@@ -10,7 +10,7 @@
         <div class="rc-title-2 fw-bold ma-6">
           {{ $m(registrationAssessment.sectionTitle) }}
         </div>
-        <div class="rc-body12 grey--text text--darken-2 ma-6">
+        <div class="rc-body16 grey--text text--darken-2 ma-6">
           {{ $m(registrationAssessment.details) }}
         </div>
       </div>

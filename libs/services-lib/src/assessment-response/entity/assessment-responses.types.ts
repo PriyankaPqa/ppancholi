@@ -8,7 +8,8 @@ export interface IAssessmentResponsesService extends IDomainBaseService<IAssessm
   saveAssessmentAnsweredQuestions(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity>
   completeSurvey(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity>
   completeSurveyByBeneficiary(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity>
-  editAssessmentAnsweredQuestion(id: string, request: { responses: IQuestionResponse[], assessmentQuestionIdentifier: string }): Promise<IAssessmentResponseEntity>
+  editAssessmentAnsweredQuestion(id: string,
+    request: { responses: IQuestionResponse[], assessmentQuestionIdentifier: string, questionId: uuid }): Promise<IAssessmentResponseEntity>
 }
 
 export interface IAssessmentResponsesServiceMock extends IDomainBaseServiceMock<IAssessmentResponseEntity> {

@@ -36,6 +36,7 @@ export const mockAssessmentBaseEntity = (force? : Partial<IAssessmentTemplateEnt
   questions: [
     {
       identifier: 'question1',
+      id: 'question1id',
       questionType: 'text',
       question: {
         translation: {
@@ -47,6 +48,7 @@ export const mockAssessmentBaseEntity = (force? : Partial<IAssessmentTemplateEnt
     },
     {
       identifier: 'question2',
+      id: 'question2id',
       questionType: 'checkbox',
       question: {
         translation: {
@@ -103,6 +105,7 @@ export const mockAssessmentBaseEntity = (force? : Partial<IAssessmentTemplateEnt
     },
     {
       identifier: 'question2|Comment',
+      id: 'question2|Commentid',
       questionType: 'text',
       question: {
         translation: {
@@ -114,6 +117,7 @@ export const mockAssessmentBaseEntity = (force? : Partial<IAssessmentTemplateEnt
     },
     {
       identifier: 'question3',
+      id: 'question3id',
       questionType: 'checkbox',
       question: {
         translation: {
@@ -159,6 +163,7 @@ export const mockAssessmentBaseEntity = (force? : Partial<IAssessmentTemplateEnt
     },
     {
       identifier: 'question4',
+      id: 'question4id',
       questionType: 'text',
       question: {
         translation: {
@@ -190,6 +195,7 @@ export const mockAssessmentTotalSubmissions = (force? : Partial<IAssessmentTotal
   ...mockAssessmentBaseEntity(),
   totalCompleted: 1,
   totalPartialCompleted: 1,
+  totalAssigned: 8,
   ...force,
 });
 
@@ -207,6 +213,7 @@ export const mockAssessmentFormEntityWithPanels = (force? : Partial<IAssessmentF
   questions: [
     {
       identifier: 'panel1',
+      id: 'panel1id',
       question: {
         translation: {
           en: 'panel 1 title en',
@@ -219,6 +226,7 @@ export const mockAssessmentFormEntityWithPanels = (force? : Partial<IAssessmentF
     },
     {
       identifier: 'panel1|ddq',
+      id: 'panel1|ddqid',
       question: {
         translation: {
           en: 'ddq',
@@ -280,6 +288,7 @@ export const mockAssessmentFormEntityWithPanels = (force? : Partial<IAssessmentF
     },
     {
       identifier: 'panel1|ddq|Comment',
+      id: 'panel1|ddq|Commentid',
       question: {
         translation: {
           en: 'ddq|Comment',
@@ -292,6 +301,7 @@ export const mockAssessmentFormEntityWithPanels = (force? : Partial<IAssessmentF
     },
     {
       identifier: 'panel1|question4',
+      id: 'panel1|question4id',
       question: {
         translation: {
           en: 'question4',
@@ -304,6 +314,7 @@ export const mockAssessmentFormEntityWithPanels = (force? : Partial<IAssessmentF
     },
     {
       identifier: 'panel1|question1',
+      id: 'panel1|question1id',
       question: {
         translation: {
           en: 'question1',
@@ -316,6 +327,7 @@ export const mockAssessmentFormEntityWithPanels = (force? : Partial<IAssessmentF
     },
     {
       identifier: 'panel1|question1|question2',
+      id: 'panel1|question1|question2id',
       question: {
         translation: {
           en: 'question2',
@@ -377,6 +389,7 @@ export const mockAssessmentFormEntityWithPanels = (force? : Partial<IAssessmentF
     },
     {
       identifier: 'panel1|question1|question2|Comment',
+      id: 'panel1|question1|question2|Commentid',
       question: {
         translation: {
           en: 'question2|Comment',
@@ -389,6 +402,7 @@ export const mockAssessmentFormEntityWithPanels = (force? : Partial<IAssessmentF
     },
     {
       identifier: 'question3',
+      id: 'question3id',
       question: {
         translation: {
           en: 'question3',

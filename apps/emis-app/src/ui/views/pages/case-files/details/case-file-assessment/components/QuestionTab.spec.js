@@ -1,4 +1,5 @@
 /* eslint-disable max-len */
+import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import {
@@ -96,11 +97,12 @@ describe('QuestionTab.vue', () => {
             childEntryIndexes: [],
             question: {
               // eslint-disable-next-line vue/max-len
-              answerChoices: null, identifier: 'question1', childEntryIndexes: [], path: null, question: { translation: { en: 'question1', fr: 'question1' } }, questionType: 'text',
+              answerChoices: null, identifier: 'question1', id: 'question1id', childEntryIndexes: [], path: null, question: { translation: { en: 'question1', fr: 'question1' } }, questionType: 'text',
             },
           }, {
             answer: {
               assessmentQuestionIdentifier: 'question2',
+              questionId: 'question2id',
               responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }, { displayValue: 'item2', numericValue: null, textValue: 'item2' }],
             },
             displayAnswer: 'item1, item2',
@@ -122,6 +124,7 @@ describe('QuestionTab.vue', () => {
               childEntryIndexes: [],
               path: null,
               identifier: 'question2',
+              id: 'question2id',
               question: { translation: { en: 'question2', fr: 'question2' } },
               questionType: 'checkbox',
             },
@@ -135,10 +138,10 @@ describe('QuestionTab.vue', () => {
             childEntryIndexes: [],
             question: {
               // eslint-disable-next-line vue/max-len
-              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question2|Comment', question: { translation: { en: 'question2|Comment', fr: 'question2|Commentaires' } }, questionType: 'text',
+              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question2|Comment', id: 'question2|Commentid', question: { translation: { en: 'question2|Comment', fr: 'question2|Commentaires' } }, questionType: 'text',
             },
           }, {
-            answer: { assessmentQuestionIdentifier: 'question3', responses: [{ displayValue: 'item2', numericValue: null, textValue: 'item2' }] },
+            answer: { assessmentQuestionIdentifier: 'question3', questionId: 'question3id', responses: [{ displayValue: 'item2', numericValue: null, textValue: 'item2' }] },
             displayAnswer: 'item2',
             history: [],
             isMultiple: true,
@@ -156,6 +159,7 @@ describe('QuestionTab.vue', () => {
               childEntryIndexes: [],
               path: null,
               identifier: 'question3',
+              id: 'question3id',
               question: { translation: { en: 'question3', fr: 'question3' } },
               questionType: 'checkbox',
             },
@@ -169,7 +173,7 @@ describe('QuestionTab.vue', () => {
             childEntryIndexes: [],
             question: {
               // eslint-disable-next-line vue/max-len
-              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question4', question: { translation: { en: 'question4', fr: 'question4' } }, questionType: 'text',
+              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question4', id: 'question4id', question: { translation: { en: 'question4', fr: 'question4' } }, questionType: 'text',
             },
           }],
         );
@@ -179,24 +183,29 @@ describe('QuestionTab.vue', () => {
         mockResponse.dateCompleted = '2022-10-11T17:20:35.568709Z';
         mockResponse.answeredQuestionsHistory = [{
           assessmentQuestionIdentifier: 'question2',
+          questionId: 'question2id',
           answeredOn: '2022-10-11T17:20:35.568709Z',
           crcUserName: 'myuser',
           responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }],
         },
         {
           assessmentQuestionIdentifier: 'question2',
+          questionId: 'question2id',
           answeredOn: '2022-10-11T17:25:35.568709Z',
           crcUserName: 'myuser2',
           responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }, { displayValue: 'item2', numericValue: null, textValue: 'item2' }],
         },
         {
           assessmentQuestionIdentifier: 'question4',
+          questionId: 'question4id',
           answeredOn: '2022-10-11T17:20:35.568709Z',
           crcUserName: 'myuser',
           responses: [{ displayValue: 'my typed text', numericValue: null, textValue: 'my typed text' }],
         }];
         mockResponse.answeredQuestions.push({
-          assessmentQuestionIdentifier: 'question4', responses: [{ displayValue: 'my typed text', numericValue: null, textValue: 'my typed text' }],
+          assessmentQuestionIdentifier: 'question4',
+          questionId: 'question4id',
+          responses: [{ displayValue: 'my typed text', numericValue: null, textValue: 'my typed text' }],
         });
 
         await mountWrapper();
@@ -206,23 +215,27 @@ describe('QuestionTab.vue', () => {
           [{
             answer: undefined,
             displayAnswer: '',
-            history: [{ assessmentQuestionIdentifier: 'question1', displayAnswer: '', responses: [] }],
+            history: [{
+              assessmentQuestionIdentifier: 'question1', questionId: 'question1id', displayAnswer: '', responses: [],
+            }],
             isMultiple: false,
             path: null,
             isDynamicRoot: false,
             childEntryIndexes: [],
             question: {
               // eslint-disable-next-line vue/max-len
-              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question1', question: { translation: { en: 'question1', fr: 'question1' } }, questionType: 'text',
+              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question1', id: 'question1id', question: { translation: { en: 'question1', fr: 'question1' } }, questionType: 'text',
             },
           }, {
             answer: {
               assessmentQuestionIdentifier: 'question2',
+              questionId: 'question2id',
               responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }, { displayValue: 'item2', numericValue: null, textValue: 'item2' }],
             },
             displayAnswer: 'item1, item2',
             history: [{
               assessmentQuestionIdentifier: 'question2',
+              questionId: 'question2id',
               answeredOn: '2022-10-11T17:20:35.568709Z',
               crcUserName: 'myuser',
               displayAnswer: 'item1',
@@ -230,6 +243,7 @@ describe('QuestionTab.vue', () => {
             },
             {
               assessmentQuestionIdentifier: 'question2',
+              questionId: 'question2id',
               answeredOn: '2022-10-11T17:25:35.568709Z',
               crcUserName: 'myuser2',
               displayAnswer: 'item1, item2',
@@ -252,25 +266,33 @@ describe('QuestionTab.vue', () => {
               childEntryIndexes: [],
               path: null,
               identifier: 'question2',
+              id: 'question2id',
               question: { translation: { en: 'question2', fr: 'question2' } },
               questionType: 'checkbox',
             },
           }, {
             answer: undefined,
             displayAnswer: '',
-            history: [{ assessmentQuestionIdentifier: 'question2|Comment', displayAnswer: '', responses: [] }],
+            history: [{
+              assessmentQuestionIdentifier: 'question2|Comment',
+              questionId: 'question2|Commentid',
+              displayAnswer: '',
+              responses: [],
+            }],
             isMultiple: false,
             path: null,
             isDynamicRoot: false,
             childEntryIndexes: [],
             question: {
               // eslint-disable-next-line vue/max-len
-              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question2|Comment', question: { translation: { en: 'question2|Comment', fr: 'question2|Commentaires' } }, questionType: 'text',
+              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question2|Comment', id: 'question2|Commentid', question: { translation: { en: 'question2|Comment', fr: 'question2|Commentaires' } }, questionType: 'text',
             },
           }, {
-            answer: { assessmentQuestionIdentifier: 'question3', responses: [{ displayValue: 'item2', numericValue: null, textValue: 'item2' }] },
+            answer: { assessmentQuestionIdentifier: 'question3', questionId: 'question3id', responses: [{ displayValue: 'item2', numericValue: null, textValue: 'item2' }] },
             displayAnswer: 'item2',
-            history: [{ assessmentQuestionIdentifier: 'question3', displayAnswer: '', responses: [] }],
+            history: [{
+              assessmentQuestionIdentifier: 'question3', questionId: 'question3id', displayAnswer: '', responses: [],
+            }],
             isMultiple: true,
             path: null,
             isDynamicRoot: false,
@@ -286,14 +308,20 @@ describe('QuestionTab.vue', () => {
               childEntryIndexes: [],
               path: null,
               identifier: 'question3',
+              id: 'question3id',
               question: { translation: { en: 'question3', fr: 'question3' } },
               questionType: 'checkbox',
             },
           }, {
-            answer: { assessmentQuestionIdentifier: 'question4', responses: [{ displayValue: 'my typed text', numericValue: null, textValue: 'my typed text' }] },
+            answer: {
+              assessmentQuestionIdentifier: 'question4',
+              questionId: 'question4id',
+              responses: [{ displayValue: 'my typed text', numericValue: null, textValue: 'my typed text' }],
+            },
             displayAnswer: 'my typed text',
             history: [{
               assessmentQuestionIdentifier: 'question4',
+              questionId: 'question4id',
               answeredOn: '2022-10-11T17:20:35.568709Z',
               displayAnswer: 'my typed text',
               crcUserName: 'myuser',
@@ -305,10 +333,46 @@ describe('QuestionTab.vue', () => {
             childEntryIndexes: [],
             question: {
               // eslint-disable-next-line vue/max-len
-              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question4', question: { translation: { en: 'question4', fr: 'question4' } }, questionType: 'text',
+              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question4', id: 'question4id', question: { translation: { en: 'question4', fr: 'question4' } }, questionType: 'text',
             },
           }],
         );
+      });
+    });
+
+    describe('questionGroups', () => {
+      it('groups details according to question end date', async () => {
+        const basicQuestion = {
+          answer: undefined,
+          displayAnswer: '',
+          history: [],
+          isMultiple: false,
+          path: null,
+          isDynamicRoot: false,
+          childEntryIndexes: [],
+          question: {
+            // eslint-disable-next-line vue/max-len
+            answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question2|Comment', id: 'question2|Commentid', question: { translation: { en: 'question2|Comment', fr: 'question2|Commentaires' } }, questionType: 'text',
+          },
+        };
+        let questions = [_cloneDeep(basicQuestion), _cloneDeep(basicQuestion), _cloneDeep(basicQuestion)];
+        questions[0].question.endDate = new Date();
+        questions[1].question.endDate = null;
+        questions[2].question.endDate = new Date();
+        await mountWrapper(false, {
+          computed: {
+            questionsAndAnswers: () => questions,
+          },
+        });
+        expect(wrapper.vm.questionGroups).toEqual([[questions[1]], [questions[0], questions[2]]]);
+
+        questions = [questions[1]];
+        await mountWrapper(false, {
+          computed: {
+            questionsAndAnswers: () => questions,
+          },
+        });
+        expect(wrapper.vm.questionGroups).toEqual([questions]);
       });
     });
 
@@ -362,6 +426,7 @@ describe('QuestionTab.vue', () => {
         await wrapper.vm.applyEdit();
         expect(storage.assessmentResponse.actions.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
           id: wrapper.vm.assessmentResponse.id,
+          questionId: 'question2id',
           parentIndexPath: null,
           responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }, { displayValue: 'item2', numericValue: null, textValue: 'item2' }],
           assessmentQuestionIdentifier: 'question2',
@@ -374,6 +439,7 @@ describe('QuestionTab.vue', () => {
         await wrapper.vm.applyEdit();
         expect(storage.assessmentResponse.actions.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
           id: wrapper.vm.assessmentResponse.id,
+          questionId: 'question2id',
           parentIndexPath: null,
           responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }],
           assessmentQuestionIdentifier: 'question2',
@@ -386,6 +452,7 @@ describe('QuestionTab.vue', () => {
         await wrapper.vm.applyEdit();
         expect(storage.assessmentResponse.actions.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
           id: wrapper.vm.assessmentResponse.id,
+          questionId: 'question2id',
           parentIndexPath: null,
           responses: [],
           assessmentQuestionIdentifier: 'question2',
@@ -414,6 +481,7 @@ describe('QuestionTab.vue', () => {
             {
               answerChoices: null,
               identifier: 'panel1',
+              id: 'panel1id',
               path: null,
               childEntryIndexes: [],
               question: {
@@ -477,6 +545,7 @@ describe('QuestionTab.vue', () => {
                 },
               ],
               identifier: 'panel1|ddq',
+              id: 'panel1|ddqid',
               path: 'panel1[0]',
               childEntryIndexes: [0],
               question: {
@@ -491,6 +560,7 @@ describe('QuestionTab.vue', () => {
             {
               answerChoices: null,
               identifier: 'panel1|ddq|Comment',
+              id: 'panel1|ddq|Commentid',
               path: 'panel1[0]',
               childEntryIndexes: [0],
               question: {
@@ -505,6 +575,7 @@ describe('QuestionTab.vue', () => {
             {
               answerChoices: null,
               identifier: 'panel1|question4',
+              id: 'panel1|question4id',
               path: 'panel1[0]',
               childEntryIndexes: [0],
               question: {
@@ -519,6 +590,7 @@ describe('QuestionTab.vue', () => {
             {
               answerChoices: null,
               identifier: 'panel1|question1',
+              id: 'panel1|question1id',
               path: 'panel1[0]',
               childEntryIndexes: [0],
               question: {
@@ -582,6 +654,7 @@ describe('QuestionTab.vue', () => {
                 },
               ],
               identifier: 'panel1|ddq',
+              id: 'panel1|ddqid',
               path: 'panel1[1]',
               childEntryIndexes: [1],
               question: {
@@ -596,6 +669,7 @@ describe('QuestionTab.vue', () => {
             {
               answerChoices: null,
               identifier: 'panel1|ddq|Comment',
+              id: 'panel1|ddq|Commentid',
               path: 'panel1[1]',
               childEntryIndexes: [1],
               question: {
@@ -610,6 +684,7 @@ describe('QuestionTab.vue', () => {
             {
               answerChoices: null,
               identifier: 'panel1|question4',
+              id: 'panel1|question4id',
               path: 'panel1[1]',
               childEntryIndexes: [1],
               question: {
@@ -624,6 +699,7 @@ describe('QuestionTab.vue', () => {
             {
               answerChoices: null,
               identifier: 'panel1|question1',
+              id: 'panel1|question1id',
               path: 'panel1[1]',
               childEntryIndexes: [1],
               question: {
@@ -687,6 +763,7 @@ describe('QuestionTab.vue', () => {
                 },
               ],
               identifier: 'panel1|question1|question2',
+              id: 'panel1|question1|question2id',
               path: 'panel1[1]|question1[0]',
               childEntryIndexes: [1, 0],
               question: {
@@ -701,6 +778,7 @@ describe('QuestionTab.vue', () => {
             {
               answerChoices: null,
               identifier: 'panel1|question1|question2|Comment',
+              id: 'panel1|question1|question2|Commentid',
               path: 'panel1[1]|question1[0]',
               childEntryIndexes: [1, 0],
               question: {
@@ -764,6 +842,7 @@ describe('QuestionTab.vue', () => {
                 },
               ],
               identifier: 'panel1|question1|question2',
+              id: 'panel1|question1|question2id',
               path: 'panel1[1]|question1[1]',
               childEntryIndexes: [1, 1],
               question: {
@@ -778,6 +857,7 @@ describe('QuestionTab.vue', () => {
             {
               answerChoices: null,
               identifier: 'panel1|question1|question2|Comment',
+              id: 'panel1|question1|question2|Commentid',
               path: 'panel1[1]|question1[1]',
               childEntryIndexes: [1, 1],
               question: {
@@ -817,6 +897,7 @@ describe('QuestionTab.vue', () => {
                 },
               ],
               identifier: 'question3',
+              id: 'question3id',
               path: null,
               childEntryIndexes: [],
               question: {

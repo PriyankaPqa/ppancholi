@@ -64,13 +64,18 @@ describe('AssessmentTemplateDetails', () => {
             test: 'frequency',
           },
           {
+            label: 'assessmentTemplate.totalAssigned',
+            data: 8,
+            test: 'totalAssigned',
+          },
+          {
             label: 'assessmentTemplate.totalSubmissionsCompleted',
-            data: '1',
+            data: 1,
             test: 'totalSubmissionsCompleted',
           },
           {
             label: 'assessmentTemplate.totalSubmissionsPartialCompleted',
-            data: '1',
+            data: 1,
             test: 'totalSubmissionsPartialCompleted',
           },
           {

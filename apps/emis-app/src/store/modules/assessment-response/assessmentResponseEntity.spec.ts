@@ -65,7 +65,7 @@ describe('AssessmentResponse entity module', () => {
     describe('editAssessmentAnsweredQuestion', () => {
       it('should call editAssessmentAnsweredQuestion service with proper params', async () => {
         const payload = {
-          id: 'id', responses: [{} as IQuestionResponse], assessmentQuestionIdentifier: 'assessmentQuestionIdentifier', parentIndexPath: 'path',
+          id: 'id', responses: [{} as IQuestionResponse], assessmentQuestionIdentifier: 'assessmentQuestionIdentifier', questionId: 'id', parentIndexPath: 'path',
         };
         const res = {} as IAssessmentResponseEntity;
         myModule.service.editAssessmentAnsweredQuestion = jest.fn(() => Promise.resolve(res));

@@ -1,11 +1,13 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
+import { mockProvider } from '@/services/provider';
 import { SurveyJsTextExtractor } from '@libs/shared-lib/plugins/surveyJs/SurveyJsTextExtractor';
 import flushPromises from 'flush-promises';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from './AssessmentBuilder.vue';
 
 let storage = mockStorage();
+let services = mockProvider();
 const localVue = createLocalVue();
 
 const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
@@ -23,6 +25,7 @@ describe('AssessmentBuilder', () => {
       },
       mocks: {
         $storage: storage,
+        $services: services,
         $route: {
           params: {
             assessmentTemplateId: 'mock-assessmentTemplate-id',
@@ -36,6 +39,8 @@ describe('AssessmentBuilder', () => {
 
   beforeEach(async () => {
     storage = mockStorage();
+    services = mockProvider();
+    services.assessmentForms.assessmentTotalSubmissions = jest.fn(() => ({ totalAssigned: 0 }));
     await mountWrapper();
   });
 
@@ -74,6 +79,29 @@ describe('AssessmentBuilder', () => {
           '#surveyCreator',
           tenantSettingsStore.currentTenantSettings.branding.colours,
         );
+      });
+
+      it('sets creator readonly if totalAssigned > 0 and confirmed', async () => {
+        jest.clearAllMocks();
+        wrapper.vm.$confirm = jest.fn(() => true);
+        wrapper.vm.$services.assessmentForms.assessmentTotalSubmissions = jest.fn(() => ({ totalAssigned: 0 }));
+
+        const hook = wrapper.vm.$options.mounted[wrapper.vm.$options.mounted.length - 1];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.$confirm).not.toHaveBeenCalled();
+        expect(wrapper.vm.creator.readOnly).toBeFalsy();
+
+        jest.clearAllMocks();
+        wrapper.vm.$services.assessmentForms.assessmentTotalSubmissions = jest.fn(() => ({ totalAssigned: 1 }));
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.$confirm).toHaveBeenCalled();
+        expect(wrapper.vm.creator.readOnly).toBeTruthy();
+
+        jest.clearAllMocks();
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.$confirm).toHaveBeenCalled();
+        expect(wrapper.vm.creator.readOnly).toBeFalsy();
       });
     });
   });

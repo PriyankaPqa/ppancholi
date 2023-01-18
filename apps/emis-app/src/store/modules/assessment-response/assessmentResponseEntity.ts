@@ -72,7 +72,8 @@ export class AssessmentResponseEntityModule extends BaseModule <IAssessmentRespo
 
     editAssessmentAnsweredQuestion: async (
 context: ActionContext<IAssessmentResponseEntityState, IAssessmentResponseEntityState>,
-      payload: { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string, parentIndexPath: string },
+      payload: { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string,
+        parentIndexPath: string, questionId: uuid },
 ): Promise<IAssessmentResponseEntity> => {
       const result = await this.service.editAssessmentAnsweredQuestion(payload.id, payload);
       if (result) {

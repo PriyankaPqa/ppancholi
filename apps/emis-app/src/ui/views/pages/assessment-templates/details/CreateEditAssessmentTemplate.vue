@@ -26,6 +26,7 @@
 
 <script lang="ts">
 /* eslint-disable max-depth */
+import _cloneDeep from 'lodash/cloneDeep';
 import { TranslateResult } from 'vue-i18n';
 import { RcPageContent } from '@libs/component-lib/components';
 import { VForm } from '@libs/shared-lib/types';
@@ -135,8 +136,9 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
             }
             if (assessmentTemplate) {
               if (this.cloneId) {
+                assessmentTemplate = _cloneDeep(assessmentTemplate);
                 assessmentTemplate.externalToolState = this.assessmentTemplate.externalToolState;
-                assessmentTemplate.questions = this.assessmentTemplate.questions;
+                assessmentTemplate.questions = this.assessmentTemplate.questions?.filter((x) => !x.endDate);
                 assessmentTemplate = (this.isFormMode) ? await this.$storage.assessmentForm.actions.updateAssessmentStructure(assessmentTemplate)
                   : await this.$storage.assessmentTemplate.actions.updateAssessmentStructure(assessmentTemplate);
               }
