@@ -115,4 +115,3 @@ export interface IMassActionMetadata extends IEntity {
 export type IMassActionCombined = IEntityCombined<IMassActionEntity, IMassActionMetadata>;
 
 export type IdsParams = uuid;
-

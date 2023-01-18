@@ -64,6 +64,16 @@ export default mixins(massActions).extend({
           group: MassActionGroup.Group1,
         },
         {
+          title: 'mass_action.card.assessments',
+          description: this.$t('mass_action.card.group', { x: 1 }),
+          button: 'mass_action.card.action.view',
+          route: null,
+          dataTest: 'massAction_assessments',
+          level: 'level6',
+          roles: null,
+          group: MassActionGroup.Group1,
+        },
+        {
           title: 'mass_action.card.export_validation_impact',
           description: this.$t('mass_action.card.group', { x: 4 }),
           button: 'mass_action.card.action.export',
