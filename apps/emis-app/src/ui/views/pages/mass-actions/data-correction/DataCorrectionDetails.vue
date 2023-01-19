@@ -45,6 +45,21 @@ export default mixins(massActionDetails).extend({
             processedSuccessesLabel: 'massAction.processed.title.2',
             processedFailuresLabel: 'massAction.processed.title.3',
           };
+        case MassActionDataCorrectionType.FinancialAssistance:
+          return {
+            preProcessingWaitTitle: '',
+            preProcessingWaitLabelOne: 'massActions.preProcessing.info1',
+            preProcessingWaitLabelTwo: 'massActions.financialAssistance.preProcessing.info2',
+            processingWaitTitle: 'massActions.financialAssistance.processing.files',
+            processingWaitLabelOne: 'massActions.financialAssistance.processing.info1',
+            processingWaitLabelTwo: 'massActions.financialAssistance.processing.info2',
+            preProcessedTotalLabel: 'massAction.financialAssistance.pre_processed.title.1',
+            preProcessedSuccessesLabel: 'massAction.pre_processed.title.2',
+            preProcessedFailuresLabel: 'massAction.pre_processed.title.3',
+            processedTotalLabel: 'massAction.financialAssistance.processed.title.1',
+            processedSuccessesLabel: 'massAction.processed.title.2',
+            processedFailuresLabel: 'massAction.processed.title.3',
+          };
         case MassActionDataCorrectionType.HomeAddress:
         case MassActionDataCorrectionType.IdentitySet:
         default:
