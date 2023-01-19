@@ -5,7 +5,6 @@ import flushPromises from 'flush-promises';
 import { createTestingPinia } from '@pinia/testing';
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
-import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import Component from './AssessmentRunner.vue';
 
 let storage = mockStorage();
@@ -39,7 +38,7 @@ describe('AssessmentRunner.vue', () => {
     storage = mockStorage();
     pinia = createTestingPinia({ stubActions: false });
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
-    tenantSettingsStore = useTenantSettingsStore(pinia).tenantSettingsStore;
+    tenantSettingsStore = useMockTenantSettingsStore(pinia).tenantSettingsStore;
     services = mockProvider();
     await mount();
   });
