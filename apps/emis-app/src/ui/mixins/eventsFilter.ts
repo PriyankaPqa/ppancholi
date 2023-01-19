@@ -2,17 +2,12 @@ import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
 import _debounce from 'lodash/debounce';
 import _throttle from 'lodash/throttle';
-import { IAzureCombinedSearchResult } from '@libs/shared-lib/types';
+import { IAzureCombinedSearchResult, IDropdownItem } from '@libs/shared-lib/types';
 import { FilterFormData } from '@libs/component-lib/types';
 import _sortBy from 'lodash/sortBy';
 import {
   EEventStatus, IEventEntity, IEventMetadata,
 } from '@libs/entities-lib/event';
-
-export interface IDropdownItem {
-text: string;
-value: string;
-}
 
 const INITIAL_NUMBER_ITEMS = 6;
 const VISUAL_DELAY = 500;
@@ -135,7 +130,7 @@ export default Vue.extend({
      */
     onAutoCompleteUpdate(
       { filterKey, search, selectedItem }:
-        { filterKey: string, search: string, selectedItem: IDropdownItem },
+      { filterKey: string, search: string, selectedItem: IDropdownItem },
     ) {
       if (filterKey === 'Entity/EventId' && search !== selectedItem?.text) {
         this.eventFilterQuery = search;

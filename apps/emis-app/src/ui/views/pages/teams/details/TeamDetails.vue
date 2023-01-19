@@ -17,7 +17,7 @@
     </v-container>
     <v-container v-else>
       <v-row justify="center" class="my-8">
-        <v-col xl="9" md="11" sm="12">
+        <v-col xl="10" md="11" sm="12">
           <v-row class="firstSection">
             <v-col md="11" sm="12">
               <div class="flex flex-row mb-4">

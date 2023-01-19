@@ -5,7 +5,6 @@ import {
   EEventStatus, mockEventEntities,
 } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
-import { mockAppUsers } from '@/test/helpers';
 import {
   TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc, mockCombinedTeams,
 } from '@libs/entities-lib/team';
@@ -21,6 +20,12 @@ import Component from './CreateEditTeam.vue';
 const localVue = createLocalVue();
 const storage = mockStorage();
 
+const mockTeamMember = {
+  displayName: 'Jane Smith',
+  email: 'Jane.Smith@example.com',
+  id: '1',
+  isPrimaryContact: true,
+};
 const teamEventsMock = mockTeamEvents();
 const inactiveEvent = { id: 'foo', name: { translation: { en: 'mock-name' } } };
 const inactiveEvent2 = { id: 'foo2', name: { translation: { en: 'mock-name2' } } };
@@ -347,7 +352,14 @@ describe('CreateEditTeam.vue', () => {
             await wrapper.setData({ team: mockTeamsDataAddHoc() });
             element = wrapper.findDataTest('createEditTeam__submit');
             const isEnabledAfterChanged = element.attributes('disabled') === undefined;
-            await wrapper.setData({ team: mockTeamEntity() });
+            await wrapper.setData({
+              original: {
+                name: wrapper.vm.team.name,
+                status: wrapper.vm.team.status,
+                events: [wrapper.vm.team.eventIds[0]],
+                primaryContact: mockTeamMember.email,
+              },
+            });
             element = wrapper.findDataTest('createEditTeam__submit');
             expect(element.attributes('disabled') && isEnabledAfterChanged).toBeTruthy();
           });
@@ -591,6 +603,11 @@ describe('CreateEditTeam.vue', () => {
             teamType: 'standard',
             id: '123',
           },
+          data() {
+            return {
+              currentPrimaryContact: mockTeamMember,
+            };
+          },
           computed: {
             isEditMode() {
               return true;
@@ -744,14 +761,6 @@ describe('CreateEditTeam.vue', () => {
         hook.call(wrapper.vm);
       });
       expect(wrapper.vm.getAvailableEvents).toHaveBeenCalledTimes(1);
-    });
-
-    it('should calls fetchUserAccounts', async () => {
-      jest.clearAllMocks();
-      await wrapper.vm.$options.mounted.forEach((hook) => {
-        hook.call(wrapper.vm);
-      });
-      expect(wrapper.vm.fetchUserAccounts).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -919,12 +928,6 @@ describe('CreateEditTeam.vue', () => {
         expect(wrapper.vm.$storage.team.actions.fetch).toHaveBeenCalledWith('abc');
       });
 
-      it('sets the right primaryContactQuery', async () => {
-        await wrapper.vm.loadTeam();
-
-        expect(wrapper.vm.primaryContactQuery).toEqual('Jane Smith');
-      });
-
       it('should set the team with a cloneDeep of team from storage', async () => {
         await wrapper.vm.loadTeam();
         expect(wrapper.vm.team).toEqual(mockTeamEntity());
@@ -952,14 +955,14 @@ describe('CreateEditTeam.vue', () => {
         wrapper.vm.$route.params = { id: 'foo' };
       });
 
-      it('sets the right primary contact user', async () => {
+      it('calls fetchUsersByIds and sets the right primary contact user and updates users.primaryContact', async () => {
+        wrapper.vm.fetchUsersByIds = jest.fn(() => [mockCombinedUserAccount()]);
+        wrapper.vm.mapToTeamMember = jest.fn(() => mockTeamMember);
         await wrapper.vm.loadTeamFromState();
-        expect(wrapper.vm.currentPrimaryContact).toEqual({
-          displayName: 'Jane Smith',
-          email: 'Jane.Smith@example.com',
-          id: '1',
-          isPrimaryContact: true,
-        });
+        expect(wrapper.vm.fetchUsersByIds).toHaveBeenCalledWith([wrapper.vm.team.getPrimaryContact().id]);
+        expect(wrapper.vm.mapToTeamMember).toHaveBeenCalledWith(mockCombinedUserAccount(), true);
+        expect(wrapper.vm.currentPrimaryContact).toEqual(mockTeamMember);
+        expect(wrapper.vm.userAccountFilter.users).toEqual([{ value: mockTeamMember.id, text: mockTeamMember.displayName }]);
       });
 
       it('sets currentEvents from the team metadata', async () => {
@@ -1045,30 +1048,6 @@ describe('CreateEditTeam.vue', () => {
       });
     });
 
-    describe('searchPrimaryContacts', () => {
-      it('calls the searchAppUsers action when the query is long enough and assigns the result to primaryContactUsers', async () => {
-        jest.spyOn(wrapper.vm.$storage.userAccount.getters, 'getByCriteria').mockImplementation(() => [mockCombinedUserAccount()]);
-        wrapper.vm.primaryContactQuery = 'ab';
-        wrapper.vm.minimumContactQueryLength = 2;
-        await wrapper.vm.searchPrimaryContacts();
-        expect(wrapper.vm.$storage.userAccount.getters.getByCriteria)
-          .toHaveBeenCalledWith(wrapper.vm.primaryContactQuery, false, ['displayName']);
-        const flattenedCombinedUserAccount = wrapper.vm.mapToTeamMember(mockCombinedUserAccount(), false);
-        expect(wrapper.vm.primaryContactUsers).toEqual([flattenedCombinedUserAccount]);
-      });
-
-      it('does not call the searchAppUsers action when the query is not long enough long enough and empties the list of users', async () => {
-        jest.clearAllMocks();
-        jest.spyOn(wrapper.vm.$storage.userAccount.getters, 'getByCriteria').mockImplementation(() => []);
-        wrapper.vm.primaryContactQuery = 'a';
-        wrapper.vm.minimumContactQueryLength = 2;
-        await wrapper.vm.searchPrimaryContacts();
-
-        expect(wrapper.vm.$storage.userAccount.getters.getByCriteria).not.toHaveBeenCalled();
-        expect(wrapper.vm.primaryContactUsers.length).toEqual(0);
-      });
-    });
-
     describe('setEvents', () => {
       it('should set the team events to the argument passed to the method, if the argument is an array', async () => {
         await wrapper.vm.setEvents([{ id: 'foo' }, { id: 'bar' }]);
@@ -1083,8 +1062,11 @@ describe('CreateEditTeam.vue', () => {
 
     describe('setPrimaryContact', () => {
       it('assigns the primary user to currentPrimaryContact ', async () => {
-        await wrapper.vm.setPrimaryContact(mockAppUsers[0]);
-        expect(wrapper.vm.currentPrimaryContact).toEqual(mockAppUsers[0]);
+        wrapper.vm.$storage.userAccount.getters.get = jest.fn(() => mockCombinedUserAccount());
+        wrapper.vm.mapToTeamMember = jest.fn(() => mockTeamMember);
+        const user = { value: mockTeamMember.id, text: mockTeamMember.displayName };
+        await wrapper.vm.setPrimaryContact(user);
+        expect(wrapper.vm.currentPrimaryContact).toEqual(mockTeamMember);
       });
     });
 
@@ -1469,13 +1451,6 @@ describe('CreateEditTeam.vue', () => {
       });
     });
 
-    describe('fetchUserAccounts', () => {
-      it('should call fetchAll actions', async () => {
-        await wrapper.vm.fetchUserAccounts();
-        expect(wrapper.vm.$storage.userAccount.actions.fetchAll).toBeCalled();
-      });
-    });
-
     describe('setPrimaryContactTeam', () => {
       it('should set the primary contact of the team', async () => {
         await wrapper.setData({ currentPrimaryContact: { id: 'abcde' } });
@@ -1485,6 +1460,13 @@ describe('CreateEditTeam.vue', () => {
           id: 'abcde',
           isPrimaryContact: true,
         });
+      });
+      it('sets submittedPrimaryContactUser', async () => {
+        await wrapper.setData({ currentPrimaryContact: { id: 'abcde' } });
+        wrapper.vm.$storage.userAccount.getters.get = jest.fn(() => mockCombinedUserAccount());
+        await wrapper.vm.setPrimaryContactTeam();
+        expect(wrapper.vm.$storage.userAccount.getters.get).toHaveBeenCalledWith('abcde');
+        expect(wrapper.vm.submittedPrimaryContactUser).toEqual(mockCombinedUserAccount());
       });
     });
   });

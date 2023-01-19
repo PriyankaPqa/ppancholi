@@ -247,8 +247,7 @@ describe('ApprovalRequestsTable', () => {
     describe('filters', () => {
       it('returns the right data', async () => {
         await wrapper.setData({
-          submittedToQuery: 'q1',
-          submittedByQuery: 'q2',
+          userAccountFilterState: { submittedBy: { query: 'q1' }, submittedTo: { query: 'q2' } },
           eventFilterQuery: 'q3',
         });
 
@@ -262,11 +261,11 @@ describe('ApprovalRequestsTable', () => {
             key: 'Entity/SubmittedBy/UserId',
             type: EFilterType.MultiSelect,
             label: 'approvalRequestsTable.submittedBy',
-            items: wrapper.vm.submittedByUsers,
-            loading: wrapper.vm.submittedLoading.by,
+            items: wrapper.vm.userAccountFilterState.submittedBy.users,
+            loading: wrapper.vm.userAccountFilterState.submittedBy.loading,
             props: {
               'no-data-text': 'common.search.no_result',
-              'search-input': wrapper.vm.submittedByQuery,
+              'search-input': wrapper.vm.userAccountFilterState.submittedBy.query,
               'no-filter': true,
               'return-object': false,
               placeholder: 'common.filters.autocomplete.placeholder',
@@ -276,11 +275,11 @@ describe('ApprovalRequestsTable', () => {
             key: 'Entity/SubmittedTo/UserId',
             type: EFilterType.MultiSelect,
             label: 'approvalRequestsTable.submittedTo',
-            items: wrapper.vm.submittedToUsers,
-            loading: wrapper.vm.submittedLoading.to,
+            items: wrapper.vm.userAccountFilterState.submittedTo.users,
+            loading: wrapper.vm.userAccountFilterState.submittedTo.loading,
             props: {
               'no-data-text': 'common.search.no_result',
-              'search-input': wrapper.vm.submittedToQuery,
+              'search-input': wrapper.vm.userAccountFilterState.submittedTo.query,
               'no-filter': true,
               'return-object': false,
               placeholder: 'common.filters.autocomplete.placeholder',
@@ -548,6 +547,43 @@ describe('ApprovalRequestsTable', () => {
         wrapper.vm.onApplyFilter = jest.fn();
         await wrapper.vm.setAdditionalFilters({ searchTerm: 'test' });
         expect(wrapper.vm.searchTerm).toEqual('test');
+      });
+    });
+
+    describe('onLoadApprovalFilters', () => {
+      it('should call onLoadFilter ', async () => {
+        wrapper.vm.onLoadFilter = jest.fn();
+        const filterFormData = {
+          name: 'form',
+          values: {
+            'Entity/EventId': { operator: '', value: { text: 'event name', value: '1' } },
+          },
+        };
+        await wrapper.vm.onLoadApprovalFilters(filterFormData);
+        expect(wrapper.vm.onLoadFilter).toHaveBeenCalledWith(filterFormData, 'Metadata/EventId');
+      });
+
+      it('should call onLoadUserAccountFilters ', async () => {
+        wrapper.vm.onLoadUserAccountFilters = jest.fn();
+        const filterFormData = {
+          name: 'form',
+          values: {
+            'Entity/EventId': { operator: '', value: { text: 'event name', value: '1' } },
+          },
+        };
+        await wrapper.vm.onLoadApprovalFilters(filterFormData);
+        expect(wrapper.vm.onLoadUserAccountFilters).toHaveBeenCalledWith(filterFormData);
+      });
+    });
+
+    describe('onOpenFilters', () => {
+      it('calls fetchEventsFilter and fetchUsers', () => {
+        wrapper.vm.fetchEventsFilter = jest.fn();
+        wrapper.vm.fetchUsers = jest.fn();
+        wrapper.vm.onOpenFilters();
+        expect(wrapper.vm.fetchEventsFilter).toHaveBeenCalled();
+        expect(wrapper.vm.fetchUsers).toHaveBeenCalledWith('', 'submittedBy');
+        expect(wrapper.vm.fetchUsers).toHaveBeenCalledWith('', 'submittedTo');
       });
     });
   });

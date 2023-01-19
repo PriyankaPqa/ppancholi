@@ -220,7 +220,7 @@ export default Vue.extend({
         dataTest = item[this.itemDataTest];
       }
 
-      return dataTest.replace(/\s|\./g, '');
+      return dataTest?.replace(/\s|\./g, '');
     },
 
     getItemIndex(item: Record<string, unknown>): number {

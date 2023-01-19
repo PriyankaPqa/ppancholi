@@ -27,6 +27,9 @@ export interface ITeamMember {
 
 export interface ITeamMemberAsUser extends IUserAccountCombined {
   isPrimaryContact: boolean,
+  openCaseFileCount: number,
+  inactiveCaseFileCount: number,
+  caseFileCount: number
 }
 
 /**

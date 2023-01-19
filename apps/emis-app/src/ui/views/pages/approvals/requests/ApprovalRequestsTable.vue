@@ -127,17 +127,18 @@ import routes from '@/constants/routes';
 import { DataTableHeader } from 'vuetify';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components';
-import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
+import { EFilterType, FilterFormData, IFilterSettings } from '@libs/component-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import { ApprovalStatus, IFinancialAssistancePaymentCombined } from '@libs/entities-lib/financial-assistance-payment';
-import { IAzureSearchParams } from '@libs/shared-lib/types';
+import { IAzureSearchParams, IDropdownItem } from '@libs/shared-lib/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
-import ApprovalRequestsFilter from '@/ui/mixins/approvalRequestsFilter';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import { UserRolesNames } from '@libs/entities-lib/user';
+import UserAccountsFilter from '@/ui/mixins/userAccountsFilter';
 import { useUserStore } from '@/pinia/user/user';
 import ApprovalActionDialog from './ApprovalActionDialog.vue';
 
@@ -147,7 +148,7 @@ interface IMappedPayment extends IFinancialAssistancePaymentCombined {
   excludedUsers: string[];
 }
 
-export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalRequestsFilter).extend({
+export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccountsFilter).extend({
   components: {
     FilterToolbar,
     RcAddButtonWithMenu,
@@ -178,6 +179,23 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
         sortDesc: [!this.isPendingRequests],
       },
       searchTerm: '',
+      userAccountFilterState: {
+        submittedBy: {
+          users: [] as IDropdownItem[],
+          selectedUsers: [] as IDropdownItem[],
+          query: '',
+          loading: false,
+          filterKey: 'Entity/SubmittedBy/UserId',
+        },
+        submittedTo: {
+          users: [] as IDropdownItem[],
+          selectedUsers: [] as IDropdownItem[],
+          query: '',
+          loading: false,
+          filterKey: 'Entity/SubmittedTo/UserId',
+          levels: [UserRolesNames.level3, UserRolesNames.level4],
+        },
+      },
     };
   },
 
@@ -328,11 +346,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
           key: 'Entity/SubmittedBy/UserId',
           type: EFilterType.MultiSelect,
           label: this.$t('approvalRequestsTable.submittedBy') as string,
-          items: this.submittedByUsers,
-          loading: this.submittedLoading.by,
+          items: this.userAccountFilterState.submittedBy.users,
+          loading: this.userAccountFilterState.submittedBy.loading,
           props: {
-            'no-data-text': !this.submittedByQuery ? this.$t('common.inputs.start_typing_to_search') : this.$t('common.search.no_result'),
-            'search-input': this.submittedByQuery,
+            'no-data-text': !this.userAccountFilterState.submittedBy.query ? this.$t('common.inputs.start_typing_to_search') : this.$t('common.search.no_result'),
+            'search-input': this.userAccountFilterState.submittedBy.query,
             'no-filter': true,
             'return-object': false,
             placeholder: this.$t('common.filters.autocomplete.placeholder'),
@@ -342,11 +360,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
           key: 'Entity/SubmittedTo/UserId',
           type: EFilterType.MultiSelect,
           label: this.$t('approvalRequestsTable.submittedTo') as string,
-          items: this.submittedToUsers,
-          loading: this.submittedLoading.to,
+          items: this.userAccountFilterState.submittedTo.users,
+          loading: this.userAccountFilterState.submittedTo.loading,
           props: {
-            'no-data-text': !this.submittedToQuery ? this.$t('common.inputs.start_typing_to_search') : this.$t('common.search.no_result'),
-            'search-input': this.submittedToQuery,
+            'no-data-text': !this.userAccountFilterState.submittedTo.query ? this.$t('common.inputs.start_typing_to_search') : this.$t('common.search.no_result'),
+            'search-input': this.userAccountFilterState.submittedTo.query,
             'no-filter': true,
             'return-object': false,
             placeholder: this.$t('common.filters.autocomplete.placeholder'),
@@ -492,6 +510,31 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, ApprovalReq
 
     getTableName():string {
       return this.isPendingRequests ? 'PendingRequests' : 'ApprovedRequests';
+    },
+
+    /**
+     * When loading a filter, we need to fetch items in case they are not contained in the initial load (top limitation)
+     */
+    async onLoadApprovalFilters(filterFormData: FilterFormData) {
+      this.onLoadFilter(filterFormData, 'Metadata/EventId'); // Loading event filter from mixin
+      this.onLoadUserAccountFilters(filterFormData);
+    },
+
+    onAutoCompleteUpdate({ filterKey, search, selectedItem }: { filterKey: string, search: string, selectedItem: IDropdownItem | string[] }) {
+      if (search !== (selectedItem as IDropdownItem)?.text && filterKey === 'Metadata/EventId') {
+        this.eventFilterQuery = search;
+      } else if (filterKey !== 'Metadata/EventId') {
+        this.onUserAutoCompleteUpdate({ filterKey, search, selectedItem: selectedItem as string[] });
+      }
+    },
+
+    /**
+     * When opening the filter panel, items need to be fetched
+     */
+    onOpenFilters() {
+      this.fetchEventsFilter();
+      this.fetchUsers('', 'submittedBy');
+      this.fetchUsers('', 'submittedTo');
     },
   },
 

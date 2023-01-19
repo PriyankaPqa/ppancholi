@@ -4,6 +4,7 @@
       :title="headerTitle"
       :show-add-button="false"
       :show-back-button="true"
+      content-padding="0"
       :help-link="$t('zendesk.help_link.teams.create')"
       :show-help="false"
       @back="onCancel(dirty || changed)">
@@ -52,11 +53,12 @@
                     <v-autocomplete-with-validation
                       data-test="team-contact"
                       :label="`${$t('teams.form.primary_contact')}${canBeEmpty ? '' : '*'}`"
-                      :items="primaryContactUsers"
-                      item-text="displayName"
-                      :search-input.sync="primaryContactQuery"
+                      :items="userAccountFilter.users"
+                      item-text="text"
+                      :item-value="(item) => item && item.value"
+                      :search-input.sync="userAccountFilter.query"
+                      :value="currentPrimaryContact && currentPrimaryContact.id"
                       :rules="rules.primaryContact"
-                      :value="currentPrimaryContact"
                       hide-no-data
                       hide-selected
                       return-object
@@ -64,6 +66,7 @@
                       :disabled="!$hasLevel('level5')"
                       :placeholder="$t('common.inputs.start_typing_to_search')"
                       @change="setPrimaryContact($event)"
+                      @update:search-input="onUserAutoCompleteUpdate({ filterKey: 'primaryContact', search: $event })"
                       @keydown.delete="resetPrimaryContact()" />
                   </v-col>
                 </v-row>
@@ -116,6 +119,7 @@
                   :show-members="isEditMode"
                   :show-search="isEditMode"
                   :disable-add-members="!allowAddMembers"
+                  :primary-contact="submittedPrimaryContactUser"
                   @reloadTeam="reloadTeam" />
               </v-col>
             </v-row>
@@ -184,12 +188,13 @@ import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable
 import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { VForm, IServerError } from '@libs/shared-lib/types';
+import { VForm, IServerError, IDropdownItem } from '@libs/shared-lib/types';
 import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { IError } from '@libs/services-lib/http-client';
 import { Status } from '@libs/entities-lib/base';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import UserAccountsFilter from '@/ui/mixins/userAccountsFilter';
 import { useEventStore } from '@/pinia/event/event';
 
 interface UserTeamMember {
@@ -199,7 +204,7 @@ interface UserTeamMember {
   email: string,
 }
 
-export default mixins(handleUniqueNameSubmitError).extend({
+export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
 
   name: 'CreateEditTeam',
 
@@ -231,10 +236,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   data() {
     return {
-      primaryContactQuery: '',
       userAccounts: [] as IUserAccountCombined[],
-      primaryContactUsers: [] as UserTeamMember[],
       currentPrimaryContact: null as UserTeamMember,
+      submittedPrimaryContactUser: null as IUserAccountCombined,
       map: [null, 'standard', 'adhoc'],
       statuses: [Status.Active, Status.Inactive],
       showCancelConfirmationDialog: false,
@@ -258,6 +262,10 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 
   computed: {
+    userAccountFilter() {
+      return this.userAccountFilterState.default;
+    },
+
     deleteEventConfirmationMessage(): TranslateResult {
       if (this.eventsAfterRemoval) {
         const removedEvent = _difference(this.team.eventIds, this.eventsAfterRemoval);
@@ -323,15 +331,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
   },
 
-  watch: {
-    primaryContactQuery() {
-      this.searchPrimaryContacts();
-    },
-  },
-
   async mounted() {
     this.isLoading = true;
-    await Promise.all([this.fetchUserAccounts()]);
     if (!this.isEditMode) {
       this.prepareCreateTeam();
     } else {
@@ -402,7 +403,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.setOriginalData();
     },
 
-    loadTeamFromState(errors? : IError[]) {
+    async loadTeamFromState(errors? : IError[]) {
       // Doesn't reload the state of the team if the error is an existing team name
       if (Array.isArray(errors) && errors.findIndex((error) => error.code === 'errors.an-entity-with-this-name-already-exists') >= 0) {
         return;
@@ -411,10 +412,14 @@ export default mixins(handleUniqueNameSubmitError).extend({
       const storeTeam = _cloneDeep(this.$storage.team.getters.get(this.id));
       this.team = new TeamEntity(storeTeam.entity);
       this.currentEvents = storeTeam.metadata?.events;
-      this.currentPrimaryContact = !this.team.getPrimaryContact() ? null
-        : this.mapToTeamMember(this.$storage.userAccount.getters.get(this.team.getPrimaryContact().id), true);
-      if (this.currentPrimaryContact) {
-        this.primaryContactQuery = this.currentPrimaryContact.displayName;
+      if (this.team.getPrimaryContact()) {
+        const primaryContactUser = await this.fetchUsersByIds([this.team.getPrimaryContact().id]);
+        if (primaryContactUser?.length) {
+          this.currentPrimaryContact = this.mapToTeamMember(primaryContactUser[0], true);
+          this.userAccountFilter.users = [{ value: this.currentPrimaryContact.id, text: this.currentPrimaryContact.displayName }];
+        }
+      } else {
+        this.currentPrimaryContact = null;
       }
     },
 
@@ -435,19 +440,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.team.status = status;
     },
 
-    async searchPrimaryContacts() {
-      const query = this.primaryContactQuery;
-
-      if (query && query.length >= this.minimumContactQueryLength) {
-        const userMatches:IUserAccountCombined[] = this.$storage.userAccount.getters.getByCriteria(query, false, ['displayName']);
-        this.primaryContactUsers = _sortBy(userMatches.map(
-          (u) => this.mapToTeamMember(u, u.entity.id === this.currentPrimaryContact?.id),
-        ), 'displayName');
-      } else {
-        this.primaryContactUsers = [];
-      }
-    },
-
     mapToTeamMember(u: IUserAccountCombined, isPrimaryContact: boolean): UserTeamMember {
       return {
         id: u.entity.id,
@@ -465,8 +457,11 @@ export default mixins(handleUniqueNameSubmitError).extend({
       (this.$refs.form as VForm).reset();
     },
 
-    setPrimaryContact(appUser: UserTeamMember) {
-      this.currentPrimaryContact = appUser;
+    setPrimaryContact(appUser: IDropdownItem) {
+      if (appUser?.value) {
+        const user = this.$storage.userAccount.getters.get(appUser.value);
+        this.currentPrimaryContact = this.mapToTeamMember(user, true);
+      }
     },
 
     setEvents(events: (ITeamEvent | string) | (ITeamEvent | string)[]) {
@@ -503,6 +498,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
           isPrimaryContact: true,
         },
       );
+      this.submittedPrimaryContactUser = this.$storage.userAccount.getters.get(this.currentPrimaryContact.id);
     },
 
     async submitCreateTeam() {
@@ -559,9 +555,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.team.teamType = this.teamType === 'standard' ? TeamType.Standard : TeamType.AdHoc;
     },
 
-    async fetchUserAccounts() {
-      this.userAccounts = await this.$storage.userAccount.actions.fetchAll();
-    },
   },
 });
 </script>
@@ -573,8 +566,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
   align-items: center;
   border: solid 1px var(--v-grey-lighten2);
   border-radius: 4px;
-  padding-top: 16px;
-  padding-bottom: 32px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 
   &__actions {
     display: flex;

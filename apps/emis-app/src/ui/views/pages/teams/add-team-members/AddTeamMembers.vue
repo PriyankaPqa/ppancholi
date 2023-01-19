@@ -39,10 +39,10 @@
               hide-default-footer
               :headers="headers"
               :item-class="getClassRow"
-              :items="availableMembers"
-              :items-per-page="Math.max(availableMembers.length, 1)"
+              :items="filteredUsers"
+              :items-per-page="Math.max(filteredUsers.length, 1)"
               @toggle-select-all="onSelectAll">
-              <template #item.data-table-select="{ item }">
+              <template #[`item.data-table-select`]="{ item }">
                 <v-simple-checkbox
                   :data-test="`select_${item.id}`"
                   :ripple="false"
@@ -51,7 +51,7 @@
                   :disabled="isAlreadyInTeam(item)"
                   @input="updateSelection(item)" />
               </template>
-              <template #item.role="{ item }">
+              <template #[`item.role`]="{ item }">
                 {{ $m(item.roleName) }}
               </template>
             </v-data-table>
@@ -93,13 +93,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import _debounce from 'lodash/debounce';
+import _difference from 'lodash/difference';
+import helpers from '@/ui/helpers/helpers';
 import { RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import _difference from 'lodash/difference';
 import { ITeamMember } from '@libs/entities-lib/team';
-import { AccountStatus, IUserAccountCombined } from '@libs/entities-lib/user-account';
 import { IMultilingual } from '@libs/shared-lib/types';
-import { Status } from '@libs/entities-lib/base';
 
 interface UserTeamMember {
   roleName: IMultilingual,
@@ -135,8 +135,8 @@ export default Vue.extend({
     return {
       search: '',
       selectedUsers: [] as UserTeamMember[],
-      users: [] as Array<IUserAccountCombined>,
       loading: false,
+      filteredUsersIds: [] as string[],
     };
   },
 
@@ -174,11 +174,8 @@ export default Vue.extend({
       ];
     },
 
-    availableMembers(): UserTeamMember[] {
-      const result:IUserAccountCombined[] = this.$storage.userAccount.getters.getByCriteria(this.search, false, ['displayName', 'emailAddress']) || [];
-      return result.filter(
-        (u) => u.entity.status === Status.Active && u.entity.accountStatus === AccountStatus.Active,
-      ).map(
+    filteredUsers(): UserTeamMember[] {
+      return this.$storage.userAccount.getters.getByIds(this.filteredUsersIds).map(
         (tm) => ({
           isPrimaryContact: false,
           roleName: tm.metadata.roleName,
@@ -187,6 +184,14 @@ export default Vue.extend({
           emailAddress: tm.metadata.emailAddress,
         }),
       );
+    },
+  },
+
+  watch: {
+    search(newVal, oldVal) {
+      if (newVal && newVal.trim() !== oldVal && newVal.length >= 2) {
+        this.debounceSearch(newVal.trim());
+      }
     },
   },
 
@@ -221,11 +226,25 @@ export default Vue.extend({
       }
     },
 
+    async fetchFilteredUsers() {
+      this.loading = true;
+      const res = await this.$storage.userAccount.actions.search({
+        search: helpers.toQuickSearch(this.search),
+        queryType: 'full',
+        searchMode: 'all',
+      });
+      if (res) {
+        this.filteredUsersIds = res.ids;
+      }
+      this.loading = false;
+    },
+
     async submit() {
       try {
         this.loading = true;
         await this.$storage.team.actions.addTeamMembers(this.teamId, this.selectedUsers);
         this.$toasted.global.success(this.$t('team.add_members.success'));
+        this.$emit('addMembers', this.$storage.userAccount.getters.getByIds(this.selectedUsers.map((u) => u.id)));
         this.close();
       } finally {
         this.loading = false;
@@ -239,6 +258,12 @@ export default Vue.extend({
         this.selectedUsers = [...this.selectedUsers, user];
       }
     },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    debounceSearch: _debounce(function func(this:any, value) {
+      this.fetchFilteredUsers(value);
+    }, 500),
+
   },
 });
 </script>

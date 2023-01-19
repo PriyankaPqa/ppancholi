@@ -13,6 +13,7 @@ export { EOptionItemStatus } from './enums/EOptionItemStatus';
 export { ERegistrationMode } from './enums/ERegistrationMode';
 export { ERegistrationMethod } from './enums/ERegistrationMethod';
 
+export type { IDropdownItem } from './interfaces/IDropdownItem';
 export type { IErrorReport } from './interfaces/IErrorReport';
 export type { IIdMultilingualName } from './interfaces/IIdMultilingualName';
 export type { IListOption } from './interfaces/IListOption';

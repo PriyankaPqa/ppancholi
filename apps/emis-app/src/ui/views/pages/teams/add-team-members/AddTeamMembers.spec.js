@@ -2,6 +2,8 @@ import { RcDialog } from '@libs/component-lib/components';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockTeamMembersData } from '@libs/entities-lib/team';
+import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
+import helpers from '@/ui/helpers/helpers';
 import Component from './AddTeamMembers.vue';
 
 const localVue = createLocalVue();
@@ -88,13 +90,32 @@ describe('AddTeamMembers.vue', () => {
       });
     });
 
-    describe('availableMembers', () => {
-      it('it calls searchAppUser with current search', async () => {
-        wrapper.vm.search = 'test';
-
+    describe('filteredUsers', () => {
+      it('returns a mapped list of those users', async () => {
+        const tm = mockCombinedUserAccount();
+        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
         await wrapper.vm.$nextTick();
+        expect(wrapper.vm.filteredUsers).toEqual([
+          {
+            isPrimaryContact: false,
+            roleName: tm.metadata.roleName,
+            displayName: tm.metadata.displayName,
+            id: tm.entity.id,
+            emailAddress: tm.metadata.emailAddress,
+          },
+        ]);
+      });
+    });
+  });
 
-        expect(storage.userAccount.getters.getByCriteria).toHaveBeenCalledWith('test', false, ['displayName', 'emailAddress']);
+  describe('watch', () => {
+    describe('search', () => {
+      it('calls debounce search with the trimmed searched query', async () => {
+        wrapper.vm.debounceSearch = jest.fn();
+        await wrapper.setData({
+          search: 'query    ',
+        });
+        expect(wrapper.vm.debounceSearch).toHaveBeenCalledWith('query');
       });
     });
   });
@@ -199,6 +220,26 @@ describe('AddTeamMembers.vue', () => {
       });
     });
 
+    describe('fetchFilteredUsers', () => {
+      it('calls the search endpoint with the right data', async () => {
+        wrapper.vm.$storage.userAccount.actions.search = jest.fn();
+        helpers.toQuickSearch = jest.fn(() => 'query from helper');
+        await wrapper.vm.fetchFilteredUsers();
+        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({
+          search: 'query from helper',
+          queryType: 'full',
+          searchMode: 'all',
+        });
+      });
+
+      it('stores the result from search into filteredUsersIds', async () => {
+        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: ['id-1'] }));
+        helpers.toQuickSearch = jest.fn();
+        await wrapper.vm.fetchFilteredUsers();
+        expect(wrapper.vm.filteredUsersIds).toEqual(['id-1']);
+      });
+    });
+
     describe('submit', () => {
       it('calls addTeamMembers actions with correct parameters (selectedUsers)', async () => {
         await wrapper.vm.submit();
@@ -209,6 +250,24 @@ describe('AddTeamMembers.vue', () => {
         jest.spyOn(wrapper.vm, 'close').mockImplementation(() => true);
         await wrapper.vm.submit();
         expect(wrapper.vm.close).toHaveBeenCalledTimes(1);
+      });
+
+      it('emits addMembers with the right value', async () => {
+        wrapper.setData({ selectedUsers: [{ id: 'id-1' }, { id: 'id-2' }] });
+        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => [{ id: 'm-1' }, { id: 'm-2' }]);
+        await wrapper.vm.submit();
+        expect(wrapper.vm.$storage.userAccount.getters.getByIds).toHaveBeenCalledWith(['id-1', 'id-2']);
+        expect(wrapper.emitted('addMembers')[0][0]).toEqual([{ id: 'm-1' }, { id: 'm-2' }]);
+      });
+    });
+
+    describe('debounceSearch', () => {
+      it('should call fetchFilteredUsers', async () => {
+        wrapper.vm.fetchFilteredUsers = jest.fn();
+        wrapper.vm.debounceSearch();
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        expect(wrapper.vm.fetchFilteredUsers).toHaveBeenCalledTimes(1);
       });
     });
   });
