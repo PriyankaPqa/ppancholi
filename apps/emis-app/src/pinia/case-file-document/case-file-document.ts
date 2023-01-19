@@ -1,5 +1,4 @@
 import { httpClient } from '@/services/httpClient';
-import { SignalR } from '@/ui/plugins/signal-r';
 import { getBaseStoreComponents, getEntityStoreComponents } from '@libs/stores-lib/base';
 
 import { ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
@@ -21,7 +20,7 @@ const metadataService = new CaseFilesMetadataService(httpClient);
 const optionsService = new OptionItemsService(httpClient);
 
 // baseComponents is used as a reference for the extension
-const baseEntityComponents = getEntityStoreComponents<Entity, IdParams>(entityService, SignalR);
+const baseEntityComponents = getEntityStoreComponents<Entity, IdParams>(entityService);
 const extensionComponents = getExtensionComponents(baseEntityComponents, entityService, optionsService);
 
 export const useCaseFileDocumentStore = defineStore(`${storeId}-entities`, () => ({
@@ -30,5 +29,5 @@ export const useCaseFileDocumentStore = defineStore(`${storeId}-entities`, () =>
 }));
 
 export const useCaseFileDocumentMetadataStore = defineStore(`${storeId}-metadata`, () => ({
-  ...getBaseStoreComponents<Metadata, uuid>(metadataService, SignalR),
+  ...getBaseStoreComponents<Metadata, uuid>(metadataService),
 }));

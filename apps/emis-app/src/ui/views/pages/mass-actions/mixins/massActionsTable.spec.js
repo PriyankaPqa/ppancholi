@@ -124,15 +124,15 @@ describe('massActionsTable', () => {
       });
 
       it('should reduce the itemCount by 1', async () => {
-        await wrapper.setData({
-          itemsCount: 1,
-        });
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
           mocks: {
             $storage: storage,
           },
+        });
+        await wrapper.setData({
+          itemsCount: 1,
         });
         await wrapper.vm.onDelete(mockCombinedMassAction());
         expect(wrapper.vm.itemsCount).toEqual(0);

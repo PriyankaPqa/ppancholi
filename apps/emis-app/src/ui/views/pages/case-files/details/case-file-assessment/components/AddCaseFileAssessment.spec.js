@@ -1,14 +1,20 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import {
   AssociationType,
 } from '@libs/entities-lib/assessment-template';
+import { mockStorage } from '@/storage';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
+import { createTestingPinia } from '@pinia/testing';
 import Component from './AddCaseFileAssessment.vue';
 
 const localVue = createLocalVue();
 let storage = mockStorage();
+let pinia = createTestingPinia({ stubActions: false });
+let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+let assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
 
 describe('AddCaseFileAssessment.vue', () => {
   let wrapper;
@@ -16,6 +22,7 @@ describe('AddCaseFileAssessment.vue', () => {
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         show: true, eventId: 'eventId', caseFileId: 'cfId', excludedIds: ['id1', 'id2'],
       },
@@ -32,6 +39,9 @@ describe('AddCaseFileAssessment.vue', () => {
 
   beforeEach(async () => {
     storage = mockStorage();
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+    assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
     jest.clearAllMocks();
   });
 
@@ -74,15 +84,11 @@ describe('AddCaseFileAssessment.vue', () => {
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.items;
 
-        expect(storage.assessmentForm.getters.getByIds).toHaveBeenCalled();
+        expect(assessmentFormStore.getByIds).toHaveBeenCalled();
 
-        const params = storage.assessmentForm.getters.getByIds.mock.calls[storage.assessmentForm.getters.getByIds.mock.calls.length - 1];
+        const params = assessmentFormStore.getByIds.mock.calls[assessmentFormStore.getByIds.mock.calls.length - 1];
         expect(params[0]).toEqual(['abc']);
-        expect(params[1].onlyActive).toBeTruthy();
-        expect(params[1].baseDate).toBeFalsy();
-        expect(params[1].prependPinnedItems).toBeFalsy();
-        expect(params[1].parentId).toBeFalsy();
-        expect(data.length).toBe(storage.assessmentTemplate.getters.getByIds().length);
+        expect(data.length).toBe(assessmentFormStore.getByIds().length);
       });
     });
   });
@@ -116,8 +122,8 @@ describe('AddCaseFileAssessment.vue', () => {
         const someObject = { entity: { id: 'newId' } };
         wrapper.vm.close = jest.fn();
         await wrapper.vm.select(someObject);
-        expect(storage.assessmentResponse.actions.create).toHaveBeenCalled();
-        const params = storage.assessmentResponse.actions.create.mock.calls[storage.assessmentResponse.actions.create.mock.calls.length - 1];
+        expect(assessmentResponseStore.create).toHaveBeenCalled();
+        const params = assessmentResponseStore.create.mock.calls[assessmentResponseStore.create.mock.calls.length - 1];
         expect(params[0].assessmentFormId).toEqual('newId');
         expect(params[0].association).toEqual({ id: 'cfId', type: AssociationType.CaseFile });
       });
@@ -129,12 +135,15 @@ describe('AddCaseFileAssessment.vue', () => {
         await mountWrapper();
         await wrapper.setData({ search: 'hello' });
         await wrapper.vm.doSearch();
-        expect(storage.assessmentForm.actions.search).toHaveBeenCalledWith({
-          search: 'cleanedUp',
-          filter: { 'Entity/EventId': 'eventId', 'Entity/Status': Status.Active, 'Entity/Id': { notSearchIn_az: ['id1', 'id2'] } },
-          top: 50,
-          queryType: 'full',
-          orderBy: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
+        expect(assessmentFormStore.search).toHaveBeenCalledWith({
+          params: {
+            search: 'cleanedUp',
+            filter: { 'Entity/EventId': 'eventId', 'Entity/Status': Status.Active, 'Entity/Id': { notSearchIn_az: ['id1', 'id2'] } },
+            top: 50,
+            queryType: 'full',
+            orderBy: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
+          },
+          searchEndpoint: null,
         });
       });
     });

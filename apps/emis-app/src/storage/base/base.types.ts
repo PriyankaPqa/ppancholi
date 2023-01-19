@@ -1,6 +1,5 @@
 import { IAzureTableSearchResults, IAzureSearchParams } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '@libs/entities-lib/base';
-import { IFullResponseCombined } from '@libs/services-lib/http-client';
 
 export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity, IdParams> {
   fetch(idParams: IdParams, {
@@ -11,19 +10,6 @@ export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity
     useEntityGlobalHandler:boolean,
     useMetadataGlobalHandler: boolean,
   }) : Promise<IEntityCombined<TEntity, TMetadata>>;
-
-  fetchFullResponse(idParams: IdParams, {
-    useEntityGlobalHandler,
-    useMetadataGlobalHandler,
-    returnEntityFullResponse,
-    returnMetadataFullResponse,
-  }
-  ? : {
-    useEntityGlobalHandler:boolean,
-    useMetadataGlobalHandler: boolean,
-    returnEntityFullResponse?: boolean,
-    returnMetadataFullResponse?: boolean
-  }) : Promise<IFullResponseCombined<TEntity, TMetadata>>;
 
   fetchAll(id?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]>;
   fetchAllIncludingInactive(id?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]>;

@@ -16,8 +16,8 @@ const mockMetadatum = mockUserAccountMetadatum();
 
 let useBaseCombinedStore = null as any;
 
-const entityStoreComponents = getEntityStoreComponents<Entity, string>(null, null);
-const baseMetadataStoreComponents = getBaseStoreComponents<Metadata, string>(null, null);
+const entityStoreComponents = getEntityStoreComponents<Entity, string>(null);
+const baseMetadataStoreComponents = getBaseStoreComponents<Metadata, string>(null);
 
 const createTestStore = (
   entityStoreComponents: BaseEntityStoreComponents<Entity, string>,
@@ -250,35 +250,6 @@ describe('Base Combined Store', () => {
       useBaseCombinedStore = createTestStore(entityStoreComponents, baseMetadataStoreComponents);
 
       const res = await useBaseCombinedStore.fetch(id);
-      const expected = { entity: mockEntities[0], metadata: mockMetadatum[0] };
-      expect(res).toEqual(expected);
-    });
-  });
-
-  describe('fetchFullResponse', () => {
-    it('should call action fetch from both module', async () => {
-      const id = '1';
-      entityStoreComponents.fetch = jest.fn();
-      baseMetadataStoreComponents.fetch = jest.fn();
-      useBaseCombinedStore = createTestStore(entityStoreComponents, baseMetadataStoreComponents);
-
-      await useBaseCombinedStore.fetchFullResponse(id, {
-        useEntityGlobalHandler: true,
-        useMetadataGlobalHandler: false,
-        returnEntityFullResponse: false,
-        returnMetadataFullResponse: true,
-      });
-      expect(entityStoreComponents.fetch).toBeCalledWith(id, true, false);
-      expect(baseMetadataStoreComponents.fetch).toBeCalledWith(id, false, true);
-    });
-
-    it('should return full response entity combined with its full response metadata', async () => {
-      const id = '1';
-      entityStoreComponents.fetch = jest.fn(() => Promise.resolve(mockEntities[0]));
-      (baseMetadataStoreComponents as any).fetch = jest.fn(() => Promise.resolve(mockMetadatum[0]));
-      useBaseCombinedStore = createTestStore(entityStoreComponents, baseMetadataStoreComponents);
-
-      const res = await useBaseCombinedStore.fetchFullResponse(id);
       const expected = { entity: mockEntities[0], metadata: mockMetadatum[0] };
       expect(res).toEqual(expected);
     });

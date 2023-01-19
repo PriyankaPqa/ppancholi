@@ -74,6 +74,8 @@ import {
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { Route, NavigationGuardNext } from 'vue-router';
 import helpers from '@/ui/helpers/helpers';
+import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
+import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import caseFileDetail from '../../caseFileDetail';
 import QuestionTab from './QuestionTab.vue';
 
@@ -116,17 +118,17 @@ export default mixins(caseFileDetail).extend({
       && this.assessmentResponse?.completionStatus === CompletionStatus.Completed;
     },
     assessmentResponse(): IAssessmentResponseEntity {
-      return this.$storage.assessmentResponse.getters.get(this.assessmentResponseId)?.entity;
+      return useAssessmentResponseStore().getById(this.assessmentResponseId);
     },
     assessmentForm(): IAssessmentFormEntity {
-      return this.$storage.assessmentForm.getters.get(this.assessmentResponse?.assessmentFormId)?.entity;
+      return useAssessmentFormStore().getById(this.assessmentResponse?.assessmentFormId);
     },
   },
 
   async created() {
-    const response = await this.$storage.assessmentResponse.actions.fetch({ id: this.assessmentResponseId });
-    if (response?.entity?.assessmentFormId) {
-      await this.$storage.assessmentForm.actions.fetch({ id: response.entity.assessmentFormId });
+    const response = await useAssessmentResponseStore().fetch({ id: this.assessmentResponseId });
+    if (response?.assessmentFormId) {
+      await useAssessmentFormStore().fetch({ id: response.assessmentFormId });
     }
   },
 

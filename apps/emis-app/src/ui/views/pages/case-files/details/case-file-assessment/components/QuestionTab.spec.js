@@ -1,17 +1,19 @@
 /* eslint-disable max-len */
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import {
   mockAssessmentResponseEntity, mockAssessmentFormEntity, mockAssessmentResponseEntityWithPanels, mockAssessmentFormEntityWithPanels,
 } from '@libs/entities-lib/assessment-template';
+import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
+import { createTestingPinia } from '@pinia/testing';
 import Component from './QuestionTab.vue';
 
 const localVue = createLocalVue();
-let storage = mockStorage();
 let mockResponse = mockAssessmentResponseEntity();
 let mockForm = mockAssessmentFormEntity();
 let canEdit = true;
+let pinia = createTestingPinia({ stubActions: false });
+let assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
 
 describe('QuestionTab.vue', () => {
   let wrapper;
@@ -19,13 +21,13 @@ describe('QuestionTab.vue', () => {
   const mountWrapper = async (fullMount = false, additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         assessmentResponse: mockResponse,
         assessmentForm: mockForm,
         canEdit,
       },
       mocks: {
-        $storage: storage,
       },
       ...additionalOverwrites,
     });
@@ -34,7 +36,8 @@ describe('QuestionTab.vue', () => {
   };
 
   beforeEach(() => {
-    storage = mockStorage();
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
     mockResponse = mockAssessmentResponseEntity();
     mockForm = mockAssessmentFormEntity();
     canEdit = false;
@@ -424,7 +427,7 @@ describe('QuestionTab.vue', () => {
         wrapper.vm.editQuestion(q);
 
         await wrapper.vm.applyEdit();
-        expect(storage.assessmentResponse.actions.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
+        expect(assessmentResponseStore.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
           id: wrapper.vm.assessmentResponse.id,
           questionId: 'question2id',
           parentIndexPath: null,
@@ -437,7 +440,7 @@ describe('QuestionTab.vue', () => {
         await wrapper.setData({ editedAnswer: ['item1'] });
 
         await wrapper.vm.applyEdit();
-        expect(storage.assessmentResponse.actions.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
+        expect(assessmentResponseStore.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
           id: wrapper.vm.assessmentResponse.id,
           questionId: 'question2id',
           parentIndexPath: null,
@@ -450,7 +453,7 @@ describe('QuestionTab.vue', () => {
         await wrapper.setData({ editedAnswer: [null] });
 
         await wrapper.vm.applyEdit();
-        expect(storage.assessmentResponse.actions.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
+        expect(assessmentResponseStore.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
           id: wrapper.vm.assessmentResponse.id,
           questionId: 'question2id',
           parentIndexPath: null,

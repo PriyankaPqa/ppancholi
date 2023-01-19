@@ -10,13 +10,12 @@ import {
 } from '@libs/entities-lib/tenantSettings';
 import { mockTenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import { getBaseStoreComponents } from '@/base';
-import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore } from 'pinia';
 import { getExtensionComponents } from './tenant-settings-extension';
 
 const entityService = mockTenantSettingsService();
-const baseComponents = getBaseStoreComponents<ITenantSettingsEntity, IdParams>(entityService, mockSignalR());
+const baseComponents = getBaseStoreComponents<ITenantSettingsEntity, IdParams>(entityService);
 
 const useTestStore = (opts = {}) => {
   const pinia = createTestingPinia({ stubActions: false });

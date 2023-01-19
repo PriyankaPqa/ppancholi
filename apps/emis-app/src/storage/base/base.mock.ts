@@ -18,7 +18,6 @@ export class BaseMock<T, S> {
 
   protected baseActions = {
     fetch: jest.fn(() => this.combinedEntitiesAndMetaData[0]),
-    fetchFullResponse: jest.fn(() => ({ entity: { status: 200 }, metadata: { status: 200 } })),
     fetchAll: jest.fn(() => this.combinedEntitiesAndMetaData),
     fetchAllIncludingInactive: jest.fn(() => this.combinedEntitiesAndMetaData),
     deactivate: jest.fn(() => this.entity),

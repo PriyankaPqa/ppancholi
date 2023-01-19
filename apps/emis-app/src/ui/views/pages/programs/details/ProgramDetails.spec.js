@@ -5,11 +5,15 @@ import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/progra
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { Status } from '@libs/entities-lib/base';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
+import { createTestingPinia } from '@pinia/testing';
 import Component from './ProgramDetails.vue';
 
 const localVue = createLocalVue();
-const { pinia, programStore } = useMockProgramStore();
+let pinia = createTestingPinia({ stubActions: false });
+let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+let programStore = useMockProgramStore(pinia).programStore;
 
 describe('ProgramDetails.vue', () => {
   let wrapper;
@@ -18,6 +22,9 @@ describe('ProgramDetails.vue', () => {
   const program = mockProgramEntity();
 
   beforeEach(() => {
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+    programStore = useMockProgramStore(pinia).programStore;
     wrapper = mount(Component, {
       localVue,
       pinia,
@@ -40,6 +47,7 @@ describe('ProgramDetails.vue', () => {
     test('the edit button is associated to the correct route', async () => {
       wrapper = await mount(Component, {
         localVue,
+        pinia,
         propsData: {
           programId: 'PROGRAM_ID',
           id: 'EVENT_ID',
@@ -129,8 +137,8 @@ describe('ProgramDetails.vue', () => {
           assessmentIds: ['newId'],
         });
         const assessments = wrapper.vm.assessments;
-        expect(storage.assessmentForm.getters.getByIds).toHaveBeenCalledWith(['newId']);
-        expect(assessments).toEqual(storage.assessmentForm.getters.getByIds().map((x) => x.entity));
+        expect(assessmentFormStore.getByIds).toHaveBeenCalledWith(['newId']);
+        expect(assessments).toEqual(assessmentFormStore.getByIds());
       });
     });
 
@@ -141,6 +149,7 @@ describe('ProgramDetails.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             programId: 'PROGRAM_ID',
             id: 'EVENT_ID',
@@ -156,8 +165,8 @@ describe('ProgramDetails.vue', () => {
         });
 
         const assessments = wrapper.vm.requiredAssessmentForms;
-        expect(storage.assessmentForm.getters.getByIds).toHaveBeenCalledWith(['newId']);
-        expect(assessments).toEqual(storage.assessmentForm.getters.getByIds(['newId']).map((x) => x.entity));
+        expect(assessmentFormStore.getByIds).toHaveBeenCalledWith(['newId']);
+        expect(assessments).toEqual(assessmentFormStore.getByIds(['newId']));
       });
 
       it('calls getter when completedAssessmentIds is empty', async () => {
@@ -166,6 +175,7 @@ describe('ProgramDetails.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             programId: 'PROGRAM_ID',
             id: 'EVENT_ID',
@@ -182,7 +192,7 @@ describe('ProgramDetails.vue', () => {
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const assessments = wrapper.vm.requiredAssessmentForms;
-        expect(storage.assessmentForm.getters.getByIds).toHaveBeenCalledWith([]);
+        expect(assessmentFormStore.getByIds).toHaveBeenCalledWith([]);
       });
 
       it('returns empty array when completedAssessmentIds is null', async () => {
@@ -191,6 +201,7 @@ describe('ProgramDetails.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             programId: 'PROGRAM_ID',
             id: 'EVENT_ID',
@@ -206,7 +217,7 @@ describe('ProgramDetails.vue', () => {
         });
 
         const assessments = wrapper.vm.requiredAssessmentForms;
-        expect(storage.assessmentForm.getters.getByIds).not.toHaveBeenCalled();
+        expect(assessmentFormStore.getByIds).not.toHaveBeenCalled();
         expect(assessments).toEqual([]);
       });
     });
@@ -296,14 +307,17 @@ describe('ProgramDetails.vue', () => {
           await wrapper.vm.$options.created[i].call(wrapper.vm);
         }
 
-        expect(storage.assessmentForm.actions.search).toHaveBeenCalledTimes(1);
-        expect(storage.assessmentForm.actions.search).toHaveBeenCalledWith({
-          filter: { 'Entity/ProgramId': wrapper.vm.programId },
-          top: 999,
-          queryType: 'full',
-          orderBy: 'Entity/Name/Translation/en',
-        }, null, true);
-        expect(wrapper.vm.assessmentIds).toEqual(storage.assessmentForm.actions.search().ids);
+        expect(assessmentFormStore.search).toHaveBeenCalledTimes(1);
+        expect(assessmentFormStore.search).toHaveBeenCalledWith({
+          params: {
+            filter: { 'Entity/ProgramId': wrapper.vm.programId },
+            top: 999,
+            queryType: 'full',
+            orderBy: 'Entity/Name/Translation/en',
+          },
+          searchEndpoint: null,
+        });
+        expect(wrapper.vm.assessmentIds).toEqual(assessmentFormStore.search().ids);
       });
     });
   });

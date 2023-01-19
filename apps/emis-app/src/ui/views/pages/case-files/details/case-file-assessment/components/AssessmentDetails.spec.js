@@ -1,18 +1,22 @@
 /* eslint-disable max-len */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import {
   CompletionStatus,
 } from '@libs/entities-lib/assessment-template';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
+import { createTestingPinia } from '@pinia/testing';
 import Component from './AssessmentDetails.vue';
 
 const localVue = createLocalVue();
-let storage = mockStorage();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
-const assessment = storage.assessmentResponse.getters.get();
+let pinia = createTestingPinia({ stubActions: false });
+let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+let assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
+const assessment = assessmentResponseStore.getById();
 
 describe('AssessmentDetails.vue', () => {
   let wrapper;
@@ -20,6 +24,7 @@ describe('AssessmentDetails.vue', () => {
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         id: 'cfId',
         assessmentResponseId: 'assId',
@@ -32,7 +37,6 @@ describe('AssessmentDetails.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
       },
       ...additionalOverwrites,
     });
@@ -42,9 +46,11 @@ describe('AssessmentDetails.vue', () => {
   };
 
   beforeEach(async () => {
-    storage = mockStorage();
-    storage.assessmentResponse.getters.get = jest.fn(() => assessment);
-    assessment.entity.completionStatus = CompletionStatus.Completed;
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+    assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
+    assessmentResponseStore.getById = jest.fn(() => assessment);
+    assessment.completionStatus = CompletionStatus.Completed;
     jest.clearAllMocks();
   });
 
@@ -82,7 +88,7 @@ describe('AssessmentDetails.vue', () => {
         await mountWrapper(false, 3);
         expect(wrapper.vm.canEdit).toBeTruthy();
 
-        assessment.entity.completionStatus = CompletionStatus.Partial;
+        assessment.completionStatus = CompletionStatus.Partial;
         await mountWrapper(false, 3);
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
@@ -115,8 +121,8 @@ describe('AssessmentDetails.vue', () => {
       it('calls storage', async () => {
         await mountWrapper();
         const data = wrapper.vm.assessmentResponse;
-        expect(storage.assessmentResponse.getters.get).toHaveBeenCalledWith(wrapper.vm.assessmentResponseId);
-        expect(data).toBe(storage.assessmentResponse.getters.get().entity);
+        expect(assessmentResponseStore.getById).toHaveBeenCalledWith(wrapper.vm.assessmentResponseId);
+        expect(data).toBe(assessmentResponseStore.getById());
       });
     });
 
@@ -124,8 +130,8 @@ describe('AssessmentDetails.vue', () => {
       it('calls storage', async () => {
         await mountWrapper();
         const data = wrapper.vm.assessmentForm;
-        expect(storage.assessmentForm.getters.get).toHaveBeenCalledWith(wrapper.vm.assessmentResponse.assessmentFormId);
-        expect(data).toBe(storage.assessmentForm.getters.get().entity);
+        expect(assessmentFormStore.getById).toHaveBeenCalledWith(wrapper.vm.assessmentResponse.assessmentFormId);
+        expect(data).toBe(assessmentFormStore.getById());
       });
     });
   });
@@ -134,8 +140,8 @@ describe('AssessmentDetails.vue', () => {
     describe('created', () => {
       it('fetches data', async () => {
         await mountWrapper();
-        expect(storage.assessmentResponse.actions.fetch).toHaveBeenCalledWith({ id: wrapper.vm.assessmentResponseId });
-        expect(storage.assessmentForm.actions.fetch).toHaveBeenCalledWith({ id: wrapper.vm.assessmentResponse.assessmentFormId });
+        expect(assessmentResponseStore.fetch).toHaveBeenCalledWith({ id: wrapper.vm.assessmentResponseId });
+        expect(assessmentFormStore.fetch).toHaveBeenCalledWith({ id: wrapper.vm.assessmentResponse.assessmentFormId });
       });
     });
   });

@@ -1,5 +1,4 @@
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
-import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { getExtensionComponents } from '@/pinia/program/program-extension';
 import { defineStore } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
@@ -10,7 +9,7 @@ IdParams,
 import { mockProgramsService } from '@libs/services-lib/programs/entity';
 
 const entityService = mockProgramsService();
-const baseComponents = getBaseStoreComponents<IProgramEntity, IdParams>(entityService, mockSignalR());
+const baseComponents = getBaseStoreComponents<IProgramEntity, IdParams>(entityService);
 
 const useTestProgramStore = (opts = {}) => {
   const pinia = createTestingPinia({ stubActions: false });

@@ -5,7 +5,6 @@ import { IAzureTableSearchResults, ICombinedIndex, IAzureSearchParams } from '@l
 import {
   IEntity, IEntityCombined, Status,
 } from '@libs/entities-lib/base';
-import { IFullResponseCombined } from '@libs/services-lib/http-client';
 import helpers from '@libs/entities-lib/helpers';
 import { useUserStore } from '@/pinia/user/user';
 import { IStore, IState } from '../../store/store.types';
@@ -160,40 +159,6 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       return {
         entity,
         metadata,
-      };
-    },
-
-    fetchFullResponse: async (idParams: IdParams, {
-      useEntityGlobalHandler,
-      useMetadataGlobalHandler,
-      returnEntityFullResponse,
-      returnMetadataFullResponse,
-    } = {
-      useEntityGlobalHandler: true,
-      useMetadataGlobalHandler: true,
-      returnEntityFullResponse: true,
-      returnMetadataFullResponse: true,
-    }): Promise<IFullResponseCombined<TEntity, TMetadata>> => {
-      const requests = [this.store.dispatch(`${this.entityModuleName}/fetch`, {
-        idParams,
-        useGlobalHandler: useEntityGlobalHandler,
-        returnFullResponse: returnEntityFullResponse,
-      })];
-
-      if (this.metadataModuleName) {
-        requests.push(this.store.dispatch(`${this.metadataModuleName}/fetch`, {
-          idParams,
-          useGlobalHandler: useMetadataGlobalHandler,
-          returnFullResponse: returnMetadataFullResponse,
-        }));
-      }
-      const results = await Promise.all(requests);
-      const fullResponseEntity = results[0];
-      const fullResponseMetadata = results[1] || null;
-
-      return {
-        entity: fullResponseEntity,
-        metadata: fullResponseMetadata,
       };
     },
 

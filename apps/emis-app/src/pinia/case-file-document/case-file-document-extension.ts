@@ -1,12 +1,11 @@
-import { BaseStoreComponents } from '@libs/stores-lib/base';
 import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/optionItems';
 import { ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '@libs/services-lib/case-file-documents/entity';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import { ref, Ref } from 'vue';
-import { filterAndSortActiveItems } from '@/store/modules/base';
 import _cloneDeep from 'lodash/cloneDeep';
 import { Status } from '@libs/entities-lib/base';
+import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
 
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<ICaseFileDocumentEntity, { id: uuid, caseFileId: uuid }>,

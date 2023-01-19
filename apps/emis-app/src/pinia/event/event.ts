@@ -1,5 +1,4 @@
 import { httpClient } from '@/services/httpClient';
-import { SignalR } from '@/ui/plugins/signal-r';
 import { EventsService } from '@libs/services-lib/events/entity';
 import { getBaseStoreComponents, getEntityStoreComponents } from '@libs/stores-lib/base';
 import { EventsMetadataService } from '@libs/services-lib/events/metadata';
@@ -18,7 +17,7 @@ const metadataService = new EventsMetadataService(httpClient);
 const optionsService = new OptionItemsService(httpClient);
 
 // baseComponents is used as a reference for the extension
-const baseEntityComponents = getEntityStoreComponents<Entity, IdParams>(entityService, SignalR);
+const baseEntityComponents = getEntityStoreComponents<Entity, IdParams>(entityService);
 const extensionComponents = getExtensionComponents(baseEntityComponents, entityService, optionsService);
 
 export const useEventStore = defineStore(`${storeId}-entities`, () => ({
@@ -27,5 +26,5 @@ export const useEventStore = defineStore(`${storeId}-entities`, () => ({
 }));
 
 export const useEventMetadataStore = defineStore(`${storeId}-metadata`, () => ({
-  ...getBaseStoreComponents<Metadata, IdParams>(metadataService, SignalR),
+  ...getBaseStoreComponents<Metadata, IdParams>(metadataService),
 }));

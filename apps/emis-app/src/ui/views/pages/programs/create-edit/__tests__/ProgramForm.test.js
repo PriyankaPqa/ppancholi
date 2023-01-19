@@ -4,9 +4,13 @@ import { ProgramEntity } from '@libs/entities-lib/program';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { Status } from '@libs/entities-lib/base';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { createTestingPinia } from '@pinia/testing';
 import Component from '../ProgramForm.vue';
 
 const localVue = createLocalVue();
+let pinia = createTestingPinia({ stubActions: false });
+let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
 
 describe('ProgramForm.vue', () => {
   let wrapper;
@@ -14,6 +18,8 @@ describe('ProgramForm.vue', () => {
   const storage = mockStorage();
 
   beforeEach(() => {
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     jest.clearAllMocks();
   });
 
@@ -21,6 +27,7 @@ describe('ProgramForm.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           isEditMode: false,
           program: new ProgramEntity(),
@@ -130,6 +137,7 @@ describe('ProgramForm.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           isEditMode: false,
           program: new ProgramEntity(),
@@ -155,13 +163,12 @@ describe('ProgramForm.vue', () => {
         assessmentForms: [],
       });
 
-      await wrapper.vm.$options.created.forEach((hook) => {
-        hook.call(wrapper.vm);
-      });
+      const hook = wrapper.vm.$options.created[0];
+      await hook.call(wrapper.vm);
 
-      expect(wrapper.vm.$storage.assessmentForm.actions.fetchByProgramId).toHaveBeenCalledTimes(1);
-      expect(wrapper.vm.$storage.assessmentForm.actions.fetchByProgramId).toHaveBeenCalledWith('PROGRAM_ID');
-      expect(wrapper.vm.assessmentForms).toEqual([mockAssessmentFormEntity()]);
+      expect(assessmentFormStore.fetchByProgramId).toHaveBeenCalledTimes(1);
+      expect(assessmentFormStore.fetchByProgramId).toHaveBeenCalledWith('PROGRAM_ID');
+      expect(wrapper.vm.assessmentForms).toEqual(await assessmentFormStore.fetchByProgramId());
     });
   });
 
@@ -169,6 +176,7 @@ describe('ProgramForm.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           isEditMode: false,
           program: new ProgramEntity(),
@@ -205,6 +213,7 @@ describe('ProgramForm.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
+        pinia,
         propsData: {
           isEditMode: false,
           program: new ProgramEntity(),
@@ -272,6 +281,7 @@ describe('ProgramForm.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
+        pinia,
         propsData: {
           isEditMode: false,
           program: new ProgramEntity(),

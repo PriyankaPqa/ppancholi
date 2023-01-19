@@ -19,6 +19,7 @@ import { IAssessmentResponseEntity } from '@libs/entities-lib/assessment-templat
 import { cloneDeep } from 'lodash';
 import { SurveyJsHelper, ISurveyModel } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
 import { NavigationGuardNext, Route } from 'vue-router';
+import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import helpers from '@/ui/helpers/helpers';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import assessmentDetail from './assessmentDetail';
@@ -59,10 +60,9 @@ export default mixins(assessmentDetail).extend({
 
   async mounted() {
     if (this.assessmentResponseId) {
-      this.response = cloneDeep((await this.$storage.assessmentResponse.actions.fetch(
+      this.response = cloneDeep((await useAssessmentResponseStore().fetch(
         { id: this.assessmentResponseId },
-        { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-      ))?.entity);
+      )));
     }
     await this.loadDetails();
     this.errorMessage = this.assessmentResponseId ? this.surveyJsHelper.getSurveyCanBeCompletedErrorMessage(this.assessmentTemplate, this.response, this, this.$m) : null;
@@ -94,7 +94,7 @@ export default mixins(assessmentDetail).extend({
     async saveAnswers(sender: ISurveyModel) {
       this.response = cloneDeep(this.surveyJsHelper.surveyToAssessmentResponse(sender, cloneDeep(this.response)));
       if (this.assessmentResponseId) {
-        const result = await this.$storage.assessmentResponse.actions.saveAssessmentAnsweredQuestions(this.response);
+        const result = await useAssessmentResponseStore().saveAssessmentAnsweredQuestions(this.response);
         if (result) {
           this.response = result;
         }

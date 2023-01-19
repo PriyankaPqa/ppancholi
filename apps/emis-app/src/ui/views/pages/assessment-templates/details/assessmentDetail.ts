@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import {
-  AssessmentBaseEntity, AssessmentTemplateEntity, AssessmentFormEntity, IAssessmentFormEntity, PublishStatus, AssessmentFrequencyType, IAssessmentFormMetadata,
+  AssessmentBaseEntity, AssessmentTemplateEntity, AssessmentFormEntity, IAssessmentFormEntity, PublishStatus, AssessmentFrequencyType,
 } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import routes from '@/constants/routes';
 import { IProgramEntity } from '@libs/entities-lib/program';
+import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
+import { useAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template';
 import { useProgramStore } from '@/pinia/program/program';
 import { IAssessmentBaseRoute } from '../IAssessmentBaseRoute.type';
 
@@ -40,10 +42,6 @@ export default Vue.extend({
       return this.isFormMode ? this.assessmentTemplate as AssessmentFormEntity : null;
     },
 
-    assessmentFormMetadata(): IAssessmentFormMetadata {
-      return this.assessmentTemplate?.id ? this.$storage.assessmentForm.getters.get(this.assessmentTemplate.id)?.metadata : null;
-    },
-
     baseRoute() : IAssessmentBaseRoute {
       return this.isFormMode ? routes.events.assessments : routes.assessmentTemplates;
     },
@@ -55,20 +53,20 @@ export default Vue.extend({
       this.program = null;
       if (this.isFormMode) {
         // eslint-disable-next-line max-len,vue/max-len
-        const res = this.assessmentTemplateId ? await this.$storage.assessmentForm.actions.fetch({ id: this.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false }) : null;
-        const form = new AssessmentFormEntity(res?.entity);
+        const res = this.assessmentTemplateId ? await useAssessmentFormStore().fetch({ id: this.assessmentTemplateId }) : null;
+        const form = new AssessmentFormEntity(res);
 
         form.eventId = this.id;
 
         this.assessmentTemplate = form;
 
         if (form.programId) {
-          this.program = (await useProgramStore().fetch({ id: form.programId, eventId: form.eventId })) as IProgramEntity;
+          this.program = await useProgramStore().fetch({ id: form.programId, eventId: form.eventId });
         }
       } else {
         // eslint-disable-next-line max-len,vue/max-len
-        const res = this.assessmentTemplateId ? await this.$storage.assessmentTemplate.actions.fetch({ id: this.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false }) : null;
-        this.assessmentTemplate = new AssessmentTemplateEntity(res?.entity);
+        const res = this.assessmentTemplateId ? await useAssessmentTemplateStore().fetch({ id: this.assessmentTemplateId }) : null;
+        this.assessmentTemplate = new AssessmentTemplateEntity(res);
       }
 
       this.assessmentTemplateLoading = false;

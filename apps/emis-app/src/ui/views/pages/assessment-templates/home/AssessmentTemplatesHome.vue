@@ -114,13 +114,18 @@ import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { IAssessmentBaseCombined, IAssessmentTemplateEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
+import {
+ IAssessmentBaseCombined, IAssessmentFormEntity, IAssessmentFormMetadata, IAssessmentTemplateEntity, IAssessmentTemplateMetadata, PublishStatus,
+} from '@libs/entities-lib/assessment-template';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useAssessmentFormStore, useAssessmentFormMetadataStore } from '@/pinia/assessment-form/assessment-form';
+import { useAssessmentTemplateStore, useAssessmentTemplateMetadataStore } from '@/pinia/assessment-template/assessment-template';
 import { useProgramStore } from '@/pinia/program/program';
 import { IAssessmentBaseRoute } from '../IAssessmentBaseRoute.type';
 import CopyAssessment from './CopyAssessment.vue';
@@ -157,6 +162,8 @@ export default mixins(TablePaginationSearchMixin).extend({
       programsFilter: [],
       PublishStatus,
       showCopyAssessmentDialog: false,
+      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, IAssessmentFormMetadata>(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
+      combinedTemplateStore: new CombinedStoreFactory<IAssessmentTemplateEntity, IAssessmentTemplateMetadata>(useAssessmentTemplateStore(), useAssessmentTemplateMetadataStore()),
     };
   },
 
@@ -267,13 +274,13 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     tableData(): IAssessmentBaseCombined[] {
       if (this.isFormMode) {
-        return this.$storage.assessmentForm.getters.getByIds(
+        return this.combinedFormStore.getByIds(
           this.searchResultIds,
           { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.id } },
         );
       }
 
-      return this.$storage.assessmentTemplate.getters.getByIds(
+      return this.combinedTemplateStore.getByIds(
         this.searchResultIds,
         { prependPinnedItems: true, baseDate: this.searchExecutionDate },
       );
@@ -361,7 +368,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async fetchData(params: IAzureSearchParams) {
       const filters = this.isFormMode ? { ...params.filter as Record<string, unknown>, 'Entity/EventId': this.id } : params.filter;
-      const res = await (this.isFormMode ? this.$storage.assessmentForm : this.$storage.assessmentTemplate).actions.search({
+      const res = await (this.isFormMode ? this.combinedFormStore : this.combinedTemplateStore).search({
         search: params.search,
         filter: filters,
         top: params.top,

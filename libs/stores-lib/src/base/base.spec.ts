@@ -1,9 +1,8 @@
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
-import { IUserAccountEntity, mockUserAccountEntities, mockUserAccountEntity } from '@libs/entities-lib/user-account';
+import { mockUserAccountEntities, mockUserAccountEntity } from '@libs/entities-lib/user-account';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
-import { mockIRestResponse } from '@libs/services-lib/http-client';
 import { mockUserAccountsService } from '@libs/services-lib/user-accounts/entity';
-import { IRestResponse } from '@libs/shared-lib/types';
+import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 
 import { setActivePinia, createPinia, defineStore } from 'pinia';
 import { mockSignalR } from '@libs/shared-lib/signal-r';
@@ -14,7 +13,7 @@ const signalR = mockSignalR();
 const id = '1';
 
 const useBaseStore = defineStore('base', () => ({
-  ...getEntityStoreComponents(service as any, signalR as any),
+  ...getEntityStoreComponents(service as any),
 }));
 
 let baseStore = null as ReturnType<typeof useBaseStore>;
@@ -72,36 +71,17 @@ describe('Base Store', () => {
   });
 
   describe('fetch', () => {
-    describe('returnFullResponse false', () => {
-      it('should call get method from the service', () => {
-        service.get = jest.fn();
-        baseStore.fetch(id, true);
-        expect(service.get).toBeCalledWith(id, true);
-      });
-
-      it('should save result', async () => {
-        const res = mockUserAccountEntity();
-        service.get = jest.fn(() => res);
-        await baseStore.fetch(id, true);
-        expect(baseStore.items).toContain(res);
-      });
+    it('should call get method from the service', () => {
+      service.get = jest.fn();
+      baseStore.fetch(id, true);
+      expect(service.get).toBeCalledWith(id, true);
     });
 
-    describe('returnFullResponse true', () => {
-      it('should call getFullResponse method from the service', () => {
-        const res = mockIRestResponse(mockUserAccountEntity()) as IRestResponse<IUserAccountEntity>;
-        service.getFullResponse = jest.fn(() => res);
-        baseStore.fetch(id, true, true);
-
-        expect(service.getFullResponse).toBeCalledWith(id, true);
-      });
-
-      it('should save result', async () => {
-        const res = mockIRestResponse(mockUserAccountEntity()) as IRestResponse<IUserAccountEntity>;
-        service.getFullResponse = jest.fn(() => res);
-        await baseStore.fetch(id, true, true);
-        expect(baseStore.items).toContain(res.data);
-      });
+    it('should save result', async () => {
+      const res = mockUserAccountEntity();
+      service.get = jest.fn(() => res);
+      await baseStore.fetch(id, true);
+      expect(baseStore.items).toContain(res);
     });
   });
 
@@ -207,6 +187,8 @@ describe('Base Store', () => {
       });
 
       it('should call addSubscription from signalR instance', () => {
+        const w: ICrcWindowObject = window;
+        w.crcSingletons = { signalR: signalR.instance };
         const entity = mockUserAccountEntity();
         baseStore.set(entity);
 

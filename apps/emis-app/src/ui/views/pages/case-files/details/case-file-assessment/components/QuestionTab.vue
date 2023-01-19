@@ -164,6 +164,7 @@ import {
   CompletedByType, IAnsweredQuestion, IAssessmentFormEntity, IAssessmentQuestion, IAssessmentResponseEntity,
 } from '@libs/entities-lib/assessment-template';
 import { SurveyJsHelper } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
+import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 
 interface IQuestionAndAnswer {
   question: IAssessmentQuestion,
@@ -303,7 +304,7 @@ export default Vue.extend({
         }));
       }
 
-      if (await this.$storage.assessmentResponse.actions.editAssessmentAnsweredQuestion({
+      if (await useAssessmentResponseStore().editAssessmentAnsweredQuestion({
         id: this.assessmentResponse.id,
         responses: newAnswer.responses,
         assessmentQuestionIdentifier: this.editedQuestion.question.identifier,

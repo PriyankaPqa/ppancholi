@@ -4,7 +4,6 @@ import { ICaseFileReferralEntity, ICaseFileReferralMetadata, IdParams } from '@l
 import { CaseFileReferralsService } from '@libs/services-lib/case-file-referrals/entity';
 import { CaseFileReferralsMetadataService } from '@libs/services-lib/case-file-referrals/metadata';
 import { getBaseStoreComponents, getEntityStoreComponents } from '@libs/stores-lib/base';
-import { SignalR } from '@/ui/plugins/signal-r';
 import { defineStore } from 'pinia';
 import { getExtensionComponents } from '@/pinia/case-file-referral/case-file-referral-extension';
 
@@ -17,7 +16,7 @@ const metadataService = new CaseFileReferralsMetadataService(httpClient);
 const optionsService = new OptionItemsService(httpClient);
 
 // baseComponents is used as a reference for the extension
-const baseEntityComponents = getEntityStoreComponents<Entity, IdParams>(entityService, SignalR);
+const baseEntityComponents = getEntityStoreComponents<Entity, IdParams>(entityService);
 const extensionComponents = getExtensionComponents(baseEntityComponents, entityService, optionsService);
 
 export const useCaseFileReferralStore = defineStore(`${storeId}-entities`, () => ({
@@ -26,5 +25,5 @@ export const useCaseFileReferralStore = defineStore(`${storeId}-entities`, () =>
 }));
 
 export const useCaseFileReferralMetadataStore = defineStore(`${storeId}-metadata`, () => ({
-  ...getBaseStoreComponents<Metadata, IdParams>(metadataService, SignalR),
+  ...getBaseStoreComponents<Metadata, IdParams>(metadataService),
 }));

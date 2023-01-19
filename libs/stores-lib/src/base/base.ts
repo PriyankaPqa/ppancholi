@@ -1,20 +1,18 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { IEntity, Status } from '@libs/entities-lib/base';
-import { IRestResponse } from '@libs/services-lib/http-client';
+import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import { DomainBaseService, IDomainBaseServiceMock } from '@libs/services-lib/base';
 import Vue, {
   ref, Ref,
 } from 'vue';
-import { ISignalRMock, ISignalRInstance } from '@libs/shared-lib/signal-r';
 
 import { BaseEntityStoreComponents, BaseStoreComponents } from './base.types';
 
 export function getBaseStoreComponents<T extends IEntity, IdParams>(
   service: DomainBaseService<T, IdParams> | IDomainBaseServiceMock<T>,
-  signalR: ISignalRInstance | ISignalRMock,
 ) {
   // State
   const items = ref([]) as Ref<T[]>;
@@ -58,7 +56,8 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
       Vue.set(items.value, index, item);
     }
 
-    signalR?.instance.addSubscription(item.id);
+    const w: ICrcWindowObject = window;
+    w.crcSingletons?.signalR?.addSubscription(item.id);
   }
 
   function set(item: T) {
@@ -69,20 +68,13 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
     payload.forEach((item) => upsert(item));
   }
 
-  async function fetch(idParams: IdParams, useGlobalHandler = true, returnFullResponse?: boolean): Promise<T | IRestResponse<T>> {
+  async function fetch(idParams: IdParams, useGlobalHandler = true): Promise<T> {
     try {
-      let res;
-      if (!returnFullResponse) {
-        res = await service.get(idParams, useGlobalHandler);
-        if (res) {
-          set(res);
-        }
-      } else {
-        res = await service.getFullResponse(idParams, useGlobalHandler);
-        if (res.data) {
-          set(res.data);
-        }
+      const res = await service.get(idParams, useGlobalHandler);
+      if (res) {
+        set(res);
       }
+
       return res;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -92,7 +84,7 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
       if (error && !Array.isArray(error)) {
         applicationInsights.trackException(error, { idParams }, 'module.base', 'fetch');
       }
-      return returnFullResponse ? e.response : null;
+      return null;
     }
   }
 
@@ -160,9 +152,8 @@ export function getBaseStoreComponents<T extends IEntity, IdParams>(
 
 export function getEntityStoreComponents<T extends IEntity, IdParams>(
   service: DomainBaseService<T, IdParams>,
-  signalR: ISignalRInstance,
 ) {
-  const readOnlyComponents = getBaseStoreComponents(service, signalR);
+  const readOnlyComponents = getBaseStoreComponents(service);
   const searchLoading = ref(false);
   async function deactivate(idParams: IdParams): Promise<T> {
     try {

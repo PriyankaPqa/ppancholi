@@ -387,7 +387,6 @@ describe('EventDetails.vue', () => {
       eventStore.fetchEventTypes = jest.fn(() => {});
       eventStore.fetchAll = jest.fn(() => {});
       eventStore.fetch = jest.fn();
-      eventStore.fetchFullResponse = jest.fn(() => {});
 
       wrapper = shallowMount(Component, {
         localVue,

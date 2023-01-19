@@ -62,9 +62,12 @@ import { DataTableHeader } from 'vuetify';
 import _debounce from 'lodash/debounce';
 import { Status } from '@libs/entities-lib/base';
 import {
-  IAssessmentFormCombined, IAssessmentResponseCreateRequest, AssociationType,
+  IAssessmentFormCombined, IAssessmentResponseCreateRequest, AssociationType, IAssessmentFormEntity, IAssessmentFormMetadata,
 } from '@libs/entities-lib/assessment-template';
 import helpers from '@/ui/helpers/helpers';
+import { useAssessmentFormStore, useAssessmentFormMetadataStore } from '@/pinia/assessment-form/assessment-form';
+import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 
 const DEBOUNCE_RATE = 500;
 const debouncedSearch = _debounce((context) => {
@@ -102,6 +105,7 @@ export default Vue.extend({
       search: '',
       searchResultIds: [] as Array<string>,
       loading: false,
+      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, IAssessmentFormMetadata>(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
     };
   },
 
@@ -129,7 +133,7 @@ export default Vue.extend({
     },
 
     items() : Array<IAssessmentFormCombined> {
-      return this.$storage.assessmentForm.getters.getByIds(this.searchResultIds, { onlyActive: true });
+      return this.combinedFormStore.getByIds(this.searchResultIds, { onlyActive: true });
     },
   },
 
@@ -149,7 +153,7 @@ export default Vue.extend({
     },
 
     async doSearch() {
-      const assessments = await this.$storage.assessmentForm.actions.search({
+      const assessments = await this.combinedFormStore.search({
         search: helpers.toQuickSearch(this.search),
         filter: { 'Entity/EventId': this.eventId, 'Entity/Status': Status.Active, 'Entity/Id': { notSearchIn_az: this.excludedIds || [] } },
         top: 50,
@@ -164,7 +168,7 @@ export default Vue.extend({
         assessmentFormId: item.entity.id, association: { id: this.caseFileId, type: AssociationType.CaseFile },
       };
 
-      const result = await this.$storage.assessmentResponse.actions.create(response);
+      const result = await useAssessmentResponseStore().create(response);
 
       if (result) {
         this.$toasted.global.success(this.$t('assessment.create.success'));

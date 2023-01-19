@@ -128,6 +128,7 @@ import helpers from '@/ui/helpers/helpers';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { Status } from '@libs/entities-lib/base';
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
+import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 
 export default Vue.extend({
   name: 'ProgramForm',
@@ -245,7 +246,7 @@ export default Vue.extend({
     if (this.isEditMode) {
       try {
         this.loading = true;
-        this.assessmentForms = await this.$storage.assessmentForm.actions.fetchByProgramId(this.localProgram.id);
+        this.assessmentForms = await useAssessmentFormStore().fetchByProgramId(this.localProgram.id);
       } finally {
         this.loading = false;
       }

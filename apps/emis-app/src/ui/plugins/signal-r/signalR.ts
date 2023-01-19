@@ -13,6 +13,15 @@ import { ISignalRService, ISignalRServiceMock } from '@libs/services-lib/signal-
 import { sub } from 'date-fns';
 import { IEntity } from '@libs/entities-lib/base';
 import helpers from '@libs/entities-lib/helpers';
+import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
+import { useUserStore } from '@/pinia/user/user';
+import { useCaseFileReferralMetadataStore, useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
+import { useUiStateStore } from '@/pinia/ui-state/uiState';
+import { useCaseFileDocumentMetadataStore, useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
+import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
+import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
+import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
+import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
 import { IStorage } from '../../../storage/storage.types';
 
@@ -33,8 +42,6 @@ export class SignalR implements ISignalR {
 
   private readonly storage: IStorage;
 
-  private pinia: any;
-
   private service: ISignalRService;
 
   public subscriptions: Record<string, uuid[]>;
@@ -43,12 +50,13 @@ export class SignalR implements ISignalR {
 
   private lastSubscribedNewlyCreatedIds: uuid[];
 
+  private watchedPiniaStores: { getNewlyCreatedIds: (baseDate: Date) => Array<{ id: uuid, createdOn: number }> }[] = [];
+
   constructor({
     service, storage, showConsole,
   }: IOptions) {
     this.service = service;
     this.storage = storage;
-    this.pinia = null;
     this.showConsole = showConsole && false;
     this.lastSubscribedIds = [];
     this.lastSubscribedNewlyCreatedIds = [];
@@ -66,15 +74,15 @@ export class SignalR implements ISignalR {
         this.$signalR = SignalR.instance;
       },
     });
+
+    const w: ICrcWindowObject = window;
+    w.crcSingletons = w.crcSingletons || {};
+    w.crcSingletons.signalR = SignalR.instance;
     return SignalR.instance;
   }
 
   static get instance() {
     return SignalR._instance;
-  }
-
-  public setPinia(pinia: any) {
-    this.pinia = pinia;
   }
 
   public async buildHubConnection() {
@@ -86,7 +94,7 @@ export class SignalR implements ISignalR {
     }
 
     const isSignedIn = await AuthenticationProvider.isAuthenticated();
-    const noAccess = this.pinia.userStore.getUser().hasRole('noAccess');
+    const noAccess = useUserStore().getUser().hasRole('noAccess');
 
     if (isSignedIn && !noAccess) {
       try {
@@ -126,7 +134,7 @@ export class SignalR implements ISignalR {
   }
 
   private initiatedByCurrentUser(entity: IEntity) {
-    const userId = this.pinia.userStore.getUserId();
+    const userId = useUserStore().getUserId();
     return userId === entity.lastUpdatedBy || userId === entity.createdBy;
   }
 
@@ -170,13 +178,13 @@ export class SignalR implements ISignalR {
 
   private listenForUserRoleChanges() {
     this.connection.on('user-account.UserAccountUpdated', async (entity) => {
-      const userId = this.pinia.userStore.getUserId();
+      const userId = useUserStore().getUserId();
       if (entity.id === userId) {
         // Wait for the role change to take effect in the BE and the token to get updated
         // This code only displays the notification that the role has changed in AD, the log out is done after the page navigation.
         // Therefore, it is only an additional UX improvement to keep the user aware of the change, it doesn't need to be 100% reliable
         await helpers.timeout(15000);
-        const roleChanged = this.pinia.userStore.isRoleChanged(await this.pinia.userStore.getCurrentRoles());
+        const roleChanged = useUserStore().isRoleChanged(await useUserStore().getCurrentRoles());
         if (roleChanged) {
           Vue.toasted.global.error(i18n.t('errors.access-change.log-out-on-navigation'));
         }
@@ -251,14 +259,16 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'event',
       entityName: 'Program',
-      action: this.pinia.programStore.setItemFromOutsideNotification,
+      action: useProgramStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'event',
       entityName: 'ProgramMetadata',
-      action: this.pinia.programMetadataStore.setItemFromOutsideNotification,
+      action: useProgramMetadataStore().setItemFromOutsideNotification,
     });
+    this.watchedPiniaStores.push(useProgramStore());
+    this.watchedPiniaStores.push(useProgramMetadataStore());
   }
 
   private listenForUserAccountModuleChanges() {
@@ -279,14 +289,16 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'event',
       entityName: 'Event',
-      action: this.pinia.eventStore.setItemFromOutsideNotification,
+      action: useEventStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'event',
       entityName: 'EventMetadata',
-      action: this.pinia.eventMetadataStore.setItemFromOutsideNotification,
+      action: useEventMetadataStore().setItemFromOutsideNotification,
     });
+    this.watchedPiniaStores.push(useEventStore());
+    this.watchedPiniaStores.push(useEventMetadataStore());
 
     this.listenForOptionItemChanges({
       domain: 'event',
@@ -319,14 +331,16 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'MassAction',
-      action: this.pinia.massActionStore.setItemFromOutsideNotification,
+      action: useMassActionStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'MassActionMetadata',
-      action: this.pinia.massActionMetadataStore.setItemFromOutsideNotification,
+      action: useMassActionMetadataStore().setItemFromOutsideNotification,
     });
+    this.watchedPiniaStores.push(useMassActionStore());
+    this.watchedPiniaStores.push(useMassActionMetadataStore());
   }
 
   private listenForCaseFileModuleChanges() {
@@ -392,14 +406,16 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'Referral',
-      action: this.pinia.caseFileReferralStore.setItemFromOutsideNotification,
+      action: useCaseFileReferralStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'ReferralMetadata',
-      action: this.pinia.caseFileReferralMetadataStore.setItemFromOutsideNotification,
+      action: useCaseFileReferralMetadataStore().setItemFromOutsideNotification,
     });
+    this.watchedPiniaStores.push(useCaseFileReferralStore());
+    this.watchedPiniaStores.push(useCaseFileReferralMetadataStore());
 
     this.listenForOptionItemChanges({
       domain: 'case-file',
@@ -434,14 +450,16 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'Document',
-      action: this.pinia.caseFileDocumentStore.setItemFromOutsideNotification,
+      action: useCaseFileDocumentStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'DocumentMetadata',
-      action: this.pinia.caseFileDocumentMetadataStore.setItemFromOutsideNotification,
+      action: useCaseFileDocumentMetadataStore().setItemFromOutsideNotification,
     });
+    this.watchedPiniaStores.push(useCaseFileDocumentStore());
+    this.watchedPiniaStores.push(useCaseFileDocumentMetadataStore());
 
     this.listenForOptionItemChanges({
       domain: 'case-file',
@@ -455,14 +473,16 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'assessment',
       entityName: 'AssessmentResponse',
-      action: this.storage.assessmentResponse.mutations.setEntityFromOutsideNotification,
+      action: useAssessmentResponseStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'assessment',
       entityName: 'AssessmentResponseMetadata',
-      action: this.storage.assessmentResponse.mutations.setMetadataFromOutsideNotification,
+      action: useAssessmentResponseMetadataStore().setItemFromOutsideNotification,
     });
+    this.watchedPiniaStores.push(useAssessmentResponseStore());
+    this.watchedPiniaStores.push(useAssessmentResponseMetadataStore());
   }
 
   private listenForFinancialAssistanceModuleChanges() {
@@ -643,13 +663,9 @@ export class SignalR implements ISignalR {
       }
     });
 
-    const piniaStores = Object.keys(this.pinia) as Array<string>;
-
-    piniaStores.forEach((storeId) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const store = this.pinia[storeId] as any;
+    this.watchedPiniaStores.forEach((store) => {
       if (store?.getNewlyCreatedIds) {
-        const items = store.getNewlyCreatedIds(baseDate) as Array<{ id: uuid, createdOn: number }>;
+        const items = store.getNewlyCreatedIds(baseDate as Date) as Array<{ id: uuid, createdOn: number }>;
         items.forEach((item) => {
           if (item.id) {
             ids.push(item.id);
@@ -692,7 +708,7 @@ export class SignalR implements ISignalR {
    */
   public async updateSubscriptions() {
     const currentPath = window.location.pathname;
-    const idsToKeep = [...this.pinia.uiStateStore.getAllSearchIds(), ...this.lastSubscribedNewlyCreatedIds];
+    const idsToKeep = [...useUiStateStore().getAllSearchIds(), ...this.lastSubscribedNewlyCreatedIds];
     const idsToUnsubscribe = this.getIdsToUnsubscribe(currentPath, idsToKeep);
 
     // We unsubscribe ids

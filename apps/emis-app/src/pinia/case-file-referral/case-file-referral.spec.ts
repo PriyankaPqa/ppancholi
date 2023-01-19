@@ -1,7 +1,6 @@
 import { mockCaseFileReferralsService } from '@libs/services-lib/case-file-referrals/entity';
 import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
-import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
@@ -13,7 +12,7 @@ import { Status } from '@libs/entities-lib/base';
 
 const entityService = mockCaseFileReferralsService();
 const optionsService = mockOptionItemsServiceService();
-const baseComponents = getBaseStoreComponents<ICaseFileReferralEntity, IdParams>(entityService, mockSignalR());
+const baseComponents = getBaseStoreComponents<ICaseFileReferralEntity, IdParams>(entityService);
 
 const getPinia = () => {
   const pinia = createTestingPinia({

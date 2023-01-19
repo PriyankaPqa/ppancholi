@@ -1,11 +1,14 @@
 import { mockStorage } from '@/storage';
 import { mockSignalRService } from '@libs/services-lib/signal-r';
-import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
-import { useMockProgramStore } from '@/pinia/program/program.mock';
-import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
-import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
-import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
+import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
+import { useCaseFileReferralMetadataStore, useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
+import { useUiStateStore } from '@/pinia/ui-state/uiState';
+import { useCaseFileDocumentMetadataStore, useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
+import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
+import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
+import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
+
 import { SignalR } from './signalR';
 
 const storage = mockStorage();
@@ -19,12 +22,7 @@ SignalR.prototype.listenForOptionItemChanges = jest.fn();
 
 let conn = new SignalR({ service, storage, showConsole: true });
 
-const { eventStore, eventMetadataStore } = useMockEventStore();
-const { caseFileReferralStore, caseFileReferralMetadataStore } = useMockCaseFileReferralStore();
-const { uiStateStore } = useMockUiStateStore();
-const { programStore, programMetadataStore } = useMockProgramStore();
-const { massActionStore, massActionMetadataStore } = useMockMassActionStore();
-const { caseFileDocumentStore, caseFileDocumentMetadataStore } = useMockCaseFileDocumentStore();
+const { eventStore } = useMockEventStore();
 
 describe('signalR', () => {
   beforeEach(() => {
@@ -33,22 +31,10 @@ describe('signalR', () => {
       storage,
       showConsole: false,
     });
+    conn.connection = { on: jest.fn(), stop: jest.fn() };
 
     eventStore.getNewlyCreatedIds = jest.fn(() => [{ id: '2', createdOn: 0 }]);
-    conn.connection = { on: jest.fn(), stop: jest.fn() };
-    conn.setPinia({
-      eventStore,
-      eventMetadataStore,
-      caseFileReferralStore,
-      caseFileReferralMetadataStore,
-      uiStateStore,
-      programStore,
-      programMetadataStore,
-      massActionStore,
-      massActionMetadataStore,
-      caseFileDocumentStore,
-      caseFileDocumentMetadataStore,
-    });
+    conn.listenForEventModuleChanges();
   });
 
   describe('createBindings', () => {
@@ -220,13 +206,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'event',
           entityName: 'Program',
-          action: programStore.setItemFromOutsideNotification,
+          action: useProgramStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'event',
           entityName: 'ProgramMetadata',
-          action: programMetadataStore.setItemFromOutsideNotification,
+          action: useProgramMetadataStore().setItemFromOutsideNotification,
         });
     });
   });
@@ -256,13 +242,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'event',
           entityName: 'Event',
-          action: conn.pinia.eventStore.setItemFromOutsideNotification,
+          action: useEventStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'event',
           entityName: 'EventMetadata',
-          action: conn.pinia.eventMetadataStore.setItemFromOutsideNotification,
+          action: useEventMetadataStore().setItemFromOutsideNotification,
         });
     });
 
@@ -308,13 +294,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'MassAction',
-          action: conn.pinia.massActionStore.setItemFromOutsideNotification,
+          action: useMassActionStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'MassActionMetadata',
-          action: conn.pinia.massActionMetadataStore.setItemFromOutsideNotification,
+          action: useMassActionMetadataStore().setItemFromOutsideNotification,
         });
     });
   });
@@ -401,13 +387,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'Referral',
-          action: conn.pinia.caseFileReferralStore.setItemFromOutsideNotification,
+          action: useCaseFileReferralStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'ReferralMetadata',
-          action: conn.pinia.caseFileReferralMetadataStore.setItemFromOutsideNotification,
+          action: useCaseFileReferralMetadataStore().setItemFromOutsideNotification,
         });
     });
 
@@ -437,13 +423,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'assessment',
           entityName: 'AssessmentResponse',
-          action: conn.storage.assessmentResponse.mutations.setEntityFromOutsideNotification,
+          action: useAssessmentResponseStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'assessment',
           entityName: 'AssessmentResponseMetadata',
-          action: conn.storage.assessmentResponse.mutations.setMetadataFromOutsideNotification,
+          action: useAssessmentResponseMetadataStore().setItemFromOutsideNotification,
         });
     });
   });
@@ -473,13 +459,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'Document',
-          action: conn.pinia.caseFileDocumentStore.setItemFromOutsideNotification,
+          action: useCaseFileDocumentStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           entityName: 'DocumentMetadata',
-          action: conn.pinia.caseFileDocumentMetadataStore.setItemFromOutsideNotification,
+          action: useCaseFileDocumentMetadataStore().setItemFromOutsideNotification,
         });
     });
 
@@ -743,7 +729,7 @@ describe('signalR', () => {
   describe('updateSubscriptions', () => {
     it('should call unsubscribe with correct ids', async () => {
       conn.getIdsToUnsubscribe = jest.fn(() => ['1']);
-      conn.pinia.uiStateStore.getAllSearchIds = jest.fn(() => ['2']);
+      useUiStateStore().getAllSearchIds = jest.fn(() => ['2']);
       conn.unsubscribe = jest.fn();
       await conn.updateSubscriptions();
       expect(conn.unsubscribe).toBeCalledWith(['1']);
@@ -751,7 +737,7 @@ describe('signalR', () => {
 
     it('should call cleanSubscriptionsObjectButSpecified with path and ids to keep', async () => {
       conn.cleanSubscriptionsObjectButSpecified = jest.fn();
-      conn.pinia.uiStateStore.getAllSearchIds = jest.fn(() => ['1']);
+      useUiStateStore().getAllSearchIds = jest.fn(() => ['1']);
       conn.lastSubscribedNewlyCreatedIds = ['2'];
       await conn.updateSubscriptions();
       expect(conn.cleanSubscriptionsObjectButSpecified).toBeCalledWith('/', ['1', '2']);

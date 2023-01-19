@@ -1,5 +1,4 @@
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
-import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { createTestingPinia } from '@pinia/testing';
 import { getExtensionComponents } from '@/pinia/mass-action/mass-action-extension';
 import { defineStore } from 'pinia';
@@ -10,7 +9,7 @@ import {
 } from '@libs/entities-lib/mass-action';
 
 const entityService = mockMassActionService();
-const baseComponents = getBaseStoreComponents<IMassActionEntity, IdsParams>(entityService, mockSignalR());
+const baseComponents = getBaseStoreComponents<IMassActionEntity, IdsParams>(entityService);
 
 const useTestMassActionStore = (opts = {}) => {
   const pinia = createTestingPinia({ stubActions: false });

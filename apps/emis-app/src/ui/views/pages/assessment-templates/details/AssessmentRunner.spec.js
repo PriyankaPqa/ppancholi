@@ -2,17 +2,21 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';
+import { createTestingPinia } from '@pinia/testing';
+import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import Component from './AssessmentRunner.vue';
 
 let storage = mockStorage();
 let services = mockProvider();
 const localVue = createLocalVue();
 
-const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
-
 describe('AssessmentRunner.vue', () => {
   let wrapper;
+  let pinia = createTestingPinia({ stubActions: false });
+  let assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
+  let tenantSettingsStore = useMockTenantSettingsStore(pinia).tenantSettingsStore;
 
   const mount = async (eventId = 'mock-event-id', assessmentResponseId = 'mock-assessmentResponse-id') => {
     jest.clearAllMocks();
@@ -33,6 +37,9 @@ describe('AssessmentRunner.vue', () => {
 
   beforeEach(async () => {
     storage = mockStorage();
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
+    tenantSettingsStore = useTenantSettingsStore(pinia).tenantSettingsStore;
     services = mockProvider();
     await mount();
   });
@@ -94,8 +101,8 @@ describe('AssessmentRunner.vue', () => {
         expect(wrapper.vm.loadDetails).toHaveBeenCalled();
       });
       it('fetches assessmentResponse when id is passed', async () => {
-        expect(storage.assessmentResponse.actions.fetch)
-          .toHaveBeenCalledWith({ id: wrapper.vm.assessmentResponseId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+        expect(assessmentResponseStore.fetch)
+          .toHaveBeenCalledWith({ id: wrapper.vm.assessmentResponseId });
       });
       it('sets survey object', () => {
         expect(wrapper.vm.survey).not.toBeNull();
@@ -136,15 +143,15 @@ describe('AssessmentRunner.vue', () => {
       it('sets response answers from helper and calls save method', async () => {
         wrapper.vm.surveyJsHelper.surveyToAssessmentResponse = jest.fn(() => 'some object');
         await wrapper.vm.saveAnswers(null);
-        expect(storage.assessmentResponse.actions.saveAssessmentAnsweredQuestions).toHaveBeenCalledWith('some object');
-        expect(wrapper.vm.response).toEqual(storage.assessmentResponse.actions.saveAssessmentAnsweredQuestions('some object'));
+        expect(assessmentResponseStore.saveAssessmentAnsweredQuestions).toHaveBeenCalledWith('some object');
+        expect(wrapper.vm.response).toEqual(await assessmentResponseStore.saveAssessmentAnsweredQuestions('some object'));
       });
 
       it('doesnt call save method if no assessmentResponseId', async () => {
         await mount('eventId', null);
         wrapper.vm.surveyJsHelper.surveyToAssessmentResponse = jest.fn(() => 'some object');
         await wrapper.vm.saveAnswers(null);
-        expect(storage.assessmentResponse.actions.saveAssessmentAnsweredQuestions).not.toHaveBeenCalled();
+        expect(assessmentResponseStore.saveAssessmentAnsweredQuestions).not.toHaveBeenCalled();
         expect(wrapper.vm.response).toEqual('some object');
       });
     });

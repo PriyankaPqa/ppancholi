@@ -1,7 +1,6 @@
 import { mockCaseFileDocumentsService } from '@libs/services-lib/case-file-documents/entity';
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { ICaseFileDocumentEntity, mockCaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
-import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { getExtensionComponents } from '@/pinia/case-file-document/case-file-document-extension';
 import { createTestingPinia } from '@pinia/testing';
 import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
@@ -11,7 +10,7 @@ import _sortBy from 'lodash/sortBy';
 import { Status } from '@libs/entities-lib/base';
 
 const entityService = mockCaseFileDocumentsService();
-const baseComponents = getBaseStoreComponents<ICaseFileDocumentEntity, { id: uuid, caseFileId: uuid }>(entityService, mockSignalR());
+const baseComponents = getBaseStoreComponents<ICaseFileDocumentEntity, { id: uuid, caseFileId: uuid }>(entityService);
 const optionService = mockOptionItemsServiceService();
 
 const createTestStore = (opts = {}) => {

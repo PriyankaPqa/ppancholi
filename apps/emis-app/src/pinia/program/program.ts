@@ -1,5 +1,4 @@
 import { httpClient } from '@/services/httpClient';
-import { SignalR } from '@/ui/plugins/signal-r';
 import { getBaseStoreComponents, getEntityStoreComponents } from '@libs/stores-lib/base';
 import { defineStore } from 'pinia';
 import { IProgramEntity, IProgramMetadata, IdParams } from '@libs/entities-lib/program';
@@ -15,7 +14,7 @@ const entityService = new ProgramsService(httpClient);
 const metadataService = new ProgramsMetadataService(httpClient);
 
 // baseComponents is used as a reference for the extension
-const baseEntityComponents = getEntityStoreComponents<Entity, IdParams>(entityService, SignalR);
+const baseEntityComponents = getEntityStoreComponents<Entity, IdParams>(entityService);
 const extensionComponents = getExtensionComponents(baseEntityComponents, entityService);
 
 export const useProgramStore = defineStore(`${storeId}-entities`, () => ({
@@ -24,5 +23,5 @@ export const useProgramStore = defineStore(`${storeId}-entities`, () => ({
 }));
 
 export const useProgramMetadataStore = defineStore(`${storeId}-metadata`, () => ({
-  ...getBaseStoreComponents<Metadata, IdParams>(metadataService, SignalR),
+  ...getBaseStoreComponents<Metadata, IdParams>(metadataService),
 }));

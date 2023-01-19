@@ -4,6 +4,9 @@ import {
   mockAssessmentFormEntity, AssessmentFormEntity, AssessmentTemplateEntity,
 } from '@libs/entities-lib/assessment-template';
 import routes from '@/constants/routes';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template.mock';
+import { createTestingPinia } from '@pinia/testing';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import assessmentDetail from './assessmentDetail';
 
@@ -16,7 +19,10 @@ const assessmentForm = mockAssessmentFormEntity();
 
 const localVue = createLocalVue();
 let storage = mockStorage();
-const { pinia, programStore } = useMockProgramStore();
+let pinia = createTestingPinia({ stubActions: false });
+let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+let assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
+let programStore = useMockProgramStore(pinia).programStore;
 
 describe('assessmentDetail', () => {
   let wrapper;
@@ -44,6 +50,10 @@ describe('assessmentDetail', () => {
 
   beforeEach(async () => {
     storage = mockStorage();
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+    assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
+    programStore = useMockProgramStore(pinia).programStore;
     jest.clearAllMocks();
   });
 
@@ -90,17 +100,17 @@ describe('assessmentDetail', () => {
   describe('Methods', () => {
     describe('loadDetails', () => {
       it('fetches from correct store depending on isFormMode', async () => {
-        await mountWrapper(storage.assessmentForm.actions.fetch().entity.eventId);
+        await mountWrapper(assessmentFormStore.fetch().eventId);
         await wrapper.vm.loadDetails();
-        expect(storage.assessmentForm.actions.fetch)
-          .toHaveBeenCalledWith({ id: wrapper.vm.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
-        expect(wrapper.vm.assessmentTemplate).toEqual(new AssessmentFormEntity(storage.assessmentForm.actions.fetch().entity));
+        expect(assessmentFormStore.fetch)
+          .toHaveBeenCalledWith({ id: wrapper.vm.assessmentTemplateId });
+        expect(wrapper.vm.assessmentTemplate).toEqual(new AssessmentFormEntity(assessmentFormStore.fetch()));
         jest.clearAllMocks();
         await mountWrapper();
         await wrapper.vm.loadDetails();
-        expect(storage.assessmentTemplate.actions.fetch)
-          .toHaveBeenCalledWith({ id: wrapper.vm.assessmentTemplateId }, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
-        expect(wrapper.vm.assessmentTemplate).toEqual(new AssessmentTemplateEntity(storage.assessmentTemplate.actions.fetch().entity));
+        expect(assessmentTemplateStore.fetch)
+          .toHaveBeenCalledWith({ id: wrapper.vm.assessmentTemplateId });
+        expect(wrapper.vm.assessmentTemplate).toEqual(new AssessmentTemplateEntity(assessmentTemplateStore.fetch()));
       });
 
       it('fetches the program if one is associated', async () => {

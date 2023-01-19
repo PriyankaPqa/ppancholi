@@ -22,7 +22,6 @@ import {
 import {
   mockAssessmentFormEntity,
   mockAssessmentResponseEntity,
-  mockAssessmentResponseEntities,
   AssociationType,
   CompletionStatus,
 } from '@libs/entities-lib/assessment-template';
@@ -39,6 +38,8 @@ import flushPromises from 'flush-promises';
 import routes from '@/constants/routes';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import Component from '../CreateEditFinancialAssistanceCaseFile.vue';
 
 const localVue = createLocalVue();
@@ -54,13 +55,17 @@ const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGrou
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
-const { programStore, pinia } = useMockProgramStore(getPiniaForUser('level6'));
-
 describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   let wrapper;
+  let pinia;
+  let programStore;
+  let assessmentResponseStore;
 
   // eslint-disable-next-line no-unused-vars,max-params,@typescript-eslint/no-unused-vars
-  const mountWrapper = async (_fullMount = false, mode = 'edit', pinia = getPiniaForUser('level6'), additionalOverwrites = {}) => {
+  const mountWrapper = async (_fullMount = false, mode = 'edit', currentPinia = getPiniaForUser('level6'), additionalOverwrites = {}) => {
+    pinia = currentPinia;
+    programStore = useMockProgramStore(pinia).programStore;
+    assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
     wrapper = (mount)(Component, {
       shallow: true,
       pinia,
@@ -105,7 +110,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     storage.caseFile.actions.fetch = jest.fn(() => caseFileCombined);
     storage.financialAssistance.getters.items = jest.fn(() => items);
     storage.financialAssistanceCategory.getters.getAll = jest.fn(() => optionItems);
-    storage.assessmentResponse.actions.search = jest.fn(() => mockAssessmentResponseEntities());
     await mountWrapper(false, 'edit', pinia);
   });
 
@@ -765,8 +769,9 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
     describe('fetchAssessmentFormByProgramId', () => {
       it('fetches assessment forms by program id', async () => {
+        const assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
         await wrapper.vm.fetchAssessmentFormByProgramId('programId');
-        expect(storage.assessmentForm.actions.fetchByProgramId).toHaveBeenCalledWith('programId');
+        expect(assessmentFormStore.fetchByProgramId).toHaveBeenCalledWith('programId');
       });
     });
 
@@ -774,15 +779,18 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       it('searches storage', async () => {
         await mountWrapper();
         await wrapper.vm.fetchAssessmentResponseByCaseFileId('caseFileId');
-        expect(storage.assessmentResponse.actions.search).toHaveBeenCalledWith({
-          filter: {
-            'Entity/Association/Id': 'caseFileId',
-            'Entity/Association/Type': AssociationType.CaseFile,
+        expect(assessmentResponseStore.search).toHaveBeenCalledWith({
+          params: {
+            filter: {
+              'Entity/Association/Id': 'caseFileId',
+              'Entity/Association/Type': AssociationType.CaseFile,
+            },
+            top: 999,
+            queryType: 'full',
+            searchMode: 'all',
           },
-          top: 999,
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, true);
+          searchEndpoint: null,
+        });
       });
     });
 

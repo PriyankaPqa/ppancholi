@@ -191,6 +191,8 @@ import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-as
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
+import { useAssessmentFormStore, useAssessmentFormMetadataStore } from '@/pinia/assessment-form/assessment-form';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramStore } from '@/pinia/program/program';
 
 export default Vue.extend({
@@ -219,6 +221,7 @@ export default Vue.extend({
       loading: false,
       financialAssistanceTables: [] as IFinancialAssistanceTableEntity[],
       assessmentIds: [] as string[],
+      combinedFormStore: new CombinedStoreFactory(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
     };
   },
 
@@ -228,7 +231,7 @@ export default Vue.extend({
     },
 
     assessments(): IAssessmentFormEntity[] {
-      return this.$storage.assessmentForm.getters.getByIds(this.assessmentIds).map((a) => a.entity);
+      return useAssessmentFormStore().getByIds(this.assessmentIds);
     },
 
     requiredAssessmentForms(): IAssessmentFormEntity[] {
@@ -237,7 +240,7 @@ export default Vue.extend({
       }
 
       return _sortBy(
-        this.$storage.assessmentForm.getters.getByIds(this.program.eligibilityCriteria.completedAssessmentIds).map((a) => a.entity),
+        useAssessmentFormStore().getByIds(this.program.eligibilityCriteria.completedAssessmentIds),
         (assessmentForm) => this.$m(assessmentForm.name),
       );
     },
@@ -253,7 +256,7 @@ export default Vue.extend({
       }
 
       this.financialAssistanceTables = await this.$storage.financialAssistance.actions.fetchByProgramId(this.programId);
-      this.assessmentIds = (await this.$storage.assessmentForm.actions.search({
+      this.assessmentIds = (await this.combinedFormStore.search({
         filter: { 'Entity/ProgramId': this.programId },
         top: 999,
         queryType: 'full',

@@ -1,5 +1,4 @@
 import { Ref } from 'vue';
-import { IRestResponse } from '@libs/services-lib/http-client';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import { IEntity } from '@libs/entities-lib/base';
 
@@ -20,7 +19,7 @@ export interface BaseGetters <T extends IEntity> {
 export interface BaseActions <T extends IEntity, IdParams> {
   set: (item: T) => void
   setAll: (payload: Array<T>) => void
-  fetch: (idParams: IdParams, useGlobalHandler?: boolean, returnFullResponse?: boolean) => Promise<T | IRestResponse<T>>
+  fetch: (idParams: IdParams, useGlobalHandler?: boolean) => Promise<T>
   fetchAll: (parentId?: Omit<IdParams, 'id'>) => Promise<T[]>
   fetchAllIncludingInactive: (parentId?: Omit<IdParams, 'id'>) => Promise<T[]>
   addNewlyCreatedId: (item: T) => void,

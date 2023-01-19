@@ -3,13 +3,19 @@ import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template.mock';
+import { createTestingPinia } from '@pinia/testing';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from './AssessmentTemplatesHome.vue';
 
 const localVue = createLocalVue();
 let storage = mockStorage();
+let pinia = createTestingPinia({ stubActions: false });
+let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+let assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
+let programStore = useMockProgramStore(pinia).programStore;
 
-const { pinia, programStore } = useMockProgramStore();
 describe('AssessmentTemplatesHome.vue', () => {
   let wrapper;
 
@@ -31,6 +37,10 @@ describe('AssessmentTemplatesHome.vue', () => {
 
   beforeEach(async () => {
     storage = mockStorage();
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+    assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
+    programStore = useMockProgramStore(pinia).programStore;
     jest.clearAllMocks();
   });
 
@@ -97,28 +107,22 @@ describe('AssessmentTemplatesHome.vue', () => {
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.tableData;
 
-        expect(storage.assessmentTemplate.getters.getByIds).toHaveBeenCalled();
+        expect(assessmentTemplateStore.getByIds).toHaveBeenCalled();
 
-        const params = storage.assessmentTemplate.getters.getByIds.mock.calls[storage.assessmentTemplate.getters.getByIds.mock.calls.length - 1];
+        const params = assessmentTemplateStore.getByIds.mock.calls[assessmentTemplateStore.getByIds.mock.calls.length - 1];
         expect(params[0]).toEqual(['abc']);
-        expect(params[1].baseDate).toBeFalsy();
-        expect(params[1].prependPinnedItems).toBeTruthy();
-        expect(params[1].parentId).toBeFalsy();
-        expect(data.length).toBe(storage.assessmentTemplate.getters.getByIds().length);
+        expect(data.length).toBe(assessmentTemplateStore.getByIds().length);
       });
 
       it('should call getById  with correct storage for forms', async () => {
-        await mountWrapper(true, 6, 'role', { propsData: { id: 'abc' } });
+        await mountWrapper(false, 6, 'role', { propsData: { id: 'abc' } });
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.tableData;
-        expect(storage.assessmentForm.getters.getByIds).toHaveBeenCalled();
+        expect(assessmentFormStore.getByIds).toHaveBeenCalled();
 
-        const params = storage.assessmentForm.getters.getByIds.mock.calls[storage.assessmentForm.getters.getByIds.mock.calls.length - 1];
+        const params = assessmentFormStore.getByIds.mock.calls[assessmentFormStore.getByIds.mock.calls.length - 1];
         expect(params[0]).toEqual(['abc']);
-        expect(params[1].baseDate).toBeFalsy();
-        expect(params[1].prependPinnedItems).toBeTruthy();
-        expect(params[1].parentId).toEqual({ eventId: 'abc' });
-        expect(data.length).toBe(storage.assessmentForm.getters.getByIds().length);
+        expect(data.length).toBe(assessmentFormStore.getByIds().length);
       });
     });
 
@@ -137,7 +141,7 @@ describe('AssessmentTemplatesHome.vue', () => {
       });
 
       it('should return for forms', async () => {
-        await mountWrapper(true, 6, 'role', { propsData: { id: 'abc' } });
+        await mountWrapper(false, 6, 'role', { propsData: { id: 'abc' } });
 
         expect(wrapper.vm.customColumns).toEqual({
           name: 'Entity/Name/Translation/en',
@@ -209,7 +213,7 @@ describe('AssessmentTemplatesHome.vue', () => {
 
     describe('baseRoute', () => {
       it('return home of correct mode', async () => {
-        await mountWrapper(true, 6, 'role', { propsData: { id: 'abc' } });
+        await mountWrapper(false, 6, 'role', { propsData: { id: 'abc' } });
         expect(wrapper.vm.baseRoute).toBe(routes.events.assessments);
         await mountWrapper();
         expect(wrapper.vm.baseRoute).toBe(routes.assessmentTemplates);
@@ -218,7 +222,7 @@ describe('AssessmentTemplatesHome.vue', () => {
 
     describe('isFormMode', () => {
       it('return true if assessment is an assessment form', async () => {
-        await mountWrapper(true, 6, 'role', { propsData: { id: 'abc' } });
+        await mountWrapper(false, 6, 'role', { propsData: { id: 'abc' } });
         expect(wrapper.vm.isFormMode).toBeTruthy();
         await mountWrapper();
         expect(wrapper.vm.isFormMode).toBeFalsy();
@@ -227,7 +231,7 @@ describe('AssessmentTemplatesHome.vue', () => {
 
     describe('labels', () => {
       it('return correct value based on form mode', async () => {
-        await mountWrapper(true, 6, 'role', { propsData: { id: 'abc' } });
+        await mountWrapper(false, 6, 'role', { propsData: { id: 'abc' } });
         expect(wrapper.vm.labels).toEqual({
           header: {
             title: 'assessments.title',
@@ -291,32 +295,38 @@ describe('AssessmentTemplatesHome.vue', () => {
         await mountWrapper();
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.assessmentTemplate.actions.search).toHaveBeenCalledWith({
-          search: params.search,
-          filter: { MyFilter: 'zzz' },
-          top: params.top,
-          skip: params.skip,
-          orderBy: params.orderBy,
-          count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, true);
+        expect(assessmentTemplateStore.search).toHaveBeenCalledWith({
+          params: {
+            search: params.search,
+            filter: { MyFilter: 'zzz' },
+            top: params.top,
+            skip: params.skip,
+            orderBy: params.orderBy,
+            count: true,
+            queryType: 'full',
+            searchMode: 'all',
+          },
+          searchEndpoint: null,
+        });
       });
 
       it('should call storage actions with proper parameters for forms mode', async () => {
-        await mountWrapper(true, 6, 'role', { propsData: { id: 'abc' } });
+        await mountWrapper(false, 6, 'role', { propsData: { id: 'abc' } });
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.assessmentForm.actions.search).toHaveBeenCalledWith({
-          search: params.search,
-          filter: { MyFilter: 'zzz', 'Entity/EventId': 'abc' },
-          top: params.top,
-          skip: params.skip,
-          orderBy: params.orderBy,
-          count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, true);
+        expect(assessmentFormStore.search).toHaveBeenCalledWith({
+          params: {
+            search: params.search,
+            filter: { MyFilter: 'zzz', 'Entity/EventId': 'abc' },
+            top: params.top,
+            skip: params.skip,
+            orderBy: params.orderBy,
+            count: true,
+            queryType: 'full',
+            searchMode: 'all',
+          },
+          searchEndpoint: null,
+        });
       });
     });
 

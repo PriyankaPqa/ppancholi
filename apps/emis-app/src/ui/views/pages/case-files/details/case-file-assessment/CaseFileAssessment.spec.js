@@ -2,8 +2,11 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import {
-  AssociationType, AssessmentFrequencyType, CompletionStatus, PublishStatus,
+  AssociationType, AssessmentFrequencyType, CompletionStatus, PublishStatus, mockCombinedAssessmentResponse,
 } from '@libs/entities-lib/assessment-template';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
+import { createTestingPinia } from '@pinia/testing';
 import { Status } from '@libs/entities-lib/base';
 import routes from '@/constants/routes';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
@@ -13,8 +16,10 @@ const localVue = createLocalVue();
 let storage = mockStorage();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
-
-const { pinia } = useMockTenantSettingsStore();
+let pinia = createTestingPinia({ stubActions: false });
+let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+let assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
+useMockAssessmentResponseStore(pinia);
 
 const mockMappedAssessments = [
   {
@@ -119,6 +124,10 @@ describe('CaseFileAssessment.vue', () => {
 
   beforeEach(async () => {
     storage = mockStorage();
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+    assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
+    useMockTenantSettingsStore(pinia);
     jest.clearAllMocks();
   });
 
@@ -185,15 +194,11 @@ describe('CaseFileAssessment.vue', () => {
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.items;
 
-        expect(storage.assessmentResponse.getters.getByIds).toHaveBeenCalled();
+        expect(assessmentResponseStore.getByIds).toHaveBeenCalled();
 
-        const params = storage.assessmentResponse.getters.getByIds.mock.calls[storage.assessmentResponse.getters.getByIds.mock.calls.length - 1];
+        const params = assessmentResponseStore.getByIds.mock.calls[assessmentResponseStore.getByIds.mock.calls.length - 1];
         expect(params[0]).toEqual(['abc']);
-        expect(params[1].onlyActive).toBeTruthy();
-        expect(params[1].baseDate).toEqual(wrapper.vm.searchExecutionDate);
-        expect(params[1].prependPinnedItems).toBeTruthy();
-        expect(params[1].parentId).toEqual({ 'association.id': 'cfId' });
-        expect(data.length).toBe(storage.assessmentResponse.getters.getByIds().length);
+        expect(data.length).toBe(await assessmentResponseStore.getByIds().length);
       });
     });
 
@@ -203,15 +208,11 @@ describe('CaseFileAssessment.vue', () => {
         const items = wrapper.vm.items;
         const data = wrapper.vm.assessments;
 
-        expect(storage.assessmentForm.getters.getByIds).toHaveBeenCalled();
+        expect(assessmentFormStore.getByIds).toHaveBeenCalled();
 
-        const params = storage.assessmentForm.getters.getByIds.mock.calls[storage.assessmentForm.getters.getByIds.mock.calls.length - 1];
+        const params = assessmentFormStore.getByIds.mock.calls[assessmentFormStore.getByIds.mock.calls.length - 1];
         expect(params[0]).toEqual(items.map((i) => i.entity.assessmentFormId));
-        expect(params[1].onlyActive).toBeFalsy();
-        expect(params[1].baseDate).toBeFalsy();
-        expect(params[1].prependPinnedItems).toBeFalsy();
-        expect(params[1].parentId).toBeFalsy();
-        expect(data.length).toBe(storage.assessmentForm.getters.getByIds().length);
+        expect(data.length).toBe(items.length);
       });
     });
 
@@ -220,14 +221,14 @@ describe('CaseFileAssessment.vue', () => {
         await mountWrapper();
         expect(wrapper.vm.oneTimeAssessmentsIds).toEqual([]);
 
-        const assessments = storage.assessmentForm.getters.getByIds();
-        assessments[0].entity.frequency = AssessmentFrequencyType.OneTime;
+        const assessments = assessmentFormStore.getByIds();
+        assessments[0].frequency = AssessmentFrequencyType.OneTime;
 
-        storage.assessmentForm.getters.getByIds = jest.fn(() => assessments);
-        storage.assessmentResponse.getters.getByIds = jest.fn(() => assessments.map((a) => ({ entity: { assessmentFormId: a.entity.id } })));
+        assessmentFormStore.getByIds = jest.fn(() => assessments);
+        assessmentResponseStore.getByIds = jest.fn(() => assessments.map((a) => ({ assessmentFormId: a.id })));
         await mountWrapper();
 
-        expect(wrapper.vm.oneTimeAssessmentsIds).toEqual([assessments[0].entity.id]);
+        expect(wrapper.vm.oneTimeAssessmentsIds).toEqual([assessments[0].id]);
 
         await mountWrapper(false, 1, null, {
           computed: {
@@ -329,7 +330,7 @@ describe('CaseFileAssessment.vue', () => {
         await mountWrapper();
         wrapper.vm.fetchAssessments = jest.fn();
         jest.clearAllMocks();
-        await wrapper.setData({ searchResultIds: 'hello' });
+        await wrapper.setData({ searchResultIds: ['hello'] });
         expect(wrapper.vm.fetchAssessments).toHaveBeenCalled();
       });
     });
@@ -339,8 +340,8 @@ describe('CaseFileAssessment.vue', () => {
     describe('mapAssessments', () => {
       it('returns mapped data', async () => {
         await mountWrapper();
-        const form = storage.assessmentForm.getters.getByIds()[0].entity;
-        const response = storage.assessmentResponse.getters.getByIds()[0];
+        const form = assessmentFormStore.getByIds()[0];
+        const response = mockCombinedAssessmentResponse({ id: '1' });
         response.entity.timestamp = new Date('2022-09-09T16:33:11.700Z');
 
         expect(wrapper.vm.mapAssessments([{ form, response }])).toEqual([{
@@ -481,12 +482,12 @@ describe('CaseFileAssessment.vue', () => {
     describe('copyLink', () => {
       it('should copy the url by fetching all the right parameters', async () => {
         navigator.clipboard = { writeText: jest.fn() };
-        const item = storage.assessmentResponse.getters.getByIds()[0];
+        const item = assessmentResponseStore.getByIds()[0];
         await mountWrapper();
         wrapper.vm.$storage.household.getters.get = jest.fn(() => ({ entity: { primaryBeneficiary: 'benefId' } }));
         wrapper.vm.$services.households.getPerson = jest.fn(() => ({ contactInformation: { preferredLanguage: { optionItemId: 'frId' } } }));
         wrapper.vm.$storage.registration.actions.fetchPreferredLanguages = jest.fn(() => ([{ id: 'frId', languageCode: 'fr' }]));
-        await wrapper.vm.copyLink({ id: item.entity.id });
+        await wrapper.vm.copyLink({ id: item.id });
         await wrapper.vm.$nextTick();
         expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://registration domain fr/fr/assessment/1dea3c36-d6a5-4e6c-ac36-078677b7da5f0/044fcd68-3d70-4a3a-b5c8-22da9e01730f/1');
         expect(wrapper.vm.$storage.household.getters.get).toHaveBeenCalledWith(wrapper.vm.caseFile.entity.householdId);
@@ -499,12 +500,15 @@ describe('CaseFileAssessment.vue', () => {
       it('searches storage', async () => {
         await mountWrapper();
         await wrapper.vm.fetchAssessments();
-        expect(storage.assessmentForm.actions.search).toHaveBeenCalledWith({
-          filter: { 'Entity/Id': { searchIn_az: wrapper.vm.items.map((i) => i.entity.assessmentFormId) } },
-          top: 999,
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, true);
+        expect(assessmentFormStore.search).toHaveBeenCalledWith({
+          params: {
+            filter: { 'Entity/Id': { searchIn_az: wrapper.vm.items.map((i) => i.entity.assessmentFormId) } },
+            top: 999,
+            queryType: 'full',
+            searchMode: 'all',
+          },
+          searchEndpoint: null,
+        });
       });
     });
 
@@ -512,16 +516,20 @@ describe('CaseFileAssessment.vue', () => {
       it('searches storage', async () => {
         await mountWrapper();
         await wrapper.vm.fetchData({});
-        expect(storage.assessmentResponse.actions.search).toHaveBeenCalledWith({
-          filter: {
-            'Entity/Association/Id': 'cfId',
-            'Entity/Association/Type': AssociationType.CaseFile,
+        expect(assessmentResponseStore.search).toHaveBeenCalledWith({
+          params:
+          {
+            filter: {
+              'Entity/Association/Id': 'cfId',
+              'Entity/Association/Type': AssociationType.CaseFile,
+            },
+            top: 999,
+            count: true,
+            queryType: 'full',
+            searchMode: 'all',
           },
-          top: 999,
-          count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        }, null, true);
+          searchEndpoint: null,
+        });
       });
     });
 
@@ -535,7 +543,7 @@ describe('CaseFileAssessment.vue', () => {
           title: 'assessmentResponse.confirm.delete.title',
           messages: 'assessmentResponse.confirm.delete.message',
         });
-        expect(storage.assessmentResponse.actions.deactivate).toHaveBeenCalledWith(response);
+        expect(assessmentResponseStore.deactivate).toHaveBeenCalledWith(response);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalled();
       });
       it('doesnt call deactivate if no confirmation', async () => {
@@ -548,7 +556,7 @@ describe('CaseFileAssessment.vue', () => {
           title: 'assessmentResponse.confirm.delete.title',
           messages: 'assessmentResponse.confirm.delete.message',
         });
-        expect(storage.assessmentResponse.actions.deactivate).toHaveBeenCalledTimes(0);
+        expect(assessmentResponseStore.deactivate).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.$toasted.global.success).not.toHaveBeenCalled();
       });
     });

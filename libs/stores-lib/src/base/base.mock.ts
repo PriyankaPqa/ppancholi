@@ -24,9 +24,9 @@ export function getMockEntityStoreComponents(items: Array<unknown>) {
   return {
     ...getMockBaseStoreComponents(items),
     searchLoading: false,
-    deactivate: jest.fn(),
-    activate: jest.fn(),
-    search: jest.fn(),
+    deactivate: jest.fn(() => items[0]),
+    activate: jest.fn(() => items[0]),
+    search: jest.fn(() => ({ ids: ['1'], count: 1, value: [{ entity: { id: '1' }, metadata: { id: '1' } }] })),
     setSearchLoading: jest.fn(),
     setItemFromOutsideNotification: jest.fn(),
   };

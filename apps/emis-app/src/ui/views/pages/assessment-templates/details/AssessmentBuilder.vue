@@ -20,6 +20,8 @@ import { SurveyJsHelper, ISurveyCreator } from '@libs/shared-lib/plugins/surveyJ
 import { SurveyJsTextExtractor, IExtractedSurveyObject } from '@libs/shared-lib/plugins/surveyJs/SurveyJsTextExtractor';
 import metadata from '@/ui/mixins/metadata';
 import helpers from '@/ui/helpers/helpers';
+import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
+import { useAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import assessmentDetail from './assessmentDetail';
 import AssessmentExport from './AssessmentExport.vue';
@@ -108,9 +110,9 @@ export default mixins(assessmentDetail, metadata).extend({
       this.assessmentTemplate.questions = this.surveyJsHelper.getAssessmentQuestions();
 
       if (this.isFormMode) {
-        await this.$storage.assessmentForm.actions.updateAssessmentStructure(this.assessmentForm);
+        await useAssessmentFormStore().updateAssessmentStructure(this.assessmentForm);
       } else {
-        await this.$storage.assessmentTemplate.actions.updateAssessmentStructure(this.assessmentTemplate);
+        await useAssessmentTemplateStore().updateAssessmentStructure(this.assessmentTemplate);
       }
       this.lastRawJsonSaved = this.assessmentTemplate.externalToolState?.data?.rawJson;
       callback(saveNo, true);

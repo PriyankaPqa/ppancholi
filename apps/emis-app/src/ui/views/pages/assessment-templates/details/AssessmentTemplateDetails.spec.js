@@ -1,23 +1,28 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   mockAssessmentTotalSubmissions,
-  mockCombinedAssessmentForm, mockCombinedAssessmentTemplate,
 } from '@libs/entities-lib/assessment-template';
 import { mockStorage } from '@/storage';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template.mock';
+import { createTestingPinia } from '@pinia/testing';
+import flushPromises from 'flush-promises';
 import Component from './AssessmentTemplateDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
-const { pinia } = useMockProgramStore();
+const pinia = createTestingPinia({ stubActions: false });
+const assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+const assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
+const programStore = useMockProgramStore(pinia).programStore;
 
 describe('AssessmentTemplateDetails', () => {
   let wrapper;
-  const combinedAssessmentForm = mockCombinedAssessmentForm();
-  const assessmentForm = combinedAssessmentForm.entity;
-  const combinedAssessmentTemplate = mockCombinedAssessmentTemplate();
+  const assessmentForm = assessmentFormStore.getById();
   const assessmentTotalSubmissions = mockAssessmentTotalSubmissions();
-  const assessmentTemplate = combinedAssessmentTemplate.entity;
+  const assessmentTemplate = assessmentTemplateStore.getById();
+  const program = programStore.getById();
 
   describe('Computed', () => {
     beforeEach(async () => {
@@ -37,7 +42,10 @@ describe('AssessmentTemplateDetails', () => {
           },
         },
       });
+
+      await flushPromises();
       await wrapper.setData({ assessmentTemplate: assessmentForm });
+      await wrapper.setData({ program });
     });
 
     describe('assessmentTemplateData', () => {
@@ -99,6 +107,7 @@ describe('AssessmentTemplateDetails', () => {
           },
         });
 
+        await flushPromises();
         await wrapper.setData({ assessmentTemplate });
 
         expect(wrapper.vm.assessmentTemplateData).toEqual([
@@ -158,10 +167,7 @@ describe('AssessmentTemplateDetails', () => {
     });
 
     it('should call fetch', () => {
-      expect(wrapper.vm.$storage.assessmentForm.actions.fetch).toHaveBeenCalledWith(
-        { id: 'mock-assessmentTemplate-id' },
-        { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-      );
+      expect(useMockAssessmentFormStore(pinia).assessmentFormStore.fetch).toHaveBeenCalledWith({ id: 'mock-assessmentTemplate-id' });
     });
   });
 

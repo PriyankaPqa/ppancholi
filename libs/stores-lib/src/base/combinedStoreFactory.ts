@@ -2,14 +2,14 @@ import helpers from '@libs/entities-lib/helpers';
 import { IEntity, IEntityCombined, Status } from '@libs/entities-lib/base';
 import _isEmpty from 'lodash/isEmpty';
 import {
- IAzureSearchParams, IAzureTableSearchResults, ICombinedIndex, IRestResponse,
+ IAzureSearchParams, IAzureTableSearchResults, ICombinedIndex,
 } from '@libs/shared-lib/types';
-import { IFullResponseCombined } from '@libs/services-lib/http-client';
+import { BaseEntityStoreComponents, BaseStoreComponents } from './base.types';
 
 export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEntity, IdParams> {
-  private storeEntity;
+  private storeEntity: BaseEntityStoreComponents<TEntity, IdParams>;
 
-  private readonly storeMetadata;
+  private readonly storeMetadata: BaseStoreComponents<TMetadata, IdParams>;
 
   constructor(pStoreEntity: any, pStoreMetadata: any) {
     this.storeEntity = pStoreEntity;
@@ -61,7 +61,7 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
       .map((x) => x.id) : [];
 
     if (pinnedIds.length && opts.parentId && typeof opts.parentId === 'object') {
-      let newEntities: TEntity[] = this.storeEntity.getByIds(pinnedIds);
+      let newEntities = this.storeEntity.getByIds(pinnedIds);
       // eslint-disable-next-line
       for (const [key, value] of Object.entries(opts.parentId)) {
         if (Array.isArray(value)) { // For a case where we want to include several values of a same property. Ex: parentId: {type: ['A', 'B']}
@@ -105,16 +105,16 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
       searchEndpoint,
     });
 
-    const data = res?.value;
+    const data = res?.value as ICombinedIndex<TEntity, TMetadata>[];
 
     if (data) {
-      const filteredData = data.filter((e: ICombinedIndex<TEntity, TMetadata>) => e.entity?.id);
+      const filteredData = data.filter((e) => e.entity?.id);
 
       const ids = [] as string [];
       const entities = [] as TEntity[];
       const metadata = [] as TMetadata[];
 
-      filteredData.forEach((r: ICombinedIndex<TEntity, TMetadata>) => {
+      filteredData.forEach((r) => {
         ids.push(r.entity.id);
         entities.push({ ...r.entity });
         metadata.push({ ...r.metadata });
@@ -150,17 +150,17 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
 
   getByCriteria(query: string, searchAll: boolean, searchAmong: Array<string>) {
     // We get results from entities and metadata
-    const entities = this.storeEntity.getByCriteria(query, searchAll, searchAmong) as Array<TEntity>;
-    const metadata = this.storeMetadata.getByCriteria(query, searchAll, searchAmong) as Array<TMetadata>;
+    const entities = this.storeEntity.getByCriteria(query, searchAll, searchAmong);
+    const metadata = this.storeMetadata.getByCriteria(query, searchAll, searchAmong);
 
     const entityIds = entities.map((h) => h.id);
     const metadataIds = metadata.map((m) => m.id);
 
     const matchingIds = entityIds.concat(metadataIds);
 
-    const foundEntities = this.storeEntity.getAll().filter((e: TEntity) => matchingIds.indexOf(e.id) >= 0);
+    const foundEntities = this.storeEntity.getAll().filter((e) => matchingIds.indexOf(e.id) >= 0);
 
-    const foundMetadata = this.storeMetadata.getAll().filter((e: TMetadata) => matchingIds.indexOf(e.id) >= 0);
+    const foundMetadata = this.storeMetadata.getAll().filter((e) => matchingIds.indexOf(e.id) >= 0);
 
     return this.combinedCollections(foundEntities, foundMetadata);
   }
@@ -184,32 +184,6 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
     return {
       entity,
       metadata,
-    };
-  }
-
-  async fetchFullResponse(idParams: IdParams, {
-    useEntityGlobalHandler,
-    useMetadataGlobalHandler,
-    returnEntityFullResponse,
-    returnMetadataFullResponse,
-  } = {
-    useEntityGlobalHandler: true,
-    useMetadataGlobalHandler: true,
-    returnEntityFullResponse: true,
-    returnMetadataFullResponse: true,
-  }): Promise<IFullResponseCombined<TEntity, TMetadata>> {
-    const requests = [
-      this.storeEntity.fetch(idParams, useEntityGlobalHandler, returnEntityFullResponse),
-      this.storeMetadata.fetch(idParams, useMetadataGlobalHandler, returnMetadataFullResponse),
-    ];
-
-    const results = await Promise.all(requests);
-    const fullResponseEntity = results[0] as IRestResponse<TEntity>;
-    const fullResponseMetadata = results[1] as IRestResponse<TMetadata> || null;
-
-    return {
-      entity: fullResponseEntity,
-      metadata: fullResponseMetadata,
     };
   }
 

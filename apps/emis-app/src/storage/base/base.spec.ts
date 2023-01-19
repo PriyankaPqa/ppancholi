@@ -198,29 +198,6 @@ describe('BaseStorage', () => {
       });
     });
 
-    describe('fetchFullResponse', () => {
-      it('should call action fetch from both module', async () => {
-        await storage.actions.fetchFullResponse(id, {
-          useEntityGlobalHandler: true,
-          useMetadataGlobalHandler: false,
-          returnEntityFullResponse: false,
-          returnMetadataFullResponse: true,
-        });
-        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/fetch`, { idParams: id, useGlobalHandler: true, returnFullResponse: false });
-        expect(store.dispatch).toBeCalledWith(`${storage.metadataModuleName}/fetch`, { idParams: id, useGlobalHandler: false, returnFullResponse: true });
-      });
-
-      it('should return full response entity combined with its full response metadata', async () => {
-        store.dispatch = jest.fn()
-          .mockReturnValueOnce(Promise.resolve(mockEntities[0]))
-          .mockReturnValueOnce(Promise.resolve(mockMetadatum[0]));
-        const storage = new BaseStorageTest(store, entityModuleName, metadataModuleName);
-        const res = await storage.actions.fetchFullResponse(id);
-        const expected = { entity: mockEntities[0], metadata: mockMetadatum[0] };
-        expect(res).toEqual(expected);
-      });
-    });
-
     describe('fetchAll', () => {
       it('should call action fetchAll from both module', async () => {
         const params: uuid = null;

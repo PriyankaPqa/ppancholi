@@ -58,8 +58,10 @@ import { RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import _debounce from 'lodash/debounce';
 import { Status } from '@libs/entities-lib/base';
-import { IAssessmentBaseEntity } from '@libs/entities-lib/assessment-template';
+import { IAssessmentBaseEntity, IAssessmentTemplateEntity, IAssessmentTemplateMetadata } from '@libs/entities-lib/assessment-template';
 import helpers from '@/ui/helpers/helpers';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useAssessmentTemplateStore, useAssessmentTemplateMetadataStore } from '@/pinia/assessment-template/assessment-template';
 
 const DEBOUNCE_RATE = 500;
 const debouncedSearch = _debounce((context) => {
@@ -85,6 +87,7 @@ export default Vue.extend({
       search: '',
       searchResultIds: [] as Array<string>,
       loading: false,
+      combinedTemplateStore: new CombinedStoreFactory<IAssessmentTemplateEntity, IAssessmentTemplateMetadata>(useAssessmentTemplateStore(), useAssessmentTemplateMetadataStore()),
     };
   },
 
@@ -106,7 +109,7 @@ export default Vue.extend({
     },
 
     items() : Array<IAssessmentBaseEntity> {
-      return this.$storage.assessmentTemplate.getters.getByIds(this.searchResultIds, { onlyActive: true }).map((a) => a.entity);
+      return useAssessmentTemplateStore().getByIds(this.searchResultIds, true);
     },
   },
 
@@ -126,7 +129,7 @@ export default Vue.extend({
     },
 
     async doSearch() {
-      const assessments = await this.$storage.assessmentTemplate.actions.search({
+      const assessments = await this.combinedTemplateStore.search({
         search: helpers.toQuickSearch(this.search),
         filter: { 'Entity/Status': Status.Active },
         top: 50,

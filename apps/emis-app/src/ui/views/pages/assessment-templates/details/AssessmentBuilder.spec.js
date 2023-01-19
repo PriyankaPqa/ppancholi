@@ -2,6 +2,9 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockProvider } from '@/services/provider';
 import { SurveyJsTextExtractor } from '@libs/shared-lib/plugins/surveyJs/SurveyJsTextExtractor';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template.mock';
+import { createTestingPinia } from '@pinia/testing';
 import flushPromises from 'flush-promises';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from './AssessmentBuilder.vue';
@@ -9,8 +12,11 @@ import Component from './AssessmentBuilder.vue';
 let storage = mockStorage();
 let services = mockProvider();
 const localVue = createLocalVue();
+let pinia = createTestingPinia({ stubActions: false });
+let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+let assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
+let tenantSettingsStore = useMockTenantSettingsStore(pinia).tenantSettingsStore;
 
-const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
 describe('AssessmentBuilder', () => {
   let wrapper;
 
@@ -39,6 +45,10 @@ describe('AssessmentBuilder', () => {
 
   beforeEach(async () => {
     storage = mockStorage();
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+    assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
+    tenantSettingsStore = useMockTenantSettingsStore(pinia).tenantSettingsStore;
     services = mockProvider();
     services.assessmentForms.assessmentTotalSubmissions = jest.fn(() => ({ totalAssigned: 0 }));
     await mountWrapper();
@@ -55,7 +65,7 @@ describe('AssessmentBuilder', () => {
         expect(wrapper.vm.loadDetails).toHaveBeenCalled();
       });
       it('sets creator with default value when no existing data', async () => {
-        storage.assessmentForm.actions.fetch = jest.fn(() => null);
+        assessmentFormStore.fetch = jest.fn(() => null);
         await mountWrapper();
         expect(wrapper.vm.creator).not.toBeNull();
         expect(JSON.stringify(JSON.parse(wrapper.vm.creator.text))).toBe(JSON.stringify(JSON.parse(wrapper.vm.getDefaultJson())));
@@ -150,11 +160,11 @@ describe('AssessmentBuilder', () => {
       it('calls save method for correct storage and sets lastRawJsonSaved', async () => {
         wrapper.vm.lastRawJsonSaved = 'nope';
         await wrapper.vm.saveSurveyJson(null, () => {});
-        expect(storage.assessmentForm.actions.updateAssessmentStructure).toHaveBeenCalledWith(wrapper.vm.assessmentForm);
+        expect(assessmentFormStore.updateAssessmentStructure).toHaveBeenCalledWith(wrapper.vm.assessmentForm);
         await wrapper.setProps({ id: null });
         jest.clearAllMocks();
         await wrapper.vm.saveSurveyJson(null, () => {});
-        expect(storage.assessmentTemplate.actions.updateAssessmentStructure).toHaveBeenCalledWith(wrapper.vm.assessmentTemplate);
+        expect(assessmentTemplateStore.updateAssessmentStructure).toHaveBeenCalledWith(wrapper.vm.assessmentTemplate);
         expect(wrapper.vm.lastRawJsonSaved).toEqual(wrapper.vm.creator.text);
       });
     });

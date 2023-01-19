@@ -2,17 +2,21 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import { mockStorage } from '@/storage';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { createTestingPinia } from '@pinia/testing';
 
 import Component from '../components/EventRegistrationAssessmentSection.vue';
 
 const localVue = createLocalVue();
+let pinia = createTestingPinia({ stubActions: false });
+let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+let eventStore = useMockEventStore(pinia).eventStore;
 
 const mockEvent = mockEventEntity();
 const storage = mockStorage();
 
 describe('EventRegistrationAssessmentSection.vue', () => {
   let wrapper;
-  const { pinia, eventStore } = useMockEventStore();
 
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     jest.clearAllMocks();
@@ -36,6 +40,9 @@ describe('EventRegistrationAssessmentSection.vue', () => {
   };
 
   beforeEach(async () => {
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+    eventStore = useMockEventStore(pinia).eventStore;
     await mountWrapper();
   });
 
@@ -45,8 +52,8 @@ describe('EventRegistrationAssessmentSection.vue', () => {
         jest.clearAllMocks();
         wrapper.vm.registrationAssessment.assessmentId = 'myid';
         const assessment = wrapper.vm.assessment;
-        expect(storage.assessmentForm.getters.get).toHaveBeenCalledWith('myid');
-        expect(assessment).toEqual(storage.assessmentForm.getters.get().entity);
+        expect(assessmentFormStore.getById).toHaveBeenCalledWith('myid');
+        expect(assessment).toEqual(assessmentFormStore.getById());
       });
     });
   });
@@ -54,7 +61,7 @@ describe('EventRegistrationAssessmentSection.vue', () => {
   describe('Lifecycle', () => {
     describe('created', () => {
       it('calls fetch for assessment', () => {
-        expect(storage.assessmentForm.actions.fetch).toHaveBeenCalledWith({ id: wrapper.vm.registrationAssessment.assessmentId });
+        expect(assessmentFormStore.fetch).toHaveBeenCalledWith({ id: wrapper.vm.registrationAssessment.assessmentId });
       });
     });
   });

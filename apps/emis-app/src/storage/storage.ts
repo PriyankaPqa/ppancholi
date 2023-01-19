@@ -12,9 +12,6 @@ import { TeamStorage } from './team';
 import { CaseNoteStorage } from './case-note';
 import { FinancialAssistanceCategoryStorage } from './financial-assistance-category';
 import { FinancialAssistancePaymentStorage } from './financial-assistance-payment';
-import { AssessmentTemplateStorage } from './assessment-template';
-import { AssessmentFormStorage } from './assessment-form';
-import { AssessmentResponseStorage } from './assessment-response';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   caseFile: new CaseFileStorage(store, vuexModule.CASE_FILE_ENTITIES, vuexModule.CASE_FILE_METADATA).make(),
@@ -35,24 +32,9 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES,
     vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA,
   ).make(),
-  assessmentTemplate: new AssessmentTemplateStorage(
-    store,
-    vuexModule.ASSESSMENT_TEMPLATE_ENTITIES,
-    vuexModule.ASSESSMENT_TEMPLATE_METADATA,
-  ).make(),
   approvalTable: new ApprovalStorage(
     store,
     vuexModule.APPROVALS_TABLE_ENTITIES,
     vuexModule.APPROVALS_TABLE_METADATA,
-  ).make(),
-  assessmentForm: new AssessmentFormStorage(
-    store,
-    vuexModule.ASSESSMENT_FORM_ENTITIES,
-    vuexModule.ASSESSMENT_FORM_METADATA,
-  ).make(),
-  assessmentResponse: new AssessmentResponseStorage(
-    store,
-    vuexModule.ASSESSMENT_RESPONSE_ENTITIES,
-    vuexModule.ASSESSMENT_RESPONSE_METADATA,
   ).make(),
 });

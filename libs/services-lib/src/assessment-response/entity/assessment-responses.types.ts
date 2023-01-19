@@ -1,7 +1,9 @@
-import { IAssessmentResponseCreateRequest, IAssessmentResponseEntity, IQuestionResponse } from '@libs/entities-lib/assessment-template/assessment-template.types';
+import {
+ IAssessmentResponseCreateRequest, IAssessmentResponseEntity, IQuestionResponse, IdParams,
+} from '@libs/entities-lib/assessment-template/assessment-template.types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
-export interface IAssessmentResponsesService extends IDomainBaseService<IAssessmentResponseEntity, { id: uuid }> {
+export interface IAssessmentResponsesService extends IDomainBaseService<IAssessmentResponseEntity, IdParams> {
   getForBeneficiary(id: uuid): Promise<IAssessmentResponseEntity>;
   create(item: IAssessmentResponseCreateRequest): Promise<IAssessmentResponseEntity>;
   update(item: IAssessmentResponseEntity): Promise<IAssessmentResponseEntity>;
@@ -14,7 +16,7 @@ export interface IAssessmentResponsesService extends IDomainBaseService<IAssessm
 
 export interface IAssessmentResponsesServiceMock extends IDomainBaseServiceMock<IAssessmentResponseEntity> {
   getForBeneficiary: jest.Mock<IAssessmentResponseEntity>;
-  create: jest.Mock<IAssessmentResponseCreateRequest>;
+  create: jest.Mock<IAssessmentResponseEntity>;
   update: jest.Mock<IAssessmentResponseEntity>;
   saveAssessmentAnsweredQuestions: jest.Mock<IAssessmentResponseEntity>;
   completeSurvey: jest.Mock<IAssessmentResponseEntity>;

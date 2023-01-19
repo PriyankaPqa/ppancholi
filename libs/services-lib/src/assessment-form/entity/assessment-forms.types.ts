@@ -1,7 +1,7 @@
-import { IAssessmentFormEntity, IAssessmentTotalSubmissions } from '@libs/entities-lib/assessment-template/assessment-template.types';
+import { IAssessmentFormEntity, IAssessmentTotalSubmissions, IdParams } from '@libs/entities-lib/assessment-template/assessment-template.types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
-export interface IAssessmentFormsService extends IDomainBaseService<IAssessmentFormEntity, { id: uuid }> {
+export interface IAssessmentFormsService extends IDomainBaseService<IAssessmentFormEntity, IdParams> {
   getForBeneficiary(id: uuid): Promise<IAssessmentFormEntity>;
   create(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;
   update(item: IAssessmentFormEntity): Promise<IAssessmentFormEntity>;

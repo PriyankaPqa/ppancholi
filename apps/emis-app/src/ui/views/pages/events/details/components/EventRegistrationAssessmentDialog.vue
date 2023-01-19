@@ -88,6 +88,7 @@ import { Status } from '@libs/entities-lib/base';
 import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
 import VTextFieldWithValidation from '@libs/component-lib/components/atoms/VTextFieldWithValidation.vue';
 import { useEventStore } from '@/pinia/event/event';
+import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 
 export default Vue.extend({
   name: 'EventRegistrationAssessmentDialog',
@@ -162,7 +163,7 @@ export default Vue.extend({
       this.registrationAssessment = this.event.registrationAssessments.find((r) => r.id === this.id);
 
       if (this.registrationAssessment) {
-        this.selectedAssessment = this.$storage.assessmentForm.getters.get(this.registrationAssessment.assessmentId)?.entity;
+        this.selectedAssessment = useAssessmentFormStore().getById(this.registrationAssessment.assessmentId);
         this.sectionTitle = _cloneDeep(this.registrationAssessment.sectionTitle);
         this.sectionDetails = _cloneDeep(this.registrationAssessment.details);
       }

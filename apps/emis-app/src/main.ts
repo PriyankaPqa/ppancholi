@@ -28,13 +28,6 @@ import { httpClient } from '@/services/httpClient';
 import { SignalR } from '@/ui/plugins/signal-r';
 import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import { createPinia, PiniaVuePlugin } from 'pinia';
-import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
-import { useUserStore } from '@/pinia/user/user';
-import { useCaseFileReferralMetadataStore, useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
-import { useUiStateStore } from '@/pinia/ui-state/uiState';
-import { useCaseFileDocumentMetadataStore, useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
-import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
-import { useMassActionMetadataStore, useMassActionStore } from '@/pinia/mass-action/mass-action';
 import store from './store/store';
 import router from './ui/router';
 import App from './ui/App.vue';
@@ -78,21 +71,6 @@ new Vue({
   store,
   pinia,
 }).$mount('#app');
-
-SignalR.instance.setPinia({
-  userStore: useUserStore(),
-  eventStore: useEventStore(),
-  eventMetadataStore: useEventMetadataStore(),
-  caseFileReferralStore: useCaseFileReferralStore(),
-  caseFileReferralMetadataStore: useCaseFileReferralMetadataStore(),
-  uiStateStore: useUiStateStore(),
-  caseFileDocumentStore: useCaseFileDocumentStore(),
-  caseFileDocumentMetadataStore: useCaseFileDocumentMetadataStore(),
-  programStore: useProgramStore(),
-  programMetadataStore: useProgramMetadataStore(),
-  massActionStore: useMassActionStore(),
-  massActionMetadataStore: useMassActionMetadataStore(),
-});
 
 // Directive fo v-visible so component is hidden but still take its place
 Vue.directive('visible', (el, binding) => {

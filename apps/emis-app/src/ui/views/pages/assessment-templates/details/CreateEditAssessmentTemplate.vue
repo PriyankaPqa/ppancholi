@@ -30,14 +30,16 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { TranslateResult } from 'vue-i18n';
 import { RcPageContent } from '@libs/component-lib/components';
 import { VForm } from '@libs/shared-lib/types';
-import { IAssessmentBaseEntity } from '@libs/entities-lib/assessment-template';
+import { IAssessmentBaseEntity, IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { Route, NavigationGuardNext } from 'vue-router';
-import AssessmentTemplateForm from './AssessmentTemplateForm.vue';
+import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
+import { useAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template';
 import assessmentDetail from './assessmentDetail';
+import AssessmentTemplateForm from './AssessmentTemplateForm.vue';
 
 export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
   name: 'CreateEditAssessmentTemplate',
@@ -125,22 +127,22 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
 
             if (this.isFormMode) {
               if (this.isEditMode) {
-                assessmentTemplate = await this.$storage.assessmentForm.actions.update(this.assessmentForm);
+                assessmentTemplate = await useAssessmentFormStore().update(this.assessmentForm);
               } else {
-                assessmentTemplate = await this.$storage.assessmentForm.actions.create(this.assessmentForm);
+                assessmentTemplate = await useAssessmentFormStore().create(this.assessmentForm);
               }
             } else if (this.isEditMode) {
-              assessmentTemplate = await this.$storage.assessmentTemplate.actions.update(this.assessmentTemplate);
+              assessmentTemplate = await useAssessmentTemplateStore().update(this.assessmentTemplate);
             } else {
-              assessmentTemplate = await this.$storage.assessmentTemplate.actions.create(this.assessmentTemplate);
+              assessmentTemplate = await useAssessmentTemplateStore().create(this.assessmentTemplate);
             }
             if (assessmentTemplate) {
               if (this.cloneId) {
                 assessmentTemplate = _cloneDeep(assessmentTemplate);
                 assessmentTemplate.externalToolState = this.assessmentTemplate.externalToolState;
                 assessmentTemplate.questions = this.assessmentTemplate.questions?.filter((x) => !x.endDate);
-                assessmentTemplate = (this.isFormMode) ? await this.$storage.assessmentForm.actions.updateAssessmentStructure(assessmentTemplate)
-                  : await this.$storage.assessmentTemplate.actions.updateAssessmentStructure(assessmentTemplate);
+                assessmentTemplate = (this.isFormMode) ? await useAssessmentFormStore().updateAssessmentStructure(assessmentTemplate as IAssessmentFormEntity)
+                  : await useAssessmentTemplateStore().updateAssessmentStructure(assessmentTemplate);
               }
 
               this.$toasted.global.success(this.$t(this.isEditMode ? 'assessmentTemplate.edit.success' : 'assessmentTemplate.create.success'));

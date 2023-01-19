@@ -59,6 +59,7 @@ import { IRegistrationAssessment } from '@libs/entities-lib/event';
 import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import { useEventStore } from '@/pinia/event/event';
+import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 
 export default Vue.extend({
   name: 'EventRegistrationAssessmentSection',
@@ -93,12 +94,12 @@ export default Vue.extend({
 
   computed: {
     assessment(): IAssessmentFormEntity {
-      return this.$storage.assessmentForm.getters.get(this.registrationAssessment.assessmentId)?.entity;
+      return useAssessmentFormStore().getById(this.registrationAssessment.assessmentId);
     },
   },
 
   async created() {
-    await this.$storage.assessmentForm.actions.fetch({ id: this.registrationAssessment.assessmentId });
+    await useAssessmentFormStore().fetch({ id: this.registrationAssessment.assessmentId });
   },
 
   methods: {

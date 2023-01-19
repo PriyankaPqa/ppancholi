@@ -34,21 +34,6 @@ import {
   IStorageMakeMock as IFinancialAssistancePaymentMakeStorageMock,
 } from './financial-assistance-payment';
 
-import {
-  IStorageMake as IAssessmentTemplateMakeStorage,
-  IStorageMakeMock as IAssessmentTemplateMakeStorageMock,
-} from './assessment-template';
-
-import {
-  IStorageMake as IAssessmentFormMakeStorage,
-  IStorageMakeMock as IAssessmentFormMakeStorageMock,
-} from './assessment-form';
-
-import {
-  IStorageMake as IAssessmentResponseMakeStorage,
-  IStorageMakeMock as IAssessmentResponseMakeStorageMock,
-} from './assessment-response';
-
 export interface IStorage {
   caseFile: ICaseFileMakeStorage;
   caseNote: ICaseNoteMakeStorage;
@@ -59,11 +44,7 @@ export interface IStorage {
   financialAssistanceCategory: IFinancialAssistanceCategoryMakeStorage;
   financialAssistancePayment: IFinancialAssistancePaymentMakeStorage;
   household: IStorageMake;
-  userAccount: IUserAccountMakeStorage;
-  assessmentTemplate: IAssessmentTemplateMakeStorage;
-  approvalTable: IApprovalTableMakeStorage;
-  assessmentForm: IAssessmentFormMakeStorage;
-  assessmentResponse: IAssessmentResponseMakeStorage;
+  userAccount: IUserAccountMakeStorage; approvalTable: IApprovalTableMakeStorage;
 }
 
 export interface IStorageMock {
@@ -77,8 +58,5 @@ export interface IStorageMock {
   financialAssistancePayment: IFinancialAssistancePaymentMakeStorageMock;
   household: IStorageMakeMock;
   userAccount: IUserAccountMakeStorageMock;
-  assessmentTemplate: IAssessmentTemplateMakeStorageMock;
   approvalTable: IApprovalTableMakeStorageMock;
-  assessmentForm: IAssessmentFormMakeStorageMock;
-  assessmentResponse: IAssessmentResponseMakeStorageMock;
 }

@@ -163,10 +163,15 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import moment from '@libs/shared-lib/plugins/moment';
 import {
-  AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType, IAssessmentResponseCombined, CompletionStatus, PublishStatus,
+  AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType,
+  IAssessmentResponseCombined, CompletionStatus, PublishStatus, IAssessmentFormEntity,
+  IAssessmentFormMetadata, IAssessmentResponseEntity, IAssessmentResponseMetadata, IdParams,
 } from '@libs/entities-lib/assessment-template';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
+import { useAssessmentFormMetadataStore, useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
+import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import caseFileDetail from '../caseFileDetail';
 import AddCaseFileAssessment from './components/AddCaseFileAssessment.vue';
@@ -222,6 +227,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         itemClass: (item: MappedAssessment) => (item.pinned ? 'pinned' : ''),
       },
       showAddPopup: false,
+      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, IAssessmentFormMetadata, IdParams>(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
+      combinedResponseStore:
+        new CombinedStoreFactory<IAssessmentResponseEntity, IAssessmentResponseMetadata, IdParams>(useAssessmentResponseStore(), useAssessmentResponseMetadataStore()),
     };
   },
 
@@ -235,7 +243,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     items(): IAssessmentResponseCombined[] {
-      const items = this.$storage.assessmentResponse.getters.getByIds(
+      const items = this.combinedResponseStore.getByIds(
         this.searchResultIds,
         {
           onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { 'association.id': this.caseFileId },
@@ -245,14 +253,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     assessments(): MappedAssessment[] {
-      const assessments = this.$storage.assessmentForm.getters.getByIds(
-        this.items?.map((i) => i.entity.assessmentFormId),
-        {
-          onlyActive: false,
-        },
-      );
+      const assessments = useAssessmentFormStore().getByIds(this.items?.map((i) => i.entity.assessmentFormId), false);
       const formAndResponses = this.items.map((r) => ({
-        form: assessments.find((i) => r.entity.assessmentFormId === i.entity.id)?.entity || {} as IAssessmentBaseEntity,
+        form: assessments.find((i) => r.entity.assessmentFormId === i.id) || {} as IAssessmentBaseEntity,
         response: r,
       }));
       return this.mapAssessments(formAndResponses);
@@ -400,7 +403,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         return;
       }
 
-      await this.$storage.assessmentForm.actions.search({
+      await this.combinedFormStore.search({
         filter: { 'Entity/Id': { searchIn_az: this.items.map((i) => i.entity.assessmentFormId) || [] } },
         top: 999,
         queryType: 'full',
@@ -416,7 +419,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
       params.filter = caseFileFilter;
 
-      const res = await this.$storage.assessmentResponse.actions.search({
+      const res = await this.combinedResponseStore.search({
         filter: params.filter,
         top: 999,
         count: true,
@@ -458,7 +461,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       });
 
       if (doDelete) {
-        if (await this.$storage.assessmentResponse.actions.deactivate(item)) {
+        if (await useAssessmentResponseStore().deactivate(item)) {
           this.$toasted.global.success(this.$t('assessmentResponse.delete.success'));
         }
       }

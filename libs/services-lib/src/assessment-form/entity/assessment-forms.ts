@@ -1,4 +1,6 @@
-import { IAssessmentFormEntity, IAssessmentFormMetadata, IAssessmentTotalSubmissions } from '@libs/entities-lib/assessment-template';
+import {
+ IAssessmentFormEntity, IAssessmentFormMetadata, IAssessmentTotalSubmissions, IdParams,
+} from '@libs/entities-lib/assessment-template';
 import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -6,9 +8,8 @@ import { IAssessmentFormsService } from './assessment-forms.types';
 
 const API_URL_SUFFIX = 'assessment';
 const ENTITY = 'assessment-forms';
-interface UrlParams { id: uuid }
 
-export class AssessmentFormsService extends DomainBaseService<IAssessmentFormEntity, UrlParams>
+export class AssessmentFormsService extends DomainBaseService<IAssessmentFormEntity, IdParams>
   implements IAssessmentFormsService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, ENTITY);

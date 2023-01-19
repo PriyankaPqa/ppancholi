@@ -1,10 +1,16 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
+import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
+import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template.mock';
+import { createTestingPinia } from '@pinia/testing';
 import Component from './CreateEditAssessmentTemplate.vue';
 
 const localVue = createLocalVue();
 let storage = mockStorage();
+let pinia = createTestingPinia({ stubActions: false });
+let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+let assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
 
 describe('CreateEditAssessmentTemplate.vue', () => {
   let wrapper;
@@ -13,6 +19,7 @@ describe('CreateEditAssessmentTemplate.vue', () => {
   const mountWrapper = async (assessmentTemplateId = null, eventId = 'EVENTID', fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         id: eventId,
       },
@@ -34,6 +41,9 @@ describe('CreateEditAssessmentTemplate.vue', () => {
 
   beforeEach(async () => {
     storage = mockStorage();
+    pinia = createTestingPinia({ stubActions: false });
+    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+    assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
     jest.clearAllMocks();
   });
 
@@ -62,7 +72,7 @@ describe('CreateEditAssessmentTemplate.vue', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
 
         await wrapper.vm.submit();
-        expect(storage.assessmentForm.actions.create).toHaveBeenCalledTimes(0);
+        expect(assessmentFormStore.create).toHaveBeenCalledTimes(0);
       });
 
       it('shows prompt message if showEligibilityCriteriaWarning is true', async () => {
@@ -79,7 +89,7 @@ describe('CreateEditAssessmentTemplate.vue', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         await wrapper.vm.submit();
-        expect(storage.assessmentForm.actions.create).toHaveBeenCalledTimes(1);
+        expect(assessmentFormStore.create).toHaveBeenCalledTimes(1);
       });
 
       it('calls assessmentForm.update if isEditMode is true with event', async () => {
@@ -87,8 +97,8 @@ describe('CreateEditAssessmentTemplate.vue', () => {
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
-        expect(storage.assessmentForm.actions.update).toHaveBeenCalledTimes(1);
-        expect(storage.assessmentForm.actions.updateAssessmentStructure).not.toHaveBeenCalled();
+        expect(assessmentFormStore.update).toHaveBeenCalledTimes(1);
+        expect(assessmentFormStore.updateAssessmentStructure).not.toHaveBeenCalled();
       });
 
       it('calls assessmentTemplate.create if isEditMode is false without event', async () => {
@@ -96,7 +106,7 @@ describe('CreateEditAssessmentTemplate.vue', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         await wrapper.vm.submit();
-        expect(storage.assessmentTemplate.actions.create).toHaveBeenCalledTimes(1);
+        expect(assessmentTemplateStore.create).toHaveBeenCalledTimes(1);
       });
 
       it('calls assessmentTemplate.update if isEditMode is true without event', async () => {
@@ -104,8 +114,8 @@ describe('CreateEditAssessmentTemplate.vue', () => {
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
-        expect(storage.assessmentTemplate.actions.update).toHaveBeenCalledTimes(1);
-        expect(storage.assessmentTemplate.actions.updateAssessmentStructure).not.toHaveBeenCalled();
+        expect(assessmentTemplateStore.update).toHaveBeenCalledTimes(1);
+        expect(assessmentTemplateStore.updateAssessmentStructure).not.toHaveBeenCalled();
       });
 
       it('calls assessmentForm.updateAssessmentStructure if cloning with event', async () => {
@@ -114,7 +124,7 @@ describe('CreateEditAssessmentTemplate.vue', () => {
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
-        expect(storage.assessmentForm.actions.updateAssessmentStructure).toHaveBeenCalledTimes(1);
+        expect(assessmentFormStore.updateAssessmentStructure).toHaveBeenCalledTimes(1);
       });
 
       it('calls assessmentTemplate.updateAssessmentStructure if cloning without event', async () => {
@@ -123,7 +133,7 @@ describe('CreateEditAssessmentTemplate.vue', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         await wrapper.vm.submit();
-        expect(storage.assessmentTemplate.actions.updateAssessmentStructure).toHaveBeenCalledTimes(1);
+        expect(assessmentTemplateStore.updateAssessmentStructure).toHaveBeenCalledTimes(1);
       });
 
       test('submit calls the fillEmptyMultilingualAttributes method', async () => {
@@ -137,7 +147,7 @@ describe('CreateEditAssessmentTemplate.vue', () => {
       test('after submitting, the user is redirected to the detail page', async () => {
         await mountWrapper();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.$storage.assessmentForm.actions.create = jest.fn(() => ({ id: 'abc' }));
+        assessmentFormStore.create = jest.fn(() => ({ id: 'abc' }));
         await wrapper.vm.submit();
 
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
@@ -233,6 +243,7 @@ describe('CreateEditAssessmentTemplate.vue', () => {
       beforeEach(() => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'EVENTID',
           },

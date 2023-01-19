@@ -166,3 +166,5 @@ export type IAssessmentResponseCombined = IEntityCombined<IAssessmentResponseEnt
 export type IAssessmentTemplateCombined = IEntityCombined<IAssessmentTemplateEntity, IAssessmentTemplateMetadata>;
 export type IAssessmentFormCombined = IEntityCombined<IAssessmentFormEntity, IAssessmentFormMetadata>;
 export type IAssessmentBaseCombined = IEntityCombined<IAssessmentBaseEntity, IAssessmentBaseMetadata>;
+
+export type IdParams = { id: uuid };

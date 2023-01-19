@@ -166,10 +166,13 @@ import { IProgramEntity } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { IEntityCombined, Status } from '@libs/entities-lib/base';
+import { Status } from '@libs/entities-lib/base';
 import SubmitFinancialAssistancePaymentDialog
   from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/SubmitFinancialAssistancePaymentDialog.vue';
+import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useProgramStore } from '@/pinia/program/program';
+import { useAssessmentResponseStore, useAssessmentResponseMetadataStore } from '@/pinia/assessment-response/assessment-response';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
@@ -227,6 +230,7 @@ export default mixins(caseFileDetail).extend({
       programAssessmentForms: [] as IAssessmentFormEntity[],
       caseFileAssessmentResponses: [] as IAssessmentResponseEntity[],
       isDeletingPayment: false,
+      combinedResponseStore: new CombinedStoreFactory<IAssessmentResponseEntity, IAssessmentResponseMetadata>(useAssessmentResponseStore(), useAssessmentResponseMetadataStore()),
     };
   },
 
@@ -392,7 +396,7 @@ export default mixins(caseFileDetail).extend({
       if (selectedProgramId && this.selectedProgram?.id !== selectedProgramId) {
         const originalProgram = this.selectedProgram;
 
-        const program = await useProgramStore().fetch({ id: selectedProgramId, eventId: this.caseFile.entity.eventId }) as IProgramEntity;
+        const program = await useProgramStore().fetch({ id: selectedProgramId, eventId: this.caseFile.entity.eventId });
         this.selectedProgram = program;
 
         if (this.selectedProgram?.eligibilityCriteria?.completedAssessments) {
@@ -568,7 +572,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     async fetchAssessmentFormByProgramId(programId: string) {
-      this.programAssessmentForms = await this.$storage.assessmentForm.actions.fetchByProgramId(programId);
+      this.programAssessmentForms = await useAssessmentFormStore().fetchByProgramId(programId);
     },
 
     async fetchAssessmentResponseByCaseFileId(caseFileId: string) {
@@ -577,15 +581,14 @@ export default mixins(caseFileDetail).extend({
         'Entity/Association/Type': AssociationType.CaseFile,
       };
 
-      const res = await this.$storage.assessmentResponse.actions.search({
+      const res = await this.combinedResponseStore.search({
         filter: caseFileFilter,
         top: 999,
         queryType: 'full',
         searchMode: 'all',
       }, null, true);
 
-      this.caseFileAssessmentResponses = this.$storage.assessmentResponse.getters.getByIds(res.ids)
-        .map((combined: IEntityCombined<IAssessmentResponseEntity, IAssessmentResponseMetadata>) => (combined.entity));
+      this.caseFileAssessmentResponses = useAssessmentResponseStore().getByIds(res.ids);
     },
 
     async confirmBeforeLeavingWithoutSubmittingPayment(next: NavigationGuardNext = null, approvalStatus: ApprovalStatus) {

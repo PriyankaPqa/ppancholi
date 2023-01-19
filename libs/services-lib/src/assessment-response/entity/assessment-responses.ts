@@ -1,5 +1,5 @@
 import {
-  IAssessmentResponseCreateRequest, IAssessmentResponseEntity, IAssessmentResponseMetadata, IQuestionResponse,
+  IAssessmentResponseCreateRequest, IAssessmentResponseEntity, IAssessmentResponseMetadata, IQuestionResponse, IdParams,
 } from '@libs/entities-lib/assessment-template';
 import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { IHttpClient } from '../../http-client';
@@ -8,9 +8,8 @@ import { IAssessmentResponsesService } from './assessment-responses.types';
 
 const API_URL_SUFFIX = 'assessment';
 const ENTITY = 'assessment-responses';
-interface UrlParams { id: uuid }
 
-export class AssessmentResponsesService extends DomainBaseService<IAssessmentResponseEntity, UrlParams>
+export class AssessmentResponsesService extends DomainBaseService<IAssessmentResponseEntity, IdParams>
   implements IAssessmentResponsesService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, ENTITY);
