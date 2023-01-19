@@ -4,6 +4,7 @@ export const NO_ROLE = 'no_role';
 
 export enum UserRoles {
   'noAccess' = 'noAccess',
+  'level0' = 'Level 0',
   'level1' = 'level1',
   'level2' = 'level2',
   'level3' = 'level3',
@@ -19,6 +20,7 @@ export enum UserRoles {
 
 export enum UserRolesNames {
   'noAccess' = 'No Access',
+  'level0' = 'Level 0',
   'level1' = 'Level 1',
   'level2' = 'Level 2',
   'level3' = 'Level 3',
@@ -91,7 +93,7 @@ export class User implements IUser {
   // hasHigherLevelOrSameAs
   hasLevel(levelToCheck: string): boolean {
     // Index n + 1, inherit from index [0,n]
-    const hierarchy = ['level1', 'level2', 'level3', 'level4', 'level5', 'level6'];
+    const hierarchy = ['level0', 'level1', 'level2', 'level3', 'level4', 'level5', 'level6'];
     const userHasALevel = hierarchy.indexOf(this.currentRole());
 
     if (userHasALevel === -1) {
@@ -104,7 +106,7 @@ export class User implements IUser {
       return false;
     }
 
-    let highestUserLevel = 0;
+    let highestUserLevel = -1;
 
     this.roles.forEach((r) => {
       const index = hierarchy.indexOf(r);

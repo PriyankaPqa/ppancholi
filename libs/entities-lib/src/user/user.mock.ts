@@ -100,8 +100,17 @@ export const mockUsersData = (): IUserData[] => [{
   roles: undefined,
   homeAccountId: 'homeAccountId',
 },
+  {
+    oid: '12',
+    email: 'test@test.ca',
+    family_name: 'White',
+    given_name: 'John',
+    roles: ['level0'],
+    homeAccountId: 'homeAccountId',
+  },
 ];
 
+export const mockUserL0 = (): IUser => new User(mockUsersData()[11]);
 export const mockUserL1 = (): IUser => new User(mockUsersData()[0]);
 export const mockUserL2 = (): IUser => new User(mockUsersData()[1]);
 export const mockUserL3 = (): IUser => new User(mockUsersData()[2]);

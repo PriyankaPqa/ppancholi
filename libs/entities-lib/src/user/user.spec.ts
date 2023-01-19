@@ -1,5 +1,5 @@
 import { User } from './user';
-import { mockUsersData } from './user.mock';
+import { mockUserL0, mockUsersData } from './user.mock';
 
 const mockUserData = mockUsersData()[0];
 
@@ -126,6 +126,35 @@ describe('>>> User', () => {
       test('should return the first index of roles if user has role', () => {
         const user = new User(mockUsersData()[0]);
         expect(user.currentRole()).toEqual('level1');
+      });
+    });
+  });
+
+  describe('Level 0', () => {
+    describe('hasLevel', () => {
+      it('should return true if the user has level0', () => {
+        const user = mockUserL0();
+        expect(user.hasLevel('level0')).toBeTruthy();
+      });
+      it('should return false if the user doesnt have level0', () => {
+        const user = mockUserL0();
+        expect(user.hasLevel('level1')).toBeFalsy();
+      });
+    });
+    describe('hasRole', () => {
+      it('should return true if the user has the role', () => {
+        const user = mockUserL0();
+        expect(user.hasRole('level0')).toBeTruthy();
+      });
+      it('should return false if the user doesnt have the role', () => {
+        const user = mockUserL0();
+        expect(user.hasRole('level1')).toBeFalsy();
+      });
+    });
+    describe('currentRole', () => {
+      it('should return the first index of roles if user has role', () => {
+        const user = new User(mockUsersData()[11]);
+        expect(user.currentRole()).toEqual('level0');
       });
     });
   });
