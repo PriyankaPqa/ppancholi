@@ -425,7 +425,7 @@ export default Vue.extend({
       let doDelete = false;
       if (item.isPrimaryContact) {
         if (this.canRemovePrimary()) {
-           doDelete = await this.$confirm({
+          doDelete = await this.$confirm({
             title: this.$t('teams.remove_team_members'),
             messages: this.$t('teams.remove_last_team_members_confirm'),
           });
@@ -433,7 +433,7 @@ export default Vue.extend({
           this.$toasted.global.warning(this.$t('teams.remove_team_members_change_contact'));
         }
       } else {
-         doDelete = await this.$confirm({
+        doDelete = await this.$confirm({
           title: this.$t('teams.remove_team_members'),
           messages: this.$t('teams.remove_team_members_confirm'),
         });
@@ -446,7 +446,7 @@ export default Vue.extend({
 
     makeMappedMembers(members: IUserAccountCombined[]): ITeamMemberAsUser[] {
       return members.map((m) => {
-        const memberAssignedCaseFiles = m.metadata?.assignedCaseFileCountByTeam.find((t:IAssignedCaseFileCountByTeam) => t.teamId === this.teamId);
+        const memberAssignedCaseFiles = m.metadata?.assignedCaseFileCountByTeam?.find((t:IAssignedCaseFileCountByTeam) => t.teamId === this.teamId);
         return {
           ...m,
           isPrimaryContact: m.entity.id === this.primaryContactId,
