@@ -40,7 +40,7 @@
         :hide-default-footer="hideFooter"
         :value="value"
         v-bind="tableOptions"
-        :item-class="itemClass || tableOptions.itemClass"
+        :item-class="itemClass || (tableProps ? tableProps.itemClass : '')"
         :items="items"
         :headers="headers"
         :count="Math.max(count, items.length)"
@@ -255,7 +255,7 @@ export default Vue.extend({
 
     itemClass: {
       type: Function,
-      default: () => '',
+      default: null,
     },
 
     initialSearch: {
