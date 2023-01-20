@@ -1,10 +1,10 @@
 stages:
 - ${{ if eq( variables['build.reason'], 'PullRequest') }}:
   - stage: 'Pre_Build_Stage'
-    displayName: 'Pre Build'
+    displayName: 'Validation'
     jobs:
       - job: Feature_Name_Policy
-        displayName: 'Feature Name Policy'
+        displayName: 'Feature name policy'
         steps:
           - task: PowerShell@2
             displayName: 'Validate branch name'

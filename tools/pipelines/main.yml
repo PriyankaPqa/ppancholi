@@ -13,7 +13,6 @@ parameters:
   nodeJsVersion: ''
   appVersion: ''
   disableCache: ''
-  testCommand: ''
 
 stages:
 
@@ -33,8 +32,8 @@ stages:
       appVersion: ${{ parameters.appVersion }}
       disableCache: ${{ parameters.disableCache }}
 
-  # Trigger after the build
-  - template: './stages/post-build-stage.yml'
+  # Run unit tests & component tests
+  - template: './stages/tests-stage.yml'
     parameters:
       appName: ${{ parameters.appName }}
       packageFeed: ${{ parameters.packageFeed }}
@@ -44,8 +43,8 @@ stages:
       workingDir: ${{ parameters.workingDir }}
       distDir: ${{ parameters.distDir }}
 
-  # Run E2E Tests (acceptance, smoke etc)
-  - template: './stages/acceptance-tests-cypress-stage.yml'
+  # Run E2E Tests
+  - template: './stages/e2e-tests-stage.yml'
     parameters:
       packageFeed: ${{ parameters.packageFeed }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
@@ -53,16 +52,34 @@ stages:
       workingDir: ${{ parameters.workingDir }}
       distDir: ${{ parameters.distDir }}
 
+  # Deploy to temporary environment for manual testing
+  - ${{ if eq( variables['build.reason'], 'PullRequest') }}:
+    - template: './stages/deploy-to-temporary-url-stage.yml'
+      parameters:
+        cdnEndpoint: ${{ parameters.cdnEndpoint }}
+        cdnProfile: ${{ parameters.cdnProfile }}
 
-  # Deploy to feature branch, dev, production
-  - template: './stages/deploy-stage.yml'
-    parameters:
-      storage: ${{ parameters.storage }}
-      cdnEndpoint: ${{ parameters.cdnEndpoint }}
-      cdnProfile: ${{ parameters.cdnProfile }}
-      nodeJsVersion: ${{ parameters.nodeJsVersion }}
-      appVersion: ${{ parameters.appVersion }}
-      disableCache: ${{ parameters.disableCache }}
-      packageFeed: ${{ parameters.packageFeed }}
-      testCommand: ${{ parameters.testCommand }}
-      appName: ${{ parameters.appName }}
+  # Deploy to DEV
+  - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
+    - template: './stages/deploy-to-dev-stage.yml'
+      parameters:
+        storage: ${{ parameters.storage }}
+        cdnEndpoint: ${{ parameters.cdnEndpoint }}
+        cdnProfile: ${{ parameters.cdnProfile }}
+
+  # Deploy to LAB
+  - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
+    - template: './stages/deploy-to-lab-stage.yml'
+      parameters:
+        storage: ${{ parameters.storage }}
+        cdnEndpoint: ${{ parameters.cdnEndpoint }}
+        cdnProfile: ${{ parameters.cdnProfile }}
+
+  # Deploy to PROD
+  - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
+    - template: './stages/deploy-to-prod-stage.yml'
+      parameters:
+        storage: ${{ parameters.storage }}
+        cdnEndpoint: ${{ parameters.cdnEndpoint }}
+        cdnProfile: ${{ parameters.cdnProfile }}
+

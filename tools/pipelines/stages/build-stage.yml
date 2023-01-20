@@ -9,7 +9,7 @@ parameters:
 
 stages:
   - stage: 'Build_Stage'
-    displayName: 'Build Stage'
+    displayName: 'Build'
     jobs:
       - job: 'Build_Web_App'
         displayName: 'Build application'

@@ -31,22 +31,8 @@ variables:
   value: '16.10.0'
 - name: disableCache
   value: 'false' # change this value to force npm package to be installed
-- name: browserStack
-  value: 'false' # change this to activate browserstack for acceptance stage. The stage it
-- name: testCommand
-  ${{ if eq( variables.browserStack, 'true' ) }}:
-    value: 'yarn test:browserstack --passWithNoTests --testPathPattern=apps/benef-app/tests/'
-  ${{ else }}:
-    value: 'yarn test:benef --passWithNoTests'
 
 name: Benef App - $(Major).$(Minor).$(Patch)
-
-resources:
-  repositories:
-    - repository: emisFrontEnd
-      name: 'EMIS/crc-emis-frontend-tests'
-      type: git
-      ref: master
 
 stages:
 - template: '../../tools/pipelines/main.yml'
@@ -61,4 +47,3 @@ stages:
     isPullRequest: $(isPullRequest)
     nodeJsVersion: $(nodeJsVersion)
     disableCache: $(disableCache)
-    testCommand: $(testCommand)

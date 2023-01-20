@@ -2,17 +2,17 @@ parameters:
   packageFeed: ''
   nodeJsVersion: ''
   disableCache: ''
-  runAcceptanceStage: true
+  runTests: true
   distDir: ''
   workingDir: ''
 
 stages:
-  - stage: 'Acceptance_Test_Stage'
-    condition: and(succeeded(), eq('${{ parameters.runAcceptanceStage }}', true))
-    displayName: 'Acceptance Stage'
+  - stage: 'E2E_Test_Stage'
+    condition: and(succeeded(), eq('${{ parameters.runTests }}', true))
+    displayName: 'E2E Tests'
     jobs:
       - job: Cypress
-        displayName: 'Run smoke tests'
+        displayName: 'Critical path tests'
         variables:
           - group: Env-Dev
         pool:

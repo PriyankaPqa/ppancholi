@@ -1,0 +1,28 @@
+parameters:
+  storage: ''
+  cdnEndpoint: ''
+  cdnProfile: ''
+
+stages:
+  - stage: 'Deploy_to_Lab'
+    displayName: 'Deploy to Lab'
+    dependsOn: 'Tests_Stage'
+    condition: succeeded()
+    pool:
+      vmImage: 'windows-2022'
+    jobs:
+      - deployment: 'Deploy_WebApp_Lab'
+        displayName: 'Deploy WebApp to Lab'
+        environment: 'Lab'
+        variables:
+          - group: Env-Lab
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: '../steps/deploy-steps.yml'
+                  parameters:
+                    storage: ${{ parameters.storage }}
+                    cdnEndpoint: ${{ parameters.cdnEndpoint }}
+                    cdnProfile: ${{ parameters.cdnProfile }}
+                    azureSubscription: 'CRC Tech Dev'

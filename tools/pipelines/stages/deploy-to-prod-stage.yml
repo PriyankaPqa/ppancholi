@@ -1,0 +1,28 @@
+parameters:
+  storage: ''
+  cdnEndpoint: ''
+  cdnProfile: ''
+
+stages:
+  - stage: 'Deploy_to_Prod'
+    displayName: 'Deploy to Prod'
+    dependsOn: 'Deploy_to_Dev'
+    condition: succeeded()
+    pool:
+      vmImage: 'windows-2022'
+    jobs:
+      - deployment: 'Deploy_WebApp_Prod'
+        displayName: 'Deploy WebApp to Prod'
+        environment: 'Prod-UI'
+        variables:
+          - group: Env-Prod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: '../steps/deploy-steps.yml'
+                  parameters:
+                    storage: ${{ parameters.storage }}
+                    cdnEndpoint: ${{ parameters.cdnEndpoint }}
+                    cdnProfile: ${{ parameters.cdnProfile }}
+                    azureSubscription: 'CRC Tech Prod'

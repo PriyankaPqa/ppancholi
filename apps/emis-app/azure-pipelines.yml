@@ -5,6 +5,8 @@ trigger:
   paths:
     include:
     - 'apps/emis-app/*'
+    exclude:
+      - 'apps/emis-app/cypress/*'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -32,24 +34,7 @@ variables:
 - name: disableCache
   value: 'false' # change this value to force npm package to be installed
 
-- name: browserStack
-  value: 'false'
-
-- name: testCommand
-  ${{ if eq( variables.browserStack, 'true' ) }}:
-    value: 'yarn test:browserstack --testPathPattern=apps/emis-app/tests/'
-  ${{ else }}:
-    value: 'yarn test:emis'
-
 name: EMIS App - $(Major).$(Minor).$(Patch)
-
-resources:
-  repositories:
-    - repository: emisFrontEnd
-      name: 'EMIS/crc-emis-frontend-tests'
-      type: git
-      ref: master
-
 
 stages:
 - template: '../../tools/pipelines/main.yml'
@@ -65,4 +50,3 @@ stages:
     nodeJsVersion: $(nodeJsVersion)
     appVersion: $(VITE_VERSION)
     disableCache: $(disableCache)
-    testCommand: $(testCommand)

@@ -4,13 +4,12 @@ parameters:
   isPullRequest: ''
   nodeJsVersion: ''
   disableCache: ''
-  runAcceptanceStage: true
   distDir: ''
   workingDir: ''
 
 stages:
-  - stage: 'Post_Build_Stage'
-    displayName: 'Post build Stage'
+  - stage: 'Tests_Stage'
+    displayName: 'Tests'
     condition: succeeded()
     jobs:
       - template: '../jobs/unit-tests-jobs.yml'
