@@ -6,6 +6,7 @@ import { mockStorage } from '@/storage';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import * as searchEndpoints from '@/constants/searchEndpoints';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import Component from './CaseNote.vue';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 
@@ -71,6 +72,17 @@ describe('CaseNote.vue', () => {
         });
 
         expect(wrapper.vm.search).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('FilterToolbar', () => {
+      it('should pass props filterState', async () => {
+        await wrapper.setData({
+          filterState: { filterStateItem: 3 },
+        });
+        const component = wrapper.findComponent(FilterToolbar);
+        const props = 'initialFilter';
+        expect(component.props(props)).toBe(wrapper.vm.filterState);
       });
     });
   });

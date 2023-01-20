@@ -4,6 +4,7 @@ import _set from 'lodash/set';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockUserAccountEntity, mockUserFilters, FilterKey } from '@libs/entities-lib/user-account';
 import { mockStorage } from '@/storage';
+import rcFilterToolbar from '@libs/component-lib/components/molecule/RcFilterToolbar/RcFilterToolbar.vue';
 import Component from './FilterToolbar.vue';
 
 const localVue = createLocalVue();
@@ -29,6 +30,19 @@ describe('Filter Toolbar', () => {
       mocks: {
         $storage: storage,
       },
+    });
+  });
+
+  describe('Template', () => {
+    describe('rcFilterToolbar', () => {
+      it('should pass props initial-filter', async () => {
+        await wrapper.setProps({
+          filterState: { filterStateItem: 3 },
+        });
+        const component = wrapper.findComponent(rcFilterToolbar);
+        const props = 'initialFilter';
+        expect(component.props(props)).toBe(wrapper.vm.initialFilter);
+      });
     });
   });
 

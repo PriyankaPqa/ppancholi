@@ -18,6 +18,7 @@
         class="caseNote__filter"
         :filter-key="filterKey"
         :filter-options="filterOptions"
+        :initial-filter="filterState"
         :count="itemsCount"
         add-filter-label="caseNote.filter"
         @update:appliedFilter="onApplyFilter">

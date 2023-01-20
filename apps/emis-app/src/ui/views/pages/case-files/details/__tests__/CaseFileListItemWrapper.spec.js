@@ -80,6 +80,16 @@ describe('CaseFileListItemWrapper.vue', () => {
         expect(element.text()).toBe(moment(wrapper.vm.listItem.lastModifiedDate).format('ll'));
       });
     });
+
+    describe('Pinned Item', () => {
+      it('should have proper class name when item is pinned', async () => {
+        await wrapper.setProps({
+          item: { pinned: true },
+        });
+        const element = wrapper.findDataTest('caseFileItem__header');
+        expect(element.classes('item__header--pinned')).toBeTruthy();
+      });
+    });
   });
 
   describe('computed', () => {
