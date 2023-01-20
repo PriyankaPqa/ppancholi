@@ -3,8 +3,6 @@ trigger:
     include:
       - master
   paths:
-    exclude:
-      - *
     include:
       - apps/benef-app/cypress/*
 

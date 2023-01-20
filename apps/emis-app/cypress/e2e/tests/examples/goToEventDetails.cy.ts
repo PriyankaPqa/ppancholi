@@ -7,6 +7,7 @@ const getOneOpenEvent = (roleValue = UserRoles.level6) => cy.getToken(roleValue)
   return event;
 });
 
+// todo remove this comment
 beforeEach(() => {
   cy.login();
   getOneOpenEvent().then((event) => {

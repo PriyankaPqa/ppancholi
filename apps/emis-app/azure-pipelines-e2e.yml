@@ -3,8 +3,6 @@ trigger:
     include:
       - master
   paths:
-    exclude:
-      - *
     include:
       - apps/emis-app/cypress/*
 
