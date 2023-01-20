@@ -380,7 +380,7 @@ describe('CaseFileActivity.vue', () => {
 
     describe('created', () => {
       it('should call fetch', () => {
-        expect(wrapper.vm.$storage.caseFile.actions.fetch).toHaveBeenCalledWith(mockCaseFile.entity.id);
+        expect(wrapper.vm.$storage.caseFile.actions.fetch).toHaveBeenCalledWith(mockCaseFile.entity.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
       });
 
       it('should call fetchCaseFileActivities', async () => {

@@ -16,7 +16,7 @@
           mdi-calendar
         </v-icon>
         <span data-test="caseFileDetails-event">
-          {{ caseFile.metadata.event ? $m(caseFile.metadata.event.name) : 'm' }}
+          {{ caseFile.metadata.event ? $m(caseFile.metadata.event.name) : '-' }}
         </span>
       </div>
       <div class="divider" />
@@ -279,7 +279,7 @@ export default mixins(caseFileDetail).extend({
   async created() {
     this.loading = true;
     try {
-      await this.$storage.caseFile.actions.fetch(this.caseFileId);
+      await this.$storage.caseFile.actions.fetch(this.caseFileId, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
       await useEventStore().fetch(this.caseFile.entity.eventId);
       await this.getHouseholdInfo();
     } finally {
@@ -291,7 +291,7 @@ export default mixins(caseFileDetail).extend({
 
     async getHouseholdInfo() {
       const { householdId } = this.caseFile.entity;
-      this.household = await this.$storage.household.actions.fetch(householdId);
+      this.household = await this.$storage.household.actions.fetch(householdId, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
     },
 
     goToHouseholdProfile() {

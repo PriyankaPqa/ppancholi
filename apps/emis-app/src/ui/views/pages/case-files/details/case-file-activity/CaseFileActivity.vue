@@ -203,7 +203,7 @@ export default mixins(caseFileDetail).extend({
 
       await Promise.all([
         this.$storage.caseFile.actions.fetchTagsOptions(),
-        this.$storage.caseFile.actions.fetch(this.caseFileId),
+        this.$storage.caseFile.actions.fetch(this.caseFileId, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false }),
         this.fetchCaseFileActivities(),
       ]);
 

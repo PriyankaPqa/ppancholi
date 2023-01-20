@@ -678,7 +678,7 @@ describe('CaseFileDetails.vue', () => {
     });
 
     it('should call fetch', () => {
-      expect(wrapper.vm.$storage.caseFile.actions.fetch).toHaveBeenCalledWith(wrapper.vm.id);
+      expect(wrapper.vm.$storage.caseFile.actions.fetch).toHaveBeenCalledWith(wrapper.vm.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
     });
 
     it('should call getHouseholdInfo', async () => {
@@ -718,7 +718,7 @@ describe('CaseFileDetails.vue', () => {
       it('calls household storage action', () => {
         jest.clearAllMocks();
         wrapper.vm.getHouseholdInfo();
-        expect(storage.household.actions.fetch).toBeCalledWith(mockCaseFile.entity.householdId);
+        expect(storage.household.actions.fetch).toBeCalledWith(mockCaseFile.entity.householdId, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
       });
     });
 
