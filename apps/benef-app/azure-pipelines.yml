@@ -4,7 +4,9 @@ trigger:
     - master
   paths:
     include:
-    - 'apps/benef-app/*'
+    - apps/benef-app/*
+    exclude:
+    - apps/benef-app/cypress/*
 
 pool:
   name: 'self-hosted-ubuntu-latest'

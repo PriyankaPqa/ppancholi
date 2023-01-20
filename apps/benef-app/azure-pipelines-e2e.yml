@@ -1,0 +1,38 @@
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    exclude:
+      - *
+    include:
+      - apps/benef-app/cypress/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: Build-Defaults
+  - name: Patch
+    value: $[counter(format('{0}.{1}',variables['Major'],variables['Minor']),0)]
+  - name: workingDir
+    value: './apps/benef-app/'
+  - name: distDir
+    value: './apps/benef-app/dist'
+  - name: VITE_VERSION
+    value: $(Major).$(Minor).$(Patch)
+  - name: nodeJsVersion
+    value: '16.10.0'
+  - name: disableCache
+    value: 'false' # change this value to force npm package to be installed
+
+name: E2E Benef App - $(Major).$(Minor).$(Patch)
+
+stages:
+  - template: '../../tools/pipelines/e2e.yml'
+    parameters:
+      packageFeed: $(PackageFeed-Npm)
+      workingDir: $(workingDir)
+      distDir: $(distDir)
+      nodeJsVersion: $(nodeJsVersion)
+      disableCache: $(disableCache)

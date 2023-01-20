@@ -4,9 +4,9 @@ trigger:
     - master
   paths:
     include:
-    - 'apps/emis-app/*'
+    - apps/emis-app/*
     exclude:
-      - 'apps/emis-app/cypress/*'
+    - apps/emis-app/cypress/*
 
 pool:
   vmImage: 'ubuntu-latest'
