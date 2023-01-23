@@ -1,6 +1,9 @@
 import { defineConfig } from 'cypress';
+import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
 
 require('tsconfig-paths').register();
+
+const enableLogger = true; // https://github.com/archfz/cypress-terminal-report
 
 export default defineConfig({
   reporter: 'cypress-multi-reporters',
@@ -9,6 +12,14 @@ export default defineConfig({
   },
   projectId: 'ct8tm8',
   e2e: {
+    setupNodeEvents(on) {
+      if (enableLogger) {
+        installLogsPrinter(on, {
+          printLogsToConsole: 'onFail',
+          includeSuccessfulHookLogs: false,
+        });
+      }
+    },
     baseUrl: 'http://localhost:8080/',
     env: {
       AZURE_CLIENT_ID: '44dc9a29-39d1-462e-9cbe-b9507b34396d',
@@ -45,6 +56,8 @@ export default defineConfig({
       MSAL_API_SCOPES_PROD: 'https://crctechmain.onmicrosoft.com/emis-prod/api/api_access',
       USER_PROD: 'testsix@crctechmain.onmicrosoft.com',
       USER_PROD_PASSWORD: 'QAEMIS1!',
+
+      CUSTOM_ENV: '',
     },
   },
   viewportWidth: 1920,

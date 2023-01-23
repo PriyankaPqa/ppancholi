@@ -6,5 +6,8 @@
     "tools/**/*.js",
     "tools/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true
+  }
 }

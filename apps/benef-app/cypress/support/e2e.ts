@@ -15,4 +15,8 @@
 // Import commands.js using ES2015 syntax:
 import '@libs/cypress-lib/support/commands';
 
+import installLogsCollector from 'cypress-terminal-report/src/installLogsCollector';
+
 require('cypress-xpath');
+
+installLogsCollector();
