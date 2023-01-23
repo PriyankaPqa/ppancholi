@@ -394,7 +394,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       const teamId = this.id;
       if (teamId) {
         await this.$storage.team.actions.fetch(teamId);
-        this.loadTeamFromState();
+        await this.loadTeamFromState();
       }
     },
 
