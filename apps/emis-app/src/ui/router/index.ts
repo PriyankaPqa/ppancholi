@@ -142,6 +142,13 @@ const checkAppVersion = () => {
   }, 3000);
 };
 
+// @ts-ignore
+router.onError((error: Error, to: Route) => {
+  if (error.message.includes('Failed to fetch dynamically imported module')) {
+    window.location.href = to.fullPath;
+  }
+});
+
 router.beforeEach(async (to, from, next) => {
   if (!AuthenticationProvider.msalLibrary) {
     await initializeMSAL();
