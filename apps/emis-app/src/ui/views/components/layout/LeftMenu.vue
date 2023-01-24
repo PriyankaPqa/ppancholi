@@ -85,7 +85,7 @@ export default Vue.extend({
           icon: 'mdi-home',
           text: 'leftMenu.home_title',
           test: 'home',
-          level: 'level1',
+          level: 'level0',
           roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE],
         },
         {
@@ -94,7 +94,7 @@ export default Vue.extend({
           text: 'leftMenu.caseFiles_title',
           test: 'caseFile',
           exact: false,
-          level: 'level1',
+          level: 'level0',
           disabled: this.$hasRole(NO_ROLE),
           roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE],
         },
@@ -104,7 +104,7 @@ export default Vue.extend({
           text: 'leftMenu.search_household_title',
           test: 'search_household',
           exact: false,
-          level: 'level1',
+          level: 'level0',
           roles: [],
         },
         {
