@@ -195,8 +195,8 @@ import {
 } from '@libs/entities-lib/event';
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IMultilingual } from '@libs/shared-lib/types';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
@@ -316,7 +316,7 @@ export default mixins(household).extend({
     },
 
     canEdit():boolean {
-      return this.$hasLevel('level0');
+      return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? 'level0' : 'level1');
     },
 
     canMove():boolean {

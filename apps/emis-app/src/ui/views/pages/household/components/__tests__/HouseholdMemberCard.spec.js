@@ -372,7 +372,24 @@ describe('HouseholdMemberCard.vue', () => {
     });
 
     describe('canEdit', () => {
-      it('returns true if the user has level 0 or more', () => {
+      it('returns true if the user has level 1 or more and feature flag is off ', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            member,
+            isPrimaryMember: false,
+            shelterLocations: [],
+          },
+          pinia: getPiniaForUser('level1'),
+          mocks: {
+            $storage: storage,
+            $hasFeature: () => false,
+          },
+        });
+        expect(wrapper.vm.canEdit).toBeTruthy();
+      });
+
+      it('returns true if the user has level 0 or more  and feature flag is on', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -381,11 +398,17 @@ describe('HouseholdMemberCard.vue', () => {
             shelterLocations: [],
           },
           pinia: getPiniaForUser('level0'),
-
+          mocks: {
+            $storage: storage,
+            $hasFeature: () => true,
+          },
         });
+        // wrapper.vm.$hasFeature = jest.fn(() => true);
+
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
-      it('returns false if the user has level 0', () => {
+
+      it('returns false if the user has a different role', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia: getPiniaForUser('contributorIM'),
