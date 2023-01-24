@@ -6,12 +6,14 @@ import {
 } from '@libs/entities-lib/case-file';
 import { IAzureCombinedSearchResult, IListOption } from '@libs/shared-lib/types';
 import { ICaseFileMetadata } from '@libs/entities-lib/src/case-file/case-file.types';
+import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { ICaseFilesService, ICreateCaseFileRequest } from './case-files.types';
 
 const API_URL_SUFFIX = 'case-file';
 const CONTROLLER = 'case-files';
+const ORCHESTRATION_CONTROLLER = 'orchestration/orchestration-households';
 
 export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> implements ICaseFilesService {
   constructor(http: IHttpClient) {
@@ -80,8 +82,8 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
     return this.http.patch<ICaseFileEntity>(`${this.baseUrl}/${id}/assign`, payload);
   }
 
-  async createCaseFile(payload: ICreateCaseFileRequest): Promise<ICaseFileEntity> {
-    return this.http.post<ICaseFileEntity>(`${this.baseUrl}`, payload);
+  async createCaseFile(payload: ICreateCaseFileRequest): Promise<IDetailedRegistrationResponse> {
+    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/case-file`, payload);
   }
 
   async getCaseFileAssignedCounts(params: { eventId: uuid, teamId: uuid }): Promise<ICaseFileCount> {

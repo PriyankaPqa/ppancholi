@@ -5,7 +5,7 @@ import {
 import { IStore, IState } from '@libs/registration-lib/store/store.types';
 import { TranslateResult } from 'vue-i18n';
 import { IIdentitySet } from '@libs/entities-lib/value-objects/identity-set/identitySet.types';
-import { IHouseholdEntity } from '@libs/entities-lib/household';
+import { IDetailedRegistrationResponse, IHouseholdEntity } from '@libs/entities-lib/household';
 import {
   IIndigenousCommunityData, EIndigenousTypes, IContactInformation, IMember, IIdentitySetData, IAddress, ICurrentAddress, IHouseholdCreateData,
 } from '@libs/entities-lib/household-create';
@@ -78,7 +78,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.getters['registration/findEffectiveJumpIndex'](targetIndex);
     },
 
-    registrationResponse(): IHouseholdEntity {
+    registrationResponse(): IDetailedRegistrationResponse {
       return store.getters['registration/registrationResponse'];
     },
 
@@ -278,7 +278,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('registration/fetchIndigenousCommunities');
     },
 
-    submitRegistration(recaptchaToken?: string): Promise<IHouseholdEntity> {
+    submitRegistration(recaptchaToken?: string): Promise<IDetailedRegistrationResponse> {
       return store.dispatch('registration/submitRegistration', recaptchaToken);
     },
 

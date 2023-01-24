@@ -183,7 +183,7 @@ describe('SplitHousehold.vue', () => {
               return mockSplitHousehold();
             },
             currentTabIndex: () => 1,
-            flowTabs() {
+            allTabs() {
               return [{ id: '1' }, { id: 2 }, { id: 3 }];
             },
           },
@@ -204,7 +204,7 @@ describe('SplitHousehold.vue', () => {
               return mockSplitHousehold();
             },
             currentTabIndex: () => 1,
-            flowTabs() {
+            allTabs() {
               return [{ id: '1' }, { id: 2 }];
             },
           },
@@ -223,6 +223,9 @@ describe('SplitHousehold.vue', () => {
           computed: {
             splitHousehold() {
               return mockSplitHousehold();
+            },
+            allTabs() {
+              return [{ id: '1' }, { id: 2 }];
             },
           },
           mocks: { $storage: storage },
@@ -285,39 +288,12 @@ describe('SplitHousehold.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('flowTabs', () => {
-      it('returns the right tabs if there are additional members', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            splitHousehold() {
-              return mockSplitHousehold();
-            },
-          },
-          mocks: { $storage: storage },
-        });
-
-        expect(wrapper.vm.flowTabs).toEqual(tabs());
-      });
-
-      it('returns the right tabs if there are no additional members', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            splitHousehold() {
-              return {
-                originHouseholdId: 'f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8',
-                splitMembers: {
-                  primaryMember: mockMember({ id: 'id-1' }),
-                  additionalMembers: [],
-                },
-              };
-            },
-          },
-          mocks: { $storage: storage },
-        });
-
-        expect(wrapper.vm.flowTabs).toEqual(tabs().filter((t) => t.id !== 'additionalSplitMembers'));
+    describe('registrationAssessment', () => {
+      it('should return the registrationAssessment', () => {
+        jest.clearAllMocks();
+        const registrationAssessment = wrapper.vm.registrationAssessment;
+        expect(wrapper.vm.$storage.registration.getters.assessmentToComplete).toHaveBeenCalled();
+        expect(registrationAssessment).toEqual(wrapper.vm.$storage.registration.getters.assessmentToComplete().registrationAssessment);
       });
     });
 
@@ -427,23 +403,38 @@ describe('SplitHousehold.vue', () => {
   });
 
   describe('lifecycle', () => {
-    it('calls the storage mutation setTabs with the tabs', () => {
+    it('sets the right tabs if there are additional members', () => {
       wrapper = shallowMount(Component, {
         localVue,
         computed: {
-          flowTabs() {
-            return [{ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }];
+          splitHousehold() {
+            return mockSplitHousehold();
           },
         },
         mocks: { $storage: storage },
       });
 
-      wrapper.vm.$options.created.forEach((hook) => {
-        hook.call(wrapper.vm);
+      expect(storage.registration.mutations.setTabs).toHaveBeenCalledWith(tabs());
+    });
+
+    it('returns the right tabs if there are no additional members', () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        computed: {
+          splitHousehold() {
+            return {
+              originHouseholdId: 'f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8',
+              splitMembers: {
+                primaryMember: mockMember({ id: 'id-1' }),
+                additionalMembers: [],
+              },
+            };
+          },
+        },
+        mocks: { $storage: storage },
       });
 
-      expect(storage.registration.mutations.setTabs)
-        .toHaveBeenCalledWith([{ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }]);
+      expect(storage.registration.mutations.setTabs).toHaveBeenCalledWith(tabs().filter((t) => t.id !== 'additionalSplitMembers'));
     });
 
     it('calls back if there is no split household data', () => {

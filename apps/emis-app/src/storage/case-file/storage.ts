@@ -11,6 +11,7 @@ import { IListOption } from '@libs/shared-lib/types';
 
 import { ICreateCaseFileRequest } from '@libs/services-lib/case-files/entity';
 import { IEntityCombined } from '@libs/entities-lib/base';
+import { IDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { IStore, IState } from '../../store/store.types';
 import { Base } from '../base';
 
@@ -111,7 +112,7 @@ export class CaseFileStorage
       Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileAssign`, { id, individuals, teams }),
 
     createCaseFile: (payload: ICreateCaseFileRequest):
-      Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/createCaseFile`, payload),
+      Promise<IDetailedRegistrationResponse> => this.store.dispatch(`${this.entityModuleName}/createCaseFile`, payload),
 
     assignCaseFile: (id: uuid, teamMembers: IAssignedTeamMembers[], teams: uuid[]):
       Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/assignCaseFile`, { id, teamMembers, teams }),

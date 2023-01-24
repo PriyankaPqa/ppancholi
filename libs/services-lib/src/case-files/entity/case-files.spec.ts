@@ -5,6 +5,8 @@ import { IListOption } from '@libs/shared-lib/types';
 import { IHttpMock, mockHttp } from '../../http-client';
 import { CaseFilesService } from './case-files';
 
+const ORCHESTRATION_CONTROLLER = 'orchestration/orchestration-households';
+
 describe('>>> Case File Service', () => {
   let http: IHttpMock;
   let service: CaseFilesService;
@@ -163,7 +165,7 @@ describe('>>> Case File Service', () => {
       };
 
       await service.createCaseFile(payload);
-      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}`, payload);
+      expect(http.post).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/case-file`, payload);
     });
   });
 

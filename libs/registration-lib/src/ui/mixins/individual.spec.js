@@ -1,12 +1,13 @@
 import helpers from '@libs/entities-lib/helpers';
 import { mockEvent } from '@libs/entities-lib/src/registration-event/registrationEvent.mock';
+import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { mockStorage } from '../../store/storage';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 
 import individual from './individual';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+let storage = mockStorage();
 const mockEventData = mockEvent();
 
 window.scrollTo = jest.fn();
@@ -55,9 +56,6 @@ const tabs = [
     componentName: 'ConfirmRegistration',
   }];
 
-storage.registration.getters.currentTab.mockImplementation(() => tabs[0]);
-storage.registration.getters.tabs.mockImplementation(() => tabs);
-
 const Component = {
   render() {},
   mixins: [individual],
@@ -65,8 +63,11 @@ const Component = {
 
 describe('Individual.vue', () => {
   let wrapper;
-  afterEach(() => {
+  beforeEach(() => {
     jest.clearAllMocks();
+    storage = mockStorage();
+    storage.registration.getters.currentTab.mockImplementation(() => tabs[0]);
+    storage.registration.getters.tabs.mockImplementation(() => tabs);
   });
 
   const doMount = ({ errorCode } = { errorCode: null }) => {
@@ -287,7 +288,54 @@ describe('Individual.vue', () => {
       });
     });
 
+    describe('openAssessmentIfAvailable', () => {
+      it('should open new tab to editor page', async () => {
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
+        window.open = jest.fn();
+        const assessment = mockDetailedRegistrationResponse().assessmentResponses[0];
+
+        wrapper.vm.openAssessmentIfAvailable();
+
+        expect(wrapper.vm.$router.resolve).toHaveBeenCalledWith({
+          name: 'events.assessments.complete',
+          params: {
+            assessmentTemplateId: assessment.assessmentFormId,
+            id: wrapper.vm.event.id,
+            assessmentResponseId: assessment.id,
+          },
+        });
+        expect(window.open).toHaveBeenCalledWith(wrapper.vm.$router.resolve().href, '_blank');
+
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
+
+        wrapper.vm.openAssessmentIfAvailable();
+
+        expect(wrapper.vm.$router.resolve).toHaveBeenCalledWith({
+          name: 'assessmentRunner',
+          params: {
+            assessmentTemplateId: assessment.assessmentFormId,
+            eventId: wrapper.vm.event.id,
+            assessmentResponseId: assessment.id,
+          },
+        });
+      });
+    });
+
     describe('next', () => {
+      describe('Assessment page', () => {
+        it('opens assessment', async () => {
+          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+            id: 'assessment',
+          }));
+          window.open = jest.fn();
+          wrapper.vm.closeRegistration = jest.fn();
+          wrapper.vm.jump = jest.fn();
+          wrapper.vm.openAssessmentIfAvailable = jest.fn();
+
+          await wrapper.vm.next();
+          expect(wrapper.vm.openAssessmentIfAvailable).toHaveBeenCalled();
+        });
+      });
       describe('Confirmation page', () => {
         it('calls closeRegistration', async () => {
           wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({

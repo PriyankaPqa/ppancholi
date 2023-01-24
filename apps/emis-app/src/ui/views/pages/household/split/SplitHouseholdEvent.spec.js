@@ -66,9 +66,19 @@ describe('SplitHouseholdEvent', () => {
     describe('setEvent', () => {
       it('calls the storage mutation setEvent', async () => {
         jest.clearAllMocks();
-        const event = mockEventEntityData();
+        const event = mockEventEntityData()[0];
         await wrapper.vm.setEvent(event);
         expect(storage.registration.mutations.setEvent).toHaveBeenCalledWith(event);
+      });
+
+      it('should call setAssessmentToComplete mutations with proper params', async () => {
+        const event = mockEventEntityData()[0];
+        await wrapper.vm.setEvent(event);
+        expect(wrapper.vm.$services.assessmentForms.get).toHaveBeenCalledWith({ id: event.registrationAssessments[0].assessmentId });
+        expect(wrapper.vm.$storage.registration.mutations.setAssessmentToComplete).toHaveBeenCalledWith({
+          assessmentForm: wrapper.vm.$services.assessmentForms.get(),
+          registrationAssessment: event.registrationAssessments[0],
+        });
       });
     });
   });

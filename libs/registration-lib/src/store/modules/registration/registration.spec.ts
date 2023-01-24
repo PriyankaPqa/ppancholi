@@ -20,7 +20,7 @@ import {
   Member,
 } from '@libs/entities-lib/household-create';
 
-import { mockHouseholdEntity } from '@libs/entities-lib/household';
+import { mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/entities-lib/household';
 import { IRegistrationMenuItem } from '@/types';
 import {
   ERegistrationMethod, ERegistrationMode,
@@ -281,7 +281,7 @@ describe('>>> Registration Module', () => {
       it('returns registrationResponse', () => {
         expect(store.getters['registration/registrationResponse']).toBeNull();
 
-        const response = mockHouseholdEntity();
+        const response = mockDetailedRegistrationResponse();
         store.state.registration.registrationResponse = response;
         expect(store.getters['registration/registrationResponse']).toBe(response);
       });
@@ -547,7 +547,7 @@ describe('>>> Registration Module', () => {
       it('sets registration response', () => {
         expect(store.state.registration.registrationResponse).toBeNull();
 
-        const response = mockHouseholdEntity();
+        const response = mockDetailedRegistrationResponse();
         store.commit('registration/setRegistrationResponse', response);
 
         expect(store.state.registration.registrationResponse).toEqual(response);
@@ -763,10 +763,11 @@ describe('>>> Registration Module', () => {
     });
 
     describe('setTabs', () => {
-      it('should set tabs', () => {
+      it('should set tabs and allTabs', () => {
         const tabs = mockTabs();
         store.commit('registration/setTabs', tabs);
         expect(store.state.registration.tabs).toEqual(tabs);
+        expect(store.state.registration.allTabs).toEqual(tabs);
       });
     });
 
@@ -910,7 +911,7 @@ describe('>>> Registration Module', () => {
 
         await store.dispatch('registration/submitRegistration');
 
-        expect(store.getters['registration/registrationResponse']).toStrictEqual(mockHouseholdEntity());
+        expect(store.getters['registration/registrationResponse']).toStrictEqual(mockDetailedRegistrationResponse());
       });
 
       it('sets registrationErrors in case of error', async () => {
@@ -1127,7 +1128,7 @@ undefined,
 
     describe('splitHousehold', () => {
       it('call the splitHousehold service with proper params', async () => {
-        store.$services.households.splitHousehold = jest.fn(() => (mockHouseholdEntity()));
+        store.$services.households.splitHousehold = jest.fn(() => (mockDetailedRegistrationResponse()));
         store.state.registration.householdCreate = mockHouseholdCreate() as HouseholdCreate;
         store.state.registration.splitHousehold = mockSplitHousehold();
         store.state.registration.event = mockEvent({ id: 'event-id' });
@@ -1136,13 +1137,13 @@ undefined,
       });
 
       it('call the mutation setRegistrationResponse after the resolution', async () => {
-        store.$services.households.splitHousehold = jest.fn(() => (mockHouseholdEntity()));
+        store.$services.households.splitHousehold = jest.fn(() => (mockDetailedRegistrationResponse()));
         store.state.registration.householdCreate = mockHouseholdCreate() as HouseholdCreate;
         store.state.registration.splitHousehold = mockSplitHousehold();
         store.state.registration.event = mockEvent({ id: 'event-id' });
         store.commit = jest.fn();
         await store.dispatch('registration/splitHousehold');
-        expect(store.commit).toHaveBeenCalledWith('registration/setRegistrationResponse', mockHouseholdEntity(), undefined);
+        expect(store.commit).toHaveBeenCalledWith('registration/setRegistrationResponse', mockDetailedRegistrationResponse(), undefined);
       });
 
       it('call the mutation setRegistrationErrors if the call ', async () => {

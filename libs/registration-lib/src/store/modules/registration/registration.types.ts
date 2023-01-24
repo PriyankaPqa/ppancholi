@@ -5,7 +5,7 @@ import {
   IIndigenousCommunityData,
 } from '@libs/entities-lib/household-create';
 
-import { IHouseholdEntity } from '@libs/entities-lib/household';
+import { IDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { IEventData } from '@libs/entities-lib/registration-event';
 import { IAssessmentFormEntity } from '@libs/entities-lib/src/assessment-template';
 import { IRegistrationAssessment } from '@libs/entities-lib/src/event';
@@ -23,7 +23,7 @@ export type IState = {
   indigenousCommunities: IIndigenousCommunityData[];
   loadingIndigenousCommunities: boolean;
   isPrivacyAgreed: boolean;
-  registrationResponse: IHouseholdEntity;
+  registrationResponse: IDetailedRegistrationResponse;
   registrationErrors: IServerError;
   submitLoading: boolean;
   inlineEditCounter: number;

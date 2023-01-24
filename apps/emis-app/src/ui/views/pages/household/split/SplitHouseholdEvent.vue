@@ -57,7 +57,14 @@ export default Vue.extend({
   },
 
   methods: {
-    setEvent(event: IEvent) {
+    async setEvent(event: IEvent) {
+      if (event.registrationAssessments?.length) {
+        const assessment = await this.$services.assessmentForms.get({ id: event.registrationAssessments[0].assessmentId });
+        this.$storage.registration.mutations.setAssessmentToComplete({ assessmentForm: assessment, registrationAssessment: event.registrationAssessments[0] });
+      } else {
+        this.$storage.registration.mutations.setAssessmentToComplete(null);
+      }
+
       this.$storage.registration.mutations.setEvent(event);
       this.event = event;
     },

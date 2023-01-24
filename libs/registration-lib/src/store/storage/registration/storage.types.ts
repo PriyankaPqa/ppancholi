@@ -15,7 +15,7 @@ import {
   ICurrentAddress,
   HouseholdCreate, IHouseholdCreate, IHouseholdCreateData,
 } from '@libs/entities-lib/household-create';
-import { IHouseholdEntity } from '@libs/entities-lib/household';
+import { IDetailedRegistrationResponse, IHouseholdEntity } from '@libs/entities-lib/household';
 import { IAssessmentFormEntity } from '@libs/entities-lib/src/assessment-template';
 import { IRegistrationMenuItem } from '../../../types';
 
@@ -36,7 +36,7 @@ export interface IStorage {
     findEffectiveJumpIndex(targetIndex: number): number;
     indigenousTypesItems(): Record<string, TranslateResult>[];
     indigenousCommunitiesItems(indigenousType: EIndigenousTypes): Record<string, string>[];
-    registrationResponse(): IHouseholdEntity;
+    registrationResponse(): IDetailedRegistrationResponse;
     registrationErrors(): IServerError;
     householdCreate(): HouseholdCreate;
     personalInformation(): IContactInformation & IIdentitySet;
@@ -81,7 +81,7 @@ export interface IStorage {
     setTabs(tabs: IRegistrationMenuItem[]): void;
     setPrimarySpokenLanguagesFetched(payload: boolean): void;
     setGendersFetched(payload: boolean): void;
-    setRegistrationResponse(payload: unknown): void;
+    setRegistrationResponse(payload: IDetailedRegistrationResponse): void;
     setInformationFromBeneficiarySearch(payload: unknown): void;
   };
 
@@ -91,7 +91,7 @@ export interface IStorage {
     fetchPreferredLanguages(): Promise<(IOptionItemData & { languageCode: string })[]>;
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
     fetchIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
-    submitRegistration(recaptchaToken?: string): Promise<IHouseholdEntity>;
+    submitRegistration(recaptchaToken?: string): Promise<IDetailedRegistrationResponse>;
     updatePersonContactInformation({ member, isPrimaryMember, index }: { member: IMember; isPrimaryMember: boolean; index?: number }): Promise<IHouseholdEntity>;
     updatePersonIdentity({ member, isPrimaryMember, index }: { member: IMember; isPrimaryMember: boolean; index?: number }): Promise<IHouseholdEntity>;
     updatePersonAddress({
@@ -119,7 +119,7 @@ export interface IStorageMock {
     indigenousTypesItems: jest.Mock<Record<string, unknown>[]>;
     indigenousCommunitiesItems: jest.Mock<Record<string, string>[]>;
     findEffectiveJumpIndex: jest.Mock<number>;
-    registrationResponse: jest.Mock<IHouseholdEntity>;
+    registrationResponse: jest.Mock<IDetailedRegistrationResponse>;
     registrationErrors: jest.Mock<IServerError>;
     householdCreate: jest.Mock<IHouseholdCreate>;
     personalInformation: jest.Mock<IContactInformation & IIdentitySet>;
@@ -175,12 +175,12 @@ export interface IStorageMock {
     fetchPreferredLanguages: jest.Mock<IOptionItemData[]>;
     fetchPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
     fetchIndigenousCommunities: jest.Mock<IIndigenousCommunityData[]>;
-    submitRegistration: jest.Mock<IHouseholdEntity>;
+    submitRegistration: jest.Mock<IDetailedRegistrationResponse>;
     updatePersonIdentity: jest.Mock<IHouseholdEntity>;
     updatePersonContactInformation: jest.Mock<IHouseholdEntity>;
     updatePersonAddress: jest.Mock<IHouseholdEntity>;
     addAdditionalMember: jest.Mock<IHouseholdEntity>;
-    splitHousehold: jest.Mock<IHouseholdEntity>;
+    splitHousehold: jest.Mock<IDetailedRegistrationResponse>;
     deleteAdditionalMember: jest.Mock<IHouseholdEntity>;
   };
 }

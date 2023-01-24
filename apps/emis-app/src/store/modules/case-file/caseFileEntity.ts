@@ -22,6 +22,7 @@ import { IListOption } from '@libs/shared-lib/types';
 import { IUserAccountEntity } from '@libs/entities-lib/user-account';
 import { SignalR } from '@/ui/plugins/signal-r';
 import { ISignalRMock } from '@libs/shared-lib/signal-r';
+import { IDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { BaseModule, filterAndSortActiveItems, IState } from '../base';
 import { IRootState } from '../../store.types';
 
@@ -228,12 +229,12 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
     createCaseFile: async (
       context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>,
       payload: ICreateCaseFileRequest,
-    ): Promise<IUserAccountEntity> => {
+    ): Promise<IDetailedRegistrationResponse> => {
       try {
         const res = await this.service.createCaseFile(payload);
         if (res) {
-          context.commit('addNewlyCreatedId', res);
-          context.commit('set', res);
+          context.commit('addNewlyCreatedId', res.caseFile);
+          context.commit('set', res.caseFile);
         }
         return res;
       } catch (e) {

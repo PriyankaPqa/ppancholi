@@ -5,6 +5,7 @@ import {
   ICaseFileCount,
   ICaseFileDetailedCount, IAssignedTeamMembers, ICaseFileMetadata,
 } from '@libs/entities-lib/case-file';
+import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface ICreateCaseFileRequest {
@@ -27,7 +28,7 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileEntity>;
   setCaseFileTriage(id: uuid, triage: CaseFileTriage): Promise<ICaseFileEntity>;
   setCaseFileAssign(id: uuid, payload: { individuals: uuid[], teams: uuid[] }): Promise<ICaseFileEntity>;
-  createCaseFile(payload: ICreateCaseFileRequest): Promise<ICaseFileEntity>;
+  createCaseFile(payload: ICreateCaseFileRequest): Promise<IDetailedRegistrationResponse>;
   setCaseFileIdentityAuthentication(id: uuid, identityAuthentication: IIdentityAuthentication): Promise<ICaseFileEntity>;
   setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation): Promise<ICaseFileEntity>;
   getCaseFileAssignedCounts(params: { eventId: uuid, teamId: uuid }): Promise<ICaseFileCount>;
@@ -46,7 +47,7 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   setCaseFileIsDuplicate: jest.Mock<ICaseFileEntity>;
   setCaseFileTriage: jest.Mock<ICaseFileEntity>;
   setCaseFileAssign: jest.Mock<ICaseFileEntity>;
-  createCaseFile: jest.Mock<ICaseFileEntity>;
+  createCaseFile: jest.Mock<IDetailedRegistrationResponse>;
   setCaseFileValidationOfImpact: jest.Mock<ICaseFileEntity>;
   getCaseFileAssignedCounts: jest.Mock<ICaseFileCount>;
   // todo add mock from api response here for getCaseFileAssignedCounts.

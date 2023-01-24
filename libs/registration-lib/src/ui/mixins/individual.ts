@@ -84,8 +84,8 @@ export default Vue.extend({
       // eslint-disable-next-line no-nested-ternary
       return this.$store.state.registration.householdAssociationMode
         ? (this.household as IHouseholdCreateData).registrationNumber
-        : this.$storage.registration.getters.registrationResponse()
-          ? this.$storage.registration.getters.registrationResponse().registrationNumber
+        : this.$storage.registration.getters.registrationResponse()?.household?.registrationNumber
+          ? this.$storage.registration.getters.registrationResponse().household.registrationNumber
           : '';
     },
 
@@ -156,7 +156,13 @@ export default Vue.extend({
     },
 
     async next() {
-      if ((this.currentTab.id === 'confirmation' && this.$storage.registration.getters.isCRCRegistration())
+      if (this.currentTab.id === 'assessment') {
+        this.openAssessmentIfAvailable();
+      }
+
+      // if this is the last page of the process, or if we dont go to the last page - assessment
+      // (confirmation did not generate an assessment due to an error or crc where we never get to the last tab)
+      if ((this.currentTab.id === 'confirmation' && (this.$storage.registration.getters.isCRCRegistration() || !this.registrationSuccess))
         || this.currentTabIndex === this.allTabs.length - 1) {
         await this.closeRegistration();
         return;
@@ -175,6 +181,29 @@ export default Vue.extend({
       }
 
       await this.jump(this.currentTabIndex + 1);
+    },
+
+    openAssessmentIfAvailable() {
+      const assessment = this.$storage.registration.getters.registrationResponse()?.assessmentResponses[0];
+      if (assessment) {
+        const routeParams = this.$storage.registration.getters.isCRCRegistration() ? {
+          name: 'events.assessments.complete',
+          params: {
+            assessmentTemplateId: assessment.assessmentFormId,
+            id: this.event.id,
+            assessmentResponseId: assessment.id,
+          },
+        } : {
+          name: 'assessmentRunner',
+          params: {
+            assessmentTemplateId: assessment.assessmentFormId,
+            eventId: this.event.id,
+            assessmentResponseId: assessment.id,
+          },
+        };
+        const routeData = this.$router.resolve(routeParams);
+        window.open(routeData.href, '_blank');
+      }
     },
 
     async submitRegistration() {
@@ -245,7 +274,7 @@ export default Vue.extend({
       // for crc we show the assessment tab after but we keep it disabled as we never access it
       // it's only there to show that the event includes an assessment
       // the confirmation screen will include the assessment button
-      this.disableOtherTabs(confirmationScreenIndex, !this.$storage.registration.getters.isCRCRegistration());
+      this.disableOtherTabs(confirmationScreenIndex, !this.$storage.registration.getters.isCRCRegistration() && this.registrationSuccess);
 
       this.$storage.registration.mutations.mutateTabAtIndex(confirmationScreenIndex, (tab: IRegistrationMenuItem) => {
         if (this.$store.state.registration.householdAssociationMode) {

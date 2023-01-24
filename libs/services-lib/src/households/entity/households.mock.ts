@@ -1,5 +1,5 @@
 import { mockVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
-import { mockHouseholdEntity } from '@libs/entities-lib/household';
+import { mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/entities-lib/household';
 import {
   mockGenders,
   mockIndigenousCommunitiesGetData, mockMemberData,
@@ -15,9 +15,9 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   getPreferredLanguages: jest.fn(() => mockPreferredLanguages()),
   getPrimarySpokenLanguages: jest.fn(() => mockPrimarySpokenLanguages()),
   getIndigenousCommunities: jest.fn(() => mockIndigenousCommunitiesGetData()),
-  submitRegistration: jest.fn(() => mockHouseholdEntity()),
+  submitRegistration: jest.fn(() => mockDetailedRegistrationResponse()),
   getPerson: jest.fn(() => mockMemberData()),
-  submitCRCRegistration: jest.fn(() => mockHouseholdEntity()),
+  submitCRCRegistration: jest.fn(() => mockDetailedRegistrationResponse()),
   updatePersonContactInformation: jest.fn(() => mockHouseholdEntity()),
   updatePersonIdentity: jest.fn(() => mockHouseholdEntity()),
   updatePersonAddress: jest.fn(() => mockHouseholdEntity()),
@@ -27,7 +27,7 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   addMember: jest.fn(() => mockHouseholdEntity()),
   hasOutstandingPayments: jest.fn(() => ({ hasOutstandingPayments: false })),
   makePrimary: jest.fn(() => mockHouseholdEntity()),
-  splitHousehold: jest.fn(() => mockHouseholdEntity()),
+  splitHousehold: jest.fn(() => mockDetailedRegistrationResponse()),
   moveMembers: jest.fn(() => [mockHouseholdEntity(), mockHouseholdEntity()]),
   validateEmail: jest.fn(() => mockValidateEmailResponse()),
   validatePublicEmail: jest.fn(() => mockValidateEmailResponse()),

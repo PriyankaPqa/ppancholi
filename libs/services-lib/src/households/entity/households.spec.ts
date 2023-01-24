@@ -21,6 +21,7 @@ import { mockHttp } from '../../http-client';
 import { HouseholdsService } from './households';
 
 const API_URL_SUFFIX = 'household';
+const ORCHESTRATION_CONTROLLER = 'orchestration/orchestration-households';
 const http = mockHttp();
 const createBeneficiaryRequest = mockCreateHouseholdRequest();
 const splitBeneficiaryRequest = mockSplitHouseholdRequest();
@@ -62,7 +63,7 @@ describe('>>> Beneficiaries Service', () => {
     });
 
     expect(http.post).toHaveBeenCalledWith(
-`${service.baseUrl}/public`,
+`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`,
       { ...createBeneficiaryRequest, recaptchaToken: 'token' },
       { globalHandler: false },
 );
@@ -73,7 +74,7 @@ describe('>>> Beneficiaries Service', () => {
 
     await service.submitCRCRegistration(mockHouseholdCreate(), 'event id');
 
-    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}`, createBeneficiaryRequest, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}`, createBeneficiaryRequest, { globalHandler: false });
   });
 
   test('getPerson is linked to the correct URL', async () => {
@@ -137,7 +138,7 @@ describe('>>> Beneficiaries Service', () => {
   test('splitHousehold is linked to the correct URL', async () => {
     service.parseSplitHouseholdPayload = jest.fn(() => splitBeneficiaryRequest);
     await service.splitHousehold(mockHouseholdCreate(), '1234', 'event-id');
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'1234'}/split`, splitBeneficiaryRequest, { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${'1234'}/split`, splitBeneficiaryRequest, { globalHandler: false });
   });
 
   test('moveMembers is linked to the correct URL', async () => {

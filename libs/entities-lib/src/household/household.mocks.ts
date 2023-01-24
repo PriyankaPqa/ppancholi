@@ -1,7 +1,9 @@
+import { mockAssessmentResponseEntity } from '../assessment-template';
+import { mockCaseFileEntity } from '../case-file';
 import { IEntity, mockBaseData } from '../base';
 import {
   IHouseholdCombined, IHouseholdEntity, IHouseholdMetadata, IHouseholdMemberMetadata,
-  IHouseholdCaseFile,
+  IHouseholdCaseFile, IDetailedRegistrationResponse,
 } from './household.types';
 /* eslint-disable no-nested-ternary */
 
@@ -92,3 +94,10 @@ export const mockCombinedHouseholds = (): IHouseholdCombined[] => [
   mockCombinedHousehold({ id: '1' }),
   mockCombinedHousehold({ id: '2' }),
 ];
+
+export const mockDetailedRegistrationResponse = (): IDetailedRegistrationResponse => (
+  JSON.parse(JSON.stringify({
+  assessmentResponses: [mockAssessmentResponseEntity({ id: '1' })],
+  caseFile: mockCaseFileEntity(),
+  household: mockHouseholdEntity(),
+})));

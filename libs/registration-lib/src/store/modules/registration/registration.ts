@@ -15,7 +15,7 @@ import { Status } from '@libs/entities-lib/base';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { ISplitHousehold } from '@libs/entities-lib/household-create/householdCreate.types';
 import { PublishStatus } from '@libs/entities-lib/assessment-template';
-import { IHouseholdEntity } from '@libs/entities-lib/household';
+import { IDetailedRegistrationResponse, IHouseholdEntity } from '@libs/entities-lib/household';
 import {
   HouseholdCreate,
   EIndigenousTypes,
@@ -346,7 +346,7 @@ const mutations = (mode: ERegistrationMode): MutationTree<IState> => ({
     state.householdCreate.consentInformation.registrationLocationId = payload;
   },
 
-  setRegistrationResponse(state: IState, payload: IHouseholdEntity) {
+  setRegistrationResponse(state: IState, payload: IDetailedRegistrationResponse) {
     state.registrationResponse = payload;
   },
 
@@ -463,6 +463,7 @@ state: IState,
 
   setTabs(state: IState, tabs: IRegistrationMenuItem[]) {
     state.tabs = tabs;
+    state.allTabs = tabs;
   },
 
   setInformationFromBeneficiarySearch(state: IState, infoObject: IInformationFromBeneficiarySearch) {
@@ -549,8 +550,8 @@ const actions = (mode: ERegistrationMode) => ({
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
     recaptchaToken?: string,
-  ): Promise<IHouseholdEntity> {
-    let result: IHouseholdEntity;
+  ): Promise<IDetailedRegistrationResponse> {
+    let result: IDetailedRegistrationResponse;
     context.commit('setSubmitLoading', true);
     try {
       let result;
@@ -676,8 +677,8 @@ member.id,
   async splitHousehold(
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
-  ): Promise<IHouseholdEntity> {
-    let result: IHouseholdEntity;
+  ): Promise<IDetailedRegistrationResponse> {
+    let result: IDetailedRegistrationResponse;
     context.commit('setSubmitLoading', true);
     try {
       const { originHouseholdId } = context.state.splitHousehold;

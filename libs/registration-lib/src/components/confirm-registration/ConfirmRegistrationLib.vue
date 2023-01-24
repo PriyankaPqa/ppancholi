@@ -66,7 +66,7 @@ import { TranslateResult } from 'vue-i18n';
 import Vue from 'vue';
 import { IHouseholdCreate, IHouseholdCreateData } from '@libs/entities-lib/src/household-create';
 import { IEvent } from '@libs/entities-lib/src/registration-event';
-import { IHouseholdEntity } from '@libs/entities-lib/src/household';
+import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IServerError } from '@libs/shared-lib/src/types';
 import ConfirmationError from './ConfirmationError.vue';
 import { IRegistrationMenuItem } from '../../types';
@@ -86,7 +86,7 @@ export default Vue.extend({
       return this.$store.state.registration.householdAssociationMode;
     },
 
-    response(): IHouseholdEntity {
+    response(): IDetailedRegistrationResponse {
       return this.$storage.registration.getters.registrationResponse();
     },
 
@@ -119,7 +119,7 @@ export default Vue.extend({
     },
 
     registrationNumber(): string {
-      return this.associationMode ? (this.household as IHouseholdCreateData).registrationNumber : this.response?.registrationNumber;
+      return this.associationMode ? (this.household as IHouseholdCreateData).registrationNumber : this.response?.household?.registrationNumber;
     },
 
     phoneAssistance(): string {

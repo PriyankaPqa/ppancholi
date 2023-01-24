@@ -11,7 +11,7 @@ import {
   IValidateEmailRequest,
   IConsentInformation, IValidateEmailPublicRequest,
 } from '@libs/entities-lib/household-create';
-import { IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
+import { IDetailedRegistrationResponse, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
 import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
 import { IOptionItemData } from '@libs/shared-lib/types';
@@ -22,8 +22,8 @@ export interface IHouseholdsService {
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
   getIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
   getPerson(id: uuid): Promise<IMemberEntity>;
-  submitRegistration({ household, eventId, recaptchaToken }: { household: IHouseholdCreate; eventId: string; recaptchaToken: string }): Promise<IHouseholdEntity>;
-  submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
+  submitRegistration({ household, eventId, recaptchaToken }: { household: IHouseholdCreate; eventId: string; recaptchaToken: string }): Promise<IDetailedRegistrationResponse>;
+  submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IDetailedRegistrationResponse>;
   updatePersonContactInformation(id: string,
       payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet }): Promise<IHouseholdEntity> | false;
   updatePersonIdentity(id: string,
@@ -33,7 +33,7 @@ export interface IHouseholdsService {
   updateNoFixedHomeAddress(id: string, observation?: string): Promise<IHouseholdEntity> | false;
   deleteAdditionalMember(householdId: string, memberId: string): Promise<IHouseholdEntity>;
   addMember(householdId: string, payload: IMember): Promise<IHouseholdEntity>;
-  splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IHouseholdEntity>;
+  splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IDetailedRegistrationResponse>;
   moveMembers(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]>;
   validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
   validatePublicEmail(request: IValidateEmailPublicRequest): Promise<IValidateEmailResponse>;
@@ -51,9 +51,9 @@ export interface IHouseholdsServiceMock {
   getPreferredLanguages: jest.Mock<IOptionItemData[]>;
   getPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
   getIndigenousCommunities: jest.Mock<IIndigenousCommunityData[]>;
-  submitRegistration: jest.Mock<IHouseholdEntity>;
+  submitRegistration: jest.Mock<IDetailedRegistrationResponse>;
   getPerson: jest.Mock<IMemberEntity>;
-  submitCRCRegistration: jest.Mock<IHouseholdEntity>;
+  submitCRCRegistration: jest.Mock<IDetailedRegistrationResponse>;
   updatePersonContactInformation: jest.Mock<IHouseholdEntity>;
   updatePersonIdentity: jest.Mock<IHouseholdEntity>;
   updatePersonAddress: jest.Mock<IHouseholdEntity>;
@@ -61,7 +61,7 @@ export interface IHouseholdsServiceMock {
   updateNoFixedHomeAddress: jest.Mock<IHouseholdEntity>;
   deleteAdditionalMember: jest.Mock<IHouseholdEntity>;
   addMember: jest.Mock<IHouseholdEntity>;
-  splitHousehold: jest.Mock<IHouseholdEntity>;
+  splitHousehold: jest.Mock<IDetailedRegistrationResponse>;
   moveMembers: jest.Mock<IHouseholdEntity[]>;
   validateEmail: jest.Mock<IValidateEmailResponse>;
   validatePublicEmail: jest.Mock<IValidateEmailResponse>;

@@ -1,6 +1,8 @@
 import { IEntity, IEntityCombined } from '../base';
 import { IPhoneNumber } from '../value-objects/contact-information';
 import { IAddressData } from '../value-objects/address';
+import { IAssessmentResponseEntity } from '../assessment-template';
+import { ICaseFileEntity } from '../case-file';
 
 export interface IHouseholdAddress {
   address?: IAddressData;
@@ -44,4 +46,10 @@ export type IHouseholdCombined = IEntityCombined<IHouseholdEntity, IHouseholdMet
 
 export interface IOustandingPaymentResponse {
   hasOutstandingPayments: boolean;
+}
+
+export interface IDetailedRegistrationResponse {
+  assessmentResponses: IAssessmentResponseEntity[];
+  caseFile: ICaseFileEntity;
+  household: IHouseholdEntity;
 }

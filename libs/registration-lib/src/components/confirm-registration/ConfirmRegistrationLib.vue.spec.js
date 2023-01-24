@@ -1,6 +1,6 @@
 import { mockStorage } from '@/store/storage/storage.mock';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockHouseholdEntity } from '@libs/entities-lib/household';
+import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { mockEvent } from '@libs/entities-lib/registration-event';
 import { mockServerError } from '@libs/services-lib/src/http-client';
 import Component from './ConfirmRegistrationLib.vue';
@@ -14,7 +14,7 @@ storage.registration.getters.currentTab = jest.fn(() => ({ titleKey: 'mock title
 console.warn = jest.fn();
 
 const computed = {
-  response: () => mockHouseholdEntity(),
+  response: () => mockDetailedRegistrationResponse(),
   event: () => ({
     name: {
       translation: {
@@ -83,7 +83,7 @@ describe('ConfirmRegistrationLib.vue', () => {
     describe('registrationNumber', () => {
       it('should render it', () => {
         const component = wrapper.findDataTest('confirm-registration-number');
-        expect(component.text()).toBe(computed.response().registrationNumber);
+        expect(component.text()).toBe(computed.response().household.registrationNumber);
       });
     });
 
@@ -162,7 +162,7 @@ describe('ConfirmRegistrationLib.vue', () => {
 
     describe('response', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.response).toEqual(mockHouseholdEntity());
+        expect(wrapper.vm.response).toEqual(mockDetailedRegistrationResponse());
       });
     });
 
@@ -223,7 +223,7 @@ describe('ConfirmRegistrationLib.vue', () => {
           computed: {
             associationMode: () => false,
             household: () => ({ registrationNumber: 'associate registrationNumber' }),
-            response: () => ({ registrationNumber: 'registrationNumber' }),
+            response: () => ({ household: { registrationNumber: 'registrationNumber' } }),
           },
         });
 
@@ -234,7 +234,7 @@ describe('ConfirmRegistrationLib.vue', () => {
           computed: {
             associationMode: () => true,
             household: () => ({ registrationNumber: 'associate registrationNumber' }),
-            response: () => ({ registrationNumber: 'registrationNumber' }),
+            response: () => ({ household: { registrationNumber: 'registrationNumber' } }),
           },
         });
 

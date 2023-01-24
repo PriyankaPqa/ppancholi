@@ -10,6 +10,7 @@ import {
 } from '@libs/entities-lib/case-file/case-file.types';
 import { IListOption } from '@libs/shared-lib/types';
 import { ICreateCaseFileRequest } from '@libs/services-lib/case-files/entity';
+import { IDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';
@@ -44,7 +45,7 @@ export interface IActions extends IBaseActions<ICaseFileEntity, ICaseFileMetadat
   setCaseFileIdentityAuthentication(id: uuid, identityAuthentication: IIdentityAuthentication): Promise<ICaseFileEntity>;
   setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation): Promise<ICaseFileEntity>;
   setCaseFileAssign(id: uuid, individuals: uuid[], teams: uuid[]): Promise<ICaseFileEntity>;
-  createCaseFile(payload: ICreateCaseFileRequest): Promise<ICaseFileEntity>;
+  createCaseFile(payload: ICreateCaseFileRequest): Promise<IDetailedRegistrationResponse>;
   assignCaseFile(id: uuid, teamMembers: IAssignedTeamMembers[], teams: uuid[]): Promise<ICaseFileEntity>;
 }
 
@@ -63,7 +64,7 @@ export interface IActionsMock extends IBaseActionsMock<ICaseFileEntity, ICaseFil
   setCaseFileTriage: jest.Mock<ICaseFileEntity>;
   setCaseFileValidationOfImpact: jest.Mock<ICaseFileEntity>;
   setCaseFileAssign: jest.Mock<ICaseFileEntity>;
-  createCaseFile: jest.Mock<ICaseFileEntity>;
+  createCaseFile: jest.Mock<IDetailedRegistrationResponse>;
   assignCaseFile: jest.Mock<ICaseFileEntity>;
 }
 

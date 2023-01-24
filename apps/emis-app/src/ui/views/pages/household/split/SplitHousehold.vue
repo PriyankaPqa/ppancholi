@@ -2,7 +2,7 @@
   <div class="full-height grey lighten-4">
     <page-template
       :loading="false"
-      :navigation-tabs="flowTabs"
+      :navigation-tabs="allTabs"
       :left-menu-title="splitMemberName"
       :left-menu-subtitle="$t('household.split.sub-title.split_household_member')">
       <template #navigation>
@@ -47,13 +47,16 @@
               <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
                 <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
                 <v-btn
-                  color="primary"
                   data-test="nextButton"
+                  :color="currentTab.id === 'confirmation' && registrationAssessment ? '' : 'primary'"
                   :aria-label="nextButtonLabel"
                   :loading="submitLoading"
                   :disabled="failed"
                   @click="next()">
                   {{ nextButtonLabel }}
+                </v-btn>
+                <v-btn v-if="currentTab.id === 'confirmation' && registrationAssessment" color="primary" data-test="new-registration-button" @click="openAssessmentIfAvailable">
+                  {{ $t('registration.start_assessment.label') }}
                 </v-btn>
               </div>
             </div>
@@ -73,6 +76,7 @@ import { TranslateResult } from 'vue-i18n';
 import individual from '@libs/registration-lib/ui/mixins/individual';
 import { RcPageContent } from '@libs/component-lib/components';
 import { ContactInformation, IMember, ISplitHousehold } from '@libs/entities-lib/household-create';
+import { IRegistrationAssessment } from '@libs/entities-lib/event';
 import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrintLib.vue';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
@@ -135,11 +139,8 @@ export default mixins(individual).extend({
   },
 
   computed: {
-    flowTabs() {
-      if (this.splitHousehold?.splitMembers.additionalMembers.length) {
-        return tabs();
-      }
-      return tabs().filter((t) => t.id !== 'additionalSplitMembers');
+    registrationAssessment(): IRegistrationAssessment {
+      return this.$storage.registration.getters.assessmentToComplete()?.registrationAssessment;
     },
 
     splitMemberName(): string {
@@ -180,7 +181,12 @@ export default mixins(individual).extend({
   },
 
   created() {
-    this.$storage.registration.mutations.setTabs(this.flowTabs);
+    let allTabs = tabs();
+    if (!this.splitHousehold?.splitMembers.additionalMembers.length) {
+      allTabs = allTabs.filter((t) => t.id !== 'additionalSplitMembers');
+    }
+    this.$storage.registration.mutations.setTabs(allTabs);
+    this.$storage.registration.mutations.setAssessmentToComplete(null);
     if (!this.splitHousehold) {
       this.back();
     }
@@ -244,13 +250,13 @@ export default mixins(individual).extend({
         this.awaiting = false;
       }
 
-      if (this.currentTabIndex < this.flowTabs.length - 1) {
+      if (this.currentTabIndex < this.allTabs.length - 1) {
         await this.jump(this.currentTabIndex + 1);
       }
     },
 
     closeSplit() {
-      const householdId = this.$storage.registration.getters.registrationResponse()?.id;
+      const householdId = this.$storage.registration.getters.registrationResponse()?.household?.id;
 
       this.$router.replace({
         name: routes.household.householdProfile.name,
@@ -277,7 +283,6 @@ export default mixins(individual).extend({
         });
       }
     },
-
   },
 });
 </script>

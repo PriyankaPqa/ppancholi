@@ -66,7 +66,7 @@
                     @click="next()">
                     {{ getNextButtonLabel }}
                   </v-btn>
-                  <v-btn v-if="registrationAssessment" color="primary" data-test="new-registration-button" @click="routeToAssessment">
+                  <v-btn v-if="registrationAssessment" color="primary" data-test="new-registration-button" @click="openAssessmentIfAvailable">
                     {{ $t('registration.start_assessment.label') }}
                   </v-btn>
                 </div>
@@ -253,12 +253,6 @@ export default mixins(individual).extend({
       this.$router.replace({
         name: routes.registration.home.name,
       });
-    },
-
-    routeToAssessment() {
-      // future dev
-      // eslint-disable-next-line no-alert
-      alert('assessment');
     },
 
     async next() {

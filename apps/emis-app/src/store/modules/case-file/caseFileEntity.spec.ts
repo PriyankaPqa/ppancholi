@@ -7,10 +7,11 @@ import { OptionItemsService } from '@libs/services-lib/optionItems';
 import {
   CaseFileStatus, CaseFileTriage, mockCaseFileActivities, mockTagsOptions, mockCaseFileEntity,
   IIdentityAuthentication, IdentityAuthenticationStatus, IdentityAuthenticationMethod, IImpactStatusValidation,
-  ImpactValidationMethod, ValidationOfImpactStatus, ICaseFileEntity, mockAssignedTeamMembers,
+  ImpactValidationMethod, ValidationOfImpactStatus, mockAssignedTeamMembers,
 } from '@libs/entities-lib/case-file';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import { mockSignalR } from '@libs/shared-lib/signal-r';
+import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { CaseFileEntityModule } from './caseFileEntity';
 import { ICaseFileEntityState } from './caseFileEntity.types';
 
@@ -344,13 +345,13 @@ describe('Case file entity module', () => {
             privacyDateTimeConsent: '2021-07-06T19:37:10.185Z',
           },
         };
-        const res = {} as ICaseFileEntity;
+        const res = mockDetailedRegistrationResponse();
         myModule.service.createCaseFile = jest.fn(() => Promise.resolve(res));
         await myModule.actions.createCaseFile(actionContext, payload);
 
         expect(myModule.service.createCaseFile).toBeCalledWith(payload);
-        expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
-        expect(actionContext.commit).toBeCalledWith('set', res);
+        expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res.caseFile);
+        expect(actionContext.commit).toBeCalledWith('set', res.caseFile);
       });
     });
 

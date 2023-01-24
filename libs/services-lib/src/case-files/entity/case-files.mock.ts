@@ -1,6 +1,7 @@
 import {
   mockCaseFileActivities, mockCaseFileEntity, mockCaseFileCount, mockCaseFileDetailedCount, mockCaseFileEntities,
 } from '@libs/entities-lib/case-file';
+import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { mockDomainBaseService } from '../../base';
 import { ICaseFilesServiceMock } from './case-files.types';
 
@@ -13,7 +14,7 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   setCaseFileIsDuplicate: jest.fn(() => mockCaseFileEntity()),
   setCaseFileTriage: jest.fn(() => mockCaseFileEntity()),
   setCaseFileAssign: jest.fn(() => mockCaseFileEntity()),
-  createCaseFile: jest.fn(() => mockCaseFileEntity()),
+  createCaseFile: jest.fn(() => mockDetailedRegistrationResponse()),
   setCaseFileValidationOfImpact: jest.fn(() => mockCaseFileEntity()),
   getCaseFileAssignedCounts: jest.fn(() => mockCaseFileCount()),
   fetchCaseFileDetailedCounts: jest.fn(() => mockCaseFileDetailedCount()),

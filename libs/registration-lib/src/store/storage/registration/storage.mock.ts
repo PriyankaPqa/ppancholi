@@ -1,7 +1,7 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set/identitySet.mock';
-import { mockHouseholdEntity } from '@libs/entities-lib/household';
+import { mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/entities-lib/household';
 import {
   mockContactInformation,
   mockGenders, mockHouseholdCreate,
@@ -31,7 +31,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     indigenousTypesItems: jest.fn(() => mockIndigenousTypesItems()),
     indigenousCommunitiesItems: jest.fn(() => mockIndigenousCommunitiesItems()),
     findEffectiveJumpIndex: jest.fn(),
-    registrationResponse: jest.fn(() => mockHouseholdEntity()),
+    registrationResponse: jest.fn(() => mockDetailedRegistrationResponse()),
     registrationErrors: jest.fn(),
     householdCreate: jest.fn(() => _cloneDeep(mockHouseholdCreate())),
     personalInformation: jest.fn(() => _merge(mockContactInformation(), mockIdentitySet())),
@@ -87,12 +87,12 @@ export const mockStorageRegistration = (): IStorageMock => ({
     fetchPreferredLanguages: jest.fn(),
     fetchPrimarySpokenLanguages: jest.fn(),
     fetchIndigenousCommunities: jest.fn(),
-    submitRegistration: jest.fn(),
+    submitRegistration: jest.fn(() => mockDetailedRegistrationResponse()),
     updatePersonAddress: jest.fn(() => mockHouseholdEntity()),
     updatePersonIdentity: jest.fn(() => mockHouseholdEntity()),
     updatePersonContactInformation: jest.fn(() => mockHouseholdEntity()),
     addAdditionalMember: jest.fn(() => mockHouseholdEntity()),
-    splitHousehold: jest.fn(() => mockHouseholdEntity()),
+    splitHousehold: jest.fn(() => mockDetailedRegistrationResponse()),
     deleteAdditionalMember: jest.fn(() => mockHouseholdEntity()),
   },
 });

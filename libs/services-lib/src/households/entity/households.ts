@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { IConsentInformation, IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
-import { IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
+import { IDetailedRegistrationResponse, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
 
 import {
   IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
@@ -19,6 +19,7 @@ import { IHouseholdsService } from './households.types';
 
 const API_URL_SUFFIX = 'household';
 const CONTROLLER = 'households';
+const ORCHESTRATION_CONTROLLER = 'orchestration/orchestration-households';
 
 export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid> implements IHouseholdsService {
   constructor(http: IHttpClient | IHttpMock) {
@@ -41,14 +42,15 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     return this.http.get(`${API_URL_SUFFIX}/indigenous-communities`);
   }
 
-  async submitRegistration({ household, eventId, recaptchaToken }: { household: IHouseholdCreate; eventId: string; recaptchaToken: string }): Promise<IHouseholdEntity> {
+  async submitRegistration({ household, eventId, recaptchaToken }: { household: IHouseholdCreate; eventId: string; recaptchaToken: string }):
+    Promise<IDetailedRegistrationResponse> {
     const payload = this.parseHouseholdPayload(household, eventId);
-    return this.http.post(`${this.baseUrl}/public`, { ...payload, recaptchaToken }, { globalHandler: false });
+    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`, { ...payload, recaptchaToken }, { globalHandler: false });
   }
 
-  async submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity> {
+  async submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IDetailedRegistrationResponse> {
     const payload = this.parseHouseholdPayload(household, eventId);
-    return this.http.post(`${this.baseUrl}`, payload, { globalHandler: false });
+    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}`, payload, { globalHandler: false });
   }
 
   async getPerson(id: uuid): Promise<IMemberEntity> {
@@ -110,9 +112,9 @@ id: string,
     return this.http.delete(`${this.baseUrl}/${householdId}/members/${memberId}`);
   }
 
-  async splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IHouseholdEntity> {
+  async splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IDetailedRegistrationResponse> {
     const payload = this.parseSplitHouseholdPayload(household, eventId);
-    return this.http.patch(`${this.baseUrl}/${originHouseholdId}/split`, payload, { globalHandler: false });
+    return this.http.patch(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${originHouseholdId}/split`, payload, { globalHandler: false });
   }
 
   async moveMembers(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]> {

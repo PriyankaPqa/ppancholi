@@ -2,6 +2,7 @@ import {
   ICaseFileCombined, ICaseFileEntity, mockCaseFileEntity, mockCombinedCaseFiles, mockCaseFileActivities, mockCaseFileDetailedCount, mockCaseFileCount,
 } from '@libs/entities-lib/case-file';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { BaseMock } from '../base/base.mock';
 import { IStorageMock } from './storage.types';
 
@@ -33,7 +34,7 @@ export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEn
     setCaseFileIsDuplicate: jest.fn(() => this.entity),
     setCaseFileTriage: jest.fn(() => this.entity),
     setCaseFileAssign: jest.fn(() => this.entity),
-    createCaseFile: jest.fn(() => this.entity),
+    createCaseFile: jest.fn(() => mockDetailedRegistrationResponse()),
     setCaseFileIdentityAuthentication: jest.fn(() => this.entity),
     setCaseFileValidationOfImpact: jest.fn(() => this.entity),
     assignCaseFile: jest.fn(() => this.entity),
