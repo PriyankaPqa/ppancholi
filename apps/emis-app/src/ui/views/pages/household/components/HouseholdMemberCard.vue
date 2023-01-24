@@ -246,7 +246,7 @@ export default Vue.extend({
     },
 
     canEdit():boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level0');
     },
 
     memberInfo(): Array<Record<string, unknown>> {

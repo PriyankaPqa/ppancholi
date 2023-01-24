@@ -379,7 +379,7 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('canEdit', () => {
-      it('returns true if user has level 1', () => {
+      it('returns true if user has level 0', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -390,7 +390,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          pinia: getPiniaForUser('level1'),
+          pinia: getPiniaForUser('level0'),
           mocks: {
             $storage: {
               registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
@@ -406,7 +406,7 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
-      it('returns false if user does not have level 1', () => {
+      it('returns false if user does not have level 0', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia: getPiniaForUser('contributorIM'),

@@ -100,14 +100,14 @@ export const mockUsersData = (): IUserData[] => [{
   roles: undefined,
   homeAccountId: 'homeAccountId',
 },
-  {
-    oid: '12',
-    email: 'test@test.ca',
-    family_name: 'White',
-    given_name: 'John',
-    roles: ['level0'],
-    homeAccountId: 'homeAccountId',
-  },
+{
+  oid: '12',
+  email: 'test@test.ca',
+  family_name: 'White',
+  given_name: 'John',
+  roles: ['level0'],
+  homeAccountId: 'homeAccountId',
+},
 ];
 
 export const mockUserL0 = (): IUser => new User(mockUsersData()[11]);

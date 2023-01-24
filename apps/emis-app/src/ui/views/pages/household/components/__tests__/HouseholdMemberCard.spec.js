@@ -372,7 +372,7 @@ describe('HouseholdMemberCard.vue', () => {
     });
 
     describe('canEdit', () => {
-      it('returns true if the user has level 1 or more', () => {
+      it('returns true if the user has level 0 or more', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -380,12 +380,12 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          pinia: getPiniaForUser('level1'),
+          pinia: getPiniaForUser('level0'),
 
         });
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
-      it('returns false if the user has level 1', () => {
+      it('returns false if the user has level 0', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia: getPiniaForUser('contributorIM'),

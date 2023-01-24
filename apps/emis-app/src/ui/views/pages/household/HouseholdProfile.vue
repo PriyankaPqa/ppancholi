@@ -316,7 +316,7 @@ export default mixins(household).extend({
     },
 
     canEdit():boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level0');
     },
 
     canMove():boolean {
