@@ -1,13 +1,13 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote, mockCaseNoteCategories, mockCaseNoteEntity } from '@libs/entities-lib/case-note';
-import { mockStorage } from '@/storage';
+import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './CaseNotesListItem.vue';
 
 const localVue = createLocalVue();
 const caseNote = mockCombinedCaseNote();
-const storage = mockStorage();
+const { pinia, caseNoteStore } = useMockCaseNoteStore();
 
 describe('CaseNotesListItem.vue', () => {
   let wrapper;
@@ -15,15 +15,13 @@ describe('CaseNotesListItem.vue', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    storage.caseNote.getters.caseNoteCategories = jest.fn(() => mockCaseNoteCategories());
+    caseNoteStore.getCaseNoteCategories = jest.fn(() => mockCaseNoteCategories());
 
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         item: caseNote,
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });
@@ -104,11 +102,9 @@ describe('CaseNotesListItem.vue', () => {
         const altCaseNote = { entity: mockCaseNoteEntity({ category: { optionItemId: mockCaseNoteCategories()[1].id } }), metadata: {} };
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             item: altCaseNote,
-          },
-          mocks: {
-            $storage: storage,
           },
           computed: {
             canEditCaseNote() {

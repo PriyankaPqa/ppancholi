@@ -1,5 +1,5 @@
 import { EFilterType } from '@libs/component-lib/types';
-import { CaseNoteStorageMock } from '@/storage/case-note/storage.mock';
+import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
 import { mockStorage } from '@/storage';
@@ -15,6 +15,7 @@ const caseNote = mockCombinedCaseNote();
 const storage = mockStorage();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
+const { pinia, caseNoteStore } = useMockCaseNoteStore();
 
 describe('CaseNote.vue', () => {
   let wrapper;
@@ -23,6 +24,7 @@ describe('CaseNote.vue', () => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         id: 'id',
       },
@@ -151,11 +153,6 @@ describe('CaseNote.vue', () => {
                 return mockEvent;
               },
             },
-            mocks: {
-              $storage: {
-                caseNote: new CaseNoteStorageMock().make(),
-              },
-            },
           });
         };
 
@@ -189,11 +186,6 @@ describe('CaseNote.vue', () => {
           propsData: {
             id: 'id',
           },
-          mocks: {
-            $storage: {
-              caseNote: new CaseNoteStorageMock().make(),
-            },
-          },
           computed: {
             readonly() {
               return true;
@@ -220,8 +212,6 @@ describe('CaseNote.vue', () => {
           mockCombinedCaseNote({ id: '3', isPinned: false, created: '2020-01-03' }),
         ];
 
-        storage.caseNote.getters.getByIds = jest.fn(() => caseFiles);
-
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -232,24 +222,42 @@ describe('CaseNote.vue', () => {
               return mockEvent;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
         });
       });
 
       it('calls the getByIds getter and sets the result into caseNotes', () => {
+        wrapper.vm.combinedCaseNoteStore.getByIds = jest.fn(() => caseFiles);
         expect(wrapper.vm.caseNotes).toEqual([caseFiles[0], caseFiles[1], caseFiles[2]]);
       });
     });
 
     describe('title', () => {
-      it('should return proper data', () => {
-        wrapper.vm.$store.state.caseNoteEntities.searchLoading = true;
+      it('should return proper data ', () => {
+        caseNoteStore.searchLoading = true;
         expect(wrapper.vm.title).toEqual('caseNote.caseNotes (...)');
-        wrapper.vm.$store.state.caseNoteEntities.searchLoading = false;
-        wrapper.vm.itemsCount = 99;
-        expect(wrapper.vm.title).toEqual('caseNote.caseNotes (99)');
+      });
+
+      it('should return proper data when loading is true', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'id',
+          },
+          computed: {
+            event() {
+              return mockEvent;
+            },
+            loading() {
+              return false;
+            },
+            caseNotes() {
+              return [mockCombinedCaseNote({ id: '1', isPinned: false, created: '2020-01-02' }),
+                mockCombinedCaseNote({ id: '2', isPinned: true, created: '2020-01-01' })];
+            },
+          },
+        });
+        expect(wrapper.vm.title).toEqual('caseNote.caseNotes (2)');
       });
     });
 
@@ -260,8 +268,7 @@ describe('CaseNote.vue', () => {
             key: 'Metadata/CaseNoteCategoryName/Translation/en',
             type: EFilterType.MultiSelect,
             label: 'caseNote.category',
-            items: wrapper.vm.$storage.caseNote.getters
-              .caseNoteCategories()
+            items: caseNoteStore.getCaseNoteCategories()
               .map((c) => ({ text: wrapper.vm.$m(c.name), value: wrapper.vm.$m(c.name) })),
           },
           {
@@ -275,10 +282,9 @@ describe('CaseNote.vue', () => {
 
     describe('loading', () => {
       it('should be linked to proper state', () => {
-        wrapper.vm.$store.state.caseNoteEntities.searchLoading = true;
+        caseNoteStore.searchLoading = true;
         expect(wrapper.vm.loading).toEqual(true);
-
-        wrapper.vm.$store.state.caseNoteEntities.searchLoading = false;
+        caseNoteStore.searchLoading = false;
         expect(wrapper.vm.loading).toEqual(false);
       });
     });
@@ -299,14 +305,14 @@ describe('CaseNote.vue', () => {
   describe('Lifecycle', () => {
     describe('created', () => {
       it('should call fetchCaseNoteCategories and searchCaseNotes', async () => {
-        wrapper.vm.$storage.caseNote.actions.fetchCaseNoteCategories = jest.fn();
+        caseNoteStore.fetchCaseNoteCategories = jest.fn();
         wrapper.vm.search = jest.fn();
 
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
-        expect(wrapper.vm.$storage.caseNote.actions.fetchCaseNoteCategories).toHaveBeenCalledTimes(1);
+        expect(caseNoteStore.fetchCaseNoteCategories).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.search).toHaveBeenCalledTimes(1);
       });
     });
@@ -326,8 +332,8 @@ describe('CaseNote.vue', () => {
     });
 
     describe('fetchData', () => {
-      it('should call storage', async () => {
-        wrapper.vm.$storage.caseNote.actions.search = jest.fn();
+      it('should call search', async () => {
+        wrapper.vm.combinedCaseNoteStore.search = jest.fn();
 
         const params = {
           search: '',
@@ -339,8 +345,8 @@ describe('CaseNote.vue', () => {
 
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.caseNote.actions.search).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.caseNote.actions.search).toHaveBeenLastCalledWith(
+        expect(wrapper.vm.combinedCaseNoteStore.search).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.combinedCaseNoteStore.search).toHaveBeenLastCalledWith(
           {
             ...params,
             filter: { 'Entity/CaseFileId': 'id' },
@@ -355,13 +361,15 @@ describe('CaseNote.vue', () => {
     });
 
     describe('pinCaseNote', () => {
-      it('should call storage', async () => {
-        wrapper.vm.$storage.caseNote.actions.pinCaseNote = jest.fn();
+      it('should call pinCaseNote', async () => {
+        caseNoteStore.pinCaseNote = jest.fn();
         const { isPinned } = caseNote;
 
         await wrapper.vm.pinCaseNote(caseNote);
 
-        expect(wrapper.vm.$storage.caseNote.actions.pinCaseNote).toHaveBeenCalledWith(wrapper.vm.caseFileId, caseNote.entity.id, !isPinned);
+        expect(caseNoteStore.pinCaseNote).toHaveBeenCalledWith(
+          { caseFileId: wrapper.vm.caseFileId, caseNoteId: caseNote.entity.id, isPinned: !isPinned },
+        );
       });
       it('should update isPinned in case note', async () => {
         const mockCaseNote = {

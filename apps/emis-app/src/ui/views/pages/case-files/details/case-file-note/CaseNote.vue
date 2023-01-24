@@ -66,10 +66,14 @@ import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import * as searchEndpoints from '@/constants/searchEndpoints';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
+import {
+  ICaseNoteCombined, ICaseNoteEntity, ICaseNoteMetadata, IdParams,
+} from '@libs/entities-lib/case-note';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { useCaseNoteStore, useCaseNoteMetadataStore } from '@/pinia/case-note/case-note';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 import CaseNotesListItem from './components/CaseNotesListItem.vue';
 import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
@@ -114,6 +118,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         pageIndex: 1,
         pageSize: 1000,
       },
+      combinedCaseNoteStore: new CombinedStoreFactory<ICaseNoteEntity, ICaseNoteMetadata, IdParams>(useCaseNoteStore(), useCaseNoteMetadataStore()),
     };
   },
 
@@ -124,14 +129,15 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     caseNotes(): ICaseNoteCombined[] {
-      return this.$storage.caseNote.getters.getByIds(
+      return this.combinedCaseNoteStore.getByIds(
         this.searchResultIds,
         { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId } },
       );
     },
 
     title(): string {
-      return `${this.$t('caseNote.caseNotes')} (${this.loading ? '...' : this.itemsCount})`;
+      // eslint-disable-next-line no-nested-ternary
+      return `${this.$t('caseNote.caseNotes')} (${this.loading ? '...' : this.caseNotes ? this.caseNotes.length : 0})`;
     },
 
     filterOptions(): Array<IFilterSettings> {
@@ -140,7 +146,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
           key: `Metadata/CaseNoteCategoryName/Translation/${this.$i18n.locale}`,
           type: EFilterType.MultiSelect,
           label: this.$t('caseNote.category') as string,
-          items: this.$storage.caseNote.getters.caseNoteCategories().map((c: IOptionItem) => ({ text: this.$m(c.name), value: this.$m(c.name) })),
+          items: useCaseNoteStore().getCaseNoteCategories().map((c: IOptionItem) => ({ text: this.$m(c.name), value: this.$m(c.name) })),
         },
         {
           key: 'Entity/Created',
@@ -151,7 +157,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     loading(): boolean {
-      return this.$store.state.caseNoteEntities.searchLoading;
+      return useCaseNoteStore().searchLoading;
     },
 
     titleLeave(): TranslateResult {
@@ -171,7 +177,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   async created() {
-    await this.$storage.caseNote.actions.fetchCaseNoteCategories();
+    await useCaseNoteStore().fetchCaseNoteCategories();
     await this.search(this.dataTableParams);
   },
 
@@ -184,7 +190,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     async fetchData(params: IAzureSearchParams) {
       const filter = _isEmpty(params?.filter) ? {} : params.filter;
-      const res = await this.$storage.caseNote.actions.search(
+      const res = await this.combinedCaseNoteStore.search(
         {
           ...params,
           filter: { ...(filter as Record<string, unknown>), 'Entity/CaseFileId': this.caseFileId },
@@ -199,7 +205,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     async pinCaseNote(caseNote: ICaseNoteCombined) {
-      await this.$storage.caseNote.actions.pinCaseNote(this.caseFileId, caseNote.entity.id, !caseNote.entity.isPinned);
+      await useCaseNoteStore().pinCaseNote({ caseFileId: this.caseFileId, caseNoteId: caseNote.entity.id, isPinned: !caseNote.entity.isPinned });
       // Since back end search has a delay, update case note and sort case note list locally
       caseNote.entity.isPinned = !caseNote.entity.isPinned;
     },

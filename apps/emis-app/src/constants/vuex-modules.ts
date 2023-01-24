@@ -1,7 +1,5 @@
 export const CASE_FILE_ENTITIES = 'caseFileEntities';
 export const CASE_FILE_METADATA = 'caseFileMetadata';
-export const CASE_NOTE_ENTITIES = 'caseNoteEntities';
-export const CASE_NOTE_METADATA = 'caseNoteMetadata';
 export const OPTION_LIST_MODULE = 'optionList';
 export const HOUSEHOLD_ENTITIES = 'householdEntities';
 export const HOUSEHOLD_METADATA = 'householdMetadata';

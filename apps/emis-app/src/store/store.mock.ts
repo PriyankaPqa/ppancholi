@@ -31,11 +31,6 @@ import { CaseFileMetadataModule } from '@/store/modules/case-file/caseFileMetada
 import { CaseFilesService } from '@libs/services-lib/case-files/entity';
 import { CaseFilesMetadataService } from '@libs/services-lib/case-files/metadata';
 
-import { CaseNoteEntityModule } from '@/store/modules/case-note/caseNoteEntity';
-import { CaseNoteMetadataModule } from '@/store/modules/case-note/caseNoteMetadata';
-import { CaseNotesService } from '@libs/services-lib/case-notes/entity';
-import { CaseNotesMetadataService } from '@libs/services-lib/case-notes/metadata';
-
 import { FinancialAssistanceEntityModule } from '@/store/modules/financial-assistance/financialAssistanceEntity';
 import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-assistance/financialAssistanceMetadata';
 import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
@@ -70,15 +65,6 @@ const mockConfig = {
     ).getModule(),
     [vuexModule.CASE_FILE_METADATA]: new CaseFileMetadataModule(
       new CaseFilesMetadataService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-    [vuexModule.CASE_NOTE_ENTITIES]: new CaseNoteEntityModule(
-      new CaseNotesService(httpClient),
-      new OptionItemsService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-    [vuexModule.CASE_NOTE_METADATA]: new CaseNoteMetadataModule(
-      new CaseNotesMetadataService(httpClient),
       mockSignalR(),
     ).getModule(),
 

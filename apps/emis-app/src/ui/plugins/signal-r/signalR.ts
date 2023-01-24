@@ -21,6 +21,7 @@ import { useCaseFileDocumentMetadataStore, useCaseFileDocumentStore } from '@/pi
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
+import { useCaseNoteStore, useCaseNoteMetadataStore } from '@/pinia/case-note/case-note';
 import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
 import { IStorage } from '../../../storage/storage.types';
@@ -385,13 +386,13 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'CaseNote',
-      action: this.storage.caseNote.mutations.setEntityFromOutsideNotification,
+      action: useCaseNoteStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'CaseNoteMetadata',
-      action: this.storage.caseNote.mutations.setMetadataFromOutsideNotification,
+      action: useCaseNoteMetadataStore().setItemFromOutsideNotification,
     });
 
     this.listenForOptionItemChanges({
@@ -400,6 +401,9 @@ export class SignalR implements ISignalR {
       cacheResetMutationName: 'setCaseNoteCategoriesFetched',
       mutationDomain: 'caseNote',
     });
+
+    this.watchedPiniaStores.push(useProgramStore());
+    this.watchedPiniaStores.push(useProgramMetadataStore());
   }
 
   private listenForCaseReferralModuleChanges() {

@@ -51,6 +51,7 @@
 import Vue from 'vue';
 import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { useCaseNoteStore } from '@/pinia/case-note/case-note';
 import CaseFileListItemWrapper from '../../components/CaseFileListItemWrapper.vue';
 import CaseNoteForm from './CaseNoteForm.vue';
 
@@ -86,7 +87,7 @@ export default Vue.extend({
     },
 
     caseNoteCategories(): IOptionItem[] {
-      return this.$storage.caseNote.getters.caseNoteCategories();
+      return useCaseNoteStore().getCaseNoteCategories();
     },
 
     categoryName(): string {

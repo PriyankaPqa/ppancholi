@@ -71,6 +71,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
 import { ICaseFileCombined } from '@libs/entities-lib/case-file';
+import { useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { CaseNoteEntity, ICaseNoteEntity } from '@libs/entities-lib/case-note';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
@@ -124,11 +125,11 @@ export default Vue.extend({
     },
 
     isSaving(): boolean {
-      return this.$store.state.caseNoteEntities.isSavingCaseNote;
+      return useCaseNoteStore().isSavingCaseNote;
     },
 
     caseNoteCategories(): IOptionItem[] {
-      return this.$storage.caseNote.getters.caseNoteCategories(true, this.isEdit ? this.localCaseNote.category.optionItemId : null);
+      return useCaseNoteStore().getCaseNoteCategories(true, this.isEdit ? this.localCaseNote.category.optionItemId : null);
     },
 
     caseFile(): ICaseFileCombined {
@@ -165,11 +166,11 @@ export default Vue.extend({
         helpers.scrollToFirstError('app');
         return;
       }
-        if (this.$hasLevel('level4')) {
-          await this.addOrEdit();
-        } else {
-          this.showConfirmationDialog = true;
-        }
+      if (this.$hasLevel('level4')) {
+        await this.addOrEdit();
+      } else {
+        this.showConfirmationDialog = true;
+      }
     },
 
     async addOrEdit() {
@@ -179,7 +180,7 @@ export default Vue.extend({
     async addCaseNote() {
       this.closeConfirmationDialog();
 
-      const result = await this.$storage.caseNote.actions.addCaseNote(this.caseFile.entity.id, this.localCaseNote);
+      const result = await useCaseNoteStore().addCaseNote({ id: this.caseFile.entity.id, caseNote: this.localCaseNote });
       if (result) {
         this.$emit('add-case-note-id', result.id);
         this.closeCaseNoteForm();
@@ -189,7 +190,11 @@ export default Vue.extend({
     },
 
     async editCaseNote() {
-      const result = await this.$storage.caseNote.actions.editCaseNote(this.caseFile.entity.id, this.caseNote.id, this.localCaseNote);
+      const result = await useCaseNoteStore().editCaseNote({
+        caseFileId: this.caseFile.entity.id,
+        caseNoteId: this.caseNote.id,
+        caseNote: this.localCaseNote,
+      });
       if (result) {
         this.closeCaseNoteForm();
       } else {

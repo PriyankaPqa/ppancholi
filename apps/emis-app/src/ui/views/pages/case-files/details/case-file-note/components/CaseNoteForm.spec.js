@@ -1,5 +1,6 @@
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
 import { mockStorage } from '@/storage';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { mockCaseNoteEntity, mockCaseNoteCategories } from '@libs/entities-lib/case-note';
@@ -10,16 +11,19 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFileId = 'id';
 const caseNote = mockCaseNoteEntity();
+const { pinia, caseNoteStore } = useMockCaseNoteStore();
 
 describe('CaseNoteForm.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    storage.caseNote.actions.addCaseNote = jest.fn(() => caseNote);
+    caseNoteStore.addCaseNote = jest.fn(() => caseNote);
+    caseNoteStore.getCaseNoteCategories = jest.fn(() => mockCaseNoteCategories());
 
     wrapper = mount(Component, {
       localVue,
+      pinia,
       mocks: {
         $storage: storage,
       },
@@ -87,11 +91,12 @@ describe('CaseNoteForm.vue', () => {
     });
 
     describe('isSaving', () => {
-      it('should be linked to proper state', () => {
-        wrapper.vm.$store.state.caseNoteEntities.isSavingCaseNote = true;
+      it('should be linked to proper state true', () => {
+        caseNoteStore.isSavingCaseNote = true;
         expect(wrapper.vm.isSaving).toEqual(true);
-
-        wrapper.vm.$store.state.caseNoteEntities.isSavingCaseNote = false;
+      });
+      it('should be linked to proper state false', () => {
+        caseNoteStore.isSavingCaseNote = false;
         expect(wrapper.vm.isSaving).toEqual(false);
       });
     });
@@ -146,6 +151,7 @@ describe('CaseNoteForm.vue', () => {
       it('assigns value from props to component data', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             caseNote,
           },
@@ -161,6 +167,7 @@ describe('CaseNoteForm.vue', () => {
       it('calls setInitialCategory if there is a case note passed in props', () => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             caseNote,
           },
@@ -269,13 +276,13 @@ describe('CaseNoteForm.vue', () => {
     });
 
     describe('addCaseNote', () => {
-      it('should call storage to add case note', async () => {
+      it('should call store to add case note', async () => {
         await wrapper.setData({
           localCaseNote: caseNote,
         });
 
         await wrapper.vm.addCaseNote();
-        expect(wrapper.vm.$storage.caseNote.actions.addCaseNote).toHaveBeenCalledWith(mockCaseFileId, caseNote);
+        expect(caseNoteStore.addCaseNote).toHaveBeenCalledWith({ id: mockCaseFileId, caseNote });
       });
 
       it('should emit add-case-note-id with the new case note id', async () => {
@@ -290,13 +297,13 @@ describe('CaseNoteForm.vue', () => {
     });
 
     describe('editCaseNote', () => {
-      it('should call storage to edit case note', async () => {
+      it('should call store to edit case note', async () => {
         await wrapper.setData({
           localCaseNote: caseNote,
         });
 
         await wrapper.vm.editCaseNote();
-        expect(wrapper.vm.$storage.caseNote.actions.editCaseNote).toHaveBeenCalledWith(mockCaseFileId, caseNote.id, caseNote);
+        expect(caseNoteStore.editCaseNote).toHaveBeenCalledWith({ caseFileId: mockCaseFileId, caseNoteId: caseNote.id, caseNote });
       });
 
       it('should emit event', () => {
