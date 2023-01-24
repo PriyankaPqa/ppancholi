@@ -247,7 +247,6 @@ export default Vue.extend({
 
     canEdit():boolean {
       return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? 'level0' : 'level1');
-      // return this.$hasLevel('level0');
     },
 
     memberInfo(): Array<Record<string, unknown>> {
