@@ -3,7 +3,6 @@ import { HouseholdStorageMock } from '@libs/registration-lib/store/storage/house
 import { UserAccountStorageMock } from '@/storage/user-account/storage.mock';
 import { CaseFileStorageMock } from '@/storage/case-file/storage.mock';
 import { TeamStorageMock } from '@/storage/team/storage.mock';
-import { ApprovalTableStorageMock } from '@/storage/approval-table';
 import { IStorageMock } from './storage.types';
 import { mockStorageOptionList } from './optionList';
 import { FinancialAssistanceStorageMock } from './financial-assistance/storage.mock';
@@ -20,5 +19,4 @@ export const mockStorage = (): IStorageMock => ({
   financialAssistanceCategory: new FinancialAssistanceCategoryStorageMock().make(),
   household: new HouseholdStorageMock().make(),
   userAccount: new UserAccountStorageMock().make(),
-  approvalTable: new ApprovalTableStorageMock().make(),
 });

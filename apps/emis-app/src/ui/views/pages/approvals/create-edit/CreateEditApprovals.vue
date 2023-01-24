@@ -164,7 +164,11 @@ import routes from '@/constants/routes';
 import { ApprovalAggregatedBy, ApprovalBaseEntity, IApprovalBaseEntity } from '@libs/entities-lib/approvals/approvals-base';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { IApprovalTableEntity, IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
+import {
+  IApprovalTableEntity, IApprovalTableEntityData, IApprovalTableMetadata, IdParams,
+} from '@libs/entities-lib/approvals/approvals-table';
+import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import mixins from 'vue-typed-mixins';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import _isEqual from 'lodash/isEqual';
@@ -203,6 +207,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       groupHasChanged: false, // if group is being edited and values have changed
       ApprovalAggregatedBy,
       showNoGroupErr: false,
+      combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, IApprovalTableMetadata, IdParams>(useApprovalTableStore(), useApprovalTableMetadataStore()),
     };
   },
 
@@ -333,7 +338,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     async createTable() {
       this.approval.fillEmptyMultilingualAttributes();
       try {
-        await this.$storage.approvalTable.actions.createApprovalTable(this.approval as IApprovalTableEntity);
+        await useApprovalTableStore().createApprovalTable(this.approval as IApprovalTableEntity);
         this.redirectedFromSave = true;
         await this.$router.push({ name: routes.events.approvals.home.name });
       } catch (e) {
@@ -347,7 +352,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     async editTable() {
       try {
-        const res = await this.$storage.approvalTable.actions.editApprovalTable(this.approval as IApprovalTableEntity);
+        const res = await useApprovalTableStore().editApprovalTable(this.approval as IApprovalTableEntity);
         if (res) {
           this.$toasted.global.success(this.$t('approval_table.edit.success'));
           this.createBackupApproval(res);
@@ -414,7 +419,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     async initTableDataEdit() {
-      const combinedApproval = await this.$storage.approvalTable.actions.fetch(this.approvalId);
+      const combinedApproval = await this.combinedApprovalTableStore.fetch(this.approvalId);
       this.approval = new ApprovalTableEntity(combinedApproval?.entity);
       (this.approval as IApprovalTableEntity).eventId = this.eventId;
       await this.loadProgramsAndEventTables();

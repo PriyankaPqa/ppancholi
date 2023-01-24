@@ -4,7 +4,6 @@ import * as vuexModule from '@/constants/vuex-modules';
 import { UserAccountStorage } from '@/storage/user-account/storage';
 import { CaseFileStorage } from '@/storage/case-file/storage';
 import { FinancialAssistanceStorage } from '@/storage/financial-assistance/storage';
-import { ApprovalStorage } from '@/storage/approval-table';
 import { IStore, IState } from '../store/store.types';
 import { IStorage } from './storage.types';
 import { makeStorage as makeOptionListStorage } from './optionList';
@@ -29,10 +28,5 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     store,
     vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES,
     vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA,
-  ).make(),
-  approvalTable: new ApprovalStorage(
-    store,
-    vuexModule.APPROVALS_TABLE_ENTITIES,
-    vuexModule.APPROVALS_TABLE_METADATA,
   ).make(),
 });

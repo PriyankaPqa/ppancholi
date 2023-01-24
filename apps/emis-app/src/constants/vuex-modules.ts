@@ -13,5 +13,3 @@ export const TEAM_METADATA = 'teamMetadata';
 export const FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES = 'financialAssistanceCategoryEntities';
 export const FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES = 'financialAssistancePaymentEntities';
 export const FINANCIAL_ASSISTANCE_PAYMENT_METADATA = 'financialAssistancePaymentMetadata';
-export const APPROVALS_TABLE_ENTITIES = 'approvalsTableEntities';
-export const APPROVALS_TABLE_METADATA = 'approvalsTableMetadata';

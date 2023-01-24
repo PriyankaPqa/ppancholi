@@ -16,11 +16,6 @@ import { OptionItemsService } from '@libs/services-lib/optionItems/optionItems';
 import { tabs } from '@/store/modules/registration/tabs';
 import { optionList } from '@/store/modules/optionList';
 
-import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
-import { ApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalTables';
-import { ApprovalTableEntityModule } from '@/store/modules/approval-table/approvalTableEntity';
-import { ApprovalTableMetadataModule } from '@/store/modules/approval-table/approvalTableMetadata';
-
 import { UserAccountEntityModule } from '@/store/modules/user-account/userAccountEntity';
 import { UserAccountMetadataModule } from '@/store/modules/user-account/userAccountMetadata';
 import { UserAccountsService } from '@libs/services-lib/user-accounts/entity';
@@ -116,16 +111,6 @@ const mockConfig = {
         new FinancialAssistancePaymentsMetadataService(httpClient),
         mockSignalR(),
       ).getModule(),
-
-    [vuexModule.APPROVALS_TABLE_ENTITIES]: new ApprovalTableEntityModule(
-      new ApprovalTablesService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-
-    [vuexModule.APPROVALS_TABLE_METADATA]: new ApprovalTableMetadataModule(
-      new ApprovalTablesMetadataService(httpClient),
-      mockSignalR(),
-    ).getModule(),
   },
 };
 

@@ -2,7 +2,6 @@ import { IStorage as IRegistrationStorage, IStorageMock as IRegistrationMock } f
 import { IStorageMake, IStorageMakeMock } from '@libs/registration-lib/store/storage/household';
 import { IStorage as IOptionListStorage, IStorageMock as IOptionListStorageMock } from './optionList';
 import { IStorageMake as IFinancialAssistanceMakeStorage, IStorageMakeMock as IFinancialAssistanceMakeStorageMock } from './financial-assistance';
-import { IStorageMake as IApprovalTableMakeStorage, IStorageMakeMock as IApprovalTableMakeStorageMock } from './approval-table';
 
 import {
   IStorageMake as IUserAccountMakeStorage,
@@ -38,7 +37,7 @@ export interface IStorage {
   financialAssistanceCategory: IFinancialAssistanceCategoryMakeStorage;
   financialAssistancePayment: IFinancialAssistancePaymentMakeStorage;
   household: IStorageMake;
-  userAccount: IUserAccountMakeStorage; approvalTable: IApprovalTableMakeStorage;
+  userAccount: IUserAccountMakeStorage;
 }
 
 export interface IStorageMock {
@@ -51,5 +50,4 @@ export interface IStorageMock {
   financialAssistancePayment: IFinancialAssistancePaymentMakeStorageMock;
   household: IStorageMakeMock;
   userAccount: IUserAccountMakeStorageMock;
-  approvalTable: IApprovalTableMakeStorageMock;
 }

@@ -21,6 +21,7 @@ import { useCaseFileDocumentMetadataStore, useCaseFileDocumentStore } from '@/pi
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
+import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
 import { useCaseNoteStore, useCaseNoteMetadataStore } from '@/pinia/case-note/case-note';
 import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
@@ -515,14 +516,17 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'finance',
       entityName: 'ApprovalTable',
-      action: this.storage.approvalTable.mutations.setEntityFromOutsideNotification,
+      action: useApprovalTableStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'finance',
       entityName: 'ApprovalTableMetadata',
-      action: this.storage.approvalTable.mutations.setMetadataFromOutsideNotification,
+      action: useApprovalTableMetadataStore().setItemFromOutsideNotification,
     });
+
+    this.watchedPiniaStores.push(useApprovalTableStore());
+    this.watchedPiniaStores.push(useApprovalTableMetadataStore());
   }
 
   private listenForChanges<T extends IEntity>({ domain, entityName, action }: { domain: string, entityName: string, action?: (entity: T, byUser: boolean)=> void }) {

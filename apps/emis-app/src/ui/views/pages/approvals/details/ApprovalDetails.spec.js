@@ -4,17 +4,18 @@ import { mockRoles } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
+import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
 import Component from './ApprovalDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia } = useMockApprovalTableStore();
 
 let wrapper;
 
 const combinedApprovalTable = mockCombinedApprovalTable();
 combinedApprovalTable.entity.groups[0].setRoles(['a6ffce22-8396-43c9-bdc3-6532925af251']);
 combinedApprovalTable.entity.groups[1].setRoles(['85315955-e20e-40bd-a672-f60b2871a0ab']);
-storage.approvalTable.actions.fetch = jest.fn(() => combinedApprovalTable);
 
 const doMount = () => {
   const roles = mockRoles();
@@ -22,6 +23,7 @@ const doMount = () => {
 
   const options = {
     localVue,
+    pinia,
     data: () => ({
       roles,
       approval: combinedApprovalTable.entity,
@@ -38,6 +40,7 @@ const doMount = () => {
     },
   };
   wrapper = shallowMount(Component, options);
+  wrapper.vm.combinedApprovalTableStore.fetch = jest.fn(() => combinedApprovalTable);
 };
 
 describe('ApprovalDetails', () => {
@@ -131,7 +134,7 @@ describe('ApprovalDetails', () => {
       it('should fetch the approval table by id', () => {
         doMount();
         wrapper.vm.loadData();
-        expect(wrapper.vm.$storage.approvalTable.actions.fetch).toBeCalledWith('approvalId');
+        expect(wrapper.vm.combinedApprovalTableStore.fetch).toBeCalledWith('approvalId');
       });
 
       it('should set approval with entity', () => {

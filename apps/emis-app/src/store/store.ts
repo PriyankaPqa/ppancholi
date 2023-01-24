@@ -40,10 +40,6 @@ import { FinancialAssistancePaymentsMetadataService } from '@libs/services-lib/f
 
 import { SignalR } from '@/ui/plugins/signal-r';
 
-import { ApprovalTableEntityModule } from '@/store/modules/approval-table/approvalTableEntity';
-import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity';
-import { ApprovalTableMetadataModule } from '@/store/modules/approval-table/approvalTableMetadata';
-import { ApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalTables';
 import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 
@@ -127,17 +123,6 @@ const store: StoreOptions<IRootState> = {
       new FinancialAssistancePaymentsMetadataService(httpClient),
       SignalR,
     ).getModule(),
-
-    [vuexModule.APPROVALS_TABLE_ENTITIES]: new ApprovalTableEntityModule(
-      new ApprovalTablesService(httpClient),
-      SignalR,
-    ).getModule(),
-
-    [vuexModule.APPROVALS_TABLE_METADATA]: new ApprovalTableMetadataModule(
-      new ApprovalTablesMetadataService(httpClient),
-      SignalR,
-    ).getModule(),
-
   },
 };
 

@@ -17,3 +17,5 @@ export interface IApprovalTableMetadata extends IApprovalBaseMetadata {
 }
 
 export type IApprovalTableCombined = IEntityCombined<IApprovalTableEntity, IApprovalTableMetadata>;
+
+export type IdParams = uuid;
