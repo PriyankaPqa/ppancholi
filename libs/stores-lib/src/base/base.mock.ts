@@ -26,7 +26,7 @@ export function getMockEntityStoreComponents(items: Array<unknown>) {
     searchLoading: false,
     deactivate: jest.fn(() => items[0]),
     activate: jest.fn(() => items[0]),
-    search: jest.fn(() => ({ ids: ['1'], count: 1, value: [{ entity: { id: '1' }, metadata: { id: '1' } }] })),
+    search: jest.fn(() => ({ ids: ['1'], odataCount: 1, value: [{ entity: { id: '1' }, metadata: { id: '1' } }] })),
     setSearchLoading: jest.fn(),
     setItemFromOutsideNotification: jest.fn(),
   };
