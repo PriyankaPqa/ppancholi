@@ -1,4 +1,3 @@
-import { makeStorage as makeRegistrationStorage } from '@libs/registration-lib/store/storage/registration';
 import { HouseholdStorage } from '@libs/registration-lib/store/storage/household';
 import * as vuexModule from '@/constants/vuex-modules';
 import { UserAccountStorage } from '@/storage/user-account/storage';
@@ -15,7 +14,6 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   caseFile: new CaseFileStorage(store, vuexModule.CASE_FILE_ENTITIES, vuexModule.CASE_FILE_METADATA).make(),
   optionList: makeOptionListStorage(store),
   team: new TeamStorage(store, vuexModule.TEAM_ENTITIES, vuexModule.TEAM_METADATA).make(),
-  registration: makeRegistrationStorage(store),
   financialAssistance: new FinancialAssistanceStorage(
     store,
     vuexModule.FINANCIAL_ASSISTANCE_ENTITIES,

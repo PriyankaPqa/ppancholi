@@ -12,9 +12,13 @@ import { mockStore } from '@/store';
 import { makeStorage } from '@/storage';
 import { getLocalVue, getWrapper } from '@libs/shared-lib/tests/testBase';
 import { mockProvider } from '@/services/provider';
-import { PiniaVuePlugin } from 'pinia';
+import { createPinia, PiniaVuePlugin, setActivePinia } from 'pinia';
+import registrationStore from '@/ui/plugins/registrationStore';
 
 jest.setTimeout(10000);
+
+// To make sure pinia is injected before using registrationStore
+setActivePinia(createPinia());
 
 const plugins = [
   Vuetify,
@@ -22,6 +26,7 @@ const plugins = [
   features,
   VueI18n,
   PiniaVuePlugin,
+  registrationStore,
 ];
 
 export const createLocalVue = () => getLocalVue(plugins);

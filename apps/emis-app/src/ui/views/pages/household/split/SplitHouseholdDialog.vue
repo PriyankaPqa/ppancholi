@@ -114,6 +114,7 @@ import libHelpers from '@libs/entities-lib/helpers';
 import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '@libs/entities-lib/household-create';
 import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
 import routes from '@/constants/routes';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default Vue.extend({
   name: 'SplitHouseholdDialog',
@@ -146,7 +147,7 @@ export default Vue.extend({
 
   computed: {
     additionalMembers(): IMember[] {
-      const allMembers = this.$storage.registration.getters.householdCreate().additionalMembers;
+      const allMembers = useRegistrationStore().getHouseholdCreate().additionalMembers;
       if (allMembers) {
         return allMembers.filter((m) => m.id !== this.newPrimaryMember.id);
       }
@@ -154,7 +155,7 @@ export default Vue.extend({
     },
 
     householdId(): string {
-      return this.$storage.registration.getters.householdCreate().id;
+      return useRegistrationStore().getHouseholdCreate().id;
     },
 
     memberInfo(): (member:IMember) => Array<Record<string, unknown>> {
@@ -221,7 +222,7 @@ export default Vue.extend({
       const type = member.identitySet.indigenousType
         ? `${this.$t(`common.indigenous.types.${EIndigenousTypes[member.identitySet.indigenousType]}`)}, ` : '';
 
-      const community = this.$store.state.registration.indigenousCommunities
+      const community = useRegistrationStore().indigenousCommunities
         .find((i: IIndigenousCommunityData) => i.id === member.identitySet.indigenousCommunityId);
 
       let communityName = '';
@@ -234,12 +235,12 @@ export default Vue.extend({
     },
 
     onClose() {
-      this.$storage.registration.mutations.resetSplitHousehold();
+      useRegistrationStore().resetSplitHousehold();
       this.$emit('update:show', false);
     },
 
     async onNext() {
-      this.$storage.registration.mutations.setSplitHousehold({
+      useRegistrationStore().setSplitHousehold({
         originHouseholdId: this.householdId,
         primaryMember: this.newPrimaryMember,
         additionalMembers: this.selectedMembers,

@@ -112,8 +112,7 @@ import Addresses from '@/ui/views/pages/registration/addresses/Addresses.vue';
 import AdditionalMembers from '@/ui/views/pages/registration/additional-members/AdditionalMembers.vue';
 import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegistration.vue';
 import ConfirmRegistration from '@/ui/views/pages/registration/confirmation/ConfirmRegistration.vue';
-import { tabs } from '@/store/modules/registration/tabs';
-import store from '@/store/store';
+import { tabs } from '@/pinia/registration/tabs';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -121,12 +120,13 @@ import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
 import { IRegistrationAssessment } from '@libs/entities-lib/event';
 import { IRegistrationMenuItem } from '@libs/registration-lib/types';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default mixins(individual).extend({
   name: 'Individual',
 
   async beforeRouteEnter(to: Route, from: Route, next: NavigationGuardNext) {
-    const event = store.state.registration.event;
+    const event = useRegistrationStore().event;
     if (!event) {
       next((vm) => {
         vm.$router.replace({
@@ -201,15 +201,15 @@ export default mixins(individual).extend({
     },
 
     householdAlreadyRegistered(): boolean {
-      return this.$store.state.registration.householdAlreadyRegistered;
+      return useRegistrationStore().householdAlreadyRegistered;
     },
 
     associationMode(): boolean {
-      return this.$store.state.registration.householdAssociationMode;
+      return useRegistrationStore().householdAssociationMode;
     },
 
     event(): IEvent {
-      return this.$storage.registration.getters.event();
+      return useRegistrationStore().getEvent();
     },
 
     enableAutocomplete(): boolean {
@@ -217,25 +217,25 @@ export default mixins(individual).extend({
     },
 
     registrationAssessment(): IRegistrationAssessment {
-      return this.$storage.registration.getters.assessmentToComplete()?.registrationAssessment;
+      return useRegistrationStore().getAssessmentToComplete()?.registrationAssessment;
     },
 
     isPersonalInfoTouched(): boolean {
-      return this.$storage.registration?.getters?.tabs()?.filter((el) => el.id === 'personalInfo')[0].isTouched;
+      return useRegistrationStore().tabs.filter((el) => el.id === 'personalInfo')[0].isTouched;
     },
 
   },
 
   methods: {
     async back() {
-      if (this.currentTab.id === 'isRegistered' && this.$store.state.registration.householdResultsShown) {
-        this.$storage.registration.mutations.setHouseholdResultsShown(false);
+      if (this.currentTab.id === 'isRegistered' && useRegistrationStore().householdResultsShown) {
+        useRegistrationStore().householdResultsShown = false;
         return;
       }
 
       if (this.currentTab.id === 'review' && this.associationMode) {
         if (this.householdAlreadyRegistered) {
-          this.$storage.registration.mutations.setHouseholdAlreadyRegistered(false);
+          useRegistrationStore().householdAlreadyRegistered = false;
         }
         this.backToHouseholdResults();
         return;
@@ -294,7 +294,7 @@ export default mixins(individual).extend({
 
         return;
       }
-      await this.$storage.registration.actions.submitRegistration();
+      await useRegistrationStore().submitRegistration();
 
       if (this.submitErrors && !this.isDuplicateError) {
         if (this.containsErrorCode) { // If no duplicate errors, but errors have a code
@@ -318,10 +318,10 @@ export default mixins(individual).extend({
     },
 
     backToHouseholdResults() {
-      this.$storage.registration.mutations.resetHouseholdCreate();
-      this.$storage.registration.mutations.setHouseholdAssociationMode(false);
-      this.$storage.registration.mutations.setHouseholdAlreadyRegistered(false);
-      this.$storage.registration.mutations.setCurrentTabIndex(tabs().findIndex((t) => t.id === 'isRegistered'));
+      useRegistrationStore().resetHouseholdCreate();
+      useRegistrationStore().householdAssociationMode = false;
+      useRegistrationStore().householdAlreadyRegistered = false;
+      useRegistrationStore().currentTabIndex = (tabs().findIndex((t) => t.id === 'isRegistered'));
     },
 
     goToHouseholdProfile(householdId: string) {
@@ -358,18 +358,17 @@ export default mixins(individual).extend({
         consentInformation: this.household.consentInformation,
       });
       if (!res) {
-        this.$storage.registration.mutations.setRegistrationErrors({ name: 'case-file-create-error', message: 'Case file create error' });
+        useRegistrationStore().registrationErrors = { name: 'case-file-create-error', message: 'Case file create error' }; // TODO Check in real app the type of errors
       } else {
-        this.$storage.registration.mutations.setRegistrationErrors(null);
+        useRegistrationStore().registrationErrors = null;
       }
-
-      this.$storage.registration.mutations.setRegistrationResponse(res);
+      useRegistrationStore().registrationResponse = res;
       return !!res;
     },
 
     async resetPersonalInfoTab() {
       if (this.isPersonalInfoTouched) {
-        this.$storage.registration.mutations.mutateTabAtIndex(2, (tab: IRegistrationMenuItem) => {
+        useRegistrationStore().mutateTabAtIndex(2, (tab: IRegistrationMenuItem) => {
           tab.disabled = false;
           tab.isValid = true;
           tab.isTouched = false;

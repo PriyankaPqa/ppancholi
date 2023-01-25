@@ -1,100 +1,47 @@
-import helpers from '@libs/entities-lib/helpers';
+import helpers from '@libs/entities-lib/src/helpers';
 import { mockEvent } from '@libs/entities-lib/src/registration-event/registrationEvent.mock';
-import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
-import { mockStorage } from '../../store/storage';
+import { mockTabs } from '@libs/stores-lib/src/registration/tabs.mock';
+import { mockDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 
 import individual from './individual';
 
 const localVue = createLocalVue();
-let storage = mockStorage();
-const mockEventData = mockEvent();
 
 window.scrollTo = jest.fn();
-
-const tabs = [
-  {
-    id: 'privacy',
-    disabled: false,
-    isValid: true,
-    isTouched: false,
-    componentName: 'PrivacyStatement',
-  },
-  {
-    id: 'personalInfo',
-    disabled: false,
-    isValid: true,
-    isTouched: false,
-    componentName: 'PersonalInformation',
-  },
-  {
-    id: 'addresses',
-    disabled: false,
-    isValid: true,
-    isTouched: false,
-    componentName: 'Addresses',
-  },
-  {
-    id: 'additionalMembers',
-    disabled: false,
-    isValid: true,
-    isTouched: false,
-    componentName: 'AdditionalMembers',
-  },
-  {
-    id: 'review',
-    disabled: false,
-    isValid: true,
-    isTouched: false,
-    componentName: 'ReviewRegistration',
-  },
-  {
-    id: 'confirmation',
-    disabled: true,
-    isValid: true,
-    isTouched: false,
-    componentName: 'ConfirmRegistration',
-  }];
 
 const Component = {
   render() {},
   mixins: [individual],
 };
+let wrapper;
+const doMount = ({ errorCode } = { errorCode: null }) => {
+  wrapper = shallowMount(Component, {
+    localVue,
+    computed: {
+      submitErrors: () => ({ response: { data: { errors: [{ code: errorCode }] } } }),
+    },
+  });
+  wrapper.vm.submitRegistration = jest.fn();
+  wrapper.vm.handleErrors = jest.fn();
+};
 
 describe('Individual.vue', () => {
-  let wrapper;
-  beforeEach(() => {
+  afterEach(() => {
     jest.clearAllMocks();
-    storage = mockStorage();
-    storage.registration.getters.currentTab.mockImplementation(() => tabs[0]);
-    storage.registration.getters.tabs.mockImplementation(() => tabs);
   });
-
-  const doMount = ({ errorCode } = { errorCode: null }) => {
-    wrapper = shallowMount(Component, {
-      localVue,
-      mocks: {
-        $storage: storage,
-      },
-      computed: {
-        submitErrors: () => ({ response: { data: { errors: [{ code: errorCode }] } } }),
-      },
-    });
-  };
 
   describe('Computed', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $storage: storage,
-        },
       });
     });
 
     describe('currentTab', () => {
       it('returns current tab from store', async () => {
-        expect(wrapper.vm.currentTab).toEqual(tabs[0]);
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => mockTabs()[0]);
+        expect(wrapper.vm.currentTab).toEqual(mockTabs()[0]);
       });
     });
 
@@ -102,7 +49,7 @@ describe('Individual.vue', () => {
       it('returns current tab index from store', async () => {
         const index = 1;
 
-        storage.registration.getters.currentTabIndex.mockReturnValueOnce(index);
+        wrapper.vm.$registrationStore.currentTabIndex = index;
 
         expect(wrapper.vm.currentTabIndex).toEqual(index);
       });
@@ -110,13 +57,14 @@ describe('Individual.vue', () => {
 
     describe('allTabs', () => {
       it('returns all tabs from store', async () => {
-        expect(wrapper.vm.allTabs).toEqual(tabs);
+        wrapper.vm.$registrationStore.tabs = mockTabs();
+        expect(wrapper.vm.allTabs).toEqual(mockTabs());
       });
     });
 
     describe('previousTab', () => {
       it('returns title of previous tab', async () => {
-        storage.registration.getters.previousTabName.mockReturnValueOnce('test');
+        wrapper.vm.$registrationStore.getPreviousTabName.mockReturnValueOnce('test');
 
         expect(wrapper.vm.previousTabName).toEqual('test');
       });
@@ -124,7 +72,7 @@ describe('Individual.vue', () => {
 
     describe('nextTab', () => {
       it('returns title of next tab', async () => {
-        storage.registration.getters.nextTabName.mockReturnValueOnce('test');
+        wrapper.vm.$registrationStore.getNextTabName.mockReturnValueOnce('test');
 
         expect(wrapper.vm.nextTabName).toEqual('test');
       });
@@ -132,7 +80,7 @@ describe('Individual.vue', () => {
 
     describe('submitLoading', () => {
       it('returns proper data', () => {
-        expect(wrapper.vm.submitLoading).toBe(wrapper.vm.$store.state.registration.submitLoading);
+        expect(wrapper.vm.submitLoading).toBe(wrapper.vm.$registrationStore.submitLoading);
       });
     });
 
@@ -144,37 +92,38 @@ describe('Individual.vue', () => {
 
     describe('registrationSuccess', () => {
       it('returns true if no error', () => {
-        storage.registration.getters.registrationErrors.mockReturnValueOnce(null);
+        wrapper.vm.$registrationStore.registrationErrors = null;
         expect(wrapper.vm.registrationSuccess).toBe(true);
       });
 
       it('returns false if has error', () => {
-        storage.registration.getters.registrationErrors.mockReturnValueOnce([{ detail: 'error' }]);
+        wrapper.vm.$registrationStore.registrationErrors = [{ detail: 'error' }];
         expect(wrapper.vm.registrationSuccess).toBe(false);
       });
 
       it('returns false if response is undefined', () => {
-        storage.registration.getters.registrationErrors.mockReturnValueOnce([]);
-        storage.registration.getters.registrationResponse.mockReturnValueOnce(undefined);
+        wrapper.vm.$registrationStore.registrationErrors = [];
+        wrapper.vm.$registrationStore.registrationResponse = undefined;
         expect(wrapper.vm.registrationSuccess).toBe(false);
       });
     });
 
     describe('submitErrors', () => {
       it('returns errors from the store', async () => {
-        expect(wrapper.vm.submitErrors).toEqual(wrapper.vm.$storage.registration.getters.registrationErrors());
+        expect(wrapper.vm.submitErrors).toEqual(wrapper.vm.$registrationStore.registrationErrors);
       });
     });
 
     describe('event', () => {
-      it('return the event by id from the storage', () => {
-        expect(wrapper.vm.event).toEqual(mockEventData);
+      it('return the event by id from the store', () => {
+        expect(wrapper.vm.event).toEqual(wrapper.vm.$registrationStore.getEvent());
       });
     });
 
     describe('phoneAssistance', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.phoneAssistance).toEqual(mockEventData.responseDetails.assistanceNumber);
+        wrapper.vm.$registrationStore.getEvent = jest.fn(() => mockEvent());
+        expect(wrapper.vm.phoneAssistance).toEqual(mockEvent().responseDetails.assistanceNumber);
       });
     });
 
@@ -226,71 +175,15 @@ describe('Individual.vue', () => {
       window.scrollTo = jest.fn();
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $storage: storage,
-        },
       });
-    });
-
-    describe('jump', () => {
-      it('makes correct uninterrupted jump', async () => {
-        storage.registration.getters.tabs.mockReturnValueOnce(tabs);
-        wrapper.vm.$refs.form = {
-          validate: jest.fn(() => true),
-        };
-        wrapper.vm.$storage.mutateStateTab = jest.fn();
-        wrapper.vm.$storage.registration.mutations.mutateTabAtIndex = jest.fn();
-        wrapper.vm.$storage.registration.getters.findEffectiveJumpIndex = jest.fn(() => 4);
-        storage.registration.getters.currentTabIndex.mockReturnValueOnce(2);
-
-        const toIndex = 4;
-        await wrapper.vm.jump(toIndex);
-        expect(wrapper.vm.$storage.registration.mutations.mutateTabAtIndex).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.registration.mutations.jump).toHaveBeenCalledWith(toIndex);
-      });
-
-      it('make correct interrupted jump', async () => {
-        storage.registration.getters.tabs.mockReturnValueOnce(tabs);
-        wrapper.vm.$refs.form = {
-          validate: jest.fn(() => true),
-        };
-        wrapper.vm.$storage.mutateStateTab = jest.fn();
-        wrapper.vm.$storage.registration.getters.findEffectiveJumpIndex = jest.fn(() => 3);
-        storage.registration.getters.currentTabIndex.mockReturnValueOnce(2).mockReturnValueOnce(3);
-
-        const toIndex = 4;
-        await wrapper.vm.jump(toIndex);
-        expect(wrapper.vm.$storage.registration.mutations.mutateTabAtIndex).toHaveBeenCalledTimes(0);
-        expect(wrapper.vm.$storage.registration.mutations.jump).toHaveBeenCalledWith(3);
-      });
-
-      it('call handleConfirmationScreen if it is confirmation', async () => {
-        storage.registration.getters.tabs.mockReturnValueOnce(tabs);
-
-        const toIndex = 5;
-        wrapper.vm.handleConfirmationScreen = jest.fn();
-
-        await wrapper.vm.jump(toIndex);
-        expect(wrapper.vm.handleConfirmationScreen).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('handleConfirmationScreen', () => {
-      it('call disableOtherTabs and jump', () => {
-        const toIndex = 5;
-        wrapper.vm.disableOtherTabs = jest.fn();
-
-        wrapper.vm.handleConfirmationScreen(toIndex);
-
-        expect(wrapper.vm.disableOtherTabs).toHaveBeenCalledWith(toIndex, false);
-        expect(wrapper.vm.$storage.registration.getters.isCRCRegistration).toHaveBeenCalled();
-        expect(wrapper.vm.$storage.registration.mutations.jump).toHaveBeenCalledWith(toIndex);
-      });
+      wrapper.vm.submitRegistration = jest.fn();
+      wrapper.vm.handleErrors = jest.fn();
     });
 
     describe('openAssessmentIfAvailable', () => {
       it('should open new tab to editor page', async () => {
-        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
+        wrapper.vm.$registrationStore.registrationResponse = mockDetailedRegistrationResponse();
         window.open = jest.fn();
         const assessment = mockDetailedRegistrationResponse().assessmentResponses[0];
 
@@ -306,7 +199,7 @@ describe('Individual.vue', () => {
         });
         expect(window.open).toHaveBeenCalledWith(wrapper.vm.$router.resolve().href, '_blank');
 
-        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
 
         wrapper.vm.openAssessmentIfAvailable();
 
@@ -324,7 +217,7 @@ describe('Individual.vue', () => {
     describe('next', () => {
       describe('Assessment page', () => {
         it('opens assessment', async () => {
-          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({
             id: 'assessment',
           }));
           window.open = jest.fn();
@@ -338,15 +231,16 @@ describe('Individual.vue', () => {
       });
       describe('Confirmation page', () => {
         it('calls closeRegistration', async () => {
-          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({
             id: 'confirmation',
           }));
+          wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
           wrapper.vm.closeRegistration = jest.fn();
           wrapper.vm.jump = jest.fn();
 
           await wrapper.vm.next();
 
-          expect(wrapper.vm.$storage.registration.getters.isCRCRegistration).toHaveBeenCalled();
+          expect(wrapper.vm.$registrationStore.isCRCRegistration).toHaveBeenCalled();
           expect(wrapper.vm.closeRegistration).toHaveBeenCalledTimes(1);
           expect(wrapper.vm.jump).toHaveBeenCalledTimes(0);
         });
@@ -354,20 +248,19 @@ describe('Individual.vue', () => {
 
       describe('Review page', () => {
         it('should call submit registration with recaptchaToken', async () => {
-          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+          wrapper.vm.$registrationStore.submitRegistration = jest.fn();
+          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({
             id: 'review',
           }));
           await wrapper.setData({ recaptchaToken: 'recaptchaToken' });
           wrapper.vm.jump = jest.fn();
-
           await wrapper.vm.next();
 
-          expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledWith('recaptchaToken');
+          expect(wrapper.vm.submitRegistration).toHaveBeenCalledTimes(1);
         });
         it('calls handleErrors if there are submit errors with no errors code', async () => {
           doMount({ errorCode: '' });
-          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({
             id: 'review',
           }));
 
@@ -379,7 +272,7 @@ describe('Individual.vue', () => {
         });
         it('calls jump if there are submit errors with error code', async () => {
           doMount({ errorCode: 'errors.example' });
-          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({
             id: 'review',
           }));
 
@@ -391,12 +284,69 @@ describe('Individual.vue', () => {
       });
 
       it('calls jump otherwise', async () => {
-        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({
+          id: 'other',
+        }));
         wrapper.vm.jump = jest.fn();
 
         await wrapper.vm.next();
 
-        expect(wrapper.vm.jump).toHaveBeenCalledWith(3);
+        expect(wrapper.vm.jump).toHaveBeenCalledWith(wrapper.vm.currentTabIndex + 1);
+      });
+    });
+
+    describe('jump', () => {
+      it('makes correct uninterrupted jump', async () => {
+        wrapper.vm.$registrationStore.tabs = mockTabs();
+        wrapper.vm.$refs.form = {
+          validate: jest.fn(() => true),
+        };
+        wrapper.vm.$registrationStore.mutateTabAtIndex = jest.fn();
+        wrapper.vm.$registrationStore.findEffectiveJumpIndex = jest.fn(() => 4);
+        wrapper.vm.$registrationStore.currentTabIndex = 2;
+
+        const toIndex = 4;
+        await wrapper.vm.jump(toIndex);
+        expect(wrapper.vm.$registrationStore.mutateTabAtIndex).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$registrationStore.jump).toHaveBeenCalledWith(toIndex);
+      });
+
+      it('make correct interrupted jump', async () => {
+        wrapper.vm.$registrationStore.tabs = mockTabs();
+        wrapper.vm.$refs.form = {
+          validate: jest.fn(() => true),
+        };
+
+        wrapper.vm.$registrationStore.findEffectiveJumpIndex = jest.fn(() => 3);
+        wrapper.vm.$registrationStore.currentTabIndex = 2;
+
+        const toIndex = 4;
+        await wrapper.vm.jump(toIndex);
+        expect(wrapper.vm.$registrationStore.mutateTabAtIndex).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$registrationStore.jump).toHaveBeenCalledWith(3);
+      });
+
+      it('call handleConfirmationScreen if it is confirmation', async () => {
+        wrapper.vm.$registrationStore.tabs = mockTabs();
+
+        const toIndex = 5;
+        wrapper.vm.handleConfirmationScreen = jest.fn();
+
+        await wrapper.vm.jump(toIndex);
+        expect(wrapper.vm.handleConfirmationScreen).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('handleConfirmationScreen', () => {
+      it('call disableOtherTabs and jump', () => {
+        wrapper.vm.$registrationStore.tabs = mockTabs();
+        const toIndex = 5;
+        wrapper.vm.disableOtherTabs = jest.fn();
+
+        wrapper.vm.handleConfirmationScreen(toIndex);
+        expect(wrapper.vm.disableOtherTabs).toHaveBeenCalledWith(toIndex, false);
+        expect(wrapper.vm.$registrationStore.isCRCRegistration).toHaveBeenCalled();
+        expect(wrapper.vm.$registrationStore.jump).toHaveBeenCalledWith(toIndex);
       });
     });
 
@@ -406,9 +356,6 @@ describe('Individual.vue', () => {
           localVue,
           computed: {
             submitErrors: () => ({ response: { data: {} } }),
-          },
-          mocks: {
-            $storage: storage,
           },
         });
         helpers.timeout = jest.fn();
@@ -428,9 +375,6 @@ describe('Individual.vue', () => {
             submitErrors: () => ({ response: { data: {} } }),
             isDuplicateError: () => false,
           },
-          mocks: {
-            $storage: storage,
-          },
         });
 
         await wrapper.setData({ retryMax: 5, retryCount: 5, showErrorDialog: false });
@@ -444,12 +388,9 @@ describe('Individual.vue', () => {
           computed: {
             submitErrors: () => null,
           },
-          mocks: {
-            $storage: storage,
-          },
         });
 
-        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
+        wrapper.vm.$registrationStore.currentTabIndex = 2;
         wrapper.vm.jump = jest.fn();
         await wrapper.setData({ retryMax: 5, retryCount: 5, showErrorDialog: false });
         await wrapper.vm.handleErrors();
@@ -464,12 +405,9 @@ describe('Individual.vue', () => {
             isDuplicateError: () => true,
 
           },
-          mocks: {
-            $storage: storage,
-          },
         });
 
-        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
+        wrapper.vm.$registrationStore.currentTabIndex = 2;
         wrapper.vm.jump = jest.fn();
         await wrapper.setData({ retryMax: 5, retryCount: 5, showErrorDialog: false });
         await wrapper.vm.handleErrors();
@@ -479,7 +417,7 @@ describe('Individual.vue', () => {
 
     describe('closeRegistration', () => {
       it('redirects to case file if it is CRC registration', async () => {
-        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
         wrapper.vm.$router = {
           replace: jest.fn(),
         };
@@ -490,7 +428,7 @@ describe('Individual.vue', () => {
       });
 
       it('redirects to red cross if it is not CRC regitration', async () => {
-        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
         wrapper.vm.$router = {
           replace: jest.fn(),
         };
@@ -511,11 +449,11 @@ describe('Individual.vue', () => {
 
     describe('mutateStateTab', () => {
       it('calls mutation', async () => {
-        storage.registration.getters.tabs.mockReturnValueOnce(tabs);
+        wrapper.vm.$registrationStore.tabs = mockTabs();
 
         wrapper.vm.mutateStateTab(true);
 
-        expect(wrapper.vm.$storage.registration.mutations.mutateCurrentTab).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$registrationStore.mutateCurrentTab).toHaveBeenCalledTimes(1);
       });
     });
   });

@@ -1,16 +1,12 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-import { makeRegistrationModule } from '@libs/registration-lib/store/modules/registration';
-import { ERegistrationMode } from '@libs/shared-lib/types';
 import { HouseholdEntityModule } from '@libs/registration-lib/store/modules/household';
 import { HouseholdMetadataModule } from '@libs/registration-lib/store/modules/household/householdMetadata';
 import { HouseholdsService } from '@libs/services-lib/households/entity';
 import { HouseholdMetadataService } from '@libs/services-lib/households/metadata';
-import { i18n } from '@/ui/plugins';
 import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@libs/services-lib/optionItems/optionItems';
-import { tabs } from '@/store/modules/registration/tabs';
 import { optionList } from '@/store/modules/optionList';
 
 import { UserAccountEntityModule } from '@/store/modules/user-account/userAccountEntity';
@@ -102,13 +98,6 @@ const store: StoreOptions<IRootState> = {
       new TeamsMetadataService(httpClient),
       SignalR,
     ).getModule(),
-    [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
-      i18n,
-      tabs: tabs(),
-      skipAgeRestriction: true,
-      skipEmailPhoneRules: true,
-      mode: ERegistrationMode.CRC,
-    }),
 
     [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
       new FinancialAssistanceCategoriesService(httpClient),

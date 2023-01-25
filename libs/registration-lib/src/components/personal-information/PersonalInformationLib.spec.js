@@ -19,7 +19,6 @@ import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 
 import { createLocalVue, shallowMount, mount } from '../../test/testSetup';
 import Component from './PersonalInformationLib.vue';
-import { mockTabs } from '../../store/modules/registration/tabs.mock';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -28,15 +27,10 @@ describe('PersonalInformationLib.vue', () => {
   let wrapper;
 
   const doMount = (shallow, {
-    otherProps, otherData, otherComputed, otherOptions,
+    otherProps, otherComputed,
   }) => {
     const options = {
       localVue,
-      data() {
-        return {
-          ...otherData,
-        };
-      },
       propsData: {
         i18n,
         ...otherProps,
@@ -47,7 +41,6 @@ describe('PersonalInformationLib.vue', () => {
       mocks: {
         $storage: storage,
       },
-      ...otherOptions,
     };
     if (shallow === true) {
       wrapper = shallowMount(Component, options);
@@ -58,11 +51,7 @@ describe('PersonalInformationLib.vue', () => {
   beforeEach(() => {
     doMount(true, {
       otherProps: null,
-      otherData: {
-        form: storage.registration.getters.personalInformation(),
-      },
       otherComputed: null,
-      otherOptions: null,
     });
   });
 
@@ -102,12 +91,12 @@ describe('PersonalInformationLib.vue', () => {
       it('triggers mutations setPrimaryBeneficiary if storeMode but always emits', async () => {
         const newValue = {};
         await wrapper.vm.setIndigenousIdentity(newValue);
-        expect(storage.registration.mutations.setIndigenousIdentity).toHaveBeenCalledWith(newValue);
+        expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.identitySet.setIndigenousIdentity).toHaveBeenCalledWith(newValue);
         expect(wrapper.emitted('setIndigenousIdentity')[0][0]).toEqual(newValue);
         jest.clearAllMocks();
         await wrapper.setProps({ memberProps: mockMember() });
         await wrapper.vm.setIndigenousIdentity(newValue);
-        expect(storage.registration.mutations.setIndigenousIdentity).not.toHaveBeenCalled();
+        expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.identitySet.setIndigenousIdentity).not.toHaveBeenCalled();
         expect(wrapper.emitted('setIndigenousIdentity')[0][0]).toEqual(newValue);
       });
       it('should be called when indigenous identity is changed', () => {
@@ -120,14 +109,15 @@ describe('PersonalInformationLib.vue', () => {
 
     describe('setIdentity', () => {
       it('triggers mutations setIdentity if storeMode but always emits', async () => {
-        const newValue = {};
+        const newValue = mockIdentitySet();
+        wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.identitySet.setIdentity = jest.fn();
         await wrapper.vm.setIdentity(newValue);
-        expect(storage.registration.mutations.setIdentity).toHaveBeenCalledWith(newValue);
+        expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.identitySet.setIdentity).toHaveBeenCalledWith(newValue);
         expect(wrapper.emitted('setIdentity')[0][0]).toEqual(newValue);
         jest.clearAllMocks();
         await wrapper.setProps({ memberProps: mockMember() });
         await wrapper.vm.setIdentity(newValue);
-        expect(storage.registration.mutations.setIdentity).not.toHaveBeenCalled();
+        expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.identitySet.setIdentity).not.toHaveBeenCalled();
         expect(wrapper.emitted('setIdentity')[0][0]).toEqual(newValue);
       });
       it('should be called when identity is changed', () => {
@@ -142,12 +132,12 @@ describe('PersonalInformationLib.vue', () => {
       it('triggers mutations setContactInformation if storeMode but always emits', async () => {
         const newValue = {};
         await wrapper.vm.setContactInformation(newValue);
-        expect(storage.registration.mutations.setContactInformation).toHaveBeenCalledWith(newValue);
+        expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.setContactInformation).toHaveBeenCalledWith(newValue);
         expect(wrapper.emitted('setContactInformation')[0][0]).toEqual(newValue);
         jest.clearAllMocks();
         await wrapper.setProps({ memberProps: mockMember() });
         await wrapper.vm.setContactInformation(newValue);
-        expect(storage.registration.mutations.setContactInformation).not.toHaveBeenCalled();
+        expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.setContactInformation).not.toHaveBeenCalled();
         expect(wrapper.emitted('setContactInformation')[0][0]).toEqual(newValue);
       });
       it('should be called when contact information is changed', () => {
@@ -188,9 +178,7 @@ describe('PersonalInformationLib.vue', () => {
       it('returns active items only if no primarySpokenLanguage selected', async () => {
         doMount(true, {
           otherProps: null,
-          otherData: null,
           otherComputed: null,
-          otherOptions: null,
         });
 
         expect(wrapper.vm.primarySpokenLanguagesItems).toEqual(mockPrimarySpokenLanguages().filter((g) => g.status === Status.Active));
@@ -203,7 +191,6 @@ describe('PersonalInformationLib.vue', () => {
             otherProps: {
               includeInactiveOptions: true,
             },
-            otherData: null,
             otherComputed: {
               contactInformation: () => ({
                 primarySpokenLanguage: {
@@ -211,7 +198,6 @@ describe('PersonalInformationLib.vue', () => {
                 },
               }),
             },
-            otherOptions: null,
           },
         );
 
@@ -223,9 +209,7 @@ describe('PersonalInformationLib.vue', () => {
       it('returns active items only if no gender selected', async () => {
         doMount(true, {
           otherProps: null,
-          otherData: null,
           otherComputed: null,
-          otherOptions: null,
         });
         expect(wrapper.vm.genderItems).toEqual(mockGenders().filter((g) => g.status === Status.Active));
       });
@@ -233,7 +217,6 @@ describe('PersonalInformationLib.vue', () => {
       it('returns active items and selected inactive gender', async () => {
         doMount(true, {
           otherProps: { includeInactiveOptions: true },
-          otherData: null,
           otherComputed: {
             identitySet: () => ({
               gender: {
@@ -241,7 +224,6 @@ describe('PersonalInformationLib.vue', () => {
               },
             }),
           },
-          otherOptions: null,
         });
         expect(wrapper.vm.genderItems).toEqual(mockGenders());
       });
@@ -269,33 +251,18 @@ describe('PersonalInformationLib.vue', () => {
       it('returns the proper data', async () => {
         doMount(true, {
           otherProps: null,
-          otherData: null,
           otherComputed: null,
-          otherOptions: {
-            store: {
-              modules: {
-                registration: {
-                  state: {
-                    householdResultsShown: true,
-                    splitHousehold: mockSplitHousehold(),
-                  },
-                },
-              },
-            },
-          },
         });
+        wrapper.vm.$registrationStore.splitHouseholdState = mockSplitHousehold();
         expect(wrapper.vm.splitHousehold).toEqual(mockSplitHousehold());
       });
     });
 
     describe('isTouched', () => {
       it('should return isTouched of personalInformaiton tab', () => {
-        storage.registration.getters.tabs = jest.fn(() => mockTabs());
         doMount(true, {
           otherProps: null,
-          otherData: null,
           otherComputed: null,
-          otherOptions: null,
         });
         expect(wrapper.vm.isTouched).toEqual(false);
       });
@@ -308,15 +275,13 @@ describe('PersonalInformationLib.vue', () => {
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-        expect(wrapper.vm.$storage.registration.actions.fetchIndigenousCommunities).toHaveBeenCalled();
+        expect(wrapper.vm.$registrationStore.fetchIndigenousCommunities).toHaveBeenCalled();
       });
 
       it('should call function loadInitialDataFromBeneficiarySearch when props prefillPersonalInformation is true', async () => {
         doMount(true, {
           otherProps: { prefillPersonalInformation: true },
-          otherData: null,
-          otherComputed: { isTouched: () => false },
-          otherOptions: null,
+          otherComputed: { isTouched: () => false, isSplitMode: () => false },
         });
         wrapper.vm.loadInitialDataFromBeneficiarySearch = jest.fn();
         await wrapper.setProps({
@@ -351,9 +316,7 @@ describe('PersonalInformationLib.vue', () => {
               prefillPersonalInformation: true,
               isEditMode: true,
             },
-            otherData: null,
             otherComputed: { isSplitMode: () => true },
-            otherOptions: null,
           },
         );
         wrapper.vm.loadInitialDataFromBeneficiarySearch = jest.fn();
@@ -372,12 +335,10 @@ describe('PersonalInformationLib.vue', () => {
               prefillPersonalInformation: true,
               isEditMode: false,
             },
-            otherData: null,
             otherComputed: {
               isSplitMode: () => true,
               isTouched: () => false,
             },
-            otherOptions: null,
           },
         );
         wrapper.vm.loadInitialDataUnderSplitMode = jest.fn();
@@ -395,11 +356,9 @@ describe('PersonalInformationLib.vue', () => {
             otherProps: {
               prefillPersonalInformation: true,
             },
-            otherData: null,
             otherComputed: {
               isTouched: () => true,
             },
-            otherOptions: null,
           },
         );
         wrapper.vm.loadInitialDataUnderSplitMode = jest.fn();

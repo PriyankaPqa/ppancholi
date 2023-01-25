@@ -115,7 +115,13 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import {
- IAssessmentBaseCombined, IAssessmentFormEntity, IAssessmentFormMetadata, IAssessmentTemplateEntity, IAssessmentTemplateMetadata, PublishStatus,
+ IAssessmentBaseCombined,
+  IAssessmentFormEntity,
+  IAssessmentFormMetadata,
+  IAssessmentTemplateEntity,
+  IAssessmentTemplateMetadata,
+  PublishStatus,
+  IdParams,
 } from '@libs/entities-lib/assessment-template';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
@@ -162,8 +168,11 @@ export default mixins(TablePaginationSearchMixin).extend({
       programsFilter: [],
       PublishStatus,
       showCopyAssessmentDialog: false,
-      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, IAssessmentFormMetadata>(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
-      combinedTemplateStore: new CombinedStoreFactory<IAssessmentTemplateEntity, IAssessmentTemplateMetadata>(useAssessmentTemplateStore(), useAssessmentTemplateMetadataStore()),
+      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, IAssessmentFormMetadata, IdParams>(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
+      combinedTemplateStore: new CombinedStoreFactory<IAssessmentTemplateEntity, IAssessmentTemplateMetadata, IdParams>(
+        useAssessmentTemplateStore(),
+        useAssessmentTemplateMetadataStore(),
+      ),
     };
   },
 

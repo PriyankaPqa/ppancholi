@@ -11,6 +11,7 @@ import { mockStorage } from '@/storage';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults.vue';
 
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from './IsRegistered.vue';
 
 const localVue = createLocalVue();
@@ -18,6 +19,8 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 
 const vuetify = new Vuetify();
+
+const { pinia, registrationStore } = useMockRegistrationStore();
 
 describe('IsRegistered.vue', () => {
   let wrapper;
@@ -28,6 +31,7 @@ describe('IsRegistered.vue', () => {
     storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       vuetify,
       mocks: {
         $storage: storage,
@@ -63,6 +67,7 @@ describe('IsRegistered.vue', () => {
       it('should be rendered if showResultPage is true', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           computed: {
             showResultPage: () => true,
@@ -80,6 +85,7 @@ describe('IsRegistered.vue', () => {
         storage.household.getters.getAll = jest.fn(() => households);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           computed: {
             showResultPage: () => true,
@@ -97,6 +103,7 @@ describe('IsRegistered.vue', () => {
       it('renders if showDetailsDialog is true', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           data() {
             return {
@@ -121,9 +128,10 @@ describe('IsRegistered.vue', () => {
         expect(wrapper.vm.search).toHaveBeenLastCalledWith(null);
       });
 
-      it('should call setHouseholdResultsShown mutation with proper parameter', async () => {
+      it('should set householdResultsShown to false in registration store', async () => {
+        registrationStore.householdResultsShown = false;
         await wrapper.vm.onSearch({});
-        expect(wrapper.vm.$storage.registration.mutations.setHouseholdResultsShown).toHaveBeenCalledWith(true);
+        expect(registrationStore.householdResultsShown).toEqual(true);
       });
 
       it('should call setSearchResultsShown mutation with proper parameter', async () => {
@@ -134,6 +142,7 @@ describe('IsRegistered.vue', () => {
       it('should call filterOutSplitHousehold if in split mode', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           computed: {
             isSplitMode() {
@@ -167,21 +176,13 @@ describe('IsRegistered.vue', () => {
         ]);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           mocks: {
             $storage: storage,
           },
-          store: {
-            modules: {
-              registration: {
-                state: {
-                  splitHousehold: mockSplitHousehold(),
-                },
-              },
-            },
-          },
         });
-
+        registrationStore.splitHouseholdState = mockSplitHousehold();
         await wrapper.vm.filterOutSplitHousehold();
         expect(wrapper.vm.searchResults).toEqual([{ entity: { id: 'foo' } }]);
       });
@@ -191,7 +192,7 @@ describe('IsRegistered.vue', () => {
   describe('Computed', () => {
     describe('isSplitMode', () => {
       it('returns the right value', (() => {
-        expect(wrapper.vm.isSplitMode).toEqual(wrapper.vm.$storage.registration.getters.isSplitMode());
+        expect(wrapper.vm.isSplitMode).toEqual(registrationStore.isSplitMode());
       }));
     });
 
@@ -199,6 +200,7 @@ describe('IsRegistered.vue', () => {
       it('return correct value', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           mocks: {
             $storage: storage,
@@ -209,6 +211,7 @@ describe('IsRegistered.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           mocks: {
             $storage: storage,
@@ -232,9 +235,10 @@ describe('IsRegistered.vue', () => {
       });
 
       it('calls filterOutSplitHousehold if isSplitMode is true', () => {
-        storage.registration.getters.isSplitMode = jest.fn(() => true);
+        registrationStore.isSplitMode = jest.fn(() => true);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           mocks: {
             $storage: storage,

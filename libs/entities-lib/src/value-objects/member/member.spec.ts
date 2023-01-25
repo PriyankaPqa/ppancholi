@@ -1,5 +1,5 @@
-import { IdentitySet } from '@/value-objects/identity-set';
-import { ContactInformation } from '@/value-objects/contact-information';
+import { IdentitySet } from '../identity-set';
+import { ContactInformation } from '../contact-information';
 import { CurrentAddress, mockCampGround } from '../current-address';
 import { mockMember } from './member.mock';
 import { Member } from './member';

@@ -59,6 +59,7 @@ describe('EventsTable.vue', () => {
     };
     beforeEach(() => {
       doMount();
+      wrapper.vm.search = jest.fn();
     });
 
     describe('data table', () => {
@@ -112,7 +113,7 @@ describe('EventsTable.vue', () => {
               tableData: () => mockEvents(),
             },
           });
-
+          wrapper.vm.search = jest.fn();
           wrapper.vm.searchResultIds = mockEvents().map((event) => event.entity.id);
           wrapper.vm.itemsCount = mockEvents().length;
           dataTable = wrapper.findComponent(RcDataTable);
@@ -238,6 +239,7 @@ describe('EventsTable.vue', () => {
             isDashboard: false,
           },
         });
+        wrapper.vm.search = jest.fn();
         wrapper.vm.combinedEventStore.getByIds = jest.fn(mockCombinedEvents);
         wrapper.vm.searchResultIds = mockEvents().map((e) => e.entity.id);
         wrapper.vm.itemsCount = mockEvents().length;
@@ -334,7 +336,7 @@ describe('EventsTable.vue', () => {
             tableData: () => mockEvents(),
           },
         });
-
+        wrapper.vm.search = jest.fn();
         expect(wrapper.vm.headers).toEqual([
           {
             text: 'eventsTable.name',
@@ -392,7 +394,7 @@ describe('EventsTable.vue', () => {
             tableData: () => mockEvents(),
           },
         });
-
+        wrapper.vm.search = jest.fn();
         const expected = [
           {
             key: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
@@ -435,6 +437,7 @@ describe('EventsTable.vue', () => {
             isDashboard: false,
           },
         });
+        wrapper.vm.search = jest.fn();
         expect(wrapper.vm.tableProps.loading).toEqual(false);
         expect(wrapper.vm.tableProps.itemClass).toBeDefined();
       });
@@ -468,7 +471,7 @@ describe('EventsTable.vue', () => {
           },
 
         });
-
+        wrapper.vm.search = jest.fn();
         const event = mockCombinedEvent({
           ...mockEventEntity({ schedule: { status: EEventStatus.OnHold } }),
         });
@@ -502,7 +505,7 @@ describe('EventsTable.vue', () => {
             },
           },
         });
-
+        wrapper.vm.search = jest.fn();
         const event = mockCombinedEvent({
           ...mockEventEntity({ schedule: { status: EEventStatus.OnHold } }),
         });
@@ -536,7 +539,7 @@ describe('EventsTable.vue', () => {
             },
           },
         });
-
+        wrapper.vm.search = jest.fn();
         const event = mockCombinedEvent({
           ...mockEventEntity({ schedule: { status: EEventStatus.Closed } }),
         });
@@ -570,7 +573,7 @@ describe('EventsTable.vue', () => {
             },
           },
         });
-
+        wrapper.vm.search = jest.fn();
         const event = mockCombinedEvent({
           ...mockEventEntity({ schedule: { status: EEventStatus.Open } }),
         });

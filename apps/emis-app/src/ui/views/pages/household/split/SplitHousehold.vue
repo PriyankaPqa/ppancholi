@@ -94,13 +94,14 @@ import { tabs } from '@/store/modules/household/tabs';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default mixins(individual).extend({
   name: 'SplitHousehold',
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
     if (this.currentTab.id === 'confirmation') {
-      this.$storage.registration.mutations.resetSplitHousehold();
+      useRegistrationStore().resetSplitHousehold();
       next();
     } else if (!this.allowExit) {
       const userChoice = await (this.$confirm({
@@ -108,7 +109,7 @@ export default mixins(individual).extend({
         messages: this.messagesLeave,
       }) as Promise<unknown>);
       if (userChoice) {
-        this.$storage.registration.mutations.resetSplitHousehold();
+        useRegistrationStore().resetSplitHousehold();
       }
       next(userChoice);
     } else {
@@ -140,7 +141,7 @@ export default mixins(individual).extend({
 
   computed: {
     registrationAssessment(): IRegistrationAssessment {
-      return this.$storage.registration.getters.assessmentToComplete()?.registrationAssessment;
+      return useRegistrationStore().getAssessmentToComplete()?.registrationAssessment;
     },
 
     splitMemberName(): string {
@@ -152,7 +153,7 @@ export default mixins(individual).extend({
     },
 
     splitHousehold(): ISplitHousehold {
-      return this.$store.state.registration.splitHousehold;
+      return useRegistrationStore().splitHouseholdState;
     },
 
     submitLoading(): boolean {
@@ -177,7 +178,6 @@ export default mixins(individual).extend({
     nextButtonLabel(): TranslateResult {
       return this.$t(this.currentTab.nextButtonTextKey);
     },
-
   },
 
   created() {
@@ -185,8 +185,8 @@ export default mixins(individual).extend({
     if (!this.splitHousehold?.splitMembers.additionalMembers.length) {
       allTabs = allTabs.filter((t) => t.id !== 'additionalSplitMembers');
     }
-    this.$storage.registration.mutations.setTabs(allTabs);
-    this.$storage.registration.mutations.setAssessmentToComplete(null);
+    useRegistrationStore().setTabs(allTabs);
+    useRegistrationStore().setAssessmentToComplete(null);
     if (!this.splitHousehold) {
       this.back();
     }
@@ -195,8 +195,8 @@ export default mixins(individual).extend({
   methods: {
     async back() {
       if (this.currentTabIndex === 0 || !this.splitHousehold) {
-        if (this.$store.state.registration.householdResultsShown) {
-          this.$storage.registration.mutations.setHouseholdResultsShown(false);
+        if (useRegistrationStore().householdResultsShown) {
+          useRegistrationStore().householdResultsShown = false;
           return;
         }
 
@@ -246,7 +246,7 @@ export default mixins(individual).extend({
 
       if (performSplit) {
         this.awaiting = true;
-        await this.$storage.registration.actions.splitHousehold();
+        await useRegistrationStore().splitHousehold();
         this.awaiting = false;
       }
 
@@ -256,7 +256,7 @@ export default mixins(individual).extend({
     },
 
     closeSplit() {
-      const householdId = this.$storage.registration.getters.registrationResponse()?.household?.id;
+      const householdId = useRegistrationStore().registrationResponse?.household?.id;
 
       this.$router.replace({
         name: routes.household.householdProfile.name,
@@ -272,14 +272,14 @@ export default mixins(individual).extend({
       primaryMember.setCurrentAddress(null);
       primaryMember.contactInformation = new ContactInformation();
 
-      this.$storage.registration.mutations.resetHouseholdCreate();
-      this.$storage.registration.mutations.setPrimaryBeneficiary(primaryMember);
+      useRegistrationStore().resetHouseholdCreate();
+      useRegistrationStore().householdCreate.setPrimaryBeneficiary(primaryMember);
 
       if (additionalMembers) {
         additionalMembers.forEach((m: IMember) => {
           const member = _cloneDeep(m);
           member.setCurrentAddress(null);
-          this.$storage.registration.mutations.addAdditionalMember(member, true);
+          useRegistrationStore().householdCreate.addAdditionalMember(member, true);
         });
       }
     },

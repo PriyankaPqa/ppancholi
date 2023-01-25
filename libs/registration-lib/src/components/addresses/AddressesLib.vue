@@ -108,19 +108,19 @@ export default Vue.extend({
 
   computed: {
     currentAddress(): ICurrentAddress {
-      return this.$storage.registration.getters.householdCreate().primaryBeneficiary.currentAddress;
+      return this.$registrationStore.getHouseholdCreate().primaryBeneficiary.currentAddress;
     },
 
     homeAddress(): IAddress {
-      return this.$storage.registration.getters.householdCreate().homeAddress;
+      return this.$registrationStore.getHouseholdCreate().homeAddress;
     },
 
     noFixedHome: {
       get(): boolean {
-        return this.$storage.registration.getters.householdCreate().noFixedHome;
+        return this.$registrationStore.getHouseholdCreate().noFixedHome;
       },
       async set(checked: boolean) {
-        this.$storage.registration.mutations.setNoFixedHome(checked);
+        this.$registrationStore.householdCreate.noFixedHome = checked;
         if (checked) {
           this.setHomeAddress(new Address(this.emptyAddress));
         }
@@ -152,8 +152,8 @@ export default Vue.extend({
     },
 
     shelterLocations(): IShelterLocationData[] {
-      const event = this.$storage.registration.getters.event();
-      if (event) {
+      const event = this.$registrationStore.getEvent();
+      if (event.shelterLocations) {
         const locations = event.shelterLocations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active);
         if (this.currentAddress.shelterLocation) {
           return [this.currentAddress.shelterLocation, ...locations];
@@ -166,11 +166,11 @@ export default Vue.extend({
 
   methods: {
     setCurrentAddress(tmpAddress: ICurrentAddress) {
-      this.$storage.registration.mutations.setCurrentAddress(tmpAddress);
+      this.$registrationStore.householdCreate.setCurrentAddress(tmpAddress);
     },
 
     setHomeAddress(homeAddress: IAddress) {
-      this.$storage.registration.mutations.setHomeAddress(homeAddress);
+      this.$registrationStore.householdCreate.setHomeAddress(homeAddress);
     },
   },
 

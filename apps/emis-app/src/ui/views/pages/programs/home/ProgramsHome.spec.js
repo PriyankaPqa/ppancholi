@@ -40,11 +40,11 @@ describe('ProgramsHome.vue', () => {
         name: routes.programs.details.name,
         params: mockParams,
       }));
-
       wrapper.vm.getProgramEditRoute = jest.fn(() => ({
         name: routes.programs.edit.name,
         params: mockParams,
       }));
+      wrapper.vm.search = jest.fn();
     });
 
     describe('data table', () => {

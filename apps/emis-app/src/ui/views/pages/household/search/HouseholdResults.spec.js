@@ -10,13 +10,16 @@ import { mockStorage } from '@/storage';
 
 import Component from '@/ui/views/pages/household/search/HouseholdResults.vue';
 
-import { tabs } from '@/store/modules/registration/tabs';
+import { tabs } from '@/pinia/registration/tabs';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
 const localVue = createLocalVue();
 
 const storage = mockStorage();
 
 const vuetify = new Vuetify();
+
+const { pinia, registrationStore } = useMockRegistrationStore();
 
 const parsedHousehold = {
   primaryBeneficiary: {},
@@ -31,6 +34,7 @@ describe('HouseholdResultsMove.vue', () => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       vuetify,
       propsData: {
         items: mockCombinedHouseholds(),
@@ -47,6 +51,7 @@ describe('HouseholdResultsMove.vue', () => {
       it('calls getCaseFilesInEvent', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           propsData: {
             items: mockCombinedHouseholds(),
@@ -69,6 +74,7 @@ describe('HouseholdResultsMove.vue', () => {
         jest.clearAllMocks();
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           propsData: {
             items: mockCombinedHouseholds(),
@@ -91,6 +97,7 @@ describe('HouseholdResultsMove.vue', () => {
         jest.clearAllMocks();
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           propsData: {
             items: mockCombinedHouseholds(),
@@ -127,6 +134,7 @@ describe('HouseholdResultsMove.vue', () => {
       it('calls casefile search with the right filter', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           propsData: {
             items: [mockCombinedHousehold({ id: 'mock-id-1' }), mockCombinedHousehold({ id: 'mock-id-2' })],
@@ -154,6 +162,7 @@ describe('HouseholdResultsMove.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           propsData: {
             items: households,
@@ -219,25 +228,25 @@ describe('HouseholdResultsMove.vue', () => {
       it('should save the parsed household in the store', async () => {
         wrapper.vm.fetchHouseholdCreate = jest.fn(() => ({}));
         await wrapper.vm.viewDetails(parsedHousehold);
-        expect(wrapper.vm.$storage.registration.mutations.setHouseholdCreate).toHaveBeenLastCalledWith({});
+        expect(registrationStore.setHouseholdCreate).toHaveBeenLastCalledWith({});
       });
 
       describe('not split more', () => {
         it('should set association mode to true', async () => {
           await wrapper.vm.viewDetails(parsedHousehold);
-          expect(wrapper.vm.$storage.registration.mutations.setHouseholdAssociationMode).toHaveBeenLastCalledWith(true);
+          expect(registrationStore.householdAssociationMode).toEqual(true);
         });
 
         it('should set already registered to correct value', async () => {
           wrapper.vm.isRegisteredInCurrentEvent = jest.fn(() => true);
           await wrapper.vm.viewDetails(parsedHousehold);
-          expect(wrapper.vm.$storage.registration.mutations.setHouseholdAlreadyRegistered).toHaveBeenLastCalledWith(true);
+          expect(registrationStore.householdAlreadyRegistered).toEqual(true);
         });
 
         it('should set currentTab to review ', async () => {
           wrapper.vm.isRegisteredInCurrentEvent = jest.fn(() => true);
           await wrapper.vm.viewDetails(parsedHousehold);
-          expect(wrapper.vm.$storage.registration.mutations.setCurrentTabIndex).toHaveBeenLastCalledWith(tabs().findIndex((t) => t.id === 'review'));
+          expect(registrationStore.currentTabIndex).toEqual(tabs().findIndex((t) => t.id === 'review'));
         });
       });
 
@@ -245,6 +254,7 @@ describe('HouseholdResultsMove.vue', () => {
         it('emits showDetails, with the household id as parameter', async () => {
           wrapper = shallowMount(Component, {
             localVue,
+            pinia,
             vuetify,
             propsData: {
               items: mockCombinedHouseholds(),
@@ -278,7 +288,7 @@ describe('HouseholdResultsMove.vue', () => {
 
     describe('currentEventId', () => {
       it('should return id of the current event', () => {
-        const currentEvent = wrapper.vm.$storage.registration.getters.event();
+        const currentEvent = registrationStore.getEvent();
         expect(wrapper.vm.currentEventId)
           .toEqual(currentEvent.id);
       });

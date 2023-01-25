@@ -2,20 +2,22 @@ import { mockHouseholdCreateData } from '@libs/entities-lib/household-create';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
-import { tabs } from '@/store/modules/registration/tabs';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import helpers from '@/ui/helpers/helpers';
-import { mockTabs } from '@libs/registration-lib/store/modules/registration/tabs.mock';
+import { mockTabs } from '@libs/stores-lib/registration/tabs.mock';
+import { tabs } from '@/pinia/registration/tabs';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from './RegistrationIndividual.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-
+const { pinia, registrationStore } = useMockRegistrationStore();
 describe('Individual.vue', () => {
   let wrapper;
   const doMount = (shallow, otherComputed = {}, otherOptions = {}) => {
     const options = {
       localVue,
+      pinia,
       computed: {
         ...otherComputed,
       },
@@ -124,8 +126,9 @@ describe('Individual.vue', () => {
             },
           },
         );
+        registrationStore.householdResultsShown = true;
         await wrapper.vm.back();
-        expect(wrapper.vm.$storage.registration.mutations.setHouseholdResultsShown).toHaveBeenCalledWith(false);
+        expect(registrationStore.householdResultsShown).toEqual(false);
       });
 
       it('should return to household results if user is seeing review of the registration in association mode', async () => {
@@ -139,7 +142,7 @@ describe('Individual.vue', () => {
       });
 
       it(
-        'should set setHouseholdAlreadyRegistered mutation to false if user is seeing the review page in association mode and household is already registered',
+        'should set householdAlreadyRegistered to false if user is seeing the review page in association mode and household is already registered',
         async () => {
           doMount(true, {
             currentTab: () => ({ id: 'review' }),
@@ -147,8 +150,9 @@ describe('Individual.vue', () => {
             householdAlreadyRegistered: () => true,
           });
           wrapper.vm.backToHouseholdResults = jest.fn();
+          registrationStore.householdAlreadyRegistered = true;
           await wrapper.vm.back();
-          expect(wrapper.vm.$storage.registration.mutations.setHouseholdAlreadyRegistered).toHaveBeenCalledWith(false);
+          expect(registrationStore.householdAlreadyRegistered).toEqual(false);
         },
       );
 
@@ -179,24 +183,28 @@ describe('Individual.vue', () => {
     });
 
     describe('backToHouseholdResults', () => {
-      it('should call setHouseholdAssociationMode with false', () => {
+      it('should set householdAssociationMode to false', () => {
+        registrationStore.resetHouseholdCreate = jest.fn();
+        registrationStore.householdAssociationMode = true;
         wrapper.vm.backToHouseholdResults();
-        expect(wrapper.vm.$storage.registration.mutations.setHouseholdAssociationMode).toHaveBeenCalledWith(false);
+        expect(registrationStore.householdAssociationMode).toEqual(false);
       });
 
-      it('should call setHouseholdAlreadyRegistered with false', () => {
+      it('should set householdAlreadyRegistered to false', () => {
+        registrationStore.resetHouseholdCreate = jest.fn();
+        registrationStore.householdAlreadyRegistered = true;
         wrapper.vm.backToHouseholdResults();
-        expect(wrapper.vm.$storage.registration.mutations.setHouseholdAlreadyRegistered).toHaveBeenCalledWith(false);
+        expect(registrationStore.householdAlreadyRegistered).toEqual(false);
       });
 
       it('should set current tab to isRegistered', () => {
         wrapper.vm.backToHouseholdResults();
-        expect(wrapper.vm.$storage.registration.mutations.setCurrentTabIndex).toHaveBeenCalledWith(tabs().findIndex((t) => t.id === 'isRegistered'));
+        expect(registrationStore.currentTabIndex).toEqual(tabs().findIndex((t) => t.id === 'isRegistered'));
       });
 
       it('should call resetHouseholdCreate', () => {
         wrapper.vm.backToHouseholdResults();
-        expect(wrapper.vm.$storage.registration.mutations.resetHouseholdCreate).toHaveBeenCalledTimes(1);
+        expect(registrationStore.resetHouseholdCreate).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -298,10 +306,11 @@ describe('Individual.vue', () => {
         wrapper.vm.jump = jest.fn();
         wrapper.vm.nextDefault = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        registrationStore.submitRegistration = jest.fn();
 
         await wrapper.vm.nextOnReview();
 
-        expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledTimes(1);
+        expect(registrationStore.submitRegistration).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.nextDefault).toHaveBeenCalledTimes(1);
       });
 
@@ -340,7 +349,7 @@ describe('Individual.vue', () => {
 
     describe('nextDefault', () => {
       it('calls jump if it passes validation', async () => {
-        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
+        registrationStore.currentTabIndex = 2;
         wrapper.vm.jump = jest.fn();
         wrapper.vm.goToHouseholdProfile = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -404,7 +413,7 @@ describe('Individual.vue', () => {
       });
 
       it('calls jump if createNewCaseFile returns success', async () => {
-        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
+        registrationStore.currentTabIndex = 2;
         wrapper.vm.$confirm = jest.fn(() => true);
         wrapper.vm.jump = jest.fn();
         wrapper.vm.createNewCaseFile = jest.fn(() => null);
@@ -426,42 +435,42 @@ describe('Individual.vue', () => {
       it('should call setRegistrationErrors with an argument if there is no response', async () => {
         wrapper.vm.$storage.caseFile.actions.createCaseFile = jest.fn(() => null);
         await wrapper.vm.createNewCaseFile();
-        expect(wrapper.vm.$storage.registration.mutations.setRegistrationErrors)
-          .toHaveBeenCalledWith({ name: 'case-file-create-error', message: 'Case file create error' });
+        expect(registrationStore.registrationErrors)
+          .toEqual({ name: 'case-file-create-error', message: 'Case file create error' });
       });
 
       it('should call setRegistrationErrors with null if there is a response', async () => {
         wrapper.vm.$storage.caseFile.actions.createCaseFile = jest.fn(() => 'mock-response');
         await wrapper.vm.createNewCaseFile();
-        expect(wrapper.vm.$storage.registration.mutations.setRegistrationErrors).toHaveBeenCalledWith(null);
+        expect(registrationStore.registrationErrors).toEqual(null);
       });
     });
 
     describe('resetPersonalInfoTab', () => {
       it('should reset personalInfo tab if it is touched, and then call nextDefault', async () => {
-        storage.registration.getters.tabs = jest.fn(() => mockTabs());
+        registrationStore.tabs = mockTabs();
         doMount(true, {
           isPersonalInfoTouched: () => true,
         });
-        wrapper.vm.$storage.registration.mutations.mutateTabAtIndex = jest.fn();
+        registrationStore.mutateTabAtIndex = jest.fn();
         wrapper.vm.nextDefault = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         await wrapper.vm.resetPersonalInfoTab();
-        expect(wrapper.vm.$storage.registration.mutations.mutateTabAtIndex).toHaveBeenCalledTimes(1);
+        expect(registrationStore.mutateTabAtIndex).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.nextDefault).toBeCalledTimes(1);
       });
       it('should not reset personalInfo tab if it is not touched, and then call nextDefault', async () => {
-        storage.registration.getters.tabs = jest.fn(() => mockTabs());
+        registrationStore.tabs = mockTabs();
         doMount(true, {
           isPersonalInfoTouched: () => false,
         });
-        wrapper.vm.$storage.registration.mutations.mutateTabAtIndex = jest.fn();
+        registrationStore.mutateTabAtIndex = jest.fn();
         wrapper.vm.nextDefault = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         await wrapper.vm.resetPersonalInfoTab();
-        expect(wrapper.vm.$storage.registration.mutations.mutateTabAtIndex).toHaveBeenCalledTimes(0);
+        expect(registrationStore.mutateTabAtIndex).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.nextDefault).toBeCalledTimes(1);
       });
     });
@@ -489,7 +498,7 @@ describe('Individual.vue', () => {
 
     describe('eventName', () => {
       it('should return the even name', () => {
-        const event = wrapper.vm.$storage.registration.getters.event();
+        const event = registrationStore.getEvent();
         expect(wrapper.vm.eventName).toEqual(wrapper.vm.$m(event.name));
       });
     });
@@ -497,9 +506,10 @@ describe('Individual.vue', () => {
     describe('registrationAssessment', () => {
       it('should return the registrationAssessment', () => {
         jest.clearAllMocks();
-        const registrationAssessment = wrapper.vm.registrationAssessment;
-        expect(wrapper.vm.$storage.registration.getters.assessmentToComplete).toHaveBeenCalled();
-        expect(registrationAssessment).toEqual(wrapper.vm.$storage.registration.getters.assessmentToComplete().registrationAssessment);
+        registrationStore.getAssessmentToComplete = jest.fn(() => ({
+          registrationAssessment: 'registrationAssessment',
+        }));
+        expect(wrapper.vm.registrationAssessment).toEqual('registrationAssessment');
       });
     });
 
@@ -559,7 +569,7 @@ describe('Individual.vue', () => {
 
     describe('isPersonalInfoTouched', () => {
       it('should return isPersonalInfoTouched of personalInformation tab', () => {
-        storage.registration.getters.tabs = jest.fn(() => mockTabs());
+        registrationStore.tabs = mockTabs();
         doMount(true);
         expect(wrapper.vm.isPersonalInfoTouched).toEqual(false);
       });

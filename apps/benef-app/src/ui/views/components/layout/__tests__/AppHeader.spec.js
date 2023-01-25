@@ -1,27 +1,25 @@
 import { mockEvent } from '@libs/entities-lib/registration-event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-
-import { mockStorage } from '@/storage';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { createTestingPinia } from '@pinia/testing';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();
-const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
+const pinia = createTestingPinia({ stubActions: false });
+const { registrationStore } = useMockRegistrationStore(pinia);
+const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
 
 describe('AppHeader.vue', () => {
   let wrapper;
-  const storage = mockStorage();
-  storage.registration.getters.event = jest.fn(() => mockEvent());
+  registrationStore.getEvent = jest.fn(() => mockEvent());
 
   describe('Template', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         pinia,
         localVue,
-        mocks: {
-          $storage: storage,
-        },
       });
     });
 
@@ -63,9 +61,7 @@ describe('AppHeader.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $storage: storage,
-        },
+        pinia,
       });
     });
     describe('logoUrl', () => {
@@ -98,8 +94,8 @@ describe('AppHeader.vue', () => {
       it('returns true if the route is landing page', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           mocks: {
-            $storage: storage,
             $route: { name: routes.landingPage.name },
           },
         });

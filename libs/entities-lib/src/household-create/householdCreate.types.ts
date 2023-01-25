@@ -3,6 +3,7 @@ import { IAddress, IAddressData } from '../value-objects/address/address.types';
 import {
   IMemberEntity, IMember, MemberCreateRequest, IMemberMoveRequest,
 } from '../value-objects/member';
+import { ICurrentAddress } from '../value-objects/current-address';
 
 export interface ISplitHouseholdMembers {
   primaryMember: IMember;
@@ -44,6 +45,8 @@ export interface IHouseholdCreate {
   removeAdditionalMember(index: number): void;
   editAdditionalMember(newPerson: IMember, index: number, sameAddress: boolean): void;
   setPrimaryBeneficiary(member: IMember): void;
+  setHomeAddress(address: IAddress): void;
+  setCurrentAddress(address: ICurrentAddress): void;
   validatePersonalInformation(skipAgeRestriction: boolean, skipEmailPhoneRules: boolean): string[];
   validateAddresses(noFixedHome: boolean): string[];
   validateAdditionalMembers(): string[];

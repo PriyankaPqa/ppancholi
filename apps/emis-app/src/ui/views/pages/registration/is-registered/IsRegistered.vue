@@ -39,6 +39,7 @@ import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default mixins(searchHousehold).extend({
   name: 'IsRegistered',
@@ -54,10 +55,10 @@ export default mixins(searchHousehold).extend({
   },
   computed: {
     isSplitMode():boolean {
-      return this.$storage.registration.getters.isSplitMode();
+      return useRegistrationStore().isSplitMode();
     },
     showResultPage(): boolean {
-      return this.$store.state.registration.householdResultsShown;
+      return useRegistrationStore().householdResultsShown;
     },
 
     enableAutocomplete(): boolean {
@@ -81,7 +82,7 @@ export default mixins(searchHousehold).extend({
         this.filterOutSplitHousehold();
       }
 
-      this.$storage.registration.mutations.setHouseholdResultsShown(true);
+      useRegistrationStore().householdResultsShown = true;
       // Hide the results on the main household search page, because they use the same store
       this.$storage.household.mutations.setSearchResultsShown(false);
     },
@@ -93,7 +94,7 @@ export default mixins(searchHousehold).extend({
 
     // In the household split flow, the results list should not contain the household from which the split originates
     filterOutSplitHousehold() {
-      const splitHouseholdId = this.$store.state.registration.splitHousehold?.originHouseholdId;
+      const splitHouseholdId = useRegistrationStore().splitHouseholdState?.originHouseholdId;
       if (splitHouseholdId) {
         this.searchResults = this.searchResults.filter((r) => r.entity.id !== splitHouseholdId);
       }

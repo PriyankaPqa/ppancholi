@@ -25,6 +25,7 @@ describe('Identity Set', () => {
       expect(p.preferredName).toEqual('');
       expect(p.gender).toEqual(null);
       expect(p.genderOther).toEqual(null);
+      expect(p.dateOfBirth).toEqual('');
       expect(p.birthDate).toEqual({
         year: null,
         month: null,

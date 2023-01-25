@@ -15,6 +15,8 @@ import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import VueProgrammaticInvisibleGoogleRecaptcha from 'vue-programmatic-invisible-google-recaptcha';
 import { Survey } from 'survey-vue';
 import { createPinia, PiniaVuePlugin } from 'pinia';
+import resetStore from '@libs/stores-lib/store-reset';
+import registrationStore from '@/ui/plugins/registrationStore';
 import App from './ui/App.vue';
 import router from './ui/router';
 import store from './store/store';
@@ -22,6 +24,7 @@ import features from './ui/plugins/features';
 
 Vue.use(PiniaVuePlugin);
 const pinia = createPinia();
+pinia.use(resetStore);
 
 Vue.component('Survey', Survey);
 Vue.component('VueProgrammaticInvisibleGoogleRecaptcha', VueProgrammaticInvisibleGoogleRecaptcha);
@@ -53,3 +56,5 @@ new Vue({
   pinia,
   render: (h) => h(App),
 }).$mount('#app');
+
+Vue.use(registrationStore);

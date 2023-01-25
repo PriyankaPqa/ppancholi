@@ -41,9 +41,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-
 import { TranslateResult } from 'vue-i18n';
-
 import _cloneDeep from 'lodash/cloneDeep';
 
 import { VAutocompleteWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';

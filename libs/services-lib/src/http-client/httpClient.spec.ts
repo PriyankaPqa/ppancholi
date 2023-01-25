@@ -22,7 +22,7 @@ mockAxios.interceptors.response.use = jest.fn();
 
 let mockHttpClient: any;
 
-const mockI18n = {
+export const mockI18n = {
   t: jest.fn((s: string) => s),
   te: jest.fn(),
   silentTranslationWarn: false,

@@ -6,7 +6,7 @@ import {
   mockAdditionalMember,
   Member,
   mockMember,
-  mockAddress,
+  mockAddress, mockFriendsFamily,
 } from './index';
 
 describe('>>> Household', () => {
@@ -23,7 +23,7 @@ describe('>>> Household', () => {
       expect(h.homeAddress).toEqual(new Address());
       expect(h.additionalMembers).toEqual([]);
       expect(h.consentInformation).toEqual({
-        crcUserName: null,
+        crcUserName: '',
         registrationMethod: null,
         registrationLocationId: null,
         privacyDateTimeConsent: null,
@@ -96,6 +96,30 @@ describe('>>> Household', () => {
         h.setPrimaryBeneficiary(mockMember({ id: 'mock-primary-id' }));
 
         expect(h.primaryBeneficiary).toEqual(mockMember({ id: 'mock-primary-id' }));
+      });
+    });
+
+    describe('setHomeAddress', () => {
+      it('should set home address', () => {
+        const h = new HouseholdCreate();
+        h.setHomeAddress(mockAddress());
+        expect(h.homeAddress).toEqual(mockAddress());
+      });
+    });
+
+    describe('setCurrentAddress', () => {
+      it('should set current address of primary beneficiary', () => {
+        const h = new HouseholdCreate();
+        h.setCurrentAddress(mockCampGround());
+        expect(h.primaryBeneficiary.currentAddress).toEqual(mockCampGround());
+      });
+      it('should update current address of additional members if they have the same as primary', () => {
+        const h = new HouseholdCreate();
+        h.primaryBeneficiary.setCurrentAddress(mockFriendsFamily());
+        h.addAdditionalMember(mockMember(), true);
+        h.additionalMembers[0].setCurrentAddress(mockFriendsFamily());
+        h.setCurrentAddress(mockCampGround());
+        expect(h.additionalMembers[0].currentAddress).toEqual(mockCampGround());
       });
     });
 

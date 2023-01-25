@@ -6,6 +6,7 @@ import {
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
 } from '@libs/entities-lib/src/household-create';
+import { mockEvent } from '@libs/entities-lib/src/registration-event';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { createLocalVue, shallowMount, mount } from '../../test/testSetup';
 import Component from './ContactInformationForm.vue';
@@ -281,10 +282,10 @@ describe('ContactInformationForm.vue', () => {
 
     describe('isCRCRegistration', () => {
       it('returns correct value', async () => {
-        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
         expect(wrapper.vm.isCRCRegistration).toBe(true);
 
-        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
         expect(wrapper.vm.isCRCRegistration).toBe(false);
       });
     });
@@ -624,7 +625,7 @@ describe('ContactInformationForm.vue', () => {
 
       describe('CRC Registration', () => {
         it('should trigger validate email with proper params', async () => {
-          wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
+          wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
           await wrapper.vm.validateEmail('test@test.ca');
 
           expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledWith({
@@ -637,7 +638,7 @@ describe('ContactInformationForm.vue', () => {
 
       describe('Self Registration', () => {
         it('should trigger validatePublicEmail with proper params', async () => {
-          wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
+          wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
           await wrapper.vm.validateEmail('test@test.ca', 'token');
 
           expect(wrapper.vm.$services.households.validatePublicEmail).toHaveBeenCalledWith({
@@ -662,6 +663,7 @@ describe('ContactInformationForm.vue', () => {
 
     describe('setEmailValidator', () => {
       it('should set isValid', () => {
+        wrapper.vm.$registrationStore.getEvent = jest.fn(() => mockEvent());
         const result = {
           emailIsValid: false,
           errors: [{ code: 'errorCode' }],

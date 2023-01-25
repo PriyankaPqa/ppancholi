@@ -1,6 +1,6 @@
 import { mockSplitHousehold, ContactInformation } from '@libs/entities-lib/household-create';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
-import { mockHouseholdEntity } from '@libs/entities-lib/household';
+import { mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/entities-lib/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { tabs } from '@/store/modules/household/tabs';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
@@ -9,11 +9,15 @@ import helpers from '@/ui/helpers/helpers';
 
 import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from './SplitHousehold.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
+const { pinia, registrationStore } = useMockRegistrationStore();
+
+window.scrollTo = jest.fn();
 describe('SplitHousehold.vue', () => {
   let wrapper;
   afterEach(() => {
@@ -24,6 +28,7 @@ describe('SplitHousehold.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         computed: {
           currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
           splitHousehold() {
@@ -40,6 +45,7 @@ describe('SplitHousehold.vue', () => {
       it('should return to search household page if user is seeing results', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             currentTabIndex: () => 0,
             splitHousehold() {
@@ -49,24 +55,15 @@ describe('SplitHousehold.vue', () => {
           mocks: {
             $storage: storage,
           },
-          store: {
-            modules: {
-              registration: {
-                state: {
-                  householdResultsShown: true,
-                },
-              },
-            },
-          },
         });
         await wrapper.vm.back();
-        expect(wrapper.vm.$storage.registration.mutations.setHouseholdResultsShown).toHaveBeenCalledWith(false);
+        expect(registrationStore.householdResultsShown).toEqual(false);
       });
 
       it('should go to the origin household if user is at the first page of registration', async () => {
         wrapper = shallowMount(Component, {
           localVue,
-
+          pinia,
           computed: {
             currentTabIndex: () => 0,
             splitHousehold() {
@@ -95,6 +92,7 @@ describe('SplitHousehold.vue', () => {
       test('back calls jump', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             splitHousehold() {
               return mockSplitHousehold();
@@ -114,6 +112,7 @@ describe('SplitHousehold.vue', () => {
       it('calls createNewHousehold and nextDefault if current tab is isRegistered', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             currentTab: () => ({ id: 'isRegistered' }),
           },
@@ -129,6 +128,7 @@ describe('SplitHousehold.vue', () => {
       it('calls eventhub emit if current tab is personalInfo', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             currentTab: () => ({ id: 'personalInfo' }),
           },
@@ -155,6 +155,7 @@ describe('SplitHousehold.vue', () => {
       it('calls nextDefault without argument by default', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             currentTab: () => ({ id: '' }),
           },
@@ -178,6 +179,7 @@ describe('SplitHousehold.vue', () => {
       it('calls jump if current tab index smaller than number of tabs -1', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             splitHousehold() {
               return mockSplitHousehold();
@@ -188,7 +190,7 @@ describe('SplitHousehold.vue', () => {
             },
           },
         });
-        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 1);
+        registrationStore.currentTabIndex = 1;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.jump = jest.fn();
 
@@ -199,6 +201,7 @@ describe('SplitHousehold.vue', () => {
       it('does not calls jump if current tab index same or larger as number of tabs -1', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             splitHousehold() {
               return mockSplitHousehold();
@@ -209,7 +212,7 @@ describe('SplitHousehold.vue', () => {
             },
           },
         });
-        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 1);
+        registrationStore.currentTabIndex = 1;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.jump = jest.fn();
 
@@ -220,6 +223,7 @@ describe('SplitHousehold.vue', () => {
       it('calls storage action splitHousehold if performSplit is true', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             splitHousehold() {
               return mockSplitHousehold();
@@ -233,12 +237,13 @@ describe('SplitHousehold.vue', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         await wrapper.vm.nextDefault(true);
-        expect(storage.registration.actions.splitHousehold).toHaveBeenCalledTimes(1);
+        expect(registrationStore.splitHousehold).toHaveBeenCalledTimes(1);
       });
     });
 
     describe('closeSplit', () => {
       it('calls router replace with the new household id if there is one ', () => {
+        registrationStore.registrationResponse = mockDetailedRegistrationResponse();
         wrapper.vm.closeSplit();
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
           name: routes.household.householdProfile.name, params: { id: mockHouseholdEntity().id },
@@ -246,17 +251,20 @@ describe('SplitHousehold.vue', () => {
       });
 
       it('calls router replace with the origin household id if there is no new household id ', () => {
-        storage.registration.getters.registrationResponse = jest.fn(() => null);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
-            currentTab: () => ({ id: 'reviewSplitInfo', titleKey: '', nextButtonTextKey: '' }),
+            currentTab: () => ({
+              id: 'reviewSplitInfo', titleKey: '', nextButtonTextKey: '', isValid: '',
+            }),
             splitHousehold() {
               return mockSplitHousehold();
             },
           },
           mocks: { $storage: storage },
         });
+        registrationStore.registrationResponse = null;
         wrapper.vm.closeSplit();
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
           name: routes.household.householdProfile.name, params: { id: mockSplitHousehold().originHouseholdId },
@@ -267,22 +275,27 @@ describe('SplitHousehold.vue', () => {
     describe('createNewHousehold', () => {
       it('calls the registration mutation resetHouseholdCreate', async () => {
         await wrapper.vm.createNewHousehold();
-        expect(storage.registration.mutations.resetHouseholdCreate).toHaveBeenCalledTimes(1);
+        expect(registrationStore.resetHouseholdCreate).toHaveBeenCalledTimes(1);
       });
-      it('calls the registration mutation setPrimaryBeneficiary with the right payload', async () => {
+
+      it('calls setPrimaryBeneficiary with the right payload', async () => {
         const { primaryMember } = mockSplitHousehold().splitMembers;
+        registrationStore.householdCreate.setPrimaryBeneficiary = jest.fn();
+        registrationStore.resetHouseholdCreate = jest.fn();
         primaryMember.setCurrentAddress(null);
         primaryMember.contactInformation = new ContactInformation();
         await wrapper.vm.createNewHousehold();
-        expect(storage.registration.mutations.setPrimaryBeneficiary).toHaveBeenCalledWith(primaryMember);
+        expect(registrationStore.householdCreate.setPrimaryBeneficiary).toHaveBeenCalledWith(primaryMember);
       });
 
-      it('calls the registration mutation addAdditionalMember if the split household has additional members', async () => {
+      it('calls addAdditionalMember if the split household has additional members', async () => {
         const additionalMember = mockSplitHousehold().splitMembers.additionalMembers[0];
+        registrationStore.householdCreate.addAdditionalMember = jest.fn();
+        registrationStore.resetHouseholdCreate = jest.fn();
         additionalMember.setCurrentAddress(null);
 
         await wrapper.vm.createNewHousehold();
-        expect(storage.registration.mutations.addAdditionalMember).toHaveBeenCalledWith(additionalMember, true);
+        expect(registrationStore.householdCreate.addAdditionalMember).toHaveBeenCalledWith(additionalMember, true);
       });
     });
   });
@@ -292,8 +305,8 @@ describe('SplitHousehold.vue', () => {
       it('should return the registrationAssessment', () => {
         jest.clearAllMocks();
         const registrationAssessment = wrapper.vm.registrationAssessment;
-        expect(wrapper.vm.$storage.registration.getters.assessmentToComplete).toHaveBeenCalled();
-        expect(registrationAssessment).toEqual(wrapper.vm.$storage.registration.getters.assessmentToComplete().registrationAssessment);
+        expect(registrationStore.getAssessmentToComplete).toHaveBeenCalled();
+        expect(registrationAssessment).toEqual(registrationStore.getAssessmentToComplete().registrationAssessment);
       });
     });
 
@@ -301,6 +314,7 @@ describe('SplitHousehold.vue', () => {
       it('returns the right value', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
             splitHousehold() {
@@ -322,23 +336,16 @@ describe('SplitHousehold.vue', () => {
       it('returns the right value', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           },
           mocks: {
             $storage: storage,
           },
-          store: {
-            modules: {
-              registration: {
-                state: {
-                  householdResultsShown: true,
-                  splitHousehold: mockSplitHousehold(),
-                },
-              },
-            },
-          },
         });
+
+        registrationStore.splitHouseholdState = mockSplitHousehold();
 
         expect(wrapper.vm.splitHousehold).toEqual(mockSplitHousehold());
       });
@@ -348,6 +355,7 @@ describe('SplitHousehold.vue', () => {
       it('should return proper text ', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           },
@@ -363,6 +371,7 @@ describe('SplitHousehold.vue', () => {
       it('should return proper text ', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           },
@@ -381,6 +390,7 @@ describe('SplitHousehold.vue', () => {
       it('should return proper text', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           },
@@ -393,6 +403,7 @@ describe('SplitHousehold.vue', () => {
       it('should return proper text ', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           },
@@ -406,20 +417,21 @@ describe('SplitHousehold.vue', () => {
     it('sets the right tabs if there are additional members', () => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         computed: {
           splitHousehold() {
             return mockSplitHousehold();
           },
         },
-        mocks: { $storage: storage },
       });
 
-      expect(storage.registration.mutations.setTabs).toHaveBeenCalledWith(tabs());
+      expect(registrationStore.setTabs).toBeCalledWith(tabs());
     });
 
     it('returns the right tabs if there are no additional members', () => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         computed: {
           splitHousehold() {
             return {
@@ -431,15 +443,15 @@ describe('SplitHousehold.vue', () => {
             };
           },
         },
-        mocks: { $storage: storage },
       });
 
-      expect(storage.registration.mutations.setTabs).toHaveBeenCalledWith(tabs().filter((t) => t.id !== 'additionalSplitMembers'));
+      expect(registrationStore.setTabs).toHaveBeenCalledWith(tabs().filter((t) => t.id !== 'additionalSplitMembers'));
     });
 
     it('calls back if there is no split household data', () => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         computed: {
           splitHousehold() {
             return null;

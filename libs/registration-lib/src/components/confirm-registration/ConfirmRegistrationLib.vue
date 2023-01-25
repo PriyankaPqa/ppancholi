@@ -83,11 +83,11 @@ export default Vue.extend({
     },
 
     associationMode(): boolean {
-      return this.$store.state.registration.householdAssociationMode;
+      return this.$registrationStore.householdAssociationMode;
     },
 
     response(): IDetailedRegistrationResponse {
-      return this.$storage.registration.getters.registrationResponse();
+      return this.$registrationStore.registrationResponse;
     },
 
     fullName(): string {
@@ -97,15 +97,15 @@ export default Vue.extend({
     },
 
     household(): IHouseholdCreate {
-      return this.$storage.registration.getters.householdCreate();
+      return this.$registrationStore.getHouseholdCreate();
     },
 
     errors(): IServerError {
-      return this.$storage.registration.getters.registrationErrors();
+      return this.$registrationStore.registrationErrors;
     },
 
     event(): IEvent {
-      return this.$storage.registration.getters.event();
+      return this.$registrationStore.getEvent();
     },
 
     confirmationMessagePath(): TranslateResult {
@@ -127,14 +127,14 @@ export default Vue.extend({
     },
 
     isCRCRegistration(): boolean {
-      return this.$storage.registration.getters.isCRCRegistration();
+      return this.$registrationStore.isCRCRegistration();
     },
 
     initialTitle(): string {
-      return this.$storage.registration.getters.currentTab()?.titleKey || '';
+      return this.$registrationStore.getCurrentTab()?.titleKey || '';
     },
     initialButtonText(): string {
-      return this.$storage.registration.getters.currentTab()?.nextButtonTextKey || '';
+      return this.$registrationStore.getCurrentTab()?.nextButtonTextKey || '';
     },
   },
 
@@ -153,7 +153,7 @@ export default Vue.extend({
 
   methods: {
     setTabWithError() {
-      this.$storage.registration.mutations.mutateCurrentTab((tab: IRegistrationMenuItem) => {
+      this.$registrationStore.mutateCurrentTab((tab: IRegistrationMenuItem) => {
         tab.nextButtonTextKey = 'common.cancel';
         tab.titleKey = 'registration.confirmation.error';
         tab.isValid = false;
@@ -161,7 +161,7 @@ export default Vue.extend({
     },
 
     clearTabError() {
-      this.$storage.registration.mutations.mutateCurrentTab(this.clearTabErrorFunc);
+      this.$registrationStore.mutateCurrentTab(this.clearTabErrorFunc);
     },
 
     clearTabErrorFunc(tab: IRegistrationMenuItem) {

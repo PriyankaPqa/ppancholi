@@ -7,5 +7,5 @@ export interface IInformationFromBeneficiarySearch {
   firstName: string;
   lastName: string;
   phone: IPhoneNumber;
-  registrationNumber: string;
+  registrationNumber?: string;
 }

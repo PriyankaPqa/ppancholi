@@ -6,17 +6,24 @@ import {
 
 import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
-import { tabs } from '@/store/modules/registration/tabs';
 import { mockEventEntity } from '@libs/entities-lib/event';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { tabs } from '@/pinia/registration/tabs';
+import { createTestingPinia } from '@pinia/testing';
+import resetStore from '@libs/stores-lib/store-reset';
 import Component from './RegistrationHome.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
-
 const storage = mockStorage();
-
 const vuetify = new Vuetify();
 
+const pinia = createTestingPinia({
+  stubActions: false,
+  plugins: [resetStore],
+});
+
+const { registrationStore } = useMockRegistrationStore(pinia);
 describe('RegistrationHome.vue', () => {
   let wrapper;
 
@@ -25,6 +32,7 @@ describe('RegistrationHome.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
+      pinia,
       vuetify,
       mocks: {
         $storage: storage,
@@ -82,15 +90,15 @@ describe('RegistrationHome.vue', () => {
     });
 
     describe('setEvent', () => {
-      it('should call setEvent mutations with proper params', async () => {
+      it('should set the event', async () => {
         await wrapper.vm.setEvent(mockEvent);
-        expect(wrapper.vm.$storage.registration.mutations.setEvent).toHaveBeenCalledWith(mockEvent);
+        expect(registrationStore.event).toEqual(mockEvent);
       });
 
       it('should call setAssessmentToComplete mutations with proper params', async () => {
         await wrapper.vm.setEvent(mockEvent);
         expect(wrapper.vm.$services.assessmentForms.get).toHaveBeenCalledWith({ id: mockEvent.registrationAssessments[0].assessmentId });
-        expect(wrapper.vm.$storage.registration.mutations.setAssessmentToComplete).toHaveBeenCalledWith({
+        expect(registrationStore.setAssessmentToComplete).toHaveBeenCalledWith({
           assessmentForm: wrapper.vm.$services.assessmentForms.get(),
           registrationAssessment: mockEvent.registrationAssessments[0],
         });
@@ -98,9 +106,9 @@ describe('RegistrationHome.vue', () => {
     });
 
     describe('resetRegistrationModule', () => {
-      it('should call resetState from registration storage', () => {
+      it('should reset the store and set tabs', () => {
         wrapper.vm.resetRegistrationModule();
-        expect(wrapper.vm.$storage.registration.mutations.resetState).toHaveBeenCalledWith(tabs());
+        expect(registrationStore.tabs).toEqual(tabs());
       });
     });
 
@@ -108,21 +116,21 @@ describe('RegistrationHome.vue', () => {
       it('should call resetState from beneficiary storage', () => {
         jest.clearAllMocks();
         wrapper.vm.resetHouseholdCreate();
-        expect(wrapper.vm.$storage.registration.mutations.resetHouseholdCreate).toBeCalled();
+        expect(registrationStore.resetHouseholdCreate).toBeCalled();
       });
     });
 
     describe('fetchDataForRegistration', () => {
       it('should fetch genders', () => {
-        expect(wrapper.vm.$storage.registration.actions.fetchGenders).toHaveBeenCalledTimes(1);
+        expect(registrationStore.fetchGenders).toHaveBeenCalledTimes(1);
       });
 
       it('should fetch fetchPreferredLanguages', () => {
-        expect(wrapper.vm.$storage.registration.actions.fetchPreferredLanguages).toHaveBeenCalledTimes(1);
+        expect(registrationStore.fetchPreferredLanguages).toHaveBeenCalledTimes(1);
       });
 
       it('should fetch fetchPrimarySpokenLanguages', () => {
-        expect(wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
+        expect(registrationStore.fetchPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
       });
     });
   });

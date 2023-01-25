@@ -2,17 +2,6 @@ import { createTestingPinia, TestingPinia } from '@pinia/testing';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { ItemState, IUIStateState } from '@/pinia/ui-state/uiState.type';
 
-export const useMockUiStateStore = (pinia?: TestingPinia) => {
-  const p = pinia || createTestingPinia({ stubActions: false });
-
-  const uiStateStore = useUiStateStore();
-
-  return {
-    pinia: p,
-    uiStateStore,
-  };
-};
-
 export const mockItemStates: ItemState[] = [
   {
     azureSearchParams: { top: 1 },
@@ -44,3 +33,16 @@ export const mockSearchStates = (): IUIStateState[] => ([
   { key: 'key1', state: mockItemStates[0] },
   { key: 'key2', state: mockItemStates[1] },
 ]);
+
+export const useMockUiStateStore = (pinia?: TestingPinia) => {
+  const p = pinia || createTestingPinia({ stubActions: false });
+
+  const uiStateStore = useUiStateStore();
+
+  uiStateStore.getSearchTableState = jest.fn(() => mockSearchStates()[0].state);
+
+  return {
+    pinia: p,
+    uiStateStore,
+  };
+};

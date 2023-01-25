@@ -41,6 +41,7 @@
 <script lang="ts">
 import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import Vue from 'vue';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default Vue.extend({
   name: 'Tabs',
@@ -54,11 +55,11 @@ export default Vue.extend({
 
   computed: {
     tabs(): IRegistrationMenuItem[] {
-      return this.$storage.registration.getters.tabs();
+      return useRegistrationStore().tabs;
     },
 
     currentTab(): IRegistrationMenuItem {
-      return this.$storage.registration.getters.currentTab();
+      return useRegistrationStore().getCurrentTab();
     },
   },
 });

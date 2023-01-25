@@ -10,6 +10,7 @@
     "@libs/entities-lib": "*",
     "@libs/services-lib": "*",
     "@libs/shared-lib": "*",
+    "@libs/stores-lib": "*",
     "@mdi/font": "^6.5.95",
     "awesome-phonenumber": "2.68.0",
     "axios": "0.27.2",
@@ -22,6 +23,10 @@
     "vue-router": "3.5.3",
     "vue-typed-mixins": "^0.2.0",
     "vuetify": "2.6.12",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "pinia": "^2.0.27"
+  },
+  "devDependencies": {
+    "@pinia/testing": "^0.0.14"
   }
 }

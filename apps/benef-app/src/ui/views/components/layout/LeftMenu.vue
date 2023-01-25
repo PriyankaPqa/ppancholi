@@ -49,6 +49,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default Vue.extend({
   name: 'LeftMenu',
@@ -63,17 +64,17 @@ export default Vue.extend({
   computed: {
     isLeftMenuOpen: {
       get(): boolean {
-        return this.$storage.registration.getters.isLeftMenuOpen();
+        return useRegistrationStore().isLeftMenuOpen;
       },
       set(val: boolean): void {
-        this.$storage.registration.mutations.toggleLeftMenu(val);
+        useRegistrationStore().isLeftMenuOpen = val;
       },
     },
     tabs(): IRegistrationMenuItem[] {
-      return this.$storage.registration.getters.tabs();
+      return useRegistrationStore().tabs;
     },
     currentTab(): IRegistrationMenuItem {
-      return this.$storage.registration.getters.currentTab();
+      return useRegistrationStore().getCurrentTab();
     },
     xSmallOrSmallMenu(): boolean {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm;

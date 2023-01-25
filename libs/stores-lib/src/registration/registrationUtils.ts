@@ -1,22 +1,23 @@
 import { IHouseholdCreate } from '@libs/entities-lib/household-create';
 import { ERegistrationMethod, ERegistrationMode } from '@libs/shared-lib/types';
-import { IState } from './registration.types';
 
 export const isRegisteredValid = (): boolean => true;
 
-export const privacyStatementValid = (mode: ERegistrationMode, state: IState): boolean => {
+export const privacyStatementValid = (
+  { mode, isPrivacyAgreed, householdCreate }: { mode: ERegistrationMode, isPrivacyAgreed: boolean; householdCreate: IHouseholdCreate },
+): boolean => {
   let isValid = false;
   if (mode === ERegistrationMode.Self) {
-    isValid = state.isPrivacyAgreed;
+    isValid = isPrivacyAgreed;
   } else if (mode === ERegistrationMode.CRC) {
-    if (!state.isPrivacyAgreed) {
+    if (!isPrivacyAgreed) {
       isValid = false;
-    } else if (!state.householdCreate.consentInformation.crcUserName) {
+    } else if (!householdCreate.consentInformation.crcUserName) {
       isValid = false;
-    } else if (state.householdCreate.consentInformation.registrationMethod === null) {
+    } else if (householdCreate.consentInformation.registrationMethod === null) {
       isValid = false;
-    } else if (state.householdCreate.consentInformation.registrationMethod === ERegistrationMethod.InPerson) {
-      isValid = state.householdCreate.consentInformation.registrationLocationId !== null;
+    } else if (householdCreate.consentInformation.registrationMethod === ERegistrationMethod.InPerson) {
+      isValid = householdCreate.consentInformation.registrationLocationId !== null;
     } else {
       isValid = true;
     }

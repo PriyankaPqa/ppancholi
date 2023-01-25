@@ -1,24 +1,26 @@
 import libHelpers from '@libs/entities-lib/helpers';
 import { mockAddressData, Address } from '@libs/entities-lib/value-objects/address';
-import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/household-create';
+import { mockAddress } from '@libs/entities-lib/household-create';
 import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { i18n } from '@/ui/plugins';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { mockStorage } from '@/storage';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from '../EditHouseholdAddressDialog.vue';
 
 const storage = mockStorage();
 
 const localVue = createLocalVue();
-
+const { pinia, registrationStore } = useMockRegistrationStore();
 describe('EditHouseholdAddressDialog.vue', () => {
   let wrapper;
 
   const doMount = (mountMode = false, hasFeature = true) => {
     const options = {
       localVue,
+      pinia,
       propsData: {
         show: true,
       },
@@ -142,11 +144,11 @@ describe('EditHouseholdAddressDialog.vue', () => {
 
     describe('Created', () => {
       it('should load address from the store', () => {
-        expect(wrapper.vm.address).toEqual(mockHouseholdCreate().homeAddress);
+        expect(wrapper.vm.address).toEqual(registrationStore.getHouseholdCreate().homeAddress);
       });
 
       it('should load noFixedHome from the store', () => {
-        expect(wrapper.vm.noFixedHome).toEqual(mockHouseholdCreate().noFixedHome);
+        expect(wrapper.vm.noFixedHome).toEqual(registrationStore.householdCreate.noFixedHome);
       });
 
       it('should load noFixedHomeDetails from the store', () => {
@@ -205,10 +207,11 @@ describe('EditHouseholdAddressDialog.vue', () => {
         expect(wrapper.vm.$storage.household.actions.updateNoFixedHomeAddress).toHaveBeenCalledWith(id, observation);
       });
 
-      it('call setNoFixedHome mutations with true', async () => {
+      it('call set noFixedHome to true', async () => {
         const id = '1';
+        wrapper.vm.householdCreate.noFixedHome = false;
         await wrapper.vm.updateNoFixedHomeAddress(id);
-        expect(wrapper.vm.$storage.registration.mutations.setNoFixedHome).toHaveBeenCalledWith(true);
+        expect(wrapper.vm.householdCreate.noFixedHome).toEqual(true);
       });
     });
 
@@ -220,18 +223,20 @@ describe('EditHouseholdAddressDialog.vue', () => {
         expect(wrapper.vm.$storage.household.actions.updateHomeAddress).toHaveBeenCalledWith(id, address);
       });
 
-      it('call setNoFixedHome mutations with false', async () => {
+      it('call set noFixedHome to false', async () => {
         const id = '1';
         const address = mockAddress();
+        wrapper.vm.householdCreate.noFixedHome = true;
         await wrapper.vm.updateHomeAddress(id, address);
-        expect(wrapper.vm.$storage.registration.mutations.setNoFixedHome).toHaveBeenCalledWith(false);
+        expect(wrapper.vm.householdCreate.noFixedHome).toEqual(false);
       });
 
       it('call setHomeAddress mutations with address', async () => {
         const id = '1';
         const address = mockAddress();
+        wrapper.vm.householdCreate.setHomeAddress = jest.fn();
         await wrapper.vm.updateHomeAddress(id, address);
-        expect(wrapper.vm.$storage.registration.mutations.setHomeAddress).toHaveBeenCalledWith(address);
+        expect(wrapper.vm.householdCreate.setHomeAddress).toHaveBeenCalledWith(address);
       });
     });
 

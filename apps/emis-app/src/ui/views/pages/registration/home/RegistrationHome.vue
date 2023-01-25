@@ -22,8 +22,9 @@ import Vue from 'vue';
 import { RcRegistrationLandingPage } from '@libs/component-lib/components';
 import { IEvent } from '@libs/entities-lib/registration-event';
 import routes from '@/constants/routes';
-import { tabs } from '@/store/modules/registration/tabs';
+import { tabs } from '@/pinia/registration/tabs';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default Vue.extend({
   name: 'RegistrationHome',
@@ -70,26 +71,27 @@ export default Vue.extend({
 
       if (event.registrationAssessments?.length) {
         const assessment = await this.$services.assessmentForms.get({ id: event.registrationAssessments[0].assessmentId });
-        this.$storage.registration.mutations.setAssessmentToComplete({ assessmentForm: assessment, registrationAssessment: event.registrationAssessments[0] });
+        useRegistrationStore().setAssessmentToComplete({ assessmentForm: assessment, registrationAssessment: event.registrationAssessments[0] });
       } else {
-        this.$storage.registration.mutations.setAssessmentToComplete(null);
+        useRegistrationStore().setAssessmentToComplete(null);
       }
 
-      this.$storage.registration.mutations.setEvent(event);
+      useRegistrationStore().event = event;
     },
 
     resetRegistrationModule() {
-      this.$storage.registration.mutations.resetState(tabs());
+      useRegistrationStore().$reset();
+      useRegistrationStore().tabs = tabs();
     },
 
     resetHouseholdCreate() {
-      this.$storage.registration.mutations.resetHouseholdCreate();
+      useRegistrationStore().resetHouseholdCreate();
     },
 
     async fetchDataForRegistration() {
-      this.$storage.registration.actions.fetchGenders();
-      this.$storage.registration.actions.fetchPreferredLanguages();
-      this.$storage.registration.actions.fetchPrimarySpokenLanguages();
+      useRegistrationStore().fetchGenders();
+      useRegistrationStore().fetchPreferredLanguages();
+      useRegistrationStore().fetchPrimarySpokenLanguages();
     },
 
   },

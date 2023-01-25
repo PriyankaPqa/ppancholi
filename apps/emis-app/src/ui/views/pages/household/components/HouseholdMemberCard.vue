@@ -148,6 +148,7 @@ import householdHelpers from '@/ui/helpers/household';
 import { IEventGenericLocation } from '@libs/entities-lib/event';
 
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 import PrimaryMemberDialog from './PrimaryMemberDialog.vue';
 import SplitHouseholdDialog from '../split/SplitHouseholdDialog.vue';
 
@@ -313,7 +314,7 @@ export default Vue.extend({
     },
 
     splitHouseholdMembers() : { primaryMember: IMember, additionalMembers: IMember[] } {
-      return this.$store.state.registration.splitHousehold?.splitMembers;
+      return useRegistrationStore().splitHouseholdState?.splitMembers;
     },
 
     splitAdditionalMembers() : IMember[] {
@@ -332,7 +333,7 @@ export default Vue.extend({
     // When coming back to the household profile page from the household split flow,
     // the split household dialog should open with the correct state
     // (the previously selected additional members involved in the split should be displayed as selected)
-    if (this.$storage.registration.getters.isSplitMode()) {
+    if (useRegistrationStore().isSplitMode()) {
       this.initSplitView();
     }
   },
@@ -365,8 +366,8 @@ export default Vue.extend({
     },
 
     openSplitDialog() {
-      if (!this.$storage.registration.getters.isSplitMode()) {
-        this.$storage.registration.mutations.resetSplitHousehold();
+      if (!useRegistrationStore().isSplitMode()) {
+        useRegistrationStore().resetSplitHousehold();
       }
       this.showSplitDialog = true;
     },
@@ -378,8 +379,8 @@ export default Vue.extend({
       });
 
       if (doDelete) {
-        const res = await this.$storage.registration.actions.deleteAdditionalMember({
-          householdId: this.$storage.registration.getters.householdCreate().id,
+        const res = await useRegistrationStore().deleteAdditionalMember({
+          householdId: useRegistrationStore().getHouseholdCreate().id,
           memberId: this.member.id,
           index: this.index,
         });

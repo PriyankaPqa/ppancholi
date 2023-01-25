@@ -6,11 +6,12 @@ import {
 } from '@libs/entities-lib/event';
 import { mockStorage } from '@/storage';
 
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from './SplitHouseholdEvent.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-
+const { pinia, registrationStore } = useMockRegistrationStore();
 describe('SplitHouseholdEvent', () => {
   let wrapper;
 
@@ -18,6 +19,7 @@ describe('SplitHouseholdEvent', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
+        pinia,
         mocks: { $storage: storage },
       });
     });
@@ -35,17 +37,10 @@ describe('SplitHouseholdEvent', () => {
       it('should set event to the value in the store', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           mocks: { $storage: storage },
-          store: {
-            modules: {
-              registration: {
-                state: {
-                  event: mockEventMainInfo().entity,
-                },
-              },
-            },
-          },
         });
+        registrationStore.event = mockEventMainInfo().entity;
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
@@ -59,6 +54,7 @@ describe('SplitHouseholdEvent', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         mocks: { $storage: storage },
       });
     });
@@ -68,14 +64,14 @@ describe('SplitHouseholdEvent', () => {
         jest.clearAllMocks();
         const event = mockEventEntityData()[0];
         await wrapper.vm.setEvent(event);
-        expect(storage.registration.mutations.setEvent).toHaveBeenCalledWith(event);
+        expect(registrationStore.event).toEqual(event);
       });
 
       it('should call setAssessmentToComplete mutations with proper params', async () => {
         const event = mockEventEntityData()[0];
         await wrapper.vm.setEvent(event);
         expect(wrapper.vm.$services.assessmentForms.get).toHaveBeenCalledWith({ id: event.registrationAssessments[0].assessmentId });
-        expect(wrapper.vm.$storage.registration.mutations.setAssessmentToComplete).toHaveBeenCalledWith({
+        expect(registrationStore.setAssessmentToComplete).toHaveBeenCalledWith({
           assessmentForm: wrapper.vm.$services.assessmentForms.get(),
           registrationAssessment: event.registrationAssessments[0],
         });

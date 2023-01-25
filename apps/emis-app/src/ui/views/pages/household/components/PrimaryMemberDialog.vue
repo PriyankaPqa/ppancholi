@@ -76,6 +76,7 @@ import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { IUser } from '@libs/entities-lib/user';
 import { useUserStore } from '@/pinia/user/user';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default Vue.extend({
   name: 'PrimaryMemberDialog',
@@ -185,7 +186,7 @@ export default Vue.extend({
   },
 
   created() {
-    const household = this.$storage.registration.getters.householdCreate();
+    const household = useRegistrationStore().getHouseholdCreate();
     // eslint-disable-next-line no-unsafe-optional-chaining
     this.allMembers = [household?.primaryBeneficiary, ...household?.additionalMembers];
     this.member = this.allMembers.filter((m) => m.id === this.memberId)[0] || this.allMembers[0];
@@ -197,7 +198,7 @@ export default Vue.extend({
 
   methods: {
     onCancel() {
-      this.$storage.registration.mutations.setIsPrivacyAgreed(false);
+      useRegistrationStore().isPrivacyAgreed = false;
       this.$emit('close');
     },
 
@@ -211,17 +212,17 @@ export default Vue.extend({
       if (isValid) {
         let ok = true;
         if (this.changedIdentitySet) {
-          ok = !!await this.$storage.registration.actions.updatePersonIdentity({ member: this.member, isPrimaryMember: true });
+          ok = !!await useRegistrationStore().updatePersonIdentity({ member: this.member, isPrimaryMember: true });
         }
 
         if (ok && this.changedContactInfo) {
-          ok = !!await this.$storage.registration.actions.updatePersonContactInformation({ member: this.member, isPrimaryMember: true });
+          ok = !!await useRegistrationStore().updatePersonContactInformation({ member: this.member, isPrimaryMember: true });
         }
 
         if (ok && this.makePrimaryMode) {
-          const household = this.$storage.registration.getters.householdCreate();
+          const household = useRegistrationStore().getHouseholdCreate();
           ok = !!await this.$services.households.makePrimary(household.id, this.member.id, household.consentInformation);
-          this.$storage.registration.mutations.setIsPrivacyAgreed(false);
+          useRegistrationStore().isPrivacyAgreed = false;
         }
 
         if (ok && this.changedAddress) {
@@ -251,7 +252,7 @@ export default Vue.extend({
     },
 
     async submitAddressUpdate() {
-      const address = await this.$storage.registration.actions.updatePersonAddress({ member: this.member, isPrimaryMember: true });
+      const address = await useRegistrationStore().updatePersonAddress({ member: this.member, isPrimaryMember: true });
       let ok = !!address;
       if (ok && this.additionalMembers) {
         const addresses = await this.updateAdditionalMembersWithSameAddress();
@@ -266,7 +267,7 @@ export default Vue.extend({
       this.additionalMembers.forEach(async (otherMember, index) => {
         if (_isEqual(otherMember.currentAddress, this.backupAddress)) {
           otherMember.setCurrentAddress(this.member.currentAddress);
-          promises.push(this.$storage.registration.actions.updatePersonAddress({
+          promises.push(useRegistrationStore().updatePersonAddress({
             member: otherMember, isPrimaryMember: false, index,
           }) as Promise<IHouseholdEntity>);
         }

@@ -7,6 +7,7 @@ import { mockCombinedHouseholds } from '@libs/entities-lib/household';
 import household from '@/ui/mixins/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileStatus, mockCaseFileEntities } from '@libs/entities-lib/case-file';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
 const Component = {
   render() {},
@@ -16,13 +17,14 @@ const Component = {
 const localVue = createLocalVue();
 const storage = mockStorage();
 const member = mockMember();
-
+const { pinia, registrationStore } = useMockRegistrationStore();
 let wrapper;
 
 describe('household', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
+      pinia,
       localVue,
       propsData: {
         id: 'id-1',
@@ -86,6 +88,7 @@ describe('household', () => {
       it('calls searchMyEventsById with the expected parameters if no argument is passed', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'hh-id',
           },
@@ -113,6 +116,7 @@ describe('household', () => {
       it('stores the result in myEvents if there is no argument and returns the result', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'hh-id',
           },
@@ -187,19 +191,19 @@ describe('household', () => {
       it('should get genders', async () => {
         const household = mockCombinedHousehold();
         await wrapper.vm.buildHouseholdCreateData(household);
-        expect(wrapper.vm.$storage.registration.getters.genders).toHaveBeenCalledTimes(1);
+        expect(registrationStore.getGenders).toHaveBeenCalledTimes(1);
       });
 
       it('should get preferredLanguages', async () => {
         const household = mockCombinedHousehold();
         await wrapper.vm.buildHouseholdCreateData(household);
-        expect(wrapper.vm.$storage.registration.getters.preferredLanguages).toHaveBeenCalledTimes(1);
+        expect(registrationStore.getPreferredLanguages).toHaveBeenCalledTimes(1);
       });
 
       it('should get primarySpokenLanguages', async () => {
         const household = mockCombinedHousehold();
         await wrapper.vm.buildHouseholdCreateData(household);
-        expect(wrapper.vm.$storage.registration.getters.primarySpokenLanguages).toHaveBeenCalledTimes(1);
+        expect(registrationStore.getPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
       });
 
       it('should call fetchMembersInformation', async () => {

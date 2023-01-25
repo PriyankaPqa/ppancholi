@@ -11,6 +11,8 @@ import householdHelpers from '@/ui/helpers/household';
 import { IOptionItemData } from '@libs/shared-lib/types';
 import { IEventGenericLocation, IEventMainInfo } from '@libs/entities-lib/event';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { useRegistrationStore } from '@/pinia/registration/registration';
+import { IEventData } from '@libs/entities-lib/registration-event';
 
 export default Vue.extend({
   props: {
@@ -137,24 +139,24 @@ export default Vue.extend({
       let primaryBeneficiary;
       const additionalMembers = [] as Array<IMemberEntity>;
 
-      let genderItems = this.$storage.registration.getters.genders(true) as IOptionItemData[];
+      let genderItems = useRegistrationStore().getGenders(true) as IOptionItemData[];
       if (genderItems.length === 0) {
-        genderItems = await this.$storage.registration.actions.fetchGenders() as IOptionItemData[];
+        genderItems = await useRegistrationStore().fetchGenders() as IOptionItemData[];
       }
 
-      let preferredLanguagesItems = this.$storage.registration.getters.preferredLanguages() as IOptionItemData[];
+      let preferredLanguagesItems = useRegistrationStore().getPreferredLanguages() as IOptionItemData[];
       if (preferredLanguagesItems.length === 0) {
-        preferredLanguagesItems = await this.$storage.registration.actions.fetchPreferredLanguages() as IOptionItemData[];
+        preferredLanguagesItems = await useRegistrationStore().fetchPreferredLanguages() as IOptionItemData[];
       }
 
-      let primarySpokenLanguagesItems = this.$storage.registration.getters.primarySpokenLanguages(true) as IOptionItemData[];
+      let primarySpokenLanguagesItems = useRegistrationStore().getPrimarySpokenLanguages(true) as IOptionItemData[];
       if (primarySpokenLanguagesItems.length === 0) {
-        primarySpokenLanguagesItems = await this.$storage.registration.actions.fetchPrimarySpokenLanguages() as IOptionItemData[];
+        primarySpokenLanguagesItems = await useRegistrationStore().fetchPrimarySpokenLanguages() as IOptionItemData[];
       }
 
       const members = await this.fetchMembersInformation(household);
 
-      const communitiesItems = await this.$storage.registration.actions.fetchIndigenousCommunities();
+      const communitiesItems = await useRegistrationStore().fetchIndigenousCommunities();
 
       const emptyCurrentAddress = {
         country: 'CA',
@@ -284,8 +286,8 @@ export default Vue.extend({
 
       const events = await this.$services.publicApi.searchEvents({ filter });
       if (events?.value?.length) {
-        const event = events?.value[0] as IEventMainInfo;
-        const location = event.entity.shelterLocations.find((l) => l.id === shelterLocationId);
+        const event = events?.value[0].entity as IEventData;
+        const location = event.shelterLocations.find((l) => l.id === shelterLocationId);
         // cache the shelter location data, so that the next member that has the same shelter location id doesn't need to refetch the data
         this.otherShelterLocations.push(location);
         return location;

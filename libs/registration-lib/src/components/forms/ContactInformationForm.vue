@@ -273,7 +273,7 @@ export default Vue.extend({
     },
 
     isCRCRegistration(): boolean {
-      return this.$storage.registration.getters.isCRCRegistration();
+      return this.$registrationStore.isCRCRegistration();
     },
 
     emailAlreadyExistMessage(): TranslateResult {
@@ -281,7 +281,7 @@ export default Vue.extend({
       if (this.isCRCRegistration) {
         return this.$t(`${emailAlreadyExists}.crc-registration`);
       }
-      return this.$t(`${emailAlreadyExists}.self-registration`, { phoneNumber: this.$storage.registration.getters.event().responseDetails.assistanceNumber });
+      return this.$t(`${emailAlreadyExists}.self-registration`, { phoneNumber: this.$registrationStore.getEvent().responseDetails.assistanceNumber });
     },
   },
 

@@ -45,6 +45,9 @@ export interface IMemberMoveRequest {
 
 export interface IMember extends IMemberEntity {
   setCurrentAddress(currentAddress: ICurrentAddress): void;
+  setIdentity(identitySet: IIdentitySet): void;
+  setContactInformation(contactInformation: IContactInformation): void;
+  setPersonalInformation(contactInformation: IContactInformation, identitySet: IIdentitySet): void;
   validate(skipAgeRestriction?: boolean): string[];
   validateIdentity(skipAgeRestriction: boolean): string[];
   validateCurrentAddress(): string[];

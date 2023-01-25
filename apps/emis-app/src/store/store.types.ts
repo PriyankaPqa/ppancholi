@@ -1,5 +1,4 @@
 import { Store } from 'vuex';
-import { IState as IRegistrationState } from '@libs/registration-lib/store/modules/registration/registration.types';
 import { IHouseholdEntityState } from '@libs/registration-lib/store/modules/household/householdEntity.types';
 import { IHouseholdMetadata } from '@libs/entities-lib/household';
 import * as vuexModule from '@/constants/vuex-modules';
@@ -37,7 +36,6 @@ export interface IRootState {
   [vuexModule.OPTION_LIST_MODULE]?: IOptionListState,
   [vuexModule.TEAM_ENTITIES]?: ITeamEntityState,
   [vuexModule.TEAM_METADATA]?: IBaseState<ITeamMetadata>,
-  [vuexModule.REGISTRATION_MODULE]?: IRegistrationState,
   [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]?: IFinancialAssistanceCategoryEntityState,
   [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES]?: IFinancialAssistancePaymentEntityState,
   [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA]?: IBaseState<IFinancialAssistancePaymentMetadata>,

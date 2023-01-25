@@ -8,6 +8,7 @@ import {
 import { mockStorage } from '@/storage';
 
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from './HouseholdSearch.vue';
 
 const localVue = createLocalVue();
@@ -15,6 +16,8 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 
 const vuetify = new Vuetify();
+
+const { pinia, registrationStore } = useMockRegistrationStore();
 
 describe('HouseholdSearch.vue', () => {
   let wrapper;
@@ -24,6 +27,7 @@ describe('HouseholdSearch.vue', () => {
 
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       vuetify,
       propsData: {
         loading: false,
@@ -33,7 +37,9 @@ describe('HouseholdSearch.vue', () => {
         $storage: storage,
       },
     });
-    wrapper.vm.$refs.form.validate = jest.fn(() => true);
+    wrapper.vm.$refs.form = {
+      validate: jest.fn(() => true),
+    };
   });
 
   describe('Methods', () => {
@@ -56,7 +62,7 @@ describe('HouseholdSearch.vue', () => {
           firstName: '',
           lastName: '',
           emailAddress: '',
-          phone: '',
+          phone: null,
           registrationNumber: '',
           birthDate: '',
         });
@@ -96,9 +102,10 @@ describe('HouseholdSearch.vue', () => {
         });
       });
 
-      it('should call setHouseholdResultsShown mutations with false', () => {
+      it('should set householdResultsShown to false', () => {
+        registrationStore.householdResultsShown = true;
         wrapper.vm.clear();
-        expect(wrapper.vm.$storage.registration.mutations.setHouseholdResultsShown).toHaveBeenCalledWith(false);
+        expect(registrationStore.householdResultsShown).toEqual(false);
       });
 
       it('should be called when clicking clear button', async () => {
@@ -129,10 +136,6 @@ describe('HouseholdSearch.vue', () => {
       });
 
       it('should emit search event with criteria as params', async () => {
-        wrapper.vm.$refs.form = {
-          validate: jest.fn(() => true),
-        };
-
         wrapper.setData({
           form: {
             phone: 'test',
@@ -147,6 +150,7 @@ describe('HouseholdSearch.vue', () => {
       it('should be called when clicking search button', async () => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           vuetify,
           propsData: {
             loading: false,
@@ -168,6 +172,7 @@ describe('HouseholdSearch.vue', () => {
       it('fills in the right name data into the form', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           propsData: {
             loading: false,
@@ -176,17 +181,11 @@ describe('HouseholdSearch.vue', () => {
           mocks: {
             $storage: storage,
           },
-          store: {
-            modules: {
-              registration: {
-                state: {
-                  splitHousehold: mockSplitHousehold(),
-                },
-              },
-            },
-          },
         });
-
+        wrapper.vm.$refs.form = {
+          validate: jest.fn(() => true),
+        };
+        registrationStore.splitHouseholdState = mockSplitHousehold();
         await wrapper.vm.fillInSplitHouseholdData();
         expect(wrapper.vm.form.firstName).toEqual(mockSplitHousehold().splitMembers.primaryMember.identitySet.firstName);
         expect(wrapper.vm.form.lastName).toEqual(mockSplitHousehold().splitMembers.primaryMember.identitySet.lastName);
@@ -211,9 +210,8 @@ describe('HouseholdSearch.vue', () => {
         },
       };
       it('should call mutations function setInformationFromBeneficiarySearch', async () => {
-        wrapper.vm.$storage.registration.mutations.setInformationFromBeneficiarySearch = jest.fn();
         await wrapper.vm.storeBeneficiarySearchData();
-        expect(wrapper.vm.$storage.registration.mutations.setInformationFromBeneficiarySearch).toHaveBeenCalledWith(formWithOriginalDataStructure);
+        expect(registrationStore.informationFromBeneficiarySearch).toEqual(formWithOriginalDataStructure);
       });
     });
   });
@@ -223,6 +221,7 @@ describe('HouseholdSearch.vue', () => {
       it('calls fillInSplitHouseholdData if is in split mode', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           vuetify,
           propsData: {
             loading: false,
@@ -232,6 +231,9 @@ describe('HouseholdSearch.vue', () => {
             $storage: storage,
           },
         });
+        wrapper.vm.$refs.form = {
+          validate: jest.fn(() => true),
+        };
         jest.spyOn(wrapper.vm, 'fillInSplitHouseholdData').mockImplementation(() => {});
 
         wrapper.vm.$options.created.forEach((hook) => {
@@ -284,6 +286,7 @@ describe('HouseholdSearch.vue', () => {
         });
       });
     });
+
     describe('rules', () => {
       it('should return correct rules', () => {
         const rules = {

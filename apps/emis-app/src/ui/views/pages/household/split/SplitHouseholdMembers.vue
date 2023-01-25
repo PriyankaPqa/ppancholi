@@ -20,6 +20,7 @@ import Vue from 'vue';
 import AdditionalMemberTemplate from '@libs/registration-lib/components/review/additional-members/AdditionalMemberTemplate.vue';
 import AdditionalMemberSection from '@libs/registration-lib/components/review/additional-members/AdditionalMemberSection.vue';
 import { IMember } from '@libs/entities-lib/value-objects/member';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default Vue.extend({
   name: 'SplitHouseholdMembers',
@@ -31,7 +32,7 @@ export default Vue.extend({
 
   computed: {
     members(): IMember[] {
-      return this.$storage.registration.getters.householdCreate().additionalMembers;
+      return useRegistrationStore().getHouseholdCreate().additionalMembers;
     },
   },
 });

@@ -9,15 +9,19 @@ import '@/ui/plugins/vee-validate';
 
 import VueI18n from 'vue-i18n';
 
-import { getLocalVue, getWrapper } from '@libs/shared-lib/tests/testBase';
+import { getLocalVue, getWrapper } from '@libs/shared-lib/src/tests/testBase';
+import { PiniaVuePlugin } from 'pinia';
 import { mockStore } from '../store';
 import { mockStorage } from '../store/storage/storage.mock';
 import { mockProvider } from '../provider';
+import registrationStore from '../ui/plugins/registrationStore';
 
 const plugins = [
   Vuetify,
   Vuex,
   VueI18n,
+  PiniaVuePlugin,
+  registrationStore,
 ];
 
 export const createLocalVue = () => getLocalVue(plugins);

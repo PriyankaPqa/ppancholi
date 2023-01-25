@@ -10,14 +10,17 @@ import householdHelpers from '@/ui/helpers/household';
 import routes from '@/constants/routes';
 import flushPromises from 'flush-promises';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();
-const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember()] };
+const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember({ id: '1' }), mockMember({ id: '2' }), mockMember({ id: '3' })] };
 const household = mockCombinedHousehold();
 const storage = mockStorage();
 const caseFile = mockCombinedCaseFile();
 const member = mockMember();
+
+const { pinia, registrationStore } = useMockRegistrationStore();
 
 const events = [
   mockEventMainInfo({
@@ -40,12 +43,13 @@ describe('HouseholdProfile.vue', () => {
   let wrapper;
   storage.household.actions.fetch = jest.fn(() => household);
   storage.caseFile.getters.getByIds = jest.fn(() => [caseFile]);
-  storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
+  registrationStore.getHouseholdCreate = jest.fn(() => householdCreate);
 
   describe('Template', () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       wrapper = shallowMount(Component, {
+        pinia,
         localVue,
         propsData: {
           id: household.entity.id,
@@ -107,6 +111,7 @@ describe('HouseholdProfile.vue', () => {
       it('renders the edit button if the user can edit', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -138,6 +143,7 @@ describe('HouseholdProfile.vue', () => {
       it('does not render the edit button if the user cannot edit', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -226,6 +232,7 @@ describe('HouseholdProfile.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -255,6 +262,7 @@ describe('HouseholdProfile.vue', () => {
       it('returns the right data', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -276,6 +284,7 @@ describe('HouseholdProfile.vue', () => {
         storage.household.getters.get = jest.fn(() => household);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -299,6 +308,7 @@ describe('HouseholdProfile.vue', () => {
         const caseFiles = [cfOpen, cfClosed];
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -326,6 +336,7 @@ describe('HouseholdProfile.vue', () => {
         jest.spyOn(householdHelpers, 'countryName').mockImplementation(() => 'mock-country');
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -346,6 +357,7 @@ describe('HouseholdProfile.vue', () => {
       it(' returns the right date when there are timestamps for both entity and metadata', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -363,6 +375,7 @@ describe('HouseholdProfile.vue', () => {
       it(' returns the right date when there are timestamps only for entity', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -505,6 +518,7 @@ describe('HouseholdProfile.vue', () => {
       it('return correct value', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -522,6 +536,7 @@ describe('HouseholdProfile.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -543,6 +558,7 @@ describe('HouseholdProfile.vue', () => {
       beforeEach(() => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           data() {
             return {
               allEvents: [...events, otherEvent],
@@ -570,6 +586,7 @@ describe('HouseholdProfile.vue', () => {
         jest.clearAllMocks();
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -579,15 +596,15 @@ describe('HouseholdProfile.vue', () => {
         });
       });
       it('calls registration storage action fetchGenders', () => {
-        expect(wrapper.vm.$storage.registration.actions.fetchGenders).toHaveBeenCalledTimes(1);
+        expect(registrationStore.fetchGenders).toHaveBeenCalledTimes(1);
       });
 
       it('calls registration storage action fetchPreferredLanguages', () => {
-        expect(wrapper.vm.$storage.registration.actions.fetchPreferredLanguages).toHaveBeenCalledTimes(1);
+        expect(registrationStore.fetchPreferredLanguages).toHaveBeenCalledTimes(1);
       });
 
       it('calls registration storage action fetchPrimarySpokenLanguages', () => {
-        expect(wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
+        expect(registrationStore.fetchPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
       });
 
       it('calls fetchHouseholdData, fetchMyEvents, fetchAllEvents, fetchCaseFiles, fetchShelterLocations', async () => {
@@ -611,6 +628,7 @@ describe('HouseholdProfile.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: household.entity.id,
         },
@@ -624,6 +642,7 @@ describe('HouseholdProfile.vue', () => {
       it('calls public searchEventsById with the expected parameters', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           data() {
             return {
               caseFiles: [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }],
@@ -662,6 +681,7 @@ describe('HouseholdProfile.vue', () => {
       it('calls buildHouseholdCreateData and the registration mutation with the data received from buildHouseholdCreateData', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -678,8 +698,8 @@ describe('HouseholdProfile.vue', () => {
         jest.spyOn(wrapper.vm, 'buildHouseholdCreateData').mockImplementation(() => householdCreate);
         jest.spyOn(wrapper.vm, 'addShelterLocationData').mockImplementation(() => [member]);
         await wrapper.vm.setHouseholdCreate();
-        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(household, null);
-        expect(storage.registration.mutations.setHouseholdCreate).toHaveBeenCalledWith(householdCreate);
+        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(household);
+        expect(registrationStore.setHouseholdCreate).toHaveBeenCalledWith(householdCreate);
       });
     });
 
@@ -702,6 +722,7 @@ describe('HouseholdProfile.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -735,6 +756,7 @@ describe('HouseholdProfile.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -769,6 +791,7 @@ describe('HouseholdProfile.vue', () => {
       it('it show edit household address dialog', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },

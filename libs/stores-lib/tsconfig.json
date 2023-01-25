@@ -35,6 +35,9 @@
       "@libs/shared-lib/*": [
         "../../libs/shared-lib/src/*"
       ],
+      "@libs/registration-lib/*": [
+        "../../libs/registration-lib/src/*"
+      ]
     },
     "lib": [
       "esnext",
@@ -46,7 +49,8 @@
   "references": [
     { "path": "../shared-lib/tsconfig.json"},
     { "path": "../services-lib/tsconfig.json"},
-    { "path": "../entities-lib/tsconfig.json"}
+    { "path": "../entities-lib/tsconfig.json"},
+    { "path": "../registration-lib/tsconfig.json"}
   ],
   "include": [
     "src/**/*.ts",

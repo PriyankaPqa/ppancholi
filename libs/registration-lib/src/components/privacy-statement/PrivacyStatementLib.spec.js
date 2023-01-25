@@ -1,12 +1,13 @@
 import moment from 'moment';
 import { HouseholdCreate } from '@libs/entities-lib/src/household-create';
+import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
 import { createLocalVue, mount, shallowMount } from '../../test/testSetup';
 import { mockStorage } from '../../store/storage';
 import Component from './PrivacyStatementLib.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-
+const { pinia, registrationStore } = useMockRegistrationStore();
 describe('PrivacyStatementLib.vue', () => {
   let wrapper;
 
@@ -14,6 +15,7 @@ describe('PrivacyStatementLib.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           household: new HouseholdCreate(),
           checkboxLabel: 'label',
@@ -31,6 +33,7 @@ describe('PrivacyStatementLib.vue', () => {
           $storage: storage,
         },
       });
+      wrapper.vm.$registrationStore = registrationStore;
     });
 
     describe('rules', () => {
@@ -45,22 +48,22 @@ describe('PrivacyStatementLib.vue', () => {
 
     describe('isPrivacyAgreed', () => {
       it('is linked to isPrivacyAgreed in the store', () => {
-        expect(wrapper.vm.isPrivacyAgreed).toEqual(true);
+        expect(wrapper.vm.isPrivacyAgreed).toEqual(false);
       });
 
       it('calls setIsPrivacyAgreed with value', () => {
         wrapper.vm.isPrivacyAgreed = false;
-        expect(wrapper.vm.$storage.registration.mutations.setIsPrivacyAgreed).toHaveBeenCalledWith(false);
+        expect(wrapper.vm.$registrationStore.isPrivacyAgreed).toEqual(false);
       });
 
       it('calls setDateTimeConsent with null when unchecked', () => {
         wrapper.vm.isPrivacyAgreed = false;
-        expect(wrapper.vm.$storage.registration.mutations.setDateTimeConsent).toHaveBeenCalledWith(null);
+        expect(wrapper.vm.$registrationStore.householdCreate.consentInformation.privacyDateTimeConsent).toEqual(null);
       });
 
       it('calls setDateTimeConsent with date of now if checked', () => {
         wrapper.vm.isPrivacyAgreed = true;
-        expect(wrapper.vm.$storage.registration.mutations.setDateTimeConsent).toHaveBeenCalledWith(moment.utc(moment()).format());
+        expect(wrapper.vm.$registrationStore.householdCreate.consentInformation.privacyDateTimeConsent).toEqual(moment.utc(moment()).format());
       });
     });
   });

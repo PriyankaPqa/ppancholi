@@ -1,14 +1,10 @@
-import { mockStorage } from '@/store/storage/storage.mock';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
+import { mockDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { mockEvent } from '@libs/entities-lib/registration-event';
 import { mockServerError } from '@libs/services-lib/src/http-client';
 import Component from './ConfirmRegistrationLib.vue';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
-storage.registration.getters.currentTab = jest.fn(() => ({ titleKey: 'mock title', nextButtonTextKey: 'mock text' }));
 
 // eslint-disable-next-line no-console
 console.warn = jest.fn();
@@ -98,9 +94,11 @@ describe('ConfirmRegistrationLib.vue', () => {
       it('should render it', () => {
         wrapper = mount(Component, {
           localVue,
-          computed,
+          computed: {
+            ...computed,
+            isCRCRegistration: () => true,
+          },
         });
-
         const component = wrapper.findDataTest('confirm-registration-additional_assistance-fullname');
         expect(component.text()).toBe('registration.crc_confirmation.additional_assistance');
       });
@@ -111,24 +109,14 @@ describe('ConfirmRegistrationLib.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $storage: storage,
-        },
-        store: {
-          modules: {
-            registration: {
-              state: {
-                householdAssociationMode: false,
-              },
-            },
-          },
-        },
       });
+      wrapper.vm.$registrationStore.householdAssociationMode = false;
+      wrapper.vm.$registrationStore.registrationResponse = mockDetailedRegistrationResponse();
     });
 
     describe('associationMode', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.associationMode).toEqual(wrapper.vm.$store.state.registration.householdAssociationMode);
+        expect(wrapper.vm.associationMode).toEqual(wrapper.vm.$registrationStore.householdAssociationMode);
       });
     });
 
@@ -250,12 +238,13 @@ describe('ConfirmRegistrationLib.vue', () => {
 
     describe('errors', () => {
       it('returns errors from the store', async () => {
-        expect(wrapper.vm.errors).toEqual(wrapper.vm.$storage.registration.getters.registrationErrors());
+        expect(wrapper.vm.errors).toEqual(wrapper.vm.$registrationStore.registrationErrors);
       });
     });
 
     describe('initialTitle', () => {
       it('returns the proper data', () => {
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({ titleKey: 'mock title', nextButtonTextKey: 'mock text' }));
         expect(wrapper.vm.initialTitle).toEqual('mock title');
       });
     });

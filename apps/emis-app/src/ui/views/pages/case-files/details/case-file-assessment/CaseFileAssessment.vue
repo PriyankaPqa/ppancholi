@@ -173,6 +173,7 @@ import { useAssessmentFormMetadataStore, useAssessmentFormStore } from '@/pinia/
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 import caseFileDetail from '../caseFileDetail';
 import AddCaseFileAssessment from './components/AddCaseFileAssessment.vue';
 
@@ -483,7 +484,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       const assessment = this.items.find((i) => i.entity.id === item.id);
       const settings = useTenantSettingsStore().currentTenantSettings;
       const member = await this.$services.households.getPerson(this.$storage.household.getters.get(this.caseFile.entity.householdId).entity.primaryBeneficiary);
-      const languages = await this.$storage.registration.actions.fetchPreferredLanguages();
+      const languages = await useRegistrationStore().fetchPreferredLanguages();
       let languageCode = languages.find((l) => l.id === member.contactInformation.preferredLanguage.optionItemId)?.languageCode;
       languageCode = languageCode === 'fr' ? 'fr' : 'en';
       // route is benef website's 'assessment/:eventId/:assessmentTemplateId/:assessmentResponseId'
