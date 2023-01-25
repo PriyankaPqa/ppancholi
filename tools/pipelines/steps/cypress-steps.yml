@@ -15,18 +15,22 @@ steps:
   # Caching the binary takes roughly same amount of time as always downloading it
   - script: yarn cypress install
     displayName: 'Install cypress binary'
+    workingDirectory: ${{ parameters.workingDir }}
 
   # Optional
-  - script: yarn emis-app:cy:verify
+  - script: yarn cy:verify
     displayName: 'Cypress verify'
+    workingDirectory: ${{ parameters.workingDir }}
 
   # Optional
-  - script: yarn emis-app:cy:cache:list
+  - script: yarn cy:cache:list
     displayName: 'Cypress cache List'
+    workingDirectory: ${{ parameters.workingDir }}
 
   # Optional
-  - script: yarn emis-app:cy:info
+  - script: yarn cy:info
     displayName: 'Cypress info'
+    workingDirectory: ${{ parameters.workingDir }}
 
   # The WebApp artifact (dist) was created in a previous stage/job
   # We need to download it again in app folder before running the server
