@@ -1,5 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { useProvider } from '../../../provider/provider';
+import { useProvider } from '../../provider/provider';
 
 const getOneOpenEvent = (roleValue = UserRoles.level6) => cy.getToken(roleValue).then(async (accessToken) => {
   const provider = useProvider(accessToken.access_token);

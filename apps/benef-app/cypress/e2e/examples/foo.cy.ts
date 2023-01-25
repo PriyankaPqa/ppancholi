@@ -1,5 +1,5 @@
-import { useProvider } from '../../../provider/provider';
-import { buildRegistrationUrl } from '../../../support/helpers/urlBuilder';
+import { useProvider } from '../../provider/provider';
+import { buildRegistrationUrl } from '../../support/helpers/urlBuilder';
 
 let provider = null as ReturnType<typeof useProvider>;
 
