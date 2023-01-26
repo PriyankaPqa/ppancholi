@@ -130,13 +130,15 @@ describe('CaseFilesTable.vue', () => {
       });
       await wrapper.setData({
         myCaseFiles: false,
+        userSearchFilters: 'query',
       });
     });
+
     describe('myCaseFiles', () => {
       describe('On', () => {
         it('should call onApplyFilter with filters from the panel + myCaseFileFilter', async () => {
           wrapper.vm.onApplyFilter = jest.fn();
-          const expected = { preparedFilters: { ...wrapper.vm.userFilters, ...wrapper.vm.myCaseFilesFilter } };
+          const expected = { preparedFilters: { ...wrapper.vm.userFilters, ...wrapper.vm.myCaseFilesFilter }, searchFilters: wrapper.vm.userSearchFilters };
 
           await wrapper.setData({
             myCaseFiles: true,
@@ -160,7 +162,7 @@ describe('CaseFilesTable.vue', () => {
           });
 
           expect(wrapper.vm.onApplyFilter)
-            .toHaveBeenLastCalledWith({ preparedFilters: {} }, null);
+            .toHaveBeenLastCalledWith({ preparedFilters: {}, searchFilters: wrapper.vm.userSearchFilters }, null);
         });
 
         it('should call onApplyFilter with filters from the panel if present', async () => {
@@ -183,7 +185,7 @@ describe('CaseFilesTable.vue', () => {
           });
 
           expect(wrapper.vm.onApplyFilter)
-            .toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel }, null);
+            .toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel, searchFilters: wrapper.vm.userSearchFilters }, null);
         });
       });
     });

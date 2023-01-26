@@ -417,20 +417,18 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
         return;
       }
 
+      let preparedFilters = {} as Record<string, unknown>;
       if (newValue) {
-        const preparedFilters = { ...this.userFilters, ...this.submittedToMeFilter };
         // We apply filters from the switch + the ones from the filters panel
-        this.onApplyFilter({ preparedFilters }, this.filterState);
+        preparedFilters = { ...this.userFilters, ...this.submittedToMeFilter };
+      } else if (_isEqual(this.submittedToMeFilter, this.userFilters)) { // If the only filter is submittedToMe
+        preparedFilters = null;
       } else {
-        let preparedFilters = {} as Record<string, unknown>;
-        if (_isEqual(this.submittedToMeFilter, this.userFilters)) { // If the only filter is submittedToMe
-          preparedFilters = null;
-        } else {
-          const requestFilterValue = Object.values(this.submittedToMeFilter)[0];
-          preparedFilters = _pickBy(this.userFilters, (value) => !_isEqual(requestFilterValue, value)); // Only filters from panel
-        }
-        this.onApplyFilter({ preparedFilters }, this.filterState);
+        const requestFilterValue = Object.values(this.submittedToMeFilter)[0];
+        preparedFilters = _pickBy(this.userFilters, (value) => !_isEqual(requestFilterValue, value)); // Only filters from panel
       }
+
+      this.onApplyFilter({ preparedFilters, searchFilters: this.userSearchFilters }, this.filterState);
     },
   },
 

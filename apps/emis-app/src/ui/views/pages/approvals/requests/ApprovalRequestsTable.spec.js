@@ -337,13 +337,14 @@ describe('ApprovalRequestsTable', () => {
       doMount();
       await wrapper.setData({
         submittedToMeSwitch: false,
+        userSearchFilters: 'query',
       });
     });
     describe('submittedToMeSwitch', () => {
       describe('On', () => {
         it('should call onApplyFilter with filters from the panel + submittedToMeFilter', async () => {
           wrapper.vm.onApplyFilter = jest.fn();
-          const expected = { preparedFilters: { ...wrapper.vm.userFilters, ...wrapper.vm.submittedToMeFilter } };
+          const expected = { preparedFilters: { ...wrapper.vm.userFilters, ...wrapper.vm.submittedToMeFilter }, searchFilters: wrapper.vm.userSearchFilters };
 
           await wrapper.setData({
             submittedToMeSwitch: true,
@@ -367,7 +368,7 @@ describe('ApprovalRequestsTable', () => {
           });
 
           expect(wrapper.vm.onApplyFilter)
-            .toHaveBeenLastCalledWith({ preparedFilters: {} }, null);
+            .toHaveBeenLastCalledWith({ preparedFilters: {}, searchFilters: wrapper.vm.userSearchFilters }, null);
         });
 
         it('should call onApplyFilter with filters from the panel if present', async () => {
@@ -390,7 +391,7 @@ describe('ApprovalRequestsTable', () => {
           });
 
           expect(wrapper.vm.onApplyFilter)
-            .toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel }, null);
+            .toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel, searchFilters: wrapper.vm.userSearchFilters }, null);
         });
       });
     });
