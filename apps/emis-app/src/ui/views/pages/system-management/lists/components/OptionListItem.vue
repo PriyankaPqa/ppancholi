@@ -215,6 +215,7 @@ import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import entityUtils from '@libs/entities-lib/utils';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
+import { useOptionListStore } from '@/pinia/option-list/optionList';
 
 export default Vue.extend({
   name: 'OptionListItem',
@@ -398,7 +399,7 @@ export default Vue.extend({
     },
 
     renameNotAllowed(): boolean {
-      return this.$store.state.optionList.list === EOptionLists.Roles && !this.isSubItem;
+      return useOptionListStore().list === EOptionLists.Roles && !this.isSubItem;
     },
   },
 
@@ -479,9 +480,9 @@ export default Vue.extend({
       try {
         if (this.isSubItem) {
           const parentItem = this.items.find((i) => i.subitems.some((sub) => sub.id === this.item.id));
-          await this.$storage.optionList.actions.updateSubItemStatus(parentItem.id, this.item.id, this.changeToStatus);
+          await useOptionListStore().updateSubItemStatus({ itemId: parentItem.id, subItemId: this.item.id, status: this.changeToStatus });
         } else {
-          await this.$storage.optionList.actions.updateStatus(this.item.id, this.changeToStatus);
+          await useOptionListStore().updateStatus({ id: this.item.id, status: this.changeToStatus });
         }
       } finally {
         this.updatingStatus = false;
@@ -495,7 +496,7 @@ export default Vue.extend({
 
     async setIsDefault() {
       const value = !this.item.isDefault;
-      await this.$storage.optionList.actions.setIsDefault(this.item.id, value);
+      await useOptionListStore().setIsDefault({ id: this.item.id, isDefault: value });
       if (value) {
         this.$toasted.global.success(this.$t('system_management.lists.defaultOptionSet'));
       } else {
@@ -505,7 +506,7 @@ export default Vue.extend({
 
     async setIsOther() {
       const value = !this.item.isOther;
-      await this.$storage.optionList.actions.setIsOther(this.item.id, value);
+      await useOptionListStore().setIsOther({ id: this.item.id, isOther: value });
       if (value) {
         this.$toasted.global.success(this.$t('system_management.lists.otherOptionSet'));
       } else {

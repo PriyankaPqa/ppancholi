@@ -10,7 +10,6 @@ import { IRootState, IStore } from '@/store/store.types';
 import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@libs/services-lib/optionItems/optionItems';
-import { optionList } from '@/store/modules/optionList';
 
 import { UserAccountEntityModule } from '@/store/modules/user-account/userAccountEntity';
 import { UserAccountMetadataModule } from '@/store/modules/user-account/userAccountMetadata';
@@ -75,7 +74,6 @@ const mockConfig = {
       mockSignalR(),
     ).getModule(),
 
-    [vuexModule.OPTION_LIST_MODULE]: optionList,
     [vuexModule.TEAM_ENTITIES]: new TeamEntityModule(
       new TeamsService(httpClient),
       mockSignalR(),

@@ -5,9 +5,11 @@ import {
   mount,
 } from '@/test/testSetup';
 import { Status } from '@libs/entities-lib/base';
+import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import Component from '../OptionListNewItem.vue';
 
 const localVue = createLocalVue();
+const { pinia } = useMockOptionListStore();
 
 describe('OptionListNewItem.vue', () => {
   describe('Computed', () => {
@@ -16,6 +18,7 @@ describe('OptionListNewItem.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           isSubItem: true,
           addMode: true,
@@ -89,6 +92,7 @@ describe('OptionListNewItem.vue', () => {
       beforeEach(() => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             isSubItem: true,
             hasDescription: true,
@@ -167,6 +171,7 @@ describe('OptionListNewItem.vue', () => {
   test('loading state disables the button and text input', () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         loading: true,
         hasDescription: true,
@@ -191,6 +196,7 @@ describe('OptionListNewItem.vue', () => {
   test('the form is not visible unless addMode is true for sub item type', async () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         isSubItem: true,
         hasDescription: true,
@@ -220,6 +226,7 @@ describe('OptionListNewItem.vue', () => {
   test('the add sub item button emits the add-mode event', async () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         isSubItem: true,
         addMode: false,
@@ -238,6 +245,7 @@ describe('OptionListNewItem.vue', () => {
   test('the status select changes the status', async () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         languageMode: 'en',
         addSubItemLabel: 'add sub item',
@@ -256,6 +264,7 @@ describe('OptionListNewItem.vue', () => {
   test('the save button emits the save event if the name exists', async () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         isSubItem: true,
         addMode: true,
@@ -305,6 +314,7 @@ describe('OptionListNewItem.vue', () => {
   test('the save button emits the save event if the name exists', async () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         isSubItem: true,
         hasDescription: true,
@@ -362,6 +372,7 @@ describe('OptionListNewItem.vue', () => {
   test('the status is reset to Active after saving a new item with a status of Inactive', async () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         isSubItem: true,
         hasDescription: true,
@@ -407,6 +418,7 @@ describe('OptionListNewItem.vue', () => {
   test('the keyboard events for enter and esc emit the proper events in name field', async () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         languageMode: 'en',
         addSubItemLabel: 'add sub item',
@@ -438,6 +450,7 @@ describe('OptionListNewItem.vue', () => {
   test('the keyboard events for enter and esc emit the proper events in description field', async () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         hasDescription: true,
         languageMode: 'en',
@@ -476,6 +489,7 @@ describe('OptionListNewItem.vue', () => {
   test('the description is displayed if the hasDescription prop is true', async () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         languageMode: 'en',
         addSubItemLabel: 'add sub item',
@@ -494,6 +508,7 @@ describe('OptionListNewItem.vue', () => {
   test('the description allows a maximum number of 250 characters', async () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         languageMode: 'en',
         addSubItemLabel: 'add sub item',
@@ -524,6 +539,7 @@ describe('OptionListNewItem.vue', () => {
   test('when languageMode changes it copies the name and description fields to unfilled languages', async () => {
     const wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         languageMode: 'en',
         addSubItemLabel: 'add sub item',

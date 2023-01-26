@@ -170,6 +170,7 @@ import {
   IOptionItem, OptionItem, ICreateOptionItemRequest, IOptionSubItem,
 } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
+import { useOptionListStore } from '@/pinia/option-list/optionList';
 import OptionListItem from './OptionListItem.vue';
 import OptionListNewItem from './OptionListNewItem.vue';
 
@@ -288,7 +289,7 @@ export default Vue.extend({
 
     items: {
       get(): OptionItem[] {
-        return this.$storage.optionList.getters.items();
+        return useOptionListStore().getItems();
       },
 
       set(value: IOptionItem[]) {
@@ -326,7 +327,7 @@ export default Vue.extend({
       }
 
       try {
-        await this.$storage.optionList.actions.fetchItems();
+        await useOptionListStore().fetchItems();
 
         clearTimeout(this.loadingTimeout);
         this.loading = false;
@@ -382,7 +383,7 @@ export default Vue.extend({
       this.itemLoading = true;
 
       try {
-        await this.$storage.optionList.actions.createOption(payload);
+        await useOptionListStore().createOption(payload);
       } catch (e) {
         this.$appInsights.trackException(e, {}, 'OptionList', 'saveNewItem');
         this.itemLoading = false;
@@ -411,7 +412,7 @@ export default Vue.extend({
       this.itemLoading = true;
 
       try {
-        await this.$storage.optionList.actions.addSubItem(itemId, payload);
+        await useOptionListStore().addSubItem(itemId, payload);
       } catch (e) {
         this.$appInsights.trackException(e, {}, 'OptionList', 'saveNewSubItem');
         this.itemLoading = false;
@@ -439,7 +440,7 @@ export default Vue.extend({
       this.itemLoading = true;
 
       try {
-        await this.$storage.optionList.actions.updateItem(item.id, payloadName, payloadDescription);
+        await useOptionListStore().updateItem({ id: item.id, name: payloadName, description: payloadDescription });
       } catch (e) {
         this.$appInsights.trackException(e, {}, 'OptionList', 'saveItem');
         this.itemLoading = false;
@@ -461,7 +462,9 @@ export default Vue.extend({
       this.itemLoading = true;
 
       try {
-        await this.$storage.optionList.actions.updateSubItem(item.id, subItem.id, payloadName, payloadDescription);
+        await useOptionListStore().updateSubItem({
+ itemId: item.id, subItemId: subItem.id, name: payloadName, description: payloadDescription,
+});
 
         this.editedItem = null;
       } finally {
@@ -474,7 +477,7 @@ export default Vue.extend({
      */
     async sortItems(items: IOptionItem[]) {
       try {
-        await this.$storage.optionList.actions.updateOrderRanks(items);
+        await useOptionListStore().updateOrderRanks(items);
       } catch (e) {
         this.$appInsights.trackException(e, {}, 'OptionList', 'sortItem');
         return;
@@ -488,7 +491,7 @@ export default Vue.extend({
      * @param parentItem The parent item of the sub-items that are being sorted
      */
     async sortSubItems(parentItem: IOptionItem) {
-      await this.$storage.optionList.actions.updateSubItemOrderRanks(parentItem);
+      await useOptionListStore().updateSubItemOrderRanks(parentItem);
 
       this.$toasted.global.success(this.$t('system_management.lists.orderRankUpdated'));
     },
