@@ -1,4 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
+import _isEqual from 'lodash/isEqual';
+import { ICurrentAddress } from '../value-objects/current-address';
 import { IConsentInformation, IHouseholdCreate, IHouseholdCreateData } from './householdCreate.types';
 import { IAddress, Address } from '../value-objects/address';
 import { IMember, Member } from '../value-objects/member';
@@ -60,13 +62,28 @@ export class HouseholdCreate implements IHouseholdCreate {
     this.primaryBeneficiary = member ? new Member(member) : null;
   }
 
+  setHomeAddress(address: IAddress) {
+    this.homeAddress = new Address(address);
+  }
+
+  setCurrentAddress(address: ICurrentAddress) {
+    const oldAddress = this.primaryBeneficiary.currentAddress;
+
+   this.additionalMembers.forEach((m: IMember) => {
+      if (_isEqual(m.currentAddress, oldAddress)) {
+        m.setCurrentAddress(address);
+      }
+    });
+    this.primaryBeneficiary.setCurrentAddress(address);
+  }
+
   reset() {
     this.noFixedHome = false;
     this.primaryBeneficiary = new Member();
     this.homeAddress = new Address();
     this.additionalMembers = [];
     this.consentInformation = {
-      crcUserName: null,
+      crcUserName: '',
       registrationMethod: null,
       registrationLocationId: null,
       privacyDateTimeConsent: null,

@@ -129,7 +129,7 @@ export default Vue.extend({
     },
 
     primaryBeneficiaryAddress(): ICurrentAddress {
-      return this.$storage.registration.getters.householdCreate().primaryBeneficiary.currentAddress;
+      return this.$registrationStore.getHouseholdCreate().primaryBeneficiary.currentAddress;
     },
 
     editMode(): boolean {
@@ -148,7 +148,7 @@ export default Vue.extend({
     },
 
     genderItems(): IOptionItemData[] {
-      return this.$storage.registration.getters.genders();
+      return this.$registrationStore.getGenders();
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
@@ -156,17 +156,17 @@ export default Vue.extend({
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
-      return this.$storage.registration.getters.indigenousTypesItems();
+      return this.$registrationStore.getIndigenousTypesItems();
     },
 
     indigenousCommunitiesItems(): Record<string, string>[] {
-      return this.$storage.registration.getters.indigenousCommunitiesItems(
+      return this.$registrationStore.getIndigenousCommunitiesItems(
         this.memberClone.identitySet.indigenousType,
       );
     },
 
     loadingIndigenousCommunities(): boolean {
-      return this.$store.state.registration.loadingIndigenousCommunities;
+      return this.$registrationStore.loadingIndigenousCommunities;
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
@@ -180,7 +180,7 @@ export default Vue.extend({
     },
 
     shelterLocations(): IShelterLocationData[] {
-      const locations = this.shelterLocationsList || this.$storage.registration.getters.event()?.shelterLocations || [];
+      const locations = this.shelterLocationsList || this.$registrationStore.getEvent()?.shelterLocations || [];
       return locations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active || s.id === this.member?.currentAddress?.shelterLocation?.id);
     },
   },
@@ -197,7 +197,7 @@ export default Vue.extend({
   methods: {
     cancel() {
       if (this.editMode) {
-        this.$storage.registration.mutations.editAdditionalMember(this.backupPerson, this.index, this.backupSameAddress);
+        this.$registrationStore.householdCreate.editAdditionalMember(this.backupPerson, this.index, this.backupSameAddress);
       }
       this.close();
     },
@@ -221,15 +221,15 @@ export default Vue.extend({
         if (this.inHouseholdProfile) {
           await this.submitChanges();
         } else {
-          this.$storage.registration.mutations.editAdditionalMember(this.memberClone, this.index, this.sameAddress);
+          this.$registrationStore.householdCreate.editAdditionalMember(this.memberClone, this.index, this.sameAddress);
         }
       } else {
         if (this.householdId) {
-          await this.$storage.registration.actions.addAdditionalMember({
+          await this.$registrationStore.addAdditionalMember({
             householdId: this.householdId, member: this.memberClone, sameAddress: this.sameAddress,
           });
         } else {
-          this.$storage.registration.mutations.addAdditionalMember(this.memberClone, this.sameAddress);
+          this.$registrationStore.householdCreate.addAdditionalMember(this.memberClone, this.sameAddress);
         }
         this.$emit('add');
       }
@@ -238,7 +238,7 @@ export default Vue.extend({
 
     async submitChanges() {
       if (this.addressChanged || this.sameAddressChanged) {
-        const updatedAddress = await this.$storage.registration.actions.updatePersonAddress({
+        const updatedAddress = await this.$registrationStore.updatePersonAddress({
           member: this.memberClone, isPrimaryMember: false, index: this.index, sameAddress: this.sameAddress,
         });
         if (!updatedAddress) {
@@ -248,7 +248,7 @@ export default Vue.extend({
       }
 
       if (this.identityChanged) {
-        const updatedIdentity = await this.$storage.registration.actions.updatePersonIdentity({ member: this.memberClone, isPrimaryMember: false, index: this.index });
+        const updatedIdentity = await this.$registrationStore.updatePersonIdentity({ member: this.memberClone, isPrimaryMember: false, index: this.index });
         if (!updatedIdentity) {
           this.cancel();
         }
@@ -268,7 +268,7 @@ export default Vue.extend({
       }
       this.memberClone.identitySet.setIndigenousIdentity(form);
       // Update the member data, so the indigenous communities list get recalculated
-      this.$storage.registration.mutations.editAdditionalMember(this.memberClone, this.index, this.sameAddress);
+      this.$registrationStore.householdCreate.editAdditionalMember(this.memberClone, this.index, this.sameAddress);
     },
 
     setCurrentAddress(form: ICurrentAddress) {

@@ -115,11 +115,11 @@ export default Vue.extend({
 
   computed: {
     additionalMembers(): IMember[] {
-      return this.$storage.registration.getters.householdCreate().additionalMembers;
+      return this.$registrationStore.getHouseholdCreate().additionalMembers;
     },
 
     primaryBeneficiary(): IMemberEntity {
-      return this.$storage.registration.getters.householdCreate().primaryBeneficiary;
+      return this.$registrationStore.getHouseholdCreate().primaryBeneficiary;
     },
   },
 
@@ -131,7 +131,7 @@ export default Vue.extend({
     },
 
     deleteAdditionalMember() {
-      this.$storage.registration.mutations.removeAdditionalMember(this.index);
+      this.$registrationStore.householdCreate.removeAdditionalMember(this.index);
       this.showDeleteDialog = false;
 
       if (this.additionalMembers.length < MAX_ADDITIONAL_MEMBERS) {

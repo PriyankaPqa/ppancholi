@@ -109,6 +109,7 @@ import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.v
 import HouseholdResultsMove from '@/ui/views/pages/household/move/HouseholdResultsMove.vue';
 import { IEventGenericLocation } from '@libs/entities-lib/event/event.types';
 import helpers from '@/ui/helpers/helpers';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export interface IMovingAddressSelection {
   sameAddressSelected: boolean;
@@ -153,7 +154,7 @@ export default mixins(searchHousehold, household).extend({
 
   computed: {
     currentHousehold(): HouseholdCreate {
-      return this.$storage.registration.getters.householdCreate();
+      return useRegistrationStore().getHouseholdCreate();
     },
   },
 

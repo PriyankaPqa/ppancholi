@@ -28,6 +28,7 @@ import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { RegistrationEvent, IEvent } from '@libs/entities-lib/registration-event';
 import { IUser } from '@libs/entities-lib/user';
 import { useUserStore } from '@/pinia/user/user';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default Vue.extend({
   name: 'SplitHouseholdEvent',
@@ -50,7 +51,7 @@ export default Vue.extend({
   },
 
   async created() {
-    const { event } = this.$store.state.registration;
+    const event = useRegistrationStore().event;
     if (event) {
       this.event = new RegistrationEvent(event);
     }
@@ -60,12 +61,12 @@ export default Vue.extend({
     async setEvent(event: IEvent) {
       if (event.registrationAssessments?.length) {
         const assessment = await this.$services.assessmentForms.get({ id: event.registrationAssessments[0].assessmentId });
-        this.$storage.registration.mutations.setAssessmentToComplete({ assessmentForm: assessment, registrationAssessment: event.registrationAssessments[0] });
+        useRegistrationStore().setAssessmentToComplete({ assessmentForm: assessment, registrationAssessment: event.registrationAssessments[0] });
       } else {
-        this.$storage.registration.mutations.setAssessmentToComplete(null);
+        useRegistrationStore().setAssessmentToComplete(null);
       }
 
-      this.$storage.registration.mutations.setEvent(event);
+      useRegistrationStore().event = event;
       this.event = event;
     },
 

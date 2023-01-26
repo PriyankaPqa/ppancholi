@@ -8,9 +8,11 @@ import {
 import { mockOptionItemData, EOptionLists } from '@libs/entities-lib/optionItem';
 import entityUtils from '@libs/entities-lib/utils';
 import { Status } from '@libs/entities-lib/base';
+import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import Component from '../OptionListItem.vue';
 
 const localVue = createLocalVue();
+const { pinia, optionListStore } = useMockOptionListStore();
 
 describe('OptionListItem.vue', () => {
   let wrapper;
@@ -21,6 +23,7 @@ describe('OptionListItem.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         item: mockOptionItemData()[0],
         languageMode: 'en',
@@ -38,6 +41,7 @@ describe('OptionListItem.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           item: mockOptionItemData()[0],
           isSubItem: true,
@@ -106,7 +110,7 @@ describe('OptionListItem.vue', () => {
 
     describe('renameNotAllowed', () => {
       it('returns true if is Role name', async () => {
-        wrapper.vm.$storage.optionList.mutations.setList(EOptionLists.Roles);
+        optionListStore.list = EOptionLists.Roles;
 
         await wrapper.setProps({
           isSubItem: false,
@@ -116,7 +120,7 @@ describe('OptionListItem.vue', () => {
       });
 
       it('returns false if is not Role', async () => {
-        wrapper.vm.$storage.optionList.mutations.setList(EOptionLists.FinancialAssistance);
+        optionListStore.list = EOptionLists.FinancialAssistance;
 
         await wrapper.setProps({
           isSubItem: false,
@@ -126,7 +130,7 @@ describe('OptionListItem.vue', () => {
       });
 
       it('returns false if is subItem', async () => {
-        wrapper.vm.$storage.optionList.mutations.setList(EOptionLists.Roles);
+        optionListStore.list = EOptionLists.FinancialAssistance;
 
         await wrapper.setProps({
           isSubItem: true,
@@ -143,6 +147,7 @@ describe('OptionListItem.vue', () => {
       beforeEach(() => {
         wrapper = mount(Component, {
           localVue,
+          pinia,
           propsData: {
             item: mockOptionItemData()[0],
             isSubItem: true,
@@ -204,11 +209,16 @@ describe('OptionListItem.vue', () => {
 
         const status = Status.Inactive;
         wrapper.vm.changeToStatus = status;
-        wrapper.vm.$storage.optionList.actions.updateSubItemStatus = jest.fn();
+        optionListStore.updateSubItemStatus = jest.fn();
 
         await wrapper.vm.confirmChangeStatus();
+        const payload = {
+          itemId: item.id,
+          subItemId: subItem.id,
+          status,
+        };
 
-        expect(wrapper.vm.$storage.optionList.actions.updateSubItemStatus).toHaveBeenCalledWith(item.id, subItem.id, status);
+        expect(optionListStore.updateSubItemStatus).toHaveBeenCalledWith(payload);
       });
 
       it('dispatches the updateStatus action if is not subItem', async () => {
@@ -218,11 +228,15 @@ describe('OptionListItem.vue', () => {
 
         const status = Status.Inactive;
         wrapper.vm.changeToStatus = status;
-        wrapper.vm.$storage.optionList.actions.updateStatus = jest.fn();
+        optionListStore.updateStatus = jest.fn();
 
         await wrapper.vm.confirmChangeStatus();
+        const payload = {
+          id: mockOptionItemData()[0].id,
+          status,
+        };
 
-        expect(wrapper.vm.$storage.optionList.actions.updateStatus).toHaveBeenCalledWith(mockOptionItemData()[0].id, status);
+        expect(optionListStore.updateStatus).toHaveBeenCalledWith(payload);
       });
     });
 
@@ -360,6 +374,33 @@ describe('OptionListItem.vue', () => {
   });
 
   test('the keyboard events for enter and esc emit the proper events', async () => {
+    // wrapper.vm.$refs.form.validate = jest.fn(() => true);
+    wrapper = mount(Component, {
+      localVue,
+      pinia,
+      propsData: {
+        item: mockOptionItemData()[0],
+        isSubItem: true,
+        editMode: true,
+        languageMode: 'en',
+      },
+      computed: {
+        allNames() {
+          return [{
+            translation: {
+              en: 'name 1 en',
+              fr: 'name 1 fr',
+            },
+          }, {
+            translation: {
+              en: 'name 2 en',
+              fr: 'name 2 fr  ',
+            },
+          }];
+        },
+      },
+    });
+
     await wrapper.setProps({
       editMode: true,
     });
@@ -376,6 +417,8 @@ describe('OptionListItem.vue', () => {
     const textInput = wrapper.find('[data-test="optionsListItem__nameInput"]');
 
     await textInput.trigger('keydown.enter');
+
+    await wrapper.vm.$refs.form.validate();
 
     await flushPromises();
 
@@ -458,6 +501,7 @@ describe('OptionListItem.vue', () => {
   test('when the component mounts, the name and description IMultilingual fields are filled with available values', async () => {
     wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         editMode: true,
         hasDescription: true,

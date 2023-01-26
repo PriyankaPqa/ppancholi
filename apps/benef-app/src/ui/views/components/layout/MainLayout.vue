@@ -20,6 +20,7 @@ import { i18n } from '@/ui/plugins';
 import { httpClient } from '@/services/httpClient';
 import helpers from '@/ui/helpers';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -52,7 +53,7 @@ export default Vue.extend({
       const tenantId = await this.$services.publicApi.getTenantByRegistrationDomain(currentdomain);
 
       httpClient.setHeadersTenant(tenantId);
-      const event: IEvent = await this.$storage.registration.actions.fetchEvent(lang, registrationLink);
+      const event: IEvent = await useRegistrationStore().fetchEvent(lang, registrationLink);
 
       this.$appInsights.setBasicContext({ tenantId });
       this.$appInsights.setBasicContext({ event });
@@ -66,13 +67,13 @@ export default Vue.extend({
       if (event.registrationAssessments?.length) {
         try {
           const assessment = await this.$services.assessmentForms.getForBeneficiary(event.registrationAssessments[0].assessmentId);
-          this.$storage.registration.mutations.setAssessmentToComplete({ assessmentForm: assessment, registrationAssessment: event.registrationAssessments[0] });
+          useRegistrationStore().setAssessmentToComplete({ assessmentForm: assessment, registrationAssessment: event.registrationAssessments[0] });
         } catch {
           // forms are not available
-          this.$storage.registration.mutations.setAssessmentToComplete(null);
+          useRegistrationStore().setAssessmentToComplete(null);
         }
       } else {
-        this.$storage.registration.mutations.setAssessmentToComplete(null);
+        useRegistrationStore().setAssessmentToComplete(null);
       }
 
       httpClient.setHeadersTenant(event.tenantId);
@@ -81,9 +82,9 @@ export default Vue.extend({
 
     async fetchData() {
       await Promise.all([
-        this.$storage.registration.actions.fetchGenders(),
-        this.$storage.registration.actions.fetchPreferredLanguages(),
-        this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
+        useRegistrationStore().fetchGenders(),
+        useRegistrationStore().fetchPreferredLanguages(),
+        useRegistrationStore().fetchPrimarySpokenLanguages(),
         useTenantSettingsStore().fetchPublicFeatures(),
         useTenantSettingsStore().fetchBranding(),
         useTenantSettingsStore().validateCaptchaAllowedIpAddress(),

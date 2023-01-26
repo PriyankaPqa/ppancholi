@@ -146,10 +146,11 @@ import _chunk from 'lodash/chunk';
 import { IHouseholdCombined } from '@libs/entities-lib/household';
 import { RcDataTable } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
-import { tabs } from '@/store/modules/registration/tabs';
+import { tabs } from '@/pinia/registration/tabs';
 import household from '@/ui/mixins/household';
 import householdResults, { IFormattedHousehold } from '@/ui/mixins/householdResults';
 import { IAzureTableSearchResults } from '@libs/shared-lib/types';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default mixins(household, householdResults).extend({
   name: 'HouseholdResults',
@@ -243,7 +244,7 @@ export default mixins(household, householdResults).extend({
     },
 
     currentEventId(): string {
-      return this.$storage.registration.getters.event().id;
+      return useRegistrationStore().getEvent().id;
     },
   },
 
@@ -286,7 +287,7 @@ export default mixins(household, householdResults).extend({
         this.detailsId = household.id;
 
         const householdCreateData = await this.fetchHouseholdCreate(household.id);
-        this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
+        useRegistrationStore().setHouseholdCreate(householdCreateData);
       } finally {
         this.detailsLoading = false;
       }
@@ -296,9 +297,9 @@ export default mixins(household, householdResults).extend({
       if (this.isSplitMode) {
         this.$emit('showDetails', household.id);
       } else {
-        this.$storage.registration.mutations.setHouseholdAlreadyRegistered(this.isRegisteredInCurrentEvent(household.id));
-        this.$storage.registration.mutations.setHouseholdAssociationMode(true);
-        this.$storage.registration.mutations.setCurrentTabIndex(tabs().findIndex((t) => t.id === 'review'));
+        useRegistrationStore().householdAlreadyRegistered = this.isRegisteredInCurrentEvent(household.id);
+        useRegistrationStore().householdAssociationMode = true;
+        useRegistrationStore().currentTabIndex = tabs().findIndex((t) => t.id === 'review');
       }
 
       return true;

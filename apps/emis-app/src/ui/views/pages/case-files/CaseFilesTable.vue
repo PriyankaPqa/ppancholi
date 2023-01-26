@@ -324,19 +324,18 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       if (oldValue == null || newValue === oldValue) {
         return;
       }
+      let preparedFilters = {} as Record<string, unknown>;
       if (newValue) {
         // We apply filters from the switch + the ones from the filters panel
-        this.onApplyFilter({ preparedFilters: { ...this.userFilters, ...this.myCaseFilesFilter } as Record<string, unknown> }, this.filterState);
+        preparedFilters = { ...this.userFilters, ...this.myCaseFilesFilter };
+      } else if (isEqual(this.myCaseFilesFilter, this.userFilters)) { // If the only filter is myCaseFile
+        preparedFilters = null;
       } else {
-        let preparedFilters = {} as Record<string, unknown>;
-        if (isEqual(this.myCaseFilesFilter, this.userFilters)) { // If the only filter is myCaseFile
-          preparedFilters = null;
-        } else {
-          const caseFileFilterValue = Object.values(this.myCaseFilesFilter)[0];
-          preparedFilters = pickBy(this.userFilters, (value) => !isEqual(caseFileFilterValue, value)); // Only filters from panel
-        }
-        this.onApplyFilter({ preparedFilters }, this.filterState);
+        const caseFileFilterValue = Object.values(this.myCaseFilesFilter)[0];
+        preparedFilters = pickBy(this.userFilters, (value) => !isEqual(caseFileFilterValue, value)); // Only filters from panel
       }
+
+      this.onApplyFilter({ preparedFilters, searchFilters: this.userSearchFilters }, this.filterState);
     },
   },
 
@@ -394,7 +393,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     async onApplyFilterLocal({ preparedFilters, searchFilters }
-        : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown) {
+    : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown) {
       let finalFilters = {};
       if (this.myCaseFiles) {
         finalFilters = isEmpty(preparedFilters) ? this.myCaseFilesFilter : { ...preparedFilters, ...this.myCaseFilesFilter };

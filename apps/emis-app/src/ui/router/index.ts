@@ -121,6 +121,13 @@ const initializeMSAL = async () => {
   await AuthenticationProvider.loadAuthModule('router');
 };
 
+const notifyUserRefresh = () => {
+  Vue.toasted.global.info(i18n.t('application_update.refreshing'));
+  setTimeout(() => {
+    window.location.reload();
+  }, 3000);
+};
+
 const checkAppVersion = () => {
   if (!sessionStorage.getItem(sessionStorageKeys.appVersion.name) || sessionStorage.getItem(sessionStorageKeys.appVersion.name) === 'Local build') {
     return;
@@ -133,19 +140,15 @@ const checkAppVersion = () => {
         const cacheVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
         if (cacheVersion !== newVersion) {
           applicationInsights.trackTrace(`Version mismatch - session cache ${cacheVersion}, blog storage ${newVersion}`, { }, 'router', 'checkAppVersion');
-          Vue.toasted.global.info(i18n.t('application_update.refreshing'));
-          setTimeout(() => {
-            window.location.reload();
-          }, 3000);
+          notifyUserRefresh();
         }
       });
   }, 3000);
 };
 
-// @ts-ignore
-router.onError((error: Error, to: Route) => {
-  if (error.message.includes('Failed to fetch dynamically imported module')) {
-    window.location.href = to.fullPath;
+router.onError((error: Error) => {
+  if (error.message.includes('Failed to fetch dynamically imported module') || error.message.includes('error loading dynamically imported module')) {
+    notifyUserRefresh();
   }
 });
 

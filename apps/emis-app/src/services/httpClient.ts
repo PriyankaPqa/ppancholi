@@ -1,5 +1,5 @@
 import { HttpClient } from '@libs/services-lib/http-client';
-import routes from '@/constants/routes';
+import routes from '../constants/routes';
 import { i18n } from '../ui/plugins/i18n';
 
 export const getHttpClient = ({ accessToken, baseUrl }: { accessToken?: string; baseUrl: string; }) => new HttpClient(i18n, {

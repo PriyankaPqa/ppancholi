@@ -1,17 +1,19 @@
-import { IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
+import { IAzureSearchParams, IAzureSearchResult, ICombinedIndex } from '@libs/shared-lib/types';
+import { IEventData } from '@libs/entities-lib/registration-event';
+import { IEventMetadata } from '@libs/entities-lib/event';
 
 export interface IPublicService {
-  fetchRegistrationEvent(lang: string, registrationLink: string): Promise<IAzureSearchResult<unknown>>;
-  searchEvents(searchParams: IAzureSearchParams): Promise<IAzureSearchResult<unknown>>;
-  searchEventsById(ids: string[]): Promise<IAzureSearchResult<unknown>>;
+  fetchRegistrationEvent(lang: string, registrationLink: string): Promise<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
+  searchEvents(searchParams: IAzureSearchParams): Promise<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
+  searchEventsById(ids: string[]): Promise<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
   getTenantByRegistrationDomain(domain: string): Promise<string>;
   getTenantByEmisDomain(domain: string): Promise<string>;
 }
 
 export interface IPublicServiceMock {
-  fetchRegistrationEvent: jest.Mock<IAzureSearchResult<unknown>>;
-  searchEvents: jest.Mock<IAzureSearchResult<unknown>>;
-  searchEventsById: jest.Mock<IAzureSearchResult<unknown>>;
+  fetchRegistrationEvent: jest.Mock<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
+  searchEvents: jest.Mock<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
+  searchEventsById: jest.Mock<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
   getTenantByRegistrationDomain: jest.Mock<string>;
   getTenantByEmisDomain: jest.Mock<string>;
 }

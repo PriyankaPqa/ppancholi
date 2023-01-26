@@ -1,15 +1,16 @@
 /* eslint-disable no-empty */
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
-import { IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
+import { IAzureSearchParams, IAzureSearchResult, ICombinedIndex } from '@libs/shared-lib/types';
 import { IEventData } from '@libs/entities-lib/registration-event';
+import { IEventMetadata } from '@libs/entities-lib/event';
 import { IHttpClient } from '../http-client';
 import { IPublicService } from './public.types';
 
 export class PublicService implements IPublicService {
   constructor(private readonly http: IHttpClient) {}
 
-  async fetchRegistrationEvent(lang: string, registrationLink: string): Promise<IAzureSearchResult<IEventData>> {
-    return this.http.get<IAzureSearchResult<IEventData>>('/event/public/search/events', {
+  async fetchRegistrationEvent(lang: string, registrationLink: string): Promise<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>> {
+    return this.http.get('/event/public/search/events', {
       params: {
         language: lang,
         registrationLink,
@@ -18,15 +19,15 @@ export class PublicService implements IPublicService {
     });
   }
 
-  async searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventData>> {
-    return this.http.get<IAzureSearchResult<IEventData>>('/event/public/search/events', {
+  async searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>> {
+    return this.http.get('/event/public/search/events', {
       params,
       containsEncodedURL: true,
       isOData: true,
     });
   }
 
-  async searchEventsById(ids: string[]): Promise<IAzureSearchResult<IEventData>> {
+  async searchEventsById(ids: string[]): Promise<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>> {
     const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
     const eventsData = await this.searchEvents({
       filter,

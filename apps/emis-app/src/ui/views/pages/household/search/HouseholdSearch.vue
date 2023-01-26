@@ -137,6 +137,8 @@ import WithRoot from '@/ui/views/components/WithRoot';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import _omit from 'lodash/omit';
 import _cloneDeep from 'lodash/cloneDeep';
+import { useRegistrationStore } from '@/pinia/registration/registration';
+import { IInformationFromBeneficiarySearch } from '@libs/registration-lib/types';
 
 export default Vue.extend({
   name: 'HouseholdSearch',
@@ -186,10 +188,10 @@ export default Vue.extend({
         firstName: '',
         lastName: '',
         emailAddress: '',
-        phone: '',
+        phone: null,
         registrationNumber: '',
         birthDate: '',
-      },
+      } as IInformationFromBeneficiarySearch,
     };
   },
   computed: {
@@ -293,7 +295,7 @@ export default Vue.extend({
         firstName: '',
         lastName: '',
         emailAddress: '',
-        phone: '',
+        phone: null,
         registrationNumber: '',
         birthDate: '',
       };
@@ -307,7 +309,7 @@ export default Vue.extend({
         day: null,
         year: null,
       };
-      this.$storage.registration.mutations.setHouseholdResultsShown(false);
+      useRegistrationStore().householdResultsShown = false;
     },
     async search() {
       const isValid = await (this.$refs.form as VForm).validate();
@@ -317,11 +319,11 @@ export default Vue.extend({
     },
 
     fillInSplitHouseholdData() {
-      const splitHouseholdMembers = this.$store.state.registration.splitHousehold?.splitMembers;
+      const splitHouseholdMembers = useRegistrationStore().splitHouseholdState?.splitMembers;
       if (splitHouseholdMembers) {
         this.form.firstName = splitHouseholdMembers.primaryMember.identitySet.firstName;
         this.form.lastName = splitHouseholdMembers.primaryMember.identitySet.lastName;
-        this.birthDate = _cloneDeep(splitHouseholdMembers.primaryMember.identitySet.birthDate);
+        this.birthDate = _cloneDeep(splitHouseholdMembers.primaryMember.identitySet.birthDate) as { month: string, day: string, year: string };
       }
     },
 
@@ -329,7 +331,7 @@ export default Vue.extend({
       const formWithOriginalDataStructure = _omit(this.form, 'registrationNumber');
       formWithOriginalDataStructure.phone = this.phone;
       formWithOriginalDataStructure.birthDate = this.birthDate;
-      this.$storage.registration.mutations.setInformationFromBeneficiarySearch(formWithOriginalDataStructure);
+      useRegistrationStore().informationFromBeneficiarySearch = formWithOriginalDataStructure as IInformationFromBeneficiarySearch;
     },
   },
 });

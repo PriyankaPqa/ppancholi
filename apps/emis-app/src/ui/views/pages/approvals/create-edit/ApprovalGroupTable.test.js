@@ -3,24 +3,26 @@ import { ApprovalGroup } from '@libs/entities-lib/approvals/approvals-group/appr
 import { mockRoles } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
 import { Status } from '@libs/entities-lib/base';
+import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
 import { mockApprovalTableEntity, mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
 import Component from './ApprovalGroupTable.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
+const { pinia, approvalTableStore } = useMockApprovalTableStore();
 
 const doMount = (editMode = false) => {
   const combinedApprovalTable = mockCombinedApprovalTable();
   combinedApprovalTable.entity.groups[0].setRoles(['a6ffce22-8396-43c9-bdc3-6532925af251']);
   combinedApprovalTable.entity.groups[1].setRoles(['85315955-e20e-40bd-a672-f60b2871a0ab']);
-  storage.approvalTable.actions.fetch = jest.fn(() => combinedApprovalTable);
 
   const roles = mockRoles();
   roles[0].subitems[0].status = Status.Inactive; // Disabled Operations Manager roles
 
   const options = {
     localVue,
+    pinia,
     data: () => ({
       roles,
       localApproval: combinedApprovalTable.entity,
@@ -164,7 +166,7 @@ describe('ApprovalGroupTable.vue', () => {
         wrapper.vm.$confirm = jest.fn(() => true);
         wrapper.vm.deleteGroup = jest.fn();
         await wrapper.vm.deleteGroupWithConfirmation(0);
-        expect(wrapper.vm.$storage.approvalTable.actions.removeGroup).toBeCalledWith(wrapper.vm.approval.id, wrapper.vm.approval.groups[0].id);
+        expect(approvalTableStore.removeGroup).toBeCalledWith({ approvalId: wrapper.vm.approval.id, groupId: wrapper.vm.approval.groups[0].id });
         expect(wrapper.emitted('edit:success')[0][0]).toEqual(mockApprovalTableEntity());
       });
     });
@@ -218,7 +220,7 @@ describe('ApprovalGroupTable.vue', () => {
         const group = wrapper.vm.approval.groups[0];
         group.setEditMode = jest.fn();
         await wrapper.vm.applyEdit(0);
-        expect(wrapper.vm.$storage.approvalTable.actions.editGroup).toBeCalledWith(wrapper.vm.approval.id, wrapper.vm.approval.groups[0]);
+        expect(approvalTableStore.editGroup).toBeCalledWith({ approvalId: wrapper.vm.approval.id, group: wrapper.vm.approval.groups[0] });
         expect(wrapper.emitted('edit:success')[0][0]).toEqual(mockApprovalTableEntity());
       });
     });
@@ -239,7 +241,7 @@ describe('ApprovalGroupTable.vue', () => {
         const group = wrapper.vm.approval.groups[0];
         group.setAddMode = jest.fn();
         await wrapper.vm.addGroup(group);
-        expect(wrapper.vm.$storage.approvalTable.actions.addGroup).toBeCalledWith(wrapper.vm.approval.id, group);
+        expect(approvalTableStore.addGroup).toBeCalledWith({ approvalId: wrapper.vm.approval.id, group });
         expect(wrapper.emitted('edit:success')[0][0]).toEqual(mockApprovalTableEntity());
       });
 

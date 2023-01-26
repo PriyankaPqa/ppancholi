@@ -7,7 +7,8 @@ import Vue from 'vue';
 import ConfirmRegistrationLib from '@libs/registration-lib/components/confirm-registration/ConfirmRegistrationLib.vue';
 import { IRegistrationMenuItem } from '@libs/registration-lib/types';
 import { i18n } from '@/ui/plugins';
-import { tabs } from '@/store/modules/registration/tabs';
+import { useRegistrationStore } from '@/pinia/registration/registration';
+import { tabs } from '@/pinia/registration/tabs';
 
 export default Vue.extend({
   name: 'ConfirmRegistration',
@@ -22,20 +23,20 @@ export default Vue.extend({
 
   computed: {
     allTabs(): IRegistrationMenuItem[] {
-      return this.$storage.registration.getters.tabs();
+     return useRegistrationStore().tabs;
     },
   },
   methods: {
     goToSearch() {
       this.resetAllTabs();
-      this.$storage.registration.mutations.setCurrentTabIndex(tabs().findIndex((t) => t.id === 'isRegistered'));
-      this.$storage.registration.mutations.resetHouseholdCreate();
-      this.$storage.registration.mutations.setRegistrationErrors(null);
+      useRegistrationStore().currentTabIndex = tabs().findIndex((t) => t.id === 'isRegistered');
+      useRegistrationStore().resetHouseholdCreate();
+      useRegistrationStore().registrationErrors = null;
     },
 
     resetAllTabs() {
       for (let index = 0; index < this.allTabs.length; index += 1) {
-        this.$storage.registration.mutations.mutateTabAtIndex(index, (tab: IRegistrationMenuItem) => {
+        useRegistrationStore().mutateTabAtIndex(index, (tab: IRegistrationMenuItem) => {
           tab.disabled = false;
           tab.isValid = true;
           tab.isTouched = false;

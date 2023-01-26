@@ -16,6 +16,8 @@ module.exports = {
     '^@libs/services-lib/(.*)$': '<rootDir>/../../libs/services-lib/src/$1',
     '^@libs/entities-lib/src/(.*)$': '<rootDir>/../../libs/entities-lib/src/$1', // in javascript file there is path like there is for TS so we need that
     '^@libs/entities-lib/(.*)$': '<rootDir>/../../libs/entities-lib/src/$1',
+    '^@libs/registration-lib/src/(.*)$': '<rootDir>/../../libs/registration-lib/src/$1', // in javascript file there is path like there is for TS so we need that
+    '^@libs/registration-lib/(.*)$': '<rootDir>/../../libs/registration-lib/src/$1',
     uuid: require.resolve('uuid'), // https://github.com/uuidjs/uuid/issues/451
   },
   transformIgnorePatterns: ['<rootDir>/node_modules/'],

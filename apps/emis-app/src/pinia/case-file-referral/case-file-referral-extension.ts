@@ -18,8 +18,8 @@ export function getExtensionComponents(
   const outcomeStatusesFetched = ref(false);
 
   function getAllTypes(filterOutInactive = true, actualValue?: string[] | string) {
- return filterAndSortActiveItems(types.value, filterOutInactive, actualValue);
-}
+    return filterAndSortActiveItems(types.value, filterOutInactive, actualValue);
+  }
 
   function getAllOutcomeStatuses(filterOutInactive = true, actualValue?: string[] | string) {
     return filterAndSortActiveItems(outcomeStatuses.value, filterOutInactive, actualValue);

@@ -1,25 +1,27 @@
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import {
-  mockIndigenousCommunitiesGetData, mockSplitHousehold, mockHouseholdCreate,
+  mockIndigenousCommunitiesGetData, mockSplitHousehold, mockHouseholdCreate, HouseholdCreate,
 } from '@libs/entities-lib/household-create';
 import { mockStorage } from '@/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 
 import householdHelpers from '@/ui/helpers/household';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from '../HouseholdMemberCard.vue';
 
 const localVue = createLocalVue();
 const member = mockMember({ id: 'id-1' });
 const storage = mockStorage();
-const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember()] };
+const householdCreate = new HouseholdCreate({ ...mockHouseholdCreate(), additionalMembers: [mockMember()] });
+
+const { pinia, registrationStore } = useMockRegistrationStore();
 describe('HouseholdMemberCard.vue', () => {
   let wrapper;
-  storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
-
   const doMount = (isPrimaryMember = false, isShallow = true, customOptions = null, index = 0) => {
     const options = {
       localVue,
+      pinia,
       propsData: {
         member,
         isPrimaryMember,
@@ -29,15 +31,6 @@ describe('HouseholdMemberCard.vue', () => {
       mocks: {
         $storage: storage,
       },
-      store: {
-        modules: {
-          registration: {
-            state: {
-              indigenousCommunities: mockIndigenousCommunitiesGetData(),
-            },
-          },
-        },
-      },
       ...customOptions,
     };
     if (isShallow) {
@@ -46,6 +39,9 @@ describe('HouseholdMemberCard.vue', () => {
       wrapper = mount(Component, options);
     }
   };
+
+  registrationStore.householdCreate = householdCreate;
+  registrationStore.indigenousCommunities = mockIndigenousCommunitiesGetData();
 
   describe('Template', () => {
     describe('display name', () => {
@@ -431,15 +427,9 @@ describe('HouseholdMemberCard.vue', () => {
 
     describe('splitHouseholdMembers', () => {
       it('returns the right data', () => {
-        doMount(false, true, {
-          store: {
-            modules: {
-              registration: {
-                state: { splitHousehold: mockSplitHousehold() },
-              },
-            },
-          },
-        });
+        doMount(false, true);
+
+        registrationStore.splitHouseholdState = mockSplitHousehold();
 
         expect(wrapper.vm.splitHouseholdMembers).toEqual(mockSplitHousehold().splitMembers);
       });
@@ -481,7 +471,7 @@ describe('HouseholdMemberCard.vue', () => {
   describe('Lifecycle', () => {
     describe('create', () => {
       it('calls initSplitView if is in split mode (e.g we land back on the page from the split flow)', () => {
-        storage.registration.getters.isSplitMode = jest.fn(() => true);
+        registrationStore.isSplitMode = jest.fn(() => true);
         doMount(false, true, {
           mocks: { $storage: storage },
         });
@@ -515,15 +505,17 @@ describe('HouseholdMemberCard.vue', () => {
     describe('openSplitDialog', () => {
       it('sets showSplitDialog to true', async () => {
         doMount(true);
+        wrapper.vm.showSplitDialog = false;
         expect(wrapper.vm.showSplitDialog).toBeFalsy();
         await wrapper.vm.openSplitDialog();
         expect(wrapper.vm.showSplitDialog).toBeTruthy();
       });
       it('calls the mutation resetSplitHousehold if is not in split mode', async () => {
-        storage.registration.getters.isSplitMode = jest.fn(() => false);
+        registrationStore.isSplitMode = jest.fn(() => false);
+        registrationStore.resetSplitHousehold = jest.fn();
         doMount(true);
         await wrapper.vm.openSplitDialog();
-        expect(storage.registration.mutations.resetSplitHousehold).toHaveBeenCalled();
+        expect(registrationStore.resetSplitHousehold).toHaveBeenCalled();
       });
     });
 
@@ -557,14 +549,13 @@ describe('HouseholdMemberCard.vue', () => {
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ title: 'common.delete', messages: 'household.profile.member.delete.message' });
       });
 
-      it('should call deleteAdditionalMember storage action', async () => {
+      it('should call deleteAdditionalMember action', async () => {
         doMount(false);
         wrapper.vm.$confirm = jest.fn(() => true);
         await wrapper.setData({ index: 0 });
-
         await wrapper.vm.deleteAdditionalMember();
 
-        expect(wrapper.vm.$storage.registration.actions.deleteAdditionalMember)
+        expect(registrationStore.deleteAdditionalMember)
           .toHaveBeenCalled(householdCreate.id, wrapper.vm.member.id, 0);
       });
 
@@ -575,7 +566,7 @@ describe('HouseholdMemberCard.vue', () => {
 
         await wrapper.vm.deleteAdditionalMember();
 
-        expect(wrapper.vm.$storage.registration.actions.deleteAdditionalMember)
+        expect(registrationStore.deleteAdditionalMember)
           .toHaveBeenCalled(householdCreate.id, wrapper.vm.member.id, 0);
       });
     });

@@ -15,6 +15,7 @@ import { mockProvider } from '@/services/provider';
 import { getLocalVue, getWrapper } from '@libs/shared-lib/tests/testBase';
 import { PiniaVuePlugin } from 'pinia';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import registrationStore from '@/ui/plugins/registrationStore';
 
 jest.setTimeout(10000);
 
@@ -25,6 +26,7 @@ const plugins = [
   formatCurrency,
   rolesAndPermissions,
   PiniaVuePlugin,
+  registrationStore,
 ];
 
 export const createLocalVue = () => getLocalVue(plugins);

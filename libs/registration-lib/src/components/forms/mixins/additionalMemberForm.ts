@@ -32,7 +32,7 @@ export default Vue.extend({
   computed: {
 
     householdCreate(): IHouseholdCreate {
-      return this.$storage.registration.getters.householdCreate();
+      return this.$registrationStore.getHouseholdCreate();
     },
 
     additionalMembersCopy(): IMember[] {
@@ -40,7 +40,7 @@ export default Vue.extend({
     },
 
     genderItems(): IOptionItemData[] {
-      return this.$storage.registration.getters.genders();
+      return this.$registrationStore.getGenders();
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
@@ -49,7 +49,7 @@ export default Vue.extend({
     },
 
     shelterLocations(): IShelterLocationData[] {
-      const event = this.$storage.registration.getters.event();
+      const event = this.$registrationStore.getEvent();
       if (event) {
         return event.shelterLocations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active);
       }
@@ -58,14 +58,14 @@ export default Vue.extend({
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
       if (this.indexAdditionalMember !== -1) {
-        return this.$storage.registration.getters.indigenousTypesItems();
+        return this.$registrationStore.getIndigenousTypesItems();
       }
       return [];
     },
 
     indigenousCommunitiesItems(): Record<string, string>[] {
       if (this.indexAdditionalMember !== -1) {
-        return this.$storage.registration.getters.indigenousCommunitiesItems(
+        return this.$registrationStore.getIndigenousCommunitiesItems(
           this.currentAdditionalMember.identitySet.indigenousType,
         );
       }
@@ -73,7 +73,7 @@ export default Vue.extend({
     },
 
     loadingIndigenousCommunities(): boolean {
-      return this.$store.state.registration.loadingIndigenousCommunities;
+      return this.$registrationStore.loadingIndigenousCommunities;
     },
 
     currentAdditionalMember(): IMember {
@@ -81,7 +81,7 @@ export default Vue.extend({
     },
 
     associationMode(): boolean {
-      return this.$store.state.registration.householdAssociationMode;
+      return this.$registrationStore.householdAssociationMode;
     },
 
   },
@@ -113,15 +113,15 @@ export default Vue.extend({
       this.additionalMembers[index].backup = _cloneDeep(this.householdCreate.additionalMembers[index]);
       this.additionalMembers[index].inlineEdit = true;
       this.additionalMembers[index].backupSameAddress = this.additionalMembers[index].sameAddress;
-      this.$storage.registration.mutations.increaseInlineEditCounter();
+      this.$registrationStore.increaseInlineEditCounter();
     },
 
     cancelAdditionalMember(index: number) {
       if (this.additionalMembers[index].inlineEdit) {
         this.additionalMembers[index].inlineEdit = false;
         this.additionalMembers[index].sameAddress = this.additionalMembers[index].backupSameAddress;
-        this.$storage.registration.mutations.decreaseInlineEditCounter();
-        this.$storage.registration.mutations.editAdditionalMember(this.additionalMembers[index].backup, index, this.additionalMembers[index].backupSameAddress);
+        this.$registrationStore.decreaseInlineEditCounter();
+        this.$registrationStore.householdCreate.editAdditionalMember(this.additionalMembers[index].backup, index, this.additionalMembers[index].backupSameAddress);
       }
     },
 
@@ -130,13 +130,13 @@ export default Vue.extend({
       const isValid = await ((this.$refs[`additionalMember_${index}`] as any)[0]).validate();
       if (isValid) {
         // Not watcher on this form to mutate so we need to do it here
-        this.$storage.registration.mutations.editAdditionalMember(this.additionalMembersCopy[index], index, this.additionalMembers[index].sameAddress);
+        this.$registrationStore.householdCreate.editAdditionalMember(this.additionalMembersCopy[index], index, this.additionalMembers[index].sameAddress);
 
         if (this.associationMode) {
           await this.updateMember(index);
         }
         this.additionalMembers[index].inlineEdit = false;
-        this.$storage.registration.mutations.decreaseInlineEditCounter();
+        this.$registrationStore.decreaseInlineEditCounter();
       } else {
         helpers.scrollToFirstError('app');
       }
@@ -151,7 +151,7 @@ export default Vue.extend({
         { identitySet: member.identitySet, contactInformation: member.contactInformation },
       );
       if (!resIdentity) {
-        this.$storage.registration.mutations.editAdditionalMember(this.additionalMembers[index].backup, index, !this.additionalMembers[index].sameAddress);
+        this.$registrationStore.householdCreate.editAdditionalMember(this.additionalMembers[index].backup, index, !this.additionalMembers[index].sameAddress);
         this.additionalMembers[index].loading = false;
         return;
       }
@@ -166,7 +166,7 @@ export default Vue.extend({
             identitySet: member.identitySet,
           };
           this.additionalMembers[index].sameAddress = !this.additionalMembers[index].sameAddress;
-          this.$storage.registration.mutations.editAdditionalMember(backUpWithUpdatedIdentity, index, !this.additionalMembers[index].sameAddress);
+          this.$registrationStore.householdCreate.editAdditionalMember(backUpWithUpdatedIdentity, index, !this.additionalMembers[index].sameAddress);
           this.additionalMembers[index].loading = false;
           return;
         }
@@ -187,12 +187,12 @@ export default Vue.extend({
         const memberId = this.householdCreate.additionalMembers[this.indexAdditionalMember].id;
         const householdId = this.householdCreate.id;
         const index = this.indexAdditionalMember;
-        const res = this.$storage.registration.actions.deleteAdditionalMember({ householdId, memberId, index });
+        const res = this.$registrationStore.deleteAdditionalMember({ householdId, memberId, index });
         if (!res) {
           return;
         }
       } else {
-        this.$storage.registration.mutations.removeAdditionalMember(this.indexAdditionalMember);
+        this.$registrationStore.householdCreate.removeAdditionalMember(this.indexAdditionalMember);
       }
       this.$toasted.global.success(this.$t('registration.member.removed'));
       this.showAdditionalMemberDelete = false;
@@ -201,7 +201,7 @@ export default Vue.extend({
     setIdentity(form: IIdentitySet) {
       if (this.currentAdditionalMember) {
         this.currentAdditionalMember.identitySet.setIdentity(form);
-        this.$storage.registration.mutations.editAdditionalMember(
+        this.$registrationStore.householdCreate.editAdditionalMember(
           this.currentAdditionalMember,
           this.indexAdditionalMember,
           this.additionalMembers[this.indexAdditionalMember].sameAddress,
@@ -212,7 +212,7 @@ export default Vue.extend({
     setIndigenousIdentity(form: IIdentitySet) {
       if (this.currentAdditionalMember) {
         this.currentAdditionalMember.identitySet.setIndigenousIdentity(form);
-        this.$storage.registration.mutations.editAdditionalMember(
+        this.$registrationStore.householdCreate.editAdditionalMember(
           this.currentAdditionalMember,
           this.indexAdditionalMember,
           this.additionalMembers[this.indexAdditionalMember].sameAddress,
@@ -223,7 +223,7 @@ export default Vue.extend({
     setCurrentAddress(form: ICurrentAddress) {
       if (this.currentAdditionalMember) {
         this.currentAdditionalMember.currentAddress = _cloneDeep(form);
-        this.$storage.registration.mutations.editAdditionalMember(
+        this.$registrationStore.householdCreate.editAdditionalMember(
           this.currentAdditionalMember,
           this.indexAdditionalMember,
           this.additionalMembers[this.indexAdditionalMember].sameAddress,

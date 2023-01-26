@@ -43,7 +43,7 @@ describe('AddressesLib.vue', () => {
 
       it('triggers setNoFixedHome mutation when changed', () => {
         wrapper.vm.noFixedHome = true;
-        expect(wrapper.vm.$storage.registration.mutations.setNoFixedHome).toHaveBeenCalledWith(true);
+        expect(wrapper.vm.$registrationStore.householdCreate.noFixedHome).toBe(true);
       });
     });
 
@@ -252,7 +252,7 @@ describe('AddressesLib.vue', () => {
           },
         });
         const location = { id: 'sl-event', status: EOptionItemStatus.Active };
-        wrapper.vm.$storage.registration.getters.event = jest.fn(() => ({ shelterLocations: [location] }));
+        wrapper.vm.$registrationStore.getEvent = jest.fn(() => ({ shelterLocations: [location] }));
         expect(wrapper.vm.shelterLocations).toEqual([{ id: 'sl-1' }, location]);
       });
     });
@@ -301,9 +301,9 @@ describe('AddressesLib.vue', () => {
         expect(wrapper.vm.setCurrentAddress).toHaveBeenCalledWith(ECurrentAddressTypes.HotelMotel);
       });
 
-      it('should call setCurrentAddress mutations', () => {
+      it('should call setCurrentAddress', () => {
         wrapper.vm.setCurrentAddress(ECurrentAddressTypes.HotelMotel);
-        expect(wrapper.vm.$storage.registration.mutations.setCurrentAddress)
+        expect(wrapper.vm.$registrationStore.householdCreate.setCurrentAddress)
           .toHaveBeenCalledWith(ECurrentAddressTypes.HotelMotel);
       });
     });
@@ -318,7 +318,7 @@ describe('AddressesLib.vue', () => {
 
       it('should call setHomeAddress mutations', () => {
         wrapper.vm.setHomeAddress(mockAddress());
-        expect(wrapper.vm.$storage.registration.mutations.setHomeAddress)
+        expect(wrapper.vm.$registrationStore.householdCreate.setHomeAddress)
           .toHaveBeenCalledWith(mockAddress());
       });
     });

@@ -1,5 +1,5 @@
 import {
-  IOptionItemData, EOptionLists, IOptionSubItem,
+  IOptionItemData, EOptionLists, ICreateOptionItemRequest,
 } from '@libs/entities-lib/optionItem';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
@@ -50,11 +50,11 @@ export class OptionItemsService implements IOptionItemsService {
     return this.http.get(`${this.getPrefix(list)}/all`);
   }
 
-  async createOptionItem(list: EOptionLists, optionItem: IOptionItemData): Promise<IOptionItemData> {
+  async createOptionItem(list: EOptionLists, optionItem: ICreateOptionItemRequest): Promise<IOptionItemData> {
     return this.http.post(this.getPrefix(list), optionItem);
   }
 
-  async addSubItem(list: EOptionLists, itemId: string, subItem: IOptionSubItem): Promise<IOptionItemData> {
+  async addSubItem(list: EOptionLists, itemId: string, subItem: ICreateOptionItemRequest): Promise<IOptionItemData> {
     return this.http.patch(`${this.getPrefix(list)}/${itemId}/add-subitem`, subItem);
   }
 

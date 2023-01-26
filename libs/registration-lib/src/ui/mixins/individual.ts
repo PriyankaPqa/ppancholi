@@ -27,23 +27,23 @@ export default Vue.extend({
     },
 
     currentTab(): IRegistrationMenuItem {
-      return this.$storage.registration.getters.currentTab();
+      return this.$registrationStore.getCurrentTab();
     },
 
     currentTabIndex(): number {
-      return this.$storage.registration.getters.currentTabIndex();
+      return this.$registrationStore.currentTabIndex;
     },
 
     allTabs(): IRegistrationMenuItem[] {
-      return this.$storage.registration.getters.tabs();
+      return this.$registrationStore.tabs;
     },
 
     previousTabName(): TranslateResult {
-      return this.$t(this.$storage.registration.getters.previousTabName());
+      return this.$t(this.$registrationStore.getPreviousTabName());
     },
 
     nextTabName(): TranslateResult {
-      return this.$t(this.$storage.registration.getters.nextTabName());
+      return this.$t(this.$registrationStore.getNextTabName());
     },
 
     currentStepHasError(): boolean {
@@ -57,7 +57,7 @@ export default Vue.extend({
     },
 
     household(): HouseholdCreate {
-      return this.$storage.registration.getters.householdCreate();
+      return this.$registrationStore.getHouseholdCreate();
     },
 
     redirectionLink(): string {
@@ -65,32 +65,32 @@ export default Vue.extend({
     },
 
     submitLoading(): boolean {
-      return this.$store.state.registration.submitLoading;
+      return this.$registrationStore.submitLoading;
     },
 
     inlineEdit(): boolean {
-      return this.$store.state.registration.inlineEditCounter > 0;
+      return this.$registrationStore.inlineEditCounter > 0;
     },
 
     event() {
-      return this.$storage.registration.getters.event();
+      return this.$registrationStore.getEvent();
     },
 
     submitErrors(): IServerError {
-      return this.$storage.registration.getters.registrationErrors();
+      return this.$registrationStore.registrationErrors;
     },
 
     registrationNumber(): string {
       // eslint-disable-next-line no-nested-ternary
-      return this.$store.state.registration.householdAssociationMode
+      return this.$registrationStore.householdAssociationMode
         ? (this.household as IHouseholdCreateData).registrationNumber
-        : this.$storage.registration.getters.registrationResponse()?.household?.registrationNumber
-          ? this.$storage.registration.getters.registrationResponse().household.registrationNumber
+        : this.$registrationStore.registrationResponse?.household?.registrationNumber
+          ? this.$registrationStore.registrationResponse.household.registrationNumber
           : '';
     },
 
     registrationSuccess(): boolean {
-      return !this.submitErrors && this.$storage.registration.getters.registrationResponse() !== undefined;
+      return !this.submitErrors && this.$registrationStore.registrationResponse !== undefined;
     },
 
     phoneAssistance(): string {
@@ -119,7 +119,7 @@ export default Vue.extend({
     },
 
     async currentTab(tab) {
-      if (!tab.isValid && tab.isTouched) {
+      if (tab && !tab.isValid && tab.isTouched) {
         await this.$nextTick();
         await (this.$refs.form as VForm).validate();
         helpers.scrollToFirstError('app');
@@ -134,12 +134,17 @@ export default Vue.extend({
 
   methods: {
     async jump(toIndex: number) {
+      // When going to another tab, consider the departure tab to be touched
+      this.$registrationStore.mutateCurrentTab((tab: IRegistrationMenuItem) => {
+        tab.isTouched = true;
+      });
+
       if (this.allTabs[toIndex].id === 'confirmation') {
         this.handleConfirmationScreen(toIndex);
         return;
       }
 
-      const effectiveToIndex = this.$storage.registration.getters.findEffectiveJumpIndex(toIndex);
+      const effectiveToIndex = this.$registrationStore.findEffectiveJumpIndex(toIndex);
       this.setSkippedStepsToValid(this.currentTabIndex, effectiveToIndex - 1);
       // We validate before leaving, so we see error if we can't go next
       await (this.$refs.form as VForm).validate();
@@ -147,11 +152,12 @@ export default Vue.extend({
       // scroll top
       window.scrollTo(0, 0);
 
-      this.$storage.registration.mutations.jump(effectiveToIndex);
+      this.$registrationStore.jump(effectiveToIndex);
 
       // If we stop on a step having errors, highlight errors
       if (effectiveToIndex !== toIndex) {
-        this.mutateStateTab(false);
+        // We validate before leaving, so we see error if we can't go next
+        await (this.$refs.form as VForm).validate();
       }
     },
 
@@ -162,7 +168,7 @@ export default Vue.extend({
 
       // if this is the last page of the process, or if we dont go to the last page - assessment
       // (confirmation did not generate an assessment due to an error or crc where we never get to the last tab)
-      if ((this.currentTab.id === 'confirmation' && (this.$storage.registration.getters.isCRCRegistration() || !this.registrationSuccess))
+      if ((this.currentTab.id === 'confirmation' && (this.$registrationStore.isCRCRegistration() || !this.registrationSuccess))
         || this.currentTabIndex === this.allTabs.length - 1) {
         await this.closeRegistration();
         return;
@@ -184,9 +190,9 @@ export default Vue.extend({
     },
 
     openAssessmentIfAvailable() {
-      const assessment = this.$storage.registration.getters.registrationResponse()?.assessmentResponses[0];
+      const assessment = this.$registrationStore.registrationResponse?.assessmentResponses[0];
       if (assessment) {
-        const routeParams = this.$storage.registration.getters.isCRCRegistration() ? {
+        const routeParams = this.$registrationStore.isCRCRegistration() ? {
           name: 'events.assessments.complete',
           params: {
             assessmentTemplateId: assessment.assessmentFormId,
@@ -207,7 +213,7 @@ export default Vue.extend({
     },
 
     async submitRegistration() {
-      await this.$storage.registration.actions.submitRegistration(this.recaptchaToken);
+      await this.$registrationStore.submitRegistration(this.recaptchaToken);
     },
 
     async handleErrors(submitFunction: ()=> void) {
@@ -263,7 +269,7 @@ export default Vue.extend({
     },
 
     async closeRegistration() {
-      if (this.$storage.registration.getters.isCRCRegistration()) {
+      if (this.$registrationStore.isCRCRegistration()) {
         this.$router.replace({ name: 'casefile.home' });
         return;
       }
@@ -274,29 +280,29 @@ export default Vue.extend({
       // for crc we show the assessment tab after but we keep it disabled as we never access it
       // it's only there to show that the event includes an assessment
       // the confirmation screen will include the assessment button
-      this.disableOtherTabs(confirmationScreenIndex, !this.$storage.registration.getters.isCRCRegistration() && this.registrationSuccess);
+      this.disableOtherTabs(confirmationScreenIndex, !this.$registrationStore.isCRCRegistration() && this.registrationSuccess);
 
-      this.$storage.registration.mutations.mutateTabAtIndex(confirmationScreenIndex, (tab: IRegistrationMenuItem) => {
-        if (this.$store.state.registration.householdAssociationMode) {
+      this.$registrationStore.mutateTabAtIndex(confirmationScreenIndex, (tab: IRegistrationMenuItem) => {
+        if (this.$registrationStore.householdAssociationMode) {
           tab.titleKey = 'registration.page.confirmation.association.title';
         }
 
         tab.isTouched = true;
       });
 
-      this.$storage.registration.mutations.jump(confirmationScreenIndex);
+      this.$registrationStore.jump(confirmationScreenIndex);
     },
 
     disableOtherTabs(toIndex: number, activateFutureTabs: boolean) {
       for (let index = 0; index < this.allTabs.length; index += 1) {
-        this.$storage.registration.mutations.mutateTabAtIndex(index, (tab: IRegistrationMenuItem) => {
+        this.$registrationStore.mutateTabAtIndex(index, (tab: IRegistrationMenuItem) => {
           tab.disabled = activateFutureTabs ? index < toIndex : index !== toIndex;
         });
       }
     },
 
     mutateStateTab(valid: boolean) {
-      this.$storage.registration.mutations.mutateCurrentTab((tab: IRegistrationMenuItem) => {
+      this.$registrationStore.mutateCurrentTab((tab: IRegistrationMenuItem) => {
         tab.isValid = valid;
         tab.isTouched = true;
       });
@@ -305,7 +311,7 @@ export default Vue.extend({
     setSkippedStepsToValid(indexStart: number, indexEnd: number) {
       if (indexStart <= indexEnd) {
         for (let i = indexStart + 1; i <= indexEnd; i += 1) {
-          this.$storage.registration.mutations.mutateTabAtIndex(i, (tab: IRegistrationMenuItem) => {
+          this.$registrationStore.mutateTabAtIndex(i, (tab: IRegistrationMenuItem) => {
             tab.isValid = true;
             tab.isTouched = true;
           });

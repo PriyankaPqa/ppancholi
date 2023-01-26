@@ -1,11 +1,14 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/storage';
-import { tabs } from '@/store/modules/registration/tabs';
+import { tabs } from '@/pinia/registration/tabs';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from './ConfirmRegistration.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+
+const { pinia, registrationStore } = useMockRegistrationStore();
 
 describe('ConfirmRegistrationLib.vue', () => {
   let wrapper;
@@ -13,6 +16,7 @@ describe('ConfirmRegistrationLib.vue', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
+      pinia,
       localVue,
       mocks: {
         $storage: storage,
@@ -31,20 +35,19 @@ describe('ConfirmRegistrationLib.vue', () => {
       it('should call redirect to first page', () => {
         wrapper.vm.resetAllTabs = jest.fn();
         wrapper.vm.goToSearch();
-        expect(wrapper.vm.$storage.registration.mutations.setCurrentTabIndex).toHaveBeenCalledWith(tabs().findIndex((t) => t.id === 'isRegistered'));
+        expect(registrationStore.currentTabIndex).toEqual(tabs().findIndex((t) => t.id === 'isRegistered'));
       });
 
       it('should reset household create', () => {
         wrapper.vm.resetAllTabs = jest.fn();
         wrapper.vm.goToSearch();
-        expect(wrapper.vm.$storage.registration.mutations.resetHouseholdCreate).toHaveBeenCalledTimes(1);
+        expect(registrationStore.resetHouseholdCreate).toHaveBeenCalledTimes(1);
       });
 
       it('should reset registration errors', () => {
-        wrapper.vm.resetAllTabs = jest.fn();
+        registrationStore.registrationErrors = 'errors';
         wrapper.vm.goToSearch();
-        expect(wrapper.vm.$storage.registration.mutations.setRegistrationErrors).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.registration.mutations.setRegistrationErrors).toHaveBeenCalledWith(null);
+        expect(registrationStore.registrationErrors).toEqual(null);
       });
     });
   });

@@ -2,52 +2,37 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { mockOptionItemData, EOptionLists } from '@libs/entities-lib/optionItem';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
+import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
+import OptionListItem from '@/ui/views/pages/system-management/lists/components/OptionListItem.vue';
 import Component from '../OptionList.vue';
 
 const localVue = createLocalVue();
-
-const actions = {
-  fetchItems: jest.fn(),
-  createOption: jest.fn(),
-  updateItem: jest.fn(),
-  updateSubItem: jest.fn(),
-  updateStatus: jest.fn(),
-  updateOrderRanks: jest.fn(),
-};
-
-const store = {
-  modules: {
-    optionList: {
-      state: {
-        list: EOptionLists.EventTypes,
-        items: mockOptionItemData(),
-      },
-      actions,
-    },
-  },
-};
+const { pinia, optionListStore } = useMockOptionListStore();
 
 describe('OptionList.vue', () => {
   let wrapper;
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-
+  const doMount = () => {
     wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         title: 'TITLE',
       },
-      store,
     });
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    doMount();
 
     jest.spyOn(wrapper.vm, 'scrollToInput').mockImplementation(() => {});
   });
 
   describe('> Props', () => {
     test('the title prop is displayed in the page title', () => {
+      doMount();
       const title = wrapper.findDataTest('page-title');
 
       expect(title.text()).toBe('TITLE (3)');
@@ -64,19 +49,27 @@ describe('OptionList.vue', () => {
     });
 
     test('the status select is hidden if the hideItemStatus prop is true', async () => {
-      expect(wrapper.findDataTest('optionsListItem__statusSelect').exists()).toBe(true);
+      await wrapper.setProps({
+        hideItemStatus: false,
+      });
+
+      const component = wrapper.findComponent(OptionListItem);
+      const props = 'hideItemStatus';
+
+      expect(component.props(props)).toEqual(false);
 
       await wrapper.setProps({
         hideItemStatus: true,
       });
-
-      expect(wrapper.findDataTest('optionsListItem__statusSelect').exists()).toBe(false);
+      expect(component.props(props)).toBe(true);
     });
   });
 
   describe('> Computed', () => {
     describe('formattedTitle', () => {
       it('returns correct value', async () => {
+        optionListStore.getItems = jest.fn(() => mockOptionItemData());
+
         expect(wrapper.vm.formattedTitle).toBe('TITLE (3)');
 
         await wrapper.setProps({
@@ -89,6 +82,7 @@ describe('OptionList.vue', () => {
 
     describe('>> items', () => {
       it('returns the items from the store', () => {
+        optionListStore.getItems = jest.fn(() => mockOptionItemData());
         expect(wrapper.vm.items).toEqual(mockOptionItemData());
       });
 
@@ -115,10 +109,11 @@ describe('OptionList.vue', () => {
 
     describe('>> highestRank', () => {
       it('returns the highestRank among the list', () => {
+        optionListStore.getItems = jest.fn(() => mockOptionItemData());
         expect(wrapper.vm.highestRank).toEqual(4);
       });
       it('returns 0 when list is empty', () => {
-        wrapper.vm.$storage.optionList.getters.items = jest.fn(() => []);
+        optionListStore.getItems = jest.fn(() => []);
         expect(wrapper.vm.highestRank).toEqual(0);
       });
     });
@@ -127,11 +122,12 @@ describe('OptionList.vue', () => {
   describe('> Methods', () => {
     describe('>> fetchItems', () => {
       it('dispatches the fetchItems action', async () => {
+        optionListStore.fetchItems = jest.fn();
         jest.clearAllMocks();
 
         await wrapper.vm.fetchItems();
 
-        expect(actions.fetchItems).toHaveBeenCalledTimes(1);
+        expect(optionListStore.fetchItems).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -172,12 +168,13 @@ describe('OptionList.vue', () => {
           status,
         );
 
-        expect(actions.createOption).toHaveBeenCalledTimes(1);
+        expect(optionListStore.createOption).toHaveBeenCalledTimes(1);
       });
       it('dispatches the createOption action with correct parameters', async () => {
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
         const description = null;
         const status = Status.Active;
+        optionListStore.createOption = jest.fn();
 
         await wrapper.vm.saveNewItem(
           name,
@@ -185,8 +182,7 @@ describe('OptionList.vue', () => {
           status,
         );
 
-        expect(actions.createOption).toHaveBeenCalledWith(
-          expect.anything(),
+        expect(optionListStore.createOption).toHaveBeenCalledWith(
           {
             name,
             status,
@@ -202,13 +198,14 @@ describe('OptionList.vue', () => {
           null,
         );
 
-        expect(actions.createOption).not.toHaveBeenCalled();
+        expect(optionListStore.createOption).not.toHaveBeenCalled();
       });
 
       it('copies the translation values over to empty languages', async () => {
         const name = { translation: { en: 'English Test', fr: '' } };
         const description = null;
         const status = Status.Active;
+        optionListStore.createOption = jest.fn();
 
         await wrapper.vm.saveNewItem(
           name,
@@ -216,8 +213,7 @@ describe('OptionList.vue', () => {
           status,
         );
 
-        expect(actions.createOption).toHaveBeenCalledWith(
-          expect.anything(),
+        expect(optionListStore.createOption).toHaveBeenCalledWith(
           {
             name: { translation: { en: 'English Test', fr: 'English Test' } },
             status,
@@ -241,8 +237,8 @@ describe('OptionList.vue', () => {
 
     describe('>> saveNewSubItem', () => {
       it('dispatches the addSubItem action', async () => {
-        wrapper.vm.$storage.optionList.actions.addSubItem = jest.fn();
-
+        optionListStore.addSubItem = jest.fn();
+        optionListStore.getItems = jest.fn(() => mockOptionItemData());
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
         const description = { translation: { en: 'English description', fr: 'French description' } };
         const status = Status.Active;
@@ -255,11 +251,11 @@ describe('OptionList.vue', () => {
           itemId,
         );
 
-        expect(wrapper.vm.$storage.optionList.actions.addSubItem).toHaveBeenCalledTimes(1);
+        expect(optionListStore.addSubItem).toHaveBeenCalledTimes(1);
       });
 
       it('dispatches the addSubItem action with correct parameters', async () => {
-        wrapper.vm.$storage.optionList.actions.addSubItem = jest.fn();
+        optionListStore.addSubItem = jest.fn();
 
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
         const description = { translation: { en: 'English description', fr: 'French description' } };
@@ -267,6 +263,7 @@ describe('OptionList.vue', () => {
 
         const item = mockOptionItemData()[0];
         const itemId = item.id;
+        optionListStore.addSubItem = jest.fn();
 
         let highestRank = 0;
 
@@ -282,7 +279,7 @@ describe('OptionList.vue', () => {
           itemId,
         );
 
-        expect(wrapper.vm.$storage.optionList.actions.addSubItem).toHaveBeenCalledWith(
+        expect(optionListStore.addSubItem).toHaveBeenCalledWith(
           itemId,
           {
             name,
@@ -294,11 +291,12 @@ describe('OptionList.vue', () => {
       });
 
       it('copies the translation values over to empty languages', async () => {
-        wrapper.vm.$storage.optionList.actions.addSubItem = jest.fn();
+        optionListStore.addSubItem = jest.fn();
 
         const name = { translation: { en: 'English Test', fr: '' } };
         const description = { translation: { en: 'English description', fr: '' } };
         const status = Status.Active;
+        optionListStore.addSubItem = jest.fn();
 
         const item = mockOptionItemData()[0];
         const itemId = item.id;
@@ -317,7 +315,7 @@ describe('OptionList.vue', () => {
           itemId,
         );
 
-        expect(wrapper.vm.$storage.optionList.actions.addSubItem).toHaveBeenCalledWith(
+        expect(optionListStore.addSubItem).toHaveBeenCalledWith(
           itemId,
           {
             name: { translation: { en: 'English Test', fr: 'English Test' } },
@@ -331,10 +329,12 @@ describe('OptionList.vue', () => {
 
     describe('>> saveItem', () => {
       it('dispatches the updateItem action', async () => {
+        doMount();
         await wrapper.setProps({ hasDescription: true });
         const item = mockOptionItemData()[0];
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
         const description = { translation: { en: 'Desc English Test', fr: 'Desc French Test' } };
+        optionListStore.updateItem = jest.fn();
 
         await wrapper.vm.saveItem(
           item,
@@ -342,14 +342,11 @@ describe('OptionList.vue', () => {
           description,
         );
 
-        expect(actions.updateItem).toHaveBeenCalledWith(
-          expect.anything(),
-          {
-            id: item.id,
-            name,
-            description,
-          },
-        );
+        expect(optionListStore.updateItem).toHaveBeenCalledWith({
+          id: item.id,
+          name,
+          description,
+        });
       });
 
       it('does not dispatch the action if item or name are not provided', async () => {
@@ -359,7 +356,7 @@ describe('OptionList.vue', () => {
           { translation: { en: 'English Desc', fr: '' } },
         );
 
-        expect(actions.updateItem).not.toHaveBeenCalled();
+        expect(optionListStore.updateItem).not.toHaveBeenCalled();
       });
 
       it('sends description as null if hasDescription is false', async () => {
@@ -367,20 +364,25 @@ describe('OptionList.vue', () => {
         const item = mockOptionItemData()[0];
         const name = { translation: { en: 'English Test', fr: '' } };
         const description = { translation: { en: '', fr: '' } };
+        optionListStore.updateItem = jest.fn();
+
         await wrapper.vm.saveItem(
           item,
           name,
           description,
         );
 
-        expect(actions.updateItem).toHaveBeenCalledWith(
-          expect.anything(),
-          {
-            id: item.id,
-            name: { translation: { en: 'English Test', fr: 'English Test' } },
-            description: null,
+        expect(optionListStore.updateItem).toHaveBeenCalledWith({
+          id: item.id,
+          name: {
+            translation: {
+              en: 'English Test',
+              fr:
+            'English Test',
+            },
           },
-        );
+          description: null,
+        });
       });
 
       it('copies the translation values over to empty languages', async () => {
@@ -388,6 +390,7 @@ describe('OptionList.vue', () => {
         const item = mockOptionItemData()[0];
         const name = { translation: { en: 'English Test', fr: '' } };
         const description = { translation: { en: 'English Desc Test', fr: '' } };
+        optionListStore.updateItem = jest.fn();
 
         await wrapper.vm.saveItem(
           item,
@@ -395,14 +398,24 @@ describe('OptionList.vue', () => {
           description,
         );
 
-        expect(actions.updateItem).toHaveBeenCalledWith(
-          expect.anything(),
-          {
-            id: item.id,
-            name: { translation: { en: 'English Test', fr: 'English Test' } },
-            description: { translation: { en: 'English Desc Test', fr: 'English Desc Test' } },
+        expect(optionListStore.updateItem).toHaveBeenCalledWith({
+          id: item.id,
+          name: {
+            translation: {
+              en: 'English Test',
+              fr:
+            'English Test',
+            },
           },
-        );
+          description: {
+            translation: {
+              en: 'English Desc Test',
+              fr:
+            'English Desc Test',
+            },
+          }
+          ,
+        });
       });
     });
 
@@ -412,6 +425,7 @@ describe('OptionList.vue', () => {
         const subItem = item.subitems[0];
         const name = { translation: { en: 'name en', fr: 'name fr' } };
         const description = { translation: { en: 'description en', fr: 'description fr' } };
+        optionListStore.updateSubItem = jest.fn();
 
         await wrapper.vm.saveSubItem(
           item,
@@ -420,15 +434,12 @@ describe('OptionList.vue', () => {
           description,
         );
 
-        expect(actions.updateSubItem).toHaveBeenCalledWith(
-          expect.anything(),
-          {
-            itemId: item.id,
-            subItemId: subItem.id,
-            name,
-            description,
-          },
-        );
+        expect(optionListStore.updateSubItem).toHaveBeenCalledWith({
+          itemId: item.id,
+          subItemId: subItem.id,
+          name,
+          description,
+        });
       });
 
       it('does not dispatch the action if item or name are not provided', async () => {
@@ -437,7 +448,7 @@ describe('OptionList.vue', () => {
           null,
         );
 
-        expect(actions.updateSubItem).not.toHaveBeenCalled();
+        expect(optionListStore.updateSubItem).not.toHaveBeenCalled();
       });
 
       it('copies the translation values over to empty languages', async () => {
@@ -445,6 +456,7 @@ describe('OptionList.vue', () => {
         const subItem = item.subitems[0];
         const name = { translation: { en: 'name en', fr: '' } };
         const description = { translation: { en: '', fr: 'description fr' } };
+        optionListStore.updateSubItem = jest.fn();
 
         await wrapper.vm.saveSubItem(
           item,
@@ -453,21 +465,32 @@ describe('OptionList.vue', () => {
           description,
         );
 
-        expect(actions.updateSubItem).toHaveBeenCalledWith(
-          expect.anything(),
-          {
-            itemId: item.id,
-            subItemId: subItem.id,
-            name: { translation: { en: 'name en', fr: 'name en' } },
-            description: { translation: { en: 'description fr', fr: 'description fr' } },
+        expect(optionListStore.updateSubItem).toHaveBeenCalledWith({
+          itemId: item.id,
+          subItemId: subItem.id,
+          name: {
+            translation: {
+              en: 'name en',
+              fr:
+            'name en',
+            },
           },
-        );
+          description: {
+            translation: {
+              en: 'description fr',
+              fr:
+            'description fr',
+            },
+          }
+          ,
+        });
       });
     });
 
     describe('>> sortItems', () => {
       it('dispatches the updateOrderRanks action', async () => {
         const items = mockOptionItemData();
+        optionListStore.updateOrderRanks = jest.fn();
 
         await wrapper.vm.sortItems([
           items[2],
@@ -475,8 +498,7 @@ describe('OptionList.vue', () => {
           items[0],
         ]);
 
-        expect(actions.updateOrderRanks).toHaveBeenCalledWith(
-          expect.anything(),
+        expect(optionListStore.updateOrderRanks).toHaveBeenCalledWith(
           [
             items[2],
             items[1],
@@ -488,13 +510,13 @@ describe('OptionList.vue', () => {
 
     describe('>> sortSubItems', () => {
       it('dispatches the updateSubItemOrderRanks action', async () => {
-        wrapper.vm.$storage.optionList.actions.updateSubItemOrderRanks = jest.fn();
+        optionListStore.updateSubItemOrderRanks = jest.fn();
 
         const item = mockOptionItemData()[0];
 
         await wrapper.vm.sortSubItems(item);
 
-        expect(wrapper.vm.$storage.optionList.actions.updateSubItemOrderRanks).toHaveBeenCalledWith(item);
+        expect(optionListStore.updateSubItemOrderRanks).toHaveBeenCalledWith(item);
       });
     });
   });

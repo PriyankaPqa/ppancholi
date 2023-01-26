@@ -28,10 +28,10 @@ export default Vue.extend({
 
   computed: {
     currentTab(): IRegistrationMenuItem {
-      return this.$storage.registration.getters.currentTab();
+      return this.$registrationStore.getCurrentTab();
     },
     registrationAssessment(): IRegistrationAssessment {
-      return this.$storage.registration.getters.assessmentToComplete().registrationAssessment;
+      return this.$registrationStore.getAssessmentToComplete().registrationAssessment;
     },
   },
 });

@@ -100,15 +100,15 @@ export default Vue.extend({
     },
 
     member(): IMember {
-      return this.memberProps || this.$storage.registration.getters.householdCreate().primaryBeneficiary;
+      return this.memberProps || this.$registrationStore.getHouseholdCreate().primaryBeneficiary;
     },
 
     preferredLanguagesItems(): IOptionItemData[] {
-      return this.$storage.registration.getters.preferredLanguages();
+      return this.$registrationStore.getPreferredLanguages();
     },
 
     primarySpokenLanguagesItems(): IOptionItemData[] {
-      let items = this.$storage.registration.getters.primarySpokenLanguages(this.includeInactiveOptions);
+      let items = this.$registrationStore.getPrimarySpokenLanguages(this.includeInactiveOptions);
 
       items = items.filter((i) => i.status === Status.Active || i.id === this.contactInformation.primarySpokenLanguage?.id);
 
@@ -116,7 +116,7 @@ export default Vue.extend({
     },
 
     genderItems(): IOptionItemData[] {
-      let items = this.$storage.registration.getters.genders(this.includeInactiveOptions);
+      let items = this.$registrationStore.getGenders(this.includeInactiveOptions);
 
       items = items.filter((i) => i.status === Status.Active || i.id === this.identitySet.gender.id);
 
@@ -124,15 +124,15 @@ export default Vue.extend({
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
-      return this.$storage.registration.getters.indigenousTypesItems();
+      return this.$registrationStore.getIndigenousTypesItems();
     },
 
     indigenousCommunitiesItems(): Record<string, string>[] {
-      return this.$storage.registration.getters.indigenousCommunitiesItems(this.identitySet.indigenousType);
+      return this.$registrationStore.getIndigenousCommunitiesItems(this.identitySet.indigenousType);
     },
 
     loadingIndigenousCommunities(): boolean {
-      return this.$store.state.registration.loadingIndigenousCommunities;
+      return this.$registrationStore.loadingIndigenousCommunities;
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
@@ -140,17 +140,18 @@ export default Vue.extend({
     },
 
     splitHousehold(): ISplitHousehold {
-      return this.$store.state.registration.splitHousehold;
+      return this.$registrationStore.splitHouseholdState;
     },
 
     isSplitMode(): boolean {
-      return this.$storage.registration.getters.isSplitMode();
+      return this.$registrationStore.isSplitMode();
     },
 
     isTouched(): boolean {
-      return this.$storage.registration?.getters?.tabs()?.filter((el) => el.id === 'personalInfo')[0].isTouched;
+      return this.$registrationStore.tabs.filter((el) => el.id === 'personalInfo')[0].isTouched;
     },
   },
+
   async created() {
     // Load data from Beneficiary Search
     if (this.prefillPersonalInformation && !this.isEditMode && !this.isSplitMode && !this.isTouched) {
@@ -161,26 +162,27 @@ export default Vue.extend({
       this.loadInitialDataUnderSplitMode();
     }
     // Load IngigenousCommunities as soon as the page loads
-    await this.$storage.registration.actions.fetchIndigenousCommunities();
+    await this.$registrationStore.fetchIndigenousCommunities();
   },
+
   methods: {
     setIdentity(form: IIdentitySet) {
       if (this.storeMode) {
-        this.$storage.registration.mutations.setIdentity(form);
+        this.$registrationStore.householdCreate.primaryBeneficiary.identitySet.setIdentity(form);
       }
       this.$emit('setIdentity', form);
     },
 
     setIndigenousIdentity(form: IIdentitySet) {
       if (this.storeMode) {
-        this.$storage.registration.mutations.setIndigenousIdentity(form);
+        this.$registrationStore.householdCreate.primaryBeneficiary.identitySet.setIndigenousIdentity(form);
       }
       this.$emit('setIndigenousIdentity', form);
     },
 
     setContactInformation(form: IContactInformation) {
       if (this.storeMode) {
-        this.$storage.registration.mutations.setContactInformation(form);
+        this.$registrationStore.householdCreate.primaryBeneficiary.setContactInformation(form);
       }
       this.$emit('setContactInformation', form);
     },
@@ -188,7 +190,7 @@ export default Vue.extend({
     loadInitialDataFromBeneficiarySearch() {
       const initIdentity = new IdentitySet();
       const initContact = new ContactInformation();
-      const initDataFromBeneficiarySearch: IInformationFromBeneficiarySearch = this.$store.state.registration.informationFromBeneficiarySearch;
+      const initDataFromBeneficiarySearch: IInformationFromBeneficiarySearch = this.$registrationStore.informationFromBeneficiarySearch;
       if (initDataFromBeneficiarySearch) {
         initIdentity.firstName = initDataFromBeneficiarySearch.firstName;
         initIdentity.lastName = initDataFromBeneficiarySearch.lastName;
@@ -204,7 +206,7 @@ export default Vue.extend({
     loadInitialDataUnderSplitMode() {
       let initIdentityFromSplitHousehold;
       const initContact = new ContactInformation();
-      const initDataFromBeneficiarySearch: IInformationFromBeneficiarySearch = this.$store.state.registration.informationFromBeneficiarySearch;
+      const initDataFromBeneficiarySearch: IInformationFromBeneficiarySearch = this.$registrationStore.informationFromBeneficiarySearch;
       if (initDataFromBeneficiarySearch && this.splitHousehold) {
         initIdentityFromSplitHousehold = _cloneDeep(this.splitHousehold.splitMembers.primaryMember.identitySet);
         initIdentityFromSplitHousehold.firstName = initDataFromBeneficiarySearch.firstName;

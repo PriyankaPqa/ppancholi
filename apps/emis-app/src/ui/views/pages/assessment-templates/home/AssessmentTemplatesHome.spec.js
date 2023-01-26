@@ -31,7 +31,6 @@ describe('AssessmentTemplatesHome.vue', () => {
       },
       ...additionalOverwrites,
     });
-
     await wrapper.vm.$nextTick();
   };
 
@@ -49,6 +48,7 @@ describe('AssessmentTemplatesHome.vue', () => {
       let dataTable;
       beforeEach(async () => {
         await mountWrapper(true);
+        wrapper.search = jest.fn();
         dataTable = wrapper.findComponent(RcDataTable);
       });
 

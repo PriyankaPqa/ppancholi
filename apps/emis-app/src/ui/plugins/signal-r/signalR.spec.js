@@ -9,6 +9,7 @@ import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/progra
 import { useCaseNoteMetadataStore, useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
+import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
 
 import { SignalR } from './signalR';
 
@@ -519,14 +520,14 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'finance',
           entityName: 'ApprovalTable',
-          action: conn.storage.approvalTable.mutations.setEntityFromOutsideNotification,
+          action: useApprovalTableStore().setItemFromOutsideNotification,
         });
 
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'finance',
           entityName: 'ApprovalTableMetadata',
-          action: conn.storage.approvalTable.mutations.setMetadataFromOutsideNotification,
+          action: useApprovalTableMetadataStore().setItemFromOutsideNotification,
         });
     });
   });

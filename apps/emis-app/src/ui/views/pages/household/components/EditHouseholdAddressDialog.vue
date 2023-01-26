@@ -50,6 +50,7 @@ import { localStorageKeys } from '@/constants/localStorage';
 import { VForm } from '@libs/shared-lib/types';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default Vue.extend({
   name: 'EditHouseholdAddressDialog',
@@ -94,7 +95,7 @@ export default Vue.extend({
     },
 
     householdCreate(): IHouseholdCreate {
-      return this.$storage.registration.getters.householdCreate();
+      return useRegistrationStore().getHouseholdCreate();
     },
 
     currentHousehold(): IHouseholdCombined {
@@ -146,7 +147,7 @@ export default Vue.extend({
     async updateNoFixedHomeAddress(householdId: string, observation: string) {
       const res = await this.$storage.household.actions.updateNoFixedHomeAddress(householdId, observation);
       if (res) {
-        this.$storage.registration.mutations.setNoFixedHome(true);
+        this.householdCreate.noFixedHome = true;
       }
       return res;
     },
@@ -154,8 +155,8 @@ export default Vue.extend({
     async updateHomeAddress(householdId: string, address: IAddress) {
       const res = await this.$storage.household.actions.updateHomeAddress(householdId, address);
       if (res) {
-        this.$storage.registration.mutations.setNoFixedHome(false);
-        this.$storage.registration.mutations.setHomeAddress(address);
+        this.householdCreate.noFixedHome = false;
+        this.householdCreate.setHomeAddress(address);
       }
       return res;
     },

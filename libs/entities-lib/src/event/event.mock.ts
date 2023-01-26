@@ -12,6 +12,13 @@ import {
 } from './event.types';
 /* eslint-disable max-lines-per-function */
 
+export const mockRegistrationAssessment = () => ({
+  ...mockBaseData(),
+  id: '1dea3c36-d6a5-4e6c-ac36-078677b7d212',
+  assessmentId: '1dea3c36-d6a5-4e6c-ac36-078677b7d210',
+  details: { translation: { en: 'detail en', fr: 'detail fr' } },
+  sectionTitle: { translation: { en: 'title en', fr: 'title fr' } },
+});
 export const mockEventMainInfo = (force?: Partial<IEventMainInfo>): IEventMainInfo => ({
   entity: {
     id: '1dea3c36-d6a5-4e6c-ac36-078677b7d111',
@@ -115,13 +122,7 @@ export const mockEventEntityData = (): IEventEntity[] => [
       assistanceNumber: '+15144544545',
     },
     registrationAssessments: [
-      {
-        ...mockBaseData(),
-        id: '1dea3c36-d6a5-4e6c-ac36-078677b7d212',
-        assessmentId: '1dea3c36-d6a5-4e6c-ac36-078677b7d210',
-        details: { translation: { en: 'detail en', fr: 'detail fr' } },
-        sectionTitle: { translation: { en: 'title en', fr: 'title fr' } },
-      },
+     mockRegistrationAssessment(),
     ],
     registrationLocations: [
       {

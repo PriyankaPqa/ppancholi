@@ -1,14 +1,10 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-
-import { mockStorage } from '@/store/storage';
-import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@libs/component-lib/src/components';
 import helpers from '@libs/entities-lib/helpers';
 import {
   mockHouseholdCreate,
-  mockContactInformation,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems,
   mockCampGround, mockIdentitySet, mockAddress, mockAdditionalMember, Member,
@@ -20,26 +16,10 @@ import PersonalInformationTemplate from './personal-information/PersonalInformat
 import Component from './ReviewRegistrationLib.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const vuetify = new Vuetify();
 
 describe('ReviewRegistrationLib.vue', () => {
   let wrapper;
-  beforeEach(() => {
-    wrapper = shallowMount(Component, {
-      localVue,
-      vuetify,
-      propsData: {
-        i18n,
-        disableAutocomplete: false,
-        user: mockUserL6(),
-      },
-      mocks: {
-        $storage: storage,
-      },
-    });
-  });
-
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -55,12 +35,10 @@ describe('ReviewRegistrationLib.vue', () => {
             disableAutocomplete: false,
             user: mockUserL6(),
           },
-          mocks: {
-            $storage: storage,
-          },
+          stubs: ['personal-information-template'],
         });
+        wrapper.vm.$registrationStore.getHouseholdCreate = jest.fn(() => mockHouseholdCreate());
       });
-
       test('edit event calls the correct method', async () => {
         wrapper.vm.editPersonalInformation = jest.fn();
         const section = wrapper.findDataTest('personalInformation');
@@ -101,12 +79,10 @@ describe('ReviewRegistrationLib.vue', () => {
             disableAutocomplete: false,
             user: mockUserL6(),
           },
-          mocks: {
-            $storage: storage,
-          },
+          stubs: ['personal-information-template'],
         });
+        wrapper.vm.$registrationStore.getHouseholdCreate = jest.fn(() => mockHouseholdCreate());
       });
-
       test('edit event calls the correct method', async () => {
         wrapper.vm.editAddresses = jest.fn();
         const section = wrapper.findDataTest('addresses');
@@ -122,7 +98,7 @@ describe('ReviewRegistrationLib.vue', () => {
       });
 
       test('submit event calls the correct method', async () => {
-        jest.spyOn(wrapper.vm, 'submitAddresses');
+        wrapper.vm.submitAddresses = jest.fn();
         wrapper.vm.$refs.addresses = {
           validate: jest.fn(),
         };
@@ -138,10 +114,23 @@ describe('ReviewRegistrationLib.vue', () => {
     });
 
     describe('Additional members', () => {
-      test('edit event calls the correct method', () => {
+      beforeEach(() => {
+        wrapper = mount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+            disableAutocomplete: false,
+            user: mockUserL6(),
+          },
+          stubs: ['personal-information-template', 'validation-observer'],
+        });
+        wrapper.vm.$registrationStore.getHouseholdCreate = jest.fn(() => mockHouseholdCreate());
+      });
+      test('edit event calls the correct method', async () => {
         wrapper.vm.editAdditionalMember = jest.fn();
         wrapper.vm.$refs.additionalMember_0 = {
-          validate: jest.fn(),
+          validate: jest.fn((() => true)),
         };
         const section = wrapper.findDataTest('additionalMember_0');
         section.vm.$emit('edit');
@@ -149,14 +138,14 @@ describe('ReviewRegistrationLib.vue', () => {
       });
 
       test('cancel event calls the correct method', () => {
-        jest.spyOn(wrapper.vm, 'cancelAdditionalMember');
+        wrapper.vm.cancelAdditionalMember = jest.fn();
         const section = wrapper.findDataTest('additionalMember_0');
         section.vm.$emit('cancel');
         expect(wrapper.vm.cancelAdditionalMember).toHaveBeenCalledTimes(1);
       });
 
       test('submit event calls the correct method', () => {
-        jest.spyOn(wrapper.vm, 'submitAdditionalMember');
+        wrapper.vm.submitAdditionalMember = jest.fn();
         wrapper.vm.$refs.additionalMember_0 = [{
           validate: jest.fn(() => true),
         }];
@@ -183,6 +172,18 @@ describe('ReviewRegistrationLib.vue', () => {
   });
 
   describe('Methods', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        vuetify,
+        propsData: {
+          i18n,
+          disableAutocomplete: false,
+          user: mockUserL6(),
+        },
+      });
+      wrapper.vm.$registrationStore.getHouseholdCreate = jest.fn(() => mockHouseholdCreate());
+    });
     describe('cancelAllAdditionalMembers', () => {
       it('should call cancelAdditionalMember for each members', () => {
         jest.spyOn(wrapper.vm, 'cancelAdditionalMember');
@@ -209,9 +210,10 @@ describe('ReviewRegistrationLib.vue', () => {
 
     describe('editPersonalInformation', () => {
       it('should save a backup before editing', () => {
-        expect(wrapper.vm.personalInformation.backup).toEqual(null);
+        expect(wrapper.vm.personalInformation.backup).toEqual({ contactInformation: null, identitySet: null });
         wrapper.vm.editPersonalInformation();
-        expect(wrapper.vm.personalInformation.backup).toEqual(wrapper.vm.getPersonalInformation);
+        expect(wrapper.vm.personalInformation.backup.contactInformation).toEqual(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.contactInformation);
+        expect(wrapper.vm.personalInformation.backup.identitySet).toEqual(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.identitySet);
       });
 
       it('should enter inline edit mode', () => {
@@ -222,7 +224,7 @@ describe('ReviewRegistrationLib.vue', () => {
 
       it('should increase inline edit counter', () => {
         wrapper.vm.editPersonalInformation();
-        expect(wrapper.vm.$storage.registration.mutations.increaseInlineEditCounter).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$registrationStore.increaseInlineEditCounter).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -247,7 +249,7 @@ describe('ReviewRegistrationLib.vue', () => {
 
       it('should increase inline edit counter', () => {
         wrapper.vm.editAddresses();
-        expect(wrapper.vm.$storage.registration.mutations.increaseInlineEditCounter).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$registrationStore.increaseInlineEditCounter).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -271,7 +273,7 @@ describe('ReviewRegistrationLib.vue', () => {
 
       it('should increase inline edit counter', () => {
         wrapper.vm.editAdditionalMember(0);
-        expect(wrapper.vm.$storage.registration.mutations.increaseInlineEditCounter).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$registrationStore.increaseInlineEditCounter).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -284,20 +286,22 @@ describe('ReviewRegistrationLib.vue', () => {
       });
 
       it('should restore the backup into the store', () => {
+        wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.setPersonalInformation = jest.fn();
         wrapper.vm.editPersonalInformation();
         wrapper.vm.cancelPersonalInformation();
-        expect(wrapper.vm.$storage.registration.mutations.setPersonalInformation)
-          .toHaveBeenCalledWith(wrapper.vm.personalInformation.backup);
+        expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.setPersonalInformation)
+          .toHaveBeenCalledWith(wrapper.vm.personalInformation.backup.contactInformation, wrapper.vm.personalInformation.backup.identitySet);
       });
 
       it('should so nothing if inline mode is not on', () => {
-        expect(wrapper.vm.$storage.registration.mutations.setPersonalInformation).toHaveBeenCalledTimes(0);
+        wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.setPersonalInformation = jest.fn();
+        expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.setPersonalInformation).toHaveBeenCalledTimes(0);
       });
 
       it('should decrease inline edit counter', () => {
         wrapper.vm.editPersonalInformation();
         wrapper.vm.cancelPersonalInformation();
-        expect(wrapper.vm.$storage.registration.mutations.decreaseInlineEditCounter).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$registrationStore.decreaseInlineEditCounter).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -310,16 +314,17 @@ describe('ReviewRegistrationLib.vue', () => {
       });
 
       it('should restore the backup into the store', () => {
+        wrapper.vm.$registrationStore.householdCreate.editAdditionalMember = jest.fn();
         wrapper.vm.editAdditionalMember(0);
         wrapper.vm.cancelAdditionalMember(0);
-        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
+        expect(wrapper.vm.$registrationStore.householdCreate.editAdditionalMember)
           .toHaveBeenCalledWith(wrapper.vm.additionalMembers[0].backup, 0, wrapper.vm.additionalMembers[0].backupSameAddress);
       });
 
       it('should decrease inline edit counter', () => {
         wrapper.vm.editAdditionalMember(0);
         wrapper.vm.cancelAdditionalMember(0);
-        expect(wrapper.vm.$storage.registration.mutations.decreaseInlineEditCounter).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$registrationStore.decreaseInlineEditCounter).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -332,23 +337,25 @@ describe('ReviewRegistrationLib.vue', () => {
       });
 
       it('should restore the home address back up into the store', () => {
+        wrapper.vm.$registrationStore.householdCreate.setHomeAddress = jest.fn();
         wrapper.vm.editAddresses();
         wrapper.vm.cancelAddresses();
-        expect(wrapper.vm.$storage.registration.mutations.setHomeAddress)
+        expect(wrapper.vm.$registrationStore.householdCreate.setHomeAddress)
           .toHaveBeenCalledWith(wrapper.vm.addresses.backupHomeAddress);
       });
 
       it('should restore the temporary address back up into the store', () => {
+        wrapper.vm.$registrationStore.householdCreate.setCurrentAddress = jest.fn();
         wrapper.vm.editAddresses();
         wrapper.vm.cancelAddresses();
-        expect(wrapper.vm.$storage.registration.mutations.setCurrentAddress)
+        expect(wrapper.vm.$registrationStore.householdCreate.setCurrentAddress)
           .toHaveBeenCalledWith(wrapper.vm.addresses.backupCurrentAddress);
       });
 
       it('should decrease inline edit counter', () => {
         wrapper.vm.editAddresses();
         wrapper.vm.cancelAddresses();
-        expect(wrapper.vm.$storage.registration.mutations.decreaseInlineEditCounter).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$registrationStore.decreaseInlineEditCounter).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -379,9 +386,7 @@ describe('ReviewRegistrationLib.vue', () => {
             disableAutocomplete: false,
             user: mockUserL6(),
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             associationMode: () => true,
           },
@@ -411,7 +416,7 @@ describe('ReviewRegistrationLib.vue', () => {
       it('should setIdentity with backup if updatePersonIdentity failed', async () => {
         wrapper.vm.$services.households.updatePersonIdentity = jest.fn(() => false);
         await wrapper.vm.updatePersonalInformation();
-        expect(wrapper.vm.$storage.registration.mutations.setIdentity).toHaveBeenCalledWith(wrapper.vm.personalInformation.backup);
+        expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.setIdentity).toHaveBeenCalledWith(wrapper.vm.personalInformation.backup.identitySet);
       });
 
       it('should always call updatePersonContactInformation with proper params if updatePersonIdentity succeeded ', async () => {
@@ -429,7 +434,8 @@ describe('ReviewRegistrationLib.vue', () => {
       it('should setContactInformation with backup if updatePersonContactInformation failed', async () => {
         wrapper.vm.$services.households.updatePersonContactInformation = jest.fn(() => false);
         await wrapper.vm.updatePersonalInformation();
-        expect(wrapper.vm.$storage.registration.mutations.setContactInformation).toHaveBeenCalledWith(wrapper.vm.personalInformation.backup);
+        expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.setContactInformation)
+          .toHaveBeenCalledWith(wrapper.vm.personalInformation.backup.contactInformation);
       });
     });
 
@@ -459,9 +465,7 @@ describe('ReviewRegistrationLib.vue', () => {
             disableAutocomplete: false,
             user: mockUserL6(),
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             associationMode: () => true,
           },
@@ -487,8 +491,9 @@ describe('ReviewRegistrationLib.vue', () => {
 
       it('should setHomeAddress with backup if updateHomeAddress failed', async () => {
         wrapper.vm.$services.households.updateHomeAddress = jest.fn(() => false);
+        wrapper.vm.$registrationStore.householdCreate.setHomeAddress = jest.fn();
         await wrapper.vm.updateAddresses();
-        expect(wrapper.vm.$storage.registration.mutations.setHomeAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupHomeAddress);
+        expect(wrapper.vm.$registrationStore.householdCreate.setHomeAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupHomeAddress);
       });
 
       it('should call updatePersonAddress with proper params if updatePersonIdentity succeeded only if isNewPrimaryCurrentAddress is true', async () => {
@@ -501,19 +506,21 @@ describe('ReviewRegistrationLib.vue', () => {
 
       it('should setCurrentAddress with backup if updatePersonAddress failed', async () => {
         wrapper.vm.$services.households.updatePersonAddress = jest.fn(() => false);
+        wrapper.vm.$registrationStore.householdCreate.setCurrentAddress = jest.fn();
         await wrapper.vm.updateAddresses();
-        expect(wrapper.vm.$storage.registration.mutations.setCurrentAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupCurrentAddress);
+        expect(wrapper.vm.$registrationStore.householdCreate.setCurrentAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupCurrentAddress);
       });
     });
 
     describe('submitAdditionalMember', () => {
       let spy;
-      beforeEach(() => {
+      beforeEach(async () => {
         // eslint-disable-next-line no-multi-assign
         spy = wrapper.vm.$refs.additionalMember_0 = [{
           validate: jest.fn(() => true),
         }];
-        wrapper.vm.submitAdditionalMember(0);
+        wrapper.vm.$registrationStore.householdCreate.editAdditionalMember = jest.fn();
+        await wrapper.vm.submitAdditionalMember(0);
       });
 
       it('should validate additional member form', () => {
@@ -525,7 +532,7 @@ describe('ReviewRegistrationLib.vue', () => {
       });
 
       it('should save the change in the store', () => {
-        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
+        expect(wrapper.vm.$registrationStore.householdCreate.editAdditionalMember)
           .toHaveBeenCalledWith(wrapper.vm.additionalMembersCopy[0], 0, wrapper.vm.additionalMembers[0].sameAddress);
       });
 
@@ -538,9 +545,7 @@ describe('ReviewRegistrationLib.vue', () => {
             disableAutocomplete: false,
             user: mockUserL6(),
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             associationMode: () => true,
           },
@@ -554,7 +559,7 @@ describe('ReviewRegistrationLib.vue', () => {
       });
     });
 
-    describe('updateMember', () => {
+    describe('updateAddresses', () => {
       it('should call updateHomeAddress with proper params', async () => {
         await wrapper.vm.updateAddresses();
         expect(wrapper.vm.$services.households.updateHomeAddress).toHaveBeenCalledWith(
@@ -565,11 +570,12 @@ describe('ReviewRegistrationLib.vue', () => {
 
       it('should setHomeAddress with backup with updateHomeAddress failed', async () => {
         wrapper.vm.$services.households.updateHomeAddress = jest.fn(() => false);
+        wrapper.vm.$registrationStore.householdCreate.setHomeAddress = jest.fn();
         await wrapper.vm.updateAddresses();
-        expect(wrapper.vm.$storage.registration.mutations.setHomeAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupHomeAddress);
+        expect(wrapper.vm.$registrationStore.householdCreate.setHomeAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupHomeAddress);
       });
 
-      it('should call updatePersonContactInformation with proper params if updatePersonIdentity succeeded ', async () => {
+      it('should call updatePersonContactInformation with proper params if updatePersonIdentity succeeded', async () => {
         await wrapper.vm.updateAddresses();
         expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
           wrapper.vm.householdCreate.primaryBeneficiary.id,
@@ -579,8 +585,9 @@ describe('ReviewRegistrationLib.vue', () => {
 
       it('should setCurrentAddress with backup with updatePersonAddress failed', async () => {
         wrapper.vm.$services.households.updatePersonAddress = jest.fn(() => false);
+        wrapper.vm.$registrationStore.householdCreate.setCurrentAddress = jest.fn();
         await wrapper.vm.updateAddresses();
-        expect(wrapper.vm.$storage.registration.mutations.setCurrentAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupCurrentAddress);
+        expect(wrapper.vm.$registrationStore.householdCreate.setCurrentAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupCurrentAddress);
       });
     });
 
@@ -598,8 +605,9 @@ describe('ReviewRegistrationLib.vue', () => {
 
     describe('deleteAdditionalMember', () => {
       it('should call removeAdditionalMember mutations with current index', () => {
+        wrapper.vm.$registrationStore.householdCreate.removeAdditionalMember = jest.fn();
         wrapper.vm.deleteAdditionalMember();
-        expect(wrapper.vm.$storage.registration.mutations.removeAdditionalMember).toHaveBeenLastCalledWith(wrapper.vm.indexAdditionalMember);
+        expect(wrapper.vm.$registrationStore.householdCreate.removeAdditionalMember).toHaveBeenLastCalledWith(wrapper.vm.indexAdditionalMember);
       });
 
       it('should set showDeleteDialog to false', () => {
@@ -616,19 +624,16 @@ describe('ReviewRegistrationLib.vue', () => {
             disableAutocomplete: false,
             user: mockUserL6(),
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             associationMode: () => true,
           },
         });
-
         await wrapper.setData({ indexAdditionalMember: 0 });
 
         await wrapper.vm.deleteAdditionalMember();
 
-        expect(wrapper.vm.$storage.registration.actions.deleteAdditionalMember)
+        expect(wrapper.vm.$registrationStore.deleteAdditionalMember)
           .toHaveBeenCalled(wrapper.vm.householdCreate.id, wrapper.vm.householdCreate.additionalMembers[0].id, 0);
       });
     });
@@ -647,8 +652,9 @@ describe('ReviewRegistrationLib.vue', () => {
         wrapper.setData({
           indexAdditionalMember: 0,
         });
+        wrapper.vm.$registrationStore.householdCreate.editAdditionalMember = jest.fn();
         await wrapper.vm.setIdentity(mockIdentitySet());
-        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
+        expect(wrapper.vm.$registrationStore.householdCreate.editAdditionalMember)
           .toHaveBeenCalledWith(
             wrapper.vm.currentAdditionalMember,
             0,
@@ -671,8 +677,9 @@ describe('ReviewRegistrationLib.vue', () => {
         wrapper.setData({
           indexAdditionalMember: 0,
         });
+        wrapper.vm.$registrationStore.householdCreate.editAdditionalMember = jest.fn();
         await wrapper.vm.setIndigenousIdentity(mockIdentitySet());
-        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
+        expect(wrapper.vm.$registrationStore.householdCreate.editAdditionalMember)
           .toHaveBeenCalledWith(
             wrapper.vm.currentAdditionalMember,
             0,
@@ -683,9 +690,10 @@ describe('ReviewRegistrationLib.vue', () => {
 
     describe('setCurrentAddress', () => {
       it('set temporary address of the additional member', async () => {
-        wrapper.setData({
+        await wrapper.setData({
           indexAdditionalMember: 0,
         });
+        wrapper.vm.$registrationStore.householdCreate.editAdditionalMember = jest.fn();
         await wrapper.vm.setCurrentAddress(mockCampGround());
         expect(wrapper.vm.currentAdditionalMember.currentAddress).toEqual(mockCampGround());
       });
@@ -694,8 +702,9 @@ describe('ReviewRegistrationLib.vue', () => {
         wrapper.setData({
           indexAdditionalMember: 0,
         });
+        wrapper.vm.$registrationStore.householdCreate.editAdditionalMember = jest.fn();
         await wrapper.vm.setCurrentAddress(mockCampGround());
-        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
+        expect(wrapper.vm.$registrationStore.householdCreate.editAdditionalMember)
           .toHaveBeenCalledWith(
             wrapper.vm.currentAdditionalMember,
             0,
@@ -730,8 +739,9 @@ describe('ReviewRegistrationLib.vue', () => {
 
       it('should editAdditionalMember with backup if updateHomeAddress failed', async () => {
         wrapper.vm.$services.households.updatePersonIdentity = jest.fn(() => false);
+        wrapper.vm.$registrationStore.householdCreate.editAdditionalMember = jest.fn();
         await wrapper.vm.updateMember(0);
-        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember).toHaveBeenCalledWith(
+        expect(wrapper.vm.$registrationStore.householdCreate.editAdditionalMember).toHaveBeenCalledWith(
           wrapper.vm.additionalMembers[0].backup,
           0,
           !wrapper.vm.additionalMembers[0].sameAddress,
@@ -748,13 +758,14 @@ describe('ReviewRegistrationLib.vue', () => {
 
       it('should editAdditionalMember with backup containing updated identity if updateHomeAddress failed', async () => {
         wrapper.vm.$services.households.updatePersonAddress = jest.fn(() => false);
+        wrapper.vm.$registrationStore.householdCreate.editAdditionalMember = jest.fn();
         wrapper.vm.isNewMemberCurrentAddress = jest.fn(() => true);
         const backUpWithUpdatedIdentity = {
           ...wrapper.vm.additionalMembers[0].backup,
           identitySet: wrapper.vm.householdCreate.additionalMembers[0].identitySet,
         };
         await wrapper.vm.updateMember(0);
-        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember).toHaveBeenCalledWith(
+        expect(wrapper.vm.$registrationStore.householdCreate.editAdditionalMember).toHaveBeenCalledWith(
           backUpWithUpdatedIdentity,
           0,
           !wrapper.vm.additionalMembers[0].sameAddress,
@@ -870,6 +881,18 @@ describe('ReviewRegistrationLib.vue', () => {
   });
 
   describe('Computed', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        vuetify,
+        propsData: {
+          i18n,
+          disableAutocomplete: false,
+          user: mockUserL6(),
+        },
+      });
+      wrapper.vm.$registrationStore.getHouseholdCreate = jest.fn(() => mockHouseholdCreate());
+    });
     describe('additionalMembersCopy', () => {
       it('should return additional members', () => {
         expect(wrapper.vm.additionalMembersCopy).toEqual(wrapper.vm.householdCreate.additionalMembers);
@@ -882,12 +905,6 @@ describe('ReviewRegistrationLib.vue', () => {
       });
     });
 
-    describe('getPersonalInformation', () => {
-      it('should return personalInformation', () => {
-        expect(wrapper.vm.getPersonalInformation).toEqual(_merge(mockContactInformation(), mockIdentitySet()));
-      });
-    });
-
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
         expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(i18n));
@@ -896,7 +913,8 @@ describe('ReviewRegistrationLib.vue', () => {
 
     describe('indigenousTypesItems', () => {
       it('returns the proper data', async () => {
-        wrapper.setData({
+        wrapper.vm.$registrationStore.getIndigenousTypesItems = jest.fn(() => mockIndigenousTypesItems());
+        await wrapper.setData({
           indexAdditionalMember: 0,
         });
         expect(wrapper.vm.indigenousTypesItems).toEqual(mockIndigenousTypesItems());
@@ -905,7 +923,8 @@ describe('ReviewRegistrationLib.vue', () => {
 
     describe('indigenousCommunitiesItems', () => {
       it('returns the proper data', async () => {
-        wrapper.setData({
+        wrapper.vm.$registrationStore.getIndigenousCommunitiesItems = jest.fn(() => mockIndigenousCommunitiesItems());
+        await wrapper.setData({
           indexAdditionalMember: 0,
         });
         expect(wrapper.vm.indigenousCommunitiesItems).toEqual(mockIndigenousCommunitiesItems());
@@ -920,12 +939,23 @@ describe('ReviewRegistrationLib.vue', () => {
 
     describe('splitMode', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.splitMode).toEqual(storage.registration.getters.isSplitMode());
+        expect(wrapper.vm.splitMode).toEqual(wrapper.vm.$registrationStore.isSplitMode());
       });
     });
   });
 
   describe('Life cycle', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        vuetify,
+        propsData: {
+          i18n,
+          disableAutocomplete: false,
+          user: mockUserL6(),
+        },
+      });
+    });
     describe('Created', () => {
       it('should call buildAdditionalMembersState', () => {
         jest.spyOn(wrapper.vm, 'buildAdditionalMembersState');

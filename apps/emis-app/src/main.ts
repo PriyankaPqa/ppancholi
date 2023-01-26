@@ -28,12 +28,16 @@ import { httpClient } from '@/services/httpClient';
 import { SignalR } from '@/ui/plugins/signal-r';
 import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import { createPinia, PiniaVuePlugin } from 'pinia';
+import resetStore from '@libs/stores-lib/store-reset';
+import registrationStore from '@/ui/plugins/registrationStore';
 import store from './store/store';
 import router from './ui/router';
 import App from './ui/App.vue';
 
 Vue.use(PiniaVuePlugin);
 const pinia = createPinia();
+pinia.use(resetStore);
+
 prepareServices(store);
 
 const storage = prepareStorage(store);
@@ -71,6 +75,8 @@ new Vue({
   store,
   pinia,
 }).$mount('#app');
+
+Vue.use(registrationStore);
 
 // Directive fo v-visible so component is hidden but still take its place
 Vue.directive('visible', (el, binding) => {

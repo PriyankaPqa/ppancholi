@@ -191,12 +191,14 @@ import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
 import {
-  EEventLocationStatus, IEventGenericLocation, IEventMainInfo,
+  EEventLocationStatus, IEventGenericLocation, IEventMetadata,
 } from '@libs/entities-lib/event';
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 import routes from '@/constants/routes';
-import { IMultilingual } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IAzureSearchResult, ICombinedIndex, IMultilingual } from '@libs/shared-lib/types';
+import { useRegistrationStore } from '@/pinia/registration/registration';
+import { IEventData } from '@libs/entities-lib/registration-event';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
@@ -229,7 +231,7 @@ export default mixins(household).extend({
       i18n: this.$i18n,
       moment,
       loading: true,
-      allEvents: [] as IEventMainInfo[],
+      allEvents: [] as ICombinedIndex<IEventData, IEventMetadata>[],
       showAddAdditionalMember: false,
       newAdditionalMember: null,
       disabledAddMembers: false,
@@ -272,7 +274,7 @@ export default mixins(household).extend({
     },
 
     household() : IHouseholdCreate {
-      return this.$storage.registration.getters.householdCreate();
+      return useRegistrationStore().getHouseholdCreate();
     },
 
     householdData() : IHouseholdCombined {
@@ -338,12 +340,12 @@ export default mixins(household).extend({
 
   async created() {
     await Promise.all([
-      this.$storage.registration.actions.fetchGenders(),
-      this.$storage.registration.actions.fetchPreferredLanguages(),
-      this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
-      this.$storage.registration.actions.fetchIndigenousCommunities(),
+      useRegistrationStore().fetchGenders(),
+      useRegistrationStore().fetchPreferredLanguages(),
+      useRegistrationStore().fetchPrimarySpokenLanguages(),
+      useRegistrationStore().fetchIndigenousCommunities(),
     ]);
-    this.$storage.registration.mutations.resetHouseholdCreate();
+    useRegistrationStore().resetHouseholdCreate();
     await this.fetchCaseFiles();
     await this.fetchMyEvents();
     await this.fetchShelterLocations();
@@ -356,8 +358,8 @@ export default mixins(household).extend({
     async fetchAllEvents() {
       if (this.caseFiles.length) {
         const eventIds = this.caseFiles.map((cf) => cf.eventId);
-        const results = await this.$services.publicApi.searchEventsById(eventIds);
-        this.allEvents = results?.value as IEventMainInfo[];
+        const results = await this.$services.publicApi.searchEventsById(eventIds) as IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>;
+        this.allEvents = results?.value;
       }
     },
 
@@ -373,8 +375,8 @@ export default mixins(household).extend({
 
     async setHouseholdCreate() {
       if (this.householdData) {
-        const householdCreateData = await this.buildHouseholdCreateData(this.householdData, null);
-        this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
+        const householdCreateData = await this.buildHouseholdCreateData(this.householdData);
+        useRegistrationStore().setHouseholdCreate(householdCreateData);
       }
     },
 

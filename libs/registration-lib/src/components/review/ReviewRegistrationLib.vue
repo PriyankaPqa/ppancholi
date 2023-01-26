@@ -145,6 +145,7 @@ import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validat
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { IContactInformation } from '@libs/entities-lib/src/value-objects/contact-information';
 import { IUser } from '@libs/entities-lib/user';
+import _merge from 'lodash/merge';
 import AddEditAdditionalMembersLib from '../additional-members/AddEditAdditionalMembersLib.vue';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
 import PersonalInformation from '../personal-information/PersonalInformationLib.vue';
@@ -209,7 +210,10 @@ export default mixins(additionalMemberForm).extend({
       moment,
       personalInformation: {
         inlineEdit: false,
-        backup: null,
+        backup: {
+          contactInformation: null,
+          identitySet: null,
+        },
         loading: false,
       },
       addresses: {
@@ -227,19 +231,19 @@ export default mixins(additionalMemberForm).extend({
 
   computed: {
     getPersonalInformation(): IContactInformation & IIdentitySet {
-      return this.$storage.registration.getters.personalInformation();
+      return _merge(this.$registrationStore.householdCreate.primaryBeneficiary.contactInformation, this.$registrationStore.householdCreate.primaryBeneficiary.identitySet);
     },
 
     associationMode(): boolean {
-      return this.$store.state.registration.householdAssociationMode;
+      return this.$registrationStore.householdAssociationMode;
     },
 
     splitMode(): boolean {
-      return this.$storage.registration.getters.isSplitMode();
+      return this.$registrationStore.isSplitMode();
     },
 
     householdAlreadyRegistered(): boolean {
-      return this.$store.state.registration.householdAlreadyRegistered;
+      return this.$registrationStore.householdAlreadyRegistered;
     },
   },
 
@@ -259,9 +263,10 @@ export default mixins(additionalMemberForm).extend({
 
   methods: {
     editPersonalInformation() {
-      this.personalInformation.backup = _cloneDeep(this.getPersonalInformation);
+      this.personalInformation.backup.identitySet = _cloneDeep(this.$registrationStore.householdCreate.primaryBeneficiary.identitySet);
+      this.personalInformation.backup.contactInformation = _cloneDeep(this.$registrationStore.householdCreate.primaryBeneficiary.contactInformation);
       this.personalInformation.inlineEdit = true;
-      this.$storage.registration.mutations.increaseInlineEditCounter();
+      this.$registrationStore.increaseInlineEditCounter();
     },
 
     editAddresses() {
@@ -270,24 +275,27 @@ export default mixins(additionalMemberForm).extend({
       this.addresses.backupHomeAddress = householdCopy.homeAddress;
       this.addresses.inlineEdit = true;
       this.addresses.backupNoFixedHome = householdCopy.noFixedHome;
-      this.$storage.registration.mutations.increaseInlineEditCounter();
+      this.$registrationStore.increaseInlineEditCounter();
     },
 
     cancelPersonalInformation() {
       if (this.personalInformation.inlineEdit) {
-        this.$storage.registration.mutations.setPersonalInformation(this.personalInformation.backup);
+        this.$registrationStore.householdCreate.primaryBeneficiary.setPersonalInformation(
+          this.personalInformation.backup.contactInformation,
+          this.personalInformation.backup.identitySet,
+        );
         this.personalInformation.inlineEdit = false;
-        this.$storage.registration.mutations.decreaseInlineEditCounter();
+        this.$registrationStore.decreaseInlineEditCounter();
       }
     },
 
     cancelAddresses() {
       if (this.addresses?.inlineEdit) {
         this.addresses.inlineEdit = false;
-        this.$storage.registration.mutations.decreaseInlineEditCounter();
-        this.$storage.registration.mutations.setHomeAddress(this.addresses.backupHomeAddress);
-        this.$storage.registration.mutations.setNoFixedHome(this.addresses.backupNoFixedHome);
-        this.$storage.registration.mutations.setCurrentAddress(this.addresses.backupCurrentAddress);
+        this.$registrationStore.decreaseInlineEditCounter();
+        this.$registrationStore.householdCreate.setHomeAddress(this.addresses.backupHomeAddress);
+        this.$registrationStore.householdCreate.noFixedHome = this.addresses.backupNoFixedHome;
+        this.$registrationStore.householdCreate.setCurrentAddress(this.addresses.backupCurrentAddress);
       }
     },
 
@@ -303,7 +311,7 @@ export default mixins(additionalMemberForm).extend({
           await this.updatePersonalInformation();
         }
         this.personalInformation.inlineEdit = false;
-        this.$storage.registration.mutations.decreaseInlineEditCounter();
+        this.$registrationStore.decreaseInlineEditCounter();
       } else {
         helpers.scrollToFirstError('app');
       }
@@ -321,7 +329,7 @@ export default mixins(additionalMemberForm).extend({
       );
 
       if (!resIdentity) {
-        this.$storage.registration.mutations.setIdentity(this.personalInformation.backup);
+        this.$registrationStore.householdCreate.primaryBeneficiary.setIdentity(this.personalInformation.backup.identitySet);
         this.personalInformation.loading = false;
         return;
       }
@@ -338,7 +346,7 @@ export default mixins(additionalMemberForm).extend({
       );
 
       if (!resContactInfo) {
-        this.$storage.registration.mutations.setContactInformation(this.personalInformation.backup);
+        this.$registrationStore.householdCreate.primaryBeneficiary.setContactInformation(this.personalInformation.backup.contactInformation);
         this.personalInformation.loading = false;
         return;
       }
@@ -353,7 +361,7 @@ export default mixins(additionalMemberForm).extend({
           await this.updateAddresses();
         }
         this.addresses.inlineEdit = false;
-        this.$storage.registration.mutations.decreaseInlineEditCounter();
+        this.$registrationStore.decreaseInlineEditCounter();
       } else {
         helpers.scrollToFirstError('app');
       }
@@ -368,7 +376,7 @@ export default mixins(additionalMemberForm).extend({
         const resHomeAddress = await this.updateHomeAddress(householdId, this.householdCreate);
 
         if (!resHomeAddress) {
-          this.$storage.registration.mutations.setHomeAddress(this.addresses.backupHomeAddress);
+          this.$registrationStore.householdCreate.setHomeAddress(this.addresses.backupHomeAddress);
           this.addresses.loading = false;
           return;
         }
@@ -379,7 +387,7 @@ export default mixins(additionalMemberForm).extend({
         const resCurrentAddress = await this.$services.households.updatePersonAddress(primaryBeneficiaryId, this.householdCreate.primaryBeneficiary.currentAddress);
 
         if (!resCurrentAddress) {
-          this.$storage.registration.mutations.setCurrentAddress(this.addresses.backupCurrentAddress);
+          this.$registrationStore.householdCreate.setCurrentAddress(this.addresses.backupCurrentAddress);
           this.addresses.loading = false;
           return;
         }

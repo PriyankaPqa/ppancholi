@@ -9,7 +9,7 @@ import { IAddress } from '@libs/entities-lib/value-objects/address/address.types
 import helpers from '@/ui/helpers/helpers';
 import { i18n } from '@/ui/plugins';
 
-import store from '@/store/store';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default {
   preferredLanguage(member: IMember): string {
@@ -75,7 +75,7 @@ export default {
 
     let communities = [];
     if (pCommunities.length === 0) {
-      communities = store.state.registration.indigenousCommunities;
+      communities = useRegistrationStore().indigenousCommunities;
     } else {
       communities = pCommunities;
     }

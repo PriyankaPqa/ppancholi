@@ -76,7 +76,7 @@ export default Vue.extend({
 
   computed: {
     isCRCRegistration(): boolean {
-      return this.$storage.registration.getters.isCRCRegistration();
+      return this.$registrationStore.isCRCRegistration();
     },
   },
 

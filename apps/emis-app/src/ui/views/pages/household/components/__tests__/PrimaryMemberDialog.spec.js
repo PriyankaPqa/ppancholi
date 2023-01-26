@@ -8,12 +8,13 @@ import { mockStorage } from '@/storage';
 
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from '../PrimaryMemberDialog.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember()] };
-
+const { pinia, registrationStore } = useMockRegistrationStore();
 const setCurrentAddress = jest.fn();
 
 householdCreate.additionalMembers = [
@@ -30,8 +31,9 @@ householdCreate.additionalMembers = [
 
 describe('PrimaryMemberDialog', () => {
   let wrapper;
-  storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
-  storage.registration.getters.personalInformation = jest.fn(() => mockIdentitySetData());
+
+  registrationStore.getHouseholdCreate = jest.fn(() => householdCreate);
+  registrationStore.householdCreate.primaryBeneficiary.personalInformation = mockIdentitySetData();
 
   libHelpers.getCanadianProvincesWithoutOther = jest.fn(() => [{ id: '1' }]);
 
@@ -43,9 +45,10 @@ describe('PrimaryMemberDialog', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should store the identity set data  into backupIdentitySet', async () => {
+      it('should store the identity set data into backupIdentitySet', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [],
@@ -61,6 +64,7 @@ describe('PrimaryMemberDialog', () => {
       it('should store the contact info into backupContactInfo', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [],
@@ -76,6 +80,7 @@ describe('PrimaryMemberDialog', () => {
       it('should save the currentAddress into backupAddress', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [],
@@ -95,6 +100,7 @@ describe('PrimaryMemberDialog', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           show: true,
           shelterLocations: [],
@@ -116,6 +122,7 @@ describe('PrimaryMemberDialog', () => {
       it('returns false if the address and the backup address are the same', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [],
@@ -135,6 +142,7 @@ describe('PrimaryMemberDialog', () => {
       it('returns true if the address and the backup address are not the same', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [],
@@ -195,6 +203,7 @@ describe('PrimaryMemberDialog', () => {
       it('returns the full list of temporary addresses types', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [{ status: EEventLocationStatus.Active }],
@@ -212,6 +221,7 @@ describe('PrimaryMemberDialog', () => {
       it('excludes shelter', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [],
@@ -233,65 +243,6 @@ describe('PrimaryMemberDialog', () => {
       });
     });
 
-    describe('member', () => {
-      it('returns the primaryBeneficiary when no id passed', () => {
-        expect(wrapper.vm.member).toEqual(householdCreate.primaryBeneficiary);
-      });
-    });
-
-    describe('member', () => {
-      it('returns the member of the right id when id passed', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            show: true,
-            shelterLocations: [],
-            memberId: householdCreate.primaryBeneficiary.id,
-          },
-          data() {
-            return { apiKey: '123' };
-          },
-          mocks: { $storage: storage },
-        });
-        expect(wrapper.vm.member).toEqual(householdCreate.primaryBeneficiary);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            show: true,
-            shelterLocations: [],
-            memberId: householdCreate.additionalMembers[0].id,
-          },
-          data() {
-            return { apiKey: '123' };
-          },
-          mocks: { $storage: storage },
-        });
-        expect(wrapper.vm.member).toEqual(householdCreate.additionalMembers[0]);
-      });
-    });
-
-    describe('additionalMembers', () => {
-      it('returns the other members', () => {
-        expect(wrapper.vm.additionalMembers).toEqual(householdCreate.additionalMembers);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            show: true,
-            shelterLocations: [],
-            memberId: householdCreate.additionalMembers[0].id,
-          },
-          data() {
-            return { apiKey: '123' };
-          },
-          mocks: { $storage: storage },
-        });
-        expect(wrapper.vm.additionalMembers).toEqual([householdCreate.primaryBeneficiary,
-          householdCreate.additionalMembers[1], householdCreate.additionalMembers[2]]);
-      });
-    });
-
     describe('submitButtonDisabled', () => {
       it('returns true if failed is true', async () => {
         expect(wrapper.vm.submitButtonDisabled(true, false)).toBeTruthy();
@@ -300,6 +251,7 @@ describe('PrimaryMemberDialog', () => {
       it('returns true if pristine is true, changedAddress is false and makePrimaryMode is false', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [],
@@ -323,6 +275,7 @@ describe('PrimaryMemberDialog', () => {
       it('returns true if submitLoading is true', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [],
@@ -348,6 +301,7 @@ describe('PrimaryMemberDialog', () => {
       it('return correct value', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [],
@@ -367,6 +321,7 @@ describe('PrimaryMemberDialog', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [],
@@ -391,6 +346,7 @@ describe('PrimaryMemberDialog', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           show: true,
           shelterLocations: [],
@@ -433,7 +389,7 @@ describe('PrimaryMemberDialog', () => {
           },
         });
         await wrapper.vm.onSubmit();
-        expect(storage.registration.actions.updatePersonIdentity).toHaveBeenCalledWith({ member: wrapper.vm.member, isPrimaryMember: true });
+        expect(registrationStore.updatePersonIdentity).toHaveBeenCalledWith({ member: wrapper.vm.member, isPrimaryMember: true });
       });
 
       it('calls updatePersonContactInformation action if changedContactInfo is true', async () => {
@@ -445,7 +401,7 @@ describe('PrimaryMemberDialog', () => {
           },
         });
         await wrapper.vm.onSubmit();
-        expect(storage.registration.actions.updatePersonContactInformation)
+        expect(registrationStore.updatePersonContactInformation)
           .toHaveBeenCalledWith({ member: wrapper.vm.member, isPrimaryMember: true });
       });
 
@@ -465,6 +421,7 @@ describe('PrimaryMemberDialog', () => {
       it('calls the makePrimary service and the setIsPrivacyAgreed mutation if makePrimaryMode is true', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             shelterLocations: [],
@@ -479,7 +436,7 @@ describe('PrimaryMemberDialog', () => {
         await wrapper.vm.onSubmit();
         expect(wrapper.vm.$services.households.makePrimary)
           .toHaveBeenCalledWith(householdCreate.id, wrapper.vm.member.id, householdCreate.consentInformation);
-        expect(storage.registration.mutations.setIsPrivacyAgreed).toHaveBeenCalledWith(false);
+        expect(registrationStore.isPrivacyAgreed).toEqual(false);
       });
 
       it('emits close', async () => {
@@ -527,7 +484,7 @@ describe('PrimaryMemberDialog', () => {
     describe('submitAddressUpdate', () => {
       it('calls the action updatePersonAddress ', async () => {
         await wrapper.vm.submitAddressUpdate();
-        expect(storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith(
+        expect(registrationStore.updatePersonAddress).toHaveBeenCalledWith(
           { member: wrapper.vm.member, isPrimaryMember: true },
         );
       });
@@ -546,6 +503,7 @@ describe('PrimaryMemberDialog', () => {
           jest.clearAllMocks();
           wrapper = shallowMount(Component, {
             localVue,
+            pinia,
             propsData: {
               show: true,
               shelterLocations: [],
@@ -557,14 +515,14 @@ describe('PrimaryMemberDialog', () => {
           });
 
           await wrapper.vm.updateAdditionalMembersWithSameAddress();
-          expect(storage.registration.actions.updatePersonAddress).toHaveBeenCalledTimes(2);
+          expect(registrationStore.updatePersonAddress).toHaveBeenCalledTimes(2);
           expect(setCurrentAddress).toHaveBeenCalledTimes(2);
-          expect(storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith({
+          expect(registrationStore.updatePersonAddress).toHaveBeenCalledWith({
             member: householdCreate.additionalMembers[0],
             isPrimaryMember: false,
             index: 0,
           });
-          expect(storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith({
+          expect(registrationStore.updatePersonAddress).toHaveBeenCalledWith({
             member: householdCreate.additionalMembers[1],
             isPrimaryMember: false,
             index: 1,

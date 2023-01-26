@@ -41,6 +41,7 @@ describe('AdditionalMembersLib.vue', () => {
 
     describe('primaryBeneficiary', () => {
       it('should be linked to household member from the store', () => {
+        wrapper.vm.$registrationStore.getHouseholdCreate = jest.fn(() => mockHouseholdCreate());
         expect(wrapper.vm.primaryBeneficiary).toEqual(mockHouseholdCreate().primaryBeneficiary);
       });
     });
@@ -71,8 +72,9 @@ describe('AdditionalMembersLib.vue', () => {
 
     describe('deleteAdditionalMember', () => {
       it('should call removeAdditionalMember mutations with current index', () => {
+        wrapper.vm.$registrationStore.householdCreate.removeAdditionalMember = jest.fn();
         wrapper.vm.deleteAdditionalMember();
-        expect(wrapper.vm.$storage.registration.mutations.removeAdditionalMember).toHaveBeenLastCalledWith(wrapper.vm.index);
+        expect(wrapper.vm.$registrationStore.householdCreate.removeAdditionalMember).toHaveBeenLastCalledWith(wrapper.vm.index);
       });
 
       it('should set showDeleteDialog to false', () => {

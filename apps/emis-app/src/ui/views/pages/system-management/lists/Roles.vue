@@ -15,6 +15,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { EOptionLists } from '@libs/entities-lib/optionItem';
+import { useOptionListStore } from '@/pinia/option-list/optionList';
 import OptionList from './components/OptionList.vue';
 
 export default Vue.extend({
@@ -25,8 +26,8 @@ export default Vue.extend({
   },
 
   created() {
-    this.$storage.optionList.mutations.resetState();
-    this.$storage.optionList.mutations.setList(EOptionLists.Roles);
+    useOptionListStore().resetState();
+    useOptionListStore().list = EOptionLists.Roles;
   },
 });
 </script>

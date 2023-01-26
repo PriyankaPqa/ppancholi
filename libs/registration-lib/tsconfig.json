@@ -37,6 +37,9 @@
       "@libs/services-lib/*": [
         "../../libs/services-lib/src/*"
       ],
+      "@libs/stores-lib/*": [
+        "../../libs/stores-lib/src/*"
+      ],
       "@/*": [
         "src/*"
       ],

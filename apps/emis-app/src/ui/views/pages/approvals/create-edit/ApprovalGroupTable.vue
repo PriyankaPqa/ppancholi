@@ -151,6 +151,7 @@ import {
   VSelectWithValidation,
 } from '@libs/component-lib/components';
 import RcItemAmount from '@libs/component-lib/components/atoms/RcItemAmount.vue';
+import { useApprovalTableStore } from '@/pinia/approval-table/approval-table';
 import { VForm } from '@libs/shared-lib/types';
 import mixins from 'vue-typed-mixins';
 import approvalRoles from '@/ui/views/pages/approvals/mixins/approvalRoles';
@@ -266,7 +267,7 @@ export default mixins(approvalRoles).extend({
       if (doDelete) {
         if (this.editMode) {
           this.deleteGroupLoadingIndex = index;
-          const res = await this.$storage.approvalTable.actions.removeGroup(this.approval.id, this.approval.groups[index].id);
+          const res = await useApprovalTableStore().removeGroup({ approvalId: this.approval.id, groupId: this.approval.groups[index].id });
           this.deleteGroupLoadingIndex = -1;
           if (res) {
             this.$toasted.global.success(this.$t('approval_table.group.remove.success'));
@@ -293,7 +294,7 @@ export default mixins(approvalRoles).extend({
     async applyEdit(index: number) {
       if (this.editMode) {
         this.editGroupLoading = true;
-        const res = await this.$storage.approvalTable.actions.editGroup(this.approval.id, this.approval.groups[index]);
+        const res = await useApprovalTableStore().editGroup({ approvalId: this.approval.id, group: this.approval.groups[index] });
         this.editGroupLoading = false;
         if (res) {
           this.$toasted.global.success(this.$t('approval_table.group.edit.success'));
@@ -311,7 +312,7 @@ export default mixins(approvalRoles).extend({
       if (isValid) {
         if (this.editMode) {
           this.addGroupLoading = true;
-          const res = await this.$storage.approvalTable.actions.addGroup(this.approval.id, group);
+          const res = await useApprovalTableStore().addGroup({ approvalId: this.approval.id, group });
           this.addGroupLoading = false;
           if (res) {
             this.$toasted.global.success(this.$t('approval_table.group.add.success'));

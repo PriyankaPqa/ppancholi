@@ -1,4 +1,4 @@
-import { IOptionItemData, IOptionSubItem } from '@libs/entities-lib/optionItem';
+import { ICreateOptionItemRequest, IOptionItemData } from '@libs/entities-lib/optionItem';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
 import { IOptionItemBaseService } from './base.types';
@@ -6,11 +6,11 @@ import { IOptionItemBaseService } from './base.types';
 import { DomainBaseService } from '../base';
 
 export class OptionItemBaseService extends DomainBaseService<IOptionItemData, uuid> implements IOptionItemBaseService {
-  async createOptionItem(optionItem: IOptionItemData): Promise<IOptionItemData> {
+  async createOptionItem(optionItem: ICreateOptionItemRequest): Promise<IOptionItemData> {
     return this.http.post(`${this.baseUrl}`, optionItem);
   }
 
-  async addSubItem(itemId: string, subItem: IOptionSubItem): Promise<IOptionItemData> {
+  async addSubItem(itemId: string, subItem: ICreateOptionItemRequest): Promise<IOptionItemData> {
     return this.http.patch(`${this.baseUrl}/${itemId}/add-subitem`, subItem);
   }
 

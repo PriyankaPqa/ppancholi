@@ -3,12 +3,13 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from '../MainLayout.vue';
 
 const storage = mockStorage();
-storage.registration.actions.fetchEvent = jest.fn(() => mockEvent());
 
-const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
+const { pinia, registrationStore } = useMockRegistrationStore();
+const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
 describe('MainLayout.vue', () => {
   const localVue = createLocalVue();
 
@@ -25,6 +26,7 @@ describe('MainLayout.vue', () => {
 
     await wrapper.setData({ fetchingData: false });
     jest.clearAllMocks();
+    registrationStore.fetchEvent = jest.fn(() => mockEvent());
   });
 
   describe('Template', () => {
@@ -51,7 +53,7 @@ describe('MainLayout.vue', () => {
         it('gets the event from storage', async () => {
           wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' }, query: {} };
           await wrapper.vm.initializeEvent();
-          expect(storage.registration.actions.fetchEvent).toHaveBeenCalledWith('lang', 'reg');
+          expect(registrationStore.fetchEvent).toHaveBeenCalledWith('lang', 'reg');
         });
 
         it('set the tenantId to appInsights', async () => {
@@ -77,7 +79,7 @@ describe('MainLayout.vue', () => {
           wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' }, query: {} };
           await wrapper.vm.initializeEvent();
           expect(wrapper.vm.$services.assessmentForms.getForBeneficiary).toHaveBeenCalledWith(mockEvent().registrationAssessments[0].assessmentId);
-          expect(wrapper.vm.$storage.registration.mutations.setAssessmentToComplete).toHaveBeenCalledWith({
+          expect(registrationStore.setAssessmentToComplete).toHaveBeenCalledWith({
             assessmentForm: wrapper.vm.$services.assessmentForms.getForBeneficiary(),
             registrationAssessment: mockEvent().registrationAssessments[0],
           });
@@ -87,17 +89,17 @@ describe('MainLayout.vue', () => {
       describe('fetchData', () => {
         it('calls fetchGenders', async () => {
           await wrapper.vm.fetchData();
-          expect(wrapper.vm.$storage.registration.actions.fetchGenders).toHaveBeenCalled();
+          expect(registrationStore.fetchGenders).toHaveBeenCalled();
         });
 
         it('calls fetchPreferredLanguages', async () => {
           await wrapper.vm.fetchData();
-          expect(wrapper.vm.$storage.registration.actions.fetchPreferredLanguages).toHaveBeenCalled();
+          expect(registrationStore.fetchPreferredLanguages).toHaveBeenCalled();
         });
 
         it('calls fetchPrimarySpokenLanguages', async () => {
           await wrapper.vm.fetchData();
-          expect(wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages).toHaveBeenCalled();
+          expect(registrationStore.fetchPrimarySpokenLanguages).toHaveBeenCalled();
         });
 
         it('calls fetchFeatures', async () => {
@@ -110,7 +112,7 @@ describe('MainLayout.vue', () => {
         it('tracks exception', async () => {
           const testError = new Error('err');
 
-          wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages = jest.fn(
+          registrationStore.fetchPrimarySpokenLanguages = jest.fn(
             () => new Promise(() => {
               throw testError;
             }),

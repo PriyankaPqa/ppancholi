@@ -22,7 +22,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VCheckboxWithValidation } from '@libs/component-lib/components';
-
 import moment from 'moment';
 
 export default Vue.extend({
@@ -52,11 +51,11 @@ export default Vue.extend({
 
     isPrivacyAgreed: {
       get(): boolean {
-        return this.$store.state.registration.isPrivacyAgreed;
+        return this.$registrationStore.isPrivacyAgreed;
       },
       set(checked: boolean) {
-        this.$storage.registration.mutations.setIsPrivacyAgreed(checked);
-        this.$storage.registration.mutations.setDateTimeConsent(checked ? moment.utc(moment()).format() : null);
+        this.$registrationStore.isPrivacyAgreed = checked;
+        this.$registrationStore.householdCreate.consentInformation.privacyDateTimeConsent = checked ? moment.utc(moment()).format() : null;
       },
     },
   },

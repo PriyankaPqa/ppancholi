@@ -19,19 +19,11 @@ describe('AdditionalMemberTemplate.vue', () => {
         member: mockMember(),
         inlineEdit: false,
       },
-      store: {
-        modules: {
-          registration: {
-            state: {
-              indigenousCommunities: [{
-                id: 'guid-community',
-                communityName: 'communityName',
-              }],
-            },
-          },
-        },
-      },
     });
+    wrapper.vm.$registrationStore.indigenousCommunities = [{
+      id: 'guid-community',
+      communityName: 'communityName',
+    }];
   });
 
   describe('Template', () => {

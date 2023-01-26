@@ -41,7 +41,7 @@ export default Vue.extend({
   },
   computed: {
     noHomeAddress(): boolean {
-      return this.$storage.registration.getters.householdCreate().noFixedHome;
+      return this.$registrationStore.getHouseholdCreate().noFixedHome;
     },
 
     addressLine(): string {

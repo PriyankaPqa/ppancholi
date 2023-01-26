@@ -5,11 +5,13 @@ import {
 
 import { EOptionLists } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
+import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import Component from '../CaseFileCloseReasons.vue';
 import OptionList from '../../components/OptionList.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, optionListStore } = useMockOptionListStore();
 
 describe('CaseFileCloseReasons.vue', () => {
   let wrapper;
@@ -17,6 +19,7 @@ describe('CaseFileCloseReasons.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       mocks: {
         $storage: storage,
       },
@@ -35,11 +38,18 @@ describe('CaseFileCloseReasons.vue', () => {
 
   describe('Created hook', () => {
     it('reset the state of optionList', async () => {
-      expect(storage.optionList.mutations.resetState).toBeCalled();
+      optionListStore.resetState = jest.fn();
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+      expect(optionListStore.resetState).toBeCalled();
     });
 
-    it('set the list with correct one', () => {
-      expect(storage.optionList.mutations.setList).toHaveBeenCalledWith(EOptionLists.CaseFileCloseReasons);
+    it('set the list with correct one', async () => {
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+      expect(optionListStore.list).toEqual(EOptionLists.CaseFileCloseReasons);
     });
   });
 });

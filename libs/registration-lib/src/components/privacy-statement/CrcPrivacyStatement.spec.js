@@ -1,5 +1,6 @@
 import { ERegistrationMethod } from '@libs/shared-lib/src/types';
-import { mockRegistrationLocations } from '@libs/entities-lib/src/registration-event';
+import { mockEventData, mockRegistrationLocations } from '@libs/entities-lib/src/registration-event';
+import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { mockStorage } from '../../store/storage';
 import Component from './CrcPrivacyStatement.vue';
@@ -7,7 +8,7 @@ import { i18n } from '../../ui/plugins/i18n';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-
+const { pinia, registrationStore } = useMockRegistrationStore();
 // eslint-disable-next-line no-console
 console.warn = jest.fn();
 
@@ -25,6 +26,7 @@ describe('CrcPrivacyStatement.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         i18n,
         user: mockUserL6(),
@@ -33,6 +35,8 @@ describe('CrcPrivacyStatement.vue', () => {
         $storage: storage,
       },
     });
+    wrapper.vm.$registrationStore = registrationStore;
+    wrapper.vm.$registrationStore.event = mockEventData();
   });
 
   describe('Computed', () => {
@@ -52,30 +56,39 @@ describe('CrcPrivacyStatement.vue', () => {
 
     describe('privacyCRCUsername', () => {
       it('is linked to privacyCRCUsername in the store', () => {
-        expect(wrapper.vm.privacyCRCUsername).toEqual(wrapper.vm.$store.state.registration.householdCreate.consentInformation.crcUserName);
+        expect(wrapper.vm.privacyCRCUsername).toEqual(registrationStore.householdCreate.consentInformation.crcUserName);
       });
 
       it('calls setPrivacyCRCUsername with value', () => {
         wrapper.vm.privacyCRCUsername = 'name';
-        expect(wrapper.vm.$storage.registration.mutations.setPrivacyCRCUsername).toHaveBeenCalledWith('name');
+        expect(registrationStore.householdCreate.consentInformation.crcUserName).toEqual('name');
       });
     });
 
     describe('privacyRegistrationMethod', () => {
       it('is linked to privacyRegistrationMethod in the store', () => {
-        expect(wrapper.vm.privacyRegistrationMethod).toEqual(
-          wrapper.vm.$store.state.registration.householdCreate.consentInformation.registrationMethod,
-        );
+        expect(wrapper.vm.privacyRegistrationMethod).toEqual(registrationStore.householdCreate.consentInformation.registrationMethod);
       });
 
       it('calls setPrivacyRegistrationMethod with value', () => {
         wrapper.vm.privacyRegistrationMethod = ERegistrationMethod.Phone;
-        expect(wrapper.vm.$storage.registration.mutations.setPrivacyRegistrationMethod).toHaveBeenCalledWith(ERegistrationMethod.Phone);
+        expect(registrationStore.householdCreate.consentInformation.registrationMethod).toEqual(ERegistrationMethod.Phone);
       });
     });
 
     describe('activeRegistrationLocations', () => {
       it('should return the registration location from the current event', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            i18n,
+            user: mockUserL6(),
+          },
+          computed: {
+            event: () => mockEventData(),
+          },
+        });
         expect(wrapper.vm.activeRegistrationLocations).toEqual(mockRegistrationLocations());
       });
 
@@ -83,6 +96,7 @@ describe('CrcPrivacyStatement.vue', () => {
         const location = { ...mockRegistrationLocations()[0], name: { translation: { en: 'mock-name' } } };
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             i18n,
             registrationLocations: [location],
@@ -100,6 +114,7 @@ describe('CrcPrivacyStatement.vue', () => {
       it('should return true if registration method is in person', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             privacyRegistrationMethod() {
               return ERegistrationMethod.InPerson;
@@ -116,6 +131,7 @@ describe('CrcPrivacyStatement.vue', () => {
       it('should return false if registration method is not in person', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             privacyRegistrationMethod() {
               return ERegistrationMethod.Phone;
@@ -135,7 +151,7 @@ describe('CrcPrivacyStatement.vue', () => {
     describe('resetPrivacyRegistrationLocation', () => {
       it('should reset privacyRegistrationLocationName ', () => {
         wrapper.vm.resetPrivacyRegistrationLocation();
-        expect(wrapper.vm.$storage.registration.mutations.setPrivacyRegistrationLocationId).toHaveBeenCalledWith(null);
+        expect(registrationStore.householdCreate.consentInformation.registrationLocationId).toEqual(null);
       });
 
       it('should be called when registration method changes', async () => {
@@ -148,8 +164,8 @@ describe('CrcPrivacyStatement.vue', () => {
 
     describe('autoFillUserName', () => {
       it('should prefill the privacyCRCUsername if empty ', () => {
-        wrapper.vm.resetPrivacyRegistrationLocation();
-        expect(wrapper.vm.$storage.registration.mutations.setPrivacyCRCUsername).toHaveBeenCalledWith(wrapper.vm.user.getFullName());
+        wrapper.vm.autoFillUserName();
+        expect(registrationStore.householdCreate.consentInformation.crcUserName).toEqual(wrapper.vm.user.getFullName());
       });
     });
 
@@ -164,12 +180,13 @@ describe('CrcPrivacyStatement.vue', () => {
       it('should call setPrivacyRegistrationLocationId mutation with the id', () => {
         const location = mockRegistrationLocations()[0];
         wrapper.vm.setRegistrationLocation(location);
-        expect(wrapper.vm.$storage.registration.mutations.setPrivacyRegistrationLocationId).toHaveBeenCalledWith(location.id);
+        expect(registrationStore.householdCreate.consentInformation.registrationLocationId).toEqual(location.id);
       });
 
       it('should be called when registration location changes', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           computed: {
             isRegistrationMethodInPerson: () => true,
           },
@@ -192,6 +209,7 @@ describe('CrcPrivacyStatement.vue', () => {
       it('should load registration from the store', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             i18n,
             user: mockUserL6(),
@@ -203,20 +221,8 @@ describe('CrcPrivacyStatement.vue', () => {
               }];
             },
           },
-          store: {
-            modules: {
-              registration: {
-                state: {
-                  householdCreate: {
-                    consentInformation: {
-                      registrationLocationId: 'location_id',
-                    },
-                  },
-                },
-              },
-            },
-          },
         });
+        wrapper.vm.$registrationStore.householdCreate.consentInformation.registrationLocationId = 'location_id';
         wrapper.vm.loadRegistrationLocation();
         expect(wrapper.vm.privacyRegistrationLocation).toEqual({ id: 'location_id' });
       });

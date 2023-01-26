@@ -182,8 +182,10 @@ export default Vue.extend({
       }
 
       const uiStateKey = this.getTableName() + this.route;
+
       // eslint-disable-next-line
       let state = useUiStateStore().getSearchTableState(uiStateKey) as any;
+
       if (state) {
         state = _cloneDeep(state);
         this.azureSearchParams = state.azureSearchParams;

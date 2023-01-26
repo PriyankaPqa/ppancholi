@@ -75,7 +75,7 @@ import {
   RcDataTable,
   RcAddButtonWithMenu,
 } from '@libs/component-lib/components';
-import { IApprovalTableCombined } from '@libs/entities-lib/approvals/approvals-table';
+import { IApprovalTableCombined, IApprovalTableEntity, IApprovalTableMetadata } from '@libs/entities-lib/approvals/approvals-table';
 import { TranslateResult } from 'vue-i18n';
 import { DataTableHeader } from 'vuetify';
 import { EFilterType, IFilterSettings, ITableAddButtonMenuItems } from '@libs/component-lib/types';
@@ -87,6 +87,7 @@ import _isEmpty from 'lodash/isEmpty';
 import { IProgramEntity, IProgramMetadata, IdParams } from '@libs/entities-lib/program';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
+import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ApprovalTablesHome',
@@ -109,6 +110,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [false],
       },
       combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata, IdParams>(useProgramStore(), useProgramMetadataStore()),
+      combinedApprovalTableStore: new CombinedStoreFactory<IApprovalTableEntity, IApprovalTableMetadata, IdParams>(useApprovalTableStore(), useApprovalTableMetadataStore()),
     };
   },
 
@@ -139,7 +141,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       });
 
       if (userChoice) {
-        await this.$storage.approvalTable.actions.deactivate(id);
+        await useApprovalTableStore().deactivate(id);
       }
     },
 
@@ -166,7 +168,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (_isEmpty(params.filter)) {
         params.filter = this.presetFilter;
       }
-      const res = await this.$storage.approvalTable.actions.search({
+      const res = await this.combinedApprovalTableStore.search({
         search: params.search,
         filter: params.filter,
         top: params.top,
@@ -211,12 +213,13 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     tableData(): IApprovalTableCombined[] {
-      return this.$storage.approvalTable.getters.getByIds(this.searchResultIds, {
+      const res = this.combinedApprovalTableStore.getByIds(this.searchResultIds, {
         onlyActive: true,
         prependPinnedItems: true,
         baseDate: this.searchExecutionDate,
         parentId: { eventId: this.eventId },
       });
+      return res;
     },
 
     customColumns(): Record<string, string> {

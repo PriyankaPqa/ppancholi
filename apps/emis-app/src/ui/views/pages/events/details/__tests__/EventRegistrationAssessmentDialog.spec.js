@@ -1,17 +1,22 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import { mockStorage } from '@/storage';
+import { mockProvider } from '@/services/provider';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import entityUtils from '@libs/entities-lib/utils';
 import { EEventSummarySections } from '@/types';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 
+import { mockCombinedAssessmentForms } from '@libs/entities-lib/assessment-template';
 import Component from '../components/EventRegistrationAssessmentDialog.vue';
 
 const localVue = createLocalVue();
 
 const mockEvent = mockEventEntity();
+const services = mockProvider();
 const storage = mockStorage();
+
+services.assessmentForms.search = jest.fn(() => ({ value: mockCombinedAssessmentForms() }));
 
 describe('EventRegistrationAssessmentDialog.vue', () => {
   let wrapper;
@@ -32,6 +37,7 @@ describe('EventRegistrationAssessmentDialog.vue', () => {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
         $storage: storage,
+        $services: services,
       },
       ...additionalOverwrites,
     });
@@ -66,12 +72,16 @@ describe('EventRegistrationAssessmentDialog.vue', () => {
   describe('Lifecycle', () => {
     describe('created', () => {
       it('calls search for assessmentForms', () => {
+        const assessments = wrapper.vm.$services.assessmentForms.search().value.map((a) => a.entity);
+        assessments.forEach((a) => {
+          a.nameWithStatus = 'Assessment Floods 2021 [enums.assessmentPublishStatus.Published]';
+        });
         expect(wrapper.vm.$services.assessmentForms.search).toHaveBeenCalledWith({
           filter: { 'Entity/EventId': wrapper.vm.event.id },
           orderBy: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
         });
 
-        expect(wrapper.vm.assessments).toEqual(wrapper.vm.$services.assessmentForms.search().value);
+        expect(wrapper.vm.assessments).toEqual(assessments);
       });
 
       it('sets data in creation mode', async () => {

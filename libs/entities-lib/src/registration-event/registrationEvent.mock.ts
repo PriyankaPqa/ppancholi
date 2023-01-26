@@ -1,12 +1,12 @@
 import deepmerge from 'deepmerge';
-import { IAzureSearchResult, ECanadaProvinces } from '@libs/shared-lib/types';
+import { IAzureSearchResult, ECanadaProvinces, ICombinedIndex } from '@libs/shared-lib/types';
+import { mockEventMetadatum, IEventMetadata, IRegistrationAssessment } from '../event';
 import {
   IEventData, IEvent, IEventGenericLocation, EEventStatus, EResponseLevel,
 } from './registrationEvent.types';
 
 import { RegistrationEvent } from './registrationEvent';
 import { IShelterLocationData } from '../household-create';
-import { IRegistrationAssessment } from '../event';
 
 export const mockShelterLocations = (): IShelterLocationData[] => ([
   {
@@ -80,12 +80,15 @@ export const mockEventData = (): IEventData => ({
   registrationAssessments: [{ assessmentId: 'assessmentId', id: 'id' } as IRegistrationAssessment],
 });
 
-export const mockSearchEventsData = (): IAzureSearchResult<unknown> => ({
+export const mockSearchEventsData = (): IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>> => ({
   odataContext: 'test',
   odataCount: 1,
   value: [
     {
+      id: '',
+      tenantId: '',
       entity: mockEventData(),
+      metadata: mockEventMetadatum(),
     },
   ],
 });

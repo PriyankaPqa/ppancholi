@@ -4,11 +4,12 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/storage';
 
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from './SplitHouseholdMembers.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-
+const { pinia, registrationStore } = useMockRegistrationStore();
 describe('SplitHouseholdMembers', () => {
   let wrapper;
 
@@ -16,6 +17,7 @@ describe('SplitHouseholdMembers', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         mocks: { $storage: storage },
         computed: {
           members() {
@@ -37,9 +39,10 @@ describe('SplitHouseholdMembers', () => {
     describe('members', () => {
       it('returns the right result of the store getter householdCreate ', () => {
         const household = { additionalMembers: [mockMember({ id: '1' })] };
-        storage.registration.getters.householdCreate = jest.fn(() => household);
+        registrationStore.getHouseholdCreate = jest.fn(() => household);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           mocks: { $storage: storage },
         });
 

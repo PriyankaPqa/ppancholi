@@ -5,11 +5,13 @@ import {
 
 import { EOptionLists } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
+import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import Component from '../ReferralOutcomeStatuses.vue';
 import OptionList from '../../components/OptionList.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, optionListStore } = useMockOptionListStore();
 
 describe('ReferralOutcomeStatuses.vue', () => {
   let wrapper;
@@ -17,6 +19,7 @@ describe('ReferralOutcomeStatuses.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       mocks: {
         $storage: storage,
       },
@@ -35,11 +38,11 @@ describe('ReferralOutcomeStatuses.vue', () => {
 
   describe('Created hook', () => {
     it('reset the state of optionList', async () => {
-      expect(storage.optionList.mutations.resetState).toBeCalled();
+      expect(optionListStore.resetState).toBeCalled();
     });
 
     it('set the list with correct one', () => {
-      expect(storage.optionList.mutations.setList).toHaveBeenCalledWith(EOptionLists.ReferralOutcomeStatus);
+      expect(optionListStore.list).toEqual(EOptionLists.ReferralOutcomeStatus);
     });
   });
 });

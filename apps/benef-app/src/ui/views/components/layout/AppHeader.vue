@@ -46,6 +46,7 @@ import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue'
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -71,7 +72,7 @@ export default Vue.extend({
     },
 
     event(): IEvent {
-      return this.$storage.registration.getters.event();
+      return useRegistrationStore().getEvent();
     },
 
     eventName(): string {
@@ -89,8 +90,7 @@ export default Vue.extend({
 
   methods: {
     toggleLeftMenu() {
-      const isLeftMenuOpen = this.$storage.registration.getters.isLeftMenuOpen();
-      this.$storage.registration.mutations.toggleLeftMenu(!isLeftMenuOpen);
+      useRegistrationStore().isLeftMenuOpen = !useRegistrationStore().isLeftMenuOpen;
     },
     openHelp() {
       helpers.openHelpCenterWindow(this.$t(this.helpLink) as string, 300);

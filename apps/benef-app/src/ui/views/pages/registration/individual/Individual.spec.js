@@ -1,10 +1,15 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { createTestingPinia } from '@pinia/testing';
+import { tabs } from '@/pinia/registration/tabs';
 import Component from './Individual.vue';
 
 const localVue = createLocalVue();
-const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
+const pinia = createTestingPinia({ stubActions: false });
+const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
+useMockRegistrationStore(pinia);
 
 describe('Individual.vue', () => {
   let wrapper;
@@ -13,15 +18,14 @@ describe('Individual.vue', () => {
   });
 
   describe('Template', () => {
-    beforeEach(() => {
-      wrapper = mount(Component, {
-        pinia,
-        localVue,
-        stubs: ['i18n'],
-      });
-    });
-
     describe('Event handlers', () => {
+      beforeEach(() => {
+        wrapper = mount(Component, {
+          pinia,
+          localVue,
+          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
+        });
+      });
       test('Click back button triggers method', async () => {
         wrapper.vm.back = jest.fn();
 
@@ -50,7 +54,7 @@ describe('Individual.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia,
-          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha'],
+          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
           computed: {
             isCaptchaAllowedIpAddress: () => false,
           },
@@ -67,7 +71,7 @@ describe('Individual.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia,
-          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha'],
+          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
           computed: {
             isCaptchaAllowedIpAddress: () => false,
           },
@@ -84,7 +88,7 @@ describe('Individual.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia,
-          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha'],
+          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
           computed: {
             isCaptchaAllowedIpAddress: () => true,
           },
@@ -108,7 +112,7 @@ describe('Individual.vue', () => {
     });
     describe('back', () => {
       test('back calls jump', async () => {
-        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
+        wrapper.vm.$registrationStore.currentTabIndex = 2;
         wrapper.vm.jump = jest.fn();
 
         await wrapper.vm.back();
@@ -122,15 +126,14 @@ describe('Individual.vue', () => {
         'should called execute from recaptcha if on review stage and if BotProtection is enabled and if ip address is not in allowed list',
         async () => {
           wrapper.vm.$refs.recaptchaSubmit = {};
+          wrapper.vm.validateAndNext = jest.fn();
           wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
-          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
-            id: 'review',
-          }));
+          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'review'));
           wrapper.vm.$hasFeature = jest.fn(() => true);
-          tenantSettingsStore.recaptcha = jest.fn(() => ({
+          tenantSettingsStore.recaptcha = {
             ipAddressIsAllowed: false,
             clientIpAddress: '',
-          }));
+          };
           await wrapper.vm.goNext();
           expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(1);
         },
@@ -138,9 +141,7 @@ describe('Individual.vue', () => {
       it('should call next from mixin otherwise', async () => {
         wrapper.vm.next = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
-          id: 'other',
-        }));
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'additionalMembers'));
         await wrapper.vm.goNext();
         expect(wrapper.vm.next).toHaveBeenCalledTimes(1);
       });

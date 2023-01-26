@@ -1,24 +1,23 @@
 import { shallowMount, createLocalVue } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { EFilterType } from '@libs/component-lib/types';
 import { mockProgramEntities, mockProgramEntity } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import { mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
-import { useMockProgramStore } from '@/pinia/program/program.mock';
+import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
 import Component from './ApprovalTablesHome.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 let wrapper;
-const { pinia } = useMockProgramStore();
+const { approvalTableStore, pinia } = useMockApprovalTableStore();
+const table = { ...mockCombinedApprovalTable(), pinned: false };
+
 const doMount = () => {
   const options = {
     localVue,
     pinia,
     mocks: {
-      $storage: storage,
       $route: {
         params: {
           id: '1',
@@ -28,6 +27,8 @@ const doMount = () => {
   };
   wrapper = shallowMount(Component, options);
 
+  wrapper.vm.combinedApprovalTableStore.search = jest.fn();
+  wrapper.vm.combinedApprovalTableStore.getByIds = jest.fn(() => [table]);
   wrapper.vm.combinedProgramStore.search = jest.fn(() => ({
     ids: [mockProgramEntities()[0].id, mockProgramEntities()[1].id],
     count: mockProgramEntities().length,
@@ -74,7 +75,7 @@ describe('ApprovalTablesHome.vue', () => {
         doMount();
         wrapper.vm.$confirm = jest.fn(() => true);
         await wrapper.vm.deleteItem('1');
-        expect(wrapper.vm.$storage.approvalTable.actions.deactivate).toBeCalledWith('1');
+        expect(approvalTableStore.deactivate).toBeCalledWith('1');
       });
     });
 
@@ -119,7 +120,7 @@ describe('ApprovalTablesHome.vue', () => {
 
         wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.approvalTable.actions.search).toBeCalledWith({
+        expect(wrapper.vm.combinedApprovalTableStore.search).toBeCalledWith({
           search: params.search,
           filter: params.filter,
           top: params.top,
@@ -178,8 +179,7 @@ describe('ApprovalTablesHome.vue', () => {
     describe('tableData', () => {
       it('should return getByIds', () => {
         doMount();
-        wrapper.vm.$storage.approvalTable.getters.getByIds = jest.fn(() => [mockCombinedApprovalTable()]);
-        expect(wrapper.vm.tableData).toEqual([mockCombinedApprovalTable()]);
+        expect(wrapper.vm.tableData).toEqual([table, table]);
       });
     });
 

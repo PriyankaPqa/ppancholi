@@ -26,7 +26,7 @@
                   data-test="registrationAssessment-assessment"
                   :items="assessments"
                   :item-value="(item) => item"
-                  :item-text="(item) => $m(item.name)"
+                  :item-text="(item) => item.nameWithStatus"
                   :label="`${$t('eventSummary.registrationAssessment.assessment')}*`"
                   :rules="rules.assessment" />
               </v-col>
@@ -38,9 +38,6 @@
                   status-name="Status"
                   :data-test="'event-assessment-section-status'"
                   :status="selectedAssessment.status" />
-                <span class="fw-bold">
-                  {{ $t(`enums.assessmentPublishStatus.${PublishStatus[selectedAssessment.publishStatus]}`) }}
-                </span>
               </v-col>
             </v-row>
 
@@ -112,7 +109,7 @@ export default Vue.extend({
   data() {
     return {
       languageMode: 'en',
-      assessments: [] as IAssessmentFormEntity[],
+      assessments: [] as (IAssessmentFormEntity & { nameWithStatus?: string })[],
       selectedAssessment: null as IAssessmentFormEntity,
       sectionTitle: {
           translation: {
@@ -128,7 +125,6 @@ export default Vue.extend({
         } as IMultilingual,
       loading: false,
       Status,
-      PublishStatus,
       registrationAssessment: null as IRegistrationAssessment,
     };
   },
@@ -172,8 +168,11 @@ export default Vue.extend({
     this.assessments = (await this.$services.assessmentForms.search({
       filter: { 'Entity/EventId': this.event.id },
       orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
-    })).value.map((x) => x.entity).filter((a) => (a.status === Status.Active && a.publishStatus === PublishStatus.Published)
+    })).value.map((x) => x.entity).filter((a) => (a.status === Status.Active)
       || a.id === this.selectedAssessment?.id);
+    this.assessments.forEach((a) => {
+      a.nameWithStatus = `${this.$m(a.name)} [${this.$t(`enums.assessmentPublishStatus.${PublishStatus[a.publishStatus]}`)}]`;
+    });
     this.selectedAssessment = this.assessments.find((a) => a.id === this.selectedAssessment?.id);
     this.loading = false;
   },

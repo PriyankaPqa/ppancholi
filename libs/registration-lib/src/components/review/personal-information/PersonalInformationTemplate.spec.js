@@ -26,19 +26,11 @@ describe('PersonalInformationTemplate.vue', () => {
       propsData: {
         personalInformation: validPersonalInformation,
       },
-      store: {
-        modules: {
-          registration: {
-            state: {
-              indigenousCommunities: [{
-                id: 'guid-community',
-                communityName: 'communityName',
-              }],
-            },
-          },
-        },
-      },
     });
+    wrapper.vm.$registrationStore.indigenousCommunities = [{
+      id: 'guid-community',
+      communityName: 'communityName',
+    }];
   });
 
   describe('Computed', () => {
@@ -286,6 +278,9 @@ describe('PersonalInformationTemplate.vue', () => {
     });
 
     describe('getIndigenousIdentity', () => {
+      it('return the correct string', () => {
+        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.indigenous.types.FirstNation');
+      });
       it('returns the correct string is other community has been picked', async () => {
         await wrapper.setProps({
           personalInformation: _merge(
@@ -294,10 +289,6 @@ describe('PersonalInformationTemplate.vue', () => {
           ),
         });
         expect(wrapper.vm.getIndigenousIdentity).toEqual('common.indigenous.types.Other');
-      });
-
-      it('return the correct string', () => {
-        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.indigenous.types.FirstNation');
       });
     });
   });

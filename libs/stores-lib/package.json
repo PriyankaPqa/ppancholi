@@ -9,10 +9,12 @@
     "@libs/entities-lib": "*",
     "@libs/services-lib": "*",
     "@libs/shared-lib": "*",
+    "@libs/registration-lib": "*",
     "lodash": "^4.17.21",
     "pinia": "^2.0.27",
     "uuid": "9.0.0",
-    "vue": "2.7.14"
+    "vue": "2.7.14",
+    "vue-i18n": "8.27.0"
   },
   "devDependencies": {
     "@babel/core": "7.17.5",

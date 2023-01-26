@@ -4,28 +4,24 @@ import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 
-import { mockStorage } from '@/storage';
-
+import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from './SplitHouseholdDialog.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const member = mockMember(mockMember({ id: '1' }));
+const { pinia, registrationStore } = useMockRegistrationStore();
 
+registrationStore.getHouseholdCreate = jest.fn(() => ({
+  additionalMembers: [mockMember({ id: '1' }), mockMember({ id: '2' }), mockMember({ id: '3' })],
+}));
 describe('SplitHouseholdDialog', () => {
   let wrapper;
-  storage.registration.getters.householdCreate = jest.fn(() => ({
-    additionalMembers: [mockMember({ id: '1' }), mockMember({ id: '2' }), mockMember({ id: '3' })],
-  }));
-
-  storage.registration.getters.householdCreate = jest.fn(() => ({
-    additionalMembers: [mockMember({ id: '1' }), mockMember({ id: '2' }), mockMember({ id: '3' })],
-  }));
 
   describe('Template', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           show: true,
           newPrimaryMember: member,
@@ -44,25 +40,27 @@ describe('SplitHouseholdDialog', () => {
             ];
           },
         },
-        mocks: { $storage: storage },
+
       });
     });
-
     describe('new primary member', () => {
       it('renders the display name', () => {
         const element = wrapper.findDataTest('household_profile_split_new_primary_member_name');
-        expect(element.text()).toContain('John Smith');
+        expect(element.text())
+          .toContain('John Smith');
       });
 
       describe('member info', () => {
         it('renders the right label', () => {
           const element = wrapper.findDataTest('household_profile_primary_member_split_label_mock-test-name-1');
-          expect(element.text()).toContain('mock-label-1');
+          expect(element.text())
+            .toContain('mock-label-1');
         });
 
         it('renders the right data', () => {
           const element = wrapper.findDataTest('household_profile_primary_member_split_data_mock-test-name-1');
-          expect(element.text()).toContain('mock-data-1');
+          expect(element.text())
+            .toContain('mock-data-1');
         });
       });
     });
@@ -70,18 +68,21 @@ describe('SplitHouseholdDialog', () => {
     describe('additional members', () => {
       it('renders the display name', () => {
         const element = wrapper.findDataTest('household_profile_split_additional_member_name');
-        expect(element.text()).toContain('John Smith');
+        expect(element.text())
+          .toContain('John Smith');
       });
 
       describe('member info', () => {
         it('renders the right label', () => {
           const element = wrapper.findDataTest('household_profile_additional_member_split_label_mock-test-name-1');
-          expect(element.text()).toContain('mock-label-1');
+          expect(element.text())
+            .toContain('mock-label-1');
         });
 
         it('renders the right data', () => {
           const element = wrapper.findDataTest('household_profile_additional_member_split_data_mock-test-name-1');
-          expect(element.text()).toContain('mock-data-1');
+          expect(element.text())
+            .toContain('mock-data-1');
         });
       });
     });
@@ -91,12 +92,16 @@ describe('SplitHouseholdDialog', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           show: true,
           newPrimaryMember: member,
         },
-        mocks: { $storage: storage },
+
       });
+      registrationStore.getHouseholdCreate = jest.fn(() => ({
+        additionalMembers: [mockMember({ id: '1' }), mockMember({ id: '2' }), mockMember({ id: '3' })],
+      }));
     });
 
     describe('additionalMembers', () => {
@@ -113,7 +118,8 @@ describe('SplitHouseholdDialog', () => {
 
     describe('householdId', () => {
       it('returns the right data', () => {
-        expect(wrapper.vm.householdId).toEqual(storage.registration.getters.householdCreate().id);
+        registrationStore.getHouseholdCreate = jest.fn(() => ({ id: 'householdId' }));
+        expect(wrapper.vm.householdId).toEqual('householdId');
       });
     });
   });
@@ -123,12 +129,13 @@ describe('SplitHouseholdDialog', () => {
       it('sets the value from the props initialAdditionalMembers into selectedMembers', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             newPrimaryMember: member,
             initialAdditionalMembers: ['foo'],
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.selectedMembers).toEqual(['foo']);
@@ -140,19 +147,10 @@ describe('SplitHouseholdDialog', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           show: true,
           newPrimaryMember: member,
-        },
-        mocks: { $storage: storage },
-        store: {
-          modules: {
-            registration: {
-              state: {
-                indigenousCommunities: mockIndigenousCommunitiesGetData(),
-              },
-            },
-          },
         },
       });
     });
@@ -195,6 +193,7 @@ describe('SplitHouseholdDialog', () => {
             indigenousCommunityId: mockIndigenousCommunitiesGetData()[0].id,
           },
         };
+        registrationStore.indigenousCommunities = mockIndigenousCommunitiesGetData();
         expect(wrapper.vm.getIndigenousIdentity(altMember))
           .toEqual(`common.indigenous.types.InuitCommunity, ${mockIndigenousCommunitiesGetData()[0].communityName}`);
       });
@@ -221,14 +220,14 @@ describe('SplitHouseholdDialog', () => {
       it('calls the storage mutation resetSplitHousehold', async () => {
         jest.clearAllMocks();
         await wrapper.vm.onClose();
-        expect(storage.registration.mutations.resetSplitHousehold).toHaveBeenCalledTimes(1);
+        expect(registrationStore.resetSplitHousehold).toHaveBeenCalledTimes(1);
       });
     });
 
     describe('onNext', () => {
       it('calls the registration mutations setSplitHousehold with the right payload', async () => {
         wrapper.vm.onNext();
-        expect(storage.registration.mutations.setSplitHousehold).toHaveBeenCalledWith({
+        expect(registrationStore.setSplitHousehold).toHaveBeenCalledWith({
           originHouseholdId: wrapper.vm.householdId,
           primaryMember: wrapper.vm.newPrimaryMember,
           additionalMembers: wrapper.vm.selectedMembers,

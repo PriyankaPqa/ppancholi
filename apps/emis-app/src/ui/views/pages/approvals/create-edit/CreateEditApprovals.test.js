@@ -3,7 +3,6 @@ import {
   ApprovalTableEntity, mockApprovalTableData, mockApprovalTableEntity, mockCombinedApprovalTable,
 } from '@libs/entities-lib/approvals/approvals-table';
 import { mockRoles } from '@libs/entities-lib/optionItem';
-import { mockStorage } from '@/storage';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import routes from '@/constants/routes';
 import { mockProgramEntities, mockProgramEntity } from '@libs/entities-lib/program';
@@ -13,14 +12,17 @@ import { mockApprovalGroup } from '@libs/entities-lib/approvals/approvals-group'
 import helpers from '@/ui/helpers/helpers';
 import { mockServerError } from '@libs/services-lib/http-client';
 import { mockProvider } from '@/services/provider';
+import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
 import Component from './CreateEditApprovals.vue';
 
 const localVue = createLocalVue();
 let wrapper;
+const { pinia, approvalTableStore } = useMockApprovalTableStore();
 
-const doMount = (tableMode = true, editMode = false, availablePrograms = null, storage = mockStorage()) => {
+const doMount = async (tableMode = true, editMode = false, availablePrograms = null) => {
   const options = {
     localVue,
+    pinia,
     data: () => ({
       roles: mockRoles(),
       programs: mockProgramEntities(),
@@ -29,9 +31,6 @@ const doMount = (tableMode = true, editMode = false, availablePrograms = null, s
       isTableMode: () => tableMode,
       isEditMode: () => editMode,
       eventId: () => 'eventId',
-    },
-    mocks: {
-      $storage: storage,
     },
   };
 
@@ -42,6 +41,7 @@ const doMount = (tableMode = true, editMode = false, availablePrograms = null, s
     };
   }
   wrapper = shallowMount(Component, options);
+  await wrapper.vm.$nextTick();
 };
 
 describe('CreateEditApprovals', () => {
@@ -102,7 +102,6 @@ describe('CreateEditApprovals', () => {
             roles: mockRoles(),
           }),
           mocks: {
-            $storage: mockStorage(),
             $route: {
               name: routes.events.approvals.create.name,
             },
@@ -119,7 +118,6 @@ describe('CreateEditApprovals', () => {
             roles: mockRoles(),
           }),
           mocks: {
-            $storage: mockStorage(),
             $route: {
               name: routes.events.approvals.edit.name,
             },
@@ -410,7 +408,7 @@ describe('CreateEditApprovals', () => {
       it('should create the approval table', async () => {
         doMount();
         await wrapper.vm.createTable();
-        expect(wrapper.vm.$storage.approvalTable.actions.createApprovalTable).toHaveBeenCalledWith(wrapper.vm.approval);
+        expect(approvalTableStore.createApprovalTable).toHaveBeenCalledWith(wrapper.vm.approval);
       });
 
       it('should redirect to event approvals home page', async () => {
@@ -422,7 +420,7 @@ describe('CreateEditApprovals', () => {
       it('should call handleSubmitError in case of error', async () => {
         doMount();
         wrapper.vm.handleSubmitError = jest.fn();
-        wrapper.vm.$storage.approvalTable.actions.createApprovalTable = jest.fn(() => Promise.reject(mockServerError()));
+        approvalTableStore.createApprovalTable = jest.fn(() => Promise.reject(mockServerError()));
         await wrapper.vm.createTable();
         expect(wrapper.vm.handleSubmitError).toBeCalled();
       });
@@ -518,7 +516,7 @@ describe('CreateEditApprovals', () => {
       it('should init approval with approval being edited', async () => {
         doMount(true, true);
         await wrapper.vm.initTableDataEdit();
-        const approval = mockApprovalTableEntity(); // return by storage by default
+        const approval = mockApprovalTableEntity(); // return by fetch by default
         approval.eventId = 'eventId';
         expect(wrapper.vm.approval).toEqual(approval);
       });
@@ -532,7 +530,7 @@ describe('CreateEditApprovals', () => {
 
       it('should create a backup of the form to know the state of editing', async () => {
         doMount(true, true);
-        const approval = mockApprovalTableEntity(); // return by storage by default
+        const approval = mockApprovalTableEntity(); // return by fetch by default
         await wrapper.vm.initTableDataEdit();
         expect(wrapper.vm.backupUpperForm).toMatchObject({
           name: approval.name,
@@ -550,12 +548,9 @@ describe('CreateEditApprovals', () => {
       });
 
       it('should set isActive depending on approvalBaseStatus', async () => {
-        const storage = mockStorage();
-        const combinedApproval = mockCombinedApprovalTable();
-        combinedApproval.entity.approvalBaseStatus = Status.Inactive;
-        storage.approvalTable.actions.fetch = jest.fn(() => combinedApproval);
-
-        doMount(true, true, [], storage);
+        const combinedApproval = mockCombinedApprovalTable({ approvalBaseStatus: Status.Inactive });
+        await doMount(true, true, []);
+        wrapper.vm.combinedApprovalTableStore.fetch = jest.fn(() => combinedApproval);
         await wrapper.vm.initTableDataEdit();
         expect(wrapper.vm.isActive).toEqual(false);
       });
@@ -565,7 +560,7 @@ describe('CreateEditApprovals', () => {
       it('should edit the table', async () => {
         doMount();
         await wrapper.vm.editTable();
-        expect(wrapper.vm.$storage.approvalTable.actions.editApprovalTable).toBeCalledWith(wrapper.vm.approval);
+        expect(approvalTableStore.editApprovalTable).toBeCalledWith(wrapper.vm.approval);
       });
     });
 

@@ -27,6 +27,7 @@ describe('EventRegistrationAssessmentSection.vue', () => {
         registrationAssessment: mockEvent.registrationAssessments[0],
         eventId: 'eventId',
         index: 0,
+        canEdit: true,
       },
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,

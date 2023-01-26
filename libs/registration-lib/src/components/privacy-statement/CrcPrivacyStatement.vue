@@ -95,19 +95,19 @@ export default Vue.extend({
 
     privacyCRCUsername: {
       get(): string {
-        return this.$store.state.registration.householdCreate.consentInformation.crcUserName;
+        return this.$registrationStore.householdCreate.consentInformation.crcUserName;
       },
       set(userName: string) {
-        this.$storage.registration.mutations.setPrivacyCRCUsername(userName);
+        this.$registrationStore.householdCreate.consentInformation.crcUserName = userName;
       },
     },
 
     privacyRegistrationMethod: {
-      get(): string {
-        return this.$store.state.registration.householdCreate.consentInformation.registrationMethod;
+      get(): ERegistrationMethod {
+        return this.$registrationStore.householdCreate.consentInformation.registrationMethod;
       },
       set(method: ERegistrationMethod) {
-        this.$storage.registration.mutations.setPrivacyRegistrationMethod(method);
+        this.$registrationStore.householdCreate.consentInformation.registrationMethod = method;
       },
     },
 
@@ -131,7 +131,7 @@ export default Vue.extend({
       if (this.registrationLocations) {
         return this.registrationLocations;
       }
-      if (this.event.registrationLocations) {
+      if (this.event?.registrationLocations) {
         return this.event.registrationLocations.filter((r) => r.status === EEventLocationStatus.Active);
       }
       return [];
@@ -142,7 +142,7 @@ export default Vue.extend({
     },
 
     event(): IEvent {
-      return this.$storage.registration.getters.event();
+      return this.$registrationStore.event;
     },
 
   },
@@ -154,23 +154,23 @@ export default Vue.extend({
 
   methods: {
     resetPrivacyRegistrationLocation() {
-      this.$storage.registration.mutations.setPrivacyRegistrationLocationId(null);
+      this.$registrationStore.householdCreate.consentInformation.registrationLocationId = null;
     },
 
     autoFillUserName() {
       if (!this.privacyCRCUsername) {
-        this.$storage.registration.mutations.setPrivacyCRCUsername(this.user.getFullName());
+        this.$registrationStore.householdCreate.consentInformation.crcUserName = this.user.getFullName();
       }
     },
 
     setRegistrationLocation(location: IEventGenericLocation) {
       this.privacyRegistrationLocation = location;
-      this.$storage.registration.mutations.setPrivacyRegistrationLocationId(location.id);
+      this.$registrationStore.householdCreate.consentInformation.registrationLocationId = location.id;
     },
 
     loadRegistrationLocation() {
       const registrationLocation = this.activeRegistrationLocations.find(
-        (r) => r.id === this.$store.state.registration.householdCreate.consentInformation.registrationLocationId,
+        (r) => r.id === this.$registrationStore.householdCreate.consentInformation.registrationLocationId,
       );
       if (registrationLocation) {
         this.privacyRegistrationLocation = registrationLocation;
