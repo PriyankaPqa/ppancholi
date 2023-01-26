@@ -13,6 +13,7 @@ parameters:
   nodeJsVersion: ''
   appVersion: ''
   disableCache: ''
+  runE2EStage: false
 
 stages:
 
@@ -44,13 +45,17 @@ stages:
       distDir: ${{ parameters.distDir }}
 
   # Run E2E Tests
-  - template: './stages/e2e-tests-stage.yml'
-    parameters:
-      packageFeed: ${{ parameters.packageFeed }}
-      nodeJsVersion: ${{ parameters.nodeJsVersion }}
-      disableCache: ${{ parameters.disableCache }}
-      workingDir: ${{ parameters.workingDir }}
-      distDir: ${{ parameters.distDir }}
+  - stage: 'E2E_Test_Stage'
+    condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
+    displayName: 'E2E Tests'
+    jobs:
+      - template: './jobs/e2e-tests-job.yml'
+        parameters:
+          packageFeed: ${{ parameters.packageFeed }}
+          nodeJsVersion: ${{ parameters.nodeJsVersion }}
+          disableCache: ${{ parameters.disableCache }}
+          distDir: ${{ parameters.distDir }}
+          workingDir: ${{ parameters.workingDir }}
 
   # Deploy to temporary environment for manual testing
   - ${{ if eq( variables['build.reason'], 'PullRequest') }}:

@@ -2,16 +2,20 @@ parameters:
   packageFeed: ''
   nodeJsVersion: ''
   disableCache: ''
-  runTests: false
   distDir: ''
   workingDir: ''
 
-stages:
-  - stage: 'E2E_Test_Stage'
-    condition: and(succeeded(), eq('${{ parameters.runTests }}', true))
-    displayName: 'E2E Tests'
-    jobs:
-      - template: '../jobs/e2e-tests-job.yml'
+jobs:
+  - job: Cypress
+    displayName: 'Critical path tests'
+    variables:
+      - group: Env-Dev
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      parallel: 2
+    steps:
+      - template: '../steps/cypress-steps.yml'
         parameters:
           packageFeed: ${{ parameters.packageFeed }}
           nodeJsVersion: ${{ parameters.nodeJsVersion }}
