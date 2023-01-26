@@ -29,6 +29,7 @@ name: E2E EMIS App - $(Major).$(Minor).$(Patch)
 stages:
   - template: '../../tools/pipelines/e2e.yml'
     parameters:
+      appVersion: $(VITE_VERSION)
       packageFeed: $(PackageFeed-Npm)
       workingDir: $(workingDir)
       distDir: $(distDir)
