@@ -82,6 +82,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    excludedEvent: {
+      type: String,
+      default: '',
+    },
   },
 
   data() {
@@ -158,7 +162,11 @@ export default Vue.extend({
         filter,
         top,
       });
-      this.events = res?.value.map((e: IEventMainInfo) => new RegistrationEvent(e.entity as unknown as IEventData));
+      const resultData = res?.value.map((e: IEventMainInfo) => new RegistrationEvent(e.entity as unknown as IEventData));
+      this.events = resultData;
+      if (this.excludedEvent) {
+        this.events = resultData.filter((event) => event.id !== this.excludedEvent);
+      }
       this.$emit('fetch:done', this.events);
 
       await helpers.timeout(this.visualDelay);

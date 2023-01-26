@@ -206,6 +206,7 @@
                 data-test="event-related-events"
                 multiple
                 :disabled="inputDisabled"
+                :excluded-event="event.id"
                 @change="setRelatedEvents($event)"
                 @delete="setRelatedEvents($event)" />
             </v-col>

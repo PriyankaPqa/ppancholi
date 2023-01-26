@@ -4,8 +4,9 @@ import {
   mount,
   shallowMount,
 } from '@/test/testSetup';
-import { EEventStatus } from '@libs/entities-lib/event';
+import { EEventStatus, mockCombinedEvent, mockCombinedEvents } from '@libs/entities-lib/event';
 import { VAutocompleteWithValidation } from '@libs/component-lib/components';
+import { RegistrationEvent } from '@libs/entities-lib/registration-event';
 import Component from './EventsSelector.vue';
 
 const localVue = createLocalVue();
@@ -102,6 +103,15 @@ describe('EventsSelector.vue', () => {
       it('should emit fetch:done so we can do additional manipulation on events', async () => {
         await wrapper.vm.fetchEvents('test', 10);
         expect(wrapper.emitted('fetch:done')).toBeTruthy();
+      });
+
+      it('should filter the excluded event out', async () => {
+        await wrapper.setProps({
+          excludedEvent: '1',
+        });
+        wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({ value: [...mockCombinedEvents()] }));
+        await wrapper.vm.fetchEvents();
+        expect(wrapper.vm.events).toEqual([new RegistrationEvent(mockCombinedEvent({ id: '2' }, 1).entity)]);
       });
     });
 

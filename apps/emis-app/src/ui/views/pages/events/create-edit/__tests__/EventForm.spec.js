@@ -350,8 +350,6 @@ describe('EventForm.vue', () => {
 
         wrapper.vm.isStatusOpen = true;
 
-        await wrapper.vm.$nextTick();
-
         expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toBe(moment(new Date()).format());
         expect(wrapper.vm.localEvent.schedule.scheduledCloseDate).toBe(initialCloseDate);
 
@@ -816,7 +814,7 @@ describe('EventForm.vue', () => {
 
   describe('Template', () => {
     beforeEach(() => {
-      wrapper = mount(Component, {
+      wrapper = shallowMount(Component, {
         localVue: createLocalVue(),
         pinia: getPiniaForUser('level6'),
         propsData: {
@@ -881,6 +879,15 @@ describe('EventForm.vue', () => {
       it('should have fetch-all-events props', () => {
         const component = wrapper.findComponent(EventsSelector);
         expect(component.props('fetchAllEvents')).toBe(true);
+      });
+
+      it('should pass event.id as the props excludedEvent', async () => {
+        await wrapper.setProps({
+          event: mockEventEntity(),
+        });
+        const component = wrapper.findComponent(EventsSelector);
+        const props = 'excludedEvent';
+        expect(component.props(props)).toBe(wrapper.vm.event.id);
       });
     });
   });
