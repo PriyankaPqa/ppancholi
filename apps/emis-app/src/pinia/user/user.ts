@@ -39,7 +39,7 @@ export const useUserStore = defineStore('user', () => {
   function getLandingPage() {
     const user = getUser();
     const role = user.currentRole();
-    if (role === 'level1' || role === 'level2' || role === 'contributorFinance' || role === 'contributor3' || role === 'readonly') {
+    if (role === 'level0' || role === 'level1' || role === 'level2' || role === 'contributorFinance' || role === 'contributor3' || role === 'readonly') {
       return 'DashboardCaseFile';
     }
     if (role === 'contributorIM') {

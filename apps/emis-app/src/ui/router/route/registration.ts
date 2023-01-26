@@ -16,13 +16,13 @@ export const registration: RouteConfig = {
       path: Routes.registration.home.path,
       name: Routes.registration.home.name,
       component: RegistrationHome,
-      meta: { level: 'level1' },
+      meta: { level: 'level0' },
     },
     {
       path: Routes.registration.individual.path,
       name: Routes.registration.individual.name,
       component: RegistrationIndividual,
-      meta: { level: 'level1' },
+      meta: { level: 'level0' },
     },
   ],
 };

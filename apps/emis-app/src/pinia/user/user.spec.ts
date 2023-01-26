@@ -19,7 +19,7 @@ const createUserTestStore = (mockTarget: Role, stubActions = false) => {
   const pinia = getPiniaForUser(mockTarget, stubActions);
   const store = useUserStore(pinia);
 
- return store;
+  return store;
 };
 
 describe('>>> User Store', () => {
@@ -59,6 +59,11 @@ describe('>>> User Store', () => {
   });
 
   describe('getLandingPage', () => {
+    it('returns proper landing page for level 0 user', () => {
+      const store = createUserTestStore('level0');
+      expect(store.getLandingPage()).toEqual('DashboardCaseFile');
+    });
+
     it('returns proper landing page for level 1 user', () => {
       const store = createUserTestStore('level1');
       expect(store.getLandingPage()).toEqual('DashboardCaseFile');
