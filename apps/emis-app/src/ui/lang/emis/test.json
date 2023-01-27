@@ -854,6 +854,8 @@
     "errors.cannot-specify-other-value-for-province-without-setting-province-to-other": "errors.cannot-specify-other-value-for-province-without-setting-province-to-other",
     "errors.cannot-split-primary-beneficiary-from-household": "errors.cannot-split-primary-beneficiary-from-household",
     "errors.case-file-activity-type-is-invalid": "errors.case-file-activity-type-is-invalid",
+    "errors.case-file-cannot-be-archived-due-to-financial-payments": "",
+    "errors.case-file-cannot-be-closed-due-to-financial-payments": "",
     "errors.case-file-cannot-be-closed-due-to-outstanding-financial-payments": "errors.case-file-cannot-be-closed-due-to-outstanding-financial-payments",
     "errors.case-file-does-not-exist": "errors.case-file-does-not-exist",
     "errors.case-file-does-not-meet-program-authenticated-criteria": "errors.case-file-does-not-meet-program-authenticated-criteria",

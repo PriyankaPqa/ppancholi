@@ -854,6 +854,8 @@
     "errors.cannot-specify-other-value-for-province-without-setting-province-to-other": "Impossible d’entrer une autre valeur pour la province sans d'abord définir la province à « Autre ».",
     "errors.cannot-split-primary-beneficiary-from-household": "Impossible de séparer le représentant ou la représentante du ménage.",
     "errors.case-file-activity-type-is-invalid": "Le type d'activité du dossier n'est pas valide",
+    "errors.case-file-cannot-be-archived-due-to-financial-payments": "",
+    "errors.case-file-cannot-be-closed-due-to-financial-payments": "",
     "errors.case-file-cannot-be-closed-due-to-outstanding-financial-payments": "Le statut du dossier ne peut pas être modifié en raison de paiements d’aide financière impayés. Veuillez vérifier et réessayer.",
     "errors.case-file-does-not-exist": "Le dossier n'existe pas",
     "errors.case-file-does-not-meet-program-authenticated-criteria": "Le dossier ne répond pas aux critères du programme en matière de vérification de l’identité.",
@@ -1139,7 +1141,6 @@
     "errors.same-agreement-with-the-same-id-already-exists": "Une entente existante utilise déjà cet identifiant.",
     "errors.same-call-centre-with-the-same-id-already-exists": "Un centre d’appels existant utilise déjà cet identifiant.",
     "errors.same-registration-assessment-with-the-same-id-already-exists": "La même analyse d'inscription avec le même identifiant existe déjà",
-
     "errors.same-registration-location-with-the-same-id-already-exists": "Un lieu d’inscription existant utilise déjà cet identifiant.",
     "errors.same-shelter-location-with-the-same-id-already-exists": "Un lieu d’hébergement existant utilise déjà cet identifiant.",
     "errors.same-subitem-with-the-same-id-already-exists": "Un sous-élément utilisant le même identifiant existe déjà.",
