@@ -181,7 +181,7 @@ import {
 import _isEqual from 'lodash/isEqual';
 import _sortBy from 'lodash/sortBy';
 import {
-  TeamType, ITeamEvent, TeamEntity, ITeamEntity,
+  TeamType, ITeamEvent, TeamEntity, ITeamEntity, IdParams, ITeamMetadata,
 } from '@libs/entities-lib/team';
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
@@ -196,6 +196,8 @@ import { Status } from '@libs/entities-lib/base';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import UserAccountsFilter from '@/ui/mixins/userAccountsFilter';
 import { useEventStore } from '@/pinia/event/event';
+import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,
@@ -258,6 +260,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       showErrorDialog: false,
       errorMessage: '' as TranslateResult,
       isSubmitting: false,
+      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
     };
   },
 
@@ -393,7 +396,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
     async loadTeam() {
       const teamId = this.id;
       if (teamId) {
-        await this.$storage.team.actions.fetch(teamId);
+        await this.combinedTeamStore.fetch(teamId);
         await this.loadTeamFromState();
       }
     },
@@ -409,7 +412,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         return;
       }
 
-      const storeTeam = _cloneDeep(this.$storage.team.getters.get(this.id));
+      const storeTeam = _cloneDeep(this.combinedTeamStore.getById(this.id));
       this.team = new TeamEntity(storeTeam.entity);
       this.currentEvents = storeTeam.metadata?.events;
       if (this.team.getPrimaryContact()) {
@@ -504,7 +507,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
     async submitCreateTeam() {
       try {
         this.isSubmitting = true;
-        const res = await this.$storage.team.actions.createTeam(this.team);
+        const res = await useTeamStore().createTeam(this.team);
 
         this.team = new TeamEntity(_cloneDeep(res));
 
@@ -530,7 +533,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
     async submitEditTeam() {
       try {
         this.isSubmitting = true;
-        await this.$storage.team.actions.editTeam(this.team);
+        await useTeamStore().editTeam(this.team);
         this.$toasted.global.success(this.$t('teams.team_updated'));
         this.resetFormValidation();
         this.setOriginalData();

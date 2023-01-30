@@ -100,6 +100,7 @@ import { RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import { ITeamMember } from '@libs/entities-lib/team';
 import { IMultilingual } from '@libs/shared-lib/types';
+import { useTeamStore } from '@/pinia/team/team';
 
 interface UserTeamMember {
   roleName: IMultilingual,
@@ -242,7 +243,7 @@ export default Vue.extend({
     async submit() {
       try {
         this.loading = true;
-        await this.$storage.team.actions.addTeamMembers(this.teamId, this.selectedUsers);
+        await useTeamStore().addTeamMembers({ teamId: this.teamId, teamMembers: this.selectedUsers });
         this.$toasted.global.success(this.$t('team.add_members.success'));
         this.$emit('addMembers', this.$storage.userAccount.getters.getByIds(this.selectedUsers.map((u) => u.id)));
         this.close();

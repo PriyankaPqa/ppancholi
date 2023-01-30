@@ -3,16 +3,19 @@ import { mockCombinedUserAccounts } from '@libs/entities-lib/user-account';
 import { mockStorage } from '@/storage';
 
 import { mockAssignedTeamMembers } from '@libs/entities-lib/case-file';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from '../case-file-activity/components/ViewAssigned.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia } = useMockTeamStore();
 let wrapper;
 
 // eslint-disable-next-line @typescript-eslint/default-param-last
 const doMount = (shallow = false, pStorage) => {
   const options = {
     localVue,
+    pinia,
     propsData: {
       caseFile: {
         id: 'mock-id',
@@ -82,11 +85,12 @@ describe('ViewAssigned.vue', () => {
         { entity: { id: 'mock-assigned-individual-id-3', displayName: 'User C' } },
       ]));
 
-      storage.team.getters.getByIds = jest.fn(() => ([
+      doMount(true, storage);
+
+      wrapper.vm.combinedTeamStore.getByIds = jest.fn(() => ([
         { entity: { id: 'mock-assigned-team-id-1', name: 'Team A' } },
         { entity: { id: 'mock-assigned-team-id-2', name: 'Team B' } },
       ]));
-      doMount(true, storage);
     });
 
     describe('close', () => {
@@ -107,15 +111,16 @@ describe('ViewAssigned.vue', () => {
 
     describe('fetchTeams', () => {
       it('should fetch teams by ids', async () => {
+        wrapper.vm.combinedTeamStore.search = jest.fn();
         const ids = ['1', '2'];
         const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
         await wrapper.vm.fetchTeams(ids);
-        expect(wrapper.vm.$storage.team.actions.search).toHaveBeenCalledWith({ filter });
+        expect(wrapper.vm.combinedTeamStore.search).toHaveBeenCalledWith({ filter });
       });
     });
 
     describe('setAssignedIndividuals', () => {
-      it('build the proper object, attaching team info on each user', async () => {
+      it('build the proper object, attaching team info on each user', () => {
         wrapper.vm.setAssignedIndividuals();
 
         expect(wrapper.vm.assignedIndividuals).toEqual([

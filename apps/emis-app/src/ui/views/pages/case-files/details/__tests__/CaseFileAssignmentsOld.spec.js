@@ -5,18 +5,20 @@ import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from '../case-file-activity/components/CaseFileAssignmentsOld.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCaseFileEntity();
 const mockTeam = mockTeamEntity();
+const { pinia, teamStore } = useMockTeamStore();
 
 describe('CaseFileAssignmentsOld.vue', () => {
   let wrapper;
   storage.userAccount.actions.search = jest.fn(() => ({ ids: [mockCombinedUserAccount().entity.id] }));
   storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
-  storage.team.actions.getTeamsAssigned = jest.fn(() => [mockTeamEntity()]);
+  teamStore.getTeamsAssigned = jest.fn(() => [mockTeamEntity()]);
   describe('Template', () => {
     beforeEach(async () => {
       wrapper = shallowMount(Component, {
@@ -298,6 +300,7 @@ describe('CaseFileAssignmentsOld.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           caseFile: mockCaseFile,
         },
@@ -346,11 +349,11 @@ describe('CaseFileAssignmentsOld.vue', () => {
       it('calls storage action getTeamsAssigned with the right id', async () => {
         jest.clearAllMocks();
         await wrapper.vm.getAssignedTeamInfo();
-        expect(storage.team.actions.getTeamsAssigned).toHaveBeenCalledWith(mockCaseFile.id);
+        expect(teamStore.getTeamsAssigned).toHaveBeenCalledWith(mockCaseFile.id);
       });
 
       it('returns the right value', async () => {
-        wrapper.vm.$storage.team.actions.getTeamsAssigned = jest.fn(() => [mockTeam]);
+        teamStore.getTeamsAssigned = jest.fn(() => [mockTeam]);
         const name = await wrapper.vm.getAssignedTeamInfo();
         expect(name).toEqual(mockTeam.name);
       });

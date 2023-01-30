@@ -456,20 +456,21 @@ describe('OptionListNewItem.vue', () => {
         languageMode: 'en',
         addSubItemLabel: 'add sub item',
       },
-    });
-
-    await wrapper.setData({
-      name: {
-        translation: {
-          en: 'Name',
-          fr: 'Name',
-        },
-      },
-      description: {
-        translation: {
-          en: 'Description',
-          fr: 'Description-fr',
-        },
+      data() {
+        return {
+          name: {
+            translation: {
+              en: 'Name',
+              fr: 'Name',
+            },
+          },
+          description: {
+            translation: {
+              en: 'Description',
+              fr: 'Description-fr',
+            },
+          },
+        };
       },
     });
 

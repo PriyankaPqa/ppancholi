@@ -25,6 +25,7 @@ import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/ap
 import { useCaseNoteStore, useCaseNoteMetadataStore } from '@/pinia/case-note/case-note';
 import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
+import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { IStorage } from '../../../storage/storage.types';
 
 export interface IOptions {
@@ -319,14 +320,16 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'team',
       entityName: 'Team',
-      action: this.storage.team.mutations.setEntityFromOutsideNotification,
+      action: useTeamStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'team',
       entityName: 'TeamMetadata',
-      action: this.storage.team.mutations.setMetadataFromOutsideNotification,
+      action: useTeamMetadataStore().setItemFromOutsideNotification,
     });
+    this.watchedPiniaStores.push(useTeamStore());
+    this.watchedPiniaStores.push(useTeamMetadataStore());
   }
 
   private listenForMassActionsModuleChanges() {

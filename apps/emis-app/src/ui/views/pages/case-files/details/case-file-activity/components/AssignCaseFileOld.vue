@@ -112,6 +112,7 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { AccountStatus, IUserAccountCombined } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
+import { useTeamStore } from '@/pinia/team/team';
 import AssignedListOld from './AssignedListOld.vue';
 
 interface TeamWithCount extends ITeamEntity {
@@ -200,7 +201,7 @@ export default Vue.extend({
 
     async getTeamsData() {
       const { eventId } = this.caseFile;
-      const teams: ITeamEntity[] = await this.$storage.team.actions.getTeamsAssignable(eventId);
+      const teams: ITeamEntity[] = await useTeamStore().getTeamsAssignable(eventId);
 
       this.allTeams = (_cloneDeep(teams.filter((t:ITeamEntity) => t.status === Status.Active)))
         .map((x) => ({ ...x, activeMemberCount: 0 }));

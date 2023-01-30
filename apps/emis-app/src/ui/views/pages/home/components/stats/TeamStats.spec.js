@@ -4,12 +4,14 @@ import {
   mockCombinedTeams, mockTeamEvents, mockTeamsDataStandard, mockTeamsMetadataStandard,
 } from '@libs/entities-lib/team';
 import { mockCombinedEvent } from '@libs/entities-lib/event';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from './TeamStats.vue';
 
 const storage = mockStorage();
 
 const localVue = createLocalVue();
 const mockEvent = mockCombinedEvent();
+const { pinia } = useMockTeamStore();
 
 describe('TeamStats.vue', () => {
   let wrapper;
@@ -18,6 +20,7 @@ describe('TeamStats.vue', () => {
     jest.clearAllMocks();
     wrapper = mount(Component, {
       localVue,
+      pinia,
       mocks: {
         $storage: storage,
       },
@@ -90,6 +93,7 @@ describe('TeamStats.vue', () => {
       beforeEach(() => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           mocks: {
             $storage: storage,
           },
@@ -104,11 +108,12 @@ describe('TeamStats.vue', () => {
       });
 
       it('should call selectEvent and check for default stats value and call searchteam and filter team based on event id', () => {
+        wrapper.vm.combinedTeamStore.search = jest.fn();
         wrapper.vm.selectEvent(mockEvent);
         expect(wrapper.vm.teamStats).toStrictEqual({
           countClose: 0, countOpen: 0, countTeamMembers: 0, countTotal: 0,
         });
-        expect(storage.team.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedTeamStore.search).toHaveBeenCalledWith({
           filter: { Metadata: { Events: { any: { Id: wrapper.vm.selectedEventId } } } },
           orderBy: 'Entity/Name asc',
         });
@@ -122,11 +127,12 @@ describe('TeamStats.vue', () => {
       });
 
       it('should not search team if no event selected', async () => {
+        wrapper.vm.combinedTeamStore.search = jest.fn();
         wrapper.vm.selectedEventId = null;
 
         await wrapper.vm.selectEvent();
 
-        expect(storage.team.actions.search).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.combinedTeamStore.search).toHaveBeenCalledTimes(0);
       });
 
       it('should clear team information if no event selected', async () => {

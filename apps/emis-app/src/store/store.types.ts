@@ -14,7 +14,6 @@ import { ICaseFileMetadata } from '@libs/entities-lib/case-file';
 import { IFinancialAssistanceEntityState } from '@/store/modules/financial-assistance/financialAssistanceEntity.types';
 import { IFinancialAssistanceTableMetadata } from '@libs/entities-lib/financial-assistance';
 
-import { ITeamEntityState } from '@/store/modules/team/teamEntity.types';
 import { ITeamMetadata } from '@libs/entities-lib/team';
 
 import { IFinancialAssistanceCategoryEntityState } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity.types';
@@ -32,7 +31,6 @@ export interface IRootState {
   [vuexModule.FINANCIAL_ASSISTANCE_METADATA]?: IBaseState<IFinancialAssistanceTableMetadata>,
   [vuexModule.HOUSEHOLD_ENTITIES]?: IHouseholdEntityState
   [vuexModule.HOUSEHOLD_METADATA]?: IBaseState<IHouseholdMetadata>
-  [vuexModule.TEAM_ENTITIES]?: ITeamEntityState,
   [vuexModule.TEAM_METADATA]?: IBaseState<ITeamMetadata>,
   [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]?: IFinancialAssistanceCategoryEntityState,
   [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES]?: IFinancialAssistancePaymentEntityState,

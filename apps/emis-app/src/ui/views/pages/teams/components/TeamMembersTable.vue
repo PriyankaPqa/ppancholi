@@ -127,7 +127,8 @@ import _orderBy from 'lodash/orderBy';
 import { DataTableHeader } from 'vuetify';
 import { RcPhoneDisplay } from '@libs/component-lib/components';
 import {
-  ITeamCombined, ITeamMember, ITeamMemberAsUser,
+  IdParams,
+  ITeamCombined, ITeamEntity, ITeamMember, ITeamMemberAsUser, ITeamMetadata,
 } from '@libs/entities-lib/team';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
@@ -136,6 +137,8 @@ import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCas
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IAssignedCaseFileCountByTeam } from '@libs/entities-lib/user-account';
 import { IUserAccountCombined } from '@libs/entities-lib/src/user-account/userAccount.types';
+import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 
 export interface Result extends IUserAccountCombined {
   isPrimaryContact: boolean;
@@ -214,6 +217,7 @@ export default Vue.extend({
       loading: true,
       FeatureKeys,
       teamMembers: [] as ITeamMemberAsUser[],
+      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
     };
   },
 
@@ -309,7 +313,7 @@ export default Vue.extend({
     },
 
     team(): ITeamCombined {
-      return this.$storage.team.getters.get(this.teamId);
+      return this.combinedTeamStore.getById(this.teamId);
     },
 
     filteredTeamMembers(): ITeamMemberAsUser[] {
@@ -380,7 +384,7 @@ export default Vue.extend({
     async removeTeamMember(id: string, isLastMember = false) {
       try {
         this.removeLoading = true;
-        const res = isLastMember ? await this.$storage.team.actions.emptyTeam(this.teamId) : await this.$storage.team.actions.removeTeamMember(this.teamId, id);
+        const res = isLastMember ? await useTeamStore().emptyTeam({ teamId: this.teamId }) : await useTeamStore().removeTeamMember({ teamId: this.teamId, teamMemberId: id });
         if (isLastMember) {
           this.$emit('reloadTeam');
         }

@@ -29,8 +29,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog, RcPageLoading } from '@libs/component-lib/components';
-import { ITeamEntity } from '@libs/entities-lib/team';
+import { IdParams, ITeamEntity, ITeamMetadata } from '@libs/entities-lib/team';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import AssignedList, { IIndividual } from './AssignedList.vue';
 
 export default Vue.extend({
@@ -58,6 +60,7 @@ export default Vue.extend({
       assignedIndividuals: [] as IIndividual[],
       allAssignedTeams: [] as ITeamEntity[],
       loading: false,
+      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
     };
   },
 
@@ -77,7 +80,7 @@ export default Vue.extend({
     try {
       this.loading = true;
       await this.fetchUserAccounts(this.individualsIds);
-      this.allAssignedTeams = await this.$storage.team.actions.getTeamsAssigned(this.caseFile.id);
+      this.allAssignedTeams = await useTeamStore().getTeamsAssigned(this.caseFile.id);
       await this.setAssignedIndividuals();
     } finally {
       this.loading = false;
@@ -96,11 +99,11 @@ export default Vue.extend({
 
     async fetchTeams(ids: string[]): Promise<void> {
       const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
-      await this.$storage.team.actions.search({ filter });
+      await this.combinedTeamStore.search({ filter });
     },
 
     setAssignedIndividuals() {
-      const teamsThroughIndividuals = this.$storage.team.getters.getByIds(this.teamsIdsFromIndividuals);
+      const teamsThroughIndividuals = this.combinedTeamStore.getByIds(this.teamsIdsFromIndividuals);
       const userAccounts = this.$storage.userAccount.getters.getByIds(this.individualsIds);
 
       this.caseFile.assignedTeamMembers.forEach((team) => {

@@ -3,12 +3,14 @@ import routes from '@/constants/routes';
 import { mockCombinedTeams } from '@libs/entities-lib/team';
 import { mockStorage } from '@/storage';
 import flushPromises from 'flush-promises';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from './TeamsTable.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const team = mockCombinedTeams()[0];
 const teamId = team.entity.id;
+const { pinia } = useMockTeamStore();
 
 describe('TeamsTable.vue', () => {
   let wrapper;
@@ -16,6 +18,7 @@ describe('TeamsTable.vue', () => {
   const mountWrapper = async (fullMount = true, level = 5) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
         $storage: storage,
@@ -248,8 +251,9 @@ describe('TeamsTable.vue', () => {
       };
 
       it('should call storage actions with proper parameters', async () => {
+        wrapper.vm.combinedTeamStore.search = jest.fn();
         await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.$storage.team.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedTeamStore.search).toHaveBeenCalledWith({
           search: 'query',
           searchMode: 'all',
           queryType: 'full',
@@ -262,8 +266,19 @@ describe('TeamsTable.vue', () => {
       });
 
       it('returns the search results', async () => {
+        wrapper.vm.combinedTeamStore.search = jest.fn(() => ({
+          count: 1,
+          date: new Date('2023-01-26'),
+          ids: [
+            '1'],
+        }));
         const res = await wrapper.vm.fetchData(params);
-        expect(res).toEqual({ ids: ['1'], count: 1 });
+        expect(res).toEqual({
+          count: 1,
+          date: new Date('2023-01-26'),
+          ids: [
+            '1'],
+        });
       });
     });
 

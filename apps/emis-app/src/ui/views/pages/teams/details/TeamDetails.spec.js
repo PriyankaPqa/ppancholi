@@ -1,7 +1,9 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
-import { mockTeamEvents } from '@libs/entities-lib/team';
+import {
+  mockCombinedTeams, mockTeamEvents,
+} from '@libs/entities-lib/team';
 
 import { RcPageContent } from '@libs/component-lib/components';
 import Component from './TeamDetails.vue';
@@ -28,6 +30,9 @@ describe('TeamDetails.vue', () => {
   };
 
   describe('Template', () => {
+    beforeEach(async () => {
+      await mountWrapper(false);
+    });
     describe('Edit button', () => {
       it('should be enabled for L4+', async () => {
         await mountWrapper(false, 4);
@@ -44,7 +49,12 @@ describe('TeamDetails.vue', () => {
 
     describe('Elements', () => {
       beforeEach(async () => {
-        await mountWrapper(false);
+        await mountWrapper(false, 5, {
+          computed: {
+            team: () => mockCombinedTeams()[0],
+          },
+        });
+        wrapper.vm.combinedTeamStore.getById = jest.fn(() => mockCombinedTeams()[0]);
       });
 
       test('Team type', () => {
@@ -67,13 +77,18 @@ describe('TeamDetails.vue', () => {
 
   describe('Methods', () => {
     beforeEach(async () => {
-      await mountWrapper(false);
+      await mountWrapper(false, 5, {
+        computed: {
+          team: () => mockCombinedTeams()[0],
+        },
+      });
     });
 
     describe('loadTeam', () => {
       it('should calls getTeam actions', async () => {
+        wrapper.vm.combinedTeamStore.fetch = jest.fn();
         await wrapper.vm.loadTeam();
-        expect(wrapper.vm.$storage.team.actions.fetch).toHaveBeenLastCalledWith('id');
+        expect(wrapper.vm.combinedTeamStore.fetch).toHaveBeenLastCalledWith('id');
       });
     });
 
@@ -113,8 +128,15 @@ describe('TeamDetails.vue', () => {
   describe('Computed', () => {
     describe('team', () => {
       it('should be linked to team getters team', async () => {
-        await mountWrapper(false);
-        expect(wrapper.vm.team).toEqual(storage.team.getters.get());
+        await mountWrapper(false, 5, {
+          computed: {
+            team: () => mockCombinedTeams()[0],
+          },
+        });
+        await wrapper.setProps({
+          id: 'guid-team-1',
+        });
+        expect(wrapper.vm.team).toEqual(mockCombinedTeams()[0]);
       });
     });
   });

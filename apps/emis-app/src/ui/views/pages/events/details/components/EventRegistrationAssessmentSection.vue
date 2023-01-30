@@ -60,9 +60,14 @@ import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessm
 import { Status } from '@libs/entities-lib/base';
 import { useEventStore } from '@/pinia/event/event';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 export default Vue.extend({
   name: 'EventRegistrationAssessmentSection',
+
+  components: {
+    StatusChip,
+  },
 
   props: {
     registrationAssessment: {

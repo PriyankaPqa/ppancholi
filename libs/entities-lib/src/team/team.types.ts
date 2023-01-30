@@ -56,3 +56,5 @@ export interface ITeamMetadata extends IEntity {
 }
 
 export type ITeamCombined = IEntityCombined<ITeamEntity, ITeamMetadata>;
+
+export type IdParams = uuid;

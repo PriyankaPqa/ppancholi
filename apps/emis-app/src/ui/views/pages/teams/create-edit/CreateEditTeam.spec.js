@@ -12,13 +12,15 @@ import { mockStorage } from '@/storage';
 
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
-import { createTestingPinia } from '@pinia/testing';
-import { useEventStore } from '@/pinia/event/event';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
+import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, teamStore } = useMockTeamStore();
+const { eventStore } = useMockEventStore(pinia);
 
 const mockTeamMember = {
   displayName: 'Jane Smith',
@@ -33,11 +35,8 @@ const allEvents = mockEventEntities();
 
 describe('CreateEditTeam.vue', () => {
   let wrapper;
-  let eventStore;
 
   const mountWrapper = async (fullMount = true, level = 5, additionalOverwrites = {}) => {
-    const pinia = createTestingPinia({ stubActions: false });
-    eventStore = useEventStore(pinia);
     eventStore.getEventsByStatus = jest.fn(() => teamEventsMock);
     eventStore.getAll = jest.fn(() => [...allEvents, inactiveEvent, inactiveEvent2]);
     wrapper = (fullMount ? mount : shallowMount)(Component, {
@@ -57,11 +56,10 @@ describe('CreateEditTeam.vue', () => {
     await flushPromises();
   };
 
-  storage.team.getters.get = jest.fn(() => mockCombinedTeams()[0]);
-
   describe('Template', () => {
     beforeEach(async () => {
       await mountWrapper(true);
+      wrapper.vm.combinedTeamStore.getById = jest.fn(() => mockCombinedTeams()[0]);
     });
 
     describe('Rendered elements', () => {
@@ -599,6 +597,7 @@ describe('CreateEditTeam.vue', () => {
       beforeEach(async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             teamType: 'standard',
             id: '123',
@@ -899,6 +898,7 @@ describe('CreateEditTeam.vue', () => {
       it('return false when in edit mode isFailed is false and isDirty is true', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             teamType: 'standard',
           },
@@ -924,8 +924,9 @@ describe('CreateEditTeam.vue', () => {
 
     describe('loadTeam', (() => {
       it('calls the action getTeam', async () => {
+        wrapper.vm.combinedTeamStore.fetch = jest.fn();
         await wrapper.vm.loadTeam();
-        expect(wrapper.vm.$storage.team.actions.fetch).toHaveBeenCalledWith('abc');
+        expect(wrapper.vm.combinedTeamStore.fetch).toHaveBeenCalledWith('abc');
       });
 
       it('should set the team with a cloneDeep of team from storage', async () => {
@@ -952,6 +953,7 @@ describe('CreateEditTeam.vue', () => {
 
     describe('loadTeamFromState', (() => {
       beforeEach(async () => {
+        await mountWrapper();
         wrapper.vm.$route.params = { id: 'foo' };
       });
 
@@ -966,6 +968,7 @@ describe('CreateEditTeam.vue', () => {
       });
 
       it('sets currentEvents from the team metadata', async () => {
+        wrapper.vm.combinedTeamStore.getById = jest.fn(() => mockCombinedTeams()[0]);
         await wrapper.vm.loadTeamFromState();
         expect(wrapper.vm.currentEvents).toEqual(mockCombinedTeams()[0].metadata.events);
       });
@@ -1076,6 +1079,7 @@ describe('CreateEditTeam.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             teamType: 'standard',
             id: '123',
@@ -1102,6 +1106,7 @@ describe('CreateEditTeam.vue', () => {
       it('calls the validation method', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             teamType: 'standard',
             id: '123',
@@ -1240,6 +1245,7 @@ describe('CreateEditTeam.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             teamType: 'standard',
             id: '123',
@@ -1264,7 +1270,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('calls createTeam action', async () => {
         await wrapper.vm.submitCreateTeam();
-        expect(wrapper.vm.$storage.team.actions.createTeam).toHaveBeenCalledTimes(1);
+        expect(teamStore.createTeam).toHaveBeenCalledTimes(1);
       });
 
       it('calls setOriginalData action', async () => {
@@ -1287,6 +1293,7 @@ describe('CreateEditTeam.vue', () => {
       it('opens a toast with a success message for adhoc team', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             teamType: 'adhoc',
             id: '123',
@@ -1338,6 +1345,7 @@ describe('CreateEditTeam.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             teamType: 'standard',
             id: '123',
@@ -1362,7 +1370,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('calls editTeam action', async () => {
         await wrapper.vm.submitEditTeam();
-        expect(wrapper.vm.$storage.team.actions.editTeam).toHaveBeenCalledTimes(1);
+        expect(teamStore.editTeam).toHaveBeenCalledTimes(1);
       });
 
       it('calls setOriginalData action', async () => {
@@ -1383,7 +1391,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('calls loadTeamFromState on error', async () => {
         jest.spyOn(wrapper.vm, 'loadTeamFromState');
-        jest.spyOn(wrapper.vm.$storage.team.actions, 'editTeam').mockImplementation(() => {
+        jest.spyOn(teamStore, 'editTeam').mockImplementation(() => {
           throw new Error([]);
         });
         wrapper.vm.$reportToasted = jest.fn();
@@ -1434,6 +1442,7 @@ describe('CreateEditTeam.vue', () => {
       it('sets the right team type for adhoc team type in create mode', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             teamType: 'adhoc',
           },

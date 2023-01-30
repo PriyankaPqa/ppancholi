@@ -4,10 +4,12 @@ import { mockStorage } from '@/storage';
 import { mockTeamMembersData } from '@libs/entities-lib/team';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import helpers from '@/ui/helpers/helpers';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from './AddTeamMembers.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, teamStore } = useMockTeamStore();
 
 describe('AddTeamMembers.vue', () => {
   let wrapper;
@@ -15,6 +17,7 @@ describe('AddTeamMembers.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         show: true,
         teamMembers: mockTeamMembersData(),
@@ -243,7 +246,7 @@ describe('AddTeamMembers.vue', () => {
     describe('submit', () => {
       it('calls addTeamMembers actions with correct parameters (selectedUsers)', async () => {
         await wrapper.vm.submit();
-        expect(storage.team.actions.addTeamMembers).toHaveBeenCalledWith('abc', wrapper.vm.selectedUsers);
+        expect(teamStore.addTeamMembers).toHaveBeenCalledWith({ teamId: 'abc', teamMembers: [] });
       });
 
       it('calls close method', async () => {

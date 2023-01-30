@@ -3,12 +3,14 @@ import { mockAssignedTeamMembers, mockCaseFileEntity } from '@libs/entities-lib/
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity, TeamType, mockTeamMembersData } from '@libs/entities-lib/team';
 import { mockStorage } from '@/storage';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from '../case-file-activity/components/AssignCaseFile.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCaseFileEntity();
 const team = { ...mockTeamEntity(), activeMemberCount: 1 };
+const { pinia, teamStore } = useMockTeamStore();
 
 const individual = (id = 'mock-id-1', otherProps = {}) => (
   {
@@ -21,7 +23,7 @@ const individual = (id = 'mock-id-1', otherProps = {}) => (
 storage.userAccount.getters.getByIds = jest.fn(() => [
   mockCombinedUserAccount({ id: 'mock-id-1' }),
 ]);
-storage.team.actions.getTeamsAssignable = jest.fn(() => [mockTeamEntity()]);
+teamStore.getTeamsAssignable = jest.fn(() => [mockTeamEntity()]);
 
 describe('AssignCaseFile.vue', () => {
   let wrapper;
@@ -30,6 +32,7 @@ describe('AssignCaseFile.vue', () => {
     beforeEach(async () => {
       wrapper = mount(Component, {
         localVue,
+        pinia,
         propsData: {
           caseFile: mockCaseFile,
           show: true,
@@ -171,9 +174,10 @@ describe('AssignCaseFile.vue', () => {
   describe('Life Cycle', () => {
     describe('created', () => {
       beforeEach(async () => {
-        storage.team.actions.searchAggregatedTeams = jest.fn(() => []);
+        teamStore.searchAggregatedTeams = jest.fn(() => []);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             caseFile: mockCaseFile,
             show: true,
@@ -232,6 +236,7 @@ describe('AssignCaseFile.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           caseFile: mockCaseFile,
           show: true,
@@ -259,7 +264,7 @@ describe('AssignCaseFile.vue', () => {
       it('calls storage action getTeamsAssignable with the right id', async () => {
         jest.clearAllMocks();
         await wrapper.vm.getTeamsData();
-        expect(storage.team.actions.getTeamsAssignable).toHaveBeenCalledWith(mockCaseFile.eventId);
+        expect(teamStore.getTeamsAssignable).toHaveBeenCalledWith(mockCaseFile.eventId);
       });
 
       it('sets the right value into allTeams', async () => {

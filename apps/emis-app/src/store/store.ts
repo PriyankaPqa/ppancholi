@@ -23,11 +23,6 @@ import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-ass
 import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
 import { FinancialAssistanceTablesMetadataService } from '@libs/services-lib/financial-assistance-tables/metadata';
 
-import { TeamEntityModule } from '@/store/modules/team/teamEntity';
-import { TeamMetadataModule } from '@/store/modules/team/teamMetadata';
-import { TeamsService } from '@libs/services-lib/teams/entity';
-import { TeamsMetadataService } from '@libs/services-lib/teams/metadata';
-
 import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
 import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
 import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
@@ -86,15 +81,6 @@ const store: StoreOptions<IRootState> = {
     [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(
       new UserAccountsMetadataService(httpClient),
       null, // SignalR,
-    ).getModule(),
-
-    [vuexModule.TEAM_ENTITIES]: new TeamEntityModule(
-      new TeamsService(httpClient),
-      SignalR,
-    ).getModule(),
-    [vuexModule.TEAM_METADATA]: new TeamMetadataModule(
-      new TeamsMetadataService(httpClient),
-      SignalR,
     ).getModule(),
 
     [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(

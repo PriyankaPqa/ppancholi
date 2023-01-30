@@ -164,7 +164,7 @@ export default Vue.extend({
       });
       const resultData = res?.value.map((e: IEventMainInfo) => new RegistrationEvent(e.entity as unknown as IEventData));
       this.events = resultData;
-      if (this.excludedEvent) {
+      if (this.excludedEvent && resultData) {
         this.events = resultData.filter((event) => event.id !== this.excludedEvent);
       }
       this.$emit('fetch:done', this.events);

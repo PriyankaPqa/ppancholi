@@ -84,7 +84,9 @@ import { DataTableHeader } from 'vuetify';
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
 import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
-import { TeamType, ITeamCombined } from '@libs/entities-lib/team';
+import {
+ TeamType, ITeamCombined, ITeamEntity, IdParams, ITeamMetadata,
+} from '@libs/entities-lib/team';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
@@ -92,6 +94,8 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'TeamsTable',
@@ -129,12 +133,13 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [false],
         ...this.limitResults ? { itemsPerPage: this.limitResults } : {}, // Add the property itemsPerPage only if limitResults is truthy
       },
+      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
     };
   },
 
   computed: {
     tableData(): ITeamCombined[] {
-      return this.$storage.team.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+      return this.combinedTeamStore.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
     labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
@@ -222,7 +227,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     tableProps(): Record<string, unknown> {
       return {
-        loading: this.$store.state.teamEntities.searchLoading,
+        loading: useTeamStore().searchLoading,
         itemClass: (item: ITeamCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
@@ -267,7 +272,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     async fetchData(params: IAzureSearchParams) {
-      const res = await this.$storage.team.actions.search({
+      const res = await this.combinedTeamStore.search({
         search: params.search,
         filter: params.filter,
         top: params.top,

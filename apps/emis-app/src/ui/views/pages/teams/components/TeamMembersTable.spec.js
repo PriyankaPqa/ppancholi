@@ -7,6 +7,7 @@ import { mockStorage } from '@/storage';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component, { LOAD_SIZE } from './TeamMembersTable.vue';
 
 const localVue = createLocalVue();
@@ -14,6 +15,8 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 
 const mockTeam = mockCombinedTeams()[0];
+
+const { pinia, teamStore } = useMockTeamStore();
 
 const userAccounts = [
   mockCombinedUserAccount({ id: 'guid-member-1' }),
@@ -35,6 +38,7 @@ describe('TeamMembersTable.vue', () => {
   const mountWrapper = async (fullMount = true, level = 5, additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         teamId: 'abc',
       },
@@ -201,8 +205,15 @@ describe('TeamMembersTable.vue', () => {
             teamMembers: [{ id: 'id-PC', isPrimaryContact: true }],
           },
         };
-        storage.team.getters.get = jest.fn(() => team);
-        await mountWrapper();
+
+        await mountWrapper(false, 5, {
+          computed: {
+            team: () => team,
+          },
+        });
+
+        wrapper.vm.combinedTeamStore.getById = jest.fn(() => team);
+
         expect(wrapper.vm.primaryContactId).toEqual('id-PC');
       });
     });
@@ -299,13 +310,13 @@ describe('TeamMembersTable.vue', () => {
     describe('removeTeamMember', () => {
       it('calls removeTeamMember action with correct params if argument is false', async () => {
         wrapper.vm.removeTeamMember('guid-member-1', false);
-        expect(storage.team.actions.removeTeamMember).toHaveBeenCalledWith('abc', 'guid-member-1');
+        expect(teamStore.removeTeamMember).toHaveBeenCalledWith({ teamId: 'abc', teamMemberId: 'guid-member-1' });
       });
 
       it('calls emptyTeam action with correct params if argument is true and emits reloadTeam', async () => {
         wrapper.vm.$emit = jest.fn();
         await wrapper.vm.removeTeamMember(null, true);
-        expect(storage.team.actions.emptyTeam).toHaveBeenCalledWith('abc');
+        expect(teamStore.emptyTeam).toHaveBeenCalledWith({ teamId: 'abc' });
         expect(wrapper.vm.$emit).toHaveBeenCalledWith('reloadTeam');
       });
 

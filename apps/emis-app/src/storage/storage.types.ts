@@ -12,11 +12,6 @@ import {
 } from './case-file/storage.types';
 
 import {
-  IStorageMake as ITeamMakeStorage,
-  IStorageMakeMock as ITeamMakeStorageMock,
-} from './team';
-
-import {
   IStorageMake as IFinancialAssistanceCategoryMakeStorage,
   IStorageMakeMock as IFinancialAssistanceCategoryMakeStorageMock,
 } from './financial-assistance-category';
@@ -28,7 +23,6 @@ import {
 
 export interface IStorage {
   caseFile: ICaseFileMakeStorage;
-  team: ITeamMakeStorage;
   financialAssistance: IFinancialAssistanceMakeStorage;
   financialAssistanceCategory: IFinancialAssistanceCategoryMakeStorage;
   financialAssistancePayment: IFinancialAssistancePaymentMakeStorage;
@@ -38,7 +32,6 @@ export interface IStorage {
 
 export interface IStorageMock {
   caseFile: ICaseFileMakeStorageMock;
-  team: ITeamMakeStorageMock;
   financialAssistance: IFinancialAssistanceMakeStorageMock;
   financialAssistanceCategory: IFinancialAssistanceCategoryMakeStorageMock;
   financialAssistancePayment: IFinancialAssistancePaymentMakeStorageMock;

@@ -5,11 +5,13 @@ import { mockStorage } from '@/storage';
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import { CaseFileActivityType } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from '../CaseFileSummary.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
+const { teamStore } = useMockTeamStore(pinia);
 
 describe('CaseFileSummary.vue', () => {
   let wrapper;
@@ -44,7 +46,7 @@ describe('CaseFileSummary.vue', () => {
         const services = wrapper.vm.$services;
         expect(services.caseFiles.getSummary).toHaveBeenCalledWith('abcd');
         expect(services.caseFilesMetadata.getSummary).toHaveBeenCalledWith('abcd');
-        expect(storage.team.actions.getTeamsAssigned).toHaveBeenCalledWith('abcd');
+        expect(teamStore.getTeamsAssigned).toHaveBeenCalledWith('abcd');
         expect(storage.userAccount.actions.search).toHaveBeenCalledWith({
           filter: "search.in(Entity/Id, 'mock-assigned-individual-id-1|mock-assigned-individual-id-2', '|')",
         });

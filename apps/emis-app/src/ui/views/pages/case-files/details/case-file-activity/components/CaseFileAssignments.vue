@@ -52,6 +52,7 @@ import { ITeamEntity } from '@libs/entities-lib/team';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IAzureTableSearchResults } from '@libs/shared-lib/types';
 import { IUserAccountCombined } from '@libs/entities-lib/user-account';
+import { useTeamStore } from '@/pinia/team/team';
 import ViewAssigned from './ViewAssigned.vue';
 import AssignCaseFile from './AssignCaseFile.vue';
 
@@ -131,7 +132,7 @@ export default Vue.extend({
       if (!this.caseFile.assignedTeamIds.length) {
         return null;
       }
-      const assignedTeamsData = await this.$storage.team.actions.getTeamsAssigned(this.caseFile.id);
+      const assignedTeamsData = await useTeamStore().getTeamsAssigned(this.caseFile.id);
       const firstTeamId: string = this.caseFile.assignedTeamIds[0];
       return assignedTeamsData.find((team) => team.id === firstTeamId)?.name;
     },

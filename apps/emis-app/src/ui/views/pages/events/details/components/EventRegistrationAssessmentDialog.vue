@@ -86,10 +86,15 @@ import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessm
 import VTextFieldWithValidation from '@libs/component-lib/components/atoms/VTextFieldWithValidation.vue';
 import { useEventStore } from '@/pinia/event/event';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
+import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
+import { VSelectWithValidation, RcDialog, VTextAreaWithValidation } from '@libs/component-lib/components';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 export default Vue.extend({
   name: 'EventRegistrationAssessmentDialog',
-  components: { VTextFieldWithValidation },
+  components: {
+    VTextFieldWithValidation, RcDialog, LanguageTabs, VSelectWithValidation, VTextAreaWithValidation, StatusChip,
+  },
 
   props: {
     event: {

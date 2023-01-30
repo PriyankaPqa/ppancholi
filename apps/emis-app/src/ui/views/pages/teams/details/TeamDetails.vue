@@ -78,10 +78,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPageContent } from '@libs/component-lib/components';
-import { TeamType, ITeamCombined, ITeamEvent } from '@libs/entities-lib/team';
+import {
+ TeamType, ITeamCombined, ITeamEvent, ITeamEntity, ITeamMetadata, IdParams,
+} from '@libs/entities-lib/team';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 
 export default Vue.extend({
   name: 'TeamDetails',
@@ -98,9 +102,15 @@ export default Vue.extend({
     },
   },
 
+  data() {
+    return {
+      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
+    };
+  },
+
   computed: {
     team(): ITeamCombined {
-      const t = this.$storage.team.getters.get(this.id);
+      const t = this.combinedTeamStore.getById(this.id);
       if (!t?.entity?.id || !t?.metadata?.id) {
         return null;
       }
@@ -122,7 +132,7 @@ export default Vue.extend({
 
   methods: {
     async loadTeam() {
-      await this.$storage.team.actions.fetch(this.id);
+      await this.combinedTeamStore.fetch(this.id);
       if (this.primaryContactId) {
         await this.$storage.userAccount.actions.fetch(this.primaryContactId);
       }

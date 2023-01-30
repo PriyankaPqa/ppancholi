@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedUserAccounts } from '@libs/entities-lib/user-account';
-import { mockCombinedTeams } from '@libs/entities-lib/team';
+import { mockTeamEntities } from '@libs/entities-lib/team';
 import { mockStorage } from '@/storage';
 
 import Component from '../case-file-activity/components/ViewAssignedOld.vue';
@@ -8,7 +8,7 @@ import Component from '../case-file-activity/components/ViewAssignedOld.vue';
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-const mockTeam = () => mockCombinedTeams()[0];
+const mockTeam = () => mockTeamEntities()[0];
 
 describe('ViewAssignedOld.vue', () => {
   let wrapper;

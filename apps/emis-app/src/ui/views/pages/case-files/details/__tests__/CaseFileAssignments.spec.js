@@ -5,18 +5,20 @@ import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from '../case-file-activity/components/CaseFileAssignments.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCaseFileEntity();
 const mockTeam = mockTeamEntity();
+const { pinia, teamStore } = useMockTeamStore();
 
 describe('CaseFileAssignments.vue', () => {
   let wrapper;
   storage.userAccount.actions.search = jest.fn(() => ({ ids: [mockCombinedUserAccount().entity.id] }));
   storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
-  storage.team.actions.getTeamsAssigned = jest.fn(() => [mockTeamEntity()]);
+  teamStore.getTeamsAssigned = jest.fn(() => [mockTeamEntity()]);
   describe('Template', () => {
     beforeEach(async () => {
       wrapper = shallowMount(Component, {
@@ -80,6 +82,7 @@ describe('CaseFileAssignments.vue', () => {
       it('does not render if canAssign is set to false', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             caseFile: mockCaseFile,
           },
@@ -128,6 +131,7 @@ describe('CaseFileAssignments.vue', () => {
       it('renders if canAssign is set to false', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             caseFile: mockCaseFile,
           },
@@ -147,6 +151,7 @@ describe('CaseFileAssignments.vue', () => {
       it('sets showAssignmentsDialog when clicked', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             caseFile: mockCaseFile,
           },
@@ -172,6 +177,7 @@ describe('CaseFileAssignments.vue', () => {
       it('calls setAssignmentsInfo', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             caseFile: mockCaseFile,
           },
@@ -201,11 +207,6 @@ describe('CaseFileAssignments.vue', () => {
               userAccount: {
                 actions: {
                   search: jest.fn(() => ({ ids: [] })),
-                },
-              },
-              team: {
-                actions: {
-                  getTeamsAssigned: jest.fn(() => [mockTeamEntity()]),
                 },
               },
             },
@@ -298,6 +299,7 @@ describe('CaseFileAssignments.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           caseFile: mockCaseFile,
         },
@@ -346,14 +348,14 @@ describe('CaseFileAssignments.vue', () => {
       it('calls storage action getTeamsAssigned with the right id', async () => {
         jest.clearAllMocks();
         await wrapper.vm.getAssignedTeamInfo();
-        expect(storage.team.actions.getTeamsAssigned).toHaveBeenCalledWith(mockCaseFile.id);
+        expect(teamStore.getTeamsAssigned).toHaveBeenCalledWith(mockCaseFile.id);
       });
 
       it('returns the right value', async () => {
         const team1 = mockTeamEntity({ id: '1', name: 'A' });
         const team2 = mockTeamEntity({ id: '2', name: 'B' });
         const mockTeams = [team1, team2];
-        wrapper.vm.$storage.team.actions.getTeamsAssigned = jest.fn(() => mockTeams);
+        teamStore.getTeamsAssigned = jest.fn(() => mockTeams);
 
         const caseFile = { ...mockCaseFile, assignedTeamIds: ['2'] };
         await wrapper.setProps({ caseFile });

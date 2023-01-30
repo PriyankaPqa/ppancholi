@@ -105,14 +105,26 @@ export const mockTeamsMetadataAddHoc = (force? : Partial<ITeamMetadata>): ITeamM
 
 export const mockTeamEntity = (force?: Partial<IEntity>) => mockTeamsDataStandard(force);
 
+export const mockTeamEntities = (force?: Partial<IEntity>) : ITeamEntity[] => ([
+  mockTeamsDataStandard(force),
+  mockTeamsDataAddHoc(force),
+]);
+
+export const mockTeamMetadatum = (force?: Partial<IEntity>) : ITeamMetadata[] => ([
+  mockTeamsMetadataAddHoc(force),
+  mockTeamsMetadataStandard(force),
+]);
+
 export const mockCombinedTeams = (): ITeamCombined[] => [
   {
     entity: mockTeamsDataStandard(),
     metadata: mockTeamsMetadataStandard(),
+    pinned: false,
   },
   {
     entity: mockTeamsDataAddHoc(),
     metadata: mockTeamsMetadataAddHoc(),
+    pinned: false,
   },
 ];
 

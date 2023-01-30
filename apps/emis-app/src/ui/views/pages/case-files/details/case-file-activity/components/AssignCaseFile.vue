@@ -130,6 +130,7 @@ import { AccountStatus, IUserAccountCombined } from '@libs/entities-lib/user-acc
 import { Status } from '@libs/entities-lib/base';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IAzureSearchParams, IAzureTableSearchResults } from '@libs/shared-lib/types';
+import { useTeamStore } from '@/pinia/team/team';
 import AssignedList from './AssignedList.vue';
 
 interface TeamWithCount extends ITeamEntity {
@@ -268,7 +269,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async getTeamsData() {
       const { eventId } = this.caseFile;
-      const teams: ITeamEntity[] = await this.$storage.team.actions.getTeamsAssignable(eventId);
+      const teams: ITeamEntity[] = await useTeamStore().getTeamsAssignable(eventId);
 
       this.allTeams = (_cloneDeep(teams.filter((t:ITeamEntity) => t.status === Status.Active)))
         .map((x) => ({ ...x, activeMemberCount: 0 }));

@@ -26,11 +26,6 @@ import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-ass
 import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
 import { FinancialAssistanceTablesMetadataService } from '@libs/services-lib/financial-assistance-tables/metadata';
 
-import { TeamEntityModule } from '@/store/modules/team/teamEntity';
-import { TeamMetadataModule } from '@/store/modules/team/teamMetadata';
-import { TeamsService } from '@libs/services-lib/teams/entity';
-import { TeamsMetadataService } from '@libs/services-lib/teams/metadata';
-
 import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
 import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
 import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
@@ -71,15 +66,6 @@ const mockConfig = {
     ).getModule(),
     [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(
       new UserAccountsMetadataService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-
-    [vuexModule.TEAM_ENTITIES]: new TeamEntityModule(
-      new TeamsService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-    [vuexModule.TEAM_METADATA]: new TeamMetadataModule(
-      new TeamsMetadataService(httpClient),
       mockSignalR(),
     ).getModule(),
 

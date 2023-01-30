@@ -151,6 +151,7 @@ import { IIdMultilingualName } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { PaymentsSummary } from '@libs/entities-lib/financial-assistance-payment';
+import { useTeamStore } from '@/pinia/team/team';
 import CaseFileTags from './case-file-activity/components/CaseFileTags.vue';
 
 export interface CaseFileSummary {
@@ -199,7 +200,7 @@ export default Vue.extend({
     },
 
     assignedTeams(): string[] {
-      return this.$storage.team.getters.getByIds(this.caseFile?.assignedTeamIds || []).map((u) => u.entity?.name) || [];
+      return useTeamStore().getByIds(this.caseFile?.assignedTeamIds || []).map((u) => u.name) || [];
     },
 
     summary(): CaseFileSummary {
@@ -237,7 +238,7 @@ export default Vue.extend({
       this.caseFile = await this.$services.caseFiles.getSummary(this.caseFileId);
       this.caseFileMetadata = await this.$services.caseFilesMetadata.getSummary(this.caseFileId);
       await Promise.all([
-        await this.$storage.team.actions.getTeamsAssigned(this.caseFileId),
+        await useTeamStore().getTeamsAssigned(this.caseFileId),
         await this.getAssignedIndividualsInfo(this.caseFile.assignedIndividualIds),
         await this.getReferrals(),
         await this.getActivities(),

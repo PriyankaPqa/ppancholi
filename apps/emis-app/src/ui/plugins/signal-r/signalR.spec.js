@@ -10,7 +10,7 @@ import { useCaseNoteMetadataStore, useCaseNoteStore } from '@/pinia/case-note/ca
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
 import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
-
+import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { SignalR } from './signalR';
 
 const storage = mockStorage();
@@ -278,13 +278,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'team',
           entityName: 'Team',
-          action: conn.storage.team.mutations.setEntityFromOutsideNotification,
+          action: useTeamStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'team',
           entityName: 'TeamMetadata',
-          action: conn.storage.team.mutations.setMetadataFromOutsideNotification,
+          action: useTeamMetadataStore().setItemFromOutsideNotification,
         });
     });
   });
