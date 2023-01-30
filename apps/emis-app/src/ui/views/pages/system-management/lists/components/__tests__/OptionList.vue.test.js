@@ -2,7 +2,7 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { mockOptionItemData, EOptionLists } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
 import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import OptionListItem from '@/ui/views/pages/system-management/lists/components/OptionListItem.vue';
@@ -83,6 +83,24 @@ describe('OptionList.vue', () => {
     describe('>> items', () => {
       it('returns the items from the store', () => {
         optionListStore.getItems = jest.fn(() => mockOptionItemData());
+        expect(wrapper.vm.items).toEqual(mockOptionItemData());
+      });
+
+      it('filters out level 0 items when feature flag is on and list is roles', () => {
+        const l0 = { name: { translation: { en: 'Level 0' } }, subItems: [] };
+        optionListStore.list = EOptionLists.Roles;
+        optionListStore.getItems = jest.fn(() => [...mockOptionItemData(), l0]);
+        wrapper = mount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            title: 'TITLE',
+          },
+          mocks: {
+            $hasFeature: jest.fn(() => false),
+          },
+        });
+
         expect(wrapper.vm.items).toEqual(mockOptionItemData());
       });
 

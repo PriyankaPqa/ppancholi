@@ -15,6 +15,7 @@ export enum FeatureKeys {
   CouplingAssessmentsWithRegistration = 'CouplingAssessmentsWithRegistration',
   ETransferCancellationHaveOptionForUnknown = 'ETransferCancellationHaveOptionForUnknown',
   PreFillPersonalInformation = 'PreFillPersonalInformation',
+  L0Access = 'L0Access',
 }
 
 export enum FeatureType {

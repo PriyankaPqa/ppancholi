@@ -167,9 +167,10 @@ import routes from '@/constants/routes';
 import entityUtils from '@libs/entities-lib/utils';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import {
-  IOptionItem, OptionItem, ICreateOptionItemRequest, IOptionSubItem,
+  IOptionItem, OptionItem, ICreateOptionItemRequest, IOptionSubItem, EOptionLists,
 } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useOptionListStore } from '@/pinia/option-list/optionList';
 import OptionListItem from './OptionListItem.vue';
 import OptionListNewItem from './OptionListNewItem.vue';
@@ -289,7 +290,11 @@ export default Vue.extend({
 
     items: {
       get(): OptionItem[] {
-        return useOptionListStore().getItems();
+        let items = useOptionListStore().getItems();
+        if (useOptionListStore().list === EOptionLists.Roles && !this.$hasFeature(FeatureKeys.L0Access)) {
+          items = items?.filter((i) => i.name.translation.en !== 'Level 0');
+        }
+        return items;
       },
 
       set(value: IOptionItem[]) {
@@ -463,8 +468,8 @@ export default Vue.extend({
 
       try {
         await useOptionListStore().updateSubItem({
- itemId: item.id, subItemId: subItem.id, name: payloadName, description: payloadDescription,
-});
+          itemId: item.id, subItemId: subItem.id, name: payloadName, description: payloadDescription,
+        });
 
         this.editedItem = null;
       } finally {

@@ -133,6 +133,7 @@ import { IAzureSearchParams, IMultilingual } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'UserAccounts',
@@ -169,7 +170,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       allAccessLevelRoles: [],
       modifiedUsers: [] as IUserAccountCombined[],
       disallowedLevels: ['Level 6', 'ContributorIM', 'ContributorFinance', 'Contributor 3', 'Read Only'],
-      disallowedRoles: [] as IOptionSubItem[],
+      disallowedRoles: [] as IOptionSubItem[], // Roles that a Level5 cannot change
       tableName: 'user-accounts',
     };
   },
@@ -180,7 +181,11 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     roles(): IOptionItem[] {
-      return this.$storage.userAccount.getters.roles();
+      let roles: IOptionItem[] = this.$storage.userAccount.getters.roles();
+      if (!this.$hasFeature(FeatureKeys.L0Access)) {
+        roles = roles?.filter((r) => r.name.translation.en !== 'Level 0');
+      }
+      return roles;
     },
 
     headers(): Array<DataTableHeader> {
