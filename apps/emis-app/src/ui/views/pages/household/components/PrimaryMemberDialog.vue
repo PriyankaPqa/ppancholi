@@ -124,6 +124,7 @@ export default Vue.extend({
       allMembers: [] as IMember[],
       member: null as IMember,
       additionalMembers: [] as IMember[],
+      noFixedHome: false,
       submitLoading: false,
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
@@ -158,6 +159,10 @@ export default Vue.extend({
         items = items.filter((i) => i.value !== ECurrentAddressTypes.Shelter);
       }
 
+      if (this.noFixedHome) {
+        items = items.filter((i) => i.value !== ECurrentAddressTypes.RemainingInHome);
+      }
+
       return items;
     },
 
@@ -187,6 +192,7 @@ export default Vue.extend({
 
   created() {
     const household = useRegistrationStore().getHouseholdCreate();
+    this.noFixedHome = household.noFixedHome;
     // eslint-disable-next-line no-unsafe-optional-chaining
     this.allMembers = [household?.primaryBeneficiary, ...household?.additionalMembers];
     this.member = this.allMembers.filter((m) => m.id === this.memberId)[0] || this.allMembers[0];

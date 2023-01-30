@@ -40,6 +40,7 @@ describe('PrimaryMemberDialog', () => {
   const mockAddressTypes = [
     { value: ECurrentAddressTypes.Campground, text: 'Campground' },
     { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
+    { value: ECurrentAddressTypes.RemainingInHome, text: 'RemainingInHome' },
   ];
   helpers.enumToTranslatedCollection = jest.fn(() => mockAddressTypes);
 
@@ -233,6 +234,27 @@ describe('PrimaryMemberDialog', () => {
           },
         });
 
+        expect(wrapper.vm.currentAddressTypeItems).toEqual([
+          { value: ECurrentAddressTypes.Campground, text: 'Campground' },
+          { value: ECurrentAddressTypes.RemainingInHome, text: 'RemainingInHome' },
+        ]);
+      });
+
+      it('excludes "remaining in home" when no fixed address', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+          },
+          data() {
+            return {
+              apiKey: '123',
+            };
+          },
+        });
+
+        await wrapper.setData({ noFixedHome: true });
         expect(wrapper.vm.currentAddressTypeItems).toEqual([{ value: ECurrentAddressTypes.Campground, text: 'Campground' }]);
       });
     });
