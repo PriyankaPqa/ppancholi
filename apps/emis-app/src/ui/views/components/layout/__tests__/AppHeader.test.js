@@ -57,7 +57,7 @@ describe('AppHeader.vue', () => {
     });
 
     describe('displayRegistrationButton', () => {
-      it('should return true if the user has minimum level 1 and the route has the right name and feature flag is off', () => {
+      it('should return true if the user has minimum level 1 and the route has the right name and feature flag L0Access is off', () => {
         wrapper = mount(Component, {
           localVue,
           pinia: getPiniaForUser('level1'),
@@ -73,7 +73,7 @@ describe('AppHeader.vue', () => {
         expect(wrapper.vm.displayRegistrationButton).toBeTruthy();
       });
 
-      it('should return true if the user has minimum level 0 and the route has the right name and feature flag is on', () => {
+      it('should return true if the user has minimum level 0 and the route has the right name and feature flag L0Access is on', () => {
         wrapper = mount(Component, {
           localVue,
           pinia: getPiniaForUser('level0'),
