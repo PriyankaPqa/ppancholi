@@ -88,11 +88,6 @@ export interface IEventAgreementInfos extends IEventAgreement {
   agreementTypeName: IMultilingual;
 }
 
-export interface IRelatedEventsInfos {
-  id: uuid;
-  eventName: IMultilingual;
-}
-
 export interface IRegistrationAssessment extends IEntity {
   assessmentId: string;
   sectionTitle: IMultilingual;
@@ -155,7 +150,6 @@ export interface IEventSearchData {
   location: IEventLocation;
   number: number;
   provinceName: IMultilingual;
-  relatedEventsInfos: Array<IRelatedEventsInfos>;
   registrationLink: IMultilingual;
   responseDetails: IEventResponseDetails;
   responseLevelName: IMultilingual;
@@ -220,7 +214,6 @@ export interface IEventMetadata extends IEntity {
   agreements?: Array<IEventAgreementInfos>;
   eventTypeName?: IMultilingual;
   scheduleEventStatusName?: IMultilingual;
-  relatedEventsInfos?: Array<IRelatedEventsInfos>;
   provinceName?: IMultilingual;
   teamMemberIds?: Array<string>;
   responseLevelName?: IMultilingual;

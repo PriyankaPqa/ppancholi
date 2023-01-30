@@ -1,6 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockEventEntity, mockEventMetadata } from '@libs/entities-lib/event';
+import { mockEventEntities } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
@@ -9,16 +9,19 @@ import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import flushPromises from 'flush-promises';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+import { mockProvider } from '@/services/provider';
 import Component from '../EventDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockEvent = mockEventEntity();
+const mockEvent = mockEventEntities()[0];
+const mockRelatedEvent = mockEventEntities()[1];
+const provider = mockProvider();
 
-const { pinia, eventStore, eventMetadataStore } = useMockEventStore();
+const { pinia, eventStore } = useMockEventStore();
 
-eventStore.getById = jest.fn(() => mockEvent);
-eventMetadataStore.getById = jest.fn(() => mockEventMetadata()[0]);
+provider.publicApi.searchEventsById = jest.fn(() => ({ value: [{ entity: mockRelatedEvent }] }));
+
 describe('EventDetails.vue', () => {
   let wrapper;
   describe('Template', () => {
@@ -27,7 +30,7 @@ describe('EventDetails.vue', () => {
         localVue,
         pinia,
         propsData: {
-          id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+          id: '1',
         },
         computed: {
           eventId() {
@@ -47,10 +50,11 @@ describe('EventDetails.vue', () => {
           $route: {
             name: routes.events.edit.name,
             params: {
-              id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+              id: '1',
             },
           },
           $storage: storage,
+          $services: provider,
         },
       });
       await flushPromises();
@@ -175,13 +179,13 @@ describe('EventDetails.vue', () => {
         });
 
         it('renders', () => {
-          const element = wrapper.findDataTest('related-event-0');
+          expect(wrapper.vm.$services.publicApi.searchEventsById).toHaveBeenCalledWith([mockRelatedEvent.id]);
+          const element = wrapper.findDataTest(`related-event-${mockRelatedEvent.id}`);
           expect(element.exists()).toBeTruthy();
         });
         it('displays the related event name', () => {
-          const relatedEvent = wrapper.vm.eventMetadata.relatedEventsInfos[0];
-          const element = wrapper.findDataTest('related-event-0');
-          expect(element.text()).toEqual(relatedEvent.eventName.translation.en);
+          const element = wrapper.findDataTest(`related-event-${mockRelatedEvent.id}`);
+          expect(element.text()).toEqual(mockRelatedEvent.name.translation.en);
         });
       });
 
@@ -220,7 +224,7 @@ describe('EventDetails.vue', () => {
         localVue,
         pinia,
         propsData: {
-          id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+          id: '1',
         },
         mocks: {
           $storage: storage,
@@ -245,7 +249,7 @@ describe('EventDetails.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+            id: '1',
           },
           computed: {
             event() {
@@ -267,7 +271,7 @@ describe('EventDetails.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+            id: '1',
           },
           computed: {
             event() {
@@ -286,7 +290,7 @@ describe('EventDetails.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+            id: '1',
           },
           computed: {
             event() {
@@ -392,13 +396,13 @@ describe('EventDetails.vue', () => {
         localVue,
         pinia,
         propsData: {
-          id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+          id: '1',
         },
         mocks: {
           $route: {
             name: routes.events.edit.name,
             params: {
-              id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+              id: '1',
             },
           },
           $storage: storage,
@@ -408,10 +412,6 @@ describe('EventDetails.vue', () => {
 
     it('should fetch event entity', () => {
       expect(eventStore.fetch).toHaveBeenCalledWith(wrapper.vm.id);
-    });
-
-    it('should fetch event metadata', () => {
-      expect(eventMetadataStore.fetch).toHaveBeenCalledWith(wrapper.vm.id, false);
     });
   });
 
@@ -425,13 +425,13 @@ describe('EventDetails.vue', () => {
         localVue,
         pinia,
         propsData: {
-          id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+          id: '1',
         },
         mocks: {
           $route: {
             name: routes.events.edit.name,
             params: {
-              id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+              id: '1',
             },
           },
           $storage: storage,

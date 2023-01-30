@@ -7,7 +7,6 @@ import {
   IEventCombined,
   IEventEntity,
   IEventMetadata,
-  IRelatedEventsInfos,
   IEventLocation,
 } from './event.types';
 /* eslint-disable max-lines-per-function */
@@ -531,15 +530,6 @@ export const mockEventMetadataData = (): IEventMetadata[] => [
         fr: 'En attente',
       },
     },
-    relatedEventsInfos: [{
-      id: '87776243-696f-426b-b961-31ee98e3a4cd',
-      eventName: {
-        translation: {
-          en: 'Vegas Earthquake 2021',
-          fr: 'Vegas Earthquake 2021 FR',
-        },
-      },
-    }],
     provinceName: {
       translation: {
         en: 'Alberta',
@@ -600,15 +590,6 @@ export const mockEventMetadataData = (): IEventMetadata[] => [
         fr: 'En attente',
       },
     },
-    relatedEventsInfos: [{
-      id: '87776243-696f-426b-b961-31ee98e3a4cd',
-      eventName: {
-        translation: {
-          en: 'Vegas Earthquake 2021',
-          fr: 'Vegas Earthquake 2021 FR',
-        },
-      },
-    }],
     provinceName: {
       translation: {
         en: 'Alberta',
@@ -669,29 +650,6 @@ export const mockRegionData = (): IEventLocation[] => [{
   provinceOther: null,
 }];
 
-export const mockRelatedEventInfos = (): IRelatedEventsInfos[] => ([
-  {
-    id: '87776243-696f-426b-b961-31ee98e3a4cd',
-    eventName: {
-      translation: {
-        en: 'Vegas Earthquake 2021',
-        fr: 'Vegas Earthquake 2021 FR',
-      },
-    },
-  },
-  {
-    id: '87776243-696f-426b-b961-31ee98e34444',
-    eventName: {
-      translation: {
-        en: 'Some Event 2021',
-        fr: 'Some Event 2021 FR',
-      },
-    },
-  },
-]);
-
-export const mockRelatedEventIds = (): uuid[] => mockRelatedEventInfos().map((i) => i.id);
-
 const getEventEntity = (index = 0) : IEventEntity => ({
   ...mockBaseData(),
   id: mockBaseData().id + index,
@@ -709,7 +667,7 @@ const getEventEntity = (index = 0) : IEventEntity => ({
   shelterLocations: mockEventEntityData()[index].shelterLocations,
   callCentres: mockEventEntityData()[index].callCentres,
   scheduleHistory: mockEventEntityData()[index].scheduleHistory,
-  relatedEventIds: [mockRelatedEventIds()[index]],
+  relatedEventIds: [mockBaseData().id + (index + 1)],
   agreements: mockEventEntityData()[index].agreements,
 
   validate: jest.fn(),
@@ -723,7 +681,6 @@ const getEventMetadatum = (index = 0) : IEventMetadata => ({
   agreements: mockEventMetadataData()[index].agreements,
   eventTypeName: mockEventMetadataData()[index].eventTypeName,
   scheduleEventStatusName: mockEventMetadataData()[index].scheduleEventStatusName,
-  relatedEventsInfos: mockRelatedEventInfos(),
   provinceName: mockEventMetadataData()[index].provinceName,
   responseLevelName: mockEventMetadataData()[index].responseLevelName,
 });
@@ -817,7 +774,6 @@ export const mockEmptyMetadata = (force?: Partial<IEventMetadata>) : IEventMetad
     eventTypeName: emptyMultilingual(),
     agreements: [],
     scheduleEventStatusName: emptyMultilingual(),
-    relatedEventsInfos: [],
     provinceName: emptyMultilingual(),
     responseLevelName: emptyMultilingual(),
     ...force,
@@ -825,7 +781,7 @@ export const mockEmptyMetadata = (force?: Partial<IEventMetadata>) : IEventMetad
 );
 
 export const mockEventEntities = () : IEventEntity[] => [
-  mockEventEntity({ id: '1' }),
+  mockEventEntity({ id: '1', relatedEventIds: ['2'] }),
   mockEventEntity({ id: '2', eventStatus: EEventStatus.Closed }, 1),
 ];
 

@@ -27,6 +27,8 @@ describe('>>> Events Service', () => {
   });
 
   test('createEvent converts the event entity to the correct payload', async () => {
+    const relatedEvent = new EventEntity(mockEventEntities()[1]);
+
     await service.createEvent(new EventEntity(mockEventEntities()[0]));
     expect(http.post).toHaveBeenCalledWith(service.baseUrl, {
       assistanceNumber: '+15144544545',
@@ -60,7 +62,7 @@ describe('>>> Events Service', () => {
           fr: '',
         },
       },
-      relatedEventIds: ['87776243-696f-426b-b961-31ee98e3a4cd'],
+      relatedEventIds: [relatedEvent.id],
       responseLevel: 3,
       scheduledCloseDate: '2021-05-15T15:00:00.000Z',
       scheduledOpenDate: '2021-03-01T00:00:00.000Z',
@@ -76,6 +78,7 @@ describe('>>> Events Service', () => {
 
   test('updateEvent converts the event entity to the correct payload', async () => {
     const event = new EventEntity(mockEventEntities()[0]);
+    const relatedEvent = new EventEntity(mockEventEntities()[1]);
 
     await service.updateEvent(event);
 
@@ -111,7 +114,7 @@ describe('>>> Events Service', () => {
           fr: '',
         },
       },
-      relatedEventIds: ['87776243-696f-426b-b961-31ee98e3a4cd'],
+      relatedEventIds: [relatedEvent.id],
       responseLevel: 3,
       scheduledCloseDate: '2021-05-15T15:00:00.000Z',
       scheduledOpenDate: '2021-03-01T00:00:00.000Z',

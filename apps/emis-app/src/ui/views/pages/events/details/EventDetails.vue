@@ -57,13 +57,13 @@
           </div>
         </div>
 
-        <div v-if="eventMetadata && eventMetadata.relatedEventsInfos && eventMetadata.relatedEventsInfos.length" class="rc-body14 pb-2">
+        <div v-if="relatedEvents && Object.keys(relatedEvents).length > 0" class="rc-body14 pb-2">
           <v-icon size="16" class="pr-2" color="gray darken-2">
             mdi-calendar
           </v-icon>
           <span class="fw-bold">{{ $t('eventDetail.relatedEvents') }}</span>
-          <div v-for="(relatedEvent, i) in eventMetadata.relatedEventsInfos" :key="relatedEvent.id" class="pl-6" :data-test="`related-event-${i}`">
-            {{ $m(relatedEvent.eventName) }}
+          <div v-for="(relatedEvent, i) in relatedEvents" :key="i" class="pl-6" :data-test="`related-event-${i}`">
+            {{ $m(relatedEvent) }}
           </div>
         </div>
       </div>
@@ -140,12 +140,12 @@ import helpers from '@/ui/helpers/helpers';
 
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import {
-  EEventStatus, EventEntity, IEventEntity, IEventMetadata,
+  EEventStatus, EventEntity, IEventEntity,
 } from '@libs/entities-lib/event';
 import { ECanadaProvinces, IMultilingual, INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
+import { useEventStore } from '@/pinia/event/event';
 import { Resize } from 'vuetify/es5/directives';
 
 export default Vue.extend({
@@ -178,16 +178,13 @@ export default Vue.extend({
       idDigitsCount: 6,
       getLocalStringDate: helpers.getLocalStringDate,
       loading: false,
+      relatedEvents: null as Record<string, IMultilingual>,
     };
   },
 
   computed: {
     event(): IEventEntity {
       return useEventStore().getById(this.id) || new EventEntity();
-    },
-
-    eventMetadata(): IEventMetadata {
-      return useEventMetadataStore().getById(this.id);
     },
 
     eventId() : string {
@@ -297,8 +294,8 @@ export default Vue.extend({
   async created() {
     this.loading = true;
     try {
-      await useEventStore().fetch(this.id);
-      await useEventMetadataStore().fetch(this.id, false);
+      const event = await useEventStore().fetch(this.id);
+      await this.fetchRelatedEvents(event?.relatedEventIds);
       await useEventStore().fetchEventTypes();
     } finally {
       this.loading = false;
@@ -319,6 +316,19 @@ export default Vue.extend({
 
     toggleExpandLeftMenu(): void {
       this.showExpandedLeftMenu = !this.showExpandedLeftMenu;
+    },
+
+    async fetchRelatedEvents(relatedEventIds:Array<string>): Promise<void> {
+      if (!relatedEventIds || relatedEventIds.length === 0) {
+        return;
+      }
+
+      const searchResults = await this.$services.publicApi.searchEventsById(relatedEventIds);
+      const events: Record<string, IMultilingual> = {};
+      searchResults?.value.forEach((e) => {
+        events[e.entity.id] = e.entity.name;
+      });
+      this.relatedEvents = events;
     },
   },
 });
