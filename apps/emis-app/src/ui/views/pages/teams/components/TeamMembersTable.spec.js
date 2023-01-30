@@ -329,7 +329,7 @@ describe('TeamMembersTable.vue', () => {
     });
 
     describe('canRemovePrimary', () => {
-      it('returns true if the feature flag is on, the user has level 5 and the team has only one member', async () => {
+      it('returns true if the user has level 5 and the team has only one member', async () => {
         await mountWrapper(false, 5, {
           computed: {
             team() {
@@ -337,20 +337,7 @@ describe('TeamMembersTable.vue', () => {
             },
           },
         });
-        wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(wrapper.vm.canRemovePrimary()).toEqual(true);
-      });
-
-      it('returns false if the feature flag is off', async () => {
-        await mountWrapper(false, 5, {
-          computed: {
-            team() {
-              return mockTeam;
-            },
-          },
-        });
-        wrapper.vm.$hasFeature = jest.fn(() => false);
-        expect(wrapper.vm.canRemovePrimary()).toEqual(false);
       });
 
       it('returns false if  the user has less than level 5', async () => {
@@ -361,7 +348,6 @@ describe('TeamMembersTable.vue', () => {
             },
           },
         });
-        wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(wrapper.vm.canRemovePrimary()).toEqual(false);
       });
 
@@ -373,7 +359,6 @@ describe('TeamMembersTable.vue', () => {
             },
           },
         });
-        wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(wrapper.vm.canRemovePrimary()).toEqual(false);
       });
     });
@@ -462,7 +447,6 @@ describe('TeamMembersTable.vue', () => {
             teamId: wrapper.vm.teamId, openCaseFileCount: 10, inactiveCaseFileCount: 11, allCaseFileCount: 21,
           }],
         });
-        wrapper.vm.$hasFeature = jest.fn(() => true);
 
         const result = await wrapper.vm.makeMappedMembers([member]);
         expect(result).toEqual([{

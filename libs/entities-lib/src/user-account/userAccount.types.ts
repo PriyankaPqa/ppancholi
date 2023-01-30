@@ -72,10 +72,6 @@ export interface IUserAccountMetadata extends IEntity {
   roleName?: IMultilingual;
   teamCount?: number;
   teams?: Array<IUserAccountTeam>;
-  caseFilesCount?: number;
-  closeCaseFilesCount?: number;
-  openCaseFilesCount?: number;
-  inactiveCaseFilesCount?: number;
   preferredLanguage?: string;
   givenName?: string;
   surname?: string;

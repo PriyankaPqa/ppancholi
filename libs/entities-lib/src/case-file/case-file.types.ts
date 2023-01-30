@@ -140,7 +140,6 @@ export interface IAssignedTeamMembers {
 }
 
 export interface ICaseFileEntity extends IEntity {
-  assignedIndividualIds?: uuid[];
   assignedTeamMembers?: IAssignedTeamMembers[],
   assignedTeamIds?: uuid[];
   caseFileNumber?: string;
@@ -150,7 +149,7 @@ export interface ICaseFileEntity extends IEntity {
   impactStatusValidation?: IImpactStatusValidation;
   isDuplicate?: boolean;
   labels?: ICaseFileLabel[];
-   tags?: IListOption[];
+  tags?: IListOption[];
   triage?: CaseFileTriage;
   privacyDateTimeConsent?: Date | string;
   identityAuthentication?: IIdentityAuthentication;

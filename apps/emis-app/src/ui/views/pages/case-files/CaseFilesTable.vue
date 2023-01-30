@@ -46,7 +46,7 @@
     <template #[`item.${customColumns.caseFileNumber}`]="{ item: caseFile }">
       <div class="d-flex align-center ">
         <v-icon
-          v-visible="caseFile.entity.assignedIndividualIds.includes(userId)"
+          v-visible="showMyCaseFileIcon(caseFile)"
           :data-test="`caseFilesTable__assignedIcon--${caseFile.caseFileNumber}`"
           small>
           mdi-account-check
@@ -100,7 +100,7 @@ import mixins from 'vue-typed-mixins';
 import { DataTableHeader } from 'vuetify';
 import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
-
+import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
 import isEmpty from 'lodash/isEmpty';
@@ -169,8 +169,14 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     myCaseFilesFilter(): Record<string, unknown> {
       return {
         Entity: {
-          AssignedIndividualIds: {
-            any: this.userId,
+          AssignedTeamMembers: {
+            any: {
+              TeamMembersIds: {
+                any: {
+                  [ITEM_ROOT]: this.userId,
+                },
+              },
+            },
           },
         },
       };
@@ -283,7 +289,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           }],
         },
         {
-          key: 'Entity/AssignedIndividualIds',
+          key: 'Entity/AssignedTeamMembers',
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.isAssigned') as string,
           items: [{
@@ -401,6 +407,13 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         finalFilters = isEmpty(preparedFilters) ? null : preparedFilters;
       }
       await this.onApplyFilter({ preparedFilters: finalFilters, searchFilters }, filterState);
+    },
+
+    showMyCaseFileIcon(caseFile:ICaseFileCombined): boolean {
+      if (!caseFile.entity?.assignedTeamMembers?.length) {
+        return false;
+      }
+      return caseFile.entity.assignedTeamMembers.some((tm) => tm.teamMembersIds?.includes(this.userId));
     },
 
     getTableName():string {

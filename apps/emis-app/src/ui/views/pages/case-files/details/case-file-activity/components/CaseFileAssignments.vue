@@ -129,7 +129,7 @@ export default Vue.extend({
     },
 
     async getAssignedTeamInfo() {
-      if (!this.caseFile.assignedTeamIds.length) {
+      if (!this.caseFile.assignedTeamIds?.length) {
         return null;
       }
       const assignedTeamsData = await useTeamStore().getTeamsAssigned(this.caseFile.id);
@@ -138,7 +138,7 @@ export default Vue.extend({
     },
 
     async getAssignedIndividualsInfo() {
-      if (!this.caseFile.assignedIndividualIds.length) {
+      if (!this.caseFile.assignedTeamMembers?.length) {
         return null;
       }
 

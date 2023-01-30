@@ -3,8 +3,9 @@ import _orderBy from 'lodash/orderBy';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
-import { CaseFileActivityType } from '@libs/entities-lib/case-file';
+import { CaseFileActivityType, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
+import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from '../CaseFileSummary.vue';
 
@@ -15,6 +16,7 @@ const { teamStore } = useMockTeamStore(pinia);
 
 describe('CaseFileSummary.vue', () => {
   let wrapper;
+  storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount({ displayName: 'John Smith' }), mockCombinedUserAccount({ displayName: 'Jane Doe' })]);
 
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
@@ -48,7 +50,19 @@ describe('CaseFileSummary.vue', () => {
         expect(services.caseFilesMetadata.getSummary).toHaveBeenCalledWith('abcd');
         expect(teamStore.getTeamsAssigned).toHaveBeenCalledWith('abcd');
         expect(storage.userAccount.actions.search).toHaveBeenCalledWith({
-          filter: "search.in(Entity/Id, 'mock-assigned-individual-id-1|mock-assigned-individual-id-2', '|')",
+          filter: {
+            Entity: {
+              Id: {
+                searchIn_az: [
+                  'mock-assigned-individual-id-1',
+                  'mock-assigned-individual-id-2',
+                  'mock-assigned-individual-id-3',
+                ],
+              },
+            },
+          },
+          queryType: 'full',
+          searchMode: 'all',
         });
         expect(caseFileReferralStore.fetchAll).toHaveBeenCalledWith({ caseFileId: 'abcd' });
         expect(caseFileReferralStore.getByCaseFile).toHaveBeenCalledWith('abcd');
@@ -117,9 +131,38 @@ describe('CaseFileSummary.vue', () => {
         );
       });
     });
+
+    describe('getAssignedIndividualsInfo', () => {
+      it('calls user account search with the right payload', async () => {
+        await mountWrapper();
+        await wrapper.setData({ caseFile: { ...mockCaseFileEntity(), assignedTeamMembers: [{ teamMembersIds: ['id-1'] }] } });
+        wrapper.vm.$storage.userAccount.actions.search = jest.fn();
+        await wrapper.vm.getAssignedIndividualsInfo();
+        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({
+          filter: { Entity: { Id: { searchIn_az: ['id-1'] } } },
+          queryType: 'full',
+          searchMode: 'all',
+        });
+      });
+    });
   });
 
   describe('Computed', () => {
+    describe('assignedIndividualIds', () => {
+      it('should return the right value', async () => {
+        await mountWrapper();
+        await wrapper.setData({ caseFile: { ...mockCaseFileEntity(), assignedTeamMembers: [{ teamMembersIds: ['id-01', 'id-02'] }, { teamMembersIds: ['id-11', 'id-12'] }] } });
+        expect(wrapper.vm.assignedIndividualIds).toEqual(['id-01', 'id-02', 'id-11', 'id-12']);
+      });
+    });
+
+    describe('assignedUserAccounts', () => {
+      it('returns the right value', async () => {
+        await mountWrapper();
+        expect(wrapper.vm.assignedUserAccounts).toEqual(['John Smith', 'Jane Doe']);
+      });
+    });
+
     describe('summary', () => {
       it('returns a complete object from storage - closed activity', async () => {
         await mountWrapper();
@@ -143,7 +186,7 @@ describe('CaseFileSummary.vue', () => {
               },
             },
           }],
-          assignedToUsersAndTeams: 'Standard Active Team 1, AdHoc Inactive Team 1, Jane Smith, Jane Smith',
+          assignedToUsersAndTeams: 'Standard Active Team 1, AdHoc Inactive Team 1, John Smith, Jane Doe',
           financialTotal: 876.43,
           hasReferrals: true,
         };
@@ -175,7 +218,7 @@ describe('CaseFileSummary.vue', () => {
               },
             },
           }],
-          assignedToUsersAndTeams: 'Standard Active Team 1, AdHoc Inactive Team 1, Jane Smith, Jane Smith',
+          assignedToUsersAndTeams: 'Standard Active Team 1, AdHoc Inactive Team 1, John Smith, Jane Doe',
           financialTotal: 876.43,
           hasReferrals: true,
         };

@@ -3,6 +3,7 @@ import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
+import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 
 import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
@@ -249,8 +250,14 @@ describe('CaseFilesTable.vue', () => {
         expect(wrapper.vm.myCaseFilesFilter)
           .toEqual({
             Entity: {
-              AssignedIndividualIds: {
-                any: 'mock-id',
+              AssignedTeamMembers: {
+                any: {
+                  TeamMembersIds: {
+                    any: {
+                      [ITEM_ROOT]: wrapper.vm.userId,
+                    },
+                  },
+                },
               },
             },
           });
@@ -396,7 +403,7 @@ describe('CaseFilesTable.vue', () => {
             }],
           },
           {
-            key: 'Entity/AssignedIndividualIds',
+            key: 'Entity/AssignedTeamMembers',
             type: EFilterType.Select,
             label: 'caseFileTable.filters.isAssigned',
             items: [{

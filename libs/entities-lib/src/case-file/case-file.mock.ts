@@ -45,7 +45,6 @@ export const mockAssignedTeamMembers = (): IAssignedTeamMembers[] => [
 
 export const mockCaseFileEntity = (force? : Partial<ICaseFileEntity>): ICaseFileEntity => ({
   ...mockBaseData(),
-  assignedIndividualIds: ['mock-assigned-individual-id-1', 'mock-assigned-individual-id-2'],
   assignedTeamMembers: mockAssignedTeamMembers(),
   assignedTeamIds: ['mock-assigned-team-id-1'],
   caseFileNumber: '000000111-000001',

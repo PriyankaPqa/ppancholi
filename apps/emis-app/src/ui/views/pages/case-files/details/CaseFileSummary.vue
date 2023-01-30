@@ -141,6 +141,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
+import _flatten from 'lodash/flatten';
 import moment from 'moment';
 import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
 import {
@@ -195,8 +196,12 @@ export default Vue.extend({
   },
 
   computed: {
+    assignedIndividualIds(): string[] {
+      return _flatten(this.caseFile.assignedTeamMembers?.map((m) => m.teamMembersIds) || []);
+    },
+
     assignedUserAccounts(): string[] {
-      return this.$storage.userAccount.getters.getByIds(this.caseFile?.assignedIndividualIds || []).map((u) => u.metadata?.displayName) || [];
+      return this.$storage.userAccount.getters.getByIds(this.assignedIndividualIds).map((u) => u.metadata?.displayName) || [];
     },
 
     assignedTeams(): string[] {
@@ -239,7 +244,7 @@ export default Vue.extend({
       this.caseFileMetadata = await this.$services.caseFilesMetadata.getSummary(this.caseFileId);
       await Promise.all([
         await useTeamStore().getTeamsAssigned(this.caseFileId),
-        await this.getAssignedIndividualsInfo(this.caseFile.assignedIndividualIds),
+        await this.getAssignedIndividualsInfo(),
         await this.getReferrals(),
         await this.getActivities(),
         await this.getFASummary(),
@@ -248,10 +253,12 @@ export default Vue.extend({
       await this.getHouseholdMembers();
     },
 
-    async getAssignedIndividualsInfo(assignedIndividualIds: string[]) {
-      const filter = `search.in(Entity/Id, '${assignedIndividualIds.join('|')}', '|')`;
-
-      await this.$storage.userAccount.actions.search({ filter });
+    async getAssignedIndividualsInfo() {
+      await this.$storage.userAccount.actions.search({
+        filter: { Entity: { Id: { searchIn_az: this.assignedIndividualIds } } },
+        queryType: 'full',
+        searchMode: 'all',
+      });
     },
 
     async getReferrals() {

@@ -7,11 +7,6 @@ const mockCaseFileData = mockCaseFileEntity();
 describe('>>> Case File', () => {
   describe('>> constructor', () => {
     describe('instantiate when data is passed', () => {
-      it('should instantiate assignedIndividualIds', () => {
-        const caseFile = new CaseFileEntity(mockCaseFileData);
-        expect(caseFile.assignedIndividualIds).toEqual(mockCaseFileData.assignedIndividualIds);
-      });
-
       it('should instantiate assignedTeamMembers', () => {
         const caseFile = new CaseFileEntity(mockCaseFileData);
         expect(caseFile.assignedTeamMembers).toEqual(mockCaseFileData.assignedTeamMembers);
@@ -69,14 +64,9 @@ describe('>>> Case File', () => {
     });
 
     describe('instantiate when data is not passed', () => {
-      it('should instantiate assignedIndividualIds', () => {
+      it('should instantiate assignedTeamIds', () => {
         const caseFile = new CaseFileEntity();
-        expect(caseFile.assignedIndividualIds).toEqual([]);
-      });
-
-      it('should instantiate assignedIndividualIds', () => {
-        const caseFile = new CaseFileEntity();
-        expect(caseFile.assignedIndividualIds).toEqual([]);
+        expect(caseFile.assignedTeamIds).toEqual([]);
       });
 
       it('should instantiate assignedTeamMembers', () => {

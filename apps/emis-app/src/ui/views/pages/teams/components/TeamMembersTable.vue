@@ -43,8 +43,8 @@
           tabindex="0"
           class="rc-link14 font-weight-bold"
           data-test="member_name"
-          @keydown.enter="$hasFeature(FeatureKeys.TeamImprovements) ? viewMemberCaseFiles(item) : viewMemberTeams(item)"
-          @click="$hasFeature(FeatureKeys.TeamImprovements) ? viewMemberCaseFiles(item) : viewMemberTeams(item)">
+          @keydown.enter="viewMemberCaseFiles(item)"
+          @click=" viewMemberCaseFiles(item)">
           {{ item.metadata.displayName }}
         </span>
       </template>
@@ -63,18 +63,12 @@
 
       <template #[`item.${customColumns.teamCount}`]="{ item }">
         <span
-          v-if="$hasFeature(FeatureKeys.TeamImprovements)"
           role="button"
           tabindex="0"
           class="rc-link14 font-weight-bold"
           data-test="member_name"
           @keydown.enter="viewMemberTeams(item)"
           @click="viewMemberTeams(item)">
-          {{ item.metadata.teamCount || '0' }}
-        </span>
-        <span
-          v-else
-          data-test="member_name">
           {{ item.metadata.teamCount || '0' }}
         </span>
       </template>
@@ -115,7 +109,7 @@
 
     <team-member-teams v-if="showMemberTeamsDialog" :show.sync="showMemberTeamsDialog" :member="clickedMember" />
     <team-member-case-files
-      v-if="$hasFeature(FeatureKeys.TeamImprovements) && showMemberCaseFilesDialog"
+      v-if="showMemberCaseFilesDialog"
       :show.sync="showMemberCaseFilesDialog"
       :member="clickedMember" />
   </div>
@@ -422,7 +416,7 @@ export default Vue.extend({
     },
 
     canRemovePrimary():boolean {
-      return this.$hasFeature(FeatureKeys.TeamImprovements) && this.$hasLevel('level5') && this.team.entity.teamMembers.length === 1;
+      return this.$hasLevel('level5') && this.team.entity.teamMembers.length === 1;
     },
 
     async handleRemoveTeamMember(item: ITeamMemberAsUser) {
@@ -454,9 +448,9 @@ export default Vue.extend({
         return {
           ...m,
           isPrimaryContact: m.entity.id === this.primaryContactId,
-          openCaseFileCount: (this.$hasFeature(FeatureKeys.TeamImprovements) ? memberAssignedCaseFiles?.openCaseFileCount : m.metadata?.openCaseFilesCount) || 0,
-          inactiveCaseFileCount: (this.$hasFeature(FeatureKeys.TeamImprovements) ? memberAssignedCaseFiles?.inactiveCaseFileCount : m.metadata?.inactiveCaseFilesCount) || 0,
-          caseFileCount: (this.$hasFeature(FeatureKeys.TeamImprovements) ? memberAssignedCaseFiles?.allCaseFileCount : m.metadata?.caseFilesCount) || 0,
+          openCaseFileCount: memberAssignedCaseFiles?.openCaseFileCount || 0,
+          inactiveCaseFileCount: memberAssignedCaseFiles?.inactiveCaseFileCount || 0,
+          caseFileCount: memberAssignedCaseFiles?.allCaseFileCount || 0,
         };
       });
     },

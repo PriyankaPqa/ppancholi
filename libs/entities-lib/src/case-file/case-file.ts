@@ -9,8 +9,6 @@ import {
 } from './case-file.types';
 
 export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
-  assignedIndividualIds?: uuid[];
-
   assignedTeamMembers?: IAssignedTeamMembers[];
 
   assignedTeamIds?: uuid[];
@@ -41,7 +39,6 @@ export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
     if (data) {
       super(data);
       this.assignedTeamMembers = data.assignedTeamMembers ? _cloneDeep(data.assignedTeamMembers) : [];
-      this.assignedIndividualIds = data.assignedIndividualIds ? [...data.assignedIndividualIds] : [];
       this.assignedTeamIds = data.assignedTeamIds ? [...data.assignedTeamIds] : [];
       this.caseFileNumber = data.caseFileNumber;
       this.caseFileStatus = data.caseFileStatus;
@@ -61,7 +58,6 @@ export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
       };
     } else {
       super();
-      this.assignedIndividualIds = [];
       this.assignedTeamMembers = [];
       this.assignedTeamIds = [];
       this.caseFileNumber = null;
