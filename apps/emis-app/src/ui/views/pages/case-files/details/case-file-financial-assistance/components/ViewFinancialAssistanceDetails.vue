@@ -74,6 +74,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { ApprovalStatus, IFinancialAssistancePaymentEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import routes from '@/constants/routes';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import ApprovalHistoryDialog from './ApprovalHistoryDialog.vue';
 import caseFileDetail from '../../caseFileDetail';
 
@@ -145,7 +146,7 @@ export default mixins(caseFileDetail).extend({
       });
 
       if (doDelete) {
-        const result = await this.$storage.financialAssistancePayment.actions.deactivate(this.financialAssistance.id);
+        const result = await useFinancialAssistancePaymentStore().deactivate(this.financialAssistance.id);
         if (result) {
           this.$emit('update:isDeletingPayment', true);
           this.$router.push({

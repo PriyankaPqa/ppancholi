@@ -53,7 +53,11 @@ describe('>>> Financial assistance payment Service', () => {
 
   describe('updatePaymentStatus', () => {
     it('is linked to the correct URL and params', async () => {
-      await service.updatePaymentStatus(entity.id, 'group-id', 2);
+      await service.updatePaymentStatus({
+        entityId: entity.id,
+        paymentGroupId: 'group-id',
+        status: 2,
+      });
       expect(http.patch).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/myId/groups/group-id/payment-status', { paymentStatus: 2 });
     });
   });

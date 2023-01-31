@@ -62,7 +62,7 @@ import { DataTableHeader } from 'vuetify';
 import _debounce from 'lodash/debounce';
 import { Status } from '@libs/entities-lib/base';
 import {
-  IAssessmentFormCombined, IAssessmentResponseCreateRequest, AssociationType, IAssessmentFormEntity, IAssessmentFormMetadata,
+  IAssessmentFormCombined, IAssessmentResponseCreateRequest, AssociationType, IAssessmentFormEntity, IAssessmentFormMetadata, IdParams,
 } from '@libs/entities-lib/assessment-template';
 import helpers from '@/ui/helpers/helpers';
 import { useAssessmentFormStore, useAssessmentFormMetadataStore } from '@/pinia/assessment-form/assessment-form';
@@ -105,7 +105,7 @@ export default Vue.extend({
       search: '',
       searchResultIds: [] as Array<string>,
       loading: false,
-      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, IAssessmentFormMetadata>(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
+      combinedFormStore: new CombinedStoreFactory<IAssessmentFormEntity, IAssessmentFormMetadata, IdParams>(useAssessmentFormStore(), useAssessmentFormMetadataStore()),
     };
   },
 

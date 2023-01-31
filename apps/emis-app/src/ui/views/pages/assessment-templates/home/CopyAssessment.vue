@@ -58,7 +58,7 @@ import { RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import _debounce from 'lodash/debounce';
 import { Status } from '@libs/entities-lib/base';
-import { IAssessmentBaseEntity, IAssessmentTemplateEntity, IAssessmentTemplateMetadata } from '@libs/entities-lib/assessment-template';
+import { IAssessmentBaseEntity, IAssessmentTemplateEntity, IAssessmentTemplateMetadata, IdParams } from '@libs/entities-lib/assessment-template';
 import helpers from '@/ui/helpers/helpers';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useAssessmentTemplateStore, useAssessmentTemplateMetadataStore } from '@/pinia/assessment-template/assessment-template';
@@ -87,7 +87,10 @@ export default Vue.extend({
       search: '',
       searchResultIds: [] as Array<string>,
       loading: false,
-      combinedTemplateStore: new CombinedStoreFactory<IAssessmentTemplateEntity, IAssessmentTemplateMetadata>(useAssessmentTemplateStore(), useAssessmentTemplateMetadataStore()),
+      combinedTemplateStore: new CombinedStoreFactory <IAssessmentTemplateEntity, IAssessmentTemplateMetadata, IdParams>(
+        useAssessmentTemplateStore(),
+        useAssessmentTemplateMetadataStore(),
+      ),
     };
   },
 

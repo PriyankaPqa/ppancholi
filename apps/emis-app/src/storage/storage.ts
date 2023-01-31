@@ -6,7 +6,6 @@ import { FinancialAssistanceStorage } from '@/storage/financial-assistance/stora
 import { IStore, IState } from '../store/store.types';
 import { IStorage } from './storage.types';
 import { FinancialAssistanceCategoryStorage } from './financial-assistance-category';
-import { FinancialAssistancePaymentStorage } from './financial-assistance-payment';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   caseFile: new CaseFileStorage(store, vuexModule.CASE_FILE_ENTITIES, vuexModule.CASE_FILE_METADATA).make(),
@@ -18,9 +17,4 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   household: new HouseholdStorage(store, vuexModule.HOUSEHOLD_ENTITIES, vuexModule.HOUSEHOLD_METADATA).make(),
   userAccount: new UserAccountStorage(store, vuexModule.USER_ACCOUNT_ENTITIES, vuexModule.USER_ACCOUNT_METADATA).make(),
   financialAssistanceCategory: new FinancialAssistanceCategoryStorage(store, vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES).make(),
-  financialAssistancePayment: new FinancialAssistancePaymentStorage(
-    store,
-    vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES,
-    vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA,
-  ).make(),
 });

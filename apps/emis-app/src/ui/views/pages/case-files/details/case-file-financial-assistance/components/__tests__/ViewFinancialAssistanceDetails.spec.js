@@ -5,6 +5,7 @@ import { mockProgramEntity } from '@libs/entities-lib/program';
 import { mockStorage } from '@/storage';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import Component from '../ViewFinancialAssistanceDetails.vue';
 
 const localVue = createLocalVue();
@@ -15,6 +16,8 @@ const program = mockProgramEntity();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
+const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
+
 describe('ViewFinancialAssistanceDetails.vue', () => {
   let wrapper;
 
@@ -24,6 +27,7 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
     financialAssistance = mockCaseFinancialAssistanceEntity();
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         financialAssistance,
         financialAssistanceTable,
@@ -206,7 +210,7 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
           title: 'caseFile.financialAssistance.confirm.delete.title',
           messages: 'caseFile.financialAssistance.confirm.delete.message',
         });
-        expect(storage.financialAssistancePayment.actions.deactivate)
+        expect(financialAssistancePaymentStore.deactivate)
           .toHaveBeenCalledWith(financialAssistance.id);
         expect(wrapper.emitted('update:isDeletingPayment')[0][0]).toEqual(true);
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
@@ -221,7 +225,7 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
           title: 'caseFile.financialAssistance.confirm.delete.title',
           messages: 'caseFile.financialAssistance.confirm.delete.message',
         });
-        expect(storage.financialAssistancePayment.actions.deactivate)
+        expect(financialAssistancePaymentStore.deactivate)
           .toHaveBeenCalledTimes(0);
       });
     });

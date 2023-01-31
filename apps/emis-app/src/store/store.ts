@@ -25,13 +25,8 @@ import { FinancialAssistanceTablesMetadataService } from '@libs/services-lib/fin
 
 import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
 import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
-import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
-import { FinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
 
 import { SignalR } from '@/ui/plugins/signal-r';
-
-import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
-import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 
 import { IRootState } from './store.types';
 
@@ -85,15 +80,6 @@ const store: StoreOptions<IRootState> = {
 
     [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
       new FinancialAssistanceCategoriesService(httpClient),
-      SignalR,
-    ).getModule(),
-
-    [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES]: new FinancialAssistancePaymentEntityModule(
-      new FinancialAssistancePaymentsService(httpClient),
-      SignalR,
-    ).getModule(),
-    [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA]: new FinancialAssistancePaymentMetadataModule(
-      new FinancialAssistancePaymentsMetadataService(httpClient),
       SignalR,
     ).getModule(),
   },

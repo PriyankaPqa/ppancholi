@@ -10,6 +10,8 @@ import { useCaseNoteMetadataStore, useCaseNoteStore } from '@/pinia/case-note/ca
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
 import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
+import { useFinancialAssistancePaymentStore, useFinancialAssistancePaymentMetadataStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { SignalR } from './signalR';
 
@@ -443,13 +445,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'finance',
           entityName: 'FinancialAssistancePayment',
-          action: conn.storage.financialAssistancePayment.mutations.setEntityFromOutsideNotification,
+          action: useFinancialAssistancePaymentStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'finance',
           entityName: 'FinancialAssistancePaymentMetadata',
-          action: conn.storage.financialAssistancePayment.mutations.setMetadataFromOutsideNotification,
+          action: useFinancialAssistancePaymentMetadataStore().setItemFromOutsideNotification,
         });
     });
   });

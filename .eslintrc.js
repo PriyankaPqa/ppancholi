@@ -22,20 +22,32 @@ module.exports = {
   rules: {
     'no-console': 'error',
     'no-debugger': 'error',
-    'no-param-reassign': ['error', { props: false }],
-    complexity: ['error', { max: 16 }],
+    'no-param-reassign': ['error', {
+      props: false,
+    }],
+    complexity: ['error', {
+      max: 16,
+    }],
     'max-depth': ['error', 3],
     'max-params': ['error', 4],
     'max-nested-callbacks': ['error', 4],
-    'max-statements': ['error', 31, { ignoreTopLevelFunctions: true }],
-    'max-lines': ['error', { max: 1000, skipBlankLines: true, skipComments: true }],
+    'max-statements': ['error', 31, {
+      ignoreTopLevelFunctions: true,
+    }],
+    'max-lines': ['error', {
+      max: 1000, skipBlankLines: true, skipComments: true,
+    }],
     'max-len': 'off',
     'vue/max-len': ['error', {
       code: 180, tabWidth: 4, ignoreUrls: true, ignoreComments: true,
     }],
-    'prefer-destructuring': ['error', { object: false, array: false }],
+    'prefer-destructuring': ['error', {
+      object: false, array: false,
+    }],
     'no-restricted-syntax': 'off',
-    'max-lines-per-function': ['error', { max: 155, skipBlankLines: true, skipComments: true }],
+    'max-lines-per-function': ['error', {
+      max: 155, skipBlankLines: true, skipComments: true,
+    }],
     'vue/max-attributes-per-line': ['error', {
       singleline: 8,
       multiline: {
@@ -48,9 +60,13 @@ module.exports = {
     }],
     'linebreak-style': 0,
     'no-shadow': 'off',
-    'no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
+    'no-unused-expressions': ['error', {
+      allowShortCircuit: true, allowTernary: true,
+    }],
     'import/prefer-default-export': 'off',
-    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    'import/no-extraneous-dependencies': ['error', {
+      devDependencies: true,
+    }],
     'no-useless-constructor': 'off',
     'class-methods-use-this': 'off',
     'vue/valid-v-slot': ['error', {
@@ -58,9 +74,12 @@ module.exports = {
     }],
     curly: ['error', 'all'],
     'no-underscore-dangle': 'off',
-    'brace-style': [1, '1tbs', { allowSingleLine: false }],
+    'brace-style': [1, '1tbs', {
+      allowSingleLine: false,
+    }],
     'vue/multi-word-component-names': 0,
     'vue/no-mutating-props': 0, // TODO Should eventually enable it and fix existing errors (false negative were there before the update)
+    'object-curly-newline': 'off',
   },
 
   overrides: [
@@ -102,7 +121,9 @@ module.exports = {
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/no-empty-interface': 'off',
         '@typescript-eslint/no-empty-function': 2,
-        '@typescript-eslint/no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
+        '@typescript-eslint/no-unused-expressions': ['error', {
+          allowShortCircuit: true, allowTernary: true,
+        }],
         '@typescript-eslint/no-shadow': 0,
         '@typescript-eslint/default-param-last': 0,
         '@typescript-eslint/naming-convention': 0,

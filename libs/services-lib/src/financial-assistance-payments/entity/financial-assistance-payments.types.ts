@@ -1,14 +1,21 @@
 import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import {
+  EPaymentCancellationReason,
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentsSummary, PaymentStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { IApprovalActionPayload } from '@libs/entities-lib/src/financial-assistance-payment/financial-assistance-payment.types';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
+export interface IUpdatePaymentStatusParams {
+  entityId: uuid;
+  paymentGroupId: uuid;
+  status: PaymentStatus
+  cancellationReason?: EPaymentCancellationReason
+}
 export interface IFinancialAssistancePaymentsService extends IDomainBaseService<IFinancialAssistancePaymentEntity, uuid> {
   addFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
-  updatePaymentStatus(entityId: uuid, paymentGroupId: uuid, status: PaymentStatus): Promise<IFinancialAssistancePaymentEntity>
+  updatePaymentStatus({ entityId, paymentGroupId, status, cancellationReason }: IUpdatePaymentStatusParams): Promise<IFinancialAssistancePaymentEntity>
   submitFinancialAssistancePayment(entityId: uuid): Promise<IFinancialAssistancePaymentEntity>;
   submitApprovalRequest(paymentId: uuid, submitTo: uuid): Promise<IFinancialAssistancePaymentEntity>
   submitApprovalAction(paymentId: uuid, payload: IApprovalActionPayload): Promise<IFinancialAssistancePaymentEntity>

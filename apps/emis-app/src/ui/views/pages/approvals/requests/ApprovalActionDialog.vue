@@ -100,6 +100,7 @@ import {
 import Vue from 'vue';
 import { IUserAccountCombined } from '@libs/entities-lib/user-account';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 
 export default Vue.extend({
   name: 'ApprovalActionDialog',
@@ -216,7 +217,7 @@ export default Vue.extend({
       }
 
       this.submitLoading = true;
-      const res = await this.$storage.financialAssistancePayment.actions.submitApprovalAction(this.financialAssistancePayment.entity.id, this.action);
+      const res = await useFinancialAssistancePaymentStore().submitApprovalAction(this.financialAssistancePayment.entity.id, this.action);
       if (res) {
         this.$toasted.global.success(this.$t('approval.requests.action.approvalStatusUpdated'));
         this.$emit('updateItems', this.financialAssistancePayment.entity.id);

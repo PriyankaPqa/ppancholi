@@ -25,6 +25,7 @@ import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/ap
 import { useCaseNoteStore, useCaseNoteMetadataStore } from '@/pinia/case-note/case-note';
 import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
+import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { IStorage } from '../../../storage/storage.types';
 
@@ -406,8 +407,8 @@ export class SignalR implements ISignalR {
       mutationDomain: 'caseNote',
     });
 
-    this.watchedPiniaStores.push(useProgramStore());
-    this.watchedPiniaStores.push(useProgramMetadataStore());
+    this.watchedPiniaStores.push(useCaseNoteStore());
+    this.watchedPiniaStores.push(useCaseNoteMetadataStore());
   }
 
   private listenForCaseReferralModuleChanges() {
@@ -444,14 +445,16 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'finance',
       entityName: 'FinancialAssistancePayment',
-      action: this.storage.financialAssistancePayment.mutations.setEntityFromOutsideNotification,
+      action: useFinancialAssistancePaymentStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'finance',
       entityName: 'FinancialAssistancePaymentMetadata',
-      action: this.storage.financialAssistancePayment.mutations.setMetadataFromOutsideNotification,
+      action: useFinancialAssistancePaymentMetadataStore().setItemFromOutsideNotification,
     });
+    this.watchedPiniaStores.push(useFinancialAssistancePaymentStore());
+    this.watchedPiniaStores.push(useFinancialAssistancePaymentMetadataStore());
   }
 
   private listenForCaseDocumentModuleChanges() {

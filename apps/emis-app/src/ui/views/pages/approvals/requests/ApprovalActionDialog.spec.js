@@ -1,6 +1,7 @@
 import { shallowMount, mount, createLocalVue } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
-import { mockCombinedCaseFinancialAssistance, ApprovalAction, mockCaseFinancialAssistanceEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { mockCombinedCaseFinancialAssistance, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import Component from './ApprovalActionDialog.vue';
 
 const localVue = createLocalVue();
@@ -8,11 +9,12 @@ const storage = mockStorage();
 let wrapper;
 
 const FAPayment = mockCombinedCaseFinancialAssistance({ eventId: 'mock-event-id' });
-storage.financialAssistancePayment.actions.submitApprovalAction = jest.fn(() => mockCaseFinancialAssistanceEntity());
+const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
 
 const doMount = (otherOptions = {}, fullMount = false) => {
   const options = {
     localVue,
+    pinia,
     propsData: {
       show: true,
       financialAssistancePayment: FAPayment,
@@ -160,7 +162,7 @@ describe('ApprovalActionDialog', () => {
         wrapper.vm.closeActionApprovalDialog = jest.fn();
         await wrapper.vm.onSubmit();
 
-        expect(wrapper.vm.$storage.financialAssistancePayment.actions.submitApprovalAction).toHaveBeenCalledWith(FAPayment.entity.id, wrapper.vm.action);
+        expect(financialAssistancePaymentStore.submitApprovalAction).toHaveBeenCalledWith(FAPayment.entity.id, wrapper.vm.action);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('approval.requests.action.approvalStatusUpdated');
         expect(wrapper.vm.closeActionApprovalDialog).toHaveBeenCalledTimes(1);
         expect(wrapper.emitted('updateItems')[0][0]).toEqual(FAPayment.entity.id);
@@ -171,7 +173,7 @@ describe('ApprovalActionDialog', () => {
         doMount();
         wrapper.vm.$refs.actionApprovalForm.validate = jest.fn(() => false);
         await wrapper.vm.onSubmit();
-        expect(wrapper.vm.$storage.financialAssistancePayment.actions.submitApprovalAction).not.toHaveBeenCalled();
+        expect(financialAssistancePaymentStore.submitApprovalAction).not.toHaveBeenCalled();
       });
     });
 

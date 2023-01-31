@@ -28,12 +28,8 @@ import { FinancialAssistanceTablesMetadataService } from '@libs/services-lib/fin
 
 import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
 import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
-import { FinancialAssistancePaymentsService } from '@libs/services-lib/financial-assistance-payments/entity';
-import { FinancialAssistancePaymentsMetadataService } from '@libs/services-lib/financial-assistance-payments/metadata';
 import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { mockProvider } from '@/services/provider';
-import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
-import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 
 Vue.use(Vuex);
 
@@ -73,17 +69,6 @@ const mockConfig = {
       new FinancialAssistanceCategoriesService(httpClient),
       mockSignalR(),
     ).getModule(),
-
-    [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES]:
-      new FinancialAssistancePaymentEntityModule(
-        new FinancialAssistancePaymentsService(httpClient),
-        mockSignalR(),
-      ).getModule(),
-    [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA]:
-      new FinancialAssistancePaymentMetadataModule(
-        new FinancialAssistancePaymentsMetadataService(httpClient),
-        mockSignalR(),
-      ).getModule(),
   },
 };
 

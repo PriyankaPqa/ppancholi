@@ -1,14 +1,10 @@
 import { shallowMount, createLocalVue } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
-import { mockCombinedCaseFinancialAssistance } from '@libs/entities-lib/financial-assistance-payment';
 import Component, { SelectedTab } from './ApprovalRequestsHome.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
-
-const FAPayment = mockCombinedCaseFinancialAssistance();
-storage.financialAssistancePayment.getters.getByIds = jest.fn(() => [FAPayment]);
 
 const doMount = (otherOptions = {}) => {
   const options = {

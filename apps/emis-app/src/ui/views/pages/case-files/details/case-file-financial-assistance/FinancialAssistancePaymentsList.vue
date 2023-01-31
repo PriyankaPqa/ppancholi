@@ -178,13 +178,15 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
   ApprovalAction,
   ApprovalStatus,
-  FinancialAssistancePaymentGroup,
+  FinancialAssistancePaymentGroup, IdParams,
   IFinancialAssistancePaymentCombined,
-  IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PayeeType,
+  IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentMetadata, PayeeType,
   PaymentStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { Status } from '@libs/entities-lib/base';
 import { EPaymentModalities } from '@libs/entities-lib/program';
+import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
 import StatisticsDialog from './components/StatisticsDialog.vue';
 import caseFileDetail from '../caseFileDetail';
@@ -228,13 +230,17 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       showApprovalHistory: false,
       selectedItem: null as IFinancialAssistancePaymentEntity,
       showStats: false,
+      combinedFinancialAssistancePaymentStore: new CombinedStoreFactory<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, IdParams>(
+        useFinancialAssistancePaymentStore(),
+        useFinancialAssistancePaymentMetadataStore(),
+      ),
     };
   },
 
   computed: {
 
     tableData(): IFinancialAssistancePaymentCombined[] {
-      return this.$storage.financialAssistancePayment.getters.getByIds(
+      return this.combinedFinancialAssistancePaymentStore.getByIds(
         this.searchResultIds,
         {
           onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
@@ -243,7 +249,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     itemsToSubmit() : IFinancialAssistancePaymentCombined[] {
-      return this.$storage.financialAssistancePayment.getters.getByIds(
+      return this.combinedFinancialAssistancePaymentStore.getByIds(
         this.allItemsIds,
         {
           onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
@@ -359,7 +365,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     }
     // we fetch all the payments for the case file because we will need to submit all at once possibly if some arent submitted
     // and since ApprovalStatus is not filterable...  we will filter on the computed - not really a problem
-    const res = await this.$storage.financialAssistancePayment.actions.search({
+    const res = await this.combinedFinancialAssistancePaymentStore.search({
       filter: { 'Entity/CaseFileId': this.caseFileId },
     });
     this.allItemsIds = res.ids;
@@ -368,7 +374,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   methods: {
     async fetchData(params: IAzureSearchParams) {
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
-      const res = await this.$storage.financialAssistancePayment.actions.search({
+      const res = await this.combinedFinancialAssistancePaymentStore.search({
         search: params.search,
         filter: { 'Entity/CaseFileId': this.caseFileId, ...filterParams },
         top: params.top,
@@ -441,7 +447,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       });
 
       if (doDelete) {
-        await this.$storage.financialAssistancePayment.actions.deactivate(item.entity.id);
+        await useFinancialAssistancePaymentStore().deactivate(item.entity.id);
       }
     },
 
@@ -451,7 +457,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       for (let i = 0; i < this.selectedItems.length; i += 1) {
         // we will do each request at a time because validation might conflict between each
         // eslint-disable-next-line no-await-in-loop
-        if (await this.$storage.financialAssistancePayment.actions.submitFinancialAssistancePayment(this.selectedItems[i])) {
+        if (await useFinancialAssistancePaymentStore().submitFinancialAssistancePayment(this.selectedItems[i])) {
           nbSuccess += 1;
         }
       }

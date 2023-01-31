@@ -98,7 +98,7 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { useCaseFileDocumentStore, useCaseFileDocumentMetadataStore } from '@/pinia/case-file-document/case-file-document';
+import { useCaseFileDocumentStore, useCaseFileDocumentMetadataStore, IdParams } from '@/pinia/case-file-document/case-file-document';
 
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
@@ -132,7 +132,10 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       tableProps: {
         itemClass: (item: { pinned: boolean }) => (item.pinned ? 'pinned' : ''),
       },
-      combinedCaseFileDocumentStore: new CombinedStoreFactory<ICaseFileDocumentEntity, ICaseFileDocumentMetadata>(useCaseFileDocumentStore(), useCaseFileDocumentMetadataStore()),
+      combinedCaseFileDocumentStore: new CombinedStoreFactory<ICaseFileDocumentEntity, ICaseFileDocumentMetadata, IdParams>(
+        useCaseFileDocumentStore(),
+        useCaseFileDocumentMetadataStore(),
+      ),
     };
   },
 

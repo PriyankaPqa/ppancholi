@@ -11,7 +11,7 @@ import
   FinancialAssistancePaymentEntity,
   mockCaseFinancialAssistanceEntity,
   mockCaseFinancialAssistancePaymentGroups,
-  ApprovalStatus,
+  ApprovalStatus, mockCaseFinancialAssistanceEntities,
 } from '@libs/entities-lib/financial-assistance-payment';
 import {
   mockCombinedCaseFile,
@@ -40,6 +40,7 @@ import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import Component from '../CreateEditFinancialAssistanceCaseFile.vue';
 
 const localVue = createLocalVue();
@@ -60,12 +61,14 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   let pinia;
   let programStore;
   let assessmentResponseStore;
+  let financialAssistancePaymentStore;
 
   // eslint-disable-next-line no-unused-vars,max-params,@typescript-eslint/no-unused-vars
   const mountWrapper = async (_fullMount = false, mode = 'edit', currentPinia = getPiniaForUser('level6'), additionalOverwrites = {}) => {
     pinia = currentPinia;
     programStore = useMockProgramStore(pinia).programStore;
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
+    financialAssistancePaymentStore = useMockFinancialAssistancePaymentStore(pinia).financialAssistancePaymentStore;
     wrapper = (mount)(Component, {
       shallow: true,
       pinia,
@@ -287,12 +290,9 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         expect(wrapper.vm.fetchTable).toHaveBeenCalledTimes(1);
       });
 
-      it('inits financialAssistance from storage when id is passed', () => {
-        expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith(
-          'myId',
-          { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-        );
-        expect(wrapper.vm.financialAssistance.id).toBe(caseFileFinancialAssistance.id);
+      it('inits financialAssistance from storage when id is passed', async () => {
+        expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith('myId');
+        expect(wrapper.vm.financialAssistance.id).toBe(mockCaseFinancialAssistanceEntities()[0].id);
         expect(wrapper.vm.financialAssistance.name).toBe(caseFileFinancialAssistance.name);
       });
 
@@ -900,14 +900,14 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         wrapper.vm.financialAssistance = caseFileFinancialAssistance;
         wrapper.vm.$refs.form.reset = jest.fn();
         await wrapper.vm.saveFinancialAssistance();
-        expect(storage.financialAssistancePayment.actions.addFinancialAssistancePayment).toHaveBeenCalledWith(caseFileFinancialAssistance);
+        expect(financialAssistancePaymentStore.addFinancialAssistancePayment).toHaveBeenCalledWith(caseFileFinancialAssistance);
       });
 
       it('should call the storage depending when editing', async () => {
         wrapper.vm.financialAssistance = caseFileFinancialAssistance;
         wrapper.vm.$refs.form.reset = jest.fn();
         await wrapper.vm.saveFinancialAssistance();
-        expect(storage.financialAssistancePayment.actions.editFinancialAssistancePayment).toHaveBeenCalledWith(caseFileFinancialAssistance);
+        expect(financialAssistancePaymentStore.editFinancialAssistancePayment).toHaveBeenCalledWith(caseFileFinancialAssistance);
       });
     });
 
@@ -993,8 +993,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         });
 
         await wrapper.vm.savePaymentLine(newGroup[0]);
-        expect(storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine).toHaveBeenCalledWith(financialAssistance.id, newGroup[0]);
-        expect(wrapper.vm.financialAssistance.groups).toEqual(storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine().groups);
+        expect(financialAssistancePaymentStore.addFinancialAssistancePaymentLine).toHaveBeenCalledWith(financialAssistance.id, newGroup[0]);
+        expect(wrapper.vm.financialAssistance.groups).toEqual(financialAssistancePaymentStore.addFinancialAssistancePaymentLine().groups);
       });
 
       it('should call the edit service when existing line is received', async () => {
@@ -1002,8 +1002,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         const newGroup = mockCaseFinancialAssistancePaymentGroups();
 
         await wrapper.vm.savePaymentLine(newGroup[0]);
-        expect(storage.financialAssistancePayment.actions.editFinancialAssistancePaymentLine).toHaveBeenCalledWith(financialAssistance.id, newGroup[0]);
-        expect(wrapper.vm.financialAssistance.groups).toEqual(storage.financialAssistancePayment.actions.editFinancialAssistancePaymentLine().groups);
+        expect(financialAssistancePaymentStore.editFinancialAssistancePaymentLine).toHaveBeenCalledWith(financialAssistance.id, newGroup[0]);
+        expect(wrapper.vm.financialAssistance.groups).toEqual(financialAssistancePaymentStore.editFinancialAssistancePaymentLine().groups);
       });
 
       it('calls submitPaymentNameUpdate if  feature branch is on', async () => {
@@ -1041,7 +1041,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         wrapper.vm.financialAssistance.groups = [newGroup[0]];
 
         await wrapper.vm.deletePaymentLine({ line: newGroup[0].lines[0], group: newGroup[0] });
-        expect(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine).not.toHaveBeenCalled();
+        expect(financialAssistancePaymentStore.deleteFinancialAssistancePaymentLine).not.toHaveBeenCalled();
         expect(wrapper.vm.financialAssistance.groups[0].lines).toEqual([lineKept]);
       });
 
@@ -1053,7 +1053,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         wrapper.vm.financialAssistance.groups = [newGroup[0]];
 
         await wrapper.vm.deletePaymentLine({ line: newGroup[0].lines[0], group: newGroup[0] });
-        expect(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine).not.toHaveBeenCalled();
+        expect(financialAssistancePaymentStore.deleteFinancialAssistancePaymentLine).not.toHaveBeenCalled();
         expect(wrapper.vm.financialAssistance.groups).toEqual([]);
       });
 
@@ -1063,8 +1063,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         wrapper.vm.financialAssistance.groups = [newGroup[0]];
 
         await wrapper.vm.deletePaymentLine({ line: newGroup[0].lines[0], group: newGroup[0] });
-        expect(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine).toHaveBeenCalledWith(financialAssistance.id, newGroup[0].lines[0].id);
-        expect(wrapper.vm.financialAssistance.groups).toEqual(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine().groups);
+        expect(financialAssistancePaymentStore.deleteFinancialAssistancePaymentLine).toHaveBeenCalledWith(financialAssistance.id, newGroup[0].lines[0].id);
+        expect(wrapper.vm.financialAssistance.groups).toEqual(financialAssistancePaymentStore.deleteFinancialAssistancePaymentLine().groups);
       });
 
       it('calls submitPaymentNameUpdate if  feature branch is on', async () => {
@@ -1081,9 +1081,14 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         const newGroup = mockCaseFinancialAssistancePaymentGroups()[0];
         newGroup.id = 'abc-id';
         wrapper.vm.$refs.form.reset = jest.fn();
+        const entityId = wrapper.vm.financialAssistance.id;
         await wrapper.vm.updatePaymentStatus({ status: 3, group: newGroup, cancellationReason: 5 });
-        expect(storage.financialAssistancePayment.actions.updatePaymentStatus).toHaveBeenCalledWith(financialAssistance.id, newGroup.id, 3, 5);
-        expect(wrapper.vm.financialAssistance).toEqual(new FinancialAssistancePaymentEntity(storage.financialAssistancePayment.actions.updatePaymentStatus()));
+        expect(financialAssistancePaymentStore.updatePaymentStatus).toHaveBeenCalledWith({
+          entityId,
+          paymentGroupId: newGroup.id,
+          status: 3,
+          cancellationReason: 5 });
+        expect(wrapper.vm.financialAssistance).toEqual(new FinancialAssistancePaymentEntity(financialAssistancePaymentStore.updatePaymentStatus()));
       });
     });
 
@@ -1176,7 +1181,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
         await wrapper.vm.submitPaymentNameUpdate();
         const newFA = { ...wrapper.vm.financialAssistance, name: `${program.name.translation.en} - mock-payment-line - 20220530 101010` };
-        expect(storage.financialAssistancePayment.actions.editFinancialAssistancePayment).toHaveBeenCalledWith(newFA);
+        expect(financialAssistancePaymentStore.editFinancialAssistancePayment).toHaveBeenCalledWith(newFA);
       });
     });
 

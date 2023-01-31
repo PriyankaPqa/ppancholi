@@ -81,6 +81,7 @@ import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Status } from '@libs/entities-lib/base';
 import { useUserStore } from '@/pinia/user/user';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 
 export default Vue.extend({
   name: 'SubmitFinancialAssistancePaymentDialog',
@@ -174,10 +175,10 @@ export default Vue.extend({
       let res;
       let successKey;
       if (this.useApprovalFlow) {
-        res = await this.$storage.financialAssistancePayment.actions.submitApprovalRequest(this.financialAssistance.id, this.selectedUserId);
+        res = await useFinancialAssistancePaymentStore().submitApprovalRequest(this.financialAssistance.id, this.selectedUserId);
         successKey = 'caseFile.financialAssistance.submitApproval.success';
       } else {
-        res = await this.$storage.financialAssistancePayment.actions.submitFinancialAssistancePayment(this.financialAssistance.id);
+        res = await useFinancialAssistancePaymentStore().submitFinancialAssistancePayment(this.financialAssistance.id);
         successKey = 'caseFile.financialAssistance.toast.assistanceSubmitted';
       }
 

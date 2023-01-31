@@ -156,3 +156,5 @@ export interface PaymentsSummary {
   totalAmountCompleted: number;
   grandTotalAmount: number;
 }
+
+export type IdParams = uuid;

@@ -17,9 +17,7 @@ import { IFinancialAssistanceTableMetadata } from '@libs/entities-lib/financial-
 import { ITeamMetadata } from '@libs/entities-lib/team';
 
 import { IFinancialAssistanceCategoryEntityState } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity.types';
-import { IFinancialAssistancePaymentMetadata } from '@libs/entities-lib/financial-assistance-payment';
 import { IProvider, IProviderMock } from '@/services/provider';
-import { IFinancialAssistancePaymentEntityState } from './modules/financial-assistance-payments/financialAssistancePaymentEntity.types';
 
 export interface IRootState {
   version: string;
@@ -33,8 +31,6 @@ export interface IRootState {
   [vuexModule.HOUSEHOLD_METADATA]?: IBaseState<IHouseholdMetadata>
   [vuexModule.TEAM_METADATA]?: IBaseState<ITeamMetadata>,
   [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]?: IFinancialAssistanceCategoryEntityState,
-  [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES]?: IFinancialAssistancePaymentEntityState,
-  [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA]?: IBaseState<IFinancialAssistancePaymentMetadata>,
 }
 
 export type IState = IRootState;

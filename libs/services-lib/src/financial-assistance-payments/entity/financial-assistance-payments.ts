@@ -3,14 +3,12 @@ import {
   IFinancialAssistancePaymentEntity,
   CreateFinancialAssistancePaymentServiceRequest,
   IFinancialAssistancePaymentGroup,
-  PaymentStatus,
-  EPaymentCancellationReason,
   PaymentsSummary,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { IApprovalActionPayload } from '@libs/entities-lib/src/financial-assistance-payment/financial-assistance-payment.types';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
-import { IFinancialAssistancePaymentsService } from './financial-assistance-payments.types';
+import { IFinancialAssistancePaymentsService, IUpdatePaymentStatusParams } from './financial-assistance-payments.types';
 
 const API_URL_SUFFIX = 'finance';
 const CONTROLLER = 'financial-assistance-payments';
@@ -41,12 +39,9 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
     return this.http.patch(`${this.baseUrl}/${entity.id}`, payload);
   }
 
-  async updatePaymentStatus(
-entityId: uuid,
-paymentGroupId: uuid,
-status: PaymentStatus,
-    cancellationReason?: EPaymentCancellationReason,
-): Promise<IFinancialAssistancePaymentEntity> {
+  async updatePaymentStatus({
+ entityId, paymentGroupId, status, cancellationReason,
+}: IUpdatePaymentStatusParams): Promise<IFinancialAssistancePaymentEntity> {
     return this.http.patch(`${this.baseUrl}/${entityId}/groups/${paymentGroupId}/payment-status`, { paymentStatus: status, cancellationReason });
   }
 

@@ -129,7 +129,13 @@ import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components';
 import { EFilterType, FilterFormData, IFilterSettings } from '@libs/component-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { ApprovalStatus, IFinancialAssistancePaymentCombined } from '@libs/entities-lib/financial-assistance-payment';
+import {
+  ApprovalStatus,
+  IdParams,
+  IFinancialAssistancePaymentCombined,
+  IFinancialAssistancePaymentEntity,
+  IFinancialAssistancePaymentMetadata,
+} from '@libs/entities-lib/financial-assistance-payment';
 import { IAzureSearchParams, IDropdownItem } from '@libs/shared-lib/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
@@ -140,6 +146,8 @@ import { Status } from '@libs/entities-lib/base';
 import { UserRolesNames } from '@libs/entities-lib/user';
 import UserAccountsFilter from '@/ui/mixins/userAccountsFilter';
 import { useUserStore } from '@/pinia/user/user';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import ApprovalActionDialog from './ApprovalActionDialog.vue';
 
 interface IMappedPayment extends IFinancialAssistancePaymentCombined {
@@ -196,6 +204,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
           levels: [UserRolesNames.level3, UserRolesNames.level4],
         },
       },
+      combinedFinancialAssistancePaymentStore: new CombinedStoreFactory<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, IdParams>(
+        useFinancialAssistancePaymentStore(),
+        useFinancialAssistancePaymentMetadataStore(),
+      ),
     };
   },
 
@@ -209,7 +221,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
     },
 
     tableData(): IFinancialAssistancePaymentCombined[] {
-      return this.$storage.financialAssistancePayment.getters.getByIds(this.searchResultIds, {
+      return this.combinedFinancialAssistancePaymentStore.getByIds(this.searchResultIds, {
         onlyActive: true,
         prependPinnedItems: false,
         baseDate: this.searchExecutionDate,
@@ -474,7 +486,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
       if (_isEmpty(params.filter)) {
         params.filter = this.presetFilter;
       }
-      const res = await this.$storage.financialAssistancePayment.actions.search({
+      const res = await this.combinedFinancialAssistancePaymentStore.search({
         search: params.search,
         filter: params.filter,
         top: params.top,

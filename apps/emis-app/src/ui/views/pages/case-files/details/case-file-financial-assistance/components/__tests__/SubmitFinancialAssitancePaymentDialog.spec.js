@@ -3,6 +3,7 @@ import { mockStorage } from '@/storage';
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalTableData } from '@libs/entities-lib/approvals/approvals-table';
 import { useMockUserStore } from '@/pinia/user/user.mock';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import Component from '../SubmitFinancialAssistancePaymentDialog.vue';
 
 const localVue = createLocalVue();
@@ -12,6 +13,7 @@ const financialAssistance = mockFinancialAssistanceTableEntity();
 let wrapper;
 
 const { pinia, userStore } = useMockUserStore();
+const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
 
 const doMount = (shallow = true, approvalRequired = false, approvalTable = null, hasFeature = true) => {
   const options = {
@@ -167,7 +169,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
 
           await wrapper.vm.onSubmit();
 
-          expect(wrapper.vm.$storage.financialAssistancePayment.actions.submitApprovalRequest)
+          expect(financialAssistancePaymentStore.submitApprovalRequest)
             .toBeCalledWith(wrapper.vm.financialAssistance.id, wrapper.vm.selectedUserId);
 
           expect(wrapper.emitted('update:financial-assistance')).toBeTruthy();
@@ -182,7 +184,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
 
           await wrapper.vm.onSubmit();
 
-          expect(wrapper.vm.$storage.financialAssistancePayment.actions.submitApprovalRequest)
+          expect(financialAssistancePaymentStore.submitApprovalRequest)
             .not.toBeCalledWith(wrapper.vm.financialAssistance.id, wrapper.vm.selectedUserId);
         });
       });
@@ -194,7 +196,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
           wrapper.vm.closeSubmitPaymentDialog = jest.fn();
 
           await wrapper.vm.onSubmit();
-          expect(wrapper.vm.$storage.financialAssistancePayment.actions.submitFinancialAssistancePayment).toBeCalledWith(wrapper.vm.financialAssistance.id);
+          expect(financialAssistancePaymentStore.submitFinancialAssistancePayment).toBeCalledWith(wrapper.vm.financialAssistance.id);
           expect(wrapper.emitted('update:financial-assistance')).toBeTruthy();
           expect(wrapper.vm.$toasted.global.success).toBeCalledWith('caseFile.financialAssistance.toast.assistanceSubmitted');
         });
@@ -205,7 +207,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
           wrapper.vm.closeSubmitPaymentDialog = jest.fn();
 
           await wrapper.vm.onSubmit();
-          expect(wrapper.vm.$storage.financialAssistancePayment.actions.submitFinancialAssistancePayment).not.toBeCalledWith(wrapper.vm.financialAssistance.id);
+          expect(financialAssistancePaymentStore.submitFinancialAssistancePayment).not.toBeCalledWith(wrapper.vm.financialAssistance.id);
         });
       });
     });

@@ -6,10 +6,9 @@ import { mockCombinedCaseFinancialAssistance, ApprovalStatus } from '@libs/entit
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import { Status } from '@libs/entities-lib/base';
 import { EFilterType } from '@libs/component-lib/types';
-
-import { createTestingPinia } from '@pinia/testing';
 import { useUserStore } from '@/pinia/user/user';
 
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import Component from './ApprovalRequestsTable.vue';
 
 const localVue = createLocalVue();
@@ -19,12 +18,12 @@ let wrapper;
 let userStore;
 
 const FAPayment = mockCombinedCaseFinancialAssistance();
-storage.financialAssistancePayment.getters.getByIds = jest.fn(() => [FAPayment]);
+const { pinia } = useMockFinancialAssistancePaymentStore();
 
 const doMount = (otherOptions = {}) => {
   const options = {
     localVue,
-    pinia: createTestingPinia({ stubActions: false }),
+    pinia,
     mocks: { $storage: storage },
     ...otherOptions,
   };
@@ -44,7 +43,16 @@ describe('ApprovalRequestsTable', () => {
 
     describe('tableData', () => {
       it(' returns the right value', () => {
-        expect(wrapper.vm.tableData).toEqual([FAPayment]);
+        doMount({
+          data() {
+            return {
+              combinedFinancialAssistancePaymentStore: {
+                getByIds: jest.fn(() => [mockCombinedCaseFinancialAssistance()]),
+              },
+            };
+          },
+        });
+        expect(wrapper.vm.tableData).toEqual([mockCombinedCaseFinancialAssistance()]);
       });
     });
 
@@ -496,9 +504,11 @@ describe('ApprovalRequestsTable', () => {
           skip: 10,
           orderBy: 'name asc',
         };
+
+        wrapper.vm.combinedFinancialAssistancePaymentStore.search = jest.fn();
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.financialAssistancePayment.actions.search)
+        expect(wrapper.vm.combinedFinancialAssistancePaymentStore.search)
           .toHaveBeenCalledWith({
             search: params.search,
             filter: params.filter,
@@ -593,6 +603,7 @@ describe('ApprovalRequestsTable', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
+        pinia,
         computed: {
           mappedPayments: () => [FAPayment],
         },

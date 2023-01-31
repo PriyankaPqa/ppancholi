@@ -165,6 +165,7 @@ import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from 
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program/program.types';
 import householdHelpers from '@/ui/helpers/household';
 import { useProgramStore } from '@/pinia/program/program';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
@@ -199,7 +200,7 @@ export default mixins(caseFileDetail).extend({
 
   computed: {
     financialAssistance() : IFinancialAssistancePaymentEntity {
-      return this.$storage.financialAssistancePayment.getters.get(this.financialAssistancePaymentId).entity;
+      return useFinancialAssistancePaymentStore().getById(this.financialAssistancePaymentId);
     },
 
     paymentGroup() : IFinancialAssistancePaymentGroup {
@@ -250,7 +251,7 @@ export default mixins(caseFileDetail).extend({
 
   async created() {
     this.loading = true;
-    await this.$storage.financialAssistancePayment.actions.fetch(this.financialAssistancePaymentId);
+    await useFinancialAssistancePaymentStore().fetch(this.financialAssistancePaymentId);
     await Promise.all([this.$storage.financialAssistanceCategory.actions.fetchAll(),
       this.$storage.financialAssistance.actions.fetch(this.financialAssistance.financialAssistanceTableId)]);
 

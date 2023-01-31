@@ -158,7 +158,7 @@ import
   IAssessmentResponseEntity,
   IAssessmentResponseMetadata,
   AssociationType,
-  CompletionStatus,
+  CompletionStatus, IdParams,
 } from '@libs/entities-lib/assessment-template';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
@@ -173,6 +173,7 @@ import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form'
 import { useProgramStore } from '@/pinia/program/program';
 import { useAssessmentResponseStore, useAssessmentResponseMetadataStore } from '@/pinia/assessment-response/assessment-response';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
@@ -230,7 +231,10 @@ export default mixins(caseFileDetail).extend({
       programAssessmentForms: [] as IAssessmentFormEntity[],
       caseFileAssessmentResponses: [] as IAssessmentResponseEntity[],
       isDeletingPayment: false,
-      combinedResponseStore: new CombinedStoreFactory<IAssessmentResponseEntity, IAssessmentResponseMetadata>(useAssessmentResponseStore(), useAssessmentResponseMetadataStore()),
+      combinedResponseStore: new CombinedStoreFactory<IAssessmentResponseEntity, IAssessmentResponseMetadata, IdParams>(
+        useAssessmentResponseStore(),
+        useAssessmentResponseMetadataStore(),
+      ),
     };
   },
 
@@ -300,11 +304,8 @@ export default mixins(caseFileDetail).extend({
   async created() {
     this.loading = true;
     if (this.$route.params.financialAssistancePaymentId) {
-      const faPayment = (await this.$storage.financialAssistancePayment.actions.fetch(
-        this.$route.params.financialAssistancePaymentId,
-        { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-      ));
-      this.financialAssistance = new FinancialAssistancePaymentEntity(faPayment.entity);
+      const faPayment = await useFinancialAssistancePaymentStore().fetch(this.$route.params.financialAssistancePaymentId);
+      this.financialAssistance = new FinancialAssistancePaymentEntity(faPayment);
     } else {
       this.financialAssistance = new FinancialAssistancePaymentEntity();
       this.financialAssistance.caseFileId = this.$route.params.id;
@@ -358,8 +359,8 @@ export default mixins(caseFileDetail).extend({
     async saveFinancialAssistance() {
       this.savingFinancialAssistance = true;
         const result = this.isEditMode ? (
-          await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePayment(this.financialAssistance))
-          : (await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePayment(this.financialAssistance)
+          await useFinancialAssistancePaymentStore().editFinancialAssistancePayment(this.financialAssistance))
+          : (await useFinancialAssistancePaymentStore().addFinancialAssistancePayment(this.financialAssistance)
           );
         if (result) {
           this.$toasted.global.success(
@@ -484,9 +485,9 @@ export default mixins(caseFileDetail).extend({
     async savePaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
       let updatedFinancialAssistance = null as IFinancialAssistancePaymentEntity;
       if (!submittedPaymentGroup.lines[0].id) {
-        updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine(this.financialAssistance.id, submittedPaymentGroup);
+        updatedFinancialAssistance = await useFinancialAssistancePaymentStore().addFinancialAssistancePaymentLine(this.financialAssistance.id, submittedPaymentGroup);
       } else {
-        updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePaymentLine(this.financialAssistance.id, submittedPaymentGroup);
+        updatedFinancialAssistance = await useFinancialAssistancePaymentStore().editFinancialAssistancePaymentLine(this.financialAssistance.id, submittedPaymentGroup);
       }
       if (updatedFinancialAssistance) {
         this.showAddPaymentLineForm = false;
@@ -504,7 +505,7 @@ export default mixins(caseFileDetail).extend({
 
     async deletePaymentLine(event : { line: IFinancialAssistancePaymentLine, group: IFinancialAssistancePaymentGroup }) {
       if (event.line.id) {
-        const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine(this.financialAssistance.id, event.line.id);
+        const updatedFinancialAssistance = await useFinancialAssistancePaymentStore().deleteFinancialAssistancePaymentLine(this.financialAssistance.id, event.line.id);
         if (updatedFinancialAssistance) {
           this.financialAssistance.groups = updatedFinancialAssistance.groups;
           this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.paymentLineDeleted'));
@@ -523,8 +524,12 @@ export default mixins(caseFileDetail).extend({
       group: IFinancialAssistancePaymentGroup,
       cancellationReason?: EPaymentCancellationReason,
       }) {
-      const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions
-        .updatePaymentStatus(this.financialAssistance.id, event.group.id, event.status, event.cancellationReason);
+      const updatedFinancialAssistance = await useFinancialAssistancePaymentStore().updatePaymentStatus({
+        entityId: this.financialAssistance.id,
+        paymentGroupId: event.group.id,
+        status: event.status,
+        cancellationReason: event.cancellationReason,
+      });
       if (updatedFinancialAssistance) {
         this.financialAssistance = new FinancialAssistancePaymentEntity(updatedFinancialAssistance);
         // so we can leave without warning
@@ -560,7 +565,7 @@ export default mixins(caseFileDetail).extend({
       const originalName = this.financialAssistance.name;
       this.makePaymentName(true);
       if (originalName !== this.financialAssistance.name) {
-        const result = await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePayment(this.financialAssistance);
+        const result = await useFinancialAssistancePaymentStore().editFinancialAssistancePayment(this.financialAssistance);
         if (result) {
           this.$toasted.global.success(this.$t('financialAssistancePayment_edit.success'));
         }

@@ -6,16 +6,17 @@ import flushPromises from 'flush-promises';
 import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import householdHelpers from '@/ui/helpers/household';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import Component from '../ViewPaymentLineDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-let financialAssistance = mockCaseFinancialAssistanceEntity();
+let financialAssistance = mockCaseFinancialAssistanceEntity({ id: '1' });
 let paymentGroup = financialAssistance.groups[0];
 let line = paymentGroup.lines[0];
 
 const { pinia, programStore } = useMockProgramStore();
-
+const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
 describe('ViewPaymentLineDetails.vue', () => {
   let wrapper;
 
@@ -150,8 +151,8 @@ describe('ViewPaymentLineDetails.vue', () => {
     describe('financialAssistance', () => {
       it('calls storage', async () => {
         await mountWrapper();
-        expect(wrapper.vm.$storage.financialAssistancePayment.getters.get).toHaveBeenCalledWith(financialAssistance.id);
-        expect(wrapper.vm.financialAssistance).toEqual(financialAssistance);
+        expect(financialAssistancePaymentStore.getById).toHaveBeenCalledWith(financialAssistance.id);
+        expect(wrapper.vm.financialAssistance).toEqual(mockCaseFinancialAssistanceEntity({ id: '1' }));
       });
     });
 
@@ -242,9 +243,9 @@ describe('ViewPaymentLineDetails.vue', () => {
     describe('created', () => {
       it('calls and loads from the storage', async () => {
         await mountWrapper(true);
-        expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith(financialAssistance.id);
+        expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith(financialAssistance.id);
         expect(storage.financialAssistanceCategory.actions.fetchAll).toHaveBeenCalled();
-        expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith(financialAssistance.id);
+        expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith(financialAssistance.id);
         expect(storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(financialAssistance.financialAssistanceTableId);
         expect(programStore.fetch).toHaveBeenCalledWith({
           id: storage.financialAssistance.getters.get().entity.programId,
