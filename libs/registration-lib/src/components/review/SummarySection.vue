@@ -8,7 +8,7 @@
         <v-btn
           v-if="!inlineEdit"
           :aria-label="`${title} ${$t('common.buttons.edit')}`"
-          data-test="inlineEdit__open"
+          :data-test="`inlineEdit__open__${title}`"
           icon
           @click.native="edit()">
           <v-icon>mdi-pencil</v-icon>
@@ -20,10 +20,10 @@
     <slot v-else />
 
     <div v-if="inlineEdit" class="inline__actions">
-      <v-btn class="mr-2" data-test="inlineEdit__cancel" @click.native="cancel()">
+      <v-btn class="mr-2" :data-test="`inlineEdit__cancel__${title}`" @click.native="cancel()">
         {{ $t('common.cancel') }}
       </v-btn>
-      <v-btn class="ml-2" color="primary" data-test="inlineEdit__save" :loading="loading" :disabled="submitDisabled" @click.native="onSubmit()">
+      <v-btn class="ml-2" color="primary" :data-test="`inlineEdit__save__${title}`" :loading="loading" :disabled="submitDisabled" @click.native="onSubmit()">
         {{ $t('common.save') }}
       </v-btn>
     </div>

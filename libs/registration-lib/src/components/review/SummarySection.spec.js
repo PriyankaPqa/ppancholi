@@ -26,13 +26,13 @@ describe('SummarySection.vue', () => {
     });
 
     it('shows edit button if inline mode is false', async () => {
-      const editButton = wrapper.find('[data-test="inlineEdit__open"]');
+      const editButton = wrapper.find('[data-test="inlineEdit__open__testTitle"]');
       expect(editButton.exists()).toBe(true);
     });
 
     it('hide edit button if inline mode is true', async () => {
       await wrapper.setProps({ inlineEdit: true });
-      const editButton = wrapper.find('[data-test="inlineEdit__open"]');
+      const editButton = wrapper.find('[data-test="inlineEdit__open__testTitle"]');
       expect(editButton.exists()).toBe(false);
     });
   });
@@ -41,7 +41,7 @@ describe('SummarySection.vue', () => {
     describe('edit', () => {
       it('should be called when clicking the edit button', async () => {
         jest.spyOn(wrapper.vm, 'edit');
-        const button = wrapper.find('[data-test="inlineEdit__open"]');
+        const button = wrapper.find('[data-test="inlineEdit__open__testTitle"]');
         await button.trigger('click');
         expect(wrapper.vm.edit).toHaveBeenCalledTimes(1);
       });
@@ -61,7 +61,7 @@ describe('SummarySection.vue', () => {
 
       it('should be called when clicking the cancel button', async () => {
         jest.spyOn(wrapper.vm, 'cancel');
-        const button = wrapper.find('[data-test="inlineEdit__cancel"]');
+        const button = wrapper.find('[data-test="inlineEdit__cancel__testTitle"]');
         await button.trigger('click');
         expect(wrapper.vm.cancel).toHaveBeenCalledTimes(1);
       });
@@ -81,7 +81,7 @@ describe('SummarySection.vue', () => {
 
       it('should be called when clicking the submit button', async () => {
         jest.spyOn(wrapper.vm, 'onSubmit');
-        const button = wrapper.find('[data-test="inlineEdit__save"]');
+        const button = wrapper.find('[data-test="inlineEdit__save__testTitle"]');
         await button.trigger('click');
         expect(wrapper.vm.onSubmit).toHaveBeenCalledTimes(1);
       });
