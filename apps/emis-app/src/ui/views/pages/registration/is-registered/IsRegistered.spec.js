@@ -12,23 +12,20 @@ import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.v
 import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults.vue';
 
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import Component from './IsRegistered.vue';
 
 const localVue = createLocalVue();
-
 const storage = mockStorage();
-
 const vuetify = new Vuetify();
-
-const { pinia, registrationStore } = useMockRegistrationStore();
+const { pinia, householdStore } = useMockHouseholdStore();
+const { registrationStore } = useMockRegistrationStore(pinia);
 
 describe('IsRegistered.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
     jest.clearAllMocks();
-
-    storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
@@ -80,9 +77,7 @@ describe('IsRegistered.vue', () => {
         expect(wrapper.findComponent(HouseholdResults).exists()).toBeTruthy();
       });
 
-      it('should pass searchResults as props', () => {
-        const households = [{ entity: { id: 'foo' } }];
-        storage.household.getters.getAll = jest.fn(() => households);
+      it('should pass searchResults as props', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -94,8 +89,9 @@ describe('IsRegistered.vue', () => {
             $storage: storage,
           },
         });
+        await wrapper.setData({ searchResults: [mockCombinedHousehold()] });
         const component = wrapper.findComponent(HouseholdResults);
-        expect(component.props().items).toEqual(households);
+        expect(component.props().items).toEqual([mockCombinedHousehold()]);
       });
     });
 
@@ -136,7 +132,7 @@ describe('IsRegistered.vue', () => {
 
       it('should call setSearchResultsShown mutation with proper parameter', async () => {
         await wrapper.vm.onSearch({});
-        expect(wrapper.vm.$storage.household.mutations.setSearchResultsShown).toHaveBeenCalledWith(false);
+        expect(householdStore.searchResultsShown).toEqual(false);
       });
 
       it('should call filterOutSplitHousehold if in split mode', async () => {
@@ -170,10 +166,6 @@ describe('IsRegistered.vue', () => {
 
     describe('filterOutSplitHousehold', () => {
       it('removes the results with the id of the origin household for the split', async () => {
-        storage.household.getters.getAll = jest.fn(() => [
-          { entity: { id: mockSplitHousehold().originHouseholdId } },
-          { entity: { id: 'foo' } },
-        ]);
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -181,6 +173,13 @@ describe('IsRegistered.vue', () => {
           mocks: {
             $storage: storage,
           },
+        });
+
+        await wrapper.setData({
+          searchResults: [
+            { entity: { id: mockSplitHousehold().originHouseholdId } },
+            { entity: { id: 'foo' } },
+          ],
         });
         registrationStore.splitHouseholdState = mockSplitHousehold();
         await wrapper.vm.filterOutSplitHousehold();
@@ -227,11 +226,12 @@ describe('IsRegistered.vue', () => {
     describe('created', () => {
       it('sets results so we can come back on page with results', () => {
         jest.clearAllMocks();
+        wrapper.vm.combinedHouseholdStore.getAll = jest.fn(() => []);
         wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
-        expect(wrapper.vm.$storage.household.getters.getAll).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.combinedHouseholdStore.getAll).toHaveBeenCalledTimes(1);
       });
 
       it('calls filterOutSplitHousehold if isSplitMode is true', () => {

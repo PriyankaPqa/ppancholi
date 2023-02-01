@@ -1,9 +1,5 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-import { HouseholdEntityModule } from '@libs/registration-lib/store/modules/household';
-import { HouseholdMetadataModule } from '@libs/registration-lib/store/modules/household/householdMetadata';
-import { HouseholdsService } from '@libs/services-lib/households/entity';
-import { HouseholdMetadataService } from '@libs/services-lib/households/metadata';
 import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@libs/services-lib/optionItems/optionItems';
@@ -56,13 +52,6 @@ const store: StoreOptions<IRootState> = {
     [vuexModule.FINANCIAL_ASSISTANCE_METADATA]: new FinancialAssistanceMetadataModule(
       new FinancialAssistanceTablesMetadataService(httpClient),
       SignalR,
-    ).getModule(),
-
-    [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(
-      new HouseholdsService(httpClient),
-    ).getModule(),
-    [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(
-      new HouseholdMetadataService(httpClient),
     ).getModule(),
 
     // User Accounts: do not include SignalR to skip subscribing to changes in this data.

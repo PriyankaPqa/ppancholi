@@ -7,6 +7,8 @@ import libHelpers from '@libs/entities-lib/helpers';
 import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
 import { mockAddressData, Address } from '@libs/entities-lib/value-objects/address';
 import { Status } from '@libs/entities-lib/base';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+import { mockHouseholdEntity, mockHouseholdMetadata } from '@libs/entities-lib/household';
 import Component from '../CreateEditPaymentLineDialog.vue';
 
 const localVue = createLocalVue();
@@ -17,6 +19,8 @@ const storage = mockStorage();
 let caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
 libHelpers.getCanadianProvincesWithoutOther = jest.fn(() => [{ id: '1' }]);
 
+const { pinia, householdStore, householdMetadataStore } = useMockHouseholdStore();
+
 describe('CreateEditPaymentLineDialog.vue', () => {
   let wrapper;
 
@@ -26,6 +30,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
 
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         show: true,
         program,
@@ -481,22 +486,20 @@ describe('CreateEditPaymentLineDialog.vue', () => {
 
       it('sets the defaultBeneficiaryData from household and case file', async () => {
         jest.clearAllMocks();
-        const household = storage.household.actions.fetch();
-        household.metadata.memberMetadata[0].email = 'myEmail';
-        household.metadata.memberMetadata[0].id = household.entity.primaryBeneficiary;
-        storage.household.actions.fetch = jest.fn(() => household);
+        householdMetadataStore.fetch = jest.fn(() => mockHouseholdMetadata());
+        householdStore.fetch = jest.fn(() => mockHouseholdEntity({ primaryBeneficiary: 'id-1' }));
         await wrapper.vm.initCreateMode();
         expect(wrapper.vm.defaultBeneficiaryData.name).toEqual('Ben 2 Test');
         expect(wrapper.vm.defaultBeneficiaryData.address.streetAddress).not.toBeNull();
-        expect(wrapper.vm.defaultBeneficiaryData.email).toBe('myEmail');
+        expect(wrapper.vm.defaultBeneficiaryData.email).toBe('Test@mail.com');
       });
 
       it('sets the address from household when none already set', async () => {
         jest.clearAllMocks();
         await wrapper.vm.initCreateMode();
-        expect(storage.household.actions.fetch).toHaveBeenCalledWith(storage.caseFile.getters.get().entity.householdId);
+        expect(householdStore.fetch).toHaveBeenCalledWith(storage.caseFile.getters.get().entity.householdId);
         expect(wrapper.vm.address.streetAddress).not.toBeNull();
-        expect(wrapper.vm.address).toEqual(storage.household.actions.fetch().entity.address.address);
+        expect(wrapper.vm.address).toEqual(householdStore.fetch().address.address);
       });
 
       it('sets the predefined address when one already set', async () => {

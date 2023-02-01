@@ -1,4 +1,3 @@
-import { mockStorage } from '@libs/registration-lib/store/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
@@ -12,7 +11,6 @@ const Component = {
 };
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 let wrapper;
 
 const doMount = (fullMount = false, pinia = getPiniaForUser('level6'), additionalOverwrites = {}) => {
@@ -21,9 +19,6 @@ const doMount = (fullMount = false, pinia = getPiniaForUser('level6'), additiona
     localVue,
     pinia,
     ...additionalOverwrites,
-    mocks: {
-      $storage: storage,
-    },
   });
 };
 

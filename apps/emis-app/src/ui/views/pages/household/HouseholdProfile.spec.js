@@ -1,5 +1,7 @@
 import { mockHouseholdCreate, Member } from '@libs/entities-lib/household-create';
-import { mockCombinedHousehold, mockHouseholdCaseFile } from '@libs/entities-lib/household';
+import {
+  mockHouseholdCaseFile, mockHouseholdEntity,
+} from '@libs/entities-lib/household';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
@@ -11,16 +13,18 @@ import routes from '@/constants/routes';
 import flushPromises from 'flush-promises';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();
 const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember({ id: '1' }), mockMember({ id: '2' }), mockMember({ id: '3' })] };
-const household = mockCombinedHousehold();
+const householdEntity = mockHouseholdEntity();
 const storage = mockStorage();
 const caseFile = mockCombinedCaseFile();
 const member = mockMember();
 
 const { pinia, registrationStore } = useMockRegistrationStore();
+const { householdStore, householdMetadataStore } = useMockHouseholdStore(pinia);
 
 const events = [
   mockEventMainInfo({
@@ -41,7 +45,6 @@ const otherEvent = mockEventMainInfo({
 
 describe('HouseholdProfile.vue', () => {
   let wrapper;
-  storage.household.actions.fetch = jest.fn(() => household);
   storage.caseFile.getters.getByIds = jest.fn(() => [caseFile]);
   registrationStore.getHouseholdCreate = jest.fn(() => householdCreate);
 
@@ -52,7 +55,7 @@ describe('HouseholdProfile.vue', () => {
         pinia,
         localVue,
         propsData: {
-          id: household.entity.id,
+          id: householdEntity.id,
         },
         data() {
           return {
@@ -68,15 +71,15 @@ describe('HouseholdProfile.vue', () => {
           household() {
             return householdCreate;
           },
-          householdData() {
-            return household;
+          householdEntity() {
+            return householdEntity;
           },
         },
         mocks: {
           $storage: storage,
         },
       });
-
+      householdStore.fetch = jest.fn(() => householdEntity);
       await flushPromises();
     });
 
@@ -113,7 +116,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           data() {
             return {
@@ -145,7 +148,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           data() {
             return {
@@ -234,7 +237,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           data() {
             return {
@@ -264,7 +267,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {
@@ -279,14 +282,13 @@ describe('HouseholdProfile.vue', () => {
       });
     });
 
-    describe('householdData', () => {
+    describe('householdEntity', () => {
       it('returns the right data', () => {
-        storage.household.getters.get = jest.fn(() => household);
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {
@@ -297,12 +299,12 @@ describe('HouseholdProfile.vue', () => {
             $storage: storage,
           },
         });
-        expect(wrapper.vm.householdData).toEqual(household);
+        expect(wrapper.vm.householdEntity).toEqual(householdEntity);
       });
     });
 
     describe('inactiveCaseFiles', () => {
-      it('returns the open case files', () => {
+      it('returns the closed or archived', () => {
         const cfOpen = { caseFileId: '1', caseFileStatus: CaseFileStatus.Open };
         const cfClosed = { caseFileId: '2', caseFileStatus: CaseFileStatus.Closed };
         const caseFiles = [cfOpen, cfClosed];
@@ -310,7 +312,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           data() {
             return {
@@ -338,7 +340,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {
@@ -359,7 +361,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {
@@ -377,7 +379,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {
@@ -396,7 +398,7 @@ describe('HouseholdProfile.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {
@@ -406,12 +408,7 @@ describe('HouseholdProfile.vue', () => {
           pinia: getPiniaForUser('level1'),
           mocks: {
             $storage: {
-              registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
               caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
-              household: {
-                actions: { fetch: jest.fn(() => mockCombinedHousehold()) },
-                getters: { get: jest.fn(() => household) },
-              },
             },
           },
         });
@@ -424,35 +421,16 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia: getPiniaForUser('contributorIM'),
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {
               return householdCreate;
             },
           },
-          store: {
-            modules: {
-              user: {
-                state:
-                  {
-                    oid: '7',
-                    email: 'test@test.ca',
-                    family_name: 'Joe',
-                    given_name: 'Pink',
-                    roles: ['contributorIM'],
-                  },
-              },
-            },
-          },
           mocks: {
             $storage: {
-              registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
               caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
-              household: {
-                actions: { fetch: jest.fn(() => mockCombinedHousehold()) },
-                getters: { get: jest.fn(() => household) },
-              },
             },
           },
         });
@@ -466,7 +444,7 @@ describe('HouseholdProfile.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {
@@ -476,12 +454,7 @@ describe('HouseholdProfile.vue', () => {
           pinia: getPiniaForUser('level2'),
           mocks: {
             $storage: {
-              registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
               caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
-              household: {
-                actions: { fetch: jest.fn(() => mockCombinedHousehold()) },
-                getters: { get: jest.fn(() => household) },
-              },
             },
           },
         });
@@ -493,7 +466,7 @@ describe('HouseholdProfile.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {
@@ -503,9 +476,7 @@ describe('HouseholdProfile.vue', () => {
           pinia: getPiniaForUser('level1'),
           mocks: {
             $storage: {
-              registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
               caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
-              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
             },
           },
         });
@@ -520,7 +491,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {
@@ -538,7 +509,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {
@@ -565,7 +536,7 @@ describe('HouseholdProfile.vue', () => {
             };
           },
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
         });
       });
@@ -588,7 +559,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           mocks: {
             $storage: storage,
@@ -630,7 +601,7 @@ describe('HouseholdProfile.vue', () => {
         localVue,
         pinia,
         propsData: {
-          id: household.entity.id,
+          id: householdEntity.id,
         },
         mocks: {
           $storage: storage,
@@ -649,7 +620,7 @@ describe('HouseholdProfile.vue', () => {
             };
           },
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           mocks: {
             $storage: storage,
@@ -670,10 +641,8 @@ describe('HouseholdProfile.vue', () => {
     describe('fetchHouseholdData', () => {
       it('calls household storage action fetch with the id', async () => {
         await wrapper.vm.fetchHouseholdData();
-        expect(wrapper.vm.$storage.household.actions.fetch).toHaveBeenCalledWith(
-          household.entity.id,
-          { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
-        );
+        expect(householdStore.fetch).toHaveBeenCalledWith(householdEntity.id);
+        expect(householdMetadataStore.fetch).toHaveBeenCalledWith(householdEntity.id, false);
       });
     });
 
@@ -683,11 +652,11 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
-            householdData() {
-              return household;
+            householdEntity() {
+              return householdEntity;
             },
           },
           mocks: {
@@ -698,7 +667,7 @@ describe('HouseholdProfile.vue', () => {
         jest.spyOn(wrapper.vm, 'buildHouseholdCreateData').mockImplementation(() => householdCreate);
         jest.spyOn(wrapper.vm, 'addShelterLocationData').mockImplementation(() => [member]);
         await wrapper.vm.setHouseholdCreate();
-        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(household);
+        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(householdEntity);
         expect(registrationStore.setHouseholdCreate).toHaveBeenCalledWith(householdCreate);
       });
     });
@@ -724,7 +693,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           data() {
             return {
@@ -758,7 +727,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             country() {
@@ -793,7 +762,7 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           pinia,
           propsData: {
-            id: household.entity.id,
+            id: householdEntity.id,
           },
           computed: {
             household() {

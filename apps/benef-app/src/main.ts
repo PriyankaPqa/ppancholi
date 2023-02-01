@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import prepareServices from '@/ui/plugins/services';
-import prepareStorage from '@/ui/plugins/storage';
 import '@libs/shared-lib/assets/styles/main.scss';
 import '@/ui/plugins/vee-validate';
 import {
@@ -19,7 +18,6 @@ import resetStore from '@libs/stores-lib/store-reset';
 import registrationStore from '@/ui/plugins/registrationStore';
 import App from './ui/App.vue';
 import router from './ui/router';
-import store from './store/store';
 import features from './ui/plugins/features';
 
 Vue.use(PiniaVuePlugin);
@@ -29,8 +27,7 @@ pinia.use(resetStore);
 Vue.component('Survey', Survey);
 Vue.component('VueProgrammaticInvisibleGoogleRecaptcha', VueProgrammaticInvisibleGoogleRecaptcha);
 
-prepareServices(store);
-prepareStorage(store);
+prepareServices();
 
 Vue.use(Multilingual);
 Vue.use(features);
@@ -51,7 +48,6 @@ Vue.config.productionTip = false;
 new Vue({
   router,
   i18n,
-  store,
   vuetify,
   pinia,
   render: (h) => h(App),

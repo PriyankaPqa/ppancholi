@@ -5,11 +5,11 @@ import { defineStore } from 'pinia';
 import { mockMassActionCreatePayload, mockMassActionService } from '@libs/services-lib/mass-actions/entity';
 import {
  IMassActionEntity, MassActionRunType, MassActionType, mockMassActionEntity,
- IdsParams,
+ IdParams,
 } from '@libs/entities-lib/mass-action';
 
 const entityService = mockMassActionService();
-const baseComponents = getBaseStoreComponents<IMassActionEntity, IdsParams>(entityService);
+const baseComponents = getBaseStoreComponents<IMassActionEntity, IdParams>(entityService);
 
 const useTestMassActionStore = (opts = {}) => {
   const pinia = createTestingPinia({ stubActions: false });

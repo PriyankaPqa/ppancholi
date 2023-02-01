@@ -2,7 +2,7 @@
 // In registration and also in household profile
 
 import Vue from 'vue';
-import { IHouseholdCombined } from '@libs/entities-lib/household';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { IMemberEntity } from '@libs/entities-lib/value-objects/member';
 import { IIndigenousCommunityData } from '@libs/entities-lib/value-objects/identity-set';
 import { IAddressData, IHouseholdCreateData } from '@libs/entities-lib/household-create';
@@ -13,6 +13,7 @@ import { IEventGenericLocation, IEventMainInfo } from '@libs/entities-lib/event'
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { IEventData } from '@libs/entities-lib/registration-event';
+import { useHouseholdStore } from '@/pinia/household/household';
 
 export default Vue.extend({
   props: {
@@ -44,7 +45,7 @@ export default Vue.extend({
 
   methods: {
     async fetchHouseholdCreate(id: string) {
-      const householdRes = await this.$storage.household.actions.fetch(id);
+      const householdRes = await useHouseholdStore().fetch(id);
       const householdCreateData = await this.buildHouseholdCreateData(householdRes);
       return householdCreateData;
     },
@@ -84,17 +85,17 @@ export default Vue.extend({
       return [];
     },
 
-    async fetchMembersInformation(household: IHouseholdCombined): Promise<IMemberEntity[]> {
-      if (!household.entity.members?.length) {
+    async fetchMembersInformation(household: IHouseholdEntity): Promise<IMemberEntity[]> {
+      if (!household.members?.length) {
         return [];
       }
       let primaryBeneficiaryPromise;
       const additionalMembersPromises = [] as Array<Promise<IMemberEntity>>;
 
-      household.entity.members.forEach((id) => {
+      household.members.forEach((id) => {
         const promise = this.$services.households.getPerson(id) as Promise<IMemberEntity>;
 
-        if (id === household.entity.primaryBeneficiary) {
+        if (id === household.primaryBeneficiary) {
           primaryBeneficiaryPromise = promise;
         } else {
           additionalMembersPromises.push(promise);
@@ -134,7 +135,7 @@ export default Vue.extend({
     },
 
     async buildHouseholdCreateData(
-      household: IHouseholdCombined,
+      household: IHouseholdEntity,
     ): Promise<IHouseholdCreateData> {
       let primaryBeneficiary;
       const additionalMembers = [] as Array<IMemberEntity>;
@@ -190,8 +191,8 @@ export default Vue.extend({
       });
 
       return {
-        id: household.entity.id,
-        registrationNumber: household.entity.registrationNumber,
+        id: household.id,
+        registrationNumber: household.registrationNumber,
         consentInformation: {
           crcUserName: '',
           registrationLocationId: '',
@@ -199,9 +200,9 @@ export default Vue.extend({
           privacyDateTimeConsent: '',
         },
         primaryBeneficiary,
-        homeAddress: household.entity.address?.address,
+        homeAddress: household.address?.address,
         additionalMembers,
-        noFixedHome: household.entity.address?.address === null,
+        noFixedHome: household.address?.address === null,
       };
     },
 

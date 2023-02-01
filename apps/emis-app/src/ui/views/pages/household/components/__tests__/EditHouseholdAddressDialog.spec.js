@@ -8,12 +8,14 @@ import { i18n } from '@/ui/plugins';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { mockStorage } from '@/storage';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import Component from '../EditHouseholdAddressDialog.vue';
 
 const storage = mockStorage();
 
 const localVue = createLocalVue();
-const { pinia, registrationStore } = useMockRegistrationStore();
+const { pinia, householdStore } = useMockHouseholdStore();
+const { registrationStore } = useMockRegistrationStore(pinia);
 describe('EditHouseholdAddressDialog.vue', () => {
   let wrapper;
 
@@ -201,10 +203,10 @@ describe('EditHouseholdAddressDialog.vue', () => {
 
     describe('updateNoFixedHomeAddress', () => {
       it('call updateNoFixedHomeAddress action', async () => {
-        const id = '1';
+        const householdId = '1';
         const observation = 'test';
-        await wrapper.vm.updateNoFixedHomeAddress(id, observation);
-        expect(wrapper.vm.$storage.household.actions.updateNoFixedHomeAddress).toHaveBeenCalledWith(id, observation);
+        await wrapper.vm.updateNoFixedHomeAddress(householdId, observation);
+        expect(householdStore.updateNoFixedHomeAddress).toHaveBeenCalledWith({ householdId, observation });
       });
 
       it('call set noFixedHome to true', async () => {
@@ -217,10 +219,10 @@ describe('EditHouseholdAddressDialog.vue', () => {
 
     describe('updateHomeAddress', () => {
       it('call updateHomeAddress action', async () => {
-        const id = '1';
+        const householdId = '1';
         const address = mockAddress();
-        await wrapper.vm.updateHomeAddress(id, address);
-        expect(wrapper.vm.$storage.household.actions.updateHomeAddress).toHaveBeenCalledWith(id, address);
+        await wrapper.vm.updateHomeAddress(householdId, address);
+        expect(householdStore.updateHomeAddress).toHaveBeenCalledWith({ householdId, address });
       });
 
       it('call set noFixedHome to false', async () => {

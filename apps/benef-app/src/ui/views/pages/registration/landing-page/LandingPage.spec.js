@@ -1,11 +1,9 @@
 import { mockEvent } from '@libs/entities-lib/registration-event';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from './LandingPage.vue';
 
-const storage = mockStorage();
 const localVue = createLocalVue();
 const { pinia } = useMockRegistrationStore();
 describe('LandingPage.vue', () => {
@@ -15,9 +13,6 @@ describe('LandingPage.vue', () => {
     wrapper = mount(Component, {
       localVue,
       pinia,
-      mocks: {
-        $storage: storage,
-      },
     });
   });
 

@@ -2,12 +2,10 @@ import { ERegistrationMethod } from '@libs/shared-lib/src/types';
 import { mockEventData, mockRegistrationLocations } from '@libs/entities-lib/src/registration-event';
 import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
-import { mockStorage } from '../../store/storage';
 import Component from './CrcPrivacyStatement.vue';
 import { i18n } from '../../ui/plugins/i18n';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const { pinia, registrationStore } = useMockRegistrationStore();
 // eslint-disable-next-line no-console
 console.warn = jest.fn();
@@ -30,9 +28,6 @@ describe('CrcPrivacyStatement.vue', () => {
       propsData: {
         i18n,
         user: mockUserL6(),
-      },
-      mocks: {
-        $storage: storage,
       },
     });
     wrapper.vm.$registrationStore = registrationStore;
@@ -101,9 +96,6 @@ describe('CrcPrivacyStatement.vue', () => {
             i18n,
             registrationLocations: [location],
             user: mockUserL6(),
-          },
-          mocks: {
-            $storage: storage,
           },
         });
         expect(wrapper.vm.activeRegistrationLocations).toEqual([location]);
@@ -189,9 +181,6 @@ describe('CrcPrivacyStatement.vue', () => {
           pinia,
           computed: {
             isRegistrationMethodInPerson: () => true,
-          },
-          mocks: {
-            $storage: storage,
           },
           propsData: {
             i18n,

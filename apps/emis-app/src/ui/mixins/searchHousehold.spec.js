@@ -1,7 +1,8 @@
-import { mockStorage } from '@libs/registration-lib/store/storage';
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import moment from '@libs/shared-lib/plugins/moment';
+import { mockCombinedHousehold } from '@libs/entities-lib/household';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
 const Component = {
   render() {},
@@ -9,7 +10,7 @@ const Component = {
 };
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+const { pinia } = useMockHouseholdStore();
 
 let wrapper;
 
@@ -18,9 +19,7 @@ describe('searchHousehold', () => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
       localVue,
-      mocks: {
-        $storage: storage,
-      },
+      pinia,
     });
   });
 
@@ -33,8 +32,9 @@ describe('searchHousehold', () => {
       });
 
       it('should call search actions with proper parameters', async () => {
+        wrapper.vm.combinedHouseholdStore.search = jest.fn();
         await wrapper.vm.search({});
-        expect(wrapper.vm.$storage.household.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedHouseholdStore.search).toHaveBeenCalledWith({
           search: wrapper.vm.searchCriteria,
           filter: wrapper.vm.filters,
           top: 999,
@@ -43,11 +43,13 @@ describe('searchHousehold', () => {
       });
 
       it('should set searchResults', async () => {
+        wrapper.vm.combinedHouseholdStore.search = jest.fn(() => ({ ids: ['1'] }));
+        wrapper.vm.combinedHouseholdStore.getByIds = jest.fn(() => mockCombinedHousehold());
         await wrapper.setData({
           searchResults: [],
         });
         await wrapper.vm.search({});
-        expect(wrapper.vm.searchResults).toEqual(wrapper.vm.$storage.household.getters.getByIds());
+        expect(wrapper.vm.searchResults).toEqual(mockCombinedHousehold());
       });
     });
   });

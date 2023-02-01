@@ -1,6 +1,4 @@
 import { Store } from 'vuex';
-import { IHouseholdEntityState } from '@libs/registration-lib/store/modules/household/householdEntity.types';
-import { IHouseholdMetadata } from '@libs/entities-lib/household';
 import * as vuexModule from '@/constants/vuex-modules';
 
 import { IState as IBaseState } from '@/store/modules/base/base.types';
@@ -14,8 +12,6 @@ import { ICaseFileMetadata } from '@libs/entities-lib/case-file';
 import { IFinancialAssistanceEntityState } from '@/store/modules/financial-assistance/financialAssistanceEntity.types';
 import { IFinancialAssistanceTableMetadata } from '@libs/entities-lib/financial-assistance';
 
-import { ITeamMetadata } from '@libs/entities-lib/team';
-
 import { IFinancialAssistanceCategoryEntityState } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity.types';
 import { IProvider, IProviderMock } from '@/services/provider';
 
@@ -27,9 +23,6 @@ export interface IRootState {
   [vuexModule.USER_ACCOUNT_METADATA]?: IBaseState<IUserAccountMetadata>,
   [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]?: IFinancialAssistanceEntityState,
   [vuexModule.FINANCIAL_ASSISTANCE_METADATA]?: IBaseState<IFinancialAssistanceTableMetadata>,
-  [vuexModule.HOUSEHOLD_ENTITIES]?: IHouseholdEntityState
-  [vuexModule.HOUSEHOLD_METADATA]?: IBaseState<IHouseholdMetadata>
-  [vuexModule.TEAM_METADATA]?: IBaseState<ITeamMetadata>,
   [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]?: IFinancialAssistanceCategoryEntityState,
 }
 

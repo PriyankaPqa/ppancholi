@@ -1,12 +1,10 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import flushPromises from 'flush-promises';
 import { mockProvider } from '@/services/provider';
 import helpers from '@/ui/helpers';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from './AssessmentRunner.vue';
 
-let storage = mockStorage();
 let services = mockProvider();
 const localVue = createLocalVue();
 
@@ -26,14 +24,13 @@ describe('AssessmentRunner.vue', () => {
         assessmentTemplateId: 'mock-assessmentTemplate-id',
         assessmentResponseId,
       },
-      mocks: { $storage: storage, $services: services },
+      mocks: { $services: services },
     });
 
     await flushPromises();
   };
 
   beforeEach(async () => {
-    storage = mockStorage();
     services = mockProvider();
     await mount();
   });

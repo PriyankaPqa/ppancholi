@@ -105,11 +105,15 @@ export const getWrapper = (Component, options, {
     'router-view': true,
   };
 
-  const store = mockStore(options.store);
+  let store;
+  if (mockStore) {
+    store = mockStore(options.store);
+  }
+
   let $storage;
   if (mockStorage) {
     $storage = mockStorage;
-  } else {
+  } else if (typeof makeStorage === 'function') {
     $storage = makeStorage(store);
   }
 

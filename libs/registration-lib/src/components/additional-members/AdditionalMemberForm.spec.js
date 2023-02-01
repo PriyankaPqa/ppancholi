@@ -13,12 +13,10 @@ import {
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
-import { mockStorage } from '../../store/storage';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AdditionalMemberForm.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 describe('AdditionalMemberForm.vue', () => {
   let wrapper;
@@ -39,9 +37,6 @@ describe('AdditionalMemberForm.vue', () => {
         shelterLocations: mockShelterLocations(),
         i18n,
         disableAutocomplete: false,
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });

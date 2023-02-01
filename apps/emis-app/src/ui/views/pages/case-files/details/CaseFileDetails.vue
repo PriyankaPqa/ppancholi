@@ -115,8 +115,8 @@
           mdi-account-multiple
         </v-icon>
         <span data-test="caseFileDetails-household-member-count">
-          {{ household && household.entity && household.entity.members
-            ? `${$t('caseFileDetail.fullHouseHold')} ${household.entity.members.length}`
+          {{ household && household && household.members
+            ? `${$t('caseFileDetail.fullHouseHold')} ${household.members.length}`
             : "-" }}
         </span>
       </div>
@@ -149,7 +149,7 @@
 
 <script lang="ts">
 import { RcTooltip } from '@libs/component-lib/components';
-import { IHouseholdCombined, IHouseholdMemberMetadata } from '@libs/entities-lib/household';
+import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
 import mixins from 'vue-typed-mixins';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
@@ -158,6 +158,7 @@ import routes from '@/constants/routes';
 import householdHelpers from '@/ui/helpers/household';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useEventStore } from '@/pinia/event/event';
+import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
@@ -177,7 +178,8 @@ export default mixins(caseFileDetail).extend({
   data() {
     return {
       loading: false,
-      household: null as IHouseholdCombined,
+      household: null as IHouseholdEntity,
+      householdMetadata: null as IHouseholdMetadata,
       showVerifyIdentityDialog: false,
       showImpact: false,
     };
@@ -185,11 +187,11 @@ export default mixins(caseFileDetail).extend({
 
   computed: {
     addressFirstLine(): string {
-      return householdHelpers.getAddressLines(this.household?.entity?.address?.address)[0] || '';
+      return householdHelpers.getAddressLines(this.household?.address?.address)[0] || '';
     },
 
     addressSecondLine(): string {
-      return householdHelpers.getAddressLines(this.household?.entity?.address?.address)[1] || '';
+      return householdHelpers.getAddressLines(this.household?.address?.address)[1] || '';
     },
 
     canEdit(): boolean {
@@ -220,7 +222,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     primaryBeneficiary(): IHouseholdMemberMetadata {
-      return this.household?.metadata?.memberMetadata.find((m: IHouseholdMemberMetadata) => m.id === this.household.entity.primaryBeneficiary);
+      return this.householdMetadata?.memberMetadata.find((m: IHouseholdMemberMetadata) => m.id === this.household.primaryBeneficiary);
     },
 
     primaryBeneficiaryFullName(): string {
@@ -232,7 +234,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     provinceCodeName(): string {
-      return householdHelpers.provinceCodeName(this.household?.entity.address.address);
+      return householdHelpers.provinceCodeName(this.household?.address.address);
     },
 
     tabs(): Array<INavigationTab> {
@@ -291,7 +293,8 @@ export default mixins(caseFileDetail).extend({
 
     async getHouseholdInfo() {
       const { householdId } = this.caseFile.entity;
-      this.household = await this.$storage.household.actions.fetch(householdId, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+      this.household = await useHouseholdStore().fetch(householdId);
+      this.householdMetadata = await useHouseholdMetadataStore().fetch(householdId, false);
     },
 
     goToHouseholdProfile() {

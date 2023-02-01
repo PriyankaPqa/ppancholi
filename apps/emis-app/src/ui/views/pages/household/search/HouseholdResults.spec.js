@@ -44,6 +44,7 @@ describe('HouseholdResultsMove.vue', () => {
         $storage: storage,
       },
     });
+    wrapper.vm.buildHouseholdCreateData = jest.fn();
   });
 
   describe('Lifecycle', () => {
@@ -264,6 +265,7 @@ describe('HouseholdResultsMove.vue', () => {
               $storage: storage,
             },
           });
+          wrapper.vm.buildHouseholdCreateData = jest.fn();
           await wrapper.vm.viewDetails(parsedHousehold);
           expect(wrapper.emitted('showDetails')[0][0]).toEqual(parsedHousehold.id);
         });

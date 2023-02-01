@@ -3,12 +3,10 @@ import { i18n } from '@/ui/plugins/i18n';
 import {
   mockHouseholdCreate, mockAdditionalMembers, mockAdditionalMember, Member,
 } from '@libs/entities-lib/src/household-create';
-import { mockStorage } from '../../store/storage/storage.mock';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AdditionalMembersLib.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 describe('AdditionalMembersLib.vue', () => {
   let wrapper;
@@ -25,9 +23,6 @@ describe('AdditionalMembersLib.vue', () => {
         additionalMembers() {
           return mockAdditionalMembers();
         },
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });
@@ -98,9 +93,6 @@ describe('AdditionalMembersLib.vue', () => {
             additionalMembers() {
               return new Array(14).fill(mockAdditionalMember());
             },
-          },
-          mocks: {
-            $storage: storage,
           },
         });
         wrapper.vm.deleteAdditionalMember();

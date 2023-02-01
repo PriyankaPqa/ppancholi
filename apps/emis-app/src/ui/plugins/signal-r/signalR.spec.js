@@ -13,6 +13,7 @@ import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/ap
 import { useFinancialAssistancePaymentStore, useFinancialAssistancePaymentMetadataStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { SignalR } from './signalR';
 
 const storage = mockStorage();
@@ -155,13 +156,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'household',
           entityName: 'Household',
-          action: conn.storage.household.mutations.setEntityFromOutsideNotification,
+          action: useHouseholdStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'household',
           entityName: 'HouseholdMetadata',
-          action: conn.storage.household.mutations.setMetadataFromOutsideNotification,
+          action: useHouseholdMetadataStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({

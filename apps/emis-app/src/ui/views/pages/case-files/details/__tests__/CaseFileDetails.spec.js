@@ -1,5 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { mockCombinedHousehold } from '@libs/entities-lib/household';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
@@ -10,6 +10,7 @@ import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useEventStore } from '@/pinia/event/event';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
@@ -18,17 +19,19 @@ const mockCaseFile = mockCombinedCaseFile();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
+const pinia = getPiniaForUser('level1');
+
+const { householdStore, householdMetadataStore } = useMockHouseholdStore(pinia);
 describe('CaseFileDetails.vue', () => {
   let wrapper;
 
   storage.caseFile.getters.get = jest.fn(() => mockCaseFile);
-  storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
   storage.caseFile.actions.fetch = jest.fn(() => [mockCaseFile]);
 
   const doMount = async () => {
     const params = {
       localVue,
-      pinia: getPiniaForUser('level1'),
+      pinia,
       propsData: {
         id: mockCaseFile.entity.id,
       },
@@ -144,7 +147,7 @@ describe('CaseFileDetails.vue', () => {
                 getters: { get: jest.fn(() => mockCaseFile) },
                 actions: { fetch: jest.fn(() => [mockCaseFile]) },
               },
-              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+
             },
           },
         });
@@ -181,7 +184,7 @@ describe('CaseFileDetails.vue', () => {
                 getters: { get: jest.fn(() => mockCaseFile) },
                 actions: { fetch: jest.fn(() => [mockCaseFile]) },
               },
-              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+
             },
           },
         });
@@ -393,9 +396,9 @@ describe('CaseFileDetails.vue', () => {
   describe('Computed', () => {
     beforeEach(() => {
       storage.caseFile.getters.get = jest.fn(() => mockCaseFile);
-      storage.household.actions.fetch.mockReturnValueOnce(mockCombinedHousehold());
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: mockCaseFile.entity.id,
         },
@@ -407,9 +410,9 @@ describe('CaseFileDetails.vue', () => {
 
     describe('addressFirstLine', () => {
       it('return the right address information when there is a suite number', async () => {
-        const altHousehold = _cloneDeep(mockCombinedHousehold());
-        altHousehold.entity.address.address.unitSuite = '100';
-        altHousehold.entity.address.address.streetAddress = '200 Left ave';
+        const altHousehold = _cloneDeep(mockHouseholdEntity());
+        altHousehold.address.address.unitSuite = '100';
+        altHousehold.address.address.streetAddress = '200 Left ave';
 
         await wrapper.setData({
           household: altHousehold,
@@ -419,9 +422,9 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('return the right address information when there is no suite number', async () => {
-        const altHousehold = _cloneDeep(mockCombinedHousehold());
-        altHousehold.entity.address.address.unitSuite = '';
-        altHousehold.entity.address.address.streetAddress = '200 Main ave';
+        const altHousehold = _cloneDeep(mockHouseholdEntity());
+        altHousehold.address.address.unitSuite = '';
+        altHousehold.address.address.streetAddress = '200 Main ave';
 
         await wrapper.setData({
           household: altHousehold,
@@ -432,10 +435,10 @@ describe('CaseFileDetails.vue', () => {
 
     describe('addressSecondLine', () => {
       it('return the right address information', async () => {
-        const altHousehold = _cloneDeep(mockCombinedHousehold());
-        altHousehold.entity.address.address.postalCode = 'H2H 2H2';
-        altHousehold.entity.address.address.city = 'Montreal';
-        altHousehold.entity.address.address.province = ECanadaProvinces.QC;
+        const altHousehold = _cloneDeep(mockHouseholdEntity());
+        altHousehold.address.address.postalCode = 'H2H 2H2';
+        altHousehold.address.address.city = 'Montreal';
+        altHousehold.address.address.province = ECanadaProvinces.QC;
 
         await wrapper.setData({
           household: altHousehold,
@@ -463,15 +466,16 @@ describe('CaseFileDetails.vue', () => {
     describe('primaryBeneficiary', () => {
       it('sets the right beneficiary from the household metadata', async () => {
         const altHousehold = {
-          entity: { primaryBeneficiary: 'mock-beneficiary-id' },
-          metadata: {
-            memberMetadata: [
-              { id: 'mock-beneficiary-id', firstName: 'Jane', lastName: 'Doe' },
-              { id: 'foo', firstName: 'Joe', lastName: 'Dane' },
-            ],
-          },
+          memberMetadata: [
+            { id: 'mock-beneficiary-id', firstName: 'Jane', lastName: 'Doe' },
+            { id: 'foo', firstName: 'Joe', lastName: 'Dane' },
+          ],
         };
-        await wrapper.setData({ household: altHousehold });
+        await wrapper.setData({
+          householdMetadata: altHousehold,
+          household: mockHouseholdEntity({ primaryBeneficiary: 'mock-beneficiary-id' }),
+        });
+
         expect(wrapper.vm.primaryBeneficiary).toEqual({ id: 'mock-beneficiary-id', firstName: 'Jane', lastName: 'Doe' });
       });
     });
@@ -622,7 +626,7 @@ describe('CaseFileDetails.vue', () => {
                   fetch: jest.fn(() => [mockCaseFile]),
                 },
               },
-              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+
             },
           },
         });
@@ -652,7 +656,7 @@ describe('CaseFileDetails.vue', () => {
                   fetch: jest.fn(() => [mockCaseFile]),
                 },
               },
-              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+
             },
           },
         });
@@ -668,6 +672,7 @@ describe('CaseFileDetails.vue', () => {
 
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: mockCaseFile.entity.id,
         },
@@ -697,6 +702,7 @@ describe('CaseFileDetails.vue', () => {
 
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: mockCaseFile.entity.id,
         },
@@ -715,10 +721,10 @@ describe('CaseFileDetails.vue', () => {
     });
 
     describe('getHouseholdInfo', () => {
-      it('calls household storage action', () => {
-        jest.clearAllMocks();
-        wrapper.vm.getHouseholdInfo();
-        expect(storage.household.actions.fetch).toBeCalledWith(mockCaseFile.entity.householdId, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+      it('should fetch household ', async () => {
+        await wrapper.vm.getHouseholdInfo();
+        expect(householdStore.fetch).toBeCalledWith(mockCaseFile.entity.householdId);
+        expect(householdMetadataStore.fetch).toBeCalledWith(mockCaseFile.entity.householdId, false);
       });
     });
 

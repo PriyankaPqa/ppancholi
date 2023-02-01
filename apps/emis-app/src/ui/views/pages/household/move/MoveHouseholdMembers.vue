@@ -110,6 +110,7 @@ import HouseholdResultsMove from '@/ui/views/pages/household/move/HouseholdResul
 import { IEventGenericLocation } from '@libs/entities-lib/event/event.types';
 import helpers from '@/ui/helpers/helpers';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { useHouseholdStore } from '@/pinia/household/household';
 
 export interface IMovingAddressSelection {
   sameAddressSelected: boolean;
@@ -181,7 +182,7 @@ export default mixins(searchHousehold, household).extend({
       this.showResults = true;
 
       // Hide the results on the main household search page, because they use the same store
-      this.$storage.household.mutations.setSearchResultsShown(false);
+      useHouseholdStore().searchResultsShown = false;
     },
 
     async onSelect(householdId: string) {

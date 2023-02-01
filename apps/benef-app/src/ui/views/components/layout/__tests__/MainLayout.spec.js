@@ -1,12 +1,9 @@
 import { mockEvent } from '@libs/entities-lib/src/registration-event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import Component from '../MainLayout.vue';
-
-const storage = mockStorage();
 
 const { pinia, registrationStore } = useMockRegistrationStore();
 const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
@@ -19,9 +16,6 @@ describe('MainLayout.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
-      mocks: {
-        $storage: storage,
-      },
     });
 
     await wrapper.setData({ fetchingData: false });

@@ -8,9 +8,11 @@ import {
   mockValidateEmailResponse,
 } from '@libs/entities-lib/household-create';
 import { mockHouseholdActivities } from '@libs/entities-lib/value-objects/household-activity';
+import { mockDomainBaseService } from '../../base';
 import { IHouseholdsServiceMock } from './households.types';
 
 export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
+  ...mockDomainBaseService([mockVersionedEntity()]),
   getGenders: jest.fn(() => mockGenders()),
   getPreferredLanguages: jest.fn(() => mockPreferredLanguages()),
   getPrimarySpokenLanguages: jest.fn(() => mockPrimarySpokenLanguages()),

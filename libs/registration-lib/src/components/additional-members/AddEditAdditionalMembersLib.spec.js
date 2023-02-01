@@ -13,10 +13,8 @@ import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/household-c
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AddEditAdditionalMembersLib.vue';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
-import { mockStorage } from '../../store/storage/storage.mock';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const householdId = '4113a553-13ed-41da-a692-f39c934bee05';
 
 describe('AddEditAdditionalMembersLib.vue', () => {
@@ -37,9 +35,6 @@ describe('AddEditAdditionalMembersLib.vue', () => {
         return {
           apiKey: 'google-key',
         };
-      },
-      mocks: {
-        $storage: storage,
       },
     });
     wrapper.vm.$registrationStore.householdCreate = mockHouseholdCreate();
@@ -116,9 +111,6 @@ describe('AddEditAdditionalMembersLib.vue', () => {
           },
           computed: {
             shelterLocations: () => [],
-          },
-          mocks: {
-            $storage: storage,
           },
         });
         const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
@@ -327,9 +319,6 @@ describe('AddEditAdditionalMembersLib.vue', () => {
                 return mockCampGround();
               },
             },
-            mocks: {
-              $storage: storage,
-            },
           });
           wrapper.vm.$options.created.forEach((hook) => {
             hook.call(wrapper.vm);
@@ -360,9 +349,6 @@ describe('AddEditAdditionalMembersLib.vue', () => {
                 return mockCampGround();
               },
             },
-            mocks: {
-              $storage: storage,
-            },
           });
           wrapper.vm.$options.created.forEach((hook) => {
             hook.call(wrapper.vm);
@@ -386,9 +372,6 @@ describe('AddEditAdditionalMembersLib.vue', () => {
               return {
                 apiKey: 'google-key',
               };
-            },
-            mocks: {
-              $storage: storage,
             },
           });
           wrapper.vm.$options.created.forEach((hook) => {

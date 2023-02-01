@@ -8,7 +8,7 @@
     @back="navigateBack">
     <rc-page-loading v-if="loading" />
     <template v-else slot="default">
-      <v-row v-if="household && householdData" class="fill-height no-gutters">
+      <v-row v-if="household && householdEntity" class="fill-height no-gutters">
         <v-col cols="2" class="border-right px-6 rc-body14">
           <div class="pt-6  d-flex flex-column" data-test="household_profile_registration_number">
             <div class="fw-bold">
@@ -17,7 +17,7 @@
               </v-icon>
               {{ $t('household.profile.registration_number') }}:
             </div>
-            <span>{{ householdData.entity.registrationNumber }}</span>
+            <span>{{ householdEntity.registrationNumber }}</span>
           </div>
 
           <div v-if="household.homeAddress" class="pt-6 d-flex flex-column" data-test="household_profile_home_address">
@@ -62,7 +62,7 @@
               </v-icon>
               {{ $t('household.profile.account_created') }}:
             </div>
-            <span>{{ moment(householdData.entity.created).format('ll') }}</span>
+            <span>{{ moment(householdEntity.created).format('ll') }}</span>
           </div>
 
           <div class="pt-6  d-flex flex-column" data-test="household_profile_last_updated_date">
@@ -170,9 +170,9 @@
       @close="fetchHouseholdData" />
     <edit-household-address-dialog v-if="showEditAddress" :show.sync="showEditAddress" />
     <household-profile-history
-      v-if="showProfileHistory && householdData"
+      v-if="showProfileHistory && householdEntity"
       :show.sync="showProfileHistory"
-      :household="householdData.entity" />
+      :household="householdEntity" />
   </rc-page-content>
 </template>
 
@@ -185,7 +185,7 @@ import _isEmpty from 'lodash/isEmpty';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { IHouseholdCreate, IMember, Member } from '@libs/entities-lib/household-create';
-import { IHouseholdCombined } from '@libs/entities-lib/household';
+import { IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
 import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
@@ -199,6 +199,7 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { ICombinedIndex, IMultilingual } from '@libs/shared-lib/types';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { IEventData } from '@libs/entities-lib/registration-event';
+import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
@@ -241,9 +242,9 @@ export default mixins(household).extend({
   },
 
   watch: {
-    householdData: {
+    householdEntity: {
       handler(newValue) {
-        if (newValue && !_isEmpty(newValue.entity) && !_isEmpty(newValue.metadata)) {
+        if (newValue && !_isEmpty(newValue)) {
           this.fetchMyEvents();
           this.fetchAllEvents();
           this.setHouseholdCreate();
@@ -273,15 +274,19 @@ export default mixins(household).extend({
       return locations;
     },
 
-    household() : IHouseholdCreate {
+    household(): IHouseholdCreate {
       return useRegistrationStore().getHouseholdCreate();
     },
 
-    householdData() : IHouseholdCombined {
-      return this.$storage.household.getters.get(this.id);
+    householdEntity() : IHouseholdEntity {
+      return useHouseholdStore().getById(this.id);
     },
 
-    inactiveCaseFiles():ICaseFileEntity[] {
+    householdMetadata() : IHouseholdMetadata {
+      return useHouseholdMetadataStore().getById(this.id);
+    },
+
+    inactiveCaseFiles(): ICaseFileEntity[] {
       return this.caseFiles
         .filter((c) => c.caseFileStatus === CaseFileStatus.Archived || c.caseFileStatus === CaseFileStatus.Closed);
     },
@@ -300,12 +305,12 @@ export default mixins(household).extend({
     },
 
     lastUpdated(): string {
-      const entityTimestamp = this.householdData?.entity?.timestamp;
+      const entityTimestamp = this.householdEntity?.timestamp;
       if (!entityTimestamp) {
         return '';
       }
 
-      const metadataTimestamp = this.householdData.metadata?.timestamp;
+      const metadataTimestamp = this.householdMetadata?.timestamp;
       let date: Moment;
 
       if (metadataTimestamp) {
@@ -366,7 +371,8 @@ export default mixins(household).extend({
     async fetchHouseholdData() {
       this.loading = true;
       try {
-        await this.$storage.household.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+        await useHouseholdStore().fetch(this.id);
+        await useHouseholdMetadataStore().fetch(this.id, false);
         await this.setHouseholdCreate();
       } finally {
         this.loading = false;
@@ -374,8 +380,8 @@ export default mixins(household).extend({
     },
 
     async setHouseholdCreate() {
-      if (this.householdData) {
-        const householdCreateData = await this.buildHouseholdCreateData(this.householdData);
+      if (this.householdEntity) {
+        const householdCreateData = await this.buildHouseholdCreateData(this.householdEntity);
         useRegistrationStore().setHouseholdCreate(householdCreateData);
       }
     },

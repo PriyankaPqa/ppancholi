@@ -2,10 +2,6 @@ import _cloneDeep from 'lodash/cloneDeep';
 import deepmerge from 'deepmerge';
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { HouseholdEntityModule } from '@libs/registration-lib/store/modules/household';
-import { HouseholdMetadataModule } from '@libs/registration-lib/store/modules/household/householdMetadata';
-import { HouseholdsService } from '@libs/services-lib/households/entity';
-import { HouseholdMetadataService } from '@libs/services-lib/households/metadata';
 import { IRootState, IStore } from '@/store/store.types';
 import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
@@ -53,8 +49,6 @@ const mockConfig = {
       new FinancialAssistanceTablesMetadataService(httpClient),
       mockSignalR(),
     ).getModule(),
-    [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
-    [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(new HouseholdMetadataService(httpClient)).getModule(),
     [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(
       new UserAccountsService(httpClient),
       new OptionItemsService(httpClient),

@@ -1,4 +1,3 @@
-import { IStorageMake, IStorageMakeMock } from '@libs/registration-lib/store/storage/household';
 import { IStorageMake as IFinancialAssistanceMakeStorage, IStorageMakeMock as IFinancialAssistanceMakeStorageMock } from './financial-assistance';
 
 import {
@@ -20,7 +19,6 @@ export interface IStorage {
   caseFile: ICaseFileMakeStorage;
   financialAssistance: IFinancialAssistanceMakeStorage;
   financialAssistanceCategory: IFinancialAssistanceCategoryMakeStorage;
-  household: IStorageMake;
   userAccount: IUserAccountMakeStorage;
 }
 
@@ -28,6 +26,5 @@ export interface IStorageMock {
   caseFile: ICaseFileMakeStorageMock;
   financialAssistance: IFinancialAssistanceMakeStorageMock;
   financialAssistanceCategory: IFinancialAssistanceCategoryMakeStorageMock;
-  household: IStorageMakeMock;
   userAccount: IUserAccountMakeStorageMock;
 }

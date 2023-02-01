@@ -1,4 +1,3 @@
-import { mockStorage } from '@libs/registration-lib/store/storage';
 import { mockCombinedHouseholds } from '@libs/entities-lib/household';
 import householdResults from '@/ui/mixins/householdResults';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
@@ -10,7 +9,6 @@ const Component = {
 };
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 let wrapper;
 
@@ -21,9 +19,6 @@ describe('householdResults', () => {
       localVue,
       propsData: {
         items: mockCombinedHouseholds(),
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });

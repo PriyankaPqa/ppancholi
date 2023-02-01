@@ -1,6 +1,6 @@
 import { BaseStoreComponents } from '@libs/stores-lib/base';
 import {
- IdsParams, IMassActionEntity, MassActionRunType, MassActionType,
+ IdParams, IMassActionEntity, MassActionRunType, MassActionType,
 } from '@libs/entities-lib/mass-action';
 import {
   IMassActionAssessmentCreatePayload,
@@ -11,7 +11,7 @@ import {
 } from '@libs/services-lib/mass-actions/entity';
 
 export function getExtensionComponents(
-  baseComponents: BaseStoreComponents<IMassActionEntity, IdsParams>,
+  baseComponents: BaseStoreComponents<IMassActionEntity, IdParams>,
   entityService: MassActionService | IMassActionServiceMock,
 ) {
   async function process(id: string, runType: MassActionRunType): Promise<IMassActionEntity> {

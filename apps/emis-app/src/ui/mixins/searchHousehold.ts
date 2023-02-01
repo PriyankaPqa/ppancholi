@@ -3,6 +3,9 @@
 import Vue from 'vue';
 import moment from '@libs/shared-lib/plugins/moment';
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
+import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { IdParams, IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
 
 export default Vue.extend({
   data() {
@@ -10,6 +13,7 @@ export default Vue.extend({
       searchResults: [],
       criteria: {} as IHouseholdSearchCriteria,
       searchLoading: false,
+      combinedHouseholdStore: new CombinedStoreFactory<IHouseholdEntity, IHouseholdMetadata, IdParams>(useHouseholdStore(), useHouseholdMetadataStore()),
     };
   },
   computed: {
@@ -74,16 +78,19 @@ export default Vue.extend({
     async search(criteria: IHouseholdSearchCriteria) {
       this.searchLoading = true;
       this.criteria = criteria;
-      this.$storage.household.mutations.reset();
+      useHouseholdStore().$reset();
+      useHouseholdMetadataStore().$reset();
 
-      const res = await this.$storage.household.actions.search({
+      const res = await this.combinedHouseholdStore.search({
         search: this.searchCriteria,
         filter: this.filters,
         top: 999,
         queryType: 'full',
       });
 
-      this.searchResults = this.$storage.household.getters.getByIds(res.ids);
+      if (res?.ids) {
+        this.searchResults = this.combinedHouseholdStore.getByIds(res.ids);
+      }
 
       this.searchLoading = false;
     },

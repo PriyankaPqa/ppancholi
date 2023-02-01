@@ -153,6 +153,7 @@ import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { PaymentsSummary } from '@libs/entities-lib/financial-assistance-payment';
 import { useTeamStore } from '@/pinia/team/team';
+import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import CaseFileTags from './case-file-activity/components/CaseFileTags.vue';
 
 export interface CaseFileSummary {
@@ -285,11 +286,12 @@ export default Vue.extend({
       });
       // if we have a date of archival/close we get the household at that date else we get the current households
       if (!this.closeActivity?.created) {
-        const household = this.$storage.household.getters.get(this.caseFile?.householdId);
-        this.primary = (household?.metadata?.memberMetadata || [])
-          .filter((m) => m.id === household?.entity.primaryBeneficiary).map(mapToMember)[0];
-        this.householdMembers = (household?.metadata?.memberMetadata || [])
-          .filter((m) => m.id !== household?.entity.primaryBeneficiary).map(mapToMember);
+        const household = useHouseholdStore().getById(this.caseFile?.householdId);
+        const householdMetadata = useHouseholdMetadataStore().getById(this.caseFile?.householdId);
+        this.primary = (householdMetadata?.memberMetadata || [])
+          .filter((m) => m.id === household.primaryBeneficiary).map(mapToMember)[0];
+        this.householdMembers = (householdMetadata?.memberMetadata || [])
+          .filter((m) => m.id !== household?.primaryBeneficiary).map(mapToMember);
       } else {
         let historyE = (await this.$services.households.getHouseholdHistory(this.caseFile?.householdId) || []);
         let historyM = (await this.$services.households.getHouseholdMetadataHistory(this.caseFile?.householdId) || []);

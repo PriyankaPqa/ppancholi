@@ -1,13 +1,12 @@
-import { mockStorage } from '@libs/registration-lib/store/storage';
-import { mockCombinedHousehold } from '@libs/entities-lib/household/household.mocks';
+import { mockCombinedHousehold, mockHouseholdEntity } from '@libs/entities-lib/household/household.mocks';
 import { mockMemberData, mockMember } from '@libs/entities-lib/value-objects/member';
 import { mockIndigenousCommunitiesGetData, mockGenders } from '@libs/entities-lib/value-objects/identity-set';
 import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@libs/entities-lib/value-objects/contact-information';
-import { mockCombinedHouseholds } from '@libs/entities-lib/household';
 import household from '@/ui/mixins/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileStatus, mockCaseFileEntities } from '@libs/entities-lib/case-file';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
 const Component = {
   render() {},
@@ -15,9 +14,10 @@ const Component = {
 };
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const member = mockMember();
-const { pinia, registrationStore } = useMockRegistrationStore();
+
+const { pinia, householdStore } = useMockHouseholdStore();
+const { registrationStore } = useMockRegistrationStore(pinia);
 let wrapper;
 
 describe('household', () => {
@@ -28,9 +28,6 @@ describe('household', () => {
       localVue,
       propsData: {
         id: 'id-1',
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });
@@ -53,14 +50,14 @@ describe('household', () => {
       it('should fetch the household', async () => {
         const id = 1;
         await wrapper.vm.fetchHouseholdCreate(id);
-        expect(wrapper.vm.$storage.household.actions.fetch).toHaveBeenCalledWith(id);
+        expect(householdStore.fetch).toHaveBeenCalledWith(id);
       });
       it('should call buildHouseholdCreateData', async () => {
         const id = 1;
-        wrapper.vm.buildHouseholdCreateData = jest.fn(() => ({}));
-        const res = await wrapper.vm.fetchHouseholdCreate(id);
-        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(mockCombinedHouseholds()[0]);
-        expect(res).toEqual({});
+        wrapper.vm.buildHouseholdCreateData = jest.fn();
+        householdStore.fetch = jest.fn(() => mockHouseholdEntity());
+        await wrapper.vm.fetchHouseholdCreate(id);
+        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(mockHouseholdEntity());
       });
     });
 
@@ -97,9 +94,6 @@ describe('household', () => {
               return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
             },
           },
-          mocks: {
-            $storage: storage,
-          },
         });
         jest.spyOn(wrapper.vm.$services.events, 'searchMyEventsById').mockImplementation(() => {});
         await wrapper.vm.fetchMyEvents();
@@ -125,9 +119,6 @@ describe('household', () => {
               return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
             },
           },
-          mocks: {
-            $storage: storage,
-          },
         });
 
         jest.spyOn(wrapper.vm.$services.events, 'searchMyEventsById').mockImplementation(() => ({ value: [{ id: 'eventId' }] }));
@@ -140,10 +131,8 @@ describe('household', () => {
     describe('fetchMembersInformation', () => {
       it('should fetch information of each member', async () => {
         const household = {
-          entity: {
-            primaryBeneficiary: '1',
-            members: ['1', '2'],
-          },
+          primaryBeneficiary: '1',
+          members: ['1', '2'],
         };
         await wrapper.vm.fetchMembersInformation(household);
         expect(wrapper.vm.$services.households.getPerson).toHaveBeenCalledWith('1');
@@ -152,10 +141,8 @@ describe('household', () => {
 
       it('calls addShelterLocationData  with the member result of the storage call', async () => {
         const household = {
-          entity: {
-            primaryBeneficiary: '1',
-            members: ['1'],
-          },
+          primaryBeneficiary: '1',
+          members: ['1'],
         };
         jest.spyOn(wrapper.vm, 'addShelterLocationData').mockImplementation(() => [member]);
         wrapper.vm.$services.households.getPerson = jest.fn(() => member);
@@ -338,8 +325,8 @@ describe('household', () => {
           },
         };
 
-        const household = mockCombinedHousehold();
-        household.entity.registrationNumber = '12345';
+        const household = mockHouseholdEntity();
+        household.registrationNumber = '12345';
 
         const res = await wrapper.vm.buildHouseholdCreateData(household);
 

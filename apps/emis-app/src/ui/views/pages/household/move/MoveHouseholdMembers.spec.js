@@ -8,6 +8,7 @@ import helpers from '@/ui/helpers/helpers';
 
 import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResultsMove.vue';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import Component from './MoveHouseholdMembers.vue';
 
 const localVue = createLocalVue();
@@ -15,9 +16,10 @@ const household = mockCombinedHousehold();
 const householdCreate = { ...mockHouseholdCreate(), id: 'id-1' };
 const storage = mockStorage();
 
+const { pinia, householdStore } = useMockHouseholdStore();
+
 describe('MoveHouseholdMembers.vue', () => {
   let wrapper;
-  storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
 
   describe('lifecycle', () => {
     describe('created', () => {
@@ -25,6 +27,7 @@ describe('MoveHouseholdMembers.vue', () => {
         jest.clearAllMocks();
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -42,6 +45,7 @@ describe('MoveHouseholdMembers.vue', () => {
       it('goes back to household profile if no householdCreate in the store', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: household.entity.id,
           },
@@ -81,6 +85,7 @@ describe('MoveHouseholdMembers.vue', () => {
       jest.clearAllMocks();
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: household.entity.id,
         },
@@ -145,7 +150,7 @@ describe('MoveHouseholdMembers.vue', () => {
 
       it('should call setSearchResultsShown mutation with proper parameter', async () => {
         await wrapper.vm.onSearch({});
-        expect(wrapper.vm.$storage.household.mutations.setSearchResultsShown).toHaveBeenCalledWith(false);
+        expect(householdStore.searchResultsShown).toEqual(false);
       });
     });
 

@@ -1,4 +1,3 @@
-import { HouseholdStorageMock } from '@libs/registration-lib/store/storage/household';
 import { UserAccountStorageMock } from '@/storage/user-account/storage.mock';
 import { CaseFileStorageMock } from '@/storage/case-file/storage.mock';
 import { IStorageMock } from './storage.types';
@@ -9,6 +8,5 @@ export const mockStorage = (): IStorageMock => ({
   caseFile: new CaseFileStorageMock().make(),
   financialAssistance: new FinancialAssistanceStorageMock().make(),
   financialAssistanceCategory: new FinancialAssistanceCategoryStorageMock().make(),
-  household: new HouseholdStorageMock().make(),
   userAccount: new UserAccountStorageMock().make(),
 });

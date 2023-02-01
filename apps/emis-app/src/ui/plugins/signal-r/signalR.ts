@@ -27,6 +27,7 @@ import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
 import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { IStorage } from '../../../storage/storage.types';
 
 export interface IOptions {
@@ -216,14 +217,17 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'household',
       entityName: 'Household',
-      action: this.storage.household.mutations.setEntityFromOutsideNotification,
+      action: useHouseholdStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'household',
       entityName: 'HouseholdMetadata',
-      action: this.storage.household.mutations.setMetadataFromOutsideNotification,
+      action: useHouseholdMetadataStore().setItemFromOutsideNotification,
     });
+
+    this.watchedPiniaStores.push(useHouseholdStore());
+    this.watchedPiniaStores.push(useHouseholdMetadataStore());
 
     this.listenForChanges({
       domain: 'household',

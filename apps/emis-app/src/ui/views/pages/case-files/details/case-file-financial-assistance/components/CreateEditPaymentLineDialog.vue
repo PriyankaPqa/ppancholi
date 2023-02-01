@@ -222,6 +222,7 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Status } from '@libs/entities-lib/base';
 import { IAddressData } from '@libs/entities-lib/household-create';
 import { i18n } from '@/ui/plugins';
+import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
@@ -419,11 +420,12 @@ export default mixins(caseFileDetail).extend({
   methods: {
     async initCreateMode() {
       const cf = this.caseFile;
-      const household = await this.$storage.household.actions.fetch(cf.entity.householdId);
+      const household = await useHouseholdStore().fetch(cf.entity.householdId);
+      const householdMetadata = await useHouseholdMetadataStore().fetch(cf.entity.householdId, false);
       this.defaultBeneficiaryData = {
         name: `${cf.metadata.primaryBeneficiary.identitySet.firstName} ${cf.metadata.primaryBeneficiary.identitySet.lastName}`,
-        address: household?.entity?.address?.address,
-        email: (household?.metadata?.memberMetadata || []).filter((m) => m.id === household?.entity?.primaryBeneficiary)[0]?.email,
+        address: household?.address?.address,
+        email: (householdMetadata?.memberMetadata || []).filter((m) => m.id === household?.primaryBeneficiary)[0]?.email,
       };
       this.paymentGroup = new FinancialAssistancePaymentGroup();
 

@@ -174,6 +174,7 @@ import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { useHouseholdStore } from '@/pinia/household/household';
 import caseFileDetail from '../caseFileDetail';
 import AddCaseFileAssessment from './components/AddCaseFileAssessment.vue';
 
@@ -483,7 +484,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     async copyLink(item: MappedAssessment) {
       const assessment = this.items.find((i) => i.entity.id === item.id);
       const settings = useTenantSettingsStore().currentTenantSettings;
-      const member = await this.$services.households.getPerson(this.$storage.household.getters.get(this.caseFile.entity.householdId).entity.primaryBeneficiary);
+      const primaryBeneficiary = useHouseholdStore().getById(this.caseFile.entity.householdId).primaryBeneficiary;
+      const member = await this.$services.households.getPerson(primaryBeneficiary);
       const languages = await useRegistrationStore().fetchPreferredLanguages();
       let languageCode = languages.find((l) => l.id === member.contactInformation.preferredLanguage.optionItemId)?.languageCode;
       languageCode = languageCode === 'fr' ? 'fr' : 'en';

@@ -2,11 +2,9 @@ import moment from 'moment';
 import { HouseholdCreate } from '@libs/entities-lib/src/household-create';
 import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
 import { createLocalVue, mount, shallowMount } from '../../test/testSetup';
-import { mockStorage } from '../../store/storage';
 import Component from './PrivacyStatementLib.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const { pinia, registrationStore } = useMockRegistrationStore();
 describe('PrivacyStatementLib.vue', () => {
   let wrapper;
@@ -19,18 +17,6 @@ describe('PrivacyStatementLib.vue', () => {
         propsData: {
           household: new HouseholdCreate(),
           checkboxLabel: 'label',
-        },
-        store: {
-          modules: {
-            registration: {
-              state: {
-                isPrivacyAgreed: true,
-              },
-            },
-          },
-        },
-        mocks: {
-          $storage: storage,
         },
       });
       wrapper.vm.$registrationStore = registrationStore;

@@ -11,6 +11,8 @@ import { Status } from '@libs/entities-lib/base';
 import routes from '@/constants/routes';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import Component from './CaseFileAssessment.vue';
 
 const localVue = createLocalVue();
@@ -23,6 +25,7 @@ let pinia = createTestingPinia({ stubActions: false });
 let { assessmentFormStore } = useMockAssessmentFormStore(pinia);
 let { assessmentResponseStore } = useMockAssessmentResponseStore(pinia);
 let { registrationStore } = useMockRegistrationStore(pinia);
+let { householdStore } = useMockHouseholdStore(pinia);
 useMockTenantSettingsStore(pinia);
 
 const mockMappedAssessments = [
@@ -133,6 +136,7 @@ describe('CaseFileAssessment.vue', () => {
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
     useMockTenantSettingsStore(pinia);
     registrationStore = useMockRegistrationStore(pinia).registrationStore;
+    householdStore = useMockHouseholdStore(pinia).householdStore;
     jest.clearAllMocks();
   });
 
@@ -492,15 +496,14 @@ describe('CaseFileAssessment.vue', () => {
         await mountWrapper();
         registrationStore.preferredLanguages = { id: 'frId', languageCode: 'fr', status: 1 };
         registrationStore.fetchPreferredLanguages = jest.fn(() => [{ id: 'frId', languageCode: 'fr', status: 1 }]);
-        wrapper.vm.$storage.household.getters.get = jest.fn(() => ({ entity: { primaryBeneficiary: 'benefId' } }));
         wrapper.vm.$services.households.getPerson = jest.fn(() => ({ contactInformation: { preferredLanguage: { optionItemId: 'frId' } } }));
 
         await wrapper.vm.copyLink({ id: item.id });
         await wrapper.vm.$nextTick();
 
         expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://registration domain fr/fr/assessment/1dea3c36-d6a5-4e6c-ac36-078677b7da5f0/044fcd68-3d70-4a3a-b5c8-22da9e01730f/1');
-        expect(wrapper.vm.$storage.household.getters.get).toHaveBeenCalledWith(wrapper.vm.caseFile.entity.householdId);
-        expect(wrapper.vm.$services.households.getPerson).toHaveBeenCalledWith('benefId');
+        expect(householdStore.getById).toHaveBeenCalledWith(wrapper.vm.caseFile.entity.householdId);
+        expect(wrapper.vm.$services.households.getPerson).toHaveBeenCalledWith(mockHouseholdEntity().primaryBeneficiary);
         expect(registrationStore.fetchPreferredLanguages).toHaveBeenCalled();
       });
     });

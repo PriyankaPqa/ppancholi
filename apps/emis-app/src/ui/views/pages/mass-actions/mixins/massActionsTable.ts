@@ -3,7 +3,7 @@ import _orderBy from 'lodash/orderBy';
 import moment from 'moment';
 import { TranslateResult } from 'vue-i18n';
 import {
-  IdsParams,
+  IdParams,
   IMassActionCombined, IMassActionEntity, IMassActionMetadata, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
 } from '@libs/entities-lib/mass-action';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
@@ -29,7 +29,7 @@ export default Vue.extend({
       searchResultIds: [],
       itemsCount: 0,
       searchExecutionDate: null as Date,
-      combinedMassActionStore: new CombinedStoreFactory<IMassActionEntity, IMassActionMetadata, IdsParams>(useMassActionStore(), useMassActionMetadataStore()),
+      combinedMassActionStore: new CombinedStoreFactory<IMassActionEntity, IMassActionMetadata, IdParams>(useMassActionStore(), useMassActionMetadataStore()),
     };
   },
 

@@ -1,5 +1,4 @@
 import Vuetify from 'vuetify';
-import { mockCombinedHousehold } from '@libs/entities-lib/household';
 import {
   createLocalVue,
   shallowMount,
@@ -19,8 +18,6 @@ describe('ReviewRegistrationLib.vue', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
-
     wrapper = shallowMount(Component, {
       localVue,
       vuetify,

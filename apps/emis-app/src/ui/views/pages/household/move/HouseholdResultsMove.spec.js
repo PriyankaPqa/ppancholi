@@ -1,4 +1,4 @@
-import { mockCombinedHouseholds, mockCombinedHousehold } from '@libs/entities-lib/household';
+import { mockCombinedHouseholds } from '@libs/entities-lib/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 
@@ -9,7 +9,6 @@ const storage = mockStorage();
 
 describe('HouseholdResultsMove.vue', () => {
   let wrapper;
-  storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
 
   describe('Methods', () => {
     beforeEach(() => {

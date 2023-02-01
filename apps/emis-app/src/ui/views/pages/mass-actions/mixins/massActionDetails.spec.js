@@ -1,5 +1,3 @@
-import { mockStorage } from '@libs/registration-lib/store/storage';
-
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
   MassActionRunStatus, mockMassActionEntity, mockMassActionMetadata, mockMassActionRun, mockMassActionRunMetadata,
@@ -13,7 +11,6 @@ const Component = {
 };
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const { pinia, massActionStore, massActionMetadataStore } = useMockMassActionStore();
 let wrapper;
 
@@ -26,9 +23,6 @@ describe('massActions', () => {
     const options = {
       localVue,
       pinia,
-      mocks: {
-        $storage: storage,
-      },
       computed: {
         ...otherComputed,
       },

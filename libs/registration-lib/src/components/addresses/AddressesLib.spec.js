@@ -4,14 +4,12 @@ import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/src/househo
 import { mockEvent } from '@libs/entities-lib/src/registration-event';
 import { ECurrentAddressTypes, mockCampGround } from '@libs/entities-lib/src/value-objects/current-address';
 import { i18n } from '../../ui/plugins/i18n';
-import { mockStorage } from '../../store/storage/storage.mock';
 import AddressForm from '../forms/AddressForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AddressesLib.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const household = mockHouseholdCreate();
 
 describe('AddressesLib.vue', () => {
@@ -28,9 +26,6 @@ describe('AddressesLib.vue', () => {
       propsData: {
         i18n,
         disableAutocomplete: false,
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });

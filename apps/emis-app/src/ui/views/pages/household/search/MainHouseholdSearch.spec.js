@@ -4,6 +4,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/storage';
 
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import Component from './MainHouseholdSearch.vue';
 
 const localVue = createLocalVue();
@@ -11,6 +12,8 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 
 const vuetify = new Vuetify();
+
+const { pinia, householdStore } = useMockHouseholdStore();
 
 describe('MainHouseholdSearch.vue', () => {
   let wrapper;
@@ -20,6 +23,7 @@ describe('MainHouseholdSearch.vue', () => {
 
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       vuetify,
       mocks: {
         $storage: storage,
@@ -67,9 +71,9 @@ describe('MainHouseholdSearch.vue', () => {
   describe('computed', () => {
     describe('showResultPage', () => {
       it('returns the right value', () => {
-        wrapper.vm.$store.state.householdEntities.searchResultsShown = true;
+        householdStore.searchResultsShown = true;
         expect(wrapper.vm.showResultPage).toBeTruthy();
-        wrapper.vm.$store.state.householdEntities.searchResultsShown = false;
+        householdStore.searchResultsShown = false;
         expect(wrapper.vm.showResultPage).toBeFalsy();
       });
     });
@@ -82,14 +86,14 @@ describe('MainHouseholdSearch.vue', () => {
         wrapper.vm.search = jest.fn();
         await wrapper.vm.onSearch(criteria);
         expect(wrapper.vm.search).toHaveBeenCalledWith(criteria);
-        expect(storage.household.mutations.setSearchResultsShown).toHaveBeenCalledWith(true);
+        expect(householdStore.searchResultsShown).toEqual(true);
       });
     });
 
     describe('back', () => {
       it('sets setSearchResultsShown to false', async () => {
         await wrapper.vm.back();
-        expect(storage.household.mutations.setSearchResultsShown).toHaveBeenCalledWith(false);
+        expect(householdStore.searchResultsShown).toEqual(false);
       });
     });
   });

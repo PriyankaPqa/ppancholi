@@ -11,12 +11,15 @@ import {
   IValidateEmailRequest,
   IConsentInformation, IValidateEmailPublicRequest,
 } from '@libs/entities-lib/household-create';
-import { IDetailedRegistrationResponse, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
+import {
+ IDetailedRegistrationResponse, IdParams, IHouseholdEntity, IOustandingPaymentResponse,
+} from '@libs/entities-lib/household';
 import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
 import { IOptionItemData } from '@libs/shared-lib/types';
+import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
-export interface IHouseholdsService {
+export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity, IdParams> {
   getGenders(): Promise<IOptionItemData[]>;
   getPreferredLanguages(): Promise<IOptionItemData[]>;
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
@@ -46,7 +49,7 @@ export interface IHouseholdsService {
   getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
 }
 
-export interface IHouseholdsServiceMock {
+export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHouseholdEntity> {
   getGenders: jest.Mock<IOptionItemData[]>;
   getPreferredLanguages: jest.Mock<IOptionItemData[]>;
   getPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;

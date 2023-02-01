@@ -44,13 +44,14 @@ import { IAddressData, IHouseholdCreate } from '@libs/entities-lib/household-cre
 import _cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
 import { Address, IAddress } from '@libs/entities-lib/value-objects/address';
-import { IHouseholdCombined } from '@libs/entities-lib/household';
+import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { i18n } from '@/ui/plugins';
 import { localStorageKeys } from '@/constants/localStorage';
 import { VForm } from '@libs/shared-lib/types';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { useHouseholdStore } from '@/pinia/household/household';
 
 export default Vue.extend({
   name: 'EditHouseholdAddressDialog',
@@ -98,14 +99,14 @@ export default Vue.extend({
       return useRegistrationStore().getHouseholdCreate();
     },
 
-    currentHousehold(): IHouseholdCombined {
-      return this.$storage.household.getters.get(this.householdCreate.id);
+    currentHousehold(): IHouseholdEntity {
+      return useHouseholdStore().getById(this.householdCreate.id);
     },
 
     hasChanged(): boolean {
       return !isEqual(this.address, this.householdCreate.homeAddress)
         || this.noFixedHome !== this.householdCreate.noFixedHome
-        || this.noFixedHomeDetails !== this.currentHousehold.entity.address.observation;
+        || this.noFixedHomeDetails !== this.currentHousehold.address.observation;
     },
 
     enableAutocomplete(): boolean {
@@ -124,7 +125,7 @@ export default Vue.extend({
   created() {
     this.address = _cloneDeep(this.householdCreate.homeAddress);
     this.noFixedHome = this.householdCreate.noFixedHome;
-    this.noFixedHomeDetails = this.currentHousehold.entity.address.observation;
+    this.noFixedHomeDetails = this.currentHousehold.address.observation;
   },
 
   methods: {
@@ -145,7 +146,7 @@ export default Vue.extend({
     },
 
     async updateNoFixedHomeAddress(householdId: string, observation: string) {
-      const res = await this.$storage.household.actions.updateNoFixedHomeAddress(householdId, observation);
+      const res = await useHouseholdStore().updateNoFixedHomeAddress({ householdId, observation });
       if (res) {
         this.householdCreate.noFixedHome = true;
       }
@@ -153,7 +154,7 @@ export default Vue.extend({
     },
 
     async updateHomeAddress(householdId: string, address: IAddress) {
-      const res = await this.$storage.household.actions.updateHomeAddress(householdId, address);
+      const res = await useHouseholdStore().updateHomeAddress({ householdId, address });
       if (res) {
         this.householdCreate.noFixedHome = false;
         this.householdCreate.setHomeAddress(address);

@@ -1,4 +1,4 @@
-import { IdsParams, IMassActionEntity, IMassActionMetadata } from '@libs/entities-lib/mass-action';
+import { IdParams, IMassActionEntity, IMassActionMetadata } from '@libs/entities-lib/mass-action';
 import { httpClient } from '@/services/httpClient';
 import { MassActionService } from '@libs/services-lib/mass-actions/entity';
 import { MassActionMetadataService } from '@libs/services-lib/mass-actions/metadata';
@@ -14,7 +14,7 @@ const entityService = new MassActionService(httpClient);
 const metadataService = new MassActionMetadataService(httpClient);
 
 // baseComponents is used as a reference for the extension
-const baseEntityComponents = getEntityStoreComponents<Entity, IdsParams>(entityService);
+const baseEntityComponents = getEntityStoreComponents<Entity, IdParams>(entityService);
 const extensionComponents = getExtensionComponents(baseEntityComponents, entityService);
 
 export const useMassActionStore = defineStore(`${storeId}-entities`, () => ({

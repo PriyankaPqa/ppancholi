@@ -34,6 +34,7 @@ import { i18n } from '@/ui/plugins';
 
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
+import { useHouseholdStore } from '@/pinia/household/household';
 import HouseholdResults from './HouseholdResults.vue';
 import HouseholdSearch from './HouseholdSearch.vue';
 
@@ -55,24 +56,23 @@ export default mixins(searchHousehold).extend({
 
   computed: {
     showResultPage(): boolean {
-      return this.$store.state.householdEntities.searchResultsShown;
+      return useHouseholdStore().searchResultsShown;
     },
   },
 
   mounted() {
     // We get back results
-    this.searchResults = this.$storage.household.getters.getAll();
+    this.searchResults = this.combinedHouseholdStore.getAll();
   },
 
   methods: {
     async onSearch(criteria: IHouseholdSearchCriteria) {
       await this.search(criteria);
-
-      this.$storage.household.mutations.setSearchResultsShown(true);
+      useHouseholdStore().searchResultsShown = true;
     },
 
     back(): void {
-      this.$storage.household.mutations.setSearchResultsShown(false);
+      useHouseholdStore().searchResultsShown = false;
     },
   },
 });

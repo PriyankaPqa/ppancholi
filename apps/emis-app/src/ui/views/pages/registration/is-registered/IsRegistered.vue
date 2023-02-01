@@ -40,6 +40,7 @@ import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { useHouseholdStore } from '@/pinia/household/household';
 
 export default mixins(searchHousehold).extend({
   name: 'IsRegistered',
@@ -68,7 +69,7 @@ export default mixins(searchHousehold).extend({
 
   created() {
     // We get back results
-    this.searchResults = this.$storage.household.getters.getAll();
+    this.searchResults = this.combinedHouseholdStore.getAll();
     if (this.isSplitMode) {
       this.filterOutSplitHousehold();
     }
@@ -84,7 +85,7 @@ export default mixins(searchHousehold).extend({
 
       useRegistrationStore().householdResultsShown = true;
       // Hide the results on the main household search page, because they use the same store
-      this.$storage.household.mutations.setSearchResultsShown(false);
+      useHouseholdStore().searchResultsShown = false;
     },
 
     async showDetails(id:string) {

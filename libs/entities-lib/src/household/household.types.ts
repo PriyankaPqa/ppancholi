@@ -53,3 +53,5 @@ export interface IDetailedRegistrationResponse {
   caseFile: ICaseFileEntity;
   household: IHouseholdEntity;
 }
+
+export type IdParams = uuid;
