@@ -2,6 +2,7 @@ import {
   IMassActionEntity, MassActionRunType, MassActionType, MassActionDataCorrectionType,
 } from '@libs/entities-lib/mass-action/massActions.types';
 import { EPaymentModalities } from '@libs/entities-lib/program';
+import { IMultilingual } from '@libs/shared-lib/src/types';
 import { IRestResponse } from '../../http-client';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
@@ -15,6 +16,16 @@ export interface IMassActionFinancialAssistanceCreatePayload {
   subCategoryId: uuid;
   paymentModality: EPaymentModalities;
   amount: number;
+  search: string;
+  filter: string;
+}
+
+export interface IMassActionAssessmentCreatePayload {
+  name: string;
+  description: string;
+  eventId: uuid;
+  assessmentId: uuid;
+  emailText: IMultilingual;
   search: string;
   filter: string;
 }

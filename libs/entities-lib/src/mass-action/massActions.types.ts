@@ -1,3 +1,4 @@
+import { IMultilingual } from '@libs/shared-lib/src/types';
 import { EPaymentModalities } from '../program';
 import { IEntity, IEntityCombined } from '../base';
 
@@ -18,8 +19,10 @@ export enum MassActionType {
   GenerateFundingRequest = 4,
   ImportPaymentStatuses = 5,
   ImportUsers = 6,
+  Assessments = 14,
 }
 
+// this is actually also part of MassActionType!!
 export enum MassActionDataCorrectionType {
   HomeAddress = 7,
   Labels = 8,
@@ -57,6 +60,12 @@ export interface IMassActionDetails {
   programId?: uuid;
   subCategoryId?: uuid;
   tableId?: uuid;
+}
+
+export interface IMassActionAssessmentDetails {
+  assessmentId: uuid;
+  eventId: uuid;
+  emailText: IMultilingual;
 }
 
 export interface IMassActionRun extends IEntity {

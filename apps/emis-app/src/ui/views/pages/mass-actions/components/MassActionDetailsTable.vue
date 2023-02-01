@@ -59,6 +59,7 @@ export default Vue.extend({
         [MassActionType.ImportPaymentStatuses]: 'massActions.type.importPaymentStatus',
         [MassActionType.ImportUsers]: 'massActions.type.importUsers',
         [MassActionType.GenerateFundingRequest]: 'massActions.type.fundingRequest',
+        [MassActionType.Assessments]: 'massActions.type.assessment',
       } as Record<MassActionType, string>,
     };
   },

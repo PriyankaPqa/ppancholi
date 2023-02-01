@@ -3,6 +3,7 @@ import {
  IdsParams, IMassActionEntity, MassActionRunType, MassActionType,
 } from '@libs/entities-lib/mass-action';
 import {
+  IMassActionAssessmentCreatePayload,
   IMassActionFinancialAssistanceCreatePayload,
   IMassActionFundingRequestCreatePayload,
   IMassActionServiceMock,
@@ -34,11 +35,16 @@ export function getExtensionComponents(
   }
 
   async function create(massActionType: MassActionType, payload: unknown): Promise<IMassActionEntity> {
-    let data = null;
+    let data: IMassActionEntity = null;
 
     if (massActionType === MassActionType.FinancialAssistance) {
       const urlSuffix = 'financial-assistance-from-list';
       data = await entityService.create(urlSuffix, payload as IMassActionFinancialAssistanceCreatePayload);
+    }
+
+    if (massActionType === MassActionType.Assessments) {
+      const urlSuffix = 'assessments-from-list';
+      data = await entityService.create(urlSuffix, payload as IMassActionAssessmentCreatePayload);
     }
 
     if (massActionType === MassActionType.GenerateFundingRequest) {

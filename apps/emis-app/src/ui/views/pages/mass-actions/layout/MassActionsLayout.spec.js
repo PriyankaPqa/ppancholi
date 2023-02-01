@@ -4,6 +4,7 @@ import {
 } from '@/test/testSetup';
 
 import routes from '@/constants/routes';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './MassActionsLayout.vue';
 
 const localVue = createLocalVue();
@@ -30,6 +31,14 @@ describe('MassActionsLayout.vue', () => {
                 to: routes.massActions.financialAssistance.home.name,
                 exact: false,
                 level: 'level6',
+              },
+              {
+                text: wrapper.vm.$t('mass_action.card.assessments'),
+                test: 'mass_action.card.assessments',
+                to: routes.massActions.assessments.home.name,
+                exact: false,
+                level: 'level6',
+                feature: FeatureKeys.AssessmentsMassAction,
               },
             ],
           },

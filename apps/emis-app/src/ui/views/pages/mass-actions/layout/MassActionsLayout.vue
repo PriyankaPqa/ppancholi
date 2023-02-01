@@ -22,6 +22,7 @@ import { PageTemplate } from '@/ui/views/components/layout';
 import massActions from '@/ui/views/pages/mass-actions/mixins/massActions';
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
 import { INavigationTabGroup } from '@libs/shared-lib/types';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(massActions).extend({
   name: 'MassActionsLayout',
@@ -53,6 +54,14 @@ export default mixins(massActions).extend({
               to: routes.massActions.financialAssistance.home.name,
               exact: false,
               level: 'level6',
+            },
+            {
+              text: this.$t('mass_action.card.assessments'),
+              test: 'mass_action.card.assessments',
+              to: routes.massActions.assessments.home.name,
+              exact: false,
+              level: 'level6',
+              feature: FeatureKeys.AssessmentsMassAction,
             },
           ],
         },

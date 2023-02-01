@@ -21,6 +21,7 @@ export enum FilterKey {
   AssessmentForms = 16,
   AssessmentTemplates = 17,
   ApprovalRequests = 18,
+  MassActionAssessment = 19,
 }
 
 export type AccessLevels = 0 | 1 | 2 | 4 | 8 | 16 | 32 | 48 | 56 | 60 | 62 | 63 | 64 | 128 | 256 | 448 | 512;

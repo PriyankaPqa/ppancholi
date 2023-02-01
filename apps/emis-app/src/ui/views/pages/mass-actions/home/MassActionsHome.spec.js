@@ -4,6 +4,7 @@ import {
 } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './MassActionsHome.vue';
 
 const localVue = createLocalVue();
@@ -35,8 +36,9 @@ describe('MassActionsHome.vue', () => {
             title: 'mass_action.card.assessments',
             description: wrapper.vm.$t('mass_action.card.group', { x: 1 }),
             button: 'mass_action.card.action.view',
-            route: null,
+            route: routes.massActions.assessments.home.name,
             dataTest: 'massAction_assessments',
+            feature: FeatureKeys.AssessmentsMassAction,
             level: 'level6',
             roles: null,
             group: 1,

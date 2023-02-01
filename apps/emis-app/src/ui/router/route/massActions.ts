@@ -8,6 +8,10 @@ const MassActionsFinancialAssistanceHome = () => import('@/ui/views/pages/mass-a
 const FinancialAssistanceCreate = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCreate.vue');
 const MassActionsFinancialAssistanceDetails = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceDetailsMassAction.vue');
 
+const MassActionsAssessmentHome = () => import('@/ui/views/pages/mass-actions/assessments/AssessmentHomeMassAction.vue');
+const MassActionsAssessmentCreate = () => import('@/ui/views/pages/mass-actions/assessments/AssessmentCreate.vue');
+const MassActionsAssessmentDetails = () => import('@/ui/views/pages/mass-actions/assessments/AssessmentDetailsMassAction.vue');
+
 const MassActionsImportValidationStatusHome = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusHome.vue');
 const MassActionsImportValidationStatusCreate = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusCreate.vue');
 const MassActionsImportValidationStatusDetails = () => import('@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusDetails.vue');
@@ -58,6 +62,26 @@ export const massActions: RouteConfig = {
       path: Routes.massActions.financialAssistance.details.path,
       name: Routes.massActions.financialAssistance.details.name,
       component: MassActionsFinancialAssistanceDetails,
+      meta: { level: 'level6' },
+      props: true,
+    },
+    {
+      path: Routes.massActions.assessments.home.path,
+      name: Routes.massActions.assessments.home.name,
+      component: MassActionsAssessmentHome,
+      meta: { level: 'level6' },
+    },
+    {
+      path: Routes.massActions.assessments.create.path,
+      name: Routes.massActions.assessments.create.name,
+      component: MassActionsAssessmentCreate,
+      meta: { level: 'level6' },
+      props: true,
+    },
+    {
+      path: Routes.massActions.assessments.details.path,
+      name: Routes.massActions.assessments.details.name,
+      component: MassActionsAssessmentDetails,
       meta: { level: 'level6' },
       props: true,
     },

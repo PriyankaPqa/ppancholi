@@ -308,6 +308,20 @@ const routes = {
         name: 'massActions.financialAssistance.details',
       },
     },
+    assessments: {
+      home: {
+        path: 'assessments',
+        name: 'massActions.assessments.home',
+      },
+      create: {
+        path: 'assessments/create',
+        name: 'massActions.assessments.create',
+      },
+      details: {
+        path: 'assessments/details/:id',
+        name: 'massActions.assessments.details',
+      },
+    },
     importValidationStatus: {
       home: {
         path: 'import-validation-status',
