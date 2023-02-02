@@ -372,6 +372,8 @@ export default Vue.extend({
         items = items.filter((i) => i.value !== ECurrentAddressTypes.Shelter);
       }
 
+      items = items.filter((i) => i.value !== ECurrentAddressTypes.RemainingInHome);
+
       return items;
     },
 

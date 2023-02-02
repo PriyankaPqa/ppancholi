@@ -21,6 +21,7 @@ describe('HouseholdCard.vue', () => {
   const mockAddressTypes = [
     { value: ECurrentAddressTypes.Campground, text: 'Campground' },
     { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
+    { value: ECurrentAddressTypes.RemainingInHome, text: 'Ramining in home' },
   ];
   helpers.enumToTranslatedCollection = jest.fn(() => mockAddressTypes);
 
@@ -267,7 +268,7 @@ describe('HouseholdCard.vue', () => {
     });
 
     describe('currentAddressTypeItems', () => {
-      it('returns the full list of temporary addresses types', async () => {
+      it('returns the list of temporary addresses types excludes Remaining in home', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -279,7 +280,11 @@ describe('HouseholdCard.vue', () => {
           },
           mocks: { $storage: storage },
         });
-        expect(wrapper.vm.currentAddressTypeItems).toEqual(mockAddressTypes);
+        const expectList = [
+          { value: ECurrentAddressTypes.Campground, text: 'Campground' },
+          { value: ECurrentAddressTypes.Shelter, text: 'Shelter' },
+        ];
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(expectList);
       });
 
       it('excludes shelter', async () => {
