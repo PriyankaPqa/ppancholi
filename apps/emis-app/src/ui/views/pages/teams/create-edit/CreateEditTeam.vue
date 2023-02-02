@@ -189,15 +189,18 @@ import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { VForm, IServerError, IDropdownItem } from '@libs/shared-lib/types';
-import { IUserAccountCombined } from '@libs/entities-lib/user-account';
+import {
+ IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata, IdParams as IdParamsUserAccount,
+} from '@libs/entities-lib/user-account';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { IError } from '@libs/services-lib/http-client';
 import { Status } from '@libs/entities-lib/base';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import UserAccountsFilter from '@/ui/mixins/userAccountsFilter';
 import { useEventStore } from '@/pinia/event/event';
-import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
+import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,
@@ -260,6 +263,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       showErrorDialog: false,
       errorMessage: '' as TranslateResult,
       isSubmitting: false,
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParamsUserAccount>(useUserAccountStore(), useUserAccountMetadataStore()),
       combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
     };
   },
@@ -418,7 +422,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       if (this.team.getPrimaryContact()) {
         const primaryContactUser = await this.fetchUsersByIds([this.team.getPrimaryContact().id]);
         if (primaryContactUser?.length) {
-          this.currentPrimaryContact = this.mapToTeamMember(primaryContactUser[0], true);
+          this.currentPrimaryContact = this.mapToTeamMember(primaryContactUser[0].entity, primaryContactUser[0].metadata, true);
           this.userAccountFilter.users = [{ value: this.currentPrimaryContact.id, text: this.currentPrimaryContact.displayName }];
         }
       } else {
@@ -443,11 +447,11 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       this.team.status = status;
     },
 
-    mapToTeamMember(u: IUserAccountCombined, isPrimaryContact: boolean): UserTeamMember {
+    mapToTeamMember(u: IUserAccountEntity, um: IUserAccountMetadata, isPrimaryContact: boolean): UserTeamMember {
       return {
-        id: u.entity.id,
-        email: u.metadata.emailAddress || u.metadata.userPrincipalName,
-        displayName: u.metadata.displayName,
+        id: u.id,
+        email: um.emailAddress || um.userPrincipalName,
+        displayName: um.displayName,
         isPrimaryContact,
       };
     },
@@ -462,8 +466,9 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
 
     setPrimaryContact(appUser: IDropdownItem) {
       if (appUser?.value) {
-        const user = this.$storage.userAccount.getters.get(appUser.value);
-        this.currentPrimaryContact = this.mapToTeamMember(user, true);
+        const user = useUserAccountStore().getById(appUser.value);
+        const userMetadata = useUserAccountMetadataStore().getById(appUser.value);
+        this.currentPrimaryContact = this.mapToTeamMember(user, userMetadata, true);
       }
     },
 
@@ -501,7 +506,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
           isPrimaryContact: true,
         },
       );
-      this.submittedPrimaryContactUser = this.$storage.userAccount.getters.get(this.currentPrimaryContact.id);
+      this.submittedPrimaryContactUser = this.combinedUserAccountStore.getById(this.currentPrimaryContact.id);
     },
 
     async submitCreateTeam() {

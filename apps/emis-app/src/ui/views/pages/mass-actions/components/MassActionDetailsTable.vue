@@ -23,7 +23,7 @@
         <span class="rc-body14 fw-bold">{{ $t('massActions.created_by') }}</span>
       </v-col>
       <v-col md="7">
-        <span v-if="userAccount && userAccount.metadata" class="rc-body14" data-test="createdBy">{{ userAccount.metadata.displayName }}</span>
+        <span v-if="userAccountMetadata" class="rc-body14" data-test="createdBy">{{ userAccountMetadata.displayName }}</span>
         <v-progress-circular v-else indeterminate color="primary" />
       </v-col>
     </v-row>
@@ -36,6 +36,8 @@ import moment from 'moment';
 import {
   IMassActionEntity, MassActionDataCorrectionType, MassActionRunStatus, MassActionType,
 } from '@libs/entities-lib/mass-action';
+import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
+import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 
 export default Vue.extend({
   name: 'MassActionDetailsTable',
@@ -50,7 +52,6 @@ export default Vue.extend({
   data() {
     return {
       moment,
-      userAccount: null,
       MassActionRunStatus,
       loading: false,
       labels: {
@@ -71,11 +72,15 @@ export default Vue.extend({
       }
       return `enums.MassActionDataCorrectionType.${MassActionDataCorrectionType[this.massAction.type]}`;
     },
+
+    userAccountMetadata(): IUserAccountMetadata {
+      return useUserAccountMetadataStore().getById(this.massAction.createdBy);
+    },
   },
 
   async mounted() {
     this.loading = true;
-    this.userAccount = await this.$storage.userAccount.actions.fetch(this.massAction.createdBy);
+    await useUserAccountMetadataStore().fetch(this.massAction.createdBy, false);
     this.loading = false;
   },
 });

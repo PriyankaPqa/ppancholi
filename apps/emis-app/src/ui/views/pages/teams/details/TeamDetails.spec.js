@@ -6,10 +6,12 @@ import {
 } from '@libs/entities-lib/team';
 
 import { RcPageContent } from '@libs/component-lib/components';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './TeamDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
+const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
 
 describe('TeamDetails.vue', () => {
   let wrapper;
@@ -17,6 +19,7 @@ describe('TeamDetails.vue', () => {
   const mountWrapper = async (fullMount = true, level = 5, additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         id: 'id',
       },
@@ -89,6 +92,10 @@ describe('TeamDetails.vue', () => {
         wrapper.vm.combinedTeamStore.fetch = jest.fn();
         await wrapper.vm.loadTeam();
         expect(wrapper.vm.combinedTeamStore.fetch).toHaveBeenLastCalledWith('id');
+      });
+
+      it('should fetch userAccount metadata with correct Id', async () => {
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('guid-member-1', false);
       });
     });
 

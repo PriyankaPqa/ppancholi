@@ -10,16 +10,18 @@ import {
 } from '@libs/entities-lib/team';
 import { mockStorage } from '@/storage';
 
-import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
+import { mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const { pinia, teamStore } = useMockTeamStore();
+const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
+const { teamStore } = useMockTeamStore(pinia);
 const { eventStore } = useMockEventStore(pinia);
 
 const mockTeamMember = {
@@ -358,6 +360,7 @@ describe('CreateEditTeam.vue', () => {
                 primaryContact: mockTeamMember.email,
               },
             });
+            await wrapper.vm.$nextTick();
             element = wrapper.findDataTest('createEditTeam__submit');
             expect(element.attributes('disabled') && isEnabledAfterChanged).toBeTruthy();
           });
@@ -738,6 +741,7 @@ describe('CreateEditTeam.vue', () => {
     beforeEach(async () => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           teamType: 'standard',
         },
@@ -769,7 +773,8 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('getAvailableEvents', () => {
-      it('calls getAll to get the events with on hold and active status', async () => {
+      it('calls getAll to get the events with on hold and active status', () => {
+        wrapper.vm.getAvailableEvents();
         expect(eventStore.getEventsByStatus).toHaveBeenCalledWith([EEventStatus.Open, EEventStatus.OnHold]);
       });
 
@@ -962,7 +967,7 @@ describe('CreateEditTeam.vue', () => {
         wrapper.vm.mapToTeamMember = jest.fn(() => mockTeamMember);
         await wrapper.vm.loadTeamFromState();
         expect(wrapper.vm.fetchUsersByIds).toHaveBeenCalledWith([wrapper.vm.team.getPrimaryContact().id]);
-        expect(wrapper.vm.mapToTeamMember).toHaveBeenCalledWith(mockCombinedUserAccount(), true);
+        expect(wrapper.vm.mapToTeamMember).toHaveBeenCalledWith(mockUserAccountEntity(), mockUserAccountMetadata(), true);
         expect(wrapper.vm.currentPrimaryContact).toEqual(mockTeamMember);
         expect(wrapper.vm.userAccountFilter.users).toEqual([{ value: mockTeamMember.id, text: mockTeamMember.displayName }]);
       });
@@ -1065,7 +1070,8 @@ describe('CreateEditTeam.vue', () => {
 
     describe('setPrimaryContact', () => {
       it('assigns the primary user to currentPrimaryContact ', async () => {
-        wrapper.vm.$storage.userAccount.getters.get = jest.fn(() => mockCombinedUserAccount());
+        userAccountStore.getById = jest.fn(() => mockUserAccountEntity());
+        userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata());
         wrapper.vm.mapToTeamMember = jest.fn(() => mockTeamMember);
         const user = { value: mockTeamMember.id, text: mockTeamMember.displayName };
         await wrapper.vm.setPrimaryContact(user);
@@ -1472,9 +1478,9 @@ describe('CreateEditTeam.vue', () => {
       });
       it('sets submittedPrimaryContactUser', async () => {
         await wrapper.setData({ currentPrimaryContact: { id: 'abcde' } });
-        wrapper.vm.$storage.userAccount.getters.get = jest.fn(() => mockCombinedUserAccount());
+        wrapper.vm.combinedUserAccountStore.getById = jest.fn(() => mockCombinedUserAccount());
         await wrapper.vm.setPrimaryContactTeam();
-        expect(wrapper.vm.$storage.userAccount.getters.get).toHaveBeenCalledWith('abcde');
+        expect(wrapper.vm.combinedUserAccountStore.getById).toHaveBeenCalledWith('abcde');
         expect(wrapper.vm.submittedPrimaryContactUser).toEqual(mockCombinedUserAccount());
       });
     });

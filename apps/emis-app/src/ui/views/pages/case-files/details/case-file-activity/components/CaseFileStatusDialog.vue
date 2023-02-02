@@ -20,7 +20,7 @@
           class=" mb-8 pa-3 border-radius-all"
           :style="backgroundColor">
           <status-chip status-name="CaseFileStatus" :status="toStatus" data-test="case-file-summary-status-chip" />
-          <span v-if="user && user.metadata" class="pl-1 rc-body14"> by {{ user.metadata.displayName }} ({{ $m(user.metadata.roleName) }})</span>
+          <span v-if="user && userMetadata" class="pl-1 rc-body14"> by {{ userMetadata.displayName }} ({{ $m(userMetadata.roleName) }})</span>
         </v-col>
 
         <v-select-with-validation
@@ -65,10 +65,13 @@ import { VForm } from '@libs/shared-lib/types';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { IUserAccountCombined } from '@libs/entities-lib/user-account';
+import {
+ IUserAccountEntity, IUserAccountMetadata,
+} from '@libs/entities-lib/user-account';
 import colors from '@libs/shared-lib/plugins/vuetify/colors';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { useUserStore } from '@/pinia/user/user';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 
 export default Vue.extend({
   name: 'CaseFileStatusDialog',
@@ -140,8 +143,12 @@ export default Vue.extend({
       return { backgroundColor: color };
     },
 
-    user(): IUserAccountCombined {
-      return this.$storage.userAccount.getters.get(this.userId);
+    user(): IUserAccountEntity {
+      return useUserAccountStore().getById(this.userId);
+    },
+
+    userMetadata(): IUserAccountMetadata {
+      return useUserAccountMetadataStore().getById(this.userId);
     },
 
     rules(): Record<string, unknown> {
@@ -195,7 +202,8 @@ export default Vue.extend({
     const userId = useUserStore().getUserId();
     this.userId = userId;
     if (userId) {
-      await this.$storage.userAccount.actions.fetch(userId);
+      await useUserAccountStore().fetch(userId);
+      await useUserAccountMetadataStore().fetch(userId, false);
     }
   },
 

@@ -1,14 +1,17 @@
 import { shallowMount, createLocalVue } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component, { SelectedTab } from './ApprovalRequestsHome.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, userAccountStore } = useMockUserAccountStore();
 let wrapper;
 
 const doMount = (otherOptions = {}) => {
   const options = {
     localVue,
+    pinia,
     mocks: { $storage: storage },
     ...otherOptions,
   };
@@ -20,11 +23,10 @@ describe('ApprovalRequestsHome', () => {
     beforeEach(() => doMount());
 
     it('should call fetchRoles', async () => {
-      wrapper.vm.$storage.userAccount.actions.fetchRoles = jest.fn();
       await wrapper.vm.$options.created.forEach((hook) => {
         hook.call(wrapper.vm);
       });
-      expect(wrapper.vm.$storage.userAccount.actions.fetchRoles).toHaveBeenCalled();
+      expect(userAccountStore.fetchRoles).toHaveBeenCalled();
     });
   });
 

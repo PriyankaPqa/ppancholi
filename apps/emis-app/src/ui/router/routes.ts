@@ -1,12 +1,7 @@
 /* eslint-disable max-len, vue/max-len */
-
 import { RouteConfig } from 'vue-router';
 import { Trans } from '@/ui/plugins/translation';
-import store from '@/store/store';
 import helpers from '@/ui/helpers/helpers';
-import {
-  USER_ACCOUNT_ENTITIES,
-} from '@/constants/vuex-modules';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { events } from '@/ui/router/route/events';
 import { caseFiles } from '@/ui/router/route/caseFiles';
@@ -18,6 +13,7 @@ import { registration } from '@/ui/router/route/registration';
 import { teams } from '@/ui/router/route/teams';
 import { assessmentTemplates } from '@/ui/router/route/assessmentTemplates';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import Routes from '../../constants/routes';
 import { SignalR } from '../plugins/signal-r/signalR';
 
@@ -54,7 +50,7 @@ export const routes: Array<RouteConfig> = [
       dashboardStore.checkingAccount = false;
       if (to.name !== Routes.loginError.name) {
         dashboardStore.initLoading = true;
-        const userAccount = await store.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchCurrentUserAccount`);
+        const userAccount = await useUserAccountStore().fetchCurrentUserAccount();
         if (userAccount) {
           await SignalR.instance.buildHubConnection();
         } else {

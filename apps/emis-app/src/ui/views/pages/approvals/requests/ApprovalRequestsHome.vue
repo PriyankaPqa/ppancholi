@@ -28,6 +28,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcTab, RcTabs, RcPageContent } from '@libs/component-lib/components';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import ApprovalRequestsTable from './ApprovalRequestsTable.vue';
 
 export enum SelectedTab {
@@ -51,8 +52,8 @@ export default Vue.extend({
     };
   },
 
-  created() {
-    this.$storage.userAccount.actions.fetchRoles();
+  async created() {
+   await useUserAccountStore().fetchRoles();
   },
 
 });

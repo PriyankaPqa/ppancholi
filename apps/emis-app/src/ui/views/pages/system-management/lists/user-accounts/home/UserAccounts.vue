@@ -128,11 +128,15 @@ import {
 import AddEmisUser from '@/ui/views/pages/system-management/lists/add-emis-user/AddEmisUser.vue';
 import routes from '@/constants/routes';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IUserAccountCombined, IUserAccountEntity } from '@libs/entities-lib/user-account';
+import {
+ IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
+} from '@libs/entities-lib/user-account';
 import { IAzureSearchParams, IMultilingual } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(TablePaginationSearchMixin).extend({
@@ -172,16 +176,17 @@ export default mixins(TablePaginationSearchMixin).extend({
       disallowedLevels: ['Level 6', 'ContributorIM', 'ContributorFinance', 'Contributor 3', 'Read Only'],
       disallowedRoles: [] as IOptionSubItem[], // Roles that a Level5 cannot change
       tableName: 'user-accounts',
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
 
   computed: {
     tableData(): IUserAccountCombined[] {
-      return this.$storage.userAccount.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+      return this.combinedUserAccountStore.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
     roles(): IOptionItem[] {
-      let roles: IOptionItem[] = this.$storage.userAccount.getters.roles();
+      let roles: IOptionItem[] = useUserAccountStore().getRoles();
       if (!this.$hasFeature(FeatureKeys.L0Access)) {
         roles = roles?.filter((r) => r.name.translation.en !== 'Level 0');
       }
@@ -284,14 +289,14 @@ export default mixins(TablePaginationSearchMixin).extend({
     if (prevState && prevState.itemsPerPage) {
       this.options.itemsPerPage = prevState.itemsPerPage;
     }
-    await this.$storage.userAccount.actions.fetchRoles();
+    await useUserAccountStore().fetchRoles();
     this.setRoles();
     this.loading = false;
   },
 
   methods: {
     async fetchData(params: IAzureSearchParams) {
-      const res = await this.$storage.userAccount.actions.search({
+      const res = await this.combinedUserAccountStore.search({
         search: params.search,
         filter: params.filter,
         top: params.top,
@@ -381,7 +386,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       };
 
       try {
-        const resultAccount:IUserAccountEntity = await this.$storage.userAccount.actions.assignRole(request);
+        const resultAccount:IUserAccountEntity = await useUserAccountStore().assignRole(request);
         if (resultAccount) {
           this.search(this.params);
           this.modifiedUsers.splice(this.modifiedUsers.findIndex((u) => u.entity.id === user.entity.id), 1);
@@ -408,7 +413,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (this.userToDelete) {
         this.submittingDelete = true;
         try {
-          const response = await this.$storage.userAccount.actions.deactivate(this.userToDelete.entity.id);
+          const response = await useUserAccountStore().deactivate(this.userToDelete.entity.id);
 
           if (response) {
             this.search(this.params);

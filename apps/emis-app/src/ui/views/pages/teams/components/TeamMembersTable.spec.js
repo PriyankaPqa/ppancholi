@@ -7,6 +7,7 @@ import { mockStorage } from '@/storage';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component, { LOAD_SIZE } from './TeamMembersTable.vue';
 
@@ -14,9 +15,10 @@ const localVue = createLocalVue();
 
 const storage = mockStorage();
 
-const mockTeam = mockCombinedTeams()[0];
+const { pinia } = useMockUserAccountStore();
+const { teamStore } = useMockTeamStore(pinia);
 
-const { pinia, teamStore } = useMockTeamStore();
+const mockTeam = mockCombinedTeams()[0];
 
 const userAccounts = [
   mockCombinedUserAccount({ id: 'guid-member-1' }),
@@ -256,9 +258,10 @@ describe('TeamMembersTable.vue', () => {
 
     describe('loadTeamMembers', () => {
       it('calls userAccount search with the right payload', async () => {
+        wrapper.vm.combinedUserAccountStore.search = jest.fn();
         await wrapper.setData({ search: 'query' });
         await wrapper.vm.loadTeamMembers();
-        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith(
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith(
           {
             search: 'query',
             filter: {
@@ -280,18 +283,18 @@ describe('TeamMembersTable.vue', () => {
       });
 
       it('calls userAccount getter , calls makeMappedMembers with the result of the userAccount getter and stores the result into teamMembers', async () => {
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: ['search-id'] }));
-        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: ['search-id'] }));
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
         wrapper.vm.makeMappedMembers = jest.fn(() => mockTeamMembers);
         await wrapper.vm.loadTeamMembers();
-        expect(wrapper.vm.$storage.userAccount.getters.getByIds).toHaveBeenCalledWith(['search-id']);
+        expect(wrapper.vm.combinedUserAccountStore.getByIds).toHaveBeenCalledWith(['search-id']);
         expect(wrapper.vm.makeMappedMembers).toHaveBeenCalledWith([mockCombinedUserAccount()]);
         expect(wrapper.vm.teamMembers).toEqual(mockTeamMembers);
       });
 
       it('pushes the result from  makeMappedMembers into teamMembers instead of replacing it if skip is higher than 0', async () => {
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: ['search-id'] }));
-        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: ['search-id'] }));
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
         wrapper.vm.makeMappedMembers = jest.fn(() => [mockTeamMembers[1]]);
         await wrapper.setData({ teamMembers: [mockTeamMembers[0]] });
         await wrapper.vm.loadTeamMembers(1000);
@@ -301,7 +304,7 @@ describe('TeamMembersTable.vue', () => {
       it('calls loadTeamMembers again with a higher skip if the response count of search is higher than the LOAD_SIZE plus skip', async () => {
         const realLoadTeamMembers = wrapper.vm.loadTeamMembers;
         wrapper.vm.loadTeamMembers = jest.fn();
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: ['search-id'], count: 1500 }));
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: ['search-id'], count: 1500 }));
         await realLoadTeamMembers();
         expect(wrapper.vm.loadTeamMembers).toHaveBeenCalledWith(LOAD_SIZE);
       });

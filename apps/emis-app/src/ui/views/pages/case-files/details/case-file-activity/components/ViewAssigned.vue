@@ -31,8 +31,10 @@ import Vue from 'vue';
 import { RcDialog, RcPageLoading } from '@libs/component-lib/components';
 import { IdParams, ITeamEntity, ITeamMetadata } from '@libs/entities-lib/team';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
-import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { IUserAccountEntity, IUserAccountMetadata, IdParams as IdParamsUserAccount } from '@libs/entities-lib/user-account';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
+import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import AssignedList, { IIndividual } from './AssignedList.vue';
 
 export default Vue.extend({
@@ -60,6 +62,7 @@ export default Vue.extend({
       assignedIndividuals: [] as IIndividual[],
       allAssignedTeams: [] as ITeamEntity[],
       loading: false,
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParamsUserAccount>(useUserAccountStore(), useUserAccountMetadataStore()),
       combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
     };
   },
@@ -94,7 +97,7 @@ export default Vue.extend({
 
     async fetchUserAccounts(ids: string[]): Promise<void> {
       const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
-      await this.$storage.userAccount.actions.search({ filter });
+      await this.combinedUserAccountStore.search({ filter });
     },
 
     async fetchTeams(ids: string[]): Promise<void> {
@@ -103,8 +106,8 @@ export default Vue.extend({
     },
 
     setAssignedIndividuals() {
+      const userAccounts = this.combinedUserAccountStore.getByIds(this.individualsIds);
       const teamsThroughIndividuals = this.combinedTeamStore.getByIds(this.teamsIdsFromIndividuals);
-      const userAccounts = this.$storage.userAccount.getters.getByIds(this.individualsIds);
 
       this.caseFile.assignedTeamMembers.forEach((team) => {
         const teamId = team.teamId;

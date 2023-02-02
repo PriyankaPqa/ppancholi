@@ -3,9 +3,6 @@ import * as vuexModule from '@/constants/vuex-modules';
 
 import { IState as IBaseState } from '@/store/modules/base/base.types';
 
-import { IUserAccountEntityState } from '@/store/modules/user-account/userAccountEntity.types';
-import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
-
 import { ICaseFileEntityState } from '@/store/modules/case-file/caseFileEntity.types';
 import { ICaseFileMetadata } from '@libs/entities-lib/case-file';
 
@@ -19,8 +16,6 @@ export interface IRootState {
   version: string;
   [vuexModule.CASE_FILE_ENTITIES]?: ICaseFileEntityState,
   [vuexModule.CASE_FILE_METADATA]?: IBaseState<ICaseFileMetadata>
-  [vuexModule.USER_ACCOUNT_ENTITIES]?: IUserAccountEntityState,
-  [vuexModule.USER_ACCOUNT_METADATA]?: IBaseState<IUserAccountMetadata>,
   [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]?: IFinancialAssistanceEntityState,
   [vuexModule.FINANCIAL_ASSISTANCE_METADATA]?: IBaseState<IFinancialAssistanceTableMetadata>,
   [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]?: IFinancialAssistanceCategoryEntityState,

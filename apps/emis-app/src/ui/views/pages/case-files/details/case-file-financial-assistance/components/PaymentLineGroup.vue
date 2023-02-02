@@ -101,6 +101,7 @@ import {
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import PaymentLineItem from './PaymentLineItem.vue';
 
 export default Vue.extend({
@@ -188,11 +189,11 @@ export default Vue.extend({
       return this.paymentGroup.paymentStatus === PaymentStatus.Cancelled;
     },
 
-    cancellationByText() {
+    cancellationByText(): TranslateResult {
       return this.$t(
         'caseFile.financialAssistance.cancellationReason.byOn',
         {
-          by: this.$storage.userAccount.getters.get(this.paymentGroup.cancellationBy)?.metadata?.displayName,
+          by: useUserAccountMetadataStore().getById(this.paymentGroup.cancellationBy)?.displayName,
           on: helpers.getLocalStringDate(this.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'll'),
         },
       );
@@ -339,7 +340,8 @@ export default Vue.extend({
     }
 
     if (this.paymentGroup.cancellationBy) {
-      await this.$storage.userAccount.actions.fetch(this.paymentGroup.cancellationBy);
+      await useUserAccountStore().fetch(this.paymentGroup.cancellationBy);
+      await useUserAccountMetadataStore().fetch(this.paymentGroup.cancellationBy, false);
     }
   },
 

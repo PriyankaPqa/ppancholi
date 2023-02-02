@@ -4,12 +4,14 @@ import { mockStorage } from '@/storage';
 import { mockTeamMembersData } from '@libs/entities-lib/team';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import helpers from '@/ui/helpers/helpers';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from './AddTeamMembers.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const { pinia, teamStore } = useMockTeamStore();
+const { pinia } = useMockUserAccountStore();
+const { teamStore } = useMockTeamStore(pinia);
 
 describe('AddTeamMembers.vue', () => {
   let wrapper;
@@ -96,7 +98,7 @@ describe('AddTeamMembers.vue', () => {
     describe('filteredUsers', () => {
       it('returns a mapped list of those users', async () => {
         const tm = mockCombinedUserAccount();
-        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.filteredUsers).toEqual([
           {
@@ -225,10 +227,10 @@ describe('AddTeamMembers.vue', () => {
 
     describe('fetchFilteredUsers', () => {
       it('calls the search endpoint with the right data', async () => {
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn();
+        wrapper.vm.combinedUserAccountStore.search = jest.fn();
         helpers.toQuickSearch = jest.fn(() => 'query from helper');
         await wrapper.vm.fetchFilteredUsers();
-        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           search: 'query from helper',
           queryType: 'full',
           searchMode: 'all',
@@ -236,7 +238,7 @@ describe('AddTeamMembers.vue', () => {
       });
 
       it('stores the result from search into filteredUsersIds', async () => {
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: ['id-1'] }));
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: ['id-1'] }));
         helpers.toQuickSearch = jest.fn();
         await wrapper.vm.fetchFilteredUsers();
         expect(wrapper.vm.filteredUsersIds).toEqual(['id-1']);
@@ -257,9 +259,9 @@ describe('AddTeamMembers.vue', () => {
 
       it('emits addMembers with the right value', async () => {
         wrapper.setData({ selectedUsers: [{ id: 'id-1' }, { id: 'id-2' }] });
-        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => [{ id: 'm-1' }, { id: 'm-2' }]);
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [{ id: 'm-1' }, { id: 'm-2' }]);
         await wrapper.vm.submit();
-        expect(wrapper.vm.$storage.userAccount.getters.getByIds).toHaveBeenCalledWith(['id-1', 'id-2']);
+        expect(wrapper.vm.combinedUserAccountStore.getByIds).toHaveBeenCalledWith(['id-1', 'id-2']);
         expect(wrapper.emitted('addMembers')[0][0]).toEqual([{ id: 'm-1' }, { id: 'm-2' }]);
       });
     });

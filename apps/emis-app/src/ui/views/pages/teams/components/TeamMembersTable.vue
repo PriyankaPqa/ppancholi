@@ -129,10 +129,13 @@ import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembe
 import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
 import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCaseFiles.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { IAssignedCaseFileCountByTeam } from '@libs/entities-lib/user-account';
-import { IUserAccountCombined } from '@libs/entities-lib/src/user-account/userAccount.types';
-import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import {
+ IAssignedCaseFileCountByTeam, IUserAccountEntity, IUserAccountMetadata,
+} from '@libs/entities-lib/user-account';
+import { IUserAccountCombined, IdParams as IdParamsUserAccount } from '@libs/entities-lib/src/user-account/userAccount.types';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
+import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 
 export interface Result extends IUserAccountCombined {
   isPrimaryContact: boolean;
@@ -211,6 +214,7 @@ export default Vue.extend({
       loading: true,
       FeatureKeys,
       teamMembers: [] as ITeamMemberAsUser[],
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParamsUserAccount>(useUserAccountStore(), useUserAccountMetadataStore()),
       combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
     };
   },
@@ -348,7 +352,7 @@ export default Vue.extend({
         },
       };
 
-      const res = await this.$storage.userAccount.actions.search({
+      const res = await this.combinedUserAccountStore.search({
         search: this.search,
         filter,
         top: LOAD_SIZE,
@@ -359,7 +363,7 @@ export default Vue.extend({
       });
 
       if (res) {
-        const members = this.$storage.userAccount.getters.getByIds(res.ids);
+        const members = this.combinedUserAccountStore.getByIds(res.ids);
         const mappedTeamMembers = this.makeMappedMembers(members);
 
         if (skip === 0) {

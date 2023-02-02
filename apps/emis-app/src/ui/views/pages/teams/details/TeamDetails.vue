@@ -85,6 +85,7 @@ import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 
 export default Vue.extend({
@@ -122,7 +123,7 @@ export default Vue.extend({
     },
 
     primaryContact(): string {
-      return this.$storage.userAccount.getters.get(this.primaryContactId)?.metadata?.displayName || null;
+      return useUserAccountMetadataStore().getById(this.primaryContactId)?.displayName || null;
     },
   },
 
@@ -134,7 +135,7 @@ export default Vue.extend({
     async loadTeam() {
       await this.combinedTeamStore.fetch(this.id);
       if (this.primaryContactId) {
-        await this.$storage.userAccount.actions.fetch(this.primaryContactId);
+        await useUserAccountMetadataStore().fetch(this.primaryContactId, false);
       }
     },
 

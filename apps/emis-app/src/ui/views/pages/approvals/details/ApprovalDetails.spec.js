@@ -5,11 +5,13 @@ import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
 import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './ApprovalDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const { pinia } = useMockApprovalTableStore();
+const { userAccountStore } = useMockUserAccountStore(pinia);
 
 let wrapper;
 
@@ -155,7 +157,7 @@ describe('ApprovalDetails', () => {
       it('should fetch and set roles', () => {
         doMount();
         wrapper.vm.loadData();
-        expect(wrapper.vm.$storage.userAccount.actions.fetchRoles).toBeCalled();
+        expect(userAccountStore.fetchRoles).toBeCalled();
       });
     });
   });

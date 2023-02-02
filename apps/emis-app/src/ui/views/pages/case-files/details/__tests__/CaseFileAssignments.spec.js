@@ -16,8 +16,6 @@ const { pinia, teamStore } = useMockTeamStore();
 
 describe('CaseFileAssignments.vue', () => {
   let wrapper;
-  storage.userAccount.actions.search = jest.fn(() => ({ ids: [mockCombinedUserAccount().entity.id] }));
-  storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
   teamStore.getTeamsAssigned = jest.fn(() => [mockTeamEntity()]);
   describe('Template', () => {
     beforeEach(async () => {
@@ -368,12 +366,16 @@ describe('CaseFileAssignments.vue', () => {
     describe('getAssignedIndividualsInfo', () => {
       it('calls storage action searchUsers', async () => {
         jest.clearAllMocks();
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [mockCombinedUserAccount().entity.id] }));
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
         await wrapper.vm.getAssignedIndividualsInfo();
-        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledTimes(1);
       });
 
       it('calls createAssignedIndividualsInfo with the storage getter results', async () => {
         jest.spyOn(wrapper.vm, 'createAssignedIndividualsInfo');
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [mockCombinedUserAccount().entity.id] }));
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
         await wrapper.vm.getAssignedIndividualsInfo();
         expect(wrapper.vm.createAssignedIndividualsInfo)
           .toHaveBeenCalledWith([mockCombinedUserAccount().metadata.displayName]);
@@ -381,6 +383,8 @@ describe('CaseFileAssignments.vue', () => {
 
       it('returns the response of createAssignedIndividualsInfo ', async () => {
         jest.spyOn(wrapper.vm, 'createAssignedIndividualsInfo').mockImplementation(() => 'mock-individual-name');
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [mockCombinedUserAccount().entity.id] }));
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
         const name = await wrapper.vm.getAssignedIndividualsInfo();
         expect(name).toEqual('mock-individual-name');
       });

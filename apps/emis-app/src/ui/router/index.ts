@@ -5,14 +5,13 @@ import { PublicService } from '@libs/services-lib/public';
 import { routes } from '@/ui/router/routes';
 import routeConstants from '@/constants/routes';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
-import store from '@/store/store';
 import { i18n } from '@/ui/plugins/i18n';
-import { USER_ACCOUNT_ENTITIES } from '@/constants/vuex-modules';
 import { IFeatureEntity } from '@libs/entities-lib/tenantSettings';
 import { httpClient } from '@/services/httpClient';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { useUserStore } from '@/pinia/user/user';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 
 Vue.use(VueRouter);
 
@@ -52,7 +51,7 @@ const authenticationGuard = async (to: Route) => {
     // if a currentUser is properly fetched, it means the user is allowed access to the app
     // (in the default tenants, even if the user has no access, his token is valid. Therefore, authentication check
     // based only on token check will pass, even if the user should not be allowed access)
-    const isAppUser = await store.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchCurrentUserAccount`);
+    const isAppUser = await useUserAccountStore().fetchCurrentUserAccount();
 
     return loggedIn && isAppUser;
   }

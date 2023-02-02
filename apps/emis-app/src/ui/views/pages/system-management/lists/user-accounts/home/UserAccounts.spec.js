@@ -10,12 +10,14 @@ import {
 import { Status } from '@libs/entities-lib/base';
 import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './UserAccounts.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const usersTestData = mockCombinedUserAccounts();
 const { pinia, uiStateStore } = useMockUiStateStore();
+const { userAccountStore } = useMockUserAccountStore(pinia);
 
 const fakeSubRole = {
   id: '123',
@@ -29,14 +31,11 @@ const fakeSubRole = {
 
 describe('UserAccounts.vue', () => {
   let wrapper;
-  storage.userAccount.actions.fetchRoles = jest.fn(() => mockOptionItemData());
-  storage.userAccount.getters.roles = jest.fn(() => mockOptionItemData());
-  storage.userAccount.getters.getAll = jest.fn(() => usersTestData);
-  storage.userAccount.actions.deactivate = jest.fn(() => usersTestData[0].entity);
-  storage.userAccount.actions.assignRole = jest.fn(() => usersTestData[0].entity);
-  storage.userAccount.actions.fetchAll = jest.fn(() => usersTestData);
+  userAccountStore.fetchRoles = jest.fn(() => mockOptionItemData());
+  userAccountStore.getRoles = jest.fn(() => mockOptionItemData());
+  userAccountStore.deactivate = jest.fn(() => usersTestData[0].entity);
+  userAccountStore.assignRole = jest.fn(() => usersTestData[0].entity);
   uiStateStore.getSearchTableState = jest.fn(() => ({ itemsPerPage: 25 }));
-  storage.userAccount.getters.getByIds = jest.fn(() => usersTestData);
 
   const mountWrapper = async (additionalOverwrites = {}) => {
     wrapper = shallowMount(Component, {
@@ -77,7 +76,7 @@ describe('UserAccounts.vue', () => {
         await wrapper.vm.$options.created[i].call(wrapper.vm);
       }
 
-      expect(storage.userAccount.actions.fetchRoles).toHaveBeenCalled();
+      expect(userAccountStore.fetchRoles).toHaveBeenCalled();
       expect(wrapper.vm.setRoles).toHaveBeenCalled();
     });
 
@@ -108,7 +107,7 @@ describe('UserAccounts.vue', () => {
 
       it('filters out level 0 roles if feature flag is off', () => {
         const l0 = { ...mockOptionItemData()[0], name: { translation: { en: 'Level 0' } } };
-        storage.userAccount.getters.roles = jest.fn(() => [...mockOptionItemData(), l0]);
+        userAccountStore.getRoles = jest.fn(() => [...mockOptionItemData(), l0]);
         mountWrapper({
           mocks: {
             $hasFeature: jest.fn(() => false),
@@ -228,9 +227,11 @@ describe('UserAccounts.vue', () => {
           orderBy: 'name asc',
         };
 
+        wrapper.vm.combinedUserAccountStore.search = jest.fn();
+
         wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.userAccount.actions.search).toBeCalledWith({
+        expect(wrapper.vm.combinedUserAccountStore.search).toBeCalledWith({
           search: params.search,
           filter: params.filter,
           top: params.top,
@@ -373,11 +374,11 @@ describe('UserAccounts.vue', () => {
         wrapper.vm.modifiedUser = jest.fn(() => changedUser);
         wrapper.vm.search = jest.fn();
         wrapper.vm.getSubRoleById = jest.fn(() => fakeSubRole);
-        wrapper.vm.$storage.userAccount.actions.assignRole = jest.fn(() => changedUser.entity);
+        userAccountStore.assignRole = jest.fn(() => changedUser.entity);
         wrapper.vm.getSubRoleById = jest.fn(() => fakeSubRole);
         await wrapper.vm.applyRoleChange(user);
 
-        expect(wrapper.vm.$storage.userAccount.actions.assignRole).toHaveBeenCalledWith({ subRole: fakeSubRole, userId: user.entity.id });
+        expect(userAccountStore.assignRole).toHaveBeenCalledWith({ subRole: fakeSubRole, userId: user.entity.id });
         expect(wrapper.vm.search).toHaveBeenCalledWith(wrapper.vm.params);
         expect(wrapper.vm.modifiedUsers.indexOf(changedUser)).not.toBeGreaterThanOrEqual(0); // Not found
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);
@@ -420,18 +421,18 @@ describe('UserAccounts.vue', () => {
 
     describe('applyDeleteUserAccount', () => {
       it('deletes the user and reloads the data', async () => {
-        storage.userAccount.actions.deactivate = jest.fn(() => {});
+        userAccountStore.deactivate = jest.fn(() => {});
         wrapper.vm.$toasted.global.success = jest.fn();
         wrapper.vm.clearDeletionStatus = jest.fn();
         wrapper.vm.search = jest.fn();
 
         const user = { entity: { id: '12345', accountStatus: AccountStatus.Active, status: Status.Active } };
         wrapper.vm.userToDelete = user;
-        wrapper.vm.$storage.userAccount.actions.deactivate = jest.fn(() => user.entity);
+        userAccountStore.deactivate = jest.fn(() => user.entity);
 
         await wrapper.vm.applyDeleteUserAccount();
 
-        expect(wrapper.vm.$storage.userAccount.actions.deactivate).toHaveBeenCalledTimes(1);
+        expect(userAccountStore.deactivate).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.search).toHaveBeenCalledWith(wrapper.vm.params);
         expect(wrapper.vm.clearDeletionStatus).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);

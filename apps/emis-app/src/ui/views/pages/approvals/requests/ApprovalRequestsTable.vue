@@ -146,6 +146,7 @@ import { Status } from '@libs/entities-lib/base';
 import { UserRolesNames } from '@libs/entities-lib/user';
 import UserAccountsFilter from '@/ui/mixins/userAccountsFilter';
 import { useUserStore } from '@/pinia/user/user';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import ApprovalActionDialog from './ApprovalActionDialog.vue';
@@ -217,7 +218,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
     },
 
     myRoleId():string {
-      return this.$store.state.userAccountEntities?.currentUserAccount?.roles[0]?.optionItemId;
+      return useUserAccountStore()?.currentUserAccount?.roles[0]?.optionItemId;
     },
 
     tableData(): IFinancialAssistancePaymentCombined[] {

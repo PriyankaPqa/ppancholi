@@ -100,6 +100,9 @@ import { RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import { ITeamMember } from '@libs/entities-lib/team';
 import { IMultilingual } from '@libs/shared-lib/types';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { IdParams, IUserAccountEntity, IUserAccountMetadata } from '@libs/entities-lib/user-account';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
 
 interface UserTeamMember {
@@ -138,6 +141,7 @@ export default Vue.extend({
       selectedUsers: [] as UserTeamMember[],
       loading: false,
       filteredUsersIds: [] as string[],
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
 
@@ -176,7 +180,7 @@ export default Vue.extend({
     },
 
     filteredUsers(): UserTeamMember[] {
-      return this.$storage.userAccount.getters.getByIds(this.filteredUsersIds).map(
+      return this.combinedUserAccountStore.getByIds(this.filteredUsersIds).map(
         (tm) => ({
           isPrimaryContact: false,
           roleName: tm.metadata.roleName,
@@ -229,7 +233,7 @@ export default Vue.extend({
 
     async fetchFilteredUsers() {
       this.loading = true;
-      const res = await this.$storage.userAccount.actions.search({
+      const res = await this.combinedUserAccountStore.search({
         search: helpers.toQuickSearch(this.search),
         queryType: 'full',
         searchMode: 'all',
@@ -245,7 +249,7 @@ export default Vue.extend({
         this.loading = true;
         await useTeamStore().addTeamMembers({ teamId: this.teamId, teamMembers: this.selectedUsers });
         this.$toasted.global.success(this.$t('team.add_members.success'));
-        this.$emit('addMembers', this.$storage.userAccount.getters.getByIds(this.selectedUsers.map((u) => u.id)));
+        this.$emit('addMembers', this.combinedUserAccountStore.getByIds(this.selectedUsers.map((u) => u.id)));
         this.close();
       } finally {
         this.loading = false;

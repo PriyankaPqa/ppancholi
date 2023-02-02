@@ -98,8 +98,12 @@ import {
   RcDialog, VAutocompleteWithValidation, VCheckboxWithValidation, VTextAreaWithValidation,
 } from '@libs/component-lib/components';
 import Vue from 'vue';
-import { IUserAccountCombined } from '@libs/entities-lib/user-account';
+import {
+ IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
+} from '@libs/entities-lib/user-account';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 
 export default Vue.extend({
@@ -137,6 +141,7 @@ export default Vue.extend({
       ApprovalAction,
       usersFetched: false,
       nextApprovalGroupRoles: [] as string[],
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
 
@@ -236,9 +241,9 @@ export default Vue.extend({
       const rolesFilter = `Entity/Roles/any(r: search.in(r/OptionItemId, '${targetRoles.join(',')}'))`;
       const eventFilter = `Metadata/Teams/any(team:team/Events/any(event:event/Id eq '${targetEvent}'))`;
       const filter = `${rolesFilter} and ${eventFilter}`;
-      const usersData: IAzureTableSearchResults = await this.$storage.userAccount.actions.search({ filter });
+      const usersData: IAzureTableSearchResults = await this.combinedUserAccountStore.search({ filter });
       if (usersData?.ids) {
-        this.users = this.$storage.userAccount.getters.getByIds(usersData.ids).filter((u) => !this.excludedUsers.includes(u.entity.id));
+        this.users = this.combinedUserAccountStore.getByIds(usersData.ids).filter((u) => !this.excludedUsers.includes(u.entity.id));
         this.usersFetched = true;
       }
     },

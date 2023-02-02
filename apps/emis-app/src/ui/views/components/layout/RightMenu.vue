@@ -55,7 +55,7 @@
             {{ $t('rightmenu.noRoleAssigned') }}
           </template>
           <template v-else>
-            {{ userAccount && userAccount.metadata ? $m(userAccount.metadata.roleName) : '' }}
+            {{ userAccountMetadata ? $m(userAccountMetadata.roleName) : '' }}
           </template>
         </div>
       </div>
@@ -157,12 +157,15 @@ import Vue from 'vue';
 import { IUser, NO_ROLE } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
 import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
-import { IUserAccountCombined } from '@libs/entities-lib/user-account';
+import {
+  IUserAccountEntity, IUserAccountMetadata,
+} from '@libs/entities-lib/user-account';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { Status } from '@libs/entities-lib/base';
 import { useUserStore } from '@/pinia/user/user';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 
 export default Vue.extend({
   name: 'RightMenu',
@@ -170,7 +173,6 @@ export default Vue.extend({
   data() {
     return {
       NO_ROLE,
-      userAccount: null as IUserAccountCombined,
       tenants: [] as IBrandingEntity[],
       currentTenantId: null as string,
       appVersion: '',
@@ -187,17 +189,23 @@ export default Vue.extend({
     isDev() {
       return process.env.VITE_APP_ENV === 'development';
     },
+    userAccount(): IUserAccountEntity {
+      return useUserAccountStore().getById(useUserStore().getUserId());
+    },
+    userAccountMetadata(): IUserAccountMetadata {
+      return useUserAccountMetadataStore().getById(useUserStore().getUserId());
+    },
   },
 
   async mounted() {
     const noAccess = useUserStore().getUser().hasRole('noAccess');
     this.appVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
     if (!noAccess) {
-      this.userAccount = await this.$storage.userAccount.actions.fetch(
-        useUserStore().getUserId(),
-        { useEntityGlobalHandler: false, useMetadataGlobalHandler: false },
-      );
-      this.currentTenantId = this.userAccount.entity?.tenantId;
+      await useUserAccountStore().fetch(useUserStore().getUserId(), false);
+      await useUserAccountMetadataStore().fetch(useUserStore().getUserId(), false);
+      if (this.userAccount) {
+        this.currentTenantId = this.userAccount.tenantId;
+      }
       this.tenants = await useTenantSettingsStore().fetchUserTenants();
       this.tenants = this.tenants.filter((t) => t.status === Status.Active);
       (await useTenantSettingsStore().fetchAll());

@@ -126,10 +126,14 @@ import { RcDialog, RcPageLoading, RcDataTable } from '@libs/component-lib/compon
 import { DataTableHeader } from 'vuetify';
 import { TeamType, ITeamEntity } from '@libs/entities-lib/team';
 import { ICaseFileEntity, IAssignedTeamMembers } from '@libs/entities-lib/case-file';
-import { AccountStatus, IUserAccountCombined } from '@libs/entities-lib/user-account';
+import {
+ AccountStatus, IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
+} from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IAzureSearchParams, IAzureTableSearchResults } from '@libs/shared-lib/types';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
 import AssignedList from './AssignedList.vue';
 
@@ -181,6 +185,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: ['Metadata/DisplayName'],
         sortDesc: [false],
       },
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
 
@@ -219,7 +224,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     tableData(): IUserAccountCombined[] {
-      return this.$storage.userAccount.getters.getByIds(this.searchResultIds);
+      return this.combinedUserAccountStore.getByIds(this.searchResultIds);
     },
 
     orderedAssignedMembers(): IIndividual[] {
@@ -329,7 +334,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         };
       }
 
-      const res = await this.$storage.userAccount.actions.search(callParams);
+      const res = await this.combinedUserAccountStore.search(callParams);
 
       this.loading = false;
       return res;
@@ -360,14 +365,14 @@ export default mixins(TablePaginationSearchMixin).extend({
     async fetchAssignedIndividualsData(): Promise<IUserAccountCombined[]> {
       const assignedIndividualIds = _flatten(this.caseFile.assignedTeamMembers.map((m) => m.teamMembersIds));
 
-      const fetchedAssignedUserAccountData = await this.$storage.userAccount.actions.search({
+      const fetchedAssignedUserAccountData = await this.combinedUserAccountStore.search({
         filter: { Entity: { Id: { searchIn_az: assignedIndividualIds } } },
         queryType: 'full',
         searchMode: 'all',
       });
 
       if (fetchedAssignedUserAccountData) {
-        return this.$storage.userAccount.getters.getByIds(fetchedAssignedUserAccountData.ids);
+        return this.combinedUserAccountStore.getByIds(fetchedAssignedUserAccountData.ids);
       }
       return [];
     },

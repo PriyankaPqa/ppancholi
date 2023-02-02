@@ -89,6 +89,7 @@ export const mockUserAccountMetadatum = () : IUserAccountMetadata[] => [
 export const mockCombinedUserAccount = (force?: Partial<IEntity>): IUserAccountCombined => ({
   entity: mockUserAccountEntity(force),
   metadata: mockUserAccountMetadata(force),
+  pinned: false,
 });
 
 export const mockCombinedUserAccounts = (): IUserAccountCombined[] => [

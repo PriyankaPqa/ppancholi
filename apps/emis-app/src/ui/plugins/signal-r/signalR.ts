@@ -25,6 +25,7 @@ import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/ap
 import { useCaseNoteStore, useCaseNoteMetadataStore } from '@/pinia/case-note/case-note';
 import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
@@ -283,14 +284,16 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'user-account',
       entityName: 'UserAccount',
-      action: this.storage.userAccount.mutations.setEntityFromOutsideNotification,
+      action: useUserAccountStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'user-account',
       entityName: 'UserAccountMetadata',
-      action: this.storage.userAccount.mutations.setMetadataFromOutsideNotification,
+      action: useUserAccountMetadataStore().setItemFromOutsideNotification,
     });
+    this.watchedPiniaStores.push(useUserAccountStore());
+    this.watchedPiniaStores.push(useUserAccountMetadataStore());
   }
 
   private listenForEventModuleChanges() {

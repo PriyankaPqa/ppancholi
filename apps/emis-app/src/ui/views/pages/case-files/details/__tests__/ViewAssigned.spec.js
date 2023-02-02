@@ -3,12 +3,14 @@ import { mockCombinedUserAccounts } from '@libs/entities-lib/user-account';
 import { mockStorage } from '@/storage';
 
 import { mockAssignedTeamMembers } from '@libs/entities-lib/case-file';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from '../case-file-activity/components/ViewAssigned.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const { pinia } = useMockTeamStore();
+const { pinia } = useMockUserAccountStore();
+useMockTeamStore(pinia);
 let wrapper;
 
 // eslint-disable-next-line @typescript-eslint/default-param-last
@@ -36,9 +38,6 @@ const doMount = (shallow = false, pStorage) => {
 };
 
 describe('ViewAssigned.vue', () => {
-  storage.userAccount.actions.search = jest.fn(() => ({ ids: [mockCombinedUserAccounts()[0].entity.id] }));
-  storage.userAccount.getters.getByIds = jest.fn(() => ([mockCombinedUserAccounts()[0]]));
-
   describe('Template', () => {
     describe('dialog', () => {
       it('displays the view assigned dialog', () => {
@@ -79,14 +78,13 @@ describe('ViewAssigned.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      storage.userAccount.getters.getByIds = jest.fn(() => ([
+      doMount(true, storage);
+      wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [mockCombinedUserAccounts()[0].entity.id] }));
+      wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => ([
         { entity: { id: 'mock-assigned-individual-id-1', displayName: 'User A' } },
         { entity: { id: 'mock-assigned-individual-id-2', displayName: 'User B' } },
         { entity: { id: 'mock-assigned-individual-id-3', displayName: 'User C' } },
       ]));
-
-      doMount(true, storage);
-
       wrapper.vm.combinedTeamStore.getByIds = jest.fn(() => ([
         { entity: { id: 'mock-assigned-team-id-1', name: 'Team A' } },
         { entity: { id: 'mock-assigned-team-id-2', name: 'Team B' } },
@@ -105,7 +103,7 @@ describe('ViewAssigned.vue', () => {
         const ids = ['1', '2'];
         const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
         await wrapper.vm.fetchUserAccounts(ids);
-        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({ filter });
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({ filter });
       });
     });
 
@@ -120,8 +118,8 @@ describe('ViewAssigned.vue', () => {
     });
 
     describe('setAssignedIndividuals', () => {
-      it('build the proper object, attaching team info on each user', () => {
-        wrapper.vm.setAssignedIndividuals();
+      it('build the proper object, attaching team info on each user', async () => {
+        await wrapper.vm.setAssignedIndividuals();
 
         expect(wrapper.vm.assignedIndividuals).toEqual([
           {

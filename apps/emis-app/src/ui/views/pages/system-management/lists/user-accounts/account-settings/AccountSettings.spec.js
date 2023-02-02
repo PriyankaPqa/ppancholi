@@ -1,32 +1,32 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
+import { mockUserAccountEntity, mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { mockStorage } from '@/storage';
 import { mockUsersData, User } from '@libs/entities-lib/user';
-
-import { createTestingPinia } from '@pinia/testing';
 import { useUserStore } from '@/pinia/user/user';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './AccountSettings.vue';
 
 const localVue = createLocalVue();
 
 const storage = mockStorage();
-const mockUser = mockCombinedUserAccount();
+const mockUser = mockUserAccountEntity({ id: '1' });
+const mockUserMetadata = mockUserAccountMetadata({ id: '1' });
+const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
 
 let userStore;
 
 describe('AccountSettings.vue', () => {
   let wrapper;
-  storage.userAccount.getters.roles = jest.fn(() => mockOptionItemData());
-  storage.userAccount.actions.fetch = jest.fn(() => mockCombinedUserAccount());
-  storage.userAccount.getters.get = jest.fn(() => mockCombinedUserAccount());
+  userAccountStore.roles = jest.fn(() => mockOptionItemData());
 
   const doMount = async (id = null, emptyUser = false) => {
     wrapper = mount(Component, {
       localVue,
-      pinia: createTestingPinia({ stubActions: false }),
+      pinia,
       computed: {
-        user: () => (emptyUser ? { entity: {}, metadata: {} } : mockUser),
+        user: () => (emptyUser ? {} : mockUser),
+        userMetadata: () => (emptyUser ? {} : mockUserMetadata),
         basicUserData: () => new User(mockUsersData()[0]),
       },
       mocks: {
@@ -60,7 +60,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
-        expect(element.props('status')).toEqual(wrapper.vm.user.entity.accountStatus);
+        expect(element.props('status')).toEqual(wrapper.vm.user.accountStatus);
       });
     });
 
@@ -75,7 +75,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', async () => {
-        expect(element.text()).toEqual(wrapper.vm.user.metadata.givenName);
+        expect(element.text()).toEqual(wrapper.vm.userMetadata.givenName);
       });
 
       it('contains the right data - no user', async () => {
@@ -96,7 +96,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', async () => {
-        expect(element.text()).toEqual(wrapper.vm.user.metadata.surname);
+        expect(element.text()).toEqual(wrapper.vm.userMetadata.surname);
       });
 
       it('contains the right data - no user', async () => {
@@ -118,7 +118,7 @@ describe('AccountSettings.vue', () => {
 
       it('contains the right data', () => {
         element = wrapper.findDataTest('userAccount-status-roleName');
-        expect(element.text()).toEqual(wrapper.vm.user.metadata.roleName.translation.en);
+        expect(element.text()).toEqual(wrapper.vm.userMetadata.roleName.translation.en);
       });
     });
 
@@ -133,7 +133,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
-        expect(element.text()).toEqual(wrapper.vm.user.metadata.emailAddress);
+        expect(element.text()).toEqual(wrapper.vm.userMetadata.emailAddress);
       });
     });
 
@@ -148,7 +148,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
-        expect(element.text()).toEqual(wrapper.vm.user.metadata.phoneNumber);
+        expect(element.text()).toEqual(wrapper.vm.userMetadata.phoneNumber);
       });
     });
 
@@ -168,17 +168,20 @@ describe('AccountSettings.vue', () => {
     it('calls fetch', async () => {
       jest.clearAllMocks();
       await doMount('id');
-      expect(storage.userAccount.actions.fetch).toHaveBeenCalled();
+      userAccountStore.fetch = jest.fn();
+      userAccountMetadataStore.fetch = jest.fn();
+      const hook = wrapper.vm.$options.created[0];
+      await hook.call(wrapper.vm);
+      expect(userAccountStore.fetch).toHaveBeenCalledWith('id');
+      expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('id', false);
     });
   });
 
   describe('Computed', () => {
     beforeEach(() => {
-      storage.userAccount.getters.get = jest.fn(() => mockUser);
-
       wrapper = shallowMount(Component, {
         localVue,
-        pinia: createTestingPinia({ stubActions: false }),
+        pinia,
         mocks: {
           $storage: storage,
         },
@@ -200,19 +203,21 @@ describe('AccountSettings.vue', () => {
 
     describe('user', () => {
       it('return the user account by id from the storage', () => {
+        userAccountStore.getById = jest.fn(() => mockUser);
+        userAccountStore.fetch = jest.fn(() => mockUserAccountEntity({ id: '1' }));
         expect(wrapper.vm.user).toEqual(mockUser);
       });
     });
 
     describe('preferredLanguage', () => {
       it('returns English if includes en', () => {
-        const user = mockCombinedUserAccount({ preferredLanguage: 'en-CA' });
+        const userMetadata = mockUserAccountMetadata({ preferredLanguage: 'en-CA' });
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: createTestingPinia({ stubActions: false }),
+          pinia,
           computed: {
-            user() {
-              return user;
+            userMetadata() {
+              return userMetadata;
             },
           },
           mocks: {
@@ -224,13 +229,13 @@ describe('AccountSettings.vue', () => {
       });
 
       it('returns Français if includes fr', () => {
-        const user = mockCombinedUserAccount({ preferredLanguage: 'fr-CA' });
+        const userMetadata = mockUserAccountMetadata({ preferredLanguage: 'fr-CA' });
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: createTestingPinia({ stubActions: false }),
+          pinia,
           computed: {
-            user() {
-              return user;
+            userMetadata() {
+              return userMetadata;
             },
           },
           mocks: {
@@ -242,13 +247,13 @@ describe('AccountSettings.vue', () => {
       });
 
       it('returns undefined if is null', () => {
-        const user = mockCombinedUserAccount({ preferredLanguage: null });
+        const userMetadata = mockUserAccountMetadata({ preferredLanguage: null });
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: createTestingPinia({ stubActions: false }),
+          pinia,
           computed: {
-            user() {
-              return user;
+            userMetadata() {
+              return userMetadata;
             },
           },
           mocks: {

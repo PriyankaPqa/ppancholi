@@ -82,6 +82,7 @@ import mixins from 'vue-typed-mixins';
 import approvalRoles from '@/ui/views/pages/approvals/mixins/approvalRoles';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useApprovalTableMetadataStore, useApprovalTableStore } from '@/pinia/approval-table/approval-table';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 
 export interface IFilteredGroups {
   groupIndex: string;
@@ -198,7 +199,7 @@ export default mixins(approvalRoles).extend({
         this.approvalMetadata = approvalCombined.metadata;
       }
 
-      this.roles = await this.$storage.userAccount.actions.fetchRoles();
+      this.roles = await useUserAccountStore().fetchRoles();
       this.loading = false;
     },
 

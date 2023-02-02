@@ -3,6 +3,8 @@ import routes from '@/constants/routes';
 import { getPiniaForUser, useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { mockUserAccountEntity } from '@libs/entities-lib/user-account';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from '../RightMenu.vue';
 
 const localVue = createLocalVue();
@@ -11,14 +13,17 @@ const pinia = getPiniaForUser('level6');
 const { userStore } = useMockUserStore(pinia);
 const { dashboardStore } = useMockDashboardStore(pinia);
 const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
+const { userAccountStore, userAccountMetadataStore } = useMockUserAccountStore(pinia);
 
 describe('RightMenu.vue', () => {
   let wrapper;
+  userAccountStore.getById = jest.fn(() => mockUserAccountEntity());
 
-  const mountWrapper = async (fullMount = false) => {
+  const mountWrapper = async (fullMount = false, otherOptions = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       pinia,
+      ...otherOptions,
     });
   };
 
@@ -51,20 +56,18 @@ describe('RightMenu.vue', () => {
       });
 
       test('the role is displayed correctly', async () => {
+        await mountWrapper(true, {
+          computed: {
+            userAccountMetadata: () => ({ roleName: {
+              translation: {
+                en: 'RoleName',
+              },
+            } }),
+          },
+        });
         const element = wrapper.find('[data-test="rightMenu__role"]');
 
         expect(element.exists()).toBeTruthy();
-        await wrapper.setData({
-          userAccount: {
-            metadata: {
-              roleName: {
-                translation: {
-                  en: 'RoleName',
-                },
-              },
-            },
-          },
-        });
         expect(element.text()).toEqual('RoleName');
       });
 
@@ -130,6 +133,22 @@ describe('RightMenu.vue', () => {
     });
   });
 
+  describe('Computed', () => {
+    userStore.getUserId = jest.fn(() => 'id');
+
+    describe('userAccount', () => {
+      it('should get data frome store this correct id', () => {
+        expect(userAccountStore.getById).toHaveBeenCalledWith('id');
+      });
+    });
+
+    describe('userAccountMetadata', () => {
+      it('should get data frome store this correct id', () => {
+        expect(userAccountMetadataStore.getById).toHaveBeenCalledWith('id');
+      });
+    });
+  });
+
   describe('Methods', () => {
     describe('changeTenant', () => {
       it('changes the url to the one from the tenant', async () => {
@@ -150,6 +169,24 @@ describe('RightMenu.vue', () => {
       it('should call unsubscribeAll from signalR', () => {
         wrapper.vm.logout();
         expect(wrapper.vm.$signalR.unsubscribeAll).toBeCalledTimes(1);
+      });
+    });
+  });
+
+  describe('lifecycle', () => {
+    describe('mounted', () => {
+      it('should fetch data if user has access', async () => {
+        userStore.getUser.hasRole = jest.fn(() => true);
+        userStore.getUserId = jest.fn(() => 'id');
+        await mountWrapper(true);
+
+        await wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(userAccountStore.fetch).toHaveBeenCalledWith('id', false);
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('id', false);
+        expect(tenantSettingsStore.fetchUserTenants).toHaveBeenCalled();
+        expect(tenantSettingsStore.fetchAll).toHaveBeenCalled();
       });
     });
   });

@@ -1,37 +1,33 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import colors from '@libs/shared-lib/plugins/vuetify/colors';
-import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
+import { mockUserAccountEntity, mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
 import { createTestingPinia } from '@pinia/testing';
-import { useUserStore } from '@/pinia/user/user';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import { useMockUserStore } from '@/pinia/user/user.mock';
 import Component from '../case-file-activity/components/CaseFileStatusDialog.vue';
 
 const localVue = createLocalVue();
 
-const mockUser = mockCombinedUserAccount();
 const storage = mockStorage();
+const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
+const { userStore } = useMockUserStore(pinia);
 
 describe('CaseFileStatusDialog.vue', () => {
   let wrapper;
-  let userStore;
+  userStore.getUserId = jest.fn(() => 'mock-id');
 
   describe('Computed', () => {
     beforeEach(() => {
       storage.caseFile.actions.fetchInactiveReasons = jest.fn(() => mockOptionItemData());
       storage.caseFile.actions.fetchCloseReasons = jest.fn(() => mockOptionItemData());
-      storage.userAccount.actions.fetch = jest.fn(() => mockUser);
 
       wrapper = shallowMount(Component, {
         localVue,
-        pinia: createTestingPinia({ stubActions: false }),
-        computed: {
-          user() {
-            return mockUser;
-          },
-        },
+        pinia,
         propsData: {
           toStatus: CaseFileStatus.Open,
           show: true,
@@ -40,9 +36,6 @@ describe('CaseFileStatusDialog.vue', () => {
           $storage: storage,
         },
       });
-
-      userStore = useUserStore();
-      userStore.getUserId = jest.fn(() => 'mock-id');
     });
 
     describe('title', () => {
@@ -82,10 +75,6 @@ describe('CaseFileStatusDialog.vue', () => {
         const reasons = storage.caseFile.getters.closeReasons();
         expect(wrapper.vm.reasons).toEqual(reasons);
       });
-    });
-
-    it('return the user account by id from the storage', () => {
-      expect(wrapper.vm.user).toEqual(mockUser);
     });
 
     describe('rationaleRequired', () => {
@@ -140,6 +129,20 @@ describe('CaseFileStatusDialog.vue', () => {
         expect(wrapper.vm.backgroundColor).toEqual({ backgroundColor: colors.grey.lighten4 });
       });
     });
+
+    describe('userMetadata', () => {
+      it('should return correct data', () => {
+        userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata());
+        expect(wrapper.vm.userMetadata).toEqual(mockUserAccountMetadata());
+      });
+    });
+
+    describe('user', () => {
+      it('should return correct data', () => {
+        userAccountStore.getById = jest.fn(() => mockUserAccountEntity());
+        expect(wrapper.vm.user).toEqual(mockUserAccountEntity());
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -171,6 +174,18 @@ describe('CaseFileStatusDialog.vue', () => {
             SpecifiedOther: null,
           },
         });
+      });
+    });
+  });
+
+  describe('life cycle', () => {
+    describe('created', () => {
+      it('should fetch userAccount entity and metadata with userId', async () => {
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(userAccountStore.fetch).toHaveBeenCalledWith('mock-id');
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-id', false);
       });
     });
   });

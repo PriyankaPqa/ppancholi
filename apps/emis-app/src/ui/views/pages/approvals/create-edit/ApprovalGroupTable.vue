@@ -156,6 +156,7 @@ import { VForm } from '@libs/shared-lib/types';
 import mixins from 'vue-typed-mixins';
 import approvalRoles from '@/ui/views/pages/approvals/mixins/approvalRoles';
 import isEqual from 'lodash/isEqual';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 
 export default mixins(approvalRoles).extend({
   name: 'ApprovalGroupTable',
@@ -244,7 +245,7 @@ export default mixins(approvalRoles).extend({
   },
 
   async created() {
-    this.roles = await this.$storage.userAccount.actions.fetchRoles();
+    this.roles = await useUserAccountStore().fetchRoles();
     this.localApproval = this.approval; // For mixin approvalRoles
   },
 

@@ -51,7 +51,11 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IAzureTableSearchResults } from '@libs/shared-lib/types';
-import { IUserAccountCombined } from '@libs/entities-lib/user-account';
+import {
+ IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
+} from '@libs/entities-lib/user-account';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
 import ViewAssigned from './ViewAssigned.vue';
 import AssignCaseFile from './AssignCaseFile.vue';
@@ -83,6 +87,7 @@ export default Vue.extend({
       showViewAssignmentsDialog: false,
       loading: false,
       FeatureKeys,
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
 
@@ -146,16 +151,15 @@ export default Vue.extend({
       const firstMemberIds = allMemberIds.slice(0, 2);
       const filter = `search.in(Entity/Id, '${firstMemberIds.join('|')}', '|')`;
 
-      const individualsData: IAzureTableSearchResults = await this.$storage.userAccount.actions.search({ filter });
-      const { ids } = individualsData;
-
-      const userAccounts = this.$storage.userAccount.getters.getByIds(ids);
-
-      if (userAccounts && userAccounts.length > 0) {
-        const userNames = userAccounts.map((u) => u.metadata.displayName);
-        return this.createAssignedIndividualsInfo(userNames);
+      const individualsData: IAzureTableSearchResults = await this.combinedUserAccountStore.search({ filter });
+      if (individualsData) {
+        const { ids } = individualsData;
+        const userAccounts = this.combinedUserAccountStore.getByIds(ids);
+        if (userAccounts && userAccounts.length > 0) {
+          const userNames = userAccounts.map((u) => u.metadata.displayName);
+          return this.createAssignedIndividualsInfo(userNames);
+        }
       }
-
       return null;
     },
 

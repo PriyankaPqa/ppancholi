@@ -5,18 +5,19 @@ import { mockStorage } from '@/storage';
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import { CaseFileActivityType, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
-import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from '../CaseFileSummary.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
+const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
+const { caseFileReferralStore } = useMockCaseFileReferralStore(pinia);
 const { teamStore } = useMockTeamStore(pinia);
 
 describe('CaseFileSummary.vue', () => {
   let wrapper;
-  storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount({ displayName: 'John Smith' }), mockCombinedUserAccount({ displayName: 'Jane Doe' })]);
 
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
@@ -44,12 +45,20 @@ describe('CaseFileSummary.vue', () => {
   describe('Lifecycle', () => {
     describe('created', () => {
       it('calls all the required fetch from services', async () => {
-        await mountWrapper();
+        await mountWrapper(true, 6, 'role');
+        await wrapper.setData({
+          combinedUserAccountStore: { search: jest.fn() },
+        });
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+
         const services = wrapper.vm.$services;
         expect(services.caseFiles.getSummary).toHaveBeenCalledWith('abcd');
         expect(services.caseFilesMetadata.getSummary).toHaveBeenCalledWith('abcd');
         expect(teamStore.getTeamsAssigned).toHaveBeenCalledWith('abcd');
-        expect(storage.userAccount.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           filter: {
             Entity: {
               Id: {
@@ -136,9 +145,9 @@ describe('CaseFileSummary.vue', () => {
       it('calls user account search with the right payload', async () => {
         await mountWrapper();
         await wrapper.setData({ caseFile: { ...mockCaseFileEntity(), assignedTeamMembers: [{ teamMembersIds: ['id-1'] }] } });
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn();
+        wrapper.vm.combinedUserAccountStore.search = jest.fn();
         await wrapper.vm.getAssignedIndividualsInfo();
-        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           filter: { Entity: { Id: { searchIn_az: ['id-1'] } } },
           queryType: 'full',
           searchMode: 'all',
@@ -159,6 +168,7 @@ describe('CaseFileSummary.vue', () => {
     describe('assignedUserAccounts', () => {
       it('returns the right value', async () => {
         await mountWrapper();
+        userAccountMetadataStore.getByIds = jest.fn(() => [mockUserAccountMetadata({ displayName: 'John Smith' }), mockUserAccountMetadata({ displayName: 'Jane Doe' })]);
         expect(wrapper.vm.assignedUserAccounts).toEqual(['John Smith', 'Jane Doe']);
       });
     });

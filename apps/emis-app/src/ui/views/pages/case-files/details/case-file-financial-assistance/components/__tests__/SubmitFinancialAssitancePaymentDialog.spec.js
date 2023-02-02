@@ -261,14 +261,14 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
           }];
         const targetRoles = ['1', '2'];
         const targetEvent = 'B';
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: [] }));
-        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => users);
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [] }));
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => users);
 
         // eslint-disable-next-line max-len
         const filter = "Entity/Roles/any(r: search.in(r/OptionItemId, '1,2')) and Metadata/Teams/any(team:team/Events/any(event:event/Id eq 'B'))";
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
 
-        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({ filter });
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({ filter });
         expect(wrapper.vm.users).toEqual(users);
       });
 
@@ -290,14 +290,14 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
           }];
         const targetRoles = ['1', '2'];
         const targetEvent = 'B';
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: [] }));
-        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => users);
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [] }));
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => users);
 
         // eslint-disable-next-line max-len
         const filter = "Entity/Roles/any(r: search.in(r/OptionItemId, '1,2')) and Metadata/Teams/any(team:team/Events/any(event:event/Id eq 'B'))";
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
 
-        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({ filter });
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({ filter });
         expect(wrapper.vm.users).toEqual([users[0]]);
       });
     });

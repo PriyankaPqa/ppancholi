@@ -14,7 +14,7 @@
                     <status-chip
                       data-test="userAccount-status-chip"
                       status-name="AccountStatus"
-                      :status="user.entity.accountStatus || accountStatus.Inactive" />
+                      :status="user.accountStatus || accountStatus.Inactive" />
                   </span>
                 </th>
                 <th class="text-right">
@@ -30,7 +30,7 @@
                   {{ $t('user.accountSettings.first_name') }}
                 </td>
                 <td colspan="2" class="fw-bold" data-test="userAccount-status-firstName">
-                  {{ user.metadata.givenName || basicUserData.firstName }}
+                  {{ userMetadata.givenName || basicUserData.firstName }}
                 </td>
               </tr>
               <tr>
@@ -38,7 +38,7 @@
                   {{ $t('user.accountSettings.last_name') }}
                 </td>
                 <td colspan="2" class="fw-bold" data-test="userAccount-status-lastName">
-                  {{ user.metadata.surname || basicUserData.lastName }}
+                  {{ userMetadata.surname || basicUserData.lastName }}
                 </td>
               </tr>
               <tr>
@@ -46,7 +46,7 @@
                   {{ $t('user.accountSettings.role') }}
                 </td>
                 <td colspan="2" class="fw-bold" data-test="userAccount-status-roleName">
-                  {{ user.metadata.roleName ? $m(user.metadata.roleName) : basicUserData.roles[0] }}
+                  {{ userMetadata.roleName ? $m(userMetadata.roleName) : basicUserData.roles[0] }}
                 </td>
               </tr>
             </tbody>
@@ -68,7 +68,7 @@
                   {{ $t('user.accountSettings.email_username') }}
                 </td>
                 <td class="fw-bold" data-test="userAccount-status-email">
-                  {{ user.metadata.emailAddress || user.metadata.userPrincipalName || basicUserData.email }}
+                  {{ userMetadata.emailAddress || userMetadata.userPrincipalName || basicUserData.email }}
                 </td>
               </tr>
               <tr>
@@ -76,7 +76,7 @@
                   {{ $t('user.accountSettings.phone') }}
                 </td>
                 <td class="fw-bold" data-test="userAccount-status-phoneNumber">
-                  {{ user.metadata.phoneNumber }}
+                  {{ userMetadata.phoneNumber }}
                 </td>
               </tr>
             </tbody>
@@ -127,11 +127,14 @@ import {
   RcPageContent,
   RcTooltip,
 } from '@libs/component-lib/components';
-import { IUserAccountCombined, AccountStatus } from '@libs/entities-lib/user-account';
+import {
+  AccountStatus, IUserAccountEntity, IUserAccountMetadata,
+} from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useUserStore } from '@/pinia/user/user';
 import { Status } from '@libs/entities-lib/base';
 import { IUser } from '@libs/entities-lib/user';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 
 export default Vue.extend({
   name: 'AccountSettings',
@@ -158,8 +161,12 @@ export default Vue.extend({
       return useUserStore().getUser();
     },
 
-    user(): IUserAccountCombined {
-      return this.$storage.userAccount.getters.get(this.id);
+    user(): IUserAccountEntity {
+      return useUserAccountStore().getById(this.id);
+    },
+
+    userMetadata(): IUserAccountMetadata {
+      return useUserAccountMetadataStore().getById(this.id);
     },
 
     id(): string {
@@ -167,7 +174,7 @@ export default Vue.extend({
     },
 
     preferredLanguage(): string {
-      const preferredLanguage = this.user.metadata.preferredLanguage;
+      const preferredLanguage = this.userMetadata.preferredLanguage;
 
       if (preferredLanguage?.includes('en')) {
         return `${this.$t('enums.preferredLanguage.English')} (${preferredLanguage})`;
@@ -183,7 +190,8 @@ export default Vue.extend({
 
   async created() {
     if (this.$route.params.id) {
-      await this.$storage.userAccount.actions.fetch(this.$route.params.id);
+      await useUserAccountStore().fetch(this.$route.params.id);
+      await useUserAccountMetadataStore().fetch(this.$route.params.id, false);
     }
   },
 });

@@ -9,6 +9,9 @@ import { FilterFormData } from '@libs/component-lib/types';
 
 import { Status } from '@libs/entities-lib/base';
 import { IUserAccountCombined } from '@libs/entities-lib/src/user-account/userAccount.types';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { IdParams, IUserAccountEntity, IUserAccountMetadata } from '@libs/entities-lib/user-account';
 
 const INITIAL_NUMBER_ITEMS = 6;
 const VISUAL_DELAY = 500;
@@ -27,6 +30,7 @@ export default Vue.extend({
           filterKey: '',
         },
       },
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
 
@@ -36,7 +40,7 @@ export default Vue.extend({
       this.userAccountFilterState[stateKey].loading = true;
 
       const levels = this.userAccountFilterState[stateKey].levels;
-      const roles = levels ? this.$storage.userAccount.getters.rolesByLevels(levels) : null;
+      const roles = levels ? useUserAccountStore().rolesByLevels(levels) : null;
       const res = await this.fetchUsersFilter(query, roles?.map((r: { name: IMultilingual, id: string, status: Status }) => r.id), top);
       const mappedUsers = res.map((u: IUserAccountCombined) => ({
         text: u.metadata.displayName,
@@ -75,9 +79,9 @@ export default Vue.extend({
     },
 
     async searchUserAccount(params: IAzureSearchParams) {
-      const searchResult: IAzureTableSearchResults = await this.$storage.userAccount.actions.search(params);
+      const searchResult: IAzureTableSearchResults = await this.combinedUserAccountStore.search(params);
       if (searchResult) {
-        return this.$storage.userAccount.getters.getByIds(searchResult.ids);
+        return this.combinedUserAccountStore.getByIds(searchResult.ids);
       }
       return [];
     },
@@ -135,7 +139,7 @@ export default Vue.extend({
       });
 
       if (selectedItem) {
-        this.userAccountFilterState[stateKey].selectedUsers = this.$storage.userAccount.getters.getByIds(selectedItem).map((u: IUserAccountCombined) => ({
+        this.userAccountFilterState[stateKey].selectedUsers = this.combinedUserAccountStore.getByIds(selectedItem).map((u: IUserAccountCombined) => ({
           text: u.metadata.displayName,
           value: u.entity.id,
         }));

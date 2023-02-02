@@ -5,12 +5,14 @@ import { mockStorage } from '@/storage';
 import { Status } from '@libs/entities-lib/base';
 import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
 import { mockApprovalTableEntity, mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './ApprovalGroupTable.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 const { pinia, approvalTableStore } = useMockApprovalTableStore();
+const { userAccountStore } = useMockUserAccountStore(pinia);
 
 const doMount = (editMode = false) => {
   const combinedApprovalTable = mockCombinedApprovalTable();
@@ -126,9 +128,11 @@ describe('ApprovalGroupTable.vue', () => {
 
   describe('Lifecycle', () => {
     describe('Created', () => {
-      it('should fetch roles', () => {
+      it('should fetch roles', async () => {
         doMount();
-        expect(wrapper.vm.$storage.userAccount.actions.fetchRoles).toBeCalled();
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        expect(userAccountStore.fetchRoles).toBeCalled();
       });
     });
   });

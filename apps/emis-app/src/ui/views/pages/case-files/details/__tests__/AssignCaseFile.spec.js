@@ -3,6 +3,7 @@ import { mockAssignedTeamMembers, mockCaseFileEntity } from '@libs/entities-lib/
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity, TeamType, mockTeamMembersData } from '@libs/entities-lib/team';
 import { mockStorage } from '@/storage';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from '../case-file-activity/components/AssignCaseFile.vue';
 
@@ -10,7 +11,8 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCaseFileEntity();
 const team = { ...mockTeamEntity(), activeMemberCount: 1 };
-const { pinia, teamStore } = useMockTeamStore();
+const { pinia } = useMockUserAccountStore();
+const { teamStore } = useMockTeamStore(pinia);
 
 const individual = (id = 'mock-id-1', otherProps = {}) => (
   {
@@ -20,9 +22,6 @@ const individual = (id = 'mock-id-1', otherProps = {}) => (
     ...otherProps,
   });
 
-storage.userAccount.getters.getByIds = jest.fn(() => [
-  mockCombinedUserAccount({ id: 'mock-id-1' }),
-]);
 teamStore.getTeamsAssignable = jest.fn(() => [mockTeamEntity()]);
 
 describe('AssignCaseFile.vue', () => {
@@ -84,6 +83,7 @@ describe('AssignCaseFile.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           caseFile: mockCaseFile,
           show: true,
@@ -133,6 +133,7 @@ describe('AssignCaseFile.vue', () => {
 
     describe('tableData', () => {
       it(' returns the right value', () => {
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount({ id: 'mock-id-1' })]);
         expect(wrapper.vm.tableData).toEqual([mockCombinedUserAccount({ id: 'mock-id-1' })]);
       });
     });
@@ -305,7 +306,7 @@ describe('AssignCaseFile.vue', () => {
 
     describe('fetchUserAccounts', () => {
       it('calls userAccount search with the right payload when initialLoad is true', async () => {
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: ['search-id'] }));
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: ['search-id'] }));
 
         const result = await wrapper.vm.fetchUserAccounts('id-1', {}, true);
         const filter = {
@@ -318,7 +319,7 @@ describe('AssignCaseFile.vue', () => {
           },
         };
 
-        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith(
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith(
           {
             filter,
             top: 1,
@@ -332,7 +333,7 @@ describe('AssignCaseFile.vue', () => {
       });
 
       it('calls userAccount search with the right payload when initialLoad is not true', async () => {
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: ['search-id'] }));
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: ['search-id'] }));
         wrapper.setData({ searchTerm: 'query' });
 
         const result = await wrapper.vm.fetchUserAccounts('id-1', {
@@ -349,7 +350,7 @@ describe('AssignCaseFile.vue', () => {
           },
         };
 
-        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith(
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith(
           {
             filter,
             search: 'Metadata/DisplayName:/.*query.*/ OR Metadata/DisplayName:"\\"query\\""',
@@ -389,16 +390,16 @@ describe('AssignCaseFile.vue', () => {
     describe('fetchAssignedIndividualsData', () => {
       it('calls userAccount getter and stores the result into teamMembers', async () => {
         await wrapper.setData({ caseFile: { assignedTeamMembers: [{ teamMembersIds: ['id-1', 'id-2'] }, { teamMembersIds: ['id-3'] }] } });
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: ['search-id'] }));
-        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: ['search-id'] }));
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
 
         const result = await wrapper.vm.fetchAssignedIndividualsData();
-        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           filter: { Entity: { Id: { searchIn_az: ['id-1', 'id-2', 'id-3'] } } },
           queryType: 'full',
           searchMode: 'all',
         });
-        expect(wrapper.vm.$storage.userAccount.getters.getByIds).toHaveBeenCalledWith(['search-id']);
+        expect(wrapper.vm.combinedUserAccountStore.getByIds).toHaveBeenCalledWith(['search-id']);
         expect(result).toEqual([mockCombinedUserAccount()]);
       });
     });

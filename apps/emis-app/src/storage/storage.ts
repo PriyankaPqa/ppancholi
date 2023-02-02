@@ -1,5 +1,4 @@
 import * as vuexModule from '@/constants/vuex-modules';
-import { UserAccountStorage } from '@/storage/user-account/storage';
 import { CaseFileStorage } from '@/storage/case-file/storage';
 import { FinancialAssistanceStorage } from '@/storage/financial-assistance/storage';
 import { IStore, IState } from '../store/store.types';
@@ -13,6 +12,5 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     vuexModule.FINANCIAL_ASSISTANCE_ENTITIES,
     vuexModule.FINANCIAL_ASSISTANCE_METADATA,
   ).make(),
-  userAccount: new UserAccountStorage(store, vuexModule.USER_ACCOUNT_ENTITIES, vuexModule.USER_ACCOUNT_METADATA).make(),
   financialAssistanceCategory: new FinancialAssistanceCategoryStorage(store, vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES).make(),
 });

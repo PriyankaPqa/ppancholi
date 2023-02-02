@@ -1,19 +1,20 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
-import { mockStorage } from '@/storage';
 import {
   mockCaseFinancialAssistancePaymentGroups, PaymentStatus, EPaymentCancellationReason, ApprovalStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import flushPromises from 'flush-promises';
 import Component from '../PaymentLineGroup.vue';
 
 const localVue = createLocalVue();
 const items = mockItems();
-let paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
+let paymentGroup = mockCaseFinancialAssistancePaymentGroups({ cancellationBy: 'mock-user-id' })[0];
 const program = mockProgramEntity();
-const storage = mockStorage();
+const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
 
 describe('PaymentLineGroup.vue', () => {
   let wrapper;
@@ -21,6 +22,7 @@ describe('PaymentLineGroup.vue', () => {
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      pinia,
       propsData: {
         paymentGroup,
         items,
@@ -30,7 +32,6 @@ describe('PaymentLineGroup.vue', () => {
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
       },
       ...additionalOverwrites,
     });
@@ -100,8 +101,6 @@ describe('PaymentLineGroup.vue', () => {
   describe('Lifecycle', () => {
     describe('created', () => {
       it('shows a message if the data is inactive', async () => {
-        paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
-
         await mountWrapper(false, 6, null, {
           computed: {
             isInactive: () => true,
@@ -122,6 +121,18 @@ describe('PaymentLineGroup.vue', () => {
         jest.clearAllMocks();
         await hook.call(wrapper.vm);
         expect(wrapper.vm.$message).not.toHaveBeenCalled();
+      });
+
+      it('should fetch userAccount entity and metadata if payment group was canceled by', async () => {
+        paymentGroup = mockCaseFinancialAssistancePaymentGroups({ cancellationBy: 'mock-user-id' })[0];
+
+        await mountWrapper(false, 6, null);
+        const hook = wrapper.vm.$options.created[0];
+        jest.clearAllMocks();
+        await hook.call(wrapper.vm);
+        await flushPromises();
+        expect(userAccountStore.fetch).toHaveBeenCalledWith('mock-user-id');
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id', false);
       });
     });
   });

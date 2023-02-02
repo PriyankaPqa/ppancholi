@@ -136,10 +136,14 @@ import helpers from '@/ui/helpers/helpers';
 import {
   IOptionSubItem,
 } from '@libs/entities-lib/optionItem';
-import { IUserAccountCombined } from '@libs/entities-lib/user-account';
+import {
+ IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
+} from '@libs/entities-lib/user-account';
 import { IAppUserData } from '@libs/entities-lib/app-user';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 
 interface IAppUser extends IAppUserData {
   isEMISUser: boolean;
@@ -177,6 +181,7 @@ export default Vue.extend({
       selectedUsers: [] as IAppUserData[],
       loading: false,
       isSubmitAllowed: false as boolean,
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
 
@@ -233,13 +238,13 @@ export default Vue.extend({
 
   methods: {
     async fetchAppUsers(searchTerm: string) {
-      const res = await this.$storage.userAccount.actions.search({
+      const res = await this.combinedUserAccountStore.search({
         search: helpers.toQuickSearch(searchTerm),
         queryType: 'full',
         searchMode: 'all',
       });
       if (res?.ids?.length) {
-        this.filteredAppUsers = this.$storage.userAccount.getters.getByIds(res.ids);
+        this.filteredAppUsers = this.combinedUserAccountStore.getByIds(res.ids);
       }
     },
 
@@ -337,7 +342,7 @@ export default Vue.extend({
           userId: user.id,
         };
 
-        const userAccount = await this.$storage.userAccount.actions.assignRole(payload);
+        const userAccount = await useUserAccountStore().assignRole(payload);
         if (userAccount) {
           this.$toasted.global.success(this.$t('system_management.add_users.success'));
         } else {

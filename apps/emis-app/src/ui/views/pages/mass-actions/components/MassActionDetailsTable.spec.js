@@ -4,24 +4,27 @@ import {
 } from '@/test/testSetup';
 
 import { MassActionDataCorrectionType, MassActionType, mockMassActionEntity } from '@libs/entities-lib/mass-action';
-import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
+import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { mockStorage } from '@/storage';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './MassActionDetailsTable.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
 
 describe('MassActionDetailsTable.vue', () => {
   let wrapper;
   const doMount = (massActionType = MassActionType.Unknown) => {
     const options = {
       localVue,
+      pinia,
       propsData: {
         massAction: mockMassActionEntity({ type: massActionType }),
       },
       data() {
         return {
-          userAccount: mockCombinedUserAccount(),
+          userAccount: mockUserAccountMetadata(),
         };
       },
       mocks: {
@@ -45,7 +48,7 @@ describe('MassActionDetailsTable.vue', () => {
     });
 
     it('should display user who created the mass action', () => {
-      expect(wrapper.findDataTest('createdBy').text()).toBe(mockCombinedUserAccount().metadata.displayName);
+      expect(wrapper.findDataTest('createdBy').text()).toBe(mockUserAccountMetadata().displayName);
     });
   });
 
@@ -78,6 +81,34 @@ describe('MassActionDetailsTable.vue', () => {
     it('should return proper text for data correction mass action', () => {
       doMount(MassActionDataCorrectionType.Labels);
       expect(wrapper.vm.massActionTypeText).toBe(`enums.MassActionDataCorrectionType.${MassActionDataCorrectionType[MassActionDataCorrectionType.Labels]}`);
+    });
+
+    describe('userAccountMetadata', () => {
+      it('should get data from store with correct id', async () => {
+        await wrapper.setProps({
+          massAction: mockMassActionEntity({ createdBy: 'mock-user-id' }),
+        });
+        expect(userAccountMetadataStore.getById).toHaveBeenCalledWith('mock-user-id');
+      });
+
+      it('should return correct data', () => {
+        userAccountMetadataStore.getById = jest.fn(() => mockUserAccountMetadata({ id: 'mock-user-id' }));
+        expect(wrapper.vm.userAccountMetadata).toEqual(mockUserAccountMetadata({ id: 'mock-user-id' }));
+      });
+    });
+  });
+
+  describe('lifecycle', () => {
+    describe('mounted', () => {
+      it('should fetch userAccount metadata', async () => {
+        await wrapper.setProps({
+          massAction: mockMassActionEntity({ createdBy: 'mock-user-id' }),
+        });
+        await wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id', false);
+      });
     });
   });
 });

@@ -35,6 +35,7 @@ import {
   EFilterKeyType, EFilterOperator, EFilterType, IFilterData, IFilterSettings, IFilterToolbarLabels, IFilterTypeOperators,
 } from '@libs/component-lib/types';
 import { IFilter, IUserAccountEntity } from '@libs/entities-lib/user-account';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 
 // A wrapper around the web-ui filter component to make integration as easy and consistent as possible
 // Includes translations for labels as well as handling API requests to create/save/delete filters
@@ -200,7 +201,7 @@ export default Vue.extend({
       };
       this.loading = true;
 
-      const userAccount = await this.$storage.userAccount.actions.editFilter(payload.oldFilter, payload.newFilter);
+      const userAccount = await useUserAccountStore().editFilter(payload);
       if (userAccount) {
         this.refreshUserFilters(userAccount);
         this.$toasted.global.success(this.$t('filters.edit.success'));
@@ -212,7 +213,7 @@ export default Vue.extend({
     async createFilter(filter: IFilter) {
       this.loading = true;
       try {
-        const userAccount = await this.$storage.userAccount.actions.addFilter(filter);
+        const userAccount = await useUserAccountStore().addFilter(filter);
         if (userAccount) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (this.$refs.rcFilterToolbar as any).setEditMode(true);
@@ -228,7 +229,7 @@ export default Vue.extend({
      * Loading filters from the store
      */
     onLoadAll() {
-      this.userFilters = this.$storage.userAccount.getters.currentUserFiltersByKey(this.filterKey);
+      this.userFilters = useUserAccountStore().currentUserFiltersByKey(this.filterKey);
     },
 
     /**
@@ -237,7 +238,7 @@ export default Vue.extend({
     async onDelete(filter: IFilter) {
       this.loading = true;
       try {
-        const userAccount = await this.$storage.userAccount.actions.deleteFilter(filter);
+        const userAccount = await useUserAccountStore().deleteFilter(filter);
         this.refreshUserFilters(userAccount);
         this.$toasted.global.success(this.$t('filters.delete.success'));
       } finally {
@@ -246,8 +247,8 @@ export default Vue.extend({
     },
 
     refreshUserFilters(userAccount: IUserAccountEntity) {
-      this.$storage.userAccount.mutations.setCurrentUserAccount(userAccount);
-      this.userFilters = this.$storage.userAccount.getters.currentUserFiltersByKey(this.filterKey);
+      useUserAccountStore().currentUserAccount = userAccount;
+      this.userFilters = useUserAccountStore().currentUserFiltersByKey(this.filterKey);
     },
 
     /**

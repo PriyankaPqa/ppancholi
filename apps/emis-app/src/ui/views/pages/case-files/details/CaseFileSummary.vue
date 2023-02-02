@@ -152,6 +152,9 @@ import { IIdMultilingualName } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { PaymentsSummary } from '@libs/entities-lib/financial-assistance-payment';
+import { IdParams, IUserAccountEntity, IUserAccountMetadata } from '@libs/entities-lib/user-account';
+import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import CaseFileTags from './case-file-activity/components/CaseFileTags.vue';
@@ -193,6 +196,7 @@ export default Vue.extend({
       faSummary: null as PaymentsSummary,
       primary: null as { name: string, birthDate: string },
       householdMembers: [] as { name: string, birthDate: string }[],
+      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
 
@@ -202,7 +206,7 @@ export default Vue.extend({
     },
 
     assignedUserAccounts(): string[] {
-      return this.$storage.userAccount.getters.getByIds(this.assignedIndividualIds).map((u) => u.metadata?.displayName) || [];
+      return useUserAccountMetadataStore().getByIds(this.assignedIndividualIds).map((u) => u.displayName) || [];
     },
 
     assignedTeams(): string[] {
@@ -255,7 +259,7 @@ export default Vue.extend({
     },
 
     async getAssignedIndividualsInfo() {
-      await this.$storage.userAccount.actions.search({
+      await this.combinedUserAccountStore.search({
         filter: { Entity: { Id: { searchIn_az: this.assignedIndividualIds } } },
         queryType: 'full',
         searchMode: 'all',

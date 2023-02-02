@@ -81,3 +81,5 @@ export interface IUserAccountMetadata extends IEntity {
 }
 
 export type IUserAccountCombined = IEntityCombined<IUserAccountEntity, IUserAccountMetadata>;
+
+export type IdParams = uuid;

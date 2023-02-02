@@ -4,11 +4,6 @@ import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@libs/services-lib/optionItems/optionItems';
 
-import { UserAccountEntityModule } from '@/store/modules/user-account/userAccountEntity';
-import { UserAccountMetadataModule } from '@/store/modules/user-account/userAccountMetadata';
-import { UserAccountsService } from '@libs/services-lib/user-accounts/entity';
-import { UserAccountsMetadataService } from '@libs/services-lib/user-accounts/metadata';
-
 import { CaseFileEntityModule } from '@/store/modules/case-file/caseFileEntity';
 import { CaseFileMetadataModule } from '@/store/modules/case-file/caseFileMetadata';
 import { CaseFilesService } from '@libs/services-lib/case-files/entity';
@@ -52,19 +47,6 @@ const store: StoreOptions<IRootState> = {
     [vuexModule.FINANCIAL_ASSISTANCE_METADATA]: new FinancialAssistanceMetadataModule(
       new FinancialAssistanceTablesMetadataService(httpClient),
       SignalR,
-    ).getModule(),
-
-    // User Accounts: do not include SignalR to skip subscribing to changes in this data.
-    // The number of entities is too large in the prod CRC tenant, so this cannot be used
-    // unless calls to getAll are removed.
-    [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(
-      new UserAccountsService(httpClient),
-      new OptionItemsService(httpClient),
-      null, // SignalR,
-    ).getModule(),
-    [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(
-      new UserAccountsMetadataService(httpClient),
-      null, // SignalR,
     ).getModule(),
 
     [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(

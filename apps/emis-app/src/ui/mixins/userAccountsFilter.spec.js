@@ -2,6 +2,7 @@ import userAccountsFilter from '@/ui/mixins/userAccountsFilter';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { UserRolesNames } from '@libs/entities-lib/user';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 
 const Component = {
   render() {},
@@ -10,6 +11,7 @@ const Component = {
 
 const localVue = createLocalVue();
 const user = mockCombinedUserAccount();
+const { pinia, userAccountStore } = useMockUserAccountStore();
 let wrapper;
 
 describe('userAccountsFilter', () => {
@@ -17,21 +19,22 @@ describe('userAccountsFilter', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
       });
     });
 
     describe('fetchUsers', () => {
       it(' calls the getter rolesByLevels with the right payload', async () => {
         await wrapper.setData({ userAccountFilterState: { to: { levels: [UserRolesNames.level3, UserRolesNames.level4] } } });
-        wrapper.vm.$storage.userAccount.getters.rolesByLevels = jest.fn(() => []);
+        userAccountStore.rolesByLevels = jest.fn(() => []);
         wrapper.vm.fetchUsers('', 'to');
-        expect(wrapper.vm.$storage.userAccount.getters.rolesByLevels).toHaveBeenCalledWith([UserRolesNames.level3, UserRolesNames.level4]);
+        expect(userAccountStore.rolesByLevels).toHaveBeenCalledWith([UserRolesNames.level3, UserRolesNames.level4]);
       });
 
       it('calls fetchUsersFilter and stores the response into the right data property', async () => {
         await wrapper.setData({ userAccountFilterState: { to: { levels: [UserRolesNames.level3, UserRolesNames.level4] } } });
         wrapper.vm.fetchUsersFilter = jest.fn(() => [mockCombinedUserAccount({ id: '1', displayName: 'a' })]);
-        wrapper.vm.$storage.userAccount.getters.rolesByLevels = jest.fn(() => [{ name: 'role1', id: 'id-1' }]);
+        userAccountStore.rolesByLevels = jest.fn(() => [{ name: 'role1', id: 'id-1' }]);
         wrapper.setData({ userAccountFilterState: { to: { selectedUsers: [{ name: 'b', id: '2' }] } } });
         await wrapper.vm.fetchUsers('search', 'to', 10);
 
@@ -60,10 +63,10 @@ describe('userAccountsFilter', () => {
 
         const user = mockCombinedUserAccount();
 
-        wrapper.vm.$storage.userAccount.actions.search = jest.fn(() => ({ ids: [] }));
-        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => [user]);
+        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [] }));
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [user]);
         const result = await wrapper.vm.searchUserAccount(params);
-        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           filter: { Entity: { Id: { searchIn_az: ['id'] } } },
           top: 999,
         });
@@ -159,7 +162,7 @@ describe('userAccountsFilter', () => {
 
     describe('onUserAutoCompleteUpdate', () => {
       it('should set query and users for the right key', async () => {
-        wrapper.vm.$storage.userAccount.getters.getByIds = jest.fn(() => [user]);
+        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [user]);
         await wrapper.setData({
           userAccountFilterState: {
             to: {
@@ -175,7 +178,7 @@ describe('userAccountsFilter', () => {
         });
 
         expect(wrapper.vm.userAccountFilterState.to.query).toEqual('search');
-        expect(wrapper.vm.$storage.userAccount.getters.getByIds).toHaveBeenCalledWith(['id-1']);
+        expect(wrapper.vm.combinedUserAccountStore.getByIds).toHaveBeenCalledWith(['id-1']);
         expect(wrapper.vm.userAccountFilterState.to.selectedUsers).toEqual([{ text: user.metadata.displayName, value: user.entity.id }]);
       });
 

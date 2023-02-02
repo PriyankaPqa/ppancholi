@@ -12,7 +12,6 @@ describe('TeamMemberTeams.vue', () => {
   let wrapper;
 
   beforeEach(() => {
-    storage.userAccount.actions.fetch = jest.fn(() => usersTestData[0]);
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {

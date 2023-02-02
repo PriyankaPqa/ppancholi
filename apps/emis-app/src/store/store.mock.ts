@@ -7,11 +7,6 @@ import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@libs/services-lib/optionItems/optionItems';
 
-import { UserAccountEntityModule } from '@/store/modules/user-account/userAccountEntity';
-import { UserAccountMetadataModule } from '@/store/modules/user-account/userAccountMetadata';
-import { UserAccountsService } from '@libs/services-lib/user-accounts/entity';
-import { UserAccountsMetadataService } from '@libs/services-lib/user-accounts/metadata';
-
 import { CaseFileEntityModule } from '@/store/modules/case-file/caseFileEntity';
 import { CaseFileMetadataModule } from '@/store/modules/case-file/caseFileMetadata';
 import { CaseFilesService } from '@libs/services-lib/case-files/entity';
@@ -47,15 +42,6 @@ const mockConfig = {
     ).getModule(),
     [vuexModule.FINANCIAL_ASSISTANCE_METADATA]: new FinancialAssistanceMetadataModule(
       new FinancialAssistanceTablesMetadataService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-    [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(
-      new UserAccountsService(httpClient),
-      new OptionItemsService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-    [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(
-      new UserAccountsMetadataService(httpClient),
       mockSignalR(),
     ).getModule(),
 
