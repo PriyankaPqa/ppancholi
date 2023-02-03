@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue2';
 // import eslintPlugin from 'vite-plugin-eslint';
 // eslint-disable-next-line import/no-unresolved
 import Components from 'unplugin-vue-components/vite';
+import Inspector from 'vite-plugin-vue-inspector';
 import path from 'path';
 
 // https://vitejs.dev/config/
@@ -29,6 +30,9 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       // eslintPlugin(),
+      Inspector({
+        vue: 2,
+      }),
       splitVendorChunkPlugin(),
       Components({
         dirs: [
