@@ -147,6 +147,9 @@ export default Vue.extend({
         case CaseFileActivityType.CaseFileLabelsUpdated:
           return this.makeContentForCaseFileLabelsUpdated();
 
+        case CaseFileActivityType.PaymentCorrected:
+          return this.makeContentForFinancialAssistancePaymentCorrected();
+
         default:
           return null;
       }
@@ -187,6 +190,7 @@ export default Vue.extend({
           return 'mdi-map-check';
 
         case CaseFileActivityType.PaymentCompleted:
+        case CaseFileActivityType.PaymentCorrected:
         case CaseFileActivityType.FinancialAssistancePayment:
           return 'mdi-currency-usd';
 
@@ -499,6 +503,12 @@ export default Vue.extend({
       const amount = this.$formatCurrency(Number(this.item.details.totalAmount));
       let body = `${this.$t('caseFileActivity.activityList.body.paymentCompleted.name')}: ${this.item.details.paymentName}`;
       body += `\n${this.$t('caseFileActivity.activityList.body.paymentCompleted.amount')}: ${amount}`;
+      return { title, body };
+    },
+
+    makeContentForFinancialAssistancePaymentCorrected(): { title: TranslateResult, body: TranslateResult } {
+      const title = `${this.$t('caseFileActivity.activityList.title.FinancialAssistancePaymentUpdated')}`;
+      const body = this.$t('caseFileActivity.activityList.body.paymentDataCorrected', { x: this.item.details.paymentName });
       return { title, body };
     },
 

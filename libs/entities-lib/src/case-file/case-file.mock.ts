@@ -722,6 +722,17 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         ],
       },
     },
+    {
+      id: 'mock-activity-id-39',
+      caseFileId: 'mock-id-39',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.PaymentCorrected,
+      details: {
+        paymentName: 'mock payment',
+      },
+    },
   ];
 
   if (type) {

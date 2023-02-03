@@ -933,6 +933,21 @@ describe('CaseFileActivityListItem.vue', () => {
       });
     });
 
+    describe('makeContentForFinancialAssistancePaymentCorrected', () => {
+      it('returns the correct data when action type is PaymentCorrected', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.PaymentCorrected)[0],
+        });
+        const title = 'caseFileActivity.activityList.title.FinancialAssistancePaymentUpdated';
+        const body = wrapper.vm.$t('caseFileActivity.activityList.body.paymentDataCorrected', { x: 'mock payment' });
+
+        expect(wrapper.vm.makeContentForFinancialAssistancePaymentCorrected()).toEqual({
+          title,
+          body,
+        });
+      });
+    });
+
     describe('makeHouseholdEditedBody', () => {
       it('returns the right string', async () => {
         let item = {

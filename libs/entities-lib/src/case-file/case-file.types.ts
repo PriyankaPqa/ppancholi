@@ -68,7 +68,7 @@ export enum CaseFileActivityType {
   AssessmentCompleted = 30,
   FinancialAssistancePayment = 31,
   CaseFileLabelsUpdated = 32,
-
+  PaymentCorrected = 33,
 }
 
 export enum HouseholdCaseFileActivityType {
