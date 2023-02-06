@@ -3,9 +3,6 @@ import * as vuexModule from '@/constants/vuex-modules';
 
 import { IState as IBaseState } from '@/store/modules/base/base.types';
 
-import { ICaseFileEntityState } from '@/store/modules/case-file/caseFileEntity.types';
-import { ICaseFileMetadata } from '@libs/entities-lib/case-file';
-
 import { IFinancialAssistanceEntityState } from '@/store/modules/financial-assistance/financialAssistanceEntity.types';
 import { IFinancialAssistanceTableMetadata } from '@libs/entities-lib/financial-assistance';
 
@@ -13,8 +10,6 @@ import { IProvider, IProviderMock } from '@/services/provider';
 
 export interface IRootState {
   version: string;
-  [vuexModule.CASE_FILE_ENTITIES]?: ICaseFileEntityState,
-  [vuexModule.CASE_FILE_METADATA]?: IBaseState<ICaseFileMetadata>
   [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]?: IFinancialAssistanceEntityState,
   [vuexModule.FINANCIAL_ASSISTANCE_METADATA]?: IBaseState<IFinancialAssistanceTableMetadata>,
 }

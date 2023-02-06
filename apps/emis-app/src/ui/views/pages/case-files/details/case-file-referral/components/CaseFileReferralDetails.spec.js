@@ -4,9 +4,9 @@ import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
-import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './CaseFileReferralDetails.vue';
 
 const storage = mockStorage();
@@ -14,7 +14,6 @@ const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
-
 describe('CaseFileReferralDetails', () => {
   let wrapper;
   const referral = mockCaseFileReferralEntity({ id: '1' });
@@ -40,9 +39,11 @@ describe('CaseFileReferralDetails', () => {
 
     describe('canEdit', () => {
       it('returns false if user does not have level 1', async () => {
+        const pinia = getPiniaForUser('contributorIM');
+        useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -50,13 +51,6 @@ describe('CaseFileReferralDetails', () => {
           computed: {
             event() {
               return mockEvent;
-            },
-          },
-          store: {
-            modules: {
-              caseFile: {
-                searchLoading: false,
-              },
             },
           },
         });
@@ -72,22 +66,18 @@ describe('CaseFileReferralDetails', () => {
       });
 
       it('returns true if user has level 1', async () => {
+        const pinia = getPiniaForUser('level1');
+        useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
           },
           computed: {
-            caseFile: () => mockCombinedCaseFile(),
             event() {
               return mockEvent;
-            },
-          },
-          pinia: getPiniaForUser('level1'),
-          store: {
-            caseFile: {
-              searchLoading: false,
             },
           },
         });

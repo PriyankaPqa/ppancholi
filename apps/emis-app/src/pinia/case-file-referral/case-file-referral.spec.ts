@@ -1,5 +1,5 @@
 import { mockCaseFileReferralsService } from '@libs/services-lib/case-file-referrals/entity';
-import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
+import { mockOptionItemsService } from '@libs/services-lib/optionItems';
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import { createTestingPinia } from '@pinia/testing';
@@ -11,7 +11,7 @@ import _sortBy from 'lodash/sortBy';
 import { Status } from '@libs/entities-lib/base';
 
 const entityService = mockCaseFileReferralsService();
-const optionsService = mockOptionItemsServiceService();
+const optionsService = mockOptionItemsService();
 const baseComponents = getBaseStoreComponents<ICaseFileReferralEntity, IdParams>(entityService);
 
 const getPinia = () => {

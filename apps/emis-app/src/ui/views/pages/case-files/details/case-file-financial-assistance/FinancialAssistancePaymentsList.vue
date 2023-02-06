@@ -391,7 +391,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       if (this.caseFile) {
         const tableData = await this.$storage.financialAssistance.actions.search({
           filter: {
-            'Entity/EventId': this.caseFile.entity.eventId,
+            'Entity/EventId': this.caseFile.eventId,
           },
         });
         this.containsActiveTables = !!(tableData?.ids?.length);

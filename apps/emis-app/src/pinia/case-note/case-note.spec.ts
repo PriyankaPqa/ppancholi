@@ -1,5 +1,5 @@
 import { mockCaseNotesService } from '@libs/services-lib/case-notes/entity';
-import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
+import { mockOptionItemsService } from '@libs/services-lib/optionItems';
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import { createTestingPinia } from '@pinia/testing';
@@ -9,7 +9,7 @@ import { ICaseNoteEntity, mockCaseNoteEntity, IdParams } from '@libs/entities-li
 import { getExtensionComponents } from '@/pinia/case-note/case-note-extension';
 
 const entityService = mockCaseNotesService();
-const optionsService = mockOptionItemsServiceService();
+const optionsService = mockOptionItemsService();
 const baseComponents = getBaseStoreComponents<ICaseNoteEntity, IdParams>(entityService);
 
 const getPinia = () => {

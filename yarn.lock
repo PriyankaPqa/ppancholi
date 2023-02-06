@@ -3217,10 +3217,10 @@
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.2.47.tgz#e597ef75086c6e896ff5478a6bfc0a7aa4bbd14c"
   integrity sha512-BHGyyGN3Q97EZx0taMQ+OLNuZcW3d37ZEVmEAyeoA9ERdGvm9Irc/0Fua8SNyOtV1w6BS4q25wbMzJujO9HIfQ==
 
-"@vue/test-utils@^1.1.3":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@vue/test-utils/-/test-utils-1.3.3.tgz#4fbd38587b0ec091dfaa355ac38ce3d888273285"
-  integrity sha512-DmZkKrH5/MSkrU0hhHhv5+aOXcEJSaOhutKMOh2viuiLiMaFeOLPiTEvtegLunO3rXBagzHO681qW1sNMaB1sQ==
+"@vue/test-utils@^1.3.4":
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/@vue/test-utils/-/test-utils-1.3.4.tgz#83a68179178cb3da4b2b7c5c59ac660dbdff8ef5"
+  integrity sha512-yh2sbosCxk5FfwjXYXdY9rUffaJqYEFjsod5sCD4oosRn2x8LfBLEzQH0scdo5n7z8VkBUThpYzbkI6DVAWimA==
   dependencies:
     dom-event-types "^1.0.0"
     lodash "^4.17.15"

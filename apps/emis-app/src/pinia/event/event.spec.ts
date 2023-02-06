@@ -1,5 +1,5 @@
 import { mockEventsService } from '@libs/services-lib/events/entity';
-import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
+import { mockOptionItemsService } from '@libs/services-lib/optionItems';
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { getExtensionComponents } from '@/pinia/event/event-extension';
 import { Entity } from '@/pinia/event/event';
@@ -15,7 +15,7 @@ import helpers from '@/ui/helpers/helpers';
 import { EEventSummarySections } from '@/types';
 
 const entityService = mockEventsService();
-const optionsService = mockOptionItemsServiceService();
+const optionsService = mockOptionItemsService();
 const baseComponents = getBaseStoreComponents<Entity, IdParams>(entityService);
 
 const mockAgreementTypes = mockOptionItemData().map((e) => new OptionItem(e));

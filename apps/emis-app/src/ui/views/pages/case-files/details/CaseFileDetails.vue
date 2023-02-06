@@ -8,7 +8,7 @@
         <v-icon size="16" class="pr-2" color="gray darken-2">
           mdi-clipboard-text
         </v-icon>
-        <span data-test="caseFileDetails-caseFileNumber">{{ caseFile.entity.caseFileNumber }}</span>
+        <span data-test="caseFileDetails-caseFileNumber">{{ caseFile.caseFileNumber }}</span>
       </div>
 
       <div class="rc-body14 pb-2">
@@ -16,7 +16,7 @@
           mdi-calendar
         </v-icon>
         <span data-test="caseFileDetails-event">
-          {{ caseFile.metadata.event ? $m(caseFile.metadata.event.name) : '-' }}
+          {{ caseFileMetadata.event ? $m(caseFileMetadata.event.name) : '-' }}
         </span>
       </div>
       <div class="divider" />
@@ -133,11 +133,11 @@
 
       <case-file-verify-identity-dialog
         v-if="showVerifyIdentityDialog"
-        :case-file="caseFile.entity"
+        :case-file="caseFile"
         :show.sync="showVerifyIdentityDialog" />
       <impact-validation
         v-if="showImpact"
-        :case-file="caseFile.entity"
+        :case-file="caseFile"
         :show.sync="showImpact" />
     </template>
 
@@ -159,6 +159,7 @@ import householdHelpers from '@/ui/helpers/household';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useEventStore } from '@/pinia/event/event';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
@@ -199,7 +200,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     colorValidationImpact() {
-      switch (this.caseFile?.entity?.impactStatusValidation?.status) {
+      switch (this.caseFile?.impactStatusValidation?.status) {
         case ValidationOfImpactStatus.Impacted: return 'status_success';
         case ValidationOfImpactStatus.NotImpacted: return 'status_error';
         default: return 'status_warning';
@@ -207,7 +208,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     colorVerifyIdentity() {
-      switch (this.caseFile?.entity?.identityAuthentication?.status) {
+      switch (this.caseFile?.identityAuthentication?.status) {
         case IdentityAuthenticationStatus.Passed: return 'status_success';
         case IdentityAuthenticationStatus.Failed: return 'status_error';
         default: return 'status_warning';
@@ -281,8 +282,9 @@ export default mixins(caseFileDetail).extend({
   async created() {
     this.loading = true;
     try {
-      await this.$storage.caseFile.actions.fetch(this.caseFileId, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
-      await useEventStore().fetch(this.caseFile.entity.eventId);
+      await useCaseFileStore().fetch(this.caseFileId);
+      await useCaseFileMetadataStore().fetch(this.caseFileId, false);
+      await useEventStore().fetch(this.caseFile.eventId);
       await this.getHouseholdInfo();
     } finally {
       this.loading = false;
@@ -292,7 +294,7 @@ export default mixins(caseFileDetail).extend({
   methods: {
 
     async getHouseholdInfo() {
-      const { householdId } = this.caseFile.entity;
+      const { householdId } = this.caseFile;
       this.household = await useHouseholdStore().fetch(householdId);
       this.householdMetadata = await useHouseholdMetadataStore().fetch(householdId, false);
     },
@@ -301,7 +303,7 @@ export default mixins(caseFileDetail).extend({
       this.$router.push({
         name: routes.household.householdProfile.name,
         params: {
-          id: this.caseFile?.entity?.householdId,
+          id: this.caseFile?.householdId,
         },
       });
     },

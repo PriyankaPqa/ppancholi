@@ -1,6 +1,6 @@
 import { RcDialog, RcConfirmationDialog } from '@libs/component-lib/components';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockCombinedCaseFile, mockCaseFileEntity } from '@libs/entities-lib/case-file';
+import { mockCaseFileEntity, mockCaseFileMetadata } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
 import {
@@ -9,31 +9,31 @@ import {
 
 import { Status } from '@libs/entities-lib/base';
 
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../case-file-activity/components/CaseFileTags.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockCaseFile = mockCombinedCaseFile();
+const mockCaseFile = mockCaseFileEntity();
+const mockCaseFileMeta = mockCaseFileMetadata();
+
+const { pinia, caseFileStore } = useMockCaseFileStore();
 
 describe('CaseFileTagsList.vue', () => {
   let wrapper;
-
-  storage.caseFile.actions.fetchTagsOptions.mockReturnValueOnce(mockOptionItemData());
-  storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFileEntity());
-  storage.caseFile.getters.tagsOptions = jest.fn(() => mockOptionItemData());
-
   const doMount = (shallow = true, otherOptions = {}) => {
     const options = {
       localVue,
+      pinia,
       propsData: {
-        tags: mockCaseFile.metadata.tags,
-        caseFileId: mockCaseFile.entity.id,
+        tags: mockCaseFileMeta.tags,
+        caseFileId: mockCaseFile.id,
       },
       mocks: {
         $route: {
           name: routes.caseFile.activity.name,
           params: {
-            id: mockCaseFile.entity.id,
+            id: mockCaseFile.id,
           },
         },
         $storage: storage,
@@ -47,7 +47,7 @@ describe('CaseFileTagsList.vue', () => {
       wrapper = mount(Component, options);
     }
 
-    wrapper.vm.existingTags = mockCaseFile.metadata.tags;
+    wrapper.vm.existingTags = mockCaseFileMeta.tags;
   };
 
   describe('Template', () => {
@@ -131,7 +131,7 @@ describe('CaseFileTagsList.vue', () => {
     describe('add tag dialog list tags', () => {
       it('renders when the dialog is open, if the list tag is active', async () => {
         wrapper.vm.showAddTagsDialog = true;
-        wrapper.vm.listTags = [{ ...mockCaseFile.metadata.tags[0], active: true }];
+        wrapper.vm.listTags = [{ ...mockCaseFileMeta.tags[0], active: true }];
         await wrapper.vm.$nextTick();
 
         const element = wrapper.findDataTest(`checkbox-item-${wrapper.vm.listTags[0].id}`);
@@ -140,7 +140,7 @@ describe('CaseFileTagsList.vue', () => {
 
       it('displays the tag name', async () => {
         wrapper.vm.showAddTagsDialog = true;
-        wrapper.vm.listTags = [{ ...mockCaseFile.metadata.tags[0], active: true }];
+        wrapper.vm.listTags = [{ ...mockCaseFileMeta.tags[0], active: true }];
         await wrapper.vm.$nextTick();
 
         const element = wrapper.findDataTest(`checkbox-item-${wrapper.vm.listTags[0].id}`);
@@ -149,7 +149,7 @@ describe('CaseFileTagsList.vue', () => {
 
       it('does not render when the dialog is open, if list tag is not active', async () => {
         wrapper.vm.showAddTagsDialog = true;
-        wrapper.vm.listTags = [{ ...mockCaseFile.metadata.tags[0], active: false }];
+        wrapper.vm.listTags = [{ ...mockCaseFileMeta.tags[0], active: false }];
         await wrapper.vm.$nextTick();
 
         const element = wrapper.findDataTest(`checkbox-item-${wrapper.vm.listTags[0].id}`);
@@ -190,13 +190,13 @@ describe('CaseFileTagsList.vue', () => {
 
     describe('addButtonDisabled', () => {
       it('returns false if some list tags are selected ', () => {
-        wrapper.vm.listTags = [{ ...mockCaseFile.metadata.tags[0], selected: true }];
+        wrapper.vm.listTags = [{ ...mockCaseFileMeta.tags[0], selected: true }];
 
         expect(wrapper.vm.addButtonDisabled).toBeFalsy();
       });
 
       it('returns true if no list tags are selected ', () => {
-        wrapper.vm.listTags = [{ ...mockCaseFile.metadata.tags[0], selected: false }];
+        wrapper.vm.listTags = [{ ...mockCaseFileMeta.tags[0], selected: false }];
 
         expect(wrapper.vm.addButtonDisabled).toBeTruthy();
       });
@@ -217,15 +217,15 @@ describe('CaseFileTagsList.vue', () => {
 
     describe('remainingTags', () => {
       it('returns the existing tags when there is no tagToRemove', () => {
-        wrapper.vm.existingTags = mockCaseFile.metadata.tags;
+        wrapper.vm.existingTags = mockCaseFileMeta.tags;
         wrapper.vm.tagToDelete = null;
 
         expect(wrapper.vm.remainingTags).toEqual(wrapper.vm.existingTags);
       });
 
       it('returns the existing tags without the tagToRemove when there is a tagToRemove', () => {
-        wrapper.vm.existingTags = [mockCaseFile.metadata.tags[0]];
-        wrapper.vm.tagToDelete = { id: mockCaseFile.metadata.tags[0].id, name: { translation: { en: 'foo' } } };
+        wrapper.vm.existingTags = [mockCaseFileMeta.tags[0]];
+        wrapper.vm.tagToDelete = { id: mockCaseFileMeta.tags[0].id, name: { translation: { en: 'foo' } } };
 
         expect(wrapper.vm.remainingTags).toEqual([]);
       });
@@ -241,7 +241,7 @@ describe('CaseFileTagsList.vue', () => {
   describe('lifecycle', () => {
     test('existing tags should be set to the value of the tag prop data', () => {
       doMount();
-      expect(wrapper.vm.existingTags).toEqual(mockCaseFile.metadata.tags);
+      expect(wrapper.vm.existingTags).toEqual(mockCaseFileMeta.tags);
     });
   });
 
@@ -431,19 +431,18 @@ describe('CaseFileTagsList.vue', () => {
 
       it('calls the storage action setCaseFileTags with the result from the makePayload call', async () => {
         jest.clearAllMocks();
-        storage.caseFile.actions.setCaseFileTags = jest.fn(() => mockCaseFileEntity());
         doMount();
 
         const mockPayload = [{ foo: 'bar' }];
         jest.spyOn(wrapper.vm, 'makePayload').mockImplementation(() => mockPayload);
 
-        expect(wrapper.vm.$storage.caseFile.actions.setCaseFileTags).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.setCaseFileTags).toHaveBeenCalledTimes(0);
 
         await wrapper.vm.submitAddTags();
 
-        expect(wrapper.vm.$storage.caseFile.actions.setCaseFileTags).toHaveBeenCalledTimes(1);
+        expect(caseFileStore.setCaseFileTags).toHaveBeenCalledTimes(1);
 
-        expect(wrapper.vm.$storage.caseFile.actions.setCaseFileTags).toHaveBeenCalledWith(wrapper.vm.caseFileId, mockPayload);
+        expect(caseFileStore.setCaseFileTags).toHaveBeenCalledWith(wrapper.vm.caseFileId, mockPayload);
       });
 
       it('calls updateExistingTagsAfterAdd if the storage action returns a result', async () => {
@@ -456,12 +455,11 @@ describe('CaseFileTagsList.vue', () => {
       });
 
       it('does not call updateExistingTagsAfterAdd if the storage action does not return a result', async () => {
-        storage.caseFile.actions.setCaseFileTags = jest.fn();
         doMount();
         jest.spyOn(wrapper.vm, 'updateExistingTagsAfterAdd').mockImplementation(() => {});
 
         expect(wrapper.vm.updateExistingTagsAfterAdd).toHaveBeenCalledTimes(0);
-
+        caseFileStore.setCaseFileTags = jest.fn();
         await wrapper.vm.submitAddTags();
         expect(wrapper.vm.updateExistingTagsAfterAdd).toHaveBeenCalledTimes(0);
       });
@@ -485,7 +483,6 @@ describe('CaseFileTagsList.vue', () => {
 
       it('calls the storage action setCaseFileTags with the result from the makePayload call', async () => {
         jest.clearAllMocks();
-        storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFileEntity());
         doMount(true, {
           computed: {
             remainingTag() {
@@ -496,18 +493,17 @@ describe('CaseFileTagsList.vue', () => {
 
         const mockPayload = [{ foo: 'bar' }];
         jest.spyOn(wrapper.vm, 'makePayload').mockImplementation(() => mockPayload);
-        expect(wrapper.vm.$storage.caseFile.actions.setCaseFileTags).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.setCaseFileTags).toHaveBeenCalledTimes(0);
 
         await wrapper.vm.submitDeleteTag();
 
-        expect(wrapper.vm.$storage.caseFile.actions.setCaseFileTags).toHaveBeenCalledTimes(1);
+        expect(caseFileStore.setCaseFileTags).toHaveBeenCalledTimes(1);
 
-        expect(wrapper.vm.$storage.caseFile.actions.setCaseFileTags).toHaveBeenCalledWith(wrapper.vm.caseFileId, mockPayload);
+        expect(caseFileStore.setCaseFileTags).toHaveBeenCalledWith(wrapper.vm.caseFileId, mockPayload);
       });
 
       it('sets existing tags to remaining tags if the storage action returns a result', async () => {
         jest.clearAllMocks();
-        storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFileEntity());
         doMount();
 
         wrapper.vm.existingTags = [];
@@ -517,7 +513,6 @@ describe('CaseFileTagsList.vue', () => {
       });
 
       it('does not set existing tags to remaining tags if the storage action does not return a result', async () => {
-        storage.caseFile.actions.setCaseFileTags = jest.fn();
         doMount();
         wrapper.vm.existingTags = [];
 

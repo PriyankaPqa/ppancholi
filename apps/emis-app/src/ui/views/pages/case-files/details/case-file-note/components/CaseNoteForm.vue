@@ -70,11 +70,12 @@ import {
 import _cloneDeep from 'lodash/cloneDeep';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
-import { ICaseFileCombined } from '@libs/entities-lib/case-file';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { CaseNoteEntity, ICaseNoteEntity } from '@libs/entities-lib/case-note';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 
 export default Vue.extend({
   name: 'CaseNoteForm',
@@ -132,8 +133,8 @@ export default Vue.extend({
       return useCaseNoteStore().getCaseNoteCategories(true, this.isEdit ? this.localCaseNote.category.optionItemId : null);
     },
 
-    caseFile(): ICaseFileCombined {
-      return this.$storage.caseFile.getters.get(this.$route.params.id);
+    caseFile(): ICaseFileEntity {
+      return useCaseFileStore().getById(this.$route.params.id);
     },
   },
 
@@ -180,10 +181,10 @@ export default Vue.extend({
     async addCaseNote() {
       this.closeConfirmationDialog();
 
-      const result = await useCaseNoteStore().addCaseNote({ id: this.caseFile.entity.id, caseNote: this.localCaseNote });
+      const result = await useCaseNoteStore().addCaseNote({ id: this.caseFile.id, caseNote: this.localCaseNote });
       if (result) {
         this.$emit('add-case-note-id', result.id);
-        this.closeCaseNoteForm();
+        await this.closeCaseNoteForm();
       } else {
         this.$toasted.global.error(this.$t('caseNote.create.error'));
       }
@@ -191,12 +192,12 @@ export default Vue.extend({
 
     async editCaseNote() {
       const result = await useCaseNoteStore().editCaseNote({
-        caseFileId: this.caseFile.entity.id,
+        caseFileId: this.caseFile.id,
         caseNoteId: this.caseNote.id,
         caseNote: this.localCaseNote,
       });
       if (result) {
-        this.closeCaseNoteForm();
+        await this.closeCaseNoteForm();
       } else {
         this.$toasted.global.error(this.$t('caseNote.update.error'));
       }

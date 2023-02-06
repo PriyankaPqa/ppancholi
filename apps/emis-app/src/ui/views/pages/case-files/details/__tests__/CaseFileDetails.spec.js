@@ -5,35 +5,33 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
+import { mockCaseFileEntity, mockCaseFileMetadata } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
-import { useEventStore } from '@/pinia/event/event';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockCaseFile = mockCombinedCaseFile();
+const mockCaseFile = mockCaseFileEntity({ id: '1' });
+const mockCaseFileMeta = mockCaseFileMetadata();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
 const pinia = getPiniaForUser('level1');
-
+const { caseFileStore, caseFileMetadataStore } = useMockCaseFileStore(pinia);
 const { householdStore, householdMetadataStore } = useMockHouseholdStore(pinia);
 describe('CaseFileDetails.vue', () => {
   let wrapper;
-
-  storage.caseFile.getters.get = jest.fn(() => mockCaseFile);
-  storage.caseFile.actions.fetch = jest.fn(() => [mockCaseFile]);
-
   const doMount = async () => {
     const params = {
       localVue,
       pinia,
       propsData: {
-        id: mockCaseFile.entity.id,
+        id: mockCaseFile.id,
       },
       computed: {
         caseFile() {
@@ -76,7 +74,6 @@ describe('CaseFileDetails.vue', () => {
         $storage: storage,
       },
     };
-
     wrapper = mount(Component, params);
   };
 
@@ -102,7 +99,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.text()).toEqual(mockCaseFile.entity.caseFileNumber);
+        expect(element.text()).toEqual(mockCaseFile.caseFileNumber);
       });
     });
 
@@ -116,7 +113,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.text()).toEqual(mockCaseFile.metadata.event.name.translation.en);
+        expect(element.text()).toEqual(mockCaseFileMeta.event.name.translation.en);
       });
     });
 
@@ -132,23 +129,7 @@ describe('CaseFileDetails.vue', () => {
           localVue,
           pinia: getPiniaForUser('contributorIM'),
           propsData: {
-            id: mockCaseFile.entity.id,
-          },
-          store: {
-            modules: {
-              caseFile: {
-                searchLoading: false,
-              },
-            },
-          },
-          mocks: {
-            $storage: {
-              caseFile: {
-                getters: { get: jest.fn(() => mockCaseFile) },
-                actions: { fetch: jest.fn(() => [mockCaseFile]) },
-              },
-
-            },
+            id: mockCaseFile.id,
           },
         });
 
@@ -169,23 +150,7 @@ describe('CaseFileDetails.vue', () => {
           localVue,
           pinia: getPiniaForUser('contributorIM'),
           propsData: {
-            id: mockCaseFile.entity.id,
-          },
-          store: {
-            modules: {
-              caseFile: {
-                searchLoading: false,
-              },
-            },
-          },
-          mocks: {
-            $storage: {
-              caseFile: {
-                getters: { get: jest.fn(() => mockCaseFile) },
-                actions: { fetch: jest.fn(() => [mockCaseFile]) },
-              },
-
-            },
+            id: mockCaseFile.id,
           },
         });
 
@@ -210,8 +175,9 @@ describe('CaseFileDetails.vue', () => {
       it('is NOT rendered if the beneficiary does not have an email', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
-            id: mockCaseFile.entity.id,
+            id: mockCaseFile.id,
           },
           mocks: {
             $storage: storage,
@@ -249,8 +215,9 @@ describe('CaseFileDetails.vue', () => {
       it('is NOT rendered if the beneficiary does not have a home phone number', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
-            id: mockCaseFile.entity.id,
+            id: mockCaseFile.id,
           },
           mocks: {
             $storage: storage,
@@ -288,8 +255,9 @@ describe('CaseFileDetails.vue', () => {
       it('is NOT rendered if the beneficiary does not have a mobile number', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
-            id: mockCaseFile.entity.id,
+            id: mockCaseFile.id,
           },
           mocks: {
             $storage: storage,
@@ -327,8 +295,9 @@ describe('CaseFileDetails.vue', () => {
       it('is NOT rendered if the beneficiary does not have a alternate number', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
-            id: mockCaseFile.entity.id,
+            id: mockCaseFile.id,
           },
           mocks: {
             $storage: storage,
@@ -395,12 +364,14 @@ describe('CaseFileDetails.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      storage.caseFile.getters.get = jest.fn(() => mockCaseFile);
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
         propsData: {
-          id: mockCaseFile.entity.id,
+          id: mockCaseFile.id,
+        },
+        computed: {
+          primaryBeneficiary: () => mockMember(),
         },
         mocks: {
           $storage: storage,
@@ -452,19 +423,30 @@ describe('CaseFileDetails.vue', () => {
       it('return the case file by id from the storage', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
-            id: mockCaseFile.entity.id,
+            id: mockCaseFile.id,
           },
           mocks: {
             $storage: storage,
           },
         });
-        expect(wrapper.vm.caseFile).toEqual(mockCaseFile);
+        expect(JSON.stringify(wrapper.vm.caseFile)).toEqual(JSON.stringify(mockCaseFile));
       });
     });
 
     describe('primaryBeneficiary', () => {
       it('sets the right beneficiary from the household metadata', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: mockCaseFile.id,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
         const altHousehold = {
           memberMetadata: [
             { id: 'mock-beneficiary-id', firstName: 'Jane', lastName: 'Doe' },
@@ -484,8 +466,9 @@ describe('CaseFileDetails.vue', () => {
       it('return the beneficiary first and last name', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
-            id: mockCaseFile.entity.id,
+            id: mockCaseFile.id,
           },
           mocks: {
             $storage: storage,
@@ -504,8 +487,9 @@ describe('CaseFileDetails.vue', () => {
       it('return true if the beneficiary has a home phone number', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
-            id: mockCaseFile.entity.id,
+            id: mockCaseFile.id,
           },
           mocks: {
             $storage: storage,
@@ -530,8 +514,9 @@ describe('CaseFileDetails.vue', () => {
       it('return true if the beneficiary has a mobile phone number', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
-            id: mockCaseFile.entity.id,
+            id: mockCaseFile.id,
           },
           mocks: {
             $storage: storage,
@@ -556,8 +541,9 @@ describe('CaseFileDetails.vue', () => {
       it('return true if the beneficiary has an alternate phone number', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
-            id: mockCaseFile.entity.id,
+            id: mockCaseFile.id,
           },
           mocks: {
             $storage: storage,
@@ -582,8 +568,9 @@ describe('CaseFileDetails.vue', () => {
       it('return false if the beneficiary has no phone number', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
-            id: mockCaseFile.entity.id,
+            id: mockCaseFile.id,
           },
           mocks: {
             $storage: storage,
@@ -605,29 +592,16 @@ describe('CaseFileDetails.vue', () => {
 
     describe('canEdit', () => {
       it('returns true if user has level 1', () => {
-        const { pinia } = useEventStore(getPiniaForUser('level1'));
-
+        const pinia = getPiniaForUser('level1');
         wrapper = shallowMount(Component, {
           localVue,
-          propsData: {
-            id: mockCaseFile.entity.id,
-          },
           pinia,
-          store: {
-            caseFile: {
-              searchLoading: false,
-            },
+          propsData: {
+            id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: {
-              caseFile: {
-                getters: { get: jest.fn(() => mockCaseFile) },
-                actions: {
-                  fetch: jest.fn(() => [mockCaseFile]),
-                },
-              },
-
-            },
+          computed: {
+            primaryBeneficiary: () => mockMember(),
+            readonly: () => false,
           },
         });
 
@@ -639,25 +613,7 @@ describe('CaseFileDetails.vue', () => {
           localVue,
           pinia: getPiniaForUser('contributorIM'),
           propsData: {
-            id: mockCaseFile.entity.id,
-          },
-          store: {
-            modules: {
-              caseFile: {
-                searchLoading: false,
-              },
-            },
-          },
-          mocks: {
-            $storage: {
-              caseFile: {
-                getters: { get: jest.fn(() => mockCaseFile) },
-                actions: {
-                  fetch: jest.fn(() => [mockCaseFile]),
-                },
-              },
-
-            },
+            id: mockCaseFile.id,
           },
         });
 
@@ -668,13 +624,11 @@ describe('CaseFileDetails.vue', () => {
 
   describe('lifecycle', () => {
     beforeEach(() => {
-      storage.caseFile.actions.fetch = jest.fn(() => {});
-
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
         propsData: {
-          id: mockCaseFile.entity.id,
+          id: mockCaseFile.id,
         },
         mocks: {
           $storage: storage,
@@ -683,7 +637,8 @@ describe('CaseFileDetails.vue', () => {
     });
 
     it('should call fetch', () => {
-      expect(wrapper.vm.$storage.caseFile.actions.fetch).toHaveBeenCalledWith(wrapper.vm.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+      expect(caseFileStore.fetch).toHaveBeenCalledWith(wrapper.vm.id);
+      expect(caseFileMetadataStore.fetch).toHaveBeenCalledWith(wrapper.vm.id, false);
     });
 
     it('should call getHouseholdInfo', async () => {
@@ -698,13 +653,11 @@ describe('CaseFileDetails.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      storage.caseFile.actions.fetch = jest.fn(() => {});
-
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
         propsData: {
-          id: mockCaseFile.entity.id,
+          id: mockCaseFile.id,
         },
         computed: {
           caseFile() {
@@ -723,8 +676,8 @@ describe('CaseFileDetails.vue', () => {
     describe('getHouseholdInfo', () => {
       it('should fetch household ', async () => {
         await wrapper.vm.getHouseholdInfo();
-        expect(householdStore.fetch).toBeCalledWith(mockCaseFile.entity.householdId);
-        expect(householdMetadataStore.fetch).toBeCalledWith(mockCaseFile.entity.householdId, false);
+        expect(householdStore.fetch).toBeCalledWith(mockCaseFile.householdId);
+        expect(householdMetadataStore.fetch).toBeCalledWith(mockCaseFile.householdId, false);
       });
     });
 
@@ -735,7 +688,7 @@ describe('CaseFileDetails.vue', () => {
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
           name: routes.household.householdProfile.name,
           params: {
-            id: wrapper.vm.caseFile.entity.householdId,
+            id: wrapper.vm.caseFile.householdId,
           },
         });
       });

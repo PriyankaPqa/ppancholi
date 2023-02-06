@@ -228,12 +228,6 @@ describe('ProgramsHome.vue', () => {
     beforeEach(() => {
       const storage = mockStorage();
 
-      storage.caseFile.actions.searchCaseFiles = jest.fn(() => ({
-        value: mockProgramEntities(),
-        odataContext: '',
-        odataCount: mockProgramEntities().length,
-      }));
-
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {

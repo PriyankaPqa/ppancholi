@@ -14,10 +14,9 @@ import
   ApprovalStatus, mockCaseFinancialAssistanceEntities,
 } from '@libs/entities-lib/financial-assistance-payment';
 import {
-  mockCombinedCaseFile,
   IdentityAuthenticationStatus,
   ValidationOfImpactStatus,
-  mockCombinedCaseFiles,
+  mockCombinedCaseFiles, mockCaseFileEntity,
 } from '@libs/entities-lib/case-file';
 import {
   mockAssessmentFormEntity,
@@ -40,6 +39,7 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../CreateEditFinancialAssistanceCaseFile.vue';
 
 const localVue = createLocalVue();
@@ -48,7 +48,7 @@ const financialAssistance = mockFinancialAssistanceTableEntity();
 const combinedFinancialAssistance = mockCombinedFinancialAssistance();
 const caseFileFinancialAssistance = mockCaseFinancialAssistanceEntity();
 const program = mockProgramEntity();
-const caseFileCombined = mockCombinedCaseFile();
+const mockCaseFile = mockCaseFileEntity();
 const items = mockItems();
 const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGroups();
 const mockEvent = mockEventEntity();
@@ -67,12 +67,13 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     programStore = useMockProgramStore(pinia).programStore;
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
     financialAssistancePaymentStore = useMockFinancialAssistancePaymentStore(pinia).financialAssistancePaymentStore;
+    useMockCaseFileStore(pinia);
     wrapper = (mount)(Component, {
       shallow: true,
       pinia,
       localVue,
       propsData: {
-        id: caseFileCombined.entity.id,
+        id: mockCaseFile.id,
       },
       data() {
         return {
@@ -107,8 +108,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     storage.financialAssistance.actions.addFinancialAssistance = jest.fn(() => combinedFinancialAssistance);
-    storage.caseFile.getters.get = jest.fn(() => caseFileCombined);
-    storage.caseFile.actions.fetch = jest.fn(() => caseFileCombined);
     storage.financialAssistance.getters.items = jest.fn(() => items);
     await mountWrapper(false, 'edit', pinia);
   });
@@ -354,7 +353,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
           computed: {
             caseFile() {
-              return caseFileCombined;
+              return mockCaseFile;
             },
             isAuthenticated() {
               return false;
@@ -375,7 +374,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
           computed: {
             caseFile() {
-              return caseFileCombined;
+              return mockCaseFile;
             },
             isAuthenticated() {
               return true;
@@ -396,7 +395,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
           computed: {
             caseFile() {
-              return caseFileCombined;
+              return mockCaseFile;
             },
             isAuthenticated() {
               return true;
@@ -417,7 +416,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
           computed: {
             caseFile() {
-              return caseFileCombined;
+              return mockCaseFile;
             },
             isAuthenticated() {
               return false;
@@ -438,7 +437,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
           computed: {
             caseFile() {
-              return caseFileCombined;
+              return mockCaseFile;
             },
             isAuthenticated() {
               return true;
@@ -554,8 +553,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
           computed: {
             caseFile() {
-              const caseFile2 = caseFileCombined;
-              caseFile2.entity.impactStatusValidation.status = ValidationOfImpactStatus.Impacted;
+              const caseFile2 = mockCaseFile;
+              caseFile2.impactStatusValidation.status = ValidationOfImpactStatus.Impacted;
 
               return caseFile2;
             },
@@ -572,8 +571,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
           computed: {
             caseFile() {
-              const caseFile2 = caseFileCombined;
-              caseFile2.entity.impactStatusValidation.status = ValidationOfImpactStatus.NotImpacted;
+              const caseFile2 = mockCaseFile;
+              caseFile2.impactStatusValidation.status = ValidationOfImpactStatus.NotImpacted;
 
               return caseFile2;
             },
@@ -603,8 +602,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
           computed: {
             caseFile() {
-              const caseFile2 = caseFileCombined;
-              caseFile2.entity.identityAuthentication.status = IdentityAuthenticationStatus.Passed;
+              const caseFile2 = mockCaseFile;
+              caseFile2.identityAuthentication.status = IdentityAuthenticationStatus.Passed;
 
               return caseFile2;
             },
@@ -621,8 +620,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
           computed: {
             caseFile() {
-              const caseFile2 = caseFileCombined;
-              caseFile2.entity.identityAuthentication.status = IdentityAuthenticationStatus.Failed;
+              const caseFile2 = mockCaseFile;
+              caseFile2.identityAuthentication.status = IdentityAuthenticationStatus.Failed;
 
               return caseFile2;
             },
@@ -726,12 +725,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       it('returns true or false if the create should be disabled', () => {
         wrapper.vm.financialAssistance = new FinancialAssistancePaymentEntity(caseFileFinancialAssistance);
         expect(wrapper.vm.isDisabled).toBe(false);
-      });
-    });
-
-    describe('caseFile', () => {
-      it('should return the associated caseFile', () => {
-        expect(wrapper.vm.caseFile).toEqual(caseFileCombined);
       });
     });
 
@@ -860,6 +853,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         programStore.fetch = jest.fn(() => program);
         program.eligibilityCriteria.completedAssessments = true;
         wrapper.vm.fetchAssessmentResponseByCaseFileId = jest.fn();
+        wrapper.vm.fetchAssessmentFormByProgramId = jest.fn();
 
         await wrapper.vm.updateSelectedProgram(financialAssistance);
 
@@ -1029,6 +1023,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     describe('deletePaymentLine', () => {
       it('should simply remove the line when line that hadnt been saved yet is received', async () => {
         wrapper.vm.financialAssistance = financialAssistance;
+        wrapper.vm.submitPaymentNameUpdate = jest.fn();
         const newGroup = mockCaseFinancialAssistancePaymentGroups();
         // mock data already has id - here we want to remove unsaved
         const lineKept = { ...newGroup[0].lines[0] };
@@ -1044,6 +1039,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
       it('should remove a group if it becomes empty', async () => {
         wrapper.vm.financialAssistance = financialAssistance;
+        wrapper.vm.submitPaymentNameUpdate = jest.fn();
         const newGroup = mockCaseFinancialAssistancePaymentGroups();
         // mock data already has id - here we want to remove unsaved
         newGroup[0].lines[0].id = null;
@@ -1056,6 +1052,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
       it('should call the delete service when existing line is received', async () => {
         wrapper.vm.financialAssistance = financialAssistance;
+        wrapper.vm.submitPaymentNameUpdate = jest.fn();
         const newGroup = mockCaseFinancialAssistancePaymentGroups();
         wrapper.vm.financialAssistance.groups = [newGroup[0]];
 

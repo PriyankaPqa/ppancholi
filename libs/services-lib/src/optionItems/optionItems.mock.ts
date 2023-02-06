@@ -1,7 +1,7 @@
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { IOptionItemsServiceMock } from './optionItems.types';
 
-export const mockOptionItemsServiceService = (): IOptionItemsServiceMock => ({
+export const mockOptionItemsService = (): IOptionItemsServiceMock => ({
   getOptionList: jest.fn(() => mockOptionItemData()),
 
   createOptionItem: jest.fn(() => mockOptionItemData()[0]),

@@ -151,6 +151,9 @@ import household from '@/ui/mixins/household';
 import householdResults, { IFormattedHousehold } from '@/ui/mixins/householdResults';
 import { IAzureTableSearchResults } from '@libs/shared-lib/types';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { ICaseFileEntity, ICaseFileMetadata, IdParams } from '@libs/entities-lib/case-file';
+import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 
 export default mixins(household, householdResults).extend({
   name: 'HouseholdResults',
@@ -186,6 +189,7 @@ export default mixins(household, householdResults).extend({
       detailsLoading: false,
       detailsId: '',
       householdsInEvent: [] as string[],
+      combinedCaseFileStore: new CombinedStoreFactory<ICaseFileEntity, ICaseFileMetadata, IdParams>(useCaseFileStore(), useCaseFileMetadataStore()),
     };
   },
   computed: {
@@ -265,13 +269,13 @@ export default mixins(household, householdResults).extend({
         const calls = [] as Promise<IAzureTableSearchResults>[];
         idBatches.forEach((b) => {
           const filter = `search.in(Entity/HouseholdId, '${b.join('|')}', '|') and Entity/EventId eq '${this.currentEventId}'`;
-          const call = this.$storage.caseFile.actions.search({ filter });
+          const call = this.combinedCaseFileStore.search({ filter });
           calls.push(call);
         });
 
         const res = await Promise.all(calls);
-        const ids = res.reduce((acc, currentValue) => acc.concat(currentValue.ids), []);
-        this.householdsInEvent = this.$storage.caseFile.getters.getByIds(ids).map((cf) => cf.entity.householdId);
+        const ids = res.reduce((acc, currentValue) => acc.concat(currentValue?.ids), []);
+        this.householdsInEvent = this.combinedCaseFileStore.getByIds(ids).map((cf) => cf.entity.householdId);
       } finally {
         this.loading = false;
       }

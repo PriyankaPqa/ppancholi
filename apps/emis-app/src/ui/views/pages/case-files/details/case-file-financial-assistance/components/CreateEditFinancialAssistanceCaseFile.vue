@@ -256,7 +256,7 @@ export default mixins(caseFileDetail).extend({
 
     isAuthenticated(): boolean {
       if (this.selectedProgram?.eligibilityCriteria?.authenticated) {
-        return this.caseFile?.entity?.identityAuthentication?.status === IdentityAuthenticationStatus.Passed;
+        return this.caseFile?.identityAuthentication?.status === IdentityAuthenticationStatus.Passed;
       }
 
       return true;
@@ -264,7 +264,7 @@ export default mixins(caseFileDetail).extend({
 
     isImpacted(): boolean {
       if (this.selectedProgram?.eligibilityCriteria?.impacted) {
-        return this.caseFile?.entity?.impactStatusValidation?.status === ValidationOfImpactStatus.Impacted;
+        return this.caseFile?.impactStatusValidation?.status === ValidationOfImpactStatus.Impacted;
       }
 
       return true;
@@ -313,7 +313,7 @@ export default mixins(caseFileDetail).extend({
 
     await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
     this.isEditMode || this.isAddMode ? await this.searchTables() : await this.fetchTable();
-    await this.fetchProgram(this.financialTables[0].programId, this.caseFile.entity.eventId);
+    await this.fetchProgram(this.financialTables[0].programId, this.caseFile.eventId);
 
     this.loading = false;
     this.warnIfInvalid();
@@ -333,7 +333,7 @@ export default mixins(caseFileDetail).extend({
       if (this.caseFile) {
         const tableData = await this.$storage.financialAssistance.actions.search({
           filter: {
-            'Entity/EventId': this.caseFile.entity.eventId,
+            'Entity/EventId': this.caseFile.eventId,
           },
         }, null, true);
         const { ids } = tableData;
@@ -397,7 +397,7 @@ export default mixins(caseFileDetail).extend({
       if (selectedProgramId && this.selectedProgram?.id !== selectedProgramId) {
         const originalProgram = this.selectedProgram;
 
-        const program = await useProgramStore().fetch({ id: selectedProgramId, eventId: this.caseFile.entity.eventId });
+        const program = await useProgramStore().fetch({ id: selectedProgramId, eventId: this.caseFile.eventId });
         this.selectedProgram = program;
 
         if (this.selectedProgram?.eligibilityCriteria?.completedAssessments) {
@@ -516,7 +516,7 @@ export default mixins(caseFileDetail).extend({
           this.financialAssistance.groups = this.financialAssistance.groups.filter((g) => g !== event.group);
         }
       }
-      this.submitPaymentNameUpdate();
+      await this.submitPaymentNameUpdate();
     },
 
     async updatePaymentStatus(event : {

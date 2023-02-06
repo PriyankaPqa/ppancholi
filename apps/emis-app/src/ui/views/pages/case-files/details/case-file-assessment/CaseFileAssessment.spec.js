@@ -13,6 +13,7 @@ import { useMockRegistrationStore } from '@libs/stores-lib/registration/registra
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './CaseFileAssessment.vue';
 
 const localVue = createLocalVue();
@@ -26,6 +27,7 @@ let { assessmentFormStore } = useMockAssessmentFormStore(pinia);
 let { assessmentResponseStore } = useMockAssessmentResponseStore(pinia);
 let { registrationStore } = useMockRegistrationStore(pinia);
 let { householdStore } = useMockHouseholdStore(pinia);
+useMockCaseFileStore(pinia);
 useMockTenantSettingsStore(pinia);
 
 const mockMappedAssessments = [
@@ -135,6 +137,7 @@ describe('CaseFileAssessment.vue', () => {
     assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
     useMockTenantSettingsStore(pinia);
+    useMockCaseFileStore(pinia);
     registrationStore = useMockRegistrationStore(pinia).registrationStore;
     householdStore = useMockHouseholdStore(pinia).householdStore;
     jest.clearAllMocks();
@@ -502,7 +505,7 @@ describe('CaseFileAssessment.vue', () => {
         await wrapper.vm.$nextTick();
 
         expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://registration domain fr/fr/assessment/1dea3c36-d6a5-4e6c-ac36-078677b7da5f0/044fcd68-3d70-4a3a-b5c8-22da9e01730f/1');
-        expect(householdStore.getById).toHaveBeenCalledWith(wrapper.vm.caseFile.entity.householdId);
+        expect(householdStore.getById).toHaveBeenCalledWith(wrapper.vm.caseFile.householdId);
         expect(wrapper.vm.$services.households.getPerson).toHaveBeenCalledWith(mockHouseholdEntity().primaryBeneficiary);
         expect(registrationStore.fetchPreferredLanguages).toHaveBeenCalled();
       });

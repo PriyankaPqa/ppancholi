@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-console */
 import _orderBy from 'lodash/orderBy';
-import _camelCase from 'lodash/camelCase';
 import _pick from 'lodash/pick';
 import _omit from 'lodash/omit';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
@@ -30,6 +29,7 @@ import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-a
 import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { IStorage } from '../../../storage/storage.types';
 
 export interface IOptions {
@@ -242,11 +242,11 @@ export class SignalR implements ISignalR {
       action: this.noAction,
     });
 
-    this.listenForOptionItemChangesWithStorage({
+    this.listenForOptionItemChanges({
       domain: 'household',
       optionItemName: 'ScreeningId',
-      cacheResetMutationName: 'setScreeningIdsFetched',
-      mutationDomain: 'caseFile',
+      prop: 'screeningIdsFetched',
+      store: useCaseFileStore(),
     });
 
     this.listenForOptionItemChanges({
@@ -363,14 +363,17 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'CaseFile',
-      action: this.storage.caseFile.mutations.setEntityFromOutsideNotification,
+      action: useCaseFileStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'case-file',
       entityName: 'CaseFileMetadata',
-      action: this.storage.caseFile.mutations.setMetadataFromOutsideNotification,
+      action: useCaseFileMetadataStore().setItemFromOutsideNotification,
     });
+
+    this.watchedPiniaStores.push(useCaseFileStore());
+    this.watchedPiniaStores.push(useCaseFileMetadataStore());
 
     this.listenForChanges({
       domain: 'case-file',
@@ -378,22 +381,25 @@ export class SignalR implements ISignalR {
       action: this.noAction,
     });
 
-    this.listenForOptionItemChangesWithStorage({
+    this.listenForOptionItemChanges({
       domain: 'case-file',
       optionItemName: 'CloseReason',
-      cacheResetMutationName: 'setCloseReasonsFetched',
+      prop: 'closeReasonsFetched',
+      store: useCaseFileStore(),
     });
 
-    this.listenForOptionItemChangesWithStorage({
+    this.listenForOptionItemChanges({
       domain: 'case-file',
       optionItemName: 'InactiveReason',
-      cacheResetMutationName: 'setInactiveReasonsFetched',
+      prop: 'inactiveReasonsFetched',
+      store: useCaseFileStore(),
     });
 
-    this.listenForOptionItemChangesWithStorage({
+    this.listenForOptionItemChanges({
       domain: 'case-file',
       optionItemName: 'Tag',
-      cacheResetMutationName: 'setTagsOptionsFetched',
+      prop: 'tagsOptionsFetched',
+      store: useCaseFileStore(),
     });
   }
 
@@ -581,31 +587,6 @@ export class SignalR implements ISignalR {
     });
   }
 
-  private listenForOptionItemChangesWithStorage({
-    domain, optionItemName, cacheResetMutationName, mutationDomain = null,
-  }: { domain: string, optionItemName: string, cacheResetMutationName: string, mutationDomain?: string }) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const storage = this.storage as any;
-    const storageDomain = mutationDomain || _camelCase(domain);
-
-    this.connection.on(`${domain}.${optionItemName}Updated`, (entity) => {
-      if (storage?.[storageDomain]?.mutations?.[cacheResetMutationName]) {
-        storage[storageDomain].mutations[cacheResetMutationName](false);
-
-        this.log(`Cache for ${domain}.${optionItemName} reset - entity updated`, entity);
-      }
-    });
-
-    this.connection.on(`${domain}.${optionItemName}Created`, (entity) => {
-      if (storage?.[storageDomain]?.mutations?.[cacheResetMutationName]) {
-        storage[storageDomain].mutations[cacheResetMutationName](false);
-
-        this.log(`Cache for ${domain}.${optionItemName} reset - entity created`, entity);
-      }
-    });
-  }
-
-  // eslint-disable-next-line
   private log(name: string, message?: any) {
     if (this.showConsole) {
       console.log(name, message?.id || message || '');

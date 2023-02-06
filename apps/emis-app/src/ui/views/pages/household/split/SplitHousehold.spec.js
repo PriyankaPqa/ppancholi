@@ -2,7 +2,6 @@ import { mockSplitHousehold, ContactInformation } from '@libs/entities-lib/house
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/entities-lib/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { tabs } from '@/store/modules/household/tabs';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 
 import helpers from '@/ui/helpers/helpers';
@@ -10,6 +9,7 @@ import helpers from '@/ui/helpers/helpers';
 import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { tabs } from '@/ui/views/pages/household/split/tabs';
 import Component from './SplitHousehold.vue';
 
 const localVue = createLocalVue();

@@ -24,8 +24,6 @@ describe('CaseFilesTable.vue', () => {
     id: 'test-id',
   };
 
-  storage.caseFile.getters.getByIds = jest.fn(() => mockCaseFiles);
-
   describe('Template', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
@@ -38,6 +36,8 @@ describe('CaseFilesTable.vue', () => {
           $storage: storage,
         },
       });
+
+      wrapper.vm.combinedCaseFileStore.getByIds = jest.fn(() => mockCaseFiles);
 
       wrapper.vm.getCaseFileRoute = jest.fn(() => ({
         name: routes.caseFile.activity.name,
@@ -428,11 +428,6 @@ describe('CaseFilesTable.vue', () => {
 
   describe('Methods', () => {
     beforeEach(async () => {
-      storage.caseFile.actions.search = jest.fn(() => ({
-        ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
-        count: 2,
-      }));
-
       wrapper = mount(Component, {
         localVue,
         pinia: createTestingPinia({ stubActions: false }),
@@ -440,6 +435,11 @@ describe('CaseFilesTable.vue', () => {
           $storage: storage,
         },
       });
+
+      wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({
+        ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
+        count: 2,
+      }));
 
       await wrapper.setData({
         myCaseFiles: false,
@@ -462,7 +462,7 @@ describe('CaseFilesTable.vue', () => {
       it('should call storage actions with proper parameters', async () => {
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.caseFile.actions.search)
+        expect(wrapper.vm.combinedCaseFileStore.search)
           .toHaveBeenCalledWith({
             search: params.search,
             filter: params.filter,

@@ -4,19 +4,20 @@ import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus } from '@libs/entities-lib/case-file';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../components/CaseFileVerifyIdentityDialog.vue';
 
 const localVue = createLocalVue();
-
+const { pinia, caseFileStore } = useMockCaseFileStore();
 describe('CaseFileVerifyIdentityDialog.vue', () => {
   let wrapper;
   let storage;
 
   beforeEach(async () => {
     storage = mockStorage();
-    storage.caseFile.getters.screeningIds = jest.fn(() => mockOptionItemData());
     wrapper = await mount(Component, {
       localVue,
+      pinia,
       propsData: {
         show: true,
         caseFile: {
@@ -32,6 +33,10 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         $storage: storage,
       },
     });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('Template', () => {
@@ -73,6 +78,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
       it('sets default when no identityAuthentication is passed', async () => {
         wrapper = await shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             caseFile: {
@@ -93,6 +99,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
       it('sets form when identityAuthentication is passed', async () => {
         wrapper = await shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             show: true,
             caseFile: {
@@ -116,7 +123,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
       });
 
       it('calls fetchScreeningIds', async () => {
-        expect(storage.caseFile.actions.fetchScreeningIds).toHaveBeenCalled();
+        expect(caseFileStore.fetchScreeningIds).toHaveBeenCalled();
       });
 
       it('should display the status and method from with the data from BE during the initial loading', async () => {
@@ -157,9 +164,9 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
     describe('verificationOptions', () => {
       it('calls storage for screeningIds and passes current value', async () => {
         await wrapper.setData({ form: { identificationIds: ['abc'] } });
-        expect(wrapper.vm.$storage.caseFile.getters.screeningIds).toHaveBeenCalledWith(true, ['abc']);
+        expect(caseFileStore.getScreeningIds).toHaveBeenCalledWith(true, ['abc']);
         await wrapper.setData({ form: { identificationIds: [] } });
-        expect(wrapper.vm.$storage.caseFile.getters.screeningIds).toHaveBeenCalledWith(true, []);
+        expect(caseFileStore.getScreeningIds).toHaveBeenCalledWith(true, []);
       });
     });
 
@@ -255,7 +262,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         });
 
         await wrapper.vm.save();
-        expect(storage.caseFile.actions.setCaseFileIdentityAuthentication).toHaveBeenCalledWith(wrapper.vm.caseFile.id, {
+        expect(caseFileStore.setCaseFileIdentityAuthentication).toHaveBeenCalledWith(wrapper.vm.caseFile.id, {
           method: IdentityAuthenticationMethod.Exceptional,
           status: IdentityAuthenticationStatus.Passed,
           identificationIds: [{ optionItemId: withOther, specifiedOther: 'xxx' }],
@@ -263,6 +270,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);
         expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
       });
+
       it('saves changes and closes only when valid - method invalid', async () => {
         wrapper.vm.$toasted.global.success = jest.fn();
         await wrapper.setData({
@@ -275,7 +283,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         });
 
         await wrapper.vm.save();
-        expect(storage.caseFile.actions.setCaseFileIdentityAuthentication).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.setCaseFileIdentityAuthentication).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(0);
         expect(wrapper.emitted('update:show')).toBeUndefined();
       });
@@ -293,7 +301,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         });
 
         await wrapper.vm.save();
-        expect(storage.caseFile.actions.setCaseFileIdentityAuthentication).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.setCaseFileIdentityAuthentication).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(0);
         expect(wrapper.emitted('update:show')).toBeUndefined();
       });
@@ -310,7 +318,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         });
 
         await wrapper.vm.save();
-        expect(storage.caseFile.actions.setCaseFileIdentityAuthentication).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.setCaseFileIdentityAuthentication).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(0);
         expect(wrapper.emitted('update:show')).toBeUndefined();
       });

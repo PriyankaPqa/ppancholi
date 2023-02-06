@@ -108,6 +108,7 @@ import { ValidationObserver } from 'vee-validate';
 import Vue from 'vue';
 import { RcDialog } from '@libs/component-lib/components';
 import { ValidationOfImpactStatus, ImpactValidationMethod, CaseFileEntity } from '@libs/entities-lib/case-file';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 
 export default Vue.extend({
   name: 'ImpactValidationDialog',
@@ -163,7 +164,7 @@ export default Vue.extend({
       const isValid = await (this.$refs.impactValidation as InstanceType<typeof ValidationObserver>).validate();
       if (isValid) {
         this.loading = true;
-        const res = await this.$storage.caseFile.actions.setCaseFileValidationOfImpact(this.caseFile.id, {
+        const res = await useCaseFileStore().setCaseFileValidationOfImpact(this.caseFile.id, {
           status: this.form.status,
           method: this.form.method,
         });

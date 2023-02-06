@@ -419,11 +419,10 @@ export default mixins(caseFileDetail).extend({
 
   methods: {
     async initCreateMode() {
-      const cf = this.caseFile;
-      const household = await useHouseholdStore().fetch(cf.entity.householdId);
-      const householdMetadata = await useHouseholdMetadataStore().fetch(cf.entity.householdId, false);
+      const household = await useHouseholdStore().fetch(this.caseFile.householdId);
+      const householdMetadata = await useHouseholdMetadataStore().fetch(this.caseFile.householdId, false);
       this.defaultBeneficiaryData = {
-        name: `${cf.metadata.primaryBeneficiary.identitySet.firstName} ${cf.metadata.primaryBeneficiary.identitySet.lastName}`,
+        name: `${this.caseFileMetadata?.primaryBeneficiary?.identitySet.firstName} ${this.caseFileMetadata?.primaryBeneficiary?.identitySet.lastName}`,
         address: household?.address?.address,
         email: (householdMetadata?.memberMetadata || []).filter((m) => m.id === household?.primaryBeneficiary)[0]?.email,
       };

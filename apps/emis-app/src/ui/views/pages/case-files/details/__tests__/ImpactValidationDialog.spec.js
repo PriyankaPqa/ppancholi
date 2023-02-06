@@ -2,10 +2,11 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 
 import { ValidationOfImpactStatus, ImpactValidationMethod } from '@libs/entities-lib/case-file';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../components/ImpactValidationDialog.vue';
 
 const localVue = createLocalVue();
-
+const { pinia, caseFileStore } = useMockCaseFileStore();
 describe('ImpactValidation.vue', () => {
   let wrapper;
   let storage;
@@ -14,6 +15,7 @@ describe('ImpactValidation.vue', () => {
     storage = mockStorage();
     wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         show: true,
         caseFile: {
@@ -28,6 +30,10 @@ describe('ImpactValidation.vue', () => {
         $storage: storage,
       },
     });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('Template', () => {
@@ -65,7 +71,7 @@ describe('ImpactValidation.vue', () => {
         });
 
         await wrapper.vm.save();
-        expect(storage.caseFile.actions.setCaseFileValidationOfImpact).toHaveBeenCalledWith(wrapper.vm.caseFile.id, {
+        expect(caseFileStore.setCaseFileValidationOfImpact).toHaveBeenCalledWith(wrapper.vm.caseFile.id, {
           status: ValidationOfImpactStatus.Undetermined,
           method: ImpactValidationMethod.Manual,
         });
@@ -83,7 +89,7 @@ describe('ImpactValidation.vue', () => {
         });
 
         await wrapper.vm.save();
-        expect(storage.caseFile.actions.setCaseFileValidationOfImpact).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.setCaseFileValidationOfImpact).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(0);
         expect(wrapper.emitted('update:show')).toBeUndefined();
       });

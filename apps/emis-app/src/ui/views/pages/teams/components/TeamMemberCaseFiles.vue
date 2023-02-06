@@ -97,11 +97,13 @@ import { RcDialog } from '@libs/component-lib/components';
 import { IUserAccountCombined, IUserAccountTeamEvent } from '@libs/entities-lib/user-account';
 import { IAzureTableSearchResults, IMultilingual } from '@libs/shared-lib/types';
 import {
-  CaseFileStatus, ICaseFileCombined, ICaseFileEntity,
+  CaseFileStatus, ICaseFileCombined, ICaseFileEntity, ICaseFileMetadata, IdParams,
 } from '@libs/entities-lib/case-file';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import AssignCaseFile from '@/ui/views/pages/case-files/details/case-file-activity/components/AssignCaseFile.vue';
 import { Dictionary } from 'lodash';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 
 interface IMemberCaseFile {
     event: { id: string, name: IMultilingual },
@@ -140,6 +142,7 @@ export default Vue.extend({
       fetchedCaseFiles: [] as ICaseFileCombined[],
       caseFilesIdsWithAllowedAccess: [] as string[],
       loading: false,
+      combinedCaseFileStore: new CombinedStoreFactory<ICaseFileEntity, ICaseFileMetadata, IdParams>(useCaseFileStore(), useCaseFileMetadataStore()),
     };
   },
 
@@ -218,7 +221,7 @@ export default Vue.extend({
 
     async fetchCaseFilesWithAllowedAccess() {
       const filter = `Entity/AssignedTeamMembers/any(AssignedTeamMember:AssignedTeamMember/TeamMembersIds/any(teamMemberId:teamMemberId eq '${this.member.entity.id}'))`;
-      const caseFilesData: IAzureTableSearchResults = await this.$storage.caseFile.actions.search({ filter });
+      const caseFilesData: IAzureTableSearchResults = await this.combinedCaseFileStore.search({ filter });
       this.caseFilesIdsWithAllowedAccess = caseFilesData ? caseFilesData.ids : [];
     },
 

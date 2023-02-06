@@ -3,9 +3,7 @@ import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import colors from '@libs/shared-lib/plugins/vuetify/colors';
 import { mockUserAccountEntity, mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { mockStorage } from '@/storage';
-import { mockOptionItemData } from '@libs/entities-lib/optionItem';
-
-import { createTestingPinia } from '@pinia/testing';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockUserStore } from '@/pinia/user/user.mock';
 import Component from '../case-file-activity/components/CaseFileStatusDialog.vue';
@@ -15,6 +13,7 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
 const { userStore } = useMockUserStore(pinia);
+const { caseFileStore } = useMockCaseFileStore(pinia);
 
 describe('CaseFileStatusDialog.vue', () => {
   let wrapper;
@@ -22,9 +21,6 @@ describe('CaseFileStatusDialog.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      storage.caseFile.actions.fetchInactiveReasons = jest.fn(() => mockOptionItemData());
-      storage.caseFile.actions.fetchCloseReasons = jest.fn(() => mockOptionItemData());
-
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
@@ -64,7 +60,7 @@ describe('CaseFileStatusDialog.vue', () => {
         await wrapper.setProps({
           toStatus: CaseFileStatus.Inactive,
         });
-        const reasons = storage.caseFile.getters.inactiveReasons();
+        const reasons = caseFileStore.getInactiveReasons();
         expect(wrapper.vm.reasons).toEqual(reasons);
       });
 
@@ -72,7 +68,7 @@ describe('CaseFileStatusDialog.vue', () => {
         await wrapper.setProps({
           toStatus: CaseFileStatus.Closed,
         });
-        const reasons = storage.caseFile.getters.closeReasons();
+        const reasons = caseFileStore.getCloseReasons();
         expect(wrapper.vm.reasons).toEqual(reasons);
       });
     });
@@ -149,7 +145,7 @@ describe('CaseFileStatusDialog.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        pinia: createTestingPinia({ stubActions: false }),
+        pinia,
         propsData: {
           toStatus: CaseFileStatus.Open,
           show: true,

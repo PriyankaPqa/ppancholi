@@ -45,7 +45,6 @@ const otherEvent = mockEventMainInfo({
 
 describe('HouseholdProfile.vue', () => {
   let wrapper;
-  storage.caseFile.getters.getByIds = jest.fn(() => [caseFile]);
   registrationStore.getHouseholdCreate = jest.fn(() => householdCreate);
 
   describe('Template', () => {

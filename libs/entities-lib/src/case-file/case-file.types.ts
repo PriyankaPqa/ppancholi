@@ -154,6 +154,8 @@ export interface ICaseFileEntity extends IEntity {
   privacyDateTimeConsent?: Date | string;
   identityAuthentication?: IIdentityAuthentication;
 
+  readonly?: boolean;
+
   validate(): Array<string> | boolean;
 }
 
@@ -193,7 +195,7 @@ export interface ICaseFileMetadata extends IEntity {
   appliedProgramIds: uuid[]
 }
 
-export type ICaseFileCombined = IEntityCombined<ICaseFileEntity, ICaseFileMetadata> & { readonly?: boolean };
+export type ICaseFileCombined = IEntityCombined<ICaseFileEntity, ICaseFileMetadata>;
 
 export interface ICaseFileCount {
   inactiveCount: number;
@@ -219,3 +221,5 @@ export interface ICaseFileDetailedCount {
     tierNone: number,
   },
 }
+
+export type IdParams = uuid;

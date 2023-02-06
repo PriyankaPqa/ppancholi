@@ -108,14 +108,15 @@ import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import {
-  ICaseFileCombined, CaseFileStatus, CaseFileTriage,
-} from '@libs/entities-lib/case-file';
+  ICaseFileCombined, CaseFileStatus, CaseFileTriage, ICaseFileMetadata, IdParams, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import { useUserStore } from '@/pinia/user/user';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useCaseFileStore, useCaseFileMetadataStore } from '@/pinia/case-file/case-file';
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'CaseFilesTable',
@@ -153,6 +154,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         sortDesc: [true],
         ...this.limitResults ? { itemsPerPage: this.limitResults } : {}, // Add the property itemsPerPage only if limitResults is truthy
       },
+      combinedCaseFileStore: new CombinedStoreFactory<ICaseFileEntity, ICaseFileMetadata, IdParams>(useCaseFileStore(), useCaseFileMetadataStore()),
     };
   },
 
@@ -183,7 +185,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     tableData(): ICaseFileCombined[] {
-      return this.$storage.caseFile.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+      return this.combinedCaseFileStore.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
     customColumns(): Record<string, string> {
@@ -357,7 +359,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     async fetchData(params: IAzureSearchParams) {
       this.searchLoading = false;
-      const res = await this.$storage.caseFile.actions.search({
+      const res = await this.combinedCaseFileStore.search({
         search: params.search,
         filter: params.filter,
         top: params.top,

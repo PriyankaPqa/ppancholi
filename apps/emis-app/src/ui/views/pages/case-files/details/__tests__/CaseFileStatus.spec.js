@@ -1,21 +1,26 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCombinedCaseFile, CaseFileStatus } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../case-file-activity/components/CaseFileStatus.vue';
 
 const localVue = createLocalVue();
-const mockCaseFile = mockCombinedCaseFile();
+const mockCaseFile = mockCaseFileEntity();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
 let wrapper;
+let pinia;
+
 const doMount = (level, props = {}) => {
+  pinia = getPiniaForUser(level);
+  useMockCaseFileStore(pinia);
   wrapper = shallowMount(Component, {
     localVue,
-    pinia: getPiniaForUser(level),
+    pinia,
     propsData: {
       caseFile: mockCaseFile,
       event: mockEvent,
@@ -44,7 +49,7 @@ describe('CaseFileStatus.vue', () => {
       });
       it('returns the proper disable status value for L2+', async () => {
         const altMockCaseFile = _cloneDeep(mockCaseFile);
-        altMockCaseFile.entity.caseFileStatus = CaseFileStatus.Open;
+        altMockCaseFile.caseFileStatus = CaseFileStatus.Open;
         doMount('level1', {
           caseFile: altMockCaseFile,
           event: mockEvent,
@@ -77,7 +82,7 @@ describe('CaseFileStatus.vue', () => {
 
       it('returns the proper disable status value for L4 and lower when archived', async () => {
         const altMockCaseFile = _cloneDeep(mockCaseFile);
-        altMockCaseFile.entity.caseFileStatus = CaseFileStatus.Archived;
+        altMockCaseFile.caseFileStatus = CaseFileStatus.Archived;
         doMount('level4', {
           caseFile: altMockCaseFile,
           event: mockEvent,
@@ -137,23 +142,15 @@ describe('CaseFileStatus.vue', () => {
   });
 
   describe('Methods', () => {
-    const actions = {
-      setCaseFileStatus: jest.fn(),
-    };
+    const { caseFileStore, pinia } = useMockCaseFileStore();
 
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           caseFile: mockCaseFile,
           event: mockEvent,
-        },
-        store: {
-          modules: {
-            caseFileEntities: {
-              actions,
-            },
-          },
         },
       });
     });
@@ -215,7 +212,7 @@ describe('CaseFileStatus.vue', () => {
 
         await wrapper.vm.submitStatusChange();
         expect(wrapper.vm.showConfirmationDialog).toBeFalsy();
-        expect(actions.setCaseFileStatus).toHaveBeenCalledTimes(1);
+        expect(caseFileStore.setCaseFileStatus).toHaveBeenCalledTimes(1);
       });
     });
   });

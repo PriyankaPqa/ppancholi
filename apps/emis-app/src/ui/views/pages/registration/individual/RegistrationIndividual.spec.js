@@ -7,11 +7,13 @@ import helpers from '@/ui/helpers/helpers';
 import { mockTabs } from '@libs/stores-lib/registration/tabs.mock';
 import { tabs } from '@/pinia/registration/tabs';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './RegistrationIndividual.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const { pinia, registrationStore } = useMockRegistrationStore();
+const { pinia, caseFileStore } = useMockCaseFileStore();
+const { registrationStore } = useMockRegistrationStore(pinia);
 describe('Individual.vue', () => {
   let wrapper;
   const doMount = (shallow, otherComputed = {}, otherOptions = {}) => {
@@ -426,21 +428,21 @@ describe('Individual.vue', () => {
       it('should call create case file action', async () => {
         await wrapper.vm.createNewCaseFile();
 
-        expect(wrapper.vm.$storage.caseFile.actions.createCaseFile).toHaveBeenCalledWith({
+        expect(caseFileStore.createCaseFile).toHaveBeenCalledWith({
           householdId: wrapper.vm.household.id,
           eventId: wrapper.vm.event.id,
           consentInformation: wrapper.vm.household.consentInformation,
         });
       });
       it('should call setRegistrationErrors with an argument if there is no response', async () => {
-        wrapper.vm.$storage.caseFile.actions.createCaseFile = jest.fn(() => null);
+        caseFileStore.createCaseFile = jest.fn(() => null);
         await wrapper.vm.createNewCaseFile();
         expect(registrationStore.registrationErrors)
           .toEqual({ name: 'case-file-create-error', message: 'Case file create error' });
       });
 
       it('should call setRegistrationErrors with null if there is a response', async () => {
-        wrapper.vm.$storage.caseFile.actions.createCaseFile = jest.fn(() => 'mock-response');
+        caseFileStore.createCaseFile = jest.fn(() => 'mock-response');
         await wrapper.vm.createNewCaseFile();
         expect(registrationStore.registrationErrors).toEqual(null);
       });

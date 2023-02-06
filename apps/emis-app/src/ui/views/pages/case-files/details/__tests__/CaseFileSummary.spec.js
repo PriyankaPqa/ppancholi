@@ -8,6 +8,7 @@ import helpers from '@/ui/helpers/helpers';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../CaseFileSummary.vue';
 
 const localVue = createLocalVue();
@@ -15,6 +16,7 @@ const storage = mockStorage();
 const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
 const { caseFileReferralStore } = useMockCaseFileReferralStore(pinia);
 const { teamStore } = useMockTeamStore(pinia);
+const { caseFileStore } = useMockCaseFileStore(pinia);
 
 describe('CaseFileSummary.vue', () => {
   let wrapper;
@@ -76,8 +78,8 @@ describe('CaseFileSummary.vue', () => {
         expect(caseFileReferralStore.fetchAll).toHaveBeenCalledWith({ caseFileId: 'abcd' });
         expect(caseFileReferralStore.getByCaseFile).toHaveBeenCalledWith('abcd');
         expect(wrapper.vm.hasReferrals).toEqual(true);
-        expect(storage.caseFile.actions.fetchCaseFileActivities).toHaveBeenCalledWith('abcd');
-        expect(wrapper.vm.activities).toEqual(_orderBy(storage.caseFile.actions.fetchCaseFileActivities('abcd'), 'created', 'desc'));
+        expect(caseFileStore.fetchCaseFileActivities).toHaveBeenCalledWith('abcd');
+        expect(wrapper.vm.activities).toEqual(_orderBy(caseFileStore.fetchCaseFileActivities('abcd'), 'created', 'desc'));
       });
     });
   });
@@ -131,7 +133,7 @@ describe('CaseFileSummary.vue', () => {
           },
         ]);
         await wrapper.vm.getHouseholdMembers();
-        expect(wrapper.vm.$services.households.getHouseholdMetadataHistory).toHaveBeenCalledWith(storage.caseFile.actions.fetch().entity.householdId);
+        expect(wrapper.vm.$services.households.getHouseholdMetadataHistory).toHaveBeenCalledWith(caseFileStore.fetch().householdId);
         expect(wrapper.vm.householdMembers).toEqual([
           { birthDate: helpers.getLocalStringDate('1991-01-01T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'll'), name: 'firstName2 lName2' },
         ]);

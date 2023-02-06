@@ -57,6 +57,8 @@ import { Status } from '@libs/entities-lib/base';
 import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import utils from '@libs/entities-lib/utils';
 import { ui } from '@/constants/ui';
+import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
+import VSelectWithValidation from '@libs/component-lib/components/atoms/VSelectWithValidation.vue';
 import { AssessmentDetailsForm } from './AssessmentCreate.vue';
 
 export default Vue.extend({
@@ -65,6 +67,8 @@ export default Vue.extend({
   components: {
     EventsSelector,
     VueEditor,
+    LanguageTabs,
+    VSelectWithValidation,
   },
 
   props: {

@@ -1,7 +1,8 @@
 import Vue from 'vue';
-import { ICaseFileCombined } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, ICaseFileEntity, ICaseFileMetadata } from '@libs/entities-lib/case-file';
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import { useEventStore } from '@/pinia/event/event';
+import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 
 export default Vue.extend({
   props: {
@@ -16,19 +17,23 @@ export default Vue.extend({
       return this.id;
     },
 
-    caseFile(): ICaseFileCombined {
-      return this.$storage.caseFile.getters.get(this.caseFileId);
+    caseFile(): ICaseFileEntity {
+      return useCaseFileStore().getById(this.caseFileId);
+    },
+
+    caseFileMetadata(): ICaseFileMetadata {
+      return useCaseFileMetadataStore().getById(this.caseFileId);
     },
 
     event(): IEventEntity {
-      if (!this.caseFile?.entity?.eventId) {
+      if (!this.caseFile?.eventId) {
         return null;
       }
-      return useEventStore().getById(this.caseFile.entity.eventId);
+      return useEventStore().getById(this.caseFile.eventId);
     },
 
     readonly(): boolean {
-      return (this.caseFile?.readonly || this.event?.schedule?.status !== +EEventStatus.Open) && !this.$hasLevel('level6');
+      return (this.caseFile.caseFileStatus !== CaseFileStatus.Open || this.event?.schedule?.status !== +EEventStatus.Open) && !this.$hasLevel('level6');
     },
   },
 });

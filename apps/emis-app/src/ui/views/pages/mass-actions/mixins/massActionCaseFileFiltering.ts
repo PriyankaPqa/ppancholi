@@ -1,12 +1,14 @@
 import _isEmpty from 'lodash/isEmpty';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { ICaseFileCombined } from '@libs/entities-lib/case-file';
+import { ICaseFileCombined, ICaseFileEntity, ICaseFileMetadata, IdParams } from '@libs/entities-lib/case-file';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { MassActionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
 import { buildQuery } from '@libs/services-lib/odata-query';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   props: {
@@ -20,6 +22,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     return {
       fetchAllCaseFileLoading: false,
       exportLoading: false,
+      combinedCaseFileStore: new CombinedStoreFactory<ICaseFileEntity, ICaseFileMetadata, IdParams>(useCaseFileStore(), useCaseFileMetadataStore()),
     };
   },
 
@@ -29,7 +32,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     tableData(): ICaseFileCombined[] {
-      return this.$storage.caseFile.getters.getByIds(
+      return this.combinedCaseFileStore.getByIds(
         this.searchResultIds,
         { onlyActive: true },
       );
@@ -37,7 +40,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     tableProps(): Record<string, unknown> {
       return {
-        loading: this.$store.state.caseFileEntities.searchLoading,
+        loading: useCaseFileStore().searchLoading,
       };
     },
   },
@@ -53,7 +56,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     async fetchData(params: IAzureSearchParams) {
       if (this.filtersOn) {
-        const res = await this.$storage.caseFile.actions.search({
+        const res = await this.combinedCaseFileStore.search({
           search: params.search,
           filter: params.filter,
           top: params.top,

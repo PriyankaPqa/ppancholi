@@ -57,7 +57,7 @@
       </template>
 
       <template #[`item.${customColumns.caseFileNumber}`]="{ item: caseFile }">
-        {{ caseFile.entity.caseFileNumber }}
+        {{ caseFile.caseFileNumber }}
       </template>
 
       <template #[`item.${customColumns.firstName}`]="{ item: caseFile }">
@@ -116,7 +116,7 @@
       </template>
 
       <template #[`item.${customColumns.assessments}`]="{ item: caseFile }">
-        ???? {{ caseFile.entity.caseFileNumber }} TBD
+        ???? {{ caseFile.caseFileNumber }} TBD
       </template>
     </rc-data-table>
   </rc-dialog>

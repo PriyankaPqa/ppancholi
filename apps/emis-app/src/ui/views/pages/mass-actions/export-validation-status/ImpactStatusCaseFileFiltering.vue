@@ -45,7 +45,7 @@
       </template>
 
       <template #[`item.${customColumns.caseFileNumber}`]="{ item: caseFile }">
-        {{ caseFile.entity.caseFileNumber }}
+        {{ caseFile.caseFileNumber }}
       </template>
 
       <template #[`item.${customColumns.firstName}`]="{ item: caseFile }">

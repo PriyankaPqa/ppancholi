@@ -46,7 +46,6 @@ const MOCK_CASEFILES = {
 
 describe('TeamMemberCaseFiles.vue', () => {
   let wrapper;
-  storage.caseFile.actions.search = jest.fn(() => ({ ids: [mockCaseFile.entity.id] }));
 
   const doMount = async (otherOptions = {}) => {
     wrapper = shallowMount(Component, {
@@ -61,6 +60,7 @@ describe('TeamMemberCaseFiles.vue', () => {
       ...otherOptions,
     });
 
+    wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({ ids: [mockCaseFile.entity.id] }));
     await flushPromises();
   };
 
@@ -93,7 +93,7 @@ describe('TeamMemberCaseFiles.vue', () => {
         // eslint-disable-next-line max-len
         const filter = `Entity/AssignedTeamMembers/any(AssignedTeamMember:AssignedTeamMember/TeamMembersIds/any(teamMemberId:teamMemberId eq '${wrapper.vm.member.entity.id}'))`;
         await wrapper.vm.fetchCaseFilesWithAllowedAccess();
-        expect(storage.caseFile.actions.search).toHaveBeenCalledWith({ filter });
+        expect(wrapper.vm.combinedCaseFileStore.search).toHaveBeenCalledWith({ filter });
         expect(wrapper.vm.caseFilesIdsWithAllowedAccess).toEqual([mockCaseFile.entity.id]);
       });
     });

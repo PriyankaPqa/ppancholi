@@ -2,12 +2,6 @@ import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
 import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
-import { OptionItemsService } from '@libs/services-lib/optionItems/optionItems';
-
-import { CaseFileEntityModule } from '@/store/modules/case-file/caseFileEntity';
-import { CaseFileMetadataModule } from '@/store/modules/case-file/caseFileMetadata';
-import { CaseFilesService } from '@libs/services-lib/case-files/entity';
-import { CaseFilesMetadataService } from '@libs/services-lib/case-files/metadata';
 
 import { FinancialAssistanceEntityModule } from '@/store/modules/financial-assistance/financialAssistanceEntity';
 import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-assistance/financialAssistanceMetadata';
@@ -26,17 +20,6 @@ const store: StoreOptions<IRootState> = {
     version: '1.0.0', // a simple property
   },
   modules: {
-    [vuexModule.CASE_FILE_ENTITIES]: new CaseFileEntityModule(
-      new CaseFilesService(httpClient),
-      new OptionItemsService(httpClient),
-      SignalR,
-    ).getModule(),
-
-    [vuexModule.CASE_FILE_METADATA]: new CaseFileMetadataModule(
-      new CaseFilesMetadataService(httpClient),
-      SignalR,
-    ).getModule(),
-
     [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]: new FinancialAssistanceEntityModule(
       new FinancialAssistanceTablesService(httpClient),
       SignalR,

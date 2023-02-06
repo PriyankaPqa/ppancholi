@@ -121,6 +121,7 @@ import SystemErrorDialog from '@libs/registration-lib/components/review/SystemEr
 import { IRegistrationAssessment } from '@libs/entities-lib/event';
 import { IRegistrationMenuItem } from '@libs/registration-lib/types';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -352,7 +353,7 @@ export default mixins(individual).extend({
     },
 
     async createNewCaseFile(): Promise<boolean> {
-      const res = await this.$storage.caseFile.actions.createCaseFile({
+      const res = await useCaseFileStore().createCaseFile({
         householdId: this.household.id,
         eventId: this.event.id,
         consentInformation: this.household.consentInformation,

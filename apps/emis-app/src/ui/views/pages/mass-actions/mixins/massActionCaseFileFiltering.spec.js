@@ -79,6 +79,8 @@ describe('massActionCaseFileFiltering.vue', () => {
           skip: 10,
           orderBy: 'name asc',
         };
+
+        wrapper.vm.combinedCaseFileStore.search = jest.fn();
       });
 
       it('should call storage actions with proper parameters if some filters are applied', async () => {
@@ -88,7 +90,7 @@ describe('massActionCaseFileFiltering.vue', () => {
 
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.caseFile.actions.search)
+        expect(wrapper.vm.combinedCaseFileStore.search)
           .toHaveBeenCalledWith({
             search: params.search,
             filter: params.filter,

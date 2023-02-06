@@ -8,6 +8,7 @@ import {
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import { createTestingPinia } from '@pinia/testing';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './AssessmentDetails.vue';
 
 const localVue = createLocalVue();
@@ -49,6 +50,7 @@ describe('AssessmentDetails.vue', () => {
     pinia = createTestingPinia({ stubActions: false });
     assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
+    useMockCaseFileStore(pinia);
     assessmentResponseStore.getById = jest.fn(() => assessment);
     assessment.completionStatus = CompletionStatus.Completed;
     jest.clearAllMocks();
@@ -176,7 +178,7 @@ describe('AssessmentDetails.vue', () => {
   describe('methods', () => {
     describe('goToList', () => {
       it('should redirect to the case document home page', async () => {
-        mountWrapper();
+        await mountWrapper();
         wrapper.vm.goToList();
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({

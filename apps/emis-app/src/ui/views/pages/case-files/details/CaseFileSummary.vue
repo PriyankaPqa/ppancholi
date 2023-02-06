@@ -157,6 +157,7 @@ import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-a
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import CaseFileTags from './case-file-activity/components/CaseFileTags.vue';
 
 export interface CaseFileSummary {
@@ -272,7 +273,7 @@ export default Vue.extend({
     },
 
     async getActivities() {
-      this.activities = await this.$storage.caseFile.actions.fetchCaseFileActivities(this.caseFileId);
+      this.activities = await useCaseFileStore().fetchCaseFileActivities(this.caseFileId);
       this.activities = _orderBy(this.activities, 'created', 'desc');
 
       this.closeActivity = this.activities.filter((a) => a.activityType === CaseFileActivityType.CaseFileStatusClosed

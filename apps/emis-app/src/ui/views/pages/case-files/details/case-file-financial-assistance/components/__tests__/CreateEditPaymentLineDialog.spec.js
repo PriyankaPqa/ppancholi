@@ -9,6 +9,7 @@ import { mockAddressData, Address } from '@libs/entities-lib/value-objects/addre
 import { Status } from '@libs/entities-lib/base';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { mockHouseholdEntity, mockHouseholdMetadata } from '@libs/entities-lib/household';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../CreateEditPaymentLineDialog.vue';
 
 const localVue = createLocalVue();
@@ -18,8 +19,8 @@ const items = mockItemsWithBasicData();
 const storage = mockStorage();
 let caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
 libHelpers.getCanadianProvincesWithoutOther = jest.fn(() => [{ id: '1' }]);
-
 const { pinia, householdStore, householdMetadataStore } = useMockHouseholdStore();
+const { caseFileStore } = useMockCaseFileStore(pinia);
 
 describe('CreateEditPaymentLineDialog.vue', () => {
   let wrapper;
@@ -282,7 +283,6 @@ describe('CreateEditPaymentLineDialog.vue', () => {
   describe('Computed', () => {
     beforeEach(async () => {
       jest.clearAllMocks();
-
       await mountWrapper();
     });
 
@@ -497,7 +497,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       it('sets the address from household when none already set', async () => {
         jest.clearAllMocks();
         await wrapper.vm.initCreateMode();
-        expect(householdStore.fetch).toHaveBeenCalledWith(storage.caseFile.getters.get().entity.householdId);
+        expect(householdStore.fetch).toHaveBeenCalledWith(caseFileStore.getById().householdId);
         expect(wrapper.vm.address.streetAddress).not.toBeNull();
         expect(wrapper.vm.address).toEqual(householdStore.fetch().address.address);
       });

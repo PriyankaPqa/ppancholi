@@ -54,6 +54,7 @@ import { RcDialog, VTextFieldWithValidation } from '@libs/component-lib/componen
 import { ICaseFileLabel } from '@libs/entities-lib/case-file';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { VForm } from '@libs/shared-lib/types';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 
 const NUM_LABELS = 4;
 
@@ -149,7 +150,7 @@ export default Vue.extend({
         this.loading = true;
 
         try {
-          await this.$storage.caseFile.actions.setCaseFileLabels(this.caseFileId, this.labels);
+          await useCaseFileStore().setCaseFileLabels(this.caseFileId, this.labels);
           this.$toasted.global.success(this.$t('caseFileActivity.labels.success.labelsModified'));
           this.showLabelsDialog = false;
         } finally {

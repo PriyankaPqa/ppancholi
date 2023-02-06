@@ -7,6 +7,7 @@ import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import householdHelpers from '@/ui/helpers/household';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../ViewPaymentLineDetails.vue';
 
 const localVue = createLocalVue();
@@ -17,6 +18,7 @@ let line = paymentGroup.lines[0];
 
 const { pinia, programStore } = useMockProgramStore();
 const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
+const { caseFileStore } = useMockCaseFileStore(pinia);
 describe('ViewPaymentLineDetails.vue', () => {
   let wrapper;
 
@@ -249,7 +251,7 @@ describe('ViewPaymentLineDetails.vue', () => {
         expect(storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(financialAssistance.financialAssistanceTableId);
         expect(programStore.fetch).toHaveBeenCalledWith({
           id: storage.financialAssistance.getters.get().entity.programId,
-          eventId: storage.caseFile.getters.get().entity.eventId,
+          eventId: caseFileStore.getById().eventId,
         });
         expect(storage.financialAssistance.mutations.setFinancialAssistance).toHaveBeenLastCalledWith(
           storage.financialAssistance.getters.get(),

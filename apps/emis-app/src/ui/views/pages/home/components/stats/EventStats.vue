@@ -88,6 +88,7 @@ import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { RcStatsTemplate } from '@libs/component-lib/components';
 import { IEventMainInfo } from '@libs/entities-lib/event';
 import { ICaseFileDetailedCount } from '@libs/entities-lib/case-file';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 
 export default Vue.extend({
   name: 'EventStats',
@@ -140,8 +141,8 @@ export default Vue.extend({
       this.currentTab = 0;
       this.loadingQuickStats = true;
 
-      const caseFileDetailedCount = await this.$storage.caseFile.actions.fetchCaseFileDetailedCounts(this.selectedEventId);
-      const caseFileCount = await this.$storage.caseFile.actions.fetchCaseFileAssignedCounts(this.selectedEventId, null);
+      const caseFileDetailedCount = await useCaseFileStore().fetchCaseFileDetailedCounts(this.selectedEventId);
+      const caseFileCount = await useCaseFileStore().fetchCaseFileAssignedCounts(this.selectedEventId, null);
 
       this.loadingQuickStats = false;
 

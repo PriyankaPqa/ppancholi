@@ -1,7 +1,7 @@
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
 import { getExtensionComponents } from '@/pinia/user-account/user-account-extension';
-import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
+import { mockOptionItemsService } from '@libs/services-lib/optionItems';
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { IAddRoleToUserRequest, mockUserAccountsService } from '@libs/services-lib/user-accounts/entity';
 import {
@@ -12,7 +12,7 @@ import _sortBy from 'lodash/sortBy';
 import { UserRolesNames } from '@libs/entities-lib/user';
 
 const entityService = mockUserAccountsService();
-const optionsService = mockOptionItemsServiceService();
+const optionsService = mockOptionItemsService();
 const baseComponents = getBaseStoreComponents<IUserAccountEntity, IdParams>(entityService);
 
 const getPinia = () => {

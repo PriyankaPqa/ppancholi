@@ -7,6 +7,7 @@ import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import * as searchEndpoints from '@/constants/searchEndpoints';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './CaseNote.vue';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 
@@ -16,6 +17,7 @@ const storage = mockStorage();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 const { pinia, caseNoteStore } = useMockCaseNoteStore();
+useMockCaseFileStore(pinia);
 
 describe('CaseNote.vue', () => {
   let wrapper;
@@ -142,9 +144,11 @@ describe('CaseNote.vue', () => {
     describe('showAddButton', () => {
       it('returns correct value', async () => {
         const doMount = (level) => {
+          const pinia = getPiniaForUser(level);
+          useMockCaseFileStore(pinia);
           wrapper = shallowMount(Component, {
             localVue,
-            pinia: getPiniaForUser(level),
+            pinia,
             propsData: {
               id: 'id',
             },
@@ -156,12 +160,6 @@ describe('CaseNote.vue', () => {
           });
         };
 
-        await wrapper.setData({
-          caseFile: {
-            ...wrapper.vm.caseFile,
-            readonly: false,
-          },
-        });
         doMount('level1');
         expect(wrapper.vm.showAddButton).toBe(true);
 

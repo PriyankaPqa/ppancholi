@@ -3,7 +3,7 @@ import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { ICaseFileDocumentEntity, mockCaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { getExtensionComponents } from '@/pinia/case-file-document/case-file-document-extension';
 import { createTestingPinia } from '@pinia/testing';
-import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
+import { mockOptionItemsService } from '@libs/services-lib/optionItems';
 import { defineStore } from 'pinia';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import _sortBy from 'lodash/sortBy';
@@ -11,7 +11,7 @@ import { Status } from '@libs/entities-lib/base';
 
 const entityService = mockCaseFileDocumentsService();
 const baseComponents = getBaseStoreComponents<ICaseFileDocumentEntity, { id: uuid, caseFileId: uuid }>(entityService);
-const optionService = mockOptionItemsServiceService();
+const optionService = mockOptionItemsService();
 
 const createTestStore = (opts = {}) => {
   const pinia = createTestingPinia({

@@ -6,6 +6,7 @@ import { mockCombinedCaseFinancialAssistance, ApprovalStatus, ApprovalAction } f
 import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './FinancialAssistancePaymentsList.vue';
 
 let storage = mockStorage();
@@ -14,6 +15,7 @@ const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
 const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
+useMockCaseFileStore(pinia);
 describe('FinancialAssistancePaymentsList.vue', () => {
   let wrapper;
 

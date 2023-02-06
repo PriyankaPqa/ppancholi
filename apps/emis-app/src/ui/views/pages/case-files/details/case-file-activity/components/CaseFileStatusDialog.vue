@@ -71,6 +71,7 @@ import {
 import colors from '@libs/shared-lib/plugins/vuetify/colors';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { useUserStore } from '@/pinia/user/user';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 
 export default Vue.extend({
@@ -170,11 +171,11 @@ export default Vue.extend({
     reasons(): Array<IOptionItem> {
       let reasons;
       if (this.toStatus === CaseFileStatus.Inactive) {
-        reasons = this.$storage.caseFile.getters.inactiveReasons();
+        reasons = useCaseFileStore().getInactiveReasons();
       }
 
       if (this.toStatus === CaseFileStatus.Closed) {
-        reasons = this.$storage.caseFile.getters.closeReasons();
+        reasons = useCaseFileStore().getCloseReasons();
       }
 
       return reasons;
@@ -192,11 +193,11 @@ export default Vue.extend({
 
   async created() {
     if (this.toStatus === CaseFileStatus.Inactive) {
-      await this.$storage.caseFile.actions.fetchInactiveReasons();
+      await useCaseFileStore().fetchInactiveReasons();
     }
 
     if (this.toStatus === CaseFileStatus.Closed) {
-      await this.$storage.caseFile.actions.fetchCloseReasons();
+      await useCaseFileStore().fetchCloseReasons();
     }
 
     const userId = useUserStore().getUserId();

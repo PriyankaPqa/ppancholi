@@ -50,7 +50,7 @@
                   {{ $t('caseFile.financialAssistance.ETransfer.email') }}
                 </td>
                 <td class="data" data-test="eTransfer-email-data">
-                  {{ caseFile.metadata.primaryBeneficiary.contactInformation.email }}
+                  {{ caseFileMetadata.primaryBeneficiary.contactInformation.email }}
                 </td>
               </tr>
               <tr v-if="showRelatedNumber(paymentGroup)" data-test="related_number">
@@ -265,7 +265,7 @@ export default mixins(caseFileDetail).extend({
       const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
       const program = await useProgramStore().fetch({
         id: tableWithMetadata.entity.programId,
-        eventId: this.caseFile.entity.eventId,
+        eventId: this.caseFile.eventId,
       }) as IProgramEntity;
       this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, program, false);
     },

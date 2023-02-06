@@ -2,25 +2,24 @@ import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validat
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
 import { mockStorage } from '@/storage';
-import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
+import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { mockCaseNoteEntity, mockCaseNoteCategories } from '@libs/entities-lib/case-note';
 import helpers from '@/ui/helpers/helpers';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './CaseNoteForm.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockCaseFileId = 'id';
+const mockCaseFileId = '1';
 const caseNote = mockCaseNoteEntity();
 const { pinia, caseNoteStore } = useMockCaseNoteStore();
+useMockCaseFileStore(pinia);
 
 describe('CaseNoteForm.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    caseNoteStore.addCaseNote = jest.fn(() => caseNote);
-    caseNoteStore.getCaseNoteCategories = jest.fn(() => mockCaseNoteCategories());
-
     wrapper = mount(Component, {
       localVue,
       pinia,
@@ -31,11 +30,6 @@ describe('CaseNoteForm.vue', () => {
         caseNote,
         actionTitle: '',
         isEdit: false,
-      },
-      computed: {
-        caseFile() {
-          return { entity: { id: mockCaseFileId } };
-        },
       },
     });
   });
@@ -109,16 +103,15 @@ describe('CaseNoteForm.vue', () => {
 
     describe('caseFile', () => {
       it('return proper data', () => {
-        const caseFile = mockCombinedCaseFile();
-        storage.caseFile.getters.get.mockReturnValueOnce(caseFile);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           mocks: {
             $storage: storage,
           },
         });
 
-        expect(wrapper.vm.caseFile).toStrictEqual(caseFile);
+        expect(JSON.stringify(wrapper.vm.caseFile)).toEqual(JSON.stringify(mockCaseFileEntity({ id: '1' })));
       });
     });
   });

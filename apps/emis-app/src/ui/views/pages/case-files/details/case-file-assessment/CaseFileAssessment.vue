@@ -146,7 +146,7 @@
       data-test="add-cfa"
       :show.sync="showAddPopup"
       :case-file-id="caseFileId"
-      :event-id="caseFile.entity.eventId"
+      :event-id="caseFile.eventId"
       :excluded-ids="oneTimeAssessmentsIds" />
   </div>
 </template>
@@ -484,7 +484,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     async copyLink(item: MappedAssessment) {
       const assessment = this.items.find((i) => i.entity.id === item.id);
       const settings = useTenantSettingsStore().currentTenantSettings;
-      const primaryBeneficiary = useHouseholdStore().getById(this.caseFile.entity.householdId).primaryBeneficiary;
+      const primaryBeneficiary = useHouseholdStore().getById(this.caseFile.householdId).primaryBeneficiary;
       const member = await this.$services.households.getPerson(primaryBeneficiary);
       const languages = await useRegistrationStore().fetchPreferredLanguages();
       let languageCode = languages.find((l) => l.id === member.contactInformation.preferredLanguage.optionItemId)?.languageCode;

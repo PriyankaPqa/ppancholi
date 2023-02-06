@@ -90,11 +90,11 @@ import SplitHouseholdEvent from '@/ui/views/pages/household/split/SplitHousehold
 import SplitHouseholdMembers from '@/ui/views/pages/household/split/SplitHouseholdMembers.vue';
 import ReviewSplit from '@/ui/views/pages/household/split/ReviewSplit.vue';
 
-import { tabs } from '@/store/modules/household/tabs';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { tabs } from '@/ui/views/pages/household/split/tabs';
 
 export default mixins(individual).extend({
   name: 'SplitHousehold',

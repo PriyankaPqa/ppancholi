@@ -10,6 +10,8 @@ import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import moment from '@libs/shared-lib/plugins/moment';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();
@@ -18,7 +20,7 @@ let mockDocumentMapped;
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
-const { pinia, caseFileDocumentStore } = useMockCaseFileDocumentStore();
+let caseFileDocumentStore;
 
 describe('CaseFileDocument.vue', () => {
   let wrapper;
@@ -26,6 +28,8 @@ describe('CaseFileDocument.vue', () => {
 
   const mountWrapper = (canEdit = true, canAdd = true, canDelete = true, canDownload = true) => {
     jest.clearAllMocks();
+    const pinia = useMockCaseFileDocumentStore().pinia;
+    caseFileDocumentStore = useMockCaseFileDocumentStore(pinia).caseFileDocumentStore;
 
     mockDocumentMapped = {
       name: document.entity.name,
@@ -36,7 +40,6 @@ describe('CaseFileDocument.vue', () => {
       created: 'Jul 20, 2021',
       entity: document.entity,
     };
-
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
@@ -93,15 +96,16 @@ describe('CaseFileDocument.vue', () => {
   describe('Computed', () => {
     describe('canAdd', () => {
       it('returns true if user has level 1 and not readonly', () => {
+        let pinia = getPiniaForUser('level1');
+        useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
           },
-          pinia: getPiniaForUser('level1'),
+          pinia,
           computed: {
-            caseFile: () => mockCombinedCaseFile(),
             event() {
               return mockEvent;
             },
@@ -110,9 +114,11 @@ describe('CaseFileDocument.vue', () => {
         });
 
         expect(wrapper.vm.canAdd).toBeTruthy();
-
+        pinia = getPiniaForUser('level1');
+        useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -122,22 +128,22 @@ describe('CaseFileDocument.vue', () => {
               return true;
             },
           },
-          pinia: getPiniaForUser('level1'),
-
         });
 
         expect(wrapper.vm.canAdd).toBeFalsy();
       });
 
       it('returns true if user does not have level but hasRole is called with contributor3', () => {
+        const pinia = useMockCaseFileDocumentStore().pinia;
+        useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
           },
           computed: {
-            caseFile: () => mockCombinedCaseFile(),
             event() {
               return mockEvent;
             },
@@ -181,15 +187,16 @@ describe('CaseFileDocument.vue', () => {
 
     describe('canEdit', () => {
       it('returns true if user has level 1 and not readonly', () => {
+        let pinia = getPiniaForUser('level1');
+        useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
           },
-          pinia: getPiniaForUser('level1'),
           computed: {
-            caseFile: () => mockCombinedCaseFile(),
             event() {
               return mockEvent;
             },
@@ -199,8 +206,11 @@ describe('CaseFileDocument.vue', () => {
 
         expect(wrapper.vm.canEdit).toBeTruthy();
 
+        pinia = getPiniaForUser('level2');
+        useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -214,7 +224,6 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          pinia: getPiniaForUser('level2'),
 
         });
 
@@ -529,6 +538,8 @@ describe('CaseFileDocument.vue', () => {
 
     describe('caseFileDocumentsMapped', () => {
       beforeEach(async () => {
+        const pinia = useMockCaseFileDocumentStore().pinia;
+        useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -578,7 +589,9 @@ describe('CaseFileDocument.vue', () => {
           edit: 'edit',
           delete: 'delete',
         };
-
+        const pinia = useMockCaseFileDocumentStore().pinia;
+        useMockCaseFileStore(pinia);
+        useCaseFileDocumentStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -646,7 +659,8 @@ describe('CaseFileDocument.vue', () => {
           skip: 0,
           top: 10,
         };
-
+        const pinia = useMockCaseFileDocumentStore().pinia;
+        useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
           pinia,

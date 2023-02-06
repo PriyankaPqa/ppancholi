@@ -47,10 +47,10 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   setCaseFileIsDuplicate: jest.Mock<ICaseFileEntity>;
   setCaseFileTriage: jest.Mock<ICaseFileEntity>;
   setCaseFileAssign: jest.Mock<ICaseFileEntity>;
+  setCaseFileIdentityAuthentication: jest.Mock<ICaseFileEntity>;
   createCaseFile: jest.Mock<IDetailedRegistrationResponse>;
   setCaseFileValidationOfImpact: jest.Mock<ICaseFileEntity>;
   getCaseFileAssignedCounts: jest.Mock<ICaseFileCount>;
-  // todo add mock from api response here for getCaseFileAssignedCounts.
   fetchCaseFileDetailedCounts: jest.Mock<ICaseFileDetailedCount>;
   assignCaseFile: jest.Mock<ICaseFileEntity>;
   getSummary: jest.Mock<ICaseFileEntity>;

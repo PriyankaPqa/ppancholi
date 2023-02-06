@@ -113,6 +113,7 @@ import {
 import { IListOption, IIdMultilingualName } from '@libs/shared-lib/types';
 
 import { Status } from '@libs/entities-lib/base';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 
 interface IListTag extends IIdMultilingualName {
   existing: boolean;
@@ -176,7 +177,7 @@ export default Vue.extend({
 
     allTags(): IOptionItem[] {
       const existingIds = this.existingTags.map((t) => t.id);
-      return this.$storage.caseFile.getters.tagsOptions(true, existingIds);
+      return useCaseFileStore().getTagsOptions(true, existingIds);
     },
 
   },
@@ -252,7 +253,7 @@ export default Vue.extend({
       const payload: IListOption[] = this.makePayload(tabsToSubmit);
 
       try {
-        const res = await this.$storage.caseFile.actions.setCaseFileTags(this.caseFileId, payload);
+        const res = await useCaseFileStore().setCaseFileTags(this.caseFileId, payload);
         if (res) {
           // Update the tags displayed on the page only after the patch call was successful
           this.updateExistingTagsAfterAdd();
@@ -268,7 +269,7 @@ export default Vue.extend({
       const payload = this.makePayload(this.remainingTags);
 
       try {
-        const res = await this.$storage.caseFile.actions.setCaseFileTags(this.caseFileId, payload);
+        const res = await useCaseFileStore().setCaseFileTags(this.caseFileId, payload);
         if (res) {
           // Update the tags displayed on the page only after the patch call was successful
           this.existingTags = this.remainingTags;

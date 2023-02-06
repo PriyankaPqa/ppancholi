@@ -2,7 +2,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { mockFinancialAssistanceService } from '@libs/services-lib/financial-assistance-payments/entity';
-import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
+import { mockOptionItemsService } from '@libs/services-lib/optionItems';
 import _sortBy from 'lodash/sortBy';
 import {
   IdParams,
@@ -15,7 +15,7 @@ import { mockVersionedEntityCombined } from '@libs/entities-lib/value-objects/ve
 import { EOptionLists, OptionItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
 
 const entityService = mockFinancialAssistanceService();
-const optionsService = mockOptionItemsServiceService();
+const optionsService = mockOptionItemsService();
 const baseComponents = getBaseStoreComponents<IFinancialAssistancePaymentEntity, IdParams>(entityService);
 const getPinia = () => {
   const pinia = createTestingPinia({

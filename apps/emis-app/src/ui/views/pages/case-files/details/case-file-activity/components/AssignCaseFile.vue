@@ -135,6 +135,7 @@ import { IAzureSearchParams, IAzureTableSearchResults } from '@libs/shared-lib/t
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import AssignedList from './AssignedList.vue';
 
 interface TeamWithCount extends ITeamEntity {
@@ -427,7 +428,11 @@ export default mixins(TablePaginationSearchMixin).extend({
 
         const assignedTeamsPayload = this.assignedTeams.map((t) => t.id);
         const assignedTeamMembersPayload = this.prepareTeamMembersPayload(this.assignedIndividuals);
-        await this.$storage.caseFile.actions.assignCaseFile(this.caseFile.id, assignedTeamMembersPayload, assignedTeamsPayload);
+        await useCaseFileStore().assignCaseFile({
+          id: this.caseFile.id,
+          teamMembers: assignedTeamMembersPayload,
+          teams: assignedTeamsPayload,
+        });
         this.$emit('updateAssignmentsInfo', { teams: this.assignedTeams, individuals: this.assignedIndividuals });
       } finally {
         this.submitLoading = false;

@@ -150,10 +150,10 @@ describe('HouseholdResultsMove.vue', () => {
             $storage: storage,
           },
         });
-        wrapper.vm.$storage.caseFile.actions.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
+        wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
         wrapper.vm.getCaseFilesInEvent();
 
-        expect(wrapper.vm.$storage.caseFile.actions.search)
+        expect(wrapper.vm.combinedCaseFileStore.search)
           .toHaveBeenCalledWith({ filter: "search.in(Entity/HouseholdId, 'mock-id-1|mock-id-2', '|') and Entity/EventId eq 'event-id'" });
       });
 
@@ -178,20 +178,20 @@ describe('HouseholdResultsMove.vue', () => {
             $storage: storage,
           },
         });
-        wrapper.vm.$storage.caseFile.actions.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
+        wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
         wrapper.vm.getCaseFilesInEvent();
 
-        expect(wrapper.vm.$storage.caseFile.actions.search)
+        expect(wrapper.vm.combinedCaseFileStore.search)
           .toHaveBeenCalledTimes(3);
       });
 
       it('calls the casefile getter and saves the household ids of the returned casefiles into householdsInEvent', async () => {
         const caseFiles = [{ entity: { householdId: 'h-id-1' } }, { entity: { householdId: 'h-id-2' } }];
-        wrapper.vm.$storage.caseFile.actions.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
-        wrapper.vm.$storage.caseFile.getters.getByIds = jest.fn(() => caseFiles);
+        wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
+        wrapper.vm.combinedCaseFileStore.getByIds = jest.fn(() => caseFiles);
 
         await wrapper.vm.getCaseFilesInEvent();
-        expect(wrapper.vm.$storage.caseFile.getters.getByIds).toHaveBeenCalledWith(['id-1', 'id-2']);
+        expect(wrapper.vm.combinedCaseFileStore.getByIds).toHaveBeenCalledWith(['id-1', 'id-2']);
         expect(wrapper.vm.householdsInEvent).toEqual(['h-id-1', 'h-id-2']);
       });
     });

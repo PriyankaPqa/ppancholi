@@ -7,10 +7,10 @@ import { mockCreateOptionPayload } from '@/pinia/option-list/optionList.mock';
 import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
 import Vue from 'vue';
-import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
+import { mockOptionItemsService } from '@libs/services-lib/optionItems';
 import { getExtensionComponents } from '@/pinia/option-list/optionListExtension';
 
-const entityService = mockOptionItemsServiceService();
+const entityService = mockOptionItemsService();
 
 const getPinia = () => {
   const pinia = createTestingPinia({

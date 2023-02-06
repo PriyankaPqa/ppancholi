@@ -2,7 +2,7 @@
   <div>
     <status-select
       data-test="case-file-detail-status-select"
-      :value="caseFile.entity.caseFileStatus"
+      :value="caseFile.caseFileStatus"
       :statuses="statuses"
       :disabled="disableStatus"
       status-name="CaseFileStatus"
@@ -37,10 +37,11 @@ import {
   RcConfirmationDialog,
 } from '@libs/component-lib/components';
 import { EEventStatus } from '@libs/entities-lib/registration-event';
-import { ICaseFileCombined, CaseFileStatus } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { IListOption } from '@libs/shared-lib/types';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import CaseFileStatusDialog from './CaseFileStatusDialog.vue';
 
 export default Vue.extend({
@@ -54,7 +55,7 @@ export default Vue.extend({
 
   props: {
     caseFile: {
-      type: Object as () => ICaseFileCombined,
+      type: Object as () => ICaseFileEntity,
       required: true,
     },
     event: {
@@ -89,7 +90,7 @@ export default Vue.extend({
       if (this.event?.schedule?.status !== +EEventStatus.Open && !this.$hasLevel('level6')) {
         return true;
       }
-      if (this.caseFile.entity.caseFileStatus === CaseFileStatus.Archived && !this.$hasLevel('level5')) {
+      if (this.caseFile.caseFileStatus === CaseFileStatus.Archived && !this.$hasLevel('level5')) {
         return true;
       }
       return !this.$hasLevel('level2');
@@ -149,7 +150,12 @@ export default Vue.extend({
     async submitStatusChange() {
       try {
         this.loading = true;
-        await this.$storage.caseFile.actions.setCaseFileStatus(this.caseFile.entity.id, this.newStatus, this.rationale, this.reason);
+        await useCaseFileStore().setCaseFileStatus({
+          id: this.caseFile.id,
+          status: this.newStatus,
+          rationale: this.rationale,
+          reason: this.reason,
+        });
       } finally {
         this.loading = false;
         this.showConfirmationDialog = false;

@@ -3,6 +3,7 @@ import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { mockStorage } from '@/storage';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../case-file-activity/components/CaseFileLabels.vue';
 
 const localVue = createLocalVue();
@@ -21,6 +22,8 @@ mockCaseFile.labels = [{
   order: 4,
 }];
 
+const { pinia, caseFileStore } = useMockCaseFileStore();
+
 const storage = mockStorage();
 
 describe('CaseFileLabels.vue', () => {
@@ -31,6 +34,7 @@ describe('CaseFileLabels.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         caseFileLabels: mockCaseFile.labels,
         caseFileId: mockCaseFile.id,
@@ -120,27 +124,27 @@ describe('CaseFileLabels.vue', () => {
 
     describe('submitAddLabels', () => {
       it('does not call the action if the validation fails', async () => {
-        expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.setCaseFileLabels).toHaveBeenCalledTimes(0);
 
         jest.spyOn(wrapper.vm.$refs.form, 'validate').mockImplementation(() => false);
 
         await wrapper.vm.submitAddLabels();
 
-        expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.setCaseFileLabels).toHaveBeenCalledTimes(0);
       });
 
       it('calls the setCaseFileLabels action if the change of labels is valid', async () => {
         jest.clearAllMocks();
-        expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.setCaseFileLabels).toHaveBeenCalledTimes(0);
 
         jest.spyOn(wrapper.vm.$refs.form, 'validate').mockImplementation(() => true);
         wrapper.vm.isNewLabelChangeValid = jest.fn(() => true);
 
         await wrapper.vm.submitAddLabels();
 
-        expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledTimes(1);
+        expect(caseFileStore.setCaseFileLabels).toHaveBeenCalledTimes(1);
 
-        expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledWith(
+        expect(caseFileStore.setCaseFileLabels).toHaveBeenCalledWith(
           mockCaseFile.id,
           wrapper.vm.labels,
         );
@@ -148,14 +152,14 @@ describe('CaseFileLabels.vue', () => {
 
       it('should not call the setCaseFileLabels action if the change of labels is invalid', async () => {
         jest.clearAllMocks();
-        expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.setCaseFileLabels).toHaveBeenCalledTimes(0);
 
         jest.spyOn(wrapper.vm.$refs.form, 'validate').mockImplementation(() => true);
         wrapper.vm.isNewLabelChangeValid = jest.fn(() => false);
 
         await wrapper.vm.submitAddLabels();
 
-        expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.setCaseFileLabels).toHaveBeenCalledTimes(0);
       });
     });
   });

@@ -123,6 +123,7 @@ import {
 } from '@libs/entities-lib/case-file';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 
 export default Vue.extend({
   name: 'VerifyIdentity',
@@ -174,7 +175,7 @@ export default Vue.extend({
      * Return list of options.
      */
     verificationOptions(): Array<IOptionItem> {
-      return this.$storage.caseFile.getters.screeningIds(true, this.form.identificationIds);
+      return useCaseFileStore().getScreeningIds(true, this.form.identificationIds);
     },
 
     isValidAuthStatus(): boolean {
@@ -230,7 +231,7 @@ export default Vue.extend({
   },
 
   async created() {
-    await this.$storage.caseFile.actions.fetchScreeningIds();
+    await useCaseFileStore().fetchScreeningIds();
     this.form.method = this.caseFile.identityAuthentication?.method || IdentityAuthenticationMethod.NotApplicable;
     this.form.status = this.caseFile.identityAuthentication?.status || IdentityAuthenticationStatus.NotVerified;
     this.form.identificationIds = (this.caseFile.identityAuthentication?.identificationIds || []).map((x) => x.optionItemId);
@@ -258,8 +259,7 @@ export default Vue.extend({
             optionItemId: m,
             specifiedOther: this.verificationOptions.filter((v) => m === v.id && v.isOther).length > 0 ? this.form.specifiedOther : null,
           }));
-
-        const res = await this.$storage.caseFile.actions.setCaseFileIdentityAuthentication(this.caseFile.id, value);
+        const res = await useCaseFileStore().setCaseFileIdentityAuthentication(this.caseFile.id, value);
 
         this.loading = false;
 

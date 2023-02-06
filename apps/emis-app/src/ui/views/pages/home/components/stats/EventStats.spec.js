@@ -2,11 +2,14 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { mockStorage } from '@/storage';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './EventStats.vue';
 
 const storage = mockStorage();
 
 const localVue = createLocalVue();
+
+const { pinia, caseFileStore } = useMockCaseFileStore();
 
 describe('EventStats.vue', () => {
   let wrapper;
@@ -14,6 +17,7 @@ describe('EventStats.vue', () => {
   beforeEach(async () => {
     wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       mocks: {
         $storage: storage,
       },
@@ -59,12 +63,12 @@ describe('EventStats.vue', () => {
       const selectedEventId = event.id;
       it('should call fetchCaseFileDetailedCounts', async () => {
         await wrapper.vm.selectEvent(selectedEventId);
-        expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFileDetailedCounts).toHaveBeenCalledWith(selectedEventId);
+        expect(caseFileStore.fetchCaseFileDetailedCounts).toHaveBeenCalledWith(selectedEventId);
       });
 
       it('should call fetchCaseFileAssignedCounts', async () => {
         await wrapper.vm.selectEvent(selectedEventId);
-        expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFileAssignedCounts).toHaveBeenCalledWith(selectedEventId, null);
+        expect(caseFileStore.fetchCaseFileAssignedCounts).toHaveBeenCalledWith(selectedEventId, null);
       });
 
       it('should not call fetchCaseFileDetailedCounts if no event selected', async () => {
@@ -72,7 +76,7 @@ describe('EventStats.vue', () => {
 
         await wrapper.vm.selectEvent(null);
 
-        expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFileDetailedCounts).toHaveBeenCalledTimes(0);
+        expect(caseFileStore.fetchCaseFileDetailedCounts).toHaveBeenCalledTimes(0);
       });
 
       it('should clear stats information if no event selected', async () => {

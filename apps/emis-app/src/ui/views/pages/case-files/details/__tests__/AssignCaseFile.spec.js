@@ -5,14 +5,16 @@ import { mockTeamEntity, TeamType, mockTeamMembersData } from '@libs/entities-li
 import { mockStorage } from '@/storage';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../case-file-activity/components/AssignCaseFile.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCaseFileEntity();
 const team = { ...mockTeamEntity(), activeMemberCount: 1 };
-const { pinia } = useMockUserAccountStore();
-const { teamStore } = useMockTeamStore(pinia);
+const { pinia, teamStore } = useMockTeamStore();
+const { caseFileStore } = useMockCaseFileStore(pinia);
+useMockUserAccountStore(pinia);
 
 const individual = (id = 'mock-id-1', otherProps = {}) => (
   {
@@ -475,8 +477,12 @@ describe('AssignCaseFile.vue', () => {
 
         wrapper.vm.prepareTeamMembersPayload = jest.fn(() => mockAssignedTeamMembers());
         await wrapper.vm.submit();
-        expect(storage.caseFile.actions.assignCaseFile)
-          .toHaveBeenCalledWith(wrapper.vm.caseFile.id, mockAssignedTeamMembers(), ['team-id-1', 'team-id-2']);
+        expect(caseFileStore.assignCaseFile)
+          .toHaveBeenCalledWith({
+            id: wrapper.vm.caseFile.id,
+            teamMembers: mockAssignedTeamMembers(),
+            teams: ['team-id-1', 'team-id-2'],
+          });
       });
 
       it('emits updateAssignmentsInfo with the right payload', async () => {

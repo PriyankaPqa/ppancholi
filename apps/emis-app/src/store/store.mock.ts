@@ -5,13 +5,6 @@ import Vuex from 'vuex';
 import { IRootState, IStore } from '@/store/store.types';
 import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
-import { OptionItemsService } from '@libs/services-lib/optionItems/optionItems';
-
-import { CaseFileEntityModule } from '@/store/modules/case-file/caseFileEntity';
-import { CaseFileMetadataModule } from '@/store/modules/case-file/caseFileMetadata';
-import { CaseFilesService } from '@libs/services-lib/case-files/entity';
-import { CaseFilesMetadataService } from '@libs/services-lib/case-files/metadata';
-
 import { FinancialAssistanceEntityModule } from '@/store/modules/financial-assistance/financialAssistanceEntity';
 import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-assistance/financialAssistanceMetadata';
 import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
@@ -24,16 +17,6 @@ Vue.use(Vuex);
 
 const mockConfig = {
   modules: {
-    [vuexModule.CASE_FILE_ENTITIES]: new CaseFileEntityModule(
-      new CaseFilesService(httpClient),
-      new OptionItemsService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-    [vuexModule.CASE_FILE_METADATA]: new CaseFileMetadataModule(
-      new CaseFilesMetadataService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-
     [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]: new FinancialAssistanceEntityModule(
       new FinancialAssistanceTablesService(httpClient),
       mockSignalR(),

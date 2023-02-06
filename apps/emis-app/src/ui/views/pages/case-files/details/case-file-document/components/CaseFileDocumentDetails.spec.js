@@ -6,6 +6,7 @@ import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './CaseFileDocumentDetails.vue';
 
 const storage = mockStorage();
@@ -14,6 +15,7 @@ const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
 const { pinia, caseFileDocumentStore } = useMockCaseFileDocumentStore();
+useMockCaseFileStore(pinia);
 
 describe('CaseFileDocumentDetails', () => {
   let wrapper;

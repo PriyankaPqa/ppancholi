@@ -6,6 +6,7 @@ import { mockStorage } from '@/storage';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../ViewFinancialAssistanceDetails.vue';
 
 const localVue = createLocalVue();
@@ -17,8 +18,9 @@ const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
 const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
+useMockCaseFileStore(pinia);
 
-describe('ViewFinancialAssistanceDetails.vue', () => {
+describe('ViewFinancialAssistanceDetails', () => {
   let wrapper;
 
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {

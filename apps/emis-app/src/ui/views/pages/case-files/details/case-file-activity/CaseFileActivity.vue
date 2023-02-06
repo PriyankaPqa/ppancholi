@@ -10,7 +10,7 @@
       <case-file-tags
         data-test="caseFileActivity-tags"
         :readonly="!canEdit"
-        :case-file-id="caseFile.entity.id"
+        :case-file-id="caseFile.id"
         :tags="tags" />
 
       <v-row class="ma-0 pa-0">
@@ -23,7 +23,7 @@
 
           <span class="pr-2 rc-body12">{{ $t('caseFileActivity.triage') }}:</span>
           <v-select
-            :value="caseFile.entity.triage"
+            :value="caseFile.triage"
             class="triage-select"
             data-test="caseFileActivity-triage-select"
             :readonly="!canEdit || saving"
@@ -57,7 +57,7 @@
                 :disabled="!canEdit || saving"
                 v-on="on"
                 @click="setCaseFileIsDuplicate">
-                <v-icon :color="caseFile && caseFile.entity.isDuplicate ? 'secondary' : ''">
+                <v-icon :color="caseFile && caseFile.isDuplicate ? 'secondary' : ''">
                   $rctech-duplicate
                 </v-icon>
               </v-btn>
@@ -67,7 +67,7 @@
         </v-col>
 
         <case-file-assignments
-          :case-file="caseFile.entity"
+          :case-file="caseFile"
           :readonly="readonly"
           data-test="case-file-assignments" />
       </v-row>
@@ -75,8 +75,8 @@
     <template v-if="!loading" slot="default">
       <v-row class="ma-0 pa-0">
         <case-file-labels
-          :case-file-id="caseFile.entity.id"
-          :case-file-labels="caseFile.entity.labels || []"
+          :case-file-id="caseFile.id"
+          :case-file-labels="caseFile.labels || []"
           :readonly="!canEdit" />
       </v-row>
 
@@ -124,6 +124,7 @@ import moment from '@libs/shared-lib/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
 import entityUtils from '@libs/entities-lib/utils';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import CaseFileTags from './components/CaseFileTags.vue';
 import CaseFileLabels from './components/CaseFileLabels.vue';
 import CaseFileStatus from './components/CaseFileStatus.vue';
@@ -177,8 +178,8 @@ export default mixins(caseFileDetail).extend({
     },
 
     tags(): IIdMultilingualName[] {
-      const existingIds = this.caseFile.entity.tags.map((t) => t.optionItemId);
-      const tags = this.$storage.caseFile.getters.tagsOptions(false);
+      const existingIds = this.caseFile.tags.map((t) => t.optionItemId);
+      const tags = useCaseFileStore().getTagsOptions(false);
       return existingIds.map((id) => {
         const name = tags.find((t) => t.id === id)?.name || entityUtils.initMultilingualAttributes();
         return { id, name };
@@ -191,8 +192,8 @@ export default mixins(caseFileDetail).extend({
       this.loading = true;
 
       await Promise.all([
-        this.$storage.caseFile.actions.fetchTagsOptions(),
-        this.$storage.caseFile.actions.fetch(this.caseFileId, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false }),
+        useCaseFileStore().fetchTagsOptions(),
+        useCaseFileStore().fetch(this.caseFileId),
         this.fetchCaseFileActivities(),
       ]);
 
@@ -229,7 +230,7 @@ export default mixins(caseFileDetail).extend({
     async fetchCaseFileActivities() {
       try {
         this.loadingActivity = true;
-        const activity: ICaseFileActivity[] = await this.$storage.caseFile.actions.fetchCaseFileActivities(this.caseFileId);
+        const activity: ICaseFileActivity[] = await useCaseFileStore().fetchCaseFileActivities(this.caseFileId);
         if (activity) {
           this.caseFileActivities = activity;
         }
@@ -243,15 +244,15 @@ export default mixins(caseFileDetail).extend({
     },
 
     async setCaseFileIsDuplicate() {
-      const { id, isDuplicate } = this.caseFile.entity;
+      const { id, isDuplicate } = this.caseFile;
       this.saving = true;
-      await this.$storage.caseFile.actions.setCaseFileIsDuplicate(id, !isDuplicate);
+      await useCaseFileStore().setCaseFileIsDuplicate(id, !isDuplicate);
       this.saving = false;
     },
 
     async setCaseFileTriage(triage: number) {
       this.saving = true;
-      await this.$storage.caseFile.actions.setCaseFileTriage(this.caseFileId, triage);
+      await useCaseFileStore().setCaseFileTriage(this.caseFileId, triage);
       this.saving = false;
     },
 
