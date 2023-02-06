@@ -394,7 +394,7 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('canEdit', () => {
-      it('returns true if user has level 1', () => {
+      it('returns true if user has level 1 and feature flag is off', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -412,7 +412,29 @@ describe('HouseholdProfile.vue', () => {
             },
           },
         });
+        wrapper.vm.$hasFeature = jest.fn(() => false);
+        expect(wrapper.vm.canEdit).toBeTruthy();
+      });
 
+      it('returns true if user has level 0 and feature flag is on', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: householdEntity.id,
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+          },
+          pinia: getPiniaForUser('level0'),
+          mocks: {
+            $storage: {
+              caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
+            },
+          },
+        });
+        wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 

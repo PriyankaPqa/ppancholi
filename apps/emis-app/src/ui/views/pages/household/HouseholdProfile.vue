@@ -196,7 +196,7 @@ import {
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 import routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { ICombinedIndex, IMultilingual } from '@libs/shared-lib/types';
+import { IAzureSearchResult, ICombinedIndex, IMultilingual } from '@libs/shared-lib/types';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { IEventData } from '@libs/entities-lib/registration-event';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
@@ -323,7 +323,7 @@ export default mixins(household).extend({
     },
 
     canEdit():boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? 'level0' : 'level1');
     },
 
     canMove():boolean {
@@ -363,7 +363,7 @@ export default mixins(household).extend({
     async fetchAllEvents() {
       if (this.caseFiles.length) {
         const eventIds = this.caseFiles.map((cf) => cf.eventId);
-        const results = await this.$services.publicApi.searchEventsById(eventIds);
+        const results = await this.$services.publicApi.searchEventsById(eventIds) as IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>;
         this.allEvents = results?.value;
       }
     },

@@ -21,6 +21,7 @@ export const useMockUserStore = (pinia?: TestingPinia) => {
 
 export const getPiniaForUser = (level: Role, stubActions = false) => {
   const mockData = {
+    level0: mockUsersData()[11],
     level1: mockUsersData()[0],
     level2: mockUsersData()[1],
     level3: mockUsersData()[2],

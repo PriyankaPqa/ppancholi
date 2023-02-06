@@ -178,7 +178,7 @@ export const caseFiles: RouteConfig = {
       path: Routes.household.householdProfile.path,
       name: Routes.household.householdProfile.name,
       component: HouseholdProfile,
-      meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+      meta: { level: 'level0', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
       props: true,
     },
     {

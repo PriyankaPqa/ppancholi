@@ -211,7 +211,7 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-home');
         expect(item.text).toBe('leftMenu.home_title');
         expect(item.test).toBe('home');
-        expect(item.level).toBe('level1');
+        expect(item.level).toBe('level0');
         expect(item.roles).toEqual(['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE]);
       });
 
@@ -222,7 +222,7 @@ describe('LeftMenu.vue', () => {
           expect(item.icon).toBe('mdi-clipboard-text');
           expect(item.text).toBe('leftMenu.caseFiles_title');
           expect(item.test).toBe('caseFile');
-          expect(item.level).toBe('level1');
+          expect(item.level).toBe('level0');
           expect(item.disabled).toBe(false);
           expect(item.roles).toEqual(['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE]);
         });
@@ -243,7 +243,7 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('$rctech-search-person');
         expect(item.text).toBe('leftMenu.search_household_title');
         expect(item.test).toBe('search_household');
-        expect(item.level).toBe('level1');
+        expect(item.level).toBe('level0');
       });
 
       test('Item[3]', () => {
