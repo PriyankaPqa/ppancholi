@@ -418,10 +418,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
 
   },
 
-  created() {
+  async created() {
     // So filters are retrieved
     this.saveState = true;
     this.loadState();
+    await this.doSearch();
   },
 
   watch: {
@@ -446,6 +447,20 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin, UserAccount
   },
 
   methods: {
+    async doSearch() {
+      if (this.params) {
+        await this.search(this.params);
+
+        // If there are no more items on a pending approvals page that is not the first page,
+        // (because we just approved the only item on the page), the previous page is displayed
+        if (this.isPendingRequests && !this.tableData?.length && this.params.pageIndex > 1) {
+          this.params.pageIndex -= 1;
+          this.options.page -= 1;
+          await this.search(this.params);
+        }
+      }
+    },
+
     getFinancialAssistanceDetailsRoute(caseFileId: string, fapId: string) {
       return {
         name: routes.caseFile.financialAssistance.details.name,

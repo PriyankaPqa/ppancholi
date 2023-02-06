@@ -1,5 +1,4 @@
 import { shallowMount, createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { RcDataTable } from '@libs/component-lib/components';
 import { mockCombinedCaseFinancialAssistance, ApprovalStatus } from '@libs/entities-lib/financial-assistance-payment';
@@ -13,7 +12,6 @@ import Component from './ApprovalRequestsTable.vue';
 
 const localVue = createLocalVue();
 
-const storage = mockStorage();
 let wrapper;
 let userStore;
 
@@ -24,7 +22,6 @@ const doMount = (otherOptions = {}) => {
   const options = {
     localVue,
     pinia,
-    mocks: { $storage: storage },
     ...otherOptions,
   };
   wrapper = shallowMount(Component, options);
@@ -338,6 +335,14 @@ describe('ApprovalRequestsTable', () => {
       });
       expect(wrapper.vm.loadState).toHaveBeenCalled();
     });
+
+    it('should call doSearch', async () => {
+      wrapper.vm.doSearch = jest.fn();
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+      expect(wrapper.vm.doSearch).toHaveBeenCalled();
+    });
   });
 
   describe('Watch', () => {
@@ -411,6 +416,39 @@ describe('ApprovalRequestsTable', () => {
         myRoleId: () => 'my-role-id',
       },
     }));
+
+    describe('doSearch', () => {
+      it('calls search with params', async () => {
+        wrapper.vm.search = jest.fn();
+        wrapper.setData({ params: { pageIndex: 1 } });
+        await wrapper.vm.doSearch();
+        expect(wrapper.vm.search).toHaveBeenCalledWith(wrapper.vm.params);
+      });
+
+      it('should change params to go to previous page and call search again if tabelData is empty and page is not first for pending requests', async () => {
+        doMount({
+          propsData: {
+            isPendingRequests: true,
+          },
+          data() {
+            return {
+              params: { pageIndex: 2 }, options: { page: 2 },
+            };
+          },
+          computed: {
+            tableData() {
+              return [];
+            },
+          },
+        });
+        wrapper.vm.search = jest.fn();
+
+        await wrapper.vm.doSearch();
+        expect(wrapper.vm.search).toHaveBeenCalledTimes(2);
+        expect(wrapper.vm.params.pageIndex).toEqual(1);
+        expect(wrapper.vm.options.page).toEqual(1);
+      });
+    });
 
     describe('getFinancialAssistanceDetailsRoute', () => {
       it('returns the right route object', () => {
@@ -496,7 +534,7 @@ describe('ApprovalRequestsTable', () => {
     });
 
     describe('fetchData', () => {
-      it('should call storage actions with proper parameters', async () => {
+      it('should call store with proper parameters', async () => {
         const params = {
           search: 'query',
           filter: 'filter',
@@ -607,7 +645,6 @@ describe('ApprovalRequestsTable', () => {
         computed: {
           mappedPayments: () => [FAPayment],
         },
-        mocks: { $storage: storage },
       });
 
       wrapper.vm.getFinancialAssistanceDetailsRoute = jest.fn(() => ({
