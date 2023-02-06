@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
-  mockCombinedTeams, mockTeamMembersData,
+  mockTeamEntity, mockTeamMembersData,
 } from '@libs/entities-lib/team';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { mockStorage } from '@/storage';
@@ -9,6 +9,7 @@ import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
+import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCaseFiles.vue';
 import Component, { LOAD_SIZE } from './TeamMembersTable.vue';
 
 const localVue = createLocalVue();
@@ -18,7 +19,7 @@ const storage = mockStorage();
 const { pinia } = useMockUserAccountStore();
 const { teamStore } = useMockTeamStore(pinia);
 
-const mockTeam = mockCombinedTeams()[0];
+const mockTeam = mockTeamEntity();
 
 const userAccounts = [
   mockCombinedUserAccount({ id: 'guid-member-1' }),
@@ -155,8 +156,8 @@ describe('TeamMembersTable.vue', () => {
         test('props teamMembers is correctly linked', async () => {
           await wrapper.setData({ showAddTeamMemberDialog: true });
           const element = wrapper.findDataTest('add-team-members');
-          expect(element.props().teamMembers).toEqual(wrapper.vm.team.entity.teamMembers);
-          expect(element.props().teamId).toEqual(wrapper.vm.team.entity.id);
+          expect(element.props().teamMembers).toEqual(wrapper.vm.team.teamMembers);
+          expect(element.props().teamId).toEqual(wrapper.vm.team.id);
         });
       });
 
@@ -178,6 +179,19 @@ describe('TeamMembersTable.vue', () => {
         const button = wrapper.find('[data-test="add-new-member"]');
         await button.trigger('click');
         expect(wrapper.vm.showAddTeamMemberDialog).toBeTruthy();
+      });
+    });
+
+    describe('Team Member Case File', () => {
+      it('should call onCloseCaseFileDialog when emit dialogClose', async () => {
+        wrapper.vm.onCloseCaseFileDialog = jest.fn();
+        await wrapper.setData({
+          showMemberCaseFilesDialog: true,
+        });
+        await wrapper.vm.$nextTick();
+        const component = wrapper.findComponent(TeamMemberCaseFiles);
+        await component.vm.$emit('dialogClose');
+        expect(wrapper.vm.onCloseCaseFileDialog).toHaveBeenCalled();
       });
     });
   });
@@ -202,10 +216,7 @@ describe('TeamMembersTable.vue', () => {
       it('returns the primary member id from team if none comes from props', async () => {
         const team = {
           ...mockTeam,
-          entity: {
-            ...mockTeam.entity,
-            teamMembers: [{ id: 'id-PC', isPrimaryContact: true }],
-          },
+          teamMembers: [{ id: 'id-PC', isPrimaryContact: true }],
         };
 
         await mountWrapper(false, 5, {
@@ -214,7 +225,7 @@ describe('TeamMembersTable.vue', () => {
           },
         });
 
-        wrapper.vm.combinedTeamStore.getById = jest.fn(() => team);
+        teamStore.getById = jest.fn(() => team);
 
         expect(wrapper.vm.primaryContactId).toEqual('id-PC');
       });
@@ -358,7 +369,7 @@ describe('TeamMembersTable.vue', () => {
         await mountWrapper(false, 5, {
           computed: {
             team() {
-              return { ...mockTeam, entity: { ...mockTeam.entity, teamMembers: mockTeamMembersData() } };
+              return { ...mockTeam.entity, teamMembers: mockTeamMembersData() };
             },
           },
         });
@@ -470,6 +481,18 @@ describe('TeamMembersTable.vue', () => {
         await wrapper.vm.addMembers(newMembers);
         expect(wrapper.vm.makeMappedMembers).toHaveBeenCalledWith(newMembers);
         expect(wrapper.vm.teamMembers).toEqual([mockTeamMembers[0], mockTeamMembers[1]]);
+      });
+    });
+
+    describe('onCloseCaseFileDialog', () => {
+      it('should call loadTeamMembers and set showMemberCaseFilesDialog to false', async () => {
+        await wrapper.setData({
+          showMemberCaseFilesDialog: true,
+        });
+        wrapper.vm.loadTeamMembers = jest.fn();
+        await wrapper.vm.onCloseCaseFileDialog();
+        expect(wrapper.vm.loadTeamMembers).toHaveBeenCalled();
+        expect(wrapper.vm.showMemberCaseFilesDialog).toEqual(false);
       });
     });
   });

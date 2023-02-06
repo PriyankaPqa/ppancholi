@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import {
-  mockCombinedTeams, mockTeamEvents, mockTeamsDataStandard, mockTeamsMetadataStandard,
+  mockTeamEntities, mockTeamEvents, mockTeamsDataStandard,
 } from '@libs/entities-lib/team';
 import { mockCombinedEvent } from '@libs/entities-lib/event';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
@@ -123,7 +123,7 @@ describe('TeamStats.vue', () => {
         const eventId = mockTeamEvents()[0].id;
         await wrapper.setData({ selectedEventId: eventId });
         await wrapper.vm.selectEvent({ entity: { id: eventId } });
-        expect(wrapper.vm.statTeam).toEqual(mockCombinedTeams());
+        expect(wrapper.vm.statTeam).toEqual(mockTeamEntities());
       });
 
       it('should not search team if no event selected', async () => {
@@ -162,11 +162,11 @@ describe('TeamStats.vue', () => {
           data() {
             return {
               selectedEventId: 'd52d45e8-1973-4d54-91f4-8ec0864f8ff9',
-              statTeam: mockCombinedTeams(),
+              statTeam: mockTeamEntities(),
             };
           },
         });
-        selectedTeam = { ...mockCombinedTeams()[0] };
+        selectedTeam = { ...mockTeamEntities()[0] };
       });
       it('Should set stat loaded to true', () => {
         wrapper.vm.selectTeam(selectedTeam);
@@ -183,8 +183,7 @@ describe('TeamStats.vue', () => {
       });
       it('Should set stats to default 0s if no users found', async () => {
         const statTeam = [{
-          entity: mockTeamsDataStandard({ teamMembers: [] }),
-          metadata: mockTeamsMetadataStandard(),
+          ...mockTeamsDataStandard({ teamMembers: [] }),
         }];
         wrapper.setData({ statTeam });
         await wrapper.vm.selectTeam(selectedTeam);

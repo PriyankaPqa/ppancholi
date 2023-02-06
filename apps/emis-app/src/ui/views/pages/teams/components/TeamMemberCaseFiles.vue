@@ -9,8 +9,8 @@
     persistent
     :show-submit="false"
     :cancel-action-label="$t('common.buttons.close')"
-    @cancel="$emit('update:show', false)"
-    @close="$emit('update:show', false)">
+    @cancel="$emit('dialogClose')"
+    @close="$emit('dialogClose')">
     <v-row v-if="loading" class="d-flex align-center justify-start no-gutter flex-column mx-0 my-6">
       <v-col col="12" md="6" class="eventTable mb-2">
         <v-skeleton-loader class="my-6" type="article" />

@@ -181,7 +181,7 @@ import {
 import _isEqual from 'lodash/isEqual';
 import _sortBy from 'lodash/sortBy';
 import {
-  TeamType, ITeamEvent, TeamEntity, ITeamEntity, IdParams, ITeamMetadata,
+  TeamType, ITeamEvent, TeamEntity, ITeamEntity,
 } from '@libs/entities-lib/team';
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
@@ -264,7 +264,6 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
       errorMessage: '' as TranslateResult,
       isSubmitting: false,
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParamsUserAccount>(useUserAccountStore(), useUserAccountMetadataStore()),
-      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
     };
   },
 
@@ -400,7 +399,8 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
     async loadTeam() {
       const teamId = this.id;
       if (teamId) {
-        await this.combinedTeamStore.fetch(teamId);
+        await useTeamStore().fetch(teamId);
+        await useTeamMetadataStore().fetch(teamId);
         await this.loadTeamFromState();
       }
     },
@@ -416,9 +416,10 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         return;
       }
 
-      const storeTeam = _cloneDeep(this.combinedTeamStore.getById(this.id));
-      this.team = new TeamEntity(storeTeam.entity);
-      this.currentEvents = storeTeam.metadata?.events;
+      const storeTeam = _cloneDeep(useTeamStore().getById(this.id));
+      const storeTeamMetadata = _cloneDeep(useTeamMetadataStore().getById(this.id));
+      this.team = new TeamEntity(storeTeam);
+      this.currentEvents = storeTeamMetadata?.events;
       if (this.team.getPrimaryContact()) {
         const primaryContactUser = await this.fetchUsersByIds([this.team.getPrimaryContact().id]);
         if (primaryContactUser?.length) {

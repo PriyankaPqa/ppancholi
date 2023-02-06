@@ -107,11 +107,11 @@ export default Vue.extend({
 
     setAssignedIndividuals() {
       const userAccounts = this.combinedUserAccountStore.getByIds(this.individualsIds);
-      const teamsThroughIndividuals = this.combinedTeamStore.getByIds(this.teamsIdsFromIndividuals);
+      const teamsThroughIndividuals = useTeamStore().getByIds(this.teamsIdsFromIndividuals);
 
       this.caseFile.assignedTeamMembers.forEach((team) => {
         const teamId = team.teamId;
-        const teamName = teamsThroughIndividuals.find((t) => t.entity.id === teamId)?.entity.name;
+        const teamName = teamsThroughIndividuals.find((t) => t.id === teamId)?.name;
 
         team.teamMembersIds.forEach((id) => {
           const user = userAccounts.find((u) => u.entity.id === id);

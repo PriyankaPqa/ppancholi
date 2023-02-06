@@ -23,8 +23,8 @@
         :placeholder="$t('team_stats.team.placeholder')"
         return-object
         :items="statTeam"
-        :item-text="(item) => item.entity.name"
-        :item-value="(item) => item.entity.id"
+        :item-text="(item) => item.name"
+        :item-value="(item) => item.id"
         @change="selectTeam" />
     </template>
 
@@ -59,7 +59,6 @@
 import Vue from 'vue';
 import { RcStatsTemplate, VAutocompleteWithValidation } from '@libs/component-lib/components';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
-import { IEntityCombined } from '@libs/entities-lib/base';
 import { IdParams, ITeamEntity, ITeamMetadata } from '@libs/entities-lib/team';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
@@ -114,12 +113,12 @@ export default Vue.extend({
         orderBy: 'Entity/Name asc',
       });
       if (eventTeams) {
-        this.statTeam = this.combinedTeamStore.getByIds(eventTeams.ids);
+        this.statTeam = useTeamStore().getByIds(eventTeams.ids);
       }
       this.loadingTeams = false;
     },
 
-    async selectTeam(selectedTeam: IEntityCombined<ITeamEntity, ITeamMetadata>) {
+    async selectTeam(selectedTeam: ITeamEntity) {
       if (!selectedTeam) {
         this.teamStats = null;
         return;
@@ -127,12 +126,12 @@ export default Vue.extend({
       this.statsLoaded = false;
       this.loadingStats = true;
       this.teamStats = defaultTeamStats;
-      const team: IEntityCombined<ITeamEntity, ITeamMetadata> = this.statTeam.find((team) => team.entity.id === selectedTeam.entity.id);
-      const countTeamMembers = team.entity.teamMembers.length;
+      const team: ITeamEntity = this.statTeam.find((team) => team.id === selectedTeam.id);
+      const countTeamMembers = team.teamMembers.length;
       if (countTeamMembers !== 0) {
         const assignedCount = await this.$services.caseFiles.getCaseFileAssignedCounts({
           eventId: this.selectedEventId,
-          teamId: selectedTeam.entity.id,
+          teamId: selectedTeam.id,
         });
         const countTotal = Object.values(assignedCount).reduce((acc, val) => acc + val, 0);
         this.teamStats = {

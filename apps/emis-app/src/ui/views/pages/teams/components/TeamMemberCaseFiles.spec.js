@@ -4,6 +4,7 @@ import { mockStorage } from '@/storage';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockCaseFileEntity, mockCombinedCaseFile, CaseFileStatus } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
+import { RcDialog } from '@libs/component-lib/components';
 import Component from './TeamMemberCaseFiles.vue';
 
 const localVue = createLocalVue();
@@ -387,6 +388,20 @@ describe('TeamMemberCaseFiles.vue', () => {
       it('is not disabled if canAssign is true', () => {
         const element = wrapper.findDataTest('team_member_caseFile_reassign_btn_0');
         expect(element.props('disabled')).toEqual(false);
+      });
+    });
+
+    describe('RcDialog', () => {
+      it('should emit dialogClose when dialog is canceled', async () => {
+        const component = wrapper.findComponent(RcDialog);
+        await component.vm.$emit('cancel');
+        expect(wrapper.emitted('dialogClose').length).toEqual(1);
+      });
+
+      it('should emit dialogClose when dialog is closed', async () => {
+        const component = wrapper.findComponent(RcDialog);
+        await component.vm.$emit('close');
+        expect(wrapper.emitted('dialogClose').length).toEqual(1);
       });
     });
   });

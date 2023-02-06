@@ -10,6 +10,7 @@ import Component from '../case-file-activity/components/ViewAssigned.vue';
 const localVue = createLocalVue();
 const storage = mockStorage();
 const { pinia } = useMockUserAccountStore();
+const { teamStore } = useMockTeamStore(pinia);
 useMockTeamStore(pinia);
 let wrapper;
 
@@ -85,9 +86,9 @@ describe('ViewAssigned.vue', () => {
         { entity: { id: 'mock-assigned-individual-id-2', displayName: 'User B' } },
         { entity: { id: 'mock-assigned-individual-id-3', displayName: 'User C' } },
       ]));
-      wrapper.vm.combinedTeamStore.getByIds = jest.fn(() => ([
-        { entity: { id: 'mock-assigned-team-id-1', name: 'Team A' } },
-        { entity: { id: 'mock-assigned-team-id-2', name: 'Team B' } },
+      teamStore.getByIds = jest.fn(() => ([
+        { id: 'mock-assigned-team-id-1', name: 'Team A' },
+        { id: 'mock-assigned-team-id-2', name: 'Team B' },
       ]));
     });
 

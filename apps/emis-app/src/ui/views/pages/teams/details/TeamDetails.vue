@@ -22,20 +22,20 @@
             <v-col md="11" sm="12">
               <div class="flex flex-row mb-4">
                 <h5 data-test="team-title" class="rc-heading-5 mr-3">
-                  {{ team.entity.name }}
+                  {{ team.name }}
                 </h5>
-                <status-chip :status="team.entity.status" data-test="team_status" status-name="Status" />
+                <status-chip :status="team.status" data-test="team_status" status-name="Status" />
               </div>
 
               <v-row no-gutters class="flex justify-space-between mt-6">
                 <div class="team_data">
                   <span class="rc-body14 fw-bold">{{ $t('teams.teamtype') }}</span>
-                  <span class="rc-body14" data-test="team_type">{{ $m(team.metadata.teamTypeName) }}</span>
+                  <span class="rc-body14" data-test="team_type">{{ $m(teamMetadata.teamTypeName) }}</span>
                 </div>
 
                 <div class="team_data">
                   <span class="rc-body14 fw-bold">{{ $t('teams.team_members') }}</span>
-                  <span class="rc-body14" data-test="team_members_count">{{ team.entity.teamMembers.length }}</span>
+                  <span class="rc-body14" data-test="team_members_count">{{ teamMemberAmount }}</span>
                 </div>
 
                 <div class="team_data">
@@ -53,8 +53,8 @@
 
               <v-row no-gutters class="mt-6">
                 <div class="team_data">
-                  <span class="rc-body14 fw-bold">{{ $tc('teams.related_events', team.metadata.events.length) }}</span>
-                  <span class="rc-body14" data-test="team_events">{{ buildEventsString(team.metadata.events) }}</span>
+                  <span class="rc-body14 fw-bold">{{ $tc('teams.related_events', eventAmount) }}</span>
+                  <span class="rc-body14" data-test="team_events">{{ buildEventsString(teamMetadata.events) }}</span>
                 </div>
               </v-row>
             </v-col>
@@ -63,7 +63,7 @@
             <v-col class="pa-0">
               <team-members-table
                 data-test="team-members-table"
-                :team-id="team.entity.id"
+                :team-id="teamId"
                 disabled-delete-member
                 :show-add-member="false"
                 :is-edit-mode="false" />
@@ -79,12 +79,11 @@
 import Vue from 'vue';
 import { RcPageContent } from '@libs/component-lib/components';
 import {
- TeamType, ITeamCombined, ITeamEvent, ITeamEntity, ITeamMetadata, IdParams,
+ TeamType, ITeamEvent, ITeamEntity, ITeamMetadata,
 } from '@libs/entities-lib/team';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 
@@ -103,37 +102,44 @@ export default Vue.extend({
     },
   },
 
-  data() {
-    return {
-      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
-    };
-  },
-
   computed: {
-    team(): ITeamCombined {
-      const t = this.combinedTeamStore.getById(this.id);
-      if (!t?.entity?.id || !t?.metadata?.id) {
-        return null;
-      }
-      return t;
+    team(): ITeamEntity {
+      return useTeamStore().getById(this.id);
+    },
+
+    teamMetadata(): ITeamMetadata {
+      return useTeamMetadataStore().getById(this.id);
     },
 
     primaryContactId() : string {
-      return (this.team?.entity?.teamMembers || []).find((x) => x.isPrimaryContact)?.id;
+      return (this.team?.teamMembers || []).find((x) => x.isPrimaryContact)?.id;
     },
 
     primaryContact(): string {
       return useUserAccountMetadataStore().getById(this.primaryContactId)?.displayName || null;
     },
+
+    eventAmount(): number {
+      return this.teamMetadata?.events?.length;
+    },
+
+    teamMemberAmount(): number {
+      return this.team?.teamMembers?.length;
+    },
+
+    teamId(): string {
+      return this.team?.id || this.$route.params.id;
+    },
   },
 
-  async mounted() {
+  async created() {
     await this.loadTeam();
   },
 
   methods: {
     async loadTeam() {
-      await this.combinedTeamStore.fetch(this.id);
+      await useTeamStore().fetch(this.id);
+      await useTeamMetadataStore().fetch(this.id, false);
       if (this.primaryContactId) {
         await useUserAccountMetadataStore().fetch(this.primaryContactId, false);
       }
@@ -144,12 +150,12 @@ export default Vue.extend({
     },
 
     navigateToEdit() {
-      const teamType = this.team.entity.teamType === TeamType.Standard ? 'standard' : 'adhoc';
+      const teamType = this.team.teamType === TeamType.Standard ? 'standard' : 'adhoc';
       this.$router.push({ name: routes.teams.edit.name, params: { teamType, id: this.id, from: this.$route.name } });
     },
 
     buildEventsString(events: ITeamEvent[]): string {
-      if (events.length === 0) {
+      if (!events) {
         return '';
       }
       return events.map((e: ITeamEvent) => this.$m(e.name)).join(', ');

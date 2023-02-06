@@ -102,16 +102,17 @@
     <add-team-members
       v-if="showAddTeamMemberDialog"
       data-test="add-team-members"
-      :team-members="team.entity.teamMembers"
-      :team-id="team.entity.id"
+      :team-members="team.teamMembers"
+      :team-id="team.id"
       :show.sync="showAddTeamMemberDialog"
       @addMembers="addMembers" />
 
     <team-member-teams v-if="showMemberTeamsDialog" :show.sync="showMemberTeamsDialog" :member="clickedMember" />
     <team-member-case-files
       v-if="showMemberCaseFilesDialog"
-      :show.sync="showMemberCaseFilesDialog"
-      :member="clickedMember" />
+      :show="showMemberCaseFilesDialog"
+      :member="clickedMember"
+      @dialogClose="onCloseCaseFileDialog" />
   </div>
 </template>
 
@@ -121,8 +122,7 @@ import _orderBy from 'lodash/orderBy';
 import { DataTableHeader } from 'vuetify';
 import { RcPhoneDisplay } from '@libs/component-lib/components';
 import {
-  IdParams,
-  ITeamCombined, ITeamEntity, ITeamMember, ITeamMemberAsUser, ITeamMetadata,
+  ITeamEntity, ITeamMember, ITeamMemberAsUser,
 } from '@libs/entities-lib/team';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
@@ -135,7 +135,7 @@ import {
 import { IUserAccountCombined, IdParams as IdParamsUserAccount } from '@libs/entities-lib/src/user-account/userAccount.types';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
-import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { useTeamStore } from '@/pinia/team/team';
 
 export interface Result extends IUserAccountCombined {
   isPrimaryContact: boolean;
@@ -215,7 +215,6 @@ export default Vue.extend({
       FeatureKeys,
       teamMembers: [] as ITeamMemberAsUser[],
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParamsUserAccount>(useUserAccountStore(), useUserAccountMetadataStore()),
-      combinedTeamStore: new CombinedStoreFactory<ITeamEntity, ITeamMetadata, IdParams>(useTeamStore(), useTeamMetadataStore()),
     };
   },
 
@@ -310,8 +309,8 @@ export default Vue.extend({
       return headers;
     },
 
-    team(): ITeamCombined {
-      return this.combinedTeamStore.getById(this.teamId);
+    team(): ITeamEntity {
+      return useTeamStore().getById(this.teamId);
     },
 
     filteredTeamMembers(): ITeamMemberAsUser[] {
@@ -319,7 +318,7 @@ export default Vue.extend({
     },
 
     primaryContactId(): string {
-      return this.primaryContact?.entity?.id || this.team.entity.teamMembers.find((m:ITeamMember) => m.isPrimaryContact).id;
+      return this.primaryContact?.entity?.id || this.team.teamMembers.find((m:ITeamMember) => m.isPrimaryContact).id;
     },
   },
 
@@ -420,7 +419,7 @@ export default Vue.extend({
     },
 
     canRemovePrimary():boolean {
-      return this.$hasLevel('level5') && this.team.entity.teamMembers.length === 1;
+      return this.$hasLevel('level5') && this.team.teamMembers.length === 1;
     },
 
     async handleRemoveTeamMember(item: ITeamMemberAsUser) {
@@ -463,6 +462,11 @@ export default Vue.extend({
       const mappedNewMembers = this.makeMappedMembers(members);
       const newMembersList = [...this.teamMembers, ...mappedNewMembers];
       this.teamMembers = _orderBy(newMembersList, this.sortBy, this.sortDesc ? 'desc' : 'asc');
+    },
+
+    async onCloseCaseFileDialog() {
+      await this.loadTeamMembers();
+      this.showMemberCaseFilesDialog = false;
     },
   },
 });

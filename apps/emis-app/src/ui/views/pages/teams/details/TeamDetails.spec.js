@@ -2,16 +2,18 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/storage';
 import {
-  mockCombinedTeams, mockTeamEvents,
+  mockTeamEntity, mockTeamEvents, mockTeamsMetadataStandard,
 } from '@libs/entities-lib/team';
-
 import { RcPageContent } from '@libs/component-lib/components';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import { useMockTeamStore } from '@/pinia/team/team.mock';
+import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import Component from './TeamDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
 const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
+const { teamStore, teamMetadataStore } = useMockTeamStore(pinia);
 
 describe('TeamDetails.vue', () => {
   let wrapper;
@@ -54,10 +56,11 @@ describe('TeamDetails.vue', () => {
       beforeEach(async () => {
         await mountWrapper(false, 5, {
           computed: {
-            team: () => mockCombinedTeams()[0],
+            team: () => mockTeamEntity(),
           },
         });
-        wrapper.vm.combinedTeamStore.getById = jest.fn(() => mockCombinedTeams()[0]);
+        teamStore.getById = jest.fn(() => mockTeamEntity());
+        teamMetadataStore.getById = jest.fn(() => mockTeamsMetadataStandard());
       });
 
       test('Team type', () => {
@@ -76,22 +79,40 @@ describe('TeamDetails.vue', () => {
         expect(wrapper.findDataTest('team_events').text()).toBe('Event 1, Event 2');
       });
     });
+
+    describe('TeamMembersTable', () => {
+      it('should pass teamId as Prosp to TeamMembersTable', async () => {
+        await mountWrapper(
+          false,
+          5,
+          {
+            computed: {
+              teamId: () => 'mock-team-id-1',
+            },
+          },
+        );
+        const component = wrapper.findComponent(TeamMembersTable);
+        const props = 'teamId';
+        expect(component.props(props)).toEqual('mock-team-id-1');
+      });
+    });
   });
 
   describe('Methods', () => {
     beforeEach(async () => {
       await mountWrapper(false, 5, {
         computed: {
-          team: () => mockCombinedTeams()[0],
+          team: () => mockTeamEntity(),
+          teamMetadata: () => mockTeamsMetadataStandard(),
         },
       });
     });
 
     describe('loadTeam', () => {
       it('should calls getTeam actions', async () => {
-        wrapper.vm.combinedTeamStore.fetch = jest.fn();
         await wrapper.vm.loadTeam();
-        expect(wrapper.vm.combinedTeamStore.fetch).toHaveBeenLastCalledWith('id');
+        expect(teamStore.fetch).toHaveBeenLastCalledWith('id');
+        expect(teamMetadataStore.fetch).toHaveBeenLastCalledWith('id', false);
       });
 
       it('should fetch userAccount metadata with correct Id', async () => {
@@ -137,13 +158,52 @@ describe('TeamDetails.vue', () => {
       it('should be linked to team getters team', async () => {
         await mountWrapper(false, 5, {
           computed: {
-            team: () => mockCombinedTeams()[0],
+            team: () => mockTeamEntity(),
           },
         });
         await wrapper.setProps({
           id: 'guid-team-1',
         });
-        expect(wrapper.vm.team).toEqual(mockCombinedTeams()[0]);
+        expect(wrapper.vm.team).toEqual(mockTeamEntity({ id: 'guid-team-1' }));
+      });
+    });
+
+    describe('teamMetadata', () => {
+      it('should be linked to team getters teamMetadata', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            teamMetadata: () => mockTeamsMetadataStandard(),
+          },
+        });
+        await wrapper.setProps({
+          id: 'guid-team-1',
+        });
+        expect(wrapper.vm.teamMetadata).toEqual(mockTeamsMetadataStandard({ id: 'guid-team-1' }));
+      });
+    });
+
+    describe('teamId', () => {
+      it('should return id from Teams Entity', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            team: () => mockTeamEntity({ id: 'mock-team-1' }),
+          },
+        });
+        expect(wrapper.vm.teamId).toEqual('mock-team-1');
+      });
+
+      it('should return id from route.id if Teams Entity isnt ready', async () => {
+        await mountWrapper(
+          false,
+          5,
+          {
+            computed: {
+              team: () => {},
+            },
+          },
+        );
+        wrapper.vm.$route = { params: { id: 'mock-team-2' } };
+        expect(wrapper.vm.teamId).toEqual('mock-team-2');
       });
     });
   });

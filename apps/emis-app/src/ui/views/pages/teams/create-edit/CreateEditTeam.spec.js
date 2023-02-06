@@ -6,7 +6,7 @@ import {
 } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import {
-  TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc, mockCombinedTeams,
+  TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc, mockTeamsMetadataStandard,
 } from '@libs/entities-lib/team';
 import { mockStorage } from '@/storage';
 
@@ -21,7 +21,7 @@ import Component from './CreateEditTeam.vue';
 const localVue = createLocalVue();
 const storage = mockStorage();
 const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
-const { teamStore } = useMockTeamStore(pinia);
+const { teamStore, teamMetadataStore } = useMockTeamStore(pinia);
 const { eventStore } = useMockEventStore(pinia);
 
 const mockTeamMember = {
@@ -61,7 +61,8 @@ describe('CreateEditTeam.vue', () => {
   describe('Template', () => {
     beforeEach(async () => {
       await mountWrapper(true);
-      wrapper.vm.combinedTeamStore.getById = jest.fn(() => mockCombinedTeams()[0]);
+      teamStore.getById = jest.fn(() => mockTeamEntity());
+      teamMetadataStore.getById = jest.fn(() => mockTeamsMetadataStandard());
     });
 
     describe('Rendered elements', () => {
@@ -929,9 +930,11 @@ describe('CreateEditTeam.vue', () => {
 
     describe('loadTeam', (() => {
       it('calls the action getTeam', async () => {
-        wrapper.vm.combinedTeamStore.fetch = jest.fn();
+        teamStore.fetch = jest.fn();
+        teamMetadataStore.fetch = jest.fn();
         await wrapper.vm.loadTeam();
-        expect(wrapper.vm.combinedTeamStore.fetch).toHaveBeenCalledWith('abc');
+        expect(teamStore.fetch).toHaveBeenCalledWith('abc');
+        expect(teamMetadataStore.fetch).toHaveBeenCalledWith('abc');
       });
 
       it('should set the team with a cloneDeep of team from storage', async () => {
@@ -973,9 +976,9 @@ describe('CreateEditTeam.vue', () => {
       });
 
       it('sets currentEvents from the team metadata', async () => {
-        wrapper.vm.combinedTeamStore.getById = jest.fn(() => mockCombinedTeams()[0]);
+        teamMetadataStore.getById = jest.fn(() => mockTeamsMetadataStandard());
         await wrapper.vm.loadTeamFromState();
-        expect(wrapper.vm.currentEvents).toEqual(mockCombinedTeams()[0].metadata.events);
+        expect(wrapper.vm.currentEvents).toEqual(mockTeamsMetadataStandard().events);
       });
 
       it('should do nothing if it receives an error of existing name as argument ', async () => {
