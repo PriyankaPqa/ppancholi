@@ -1,12 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { mockCreateEvent } from '@libs/cypress-lib/mocks/event';
+import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
 import { useProvider } from '../../provider/provider';
-
-// const getOneOpenEvent = (roleValue = UserRoles.level6) => cy.getToken(roleValue).then(async (accessToken) => {
-//   const provider = useProvider(accessToken.access_token);
-//   const event = await provider.cypress.events.fetchOneOpenEvent();
-//   return event.entity;
-// });
 
 const createOpenEvent = (roleValue = UserRoles.level6) => cy.getToken(roleValue).then(async (accessToken) => {
   const provider = useProvider(accessToken.access_token);

@@ -12,6 +12,7 @@
     "@libs/entities-lib": "*",
     "@libs/services-lib": "*",
     "@libs/shared-lib": "*",
+    "cypress-wait-until": "^1.7.2",
     "date-fns": "2.28.0",
     "jsonwebtoken": "^8.5.1"
   }

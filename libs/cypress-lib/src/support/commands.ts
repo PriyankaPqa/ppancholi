@@ -1,35 +1,10 @@
 /// <reference types="cypress" />
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// eslint-disable-next-line import/no-duplicates
+/* eslint-disable import/no-duplicates */
 import { ServerAuthorizationTokenResponse } from '@azure/msal-common';
-// eslint-disable-next-line import/no-duplicates
 import { UserRoles } from './msal';
-// eslint-disable-next-line import/no-duplicates
 import './msal';
-
+import { RefreshUntilOptions } from './wait';
+import './wait';
 import './ui';
 
 Cypress.Commands.add('goTo', (url: string, lang = 'en', options = {}) => {
@@ -53,6 +28,7 @@ declare global {
       selectCountry(dataTest: string, { countryCode, search }: { countryCode: string; search: string }): Chainable<void>
       escape(): Chainable<void>
       goTo(url: string, lang?: string, options?: Record<string, string>): Chainable<AUTWindow>
+      refreshUntil(selector: string | { selector: string, type: string }, opts?: RefreshUntilOptions): Chainable<void>
     }
   }
 }

@@ -4,7 +4,7 @@ import { mockBaseData } from '@libs/entities-lib/base';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import {
  EventTypes, generateMultilingual, generateRandomEventName, today,
-} from '../helpers';
+} from '../../helpers';
 
 export const mockCreateEvent = (): IEventEntity => ({
   ...mockBaseData(),

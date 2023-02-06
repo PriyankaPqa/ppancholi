@@ -164,7 +164,6 @@ export class CreateEventPage {
     if (data.description) {
       cy.getByDataTest(this.description).type(data.description);
     }
-    return this;
   }
 
   saveAndGoToEventDetailsPage() {

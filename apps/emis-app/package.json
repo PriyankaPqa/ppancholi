@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@azure/msal-browser": "2.26.0",
+    "@faker-js/faker": "^7.6.0",
     "@libs/component-lib": "*",
     "@libs/cypress-lib": "*",
     "@libs/entities-lib": "*",
