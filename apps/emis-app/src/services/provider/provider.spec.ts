@@ -9,7 +9,6 @@ import { OptionItemsService } from '@libs/services-lib/optionItems';
 import { TeamsService } from '@libs/services-lib/teams/entity';
 import { ProgramsService } from '@libs/services-lib/programs/entity';
 import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
-import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
 import { CaseFilesMetadataService } from '@libs/services-lib/case-files/metadata';
 import { CaseNotesMetadataService } from '@libs/services-lib/case-notes/metadata';
 import { CaseFileReferralsMetadataService } from '@libs/services-lib/case-file-referrals/metadata';
@@ -34,7 +33,6 @@ jest.mock('@libs/services-lib/programs/entity');
 jest.mock('@libs/services-lib/public');
 jest.mock('@libs/services-lib/households/entity');
 jest.mock('@libs/services-lib/financial-assistance-tables/entity');
-jest.mock('@libs/services-lib/financial-assistance-categories/entity');
 jest.mock('@libs/services-lib/mass-actions/entity');
 jest.mock('@libs/services-lib/case-files/metadata');
 jest.mock('@libs/services-lib/case-notes/metadata');
@@ -102,11 +100,6 @@ describe('Provider', () => {
   it('should instantiate UserAccountsService', () => {
     provider();
     expect(UserAccountsService.prototype.constructor).toBeCalled();
-  });
-
-  it('should instantiate FinancialAssistanceCategoriesService', () => {
-    provider();
-    expect(FinancialAssistanceCategoriesService.prototype.constructor).toBeCalled();
   });
 
   it('should instantiate MassActionService', () => {

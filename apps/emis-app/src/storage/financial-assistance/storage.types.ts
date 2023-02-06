@@ -30,7 +30,6 @@ export interface IGetters extends IBaseGetters<IFinancialAssistanceTableEntity, 
   formDirty(): boolean;
   loading(): boolean;
   isOperating(): boolean;
-  faCategories(): IOptionItem[];
 }
 
 export interface IGettersMock extends IBaseGettersMock<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> {
@@ -49,7 +48,6 @@ export interface IGettersMock extends IBaseGettersMock<IFinancialAssistanceTable
   formDirty: jest.Mock<void>;
   loading: jest.Mock<void>;
   isOperating: jest.Mock<void>;
-  faCategories: jest.Mock<IOptionItem[]>;
 }
 
 export interface IMutations extends IBaseMutations<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> {

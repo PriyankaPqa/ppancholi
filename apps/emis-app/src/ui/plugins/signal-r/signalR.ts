@@ -21,6 +21,7 @@ import { useCaseFileDocumentMetadataStore, useCaseFileDocumentStore } from '@/pi
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
 import { useAssessmentResponseMetadataStore, useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { useMassActionStore, useMassActionMetadataStore } from '@/pinia/mass-action/mass-action';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/approval-table/approval-table';
 import { useCaseNoteStore, useCaseNoteMetadataStore } from '@/pinia/case-note/case-note';
 import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
@@ -161,7 +162,6 @@ export class SignalR implements ISignalR {
 
     // Financial Assistance
     this.listenForFinancialAssistanceModuleChanges();
-    this.listenForFinancialAssistanceCategoryModuleChanges();
 
     // Household
     this.listenForHouseholdModuleChanges();
@@ -242,7 +242,7 @@ export class SignalR implements ISignalR {
       action: this.noAction,
     });
 
-    this.listenForOptionItemChanges({
+    this.listenForOptionItemChangesWithStorage({
       domain: 'household',
       optionItemName: 'ScreeningId',
       cacheResetMutationName: 'setScreeningIdsFetched',
@@ -252,15 +252,15 @@ export class SignalR implements ISignalR {
     this.listenForOptionItemChanges({
       domain: 'household',
       optionItemName: 'Gender',
-      cacheResetMutationName: 'setGendersFetched',
-      mutationDomain: 'registration',
+      store: useRegistrationStore(),
+      prop: 'gendersFetched',
     });
 
     this.listenForOptionItemChanges({
       domain: 'household',
       optionItemName: 'PrimarySpokenLanguage',
-      cacheResetMutationName: 'setPrimarySpokenLanguagesFetched',
-      mutationDomain: 'registration',
+      store: useRegistrationStore(),
+      prop: 'primarySpokenLanguagesFetched',
     });
   }
 
@@ -308,20 +308,23 @@ export class SignalR implements ISignalR {
       entityName: 'EventMetadata',
       action: useEventMetadataStore().setItemFromOutsideNotification,
     });
-    this.watchedPiniaStores.push(useEventStore());
-    this.watchedPiniaStores.push(useEventMetadataStore());
 
     this.listenForOptionItemChanges({
       domain: 'event',
       optionItemName: 'AgreementType',
-      cacheResetMutationName: 'setAgreementTypesFetched',
+      store: useEventStore(),
+      prop: 'agreementTypesFetched',
     });
 
     this.listenForOptionItemChanges({
       domain: 'event',
       optionItemName: 'EventType',
-      cacheResetMutationName: 'setEventTypesFetched',
+      store: useEventStore(),
+      prop: 'eventTypesFetched',
     });
+
+    this.watchedPiniaStores.push(useEventStore());
+    this.watchedPiniaStores.push(useEventMetadataStore());
   }
 
   private listenForTeamModuleChanges() {
@@ -375,19 +378,19 @@ export class SignalR implements ISignalR {
       action: this.noAction,
     });
 
-    this.listenForOptionItemChanges({
+    this.listenForOptionItemChangesWithStorage({
       domain: 'case-file',
       optionItemName: 'CloseReason',
       cacheResetMutationName: 'setCloseReasonsFetched',
     });
 
-    this.listenForOptionItemChanges({
+    this.listenForOptionItemChangesWithStorage({
       domain: 'case-file',
       optionItemName: 'InactiveReason',
       cacheResetMutationName: 'setInactiveReasonsFetched',
     });
 
-    this.listenForOptionItemChanges({
+    this.listenForOptionItemChangesWithStorage({
       domain: 'case-file',
       optionItemName: 'Tag',
       cacheResetMutationName: 'setTagsOptionsFetched',
@@ -410,8 +413,8 @@ export class SignalR implements ISignalR {
     this.listenForOptionItemChanges({
       domain: 'case-file',
       optionItemName: 'CaseNoteCategory',
-      cacheResetMutationName: 'setCaseNoteCategoriesFetched',
-      mutationDomain: 'caseNote',
+      store: useCaseNoteStore(),
+      prop: 'caseNoteCategoriesFetched',
     });
 
     this.watchedPiniaStores.push(useCaseNoteStore());
@@ -436,19 +439,26 @@ export class SignalR implements ISignalR {
     this.listenForOptionItemChanges({
       domain: 'case-file',
       optionItemName: 'ReferralType',
-      cacheResetMutationName: 'setTypesFetched',
-      mutationDomain: 'caseFileReferral',
+      store: useCaseFileReferralStore(),
+      prop: 'typesFetched',
     });
 
     this.listenForOptionItemChanges({
       domain: 'case-file',
       optionItemName: 'ReferralOutcomeStatus',
-      cacheResetMutationName: 'setOutcomeStatusesFetched',
-      mutationDomain: 'caseFileReferral',
+      store: useCaseFileReferralStore(),
+      prop: 'outcomeStatusesFetched',
     });
   }
 
   private listenForFinancialAssistancePaymentModuleChanges() {
+    this.listenForOptionItemChanges({
+      domain: 'finance',
+      optionItemName: 'FinancialAssistanceCategory',
+      store: useFinancialAssistancePaymentStore(),
+      prop: 'financialAssistanceCategoriesFetched',
+    });
+
     this.listenForChanges({
       domain: 'finance',
       entityName: 'FinancialAssistancePayment',
@@ -476,15 +486,16 @@ export class SignalR implements ISignalR {
       entityName: 'DocumentMetadata',
       action: useCaseFileDocumentMetadataStore().setItemFromOutsideNotification,
     });
-    this.watchedPiniaStores.push(useCaseFileDocumentStore());
-    this.watchedPiniaStores.push(useCaseFileDocumentMetadataStore());
 
     this.listenForOptionItemChanges({
       domain: 'case-file',
       optionItemName: 'DocumentCategory',
-      cacheResetMutationName: 'setCategoriesFetched',
-      mutationDomain: 'caseFileDocument',
+      store: useCaseFileDocumentStore(),
+      prop: 'categoriesFetched',
     });
+
+    this.watchedPiniaStores.push(useCaseFileDocumentStore());
+    this.watchedPiniaStores.push(useCaseFileDocumentMetadataStore());
   }
 
   private listenForAssessmentResponseModuleChanges() {
@@ -514,14 +525,6 @@ export class SignalR implements ISignalR {
       domain: 'finance',
       entityName: 'FinancialAssistanceTableMetadata',
       action: this.storage.financialAssistance.mutations.setMetadataFromOutsideNotification,
-    });
-  }
-
-  private listenForFinancialAssistanceCategoryModuleChanges() {
-    this.listenForChanges({
-      domain: 'finance',
-      entityName: 'FinancialAssistanceCategory',
-      action: this.storage.financialAssistanceCategory.mutations.setEntityFromOutsideNotification,
     });
   }
 
@@ -558,7 +561,27 @@ export class SignalR implements ISignalR {
     });
   }
 
+  // when a list of option items is changed, we want the property [optionItemsType]Fetched to be set to false
+  // so that the next time the list is needed in the UI, it is re-fetched, not used from the store cache
   private listenForOptionItemChanges({
+    domain, optionItemName, store, prop,
+  }: { domain: string, optionItemName: string, store: any, prop: string }) {
+    this.connection.on(`${domain}.${optionItemName}Updated`, (entity) => {
+      if (store && prop) {
+        store[prop] = false;
+        this.log(`Cache for ${domain}.${optionItemName} reset - entity updated`, entity);
+      }
+    });
+
+    this.connection.on(`${domain}.${optionItemName}Created`, (entity) => {
+      if (store && prop) {
+        store[prop] = false;
+        this.log(`Cache for ${domain}.${optionItemName} reset - entity created`, entity);
+      }
+    });
+  }
+
+  private listenForOptionItemChangesWithStorage({
     domain, optionItemName, cacheResetMutationName, mutationDomain = null,
   }: { domain: string, optionItemName: string, cacheResetMutationName: string, mutationDomain?: string }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

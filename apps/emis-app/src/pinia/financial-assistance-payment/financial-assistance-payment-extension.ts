@@ -1,4 +1,7 @@
-import { BaseStoreComponents } from '@libs/stores-lib/base';
+import { BaseStoreComponents, filterAndSortActiveItems } from '@libs/stores-lib/base';
+import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/optionItems';
+import { ref, Ref } from 'vue';
+import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import {
   IApprovalActionPayload,
   IdParams,
@@ -15,7 +18,25 @@ import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEn
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<IFinancialAssistancePaymentEntity, IdParams>,
   entityService: IFinancialAssistancePaymentsService | IFinancialAssistancePaymentsServiceMock,
+  optionItemService: OptionItemsService | IOptionItemsServiceMock,
 ) {
+  const financialAssistanceCategories = ref([]) as Ref<IOptionItem[]>;
+  const financialAssistanceCategoriesFetched = ref(false);
+
+  function getFinancialAssistanceCategories(filterOutInactive = true, actualValue?: string[] | string) {
+    return filterAndSortActiveItems(financialAssistanceCategories.value, filterOutInactive, actualValue);
+  }
+
+  async function fetchFinancialAssistanceCategories(): Promise<IOptionItem[]> {
+    if (!financialAssistanceCategoriesFetched.value) {
+      const results = await optionItemService.getOptionList(EOptionLists.FinancialAssistanceCategories);
+      const categories = results ?? [];
+      financialAssistanceCategories.value = categories;
+      financialAssistanceCategoriesFetched.value = true;
+    }
+    return financialAssistanceCategories.value;
+  }
+
   async function addFinancialAssistancePayment(payload: IFinancialAssistancePaymentEntity) {
     const result = await entityService.addFinancialAssistancePayment(payload);
     if (result) {
@@ -33,8 +54,12 @@ export function getExtensionComponents(
     return result;
   }
 
-  async function updatePaymentStatus({ paymentGroupId, entityId, status, cancellationReason }: IUpdatePaymentStatusParams) {
-    const result = await entityService.updatePaymentStatus({ entityId, paymentGroupId, status, cancellationReason });
+  async function updatePaymentStatus({
+    paymentGroupId, entityId, status, cancellationReason,
+  }: IUpdatePaymentStatusParams) {
+    const result = await entityService.updatePaymentStatus({
+      entityId, paymentGroupId, status, cancellationReason,
+    });
     if (result) {
       baseComponents.set(result);
     }
@@ -44,7 +69,7 @@ export function getExtensionComponents(
   async function submitFinancialAssistancePayment(payload: uuid) {
     const result = await entityService.submitFinancialAssistancePayment(payload);
     if (result) {
-     baseComponents.set(result);
+      baseComponents.set(result);
     }
     return result;
   }
@@ -52,7 +77,7 @@ export function getExtensionComponents(
   async function submitApprovalRequest(paymentId: uuid, submitTo: uuid) {
     const result = await entityService.submitApprovalRequest(paymentId, submitTo);
     if (result) {
-     baseComponents.set(result);
+      baseComponents.set(result);
     }
     return result;
   }
@@ -60,7 +85,7 @@ export function getExtensionComponents(
   async function submitApprovalAction(paymentId: uuid, action: IApprovalActionPayload) {
     const result = await entityService.submitApprovalAction(paymentId, action);
     if (result) {
-     baseComponents.set(result);
+      baseComponents.set(result);
     }
     return result;
   }
@@ -68,7 +93,7 @@ export function getExtensionComponents(
   async function addFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup) {
     const result = await entityService.addFinancialAssistancePaymentLine(financialAssistanceId, entity);
     if (result) {
-     baseComponents.set(result);
+      baseComponents.set(result);
     }
     return result;
   }
@@ -76,7 +101,7 @@ export function getExtensionComponents(
   async function editFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup) {
     const result = await entityService.editFinancialAssistancePaymentLine(financialAssistanceId, entity);
     if (result) {
-     baseComponents.set(result);
+      baseComponents.set(result);
     }
     return result;
   }
@@ -84,7 +109,7 @@ export function getExtensionComponents(
   async function deleteFinancialAssistancePaymentLine(paymentId: uuid, financialAssistanceId: uuid) {
     const result = await entityService.deleteFinancialAssistancePaymentLine(financialAssistanceId, paymentId);
     if (result) {
-     baseComponents.set(result);
+      baseComponents.set(result);
     }
     return result;
   }
@@ -111,6 +136,10 @@ export function getExtensionComponents(
   }
 
   return {
+    financialAssistanceCategories,
+    financialAssistanceCategoriesFetched,
+    getFinancialAssistanceCategories,
+    fetchFinancialAssistanceCategories,
     addFinancialAssistancePayment,
     editFinancialAssistancePayment,
     updatePaymentStatus,

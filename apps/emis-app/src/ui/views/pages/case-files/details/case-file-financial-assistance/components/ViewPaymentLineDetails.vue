@@ -252,7 +252,7 @@ export default mixins(caseFileDetail).extend({
   async created() {
     this.loading = true;
     await useFinancialAssistancePaymentStore().fetch(this.financialAssistancePaymentId);
-    await Promise.all([this.$storage.financialAssistanceCategory.actions.fetchAll(),
+    await Promise.all([useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories(),
       this.$storage.financialAssistance.actions.fetch(this.financialAssistance.financialAssistanceTableId)]);
 
     await this.setFinancialAssistance();
@@ -262,7 +262,7 @@ export default mixins(caseFileDetail).extend({
   methods: {
     async setFinancialAssistance() {
       const tableWithMetadata = this.$storage.financialAssistance.getters.get(this.financialAssistance.financialAssistanceTableId);
-      const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
+      const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
       const program = await useProgramStore().fetch({
         id: tableWithMetadata.entity.programId,
         eventId: this.caseFile.entity.eventId,

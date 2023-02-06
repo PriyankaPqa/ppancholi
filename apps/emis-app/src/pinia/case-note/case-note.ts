@@ -3,7 +3,7 @@ import { OptionItemsService } from '@libs/services-lib/optionItems';
 import { getBaseStoreComponents, getEntityStoreComponents } from '@libs/stores-lib/base';
 import { defineStore } from 'pinia';
 import {
- ICaseNoteEntity, ICaseNoteMetadata, IdParams, IdMetadataParams,
+  ICaseNoteEntity, ICaseNoteMetadata, IdParams, IdMetadataParams,
 } from '@libs/entities-lib/case-note';
 import { CaseNotesService } from '@libs/services-lib/case-notes/entity';
 import { CaseNotesMetadataService } from '@libs/services-lib/case-notes/metadata';

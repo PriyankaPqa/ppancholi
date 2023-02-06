@@ -18,56 +18,44 @@ export function getExtensionComponents(
     return filterAndSortActiveItems(caseNoteCategories.value, filterOutInactive, actualValue);
   }
 
-  function setCaseNoteCategories(payload: Array<IOptionItem>) {
-    caseNoteCategories.value = payload;
-  }
-
-  function setCaseNoteCategoriesFetched(payload: boolean) {
-    caseNoteCategoriesFetched.value = payload;
-  }
-
-  function setIsSavingCaseNote(payload: boolean) {
-    isSavingCaseNote.value = payload;
-  }
-
   async function fetchCaseNoteCategories(): Promise<IOptionItem[]> {
     if (!caseNoteCategoriesFetched.value) {
       const results = await optionItemService.getOptionList(EOptionLists.CaseNoteCategories);
       const categories = results ?? [];
-      setCaseNoteCategories(categories);
-      setCaseNoteCategoriesFetched(true);
+      caseNoteCategories.value = categories;
+      caseNoteCategoriesFetched.value = true;
     }
     return caseNoteCategories.value;
   }
 
   async function addCaseNote(payload: { id: uuid; caseNote: ICaseNoteEntity }) : Promise<ICaseNoteEntity> {
-    setIsSavingCaseNote(true);
+    isSavingCaseNote.value = true;
     const result = await service.addCaseNote(payload.id, payload.caseNote);
     if (result) {
       baseComponents.addNewlyCreatedId(result);
       baseComponents.set(result);
     }
-    setIsSavingCaseNote(false);
+    isSavingCaseNote.value = false;
     return result;
   }
 
   async function pinCaseNote(payload: { caseFileId: uuid; caseNoteId: uuid, isPinned: boolean }): Promise<ICaseNoteEntity> {
-    setIsSavingCaseNote(true);
+    isSavingCaseNote.value = true;
     const result = await service.pinCaseNote(payload.caseFileId, payload.caseNoteId, payload.isPinned);
     if (result) {
       baseComponents.set(result);
     }
-    setIsSavingCaseNote(false);
+    isSavingCaseNote.value = false;
     return result;
   }
 
   async function editCaseNote(payload: { caseFileId: uuid; caseNoteId: uuid, caseNote: ICaseNoteEntity }): Promise<ICaseNoteEntity> {
-    setIsSavingCaseNote(true);
+    isSavingCaseNote.value = true;
     const result = await service.editCaseNote(payload.caseFileId, payload.caseNoteId, payload.caseNote);
     if (result) {
       baseComponents.set(result);
     }
-    setIsSavingCaseNote(false);
+    isSavingCaseNote.value = false;
     return result;
   }
 
@@ -76,9 +64,6 @@ export function getExtensionComponents(
     isSavingCaseNote,
     caseNoteCategoriesFetched,
     getCaseNoteCategories,
-    setCaseNoteCategories,
-    setCaseNoteCategoriesFetched,
-    setIsSavingCaseNote,
     fetchCaseNoteCategories,
     addCaseNote,
     pinCaseNote,

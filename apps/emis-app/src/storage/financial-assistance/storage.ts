@@ -52,7 +52,6 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
     isOperating: (): boolean => this.store.getters[`${this.entityModuleName}/isOperating`],
 
-    faCategories: (): IOptionItem[] => this.store.getters[`${this.entityModuleName}/faCategories`],
   };
 
   private mutations = {

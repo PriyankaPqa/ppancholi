@@ -1,6 +1,6 @@
 import { mockBaseData, Status } from '../base';
 import {
-  IOptionItem, IOptionItemCombined, IOptionItemData, IOptionSubItem,
+  IOptionItem, IOptionItemData, IOptionSubItem,
 } from './optionItem.types';
 
 export const mockOptionSubItem = (force?: Partial<IOptionSubItem>): IOptionSubItem => ({
@@ -109,14 +109,7 @@ export const mockOptionItem = (force?: Partial<IOptionItem>): IOptionItem => ({
   ...force,
 });
 
-export const mockCombineOptionItem = (): IOptionItemCombined => ({
-  entity: mockOptionItem(),
-  metadata: null as never,
-});
-
 export const mockOptionItems = (): IOptionItem[] => [mockOptionItem()];
-
-export const mockCombinedOptionItems = (): IOptionItemCombined[] => [mockCombineOptionItem()];
 
 export const mockSubItem = (): IOptionSubItem => ({
   id: 'ID',

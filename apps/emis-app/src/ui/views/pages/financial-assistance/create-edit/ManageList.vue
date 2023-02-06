@@ -38,7 +38,7 @@ export default Vue.extend({
 
   created() {
     useOptionListStore().resetState();
-    useOptionListStore().list = EOptionLists.FinancialAssistance;
+    useOptionListStore().list = EOptionLists.FinancialAssistanceCategories;
   },
 
   methods: {

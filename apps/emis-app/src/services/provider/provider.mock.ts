@@ -12,7 +12,6 @@ import { mockEventsService } from '@libs/services-lib/events/entity';
 import { mockCaseNotesService } from '@libs/services-lib/case-notes/entity';
 import { mockCaseFileReferralsService } from '@libs/services-lib/case-file-referrals/entity';
 import { mockCaseFileDocumentsService } from '@libs/services-lib/case-file-documents/entity';
-import { mockFinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
 import { mockFinancialAssistanceService } from '@libs/services-lib/financial-assistance-payments/entity';
 import { mockTenantSettingsService } from '@libs/services-lib/tenantSettings/entity';
 import { mockErrorReportingService } from '@libs/services-lib/error-reporting';
@@ -41,7 +40,6 @@ export const mockProvider = (): IProviderMock => ({
   financialAssistancePaymentsService: mockFinancialAssistanceService(),
   userAccounts: mockUserAccountsService(),
   events: mockEventsService(),
-  financialAssistanceCategories: mockFinancialAssistanceCategoriesService(),
   massActions: mockMassActionService(),
   tenantSettings: mockTenantSettingsService(),
   errorReporting: mockErrorReportingService(),

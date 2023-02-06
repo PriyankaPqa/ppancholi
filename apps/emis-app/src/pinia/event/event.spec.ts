@@ -99,50 +99,6 @@ describe('>>> Event Store', () => {
     });
   });
 
-  describe('setAgreementTypes', () => {
-    it('sets the agreement types array', () => {
-      const store = createTestStore();
-      const entity = mockOptionItemData();
-      store.setAgreementTypes(entity);
-      expect(store.agreementTypes)
-        .toEqual(entity);
-    });
-  });
-
-  describe('setEventTypes', () => {
-    it('sets the agreement types array', () => {
-      const store = createTestStore();
-      const entity = mockOptionItemData();
-      store.setEventTypes(entity);
-      expect(store.eventTypes)
-        .toEqual(entity);
-    });
-  });
-
-  describe('setAgreementTypesFetched', () => {
-    it('should sets the agreementTypesFetched state', () => {
-      const store = createTestStore();
-      store.setAgreementTypesFetched(true);
-      expect(store.agreementTypesFetched)
-        .toBeTruthy();
-      store.setAgreementTypesFetched(false);
-      expect(store.agreementTypesFetched)
-        .toBeFalsy();
-    });
-  });
-
-  describe('setEventTypesFetched', () => {
-    it('should sets the eventTypesFetched state', () => {
-      const store = createTestStore();
-      store.setEventTypesFetched(true);
-      expect(store.eventTypesFetched)
-        .toBeTruthy();
-      store.setEventTypesFetched(false);
-      expect(store.eventTypesFetched)
-        .toBeFalsy();
-    });
-  });
-
   describe('fetchAgreementTypes', () => {
     it('calls the getAgreementTypes service and returns the eventTypes getter', async () => {
       const store = createTestStore();

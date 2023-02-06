@@ -23,9 +23,10 @@ import { IMassActionEntity } from '@libs/entities-lib/mass-action';
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { IFinancialAssistanceTableCombined } from '@libs/entities-lib/financial-assistance';
-import { IOptionSubItem, IOptionItemCombined } from '@libs/entities-lib/optionItem';
+import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { useEventStore } from '@/pinia/event/event';
 import { useProgramStore } from '@/pinia/program/program';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 
 export default Vue.extend({
   name: 'FinancialAssistancePaymentDetailsTable',
@@ -42,7 +43,7 @@ export default Vue.extend({
       event: null as IEventEntity,
       table: null as IFinancialAssistanceTableCombined,
       program: null as IProgramEntity,
-      item: null as IOptionItemCombined,
+      item: null as IOptionItem,
       eventLoading: false,
       tableLoading: false,
       programLoading: false,
@@ -72,7 +73,7 @@ export default Vue.extend({
         },
         {
           label: 'massActions.financialAssistance.create.item.label',
-          value: this.item?.entity && this.$m(this.item.entity.name),
+          value: this.item && this.$m(this.item.name),
           dataTest: 'item',
           loading: this.itemLoading,
         },
@@ -98,8 +99,8 @@ export default Vue.extend({
     },
 
     subItem(): IOptionSubItem {
-      if (this.item?.entity) {
-        return this.item.entity.subitems.find((s) => s.id === this.massAction.details.subCategoryId);
+      if (this.item) {
+        return this.item.subitems?.find((s) => s.id === this.massAction.details.subCategoryId);
       }
       return null;
     },
@@ -135,7 +136,8 @@ export default Vue.extend({
 
     async fetchItem() {
       this.itemLoading = true;
-      this.item = await this.$storage.financialAssistanceCategory.actions.fetch(this.massAction.details.mainCategoryId);
+      const categories = await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
+      this.item = categories?.find((c) => c.id === this.massAction.details.mainCategoryId);
       this.itemLoading = false;
     },
   },

@@ -1,10 +1,14 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import Component from '../Templates/AddEditSubItemButtons.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+
+const { pinia } = useMockFinancialAssistancePaymentStore();
 
 describe('AddEditSubItemButtons.vue', () => {
   let wrapper;
@@ -14,6 +18,7 @@ describe('AddEditSubItemButtons.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         mode: 'add',
         isEdit: false,
@@ -32,6 +37,12 @@ describe('AddEditSubItemButtons.vue', () => {
         wrapper.vm.$storage.financialAssistance.getters.loading = jest.fn(() => true);
 
         expect(wrapper.vm.loading).toEqual(true);
+      });
+    });
+
+    describe('categories', () => {
+      it('returns the right value', () => {
+        expect(wrapper.vm.categories).toEqual(mockOptionItemData());
       });
     });
 

@@ -244,7 +244,7 @@ describe('ViewPaymentLineDetails.vue', () => {
       it('calls and loads from the storage', async () => {
         await mountWrapper(true);
         expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith(financialAssistance.id);
-        expect(storage.financialAssistanceCategory.actions.fetchAll).toHaveBeenCalled();
+        expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalled();
         expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith(financialAssistance.id);
         expect(storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(financialAssistance.financialAssistanceTableId);
         expect(programStore.fetch).toHaveBeenCalledWith({
@@ -253,7 +253,7 @@ describe('ViewPaymentLineDetails.vue', () => {
         });
         expect(storage.financialAssistance.mutations.setFinancialAssistance).toHaveBeenLastCalledWith(
           storage.financialAssistance.getters.get(),
-          storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity),
+          financialAssistancePaymentStore.getFinancialAssistanceCategories(),
           programStore.fetch(),
           false,
         );

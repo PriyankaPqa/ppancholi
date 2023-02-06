@@ -190,6 +190,7 @@ import routes from '@/constants/routes';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { VForm } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
@@ -400,12 +401,11 @@ export default Vue.extend({
 
   async created() {
     this.$storage.financialAssistance.mutations.resetState();
-
-    await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
+    await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
 
     if (this.isEdit) {
       const fa = await this.$storage.financialAssistance.actions.fetch(this.$route.params.faId);
-      const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
+      const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
       const program = await useProgramStore().fetch({ id: fa.entity?.programId, eventId: fa.entity?.eventId }) as IProgramEntity;
       this.$storage.financialAssistance.mutations.setFinancialAssistance(fa, categories, program);
 

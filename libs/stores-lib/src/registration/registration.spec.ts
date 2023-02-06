@@ -4,7 +4,7 @@ import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import { mockEvent, mockEventData, RegistrationEvent } from '@libs/entities-lib/registration-event';
 import {
- EIndigenousTypes, mockGenders, mockIndigenousCommunitiesGetData, mockIndigenousTypesItems,
+  EIndigenousTypes, mockGenders, mockIndigenousCommunitiesGetData, mockIndigenousTypesItems,
 } from '@libs/entities-lib/value-objects/identity-set';
 import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@libs/entities-lib/value-objects/contact-information';
 import {
@@ -733,7 +733,7 @@ describe('>>> Registration Store', () => {
       useRegistrationStore.splitHouseholdState = mockSplitHousehold();
       useRegistrationStore.event = mockEvent({ id: 'event-id' });
       await useRegistrationStore.splitHousehold();
-     expect(useRegistrationStore.registrationResponse).toEqual(mockDetailedRegistrationResponse());
+      expect(useRegistrationStore.registrationResponse).toEqual(mockDetailedRegistrationResponse());
     });
 
     it('call the mutation setRegistrationErrors if the call ', async () => {

@@ -9,7 +9,8 @@ import {
   mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems,
 } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities, mockCombinedProgram, mockProgramEntity } from '@libs/entities-lib/program';
-import { mockCombinedOptionItems, mockOptionItem, mockOptionSubItem } from '@libs/entities-lib/optionItem';
+import { mockOptionItem, mockOptionSubItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import { mockStorage } from '@/storage';
@@ -38,6 +39,7 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 
 const { pinia, programStore } = useMockProgramStore();
+const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
 
 describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
   let wrapper;
@@ -130,7 +132,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
 
     describe('financialAssistanceCategories', () => {
       it('should return all financial assistance categories', () => {
-        expect(wrapper.vm.financialAssistanceCategories).toEqual(mockCombinedOptionItems());
+        expect(wrapper.vm.financialAssistanceCategories).toEqual(mockOptionItemData());
       });
     });
 
@@ -154,10 +156,9 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         const idItemCurrentTable = '9b275d2f-00a1-4345-94fe-c37b84beb400';
 
         const expected = _sortBy(wrapper.vm.financialAssistanceCategories
-          .filter((c) => c.entity.id === idItemCurrentTable
-            && c.entity.status === Status.Active
-            && c.subItems.some((s) => s.documentationRequired === false))
-          .map((c) => c.entity), 'orderRank');
+          .filter((c) => c.id === idItemCurrentTable
+            && c.status === Status.Active
+            && c.subItems.some((s) => s.documentationRequired === false)), 'orderRank');
 
         expect(wrapper.vm.financialAssistanceTableItems).toEqual(expected);
       });
@@ -367,7 +368,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-        expect(wrapper.vm.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalledTimes(1);
+        expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalledTimes(1);
       });
     });
   });

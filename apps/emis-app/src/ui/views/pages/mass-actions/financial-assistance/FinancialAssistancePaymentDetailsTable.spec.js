@@ -4,15 +4,17 @@ import { mockCombinedMassAction, mockMassActionEntity } from '@libs/entities-lib
 import { EPaymentModalities, mockCombinedProgram } from '@libs/entities-lib/program';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
-import { mockCombineOptionItem, mockOptionItem } from '@libs/entities-lib/optionItem';
+import { mockOptionItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import Component from './FinancialAssistancePaymentDetailsTable.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const { pinia, eventStore } = useMockEventStore();
 const { programStore } = useMockProgramStore(pinia);
+const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
 
 describe('FinancialAssistancePaymentDetailsTable.vue', () => {
   let wrapper;
@@ -46,7 +48,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
         event: mockEventEntity(),
         table: mockCombinedFinancialAssistance(),
         program: mockCombinedProgram(),
-        item: mockCombineOptionItem(),
+        item: mockOptionItem(),
       });
     });
     describe('rows', () => {
@@ -72,7 +74,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
           },
           {
             label: 'massActions.financialAssistance.create.item.label',
-            value: mockCombineOptionItem().entity.name.translation.en,
+            value: mockOptionItem().name.translation.en,
             dataTest: 'item',
             loading: wrapper.vm.itemLoading,
           },
@@ -135,10 +137,12 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
     });
 
     describe('fetchItem', () => {
-      it('should fetch the item', async () => {
-        const id = mockCombinedMassAction().entity.details.mainCategoryId;
+      it('should fetch the categories and save the item to the state ', async () => {
+        wrapper.setProps({ massAction: { ...mockMassActionEntity(), details: { ...mockMassActionEntity().details, mainCategoryId: '1' } } });
+        financialAssistancePaymentStore.fetchFinancialAssistanceCategories = jest.fn(() => mockOptionItemData());
         await wrapper.vm.fetchItem();
-        expect(wrapper.vm.$storage.financialAssistanceCategory.actions.fetch).toHaveBeenCalledWith(id);
+        expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalled();
+        expect(wrapper.vm.item).toEqual(mockOptionItemData()[0]);
       });
     });
   });

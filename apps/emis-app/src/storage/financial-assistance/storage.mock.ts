@@ -1,7 +1,6 @@
 import {
   IFinancialAssistanceTableCombined,
   IFinancialAssistanceTableEntity,
-  mockCategories,
   mockCombinedFinancialAssistances,
   mockFinancialAssistanceTableEntity,
   mockItems,
@@ -34,7 +33,6 @@ export class FinancialAssistanceStorageMock extends BaseMock<IFinancialAssistanc
     formDirty: jest.fn(),
     loading: jest.fn(),
     isOperating: jest.fn(),
-    faCategories: jest.fn(() => mockCategories()),
   };
 
   protected mutations: IMutationsMock = {

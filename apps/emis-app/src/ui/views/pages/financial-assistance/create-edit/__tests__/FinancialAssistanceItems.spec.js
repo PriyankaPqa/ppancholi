@@ -2,9 +2,11 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import {
   mockItems, mockCategories, EFinancialAmountModes, EFinancialFrequency,
 } from '@libs/entities-lib/financial-assistance';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { mockStorage } from '@/storage';
 import Component from '../FinancialAssistanceItems.vue';
 
+const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
 const localVue = createLocalVue();
 describe('FinancialAssistanceItems.vue', () => {
   let wrapper;
@@ -15,6 +17,7 @@ describe('FinancialAssistanceItems.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         isEdit: false,
         isTableMode: false,
@@ -36,7 +39,7 @@ describe('FinancialAssistanceItems.vue', () => {
   describe('Computed', () => {
     describe('faCategories', () => {
       it('returns the right value', () => {
-        wrapper.vm.$storage.financialAssistance.getters.faCategories = jest.fn(() => mockCategories());
+        financialAssistancePaymentStore.getFinancialAssistanceCategories = jest.fn(() => mockCategories());
 
         expect(wrapper.vm.faCategories).toEqual(mockCategories());
       });

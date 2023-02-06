@@ -6,6 +6,7 @@ import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
 import { ProgramEntity, mockProgramEntity, mockProgramEntities } from '@libs/entities-lib/program';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { Status } from '@libs/entities-lib/base';
 
 import { useMockProgramStore } from '@/pinia/program/program.mock';
@@ -14,6 +15,8 @@ import Component from '../CreateEditFinancialAssistance.vue';
 const localVue = createLocalVue();
 const storage = mockStorage();
 const { pinia } = useMockProgramStore();
+const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
+
 describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   let wrapper;
 
@@ -298,7 +301,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         hook.call(wrapper.vm);
       });
 
-      expect(storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalled();
+      expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalled();
     });
 
     it('calls fetchAllIncludingInactive in edit mode', async () => {
@@ -320,7 +323,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         hook.call(wrapper.vm);
       });
 
-      expect(storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalled();
+      expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalled();
     });
 
     it('fetches financial assistance in edit mode', async () => {

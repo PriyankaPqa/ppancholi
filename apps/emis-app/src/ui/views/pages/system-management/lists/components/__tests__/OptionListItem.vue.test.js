@@ -120,7 +120,7 @@ describe('OptionListItem.vue', () => {
       });
 
       it('returns false if is not Role', async () => {
-        optionListStore.list = EOptionLists.FinancialAssistance;
+        optionListStore.list = EOptionLists.FinancialAssistanceCategories;
 
         await wrapper.setProps({
           isSubItem: false,
@@ -130,7 +130,7 @@ describe('OptionListItem.vue', () => {
       });
 
       it('returns false if is subItem', async () => {
-        optionListStore.list = EOptionLists.FinancialAssistance;
+        optionListStore.list = EOptionLists.FinancialAssistanceCategories;
 
         await wrapper.setProps({
           isSubItem: true,

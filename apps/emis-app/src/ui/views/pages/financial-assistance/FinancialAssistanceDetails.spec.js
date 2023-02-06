@@ -2,12 +2,14 @@ import { RcNestedTable } from '@libs/component-lib/components';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/storage';
 import { mockItems, EFinancialAmountModes, EFinancialFrequency } from '@libs/entities-lib/financial-assistance';
+import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
 import Component from './FinancialAssistanceDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
+const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
 
 describe('FinancialAssistanceDetailsMassAction.vue', () => {
   let wrapper;
@@ -15,6 +17,7 @@ describe('FinancialAssistanceDetailsMassAction.vue', () => {
   beforeEach(() => {
     wrapper = mount(Component, {
       localVue,
+      pinia,
       mocks: {
         $route: {
           params: {
@@ -178,7 +181,7 @@ describe('FinancialAssistanceDetailsMassAction.vue', () => {
           hook.call(wrapper.vm);
         });
 
-        expect(wrapper.vm.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalledTimes(1);
+        expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalledTimes(1);
 
         expect(wrapper.vm.$storage.financialAssistance.actions.fetch).toHaveBeenCalledWith('faId');
       });

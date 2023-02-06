@@ -72,61 +72,61 @@ describe('>>> Option List Store', () => {
     });
   });
 
-    describe('addOrUpdateItem', () => {
-      test('the addOrUpdateItem mutation adds a new option item to the state', () => {
-        const store = createTestStore();
-        const item = mockOptionItemData()[0];
-        store.items = [];
-        expect(store.items).toEqual([]);
+  describe('addOrUpdateItem', () => {
+    test('the addOrUpdateItem mutation adds a new option item to the state', () => {
+      const store = createTestStore();
+      const item = mockOptionItemData()[0];
+      store.items = [];
+      expect(store.items).toEqual([]);
 
-        store.addOrUpdateItem(item);
+      store.addOrUpdateItem(item);
 
-        expect(store.items).toEqual([item]);
-      });
+      expect(store.items).toEqual([item]);
+    });
 
-      test('the addOrUpdateItem mutation updates an existing option item', () => {
-        const store = createTestStore();
-        const items = mockOptionItemData();
-        store.items = items;
-        expect(store.items).toEqual(items);
+    test('the addOrUpdateItem mutation updates an existing option item', () => {
+      const store = createTestStore();
+      const items = mockOptionItemData();
+      store.items = items;
+      expect(store.items).toEqual(items);
 
-        const updatedItem = mockOptionItemData()[0];
+      const updatedItem = mockOptionItemData()[0];
 
-        updatedItem.name = {
-          translation: {
-            en: 'UPDATED EN',
-            fr: 'UPDATED FR',
-          },
-        };
+      updatedItem.name = {
+        translation: {
+          en: 'UPDATED EN',
+          fr: 'UPDATED FR',
+        },
+      };
 
-        store.addOrUpdateItem(updatedItem);
+      store.addOrUpdateItem(updatedItem);
 
-        expect(store.items).toEqual([
-          {
-            ...items[0],
-            name: {
-              translation: {
-                en: 'UPDATED EN',
-                fr: 'UPDATED FR',
-              },
+      expect(store.items).toEqual([
+        {
+          ...items[0],
+          name: {
+            translation: {
+              en: 'UPDATED EN',
+              fr: 'UPDATED FR',
             },
           },
-          ...items.slice(1),
-        ]);
-      });
+        },
+        ...items.slice(1),
+      ]);
     });
+  });
 
-    describe('resetState', () => {
-      it('resets the state to default', () => {
-        const store = createTestStore();
-        store.list = list;
-        store.items = mockOptionItemData();
-        store.resetState();
+  describe('resetState', () => {
+    it('resets the state to default', () => {
+      const store = createTestStore();
+      store.list = list;
+      store.items = mockOptionItemData();
+      store.resetState();
 
-        expect(store.list).toBe(null);
-        expect(store.items).toEqual([]);
-      });
+      expect(store.list).toBe(null);
+      expect(store.items).toEqual([]);
     });
+  });
 
   describe('>> Actions', () => {
     describe('fetchItems', () => {

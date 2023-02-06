@@ -42,7 +42,7 @@ describe('FinancialAssistance.vue', () => {
     });
 
     it('set the list with correct one', () => {
-      expect(optionListStore.list).toEqual(EOptionLists.FinancialAssistance);
+      expect(optionListStore.list).toEqual(EOptionLists.FinancialAssistanceCategories);
     });
   });
 });

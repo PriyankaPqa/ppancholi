@@ -1,6 +1,6 @@
 import { createTestingPinia, TestingPinia } from '@pinia/testing';
 import {
- ICreateOptionItemRequest,
+  ICreateOptionItemRequest,
 } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
 
@@ -13,11 +13,11 @@ export const useMockOptionListStore = (pinia?: TestingPinia) => {
   const p = pinia || createTestingPinia(
     {
       stubActions: false,
-},
-);
+    },
+  );
 
   const useOptionListStore = defineStore(`${storeId}`, () => ({
-      ...getMockOptionListExtensionComponents(),
+    ...getMockOptionListExtensionComponents(),
   }));
 
   return {

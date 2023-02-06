@@ -149,6 +149,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcNestedTable } from '@libs/component-lib/components';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { VForm } from '@libs/shared-lib/types';
 import {
   EFinancialAmountModes,
@@ -215,7 +216,7 @@ export default Vue.extend({
 
   computed: {
     faCategories(): IOptionItem[] {
-      return this.$storage.financialAssistance.getters.faCategories();
+      return useFinancialAssistancePaymentStore().getFinancialAssistanceCategories();
     },
 
     /**
@@ -343,7 +344,8 @@ export default Vue.extend({
      */
     async showManageListsDialog(newValue: boolean) {
       if (newValue === false) {
-        await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
+        useFinancialAssistancePaymentStore().financialAssistanceCategoriesFetched = false;
+        await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
         (this.$refs.form as VForm).reset();
       }
     },

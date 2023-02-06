@@ -311,7 +311,7 @@ export default mixins(caseFileDetail).extend({
       this.financialAssistance.caseFileId = this.$route.params.id;
     }
 
-    await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
+    await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
     this.isEditMode || this.isAddMode ? await this.searchTables() : await this.fetchTable();
     await this.fetchProgram(this.financialTables[0].programId, this.caseFile.entity.eventId);
 
@@ -358,26 +358,26 @@ export default mixins(caseFileDetail).extend({
 
     async saveFinancialAssistance() {
       this.savingFinancialAssistance = true;
-        const result = this.isEditMode ? (
-          await useFinancialAssistancePaymentStore().editFinancialAssistancePayment(this.financialAssistance))
-          : (await useFinancialAssistancePaymentStore().addFinancialAssistancePayment(this.financialAssistance)
-          );
-        if (result) {
-          this.$toasted.global.success(
-            this.isEditMode ? this.$t('financialAssistancePayment_edit.success') : this.$t('financialAssistancePayment_create.success'),
-          );
-          // so we can leave without warning
-          (this.$refs.form as VForm).reset();
-          // reset actually takes a few ms but isnt awaitable...
-          setTimeout(() => {
-            this.$router.replace({
-              name: routes.caseFile.financialAssistance.details.name,
-              params: {
-                financialAssistancePaymentId: result.id,
-              },
-            });
-          }, 150);
-        }
+      const result = this.isEditMode ? (
+        await useFinancialAssistancePaymentStore().editFinancialAssistancePayment(this.financialAssistance))
+        : (await useFinancialAssistancePaymentStore().addFinancialAssistancePayment(this.financialAssistance)
+        );
+      if (result) {
+        this.$toasted.global.success(
+          this.isEditMode ? this.$t('financialAssistancePayment_edit.success') : this.$t('financialAssistancePayment_create.success'),
+        );
+        // so we can leave without warning
+        (this.$refs.form as VForm).reset();
+        // reset actually takes a few ms but isnt awaitable...
+        setTimeout(() => {
+          this.$router.replace({
+            name: routes.caseFile.financialAssistance.details.name,
+            params: {
+              financialAssistancePaymentId: result.id,
+            },
+          });
+        }, 150);
+      }
       this.savingFinancialAssistance = false;
     },
 
@@ -415,7 +415,7 @@ export default mixins(caseFileDetail).extend({
       this.selectedTable = table;
       if (this.selectedTable) {
         const tableWithMetadata = this.$storage.financialAssistance.getters.get(table.id);
-        const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
+        const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
         this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, this.selectedProgram, false);
       }
     },
@@ -523,7 +523,7 @@ export default mixins(caseFileDetail).extend({
       status: PaymentStatus,
       group: IFinancialAssistancePaymentGroup,
       cancellationReason?: EPaymentCancellationReason,
-      }) {
+    }) {
       const updatedFinancialAssistance = await useFinancialAssistancePaymentStore().updatePaymentStatus({
         entityId: this.financialAssistance.id,
         paymentGroupId: event.group.id,

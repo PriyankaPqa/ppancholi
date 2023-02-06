@@ -13,9 +13,9 @@ import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/ap
 
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore, useFinancialAssistancePaymentMetadataStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
-
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 import { SignalR } from './signalR';
 
 const storage = mockStorage();
@@ -23,9 +23,11 @@ const service = mockSignalRService();
 
 const listenForChangesFct = SignalR.prototype.listenForChanges;
 const listenForOptionItemChangesFct = SignalR.prototype.listenForOptionItemChanges;
+const listenForOptionItemChangesWithStorageFct = SignalR.prototype.listenForOptionItemChangesWithStorage;
 SignalR.prototype.buildHubConnection = jest.fn();
 SignalR.prototype.listenForChanges = jest.fn();
 SignalR.prototype.listenForOptionItemChanges = jest.fn();
+SignalR.prototype.listenForOptionItemChangesWithStorage = jest.fn();
 
 let conn = new SignalR({ service, storage, showConsole: true });
 
@@ -108,13 +110,6 @@ describe('signalR', () => {
         .toHaveBeenCalled();
     });
 
-    it('calls listenForFinancialAssistanceCategoryModuleChanges', () => {
-      conn.listenForFinancialAssistanceCategoryModuleChanges = jest.fn();
-      conn.createBindings();
-      expect(conn.listenForFinancialAssistanceCategoryModuleChanges)
-        .toHaveBeenCalled();
-    });
-
     it('calls listenForHouseholdModuleChanges', () => {
       conn.listenForHouseholdModuleChanges = jest.fn();
       conn.createBindings();
@@ -182,7 +177,7 @@ describe('signalR', () => {
 
     it('calls listenForOptionItemChanges', () => {
       conn.listenForHouseholdModuleChanges();
-      expect(conn.listenForOptionItemChanges)
+      expect(conn.listenForOptionItemChangesWithStorage)
         .toHaveBeenCalledWith({
           domain: 'household',
           optionItemName: 'ScreeningId',
@@ -193,15 +188,15 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'household',
           optionItemName: 'Gender',
-          cacheResetMutationName: 'setGendersFetched',
-          mutationDomain: 'registration',
+          store: useRegistrationStore(),
+          prop: 'gendersFetched',
         });
       expect(conn.listenForOptionItemChanges)
         .toHaveBeenCalledWith({
           domain: 'household',
           optionItemName: 'PrimarySpokenLanguage',
-          cacheResetMutationName: 'setPrimarySpokenLanguagesFetched',
-          mutationDomain: 'registration',
+          store: useRegistrationStore(),
+          prop: 'primarySpokenLanguagesFetched',
         });
     });
   });
@@ -265,13 +260,15 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'event',
           optionItemName: 'AgreementType',
-          cacheResetMutationName: 'setAgreementTypesFetched',
+          store: useEventStore(),
+          prop: 'agreementTypesFetched',
         });
       expect(conn.listenForOptionItemChanges)
         .toHaveBeenCalledWith({
           domain: 'event',
           optionItemName: 'EventType',
-          cacheResetMutationName: 'setEventTypesFetched',
+          store: useEventStore(),
+          prop: 'eventTypesFetched',
         });
     });
   });
@@ -335,21 +332,21 @@ describe('signalR', () => {
         });
     });
 
-    it('calls listenForOptionItemChanges', () => {
+    it('calls listenForOptionItemChangesWithStorage', () => {
       conn.listenForCaseFileModuleChanges();
-      expect(conn.listenForOptionItemChanges)
+      expect(conn.listenForOptionItemChangesWithStorage)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           optionItemName: 'CloseReason',
           cacheResetMutationName: 'setCloseReasonsFetched',
         });
-      expect(conn.listenForOptionItemChanges)
+      expect(conn.listenForOptionItemChangesWithStorage)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           optionItemName: 'InactiveReason',
           cacheResetMutationName: 'setInactiveReasonsFetched',
         });
-      expect(conn.listenForOptionItemChanges)
+      expect(conn.listenForOptionItemChangesWithStorage)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           optionItemName: 'Tag',
@@ -381,8 +378,8 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'case-file',
           optionItemName: 'CaseNoteCategory',
-          cacheResetMutationName: 'setCaseNoteCategoriesFetched',
-          mutationDomain: 'caseNote',
+          store: useCaseNoteStore(),
+          prop: 'caseNoteCategoriesFetched',
         });
     });
   });
@@ -410,15 +407,15 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'case-file',
           optionItemName: 'ReferralType',
-          cacheResetMutationName: 'setTypesFetched',
-          mutationDomain: 'caseFileReferral',
+          store: useCaseFileReferralStore(),
+          prop: 'typesFetched',
         });
       expect(conn.listenForOptionItemChanges)
         .toHaveBeenCalledWith({
           domain: 'case-file',
           optionItemName: 'ReferralOutcomeStatus',
-          cacheResetMutationName: 'setOutcomeStatusesFetched',
-          mutationDomain: 'caseFileReferral',
+          store: useCaseFileReferralStore(),
+          prop: 'outcomeStatusesFetched',
         });
     });
   });
@@ -457,6 +454,17 @@ describe('signalR', () => {
           action: useFinancialAssistancePaymentMetadataStore().setItemFromOutsideNotification,
         });
     });
+
+    it('calls listenForOptionItemChanges', () => {
+      conn.listenForFinancialAssistancePaymentModuleChanges();
+      expect(conn.listenForOptionItemChanges)
+        .toHaveBeenCalledWith({
+          domain: 'finance',
+          optionItemName: 'FinancialAssistanceCategory',
+          store: useFinancialAssistancePaymentStore(),
+          prop: 'financialAssistanceCategoriesFetched',
+        });
+    });
   });
 
   describe('listenForCaseDocumentModuleChanges', () => {
@@ -482,8 +490,8 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'case-file',
           optionItemName: 'DocumentCategory',
-          cacheResetMutationName: 'setCategoriesFetched',
-          mutationDomain: 'caseFileDocument',
+          store: useCaseFileDocumentStore(),
+          prop: 'categoriesFetched',
         });
     });
   });
@@ -502,18 +510,6 @@ describe('signalR', () => {
           domain: 'finance',
           entityName: 'FinancialAssistanceTableMetadata',
           action: conn.storage.financialAssistance.mutations.setMetadataFromOutsideNotification,
-        });
-    });
-  });
-
-  describe('listenForFinancialAssistanceCategoryModuleChanges', () => {
-    it('calls listenForChanges', () => {
-      conn.listenForFinancialAssistanceCategoryModuleChanges();
-      expect(conn.listenForChanges)
-        .toHaveBeenCalledWith({
-          domain: 'finance',
-          entityName: 'FinancialAssistanceCategory',
-          action: conn.storage.financialAssistanceCategory.mutations.setEntityFromOutsideNotification,
         });
     });
   });
@@ -565,6 +561,27 @@ describe('signalR', () => {
       });
       conn.connection = { on: jest.fn() };
       conn.listenForOptionItemChanges({
+        domain: 'event',
+        optionItemName: 'AgreementType',
+        store: useEventStore(),
+        prop: 'agreementTypesFetched',
+      });
+      expect(conn.connection.on)
+        .toHaveBeenCalledWith('event.AgreementTypeUpdated', expect.any(Function));
+      expect(conn.connection.on)
+        .toHaveBeenCalledWith('event.AgreementTypeCreated', expect.any(Function));
+    });
+  });
+
+  describe('listenForOptionItemChangesWithStorage', () => {
+    it('attaches the action to the connection', () => {
+      SignalR.prototype.listenForOptionItemChangesWithStorage = listenForOptionItemChangesWithStorageFct;
+      conn = new SignalR({
+        storage,
+        showConsole: false,
+      });
+      conn.connection = { on: jest.fn() };
+      conn.listenForOptionItemChangesWithStorage({
         domain: 'event',
         optionItemName: 'AgreementType',
         cacheResetMutationName: 'setAgreementTypesFetched',

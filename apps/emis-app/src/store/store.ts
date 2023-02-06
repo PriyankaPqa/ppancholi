@@ -14,9 +14,6 @@ import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-ass
 import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
 import { FinancialAssistanceTablesMetadataService } from '@libs/services-lib/financial-assistance-tables/metadata';
 
-import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
-import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
-
 import { SignalR } from '@/ui/plugins/signal-r';
 
 import { IRootState } from './store.types';
@@ -46,11 +43,6 @@ const store: StoreOptions<IRootState> = {
     ).getModule(),
     [vuexModule.FINANCIAL_ASSISTANCE_METADATA]: new FinancialAssistanceMetadataModule(
       new FinancialAssistanceTablesMetadataService(httpClient),
-      SignalR,
-    ).getModule(),
-
-    [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
-      new FinancialAssistanceCategoriesService(httpClient),
       SignalR,
     ).getModule(),
   },

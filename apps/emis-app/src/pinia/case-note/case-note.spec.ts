@@ -66,40 +66,6 @@ describe('>>> Case Note Store', () => {
     });
   });
 
-  describe('setCaseNoteCategories', () => {
-    it('sets the caseNote Categories array', () => {
-      const store = createTestStore();
-      const entity = mockOptionItemData();
-      store.setCaseNoteCategories(entity);
-      expect(store.caseNoteCategories)
-        .toEqual(entity);
-    });
-  });
-
-  describe('setCaseNoteCategoriesFetched', () => {
-    it('should sets the caseNoteCategoriesFetched state', () => {
-      const store = createTestStore();
-      store.setCaseNoteCategoriesFetched(true);
-      expect(store.caseNoteCategoriesFetched)
-        .toBeTruthy();
-      store.setCaseNoteCategoriesFetched(false);
-      expect(store.caseNoteCategoriesFetched)
-        .toBeFalsy();
-    });
-  });
-
-  describe('setIsSavingCaseNote', () => {
-    it('should sets the isSavingCaseNote state', () => {
-      const store = createTestStore();
-      store.setIsSavingCaseNote(true);
-      expect(store.isSavingCaseNote)
-        .toBeTruthy();
-      store.setIsSavingCaseNote(false);
-      expect(store.isSavingCaseNote)
-        .toBeFalsy();
-    });
-  });
-
   describe('fetchCaseNoteCategories', () => {
     it('should call optionItemService getOptionList and commit the result', async () => {
       const store = createTestStore();

@@ -33,27 +33,11 @@ export function getExtensionComponents(
     return helpers.sortMultilingualArray(events, 'name');
   }
 
-  function setAgreementTypes(payload: Array<IOptionItemData>) {
-    agreementTypes.value = payload;
-  }
-
-  function setEventTypes(payload: Array<IOptionItemData>) {
-    eventTypes.value = payload;
-  }
-
-  function setAgreementTypesFetched(payload: boolean) {
-    agreementTypesFetched.value = payload;
-  }
-
-  function setEventTypesFetched(payload: boolean) {
-    eventTypesFetched.value = payload;
-  }
-
   async function fetchAgreementTypes(): Promise<IOptionItem[]> {
     if (!agreementTypesFetched.value) {
       const data = await optionsService.getOptionList(EOptionLists.AgreementTypes);
-      setAgreementTypes(data);
-      setAgreementTypesFetched(true);
+      agreementTypes.value = data;
+      agreementTypesFetched.value = true;
     }
 
     return getAgreementTypes();
@@ -62,8 +46,8 @@ export function getExtensionComponents(
   async function fetchEventTypes(): Promise<IOptionItem[]> {
     if (!eventTypesFetched.value) {
       const data = await optionsService.getOptionList(EOptionLists.EventTypes);
-      setEventTypes(data);
-      setEventTypesFetched(true);
+      eventTypes.value = data;
+      eventTypesFetched.value = true;
     }
 
     return getEventTypes();
@@ -160,10 +144,6 @@ export function getExtensionComponents(
     getAgreementTypes,
     getEventTypes,
     getEventsByStatus,
-    setAgreementTypes,
-    setEventTypes,
-    setAgreementTypesFetched,
-    setEventTypesFetched,
     fetchAgreementTypes,
     fetchEventTypes,
     fetchOtherProvinces,

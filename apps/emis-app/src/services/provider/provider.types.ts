@@ -16,7 +16,6 @@ import { ICaseNotesService, ICaseNotesServiceMock } from '@libs/services-lib/cas
 import { ICaseFileReferralsService, ICaseFileReferralsServiceMock } from '@libs/services-lib/case-file-referrals/entity';
 import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '@libs/services-lib/case-file-documents/entity';
 import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMock } from '@libs/services-lib/financial-assistance-tables/entity';
-import { IFinancialAssistanceCategoriesService, IFinancialAssistanceCategoriesServiceMock } from '@libs/services-lib/financial-assistance-categories/entity';
 import { IFinancialAssistancePaymentsService, IFinancialAssistancePaymentsServiceMock } from '@libs/services-lib/financial-assistance-payments/entity';
 import { ICaseFilesMetadataService, ICaseFilesMetadataServiceMock } from '@libs/services-lib/case-files/metadata';
 import { ICaseNotesMetadataService } from '@libs/services-lib/case-notes/metadata';
@@ -55,7 +54,6 @@ export interface IProvider {
   financialAssistancePaymentsService: IFinancialAssistancePaymentsService,
   financialAssistancePaymentsServiceMetadata: IFinancialAssistancePaymentsMetadataService,
   userAccounts: UserAccountsService,
-  financialAssistanceCategories: IFinancialAssistanceCategoriesService,
   massActions: IMassActionService;
   tenantSettings: ITenantSettingsService;
   errorReporting: IErrorReportingService;
@@ -81,7 +79,6 @@ export interface IProviderMock {
   financialAssistanceTables: IFinancialAssistanceTablesServiceMock,
   financialAssistancePaymentsService: IFinancialAssistancePaymentsServiceMock,
   userAccounts: IUserAccountsServiceMock,
-  financialAssistanceCategories: IFinancialAssistanceCategoriesServiceMock,
   massActions: IMassActionServiceMock,
   tenantSettings: ITenantSettingsServiceMock;
   errorReporting: IErrorReportingServiceMock;

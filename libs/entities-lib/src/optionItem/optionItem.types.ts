@@ -1,5 +1,5 @@
 import { IMultilingual } from '@libs/shared-lib/types';
-import { IEntity, IEntityCombined, Status } from '../base';
+import { IEntity, Status } from '../base';
 
 export enum EOptionLists {
   EventTypes = 1,
@@ -12,7 +12,7 @@ export enum EOptionLists {
   CaseFileInactiveReasons = 8,
   CaseNoteCategories = 9,
   CaseFileCloseReasons = 10,
-  FinancialAssistance = 11,
+  FinancialAssistanceCategories = 11,
   ScreeningId = 12,
   ReferralOutcomeStatus = 13,
   ReferralTypes = 14,
@@ -47,5 +47,3 @@ export interface ICreateOptionItemRequest {
   status: Status;
   description?: IMultilingual;
 }
-
-export type IOptionItemCombined = IEntityCombined<IOptionItem, never>;

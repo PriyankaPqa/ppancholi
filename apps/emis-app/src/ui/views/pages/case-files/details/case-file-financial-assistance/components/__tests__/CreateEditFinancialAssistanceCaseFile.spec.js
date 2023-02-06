@@ -31,7 +31,6 @@ import { format } from 'date-fns';
 import { Status } from '@libs/entities-lib/base';
 
 import { mockProgramEntity, mockCombinedPrograms } from '@libs/entities-lib/program';
-import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import flushPromises from 'flush-promises';
@@ -51,7 +50,6 @@ const caseFileFinancialAssistance = mockCaseFinancialAssistanceEntity();
 const program = mockProgramEntity();
 const caseFileCombined = mockCombinedCaseFile();
 const items = mockItems();
-const optionItems = mockOptionItemData();
 const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGroups();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
@@ -112,7 +110,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     storage.caseFile.getters.get = jest.fn(() => caseFileCombined);
     storage.caseFile.actions.fetch = jest.fn(() => caseFileCombined);
     storage.financialAssistance.getters.items = jest.fn(() => items);
-    storage.financialAssistanceCategory.getters.getAll = jest.fn(() => optionItems);
     await mountWrapper(false, 'edit', pinia);
   });
 
@@ -257,7 +254,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
 
-        expect(storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalled();
+        expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalled();
       });
 
       it('call searchTables if it is add mode', async () => {
@@ -890,7 +887,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
       it('should call storage to get categories', async () => {
         await wrapper.vm.updateSelectedTable(financialAssistance);
-        expect(storage.financialAssistanceCategory.getters.getAll).toHaveBeenCalled();
+        expect(financialAssistancePaymentStore.getFinancialAssistanceCategories).toHaveBeenCalled();
       });
     });
 
@@ -1087,7 +1084,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
           entityId,
           paymentGroupId: newGroup.id,
           status: 3,
-          cancellationReason: 5 });
+          cancellationReason: 5,
+        });
         expect(wrapper.vm.financialAssistance).toEqual(new FinancialAssistancePaymentEntity(financialAssistancePaymentStore.updatePaymentStatus()));
       });
     });

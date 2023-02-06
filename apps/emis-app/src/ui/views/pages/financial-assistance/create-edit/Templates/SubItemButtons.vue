@@ -34,6 +34,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import ConfirmBeforeAction from '../ConfirmBeforeAction.vue';
 
 export default Vue.extend({
@@ -182,7 +183,7 @@ export default Vue.extend({
       this.loading = false;
 
       if (res) {
-        const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
+        const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
         await this.$storage.financialAssistance.actions.reloadItems(categories);
         this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
       }

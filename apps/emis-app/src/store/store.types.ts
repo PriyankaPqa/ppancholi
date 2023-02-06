@@ -9,7 +9,6 @@ import { ICaseFileMetadata } from '@libs/entities-lib/case-file';
 import { IFinancialAssistanceEntityState } from '@/store/modules/financial-assistance/financialAssistanceEntity.types';
 import { IFinancialAssistanceTableMetadata } from '@libs/entities-lib/financial-assistance';
 
-import { IFinancialAssistanceCategoryEntityState } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity.types';
 import { IProvider, IProviderMock } from '@/services/provider';
 
 export interface IRootState {
@@ -18,7 +17,6 @@ export interface IRootState {
   [vuexModule.CASE_FILE_METADATA]?: IBaseState<ICaseFileMetadata>
   [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]?: IFinancialAssistanceEntityState,
   [vuexModule.FINANCIAL_ASSISTANCE_METADATA]?: IBaseState<IFinancialAssistanceTableMetadata>,
-  [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]?: IFinancialAssistanceCategoryEntityState,
 }
 
 export type IState = IRootState;

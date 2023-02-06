@@ -21,7 +21,7 @@ import { SignalR } from '@/ui/plugins/signal-r';
 import { ISignalRMock } from '@libs/shared-lib/signal-r';
 import { Status } from '@libs/entities-lib/base';
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
-import { BaseModule, filterAndSortActiveItems } from '../base';
+import { BaseModule } from '../base';
 import { IState } from '../base/base.types';
 
 export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssistanceTableEntity, uuid> {
@@ -72,12 +72,6 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
   public getters = {
     ...this.baseGetters,
-
-    // eslint-disable-next-line
-    faCategories: (_state: any, _getters: any, _rootState: any, rootGetters: any) => {
-      const allCategories = filterAndSortActiveItems(rootGetters['financialAssistanceCategoryEntities/getAll']);
-      return allCategories;
-    },
 
     name: (state: IFinancialAssistanceEntityState) => (language: string) => state.name.translation[language],
 

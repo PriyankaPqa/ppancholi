@@ -24,6 +24,8 @@ import { TranslateResult } from 'vue-i18n';
 import { cloneDeep } from 'lodash';
 import { VForm } from '@libs/shared-lib/types';
 import { IFinancialAssistanceTableSubItem } from '@libs/entities-lib/financial-assistance';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
 
 export default Vue.extend({
   name: 'AddEditSubItemButtons',
@@ -86,6 +88,10 @@ export default Vue.extend({
 
     cancelButtonDataTest(): string {
       return this.mode === 'add' ? 'financialAssistanceItems__cancelAddSubItemBtn' : 'financialAssistanceItems__cancelEditSubItemBtn';
+    },
+
+    categories(): IOptionItem[] {
+      return useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
     },
   },
 
@@ -151,8 +157,7 @@ export default Vue.extend({
         }
 
         if (res) {
-          const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
-          await this.$storage.financialAssistance.actions.reloadItems(categories);
+          await this.$storage.financialAssistance.actions.reloadItems(this.categories);
           this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
           this.onCancel();
         }
@@ -173,8 +178,7 @@ export default Vue.extend({
       const res = await this.$storage.financialAssistance.actions.editSubItem(editedItemIndex, editedSubItemIndex, newSubItem);
 
       if (res) {
-        const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
-        await this.$storage.financialAssistance.actions.reloadItems(categories);
+        await this.$storage.financialAssistance.actions.reloadItems(this.categories);
         this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
         this.onCancel();
       }

@@ -6,7 +6,7 @@ import { IInformationFromBeneficiarySearch, IRegistrationMenuItem } from '@libs/
 import Vue, { ref, Ref } from 'vue';
 import { IVueI18n, TranslateResult } from 'vue-i18n';
 import {
- EOptionItemStatus, ERegistrationMode, IOptionItemData, IServerError,
+  EOptionItemStatus, ERegistrationMode, IOptionItemData, IServerError,
 } from '@libs/shared-lib/types';
 import { IEventData as IRegistrationEventData, RegistrationEvent } from '@libs/entities-lib/registration-event';
 import { Status } from '@libs/entities-lib/base';
@@ -42,7 +42,7 @@ export interface IRegistrationParams {
 }
 // eslint-disable-next-line max-lines-per-function
 export function storeFactory({
- pTabs, i18n, skipAgeRestriction, skipEmailPhoneRules, mode, publicApi, householdApi,
+  pTabs, i18n, skipAgeRestriction, skipEmailPhoneRules, mode, publicApi, householdApi,
 }: IRegistrationParams) {
   // eslint-disable-next-line max-lines-per-function, max-statements
   return defineStore('registration', () => {
@@ -52,9 +52,11 @@ export function storeFactory({
     const tabs = ref(pTabs) as Ref<IRegistrationMenuItem[]>;
     const currentTabIndex = ref(0);
     const genders = ref([]);
+    const gendersFetched = ref(false);
     const preferredLanguages = ref([]);
     const primarySpokenLanguages = ref([]);
     const indigenousCommunities = ref([]);
+    const primarySpokenLanguagesFetched = ref(false);
     const loadingIndigenousCommunities = ref(false);
     const registrationResponse = ref(null) as Ref<IDetailedRegistrationResponse>;
     const registrationErrors = ref(null) as Ref<IServerError>;
@@ -183,9 +185,11 @@ export function storeFactory({
     function getHouseholdCreate() {
       return _cloneDeep(householdCreate.value);
     }
+
     function isSplitMode() {
       return !!(splitHouseholdState.value);
     }
+
     function findEffectiveJumpIndex(targetIndex: number): number {
       if (targetIndex <= currentTabIndex.value) {
         return targetIndex;
@@ -226,7 +230,7 @@ export function storeFactory({
             isValid = true;
             break;
         }
-          // Return on first error found
+        // Return on first error found
         if (!isValid) {
           break;
         }
@@ -286,11 +290,12 @@ export function storeFactory({
     }
 
     async function fetchGenders(): Promise<IOptionItemData[]> {
-      if (genders.value.length === 0) {
+      if (!gendersFetched.value) {
         const data: IOptionItemData[] = await householdApi.getGenders();
 
         if (data?.length > 0) {
           genders.value = data;
+          gendersFetched.value = true;
         }
       }
       return getGenders(false);
@@ -307,10 +312,11 @@ export function storeFactory({
     }
 
     async function fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]> {
-      if (primarySpokenLanguages.value.length === 0) {
+      if (!primarySpokenLanguagesFetched.value) {
         const data: IOptionItemData[] = await householdApi.getPrimarySpokenLanguages();
         if (data?.length > 0) {
           primarySpokenLanguages.value = data;
+          primarySpokenLanguagesFetched.value = true;
         }
       }
       return getPrimarySpokenLanguages();
@@ -398,8 +404,8 @@ export function storeFactory({
 
     async function updatePersonAddress(
       {
- member, isPrimaryMember, index = -1, sameAddress = false,
-}: { member: IMember; isPrimaryMember: boolean; index?: number; sameAddress?: boolean },
+        member, isPrimaryMember, index = -1, sameAddress = false,
+      }: { member: IMember; isPrimaryMember: boolean; index?: number; sameAddress?: boolean },
     ): Promise<IHouseholdEntity> {
       let result;
       if (isPrimaryMember) {
@@ -432,7 +438,7 @@ export function storeFactory({
       return res;
     }
 
-      async function deleteAdditionalMember({ householdId, memberId, index }: { householdId: string; memberId: string; index: number }): Promise<IHouseholdEntity> {
+    async function deleteAdditionalMember({ householdId, memberId, index }: { householdId: string; memberId: string; index: number }): Promise<IHouseholdEntity> {
       const res = await householdApi.deleteAdditionalMember(householdId, memberId);
       if (res) {
         householdCreate.value.removeAdditionalMember(index);
@@ -463,8 +469,10 @@ export function storeFactory({
       tabs,
       currentTabIndex,
       genders,
+      gendersFetched,
       preferredLanguages,
       primarySpokenLanguages,
+      primarySpokenLanguagesFetched,
       indigenousCommunities,
       loadingIndigenousCommunities,
       registrationResponse,

@@ -17,8 +17,6 @@ import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-ass
 import { FinancialAssistanceTablesService } from '@libs/services-lib/financial-assistance-tables/entity';
 import { FinancialAssistanceTablesMetadataService } from '@libs/services-lib/financial-assistance-tables/metadata';
 
-import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
-import { FinancialAssistanceCategoriesService } from '@libs/services-lib/financial-assistance-categories/entity';
 import { mockSignalR } from '@libs/shared-lib/signal-r';
 import { mockProvider } from '@/services/provider';
 
@@ -42,11 +40,6 @@ const mockConfig = {
     ).getModule(),
     [vuexModule.FINANCIAL_ASSISTANCE_METADATA]: new FinancialAssistanceMetadataModule(
       new FinancialAssistanceTablesMetadataService(httpClient),
-      mockSignalR(),
-    ).getModule(),
-
-    [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
-      new FinancialAssistanceCategoriesService(httpClient),
       mockSignalR(),
     ).getModule(),
   },

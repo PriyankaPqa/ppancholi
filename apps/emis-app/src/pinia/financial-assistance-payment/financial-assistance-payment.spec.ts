@@ -2,6 +2,8 @@ import { createTestingPinia } from '@pinia/testing';
 import { defineStore, setActivePinia } from 'pinia';
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
 import { mockFinancialAssistanceService } from '@libs/services-lib/financial-assistance-payments/entity';
+import { mockOptionItemsServiceService } from '@libs/services-lib/optionItems';
+import _sortBy from 'lodash/sortBy';
 import {
   IdParams,
   IFinancialAssistancePaymentEntity,
@@ -10,13 +12,16 @@ import {
 import { getExtensionComponents } from '@/pinia/financial-assistance-payment/financial-assistance-payment-extension';
 import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
 import { mockVersionedEntityCombined } from '@libs/entities-lib/value-objects/versioned-entity';
+import { EOptionLists, OptionItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
 
 const entityService = mockFinancialAssistanceService();
+const optionsService = mockOptionItemsServiceService();
 const baseComponents = getBaseStoreComponents<IFinancialAssistancePaymentEntity, IdParams>(entityService);
 const getPinia = () => {
   const pinia = createTestingPinia({
     initialState: {
       'test-financial-assistance-payment': {
+        financialAssistanceCategories: mockOptionItemData(),
       },
     },
     stubActions: false,
@@ -31,7 +36,7 @@ const useFinancialAssistancePaymentTestStore = (opts = {}) => {
     ...opts,
   };
 
-  const extensionComponents = getExtensionComponents(newBaseComponents, entityService);
+  const extensionComponents = getExtensionComponents(newBaseComponents, entityService, optionsService);
 
   const useStore = defineStore('test-financial-assistance-payment', () => ({
     ...newBaseComponents,
@@ -53,15 +58,42 @@ describe('Financial assistance payment store', () => {
     bComponents = { addNewlyCreatedId: jest.fn(), set: jest.fn() };
     store = createTestStore({ ...baseComponents, ...bComponents });
   });
-    describe('addFinancialAssistancePayment', () => {
-      it('calls the right service and returns the result', async () => {
-        const res = await store.addFinancialAssistancePayment(entity);
-        expect(entityService.addFinancialAssistancePayment).toBeCalledWith(entity);
-        expect(res).toEqual(entity);
-        expect(bComponents.addNewlyCreatedId).toBeCalledWith(entity);
-        expect(bComponents.set).toBeCalledWith(entity);
-      });
+
+  describe('getFinancialAssistanceCategories', () => {
+    test('the getter calls filterAndSortActiveItems with the right params and returns the result', () => {
+      const store = createTestStore();
+      const res = store.getFinancialAssistanceCategories(false);
+      expect(res).toEqual(
+        _sortBy(
+          mockOptionItemData().map((e) => new OptionItem(e)),
+          'orderRank',
+        ),
+      );
     });
+  });
+
+  describe('fetchFinancialAssistanceCategories', () => {
+    it('should call optionItemService getOptionList and commit the result', async () => {
+      const res = mockOptionItemData();
+      const store = createTestStore();
+      optionsService.getOptionList = jest.fn(() => res);
+      await store.fetchFinancialAssistanceCategories();
+
+      expect(optionsService.getOptionList).toBeCalledWith(EOptionLists.FinancialAssistanceCategories);
+      expect(store.financialAssistanceCategories).toEqual(res);
+      expect(store.financialAssistanceCategoriesFetched).toEqual(true);
+    });
+  });
+
+  describe('addFinancialAssistancePayment', () => {
+    it('calls the right service and returns the result', async () => {
+      const res = await store.addFinancialAssistancePayment(entity);
+      expect(entityService.addFinancialAssistancePayment).toBeCalledWith(entity);
+      expect(res).toEqual(entity);
+      expect(bComponents.addNewlyCreatedId).toBeCalledWith(entity);
+      expect(bComponents.set).toBeCalledWith(entity);
+    });
+  });
 
   describe('editFinancialAssistancePayment', () => {
     it('calls the right service and returns the result', async () => {
@@ -82,7 +114,9 @@ describe('Financial assistance payment store', () => {
         cancellationReason: 5,
       });
 
-      expect(entityService.updatePaymentStatus).toBeCalledWith({ cancellationReason: 5, entityId: 'mock-id', paymentGroupId: 'group-id', status: 2 });
+      expect(entityService.updatePaymentStatus).toBeCalledWith({
+        cancellationReason: 5, entityId: 'mock-id', paymentGroupId: 'group-id', status: 2,
+      });
       expect(res).toEqual(entity);
     });
   });

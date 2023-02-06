@@ -118,8 +118,9 @@ import {
   IFinancialAssistanceTableEntity, IFinancialAssistanceTableItemData, IFinancialAssistanceTableSubItemData,
   EFinancialAmountModes,
 } from '@libs/entities-lib/financial-assistance';
+import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import {
-  IOptionItem, IOptionItemCombined, IOptionSubItem,
+  IOptionItem, IOptionSubItem,
 } from '@libs/entities-lib/optionItem';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { IEventEntity } from '@libs/entities-lib/event';
@@ -210,8 +211,8 @@ export default Vue.extend({
         && t.entity.items.some((item) => item.subItems.some((subItem) => subItem.documentationRequired === false)));
     },
 
-    financialAssistanceCategories(): Array<IOptionItemCombined> {
-      return this.$storage.financialAssistanceCategory.getters.getAll();
+    financialAssistanceCategories(): Array<IOptionItem> {
+      return useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
     },
 
     financialAssistanceTableItems(): Array<IOptionItem> {
@@ -223,8 +224,7 @@ export default Vue.extend({
           .map((i) => i.mainCategory.optionItemId);
 
         return _sortBy(this.financialAssistanceCategories
-          .filter((c) => currentItemsIds.includes(c.entity.id))
-          .map((c) => c.entity), 'orderRank');
+          .filter((c) => currentItemsIds.includes(c.id)), 'orderRank');
       }
       return [];
     },
@@ -311,7 +311,7 @@ export default Vue.extend({
   async created() {
     this.formCopy = cloneDeep(this.form);
     await this.$storage.financialAssistance.actions.fetchAll();
-    await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
+    await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
   },
 
   methods: {
