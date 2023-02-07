@@ -20,7 +20,8 @@
     "cy:open": "cypress open",
     "cy:delete:reports": "rm cypress/results/* || true",
     "cy:combine:reports": "jrm cypress/results/combined-report.xml \"cypress/results/*.xml\"",
-    "cy:report": "yarn cy:delete:reports & cypress run --reporter cypress-multi-reporters --reporter-options configFile=reporter-config.json"
+    "cy:ci": "currents",
+    "cy:report": "yarn cy:delete:reports & yarn cy:ci run --reporter cypress-multi-reporters --reporter-options configFile=cypress-reporter-config.js"
   },
   "dependencies": {
     "@libs/component-lib": "*",
@@ -58,6 +59,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.17.5",
+    "@currents/cli": "^4.0.2",
     "@faker-js/faker": "^7.6.0",
     "@pinia/testing": "^0.0.14",
     "@types/lodash": "4.14.179",

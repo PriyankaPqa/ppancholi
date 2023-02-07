@@ -8,9 +8,9 @@ const enableLogger = true; // https://github.com/archfz/cypress-terminal-report
 export default defineConfig({
   reporter: 'cypress-multi-reporters',
   reporterOptions: {
-    configFile: 'reporter-config.json',
+    configFile: 'cypress-reporter-config.js',
   },
-  projectId: 'ct8tm8',
+  projectId: 'CLyVZv',
   e2e: {
     setupNodeEvents(on) {
       if (enableLogger) {

@@ -69,7 +69,7 @@ describe(`${title}`, () => {
     });
   });
 
-  it('should register on benef-app', () => {
+  it('should register someone successfully', () => {
     const registrationPage = new RegistrationPage();
     cy.wrap(1).then(() => {
       privacyStatement = registrationPage.gotoRegistrationPage();

@@ -7,7 +7,7 @@ const enableLogger = true; // https://github.com/archfz/cypress-terminal-report
 export default defineConfig({
   reporter: 'cypress-multi-reporters',
   reporterOptions: {
-    configFile: 'reporter-config.json',
+    configFile: 'cypress-reporter-config.js',
   },
   e2e: {
     setupNodeEvents(on) {
@@ -19,7 +19,7 @@ export default defineConfig({
       }
     },
     baseUrl: 'http://localhost:8080/',
-    projectId: '7svzz4',
+    projectId: 'FDDF6a',
     env: {
       AZURE_CLIENT_ID: '44dc9a29-39d1-462e-9cbe-b9507b34396d',
       AZURE_TENANT_ID: '56f61c9c-0a6f-4be2-954d-941c9f02cb4c',

@@ -10,6 +10,7 @@ jobs:
     displayName: 'Critical path tests'
     variables:
       - group: Env-Dev
+      - group: Cypress
     pool:
       vmImage: 'ubuntu-latest'
     strategy:
