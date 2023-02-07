@@ -61,7 +61,7 @@ import Vue from 'vue';
 import { RcTooltip } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
-import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
+import { IBrandingEntity, FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useUserStore } from '@/pinia/user/user';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
@@ -90,7 +90,7 @@ export default Vue.extend({
     displayRegistrationButton(): boolean {
       return this.$route.name !== routes.registration.home.name
         && this.$route.name !== routes.registration.individual.name
-        && this.$hasLevel('level1');
+        && this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? 'level0' : 'level1');
     },
 
     logoUrl(): string {

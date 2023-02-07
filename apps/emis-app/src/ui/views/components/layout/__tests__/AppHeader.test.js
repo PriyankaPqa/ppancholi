@@ -55,6 +55,84 @@ describe('AppHeader.vue', () => {
         expect(wrapper.vm.branding).toEqual(tenantSettingsStore.currentTenantSettings.branding);
       });
     });
+
+    describe('displayRegistrationButton', () => {
+      it('should return true if the user has minimum level 1 and the route has the right name and feature flag L0Access is off', () => {
+        wrapper = mount(Component, {
+          localVue,
+          pinia: getPiniaForUser('level1'),
+          vuetify,
+          mocks: {
+            $route: {
+              name: routes.events.home.name,
+            },
+            $hasFeature: jest.fn(() => false),
+          },
+        });
+
+        expect(wrapper.vm.displayRegistrationButton).toBeTruthy();
+      });
+
+      it('should return true if the user has minimum level 0 and the route has the right name and feature flag L0Access is on', () => {
+        wrapper = mount(Component, {
+          localVue,
+          pinia: getPiniaForUser('level0'),
+          vuetify,
+          mocks: {
+            $route: {
+              name: routes.events.home.name,
+            },
+            $hasFeature: jest.fn(() => true),
+          },
+        });
+
+        expect(wrapper.vm.displayRegistrationButton).toBeTruthy();
+      });
+
+      it('should return false if the user has not level 0', () => {
+        wrapper = mount(Component, {
+          localVue,
+          pinia: getPiniaForUser('contributorIM'),
+          vuetify,
+          mocks: {
+            $route: {
+              name: routes.events.home.name,
+            },
+          },
+        });
+
+        expect(wrapper.vm.displayRegistrationButton).toBeFalsy();
+      });
+
+      it('should return false for the wrong route - home', () => {
+        wrapper = mount(Component, {
+          localVue,
+          pinia: getPiniaForUser('contributorIM'),
+          vuetify,
+          mocks: {
+            $route: {
+              name: routes.registration.home.name,
+            },
+          },
+        });
+
+        expect(wrapper.vm.displayRegistrationButton).toBeFalsy();
+      });
+      it('should return false for the wrong route - individual', () => {
+        wrapper = mount(Component, {
+          localVue,
+          pinia: getPiniaForUser('contributorIM'),
+          vuetify,
+          mocks: {
+            $route: {
+              name: routes.registration.individual.name,
+            },
+          },
+        });
+
+        expect(wrapper.vm.displayRegistrationButton).toBeFalsy();
+      });
+    });
   });
 
   describe('Methods', () => {
