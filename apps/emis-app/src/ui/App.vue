@@ -62,6 +62,7 @@ import helpers from '@/ui/helpers/helpers';
 import ErrorReportToast from '@/ui/shared-components/ErrorReportToast.vue';
 import { Survey } from 'survey-vue';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
+import { initializeStores } from '@/ui/helpers/cypress';
 
 Vue.component('Survey', Survey);
 
@@ -123,6 +124,10 @@ export default {
     localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VITE_GOOGLE_API_KEY);
     localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VITE_API_BASE_URL);
     sessionStorage.setItem(sessionStorageKeys.appVersion.name, process.env.VITE_VERSION);
+
+    if (window.Cypress) {
+      initializeStores();
+    }
 
     this.createPrototypes();
 
@@ -196,6 +201,7 @@ export default {
         this.$signalR.updateSubscriptions();
       }, this.intervalSignalRSubscriptions);
     },
+
   },
 };
 </script>

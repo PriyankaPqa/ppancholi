@@ -3,7 +3,6 @@
 import { ServerAuthorizationTokenResponse } from '@azure/msal-common';
 import { UserRoles } from './msal';
 import './msal';
-import { RefreshUntilOptions } from './wait';
 import './wait';
 import './ui';
 
@@ -28,7 +27,16 @@ declare global {
       selectCountry(dataTest: string, { countryCode, search }: { countryCode: string; search: string }): Chainable<void>
       escape(): Chainable<void>
       goTo(url: string, lang?: string, options?: Record<string, string>): Chainable<AUTWindow>
-      refreshUntil(selector: string | { selector: string, type: string }, opts?: RefreshUntilOptions): Chainable<void>
+      waitFirstRefreshUntilDisplayed(
+        firstWaitFunction: () => Chainable<boolean> | boolean,
+        selector: string | { selector: string, type: string },
+        opts?: WaitUntilOptions
+      ): Chainable<void>
+      waitItemsRefreshUntilDisplayed(
+        piniaStoreId: string,
+        selector: string | { selector: string, type: string },
+        opts?: WaitUntilOptions
+      ): Chainable<void>
     }
   }
 }

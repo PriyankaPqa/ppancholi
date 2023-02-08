@@ -67,7 +67,7 @@ SignalR.Initialize({
   showConsole: false,
 });
 
-new Vue({
+const app = new Vue({
   render: (h) => h(App),
   router,
   i18n,
@@ -76,6 +76,11 @@ new Vue({
   pinia,
 }).$mount('#app');
 
+// @ts-ignore
+if (window.Cypress) {
+  // @ts-ignore
+  window._app = app;
+}
 Vue.use(registrationStore);
 
 // Directive fo v-visible so component is hidden but still take its place
