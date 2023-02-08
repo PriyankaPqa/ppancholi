@@ -28,6 +28,7 @@ export default defineConfig({
       API_BASE_URL: 'https://api-dev.crc-tech.ca',
       USER_6_MAIL: 'TestDev6@crctechtesting.onmicrosoft.com',
       USER_6_PASSWORD: 'I#cWVAo*EqA6',
+      CUSTOM_ENV: '',
     },
   },
   viewportWidth: 1920,

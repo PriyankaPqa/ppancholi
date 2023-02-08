@@ -8,7 +8,7 @@ const createOpenEvent = (roleValue = UserRoles.level6) => cy.getToken(roleValue)
   return createdEvent;
 });
 
-beforeEach(() => {
+before(() => {
   cy.login();
   createOpenEvent().then((event) => {
     cy.goTo(`events/${event.id}/`);

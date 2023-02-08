@@ -6,9 +6,10 @@ export interface RefreshUntilOptions extends WaitUntilOptions {
 
 Cypress.Commands.add('refreshUntil', (selector: string | { selector: string, type: string }, opts?: RefreshUntilOptions) => {
   let parsedSelector = '';
+  let waitAfterRefresh = 2500; // Default wait time after reloading the page in ms
 
-  if (!opts.waitAfterRefresh) {
-    opts.waitAfterRefresh = 2500;
+  if (opts && opts.waitAfterRefresh) {
+    waitAfterRefresh = opts.waitAfterRefresh;
   }
 
   if (typeof selector === 'string') {
@@ -18,6 +19,6 @@ Cypress.Commands.add('refreshUntil', (selector: string | { selector: string, typ
   if (typeof selector !== 'string' && selector.selector && selector.type) {
     parsedSelector = `${selector.type}[data-test=${selector.selector}]`;
   }
-
-  cy.waitUntil(() => cy.reload().wait(opts.waitAfterRefresh).then(() => Cypress.$(parsedSelector).length), opts);
+  // eslint-disable-next-line
+  cy.waitUntil(() => cy.reload().wait(waitAfterRefresh).then(() => Cypress.$(parsedSelector).length), opts);
 });

@@ -38,7 +38,7 @@ let createEventPage: CreateEventPage;
 let eventDetailsPage: EventDetailsPage;
 describe(`${title}`, () => {
   describe('Level6', () => {
-    beforeEach(() => {
+    before(() => {
       cy.login();
       cy.goTo('events/create');
     });
@@ -66,7 +66,7 @@ describe(`${title}`, () => {
   });
   for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
     describe(`${roleName}`, () => {
-      beforeEach(() => {
+      before(() => {
         cy.login(roleValue);
         cy.goTo('home');
       });

@@ -1,4 +1,4 @@
-import { CypressEventsService } from '@libs/cypress-lib/services/events/events';
+import { CypressEventsService } from '@libs/cypress-lib/services/events';
 import { EventsService } from '@libs/services-lib/events/entity';
 import { getHttpClient } from '../../src/services/httpClient';
 import { provider as appProvider } from '../../src/services/provider';

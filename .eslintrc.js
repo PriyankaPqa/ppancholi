@@ -129,6 +129,12 @@ module.exports = {
         '@typescript-eslint/naming-convention': 0,
       },
     },
+    {
+      files: ['**/*.cy.ts'],
+      rules: {
+        'func-names': 'off',
+      },
+    },
   ],
   plugins: ['vuejs-accessibility'],
   ignorePatterns: ['dist/**', 'node_modules/**'],

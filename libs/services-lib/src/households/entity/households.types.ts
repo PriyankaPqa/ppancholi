@@ -9,7 +9,7 @@ import {
   IAddress,
   IValidateEmailResponse,
   IValidateEmailRequest,
-  IConsentInformation, IValidateEmailPublicRequest,
+  IConsentInformation, IValidateEmailPublicRequest, ICreateHouseholdRequest,
 } from '@libs/entities-lib/household-create';
 import {
  IDetailedRegistrationResponse, IdParams, IHouseholdEntity, IOustandingPaymentResponse,
@@ -26,7 +26,9 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   getIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
   getPerson(id: uuid): Promise<IMemberEntity>;
   submitRegistration({ household, eventId, recaptchaToken }: { household: IHouseholdCreate; eventId: string; recaptchaToken: string }): Promise<IDetailedRegistrationResponse>;
+  postPublicRegistration(payload: ICreateHouseholdRequest, recaptchaToken: string): Promise<IDetailedRegistrationResponse>
   submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IDetailedRegistrationResponse>;
+  postCrcRegistration(payload: ICreateHouseholdRequest): Promise<IDetailedRegistrationResponse>
   updatePersonContactInformation(id: string,
       payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet }): Promise<IHouseholdEntity> | false;
   updatePersonIdentity(id: string,
@@ -55,8 +57,10 @@ export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHousehol
   getPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
   getIndigenousCommunities: jest.Mock<IIndigenousCommunityData[]>;
   submitRegistration: jest.Mock<IDetailedRegistrationResponse>;
+  postPublicRegistration: jest.Mock<IDetailedRegistrationResponse>;
   getPerson: jest.Mock<IMemberEntity>;
   submitCRCRegistration: jest.Mock<IDetailedRegistrationResponse>;
+  postCRCRegistration: jest.Mock<IDetailedRegistrationResponse>;
   updatePersonContactInformation: jest.Mock<IHouseholdEntity>;
   updatePersonIdentity: jest.Mock<IHouseholdEntity>;
   updatePersonAddress: jest.Mock<IHouseholdEntity>;

@@ -45,11 +45,19 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   async submitRegistration({ household, eventId, recaptchaToken }: { household: IHouseholdCreate; eventId: string; recaptchaToken: string }):
     Promise<IDetailedRegistrationResponse> {
     const payload = this.parseHouseholdPayload(household, eventId);
+    return this.postPublicRegistration(payload, recaptchaToken);
+  }
+
+  async postPublicRegistration(payload: ICreateHouseholdRequest, recaptchaToken: string): Promise<IDetailedRegistrationResponse> {
     return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`, { ...payload, recaptchaToken }, { globalHandler: false });
   }
 
   async submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IDetailedRegistrationResponse> {
     const payload = this.parseHouseholdPayload(household, eventId);
+    return this.postCrcRegistration(payload);
+  }
+
+  async postCrcRegistration(payload: ICreateHouseholdRequest): Promise<IDetailedRegistrationResponse> {
     return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}`, payload, { globalHandler: false });
   }
 

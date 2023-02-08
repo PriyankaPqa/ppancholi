@@ -69,6 +69,26 @@ describe('>>> Beneficiaries Service', () => {
 );
   });
 
+  test('postPublicRegistration is linked to the correct URL', async () => {
+    service.parseHouseholdPayload = jest.fn(() => createBeneficiaryRequest);
+
+    await service.postPublicRegistration(createBeneficiaryRequest, 'token');
+
+    expect(http.post).toHaveBeenCalledWith(
+      `${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`,
+      { ...createBeneficiaryRequest, recaptchaToken: 'token' },
+      { globalHandler: false },
+    );
+  });
+
+  test('postRegistration is linked to the correct URL', async () => {
+    service.parseHouseholdPayload = jest.fn(() => createBeneficiaryRequest);
+
+    await service.postCrcRegistration(createBeneficiaryRequest);
+
+    expect(http.post).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}`, createBeneficiaryRequest, { globalHandler: false });
+  });
+
   test('submitCRCRegistration is linked to the correct URL', async () => {
     service.parseHouseholdPayload = jest.fn(() => createBeneficiaryRequest);
 

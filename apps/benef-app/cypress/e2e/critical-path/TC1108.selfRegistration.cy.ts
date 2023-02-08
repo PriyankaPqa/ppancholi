@@ -61,7 +61,8 @@ before(() => {
 });
 
 describe(`${title}`, () => {
-  beforeEach(() => {
+  before(() => {
+    cy.log('CUSTOM_ENV', Cypress.env('CUSTOM_ENV'));
     cy.then(async () => {
       event = await provider.events.createEvent(mockCreateEvent());
       await provider.events.toggleSelfRegistration(event.id, true);

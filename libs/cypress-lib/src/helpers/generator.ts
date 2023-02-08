@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { faker } from '@faker-js/faker';
 
 export const today = `${new Date().toISOString().split('T')[0]}T00:00:00.000Z`;
 
@@ -24,6 +25,15 @@ text += possible.charAt(Math.floor(Math.random() * possible.length));
   return text;
 }
 
+export function generateDateOfBirth() {
+  const birthDate = faker.date.birthdate({ min: 16, max: 100, mode: 'age' });
+  return `${birthDate.toISOString().split('T')[0]}T00:00:00.000Z`;
+}
+
 export function generateRandomEventName() {
-  return `test-auto-event-${generateRandomText()}-${getCurrentDateString()}`;
+  return `test-auto-event-${getCurrentDateString()}`;
+}
+
+export function generateRandomTeamName() {
+  return `Atest-auto-team-${getCurrentDateString()}`;
 }
