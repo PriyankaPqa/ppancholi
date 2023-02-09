@@ -6,6 +6,7 @@ import {
 import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import PaymentStatusHistoryDialog from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/PaymentStatusHistoryDialog.vue';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import flushPromises from 'flush-promises';
 import Component from '../PaymentLineGroup.vue';
@@ -94,6 +95,38 @@ describe('PaymentLineGroup.vue', () => {
         await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.New });
         await wrapper.vm.$nextTick();
         expect(wrapper.findDataTest('paymentLineGroup__statusMessage').exists()).toBeTruthy();
+      });
+    });
+
+    describe('paymentLineGroup__historyLink', () => {
+      it('should render when the payment group has payment status history and the feature flag is on', async () => {
+        await mountWrapper(false, 6, 'role', {
+          computed: {
+            hasFeatureFlagPaymentStatusHistory: () => true,
+          },
+        });
+        await wrapper.setProps({
+          paymentGroup: mockCaseFinancialAssistancePaymentGroups()[0],
+        });
+        const element = wrapper.findDataTest('paymentLineGroup__historyLink');
+        expect(element.exists()).toBeTruthy();
+      });
+    });
+
+    describe('PaymentStatusHistoryDialog', () => {
+      it('should exist when showPaymentStatusHistory is true and the feature flag is on, and passing the correct props', async () => {
+        await mountWrapper(false, 6, 'role', {
+          computed: {
+            hasFeatureFlagPaymentStatusHistory: () => true,
+          },
+        });
+        await wrapper.setData({
+          showPaymentStatusHistory: true,
+        });
+        const component = wrapper.findComponent(PaymentStatusHistoryDialog);
+        const props = 'paymentGroup';
+        expect(component.exists()).toBeTruthy();
+        expect(component.props(props)).toBe(wrapper.vm.paymentGroup);
       });
     });
   });

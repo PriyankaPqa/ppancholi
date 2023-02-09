@@ -10,6 +10,14 @@
           {{ $t('common.status') }}:
         </span>
 
+        <v-icon
+          v-if="paymentGroup.paymentStatusHistory && hasFeatureFlagPaymentStatusHistory"
+          data-test="paymentLineGroup__historyLink"
+          class="mr-2"
+          @click="showPaymentStatusHistoryDialog()">
+          mdi-history
+        </v-icon>
+
         <span v-if="transactionApprovalStatus === ApprovalStatus.Approved">
           <status-select
             data-test="paymentLineGroup__status"
@@ -79,6 +87,11 @@
         </div>
       </template>
     </rc-confirmation-dialog>
+
+    <payment-status-history-dialog
+      v-if="showPaymentStatusHistory && hasFeatureFlagPaymentStatusHistory"
+      :payment-group="paymentGroup"
+      :show.sync="showPaymentStatusHistory" />
   </div>
 </template>
 
@@ -101,6 +114,7 @@ import {
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import PaymentStatusHistoryDialog from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/PaymentStatusHistoryDialog.vue';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import PaymentLineItem from './PaymentLineItem.vue';
 
@@ -112,6 +126,7 @@ export default Vue.extend({
     PaymentLineItem,
     RcConfirmationDialog,
     VSelectWithValidation,
+    PaymentStatusHistoryDialog,
   },
 
   props: {
@@ -152,6 +167,7 @@ export default Vue.extend({
       cancellationReason: null as EPaymentCancellationReason,
       ApprovalStatus,
       showCancelConfirmationReason: false,
+      showPaymentStatusHistory: false,
     };
   },
 
@@ -329,6 +345,11 @@ export default Vue.extend({
       }
       return reasons.filter((reason) => reason.value !== EPaymentCancellationReason.Unknown);
     },
+
+    hasFeatureFlagPaymentStatusHistory() {
+      // TODO: EMISV2-6268 remove feature flag
+      return this.$hasFeature(FeatureKeys.PaymentGroupStatusHistory);
+    },
   },
 
   async created() {
@@ -370,6 +391,10 @@ export default Vue.extend({
     onConfirmCancel() {
       this.showCancelConfirmationReason = false;
       this.$emit('update-payment-status', { status: PaymentStatus.Cancelled, group: this.paymentGroup, cancellationReason: this.cancellationReason });
+    },
+
+    showPaymentStatusHistoryDialog() {
+      this.showPaymentStatusHistory = true;
     },
   },
 });

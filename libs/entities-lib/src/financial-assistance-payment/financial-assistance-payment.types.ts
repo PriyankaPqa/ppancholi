@@ -72,6 +72,7 @@ export interface IFinancialAssistancePaymentGroup extends IEntity {
   cancellationBy: uuid;
   groupingInformation: IGroupingInformation;
   paymentStatus: PaymentStatus;
+  paymentStatusHistory?: IPaymentStatusHistory[];
   lines: IFinancialAssistancePaymentLine[];
 }
 
@@ -157,4 +158,15 @@ export interface PaymentsSummary {
   grandTotalAmount: number;
 }
 
+export interface IPaymentStatusHistory {
+  userInformation:{
+    userId: string;
+    userName: string;
+    roleName: IMultilingual;
+  },
+  dateOfAction: string | Date;
+  actualDateOfAction: string | Date;
+  paymentStatus: PaymentStatus;
+  paymentStatusText?: string;
+}
 export type IdParams = uuid;

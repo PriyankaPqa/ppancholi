@@ -1,0 +1,154 @@
+<template>
+  <rc-dialog
+    :title="$t('caseFile.financialAssistance.paymentStatusHistory')"
+    :cancel-action-label="$t('common.buttons.close')"
+    :show.sync="show"
+    content-padding="6"
+    content-only-scrolling
+    max-width="1250"
+    min-height="500"
+    :fullscreen="$vuetify.breakpoint.mdAndDown"
+    persistent
+    :show-submit="false"
+    @close="close"
+    @cancel="close">
+    <div class="pb-4 d-flex justify-space-between">
+      <h3 data-test="payment-modality">
+        {{
+          $t(`enums.PaymentModality.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`)
+        }}
+      </h3>
+      <div>
+        <status-chip status-name="FinancialAssistancePaymentStatus" :status="paymentGroup.paymentStatus" />
+      </div>
+    </div>
+    <v-data-table
+      data-test="history-table"
+      class="flex-grow-1 scrollable"
+      :headers="headers"
+      hide-default-footer
+      must-sort
+      :items="paymentStatusHistory">
+      <template #[`item.userInformation.userName`]="{ item }">
+        <b class="no-word-break">{{ item.userInformation.userName }}</b>
+        <span v-if="item.userInformation.roleName" class="pl-2 no-word-break">({{ $m(item.userInformation.roleName) }})</span>
+      </template>
+      <template #[`item.dateOfAction`]="{ item }">
+        {{ moment(item.dateOfAction).format('ll') }}
+      </template>
+      <template #[`item.actualDateOfAction`]="{ item }">
+        <div class="text-no-wrap">
+          {{ item.actualDateOfAction ? moment(item.actualDateOfAction).format('ll') : '-' }}
+        </div>
+      </template>
+      <template #[`item.paymentStatusText`]="{ item }">
+        <div class="no-word-break">
+          {{ item.paymentStatusText }}
+        </div>
+      </template>
+    </v-data-table>
+  </rc-dialog>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import { RcDialog } from '@libs/component-lib/components';
+import { IVersionedEntityCombined } from '@libs/entities-lib/src/value-objects/versioned-entity';
+import { DataTableHeader } from 'vuetify';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import helpers from '@/ui/helpers/helpers';
+import moment from 'moment';
+import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
+import {
+  IFinancialAssistancePaymentGroup, IPaymentStatusHistory, PaymentStatus,
+} from '@libs/entities-lib/financial-assistance-payment';
+
+export default Vue.extend({
+  name: 'PaymentStatusHistoryDialog',
+
+  components: {
+    RcDialog,
+    StatusChip,
+  },
+
+  props: {
+    show: {
+      type: Boolean,
+      required: true,
+    },
+
+    paymentGroup: {
+      type: Object as () => IFinancialAssistancePaymentGroup,
+      required: true,
+    },
+  },
+
+  data() {
+    return {
+      historyItems: [] as IVersionedEntityCombined[],
+      submittedHistory: null as IVersionedEntityCombined,
+      getLocalStringDate: helpers.getLocalStringDate,
+      PaymentStatus,
+      EPaymentModalities,
+      moment,
+    };
+  },
+
+  computed: {
+    paymentStatusHistory(): IPaymentStatusHistory[] {
+      const paymentStatusHistoryWithText: IPaymentStatusHistory[] = [];
+      this.paymentGroup.paymentStatusHistory.forEach((e) => {
+        const paymentStatusHistoryItem = {
+          ...e,
+          paymentStatusText: this.$t(`enums.paymentStatus.${PaymentStatus[e.paymentStatus]}`) as string,
+        };
+        paymentStatusHistoryWithText.push(paymentStatusHistoryItem);
+      });
+      return paymentStatusHistoryWithText;
+    },
+
+    headers(): Array<DataTableHeader> {
+      return [
+        {
+          text: this.$t('caseFile.financialAssistance.paymentStatusHistory.systemUser') as string,
+          filterable: false,
+          value: 'userInformation.userName',
+          width: '40%',
+          sortable: true,
+        },
+        {
+          text: this.$t('caseFile.financialAssistance.paymentStatusHistory.systemDateOfAction') as string,
+          filterable: false,
+          value: 'dateOfAction',
+          sortable: true,
+        },
+        {
+          text: this.$t('caseFile.financialAssistance.paymentStatusHistory.actualDate') as string,
+          filterable: false,
+          value: 'actualDateOfAction',
+          sortable: true,
+        },
+        {
+          text: this.$t('caseFile.financialAssistance.paymentStatusHistory.previousStatus') as string,
+          filterable: false,
+          value: 'paymentStatusText',
+          sortable: true,
+        },
+      ];
+    },
+  },
+
+  methods: {
+    close() {
+      this.$emit('update:show', false);
+    },
+  },
+});
+
+</script>
+
+<style lang="scss" scoped>
+.no-word-break{
+  word-break: initial;
+}
+</style>

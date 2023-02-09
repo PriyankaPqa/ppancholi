@@ -39,6 +39,23 @@ export const mockCaseFinancialAssistancePaymentGroups = (force?: Partial<IFinanc
         address: null,
       },
     ],
+    paymentStatusHistory: [
+      {
+        actualDateOfAction: null,
+        dateOfAction: '2023-01-18T15:51:28.0626034Z',
+        paymentStatus: 1,
+        userInformation: {
+          userId: 'test-user-id-123456',
+          userName: 'Mock user name',
+          roleName: {
+            translation: {
+              en: 'System Admin',
+              fr: 'System Admin in french',
+            },
+          },
+        },
+      },
+    ],
     ...force,
   },
 ];

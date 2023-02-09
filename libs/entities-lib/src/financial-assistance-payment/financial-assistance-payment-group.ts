@@ -4,7 +4,7 @@ import {
   IGroupingInformation,
   PaymentStatus,
   IFinancialAssistancePaymentLine,
-  EPaymentCancellationReason,
+  EPaymentCancellationReason, IPaymentStatusHistory,
 } from './financial-assistance-payment.types';
 import { EPaymentModalities } from '../program';
 
@@ -21,6 +21,8 @@ export class FinancialAssistancePaymentGroup extends BaseEntity implements IFina
 
   cancellationBy: uuid;
 
+  paymentStatusHistory?: IPaymentStatusHistory[];
+
   constructor(data?: IFinancialAssistancePaymentGroup) {
     if (data) {
       super(data);
@@ -30,6 +32,7 @@ export class FinancialAssistancePaymentGroup extends BaseEntity implements IFina
       this.cancellationReason = data.cancellationReason;
       this.cancellationDate = data.cancellationDate;
       this.cancellationBy = data.cancellationBy;
+      this.paymentStatusHistory = data.paymentStatusHistory;
     } else {
       super();
       this.groupingInformation = null;
