@@ -51,14 +51,22 @@ describe('ApprovalHistoryDialog.vue', () => {
         await mountWrapper();
         const { headers } = wrapper.vm;
         expect(headers.length).toBe(4);
-        expect(headers.map((h) => h.value)).toEqual(['username', 'rationale', 'date', 'action']);
+        expect(headers.map((h) => h.value)).toEqual(['submittedBy.userName', 'rationale', 'dateOfApprovalAction', 'actionText']);
       });
     });
 
     describe('approvalHistoryItems', () => {
       it('returns the right data', async () => {
         await mountWrapper();
-        expect(wrapper.vm.approvalHistoryItems).toEqual(wrapper.vm.financialAssistance.approvalStatusHistory);
+        const approvalHistoryItemsWithText = [];
+        wrapper.vm.financialAssistance.approvalStatusHistory.forEach((e) => {
+          const approvalHistoryItemsWithTextItem = {
+            ...e,
+            actionText: wrapper.vm.$t(`enums.approvalAction.${ApprovalAction[e.approvalAction]}`),
+          };
+          approvalHistoryItemsWithText.push(approvalHistoryItemsWithTextItem);
+        });
+        expect(wrapper.vm.approvalHistoryItems).toEqual(approvalHistoryItemsWithText);
       });
     });
   });

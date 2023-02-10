@@ -101,6 +101,7 @@ export interface IApprovalStatusHistory {
   approvalAction: ApprovalAction;
   dateOfApprovalAction: string | Date;
   rationale: string;
+  actionText?: string;
 }
 
 export interface IFinancialAssistancePaymentEntity extends IEntity {

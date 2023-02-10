@@ -28,7 +28,8 @@
       :headers="headers"
       hide-default-footer
       must-sort
-      :items="paymentStatusHistory">
+      :items="paymentStatusHistory"
+      :items-per-page="-1">
       <template #[`item.userInformation.userName`]="{ item }">
         <b class="no-word-break">{{ item.userInformation.userName }}</b>
         <span v-if="item.userInformation.roleName" class="pl-2 no-word-break">({{ $m(item.userInformation.roleName) }})</span>

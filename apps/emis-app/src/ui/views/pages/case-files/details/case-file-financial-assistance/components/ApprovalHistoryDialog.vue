@@ -26,22 +26,23 @@
       :headers="headers"
       hide-default-footer
       must-sort
-      :items="approvalHistoryItems">
-      <template #[`item.username`]="{ item }">
+      :items="approvalHistoryItems"
+      :items-per-page="-1">
+      <template #[`item.submittedBy.userName`]="{ item }">
         <b class="no-word-break">{{ item.submittedBy.userName }}</b>
         <span v-if="item.submittedBy.roleName" class="pl-2 no-word-break">({{ $m(item.submittedBy.roleName) }})</span>
       </template>
       <template #[`item.rationale`]="{ item }">
         {{ getRationaleText(item) }}
       </template>
-      <template #[`item.date`]="{ item }">
+      <template #[`item.dateOfApprovalAction`]="{ item }">
         <div class="text-no-wrap">
           {{ getLocalStringDate(item.dateOfApprovalAction, 'Entity.timestamp', 'll') }}
         </div>
       </template>
-      <template #[`item.action`]="{ item }">
+      <template #[`item.actionText`]="{ item }">
         <div class="no-word-break">
-          {{ $t(`enums.approvalAction.${ApprovalAction[item.approvalAction]}`) }}
+          {{ item.actionText }}
         </div>
       </template>
     </v-data-table>
@@ -90,7 +91,16 @@ export default Vue.extend({
 
   computed: {
     approvalHistoryItems(): IApprovalStatusHistory[] {
-      return this.financialAssistance.approvalStatusHistory || [];
+      const approvalHistoryItemsWithText: IApprovalStatusHistory[] = [];
+      this.financialAssistance.approvalStatusHistory.forEach((e) => {
+        const approvalHistoryItemsWithTextItem = {
+          ...e,
+          actionText: this.$t(`enums.approvalAction.${ApprovalAction[e.approvalAction]}`) as string,
+        };
+        approvalHistoryItemsWithText.push(approvalHistoryItemsWithTextItem);
+      });
+
+      return approvalHistoryItemsWithText || [];
     },
 
     headers(): Array<DataTableHeader> {
@@ -98,23 +108,27 @@ export default Vue.extend({
         {
           text: this.$t('caseFile.financialAssistance.approvalHistory.username') as string,
           filterable: false,
-          value: 'username',
+          value: 'submittedBy.userName',
+          sortable: true,
         },
         {
           text: this.$t('caseFile.financialAssistance.approvalHistory.rationale') as string,
           filterable: false,
           value: 'rationale',
           width: '50%',
+          sortable: false,
         },
         {
           text: this.$t('caseFile.financialAssistance.approvalHistory.date') as string,
           filterable: false,
-          value: 'date',
+          value: 'dateOfApprovalAction',
+          sortable: true,
         },
         {
           text: this.$t('caseFile.financialAssistance.approvalHistory.action') as string,
           filterable: false,
-          value: 'action',
+          value: 'actionText',
+          sortable: true,
         },
       ];
     },
