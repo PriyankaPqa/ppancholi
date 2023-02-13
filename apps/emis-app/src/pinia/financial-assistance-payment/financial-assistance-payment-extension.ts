@@ -106,7 +106,7 @@ export function getExtensionComponents(
     return result;
   }
 
-  async function deleteFinancialAssistancePaymentLine(paymentId: uuid, financialAssistanceId: uuid) {
+  async function deleteFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid) {
     const result = await entityService.deleteFinancialAssistancePaymentLine(financialAssistanceId, paymentId);
     if (result) {
       baseComponents.set(result);

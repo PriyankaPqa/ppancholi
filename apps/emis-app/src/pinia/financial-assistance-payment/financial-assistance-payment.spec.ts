@@ -161,7 +161,7 @@ describe('Financial assistance payment store', () => {
   describe('deleteFinancialAssistancePaymentLine', () => {
     it('calls the right service and returns the result', async () => {
       const id = 'mock-id';
-      const res = await store.deleteFinancialAssistancePaymentLine('myId', id);
+      const res = await store.deleteFinancialAssistancePaymentLine(id, 'myId');
       expect(entityService.deleteFinancialAssistancePaymentLine).toBeCalledWith(id, 'myId');
       expect(res).toEqual(entity);
     });
