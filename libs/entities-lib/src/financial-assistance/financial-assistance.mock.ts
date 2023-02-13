@@ -205,7 +205,7 @@ export const mockItemData = (): IFinancialAssistanceTableItemData => ({
   subItems: [mockSubItemData()],
 });
 
-export const mockFinancialAssistanceTableEntity = (): IFinancialAssistanceTableEntity => ({
+export const mockFinancialAssistanceTableEntity = (force = {}): IFinancialAssistanceTableEntity => ({
   ...mockBaseData(),
 
   eventId: '8d88bc46-22c2-412d-814d-ff898357b745',
@@ -247,6 +247,7 @@ export const mockFinancialAssistanceTableEntity = (): IFinancialAssistanceTableE
       ],
     },
   ],
+  ...force,
 });
 
 export const mockFinancialAssistanceMetadata = (): IFinancialAssistanceTableMetadata => ({

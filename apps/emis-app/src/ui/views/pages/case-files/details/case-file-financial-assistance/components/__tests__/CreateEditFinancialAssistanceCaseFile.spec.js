@@ -1170,13 +1170,21 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         expect(wrapper.vm.makePaymentName).toHaveBeenCalledWith(true);
       });
 
-      it('calls action editFinancialAssistancePayment if financial assistance name has changed', async () => {
+      it('calls action editFinancialAssistancePayment if financial assistance name has changed and it has FA id', async () => {
+        wrapper.vm.financialAssistance = mockFinancialAssistanceTableEntity();
         wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
         await wrapper.setData({ selectedProgram: program, financialAssistance: { ...financialAssistance, name: 'programName - lineName - 20220530 101010' } });
 
         await wrapper.vm.submitPaymentNameUpdate();
         const newFA = { ...wrapper.vm.financialAssistance, name: `${program.name.translation.en} - mock-payment-line - 20220530 101010` };
         expect(financialAssistancePaymentStore.editFinancialAssistancePayment).toHaveBeenCalledWith(newFA);
+      });
+
+      it('should not call action editFinancialAssistancePayment if financial assistance name has changed and it has no FA id', async () => {
+        wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
+        await wrapper.setData({ selectedProgram: program, financialAssistance: { ...financialAssistance, name: 'programName - lineName - 20220530 101010', id: '' } });
+        await wrapper.vm.submitPaymentNameUpdate();
+        expect(financialAssistancePaymentStore.editFinancialAssistancePayment).not.toHaveBeenCalled();
       });
     });
 

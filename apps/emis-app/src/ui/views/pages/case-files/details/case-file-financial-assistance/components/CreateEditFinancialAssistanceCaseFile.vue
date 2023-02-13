@@ -516,7 +516,7 @@ export default mixins(caseFileDetail).extend({
           this.financialAssistance.groups = this.financialAssistance.groups.filter((g) => g !== event.group);
         }
       }
-      await this.submitPaymentNameUpdate();
+        await this.submitPaymentNameUpdate();
     },
 
     async updatePaymentStatus(event : {
@@ -564,7 +564,7 @@ export default mixins(caseFileDetail).extend({
     async submitPaymentNameUpdate() {
       const originalName = this.financialAssistance.name;
       this.makePaymentName(true);
-      if (originalName !== this.financialAssistance.name) {
+      if (originalName !== this.financialAssistance.name && this.financialAssistance.id) {
         const result = await useFinancialAssistancePaymentStore().editFinancialAssistancePayment(this.financialAssistance);
         if (result) {
           this.$toasted.global.success(this.$t('financialAssistancePayment_edit.success'));
