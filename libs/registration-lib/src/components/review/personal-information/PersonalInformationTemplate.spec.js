@@ -9,6 +9,7 @@ import {
   mockPreferredLanguageOther,
   mockPrimarySpokenLanguageOther,
 } from '@libs/entities-lib/value-objects/contact-information';
+import helpers from '@libs/entities-lib/helpers';
 import Component from './PersonalInformationTemplate.vue';
 
 const localVue = createLocalVue();
@@ -157,7 +158,7 @@ describe('PersonalInformationTemplate.vue', () => {
         await wrapper.setProps({
           showAgeInReview: true,
         });
-        expect(wrapper.vm.getBirthDate).toEqual('Feb 12, 1999 (23 common.years)');
+        expect(wrapper.vm.getBirthDate).toEqual(`Feb 12, 1999 (${helpers.getAge(wrapper.vm.personalInformation.birthDate)} common.years)`);
       });
 
       it('returns "" otherwise', async () => {

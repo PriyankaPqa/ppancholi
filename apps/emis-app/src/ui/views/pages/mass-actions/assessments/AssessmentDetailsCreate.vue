@@ -39,7 +39,7 @@
           <v-btn class="ma-2" small @click="clearEmailText">
             {{ $t('common.clear') }}
           </v-btn>
-          <vue-editor id="editor1" v-model="formCopy.emailText.translation[languageMode]" :editor-toolbar="toolbarSettings" />
+          <vue-editor id="editor1" v-model="formCopy.emailAdditionalDescription.translation[languageMode]" :editor-toolbar="toolbarSettings" />
         </v-col>
       </v-row>
     </div>
@@ -58,7 +58,9 @@ import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import utils from '@libs/entities-lib/utils';
 import { ui } from '@/constants/ui';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import VSelectWithValidation from '@libs/component-lib/components/atoms/VSelectWithValidation.vue';
+import {
+  VSelectWithValidation,
+} from '@libs/component-lib/components';
 import { AssessmentDetailsForm } from './AssessmentCreate.vue';
 
 export default Vue.extend({
@@ -140,11 +142,11 @@ export default Vue.extend({
     },
 
     fillEmptyMultilingualFields() {
-      this.formCopy.emailText = utils.getFilledMultilingualField(this.formCopy.emailText);
+      this.formCopy.emailAdditionalDescription = utils.getFilledMultilingualField(this.formCopy.emailAdditionalDescription);
     },
 
     clearEmailText() {
-      this.formCopy.emailText = utils.initMultilingualAttributes();
+      this.formCopy.emailAdditionalDescription = utils.initMultilingualAttributes();
     },
 
     setLanguageMode(lang: string) {

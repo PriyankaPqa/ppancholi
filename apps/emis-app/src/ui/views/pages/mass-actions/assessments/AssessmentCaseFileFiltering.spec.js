@@ -5,7 +5,9 @@ import {
 } from '@/test/testSetup';
 
 import { mockStorage } from '@/storage';
-import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
+import {
+  CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus, mockCombinedCaseFiles,
+} from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
@@ -26,6 +28,11 @@ describe('AssessmentCaseFileFiltering.vue', () => {
         propsData: {
           show: true,
         },
+        computed: {
+          tableData() {
+            return mockCombinedCaseFiles();
+          },
+        },
         mocks: {
           $storage: storage,
         },
@@ -39,13 +46,16 @@ describe('AssessmentCaseFileFiltering.vue', () => {
           firstName: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
           lastName: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
           street: 'Metadata/Household/Address/Address/StreetAddress',
+          unit: 'Metadata/Household/Address/Address/Unit',
           city: 'Metadata/Household/Address/Address/City',
           province: 'Metadata/Household/Address/Address/ProvinceCode/Translation/en',
           postalCode: 'Metadata/Household/Address/Address/PostalCode',
           email: 'Metadata/PrimaryBeneficiary/ContactInformation/Email',
+          phoneNumber: 'Metadata/Household/ContactInformation/Phone/',
+          preferredLanguage: 'Metadata/PrimaryBeneficiary/ContactInformation/PreferredLanguage',
           authenticationStatus: 'Metadata/IdentityAuthenticationStatusName/Translation/en',
           validationOfImpact: 'Metadata/ImpactStatusValidationName/Translation/en',
-          isDuplicate: 'Entity/IsDuplicate',
+          assessmentsOnFile: 'Metadata/Assessments/AssessmentFormId',
         };
 
         expect(wrapper.vm.customColumns).toEqual(expected);
@@ -77,6 +87,16 @@ describe('AssessmentCaseFileFiltering.vue', () => {
             sortable: true,
           },
           {
+            text: 'massActions.financialAssistance.table.header.unit',
+            value: wrapper.vm.customColumns.unit,
+            sortable: false,
+          },
+          {
+            text: 'massActions.financialAssistance.table.header.phoneNumber',
+            value: wrapper.vm.customColumns.phoneNumber,
+            sortable: false,
+          },
+          {
             text: 'massActions.financialAssistance.table.header.city',
             value: wrapper.vm.customColumns.city,
             sortable: true,
@@ -97,6 +117,11 @@ describe('AssessmentCaseFileFiltering.vue', () => {
             sortable: true,
           },
           {
+            text: 'massActions.financialAssistance.table.header.preferredLanguage',
+            value: wrapper.vm.customColumns.preferredLanguage,
+            sortable: false,
+          },
+          {
             text: 'massActions.financialAssistance.table.header.authenticationStatus',
             value: wrapper.vm.customColumns.authenticationStatus,
             sortable: true,
@@ -108,8 +133,8 @@ describe('AssessmentCaseFileFiltering.vue', () => {
           },
           {
             text: 'massActions.assessment.table.header.assessmentsOnFile',
-            value: wrapper.vm.customColumns.isDuplicate,
-            sortable: true,
+            value: wrapper.vm.customColumns.assessmentsOnFile,
+            sortable: false,
           },
         ];
 
@@ -139,6 +164,13 @@ describe('AssessmentCaseFileFiltering.vue', () => {
             type: EFilterType.MultiSelect,
             label: 'caseFileTable.tableHeaders.status',
             items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', true),
+          },
+          {
+            key: wrapper.vm.customColumns.assessmentsOnFile,
+            type: EFilterType.MultiSelectExclude,
+            label: wrapper.vm.$t('massActions.assessments.filters.assessmentsOnFileExcluded'),
+            items: wrapper.vm.assessments.map((assessment) => ({ text: wrapper.vm.$m(assessment.name), value: assessment.id })),
+            loading: wrapper.vm.assessmentsFilterLoading,
           },
           {
             key: wrapper.vm.customColumns.authenticationStatus,
@@ -178,6 +210,11 @@ describe('AssessmentCaseFileFiltering.vue', () => {
         propsData: {
           show: true,
         },
+        computed: {
+          tableData() {
+            return mockCombinedCaseFiles();
+          },
+        },
         mocks: {
           $storage: storage,
         },
@@ -206,11 +243,11 @@ describe('AssessmentCaseFileFiltering.vue', () => {
     });
 
     describe('onApplyCaseFileFilter', () => {
-      it('should assign email filter and remove original email filter', async () => {
-        const testFilter = { test: 'filter' };
+      it('should assign assessmentsOnFile filter and remove original assessmentsOnFile filter', async () => {
+        const testFilter = { notSearchIn_az: 'filter' };
 
         const preparedFilters = {
-          'Metadata/PrimaryBeneficiary/ContactInformation/Email': testFilter,
+          'Metadata/Assessments/AssessmentFormId': testFilter,
           and: [],
         };
 
@@ -221,11 +258,79 @@ describe('AssessmentCaseFileFiltering.vue', () => {
         expect(wrapper.vm.onApplyFilter).toHaveBeenCalledWith({
           preparedFilters: {
             and: [
-              testFilter,
+              {
+                not: {
+                  'Metadata/Assessments': {
+                    any: {
+                      AssessmentFormId: { searchIn_az: 'filter' },
+                    },
+                  },
+                },
+              },
             ],
           },
           searchFilters: '',
         });
+      });
+    });
+
+    describe('onSearchComplete', () => {
+      it('should call getPerson for the primaries', async () => {
+        jest.clearAllMocks();
+        await wrapper.vm.onSearchComplete();
+        expect(wrapper.vm.$services.households.getPerson).toHaveBeenCalledTimes(mockCombinedCaseFiles().length);
+        expect(wrapper.vm.$services.households.getPerson).toHaveBeenCalledWith(mockCombinedCaseFiles()[0].metadata.primaryBeneficiary.id);
+        expect(wrapper.vm.personData.length).toBe(mockCombinedCaseFiles().length);
+      });
+    });
+
+    describe('getPerson', () => {
+      it('Finds by id', async () => {
+        await wrapper.setData({ personData: [{ id: 'abc' }, { id: 'def' }] });
+        expect(wrapper.vm.getPerson({ metadata: { primaryBeneficiary: { id: 'def' } } })).toBe(wrapper.vm.personData[1]);
+      });
+    });
+
+    describe('onAutoCompleteChange (when event is selected or un-selected)', () => {
+      it('should call fetchAssessmentsFilters', async () => {
+        const data = { filterKey: 'Entity/EventId', value: null };
+        wrapper.vm.fetchAssessmentsFilters = jest.fn();
+
+        wrapper.vm.onAutoCompleteChange(data);
+
+        expect(wrapper.vm.fetchAssessmentsFilters).toHaveBeenCalled();
+      });
+    });
+
+    describe('onLoadAdditionalFilters (initial load of filters)', () => {
+      it('should call fetchAssessmentsFilters', async () => {
+        const data = { values: { 'Entity/EventId': { value: { text: '', value: 'uuid' } } } };
+        wrapper.vm.fetchAssessmentsFilters = jest.fn();
+
+        wrapper.vm.onLoadAdditionalFilters(data);
+
+        expect(wrapper.vm.fetchAssessmentsFilters).toHaveBeenCalledWith('uuid');
+      });
+    });
+
+    describe('fetchAssessmentsFilters', () => {
+      it('should reset assessments filter if not event has been selected', async () => {
+        await wrapper.setData({ assessments: ['1', '2'] });
+
+        wrapper.vm.fetchAssessmentsFilters(null);
+
+        expect(wrapper.vm.assessments).toEqual([]);
+      });
+
+      it('should fetch assessments filters if the selected events has some', async () => {
+        wrapper.vm.$services.assessmentForms.search = jest.fn(() => ({ odataContext: '', odataCount: 1, value: [{ entity: {} }] }));
+        await wrapper.vm.fetchAssessmentsFilters('new_id');
+
+        expect(wrapper.vm.$services.assessmentForms.search).toHaveBeenCalledWith({
+          filter: { 'Entity/EventId': 'new_id' },
+          orderBy: 'Entity/Name/Translation/en',
+        });
+        expect(wrapper.vm.assessments).toEqual([{}]);
       });
     });
   });

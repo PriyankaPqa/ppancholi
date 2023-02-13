@@ -149,6 +149,11 @@ export default Vue.extend({
       }
 
       this.setState();
+      await this.onSearchComplete();
+    },
+
+    async onSearchComplete() {
+      // to override if needed
     },
 
     setState() {

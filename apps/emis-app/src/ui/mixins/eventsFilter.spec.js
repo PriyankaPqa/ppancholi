@@ -103,6 +103,18 @@ describe('eventsFilter', () => {
           ...[{ text: 'Gatineau Floods 2021', value: '7c076603-580a-4400-bef2-5ddececb0931' }],
         ]);
       });
+
+      it('calls onLoadAdditionalFilters', async () => {
+        wrapper.vm.onLoadAdditionalFilters = jest.fn();
+        const filterFormData = {
+          name: 'form',
+          values: {
+            'Entity/EventId': { operator: '', value: { text: 'event name', value: '1' } },
+          },
+        };
+        await wrapper.vm.onLoadFilter(filterFormData);
+        expect(wrapper.vm.onLoadAdditionalFilters).toHaveBeenCalled();
+      });
     });
 
     describe('debounceSearchEventsFilter', () => {

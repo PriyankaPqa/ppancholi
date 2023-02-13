@@ -57,7 +57,7 @@
       </template>
 
       <template #[`item.${customColumns.caseFileNumber}`]="{ item: caseFile }">
-        {{ caseFile.caseFileNumber }}
+        {{ caseFile.entity.caseFileNumber }}
       </template>
 
       <template #[`item.${customColumns.firstName}`]="{ item: caseFile }">
@@ -74,6 +74,12 @@
         {{ caseFile.metadata.household && caseFile.metadata.household.address
           && caseFile.metadata.household.address.address
           && caseFile.metadata.household.address.address.streetAddress || '-' }}
+      </template>
+
+      <template #[`item.${customColumns.unit}`]="{ item: caseFile }">
+        {{ caseFile.metadata.household && caseFile.metadata.household.address
+          && caseFile.metadata.household.address.address
+          && caseFile.metadata.household.address.address.unitSuite || '-' }}
       </template>
 
       <template #[`item.${customColumns.city}`]="{ item: caseFile }">
@@ -103,6 +109,33 @@
           && caseFile.metadata.primaryBeneficiary.contactInformation && caseFile.metadata.primaryBeneficiary.contactInformation.email || '-' }}
       </template>
 
+      <template #[`item.${customColumns.preferredLanguage}`]="{ item: caseFile }">
+        {{ caseFile.metadata.primaryBeneficiary
+          && caseFile.metadata.primaryBeneficiary.contactInformation
+          && $t('enums.preferredLanguage.' + caseFile.metadata.primaryBeneficiary.contactInformation.preferredLanguage) || '-' }}
+      </template>
+
+      <template #[`item.${customColumns.phoneNumber}`]="{ item: caseFile }">
+        <div class="d-flex flex-column py-4 line-height-24">
+          <span>
+            <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.home') }}: </span>
+            {{ householdHelpers.homePhoneNumber(getPerson(caseFile)) }}
+          </span>
+          <span>
+            <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.mobile') }}: </span>
+            {{ householdHelpers.mobilePhoneNumber(getPerson(caseFile)) }}
+          </span>
+          <span>
+            <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.alternate') }}: </span>
+            {{ householdHelpers.alternatePhoneNumber(getPerson(caseFile)) }}
+          </span>
+          <span>
+            <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.extension') }}:</span>
+            {{ householdHelpers.alternatePhoneExtension(getPerson(caseFile)) }}
+          </span>
+        </div>
+      </template>
+
       <template #[`item.${customColumns.authenticationStatus}`]="{ item: caseFile }">
         <span>
           {{ $m(caseFile.metadata.identityAuthenticationStatusName) }}
@@ -115,8 +148,8 @@
         </span>
       </template>
 
-      <template #[`item.${customColumns.assessments}`]="{ item: caseFile }">
-        ???? {{ caseFile.caseFileNumber }} TBD
+      <template #[`item.${customColumns.assessmentsOnFile}`]="{ item: caseFile }">
+        {{ getAssessmentsOnFile(caseFile) }}
       </template>
     </rc-data-table>
   </rc-dialog>
@@ -128,16 +161,21 @@ import { RcDataTable, RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import mixins from 'vue-typed-mixins';
 import {
-  EDateMode, EFilterType, IFilterSettings,
+  EDateMode, EFilterType, FilterFormData, IFilterSettings,
 } from '@libs/component-lib/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { ECanadaProvinces } from '@libs/shared-lib/types';
+import { ECanadaProvinces, IDropdownItem } from '@libs/shared-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
+import {
+ CaseFileStatus, ICaseFileCombined, IdentityAuthenticationStatus, ValidationOfImpactStatus,
+} from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
 import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
+import householdHelpers from '@/ui/helpers/household';
 import massActionCaseFileFiltering from '@/ui/views/pages/mass-actions/mixins/massActionCaseFileFiltering';
+import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
+import { IMemberEntity } from '@libs/entities-lib/value-objects/member';
 
 export default mixins(massActionCaseFileFiltering).extend({
   name: 'FinancialAssistanceCaseFileFiltering',
@@ -150,29 +188,34 @@ export default mixins(massActionCaseFileFiltering).extend({
 
   data() {
     return {
-      programsFilterLoading: false,
-      programsFilter: [],
       FilterKey,
       ValidationOfImpactStatus,
       IdentityAuthenticationStatus,
       MassActionType,
+      assessmentsFilterLoading: false,
+      assessments: [] as IAssessmentFormEntity[],
+      personData: [] as IMemberEntity[],
+      householdHelpers,
     };
   },
 
   computed: {
-    customColumns(): Record<string, string> {
+    customColumns() {
       return {
         caseFileNumber: 'Entity/CaseFileNumber',
         firstName: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
         lastName: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
         street: 'Metadata/Household/Address/Address/StreetAddress',
+        unit: 'Metadata/Household/Address/Address/Unit',
         city: 'Metadata/Household/Address/Address/City',
         province: `Metadata/Household/Address/Address/ProvinceCode/Translation/${this.$i18n.locale}`,
         postalCode: 'Metadata/Household/Address/Address/PostalCode',
         email: 'Metadata/PrimaryBeneficiary/ContactInformation/Email',
+        phoneNumber: 'Metadata/Household/ContactInformation/Phone/',
+        preferredLanguage: 'Metadata/PrimaryBeneficiary/ContactInformation/PreferredLanguage',
         authenticationStatus: `Metadata/IdentityAuthenticationStatusName/Translation/${this.$i18n.locale}`,
         validationOfImpact: `Metadata/ImpactStatusValidationName/Translation/${this.$i18n.locale}`,
-        isDuplicate: 'Entity/IsDuplicate',
+        assessmentsOnFile: 'Metadata/Assessments/AssessmentFormId',
       };
     },
 
@@ -200,6 +243,16 @@ export default mixins(massActionCaseFileFiltering).extend({
           sortable: true,
         },
         {
+          text: this.$t('massActions.financialAssistance.table.header.unit') as string,
+          value: this.customColumns.unit,
+          sortable: false,
+        },
+        {
+          text: this.$t('massActions.financialAssistance.table.header.phoneNumber') as string,
+          value: this.customColumns.phoneNumber,
+          sortable: false,
+        },
+        {
           text: this.$t('massActions.financialAssistance.table.header.city') as string,
           value: this.customColumns.city,
           sortable: true,
@@ -220,6 +273,11 @@ export default mixins(massActionCaseFileFiltering).extend({
           sortable: true,
         },
         {
+          text: this.$t('massActions.financialAssistance.table.header.preferredLanguage') as string,
+          value: this.customColumns.preferredLanguage,
+          sortable: false,
+        },
+        {
           text: this.$t('massActions.financialAssistance.table.header.authenticationStatus') as string,
           value: this.customColumns.authenticationStatus,
           sortable: true,
@@ -231,8 +289,8 @@ export default mixins(massActionCaseFileFiltering).extend({
         },
         {
           text: this.$t('massActions.assessment.table.header.assessmentsOnFile') as string,
-          value: this.customColumns.isDuplicate,
-          sortable: true,
+          value: this.customColumns.assessmentsOnFile,
+          sortable: false,
         },
       ];
     },
@@ -258,6 +316,13 @@ export default mixins(massActionCaseFileFiltering).extend({
           type: EFilterType.MultiSelect,
           label: this.$t('caseFileTable.tableHeaders.status') as string,
           items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', true),
+        },
+        {
+          key: this.customColumns.assessmentsOnFile,
+          type: EFilterType.MultiSelectExclude,
+          label: this.$t('massActions.assessments.filters.assessmentsOnFileExcluded') as string,
+          items: this.assessments.map((assessment) => ({ text: this.$m(assessment.name) as string, value: assessment.id })),
+          loading: this.assessmentsFilterLoading,
         },
         {
           key: this.customColumns.authenticationStatus,
@@ -288,6 +353,17 @@ export default mixins(massActionCaseFileFiltering).extend({
   },
 
   methods: {
+    getAssessmentsOnFile(caseFile: ICaseFileCombined): string {
+      if (!this.assessments || !caseFile?.metadata?.assessments?.length) {
+        return '';
+      }
+      return caseFile.metadata.assessments.map((a) => this.$m(this.assessments.find((af) => af.id === a.assessmentFormId)?.name)).join(', ');
+    },
+
+    getPerson(caseFile: ICaseFileCombined): IMemberEntity {
+      return this.personData.find((p) => p.id === caseFile.metadata.primaryBeneficiary?.id);
+    },
+
     async onSubmit() {
       this.$router.push({
         name: routes.massActions.assessments.create.name,
@@ -297,20 +373,64 @@ export default mixins(massActionCaseFileFiltering).extend({
       this.$emit('update:show', false);
     },
 
-    async onApplyCaseFileFilter({ preparedFilters, searchFilters }: { preparedFilters: Record<string, unknown>; searchFilters?: string }) {
-      const emailFilter = preparedFilters[this.customColumns.email];
+    async onSearchComplete() {
+      const personIds = this.tableData.map((c) => c.metadata.primaryBeneficiary?.id).filter((c) => c);
+      this.personData = await Promise.all((personIds.map((p) => this.$services.households.getPerson(p))));
+    },
 
-      if (emailFilter) {
+    async onApplyCaseFileFilter({ preparedFilters, searchFilters }: { preparedFilters: Record<string, unknown>; searchFilters?: string }) {
+      const assessmentsOnFile = preparedFilters[this.customColumns.assessmentsOnFile] as any;
+
+      // assessments on file is a filter where we're looking for all case files that have not been assigned any of the form ids
+      // it does not directly translate to our regular filters - Assessments is an array of objects with AssessmentFormId
+      // this is the real filter for this
+      if (assessmentsOnFile) {
         if (!preparedFilters.and) {
           preparedFilters.and = [];
         }
 
-        (preparedFilters.and as unknown[]).push(emailFilter);
+        (preparedFilters.and as unknown[]).push({
+          not: {
+            'Metadata/Assessments': {
+              any: {
+                AssessmentFormId: { searchIn_az: assessmentsOnFile.notSearchIn_az },
+              },
+            },
+          },
+        });
 
-        delete preparedFilters[this.customColumns.email];
+        delete preparedFilters[this.customColumns.assessmentsOnFile];
       }
 
       await this.onApplyFilter({ preparedFilters, searchFilters });
+    },
+
+    /**
+     * When an item has been selected or un-selected
+     */
+    onAutoCompleteChange({ filterKey, value }: { filterKey: string, value: { text: string; value: string }; }) {
+      if (filterKey === 'Entity/EventId') {
+        this.fetchAssessmentsFilters(value?.value);
+      }
+    },
+
+    async onLoadAdditionalFilters(filterFormData: FilterFormData) {
+      const eventFilter = filterFormData?.values ? filterFormData.values['Entity/EventId'] : null;
+      const selectedId = ((eventFilter?.value) as unknown as IDropdownItem)?.value;
+      await this.fetchAssessmentsFilters(selectedId);
+    },
+
+    async fetchAssessmentsFilters(eventId: string) {
+      if (!eventId) {
+        this.assessments = [];
+      } else {
+        this.assessmentsFilterLoading = true;
+        this.assessments = (await this.$services.assessmentForms.search({
+          filter: { 'Entity/EventId': eventId },
+          orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
+        })).value.map((x) => x.entity);
+        this.assessmentsFilterLoading = false;
+      }
     },
   },
 });

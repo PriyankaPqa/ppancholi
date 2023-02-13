@@ -285,7 +285,8 @@ export default Vue.extend({
         }
 
         switch (flOption.type) {
-          case EFilterType.MultiSelect || EFilterType.MultiSelectExclude:
+          case EFilterType.MultiSelect:
+          case EFilterType.MultiSelectExclude:
             itemValue = vl ? vl.value : [];
             filter.values[flOption.key] = { operator: itemOperator, value: itemValue };
             break;

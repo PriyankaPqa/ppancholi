@@ -9,7 +9,13 @@
         <span class="rc-body14 fw-bold">{{ $t(row.label) }}</span>
       </v-col>
       <v-col md="7">
-        <span v-if="!row.loading" :class="[row.customClassValue, 'rc-body14']" :data-test="row.dataTest"> {{ row.value }} </span>
+        <span v-if="!row.loading" :class="[row.customClassValue, 'rc-body14']" :data-test="row.dataTest">
+          <!-- eslint is disabled because we purposefully decided to inject html in this -->
+          <!-- eslint-disable -->
+          <p v-if="row.html" v-html="row.html"/>
+          <!-- eslint-enable -->
+          <div v-else>{{ row.value }}</div>
+        </span>
         <v-progress-circular v-else indeterminate color="primary" />
       </v-col>
     </v-row>
@@ -60,8 +66,8 @@ export default Vue.extend({
         },
         {
           label: 'massActions.assessment.create.emailText.label',
-          value: this.$m((this.massAction.details as IMassActionAssessmentDetails).emailText),
-          dataTest: 'emailText',
+          html: this.$m((this.massAction.details as IMassActionAssessmentDetails).emailAdditionalDescription),
+          dataTest: 'emailAdditionalDescription',
         },
       ];
     },
@@ -80,7 +86,7 @@ export default Vue.extend({
 
     async fetchAssessment() {
       this.assessmentLoading = true;
-      this.assessment = await useAssessmentFormStore().fetch({ id: (this.massAction.details as IMassActionAssessmentDetails).assessmentId });
+      this.assessment = await useAssessmentFormStore().fetch({ id: (this.massAction.details as IMassActionAssessmentDetails).assessmentFormId });
       this.assessmentLoading = false;
     },
   },

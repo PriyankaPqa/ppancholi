@@ -17,7 +17,7 @@ describe('AssessmentDetailsTable.vue', () => {
 
   const doMount = (shallow, otherData) => {
     const massAction = mockMassActionEntity();
-    massAction.details.emailText = { translation: { en: 'hello' } };
+    massAction.details.emailAdditionalDescription = { translation: { en: 'hello' } };
     const options = {
       localVue,
       pinia,
@@ -64,8 +64,8 @@ describe('AssessmentDetailsTable.vue', () => {
           },
           {
             label: 'massActions.assessment.create.emailText.label',
-            value: 'hello',
-            dataTest: 'emailText',
+            html: 'hello',
+            dataTest: 'emailAdditionalDescription',
           },
         ]);
       });
@@ -86,7 +86,7 @@ describe('AssessmentDetailsTable.vue', () => {
 
     describe('fetchAssessment', () => {
       it('should fetch the assessment', async () => {
-        const id = mockCombinedMassAction().entity.details.assessmentId;
+        const id = mockCombinedMassAction().entity.details.assessmentFormId;
         await wrapper.vm.fetchAssessment();
         expect(assessmentFormStore.fetch).toHaveBeenCalledWith({ id });
       });

@@ -106,6 +106,12 @@ export default Vue.extend({
           this.eventsFilter = [...this.selectedEvent, ...this.eventsFilter];
         }
       }
+      await this.onLoadAdditionalFilters(filterFormData);
+    },
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async onLoadAdditionalFilters(_filterFormData: FilterFormData) {
+      // to be redefined if needed
     },
 
     async fetchEventsByIds(ids: Array<string>) {

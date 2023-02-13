@@ -43,7 +43,7 @@ export function getExtensionComponents(
     }
 
     if (massActionType === MassActionType.Assessments) {
-      const urlSuffix = 'assessments-from-list';
+      const urlSuffix = 'assessment-from-list';
       data = await entityService.create(urlSuffix, payload as IMassActionAssessmentCreatePayload);
     }
 

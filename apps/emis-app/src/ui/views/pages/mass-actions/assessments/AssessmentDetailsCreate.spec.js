@@ -13,7 +13,7 @@ import Component from './AssessmentDetailsCreate.vue';
 const formCopy = {
   event: mockEvent(),
   assessment: mockAssessmentFormEntity(),
-  emailText: { translation: { en: 'en', fr: 'fr' } },
+  emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
 };
 
 const localVue = createLocalVue();
@@ -89,19 +89,19 @@ describe('AssessmentDetailsCreate.vue', () => {
     });
 
     describe('fillEmptyMultilingualFields', () => {
-      it('calls entityUtils.getFilledMultilingualField and assigns the result to emailText', () => {
+      it('calls entityUtils.getFilledMultilingualField and assigns the result to emailAdditionalDescription', () => {
         const spy = jest.spyOn(utils, 'getFilledMultilingualField').mockImplementation(() => ({ translation: { en: 'mock-name-en' } }));
         wrapper.vm.fillEmptyMultilingualFields();
-        expect(wrapper.vm.formCopy.emailText).toEqual({ translation: { en: 'mock-name-en' } });
+        expect(wrapper.vm.formCopy.emailAdditionalDescription).toEqual({ translation: { en: 'mock-name-en' } });
         spy.mockRestore();
       });
     });
 
     describe('clearEmailText', () => {
-      it('calls entityUtils.initMultilingualAttributes and assigns the result to emailText', () => {
+      it('calls entityUtils.initMultilingualAttributes and assigns the result to emailAdditionalDescription', () => {
         const spy = jest.spyOn(utils, 'initMultilingualAttributes').mockImplementation(() => ({ translation: { en: 'mock-name-en' } }));
         wrapper.vm.clearEmailText();
-        expect(wrapper.vm.formCopy.emailText).toEqual({ translation: { en: 'mock-name-en' } });
+        expect(wrapper.vm.formCopy.emailAdditionalDescription).toEqual({ translation: { en: 'mock-name-en' } });
         spy.mockRestore();
       });
     });

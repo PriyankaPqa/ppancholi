@@ -34,7 +34,7 @@ import AssessmentDetailsCreate from './AssessmentDetailsCreate.vue';
 export interface AssessmentDetailsForm {
   event: IEventEntity,
   assessment: IAssessmentFormEntity,
-  emailText: IMultilingual,
+  emailAdditionalDescription: IMultilingual,
 }
 
 export default Vue.extend({
@@ -53,7 +53,7 @@ export default Vue.extend({
       details: {
         event: null,
         assessment: null,
-        emailText: utils.initMultilingualAttributes(),
+        emailAdditionalDescription: utils.initMultilingualAttributes(),
       } as AssessmentDetailsForm,
       loading: false,
     };
@@ -76,6 +76,10 @@ export default Vue.extend({
       this.details = form;
     },
 
+    fillEmptyMultilingualFields() {
+      this.details.emailAdditionalDescription = utils.getFilledMultilingualField(this.details.emailAdditionalDescription);
+    },
+
     /**
      * Triggered when creating a mass action from a filtered list
      */
@@ -84,12 +88,14 @@ export default Vue.extend({
 
       const filter = buildQuery({ filter: azureSearchParams.filter }).replace('?$filter=', '');
 
+      this.fillEmptyMultilingualFields();
+
       const payload: IMassActionAssessmentCreatePayload = {
         name,
         description,
         eventId: this.details.event.id,
-        assessmentId: this.details.assessment.id,
-        emailText: this.details.emailText,
+        assessmentFormId: this.details.assessment.id,
+        emailAdditionalDescription: this.details.emailAdditionalDescription,
         search: azureSearchParams.search,
         filter: `${filter} and Entity/Status eq 1`,
       };
@@ -106,9 +112,11 @@ export default Vue.extend({
      * Triggered when creating a mass action from a file
      */
     async onUploadStart() {
+      this.fillEmptyMultilingualFields();
+
       this.formData.set('eventId', this.details.event.id);
-      this.formData.set('assessmentId', this.details.assessment.id);
-      this.formData.set('emailText', JSON.stringify(this.details.emailText));
+      this.formData.set('assessmentFormId', this.details.assessment.id);
+      this.formData.set('emailAdditionalDescription', JSON.stringify(this.details.emailAdditionalDescription.translation));
 
       this.loading = true;
       await (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();

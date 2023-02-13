@@ -2,6 +2,7 @@ import {
   EIndigenousTypes, IIndigenousCommunityData, IMember, HouseholdCreate,
   IAddressData,
   IPhoneNumber,
+  IMemberEntity,
 } from '@libs/entities-lib/household-create/index';
 import { IBirthDate } from '@libs/entities-lib/value-objects/identity-set/identitySet.types';
 import libHelpers from '@libs/entities-lib/helpers';
@@ -40,19 +41,19 @@ export default {
       && phone.countryCode !== 'US' ? (phone.e164Number || phone.e164number) : phone.number;
   },
 
-  mobilePhoneNumber(member: IMember): string {
+  mobilePhoneNumber(member: IMemberEntity): string {
     return this.phoneNumberDisplay(member.contactInformation?.mobilePhoneNumber) || '-';
   },
 
-  homePhoneNumber(member: IMember): string {
+  homePhoneNumber(member: IMemberEntity): string {
     return this.phoneNumberDisplay(member.contactInformation.homePhoneNumber) || '-';
   },
 
-  alternatePhoneNumber(member: IMember): string {
+  alternatePhoneNumber(member: IMemberEntity): string {
     return this.phoneNumberDisplay(member.contactInformation.alternatePhoneNumber) || '-';
   },
 
-  alternatePhoneExtension(member: IMember): string {
+  alternatePhoneExtension(member: IMemberEntity): string {
     if (member.contactInformation?.alternatePhoneNumber?.extension) {
       return member.contactInformation.alternatePhoneNumber.extension;
     }

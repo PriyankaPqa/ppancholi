@@ -11,6 +11,7 @@ import { MassActionMode, MassActionType, mockMassActionEntity } from '@libs/enti
 import { mockStorage } from '@/storage';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
+import utils from '@libs/entities-lib/utils';
 import Component from './AssessmentCreate.vue';
 
 const localVue = createLocalVue();
@@ -124,12 +125,21 @@ describe('AssessmentCreate.vue', () => {
       });
     });
 
+    describe('fillEmptyMultilingualFields', () => {
+      it('calls entityUtils.getFilledMultilingualField and assigns the result to emailAdditionalDescription', () => {
+        const spy = jest.spyOn(utils, 'getFilledMultilingualField').mockImplementation(() => ({ translation: { en: 'mock-name-en' } }));
+        wrapper.vm.fillEmptyMultilingualFields();
+        expect(wrapper.vm.details.emailAdditionalDescription).toEqual({ translation: { en: 'mock-name-en' } });
+        spy.mockRestore();
+      });
+    });
+
     describe('onUpdate', () => {
       it('should update the details', () => {
         const formCopy = {
           event: mockEvent(),
           assessment: mockAssessmentFormEntity(),
-          emailText: { translation: { en: 'en', fr: 'fr' } },
+          emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
         };
 
         wrapper.vm.onUpdate(formCopy);
@@ -140,29 +150,29 @@ describe('AssessmentCreate.vue', () => {
 
     describe('onUploadStart', () => {
       it('should add the payment details to the details data', () => {
-        wrapper.vm.formData.append = jest.fn();
+        wrapper.vm.formData.set = jest.fn();
         wrapper.vm.$refs.base.upload = jest.fn();
 
         const formCopy = {
           event: mockEvent(),
           assessment: mockAssessmentFormEntity(),
-          emailText: { translation: { en: 'en', fr: 'fr' } },
+          emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
         };
 
         wrapper.vm.onUpdate(formCopy);
 
         wrapper.vm.onUploadStart();
 
-        wrapper.vm.formData.set('eventId', wrapper.vm.details.event.id);
-        wrapper.vm.formData.set('assessmentId', wrapper.vm.details.assessment.id);
-        wrapper.vm.formData.set('emailText', wrapper.vm.details.emailText);
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('eventId', wrapper.vm.details.event.id);
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('assessmentFormId', wrapper.vm.details.assessment.id);
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('emailAdditionalDescription', JSON.stringify(wrapper.vm.details.emailAdditionalDescription.translation));
       });
 
       it('should call upload method of the child', () => {
         const formCopy = {
           event: mockEvent(),
           assessment: mockAssessmentFormEntity(),
-          emailText: { translation: { en: 'en', fr: 'fr' } },
+          emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
         };
 
         wrapper.vm.onUpdate(formCopy);
@@ -190,7 +200,7 @@ describe('AssessmentCreate.vue', () => {
           details: {
             event: mockEvent(),
             assessment: mockAssessmentFormEntity(),
-            emailText: { translation: { en: 'en', fr: 'fr' } },
+            emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
           },
         });
 
@@ -198,8 +208,8 @@ describe('AssessmentCreate.vue', () => {
           name,
           description,
           eventId: wrapper.vm.details.event.id,
-          assessmentId: wrapper.vm.details.assessment.id,
-          emailText: wrapper.vm.details.emailText,
+          assessmentFormId: wrapper.vm.details.assessment.id,
+          emailAdditionalDescription: wrapper.vm.details.emailAdditionalDescription,
           search: azureSearchParams.search,
           filter: "Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 1",
         };
@@ -219,7 +229,7 @@ describe('AssessmentCreate.vue', () => {
               details: {
                 event: mockEvent(),
                 assessment: mockAssessmentFormEntity(),
-                emailText: { translation: { en: 'en', fr: 'fr' } },
+                emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
               },
             };
           },

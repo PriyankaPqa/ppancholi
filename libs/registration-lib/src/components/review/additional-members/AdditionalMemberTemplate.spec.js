@@ -2,6 +2,7 @@ import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { EIndigenousTypes, mockGenderOther } from '@libs/entities-lib/value-objects/identity-set';
+import helpers from '@libs/entities-lib/helpers';
 import CurrentAddressTemplate from '../addresses/CurrentAddressTemplate.vue';
 import Component from './AdditionalMemberTemplate.vue';
 
@@ -89,7 +90,7 @@ describe('AdditionalMemberTemplate.vue', () => {
 
     describe('getBirthDateLine', () => {
       it('should return the proper data', () => {
-        const expected = 'registration.personal_info.birthdate : Feb 12, 1999 (23 common.years)';
+        const expected = `registration.personal_info.birthdate : Feb 12, 1999 (${helpers.getAge(wrapper.vm.member.identitySet.birthDate)} common.years)`;
         expect(wrapper.vm.getBirthDateLine).toEqual(expected);
       });
     });

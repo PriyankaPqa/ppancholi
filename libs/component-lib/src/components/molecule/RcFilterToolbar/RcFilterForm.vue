@@ -198,7 +198,8 @@ filterOptions: Array<IFilterSettings>,
       // take a first available operator as default operator.
       const defaultOperator = operators[filter.type][0].operator;
       switch (filter.type) {
-        case EFilterType.MultiSelect || EFilterType.MultiSelectExclude:
+        case EFilterType.MultiSelect:
+        case EFilterType.MultiSelectExclude:
           filterItems[filter.key] = { value: [], operator: defaultOperator };
           break;
         default:

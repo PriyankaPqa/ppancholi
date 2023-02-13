@@ -77,7 +77,7 @@ export function getExtensionComponents(
     return getScreeningIds();
   }
 
-    async function fetchCloseReasons() {
+  async function fetchCloseReasons() {
     if (!closeReasonsFetched.value) {
       const data = await optionService.getOptionList(EOptionLists.CaseFileCloseReasons);
       closeReasons.value = data;
@@ -90,12 +90,12 @@ export function getExtensionComponents(
     return entityService.fetchCaseFileActivities(id);
   }
 
-    async function genericSetAction(
+  async function genericSetAction(
       { id, payload, element }:
         { id: uuid, payload: unknown, element: 'Tags' | 'Status' | 'IsDuplicate' | 'Labels' | 'IdentityAuthentication' | 'Triage' | 'ValidationOfImpact' | 'Assign' },
-) {
+  ) {
     try {
-      const res = await entityService[`setCaseFile${element}`](id, payload);
+      const res = await (entityService[`setCaseFile${element}`] as any)(id, payload);
       baseComponents.set(res);
       return res;
     } catch (e) {
@@ -104,11 +104,11 @@ export function getExtensionComponents(
     }
   }
 
-    async function setCaseFileTags(id: uuid, tags: IListOption[]) {
+  async function setCaseFileTags(id: uuid, tags: IListOption[]) {
     return genericSetAction({ id, payload: tags, element: 'Tags' });
   }
 
-    async function setCaseFileStatus({ id, status, rationale, reason }: { id: uuid; status: CaseFileStatus; rationale: string; reason: IListOption }) {
+  async function setCaseFileStatus({ id, status, rationale, reason }: { id: uuid; status: CaseFileStatus; rationale: string; reason: IListOption }) {
     return genericSetAction({ id, payload: { status, rationale, reason }, element: 'Status' });
   }
 
@@ -150,7 +150,7 @@ export function getExtensionComponents(
     }
   }
 
-    async function fetchCaseFileAssignedCounts(eventId: uuid, teamId: uuid) {
+  async function fetchCaseFileAssignedCounts(eventId: uuid, teamId: uuid) {
     try {
       const res = await entityService.getCaseFileAssignedCounts({
         eventId,
@@ -163,7 +163,7 @@ export function getExtensionComponents(
     }
   }
 
-    async function fetchCaseFileDetailedCounts(eventId: uuid) {
+  async function fetchCaseFileDetailedCounts(eventId: uuid) {
     try {
       const res = await entityService.fetchCaseFileDetailedCounts(eventId);
       return res;
@@ -173,7 +173,7 @@ export function getExtensionComponents(
     }
   }
 
-    async function assignCaseFile({ id, teamMembers, teams }:{ id: uuid, teamMembers: IAssignedTeamMembers[]; teams: uuid[] }): Promise<IUserAccountEntity> {
+  async function assignCaseFile({ id, teamMembers, teams }:{ id: uuid, teamMembers: IAssignedTeamMembers[]; teams: uuid[] }): Promise<IUserAccountEntity> {
     try {
       const res = await entityService.assignCaseFile(id, { teams, teamMembers });
       if (res) {
@@ -186,36 +186,36 @@ export function getExtensionComponents(
     }
   }
 
-    return {
-      tagsOptions,
-      inactiveReasons,
-      closeReasons,
-      screeningIds,
-      tagsOptionsFetched,
-      inactiveReasonsFetched,
-      closeReasonsFetched,
-      screeningIdsFetched,
-      getTagsOptions,
-      getInactiveReasons,
-      getCloseReasons,
-      getScreeningIds,
-      fetchTagsOptions,
-      fetchInactiveReasons,
-      fetchScreeningIds,
-      fetchCloseReasons,
-      fetchCaseFileActivities,
-      setCaseFileTags,
-      setCaseFileStatus,
-      setCaseFileIsDuplicate,
-      setCaseFileLabels,
-      setCaseFileIdentityAuthentication,
-      setCaseFileTriage,
-      setCaseFileValidationOfImpact,
-      setCaseFileAssign,
-      createCaseFile,
-      fetchCaseFileAssignedCounts,
-      fetchCaseFileDetailedCounts,
-      assignCaseFile,
-      genericSetAction,
+  return {
+    tagsOptions,
+    inactiveReasons,
+    closeReasons,
+    screeningIds,
+    tagsOptionsFetched,
+    inactiveReasonsFetched,
+    closeReasonsFetched,
+    screeningIdsFetched,
+    getTagsOptions,
+    getInactiveReasons,
+    getCloseReasons,
+    getScreeningIds,
+    fetchTagsOptions,
+    fetchInactiveReasons,
+    fetchScreeningIds,
+    fetchCloseReasons,
+    fetchCaseFileActivities,
+    setCaseFileTags,
+    setCaseFileStatus,
+    setCaseFileIsDuplicate,
+    setCaseFileLabels,
+    setCaseFileIdentityAuthentication,
+    setCaseFileTriage,
+    setCaseFileValidationOfImpact,
+    setCaseFileAssign,
+    createCaseFile,
+    fetchCaseFileAssignedCounts,
+    fetchCaseFileDetailedCounts,
+    assignCaseFile,
+    genericSetAction,
   };
 }

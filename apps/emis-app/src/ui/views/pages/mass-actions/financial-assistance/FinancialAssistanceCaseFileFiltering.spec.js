@@ -228,7 +228,7 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
       });
     });
 
-    describe('onAutoCompleteChange (when user is selected or un-selected)', () => {
+    describe('onAutoCompleteChange (when event is selected or un-selected)', () => {
       it('should reset programs filter if not event has been selected', async () => {
         const data = { filterKey: 'Entity/EventId', value: null };
         await wrapper.setData({ programsFilter: ['1', '2'] });

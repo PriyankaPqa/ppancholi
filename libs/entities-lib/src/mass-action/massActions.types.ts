@@ -63,9 +63,9 @@ export interface IMassActionDetails {
 }
 
 export interface IMassActionAssessmentDetails {
-  assessmentId: uuid;
+  assessmentFormId: uuid;
   eventId: uuid;
-  emailText: IMultilingual;
+  emailAdditionalDescription: IMultilingual;
 }
 
 export interface IMassActionRun extends IEntity {

@@ -137,5 +137,21 @@ describe('>>> Mass Action Store', () => {
         expect(bComponents.set).toBeCalledWith(massAction);
       });
     });
+
+    describe('Assessments request', () => {
+      it('should call the create service with proper parameters and commit the res', async () => {
+        const bComponents = { ...baseComponents, set: jest.fn() };
+        const store = createTestStore(bComponents);
+        const urlSuffix = 'assessment-from-list';
+        const massActionType = MassActionType.Assessments;
+        const payload = { name: 'test', description: '' };
+        const massAction = mockMassActionEntity();
+
+        await store.create(massActionType, payload);
+
+        expect(entityService.create).toHaveBeenCalledWith(urlSuffix, payload);
+        expect(bComponents.set).toBeCalledWith(massAction);
+      });
+    });
   });
 });

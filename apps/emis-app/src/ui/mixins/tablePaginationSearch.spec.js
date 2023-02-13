@@ -327,6 +327,12 @@ describe('tablePaginationSearch.vue', () => {
         await wrapper.vm.search(params);
         expect(wrapper.vm.setState).toHaveBeenCalled();
       });
+
+      it('calls onSearchComplete', async () => {
+        jest.spyOn(wrapper.vm, 'onSearchComplete');
+        await wrapper.vm.search(params);
+        expect(wrapper.vm.onSearchComplete).toHaveBeenCalled();
+      });
     });
 
     describe('setState', () => {
