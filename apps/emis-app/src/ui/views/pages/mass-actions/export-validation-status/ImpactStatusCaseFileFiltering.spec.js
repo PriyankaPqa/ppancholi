@@ -2,32 +2,32 @@ import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import {
   createLocalVue,
   shallowMount,
+  mount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
-import { CaseFileStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, mockCombinedCaseFiles, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import { MassActionType } from '@libs/entities-lib/mass-action';
 import Component from './ImpactStatusCaseFileFiltering.vue';
 
 const localVue = createLocalVue();
 
-const storage = mockStorage();
+let wrapper;
+const doMount = (fullMount = false, opts = {}) => {
+  const options = {
+    localVue,
+    propsData: {
+      show: true,
+    },
+    ...opts,
+  };
+  wrapper = fullMount ? mount(Component, options) : shallowMount(Component, options);
+};
 
 describe('ImpactStatusCaseFileFiltering.vue', () => {
-  let wrapper;
-
   describe('Computed', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          show: true,
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
+      doMount();
     });
 
     describe('customColumns', () => {
@@ -159,15 +159,7 @@ describe('ImpactStatusCaseFileFiltering.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          show: true,
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
+      doMount();
     });
 
     describe('onSubmit', () => {
@@ -178,6 +170,18 @@ describe('ImpactStatusCaseFileFiltering.vue', () => {
 
         expect(wrapper.vm.onExport).toHaveBeenCalledWith(MassActionType.ExportValidationOfImpactStatus);
       });
+    });
+  });
+
+  describe('Template', () => {
+    it('should display case file number', () => {
+      doMount(true, {
+        computed: {
+          tableData: () => mockCombinedCaseFiles(),
+        },
+      });
+
+      expect(wrapper.findDataTest('caseFileNumber').text()).toEqual(mockCombinedCaseFiles()[0].entity.caseFileNumber);
     });
   });
 });

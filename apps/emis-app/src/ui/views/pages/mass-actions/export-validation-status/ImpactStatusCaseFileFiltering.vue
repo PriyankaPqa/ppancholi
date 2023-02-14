@@ -45,7 +45,7 @@
       </template>
 
       <template #[`item.${customColumns.caseFileNumber}`]="{ item: caseFile }">
-        {{ caseFile.caseFileNumber }}
+        <span data-test="caseFileNumber">{{ caseFile.entity.caseFileNumber }}</span>
       </template>
 
       <template #[`item.${customColumns.firstName}`]="{ item: caseFile }">
