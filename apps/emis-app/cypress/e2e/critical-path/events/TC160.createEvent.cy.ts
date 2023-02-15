@@ -18,6 +18,7 @@ const createData = {
   assistanceNumber: '514-706-5000',
   relatedEventsIndex: [0, 1],
   description: 'This is a description',
+  reportedDate: { year: 1990, month: 1, day: 31 },
 } as ICreateEventFields;
 
 const cannotRoles = {

@@ -37,6 +37,7 @@ declare global {
         selector: string | { selector: string, type: string },
         opts?: WaitUntilOptions
       ): Chainable<void>
+      setDatePicker(dataTest: string, { year, month, day }: { year: number; month: number; day: number }): Chainable<void>
     }
   }
 }

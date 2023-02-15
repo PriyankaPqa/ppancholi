@@ -100,6 +100,7 @@ export class CreateEventPage {
       });
   }
 
+  // eslint-disable-next-line complexity,max-statements
   async fill(data: IFields) {
     if (data.name) {
       cy.getByDataTest(this.name).type(data.name);
@@ -145,9 +146,9 @@ export class CreateEventPage {
       cy.getByDataTest(this.assistanceNumber).type(data.assistanceNumber);
     }
 
-    // if (data.reportedDate) {
-    //   await this.setDatePicker(DataTest.reportedDate, data.reportedDate);
-    // }
+    if (data.reportedDate) {
+      cy.setDatePicker(DataTest.reportedDate, data.reportedDate);
+    }
 
     if (data.eventStatus) {
       this.setStatus(data.eventStatus);
