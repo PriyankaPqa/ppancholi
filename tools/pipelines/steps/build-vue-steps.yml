@@ -3,7 +3,7 @@ parameters:
   buildCommand: ''
   workingDir: ''
   lokaliseCommand: ''
-  lokalise: 'false'
+  lokalise: 'true'
   nodeJsVersion: ''
   appVersion: ''
   disableCache: ''
