@@ -332,6 +332,121 @@ describe('CaseFileActivity', () => {
       });
     });
 
+    describe('canEditLabels', () => {
+      it('returns the true for level 0+ users if not readonly and feature flag L0Access is on', async () => {
+        mockCaseFile.readonly = false;
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: { id: mockCaseFile.id },
+          computed: {
+            caseFile() {
+              return mockCaseFile;
+            },
+            event() {
+              return mockEvent;
+            },
+          },
+          mocks: {
+            $storage: storage,
+            $hasLevel: () => false,
+            $hasRole: (r) => r === 'contributor3',
+          },
+        });
+        expect(wrapper.vm.canEdit).toBe(false);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: { id: mockCaseFile.id },
+          computed: {
+            caseFile() {
+              return mockCaseFile;
+            },
+            event() {
+              return mockEvent;
+            },
+          },
+          mocks: {
+            $storage: storage,
+            $hasLevel: () => true,
+            $hasFeature: () => true,
+          },
+        });
+        expect(wrapper.vm.canEdit).toBe(true);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: { id: mockCaseFile.id },
+          computed: {
+            caseFile() {
+              return mockCaseFile;
+            },
+            event() {
+              return mockEvent;
+            },
+            readonly() {
+              return true;
+            },
+          },
+          mocks: {
+            $storage: storage,
+            $hasLevel: () => true,
+            $hasFeature: () => true,
+          },
+        });
+        expect(wrapper.vm.canEdit).toBe(false);
+      });
+
+      it('returns canEdit if feature flag L0Access is off', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: { id: mockCaseFile.id },
+          computed: {
+            caseFile() {
+              return mockCaseFile;
+            },
+            event() {
+              return mockEvent;
+            },
+            readonly() {
+              return true;
+            },
+            canEdit() {
+              return true;
+            },
+          },
+          mocks: {
+            $storage: storage,
+            $hasFeature: () => false,
+          },
+        });
+        expect(wrapper.vm.canEdit).toBe(true);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: { id: mockCaseFile.id },
+          computed: {
+            caseFile() {
+              return mockCaseFile;
+            },
+            event() {
+              return mockEvent;
+            },
+            readonly() {
+              return true;
+            },
+            canEdit() {
+              return false;
+            },
+          },
+          mocks: {
+            $storage: storage,
+            $hasFeature: () => false,
+          },
+        });
+        expect(wrapper.vm.canEdit).toBe(false);
+      });
+    });
+
     describe('tags', () => {
       it('should call the storage getter and return the tags data in the right form', async () => {
         const caseFile = { ...mockCaseFile, tags: [{ optionItemId: 'id-1' }] };

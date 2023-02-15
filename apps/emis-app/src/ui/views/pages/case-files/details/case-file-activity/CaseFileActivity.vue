@@ -77,7 +77,7 @@
         <case-file-labels
           :case-file-id="caseFile.id"
           :case-file-labels="caseFile.labels || []"
-          :readonly="!canEdit" />
+          :readonly="!canEditLabels" />
       </v-row>
 
       <v-row class="ma-0 px-2 pt-0 no-gutters">
@@ -123,6 +123,7 @@ import { ICaseFileActivity, CaseFileTriage } from '@libs/entities-lib/case-file'
 import moment from '@libs/shared-lib/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import entityUtils from '@libs/entities-lib/utils';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import CaseFileTags from './components/CaseFileTags.vue';
@@ -170,6 +171,10 @@ export default mixins(caseFileDetail).extend({
   computed: {
     canEdit(): boolean {
       return this.$hasLevel('level1') && !this.readonly;
+    },
+
+    canEditLabels(): boolean {
+      return this.$hasFeature(FeatureKeys.L0Access) ? this.$hasLevel('level0') && !this.readonly : this.canEdit;
     },
 
     triageLevels(): { value: unknown, text: string }[] {

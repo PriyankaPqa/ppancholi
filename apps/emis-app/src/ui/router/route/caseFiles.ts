@@ -38,19 +38,19 @@ export const caseFiles: RouteConfig = {
       path: Routes.caseFile.home.path,
       name: Routes.caseFile.home.name,
       component: HomeCaseFile,
-      meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+      meta: { level: 'level0', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
     },
     {
       path: Routes.caseFile.details.path,
       component: CaseFileDetails,
-      meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+      meta: { level: 'level0', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
       props: true,
       children: [
         {
           path: Routes.caseFile.activity.path,
           name: Routes.caseFile.activity.name,
           component: CaseFileActivity,
-          meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+          meta: { level: 'level0', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
           props: true,
         },
         {
