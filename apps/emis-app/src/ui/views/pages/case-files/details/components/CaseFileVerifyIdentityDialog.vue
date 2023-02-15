@@ -28,7 +28,8 @@
                       v-model="form.status"
                       :error-messages="errors"
                       data-test="verifyIdentity_status"
-                      row>
+                      row
+                      @change="onStatusChange">
                       <v-icon left color="status_success">
                         mdi-shield-check
                       </v-icon>
@@ -151,13 +152,12 @@ export default Vue.extend({
       isChanged: false,
       status: IdentityAuthenticationStatus,
       form: {
-        method: 0 as IdentityAuthenticationMethod,
+        method: null as IdentityAuthenticationMethod,
         identificationIds: [] as Array<string>,
-        status: 0 as IdentityAuthenticationStatus,
+        status: null as IdentityAuthenticationStatus,
         specifiedOther: null as string,
       },
       helpLink: this.$t('zendesk.authentication_identity'),
-      isInitialLoading: true,
     };
   },
   computed: {
@@ -219,15 +219,6 @@ export default Vue.extend({
         this.form.specifiedOther = null;
       }
     },
-    'form.status': {
-      handler() {
-        // isInitialLoading is to disable this watcher during the Initialization, then we can see the status and method from BE data. -- [EMISV2-6099]
-        if (!this.isInitialLoading) {
-            this.form.method = IdentityAuthenticationMethod.NotApplicable;
-        }
-        this.isInitialLoading = false;
-      },
-    },
   },
 
   async created() {
@@ -275,6 +266,10 @@ export default Vue.extend({
      */
     close() {
       this.$emit('update:show', false);
+    },
+
+    onStatusChange() {
+      this.form.method = IdentityAuthenticationMethod.NotApplicable;
     },
   },
 });

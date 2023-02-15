@@ -86,6 +86,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
               identityAuthentication: null,
             },
           },
+
           mocks: {
             $storage: storage,
           },
@@ -138,14 +139,21 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
             },
           },
         });
-        await wrapper.setData({
-          isInitialLoading: true,
-        });
         await wrapper.vm.$nextTick();
         wrapper.vm.form.method = wrapper.vm.caseFile.identityAuthentication.method;
         wrapper.vm.form.status = wrapper.vm.caseFile.identityAuthentication.status;
         expect(wrapper.vm.form.status).toEqual(IdentityAuthenticationStatus.Failed);
         expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.System);
+      });
+    });
+
+    describe('verifyIdentity_status radio', () => {
+      it('should call onStatusChange when emitted change event', async () => {
+        wrapper.vm.onStatusChange = jest.fn();
+        await wrapper.setData({ form: { status: IdentityAuthenticationStatus.Passed, method: IdentityAuthenticationMethod.System } });
+        const element = wrapper.findDataTest('verifyIdentity_status');
+        await element.vm.$emit('change');
+        expect(wrapper.vm.onStatusChange).toHaveBeenCalled();
       });
     });
   });
@@ -230,12 +238,12 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         await wrapper.setData({
           form: {
             identificationIds: ['abc'],
-            method: IdentityAuthenticationMethod.Exceptional,
+            status: IdentityAuthenticationStatus.Passed,
           },
         });
         await wrapper.setData({
           form: {
-            status: IdentityAuthenticationStatus.Passed,
+            method: IdentityAuthenticationMethod.Exceptional,
           },
         });
         expect(wrapper.vm.form.identificationIds).toEqual(['abc']);
@@ -248,23 +256,26 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
   });
 
   describe('Methods', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
     describe('Save', () => {
       it('saves changes and triggers a toast', async () => {
         wrapper.vm.$toasted.global.success = jest.fn();
         const withOther = mockOptionItemData().filter((m) => m.isOther)[0].id;
         await wrapper.setData({
           form: {
-            method: IdentityAuthenticationMethod.Exceptional,
             status: IdentityAuthenticationStatus.Passed,
+            method: IdentityAuthenticationMethod.Exceptional,
             identificationIds: [withOther],
             specifiedOther: 'xxx',
           },
         });
-
         await wrapper.vm.save();
         expect(caseFileStore.setCaseFileIdentityAuthentication).toHaveBeenCalledWith(wrapper.vm.caseFile.id, {
-          method: IdentityAuthenticationMethod.Exceptional,
           status: IdentityAuthenticationStatus.Passed,
+          method: IdentityAuthenticationMethod.Exceptional,
           identificationIds: [{ optionItemId: withOther, specifiedOther: 'xxx' }],
         });
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);
@@ -323,49 +334,15 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         expect(wrapper.emitted('update:show')).toBeUndefined();
       });
     });
-  });
 
-  describe('Watcher', () => {
-    describe('form.status', () => {
-      test('If user put status as Passed, the method should be switched to not applicable', async () => {
+    describe('onStatusChange', () => {
+      it('should set method to NotApplicate when onStatusChange has been called', async () => {
         await wrapper.setData({
-          isInitialLoading: false,
+          form: {
+            method: IdentityAuthenticationMethod.System,
+          },
         });
-        wrapper.vm.form.method = IdentityAuthenticationMethod.System;
-        await wrapper.vm.$nextTick();
-        wrapper.vm.form.status = IdentityAuthenticationStatus.NotVerified;
-        await wrapper.vm.$nextTick();
-        wrapper.vm.form.status = IdentityAuthenticationStatus.Passed;
-        await wrapper.vm.$nextTick();
-
-        expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.NotApplicable);
-      });
-
-      test('If user put status as failed, the method should be switched to not applicable', async () => {
-        await wrapper.setData({
-          isInitialLoading: false,
-        });
-        wrapper.vm.form.method = IdentityAuthenticationMethod.System;
-        await wrapper.vm.$nextTick();
-        wrapper.vm.form.status = IdentityAuthenticationStatus.NotVerified;
-        await wrapper.vm.$nextTick();
-        wrapper.vm.form.status = IdentityAuthenticationStatus.Failed;
-        await wrapper.vm.$nextTick();
-
-        expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.NotApplicable);
-      });
-
-      test('If user put status as not verified, the method should be switched to not applicable', async () => {
-        await wrapper.setData({
-          isInitialLoading: false,
-        });
-        wrapper.vm.form.method = IdentityAuthenticationMethod.System;
-        await wrapper.vm.$nextTick();
-        wrapper.vm.form.status = IdentityAuthenticationStatus.Passed;
-        await wrapper.vm.$nextTick();
-        wrapper.vm.form.status = IdentityAuthenticationStatus.NotVerified;
-        await wrapper.vm.$nextTick();
-
+        wrapper.vm.onStatusChange();
         expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.NotApplicable);
       });
     });
