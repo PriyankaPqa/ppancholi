@@ -21,9 +21,9 @@
         {{ $t(`registration.addresses.temporaryAddressTypes.${ECurrentAddressTypes[currentAddress.addressType]}`) }}
       </div>
 
-      <div v-if="currentAddress.requiresPlaceName()" data-test="currentAddress__name">
+      <div v-if="currentAddress.requiresPlaceName() || currentAddress.requiresShelterLocation()" data-test="currentAddress__name">
         {{ currentAddress.placeName }}
-        <span v-if="currentAddress.hasPlaceNumber() && currentAddress.placeNumber" data-test="currentAddress__placeNumber">
+        <span v-if="(currentAddress.hasPlaceNumber() || hasShelterCurrentAddress) && currentAddress.placeNumber" data-test="currentAddress__placeNumber">
           {{ `#${currentAddress.placeNumber}` }}
         </span>
       </div>

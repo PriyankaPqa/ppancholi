@@ -13,6 +13,7 @@ export enum FeatureKeys {
   LetIMViewEventDetails = 'letIMViewEventDetails',
   CouplingAssessmentsWithRegistration = 'CouplingAssessmentsWithRegistration',
   ETransferCancellationHaveOptionForUnknown = 'ETransferCancellationHaveOptionForUnknown',
+  AddShelterRoomNumber = 'AddShelterRoomNumber',
   PreFillPersonalInformation = 'PreFillPersonalInformation',
   PaymentGroupStatusHistory = 'paymentGroupStatusHistory',
   AssessmentsMassAction = 'AssessmentsMassAction',

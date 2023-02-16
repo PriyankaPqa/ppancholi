@@ -321,6 +321,21 @@ describe('>>> Household Activity', () => {
       ]);
     });
 
+    it('returns the right address if the address is a shelter and has a place number', () => {
+      const activity = mockHouseholdActivities(HouseholdActivityType.TempAddressEdited)[0];
+      const historyActivity = new HouseholdActivity(activity);
+
+      const previousData = { currentAddress: mockShelter(), shelterLocationName: { translation: { en: 'Mock Shelter Location', fr: '' } } };
+      previousData.currentAddress.placeNumber = '1234';
+
+      expect(historyActivity.makeTemporaryAddressTemplate(previousData, i18n)).toEqual([
+        {
+          label: 'household.history.label.temporary_address',
+          value: 'registration.addresses.temporaryAddressTypes.Shelter, Mock Shelter Location #1234',
+        },
+      ]);
+    });
+
     it('calls getAddressLines helper and returns the right address if the address has a place name and number', () => {
       jest.spyOn(helpers, 'getAddressLines').mockImplementation(() => (['120 East Str.', '12345, NY, New York', 'USA']));
 

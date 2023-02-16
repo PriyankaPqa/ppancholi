@@ -65,6 +65,18 @@ describe('CurrentAddressTemplate.vue', () => {
         const expected = `${wrapper.vm.currentAddress.placeName} #${wrapper.vm.currentAddress.placeNumber}`;
         expect(el.text().replace(/\s+/g, ' ').trim()).toMatch(expected);
       });
+
+      it('should display the placeName and placeNumber if type is shelter location and has a number', async () => {
+        const shelter = mockShelter();
+        shelter.placeNumber = '123';
+        shelter.placeName = 'placeName';
+        await wrapper.setProps({
+          currentAddress: shelter,
+        });
+        const el = wrapper.findDataTest('currentAddress__name');
+        const expected = `${wrapper.vm.currentAddress.placeName} #${wrapper.vm.currentAddress.placeNumber}`;
+        expect(el.text().replace(/\s+/g, ' ').trim()).toMatch(expected);
+      });
     });
 
     describe('Street', () => {

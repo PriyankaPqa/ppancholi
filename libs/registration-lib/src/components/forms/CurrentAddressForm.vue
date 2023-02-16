@@ -53,7 +53,19 @@
             :label="placeNameLabel" />
         </v-col>
 
-        <v-col v-if="form.hasPlaceNumber()" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
+        <v-col v-if="form.requiresShelterLocation() && currentShelterLocations.length > 0" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
+          <v-select-with-validation
+            v-model="form.shelterLocation"
+            background-color="white"
+            :rules="rules.shelterLocation"
+            :item-text="(e) => $m(e.name)"
+            return-object
+            :data-test="`${prefixDataTest}__shelterLocation`"
+            :label="`${$t('registration.addresses.temporaryAddressTypes.Shelter')} *`"
+            :items="currentShelterLocations" />
+        </v-col>
+
+        <v-col v-if="form.hasPlaceNumber() || (enableShelterLocationNumber && form.requiresShelterLocation())" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
           <v-text-field-with-validation
             v-model="form.placeNumber"
             background-color="white"
@@ -131,18 +143,6 @@
             :label="`${$t('registration.addresses.country')} *`"
             @change="onCountryChange()" />
         </v-col>
-
-        <v-col v-if="form.requiresShelterLocation() && currentShelterLocations.length > 0" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
-          <v-select-with-validation
-            v-model="form.shelterLocation"
-            background-color="white"
-            :rules="rules.shelterLocation"
-            :item-text="(e) => $m(e.name)"
-            return-object
-            :data-test="`${prefixDataTest}__shelterLocation`"
-            :label="`${$t('registration.addresses.temporaryAddressTypes.Shelter')} *`"
-            :items="currentShelterLocations" />
-        </v-col>
       </template>
     </v-row>
   </validation-observer>
@@ -164,6 +164,7 @@ import {
   ICurrentAddress,
   CurrentAddress,
 } from '@libs/entities-lib/household-create';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 
 import googleAutoCompleteMixin from './mixins/address';
@@ -284,6 +285,10 @@ export default mixins(googleAutoCompleteMixin).extend({
       };
     },
 
+    enableShelterLocationNumber(): boolean {
+      return this.$hasFeature(FeatureKeys.AddShelterRoomNumber);
+    },
+
     isCanada(): boolean {
       return this.form?.address?.country === 'CA';
     },
@@ -310,6 +315,8 @@ export default mixins(googleAutoCompleteMixin).extend({
         case (ECurrentAddressTypes.HotelMotel):
         case (ECurrentAddressTypes.MedicalFacility):
           return this.$t('registration.addresses.roomNumber');
+        case (ECurrentAddressTypes.Shelter):
+          return this.$t('registration.addresses.shelterLocationNumber');
         default:
           return '';
       }

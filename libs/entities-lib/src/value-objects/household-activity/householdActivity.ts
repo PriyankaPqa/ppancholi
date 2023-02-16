@@ -236,6 +236,9 @@ export class HouseholdActivity implements IHouseholdActivity {
 
     if (data.currentAddress.addressType === ECurrentAddressTypes.Shelter && data.shelterLocationName) {
       address = helpers.getMultilingualValue(data.shelterLocationName, i18n);
+      if (data.currentAddress.placeNumber) {
+        address += ` #${data.currentAddress.placeNumber}`;
+      }
     } else {
       const memberAddress = new CurrentAddress(data.currentAddress);
       if (memberAddress.requiresPlaceName()) {

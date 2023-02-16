@@ -72,6 +72,7 @@
     "registration.addresses.postalCode": "Postal code",
     "registration.addresses.province": "Province\/Territory",
     "registration.addresses.roomNumber": "Room number",
+    "registration.addresses.shelterLocationNumber": "Room\/Cot\/Other number",
     "registration.addresses.streetAddress": "Street address",
     "registration.addresses.temporaryAddressTypes.Campground": "Campground",
     "registration.addresses.temporaryAddressTypes.FriendsFamily": "Friends \/ Family",

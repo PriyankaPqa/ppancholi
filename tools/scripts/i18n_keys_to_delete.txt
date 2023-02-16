@@ -7,3 +7,7 @@ registration.privacy_statement.p1
 error.there-are-no-records-to-be-processed
 mass_action.card.group4
 mass_action.card.group1
+registration.addresses.roomCotOtherNumber
+errors.unit-suite-not-place-number-must-have-avalue
+errors.unit-suit-not-place-number-must-have-a-value
+errors.place-number-not-unit-suite-must-have-avalue

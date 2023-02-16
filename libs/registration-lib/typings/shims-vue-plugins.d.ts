@@ -3,6 +3,7 @@
 import { Store } from 'vuex';
 import { IMultilingual } from '../src/types';
 import { Toasted } from 'vue-toasted';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 interface IFormatCurrency {
   (value: number): string;
@@ -23,5 +24,6 @@ declare module 'vue/types/vue' {
     $m: IMFunction;
     $hasLevel: (p: string) => boolean;
     $hasRole: (p: string) => boolean;
+    $hasFeature: (feature: FeatureKeys) => boolean;
   }
 }
