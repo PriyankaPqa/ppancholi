@@ -1,4 +1,3 @@
-import { mockStorage } from '@/storage';
 import { mockSignalRService } from '@libs/services-lib/signal-r';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
@@ -13,13 +12,13 @@ import { useApprovalTableStore, useApprovalTableMetadataStore } from '@/pinia/ap
 
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore, useFinancialAssistancePaymentMetadataStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistanceStore, useFinancialAssistanceMetadataStore } from '@/pinia/financial-assistance/financial-assistance';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { SignalR } from './signalR';
 
-const storage = mockStorage();
 const service = mockSignalRService();
 
 const listenForChangesFct = SignalR.prototype.listenForChanges;
@@ -28,7 +27,7 @@ SignalR.prototype.buildHubConnection = jest.fn();
 SignalR.prototype.listenForChanges = jest.fn();
 SignalR.prototype.listenForOptionItemChanges = jest.fn();
 
-let conn = new SignalR({ service, storage, showConsole: true });
+let conn = new SignalR({ service, showConsole: true });
 
 const { eventStore } = useMockEventStore();
 
@@ -36,7 +35,6 @@ describe('signalR', () => {
   beforeEach(() => {
     conn = new SignalR({
       service,
-      storage,
       showConsole: false,
     });
     conn.connection = { on: jest.fn(), stop: jest.fn() };
@@ -505,13 +503,13 @@ describe('signalR', () => {
         .toHaveBeenCalledWith({
           domain: 'finance',
           entityName: 'FinancialAssistanceTable',
-          action: conn.storage.financialAssistance.mutations.setEntityFromOutsideNotification,
+          action: useFinancialAssistanceStore().setItemFromOutsideNotification,
         });
       expect(conn.listenForChanges)
         .toHaveBeenCalledWith({
           domain: 'finance',
           entityName: 'FinancialAssistanceTableMetadata',
-          action: conn.storage.financialAssistance.mutations.setMetadataFromOutsideNotification,
+          action: useFinancialAssistanceMetadataStore().setItemFromOutsideNotification,
         });
     });
   });
@@ -539,7 +537,6 @@ describe('signalR', () => {
     it('attaches the action to the connection', () => {
       SignalR.prototype.listenForChanges = listenForChangesFct;
       conn = new SignalR({
-        storage,
         showConsole: false,
       });
       conn.connection = { on: jest.fn() };
@@ -558,7 +555,6 @@ describe('signalR', () => {
     it('attaches the action to the connection', () => {
       SignalR.prototype.listenForOptionItemChanges = listenForOptionItemChangesFct;
       conn = new SignalR({
-        storage,
         showConsole: false,
       });
       conn.connection = { on: jest.fn() };

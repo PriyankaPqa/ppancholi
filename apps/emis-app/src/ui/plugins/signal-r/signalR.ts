@@ -27,14 +27,13 @@ import { ICrcWindowObject } from '@libs/entities-lib/ICrcWindowObject';
 import { ISignalR } from '@libs/shared-lib/signal-r/signalR.types';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistanceMetadataStore, useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
-import { IStorage } from '../../../storage/storage.types';
 
 export interface IOptions {
   service: ISignalRService | ISignalRServiceMock,
-  storage: IStorage,
   showConsole: boolean,
 }
 
@@ -47,8 +46,6 @@ export class SignalR implements ISignalR {
 
   private readonly showConsole: boolean;
 
-  private readonly storage: IStorage;
-
   private service: ISignalRService;
 
   public subscriptions: Record<string, uuid[]>;
@@ -60,10 +57,9 @@ export class SignalR implements ISignalR {
   private watchedPiniaStores: { getNewlyCreatedIds: (baseDate: Date) => Array<{ id: uuid, createdOn: number }> }[] = [];
 
   constructor({
-    service, storage, showConsole,
+    service, showConsole,
   }: IOptions) {
     this.service = service;
-    this.storage = storage;
     this.showConsole = showConsole && false;
     this.lastSubscribedIds = [];
     this.lastSubscribedNewlyCreatedIds = [];
@@ -71,10 +67,10 @@ export class SignalR implements ISignalR {
   }
 
   public static Initialize({
-    service, storage, showConsole,
+    service, showConsole,
   }: IOptions) {
     SignalR._instance = new SignalR({
-      service, storage, showConsole,
+      service, showConsole,
     });
     Vue.mixin({
       beforeCreate() {
@@ -524,14 +520,17 @@ export class SignalR implements ISignalR {
     this.listenForChanges({
       domain: 'finance',
       entityName: 'FinancialAssistanceTable',
-      action: this.storage.financialAssistance.mutations.setEntityFromOutsideNotification,
+      action: useFinancialAssistanceStore().setItemFromOutsideNotification,
     });
 
     this.listenForChanges({
       domain: 'finance',
       entityName: 'FinancialAssistanceTableMetadata',
-      action: this.storage.financialAssistance.mutations.setMetadataFromOutsideNotification,
+      action: useFinancialAssistanceMetadataStore().setItemFromOutsideNotification,
     });
+
+    this.watchedPiniaStores.push(useFinancialAssistanceStore());
+    this.watchedPiniaStores.push(useFinancialAssistanceMetadataStore());
   }
 
   private listenForApprovalTablesModuleChanges() {
@@ -671,22 +670,8 @@ export class SignalR implements ISignalR {
   }
 
   private getNewlyCreatedItemsSince(sinceDate?: number) {
-    const modules = Object.keys(this.storage) as Array<keyof IStorage>;
     const ids = [] as uuid[];
     const baseDate = sinceDate || sub(new Date(), { hours: 3 }); // by default 3h ago
-
-    modules.forEach((module) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const storageModule = this.storage[module] as any;
-      if (storageModule?.getters?.getNewlyCreatedIds) {
-        const items = storageModule.getters.getNewlyCreatedIds(baseDate) as Array<{ id: uuid, createdOn: number }>;
-        items.forEach((item) => {
-          if (item.id) {
-            ids.push(item.id);
-          }
-        });
-      }
-    });
 
     this.watchedPiniaStores.forEach((store) => {
       if (store?.getNewlyCreatedIds) {

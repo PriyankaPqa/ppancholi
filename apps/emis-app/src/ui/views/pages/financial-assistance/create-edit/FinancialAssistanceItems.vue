@@ -158,6 +158,7 @@ import {
   IFinancialAssistanceTableSubItem,
 } from '@libs/entities-lib/financial-assistance';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { INestedTableHeader } from './INestedTableHeader';
 import ManageList from './ManageList.vue';
 import TooltipFinancialAssistanceCategory from './TooltipFinancialAssistanceCategory.vue';
@@ -175,7 +176,6 @@ import AddEditSubItemButtons from './Templates/AddEditSubItemButtons.vue';
 /**
  * A component that uses RcNestedTable to manage a list of financial assistance items/sub-items
  * Useable for Templates and Tables
- * Interfaces with the financial assistance Vuex module
  */
 export default Vue.extend({
   name: 'FinancialAssistanceItems',
@@ -230,10 +230,10 @@ export default Vue.extend({
     },
 
     /**
-     * Get the list of items from Vuex
+     * Get the list of items from the store
      */
     items(): Array<IFinancialAssistanceTableItem> {
-      return this.$storage.financialAssistance.getters.items();
+      return useFinancialAssistanceStore().mainItems;
     },
 
     /**
@@ -242,11 +242,11 @@ export default Vue.extend({
      */
     addingItem: {
       get(): boolean {
-        return this.$storage.financialAssistance.getters.addingItem() as boolean;
+        return useFinancialAssistanceStore().addingItem;
       },
 
       set(value: boolean) {
-        this.$storage.financialAssistance.mutations.setAddingItem(value);
+        useFinancialAssistanceStore().addingItem = value;
       },
     },
 
@@ -254,11 +254,11 @@ export default Vue.extend({
      * Get the item currently being edited from the store
      */
     editedItem(): IFinancialAssistanceTableItem {
-      return this.$storage.financialAssistance.getters.editedItem();
+      return useFinancialAssistanceStore().editedItem;
     },
 
     isOperating(): boolean {
-      return this.$storage.financialAssistance.getters.isOperating();
+      return useFinancialAssistanceStore().isOperating();
     },
 
     /**

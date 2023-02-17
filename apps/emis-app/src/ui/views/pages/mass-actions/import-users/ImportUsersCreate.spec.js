@@ -7,12 +7,10 @@ import {
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import routes from '@/constants/routes';
 import { MassActionMode, MassActionRunType, mockMassActionEntity } from '@libs/entities-lib/mass-action';
-import { mockStorage } from '@/storage';
+
 import Component from './ImportUsersCreate.vue';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 describe('ImportUsersCreate.vue', () => {
   let wrapper;
@@ -65,9 +63,7 @@ describe('ImportUsersCreate.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

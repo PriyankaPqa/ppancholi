@@ -5,15 +5,12 @@ import {
   shallowMount, mount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
-
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+
 import Component from './HouseholdSearch.vue';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 const vuetify = new Vuetify();
 
@@ -33,9 +30,7 @@ describe('HouseholdSearch.vue', () => {
         loading: false,
         isSplitMode: false,
       },
-      mocks: {
-        $storage: storage,
-      },
+
     });
     wrapper.vm.$refs.form = {
       validate: jest.fn(() => true),
@@ -116,9 +111,7 @@ describe('HouseholdSearch.vue', () => {
             loading: false,
             isSplitMode: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.clear = jest.fn();
         const element = wrapper.findDataTest('clearForm');
@@ -156,9 +149,7 @@ describe('HouseholdSearch.vue', () => {
             loading: false,
             isSplitMode: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.search = jest.fn();
         const element = wrapper.findDataTest('search');
@@ -178,9 +169,7 @@ describe('HouseholdSearch.vue', () => {
             loading: false,
             isSplitMode: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.$refs.form = {
           validate: jest.fn(() => true),
@@ -227,9 +216,7 @@ describe('HouseholdSearch.vue', () => {
             loading: false,
             isSplitMode: true,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.$refs.form = {
           validate: jest.fn(() => true),

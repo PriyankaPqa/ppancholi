@@ -1,7 +1,6 @@
 import flushPromises from 'flush-promises';
 import _orderBy from 'lodash/orderBy';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import { CaseFileActivityType, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
@@ -9,10 +8,11 @@ import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock'
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+
 import Component from '../CaseFileSummary.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
 const { caseFileReferralStore } = useMockCaseFileReferralStore(pinia);
 const { teamStore } = useMockTeamStore(pinia);
@@ -31,7 +31,7 @@ describe('CaseFileSummary.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });

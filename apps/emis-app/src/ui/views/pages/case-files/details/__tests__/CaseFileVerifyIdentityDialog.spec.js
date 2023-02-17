@@ -1,20 +1,17 @@
 /* eslint-disable no-unused-vars */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
-
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus } from '@libs/entities-lib/case-file';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+
 import Component from '../components/CaseFileVerifyIdentityDialog.vue';
 
 const localVue = createLocalVue();
 const { pinia, caseFileStore } = useMockCaseFileStore();
 describe('CaseFileVerifyIdentityDialog.vue', () => {
   let wrapper;
-  let storage;
 
   beforeEach(async () => {
-    storage = mockStorage();
     wrapper = await mount(Component, {
       localVue,
       pinia,
@@ -29,9 +26,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
           },
         },
       },
-      mocks: {
-        $storage: storage,
-      },
+
     });
   });
 
@@ -87,9 +82,6 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
             },
           },
 
-          mocks: {
-            $storage: storage,
-          },
         });
         expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.NotApplicable);
         expect(wrapper.vm.form.status).toEqual(IdentityAuthenticationStatus.NotVerified);
@@ -112,9 +104,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
               },
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.Exceptional);
@@ -170,7 +160,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
     });
 
     describe('verificationOptions', () => {
-      it('calls storage for screeningIds and passes current value', async () => {
+      it('calls the store for screeningIds and passes current value', async () => {
         await wrapper.setData({ form: { identificationIds: ['abc'] } });
         expect(caseFileStore.getScreeningIds).toHaveBeenCalledWith(true, ['abc']);
         await wrapper.setData({ form: { identificationIds: [] } });

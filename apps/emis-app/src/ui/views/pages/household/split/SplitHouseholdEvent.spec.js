@@ -4,13 +4,12 @@ import {
 import {
   mockEventMainInfo, mockEventEntityData,
 } from '@libs/entities-lib/event';
-import { mockStorage } from '@/storage';
-
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+
 import Component from './SplitHouseholdEvent.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, registrationStore } = useMockRegistrationStore();
 describe('SplitHouseholdEvent', () => {
   let wrapper;
@@ -20,7 +19,7 @@ describe('SplitHouseholdEvent', () => {
       wrapper = mount(Component, {
         localVue,
         pinia,
-        mocks: { $storage: storage },
+
       });
     });
 
@@ -38,7 +37,7 @@ describe('SplitHouseholdEvent', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          mocks: { $storage: storage },
+
         });
         registrationStore.event = mockEventMainInfo().entity;
         await wrapper.vm.$options.created.forEach((hook) => {
@@ -55,7 +54,7 @@ describe('SplitHouseholdEvent', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
-        mocks: { $storage: storage },
+
       });
     });
 

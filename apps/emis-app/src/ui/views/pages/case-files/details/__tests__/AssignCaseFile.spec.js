@@ -2,14 +2,14 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockAssignedTeamMembers, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity, TeamType, mockTeamMembersData } from '@libs/entities-lib/team';
-import { mockStorage } from '@/storage';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+
 import Component from '../case-file-activity/components/AssignCaseFile.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const mockCaseFile = mockCaseFileEntity();
 const team = { ...mockTeamEntity(), activeMemberCount: 1 };
 const { pinia, teamStore } = useMockTeamStore();
@@ -43,9 +43,6 @@ describe('AssignCaseFile.vue', () => {
             assignedTeams: [team],
             allTeams: [team],
           };
-        },
-        mocks: {
-          $storage: storage,
         },
       });
       await wrapper.setData({
@@ -90,9 +87,7 @@ describe('AssignCaseFile.vue', () => {
           caseFile: mockCaseFile,
           show: true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -160,9 +155,7 @@ describe('AssignCaseFile.vue', () => {
           caseFile: mockCaseFile,
           show: true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
       wrapper.vm.search = jest.fn();
       wrapper.vm.goToFirstPage = jest.fn();
@@ -185,9 +178,7 @@ describe('AssignCaseFile.vue', () => {
             caseFile: mockCaseFile,
             show: true,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.getTeamsData = jest.fn();
         wrapper.vm.initialLoadTeamMembers = jest.fn();
@@ -244,9 +235,7 @@ describe('AssignCaseFile.vue', () => {
           caseFile: mockCaseFile,
           show: true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -264,7 +253,7 @@ describe('AssignCaseFile.vue', () => {
     });
 
     describe('getTeamsData', () => {
-      it('calls storage action getTeamsAssignable with the right id', async () => {
+      it('calls the store action getTeamsAssignable with the right id', async () => {
         jest.clearAllMocks();
         await wrapper.vm.getTeamsData();
         expect(teamStore.getTeamsAssignable).toHaveBeenCalledWith(mockCaseFile.eventId);

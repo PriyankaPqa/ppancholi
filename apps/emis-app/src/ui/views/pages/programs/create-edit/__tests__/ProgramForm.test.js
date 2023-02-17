@@ -1,4 +1,3 @@
-import { mockStorage } from '@/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { ProgramEntity } from '@libs/entities-lib/program';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
@@ -6,6 +5,7 @@ import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validat
 import { Status } from '@libs/entities-lib/base';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { createTestingPinia } from '@pinia/testing';
+
 import Component from '../ProgramForm.vue';
 
 const localVue = createLocalVue();
@@ -14,8 +14,6 @@ let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
 
 describe('ProgramForm.vue', () => {
   let wrapper;
-
-  const storage = mockStorage();
 
   beforeEach(() => {
     pinia = createTestingPinia({ stubActions: false });
@@ -34,9 +32,7 @@ describe('ProgramForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -144,9 +140,7 @@ describe('ProgramForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

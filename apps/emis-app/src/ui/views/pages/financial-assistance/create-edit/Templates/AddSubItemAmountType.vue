@@ -15,6 +15,7 @@ import Vue from 'vue';
 import { VSelectWithValidation } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 
 export default Vue.extend({
   name: 'AddSubItemAmountType',
@@ -29,11 +30,11 @@ export default Vue.extend({
      */
     amountType: {
       get(): EFinancialAmountModes {
-        return this.$storage.financialAssistance.getters.newSubItem().amountType;
+        return useFinancialAssistanceStore().newSubItem.amountType;
       },
 
       set(value: EFinancialAmountModes) {
-        this.$storage.financialAssistance.mutations.setNewSubItemAmountType(value);
+        useFinancialAssistanceStore().newSubItem.amountType = value;
       },
     },
 

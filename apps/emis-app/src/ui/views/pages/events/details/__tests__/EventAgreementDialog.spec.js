@@ -1,17 +1,16 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
-import { mockStorage } from '@/storage';
 import entityUtils from '@libs/entities-lib/utils';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { EEventSummarySections } from '@/types';
 
 import { useMockEventStore } from '@/pinia/event/event.mock';
+
 import Component from '../components/EventAgreementDialog.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
-const storage = mockStorage();
 
 describe('EventAgreementDialog.vue', () => {
   let wrapper;
@@ -216,9 +215,7 @@ describe('EventAgreementDialog.vue', () => {
           isEditMode: false,
           id: '',
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -237,9 +234,7 @@ describe('EventAgreementDialog.vue', () => {
               agreement: mockEvent.agreements[0],
             };
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(eventStore.getAgreementTypes).toHaveBeenCalledWith(true, wrapper.vm.agreement.agreementType.optionItemId);
@@ -375,9 +370,7 @@ describe('EventAgreementDialog.vue', () => {
             return mockOptionItemData();
           },
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

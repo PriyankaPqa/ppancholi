@@ -1,15 +1,14 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
-import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+
 import Component from '../components/EventAgreementSection.vue';
 
 const localVue = createLocalVue();
 
 const mockEvent = mockEventEntity();
-const storage = mockStorage();
 
 const { pinia, eventStore } = useMockEventStore();
 
@@ -279,9 +278,7 @@ describe('EventAgreementSection.vue', () => {
           index: 0,
           canEdit: true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

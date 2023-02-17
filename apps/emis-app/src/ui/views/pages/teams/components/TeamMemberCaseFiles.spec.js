@@ -1,10 +1,10 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import flushPromises from 'flush-promises';
-import { mockStorage } from '@/storage';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockCaseFileEntity, mockCombinedCaseFile, CaseFileStatus } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
 import { RcDialog } from '@libs/component-lib/components';
+
 import Component from './TeamMemberCaseFiles.vue';
 
 const localVue = createLocalVue();
@@ -30,7 +30,7 @@ const usersTestData = mockCombinedUserAccount({
   ],
 
 });
-const storage = mockStorage();
+
 const mockCaseFile = mockCombinedCaseFile();
 
 const MOCK_CASEFILES = {
@@ -54,9 +54,6 @@ describe('TeamMemberCaseFiles.vue', () => {
       propsData: {
         member: usersTestData,
         show: true,
-      },
-      mocks: {
-        $storage: storage,
       },
       ...otherOptions,
     });

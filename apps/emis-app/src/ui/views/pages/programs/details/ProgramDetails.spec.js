@@ -1,4 +1,3 @@
-import { mockStorage } from '@/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
@@ -7,24 +6,25 @@ import { Status } from '@libs/entities-lib/base';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import { createTestingPinia } from '@pinia/testing';
+
 import Component from './ProgramDetails.vue';
 
 const localVue = createLocalVue();
-let pinia = createTestingPinia({ stubActions: false });
-let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
-let programStore = useMockProgramStore(pinia).programStore;
+const pinia = createTestingPinia({ stubActions: false });
+const assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
+const programStore = useMockProgramStore(pinia).programStore;
+const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
+
+financialAssistanceStore.fetchByProgramId = jest.fn(() => [mockFinancialAssistanceTableEntity()]);
 
 describe('ProgramDetails.vue', () => {
   let wrapper;
 
-  const storage = mockStorage();
   const program = mockProgramEntity();
 
   beforeEach(() => {
-    pinia = createTestingPinia({ stubActions: false });
-    assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
-    programStore = useMockProgramStore(pinia).programStore;
     wrapper = mount(Component, {
       localVue,
       pinia,
@@ -36,9 +36,6 @@ describe('ProgramDetails.vue', () => {
         program() {
           return program;
         },
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });
@@ -57,9 +54,7 @@ describe('ProgramDetails.vue', () => {
             return program;
           },
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
 
       await wrapper.setData({
@@ -159,9 +154,7 @@ describe('ProgramDetails.vue', () => {
               return program;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         const assessments = wrapper.vm.requiredAssessmentForms;
@@ -185,9 +178,7 @@ describe('ProgramDetails.vue', () => {
               return program;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -211,9 +202,7 @@ describe('ProgramDetails.vue', () => {
               return program;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         const assessments = wrapper.vm.requiredAssessmentForms;
@@ -237,8 +226,8 @@ describe('ProgramDetails.vue', () => {
           hook.call(wrapper.vm);
         });
 
-        expect(wrapper.vm.$storage.financialAssistance.actions.fetchByProgramId).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.financialAssistance.actions.fetchByProgramId).toHaveBeenCalledWith('PROGRAM_ID');
+        expect(financialAssistanceStore.fetchByProgramId).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.fetchByProgramId).toHaveBeenCalledWith({ programId: 'PROGRAM_ID' });
         expect(wrapper.vm.financialAssistanceTables).toEqual([mockFinancialAssistanceTableEntity()]);
       });
 
@@ -255,9 +244,7 @@ describe('ProgramDetails.vue', () => {
               return program;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         wrapper.vm.$options.created.forEach((hook) => {
@@ -280,9 +267,7 @@ describe('ProgramDetails.vue', () => {
               return program;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         programStore.getById = jest.fn(() => null);

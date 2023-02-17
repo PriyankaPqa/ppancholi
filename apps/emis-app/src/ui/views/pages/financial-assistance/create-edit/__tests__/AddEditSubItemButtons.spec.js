@@ -1,14 +1,14 @@
-import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from '../Templates/AddEditSubItemButtons.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 const { pinia } = useMockFinancialAssistancePaymentStore();
+const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
 
 describe('AddEditSubItemButtons.vue', () => {
   let wrapper;
@@ -16,7 +16,7 @@ describe('AddEditSubItemButtons.vue', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    wrapper = mount(Component, {
+    wrapper = shallowMount(Component, {
       localVue,
       pinia,
       propsData: {
@@ -25,17 +25,23 @@ describe('AddEditSubItemButtons.vue', () => {
         failed: false,
         isTableMode: true,
       },
-      mocks: {
-        $storage: storage,
-      },
     });
   });
 
   describe('Computed', () => {
     describe('loading', () => {
-      it('returns the right value', async () => {
-        wrapper.vm.$storage.financialAssistance.getters.loading = jest.fn(() => true);
-
+      it('returns the right value', () => {
+        financialAssistanceStore.loading = true;
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            mode: 'add',
+            isEdit: false,
+            failed: false,
+            isTableMode: true,
+          },
+        });
         expect(wrapper.vm.loading).toEqual(true);
       });
     });
@@ -123,16 +129,13 @@ describe('AddEditSubItemButtons.vue', () => {
       });
 
       it('call addRemotely if is edit', async () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             mode: 'add',
             isEdit: true,
             failed: false,
             isTableMode: true,
-          },
-          mocks: {
-            $storage: storage,
           },
         });
 
@@ -183,16 +186,13 @@ describe('AddEditSubItemButtons.vue', () => {
       });
 
       it('call saveRemotely if is edit', async () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             mode: 'add',
             isEdit: true,
             failed: false,
             isTableMode: true,
-          },
-          mocks: {
-            $storage: storage,
           },
         });
 
@@ -225,29 +225,27 @@ describe('AddEditSubItemButtons.vue', () => {
         await wrapper.setProps({
           index: 0,
         });
-        wrapper.vm.$storage.financialAssistance.getters.items = jest.fn(() => mockItems());
+        financialAssistanceStore.mainItems = mockItems();
 
         await wrapper.vm.addRemotely();
-        expect(wrapper.vm.$storage.financialAssistance.actions.createSubItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.createSubItem).toHaveBeenCalledTimes(1);
 
-        wrapper.vm.$storage.financialAssistance.getters.items = jest.fn(() => [{
-          subItems: [],
-        }]);
+        financialAssistanceStore.mainItems = [{ subItems: [] }];
 
         await wrapper.vm.addRemotely();
-        expect(wrapper.vm.$storage.financialAssistance.actions.createItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.createItem).toHaveBeenCalledTimes(1);
       });
 
       it('reload items and toast success message', async () => {
         await wrapper.setProps({
           index: 0,
         });
-        wrapper.vm.$storage.financialAssistance.getters.items = jest.fn(() => mockItems());
+        financialAssistanceStore.mainItems = mockItems();
         jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
 
         await wrapper.vm.addRemotely();
 
-        expect(wrapper.vm.$storage.financialAssistance.actions.reloadItems).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.reloadItems).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('financialAssistance.toast.table.editTable');
       });
     });
@@ -256,7 +254,7 @@ describe('AddEditSubItemButtons.vue', () => {
       it('add locally', () => {
         wrapper.vm.addLocally();
 
-        expect(wrapper.vm.$storage.financialAssistance.mutations.addSubItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.addSubItem).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -264,7 +262,7 @@ describe('AddEditSubItemButtons.vue', () => {
       it('save remotely', () => {
         wrapper.vm.saveRemotely();
 
-        expect(wrapper.vm.$storage.financialAssistance.actions.editSubItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.editSubItem).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -272,16 +270,16 @@ describe('AddEditSubItemButtons.vue', () => {
       it('save locally', () => {
         wrapper.vm.saveLocally();
 
-        expect(wrapper.vm.$storage.financialAssistance.mutations.setSubItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.setSubItem).toHaveBeenCalledTimes(1);
       });
     });
 
     describe('onCancel', () => {
-      it('mutates storage', async () => {
+      it('updates store', async () => {
         wrapper.vm.onCancel();
 
-        expect(wrapper.vm.$storage.financialAssistance.mutations.cancelOperation).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.financialAssistance.mutations.resetNewSubItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.cancelOperation).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.resetNewSubItem).toHaveBeenCalledTimes(1);
       });
     });
   });

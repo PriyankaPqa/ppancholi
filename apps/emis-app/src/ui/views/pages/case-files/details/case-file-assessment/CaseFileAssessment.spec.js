@@ -1,5 +1,4 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import {
   AssociationType, AssessmentFrequencyType, CompletionStatus, PublishStatus, mockCombinedAssessmentResponse,
@@ -14,10 +13,11 @@ import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/ten
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+
 import Component from './CaseFileAssessment.vue';
 
 const localVue = createLocalVue();
-let storage = mockStorage();
+
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
@@ -123,7 +123,7 @@ describe('CaseFileAssessment.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });
@@ -132,7 +132,6 @@ describe('CaseFileAssessment.vue', () => {
   };
 
   beforeEach(async () => {
-    storage = mockStorage();
     pinia = createTestingPinia({ stubActions: false });
     assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;

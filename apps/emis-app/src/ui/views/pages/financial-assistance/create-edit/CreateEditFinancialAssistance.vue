@@ -195,6 +195,7 @@ import { IProgramEntity } from '@libs/entities-lib/program';
 import { VForm } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
 import { useProgramStore } from '@/pinia/program/program';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import ConfirmBeforeAction, { ConfirmationDialog } from './ConfirmBeforeAction.vue';
 import ErrorPanel from './ErrorPanel.vue';
 import FinancialAssistanceItems from './FinancialAssistanceItems.vue';
@@ -314,24 +315,24 @@ export default Vue.extend({
     },
 
     /**
-     * Gets or sets the Financial Template name from Vuex
+     * Gets or sets the Financial Template name
      */
     name: {
       get(): string {
-        return this.$storage.financialAssistance.getters.name(this.languageMode);
+        return useFinancialAssistanceStore().getName(this.languageMode);
       },
 
       set(name: string) {
-        this.$storage.financialAssistance.mutations.setName(name, this.languageMode);
+        useFinancialAssistanceStore().setName({ newName: name, language: this.languageMode });
       },
     },
 
     /**
-     * Gets or sets the Financial Template status from Vuex
+     * Gets or sets the Financial Template status
      */
     status: {
       get(): boolean {
-        const status = this.$storage.financialAssistance.getters.status();
+        const status = useFinancialAssistanceStore().status;
 
         return status === Status.Active;
       },
@@ -339,7 +340,7 @@ export default Vue.extend({
       set(value: boolean) {
         const status = value ? Status.Active : Status.Inactive;
 
-        this.$storage.financialAssistance.mutations.setStatus(status);
+        useFinancialAssistanceStore().status = status;
       },
     },
 
@@ -348,21 +349,21 @@ export default Vue.extend({
      */
     program: {
       get(): IProgramEntity {
-        return this.$storage.financialAssistance.getters.program();
+        return useFinancialAssistanceStore().program;
       },
 
       set(value: IProgramEntity) {
-        this.$storage.financialAssistance.mutations.setProgram(value);
+        useFinancialAssistanceStore().$patch({ program: value, formDirty: true });
       },
     },
 
     itemsDirty: {
       get(): boolean {
-        return this.$storage.financialAssistance.getters.dirty();
+        return useFinancialAssistanceStore().dirty;
       },
 
       set(value: boolean) {
-        this.$storage.financialAssistance.mutations.setDirty(value);
+        useFinancialAssistanceStore().dirty = value;
       },
     },
 
@@ -385,7 +386,7 @@ export default Vue.extend({
     },
 
     isOperating(): boolean {
-      return this.$storage.financialAssistance.getters.isOperating();
+      return useFinancialAssistanceStore().isOperating();
     },
   },
 
@@ -400,16 +401,19 @@ export default Vue.extend({
   },
 
   async created() {
-    this.$storage.financialAssistance.mutations.resetState();
+    useFinancialAssistanceStore().resetExtensionState();
     await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
 
     if (this.isEdit) {
-      const fa = await this.$storage.financialAssistance.actions.fetch(this.$route.params.faId);
+      const fa = await useFinancialAssistanceStore().fetch(this.$route.params.faId);
       const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
-      const program = await useProgramStore().fetch({ id: fa.entity?.programId, eventId: fa.entity?.eventId }) as IProgramEntity;
-      this.$storage.financialAssistance.mutations.setFinancialAssistance(fa, categories, program);
-
-      this.programs = [this.$storage.financialAssistance.getters.program()];
+      if (fa && categories) {
+        const program = await useProgramStore().fetch({ id: fa.programId, eventId: fa.eventId }) as IProgramEntity;
+        useFinancialAssistanceStore().setFinancialAssistance({
+          fa, categories, newProgram: program, removeInactiveItems: false,
+        });
+        this.programs = [useFinancialAssistanceStore().program];
+      }
     } else {
       await this.loadActivePrograms();
     }
@@ -425,7 +429,7 @@ export default Vue.extend({
     },
 
     /**
-     * Dispatches the action to the Vuex module to save the template/table
+     * Calls store to save the template/table
      * Redirects to the view list page when complete
      */
     async save(): Promise<void> {
@@ -434,7 +438,7 @@ export default Vue.extend({
       const isValid = await (this.$refs.form as VForm).validate();
 
       if (isValid && this.validateItemsAndSubItems()) {
-        await this.dispatchSaveAction();
+        await this.submit();
       } else {
         await this.$nextTick();
         helpers.scrollToFirstError('scrollAnchor');
@@ -446,9 +450,7 @@ export default Vue.extend({
 
       if (isValid) {
         this.isSaving = true;
-
-        const res = await this.$storage.financialAssistance.actions.editFinancialAssistance();
-
+        const res = await useFinancialAssistanceStore().editFinancialAssistance();
         this.isSaving = false;
 
         if (res) {
@@ -459,11 +461,9 @@ export default Vue.extend({
       }
     },
 
-    async dispatchSaveAction(): Promise<void> {
+    async submit(): Promise<void> {
       this.isSaving = true;
-
-      const res = await this.$storage.financialAssistance.actions.createFinancialAssistance(this.isTableMode);
-
+      const res = await useFinancialAssistanceStore().createFinancialAssistance({ table: this.isTableMode });
       this.isSaving = false;
 
       if (res) {
@@ -483,7 +483,7 @@ export default Vue.extend({
      * Used to enable or disable the save button (cannot save unless you have at least 1 item/sub-item)
      */
     validateItemsAndSubItems() {
-      const items = this.$storage.financialAssistance.getters.items();
+      const items = useFinancialAssistanceStore().mainItems;
 
       if (!items.length) {
         return false;
@@ -505,11 +505,11 @@ export default Vue.extend({
      * Populates missing values in other languages with the value entered in the current language
      */
     setLanguageMode(language: string) {
-      const name = this.$storage.financialAssistance.getters.name(language);
-      const currentName = this.$storage.financialAssistance.getters.name(this.languageMode);
+      const name = useFinancialAssistanceStore().getName(language);
+      const currentName = useFinancialAssistanceStore().getName(this.languageMode);
 
       if (!name && currentName) {
-        this.$storage.financialAssistance.mutations.setName(currentName, language);
+        useFinancialAssistanceStore().setName({ newName: currentName, language });
       }
 
       this.languageMode = language;
@@ -548,7 +548,7 @@ export default Vue.extend({
     },
 
     /**
-     * When the user selects a template to copy, dispatch the Vuex action getCopyTemplate
+     * When the user selects a template to copy, call getCopyTemplate
      * which fetches the template details from the API and overwrites the list of items in the store
      */
     async onSelectCopyTemplate() {

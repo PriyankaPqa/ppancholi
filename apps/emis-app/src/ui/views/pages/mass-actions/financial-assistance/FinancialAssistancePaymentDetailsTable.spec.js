@@ -1,5 +1,4 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockCombinedMassAction, mockMassActionEntity } from '@libs/entities-lib/mass-action';
 import { EPaymentModalities, mockCombinedProgram } from '@libs/entities-lib/program';
 import { mockEventEntity } from '@libs/entities-lib/event';
@@ -8,13 +7,16 @@ import { mockOptionItem, mockOptionItemData } from '@libs/entities-lib/optionIte
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
+
 import Component from './FinancialAssistancePaymentDetailsTable.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, eventStore } = useMockEventStore();
 const { programStore } = useMockProgramStore(pinia);
 const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
+const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
 
 describe('FinancialAssistancePaymentDetailsTable.vue', () => {
   let wrapper;
@@ -30,9 +32,6 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
         return {
           ...otherData,
         };
-      },
-      mocks: {
-        $storage: storage,
       },
     };
     if (shallow === true) {
@@ -123,7 +122,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
       it('should fetch the table', async () => {
         const id = mockCombinedMassAction().entity.details.tableId;
         await wrapper.vm.fetchTable();
-        expect(wrapper.vm.$storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(id);
+        expect(financialAssistanceStore.fetch).toHaveBeenCalledWith(id);
       });
     });
 

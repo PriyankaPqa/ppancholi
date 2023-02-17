@@ -1,13 +1,11 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import {
   mockTeamEntities, mockTeamEvents, mockTeamsDataStandard,
 } from '@libs/entities-lib/team';
 import { mockCombinedEvent } from '@libs/entities-lib/event';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
-import Component from './TeamStats.vue';
 
-const storage = mockStorage();
+import Component from './TeamStats.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockCombinedEvent();
@@ -21,9 +19,6 @@ describe('TeamStats.vue', () => {
     wrapper = mount(Component, {
       localVue,
       pinia,
-      mocks: {
-        $storage: storage,
-      },
       data() {
         return { event: mockEvent };
       },
@@ -70,9 +65,7 @@ describe('TeamStats.vue', () => {
       beforeEach(() => {
         wrapper = shallowMount(Component, {
           localVue,
-          mocks: {
-            $storage: storage,
-          },
+
           data() {
             return { selectedEventId: '' };
           },
@@ -94,9 +87,7 @@ describe('TeamStats.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          mocks: {
-            $storage: storage,
-          },
+
           data() {
             return { selectedEventId: 'd52d45e8-1973-4d54-91f4-8ec0864f8ff9' };
           },
@@ -156,9 +147,7 @@ describe('TeamStats.vue', () => {
       beforeEach(() => {
         wrapper = shallowMount(Component, {
           localVue,
-          mocks: {
-            $storage: storage,
-          },
+
           data() {
             return {
               selectedEventId: 'd52d45e8-1973-4d54-91f4-8ec0864f8ff9',

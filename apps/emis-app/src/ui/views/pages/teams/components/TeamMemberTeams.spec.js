@@ -1,12 +1,11 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockTeamEvents } from '@libs/entities-lib/team';
-import { mockStorage } from '@/storage';
 import { mockCombinedUserAccounts } from '@libs/entities-lib/user-account';
+
 import Component from './TeamMemberTeams.vue';
 
 const localVue = createLocalVue();
 const usersTestData = mockCombinedUserAccounts();
-const storage = mockStorage();
 
 describe('TeamMemberTeams.vue', () => {
   let wrapper;
@@ -17,9 +16,6 @@ describe('TeamMemberTeams.vue', () => {
       propsData: {
         member: usersTestData[0],
         show: true,
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });

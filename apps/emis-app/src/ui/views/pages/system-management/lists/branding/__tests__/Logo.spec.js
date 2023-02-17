@@ -1,12 +1,12 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { LOGO_EXTENSIONS } from '@/constants/documentExtensions';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
+
 import Component from '../Logo.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 let wrapper;
 
 const doMount = (shallow = true) => {
@@ -15,10 +15,6 @@ const doMount = (shallow = true) => {
     propsData: {
       disableEditBtn: false,
     },
-    mocks: {
-      $storage: storage,
-    },
-
   };
   if (shallow) {
     wrapper = shallowMount(Component, opts);
@@ -50,9 +46,7 @@ describe('Logo.vue', () => {
           propsData: {
             disableEditBtn: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.dimensionsRuleText).toEqual(`system_management.branding.logo.maxDimensions: ${maxWidth}px × ${maxHeight}px`);

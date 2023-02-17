@@ -1,15 +1,16 @@
-import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockItems, mockCategories } from '@libs/entities-lib/financial-assistance';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from '../Templates/AddItemItem.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 const items = mockItems();
 const categories = mockCategories();
 
-storage.financialAssistance.getters.newItem = jest.fn(() => items[0]);
+const { financialAssistanceStore, pinia } = useMockFinancialAssistanceStore();
+
+financialAssistanceStore.newItem = items[0];
 
 describe('AddItemItem.vue', () => {
   let wrapper;
@@ -17,14 +18,12 @@ describe('AddItemItem.vue', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    wrapper = mount(Component, {
+    wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         financialAssistanceCategories: categories,
         items,
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });
@@ -33,8 +32,7 @@ describe('AddItemItem.vue', () => {
     describe('value', () => {
       it('returns the right value', async () => {
         const item = mockItems()[0];
-
-        wrapper.vm.$storage.financialAssistance.getters.newItem = jest.fn(() => item);
+        financialAssistanceStore.newItem = item;
 
         expect(wrapper.vm.value).toEqual(item.mainCategory);
       });

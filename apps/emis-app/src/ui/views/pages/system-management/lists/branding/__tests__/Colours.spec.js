@@ -1,11 +1,11 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockBrandingEntity, mockEditColoursRequest } from '@libs/entities-lib/tenantSettings';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+
 import Component from '../Colours.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 let wrapper;
 
 const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
@@ -20,7 +20,7 @@ beforeEach(() => {
       disableEditBtn: false,
     },
     mocks: {
-      $storage: storage,
+
     },
   });
 });
@@ -128,7 +128,7 @@ describe('Colours.vue', () => {
     });
 
     describe('saveEdit', () => {
-      it('calls storage to save colours', async () => {
+      it('calls the store to save colours', async () => {
         await wrapper.setData({
           colours: [
             {

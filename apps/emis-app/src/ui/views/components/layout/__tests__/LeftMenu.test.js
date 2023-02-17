@@ -119,17 +119,6 @@ describe('LeftMenu.vue', () => {
               return items;
             },
           },
-          mocks: {
-            $storage: {
-              feature: {
-                getters: {
-                  feature: jest.fn(() => ({ enabled: false })),
-                },
-              },
-            },
-            $hasLevel: jest.fn(() => true),
-            $hasRole: jest.fn(() => true),
-          },
         });
 
         expect(wrapper.vm.availableItems).toEqual([]);

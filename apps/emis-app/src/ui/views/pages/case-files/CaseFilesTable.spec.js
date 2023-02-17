@@ -2,7 +2,6 @@ import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 
 import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
@@ -10,9 +9,9 @@ import helpers from '@/ui/helpers/helpers';
 
 import { createTestingPinia } from '@pinia/testing';
 import { useUserStore } from '@/pinia/user/user';
+
 import Component from './CaseFilesTable.vue';
 
-const storage = mockStorage();
 const mockCaseFiles = mockCombinedCaseFiles();
 
 const localVue = createLocalVue();
@@ -31,9 +30,6 @@ describe('CaseFilesTable.vue', () => {
         pinia: createTestingPinia({ stubActions: false }),
         computed: {
           tableData: () => mockCombinedCaseFiles(),
-        },
-        mocks: {
-          $storage: storage,
         },
       });
 
@@ -125,9 +121,6 @@ describe('CaseFilesTable.vue', () => {
       wrapper = mount(Component, {
         localVue,
         pinia: createTestingPinia({ stubActions: false }),
-        mocks: {
-          $storage: storage,
-        },
       });
       await wrapper.setData({
         myCaseFiles: false,
@@ -197,14 +190,6 @@ describe('CaseFilesTable.vue', () => {
       wrapper = mount(Component, {
         localVue,
         pinia: createTestingPinia({ stubActions: false }),
-        store: {
-          caseFile: {
-            searchLoading: false,
-          },
-        },
-        mocks: {
-          $storage: storage,
-        },
       });
       userStore = useUserStore();
       userStore.getUserId = jest.fn(() => 'mock-id');
@@ -219,9 +204,6 @@ describe('CaseFilesTable.vue', () => {
             locale() {
               return 'en';
             },
-          },
-          mocks: {
-            $storage: storage,
           },
         });
         const expectedColumns = {
@@ -272,9 +254,7 @@ describe('CaseFilesTable.vue', () => {
           propsData: {
             isDashboard: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             customColumns() {
               return {
@@ -431,9 +411,6 @@ describe('CaseFilesTable.vue', () => {
       wrapper = mount(Component, {
         localVue,
         pinia: createTestingPinia({ stubActions: false }),
-        mocks: {
-          $storage: storage,
-        },
       });
 
       wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({

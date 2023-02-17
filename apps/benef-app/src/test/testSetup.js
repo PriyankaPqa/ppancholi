@@ -4,7 +4,6 @@ import {
   shallowMount as sm,
 } from '@vue/test-utils';
 import Vuetify from 'vuetify';
-import Vuex from 'vuex';
 import '@/ui/plugins/vee-validate';
 import VueI18n from 'vue-i18n';
 import features from '@/ui/plugins/features';
@@ -20,7 +19,6 @@ setActivePinia(createPinia());
 
 const plugins = [
   Vuetify,
-  Vuex,
   features,
   VueI18n,
   PiniaVuePlugin,

@@ -15,6 +15,7 @@ import Vue from 'vue';
 import { VSelectWithValidation } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import { EFinancialFrequency } from '@libs/entities-lib/financial-assistance';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 
 export default Vue.extend({
   name: 'AddSubItemFrequency',
@@ -29,11 +30,11 @@ export default Vue.extend({
      */
     frequency: {
       get(): EFinancialFrequency {
-        return this.$storage.financialAssistance.getters.newSubItem().frequency;
+        return useFinancialAssistanceStore().newSubItem.frequency;
       },
 
       set(value: EFinancialFrequency) {
-        this.$storage.financialAssistance.mutations.setNewSubItemFrequency(value);
+        useFinancialAssistanceStore().newSubItem.frequency = value;
       },
     },
 

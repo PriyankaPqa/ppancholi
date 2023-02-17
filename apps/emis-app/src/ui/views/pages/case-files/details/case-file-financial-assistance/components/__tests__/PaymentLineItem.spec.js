@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
-import { mockStorage } from '@/storage';
+
 import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import { ApprovalStatus, mockCaseFinancialAssistancePaymentGroups } from '@libs/entities-lib/financial-assistance-payment';
 import routes from '@/constants/routes';
@@ -8,7 +8,7 @@ import { Status } from '@libs/entities-lib/base';
 import Component from '../PaymentLineItem.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const items = mockItems();
 const paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
 const approvalStatus = ApprovalStatus.New;
@@ -30,7 +30,7 @@ describe('CaseFilePaymentLineItem.vue', () => {
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });

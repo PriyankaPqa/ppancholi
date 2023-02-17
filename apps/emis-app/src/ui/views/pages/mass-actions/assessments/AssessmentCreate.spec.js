@@ -8,7 +8,6 @@ import {
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import routes from '@/constants/routes';
 import { MassActionMode, MassActionType, mockMassActionEntity } from '@libs/entities-lib/mass-action';
-import { mockStorage } from '@/storage';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import utils from '@libs/entities-lib/utils';
@@ -19,7 +18,6 @@ const localVue = createLocalVue();
 // eslint-disable-next-line max-len,vue/max-len
 const filtersString = '{"search":"Metadata/PrimaryBeneficiary/ContactInformation/Email: /.*tammy.*/","skip":0,"top":10,"orderBy":"","filter":{"and":{"Entity/EventId":"60983874-18bb-467d-b55a-94dc55818151"}}}';
 
-const storage = mockStorage();
 const { pinia, massActionStore } = useMockMassActionStore();
 
 describe('AssessmentCreate.vue', () => {
@@ -30,7 +28,7 @@ describe('AssessmentCreate.vue', () => {
       localVue,
       pinia,
       mocks: {
-        $storage: storage,
+
         $route: {
           query: {
             azureSearchParams: filtersString,
@@ -234,7 +232,7 @@ describe('AssessmentCreate.vue', () => {
             };
           },
           mocks: {
-            $storage: storage,
+
             $route: {
               query: {
                 azureSearchParams: filtersString,

@@ -2,7 +2,7 @@ import { EFilterType } from '@libs/component-lib/types';
 import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
-import { mockStorage } from '@/storage';
+
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import * as searchEndpoints from '@/constants/searchEndpoints';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
@@ -13,7 +13,7 @@ import CaseNoteForm from './components/CaseNoteForm.vue';
 
 const localVue = createLocalVue();
 const caseNote = mockCombinedCaseNote();
-const storage = mockStorage();
+
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 const { pinia, caseNoteStore } = useMockCaseNoteStore();
@@ -35,9 +35,7 @@ describe('CaseNote.vue', () => {
           return mockEvent;
         },
       },
-      mocks: {
-        $storage: storage,
-      },
+
     });
   });
 

@@ -1,21 +1,26 @@
 import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
+
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
-import { ProgramEntity, mockProgramEntity, mockProgramEntities } from '@libs/entities-lib/program';
+import { mockProgramEntity, mockProgramEntities } from '@libs/entities-lib/program';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import { Status } from '@libs/entities-lib/base';
-
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from '../CreateEditFinancialAssistance.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const { pinia } = useMockProgramStore();
 const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
+const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
+
+financialAssistanceStore.program = mockProgramEntity();
+financialAssistanceStore.status = Status.Inactive;
+financialAssistanceStore.name = { translation: { en: 'en name' } };
+financialAssistanceStore.$reset = jest.fn();
 
 describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   let wrapper;
@@ -26,9 +31,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     wrapper = mount(Component, {
       localVue,
       pinia,
-      mocks: {
-        $storage: storage,
-      },
       stubs: {
         FinancialAssistanceItems: true,
       },
@@ -44,9 +46,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       expect(wrapper.find('[data-test="financialCreate__copySelect"]').exists()).toBe(false);
     });
 
-    test('the status box has the correct css classes depending on status', async () => {
+    test('the status toggle changes the status', async () => {
       jest.clearAllMocks();
-
       wrapper = mount(Component, {
         localVue,
         pinia,
@@ -67,18 +68,41 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
             error: false,
           };
         },
-        mocks: {
-          $storage: storage,
-        },
         stubs: ['financial-assistance-items'],
       });
 
       const statusSwitch = wrapper.find('[data-test="financial-assistance-table-status-toggle"]');
-      const statusContainer = wrapper.find('.financial-status');
-
       await statusSwitch.trigger('click');
+      expect(financialAssistanceStore.status).toBe(Status.Active);
+    });
 
-      expect(wrapper.vm.status).toBe(true);
+    test('the status box has the correct css classes depending on status', async () => {
+      jest.clearAllMocks();
+      financialAssistanceStore.status = Status.Active;
+      wrapper = mount(Component, {
+        localVue,
+        pinia,
+        computed: {
+          isEdit() {
+            return true;
+          },
+          isTableMode() {
+            return true;
+          },
+          isCopy() {
+            return false;
+          },
+        },
+        data() {
+          return {
+            loading: false,
+            error: false,
+          };
+        },
+        stubs: ['financial-assistance-items'],
+      });
+
+      const statusContainer = wrapper.find('.financial-status');
       expect(statusContainer.classes('grey')).toBe(false);
       expect(statusContainer.classes('lighten-3')).toBe(false);
     });
@@ -119,9 +143,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
               loading: false,
               error: false,
             };
-          },
-          mocks: {
-            $storage: storage,
           },
           stubs: ['financial-assistance-items'],
         });
@@ -183,7 +204,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
             $route: {
               name: routes.events.financialAssistance.edit.name,
             },
-            $storage: storage,
           },
           stubs: ['financial-assistance-items'],
         });
@@ -196,7 +216,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       it('returns the right value', async () => {
         const programName = mockProgramEntity().name.translation.en;
 
-        wrapper.vm.$storage.financialAssistance.getters.name = jest.fn(() => programName);
+        financialAssistanceStore.getName = jest.fn(() => programName);
 
         expect(wrapper.vm.name).toEqual(programName);
       });
@@ -204,25 +224,25 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
     describe('status', () => {
       it('returns the right value', async () => {
-        wrapper.vm.$storage.financialAssistance.getters.status = jest.fn(() => Status.Active);
-
+        financialAssistanceStore.status = Status.Active;
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          stubs: ['financial-assistance-items'],
+        });
         expect(wrapper.vm.status).toEqual(true);
       });
     });
 
     describe('program', () => {
       it('returns the right value', async () => {
-        const program = new ProgramEntity(mockProgramEntity());
-
-        wrapper.vm.$storage.financialAssistance.getters.program = jest.fn(() => program);
-
-        expect(wrapper.vm.program).toEqual(program);
+        expect(wrapper.vm.program).toEqual(mockProgramEntity());
       });
     });
 
     describe('itemsDirty', () => {
       it('returns the right value', async () => {
-        wrapper.vm.$storage.financialAssistance.getters.dirty = jest.fn(() => true);
+        financialAssistanceStore.dirty = true;
 
         expect(wrapper.vm.itemsDirty).toEqual(true);
       });
@@ -240,9 +260,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
               };
             },
           },
-          mocks: {
-            $storage: storage,
-          },
           stubs: ['financial-assistance-items'],
         });
 
@@ -257,9 +274,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
                 status: Status.Inactive,
               };
             },
-          },
-          mocks: {
-            $storage: storage,
           },
           stubs: ['financial-assistance-items'],
         });
@@ -278,7 +292,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
     describe('isOperating', () => {
       it('returns the right value', async () => {
-        wrapper.vm.$storage.financialAssistance.getters.isOperating = jest.fn(() => true);
+        financialAssistanceStore.isOperating = jest.fn(() => true);
 
         expect(wrapper.vm.isOperating).toEqual(true);
       });
@@ -313,9 +327,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
             return true;
           },
         },
-        mocks: {
-          $storage: storage,
-        },
         stubs: ['financial-assistance-items'],
       });
 
@@ -335,16 +346,13 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
             return true;
           },
         },
-        mocks: {
-          $storage: storage,
-        },
       });
 
       await wrapper.vm.$options.created.forEach((hook) => {
         hook.call(wrapper.vm);
       });
 
-      expect(storage.financialAssistance.actions.fetch).toHaveBeenCalled();
+      expect(financialAssistanceStore.fetch).toHaveBeenCalled();
     });
   });
 
@@ -376,7 +384,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       it('calls editFinancialAssistance', async () => {
         await wrapper.vm.saveEdit();
 
-        expect(storage.financialAssistance.actions.editFinancialAssistance).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.editFinancialAssistance).toHaveBeenCalledTimes(1);
       });
 
       it('toasts success if validate table succeeds', async () => {
@@ -388,7 +396,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
     });
 
-    describe('dispatchSaveAction', () => {
+    describe('submit', () => {
       it('calls createFinancialAssistance', async () => {
         wrapper.vm.createFinancialAssistance = jest.fn(() => true);
 
@@ -411,14 +419,14 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
     describe('validateItemsAndSubItems', () => {
       it('return false if no items', async () => {
-        wrapper.vm.$storage.financialAssistance.getters.items = jest.fn(() => []);
+        financialAssistanceStore.mainItems = [];
 
         expect(wrapper.vm.validateItemsAndSubItems()).toBe(false);
       });
 
       it('return false if item has no subItems', async () => {
         const items = mockItems();
-        wrapper.vm.$storage.financialAssistance.getters.items = jest.fn(() => items);
+        financialAssistanceStore.mainItems = items;
 
         expect(wrapper.vm.validateItemsAndSubItems()).toBe(true);
 
@@ -433,17 +441,14 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia,
-          mocks: {
-            $storage: storage,
-          },
           stubs: ['financial-assistance-items'],
         });
 
-        wrapper.vm.$storage.financialAssistance.getters.name = jest.fn((language) => (language === 'fr' ? null : 'name en'));
+        financialAssistanceStore.getName = jest.fn((language) => (language === 'fr' ? null : 'name en'));
 
         wrapper.vm.setLanguageMode('fr');
 
-        expect(wrapper.vm.$storage.financialAssistance.mutations.setName).toHaveBeenLastCalledWith('name en', 'fr');
+        expect(financialAssistanceStore.setName).toHaveBeenLastCalledWith({ newName: 'name en', language: 'fr' });
       });
     });
   });

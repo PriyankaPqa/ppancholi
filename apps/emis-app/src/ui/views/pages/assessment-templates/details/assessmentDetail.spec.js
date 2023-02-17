@@ -1,4 +1,3 @@
-import { mockStorage } from '@/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   mockAssessmentFormEntity, AssessmentFormEntity, AssessmentTemplateEntity,
@@ -18,7 +17,6 @@ const Component = {
 const assessmentForm = mockAssessmentFormEntity();
 
 const localVue = createLocalVue();
-let storage = mockStorage();
 let pinia = createTestingPinia({ stubActions: false });
 let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
 let assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
@@ -35,7 +33,6 @@ describe('assessmentDetail', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
         $route: {
           params: {
             assessmentTemplateId: 'assId',
@@ -49,7 +46,6 @@ describe('assessmentDetail', () => {
   };
 
   beforeEach(async () => {
-    storage = mockStorage();
     pinia = createTestingPinia({ stubActions: false });
     assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;

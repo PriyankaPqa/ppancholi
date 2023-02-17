@@ -4,15 +4,14 @@ import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
 import {
-  mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata, EResponseLevel, EEventStatus, mockEventEntity,
+  mockCombinedEvents, mockCombinedEvent, EResponseLevel, EEventStatus, mockEventEntity,
 } from '@libs/entities-lib/event';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+
 import Component from './EventsTable.vue';
 
-const storage = mockStorage();
 const localVue = createLocalVue();
 const mockEvents = () => mockCombinedEvents();
 
@@ -26,21 +25,6 @@ describe('EventsTable.vue', () => {
         localVue,
         propsData: {
           isDashboard: false,
-        },
-        mocks: {
-          $storage: {
-            event: {
-              getters: {
-                getByIds: jest.fn(() => mockCombinedEvents()),
-              },
-              actions: {
-                search: jest.fn(() => ({
-                  ids: [mockEvents()[0].id, mockEvents()[1].id],
-                  count: mockEvents().length,
-                })),
-              },
-            },
-          },
         },
 
         computed: {
@@ -91,21 +75,6 @@ describe('EventsTable.vue', () => {
           wrapper = mount(Component, {
             localVue,
             pinia: getPiniaForUser('level5'),
-            mocks: {
-              $storage: {
-                event: {
-                  getters: {
-                    getByIds: jest.fn(() => mockCombinedEvents()),
-                  },
-                  actions: {
-                    search: jest.fn(() => ({
-                      ids: [mockEvents()[0].id, mockEvents()[1].id],
-                      count: mockEvents().length,
-                    })),
-                  },
-                },
-              },
-            },
             propsData: {
               isDashboard: false,
             },
@@ -157,21 +126,6 @@ describe('EventsTable.vue', () => {
             propsData: {
               isDashboard: false,
             },
-            mocks: {
-              $storage: {
-                event: {
-                  getters: {
-                    getByIds: jest.fn(() => mockCombinedEvents()),
-                  },
-                  actions: {
-                    search: jest.fn(() => ({
-                      ids: [mockEvents()[0].id, mockEvents()[1].id],
-                      count: mockEvents().length,
-                    })),
-                  },
-                },
-              },
-            },
             computed: {
               tableData: () => mockEvents(),
             },
@@ -189,21 +143,6 @@ describe('EventsTable.vue', () => {
             pinia: getPiniaForUser('level4'),
             propsData: {
               isDashboard: false,
-            },
-            mocks: {
-              $storage: {
-                event: {
-                  getters: {
-                    getByIds: jest.fn(() => mockCombinedEvents()),
-                  },
-                  actions: {
-                    search: jest.fn(() => ({
-                      ids: [mockEvents()[0].id, mockEvents()[1].id],
-                      count: mockEvents().length,
-                    })),
-                  },
-                },
-              },
             },
             computed: {
               tableData: () => mockEvents(),
@@ -225,16 +164,6 @@ describe('EventsTable.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia: getPiniaForUser('level6'),
-          store: {
-            event: {
-              searchLoading: false,
-              entities: mockEventEntities(),
-              metadata: mockEventMetadata(),
-            },
-          },
-          mocks: {
-            $storage: storage,
-          },
           propsData: {
             isDashboard: false,
           },
@@ -257,15 +186,6 @@ describe('EventsTable.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia: getPiniaForUser('level6'),
-          store: {
-            event: {
-              searchLoading: false,
-              entities: mockEvents(),
-            },
-          },
-          mocks: {
-            $storage: storage,
-          },
           propsData: {
             isDashboard: false,
           },
@@ -289,15 +209,6 @@ describe('EventsTable.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia: getPiniaForUser('level6'),
-          store: {
-            event: {
-              searchLoading: false,
-              entities: mockEvents(),
-            },
-          },
-          mocks: {
-            $storage: storage,
-          },
           propsData: {
             isDashboard: false,
           },
@@ -320,9 +231,7 @@ describe('EventsTable.vue', () => {
           propsData: {
             isDashboard: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             customColumns() {
               return {
@@ -378,9 +287,7 @@ describe('EventsTable.vue', () => {
           propsData: {
             isDashboard: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             customColumns() {
               return {
@@ -430,9 +337,7 @@ describe('EventsTable.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia,
-          mocks: {
-            $storage: storage,
-          },
+
           propsData: {
             isDashboard: false,
           },
@@ -455,21 +360,7 @@ describe('EventsTable.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-            $storage: {
-              event: {
-                getters: {
-                  getByIds: jest.fn(() => mockCombinedEvents()),
-                },
-                actions: {
-                  search: jest.fn(() => ({
-                    ids: [mockEvents()[0].id, mockEvents()[1].id],
-                    count: mockEvents().length,
-                  })),
-                },
-              },
-            },
           },
-
         });
         wrapper.vm.search = jest.fn();
         const event = mockCombinedEvent({
@@ -488,19 +379,6 @@ describe('EventsTable.vue', () => {
               name: routes.events.edit.name,
               params: {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-            $storage: {
-              event: {
-                getters: {
-                  getByIds: jest.fn(() => mockCombinedEvents()),
-                },
-                actions: {
-                  search: jest.fn(() => ({
-                    ids: [mockEvents()[0].id, mockEvents()[1].id],
-                    count: mockEvents().length,
-                  })),
-                },
               },
             },
           },
@@ -524,19 +402,6 @@ describe('EventsTable.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-            $storage: {
-              event: {
-                getters: {
-                  getByIds: jest.fn(() => mockCombinedEvents()),
-                },
-                actions: {
-                  search: jest.fn(() => ({
-                    ids: [mockEvents()[0].id, mockEvents()[1].id],
-                    count: mockEvents().length,
-                  })),
-                },
-              },
-            },
           },
         });
         wrapper.vm.search = jest.fn();
@@ -556,19 +421,6 @@ describe('EventsTable.vue', () => {
               name: routes.events.edit.name,
               params: {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-            $storage: {
-              event: {
-                getters: {
-                  getByIds: jest.fn(() => mockCombinedEvents()),
-                },
-                actions: {
-                  search: jest.fn(() => ({
-                    ids: [mockEvents()[0].id, mockEvents()[1].id],
-                    count: mockEvents().length,
-                  })),
-                },
               },
             },
           },
@@ -591,9 +443,7 @@ describe('EventsTable.vue', () => {
         propsData: {
           isDashboard: false,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
 
       wrapper.vm.combinedEventStore.search = jest.fn(() => ({
@@ -641,21 +491,6 @@ describe('EventsTable.vue', () => {
           localVue,
           propsData: {
             isDashboard: false,
-          },
-          mocks: {
-            $storage: {
-              event: {
-                getters: {
-                  getByIds: jest.fn(() => mockCombinedEvents()),
-                },
-                actions: {
-                  search: jest.fn(() => ({
-                    ids: [mockEvents()[0].id, mockEvents()[1].id],
-                    count: mockEvents().length,
-                  })),
-                },
-              },
-            },
           },
           computed: {
             customColumns() {

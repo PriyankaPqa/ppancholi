@@ -1,7 +1,7 @@
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@libs/shared-lib/constants/validations';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
-import { mockStorage } from '@/storage';
+
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { mockCaseNoteEntity, mockCaseNoteCategories } from '@libs/entities-lib/case-note';
 import helpers from '@/ui/helpers/helpers';
@@ -9,7 +9,7 @@ import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './CaseNoteForm.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const mockCaseFileId = '1';
 const caseNote = mockCaseNoteEntity();
 const { pinia, caseNoteStore } = useMockCaseNoteStore();
@@ -23,9 +23,7 @@ describe('CaseNoteForm.vue', () => {
     wrapper = mount(Component, {
       localVue,
       pinia,
-      mocks: {
-        $storage: storage,
-      },
+
       propsData: {
         caseNote,
         actionTitle: '',
@@ -106,9 +104,7 @@ describe('CaseNoteForm.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(JSON.stringify(wrapper.vm.caseFile)).toEqual(JSON.stringify(mockCaseFileEntity({ id: '1' })));

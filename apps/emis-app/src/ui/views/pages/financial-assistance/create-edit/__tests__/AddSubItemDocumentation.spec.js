@@ -1,13 +1,13 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockSubItems } from '@libs/entities-lib/financial-assistance';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from '../Templates/AddSubItemDocumentation.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
+const { pinia, financialAssistanceStore } = useMockFinancialAssistanceStore();
 const subItem = mockSubItems()[0];
-storage.financialAssistance.getters.newSubItem = jest.fn(() => subItem);
+financialAssistanceStore.newSubItem = subItem;
 
 describe('AddSubItemDocumentation.vue', () => {
   let wrapper;
@@ -17,9 +17,7 @@ describe('AddSubItemDocumentation.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
-      mocks: {
-        $storage: storage,
-      },
+      pinia,
     });
   });
 
@@ -31,9 +29,7 @@ describe('AddSubItemDocumentation.vue', () => {
 
       it('sets the right value', async () => {
         wrapper.vm.documentationRequired = false;
-
-        expect(storage.financialAssistance.mutations.setNewSubItemDocumentationRequired).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setNewSubItemDocumentationRequired).toHaveBeenCalledWith(false);
+        expect(financialAssistanceStore.newSubItem.documentationRequired).toEqual(false);
       });
     });
   });

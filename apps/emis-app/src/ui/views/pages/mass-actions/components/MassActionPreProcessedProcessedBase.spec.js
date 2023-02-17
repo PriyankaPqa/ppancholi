@@ -11,13 +11,13 @@ import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
-import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
+
 import Component from './MassActionPreProcessedProcessedBase.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, massActionStore } = useMockMassActionStore();
 let wrapper;
 
@@ -42,9 +42,6 @@ const doMount = ({ otherProps, otherData }, mountMode = false, runStatus = MassA
         userAccount: mockCombinedUserAccount(),
         ...otherData,
       };
-    },
-    mocks: {
-      $storage: storage,
     },
   };
   if (mountMode) {

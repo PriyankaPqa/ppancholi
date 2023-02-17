@@ -6,11 +6,9 @@ import {
   EResponseLevel,
   EEventStatus,
   mockEventEntity,
-  mockCombinedEvents,
 } from '@libs/entities-lib/event';
 import {
   mockOptionItemData,
-  OptionItem,
 } from '@libs/entities-lib/optionItem';
 import helpers from '@/ui/helpers/helpers';
 import {
@@ -20,10 +18,10 @@ import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validat
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import moment from '@libs/shared-lib/plugins/moment';
 import { createTestingPinia } from '@pinia/testing';
-import { mockStorage } from '@/storage';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+
 import Component from '../EventForm.vue';
 
 const event = mockEventEntity();
@@ -32,7 +30,6 @@ event.schedule.scheduledOpenDate = moment(event.schedule.scheduledOpenDate).toIS
 event.responseDetails.dateReported = moment(event.responseDetails.dateReported).toISOString();
 event.fillEmptyMultilingualAttributes = jest.fn();
 
-const storage = mockStorage();
 const localVue = createLocalVue();
 const pinia = createTestingPinia({
   stubActions: false,
@@ -93,9 +90,7 @@ describe('EventForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
 
       expect(wrapper.vm.prefixRegistrationLink).toEqual('https://registration domain en/en/registration/');
@@ -122,9 +117,7 @@ describe('EventForm.vue', () => {
           },
 
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -179,9 +172,7 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         await wrapper.vm.setRelatedEvents([event.id]);
@@ -205,9 +196,7 @@ describe('EventForm.vue', () => {
               return [event];
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         await wrapper.vm.setRelatedEvents([event.id]);
         expect(wrapper.emitted('update:is-dirty')).toBeTruthy();
@@ -274,9 +263,7 @@ describe('EventForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
-        mocks: {
-          $storage: storage,
-        },
+
         computed: {
           prefixRegistrationLink() {
             return 'https://mytest.test/';
@@ -332,9 +319,7 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             prefixRegistrationLink() {
               return 'https://mytest.test/';
@@ -390,9 +375,7 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             otherProvincesSorted() {
               return otherProvinces;
@@ -417,9 +400,7 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             otherProvincesSorted() {
               return otherProvinces;
@@ -451,9 +432,6 @@ describe('EventForm.vue', () => {
               return {
                 newProvince: { translation: {} },
               };
-            },
-            mocks: {
-              $storage: storage,
             },
             computed: {
               otherProvincesSorted() {
@@ -501,9 +479,7 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             regionsSorted() {
               return [region1, region2];
@@ -528,9 +504,7 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             regionsSorted() {
               return [region1, region2];
@@ -564,9 +538,6 @@ describe('EventForm.vue', () => {
                 localEvent: { region: null },
                 newRegion: { translation: {} },
               };
-            },
-            mocks: {
-              $storage: storage,
             },
             computed: {
               regionsSorted() {
@@ -641,9 +612,7 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             eventTypesSorted() {
               return mockOptionItemData();
@@ -784,9 +753,7 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             prefixRegistrationLink() {
               return 'https://mytest.test/';
@@ -829,21 +796,6 @@ describe('EventForm.vue', () => {
           },
           relatedEventsSorted() {
             return [event];
-          },
-        },
-        mocks: {
-          $storage: {
-            event: {
-              getters: {
-                eventTypes: jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e))),
-              },
-              actions: {
-                fetchEventTypes: jest.fn(() => mockOptionItemData()),
-                fetchAll: jest.fn(() => mockCombinedEvents()),
-                fetchOtherProvinces: jest.fn(() => mockOtherProvinceData()),
-                fetchRegions: jest.fn(() => mockRegionData()),
-              },
-            },
           },
         },
       });
@@ -1017,21 +969,6 @@ describe('EventForm.vue', () => {
             return 'https://mytest.test/';
           },
         },
-        mocks: {
-          $storage: {
-            event: {
-              getters: {
-                eventTypes: jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e))),
-              },
-              actions: {
-                fetchEventTypes: jest.fn(() => mockOptionItemData()),
-                fetchAll: jest.fn(() => mockCombinedEvents()),
-                fetchOtherProvinces: jest.fn(() => mockOtherProvinceData()),
-                fetchRegions: jest.fn(() => mockRegionData()),
-              },
-            },
-          },
-        },
       });
       wrapper.vm.assistanceNumber = {
         number: '',
@@ -1073,9 +1010,7 @@ describe('EventForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     };
 

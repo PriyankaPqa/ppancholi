@@ -1,10 +1,12 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
+
 import { mockItems } from '@libs/entities-lib/financial-assistance';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from '../Templates/AddEditItemButtons.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
+const { pinia, financialAssistanceStore } = useMockFinancialAssistanceStore();
 
 describe('AddEditItemButtons.vue', () => {
   let wrapper;
@@ -14,12 +16,10 @@ describe('AddEditItemButtons.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         mode: 'add',
         failed: false,
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });
@@ -84,23 +84,23 @@ describe('AddEditItemButtons.vue', () => {
           },
         };
 
+        financialAssistanceStore.addingItem = true;
         await wrapper.vm.onAddItem();
 
-        expect(wrapper.vm.$storage.financialAssistance.mutations.addItem).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.financialAssistance.mutations.setAddingItem).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.financialAssistance.mutations.resetNewItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.addItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.addingItem).toBeFalsy();
+        expect(financialAssistanceStore.resetNewItem).toHaveBeenCalledTimes(1);
       });
     });
 
     describe('onSaveEditItem', () => {
       it('mutates storage', async () => {
-        wrapper.vm.$storage.financialAssistance.getters.newItem = jest.fn(() => mockItems()[0]);
-
+        financialAssistanceStore.newItem = mockItems()[0];
         wrapper.vm.onSaveEditItem();
 
-        expect(wrapper.vm.$storage.financialAssistance.mutations.setItemItem).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.financialAssistance.mutations.cancelOperation).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.financialAssistance.mutations.resetNewItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.setItemItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.cancelOperation).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.resetNewItem).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -108,8 +108,8 @@ describe('AddEditItemButtons.vue', () => {
       it('mutates storage', async () => {
         wrapper.vm.onCancel();
 
-        expect(wrapper.vm.$storage.financialAssistance.mutations.cancelOperation).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.financialAssistance.mutations.resetNewItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.cancelOperation).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.resetNewItem).toHaveBeenCalledTimes(1);
       });
     });
   });

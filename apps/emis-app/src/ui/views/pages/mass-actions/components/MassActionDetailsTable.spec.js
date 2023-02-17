@@ -5,12 +5,12 @@ import {
 
 import { MassActionDataCorrectionType, MassActionType, mockMassActionEntity } from '@libs/entities-lib/mass-action';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
-import { mockStorage } from '@/storage';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+
 import Component from './MassActionDetailsTable.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
 
 describe('MassActionDetailsTable.vue', () => {
@@ -27,9 +27,7 @@ describe('MassActionDetailsTable.vue', () => {
           userAccount: mockUserAccountMetadata(),
         };
       },
-      mocks: {
-        $storage: storage,
-      },
+
     };
     wrapper = shallowMount(Component, options);
   };

@@ -1,13 +1,12 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
 import { MassActionType } from '@libs/entities-lib/mass-action';
 import routes from '@/constants/routes';
+
 import Component from './MassActionBaseTable.vue';
 
 const localVue = createLocalVue();
 
-const storage = mockStorage();
 let wrapper;
 
 const doMount = (props) => {
@@ -21,9 +20,6 @@ const doMount = (props) => {
       searchEndpoint: 'searchEndpoint',
       showAddButton: true,
       ...props,
-    },
-    mocks: {
-      $storage: storage,
     },
   };
   wrapper = shallowMount(Component, options);

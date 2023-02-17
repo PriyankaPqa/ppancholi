@@ -19,9 +19,7 @@ import Multilingual from '@libs/shared-lib/plugins/multilingual';
 import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
 import features from '@/ui/plugins/features';
 import '@/ui/plugins/vee-validate';
-
 import prepareServices from '@/ui/plugins/services';
-import prepareStorage from '@/ui/plugins/storage';
 import { SignalRService } from '@libs/services-lib/signal-r';
 
 import { httpClient } from '@/services/httpClient';
@@ -30,17 +28,13 @@ import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 import { createPinia, PiniaVuePlugin } from 'pinia';
 import resetStore from '@libs/stores-lib/store-reset';
 import registrationStore from '@/ui/plugins/registrationStore';
-import store from './store/store';
 import router from './ui/router';
 import App from './ui/App.vue';
 
 Vue.use(PiniaVuePlugin);
 const pinia = createPinia();
 pinia.use(resetStore);
-
-prepareServices(store);
-
-const storage = prepareStorage(store);
+prepareServices();
 const signalRService = new SignalRService(httpClient);
 
 applicationInsights.initialize({
@@ -63,7 +57,6 @@ Vue.use(VueCookies);
 
 SignalR.Initialize({
   service: signalRService,
-  storage,
   showConsole: false,
 });
 
@@ -72,7 +65,6 @@ const app = new Vue({
   router,
   i18n,
   vuetify,
-  store,
   pinia,
 }).$mount('#app');
 

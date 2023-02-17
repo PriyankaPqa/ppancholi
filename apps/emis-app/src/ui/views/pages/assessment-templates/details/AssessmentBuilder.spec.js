@@ -1,5 +1,4 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockProvider } from '@/services/provider';
 import { SurveyJsTextExtractor } from '@libs/shared-lib/plugins/surveyJs/SurveyJsTextExtractor';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
@@ -9,7 +8,6 @@ import flushPromises from 'flush-promises';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import Component from './AssessmentBuilder.vue';
 
-let storage = mockStorage();
 let services = mockProvider();
 const localVue = createLocalVue();
 let pinia = createTestingPinia({ stubActions: false });
@@ -30,7 +28,6 @@ describe('AssessmentBuilder', () => {
         id: eventId,
       },
       mocks: {
-        $storage: storage,
         $services: services,
         $route: {
           params: {
@@ -44,7 +41,6 @@ describe('AssessmentBuilder', () => {
   };
 
   beforeEach(async () => {
-    storage = mockStorage();
     pinia = createTestingPinia({ stubActions: false });
     assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;

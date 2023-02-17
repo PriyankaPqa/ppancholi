@@ -1,5 +1,4 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
 import { mockItemsWithBasicData } from '@libs/entities-lib/financial-assistance';
 import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@libs/entities-lib/financial-assistance-payment';
@@ -10,13 +9,14 @@ import { Status } from '@libs/entities-lib/base';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { mockHouseholdEntity, mockHouseholdMetadata } from '@libs/entities-lib/household';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+
 import Component from '../CreateEditPaymentLineDialog.vue';
 
 const localVue = createLocalVue();
 const program = mockProgramEntity();
 let financialAssistance = mockCaseFinancialAssistanceEntity();
 const items = mockItemsWithBasicData();
-const storage = mockStorage();
+
 let caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
 libHelpers.getCanadianProvincesWithoutOther = jest.fn(() => [{ id: '1' }]);
 const { pinia, householdStore, householdMetadataStore } = useMockHouseholdStore();
@@ -42,7 +42,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       stubs: {
         RcGoogleAutocomplete: true,
@@ -384,7 +384,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
             id: 'cfid',
           },
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => true,
           },
         });
@@ -400,7 +400,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
             id: 'cfid',
           },
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => false,
           },
         });

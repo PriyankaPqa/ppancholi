@@ -114,7 +114,7 @@
           { text: 'contributorIM', value: 'contributorIM' },
           { text: 'contributorFinance', value: 'contributorFinance' },
         ]"
-        @change="$store.commit('user/setRole', $event);" />
+        @change="useUserStore().setRole($event)" />
     </div>
 
     <template #append>
@@ -236,7 +236,7 @@ export default Vue.extend({
       // while testing we might want to switch to localhost... localhost is not https
       // outside of localhost everything is https.
       const url = this.$m(tenant.emisDomain).indexOf('localhost') > -1 ? `http://${this.$m(tenant.emisDomain)}` : `https://${this.$m(tenant.emisDomain)}`;
-       window.location.href = url;
+      window.location.href = url;
     },
   },
 });

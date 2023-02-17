@@ -7,13 +7,12 @@ import {
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
 import routes from '@/constants/routes';
 import { MassActionMode, MassActionType, mockMassActionEntity } from '@libs/entities-lib/mass-action';
-import { mockStorage } from '@/storage';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
+
 import Component from './FundingRequestCreate.vue';
 
 const localVue = createLocalVue();
 
-const storage = mockStorage();
 const { pinia, massActionStore } = useMockMassActionStore();
 
 describe('FundingRequestCreate.vue', () => {
@@ -50,9 +49,7 @@ describe('FundingRequestCreate.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

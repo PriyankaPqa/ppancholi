@@ -4,17 +4,16 @@ import {
   createLocalVue,
   shallowMount,
 } from '@/test/testSetup';
-
 import {
-  mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems,
+  mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems, mockCategories,
 } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities, mockCombinedProgram, mockProgramEntity } from '@libs/entities-lib/program';
 import { mockOptionItem, mockOptionSubItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
-import { mockStorage } from '@/storage';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from './FinancialAssistancePaymentDetailsCreate.vue';
 
 const formCopy = {
@@ -36,10 +35,11 @@ const formCopyNull = {
 };
 const localVue = createLocalVue();
 
-const storage = mockStorage();
-
 const { pinia, programStore } = useMockProgramStore();
 const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
+const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
+financialAssistanceStore.getAll = jest.fn(() => [mockFinancialAssistanceTableEntity()]);
+financialAssistanceStore.getFinancialAssistanceCategories = jest.fn(() => mockCategories());
 
 describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
   let wrapper;
@@ -51,9 +51,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         pinia,
         propsData: {
           form: formCopy,
-        },
-        mocks: {
-          $storage: storage,
         },
       });
     });
@@ -99,8 +96,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
     describe('eventTables', () => {
       it('should return the list of financial assistance tables of an specific event', () => {
         const expected = wrapper.vm.financialAssistanceTables
-          .filter((t) => t.entity.eventId === wrapper.vm.formCopy.event.id && t.entity.items.length > 0 && t.entity.status === Status.Active)
-          .map((t) => t.entity);
+          .filter((t) => t.eventId === wrapper.vm.formCopy.event.id && t.items.length > 0 && t.status === Status.Active);
 
         expect(wrapper.vm.eventTables).toEqual(expected);
       });
@@ -113,7 +109,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
             table: mockFinancialAssistanceTableEntity(),
           },
         });
-        const expected = wrapper.vm.financialAssistanceTables.find((t) => t.entity.id === wrapper.vm.formCopy.table.id);
+        const expected = wrapper.vm.financialAssistanceTables.find((t) => t.id === wrapper.vm.formCopy.table.id);
         expect(wrapper.vm.currentFinancialAssistanceTable).toEqual(expected);
       });
     });
@@ -121,10 +117,10 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
     describe('financialAssistanceTables', () => {
       it('should return all financial assistance tables having at least one active item having at least one sub item '
         + 'for which document is not required', () => {
-        const expected = [mockCombinedFinancialAssistance()]
-          .filter((t) => t.entity.items.length > 0
-            && t.entity.status === Status.Active
-            && t.entity.items.some((item) => item.subItems.some((subItem) => subItem.documentationRequired === false)));
+        const expected = [mockFinancialAssistanceTableEntity()]
+          .filter((t) => t.items.length > 0
+            && t.status === Status.Active
+            && t.items.some((item) => item.subItems.some((subItem) => subItem.documentationRequired === false)));
 
         expect(wrapper.vm.financialAssistanceTables).toEqual(expected);
       });
@@ -145,9 +141,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         },
         computed: {
           currentFinancialAssistanceTable: () => mockCombinedFinancialAssistance(),
-        },
-        mocks: {
-          $storage: storage,
         },
       });
 
@@ -176,9 +169,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
             program: mockProgramEntity(),
           };
         },
-        mocks: {
-          $storage: storage,
-        },
       });
 
       it('should return all payment modalities included in the program', () => {
@@ -198,9 +188,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         },
         computed: {
           currentFinancialAssistanceTable: () => mockCombinedFinancialAssistance(),
-        },
-        mocks: {
-          $storage: storage,
         },
       });
 
@@ -239,9 +226,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         pinia,
         propsData: {
           form: formCopy,
-        },
-        mocks: {
-          $storage: storage,
         },
       });
     });
@@ -325,9 +309,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
           computed: {
             eventIdsWithFinancialAssistanceTable: () => ['1'],
           },
-          mocks: {
-            $storage: storage,
-          },
         });
         const events = [
           { id: '1', name: 'event A' },
@@ -349,9 +330,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
           propsData: {
             form: formCopy,
           },
-          mocks: {
-            $storage: storage,
-          },
         });
         wrapper.vm.fetchEvents = jest.fn();
         jest.clearAllMocks();
@@ -361,7 +339,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-        expect(wrapper.vm.$storage.financialAssistance.actions.fetchAll).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.fetchAll).toHaveBeenCalledTimes(1);
       });
 
       it('should fetch all financial assistance categories - including inactive ones', async () => {
@@ -380,9 +358,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         pinia,
         propsData: {
           form: formCopy,
-        },
-        mocks: {
-          $storage: storage,
         },
         computed: {
           currentSubItem: () => mockSubItemData(),
@@ -437,9 +412,6 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
           pinia,
           propsData: {
             form: formCopy,
-          },
-          mocks: {
-            $storage: storage,
           },
           computed: {
             currentSubItem: () => mockSubItems()[1],

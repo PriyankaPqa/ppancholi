@@ -28,6 +28,7 @@ import { VSelectWithValidation } from '@libs/component-lib/components';
 import { IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@libs/entities-lib/financial-assistance';
 import { Status } from '@libs/entities-lib/base';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import TooltipFinancialAssistanceCategory from '../TooltipFinancialAssistanceCategory.vue';
 
 export default Vue.extend({
@@ -61,11 +62,11 @@ export default Vue.extend({
      */
     value: {
       get(): IOptionSubItem {
-        return this.$storage.financialAssistance.getters.newSubItem().subCategory;
+        return useFinancialAssistanceStore().newSubItem.subCategory;
       },
 
       set(value: IOptionSubItem) {
-        this.$storage.financialAssistance.mutations.setNewSubItemSubItem(value);
+        useFinancialAssistanceStore().newSubItem.subCategory = value;
       },
     },
   },

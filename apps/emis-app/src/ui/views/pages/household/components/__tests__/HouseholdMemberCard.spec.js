@@ -2,17 +2,17 @@ import { mockMember } from '@libs/entities-lib/value-objects/member';
 import {
   mockIndigenousCommunitiesGetData, mockSplitHousehold, mockHouseholdCreate, HouseholdCreate,
 } from '@libs/entities-lib/household-create';
-import { mockStorage } from '@/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 
 import householdHelpers from '@/ui/helpers/household';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+
 import Component from '../HouseholdMemberCard.vue';
 
 const localVue = createLocalVue();
 const member = mockMember({ id: 'id-1' });
-const storage = mockStorage();
+
 const householdCreate = new HouseholdCreate({ ...mockHouseholdCreate(), additionalMembers: [mockMember()] });
 
 const { pinia, registrationStore } = useMockRegistrationStore();
@@ -27,9 +27,6 @@ describe('HouseholdMemberCard.vue', () => {
         isPrimaryMember,
         shelterLocations: [],
         index,
-      },
-      mocks: {
-        $storage: storage,
       },
       ...customOptions,
     };
@@ -378,7 +375,7 @@ describe('HouseholdMemberCard.vue', () => {
           },
           pinia: getPiniaForUser('level1'),
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => false,
           },
         });
@@ -395,7 +392,7 @@ describe('HouseholdMemberCard.vue', () => {
           },
           pinia: getPiniaForUser('level0'),
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => true,
           },
         });
@@ -472,7 +469,7 @@ describe('HouseholdMemberCard.vue', () => {
       it('calls initSplitView if is in split mode (e.g we land back on the page from the split flow)', () => {
         registrationStore.isSplitMode = jest.fn(() => true);
         doMount(false, true, {
-          mocks: { $storage: storage },
+
         });
         jest.spyOn(wrapper.vm, 'initSplitView').mockImplementation(() => {});
 

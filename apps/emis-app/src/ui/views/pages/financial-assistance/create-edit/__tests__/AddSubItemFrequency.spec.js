@@ -1,13 +1,13 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockSubItems, EFinancialFrequency } from '@libs/entities-lib/financial-assistance';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from '../Templates/AddSubItemFrequency.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+const { pinia, financialAssistanceStore } = useMockFinancialAssistanceStore();
 
 const subItem = mockSubItems()[0];
-storage.financialAssistance.getters.newSubItem = jest.fn(() => subItem);
+financialAssistanceStore.newSubItem = subItem;
 
 describe('AddSubItemFrequency.vue', () => {
   let wrapper;
@@ -17,9 +17,7 @@ describe('AddSubItemFrequency.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
-      mocks: {
-        $storage: storage,
-      },
+      pinia,
     });
   });
 
@@ -32,8 +30,7 @@ describe('AddSubItemFrequency.vue', () => {
       it('sets the right value', async () => {
         wrapper.vm.frequency = EFinancialFrequency.Multiple;
 
-        expect(storage.financialAssistance.mutations.setNewSubItemFrequency).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setNewSubItemFrequency).toHaveBeenCalledWith(EFinancialFrequency.Multiple);
+        expect(financialAssistanceStore.newSubItem.frequency).toEqual(EFinancialFrequency.Multiple);
       });
     });
 

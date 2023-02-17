@@ -1,13 +1,13 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockCombinedTeams } from '@libs/entities-lib/team';
-import { mockStorage } from '@/storage';
 import flushPromises from 'flush-promises';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
+
 import Component from './TeamsTable.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const team = mockCombinedTeams()[0];
 const teamId = team.entity.id;
 const { pinia } = useMockTeamStore();
@@ -21,7 +21,7 @@ describe('TeamsTable.vue', () => {
       pinia,
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
-        $storage: storage,
+
       },
     });
     await wrapper.vm.$nextTick();

@@ -3,18 +3,16 @@ import {
   mockTeamEntity, mockTeamMembersData,
 } from '@libs/entities-lib/team';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
-import { mockStorage } from '@/storage';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCaseFiles.vue';
+
 import Component, { LOAD_SIZE } from './TeamMembersTable.vue';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 const { pinia } = useMockUserAccountStore();
 const { teamStore } = useMockTeamStore(pinia);
@@ -47,7 +45,6 @@ describe('TeamMembersTable.vue', () => {
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
-        $storage: storage,
       },
       ...additionalOverwrites,
     });
@@ -187,6 +184,7 @@ describe('TeamMembersTable.vue', () => {
         wrapper.vm.onCloseCaseFileDialog = jest.fn();
         await wrapper.setData({
           showMemberCaseFilesDialog: true,
+          clickedMember: { ...userAccounts[0], isPrimaryContact: true },
         });
         await wrapper.vm.$nextTick();
         const component = wrapper.findComponent(TeamMemberCaseFiles);
@@ -488,6 +486,7 @@ describe('TeamMembersTable.vue', () => {
       it('should call loadTeamMembers and set showMemberCaseFilesDialog to false', async () => {
         await wrapper.setData({
           showMemberCaseFilesDialog: true,
+          clickedMember: { ...userAccounts[0], isPrimaryContact: true },
         });
         wrapper.vm.loadTeamMembers = jest.fn();
         await wrapper.vm.onCloseCaseFileDialog();

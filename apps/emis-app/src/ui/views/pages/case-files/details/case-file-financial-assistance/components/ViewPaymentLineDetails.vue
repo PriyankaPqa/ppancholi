@@ -166,6 +166,7 @@ import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program/p
 import householdHelpers from '@/ui/helpers/household';
 import { useProgramStore } from '@/pinia/program/program';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
@@ -218,7 +219,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     items(): Array<IFinancialAssistanceTableItem> {
-      return this.$storage.financialAssistance.getters.items();
+      return useFinancialAssistanceStore().mainItems;
     },
 
     mainItem(): IFinancialAssistanceTableItem {
@@ -253,7 +254,7 @@ export default mixins(caseFileDetail).extend({
     this.loading = true;
     await useFinancialAssistancePaymentStore().fetch(this.financialAssistancePaymentId);
     await Promise.all([useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories(),
-      this.$storage.financialAssistance.actions.fetch(this.financialAssistance.financialAssistanceTableId)]);
+      useFinancialAssistanceStore().fetch(this.financialAssistance.financialAssistanceTableId)]);
 
     await this.setFinancialAssistance();
     this.loading = false;
@@ -261,13 +262,15 @@ export default mixins(caseFileDetail).extend({
 
   methods: {
     async setFinancialAssistance() {
-      const tableWithMetadata = this.$storage.financialAssistance.getters.get(this.financialAssistance.financialAssistanceTableId);
+      const table = useFinancialAssistanceStore().getById(this.financialAssistance.financialAssistanceTableId);
       const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
       const program = await useProgramStore().fetch({
-        id: tableWithMetadata.entity.programId,
+        id: table.programId,
         eventId: this.caseFile.eventId,
       }) as IProgramEntity;
-      this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, program, false);
+      useFinancialAssistanceStore().setFinancialAssistance({
+        fa: table, categories, newProgram: program, removeInactiveItems: false,
+      });
     },
   },
 });

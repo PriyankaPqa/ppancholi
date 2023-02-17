@@ -2,14 +2,11 @@ import Vuetify from 'vuetify';
 
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
-
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+
 import Component from './MainHouseholdSearch.vue';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 const vuetify = new Vuetify();
 
@@ -25,10 +22,6 @@ describe('MainHouseholdSearch.vue', () => {
       localVue,
       pinia,
       vuetify,
-      mocks: {
-        $storage: storage,
-      },
-
     });
   });
 
@@ -40,9 +33,7 @@ describe('MainHouseholdSearch.vue', () => {
         computed: {
           showResultPage: () => false,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
       const searchPage = wrapper.findDataTest('household-search');
       const resultsPage = wrapper.findDataTest('household-results');
@@ -57,9 +48,7 @@ describe('MainHouseholdSearch.vue', () => {
         computed: {
           showResultPage: () => true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
       const searchPage = wrapper.findDataTest('household-search');
       const resultsPage = wrapper.findDataTest('household-results');

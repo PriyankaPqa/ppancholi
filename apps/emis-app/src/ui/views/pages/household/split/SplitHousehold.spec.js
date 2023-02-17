@@ -6,14 +6,13 @@ import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 
 import helpers from '@/ui/helpers/helpers';
 
-import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { tabs } from '@/ui/views/pages/household/split/tabs';
+
 import Component from './SplitHousehold.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 const { pinia, registrationStore } = useMockRegistrationStore();
 
@@ -35,9 +34,7 @@ describe('SplitHousehold.vue', () => {
             return mockSplitHousehold();
           },
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -52,9 +49,7 @@ describe('SplitHousehold.vue', () => {
               return mockSplitHousehold();
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         await wrapper.vm.back();
         expect(registrationStore.householdResultsShown).toEqual(false);
@@ -77,7 +72,7 @@ describe('SplitHousehold.vue', () => {
                 id: 'id-1',
               },
             },
-            $storage: storage,
+
           },
         });
         await wrapper.vm.back();
@@ -220,7 +215,7 @@ describe('SplitHousehold.vue', () => {
         expect(wrapper.vm.jump).not.toHaveBeenCalled();
       });
 
-      it('calls storage action splitHousehold if performSplit is true', async () => {
+      it('calls the store action splitHousehold if performSplit is true', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -232,7 +227,7 @@ describe('SplitHousehold.vue', () => {
               return [{ id: '1' }, { id: 2 }];
             },
           },
-          mocks: { $storage: storage },
+
         });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
@@ -262,7 +257,7 @@ describe('SplitHousehold.vue', () => {
               return mockSplitHousehold();
             },
           },
-          mocks: { $storage: storage },
+
         });
         registrationStore.registrationResponse = null;
         wrapper.vm.closeSplit();
@@ -321,9 +316,7 @@ describe('SplitHousehold.vue', () => {
               return mockSplitHousehold();
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.splitMemberName)
@@ -340,9 +333,7 @@ describe('SplitHousehold.vue', () => {
           computed: {
             currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         registrationStore.splitHouseholdState = mockSplitHousehold();
@@ -359,9 +350,7 @@ describe('SplitHousehold.vue', () => {
           computed: {
             currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         expect(wrapper.vm.titleLeave).toEqual('confirmLeaveDialog.title');
       });
@@ -375,9 +364,7 @@ describe('SplitHousehold.vue', () => {
           computed: {
             currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         expect(wrapper.vm.messagesLeave).toEqual([
           'confirmLeaveDialog.message_1',
@@ -457,9 +444,7 @@ describe('SplitHousehold.vue', () => {
             return null;
           },
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
 
       wrapper.vm.back = jest.fn();

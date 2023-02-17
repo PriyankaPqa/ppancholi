@@ -1,11 +1,9 @@
 import { mockCombinedHouseholds } from '@libs/entities-lib/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 
 import Component from './HouseholdResultsMove.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 describe('HouseholdResultsMove.vue', () => {
   let wrapper;
@@ -23,9 +21,7 @@ describe('HouseholdResultsMove.vue', () => {
             return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
           },
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

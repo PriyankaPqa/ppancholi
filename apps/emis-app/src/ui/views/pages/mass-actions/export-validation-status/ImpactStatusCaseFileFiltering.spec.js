@@ -8,6 +8,7 @@ import {
 import helpers from '@/ui/helpers/helpers';
 import { CaseFileStatus, mockCombinedCaseFiles, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import { MassActionType } from '@libs/entities-lib/mass-action';
+
 import Component from './ImpactStatusCaseFileFiltering.vue';
 
 const localVue = createLocalVue();

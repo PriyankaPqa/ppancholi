@@ -23,14 +23,14 @@ export function getExtensionComponents(
   entityService: CaseFilesService | ICaseFilesServiceMock,
   optionService: OptionItemsService | IOptionItemsServiceMock,
 ) {
-    const tagsOptions = ref([]) as Ref<IOptionItem[]>;
-    const inactiveReasons = ref([]) as Ref<IOptionItem[]>;
-    const closeReasons = ref([]) as Ref<IOptionItem[]>;
-    const screeningIds = ref([]) as Ref<IOptionItem[]>;
-    const tagsOptionsFetched = ref(false);
-    const inactiveReasonsFetched = ref(false);
-    const closeReasonsFetched = ref(false);
-    const screeningIdsFetched = ref(false);
+  const tagsOptions = ref([]) as Ref<IOptionItem[]>;
+  const inactiveReasons = ref([]) as Ref<IOptionItem[]>;
+  const closeReasons = ref([]) as Ref<IOptionItem[]>;
+  const screeningIds = ref([]) as Ref<IOptionItem[]>;
+  const tagsOptionsFetched = ref(false);
+  const inactiveReasonsFetched = ref(false);
+  const closeReasonsFetched = ref(false);
+  const screeningIdsFetched = ref(false);
 
   function getTagsOptions(filterOutInactive = true, actualValue?: string[] | string) {
     return filterAndSortActiveItems(tagsOptions.value, filterOutInactive, actualValue);

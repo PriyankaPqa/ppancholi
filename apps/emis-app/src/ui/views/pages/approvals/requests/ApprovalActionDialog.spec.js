@@ -1,12 +1,10 @@
 import { shallowMount, mount, createLocalVue } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockCombinedCaseFinancialAssistance, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import Component from './ApprovalActionDialog.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const { pinia } = useMockUserAccountStore();
 let wrapper;
 
@@ -22,7 +20,6 @@ const doMount = (otherOptions = {}, fullMount = false) => {
       financialAssistancePayment: FAPayment,
       myRoleId: 'my-role-id',
     },
-    mocks: { $storage: storage },
     ...otherOptions,
   };
 

@@ -1,12 +1,11 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
 import { tabs } from '@/pinia/registration/tabs';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+
 import Component from './ConfirmRegistration.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 const { pinia, registrationStore } = useMockRegistrationStore();
 
@@ -18,9 +17,6 @@ describe('ConfirmRegistrationLib.vue', () => {
     wrapper = shallowMount(Component, {
       pinia,
       localVue,
-      mocks: {
-        $storage: storage,
-      },
     });
   });
 

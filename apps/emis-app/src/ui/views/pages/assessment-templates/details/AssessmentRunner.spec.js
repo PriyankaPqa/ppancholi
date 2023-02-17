@@ -1,13 +1,12 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';
 import { createTestingPinia } from '@pinia/testing';
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+
 import Component from './AssessmentRunner.vue';
 
-let storage = mockStorage();
 let services = mockProvider();
 const localVue = createLocalVue();
 
@@ -28,14 +27,13 @@ describe('AssessmentRunner.vue', () => {
         assessmentTemplateId: 'mock-assessmentTemplate-id',
         assessmentResponseId,
       },
-      mocks: { $storage: storage, $services: services },
+      mocks: { $services: services },
     });
 
     await flushPromises();
   };
 
   beforeEach(async () => {
-    storage = mockStorage();
     pinia = createTestingPinia({ stubActions: false });
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
     tenantSettingsStore = useMockTenantSettingsStore(pinia).tenantSettingsStore;

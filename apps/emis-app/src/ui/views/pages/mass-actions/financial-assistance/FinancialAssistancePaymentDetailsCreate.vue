@@ -114,7 +114,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import { VAutocompleteWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import _sortBy from 'lodash/sortBy';
 import {
-  IFinancialAssistanceTableCombined,
   IFinancialAssistanceTableEntity, IFinancialAssistanceTableItemData, IFinancialAssistanceTableSubItemData,
   EFinancialAmountModes,
 } from '@libs/entities-lib/financial-assistance';
@@ -129,6 +128,7 @@ import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
 import { IEvent } from '@libs/entities-lib/registration-event';
 import { useProgramStore } from '@/pinia/program/program';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { PaymentDetailsForm } from './FinancialAssistanceCreate.vue';
 
 export default Vue.extend({
@@ -185,30 +185,30 @@ export default Vue.extend({
     },
 
     eventIdsWithFinancialAssistanceTable(): Array<string> {
-      return this.financialAssistanceTables.map((t) => t.entity.eventId);
+      return this.financialAssistanceTables.map((t) => t.eventId);
     },
 
     eventTables(): IFinancialAssistanceTableEntity[] {
-      if (this.formCopy.event) {
-        return this.financialAssistanceTables.filter((t) => t.entity.eventId === this.formCopy.event.id).map((t) => t.entity);
+      if (this.formCopy.event && this.financialAssistanceTables) {
+        return this.financialAssistanceTables.filter((t) => t.eventId === this.formCopy.event.id);
       }
       return [];
     },
 
-    currentFinancialAssistanceTable(): IFinancialAssistanceTableCombined {
+    currentFinancialAssistanceTable(): IFinancialAssistanceTableEntity {
       if (this.formCopy.table) {
-        return this.financialAssistanceTables.find((t) => t.entity.id === this.formCopy.table.id);
+        return this.financialAssistanceTables?.find((t) => t.id === this.formCopy.table.id);
       }
       return null;
     },
 
-    financialAssistanceTables(): Array<IFinancialAssistanceTableCombined> {
+    financialAssistanceTables(): Array<IFinancialAssistanceTableEntity> {
       // We keep tables having at least one active item having at least one sub-item for which document is not required
       // We can't create mass action with sub-item requiring a documentation
-      return this.$storage.financialAssistance.getters.getAll()
-        .filter((t) => t.entity.items.length > 0
-        && t.entity.status === Status.Active
-        && t.entity.items.some((item) => item.subItems.some((subItem) => subItem.documentationRequired === false)));
+      return useFinancialAssistanceStore().getAll()
+        .filter((t) => t.items.length > 0
+        && t.status === Status.Active
+        && t.items.some((item) => item.subItems.some((subItem) => subItem.documentationRequired === false)));
     },
 
     financialAssistanceCategories(): Array<IOptionItem> {
@@ -216,11 +216,12 @@ export default Vue.extend({
     },
 
     financialAssistanceTableItems(): Array<IOptionItem> {
-      if (this.currentFinancialAssistanceTable) {
+      if (this.currentFinancialAssistanceTable?.items) {
         // We keep only items having at least one sub-item for which document is not required.
         // We can't create mass action with sub-item requiring a documentation
-        const currentItemsIds = this.currentFinancialAssistanceTable.entity.items
-          .filter((i) => i.status === Status.Active && i.subItems.some((s) => s.documentationRequired === false))
+        const currentItemsIds = this.currentFinancialAssistanceTable.items.filter(
+          (i) => i.status === Status.Active && i.subItems.some((s) => s.documentationRequired === false),
+)
           .map((i) => i.mainCategory.optionItemId);
 
         return _sortBy(this.financialAssistanceCategories
@@ -238,14 +239,14 @@ export default Vue.extend({
     },
 
     currentItem(): IFinancialAssistanceTableItemData {
-      if (this.currentFinancialAssistanceTable && this.formCopy.item) {
-        return this.currentFinancialAssistanceTable.entity.items.find((i) => i.mainCategory.optionItemId === this.formCopy.item.id);
+      if (this.currentFinancialAssistanceTable?.items && this.formCopy.item) {
+        return this.currentFinancialAssistanceTable.items.find((i) => i.mainCategory.optionItemId === this.formCopy.item.id);
       }
       return null;
     },
 
     currentSubItem(): IFinancialAssistanceTableSubItemData {
-      if (this.currentItem && this.formCopy.subItem) {
+      if (this.currentItem?.subItems && this.formCopy.subItem) {
         return this.currentItem.subItems.find((s) => s.subCategory.optionItemId === this.formCopy.subItem.id);
       }
       return null;
@@ -310,7 +311,7 @@ export default Vue.extend({
 
   async created() {
     this.formCopy = cloneDeep(this.form);
-    await this.$storage.financialAssistance.actions.fetchAll();
+    await useFinancialAssistanceStore().fetchAll();
     await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
   },
 

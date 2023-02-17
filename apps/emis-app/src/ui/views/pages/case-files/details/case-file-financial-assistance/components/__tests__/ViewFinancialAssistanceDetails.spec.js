@@ -2,7 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
 import { ApprovalStatus, mockCaseFinancialAssistanceEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { mockProgramEntity } from '@libs/entities-lib/program';
-import { mockStorage } from '@/storage';
+
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
@@ -10,7 +10,7 @@ import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../ViewFinancialAssistanceDetails.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 let financialAssistance = mockCaseFinancialAssistanceEntity();
 const financialAssistanceTable = mockCombinedFinancialAssistance().entity;
 const program = mockProgramEntity();
@@ -44,7 +44,7 @@ describe('ViewFinancialAssistanceDetails', () => {
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });

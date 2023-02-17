@@ -3,14 +3,14 @@ import {
   CaseFileDocumentEntity, DocumentStatus, mockCaseFileDocumentEntity,
 } from '@libs/entities-lib/case-file-document';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { mockStorage } from '@/storage';
+
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import Component from './CaseFileDocumentForm.vue';
 import DownloadComponent from './DownloadViewDocument.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, caseFileDocumentStore } = useMockCaseFileDocumentStore();
 
 describe('CaseFileDocumentForm.vue', () => {
@@ -30,7 +30,7 @@ describe('CaseFileDocumentForm.vue', () => {
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });
@@ -70,7 +70,7 @@ describe('CaseFileDocumentForm.vue', () => {
 
   describe('Computed', () => {
     describe('documentCategories', () => {
-      it('calls storage and passes current value', async () => {
+      it('calls the store and passes current value', async () => {
         await mountWrapper();
         await wrapper.setData({ localDocument: { category: { optionItemId: 'abc' } } });
         expect(caseFileDocumentStore.getCategories).toHaveBeenCalledWith(true, 'abc');

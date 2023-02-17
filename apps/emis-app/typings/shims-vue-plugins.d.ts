@@ -1,5 +1,4 @@
 import VueRouter, { Route } from 'vue-router';
-import { Store } from 'vuex';
 import { Toasted } from 'vue-toasted';
 import { TranslateResult } from 'vue-i18n';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
@@ -20,7 +19,6 @@ declare module 'vue/types/vue' {
     $router: VueRouter;
     $route: Route;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    $store: Store<any>;
     $signalR: SignalR;
     $toasted: Toasted;
     $formatCurrency: IFormatCurrency;

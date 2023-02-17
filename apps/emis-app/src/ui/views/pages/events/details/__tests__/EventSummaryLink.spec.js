@@ -2,14 +2,13 @@ import { VSwitch } from 'vuetify/lib';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity, EEventStatus } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
-import { mockStorage } from '@/storage';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+
 import Component from '../components/EventSummaryLink.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
-const storage = mockStorage();
 
 const { pinia, eventStore } = useMockEventStore();
 useMockTenantSettingsStore(pinia);
@@ -27,7 +26,7 @@ describe('EventSummaryLink.vue', () => {
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });

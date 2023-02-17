@@ -44,7 +44,7 @@ describe('MainLayout.vue', () => {
           expect(wrapper.vm.$services.publicApi.getTenantByRegistrationDomain).toHaveBeenCalledWith(helpers.getCurrentDomain(wrapper.vm.$route));
         });
 
-        it('gets the event from storage', async () => {
+        it('gets the event from the store', async () => {
           wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' }, query: {} };
           await wrapper.vm.initializeEvent();
           expect(registrationStore.fetchEvent).toHaveBeenCalledWith('lang', 'reg');

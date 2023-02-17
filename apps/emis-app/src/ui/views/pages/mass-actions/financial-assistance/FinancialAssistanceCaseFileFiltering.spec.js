@@ -4,18 +4,16 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
 import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { MassActionMode } from '@libs/entities-lib/mass-action';
+
 import Component from './FinancialAssistanceCaseFileFiltering.vue';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 describe('FinancialAssistanceCaseFileFiltering.vue', () => {
   let wrapper;
@@ -27,9 +25,7 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
         propsData: {
           show: true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -222,9 +218,7 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
         propsData: {
           show: true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

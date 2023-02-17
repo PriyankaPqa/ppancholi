@@ -2,9 +2,9 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   MassActionRunStatus, mockCombinedMassAction, mockCombinedMassActions, mockMassActionRun,
 } from '@libs/entities-lib/mass-action';
-import { mockStorage } from '@/storage';
 import { Status } from '@libs/entities-lib/base';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
+
 import massActionsTable from './massActionsTable';
 
 const Component = {
@@ -13,7 +13,7 @@ const Component = {
 };
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, massActionStore } = useMockMassActionStore();
 
 let wrapper;
@@ -24,9 +24,6 @@ describe('massActionsTable', () => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
-      mocks: {
-        $storage: storage,
-      },
     });
   });
 
@@ -35,9 +32,7 @@ describe('massActionsTable', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -127,9 +122,7 @@ describe('massActionsTable', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          mocks: {
-            $storage: storage,
-          },
+
         });
         await wrapper.setData({
           itemsCount: 1,
@@ -145,9 +138,7 @@ describe('massActionsTable', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

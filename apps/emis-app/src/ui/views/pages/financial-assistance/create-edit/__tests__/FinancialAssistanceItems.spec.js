@@ -1,29 +1,26 @@
-import { createLocalVue, mount } from '@/test/testSetup';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   mockItems, mockCategories, EFinancialAmountModes, EFinancialFrequency,
 } from '@libs/entities-lib/financial-assistance';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
-import { mockStorage } from '@/storage';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from '../FinancialAssistanceItems.vue';
 
 const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
+const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
 const localVue = createLocalVue();
 describe('FinancialAssistanceItems.vue', () => {
   let wrapper;
-  const storage = mockStorage();
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    wrapper = mount(Component, {
+    wrapper = shallowMount(Component, {
       localVue,
       pinia,
       propsData: {
         isEdit: false,
         isTableMode: false,
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });
@@ -56,16 +53,22 @@ describe('FinancialAssistanceItems.vue', () => {
 
     describe('items', () => {
       it('returns the right value', () => {
-        wrapper.vm.$storage.financialAssistance.getters.items = jest.fn(() => mockItems());
-
+        financialAssistanceStore.mainItems = mockItems();
         expect(wrapper.vm.items).toEqual(mockItems());
       });
     });
 
     describe('addingItem', () => {
-      it('returns the right value', () => {
-        wrapper.vm.$storage.financialAssistance.getters.addingItem = jest.fn(() => true);
-
+      it('returns the right value', async () => {
+        financialAssistanceStore.addingItem = true;
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            isEdit: false,
+            isTableMode: false,
+          },
+        });
         expect(wrapper.vm.addingItem).toEqual(true);
       });
     });
@@ -74,15 +77,14 @@ describe('FinancialAssistanceItems.vue', () => {
       it('returns the right value', () => {
         const editedItem = mockItems()[0];
 
-        wrapper.vm.$storage.financialAssistance.getters.editedItem = jest.fn(() => editedItem);
-
+        financialAssistanceStore.editedItem = editedItem;
         expect(wrapper.vm.editedItem).toEqual(editedItem);
       });
     });
 
     describe('isOperating', () => {
       it('returns the right value', () => {
-        wrapper.vm.$storage.financialAssistance.getters.isOperating = jest.fn(() => true);
+        financialAssistanceStore.isOperating = jest.fn(() => true);
 
         expect(wrapper.vm.isOperating).toEqual(true);
       });
@@ -90,7 +92,7 @@ describe('FinancialAssistanceItems.vue', () => {
 
     describe('disableAddSubItem', () => {
       it('returns the right value', () => {
-        wrapper.vm.$storage.financialAssistance.getters.isOperating = jest.fn(() => true);
+        financialAssistanceStore.isOperating = jest.fn(() => true);
 
         expect(wrapper.vm.disableAddSubItem).toEqual(true);
       });
@@ -159,7 +161,7 @@ describe('FinancialAssistanceItems.vue', () => {
 
     describe('getIsFormActive', () => {
       it('returns true if has editedItem or addingItem is true', async () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             isEdit: false,
@@ -179,7 +181,7 @@ describe('FinancialAssistanceItems.vue', () => {
       });
 
       it('returns true if has editedItem or addingItem has index', async () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             isEdit: false,

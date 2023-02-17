@@ -1,16 +1,16 @@
 import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template.mock';
 import { createTestingPinia } from '@pinia/testing';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
+
 import Component from './AssessmentTemplatesHome.vue';
 
 const localVue = createLocalVue();
-let storage = mockStorage();
+
 let pinia = createTestingPinia({ stubActions: false });
 let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
 let assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
@@ -27,7 +27,7 @@ describe('AssessmentTemplatesHome.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });
@@ -35,7 +35,6 @@ describe('AssessmentTemplatesHome.vue', () => {
   };
 
   beforeEach(async () => {
-    storage = mockStorage();
     pinia = createTestingPinia({ stubActions: false });
     assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;

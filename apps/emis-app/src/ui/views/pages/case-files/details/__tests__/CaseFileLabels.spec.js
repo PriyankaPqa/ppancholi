@@ -1,9 +1,9 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
-import { mockStorage } from '@/storage';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+
 import Component from '../case-file-activity/components/CaseFileLabels.vue';
 
 const localVue = createLocalVue();
@@ -24,8 +24,6 @@ mockCaseFile.labels = [{
 
 const { pinia, caseFileStore } = useMockCaseFileStore();
 
-const storage = mockStorage();
-
 describe('CaseFileLabels.vue', () => {
   let wrapper;
 
@@ -39,9 +37,7 @@ describe('CaseFileLabels.vue', () => {
         caseFileLabels: mockCaseFile.labels,
         caseFileId: mockCaseFile.id,
       },
-      mocks: {
-        $storage: storage,
-      },
+
     });
   });
 

@@ -36,6 +36,8 @@
 import Vue from 'vue';
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
+
 import ConfirmBeforeAction from '../ConfirmBeforeAction.vue';
 
 export default Vue.extend({
@@ -77,21 +79,21 @@ export default Vue.extend({
 
   computed: {
     /**
-     * Get the list of items from Vuex
+     * Get the list of items from the store
      */
     items(): IFinancialAssistanceTableItem[] {
-      return this.$storage.financialAssistance.getters.items();
+      return useFinancialAssistanceStore().mainItems;
     },
 
     /**
      * Whether the Add item or Add sub-item form is active
      */
     addingItem(): boolean | number {
-      return this.$storage.financialAssistance.getters.addingItem();
+      return useFinancialAssistanceStore().addingItem;
     },
 
     isOperating(): boolean {
-      return this.$storage.financialAssistance.getters.isOperating();
+      return useFinancialAssistanceStore().isOperating();
     },
 
     /**
@@ -99,11 +101,11 @@ export default Vue.extend({
      */
     loading: {
       get(): boolean {
-        return this.$storage.financialAssistance.getters.loading();
+        return useFinancialAssistanceStore().loading;
       },
 
       set(value: boolean) {
-        this.$storage.financialAssistance.mutations.setLoading(value);
+        useFinancialAssistanceStore().loading = value;
       },
     },
 
@@ -123,9 +125,11 @@ export default Vue.extend({
      * When the user clicks on the edit button for an item
      */
     onEditItem() {
-      this.$storage.financialAssistance.mutations.setNewItemItem(this.item.mainCategory);
-      this.$storage.financialAssistance.mutations.setEditedItem(this.item);
-      this.$storage.financialAssistance.mutations.setEditedItemIndex(this.index);
+      useFinancialAssistanceStore().$patch((state) => {
+        state.newItem = { ...state.newItem, mainCategory: this.item.mainCategory };
+        state.editedItem = this.item;
+        state.editedItemIndex = this.index;
+      });
     },
 
     /**
@@ -161,20 +165,18 @@ export default Vue.extend({
 
     async deleteRemotely() {
       this.loading = true;
-
-      const res = await this.$storage.financialAssistance.actions.deleteItem(this.itemBeingDeletedIndex);
-
+      const res = await useFinancialAssistanceStore().deleteItem({ itemIndex: this.itemBeingDeletedIndex });
       this.loading = false;
 
       if (res) {
         const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
-        await this.$storage.financialAssistance.actions.reloadItems(categories);
+        await useFinancialAssistanceStore().reloadItems({ categories });
         this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
       }
     },
 
     deleteLocally() {
-      this.$storage.financialAssistance.mutations.deleteItem(this.itemBeingDeletedIndex);
+      useFinancialAssistanceStore().deleteItem({ itemIndex: this.itemBeingDeletedIndex });
     },
   },
 });

@@ -25,6 +25,7 @@ import { cloneDeep } from 'lodash';
 import { VForm } from '@libs/shared-lib/types';
 import { IFinancialAssistanceTableSubItem } from '@libs/entities-lib/financial-assistance';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 
 export default Vue.extend({
@@ -34,7 +35,7 @@ export default Vue.extend({
     mode: {
       type: String,
       required: true,
-      validator: (value) => ['add', 'edit'].indexOf(value) !== -1,
+      validator: (value: string) => ['add', 'edit'].indexOf(value) !== -1,
     },
 
     index: {
@@ -66,11 +67,11 @@ export default Vue.extend({
   computed: {
     loading: {
       get(): boolean {
-        return this.$storage.financialAssistance.getters.loading();
+        return useFinancialAssistanceStore().loading;
       },
 
       set(value: boolean) {
-        this.$storage.financialAssistance.mutations.setLoading(value);
+        useFinancialAssistanceStore().loading = value;
       },
     },
 
@@ -111,7 +112,7 @@ export default Vue.extend({
       const isValid = await (this.$parent.$parent.$parent.$parent.$refs.form as VForm).validate();
 
       if (isValid) {
-        const newSubItem = this.$storage.financialAssistance.getters.newSubItem();
+        const newSubItem = useFinancialAssistanceStore().newSubItem;
 
         if (this.isEdit) {
           await this.addRemotely(newSubItem);
@@ -128,9 +129,9 @@ export default Vue.extend({
       const isValid = await (this.$parent.$parent.$parent.$parent.$parent.$refs.form as VForm).validate();
 
       if (isValid) {
-        const newSubItem = this.$storage.financialAssistance.getters.newSubItem();
-        const editedSubItemIndex = this.$storage.financialAssistance.getters.editedSubItemIndex();
-        const editedItemIndex = this.$storage.financialAssistance.getters.editedItemIndex();
+        const newSubItem = useFinancialAssistanceStore().newSubItem;
+        const editedSubItemIndex = useFinancialAssistanceStore().editedSubItemIndex;
+        const editedItemIndex = useFinancialAssistanceStore().editedItemIndex;
 
         if (this.isEdit) {
           await this.saveRemotely(newSubItem, editedSubItemIndex, editedItemIndex);
@@ -143,21 +144,21 @@ export default Vue.extend({
     async addRemotely(newSubItem: IFinancialAssistanceTableSubItem) {
       this.loading = true;
 
-      const parentItem = this.$storage.financialAssistance.getters.items()[this.index];
+      const parentItem = useFinancialAssistanceStore().mainItems[this.index];
 
       let res;
 
       try {
         if (parentItem.subItems?.length > 0) {
-          res = await this.$storage.financialAssistance.actions.createSubItem(this.index, newSubItem);
+          res = await useFinancialAssistanceStore().createSubItem({ itemIndex: this.index, subItem: newSubItem });
         } else {
           const item = cloneDeep(parentItem);
           item.subItems = [newSubItem];
-          res = await this.$storage.financialAssistance.actions.createItem(item);
+          res = await useFinancialAssistanceStore().createItem({ item });
         }
 
         if (res) {
-          await this.$storage.financialAssistance.actions.reloadItems(this.categories);
+          await useFinancialAssistanceStore().reloadItems({ categories: this.categories });
           this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
           this.onCancel();
         }
@@ -167,7 +168,7 @@ export default Vue.extend({
     },
 
     addLocally(newSubItem: IFinancialAssistanceTableSubItem) {
-      this.$storage.financialAssistance.mutations.addSubItem(newSubItem, this.index);
+      useFinancialAssistanceStore().addSubItem({ subItem: newSubItem, index: this.index });
 
       this.onCancel();
     },
@@ -175,10 +176,10 @@ export default Vue.extend({
     async saveRemotely(newSubItem: IFinancialAssistanceTableSubItem, editedSubItemIndex: number, editedItemIndex: number) {
       this.loading = true;
 
-      const res = await this.$storage.financialAssistance.actions.editSubItem(editedItemIndex, editedSubItemIndex, newSubItem);
+      const res = await useFinancialAssistanceStore().editSubItem({ itemIndex: editedItemIndex, subItemIndex: editedSubItemIndex, subItem: newSubItem });
 
       if (res) {
-        await this.$storage.financialAssistance.actions.reloadItems(this.categories);
+        await useFinancialAssistanceStore().reloadItems({ categories: this.categories });
         this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
         this.onCancel();
       }
@@ -187,7 +188,7 @@ export default Vue.extend({
     },
 
     saveLocally(newSubItem: IFinancialAssistanceTableSubItem, editedSubItemIndex: number, editedItemIndex: number) {
-      this.$storage.financialAssistance.mutations.setSubItem(newSubItem, editedSubItemIndex, editedItemIndex);
+      useFinancialAssistanceStore().setSubItem({ subItem: newSubItem, index: editedSubItemIndex, parentIndex: editedItemIndex });
 
       this.onCancel();
     },
@@ -196,9 +197,8 @@ export default Vue.extend({
      * Handles cancelling the add sub-item row
      */
     onCancel() {
-      this.$storage.financialAssistance.mutations.cancelOperation();
-
-      this.$storage.financialAssistance.mutations.resetNewSubItem();
+      useFinancialAssistanceStore().cancelOperation();
+      useFinancialAssistanceStore().resetNewSubItem();
     },
   },
 });

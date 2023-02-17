@@ -2,12 +2,10 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
   mockCaseFinancialAssistancePaymentGroups, PaymentStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
-import { mockStorage } from '@/storage';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import Component from '../PaymentStatusHistoryDialog.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 describe('ApprovalHistoryDialog.vue', () => {
   let wrapper;
@@ -30,7 +28,6 @@ describe('ApprovalHistoryDialog.vue', () => {
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
       },
       ...additionalOverwrites,
     });

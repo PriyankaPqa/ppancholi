@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { CaseFileReferralEntity, mockCaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-file-referral';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { mockStorage } from '@/storage';
+
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import Component from './ReferralForm.vue';
 
@@ -11,10 +11,8 @@ const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
 describe('ReferralForm.vue', () => {
   let wrapper;
   let referral;
-  let storage;
 
   const doMount = (isEditMode = true, shallow = true) => {
-    storage = mockStorage();
     referral = referral || (isEditMode ? mockCaseFileReferralEntity() : new CaseFileReferralEntity());
     const options = {
       localVue,
@@ -23,9 +21,7 @@ describe('ReferralForm.vue', () => {
         isEditMode,
         referral: new CaseFileReferralEntity(referral),
       },
-      mocks: {
-        $storage: storage,
-      },
+
     };
     if (shallow) {
       wrapper = shallowMount(Component, options);
@@ -68,7 +64,7 @@ describe('ReferralForm.vue', () => {
 
   describe('Computed', () => {
     describe('referralTypes', () => {
-      it('calls storage and passes current value', async () => {
+      it('calls the store and passes current value', async () => {
         doMount();
         expect(caseFileReferralStore.getAllTypes).toHaveBeenCalledWith(true, '09bda590-ad8b-4f29-af4e-c63eedd337a0');
         await wrapper.setData({ localReferral: { type: { optionItemId: null } } });
@@ -76,7 +72,7 @@ describe('ReferralForm.vue', () => {
       });
     });
     describe('outcomeStatuses', () => {
-      it('calls storage and passes current value', async () => {
+      it('calls the store and passes current value', async () => {
         doMount();
         await wrapper.setData({ localReferral: { outcomeStatus: { optionItemId: 'abc' } } });
         expect(caseFileReferralStore.getAllOutcomeStatuses).toHaveBeenCalledWith(true, 'abc');

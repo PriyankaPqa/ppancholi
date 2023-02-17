@@ -1,6 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
 import {
   mockTeamEntity, mockTeamEvents, mockTeamsMetadataStandard,
 } from '@libs/entities-lib/team';
@@ -8,9 +7,9 @@ import { RcPageContent } from '@libs/component-lib/components';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
+
 import Component from './TeamDetails.vue';
 
-const storage = mockStorage();
 const localVue = createLocalVue();
 const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
 const { teamStore, teamMetadataStore } = useMockTeamStore(pinia);
@@ -27,7 +26,7 @@ describe('TeamDetails.vue', () => {
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });

@@ -6,12 +6,10 @@ import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { i18n } from '@/ui/plugins';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
-import { mockStorage } from '@/storage';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
-import Component from '../EditHouseholdAddressDialog.vue';
 
-const storage = mockStorage();
+import Component from '../EditHouseholdAddressDialog.vue';
 
 const localVue = createLocalVue();
 const { pinia, householdStore } = useMockHouseholdStore();
@@ -27,7 +25,7 @@ describe('EditHouseholdAddressDialog.vue', () => {
         show: true,
       },
       mocks: {
-        $storage: storage,
+
         $hasFeature: () => hasFeature,
       },
       data() {

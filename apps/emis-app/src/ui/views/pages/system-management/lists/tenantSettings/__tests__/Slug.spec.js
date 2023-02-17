@@ -1,10 +1,10 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+
 import Component from '../Slug.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 let wrapper;
 
 const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
@@ -16,9 +16,6 @@ beforeEach(() => {
     pinia,
     propsData: {
       disableEditBtn: false,
-    },
-    mocks: {
-      $storage: storage,
     },
   });
 });
@@ -111,9 +108,7 @@ describe('Slug.vue', () => {
               return testSlug;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         await wrapper.setData({
@@ -137,9 +132,7 @@ describe('Slug.vue', () => {
               return testSlug;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         await wrapper.setData({
@@ -163,9 +156,7 @@ describe('Slug.vue', () => {
               return testSlug;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         await wrapper.setData({
@@ -193,9 +184,7 @@ describe('Slug.vue', () => {
               return testSlug;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         wrapper.vm.enterEditMode();
@@ -224,9 +213,7 @@ describe('Slug.vue', () => {
               return testSlug;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         wrapper.vm.exitEditMode();
@@ -242,7 +229,7 @@ describe('Slug.vue', () => {
     });
 
     describe('submit', () => {
-      it('calls storage to create tenant settings', async () => {
+      it('calls the store to create tenant settings', async () => {
         await wrapper.setData({
           tempSlug: 'slug',
         });
@@ -267,9 +254,7 @@ describe('Slug.vue', () => {
               return true;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         wrapper.vm.$confirm = jest.fn();

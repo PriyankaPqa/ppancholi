@@ -5,7 +5,7 @@ import {
   IFinancialAssistanceTableItemData,
   IFinancialAssistanceTableSubItemData,
 } from '@libs/entities-lib/financial-assistance';
-import { IDomainBaseService } from '../../base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
 export interface IFinancialAssistanceTablesService extends IDomainBaseService<IFinancialAssistanceTableEntity, uuid> {
   createFinancialAssistanceTable(financialAssistance: ICreateFinancialAssistanceTableRequest): Promise<IFinancialAssistanceTableEntity>;
@@ -18,7 +18,7 @@ export interface IFinancialAssistanceTablesService extends IDomainBaseService<IF
   fetchByProgramId(programId: uuid): Promise<IFinancialAssistanceTableEntity[]>;
 }
 
-export interface IFinancialAssistanceTablesServiceMock {
+export interface IFinancialAssistanceTablesServiceMock extends IDomainBaseServiceMock<IFinancialAssistanceTableEntity> {
   createFinancialAssistanceTable: jest.Mock<IFinancialAssistanceTableEntity>;
   editFinancialAssistanceTable: jest.Mock<IFinancialAssistanceTableEntity>;
   createItem: jest.Mock<IFinancialAssistanceTableEntity>;

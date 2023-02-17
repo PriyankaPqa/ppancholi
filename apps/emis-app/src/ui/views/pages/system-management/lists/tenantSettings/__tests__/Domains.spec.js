@@ -1,13 +1,13 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import entityUtils from '@libs/entities-lib/utils';
-import { mockStorage } from '@/storage';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { mockTenantSettingsEntity } from '@libs/entities-lib/tenantSettings';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+
 import Component from '../Domains.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 let wrapper;
 
 const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
@@ -20,9 +20,6 @@ beforeEach(() => {
     pinia,
     propsData: {
       disableEditBtn: false,
-    },
-    mocks: {
-      $storage: storage,
     },
   });
 });
@@ -75,9 +72,7 @@ describe('Domains.vue', () => {
           propsData: {
             disableEditBtn: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.hasNoSlug).toBeFalsy();
@@ -128,9 +123,7 @@ describe('Domains.vue', () => {
               return testRegistrationDomain;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         await wrapper.setData({
@@ -157,9 +150,7 @@ describe('Domains.vue', () => {
               return 'registration-1';
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         await wrapper.setData({
@@ -186,9 +177,7 @@ describe('Domains.vue', () => {
               return 'registration-1';
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         await wrapper.setData({
@@ -295,7 +284,7 @@ describe('Domains.vue', () => {
         expect(entityUtils.getFilledMultilingualField).toHaveBeenCalledTimes(2);
       });
 
-      it('builds request and calls storage to update tenant settings', async () => {
+      it('builds request and calls the store to update tenant settings', async () => {
         jest.clearAllMocks();
 
         const { emisDomain } = mockTenantSettingsEntity();
@@ -328,9 +317,7 @@ describe('Domains.vue', () => {
               return true;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         wrapper.vm.$confirm = jest.fn();

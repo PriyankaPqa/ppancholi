@@ -1,12 +1,12 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { FeatureType } from '@libs/entities-lib/tenantSettings';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+
 import Component from '../Features.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 let wrapper;
 
 const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
@@ -16,9 +16,6 @@ beforeEach(() => {
   wrapper = shallowMount(Component, {
     localVue,
     pinia,
-    mocks: {
-      $storage: storage,
-    },
   });
 });
 

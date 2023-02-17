@@ -8,13 +8,12 @@ import {
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { MassActionEntity, MassActionMode, MassActionRunType } from '@libs/entities-lib/mass-action';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { mockStorage } from '@/storage';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
+
 import Component from './MassActionBaseCreate.vue';
 
 const localVue = createLocalVue();
 
-const storage = mockStorage();
 const { pinia, massActionStore } = useMockMassActionStore();
 let wrapper;
 
@@ -31,9 +30,6 @@ const doMount = (shallow = false, propsData) => {
       mode: MassActionMode.File,
       loading: false,
       ...propsData,
-    },
-    mocks: {
-      $storage: storage,
     },
   };
   if (shallow) {
@@ -149,9 +145,7 @@ describe('MassActionBaseCreate.vue', () => {
             runType: MassActionRunType.Process,
             loading: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.create = jest.fn();
@@ -190,9 +184,7 @@ describe('MassActionBaseCreate.vue', () => {
             mode: MassActionMode.List,
             loading: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$confirm = jest.fn(() => true);

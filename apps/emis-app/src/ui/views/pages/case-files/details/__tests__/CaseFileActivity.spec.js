@@ -1,15 +1,15 @@
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCaseFileEntity } from '@libs/entities-lib/case-file';
-import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const mockCaseFile = mockCaseFileEntity({ id: '1' });
 const mockActivities = mockCaseFileActivities();
 const mockEvent = mockEventEntity();
@@ -43,10 +43,7 @@ describe('CaseFileActivity', () => {
           return [{ id: '1', name: { translation: { en: 'name' } } }];
         },
       },
-      mocks: {
-        $storage: storage,
 
-      },
     });
     await flushPromises();
   };
@@ -141,10 +138,7 @@ describe('CaseFileActivity', () => {
               return mockEvent;
             },
           },
-          mocks: {
-            $storage: storage,
 
-          },
         });
 
         await wrapper.setData({
@@ -177,10 +171,7 @@ describe('CaseFileActivity', () => {
               return mockEvent;
             },
           },
-          mocks: {
-            $storage: storage,
 
-          },
         });
 
         await wrapper.setData({
@@ -210,10 +201,7 @@ describe('CaseFileActivity', () => {
               return mockEvent;
             },
           },
-          mocks: {
-            $storage: storage,
 
-          },
         });
 
         await wrapper.setData({
@@ -242,15 +230,6 @@ describe('CaseFileActivity', () => {
         localVue,
         pinia,
         propsData: { id: mockCaseFile.id },
-        mocks: {
-          $storage: storage,
-        },
-        store: {
-          modules: {
-            caseFileEntities: {
-            },
-          },
-        },
       });
     });
 
@@ -282,7 +261,7 @@ describe('CaseFileActivity', () => {
             },
           },
           mocks: {
-            $storage: storage,
+
             $hasLevel: () => false,
             $hasRole: (r) => r === 'contributor3',
           },
@@ -302,7 +281,7 @@ describe('CaseFileActivity', () => {
             },
           },
           mocks: {
-            $storage: storage,
+
             $hasLevel: () => true,
           },
         });
@@ -324,7 +303,7 @@ describe('CaseFileActivity', () => {
             },
           },
           mocks: {
-            $storage: storage,
+
             $hasLevel: () => true,
           },
         });
@@ -347,7 +326,7 @@ describe('CaseFileActivity', () => {
             },
           },
           mocks: {
-            $storage: storage,
+
             $hasLevel: () => false,
             $hasRole: (r) => r === 'contributor3',
           },
@@ -366,7 +345,7 @@ describe('CaseFileActivity', () => {
             },
           },
           mocks: {
-            $storage: storage,
+
             $hasLevel: () => true,
             $hasFeature: () => true,
           },
@@ -388,7 +367,7 @@ describe('CaseFileActivity', () => {
             },
           },
           mocks: {
-            $storage: storage,
+
             $hasLevel: () => true,
             $hasFeature: () => true,
           },
@@ -415,7 +394,7 @@ describe('CaseFileActivity', () => {
             },
           },
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => false,
           },
         });
@@ -439,7 +418,7 @@ describe('CaseFileActivity', () => {
             },
           },
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => false,
           },
         });
@@ -455,9 +434,7 @@ describe('CaseFileActivity', () => {
           localVue,
           pinia,
           propsData: { id: mockCaseFile.id },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             caseFile() {
               return caseFile;
@@ -484,9 +461,7 @@ describe('CaseFileActivity', () => {
         localVue,
         pinia,
         propsData: { id: mockCaseFile.id },
-        mocks: {
-          $storage: storage,
-        },
+
         computed: {
           caseFile() {
             return mockCaseFile;
@@ -551,9 +526,7 @@ describe('CaseFileActivity', () => {
         localVue,
         pinia,
         propsData: { id: mockCaseFile.id },
-        mocks: {
-          $storage: storage,
-        },
+
         computed: {
           caseFile() {
             return mockCaseFile;

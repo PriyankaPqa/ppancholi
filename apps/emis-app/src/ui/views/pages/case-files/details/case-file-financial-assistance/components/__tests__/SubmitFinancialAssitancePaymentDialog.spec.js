@@ -1,5 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
+
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalTableData } from '@libs/entities-lib/approvals/approvals-table';
 import { useMockUserStore } from '@/pinia/user/user.mock';
@@ -7,7 +7,7 @@ import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assist
 import Component from '../SubmitFinancialAssistancePaymentDialog.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const financialAssistance = mockFinancialAssistanceTableEntity();
 
 let wrapper;
@@ -31,7 +31,7 @@ const doMount = (shallow = true, approvalRequired = false, approvalTable = null,
       approvalTable,
     }),
     mocks: {
-      $storage: storage,
+
       $hasFeature: () => hasFeature,
     },
   };

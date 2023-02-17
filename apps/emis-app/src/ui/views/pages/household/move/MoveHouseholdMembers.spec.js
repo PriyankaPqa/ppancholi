@@ -3,18 +3,17 @@ import { mockCombinedHousehold } from '@libs/entities-lib/household';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
 
 import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResultsMove.vue';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+
 import Component from './MoveHouseholdMembers.vue';
 
 const localVue = createLocalVue();
 const household = mockCombinedHousehold();
 const householdCreate = { ...mockHouseholdCreate(), id: 'id-1' };
-const storage = mockStorage();
 
 const { pinia, householdStore } = useMockHouseholdStore();
 
@@ -31,9 +30,7 @@ describe('MoveHouseholdMembers.vue', () => {
           propsData: {
             id: household.entity.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             currentHousehold: () => (householdCreate),
           },
@@ -50,7 +47,7 @@ describe('MoveHouseholdMembers.vue', () => {
             id: household.entity.id,
           },
           mocks: {
-            $storage: storage,
+
             $router: { back: jest.fn() },
           },
           computed: {
@@ -94,9 +91,7 @@ describe('MoveHouseholdMembers.vue', () => {
             return householdCreate;
           },
         },
-        mocks: {
-          $storage: storage,
-        },
+
         data() {
           return {
             firstHousehold: householdCreate,

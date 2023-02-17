@@ -1,24 +1,29 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockSubItemData } from '@libs/entities-lib/financial-assistance';
+import { mockFinancialAssistanceTableEntity, mockSubItemData } from '@libs/entities-lib/financial-assistance';
 import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups } from '@libs/entities-lib/financial-assistance-payment';
-import { mockStorage } from '@/storage';
+
 import flushPromises from 'flush-promises';
 import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import householdHelpers from '@/ui/helpers/household';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../ViewPaymentLineDetails.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 let financialAssistance = mockCaseFinancialAssistanceEntity({ id: '1' });
 let paymentGroup = financialAssistance.groups[0];
 let line = paymentGroup.lines[0];
 
 const { pinia, programStore } = useMockProgramStore();
 const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
+const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
 const { caseFileStore } = useMockCaseFileStore(pinia);
+
+financialAssistanceStore.getById = jest.fn(() => mockFinancialAssistanceTableEntity());
+
 describe('ViewPaymentLineDetails.vue', () => {
   let wrapper;
 
@@ -40,7 +45,7 @@ describe('ViewPaymentLineDetails.vue', () => {
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });
@@ -151,7 +156,7 @@ describe('ViewPaymentLineDetails.vue', () => {
 
   describe('Computed', () => {
     describe('financialAssistance', () => {
-      it('calls storage', async () => {
+      it('calls the store', async () => {
         await mountWrapper();
         expect(financialAssistancePaymentStore.getById).toHaveBeenCalledWith(financialAssistance.id);
         expect(wrapper.vm.financialAssistance).toEqual(mockCaseFinancialAssistanceEntity({ id: '1' }));
@@ -248,16 +253,17 @@ describe('ViewPaymentLineDetails.vue', () => {
         expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith(financialAssistance.id);
         expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalled();
         expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith(financialAssistance.id);
-        expect(storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(financialAssistance.financialAssistanceTableId);
+        expect(financialAssistanceStore.fetch).toHaveBeenCalledWith(financialAssistance.financialAssistanceTableId);
         expect(programStore.fetch).toHaveBeenCalledWith({
-          id: storage.financialAssistance.getters.get().entity.programId,
+          id: financialAssistanceStore.getById().programId,
           eventId: caseFileStore.getById().eventId,
         });
-        expect(storage.financialAssistance.mutations.setFinancialAssistance).toHaveBeenLastCalledWith(
-          storage.financialAssistance.getters.get(),
-          financialAssistancePaymentStore.getFinancialAssistanceCategories(),
-          programStore.fetch(),
-          false,
+        expect(financialAssistanceStore.setFinancialAssistance).toHaveBeenLastCalledWith(
+          { fa: financialAssistanceStore.getById(),
+            categories: financialAssistancePaymentStore.getFinancialAssistanceCategories(),
+            newProgram: programStore.fetch(),
+            removeInactiveItems: false,
+          },
         );
       });
     });

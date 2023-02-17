@@ -8,7 +8,6 @@ import routes from '@/constants/routes';
 import {
   TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc, mockTeamsMetadataStandard,
 } from '@libs/entities-lib/team';
-import { mockStorage } from '@/storage';
 
 import { mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
@@ -16,10 +15,11 @@ import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
 const { teamStore, teamMetadataStore } = useMockTeamStore(pinia);
 const { eventStore } = useMockEventStore(pinia);
@@ -50,7 +50,7 @@ describe('CreateEditTeam.vue', () => {
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });
@@ -616,9 +616,7 @@ describe('CreateEditTeam.vue', () => {
               return true;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         await wrapper.setData({
           team: mockTeamEntity(),
@@ -746,9 +744,7 @@ describe('CreateEditTeam.vue', () => {
         propsData: {
           teamType: 'standard',
         },
-        mocks: {
-          $storage: storage,
-        },
+
         data() {
           return {
             team: mockTeamEntity(),
@@ -860,9 +856,7 @@ describe('CreateEditTeam.vue', () => {
               return true;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
           data() {
             return {
               team: mockTeamEntity(),
@@ -880,9 +874,7 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             isEditMode() {
               return false;
@@ -913,9 +905,7 @@ describe('CreateEditTeam.vue', () => {
               return true;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
           data() {
             return {
               team: mockTeamEntity(),
@@ -1000,9 +990,7 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
           },
-          mocks: {
-            $storage: storage,
-          },
+
           data() {
             return {
               team: mockTeamEntity(),
@@ -1021,9 +1009,7 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
           },
-          mocks: {
-            $storage: storage,
-          },
+
           data() {
             return {
               team: mockTeamEntity(),
@@ -1104,9 +1090,7 @@ describe('CreateEditTeam.vue', () => {
               isLoading: false,
             };
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         wrapper.vm.setPrimaryContactTeam = jest.fn();
@@ -1120,9 +1104,7 @@ describe('CreateEditTeam.vue', () => {
             teamType: 'standard',
             id: '123',
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             isEditMode() {
               return true;
@@ -1167,9 +1149,6 @@ describe('CreateEditTeam.vue', () => {
               isEditMode() {
                 return false;
               },
-            },
-            mocks: {
-              $storage: storage,
             },
             data() {
               return {
@@ -1216,9 +1195,6 @@ describe('CreateEditTeam.vue', () => {
                 return true;
               },
             },
-            mocks: {
-              $storage: storage,
-            },
             data() {
               return {
                 currentPrimaryContact: {
@@ -1264,9 +1240,7 @@ describe('CreateEditTeam.vue', () => {
               return false;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         await wrapper.setData({
@@ -1311,9 +1285,6 @@ describe('CreateEditTeam.vue', () => {
             isEditMode() {
               return false;
             },
-          },
-          mocks: {
-            $storage: storage,
           },
 
         });
@@ -1364,9 +1335,7 @@ describe('CreateEditTeam.vue', () => {
               return true;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         await wrapper.setData({
@@ -1435,9 +1404,7 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             isEditMode() {
               return false;
@@ -1455,9 +1422,7 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'adhoc',
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             isEditMode() {
               return false;

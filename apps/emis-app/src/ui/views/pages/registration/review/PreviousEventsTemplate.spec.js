@@ -3,11 +3,10 @@ import { mockCaseFileEntities, mockCaseFileEntity } from '@libs/entities-lib/cas
 import { mockEventMainInfo } from '@libs/entities-lib/event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
 import Component from './PreviousEventsTemplate.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const vuetify = new Vuetify();
 
 const mockCaseFiles = [
@@ -42,9 +41,6 @@ describe('PreviousEventsTemplate.vue', () => {
           caseFiles: mockCaseFiles,
           loading: false,
         };
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });

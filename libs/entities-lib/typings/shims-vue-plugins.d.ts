@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { Store } from 'vuex';
 import { IMultilingual } from '../src/types';
 import { Toasted } from 'vue-toasted';
 
@@ -15,8 +14,6 @@ declare module 'vue/types/vue' {
   interface Vue {
     $router: any;
     $route: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    $store: Store<any>;
     $toasted: Toasted;
   }
 }

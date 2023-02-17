@@ -4,7 +4,6 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
 import {
   CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus, mockCombinedCaseFiles,
 } from '@libs/entities-lib/case-file';
@@ -12,11 +11,10 @@ import helpers from '@/ui/helpers/helpers';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { MassActionMode } from '@libs/entities-lib/mass-action';
+
 import Component from './AssessmentCaseFileFiltering.vue';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 describe('AssessmentCaseFileFiltering.vue', () => {
   let wrapper;
@@ -32,9 +30,6 @@ describe('AssessmentCaseFileFiltering.vue', () => {
           tableData() {
             return mockCombinedCaseFiles();
           },
-        },
-        mocks: {
-          $storage: storage,
         },
       });
     });
@@ -214,9 +209,6 @@ describe('AssessmentCaseFileFiltering.vue', () => {
           tableData() {
             return mockCombinedCaseFiles();
           },
-        },
-        mocks: {
-          $storage: storage,
         },
       });
     });

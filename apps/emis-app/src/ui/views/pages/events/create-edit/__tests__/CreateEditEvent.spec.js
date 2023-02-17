@@ -7,13 +7,12 @@ import {
 import {
   mockEventEntity, mockRegionData, mockOtherProvinceData, mockEventEntities,
 } from '@libs/entities-lib/event';
-import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+
 import Component from '../CreateEditEvent.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 const { pinia, eventStore } = useMockEventStore();
 
@@ -44,7 +43,7 @@ describe('CreatEditEvent.vue', () => {
         },
       },
       mocks: {
-        $storage: storage,
+
         $route: {
           name: routes.events.edit.name,
         },

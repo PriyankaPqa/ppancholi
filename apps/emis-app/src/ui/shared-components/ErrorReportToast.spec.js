@@ -1,5 +1,4 @@
 /* eslint-disable vue/max-len, max-len */
-import { mockStorage } from '@/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { User, mockUserData } from '@libs/entities-lib/user';
 
@@ -11,7 +10,6 @@ import Component from './ErrorReportToast.vue';
 
 const localVue = createLocalVue();
 
-const storage = mockStorage();
 let onLineGetter;
 
 describe('ErrorReportToast', () => {
@@ -90,10 +88,6 @@ describe('ErrorReportToast', () => {
       computed: {
         languageCode: () => 'en',
       },
-      mocks: {
-        $storage: storage,
-      },
-
     });
   });
 
@@ -339,9 +333,6 @@ describe('ErrorReportToast', () => {
             languageCode: () => 'en',
             stringifiedCallPayload: () => '{"key1": { "key2": "value" }}',
             tenantId: () => 'mock-tenant-id',
-          },
-          mocks: {
-            $storage: storage,
           },
         });
 

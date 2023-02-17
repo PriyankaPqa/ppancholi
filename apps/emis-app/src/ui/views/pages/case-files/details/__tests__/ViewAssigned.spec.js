@@ -1,21 +1,19 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedUserAccounts } from '@libs/entities-lib/user-account';
-import { mockStorage } from '@/storage';
-
 import { mockAssignedTeamMembers } from '@libs/entities-lib/case-file';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import Component from '../case-file-activity/components/ViewAssigned.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia } = useMockUserAccountStore();
 const { teamStore } = useMockTeamStore(pinia);
 useMockTeamStore(pinia);
 let wrapper;
 
 // eslint-disable-next-line @typescript-eslint/default-param-last
-const doMount = (shallow = false, pStorage) => {
+const doMount = (shallow = false) => {
   const options = {
     localVue,
     pinia,
@@ -26,9 +24,6 @@ const doMount = (shallow = false, pStorage) => {
         assignedTeamIds: [],
       },
       show: true,
-    },
-    mocks: {
-      $storage: pStorage,
     },
   };
   if (shallow) {
@@ -42,7 +37,7 @@ describe('ViewAssigned.vue', () => {
   describe('Template', () => {
     describe('dialog', () => {
       it('displays the view assigned dialog', () => {
-        doMount(true, storage);
+        doMount(true);
         const element = wrapper.findDataTest('view-assigned-dialog');
         expect(element.exists()).toBeTruthy();
       });
@@ -52,7 +47,7 @@ describe('ViewAssigned.vue', () => {
   describe('Life Cycle', () => {
     describe('created', () => {
       beforeEach(() => {
-        doMount(true, storage);
+        doMount(true);
         wrapper.vm.setAssignedIndividuals = jest.fn();
         wrapper.vm.fetchUserAccounts = jest.fn();
         wrapper.vm.fetchTeams = jest.fn();
@@ -79,7 +74,7 @@ describe('ViewAssigned.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      doMount(true, storage);
+      doMount(true);
       wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [mockCombinedUserAccounts()[0].entity.id] }));
       wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => ([
         { entity: { id: 'mock-assigned-individual-id-1', displayName: 'User A' } },

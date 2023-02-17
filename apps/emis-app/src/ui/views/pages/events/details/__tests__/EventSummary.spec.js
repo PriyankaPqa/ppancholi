@@ -5,7 +5,6 @@ import {
 } from '@libs/entities-lib/event';
 
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
 import { EEventSummarySections } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
@@ -13,10 +12,11 @@ import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { Status } from '@libs/entities-lib/base';
+
 import Component, { EDialogComponent } from '../EventSummary.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const mockEvent = mockEventEntities()[0];
 
 const pinia = getPiniaForUser('level5');
@@ -160,7 +160,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-            $storage: storage,
+
           },
           stubs: {
             EventStatusDialog: true,
@@ -221,7 +221,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-            $storage: storage,
+
           },
           stubs: {
             EventStatusDialog: true,
@@ -263,7 +263,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-            $storage: storage,
+
           },
           stubs: {
             EventStatusDialog: true,
@@ -306,7 +306,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-            $storage: storage,
+
           },
           stubs: {
             EventStatusDialog: true,
@@ -349,7 +349,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-            $storage: storage,
+
           },
           stubs: {
             EventStatusDialog: true,
@@ -413,7 +413,7 @@ describe('EventSummary.vue', () => {
               id: '7c076603-580a-4400-bef2-5ddececb0931',
             },
           },
-          $storage: storage,
+
         },
       });
     });
@@ -436,7 +436,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-            $storage: storage,
+
           },
           computed: {
             event() {
@@ -455,7 +455,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-            $storage: storage,
+
           },
           computed: {
             event() {
@@ -846,7 +846,7 @@ describe('EventSummary.vue', () => {
               id: '7c076603-580a-4400-bef2-5ddececb0931',
             },
           },
-          $storage: storage,
+
         },
       });
     });

@@ -1,13 +1,11 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
 import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
 import routes from '@/constants/routes';
+
 import Component from './AssessmentHomeMassAction.vue';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 describe('AssessmentHomeMassAction.vue', () => {
   let wrapper;
@@ -16,9 +14,7 @@ describe('AssessmentHomeMassAction.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -43,9 +39,7 @@ describe('AssessmentHomeMassAction.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -69,9 +63,7 @@ describe('AssessmentHomeMassAction.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

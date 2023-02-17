@@ -24,6 +24,7 @@
 import Vue from 'vue';
 import { VForm } from '@libs/shared-lib/types';
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 
 export default Vue.extend({
   name: 'AddEditItemButtons',
@@ -32,7 +33,7 @@ export default Vue.extend({
     mode: {
       type: String,
       required: true,
-      validator: (value) => ['add', 'edit'].indexOf(value) !== -1,
+      validator: (value: string) => ['add', 'edit'].indexOf(value) !== -1,
     },
 
     failed: {
@@ -71,13 +72,13 @@ export default Vue.extend({
       const isValid = await (this.$parent.$parent.$parent.$refs.form as VForm).validate();
 
       if (isValid) {
-        const newItem = this.$storage.financialAssistance.getters.newItem();
+        const newItem = useFinancialAssistanceStore().newItem;
 
-        this.$storage.financialAssistance.mutations.addItem(newItem);
+        useFinancialAssistanceStore().addItem({ item: newItem });
 
-        this.$storage.financialAssistance.mutations.setAddingItem(false);
+        useFinancialAssistanceStore().addingItem = false;
 
-        this.$storage.financialAssistance.mutations.resetNewItem();
+        useFinancialAssistanceStore().resetNewItem();
       }
     },
 
@@ -85,23 +86,23 @@ export default Vue.extend({
      * When the user clicks the save button after editing an item
      */
     onSaveEditItem() {
-      const newItem: IFinancialAssistanceTableItem = this.$storage.financialAssistance.getters.newItem();
-      const editedItemIndex = this.$storage.financialAssistance.getters.editedItemIndex();
+      const newItem: IFinancialAssistanceTableItem = useFinancialAssistanceStore().newItem;
+      const editedItemIndex = useFinancialAssistanceStore().editedItemIndex;
 
-      this.$storage.financialAssistance.mutations.setItemItem(newItem.mainCategory, editedItemIndex);
+      useFinancialAssistanceStore().setItemItem({ item: newItem.mainCategory, index: editedItemIndex });
 
-      this.$storage.financialAssistance.mutations.cancelOperation();
+      useFinancialAssistanceStore().cancelOperation();
 
-      this.$storage.financialAssistance.mutations.resetNewItem();
+      useFinancialAssistanceStore().resetNewItem();
     },
 
     /**
      * Event handler for when the user cancels adding a new item
      */
     onCancel() {
-      this.$storage.financialAssistance.mutations.cancelOperation();
+      useFinancialAssistanceStore().cancelOperation();
 
-      this.$storage.financialAssistance.mutations.resetNewItem();
+      useFinancialAssistanceStore().resetNewItem();
     },
   },
 });

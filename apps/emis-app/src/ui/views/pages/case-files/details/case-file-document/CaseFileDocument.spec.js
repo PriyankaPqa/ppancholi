@@ -724,7 +724,7 @@ describe('CaseFileDocument.vue', () => {
     });
 
     describe('download', () => {
-      it('calls storage on download', () => {
+      it('calls the store on download', () => {
         mountWrapper(false);
         wrapper.vm.download(document);
         expect(caseFileDocumentStore.downloadDocumentAsUrl).toHaveBeenCalledWith({ item: document.entity, saveDownloadedFile: true });
@@ -732,7 +732,7 @@ describe('CaseFileDocument.vue', () => {
     });
 
     describe('preview', () => {
-      it('calls storage on preview', () => {
+      it('calls the store on preview', () => {
         mountWrapper(false);
         window.open = jest.fn();
         wrapper.vm.preview(document);

@@ -4,7 +4,6 @@ import {
   shallowMount as sm,
 } from '@vue/test-utils';
 import Vuetify from 'vuetify';
-import Vuex from 'vuex';
 import '@/ui/plugins/vee-validate';
 
 import VueI18n from 'vue-i18n';
@@ -16,7 +15,6 @@ import registrationStore from '../ui/plugins/registrationStore';
 
 const plugins = [
   Vuetify,
-  Vuex,
   VueI18n,
   PiniaVuePlugin,
   registrationStore,

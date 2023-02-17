@@ -2,15 +2,14 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import colors from '@libs/shared-lib/plugins/vuetify/colors';
 import { mockUserAccountEntity, mockUserAccountMetadata } from '@libs/entities-lib/user-account';
-import { mockStorage } from '@/storage';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockUserStore } from '@/pinia/user/user.mock';
+
 import Component from '../case-file-activity/components/CaseFileStatusDialog.vue';
 
 const localVue = createLocalVue();
 
-const storage = mockStorage();
 const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
 const { userStore } = useMockUserStore(pinia);
 const { caseFileStore } = useMockCaseFileStore(pinia);
@@ -28,9 +27,7 @@ describe('CaseFileStatusDialog.vue', () => {
           toStatus: CaseFileStatus.Open,
           show: true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -150,9 +147,7 @@ describe('CaseFileStatusDialog.vue', () => {
           toStatus: CaseFileStatus.Open,
           show: true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

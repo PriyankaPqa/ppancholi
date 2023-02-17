@@ -15,16 +15,18 @@ export interface IUpdatePaymentStatusParams {
 export interface IFinancialAssistancePaymentsService extends IDomainBaseService<IFinancialAssistancePaymentEntity, uuid> {
   addFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
-  updatePaymentStatus({ entityId, paymentGroupId, status, cancellationReason }: IUpdatePaymentStatusParams): Promise<IFinancialAssistancePaymentEntity>
+  updatePaymentStatus({
+    entityId, paymentGroupId, status, cancellationReason,
+  }: IUpdatePaymentStatusParams): Promise<IFinancialAssistancePaymentEntity>
   submitFinancialAssistancePayment(entityId: uuid): Promise<IFinancialAssistancePaymentEntity>;
   submitApprovalRequest(paymentId: uuid, submitTo: uuid): Promise<IFinancialAssistancePaymentEntity>
   submitApprovalAction(paymentId: uuid, payload: IApprovalActionPayload): Promise<IFinancialAssistancePaymentEntity>
   addFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
-    Promise<IFinancialAssistancePaymentEntity>;
+  Promise<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
-    Promise<IFinancialAssistancePaymentEntity>;
+  Promise<IFinancialAssistancePaymentEntity>;
   deleteFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid):
-    Promise<IFinancialAssistancePaymentEntity>;
+  Promise<IFinancialAssistancePaymentEntity>;
   getHistory(financialAssistanceId: uuid): Promise<IVersionedEntity[]>;
   getMetadataHistory(financialAssistanceId: uuid): Promise<IVersionedEntity[]>;
   getPaymentSummary(caseFileId: uuid): Promise<PaymentsSummary>;

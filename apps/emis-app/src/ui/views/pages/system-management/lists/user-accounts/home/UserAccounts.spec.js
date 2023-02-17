@@ -1,7 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
 import { mockOptionItemData, mockRoles } from '@libs/entities-lib/optionItem';
 
 import {
@@ -11,10 +10,11 @@ import { Status } from '@libs/entities-lib/base';
 import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+
 import Component from './UserAccounts.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const usersTestData = mockCombinedUserAccounts();
 const { pinia, uiStateStore } = useMockUiStateStore();
 const { userAccountStore } = useMockUserAccountStore(pinia);
@@ -57,9 +57,6 @@ describe('UserAccounts.vue', () => {
           allActiveSubRoles: [],
           changedAccounts: [],
         };
-      },
-      mocks: {
-        $storage: storage,
       },
       ...additionalOverwrites,
     });
@@ -111,7 +108,7 @@ describe('UserAccounts.vue', () => {
         mountWrapper({
           mocks: {
             $hasFeature: jest.fn(() => false),
-            $storage: storage,
+
           },
         });
         expect(wrapper.vm.roles).toEqual(mockOptionItemData());
@@ -536,22 +533,6 @@ describe('UserAccounts.vue', () => {
               ],
             };
           },
-          mocks: {
-            $storage: {
-              userAccount: {
-                actions: {
-                  fetchRoles: jest.fn(() => mockOptionItemData()),
-                  deactivate: jest.fn(() => usersTestData[0].entity),
-                  assignRole: jest.fn(() => usersTestData[0].entity),
-                  fetchAll: jest.fn(() => usersTestData),
-                },
-                getters: {
-                  roles: jest.fn(() => mockOptionItemData()),
-                  getAll: jest.fn(() => usersTestData),
-                },
-              },
-            },
-          },
         });
       });
 
@@ -577,22 +558,6 @@ describe('UserAccounts.vue', () => {
                 },
               ],
             };
-          },
-          mocks: {
-            $storage: {
-              userAccount: {
-                actions: {
-                  fetchRoles: jest.fn(() => mockOptionItemData()),
-                  deactivate: jest.fn(() => usersTestData[0].entity),
-                  assignRole: jest.fn(() => usersTestData[0].entity),
-                  fetchAll: jest.fn(() => usersTestData),
-                },
-                getters: {
-                  roles: jest.fn(() => mockOptionItemData()),
-                  getAll: jest.fn(() => usersTestData),
-                },
-              },
-            },
           },
         });
 
@@ -635,22 +600,6 @@ describe('UserAccounts.vue', () => {
             };
           },
           pinia: getPiniaForUser('level5'),
-          mocks: {
-            $storage: {
-              userAccount: {
-                actions: {
-                  fetchRoles: jest.fn(() => mockOptionItemData()),
-                  deactivate: jest.fn(() => usersTestData[0].entity),
-                  assignRole: jest.fn(() => usersTestData[0].entity),
-                  fetchAll: jest.fn(() => usersTestData),
-                },
-                getters: {
-                  roles: jest.fn(() => mockOptionItemData()),
-                  getAll: jest.fn(() => usersTestData),
-                },
-              },
-            },
-          },
         });
 
         const result = await wrapper.vm.canNotManageRoleForUser(testUser);
@@ -692,22 +641,6 @@ describe('UserAccounts.vue', () => {
             };
           },
           pinia: getPiniaForUser('level5'),
-          mocks: {
-            $storage: {
-              userAccount: {
-                actions: {
-                  fetchRoles: jest.fn(() => mockOptionItemData()),
-                  deactivate: jest.fn(() => usersTestData[0].entity),
-                  assignRole: jest.fn(() => usersTestData[0].entity),
-                  fetchAll: jest.fn(() => usersTestData),
-                },
-                getters: {
-                  roles: jest.fn(() => mockOptionItemData()),
-                  getAll: jest.fn(() => usersTestData),
-                },
-              },
-            },
-          },
         });
 
         const result = await wrapper.vm.canNotManageRoleForUser(testUser);

@@ -4,13 +4,12 @@ import { mockShelterLocations } from '@libs/entities-lib/registration-event/regi
 import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
-import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 
 import Component from './HouseholdCard.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const mockMovingHouseholdCreate = (movingMembers = []) => ({ ...mockHouseholdCreate(), movingAdditionalMembers: movingMembers });
 const shelterLocations = mockShelterLocations();
 
@@ -37,7 +36,7 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.members).toEqual(
@@ -57,7 +56,7 @@ describe('HouseholdCard.vue', () => {
             enabledMove: false,
             moveSubmitted: false,
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.showMoveButton(1)).toEqual(false);
@@ -72,7 +71,7 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.showMoveButton(1)).toEqual(true);
@@ -93,7 +92,7 @@ describe('HouseholdCard.vue', () => {
               return [mockMember()];
             },
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.showMoveButton(0)).toEqual(true);
@@ -114,7 +113,7 @@ describe('HouseholdCard.vue', () => {
               return [mockMember({ id: '1' }), mockMember({ id: '2' })];
             },
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.showMoveButton(0)).toEqual(false);
@@ -135,7 +134,7 @@ describe('HouseholdCard.vue', () => {
               return [mockMember({ id: '1' }), mockMember({ id: '2' })];
             },
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.showMoveButton(0)).toEqual(false);
@@ -159,7 +158,7 @@ describe('HouseholdCard.vue', () => {
               return [mockMember()];
             },
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.errorOutstandingPayments(0)).toEqual(false);
@@ -185,7 +184,7 @@ describe('HouseholdCard.vue', () => {
               return members;
             },
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.errorOutstandingPayments(0)).toEqual(false);
@@ -211,7 +210,7 @@ describe('HouseholdCard.vue', () => {
               return [mockMember({ id: '1' })];
             },
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.errorOutstandingPayments(0)).toEqual(false);
@@ -233,7 +232,7 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-          mocks: { $storage: storage },
+
         });
       });
       it('returns true if the member was moved, and no selection was made for temporary address', async () => {
@@ -261,7 +260,7 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-          mocks: { $storage: storage },
+
         });
         expect(wrapper.vm.canadianProvincesItems).toEqual([{ id: '1' }]);
       });
@@ -278,7 +277,7 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-          mocks: { $storage: storage },
+
         });
         const expectList = [
           { value: ECurrentAddressTypes.Campground, text: 'Campground' },
@@ -297,7 +296,7 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
             moveSubmitted: false,
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.currentAddressTypeItems).toEqual([{ value: ECurrentAddressTypes.Campground, text: 'Campground' }]);
@@ -319,7 +318,7 @@ describe('HouseholdCard.vue', () => {
         data() {
           return { expand: ['id-1'] };
         },
-        mocks: { $storage: storage },
+
       });
 
       await wrapper.setProps({ household: mockMovingHouseholdCreate([mockMember({ id: 'moving-member-id' })]) });
@@ -339,7 +338,7 @@ describe('HouseholdCard.vue', () => {
           enabledMove: true,
           moveSubmitted: false,
         },
-        mocks: { $storage: storage },
+
       });
     });
 
@@ -425,7 +424,7 @@ describe('HouseholdCard.vue', () => {
                 return [member];
               },
             },
-            mocks: { $storage: storage },
+
           });
           wrapper.vm.$refs.addressForm.validate = jest.fn(() => true);
           wrapper.vm.closeNewAddressDialog = jest.fn(() => {});

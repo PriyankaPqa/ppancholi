@@ -3,7 +3,6 @@ import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { mockCaseFileEntity, mockCaseFileMetadata } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
@@ -12,10 +11,11 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
+
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const mockCaseFile = mockCaseFileEntity({ id: '1' });
 const mockCaseFileMeta = mockCaseFileMetadata();
 const mockEvent = mockEventEntity();
@@ -70,9 +70,7 @@ describe('CaseFileDetails.vue', () => {
           };
         },
       },
-      mocks: {
-        $storage: storage,
-      },
+
     };
     wrapper = mount(Component, params);
   };
@@ -179,9 +177,7 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             caseFile() {
               return mockCaseFile;
@@ -219,9 +215,7 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             caseFile() {
               return mockCaseFile;
@@ -259,9 +253,7 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             caseFile() {
               return mockCaseFile;
@@ -299,9 +291,7 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             caseFile() {
               return mockCaseFile;
@@ -373,9 +363,7 @@ describe('CaseFileDetails.vue', () => {
         computed: {
           primaryBeneficiary: () => mockMember(),
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -427,9 +415,7 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         expect(JSON.stringify(wrapper.vm.caseFile)).toEqual(JSON.stringify(mockCaseFile));
       });
@@ -443,9 +429,7 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         const altHousehold = {
           memberMetadata: [
@@ -470,9 +454,7 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             primaryBeneficiary() {
               return { firstName: 'Jack', lastName: 'White' };
@@ -491,9 +473,7 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             primaryBeneficiary() {
               return {
@@ -518,9 +498,7 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             primaryBeneficiary() {
               return {
@@ -545,9 +523,7 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             primaryBeneficiary() {
               return {
@@ -572,9 +548,7 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
           computed: {
             primaryBeneficiary() {
               return {
@@ -663,9 +637,7 @@ describe('CaseFileDetails.vue', () => {
         propsData: {
           id: mockCaseFile.id,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -700,9 +672,7 @@ describe('CaseFileDetails.vue', () => {
             return mockEvent;
           },
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

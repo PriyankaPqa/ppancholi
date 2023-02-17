@@ -1,12 +1,12 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import entityUtils from '@libs/entities-lib/utils';
-import { mockStorage } from '@/storage';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+
 import Component from '../TenantDetails.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 let wrapper;
 
 const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
@@ -18,9 +18,6 @@ beforeEach(() => {
     pinia,
     propsData: {
       disableEditBtn: false,
-    },
-    mocks: {
-      $storage: storage,
     },
   });
 });
@@ -138,7 +135,7 @@ describe('TenantDetails.vue', () => {
         expect(entityUtils.getFilledMultilingualField).toHaveBeenCalledTimes(2);
       });
 
-      it('builds request and calls storage to update tenant details', async () => {
+      it('builds request and calls the store to update tenant details', async () => {
         jest.clearAllMocks();
 
         await wrapper.setData({

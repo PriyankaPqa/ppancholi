@@ -1,15 +1,15 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCaseFileEntity, CaseFileStatus } from '@libs/entities-lib/case-file';
-import { mockStorage } from '@/storage';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity } from '@libs/entities-lib/team';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
+
 import Component from '../case-file-activity/components/CaseFileAssignments.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const mockCaseFile = mockCaseFileEntity();
 const mockTeam = mockTeamEntity();
 const { pinia, teamStore } = useMockTeamStore();
@@ -30,9 +30,7 @@ describe('CaseFileAssignments.vue', () => {
             return true;
           },
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
       wrapper.vm.loading = false;
     });
@@ -89,9 +87,7 @@ describe('CaseFileAssignments.vue', () => {
               return false;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         element = wrapper.findDataTest('case-file-assign-btn');
       });
@@ -138,9 +134,7 @@ describe('CaseFileAssignments.vue', () => {
               return false;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         element = wrapper.findDataTest('case-file-view-assign-btn');
         expect(element.exists()).toBeTruthy();
@@ -158,9 +152,7 @@ describe('CaseFileAssignments.vue', () => {
               return false;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         element = wrapper.findDataTest('case-file-view-assign-btn');
         wrapper.vm.showViewAssignmentsDialog = false;
@@ -179,9 +171,7 @@ describe('CaseFileAssignments.vue', () => {
           propsData: {
             caseFile: mockCaseFile,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         jest.spyOn(wrapper.vm, 'setAssignmentsInfo');
         wrapper.vm.$options.created.forEach((hook) => {
@@ -200,15 +190,6 @@ describe('CaseFileAssignments.vue', () => {
           propsData: {
             caseFile: mockCaseFile,
           },
-          mocks: {
-            $storage: {
-              userAccount: {
-                actions: {
-                  search: jest.fn(() => ({ ids: [] })),
-                },
-              },
-            },
-          },
         });
         expect(wrapper.vm.canAssign).toBeTruthy();
       });
@@ -220,20 +201,6 @@ describe('CaseFileAssignments.vue', () => {
             caseFile: mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open }),
           },
           pinia: getPiniaForUser('level4'),
-          mocks: {
-            $storage: {
-              userAccount: {
-                actions: {
-                  search: jest.fn(() => ({ ids: [] })),
-                },
-              },
-              team: {
-                actions: {
-                  getTeamsAssigned: jest.fn(() => [mockTeamEntity()]),
-                },
-              },
-            },
-          },
         });
         expect(wrapper.vm.canAssign).toBeTruthy();
       });
@@ -246,20 +213,6 @@ describe('CaseFileAssignments.vue', () => {
             readonly: false,
           },
           pinia: getPiniaForUser('level4'),
-          mocks: {
-            $storage: {
-              userAccount: {
-                actions: {
-                  search: jest.fn(() => ({ ids: [] })),
-                },
-              },
-              team: {
-                actions: {
-                  getTeamsAssigned: jest.fn(() => [mockTeamEntity()]),
-                },
-              },
-            },
-          },
         });
         expect(wrapper.vm.canAssign).toBeTruthy();
         await wrapper.setProps({ readonly: true });
@@ -271,20 +224,6 @@ describe('CaseFileAssignments.vue', () => {
           localVue,
           propsData: {
             caseFile: mockCaseFile,
-          },
-          mocks: {
-            $storage: {
-              userAccount: {
-                actions: {
-                  search: jest.fn(() => ({ ids: [] })),
-                },
-              },
-              team: {
-                actions: {
-                  getTeamsAssigned: jest.fn(() => [mockTeamEntity()]),
-                },
-              },
-            },
           },
           pinia: getPiniaForUser('level2'),
         });
@@ -301,9 +240,7 @@ describe('CaseFileAssignments.vue', () => {
         propsData: {
           caseFile: mockCaseFile,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
       wrapper.vm.loading = false;
     });
@@ -343,7 +280,7 @@ describe('CaseFileAssignments.vue', () => {
     });
 
     describe('getAssignedTeamInfo', () => {
-      it('calls storage action getTeamsAssigned with the right id', async () => {
+      it('calls the store action getTeamsAssigned with the right id', async () => {
         jest.clearAllMocks();
         await wrapper.vm.getAssignedTeamInfo();
         expect(teamStore.getTeamsAssigned).toHaveBeenCalledWith(mockCaseFile.id);
@@ -364,7 +301,7 @@ describe('CaseFileAssignments.vue', () => {
     });
 
     describe('getAssignedIndividualsInfo', () => {
-      it('calls storage action searchUsers', async () => {
+      it('calls the store action searchUsers', async () => {
         jest.clearAllMocks();
         wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [mockCombinedUserAccount().entity.id] }));
         wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount()]);

@@ -1,5 +1,4 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { mockStorage } from '@/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
@@ -11,8 +10,6 @@ const params = {
   orderBy: 'name',
   descending: true,
 };
-
-const storage = mockStorage();
 
 const Component = {
   render() {},
@@ -39,9 +36,6 @@ describe('tablePaginationSearch.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
-      mocks: {
-        $storage: storage,
-      },
     });
     wrapper.vm.route = 'current route';
   });
@@ -410,9 +404,6 @@ describe('tablePaginationSearch.vue', () => {
           localVue,
           computed: {
             presetFilter: () => ({ preset: '1' }),
-          },
-          mocks: {
-            $storage: storage,
           },
         });
         const preparedFilters = [{ key: 'name' }];

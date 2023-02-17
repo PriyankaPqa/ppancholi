@@ -1,14 +1,13 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
 import { mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@libs/entities-lib/financial-assistance-payment';
-import { mockStorage } from '@/storage';
 import { Status } from '@libs/entities-lib/base';
+
 import Component from '../PaymentLineGroupList.vue';
 
 const localVue = createLocalVue();
 const items = mockItems();
 const paymentGroups = mockCaseFinancialAssistancePaymentGroups();
-const storage = mockStorage();
 
 describe('PaymentLineGroupList.vue', () => {
   let wrapper;
@@ -25,7 +24,7 @@ describe('PaymentLineGroupList.vue', () => {
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });

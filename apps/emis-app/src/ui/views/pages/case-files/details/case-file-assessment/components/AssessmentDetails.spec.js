@@ -120,7 +120,7 @@ describe('AssessmentDetails.vue', () => {
     });
 
     describe('assessmentResponse', () => {
-      it('calls storage', async () => {
+      it('calls the store', async () => {
         await mountWrapper();
         const data = wrapper.vm.assessmentResponse;
         expect(assessmentResponseStore.getById).toHaveBeenCalledWith(wrapper.vm.assessmentResponseId);
@@ -129,7 +129,7 @@ describe('AssessmentDetails.vue', () => {
     });
 
     describe('assessmentForm', () => {
-      it('calls storage', async () => {
+      it('calls the store', async () => {
         await mountWrapper();
         const data = wrapper.vm.assessmentForm;
         expect(assessmentFormStore.getById).toHaveBeenCalledWith(wrapper.vm.assessmentResponse.assessmentFormId);

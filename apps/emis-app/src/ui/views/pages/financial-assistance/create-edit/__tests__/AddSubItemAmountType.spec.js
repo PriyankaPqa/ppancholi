@@ -1,13 +1,14 @@
-import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockSubItems } from '@libs/entities-lib/financial-assistance';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from '../Templates/AddSubItemAmountType.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 const subItem = mockSubItems()[0];
-storage.financialAssistance.getters.newSubItem = jest.fn(() => subItem);
+const { financialAssistanceStore, pinia } = useMockFinancialAssistanceStore();
+
+financialAssistanceStore.newSubItem = subItem;
 
 describe('AddSubItemAmountType.vue', () => {
   let wrapper;
@@ -15,11 +16,9 @@ describe('AddSubItemAmountType.vue', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    wrapper = mount(Component, {
+    wrapper = shallowMount(Component, {
       localVue,
-      mocks: {
-        $storage: storage,
-      },
+      pinia,
     });
   });
 

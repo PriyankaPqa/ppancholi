@@ -3,15 +3,14 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 import { mockEventEntity, EEventCallCentreStatus } from '@libs/entities-lib/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
-import { mockStorage } from '@/storage';
 import entityUtils from '@libs/entities-lib/utils';
 import { EEventSummarySections } from '@/types';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+
 import Component from '../components/EventCallCentreDialog.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
-const storage = mockStorage();
 
 const { pinia, eventStore } = useMockEventStore();
 
@@ -286,9 +285,7 @@ describe('EventCallCentreDialog.vue', () => {
           isEditMode: false,
           id: '',
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

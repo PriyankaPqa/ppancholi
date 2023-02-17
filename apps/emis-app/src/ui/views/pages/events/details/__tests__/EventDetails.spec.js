@@ -4,16 +4,16 @@ import { mockEventEntities } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
-import { mockStorage } from '@/storage';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import flushPromises from 'flush-promises';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { mockProvider } from '@/services/provider';
+
 import Component from '../EventDetails.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const mockEvent = mockEventEntities()[0];
 const mockRelatedEvent = mockEventEntities()[1];
 const provider = mockProvider();
@@ -53,7 +53,7 @@ describe('EventDetails.vue', () => {
               id: '1',
             },
           },
-          $storage: storage,
+
           $services: provider,
         },
       });
@@ -226,9 +226,7 @@ describe('EventDetails.vue', () => {
         propsData: {
           id: '1',
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
     describe('event', () => {
@@ -256,9 +254,7 @@ describe('EventDetails.vue', () => {
               return { ...mockEvent, responseDetails: { eventType: { optionItemId: mockOptionItemData()[0].id } } };
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.eventTypeName).toEqual(mockOptionItemData()[0].name);
@@ -278,9 +274,7 @@ describe('EventDetails.vue', () => {
               return { ...mockEvent, location: { province: ECanadaProvinces.QC } };
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         expect(wrapper.vm.provinceName).toEqual('common.provinces.QC');
       });
@@ -305,9 +299,7 @@ describe('EventDetails.vue', () => {
               };
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         expect(wrapper.vm.provinceName).toEqual('other-province');
       });
@@ -405,7 +397,7 @@ describe('EventDetails.vue', () => {
               id: '1',
             },
           },
-          $storage: storage,
+
         },
       });
     });
@@ -434,7 +426,7 @@ describe('EventDetails.vue', () => {
               id: '1',
             },
           },
-          $storage: storage,
+
         },
       });
     });

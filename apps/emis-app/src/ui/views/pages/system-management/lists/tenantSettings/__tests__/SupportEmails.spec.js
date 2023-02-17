@@ -1,11 +1,11 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import entityUtils from '@libs/entities-lib/utils';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+
 import Component from '../SupportEmails.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 let wrapper;
 
 const { pinia, tenantSettingsStore } = useMockTenantSettingsStore();
@@ -18,9 +18,6 @@ beforeEach(() => {
     pinia,
     propsData: {
       disableEditBtn: false,
-    },
-    mocks: {
-      $storage: storage,
     },
   });
 });
@@ -90,9 +87,7 @@ describe('SupportEmails.vue', () => {
               return mockEmails;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.isDirty).toBe(false);
@@ -111,9 +106,7 @@ describe('SupportEmails.vue', () => {
               return mockEmails;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         await wrapper.setData({
@@ -140,9 +133,7 @@ describe('SupportEmails.vue', () => {
               return mockEmails;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         wrapper.vm.enterEditMode();
@@ -171,9 +162,7 @@ describe('SupportEmails.vue', () => {
               return mockEmails;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         wrapper.vm.exitEditMode();
@@ -213,7 +202,7 @@ describe('SupportEmails.vue', () => {
     });
 
     describe('submit', () => {
-      it('calls storage to create tenant settings', async () => {
+      it('calls the store to create tenant settings', async () => {
         await wrapper.setData({
           tempEmails: { translation: { en: 'mock_en@email.com', fr: 'mock_fr@email.com' } },
         });
@@ -238,9 +227,7 @@ describe('SupportEmails.vue', () => {
               return true;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         wrapper.vm.$confirm = jest.fn();
@@ -263,9 +250,7 @@ describe('SupportEmails.vue', () => {
               return true;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         entityUtils.initMultilingualAttributes = jest.fn(() => ({ translation: { en: 'test' } }));

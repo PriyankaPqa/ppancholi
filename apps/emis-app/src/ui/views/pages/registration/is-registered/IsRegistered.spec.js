@@ -7,16 +7,16 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults.vue';
 
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+
 import Component from './IsRegistered.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const vuetify = new Vuetify();
 const { pinia, householdStore } = useMockHouseholdStore();
 const { registrationStore } = useMockRegistrationStore(pinia);
@@ -30,9 +30,6 @@ describe('IsRegistered.vue', () => {
       localVue,
       pinia,
       vuetify,
-      mocks: {
-        $storage: storage,
-      },
     });
   });
 
@@ -45,9 +42,7 @@ describe('IsRegistered.vue', () => {
           computed: {
             showResultPage: () => false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         expect(wrapper.findComponent(HouseholdSearch).exists()).toBeTruthy();
         expect(wrapper.findComponent(HouseholdResults).exists()).toBeFalsy();
@@ -69,9 +64,7 @@ describe('IsRegistered.vue', () => {
           computed: {
             showResultPage: () => true,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         expect(wrapper.findComponent(HouseholdSearch).exists()).toBeFalsy();
         expect(wrapper.findComponent(HouseholdResults).exists()).toBeTruthy();
@@ -85,9 +78,7 @@ describe('IsRegistered.vue', () => {
           computed: {
             showResultPage: () => true,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         await wrapper.setData({ searchResults: [mockCombinedHousehold()] });
         const component = wrapper.findComponent(HouseholdResults);
@@ -106,9 +97,7 @@ describe('IsRegistered.vue', () => {
               showDetailsDialog: true,
             };
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.findComponent(RcDialog).exists()).toBeTruthy();
@@ -145,9 +134,7 @@ describe('IsRegistered.vue', () => {
               return true;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         jest.spyOn(wrapper.vm, 'filterOutSplitHousehold').mockImplementation(() => {});
@@ -170,9 +157,7 @@ describe('IsRegistered.vue', () => {
           localVue,
           pinia,
           vuetify,
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         await wrapper.setData({
@@ -202,7 +187,7 @@ describe('IsRegistered.vue', () => {
           pinia,
           vuetify,
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => true,
           },
         });
@@ -213,7 +198,7 @@ describe('IsRegistered.vue', () => {
           pinia,
           vuetify,
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => false,
           },
         });
@@ -240,9 +225,7 @@ describe('IsRegistered.vue', () => {
           localVue,
           pinia,
           vuetify,
-          mocks: {
-            $storage: storage,
-          },
+
         });
         jest.spyOn(wrapper.vm, 'filterOutSplitHousehold').mockImplementation(() => {});
         wrapper.vm.$options.created.forEach((hook) => {

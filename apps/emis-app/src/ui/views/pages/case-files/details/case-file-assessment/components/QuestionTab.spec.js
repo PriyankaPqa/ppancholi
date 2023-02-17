@@ -421,7 +421,7 @@ describe('QuestionTab.vue', () => {
       });
     });
     describe('applyEdit', () => {
-      it('calls storage with formatted new data', async () => {
+      it('calls the store with formatted new data', async () => {
         await mountWrapper();
         const q = wrapper.vm.questionsAndAnswers[1];
         wrapper.vm.editQuestion(q);

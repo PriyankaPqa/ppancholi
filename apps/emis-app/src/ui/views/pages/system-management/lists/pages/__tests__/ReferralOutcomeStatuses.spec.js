@@ -4,13 +4,13 @@ import {
 } from '@/test/testSetup';
 
 import { EOptionLists } from '@libs/entities-lib/optionItem';
-import { mockStorage } from '@/storage';
 import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
+
 import Component from '../ReferralOutcomeStatuses.vue';
 import OptionList from '../../components/OptionList.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, optionListStore } = useMockOptionListStore();
 
 describe('ReferralOutcomeStatuses.vue', () => {
@@ -20,9 +20,6 @@ describe('ReferralOutcomeStatuses.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
-      mocks: {
-        $storage: storage,
-      },
     });
   });
 

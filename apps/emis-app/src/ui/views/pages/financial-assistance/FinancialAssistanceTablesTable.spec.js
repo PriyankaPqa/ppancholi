@@ -1,38 +1,35 @@
 import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
-import { mockCombinedFinancialAssistances } from '@libs/entities-lib/financial-assistance';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import { mockCombinedFinancialAssistances, mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
 import { mockCombinedPrograms, mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from './FinancialAssistanceTablesTable.vue';
 
-const storage = mockStorage();
 const localVue = createLocalVue();
 
 describe('FinancialAssistanceTablesTable.vue', () => {
   let wrapper;
-
-  beforeEach(() => {
-    wrapper = mount(Component, {
-      localVue,
-      pinia: getPiniaForUser('level6'),
-      mocks: {
-        $storage: storage,
-      },
-      computed: {
-        tableData: () => mockCombinedFinancialAssistances(),
-      },
-    });
-
-    wrapper.vm.searchResultIds = mockCombinedFinancialAssistances().map((item) => item.entity.id);
-    wrapper.vm.count = mockCombinedFinancialAssistances().length;
-  });
+  const pinia = getPiniaForUser('level6');
+  const table = { ...mockCombinedFinancialAssistance(), pinned: false };
+  const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
 
   describe('Template', () => {
+    beforeEach(() => {
+      wrapper = mount(Component, {
+        localVue,
+        pinia,
+        computed: {
+          tableData: () => mockCombinedFinancialAssistances(),
+        },
+      });
+
+      wrapper.vm.count = mockCombinedFinancialAssistances().length;
+    });
     describe('data table', () => {
       let dataTable;
       beforeEach(() => {
@@ -54,6 +51,17 @@ describe('FinancialAssistanceTablesTable.vue', () => {
   });
 
   describe('Computed', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        computed: {
+          tableData: () => mockCombinedFinancialAssistances(),
+        },
+      });
+
+      wrapper.vm.count = mockCombinedFinancialAssistances().length;
+    });
     describe('labels', () => {
       it('returns the right labels', () => {
         expect(wrapper.vm.labels).toEqual({
@@ -70,9 +78,6 @@ describe('FinancialAssistanceTablesTable.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia: getPiniaForUser('level6'),
-          mocks: {
-            $storage: storage,
-          },
           computed: {
             customColumns() {
               return {
@@ -161,57 +166,32 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
     describe('tableData', () => {
       it('should return the correct values', () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
-          mocks: {
-            $storage: storage,
-          },
+          pinia,
         });
+        wrapper.vm.combinedFinancialAssistanceStore.getByIds = jest.fn(() => [table]);
 
-        expect(wrapper.vm.tableData).toEqual(mockCombinedFinancialAssistances());
+        expect(wrapper.vm.tableData).toEqual([table]);
       });
     });
 
     describe('tableProps', () => {
       it('returns the correct object', () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
-          mocks: {
-            $storage: storage,
-          },
-          store: {
-            modules: {
-              financialAssistanceEntities: {
-                state: {
-                  searchLoading: false,
-                },
-              },
-            },
-          },
-        });
+          pinia,
 
+        });
+        financialAssistanceStore.searchLoading = false;
         expect(wrapper.vm.tableProps.loading).toEqual(false);
         expect(wrapper.vm.tableProps.itemClass).toBeDefined();
 
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
-          mocks: {
-            $storage: storage,
-          },
-          store: {
-            modules: {
-              financialAssistanceEntities: {
-                state: {
-                  searchLoading: true,
-                },
-              },
-            },
-          },
+          pinia,
         });
-
+        financialAssistanceStore.searchLoading = true;
         expect(wrapper.vm.tableProps.loading).toEqual(true);
       });
     });
@@ -238,7 +218,6 @@ describe('FinancialAssistanceTablesTable.vue', () => {
                 id: 'event id',
               },
             },
-            $storage: storage,
           },
         });
 
@@ -248,6 +227,17 @@ describe('FinancialAssistanceTablesTable.vue', () => {
   });
 
   describe('Lifecycle', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        computed: {
+          tableData: () => mockCombinedFinancialAssistances(),
+        },
+      });
+
+      wrapper.vm.count = mockCombinedFinancialAssistances().length;
+    });
     describe('created', () => {
       it('should call fetchPrograms', async () => {
         wrapper.vm.fetchPrograms = jest.fn();
@@ -262,6 +252,17 @@ describe('FinancialAssistanceTablesTable.vue', () => {
   });
 
   describe('Methods', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        computed: {
+          tableData: () => mockCombinedFinancialAssistances(),
+        },
+      });
+
+      wrapper.vm.count = mockCombinedFinancialAssistances().length;
+    });
     describe('fetchData', () => {
       let params;
 
@@ -273,22 +274,20 @@ describe('FinancialAssistanceTablesTable.vue', () => {
           orderBy: 'name asc',
         };
 
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
-          mocks: {
-            $storage: storage,
-          },
+          pinia,
           computed: {
             eventId: () => 'event id',
           },
         });
       });
 
-      it('should call storage actions with proper parameters', async () => {
+      it('should call the store with proper parameters', async () => {
+        wrapper.vm.combinedFinancialAssistanceStore.search = jest.fn();
         await wrapper.vm.fetchData(params);
 
-        expect(storage.financialAssistance.actions.search).toHaveBeenCalledWith({
+        expect(wrapper.vm.combinedFinancialAssistanceStore.search).toHaveBeenCalledWith({
           search: params.search,
           filter: {
             'Entity/EventId': 'event id',
@@ -359,12 +358,9 @@ describe('FinancialAssistanceTablesTable.vue', () => {
 
     describe('fetchPrograms', () => {
       it('calls search action', async () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
-          mocks: {
-            $storage: storage,
-          },
+          pinia,
         });
 
         wrapper.vm.combinedProgramStore.search = jest.fn(() => ({
@@ -372,7 +368,6 @@ describe('FinancialAssistanceTablesTable.vue', () => {
           count: mockProgramEntities().length,
         }));
         wrapper.vm.combinedProgramStore.getByIds = jest.fn(() => mockCombinedPrograms());
-        wrapper.vm.searchResultIds = mockCombinedPrograms().map((e) => e.entity.id);
 
         await wrapper.setData({
           presetFilter: {

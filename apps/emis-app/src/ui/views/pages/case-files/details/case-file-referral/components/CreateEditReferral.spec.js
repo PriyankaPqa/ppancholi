@@ -1,11 +1,11 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
+
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import Component from './CreateEditReferral.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
 
 describe('CreateEditReferral', () => {
@@ -30,7 +30,7 @@ describe('CreateEditReferral', () => {
             id: 'CASEFILE_ID',
           },
         },
-        $storage: storage,
+
       },
     });
   };
@@ -115,7 +115,7 @@ describe('CreateEditReferral', () => {
                 referralId: 'REF_ID',
               },
             },
-            $storage: storage,
+
           },
         });
 
@@ -137,7 +137,7 @@ describe('CreateEditReferral', () => {
                 referralId: 'REF_ID',
               },
             },
-            $storage: storage,
+
           },
         });
 
@@ -182,9 +182,7 @@ describe('CreateEditReferral', () => {
           propsData: {
             id: 'CASEFILE_ID',
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
       });
 

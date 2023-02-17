@@ -55,6 +55,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 
 export default Vue.extend({
   name: 'CreateEditFinancialAssistanceForm',
@@ -110,7 +111,7 @@ export default Vue.extend({
     },
 
     loadingTables(): boolean {
-      return this.$storage.financialAssistance.getters.loading();
+      return useFinancialAssistanceStore().loading;
     },
   },
 

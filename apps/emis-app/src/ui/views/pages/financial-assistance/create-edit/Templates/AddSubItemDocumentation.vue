@@ -9,6 +9,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 
 export default Vue.extend({
   name: 'AddSubItemDocumentation',
@@ -19,11 +20,11 @@ export default Vue.extend({
      */
     documentationRequired: {
       get(): boolean {
-        return this.$storage.financialAssistance.getters.newSubItem().documentationRequired;
+        return useFinancialAssistanceStore().newSubItem.documentationRequired;
       },
 
       set(value: boolean) {
-        this.$storage.financialAssistance.mutations.setNewSubItemDocumentationRequired(value);
+        useFinancialAssistanceStore().newSubItem.documentationRequired = value;
       },
     },
   },

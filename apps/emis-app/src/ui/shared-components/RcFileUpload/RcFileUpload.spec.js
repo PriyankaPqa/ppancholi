@@ -1,10 +1,8 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import helpers from '@/ui/helpers/helpers';
 import Component from './RcFileUpload.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 describe('RcFileUpload.spec', () => {
   let wrapper;
@@ -13,7 +11,6 @@ describe('RcFileUpload.spec', () => {
     wrapper = shallowMount(Component, {
       localVue,
       computed: { currentFile: () => mockFile },
-      mocks: { $storage: storage },
       ...options,
     });
   };

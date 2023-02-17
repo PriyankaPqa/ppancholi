@@ -4,10 +4,10 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
 import { mockAssessmentFormEntity, mockSearchDataForm } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import utils from '@libs/entities-lib/utils';
+
 import Component from './AssessmentDetailsCreate.vue';
 
 const formCopy = {
@@ -17,8 +17,6 @@ const formCopy = {
 };
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 describe('AssessmentDetailsCreate.vue', () => {
   let wrapper;
@@ -30,9 +28,7 @@ describe('AssessmentDetailsCreate.vue', () => {
         propsData: {
           form: formCopy,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -58,9 +54,7 @@ describe('AssessmentDetailsCreate.vue', () => {
         propsData: {
           form: formCopy,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -128,9 +122,7 @@ describe('AssessmentDetailsCreate.vue', () => {
         propsData: {
           form: formCopy,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
       wrapper.vm.onSetEvent = jest.fn();
     });

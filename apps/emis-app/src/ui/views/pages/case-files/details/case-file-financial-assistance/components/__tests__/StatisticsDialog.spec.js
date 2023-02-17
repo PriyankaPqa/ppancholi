@@ -1,10 +1,10 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockProvider } from '@/services/provider';
+
 import Component from '../StatisticsDialog.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const services = mockProvider();
 
 describe('StatisticsDialog.vue', () => {
@@ -22,7 +22,7 @@ describe('StatisticsDialog.vue', () => {
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
         $services: services,
       },
       ...additionalOverwrites,

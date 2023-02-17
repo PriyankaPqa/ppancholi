@@ -1,21 +1,21 @@
 import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockCombinedCaseFinancialAssistance, ApprovalStatus, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+
 import Component from './FinancialAssistancePaymentsList.vue';
 
-let storage = mockStorage();
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
 const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
 useMockCaseFileStore(pinia);
+
 describe('FinancialAssistancePaymentsList.vue', () => {
   let wrapper;
 
@@ -32,12 +32,16 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       data() {
         return {
           searchResultIds: [mockCombinedCaseFinancialAssistance()].map((e) => e.entity.id),
           combinedFinancialAssistancePaymentStore: {
+            search: jest.fn(() => ({ ids: ['1'], count: 1 })),
+            getByIds: jest.fn(() => [mockCombinedCaseFinancialAssistance()]),
+          },
+          combinedFinancialAssistanceStore: {
             search: jest.fn(() => ({ ids: ['1'], count: 1 })),
             getByIds: jest.fn(() => [mockCombinedCaseFinancialAssistance()]),
           },
@@ -50,9 +54,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
   };
 
   beforeEach(async () => {
-    storage = mockStorage();
     jest.clearAllMocks();
-    storage = mockStorage();
   });
 
   describe('Template', () => {

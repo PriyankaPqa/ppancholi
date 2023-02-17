@@ -2,13 +2,12 @@ import { mockMember } from '@libs/entities-lib/value-objects/member';
 
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
-
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+
 import Component from './SplitHouseholdMembers.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, registrationStore } = useMockRegistrationStore();
 describe('SplitHouseholdMembers', () => {
   let wrapper;
@@ -18,7 +17,7 @@ describe('SplitHouseholdMembers', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
-        mocks: { $storage: storage },
+
         computed: {
           members() {
             return [mockMember({ id: '1' })];
@@ -43,7 +42,7 @@ describe('SplitHouseholdMembers', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.members).toEqual(household.additionalMembers);

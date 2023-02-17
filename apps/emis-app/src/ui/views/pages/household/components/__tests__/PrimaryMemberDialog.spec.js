@@ -4,15 +4,14 @@ import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 
-import { mockStorage } from '@/storage';
-
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+
 import Component from '../PrimaryMemberDialog.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember()] };
 const { pinia, registrationStore } = useMockRegistrationStore();
 const setCurrentAddress = jest.fn();
@@ -57,7 +56,7 @@ describe('PrimaryMemberDialog', () => {
           data() {
             return { apiKey: '123' };
           },
-          mocks: { $storage: storage },
+
         });
         expect(wrapper.vm.backupIdentitySet).toEqual(householdCreate.primaryBeneficiary.identitySet);
       });
@@ -73,7 +72,7 @@ describe('PrimaryMemberDialog', () => {
           data() {
             return { apiKey: '123' };
           },
-          mocks: { $storage: storage },
+
         });
         expect(wrapper.vm.backupContactInfo).toEqual(householdCreate.primaryBeneficiary.contactInformation);
       });
@@ -89,7 +88,7 @@ describe('PrimaryMemberDialog', () => {
           data() {
             return { apiKey: '123' };
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.backupAddress).toEqual(householdCreate.primaryBeneficiary.currentAddress);
@@ -109,7 +108,7 @@ describe('PrimaryMemberDialog', () => {
         data() {
           return { apiKey: '123' };
         },
-        mocks: { $storage: storage },
+
       });
     });
 
@@ -134,7 +133,7 @@ describe('PrimaryMemberDialog', () => {
               backupAddress: householdCreate.primaryBeneficiary.currentAddress,
             };
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.changedAddress).toBeFalsy();
@@ -335,7 +334,7 @@ describe('PrimaryMemberDialog', () => {
             };
           },
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => true,
           },
         });
@@ -355,7 +354,7 @@ describe('PrimaryMemberDialog', () => {
             };
           },
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => false,
           },
         });
@@ -376,7 +375,7 @@ describe('PrimaryMemberDialog', () => {
         data() {
           return { apiKey: '123' };
         },
-        mocks: { $storage: storage },
+
       });
     });
 
@@ -452,7 +451,7 @@ describe('PrimaryMemberDialog', () => {
           data() {
             return { apiKey: '123', member: mockMember() };
           },
-          mocks: { $storage: storage },
+
         });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.onSubmit();
@@ -533,7 +532,7 @@ describe('PrimaryMemberDialog', () => {
             data() {
               return { apiKey: '123' };
             },
-            mocks: { $storage: storage },
+
           });
 
           await wrapper.vm.updateAdditionalMembersWithSameAddress();

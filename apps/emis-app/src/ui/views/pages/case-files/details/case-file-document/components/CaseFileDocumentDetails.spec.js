@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFileDocuments } from '@libs/entities-lib/case-file-document';
-import { mockStorage } from '@/storage';
+
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
@@ -9,7 +9,6 @@ import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-fi
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './CaseFileDocumentDetails.vue';
 
-const storage = mockStorage();
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
@@ -37,7 +36,7 @@ describe('CaseFileDocumentDetails', () => {
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });

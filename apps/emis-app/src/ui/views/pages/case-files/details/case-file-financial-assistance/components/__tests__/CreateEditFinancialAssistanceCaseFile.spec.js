@@ -1,9 +1,7 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import
 {
   mockFinancialAssistanceTableEntity,
-  mockCombinedFinancialAssistance,
   mockItems,
 } from '@libs/entities-lib/financial-assistance';
 import
@@ -24,13 +22,9 @@ import {
   AssociationType,
   CompletionStatus,
 } from '@libs/entities-lib/assessment-template';
-
 import { format } from 'date-fns';
-
 import { Status } from '@libs/entities-lib/base';
-
 import { mockProgramEntity, mockCombinedPrograms } from '@libs/entities-lib/program';
-
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import flushPromises from 'flush-promises';
 import routes from '@/constants/routes';
@@ -39,13 +33,12 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../CreateEditFinancialAssistanceCaseFile.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const financialAssistance = mockFinancialAssistanceTableEntity();
-const combinedFinancialAssistance = mockCombinedFinancialAssistance();
 const caseFileFinancialAssistance = mockCaseFinancialAssistanceEntity();
 const program = mockProgramEntity();
 const mockCaseFile = mockCaseFileEntity();
@@ -60,6 +53,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   let programStore;
   let assessmentResponseStore;
   let financialAssistancePaymentStore;
+  let financialAssistanceStore;
 
   // eslint-disable-next-line no-unused-vars,max-params,@typescript-eslint/no-unused-vars
   const mountWrapper = async (_fullMount = false, mode = 'edit', currentPinia = getPiniaForUser('level6'), additionalOverwrites = {}) => {
@@ -67,6 +61,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     programStore = useMockProgramStore(pinia).programStore;
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
     financialAssistancePaymentStore = useMockFinancialAssistancePaymentStore(pinia).financialAssistancePaymentStore;
+    financialAssistanceStore = useMockFinancialAssistanceStore(pinia).financialAssistanceStore;
     useMockCaseFileStore(pinia);
     wrapper = (mount)(Component, {
       shallow: true,
@@ -86,7 +81,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         },
       },
       mocks: {
-        $storage: storage,
         $route: {
           name: routes.caseFile.financialAssistance[mode].name,
           params: {
@@ -102,13 +96,12 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       ...additionalOverwrites,
     });
 
+    financialAssistanceStore.mainItems = items;
     await flushPromises();
   };
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    storage.financialAssistance.actions.addFinancialAssistance = jest.fn(() => combinedFinancialAssistance);
-    storage.financialAssistance.getters.items = jest.fn(() => items);
     await mountWrapper(false, 'edit', pinia);
   });
 
@@ -247,7 +240,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should call storage to fetch categories - including inactives', async () => {
+      it('should call the store to fetch categories - including inactives', async () => {
         jest.spyOn(wrapper.vm, 'searchTables').mockImplementation(() => financialAssistance);
 
         const hook = wrapper.vm.$options.created[0];
@@ -286,7 +279,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         expect(wrapper.vm.fetchTable).toHaveBeenCalledTimes(1);
       });
 
-      it('inits financialAssistance from storage when id is passed', async () => {
+      it('inits financialAssistance from the store when id is passed', async () => {
         expect(financialAssistancePaymentStore.fetch).toHaveBeenCalledWith('myId');
         expect(wrapper.vm.financialAssistance.id).toBe(mockCaseFinancialAssistanceEntities()[0].id);
         expect(wrapper.vm.financialAssistance.name).toBe(caseFileFinancialAssistance.name);
@@ -746,7 +739,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     describe('fetchTable', () => {
       it('fetches financial table by id', async () => {
         await wrapper.vm.fetchTable();
-        expect(storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(caseFileFinancialAssistance.financialAssistanceTableId);
+        expect(financialAssistanceStore.fetch).toHaveBeenCalledWith(caseFileFinancialAssistance.financialAssistanceTableId);
       });
     });
 
@@ -766,7 +759,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     });
 
     describe('fetchAssessmentResponseByCaseFileId', () => {
-      it('searches storage', async () => {
+      it('searches the store', async () => {
         await mountWrapper();
         await wrapper.vm.fetchAssessmentResponseByCaseFileId('caseFileId');
         expect(assessmentResponseStore.search).toHaveBeenCalledWith({
@@ -827,7 +820,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     });
 
     describe('updateSelectedProgram', () => {
-      it('should call storage actions with proper parameters', async () => {
+      it('should call the store actions with proper parameters', async () => {
         await wrapper.vm.updateSelectedProgram(financialAssistance);
         expect(programStore.fetch).toHaveBeenCalledWith({
           id: financialAssistance.programId,
@@ -874,19 +867,19 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     });
 
     describe('updateSelectedTable', () => {
-      it('should call storage to get table', async () => {
+      it('should call the store to get table', async () => {
         await wrapper.vm.updateSelectedTable(financialAssistance);
-        expect(storage.financialAssistance.getters.get).toHaveBeenCalledWith(financialAssistance.id);
+        expect(financialAssistanceStore.getById).toHaveBeenCalledWith(financialAssistance.id);
       });
 
-      it('should call storage to get categories', async () => {
+      it('should call the store to get categories', async () => {
         await wrapper.vm.updateSelectedTable(financialAssistance);
         expect(financialAssistancePaymentStore.getFinancialAssistanceCategories).toHaveBeenCalled();
       });
     });
 
     describe('saveFinancialAssistance', () => {
-      it('should call the storage depending when adding', async () => {
+      it('should call the the store depending when adding', async () => {
         await mountWrapper(false, 'create');
         wrapper.vm.financialAssistance = caseFileFinancialAssistance;
         wrapper.vm.$refs.form.reset = jest.fn();
@@ -894,7 +887,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         expect(financialAssistancePaymentStore.addFinancialAssistancePayment).toHaveBeenCalledWith(caseFileFinancialAssistance);
       });
 
-      it('should call the storage depending when editing', async () => {
+      it('should call the the store depending when editing', async () => {
         wrapper.vm.financialAssistance = caseFileFinancialAssistance;
         wrapper.vm.$refs.form.reset = jest.fn();
         await wrapper.vm.saveFinancialAssistance();

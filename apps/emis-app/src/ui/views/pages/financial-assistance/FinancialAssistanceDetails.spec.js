@@ -1,15 +1,26 @@
 import { RcNestedTable } from '@libs/component-lib/components';
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockItems, EFinancialAmountModes, EFinancialFrequency } from '@libs/entities-lib/financial-assistance';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
 import Component from './FinancialAssistanceDetails.vue';
 
-const storage = mockStorage();
 const localVue = createLocalVue();
 const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
+const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
+
+financialAssistanceStore.$reset = jest.fn();
+financialAssistanceStore.program = {
+  name: {
+    translation: {
+      en: 'name en',
+      fr: 'name fr',
+    },
+  },
+};
+financialAssistanceStore.status = Status.Active;
 
 describe('FinancialAssistanceDetailsMassAction.vue', () => {
   let wrapper;
@@ -24,7 +35,6 @@ describe('FinancialAssistanceDetailsMassAction.vue', () => {
             faId: 'faId',
           },
         },
-        $storage: storage,
       },
     });
   });
@@ -80,25 +90,13 @@ describe('FinancialAssistanceDetailsMassAction.vue', () => {
 
     describe('name', () => {
       it('returns correct data', () => {
-        expect(wrapper.vm.name).toBe('');
-
-        wrapper.vm.$storage.financialAssistance.getters.name = jest.fn(() => 'name');
-
+        financialAssistanceStore.getName = jest.fn(() => 'name');
         expect(wrapper.vm.name).toBe('name');
       });
     });
 
     describe('programName', () => {
       it('returns correct data', () => {
-        wrapper.vm.$storage.financialAssistance.getters.program = jest.fn(() => ({
-          name: {
-            translation: {
-              en: 'name en',
-              fr: 'name fr',
-            },
-          },
-        }));
-
         expect(wrapper.vm.programName).toBe('name en');
       });
     });
@@ -183,7 +181,7 @@ describe('FinancialAssistanceDetailsMassAction.vue', () => {
 
         expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalledTimes(1);
 
-        expect(wrapper.vm.$storage.financialAssistance.actions.fetch).toHaveBeenCalledWith('faId');
+        expect(financialAssistanceStore.fetch).toHaveBeenCalledWith('faId');
       });
     });
   });

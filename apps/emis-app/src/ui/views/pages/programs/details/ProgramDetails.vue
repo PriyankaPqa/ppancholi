@@ -192,6 +192,7 @@ import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
 import { useAssessmentFormStore, useAssessmentFormMetadataStore } from '@/pinia/assessment-form/assessment-form';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramStore } from '@/pinia/program/program';
 
@@ -255,7 +256,7 @@ export default Vue.extend({
         await useProgramStore().fetch({ id: this.programId, eventId: this.id });
       }
 
-      this.financialAssistanceTables = await this.$storage.financialAssistance.actions.fetchByProgramId(this.programId);
+      this.financialAssistanceTables = await useFinancialAssistanceStore().fetchByProgramId({ programId: this.programId });
       this.assessmentIds = (await this.combinedFormStore.search({
         filter: { 'Entity/ProgramId': this.programId },
         top: 999,

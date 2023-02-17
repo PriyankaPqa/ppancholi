@@ -22,11 +22,12 @@ import Vue from 'vue';
 import { IMassActionEntity } from '@libs/entities-lib/mass-action';
 import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { IFinancialAssistanceTableCombined } from '@libs/entities-lib/financial-assistance';
+import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { IOptionItem, IOptionSubItem } from '@libs/entities-lib/optionItem';
 import { useEventStore } from '@/pinia/event/event';
 import { useProgramStore } from '@/pinia/program/program';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 
 export default Vue.extend({
   name: 'FinancialAssistancePaymentDetailsTable',
@@ -41,7 +42,7 @@ export default Vue.extend({
   data() {
     return {
       event: null as IEventEntity,
-      table: null as IFinancialAssistanceTableCombined,
+      table: null as IFinancialAssistanceTableEntity,
       program: null as IProgramEntity,
       item: null as IOptionItem,
       eventLoading: false,
@@ -61,7 +62,7 @@ export default Vue.extend({
         },
         {
           label: 'massActions.financialAssistance.create.table.label',
-          value: this.table?.entity && this.$m(this.table.entity.name),
+          value: this.table && this.$m(this.table.name),
           dataTest: 'table',
           loading: this.tableLoading,
         },
@@ -121,7 +122,7 @@ export default Vue.extend({
 
     async fetchTable() {
       this.tableLoading = true;
-      this.table = await this.$storage.financialAssistance.actions.fetch(this.massAction.details.tableId);
+      this.table = await useFinancialAssistanceStore().fetch(this.massAction.details.tableId);
       this.tableLoading = false;
     },
 

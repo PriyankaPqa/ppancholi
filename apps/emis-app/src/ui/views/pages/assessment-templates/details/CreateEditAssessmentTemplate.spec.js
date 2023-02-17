@@ -1,13 +1,13 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template.mock';
 import { createTestingPinia } from '@pinia/testing';
+
 import Component from './CreateEditAssessmentTemplate.vue';
 
 const localVue = createLocalVue();
-let storage = mockStorage();
+
 let pinia = createTestingPinia({ stubActions: false });
 let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
 let assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
@@ -26,7 +26,7 @@ describe('CreateEditAssessmentTemplate.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
         $route: {
           params: {
             assessmentTemplateId,
@@ -40,7 +40,6 @@ describe('CreateEditAssessmentTemplate.vue', () => {
   };
 
   beforeEach(async () => {
-    storage = mockStorage();
     pinia = createTestingPinia({ stubActions: false });
     assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
@@ -247,9 +246,7 @@ describe('CreateEditAssessmentTemplate.vue', () => {
           propsData: {
             id: 'EVENTID',
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
       });
 

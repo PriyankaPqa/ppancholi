@@ -9,13 +9,11 @@ import routes from '@/constants/routes';
 import {
   MassActionDataCorrectionType, MassActionMode, MassActionRunType, mockMassActionEntity,
 } from '@libs/entities-lib/mass-action';
-import { mockStorage } from '@/storage';
 import { format } from 'date-fns';
+
 import Component from './DataCorrectionCreate.vue';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 describe('DataCorrectionCreate.vue', () => {
   let wrapper;
@@ -150,9 +148,7 @@ describe('DataCorrectionCreate.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

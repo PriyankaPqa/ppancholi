@@ -5,22 +5,21 @@ import {
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockEventMainInfo, EEventLocationStatus } from '@libs/entities-lib/event';
-import { mockCombinedCaseFile, CaseFileStatus, mockCaseFileEntities } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, mockCaseFileEntities } from '@libs/entities-lib/case-file';
 import householdHelpers from '@/ui/helpers/household';
 import routes from '@/constants/routes';
 import flushPromises from 'flush-promises';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+
 import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();
 const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember({ id: '1' }), mockMember({ id: '2' }), mockMember({ id: '3' })] };
 const householdEntity = mockHouseholdEntity();
-const storage = mockStorage();
-const caseFile = mockCombinedCaseFile();
+
 const member = mockMember();
 
 const { pinia, registrationStore } = useMockRegistrationStore();
@@ -74,9 +73,7 @@ describe('HouseholdProfile.vue', () => {
             return householdEntity;
           },
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
       householdStore.fetch = jest.fn(() => householdEntity);
       await flushPromises();
@@ -135,9 +132,7 @@ describe('HouseholdProfile.vue', () => {
               return true;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.findDataTest('member_address_edit_btn').exists()).toBeTruthy();
@@ -167,9 +162,7 @@ describe('HouseholdProfile.vue', () => {
               return false;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.findDataTest('member_address_edit_btn').exists()).toBeFalsy();
@@ -248,9 +241,7 @@ describe('HouseholdProfile.vue', () => {
               return caseFiles;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.registrationLocations).toEqual([
@@ -273,9 +264,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         expect(wrapper.vm.household).toEqual(householdCreate);
       });
@@ -294,9 +283,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         expect(wrapper.vm.householdEntity).toEqual(householdEntity);
       });
@@ -323,9 +310,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.inactiveCaseFiles).toEqual([cfClosed]);
@@ -346,9 +331,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         expect(wrapper.vm.country).toEqual('mock-country');
       });
@@ -367,7 +350,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.lastUpdated).toEqual('May 26, 2021');
@@ -385,7 +368,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.lastUpdated).toEqual('May 26, 2021');
@@ -405,11 +388,6 @@ describe('HouseholdProfile.vue', () => {
             },
           },
           pinia: getPiniaForUser('level1'),
-          mocks: {
-            $storage: {
-              caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
-            },
-          },
         });
         wrapper.vm.$hasFeature = jest.fn(() => false);
         expect(wrapper.vm.canEdit).toBeTruthy();
@@ -427,11 +405,6 @@ describe('HouseholdProfile.vue', () => {
             },
           },
           pinia: getPiniaForUser('level0'),
-          mocks: {
-            $storage: {
-              caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
-            },
-          },
         });
         wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(wrapper.vm.canEdit).toBeTruthy();
@@ -447,11 +420,6 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() {
               return householdCreate;
-            },
-          },
-          mocks: {
-            $storage: {
-              caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
             },
           },
         });
@@ -473,11 +441,6 @@ describe('HouseholdProfile.vue', () => {
             },
           },
           pinia: getPiniaForUser('level2'),
-          mocks: {
-            $storage: {
-              caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
-            },
-          },
         });
 
         expect(wrapper.vm.canMove).toBeTruthy();
@@ -495,11 +458,6 @@ describe('HouseholdProfile.vue', () => {
             },
           },
           pinia: getPiniaForUser('level1'),
-          mocks: {
-            $storage: {
-              caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
-            },
-          },
         });
 
         expect(wrapper.vm.canMove).toBeFalsy();
@@ -520,7 +478,6 @@ describe('HouseholdProfile.vue', () => {
             },
           },
           mocks: {
-            $storage: storage,
             $hasFeature: () => true,
           },
         });
@@ -538,7 +495,7 @@ describe('HouseholdProfile.vue', () => {
             },
           },
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => false,
           },
         });
@@ -582,9 +539,7 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: householdEntity.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
       });
       it('calls registration storage action fetchGenders', () => {
@@ -624,9 +579,7 @@ describe('HouseholdProfile.vue', () => {
         propsData: {
           id: householdEntity.id,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -643,9 +596,7 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: householdEntity.id,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         jest.spyOn(wrapper.vm.$services.publicApi, 'searchEventsById').mockImplementation(() => {});
         await wrapper.vm.fetchAllEvents();
@@ -680,9 +631,7 @@ describe('HouseholdProfile.vue', () => {
               return householdEntity;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         jest.spyOn(wrapper.vm, 'buildHouseholdCreateData').mockImplementation(() => householdCreate);
@@ -729,9 +678,7 @@ describe('HouseholdProfile.vue', () => {
               return altHousehold;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         wrapper.vm.addAdditionalMember();
@@ -758,9 +705,7 @@ describe('HouseholdProfile.vue', () => {
               return altHousehold;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.disabledAddMembers).toBeFalsy();
@@ -790,7 +735,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          mocks: { $storage: storage },
+
         });
         expect(wrapper.vm.showEditAddress).toBe(false);
 

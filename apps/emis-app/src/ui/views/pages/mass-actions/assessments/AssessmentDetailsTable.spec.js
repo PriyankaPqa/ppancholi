@@ -1,14 +1,14 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockCombinedMassAction, mockMassActionEntity } from '@libs/entities-lib/mass-action';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { mockAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
+
 import Component from './AssessmentDetailsTable.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, eventStore } = useMockEventStore();
 const { assessmentFormStore } = useMockAssessmentFormStore(pinia);
 
@@ -28,9 +28,6 @@ describe('AssessmentDetailsTable.vue', () => {
         return {
           ...otherData,
         };
-      },
-      mocks: {
-        $storage: storage,
       },
     };
     if (shallow === true) {

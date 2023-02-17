@@ -3,12 +3,11 @@ import routes from '@/constants/routes';
 import {
   CaseFileDocumentEntity, mockCaseFileDocumentEntities, mockCaseFileDocumentEntity,
 } from '@libs/entities-lib/case-file-document';
-import { mockStorage } from '@/storage';
+
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import Component from './CreateEditCaseFileDocument.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 const { pinia, caseFileDocumentStore } = useMockCaseFileDocumentStore();
 
@@ -37,7 +36,7 @@ describe('CreateEditDocument', () => {
             id: 'CASEFILE_ID',
           },
         },
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });

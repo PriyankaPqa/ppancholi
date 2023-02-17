@@ -1,15 +1,14 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockUserAccountEntity, mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
-import { mockStorage } from '@/storage';
 import { mockUsersData, User } from '@libs/entities-lib/user';
 import { useUserStore } from '@/pinia/user/user';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+
 import Component from './AccountSettings.vue';
 
 const localVue = createLocalVue();
 
-const storage = mockStorage();
 const mockUser = mockUserAccountEntity({ id: '1' });
 const mockUserMetadata = mockUserAccountMetadata({ id: '1' });
 const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
@@ -30,7 +29,7 @@ describe('AccountSettings.vue', () => {
         basicUserData: () => new User(mockUsersData()[0]),
       },
       mocks: {
-        $storage: storage,
+
         $route: {
           params: {
             id,
@@ -182,14 +181,6 @@ describe('AccountSettings.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
-        mocks: {
-          $storage: storage,
-        },
-        store: {
-          userAccount: {
-            searchLoading: false,
-          },
-        },
       });
       userStore = useUserStore();
       userStore.getUser = jest.fn(() => new User(mockUsersData()[0]));
@@ -220,9 +211,7 @@ describe('AccountSettings.vue', () => {
               return userMetadata;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.preferredLanguage).toBe('enums.preferredLanguage.English (en-CA)');
@@ -238,9 +227,7 @@ describe('AccountSettings.vue', () => {
               return userMetadata;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.preferredLanguage).toBe('enums.preferredLanguage.French (fr-CA)');
@@ -256,9 +243,7 @@ describe('AccountSettings.vue', () => {
               return userMetadata;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
 
         expect(wrapper.vm.preferredLanguage).toBe('account_settings.preferredLanguage.notSet');

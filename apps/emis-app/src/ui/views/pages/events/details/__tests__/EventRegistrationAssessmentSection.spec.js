@@ -1,6 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity } from '@libs/entities-lib/event';
-import { mockStorage } from '@/storage';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { createTestingPinia } from '@pinia/testing';
@@ -13,7 +12,6 @@ let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
 let eventStore = useMockEventStore(pinia).eventStore;
 
 const mockEvent = mockEventEntity();
-const storage = mockStorage();
 
 describe('EventRegistrationAssessmentSection.vue', () => {
   let wrapper;
@@ -32,7 +30,7 @@ describe('EventRegistrationAssessmentSection.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });
@@ -69,7 +67,7 @@ describe('EventRegistrationAssessmentSection.vue', () => {
 
   describe('Methods', () => {
     describe('deleteRegistrationAssessment', () => {
-      it('calls storage action deleteRegistrationAssessment with the right payload', async () => {
+      it('calls the store action deleteRegistrationAssessment with the right payload', async () => {
         await wrapper.vm.deleteRegistrationAssessment();
         expect(eventStore.deleteRegistrationAssessment).toHaveBeenCalledWith({
           eventId: wrapper.vm.eventId,
@@ -77,7 +75,7 @@ describe('EventRegistrationAssessmentSection.vue', () => {
         });
       });
 
-      it('does not calls storage action deleteRegistrationAssessment if not confirmed', async () => {
+      it('does not calls the store action deleteRegistrationAssessment if not confirmed', async () => {
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.deleteRegistrationAssessment();
         expect(eventStore.deleteRegistrationAssessment).not.toHaveBeenCalled();

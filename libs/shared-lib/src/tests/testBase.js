@@ -32,7 +32,7 @@ function findSelectWithValidation(dataTest) {
 }
 
 export const getWrapper = (Component, options, {
-  mockStore, mockProviderInstance, makeStorage, mountMethod, mockStorage,
+  mockStore, mockProviderInstance, mountMethod,
 }) => {
   if (!options.localVue) {
     throw new Error('Must pass in localVue instance.');
@@ -110,20 +110,13 @@ export const getWrapper = (Component, options, {
     store = mockStore(options.store);
   }
 
-  let $storage;
-  if (mockStorage) {
-    $storage = mockStorage;
-  } else if (typeof makeStorage === 'function') {
-    $storage = makeStorage(store);
-  }
-
   const wrapper = mountMethod(Component, {
     vuetify,
     i18n,
     sync: false,
     ...options,
     store,
-    mocks: deepmerge({ ...mocks, $storage }, options.mocks || {}),
+    mocks: deepmerge({ ...mocks }, options.mocks || {}),
     stubs: deepmerge(stubs, options.stubs || {}),
   });
 

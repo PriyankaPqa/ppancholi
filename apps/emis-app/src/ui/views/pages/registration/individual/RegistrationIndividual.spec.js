@@ -1,6 +1,5 @@
 import { mockHouseholdCreateData } from '@libs/entities-lib/household-create';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import helpers from '@/ui/helpers/helpers';
@@ -8,10 +7,11 @@ import { mockTabs } from '@libs/stores-lib/registration/tabs.mock';
 import { tabs } from '@/pinia/registration/tabs';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+
 import Component from './RegistrationIndividual.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia, caseFileStore } = useMockCaseFileStore();
 const { registrationStore } = useMockRegistrationStore(pinia);
 describe('Individual.vue', () => {
@@ -23,9 +23,7 @@ describe('Individual.vue', () => {
       computed: {
         ...otherComputed,
       },
-      mocks: {
-        $storage: storage,
-      },
+
       ...otherOptions,
     };
     if (shallow === true) {
@@ -115,17 +113,6 @@ describe('Individual.vue', () => {
           true,
           {
             currentTab: () => ({ id: 'isRegistered' }),
-          },
-          {
-            store: {
-              modules: {
-                registration: {
-                  state: {
-                    householdResultsShown: true,
-                  },
-                },
-              },
-            },
           },
         );
         registrationStore.householdResultsShown = true;

@@ -110,6 +110,7 @@ import { Status } from '@libs/entities-lib/base';
 import { useProgramStore } from '@/pinia/program/program';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { INestedTableHeader } from './create-edit/INestedTableHeader';
 import TooltipFinancialAssistanceCategory from './create-edit/TooltipFinancialAssistanceCategory.vue';
 import ErrorPanel from './create-edit/ErrorPanel.vue';
@@ -139,21 +140,20 @@ export default Vue.extend({
     },
 
     status(): Status {
-      return this.$storage.financialAssistance.getters.status();
+      return useFinancialAssistanceStore().status;
     },
 
     name(): string {
-      return this.$storage.financialAssistance.getters.name(this.$i18n.locale);
+      return useFinancialAssistanceStore().getName(this.$i18n.locale);
     },
 
     programName(): string {
-      const program = this.$storage.financialAssistance.getters.program();
-
+      const program = useFinancialAssistanceStore().program;
       return this.$m(program?.name);
     },
 
     items(): IFinancialAssistanceTableItem[] {
-      return this.$storage.financialAssistance.getters.items();
+      return useFinancialAssistanceStore().mainItems;
     },
 
     /**
@@ -231,7 +231,7 @@ export default Vue.extend({
   },
 
   async created() {
-    this.$storage.financialAssistance.mutations.resetState();
+    useFinancialAssistanceStore().resetExtensionState();
 
     const id = this.$route.params.faId;
 
@@ -245,10 +245,12 @@ export default Vue.extend({
       this.loading = true;
     }, 300);
 
-    const res = await this.$storage.financialAssistance.actions.fetch(this.$route.params.faId);
+    const res = await useFinancialAssistanceStore().fetch(this.$route.params.faId);
     const categories = await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
-    const program = await useProgramStore().fetch({ id: res.entity.programId, eventId: res.entity.eventId }) as IProgramEntity;
-    this.$storage.financialAssistance.mutations.setFinancialAssistance(res, categories, program);
+    const program = await useProgramStore().fetch({ id: res.programId, eventId: res.eventId }) as IProgramEntity;
+    useFinancialAssistanceStore().setFinancialAssistance({
+      fa: res, categories, newProgram: program, removeInactiveItems: false,
+    });
 
     if (!res) {
       this.error = true;

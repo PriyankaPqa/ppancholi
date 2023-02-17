@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
+
 import { mockProgramEntity } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
@@ -30,7 +30,6 @@ const doMount = (editMode = false) => {
           id: 'EVENT_ID',
         },
       },
-      $storage: mockStorage(),
     },
   });
 };

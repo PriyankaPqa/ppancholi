@@ -1,10 +1,8 @@
 import { shallowMount, createLocalVue } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component, { SelectedTab } from './ApprovalRequestsHome.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const { pinia, userAccountStore } = useMockUserAccountStore();
 let wrapper;
 
@@ -12,7 +10,6 @@ const doMount = (otherOptions = {}) => {
   const options = {
     localVue,
     pinia,
-    mocks: { $storage: storage },
     ...otherOptions,
   };
   wrapper = shallowMount(Component, options);

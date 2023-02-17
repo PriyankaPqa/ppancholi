@@ -149,8 +149,8 @@ import {
 import
 {
   IFinancialAssistanceTableEntity,
-  IFinancialAssistanceTableCombined,
   IFinancialAssistanceTableItem,
+  IFinancialAssistanceTableMetadata, IdParams as FAIdParams,
 } from '@libs/entities-lib/financial-assistance';
 import
 {
@@ -174,6 +174,7 @@ import { useProgramStore } from '@/pinia/program/program';
 import { useAssessmentResponseStore, useAssessmentResponseMetadataStore } from '@/pinia/assessment-response/assessment-response';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { useFinancialAssistanceStore, useFinancialAssistanceMetadataStore } from '@/pinia/financial-assistance/financial-assistance';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
@@ -235,6 +236,10 @@ export default mixins(caseFileDetail).extend({
         useAssessmentResponseStore(),
         useAssessmentResponseMetadataStore(),
       ),
+      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, FAIdParams>(
+        useFinancialAssistanceStore(),
+        useFinancialAssistanceMetadataStore(),
+      ),
     };
   },
 
@@ -291,7 +296,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     items(): Array<IFinancialAssistanceTableItem> {
-      return this.$storage.financialAssistance.getters.items();
+      return useFinancialAssistanceStore().mainItems;
     },
 
     nbPaymentLines() : number {
@@ -331,14 +336,14 @@ export default mixins(caseFileDetail).extend({
 
     async searchTables() {
       if (this.caseFile) {
-        const tableData = await this.$storage.financialAssistance.actions.search({
+        const tableData = await this.combinedFinancialAssistanceStore.search({
           filter: {
             'Entity/EventId': this.caseFile.eventId,
           },
         }, null, true);
         const { ids } = tableData;
 
-        this.financialTables = this.$storage.financialAssistance.getters.getByIds(ids).map((t : IFinancialAssistanceTableCombined) => t.entity)
+        this.financialTables = useFinancialAssistanceStore().getByIds(ids)
           .filter((t: IFinancialAssistanceTableEntity) => t.status === Status.Active || t.id === this.financialAssistance.financialAssistanceTableId);
 
         await this.updateSelectedData(this.financialTables
@@ -348,11 +353,11 @@ export default mixins(caseFileDetail).extend({
 
     async fetchTable() {
       if (this.caseFile) {
-        const table = await this.$storage.financialAssistance.actions.fetch(this.financialAssistance.financialAssistanceTableId);
-        this.financialTables = [table.entity];
-
-        await this.updateSelectedData(this.financialTables
-          .find((x) => x.id === this.financialAssistance.financialAssistanceTableId));
+        const table = await useFinancialAssistanceStore().fetch(this.financialAssistance.financialAssistanceTableId);
+        if (table) {
+          this.financialTables = [table];
+          await this.updateSelectedData(table);
+        }
       }
     },
 
@@ -414,9 +419,11 @@ export default mixins(caseFileDetail).extend({
     updateSelectedTable(table: IFinancialAssistanceTableEntity) {
       this.selectedTable = table;
       if (this.selectedTable) {
-        const tableWithMetadata = this.$storage.financialAssistance.getters.get(table.id);
+        const tableEntity = useFinancialAssistanceStore().getById(table.id);
         const categories = useFinancialAssistancePaymentStore().getFinancialAssistanceCategories(false);
-        this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, this.selectedProgram, false);
+        useFinancialAssistanceStore().setFinancialAssistance({
+          fa: tableEntity, categories, newProgram: this.selectedProgram, removeInactiveItems: false,
+        });
       }
     },
 

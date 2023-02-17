@@ -1,10 +1,8 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { useMockUserStore } from '@/pinia/user/user.mock';
 import Component from './ActivityWatcher.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 let wrapper;
 const { pinia, userStore } = useMockUserStore();
@@ -16,9 +14,6 @@ const doMount = (maxInactivity = 1) => {
     },
     localVue,
     pinia,
-    mocks: {
-      $storage: storage,
-    },
   };
 
   wrapper = shallowMount(Component, options);

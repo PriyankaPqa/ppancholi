@@ -3,10 +3,10 @@ import { EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
 import { mockCombinedPrograms, mockProgramEntities } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
+
 import Component from './ProgramsHome.vue';
 
 const localVue = createLocalVue();
@@ -30,9 +30,6 @@ describe('ProgramsHome.vue', () => {
         pinia,
         propsData: {
           id: 'event-id',
-        },
-        mocks: {
-          $storage: mockStorage(),
         },
       });
 
@@ -226,16 +223,12 @@ describe('ProgramsHome.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      const storage = mockStorage();
-
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
           id: 'event-id',
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
 
       wrapper.vm.combinedProgramStore.search = jest.fn(() => ({

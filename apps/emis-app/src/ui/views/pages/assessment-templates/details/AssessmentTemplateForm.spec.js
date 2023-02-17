@@ -1,6 +1,5 @@
 import _sortBy from 'lodash/sortBy';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { Status } from '@libs/entities-lib/base';
 import {
   mockAssessmentFormEntity, mockAssessmentTemplateEntity, PublishStatus, AssessmentFormEntity, AssessmentTemplateEntity,
@@ -9,10 +8,11 @@ import { mockCombinedPrograms, mockProgramEntities } from '@libs/entities-lib/pr
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import flushPromises from 'flush-promises';
+
 import Component from './AssessmentTemplateForm.vue';
 
 const localVue = createLocalVue();
-let storage = mockStorage();
+
 const assessmentTemplate = mockAssessmentTemplateEntity();
 const assessmentForm = mockAssessmentFormEntity();
 
@@ -31,7 +31,7 @@ describe('AssessmentTemplateForm.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });
@@ -48,7 +48,6 @@ describe('AssessmentTemplateForm.vue', () => {
   };
 
   beforeEach(async () => {
-    storage = mockStorage();
     jest.clearAllMocks();
   });
 

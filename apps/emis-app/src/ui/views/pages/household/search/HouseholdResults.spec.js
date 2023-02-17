@@ -6,16 +6,12 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
-
 import Component from '@/ui/views/pages/household/search/HouseholdResults.vue';
 
 import { tabs } from '@/pinia/registration/tabs';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 const vuetify = new Vuetify();
 
@@ -40,9 +36,6 @@ describe('HouseholdResultsMove.vue', () => {
         items: mockCombinedHouseholds(),
         isSplitMode: false,
       },
-      mocks: {
-        $storage: storage,
-      },
     });
     wrapper.vm.buildHouseholdCreateData = jest.fn();
   });
@@ -59,9 +52,7 @@ describe('HouseholdResultsMove.vue', () => {
             isSplitMode: false,
             hideEventInfo: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.getCaseFilesInEvent = jest.fn();
         wrapper.vm.$options.mounted.forEach((hook) => {
@@ -82,9 +73,7 @@ describe('HouseholdResultsMove.vue', () => {
             isSplitMode: true,
             hideEventInfo: false,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.getCaseFilesInEvent = jest.fn();
         wrapper.vm.$options.mounted.forEach((hook) => {
@@ -105,9 +94,7 @@ describe('HouseholdResultsMove.vue', () => {
             isSplitMode: false,
             hideEventInfo: true,
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.getCaseFilesInEvent = jest.fn();
         wrapper.vm.$options.mounted.forEach((hook) => {
@@ -146,9 +133,7 @@ describe('HouseholdResultsMove.vue', () => {
               return 'event-id';
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
         wrapper.vm.getCaseFilesInEvent();
@@ -174,9 +159,7 @@ describe('HouseholdResultsMove.vue', () => {
               return 'event-id';
             },
           },
-          mocks: {
-            $storage: storage,
-          },
+
         });
         wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
         wrapper.vm.getCaseFilesInEvent();
@@ -260,9 +243,6 @@ describe('HouseholdResultsMove.vue', () => {
             propsData: {
               items: mockCombinedHouseholds(),
               isSplitMode: true,
-            },
-            mocks: {
-              $storage: storage,
             },
           });
           wrapper.vm.buildHouseholdCreateData = jest.fn();

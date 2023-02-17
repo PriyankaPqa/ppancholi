@@ -1,15 +1,15 @@
 import { RcDialog } from '@libs/component-lib/components';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { mockTeamMembersData } from '@libs/entities-lib/team';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import helpers from '@/ui/helpers/helpers';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
+
 import Component from './AddTeamMembers.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const { pinia } = useMockUserAccountStore();
 const { teamStore } = useMockTeamStore(pinia);
 
@@ -24,18 +24,6 @@ describe('AddTeamMembers.vue', () => {
         show: true,
         teamMembers: mockTeamMembersData(),
         teamId: 'abc',
-      },
-      store: {
-        modules: {
-          team: {
-            state: {
-              submitLoading: true,
-            },
-          },
-        },
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });

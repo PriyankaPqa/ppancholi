@@ -1,11 +1,9 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
-import { mockStorage } from '@/storage';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
-import Component from './EventStats.vue';
 
-const storage = mockStorage();
+import Component from './EventStats.vue';
 
 const localVue = createLocalVue();
 
@@ -18,9 +16,6 @@ describe('EventStats.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
-      mocks: {
-        $storage: storage,
-      },
     });
   });
 

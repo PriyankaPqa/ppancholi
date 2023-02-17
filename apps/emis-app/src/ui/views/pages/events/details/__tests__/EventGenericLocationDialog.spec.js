@@ -1,18 +1,17 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity, EEventLocationStatus } from '@libs/entities-lib/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
-import { mockStorage } from '@/storage';
 import entityUtils from '@libs/entities-lib/utils';
 import helpers from '@/ui/helpers/helpers';
 import { EEventSummarySections } from '@/types';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 
 import { useMockEventStore } from '@/pinia/event/event.mock';
+
 import Component from '../components/EventGenericLocationDialog.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
-const storage = mockStorage();
 
 describe('EventGenericLocationDialog.vue', () => {
   let wrapper;
@@ -369,7 +368,7 @@ describe('EventGenericLocationDialog.vue', () => {
             isRegistrationLocation: true,
           },
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => true,
           },
         });
@@ -387,7 +386,7 @@ describe('EventGenericLocationDialog.vue', () => {
             isRegistrationLocation: true,
           },
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => false,
           },
         });
@@ -535,9 +534,7 @@ describe('EventGenericLocationDialog.vue', () => {
           id: mockEvent.registrationLocations[0].name.translation.en,
           isRegistrationLocation: true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
 
       jest.clearAllMocks();

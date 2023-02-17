@@ -1,7 +1,6 @@
 import { shallowMount, createLocalVue } from '@/test/testSetup';
 import { mockCombinedApprovalTable } from '@libs/entities-lib/approvals/approvals-table';
 import { mockRoles } from '@libs/entities-lib/optionItem';
-import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
 import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table.mock';
@@ -9,7 +8,6 @@ import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock'
 import Component from './ApprovalDetails.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 const { pinia } = useMockApprovalTableStore();
 const { userAccountStore } = useMockUserAccountStore(pinia);
 
@@ -33,7 +31,6 @@ const doMount = () => {
       approvalMetadata: combinedApprovalTable.metadata,
     }),
     mocks: {
-      $storage: storage,
       $route: {
         params: {
           approvalId: 'approvalId',

@@ -1,15 +1,14 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-file-referral';
-import { mockStorage } from '@/storage';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+
 import Component from './CaseFileReferralDetails.vue';
 
-const storage = mockStorage();
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
@@ -33,7 +32,6 @@ describe('CaseFileReferralDetails', () => {
             return mockEvent;
           },
         },
-        mocks: { $storage: storage },
       });
     });
 
@@ -116,7 +114,7 @@ describe('CaseFileReferralDetails', () => {
               return mockEvent;
             },
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.typeName).toEqual(mockOptionItemData()[0].name.translation.en);
@@ -144,7 +142,7 @@ describe('CaseFileReferralDetails', () => {
               return mockEvent;
             },
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.outcomeStatus).toEqual(mockOptionItemData()[0].name.translation.en);
@@ -168,7 +166,7 @@ describe('CaseFileReferralDetails', () => {
               return mockEvent;
             },
           },
-          mocks: { $storage: storage },
+
         });
 
         expect(wrapper.vm.referralData).toEqual([
@@ -218,7 +216,7 @@ describe('CaseFileReferralDetails', () => {
             return mockEvent;
           },
         },
-        mocks: { $storage: storage },
+
       });
     });
 
@@ -246,7 +244,7 @@ describe('CaseFileReferralDetails', () => {
           id: 'mock-caseFile-id',
           referralId: 'mock-referral-id',
         },
-        mocks: { $storage: storage },
+
         computed: {
           referralData() {
             return [{

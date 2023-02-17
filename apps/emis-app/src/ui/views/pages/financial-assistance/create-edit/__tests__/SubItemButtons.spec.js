@@ -1,15 +1,15 @@
-import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockItems, mockSubItems } from '@libs/entities-lib/financial-assistance';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from '../Templates/SubItemButtons.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
+const { pinia, financialAssistanceStore } = useMockFinancialAssistanceStore();
 
 const item = mockItems()[0];
-
 const subItem = mockSubItems()[0];
-storage.financialAssistance.getters.newSubItem = jest.fn(() => subItem);
+financialAssistanceStore.newSubItem = subItem;
 
 describe('AddSubItemSubItem.vue', () => {
   let wrapper;
@@ -17,8 +17,9 @@ describe('AddSubItemSubItem.vue', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    wrapper = mount(Component, {
+    wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         item: item.subItems[0],
         index: 0,
@@ -27,43 +28,37 @@ describe('AddSubItemSubItem.vue', () => {
         isEdit: false,
         isTableMode: true,
       },
-      mocks: {
-        $storage: storage,
-      },
     });
   });
 
   describe('Computed', () => {
     describe('items', () => {
       it('returns the right value', async () => {
-        expect(wrapper.vm.items).toEqual(wrapper.vm.$storage.financialAssistance.getters.items());
+        expect(wrapper.vm.items).toEqual(financialAssistanceStore.mainItems);
       });
     });
 
     describe('addingItem', () => {
       it('returns the right value', async () => {
-        expect(wrapper.vm.addingItem).toEqual(wrapper.vm.$storage.financialAssistance.getters.addingItem());
+        expect(wrapper.vm.addingItem).toEqual(financialAssistanceStore.addingItem);
       });
     });
 
     describe('isOperating', () => {
       it('returns the right value', async () => {
-        expect(wrapper.vm.addingItem).toEqual(wrapper.vm.$storage.financialAssistance.getters.isOperating());
+        expect(wrapper.vm.isOperating).toEqual(financialAssistanceStore.isOperating());
       });
     });
 
     describe('loading', () => {
       it('returns the right value', async () => {
-        expect(wrapper.vm.loading).toEqual(wrapper.vm.$storage.financialAssistance.getters.loading());
+        expect(wrapper.vm.loading).toEqual(financialAssistanceStore.loading);
       });
 
       it('sets the right value', async () => {
         jest.clearAllMocks();
-
         wrapper.vm.loading = false;
-
-        expect(storage.financialAssistance.mutations.setLoading).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setLoading).toHaveBeenCalledWith(false);
+        expect(financialAssistanceStore.loading).toEqual(false);
       });
     });
 
@@ -82,7 +77,7 @@ describe('AddSubItemSubItem.vue', () => {
         const item2 = { subItems: [sub] };
         const items = [item1, item2];
 
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             item: sub,
@@ -96,9 +91,6 @@ describe('AddSubItemSubItem.vue', () => {
             items() {
               return items;
             },
-          },
-          mocks: {
-            $storage: storage,
           },
         });
 
@@ -110,7 +102,7 @@ describe('AddSubItemSubItem.vue', () => {
         const item1 = { subItems: [sub] };
         const items = [item1];
 
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             item: sub,
@@ -124,9 +116,6 @@ describe('AddSubItemSubItem.vue', () => {
             items() {
               return items;
             },
-          },
-          mocks: {
-            $storage: storage,
           },
         });
 
@@ -139,7 +128,7 @@ describe('AddSubItemSubItem.vue', () => {
         const item1 = { subItems: [sub1, sub2] };
         const items = [item1];
 
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             item: sub1,
@@ -154,9 +143,6 @@ describe('AddSubItemSubItem.vue', () => {
               return items;
             },
           },
-          mocks: {
-            $storage: storage,
-          },
         });
 
         expect(wrapper.vm.canDelete).toEqual(true);
@@ -167,24 +153,17 @@ describe('AddSubItemSubItem.vue', () => {
   describe('Methods', () => {
     describe('onEditSubItem', () => {
       it('mutates properly', async () => {
-        wrapper.vm.onEditSubItem();
-
-        expect(storage.financialAssistance.mutations.setNewSubItemSubItem).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setNewSubItemMaximum).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setNewSubItemAmountType).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setNewSubItemDocumentationRequired).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setNewSubItemFrequency).toHaveBeenCalledTimes(1);
-
-        expect(storage.financialAssistance.mutations.setEditedItem).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setEditedItemIndex).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setEditedSubItemIndex).toHaveBeenCalledTimes(1);
+        await wrapper.vm.onEditSubItem();
+        expect(financialAssistanceStore.$patch).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$pinia.state.value['financial-assistance-entities'].editedItemIndex).toEqual(0);
       });
     });
 
     describe('onDeleteSubItem', () => {
       it('toast error message if can not delete', async () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           propsData: {
             item: item.subItems[0],
             index: 0,
@@ -197,9 +176,6 @@ describe('AddSubItemSubItem.vue', () => {
             canDelete() {
               return false;
             },
-          },
-          mocks: {
-            $storage: storage,
           },
         });
 
@@ -254,7 +230,7 @@ describe('AddSubItemSubItem.vue', () => {
       it('calls proper action', async () => {
         await wrapper.vm.deleteRemotely();
 
-        expect(wrapper.vm.$storage.financialAssistance.actions.deleteSubItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.deleteSubItem).toHaveBeenCalledTimes(1);
       });
 
       it('reload items and toast success message', async () => {
@@ -262,7 +238,7 @@ describe('AddSubItemSubItem.vue', () => {
 
         await wrapper.vm.deleteRemotely();
 
-        expect(wrapper.vm.$storage.financialAssistance.actions.reloadItems).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.reloadItems).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('financialAssistance.toast.table.editTable');
       });
     });
@@ -271,7 +247,7 @@ describe('AddSubItemSubItem.vue', () => {
       it('delete subItem', async () => {
         wrapper.vm.deleteLocally();
 
-        expect(wrapper.vm.$storage.financialAssistance.mutations.deleteSubItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.deleteSubItem).toHaveBeenCalledTimes(1);
       });
 
       it('delete item', async () => {
@@ -279,7 +255,7 @@ describe('AddSubItemSubItem.vue', () => {
 
         wrapper.vm.deleteLocally();
 
-        expect(wrapper.vm.$storage.financialAssistance.mutations.deleteItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.deleteItem).toHaveBeenCalledTimes(1);
       });
     });
   });

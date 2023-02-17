@@ -4,14 +4,14 @@ import { Status } from '@libs/entities-lib/base';
 import {
   AssociationType,
 } from '@libs/entities-lib/assessment-template';
-import { mockStorage } from '@/storage';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import { createTestingPinia } from '@pinia/testing';
+
 import Component from './AddCaseFileAssessment.vue';
 
 const localVue = createLocalVue();
-let storage = mockStorage();
+
 let pinia = createTestingPinia({ stubActions: false });
 let assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
 let assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
@@ -29,7 +29,7 @@ describe('AddCaseFileAssessment.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });
@@ -38,7 +38,6 @@ describe('AddCaseFileAssessment.vue', () => {
   };
 
   beforeEach(async () => {
-    storage = mockStorage();
     pinia = createTestingPinia({ stubActions: false });
     assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;

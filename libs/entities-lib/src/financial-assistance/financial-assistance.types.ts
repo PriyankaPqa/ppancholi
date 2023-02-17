@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IListOption, IMultilingual } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined, Status } from '../base';
 import { IOptionItem, IOptionSubItem } from '../optionItem';
 
@@ -21,6 +21,7 @@ export interface IFinancialAssistanceTableSubItem {
   frequency: EFinancialFrequency;
   status?: Status;
 }
+
 export interface IFinancialAssistanceTableItem {
   id?: uuid;
   mainCategory: IOptionItem;
@@ -28,14 +29,9 @@ export interface IFinancialAssistanceTableItem {
   status?: Status;
 }
 
-export interface IFinancialAssistanceOptionItemData {
-  optionItemId: string;
-  specifiedOther: string;
-}
-
 export interface IFinancialAssistanceTableSubItemData {
   id?: uuid;
-  subCategory: IFinancialAssistanceOptionItemData;
+  subCategory: IListOption;
   maximumAmount: number;
   amountType: EFinancialAmountModes;
   documentationRequired: boolean;
@@ -44,7 +40,7 @@ export interface IFinancialAssistanceTableSubItemData {
 }
 export interface IFinancialAssistanceTableItemData {
   id?: uuid;
-  mainCategory: IFinancialAssistanceOptionItemData;
+  mainCategory: IListOption;
   subItems: IFinancialAssistanceTableSubItemData[];
   status?: Status;
 }
@@ -70,6 +66,6 @@ export interface IEditFinancialAssistanceTableRequest extends IEntity {
   status: Status;
 }
 
-export type IFinancialAssistanceCategoryEntity = IOptionItem;
-
 export type IFinancialAssistanceTableCombined = IEntityCombined<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata>;
+
+export type IdParams = uuid;

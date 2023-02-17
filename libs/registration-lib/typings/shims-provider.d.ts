@@ -11,9 +11,3 @@ declare module 'vue/types/vue' {
     $services: IProvider | IProviderMock
   }
 }
-
-declare module 'vuex/types/index' {
-  interface Store<S> {
-    $services: IProvider | IProviderMock
-  }
-}

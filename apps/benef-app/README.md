@@ -48,7 +48,7 @@ and allows user to get instant feedback before calling the API
 The official router for Vue.js. It provides client-side routing to navigate within each page the Single Page Application.
 When configured properly, it also allows code splitting to split the bundle up into different chunks, reducing the overall load time of the application.
 
-### [vuex 3.x ](https://vuex.vuejs.org/)
+### [pinia 2.x ](https://pinia.vuejs.org/)
 
 It allows the application to keep a centralized state accessible from all components. It's particularly useful for distant components or for caching purposes.
 

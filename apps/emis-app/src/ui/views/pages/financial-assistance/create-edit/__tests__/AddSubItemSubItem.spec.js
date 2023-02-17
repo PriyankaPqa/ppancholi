@@ -1,19 +1,16 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-
-import { mockStorage } from '@/storage';
 import { mockItems, mockSubItems, mockCategories } from '@libs/entities-lib/financial-assistance';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import { Status } from '@libs/entities-lib/base';
 import Component from '../Templates/AddSubItemSubItem.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+const { pinia, financialAssistanceStore } = useMockFinancialAssistanceStore();
 
 const categories = mockCategories();
-
 const item = mockItems()[0];
-
 const subItem = mockSubItems()[0];
-storage.financialAssistance.getters.newSubItem = jest.fn(() => subItem);
+financialAssistanceStore.newSubItem = subItem;
 
 describe('AddSubItemSubItem.vue', () => {
   let wrapper;
@@ -23,12 +20,10 @@ describe('AddSubItemSubItem.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         parent: item,
         financialAssistanceCategories: categories,
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });
@@ -43,9 +38,7 @@ describe('AddSubItemSubItem.vue', () => {
         jest.clearAllMocks();
 
         wrapper.vm.value = null;
-
-        expect(storage.financialAssistance.mutations.setNewSubItemSubItem).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setNewSubItemSubItem).toHaveBeenCalledWith(null);
+        expect(financialAssistanceStore.newSubItem.subCategory).toEqual(null);
       });
     });
   });

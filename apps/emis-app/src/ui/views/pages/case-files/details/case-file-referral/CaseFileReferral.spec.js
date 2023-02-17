@@ -1,12 +1,11 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockSearchData } from '@libs/entities-lib/case-file-referral';
-import { mockStorage } from '@/storage';
+
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import routes from '@/constants/routes';
 import Component from './CaseFileReferral.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
 const { pinia, caseFileReferralStore } = useMockCaseFileReferralStore();
 
@@ -23,9 +22,7 @@ describe('CaseFileReferral.vue', () => {
         },
       },
       propsData: { id: 'foo' },
-      mocks: {
-        $storage: storage,
-      },
+
     });
   };
 
@@ -197,15 +194,12 @@ describe('CaseFileReferral.vue', () => {
 
     describe('fetchData', () => {
       beforeEach(() => {
-        const storage = mockStorage();
         caseFileReferralStore.search = jest.fn().mockImplementation(() => mockSearchData);
 
         wrapper = shallowMount(Component, {
           localVue,
           propsData: { id: 'foo' },
-          mocks: {
-            $storage: storage,
-          },
+
         });
       });
 

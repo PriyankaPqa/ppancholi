@@ -186,6 +186,8 @@ import {
 import { Status } from '@libs/entities-lib/base';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, IdParams as FAIdParams } from '@libs/entities-lib/financial-assistance';
+import { useFinancialAssistanceMetadataStore, useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
 import StatisticsDialog from './components/StatisticsDialog.vue';
@@ -233,6 +235,10 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       combinedFinancialAssistancePaymentStore: new CombinedStoreFactory<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, IdParams>(
         useFinancialAssistancePaymentStore(),
         useFinancialAssistancePaymentMetadataStore(),
+      ),
+      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, FAIdParams>(
+        useFinancialAssistanceStore(),
+        useFinancialAssistanceMetadataStore(),
       ),
     };
   },
@@ -389,7 +395,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     async initContainsActiveTables() {
       if (this.caseFile) {
-        const tableData = await this.$storage.financialAssistance.actions.search({
+        const tableData = await this.combinedFinancialAssistanceStore.search({
           filter: {
             'Entity/EventId': this.caseFile.eventId,
           },

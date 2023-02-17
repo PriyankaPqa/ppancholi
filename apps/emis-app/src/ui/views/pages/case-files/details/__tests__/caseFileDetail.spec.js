@@ -1,12 +1,10 @@
-import { mockStorage } from '@/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { EEventStatus } from '@libs/entities-lib/event';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { CaseFileStatus, mockCaseFileEntity } from '@libs/entities-lib/case-file';
-import caseFileDetail from '../caseFileDetail';
 
-const storage = mockStorage();
+import caseFileDetail from '../caseFileDetail';
 
 const Component = {
   render() {},
@@ -29,7 +27,7 @@ describe('caseFileDetail mixin', () => {
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
-        $storage: storage,
+
       },
       ...additionalOverwrites,
     });

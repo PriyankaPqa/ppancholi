@@ -2,15 +2,14 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   mockAssessmentTotalSubmissions,
 } from '@libs/entities-lib/assessment-template';
-import { mockStorage } from '@/storage';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-form.mock';
 import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/assessment-template.mock';
 import { createTestingPinia } from '@pinia/testing';
 import flushPromises from 'flush-promises';
+
 import Component from './AssessmentTemplateDetails.vue';
 
-const storage = mockStorage();
 const localVue = createLocalVue();
 const pinia = createTestingPinia({ stubActions: false });
 const assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
@@ -34,7 +33,6 @@ describe('AssessmentTemplateDetails', () => {
           id: 'mock-event-id',
         },
         mocks: {
-          $storage: storage,
           $route: {
             params: {
               assessmentTemplateId: 'mock-assessmentTemplate-id',
@@ -98,7 +96,6 @@ describe('AssessmentTemplateDetails', () => {
         wrapper = shallowMount(Component, {
           localVue,
           mocks: {
-            $storage: storage,
             $route: {
               params: {
                 assessmentTemplateId: 'mock-assessmentTemplate-id',
@@ -156,7 +153,6 @@ describe('AssessmentTemplateDetails', () => {
           id: 'mock-event-id',
         },
         mocks: {
-          $storage: storage,
           $route: {
             params: {
               assessmentTemplateId: 'mock-assessmentTemplate-id',
@@ -180,7 +176,6 @@ describe('AssessmentTemplateDetails', () => {
           id: 'mock-event-id',
         },
         mocks: {
-          $storage: storage,
           $route: {
             params: {
               assessmentTemplateId: 'mock-assessmentTemplate-id',
@@ -233,7 +228,6 @@ describe('AssessmentTemplateDetails', () => {
           id: 'mock-event-id',
         },
         mocks: {
-          $storage: storage,
           $route: {
             params: {
               assessmentTemplateId: 'mock-assessmentTemplate-id',

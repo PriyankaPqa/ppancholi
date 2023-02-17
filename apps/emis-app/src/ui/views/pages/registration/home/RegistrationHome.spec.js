@@ -4,18 +4,18 @@ import {
   mount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
 import routes from '@/constants/routes';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { tabs } from '@/pinia/registration/tabs';
 import { createTestingPinia } from '@pinia/testing';
 import resetStore from '@libs/stores-lib/store-reset';
+
 import Component from './RegistrationHome.vue';
 
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
-const storage = mockStorage();
+
 const vuetify = new Vuetify();
 
 const pinia = createTestingPinia({
@@ -34,9 +34,6 @@ describe('RegistrationHome.vue', () => {
       localVue,
       pinia,
       vuetify,
-      mocks: {
-        $storage: storage,
-      },
     });
 
     await wrapper.setData({

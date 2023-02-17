@@ -1,12 +1,13 @@
-import { createLocalVue, mount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockItems, mockSubItems } from '@libs/entities-lib/financial-assistance';
+import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
 import Component from '../Templates/ItemButtons.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
 
-storage.financialAssistance.getters.items = jest.fn(() => mockItems());
+const { financialAssistanceStore, pinia } = useMockFinancialAssistanceStore();
+financialAssistanceStore.mainItems = mockItems();
+financialAssistanceStore.$patch = jest.fn();
 
 const item = mockItems()[0];
 
@@ -16,16 +17,14 @@ describe('ItemButtons.vue', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    wrapper = mount(Component, {
+    wrapper = shallowMount(Component, {
       localVue,
+      pinia,
       propsData: {
         item,
         index: 1,
         isEdit: false,
         isTableMode: true,
-      },
-      mocks: {
-        $storage: storage,
       },
     });
   });
@@ -33,25 +32,25 @@ describe('ItemButtons.vue', () => {
   describe('Computed', () => {
     describe('items', () => {
       it('returns the right value', async () => {
-        expect(wrapper.vm.items).toEqual(storage.financialAssistance.getters.items());
+        expect(wrapper.vm.items).toEqual(financialAssistanceStore.mainItems);
       });
     });
 
     describe('addingItem', () => {
       it('returns the right value', async () => {
-        expect(wrapper.vm.addingItem).toEqual(storage.financialAssistance.getters.addingItem());
+        expect(wrapper.vm.addingItem).toEqual(financialAssistanceStore.addingItem);
       });
     });
 
     describe('isOperating', () => {
       it('returns the right value', async () => {
-        expect(wrapper.vm.isOperating).toEqual(storage.financialAssistance.getters.isOperating());
+        expect(wrapper.vm.isOperating).toEqual(financialAssistanceStore.isOperating());
       });
     });
 
     describe('loading', () => {
       it('returns the right value', async () => {
-        expect(wrapper.vm.loading).toEqual(storage.financialAssistance.getters.loading());
+        expect(wrapper.vm.loading).toEqual(financialAssistanceStore.loading);
       });
     });
 
@@ -65,7 +64,7 @@ describe('ItemButtons.vue', () => {
       });
 
       it('returns true if have more than 1 valid item', async () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             item,
@@ -84,9 +83,6 @@ describe('ItemButtons.vue', () => {
                 },
               ];
             },
-          },
-          mocks: {
-            $storage: storage,
           },
         });
 
@@ -94,7 +90,7 @@ describe('ItemButtons.vue', () => {
       });
 
       it('returns false if only 1 valid item', async () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             item,
@@ -110,9 +106,6 @@ describe('ItemButtons.vue', () => {
                 },
               ];
             },
-          },
-          mocks: {
-            $storage: storage,
           },
         });
 
@@ -123,18 +116,15 @@ describe('ItemButtons.vue', () => {
 
   describe('Methods', () => {
     describe('onEditItem', () => {
-      it('calls mutations', async () => {
-        wrapper.vm.onEditItem();
-
-        expect(storage.financialAssistance.mutations.setNewItemItem).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setEditedItem).toHaveBeenCalledTimes(1);
-        expect(storage.financialAssistance.mutations.setEditedItemIndex).toHaveBeenCalledTimes(1);
+      it('calls store methods', async () => {
+        await wrapper.vm.onEditItem();
+        expect(financialAssistanceStore.$patch).toHaveBeenCalledTimes(1);
       });
     });
 
     describe('onDeleteItem', () => {
       it('toast error message if can not delete', async () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             item,
@@ -146,9 +136,6 @@ describe('ItemButtons.vue', () => {
             canDelete() {
               return false;
             },
-          },
-          mocks: {
-            $storage: storage,
           },
         });
 
@@ -206,7 +193,7 @@ describe('ItemButtons.vue', () => {
       it('delete remotely', async () => {
         await wrapper.vm.deleteRemotely();
 
-        expect(wrapper.vm.$storage.financialAssistance.actions.deleteItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.deleteItem).toHaveBeenCalledTimes(1);
       });
 
       it('reload items and toast success message', async () => {
@@ -214,7 +201,7 @@ describe('ItemButtons.vue', () => {
 
         await wrapper.vm.deleteRemotely();
 
-        expect(wrapper.vm.$storage.financialAssistance.actions.reloadItems).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.reloadItems).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('financialAssistance.toast.table.editTable');
       });
     });
@@ -223,7 +210,7 @@ describe('ItemButtons.vue', () => {
       it('delete locally', async () => {
         wrapper.vm.deleteLocally();
 
-        expect(wrapper.vm.$storage.financialAssistance.mutations.deleteItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.deleteItem).toHaveBeenCalledTimes(1);
       });
     });
   });

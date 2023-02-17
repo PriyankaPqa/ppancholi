@@ -1,7 +1,6 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { i18n } from '@/ui/plugins/i18n';
-import { mockStorage } from '@/storage';
 import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import Component from '../GeneralHelpMenu.vue';
 
@@ -16,9 +15,6 @@ describe('GeneralHelpMenu.vue', () => {
       localVue,
       pinia,
       vuetify,
-      mocks: {
-        $storage: mockStorage(),
-      },
       propsData: {
         menuLinks: [],
       },

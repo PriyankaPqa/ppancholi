@@ -15,6 +15,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VTextFieldWithValidation } from '@libs/component-lib/components';
+import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 
 export default Vue.extend({
   name: 'AddSubItemMaximum',
@@ -29,11 +30,11 @@ export default Vue.extend({
      */
     maximum: {
       get(): number {
-        return this.$storage.financialAssistance.getters.newSubItem().maximumAmount;
+        return useFinancialAssistanceStore().newSubItem.maximumAmount;
       },
 
       set(value: number) {
-        this.$storage.financialAssistance.mutations.setNewSubItemMaximum(value);
+        useFinancialAssistanceStore().newSubItem.maximumAmount = value;
       },
     },
   },

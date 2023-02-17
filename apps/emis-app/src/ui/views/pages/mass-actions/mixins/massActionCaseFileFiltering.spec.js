@@ -1,10 +1,8 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockStorage } from '@/storage';
 import { MassActionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
-import massActionCaseFileFiltering from './massActionCaseFileFiltering';
 
-const storage = mockStorage();
+import massActionCaseFileFiltering from './massActionCaseFileFiltering';
 
 const Component = {
   render() {},
@@ -22,9 +20,7 @@ describe('massActionCaseFileFiltering.vue', () => {
         propsData: {
           show: true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 
@@ -48,9 +44,7 @@ describe('massActionCaseFileFiltering.vue', () => {
         propsData: {
           show: true,
         },
-        mocks: {
-          $storage: storage,
-        },
+
       });
     });
 

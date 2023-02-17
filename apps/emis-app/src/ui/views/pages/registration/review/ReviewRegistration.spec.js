@@ -4,12 +4,9 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockStorage } from '@/storage';
 import Component from './ReviewRegistration.vue';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 const vuetify = new Vuetify();
 
@@ -21,9 +18,6 @@ describe('ReviewRegistrationLib.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       vuetify,
-      mocks: {
-        $storage: storage,
-      },
       stubs: {
         'previous-events-template': {
           template: '<div />',
@@ -39,7 +33,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           mocks: {
-            $storage: storage,
             $hasFeature: () => true,
           },
         });
@@ -49,7 +42,7 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           mocks: {
-            $storage: storage,
+
             $hasFeature: () => false,
           },
         });

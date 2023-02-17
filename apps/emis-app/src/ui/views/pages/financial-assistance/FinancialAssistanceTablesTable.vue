@@ -1,66 +1,68 @@
 <template>
-  <rc-data-table
-    data-test="fa-templates-table"
-    :items="tableData"
-    :count="itemsCount"
-    :labels="labels"
-    :headers="headers"
-    :footer-text="footerText"
-    :table-props="tableProps"
-    :show-help="false"
-    :help-link="$t('zendesk.help_link.financial_assistance_tables_list')"
-    :options.sync="options"
-    :initial-search="params && params.search"
-    :custom-columns="[
-      customColumns.program,
-      customColumns.name,
-      customColumns.status,
-      'editButton',
-    ]"
-    @search="search">
-    <template v-if="$hasLevel('level6')" #headerLeft>
-      <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="onClickMenuItem($event)" />
-    </template>
+  <div>
+    <rc-data-table
+      data-test="fa-templates-table"
+      :items="tableData"
+      :count="itemsCount"
+      :labels="labels"
+      :headers="headers"
+      :footer-text="footerText"
+      :table-props="tableProps"
+      :show-help="false"
+      :help-link="$t('zendesk.help_link.financial_assistance_tables_list')"
+      :options.sync="options"
+      :initial-search="params && params.search"
+      :custom-columns="[
+        customColumns.program,
+        customColumns.name,
+        customColumns.status,
+        'editButton',
+      ]"
+      @search="search">
+      <template v-if="$hasLevel('level6')" #headerLeft>
+        <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="onClickMenuItem($event)" />
+      </template>
 
-    <template #filter>
-      <filter-toolbar
-        :filter-key="FilterKey.FinancialAssistanceTables"
-        :filter-options="filters"
-        :count="itemsCount"
-        :initial-filter="filterState"
-        add-filter-label="financialAssistance.filter"
-        @update:appliedFilter="onApplyFilter" />
-    </template>
+      <template #filter>
+        <filter-toolbar
+          :filter-key="FilterKey.FinancialAssistanceTables"
+          :filter-options="filters"
+          :count="itemsCount"
+          :initial-filter="filterState"
+          add-filter-label="financialAssistance.filter"
+          @update:appliedFilter="onApplyFilter" />
+      </template>
 
-    <template #[`item.${customColumns.program}`]="{ item }">
-      {{ $m(item.metadata.programName) }}
-    </template>
+      <template #[`item.${customColumns.program}`]="{ item }">
+        {{ $m(item.metadata.programName) }}
+      </template>
 
-    <template #[`item.${customColumns.name}`]="{ item }">
-      <router-link
-        class="rc-link14 font-weight-bold"
-        data-test="eventDetail-link"
-        :to="getDetailsRoute(item)">
-        {{ $m(item.entity.name) }}
-      </router-link>
-    </template>
+      <template #[`item.${customColumns.name}`]="{ item }">
+        <router-link
+          class="rc-link14 font-weight-bold"
+          data-test="eventDetail-link"
+          :to="getDetailsRoute(item)">
+          {{ $m(item.entity.name) }}
+        </router-link>
+      </template>
 
-    <template #[`item.${customColumns.status}`]="{ item }">
-      <status-chip status-name="Status" :status="item.entity.status" />
-    </template>
+      <template #[`item.${customColumns.status}`]="{ item }">
+        <status-chip status-name="Status" :status="item.entity.status" />
+      </template>
 
-    <template #[`item.editButton`]="{ item }">
-      <v-btn
-        icon
-        class="mr-2"
-        :data-test="`edit_financial_assistance_${ $m(item.entity.name) }`"
-        @click="goToEdit(item)">
-        <v-icon size="24" color="grey darken-2">
-          mdi-pencil
-        </v-icon>
-      </v-btn>
-    </template>
-  </rc-data-table>
+      <template #[`item.editButton`]="{ item }">
+        <v-btn
+          icon
+          class="mr-2"
+          :data-test="`edit_financial_assistance_${ $m(item.entity.name) }`"
+          @click="goToEdit(item)">
+          <v-icon size="24" color="grey darken-2">
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+      </template>
+    </rc-data-table>
+  </div>
 </template>
 
 <script lang="ts">
@@ -75,13 +77,18 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
-import { IFinancialAssistanceTableCombined } from '@libs/entities-lib/financial-assistance';
+import { useFinancialAssistanceStore, useFinancialAssistanceMetadataStore } from '@/pinia/financial-assistance/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
 import { IdParams, IProgramEntity, IProgramMetadata } from '@libs/entities-lib/program';
 import { IEntityCombined, Status } from '@libs/entities-lib/base';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useProgramMetadataStore, useProgramStore } from '@/pinia/program/program';
+import
+{
+  IFinancialAssistanceTableEntity,
+  IFinancialAssistanceTableMetadata, IdParams as FAIdParams, IFinancialAssistanceTableCombined,
+} from '@libs/entities-lib/financial-assistance';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'FinancialAssistanceTablesTable',
@@ -103,6 +110,10 @@ export default mixins(TablePaginationSearchMixin).extend({
       },
       programs: [],
       combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata, IdParams>(useProgramStore(), useProgramMetadataStore()),
+      combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, FAIdParams>(
+        useFinancialAssistanceStore(),
+        useFinancialAssistanceMetadataStore(),
+      ),
     };
   },
 
@@ -169,7 +180,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     tableData(): IFinancialAssistanceTableCombined[] {
-      return this.$storage.financialAssistance.getters.getByIds(
+      return this.combinedFinancialAssistanceStore.getByIds(
         this.searchResultIds,
         { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.eventId } },
       );
@@ -177,7 +188,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     tableProps(): Record<string, unknown> {
       return {
-        loading: this.$store.state.financialAssistanceEntities.searchLoading,
+        loading: useFinancialAssistanceStore().searchLoading,
         itemClass: (item: IFinancialAssistanceTableCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
@@ -221,7 +232,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       if (_isEmpty(params.filter)) {
         params.filter = this.presetFilter;
       }
-      const res = await this.$storage.financialAssistance.actions.search({
+      const res = await this.combinedFinancialAssistanceStore.search({
         search: params.search,
         filter: params.filter,
         top: params.top,

@@ -2,7 +2,6 @@ import { RcDialog, RcConfirmationDialog } from '@libs/component-lib/components';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileEntity, mockCaseFileMetadata } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
-import { mockStorage } from '@/storage';
 import {
   mockOptionItemData,
 } from '@libs/entities-lib/optionItem';
@@ -10,10 +9,11 @@ import {
 import { Status } from '@libs/entities-lib/base';
 
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+
 import Component from '../case-file-activity/components/CaseFileTags.vue';
 
 const localVue = createLocalVue();
-const storage = mockStorage();
+
 const mockCaseFile = mockCaseFileEntity();
 const mockCaseFileMeta = mockCaseFileMetadata();
 
@@ -36,7 +36,7 @@ describe('CaseFileTagsList.vue', () => {
             id: mockCaseFile.id,
           },
         },
-        $storage: storage,
+
       },
       ...otherOptions,
     };
