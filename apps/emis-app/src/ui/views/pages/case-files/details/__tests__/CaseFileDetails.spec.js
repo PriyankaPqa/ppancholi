@@ -620,6 +620,39 @@ describe('CaseFileDetails.vue', () => {
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });
+
+    describe('canAccess', () => {
+      it('should return true if user has level 1+', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser('level1'),
+          propsData: {
+            id: mockCaseFile.id,
+          },
+          computed: {
+            primaryBeneficiary: () => mockMember(),
+          },
+        });
+        expect(wrapper.vm.canAccess).toBe(true);
+      });
+
+      it('should return true if user has level 0, feature flag is on', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser('level0'),
+          propsData: {
+            id: mockCaseFile.id,
+          },
+          computed: {
+            primaryBeneficiary: () => mockMember(),
+          },
+          mocks: {
+            $hasFeature: () => true,
+          },
+        });
+        expect(wrapper.vm.canAccess).toBe(true);
+      });
+    });
   });
 
   describe('lifecycle', () => {

@@ -66,13 +66,11 @@ import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import * as searchEndpoints from '@/constants/searchEndpoints';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import {
-  ICaseNoteCombined, ICaseNoteEntity, ICaseNoteMetadata, IdParams,
-} from '@libs/entities-lib/case-note';
+import { ICaseNoteCombined, ICaseNoteEntity, ICaseNoteMetadata, IdParams } from '@libs/entities-lib/case-note';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
-import { useCaseNoteStore, useCaseNoteMetadataStore } from '@/pinia/case-note/case-note';
+import { useCaseNoteMetadataStore, useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 import CaseNotesListItem from './components/CaseNotesListItem.vue';
@@ -124,7 +122,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
   computed: {
     showAddButton(): boolean {
-      return (this.$hasLevel('level1') || this.$hasRole('contributorFinance') || this.$hasRole('contributor3'))
+      return (this.$hasLevel('level0') || this.$hasRole('contributorFinance') || this.$hasRole('contributor3'))
         && !this.readonly;
     },
 

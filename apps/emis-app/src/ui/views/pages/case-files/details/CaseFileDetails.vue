@@ -160,6 +160,7 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useEventStore } from '@/pinia/event/event';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
+import { useUserStore } from '@/pinia/user/user';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
@@ -248,7 +249,7 @@ export default mixins(caseFileDetail).extend({
         text: this.$t('caseFileDetail.menu_case_note') as string,
         test: 'case-note',
         to: routes.caseFile.note.name,
-
+        disabled: !this.canAccess,
       }, {
         text: this.$t('caseFileDetail.menu_documents') as string,
         test: 'documents',
@@ -277,6 +278,12 @@ export default mixins(caseFileDetail).extend({
       }];
     },
 
+    canAccess(): boolean {
+      if (useUserStore().getUser().currentRole() === 'level0') {
+        return this.$hasFeature(FeatureKeys.L0Access);
+      }
+        return true;
+    },
   },
 
   async created() {

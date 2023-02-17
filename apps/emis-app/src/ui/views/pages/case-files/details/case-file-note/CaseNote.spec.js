@@ -1,6 +1,6 @@
 import { EFilterType } from '@libs/component-lib/types';
 import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
 import { mockStorage } from '@/storage';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
@@ -141,26 +141,34 @@ describe('CaseNote.vue', () => {
   });
 
   describe('Computed', () => {
+    const doMount = (level, otherComputed, hasFeature) => {
+      const pinia = getPiniaForUser(level);
+      useMockCaseFileStore(pinia);
+      wrapper = mount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          id: 'id',
+        },
+        computed: {
+          event() {
+            return mockEvent;
+          },
+          ...otherComputed,
+        },
+        mocks: {
+          $hasFeature: () => hasFeature,
+        },
+      });
+    };
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
     describe('showAddButton', () => {
       it('returns correct value', async () => {
-        const doMount = (level) => {
-          const pinia = getPiniaForUser(level);
-          useMockCaseFileStore(pinia);
-          wrapper = shallowMount(Component, {
-            localVue,
-            pinia,
-            propsData: {
-              id: 'id',
-            },
-            computed: {
-              event() {
-                return mockEvent;
-              },
-            },
-          });
-        };
-
-        doMount('level1');
+        doMount('level0');
         expect(wrapper.vm.showAddButton).toBe(true);
 
         doMount('level6');

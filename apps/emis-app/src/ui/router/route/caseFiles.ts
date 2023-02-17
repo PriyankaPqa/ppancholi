@@ -78,7 +78,7 @@ export const caseFiles: RouteConfig = {
           path: Routes.caseFile.note.path,
           name: Routes.caseFile.note.name,
           component: CaseNote,
-          meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+          meta: { level: 'level0', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
           props: true,
         },
         {
