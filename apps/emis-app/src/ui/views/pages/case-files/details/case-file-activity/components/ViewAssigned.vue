@@ -35,6 +35,7 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { IUserAccountEntity, IUserAccountMetadata, IdParams as IdParamsUserAccount } from '@libs/entities-lib/user-account';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import AssignedList, { IIndividual } from './AssignedList.vue';
 
 export default Vue.extend({
@@ -96,13 +97,19 @@ export default Vue.extend({
     },
 
     async fetchUserAccounts(ids: string[]): Promise<void> {
-      const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
-      await this.combinedUserAccountStore.search({ filter });
+      await helpers.callSearchInInBatches({
+        service: this.combinedUserAccountStore,
+        searchInFilter: 'search.in(Entity/Id, \'{ids}\')',
+        ids,
+      });
     },
 
     async fetchTeams(ids: string[]): Promise<void> {
-      const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
-      await this.combinedTeamStore.search({ filter });
+      await helpers.callSearchInInBatches({
+        service: this.combinedTeamStore,
+        searchInFilter: 'search.in(Entity/Id, \'{ids}\')',
+        ids,
+      });
     },
 
     setAssignedIndividuals() {

@@ -3,6 +3,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { UserRolesNames } from '@libs/entities-lib/user';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 
 const Component = {
   render() {},
@@ -76,17 +77,33 @@ describe('userAccountsFilter', () => {
     });
 
     describe('fetchUsersFilter', () => {
-      it('should call searchUserAccount with the right query', async () => {
-        wrapper.vm.searchUserAccount = jest.fn();
-        await wrapper.vm.fetchUsersFilter('test', ['level3', 'level4'], 10);
-        expect(wrapper.vm.searchUserAccount).toHaveBeenCalledWith({
+      it('should call combinedUserAccountStore search with the right query when there are no roles passed as argument', async () => {
+        wrapper.vm.combinedUserAccountStore.search = jest.fn();
+        await wrapper.vm.fetchUsersFilter('test', null, 10);
+        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
           search: '((/.*test.*/ OR "\\"test\\""))',
           searchFields: 'Metadata/DisplayName',
-          filter: "Entity/Roles/any(r: search.in(r/OptionItemId, 'level3,level4'))",
           top: 10,
           orderBy: 'Metadata/DisplayName',
           queryType: 'full',
           searchMode: 'all',
+        });
+      });
+
+      it('should call callSearchInInBatches with the right payload if there are roles passed as argument', async () => {
+        sharedHelpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1'] }));
+        await wrapper.vm.fetchUsersFilter('test', ['level3', 'level4'], 10);
+        expect(sharedHelpers.callSearchInInBatches).toHaveBeenCalledWith({
+          ids: ['level3', 'level4'],
+          searchInFilter: 'Entity/Roles/any(r: search.in(r/OptionItemId, \'{ids}\'))',
+          otherOptions: {
+            search: '((/.*test.*/ OR "\\"test\\""))',
+            searchFields: 'Metadata/DisplayName',
+            top: 10,
+            orderBy: 'Metadata/DisplayName',
+            queryType: 'full',
+            searchMode: 'all' },
+          service: wrapper.vm.combinedUserAccountStore,
         });
       });
     });

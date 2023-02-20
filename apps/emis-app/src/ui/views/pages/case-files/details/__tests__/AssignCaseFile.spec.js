@@ -5,7 +5,7 @@ import { mockTeamEntity, TeamType, mockTeamMembersData } from '@libs/entities-li
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
-
+import helpers from '@libs/shared-lib/helpers/helpers';
 import Component from '../case-file-activity/components/AssignCaseFile.vue';
 
 const localVue = createLocalVue();
@@ -379,16 +379,18 @@ describe('AssignCaseFile.vue', () => {
     });
 
     describe('fetchAssignedIndividualsData', () => {
-      it('calls userAccount getter and stores the result into teamMembers', async () => {
+      it('calls the helper to batch search calls, userAccount getter and stores the result into teamMembers', async () => {
+        helpers.callSearchInInBatches = jest.fn(() => ({ ids: ['search-id'] }));
         await wrapper.setData({ caseFile: { assignedTeamMembers: [{ teamMembersIds: ['id-1', 'id-2'] }, { teamMembersIds: ['id-3'] }] } });
-        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: ['search-id'] }));
         wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
 
         const result = await wrapper.vm.fetchAssignedIndividualsData();
-        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
-          filter: { Entity: { Id: { searchIn_az: ['id-1', 'id-2', 'id-3'] } } },
-          queryType: 'full',
-          searchMode: 'all',
+        expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
+          service: wrapper.vm.combinedUserAccountStore,
+          ids: ['id-1', 'id-2', 'id-3'],
+          searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
+          otherOptions: { queryType: 'full',
+            searchMode: 'all' },
         });
         expect(wrapper.vm.combinedUserAccountStore.getByIds).toHaveBeenCalledWith(['search-id']);
         expect(result).toEqual([mockCombinedUserAccount()]);

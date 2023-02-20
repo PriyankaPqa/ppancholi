@@ -150,6 +150,8 @@ import {
 import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
+
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { PaymentsSummary } from '@libs/entities-lib/financial-assistance-payment';
 import { IdParams, IUserAccountEntity, IUserAccountMetadata } from '@libs/entities-lib/user-account';
@@ -260,10 +262,14 @@ export default Vue.extend({
     },
 
     async getAssignedIndividualsInfo() {
-      await this.combinedUserAccountStore.search({
-        filter: { Entity: { Id: { searchIn_az: this.assignedIndividualIds } } },
-        queryType: 'full',
-        searchMode: 'all',
+      await sharedHelpers.callSearchInInBatches({
+        ids: this.assignedIndividualIds,
+        service: this.combinedUserAccountStore,
+        searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
+        otherOptions: {
+          queryType: 'full',
+          searchMode: 'all',
+        },
       });
     },
 

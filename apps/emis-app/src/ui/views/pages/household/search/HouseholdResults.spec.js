@@ -1,11 +1,10 @@
 import Vuetify from 'vuetify';
 import { mockCombinedHouseholds, mockCombinedHousehold } from '@libs/entities-lib/household';
-import _range from 'lodash/range';
 import {
   createLocalVue,
   shallowMount,
 } from '@/test/testSetup';
-
+import helpers from '@libs/shared-lib/helpers/helpers';
 import Component from '@/ui/views/pages/household/search/HouseholdResults.vue';
 
 import { tabs } from '@/pinia/registration/tabs';
@@ -119,7 +118,7 @@ describe('HouseholdResultsMove.vue', () => {
     });
 
     describe('getCaseFilesInEvent', () => {
-      it('calls casefile search with the right filter', async () => {
+      it('calls helper callSearchInInBatches  with the right payload', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -135,42 +134,21 @@ describe('HouseholdResultsMove.vue', () => {
           },
 
         });
-        wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
-        wrapper.vm.getCaseFilesInEvent();
+        helpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
+        await wrapper.vm.getCaseFilesInEvent();
 
-        expect(wrapper.vm.combinedCaseFileStore.search)
-          .toHaveBeenCalledWith({ filter: "search.in(Entity/HouseholdId, 'mock-id-1|mock-id-2', '|') and Entity/EventId eq 'event-id'" });
-      });
-
-      it('calls casefile search multiple times if there are more than 20 household ids', async () => {
-        const range = _range(41);
-        const households = range.map((i) => mockCombinedHousehold({ id: i }));
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          vuetify,
-          propsData: {
-            items: households,
-            isSplitMode: false,
-          },
-          computed: {
-            currentEventId() {
-              return 'event-id';
-            },
-          },
-
-        });
-        wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
-        wrapper.vm.getCaseFilesInEvent();
-
-        expect(wrapper.vm.combinedCaseFileStore.search)
-          .toHaveBeenCalledTimes(3);
+        expect(helpers.callSearchInInBatches)
+          .toHaveBeenCalledWith({
+            ids: ['mock-id-1', 'mock-id-2'],
+            service: wrapper.vm.combinedCaseFileStore,
+            searchInFilter: "search.in(Entity/HouseholdId, '{ids}')",
+            otherFilter: "Entity/EventId eq 'event-id'",
+          });
       });
 
       it('calls the casefile getter and saves the household ids of the returned casefiles into householdsInEvent', async () => {
         const caseFiles = [{ entity: { householdId: 'h-id-1' } }, { entity: { householdId: 'h-id-2' } }];
-        wrapper.vm.combinedCaseFileStore.search = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
+        helpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1', 'id-2'] }));
         wrapper.vm.combinedCaseFileStore.getByIds = jest.fn(() => caseFiles);
 
         await wrapper.vm.getCaseFilesInEvent();

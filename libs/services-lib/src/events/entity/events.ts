@@ -12,6 +12,7 @@ import {
   IRegistrationAssessment,
 } from '@libs/entities-lib/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@libs/shared-lib/types';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 import { IEventsService } from './events.types';
@@ -90,10 +91,10 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
 
   async editAgreement(eventId:uuid, payload: IEventAgreement): Promise<IEventEntity> {
     return this.http.patch(
-`${this.baseUrl}/${eventId}/agreement/${payload.id}`,
+      `${this.baseUrl}/${eventId}/agreement/${payload.id}`,
       this.makeAgreementPayload(payload),
-{ globalHandler: false },
-);
+      { globalHandler: false },
+    );
   }
 
   async removeAgreement(eventId:uuid, agreementId: uuid): Promise<IEventEntity> {
@@ -134,12 +135,12 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
   }
 
   async searchMyEventsById(ids: string[]): Promise<IAzureSearchResult<IEventMainInfo>> {
-    const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
-    const params = {
-      filter,
-      top: 999,
-    };
-    return this.searchMyEvents(params);
+    return helpers.callSearchInInBatches({
+      searchInFilter: "search.in(Entity/Id, '{ids}')",
+      service: this,
+      ids,
+      api: 'searchMyEvents',
+    }) as Promise<IAzureSearchResult<IEventMainInfo>>;
   }
 
   async toggleAssessmentsForL0Users(id: uuid, assessmentsForL0UsersEnabled: boolean): Promise<IEventEntity> {

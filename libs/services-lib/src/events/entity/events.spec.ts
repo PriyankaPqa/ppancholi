@@ -4,6 +4,7 @@ import {
   mockEventEntities,
 } from '@libs/entities-lib/event';
 import { ISearchData } from '@libs/shared-lib/types';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import { IHttpMock, mockHttp } from '../../http-client';
 import { EventsService } from './events';
 
@@ -136,14 +137,15 @@ describe('>>> Events Service', () => {
     expect(http.get).toHaveBeenCalledWith('event/search/events', { params, isOData: true });
   });
 
-  test('searchMyEventsById is linked to the correct URL and params', async () => {
+  test('searchMyEventsById calls the helper callSearchInInBatches with the right params and return the right object', async () => {
     const ids = ['id-1', 'id-2'];
-    const params = {
-      filter: "search.in(Entity/Id, 'id-1|id-2', '|')",
-      top: 999,
-    };
-    await service.searchMyEventsById(ids);
-    expect(http.get).toHaveBeenCalledWith('event/search/events', { params, isOData: true });
+    helpers.callSearchInInBatches = jest.fn(); await service.searchMyEventsById(ids);
+    expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
+      searchInFilter: 'search.in(Entity/Id, \'{ids}\')',
+      service,
+      ids,
+      api: 'searchMyEvents',
+    });
   });
 
   describe('setEventStatus', () => {
@@ -216,19 +218,19 @@ describe('>>> Events Service', () => {
     const { id } = event;
     await service.editAgreement(id, agreement);
     expect(http.patch).toHaveBeenCalledWith(
-`${service.baseUrl}/${id}/agreement/${agreement.id}`,
-{
-      name: agreement.name,
-      details: agreement.details,
-      startDate: new Date(agreement.startDate).toISOString(),
-      endDate: null,
-      agreementType: {
-        optionItemId: agreement.agreementType.optionItemId,
-        specifiedOther: agreement.agreementType.specifiedOther,
+      `${service.baseUrl}/${id}/agreement/${agreement.id}`,
+      {
+        name: agreement.name,
+        details: agreement.details,
+        startDate: new Date(agreement.startDate).toISOString(),
+        endDate: null,
+        agreementType: {
+          optionItemId: agreement.agreementType.optionItemId,
+          specifiedOther: agreement.agreementType.specifiedOther,
+        },
       },
-    },
-{ globalHandler: false },
-);
+      { globalHandler: false },
+    );
   });
 
   test('removeAgreement calls the correct URL with the right payload', async () => {

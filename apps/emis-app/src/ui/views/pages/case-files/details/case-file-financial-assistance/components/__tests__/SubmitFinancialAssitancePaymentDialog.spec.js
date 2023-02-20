@@ -4,6 +4,7 @@ import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial
 import { mockApprovalTableData } from '@libs/entities-lib/approvals/approvals-table';
 import { useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import Component from '../SubmitFinancialAssistancePaymentDialog.vue';
 
 const localVue = createLocalVue();
@@ -261,14 +262,17 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
           }];
         const targetRoles = ['1', '2'];
         const targetEvent = 'B';
-        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [] }));
+        helpers.callSearchInInBatches = jest.fn(() => ({ ids: [] }));
         wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => users);
 
-        // eslint-disable-next-line max-len
-        const filter = "Entity/Roles/any(r: search.in(r/OptionItemId, '1,2')) and Metadata/Teams/any(team:team/Events/any(event:event/Id eq 'B'))";
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
 
-        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({ filter });
+        expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
+          service: wrapper.vm.combinedUserAccountStore,
+          searchInFilter: "Entity/Roles/any(r: search.in(r/OptionItemId, '{ids}'))",
+          ids: targetRoles,
+          otherFilter: `Metadata/Teams/any(team:team/Events/any(event:event/Id eq '${targetEvent}'))`,
+        });
         expect(wrapper.vm.users).toEqual(users);
       });
 
@@ -290,14 +294,11 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
           }];
         const targetRoles = ['1', '2'];
         const targetEvent = 'B';
-        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [] }));
+        helpers.callSearchInInBatches = jest.fn(() => ({ ids: [] }));
         wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => users);
 
         // eslint-disable-next-line max-len
-        const filter = "Entity/Roles/any(r: search.in(r/OptionItemId, '1,2')) and Metadata/Teams/any(team:team/Events/any(event:event/Id eq 'B'))";
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
-
-        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({ filter });
         expect(wrapper.vm.users).toEqual([users[0]]);
       });
     });

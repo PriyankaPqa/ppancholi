@@ -3,6 +3,7 @@ import { mockCombinedUserAccounts } from '@libs/entities-lib/user-account';
 import { mockAssignedTeamMembers } from '@libs/entities-lib/case-file';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import Component from '../case-file-activity/components/ViewAssigned.vue';
 
 const localVue = createLocalVue();
@@ -95,21 +96,28 @@ describe('ViewAssigned.vue', () => {
     });
 
     describe('fetchUserAccounts', () => {
-      it('should fetch user accounts by ids', async () => {
+      it('should call the helper callSearchInInBatches', async () => {
+        helpers.callSearchInInBatches = jest.fn();
         const ids = ['1', '2'];
-        const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
         await wrapper.vm.fetchUserAccounts(ids);
-        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({ filter });
+        expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
+          service: wrapper.vm.combinedUserAccountStore,
+          searchInFilter: 'search.in(Entity/Id, \'{ids}\')',
+          ids,
+        });
       });
     });
 
     describe('fetchTeams', () => {
       it('should fetch teams by ids', async () => {
-        wrapper.vm.combinedTeamStore.search = jest.fn();
+        helpers.callSearchInInBatches = jest.fn();
         const ids = ['1', '2'];
-        const filter = `search.in(Entity/Id, '${ids.join('|')}', '|')`;
         await wrapper.vm.fetchTeams(ids);
-        expect(wrapper.vm.combinedTeamStore.search).toHaveBeenCalledWith({ filter });
+        expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
+          service: wrapper.vm.combinedTeamStore,
+          searchInFilter: 'search.in(Entity/Id, \'{ids}\')',
+          ids,
+        });
       });
     });
 

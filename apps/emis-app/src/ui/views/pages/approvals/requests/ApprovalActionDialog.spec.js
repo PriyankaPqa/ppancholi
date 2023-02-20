@@ -2,6 +2,7 @@ import { shallowMount, mount, createLocalVue } from '@/test/testSetup';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockCombinedCaseFinancialAssistance, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import Component from './ApprovalActionDialog.vue';
 
 const localVue = createLocalVue();
@@ -189,7 +190,7 @@ describe('ApprovalActionDialog', () => {
     });
 
     describe('getUsersByRolesAndEvent', () => {
-      it('should return all users having a role for an event', async () => {
+      it('should call helper callSearchInInBatches and return all users having a role for an event', async () => {
         doMount();
         const users = [
           {
@@ -206,14 +207,16 @@ describe('ApprovalActionDialog', () => {
           }];
         const targetRoles = ['1', '2'];
         const targetEvent = 'B';
-        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [] }));
+        helpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1'] }));
         wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => users);
 
-        // eslint-disable-next-line max-len
-        const filter = "Entity/Roles/any(r: search.in(r/OptionItemId, '1,2')) and Metadata/Teams/any(team:team/Events/any(event:event/Id eq 'B'))";
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
-
-        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({ filter });
+        expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
+          service: wrapper.vm.combinedUserAccountStore,
+          searchInFilter: 'Entity/Roles/any(r: search.in(r/OptionItemId, \'{ids}\'))',
+          ids: targetRoles,
+          otherFilter: `Metadata/Teams/any(team:team/Events/any(event:event/Id eq '${targetEvent}'))`,
+        });
         expect(wrapper.vm.users).toEqual(users);
       });
 
@@ -240,14 +243,12 @@ describe('ApprovalActionDialog', () => {
           }];
         const targetRoles = ['1', '2'];
         const targetEvent = 'B';
-        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: [] }));
+        helpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1'] }));
         wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => users);
 
         // eslint-disable-next-line max-len
-        const filter = "Entity/Roles/any(r: search.in(r/OptionItemId, '1,2')) and Metadata/Teams/any(team:team/Events/any(event:event/Id eq 'B'))";
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
 
-        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({ filter });
         expect(wrapper.vm.users).toEqual([users[0]]);
       });
     });

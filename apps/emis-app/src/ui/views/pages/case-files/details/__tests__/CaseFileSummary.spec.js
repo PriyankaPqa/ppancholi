@@ -4,6 +4,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { useMockCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral.mock';
 import { CaseFileActivityType, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
@@ -144,15 +145,19 @@ describe('CaseFileSummary.vue', () => {
     });
 
     describe('getAssignedIndividualsInfo', () => {
-      it('calls user account search with the right payload', async () => {
+      it('calls sharedHelpers callSearchInInBatches with the right payload', async () => {
         await mountWrapper();
         await wrapper.setData({ caseFile: { ...mockCaseFileEntity(), assignedTeamMembers: [{ teamMembersIds: ['id-1'] }] } });
-        wrapper.vm.combinedUserAccountStore.search = jest.fn();
+        sharedHelpers.callSearchInInBatches = jest.fn();
         await wrapper.vm.getAssignedIndividualsInfo();
-        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith({
-          filter: { Entity: { Id: { searchIn_az: ['id-1'] } } },
-          queryType: 'full',
-          searchMode: 'all',
+        expect(sharedHelpers.callSearchInInBatches).toHaveBeenCalledWith({
+          ids: ['id-1'],
+          service: wrapper.vm.combinedUserAccountStore,
+          searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
+          otherOptions: {
+            queryType: 'full',
+            searchMode: 'all',
+          },
         });
       });
     });

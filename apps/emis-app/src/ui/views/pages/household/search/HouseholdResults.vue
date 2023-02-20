@@ -142,7 +142,6 @@
 
 <script lang="ts">
 import moment from 'moment';
-import _chunk from 'lodash/chunk';
 import { IHouseholdCombined } from '@libs/entities-lib/household';
 import { RcDataTable } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
@@ -154,6 +153,7 @@ import { useRegistrationStore } from '@/pinia/registration/registration';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { ICaseFileEntity, ICaseFileMetadata, IdParams } from '@libs/entities-lib/case-file';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
+import helpers from '@libs/shared-lib/helpers/helpers';
 
 export default mixins(household, householdResults).extend({
   name: 'HouseholdResults',
@@ -263,19 +263,17 @@ export default mixins(household, householdResults).extend({
       this.loading = true;
       try {
         const householdIds = this.items.map((h) => h.entity.id);
-        // The search fails if there are too many parameters in the filter. TO DO: create an endpoint to replace the search calls
-        // (eg. modify getAllCaseFilesRelatedToHouseholdId to accept multiple household ids) - EMISV2-6020
-        const idBatches = _chunk(householdIds, 20);
-        const calls = [] as Promise<IAzureTableSearchResults>[];
-        idBatches.forEach((b) => {
-          const filter = `search.in(Entity/HouseholdId, '${b.join('|')}', '|') and Entity/EventId eq '${this.currentEventId}'`;
-          const call = this.combinedCaseFileStore.search({ filter });
-          calls.push(call);
+        const res = await helpers.callSearchInInBatches({
+          ids: householdIds,
+          service: this.combinedCaseFileStore,
+          searchInFilter: "search.in(Entity/HouseholdId, '{ids}')",
+          otherFilter: `Entity/EventId eq '${this.currentEventId}'`,
         });
 
-        const res = await Promise.all(calls);
-        const ids = res.reduce((acc, currentValue) => acc.concat(currentValue?.ids), []);
-        this.householdsInEvent = this.combinedCaseFileStore.getByIds(ids).map((cf) => cf.entity.householdId);
+        const ids = (res as IAzureTableSearchResults)?.ids;
+        if (ids) {
+          this.householdsInEvent = this.combinedCaseFileStore.getByIds(ids).map((cf) => cf.entity.householdId);
+        }
       } finally {
         this.loading = false;
       }

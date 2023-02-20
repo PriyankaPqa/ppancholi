@@ -99,12 +99,13 @@ import {
 } from '@libs/component-lib/components';
 import Vue from 'vue';
 import {
- IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
+  IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import helpers from '@libs/shared-lib/helpers/helpers';
 
 export default Vue.extend({
   name: 'ApprovalActionDialog',
@@ -238,12 +239,16 @@ export default Vue.extend({
     },
 
     async getUsersByRolesAndEvent(targetRoles: Array<string>, targetEvent: string) { // TO DO: replace with dropdown that searches on user input
-      const rolesFilter = `Entity/Roles/any(r: search.in(r/OptionItemId, '${targetRoles.join(',')}'))`;
-      const eventFilter = `Metadata/Teams/any(team:team/Events/any(event:event/Id eq '${targetEvent}'))`;
-      const filter = `${rolesFilter} and ${eventFilter}`;
-      const usersData: IAzureTableSearchResults = await this.combinedUserAccountStore.search({ filter });
-      if (usersData?.ids) {
-        this.users = this.combinedUserAccountStore.getByIds(usersData.ids).filter((u) => !this.excludedUsers.includes(u.entity.id));
+      const usersData = await helpers.callSearchInInBatches({
+        service: this.combinedUserAccountStore,
+        searchInFilter: "Entity/Roles/any(r: search.in(r/OptionItemId, '{ids}'))",
+        ids: targetRoles,
+        otherFilter: `Metadata/Teams/any(team:team/Events/any(event:event/Id eq '${targetEvent}'))`,
+      });
+
+      const ids = (usersData as IAzureTableSearchResults)?.ids;
+      if (ids) {
+        this.users = this.combinedUserAccountStore.getByIds(ids).filter((u) => !this.excludedUsers.includes(u.entity.id));
         this.usersFetched = true;
       }
     },

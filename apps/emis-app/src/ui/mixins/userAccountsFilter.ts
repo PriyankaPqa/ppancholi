@@ -1,12 +1,12 @@
 import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
 import _debounce from 'lodash/debounce';
 import _throttle from 'lodash/throttle';
 import {
   IAzureSearchParams, IAzureTableSearchResults, IDropdownItem, IMultilingual,
 } from '@libs/shared-lib/types';
 import { FilterFormData } from '@libs/component-lib/types';
-
 import { Status } from '@libs/entities-lib/base';
 import { IUserAccountCombined } from '@libs/entities-lib/src/user-account/userAccount.types';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
@@ -64,18 +64,32 @@ export default Vue.extend({
     // eslint-disable-next-line @typescript-eslint/default-param-last
     async fetchUsersFilter(query = '', rolesId: Array<string>, top = 6) {
       const searchParam = helpers.toQuickSearch(query);
-      const filter = rolesId ? `Entity/Roles/any(r: search.in(r/OptionItemId, '${rolesId.join(',')}'))` : {};
       const params = {
         search: searchParam,
         searchFields: 'Metadata/DisplayName',
         top,
-        filter,
         orderBy: 'Metadata/DisplayName',
         queryType: 'full',
         searchMode: 'all',
       };
 
-      return this.searchUserAccount(params);
+      let searchResults;
+      if (rolesId?.length) {
+        searchResults = await sharedHelpers.callSearchInInBatches({
+          ids: rolesId,
+          searchInFilter: "Entity/Roles/any(r: search.in(r/OptionItemId, '{ids}'))",
+          otherOptions: params,
+          service: this.combinedUserAccountStore,
+        });
+      } else {
+        searchResults = await this.combinedUserAccountStore.search(params);
+      }
+
+      if (searchResults?.ids) {
+        const userIds = searchResults.ids;
+        return this.combinedUserAccountStore.getByIds(userIds);
+      }
+      return [];
     },
 
     async searchUserAccount(params: IAzureSearchParams) {

@@ -127,7 +127,7 @@ import { DataTableHeader } from 'vuetify';
 import { TeamType, ITeamEntity } from '@libs/entities-lib/team';
 import { ICaseFileEntity, IAssignedTeamMembers } from '@libs/entities-lib/case-file';
 import {
- AccountStatus, IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
+  AccountStatus, IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -136,6 +136,7 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import AssignedList from './AssignedList.vue';
 
 interface TeamWithCount extends ITeamEntity {
@@ -366,14 +367,17 @@ export default mixins(TablePaginationSearchMixin).extend({
     async fetchAssignedIndividualsData(): Promise<IUserAccountCombined[]> {
       const assignedIndividualIds = _flatten(this.caseFile.assignedTeamMembers.map((m) => m.teamMembersIds));
 
-      const fetchedAssignedUserAccountData = await this.combinedUserAccountStore.search({
-        filter: { Entity: { Id: { searchIn_az: assignedIndividualIds } } },
-        queryType: 'full',
-        searchMode: 'all',
+      const fetchedAssignedUserAccountData = await helpers.callSearchInInBatches({
+        service: this.combinedUserAccountStore,
+        ids: assignedIndividualIds,
+        searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
+        otherOptions: { queryType: 'full',
+          searchMode: 'all' },
       });
 
-      if (fetchedAssignedUserAccountData) {
-        return this.combinedUserAccountStore.getByIds(fetchedAssignedUserAccountData.ids);
+      const ids = (fetchedAssignedUserAccountData as IAzureTableSearchResults)?.ids;
+      if (ids) {
+        return this.combinedUserAccountStore.getByIds(ids);
       }
       return [];
     },
