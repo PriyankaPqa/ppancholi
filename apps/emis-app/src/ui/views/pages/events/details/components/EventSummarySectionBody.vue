@@ -7,6 +7,7 @@
       class="justify-end my-0 pa-4 event-section-item">
       <slot name="default" :item="item" :index="index" />
     </v-col>
+    <slot name="toggleArea" />
   </v-row>
 </template>
 

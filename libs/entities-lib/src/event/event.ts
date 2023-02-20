@@ -53,6 +53,8 @@ export class EventEntity extends BaseEntity {
 
   agreements: Array<IEventAgreement>;
 
+  assessmentsForL0usersEnabled: boolean;
+
   constructor(data?: IEventEntity) {
     if (data) {
       super(data);
@@ -88,6 +90,7 @@ export class EventEntity extends BaseEntity {
       }));
 
       this.selfRegistrationEnabled = data.selfRegistrationEnabled;
+      this.assessmentsForL0usersEnabled = data.assessmentsForL0usersEnabled;
       this.eventStatus = data.eventStatus;
       this.tenantId = data.tenantId;
       this.registrationLocations = _cloneDeep(data.registrationLocations) || [];

@@ -402,4 +402,23 @@ describe('>>> Event Store', () => {
       expect(bComponents.set).toBeCalledWith(res);
     });
   });
+
+  describe('assessmentsForL0UsersEnabled', () => {
+    it('calls the assessmentsForL0UsersEnabled service', async () => {
+      const event = mockEventEntity();
+      const bComponents = { ...baseComponents, set: jest.fn() };
+      const store = createTestStore(bComponents);
+      const payload = {
+        id: event.id,
+        assessmentsForL0UsersEnabled: true,
+      };
+      expect(entityService.toggleAssessmentsForL0Users).toHaveBeenCalledTimes(0);
+
+      const res = await store.toggleAssessmentsForL0Users(payload);
+
+      expect(entityService.toggleAssessmentsForL0Users).toHaveBeenCalledTimes(1);
+      expect(entityService.toggleAssessmentsForL0Users).toHaveBeenCalledWith(event.id, true);
+      expect(bComponents.set).toBeCalledWith(res);
+    });
+  });
 });

@@ -1409,6 +1409,8 @@
     "eventSummary.addRegistrationAssessment": "Ajouter l'analyse",
     "eventSummary.addRegistrationLocation": "Ajouter un nouveau lieu d'inscription",
     "eventSummary.addShelterLocation": "Ajouter un nouveau lieu d'hébergement",
+    "eventSummary.accessAssessmentEnabled": "Activer les évaluations pour les utilisateurs L0",
+    "eventSummary.accessAssessmentDisabled": "Désactiver les évaluations pour les utilisateurs L0",
     "eventSummary.agreement": "Ententes",
     "eventSummary.agreement.agreementType": "Type d'entente",
     "eventSummary.agreement.confirmDelete.message": "Voulez-vous vraiment supprimer l'entente?",

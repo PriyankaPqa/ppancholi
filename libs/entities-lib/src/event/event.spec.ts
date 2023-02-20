@@ -195,6 +195,11 @@ describe('>>> EventEntity', () => {
       const event = new EventEntity(mockEvent);
       expect(event.relatedEventIds).toEqual(mockEvent.relatedEventIds);
     });
+
+    it('should instantiate assessmentsForL0usersEnabled', () => {
+      const event = new EventEntity(mockEvent);
+      expect(event.assessmentsForL0usersEnabled).toEqual(mockEvent.assessmentsForL0usersEnabled);
+    });
   });
 
   describe('>> computed getters', () => {

@@ -135,6 +135,15 @@ export function getExtensionComponents(
     return null;
   }
 
+  async function toggleAssessmentsForL0Users(payload: { id: uuid, assessmentsForL0UsersEnabled: boolean }): Promise<IEventEntity> {
+    const data = await entityService.toggleAssessmentsForL0Users(payload.id, payload.assessmentsForL0UsersEnabled);
+    if (data) {
+      baseComponents.set(data);
+      return data;
+    }
+    return null;
+  }
+
   return {
     eventsFetched,
     agreementTypes,
@@ -155,5 +164,6 @@ export function getExtensionComponents(
     setEventStatus,
     createEvent,
     updateEvent,
+    toggleAssessmentsForL0Users,
   };
 }

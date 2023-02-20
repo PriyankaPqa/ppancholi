@@ -51,6 +51,8 @@ export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
   editRegistrationAssessment(eventId:uuid, payload: IRegistrationAssessment): Promise<IEventEntity>;
 
   removeRegistrationAssessment(eventId:uuid, agreementId: uuid): Promise<IEventEntity>;
+
+  toggleAssessmentsForL0Users(id: uuid, assessmentsForL0UsersEnabled: boolean): Promise<IEventEntity>;
 }
 
 export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity> {
@@ -74,4 +76,5 @@ export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity>
   editShelterLocation: jest.Mock<IEventEntity>;
   searchMyEvents: jest.Mock<IAzureSearchResult<IEventMainInfo>>;
   searchMyEventsById: jest.Mock<IAzureSearchResult<IEventMainInfo>>;
+  toggleAssessmentsForL0Users: jest.Mock<IEventEntity>;
 }

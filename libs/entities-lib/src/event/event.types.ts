@@ -182,6 +182,7 @@ export interface ICreateEventRequest {
 export interface IEditEventRequest extends ICreateEventRequest {
   reOpenReason: string;
   selfRegistrationEnabled: boolean;
+  assessmentsForL0usersEnabled: boolean;
 }
 
 /**
@@ -204,6 +205,7 @@ export interface IEventEntity extends IEntity {
    eventStatus?: number;
    relatedEventIds?: Array<string>;
    agreements?: Array<IEventAgreement>;
+   assessmentsForL0usersEnabled: boolean;
 
    validate(): Array<string> | boolean;
    fillEmptyMultilingualAttributes(): void;

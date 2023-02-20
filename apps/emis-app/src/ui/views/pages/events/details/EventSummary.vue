@@ -64,13 +64,25 @@
         :section="EEventSummarySections.CallCentre"
         :can-add="canEditSections"
         @click-add-button="onSectionAdd($event)" />
-      <event-summary-section-body v-slot="{ item, index }" :items="sortedCallCentres">
-        <event-call-centre-section
-          data-test="call-centre-section"
-          :call-centre="item"
-          :index="index"
-          :can-edit="canEditSections"
-          @edit="editSection($event, EEventSummarySections.CallCentre)" />
+      <event-summary-section-body :items="sortedCallCentres" :section-name="EEventSummarySections.CallCentre">
+        <template #default="{ item, index }">
+          <event-call-centre-section
+            data-test="call-centre-section"
+            :call-centre="item"
+            :index="index"
+            :can-edit="canEditSections"
+            @edit="editSection($event, EEventSummarySections.CallCentre)" />
+        </template>
+
+        <template v-if="showAccessAssessmentToggle" #toggleArea>
+          <event-summary-toggle
+            :toggle-value="event.assessmentsForL0usersEnabled"
+            :loading="updatingAccessAssessmentToggle"
+            :title-of-toggle="$t('eventSummary.accessAssessmentEnabled')"
+            is-last-child
+            data-test="event-summary-toggle-call-centre"
+            @toggleChanged="toggleAccessAssessment($event)" />
+        </template>
       </event-summary-section-body>
 
       <event-summary-section-title
@@ -143,15 +155,7 @@ import { TranslateResult } from 'vue-i18n';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
-import {
-  EEventStatus,
-  IEventCallCentre,
-  IEventAgreement,
-  IEventGenericLocation,
-  EResponseLevel,
-  EventEntity,
-  IRegistrationAssessment,
-} from '@libs/entities-lib/event';
+import { EEventStatus, EResponseLevel, EventEntity, IEventAgreement, IEventCallCentre, IEventGenericLocation, IRegistrationAssessment } from '@libs/entities-lib/event';
 import { EEventSummarySections } from '@/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useEventStore } from '@/pinia/event/event';
@@ -170,6 +174,7 @@ import EventAgreementSection from './components/EventAgreementSection.vue';
 import EventLocationSection from './components/EventLocationSection.vue';
 import EventRegistrationAssessmentSection from './components/EventRegistrationAssessmentSection.vue';
 import EventRegistrationAssessmentDialog from './components/EventRegistrationAssessmentDialog.vue';
+import EventSummaryToggle from './components/EventSummaryToggle.vue';
 
 export enum EDialogComponent {
   CallCentre = 'EventCallCentreDialog',
@@ -203,6 +208,7 @@ export default Vue.extend({
     EventLocationSection,
     EventRegistrationAssessmentSection,
     EventRegistrationAssessmentDialog,
+    EventSummaryToggle,
   },
 
   data() {
@@ -214,6 +220,7 @@ export default Vue.extend({
       loading: false,
       currentDialog: null as DialogData,
       FeatureKeys,
+      updatingAccessAssessmentToggle: false,
     };
   },
 
@@ -289,6 +296,10 @@ export default Vue.extend({
       return this.$hasLevel('level5')
       && (this.event.schedule.status === EEventStatus.Open || this.event.schedule.status === EEventStatus.OnHold);
     },
+
+    showAccessAssessmentToggle(): boolean {
+      return this.event.callCentres.length && this.$hasLevel('level6') && this.$hasFeature(FeatureKeys.L0Access);
+    },
   },
 
   async created() {
@@ -345,6 +356,25 @@ export default Vue.extend({
         isEditMode: true,
         id,
       };
+    },
+
+    async toggleAccessAssessment(toggleChangedResult: boolean) {
+      this.updatingAccessAssessmentToggle = true;
+
+      const response = await useEventStore().toggleAssessmentsForL0Users({
+        id: this.event.id,
+        assessmentsForL0UsersEnabled: toggleChangedResult,
+      });
+
+      if (response) {
+        if (toggleChangedResult) {
+          this.$toasted.global.success(this.$t('eventSummary.accessAssessmentEnabled'));
+        } else {
+          this.$toasted.global.success(this.$t('eventSummary.accessAssessmentDisabled'));
+        }
+      }
+
+      this.updatingAccessAssessmentToggle = false;
     },
   },
 });

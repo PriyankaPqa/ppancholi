@@ -142,6 +142,10 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
     return this.searchMyEvents(params);
   }
 
+  async toggleAssessmentsForL0Users(id: uuid, assessmentsForL0UsersEnabled: boolean): Promise<IEventEntity> {
+    return this.http.patch(`${this.baseUrl}/${id}/assessments-for-l0-users-enabled`, { assessmentsForL0UsersEnabled });
+  }
+
   private eventToCreateEventRequestPayload(event: IEventEntity): ICreateEventRequest {
     const payload: ICreateEventRequest = {
       assistanceNumber: event.responseDetails.assistanceNumber,
@@ -171,6 +175,7 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
       ...this.eventToCreateEventRequestPayload(event),
       reOpenReason: event.schedule.updateReason,
       selfRegistrationEnabled: event.selfRegistrationEnabled,
+      assessmentsForL0usersEnabled: event.assessmentsForL0usersEnabled,
     };
   }
 

@@ -12,7 +12,7 @@ import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { Status } from '@libs/entities-lib/base';
-
+import EventSummaryToggle from '@/ui/views/pages/events/details/components/EventSummaryToggle.vue';
 import Component, { EDialogComponent } from '../EventSummary.vue';
 
 const localVue = createLocalVue();
@@ -58,42 +58,45 @@ const mountWithStatus = (status) => {
 
 describe('EventSummary.vue', () => {
   let wrapper;
+  const doMount = (pinia = getPiniaForUser('level5'), level = 5, otherComputed = {}, hasFeature = false) => {
+    wrapper = mount(Component, {
+      localVue,
+      pinia,
+      computed: {
+        event() {
+          return mockEvent;
+        },
+        agreementTypes() {
+          return [];
+        },
+        responseLevelName() {
+          return 'mock-response-level';
+        },
+        canEditSections() {
+          return true;
+        },
+        canEdit() {
+          return true;
+        },
+        ...otherComputed,
+      },
+      mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}` && level,
+        $route: {
+          name: routes.events.edit.name,
+          params: {
+            id: '7c076603-580a-4400-bef2-5ddececb0931',
+          },
+        },
+        $hasFeature: () => hasFeature,
+      },
+      stubs: {
+        EventStatusDialog: true,
+      },
+    });
+  };
 
   describe('Template', () => {
-    const doMount = (pinia = getPiniaForUser('level5')) => {
-      wrapper = mount(Component, {
-        localVue,
-        pinia,
-        computed: {
-          event() {
-            return mockEvent;
-          },
-          agreementTypes() {
-            return [];
-          },
-          responseLevelName() {
-            return 'mock-response-level';
-          },
-          canEditSections() {
-            return true;
-          },
-          canEdit() {
-            return true;
-          },
-        },
-        mocks: {
-          $route: {
-            name: routes.events.edit.name,
-            params: {
-              id: '7c076603-580a-4400-bef2-5ddececb0931',
-            },
-          },
-        },
-        stubs: {
-          EventStatusDialog: true,
-        },
-      });
-    };
     beforeEach(() => {
       doMount();
     });
@@ -105,7 +108,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('is disabled for users with level below 5', async () => {
-        doMount(getPiniaForUser('level4'));
+        doMount(getPiniaForUser('level4'), 4);
         const element = wrapper.findDataTest('event-detail-status');
         expect(element.props('disabled')).toBeTruthy();
       });
@@ -230,6 +233,55 @@ describe('EventSummary.vue', () => {
 
         const element = wrapper.findDataTest('call-centre-section');
         expect(element.exists()).toBeFalsy();
+      });
+
+      describe('event-summary-toggle-call-centre', () => {
+        it('should display when showAccessAssessmentToggle is true', () => {
+          doMount(getPiniaForUser('level6'), 6, {
+            showAccessAssessmentToggle() {
+              return true;
+            },
+          });
+          const element = wrapper.findDataTest('event-summary-toggle-call-centre');
+          expect(element.exists()).toBeTruthy();
+        });
+      });
+
+      describe('event-summary-toggle', () => {
+        it('should call toggleAccessAssessment when changed', () => {
+          doMount(getPiniaForUser('level6'), 6, {
+            showAccessAssessmentToggle() {
+              return true;
+            },
+          });
+          wrapper.vm.toggleAccessAssessment = jest.fn();
+
+          expect(wrapper.vm.toggleAccessAssessment).toBeCalledTimes(0);
+
+          const element = wrapper.findComponent(EventSummaryToggle);
+          element.vm.$emit('toggleChanged');
+
+          expect(wrapper.vm.toggleAccessAssessment).toBeCalledTimes(1);
+        });
+
+        it('should pass correct Props to EventSummaryToggle for call centre', async () => {
+          doMount(getPiniaForUser('level6'), 6, {
+            showAccessAssessmentToggle() {
+              return true;
+            },
+          });
+          await wrapper.setData({
+            updatingAccessAssessmentToggle: false,
+          });
+
+          const element = wrapper.findDataTest('event-summary-toggle-call-centre');
+          const propsLoading = 'loading';
+          const propsToggleValue = 'toggleValue';
+          const propsTitleOfToggle = 'titleOfToggle';
+          expect(element.props(propsTitleOfToggle)).toEqual(wrapper.vm.$t('eventSummary.accessAssessmentEnabled'));
+          expect(element.props(propsToggleValue)).toEqual(wrapper.vm.event.assessmentsForL0usersEnabled);
+          expect(element.props(propsLoading)).toEqual(wrapper.vm.updatingAccessAssessmentToggle);
+        });
       });
     });
 
@@ -826,6 +878,18 @@ describe('EventSummary.vue', () => {
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });
+
+    describe('showAccessAssessmentToggle', () => {
+      it('should return true when user has level6 and event has call centre', () => {
+        doMount(getPiniaForUser('level6'), 6, null, true);
+        expect(wrapper.vm.showAccessAssessmentToggle).toBeTruthy();
+      });
+
+      it('should return false when user doesnt have level 6,', () => {
+        doMount(getPiniaForUser('level5'), 5, null, true);
+        expect(wrapper.vm.showAccessAssessmentToggle).toBeFalsy();
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -923,6 +987,27 @@ describe('EventSummary.vue', () => {
           isEditMode: true,
           id: 'foo',
         });
+      });
+    });
+
+    describe('toggleAccessAssessment', () => {
+      it('calls the actions assessmentsForL0UsersEnabled', async () => {
+        await wrapper.vm.toggleAccessAssessment(true);
+        expect(eventStore.toggleAssessmentsForL0Users).toHaveBeenCalledWith({
+          id: wrapper.vm.event.id,
+          assessmentsForL0UsersEnabled: true,
+        });
+      });
+
+      it('shows a toast notification when toggleAccessAssessment completes successfully', async () => {
+        eventStore.toggleAssessmentsForL0Users = jest.fn(() => true);
+        await wrapper.vm.toggleAccessAssessment(true);
+
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.accessAssessmentEnabled');
+
+        await wrapper.vm.toggleAccessAssessment(false);
+
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.accessAssessmentDisabled');
       });
     });
   });

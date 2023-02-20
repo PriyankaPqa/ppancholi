@@ -1409,6 +1409,8 @@
     "eventSummary.addRegistrationAssessment": "Add assessment",
     "eventSummary.addRegistrationLocation": "Add new registration location",
     "eventSummary.addShelterLocation": "Add new shelter location",
+    "eventSummary.accessAssessmentEnabled": "Enable Assessments for L0 users",
+    "eventSummary.accessAssessmentDisabled": "Disable Assessments for L0 users",
     "eventSummary.agreement": "Agreements",
     "eventSummary.agreement.agreementType": "Agreement type",
     "eventSummary.agreement.confirmDelete.message": "Are you sure you want to delete the agreement?",

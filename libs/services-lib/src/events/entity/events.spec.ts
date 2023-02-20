@@ -121,6 +121,7 @@ describe('>>> Events Service', () => {
       reOpenReason: 'For reasons',
       status: EEventStatus.OnHold,
       selfRegistrationEnabled: false,
+      assessmentsForL0usersEnabled: false,
     }, { globalHandler: false });
   });
 
@@ -307,5 +308,10 @@ describe('>>> Events Service', () => {
       await service.search(params);
       expect(http.get).toHaveBeenCalledWith('event/search/events', { params, isOData: true });
     });
+  });
+
+  test('toggleAssessmentsForL0Users is linked to the correct url', async () => {
+    await service.toggleAssessmentsForL0Users('ID', false);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/ID/assessments-for-l0-users-enabled`, { assessmentsForL0UsersEnabled: false });
   });
 });
