@@ -4,10 +4,12 @@ import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial
 import { mockApprovalTableData } from '@libs/entities-lib/approvals/approvals-table';
 import { useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { mockProvider } from '@/services/provider';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import Component from '../SubmitFinancialAssistancePaymentDialog.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const financialAssistance = mockFinancialAssistanceTableEntity();
 
@@ -32,7 +34,7 @@ const doMount = (shallow = true, approvalRequired = false, approvalTable = null,
       approvalTable,
     }),
     mocks: {
-
+      $services: services,
       $hasFeature: () => hasFeature,
     },
   };

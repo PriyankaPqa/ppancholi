@@ -10,9 +10,11 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { mockProvider } from '@/services/provider';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 const vuetify = new Vuetify();
 
 const pinia = getPiniaForUser(UserRoles.level6);
@@ -31,6 +33,7 @@ describe('AppHeader.vue', () => {
         $route: {
           name: routes.events.home.name,
         },
+        $services: services,
       },
     });
   });
@@ -68,6 +71,7 @@ describe('AppHeader.vue', () => {
               name: routes.events.home.name,
             },
             $hasFeature: jest.fn(() => false),
+            $services: services,
           },
         });
 
@@ -84,6 +88,7 @@ describe('AppHeader.vue', () => {
               name: routes.events.home.name,
             },
             $hasFeature: jest.fn(() => true),
+            $services: services,
           },
         });
 
@@ -99,6 +104,7 @@ describe('AppHeader.vue', () => {
             $route: {
               name: routes.events.home.name,
             },
+            $services: services,
           },
         });
 
@@ -114,6 +120,7 @@ describe('AppHeader.vue', () => {
             $route: {
               name: routes.registration.home.name,
             },
+            $services: services,
           },
         });
 
@@ -128,6 +135,7 @@ describe('AppHeader.vue', () => {
             $route: {
               name: routes.registration.individual.name,
             },
+            $services: services,
           },
         });
 
@@ -221,6 +229,9 @@ describe('AppHeader.vue', () => {
             branding() {
               return mockBrandingEntity();
             },
+          },
+          mocks: {
+            $services: services,
           },
         });
         const button = wrapper.find('[data-test="appHeader__registerBeneficiaries"]');

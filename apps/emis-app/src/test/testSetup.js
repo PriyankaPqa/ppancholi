@@ -8,7 +8,6 @@ import '@/ui/plugins/vee-validate';
 import formatCurrency from '@/ui/plugins/formatCurrency';
 import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
 import features from '@/ui/plugins/features';
-import { mockProvider } from '@/services/provider';
 import { getLocalVue, getWrapper } from '@libs/shared-lib/tests/testBase';
 import { PiniaVuePlugin } from 'pinia';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
@@ -34,7 +33,6 @@ export const mount = (Component, options) => {
     ...options,
   };
   const wrapper = getWrapper(Component, opts, {
-    mockProviderInstance: mockProvider(),
     mountMethod: m,
   });
   return wrapper;
@@ -46,7 +44,6 @@ export const shallowMount = (Component, options) => {
     ...options,
   };
   const wrapper = getWrapper(Component, opts, {
-    mockProviderInstance: mockProvider(),
     mountMethod: sm,
   });
   return wrapper;

@@ -11,9 +11,11 @@ import {
 } from '@libs/entities-lib/mass-action';
 import { format } from 'date-fns';
 
+import { mockProvider } from '@/services/provider';
 import Component from './DataCorrectionCreate.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 describe('DataCorrectionCreate.vue', () => {
   let wrapper;
@@ -22,6 +24,9 @@ describe('DataCorrectionCreate.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
+        mocks: {
+          $services: services,
+        },
       });
     });
 

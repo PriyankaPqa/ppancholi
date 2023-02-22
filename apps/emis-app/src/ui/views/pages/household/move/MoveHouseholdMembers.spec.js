@@ -9,9 +9,11 @@ import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResultsMo
 import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
+import { mockProvider } from '@/services/provider';
 import Component from './MoveHouseholdMembers.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 const household = mockCombinedHousehold();
 const householdCreate = { ...mockHouseholdCreate(), id: 'id-1' };
 
@@ -30,9 +32,11 @@ describe('MoveHouseholdMembers.vue', () => {
           propsData: {
             id: household.entity.id,
           },
-
           computed: {
             currentHousehold: () => (householdCreate),
+          },
+          mocks: {
+            $services: services,
           },
         });
 
@@ -47,7 +51,7 @@ describe('MoveHouseholdMembers.vue', () => {
             id: household.entity.id,
           },
           mocks: {
-
+            $services: services,
             $router: { back: jest.fn() },
           },
           computed: {
@@ -96,6 +100,9 @@ describe('MoveHouseholdMembers.vue', () => {
           return {
             firstHousehold: householdCreate,
           };
+        },
+        mocks: {
+          $services: services,
         },
       });
     });

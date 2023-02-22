@@ -10,9 +10,11 @@ import {
 import helpers from '@/ui/helpers/helpers';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 
+import { mockProvider } from '@/services/provider';
 import Component from '../CreateEditEvent.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const { pinia, eventStore } = useMockEventStore();
 
@@ -43,7 +45,7 @@ describe('CreatEditEvent.vue', () => {
         },
       },
       mocks: {
-
+        $services: services,
         $route: {
           name: routes.events.edit.name,
         },

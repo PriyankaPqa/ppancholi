@@ -32,7 +32,7 @@ function findSelectWithValidation(dataTest) {
 }
 
 export const getWrapper = (Component, options, {
-  mockStore, mockProviderInstance, mountMethod,
+  mockStore, mountMethod,
 }) => {
   if (!options.localVue) {
     throw new Error('Must pass in localVue instance.');
@@ -74,7 +74,6 @@ export const getWrapper = (Component, options, {
       },
       show: jest.fn(),
     },
-    $services: mockProviderInstance,
     $appInsights: {
       loadAppInsights: jest.fn(),
       trackPageView: jest.fn(),

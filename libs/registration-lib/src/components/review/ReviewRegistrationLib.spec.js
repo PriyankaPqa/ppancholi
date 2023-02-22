@@ -14,8 +14,10 @@ import { i18n } from '../../ui/plugins/i18n';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
 import PersonalInformationTemplate from './personal-information/PersonalInformationTemplate.vue';
 import Component from './ReviewRegistrationLib.vue';
+import { mockProvider } from '../../provider';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 const vuetify = new Vuetify();
 
 describe('ReviewRegistrationLib.vue', () => {
@@ -34,6 +36,9 @@ describe('ReviewRegistrationLib.vue', () => {
             i18n,
             disableAutocomplete: false,
             user: mockUserL6(),
+          },
+          mocks: {
+            $services: services,
           },
           stubs: ['personal-information-template'],
         });
@@ -180,6 +185,9 @@ describe('ReviewRegistrationLib.vue', () => {
           i18n,
           disableAutocomplete: false,
           user: mockUserL6(),
+        },
+        mocks: {
+          $services: services,
         },
       });
       wrapper.vm.$registrationStore.getHouseholdCreate = jest.fn(() => mockHouseholdCreate());

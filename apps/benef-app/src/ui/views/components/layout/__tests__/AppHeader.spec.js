@@ -4,9 +4,11 @@ import routes from '@/constants/routes';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { createTestingPinia } from '@pinia/testing';
+import { mockProvider } from '@/services/provider';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 const pinia = createTestingPinia({ stubActions: false });
 const { registrationStore } = useMockRegistrationStore(pinia);
 const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
@@ -20,6 +22,9 @@ describe('AppHeader.vue', () => {
       wrapper = shallowMount(Component, {
         pinia,
         localVue,
+        mocks: {
+          $services: services,
+        },
       });
     });
 
@@ -62,6 +67,9 @@ describe('AppHeader.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
+        mocks: {
+          $services: services,
+        },
       });
     });
     describe('logoUrl', () => {
@@ -97,6 +105,7 @@ describe('AppHeader.vue', () => {
           pinia,
           mocks: {
             $route: { name: routes.landingPage.name },
+            $services: services,
           },
         });
         expect(wrapper.vm.isLandingPage).toBeTruthy();

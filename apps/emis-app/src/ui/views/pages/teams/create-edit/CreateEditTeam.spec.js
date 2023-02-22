@@ -16,9 +16,11 @@ import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock'
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 
+import { mockProvider } from '@/services/provider';
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const { pinia, userAccountStore, userAccountMetadataStore } = useMockUserAccountStore();
 const { teamStore, teamMetadataStore } = useMockTeamStore(pinia);
@@ -50,7 +52,7 @@ describe('CreateEditTeam.vue', () => {
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
-
+        $services: services,
       },
       ...additionalOverwrites,
     });

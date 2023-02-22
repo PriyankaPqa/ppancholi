@@ -6,9 +6,11 @@ import {
 } from '@libs/entities-lib/event';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
+import { mockProvider } from '@/services/provider';
 import Component from './SplitHouseholdEvent.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const { pinia, registrationStore } = useMockRegistrationStore();
 describe('SplitHouseholdEvent', () => {
@@ -19,7 +21,9 @@ describe('SplitHouseholdEvent', () => {
       wrapper = mount(Component, {
         localVue,
         pinia,
-
+        mocks: {
+          $services: services,
+        },
       });
     });
 
@@ -54,7 +58,9 @@ describe('SplitHouseholdEvent', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
-
+        mocks: {
+          $services: services,
+        },
       });
     });
 

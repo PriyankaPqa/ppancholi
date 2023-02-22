@@ -15,11 +15,13 @@ import { useMockRegistrationStore } from '@libs/stores-lib/registration/registra
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 
+import { mockProvider } from '@/services/provider';
 import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();
 const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember({ id: '1' }), mockMember({ id: '2' }), mockMember({ id: '3' })] };
 const householdEntity = mockHouseholdEntity();
+const services = mockProvider();
 
 const member = mockMember();
 
@@ -73,6 +75,9 @@ describe('HouseholdProfile.vue', () => {
           householdEntity() {
             return householdEntity;
           },
+        },
+        mocks: {
+          $services: services,
         },
 
       });
@@ -133,6 +138,9 @@ describe('HouseholdProfile.vue', () => {
               return true;
             },
           },
+          mocks: {
+            $services: services,
+          },
 
         });
 
@@ -162,6 +170,9 @@ describe('HouseholdProfile.vue', () => {
             canEdit() {
               return false;
             },
+          },
+          mocks: {
+            $services: services,
           },
 
         });
@@ -242,7 +253,9 @@ describe('HouseholdProfile.vue', () => {
               return caseFiles;
             },
           },
-
+          mocks: {
+            $services: services,
+          },
         });
 
         expect(wrapper.vm.registrationLocations).toEqual([
@@ -265,6 +278,9 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
+          mocks: {
+            $services: services,
+          },
 
         });
         expect(wrapper.vm.household).toEqual(householdCreate);
@@ -283,6 +299,9 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
+          },
+          mocks: {
+            $services: services,
           },
 
         });
@@ -311,6 +330,9 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
+          mocks: {
+            $services: services,
+          },
 
         });
 
@@ -332,6 +354,9 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
+          mocks: {
+            $services: services,
+          },
 
         });
         expect(wrapper.vm.country).toEqual('mock-country');
@@ -351,6 +376,9 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
+          mocks: {
+            $services: services,
+          },
 
         });
 
@@ -368,6 +396,9 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
+          },
+          mocks: {
+            $services: services,
           },
 
         });
@@ -388,6 +419,9 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
+          mocks: {
+            $services: services,
+          },
           pinia: getPiniaForUser(UserRoles.level1),
         });
         wrapper.vm.$hasFeature = jest.fn(() => false);
@@ -404,6 +438,9 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
+          },
+          mocks: {
+            $services: services,
           },
           pinia: getPiniaForUser(UserRoles.level0),
         });
@@ -423,6 +460,9 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
+          mocks: {
+            $services: services,
+          },
         });
 
         expect(wrapper.vm.canEdit).toBeFalsy();
@@ -441,6 +481,9 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
+          mocks: {
+            $services: services,
+          },
           pinia: getPiniaForUser(UserRoles.level2),
         });
 
@@ -457,6 +500,9 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
+          },
+          mocks: {
+            $services: services,
           },
           pinia: getPiniaForUser(UserRoles.level1),
         });
@@ -480,6 +526,7 @@ describe('HouseholdProfile.vue', () => {
           },
           mocks: {
             $hasFeature: () => true,
+            $services: services,
           },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(true);
@@ -496,7 +543,7 @@ describe('HouseholdProfile.vue', () => {
             },
           },
           mocks: {
-
+            $services: services,
             $hasFeature: () => false,
           },
         });
@@ -516,6 +563,9 @@ describe('HouseholdProfile.vue', () => {
           },
           propsData: {
             id: householdEntity.id,
+          },
+          mocks: {
+            $services: services,
           },
         });
       });
@@ -540,7 +590,9 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: householdEntity.id,
           },
-
+          mocks: {
+            $services: services,
+          },
         });
       });
       it('calls registration storage action fetchGenders', () => {
@@ -580,6 +632,9 @@ describe('HouseholdProfile.vue', () => {
         propsData: {
           id: householdEntity.id,
         },
+        mocks: {
+          $services: services,
+        },
 
       });
     });
@@ -597,6 +652,9 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: householdEntity.id,
           },
+          mocks: {
+            $services: services,
+          },
 
         });
         jest.spyOn(wrapper.vm.$services.publicApi, 'searchEventsById').mockImplementation(() => {});
@@ -613,6 +671,22 @@ describe('HouseholdProfile.vue', () => {
 
     describe('fetchHouseholdData', () => {
       it('calls household storage action fetch with the id', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          data() {
+            return {
+              caseFiles: [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }],
+            };
+          },
+          propsData: {
+            id: householdEntity.id,
+          },
+          mocks: {
+            $services: services,
+          },
+
+        });
         await wrapper.vm.fetchHouseholdData();
         expect(householdStore.fetch).toHaveBeenCalledWith(householdEntity.id);
         expect(householdMetadataStore.fetch).toHaveBeenCalledWith(householdEntity.id, false);
@@ -632,7 +706,9 @@ describe('HouseholdProfile.vue', () => {
               return householdEntity;
             },
           },
-
+          mocks: {
+            $services: services,
+          },
         });
 
         jest.spyOn(wrapper.vm, 'buildHouseholdCreateData').mockImplementation(() => householdCreate);
@@ -679,7 +755,9 @@ describe('HouseholdProfile.vue', () => {
               return altHousehold;
             },
           },
-
+          mocks: {
+            $services: services,
+          },
         });
 
         wrapper.vm.addAdditionalMember();
@@ -706,7 +784,9 @@ describe('HouseholdProfile.vue', () => {
               return altHousehold;
             },
           },
-
+          mocks: {
+            $services: services,
+          },
         });
 
         expect(wrapper.vm.disabledAddMembers).toBeFalsy();
@@ -736,7 +816,9 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-
+          mocks: {
+            $services: services,
+          },
         });
         expect(wrapper.vm.showEditAddress).toBe(false);
 

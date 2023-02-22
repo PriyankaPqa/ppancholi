@@ -42,7 +42,6 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           mocks: {
-
             $hasFeature: () => false,
           },
         });

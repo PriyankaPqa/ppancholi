@@ -5,9 +5,11 @@ import { mockCaseFileEntity, mockCombinedCaseFile, CaseFileStatus } from '@libs/
 import routes from '@/constants/routes';
 import { RcDialog } from '@libs/component-lib/components';
 
+import { mockProvider } from '@/services/provider';
 import Component from './TeamMemberCaseFiles.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 const usersTestData = mockCombinedUserAccount({
   id: '8f05945f-0093-447f-80b2-cee1b0826678',
   teams: [
@@ -54,6 +56,9 @@ describe('TeamMemberCaseFiles.vue', () => {
       propsData: {
         member: usersTestData,
         show: true,
+      },
+      mocks: {
+        $services: services,
       },
       ...otherOptions,
     });

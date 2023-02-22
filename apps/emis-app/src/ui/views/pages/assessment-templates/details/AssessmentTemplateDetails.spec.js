@@ -8,9 +8,11 @@ import { useMockAssessmentTemplateStore } from '@/pinia/assessment-template/asse
 import { createTestingPinia } from '@pinia/testing';
 import flushPromises from 'flush-promises';
 
+import { mockProvider } from '@/services/provider';
 import Component from './AssessmentTemplateDetails.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 const pinia = createTestingPinia({ stubActions: false });
 const assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
 const assessmentTemplateStore = useMockAssessmentTemplateStore(pinia).assessmentTemplateStore;
@@ -38,6 +40,7 @@ describe('AssessmentTemplateDetails', () => {
               assessmentTemplateId: 'mock-assessmentTemplate-id',
             },
           },
+          $services: services,
         },
       });
 
@@ -158,6 +161,7 @@ describe('AssessmentTemplateDetails', () => {
               assessmentTemplateId: 'mock-assessmentTemplate-id',
             },
           },
+          $services: services,
         },
       });
     });
@@ -181,6 +185,7 @@ describe('AssessmentTemplateDetails', () => {
               assessmentTemplateId: 'mock-assessmentTemplate-id',
             },
           },
+          $services: services,
         },
       });
     });
@@ -233,6 +238,7 @@ describe('AssessmentTemplateDetails', () => {
               assessmentTemplateId: 'mock-assessmentTemplate-id',
             },
           },
+          $services: services,
         },
         computed: {
           assessmentTemplateData() {

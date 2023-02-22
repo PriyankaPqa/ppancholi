@@ -3,9 +3,11 @@ import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { LOGO_EXTENSIONS } from '@/constants/documentExtensions';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 
+import { mockProvider } from '@/services/provider';
 import Component from '../Logo.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 let wrapper;
 
@@ -14,6 +16,9 @@ const doMount = (shallow = true) => {
     localVue,
     propsData: {
       disableEditBtn: false,
+    },
+    mocks: {
+      $services: services,
     },
   };
   if (shallow) {
@@ -46,7 +51,9 @@ describe('Logo.vue', () => {
           propsData: {
             disableEditBtn: false,
           },
-
+          mocks: {
+            $services: services,
+          },
         });
 
         expect(wrapper.vm.dimensionsRuleText).toEqual(`system_management.branding.logo.maxDimensions: ${maxWidth}px × ${maxHeight}px`);

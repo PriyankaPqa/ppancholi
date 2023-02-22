@@ -1,5 +1,6 @@
 import { RcRouterViewTransition } from '@libs/component-lib/components';
 import { createLocalVue, mount } from '@/test/testSetup';
+import { mockProvider } from '@/services/provider';
 import Component from '../MainLayout.vue';
 import AppHeader from '../AppHeader.vue';
 import LeftMenu from '../LeftMenu.vue';
@@ -8,10 +9,14 @@ import GeneralHelpMenu from '../GeneralHelpMenu.vue';
 describe('MainLayout.vue', () => {
   let wrapper;
   const localVue = createLocalVue();
+  const services = mockProvider();
 
   beforeEach(async () => {
     wrapper = mount(Component, {
       localVue,
+      mocks: {
+        $services: services,
+      },
     });
   });
 

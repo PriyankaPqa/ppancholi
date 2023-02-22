@@ -10,9 +10,11 @@ import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 
+import { mockProvider } from '@/services/provider';
 import Component from '../CaseFileSummary.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const { pinia, userAccountMetadataStore } = useMockUserAccountStore();
 const { caseFileReferralStore } = useMockCaseFileReferralStore(pinia);
@@ -32,7 +34,7 @@ describe('CaseFileSummary.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-
+        $services: services,
       },
       ...additionalOverwrites,
     });

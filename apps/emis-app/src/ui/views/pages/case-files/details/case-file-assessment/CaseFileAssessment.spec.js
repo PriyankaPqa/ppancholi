@@ -15,10 +15,11 @@ import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 
+import { mockProvider } from '@/services/provider';
 import Component from './CaseFileAssessment.vue';
 
 const localVue = createLocalVue();
-
+const services = mockProvider();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
@@ -124,7 +125,7 @@ describe('CaseFileAssessment.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-
+        $services: services,
       },
       ...additionalOverwrites,
     });

@@ -7,6 +7,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileStatus, mockCaseFileEntities } from '@libs/entities-lib/case-file';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+import { mockProvider } from '@/services/provider';
 
 const Component = {
   render() {},
@@ -15,6 +16,7 @@ const Component = {
 
 const localVue = createLocalVue();
 const member = mockMember();
+const services = mockProvider();
 
 const { pinia, householdStore } = useMockHouseholdStore();
 const { registrationStore } = useMockRegistrationStore(pinia);
@@ -28,6 +30,9 @@ describe('household', () => {
       localVue,
       propsData: {
         id: 'id-1',
+      },
+      mocks: {
+        $services: services,
       },
     });
   });
@@ -94,6 +99,9 @@ describe('household', () => {
               return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
             },
           },
+          mocks: {
+            $services: services,
+          },
         });
         jest.spyOn(wrapper.vm.$services.events, 'searchMyEventsById').mockImplementation(() => {});
         await wrapper.vm.fetchMyEvents();
@@ -118,6 +126,9 @@ describe('household', () => {
             activeCaseFiles() {
               return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
             },
+          },
+          mocks: {
+            $services: services,
           },
         });
 

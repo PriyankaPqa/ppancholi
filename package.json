@@ -64,7 +64,7 @@
     "emis-app:dev:lab": "yarn emis-app:dev --mode lab",
     "emis-app:lint": "yarn --cwd apps/emis-app lint",
     "emis-app:test": "yarn jest --projects apps/emis-app --runInBand",
-    "emis-app:test:graph": "jest-heap-graph 'yarn benef-app:test --logHeapUsage --no-cache'",
+    "emis-app:test:graph": "jest-heap-graph 'yarn emis-app:test --logHeapUsage --no-cache'",
     "emis-app:i18n-report": "node tools/scripts/i18n-report.js 'apps/emis-app/src/ui/lang/emis/en.json','apps/emis-app/src/ui/lang/registration/en.json' 'apps/emis-app/src'",
     "emis-app:lokalise": "yarn --cwd apps/emis-app lokalise",
     "emis-app:cy:run": "yarn --cwd apps/emis-app cypress run",

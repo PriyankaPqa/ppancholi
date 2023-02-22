@@ -8,6 +8,7 @@ import { mockAssessmentFormEntity, mockSearchDataForm } from '@libs/entities-lib
 import { Status } from '@libs/entities-lib/base';
 import utils from '@libs/entities-lib/utils';
 
+import { mockProvider } from '@/services/provider';
 import Component from './AssessmentDetailsCreate.vue';
 
 const formCopy = {
@@ -17,6 +18,7 @@ const formCopy = {
 };
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 describe('AssessmentDetailsCreate.vue', () => {
   let wrapper;
@@ -28,7 +30,9 @@ describe('AssessmentDetailsCreate.vue', () => {
         propsData: {
           form: formCopy,
         },
-
+        mocks: {
+          $services: services,
+        },
       });
     });
 
@@ -54,7 +58,9 @@ describe('AssessmentDetailsCreate.vue', () => {
         propsData: {
           form: formCopy,
         },
-
+        mocks: {
+          $services: services,
+        },
       });
     });
 

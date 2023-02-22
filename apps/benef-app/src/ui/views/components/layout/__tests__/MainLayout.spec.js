@@ -3,12 +3,14 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { mockProvider } from '@/services/provider';
 import Component from '../MainLayout.vue';
 
 const { pinia, registrationStore } = useMockRegistrationStore();
 const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
 describe('MainLayout.vue', () => {
   const localVue = createLocalVue();
+  const services = mockProvider();
 
   let wrapper;
 
@@ -16,6 +18,9 @@ describe('MainLayout.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
+      mocks: {
+        $services: services,
+      },
     });
 
     await wrapper.setData({ fetchingData: false });

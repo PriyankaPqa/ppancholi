@@ -14,9 +14,11 @@ import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/compon
 import helpers from '@/ui/helpers/helpers';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
 
+import { mockProvider } from '@/services/provider';
 import Component from './MassActionPreProcessedProcessedBase.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const { pinia, massActionStore } = useMockMassActionStore();
 let wrapper;
@@ -42,6 +44,9 @@ const doMount = ({ otherProps, otherData }, mountMode = false, runStatus = MassA
         userAccount: mockCombinedUserAccount(),
         ...otherData,
       };
+    },
+    mocks: {
+      $services: services,
     },
   };
   if (mountMode) {

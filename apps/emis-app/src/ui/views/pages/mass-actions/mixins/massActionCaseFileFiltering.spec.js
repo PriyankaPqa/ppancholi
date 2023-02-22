@@ -2,6 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { MassActionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
 
+import { mockProvider } from '@/services/provider';
 import massActionCaseFileFiltering from './massActionCaseFileFiltering';
 
 const Component = {
@@ -10,6 +11,7 @@ const Component = {
 };
 
 const localVue = createLocalVue();
+const services = mockProvider();
 let wrapper;
 
 describe('massActionCaseFileFiltering.vue', () => {
@@ -19,6 +21,9 @@ describe('massActionCaseFileFiltering.vue', () => {
         localVue,
         propsData: {
           show: true,
+        },
+        mocks: {
+          $services: services,
         },
 
       });
@@ -44,7 +49,9 @@ describe('massActionCaseFileFiltering.vue', () => {
         propsData: {
           show: true,
         },
-
+        mocks: {
+          $services: services,
+        },
       });
     });
 

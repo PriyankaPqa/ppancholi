@@ -23,6 +23,7 @@ import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 
+import { mockProvider } from '@/services/provider';
 import Component from '../EventForm.vue';
 
 const event = mockEventEntity();
@@ -32,6 +33,7 @@ event.responseDetails.dateReported = moment(event.responseDetails.dateReported).
 event.fillEmptyMultilingualAttributes = jest.fn();
 
 const localVue = createLocalVue();
+const services = mockProvider();
 const pinia = createTestingPinia({
   stubActions: false,
 });
@@ -91,6 +93,9 @@ describe('EventForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
+        mocks: {
+          $services: services,
+        },
 
       });
 
@@ -116,7 +121,9 @@ describe('EventForm.vue', () => {
           registrationLink() {
             return 'gatineau-floods-2021';
           },
-
+        },
+        mocks: {
+          $services: services,
         },
 
       });
@@ -173,6 +180,9 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
+          mocks: {
+            $services: services,
+          },
 
         });
 
@@ -196,6 +206,9 @@ describe('EventForm.vue', () => {
             relatedEventsSorted() {
               return [event];
             },
+          },
+          mocks: {
+            $services: services,
           },
 
         });
@@ -270,6 +283,7 @@ describe('EventForm.vue', () => {
             return 'https://mytest.test/';
           },
         },
+
       });
     });
 
@@ -320,7 +334,6 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-
           computed: {
             prefixRegistrationLink() {
               return 'https://mytest.test/';
@@ -376,12 +389,12 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-
           computed: {
             otherProvincesSorted() {
               return otherProvinces;
             },
           },
+
         });
 
         wrapper.vm.provinceOther = otherProvinces[0];
@@ -407,6 +420,7 @@ describe('EventForm.vue', () => {
               return otherProvinces;
             },
           },
+
         });
 
         wrapper.vm.languageMode = 'en';
@@ -439,6 +453,7 @@ describe('EventForm.vue', () => {
                 return otherProvinces;
               },
             },
+
           });
 
           wrapper.vm.languageMode = 'en';
@@ -799,6 +814,9 @@ describe('EventForm.vue', () => {
             return [event];
           },
         },
+        mocks: {
+          $services: services,
+        },
       });
     });
 
@@ -870,6 +888,9 @@ describe('EventForm.vue', () => {
               e164Number: '',
             },
           };
+        },
+        mocks: {
+          $services: services,
         },
       });
     });
@@ -970,6 +991,9 @@ describe('EventForm.vue', () => {
             return 'https://mytest.test/';
           },
         },
+        mocks: {
+          $services: services,
+        },
       });
       wrapper.vm.assistanceNumber = {
         number: '',
@@ -1011,7 +1035,9 @@ describe('EventForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
-
+        mocks: {
+          $services: services,
+        },
       });
     };
 

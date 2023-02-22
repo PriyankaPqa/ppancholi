@@ -8,9 +8,11 @@ import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
+import { mockProvider } from '@/services/provider';
 import Component from '../PrimaryMemberDialog.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember()] };
 const { pinia, registrationStore } = useMockRegistrationStore();
@@ -450,6 +452,9 @@ describe('PrimaryMemberDialog', () => {
           },
           data() {
             return { apiKey: '123', member: mockMember() };
+          },
+          mocks: {
+            $services: services,
           },
 
         });

@@ -7,10 +7,12 @@ import {
 import { EEventStatus, mockCombinedEvent, mockCombinedEvents } from '@libs/entities-lib/event';
 import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import { RegistrationEvent } from '@libs/entities-lib/registration-event';
+import { mockProvider } from '@/services/provider';
 import Component from './EventsSelector.vue';
 
 const localVue = createLocalVue();
 const vuetify = new Vuetify();
+const services = mockProvider();
 let wrapper;
 
 const doMount = (shallow = true, fetchAllEvents = false) => {
@@ -22,6 +24,9 @@ const doMount = (shallow = true, fetchAllEvents = false) => {
       dataTest: 'dataTest',
       itemValue: 'event.id',
       fetchAllEvents,
+    },
+    mocks: {
+      $services: services,
     },
   };
   if (shallow) {

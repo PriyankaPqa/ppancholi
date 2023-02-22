@@ -1,8 +1,10 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { useMockUserStore } from '@/pinia/user/user.mock';
+import { mockProvider } from '@/services/provider';
 import Component from './HomeLayout.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 let wrapper;
 const doMount = () => {
@@ -11,6 +13,9 @@ const doMount = () => {
   wrapper = mount(Component, {
     localVue,
     pinia,
+    mocks: {
+      $services: services,
+    },
   });
 };
 

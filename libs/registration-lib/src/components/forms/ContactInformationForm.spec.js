@@ -10,6 +10,7 @@ import { mockEvent } from '@libs/entities-lib/src/registration-event';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { createLocalVue, shallowMount, mount } from '../../test/testSetup';
 import Component from './ContactInformationForm.vue';
+import { mockProvider } from '../../provider';
 
 extend('required', required);
 extend('phone', required);
@@ -17,6 +18,7 @@ extend('max', max);
 extend('customValidator', required);
 
 const localVue = createLocalVue();
+const services = mockProvider();
 describe('ContactInformationForm.vue', () => {
   let wrapper;
 
@@ -32,6 +34,9 @@ describe('ContactInformationForm.vue', () => {
       stubs: {
         'vue-programmatic-invisible-google-recaptcha': { template: '<div></div>' },
         ValidationObserver: false,
+      },
+      mocks: {
+        $services: services,
       },
       ...additionalOptions,
     };

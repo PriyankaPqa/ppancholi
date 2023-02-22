@@ -3,9 +3,11 @@ import { mockCaseFileEntities, mockCaseFileEntity } from '@libs/entities-lib/cas
 import { mockEventMainInfo } from '@libs/entities-lib/event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
+import { mockProvider } from '@/services/provider';
 import Component from './PreviousEventsTemplate.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const vuetify = new Vuetify();
 
@@ -41,6 +43,9 @@ describe('PreviousEventsTemplate.vue', () => {
           caseFiles: mockCaseFiles,
           loading: false,
         };
+      },
+      mocks: {
+        $services: services,
       },
     });
   });
@@ -96,6 +101,9 @@ describe('PreviousEventsTemplate.vue', () => {
           vuetify,
           propsData: {
             householdId: 'household-12345-test',
+          },
+          mocks: {
+            $services: services,
           },
         });
         wrapper.vm.fetchCaseFilesInformation = jest.fn();

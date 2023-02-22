@@ -10,9 +10,11 @@ import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock'
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCaseFiles.vue';
 
+import { mockProvider } from '@/services/provider';
 import Component, { LOAD_SIZE } from './TeamMembersTable.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const { pinia } = useMockUserAccountStore();
 const { teamStore } = useMockTeamStore(pinia);
@@ -44,6 +46,7 @@ describe('TeamMembersTable.vue', () => {
         teamId: 'abc',
       },
       mocks: {
+        $services: services,
         $hasLevel: (lvl) => lvl <= `level${level}`,
       },
       ...additionalOverwrites,

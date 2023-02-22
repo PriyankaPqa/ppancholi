@@ -5,10 +5,12 @@ import { User, mockUserData } from '@libs/entities-lib/user';
 import { useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { createTestingPinia } from '@pinia/testing';
+import { mockProvider } from '@/services/provider';
 import helpers from '../helpers/helpers';
 import Component from './ErrorReportToast.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 let onLineGetter;
 
@@ -87,6 +89,9 @@ describe('ErrorReportToast', () => {
       },
       computed: {
         languageCode: () => 'en',
+      },
+      mocks: {
+        $services: services,
       },
     });
   });

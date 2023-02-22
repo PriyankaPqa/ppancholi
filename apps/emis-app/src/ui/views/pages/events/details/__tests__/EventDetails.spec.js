@@ -14,14 +14,14 @@ import { UserRoles } from '@libs/entities-lib/user';
 import Component from '../EventDetails.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const mockEvent = mockEventEntities()[0];
 const mockRelatedEvent = mockEventEntities()[1];
-const provider = mockProvider();
 
 const { pinia, eventStore } = useMockEventStore();
 
-provider.publicApi.searchEventsById = jest.fn(() => ({ value: [{ entity: mockRelatedEvent }] }));
+services.publicApi.searchEventsById = jest.fn(() => ({ value: [{ entity: mockRelatedEvent }] }));
 
 describe('EventDetails.vue', () => {
   let wrapper;
@@ -55,7 +55,7 @@ describe('EventDetails.vue', () => {
             },
           },
 
-          $services: provider,
+          $services: services,
         },
       });
       await flushPromises();
@@ -227,7 +227,9 @@ describe('EventDetails.vue', () => {
         propsData: {
           id: '1',
         },
-
+        mocks: {
+          $services: services,
+        },
       });
     });
     describe('event', () => {
@@ -255,7 +257,9 @@ describe('EventDetails.vue', () => {
               return { ...mockEvent, responseDetails: { eventType: { optionItemId: mockOptionItemData()[0].id } } };
             },
           },
-
+          mocks: {
+            $services: services,
+          },
         });
 
         expect(wrapper.vm.eventTypeName).toEqual(mockOptionItemData()[0].name);
@@ -275,7 +279,9 @@ describe('EventDetails.vue', () => {
               return { ...mockEvent, location: { province: ECanadaProvinces.QC } };
             },
           },
-
+          mocks: {
+            $services: services,
+          },
         });
         expect(wrapper.vm.provinceName).toEqual('common.provinces.QC');
       });
@@ -300,7 +306,9 @@ describe('EventDetails.vue', () => {
               };
             },
           },
-
+          mocks: {
+            $services: services,
+          },
         });
         expect(wrapper.vm.provinceName).toEqual('other-province');
       });

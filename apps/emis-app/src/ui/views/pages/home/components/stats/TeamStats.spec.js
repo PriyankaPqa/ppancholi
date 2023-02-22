@@ -5,9 +5,11 @@ import {
 import { mockCombinedEvent } from '@libs/entities-lib/event';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 
+import { mockProvider } from '@/services/provider';
 import Component from './TeamStats.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 const mockEvent = mockCombinedEvent();
 const { pinia } = useMockTeamStore();
 
@@ -21,6 +23,9 @@ describe('TeamStats.vue', () => {
       pinia,
       data() {
         return { event: mockEvent };
+      },
+      mocks: {
+        $services: services,
       },
     });
   });
@@ -153,6 +158,9 @@ describe('TeamStats.vue', () => {
               selectedEventId: 'd52d45e8-1973-4d54-91f4-8ec0864f8ff9',
               statTeam: mockTeamEntities(),
             };
+          },
+          mocks: {
+            $services: services,
           },
         });
         selectedTeam = { ...mockTeamEntities()[0] };

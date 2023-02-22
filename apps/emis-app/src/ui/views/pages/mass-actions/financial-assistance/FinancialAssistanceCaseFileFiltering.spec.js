@@ -11,9 +11,11 @@ import { mockProgramEntities } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { MassActionMode } from '@libs/entities-lib/mass-action';
 
+import { mockProvider } from '@/services/provider';
 import Component from './FinancialAssistanceCaseFileFiltering.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 describe('FinancialAssistanceCaseFileFiltering.vue', () => {
   let wrapper;
@@ -25,7 +27,9 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
         propsData: {
           show: true,
         },
-
+        mocks: {
+          $services: services,
+        },
       });
     });
 
@@ -218,7 +222,9 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
         propsData: {
           show: true,
         },
-
+        mocks: {
+          $services: services,
+        },
       });
     });
 

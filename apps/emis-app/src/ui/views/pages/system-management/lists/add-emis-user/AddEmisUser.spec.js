@@ -2,10 +2,12 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockAppUserData } from '@libs/entities-lib/app-user';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 
+import { mockProvider } from '@/services/provider';
 import Component from './AddEmisUser.vue';
 
 const { pinia, userAccountStore } = useMockUserAccountStore();
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const mockSubRole = {
   id: '123',
@@ -155,6 +157,9 @@ const doMount = (shallow = true, otherOptions = {}) => {
         loading: false,
         isSubmitAllowed: false,
       };
+    },
+    mocks: {
+      $services: services,
     },
     ...otherOptions,
   };

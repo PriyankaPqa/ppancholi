@@ -2,6 +2,7 @@ import eventsFilter from '@/ui/mixins/eventsFilter';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockSearchEventsData } from '@libs/entities-lib/registration-event';
 import { EEventStatus } from '@libs/entities-lib/event';
+import { mockProvider } from '@/services/provider';
 
 const Component = {
   render() {},
@@ -9,10 +10,13 @@ const Component = {
 };
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const wrapper = shallowMount(Component, {
   localVue,
-});
+  mocks: {
+    $services: services,
+  } });
 
 describe('eventsFilter', () => {
   describe('Methods', () => {

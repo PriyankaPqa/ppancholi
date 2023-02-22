@@ -12,9 +12,11 @@ import { ECanadaProvinces } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { MassActionMode } from '@libs/entities-lib/mass-action';
 
+import { mockProvider } from '@/services/provider';
 import Component from './AssessmentCaseFileFiltering.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 describe('AssessmentCaseFileFiltering.vue', () => {
   let wrapper;
@@ -30,6 +32,9 @@ describe('AssessmentCaseFileFiltering.vue', () => {
           tableData() {
             return mockCombinedCaseFiles();
           },
+        },
+        mocks: {
+          $services: services,
         },
       });
     });
@@ -209,6 +214,9 @@ describe('AssessmentCaseFileFiltering.vue', () => {
           tableData() {
             return mockCombinedCaseFiles();
           },
+        },
+        mocks: {
+          $services: services,
         },
       });
     });

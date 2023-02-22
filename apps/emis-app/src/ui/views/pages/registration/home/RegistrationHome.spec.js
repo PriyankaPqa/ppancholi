@@ -11,9 +11,11 @@ import { tabs } from '@/pinia/registration/tabs';
 import { createTestingPinia } from '@pinia/testing';
 import resetStore from '@libs/stores-lib/store-reset';
 
+import { mockProvider } from '@/services/provider';
 import Component from './RegistrationHome.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 const mockEvent = mockEventEntity();
 
 const vuetify = new Vuetify();
@@ -34,6 +36,9 @@ describe('RegistrationHome.vue', () => {
       localVue,
       pinia,
       vuetify,
+      mocks: {
+        $services: services,
+      },
     });
 
     await wrapper.setData({

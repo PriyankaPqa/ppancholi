@@ -9,9 +9,11 @@ import helpers from '@/ui/helpers/helpers';
 import { CaseFileStatus, mockCombinedCaseFiles, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import { MassActionType } from '@libs/entities-lib/mass-action';
 
+import { mockProvider } from '@/services/provider';
 import Component from './ImpactStatusCaseFileFiltering.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 let wrapper;
 const doMount = (fullMount = false, opts = {}) => {
@@ -19,6 +21,9 @@ const doMount = (fullMount = false, opts = {}) => {
     localVue,
     propsData: {
       show: true,
+    },
+    mocks: {
+      $services: services,
     },
     ...opts,
   };

@@ -16,6 +16,7 @@ import { useMockApprovalTableStore } from '@/pinia/approval-table/approval-table
 import Component from './CreateEditApprovals.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 let wrapper;
 const { pinia, approvalTableStore } = useMockApprovalTableStore();
 
@@ -31,6 +32,9 @@ const doMount = async (tableMode = true, editMode = false, availablePrograms = n
       isTableMode: () => tableMode,
       isEditMode: () => editMode,
       eventId: () => 'eventId',
+    },
+    mocks: {
+      $services: services,
     },
   };
 
@@ -105,6 +109,7 @@ describe('CreateEditApprovals', () => {
             $route: {
               name: routes.events.approvals.create.name,
             },
+            $services: services,
           },
         };
         wrapper = shallowMount(Component, options);
@@ -121,6 +126,7 @@ describe('CreateEditApprovals', () => {
             $route: {
               name: routes.events.approvals.edit.name,
             },
+            $services: services,
           },
         };
         wrapper = shallowMount(Component, options);
@@ -149,8 +155,7 @@ describe('CreateEditApprovals', () => {
     describe('availablePrograms', () => {
       describe('Create mode', () => {
         it('should return active programs listed alphabetically not already used in an approval table', async () => {
-          const provider = mockProvider();
-          provider.programs.getAllIncludingInactive = jest.fn();
+          services.programs.getAllIncludingInactive = jest.fn();
           const options = {
             localVue,
             data: () => ({
@@ -167,7 +172,7 @@ describe('CreateEditApprovals', () => {
               isEditMode: () => false,
             },
             mocks: {
-              $services: provider,
+              $services: services,
             },
           };
           wrapper = shallowMount(Component, options);
@@ -181,8 +186,7 @@ describe('CreateEditApprovals', () => {
         });
 
         it('should return active programs listed alphabetically if no used programs', async () => {
-          const provider = mockProvider();
-          provider.programs.getAllIncludingInactive = jest.fn();
+          services.programs.getAllIncludingInactive = jest.fn();
           const options = {
             localVue,
             data: () => ({
@@ -199,7 +203,7 @@ describe('CreateEditApprovals', () => {
               isEditMode: () => false,
             },
             mocks: {
-              $services: provider,
+              $services: services,
             },
           };
           wrapper = shallowMount(Component, options);
@@ -215,8 +219,7 @@ describe('CreateEditApprovals', () => {
 
       describe('Edit Mode', () => {
         it('should return active programs listed alphabetically not already used or the current one even if inactive', async () => {
-          const provider = mockProvider();
-          provider.programs.getAllIncludingInactive = jest.fn();
+          services.programs.getAllIncludingInactive = jest.fn();
           const options = {
             localVue,
             data: () => ({
@@ -236,7 +239,7 @@ describe('CreateEditApprovals', () => {
               isEditMode: () => true,
             },
             mocks: {
-              $services: provider,
+              $services: services,
             },
           };
           wrapper = shallowMount(Component, options);
