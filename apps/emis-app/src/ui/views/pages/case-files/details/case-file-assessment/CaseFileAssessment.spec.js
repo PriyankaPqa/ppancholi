@@ -13,6 +13,7 @@ import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/ten
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import Component from './CaseFileAssessment.vue';
 
@@ -162,11 +163,11 @@ describe('CaseFileAssessment.vue', () => {
         expect(wrapper.vm.canAdd).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canAdd).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.canAdd).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.canAdd).toBeFalsy();
-        await mountWrapper(false, null, 'contributorFinance');
+        await mountWrapper(false, null, UserRoles.contributorFinance);
         expect(wrapper.vm.canAdd).toBeFalsy();
       });
     });
@@ -190,11 +191,11 @@ describe('CaseFileAssessment.vue', () => {
         expect(wrapper.vm.canDelete).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canDelete).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.canDelete).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.canDelete).toBeFalsy();
-        await mountWrapper(false, null, 'contributorFinance');
+        await mountWrapper(false, null, UserRoles.contributorFinance);
         expect(wrapper.vm.canDelete).toBeFalsy();
       });
     });
@@ -420,7 +421,7 @@ describe('CaseFileAssessment.vue', () => {
           dateCompletedFormatted: 'Sep 9, 2022',
         }]);
 
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.mapAssessments([{ form, response }])).toEqual([{
           canEdit: false,
           canCopy: false,

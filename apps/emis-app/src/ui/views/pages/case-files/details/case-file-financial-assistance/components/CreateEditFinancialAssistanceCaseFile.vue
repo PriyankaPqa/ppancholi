@@ -171,6 +171,7 @@ import SubmitFinancialAssistancePaymentDialog
   from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/SubmitFinancialAssistancePaymentDialog.vue';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useProgramStore } from '@/pinia/program/program';
+import { UserRoles } from '@libs/entities-lib/user';
 import { useAssessmentResponseStore, useAssessmentResponseMetadataStore } from '@/pinia/assessment-response/assessment-response';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
@@ -292,7 +293,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     canAddNewLines(): boolean {
-      return !this.readonly && this.$hasLevel('level1') && this.financialAssistance.approvalStatus === ApprovalStatus.New;
+      return !this.readonly && this.$hasLevel(UserRoles.level1) && this.financialAssistance.approvalStatus === ApprovalStatus.New;
     },
 
     items(): Array<IFinancialAssistanceTableItem> {
@@ -523,7 +524,7 @@ export default mixins(caseFileDetail).extend({
           this.financialAssistance.groups = this.financialAssistance.groups.filter((g) => g !== event.group);
         }
       }
-        await this.submitPaymentNameUpdate();
+      await this.submitPaymentNameUpdate();
     },
 
     async updatePaymentStatus(event : {

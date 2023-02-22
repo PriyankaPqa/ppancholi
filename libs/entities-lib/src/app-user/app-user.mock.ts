@@ -1,15 +1,16 @@
+import { UserRoles } from '@libs/entities-lib/user';
 import { IRolesData, IAppUserData } from './app-user.types';
 
 export const mockRolesData = (): IRolesData[] => [
   {
     id: '0',
     displayName: 'Contributor M',
-    value: 'contributorIM',
+    value: UserRoles.contributorIM,
   },
   {
     id: '1',
     displayName: 'General Manager',
-    value: 'level6',
+    value: UserRoles.level6,
   },
   {
     id: '2',

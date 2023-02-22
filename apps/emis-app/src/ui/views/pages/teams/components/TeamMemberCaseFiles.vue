@@ -104,13 +104,14 @@ import AssignCaseFile from '@/ui/views/pages/case-files/details/case-file-activi
 import { Dictionary } from 'lodash';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
+import { UserRoles } from '@libs/entities-lib/user';
 
 interface IMemberCaseFile {
-    event: { id: string, name: IMultilingual },
-    teamName: string,
-    caseFile: ICaseFileEntity,
-    canAssign: boolean,
-    canAccessFile: boolean,
+  event: { id: string, name: IMultilingual },
+  teamName: string,
+  caseFile: ICaseFileEntity,
+  canAssign: boolean,
+  canAccessFile: boolean,
 }
 
 export default Vue.extend({
@@ -176,7 +177,7 @@ export default Vue.extend({
                 teamName,
                 caseFile: cf.entity,
                 canAccessFile: this.caseFilesIdsWithAllowedAccess.includes(cf.entity.id),
-                canAssign: this.caseFilesIdsWithAllowedAccess.includes(cf.entity.id) && (cf.entity.caseFileStatus === CaseFileStatus.Open || this.$hasLevel('level6')),
+                canAssign: this.caseFilesIdsWithAllowedAccess.includes(cf.entity.id) && (cf.entity.caseFileStatus === CaseFileStatus.Open || this.$hasLevel(UserRoles.level6)),
               };
             }
             return null;

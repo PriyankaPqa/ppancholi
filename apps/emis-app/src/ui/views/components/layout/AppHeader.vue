@@ -65,6 +65,7 @@ import { IBrandingEntity, FeatureKeys } from '@libs/entities-lib/tenantSettings'
 import { useUserStore } from '@/pinia/user/user';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -90,7 +91,7 @@ export default Vue.extend({
     displayRegistrationButton(): boolean {
       return this.$route.name !== routes.registration.home.name
         && this.$route.name !== routes.registration.individual.name
-        && this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? 'level0' : 'level1');
+        && this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? UserRoles.level0 : UserRoles.level1);
     },
 
     logoUrl(): string {
@@ -104,7 +105,7 @@ export default Vue.extend({
     },
 
     hasRole():boolean {
-      return !this.$hasRole('noAccess');
+      return !this.$hasRole(UserRoles.noAccess);
     },
   },
 

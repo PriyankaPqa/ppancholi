@@ -76,6 +76,7 @@ import { CaseNoteEntity, ICaseNoteEntity } from '@libs/entities-lib/case-note';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'CaseNoteForm',
@@ -167,7 +168,7 @@ export default Vue.extend({
         helpers.scrollToFirstError('app');
         return;
       }
-      if (this.$hasLevel('level4')) {
+      if (this.$hasLevel(UserRoles.level4)) {
         await this.addOrEdit();
       } else {
         this.showConfirmationDialog = true;

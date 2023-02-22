@@ -34,7 +34,7 @@
                       :value="team.status"
                       :statuses="statuses"
                       status-name="Status"
-                      :disabled="!isEditMode || !$hasLevel('level5')"
+                      :disabled="!isEditMode || !$hasLevel(UserRoles.level5)"
                       @input="onStatusChange($event)" />
                   </validation-provider>
                 </div>
@@ -45,7 +45,7 @@
                       v-model="team.name"
                       data-test="team-name"
                       :label="`${$t('teams.form.team_name')}*`"
-                      :disabled="!$hasLevel('level5')"
+                      :disabled="!$hasLevel(UserRoles.level5)"
                       :rules="rules.name"
                       @input="resetAsUnique()" />
                   </v-col>
@@ -63,7 +63,7 @@
                       hide-selected
                       return-object
                       no-filter
-                      :disabled="!$hasLevel('level5')"
+                      :disabled="!$hasLevel(UserRoles.level5)"
                       :placeholder="$t('common.inputs.start_typing_to_search')"
                       @change="setPrimaryContact($event)"
                       @update:search-input="onUserAutoCompleteUpdate({ filterKey: 'primaryContact', search: $event })"
@@ -78,8 +78,8 @@
                       fetch-all-events
                       :value="teamType === 'standard' ? team.eventIds : team.eventIds[0]"
                       :multiple="teamType === 'standard'"
-                      :disabled="!$hasLevel('level5')"
-                      :disable-event-delete="!$hasLevel('level5')"
+                      :disabled="!$hasLevel(UserRoles.level5)"
+                      :disable-event-delete="!$hasLevel(UserRoles.level5)"
                       item-value="id"
                       :rules="rules.event"
                       return-object
@@ -94,7 +94,7 @@
                 <v-row>
                   <v-col cols="12" class="firstSection__actions">
                     <v-btn
-                      :disabled="!$hasLevel('level5')"
+                      :disabled="!$hasLevel(UserRoles.level5)"
                       data-test="createEditTeam__cancel"
                       @click="onCancel(dirty || changed)">
                       {{ $t('common.buttons.cancel') }}
@@ -190,7 +190,7 @@ import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { VForm, IServerError, IDropdownItem } from '@libs/shared-lib/types';
 import {
- IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata, IdParams as IdParamsUserAccount,
+  IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata, IdParams as IdParamsUserAccount,
 } from '@libs/entities-lib/user-account';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { IError } from '@libs/services-lib/http-client';
@@ -201,6 +201,7 @@ import { useEventStore } from '@/pinia/event/event';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { UserRoles } from '@libs/entities-lib/user';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,
@@ -241,6 +242,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
 
   data() {
     return {
+      UserRoles,
       userAccounts: [] as IUserAccountCombined[],
       currentPrimaryContact: null as UserTeamMember,
       submittedPrimaryContactUser: null as IUserAccountCombined,

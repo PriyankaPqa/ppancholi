@@ -22,7 +22,7 @@
           add-filter-label="team.filter"
           @update:appliedFilter="onApplyFilter" />
       </template>
-      <template v-if="$hasLevel('level5')" #headerLeft>
+      <template v-if="$hasLevel(UserRoles.level5)" #headerLeft>
         <rc-add-button-with-menu
           :items="menuItems"
           data-test="create-team-button"
@@ -65,7 +65,7 @@
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item }">
-        <v-btn v-if="$hasLevel('level4')" icon class="mr-2" :data-test="`edit_team_${item.entity.id}`" @click="goToEditTeam(item)">
+        <v-btn v-if="$hasLevel(UserRoles.level4)" icon class="mr-2" :data-test="`edit_team_${item.entity.id}`" @click="goToEditTeam(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
@@ -85,7 +85,7 @@ import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTy
 import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
 import {
- TeamType, ITeamCombined, ITeamEntity, IdParams, ITeamMetadata,
+  TeamType, ITeamCombined, ITeamEntity, IdParams, ITeamMetadata,
 } from '@libs/entities-lib/team';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
@@ -96,6 +96,7 @@ import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'TeamsTable',
@@ -127,6 +128,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       FilterKey,
       TeamType,
       Status,
+      UserRoles,
       options: {
         page: 1,
         sortBy: ['Entity/Name'],

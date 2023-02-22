@@ -5,6 +5,7 @@ import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { UserRoles } from '@libs/entities-lib/user';
 import Component from './DataCorrectionHome.vue';
 
 const localVue = createLocalVue();
@@ -20,7 +21,7 @@ const doMount = async (fullMount = false, pinia = {}, additionalOverwrites = {})
 
 describe('DataCorrectionHome.vue', () => {
   beforeEach(() => {
-    doMount(false, getPiniaForUser('level6'));
+    doMount(false, getPiniaForUser(UserRoles.level6));
   });
 
   describe('Template', () => {
@@ -65,12 +66,12 @@ describe('DataCorrectionHome.vue', () => {
 
     describe('showAddButton', () => {
       it('should be true if level 6', () => {
-        doMount(false, getPiniaForUser('level6'));
+        doMount(false, getPiniaForUser(UserRoles.level6));
         expect(wrapper.findComponent(MassActionBaseTable).props('showAddButton')).toEqual(true);
       });
 
       it('should be false if not level 6', () => {
-        doMount(false, getPiniaForUser('level5'));
+        doMount(false, getPiniaForUser(UserRoles.level5));
         expect(wrapper.findComponent(MassActionBaseTable).props('showAddButton')).toEqual(false);
       });
     });

@@ -2,6 +2,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockOptionItemData, mockRoles } from '@libs/entities-lib/optionItem';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import {
   AccountStatus, mockCombinedUserAccounts, mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata,
@@ -536,9 +537,10 @@ describe('UserAccounts.vue', () => {
         });
       });
 
-      it('return false is current user is level 6', async () => {
+      it('return false if current user is level 6', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           data() {
             return {
               disallowedRoles: [
@@ -599,7 +601,7 @@ describe('UserAccounts.vue', () => {
               ],
             };
           },
-          pinia: getPiniaForUser('level5'),
+          pinia: getPiniaForUser(UserRoles.level5),
         });
 
         const result = await wrapper.vm.canNotManageRoleForUser(testUser);
@@ -640,7 +642,7 @@ describe('UserAccounts.vue', () => {
               ],
             };
           },
-          pinia: getPiniaForUser('level5'),
+          pinia: getPiniaForUser(UserRoles.level5),
         });
 
         const result = await wrapper.vm.canNotManageRoleForUser(testUser);

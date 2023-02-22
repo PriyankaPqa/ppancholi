@@ -38,7 +38,7 @@ const title = '#TC160# - Create Event';
 let createEventPage: CreateEventPage;
 let eventDetailsPage: EventDetailsPage;
 describe(`${title}`, () => {
-  describe('Level6', () => {
+  describe('level6', () => {
     before(() => {
       cy.login();
       cy.goTo('events/create');

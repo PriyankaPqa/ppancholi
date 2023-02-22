@@ -2,6 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
 import { mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { Status } from '@libs/entities-lib/base';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import Component from '../PaymentLineGroupList.vue';
 
@@ -60,11 +61,11 @@ describe('PaymentLineGroupList.vue', () => {
         expect(wrapper.vm.canSubmit).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canSubmit).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.canSubmit).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.canSubmit).toBeFalsy();
-        await mountWrapper(false, null, 'contributorFinance');
+        await mountWrapper(false, null, UserRoles.contributorFinance);
         expect(wrapper.vm.canSubmit).toBeFalsy();
       });
 

@@ -41,6 +41,7 @@ import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { IListOption } from '@libs/shared-lib/types';
+import { UserRoles } from '@libs/entities-lib/user';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import CaseFileStatusDialog from './CaseFileStatusDialog.vue';
 
@@ -79,7 +80,7 @@ export default Vue.extend({
   computed: {
 
     statuses(): Array<CaseFileStatus> {
-      if (this.$hasLevel('level3')) {
+      if (this.$hasLevel(UserRoles.level3)) {
         return [CaseFileStatus.Archived, CaseFileStatus.Closed, CaseFileStatus.Inactive, CaseFileStatus.Open];
       }
 
@@ -87,13 +88,13 @@ export default Vue.extend({
     },
 
     disableStatus() {
-      if (this.event?.schedule?.status !== +EEventStatus.Open && !this.$hasLevel('level6')) {
+      if (this.event?.schedule?.status !== +EEventStatus.Open && !this.$hasLevel(UserRoles.level6)) {
         return true;
       }
-      if (this.caseFile.caseFileStatus === CaseFileStatus.Archived && !this.$hasLevel('level5')) {
+      if (this.caseFile.caseFileStatus === CaseFileStatus.Archived && !this.$hasLevel(UserRoles.level5)) {
         return true;
       }
-      return !this.$hasLevel('level2');
+      return !this.$hasLevel(UserRoles.level2);
     },
 
     confirmationDialogText() : { title:string, message:string } {

@@ -1,38 +1,4 @@
-import { IUser, IUserData } from './user.types';
-
-export const NO_ROLE = 'no_role';
-
-export enum UserRoles {
-  'noAccess' = 'noAccess',
-  'level0' = 'Level 0',
-  'level1' = 'level1',
-  'level2' = 'level2',
-  'level3' = 'level3',
-  'level4' = 'level4',
-  'level5' = 'level5',
-  'level6' = 'level6',
-  'contributorIM' = 'contributorIM',
-  'contributorFinance' = 'contributorFinance',
-  'contributor3' = 'contributor3',
-  'readonly' = 'readonly',
-  'no_role' = 'no_role',
-}
-
-export enum UserRolesNames {
-  'noAccess' = 'No Access',
-  'level0' = 'Level 0',
-  'level1' = 'Level 1',
-  'level2' = 'Level 2',
-  'level3' = 'Level 3',
-  'level4' = 'Level 4',
-  'level5' = 'Level 5',
-  'level6' = 'Level 6',
-  'contributorIM' = 'ContributorIM',
-  'contributorFinance' = 'ContributorFinance',
-  'contributor3' = 'ContributorAdvisor',
-  'readonly' = 'Read Only',
-  'no_access' = 'No Access',
-}
+import { IUser, IUserData, UserRoles } from './user.types';
 
 export class User implements IUser {
   readonly id: string;
@@ -43,7 +9,7 @@ export class User implements IUser {
 
   readonly firstName: string;
 
-  readonly roles: Array<string>;
+  readonly roles: Array<UserRoles>;
 
   readonly homeAccountId: string;
 
@@ -52,7 +18,7 @@ export class User implements IUser {
     this.email = data.email;
     this.lastName = data.family_name;
     this.firstName = data.given_name;
-    this.roles = data?.roles?.length ? [...data.roles] : [NO_ROLE];
+    this.roles = data?.roles?.length ? [...data.roles] : [UserRoles.no_role];
     this.homeAccountId = data.homeAccountId;
   }
 
@@ -70,7 +36,7 @@ export class User implements IUser {
     return '';
   }
 
-  hasRole(role: string): boolean {
+  hasRole(role: UserRoles): boolean {
     const acceptedValues = Object.keys(UserRoles);
 
     if (typeof role !== 'string') {
@@ -81,19 +47,20 @@ export class User implements IUser {
       throw new Error(`The role ${role} is not valid. Please choose among ${acceptedValues.join(', ')}`);
     }
     if (this.roles) {
-      return this.roles.some((r: string) => r.toLowerCase() === role.toLowerCase());
+      return this.roles.some((r: UserRoles) => r.toLowerCase() === role.toLowerCase());
     }
     return false;
   }
 
-  currentRole(): string {
+  currentRole(): UserRoles {
     return this.roles[0];
   }
 
   // hasHigherLevelOrSameAs
-  hasLevel(levelToCheck: string): boolean {
+  hasLevel(levelToCheck: UserRoles): boolean {
     // Index n + 1, inherit from index [0,n]
-    const hierarchy = ['level0', 'level1', 'level2', 'level3', 'level4', 'level5', 'level6'];
+    const hierarchy = [UserRoles.level0, UserRoles.level1, UserRoles.level2,
+      UserRoles.level3, UserRoles.level4, UserRoles.level5, UserRoles.level6];
     const userHasALevel = hierarchy.indexOf(this.currentRole());
 
     if (userHasALevel === -1) {

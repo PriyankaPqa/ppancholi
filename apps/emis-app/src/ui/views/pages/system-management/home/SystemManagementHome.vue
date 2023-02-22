@@ -17,6 +17,7 @@
 import Vue from 'vue';
 import { RcMenuCard } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'SystemManagementHome',
@@ -37,42 +38,42 @@ export default Vue.extend({
         button: 'system_management.card.btn.lists_title',
         route: routes.systemManagement.lists.name,
         dataTest: 'sysManagementHome__lists',
-        level: 'level6',
+        level: UserRoles.level6,
       }, {
         title: 'system_management.card.user_accounts_title',
         description: 'system_management.card.user_accounts_description',
         button: 'system_management.card.btn.user_accounts_title',
         route: routes.systemManagement.userAccounts.home.name,
         dataTest: 'sysManagementHome__accounts',
-        level: 'level5',
+        level: UserRoles.level5,
       }, {
         title: 'system_management.card.roles_title',
         description: 'system_management.card.roles_description',
         button: 'system_management.card.btn.roles_title',
         route: routes.systemManagement.roles.name,
         dataTest: 'sysManagementHome__roles',
-        level: 'level6',
+        level: UserRoles.level6,
       }, {
         title: 'system_management.card.branding.title',
         description: 'system_management.card.branding.description',
         button: 'system_management.card.branding.btn.label',
         route: routes.systemManagement.branding.name,
         dataTest: 'sysManagementHome__branding',
-        level: 'level6',
+        level: UserRoles.level6,
       }, {
         title: 'system_management.card.tenantSettings.title',
         description: 'system_management.card.tenantSettings.description',
         button: 'system_management.card.tenantSettings.btn.label',
         route: routes.systemManagement.tenantSettings.name,
         dataTest: 'sysManagementHome__tenantSettings',
-        level: 'level6',
+        level: UserRoles.level6,
       }, {
         title: 'system_management.card.features.title',
         description: 'system_management.card.features.description',
         button: 'system_management.card.features.btn.label',
         route: routes.systemManagement.features.name,
         dataTest: 'sysManagementHome__features',
-        level: 'level6',
+        level: UserRoles.level6,
       }];
     },
 

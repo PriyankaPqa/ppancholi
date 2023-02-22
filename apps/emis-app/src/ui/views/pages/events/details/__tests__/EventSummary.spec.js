@@ -8,6 +8,7 @@ import routes from '@/constants/routes';
 import { EEventSummarySections } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
@@ -19,7 +20,7 @@ const localVue = createLocalVue();
 
 const mockEvent = mockEventEntities()[0];
 
-const pinia = getPiniaForUser('level5');
+const pinia = getPiniaForUser(UserRoles.level5);
 
 const initEventStore = (pinia) => {
   const { eventStore } = useMockEventStore(pinia);
@@ -58,7 +59,7 @@ const mountWithStatus = (status) => {
 
 describe('EventSummary.vue', () => {
   let wrapper;
-  const doMount = (pinia = getPiniaForUser('level5'), level = 5, otherComputed = {}, hasFeature = false) => {
+  const doMount = (pinia = getPiniaForUser(UserRoles.level5), level = 5, otherComputed = {}, hasFeature = false) => {
     wrapper = mount(Component, {
       localVue,
       pinia,
@@ -108,7 +109,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('is disabled for users with level below 5', async () => {
-        doMount(getPiniaForUser('level4'), 4);
+        doMount(getPiniaForUser(UserRoles.level4), 4);
         const element = wrapper.findDataTest('event-detail-status');
         expect(element.props('disabled')).toBeTruthy();
       });
@@ -237,7 +238,7 @@ describe('EventSummary.vue', () => {
 
       describe('event-summary-toggle-call-centre', () => {
         it('should display when showAccessAssessmentToggle is true', () => {
-          doMount(getPiniaForUser('level6'), 6, {
+          doMount(getPiniaForUser(UserRoles.level6), 6, {
             showAccessAssessmentToggle() {
               return true;
             },
@@ -249,7 +250,7 @@ describe('EventSummary.vue', () => {
 
       describe('event-summary-toggle', () => {
         it('should call toggleAccessAssessment when changed', () => {
-          doMount(getPiniaForUser('level6'), 6, {
+          doMount(getPiniaForUser(UserRoles.level6), 6, {
             showAccessAssessmentToggle() {
               return true;
             },
@@ -265,7 +266,7 @@ describe('EventSummary.vue', () => {
         });
 
         it('should pass correct Props to EventSummaryToggle for call centre', async () => {
-          doMount(getPiniaForUser('level6'), 6, {
+          doMount(getPiniaForUser(UserRoles.level6), 6, {
             showAccessAssessmentToggle() {
               return true;
             },
@@ -586,7 +587,7 @@ describe('EventSummary.vue', () => {
       it('returns true if user is level 6 and event is on hold', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
+          pinia: getPiniaForUser(UserRoles.level6),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -614,7 +615,7 @@ describe('EventSummary.vue', () => {
       it('returns false if user is level 6 and event is not open or on hold', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
+          pinia: getPiniaForUser(UserRoles.level6),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -648,7 +649,7 @@ describe('EventSummary.vue', () => {
       it('returns false if user is level 5 and event is not open', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level5'),
+          pinia: getPiniaForUser(UserRoles.level5),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -674,7 +675,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is not level 5', () => {
-        const pinia = getPiniaForUser('level3');
+        const pinia = getPiniaForUser(UserRoles.level3);
         initEventStore(pinia);
 
         wrapper = shallowMount(Component, {
@@ -703,7 +704,7 @@ describe('EventSummary.vue', () => {
       it('returns true if user is level 6 and event is on hold', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
+          pinia: getPiniaForUser(UserRoles.level6),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -731,7 +732,7 @@ describe('EventSummary.vue', () => {
       it('returns false if user is level 6 and event is not open or on hold', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
+          pinia: getPiniaForUser(UserRoles.level6),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -759,7 +760,7 @@ describe('EventSummary.vue', () => {
       it('returns true if user is level 6 and event is open', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
+          pinia: getPiniaForUser(UserRoles.level6),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -800,7 +801,7 @@ describe('EventSummary.vue', () => {
       it('returns true if user is level 5 and event is on hold', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level5'),
+          pinia: getPiniaForUser(UserRoles.level5),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -828,7 +829,7 @@ describe('EventSummary.vue', () => {
       it('returns false if user is level 5 and event is not open or on hold', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level5'),
+          pinia: getPiniaForUser(UserRoles.level5),
           mocks: {
             $route: {
               name: routes.events.edit.name,
@@ -860,7 +861,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is not level 5', () => {
-        const pinia = getPiniaForUser('level3');
+        const pinia = getPiniaForUser(UserRoles.level3);
         initEventStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
@@ -881,12 +882,12 @@ describe('EventSummary.vue', () => {
 
     describe('showAccessAssessmentToggle', () => {
       it('should return true when user has level6 and event has call centre', () => {
-        doMount(getPiniaForUser('level6'), 6, null, true);
+        doMount(getPiniaForUser(UserRoles.level6), 6, null, true);
         expect(wrapper.vm.showAccessAssessmentToggle).toBeTruthy();
       });
 
       it('should return false when user doesnt have level 6,', () => {
-        doMount(getPiniaForUser('level5'), 5, null, true);
+        doMount(getPiniaForUser(UserRoles.level5), 5, null, true);
         expect(wrapper.vm.showAccessAssessmentToggle).toBeFalsy();
       });
     });

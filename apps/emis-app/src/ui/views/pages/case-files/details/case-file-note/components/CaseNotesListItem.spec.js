@@ -1,6 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote, mockCaseNoteCategories, mockCaseNoteEntity } from '@libs/entities-lib/case-note';
 import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from './CaseNotesListItem.vue';
@@ -128,15 +129,15 @@ describe('CaseNotesListItem.vue', () => {
           });
         };
 
-        doMount(getPiniaForUser('level4'));
+        doMount(getPiniaForUser(UserRoles.level4));
 
         expect(wrapper.vm.canEditCaseNote).toBeTruthy();
 
-        doMount(getPiniaForUser('level3'));
+        doMount(getPiniaForUser(UserRoles.level3));
 
         expect(wrapper.vm.canEditCaseNote).toBeFalsy();
 
-        doMount(getPiniaForUser('level4'));
+        doMount(getPiniaForUser(UserRoles.level4));
         await wrapper.setProps({ readonly: true });
         expect(wrapper.vm.canEditCaseNote).toBeFalsy();
       });

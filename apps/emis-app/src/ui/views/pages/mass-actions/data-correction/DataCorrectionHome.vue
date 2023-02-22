@@ -5,7 +5,7 @@
     :add-route-name="addRouteName"
     :table-title="tableTitle"
     :search-endpoint="searchEndpoint"
-    :show-add-button="$hasLevel('level6')"
+    :show-add-button="$hasLevel(UserRoles.level6)"
     :add-button-label="addButtonLabel" />
 </template>
 
@@ -16,6 +16,7 @@ import routes from '@/constants/routes';
 import MassActionBaseTable from '@/ui/views/pages/mass-actions/components/MassActionBaseTable.vue';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'DataCorrectionHome',
@@ -32,6 +33,7 @@ export default Vue.extend({
     addButtonLabel: 'massActions.dataCorrection.tooltip.add',
     searchEndpoint: 'data-correction-mass-actions',
     addRouteName: routes.massActions.dataCorrection.create.name,
+    UserRoles,
   }),
 });
 </script>

@@ -9,7 +9,7 @@
               :value="event.schedule.status"
               :statuses="statuses"
               status-name="EEventStatus"
-              :disabled="!$hasLevel('level5')"
+              :disabled="!$hasLevel(UserRoles.level5)"
               @input="onStatusChangeInit($event)" />
           </span>
 
@@ -160,6 +160,7 @@ import { EEventSummarySections } from '@/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useEventStore } from '@/pinia/event/event';
 import { Status } from '@libs/entities-lib/base';
+import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
@@ -221,6 +222,7 @@ export default Vue.extend({
       currentDialog: null as DialogData,
       FeatureKeys,
       updatingAccessAssessmentToggle: false,
+      UserRoles,
     };
   },
 
@@ -283,22 +285,22 @@ export default Vue.extend({
     },
 
     canEditSections(): boolean {
-      return (this.$hasLevel('level6') && this.event.schedule.status === EEventStatus.OnHold)
-      || (this.$hasLevel('level5') && this.event.schedule.status === EEventStatus.Open);
+      return (this.$hasLevel(UserRoles.level6) && this.event.schedule.status === EEventStatus.OnHold)
+      || (this.$hasLevel(UserRoles.level5) && this.event.schedule.status === EEventStatus.Open);
     },
 
     canEditAssessmentSection(): boolean {
-      return (this.$hasLevel('level6') && (this.event.schedule.status === EEventStatus.OnHold
+      return (this.$hasLevel(UserRoles.level6) && (this.event.schedule.status === EEventStatus.OnHold
       || this.event.schedule.status === EEventStatus.Open));
     },
 
     canEdit(): boolean {
-      return this.$hasLevel('level5')
+      return this.$hasLevel(UserRoles.level5)
       && (this.event.schedule.status === EEventStatus.Open || this.event.schedule.status === EEventStatus.OnHold);
     },
 
     showAccessAssessmentToggle(): boolean {
-      return this.event.callCentres.length && this.$hasLevel('level6') && this.$hasFeature(FeatureKeys.L0Access);
+      return this.event.callCentres.length && this.$hasLevel(UserRoles.level6) && this.$hasFeature(FeatureKeys.L0Access);
     },
   },
 

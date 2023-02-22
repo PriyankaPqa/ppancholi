@@ -3,7 +3,7 @@
     :title="$t('teams.team_details')"
     :show-add-button="false"
     show-back-button
-    :show-edit-button="$hasLevel('level4')"
+    :show-edit-button="$hasLevel(UserRoles.level4)"
     @edit="navigateToEdit"
     @back="navigateToHome">
     <v-container v-if="!team">
@@ -79,13 +79,14 @@
 import Vue from 'vue';
 import { RcPageContent } from '@libs/component-lib/components';
 import {
- TeamType, ITeamEvent, ITeamEntity, ITeamMetadata,
+  TeamType, ITeamEvent, ITeamEntity, ITeamMetadata,
 } from '@libs/entities-lib/team';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'TeamDetails',
@@ -100,6 +101,12 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+  },
+
+  data() {
+    return {
+      UserRoles,
+    };
   },
 
   computed: {

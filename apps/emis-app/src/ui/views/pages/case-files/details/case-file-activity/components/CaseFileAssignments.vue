@@ -52,8 +52,9 @@ import { ITeamEntity } from '@libs/entities-lib/team';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IAzureTableSearchResults } from '@libs/shared-lib/types';
 import {
- IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
+  IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
+import { UserRoles } from '@libs/entities-lib/user';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
@@ -93,7 +94,7 @@ export default Vue.extend({
 
   computed: {
     canAssign() {
-      return this.$hasLevel('level6') || (this.$hasLevel('level3') && !this.readonly);
+      return this.$hasLevel(UserRoles.level6) || (this.$hasLevel(UserRoles.level3) && !this.readonly);
     },
   },
 

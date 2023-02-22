@@ -1,10 +1,10 @@
 import { localStorageKeys } from '@/constants/localStorage';
-import { IMSALUserData } from '@libs/entities-lib/user';
+import { IMSALUserData, UserRoles } from '@libs/entities-lib/user';
 import AuthenticationProvider from '../../auth/AuthenticationProvider';
 
 export default {
 
-  getUserData(roles: string[]): IMSALUserData | null {
+  getUserData(roles: UserRoles[]): IMSALUserData | null {
     try {
       const account = JSON.parse(localStorage.getItem(localStorageKeys.msalAccount.name)) || AuthenticationProvider.account;
       const userData = { ...account.idTokenClaims, homeAccountId: account.homeAccountId } as IMSALUserData;

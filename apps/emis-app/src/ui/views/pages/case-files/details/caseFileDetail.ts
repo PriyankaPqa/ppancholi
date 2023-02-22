@@ -3,6 +3,7 @@ import { CaseFileStatus, ICaseFileEntity, ICaseFileMetadata } from '@libs/entiti
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import { useEventStore } from '@/pinia/event/event';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   props: {
@@ -33,7 +34,7 @@ export default Vue.extend({
     },
 
     readonly(): boolean {
-      return (this.caseFile.caseFileStatus !== CaseFileStatus.Open || this.event?.schedule?.status !== +EEventStatus.Open) && !this.$hasLevel('level6');
+      return (this.caseFile.caseFileStatus !== CaseFileStatus.Open || this.event?.schedule?.status !== +EEventStatus.Open) && !this.$hasLevel(UserRoles.level6);
     },
   },
 });

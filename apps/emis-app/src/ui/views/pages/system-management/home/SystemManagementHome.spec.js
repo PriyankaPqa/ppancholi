@@ -4,6 +4,7 @@ import {
   mount,
 } from '@/test/testSetup';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { UserRoles } from '@libs/entities-lib/user';
 import Component from './SystemManagementHome.vue';
 
 const localVue = createLocalVue();
@@ -14,7 +15,7 @@ describe('SystemManagementHome.vue', () => {
   describe('Template', () => {
     beforeEach(async () => {
       wrapper = mount(Component, {
-        pinia: getPiniaForUser('level6'),
+        pinia: getPiniaForUser(UserRoles.level6),
         localVue,
       });
     });

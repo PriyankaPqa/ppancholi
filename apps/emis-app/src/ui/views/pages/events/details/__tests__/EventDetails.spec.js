@@ -9,6 +9,7 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import flushPromises from 'flush-promises';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { mockProvider } from '@/services/provider';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import Component from '../EventDetails.vue';
 
@@ -314,14 +315,14 @@ describe('EventDetails.vue', () => {
             icon: '',
             disabled: false,
             to: routes.events.summary.name,
-            level: 'level4',
+            level: UserRoles.level4,
           }, {
             text: 'eventDetail.menu_programs',
             test: 'event-programs',
             icon: '',
             disabled: false,
             to: routes.programs.home.name,
-            level: 'level6',
+            level: UserRoles.level6,
             exact: false,
           }, {
             text: 'eventDetail.menu_financial',
@@ -329,7 +330,7 @@ describe('EventDetails.vue', () => {
             icon: '',
             disabled: false,
             to: routes.events.financialAssistance.home.name,
-            level: 'level6',
+            level: UserRoles.level6,
             exact: false,
           },
           {
@@ -340,14 +341,14 @@ describe('EventDetails.vue', () => {
             disabled: false,
             feature: FeatureKeys.ApprovalsWithinEvent,
             to: routes.events.approvals.home.name,
-            level: 'level6',
+            level: UserRoles.level6,
           }, {
             text: 'eventDetail.menu_assessments',
             test: 'event-assessments',
             icon: '',
             disabled: false,
             to: routes.events.assessments.home.name,
-            level: 'level6',
+            level: UserRoles.level6,
             feature: FeatureKeys.Assessments,
             exact: false,
           }],

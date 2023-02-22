@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import { IAuthenticationAccessToken } from '@/types';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export const mockAuthenticationData = (): IAuthenticationAccessToken => ({
   // eslint-disable-next-line vue/max-len
@@ -16,7 +17,7 @@ export const mockAuthenticationData = (): IAuthenticationAccessToken => ({
       family_name: 'Smith',
       given_name: 'John',
       email: 'test@redcross.ca',
-      roles: ['level6'],
+      roles: [UserRoles.level6],
     },
   },
   idToken: '...',

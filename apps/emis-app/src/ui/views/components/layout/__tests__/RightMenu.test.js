@@ -5,11 +5,13 @@ import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { mockUserAccountEntity } from '@libs/entities-lib/user-account';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import { UserRoles } from '@libs/entities-lib/user';
+
 import Component from '../RightMenu.vue';
 
 const localVue = createLocalVue();
 
-const pinia = getPiniaForUser('level6');
+const pinia = getPiniaForUser(UserRoles.level6);
 const { userStore } = useMockUserStore(pinia);
 const { dashboardStore } = useMockDashboardStore(pinia);
 const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);

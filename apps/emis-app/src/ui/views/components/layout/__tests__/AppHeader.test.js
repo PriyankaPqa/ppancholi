@@ -5,6 +5,7 @@ import {
   mount,
 } from '@/test/testSetup';
 import routes from '@/constants/routes';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockDashboardStore } from '@/pinia/dashboard/dashboard.mock';
@@ -14,7 +15,7 @@ import Component from '../AppHeader.vue';
 const localVue = createLocalVue();
 const vuetify = new Vuetify();
 
-const pinia = getPiniaForUser('level6');
+const pinia = getPiniaForUser(UserRoles.level6);
 const { dashboardStore } = useMockDashboardStore(pinia);
 const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
 
@@ -60,7 +61,7 @@ describe('AppHeader.vue', () => {
       it('should return true if the user has minimum level 1 and the route has the right name and feature flag L0Access is off', () => {
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser('level1'),
+          pinia: getPiniaForUser(UserRoles.level1),
           vuetify,
           mocks: {
             $route: {
@@ -76,7 +77,7 @@ describe('AppHeader.vue', () => {
       it('should return true if the user has minimum level 0 and the route has the right name and feature flag L0Access is on', () => {
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser('level0'),
+          pinia: getPiniaForUser(UserRoles.level0),
           vuetify,
           mocks: {
             $route: {
@@ -92,7 +93,7 @@ describe('AppHeader.vue', () => {
       it('should return false if the user has not level 0', () => {
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia: getPiniaForUser(UserRoles.contributorIM),
           vuetify,
           mocks: {
             $route: {
@@ -107,7 +108,7 @@ describe('AppHeader.vue', () => {
       it('should return false for the wrong route - home', () => {
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia: getPiniaForUser(UserRoles.contributorIM),
           vuetify,
           mocks: {
             $route: {
@@ -121,7 +122,7 @@ describe('AppHeader.vue', () => {
       it('should return false for the wrong route - individual', () => {
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia: getPiniaForUser(UserRoles.contributorIM),
           vuetify,
           mocks: {
             $route: {

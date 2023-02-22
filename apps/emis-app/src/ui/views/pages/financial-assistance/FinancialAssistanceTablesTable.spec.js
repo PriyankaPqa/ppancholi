@@ -8,13 +8,14 @@ import routes from '@/constants/routes';
 import { Status } from '@libs/entities-lib/base';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
+import { UserRoles } from '@libs/entities-lib/user';
 import Component from './FinancialAssistanceTablesTable.vue';
 
 const localVue = createLocalVue();
 
 describe('FinancialAssistanceTablesTable.vue', () => {
   let wrapper;
-  const pinia = getPiniaForUser('level6');
+  const pinia = getPiniaForUser(UserRoles.level6);
   const table = { ...mockCombinedFinancialAssistance(), pinned: false };
   const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
 
@@ -77,7 +78,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       it('returns the correct headers data', () => {
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
+          pinia: getPiniaForUser(UserRoles.level6),
           computed: {
             customColumns() {
               return {
@@ -211,7 +212,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       it('returns correct data', () => {
         wrapper = mount(Component, {
           localVue,
-          pinia: getPiniaForUser('level6'),
+          pinia: getPiniaForUser(UserRoles.level6),
           mocks: {
             $route: {
               params: {

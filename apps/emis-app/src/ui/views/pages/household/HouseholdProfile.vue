@@ -199,6 +199,7 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IAzureSearchResult, ICombinedIndex, IMultilingual } from '@libs/shared-lib/types';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { IEventData } from '@libs/entities-lib/registration-event';
+import { UserRoles } from '@libs/entities-lib/user';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
@@ -323,11 +324,11 @@ export default mixins(household).extend({
     },
 
     canEdit():boolean {
-      return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? 'level0' : 'level1');
+      return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? UserRoles.level0 : UserRoles.level1);
     },
 
     canMove():boolean {
-      return this.$hasLevel('level2');
+      return this.$hasLevel(UserRoles.level2);
     },
 
     enableAutocomplete(): boolean {

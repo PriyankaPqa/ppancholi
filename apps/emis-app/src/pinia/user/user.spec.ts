@@ -3,7 +3,7 @@ import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/ap
 import { Toasted } from 'vue-toasted';
 import {
   mockUserL1,
-  mockUsersData, User,
+  mockUsersData, User, UserRoles,
 } from '@libs/entities-lib/user';
 import { getPiniaForUser, Role } from '@/pinia/user/user.mock';
 import { useUserStore } from './user';
@@ -38,7 +38,7 @@ describe('>>> User Store', () => {
   describe('getUser', () => {
     it('should return the current user entity', () => {
       const mockUser = mockUserL1();
-      const store = createUserTestStore('level1');
+      const store = createUserTestStore(UserRoles.level1);
       expect(store.getUser()).toEqual(new User({
         oid: mockUser.id,
         email: mockUser.email,
@@ -53,59 +53,59 @@ describe('>>> User Store', () => {
   describe('getUserId', () => {
     it('should return the oid', () => {
       const mockUser = mockUserL1();
-      const store = createUserTestStore('level1');
+      const store = createUserTestStore(UserRoles.level1);
       expect(store.getUserId()).toEqual(mockUser.id);
     });
   });
 
   describe('getLandingPage', () => {
     it('returns proper landing page for level 0 user', () => {
-      const store = createUserTestStore('level0');
+      const store = createUserTestStore(UserRoles.level0);
       expect(store.getLandingPage()).toEqual('DashboardCaseFile');
     });
 
     it('returns proper landing page for level 1 user', () => {
-      const store = createUserTestStore('level1');
+      const store = createUserTestStore(UserRoles.level1);
       expect(store.getLandingPage()).toEqual('DashboardCaseFile');
     });
 
     it('returns proper landing page for level 2 user', () => {
-      const store = createUserTestStore('level2');
+      const store = createUserTestStore(UserRoles.level2);
       expect(store.getLandingPage()).toEqual('DashboardCaseFile');
     });
 
     it('returns proper landing page for level 3 user', () => {
-      const store = createUserTestStore('level3');
+      const store = createUserTestStore(UserRoles.level3);
       expect(store.getLandingPage()).toEqual('HomeLevel3');
     });
 
     it('returns proper landing page for level 4 user', () => {
-      const store = createUserTestStore('level4');
+      const store = createUserTestStore(UserRoles.level4);
       expect(store.getLandingPage()).toEqual('HomeLevel4');
     });
 
     it('returns proper landing page for level 5 user', () => {
-      const store = createUserTestStore('level5');
+      const store = createUserTestStore(UserRoles.level5);
       expect(store.getLandingPage()).toEqual('HomeLevel5');
     });
 
     it('returns proper landing page for level 6 user', () => {
-      const store = createUserTestStore('level6');
+      const store = createUserTestStore(UserRoles.level6);
       expect(store.getLandingPage()).toEqual('HomeLevel6');
     });
 
     it('returns proper landing page for contributorIM user', () => {
-      const store = createUserTestStore('contributorIM');
+      const store = createUserTestStore(UserRoles.contributorIM);
       expect(store.getLandingPage()).toEqual('HomeContributorIM');
     });
 
     it('returns proper landing page for contributorFinance user', () => {
-      const store = createUserTestStore('contributorFinance');
+      const store = createUserTestStore(UserRoles.contributorFinance);
       expect(store.getLandingPage()).toEqual('DashboardCaseFile');
     });
 
     it('returns proper landing page for contributor3 user', () => {
-      const store = createUserTestStore('contributor3');
+      const store = createUserTestStore(UserRoles.contributor3);
       expect(store.getLandingPage()).toEqual('DashboardCaseFile');
     });
 
@@ -122,7 +122,7 @@ describe('>>> User Store', () => {
 
   describe('setUser', () => {
     it('should set the user data in the store', () => {
-      const store = createUserTestStore('level1');
+      const store = createUserTestStore(UserRoles.level1);
       const mockUser = mockUsersData()[5];
       store.setUser(mockUser);
 
@@ -137,7 +137,7 @@ describe('>>> User Store', () => {
     });
 
     it('uses preferred_name for email if email is not available', () => {
-      const store = createUserTestStore('level1');
+      const store = createUserTestStore(UserRoles.level1);
       const mockUser = mockUsersData()[1];
       store.setUser(mockUser);
 
@@ -154,7 +154,7 @@ describe('>>> User Store', () => {
     // TODO: Creates issues when running other tests. I don't know why, so leave it commented for now
 
     // it('sets the user data in application insights', () => {
-    //   const store = createUserTestStore('level3');
+    //   const store = createUserTestStore(UserRoles.level3);
     //   const mockUser = mockUsersData()[0];
     //   store.setUser(mockUser);
     //
@@ -167,17 +167,17 @@ describe('>>> User Store', () => {
 
   describe('setRole', () => {
     it('should set roles in the state', () => {
-      const store = createUserTestStore('level1');
+      const store = createUserTestStore(UserRoles.level1);
 
-      store.setRole('newRole');
+      store.setRole(UserRoles.contributor3);
 
-      expect(store.roles).toEqual(['newRole']);
+      expect(store.roles).toEqual([UserRoles.contributor3]);
     });
   });
 
   describe('signOut', () => {
     it('should call the signout method of the authenticaiton provider', async () => {
-      const store = createUserTestStore('level1');
+      const store = createUserTestStore(UserRoles.level1);
       expect(AuthenticationProvider.signOut).toHaveBeenCalledTimes(0);
 
       await store.signOut();
@@ -188,30 +188,30 @@ describe('>>> User Store', () => {
 
   describe('isRoleChanged', () => {
     it('returns true if the passed argument and the roles that are now in store have no element in common', () => {
-      const store = createUserTestStore('level1');
-      const result = store.isRoleChanged(['level2']);
+      const store = createUserTestStore(UserRoles.level1);
+      const result = store.isRoleChanged([UserRoles.level2]);
       expect(result).toEqual(true);
     });
 
     it('returns false if the passed argument and the roles that are now in store have elements in common', () => {
-      const store = createUserTestStore('level1');
-      const result = store.isRoleChanged(['level1']);
+      const store = createUserTestStore(UserRoles.level1);
+      const result = store.isRoleChanged([UserRoles.level1]);
       expect(result).toEqual(false);
     });
   });
 
   describe('getCurrentRoles', () => {
     it('calls acquire token', async () => {
-      const store = createUserTestStore('level1');
+      const store = createUserTestStore(UserRoles.level1);
       AuthenticationProvider.acquireToken = jest.fn();
       await store.getCurrentRoles();
       expect(AuthenticationProvider.acquireToken).toBeCalledTimes(1);
     });
 
     it('calls decodeJwt and returns currentRoles', async () => {
-      const store = createUserTestStore('level1');
+      const store = createUserTestStore(UserRoles.level1);
       AuthenticationProvider.acquireToken = jest.fn(() => Promise.resolve('mock-token'));
-      const currentRoles = { roles: ['level1'] };
+      const currentRoles = { roles: [UserRoles.level1] };
 
       helpers.decodeJwt = jest.fn(() => currentRoles);
       const result = await store.getCurrentRoles();
@@ -223,8 +223,8 @@ describe('>>> User Store', () => {
   // Seems that we cannot mock an internal actions getCurrentRoles
   // describe('fetchUserData', () => {
   //     it('calls getUserData with the current roles and it sets the user data into the store, if there are current roles', async () => {
-  //       const store = createUserTestStore('level1', true);
-  //       store.getCurrentRoles = jest.fn(() => Promise.resolve(['level5']));
+  //       const store = createUserTestStore(UserRoles.level1, true);
+  //       store.getCurrentRoles = jest.fn(() => Promise.resolve([UserRoles.level5]));
   //       store.isRoleChanged = jest.fn(() => true);
   //       const user = mockUsersData()[0];
   //
@@ -232,7 +232,7 @@ describe('>>> User Store', () => {
   //
   //       await store.fetchUserData();
   //
-  //       expect(userHelpers.getUserData).toBeCalledWith(['level5']);
+  //       expect(userHelpers.getUserData).toBeCalledWith([UserRoles.level5]);
   //
   //       expect(store.getUser()).toEqual(new User({
   //         oid: user.oid,
@@ -252,7 +252,7 @@ describe('>>> User Store', () => {
   //     //
   //     //   jest.spyOn(store, 'dispatch')
   //     //     .mockImplementationOnce((args) => Promise.resolve(originalFunction(args)))
-  //     //     .mockImplementationOnce(() => Promise.resolve(['level5']))
+  //     //     .mockImplementationOnce(() => Promise.resolve([UserRoles.level5]))
   //     //     .mockImplementationOnce(() => Promise.resolve(true));
   //     //
   //     //   await store.dispatch('user/fetchUserData');

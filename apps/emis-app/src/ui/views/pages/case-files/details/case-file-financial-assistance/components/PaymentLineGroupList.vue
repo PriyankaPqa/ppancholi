@@ -38,6 +38,7 @@ import {
   ApprovalStatus,
   FinancialAssistancePaymentGroup,
 } from '@libs/entities-lib/financial-assistance-payment';
+import { UserRoles } from '@libs/entities-lib/user';
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import PaymentLineGroup from './PaymentLineGroup.vue';
@@ -97,7 +98,7 @@ export default Vue.extend({
     },
 
     canSubmit(): boolean {
-      return !this.readonly && this.$hasLevel('level1') && this.transactionApprovalStatus === ApprovalStatus.New;
+      return !this.readonly && this.$hasLevel(UserRoles.level1) && this.transactionApprovalStatus === ApprovalStatus.New;
     },
   },
 });

@@ -13,6 +13,7 @@ import { getLocalVue, getWrapper } from '@libs/shared-lib/tests/testBase';
 import { PiniaVuePlugin } from 'pinia';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import registrationStore from '@/ui/plugins/registrationStore';
+import { UserRoles } from '@libs/entities-lib/user';
 
 jest.setTimeout(10000);
 
@@ -29,7 +30,7 @@ export const createLocalVue = () => getLocalVue(plugins);
 
 export const mount = (Component, options) => {
   const opts = {
-    pinia: getPiniaForUser('level6'),
+    pinia: getPiniaForUser(UserRoles.level6),
     ...options,
   };
   const wrapper = getWrapper(Component, opts, {
@@ -41,7 +42,7 @@ export const mount = (Component, options) => {
 
 export const shallowMount = (Component, options) => {
   const opts = {
-    pinia: getPiniaForUser('level6'),
+    pinia: getPiniaForUser(UserRoles.level6),
     ...options,
   };
   const wrapper = getWrapper(Component, opts, {

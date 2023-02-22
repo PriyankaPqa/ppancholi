@@ -146,6 +146,7 @@ import AddEditAdditionalMembersLib from '@libs/registration-lib/components/addit
 import { RcTooltip } from '@libs/component-lib/components';
 import householdHelpers from '@/ui/helpers/household';
 import { IEventGenericLocation } from '@libs/entities-lib/event';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
@@ -239,15 +240,15 @@ export default Vue.extend({
     },
 
     canChangePrimary():boolean {
-      return this.$hasLevel('level2');
+      return this.$hasLevel(UserRoles.level2);
     },
 
     canSplit():boolean {
-      return this.$hasLevel('level2');
+      return this.$hasLevel(UserRoles.level2);
     },
 
     canEdit():boolean {
-      return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? 'level0' : 'level1');
+      return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? UserRoles.level0 : UserRoles.level1);
     },
 
     memberInfo(): Array<Record<string, unknown>> {

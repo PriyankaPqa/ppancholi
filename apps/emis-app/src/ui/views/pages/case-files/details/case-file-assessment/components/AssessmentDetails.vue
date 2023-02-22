@@ -72,6 +72,7 @@ import { Route, NavigationGuardNext } from 'vue-router';
 import helpers from '@/ui/helpers/helpers';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
+import { UserRoles } from '@libs/entities-lib/user';
 import caseFileDetail from '../../caseFileDetail';
 import QuestionTab from './QuestionTab.vue';
 
@@ -109,7 +110,7 @@ export default mixins(caseFileDetail).extend({
 
   computed: {
     canEdit(): boolean {
-      return this.$hasLevel('level3') && !this.readonly
+      return this.$hasLevel(UserRoles.level3) && !this.readonly
       && this.$route.name === routes.caseFile.assessments.edit.name
       && this.assessmentResponse?.completionStatus === CompletionStatus.Completed;
     },

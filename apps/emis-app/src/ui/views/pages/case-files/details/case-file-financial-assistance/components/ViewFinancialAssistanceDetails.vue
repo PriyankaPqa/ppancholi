@@ -74,6 +74,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { ApprovalStatus, IFinancialAssistancePaymentEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import routes from '@/constants/routes';
+import { UserRoles } from '@libs/entities-lib/user';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import ApprovalHistoryDialog from './ApprovalHistoryDialog.vue';
 import caseFileDetail from '../../caseFileDetail';
@@ -121,11 +122,11 @@ export default mixins(caseFileDetail).extend({
     },
 
     canEdit(): boolean {
-      return !this.readonly && this.$hasLevel('level1') && this.financialAssistance.approvalStatus === ApprovalStatus.New;
+      return !this.readonly && this.$hasLevel(UserRoles.level1) && this.financialAssistance.approvalStatus === ApprovalStatus.New;
     },
 
     canDelete(): boolean {
-      return !this.readonly && this.$hasLevel('level1') && this.financialAssistance.approvalStatus === ApprovalStatus.New;
+      return !this.readonly && this.$hasLevel(UserRoles.level1) && this.financialAssistance.approvalStatus === ApprovalStatus.New;
     },
 
     editRoute(): { name: string, params: Record<string, string> } {

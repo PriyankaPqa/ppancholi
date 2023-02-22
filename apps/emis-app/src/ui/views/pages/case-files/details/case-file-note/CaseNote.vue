@@ -72,6 +72,7 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useCaseNoteMetadataStore, useCaseNoteStore } from '@/pinia/case-note/case-note';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { UserRoles } from '@libs/entities-lib/user';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 import CaseNotesListItem from './components/CaseNotesListItem.vue';
 import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
@@ -122,7 +123,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
   computed: {
     showAddButton(): boolean {
-      return (this.$hasLevel('level0') || this.$hasRole('contributorFinance') || this.$hasRole('contributor3'))
+      return (this.$hasLevel(UserRoles.level0) || this.$hasRole(UserRoles.contributorFinance) || this.$hasRole(UserRoles.contributor3))
         && !this.readonly;
     },
 

@@ -125,6 +125,7 @@ import helpers from '@/ui/helpers/helpers';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import entityUtils from '@libs/entities-lib/utils';
+import { UserRoles } from '@libs/entities-lib/user';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import CaseFileTags from './components/CaseFileTags.vue';
 import CaseFileLabels from './components/CaseFileLabels.vue';
@@ -170,11 +171,11 @@ export default mixins(caseFileDetail).extend({
   },
   computed: {
     canEdit(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
+      return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
 
     canEditLabels(): boolean {
-      return this.$hasFeature(FeatureKeys.L0Access) ? this.$hasLevel('level0') && !this.readonly : this.canEdit;
+      return this.$hasFeature(FeatureKeys.L0Access) ? this.$hasLevel(UserRoles.level0) && !this.readonly : this.canEdit;
     },
 
     triageLevels(): { value: unknown, text: string }[] {

@@ -66,8 +66,9 @@ import routes from '@/constants/routes';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import {
- ICaseFileReferralCombined, ICaseFileReferralEntity, ICaseFileReferralMetadata, IdParams,
+  ICaseFileReferralCombined, ICaseFileReferralEntity, ICaseFileReferralMetadata, IdParams,
 } from '@libs/entities-lib/case-file-referral';
+import { UserRoles } from '@libs/entities-lib/user';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { useCaseFileReferralMetadataStore, useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
@@ -97,7 +98,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
   computed: {
     canEdit(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
+      return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
 
     customColumns(): Record<string, string> {

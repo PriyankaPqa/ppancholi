@@ -2,6 +2,7 @@ import { EFilterType } from '@libs/component-lib/types';
 import { useMockCaseNoteStore } from '@/pinia/case-note/case-note.mock';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import * as searchEndpoints from '@/constants/searchEndpoints';
@@ -166,19 +167,19 @@ describe('CaseNote.vue', () => {
 
     describe('showAddButton', () => {
       it('returns correct value', async () => {
-        doMount('level0');
+        doMount(UserRoles.level0);
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        doMount('level6');
+        doMount(UserRoles.level6);
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        doMount('contributorFinance');
+        doMount(UserRoles.contributorFinance);
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        doMount('contributor3');
+        doMount(UserRoles.contributor3);
         expect(wrapper.vm.showAddButton).toBe(true);
 
-        doMount('contributorIM');
+        doMount(UserRoles.contributorIM);
         expect(wrapper.vm.showAddButton).toBe(false);
 
         doMount('readOnly');
@@ -186,7 +187,7 @@ describe('CaseNote.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level1'),
+          pinia: getPiniaForUser(UserRoles.level1),
           propsData: {
             id: 'id',
           },

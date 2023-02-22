@@ -1,5 +1,4 @@
-import { IUserData, IUser } from './user.types';
-
+import { IUserData, IUser, UserRoles } from './user.types';
 import { User } from './user';
 
 export const mockUserData = (force?: Partial<IUserData>): IUserData => ({
@@ -7,7 +6,7 @@ export const mockUserData = (force?: Partial<IUserData>): IUserData => ({
   email: 'test@test.ca',
   family_name: 'White',
   given_name: 'John',
-  roles: ['level1'],
+  roles: [UserRoles.level1],
   homeAccountId: 'homeAccountId',
   ...force,
 });
@@ -17,7 +16,7 @@ export const mockUsersData = (): IUserData[] => [{
   email: 'test@test.ca',
   family_name: 'White',
   given_name: 'John',
-  roles: ['level1'],
+  roles: [UserRoles.level1],
   homeAccountId: 'homeAccountId',
 }, {
   oid: '2',
@@ -25,7 +24,7 @@ export const mockUsersData = (): IUserData[] => [{
   preferred_username: 'test@test.ca',
   family_name: 'Black',
   given_name: 'Peter',
-  roles: ['level2'],
+  roles: [UserRoles.level2],
   homeAccountId: 'homeAccountId',
 },
 {
@@ -33,7 +32,7 @@ export const mockUsersData = (): IUserData[] => [{
   email: 'test@test.ca',
   family_name: 'Pink',
   given_name: 'Alan',
-  roles: ['level3'],
+  roles: [UserRoles.level3],
   homeAccountId: 'homeAccountId',
 },
 {
@@ -41,7 +40,7 @@ export const mockUsersData = (): IUserData[] => [{
   email: 'test@test.ca',
   family_name: 'Hilary',
   given_name: 'Purple',
-  roles: ['level4'],
+  roles: [UserRoles.level4],
   homeAccountId: 'homeAccountId',
 },
 {
@@ -49,7 +48,7 @@ export const mockUsersData = (): IUserData[] => [{
   email: 'test@test.ca',
   family_name: 'Tony',
   given_name: 'Brown',
-  roles: ['level5'],
+  roles: [UserRoles.level5],
   homeAccountId: 'homeAccountId',
 },
 {
@@ -57,7 +56,7 @@ export const mockUsersData = (): IUserData[] => [{
   email: 'test@test.ca',
   family_name: 'Jack',
   given_name: 'Orange',
-  roles: ['level6'],
+  roles: [UserRoles.level6],
   homeAccountId: 'homeAccountId',
 },
 {
@@ -65,7 +64,7 @@ export const mockUsersData = (): IUserData[] => [{
   email: 'test@test.ca',
   family_name: 'Joe',
   given_name: 'Pink',
-  roles: ['contributorIM'],
+  roles: [UserRoles.contributorIM],
   homeAccountId: 'homeAccountId',
 },
 {
@@ -73,7 +72,7 @@ export const mockUsersData = (): IUserData[] => [{
   email: 'test@test.ca',
   family_name: 'Joe',
   given_name: 'Joe',
-  roles: ['contributorFinance'],
+  roles: [UserRoles.contributorFinance],
   homeAccountId: 'homeAccountId',
 },
 {
@@ -81,7 +80,7 @@ export const mockUsersData = (): IUserData[] => [{
   email: 'test@test.ca',
   family_name: 'Thomas',
   given_name: 'William',
-  roles: ['contributor3'],
+  roles: [UserRoles.contributor3],
   homeAccountId: 'homeAccountId',
 },
 {
@@ -89,7 +88,7 @@ export const mockUsersData = (): IUserData[] => [{
   email: 'test@test.ca',
   family_name: 'Lily',
   given_name: 'Park',
-  roles: ['readonly'],
+  roles: [UserRoles.readonly],
   homeAccountId: 'homeAccountId',
 },
 {
@@ -105,7 +104,7 @@ export const mockUsersData = (): IUserData[] => [{
   email: 'test@test.ca',
   family_name: 'White',
   given_name: 'John',
-  roles: ['level0'],
+  roles: [UserRoles.level0],
   homeAccountId: 'homeAccountId',
 },
 ];

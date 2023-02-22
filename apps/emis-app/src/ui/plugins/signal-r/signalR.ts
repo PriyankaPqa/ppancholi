@@ -31,6 +31,7 @@ import { useFinancialAssistanceMetadataStore, useFinancialAssistanceStore } from
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export interface IOptions {
   service: ISignalRService | ISignalRServiceMock,
@@ -97,7 +98,7 @@ export class SignalR implements ISignalR {
     }
 
     const isSignedIn = await AuthenticationProvider.isAuthenticated();
-    const noAccess = useUserStore().getUser().hasRole('noAccess');
+    const noAccess = useUserStore().getUser().hasRole(UserRoles.noAccess);
 
     if (isSignedIn && !noAccess) {
       try {

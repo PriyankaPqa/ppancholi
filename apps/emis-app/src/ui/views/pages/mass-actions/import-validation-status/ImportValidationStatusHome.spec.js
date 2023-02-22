@@ -1,4 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import MassActionBaseTable from '@/ui/views/pages/mass-actions/components/MassActionBaseTable.vue';
 import { MassActionType } from '@libs/entities-lib/mass-action';
@@ -10,7 +11,7 @@ const localVue = createLocalVue();
 
 let wrapper;
 
-const doMount = async (fullMount = false, pinia = getPiniaForUser('level6'), additionalOverwrites = {}) => {
+const doMount = async (fullMount = false, pinia = getPiniaForUser(UserRoles.level6), additionalOverwrites = {}) => {
   wrapper = (fullMount ? mount : shallowMount)(Component, {
     localVue,
     pinia,
@@ -72,17 +73,17 @@ describe('ImportValidationStatusHome.vue', () => {
       });
 
       it('should be true if contributorIM ', () => {
-        doMount(false, getPiniaForUser('contributorIM'));
+        doMount(false, getPiniaForUser(UserRoles.contributorIM));
         expect(wrapper.findComponent(MassActionBaseTable).props('showAddButton')).toEqual(true);
       });
 
       it('should be false if not level 6', () => {
-        doMount(false, getPiniaForUser('level5'));
+        doMount(false, getPiniaForUser(UserRoles.level5));
         expect(wrapper.findComponent(MassActionBaseTable).props('showAddButton')).toEqual(false);
       });
 
       it('should be false if not contributorIM', () => {
-        doMount(false, getPiniaForUser('contributorFinance'));
+        doMount(false, getPiniaForUser(UserRoles.contributorFinance));
         expect(wrapper.findComponent(MassActionBaseTable).props('showAddButton')).toEqual(false);
       });
     });

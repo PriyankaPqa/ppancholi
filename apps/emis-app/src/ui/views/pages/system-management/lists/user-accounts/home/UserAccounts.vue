@@ -129,7 +129,7 @@ import AddEmisUser from '@/ui/views/pages/system-management/lists/add-emis-user/
 import routes from '@/constants/routes';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import {
- IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
+  IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { IAzureSearchParams, IMultilingual } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
@@ -138,6 +138,7 @@ import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { UserRolesNames, UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'UserAccounts',
@@ -173,7 +174,8 @@ export default mixins(TablePaginationSearchMixin).extend({
       allActiveSubRoles: [] as IOptionSubItem[],
       allAccessLevelRoles: [],
       modifiedUsers: [] as IUserAccountCombined[],
-      disallowedLevels: ['Level 6', 'ContributorIM', 'ContributorFinance', 'Contributor 3', 'Read Only'],
+      disallowedLevels: [UserRolesNames.level6, UserRolesNames.contributorIM, UserRolesNames.contributorFinance,
+        UserRolesNames.contributor3, UserRolesNames.readonly],
       disallowedRoles: [] as IOptionSubItem[], // Roles that a Level5 cannot change
       tableName: 'user-accounts',
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
@@ -450,7 +452,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     // set the hierarchical list of roles and subroles in the format needed for the dropdown of the select component
     setAllAccessLevelRoles(roles: IOptionItem[]) {
       roles.forEach((accessLevel : IOptionItem) => {
-        if (this.$hasLevel('level5') && !this.$hasLevel('level6')
+        if (this.$hasLevel(UserRoles.level5) && !this.$hasLevel(UserRoles.level6)
         && this.disallowedLevels.some((level) => level === accessLevel.name.translation.en)) {
           return;
         }
@@ -483,7 +485,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     canNotManageRoleForUser(user: IUserAccountCombined): boolean {
-      if (this.$hasLevel('level5') && !this.$hasLevel('level6')) {
+      if (this.$hasLevel(UserRoles.level5) && !this.$hasLevel(UserRoles.level6)) {
         return this.disallowedRoles.some((r) => r.name.translation.en === user.metadata?.roleName?.translation.en);
       }
 

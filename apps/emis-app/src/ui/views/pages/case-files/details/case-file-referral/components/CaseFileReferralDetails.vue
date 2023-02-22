@@ -63,6 +63,7 @@ import { RcPageContent } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import { CaseFileReferralEntity, ICaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-file-referral';
 import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
+import { UserRoles } from '@libs/entities-lib/user';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
@@ -89,7 +90,7 @@ export default mixins(caseFileDetail).extend({
 
   computed: {
     canEdit(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
+      return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
 
     referral(): ICaseFileReferralEntity {

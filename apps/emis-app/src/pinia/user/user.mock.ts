@@ -1,9 +1,11 @@
 import { createTestingPinia, TestingPinia } from '@pinia/testing';
 
 import { useUserStore } from '@/pinia/user/user';
-import { IUserData, mockUsersData } from '@libs/entities-lib/user';
+import { IUserData, mockUsersData, UserRoles } from '@libs/entities-lib/user';
 
-export type Role = 'level0' | 'level1' | 'level2' | 'level3' | 'level4' | 'level5' | 'level6' | 'contributorIM' | 'contributorFinance' | 'contributor3' | 'readOnly' | 'noRole';
+export type Role = UserRoles.level0 | UserRoles.level1 |
+UserRoles.level2 | UserRoles.level3 | UserRoles.level4 | UserRoles.level5 |
+UserRoles.level6 | UserRoles.contributorIM | UserRoles.contributorFinance | UserRoles.contributor3 | 'readOnly' | 'noRole';
 
 export const useMockUserStore = (pinia?: TestingPinia) => {
   const p = pinia || createTestingPinia({ stubActions: false });

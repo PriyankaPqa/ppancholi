@@ -2,6 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCaseFileEntity, CaseFileStatus } from '@libs/entities-lib/case-file';
 import { mockCombinedUserAccount } from '@libs/entities-lib/user-account';
 import { mockTeamEntity } from '@libs/entities-lib/team';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
@@ -21,7 +22,7 @@ describe('CaseFileAssignments.vue', () => {
     beforeEach(async () => {
       wrapper = shallowMount(Component, {
         localVue,
-        pinia: getPiniaForUser('level3'),
+        pinia: getPiniaForUser(UserRoles.level3),
         propsData: {
           caseFile: mockCaseFile,
         },
@@ -200,7 +201,7 @@ describe('CaseFileAssignments.vue', () => {
           propsData: {
             caseFile: mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open }),
           },
-          pinia: getPiniaForUser('level4'),
+          pinia: getPiniaForUser(UserRoles.level4),
         });
         expect(wrapper.vm.canAssign).toBeTruthy();
       });
@@ -212,7 +213,7 @@ describe('CaseFileAssignments.vue', () => {
             caseFile: mockCaseFileEntity(),
             readonly: false,
           },
-          pinia: getPiniaForUser('level4'),
+          pinia: getPiniaForUser(UserRoles.level4),
         });
         expect(wrapper.vm.canAssign).toBeTruthy();
         await wrapper.setProps({ readonly: true });
@@ -225,7 +226,7 @@ describe('CaseFileAssignments.vue', () => {
           propsData: {
             caseFile: mockCaseFile,
           },
-          pinia: getPiniaForUser('level2'),
+          pinia: getPiniaForUser(UserRoles.level2),
         });
         expect(wrapper.vm.canAssign).toBeFalsy();
       });

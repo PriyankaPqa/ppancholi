@@ -3,6 +3,7 @@ import helpers from '@/ui/helpers/helpers';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { UserRoles } from '@libs/entities-lib/user';
 import massActions from './massActions';
 /* eslint-disable max-len */
 const Component = {
@@ -13,7 +14,7 @@ const Component = {
 const localVue = createLocalVue();
 let wrapper;
 
-const doMount = (fullMount = false, pinia = getPiniaForUser('level6'), additionalOverwrites = {}) => {
+const doMount = (fullMount = false, pinia = getPiniaForUser(UserRoles.level6), additionalOverwrites = {}) => {
   useMockTenantSettingsStore(pinia);
   wrapper = (fullMount ? mount : shallowMount)(Component, {
     localVue,
@@ -70,16 +71,16 @@ describe('massActions', () => {
             to: 'routes.home.name',
             text: 'leftMenu.home_title',
             test: 'home',
-            level: 'level1',
+            level: UserRoles.level1,
           },
           {
             to: 'routes.caseFile.home.name',
             text: 'leftMenu.caseFiles_title',
             test: 'caseFile',
-            level: 'level6',
+            level: UserRoles.level6,
           },
         ];
-        doMount(false, getPiniaForUser('level1'));
+        doMount(false, getPiniaForUser(UserRoles.level1));
         expect(wrapper.vm.filterItems(items)).toMatchObject([items[0]]);
       });
 
@@ -90,18 +91,18 @@ describe('massActions', () => {
             icon: 'mdi-home',
             text: 'leftMenu.home_title',
             test: 'home',
-            level: 'level1',
+            level: UserRoles.level1,
           },
           {
             to: 'routes.caseFile.home.name',
             icon: 'mdi-clipboard-text',
             text: 'leftMenu.caseFiles_title',
             test: 'caseFile',
-            level: 'level6',
-            roles: ['contributorIM'],
+            level: UserRoles.level6,
+            roles: [UserRoles.contributorIM],
           },
         ];
-        doMount(false, getPiniaForUser('contributorIM'));
+        doMount(false, getPiniaForUser(UserRoles.contributorIM));
         expect(wrapper.vm.filterItems(items)).toMatchObject([items[1]]);
       });
 
@@ -112,18 +113,18 @@ describe('massActions', () => {
             icon: 'mdi-home',
             text: 'leftMenu.home_title',
             test: 'home',
-            level: 'level1',
+            level: UserRoles.level1,
           },
           {
             to: 'routes.caseFile.home.name',
             icon: 'mdi-clipboard-text',
             text: 'leftMenu.caseFiles_title',
             test: 'caseFile',
-            level: 'level6',
-            roles: ['contributorIM'],
+            level: UserRoles.level6,
+            roles: [UserRoles.contributorIM],
           },
         ];
-        doMount(false, getPiniaForUser('contributorIM'));
+        doMount(false, getPiniaForUser(UserRoles.contributorIM));
         expect(wrapper.vm.filterItems(items)).toMatchObject([items[1]]);
       });
 
@@ -134,12 +135,12 @@ describe('massActions', () => {
             icon: 'mdi-clipboard-text',
             text: 'leftMenu.caseFiles_title',
             test: 'caseFile',
-            level: 'level6',
-            roles: ['contributorIM'],
+            level: UserRoles.level6,
+            roles: [UserRoles.contributorIM],
             feature: 'feature key-2',
           },
         ];
-        doMount(false, getPiniaForUser('level6'));
+        doMount(false, getPiniaForUser(UserRoles.level6));
         expect(wrapper.vm.filterItems(items)).toMatchObject(items);
       });
     });

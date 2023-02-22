@@ -1,5 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import { ApprovalStatus, mockCaseFinancialAssistancePaymentGroups } from '@libs/entities-lib/financial-assistance-payment';
@@ -151,11 +152,11 @@ describe('CaseFilePaymentLineItem.vue', () => {
 
         await mountWrapper(false, null);
         expect(wrapper.vm.showEditButton).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.showEditButton).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.showEditButton).toBeFalsy();
-        await mountWrapper(false, null, 'contributorFinance');
+        await mountWrapper(false, null, UserRoles.contributorFinance);
         expect(wrapper.vm.showEditButton).toBeFalsy();
       });
 
@@ -193,11 +194,11 @@ describe('CaseFilePaymentLineItem.vue', () => {
         expect(wrapper.vm.showDeleteButton).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.showDeleteButton).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.showDeleteButton).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.showDeleteButton).toBeFalsy();
-        await mountWrapper(false, null, 'contributorFinance');
+        await mountWrapper(false, null, UserRoles.contributorFinance);
         expect(wrapper.vm.showDeleteButton).toBeFalsy();
       });
 

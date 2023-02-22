@@ -1,3 +1,4 @@
+import { UserRoles } from '@libs/entities-lib/user';
 import Vue from 'vue';
 import { useUserStore } from '@/pinia/user/user';
 
@@ -8,13 +9,13 @@ export type VuePlugin = Vue & {
 
 export default {
   install: (V: typeof Vue) => {
-    function hasLevel(this: Vue, levelToCheck: string) {
+    function hasLevel(this: Vue, levelToCheck: UserRoles) {
       const user = useUserStore().getUser();
 
       return user ? user.hasLevel(levelToCheck) : false;
     }
 
-    function hasRole(this: Vue, roleToCheck: string) {
+    function hasRole(this: Vue, roleToCheck: UserRoles) {
       const user = useUserStore().getUser();
 
       return user ? user.hasRole(roleToCheck) : false;

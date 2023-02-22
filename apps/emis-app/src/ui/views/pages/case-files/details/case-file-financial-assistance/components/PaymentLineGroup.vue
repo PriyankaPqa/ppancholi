@@ -114,6 +114,7 @@ import {
 import { IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@libs/entities-lib/base';
+import { UserRoles } from '@libs/entities-lib/user';
 import PaymentStatusHistoryDialog from '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/PaymentStatusHistoryDialog.vue';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import PaymentLineItem from './PaymentLineItem.vue';
@@ -250,10 +251,10 @@ export default Vue.extend({
       let statusArr: Array<PaymentStatus> = [];
       const currentModality = this.paymentGroup.groupingInformation.modality;
       const currentStatus = this.paymentGroup.paymentStatus;
-      const isFinance = this.$hasRole('contributorFinance');
-      const isLevel1Plus = this.$hasLevel('level1');
-      const isLevel3Plus = this.$hasLevel('level3');
-      const isLevel6 = this.$hasLevel('level6');
+      const isFinance = this.$hasRole(UserRoles.contributorFinance);
+      const isLevel1Plus = this.$hasLevel(UserRoles.level1);
+      const isLevel3Plus = this.$hasLevel(UserRoles.level3);
+      const isLevel6 = this.$hasLevel(UserRoles.level6);
 
       if (!isFinance && !isLevel1Plus) {
         return [currentStatus];

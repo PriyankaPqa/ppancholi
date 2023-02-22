@@ -147,6 +147,7 @@ import routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useEventStore } from '@/pinia/event/event';
 import { Resize } from 'vuetify/es5/directives';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'EventDetails',
@@ -220,14 +221,14 @@ export default Vue.extend({
         icon: '',
         disabled: false,
         to: routes.events.summary.name,
-        level: 'level4',
+        level: UserRoles.level4,
       }, {
         text: this.$t('eventDetail.menu_programs'),
         test: 'event-programs',
         icon: '',
         disabled: false,
         to: routes.programs.home.name,
-        level: 'level6',
+        level: UserRoles.level6,
         exact: false,
       }, {
         text: this.$t('eventDetail.menu_financial'),
@@ -235,7 +236,7 @@ export default Vue.extend({
         icon: '',
         disabled: false,
         to: routes.events.financialAssistance.home.name,
-        level: 'level6',
+        level: UserRoles.level6,
         exact: false,
       },
       {
@@ -244,7 +245,7 @@ export default Vue.extend({
         icon: '',
         disabled: false,
         to: routes.events.approvals.home.name,
-        level: 'level6',
+        level: UserRoles.level6,
         feature: FeatureKeys.ApprovalsWithinEvent,
         exact: false,
       },
@@ -254,7 +255,7 @@ export default Vue.extend({
         icon: '',
         disabled: false,
         to: routes.events.assessments.home.name,
-        level: 'level6',
+        level: UserRoles.level6,
         feature: FeatureKeys.Assessments,
         exact: false,
       }];

@@ -21,6 +21,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import Component from '../EventForm.vue';
 
@@ -783,7 +784,7 @@ describe('EventForm.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue: createLocalVue(),
-        pinia: getPiniaForUser('level6'),
+        pinia: getPiniaForUser(UserRoles.level6),
         propsData: {
           event,
           isEditMode: false,
@@ -848,7 +849,7 @@ describe('EventForm.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
-        pinia: getPiniaForUser('level6'),
+        pinia: getPiniaForUser(UserRoles.level6),
         propsData: {
           event,
           isEditMode: false,
@@ -957,7 +958,7 @@ describe('EventForm.vue', () => {
     test('assistanceNumber is required', async () => {
       wrapper = mount(Component, {
         localVue: createLocalVue(),
-        pinia: getPiniaForUser('level6'),
+        pinia: getPiniaForUser(UserRoles.level6),
         propsData: {
           event,
           isEditMode: true,
@@ -1000,7 +1001,7 @@ describe('EventForm.vue', () => {
   });
 
   describe('Permissions', () => {
-    const doMount = (pinia = getPiniaForUser('level6')) => {
+    const doMount = (pinia = getPiniaForUser(UserRoles.level6)) => {
       wrapper = mount(Component, {
         localVue,
         pinia,
@@ -1015,12 +1016,12 @@ describe('EventForm.vue', () => {
     };
 
     test('the inputDisabled prop returns false if the user has level lower than 6', async () => {
-      doMount(getPiniaForUser('level5'));
+      doMount(getPiniaForUser(UserRoles.level5));
       expect(wrapper.vm.inputDisabled).toBe(true);
     });
 
     test('all the inputs except for description are disabled for level 5', async () => {
-      doMount(getPiniaForUser('level5'));
+      doMount(getPiniaForUser(UserRoles.level5));
 
       expect(wrapper.findDataTest('event-name').attributes('disabled')).toBe('disabled');
       expect(wrapper.findDataTest('event-level').attributes('disabled')).toBe('disabled');

@@ -2,6 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedFinancialAssistance } from '@libs/entities-lib/financial-assistance';
 import { ApprovalStatus, mockCaseFinancialAssistanceEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { mockProgramEntity } from '@libs/entities-lib/program';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import routes from '@/constants/routes';
@@ -101,11 +102,11 @@ describe('ViewFinancialAssistanceDetails', () => {
         expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canEdit).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.canEdit).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.canEdit).toBeFalsy();
-        await mountWrapper(false, null, 'contributorFinance');
+        await mountWrapper(false, null, UserRoles.contributorFinance);
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
 
@@ -138,11 +139,11 @@ describe('ViewFinancialAssistanceDetails', () => {
         expect(wrapper.vm.canDelete).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canDelete).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.canDelete).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.canDelete).toBeFalsy();
-        await mountWrapper(false, null, 'contributorFinance');
+        await mountWrapper(false, null, UserRoles.contributorFinance);
         expect(wrapper.vm.canDelete).toBeFalsy();
       });
 

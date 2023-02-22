@@ -130,12 +130,13 @@ import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.v
 import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCaseFiles.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import {
- IAssignedCaseFileCountByTeam, IUserAccountEntity, IUserAccountMetadata,
+  IAssignedCaseFileCountByTeam, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { IUserAccountCombined, IdParams as IdParamsUserAccount } from '@libs/entities-lib/src/user-account/userAccount.types';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export interface Result extends IUserAccountCombined {
   isPrimaryContact: boolean;
@@ -403,9 +404,9 @@ export default Vue.extend({
 
     showDeleteIcon(member: ITeamMemberAsUser): boolean {
       if (member.isPrimaryContact) {
-        return this.$hasLevel('level5');
+        return this.$hasLevel(UserRoles.level5);
       }
-      return this.$hasLevel('level4');
+      return this.$hasLevel(UserRoles.level4);
     },
 
     async viewMemberTeams(member: ITeamMemberAsUser) {
@@ -419,7 +420,7 @@ export default Vue.extend({
     },
 
     canRemovePrimary():boolean {
-      return this.$hasLevel('level5') && this.team.teamMembers.length === 1;
+      return this.$hasLevel(UserRoles.level5) && this.team.teamMembers.length === 1;
     },
 
     async handleRemoveTeamMember(item: ITeamMemberAsUser) {

@@ -13,6 +13,7 @@ import flushPromises from 'flush-promises';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import Component from './HouseholdProfile.vue';
 
@@ -387,7 +388,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          pinia: getPiniaForUser('level1'),
+          pinia: getPiniaForUser(UserRoles.level1),
         });
         wrapper.vm.$hasFeature = jest.fn(() => false);
         expect(wrapper.vm.canEdit).toBeTruthy();
@@ -404,7 +405,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          pinia: getPiniaForUser('level0'),
+          pinia: getPiniaForUser(UserRoles.level0),
         });
         wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(wrapper.vm.canEdit).toBeTruthy();
@@ -413,7 +414,7 @@ describe('HouseholdProfile.vue', () => {
       it('returns false if user does not have level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia: getPiniaForUser(UserRoles.contributorIM),
           propsData: {
             id: householdEntity.id,
           },
@@ -440,7 +441,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          pinia: getPiniaForUser('level2'),
+          pinia: getPiniaForUser(UserRoles.level2),
         });
 
         expect(wrapper.vm.canMove).toBeTruthy();
@@ -457,7 +458,7 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
-          pinia: getPiniaForUser('level1'),
+          pinia: getPiniaForUser(UserRoles.level1),
         });
 
         expect(wrapper.vm.canMove).toBeFalsy();

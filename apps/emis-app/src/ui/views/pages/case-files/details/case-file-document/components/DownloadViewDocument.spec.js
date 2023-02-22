@@ -1,5 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { CaseFileDocumentEntity, mockCombinedCaseFileDocument } from '@libs/entities-lib/case-file-document';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import Component from './DownloadViewDocument.vue';
@@ -65,10 +66,10 @@ describe('DownloadViewDocument', () => {
       await mountWrapper(true, 1);
       let element = wrapper.findDataTest('download-link');
       expect(element.exists()).toBeTruthy();
-      await mountWrapper(true, null, 'contributorIM');
+      await mountWrapper(true, null, UserRoles.contributorIM);
       element = wrapper.findDataTest('download-link');
       expect(element.exists()).toBeFalsy();
-      await mountWrapper(true, null, 'contributor3');
+      await mountWrapper(true, null, UserRoles.contributor3);
       element = wrapper.findDataTest('download-link');
       expect(element.exists()).toBeTruthy();
     });

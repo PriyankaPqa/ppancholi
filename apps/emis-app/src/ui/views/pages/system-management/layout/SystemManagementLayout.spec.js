@@ -2,6 +2,7 @@ import { RcRouterViewTransition } from '@libs/component-lib/components';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import routes from '@/constants/routes';
+import { UserRoles } from '@libs/entities-lib/user';
 import Component from './SystemManagementLayout.vue';
 
 const localVue = createLocalVue();
@@ -61,37 +62,37 @@ describe('SystemManagementLayout.vue', () => {
           test: 'systemManagement__menu__optionsLists',
           to: routes.systemManagement.lists.name,
           exact: false,
-          level: 'level6',
+          level: UserRoles.level6,
         }, {
           text: 'system_management.leftMenu.user_accounts_title',
           test: 'systemManagement__menu__userAccounts',
           to: routes.systemManagement.userAccounts.home.name,
           exact: false,
-          level: 'level5',
+          level: UserRoles.level5,
         }, {
           text: 'system_management.lists.roles',
           test: 'systemManagement__menu__roles',
           to: routes.systemManagement.roles.name,
           exact: false,
-          level: 'level6',
+          level: UserRoles.level6,
         }, {
           text: 'system_management.lists.branding',
           test: 'systemManagement__menu__branding',
           to: routes.systemManagement.branding.name,
           exact: false,
-          level: 'level6',
+          level: UserRoles.level6,
         }, {
           text: 'system_management.lists.tenantSettings',
           test: 'systemManagement__menu__tenantSettings',
           to: routes.systemManagement.tenantSettings.name,
           exact: false,
-          level: 'level6',
+          level: UserRoles.level6,
         }, {
           text: 'system_management.card.features.title',
           test: 'systemManagement__menu__features',
           to: routes.systemManagement.features.name,
           exact: false,
-          level: 'level6',
+          level: UserRoles.level6,
         }]);
       });
     });

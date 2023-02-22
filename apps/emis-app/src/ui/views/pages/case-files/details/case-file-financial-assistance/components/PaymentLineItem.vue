@@ -60,6 +60,7 @@ import {
 } from '@libs/entities-lib/financial-assistance-payment';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@libs/entities-lib/financial-assistance';
 import routes from '@/constants/routes';
+import { UserRoles } from '@libs/entities-lib/user';
 import { Status } from '@libs/entities-lib/base';
 
 export default Vue.extend({
@@ -156,7 +157,7 @@ export default Vue.extend({
     },
 
     showEditButton(): boolean {
-      if (this.readonly || !this.$hasLevel('level1')) {
+      if (this.readonly || !this.$hasLevel(UserRoles.level1)) {
         return false;
       }
       if (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New) {
@@ -174,7 +175,7 @@ export default Vue.extend({
     },
 
     showDeleteButton(): boolean {
-      return !this.readonly && this.$hasLevel('level1') && (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New);
+      return !this.readonly && this.$hasLevel(UserRoles.level1) && (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New);
     },
   },
 

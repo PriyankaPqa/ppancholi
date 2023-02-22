@@ -5,6 +5,7 @@ import _intersection from 'lodash/intersection';
 import {
   IMSALUserData,
   User,
+  UserRoles,
 } from '@libs/entities-lib/user';
 import { i18n } from '@/ui/plugins';
 import { defineStore } from 'pinia';
@@ -39,19 +40,20 @@ export const useUserStore = defineStore('user', () => {
   function getLandingPage() {
     const user = getUser();
     const role = user.currentRole();
-    if (role === 'level0' || role === 'level1' || role === 'level2' || role === 'contributorFinance' || role === 'contributor3' || role === 'readonly') {
+    if (role === UserRoles.level0 || role === UserRoles.level1 || role === UserRoles.level2
+      || role === UserRoles.contributorFinance || role === UserRoles.contributor3 || role === UserRoles.readonly) {
       return 'DashboardCaseFile';
     }
-    if (role === 'contributorIM') {
+    if (role === UserRoles.contributorIM) {
       return 'HomeContributorIM';
     }
-    if (role === 'level3') {
+    if (role === UserRoles.level3) {
       return 'HomeLevel3';
-    } if (role === 'level4') {
+    } if (role === UserRoles.level4) {
       return 'HomeLevel4';
-    } if (role === 'level5') {
+    } if (role === UserRoles.level5) {
       return 'HomeLevel5';
-    } if (role === 'level6') {
+    } if (role === UserRoles.level6) {
       return 'HomeLevel6';
     }
     return 'HomeNoRole';
@@ -76,7 +78,7 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  function setRole(payload: string) {
+  function setRole(payload: UserRoles) {
     if (roles.value[0] !== payload) {
       roles.value = [payload];
       applicationInsights.setBasicContext({ roles: roles.value });
@@ -87,7 +89,7 @@ export const useUserStore = defineStore('user', () => {
     await AuthenticationProvider.signOut();
   }
 
-  function isRoleChanged(currentRoles: string[]):boolean {
+  function isRoleChanged(currentRoles: UserRoles[]):boolean {
     const previousRoles = roles.value;
     if (!currentRoles || !currentRoles.length || !previousRoles || !previousRoles.length) {
       return false;
@@ -95,7 +97,7 @@ export const useUserStore = defineStore('user', () => {
     return !(_intersection(currentRoles, previousRoles).length);
   }
 
-  async function getCurrentRoles(): Promise<string[] | null> {
+  async function getCurrentRoles(): Promise<UserRoles[] | null> {
     const currentToken = await AuthenticationProvider.acquireToken('fetchUserData', true);
     if (currentToken) {
       return helpers.decodeJwt(currentToken).roles;

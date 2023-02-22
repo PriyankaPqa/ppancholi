@@ -52,6 +52,7 @@ import Vue from 'vue';
 import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useCaseNoteStore } from '@/pinia/case-note/case-note';
+import { UserRoles } from '@libs/entities-lib/user';
 import CaseFileListItemWrapper from '../../components/CaseFileListItemWrapper.vue';
 import CaseNoteForm from './CaseNoteForm.vue';
 
@@ -83,7 +84,7 @@ export default Vue.extend({
 
   computed: {
     canEditCaseNote(): boolean {
-      return this.$hasLevel('level4') && !this.readonly;
+      return this.$hasLevel(UserRoles.level4) && !this.readonly;
     },
 
     caseNoteCategories(): IOptionItem[] {

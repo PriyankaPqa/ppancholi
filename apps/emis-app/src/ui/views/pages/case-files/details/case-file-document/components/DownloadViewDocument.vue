@@ -32,6 +32,7 @@
 import Vue from 'vue';
 import { ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'DownloadViewDocument',
@@ -48,7 +49,7 @@ export default Vue.extend({
 
   computed: {
     canDownload(): boolean {
-      return this.$hasLevel('level1') || this.$hasRole('contributor3');
+      return this.$hasLevel(UserRoles.level1) || this.$hasRole(UserRoles.contributor3);
     },
   },
 

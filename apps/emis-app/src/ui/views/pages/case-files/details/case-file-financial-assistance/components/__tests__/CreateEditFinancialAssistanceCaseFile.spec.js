@@ -22,6 +22,7 @@ import {
   AssociationType,
   CompletionStatus,
 } from '@libs/entities-lib/assessment-template';
+import { UserRoles } from '@libs/entities-lib/user';
 import { format } from 'date-fns';
 import { Status } from '@libs/entities-lib/base';
 import { mockProgramEntity, mockCombinedPrograms } from '@libs/entities-lib/program';
@@ -56,7 +57,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   let financialAssistanceStore;
 
   // eslint-disable-next-line no-unused-vars,max-params,@typescript-eslint/no-unused-vars
-  const mountWrapper = async (_fullMount = false, mode = 'edit', currentPinia = getPiniaForUser('level6'), additionalOverwrites = {}) => {
+  const mountWrapper = async (_fullMount = false, mode = 'edit', currentPinia = getPiniaForUser(UserRoles.level6), additionalOverwrites = {}) => {
     pinia = currentPinia;
     programStore = useMockProgramStore(pinia).programStore;
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
@@ -130,7 +131,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
     describe('paymentGroupList', () => {
       let element;
       it('renders when nbPaymentLines > 0', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             nbPaymentLines() {
               return 2;
@@ -140,7 +141,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         element = wrapper.find('[data-test="paymentGroupList"]');
         expect(element.exists()).toBeTruthy();
 
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             nbPaymentLines() {
               return 1;
@@ -150,7 +151,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         element = wrapper.find('[data-test="paymentGroupList"]');
         expect(element.exists()).toBeTruthy();
 
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             nbPaymentLines() {
               return 0;
@@ -162,7 +163,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('passes disabledDeleteButton when nbPaymentLines = 1', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             nbPaymentLines() {
               return 2;
@@ -172,7 +173,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         element = wrapper.find('[data-test="paymentGroupList"]');
         expect(element.props('disableDeleteButton')).toBeFalsy();
 
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             nbPaymentLines() {
               return 1;
@@ -205,7 +206,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         element = wrapper.find('[data-test="financial-addPaymentLineBtn"]');
       });
       it('renders when canAddNewLines', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             canAddNewLines() {
               return true;
@@ -215,7 +216,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
         element = wrapper.find('[data-test="financial-addPaymentLineBtn"]');
         expect(element.exists()).toBeTruthy();
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             canAddNewLines() {
               return false;
@@ -298,19 +299,19 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
   describe('Computed', () => {
     describe('canAddNewLines', () => {
       it('returns true for level1+ if not readonly', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level1'));
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level1));
         expect(wrapper.vm.canAddNewLines).toBeTruthy();
-        await mountWrapper(false, 'edit', getPiniaForUser('readonly'));
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.readonly));
         expect(wrapper.vm.canAddNewLines).toBeFalsy();
-        await mountWrapper(false, 'edit', getPiniaForUser('contributor3'));
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.contributor3));
         expect(wrapper.vm.canAddNewLines).toBeFalsy();
-        await mountWrapper(false, 'edit', getPiniaForUser('contributorFinance'));
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.contributorFinance));
         expect(wrapper.vm.canAddNewLines).toBeFalsy();
 
         await mountWrapper(
           false,
           'edit',
-          getPiniaForUser('level1'),
+          getPiniaForUser(UserRoles.level1),
           {
             computed: {
               readonly() {
@@ -323,7 +324,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('returns false when status > new', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level1'));
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level1));
         expect(wrapper.vm.canAddNewLines).toBeTruthy();
         await wrapper.setData({ financialAssistance: { approvalStatus: ApprovalStatus.New } });
         expect(wrapper.vm.canAddNewLines).toBeTruthy();
@@ -343,7 +344,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
     describe('showWarning', () => {
       it('return true if any condition is not meet', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             caseFile() {
               return mockCaseFile;
@@ -364,7 +365,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('return true if any condition is not meet', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             caseFile() {
               return mockCaseFile;
@@ -385,7 +386,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('return true if any condition is not meet', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             caseFile() {
               return mockCaseFile;
@@ -406,7 +407,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('return true if all conditions are not meet', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             caseFile() {
               return mockCaseFile;
@@ -427,7 +428,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('return false if all conditions are meet', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             caseFile() {
               return mockCaseFile;
@@ -448,7 +449,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('return false if any conditions is not met but financialAssistance is approved', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             isAuthenticated() {
               return false;
@@ -472,7 +473,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('return true if any conditions is not met and financialAssistance is not approved', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             isAuthenticated() {
               return false;
@@ -543,7 +544,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('should return true if program requires to be impacted and user is impacted', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             caseFile() {
               const caseFile2 = mockCaseFile;
@@ -561,7 +562,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('should return false if program requires to be impacted and user isnt impacted', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             caseFile() {
               const caseFile2 = mockCaseFile;
@@ -592,7 +593,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('should return true if program requires to be authenticated and user is authenticated', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             caseFile() {
               const caseFile2 = mockCaseFile;
@@ -610,7 +611,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('should return false if program requires to be authenticated and user isnt authenticated', async () => {
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             caseFile() {
               const caseFile2 = mockCaseFile;
@@ -1133,7 +1134,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
           { mainCategory: { id: 'id-3', name: { translation: { en: 'name-3' } } } },
           { mainCategory: { id: 'id-4', name: { translation: { en: 'name-4' } } } }];
 
-        await mountWrapper(false, 'edit', getPiniaForUser('level6'), {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
           computed: {
             items() {
               return items;

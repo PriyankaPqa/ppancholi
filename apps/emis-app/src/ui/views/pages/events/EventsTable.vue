@@ -2,7 +2,7 @@
   <rc-data-table
     ref="eventsTable"
     data-test="events-table"
-    :show-help="false && $hasLevel('level6')"
+    :show-help="false && $hasLevel(UserRoles.level6)"
     :help-link="$t(helpLink)"
     :items="tableData"
     :count="itemsCount"
@@ -10,7 +10,7 @@
     :footer-text="footerText"
     :labels="labels"
     :table-props="tableProps"
-    :show-add-button="$hasLevel('level6')"
+    :show-add-button="$hasLevel(UserRoles.level6)"
     :initial-search="params && params.search"
     :options.sync="options"
     :custom-columns="[
@@ -86,6 +86,7 @@ import {
   IEventCombined,
   IEventSchedule, IdParams,
 } from '@libs/entities-lib/event';
+import { UserRoles } from '@libs/entities-lib/user';
 import helpers from '@/ui/helpers/helpers';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
@@ -119,6 +120,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       loading: false,
       EResponseLevel,
       EEventStatus,
+      UserRoles,
       helpLink: 'zendesk.help_link.eventsTable',
       options: {
         page: 1,
@@ -215,7 +217,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     canEdit(): (event: IEventCombined) => boolean {
-      return (event) => this.$hasLevel('level5')
+      return (event) => this.$hasLevel(UserRoles.level5)
       && (event.entity.schedule.status === EEventStatus.Open || event.entity.schedule.status === EEventStatus.OnHold);
     },
   },
@@ -262,7 +264,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     getEventRoute(event: IEventCombined) {
       const isFeatureFlagEnabled = this.$hasFeature(FeatureKeys.LetIMViewEventDetails); // TODO EMISV2-6088
-      if (isFeatureFlagEnabled && this.$hasRole('contributorIM')) {
+      if (isFeatureFlagEnabled && this.$hasRole(UserRoles.contributorIM)) {
         return {
           name: routes.events.summaryForIM.name,
           params: {

@@ -51,7 +51,7 @@
           mdi-account-circle
         </v-icon>
         <div class="rc-body14 break-word pl-2" data-test="rightMenu__role">
-          <template v-if="user.hasRole(NO_ROLE)">
+          <template v-if="user.hasRole(UserRoles.no_role)">
             {{ $t('rightmenu.noRoleAssigned') }}
           </template>
           <template v-else>
@@ -105,14 +105,14 @@
         outlined
         :items="[
           { text: 'No role', value: '' },
-          { text: 'level1', value: 'level1' },
-          { text: 'level2', value: 'level2' },
-          { text: 'level3', value: 'level3' },
-          { text: 'level4', value: 'level4' },
-          { text: 'level5', value: 'level5' },
-          { text: 'level6', value: 'level6' },
-          { text: 'contributorIM', value: 'contributorIM' },
-          { text: 'contributorFinance', value: 'contributorFinance' },
+          { text: UserRoles.level1, value: UserRoles.level1 },
+          { text: UserRoles.level2, value: UserRoles.level2 },
+          { text: UserRoles.level3, value: UserRoles.level3 },
+          { text: UserRoles.level4, value: UserRoles.level4 },
+          { text: UserRoles.level5, value: UserRoles.level5 },
+          { text: UserRoles.level6, value: UserRoles.level6 },
+          { text: UserRoles.contributorIM, value: UserRoles.contributorIM },
+          { text: UserRoles.contributorFinance, value: UserRoles.contributorFinance },
         ]"
         @change="useUserStore().setRole($event)" />
     </div>
@@ -154,7 +154,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IUser, NO_ROLE } from '@libs/entities-lib/user';
+import { IUser, UserRoles } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
 import { IBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import {
@@ -172,10 +172,10 @@ export default Vue.extend({
 
   data() {
     return {
-      NO_ROLE,
       tenants: [] as IBrandingEntity[],
       currentTenantId: null as string,
       appVersion: '',
+      UserRoles,
     };
   },
 
@@ -198,7 +198,7 @@ export default Vue.extend({
   },
 
   async mounted() {
-    const noAccess = useUserStore().getUser().hasRole('noAccess');
+    const noAccess = useUserStore().getUser().hasRole(UserRoles.noAccess);
     this.appVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
     if (!noAccess) {
       await useUserAccountStore().fetch(useUserStore().getUserId(), false);

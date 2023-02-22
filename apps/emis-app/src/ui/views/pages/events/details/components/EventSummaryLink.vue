@@ -34,7 +34,7 @@
 
       <v-spacer />
 
-      <rc-tooltip v-if="$hasLevel('level6') && showSwitchBtn" bottom>
+      <rc-tooltip v-if="$hasLevel(UserRoles.level6) && showSwitchBtn" bottom>
         <template #activator="{ on }">
           <div v-on="on">
             <v-switch
@@ -61,6 +61,7 @@ import helpers from '@/ui/helpers/helpers';
 import { EEventStatus, IEventEntity } from '@libs/entities-lib/event';
 import { useEventStore } from '@/pinia/event/event';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'EventSummaryLink',
@@ -80,6 +81,7 @@ export default Vue.extend({
     return {
       updatingSelfRegistration: false,
       selfRegistrationEnabled: this.event.selfRegistrationEnabled,
+      UserRoles,
     };
   },
 
@@ -97,7 +99,7 @@ export default Vue.extend({
       if (!this.event.schedule) {
         return false;
       }
-      return this.event.schedule.status === EEventStatus.Open && this.$hasLevel('level6');
+      return this.event.schedule.status === EEventStatus.Open && this.$hasLevel(UserRoles.level6);
     },
   },
 

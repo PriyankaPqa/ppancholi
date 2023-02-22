@@ -12,6 +12,7 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
+import { UserRoles } from '@libs/entities-lib/user';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();
@@ -96,7 +97,7 @@ describe('CaseFileDocument.vue', () => {
   describe('Computed', () => {
     describe('canAdd', () => {
       it('returns true if user has level 1 and not readonly', () => {
-        let pinia = getPiniaForUser('level1');
+        let pinia = getPiniaForUser(UserRoles.level1);
         useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
@@ -114,7 +115,7 @@ describe('CaseFileDocument.vue', () => {
         });
 
         expect(wrapper.vm.canAdd).toBeTruthy();
-        pinia = getPiniaForUser('level1');
+        pinia = getPiniaForUser(UserRoles.level1);
         useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
@@ -150,7 +151,7 @@ describe('CaseFileDocument.vue', () => {
           },
           mocks: {
             $hasLevel: () => false,
-            $hasRole: (r) => r === 'contributor3',
+            $hasRole: (r) => r === UserRoles.contributor3,
           },
         });
 
@@ -163,7 +164,7 @@ describe('CaseFileDocument.vue', () => {
           },
           mocks: {
             $hasLevel: () => false,
-            $hasRole: (r) => r !== 'contributor3',
+            $hasRole: (r) => r !== UserRoles.contributor3,
           },
         });
 
@@ -173,7 +174,7 @@ describe('CaseFileDocument.vue', () => {
       it('returns false if user does not have level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia: getPiniaForUser(UserRoles.contributorIM),
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -187,7 +188,7 @@ describe('CaseFileDocument.vue', () => {
 
     describe('canEdit', () => {
       it('returns true if user has level 1 and not readonly', () => {
-        let pinia = getPiniaForUser('level1');
+        let pinia = getPiniaForUser(UserRoles.level1);
         useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
@@ -206,7 +207,7 @@ describe('CaseFileDocument.vue', () => {
 
         expect(wrapper.vm.canEdit).toBeTruthy();
 
-        pinia = getPiniaForUser('level2');
+        pinia = getPiniaForUser(UserRoles.level2);
         useMockCaseFileStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
@@ -233,7 +234,7 @@ describe('CaseFileDocument.vue', () => {
       it('returns false if user does not have level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia: getPiniaForUser(UserRoles.contributorIM),
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -259,7 +260,7 @@ describe('CaseFileDocument.vue', () => {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
           },
-          pinia: getPiniaForUser('level1'),
+          pinia: getPiniaForUser(UserRoles.level1),
           computed: {
             caseFile: () => mockCombinedCaseFile(),
             event() {
@@ -287,7 +288,7 @@ describe('CaseFileDocument.vue', () => {
           },
           mocks: {
             $hasLevel: () => false,
-            $hasRole: (r) => r === 'contributor3',
+            $hasRole: (r) => r === UserRoles.contributor3,
           },
         });
 
@@ -307,7 +308,7 @@ describe('CaseFileDocument.vue', () => {
           mocks: {
 
             $hasLevel: () => false,
-            $hasRole: (r) => r !== 'contributor3',
+            $hasRole: (r) => r !== UserRoles.contributor3,
           },
         });
 
@@ -317,7 +318,7 @@ describe('CaseFileDocument.vue', () => {
       it('returns false if user does not have level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia: getPiniaForUser(UserRoles.contributorIM),
           propsData: {
             id: 'mock-caseFile-id',
             referralId: 'mock-referral-id',
@@ -384,7 +385,7 @@ describe('CaseFileDocument.vue', () => {
               return mockEvent;
             },
           },
-          pinia: getPiniaForUser('level5'),
+          pinia: getPiniaForUser(UserRoles.level5),
 
         });
 

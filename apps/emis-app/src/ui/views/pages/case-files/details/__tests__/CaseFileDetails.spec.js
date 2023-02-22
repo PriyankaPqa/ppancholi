@@ -6,6 +6,7 @@ import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { mockCaseFileEntity, mockCaseFileMetadata } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
@@ -21,7 +22,7 @@ const mockCaseFileMeta = mockCaseFileMetadata();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
 
-const pinia = getPiniaForUser('level1');
+const pinia = getPiniaForUser(UserRoles.level1);
 const { caseFileStore, caseFileMetadataStore } = useMockCaseFileStore(pinia);
 const { householdStore, householdMetadataStore } = useMockHouseholdStore(pinia);
 describe('CaseFileDetails.vue', () => {
@@ -125,7 +126,7 @@ describe('CaseFileDetails.vue', () => {
       it('is not rendered when level is not 1', async () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia: getPiniaForUser(UserRoles.contributorIM),
           propsData: {
             id: mockCaseFile.id,
           },
@@ -146,7 +147,7 @@ describe('CaseFileDetails.vue', () => {
       it('is not rendered when level is not 1', async () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia: getPiniaForUser(UserRoles.contributorIM),
           propsData: {
             id: mockCaseFile.id,
           },
@@ -566,7 +567,7 @@ describe('CaseFileDetails.vue', () => {
 
     describe('canEdit', () => {
       it('returns true if user has level 1', () => {
-        const pinia = getPiniaForUser('level1');
+        const pinia = getPiniaForUser(UserRoles.level1);
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -585,7 +586,7 @@ describe('CaseFileDetails.vue', () => {
       it('returns false if user does not have level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia: getPiniaForUser(UserRoles.contributorIM),
           propsData: {
             id: mockCaseFile.id,
           },
@@ -599,7 +600,7 @@ describe('CaseFileDetails.vue', () => {
       it('should return true if user has level 1+', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level1'),
+          pinia: getPiniaForUser(UserRoles.level1),
           propsData: {
             id: mockCaseFile.id,
           },
@@ -613,7 +614,7 @@ describe('CaseFileDetails.vue', () => {
       it('should return true if user has level 0, feature flag is on', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('level0'),
+          pinia: getPiniaForUser(UserRoles.level0),
           propsData: {
             id: mockCaseFile.id,
           },

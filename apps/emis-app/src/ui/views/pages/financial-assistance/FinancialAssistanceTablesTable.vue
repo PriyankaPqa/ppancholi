@@ -19,7 +19,7 @@
         'editButton',
       ]"
       @search="search">
-      <template v-if="$hasLevel('level6')" #headerLeft>
+      <template v-if="$hasLevel(UserRoles.level6)" #headerLeft>
         <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="onClickMenuItem($event)" />
       </template>
 
@@ -89,6 +89,7 @@ import
   IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableMetadata, IdParams as FAIdParams, IFinancialAssistanceTableCombined,
 } from '@libs/entities-lib/financial-assistance';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'FinancialAssistanceTablesTable',
@@ -109,6 +110,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [false],
       },
       programs: [],
+      UserRoles,
       combinedProgramStore: new CombinedStoreFactory<IProgramEntity, IProgramMetadata, IdParams>(useProgramStore(), useProgramMetadataStore()),
       combinedFinancialAssistanceStore: new CombinedStoreFactory<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, FAIdParams>(
         useFinancialAssistanceStore(),

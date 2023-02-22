@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { NO_ROLE } from '@libs/entities-lib/user';
+import { UserRoles } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
 import { createTestingPinia } from '@pinia/testing';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
@@ -44,17 +44,17 @@ describe('LeftMenu.vue', () => {
             icon: 'mdi-home',
             text: 'leftMenu.home_title',
             test: 'home',
-            level: 'level1',
+            level: UserRoles.level1,
           },
           {
             to: 'routes.caseFile.home.name',
             icon: 'mdi-clipboard-text',
             text: 'leftMenu.caseFiles_title',
             test: 'caseFile',
-            level: 'level6',
+            level: UserRoles.level6,
           },
         ];
-        const pinia = getPiniaForUser('level1');
+        const pinia = getPiniaForUser(UserRoles.level1);
         const wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -74,18 +74,18 @@ describe('LeftMenu.vue', () => {
             icon: 'mdi-home',
             text: 'leftMenu.home_title',
             test: 'home',
-            level: 'level1',
+            level: UserRoles.level1,
           },
           {
             to: 'routes.caseFile.home.name',
             icon: 'mdi-clipboard-text',
             text: 'leftMenu.caseFiles_title',
             test: 'caseFile',
-            level: 'level6',
-            roles: ['contributorIM'],
+            level: UserRoles.level6,
+            roles: [UserRoles.contributorIM],
           },
         ];
-        const pinia = getPiniaForUser('contributorIM');
+        const pinia = getPiniaForUser(UserRoles.contributorIM);
         const wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -105,12 +105,12 @@ describe('LeftMenu.vue', () => {
             icon: 'mdi-home',
             text: 'leftMenu.home_title',
             test: 'home',
-            level: 'level6',
-            roles: ['contributorIM'],
+            level: UserRoles.level6,
+            roles: [UserRoles.contributorIM],
             feature: 'feature',
           },
         ];
-        const pinia = getPiniaForUser('level6');
+        const pinia = getPiniaForUser(UserRoles.level6);
         const wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -131,8 +131,8 @@ describe('LeftMenu.vue', () => {
             icon: 'mdi-home',
             text: 'leftMenu.home_title',
             test: 'home',
-            level: 'level6',
-            roles: ['contributorIM'],
+            level: UserRoles.level6,
+            roles: [UserRoles.contributorIM],
             feature: 'feature',
           },
         ];
@@ -157,7 +157,7 @@ describe('LeftMenu.vue', () => {
 
     describe('approvalRedirection', () => {
       it('returns approvals home for a level 6 user', () => {
-        const pinia = getPiniaForUser('level6');
+        const pinia = getPiniaForUser(UserRoles.level6);
         const wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -166,7 +166,7 @@ describe('LeftMenu.vue', () => {
       });
 
       it('returns approvals request for a level 3 user', () => {
-        const pinia = getPiniaForUser('level3');
+        const pinia = getPiniaForUser(UserRoles.level3);
         const wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -175,7 +175,7 @@ describe('LeftMenu.vue', () => {
       });
 
       it('returns approvals request for a level 4 user', () => {
-        const pinia = getPiniaForUser('level4');
+        const pinia = getPiniaForUser(UserRoles.level4);
         const wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -187,7 +187,7 @@ describe('LeftMenu.vue', () => {
     describe('items', () => {
       let wrapper;
       beforeEach(() => {
-        const pinia = getPiniaForUser('level6');
+        const pinia = getPiniaForUser(UserRoles.level6);
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -200,8 +200,8 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-home');
         expect(item.text).toBe('leftMenu.home_title');
         expect(item.test).toBe('home');
-        expect(item.level).toBe('level0');
-        expect(item.roles).toEqual(['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE]);
+        expect(item.level).toBe(UserRoles.level0);
+        expect(item.roles).toEqual([UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly, UserRoles.no_role]);
       });
 
       describe('Item[1]', () => {
@@ -211,9 +211,9 @@ describe('LeftMenu.vue', () => {
           expect(item.icon).toBe('mdi-clipboard-text');
           expect(item.text).toBe('leftMenu.caseFiles_title');
           expect(item.test).toBe('caseFile');
-          expect(item.level).toBe('level0');
+          expect(item.level).toBe(UserRoles.level0);
           expect(item.disabled).toBe(false);
-          expect(item.roles).toEqual(['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE]);
+          expect(item.roles).toEqual([UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly, UserRoles.no_role]);
         });
         test('It is disabled if user has no role', () => {
           const pinia = getPiniaForUser('noRole');
@@ -232,7 +232,7 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('$rctech-search-person');
         expect(item.text).toBe('leftMenu.search_household_title');
         expect(item.test).toBe('search_household');
-        expect(item.level).toBe('level0');
+        expect(item.level).toBe(UserRoles.level0);
       });
 
       test('Item[3]', () => {
@@ -241,7 +241,7 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-calendar');
         expect(item.text).toBe('leftMenu.events_title');
         expect(item.test).toBe('events');
-        expect(item.level).toBe('level4');
+        expect(item.level).toBe(UserRoles.level4);
       });
 
       test('Item[4]', () => {
@@ -250,7 +250,7 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-account-multiple-plus');
         expect(item.text).toBe('leftMenu.teams_title');
         expect(item.test).toBe('teams');
-        expect(item.level).toBe('level3');
+        expect(item.level).toBe(UserRoles.level3);
       });
 
       test('Item[5]', () => {
@@ -259,7 +259,7 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-currency-usd');
         expect(item.text).toBe('leftMenu.financial_title');
         expect(item.test).toBe('financial');
-        expect(item.level).toBe('level6');
+        expect(item.level).toBe(UserRoles.level6);
       });
 
       test('Item[6]', () => {
@@ -268,7 +268,7 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-check');
         expect(item.text).toBe('leftMenu.approvals_title');
         expect(item.test).toBe('approvals');
-        expect(item.roles).toEqual(['level3', 'level4', 'level6']);
+        expect(item.roles).toEqual([UserRoles.level3, UserRoles.level4, UserRoles.level6]);
       });
 
       test('Item[7]', () => {
@@ -277,8 +277,8 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-file-document');
         expect(item.text).toBe('leftMenu.mass_actions_title');
         expect(item.test).toBe('mass_actions');
-        expect(item.level).toBe('level6');
-        expect(item.roles).toEqual(['contributorIM', 'contributorFinance']);
+        expect(item.level).toBe(UserRoles.level6);
+        expect(item.roles).toEqual([UserRoles.contributorIM, UserRoles.contributorFinance]);
       });
 
       test('Item[8]', () => {
@@ -287,7 +287,7 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-chart-box');
         expect(item.text).toBe('leftMenu.assessments_title');
         expect(item.test).toBe('assessments');
-        expect(item.level).toBe('level6');
+        expect(item.level).toBe(UserRoles.level6);
       });
 
       test('Item[9]', () => {
@@ -296,7 +296,7 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('dvr');
         expect(item.text).toBe('system_management.leftMenu.title');
         expect(item.test).toBe('system_management');
-        expect(item.level).toBe('level5');
+        expect(item.level).toBe(UserRoles.level5);
       });
     });
   });

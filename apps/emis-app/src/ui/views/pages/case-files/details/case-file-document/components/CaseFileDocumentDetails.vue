@@ -59,6 +59,7 @@ import routes from '@/constants/routes';
 import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
+import { UserRoles } from '@libs/entities-lib/user';
 import DownloadViewDocument from './DownloadViewDocument.vue';
 import caseFileDetail from '../../caseFileDetail';
 
@@ -88,11 +89,11 @@ export default mixins(caseFileDetail).extend({
 
   computed: {
     canEdit(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
+      return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
 
     canDelete(): boolean {
-      return this.$hasLevel('level6') && !this.readonly;
+      return this.$hasLevel(UserRoles.level6) && !this.readonly;
     },
 
     document(): ICaseFileDocumentEntity {

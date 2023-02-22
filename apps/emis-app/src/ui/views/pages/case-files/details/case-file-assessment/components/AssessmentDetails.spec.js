@@ -9,6 +9,7 @@ import { useMockAssessmentFormStore } from '@/pinia/assessment-form/assessment-f
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import { createTestingPinia } from '@pinia/testing';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { UserRoles } from '@libs/entities-lib/user';
 import Component from './AssessmentDetails.vue';
 
 const localVue = createLocalVue();
@@ -99,9 +100,9 @@ describe('AssessmentDetails.vue', () => {
         expect(wrapper.vm.canEdit).toBeTruthy();
         await mountWrapper(false, 2);
         expect(wrapper.vm.canEdit).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.canEdit).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(
           false,

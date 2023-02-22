@@ -258,6 +258,7 @@ import moment from 'moment';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { useEventStore } from '@/pinia/event/event';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'EventForm',
@@ -346,7 +347,7 @@ export default Vue.extend({
 
   computed: {
     inputDisabled(): boolean {
-      return !this.$hasLevel('level6');
+      return !this.$hasLevel(UserRoles.level6);
     },
 
     isStatusOpen: {

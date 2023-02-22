@@ -2,6 +2,7 @@ import { RcPageLoading } from '@libs/component-lib/components';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import SecondaryLeftMenu from '@/ui/views/components/layout/SecondaryLeftMenu.vue';
 import SecondaryRightMenu from '@/ui/views/components/layout/SecondaryRightMenu.vue';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from '../PageTemplate.vue';
@@ -11,7 +12,7 @@ describe('PageTemplate.vue', () => {
   const localVue = createLocalVue();
   beforeEach(async () => {
     jest.clearAllMocks();
-    const pinia = getPiniaForUser('level5');
+    const pinia = getPiniaForUser(UserRoles.level5);
     wrapper = mount(Component, {
       localVue,
       pinia,
@@ -164,7 +165,7 @@ describe('PageTemplate.vue', () => {
   describe('Computed', () => {
     describe('navigationTabsFilteredForPermissionsAndFeatures', () => {
       it('filters tabs by level', async () => {
-        const pinia = getPiniaForUser('level5');
+        const pinia = getPiniaForUser(UserRoles.level5);
 
         wrapper = shallowMount(Component, {
           localVue,
@@ -172,10 +173,10 @@ describe('PageTemplate.vue', () => {
           propsData: {
             navigationTabs: [
               {
-                level: 'level5',
+                level: UserRoles.level5,
               },
               {
-                level: 'level6',
+                level: UserRoles.level6,
               },
             ],
             loading: false,
@@ -186,7 +187,7 @@ describe('PageTemplate.vue', () => {
       });
 
       it('If tab has no level property, it should be displayed', async () => {
-        const pinia = getPiniaForUser('level5');
+        const pinia = getPiniaForUser(UserRoles.level5);
         wrapper = shallowMount(Component, {
           localVue,
           pinia,

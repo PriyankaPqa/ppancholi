@@ -2,6 +2,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileStatus, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
@@ -33,47 +34,47 @@ describe('CaseFileStatus.vue', () => {
   describe('Computed', () => {
     describe('statuses', () => {
       it('returns the proper statuses value', async () => {
-        doMount('level3');
+        doMount(UserRoles.level3);
         expect(wrapper.vm.statuses).toEqual([
           CaseFileStatus.Archived, CaseFileStatus.Closed, CaseFileStatus.Inactive, CaseFileStatus.Open,
         ]);
-        doMount('level2');
+        doMount(UserRoles.level2);
         expect(wrapper.vm.statuses).toEqual([CaseFileStatus.Archived, CaseFileStatus.Closed, CaseFileStatus.Inactive]);
       });
     });
 
     describe('disableStatus', () => {
       it('returns the proper disable status value for L1', async () => {
-        doMount('level1');
+        doMount(UserRoles.level1);
         expect(wrapper.vm.disableStatus).toBe(true);
       });
       it('returns the proper disable status value for L2+', async () => {
         const altMockCaseFile = _cloneDeep(mockCaseFile);
         altMockCaseFile.caseFileStatus = CaseFileStatus.Open;
-        doMount('level1', {
+        doMount(UserRoles.level1, {
           caseFile: altMockCaseFile,
           event: mockEvent,
         });
 
-        doMount('level2', {
-          caseFile: altMockCaseFile,
-          event: mockEvent,
-        });
-        expect(wrapper.vm.disableStatus).toBe(false);
-
-        doMount('level3', {
+        doMount(UserRoles.level2, {
           caseFile: altMockCaseFile,
           event: mockEvent,
         });
         expect(wrapper.vm.disableStatus).toBe(false);
 
-        doMount('level4', {
+        doMount(UserRoles.level3, {
           caseFile: altMockCaseFile,
           event: mockEvent,
         });
         expect(wrapper.vm.disableStatus).toBe(false);
 
-        doMount('level5', {
+        doMount(UserRoles.level4, {
+          caseFile: altMockCaseFile,
+          event: mockEvent,
+        });
+        expect(wrapper.vm.disableStatus).toBe(false);
+
+        doMount(UserRoles.level5, {
           caseFile: altMockCaseFile,
           event: mockEvent,
         });
@@ -83,7 +84,7 @@ describe('CaseFileStatus.vue', () => {
       it('returns the proper disable status value for L4 and lower when archived', async () => {
         const altMockCaseFile = _cloneDeep(mockCaseFile);
         altMockCaseFile.caseFileStatus = CaseFileStatus.Archived;
-        doMount('level4', {
+        doMount(UserRoles.level4, {
           caseFile: altMockCaseFile,
           event: mockEvent,
         });
@@ -94,7 +95,7 @@ describe('CaseFileStatus.vue', () => {
       it('returns the proper disable status value for L5 and lower when event status is not open', async () => {
         let altMockEvent = _cloneDeep(mockEvent);
         altMockEvent.schedule.status = EEventStatus.Open;
-        doMount('level5', {
+        doMount(UserRoles.level5, {
           caseFile: mockCaseFile,
           event: altMockEvent,
         });
@@ -106,7 +107,7 @@ describe('CaseFileStatus.vue', () => {
         await wrapper.setProps({ event: altMockEvent });
         expect(wrapper.vm.disableStatus).toBe(true);
 
-        doMount('level6', {
+        doMount(UserRoles.level6, {
           caseFile: mockCaseFile,
           event: altMockEvent,
         });

@@ -4,7 +4,7 @@ import { mockCombinedCaseFileDocuments } from '@libs/entities-lib/case-file-docu
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
-
+import { UserRoles } from '@libs/entities-lib/user';
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './CaseFileDocumentDetails.vue';
@@ -52,9 +52,9 @@ describe('CaseFileDocumentDetails', () => {
       it('returns true if only if level1+ and not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canEdit).toBeTruthy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.canEdit).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(
           false,
@@ -78,9 +78,9 @@ describe('CaseFileDocumentDetails', () => {
         expect(wrapper.vm.canDelete).toBeFalsy();
         await mountWrapper(false, 6);
         expect(wrapper.vm.canDelete).toBeTruthy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.canDelete).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.canDelete).toBeFalsy();
       });
     });

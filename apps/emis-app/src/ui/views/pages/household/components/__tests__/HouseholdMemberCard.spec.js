@@ -3,6 +3,7 @@ import {
   mockIndigenousCommunitiesGetData, mockSplitHousehold, mockHouseholdCreate, HouseholdCreate,
 } from '@libs/entities-lib/household-create';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import householdHelpers from '@/ui/helpers/household';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
@@ -315,7 +316,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          pinia: getPiniaForUser('level2'),
+          pinia: getPiniaForUser(UserRoles.level2),
 
         });
         expect(wrapper.vm.canSplit).toBeTruthy();
@@ -328,7 +329,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          pinia: getPiniaForUser('level1'),
+          pinia: getPiniaForUser(UserRoles.level1),
 
         });
         expect(wrapper.vm.canSplit).toBeFalsy();
@@ -344,7 +345,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          pinia: getPiniaForUser('level2'),
+          pinia: getPiniaForUser(UserRoles.level2),
 
         });
         expect(wrapper.vm.canChangePrimary).toBeTruthy();
@@ -357,7 +358,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          pinia: getPiniaForUser('level1'),
+          pinia: getPiniaForUser(UserRoles.level1),
 
         });
         expect(wrapper.vm.canChangePrimary).toBeFalsy();
@@ -373,7 +374,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          pinia: getPiniaForUser('level1'),
+          pinia: getPiniaForUser(UserRoles.level1),
           mocks: {
 
             $hasFeature: () => false,
@@ -390,7 +391,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          pinia: getPiniaForUser('level0'),
+          pinia: getPiniaForUser(UserRoles.level0),
           mocks: {
 
             $hasFeature: () => true,
@@ -403,7 +404,7 @@ describe('HouseholdMemberCard.vue', () => {
       it('returns false if the user has a different role', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser('contributorIM'),
+          pinia: getPiniaForUser(UserRoles.contributorIM),
           propsData: {
             member,
             isPrimaryMember: false,

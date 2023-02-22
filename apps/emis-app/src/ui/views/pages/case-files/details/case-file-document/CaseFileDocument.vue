@@ -92,13 +92,14 @@ import isEmpty from 'lodash/isEmpty';
 import moment from '@libs/shared-lib/plugins/moment';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import {
- DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined, ICaseFileDocumentMetadata,
+  DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined, ICaseFileDocumentMetadata,
 } from '@libs/entities-lib/case-file-document';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useCaseFileDocumentStore, useCaseFileDocumentMetadataStore, IdParams } from '@/pinia/case-file-document/case-file-document';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
@@ -141,19 +142,19 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
   computed: {
     canAdd(): boolean {
-      return (this.$hasLevel('level1') || this.$hasRole('contributor3')) && !this.readonly;
+      return (this.$hasLevel(UserRoles.level1) || this.$hasRole(UserRoles.contributor3)) && !this.readonly;
     },
 
     canEdit(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
+      return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
 
     canDownload(): boolean {
-      return this.$hasLevel('level1') || this.$hasRole('contributor3');
+      return this.$hasLevel(UserRoles.level1) || this.$hasRole(UserRoles.contributor3);
     },
 
     canDelete(): boolean {
-      return this.$hasLevel('level6') && !this.readonly;
+      return this.$hasLevel(UserRoles.level6) && !this.readonly;
     },
 
     caseFileDocumentsMapped(): caseFileDocumentsMapped[] {

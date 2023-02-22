@@ -23,6 +23,7 @@ import massActions from '@/ui/views/pages/mass-actions/mixins/massActions';
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
 import { INavigationTabGroup } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(massActions).extend({
   name: 'MassActionsLayout',
@@ -53,14 +54,14 @@ export default mixins(massActions).extend({
               test: 'mass_action.card.financial_assistance',
               to: routes.massActions.financialAssistance.home.name,
               exact: false,
-              level: 'level6',
+              level: UserRoles.level6,
             },
             {
               text: this.$t('mass_action.card.assessments'),
               test: 'mass_action.card.assessments',
               to: routes.massActions.assessments.home.name,
               exact: false,
-              level: 'level6',
+              level: UserRoles.level6,
               feature: FeatureKeys.AssessmentsMassAction,
             },
           ],
@@ -73,8 +74,8 @@ export default mixins(massActions).extend({
               test: 'mass_action.card.export_validation_impact',
               to: null,
               exact: false,
-              level: 'level6',
-              roles: ['contributorIM'],
+              level: UserRoles.level6,
+              roles: [UserRoles.contributorIM],
               onClick: 'exportImpactValidation',
             },
             {
@@ -82,16 +83,16 @@ export default mixins(massActions).extend({
               test: 'mass_action.card.import_validation_impact',
               to: routes.massActions.importValidationStatus.home.name,
               exact: false,
-              level: 'level6',
-              roles: ['contributorIM'],
+              level: UserRoles.level6,
+              roles: [UserRoles.contributorIM],
             },
             {
               text: this.$t('mass_action.card.generate_funding'),
               test: 'mass_action.card.generate_funding',
               to: routes.massActions.fundingRequest.home.name,
               exact: false,
-              level: 'level6',
-              roles: ['contributorFinance'],
+              level: UserRoles.level6,
+              roles: [UserRoles.contributorFinance],
               onClick: 'generateFundingRequest',
             },
             {
@@ -99,15 +100,15 @@ export default mixins(massActions).extend({
               test: 'mass_action.card.import_payment_statuses',
               to: routes.massActions.importPaymentStatus.home.name,
               exact: false,
-              level: 'level6',
-              roles: ['contributorFinance'],
+              level: UserRoles.level6,
+              roles: [UserRoles.contributorFinance],
             },
             {
               text: this.$t('mass_action.card.import_users'),
               test: 'mass_action.card.import_users',
               to: routes.massActions.importUsers.home.name,
               exact: false,
-              level: 'level6',
+              level: UserRoles.level6,
             },
           ],
         },
@@ -119,7 +120,7 @@ export default mixins(massActions).extend({
               test: 'mass_action.card.data_correction',
               to: routes.massActions.dataCorrection.home.name,
               exact: false,
-              level: 'level6',
+              level: UserRoles.level6,
             },
           ],
         },

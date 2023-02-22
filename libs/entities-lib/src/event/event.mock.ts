@@ -1,4 +1,5 @@
 import { ECanadaProvinces, IMultilingual, IAzureSearchResult } from '@libs/shared-lib/types';
+import { UserRoles } from '../user';
 import { IEntity, mockBaseData, Status } from '../base';
 import {
   IEventMainInfo,
@@ -122,7 +123,7 @@ export const mockEventEntityData = (): IEventEntity[] => [
       assistanceNumber: '+15144544545',
     },
     registrationAssessments: [
-     mockRegistrationAssessment(),
+      mockRegistrationAssessment(),
     ],
     registrationLocations: [
       {
@@ -545,7 +546,7 @@ export const mockEventMetadataData = (): IEventMetadata[] => [
     ],
     responseLevelName: {
       translation: {
-        en: 'Level1',
+        en: UserRoles.level1,
         fr: 'Niveau1',
       },
     },
@@ -605,7 +606,7 @@ export const mockEventMetadataData = (): IEventMetadata[] => [
     ],
     responseLevelName: {
       translation: {
-        en: 'Level1',
+        en: UserRoles.level1,
         fr: 'Niveau1',
       },
     },

@@ -53,7 +53,7 @@ import { RcTooltip } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import { ui } from '@/constants/ui';
 import { INavigationTab } from '@libs/shared-lib/types';
-import { NO_ROLE } from '@libs/entities-lib/user';
+import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import { ClickOutside } from 'vuetify/es5/directives';
@@ -85,8 +85,8 @@ export default Vue.extend({
           icon: 'mdi-home',
           text: 'leftMenu.home_title',
           test: 'home',
-          level: 'level0',
-          roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE],
+          level: UserRoles.level0,
+          roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly, UserRoles.no_role],
         },
         {
           to: routes.caseFile.home.name,
@@ -94,9 +94,9 @@ export default Vue.extend({
           text: 'leftMenu.caseFiles_title',
           test: 'caseFile',
           exact: false,
-          level: 'level0',
-          disabled: this.$hasRole(NO_ROLE),
-          roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE],
+          level: UserRoles.level0,
+          disabled: this.$hasRole(UserRoles.no_role),
+          roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly, UserRoles.no_role],
         },
         {
           to: routes.householdSearch.name,
@@ -104,7 +104,7 @@ export default Vue.extend({
           text: 'leftMenu.search_household_title',
           test: 'search_household',
           exact: false,
-          level: 'level0',
+          level: UserRoles.level0,
           roles: [],
         },
         {
@@ -113,8 +113,8 @@ export default Vue.extend({
           text: 'leftMenu.events_title',
           test: 'events',
           exact: false,
-          level: 'level4',
-          roles: ['contributorIM'],
+          level: UserRoles.level4,
+          roles: [UserRoles.contributorIM],
         },
         {
           to: routes.teams.home.name,
@@ -122,7 +122,7 @@ export default Vue.extend({
           text: 'leftMenu.teams_title',
           test: 'teams',
           exact: false,
-          level: 'level3',
+          level: UserRoles.level3,
         },
         {
           to: routes.financialAssistance.home.name,
@@ -130,7 +130,7 @@ export default Vue.extend({
           text: 'leftMenu.financial_title',
           test: 'financial',
           exact: false,
-          level: 'level6',
+          level: UserRoles.level6,
         },
         {
           to: this.approvalRedirection,
@@ -138,8 +138,8 @@ export default Vue.extend({
           text: 'leftMenu.approvals_title',
           test: 'approvals',
           exact: false,
-          roles: ['level3', 'level4', 'level6'],
-          feature: this.$hasLevel('level6') ? FeatureKeys.ApprovalsWithinEvent : FeatureKeys.ActionApprovals,
+          roles: [UserRoles.level3, UserRoles.level4, UserRoles.level6],
+          feature: this.$hasLevel(UserRoles.level6) ? FeatureKeys.ApprovalsWithinEvent : FeatureKeys.ActionApprovals,
         },
         {
           to: routes.massActions.home.name,
@@ -147,15 +147,15 @@ export default Vue.extend({
           text: 'leftMenu.mass_actions_title',
           test: 'mass_actions',
           exact: false,
-          level: 'level6',
-          roles: ['contributorIM', 'contributorFinance'],
+          level: UserRoles.level6,
+          roles: [UserRoles.contributorIM, UserRoles.contributorFinance],
         },
         {
           to: routes.assessmentTemplates.home.name,
           icon: 'mdi-chart-box',
           text: 'leftMenu.assessments_title',
           test: 'assessments',
-          level: 'level6',
+          level: UserRoles.level6,
           feature: FeatureKeys.Assessments,
         },
         {
@@ -164,7 +164,7 @@ export default Vue.extend({
           text: 'system_management.leftMenu.title',
           test: 'system_management',
           exact: false,
-          level: 'level5',
+          level: UserRoles.level5,
         },
       ];
     },
@@ -209,9 +209,9 @@ export default Vue.extend({
     },
 
     approvalRedirection(): string {
-      if (this.$hasLevel('level6')) {
+      if (this.$hasLevel(UserRoles.level6)) {
         return routes.approvals.templates.home.name;
-      } if (this.$hasRole('level3') || this.$hasRole('level4')) {
+      } if (this.$hasRole(UserRoles.level3) || this.$hasRole(UserRoles.level4)) {
         return routes.approvals.request.name;
       }
       return '';

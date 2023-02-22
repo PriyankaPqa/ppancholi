@@ -14,6 +14,7 @@ import { teams } from '@/ui/router/route/teams';
 import { assessmentTemplates } from '@/ui/router/route/assessmentTemplates';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
+import { UserRoles } from '@libs/entities-lib/user';
 import Routes from '../../constants/routes';
 import { SignalR } from '../plugins/signal-r/signalR';
 
@@ -66,7 +67,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.assessmentTemplates.builder.name,
         component: AssessmentBuilder,
         meta: {
-          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
+          level: UserRoles.level6, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -75,7 +76,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.events.assessments.builder.name,
         component: AssessmentBuilder,
         meta: {
-          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
+          level: UserRoles.level6, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -84,7 +85,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.assessmentTemplates.runner.name,
         component: AssessmentRunner,
         meta: {
-          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
+          level: UserRoles.level6, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -93,7 +94,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.events.assessments.runner.name,
         component: AssessmentRunner,
         meta: {
-          level: 'level6', feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
+          level: UserRoles.level6, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -102,7 +103,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.events.assessments.complete.name,
         component: AssessmentRunner,
         meta: {
-          level: 'level1', feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
+          level: UserRoles.level1, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -122,8 +123,8 @@ export const routes: Array<RouteConfig> = [
             name: Routes.home.name,
             component: HomeLayout,
             meta: {
-              level: 'level1',
-              roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'],
+              level: UserRoles.level1,
+              roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly],
               requiresAuthorization: false,
             },
           },
@@ -134,7 +135,7 @@ export const routes: Array<RouteConfig> = [
             path: Routes.householdSearch.path,
             name: Routes.householdSearch.name,
             component: MainHouseholdSearch,
-            meta: { level: 'level1' },
+            meta: { level: UserRoles.level1 },
             props: true,
           },
           registration,

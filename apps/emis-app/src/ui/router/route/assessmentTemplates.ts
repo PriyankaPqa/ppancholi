@@ -1,6 +1,7 @@
 import Routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { RouteConfig } from 'vue-router';
+import { UserRoles } from '@libs/entities-lib/user';
 
 const AssessmentTemplatesHome = () => import('@/ui/views/pages/assessment-templates/home/AssessmentTemplatesHome.vue');
 const AssessmentTemplatesEdit = () => import('@/ui/views/pages/assessment-templates/details/CreateEditAssessmentTemplate.vue');
@@ -12,7 +13,7 @@ export const assessmentTemplates: Array<RouteConfig> = [
     name: Routes.assessmentTemplates.home.name,
     component: AssessmentTemplatesHome,
     meta: {
-      level: 'level6', requiresAuthorization: true, requiresAuthentication: true, feature: FeatureKeys.Assessments,
+      level: UserRoles.level6, requiresAuthorization: true, requiresAuthentication: true, feature: FeatureKeys.Assessments,
     },
   },
   {
@@ -20,7 +21,7 @@ export const assessmentTemplates: Array<RouteConfig> = [
     name: Routes.assessmentTemplates.create.name,
     component: AssessmentTemplatesEdit,
     meta: {
-      level: 'level6', requiresAuthorization: true, requiresAuthentication: true, feature: FeatureKeys.Assessments,
+      level: UserRoles.level6, requiresAuthorization: true, requiresAuthentication: true, feature: FeatureKeys.Assessments,
     },
     props: true,
   },
@@ -29,7 +30,7 @@ export const assessmentTemplates: Array<RouteConfig> = [
     name: Routes.assessmentTemplates.duplicate.name,
     component: AssessmentTemplatesEdit,
     meta: {
-      level: 'level6', requiresAuthorization: true, requiresAuthentication: true, feature: FeatureKeys.Assessments,
+      level: UserRoles.level6, requiresAuthorization: true, requiresAuthentication: true, feature: FeatureKeys.Assessments,
     },
     props: true,
   },
@@ -38,7 +39,7 @@ export const assessmentTemplates: Array<RouteConfig> = [
     name: Routes.assessmentTemplates.edit.name,
     component: AssessmentTemplatesEdit,
     meta: {
-      level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+      level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
     },
     props: true,
   },
@@ -47,7 +48,7 @@ export const assessmentTemplates: Array<RouteConfig> = [
     name: Routes.assessmentTemplates.details.name,
     component: AssessmentTemplateDetails,
     meta: {
-      level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+      level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
     },
     props: true,
   },

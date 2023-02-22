@@ -12,7 +12,7 @@
       :custom-columns="Object.values(customColumns)"
       @add-button="goToAdd"
       @search="search">
-      <template v-if="$hasLevel('level6')" #headerLeft>
+      <template v-if="$hasLevel(UserRoles.level6)" #headerLeft>
         <rc-add-button-with-menu
           :add-button-label="$t('massActions.assessment.tooltip.add')"
           :items="menuItems"
@@ -63,6 +63,7 @@ import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import massActionsTable from '@/ui/views/pages/mass-actions/mixins/massActionsTable';
 import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
+import { UserRoles } from '@libs/entities-lib/user';
 import AssessmentCaseFileFiltering from './AssessmentCaseFileFiltering.vue';
 
 export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
@@ -83,6 +84,7 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
       tableTitleData: 'massAction.assessmentTable.title',
       showProcessByList: false,
       searchEndpointData: 'assessment-mass-actions',
+      UserRoles,
     };
   },
 

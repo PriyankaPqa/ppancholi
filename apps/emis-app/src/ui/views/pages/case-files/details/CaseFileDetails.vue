@@ -157,6 +157,7 @@ import { INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import householdHelpers from '@/ui/helpers/household';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { UserRoles } from '@libs/entities-lib/user';
 import { useEventStore } from '@/pinia/event/event';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
@@ -197,7 +198,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     canEdit(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
+      return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
 
     colorValidationImpact() {
@@ -279,10 +280,10 @@ export default mixins(caseFileDetail).extend({
     },
 
     canAccess(): boolean {
-      if (useUserStore().getUser().currentRole() === 'level0') {
+      if (useUserStore().getUser().currentRole() === UserRoles.level0) {
         return this.$hasFeature(FeatureKeys.L0Access);
       }
-        return true;
+      return true;
     },
   },
 

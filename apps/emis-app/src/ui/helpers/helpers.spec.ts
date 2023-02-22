@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import moment from 'moment';
 import { dateTypes } from '@/constants/dateTypes';
+import { UserRoles } from '@libs/entities-lib/user';
 import helpers from './helpers';
 
 describe('>>>> helpers', () => {
@@ -50,7 +51,7 @@ describe('>>>> helpers', () => {
         preferred_username: 'madeschenes@crctechmain.onmicrosoft.com',
         rh: '0.AX0ADfUAxFZ68k6ORCEb-kNHJDJaDgPvtidJlLp02R6qJR59AJ8.',
         roles: [
-          'level3',
+          UserRoles.level3,
         ],
         scp: 'api_access',
         sub: 'XunGkiGpEFwNmOjPWNxPEvxats7G3M7k-sL2sb3Q3j4',

@@ -189,6 +189,7 @@ import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePayme
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, IdParams as FAIdParams } from '@libs/entities-lib/financial-assistance';
 import { useFinancialAssistanceMetadataStore, useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { UserRoles } from '@libs/entities-lib/user';
 import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
 import StatisticsDialog from './components/StatisticsDialog.vue';
 import caseFileDetail from '../caseFileDetail';
@@ -351,22 +352,22 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     canAdd(): boolean {
-      return this.$hasLevel('level1') && this.containsActiveTables != null && !this.readonly;
+      return this.$hasLevel(UserRoles.level1) && this.containsActiveTables != null && !this.readonly;
     },
 
     canEdit(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
+      return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
 
     canDelete(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
+      return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
   },
 
   async created() {
     this.saveState = true;
     this.loadState();
-    if (!this.$hasRole('readonly')) {
+    if (!this.$hasRole(UserRoles.readonly)) {
       this.initContainsActiveTables();
     }
     // we fetch all the payments for the case file because we will need to submit all at once possibly if some arent submitted

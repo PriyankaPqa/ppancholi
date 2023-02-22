@@ -175,6 +175,7 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useHouseholdStore } from '@/pinia/household/household';
+import { UserRoles } from '@libs/entities-lib/user';
 import caseFileDetail from '../caseFileDetail';
 import AddCaseFileAssessment from './components/AddCaseFileAssessment.vue';
 
@@ -237,11 +238,11 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
   computed: {
     canAdd(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
+      return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
 
     canDelete(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
+      return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
 
     items(): IAssessmentResponseCombined[] {
@@ -392,10 +393,10 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         formFrequency: r.form?.frequency,
         formId: r.form?.id,
         pinned: r.response.pinned,
-        canCopy: !this.readonly && this.$hasLevel('level1') && r.form?.publishStatus === PublishStatus.Published && r.form?.status === Status.Active
+        canCopy: !this.readonly && this.$hasLevel(UserRoles.level1) && r.form?.publishStatus === PublishStatus.Published && r.form?.status === Status.Active
           && (r.response.entity.completionStatus === CompletionStatus.Pending || r.response.entity.completionStatus === CompletionStatus.Partial),
-        canEdit: !this.readonly && this.$hasLevel('level3') && r.response.entity.completionStatus === CompletionStatus.Completed,
-        canLaunch: !this.readonly && this.$hasLevel('level1')
+        canEdit: !this.readonly && this.$hasLevel(UserRoles.level3) && r.response.entity.completionStatus === CompletionStatus.Completed,
+        canLaunch: !this.readonly && this.$hasLevel(UserRoles.level1)
           && (r.response.entity.completionStatus === CompletionStatus.Pending || r.response.entity.completionStatus === CompletionStatus.Partial),
       }));
     },

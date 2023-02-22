@@ -12,6 +12,7 @@ import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { useUserStore } from '@/pinia/user/user';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
+import { UserRoles } from '@libs/entities-lib/user';
 
 Vue.use(VueRouter);
 
@@ -167,7 +168,7 @@ router.beforeEach(async (to, from, next) => {
 
       if (authorized) {
         // eslint-disable-next-line max-depth
-        if (hasRole('noAccess')) {
+        if (hasRole(UserRoles.noAccess)) {
           next();
           return;
         }

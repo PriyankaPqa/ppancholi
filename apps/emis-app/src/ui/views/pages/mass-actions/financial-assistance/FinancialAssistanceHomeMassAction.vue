@@ -12,7 +12,7 @@
       :custom-columns="Object.values(customColumns)"
       @add-button="goToAdd"
       @search="search">
-      <template v-if="$hasLevel('level6')" #headerLeft>
+      <template v-if="$hasLevel(UserRoles.level6)" #headerLeft>
         <rc-add-button-with-menu
           :add-button-label="$t('massActions.financialAssistance.tooltip.add')"
           :items="menuItems"
@@ -71,6 +71,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import massActionsTable from '@/ui/views/pages/mass-actions/mixins/massActionsTable';
 import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
 import FinancialAssistanceCaseFileFiltering from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCaseFileFiltering.vue';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
   name: 'FinancialAssistanceHome',
@@ -90,6 +91,7 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
       tableTitleData: 'massAction.financialAssistanceTable.title',
       showProcessByList: false,
       searchEndpointData: 'financial-assistance-mass-actions',
+      UserRoles,
     };
   },
 

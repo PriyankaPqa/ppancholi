@@ -1,6 +1,7 @@
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Routes from '@/constants/routes';
 import { RouteConfig } from 'vue-router/types/router';
+import { UserRoles } from '@libs/entities-lib/user';
 
 const AssessmentTemplatesHome = () => import('@/ui/views/pages/assessment-templates/home/AssessmentTemplatesHome.vue');
 const AssessmentTemplatesEdit = () => import('@/ui/views/pages/assessment-templates/details/CreateEditAssessmentTemplate.vue');
@@ -34,124 +35,124 @@ export const events: RouteConfig = {
       path: Routes.events.home.path,
       name: Routes.events.home.name,
       component: HomeEvents,
-      meta: { level: 'level4', roles: ['contributorIM'] },
+      meta: { level: UserRoles.level4, roles: [UserRoles.contributorIM] },
     },
     {
       path: Routes.events.create.path,
       name: Routes.events.create.name,
       component: CreateEditEvent,
-      meta: { level: 'level6' },
+      meta: { level: UserRoles.level6 },
       props: true,
     },
     {
       path: Routes.events.edit.path,
       name: Routes.events.edit.name,
       component: CreateEditEvent,
-      meta: { level: 'level5' },
+      meta: { level: UserRoles.level5 },
       props: true,
     },
     {
       path: Routes.events.details.path,
       component: EventDetails,
-      meta: { level: 'level4' },
+      meta: { level: UserRoles.level4 },
       props: true,
       children: [
         {
           path: Routes.events.summary.path,
           name: Routes.events.summary.name,
           component: EventSummary,
-          meta: { level: 'level4' },
+          meta: { level: UserRoles.level4 },
           props: true,
         },
         {
           path: Routes.events.summary.path, // TODO EMISV2-6088
           name: Routes.events.summaryForIM.name, // Please remove this route when you remove the feature flag "letIMViewEventDetails"
           component: EventSummary,
-          meta: { roles: ['contributorIM'] }, // Please add 'roles: ['contributorIM']' to the meta of route 'events.summary'
+          meta: { roles: [UserRoles.contributorIM] }, // Please add 'roles: [UserRoles.contributorIM]' to the meta of route 'events.summary'
           props: true,
         },
         {
           path: Routes.programs.home.path,
           name: Routes.programs.home.name,
           component: ProgramsHome,
-          meta: { level: 'level6' },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {
           path: Routes.programs.create.path,
           name: Routes.programs.create.name,
           component: CreateEditProgram,
-          meta: { level: 'level6' },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {
           path: Routes.programs.edit.path,
           name: Routes.programs.edit.name,
           component: CreateEditProgram,
-          meta: { level: 'level6' },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {
           path: Routes.programs.details.path,
           name: Routes.programs.details.name,
           component: ProgramDetails,
-          meta: { level: 'level6' },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {
           path: Routes.events.financialAssistance.home.path,
           name: Routes.events.financialAssistance.home.name,
           component: EventFinancialAssistanceHome,
-          meta: { level: 'level6' },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {
           path: Routes.events.financialAssistance.create.path,
           name: Routes.events.financialAssistance.create.name,
           component: CreateEditFinancialAssistance,
-          meta: { level: 'level6' },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {
           path: Routes.events.financialAssistance.edit.path,
           name: Routes.events.financialAssistance.edit.name,
           component: CreateEditFinancialAssistance,
-          meta: { level: 'level6' },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {
           path: Routes.events.financialAssistance.details.path,
           name: Routes.events.financialAssistance.details.name,
           component: FinancialAssistanceDetails,
-          meta: { level: 'level6' },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {
           path: Routes.events.approvals.home.path,
           name: Routes.events.approvals.home.name,
           component: ApprovalTablesHome,
-          meta: { level: 'level6', feature: FeatureKeys.ApprovalsWithinEvent },
+          meta: { level: UserRoles.level6, feature: FeatureKeys.ApprovalsWithinEvent },
           props: true,
         },
         {
           path: Routes.events.approvals.create.path,
           name: Routes.events.approvals.create.name,
           component: ApprovalsTableCreateEdit,
-          meta: { level: 'level6', feature: FeatureKeys.ApprovalsWithinEvent },
+          meta: { level: UserRoles.level6, feature: FeatureKeys.ApprovalsWithinEvent },
           props: true,
         },
         {
           path: Routes.events.approvals.edit.path,
           name: Routes.events.approvals.edit.name,
           component: ApprovalsTableCreateEdit,
-          meta: { level: 'level6', feature: FeatureKeys.ApprovalsWithinEvent },
+          meta: { level: UserRoles.level6, feature: FeatureKeys.ApprovalsWithinEvent },
           props: true,
         },
         {
           path: Routes.events.approvals.details.path,
           name: Routes.events.approvals.details.name,
           component: ApprovalDetails,
-          meta: { level: 'level6', feature: FeatureKeys.ApprovalsWithinEvent },
+          meta: { level: UserRoles.level6, feature: FeatureKeys.ApprovalsWithinEvent },
           props: true,
         },
         {
@@ -159,7 +160,7 @@ export const events: RouteConfig = {
           name: Routes.events.assessments.home.name,
           component: AssessmentTemplatesHome,
           meta: {
-            level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
           },
           props: true,
         },
@@ -168,7 +169,7 @@ export const events: RouteConfig = {
           name: Routes.events.assessments.create.name,
           component: AssessmentTemplatesEdit,
           meta: {
-            level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
           },
           props: true,
           children: [],
@@ -178,7 +179,7 @@ export const events: RouteConfig = {
           name: Routes.events.assessments.duplicate.name,
           component: AssessmentTemplatesEdit,
           meta: {
-            level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
           },
           props: true,
           children: [],
@@ -188,7 +189,7 @@ export const events: RouteConfig = {
           name: Routes.events.assessments.edit.name,
           component: AssessmentTemplatesEdit,
           meta: {
-            level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
           },
           props: true,
           children: [],
@@ -198,7 +199,7 @@ export const events: RouteConfig = {
           name: Routes.events.assessments.details.name,
           component: AssessmentTemplateDetails,
           meta: {
-            level: 'level6', requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
           },
           props: true,
           children: [],

@@ -1,5 +1,6 @@
 import Routes from '@/constants/routes';
 import { RouteConfig } from 'vue-router/types/router';
+import { UserRoles } from '@libs/entities-lib/user';
 
 const TeamsLayout = () => import('@/ui/views/pages/teams/layout/TeamsLayout.vue');
 const TeamsHome = () => import('@/ui/views/pages/teams/home/TeamsHome.vue');
@@ -17,27 +18,27 @@ export const teams: RouteConfig = {
       path: Routes.teams.home.path,
       name: Routes.teams.home.name,
       component: TeamsHome,
-      meta: { level: 'level3' },
+      meta: { level: UserRoles.level3 },
     },
     {
       path: Routes.teams.create.path,
       name: Routes.teams.create.name,
       component: CreateEditTeam,
-      meta: { level: 'level5' },
+      meta: { level: UserRoles.level5 },
       props: true,
     },
     {
       path: Routes.teams.edit.path,
       name: Routes.teams.edit.name,
       component: CreateEditTeam,
-      meta: { level: 'level4' },
+      meta: { level: UserRoles.level4 },
       props: true,
     },
     {
       path: Routes.teams.details.path,
       name: Routes.teams.details.name,
       component: TeamDetails,
-      meta: { level: 'level3' },
+      meta: { level: UserRoles.level3 },
       props: true,
     },
   ],

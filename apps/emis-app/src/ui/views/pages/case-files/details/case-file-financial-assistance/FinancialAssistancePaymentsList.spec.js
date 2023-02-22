@@ -6,6 +6,7 @@ import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { UserRoles } from '@libs/entities-lib/user';
 
 import Component from './FinancialAssistancePaymentsList.vue';
 
@@ -197,11 +198,11 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         expect(wrapper.vm.canAdd).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canAdd).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.canAdd).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.canAdd).toBeFalsy();
-        await mountWrapper(false, null, 'contributorFinance');
+        await mountWrapper(false, null, UserRoles.contributorFinance);
         expect(wrapper.vm.canAdd).toBeFalsy();
       });
     });
@@ -225,11 +226,11 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canEdit).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.canEdit).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.canEdit).toBeFalsy();
-        await mountWrapper(false, null, 'contributorFinance');
+        await mountWrapper(false, null, UserRoles.contributorFinance);
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });
@@ -253,11 +254,11 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         expect(wrapper.vm.canDelete).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canDelete).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
         expect(wrapper.vm.canDelete).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
+        await mountWrapper(false, null, UserRoles.contributor3);
         expect(wrapper.vm.canDelete).toBeFalsy();
-        await mountWrapper(false, null, 'contributorFinance');
+        await mountWrapper(false, null, UserRoles.contributorFinance);
         expect(wrapper.vm.canDelete).toBeFalsy();
       });
     });
@@ -535,7 +536,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       });
 
       it('should not call the method initContainsActiveTables', async () => {
-        await mountWrapper(false, null, 'readonly');
+        await mountWrapper(false, null, UserRoles.readonly);
 
         wrapper.vm.initContainsActiveTables = jest.fn();
 
@@ -547,7 +548,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       });
 
       it('should call the method initContainsActiveTables', async () => {
-        await mountWrapper(false, null, 'contributorFinance');
+        await mountWrapper(false, null, UserRoles.contributorFinance);
 
         wrapper.vm.initContainsActiveTables = jest.fn();
 

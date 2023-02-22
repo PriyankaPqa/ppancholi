@@ -3,7 +3,7 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
-
+import { UserRoles } from '@libs/entities-lib/user';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 
 import Component from '../case-file-activity/CaseFileActivity.vue';
@@ -263,7 +263,7 @@ describe('CaseFileActivity', () => {
           mocks: {
 
             $hasLevel: () => false,
-            $hasRole: (r) => r === 'contributor3',
+            $hasRole: (r) => r === UserRoles.contributor3,
           },
         });
         expect(wrapper.vm.canEdit).toBe(false);
@@ -328,7 +328,7 @@ describe('CaseFileActivity', () => {
           mocks: {
 
             $hasLevel: () => false,
-            $hasRole: (r) => r === 'contributor3',
+            $hasRole: (r) => r === UserRoles.contributor3,
           },
         });
         expect(wrapper.vm.canEdit).toBe(false);
