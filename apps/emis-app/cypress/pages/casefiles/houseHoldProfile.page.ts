@@ -8,6 +8,7 @@ export enum DataTest {
   dateOfBirth = 'household_profile_member_info_data_date_of_birth',
   gender = 'household_profile_member_info_data_gender',
   registrationNumber = 'registrationNumber',
+  eventName = 'household_profile_case_file_event_name',
 }
 
 export class HouseholdProfilePage {
@@ -22,6 +23,8 @@ export class HouseholdProfilePage {
   private dateOfBirth = { selector: DataTest.dateOfBirth };
 
   private gender = { selector: DataTest.gender };
+
+  private eventName = { selector: DataTest.eventName };
 
   public getCaseFileNumber() {
     return cy.getByDataTest(this.caseFileNumber).invoke('text').then((text) => text.trim());
@@ -63,5 +66,9 @@ export class HouseholdProfilePage {
       const genderText = $el.text().trim();
       genderArray.push(genderText);
     }).then(() => genderArray);
+  }
+
+  public getEventName() {
+    return cy.getByDataTest(this.eventName).invoke('text').then((text) => text.trim());
   }
 }

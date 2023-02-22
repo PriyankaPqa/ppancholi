@@ -144,20 +144,30 @@ describe(`${title}`, () => {
       });
     });
   }
-  for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
-    describe(`${roleName}`, () => {
-      before(() => {
-        cy.login(roleValue);
-        prepareState();
-        cy.goTo('casefile');
-      });
-      it('should not be able to split the household', function () {
-        const caseFileHomePage = new CaseFilesHomePage();
 
-        caseFileHomePage.waitUntilBeneficiaryIsDisplayed(this.household.primaryBeneficiary);
-        const householdProfilePage = caseFileHomePage.goToHouseholdProfile(this.household.primaryBeneficiary);
-        householdProfilePage.getSplitIcon().should('not.exist');
-      });
+  describe('Cannot roles', () => {
+    before(() => {
+      cy.login();
+      cy.log('prepareState');
+      prepareState();
     });
-  }
+    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+      describe(`${roleName}`, () => {
+        beforeEach(() => {
+          cy.login(roleValue);
+          cy.goTo('casefile');
+        });
+        it('should not be able to split the household', function () {
+          const caseFileHomePage = new CaseFilesHomePage();
+          caseFileHomePage.waitUntilBeneficiaryIsDisplayed(this.household.primaryBeneficiary);
+          const householdProfilePage = caseFileHomePage.goToHouseholdProfile(this.household.primaryBeneficiary);
+
+          // We make sure the page is loaded, by waiting for an element to be displayed
+          householdProfilePage.getEventName().should('string', this.eventCreated.name.translation.en);
+
+          householdProfilePage.getSplitIcon().should('not.exist');
+        });
+      });
+    }
+  });
 });
