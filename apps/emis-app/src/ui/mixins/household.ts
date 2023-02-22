@@ -39,7 +39,10 @@ export default Vue.extend({
 
   computed: {
     activeCaseFiles():ICaseFileEntity[] {
-      return this.caseFiles.filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive);
+      if (this.caseFiles) {
+        return this.caseFiles.filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive);
+      }
+      return [];
     },
   },
 
@@ -118,8 +121,10 @@ export default Vue.extend({
       let events = this.myEvents;
       if (!this.myEvents && householdId) {
         const caseFiles: ICaseFileEntity[] = await this.fetchCaseFiles(householdId);
-        const activeCaseFiles = caseFiles.filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive);
-        events = await this.fetchMyEvents(activeCaseFiles);
+        if (caseFiles) {
+          const activeCaseFiles = caseFiles.filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive);
+          events = await this.fetchMyEvents(activeCaseFiles);
+        }
       }
 
       const shelters = [] as IEventGenericLocation[];

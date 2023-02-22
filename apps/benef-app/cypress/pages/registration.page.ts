@@ -1,4 +1,4 @@
-import { PrivacyStatementPage } from './privacyStatement.page';
+import { PrivacyStatementPage } from '@libs/cypress-lib/pages/registration/privacyStatement.page';
 
 export enum DataTest {
   beginRegistration = 'startRegistration-individual-button',

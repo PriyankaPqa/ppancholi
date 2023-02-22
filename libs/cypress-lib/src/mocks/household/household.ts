@@ -43,9 +43,9 @@ export const mockAdditionalMemberCreateRequest = (force?: Partial<MemberCreateRe
 
 export const mockContactInformationCreateRequest = (force?: Partial<IContactInformationCreateRequest>): IContactInformationCreateRequest => ({
   homePhoneNumber: {
-    number: faker.phone.number('(514) ###-####'),
+    number: faker.phone.number('(514) 3##-####'), // Digit 1 of seven digit local phone number cannot be 0 or 1.
     countryCode: 'CA',
-    e164Number: faker.phone.number('+1514#######'),
+    e164Number: faker.phone.number('+15143######'),
   },
   mobilePhoneNumber: null,
   alternatePhoneNumber: null,

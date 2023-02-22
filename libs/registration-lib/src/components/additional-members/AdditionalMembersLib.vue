@@ -13,7 +13,7 @@
         </div>
         <div class="additionalMembers">
           <div v-for="(member, i) in additionalMembers" :key="i" class="row-data rc-body14 fw-bold" :data-test="`additionalMember_${i}`">
-            <div class="flex-grow-1" data-test="additionalMember-identity">
+            <div class="flex-grow-1" data-test="additionalMember__identity">
               {{ member.identitySet.firstName }} {{ member.identitySet.lastName }}
             </div>
             <div>

@@ -35,7 +35,7 @@ export class AddressPage {
 
   private tempAddressProvinceName = { selector: DataTest.tempAddressProvinceName, type: 'input' };
 
-  private nextButton = { selector: DataTest.nextButton, type: 'button' };
+  private nextButton = { selector: DataTest.nextButton };
 
   async fill(data:IAddressPageFields) {
     if (data.streetAddress) {
@@ -59,7 +59,7 @@ export class AddressPage {
     }
   }
 
-  saveAndGoToHouseholdMembersPage() {
+  goToHouseholdMembersPage() {
     cy.getByDataTest(this.nextButton).click();
     return new HouseholdMembersPage();
   }

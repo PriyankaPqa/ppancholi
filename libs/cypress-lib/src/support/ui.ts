@@ -1,6 +1,8 @@
 /// <reference types="cypress-xpath" />
 Cypress.Commands.add('getByDataTest', ({ selector, type = '' }, ...options) => cy.get(`${type}[data-test=${selector}]`, ...options));
 
+  Cypress.Commands.add('getByDataTestLike', ({ selector, type = '' }, ...options) => cy.get(`${type}[data-test*=${selector}]`, ...options));
+
   Cypress.Commands.add('escape', () => {
     cy.get('body').type('{esc}');
   });

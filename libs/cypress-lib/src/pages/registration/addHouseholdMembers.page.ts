@@ -35,7 +35,7 @@ export class AddHouseholdMembersPage {
 
   private sameAddress = { selector: DataTest.sameAddress, type: 'input' };
 
-  private save = { selector: DataTest.save, type: 'button' };
+  private save = { selector: DataTest.save };
 
   async fill(data:IAddMembersPersonalInfoFields) {
     if (data.firstName) {
@@ -64,7 +64,7 @@ export class AddHouseholdMembersPage {
       cy.selectListElementByValue(DataTest.indigenousIdentity, data.indigenousIdentity);
     }
 
-    cy.getByDataTest(this.sameAddress).check({ force: true });
+    this.selectSameAddress();
   }
 
   selectSameAddress() {

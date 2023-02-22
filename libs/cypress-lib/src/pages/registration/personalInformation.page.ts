@@ -18,7 +18,7 @@ export interface IPersonalInfoFields {
   lastName?: string;
   gender?: string;
   dateOfBirth?: Date;
-  language?: string[];
+  preferredLanguage?: string;
   emailAddress?: string;
   indigenousIdentity?: string;
 }
@@ -42,7 +42,7 @@ export class PersonalInformationPage {
 
   private indigenousIdentity = { selector: DataTest.indigenousIdentity, type: 'input' };
 
-  private nextButton = { selector: DataTest.nextButton, type: 'button' };
+  private nextButton = { selector: DataTest.nextButton };
 
   async fill(data:IPersonalInfoFields) {
     if (data.firstName) {
@@ -67,8 +67,8 @@ export class PersonalInformationPage {
       cy.getByDataTest(this.year).type(`${year}`);
     }
 
-    if (data.language) {
-      cy.selectListElementByValue(DataTest.preferredLanguage, data.language[0]);
+    if (data.preferredLanguage) {
+      this.selectPreferredLanguage(data.preferredLanguage);
     }
 
     if (data.emailAddress) {
@@ -80,11 +80,11 @@ export class PersonalInformationPage {
     }
   }
 
-  selectLanguageAlternative(data:IPersonalInfoFields) {
-    cy.selectListElementByValue(DataTest.preferredLanguage, data.language[1]);
+  selectPreferredLanguage(lang:string) {
+    cy.selectListElementByValue(DataTest.preferredLanguage, lang);
   }
 
-  saveAndGoToAddressPage() {
+  goToAddressPage() {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500); // Validate email could fail otherwise
     cy.getByDataTest(this.nextButton).click();

@@ -17,7 +17,7 @@
               </v-icon>
               {{ $t('household.profile.registration_number') }}:
             </div>
-            <span>{{ householdEntity.registrationNumber }}</span>
+            <span data-test="registrationNumber">{{ householdEntity.registrationNumber }}</span>
           </div>
 
           <div v-if="household.homeAddress" class="pt-6 d-flex flex-column" data-test="household_profile_home_address">
@@ -288,8 +288,10 @@ export default mixins(household).extend({
     },
 
     inactiveCaseFiles(): ICaseFileEntity[] {
-      return this.caseFiles
-        .filter((c) => c.caseFileStatus === CaseFileStatus.Archived || c.caseFileStatus === CaseFileStatus.Closed);
+      if (this.caseFiles) {
+        return this.caseFiles.filter((c) => c.caseFileStatus === CaseFileStatus.Archived || c.caseFileStatus === CaseFileStatus.Closed);
+      }
+      return [];
     },
 
     addressLine1(): string {
@@ -362,7 +364,7 @@ export default mixins(household).extend({
 
   methods: {
     async fetchAllEvents() {
-      if (this.caseFiles.length) {
+      if (this.caseFiles?.length) {
         const eventIds = this.caseFiles.map((cf) => cf.eventId);
         const results = await this.$services.publicApi.searchEventsById(eventIds) as IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>;
         this.allEvents = results?.value;

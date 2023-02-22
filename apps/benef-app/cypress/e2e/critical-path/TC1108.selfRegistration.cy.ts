@@ -2,14 +2,14 @@ import { faker } from '@faker-js/faker';
 import { getCurrentDateString } from '@libs/cypress-lib/helpers';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
-import { ReviewRegistrationPage } from '../../pages/reviewRegistration.page';
+import { ReviewRegistrationPage } from '@libs/cypress-lib/pages/registration/reviewRegistration.page';
+import { PrivacyStatementPage } from '@libs/cypress-lib/pages/registration/privacyStatement.page';
+import { HouseholdMembersPage } from '@libs/cypress-lib/pages/registration/householdMembers.page';
+import { PersonalInformationPage, IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
+import { AddressPage, IAddressPageFields } from '@libs/cypress-lib/pages/registration/address.page';
+import { AddHouseholdMembersPage, IAddMembersPersonalInfoFields } from '@libs/cypress-lib/pages/registration/addHouseholdMembers.page';
+import { ConfirmationPage } from '@libs/cypress-lib/pages/registration/confirmation.page';
 import { RegistrationPage } from '../../pages/registration.page';
-import { PrivacyStatementPage } from '../../pages/privacyStatement.page';
-import { HouseholdMembersPage } from '../../pages/householdMembers.page';
-import { PersonalInformationPage, IPersonalInfoFields } from '../../pages/personalInformation.page';
-import { AddressPage, IAddressPageFields } from '../../pages/address.page';
-import { AddHouseholdMembersPage, IAddMembersPersonalInfoFields } from '../../pages/addHouseholdMembers.page';
-import { ConfirmationOfRegistrationPage } from '../../pages/confirmationOfRegistration.page';
 import { useProvider } from '../../provider/provider';
 import { buildRegistrationUrl } from '../../support/helpers/urlBuilder';
 
@@ -21,7 +21,7 @@ const primaryBeneficiaryData: IPersonalInfoFields = {
   lastName,
   gender: faker.helpers.arrayElement(['Female', 'Male']),
   dateOfBirth: faker.date.birthdate({ min: 16, max: 100, mode: 'age' }),
-  language: ['French', 'English'],
+  preferredLanguage: 'French',
   emailAddress: faker.internet.email(firstName, lastName),
   indigenousIdentity: faker.helpers.arrayElement(['First Nation', 'Metis', 'Inuit', 'Other']),
 };
@@ -50,7 +50,7 @@ let address: AddressPage;
 let householdMembers: HouseholdMembersPage;
 let addHouseholdMembers: AddHouseholdMembersPage;
 let reviewRegistration: ReviewRegistrationPage;
-let confirmationOfRegistrationPage: ConfirmationOfRegistrationPage;
+let confirmationPage: ConfirmationPage;
 
 let provider = null as ReturnType<typeof useProvider>;
 let event: IEventEntity;
@@ -62,7 +62,6 @@ before(() => {
 
 describe(`${title}`, () => {
   before(() => {
-    cy.log('CUSTOM_ENV', Cypress.env('CUSTOM_ENV'));
     cy.then(async () => {
       event = await provider.events.createEvent(mockCreateEvent());
       await provider.events.toggleSelfRegistration(event.id, true);
@@ -79,47 +78,46 @@ describe(`${title}`, () => {
       expect(eventName).to.include(event.name.translation.en);
       });
     }).then(() => {
-      privacyStatement.agreeToPrivacy();
-      personalInformation = privacyStatement.saveAndGoToPersonalInfoPage();
+      privacyStatement.getPrivacyCheckbox().should('not.be.checked');
+      privacyStatement.getPrivacyCheckbox().click({ force: true }).should('be.checked');
+      personalInformation = privacyStatement.goToPersonalInfoPage();
     }).then(() => {
       personalInformation.fill(primaryBeneficiaryData);
-      address = personalInformation.saveAndGoToAddressPage();
+      address = personalInformation.goToAddressPage();
     })
     .then(() => {
       address.fill(createAddressData);
-      householdMembers = address.saveAndGoToHouseholdMembersPage();
+      householdMembers = address.goToHouseholdMembersPage();
     })
     .then(() => {
       addHouseholdMembers = householdMembers.addMember();
       addHouseholdMembers.fill(additionalMemberData);
       addHouseholdMembers.addHouseholdMember();
       // verify that new member added
-      householdMembers.getNewMemberDetails().should('string', `${additionalMemberData.firstName} ${additionalMemberData.lastName}`);
-      reviewRegistration = householdMembers.saveAndGoToReviewPage();
+      householdMembers.getAdditionalMemberDetails(0).should('string', `${additionalMemberData.firstName} ${additionalMemberData.lastName}`);
+      reviewRegistration = householdMembers.goToReviewPage();
     })
     .then(() => {
       reviewRegistration.getFirstName().should('string', primaryBeneficiaryData.firstName);
       reviewRegistration.getLastName().should('string', primaryBeneficiaryData.lastName);
       reviewRegistration.getBirthDate().should('string', reviewRegistration.getDateOfBirthString(primaryBeneficiaryData.dateOfBirth));
-      reviewRegistration.getPreferredLanguage().should('string', primaryBeneficiaryData.language[0]);
+      reviewRegistration.getPreferredLanguage().should('string', primaryBeneficiaryData.preferredLanguage);
       reviewRegistration.getGender().should('string', primaryBeneficiaryData.gender);
       reviewRegistration.getStreetHomeAddress().should('string', createAddressData.streetAddress);
       reviewRegistration.getLineHomeAddress().should('string', createAddressData.municipality);
-      reviewRegistration.getAdditionalMemberName().should('string', `${additionalMemberData.firstName} ${additionalMemberData.lastName}`);
-      reviewRegistration.getAdditionalMemberBirthdate().should('string', reviewRegistration.getDateOfBirthString(additionalMemberData.dateOfBirth));
-      reviewRegistration.getAdditionalMemberGender().should('string', additionalMemberData.gender);
+      reviewRegistration.getAdditionalMemberName(0).should('string', `${additionalMemberData.firstName} ${additionalMemberData.lastName}`);
+      reviewRegistration.getAdditionalMemberBirthdate(0).should('string', reviewRegistration.getDateOfBirthString(additionalMemberData.dateOfBirth));
+      reviewRegistration.getAdditionalMemberGender(0).should('string', additionalMemberData.gender);
       reviewRegistration.editPersonalInformation();
-      personalInformation.selectLanguageAlternative(primaryBeneficiaryData);
+      personalInformation.selectPreferredLanguage('English');
 
       reviewRegistration.submitRegistration();
 
-      confirmationOfRegistrationPage = reviewRegistration.saveAndGoToConfirmationPage();
-      confirmationOfRegistrationPage.getRegistrationMessage().should('string', 'Thank you');
-      confirmationOfRegistrationPage.getFullName().should('string', `${primaryBeneficiaryData.firstName}`);
-      confirmationOfRegistrationPage.getFullName().should('string', `${primaryBeneficiaryData.lastName}`);
-      confirmationOfRegistrationPage.getRegistrationMessage().should('string', 'for registering!');
-      confirmationOfRegistrationPage.getEventName().should('string', event.name.translation.en);
-      confirmationOfRegistrationPage.getPhoneAssistance().should('string', event.responseDetails.assistanceNumber);
+      confirmationPage = reviewRegistration.goToConfirmationPage();
+      confirmationPage.getMessage().should('string', 'Thank you').and('string', 'for registering!');
+      confirmationPage.getFullName().should('string', `${primaryBeneficiaryData.firstName}`).and('string', `${primaryBeneficiaryData.lastName}`);
+      confirmationPage.getEventName().should('string', event.name.translation.en);
+      confirmationPage.getPhoneAssistance().should('string', event.responseDetails.assistanceNumber);
     });
   });
 });

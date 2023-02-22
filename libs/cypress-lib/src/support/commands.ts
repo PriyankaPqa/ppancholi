@@ -18,7 +18,8 @@ declare global {
       loginProd(): Chainable<void>
       getToken(as?: UserRoles): Chainable<ServerAuthorizationTokenResponse>
       // eslint-disable-next-line no-undef
-      getByDataTest({ selector, type }: { selector: string; type: string; }, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>): Chainable<JQuery<HTMLElement>>
+      getByDataTest({ selector, type }: { selector: string; type?: string; }, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>): Chainable<JQuery<HTMLElement>>
+      getByDataTestLike({ selector, type }: { selector: string; type?: string; }, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>): Chainable<JQuery<HTMLElement>>
       selectListElementByIndex(dataTest:string, index: number, parentSelectorType?: string): Chainable<string>;
       selectMultipleElementByIndex(dataTest:string, indexes: number[]): Chainable<void>
       selectListElementByValue(dataTest: string, value: string): Chainable<void>
