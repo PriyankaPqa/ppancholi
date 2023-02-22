@@ -67,6 +67,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { ValidationProvider } from 'vee-validate';
+import { IMultilingual } from '@libs/shared-lib/types';
 
 export default Vue.extend({
   name: 'VAutocompleteWithValidation',
@@ -215,12 +216,11 @@ export default Vue.extend({
       } else if (typeof item === 'string') {
         dataTest = item;
       } else if (!this.itemDataTest) {
-        dataTest = this.getItemText(item);
+        dataTest = (item?.name as unknown as IMultilingual)?.translation?.en ?? item?.dataTest ?? this.getItemText(item);
       } else {
         dataTest = item[this.itemDataTest];
       }
-
-      return dataTest?.replace(/\s|\./g, '');
+      return dataTest.replace(/\s|\./g, '');
     },
 
     getItemIndex(item: Record<string, unknown>): number {

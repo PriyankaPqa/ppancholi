@@ -40,6 +40,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import helpers from '@libs/component-lib/helpers';
+import { IMultilingual } from '@libs/shared-lib/types';
 import VTextFieldWithValidation from './VTextFieldWithValidation.vue';
 
 export default Vue.extend({
@@ -163,11 +164,10 @@ export default Vue.extend({
       } else if (typeof item === 'string') {
         dataTest = item;
       } else if (!this.itemDataTest) {
-        dataTest = this.getItemText(item);
+        dataTest = (item?.name as unknown as IMultilingual)?.translation?.en ?? item?.dataTest ?? this.getItemText(item);
       } else {
         dataTest = item[this.itemDataTest];
       }
-
       return dataTest.replace(/\s|\./g, '');
     },
   },

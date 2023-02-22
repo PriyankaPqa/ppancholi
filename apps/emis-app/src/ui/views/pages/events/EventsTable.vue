@@ -36,7 +36,7 @@
     <template #[`item.${customColumns.name}`]="{ item: event }">
       <router-link
         class="rc-link14 font-weight-bold"
-        :data-test="`eventDetail-link_${ $m(event.entity.name) }`"
+        :data-test="`eventDetail-link_${ event.entity.name && event.entity.name.translation.en }`"
         :to="getEventRoute(event)">
         {{ $m(event.entity.name) }}
       </router-link>

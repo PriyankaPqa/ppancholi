@@ -54,7 +54,7 @@
         <v-btn
           icon
           class="mr-2"
-          :data-test="`edit_financial_assistance_${ $m(item.entity.name) }`"
+          :data-test="`edit_financial_assistance_${ item.entity.name && item.entity.name.translation.en }`"
           @click="goToEdit(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil

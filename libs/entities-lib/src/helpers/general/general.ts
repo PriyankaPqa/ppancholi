@@ -22,12 +22,12 @@ export default {
 
   enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string, i18n: VueI18n = null) {
     const enumKeys = this.getEnumKeys(myEnum);
-    const data = [] as Array<{ value: unknown; text: string }>;
+    const data = [] as Array<{ value: unknown; text: string, dataTest: string }>;
     enumKeys.forEach((val) => {
       if (i18n) {
-        data.push({ value: myEnum[val], text: i18n.t(`${translationPath}.${val}`).toString() });
+        data.push({ value: myEnum[val], text: i18n.t(`${translationPath}.${val}`).toString(), dataTest: val });
       } else {
-        data.push({ value: myEnum[val], text: `${translationPath}.${val}` });
+        data.push({ value: myEnum[val], text: `${translationPath}.${val}`, dataTest: val });
       }
     });
     return data.sort((a, b) => a.text.localeCompare(b.text));

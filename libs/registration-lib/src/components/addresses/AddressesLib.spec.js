@@ -85,30 +85,37 @@ describe('AddressesLib.vue', () => {
             value: 1,
           },
           {
+            dataTest: 'Campground',
             text: 'Campground',
             value: 2,
           },
           {
+            dataTest: 'FriendsFamily',
             text: 'Friends / Family',
             value: 3,
           },
           {
+            dataTest: 'HotelMotel',
             text: 'Hotel/Motel',
             value: 4,
           },
           {
+            dataTest: 'MedicalFacility',
             text: 'Medical facility',
             value: 5,
           },
           {
+            dataTest: 'Other',
             text: 'Other',
             value: 6,
           },
           {
+            dataTest: 'Shelter',
             text: 'Shelter',
             value: 7,
           },
           {
+            dataTest: 'Unknown',
             text: 'Unknown',
             value: 0,
           },
@@ -136,30 +143,37 @@ describe('AddressesLib.vue', () => {
         });
         const listNoRemainingHome = [
           {
+            dataTest: 'Campground',
             text: 'Campground',
             value: 2,
           },
           {
+            dataTest: 'FriendsFamily',
             text: 'Friends / Family',
             value: 3,
           },
           {
+            dataTest: 'HotelMotel',
             text: 'Hotel/Motel',
             value: 4,
           },
           {
+            dataTest: 'MedicalFacility',
             text: 'Medical facility',
             value: 5,
           },
           {
+            dataTest: 'Other',
             text: 'Other',
             value: 6,
           },
           {
+            dataTest: 'Shelter',
             text: 'Shelter',
             value: 7,
           },
           {
+            dataTest: 'Unknown',
             text: 'Unknown',
             value: 0,
           },
@@ -192,26 +206,32 @@ describe('AddressesLib.vue', () => {
             value: 1,
           },
           {
+            dataTest: 'Campground',
             text: 'Campground',
             value: 2,
           },
           {
+            dataTest: 'FriendsFamily',
             text: 'Friends / Family',
             value: 3,
           },
           {
+            dataTest: 'HotelMotel',
             text: 'Hotel/Motel',
             value: 4,
           },
           {
+            dataTest: 'MedicalFacility',
             text: 'Medical facility',
             value: 5,
           },
           {
+            dataTest: 'Other',
             text: 'Other',
             value: 6,
           },
           {
+            dataTest: 'Unknown',
             text: 'Unknown',
             value: 0,
           },
