@@ -733,6 +733,17 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         paymentName: 'mock payment',
       },
     },
+    {
+      id: 'mock-activity-id-40',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.AssessmentAdded,
+      details: {
+        assessmentName: { translation: { en: 'mock assessment', fr: 'mock assessment' } },
+      },
+    },
   ];
 
   if (type) {

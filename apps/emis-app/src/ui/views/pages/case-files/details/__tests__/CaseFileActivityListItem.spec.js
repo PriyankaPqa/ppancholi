@@ -352,6 +352,13 @@ describe('CaseFileActivityListItem.vue', () => {
         expect(wrapper.vm.icon).toEqual('mdi-currency-usd');
       });
 
+      it('returns the correct icon when action type is AssessmentAdded', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.AssessmentAdded)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-message-text');
+      });
+
       it('returns the correct icon when action type is AssessmentCompleted', async () => {
         await wrapper.setProps({
           item: mockCaseFileActivities(CaseFileActivityType.AssessmentCompleted)[0],
@@ -826,6 +833,21 @@ describe('CaseFileActivityListItem.vue', () => {
         expect(wrapper.vm.makeContentForHouseholdEdited()).toEqual({
           title: 'caseFileActivity.activityList.title.HouseholdEdited',
           body: 'mock-body',
+        });
+      });
+
+      describe('makeContentForAssessmentAdded', () => {
+        it('returns the correct data when activity type is AssessmentAdded', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.AssessmentAdded)[0],
+          });
+
+          const body = wrapper.vm.$t('caseFileActivity.activityList.body.assessmentAdded.name', { x: 'mock assessment' });
+
+          expect(wrapper.vm.makeContentForAssessmentAdded()).toEqual({
+            title: 'caseFileActivity.activityList.title.AssessmentAdded',
+            body,
+          });
         });
       });
 
