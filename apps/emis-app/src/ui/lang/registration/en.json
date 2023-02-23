@@ -52,6 +52,7 @@
     "common.tooltip_label": "Open help",
     "common.years": "years",
     "common.yes": "Yes",
+    "duplicate.CommunicationMethod.AlternatePhone": "Receive code by alternate phone number",
     "duplicate.CommunicationMethod.Email": "Receive code by email address",
     "duplicate.CommunicationMethod.HomePhone": "Receive code by home phone number",
     "duplicate.CommunicationMethod.MobilePhone": "Receive code by mobile phone number",

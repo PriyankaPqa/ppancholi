@@ -52,6 +52,7 @@
     "common.tooltip_label": "Ouvrir l'aide",
     "common.years": "années",
     "common.yes": "Oui",
+    "duplicate.CommunicationMethod.AlternatePhone": "Recevoir le code par un autre numéro de téléphone",
     "duplicate.CommunicationMethod.Email": "Recevoir le code par courriel",
     "duplicate.CommunicationMethod.HomePhone": "Recevoir le code au numéro de téléphone de la maison",
     "duplicate.CommunicationMethod.MobilePhone": "Recevoir le code au numéro de téléphone mobile",
