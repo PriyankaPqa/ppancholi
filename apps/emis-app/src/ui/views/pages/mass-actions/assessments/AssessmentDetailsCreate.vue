@@ -54,7 +54,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { Status } from '@libs/entities-lib/base';
-import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
+import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
 import utils from '@libs/entities-lib/utils';
 import { ui } from '@/constants/ui';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
@@ -136,7 +136,7 @@ export default Vue.extend({
       this.formCopy.assessment = null;
 
       this.assessments = event ? (await this.$services.assessmentForms.search({
-        filter: { 'Entity/EventId': event.id, 'Entity/Status': Status.Active },
+        filter: { 'Entity/EventId': event.id, 'Entity/Status': Status.Active, 'Entity/PublishStatus': PublishStatus.Published },
         orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
       })).value.map((x) => x.entity) : [];
     },

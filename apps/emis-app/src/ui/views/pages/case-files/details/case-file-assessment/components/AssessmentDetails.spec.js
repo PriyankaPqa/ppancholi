@@ -137,6 +137,20 @@ describe('AssessmentDetails.vue', () => {
         expect(data).toBe(assessmentFormStore.getById());
       });
     });
+
+    describe('scoringRange', () => {
+      it('returns correct value', async () => {
+        await mountWrapper();
+
+        expect(wrapper.vm.scoringRange).toBe('more');
+        assessment.totalScore = 5;
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.scoringRange).toBe('less');
+        assessment.completionStatus = CompletionStatus.Partial;
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.scoringRange).toBe(null);
+      });
+    });
   });
 
   describe('Lifecycle', () => {

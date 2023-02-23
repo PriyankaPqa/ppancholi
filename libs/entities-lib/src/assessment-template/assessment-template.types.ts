@@ -89,6 +89,12 @@ export interface IAssessmentQuestion {
   endDate?: Date | null;
 }
 
+export interface IAssessmentScoringRange {
+  label: IMultilingual;
+  minValue: number;
+  maxValue: number;
+}
+
 export interface IAssessmentBaseEntity extends IEntity {
   name: IMultilingual;
   description: IMultilingual;
@@ -99,6 +105,7 @@ export interface IAssessmentBaseEntity extends IEntity {
   assessmentFormType: AssessmentFormType;
   externalToolState: SurveyJsAssessmentFormState;
   questions: IAssessmentQuestion[];
+  scoringRanges: IAssessmentScoringRange[];
 }
 
 export interface IAssessmentTemplateEntity extends IAssessmentBaseEntity {

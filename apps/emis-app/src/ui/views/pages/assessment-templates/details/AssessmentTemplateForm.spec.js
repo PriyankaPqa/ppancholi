@@ -5,8 +5,9 @@ import {
   mockAssessmentFormEntity, mockAssessmentTemplateEntity, PublishStatus, AssessmentFormEntity, AssessmentTemplateEntity,
 } from '@libs/entities-lib/assessment-template';
 import { mockCombinedPrograms, mockProgramEntities } from '@libs/entities-lib/program';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { useMockProgramStore } from '@/pinia/program/program.mock';
+import utils from '@libs/entities-lib/utils';
 import flushPromises from 'flush-promises';
 
 import Component from './AssessmentTemplateForm.vue';
@@ -105,6 +106,10 @@ describe('AssessmentTemplateForm.vue', () => {
           },
           frequency: {
             required: wrapper.vm.isFormMode,
+          },
+          scoringLabel: {
+            required: true,
+            max: MAX_LENGTH_SM,
           },
         });
       });
@@ -310,6 +315,56 @@ describe('AssessmentTemplateForm.vue', () => {
         expect(wrapper.vm.combinedProgramStore.getByIds).toHaveBeenCalledWith(['1', '2']);
 
         expect(wrapper.vm.programs).toEqual(wrapper.vm.combinedProgramStore.getByIds().map((t) => t.entity));
+      });
+    });
+
+    describe('deleteScoring', () => {
+      it('removes the range', async () => {
+        await mountWrapper();
+        const copy = [...wrapper.vm.localAssessment.scoringRanges];
+        const range = wrapper.vm.localAssessment.scoringRanges[1];
+        wrapper.vm.deleteScoring(range);
+        expect(wrapper.vm.localAssessment.scoringRanges.length).toBe(copy.length - 1);
+        expect(wrapper.vm.localAssessment.scoringRanges.find((x) => x === range)).toBeFalsy();
+      });
+
+      it('emits data-removed when scoring is removed', async () => {
+        await mountWrapper();
+        const range = wrapper.vm.localAssessment.scoringRanges[1];
+        wrapper.vm.deleteScoring(range);
+        expect(wrapper.emitted('update:data-removed')?.length).toBe(1);
+      });
+    });
+
+    describe('addNewScoring', () => {
+      it('pushes an empty range', async () => {
+        await mountWrapper();
+        wrapper.vm.localAssessment.scoringRanges.push = jest.fn();
+        wrapper.vm.addNewScoring();
+        expect(wrapper.vm.localAssessment.scoringRanges.push).toHaveBeenCalledWith({
+          label: utils.initMultilingualAttributes(),
+          maxValue: null,
+          minValue: null,
+        });
+      });
+    });
+
+    describe('isRangeValid', () => {
+      it('checks for valid ranges', async () => {
+        await mountWrapper();
+        const ranges = wrapper.vm.localAssessment.scoringRanges;
+        ranges[0].minValue = '1';
+        ranges[0].maxValue = '5';
+        ranges[1].minValue = '6';
+        ranges[1].maxValue = '6';
+        expect(wrapper.vm.isRangeValid(0)).toEqual({ isValid: true });
+        expect(wrapper.vm.isRangeValid(1)).toEqual({ isValid: true });
+
+        ranges[1].minValue = '8';
+        expect(wrapper.vm.isRangeValid(1)).toEqual({ isValid: false, messageKey: 'assessmentTemplate.invalidRange' });
+
+        ranges[1].minValue = '2';
+        expect(wrapper.vm.isRangeValid(0)).toEqual({ isValid: false, messageKey: 'assessmentTemplate.rangeOverlap' });
       });
     });
   });

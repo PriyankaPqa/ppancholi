@@ -1314,6 +1314,7 @@
     "errors.unit-suite-not-place-number-must-have-a-value": "Le numéro d'appartement ou bureau, pas le numéro de l’emplacement, doit avoir une valeur",
     "errors.unit-suite-must-have-a-value": "L'unité doit avoir une valeur",
     "errors.unit-suite-must-not-have-a-value": "Le champ <<Unité\/ bureau>> doit être vide",
+    "errors.unit-suite-not-place-number-must-have-a-value": "",
     "errors.unknown-status": "Statut inconnu",
     "errors.unknown-team-type": "Type d’équipe inconnu",
     "errors.user-account-deleted.fail": "Impossible de supprimer le compte utilisateur",

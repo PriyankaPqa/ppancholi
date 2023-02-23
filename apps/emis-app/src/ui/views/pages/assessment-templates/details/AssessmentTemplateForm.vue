@@ -141,6 +141,85 @@
                 @click:clear="clearMessage()" />
             </v-col>
           </v-row>
+
+          <v-row>
+            <v-col cols="12">
+              <div class="fw-bold rc-body16">
+                {{ $t('assessmentTemplate.configureScoring') }}
+              </div>
+              <v-sheet rounded outlined>
+                <v-simple-table class="scoring-table">
+                  <thead>
+                    <tr>
+                      <th width="150px">
+                        {{ $t('assessmentTemplate.minValue') }}
+                      </th>
+                      <th width="150px">
+                        {{ $t('assessmentTemplate.maxValue') }}
+                      </th>
+                      <th>
+                        {{ $t('assessmentTemplate.stepLabel') }}
+                      </th>
+                      <th>&nbsp;</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(scoringRange, $index) in localAssessment.scoringRanges"
+                      :key="$index"
+                      :data-test="`scoringRange${$index}`">
+                      <td>
+                        <v-text-field-with-validation
+                          v-model="scoringRange.minValue"
+                          dense
+                          small
+                          type="number"
+                          background-color="white"
+                          :rules="{ required: true, numeric: true, customValidator: isRangeValid($index) }"
+                          :label="$t('assessmentTemplate.minValue') + '*'" />
+                      </td>
+                      <td>
+                        <v-text-field-with-validation
+                          v-model="scoringRange.maxValue"
+                          dense
+                          small
+                          type="number"
+                          background-color="white"
+                          :rules="{ required: true, numeric: true }"
+                          :label="$t('assessmentTemplate.maxValue') + '*'" />
+                      </td>
+                      <td>
+                        <v-text-field-with-validation
+                          v-model="scoringRange.label.translation[languageMode]"
+                          dense
+                          small
+                          background-color="white"
+                          :rules="rules.scoringLabel"
+                          :label="$t('assessmentTemplate.stepLabel') + '*'" />
+                      </td>
+                      <td>
+                        <v-btn class="ml-3" icon data-test="cancel" @click="deleteScoring(scoringRange)">
+                          <v-icon size="20">
+                            mdi-delete
+                          </v-icon>
+                        </v-btn>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <td colspan="4">
+                      <v-btn color="primary" small @click="addNewScoring()">
+                        <v-icon left>
+                          mdi-plus
+                        </v-icon>
+                        {{ $t('assessmentTemplate.addScoring') }}
+                      </v-btn>
+                    </td>
+                  </tfoot>
+                </v-simple-table>
+              </v-sheet>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </validation-observer>
@@ -154,10 +233,10 @@ import {
   VTextAreaWithValidation,
   VAutocompleteWithValidation,
 } from '@libs/component-lib/components';
-import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_LG, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import {
   AssessmentBaseEntity, IAssessmentBaseEntity, IAssessmentFormEntity, PublishStatus, AssessmentTemplateEntity, AssessmentFormEntity,
-  AssessmentFrequencyType,
+  AssessmentFrequencyType, IAssessmentScoringRange,
 } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
@@ -273,6 +352,10 @@ export default Vue.extend({
         frequency: {
           required: this.isFormMode,
         },
+        scoringLabel: {
+          required: true,
+          max: MAX_LENGTH_SM,
+        },
       };
     },
   },
@@ -357,6 +440,38 @@ export default Vue.extend({
           .filter((t) => t.status === Status.Active || t.id === form.programId);
       }
     },
+
+    deleteScoring(scoringRange: IAssessmentScoringRange) {
+      this.localAssessment.scoringRanges = this.localAssessment.scoringRanges.filter((x) => x !== scoringRange);
+      this.$emit('update:data-removed', true);
+    },
+
+    addNewScoring() {
+      this.localAssessment.scoringRanges.push({
+        label: utils.initMultilingualAttributes(),
+        maxValue: null,
+        minValue: null,
+      });
+    },
+
+    isRangeValid(index: number) {
+      const scoring = this.localAssessment.scoringRanges[index];
+      // covered by required - we dont need to show errors for invalid ranges while data isnt inputted...
+      if (!scoring.minValue?.toString().length || !scoring.maxValue?.toString().length) {
+        return { isValid: true };
+      }
+
+      if (+scoring.minValue > +scoring.maxValue) {
+        return { isValid: false, messageKey: 'assessmentTemplate.invalidRange' };
+      }
+
+      if (this.localAssessment.scoringRanges.some((x) => x !== scoring && x.minValue?.toString().length
+        && +x.minValue >= +scoring.minValue && +x.minValue <= +scoring.maxValue)) {
+        return { isValid: false, messageKey: 'assessmentTemplate.rangeOverlap' };
+      }
+
+      return { isValid: true };
+    },
   },
 });
 </script>
@@ -365,4 +480,13 @@ export default Vue.extend({
  .border-bottom {
    border-bottom: 1px solid var(--v-grey-lighten2);
  }
+
+ ::v-deep .v-text-field__details {
+    min-height: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .scoring-table td {
+    padding: 6px !important;
+  }
 </style>

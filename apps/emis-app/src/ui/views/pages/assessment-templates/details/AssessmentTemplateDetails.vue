@@ -40,7 +40,7 @@
               </tbody>
             </v-simple-table>
           </div>
-          <v-sheet rounded outlined>
+          <v-sheet rounded outlined class="mb-6">
             <v-simple-table>
               <tbody>
                 <tr
@@ -52,6 +52,40 @@
                   </td>
                   <td class="data">
                     {{ item.data }}
+                  </td>
+                </tr>
+              </tbody>
+            </v-simple-table>
+          </v-sheet>
+
+          <v-sheet rounded outlined>
+            <v-simple-table class="scoring-table" data-test="scoring-table">
+              <thead>
+                <tr>
+                  <th width="150px">
+                    {{ $t('assessmentTemplate.minValue') }}
+                  </th>
+                  <th width="150px">
+                    {{ $t('assessmentTemplate.maxValue') }}
+                  </th>
+                  <th>
+                    {{ $t('assessmentTemplate.stepLabel') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(scoringRange, $index) in assessmentTemplate.scoringRanges"
+                  :key="$index"
+                  :data-test="`scoringRange${$index}`">
+                  <td>
+                    {{ scoringRange.minValue }}
+                  </td>
+                  <td>
+                    {{ scoringRange.maxValue }}
+                  </td>
+                  <td>
+                    {{ $m(scoringRange.label) }}
                   </td>
                 </tr>
               </tbody>

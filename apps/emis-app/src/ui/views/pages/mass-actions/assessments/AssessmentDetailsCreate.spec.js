@@ -4,7 +4,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockAssessmentFormEntity, mockSearchDataForm } from '@libs/entities-lib/assessment-template';
+import { mockAssessmentFormEntity, mockSearchDataForm, PublishStatus } from '@libs/entities-lib/assessment-template';
 import { Status } from '@libs/entities-lib/base';
 import utils from '@libs/entities-lib/utils';
 
@@ -81,7 +81,7 @@ describe('AssessmentDetailsCreate.vue', () => {
         wrapper.vm.$services.assessmentForms.search = jest.fn(() => mockSearchDataForm);
         await wrapper.vm.onSetEvent(mockEvent());
         expect(wrapper.vm.$services.assessmentForms.search).toHaveBeenCalledWith({
-          filter: { 'Entity/EventId': mockEvent().id, 'Entity/Status': Status.Active },
+          filter: { 'Entity/EventId': mockEvent().id, 'Entity/Status': Status.Active, 'Entity/PublishStatus': PublishStatus.Published },
           orderBy: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
         });
         expect(wrapper.vm.assessments).toEqual(mockSearchDataForm.value.map((x) => x.entity));

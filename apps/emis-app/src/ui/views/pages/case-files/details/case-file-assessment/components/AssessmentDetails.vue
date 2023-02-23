@@ -25,6 +25,9 @@
             <div>{{ $t('assessmentResponse.dateCompleted') }}:</div>
             <div>{{ assessmentResponse.dateCompleted ? moment(assessmentResponse.dateCompleted).format('ll') : '' }}</div>
           </div>
+          <div v-if="scoringRange">
+            <div>{{ scoringRange }}</div>
+          </div>
         </v-row>
       </div>
 
@@ -119,6 +122,13 @@ export default mixins(caseFileDetail).extend({
     },
     assessmentForm(): IAssessmentFormEntity {
       return useAssessmentFormStore().getById(this.assessmentResponse?.assessmentFormId);
+    },
+    scoringRange(): string {
+      const range = this.assessmentForm?.scoringRanges?.find((sr) => sr.minValue <= this.assessmentResponse.totalScore && sr.maxValue >= this.assessmentResponse.totalScore);
+      if (range && this.assessmentResponse.completionStatus === CompletionStatus.Completed) {
+        return this.$m(range.label);
+      }
+      return null;
     },
   },
 
