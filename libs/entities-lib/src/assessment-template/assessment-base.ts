@@ -3,7 +3,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import utils from '../utils';
 import { BaseEntity, Status } from '../base';
 import {
-  AssessmentFormType, AssessmentFrequencyType, IAssessmentBaseEntity, IAssessmentQuestion, PublishStatus, SurveyJsAssessmentFormState,
+  AssessmentFormType, AssessmentFrequencyType, IAssessmentBaseEntity, IAssessmentQuestion, IAssessmentScoringRange, PublishStatus, SurveyJsAssessmentFormState,
 } from './assessment-template.types';
 
 export class AssessmentBaseEntity extends BaseEntity implements IAssessmentBaseEntity {
@@ -25,6 +25,8 @@ export class AssessmentBaseEntity extends BaseEntity implements IAssessmentBaseE
 
   frequency: AssessmentFrequencyType;
 
+  scoringRanges: IAssessmentScoringRange[];
+
   constructor(data?: IAssessmentBaseEntity) {
     super(data);
     if (!data) {
@@ -39,11 +41,15 @@ export class AssessmentBaseEntity extends BaseEntity implements IAssessmentBaseE
     this.assessmentFormType = data?.assessmentFormType;
     this.externalToolState = data?.externalToolState ? _cloneDeep(data?.externalToolState) : new SurveyJsAssessmentFormState(null);
     this.questions = data?.questions || [];
+    this.scoringRanges = data?.scoringRanges || [];
   }
 
   public fillEmptyMultilingualAttributes() {
     this.name = utils.getFilledMultilingualField(this.name);
     this.description = utils.getFilledMultilingualField(this.description);
     this.messageIfUnavailable = utils.getFilledMultilingualField(this.messageIfUnavailable);
+    this.scoringRanges.forEach((sr) => {
+      sr.label = utils.getFilledMultilingualField(sr.label);
+    });
   }
 }

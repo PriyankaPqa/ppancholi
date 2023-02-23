@@ -8,6 +8,7 @@
           :assessment-template.sync="assessmentTemplate"
           :is-edit-mode="isEditMode"
           :is-name-unique.sync="isNameUnique"
+          :data-removed.sync="dataRemoved"
           :show-eligibility-criteria-warning.sync="showEligibilityCriteriaWarning" />
 
         <template slot="actions">
@@ -15,7 +16,7 @@
             {{ $t('common.cancel') }}
           </v-btn>
 
-          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed || !dirty" @click.stop="submit">
+          <v-btn color="primary" data-test="save" :loading="loading" :disabled="(failed || !dirty) && !dataRemoved" @click.stop="submit">
             {{ submitLabel }}
           </v-btn>
         </template>
@@ -72,6 +73,7 @@ export default mixins(handleUniqueNameSubmitError, assessmentDetail).extend({
       isNameUnique: true,
       dataSaved: false,
       showEligibilityCriteriaWarning: false,
+      dataRemoved: false,
     };
   },
 

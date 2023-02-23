@@ -98,6 +98,7 @@ describe('AssessmentTemplateDetails', () => {
       it('returns the right data when assessmentTemplate', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia,
           mocks: {
             $route: {
               params: {
@@ -152,6 +153,7 @@ describe('AssessmentTemplateDetails', () => {
       jest.clearAllMocks();
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: 'mock-event-id',
         },
@@ -176,6 +178,7 @@ describe('AssessmentTemplateDetails', () => {
       jest.clearAllMocks();
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: 'mock-event-id',
         },
@@ -229,6 +232,7 @@ describe('AssessmentTemplateDetails', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           id: 'mock-event-id',
         },
@@ -262,6 +266,15 @@ describe('AssessmentTemplateDetails', () => {
       });
       it('contains the right data', () => {
         expect(element.text()).toContain('mock-data');
+      });
+    });
+
+    describe('scoring-table', () => {
+      it('shows scoring ranges', () => {
+        const element = wrapper.findDataTest('scoring-table');
+        expect(element.text()).toContain(wrapper.vm.assessmentTemplate.scoringRanges[0].minValue.toString());
+        expect(element.text()).toContain(wrapper.vm.assessmentTemplate.scoringRanges[0].maxValue.toString());
+        expect(element.text()).toContain(wrapper.vm.assessmentTemplate.scoringRanges[0].label.translation.en);
       });
     });
 

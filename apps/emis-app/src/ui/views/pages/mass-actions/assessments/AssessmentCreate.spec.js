@@ -124,6 +124,12 @@ describe('AssessmentCreate.vue', () => {
     });
 
     describe('fillEmptyMultilingualFields', () => {
+      it('calls entityUtils.getFilledMultilingualField and assigns the result to emailSubject', () => {
+        const spy = jest.spyOn(utils, 'getFilledMultilingualField').mockImplementation(() => ({ translation: { en: 'mock-subject-en' } }));
+        wrapper.vm.fillEmptyMultilingualFields();
+        expect(wrapper.vm.details.emailSubject).toEqual({ translation: { en: 'mock-subject-en' } });
+        spy.mockRestore();
+      });
       it('calls entityUtils.getFilledMultilingualField and assigns the result to emailAdditionalDescription', () => {
         const spy = jest.spyOn(utils, 'getFilledMultilingualField').mockImplementation(() => ({ translation: { en: 'mock-name-en' } }));
         wrapper.vm.fillEmptyMultilingualFields();
@@ -137,6 +143,7 @@ describe('AssessmentCreate.vue', () => {
         const formCopy = {
           event: mockEvent(),
           assessment: mockAssessmentFormEntity(),
+          emailSubject: { translation: { en: 'en', fr: 'fr' } },
           emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
         };
 
@@ -154,6 +161,7 @@ describe('AssessmentCreate.vue', () => {
         const formCopy = {
           event: mockEvent(),
           assessment: mockAssessmentFormEntity(),
+          emailSubject: { translation: { en: 'en', fr: 'fr' } },
           emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
         };
 
@@ -163,6 +171,7 @@ describe('AssessmentCreate.vue', () => {
 
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('eventId', wrapper.vm.details.event.id);
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('assessmentFormId', wrapper.vm.details.assessment.id);
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('emailSubject', JSON.stringify(wrapper.vm.details.emailSubject.translation));
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('emailAdditionalDescription', JSON.stringify(wrapper.vm.details.emailAdditionalDescription.translation));
       });
 
@@ -170,6 +179,7 @@ describe('AssessmentCreate.vue', () => {
         const formCopy = {
           event: mockEvent(),
           assessment: mockAssessmentFormEntity(),
+          emailSubject: { translation: { en: 'en', fr: 'fr' } },
           emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
         };
 
@@ -198,6 +208,7 @@ describe('AssessmentCreate.vue', () => {
           details: {
             event: mockEvent(),
             assessment: mockAssessmentFormEntity(),
+            emailSubject: { translation: { en: 'en', fr: 'fr' } },
             emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
           },
         });
@@ -207,6 +218,7 @@ describe('AssessmentCreate.vue', () => {
           description,
           eventId: wrapper.vm.details.event.id,
           assessmentFormId: wrapper.vm.details.assessment.id,
+          emailSubject: wrapper.vm.details.emailSubject,
           emailAdditionalDescription: wrapper.vm.details.emailAdditionalDescription,
           search: azureSearchParams.search,
           filter: "Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 1",
@@ -227,6 +239,7 @@ describe('AssessmentCreate.vue', () => {
               details: {
                 event: mockEvent(),
                 assessment: mockAssessmentFormEntity(),
+                emailSubject: { translation: { en: 'en', fr: 'fr' } },
                 emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
               },
             };
