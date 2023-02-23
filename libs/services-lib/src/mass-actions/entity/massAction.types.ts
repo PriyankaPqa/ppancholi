@@ -25,6 +25,7 @@ export interface IMassActionAssessmentCreatePayload {
   description: string;
   eventId: uuid;
   assessmentFormId: uuid;
+  emailSubject: IMultilingual;
   emailAdditionalDescription: IMultilingual;
   search: string;
   filter: string;

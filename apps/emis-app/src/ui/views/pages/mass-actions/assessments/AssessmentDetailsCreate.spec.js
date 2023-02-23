@@ -1,3 +1,4 @@
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { mockEvent } from '@libs/entities-lib/registration-event/registrationEvent.mock';
 import {
   createLocalVue,
@@ -14,6 +15,7 @@ import Component from './AssessmentDetailsCreate.vue';
 const formCopy = {
   event: mockEvent(),
   assessment: mockAssessmentFormEntity(),
+  emailSubject: { translation: { en: 'en', fr: 'fr' } },
   emailAdditionalDescription: { translation: { en: 'en', fr: 'fr' } },
 };
 
@@ -45,6 +47,10 @@ describe('AssessmentDetailsCreate.vue', () => {
             },
             assessment: {
               required: true,
+            },
+            emailSubject: {
+              required: true,
+              max: MAX_LENGTH_MD,
             },
           });
       });
@@ -89,6 +95,12 @@ describe('AssessmentDetailsCreate.vue', () => {
     });
 
     describe('fillEmptyMultilingualFields', () => {
+      it('calls entityUtils.getFilledMultilingualField and assigns the result to emailSubject', () => {
+        const spy = jest.spyOn(utils, 'getFilledMultilingualField').mockImplementation(() => ({ translation: { en: 'mock-subject-en' } }));
+        wrapper.vm.fillEmptyMultilingualFields();
+        expect(wrapper.vm.formCopy.emailSubject).toEqual({ translation: { en: 'mock-subject-en' } });
+        spy.mockRestore();
+      });
       it('calls entityUtils.getFilledMultilingualField and assigns the result to emailAdditionalDescription', () => {
         const spy = jest.spyOn(utils, 'getFilledMultilingualField').mockImplementation(() => ({ translation: { en: 'mock-name-en' } }));
         wrapper.vm.fillEmptyMultilingualFields();
@@ -115,7 +127,7 @@ describe('AssessmentDetailsCreate.vue', () => {
       it('calls fillEmptyMultilingualAttributes entity method', () => {
         const spy = jest.spyOn(utils, 'getFilledMultilingualField').mockImplementation(() => ({ translation: { en: 'mock-name-en' } }));
         wrapper.vm.setLanguageMode('fr');
-        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(2);
         spy.mockRestore();
       });
     });

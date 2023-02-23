@@ -28,13 +28,19 @@
             :items="assessments"
             :item-value="(item) => item"
             :item-text="(item) => $m(item.name)"
-            :label="`${$t('massActions.assessment.create.assessment.label')}*`"
+            :label="`${$t('massActions.assessment.create.assessment.label')} *`"
             :rules="rules.assessment" />
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12">
           <language-tabs :language="languageMode" @click="setLanguageMode" />
+          <v-text-field-with-validation
+            v-model="formCopy.emailSubject.translation[languageMode]"
+            data-test="assessment-email-subject"
+            :label="`${$t('massActions.assessment.create.emailSubject.label')} *`"
+            :rules="rules.emailSubject" />
+
           <span>{{ $t('massActions.assessment.create.emailText.label') }}</span>
           <v-btn class="ma-2" small @click="clearEmailText">
             {{ $t('common.clear') }}
@@ -52,6 +58,7 @@ import { VueEditor } from 'vue2-editor';
 import isEmpty from 'lodash/isEmpty';
 import cloneDeep from 'lodash/cloneDeep';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { Status } from '@libs/entities-lib/base';
 import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
@@ -101,6 +108,10 @@ export default Vue.extend({
         assessment: {
           required: true,
         },
+        emailSubject: {
+          required: true,
+          max: MAX_LENGTH_MD,
+        },
       };
     },
   },
@@ -142,6 +153,7 @@ export default Vue.extend({
     },
 
     fillEmptyMultilingualFields() {
+      this.formCopy.emailSubject = utils.getFilledMultilingualField(this.formCopy.emailSubject);
       this.formCopy.emailAdditionalDescription = utils.getFilledMultilingualField(this.formCopy.emailAdditionalDescription);
     },
 

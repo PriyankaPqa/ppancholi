@@ -52,6 +52,7 @@
     "common.tooltip_label": "common.tooltip_label",
     "common.years": "common.years",
     "common.yes": "common.yes",
+    "duplicate.CommunicationMethod.AlternatePhone": "",
     "duplicate.CommunicationMethod.Email": "",
     "duplicate.CommunicationMethod.HomePhone": "",
     "duplicate.CommunicationMethod.MobilePhone": "",

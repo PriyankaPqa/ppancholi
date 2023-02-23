@@ -17,6 +17,7 @@ describe('AssessmentDetailsTable.vue', () => {
 
   const doMount = (shallow, otherData) => {
     const massAction = mockMassActionEntity();
+    massAction.details.emailSubject = { translation: { en: 'bonjour hi' } };
     massAction.details.emailAdditionalDescription = { translation: { en: 'hello' } };
     const options = {
       localVue,
@@ -58,6 +59,11 @@ describe('AssessmentDetailsTable.vue', () => {
             value: mockAssessmentFormEntity().name.translation.en,
             dataTest: 'assessment',
             loading: wrapper.vm.assessmentLoading,
+          },
+          {
+            label: 'massActions.assessment.create.emailSubject.label',
+            value: 'bonjour hi',
+            dataTest: 'emailSubject',
           },
           {
             label: 'massActions.assessment.create.emailText.label',

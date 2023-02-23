@@ -65,6 +65,11 @@ export default Vue.extend({
           loading: this.assessmentLoading,
         },
         {
+          label: 'massActions.assessment.create.emailSubject.label',
+          value: this.$m((this.massAction.details as IMassActionAssessmentDetails).emailSubject),
+          dataTest: 'emailSubject',
+        },
+        {
           label: 'massActions.assessment.create.emailText.label',
           html: this.$m((this.massAction.details as IMassActionAssessmentDetails).emailAdditionalDescription),
           dataTest: 'emailAdditionalDescription',
