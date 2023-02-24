@@ -86,7 +86,7 @@ export const caseFiles: RouteConfig = {
           path: Routes.caseFile.financialAssistance.home.path,
           name: Routes.caseFile.financialAssistance.home.name,
           component: FinancialAssistancePaymentsList,
-          meta: { level: UserRoles.level1, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
           props: true,
         },
         {
@@ -107,14 +107,14 @@ export const caseFiles: RouteConfig = {
           path: Routes.caseFile.financialAssistance.details.path,
           name: Routes.caseFile.financialAssistance.details.name,
           component: CreateEditCaseFileFinancialAssistance,
-          meta: { level: UserRoles.level1, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
           props: true,
         },
         {
           path: Routes.caseFile.financialAssistance.paymentLineDetails.path,
           name: Routes.caseFile.financialAssistance.paymentLineDetails.name,
           component: ViewPaymentLineDetails,
-          meta: { level: UserRoles.level1, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
           props: true,
         },
         {

@@ -261,6 +261,7 @@ export default mixins(caseFileDetail).extend({
         test: 'case-financial-assistance',
         to: routes.caseFile.financialAssistance.home.name,
         exact: false,
+        disabled: !this.canAccess,
       }, {
         text: this.$t('caseFileDetail.menu_assessments') as string,
         test: 'assessments',
