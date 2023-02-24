@@ -58,14 +58,14 @@ export const caseFiles: RouteConfig = {
           path: Routes.caseFile.assessments.home.path,
           name: Routes.caseFile.assessments.home.name,
           component: CaseFileAssessments,
-          meta: { level: UserRoles.level1, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
           props: true,
         },
         {
           path: Routes.caseFile.assessments.details.path,
           name: Routes.caseFile.assessments.details.name,
           component: CaseFileAssessmentDetails,
-          meta: { level: UserRoles.level1, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
           props: true,
         },
         {

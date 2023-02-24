@@ -123,7 +123,7 @@ describe('CaseFileAssessment.vue', () => {
         },
       },
       mocks: {
-        $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
+        $hasLevel: (lvl) => (lvl <= `level${level}`) && level !== null,
         $hasRole: (r) => r === hasRole,
         $services: services,
       },
@@ -146,12 +146,12 @@ describe('CaseFileAssessment.vue', () => {
 
   describe('Computed', () => {
     describe('canAdd', () => {
-      it('returns true for level1+ when not readonly', async () => {
-        await mountWrapper(false, 1);
+      it('returns true for level0+ when not readonly', async () => {
+        await mountWrapper(false, 0);
         expect(wrapper.vm.canAdd).toBeTruthy();
         await mountWrapper(
           false,
-          1,
+          0,
           null,
           {
             computed: {
@@ -256,7 +256,7 @@ describe('CaseFileAssessment.vue', () => {
 
     describe('pendingAssessments', () => {
       it('should filter by name and order', async () => {
-        await mountWrapper(false, 1, null, {
+        await mountWrapper(false, 0, null, {
           computed: {
             assessments() {
               return mockMappedAssessments;
@@ -287,7 +287,7 @@ describe('CaseFileAssessment.vue', () => {
 
     describe('completedAssessments', () => {
       it('should filter by name and order', async () => {
-        await mountWrapper(false, 1, null, {
+        await mountWrapper(false, 0, null, {
           computed: {
             assessments() {
               return mockMappedAssessments;

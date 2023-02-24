@@ -238,7 +238,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
   computed: {
     canAdd(): boolean {
-      return this.$hasLevel(UserRoles.level1) && !this.readonly;
+      return this.$hasLevel(UserRoles.level0) && !this.readonly;
     },
 
     canDelete(): boolean {
@@ -396,7 +396,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         canCopy: !this.readonly && this.$hasLevel(UserRoles.level1) && r.form?.publishStatus === PublishStatus.Published && r.form?.status === Status.Active
           && (r.response.entity.completionStatus === CompletionStatus.Pending || r.response.entity.completionStatus === CompletionStatus.Partial),
         canEdit: !this.readonly && this.$hasLevel(UserRoles.level3) && r.response.entity.completionStatus === CompletionStatus.Completed,
-        canLaunch: !this.readonly && this.$hasLevel(UserRoles.level1)
+        canLaunch: !this.readonly && this.$hasLevel(UserRoles.level0)
           && (r.response.entity.completionStatus === CompletionStatus.Pending || r.response.entity.completionStatus === CompletionStatus.Partial),
       }));
     },

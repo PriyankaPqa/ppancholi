@@ -267,7 +267,7 @@ export default mixins(caseFileDetail).extend({
         test: 'assessments',
         to: routes.caseFile.assessments.home.name,
         exact: false,
-        disabled: !this.$hasFeature(FeatureKeys.AssessmentsWithinCasefiles),
+        disabled: !this.$hasFeature(FeatureKeys.AssessmentsWithinCasefiles) || !this.canL0AccessAssessment,
       }, {
         text: this.$t('caseFileDetail.menu_referrals') as string,
         test: 'referrals',
@@ -278,6 +278,13 @@ export default mixins(caseFileDetail).extend({
         test: 'recovery-plan',
         disabled: true,
       }];
+    },
+
+    canL0AccessAssessment(): boolean {
+      if (useUserStore().getUser().currentRole() === 'level0') {
+        return this.$hasFeature(FeatureKeys.L0Access) && this.event.assessmentsForL0usersEnabled;
+      }
+      return true;
     },
 
     canAccess(): boolean {

@@ -103,7 +103,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.events.assessments.complete.name,
         component: AssessmentRunner,
         meta: {
-          level: UserRoles.level1, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
+          level: UserRoles.level0, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
