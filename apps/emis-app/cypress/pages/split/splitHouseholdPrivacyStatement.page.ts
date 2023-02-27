@@ -7,9 +7,8 @@ export enum DataTest {
 export class SplitHouseholdPrivacyStatementPage extends CRCPrivacyStatementPage {
   private selectEvent = { selector: DataTest.selectEvent, type: 'input' };
 
-  public fillEvent(data: string) {
-    cy.getByDataTest(this.selectEvent).type(data);
-    cy.selectListElementByValue(DataTest.selectEvent, data);
+  public fillEvent(eventName: string) {
+    cy.searchAndSelect(DataTest.selectEvent, eventName);
     return new CRCPrivacyStatementPage();
   }
 }

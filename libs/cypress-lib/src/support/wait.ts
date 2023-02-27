@@ -94,3 +94,40 @@ Cypress.Commands.add('waitItemsRefreshUntilDisplayed', (piniaStoreId, selector, 
   // Call the custom command `cy.waitFirstRefreshUntilDisplayed` and pass the firstCheckFunction, selector, and opts as arguments
   cy.waitFirstRefreshUntilDisplayed(firstCheckFunction, selector, opts);
 });
+
+/**
+ Custom Cypress command that searches for an element with the specified data-test attribute, types a search string into the associated input field, and selects a corresponding option that matches the search string.
+ @param {string} dataTest - The data-test attribute value of the element to search for.
+ @param {string} searchString - The string to type into the associated input field and use to select the corresponding option.
+ @param {Object} [opts] - Optional object with timeout and interval properties.
+ @param {number} [opts.timeout=5000] - The maximum amount of time in milliseconds to wait for the option to be displayed.
+ @param {number} [opts.interval=500] - The amount of time in milliseconds to wait between retry attempts to find the option.
+ @throws Will throw an error if the option cannot be found after the maximum number of retries has been reached.
+ @returns {void}
+ */
+Cypress.Commands.add('searchAndSelect', (dataTest: string, searchString: string, opts = { timeout: 5000, interval: 500 }) => {
+  let retries = Math.floor(opts.timeout / opts.interval);
+  const valueWithoutSpace = searchString.replace(/\s/g, '');
+  const optionSelector = `div[data-test=${dataTest}__item--${valueWithoutSpace}]`;
+
+  const search = () => {
+    if (retries < 1) {
+      throw Error(`${searchString} was not found and could not be selected. Try another query or increase timeout`);
+    }
+
+    cy.getByDataTest({ selector: dataTest, type: 'input' }).clear().type(searchString);
+
+    cy.getByDataTest({ selector: dataTest, type: 'div' }).click().then(() => {
+      if (Cypress.$(optionSelector).length) {
+        cy.get(optionSelector).click();
+      } else {
+        cy.wait(opts.interval).then(() => {
+          retries -= 1;
+          search();
+        });
+      }
+    });
+  };
+
+  search();
+});
