@@ -23,7 +23,7 @@ const createAddressData: IAddressPageFields = {
   placeName: faker.address.city(),
   streetAddress: faker.address.streetAddress(),
   municipality: faker.address.cityName(),
-  province: faker.helpers.arrayElement(['Ontario', 'Quebec', 'Manitoba', 'Nunavut']),
+  province: faker.helpers.arrayElement(['OT', 'QC', 'MB', 'NU']),
   postalCode: faker.helpers.replaceSymbols('?#?#?#'),
   tempAddress: 'Remaining in home',
 };
