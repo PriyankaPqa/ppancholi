@@ -138,6 +138,9 @@ export default Vue.extend({
         case CaseFileActivityType.PaymentCompleted:
           return this.makeContentForFinancialAssistancePaymentCompleted();
 
+        case CaseFileActivityType.AssessmentAdded:
+          return this.makeContentForAssessmentAdded();
+
         case CaseFileActivityType.AssessmentCompleted:
           return this.makeContentForAssessmentCompleted();
 
@@ -535,6 +538,14 @@ export default Vue.extend({
         default:
           return '';
       }
+    },
+
+    makeContentForAssessmentAdded(): { title: TranslateResult, body: TranslateResult } {
+      const title = this.$t('caseFileActivity.activityList.title.AssessmentAdded');
+      const name = this.$m(this.item.details.assessmentName as IMultilingual);
+      const body = this.$t('caseFileActivity.activityList.body.assessmentAdded.name', { x: name });
+
+      return { title, body };
     },
 
     makeContentForAssessmentCompleted(): { title: TranslateResult, body: TranslateResult } {
