@@ -39,6 +39,21 @@
               {{ $t('caseFilesTable.myCaseFiles') }}
             </span>
           </div>
+          <template v-if="$hasFeature(FeatureKeys.ManageDuplicates)">
+            <v-divider vertical class="mx-3" />
+            <div class="flex-row">
+              <v-switch
+                v-model="duplicatesOnly"
+                data-test="caseFilesTable__duplicatesOnlySwitch"
+                hide-details />
+              <v-icon class="mx-2" small>
+                $rctech-duplicate
+              </v-icon>
+              <span class="rc-body14">
+                {{ $t('caseFilesTable.duplicates') }}
+              </span>
+            </div>
+          </template>
         </template>
       </filter-toolbar>
     </template>
@@ -117,6 +132,7 @@ import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 import { useUserStore } from '@/pinia/user/user';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useCaseFileStore, useCaseFileMetadataStore } from '@/pinia/case-file/case-file';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'CaseFilesTable',
@@ -142,7 +158,9 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     return {
       CaseFileStatus,
       FilterKey,
-      myCaseFiles: null as boolean,
+      FeatureKeys,
+      myCaseFiles: false,
+      duplicatesOnly: false,
       getLocalStringDate: helpers.getLocalStringDate,
       helpLink: 'zendesk.help_link.caseFilesTable',
       searchEventsResultIds: [] as string[],
@@ -181,6 +199,12 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
             },
           },
         },
+      };
+    },
+
+    duplicatesOnlyFilter(): Record<string, unknown> {
+      return {
+      'Entity/IsDuplicate': true,
       };
     },
 
@@ -332,29 +356,45 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       if (oldValue == null || newValue === oldValue) {
         return;
       }
-      let preparedFilters = {} as Record<string, unknown>;
-      if (newValue) {
-        // We apply filters from the switch + the ones from the filters panel
-        preparedFilters = { ...this.userFilters, ...this.myCaseFilesFilter };
-      } else if (isEqual(this.myCaseFilesFilter, this.userFilters)) { // If the only filter is myCaseFile
-        preparedFilters = null;
-      } else {
-        const caseFileFilterValue = Object.values(this.myCaseFilesFilter)[0];
-        preparedFilters = pickBy(this.userFilters, (value) => !isEqual(caseFileFilterValue, value)); // Only filters from panel
-      }
+      this.applyCustomFilter(newValue, this.myCaseFilesFilter);
+    },
 
-      this.onApplyFilter({ preparedFilters, searchFilters: this.userSearchFilters }, this.filterState);
+    duplicatesOnly(newValue, oldValue) {
+      if (oldValue == null || newValue === oldValue) {
+        return;
+      }
+      this.applyCustomFilter(newValue, this.duplicatesOnlyFilter);
     },
   },
 
   methods: {
+    applyCustomFilter(value: boolean, filter: Record<string, unknown>) {
+      let preparedFilters = {} as Record<string, unknown>;
+
+      if (value) {
+        // We apply filters from the switch + the ones from the filters panel
+        preparedFilters = { ...this.userFilters, ...filter };
+      } else if (isEqual(filter, this.userFilters)) { // If the only filter is myCaseFile
+        preparedFilters = null;
+      } else {
+        const filterValue = Object.values(filter)[0];
+        preparedFilters = pickBy(this.userFilters, (value) => !isEqual(filterValue, value)); // Only the other filters
+      }
+
+      this.onApplyFilter({ preparedFilters, searchFilters: this.userSearchFilters }, this.filterState);
+    },
+
     additionalFilters() {
-      return { myCaseFilesFilter: this.myCaseFiles };
+      return {
+        myCaseFilesFilter: this.myCaseFiles,
+        duplicatesOnlyFilter: this.duplicatesOnly,
+      };
     },
 
     setAdditionalFilters(state: unknown) {
       // eslint-disable-next-line
       this.myCaseFiles = (state as any)?.myCaseFilesFilter || false;
+      this.duplicatesOnly = (state as any)?.duplicatesOnlyFilter || false;
     },
 
     async fetchData(params: IAzureSearchParams) {

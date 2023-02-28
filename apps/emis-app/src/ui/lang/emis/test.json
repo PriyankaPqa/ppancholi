@@ -455,6 +455,7 @@
     "caseFileTable.tableHeaders.status": "caseFileTable.tableHeaders.status",
     "caseFileTable.tableHeaders.triage": "caseFileTable.tableHeaders.triage",
     "caseFiles.title": "caseFiles.title",
+    "caseFilesTable.duplicates": "",
     "caseFilesTable.filters.createdDate": "caseFilesTable.filters.createdDate",
     "caseFilesTable.filters.isDuplicate": "caseFilesTable.filters.isDuplicate",
     "caseFilesTable.myCaseFiles": "caseFilesTable.myCaseFiles",

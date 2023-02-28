@@ -18,6 +18,7 @@ export enum FeatureKeys {
   PaymentGroupStatusHistory = 'paymentGroupStatusHistory',
   AssessmentsMassAction = 'AssessmentsMassAction',
   L0Access = 'L0Access',
+  ManageDuplicates = 'manageDuplicates',
 }
 
 export enum FeatureType {

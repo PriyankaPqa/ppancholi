@@ -455,6 +455,7 @@
     "caseFileTable.tableHeaders.status": "Statut",
     "caseFileTable.tableHeaders.triage": "Classification",
     "caseFiles.title": "Dossiers",
+    "caseFilesTable.duplicates": "Doublons",
     "caseFilesTable.filters.createdDate": "Date de création",
     "caseFilesTable.filters.isDuplicate": "Est dupliqué",
     "caseFilesTable.myCaseFiles": "Mes dossiers",

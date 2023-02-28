@@ -124,63 +124,29 @@ describe('CaseFilesTable.vue', () => {
       });
       await wrapper.setData({
         myCaseFiles: false,
-        userSearchFilters: 'query',
+        duplicatesOnly: false,
       });
     });
 
     describe('myCaseFiles', () => {
-      describe('On', () => {
-        it('should call onApplyFilter with filters from the panel + myCaseFileFilter', async () => {
-          wrapper.vm.onApplyFilter = jest.fn();
-          const expected = { preparedFilters: { ...wrapper.vm.userFilters, ...wrapper.vm.myCaseFilesFilter }, searchFilters: wrapper.vm.userSearchFilters };
-
-          await wrapper.setData({
-            myCaseFiles: true,
-          });
-
-          expect(wrapper.vm.onApplyFilter)
-            .toHaveBeenCalledWith(expected, null);
+      it('should call applyCustomFilter with the right arguments', async () => {
+        wrapper.vm.applyCustomFilter = jest.fn();
+        await wrapper.setData({
+          myCaseFiles: true,
         });
+
+        expect(wrapper.vm.applyCustomFilter).toHaveBeenCalledWith(true, wrapper.vm.myCaseFilesFilter);
       });
+    });
 
-      describe('Off', () => {
-        it('should call onApplyFilter with {} if the only filter is myCaseFileFilter', async () => {
-          wrapper.vm.onApplyFilter = jest.fn();
-
-          await wrapper.setData({
-            myCaseFiles: true,
-          });
-
-          await wrapper.setData({
-            myCaseFiles: false,
-          });
-
-          expect(wrapper.vm.onApplyFilter)
-            .toHaveBeenLastCalledWith({ preparedFilters: {}, searchFilters: wrapper.vm.userSearchFilters }, null);
+    describe('duplicatesOnly', () => {
+      it('should call applyCustomFilter with the right arguments', async () => {
+        wrapper.vm.applyCustomFilter = jest.fn();
+        await wrapper.setData({
+          duplicatesOnly: true,
         });
 
-        it('should call onApplyFilter with filters from the panel if present', async () => {
-          wrapper.vm.onApplyFilter = jest.fn();
-
-          await wrapper.setData({
-            myCaseFiles: true,
-          });
-
-          const filterFromPanel = {
-            test: {},
-          };
-
-          await wrapper.setData({
-            myCaseFiles: false,
-            userFilters: {
-              ...wrapper.vm.myCaseFilesFilter,
-              ...filterFromPanel,
-            },
-          });
-
-          expect(wrapper.vm.onApplyFilter)
-            .toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel, searchFilters: wrapper.vm.userSearchFilters }, null);
-        });
+        expect(wrapper.vm.applyCustomFilter).toHaveBeenCalledWith(true, wrapper.vm.duplicatesOnlyFilter);
       });
     });
   });
@@ -420,6 +386,48 @@ describe('CaseFilesTable.vue', () => {
 
       await wrapper.setData({
         myCaseFiles: false,
+      });
+    });
+
+    describe('applyCustomFilter', () => {
+      describe('when value is True', () => {
+        it('should call onApplyFilter with filters from the panel + filter', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          const expected = { preparedFilters: { ...wrapper.vm.userFilters, ...wrapper.vm.myCaseFilesFilter }, searchFilters: wrapper.vm.userSearchFilters };
+
+          await wrapper.vm.applyCustomFilter(true, wrapper.vm.myCaseFilesFilter);
+
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenCalledWith(expected, null);
+        });
+      });
+
+      describe('when value is False', () => {
+        it('should call onApplyFilter with {} if the only filter is the applied filter', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+
+          await wrapper.vm.applyCustomFilter(false, wrapper.vm.myCaseFilesFilter);
+
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({ preparedFilters: {}, searchFilters: wrapper.vm.userSearchFilters }, null);
+        });
+
+        it('should call onApplyFilter with filters from the panel if present', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          const filterFromPanel = {
+            test: {},
+          };
+          await wrapper.setData({
+            userFilters: {
+              ...wrapper.vm.myCaseFilesFilter,
+              ...filterFromPanel,
+            },
+          });
+          await wrapper.vm.applyCustomFilter(false, wrapper.vm.myCaseFilesFilter);
+
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel, searchFilters: wrapper.vm.userSearchFilters }, null);
+        });
       });
     });
 
