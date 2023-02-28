@@ -593,13 +593,13 @@ describe('PaymentLineGroup.vue', () => {
 
     describe('cancellationReasons', () => {
       const mockReasons = [
-        { value: 0, text: '0 - Admin cancellation' },
-        { value: 1, text: '1 - Recipient rejected' },
-        { value: 2, text: '2 - Invalid PIN' },
-        { value: 3, text: '3 - Expired' },
-        { value: 4, text: '4 - Admin cancellation' },
-        { value: 5, text: '5 - Failed delivery' },
-        { value: 6, text: '6 - Unknown' },
+        { value: 0, text: '0 - Admin cancellation', dataTest: 'AdminCancellation0' },
+        { value: 1, text: '1 - Recipient rejected', dataTest: 'RecipientRejected' },
+        { value: 2, text: '2 - Invalid PIN', dataTest: 'InvalidPIN' },
+        { value: 3, text: '3 - Expired', dataTest: 'Expired' },
+        { value: 4, text: '4 - Admin cancellation', dataTest: 'AdminCancellation4' },
+        { value: 5, text: '5 - Failed delivery', dataTest: 'FailedDelivery' },
+        { value: 6, text: '6 - Unknown', dataTest: 'Unknown' },
       ];
       it('should return cancellation reasons with Unknown when feature flag is on', async () => {
         wrapper.vm.$hasFeature = jest.fn(() => true);

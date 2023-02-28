@@ -67,14 +67,14 @@ export default {
   // This function takes am enum in parameters and output a collection with [value: value of enum, text: the translation corresponding to the enum]
   enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string, textToValue = false) {
     const enumKeys = this.getEnumKeys(myEnum);
-    const data = [] as Array<{ value: unknown, text: string }>;
+    const data = [] as Array<{ value: unknown, text: string, dataTest: string }>;
     enumKeys.forEach((val) => {
       if (textToValue) {
         const text = i18n.t(`${translationPath}.${val}`).toString();
-        data.push({ value: text, text });
+        data.push({ value: text, text, dataTest: val });
       } else {
         const value = myEnum[val];
-        data.push({ value, text: i18n.t(`${translationPath}.${val}`).toString() });
+        data.push({ value, text: i18n.t(`${translationPath}.${val}`).toString(), dataTest: val });
       }
     });
     return data.sort((a, b) => a.text.localeCompare(b.text));

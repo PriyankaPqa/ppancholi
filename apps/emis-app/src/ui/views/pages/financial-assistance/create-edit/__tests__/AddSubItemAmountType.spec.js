@@ -35,10 +35,12 @@ describe('AddSubItemAmountType.vue', () => {
           {
             text: 'Fixed',
             value: 1,
+            dataTest: 'Fixed',
           },
           {
             text: 'Variable',
             value: 2,
+            dataTest: 'Variable',
           },
         ]);
       });

@@ -167,10 +167,12 @@ describe('AssessmentTemplatesHome.vue', () => {
             {
               text: 'Active',
               value: 'Active',
+              dataTest: 'Active',
             },
             {
               text: 'Inactive',
               value: 'Inactive',
+              dataTest: 'Inactive',
             },
           ],
           type: EFilterType.MultiSelect,
@@ -190,10 +192,12 @@ describe('AssessmentTemplatesHome.vue', () => {
             {
               text: 'Active',
               value: 'Active',
+              dataTest: 'Active',
             },
             {
               text: 'Inactive',
               value: 'Inactive',
+              dataTest: 'Inactive',
             },
           ],
           type: EFilterType.MultiSelect,

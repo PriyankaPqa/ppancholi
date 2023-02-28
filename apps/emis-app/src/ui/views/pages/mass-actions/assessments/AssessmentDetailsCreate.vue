@@ -66,7 +66,7 @@ import utils from '@libs/entities-lib/utils';
 import { ui } from '@/constants/ui';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import {
-  VSelectWithValidation,
+  VSelectWithValidation, VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import { AssessmentDetailsForm } from './AssessmentCreate.vue';
 
@@ -78,6 +78,7 @@ export default Vue.extend({
     VueEditor,
     LanguageTabs,
     VSelectWithValidation,
+    VTextFieldWithValidation,
   },
 
   props: {

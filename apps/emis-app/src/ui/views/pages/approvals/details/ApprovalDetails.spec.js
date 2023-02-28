@@ -65,10 +65,12 @@ describe('ApprovalDetails', () => {
           {
             text: 'Individual payment total',
             value: 2,
+            dataTest: 'IndividualPaymentTotal',
           },
           {
             text: 'Total financial assistance on case file',
             value: 1,
+            dataTest: 'TotalFinancialAssistanceOnCaseFile',
           },
         ]);
       });

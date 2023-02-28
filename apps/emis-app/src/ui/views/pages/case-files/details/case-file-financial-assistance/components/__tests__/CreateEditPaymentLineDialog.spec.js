@@ -289,12 +289,12 @@ describe('CreateEditPaymentLineDialog.vue', () => {
     describe('paymentModalities', () => {
       it('should return the list of payment modalities', () => {
         expect(wrapper.vm.paymentModalities).toEqual([
-          { value: 2, text: 'Cheque' },
-          { value: 3, text: 'Direct deposit' },
-          { value: 4, text: 'Gift card' },
-          { value: 5, text: 'Invoice' },
-          { value: 6, text: 'Prepaid card' },
-          { value: 7, text: 'Voucher' },
+          { value: 2, text: 'Cheque', dataTest: 'Cheque' },
+          { value: 3, text: 'Direct deposit', dataTest: 'DirectDeposit' },
+          { value: 4, text: 'Gift card', dataTest: 'GiftCard' },
+          { value: 5, text: 'Invoice', dataTest: 'Invoice' },
+          { value: 6, text: 'Prepaid card', dataTest: 'PrepaidCard' },
+          { value: 7, text: 'Voucher', dataTest: 'Voucher' },
         ]);
       });
     });

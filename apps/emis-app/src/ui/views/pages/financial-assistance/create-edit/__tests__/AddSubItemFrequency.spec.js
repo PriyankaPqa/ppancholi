@@ -40,10 +40,12 @@ describe('AddSubItemFrequency.vue', () => {
           {
             text: 'Multiple',
             value: 2,
+            dataTest: 'Multiple',
           },
           {
             text: 'One time',
             value: 1,
+            dataTest: 'OneTime',
           },
         ]);
       });
