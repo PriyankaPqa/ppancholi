@@ -403,21 +403,39 @@ describe('>>> Event Store', () => {
     });
   });
 
-  describe('assessmentsForL0UsersEnabled', () => {
-    it('calls the assessmentsForL0UsersEnabled service', async () => {
+  describe('toggleAssessmentsForL0Users', () => {
+    it('calls the toggleAssessmentsForL0Users service', async () => {
+          const event = mockEventEntity();
+          const bComponents = { ...baseComponents, set: jest.fn() };
+          const store = createTestStore(bComponents);
+          const payload = {
+            id: event.id,
+            assessmentsForL0UsersEnabled: true,
+          };
+          expect(entityService.toggleAssessmentsForL0Users).toHaveBeenCalledTimes(0);
+
+          const res = await store.toggleAssessmentsForL0Users(payload);
+
+          expect(entityService.toggleAssessmentsForL0Users).toHaveBeenCalledTimes(1);
+          expect(entityService.toggleAssessmentsForL0Users).toHaveBeenCalledWith(event.id, true);
+          expect(bComponents.set).toBeCalledWith(res);
+    });
+  });
+  describe('toggleRegistrationForL0Users', () => {
+    it('calls the toggleRegistrationForL0Users service', async () => {
       const event = mockEventEntity();
       const bComponents = { ...baseComponents, set: jest.fn() };
       const store = createTestStore(bComponents);
       const payload = {
         id: event.id,
-        assessmentsForL0UsersEnabled: true,
+        registrationsForL0UsersEnabled: true,
       };
-      expect(entityService.toggleAssessmentsForL0Users).toHaveBeenCalledTimes(0);
+      expect(entityService.toggleRegistrationForL0Users).toHaveBeenCalledTimes(0);
 
-      const res = await store.toggleAssessmentsForL0Users(payload);
+      const res = await store.toggleRegistrationForL0Users(payload);
 
-      expect(entityService.toggleAssessmentsForL0Users).toHaveBeenCalledTimes(1);
-      expect(entityService.toggleAssessmentsForL0Users).toHaveBeenCalledWith(event.id, true);
+      expect(entityService.toggleRegistrationForL0Users).toHaveBeenCalledTimes(1);
+      expect(entityService.toggleRegistrationForL0Users).toHaveBeenCalledWith(event.id, true);
       expect(bComponents.set).toBeCalledWith(res);
     });
   });

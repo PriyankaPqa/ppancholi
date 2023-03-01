@@ -123,6 +123,7 @@ describe('>>> Events Service', () => {
       status: EEventStatus.OnHold,
       selfRegistrationEnabled: false,
       assessmentsForL0usersEnabled: false,
+      registrationsForL0usersEnabled: false,
     }, { globalHandler: false });
   });
 
@@ -146,6 +147,12 @@ describe('>>> Events Service', () => {
       ids,
       api: 'searchMyEvents',
     });
+  });
+
+  test('searchMyRegistrationEvents is linked to the correct URL and params', async () => {
+    const params = mockSearchParams;
+    await service.searchMyRegistrationEvents(params);
+    expect(http.get).toHaveBeenCalledWith('event/search/events-open-for-registration', { params, isOData: true });
   });
 
   describe('setEventStatus', () => {
@@ -315,5 +322,10 @@ describe('>>> Events Service', () => {
   test('toggleAssessmentsForL0Users is linked to the correct url', async () => {
     await service.toggleAssessmentsForL0Users('ID', false);
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/ID/assessments-for-l0-users-enabled`, { assessmentsForL0UsersEnabled: false });
+  });
+
+  test('toggleRegistrationForL0Users is linked to the correct url', async () => {
+    await service.toggleRegistrationForL0Users('ID', false);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/ID/registrations-for-l0-users-enabled`, { registrationsForL0UsersEnabled: false });
   });
 });

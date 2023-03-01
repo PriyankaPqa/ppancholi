@@ -27,14 +27,11 @@ import Vue from 'vue';
 import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import _debounce from 'lodash/debounce';
 import helpers from '@/ui/helpers/helpers';
-import {
-  EEventStatus, IEventMainInfo,
-} from '@libs/entities-lib/event';
+import { EEventStatus, IEventMainInfo } from '@libs/entities-lib/event';
 
-import {
-  IEvent, RegistrationEvent, IEventData,
-} from '@libs/entities-lib/registration-event';
+import { IEvent, IEventData, RegistrationEvent } from '@libs/entities-lib/registration-event';
 import deepmerge from 'deepmerge';
+import Routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'EventsSelector',
@@ -100,6 +97,12 @@ export default Vue.extend({
     };
   },
 
+  computed: {
+    isOnRegistrationPage(): boolean {
+      return this.$route.name === Routes.registration.home.name;
+    },
+  },
+
   watch: {
     selectedItem(newVal) {
       this.$emit('input', newVal);
@@ -153,7 +156,8 @@ export default Vue.extend({
         filter = null;
       }
 
-      const res = await this.$services.events.searchMyEvents({
+      let res;
+      const params = {
         search: searchParam,
         searchFields: `Entity/Name/Translation/${this.$i18n.locale}`,
         orderBy: 'Entity/Schedule/OpenDate desc',
@@ -161,7 +165,14 @@ export default Vue.extend({
         searchMode: 'all',
         filter,
         top,
-      });
+      };
+
+      if (this.isOnRegistrationPage) {
+          res = await this.$services.events.searchMyRegistrationEvents(params);
+      } else {
+          res = await this.$services.events.searchMyEvents(params);
+      }
+
       const resultData = res?.value.map((e: IEventMainInfo) => new RegistrationEvent(e.entity as unknown as IEventData));
       this.events = resultData;
       if (this.excludedEvent && resultData) {

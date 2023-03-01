@@ -46,6 +46,8 @@ export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
 
   searchMyEventsById(ids: string[]): Promise<IAzureSearchResult<IEventMainInfo>>;
 
+  searchMyRegistrationEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventMainInfo>>;
+
   addRegistrationAssessment(eventId: uuid, payload: IRegistrationAssessment): Promise<IEventEntity>;
 
   editRegistrationAssessment(eventId:uuid, payload: IRegistrationAssessment): Promise<IEventEntity>;
@@ -53,6 +55,8 @@ export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
   removeRegistrationAssessment(eventId:uuid, agreementId: uuid): Promise<IEventEntity>;
 
   toggleAssessmentsForL0Users(id: uuid, assessmentsForL0UsersEnabled: boolean): Promise<IEventEntity>;
+
+  toggleRegistrationForL0Users(id: uuid, registrationsForL0UsersEnabled: boolean): Promise<IEventEntity>;
 }
 
 export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity> {
@@ -76,5 +80,7 @@ export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity>
   editShelterLocation: jest.Mock<IEventEntity>;
   searchMyEvents: jest.Mock<IAzureSearchResult<IEventMainInfo>>;
   searchMyEventsById: jest.Mock<IAzureSearchResult<IEventMainInfo>>;
+  searchMyRegistrationEvents: jest.Mock<IAzureSearchResult<IEventMainInfo>>;
   toggleAssessmentsForL0Users: jest.Mock<IEventEntity>;
+  toggleRegistrationForL0Users: jest.Mock<IEventEntity>;
 }

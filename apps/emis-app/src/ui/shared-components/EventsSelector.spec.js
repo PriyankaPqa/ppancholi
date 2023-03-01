@@ -7,6 +7,7 @@ import {
 import { EEventStatus, mockCombinedEvent, mockCombinedEvents } from '@libs/entities-lib/event';
 import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import { RegistrationEvent } from '@libs/entities-lib/registration-event';
+import Routes from '@/constants/routes';
 import { mockProvider } from '@/services/provider';
 import Component from './EventsSelector.vue';
 
@@ -15,7 +16,7 @@ const vuetify = new Vuetify();
 const services = mockProvider();
 let wrapper;
 
-const doMount = (shallow = true, fetchAllEvents = false) => {
+const doMount = (shallow = true, fetchAllEvents = false, otherOptions = {}) => {
   const options = {
     localVue,
     vuetify,
@@ -28,6 +29,7 @@ const doMount = (shallow = true, fetchAllEvents = false) => {
     mocks: {
       $services: services,
     },
+    ...otherOptions,
   };
   if (shallow) {
     wrapper = shallowMount(Component, options);
@@ -60,6 +62,20 @@ describe('EventsSelector.vue', () => {
         });
 
         expect(component.props(props)).toBe(false);
+      });
+    });
+  });
+
+  describe('Computed', () => {
+    describe('isOnRegistrationPage', () => {
+      it('should return true when user on Registration page', () => {
+        doMount(true, true, {
+          mocks: {
+            $services: services,
+            $route: { name: Routes.registration.home.name },
+          },
+        });
+        expect(wrapper.vm.isOnRegistrationPage).toBe(true);
       });
     });
   });
@@ -117,6 +133,24 @@ describe('EventsSelector.vue', () => {
         wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({ value: [...mockCombinedEvents()] }));
         await wrapper.vm.fetchEvents();
         expect(wrapper.vm.events).toEqual([new RegistrationEvent(mockCombinedEvent({ id: '2' }, 1).entity)]);
+      });
+
+      it('should call searchMyRegistrationEvents, fetch active events corresponding to the query when user is L0', async () => {
+        doMount(true, false, {
+          computed: {
+            isOnRegistrationPage: jest.fn(() => true),
+          },
+        });
+        await wrapper.vm.fetchEvents('test', 10);
+        expect(wrapper.vm.$services.events.searchMyRegistrationEvents).toHaveBeenCalledWith({
+          search: '((/.*test.*/ OR "\\"test\\""))',
+          searchFields: 'Entity/Name/Translation/en',
+          orderBy: 'Entity/Schedule/OpenDate desc',
+          queryType: 'full',
+          searchMode: 'all',
+          filter: { Entity: { Schedule: { Status: EEventStatus.Open } } },
+          top: 10,
+        });
       });
     });
 

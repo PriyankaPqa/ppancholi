@@ -240,44 +240,52 @@ export default mixins(caseFileDetail).extend({
       return householdHelpers.provinceCodeName(this.household?.address.address);
     },
 
+    isL0(): boolean {
+      return useUserStore().getUser().currentRole() === 'level0';
+    },
+
     tabs(): Array<INavigationTab> {
-      return [{
-        text: this.$t('caseFileDetail.menu_activity') as string,
-        test: 'case-file-activity',
-        icon: '',
-        to: routes.caseFile.activity.name,
-      }, {
-        text: this.$t('caseFileDetail.menu_case_note') as string,
-        test: 'case-note',
-        to: routes.caseFile.note.name,
-        disabled: !this.canAccess,
-      }, {
-        text: this.$t('caseFileDetail.menu_documents') as string,
-        test: 'documents',
-        to: routes.caseFile.documents.home.name,
-        exact: false,
-      }, {
-        text: this.$t('caseFileDetail.menu_financial_assistance') as string,
-        test: 'case-financial-assistance',
-        to: routes.caseFile.financialAssistance.home.name,
-        exact: false,
-        disabled: !this.canAccess,
-      }, {
-        text: this.$t('caseFileDetail.menu_assessments') as string,
-        test: 'assessments',
-        to: routes.caseFile.assessments.home.name,
-        exact: false,
-        disabled: !this.$hasFeature(FeatureKeys.AssessmentsWithinCasefiles) || !this.canL0AccessAssessment,
-      }, {
-        text: this.$t('caseFileDetail.menu_referrals') as string,
-        test: 'referrals',
-        to: routes.caseFile.referrals.home.name,
-        exact: false,
-      }, {
-        text: this.$t('caseFileDetail.menu_recoveryPlan') as string,
-        test: 'recovery-plan',
-        disabled: true,
-      }];
+        const tabs = [{
+          text: this.$t('caseFileDetail.menu_activity') as string,
+          test: 'case-file-activity',
+          icon: '',
+          to: routes.caseFile.activity.name,
+        }, {
+          text: this.$t('caseFileDetail.menu_case_note') as string,
+          test: 'case-note',
+          to: routes.caseFile.note.name,
+          disabled: !this.canAccess,
+        },
+          !this.isL0 && {
+          text: this.$t('caseFileDetail.menu_documents') as string,
+          test: 'documents',
+          to: routes.caseFile.documents.home.name,
+          exact: false,
+        }, {
+          text: this.$t('caseFileDetail.menu_financial_assistance') as string,
+          test: 'case-financial-assistance',
+          to: routes.caseFile.financialAssistance.home.name,
+          exact: false,
+        }, {
+          text: this.$t('caseFileDetail.menu_assessments') as string,
+          test: 'assessments',
+          to: routes.caseFile.assessments.home.name,
+          exact: false,
+          disabled: !this.$hasFeature(FeatureKeys.AssessmentsWithinCasefiles) || !this.canL0AccessAssessment,
+        },
+          !this.isL0 && {
+          text: this.$t('caseFileDetail.menu_referrals') as string,
+          test: 'referrals',
+          to: routes.caseFile.referrals.home.name,
+          exact: false,
+        },
+          !this.isL0 && {
+          text: this.$t('caseFileDetail.menu_recoveryPlan') as string,
+          test: 'recovery-plan',
+          disabled: true,
+        }];
+
+        return tabs.filter((t) => t);
     },
 
     canL0AccessAssessment(): boolean {

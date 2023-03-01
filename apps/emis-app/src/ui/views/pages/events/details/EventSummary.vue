@@ -74,13 +74,20 @@
             @edit="editSection($event, EEventSummarySections.CallCentre)" />
         </template>
 
-        <template v-if="showAccessAssessmentToggle" #toggleArea>
+        <template v-if="showToggleForL0Access" #toggleArea>
+          <event-summary-toggle
+            :toggle-value="event.registrationsForL0usersEnabled"
+            :loading="updatingRegistrationToggle"
+            :title-of-toggle="$t('eventSummary.registrationEnabled')"
+            data-test="event-summary-toggle-registration"
+            @toggleChanged="toggleRegistration($event)" />
+
           <event-summary-toggle
             :toggle-value="event.assessmentsForL0usersEnabled"
             :loading="updatingAccessAssessmentToggle"
             :title-of-toggle="$t('eventSummary.accessAssessmentEnabled')"
             is-last-child
-            data-test="event-summary-toggle-call-centre"
+            data-test="event-summary-toggle-assessment"
             @toggleChanged="toggleAccessAssessment($event)" />
         </template>
       </event-summary-section-body>
@@ -222,6 +229,7 @@ export default Vue.extend({
       currentDialog: null as DialogData,
       FeatureKeys,
       updatingAccessAssessmentToggle: false,
+      updatingRegistrationToggle: false,
       UserRoles,
     };
   },
@@ -299,7 +307,7 @@ export default Vue.extend({
       && (this.event.schedule.status === EEventStatus.Open || this.event.schedule.status === EEventStatus.OnHold);
     },
 
-    showAccessAssessmentToggle(): boolean {
+    showToggleForL0Access(): boolean {
       return this.event.callCentres.length && this.$hasLevel(UserRoles.level6) && this.$hasFeature(FeatureKeys.L0Access);
     },
   },
@@ -377,6 +385,25 @@ export default Vue.extend({
       }
 
       this.updatingAccessAssessmentToggle = false;
+    },
+
+    async toggleRegistration(toggleChangedResult: boolean) {
+      this.updatingRegistrationToggle = true;
+
+      const response = await useEventStore().toggleRegistrationForL0Users({
+        id: this.event.id,
+        registrationsForL0UsersEnabled: toggleChangedResult,
+      });
+
+      if (response) {
+        if (toggleChangedResult) {
+          this.$toasted.global.success(this.$t('eventSummary.registrationEnabled'));
+        } else {
+          this.$toasted.global.success(this.$t('eventSummary.registrationDisabled'));
+        }
+      }
+
+      this.updatingRegistrationToggle = false;
     },
   },
 });

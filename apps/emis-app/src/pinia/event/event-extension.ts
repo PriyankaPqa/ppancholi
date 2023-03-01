@@ -9,6 +9,7 @@ import {
 import helpers from '@/ui/helpers/helpers';
 import { EEventSummarySections } from '@/types';
 
+// eslint-disable-next-line max-lines-per-function
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<IEventEntity, IdParams>,
   entityService: EventsService | IEventsServiceMock,
@@ -144,6 +145,15 @@ export function getExtensionComponents(
     return null;
   }
 
+  async function toggleRegistrationForL0Users(payload: { id: uuid, registrationsForL0UsersEnabled: boolean }): Promise<IEventEntity> {
+    const data = await entityService.toggleRegistrationForL0Users(payload.id, payload.registrationsForL0UsersEnabled);
+    if (data) {
+      baseComponents.set(data);
+      return data;
+    }
+    return null;
+  }
+
   return {
     eventsFetched,
     agreementTypes,
@@ -165,5 +175,6 @@ export function getExtensionComponents(
     createEvent,
     updateEvent,
     toggleAssessmentsForL0Users,
+    toggleRegistrationForL0Users,
   };
 }

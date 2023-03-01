@@ -2,7 +2,7 @@
   <v-row class="no-gutters flex-column mt-0">
     <v-col
       col="12"
-      class="pt-0 pb-0 px-4 d-flex align-center justify-space-between"
+      class="pt-0 pb-0 px-4 d-flex align-center justify-space-between rc-body12"
       :class="isLastChild ? 'last-child-border' : 'child-border'"
       data-test="event-summary-toggle-title">
       {{ titleOfToggle }}

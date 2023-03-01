@@ -13,7 +13,6 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { Status } from '@libs/entities-lib/base';
-import EventSummaryToggle from '@/ui/views/pages/events/details/components/EventSummaryToggle.vue';
 import Component, { EDialogComponent } from '../EventSummary.vue';
 
 const localVue = createLocalVue();
@@ -237,21 +236,23 @@ describe('EventSummary.vue', () => {
       });
 
       describe('event-summary-toggle-call-centre', () => {
-        it('should display when showAccessAssessmentToggle is true', () => {
+        it('should display when showToggleForL0Access is true', () => {
           doMount(getPiniaForUser(UserRoles.level6), 6, {
-            showAccessAssessmentToggle() {
+            showToggleForL0Access() {
               return true;
             },
           });
-          const element = wrapper.findDataTest('event-summary-toggle-call-centre');
-          expect(element.exists()).toBeTruthy();
+          const toggleRegistration = wrapper.findDataTest('event-summary-toggle-registration');
+          const toggleAssessment = wrapper.findDataTest('event-summary-toggle-assessment');
+          expect(toggleRegistration.exists()).toBeTruthy();
+          expect(toggleAssessment.exists()).toBeTruthy();
         });
       });
 
-      describe('event-summary-toggle', () => {
+      describe('event-summary-toggle-assessment', () => {
         it('should call toggleAccessAssessment when changed', () => {
           doMount(getPiniaForUser(UserRoles.level6), 6, {
-            showAccessAssessmentToggle() {
+            showToggleForL0Access() {
               return true;
             },
           });
@@ -259,7 +260,7 @@ describe('EventSummary.vue', () => {
 
           expect(wrapper.vm.toggleAccessAssessment).toBeCalledTimes(0);
 
-          const element = wrapper.findComponent(EventSummaryToggle);
+          const element = wrapper.findDataTest('event-summary-toggle-assessment');
           element.vm.$emit('toggleChanged');
 
           expect(wrapper.vm.toggleAccessAssessment).toBeCalledTimes(1);
@@ -267,7 +268,7 @@ describe('EventSummary.vue', () => {
 
         it('should pass correct Props to EventSummaryToggle for call centre', async () => {
           doMount(getPiniaForUser(UserRoles.level6), 6, {
-            showAccessAssessmentToggle() {
+            showToggleForL0Access() {
               return true;
             },
           });
@@ -275,13 +276,50 @@ describe('EventSummary.vue', () => {
             updatingAccessAssessmentToggle: false,
           });
 
-          const element = wrapper.findDataTest('event-summary-toggle-call-centre');
+          const element = wrapper.findDataTest('event-summary-toggle-assessment');
           const propsLoading = 'loading';
           const propsToggleValue = 'toggleValue';
           const propsTitleOfToggle = 'titleOfToggle';
           expect(element.props(propsTitleOfToggle)).toEqual(wrapper.vm.$t('eventSummary.accessAssessmentEnabled'));
           expect(element.props(propsToggleValue)).toEqual(wrapper.vm.event.assessmentsForL0usersEnabled);
           expect(element.props(propsLoading)).toEqual(wrapper.vm.updatingAccessAssessmentToggle);
+        });
+      });
+
+      describe('event-summary-toggle-registration', () => {
+        it('should call toggleRegistration when changed', () => {
+          doMount(getPiniaForUser('level6'), 6, {
+            showToggleForL0Access() {
+              return true;
+            },
+          });
+          wrapper.vm.toggleRegistration = jest.fn();
+
+          expect(wrapper.vm.toggleRegistration).toBeCalledTimes(0);
+
+          const element = wrapper.findDataTest('event-summary-toggle-registration');
+          element.vm.$emit('toggleChanged');
+
+          expect(wrapper.vm.toggleRegistration).toBeCalledTimes(1);
+        });
+
+        it('should pass correct Props to EventSummaryToggle for call centre', async () => {
+          doMount(getPiniaForUser('level6'), 6, {
+            showToggleForL0Access() {
+              return true;
+            },
+          });
+          await wrapper.setData({
+            updatingRegistrationToggle: false,
+          });
+
+          const element = wrapper.findDataTest('event-summary-toggle-registration');
+          const propsLoading = 'loading';
+          const propsToggleValue = 'toggleValue';
+          const propsTitleOfToggle = 'titleOfToggle';
+          expect(element.props(propsTitleOfToggle)).toEqual(wrapper.vm.$t('eventSummary.registrationEnabled'));
+          expect(element.props(propsToggleValue)).toEqual(wrapper.vm.event.registrationsForL0usersEnabled);
+          expect(element.props(propsLoading)).toEqual(wrapper.vm.updatingRegistrationToggle);
         });
       });
     });
@@ -883,12 +921,12 @@ describe('EventSummary.vue', () => {
     describe('showAccessAssessmentToggle', () => {
       it('should return true when user has level6 and event has call centre', () => {
         doMount(getPiniaForUser(UserRoles.level6), 6, null, true);
-        expect(wrapper.vm.showAccessAssessmentToggle).toBeTruthy();
+        expect(wrapper.vm.showToggleForL0Access).toBeTruthy();
       });
 
       it('should return false when user doesnt have level 6,', () => {
         doMount(getPiniaForUser(UserRoles.level5), 5, null, true);
-        expect(wrapper.vm.showAccessAssessmentToggle).toBeFalsy();
+        expect(wrapper.vm.showToggleForL0Access).toBeFalsy();
       });
     });
   });

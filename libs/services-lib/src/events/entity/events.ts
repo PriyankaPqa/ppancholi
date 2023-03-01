@@ -143,8 +143,16 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
     }) as Promise<IAzureSearchResult<IEventMainInfo>>;
   }
 
+  async searchMyRegistrationEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventMainInfo>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/events-open-for-registration`, { params, isOData: true });
+  }
+
   async toggleAssessmentsForL0Users(id: uuid, assessmentsForL0UsersEnabled: boolean): Promise<IEventEntity> {
     return this.http.patch(`${this.baseUrl}/${id}/assessments-for-l0-users-enabled`, { assessmentsForL0UsersEnabled });
+  }
+
+  async toggleRegistrationForL0Users(id: uuid, registrationsForL0UsersEnabled: boolean): Promise<IEventEntity> {
+    return this.http.patch(`${this.baseUrl}/${id}/registrations-for-l0-users-enabled`, { registrationsForL0UsersEnabled });
   }
 
   private eventToCreateEventRequestPayload(event: IEventEntity): ICreateEventRequest {
@@ -177,6 +185,7 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
       reOpenReason: event.schedule.updateReason,
       selfRegistrationEnabled: event.selfRegistrationEnabled,
       assessmentsForL0usersEnabled: event.assessmentsForL0usersEnabled,
+      registrationsForL0usersEnabled: event.registrationsForL0usersEnabled,
     };
   }
 
