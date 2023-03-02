@@ -20,15 +20,15 @@ describe('HomeAddressTemplate.vue', () => {
   });
 
   describe('Template', () => {
-    it('should display the street without unit', () => {
+    it('should display the street without unit', async () => {
+      await wrapper.setProps({
+        address: mockAddress({ unitSuite: '' }),
+      });
       const el = wrapper.findDataTest('homeAddress__street');
       expect(el.text()).toBe('247 Some Street');
     });
 
-    it('should display the street with unit', async () => {
-      await wrapper.setProps({
-        address: mockAddress({ unitSuite: '123' }),
-      });
+    it('should display the street with unit', () => {
       const el = wrapper.findDataTest('homeAddress__street');
       expect(el.text()).toBe('247 Some Street #123');
     });

@@ -196,14 +196,14 @@ describe('householdHelpers', () => {
 
   describe('addressLine1', () => {
     it('returns the right data when there is a unit suite ', () => {
-      const household = { ...mockHouseholdCreate(), homeAddress: { ...mockHouseholdCreate().homeAddress, unitSuite: '13' } };
-
+      const household = mockHouseholdCreate() as unknown as HouseholdCreate;
       expect(householdHelpers.addressLine1(household as unknown as HouseholdCreate))
-        .toEqual(`13-${household.homeAddress.streetAddress}`);
+        .toEqual(`123-${household.homeAddress.streetAddress}`);
     });
 
     it('returns the right data when there is no unit suite ', () => {
-      const household = mockHouseholdCreate() as unknown as HouseholdCreate;
+      const household = { ...mockHouseholdCreate(), homeAddress: { ...mockHouseholdCreate().homeAddress, unitSuite: '' } }as unknown as HouseholdCreate;
+     
       expect(householdHelpers.addressLine1(household))
         .toEqual(`${household.homeAddress.streetAddress}`);
     });
@@ -227,7 +227,7 @@ describe('householdHelpers', () => {
   describe('getAddressLines', () => {
     it('should return proper data', () => {
       const household = mockHouseholdCreate() as unknown as HouseholdCreate;
-      expect(householdHelpers.getAddressLines(household.homeAddress)).toEqual(['247 Some Street', 'Ottawa, ON, K1W 1G7', 'Canada']);
+      expect(householdHelpers.getAddressLines(household.homeAddress)).toEqual(['123-247 Some Street', 'Ottawa, ON, K1W 1G7', 'Canada']);
     });
   });
 

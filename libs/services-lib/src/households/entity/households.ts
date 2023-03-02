@@ -246,7 +246,7 @@ id: string,
     return {
       country: address.country,
       streetAddress: address.streetAddress,
-      unitSuite: address.unitSuite,
+      unitSuite: address.unitSuite ? address.unitSuite : null,
       province: address.province ?? ECanadaProvinces.OT,
       specifiedOtherProvince: address.specifiedOtherProvince,
       city: address.city,

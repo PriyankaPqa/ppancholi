@@ -302,9 +302,11 @@ describe('>>> Beneficiaries Service', () => {
       let result = service.parseAddress(address);
       expect(result).toEqual(address);
 
+      address.unitSuite = '';
       address.province = null;
       address.specifiedOtherProvince = 'other province';
       result = service.parseAddress(address);
+      expect(result.unitSuite).toBe(null);
       expect(result.province).toBe(ECanadaProvinces.OT);
       expect(result.specifiedOtherProvince).toBe('other province');
     });

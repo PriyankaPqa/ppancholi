@@ -296,7 +296,7 @@ describe('household', () => {
                 postalCode: 'K1W 1G7',
                 province: 9,
                 streetAddress: '247 Some Street',
-                unitSuite: '',
+                unitSuite: '123',
               },
               addressType: 2,
               placeName: 'test',

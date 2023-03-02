@@ -11,7 +11,7 @@ export const mockAddressData = (force?: Partial<IAddressData>): IAddressData => 
   postalCode: 'K1W 1G7',
   latitude: 0,
   longitude: 0,
-  unitSuite: '',
+  unitSuite: '123',
   ...force,
 });
 
