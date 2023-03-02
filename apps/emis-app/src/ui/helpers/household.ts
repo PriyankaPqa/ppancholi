@@ -42,19 +42,19 @@ export default {
   },
 
   mobilePhoneNumber(member: IMemberEntity): string {
-    return this.phoneNumberDisplay(member.contactInformation?.mobilePhoneNumber) || '-';
+    return this.phoneNumberDisplay(member?.contactInformation?.mobilePhoneNumber) || '-';
   },
 
   homePhoneNumber(member: IMemberEntity): string {
-    return this.phoneNumberDisplay(member.contactInformation.homePhoneNumber) || '-';
+    return this.phoneNumberDisplay(member?.contactInformation?.homePhoneNumber) || '-';
   },
 
   alternatePhoneNumber(member: IMemberEntity): string {
-    return this.phoneNumberDisplay(member.contactInformation.alternatePhoneNumber) || '-';
+    return this.phoneNumberDisplay(member?.contactInformation?.alternatePhoneNumber) || '-';
   },
 
   alternatePhoneExtension(member: IMemberEntity): string {
-    if (member.contactInformation?.alternatePhoneNumber?.extension) {
+    if (member?.contactInformation?.alternatePhoneNumber?.extension) {
       return member.contactInformation.alternatePhoneNumber.extension;
     }
     return '-';
