@@ -1,9 +1,10 @@
-import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalTableData } from '@libs/entities-lib/approvals/approvals-table';
 import { useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockProvider } from '@/services/provider';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import Component from '../SubmitFinancialAssistancePaymentDialog.vue';
@@ -17,8 +18,9 @@ let wrapper;
 
 const { pinia, userStore } = useMockUserStore();
 const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
+const { userAccountStore } = useMockUserAccountStore(pinia);
 
-const doMount = (shallow = true, approvalRequired = false, approvalTable = null, hasFeature = true) => {
+const doMount = ({ approvalRequired = false, approvalTable, hasFeature = true, otherOptions = {} } = {}) => {
   const options = {
     localVue,
     pinia,
@@ -37,17 +39,24 @@ const doMount = (shallow = true, approvalRequired = false, approvalTable = null,
       $services: services,
       $hasFeature: () => hasFeature,
     },
+    ...otherOptions,
   };
-  if (shallow) {
-    wrapper = shallowMount(Component, options);
-  } else {
-    wrapper = mount(Component, options);
-  }
+
+  wrapper = shallowMount(Component, options);
+
   jest.clearAllMocks();
 };
 
 describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
   describe('Computed', () => {
+    describe('myUserRoleId', () => {
+      it('returns the right value', () => {
+        userAccountStore.getById = jest.fn(() => ({ roles: [{ optionItemId: 'my-role-id' }] }));
+        doMount();
+        expect(wrapper.vm.myUserRoleId).toEqual('my-role-id');
+      });
+    });
+
     describe('rules', () => {
       it('should return the correct rules', () => {
         doMount();
@@ -62,25 +71,25 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
 
     describe('useApprovalFlow', () => {
       it('returns true if approval is required and there is a table and feature flag is on', async () => {
-        doMount(true, true, {}, true);
+        doMount({ approvalRequired: true, approvalTable: {} });
 
         expect(wrapper.vm.useApprovalFlow).toBeTruthy();
       });
 
       it('returns false if there is no table', async () => {
-        doMount(true, true, null, true);
+        doMount({ approvalRequired: true });
 
         expect(wrapper.vm.useApprovalFlow).toBeFalsy();
       });
 
       it('returns false if approvalRequired is false', async () => {
-        doMount(true, false, {}, true);
+        doMount({ approvalRequired: false, approvalTable: {} });
 
         expect(wrapper.vm.useApprovalFlow).toBeFalsy();
       });
 
       it('returns false if feature flag is off', async () => {
-        doMount(true, true, {}, false);
+        doMount({ approvalRequired: true, approvalTable: {}, hasFeature: false });
 
         expect(wrapper.vm.useApprovalFlow).toBeFalsy();
       });
@@ -88,25 +97,25 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
 
     describe('hasInvalidTable', () => {
       it('returns true if approval is required and there is no table and feature flag is on', async () => {
-        doMount(true, true, null, true);
+        doMount({ approvalRequired: true });
 
         expect(wrapper.vm.hasInvalidTable).toBeTruthy();
       });
 
       it('returns false if approvalRequired is false', async () => {
-        doMount(true, false, {}, true);
+        doMount({ approvalRequired: false, approvalTable: {} });
 
         expect(wrapper.vm.hasInvalidTable).toBeFalsy();
       });
 
       it('returns false if there is a table', async () => {
-        doMount(true, true, {}, true);
+        doMount({ approvalRequired: true, approvalTable: {} });
 
         expect(wrapper.vm.hasInvalidTable).toBeFalsy();
       });
 
       it('returns false if feature flag is off', async () => {
-        doMount(true, true, null, false);
+        doMount({ approvalRequired: true, hasFeature: false });
 
         expect(wrapper.vm.hasInvalidTable).toBeFalsy();
       });
@@ -114,19 +123,19 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
 
     describe('approvalNotRequired', () => {
       it('returns true if approval is not required ', async () => {
-        doMount(true, false, null, true);
+        doMount();
 
         expect(wrapper.vm.approvalNotRequired).toBeTruthy();
       });
 
       it('returns true if feature flag is off', async () => {
-        doMount(true, true, {}, false);
+        doMount({ approvalRequired: true, approvalTable: {}, hasFeature: false });
 
         expect(wrapper.vm.approvalNotRequired).toBeTruthy();
       });
 
       it('returns false if feature flag is on and approvalRequired is true', async () => {
-        doMount(true, true, null, true);
+        doMount({ approvalRequired: true, approvalTable: null, hasFeature: true });
 
         expect(wrapper.vm.approvalNotRequired).toBeFalsy();
       });
@@ -134,28 +143,28 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
 
     describe('hasNoUsers', () => {
       it('returns false if feature flag is off', async () => {
-        doMount(true, true, {}, false);
+        doMount({ approvalRequired: true, approvalTable: {}, hasFeature: false });
         expect(wrapper.vm.hasNoUsers).toBeFalsy();
       });
 
       it('returns false if approval is not required', async () => {
-        doMount(true, false, {}, true);
+        doMount({ approvalRequired: false, approvalTable: {} });
         expect(wrapper.vm.hasNoUsers).toBeFalsy();
       });
 
       it('returns false if it requires approval and there are users to approve', async () => {
-        doMount(true, true, {}, true);
+        doMount({ approvalRequired: true, approvalTable: {} });
         await wrapper.setData({ users: ['user-id-1'] });
         expect(wrapper.vm.hasNoUsers).toBeFalsy();
       });
       it('returns false if it requires approval and the users are loading', async () => {
-        doMount(true, true, {}, true);
+        doMount({ approvalRequired: true, approvalTable: {} });
         await wrapper.setData({ loadingUsers: true });
         expect(wrapper.vm.hasNoUsers).toBeFalsy();
       });
 
       it('returns true if it requires approval and there are no users to approve', async () => {
-        doMount(true, true, {}, true);
+        doMount({ approvalRequired: true, approvalTable: {} });
         await wrapper.setData({ users: [], loadingUsers: false });
         expect(wrapper.vm.hasNoUsers).toBeTruthy();
       });
@@ -166,7 +175,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
     describe('onSubmit', () => {
       describe('Use approval flow', () => {
         it('should call submitApprovalRequest, emit update event and display a toast if form is valid', async () => {
-          doMount(true, true, true);
+          doMount({ approvalRequired: true, approvalTable: {} });
           wrapper.vm.$refs.submitPaymentForm.validate = jest.fn(() => true);
           wrapper.vm.closeSubmitPaymentDialog = jest.fn();
 
@@ -181,7 +190,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
         });
 
         it('should not call submitApprovalRequest if form is not valid', async () => {
-          doMount(true, true, true);
+          doMount({ approvalRequired: true, approvalTable: {} });
           wrapper.vm.$refs.submitPaymentForm.validate = jest.fn(() => false);
           wrapper.vm.closeSubmitPaymentDialog = jest.fn();
 
@@ -194,7 +203,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
 
       describe('Use regular flow', () => {
         it('should call submitPayment emit update event and display a toast if form is valid', async () => {
-          doMount(true, false, false);
+          doMount();
           wrapper.vm.$refs.submitPaymentForm.validate = jest.fn(() => true);
           wrapper.vm.closeSubmitPaymentDialog = jest.fn();
 
@@ -205,7 +214,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
         });
 
         it('should not call submitPayment if form is valid', async () => {
-          doMount(true, false, false);
+          doMount();
           wrapper.vm.$refs.submitPaymentForm.validate = jest.fn(() => false);
           wrapper.vm.closeSubmitPaymentDialog = jest.fn();
 
@@ -322,11 +331,37 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
         expect(wrapper.vm.approvalTable).toBeNull();
       });
 
-      it('should call getUsersByRolesAndEvent with proper event id and roles from the first group of approval table', async () => {
+      it('should call getUsersByRolesAndEvent with proper event id and roles returned by getCurrentApprovalRoles', async () => {
         doMount();
         wrapper.vm.getUsersByRolesAndEvent = jest.fn();
+        wrapper.vm.getCurrentApprovalRoles = jest.fn(() => ['roleId1']);
         await wrapper.vm.fetchDataForApproval();
-        expect(wrapper.vm.getUsersByRolesAndEvent).toBeCalledWith(mockApprovalTableData().groups[0].roles, 'eventId');
+        expect(wrapper.vm.getUsersByRolesAndEvent).toBeCalledWith(['roleId1'], 'eventId');
+      });
+    });
+
+    describe('getCurrentApprovalRoles', () => {
+      it('returns the roles in the group where the current user role is, if the role of the user is in an approval group', async () => {
+        doMount({ otherOptions: { computed: {
+          myUserRoleId() {
+            return 'my-user-role-id';
+          },
+        } } });
+        const approvalGroups = { groups: [{ roles: ['group-1-role'] }, { roles: ['my-user-role-id', 'group-2-role'] }] };
+        const roles = await wrapper.vm.getCurrentApprovalRoles(approvalGroups);
+        expect(roles).toEqual(['my-user-role-id', 'group-2-role']);
+      });
+
+      it('returns the first roles group, if the role of the user is not in an approval group', () => {
+        doMount({ otherOptions: { computed: {
+          myUserRoleId() {
+            return 'my-user-role-id';
+          },
+        } } });
+        const approvalGroups = { groups: [{ roles: ['group-1-role'] }, { roles: ['group-2-role'] }] };
+
+        const roles = wrapper.vm.getCurrentApprovalRoles(approvalGroups);
+        expect(roles).toEqual(['group-1-role']);
       });
     });
   });

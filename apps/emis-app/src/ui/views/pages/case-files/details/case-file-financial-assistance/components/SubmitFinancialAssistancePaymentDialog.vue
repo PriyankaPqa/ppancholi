@@ -86,6 +86,7 @@ import { useUserStore } from '@/pinia/user/user';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
+import { IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
 import helpers from '@libs/shared-lib/helpers/helpers';
 
 export default Vue.extend({
@@ -135,6 +136,10 @@ export default Vue.extend({
     };
   },
   computed: {
+    myUserRoleId() {
+      return useUserAccountStore().getById(useUserStore().getUserId())?.roles?.[0]?.optionItemId;
+    },
+
     rules(): Record<string, unknown> {
       return {
         agree: {
@@ -221,15 +226,23 @@ export default Vue.extend({
       this.loadingUsers = true;
       try {
         const approvalTable = await this.$services.approvalTables.getApprovalTableByProgramId(this.programId);
-        if (approvalTable.approvalBaseStatus === Status.Active) {
+        if (approvalTable && approvalTable.approvalBaseStatus === Status.Active) {
           this.approvalTable = approvalTable;
-          await this.getUsersByRolesAndEvent(approvalTable.groups[0].roles, this.eventId);
+          const approvalRoles = this.getCurrentApprovalRoles(approvalTable);
+          await this.getUsersByRolesAndEvent(approvalRoles, this.eventId);
         }
       } catch (e) {
         // If there is no approval table using the program and the programs required an approval table
       } finally {
         this.loadingUsers = false;
       }
+    },
+
+    getCurrentApprovalRoles(approvalTable: IApprovalTableEntityData): string[] {
+      // If the user who submits the request has a role that is in included in one of the approval groups, (eg: the submitter's role is in approval group 3)
+      // the approval flow should start at this group and bypass the previous groups (group 1 and group 2)
+      const groupContainingCurrentUserRole = approvalTable.groups?.find((g) => g.roles.includes(this.myUserRoleId));
+      return groupContainingCurrentUserRole?.roles || approvalTable.groups?.[0].roles;
     },
 
     getUserName(item: IUserAccountCombined): string {
