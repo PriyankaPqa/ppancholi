@@ -179,6 +179,7 @@
                   :disable-autocomplete="!enableAutocomplete"
                   prefix-data-test="address"
                   :home-address="address"
+                  is-edit-mode
                   @change="setAddress($event)" />
               </v-col>
             </v-row>

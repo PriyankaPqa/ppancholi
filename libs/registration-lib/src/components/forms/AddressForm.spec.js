@@ -143,10 +143,54 @@ describe('AddressForm.vue', () => {
           await element.vm.$emit('input');
           expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalledTimes(1);
         });
+
+        it('triggers resetGeoLocationInEditMode when is in edit mode', async () => {
+          const elementCity = wrapper.findDataTest('address__city');
+          const elementStreet = wrapper.findDataTest('address__street');
+          const elementProvince = wrapper.findDataTest('address__province');
+          const elementPostalCode = wrapper.findDataTest('address__postalCode');
+          wrapper.vm.resetGeoLocationInEditMode = jest.fn();
+          await wrapper.setProps({
+            isEditMode: true,
+          });
+          await elementCity.vm.$emit('input');
+          expect(wrapper.vm.resetGeoLocationInEditMode).toHaveBeenCalled();
+
+          await elementStreet.vm.$emit('input');
+          expect(wrapper.vm.resetGeoLocationInEditMode).toHaveBeenCalled();
+
+          await elementProvince.vm.$emit('input');
+          expect(wrapper.vm.resetGeoLocationInEditMode).toHaveBeenCalled();
+
+          await elementPostalCode.vm.$emit('input');
+          expect(wrapper.vm.resetGeoLocationInEditMode).toHaveBeenCalled();
+        });
+
+        it('triggers $resetGeoLocation when is not in edit mode', async () => {
+          const elementCity = wrapper.findDataTest('address__city');
+          const elementStreet = wrapper.findDataTest('address__street');
+          const elementProvince = wrapper.findDataTest('address__province');
+          const elementPostalCode = wrapper.findDataTest('address__postalCode');
+          jest.spyOn(wrapper.vm, '$resetGeoLocation');
+          await wrapper.setProps({
+            isEditMode: false,
+          });
+          await elementCity.vm.$emit('input');
+          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalled();
+
+          await elementStreet.vm.$emit('input');
+          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalled();
+
+          await elementProvince.vm.$emit('input');
+          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalled();
+
+          await elementPostalCode.vm.$emit('input');
+          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalled();
+        });
       });
 
       test('change event is emitted when form changes', async () => {
-        wrapper.vm.form.city = 'test';
+        wrapper.vm.form.city = 'Ottawa';
         expect(wrapper.emitted('change')[0]).toEqual([wrapper.vm.form]);
       });
     });
@@ -186,6 +230,62 @@ describe('AddressForm.vue', () => {
           expect(element.props('rules')).toEqual(wrapper.vm.rules.city);
         });
       });
+    });
+  });
+
+  describe('Methods', () => {
+    describe('resetGeoLocationInEditMode', () => {
+      it('should call $resetGeoLocation when isSameGeoLocation is false', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            apiKey: '1235',
+            homeAddress: mockAddress({ province: ECanadaProvinces.ON }),
+            canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
+            disableAutocomplete: false,
+          },
+          computed: {
+            isSameGeoLocation: () => false,
+          },
+        });
+        wrapper.vm.$resetGeoLocation = jest.fn();
+        wrapper.vm.resetGeoLocationInEditMode();
+        expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('watcher', () => {
+    it('should emit onChange event with proper payload', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          apiKey: '1235',
+          homeAddress: mockAddress({ province: ECanadaProvinces.ON }),
+          canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
+          disableAutocomplete: false,
+        },
+        data() {
+          return {
+            form: mockAddress({ province: ECanadaProvinces.ON }),
+            backUpForm: mockAddress({ province: ECanadaProvinces.ON }),
+          };
+        },
+      });
+      await wrapper.setData({
+        form: mockAddress({ province: ECanadaProvinces.QC }),
+      });
+      expect(wrapper.emitted('change')[0][0]).toEqual(wrapper.vm.form);
+
+      await wrapper.setData({
+        form: mockAddress({ province: ECanadaProvinces.ON }),
+      });
+      expect(wrapper.emitted('change')[0][0]).toEqual(wrapper.vm.backUpForm);
+
+      await wrapper.setData({
+        form: mockAddress({ unitSuite: '309' }),
+      });
+      expect(wrapper.emitted('change')[0][0]).toEqual(wrapper.vm.form);
     });
   });
 });

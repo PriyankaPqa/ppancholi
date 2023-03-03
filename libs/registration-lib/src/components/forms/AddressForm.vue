@@ -18,7 +18,7 @@
           :data-test="`${prefixDataTest}__street`"
           :rules="rules.streetAddress"
           :label="`${$t('registration.addresses.streetAddress')} *`"
-          @input="$resetGeoLocation()" />
+          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
       </v-col>
 
       <v-col cols="6" sm="3" md="4">
@@ -35,7 +35,7 @@
           :rules="rules.city"
           :data-test="`${prefixDataTest}__city`"
           :label="`${$t('registration.addresses.city')} *`"
-          @input="$resetGeoLocation()" />
+          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
       </v-col>
 
       <v-col cols="12" sm="6" md="4">
@@ -46,14 +46,13 @@
           :data-test="`${prefixDataTest}__province`"
           :label="`${$t('registration.addresses.province')}*`"
           :items="canadianProvincesItems"
-          @input="$resetGeoLocation()" />
-        <v-text-field-with-validation
-          v-else
-          v-model="form.specifiedOtherProvince"
-          :rules="rules.specifiedOtherProvince"
-          :data-test="`${prefixDataTest}__specifiedOtherProvince`"
-          :label="`${$t('registration.addresses.province')}*`"
-          @input="$resetGeoLocation()" />
+          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />        <v-text-field-with-validation
+            v-else
+            v-model="form.specifiedOtherProvince"
+            :rules="rules.specifiedOtherProvince"
+            :data-test="`${prefixDataTest}__specifiedOtherProvince`"
+            :label="`${$t('registration.addresses.province')}*`"
+            @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
       </v-col>
 
       <v-col cols="6" sm="6" md="4">
@@ -62,7 +61,7 @@
           :rules="rules.postalCode"
           :data-test="`${prefixDataTest}__postalCode`"
           :label="`${$t('registration.addresses.postalCode')} *`"
-          @input="$resetGeoLocation()" />
+          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
       </v-col>
 
       <v-col cols="12" sm="6" md="8">
@@ -87,6 +86,7 @@ import {
 } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { IAddress } from '@libs/entities-lib/household-create';
+import _cloneDeep from 'lodash/cloneDeep';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import googleAutoCompleteMixin from './mixins/address';
 
@@ -125,11 +125,17 @@ export default mixins(googleAutoCompleteMixin).extend({
       type: Boolean,
       required: true,
     },
+
+    isEditMode: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
     return {
       form: null as IAddress,
+      backUpForm: null as IAddress,
     };
   },
 
@@ -168,19 +174,47 @@ export default mixins(googleAutoCompleteMixin).extend({
     isCanada(): boolean {
       return this.form?.country === 'CA';
     },
+
+    isSameGeoLocation() : boolean {
+      return (
+      this.form.streetAddress === this.backUpForm.streetAddress
+      && this.form.city === this.backUpForm.city
+      && this.form.province === this.backUpForm.province
+      && this.form.specifiedOtherProvince === this.backUpForm.specifiedOtherProvince
+      && this.form.postalCode === this.backUpForm.postalCode
+    );
+    },
+
+    isSameUnit(): boolean {
+      return this.form.unitSuite === this.backUpForm.unitSuite;
+    },
   },
 
   watch: {
     form: {
       deep: true,
       handler(form: IAddress) {
-        this.$emit('change', form);
+        // This part is for the scenario when the user has changed the address information( which will reset geolocation), and then change it back to the previous one.
+        // We want to keep the geolocation data seems the address hasn't been changed
+        if (this.isSameGeoLocation && this.isSameUnit) {
+          this.$emit('change', this.backUpForm);
+        } else {
+          this.$emit('change', form);
+        }
       },
     },
   },
 
   created() {
     this.form = this.homeAddress;
+    this.backUpForm = _cloneDeep(this.homeAddress);
+  },
+
+  methods: {
+    // Here we want to disable $resetGeoLocation when initial load in edit mode
+    resetGeoLocationInEditMode() {
+      !this.isSameGeoLocation && this.$resetGeoLocation();
+    },
   },
 });
 </script>

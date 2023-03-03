@@ -47,7 +47,7 @@
         @cancel="cancelAddresses()"
         @submit="submitAddresses()">
         <template #inline>
-          <addresses-lib :i18n="i18n" :disable-autocomplete="disableAutocomplete" />
+          <addresses-lib :i18n="i18n" :disable-autocomplete="disableAutocomplete" is-edit-mode />
         </template>
         <addresses-template :household="householdCreate" />
       </summary-section>

@@ -282,6 +282,20 @@ describe('AddressesLib.vue', () => {
       expect(wrapper.findComponent(AddressForm).exists()).toBeTruthy();
     });
 
+    it('should pass props isEditMode to AddressForm component', async () => {
+      const component = wrapper.findComponent(AddressForm);
+      const props = 'isEditMode';
+      await wrapper.setProps({
+        isEditMode: true,
+      });
+      expect(component.props(props)).toBe(true);
+
+      await wrapper.setProps({
+        isEditMode: false,
+      });
+      expect(component.props(props)).toBe(false);
+    });
+
     it('should hide AddressForm if no fixed home', async () => {
       wrapper = shallowMount(Component, {
         localVue,

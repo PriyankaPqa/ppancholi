@@ -24,6 +24,7 @@
         :disable-autocomplete="!enableAutocomplete"
         prefix-data-test="address"
         :home-address="address"
+        is-edit-mode
         @change="setAddress($event)" />
       <v-text-area-with-validation
         v-if="noFixedHome"

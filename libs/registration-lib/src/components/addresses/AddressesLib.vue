@@ -31,6 +31,7 @@
         prefix-data-test="address"
         :home-address="homeAddress"
         :disable-autocomplete="disableAutocomplete"
+        :is-edit-mode="isEditMode"
         @change="setHomeAddress($event)" />
     </template>
 
@@ -84,6 +85,11 @@ export default Vue.extend({
     disableAutocomplete: {
       type: Boolean,
       required: true,
+    },
+
+    isEditMode: {
+      type: Boolean,
+      default: false,
     },
   },
 

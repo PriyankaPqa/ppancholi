@@ -227,6 +227,13 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         await component.vm.$emit('change');
         expect(wrapper.vm.setAddress).toHaveBeenCalledTimes(1);
       });
+
+      it('should pass Prop isEditMode', async () => {
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
+        const component = wrapper.findComponent(AddressForm);
+        const props = 'isEditMode';
+        expect(component.props(props)).toBe(true);
+      });
     });
 
     describe('E-transfer', () => {
