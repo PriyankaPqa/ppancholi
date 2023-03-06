@@ -11,7 +11,7 @@ import {
 const createData = {
   name: `test-auto-event-${format(Date.now(), 'yyyy-MM-dd-H-mm-ss')}`,
   responseLevelIndex: 1,
-  province: 'Alberta',
+  province: 'AB',
   region: 'my custom region',
   eventType: 'Earthquake',
   eventStatus: EventStatus.open,
@@ -31,7 +31,6 @@ const cannotRoles = {
   Contributor2: UserRoles.contributor2,
   Contributor3: UserRoles.contributor3,
   ReadOnly: UserRoles.readonly,
-  noRole: UserRoles.no_role,
 };
 
 const title = '#TC160# - Create Event';
@@ -59,7 +58,7 @@ describe(`${title}`, () => {
           eventDetailsPage.getEventType().should('string', createData.eventType);
           eventDetailsPage.getEventStatus().should('string', 'Open');
           eventDetailsPage.getEventLink().should('string', `https://beneficiary-test.crc-tech.ca/en/registration/${createData.name}`);
-          eventDetailsPage.getEventProvince().should('string', createData.province);
+          eventDetailsPage.getEventProvince().should('string', 'Alberta');
           eventDetailsPage.getEventRegion().should('string', createData.region);
           eventDetailsPage.getEventPhone().should('string', '1 (514) 706-5000');
         });

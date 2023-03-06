@@ -1,28 +1,24 @@
-import { EEventCallCentreStatus, IEventCallCentre } from '@libs/entities-lib/event';
 import { faker } from '@faker-js/faker';
-import { format } from 'date-fns';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { IRegistrationLocationFields } from '../../../pages/events/addRegistrationLocation.page';
 import { EventDetailsPage } from '../../../pages/events/eventDetails.page';
+import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { useProvider } from '../../../provider/provider';
 
-const callCentreData: IEventCallCentre = {
+const registrationLocationData: IRegistrationLocationFields = {
   name: {
     translation: {
-      en: 'Ontario',
-      fr: 'Montreal',
+      en: 'Toronto',
+      fr: 'Toronto-fr',
     },
   },
-  details: {
-    translation: {
-      en: 'This is English Description of Event',
-      fr: "Ceci est la description française de l'événement",
-    },
-  },
-  startDate: format(Date.now(), 'yyyy-MM-dd'),
-  endDate: format(faker.date.future(), 'yyyy-MM-dd'),
-  status: EEventCallCentreStatus.Active,
+  country: 'CA',
+  streetAddress: faker.address.streetAddress(),
+  city: faker.address.cityName(),
+  provinceIndex: ECanadaProvinces.NT,
+  postalCode: faker.helpers.replaceSymbols('?#?#?#'),
 };
 
 const canRoles = {
@@ -41,17 +37,18 @@ const cannotRoles = {
   ReadOnly: UserRoles.readonly,
 };
 
-const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)] as UserRoles[];
 
 const prepareState = () => cy.getToken().then(async (accessToken) => {
   const provider = useProvider(accessToken.access_token);
   const { event, team } = await createEventWithTeamWithUsers(provider, allRolesValues);
+
   cy.wrap(event).as('eventCreated');
   cy.wrap(team).as('teamCreated');
   cy.wrap(provider).as('provider');
 });
 
-const title = '#TC163# - Add Event Call Centre';
+const title = '#TC164# - Add Event Registration Location';
 describe(`${title}`, () => {
   before(() => {
     prepareState();
@@ -69,40 +66,40 @@ describe(`${title}`, () => {
         before(() => {
           cy.login(roleValue);
         });
-        it('should successfully add event call centre', function () {
+        it('should successfully add event registration location', function () {
           cy.goTo(`events/${this.eventCreated.id}`);
-
           const eventDetailsPage = new EventDetailsPage();
-          eventDetailsPage.getEventStatus().should('eq', 'Open' || 'eq', 'On hold');
 
-          const addCallCentrePage = eventDetailsPage.addCallCentre();
-          addCallCentrePage.getCallCentreStatus().should('eq', 'Inactive');
-          addCallCentrePage.fill(callCentreData, roleName);
-          addCallCentrePage.toggleStatus();
-          addCallCentrePage.getCallCentreStatus().should('eq', 'Active');
-          addCallCentrePage.selectFrenchTab();
-          addCallCentrePage.fillFrenchData(callCentreData, roleName);
-          addCallCentrePage.addNewCallCentre();
+          const addRegistrationLocationPage = eventDetailsPage.addRegistrationLocation();
+          addRegistrationLocationPage.getRegistrationLocationStatus().should('eq', 'Active');
+          addRegistrationLocationPage.fill(registrationLocationData, roleName);
+          addRegistrationLocationPage.selectFrenchTab();
+          addRegistrationLocationPage.fillFrenchRegistrationLocationName(registrationLocationData.name.translation.fr, roleName);
+          addRegistrationLocationPage.addNewRegistrationLocation();
 
-          eventDetailsPage.getCallCentreNameByRole(roleName).should('string', `${callCentreData.name.translation.en}${roleName}`);
-          eventDetailsPage.getCallCentreStartDate().should('string', callCentreData.startDate);
-          eventDetailsPage.getCallCentreEndDate().should('string', callCentreData.endDate);
+          eventDetailsPage.getRegistrationLocationNameByRole(roleName).should('eq', `${registrationLocationData.name.translation.en}${roleName}`);
+          eventDetailsPage.getRegistrationLocationAddress().should('eq', `${registrationLocationData.streetAddress} ${registrationLocationData.city}`
+          + `, ${ECanadaProvinces[registrationLocationData.provinceIndex]}, ${registrationLocationData.postalCode}, ${registrationLocationData.country}`);
+          eventDetailsPage.getRegistrationLocationStatus().should('eq', 'Active');
         });
       });
     }
   });
 
   describe('Cannot Roles', () => {
+    before(() => {
+      cy.login();
+    });
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleValue);
         });
-        it('should not be able to add event call centre', function () {
+        it('should not be able to add event registration location', function () {
           cy.goTo(`events/${this.eventCreated.id}`);
 
           const eventDetailsPage = new EventDetailsPage();
-          eventDetailsPage.getCallCentreButton().should('not.exist');
+          eventDetailsPage.getRegistrationLocationButton().should('not.exist');
         });
       });
     }

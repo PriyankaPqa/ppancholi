@@ -1,5 +1,6 @@
 import { formatDate } from '@libs/cypress-lib/helpers/date';
 import { AddCallCentrePage } from './addCallCentre.page';
+import { AddRegistrationLocationPage } from './addRegistrationLocation.page';
 
 export enum DataTest {
   eventName = 'title-left-menu',
@@ -20,6 +21,10 @@ export enum DataTest {
   callCentreName = 'event-call-centre-section-name',
   callCentreStartDate = 'event-call-centre-section-start-date',
   callCentreEndDate = 'event-call-centre-section-end-date',
+  addEventRegLocation = 'add-section-button-RegistrationLocation',
+  registrationLocationName = 'event-registration-location-section-name',
+  registrationLocationAddress = 'event-registration-location-section-address',
+  registrationLocationStatus = 'event-registration-location-section-status',
 }
 
 export class EventDetailsPage {
@@ -58,6 +63,14 @@ export class EventDetailsPage {
   private callCentreStartDate = { selector: DataTest.callCentreStartDate };
 
   private callCentreEndDate = { selector: DataTest.callCentreEndDate };
+
+  private addNewEventRegistrationLocation = { selector: DataTest.addEventRegLocation };
+
+  private registrationLocationName = { selector: DataTest.registrationLocationName };
+
+  private registrationLocationAddress = { selector: DataTest.registrationLocationAddress };
+
+  private registrationLocationStatus = { selector: DataTest.registrationLocationStatus };
 
   public copyLink() {
     cy.getByDataTest(this.eventLink)
@@ -126,7 +139,10 @@ export class EventDetailsPage {
     return cy.getByDataTest(this.addNewCallCentre);
   }
 
-  public getCallCentreName(index = 0) {
+  public getCallCentreNameByRole(roleName: string, index = 0) {
+    if (roleName === 'Level5') {
+      cy.getByDataTestLike(this.callCentreName).eq(1).should('exist');
+    }
     return cy.getByDataTestLike(this.callCentreName).eq(index).invoke('text').then((text) => text.trim());
   }
 
@@ -136,5 +152,29 @@ export class EventDetailsPage {
 
   public getCallCentreEndDate(index = 0) {
     return cy.getByDataTestLike(this.callCentreEndDate).eq(index).invoke('text').then((date) => formatDate(date));
+  }
+
+  public addRegistrationLocation() {
+    cy.getByDataTest(this.addNewEventRegistrationLocation).click();
+    return new AddRegistrationLocationPage();
+  }
+
+  public getRegistrationLocationNameByRole(roleName: string, index = 0) {
+    if (roleName === 'Level5') {
+      cy.getByDataTestLike(this.registrationLocationName).eq(1).should('exist');
+    }
+    return cy.getByDataTestLike(this.registrationLocationName).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getRegistrationLocationAddress(index = 0) {
+    return cy.getByDataTestLike(this.registrationLocationAddress).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getRegistrationLocationStatus(index = 0) {
+    return cy.getByDataTestLike(this.registrationLocationStatus).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getRegistrationLocationButton() {
+    return cy.getByDataTest(this.addNewEventRegistrationLocation);
   }
 }

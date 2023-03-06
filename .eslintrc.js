@@ -133,6 +133,7 @@ module.exports = {
       files: ['**/*.cy.ts'],
       rules: {
         'func-names': 'off',
+        '@typescript-eslint/no-loop-func': 'off',
       },
     },
   ],

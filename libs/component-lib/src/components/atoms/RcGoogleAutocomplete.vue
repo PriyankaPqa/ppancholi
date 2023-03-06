@@ -263,7 +263,9 @@ export default Vue.extend({
         };
       }
 
-      await this.autocompleteService.getPlacePredictions(payload, this.displaySuggestions);
+      if (this.autocompleteService) {
+        await this.autocompleteService.getPlacePredictions(payload, this.displaySuggestions);
+      }
     },
 
     onPlaceChanged(placeId) {

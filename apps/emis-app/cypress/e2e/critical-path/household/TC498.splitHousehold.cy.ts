@@ -4,10 +4,13 @@ import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/ho
 import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
+import { IEventEntity } from '@libs/entities-lib/event';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 import { ICRCPrivacyStatementPageFields } from '../../../pages/registration/crcPrivacyStatement.page';
+import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
+import { DataTest } from '../../../pages/casefiles/houseHoldProfile.page';
 
 const privacyData: ICRCPrivacyStatementPageFields = {
   privacyRegistrationMethod: 'Phone',
@@ -23,7 +26,7 @@ const createAddressData: IAddressPageFields = {
   placeName: faker.address.city(),
   streetAddress: faker.address.streetAddress(),
   municipality: faker.address.cityName(),
-  province: faker.helpers.arrayElement(['OT', 'QC', 'MB', 'NU']),
+  province: faker.helpers.arrayElement(['ON', 'QC', 'MB', 'NU']),
   postalCode: faker.helpers.replaceSymbols('?#?#?#'),
   tempAddress: 'Remaining in home',
 };
@@ -44,112 +47,140 @@ const cannotRoles = {
   ReadOnly: UserRoles.readonly,
 };
 
-const prepareState = () => cy.getToken().then(async (accessToken) => {
-  const provider = useProvider(accessToken.access_token);
-  const event = await createEventWithTeamWithUsers(provider);
-  cy.wrap(event).as('eventCreated');
+const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
+
+let event = null as IEventEntity;
+let accessTokenL6 = '';
+
+const prepareState = async (accessToken: string, event: IEventEntity) => {
+  const provider = useProvider(accessToken);
   const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
-  await provider.households.postCrcRegistration(mockCreateHousehold);
   cy.wrap(mockCreateHousehold).as('household');
-});
+  await provider.households.postCrcRegistration(mockCreateHousehold);
+};
+
+const prepareEventTeam = async (accessToken: string) => {
+  const provider = useProvider(accessToken);
+  const result = await createEventWithTeamWithUsers(provider, allRolesValues);
+  event = result.event;
+  const { team } = result;
+  cy.wrap(team).as('teamCreated');
+  cy.wrap(provider).as('provider');
+};
 
 const title = '#TC498# - Split Household';
+
 describe(`${title}`, () => {
-  for (const [roleName, roleValue] of Object.entries(canRoles)) {
-    describe(`${roleName}`, () => {
-      before(() => {
-        cy.login(roleValue);
-        prepareState();
-        cy.goTo('casefile');
-      });
-      // eslint-disable-next-line
-      it('should successfully split the household', function() {
-        const caseFileHomePage = new CaseFilesHomePage();
-        const eventName = this.eventCreated.name.translation.en;
-
-        caseFileHomePage.waitUntilBeneficiaryIsDisplayed(this.household.primaryBeneficiary);
-        const householdProfilePage = caseFileHomePage.goToHouseholdProfile(this.household.primaryBeneficiary);
-        const firstNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.firstName;
-        const lastNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.lastName;
-        householdProfilePage.getGender().as('genderArray');
-        householdProfilePage.getDateOfBirth().as('dateOfBirthArray');
-        householdProfilePage.getRegistrationNumber().as('registrationNumber');
-
-        const splitHouseholdMemberPage = householdProfilePage.selectMemberToSplit();
-        splitHouseholdMemberPage.selectCheckBoxes();
-
-        const namePrimaryMemberAfterSplit = `${firstNamePrimaryMemberAfterSplit} ${lastNamePrimaryMemberAfterSplit}`;
-        const nameFirstMember = `${this.household.additionalMembers[1].identitySet.firstName} ${this.household.additionalMembers[1].identitySet.lastName}`;
-        const nameSecondMember = `${this.household.additionalMembers[2].identitySet.firstName} ${this.household.additionalMembers[2].identitySet.lastName}`;
-
-        const beneficiarySearchPage = splitHouseholdMemberPage.goToBeneficiarySearchPage();
-        beneficiarySearchPage.getFirstName().should('string', firstNamePrimaryMemberAfterSplit);
-        beneficiarySearchPage.getLastName().should('string', lastNamePrimaryMemberAfterSplit);
-        beneficiarySearchPage.searchBeneficiaries();
-        beneficiarySearchPage.verifyDuplicateBeneficiary().should('not.exist');
-        const splitHouseholdPrivacyStatementPage = beneficiarySearchPage.goToSelectEventPage();
-
-        const crcPrivacyStatementPage = splitHouseholdPrivacyStatementPage.fillEvent(eventName);
-        crcPrivacyStatementPage.getPrivacyCheckbox().should('not.be.checked');
-        crcPrivacyStatementPage.getPrivacyCheckbox().click({ force: true }).should('be.checked');
-        crcPrivacyStatementPage.fillPrivacyRegistrationMethod(privacyData.privacyRegistrationMethod);
-        crcPrivacyStatementPage.fillUserNameIfEmpty(privacyData.userName); // checks if CRC User Name field is empty and fills with a name if application is run using localhost.
-        const personalInfoSplitMemberPage = crcPrivacyStatementPage.goToPersonalInfoSplitMemberPage();
-        personalInfoSplitMemberPage.fill(primaryBeneficiaryData);
-
-        const addressSplitHouseholdPage = personalInfoSplitMemberPage.goToAddressSplitHouseholdPage();
-        addressSplitHouseholdPage.fill(createAddressData);
-        const householdMembersAfterSplitPage = addressSplitHouseholdPage.goToHouseholdMembersAfterSplitPage();
-
-        householdMembersAfterSplitPage.getAdditionalMemberDetails(0).should('string', nameFirstMember);
-        householdMembersAfterSplitPage.getAdditionalMemberDetails(1).should('string', nameSecondMember);
-
-        const reviewSplitInformationPage = householdMembersAfterSplitPage.goToReviewSplitInformationPage();
-        reviewSplitInformationPage.getPrimaryFullNameMember().should('string', firstNamePrimaryMemberAfterSplit);
-        reviewSplitInformationPage.getPrimaryFullNameMember().should('string', lastNamePrimaryMemberAfterSplit);
-
-        cy.get('@dateOfBirthArray').then((birthdateMember) => {
-          reviewSplitInformationPage.getBirthDate().should('string', birthdateMember[1]);
-          reviewSplitInformationPage.getAdditionalMemberBirthdate(0).should('string', birthdateMember[2]);
-          reviewSplitInformationPage.getAdditionalMemberBirthdate(1).should('string', birthdateMember[3]);
-        });
-        cy.get('@genderArray').then((gender) => {
-          reviewSplitInformationPage.getGender().should('string', gender[1]);
-          reviewSplitInformationPage.getAdditionalMemberGender(0).should('string', gender[2]);
-          reviewSplitInformationPage.getAdditionalMemberGender(1).should('string', gender[3]);
-        });
-        reviewSplitInformationPage.getStreetHomeAddress().should('string', createAddressData.streetAddress);
-        reviewSplitInformationPage.getLineHomeAddress().should('string', createAddressData.municipality).and('string', createAddressData.postalCode);
-        reviewSplitInformationPage.getAdditionalMemberName(0).should('string', nameFirstMember);
-        reviewSplitInformationPage.getAdditionalMemberName(1).should('string', nameSecondMember);
-        const splitConfirmationPage = reviewSplitInformationPage.goToConfirmationPage();
-
-        splitConfirmationPage.getMessage().should('string', firstNamePrimaryMemberAfterSplit).should('string', 'is now registered!');
-        splitConfirmationPage.getEventName().should('string', eventName);
-        splitConfirmationPage.closeRegistration(); // takes to household profile page
-
-        householdProfilePage.getFullNameOfMember(0).should('string', namePrimaryMemberAfterSplit);
-        householdProfilePage.getFullNameOfMember(1).should('string', nameFirstMember);
-        householdProfilePage.getFullNameOfMember(2).should('string', nameSecondMember);
-
-        const caseFileActivityPage = householdProfilePage.goToCaseFileActivityPage();
-        cy.get('@registrationNumber').then((registrationNumber) => {
-          caseFileActivityPage.getCaseFileActivityTitles()
-          .should('string', `Household member(s) split from Household #${registrationNumber}`)
-          .and('string', 'Registration');
-        });
-        caseFileActivityPage.getCaseFileActivityBodies()
-        .should('string', `Created By ${getUserName(roleName)}\nRegistration method: Phone`)
-        .and('string', `Individual(s) split: ${namePrimaryMemberAfterSplit}, ${nameFirstMember}, ${nameSecondMember}`);
-      });
+  before(() => {
+    cy.getToken().then(async (tokenResponse) => {
+      accessTokenL6 = tokenResponse.access_token;
+      await prepareEventTeam(accessTokenL6);
     });
-  }
+  });
+
+  after(function () {
+    if (this.teamCreated?.id && this.provider) {
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+    }
+  });
+
+  describe('Can roles', () => {
+    for (const [roleName, roleValue] of Object.entries(canRoles)) {
+      describe(`${roleName}`, () => {
+        beforeEach(async () => {
+          await prepareState(accessTokenL6, event);
+          cy.login(roleValue);
+          cy.goTo('casefile');
+        });
+        // eslint-disable-next-line
+        it('should successfully split the household', function() {
+          const caseFileHomePage = new CaseFilesHomePage();
+          const eventName = event.name.translation.en;
+          caseFileHomePage.waitUntilBeneficiaryIsDisplayed(this.household.primaryBeneficiary);
+          const householdProfilePage = caseFileHomePage.goToHouseholdProfile(this.household.primaryBeneficiary);
+          const firstNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.firstName;
+          const lastNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.lastName;
+          householdProfilePage.getGender().as('genderArray');
+          householdProfilePage.getDateOfBirth().as('dateOfBirthArray');
+          householdProfilePage.getRegistrationNumber().as('registrationNumber');
+
+          const splitHouseholdMemberPage = householdProfilePage.selectMemberToSplit();
+          splitHouseholdMemberPage.selectCheckBoxes();
+
+          const namePrimaryMemberAfterSplit = `${firstNamePrimaryMemberAfterSplit} ${lastNamePrimaryMemberAfterSplit}`;
+          const nameFirstMember = `${this.household.additionalMembers[1].identitySet.firstName} ${this.household.additionalMembers[1].identitySet.lastName}`;
+          const nameSecondMember = `${this.household.additionalMembers[2].identitySet.firstName} ${this.household.additionalMembers[2].identitySet.lastName}`;
+
+          const beneficiarySearchPage = splitHouseholdMemberPage.goToBeneficiarySearchPage();
+          beneficiarySearchPage.getFirstName().should('string', firstNamePrimaryMemberAfterSplit);
+          beneficiarySearchPage.getLastName().should('string', lastNamePrimaryMemberAfterSplit);
+          beneficiarySearchPage.searchBeneficiaries();
+          beneficiarySearchPage.verifyDuplicateBeneficiary().should('not.exist');
+          const splitHouseholdPrivacyStatementPage = beneficiarySearchPage.goToSelectEventPage();
+
+          const crcPrivacyStatementPage = splitHouseholdPrivacyStatementPage.fillEvent(eventName);
+          crcPrivacyStatementPage.getPrivacyCheckbox().should('not.be.checked');
+          crcPrivacyStatementPage.getPrivacyCheckbox().click({ force: true }).should('be.checked');
+          crcPrivacyStatementPage.fillPrivacyRegistrationMethod(privacyData.privacyRegistrationMethod);
+          crcPrivacyStatementPage.fillUserNameIfEmpty(privacyData.userName); // checks if CRC User Name field is empty and fills with a name if application is run using localhost.
+          const personalInfoSplitMemberPage = crcPrivacyStatementPage.goToPersonalInfoSplitMemberPage();
+          personalInfoSplitMemberPage.fill(primaryBeneficiaryData);
+
+          const addressSplitHouseholdPage = personalInfoSplitMemberPage.goToAddressSplitHouseholdPage();
+          addressSplitHouseholdPage.fill(createAddressData);
+          const householdMembersAfterSplitPage = addressSplitHouseholdPage.goToHouseholdMembersAfterSplitPage();
+
+          householdMembersAfterSplitPage.getAdditionalMemberDetails(0).should('string', nameFirstMember);
+          householdMembersAfterSplitPage.getAdditionalMemberDetails(1).should('string', nameSecondMember);
+
+          const reviewSplitInformationPage = householdMembersAfterSplitPage.goToReviewSplitInformationPage();
+          reviewSplitInformationPage.getPrimaryFullNameMember().should('string', firstNamePrimaryMemberAfterSplit);
+          reviewSplitInformationPage.getPrimaryFullNameMember().should('string', lastNamePrimaryMemberAfterSplit);
+
+          // eslint-disable-next-line max-nested-callbacks
+          cy.get('@dateOfBirthArray').then((birthdateMember) => {
+            reviewSplitInformationPage.getBirthDate().should('string', birthdateMember[1]);
+            reviewSplitInformationPage.getAdditionalMemberBirthdate(0).should('string', birthdateMember[2]);
+            reviewSplitInformationPage.getAdditionalMemberBirthdate(1).should('string', birthdateMember[3]);
+          });
+          // eslint-disable-next-line max-nested-callbacks
+          cy.get('@genderArray').then((gender) => {
+            reviewSplitInformationPage.getGender().should('string', gender[1]);
+            reviewSplitInformationPage.getAdditionalMemberGender(0).should('string', gender[2]);
+            reviewSplitInformationPage.getAdditionalMemberGender(1).should('string', gender[3]);
+          });
+          reviewSplitInformationPage.getStreetHomeAddress().should('string', createAddressData.streetAddress);
+          reviewSplitInformationPage.getLineHomeAddress().should('string', createAddressData.municipality).and('string', createAddressData.postalCode);
+          reviewSplitInformationPage.getAdditionalMemberName(0).should('string', nameFirstMember);
+          reviewSplitInformationPage.getAdditionalMemberName(1).should('string', nameSecondMember);
+          const splitConfirmationPage = reviewSplitInformationPage.goToConfirmationPage();
+
+          splitConfirmationPage.getMessage().should('string', firstNamePrimaryMemberAfterSplit).should('string', 'is now registered!');
+          splitConfirmationPage.getEventName().should('string', eventName);
+          splitConfirmationPage.closeRegistration(); // takes to household profile page
+
+          householdProfilePage.getFullNameOfMember(0).should('string', namePrimaryMemberAfterSplit);
+          householdProfilePage.getFullNameOfMember(1).should('string', nameFirstMember);
+          householdProfilePage.getFullNameOfMember(2).should('string', nameSecondMember);
+
+          const caseFileActivityPage = householdProfilePage.goToCaseFileActivityPage();
+          // eslint-disable-next-line max-nested-callbacks
+          cy.get('@registrationNumber').then((registrationNumber) => {
+            caseFileActivityPage.getCaseFileActivityTitles()
+              .should('string', `Household member(s) split from Household #${registrationNumber}`)
+              .and('string', 'Registration');
+          });
+          caseFileActivityPage.getCaseFileActivityBodies()
+            .should('string', `Created By ${getUserName(roleName)}\nRegistration method: Phone`)
+            .and('string', `Individual(s) split: ${namePrimaryMemberAfterSplit}, ${nameFirstMember}, ${nameSecondMember}`);
+        });
+      });
+    }
+  });
 
   describe('Cannot roles', () => {
     before(() => {
-      cy.login();
-      cy.log('prepareState');
-      prepareState();
+      prepareState(accessTokenL6, event);
     });
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
@@ -162,9 +193,8 @@ describe(`${title}`, () => {
           caseFileHomePage.waitUntilBeneficiaryIsDisplayed(this.household.primaryBeneficiary);
           const householdProfilePage = caseFileHomePage.goToHouseholdProfile(this.household.primaryBeneficiary);
 
-          // We make sure the page is loaded, by waiting for an element to be displayed
-          householdProfilePage.getEventName().should('string', this.eventCreated.name.translation.en);
-
+          // We  make sure the page is loaded, by waiting for data to be displayed. Note that we could have chosen something else.
+          cy.getByDataTest({ selector: DataTest.dateOfBirth }).should('be.visible');
           householdProfilePage.getSplitIcon().should('not.exist');
         });
       });

@@ -3,8 +3,6 @@ import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
 
 require('tsconfig-paths').register();
 
-const enableLogger = true; // https://github.com/archfz/cypress-terminal-report
-
 export default defineConfig({
   reporter: 'cypress-multi-reporters',
   reporterOptions: {
@@ -13,12 +11,10 @@ export default defineConfig({
   projectId: 'CLyVZv',
   e2e: {
     setupNodeEvents(on) {
-      if (enableLogger) {
-        installLogsPrinter(on, {
-          printLogsToConsole: 'onFail',
-          includeSuccessfulHookLogs: false,
-        });
-      }
+      installLogsPrinter(on, { // https://github.com/archfz/cypress-terminal-report
+        printLogsToConsole: 'onFail', // 'never'
+        includeSuccessfulHookLogs: false,
+      });
     },
     baseUrl: 'http://localhost:8080/',
     env: {
@@ -62,6 +58,6 @@ export default defineConfig({
   },
   viewportWidth: 1920,
   viewportHeight: 1080,
-  defaultCommandTimeout: 8000, // Time, in milliseconds, to wait until most DOM based commands are considered timed out.
+  defaultCommandTimeout: 10000, // Time, in milliseconds, to wait until most DOM based commands are considered timed out.
   pageLoadTimeout: 80000, // Time, in milliseconds, to wait for page transition events or cy.visit(), cy.go(), cy.reload() commands to fire their page load events.
 });

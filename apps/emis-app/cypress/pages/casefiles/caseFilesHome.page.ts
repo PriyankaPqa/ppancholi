@@ -1,4 +1,4 @@
-import { IMemberEntity } from '@libs/entities-lib/household-create';
+import { MemberCreateRequest } from '@libs/entities-lib/household-create';
 import { HouseholdProfilePage } from './houseHoldProfile.page';
 
 export enum DataTest {
@@ -6,12 +6,12 @@ export enum DataTest {
 }
 
 export class CaseFilesHomePage {
-  public waitUntilBeneficiaryIsDisplayed(primaryBeneficiary: IMemberEntity) {
+  public waitUntilBeneficiaryIsDisplayed(primaryBeneficiary: MemberCreateRequest) {
     const beneficiarySelector = { selector: `"${DataTest.beneficiaryNameLink}_${primaryBeneficiary.identitySet.firstName} ${primaryBeneficiary.identitySet.lastName}"`, type: 'a' };
     cy.waitItemsRefreshUntilDisplayed('case-file-entities', beneficiarySelector);
   }
 
-  public goToHouseholdProfile(primaryBeneficiary: IMemberEntity) {
+  public goToHouseholdProfile(primaryBeneficiary: MemberCreateRequest) {
     const beneficiarySelector = { selector: `"${DataTest.beneficiaryNameLink}_${primaryBeneficiary.identitySet.firstName} ${primaryBeneficiary.identitySet.lastName}"`, type: 'a' };
     cy.getByDataTest(beneficiarySelector).click();
     return new HouseholdProfilePage();
