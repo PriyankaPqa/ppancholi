@@ -1,9 +1,11 @@
 <template>
   <rc-status-chip :color="color" :text-color="textColor">
     <slot name="default">
-      <v-progress-circular v-if="showLoading" indeterminate :size="14" :width="2" class="mr-2" />
-      {{ text ? text : $t(textFromEnum) }}
-      <v-icon v-if="showChevron" right>
+      <v-progress-circular v-if="showLoading" indeterminate :size="14" :width="2" class="mr-2" data-test="loading-circular" />
+      <span data-test="chip-text">
+        {{ text ? text : $t(textFromEnum) }}
+      </span>
+      <v-icon v-if="showChevron" right data-test="chevron-icon">
         mdi-chevron-down
       </v-icon>
     </slot>
@@ -22,6 +24,7 @@ import { DocumentStatus } from '@libs/entities-lib/case-file-document';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { Status } from '@libs/entities-lib/base';
 import { CompletionStatus as AssessmentResponseCompletionStatus } from '@libs/entities-lib/assessment-template';
+import { HouseholdStatus } from '@libs/entities-lib/household';
 
 export default Vue.extend({
   name: 'StatusChip',
@@ -49,6 +52,7 @@ export default Vue.extend({
           'Status',
           'MassActionRunStatus',
           'AssessmentResponseCompletionStatus',
+          'HouseholdStatus',
         ].indexOf(value) > -1
       ),
     },
@@ -98,6 +102,8 @@ export default Vue.extend({
           return this.getMassActionRunStatusColor();
         case 'AssessmentResponseCompletionStatus':
           return this.getAssessmentResponseCompletionStatusColor();
+        case 'HouseholdStatus':
+          return this.getHouseholdStatusColor();
         default:
           return colors.chips.green;
       }
@@ -139,6 +145,8 @@ export default Vue.extend({
           return `enums.MassActionRunStatus.${MassActionRunStatus[this.status]}`;
         case 'AssessmentResponseCompletionStatus':
           return `enums.completionStatus.${AssessmentResponseCompletionStatus[this.status]}`;
+        case 'HouseholdStatus':
+          return `household.profile.householdStatus.${HouseholdStatus[this.status]}`;
 
         default:
           return '';
@@ -298,6 +306,22 @@ export default Vue.extend({
 
         case AssessmentResponseCompletionStatus.Obsolete:
           return colors.chips.light_grey;
+
+        default:
+          return colors.chips.green;
+      }
+    },
+
+    getHouseholdStatusColor(): string {
+      switch (this.status) {
+        case HouseholdStatus.Open:
+          return colors.chips.green;
+
+        case HouseholdStatus.Archived:
+          return colors.chips.grey;
+
+        case HouseholdStatus.Closed:
+          return colors.chips.red;
 
         default:
           return colors.chips.green;

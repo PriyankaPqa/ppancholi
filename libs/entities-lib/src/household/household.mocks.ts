@@ -2,8 +2,13 @@ import { mockAssessmentResponseEntity } from '../assessment-template';
 import { mockCaseFileEntity } from '../case-file';
 import { IEntity, mockBaseData } from '../base';
 import {
-  IHouseholdCombined, IHouseholdEntity, IHouseholdMetadata, IHouseholdMemberMetadata,
-  IHouseholdCaseFile, IDetailedRegistrationResponse,
+  HouseholdStatus,
+  IDetailedRegistrationResponse,
+  IHouseholdCaseFile,
+  IHouseholdCombined,
+  IHouseholdEntity,
+  IHouseholdMemberMetadata,
+  IHouseholdMetadata,
 } from './household.types';
 /* eslint-disable no-nested-ternary */
 
@@ -55,6 +60,7 @@ export const mockHouseholdEntity = (force?: Partial<IHouseholdEntity>): IHouseho
   ],
   primaryBeneficiary: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
   registrationNumber: 'string',
+  householdStatus: HouseholdStatus.Open,
   ...force,
 });
 

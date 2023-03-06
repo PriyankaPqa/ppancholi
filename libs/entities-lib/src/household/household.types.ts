@@ -4,6 +4,12 @@ import { IAddressData } from '../value-objects/address';
 import { IAssessmentResponseEntity } from '../assessment-template';
 import { ICaseFileEntity } from '../case-file';
 
+export enum HouseholdStatus {
+  Open = 0,
+  Archived = 1,
+  Closed = 2,
+}
+
 export interface IHouseholdAddress {
   address?: IAddressData;
   from?: string;
@@ -17,6 +23,7 @@ export interface IHouseholdEntity extends IEntity {
   members?: Array<string>;
   primaryBeneficiary?: string;
   registrationNumber?: string;
+  householdStatus: HouseholdStatus;
 }
 
 export interface IHouseholdMemberMetadata {

@@ -78,6 +78,7 @@ describe('HouseholdProfile.vue', () => {
         },
         mocks: {
           $services: services,
+          $hasFeature: () => true,
         },
 
       });
@@ -178,6 +179,20 @@ describe('HouseholdProfile.vue', () => {
         });
 
         expect(wrapper.findDataTest('member_address_edit_btn').exists()).toBeFalsy();
+      });
+    });
+
+    describe('household-profile-status', () => {
+      it('should render', () => {
+        const element = wrapper.findDataTest('household-profile-status');
+        expect(element.exists()).toBe(true);
+      });
+
+      it('calls the method onStatusChangeInit on change', () => {
+        jest.spyOn(wrapper.vm, 'onStatusChangeInit').mockImplementation(() => {});
+        const element = wrapper.findDataTest('household-profile-status');
+        element.vm.$emit('input');
+        expect(wrapper.vm.onStatusChangeInit).toHaveBeenCalledTimes(1);
       });
     });
 

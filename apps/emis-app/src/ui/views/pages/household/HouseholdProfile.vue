@@ -85,6 +85,17 @@
           </v-btn>
         </v-col>
         <v-col cols="10" class="pa-6">
+          <template v-if="$hasFeature(FeatureKeys.HouseholdProfileStatus)">
+            <div>
+              <status-select
+                data-test="household-profile-status"
+                :value="mockHouseholdEntity.householdStatus"
+                :statuses="statuses"
+                status-name="HouseholdStatus"
+                @input="onStatusChangeInit($event)" />
+            </div>
+            <v-divider class="mt-4 mb-6" />
+          </template>
           <h5 class="rc-heading-5">
             {{ $t('household.profile.active_in_events', { x: activeCaseFiles.length }) }}
           </h5>
@@ -185,7 +196,7 @@ import _isEmpty from 'lodash/isEmpty';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { IHouseholdCreate, IMember, Member } from '@libs/entities-lib/household-create';
-import { IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
+import { HouseholdStatus, IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
 import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
@@ -201,6 +212,7 @@ import { useRegistrationStore } from '@/pinia/registration/registration';
 import { IEventData } from '@libs/entities-lib/registration-event';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
+import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
@@ -216,6 +228,7 @@ export default mixins(household).extend({
     HouseholdMemberCard,
     HouseholdProfileHistory,
     AddEditAdditionalMembersLib,
+    StatusSelect,
   },
 
   props: {
@@ -239,6 +252,8 @@ export default mixins(household).extend({
       disabledAddMembers: false,
       showEditAddress: false,
       showProfileHistory: false,
+      mockHouseholdEntity: { householdStatus: HouseholdStatus.Open },
+      FeatureKeys,
     };
   },
 
@@ -344,6 +359,23 @@ export default mixins(household).extend({
       });
       return names;
     },
+
+    statuses(): HouseholdStatus[] {
+      // TODO this part will be rewritten in 6250, add rules
+      if (this.mockHouseholdEntity.householdStatus === HouseholdStatus.Open) {
+        return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+      }
+
+      if (this.mockHouseholdEntity.householdStatus === HouseholdStatus.Archived) {
+        return [HouseholdStatus.Open, HouseholdStatus.Closed];
+      }
+
+      if (this.mockHouseholdEntity.householdStatus === HouseholdStatus.Closed) {
+        return [HouseholdStatus.Open, HouseholdStatus.Archived];
+      }
+
+      return [];
+    },
   },
 
   async created() {
@@ -416,6 +448,10 @@ export default mixins(household).extend({
         return [m.currentAddress.shelterLocation, ...this.shelterLocations];
       }
       return this.shelterLocations;
+    },
+
+    onStatusChangeInit() {
+      // TODO add logic in 6250
     },
   },
 });
