@@ -11,6 +11,7 @@
       :preferred-languages-items="preferredLanguagesItems"
       :primary-spoken-languages-items="primarySpokenLanguagesItems"
       :skip-phone-email-rules="skipPhoneEmailRules"
+      :allow-duplicate-emails="allowDuplicateEmails"
       :person-id="member.id"
       :recaptcha-key="recaptchaKey"
       @change="setContactInformation($event)" />
@@ -57,6 +58,10 @@ export default Vue.extend({
       default: null,
     },
     skipPhoneEmailRules: {
+      type: Boolean,
+      default: false,
+    },
+    allowDuplicateEmails: {
       type: Boolean,
       default: false,
     },

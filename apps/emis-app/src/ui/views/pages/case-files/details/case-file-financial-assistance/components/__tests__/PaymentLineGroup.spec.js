@@ -205,7 +205,7 @@ describe('PaymentLineGroup.vue', () => {
         wrapper.vm.paymentGroup.cancellationDate = '2021-10-13T14:42:03.6568718Z';
         wrapper.vm.paymentGroup.cancellationBy = '0d22f50a-e1ab-435d-a9f0-cfda502866f4';
         const c = wrapper.vm.cancellationByText;
-        expect(c).toBe('caseFile.financialAssistance.cancellationReason.byOn');
+        expect(c).toEqual({ key: 'caseFile.financialAssistance.cancellationReason.byOn', params: [{ by: 'Jane Smith', on: 'Oct 13, 2021' }] });
         expect(wrapper.vm.$t).toHaveBeenCalledWith(
           'caseFile.financialAssistance.cancellationReason.byOn',
           { by: 'Jane Smith', on: helpers.getLocalStringDate(wrapper.vm.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'll') },

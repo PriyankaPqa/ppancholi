@@ -609,6 +609,7 @@ describe('ContactInformationForm.vue', () => {
         expect(wrapper.vm.resetEmailValidation).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.setEmailValidator).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$services.households.validatePublicEmail).toHaveBeenCalledTimes(0);
       });
 
       it('should do nothing if new email is the same as previous one', async () => {
@@ -616,6 +617,38 @@ describe('ContactInformationForm.vue', () => {
         await wrapper.vm.validateEmail('test@test.ca');
         expect(wrapper.vm.setEmailValidator).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$services.households.validatePublicEmail).toHaveBeenCalledTimes(0);
+      });
+
+      it('should disregard duplicate errors if allowDuplicateEmails', async () => {
+        wrapper.vm.$services.households.validatePublicEmail = jest.fn(() => ({
+          emailIsValid: false, errors: [{ code: 'hello' }, { code: 'errors.the-email-provided-already-exists-in-the-system' }],
+        }));
+        wrapper.vm.setEmailValidator = jest.fn();
+        await wrapper.setData({ previousEmail: '' });
+        await wrapper.vm.validateEmail('test@test.ca');
+        expect(wrapper.vm.setEmailValidator).toBeCalledWith({
+          emailIsValid: false, errors: [{ code: 'hello' }, { code: 'errors.the-email-provided-already-exists-in-the-system' }],
+        });
+
+        await wrapper.setProps({ allowDuplicateEmails: true });
+        jest.clearAllMocks();
+        await wrapper.setData({ previousEmail: '' });
+        await wrapper.vm.validateEmail('test@test.ca');
+        expect(wrapper.vm.setEmailValidator).toBeCalledWith({
+          emailIsValid: false, errors: [{ code: 'hello' }],
+        });
+
+        wrapper.vm.$services.households.validatePublicEmail = jest.fn(() => ({
+          emailIsValid: false, errors: [{ code: 'errors.the-email-provided-already-exists-in-the-system' }],
+        }));
+        await wrapper.setProps({ allowDuplicateEmails: true });
+        jest.clearAllMocks();
+        await wrapper.setData({ previousEmail: '' });
+        await wrapper.vm.validateEmail('test@test.ca');
+        expect(wrapper.vm.setEmailValidator).toBeCalledWith({
+          emailIsValid: true, errors: [],
+        });
       });
 
       it('should set emailValidatedByBackend', async () => {

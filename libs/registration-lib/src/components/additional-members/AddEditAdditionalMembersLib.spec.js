@@ -80,7 +80,7 @@ describe('AddEditAdditionalMembersLib.vue', () => {
 
       it('returns the right value when in Household profile', async () => {
         await wrapper.setProps({ inHouseholdProfile: true, index: 0 });
-        expect(wrapper.vm.getTitle).toEqual('household.details.edit.title');
+        expect(wrapper.vm.getTitle).toEqual({ key: 'household.details.edit.title', params: [{ x: 'Bob Smith' }] });
       });
     });
 

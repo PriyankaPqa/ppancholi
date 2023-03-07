@@ -539,6 +539,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
             name: 'firstname2 lastname',
           },
         ],
+        registrationNumber: 'registrationNumber',
       },
     },
     {
@@ -559,6 +560,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
             name: 'firstname2 lastname',
           },
         ],
+        registrationNumber: 'registrationNumber',
       },
     },
     {
@@ -579,6 +581,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
             name: 'firstname2 lastname',
           },
         ],
+        registrationNumber: 'registrationNumber',
       },
     },
     {
@@ -599,6 +602,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
             name: 'firstname2 lastname',
           },
         ],
+        registrationNumber: 'registrationNumber',
       },
     },
     {

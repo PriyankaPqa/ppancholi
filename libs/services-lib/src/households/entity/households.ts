@@ -7,6 +7,7 @@ import {
   IIndigenousCommunityData, IMember, ICurrentAddress, ICurrentAddressCreateRequest, ECurrentAddressTypes,
   MemberCreateRequest, IIdentitySet, IIdentitySetCreateRequest, IMemberEntity, IAddress, IValidateEmailResponse,
   IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest, IValidateEmailPublicRequest, IHoneyPotIdentitySet,
+  ICheckForPossibleDuplicateResponse, ISendOneTimeCodeRegistrationPublicPayload, IVerifyOneTimeCodeRegistrationPublicPayload,
 } from '@libs/entities-lib/household-create';
 import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity/versionedEntity.types';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
@@ -165,6 +166,22 @@ id: string,
 
   async getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
     return this.http.get(`${this.baseApi}/persons/metadata/${id}/history`);
+  }
+
+  checkForPossibleDuplicatePublic(eventId: string, member: IMember, recaptchaToken: string): Promise<ICheckForPossibleDuplicateResponse> {
+    return this.http.post(
+      `${this.baseApi}/persons/public/check-possible-duplicate`,
+      { eventId, contactInformation: member.contactInformation, identitySet: member.identitySet, recaptchaToken },
+      { globalHandler: false },
+);
+  }
+
+  sendOneTimeCodeRegistrationPublic(payload: ISendOneTimeCodeRegistrationPublicPayload): Promise<void> {
+    return this.http.post(`${this.baseApi}/persons/public/send-code-registration`, payload, { globalHandler: false });
+  }
+
+  verifyOneTimeCodeRegistrationPublic(payload: IVerifyOneTimeCodeRegistrationPublicPayload): Promise<boolean> {
+    return this.http.post(`${this.baseApi}/persons/public/verify-code-registration`, payload, { globalHandler: false });
   }
 
   /** Private methods * */

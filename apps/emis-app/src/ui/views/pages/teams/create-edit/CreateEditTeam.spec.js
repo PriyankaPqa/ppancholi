@@ -52,6 +52,7 @@ describe('CreateEditTeam.vue', () => {
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
+        $t: (k) => k,
         $services: services,
       },
       ...additionalOverwrites,

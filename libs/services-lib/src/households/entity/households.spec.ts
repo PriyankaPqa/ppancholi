@@ -5,6 +5,8 @@ import {
   ECurrentAddressTypes,
   IMember,
   IMemberMoveRequest,
+  ISendOneTimeCodeRegistrationPublicPayload,
+  IVerifyOneTimeCodeRegistrationPublicPayload,
   mockAddress,
   mockAddressData,
   mockCampGround,
@@ -259,6 +261,34 @@ describe('>>> Beneficiaries Service', () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
       expect(http.get).toHaveBeenCalledWith('household/search/households', { params, isOData: true });
+    });
+  });
+
+  describe('checkForPossibleDuplicatePublic', () => {
+    it('should call the proper endpoint', async () => {
+      const member = mockMember();
+      await service.checkForPossibleDuplicatePublic('eventId', member, 'captcha');
+      expect(http.post).toHaveBeenCalledWith(
+        `${service.baseApi}/persons/public/check-possible-duplicate`,
+        { eventId: 'eventId', contactInformation: member.contactInformation, identitySet: member.identitySet, recaptchaToken: 'captcha' },
+        { globalHandler: false },
+      );
+    });
+  });
+
+  describe('sendOneTimeCodeRegistrationPublic', () => {
+    it('should call the proper endpoint', async () => {
+      const params = {} as ISendOneTimeCodeRegistrationPublicPayload;
+      await service.sendOneTimeCodeRegistrationPublic(params);
+      expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/send-code-registration`, params, { globalHandler: false });
+    });
+  });
+
+  describe('verifyOneTimeCodeRegistrationPublic', () => {
+    it('should call the proper endpoint', async () => {
+      const params = {} as IVerifyOneTimeCodeRegistrationPublicPayload;
+      await service.verifyOneTimeCodeRegistrationPublic(params);
+      expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/verify-code-registration`, params, { globalHandler: false });
     });
   });
 

@@ -184,6 +184,11 @@ export default Vue.extend({
       default: false,
     },
 
+    allowDuplicateEmails: {
+      type: Boolean,
+      default: false,
+    },
+
     recaptchaKey: {
       type: String,
       default: '',
@@ -401,7 +406,7 @@ export default Vue.extend({
       if (email !== this.previousEmail || onSubmit) {
         this.previousEmail = email;
         this.emailChecking = true;
-        let result = null;
+        let result = null as IValidateEmailResponse;
 
         try {
           if (this.isCRCRegistration) {
@@ -409,7 +414,11 @@ export default Vue.extend({
           } else {
             result = await this.$services.households.validatePublicEmail({ emailAddress: email, personId: this.personId, recaptchaToken });
           }
-        } catch (e) {
+          if (this.allowDuplicateEmails && result.errors?.length) {
+            result.errors = result.errors.filter((e) => e.code !== 'errors.the-email-provided-already-exists-in-the-system');
+            result.emailIsValid = !result.errors.length;
+          }
+        } catch (e: any) {
           result = { emailIsValid: false, errors: e };
         } finally {
           this.emailChecking = false;

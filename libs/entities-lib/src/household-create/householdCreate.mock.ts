@@ -14,7 +14,12 @@ export const mockHouseholdCreateData = (): IHouseholdCreateData => ({
   primaryBeneficiary: mockMemberData(),
   homeAddress: mockAddressData(),
   additionalMembers: mockAdditionalMembers(),
-  consentInformation: null,
+  consentInformation: {
+    crcUserName: '',
+    registrationMethod: null,
+    registrationLocationId: null,
+    privacyDateTimeConsent: null,
+  },
 });
 
 export const mockHouseholdCreate = (force?: Partial<IHouseholdCreateData>): IHouseholdCreate => new HouseholdCreate(

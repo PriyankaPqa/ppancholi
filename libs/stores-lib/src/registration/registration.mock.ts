@@ -58,10 +58,12 @@ export const useMockRegistrationStore = (pinia?: TestingPinia) => {
   });
 
   registrationStore.getHouseholdCreate = jest.fn(() => new HouseholdCreate(mockHouseholdCreate()));
+  registrationStore.householdCreate = new HouseholdCreate(mockHouseholdCreate());
   registrationStore.getPreferredLanguages = jest.fn(() => mockPreferredLanguages());
   registrationStore.getPrimarySpokenLanguages = jest.fn(() => mockPrimarySpokenLanguages());
   registrationStore.getGenders = jest.fn(() => mockGenders());
   registrationStore.getEvent = jest.fn(() => mockEvent());
+  registrationStore.event = mockEvent();
   registrationStore.getIndigenousTypesItems = jest.fn(() => mockIndigenousTypesItems() as Record<string, TranslateResult>[]);
   registrationStore.getIndigenousCommunitiesItems = jest.fn(() => mockIndigenousCommunitiesItems() as Record<string, string>[]);
   registrationStore.tabs = mockTabs();

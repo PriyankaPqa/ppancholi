@@ -4,9 +4,11 @@ import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/ten
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { createTestingPinia } from '@pinia/testing';
 import { tabs } from '@/pinia/registration/tabs';
+import { mockProvider } from '@/services/provider';
 import Component from './Individual.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 const pinia = createTestingPinia({ stubActions: false });
 const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
 useMockRegistrationStore(pinia);
@@ -108,6 +110,9 @@ describe('Individual.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
+        mocks: {
+          $services: services,
+        },
       });
     });
     describe('back', () => {
@@ -136,6 +141,25 @@ describe('Individual.vue', () => {
           };
           await wrapper.vm.goNext();
           expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.$hasFeature).toHaveBeenCalledWith('BotProtection');
+        },
+      );
+      it(
+        'should called execute from recaptcha if on personalInfo stage and SelfRegistration is enabled and if BotProtection is enabled and if ip address is not in allowed list',
+        async () => {
+          wrapper.vm.$refs.recaptchaSubmit = {};
+          wrapper.vm.validateAndNext = jest.fn();
+          wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
+          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
+          wrapper.vm.$hasFeature = jest.fn(() => true);
+          tenantSettingsStore.recaptcha = {
+            ipAddressIsAllowed: false,
+            clientIpAddress: '',
+          };
+          await wrapper.vm.goNext();
+          expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.$hasFeature).toHaveBeenCalledWith('BotProtection');
+          expect(wrapper.vm.$hasFeature).toHaveBeenCalledWith('SelfRegistration');
         },
       );
       it('should call next from mixin otherwise', async () => {
@@ -148,10 +172,47 @@ describe('Individual.vue', () => {
     });
 
     describe('recaptchaCallBack', () => {
-      it('should set the token and call next from the mixin ', async () => {
-        wrapper.vm.next = jest.fn();
+      it('should set the token and call validateAndNext', async () => {
+        wrapper.vm.validateAndNext = jest.fn();
         await wrapper.vm.recaptchaCallBack('token');
         expect(wrapper.vm.recaptchaToken).toBe('token');
+        expect(wrapper.vm.validateAndNext).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('validateAndNext', () => {
+      it('calls checkForPossibleDuplicatePublic if on personalInfo stage and SelfRegistration is enabled', async () => {
+        window.confirm = () => true;
+        wrapper.vm.$services.households.checkForPossibleDuplicatePublic = jest.fn(() => ({
+          duplicateFound: true,
+          registeredToEvent: true,
+        }));
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.next = jest.fn();
+        await wrapper.vm.validateAndNext();
+        expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic)
+          .toHaveBeenCalledWith(wrapper.vm.event.id, wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary, wrapper.vm.recaptchaToken);
+        // will change once be is implemented
+        // expect(wrapper.vm.duplicateResult).toEqual(wrapper.vm.$services.households.checkForPossibleDuplicatePublic());
+        expect(wrapper.vm.showDuplicateDialog).toBeTruthy();
+        expect(wrapper.vm.next).toHaveBeenCalledTimes(0);
+      });
+      it('doesnt call checkForPossibleDuplicatePublic if not personalInfo stage or SelfRegistration is not enabled', async () => {
+        window.confirm = () => true;
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
+        wrapper.vm.$hasFeature = jest.fn(() => false);
+        wrapper.vm.next = jest.fn();
+        await wrapper.vm.validateAndNext();
+        expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic).not.toHaveBeenCalled();
+        expect(wrapper.vm.next).toHaveBeenCalledTimes(1);
+        jest.clearAllMocks();
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'review'));
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        await wrapper.vm.validateAndNext();
+        expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic).not.toHaveBeenCalled();
         expect(wrapper.vm.next).toHaveBeenCalledTimes(1);
       });
     });

@@ -118,14 +118,14 @@ export default Vue.extend({
       selectedAssessment: null as IAssessmentFormEntity,
       sectionTitle: {
           translation: {
-            en: this.$t('eventSummary.registrationAssessment.defaultTitle', 'en'),
-            fr: this.$t('eventSummary.registrationAssessment.defaultTitle', 'fr'),
+            en: this.$t('eventSummary.registrationAssessment.defaultTitle'),
+            fr: this.$t('eventSummary.registrationAssessment.defaultTitle'),
           },
         } as IMultilingual,
       sectionDetails: {
           translation: {
-            en: this.$t('eventSummary.registrationAssessment.defaultDescription', 'en'),
-            fr: this.$t('eventSummary.registrationAssessment.defaultDescription', 'fr'),
+            en: this.$t('eventSummary.registrationAssessment.defaultDescription'),
+            fr: this.$t('eventSummary.registrationAssessment.defaultDescription'),
           },
         } as IMultilingual,
       loading: false,

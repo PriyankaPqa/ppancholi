@@ -54,7 +54,7 @@ describe('ActivityWatcher', () => {
 
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
           htmlContent: '',
-          messages: 'session_will_expire.message',
+          messages: { key: 'session_will_expire.message', params: [{ x: wrapper.vm.timeBeforeLogOut }] },
           showCancelButton: false,
           submitActionLabel: 'session_will_expire.submit.label',
           title: 'session_will_expire.title',

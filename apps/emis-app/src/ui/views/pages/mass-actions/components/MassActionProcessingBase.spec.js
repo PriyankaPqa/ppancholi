@@ -31,7 +31,7 @@ describe('MassActionProcessingBase.vue', () => {
 
       it('should render processTitle if there is one', () => {
         const component = wrapper.findDataTest('processTitle');
-        expect(component.text()).toBe(wrapper.vm.processTitle);
+        expect(JSON.parse(component.text())).toEqual({ key: wrapper.vm.processTitle, params: [{ x: 50 }] });
       });
 
       it('should render processLabelOne if there is one', () => {

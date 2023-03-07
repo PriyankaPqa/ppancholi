@@ -262,7 +262,7 @@ describe('PrimaryMemberDialog', () => {
 
     describe('title', () => {
       it('returns the right value', () => {
-        expect(wrapper.vm.title).toEqual('household.details.edit.title');
+        expect(wrapper.vm.title).toEqual({ key: 'household.details.edit.title', params: [{ x: 'Bob Smith' }] });
       });
     });
 

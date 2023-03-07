@@ -1,6 +1,7 @@
 import { mockVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import { mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/entities-lib/household';
 import {
+  mockCheckForPossibleDuplicateResponse,
   mockGenders,
   mockIndigenousCommunitiesGetData, mockMemberData,
   mockPreferredLanguages,
@@ -40,4 +41,7 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   getHouseholdMetadataHistory: jest.fn(() => [mockVersionedEntity()]),
   getMemberHistory: jest.fn(() => [mockVersionedEntity()]),
   getMemberMetadataHistory: jest.fn(() => [mockVersionedEntity()]),
+  checkForPossibleDuplicatePublic: jest.fn(() => mockCheckForPossibleDuplicateResponse()),
+  sendOneTimeCodeRegistrationPublic: jest.fn(),
+  verifyOneTimeCodeRegistrationPublic: jest.fn(() => true),
 });

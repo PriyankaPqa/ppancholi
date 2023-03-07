@@ -2,6 +2,7 @@
   <personal-information-lib
     :min-age-registration="MIN_AGE_REGISTRATION"
     :i18n="i18n"
+    :allow-duplicate-emails="$hasFeature(FeatureKeys.SelfRegistration)"
     :recaptcha-key="$hasFeature(FeatureKeys.BotProtection) && !isCaptchaAllowedIpAddress ? recaptchaKey : ''" />
 </template>
 <script lang="ts">

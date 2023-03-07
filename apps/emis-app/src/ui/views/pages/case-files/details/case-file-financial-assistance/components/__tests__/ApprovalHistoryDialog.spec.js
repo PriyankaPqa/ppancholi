@@ -101,7 +101,7 @@ describe('ApprovalHistoryDialog.vue', () => {
           submittedTo: { userId: '11111111-1234-1111-1111-111111111111', userName: 'John Smith' },
           approvalAction: ApprovalAction.Submitted,
         };
-        expect(wrapper.vm.getRationaleText(item)).toEqual('caseFile.financialAssistance.approvalHistory.rationale.submittedTo');
+        expect(wrapper.vm.getRationaleText(item)).toEqual({ key: 'caseFile.financialAssistance.approvalHistory.rationale.submittedTo', params: [{ user: 'John Smith' }] });
       });
 
       it('returns the rationale', async () => {

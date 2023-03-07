@@ -512,7 +512,7 @@ describe('CaseFileActivityListItem.vue', () => {
           });
 
           expect(wrapper.vm.makeContentForAssignedToCaseFile()).toEqual({
-            title: 'caseFileActivity.activityList.title.AssignedToCaseFile',
+            title: { key: 'caseFileActivity.activityList.title.AssignedToCaseFile', params: [{ x: 'Jack White' }] },
             body: null,
           });
         });
@@ -569,7 +569,7 @@ describe('CaseFileActivityListItem.vue', () => {
           });
 
           expect(wrapper.vm.makeContentForUnassignedFromCaseFile()).toEqual({
-            title: 'caseFileActivity.activityList.title.UnassignedFromCaseFile',
+            title: { key: 'caseFileActivity.activityList.title.UnassignedFromCaseFile', params: [{ x: 'John Stevenson, Steven Johnson, Team 1, Team 2' }] },
             body: null,
           });
         });
@@ -762,6 +762,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForRegistration', () => {
         it('returns the correct data when action type is Registration,  RegistrationType is crc and there is a registration method', async () => {
           const item = mockCaseFileActivities(CaseFileActivityType.Registration)[0];
+          wrapper.vm.$t = jest.fn((k) => k);
           await wrapper.setProps({
             item,
           });
@@ -782,6 +783,7 @@ describe('CaseFileActivityListItem.vue', () => {
               registrationLocation: { translation: { en: 'Town Hall', fr: '' } },
             },
           };
+          wrapper.vm.$t = jest.fn((k) => k);
           await wrapper.setProps({
             item,
           });
@@ -875,7 +877,7 @@ describe('CaseFileActivityListItem.vue', () => {
           item,
         });
         expect(wrapper.vm.makeContentForHouseholdSplit()).toEqual({
-          title: 'caseFileActivity.activityList.title.HouseholdSplitTo',
+          title: { key: 'caseFileActivity.activityList.title.HouseholdSplitTo', params: [{ x: 'registrationNumber' }] },
           body: 'caseFileActivity.activityList.body.HouseholdSplitfirstname1 lastname, firstname2 lastname',
         });
       });
@@ -889,7 +891,7 @@ describe('CaseFileActivityListItem.vue', () => {
           item,
         });
         expect(wrapper.vm.makeContentForHouseholdCreatedAfterSplit()).toEqual({
-          title: 'caseFileActivity.activityList.title.HouseholdSplitFrom',
+          title: { key: 'caseFileActivity.activityList.title.HouseholdSplitFrom', params: [{ x: 'registrationNumber' }] },
           body: 'caseFileActivity.activityList.body.HouseholdSplitfirstname1 lastname, firstname2 lastname',
         });
       });
@@ -902,7 +904,7 @@ describe('CaseFileActivityListItem.vue', () => {
         });
 
         expect(wrapper.vm.makeContentForHouseholdMovedMembersOut()).toEqual({
-          title: 'caseFileActivity.activityList.title.HouseholdMovedMembersOut',
+          title: { key: 'caseFileActivity.activityList.title.HouseholdMovedMembersOut', params: [{ x: 'registrationNumber' }] },
           body: 'caseFileActivity.activityList.body.HouseholdMovedMembersfirstname1 lastname, firstname2 lastname',
         });
       });
@@ -915,7 +917,7 @@ describe('CaseFileActivityListItem.vue', () => {
         });
 
         expect(wrapper.vm.makeContentForHouseholdMovedMembersIn()).toEqual({
-          title: 'caseFileActivity.activityList.title.HouseholdMovedMembersIn',
+          title: { key: 'caseFileActivity.activityList.title.HouseholdMovedMembersIn', params: [{ x: 'registrationNumber' }] },
           body: 'caseFileActivity.activityList.body.HouseholdMovedMembersfirstname1 lastname, firstname2 lastname',
         });
       });

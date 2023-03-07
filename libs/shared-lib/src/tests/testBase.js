@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { createLocalVue as clv, RouterLinkStub } from '@vue/test-utils';
 import VueI18n from 'vue-i18n';
 import deepmerge from 'deepmerge';
@@ -51,7 +52,7 @@ export const getWrapper = (Component, options, {
       params: {},
       query: {},
     },
-    $t: jest.fn((key) => key),
+    $t: jest.fn((key, ...params) => (params?.length ? { key, params } : key)),
     $tc: jest.fn((key) => key),
     $m: jest.fn((m) => m?.translation?.en),
     $confirm: jest.fn(() => true),

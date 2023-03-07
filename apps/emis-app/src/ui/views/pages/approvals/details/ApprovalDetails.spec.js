@@ -86,7 +86,7 @@ describe('ApprovalDetails', () => {
 
         expect(wrapper.vm.filteredGroups).toEqual([
           {
-            groupIndex: 'approvals.nestedTable.group',
+            groupIndex: { key: 'approvals.nestedTable.group', params: [{ x: 1 }] },
             maximum: '$10.00',
             minimum: '$1.00',
             roles: 'Operations Manager',

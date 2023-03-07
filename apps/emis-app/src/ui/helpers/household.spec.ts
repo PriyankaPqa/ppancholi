@@ -202,8 +202,8 @@ describe('householdHelpers', () => {
     });
 
     it('returns the right data when there is no unit suite ', () => {
-      const household = { ...mockHouseholdCreate(), homeAddress: { ...mockHouseholdCreate().homeAddress, unitSuite: '' } }as unknown as HouseholdCreate;
-     
+      const household = { ...mockHouseholdCreate(), homeAddress: { ...mockHouseholdCreate().homeAddress, unitSuite: '' } } as unknown as HouseholdCreate;
+
       expect(householdHelpers.addressLine1(household))
         .toEqual(`${household.homeAddress.streetAddress}`);
     });

@@ -862,7 +862,7 @@ describe('ReviewRegistrationLib.vue', () => {
           },
         });
         wrapper.vm.addAdditionalMember();
-        expect(wrapper.vm.$toasted.global.warning).toHaveBeenCalledWith('warning.MAX_ADDITIONAL_MEMBERS_reached');
+        expect(wrapper.vm.$toasted.global.warning).toHaveBeenCalledWith({ key: 'warning.MAX_ADDITIONAL_MEMBERS_reached', params: [{ x: 15 }] });
       });
 
       it('should disabled the button add if limit is reached', () => {

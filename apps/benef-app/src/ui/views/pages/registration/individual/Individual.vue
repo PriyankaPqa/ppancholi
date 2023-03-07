@@ -72,6 +72,12 @@
       v-if="showErrorDialog"
       :show.sync="showErrorDialog"
       :phone="phoneAssistance" />
+    <duplicate-dialog
+      v-if="showDuplicateDialog"
+      :show.sync="showDuplicateDialog"
+      :duplicate-results="duplicateResult"
+      :recaptcha-token="recaptchaToken"
+      :phone="phoneAssistance" />
   </div>
 </template>
 
@@ -84,10 +90,13 @@ import SystemErrorDialog from '@libs/registration-lib/components/review/SystemEr
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { localStorageKeys } from '@/constants/localStorage';
 import routes from '@/constants/routes';
-import { VForm } from '@libs/shared-lib/types';
+import { IServerError, VForm } from '@libs/shared-lib/types';
 import helpers from '@libs/entities-lib/helpers';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { ICheckForPossibleDuplicateResponse } from '@libs/entities-lib/household-create';
+import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
+import { useRegistrationStore } from '@/pinia/registration/registration';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
@@ -96,6 +105,7 @@ import AdditionalMembers from '../additional-members/AdditionalMembers.vue';
 import ReviewRegistration from '../review/ReviewRegistration.vue';
 import ConfirmRegistration from '../confirmation/ConfirmRegistration.vue';
 import CompleteAssessment from '../complete-assessment/CompleteAssessment.vue';
+import DuplicateDialog from '../duplicate-dialog/DuplicateDialog.vue';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -111,6 +121,7 @@ export default mixins(individual).extend({
     CompleteAssessment,
     ConfirmationPrintLib,
     SystemErrorDialog,
+    DuplicateDialog,
   },
 
   data: () => ({
@@ -118,6 +129,8 @@ export default mixins(individual).extend({
     recaptchaKey: localStorage.getItem(localStorageKeys.recaptchaKey.name),
     FeatureKeys,
     showErrorDialog: false,
+    showDuplicateDialog: false,
+    duplicateResult: null as ICheckForPossibleDuplicateResponse,
   }),
 
   computed: {
@@ -136,7 +149,8 @@ export default mixins(individual).extend({
     },
 
     async goNext() {
-      if (this.currentTab.id === 'review' && this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
+      if ((this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress)
+        && (this.currentTab.id === 'review' || (this.$hasFeature(FeatureKeys.SelfRegistration) && this.currentTab.id === 'personalInfo'))) {
         // eslint-disable-next-line
         (this.$refs.recaptchaSubmit as any).execute();
       } else if (this.currentTab.id === 'personalInfo') {
@@ -152,13 +166,30 @@ export default mixins(individual).extend({
         helpers.scrollToFirstError('app');
         return;
       }
+
+      if (this.$hasFeature(FeatureKeys.SelfRegistration) && this.currentTab.id === 'personalInfo') {
+        try {
+          this.duplicateResult = await this.$services.households
+            .checkForPossibleDuplicatePublic(this.event.id, useRegistrationStore().householdCreate.primaryBeneficiary, this.recaptchaToken);
+        } catch (error) {
+          const e = (error as IServerError).response?.data?.errors || error;
+          applicationInsights.trackTrace('checkForPossibleDuplicatePublic error', { error: e }, 'Individual.vue', 'checkForPossibleDuplicatePublic');
+          this.showErrorDialog = true;
+        }
+
+        if (this.duplicateResult?.duplicateFound) {
+          this.showDuplicateDialog = true;
+          return;
+        }
+      }
+
       await this.next();
     },
 
     async recaptchaCallBack(token: string) {
       if (token) { // you're not a robot
         this.recaptchaToken = token;
-        await this.next();
+        await this.validateAndNext();
       }
     },
   },

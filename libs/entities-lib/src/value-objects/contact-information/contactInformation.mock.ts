@@ -2,7 +2,7 @@ import deepmerge from 'deepmerge';
 import { IOptionItemData } from '@libs/shared-lib/types';
 import { ContactInformation } from './contactInformation';
 import {
-  IContactInformationData, IContactInformation, IContactInformationCreateRequest, IValidateEmailResponse,
+  IContactInformationData, IContactInformation, IContactInformationCreateRequest, IValidateEmailResponse, ICheckForPossibleDuplicateResponse,
 } from './contactInformation.types';
 
 export const mockPreferredLanguages = (): IOptionItemData[] => [
@@ -127,4 +127,9 @@ export const mockContactInformationCreateRequest = (): IContactInformationCreate
 export const mockValidateEmailResponse = (): IValidateEmailResponse => ({
   errors: [],
   emailIsValid: true,
+});
+
+export const mockCheckForPossibleDuplicateResponse = (): ICheckForPossibleDuplicateResponse => ({
+  duplicateFound: false,
+  registeredToEvent: false,
 });

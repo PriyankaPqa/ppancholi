@@ -1,5 +1,12 @@
 import { IListOption, IOptionItemData } from '@libs/shared-lib/types';
 
+export enum CommunicationMethod {
+  Email = 1,
+  HomePhone = 2,
+  MobilePhone = 3,
+  AlternatePhone = 4,
+}
+
 export interface IPhoneNumber {
   number?: string;
   countryCode?: string;
@@ -65,4 +72,29 @@ export interface IApiError {
 export interface IValidateEmailResponse {
   emailIsValid: boolean;
   errors: IApiError[];
+}
+
+export interface ICheckForPossibleDuplicateResponse {
+  duplicateFound: boolean;
+  duplicateHouseholdId?: uuid;
+  registeredToEvent: boolean;
+  maskedEmail?: string;
+  maskedMobilePhone?: string;
+  maskedHomePhone?: string;
+  maskedAlternatePhoneNumber?: string;
+}
+
+export interface ISendOneTimeCodeRegistrationPublicPayload {
+  eventId: uuid;
+  duplicateHouseholdId: uuid;
+  recaptchaToken: string;
+  communicationMethod: CommunicationMethod;
+  language: string;
+}
+
+export interface IVerifyOneTimeCodeRegistrationPublicPayload {
+  eventId: uuid;
+  duplicateHouseholdId: uuid;
+  recaptchaToken: string;
+  code: string;
 }

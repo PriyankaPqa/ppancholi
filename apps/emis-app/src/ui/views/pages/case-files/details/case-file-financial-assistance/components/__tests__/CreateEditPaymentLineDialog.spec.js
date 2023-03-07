@@ -371,7 +371,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
 
         financialAssistance.groups[0].lines[0].amount = 2;
         await wrapper.setProps({ financialAssistance: { ...financialAssistance } });
-        expect(wrapper.vm.amountError).toBe('caseFile.financialAssistance.ETransfer.moreThanX');
+        expect(wrapper.vm.amountError).toEqual({ key: 'caseFile.financialAssistance.ETransfer.moreThanX', params: [{ maximumAmount: 10000 }] });
 
         financialAssistance.groups[0].groupingInformation.modality = EPaymentModalities.Cheque;
         await wrapper.setProps({ financialAssistance: { ...financialAssistance } });
