@@ -13,6 +13,7 @@ export enum DataTest {
   eventCreatedDate = 'event-created-date',
   eventReportedDate = 'event-reported-date',
   eventDescription = 'event-summary-description',
+  eventResponseLevel = 'event-summary-response-level',
   eventLink = 'event-summary-registration-link',
   eventRegistrationToggle = 'event-summary-toggle-self-registration',
   eventStatus = 'statusSelect__chip',
@@ -52,6 +53,8 @@ export class EventDetailsPage {
   private eventDescription = { selector: DataTest.eventDescription };
 
   private eventLink = { selector: DataTest.eventLink };
+
+  private eventResponseLevel = { selector: DataTest.eventResponseLevel };
 
   private eventRegistrationToggle = { selector: DataTest.eventRegistrationToggle, type: 'input' };
 
@@ -133,6 +136,10 @@ export class EventDetailsPage {
 
   public getEventDescription() {
     return cy.getByDataTest(this.eventDescription).invoke('text').then((text) => text.trim());
+  }
+
+  public getEventResponseLevel() {
+    return cy.getByDataTest(this.eventResponseLevel).invoke('text').then((text) => text.trim());
   }
 
   public getEventLink() {

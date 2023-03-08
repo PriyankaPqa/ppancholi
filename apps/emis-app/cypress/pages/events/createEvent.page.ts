@@ -1,3 +1,4 @@
+import { ECanadaProvinces, IMultilingual } from '@libs/shared-lib/types';
 import { EventDetailsPage } from './eventDetails.page';
 
 export enum DataTest {
@@ -23,16 +24,15 @@ export enum DataTest {
 }
 
 export enum EventStatus {
-    open = 'OPEN',
-    onHold = 'ON HOLD',
+    open = 'Open',
 }
 
-export interface IFields {
-    name?: string;
+export interface ICreateEventFields {
+    name?: IMultilingual;
     responseLevelIndex?: number;
     responseLevel?: string;
-    provinceIndex?: number;
-    province?:string;
+    provinceIndex?: ECanadaProvinces;
+    provinceCode?:string;
     provinceOther?: string;
     region?: string;
     eventTypeIndex?: number;
@@ -43,83 +43,59 @@ export interface IFields {
     eventStatus?: EventStatus;
     relatedEventsIndex?: number[];
     relatedEvents?: string[];
-    description?: string;
+    description?: IMultilingual;
     reOpenReason?: string;
 }
 
 export class CreateEventPage {
   private name = { selector: DataTest.name, type: 'input' };
 
-  private responseLevel = { selector: DataTest.responseLevel, type: 'div' };
-
-  private province = { selector: DataTest.province, type: 'div' };
-
   private provinceOther = { selector: DataTest.provinceOther, type: 'input' };
-
-  private region = { selector: DataTest.region, type: 'input' };
-
-  private eventType = { selector: DataTest.eventType, type: 'div' };
 
   private eventTypeOther = { selector: DataTest.eventTypeOther, type: 'input' };
 
   private assistanceNumber = { selector: DataTest.assistanceNumber, type: 'input' };
 
-  private reportedDate = { selector: DataTest.reportedDate, type: 'input' };
-
   private eventStatus = { selector: DataTest.eventStatus, type: 'input' };
 
-  private eventStatusText = { selector: DataTest.eventStatusText, type: 'span' };
+  private eventStatusText = { selector: DataTest.eventStatusText };
 
-  private registrationLink = { selector: DataTest.registrationLink, type: 'input' };
+  private description = { selector: DataTest.description, type: 'span' };
 
-  private relatedEvents = { selector: DataTest.relatedEvents, type: 'div' };
+  private cancelButton = { selector: DataTest.cancelButton };
 
-  private description = { selector: DataTest.description, type: 'textarea' };
+  private submitButton = { selector: DataTest.submitButton };
 
-  private cancelButton = { selector: DataTest.cancelButton, type: 'button' };
+  private frenchTab = { selector: DataTest.frenchTab };
 
-  private submitButton = { selector: DataTest.submitButton, type: 'button' };
-
-  private reOpenReason = { selector: DataTest.reOpenReason, type: 'input' };
-
-  private frenchTab = { selector: DataTest.frenchTab, type: 'button' };
-
-  private englishTab = { selector: DataTest.englishTab, type: 'button' };
-
-  load() {
-    cy.goTo('events/create');
-  }
-
-  setStatus(status: EventStatus) {
-    cy.getByDataTest(this.eventStatusText)
-      .invoke('text')
-      .then((currentStatusText) => {
-        if (currentStatusText !== status) {
-          cy.getByDataTest(this.eventStatus).click({ force: true });
-        }
-      });
+  public setStatus(status: EventStatus) {
+    cy.getByDataTest(this.eventStatusText).invoke('text').then((currentStatusText) => {
+      if (currentStatusText !== status) {
+        cy.getByDataTest(this.eventStatus).click({ force: true });
+      }
+    });
   }
 
   // eslint-disable-next-line complexity,max-statements
-  async fill(data: IFields) {
-    if (data.name) {
-      cy.getByDataTest(this.name).type(data.name);
+  async fill(data: ICreateEventFields) {
+    if (data.name.translation.en) {
+      cy.getByDataTest(this.name).type(data.name.translation.en);
     }
 
     if (data.responseLevelIndex !== undefined) {
-      cy.selectListElementByIndex(DataTest.responseLevel, data.responseLevelIndex);
+      cy.selectListElementByIndex(DataTest.responseLevel, data.responseLevelIndex - 1);
     }
 
     if (data.responseLevel) {
       cy.selectListElementByValue(DataTest.responseLevel, data.responseLevel);
     }
 
-    if (data.provinceIndex !== undefined) {
-      cy.selectListElementByIndex(DataTest.province, data.provinceIndex);
+    if (data.provinceIndex) {
+      cy.selectListElementByIndex(DataTest.province, data.provinceIndex - 1);
     }
 
-    if (data.province) {
-      cy.selectListElementByValue(DataTest.province, data.province);
+    if (data.provinceCode) {
+      cy.selectListElementByValue(DataTest.province, data.provinceCode);
     }
 
     if (data.provinceOther) {
@@ -162,13 +138,27 @@ export class CreateEventPage {
       cy.selectMultipleElementByValues(DataTest.relatedEvents, data.relatedEvents);
     }
 
-    if (data.description) {
-      cy.getByDataTest(this.description).type(data.description);
+    if (data.description.translation.en) {
+      cy.getByDataTest(this.description).type(data.description.translation.en);
     }
   }
 
-  saveAndGoToEventDetailsPage() {
+  async fillFrenchData(data: ICreateEventFields) {
+    if (data.name.translation.fr) {
+      cy.getByDataTest(this.name).clear().type(data.name.translation.fr);
+    }
+
+    if (data.description.translation.fr) {
+      cy.getByDataTest(this.description).clear().type(data.description.translation.fr);
+    }
+  }
+
+  public goToEventDetailsPage() {
     cy.getByDataTest(this.submitButton).click();
     return new EventDetailsPage();
+  }
+
+  public selectFrenchTab() {
+    cy.getByDataTest(this.frenchTab).click();
   }
 }
