@@ -1,5 +1,6 @@
 import { formatDate } from '@libs/cypress-lib/helpers/date';
 import { AddCallCentrePage } from './addCallCentre.page';
+import { AddShelterLocationPage } from './addShelterLocation.page';
 import { AddRegistrationLocationPage } from './addRegistrationLocation.page';
 
 export enum DataTest {
@@ -25,6 +26,10 @@ export enum DataTest {
   registrationLocationName = 'event-registration-location-section-name',
   registrationLocationAddress = 'event-registration-location-section-address',
   registrationLocationStatus = 'event-registration-location-section-status',
+  addShelterLocation = 'add-section-button-ShelterLocation',
+  shelterLocationName = 'event-shelter-location-section-name',
+  shelterLocationAddress = 'event-shelter-location-section-address',
+  shelterLocationStatus = 'event-shelter-location-section-status',
 }
 
 export class EventDetailsPage {
@@ -71,6 +76,14 @@ export class EventDetailsPage {
   private registrationLocationAddress = { selector: DataTest.registrationLocationAddress };
 
   private registrationLocationStatus = { selector: DataTest.registrationLocationStatus };
+
+  private addNewShelterLocation = { selector: DataTest.addShelterLocation };
+
+  private shelterLocationName = { selector: DataTest.shelterLocationName };
+
+  private shelterLocationAddress = { selector: DataTest.shelterLocationAddress };
+
+  private shelterLocationStatus = { selector: DataTest.shelterLocationStatus };
 
   public copyLink() {
     cy.getByDataTest(this.eventLink)
@@ -176,5 +189,29 @@ export class EventDetailsPage {
 
   public getRegistrationLocationButton() {
     return cy.getByDataTest(this.addNewEventRegistrationLocation);
+  }
+
+  public addShelterLocation() {
+    cy.getByDataTest(this.addNewShelterLocation).click();
+    return new AddShelterLocationPage();
+  }
+
+  public getShelterLocationNameByRole(roleName: string, index = 0) {
+    if (roleName === 'Level5') {
+      cy.getByDataTestLike(this.shelterLocationName).eq(1).should('exist');
+    }
+    return cy.getByDataTestLike(this.shelterLocationName).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getShelterLocationAddress(index = 0) {
+    return cy.getByDataTestLike(this.shelterLocationAddress).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getShelterLocationStatus(index = 0) {
+    return cy.getByDataTestLike(this.shelterLocationStatus).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getShelterLocationButton() {
+    return cy.getByDataTest(this.addNewShelterLocation);
   }
 }

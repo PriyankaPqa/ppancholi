@@ -1,23 +1,23 @@
 import { faker } from '@faker-js/faker';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { IRegistrationLocationFields } from '../../../pages/events/addRegistrationLocation.page';
+import { IShelterLocationFields } from '../../../pages/events/addShelterLocation.page';
 import { EventDetailsPage } from '../../../pages/events/eventDetails.page';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 
-const registrationLocationData: IRegistrationLocationFields = {
+const shelterLocationData: IShelterLocationFields = {
   name: {
     translation: {
-      en: 'Toronto',
-      fr: 'Toronto-fr',
+      en: 'Shelter Toronto-En-',
+      fr: 'Shelter Toronto-Fr-',
     },
   },
   country: 'CA',
   streetAddress: faker.address.streetAddress(),
   city: faker.address.cityName(),
-  provinceIndex: ECanadaProvinces.NT,
+  provinceIndex: ECanadaProvinces.NB,
   postalCode: faker.helpers.replaceSymbols('?#?#?#'),
 };
 
@@ -42,13 +42,12 @@ const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles
 const prepareState = () => cy.getToken().then(async (accessToken) => {
   const provider = useProvider(accessToken.access_token);
   const { event, team } = await createEventWithTeamWithUsers(provider, allRolesValues);
-
   cy.wrap(event).as('eventCreated');
   cy.wrap(team).as('teamCreated');
   cy.wrap(provider).as('provider');
 });
 
-const title = '#TC164# - Add Event Registration Location';
+const title = '#TC165# - Add Event Shelter Location';
 describe(`${title}`, () => {
   before(() => {
     prepareState();
@@ -66,21 +65,21 @@ describe(`${title}`, () => {
         before(() => {
           cy.login(roleValue);
         });
-        it('should successfully add event registration location', function () {
+        it('should successfully add event shelter location', function () {
           cy.goTo(`events/${this.eventCreated.id}`);
           const eventDetailsPage = new EventDetailsPage();
 
-          const addRegistrationLocationPage = eventDetailsPage.addRegistrationLocation();
-          addRegistrationLocationPage.getRegistrationLocationStatus().should('eq', 'Active');
-          addRegistrationLocationPage.fill(registrationLocationData, roleName);
-          addRegistrationLocationPage.selectFrenchTab();
-          addRegistrationLocationPage.fillFrenchRegistrationLocationName(registrationLocationData.name.translation.fr, roleName);
-          addRegistrationLocationPage.addNewRegistrationLocation();
+          const addShelterLocationPage = eventDetailsPage.addShelterLocation();
+          addShelterLocationPage.getShelterLocationStatus().should('eq', 'Active');
+          addShelterLocationPage.fill(shelterLocationData, roleName);
+          addShelterLocationPage.selectFrenchTab();
+          addShelterLocationPage.fillFrenchShelterLocationName(shelterLocationData.name.translation.fr, roleName);
+          addShelterLocationPage.addNewShelterLocation();
 
-          eventDetailsPage.getRegistrationLocationNameByRole(roleName).should('eq', `${registrationLocationData.name.translation.en}${roleName}`);
-          eventDetailsPage.getRegistrationLocationAddress().should('eq', `${registrationLocationData.streetAddress} ${registrationLocationData.city}`
-          + `, ${ECanadaProvinces[registrationLocationData.provinceIndex]}, ${registrationLocationData.postalCode}, ${registrationLocationData.country}`);
-          eventDetailsPage.getRegistrationLocationStatus().should('eq', 'Active');
+          eventDetailsPage.getShelterLocationNameByRole(roleName).should('eq', `${shelterLocationData.name.translation.en}${roleName}`);
+          eventDetailsPage.getShelterLocationAddress().should('eq', `${shelterLocationData.streetAddress} ${shelterLocationData.city}`
+          + `, ${ECanadaProvinces[shelterLocationData.provinceIndex]}, ${shelterLocationData.postalCode}, ${shelterLocationData.country}`);
+          eventDetailsPage.getShelterLocationStatus().should('eq', 'Active');
         });
       });
     }
@@ -92,11 +91,11 @@ describe(`${title}`, () => {
         beforeEach(() => {
           cy.login(roleValue);
         });
-        it('should not be able to add event registration location', function () {
+        it('should not be able to add event shelter location', function () {
           cy.goTo(`events/${this.eventCreated.id}`);
 
           const eventDetailsPage = new EventDetailsPage();
-          eventDetailsPage.getRegistrationLocationButton().should('not.exist');
+          eventDetailsPage.getShelterLocationButton().should('not.exist');
         });
       });
     }
