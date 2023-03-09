@@ -58,7 +58,7 @@ export default Vue.extend({
           blobsParts: 'TBD,ETag',
         },
         importPaymentStatuses: {
-          fileName: 'ImportPaymentStatusesTemplate.csv', blobsParts: 'PaymentGroupId,Status,CancellationReason',
+          fileName: 'ImportPaymentStatusesTemplate.csv', blobsParts: 'PaymentGroupId,Status,CancellationReason,ActualDate',
         },
         importUsers: {
           fileName: 'ImportUsersTemplate.csv', blobsParts: 'FirstName,LastName,Email,Role',

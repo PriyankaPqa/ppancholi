@@ -46,7 +46,7 @@ describe('massActions', () => {
       it('should trigger proper method downloadImportPaymentStatusesTemplate', () => {
         wrapper.vm.downloadTemplate = jest.fn();
         wrapper.vm.onClick('downloadImportPaymentStatusesTemplate');
-        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('ImportPaymentStatusesTemplate.csv', 'PaymentGroupId,Status,CancellationReason');
+        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('ImportPaymentStatusesTemplate.csv', 'PaymentGroupId,Status,CancellationReason,ActualDate');
       });
 
       it('should trigger proper method downloadImportUsersTemplate', () => {
