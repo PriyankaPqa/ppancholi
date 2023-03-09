@@ -15,13 +15,14 @@ import 'survey-core/defaultV2.min.css';
 
 import mixins from 'vue-typed-mixins';
 import _debounce from 'lodash/debounce';
-import { IAssessmentResponseEntity } from '@libs/entities-lib/assessment-template';
+import { CompletionStatus, IAssessmentResponseEntity } from '@libs/entities-lib/assessment-template';
 import { cloneDeep } from 'lodash';
 import { SurveyJsHelper, ISurveyModel } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
 import { NavigationGuardNext, Route } from 'vue-router';
 import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import helpers from '@/ui/helpers/helpers';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { UserRoles } from '@libs/entities-lib/user';
 import assessmentDetail from './assessmentDetail';
 
 const DEBOUNCE_RATE = 500;
@@ -65,9 +66,14 @@ export default mixins(assessmentDetail).extend({
       )));
     }
     await this.loadDetails();
-    this.errorMessage = this.assessmentResponseId ? this.surveyJsHelper.getSurveyCanBeCompletedErrorMessage(this.assessmentTemplate, this.response, this, this.$m) : null;
+    this.errorMessage = this.assessmentResponseId
+      ? this.surveyJsHelper.getSurveyCanBeCompletedErrorMessage(this.assessmentTemplate, this.response, this, this.$m, this.$hasLevel(UserRoles.level3)) : null;
     if (!this.errorMessage) {
-      this.survey = this.surveyJsHelper.initializeSurveyJsRunner(this.$i18n.locale, this.assessmentTemplate.externalToolState?.data?.rawJson);
+      this.survey = this.surveyJsHelper.initializeSurveyJsRunner(
+        this.$i18n.locale,
+        this.assessmentTemplate.externalToolState?.data?.rawJson,
+        this.response.completionStatus === CompletionStatus.Completed,
+      );
 
       if (this.response?.externalToolState?.data?.rawJson) {
         this.survey.data = JSON.parse(this.response.externalToolState.data.rawJson);
@@ -77,16 +83,14 @@ export default mixins(assessmentDetail).extend({
       }
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       const _this = this;
-      if (this.assessmentTemplate.savePartialSurveyResults) {
+      if (this.assessmentTemplate.savePartialSurveyResults && this.response.completionStatus !== CompletionStatus.Completed) {
         this.survey.onValueChanged.add((sender: ISurveyModel) => debouncedSave({ _this, sender }));
+      } else {
+        // confirm leaving when navigating to another wbesite or closing the tab
+        window.addEventListener('beforeunload', this.beforeAssessmentRunnerWindowUnload);
       }
       this.survey.onComplete.add(this.completeSurvey);
       this.surveyJsHelper.setColorScheme('#surveyContainer', useTenantSettingsStore().currentTenantSettings.branding.colours);
-    }
-
-    if (!this.assessmentTemplate.savePartialSurveyResults) {
-      // confirm leaving when navigating to another wbesite or closing the tab
-      window.addEventListener('beforeunload', this.beforeAssessmentRunnerWindowUnload);
     }
   },
 
@@ -104,7 +108,9 @@ export default mixins(assessmentDetail).extend({
     async completeSurvey(sender: ISurveyModel) {
       debouncedSave.cancel();
       await this.saveAnswers(sender);
-      await this.$services.assessmentResponses.completeSurvey(this.response);
+      if (this.response.completionStatus !== CompletionStatus.Completed) {
+        await this.$services.assessmentResponses.completeSurvey(this.response);
+      }
       this.surveyCompleted = true;
     },
 

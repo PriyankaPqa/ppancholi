@@ -480,18 +480,6 @@ describe('CaseFileAssessment.vue', () => {
       });
     });
 
-    describe('editAssessment', () => {
-      it('should redirect to the edit page', async () => {
-        await mountWrapper();
-        wrapper.vm.editAssessment({ id: 'myid' });
-        await wrapper.vm.$nextTick();
-        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-          name: routes.caseFile.assessments.edit.name,
-          params: { assessmentResponseId: 'myid' },
-        });
-      });
-    });
-
     describe('copyLink', () => {
       it('should copy the url by fetching all the right parameters', async () => {
         navigator.clipboard = { writeText: jest.fn() };

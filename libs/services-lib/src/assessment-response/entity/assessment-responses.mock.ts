@@ -10,5 +10,4 @@ export const mockAssessmentResponsesService = (): IAssessmentResponsesServiceMoc
   saveAssessmentAnsweredQuestions: jest.fn(() => mockAssessmentResponseEntity()),
   completeSurvey: jest.fn(() => mockAssessmentResponseEntity()),
   completeSurveyByBeneficiary: jest.fn(() => mockAssessmentResponseEntity()),
-  editAssessmentAnsweredQuestion: jest.fn(() => mockAssessmentResponseEntity()),
 });

@@ -1,13 +1,20 @@
 <template>
   <rc-page-content
-    :title="canEdit ? $t('assessmentTemplateEdit.title') : $t('assessmentTemplateDetails.title')">
+    :title="$t('assessmentTemplateDetails.title')">
     <div v-if="assessmentForm">
       <div class="ma-4">
         <v-row class="justify-space-between">
           <h3>
             {{ $m(assessmentForm.name) }}
           </h3>
-          <status-chip status-name="AssessmentResponseCompletionStatus" :status="assessmentResponse.completionStatus" />
+          <div>
+            <status-chip status-name="AssessmentResponseCompletionStatus" :status="assessmentResponse.completionStatus" />
+            <v-btn v-if="canEdit" class="ml-4" icon @click="launchAssessment()">
+              <v-icon size="20">
+                mdi-pencil
+              </v-icon>
+            </v-btn>
+          </div>
         </v-row>
         <v-row class="stacked-details rc-body14">
           <div>
@@ -43,11 +50,9 @@
 
       <question-tab
         v-if="selectedTab === 'Questions'"
-        :can-edit="canEdit"
         :assessment-response="assessmentResponse"
         :assessment-form="assessmentForm"
-        data-test="question-list"
-        @pending-changes="hasPendingChanges = $event" />
+        data-test="question-list" />
     </div>
 
     <template slot="actions">
@@ -71,8 +76,6 @@ import {
   CompletedByType, CompletionStatus, IAssessmentFormEntity, IAssessmentResponseEntity,
 } from '@libs/entities-lib/assessment-template';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { Route, NavigationGuardNext } from 'vue-router';
-import helpers from '@/ui/helpers/helpers';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -97,24 +100,18 @@ export default mixins(caseFileDetail).extend({
     },
   },
 
-  async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    await helpers.confirmBeforeLeaving(this, this.hasPendingChanges, next);
-  },
-
   data() {
     return {
       CompletedByType,
       moment,
       selectedTab: 'Questions',
       tabs: ['Questions'],
-      hasPendingChanges: false,
     };
   },
 
   computed: {
     canEdit(): boolean {
       return this.$hasLevel(UserRoles.level3) && !this.readonly
-      && this.$route.name === routes.caseFile.assessments.edit.name
       && this.assessmentResponse?.completionStatus === CompletionStatus.Completed;
     },
     assessmentResponse(): IAssessmentResponseEntity {
@@ -144,6 +141,18 @@ export default mixins(caseFileDetail).extend({
       this.$router.push({
         name: routes.caseFile.assessments.home.name,
       });
+    },
+
+    launchAssessment() {
+      const routeData = this.$router.resolve({
+        name: routes.events.assessments.complete.name,
+        params: {
+          assessmentTemplateId: this.assessmentForm.id,
+          id: this.event.id,
+          assessmentResponseId: this.assessmentResponse.id,
+        },
+      });
+      window.open(routeData.href, '_blank');
     },
   },
 });

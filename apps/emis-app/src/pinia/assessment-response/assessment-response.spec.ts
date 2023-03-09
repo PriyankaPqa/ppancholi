@@ -5,7 +5,7 @@ import { Entity } from '@/pinia/assessment-response/assessment-response';
 import { defineStore, setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import {
-  IAssessmentResponseEntity, IQuestionResponse, IdParams, mockAssessmentResponseEntities,
+  IAssessmentResponseEntity, IdParams, mockAssessmentResponseEntities,
 } from '@libs/entities-lib/assessment-template';
 
 const entityService = mockAssessmentResponsesService();
@@ -89,20 +89,6 @@ describe('>>> AssessmentResponse Store', () => {
 
       expect(entityService.saveAssessmentAnsweredQuestions).toBeCalledWith(payload);
       expect(bComponents.set).toBeCalledWith(res);
-    });
-
-    describe('editAssessmentAnsweredQuestion', () => {
-      it('should call editAssessmentAnsweredQuestion service with proper params', async () => {
-        const bComponents = { ...baseComponents, set: jest.fn() };
-        const store = createTestStore(bComponents);
-        const payload = { id: 'test' } as {
-          id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string, parentIndexPath: string, questionId: string };
-
-        const res = await store.editAssessmentAnsweredQuestion(payload);
-
-        expect(entityService.editAssessmentAnsweredQuestion).toBeCalledWith(payload.id, payload);
-        expect(bComponents.set).toBeCalledWith(res);
-      });
     });
   });
 });

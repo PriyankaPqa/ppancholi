@@ -9,7 +9,6 @@
         <tr>
           <th>{{ index ? $t('assessment.obsoleteQuestions') : $t('assessment.questions') }}</th>
           <th>{{ index ? $t('assessment.obsoleteAnswers') : $t('assessment.responses') }}</th>
-          <th v-if="canEdit" />
         </tr>
       </thead>
       <tbody>
@@ -32,82 +31,13 @@
               </div>
             </div>
           </td>
-          <td v-if="editedQuestion == qAndA" class="answer">
-            <div>
-              <v-select-with-validation
-                v-if="qAndA.isMultiple"
-                v-model="editedAnswer"
-                dense
-                outlined
-                multiple
-                clearable
-                data-test="question_answer_select_multiple"
-                :attach="false"
-                :item-value="(answer) => answer.identifier"
-                :item-text="(answer) => $m(answer.displayValue)"
-                :items="qAndA.question.answerChoices" />
-              <v-select-with-validation
-                v-else-if="qAndA.question.answerChoices && qAndA.question.answerChoices.length"
-                v-model="editedAnswer[0]"
-                dense
-                outlined
-                clearable
-                data-test="question_answer_select"
-                :attach="false"
-                :item-value="(answer) => answer.identifier"
-                :item-text="(answer) => $m(answer.displayValue)"
-                :items="qAndA.question.answerChoices" />
-              <v-text-area-with-validation
-                v-else-if="qAndA.question.questionType == 'comment'"
-                v-model="editedAnswer[0]"
-                dense
-                outlined
-                clearable
-                data-test="question_answer_text" />
-              <v-text-field-with-validation
-                v-else
-                v-model="editedAnswer[0]"
-                dense
-                outlined
-                clearable
-                data-test="question_answer_text" />
-            </div>
-          </td>
-          <td v-else-if="canEdit && qAndA.isDynamicRoot" class="answer" colspan="2">
-            <v-btn color="primary" :disabled="!!editedQuestion" @click="addDynamicSet(qAndA)">
-              {{ $t('assessmentResponse.addASetOfAnswers') }}
-            </v-btn>
-          </td>
-          <td v-else class="answer">
+          <td class="answer">
             {{ qAndA.displayAnswer }}
             <v-btn v-if="qAndA.history.length > 1" icon class="pl-1" @click="showHistory(qAndA)">
               <v-icon size="20">
                 mdi-history
               </v-icon>
             </v-btn>
-          </td>
-          <td v-if="canEdit && !qAndA.isDynamicRoot" align="right">
-            <div class="editSection">
-              <template v-if="editedQuestion == qAndA">
-                <v-btn color="primary" :disabled="answerHasntChanged" @click="applyEdit()">
-                  {{ $t('common.apply') }}
-                </v-btn>
-
-                <v-btn class="ml-3" icon data-test="cancel" @click="cancelEdit()">
-                  <v-icon size="20">
-                    mdi-close
-                  </v-icon>
-                </v-btn>
-              </template>
-
-              <template v-if="!editedQuestion">
-                <v-btn icon data-test="cancel" @click="editQuestion(qAndA)">
-                  <v-icon size="20">
-                    mdi-pencil
-                  </v-icon>
-                </v-btn>
-              </template>
-            </div>
           </td>
         </tr>
       </tbody>
@@ -156,15 +86,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from 'moment';
-import _xor from 'lodash/xor';
 import {
-  VSelectWithValidation, VTextFieldWithValidation, RcDialog, VTextAreaWithValidation,
+  RcDialog,
 } from '@libs/component-lib/components';
 import {
   CompletedByType, IAnsweredQuestion, IAssessmentFormEntity, IAssessmentQuestion, IAssessmentResponseEntity,
 } from '@libs/entities-lib/assessment-template';
 import { SurveyJsHelper } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
-import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 
 interface IQuestionAndAnswer {
   question: IAssessmentQuestion,
@@ -183,9 +111,6 @@ export default Vue.extend({
   name: 'QuestionTab',
 
   components: {
-    VSelectWithValidation,
-    VTextFieldWithValidation,
-    VTextAreaWithValidation,
     RcDialog,
   },
 
@@ -196,10 +121,6 @@ export default Vue.extend({
     },
     assessmentForm: {
       type: Object as () => IAssessmentFormEntity,
-      required: true,
-    },
-    canEdit: {
-      type: Boolean,
       required: true,
     },
   },
@@ -261,7 +182,7 @@ export default Vue.extend({
         qAndA.displayAnswer = this.getDisplayAnswer(qAndA.answer, qAndA.question);
       });
 
-      qAndAs = qAndAs.filter((q) => !q.question.endDate || q.answer || q.history?.length > 1);
+      qAndAs = qAndAs.filter((q) => q.answer || q.history?.length > 1);
 
       return qAndAs;
     },
@@ -273,63 +194,12 @@ export default Vue.extend({
       }
       return groups;
     },
-    answerHasntChanged(): boolean {
-      return _xor(this.editedAnswer, this.currentAnswer).length === 0;
-    },
-  },
-
-  watch: {
-    answerHasntChanged(newVal) {
-      this.$emit('pending-changes', !newVal);
-    },
   },
 
   methods: {
-    editQuestion(q: IQuestionAndAnswer) {
-      this.editedQuestion = q;
-      this.currentAnswer = q?.answer?.responses?.map((r) => r.textValue) || [];
-      this.editedAnswer = q?.answer?.responses?.map((r) => r.textValue) || [];
-    },
-
-    async applyEdit() {
-      const newAnswer = {
-        assessmentQuestionIdentifier: this.editedQuestion.question.identifier,
-        responses: [],
-      } as IAnsweredQuestion;
-      if (this.editedAnswer != null) {
-        newAnswer.responses = this.editedAnswer.filter((x) => x != null && x.toString().trim() !== '').map((userResponse) => ({
-          displayValue: this.$m(this.editedQuestion.question.answerChoices?.find((ac) => ac.identifier === userResponse)?.displayValue) || userResponse,
-          textValue: userResponse,
-          numericValue: `${(userResponse || '')}`.trim() !== '' && !Number.isNaN(+userResponse) ? +userResponse : null,
-        }));
-      }
-
-      if (await useAssessmentResponseStore().editAssessmentAnsweredQuestion({
-        id: this.assessmentResponse.id,
-        responses: newAnswer.responses,
-        assessmentQuestionIdentifier: this.editedQuestion.question.identifier,
-        parentIndexPath: this.editedQuestion.path != null ? `${this.editedQuestion.path}|` : null,
-        questionId: this.editedQuestion.question.id,
-      })) {
-        this.cancelEdit();
-      }
-    },
-
-    cancelEdit() {
-      this.editQuestion(null);
-    },
-
     showHistory(qAndA: IQuestionAndAnswer) {
       this.currentHistoryData = qAndA.history;
       this.showHistoryDialog = true;
-    },
-
-    addDynamicSet(qAndA: IQuestionAndAnswer) {
-      const path = this.getDynamicPathForPanel(qAndA.path, qAndA.question.identifier);
-      const currentChildren = this.questionsAndAnswers.filter((q2) => q2.path && q2.path.startsWith(path));
-      const currentId = (currentChildren.pop()?.childEntryIndexes || [])[qAndA.childEntryIndexes.length];
-      const nextId = currentId != null ? currentId + 1 : 0;
-      this.additionalDynamicPaths.push(`${path}[${nextId}]|`);
     },
 
     getDisplayAnswer(answeredQuestion: IAnsweredQuestion, question: IAssessmentQuestion) : string {
@@ -413,13 +283,6 @@ export default Vue.extend({
   }
   .answer {
     white-space: pre-wrap;
-  }
-  .editSection {
-    white-space: nowrap;
-  }
-  ::v-deep .v-text-field__details {
-    min-height: 0 !important;
-    margin-bottom: 0 !important;
   }
   .question-dynamic.even {
     background-color: var(--v-accent-lighten2);

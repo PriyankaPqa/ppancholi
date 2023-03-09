@@ -43,7 +43,6 @@ describe('AssessmentDetails.vue', () => {
       ...additionalOverwrites,
     });
 
-    await wrapper.setData({ $route: { name: routes.caseFile.assessments.edit.name } });
     await wrapper.vm.$nextTick();
   };
 
@@ -80,13 +79,6 @@ describe('AssessmentDetails.vue', () => {
 
   describe('Computed', () => {
     describe('canEdit', () => {
-      it('returns false if route is not edit', async () => {
-        await mountWrapper(false, 3);
-        expect(wrapper.vm.canEdit).toBeTruthy();
-
-        await wrapper.setData({ $route: { name: routes.caseFile.assessments.details.name } });
-        expect(wrapper.vm.canEdit).toBeFalsy();
-      });
       it('returns false if response is not completed', async () => {
         await mountWrapper(false, 3);
         expect(wrapper.vm.canEdit).toBeTruthy();
@@ -160,33 +152,6 @@ describe('AssessmentDetails.vue', () => {
         expect(assessmentResponseStore.fetch).toHaveBeenCalledWith({ id: wrapper.vm.assessmentResponseId });
         expect(assessmentFormStore.fetch).toHaveBeenCalledWith({ id: wrapper.vm.assessmentResponse.assessmentFormId });
       });
-    });
-  });
-
-  describe('beforeRouteLeave', () => {
-    let next;
-    beforeEach(async () => {
-      next = jest.fn(() => {});
-      await mountWrapper();
-    });
-
-    it('calls next if the confirmation dialog returns true', async () => {
-      await wrapper.setData({ hasPendingChanges: true });
-      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
-      expect(next).toBeCalled();
-    });
-
-    it('does not call next if the confirmation dialog returns false', async () => {
-      await wrapper.setData({ hasPendingChanges: true });
-      wrapper.vm.$confirm = jest.fn(() => false);
-      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
-      expect(next).not.toBeCalled();
-    });
-
-    it('calls next if dirty is false', async () => {
-      await wrapper.setData({ hasPendingChanges: false });
-      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
-      expect(next).toBeCalled();
     });
   });
 

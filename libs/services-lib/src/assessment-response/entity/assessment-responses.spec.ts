@@ -74,15 +74,4 @@ describe('>>> AssessmentResponses Service', () => {
       expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-responses/${entity.id}/submit/public`);
     });
   });
-
-  describe('editAssessmentAnsweredQuestion', () => {
-    it('should call the proper endpoint', async () => {
-      const entity = mockAssessmentResponseEntity();
-      const payload = {
- responses: entity.answeredQuestions[0].responses, questionId: 'id', assessmentQuestionIdentifier: 'id', parentIndexPath: '',
-};
-      await service.editAssessmentAnsweredQuestion(entity.id, payload);
-      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-responses/${entity.id}/editAssessmentAnsweredQuestion`, payload);
-    });
-  });
 });

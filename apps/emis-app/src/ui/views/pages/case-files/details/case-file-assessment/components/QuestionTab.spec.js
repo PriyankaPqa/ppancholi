@@ -4,16 +4,13 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
   mockAssessmentResponseEntity, mockAssessmentFormEntity, mockAssessmentResponseEntityWithPanels, mockAssessmentFormEntityWithPanels,
 } from '@libs/entities-lib/assessment-template';
-import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
 import { createTestingPinia } from '@pinia/testing';
 import Component from './QuestionTab.vue';
 
 const localVue = createLocalVue();
 let mockResponse = mockAssessmentResponseEntity();
 let mockForm = mockAssessmentFormEntity();
-let canEdit = true;
 let pinia = createTestingPinia({ stubActions: false });
-let assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
 
 describe('QuestionTab.vue', () => {
   let wrapper;
@@ -25,7 +22,6 @@ describe('QuestionTab.vue', () => {
       propsData: {
         assessmentResponse: mockResponse,
         assessmentForm: mockForm,
-        canEdit,
       },
       mocks: {
       },
@@ -37,10 +33,8 @@ describe('QuestionTab.vue', () => {
 
   beforeEach(() => {
     pinia = createTestingPinia({ stubActions: false });
-    assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
     mockResponse = mockAssessmentResponseEntity();
     mockForm = mockAssessmentFormEntity();
-    canEdit = false;
     jest.clearAllMocks();
   });
 
@@ -50,36 +44,20 @@ describe('QuestionTab.vue', () => {
         await mountWrapper(true);
       });
 
-      it('displays the correct header values depending on editing', async () => {
-        let headers = wrapper.findAll('th');
+      it('displays the correct header values', async () => {
+        const headers = wrapper.findAll('th');
 
         expect(headers.length).toBe(2);
 
         expect(headers.wrappers[0].text()).toBe('assessment.questions');
         expect(headers.wrappers[1].text()).toBe('assessment.responses');
-
-        await wrapper.setProps({ canEdit: true });
-        headers = wrapper.findAll('th');
-
-        expect(headers.length).toBe(3);
-        expect(headers.wrappers[2].text()).toBe('');
       });
 
-      it('displays the correct row depending on editing', async () => {
-        let tds = wrapper.findAll('td');
+      it('displays the correct row (no empty)', async () => {
+        const tds = wrapper.findAll('td');
 
-        expect(tds.wrappers[0].text()).toBe('question1');
-        expect(tds.wrappers[1].text()).toBe('');
-        expect(tds.wrappers[2].text()).toBe('question2');
-        expect(tds.wrappers[3].text()).toBe('item1, item2');
-
-        await wrapper.setProps({ canEdit: true });
-        tds = wrapper.findAll('td');
-
-        expect(tds.wrappers[0].text()).toBe('question1');
-        expect(tds.wrappers[1].text()).toBe('');
-        expect(tds.wrappers[2].text()).toBe('');
-        expect(tds.wrappers[3].text()).toBe('question2');
+        expect(tds.wrappers[0].text()).toBe('question2');
+        expect(tds.wrappers[1].text()).toBe('item1, item2');
       });
     });
   });
@@ -91,18 +69,6 @@ describe('QuestionTab.vue', () => {
         const data = wrapper.vm.questionsAndAnswers;
         expect(data).toEqual(
           [{
-            answer: undefined,
-            displayAnswer: '',
-            history: [],
-            isMultiple: false,
-            path: null,
-            isDynamicRoot: false,
-            childEntryIndexes: [],
-            question: {
-              // eslint-disable-next-line vue/max-len
-              answerChoices: null, identifier: 'question1', id: 'question1id', childEntryIndexes: [], path: null, question: { translation: { en: 'question1', fr: 'question1' } }, questionType: 'text',
-            },
-          }, {
             answer: {
               assessmentQuestionIdentifier: 'question2',
               questionId: 'question2id',
@@ -132,18 +98,6 @@ describe('QuestionTab.vue', () => {
               questionType: 'checkbox',
             },
           }, {
-            answer: undefined,
-            displayAnswer: '',
-            history: [],
-            isMultiple: false,
-            path: null,
-            isDynamicRoot: false,
-            childEntryIndexes: [],
-            question: {
-              // eslint-disable-next-line vue/max-len
-              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question2|Comment', id: 'question2|Commentid', question: { translation: { en: 'question2|Comment', fr: 'question2|Commentaires' } }, questionType: 'text',
-            },
-          }, {
             answer: { assessmentQuestionIdentifier: 'question3', questionId: 'question3id', responses: [{ displayValue: 'item2', numericValue: null, textValue: 'item2' }] },
             displayAnswer: 'item2',
             history: [],
@@ -165,18 +119,6 @@ describe('QuestionTab.vue', () => {
               id: 'question3id',
               question: { translation: { en: 'question3', fr: 'question3' } },
               questionType: 'checkbox',
-            },
-          }, {
-            answer: undefined,
-            displayAnswer: '',
-            history: [],
-            isMultiple: false,
-            path: null,
-            isDynamicRoot: false,
-            childEntryIndexes: [],
-            question: {
-              // eslint-disable-next-line vue/max-len
-              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question4', id: 'question4id', question: { translation: { en: 'question4', fr: 'question4' } }, questionType: 'text',
             },
           }],
         );
@@ -216,20 +158,6 @@ describe('QuestionTab.vue', () => {
 
         expect(data).toEqual(
           [{
-            answer: undefined,
-            displayAnswer: '',
-            history: [{
-              assessmentQuestionIdentifier: 'question1', questionId: 'question1id', displayAnswer: '', responses: [],
-            }],
-            isMultiple: false,
-            path: null,
-            isDynamicRoot: false,
-            childEntryIndexes: [],
-            question: {
-              // eslint-disable-next-line vue/max-len
-              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question1', id: 'question1id', question: { translation: { en: 'question1', fr: 'question1' } }, questionType: 'text',
-            },
-          }, {
             answer: {
               assessmentQuestionIdentifier: 'question2',
               questionId: 'question2id',
@@ -272,23 +200,6 @@ describe('QuestionTab.vue', () => {
               id: 'question2id',
               question: { translation: { en: 'question2', fr: 'question2' } },
               questionType: 'checkbox',
-            },
-          }, {
-            answer: undefined,
-            displayAnswer: '',
-            history: [{
-              assessmentQuestionIdentifier: 'question2|Comment',
-              questionId: 'question2|Commentid',
-              displayAnswer: '',
-              responses: [],
-            }],
-            isMultiple: false,
-            path: null,
-            isDynamicRoot: false,
-            childEntryIndexes: [],
-            question: {
-              // eslint-disable-next-line vue/max-len
-              answerChoices: null, childEntryIndexes: [], path: null, identifier: 'question2|Comment', id: 'question2|Commentid', question: { translation: { en: 'question2|Comment', fr: 'question2|Commentaires' } }, questionType: 'text',
             },
           }, {
             answer: { assessmentQuestionIdentifier: 'question3', questionId: 'question3id', responses: [{ displayValue: 'item2', numericValue: null, textValue: 'item2' }] },
@@ -378,92 +289,9 @@ describe('QuestionTab.vue', () => {
         expect(wrapper.vm.questionGroups).toEqual([questions]);
       });
     });
-
-    describe('answerHasntChanged', () => {
-      it('compares arrays without order', async () => {
-        await mountWrapper();
-        await wrapper.setData({ currentAnswer: ['item1', 'item2'], editedAnswer: ['item1', 'item2'] });
-        expect(wrapper.vm.answerHasntChanged).toBeTruthy();
-        await wrapper.setData({ currentAnswer: ['item1'], editedAnswer: ['item1', 'item2'] });
-        expect(wrapper.vm.answerHasntChanged).toBeFalsy();
-        await wrapper.setData({ currentAnswer: ['item2', 'item1'], editedAnswer: ['item1', 'item2'] });
-        expect(wrapper.vm.answerHasntChanged).toBeTruthy();
-        await wrapper.setData({ currentAnswer: ['item3', 'item1'], editedAnswer: ['item1', 'item2'] });
-        expect(wrapper.vm.answerHasntChanged).toBeFalsy();
-        await wrapper.setData({ currentAnswer: [], editedAnswer: [] });
-        expect(wrapper.vm.answerHasntChanged).toBeTruthy();
-      });
-    });
   });
 
   describe('methods', () => {
-    describe('editQuestion', () => {
-      it('sets variables to edit', async () => {
-        await mountWrapper();
-        const q = wrapper.vm.questionsAndAnswers[1];
-        wrapper.vm.editQuestion(q);
-
-        expect(wrapper.vm.editedQuestion).toBe(q);
-        expect(wrapper.vm.currentAnswer).toEqual(['item1', 'item2']);
-        expect(wrapper.vm.editedAnswer).toEqual(['item1', 'item2']);
-      });
-    });
-    describe('cancelEdit', () => {
-      it('resets variables from edit', async () => {
-        await mountWrapper();
-        const q = wrapper.vm.questionsAndAnswers[1];
-        wrapper.vm.editQuestion(q);
-        wrapper.vm.cancelEdit();
-
-        expect(wrapper.vm.editedQuestion).toBeNull();
-        expect(wrapper.vm.currentAnswer).toEqual([]);
-        expect(wrapper.vm.editedAnswer).toEqual([]);
-      });
-    });
-    describe('applyEdit', () => {
-      it('calls the store with formatted new data', async () => {
-        await mountWrapper();
-        const q = wrapper.vm.questionsAndAnswers[1];
-        wrapper.vm.editQuestion(q);
-
-        await wrapper.vm.applyEdit();
-        expect(assessmentResponseStore.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
-          id: wrapper.vm.assessmentResponse.id,
-          questionId: 'question2id',
-          parentIndexPath: null,
-          responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }, { displayValue: 'item2', numericValue: null, textValue: 'item2' }],
-          assessmentQuestionIdentifier: 'question2',
-        });
-        expect(wrapper.vm.editedQuestion).toEqual(null);
-
-        wrapper.vm.editQuestion(q);
-        await wrapper.setData({ editedAnswer: ['item1'] });
-
-        await wrapper.vm.applyEdit();
-        expect(assessmentResponseStore.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
-          id: wrapper.vm.assessmentResponse.id,
-          questionId: 'question2id',
-          parentIndexPath: null,
-          responses: [{ displayValue: 'item1', numericValue: null, textValue: 'item1' }],
-          assessmentQuestionIdentifier: 'question2',
-        });
-        expect(wrapper.vm.editedQuestion).toEqual(null);
-
-        wrapper.vm.editQuestion(q);
-        await wrapper.setData({ editedAnswer: [null] });
-
-        await wrapper.vm.applyEdit();
-        expect(assessmentResponseStore.editAssessmentAnsweredQuestion).toHaveBeenCalledWith({
-          id: wrapper.vm.assessmentResponse.id,
-          questionId: 'question2id',
-          parentIndexPath: null,
-          responses: [],
-          assessmentQuestionIdentifier: 'question2',
-        });
-        expect(wrapper.vm.editedQuestion).toEqual(null);
-      });
-    });
-
     describe('regroupQuestions', () => {
       it('groups dynamic panels and multiplies questions by the number of panels', async () => {
         await mountWrapper();

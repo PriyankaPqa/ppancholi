@@ -5,6 +5,5 @@ export function getMockExtensionComponents() {
     create: jest.fn(() => Promise.resolve(mockAssessmentResponseEntity())),
     update: jest.fn(() => Promise.resolve(mockAssessmentResponseEntity())),
     saveAssessmentAnsweredQuestions: jest.fn(() => Promise.resolve(mockAssessmentResponseEntity())),
-    editAssessmentAnsweredQuestion: jest.fn(() => Promise.resolve(mockAssessmentResponseEntity())),
   };
 }

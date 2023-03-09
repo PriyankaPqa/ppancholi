@@ -2,7 +2,7 @@ import { BaseStoreComponents } from '@libs/stores-lib/base/base.types';
 import { AssessmentResponsesService, IAssessmentResponsesServiceMock } from '@libs/services-lib/assessment-response/entity';
 import {
   IAssessmentResponseCreateRequest,
-  IAssessmentResponseEntity, IQuestionResponse, IdParams,
+  IAssessmentResponseEntity, IdParams,
 } from '@libs/entities-lib/assessment-template';
 
 export function getExtensionComponents(
@@ -37,20 +37,9 @@ export function getExtensionComponents(
     return null;
   }
 
-  async function editAssessmentAnsweredQuestion(payload:
-      { id: string, responses: IQuestionResponse[], assessmentQuestionIdentifier: string, parentIndexPath: string, questionId: uuid }) {
-    const data = await entityService.editAssessmentAnsweredQuestion(payload.id, payload);
-    if (data) {
-      baseComponents.set(data);
-      return data;
-    }
-    return null;
-  }
-
   return {
     create,
     update,
     saveAssessmentAnsweredQuestions,
-    editAssessmentAnsweredQuestion,
   };
 }

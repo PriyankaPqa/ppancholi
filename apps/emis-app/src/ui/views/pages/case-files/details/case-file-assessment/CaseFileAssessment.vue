@@ -131,7 +131,7 @@
           </template>
 
           <template #[`item.${customColumns.actions_icons}`]="{ item }">
-            <v-btn v-if="item.canEdit" icon data-test="edit-link" @click="editAssessment(item)">
+            <v-btn v-if="item.canEdit" icon data-test="edit-link" @click="launchAssessment(item)">
               <v-icon size="24" color="grey darken-2">
                 mdi-pencil
               </v-icon>
@@ -448,13 +448,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
           assessmentResponseId: id,
         },
       };
-    },
-
-    editAssessment(item: MappedAssessment) {
-      this.$router.push({
-        name: routes.caseFile.assessments.edit.name,
-        params: { assessmentResponseId: item.id },
-      });
     },
 
     async deleteAssessment(item: MappedAssessment) {

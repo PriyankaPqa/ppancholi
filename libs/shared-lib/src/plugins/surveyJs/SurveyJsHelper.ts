@@ -142,7 +142,7 @@ export class SurveyJsHelper {
     }));
   }
 
-  initializeSurveyJsRunner(locale: string, surveyJson: string) {
+  initializeSurveyJsRunner(locale: string, surveyJson: string, singlePageMode = false) {
     RunnerStylesManager.applyTheme('defaultV2');
 
     this.registerCustomProperties(true);
@@ -155,6 +155,10 @@ export class SurveyJsHelper {
     this.totalScore = 0;
     this.survey.onValueChanged.add(this.valueChangedNewScore);
     document.title = this.survey.title;
+
+    if (singlePageMode) {
+      this.survey.questionsOnPageMode = "singlePage";
+    }
 
     return this.survey;
   }
@@ -169,11 +173,12 @@ export class SurveyJsHelper {
     }
   }
 
-  getSurveyCanBeCompletedErrorMessage(assessmentTemplate: IAssessmentBaseEntity, response: IAssessmentResponseEntity, vue: Vue, $m: (s: IMultilingual) => string) {
+  getSurveyCanBeCompletedErrorMessage(assessmentTemplate: IAssessmentBaseEntity, response: IAssessmentResponseEntity,
+      vue: Vue, $m: (s: IMultilingual) => string, canEditCompleted: boolean = false) {
     if (response?.status !== Status.Active || assessmentTemplate?.status !== Status.Active) {
       return $m.call(vue, assessmentTemplate?.messageIfUnavailable) || vue.$t('assessment.messageUnavailable') as string;
     }
-    if (response.completionStatus === CompletionStatus.Completed) {
+    if (response.completionStatus === CompletionStatus.Completed && !canEditCompleted) {
       const survey = this.initializeSurveyJsRunner(vue.$i18n.locale, assessmentTemplate.externalToolState.data.rawJson);
       return survey.processedCompletedBeforeHtml || vue.$t('assessment.surveyAlreadyCompleted') as string;
     }
