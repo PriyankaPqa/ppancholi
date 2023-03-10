@@ -62,6 +62,7 @@
     "emis-app:serve": "yarn --cwd apps/emis-app serve",
     "emis-app:dev": "yarn --cwd apps/emis-app dev",
     "emis-app:dev:lab": "yarn emis-app:dev --mode lab",
+    "emis-app:dev:local": "yarn emis-app:dev --mode localhost",
     "emis-app:lint": "yarn --cwd apps/emis-app lint",
     "emis-app:test": "yarn jest --projects apps/emis-app --runInBand",
     "emis-app:test:graph": "jest-heap-graph 'yarn emis-app:test --logHeapUsage --no-cache'",

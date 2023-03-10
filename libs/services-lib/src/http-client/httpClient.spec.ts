@@ -606,5 +606,49 @@ describe('httpClient', () => {
         window.location = backUp;
       });
     });
+
+    describe('mapRequestForLocalhost', () => {
+      const apiPorts = 'assessment:44360,case-file:44355,event:44358,finance:44359';
+
+      it('should do nothing for non-localhost', () => {
+        const request = {
+          baseURL: 'https://api-dev.crc-tech.ca',
+          url: '/case-file/search/case-files',
+        };
+        mockHttpClient.mapRequestForLocalhost(request, apiPorts);
+        expect(request.baseURL).toBe('https://api-dev.crc-tech.ca');
+        expect(request.url).toBe('/case-file/search/case-files');
+      });
+
+      it('should handle absolute urls', () => {
+        const request = {
+          baseURL: 'http://localhost',
+          url: 'http://localhost/case-file/search/case-files',
+        };
+        mockHttpClient.mapRequestForLocalhost(request, apiPorts);
+        expect(request.baseURL).toBe('http://localhost:44355');
+        expect(request.url).toBe('/search/case-files');
+      });
+
+      it('should handle absolute paths', () => {
+        const request = {
+          baseURL: 'http://localhost',
+          url: '/case-file/search/case-files',
+        };
+        mockHttpClient.mapRequestForLocalhost(request, apiPorts);
+        expect(request.baseURL).toBe('http://localhost:44355');
+        expect(request.url).toBe('/search/case-files');
+      });
+
+      it('should handle relative paths', () => {
+        const request = {
+          baseURL: 'http://localhost',
+          url: 'case-file/search/case-files',
+        };
+        mockHttpClient.mapRequestForLocalhost(request, apiPorts);
+        expect(request.baseURL).toBe('http://localhost:44355');
+        expect(request.url).toBe('/search/case-files');
+      });
+    });
   });
 });

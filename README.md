@@ -29,14 +29,17 @@ For more information about their concepts: https://nx.dev/structure/applications
 
 ## Development
 
-| Actions / Package      |           benef-app           | emis-app                     | registration-lib                 | component-lib                 | entities-lib                 |
-|------------------------|:-----------------------------:|------------------------------|----------------------------------|-------------------------------|------------------------------|
-| Run development server |   ```yarn benef-app:dev```    | ```yarn emis-app:dev```      | NA                               | NA                            | NA                           |
-| Test the code          |   ```yarn benef-app:test```   | ```yarn emis-app:test```     | ```yarn registration-lib:test``` | ```yarn component-lib:test``` | ```yarn entities-lib:test``` | 
-| Lint                   |   ```yarn benef-app:lint```   | ```yarn emis-app:lint```     | ```yarn registration-lib:lint``` | ```yarn component-lib:lint``` | ```yarn entities-lib:lint``` | 
-| Sync Lokalise          | ```yarn benef-app:lokalise``` | ```yarn emis-app:lokalise``` | NA                               | NA                            | NA                           | 
+| Actions / Package      |           benef-app           | emis-app                      | registration-lib                 | component-lib                 | entities-lib                 |
+|------------------------|:-----------------------------:|-------------------------------|----------------------------------|-------------------------------|------------------------------|
+| Run development server | ```yarn benef-app:dev```      | ```yarn emis-app:dev```       | NA                               | NA                            | NA                           |
+|   (targeting lab env)  | ```yarn benef-app:dev:lab```  | ```yarn emis-app:dev:lab```   | NA                               | NA                            | NA                           |
+|   (targeting local BE) | NA                            | ```yarn emis-app:dev:local``` | NA                               | NA                            | NA                           |
+| Test the code          | ```yarn benef-app:test```     | ```yarn emis-app:test```      | ```yarn registration-lib:test``` | ```yarn component-lib:test``` | ```yarn entities-lib:test``` | 
+| Lint                   | ```yarn benef-app:lint```     | ```yarn emis-app:lint```      | ```yarn registration-lib:lint``` | ```yarn component-lib:lint``` | ```yarn entities-lib:lint``` | 
+| Sync Lokalise          | ```yarn benef-app:lokalise``` | ```yarn emis-app:lokalise```  | NA                               | NA                            | NA                           | 
 
 NA: Not applicable
+local BE: API projects hosted locally (see apps/emis-app/.env.localhost)
 
 ## Helpful commands
 

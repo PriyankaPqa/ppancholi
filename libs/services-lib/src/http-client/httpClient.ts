@@ -164,6 +164,8 @@ export class HttpClient implements IHttpClient {
   }
 
   private requestHandler(request: any) {
+    this.mapRequestForLocalhost(request, process.env.VITE_API_PORTS);
+
     if (this.options.authentication) {
       if (!request.ignoreJwt) {
         const accessToken = this.options.accessToken || localStorage.getItem(localStorageKeys.accessToken.name);
@@ -278,5 +280,52 @@ export class HttpClient implements IHttpClient {
       document.body.removeChild(link);
     }
     return url;
+  }
+
+  mapRequestForLocalhost(request: any, localhostApiPorts: string) {
+    if (!localhostApiPorts || localhostApiPorts.length === 0 || !request?.baseURL || !request?.url || !request.baseURL.includes('localhost')) {
+      return;
+    }
+
+    const urlParts = request.url.split('/');
+    while (urlParts.length > 0) {
+      const part = urlParts[0];
+      if (part === 'http:' || part === 'https:' || part === '' || part === 'localhost') {
+        urlParts.shift();
+      } else {
+        break;
+      }
+    }
+    if (urlParts.length === 0) {
+      return;
+    }
+
+    const port = this.getPortForApiUrlSuffix(urlParts[0], localhostApiPorts);
+    if (port === 0) {
+      return;
+    }
+
+    urlParts.shift();
+    const baseUrl = request.baseURL.endsWith('/') ? request.baseURL.slice(0, request.baseURL.length - 1) : request.baseURL;
+
+    request.baseURL = `${baseUrl}:${port}`;
+    request.url = `/${urlParts.join('/')}`;
+  }
+
+  getPortForApiUrlSuffix(apiUrlSuffix: string, localhostApiPorts: string): number {
+    let port = 0;
+    try {
+      if (localhostApiPorts.length === 0) {
+        return port;
+      }
+
+      const portMatch = localhostApiPorts.split(',').find((s) => s.startsWith(apiUrlSuffix));
+      if (portMatch) {
+        port = parseInt(portMatch.split(':')[1], 10);
+      }
+    } catch {
+      // ignore any errors
+    }
+    return port;
   }
 }
