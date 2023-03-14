@@ -19,6 +19,7 @@ import {
   mockMemberCreateRequest,
   mockSplitHouseholdRequest,
 } from '@libs/entities-lib/household-create';
+import { HouseholdStatus } from '@libs/entities-lib/household';
 import { mockHttp } from '../../http-client';
 import { HouseholdsService } from './households';
 
@@ -474,6 +475,25 @@ describe('>>> Beneficiaries Service', () => {
         memberId: member.id,
         currentAddress: service.parseCurrentAddress(member.currentAddress),
         identitySet: service.parseIdentitySet(member.identitySet),
+      });
+    });
+  });
+
+  describe('setHouseholdStatus', () => {
+    it('should call the correct URL', async () => {
+      await service.setHouseholdStatus('test-id-123', HouseholdStatus.Open, 'rationale-test');
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/test-id-123/reopen/`, {
+        rationale: 'rationale-test',
+      });
+
+      await service.setHouseholdStatus('test-id-123', HouseholdStatus.Archived, 'rationale-test');
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/test-id-123/archive/`, {
+        rationale: 'rationale-test',
+      });
+
+      await service.setHouseholdStatus('test-id-123', HouseholdStatus.Closed, 'rationale-test');
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/test-id-123/close/`, {
+        rationale: 'rationale-test',
       });
     });
   });

@@ -1,12 +1,13 @@
 import { mockHouseholdCreate, Member } from '@libs/entities-lib/household-create';
 import {
+  HouseholdStatus,
   mockHouseholdCaseFile, mockHouseholdEntity,
 } from '@libs/entities-lib/household';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockEventMainInfo, EEventLocationStatus } from '@libs/entities-lib/event';
-import { CaseFileStatus, mockCaseFileEntities } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, mockCaseFileEntities, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import householdHelpers from '@/ui/helpers/household';
 import routes from '@/constants/routes';
 import flushPromises from 'flush-promises';
@@ -63,6 +64,7 @@ describe('HouseholdProfile.vue', () => {
             events,
             loading: false,
             caseFiles: mockCaseFileEntities(),
+            newStatus: HouseholdStatus.Open,
           };
         },
         computed: {
@@ -74,6 +76,9 @@ describe('HouseholdProfile.vue', () => {
           },
           householdEntity() {
             return householdEntity;
+          },
+          statuses() {
+            return [HouseholdStatus.Archived, HouseholdStatus.Closed];
           },
         },
         mocks: {
@@ -126,6 +131,7 @@ describe('HouseholdProfile.vue', () => {
               events,
               loading: false,
               caseFiles: mockCaseFileEntities(),
+              newStatus: HouseholdStatus.Open,
             };
           },
           computed: {
@@ -137,6 +143,12 @@ describe('HouseholdProfile.vue', () => {
             },
             canEdit() {
               return true;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
             },
           },
           mocks: {
@@ -159,6 +171,7 @@ describe('HouseholdProfile.vue', () => {
               events,
               loading: false,
               caseFiles: mockCaseFileEntities(),
+              newStatus: HouseholdStatus.Open,
             };
           },
           computed: {
@@ -170,6 +183,12 @@ describe('HouseholdProfile.vue', () => {
             },
             canEdit() {
               return false;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
             },
           },
           mocks: {
@@ -227,6 +246,26 @@ describe('HouseholdProfile.vue', () => {
         expect(element.text()).toContain('May 26, 2021');
       });
     });
+
+    describe('household-status-dialog', () => {
+      it('should exist when showHouseholdStatusDialog is true', async () => {
+        await wrapper.setData({
+          showHouseholdStatusDialog: true,
+        });
+        const element = wrapper.findDataTest('household-status-dialog');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should call onStatusChange when triggered submit event', async () => {
+        wrapper.vm.onStatusChange = jest.fn();
+        await wrapper.setData({
+          showHouseholdStatusDialog: true,
+        });
+        const element = wrapper.findDataTest('household-status-dialog');
+        await element.vm.$emit('submit');
+        expect(wrapper.vm.onStatusChange).toHaveBeenCalled();
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -261,11 +300,20 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               allEvents: events,
+              newStatus: HouseholdStatus.Open,
+              caseFiles: mockCaseFileEntities(),
+              myEvents: [mockEventMainInfo()],
             };
           },
           computed: {
             activeCaseFiles() {
               return caseFiles;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
             },
           },
           mocks: {
@@ -292,6 +340,12 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $services: services,
@@ -313,6 +367,12 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() {
               return householdCreate;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
             },
           },
           mocks: {
@@ -338,11 +398,18 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               caseFiles: [...caseFiles],
+              newStatus: HouseholdStatus.Open,
             };
           },
           computed: {
             household() {
               return householdCreate;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
             },
           },
           mocks: {
@@ -368,6 +435,12 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $services: services,
@@ -390,6 +463,12 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $services: services,
@@ -410,6 +489,12 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() {
               return householdCreate;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
             },
           },
           mocks: {
@@ -433,6 +518,12 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $services: services,
@@ -452,6 +543,12 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() {
               return householdCreate;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
             },
           },
           mocks: {
@@ -474,6 +571,12 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $services: services,
@@ -495,6 +598,12 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $services: services,
@@ -514,6 +623,12 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() {
               return householdCreate;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
             },
           },
           mocks: {
@@ -538,6 +653,12 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $hasFeature: () => true,
@@ -555,6 +676,12 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() {
               return householdCreate;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
             },
           },
           mocks: {
@@ -574,10 +701,19 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               allEvents: [...events, otherEvent],
+              newStatus: HouseholdStatus.Open,
             };
           },
           propsData: {
             id: householdEntity.id,
+          },
+          computed: {
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $services: services,
@@ -593,6 +729,227 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.eventNames[otherEvent.entity.id]).toBeTruthy();
       });
     });
+
+    describe('hasLinkedCasefiles', () => {
+      it('should return true it myEvents id includes eventId in casefils', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              newStatus: HouseholdStatus.Open,
+              caseFiles: [mockCaseFileEntity({ eventId: 'test-event-id-123' })],
+              myEvents: [mockEventMainInfo({ id: 'test-event-id-123' })],
+            };
+          },
+          computed: {
+            householdEntity() {
+              return mockHouseholdEntity({ householdStatus: HouseholdStatus.Open });
+            },
+          },
+          mocks: {
+            $hasLevel: () => true,
+            $hasFeature: () => true,
+            $services: services,
+          },
+        });
+        expect(wrapper.vm.hasLinkedCasefiles).toEqual(true);
+      });
+    });
+
+    describe('canChangeStatus', () => {
+      it('should return true, when status is Open and it has Level and hasLinkedCasefiles is true', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              newStatus: HouseholdStatus.Open,
+              caseFiles: mockCaseFileEntities(),
+              myEvents: [mockEventMainInfo()],
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return mockHouseholdEntity({ householdStatus: HouseholdStatus.Open });
+            },
+            hasLinkedCasefiles() {
+              return true;
+            },
+          },
+          mocks: {
+            $hasLevel: () => true,
+            $hasFeature: () => true,
+            $services: services,
+          },
+        });
+        expect(wrapper.vm.canChangeStatus).toEqual(true);
+      });
+
+      it('should return true, when status is Archived and it has Level and members', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              newStatus: HouseholdStatus.Open,
+              caseFiles: mockCaseFileEntities(),
+              myEvents: events,
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return mockHouseholdEntity({
+                householdStatus: HouseholdStatus.Archived,
+              });
+            },
+          },
+          mocks: {
+            $hasLevel: () => true,
+            $hasFeature: () => true,
+            $services: services,
+          },
+        });
+        expect(wrapper.vm.canChangeStatus).toEqual(true);
+      });
+
+      it('should return true, when status is Closed and it has Level', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return mockHouseholdEntity({
+                householdStatus: HouseholdStatus.Closed,
+              });
+            },
+          },
+          mocks: {
+            $hasLevel: () => true,
+            $hasFeature: () => true,
+            $services: services,
+          },
+        });
+        expect(wrapper.vm.canChangeStatus).toEqual(true);
+      });
+    });
+
+    describe('statuses', () => {
+      it('should return Archive and Closed, when status is Open', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              myEvents: events,
+              casefiles: mockCaseFileEntities(),
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return mockHouseholdEntity({ householdStatus: HouseholdStatus.Open });
+            },
+          },
+          mocks: {
+            $hasLevel: () => true,
+            $hasFeature: () => true,
+            $services: services,
+          },
+        });
+        expect(wrapper.vm.statuses).toEqual([HouseholdStatus.Archived, HouseholdStatus.Closed]);
+      });
+
+      it('should return Open, when status is Archived', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              myEvents: events,
+              casefiles: mockCaseFileEntities(),
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return mockHouseholdEntity({
+                householdStatus: HouseholdStatus.Archived,
+              });
+            },
+          },
+          mocks: {
+            $hasLevel: () => true,
+            $hasFeature: () => true,
+            $services: services,
+          },
+        });
+        expect(wrapper.vm.statuses).toEqual([HouseholdStatus.Open]);
+      });
+
+      it('should return Open, when status is Closed', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              myEvents: events,
+              casefiles: mockCaseFileEntities(),
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return mockHouseholdEntity({
+                householdStatus: HouseholdStatus.Closed,
+              });
+            },
+          },
+          mocks: {
+            $hasLevel: () => true,
+            $hasFeature: () => true,
+            $services: services,
+          },
+        });
+        expect(wrapper.vm.statuses).toEqual([HouseholdStatus.Open]);
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -604,6 +961,20 @@ describe('HouseholdProfile.vue', () => {
           pinia,
           propsData: {
             id: householdEntity.id,
+          },
+          data() {
+            return {
+              myEvents: events,
+              casefiles: mockCaseFileEntities(),
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $services: services,
@@ -647,6 +1018,11 @@ describe('HouseholdProfile.vue', () => {
         propsData: {
           id: householdEntity.id,
         },
+        computed: {
+          statuses() {
+            return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+          },
+        },
         mocks: {
           $services: services,
         },
@@ -662,10 +1038,16 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               caseFiles: [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }],
+              newStatus: HouseholdStatus.Open,
             };
           },
           propsData: {
             id: householdEntity.id,
+          },
+          computed: {
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
           },
           mocks: {
             $services: services,
@@ -692,10 +1074,16 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               caseFiles: [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }],
+              newStatus: HouseholdStatus.Open,
             };
           },
           propsData: {
             id: householdEntity.id,
+          },
+          computed: {
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
           },
           mocks: {
             $services: services,
@@ -719,6 +1107,9 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             householdEntity() {
               return householdEntity;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
             },
           },
           mocks: {
@@ -760,6 +1151,7 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               myEvents: events,
+              newStatus: HouseholdStatus.Open,
             };
           },
           computed: {
@@ -768,6 +1160,9 @@ describe('HouseholdProfile.vue', () => {
             },
             household() {
               return altHousehold;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
             },
           },
           mocks: {
@@ -797,6 +1192,9 @@ describe('HouseholdProfile.vue', () => {
             },
             household() {
               return altHousehold;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
             },
           },
           mocks: {
@@ -829,6 +1227,9 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() {
               return householdCreate;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
             },
           },
           mocks: {
@@ -863,6 +1264,49 @@ describe('HouseholdProfile.vue', () => {
         await wrapper.setData({ shelterLocations: [{ id: 'sl-1' }] });
         const result = await wrapper.vm.makeShelterLocationsListForMember(member);
         expect(result).toEqual([{ id: 'sl-1' }]);
+      });
+    });
+
+    describe('onStatusChangeInit', () => {
+      it('should set newStatus, set showHouseholdStatusDialog to true', async () => {
+        await wrapper.setData({
+          newStatus: null,
+          showHouseholdStatusDialog: false,
+        });
+        wrapper.vm.onStatusChangeInit(HouseholdStatus.Open);
+        expect(wrapper.vm.newStatus).toEqual(HouseholdStatus.Open);
+        expect(wrapper.vm.showHouseholdStatusDialog).toEqual(true);
+      });
+    });
+
+    describe('onStatusChange', () => {
+      it('should call the correct service, set showHouseholdStatusDialog to false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              showHouseholdStatusDialog: true,
+              newStatus: HouseholdStatus.Open,
+            };
+          },
+          computed: {
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+          },
+          mocks: {
+            $services: services,
+          },
+        });
+        wrapper.vm.$services.households.setHouseholdStatus = jest.fn();
+        const payload = { status: HouseholdStatus.Open, rationale: 'test-rationale' };
+        await wrapper.vm.onStatusChange(payload);
+        expect(wrapper.vm.$services.households.setHouseholdStatus).toHaveBeenCalledWith(wrapper.vm.id, HouseholdStatus.Open, 'test-rationale');
+        expect(wrapper.vm.showHouseholdStatusDialog).toEqual(false);
       });
     });
   });

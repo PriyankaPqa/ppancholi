@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { IConsentInformation, IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
-import { IDetailedRegistrationResponse, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
+import { HouseholdStatus, IDetailedRegistrationResponse, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
 
 import {
   IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
@@ -320,5 +320,18 @@ id: string,
       currentAddress: this.parseCurrentAddress(member.currentAddress),
       identitySet: isPrimaryBeneficiary ? this.parseIdentitySet(member.identitySet) : null,
     };
+  }
+
+  async setHouseholdStatus(householdId: string, status: HouseholdStatus, rationale: string): Promise<IHouseholdEntity> {
+    switch (status) {
+      case HouseholdStatus.Open:
+        return this.http.patch(`${this.baseUrl}/${householdId}/reopen/`, { rationale });
+      case HouseholdStatus.Archived:
+        return this.http.patch(`${this.baseUrl}/${householdId}/archive/`, { rationale });
+      case HouseholdStatus.Closed:
+        return this.http.patch(`${this.baseUrl}/${householdId}/close/`, { rationale });
+      default:
+        return null;
+    }
   }
 }

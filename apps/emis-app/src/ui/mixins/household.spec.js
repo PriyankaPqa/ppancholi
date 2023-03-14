@@ -94,16 +94,15 @@ describe('household', () => {
           propsData: {
             id: 'hh-id',
           },
-          computed: {
-            activeCaseFiles() {
-              return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
-            },
-          },
           mocks: {
             $services: services,
           },
         });
-        jest.spyOn(wrapper.vm.$services.events, 'searchMyEventsById').mockImplementation(() => {});
+
+        await wrapper.setData({
+          caseFiles: [{ eventId: 'id-1' }, { eventId: 'id-2' }],
+        });
+        wrapper.vm.$services.events.searchMyEventsById = jest.fn();
         await wrapper.vm.fetchMyEvents();
         expect(wrapper.vm.$services.events.searchMyEventsById).toHaveBeenCalledWith(['id-1', 'id-2']);
       });
@@ -122,17 +121,16 @@ describe('household', () => {
           propsData: {
             id: 'hh-id',
           },
-          computed: {
-            activeCaseFiles() {
-              return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
-            },
-          },
           mocks: {
             $services: services,
           },
         });
 
-        jest.spyOn(wrapper.vm.$services.events, 'searchMyEventsById').mockImplementation(() => ({ value: [{ id: 'eventId' }] }));
+        await wrapper.setData({
+          caseFiles: [{ eventId: 'eventId' }],
+        });
+
+        wrapper.vm.$services.events.searchMyEventsById = jest.fn(() => ({ value: [{ id: 'eventId' }] }));
         const result = await wrapper.vm.fetchMyEvents();
         expect(wrapper.vm.myEvents).toEqual([{ id: 'eventId' }]);
         expect(result).toEqual([{ id: 'eventId' }]);

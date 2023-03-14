@@ -89,9 +89,10 @@
             <div>
               <status-select
                 data-test="household-profile-status"
-                :value="mockHouseholdEntity.householdStatus"
+                :value="householdEntity.householdStatus"
                 :statuses="statuses"
                 status-name="HouseholdStatus"
+                :disabled="!canChangeStatus"
                 @input="onStatusChangeInit($event)" />
             </div>
             <v-divider class="mt-4 mb-6" />
@@ -184,6 +185,12 @@
       v-if="showProfileHistory && householdEntity"
       :show.sync="showProfileHistory"
       :household="householdEntity" />
+    <household-status-dialog
+      v-if="showHouseholdStatusDialog"
+      data-test="household-status-dialog"
+      :show.sync="showHouseholdStatusDialog"
+      :to-status="newStatus"
+      @submit="onStatusChange($event)" />
   </rc-page-content>
 </template>
 
@@ -201,9 +208,7 @@ import AddEditAdditionalMembersLib from '@libs/registration-lib/components/addit
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
-import {
-  EEventLocationStatus, IEventGenericLocation, IEventMetadata,
-} from '@libs/entities-lib/event';
+import { EEventLocationStatus, IEventGenericLocation, IEventMetadata } from '@libs/entities-lib/event';
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 import routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -216,6 +221,7 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
+import HouseholdStatusDialog from './components/HouseholdStatusDialog.vue';
 
 export default mixins(household).extend({
   name: 'HouseholdProfile',
@@ -229,6 +235,7 @@ export default mixins(household).extend({
     HouseholdProfileHistory,
     AddEditAdditionalMembersLib,
     StatusSelect,
+    HouseholdStatusDialog,
   },
 
   props: {
@@ -252,8 +259,9 @@ export default mixins(household).extend({
       disabledAddMembers: false,
       showEditAddress: false,
       showProfileHistory: false,
-      mockHouseholdEntity: { householdStatus: HouseholdStatus.Open },
       FeatureKeys,
+      showHouseholdStatusDialog: false,
+      newStatus: null as HouseholdStatus,
     };
   },
 
@@ -360,21 +368,46 @@ export default mixins(household).extend({
       return names;
     },
 
+    hasLinkedCasefiles(): boolean {
+      if (this.caseFiles && this.myEvents) {
+        const eventsIdsInCasefiles = this.caseFiles.map((e) => e.eventId);
+        for (const myEvent of this.myEvents) {
+          if (eventsIdsInCasefiles.includes(myEvent.entity.id)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+
+    canChangeStatus(): boolean {
+      switch (this.householdEntity.householdStatus) {
+        case HouseholdStatus.Open:
+          return this.$hasLevel(UserRoles.level2) && this.hasLinkedCasefiles;
+
+        case HouseholdStatus.Archived:
+          return this.$hasLevel(UserRoles.level5) && this.householdEntity.members.length > 0;
+
+        case HouseholdStatus.Closed:
+          return this.$hasLevel(UserRoles.level3);
+
+        default:
+          return false;
+      }
+    },
+
     statuses(): HouseholdStatus[] {
-      // TODO this part will be rewritten in 6250, add rules
-      if (this.mockHouseholdEntity.householdStatus === HouseholdStatus.Open) {
-        return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-      }
+      switch (this.householdEntity.householdStatus) {
+        case HouseholdStatus.Open:
+          return [HouseholdStatus.Archived, HouseholdStatus.Closed];
 
-      if (this.mockHouseholdEntity.householdStatus === HouseholdStatus.Archived) {
-        return [HouseholdStatus.Open, HouseholdStatus.Closed];
-      }
+        case HouseholdStatus.Closed:
+        case HouseholdStatus.Archived:
+          return [HouseholdStatus.Open];
 
-      if (this.mockHouseholdEntity.householdStatus === HouseholdStatus.Closed) {
-        return [HouseholdStatus.Open, HouseholdStatus.Archived];
+        default:
+          return [];
       }
-
-      return [];
     },
   },
 
@@ -450,9 +483,19 @@ export default mixins(household).extend({
       return this.shelterLocations;
     },
 
-    onStatusChangeInit() {
-      // TODO add logic in 6250
+    onStatusChangeInit(status: HouseholdStatus) {
+      this.newStatus = status;
+      this.showHouseholdStatusDialog = true;
     },
+
+     async onStatusChange({ status, rationale }: { status: HouseholdStatus, rationale: string }) {
+      try {
+        await this.$services.households.setHouseholdStatus(this.id, status, rationale);
+      } finally {
+        this.showHouseholdStatusDialog = false;
+      }
+       return null;
+     },
   },
 });
 </script>

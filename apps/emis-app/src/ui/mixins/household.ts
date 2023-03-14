@@ -76,7 +76,7 @@ export default Vue.extend({
      * @returns {Promise<IEventMainInfo[]>} Case files related to a household
      */
     async fetchMyEvents(caseFiles?: ICaseFileEntity[]): Promise<IEventMainInfo[]> {
-      const cf = caseFiles || this.activeCaseFiles;
+      const cf = caseFiles || this.caseFiles;
       if (cf?.length) {
         const eventIds = cf.map((f) => f.eventId);
         const results = await this.$services.events.searchMyEventsById(eventIds);

@@ -17,7 +17,8 @@ import {
   ICreateHouseholdRequest,
 } from '@libs/entities-lib/household-create';
 import {
- IDetailedRegistrationResponse, IdParams, IHouseholdEntity, IOustandingPaymentResponse,
+  HouseholdStatus,
+  IDetailedRegistrationResponse, IdParams, IHouseholdEntity, IOustandingPaymentResponse,
 } from '@libs/entities-lib/household';
 import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
@@ -54,6 +55,7 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
   getMemberHistory(id: uuid): Promise<IVersionedEntity[]>;
   getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
+  setHouseholdStatus(householdId: string, status: HouseholdStatus, rationale: string): Promise<IHouseholdEntity>;
   checkForPossibleDuplicatePublic(eventId: uuid, member: IMember, recaptchaToken: string): Promise<ICheckForPossibleDuplicateResponse>;
   sendOneTimeCodeRegistrationPublic(payload: ISendOneTimeCodeRegistrationPublicPayload): Promise<void>;
   verifyOneTimeCodeRegistrationPublic(payload: IVerifyOneTimeCodeRegistrationPublicPayload): Promise<boolean>;
@@ -87,6 +89,7 @@ export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHousehol
   getHouseholdMetadataHistory: jest.Mock<IVersionedEntity[]>;
   getMemberHistory: jest.Mock<IVersionedEntity[]>;
   getMemberMetadataHistory: jest.Mock<IVersionedEntity[]>;
+  setHouseholdStatus: jest.Mock<IHouseholdEntity>;
   checkForPossibleDuplicatePublic: jest.Mock<ICheckForPossibleDuplicateResponse>;
   sendOneTimeCodeRegistrationPublic: jest.Mock<void>;
   verifyOneTimeCodeRegistrationPublic: jest.Mock<boolean>;

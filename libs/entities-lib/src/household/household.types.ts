@@ -6,8 +6,8 @@ import { ICaseFileEntity } from '../case-file';
 
 export enum HouseholdStatus {
   Open = 0,
-  Archived = 1,
-  Closed = 2,
+  Closed = 1,
+  Archived = 2,
 }
 
 export interface IHouseholdAddress {
