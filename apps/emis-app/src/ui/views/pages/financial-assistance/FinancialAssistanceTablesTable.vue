@@ -20,7 +20,7 @@
       ]"
       @search="search">
       <template v-if="$hasLevel(UserRoles.level6)" #headerLeft>
-        <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="onClickMenuItem($event)" />
+        <rc-add-button-with-menu :items="menuItems" data-test="create-financial-assistance-table-button" @click-item="onClickMenuItem($event)" />
       </template>
 
       <template #filter>
