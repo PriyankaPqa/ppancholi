@@ -8,6 +8,7 @@ export interface IPublicService {
   searchEventsById(ids: string[]): Promise<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
   getTenantByRegistrationDomain(domain: string): Promise<string>;
   getTenantByEmisDomain(domain: string): Promise<string>;
+  resetPublicToken(): void;
 }
 
 export interface IPublicServiceMock {
@@ -16,4 +17,5 @@ export interface IPublicServiceMock {
   searchEventsById: jest.Mock<IAzureSearchResult<ICombinedIndex<IEventData, IEventMetadata>>>;
   getTenantByRegistrationDomain: jest.Mock<string>;
   getTenantByEmisDomain: jest.Mock<string>;
+  resetPublicToken: jest.Mock<void>;
 }

@@ -53,6 +53,10 @@ export class HttpClient implements IHttpClient {
     this.axios.defaults.headers.common['x-tenant-id'] = tenantId;
   }
 
+  public setPublicToken(token: string) {
+    this.axios.defaults.headers.common['x-public-token'] = token;
+  }
+
   public getTenant(): string {
     return this.axios.defaults.headers.common['x-tenant-id'].toString();
   }

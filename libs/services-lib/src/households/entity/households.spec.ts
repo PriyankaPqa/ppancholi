@@ -268,12 +268,20 @@ describe('>>> Beneficiaries Service', () => {
   describe('checkForPossibleDuplicatePublic', () => {
     it('should call the proper endpoint', async () => {
       const member = mockMember();
-      await service.checkForPossibleDuplicatePublic('eventId', member, 'captcha');
+      await service.checkForPossibleDuplicatePublic('eventId', member);
       expect(http.post).toHaveBeenCalledWith(
         `${service.baseApi}/persons/public/check-possible-duplicate`,
-        { eventId: 'eventId', contactInformation: member.contactInformation, identitySet: member.identitySet, recaptchaToken: 'captcha' },
+        { eventId: 'eventId', contactInformation: member.contactInformation, identitySet: member.identitySet },
         { globalHandler: false },
       );
+    });
+  });
+
+  describe('getPublicToken', () => {
+    it('should call the proper endpoint and set header', async () => {
+      await service.getPublicToken('token');
+      expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/validate-recaptcha?recaptchaToken=token`, null, { globalHandler: false });
+      expect(http.setPublicToken).toHaveBeenCalledWith(await http.post());
     });
   });
 
@@ -290,6 +298,7 @@ describe('>>> Beneficiaries Service', () => {
       const params = {} as IVerifyOneTimeCodeRegistrationPublicPayload;
       await service.verifyOneTimeCodeRegistrationPublic(params);
       expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/verify-code-registration`, params, { globalHandler: false });
+      expect(http.setPublicToken).toHaveBeenCalledWith(await http.post());
     });
   });
 

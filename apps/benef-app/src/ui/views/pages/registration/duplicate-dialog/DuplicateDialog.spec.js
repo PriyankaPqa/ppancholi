@@ -30,7 +30,6 @@ describe('DuplicateDialog.vue', () => {
         show: true,
         duplicateResults,
         phone: '555-555-4444',
-        recaptchaToken: 'recaptchaToken',
       },
       mocks: {
         $services: services,
@@ -92,36 +91,37 @@ describe('DuplicateDialog.vue', () => {
     describe('goHome', () => {
       it('calls reset and goes home', () => {
         registrationStore.resetHouseholdCreate = jest.fn();
+        registrationStore.resetTabs = jest.fn();
         wrapper.vm.goHome();
         expect(registrationStore.resetHouseholdCreate).toHaveBeenCalled();
+        expect(registrationStore.resetTabs).toHaveBeenCalled();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: 'landingPage.name' });
       });
     });
 
     describe('resetScreen', () => {
       it('resets data', async () => {
-        await wrapper.setData({ selectedCommunication: 1, sentCode: true, codeValid: false });
+        await wrapper.setData({ selectedCommunication: 1, sentCode: true, codeIsValid: true });
         wrapper.vm.resetScreen();
         expect(wrapper.vm.selectedCommunication).toBeNull();
         expect(wrapper.vm.sentCode).toBeFalsy();
-        expect(wrapper.vm.codeValid).toBeNull();
+        expect(wrapper.vm.codeIsValid).toBeNull();
       });
     });
 
     describe('verifyCode', () => {
       it('calls verifyOneTimeCodeRegistrationPublic', async () => {
         window.confirm = () => true;
-        await wrapper.setData({ chars: ['1', '2', '3', '4', '5', '6'] });
+        await wrapper.setData({ chars: ['1', '2', '3', '4', '5', '6'], selectedCommunication: 1 });
         await wrapper.vm.verifyCode();
         expect(wrapper.vm.$services.households.verifyOneTimeCodeRegistrationPublic).toHaveBeenCalledWith(
           {
-            eventId: wrapper.vm.event.id,
+            communicationMethod: 1,
             duplicateHouseholdId: 'duplicateHouseholdId',
             code: '123456',
-            recaptchaToken: 'recaptchaToken',
           },
         );
-        expect(wrapper.vm.codeValid).toBe(await wrapper.vm.$services.households.verifyOneTimeCodeRegistrationPublic());
+        expect(wrapper.vm.codeIsValid).toBe(await wrapper.vm.$services.households.verifyOneTimeCodeRegistrationPublic());
       });
     });
   });

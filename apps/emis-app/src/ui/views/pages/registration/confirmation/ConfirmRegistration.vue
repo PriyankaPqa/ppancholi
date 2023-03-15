@@ -28,20 +28,9 @@ export default Vue.extend({
   },
   methods: {
     goToSearch() {
-      this.resetAllTabs();
       useRegistrationStore().currentTabIndex = tabs().findIndex((t) => t.id === 'isRegistered');
       useRegistrationStore().resetHouseholdCreate();
-      useRegistrationStore().registrationErrors = null;
-    },
-
-    resetAllTabs() {
-      for (let index = 0; index < this.allTabs.length; index += 1) {
-        useRegistrationStore().mutateTabAtIndex(index, (tab: IRegistrationMenuItem) => {
-          tab.disabled = false;
-          tab.isValid = true;
-          tab.isTouched = false;
-        });
-      }
+      useRegistrationStore().resetTabs();
     },
   },
 });

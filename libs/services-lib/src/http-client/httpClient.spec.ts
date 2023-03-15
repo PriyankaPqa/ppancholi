@@ -96,6 +96,14 @@ describe('httpClient', () => {
       } as Toasted;
     });
 
+    describe('setPublicToken', () => {
+      it('sets public token', () => {
+        mockHttpClient.setPublicToken('test-id');
+
+        expect(mockHttpClient.axios.defaults.headers.common['x-public-token']).toBe('test-id');
+      });
+    });
+
     describe('setHeadersTenant', () => {
       it('sets tenantId', () => {
         mockHttpClient.setHeadersTenant('test-id');

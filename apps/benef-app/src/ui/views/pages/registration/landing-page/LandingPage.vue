@@ -47,6 +47,9 @@ export default Vue.extend({
 
   created() {
     this.appVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
+    useRegistrationStore().resetHouseholdCreate();
+    useRegistrationStore().resetTabs();
+    this.$services.publicApi.resetPublicToken();
     document.title = this.$m(this.event.name) as string;
   },
 

@@ -64,4 +64,8 @@ export class PublicService implements IPublicService {
     }
     return tenantId;
   }
+
+  resetPublicToken(): void {
+    this.http.setPublicToken('');
+  }
 }

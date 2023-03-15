@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createLocalVue as clv, RouterLinkStub } from '@vue/test-utils';
 import VueI18n from 'vue-i18n';
@@ -129,5 +130,17 @@ export const getWrapper = (Component, options, {
 export const getLocalVue = (plugins) => {
   const localVue = clv();
   plugins.forEach((p) => localVue.use(p));
+
+  // in test mode we don't need the props checks
+  // we sometimes have data that doesnt follow the correct typings for test purposes
+  const outputErrorToConsole = console.error;
+  console.error = (...data) => {
+    if (data.length === 1 && typeof data[0] === 'string' && data[0].startsWith('[Vue warn]: Invalid prop: type check failed')
+      // kinda specific to $t mocked
+      && data[0].indexOf('Expected String, got Object') > -1) {
+      return;
+    }
+    outputErrorToConsole(...data);
+  };
   return localVue;
 };

@@ -359,6 +359,17 @@ describe('>>> Registration Store', () => {
     });
   });
 
+  describe('resetTabs', () => {
+    it('should reset the tab state to default', () => {
+      useRegistrationStore = initStore();
+      useRegistrationStore.mutateTabAtIndex(1, (x) => {
+        x.isTouched = true;
+      });
+      useRegistrationStore.resetTabs();
+      expect(useRegistrationStore.allTabs[1].isTouched).toEqual(false);
+    });
+  });
+
   describe('setSplitHousehold', () => {
     it('should set splitHousehold', () => {
       useRegistrationStore = initStore();

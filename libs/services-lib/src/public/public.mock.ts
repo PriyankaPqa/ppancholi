@@ -7,4 +7,5 @@ export const mockPublicService = (): IPublicServiceMock => ({
   searchEventsById: jest.fn(() => mockSearchEventsData()),
   getTenantByRegistrationDomain: jest.fn(() => 'tenant-id'),
   getTenantByEmisDomain: jest.fn(() => 'tenant-id'),
+  resetPublicToken: jest.fn(),
 });

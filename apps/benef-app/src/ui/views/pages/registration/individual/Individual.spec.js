@@ -192,8 +192,10 @@ describe('Individual.vue', () => {
         wrapper.vm.$hasFeature = jest.fn(() => true);
         wrapper.vm.next = jest.fn();
         await wrapper.vm.validateAndNext();
+        expect(wrapper.vm.$services.households.getPublicToken)
+          .toHaveBeenCalledWith(wrapper.vm.recaptchaToken);
         expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic)
-          .toHaveBeenCalledWith(wrapper.vm.event.id, wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary, wrapper.vm.recaptchaToken);
+          .toHaveBeenCalledWith(wrapper.vm.event.id, wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary);
         // will change once be is implemented
         // expect(wrapper.vm.duplicateResult).toEqual(wrapper.vm.$services.households.checkForPossibleDuplicatePublic());
         expect(wrapper.vm.showDuplicateDialog).toBeTruthy();

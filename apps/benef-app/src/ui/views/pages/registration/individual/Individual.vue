@@ -76,7 +76,6 @@
       v-if="showDuplicateDialog"
       :show.sync="showDuplicateDialog"
       :duplicate-results="duplicateResult"
-      :recaptcha-token="recaptchaToken"
       :phone="phoneAssistance" />
   </div>
 </template>
@@ -169,8 +168,9 @@ export default mixins(individual).extend({
 
       if (this.$hasFeature(FeatureKeys.SelfRegistration) && this.currentTab.id === 'personalInfo') {
         try {
+          await this.$services.households.getPublicToken(this.recaptchaToken);
           this.duplicateResult = await this.$services.households
-            .checkForPossibleDuplicatePublic(this.event.id, useRegistrationStore().householdCreate.primaryBeneficiary, this.recaptchaToken);
+            .checkForPossibleDuplicatePublic(this.event.id, useRegistrationStore().householdCreate.primaryBeneficiary);
         } catch (error) {
           const e = (error as IServerError).response?.data?.errors || error;
           applicationInsights.trackTrace('checkForPossibleDuplicatePublic error', { error: e }, 'Individual.vue', 'checkForPossibleDuplicatePublic');

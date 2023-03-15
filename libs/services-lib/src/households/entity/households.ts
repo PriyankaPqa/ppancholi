@@ -168,20 +168,37 @@ id: string,
     return this.http.get(`${this.baseApi}/persons/metadata/${id}/history`);
   }
 
-  checkForPossibleDuplicatePublic(eventId: string, member: IMember, recaptchaToken: string): Promise<ICheckForPossibleDuplicateResponse> {
+  checkForPossibleDuplicatePublic(eventId: string, member: IMember): Promise<ICheckForPossibleDuplicateResponse> {
     return this.http.post(
       `${this.baseApi}/persons/public/check-possible-duplicate`,
-      { eventId, contactInformation: member.contactInformation, identitySet: member.identitySet, recaptchaToken },
+      { eventId, contactInformation: member.contactInformation, identitySet: member.identitySet },
       { globalHandler: false },
-);
+    );
+  }
+
+  async getPublicToken(recaptchaToken: string): Promise<string> {
+    const publicToken = await this.http.post<string>(
+      `${this.baseApi}/persons/public/validate-recaptcha?recaptchaToken=${encodeURIComponent(recaptchaToken)}`,
+      null,
+      { globalHandler: false },
+    );
+
+    this.http.setPublicToken(publicToken);
+
+    return publicToken;
   }
 
   sendOneTimeCodeRegistrationPublic(payload: ISendOneTimeCodeRegistrationPublicPayload): Promise<void> {
     return this.http.post(`${this.baseApi}/persons/public/send-code-registration`, payload, { globalHandler: false });
   }
 
-  verifyOneTimeCodeRegistrationPublic(payload: IVerifyOneTimeCodeRegistrationPublicPayload): Promise<boolean> {
-    return this.http.post(`${this.baseApi}/persons/public/verify-code-registration`, payload, { globalHandler: false });
+  async verifyOneTimeCodeRegistrationPublic(payload: IVerifyOneTimeCodeRegistrationPublicPayload): Promise<boolean> {
+    const publicToken = await this.http.post<string>(`${this.baseApi}/persons/public/verify-code-registration`, payload, { globalHandler: false });
+    const success = publicToken !== null && publicToken !== '';
+    if (success) {
+      this.http.setPublicToken(publicToken);
+    }
+    return success;
   }
 
   /** Private methods * */

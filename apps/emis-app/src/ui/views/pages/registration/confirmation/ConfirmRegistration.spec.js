@@ -22,12 +22,6 @@ describe('ConfirmRegistrationLib.vue', () => {
 
   describe('Methods', () => {
     describe('goToSearch', () => {
-      it('should call resetAllTabs', () => {
-        wrapper.vm.resetAllTabs = jest.fn();
-        wrapper.vm.goToSearch();
-        expect(wrapper.vm.resetAllTabs).toHaveBeenCalledTimes(1);
-      });
-
       it('should call redirect to first page', () => {
         wrapper.vm.resetAllTabs = jest.fn();
         wrapper.vm.goToSearch();
@@ -37,7 +31,8 @@ describe('ConfirmRegistrationLib.vue', () => {
       it('should reset household create', () => {
         wrapper.vm.resetAllTabs = jest.fn();
         wrapper.vm.goToSearch();
-        expect(registrationStore.resetHouseholdCreate).toHaveBeenCalledTimes(1);
+        expect(registrationStore.resetHouseholdCreate).toHaveBeenCalled();
+        expect(registrationStore.resetTabs).toHaveBeenCalled();
       });
 
       it('should reset registration errors', () => {

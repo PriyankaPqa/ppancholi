@@ -57,4 +57,9 @@ describe('>>> Public Service', () => {
       { globalHandler: false, noErrorLogging: true, ignoreJwt: true },
     );
   });
+
+  test('resetPublicToken sets token empty', () => {
+    service.resetPublicToken();
+    expect(http.setPublicToken).toHaveBeenCalledWith('');
+  });
 });

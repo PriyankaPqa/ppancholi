@@ -2,10 +2,12 @@ import { mockEvent } from '@libs/entities-lib/registration-event';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { mockProvider } from '@/services/provider';
 import Component from './LandingPage.vue';
 
 const localVue = createLocalVue();
-const { pinia } = useMockRegistrationStore();
+const services = mockProvider();
+const { pinia, registrationStore } = useMockRegistrationStore();
 describe('LandingPage.vue', () => {
   let wrapper;
 
@@ -13,6 +15,9 @@ describe('LandingPage.vue', () => {
     wrapper = mount(Component, {
       localVue,
       pinia,
+      mocks: {
+        $services: services,
+      },
     });
   });
 
@@ -53,6 +58,16 @@ describe('LandingPage.vue', () => {
     describe('event', () => {
       it('should return the event from the storage', () => {
         expect(wrapper.vm.event).toEqual(mockEvent());
+      });
+    });
+  });
+
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('should reset household and token', () => {
+        expect(registrationStore.resetHouseholdCreate).toHaveBeenCalled();
+        expect(registrationStore.resetTabs).toHaveBeenCalled();
+        expect(wrapper.vm.$services.publicApi.resetPublicToken).toHaveBeenCalled();
       });
     });
   });

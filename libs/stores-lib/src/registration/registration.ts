@@ -268,6 +268,16 @@ export function storeFactory({
     }
     function resetHouseholdCreate() {
       householdCreate.value = new HouseholdCreate();
+      registrationErrors.value = null;
+    }
+    function resetTabs() {
+      for (let index = 0; index < allTabs.value.length; index += 1) {
+        mutateTabAtIndex(index, (tab: IRegistrationMenuItem) => {
+          tab.disabled = false;
+          tab.isValid = true;
+          tab.isTouched = false;
+        });
+      }
     }
     function setSplitHousehold({ originHouseholdId, primaryMember, additionalMembers }: { originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }) {
       splitHouseholdState.value = { originHouseholdId, splitMembers: { primaryMember, additionalMembers } };
@@ -505,6 +515,7 @@ export function storeFactory({
       decreaseInlineEditCounter,
       setHouseholdCreate,
       resetHouseholdCreate,
+      resetTabs,
       setSplitHousehold,
       resetSplitHousehold,
       fetchEvent,

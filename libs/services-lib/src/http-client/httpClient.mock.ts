@@ -20,6 +20,7 @@ export const mockHttp = (): IHttpMock => ({
   delete: jest.fn(() => Promise.resolve('resolved')),
   setHeadersLanguage: jest.fn(),
   setHeadersTenant: jest.fn(),
+  setPublicToken: jest.fn(),
   getTenant: jest.fn(() => 'tenantId'),
   getFormattedError: jest.fn(),
   getRestResponseAsFile: jest.fn(() => 'myUrl'),

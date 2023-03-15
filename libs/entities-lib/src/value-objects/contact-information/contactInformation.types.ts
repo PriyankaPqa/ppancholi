@@ -87,14 +87,12 @@ export interface ICheckForPossibleDuplicateResponse {
 export interface ISendOneTimeCodeRegistrationPublicPayload {
   eventId: uuid;
   duplicateHouseholdId: uuid;
-  recaptchaToken: string;
   communicationMethod: CommunicationMethod;
   language: string;
 }
 
 export interface IVerifyOneTimeCodeRegistrationPublicPayload {
-  eventId: uuid;
+  communicationMethod: CommunicationMethod,
   duplicateHouseholdId: uuid;
-  recaptchaToken: string;
   code: string;
 }

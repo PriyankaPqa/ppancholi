@@ -100,7 +100,7 @@
                     <v-text-field
                       ref="charsinput"
                       v-model="chars[index]"
-                      :disabled="codeValid"
+                      :disabled="!!codeIsValid"
                       class="code mx-4"
                       outlined
                       background-color="white"
@@ -113,14 +113,14 @@
                 </v-row>
                 <v-row class="justify-center">
                   <v-btn
-                    v-if="codeValid == null"
+                    v-if="codeIsValid == null"
                     :loading="showLoader"
                     text
                     color="primary"
                     @click="sendCode">
                     {{ $t('duplicate.resendCode') }}
                   </v-btn>
-                  <v-alert v-else-if="codeValid" dense text type="success">
+                  <v-alert v-else-if="codeIsValid" dense text type="success">
                     {{ $t('duplicate.codeValid') }}
                   </v-alert>
                   <v-alert v-else dense text type="error">
@@ -134,7 +134,7 @@
                     {{ $t('common.button.back') }}
                   </v-btn>
                   <v-btn
-                    v-if="!codeValid"
+                    v-if="!codeIsValid"
                     ref="verifyCodeBtn"
                     :disabled="!codeFilled"
                     :loading="showLoader"
@@ -143,7 +143,7 @@
                     {{ $t('duplicate.verifyCode') }}
                   </v-btn>
                   <v-btn
-                    v-if="codeValid"
+                    v-if="codeIsValid"
                     color="primary"
                     @click="next">
                     {{ $t('common.button.next') }}
@@ -190,10 +190,6 @@ export default Vue.extend({
       type: String,
       default: null,
     },
-    recaptchaToken: {
-      type: String,
-      default: null,
-    },
   },
 
   data: () => ({
@@ -201,7 +197,7 @@ export default Vue.extend({
     sentCode: false,
     showLoader: false,
     chars: ['', '', '', '', '', ''],
-    codeValid: null as boolean,
+    codeIsValid: null as boolean,
     event: useRegistrationStore().event,
   }),
 
@@ -238,6 +234,7 @@ export default Vue.extend({
     },
     goHome() {
       useRegistrationStore().resetHouseholdCreate();
+      useRegistrationStore().resetTabs();
       this.$router.push({ name: routes.landingPage.name });
     },
     next() {
@@ -246,7 +243,7 @@ export default Vue.extend({
     resetScreen() {
       this.selectedCommunication = null;
       this.sentCode = false;
-      this.codeValid = null;
+      this.codeIsValid = null;
     },
     async sendCode() {
       this.chars = ['', '', '', '', '', ''];
@@ -258,7 +255,6 @@ export default Vue.extend({
           duplicateHouseholdId: this.duplicateResults.duplicateHouseholdId,
           communicationMethod: this.selectedCommunication,
           language: this.$i18n.locale,
-          recaptchaToken: this.recaptchaToken,
         }),
         // adding a timeout else it may not look like we've sent something... especially on retry
         helpers.timeout(5000)]);
@@ -290,15 +286,12 @@ export default Vue.extend({
 
     async verifyCode() {
       this.showLoader = true;
-      // eslint-disable-next-line
-      this.codeValid = confirm('code ok?');
 
       try {
-        this.codeValid = await this.$services.households.verifyOneTimeCodeRegistrationPublic({
-          eventId: this.event.id,
+        this.codeIsValid = await this.$services.households.verifyOneTimeCodeRegistrationPublic({
+          communicationMethod: this.selectedCommunication,
           duplicateHouseholdId: this.duplicateResults.duplicateHouseholdId,
           code: this.chars.join(''),
-          recaptchaToken: this.recaptchaToken,
         });
       } catch (error) {
         const e = (error as IServerError).response?.data?.errors || error;
