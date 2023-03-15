@@ -159,6 +159,26 @@
               </div>
             </v-col>
           </v-row>
+          <div v-if="$hasFeature(FeatureKeys.CustomConsent)">
+            <v-row>
+              <v-col cols="12">
+                <div class="grey-container py-4 px-8">
+                  <p class="rc-body16 fw-bold">
+                    {{ $t('eventSummary.eventConsent') }}
+                  </p>
+                  <v-divider class="my-4" />
+                  <div class="d-flex justify-space-between">
+                    <div class="fw-bold">
+                      {{ consentStatement }}
+                    </div>
+                    <v-btn class="primary" :disabled="inputDisabled" @click="onSectionAdd(EEventSummarySections.EventConsent)">
+                      {{ $t('eventSummary.selectEventConsent') }}
+                    </v-btn>
+                  </div>
+                </div>
+              </v-col>
+            </v-row>
+          </div>
 
           <v-row>
             <v-col cols="12">
@@ -226,6 +246,14 @@
           </v-row>
         </v-col>
       </v-row>
+
+      <component
+        :is="currentDialog.component"
+        v-if="currentDialog"
+        :id="currentDialog.id"
+        :event="localEvent"
+        :is-edit-mode="currentDialog.isEditMode"
+        @close="currentDialog = null" />
     </validation-observer>
   </v-container>
 </template>
@@ -259,6 +287,11 @@ import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { useEventStore } from '@/pinia/event/event';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { TranslateResult } from 'vue-i18n';
+import { EEventSummarySections } from '@/types';
+import { DialogData, EDialogComponent } from '../details/components/DialogComponents';
+import EventConsentSelectionDialog from '../details/components/EventConsentSelectionDialog.vue';
 
 export default Vue.extend({
   name: 'EventForm',
@@ -273,6 +306,7 @@ export default Vue.extend({
     RcAutosuggest,
     RcTooltip,
     EventsSelector,
+    EventConsentSelectionDialog,
   },
 
   props: {
@@ -334,6 +368,7 @@ export default Vue.extend({
       eventType: null,
       initialEventType: null,
       languageMode: 'en',
+      FeatureKeys,
       otherProvinces: [] as IEventLocation[],
       regions: [] as IEventLocation[],
       initialStatus: localEvent.schedule.status,
@@ -342,10 +377,17 @@ export default Vue.extend({
       getLocalStringDate,
       newRegion: { translation: {} } as IMultilingual,
       newProvince: { translation: {} } as IMultilingual,
+      currentDialog: null as DialogData,
+      EEventSummarySections,
     };
   },
 
   computed: {
+    consentStatement(): TranslateResult {
+      const statement = (useTenantSettingsStore().currentTenantSettings.consentStatements || []).find((x) => x.id === this.event?.consentStatementId);
+      return statement?.name ? this.$m(statement.name) : this.$t('eventSummary.defaultConsentName');
+    },
+
     inputDisabled(): boolean {
       return !this.$hasLevel(UserRoles.level6);
     },
@@ -649,6 +691,14 @@ export default Vue.extend({
 
     clearDescription() {
       this.localEvent.description = utils.initMultilingualAttributes();
+    },
+
+    onSectionAdd(section: EEventSummarySections) {
+      // set the current dialog data to the component corresponding to the section to add
+      this.currentDialog = {
+        component: EDialogComponent[EEventSummarySections[section]],
+        isEditMode: false,
+      };
     },
   },
 });

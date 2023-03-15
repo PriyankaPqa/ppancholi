@@ -26,8 +26,8 @@ describe('>>>> helpers', () => {
       let res = helpers.getLocalStringDate(d, dateTypes.static[0], 'YYYY-MM-DD HH:mm');
       expect(res).toBe(moment(d).utc().format('YYYY-MM-DD HH:mm'));
 
-      // EventSchedule.scheduledOpenDate is a static date (ie: we've stored as midnight UTC)- here it is an example of how it would be called normally
-      res = helpers.getLocalStringDate(new Date('2021-10-01T00:00:00.000Z'), 'EventSchedule.scheduledOpenDate', 'YYYY-MM-DD HH:mm');
+      // EventSchedule.scheduledCloseDate is a static date (ie: we've stored as midnight UTC)- here it is an example of how it would be called normally
+      res = helpers.getLocalStringDate(new Date('2021-10-01T00:00:00.000Z'), 'EventSchedule.scheduledCloseDate', 'YYYY-MM-DD HH:mm');
       expect(res).toBe('2021-10-01 00:00');
     });
   });

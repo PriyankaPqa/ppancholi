@@ -3,7 +3,7 @@ import { IMultilingual } from '@libs/shared-lib/types';
 import utils from '../utils';
 import { BaseEntity } from '../base';
 import {
-  IBrandingEntity, IFeatureEntity, ITenantSettingsEntity, ITenantSettingsEntityData,
+  IBrandingEntity, IConsentStatement, IFeatureEntity, ITenantSettingsEntity, ITenantSettingsEntityData,
 } from './tenantSettings.types';
 
 export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsEntity {
@@ -14,6 +14,8 @@ export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsE
   registrationDomain: IMultilingual;
 
   availableLanguages: Array<string>;
+
+  consentStatements?: Array<IConsentStatement>;
 
   features: Array<IFeatureEntity>;
 
@@ -28,8 +30,8 @@ export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsE
     this.registrationDomain = utils.initMultilingualAttributes(data?.registrationDomain);
     this.availableLanguages = data?.availableLanguages ? [...data.availableLanguages] : [];
 
+    this.consentStatements = _cloneDeep(data?.consentStatements) || [];
     this.features = _cloneDeep(data?.features) || [];
-
     if (data?.branding) {
       this.branding = _cloneDeep(data.branding);
       this.branding.showName = !data.branding.hideName;

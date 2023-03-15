@@ -248,6 +248,17 @@ describe('>>> Events Service', () => {
     expect(http.delete).toHaveBeenCalledWith(`${service.baseUrl}/${id}/agreement/${agreementId}`);
   });
 
+  test('editEventConsent calls the correct URL with the right payload ', async () => {
+    await service.editEventConsent('eventid', 'consentid');
+    expect(http.patch).toHaveBeenCalledWith(
+      `${service.baseUrl}/eventid/consent-statement`,
+      {
+        consentStatementId: 'consentid',
+      },
+      { globalHandler: false },
+    );
+  });
+
   test('addRegistrationLocation is linked to the correct URL', async () => {
     const event = new EventEntity(mockEventEntities()[0]);
     const location = event.registrationLocations[0];

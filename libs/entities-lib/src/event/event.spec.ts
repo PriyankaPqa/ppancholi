@@ -196,6 +196,11 @@ describe('>>> EventEntity', () => {
       expect(event.relatedEventIds).toEqual(mockEvent.relatedEventIds);
     });
 
+    it('should instantiate consentStatementId', () => {
+      const event = new EventEntity(mockEvent);
+      expect(event.consentStatementId).toEqual(mockEvent.consentStatementId);
+    });
+
     it('should instantiate assessmentsForL0usersEnabled', () => {
       const event = new EventEntity(mockEvent);
       expect(event.assessmentsForL0usersEnabled).toEqual(mockEvent.assessmentsForL0usersEnabled);

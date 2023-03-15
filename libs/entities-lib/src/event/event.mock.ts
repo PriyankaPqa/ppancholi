@@ -662,6 +662,7 @@ const getEventEntity = (index = 0) : IEventEntity => ({
   selfRegistrationEnabled: mockEventEntityData()[index].selfRegistrationEnabled,
   assessmentsForL0usersEnabled: mockEventEntityData()[index].assessmentsForL0usersEnabled,
   registrationsForL0usersEnabled: mockEventEntityData()[index].registrationsForL0usersEnabled,
+  consentStatementId: mockEventEntityData()[index].consentStatementId,
   eventStatus: mockEventEntityData()[index].eventStatus,
   name: mockEventEntityData()[index].name,
   description: mockEventEntityData()[index].description,

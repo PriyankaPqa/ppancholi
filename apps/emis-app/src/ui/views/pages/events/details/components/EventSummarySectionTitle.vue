@@ -66,6 +66,10 @@ export default Vue.extend({
           title: 'eventSummary.registrationAssessment',
           buttonCaption: 'eventSummary.addRegistrationAssessment',
         },
+        [EEventSummarySections.EventConsent]: {
+          title: 'eventSummary.eventConsent',
+          buttonCaption: 'eventSummary.selectEventConsent',
+        },
       } as Record<string, { title: string, buttonCaption: string }>,
     };
   },

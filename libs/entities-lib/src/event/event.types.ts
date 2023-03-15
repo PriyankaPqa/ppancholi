@@ -84,6 +84,12 @@ export interface IEventAgreement {
   agreementType: IListOption;
 }
 
+export interface IConsentStatement {
+  id?: uuid;
+  name: IMultilingual;
+  statement: IMultilingual;
+}
+
 export interface IEventAgreementInfos extends IEventAgreement {
   agreementTypeName: IMultilingual;
 }
@@ -115,6 +121,7 @@ export interface IEventData {
   registrationLocations: Array<IEventGenericLocation>;
   shelterLocations: Array<IEventGenericLocation>;
   selfRegistrationEnabled: boolean;
+  consentStatementId?: uuid;
 }
 
 export interface IEventMainInfo {
@@ -177,6 +184,7 @@ export interface ICreateEventRequest {
   scheduledCloseDate: Date | string;
   scheduledOpenDate: Date | string;
   status: EEventStatus;
+  consentStatementId?: uuid;
 }
 
 export interface IEditEventRequest extends ICreateEventRequest {
@@ -208,6 +216,7 @@ export interface IEventEntity extends IEntity {
    agreements?: Array<IEventAgreement>;
    assessmentsForL0usersEnabled: boolean;
    registrationsForL0usersEnabled: boolean;
+   consentStatementId?: uuid;
 
    validate(): Array<string> | boolean;
    fillEmptyMultilingualAttributes(): void;

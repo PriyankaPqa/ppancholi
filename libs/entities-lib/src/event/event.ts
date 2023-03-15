@@ -57,6 +57,8 @@ export class EventEntity extends BaseEntity {
 
   registrationsForL0usersEnabled: boolean;
 
+  consentStatementId?: uuid;
+
   constructor(data?: IEventEntity) {
     if (data) {
       super(data);
@@ -115,6 +117,7 @@ export class EventEntity extends BaseEntity {
         agreementType: { ...agreement.agreementType },
       }));
       this.relatedEventIds = data.relatedEventIds ? [...data.relatedEventIds] : null;
+      this.consentStatementId = data.consentStatementId;
     } else {
       super();
       this.reset();

@@ -31,6 +31,11 @@ describe('>>> TenantSettingsEntity', () => {
         expect(entity.features).toEqual(mock.features);
       });
 
+      it('should instantiate consentStatements', () => {
+        const entity = new TenantSettingsEntity(mock);
+        expect(entity.consentStatements).toEqual(mock.consentStatements);
+      });
+
       it('should instantiate branding', () => {
         const entity = new TenantSettingsEntity(mock);
         expect(entity.branding).toEqual({ ...mock.branding, showName: !mock.branding.hideName });
@@ -76,6 +81,11 @@ describe('>>> TenantSettingsEntity', () => {
       it('should instantiate features', () => {
         const entity = new TenantSettingsEntity();
         expect(entity.features).toEqual([]);
+      });
+
+      it('should instantiate consentStatements', () => {
+        const entity = new TenantSettingsEntity();
+        expect(entity.consentStatements).toEqual([]);
       });
 
       it('should not instantiate branding', () => {

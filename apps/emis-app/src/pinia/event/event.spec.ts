@@ -305,6 +305,24 @@ describe('>>> Event Store', () => {
       expect(entityService.editShelterLocation).toHaveBeenCalledWith(event.id, shelterLocation);
       expect(bComponents.set).toBeCalledWith(res);
     });
+
+    it('calls the editEventConsent service and returns the new Event entity', async () => {
+      const bComponents = { ...baseComponents, set: jest.fn() };
+      const store = createTestStore(bComponents);
+      const event = mockEventEntity();
+
+      expect(entityService.editEventConsent).toHaveBeenCalledTimes(0);
+
+      const res = await store.updateEventConsent({
+        eventId: event.id,
+        consentStatementId: 'id-1',
+        section: EEventSummarySections.EventConsent,
+      });
+
+      expect(entityService.editEventConsent).toHaveBeenCalledTimes(1);
+      expect(entityService.editEventConsent).toHaveBeenCalledWith(event.id, 'id-1');
+      expect(bComponents.set).toBeCalledWith(res);
+    });
   });
 
   describe('deleteAgreement', () => {
@@ -421,6 +439,7 @@ describe('>>> Event Store', () => {
           expect(bComponents.set).toBeCalledWith(res);
     });
   });
+
   describe('toggleRegistrationForL0Users', () => {
     it('calls the toggleRegistrationForL0Users service', async () => {
       const event = mockEventEntity();
@@ -436,6 +455,26 @@ describe('>>> Event Store', () => {
 
       expect(entityService.toggleRegistrationForL0Users).toHaveBeenCalledTimes(1);
       expect(entityService.toggleRegistrationForL0Users).toHaveBeenCalledWith(event.id, true);
+      expect(bComponents.set).toBeCalledWith(res);
+    });
+  });
+
+  describe('editEventConsent', () => {
+    it('calls the editEventConsent service', async () => {
+      const event = mockEventEntity();
+      const bComponents = { ...baseComponents, set: jest.fn() };
+      const store = createTestStore(bComponents);
+      const payload = {
+        eventId: event.id,
+        consentStatementId: event.consentStatementId,
+        section: EEventSummarySections.EventConsent,
+      };
+      expect(entityService.editEventConsent).toHaveBeenCalledTimes(0);
+
+      const res = await store.updateEventConsent(payload);
+
+      expect(entityService.editEventConsent).toHaveBeenCalledTimes(1);
+      expect(entityService.editEventConsent).toHaveBeenCalledWith(event.id, event.consentStatementId);
       expect(bComponents.set).toBeCalledWith(res);
     });
   });

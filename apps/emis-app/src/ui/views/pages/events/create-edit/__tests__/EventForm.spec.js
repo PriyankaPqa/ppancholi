@@ -24,7 +24,9 @@ import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/ten
 import { UserRoles } from '@libs/entities-lib/user';
 
 import { mockProvider } from '@/services/provider';
+import { EEventSummarySections } from '@/types';
 import Component from '../EventForm.vue';
+import { EDialogComponent } from '../../details/components/DialogComponents';
 
 const event = mockEventEntity();
 event.schedule.scheduledCloseDate = moment(event.schedule.scheduledCloseDate).toISOString();
@@ -38,7 +40,7 @@ const pinia = createTestingPinia({
   stubActions: false,
 });
 
-useMockTenantSettingsStore(pinia);
+const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
 
 describe('EventForm.vue', () => {
   let wrapper;
@@ -262,6 +264,17 @@ describe('EventForm.vue', () => {
         });
       });
     });
+
+    describe('onSectionAdd', () => {
+      it('sets currentDialog to the right object', async () => {
+        wrapper.vm.currentDialog = null;
+        await wrapper.vm.onSectionAdd(EEventSummarySections.EventConsent);
+        expect(wrapper.vm.currentDialog).toEqual({
+          component: EDialogComponent.EventConsent,
+          isEditMode: false,
+        });
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -284,6 +297,22 @@ describe('EventForm.vue', () => {
           },
         },
 
+      });
+    });
+
+    describe('consentStatement', () => {
+      it('returns correct value if consentStatementId is set', async () => {
+        tenantSettingsStore.currentTenantSettings.consentStatements = [{ id: 'id-1',
+          name: {
+            translation: {
+              en: 'consent statement name-1 en',
+              fr: 'consent statement name-1 fr',
+            },
+          } }];
+
+        wrapper.vm.event.consentStatementId = 'id-1';
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.consentStatement).toEqual('consent statement name-1 en');
       });
     });
 

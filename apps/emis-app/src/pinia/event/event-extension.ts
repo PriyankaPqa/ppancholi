@@ -80,6 +80,22 @@ export function getExtensionComponents(
     return null;
   }
 
+  async function updateEventConsent({
+    eventId, consentStatementId, section,
+  }: {
+    eventId:uuid,
+    consentStatementId: uuid,
+    section: EEventSummarySections
+  }): Promise<IEventEntity> {
+    // @ts-ignore
+    const data = await entityService[`edit${section}`](eventId, consentStatementId);
+    if (data) {
+      baseComponents.set(data);
+      return data;
+    }
+    return null;
+  }
+
   async function deleteAgreement({ eventId, agreementId }: { eventId: uuid, agreementId: uuid }): Promise<IEventEntity> {
     const data = await entityService.removeAgreement(eventId, agreementId);
     if (data) {
@@ -168,6 +184,7 @@ export function getExtensionComponents(
     fetchOtherProvinces,
     fetchRegions,
     updateEventSection,
+    updateEventConsent,
     deleteAgreement,
     deleteRegistrationAssessment,
     toggleSelfRegistration,

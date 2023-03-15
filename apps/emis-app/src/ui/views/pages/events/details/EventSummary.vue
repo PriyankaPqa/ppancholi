@@ -136,6 +136,18 @@
           @edit="editSection($event, EEventSummarySections.Agreement)" />
       </event-summary-section-body>
 
+      <div v-if="$hasFeature(FeatureKeys.CustomConsent)">
+        <event-summary-section-title
+          :section="EEventSummarySections.EventConsent"
+          :can-add="canEditConsentSection"
+          @click-add-button="onSectionAdd($event)" />
+        <event-summary-section-body v-slot="{ item }" :items="[consentStatement]">
+          <div class="fw-bold">
+            {{ item }}
+          </div>
+        </event-summary-section-body>
+      </div>
+
       <event-status-dialog
         v-if="showEventStatusDialog && newStatus"
         data-test="event-summary-status-dialog"
@@ -169,6 +181,7 @@ import { useEventStore } from '@/pinia/event/event';
 import { Status } from '@libs/entities-lib/base';
 import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
 import EventSummarySectionBody from './components/EventSummarySectionBody.vue';
@@ -182,21 +195,9 @@ import EventAgreementSection from './components/EventAgreementSection.vue';
 import EventLocationSection from './components/EventLocationSection.vue';
 import EventRegistrationAssessmentSection from './components/EventRegistrationAssessmentSection.vue';
 import EventRegistrationAssessmentDialog from './components/EventRegistrationAssessmentDialog.vue';
+import EventConsentSelectionDialog from './components/EventConsentSelectionDialog.vue';
 import EventSummaryToggle from './components/EventSummaryToggle.vue';
-
-export enum EDialogComponent {
-  CallCentre = 'EventCallCentreDialog',
-  RegistrationLocation = 'EventRegistrationLocationDialog',
-  ShelterLocation = 'EventShelterLocationDialog',
-  Agreement = 'EventAgreementDialog',
-  RegistrationAssessment = 'EventRegistrationAssessmentDialog',
-}
-
-interface DialogData {
-  id?: string,
-  isEditMode: boolean,
-  component: EDialogComponent,
-}
+import { DialogData, EDialogComponent } from './components/DialogComponents';
 
 export default Vue.extend({
   name: 'EventSummary',
@@ -216,6 +217,7 @@ export default Vue.extend({
     EventLocationSection,
     EventRegistrationAssessmentSection,
     EventRegistrationAssessmentDialog,
+    EventConsentSelectionDialog,
     EventSummaryToggle,
   },
 
@@ -302,6 +304,11 @@ export default Vue.extend({
       || this.event.schedule.status === EEventStatus.Open));
     },
 
+    canEditConsentSection(): boolean {
+      return (this.$hasLevel(UserRoles.level6) && (this.event.schedule.status === EEventStatus.OnHold
+      || this.event.schedule.status === EEventStatus.Open));
+    },
+
     canEdit(): boolean {
       return this.$hasLevel(UserRoles.level5)
       && (this.event.schedule.status === EEventStatus.Open || this.event.schedule.status === EEventStatus.OnHold);
@@ -309,6 +316,11 @@ export default Vue.extend({
 
     showToggleForL0Access(): boolean {
       return this.event.callCentres.length && this.$hasLevel(UserRoles.level6) && this.$hasFeature(FeatureKeys.L0Access);
+    },
+
+    consentStatement(): TranslateResult {
+      const statement = (useTenantSettingsStore().currentTenantSettings.consentStatements || []).find((x) => x.id === this.event?.consentStatementId);
+      return statement?.name ? this.$m(statement.name) : this.$t('eventSummary.defaultConsentName');
     },
   },
 

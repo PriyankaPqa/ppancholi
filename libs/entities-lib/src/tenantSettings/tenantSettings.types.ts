@@ -21,6 +21,7 @@ export enum FeatureKeys {
   SelfRegistration = 'SelfRegistration',
   HouseholdProfileStatus = 'HouseholdProfileStatus',
   ManageDuplicates = 'manageDuplicates',
+  CustomConsent = 'CustomConsent',
 }
 
 export enum FeatureType {
@@ -71,7 +72,18 @@ export interface IFeatureEntity extends IEntity {
   canDisable: boolean;
   type: FeatureType;
 }
+
+export interface IConsentStatementData {
+  id: uuid;
+  name: IMultilingual;
+  statement: IMultilingual;
+}
+
+export interface IConsentStatement extends IEntity, IConsentStatementData {
+}
+
 export interface ITenantSettingsEntityData extends IEntity {
+  consentStatements?: Array<IConsentStatement>;
   slug: string;
   emisDomain: IMultilingual;
   registrationDomain: IMultilingual;
@@ -82,6 +94,7 @@ export interface ITenantSettingsEntityData extends IEntity {
 }
 
 export interface ITenantSettingsEntity extends IEntity {
+  consentStatements?: Array<IConsentStatement>;
   slug: string;
   emisDomain: IMultilingual;
   registrationDomain: IMultilingual;

@@ -11,6 +11,7 @@ import {
   ITenantSettingsCombined,
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
+  IConsentStatement,
 } from './tenantSettings.types';
 
 export const mockEditColoursRequest = (): IEditColoursRequest => ({
@@ -114,6 +115,44 @@ export const mockFeatures = (): IFeatureEntity[] => [{
   type: FeatureType.Permanent,
 }];
 
+export const mockConsentStatements = (): IConsentStatement[] => [{
+  ...mockBaseData(),
+
+  id: 'id-1',
+
+  name: {
+    translation: {
+      en: 'consent statement name-1 en',
+      fr: 'consent statement name-1 fr',
+    },
+  },
+
+  statement: {
+    translation: {
+      en: 'description-1 en',
+      fr: 'description-1 fr',
+    },
+  },
+}, {
+  ...mockBaseData(),
+
+  id: 'id-2',
+
+  name: {
+    translation: {
+      en: 'consent statement name-2 en',
+      fr: 'consent statement name-2 fr',
+    },
+  },
+
+  statement: {
+    translation: {
+      en: 'description-2 en',
+      fr: 'description-2 fr',
+    },
+  },
+}];
+
 export const mockTenantSettingsEntityData = (force?: Partial<ITenantSettingsEntityData>): ITenantSettingsEntityData => ({
   ...mockBaseData(),
 
@@ -133,6 +172,8 @@ export const mockTenantSettingsEntityData = (force?: Partial<ITenantSettingsEnti
   availableLanguages: ['en', 'fr'],
 
   features: mockFeatures(),
+
+  consentStatements: mockConsentStatements(),
 
   branding: mockBrandingEntityData(),
 

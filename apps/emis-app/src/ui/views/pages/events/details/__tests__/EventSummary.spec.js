@@ -12,14 +12,17 @@ import { UserRoles } from '@libs/entities-lib/user';
 
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { Status } from '@libs/entities-lib/base';
-import Component, { EDialogComponent } from '../EventSummary.vue';
+import Component from '../EventSummary.vue';
+import { EDialogComponent } from '../components/DialogComponents';
 
 const localVue = createLocalVue();
 
 const mockEvent = mockEventEntities()[0];
 
 const pinia = getPiniaForUser(UserRoles.level5);
+const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
 
 const initEventStore = (pinia) => {
   const { eventStore } = useMockEventStore(pinia);
@@ -76,6 +79,9 @@ describe('EventSummary.vue', () => {
           return true;
         },
         canEdit() {
+          return true;
+        },
+        canEditConsentSection() {
           return true;
         },
         ...otherComputed,
@@ -830,6 +836,103 @@ describe('EventSummary.vue', () => {
       });
     });
 
+    describe('canEditConsentSection', () => {
+      let event;
+      beforeEach(() => {
+        event = mockEventEntity();
+      });
+
+      it('returns true if user is level 6 and event is on hold', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser(UserRoles.level6),
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+          },
+          computed: {
+            event() {
+              return new EventEntity({
+                ...event,
+                schedule: {
+                  ...event.schedule,
+                  status: EEventStatus.OnHold,
+                },
+              });
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEditConsentSection).toBeTruthy();
+      });
+
+      it('returns false if user is level 6 and event is not open or on hold', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser(UserRoles.level6),
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+          },
+          computed: {
+            event() {
+              return new EventEntity({
+                ...event,
+                schedule: {
+                  ...event.schedule,
+                  status: EEventStatus.Closed,
+                },
+              });
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEditConsentSection).toBeFalsy();
+      });
+
+      it('returns true if user is level 6 and event is open', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia: getPiniaForUser(UserRoles.level6),
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+          },
+          computed: {
+            event() {
+              return new EventEntity({
+                ...event,
+                schedule: {
+                  ...event.schedule,
+                  status: EEventStatus.Open,
+                },
+              });
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEditConsentSection).toBeTruthy();
+      });
+
+      it('returns false if user is level 5', () => {
+        wrapper = mountWithStatus(EEventStatus.Open);
+
+        expect(wrapper.vm.canEditConsentSection).toBeFalsy();
+      });
+    });
+
     describe('canEdit', () => {
       let event;
       beforeEach(() => {
@@ -927,6 +1030,28 @@ describe('EventSummary.vue', () => {
       it('should return false when user doesnt have level 6,', () => {
         doMount(getPiniaForUser(UserRoles.level5), 5, null, true);
         expect(wrapper.vm.showToggleForL0Access).toBeFalsy();
+      });
+    });
+
+    describe('consentStatement', () => {
+      it('returns correct value if consentStatementId is set', async () => {
+        tenantSettingsStore.currentTenantSettings.consentStatements = [{ id: 'id-1',
+          name: {
+            translation: {
+              en: 'consent statement name-1 en',
+              fr: 'consent statement name-1 fr',
+            },
+          } }];
+
+        wrapper.vm.event.consentStatementId = 'id-1';
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.consentStatement).toEqual('consent statement name-1 en');
+      });
+
+      it('returns defaultConsentName if consentStatementId is null', async () => {
+        wrapper.vm.event.consentStatementId = null;
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.consentStatement).toEqual('eventSummary.defaultConsentName');
       });
     });
   });

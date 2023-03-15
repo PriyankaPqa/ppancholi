@@ -97,6 +97,14 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
     );
   }
 
+  async editEventConsent(eventId:uuid, consentStatementId: uuid): Promise<IEventEntity> {
+    return this.http.patch(
+      `${this.baseUrl}/${eventId}/consent-statement`,
+      { consentStatementId },
+      { globalHandler: false },
+    );
+  }
+
   async removeAgreement(eventId:uuid, agreementId: uuid): Promise<IEventEntity> {
     return this.http.delete(`${this.baseUrl}/${eventId}/agreement/${agreementId}`);
   }
@@ -158,6 +166,7 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
   private eventToCreateEventRequestPayload(event: IEventEntity): ICreateEventRequest {
     const payload: ICreateEventRequest = {
       assistanceNumber: event.responseDetails.assistanceNumber,
+      consentStatementId: event.consentStatementId,
       dateReported: event.responseDetails.dateReported ? new Date(event.responseDetails.dateReported).toISOString() : null,
       description: event.description,
       name: event.name,
