@@ -16,6 +16,7 @@ export enum HouseholdActivityType {
   HomeAddressEdited = 7,
   TempAddressEdited = 8,
   PrimaryAssigned = 9,
+  StatusChanged = 10,
 }
 
 export interface IHouseholdActivityPerson {

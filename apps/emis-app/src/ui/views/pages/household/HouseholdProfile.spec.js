@@ -17,6 +17,7 @@ import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 
 import { mockProvider } from '@/services/provider';
+import PinnedActionAndRationale from '@/ui/views/pages/household/components/PinnedStatus.vue';
 import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();
@@ -212,6 +213,14 @@ describe('HouseholdProfile.vue', () => {
         const element = wrapper.findDataTest('household-profile-status');
         element.vm.$emit('input');
         expect(wrapper.vm.onStatusChangeInit).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('pinned-action-and-rationale', () => {
+      it('should exist when has feature flag', () => {
+        const component = wrapper.findComponent(PinnedActionAndRationale);
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        expect(component.exists()).toBeTruthy();
       });
     });
 

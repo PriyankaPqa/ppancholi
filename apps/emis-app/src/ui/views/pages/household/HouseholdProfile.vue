@@ -96,6 +96,8 @@
                 @input="onStatusChangeInit($event)" />
             </div>
             <v-divider class="mt-4 mb-6" />
+            <pinned-status
+              :id="caseFileIdForPinnedStatus" />
           </template>
           <h5 class="rc-heading-5">
             {{ $t('household.profile.active_in_events', { x: activeCaseFiles.length }) }}
@@ -218,6 +220,7 @@ import { IEventData } from '@libs/entities-lib/registration-event';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
+import PinnedStatus from '@/ui/views/pages/household/components/PinnedStatus.vue';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
@@ -227,6 +230,7 @@ export default mixins(household).extend({
   name: 'HouseholdProfile',
 
   components: {
+    PinnedStatus,
     EditHouseholdAddressDialog,
     RcPageLoading,
     RcPageContent,
@@ -408,6 +412,13 @@ export default mixins(household).extend({
         default:
           return [];
       }
+    },
+
+    caseFileIdForPinnedStatus(): string {
+      if (this.caseFiles?.length > 0) {
+        return this.caseFiles[0].id;
+      }
+      return '';
     },
   },
 
