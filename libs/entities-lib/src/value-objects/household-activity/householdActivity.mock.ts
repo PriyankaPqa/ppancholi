@@ -1,3 +1,4 @@
+import { HouseholdStatus } from '../../household';
 import {
   HouseholdActivityType, IHouseholdActivity, IHouseholdActivityIdentity, IHouseholdActivityMembers,
 } from './householdActivity.types';
@@ -174,6 +175,16 @@ export const mockHouseholdActivities = (type: HouseholdActivityType = null): IHo
       personFullName: 'John Doe',
     },
   },
+    {
+      ...householdActivityBase,
+      activityType: HouseholdActivityType.StatusChanged,
+      newDetails: {
+        status: HouseholdStatus.Open,
+      },
+      previousDetails: {
+        status: HouseholdStatus.Closed,
+      },
+    },
   ];
 
   if (type) {

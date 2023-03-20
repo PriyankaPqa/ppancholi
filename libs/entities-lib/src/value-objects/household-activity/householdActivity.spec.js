@@ -94,6 +94,11 @@ describe('>>> Household Activity', () => {
       const historyActivity = new HouseholdActivity(activity);
       expect(historyActivity.getActivityName()).toEqual('household.history.action.household_member_assign_primary');
     });
+    it('returns the right data if activity type is StatusChanged', () => {
+      const activity = mockHouseholdActivities(HouseholdActivityType.StatusChanged)[0];
+      const historyActivity = new HouseholdActivity(activity);
+      expect(historyActivity.getActivityName()).toEqual('household.history.action.household_status_changed');
+    });
   });
 
   describe('getTemplateData', () => {
@@ -203,6 +208,15 @@ describe('>>> Household Activity', () => {
       historyActivity.makeEmptyTemplate = jest.fn();
       historyActivity.getTemplateData(false, i18n);
       expect(historyActivity.makeEmptyTemplate).toHaveBeenCalled();
+    });
+
+    it('calls makeStatusTemplate if activity type is StatusChanged ', () => {
+      const activity = mockHouseholdActivities(HouseholdActivityType.StatusChanged)[0];
+      const historyActivity = new HouseholdActivity(activity);
+
+      historyActivity.makeStatusTemplate = jest.fn();
+      historyActivity.getTemplateData(true, i18n);
+      expect(historyActivity.makeStatusTemplate).toHaveBeenCalledWith(historyActivity.previousDetails.status, i18n);
     });
   });
 
@@ -441,6 +455,18 @@ describe('>>> Household Activity', () => {
         { label: 'name', value: 'foo' },
         { label: '\n', value: '' },
         { label: 'address', value: 'bar' },
+      ]);
+    });
+  });
+
+  describe('makeStatusTemplate', () => {
+    it('returns the right data', () => {
+      const activity = mockHouseholdActivities(HouseholdActivityType.StatusChanged)[0];
+      const historyActivity = new HouseholdActivity(activity);
+      const expected = historyActivity.makeStatusTemplate(historyActivity.previousDetails.status, i18n);
+
+      expect(expected).toEqual([
+        { label: '', value: 'household.profile.householdStatus.Closed' },
       ]);
     });
   });

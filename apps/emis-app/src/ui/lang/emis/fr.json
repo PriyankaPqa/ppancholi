@@ -1608,6 +1608,7 @@
     "household.history.action.no_fixed_address_set": "Adresse définie comme étant « Sans domicile fixe »",
     "household.history.action.personal_information_changed": "Renseignements personnels modifiés",
     "household.history.action.temporary_address_changed": "Adresse temporaire modifiée",
+    "household.history.action.household_status_changed": "Le statut du ménage modifié",
     "household.history.label.alternate_phone": "Autre",
     "household.history.label.date_of_birth": "Date de naissance",
     "household.history.label.email": "Adresse électronique",

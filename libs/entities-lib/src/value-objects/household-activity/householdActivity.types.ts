@@ -1,5 +1,6 @@
 import VueI18n from 'vue-i18n';
 import { IMultilingual } from '@libs/shared-lib/types';
+import { HouseholdStatus } from '../../household';
 import { ICurrentAddress } from '../current-address/currentAddress.types';
 import { IContactInformation } from '../contact-information';
 import { EIndigenousTypes, IIdentitySet } from '../identity-set/identitySet.types';
@@ -46,6 +47,10 @@ export interface IHouseholdActivityTempAddress extends IHouseholdActivityPerson 
 
 export interface IHouseholdActivityMembers {
   memberDetails: (IHouseholdActivityIdentity & IHouseholdActivityTempAddress)[];
+}
+
+export interface IHouseholdActivityStatus {
+  status: HouseholdStatus;
 }
 
 export interface IHouseholdActivity {

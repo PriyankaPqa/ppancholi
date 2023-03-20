@@ -1,6 +1,7 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import VueI18n from 'vue-i18n';
 import { IMultilingual } from '@libs/shared-lib/types';
+import { HouseholdStatus } from '../../household';
 import helpers from '../../helpers';
 import { IAddress } from '../address/address.types';
 import {
@@ -9,12 +10,10 @@ import {
   IHouseholdActivityContactInfo,
   IHouseholdActivityIdentity,
   IHouseholdActivityMembers,
-  IHouseholdActivityPerson,
+  IHouseholdActivityPerson, IHouseholdActivityStatus,
   IHouseholdActivityTempAddress,
 } from './householdActivity.types';
-import {
-  Address, CurrentAddress, ECurrentAddressTypes, EIndigenousTypes,
-} from '../../household-create';
+import { Address, CurrentAddress, ECurrentAddressTypes, EIndigenousTypes } from '../../household-create';
 import { IHistoryItemTemplateData } from '../versioned-entity/versionedEntity.types';
 
 export class HouseholdActivity implements IHouseholdActivity {
@@ -68,6 +67,8 @@ export class HouseholdActivity implements IHouseholdActivity {
         return 'household.history.action.temporary_address_changed';
       case HouseholdActivityType.PrimaryAssigned:
         return 'household.history.action.household_member_assign_primary';
+      case HouseholdActivityType.StatusChanged:
+        return 'household.history.action.household_status_changed';
       default:
         return '';
     }
@@ -103,6 +104,9 @@ export class HouseholdActivity implements IHouseholdActivity {
 
       case HouseholdActivityType.PrimaryAssigned:
         return this.makePrimaryTemplate(data as IHouseholdActivityPerson);
+
+      case HouseholdActivityType.StatusChanged:
+        return this.makeStatusTemplate((data as IHouseholdActivityStatus)?.status, i18n);
 
       default:
         return this.makeEmptyTemplate();
@@ -369,5 +373,14 @@ export class HouseholdActivity implements IHouseholdActivity {
       }
     }
     return address;
+  }
+
+  makeStatusTemplate(status: HouseholdStatus, i18n: VueI18n): IHistoryItemTemplateData[] {
+    return [
+      {
+        label: '',
+        value: `${i18n.t(`household.profile.householdStatus.${HouseholdStatus[status]}`)}`,
+      },
+      ];
   }
 }
