@@ -2,6 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileActivityType, mockCaseFileActivities, HouseholdCaseFileActivityType } from '@libs/entities-lib/case-file';
 import { ERegistrationMethod } from '@libs/shared-lib/src/types/enums/ERegistrationMethod';
 import { ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
+import { HouseholdStatus } from '@libs/entities-lib/household';
 import Component from '../case-file-activity/components/CaseFileActivityListItem.vue';
 
 const localVue = createLocalVue();
@@ -1039,6 +1040,26 @@ describe('CaseFileActivityListItem.vue', () => {
         body += wrapper.vm.item.details.newLabels.filter((label) => label.name.trim().length > 0).map((label) => label.name).join(' | ');
 
         expect(wrapper.vm.makeContentForCaseFileLabelsUpdated()).toEqual({
+          title,
+          body,
+        });
+      });
+    });
+
+    describe('makeContentForHouseholdStatusChanged', () => {
+      it('returns the correct data when action type is CaseFileLabelsUpdated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.HouseholdStatusChanged)[0],
+        });
+
+        const title = wrapper.vm.$t('caseFileActivity.activityList.title.HouseholdEdited');
+        let body = `${wrapper.vm.$t('caseFileActivity.activityList.body.HouseholdStatusChanged')}`;
+        body += `\n${wrapper.vm.$t(`household.profile.householdStatus.${HouseholdStatus[wrapper.vm.item.details.oldHouseholdStatus]}`)}`;
+        body += ` ${wrapper.vm.$t('caseFileActivity.activityList.body.HouseholdStatusChanged.to')} `;
+        body += `${wrapper.vm.$t(`household.profile.householdStatus.${HouseholdStatus[wrapper.vm.item.details.newHouseholdStatus]}`)}`;
+        body += '\nrationale in EN';
+
+        expect(wrapper.vm.makeContentForHouseholdStatusChanged()).toEqual({
           title,
           body,
         });

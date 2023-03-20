@@ -331,6 +331,8 @@
     "caseFileActivity.activityList.body.CRCRegistration": "Créé par {By}",
     "caseFileActivity.activityList.body.HouseholdMovedMembers": "Personne(s) déplacée(s) : ",
     "caseFileActivity.activityList.body.HouseholdSplit": "Personne(s) dissociée(s) :",
+    "caseFileActivity.activityList.body.HouseholdStatusChanged": "Changement de statut du ménage: ",
+    "caseFileActivity.activityList.body.HouseholdStatusChanged.to": "à",
     "caseFileActivity.activityList.body.NewLabels": "Nouvelles étiquettes",
     "caseFileActivity.activityList.body.PreviousLabels": "Étiquettes précédentes",
     "caseFileActivity.activityList.body.PublicRegistration": "Créé par Bénéficiaire",

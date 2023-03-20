@@ -26,6 +26,7 @@ import {
 import { ERegistrationMethod, IIdMultilingualName, IMultilingual } from '@libs/shared-lib/types';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
+import { HouseholdStatus } from '@libs/entities-lib/household';
 
 export interface IAssignInfo {
   id: string;
@@ -152,6 +153,9 @@ export default Vue.extend({
 
         case CaseFileActivityType.PaymentCorrected:
           return this.makeContentForFinancialAssistancePaymentCorrected();
+
+        case CaseFileActivityType.HouseholdStatusChanged:
+          return this.makeContentForHouseholdStatusChanged();
 
         default:
           return null;
@@ -567,6 +571,18 @@ export default Vue.extend({
       body += (this.item.details.newLabels as [])
         .filter((label : Record<string, any>) => (label.name as string).trim().length > 0)
         .map((label : Record<string, any>) => label.name).join(' | ');
+
+      return { title, body };
+    },
+
+    makeContentForHouseholdStatusChanged(): { title: TranslateResult, body: TranslateResult } {
+      const rationale = this.item.details.rationale as IMultilingual;
+      const title = this.$t('caseFileActivity.activityList.title.HouseholdEdited');
+      let body = `${this.$t('caseFileActivity.activityList.body.HouseholdStatusChanged')}`;
+      body += `\n${this.$t(`household.profile.householdStatus.${HouseholdStatus[(this.item.details.oldHouseholdStatus) as HouseholdStatus]}`)}`;
+      body += ` ${this.$t('caseFileActivity.activityList.body.HouseholdStatusChanged.to')} `;
+      body += `${this.$t(`household.profile.householdStatus.${HouseholdStatus[(this.item.details.newHouseholdStatus) as HouseholdStatus]}`)}`;
+      body += `\n${this.$m(rationale) || rationale.translation[this.$i18n.fallbackLocale as string]}`;
 
       return { title, body };
     },

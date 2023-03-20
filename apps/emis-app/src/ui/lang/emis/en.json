@@ -331,6 +331,8 @@
     "caseFileActivity.activityList.body.CRCRegistration": "Created By {By}",
     "caseFileActivity.activityList.body.HouseholdMovedMembers": "Individual(s) moved: ",
     "caseFileActivity.activityList.body.HouseholdSplit": "Individual(s) split: ",
+    "caseFileActivity.activityList.body.HouseholdStatusChanged": "Household status changed: ",
+    "caseFileActivity.activityList.body.HouseholdStatusChanged.to": "to",
     "caseFileActivity.activityList.body.NewLabels": "New Labels",
     "caseFileActivity.activityList.body.PreviousLabels": "Previous Labels",
     "caseFileActivity.activityList.body.PublicRegistration": "Created By Beneficiary",
