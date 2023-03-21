@@ -31,10 +31,6 @@ export class FinancialAssistancePage {
     return cy.getByDataTestLike(this.tableEdit);
   }
 
-  public getToastMessage() {
-    return cy.contains('The financial assistance table has been successfully created.');
-  }
-
   public getCreateFATableButton() {
     return cy.getByDataTest(this.createTableButton);
   }

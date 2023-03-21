@@ -18,13 +18,13 @@ export const mockProgram = (force?: Partial<IProgramEntity>): IProgramEntity => 
   },
   approvalRequired: true,
   eligibilityCriteria: {
-    authenticated: true,
+    authenticated: false,
     impacted: false,
     completedAssessments: false,
     completedAssessmentIds: [],
   },
   eventId: 'd3becde1-6ec7-4b59-85c0-6e7fa3511e2e',
-  paymentModalities: [EPaymentModalities.DirectDeposit],
+  paymentModalities: [EPaymentModalities.DirectDeposit, EPaymentModalities.PrepaidCard],
   fillEmptyMultilingualAttributes: () => {},
   ...force,
   });

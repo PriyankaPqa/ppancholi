@@ -1,6 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
 import { faker } from '@faker-js/faker';
+import { getToastMessage } from '@libs/cypress-lib/helpers/misc';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -103,7 +104,7 @@ describe(`${title}`, () => {
           createFinancialAssitanceTablePage.fillFrenchTableName(tableData.name.translation.fr);
           createFinancialAssitanceTablePage.addFinancialAssistanceTable();
 
-          financialAssistancePage.getToastMessage().should('be.visible');
+          getToastMessage('The financial assistance table has been successfully created.').should('be.visible');
           financialAssistancePage.getTableName().should('eq', tableData.name.translation.en);
           financialAssistancePage.getTableStatus().should('eq', 'Active');
           financialAssistancePage.getTableEditButton().should('be.visible');
@@ -121,7 +122,7 @@ describe(`${title}`, () => {
         it('should not be able to add Financial Assistance Table to Event', function () {
           cy.goTo(`events/${this.eventCreated.id}/financial-assistance`);
 
-          cy.contains('You do not have permission to access this page');
+          getToastMessage('You do not have permission to access this page').should('be.visible');
         });
       });
     }
