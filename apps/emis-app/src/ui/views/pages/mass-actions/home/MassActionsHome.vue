@@ -41,12 +41,6 @@ export default mixins(massActions).extend({
     RcMenuCard,
   },
 
-  data() {
-    return {
-      isFinancialAssistanceDataCorrectionEnabled: this.$hasFeature(FeatureKeys.FinancialAssistanceDataCorrection),
-    };
-  },
-
   computed: {
     routes() {
       return routes;
@@ -156,11 +150,7 @@ export default mixins(massActions).extend({
     },
 
     massActionTypes(): Array<Record<string, unknown>> {
-      let types = helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false);
-      if (!this.isFinancialAssistanceDataCorrectionEnabled) {
-        types = types.filter((t) => t.value !== MassActionDataCorrectionType.FinancialAssistance);
-      }
-      return types;
+      return helpers.enumToTranslatedCollection(MassActionDataCorrectionType, 'enums.MassActionDataCorrectionType', false);
     },
   },
 });

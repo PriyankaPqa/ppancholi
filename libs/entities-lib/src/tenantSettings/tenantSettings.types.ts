@@ -8,7 +8,6 @@ export enum FeatureKeys {
   ApprovalsWithinEvent = 'Approvals',
   BotProtection = 'BotProtection',
   AssessmentsWithinCasefiles = 'AssessmentsWithinCasefiles',
-  FinancialAssistanceDataCorrection = 'FinancialAssistanceDataCorrection',
   ActionApprovals = 'ActionApprovals',
   LetIMViewEventDetails = 'letIMViewEventDetails',
   CouplingAssessmentsWithRegistration = 'CouplingAssessmentsWithRegistration',

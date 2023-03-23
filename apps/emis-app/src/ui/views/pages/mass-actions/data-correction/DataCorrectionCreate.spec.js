@@ -93,31 +93,29 @@ describe('DataCorrectionCreate.vue', () => {
       });
     });
 
-    describe('massActionTypes', () => {
-      it('should contain Financial Assistance data correction type when feature is enabled', () => {
-        wrapper.vm.isFinancialAssistanceDataCorrectionEnabled = true;
-        expect(wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance)).toBeTruthy();
-      });
+    const dataCorrectionTypes = [
+      null,
+      MassActionDataCorrectionType.HomeAddress,
+      MassActionDataCorrectionType.Labels,
+      MassActionDataCorrectionType.TemporaryAddress,
+      MassActionDataCorrectionType.AuthenticationSpecifiedOther,
+      MassActionDataCorrectionType.IdentitySet,
+      MassActionDataCorrectionType.ContactInformation,
+      MassActionDataCorrectionType.FinancialAssistance,
+    ];
 
-      it('should not contain Financial Assistance data correction type when feature is disabled', () => {
-        wrapper.vm.isFinancialAssistanceDataCorrectionEnabled = false;
-        expect(wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance)).toBeFalsy();
+    describe('massActionTypes', () => {
+      it('should return list of mass action types', () => {
+        const massActionTypes = wrapper.vm.massActionTypes;
+        dataCorrectionTypes.filter((t) => !!t).forEach((type) => {
+          expect(massActionTypes.find((t) => t.value === type)).toBeTruthy();
+        });
       });
     });
 
     describe('rules', () => {
       it('should only require events when data correction type is Financial Assistance', () => {
-        const types = [
-          null,
-          MassActionDataCorrectionType.HomeAddress,
-          MassActionDataCorrectionType.Labels,
-          MassActionDataCorrectionType.TemporaryAddress,
-          MassActionDataCorrectionType.AuthenticationSpecifiedOther,
-          MassActionDataCorrectionType.IdentitySet,
-          MassActionDataCorrectionType.ContactInformation,
-          MassActionDataCorrectionType.FinancialAssistance,
-        ];
-        types.forEach((t) => {
+        dataCorrectionTypes.forEach((t) => {
           wrapper.vm.selectedType = t;
           expect(wrapper.vm.rules.event.required).toBe(t === MassActionDataCorrectionType.FinancialAssistance);
         });

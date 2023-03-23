@@ -129,14 +129,10 @@ describe('MassActionsHome.vue', () => {
     });
 
     describe('massActionTypes', () => {
-      it('should contain Financial Assistance data correction type when feature is enabled', () => {
-        wrapper.vm.isFinancialAssistanceDataCorrectionEnabled = true;
-        expect(wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance)).toBeTruthy();
-      });
-
-      it('should not contain Financial Assistance data correction type when feature is disabled', () => {
-        wrapper.vm.isFinancialAssistanceDataCorrectionEnabled = false;
-        expect(wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance)).toBeFalsy();
+      it('should return a list of mass action type translation objects', () => {
+        expect(wrapper.vm.massActionTypes.length).toBeGreaterThan(1);
+        const maType = wrapper.vm.massActionTypes.find((t) => t.value === MassActionDataCorrectionType.FinancialAssistance);
+        expect(!!maType.text && !!maType.value).toBeTruthy();
       });
     });
   });
