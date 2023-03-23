@@ -360,5 +360,58 @@ describe('HouseholdSearch.vue', () => {
         expect(wrapper.vm.dateComponentNotEmpty).toBeFalsy();
       });
     });
+
+    describe('dateComponentFilled', () => {
+      it('should return true if all of date component is non empty', () => {
+        wrapper.setData({
+          birthDate: {
+            month: '01',
+            day: '01',
+            year: '2000',
+          },
+        });
+        expect(wrapper.vm.dateComponentFilled).toBeTruthy();
+      });
+
+      it('should return false if part of the date is empty', () => {
+        wrapper.setData({
+          birthDate: {
+            month: '01',
+            day: null,
+            year: '2000',
+          },
+        });
+        expect(wrapper.vm.dateComponentFilled).toBeFalsy();
+      });
+    });
+  });
+
+  describe('watch', () => {
+    describe('birthDate', () => {
+      it('modifies the form field birthDate if the data is complete', async () => {
+        await wrapper.setData({
+          birthDate: {
+            month: '01',
+            day: '02',
+            year: '2000',
+          },
+        });
+
+        expect(wrapper.vm.form.birthDate).toEqual('2000-01-02');
+      });
+
+      it('modifies the form field birthDate if the data is complete', async () => {
+        await wrapper.setData({ form: { ...wrapper.vm.form, birthDate: '2000-01-02' } });
+        await wrapper.setData({
+          birthDate: {
+            month: '01',
+            day: null,
+            year: '2000',
+          },
+        });
+
+        expect(wrapper.vm.form.birthDate).toEqual('');
+      });
+    });
   });
 });

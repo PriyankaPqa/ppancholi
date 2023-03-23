@@ -256,6 +256,10 @@ export default Vue.extend({
         || !this.monthEmpty
         || !isEmpty(this.birthDate.year);
     },
+
+    dateComponentFilled(): boolean {
+      return !isEmpty(this.birthDate.day) && !this.monthEmpty && !isEmpty(this.birthDate.year);
+    },
   },
   watch: {
     phone(newVal) {
@@ -275,12 +279,15 @@ export default Vue.extend({
             (this.$refs.form as VForm).validate();
           }
         });
-        if (this.dateComponentNotEmpty) {
+
+        if (this.dateComponentFilled) {
           this.form.birthDate = moment({
             month: newVal.month - 1,
             day: newVal.day,
             year: newVal.year,
           }).format('YYYY-MM-DD');
+        } else {
+          this.form.birthDate = '';
         }
       },
     },
