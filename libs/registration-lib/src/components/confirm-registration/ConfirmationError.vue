@@ -17,13 +17,16 @@
             v-if="isDuplicateError && isCrcRegistration"
             class="rc-body14 pt-6 pb-2">
             <div class="mt-2 mb-6">
-              {{ $t('registration.confirmation.error.use.search') }}
+              {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+                ? $t('registration.confirmation.error.use.search.household')
+                : $t('registration.confirmation.error.use.search') }}
             </div>
             <v-btn
               color="primary"
               data-test="confirmation-errorRegistration-beneficiarySearchButton"
               @click="$emit('search-household')">
-              {{ $t('registration.confirmation.error.search.button') }}
+              {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+                ? $t('registration.confirmation.error.search.household.button') : $t('registration.confirmation.error.search.button') }}
             </v-btn>
           </div>
           <template v-else>
@@ -56,6 +59,7 @@ import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import { IError } from '@libs/services-lib/http-client';
 import { IServerError } from '@libs/shared-lib/types';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { keysForDuplicateErrors } from './keysForDuplicateErrors';
 
 type TranslateResult = VueI18n.TranslateResult;
@@ -81,6 +85,7 @@ export default Vue.extend({
   data() {
     return {
       keysForDuplicateErrors,
+      FeatureKeys,
     };
   },
 
@@ -99,7 +104,10 @@ export default Vue.extend({
     },
 
     errorMessage(): TranslateResult {
-      return this.isDuplicateError ? this.$t('registration.confirmation.error.message.duplicate') : this.$t('registration.confirmation.error');
+      const duplicateErrorMessage = this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+        ? this.$t('registration.confirmation.error.message.duplicate.household') : this.$t('registration.confirmation.error.message.duplicate');
+
+      return this.isDuplicateError ? duplicateErrorMessage : this.$t('registration.confirmation.error');
     },
   },
 });

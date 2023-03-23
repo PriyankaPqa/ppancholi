@@ -46,7 +46,9 @@
         </div>
         <div v-if="isCRCRegistration">
           <v-icon>mdi-information</v-icon>
-          <span class="rc-body14 ml-2">{{ $t('registration.crc_confirmation.email_sent') }}</span>
+          <span class="rc-body14 ml-2">{{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+            ? $t('registration.crc_confirmation.email_sent.household')
+            : $t('registration.crc_confirmation.email_sent') }}</span>
         </div>
       </div>
     </template>
@@ -68,6 +70,7 @@ import { IHouseholdCreate, IHouseholdCreateData } from '@libs/entities-lib/src/h
 import { IEvent } from '@libs/entities-lib/src/registration-event';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IServerError } from '@libs/shared-lib/src/types';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import ConfirmationError from './ConfirmationError.vue';
 import { IRegistrationMenuItem } from '../../types';
 
@@ -75,6 +78,10 @@ export default Vue.extend({
   name: 'ConfirmRegistration',
   components: {
     ConfirmationError,
+  },
+
+  data() {
+    return { FeatureKeys };
   },
 
   computed: {

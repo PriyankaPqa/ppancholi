@@ -108,7 +108,9 @@
                   {{ $t("caseFile.financialAssistance.payee.paymentMadeTo") }}
                 </td>
                 <td class="data">
-                  {{ $t(`enums.payeeType.${PayeeType[paymentGroup.groupingInformation.payeeType]}`) }}
+                  {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+                    ? $t(`enums.payeeType.new.${PayeeType[paymentGroup.groupingInformation.payeeType]}`)
+                    : $t(`enums.payeeType.${PayeeType[paymentGroup.groupingInformation.payeeType]}`) }}
                 </td>
               </tr>
               <tr>
@@ -167,6 +169,7 @@ import householdHelpers from '@/ui/helpers/household';
 import { useProgramStore } from '@/pinia/program/program';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
@@ -196,6 +199,7 @@ export default mixins(caseFileDetail).extend({
       showPayee: FinancialAssistancePaymentGroup.showPayee,
       PayeeType,
       EPaymentModalities,
+      FeatureKeys,
     };
   },
 

@@ -1,5 +1,7 @@
 <template>
-  <privacy-statement-lib :checkbox-label="$t('registration.privacy_statement.agreeCRC')">
+  <privacy-statement-lib
+    :checkbox-label="$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+      ? $t('registration.privacy_statement.agreeCRC.individual') : $t('registration.privacy_statement.agreeCRC')">
     <div class="grey-container py-3 px-3">
       <v-row>
         <v-col cols="12" md="6">
@@ -45,6 +47,7 @@ import helpers from '@libs/entities-lib/helpers';
 import VueI18n from 'vue-i18n';
 import { ERegistrationMethod } from '@libs/shared-lib/types';
 import { EEventLocationStatus, IEvent, IEventGenericLocation } from '@libs/entities-lib/registration-event';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import PrivacyStatementLib from './PrivacyStatementLib.vue';
 
 export interface IUser {
@@ -87,6 +90,7 @@ export default Vue.extend({
 
   data() {
     return {
+      FeatureKeys,
       privacyRegistrationLocation: null as IEventGenericLocation,
     };
   },

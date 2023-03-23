@@ -190,6 +190,7 @@ import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, IdP
 import { useFinancialAssistanceMetadataStore, useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
 import StatisticsDialog from './components/StatisticsDialog.vue';
 import caseFileDetail from '../caseFileDetail';
@@ -477,7 +478,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     getGroupTitle(paymentGroup: IFinancialAssistancePaymentGroup) {
       if (FinancialAssistancePaymentGroup.showPayee(paymentGroup)) {
         const modality = this.$t(`enums.PaymentModality.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`);
-        const payeeType = this.$t(`enums.payeeType.${PayeeType[paymentGroup.groupingInformation.payeeType]}`);
+        const payeeType = this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+          ? this.$t(`enums.payeeType.new.${PayeeType[paymentGroup.groupingInformation.payeeType]}`)
+          : this.$t(`enums.payeeType.${PayeeType[paymentGroup.groupingInformation.payeeType]}`);
 
         return `${modality} (${payeeType}) - ${paymentGroup.groupingInformation.payeeName}`;
       }

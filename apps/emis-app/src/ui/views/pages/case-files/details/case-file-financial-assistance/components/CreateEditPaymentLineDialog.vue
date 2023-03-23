@@ -84,7 +84,9 @@
               v-else
               icon="mdi-information-outline"
               small-icon
-              :message="$t('caseFile.financialAssistance.ETransfer.noEmailNotification')"
+              :message="$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+                ? $t('caseFile.financialAssistance.ETransfer.noEmailNotification.individual')
+                : $t('caseFile.financialAssistance.ETransfer.noEmailNotification') "
               :styles="{
                 'background-color': 'var(--v-status_yellow_pale-base)',
                 color: 'var(--v-grey-darken4)',
@@ -280,7 +282,10 @@ export default mixins(caseFileDetail).extend({
     return {
       paymentGroup: null as IFinancialAssistancePaymentGroup,
       address: new Address(),
-      payeeTypes: helpers.enumToTranslatedCollection(PayeeType, 'enums.payeeType'),
+      payeeTypes: helpers.enumToTranslatedCollection(
+        PayeeType,
+        this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm) ? 'enums.payeeType.new' : 'enums.payeeType',
+      ),
       loaded: false,
       defaultBeneficiaryData: {
         address: null as IAddressData,
@@ -292,6 +297,7 @@ export default mixins(caseFileDetail).extend({
       showPayee: FinancialAssistancePaymentGroup.showPayee,
       fixedAmount: false,
       EPaymentModalities,
+      FeatureKeys,
     };
   },
 
@@ -305,7 +311,8 @@ export default mixins(caseFileDetail).extend({
 
     modalityError() : string {
       if (this.paymentGroup.groupingInformation.modality === EPaymentModalities.ETransfer && !this.defaultBeneficiaryData.email) {
-        return 'caseFile.financialAssistance.ETransfer.noEmail';
+        return this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm) ? 'caseFile.financialAssistance.ETransfer.noEmail.individual'
+          : 'caseFile.financialAssistance.ETransfer.noEmail';
       }
       return null;
     },
@@ -433,7 +440,7 @@ export default mixins(caseFileDetail).extend({
 
       this.paymentGroup.groupingInformation = {
         modality: this.currentGroup?.groupingInformation?.modality || null,
-        payeeType: this.currentGroup?.groupingInformation?.payeeType || PayeeType.Beneficiary,
+        payeeType: this.currentGroup?.groupingInformation?.payeeType || PayeeType.Individual,
         payeeName: this.currentGroup?.groupingInformation?.payeeName
           || this.defaultBeneficiaryData.name,
       };
@@ -454,7 +461,7 @@ export default mixins(caseFileDetail).extend({
           // reset non-editable fields if they had been changed
           this.currentPaymentLine.address = null;
           this.currentPaymentLine.careOf = null;
-          this.paymentGroup.groupingInformation.payeeType = PayeeType.Beneficiary;
+          this.paymentGroup.groupingInformation.payeeType = PayeeType.Individual;
           this.paymentGroup.groupingInformation.payeeName = this.defaultBeneficiaryData.name;
         }
 
@@ -489,7 +496,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     resetPayeeInformation() {
-      if (this.paymentGroup.groupingInformation.payeeType === PayeeType.Beneficiary) {
+      if (this.paymentGroup.groupingInformation.payeeType === PayeeType.Individual) {
         this.paymentGroup.groupingInformation.payeeName = this.defaultBeneficiaryData.name;
         this.address = new Address(this.defaultBeneficiaryData.address);
       } else {

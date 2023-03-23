@@ -22,6 +22,9 @@ describe('ConfirmRegistrationLib.vue', () => {
           errors,
           phone: 'phone',
         },
+        mocks: {
+          $hasFeature: () => false,
+        },
       });
     });
 

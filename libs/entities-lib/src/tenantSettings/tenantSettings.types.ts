@@ -22,6 +22,7 @@ export enum FeatureKeys {
   HouseholdProfileStatus = 'HouseholdProfileStatus',
   ManageDuplicates = 'manageDuplicates',
   CustomConsent = 'CustomConsent',
+  ReplaceBeneficiaryTerm = 'replaceBeneficiaryTerm',
 }
 
 export enum FeatureType {

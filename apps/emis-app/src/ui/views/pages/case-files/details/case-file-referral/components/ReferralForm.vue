@@ -46,7 +46,9 @@
                       data-test="refmethod_referral"
                       @click="confirmResetConsent" />
                     <div class="rc-body12 grey--text ml-8">
-                      {{ $t('referral.method.referral.details') }}
+                      {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+                        ? $t('referral.method.referral.details.individual')
+                        : $t('referral.method.referral.details') }}
                     </div>
                   </v-col>
                   <v-col cols="6">
@@ -56,7 +58,9 @@
                       data-test="refmethod_warm"
                       @click="showConsent = true" />
                     <div class="rc-body12 grey--text ml-8">
-                      {{ $t('referral.method.warm.details') }}
+                      {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+                        ? $t('referral.method.warm.details.individual')
+                        : $t('referral.method.warm.details') }}
                     </div>
                   </v-col>
                 </v-radio-group>
@@ -99,6 +103,7 @@ import { CaseFileReferralEntity, ReferralMethod } from '@libs/entities-lib/case-
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { IListOption } from '@libs/shared-lib/types';
 import { useCaseFileReferralStore } from '@/pinia/case-file-referral/case-file-referral';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import WarmReferralConsent from './WarmReferralConsent.vue';
 
 export default Vue.extend({
@@ -130,6 +135,7 @@ export default Vue.extend({
     }
 
     return {
+      FeatureKeys,
       localReferral,
       methodsEnum: ReferralMethod,
       showConsent: false,
@@ -197,7 +203,8 @@ export default Vue.extend({
       if (this.isEditMode && this.localReferral.referralConsentInformation.dateTimeConsent) {
         const confirmReset = await this.$confirm({
           title: this.$t('caseFile.referral.resetConsentConfirm.title'),
-          messages: this.$t('caseFile.referral.resetConsentConfirm.message'),
+          messages: this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+            ? this.$t('caseFile.referral.resetConsentConfirm.message.individual') : this.$t('caseFile.referral.resetConsentConfirm.message'),
         });
 
         if (confirmReset) {

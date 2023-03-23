@@ -26,7 +26,7 @@
         <v-icon left>
           mdi-plus
         </v-icon>
-        {{ $t('header.registerBeneficiaries') }}
+        {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm) ? $t('header.beginRegistration') : $t('header.registerBeneficiaries') }}
       </v-btn>
 
       <language-selector />
@@ -79,6 +79,7 @@ export default Vue.extend({
     return {
       showGeneralHelp: false,
       routes,
+      FeatureKeys,
     };
   },
 

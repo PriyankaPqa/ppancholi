@@ -382,7 +382,7 @@ describe('SplitHousehold.vue', () => {
             currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           },
         });
-        expect(wrapper.vm.title).toEqual(wrapper.vm.currentTab.titleKey);
+        expect(wrapper.vm.title).toEqual(wrapper.vm.allTabs[wrapper.vm.currentTabIndex].titleKey);
       });
     });
 

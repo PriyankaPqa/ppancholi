@@ -22,7 +22,10 @@
           :rules="rules.consent"
           data-test="checkbox-consent">
           <template #label>
-            <span :class="{ 'rc-body14': true, 'red-text': failed }"> {{ $t('referral.consent') }}</span>
+            <span :class="{ 'rc-body14': true, 'red-text': failed }">
+              {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+                ? $t('referral.consent.individual') : $t('referral.consent') }}
+            </span>
           </template>
         </v-checkbox-with-validation>
         <div v-if="localConsentInfo" class="rc-body12 grey--text pl-8 mt-n4">
@@ -40,6 +43,7 @@ import { VCheckboxWithValidation, RcDialog } from '@libs/component-lib/component
 
 import { IReferralConsentInformation } from '@libs/entities-lib/case-file-referral';
 import { VForm } from '@libs/shared-lib/types';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useUserStore } from '@/pinia/user/user';
 
 export default Vue.extend({
@@ -64,6 +68,7 @@ export default Vue.extend({
 
   data() {
     return {
+      FeatureKeys,
       localConsentInfo: _cloneDeep(this.referralConsentInformation) as IReferralConsentInformation,
       consentChecked: this.referralConsentInformation?.dateTimeConsent != null,
     };

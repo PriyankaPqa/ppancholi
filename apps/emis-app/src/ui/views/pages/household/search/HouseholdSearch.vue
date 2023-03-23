@@ -4,7 +4,7 @@
       <validation-observer ref="form" v-slot="{ valid }" tag="div" data-test="search_IsRegistered">
         <v-row v-if="!hideTitle">
           <div class="rc-heading-5 ml-4">
-            {{ $t(title) }}
+            {{ $t(featureFlagTitle) }}
           </div>
         </v-row>
 
@@ -167,9 +167,10 @@ export default Vue.extend({
     },
     title: {
       type: String,
-      default: 'registration.isRegistered.title',
+      default: '',
     },
   },
+
   data() {
     return {
       isEmpty,
@@ -195,6 +196,16 @@ export default Vue.extend({
     };
   },
   computed: {
+    featureFlagTitle(): string {
+      if (this.title) {
+        return this.title;
+      }
+      if (this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)) {
+        return 'registration.isRegistered.title.householdSearch';
+      }
+      return 'registration.isRegistered.title';
+    },
+
     // Will return only non empty properties from the form object, Ex: {firstName: 'x', lastName: 'y'}
     nonEmptySearchCriteria(): { [key: string]: string } {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

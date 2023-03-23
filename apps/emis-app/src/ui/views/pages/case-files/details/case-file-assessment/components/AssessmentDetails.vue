@@ -25,7 +25,8 @@
             <div>{{ $t('assessmentResponse.completedBy') }}:</div>
             <div v-if="assessmentResponse.completedBy">
               {{ assessmentResponse.completedBy.type === CompletedByType.Crc
-                ? assessmentResponse.completedBy.crcUserName : $t('assessment.completedBy.beneficiary') }}
+                ? assessmentResponse.completedBy.crcUserName
+                : $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm) ? $t('assessment.completedBy.individual') : $t('assessment.completedBy.beneficiary') }}
             </div>
           </div>
           <div>
@@ -79,6 +80,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form';
 import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import caseFileDetail from '../../caseFileDetail';
 import QuestionTab from './QuestionTab.vue';
 
@@ -104,6 +106,7 @@ export default mixins(caseFileDetail).extend({
     return {
       CompletedByType,
       moment,
+      FeatureKeys,
       selectedTab: 'Questions',
       tabs: ['Questions'],
     };

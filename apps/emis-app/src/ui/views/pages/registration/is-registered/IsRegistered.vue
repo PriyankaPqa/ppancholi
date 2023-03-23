@@ -5,7 +5,7 @@
     <rc-dialog
       v-if="showDetailsDialog"
       data-test="household-split-search-details-dialog"
-      :title="$t('household.split.title.beneficiary_details')"
+      :title="$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm) ? $t('household.split.title.household_details') : $t('household.split.title.beneficiary_details')"
       :show-cancel="false"
       :submit-action-label="$t('common.close')"
       :show.sync="showDetailsDialog"
@@ -49,6 +49,7 @@ export default mixins(searchHousehold).extend({
   },
   data() {
     return {
+      FeatureKeys,
       i18n,
       showDetailsDialog: false,
       selectedHouseholdId: '',

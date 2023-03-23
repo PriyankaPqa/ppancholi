@@ -162,6 +162,7 @@
     "registration.personal_info.contact_methods": "Contact methods",
     "registration.personal_info.year": "Year",
     "registration.privacy_statement.agreeCRC": "Beneficiary has stated “I agree” to the above statements.",
+    "registration.privacy_statement.agreeCRC.individual": "Individual has stated “I agree” to the above statements.",
     "registration.privacy_statement.agreeSelf": "I agree to the above statements.",
     "registration.privacy_statement.crc_username": "CRC Username",
     "registration.privacy_statement.email": "privacy@redcross.ca",

@@ -21,6 +21,9 @@ describe('Individual.vue', () => {
       localVue,
       pinia,
       computed: {
+        allTabs() {
+          return tabs();
+        },
         ...otherComputed,
       },
 
@@ -188,7 +191,7 @@ describe('Individual.vue', () => {
 
       it('should set current tab to isRegistered', () => {
         wrapper.vm.backToHouseholdResults();
-        expect(registrationStore.currentTabIndex).toEqual(tabs().findIndex((t) => t.id === 'isRegistered'));
+        expect(registrationStore.currentTabIndex).toEqual(wrapper.vm.allTabs.findIndex((t) => t.id === 'isRegistered'));
       });
 
       it('should call resetHouseholdCreate', () => {
@@ -516,7 +519,7 @@ describe('Individual.vue', () => {
           currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           associationMode: () => false,
         });
-        expect(wrapper.vm.getTitle).toEqual(wrapper.vm.currentTab.titleKey);
+        expect(wrapper.vm.getTitle).toEqual(wrapper.vm.allTabs[wrapper.vm.currentTabIndex].titleKey);
       });
     });
 

@@ -26,6 +26,7 @@ import {
 import { ERegistrationMethod, IIdMultilingualName, IMultilingual } from '@libs/shared-lib/types';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { HouseholdStatus } from '@libs/entities-lib/household';
 
 export interface IAssignInfo {
@@ -446,7 +447,9 @@ export default Vue.extend({
           }
         }
       } else {
-        body += this.$t('caseFileActivity.activityList.body.PublicRegistration');
+        body += this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+          ? this.$t('caseFileActivity.activityList.body.PublicRegistration.individual')
+          : this.$t('caseFileActivity.activityList.body.PublicRegistration');
       }
 
       return { title, body };

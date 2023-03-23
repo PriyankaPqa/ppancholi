@@ -3,7 +3,7 @@
     <page-template
       :show-left-menu="!associationMode"
       :loading="false"
-      :navigation-tabs="tabs"
+      :navigation-tabs="allTabs"
       :left-menu-title="eventName"
       :left-menu-subtitle="$t('registration.menu.title')">
       <template #navigation>
@@ -112,7 +112,6 @@ import Addresses from '@/ui/views/pages/registration/addresses/Addresses.vue';
 import AdditionalMembers from '@/ui/views/pages/registration/additional-members/AdditionalMembers.vue';
 import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegistration.vue';
 import ConfirmRegistration from '@/ui/views/pages/registration/confirmation/ConfirmRegistration.vue';
-import { tabs } from '@/pinia/registration/tabs';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -171,7 +170,6 @@ export default mixins(individual).extend({
 
   data() {
     return {
-      tabs: tabs(),
       showErrorDialog: false,
     };
   },
@@ -187,9 +185,11 @@ export default mixins(individual).extend({
 
     getTitle(): TranslateResult {
       if (this.currentTab.id === 'review' && this.associationMode) {
-        return this.$t('registration.details.associateBeneficiaryButton.label');
+        return this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+          ? this.$t('registration.details.associateHouseholdButton.label')
+          : this.$t('registration.details.associateBeneficiaryButton.label');
       }
-      return this.$t(this.currentTab.titleKey);
+      return this.$t(this.allTabs[this.currentTabIndex].titleKey);
     },
 
     getNextButtonLabel(): TranslateResult {
@@ -322,7 +322,7 @@ export default mixins(individual).extend({
       useRegistrationStore().resetHouseholdCreate();
       useRegistrationStore().householdAssociationMode = false;
       useRegistrationStore().householdAlreadyRegistered = false;
-      useRegistrationStore().currentTabIndex = (tabs().findIndex((t) => t.id === 'isRegistered'));
+      useRegistrationStore().currentTabIndex = (this.allTabs.findIndex((t) => t.id === 'isRegistered'));
     },
 
     goToHouseholdProfile(householdId: string) {
@@ -339,7 +339,9 @@ export default mixins(individual).extend({
         title: this.$t('registration.associate.confirmation.title'),
         messages: [
           this.$t('registration.associate.confirmation.message1'),
-          this.$t('registration.associate.confirmation.message2'),
+          this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+            ? this.$t('registration.associate.confirmation.message2.household')
+            : this.$t('registration.associate.confirmation.message2'),
         ],
       }));
       if (userChoice) {

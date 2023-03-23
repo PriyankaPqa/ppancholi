@@ -7,7 +7,7 @@ import { IEntity, IEntityCombined } from '../base';
  * Enums
  */
 export enum PayeeType {
-  Beneficiary = 1,
+  Individual = 1,
   ThirdParty = 2,
 }
 
@@ -28,11 +28,11 @@ export enum ApprovalStatus {
 }
 
 export enum ApprovalAction {
-    Submitted = 1,
-    RequestAdditionalInfo = 2,
-    Approved = 3,
-    Declined = 4,
-    ApprovedFinal = 5,
+  Submitted = 1,
+  RequestAdditionalInfo = 2,
+  Approved = 3,
+  Declined = 4,
+  ApprovedFinal = 5,
 }
 
 export enum EPaymentCancellationReason {

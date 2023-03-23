@@ -9,7 +9,12 @@
         <v-row justify="center">
           <v-col cols="8">
             <!-- Warning -->
-            <message-box v-if="showWarning" icon="mdi-alert" :message="$t('caseFile.financialAssistance.warning.program.eligibility')" />
+            <message-box
+              v-if="showWarning"
+              icon="mdi-alert"
+              :message="$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+                ? $t('caseFile.financialAssistance.warning.program.eligibility.household')
+                : $t('caseFile.financialAssistance.warning.program.eligibility')" />
             <!-- Form -->
             <v-sheet v-if="!isDetailsMode" rounded outlined class="pa-8 mb-8">
               <create-edit-financial-assistance-form
@@ -176,6 +181,7 @@ import { useAssessmentResponseStore, useAssessmentResponseMetadataStore } from '
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore, useFinancialAssistanceMetadataStore } from '@/pinia/financial-assistance/financial-assistance';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
@@ -212,6 +218,7 @@ export default mixins(caseFileDetail).extend({
 
   data() {
     return {
+      FeatureKeys,
       financialAssistanceLoading: false,
       financialAssistance: null as FinancialAssistancePaymentEntity,
       financialTables: [] as IFinancialAssistanceTableEntity[],

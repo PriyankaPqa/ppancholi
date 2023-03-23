@@ -177,7 +177,9 @@ export default Vue.extend({
       let key;
       if (FinancialAssistancePaymentGroup.showPayee(this.paymentGroup)) {
         const modality = this.$t(`enums.PaymentModality.${EPaymentModalities[this.paymentGroup.groupingInformation.modality]}`);
-        const payeeType = this.$t(`enums.payeeType.${PayeeType[this.paymentGroup.groupingInformation.payeeType]}`);
+        const payeeType = this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
+          ? this.$t(`enums.payeeType.new.${PayeeType[this.paymentGroup.groupingInformation.payeeType]}`)
+          : this.$t(`enums.payeeType.${PayeeType[this.paymentGroup.groupingInformation.payeeType]}`);
         key = `${modality} (${payeeType}) - ${this.paymentGroup.groupingInformation.payeeName}`;
       } else {
         key = this.$t(`enums.PaymentModality.${EPaymentModalities[this.paymentGroup.groupingInformation.modality]}`);

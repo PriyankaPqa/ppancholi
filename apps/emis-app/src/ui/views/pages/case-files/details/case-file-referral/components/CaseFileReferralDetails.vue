@@ -67,7 +67,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
-  name: 'CreateEditReferralDetails',
+  name: 'CaseFileReferralDetails',
 
   components: {
     RcPageContent,
@@ -165,5 +165,3 @@ export default mixins(caseFileDetail).extend({
 
 });
 </script>
-
-<style scoped>
