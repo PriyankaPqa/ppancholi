@@ -9,12 +9,12 @@
       <v-row justify="center">
         <v-col class="mt-10" cols="12" md="10">
           <div class="flex-row justify-space-between">
-            <h5 class="rc-heading-5">
+            <h5 class="rc-heading-5" data-test="program-details-name">
               {{ $m(program.name) }}
             </h5>
 
             <div>
-              <status-chip status-name="Status" :status="program.status" />
+              <status-chip status-name="Status" :status="program.status" data-test="program-details-status" />
               <v-btn class="ml-4" icon data-test="edit-button" :to="getEditRoute()">
                 <v-icon>
                   mdi-pencil
@@ -40,7 +40,7 @@
                     mdi-check-circle
                   </v-icon>
 
-                  <span>
+                  <span data-test="program-details-payment-modality">
                     {{ getTranslatedPaymentModality(modality) }}
                   </span>
                 </span>
@@ -57,7 +57,8 @@
                   <v-icon
                     class="mr-1"
                     :color="getEligibilityIconColor(program.eligibilityCriteria.authenticated)"
-                    small>
+                    small
+                    data-test="program-details-icon-eligibilityCriteria-authenticated">
                     {{ getEligibilityIcon(program.eligibilityCriteria.authenticated) }}
                   </v-icon>
                   {{ $t('event.programManagement.needAuthenticated') }}
@@ -67,7 +68,8 @@
                   <v-icon
                     class="mr-1"
                     :color="getEligibilityIconColor(program.eligibilityCriteria.impacted)"
-                    small>
+                    small
+                    data-test="program-details-icon-eligibilityCriteria-impacted">
                     {{ getEligibilityIcon(program.eligibilityCriteria.impacted) }}
                   </v-icon>
                   {{ $t('event.programManagement.needImpacted') }}
@@ -77,7 +79,8 @@
                   <v-icon
                     class="mr-1"
                     :color="getEligibilityIconColor(program.eligibilityCriteria.completedAssessments)"
-                    small>
+                    small
+                    data-test="program-details-icon-eligibilityCriteria-completedAssessments">
                     {{ getEligibilityIcon(program.eligibilityCriteria.completedAssessments) }}
                   </v-icon>
                   {{ $t('event.programManagement.hasCompletedAssessments') }}
@@ -106,7 +109,8 @@
                   <v-icon
                     class="mr-1"
                     :color="getEligibilityIconColor(program.approvalRequired)"
-                    small>
+                    small
+                    data-test="program-details-icon-approvalRequired">
                     {{ getEligibilityIcon(program.approvalRequired) }}
                   </v-icon>
                   {{ $t('event.programManagement.approvalRequired') }}
@@ -119,7 +123,7 @@
                 {{ $t('event.programManagement.programDescription.title') }}
               </v-col>
 
-              <v-col class="rc-body14 pre-formatted" cols="12" md="7">
+              <v-col class="rc-body14 pre-formatted" cols="12" md="7" data-test="program-details-description">
                 {{ $m(program.description) }}
               </v-col>
             </v-row>
@@ -127,7 +131,7 @@
         </v-col>
 
         <v-col class="mt-4" cols="12" md="10">
-          <h5 class="rc-heading-5">
+          <h5 class="rc-heading-5" data-test="program-details-financialAssistanceTables-title">
             {{ $t('event.programManagement.financialAssistance') }} ({{ financialAssistanceTables.length }})
           </h5>
         </v-col>

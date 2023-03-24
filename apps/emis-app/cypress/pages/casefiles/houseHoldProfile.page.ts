@@ -59,7 +59,7 @@ export class HouseholdProfilePage {
 
   public getGender() {
     const genderArray: string[] = [];
-    return cy.getByDataTest(this.gender).each(($el) => {
+    return cy.getByDataTest(this.gender).should('be.visible').each(($el) => {
       const genderText = $el.text().trim();
       genderArray.push(genderText);
     }).then(() => genderArray);
