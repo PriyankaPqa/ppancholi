@@ -43,14 +43,14 @@
       },
 
       householdStatusActionAndUserInfo(): string {
+        const user = ` ${this.pinnedHouseholdStatusActivity?.user?.name || ''}`;
+        const role = this.pinnedHouseholdStatusActivity?.role?.name ? ` (${this.$m(this.pinnedHouseholdStatusActivity?.role?.name)})` : '';
         if (this.pinnedHouseholdStatusActivity?.details) {
-          const string = `${this.$t(`household.status.pinned_information.${HouseholdStatus[(this.pinnedHouseholdStatusActivity.details.newHouseholdStatus) as HouseholdStatus]}`)
-             } ${
-             this.pinnedHouseholdStatusActivity?.user?.name || ''
-             } `
-            + `(${this.$m(this.pinnedHouseholdStatusActivity?.role?.name)})`
-            + ` - ${
-             this.moment(this.pinnedHouseholdStatusActivity?.created).local().format('ll')}`;
+          let string = `${this.$t(`household.status.pinned_information.${HouseholdStatus[(this.pinnedHouseholdStatusActivity.details.newHouseholdStatus) as HouseholdStatus]}`)
+             }`;
+            string += user;
+            string += role;
+            string += ` - ${this.moment(this.pinnedHouseholdStatusActivity?.created).local().format('ll')}`;
           return string;
         }
         return '';

@@ -24,7 +24,7 @@
       <template #[`item.${customColumns.editedBy}`]="{ item }">
         <div class="d-flex flex-column full-height py-2" data-test="household_history_edited-by">
           <span class="fw-bold">{{ item.user.name }}</span>
-          <span class="rc-body12">{{ $m(item.role.name) }}</span>
+          <span class="rc-body12">{{ item.role ? $m(item.role.name) : '' }}</span>
         </div>
       </template>
 

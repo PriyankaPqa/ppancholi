@@ -7,28 +7,48 @@ import Component from '../PinnedStatus.vue';
 const localVue = createLocalVue();
 const { pinia } = useMockCaseFileStore();
 
-const householdStatusChangedActivity = {
-  id: 'mock-activity-id-41',
-  caseFileId: 'mock-id-1',
-  user: { id: '1', name: 'Jane Doe' },
-  role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
-  created: '2021-05-04',
-  activityType: CaseFileActivityType.HouseholdStatusChanged,
-  details: {
-    newHouseholdStatus: HouseholdStatus.Open,
-    oldHouseholdStatus: HouseholdStatus.Closed,
-    rationale: {
-      translation: {
-        en: 'rationale in EN',
-        fr: 'rationale in FR',
+const householdStatusChangedActivity = [
+  {
+    id: 'mock-activity-id-41',
+    caseFileId: 'mock-id-1',
+    user: { id: '1', name: 'Jane Doe' },
+    role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+    created: '2021-05-04',
+    activityType: CaseFileActivityType.HouseholdStatusChanged,
+    details: {
+      newHouseholdStatus: HouseholdStatus.Open,
+      oldHouseholdStatus: HouseholdStatus.Closed,
+      rationale: {
+        translation: {
+          en: 'rationale in EN',
+          fr: 'rationale in FR',
+        },
       },
     },
   },
-};
+  {
+    id: 'mock-activity-id-42',
+    caseFileId: 'mock-id-2',
+    user: { id: '111111', name: 'System' },
+    role: null,
+    created: '2021-05-04',
+    activityType: CaseFileActivityType.HouseholdStatusChanged,
+    details: {
+      newHouseholdStatus: HouseholdStatus.Open,
+      oldHouseholdStatus: HouseholdStatus.Closed,
+      rationale: {
+        translation: {
+          en: 'All members have been moved out',
+          fr: 'Tous les membres ont été déplacés',
+        },
+      },
+    },
+  },
+];
 
 describe('PinnedStatus.vue', () => {
   let wrapper;
-  const doMount = () => {
+  const doMount = (indexOfActivity = 0) => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
@@ -36,7 +56,7 @@ describe('PinnedStatus.vue', () => {
         id: 'mock-id',
       },
       computed: {
-        pinnedHouseholdStatusActivity: () => householdStatusChangedActivity,
+        pinnedHouseholdStatusActivity: () => householdStatusChangedActivity[indexOfActivity],
       },
     });
   };
@@ -57,6 +77,9 @@ describe('PinnedStatus.vue', () => {
     describe('householdStatusActionAndUserInfo', () => {
       it('should return correct string', async () => {
         expect(wrapper.vm.householdStatusActionAndUserInfo).toEqual('household.status.pinned_information.Open Jane Doe (sys admin) - May 4, 2021');
+
+        doMount(1);
+        expect(wrapper.vm.householdStatusActionAndUserInfo).toEqual('household.status.pinned_information.Open System - May 4, 2021');
       });
     });
   });
