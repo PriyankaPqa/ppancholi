@@ -71,6 +71,9 @@
                   <th>
                     {{ $t('assessmentTemplate.stepLabel') }}
                   </th>
+                  <th>
+                    {{ $t('assessmentTemplate.restrictFinancial') }}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -86,6 +89,9 @@
                   </td>
                   <td>
                     {{ $m(scoringRange.label) }}
+                  </td>
+                  <td>
+                    {{ scoringRange.restrictFinancial ? $t('common.yes') : '' }}
                   </td>
                 </tr>
               </tbody>

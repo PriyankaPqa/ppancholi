@@ -264,7 +264,8 @@ export default mixins(caseFileDetail).extend({
     },
 
     showWarning() : boolean {
-      return !(this.isImpacted && this.isAuthenticated && this.hasCompletedAssessments) && this.financialAssistance.approvalStatus !== ApprovalStatus.Approved;
+      return !(this.isImpacted && this.isAuthenticated && this.hasCompletedAssessments && !this.hasBlockingAssessmentScore)
+        && this.financialAssistance.approvalStatus !== ApprovalStatus.Approved;
     },
 
     isAuthenticated(): boolean {
@@ -293,6 +294,21 @@ export default mixins(caseFileDetail).extend({
       }
 
       return true;
+    },
+
+    hasBlockingAssessmentScore(): boolean {
+      if (!this.selectedProgram || !this.programAssessmentForms?.length) {
+        return false;
+      }
+      for (let i = 0; i < this.caseFileAssessmentResponses.length; i += 1) {
+        const response = this.caseFileAssessmentResponses[i];
+        const form = this.programAssessmentForms.find((f) => f.id === response.assessmentFormId);
+        if (form != null && response.completionStatus === CompletionStatus.Completed && response.totalScore != null
+            && (form.scoringRanges || []).find((s) => s.restrictFinancial && s.minValue <= response.totalScore && s.maxValue >= response.totalScore)) {
+          return true;
+        }
+      }
+      return false;
     },
 
     isDisabled() : boolean {
@@ -327,6 +343,7 @@ export default mixins(caseFileDetail).extend({
     await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
     this.isEditMode || this.isAddMode ? await this.searchTables() : await this.fetchTable();
     await this.fetchProgram(this.financialTables[0].programId, this.caseFile.eventId);
+    await this.fetchAssessmentResponseByCaseFileId(this.caseFileId);
 
     this.loading = false;
     this.warnIfInvalid();
@@ -407,16 +424,13 @@ export default mixins(caseFileDetail).extend({
 
     async updateSelectedProgram(table: IFinancialAssistanceTableEntity) {
       const selectedProgramId = table?.programId;
+
       if (selectedProgramId && this.selectedProgram?.id !== selectedProgramId) {
         const originalProgram = this.selectedProgram;
 
         const program = await useProgramStore().fetch({ id: selectedProgramId, eventId: this.caseFile.eventId });
         this.selectedProgram = program;
-
-        if (this.selectedProgram?.eligibilityCriteria?.completedAssessments) {
-          await this.fetchAssessmentResponseByCaseFileId(this.caseFileId);
-          await this.fetchAssessmentFormByProgramId(this.selectedProgram.id);
-        }
+        await this.fetchAssessmentFormByProgramId(this.selectedProgram.id);
 
         if (originalProgram) {
           this.makePaymentName();
@@ -592,6 +606,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     async fetchAssessmentFormByProgramId(programId: string) {
+      this.programAssessmentForms = [];
       this.programAssessmentForms = await useAssessmentFormStore().fetchByProgramId(programId);
     },
 
