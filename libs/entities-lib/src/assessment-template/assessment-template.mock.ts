@@ -174,8 +174,8 @@ export const mockAssessmentBaseEntity = (force? : Partial<IAssessmentTemplateEnt
       answerChoices: null,
     },
   ],
-  scoringRanges: [{ minValue: 0, maxValue: 5, label: { translation: { en: 'less', fr: 'moins' } }, restrictFinancial: false },
-    { minValue: 6, maxValue: 10, label: { translation: { en: 'more', fr: 'plus' } }, restrictFinancial: true }],
+  scoringRanges: [{ minValue: 0, maxValue: 5, label: { translation: { en: 'less', fr: 'moins' } } },
+    { minValue: 6, maxValue: 10, label: { translation: { en: 'more', fr: 'plus' } } }],
   ...force,
 });
 

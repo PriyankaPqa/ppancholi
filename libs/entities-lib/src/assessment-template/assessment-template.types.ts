@@ -93,7 +93,6 @@ export interface IAssessmentScoringRange {
   label: IMultilingual;
   minValue: number;
   maxValue: number;
-  restrictFinancial: boolean;
 }
 
 export interface IAssessmentBaseEntity extends IEntity {
