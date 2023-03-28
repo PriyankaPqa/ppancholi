@@ -1,4 +1,3 @@
-import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import {
   HouseholdActivity,
   mockHouseholdActivities,
@@ -11,7 +10,6 @@ import Component from '../HouseholdProfileHistory.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
-const household = { ...mockHouseholdEntity() };
 const householdActivity = mockHouseholdActivities()[0];
 const displayedItem = mockHouseholdActivities()[0];
 displayedItem.templateData = [{ label: 'foo', value: 'bar' }];
@@ -22,7 +20,6 @@ jest.mock('@libs/entities-lib/value-objects/household-activity/householdActivity
 
 describe('HouseholdProfileHistory', () => {
   let wrapper;
-  services.households.getHouseholdActivity = jest.fn(() => ([householdActivity]));
 
   describe('Template', () => {
     beforeEach(() => {
@@ -30,7 +27,7 @@ describe('HouseholdProfileHistory', () => {
         localVue,
         propsData: {
           show: true,
-          household,
+          activityItemsData: [householdActivity],
         },
         computed: {
           displayedItems() {
@@ -80,7 +77,7 @@ describe('HouseholdProfileHistory', () => {
             localVue,
             propsData: {
               show: true,
-              household,
+              activityItemsData: [householdActivity],
             },
             mocks: { $services: services },
           });
@@ -89,7 +86,6 @@ describe('HouseholdProfileHistory', () => {
           const hook = wrapper.vm.$options.created[0];
           await hook.call(wrapper.vm);
 
-          expect(services.households.getHouseholdActivity).toHaveBeenCalledWith(wrapper.vm.household.id);
           expect(wrapper.vm.handleMoveActivity).toHaveBeenCalledWith([householdActivity]);
           expect(wrapper.vm.activityItems.toString())
             .toEqual([new HouseholdActivity({ ...householdActivity, timestamp: '2021-11-16T16:20:03.7678072Z' })].toString());
@@ -115,7 +111,6 @@ describe('HouseholdProfileHistory', () => {
           localVue,
           propsData: {
             show: true,
-            household,
           },
           data() {
             return { activityItems: [item1, item2] };
@@ -145,7 +140,7 @@ describe('HouseholdProfileHistory', () => {
           localVue,
           propsData: {
             show: true,
-            household,
+            activityItemsData: [householdActivity],
           },
           mocks: { $services: services },
         });

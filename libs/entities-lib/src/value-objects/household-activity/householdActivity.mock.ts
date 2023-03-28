@@ -8,7 +8,7 @@ import { mockContactInformation } from '../contact-information';
 import { mockCampGround, mockShelter } from '../current-address';
 import { EIndigenousTypes, mockIdentitySet } from '../identity-set';
 
-const householdActivityBase = {
+ const householdActivityBase = {
   householdId: '60983874-18bb-467d-b55a-94dc55818151',
   user: {
     id: '60983874-18bb-467d-b55a-94dc55818152',
@@ -21,7 +21,7 @@ const householdActivityBase = {
   timestamp: '2021-01-01',
 };
 
-const householdActivityIdentity = (force? : Partial<IHouseholdActivityIdentity>) => ({
+ const householdActivityIdentity = (force? : Partial<IHouseholdActivityIdentity>) => ({
   identitySet: mockIdentitySet(),
   genderName: {
     translation: { en: 'Male', fr: 'Masculin' },
@@ -48,7 +48,7 @@ export const mockHouseholdActivities = (type: HouseholdActivityType = null): IHo
     activityType: HouseholdActivityType.ContactInformationEdited,
     timestamp: '2021-01-03',
     newDetails: {
-      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
+      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3501',
       personFullName: 'John Doe',
       contactInformation: mockContactInformation(),
       preferredLanguageName: {
@@ -60,7 +60,7 @@ export const mockHouseholdActivities = (type: HouseholdActivityType = null): IHo
 
     },
     previousDetails: {
-      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
+      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3501',
       personFullName: 'John Doe',
       contactInformation: mockContactInformation(),
       preferredLanguageName: {
@@ -76,7 +76,7 @@ export const mockHouseholdActivities = (type: HouseholdActivityType = null): IHo
     activityType: HouseholdActivityType.MemberAdded,
     newDetails: {
       ...householdActivityIdentity(),
-      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
+      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3502',
       personFullName: 'John Doe',
       currentAddress: mockCampGround(),
     },
@@ -88,7 +88,7 @@ export const mockHouseholdActivities = (type: HouseholdActivityType = null): IHo
     newDetails: [] as IHouseholdActivityIdentity[],
     previousDetails: {
       ...householdActivityIdentity(),
-      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
+      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3503',
       personFullName: 'John Doe',
       currentAddress: mockCampGround(),
     },
@@ -101,13 +101,13 @@ export const mockHouseholdActivities = (type: HouseholdActivityType = null): IHo
       memberDetails: [
         {
           ...householdActivityIdentity(),
-          personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
+          personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3504',
           personFullName: 'John Doe',
           currentAddress: mockCampGround(),
         },
         {
           ...householdActivityIdentity(),
-          personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
+          personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3505',
           personFullName: 'Joe Doe',
           currentAddress: mockShelter(),
           shelterLocationName: { translation: { en: 'Acme shelter', fr: '' } },
@@ -115,34 +115,34 @@ export const mockHouseholdActivities = (type: HouseholdActivityType = null): IHo
       ],
     },
   },
-  {
-    ...householdActivityBase,
-    activityType: HouseholdActivityType.HouseholdMoved,
-    newDetails: {
-      memberDetails: [
-        {
-          ...householdActivityIdentity({ identitySet: mockIdentitySet({ firstName: 'Jack' }) }),
-          personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
-          currentAddress: mockCampGround(),
-        },
-        {
-          ...householdActivityIdentity(),
-          personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
-          currentAddress: mockShelter(),
-          shelterLocationName: { translation: { en: 'Acme shelter', fr: '' } },
-        },
-      ],
+    {
+      ...householdActivityBase,
+      activityType: HouseholdActivityType.HouseholdMoved,
+      newDetails: {
+        memberDetails: [
+          {
+            ...householdActivityIdentity({ identitySet: mockIdentitySet({ firstName: 'Jack' }) }),
+            personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
+            currentAddress: mockCampGround(),
+          },
+          {
+            ...householdActivityIdentity(),
+            personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
+            currentAddress: mockShelter(),
+            shelterLocationName: { translation: { en: 'Acme shelter', fr: '' } },
+          },
+        ],
+      },
+      previousDetails: {
+        memberDetails: [
+          {
+            ...householdActivityIdentity(),
+            personId: 'newId',
+            currentAddress: mockCampGround(),
+          },
+        ],
+      },
     },
-    previousDetails: {
-      memberDetails: [
-        {
-          ...householdActivityIdentity(),
-          personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
-          currentAddress: mockCampGround(),
-        },
-      ],
-    },
-  },
   {
     ...householdActivityBase,
     activityType: HouseholdActivityType.HomeAddressEdited,
@@ -153,12 +153,12 @@ export const mockHouseholdActivities = (type: HouseholdActivityType = null): IHo
     ...householdActivityBase,
     activityType: HouseholdActivityType.TempAddressEdited,
     newDetails: {
-      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
+      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3508',
       personFullName: 'John Doe',
       currentAddress: mockCampGround(),
     },
     previousDetails: {
-      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
+      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3508',
       personFullName: 'John Doe',
       currentAddress: mockCampGround({ placeName: 'old name' }),
     },
@@ -167,11 +167,11 @@ export const mockHouseholdActivities = (type: HouseholdActivityType = null): IHo
     ...householdActivityBase,
     activityType: HouseholdActivityType.PrimaryAssigned,
     newDetails: {
-      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3548',
+      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3509',
       personFullName: 'Jack Doe',
     },
     previousDetails: {
-      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3549',
+      personId: 'b2b528c3-e7d9-4b46-8062-3fa242fc3509',
       personFullName: 'John Doe',
     },
   },

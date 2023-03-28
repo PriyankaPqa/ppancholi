@@ -9,6 +9,7 @@ import householdHelpers from '@/ui/helpers/household';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
+import { HouseholdActivityType } from '@libs/entities-lib/value-objects/household-activity';
 import Component from '../HouseholdMemberCard.vue';
 
 const localVue = createLocalVue();
@@ -321,6 +322,24 @@ describe('HouseholdMemberCard.vue', () => {
         });
         expect(wrapper.vm.canSplit).toBeTruthy();
       });
+
+      it('returns false if the user has level 2 or more but isMovedMember is true', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            member,
+            isPrimaryMember: false,
+            shelterLocations: [],
+          },
+          computed: {
+            isMovedMember: () => true,
+          },
+          pinia: getPiniaForUser(UserRoles.level2),
+
+        });
+        expect(wrapper.vm.canSplit).toBeFalsy();
+      });
+
       it('returns false if the user has level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -350,6 +369,24 @@ describe('HouseholdMemberCard.vue', () => {
         });
         expect(wrapper.vm.canChangePrimary).toBeTruthy();
       });
+
+      it('returns false if the user has level 2 or more but isMovedMember is true', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            member,
+            isPrimaryMember: false,
+            shelterLocations: [],
+          },
+          computed: {
+            isMovedMember: () => true,
+          },
+          pinia: getPiniaForUser(UserRoles.level2),
+
+        });
+        expect(wrapper.vm.canChangePrimary).toBeFalsy();
+      });
+
       it('returns false if the user has level 1', () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -381,6 +418,26 @@ describe('HouseholdMemberCard.vue', () => {
           },
         });
         expect(wrapper.vm.canEdit).toBeTruthy();
+      });
+
+      it('returns false if the user has level 1 or more but isMovedMember is true', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            member,
+            isPrimaryMember: false,
+            shelterLocations: [],
+          },
+          computed: {
+            isMovedMember: () => true,
+          },
+          pinia: getPiniaForUser(UserRoles.level1),
+          mocks: {
+
+            $hasFeature: () => false,
+          },
+        });
+        expect(wrapper.vm.canEdit).toBeFalsy();
       });
 
       it('returns true if the user has level 0 or more  and feature flag L0Access is on', () => {
@@ -461,6 +518,23 @@ describe('HouseholdMemberCard.vue', () => {
         doMount();
         wrapper.vm.$hasFeature = jest.fn(() => false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
+      });
+    });
+
+    describe('isMovedMember', () => {
+      it('should return true when there is movedStatus', async () => {
+        doMount();
+        await wrapper.setProps({
+          movedStatus: HouseholdActivityType.HouseholdMoved,
+        });
+        expect(wrapper.vm.isMovedMember).toEqual(true);
+      });
+      it('should return false when there is no movedStatus', async () => {
+        doMount();
+        await wrapper.setProps({
+          movedStatus: null,
+        });
+        expect(wrapper.vm.isMovedMember).toEqual(false);
       });
     });
   });

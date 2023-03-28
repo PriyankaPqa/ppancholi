@@ -68,7 +68,6 @@ import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import { RcDialog, RcDataTable } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import { IHouseholdEntity } from '@libs/entities-lib/household';
 
 import { IHistoryItemTemplateData } from '@libs/entities-lib/value-objects/versioned-entity';
 import {
@@ -97,8 +96,8 @@ export default Vue.extend({
       required: true,
     },
 
-    household: {
-      type: Object as ()=> IHouseholdEntity,
+    activityItemsData: {
+      type: Array as () => IHouseholdActivity[],
       required: true,
     },
   },
@@ -169,10 +168,9 @@ export default Vue.extend({
   },
 
   async created() {
-    if (this.household) {
+    if (this.activityItemsData) {
       try {
-        const activityItemsData = await this.$services.households.getHouseholdActivity(this.household.id);
-        const processedData = this.handleMoveActivity(activityItemsData);
+        const processedData = this.handleMoveActivity(this.activityItemsData);
         this.activityItems = processedData.length ? processedData.map((i: IHouseholdActivity) => new HouseholdActivity(i)) : [];
       } finally {
         this.loading = false;

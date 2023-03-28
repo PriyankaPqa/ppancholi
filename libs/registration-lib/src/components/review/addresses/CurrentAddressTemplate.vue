@@ -1,5 +1,5 @@
 <template>
-  <div class="rc-body14">
+  <div class="rc-body14" :class="{ 'disabled-table': disabled }">
     <div v-if="!hideTitle" class="fw-bold">
       {{ $t('registration.addresses.currentAddress') }}
     </div>
@@ -63,6 +63,11 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -103,3 +108,11 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped lang="scss">
+
+.disabled-table{
+  color: var(--v-grey-lighten1) !important;
+}
+
+</style>

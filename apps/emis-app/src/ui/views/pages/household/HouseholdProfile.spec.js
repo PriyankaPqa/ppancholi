@@ -17,6 +17,7 @@ import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 
 import { mockProvider } from '@/services/provider';
+import { HouseholdActivityType, mockHouseholdActivities } from '@libs/entities-lib/value-objects/household-activity';
 import PinnedActionAndRationale from '@/ui/views/pages/household/components/PinnedStatus.vue';
 import Component from './HouseholdProfile.vue';
 
@@ -959,6 +960,104 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.statuses).toEqual([HouseholdStatus.Open]);
       });
     });
+
+    describe('movedMembers', () => {
+      it('should return correct data', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              myEvents: events,
+              casefiles: mockCaseFileEntities(),
+              activityItemsData: mockHouseholdActivities(HouseholdActivityType.HouseholdMoved),
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return mockHouseholdEntity();
+            },
+          },
+          mocks: {
+            $hasLevel: () => true,
+            $hasFeature: () => true,
+            $services: services,
+          },
+        });
+        const expectResult = [
+          {
+            currentAddress: {
+              address: {
+                city: 'Ottawa',
+                country: 'CA',
+                latitude: 0,
+                longitude: 0,
+                postalCode: 'K1W 1G7',
+                province: 9,
+                specifiedOtherProvince: undefined,
+                streetAddress: '247 Some Street',
+                unitSuite: '123',
+              },
+              addressType: 2,
+              placeName: 'test',
+              placeNumber: '',
+              shelterLocation: undefined,
+            },
+            genderName: {
+              translation: {
+                en: 'Male',
+                fr: 'Masculin',
+              },
+            },
+            identitySet: {
+              birthDate: {
+                day: '12',
+                month: 2,
+                year: '1999',
+              },
+              dateOfBirth: '1999-02-12T00:00:00.000Z',
+              firstName: 'Bob',
+              gender: {
+                id: '676eb98b-d432-4924-90ee-2489e3acdc26',
+                isDefault: false,
+                isOther: false,
+                name: {
+                  translation: {
+                    en: 'Male',
+                    fr: 'Masculin',
+                  },
+                },
+                orderRank: 0,
+                status: 1,
+              },
+              genderOther: null,
+              indigenousCommunityOther: '',
+              indigenousIdentity: null,
+              indigenousProvince: 1,
+              indigenousType: '',
+              lastName: 'Smith',
+              middleName: 'middle',
+              preferredName: 'preferredName',
+              indigenousCommunityId: undefined,
+              name: undefined,
+            },
+            indigenousIdentityInfo: {
+              communityType: '',
+              name: '',
+            },
+            personId: 'newId',
+            status: 6,
+          },
+        ];
+        expect(wrapper.vm.movedMembers).toEqual(expectResult);
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -1002,7 +1101,7 @@ describe('HouseholdProfile.vue', () => {
         expect(registrationStore.fetchPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
       });
 
-      it('calls fetchHouseholdData, fetchMyEvents, fetchAllEvents, fetchCaseFiles, fetchShelterLocations', async () => {
+      it('calls fetchHouseholdData, fetchMyEvents, fetchAllEvents, fetchCaseFiles, fetchShelterLocations ,getHouseholdActivity', async () => {
         wrapper.vm.fetchHouseholdData = jest.fn();
         wrapper.vm.fetchMyEvents = jest.fn();
         wrapper.vm.fetchAllEvents = jest.fn();
@@ -1015,6 +1114,7 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.fetchAllEvents).toHaveBeenCalled();
         expect(wrapper.vm.fetchCaseFiles).toHaveBeenCalled();
         expect(wrapper.vm.fetchShelterLocations).toHaveBeenCalled();
+        expect(wrapper.vm.$services.households.getHouseholdActivity).toHaveBeenCalled();
       });
     });
   });

@@ -5,8 +5,8 @@
     outlined
     class="mb-4 background">
     <div class="px-4 py-2 rc-body18 fw-bold d-flex  align-center justify-space-between">
-      <div :data-test="`household_profile_member_display_name_${displayName}`">
-        <v-icon size="22" class="pr-2" color="secondary">
+      <div :data-test="`household_profile_member_display_name_${displayName}`" :class="isMovedMember && 'disabled-table'">
+        <v-icon size="22" class="pr-2" :color="isMovedMember ? 'grey' : 'secondary'">
           mdi-account
         </v-icon>
         {{ displayName }}
@@ -36,6 +36,19 @@
           </v-btn>
         </div>
 
+        <v-chip
+          v-else-if="isMovedMember"
+          class="px-2 mr-4"
+          small
+          label
+          color="grey darken-2"
+          outlined
+          data-test="household_profile_member_moved_member_label">
+          <span class="text-uppercase rc-body10">
+            {{ movedStatus === HouseholdActivityType.HouseholdMoved ? $t('household.profile.member.moved_member') : $t('household.profile.member.split_member') }}
+          </span>
+        </v-chip>
+
         <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
         <rc-tooltip
           v-for="btn in buttons"
@@ -60,10 +73,10 @@
       </div>
     </div>
     <v-simple-table>
-      <tbody class="rc-body12">
+      <tbody class="rc-body12" :class="{ 'disabled-table': isMovedMember }">
         <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
         <tr v-for="item in memberInfo" v-if="isPrimaryMember || !item.primaryMemberOnly" :key="item.label">
-          <td class="label py-4 fw-bold" :data-test="`household_profile_member_info_label_${item.test}`">
+          <td class="label py-4 fw-bold " :data-test="`household_profile_member_info_label_${item.test}`">
             {{ $t(item.label) }}
           </td>
           <td v-if="!item.customContent" class="py-4" :data-test="`household_profile_member_info_data_${item.test}`">
@@ -103,7 +116,7 @@
             </div>
           </td>
           <td v-if="item.customContent === 'address'" class="py-4" :data-test="`household_profile_member_info_data_${item.test}`">
-            <current-address-template :current-address="member.currentAddress" hide-title />
+            <current-address-template :current-address="member.currentAddress" hide-title :disabled="isMovedMember" />
           </td>
         </tr>
       </tbody>
@@ -150,6 +163,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { HouseholdActivityType } from '@libs/entities-lib/value-objects/household-activity';
 import PrimaryMemberDialog from './PrimaryMemberDialog.vue';
 import SplitHouseholdDialog from '../split/SplitHouseholdDialog.vue';
 
@@ -199,6 +213,11 @@ export default Vue.extend({
       type: Array as ()=> IEventGenericLocation[],
       default: null,
     },
+
+    movedStatus: {
+      type: Number as () => HouseholdActivityType,
+      default: null,
+    },
   },
 
   data() {
@@ -208,6 +227,7 @@ export default Vue.extend({
       showSplitDialog: false,
       i18n: this.$i18n,
       householdHelpers,
+      HouseholdActivityType,
     };
   },
 
@@ -240,15 +260,15 @@ export default Vue.extend({
     },
 
     canChangePrimary():boolean {
-      return this.$hasLevel(UserRoles.level2);
+      return this.$hasLevel(UserRoles.level2) && !this.isMovedMember;
     },
 
     canSplit():boolean {
-      return this.$hasLevel(UserRoles.level2);
+      return this.$hasLevel(UserRoles.level2) && !this.isMovedMember;
     },
 
     canEdit():boolean {
-      return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? UserRoles.level0 : UserRoles.level1);
+      return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? UserRoles.level0 : UserRoles.level1) && !this.isMovedMember;
     },
 
     memberInfo(): Array<Record<string, unknown>> {
@@ -263,7 +283,7 @@ export default Vue.extend({
           primaryMemberOnly: true,
           test: 'email_address',
           label: 'household.profile.member.email_address',
-          data: this.member.contactInformation.email || '—',
+          data: (this.isPrimaryMember && this.member.contactInformation.email) || '—',
         },
         {
           test: 'phone_numbers',
@@ -327,6 +347,10 @@ export default Vue.extend({
 
     enableAutocomplete(): boolean {
       return this.$hasFeature(FeatureKeys.AddressAutoFill);
+    },
+
+    isMovedMember(): boolean {
+      return !!this.movedStatus;
     },
   },
 
@@ -430,5 +454,9 @@ export default Vue.extend({
 
   .border-right {
     border-right: 1px solid var(--v-grey-lighten2);
+  }
+
+  .disabled-table{
+    color: var(--v-grey-lighten1) !important;
   }
 </style>

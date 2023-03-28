@@ -158,6 +158,13 @@
             :shelter-locations="makeShelterLocationsListForMember(member)"
             :registration-locations="registrationLocations"
             @reload-household-create="fetchHouseholdData" />
+          <household-member-card
+            v-for="(member, index) in movedMembers"
+            :key="member.personId"
+            :member="member"
+            :index="index"
+            :moved-status="member.status"
+            moved-member />
 
           <h5 v-if="inactiveCaseFiles.length" class="rc-heading-5 pt-4 pb-4">
             {{ $t('household.profile.registered_previous_events') }} ({{ inactiveCaseFiles.length }})
@@ -184,9 +191,9 @@
       @close="fetchHouseholdData" />
     <edit-household-address-dialog v-if="showEditAddress" :show.sync="showEditAddress" />
     <household-profile-history
-      v-if="showProfileHistory && householdEntity"
+      v-if="showProfileHistory && activityItemsData"
       :show.sync="showProfileHistory"
-      :household="householdEntity" />
+      :activity-items-data="activityItemsData" />
     <household-status-dialog
       v-if="showHouseholdStatusDialog"
       data-test="household-status-dialog"
@@ -204,7 +211,7 @@ import _isEmpty from 'lodash/isEmpty';
 
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
-import { IHouseholdCreate, IMember, Member } from '@libs/entities-lib/household-create';
+import { CurrentAddress, EIndigenousTypes, ICurrentAddress, IHouseholdCreate, IIdentitySet, IMember, Member } from '@libs/entities-lib/household-create';
 import { HouseholdStatus, IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
 import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
@@ -220,11 +227,25 @@ import { IEventData } from '@libs/entities-lib/registration-event';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
+import { HouseholdActivityType, IHouseholdActivity, IHouseholdActivityMembers } from '@libs/entities-lib/value-objects/household-activity';
 import PinnedStatus from '@/ui/views/pages/household/components/PinnedStatus.vue';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
 import HouseholdStatusDialog from './components/HouseholdStatusDialog.vue';
+
+export interface IMovedMember {
+  personId: string;
+  identitySet: IIdentitySet;
+  currentAddress: ICurrentAddress;
+  genderName: IMultilingual;
+  indigenousIdentityInfo: {
+    communityType: EIndigenousTypes,
+    name: string,
+  };
+  shelterLocationName: IMultilingual;
+  status: HouseholdActivityType.HouseholdMoved | HouseholdActivityType.OriginalHouseholdSplit;
+}
 
 export default mixins(household).extend({
   name: 'HouseholdProfile',
@@ -266,6 +287,7 @@ export default mixins(household).extend({
       FeatureKeys,
       showHouseholdStatusDialog: false,
       newStatus: null as HouseholdStatus,
+      activityItemsData: [] as IHouseholdActivity[],
     };
   },
 
@@ -283,7 +305,7 @@ export default mixins(household).extend({
   },
 
   computed: {
-    registrationLocations() : IEventGenericLocation[] {
+    registrationLocations(): IEventGenericLocation[] {
       // active registration locations from events associated with active case files
       const locations: IEventGenericLocation[] = [];
       if (!this.allEvents) {
@@ -306,11 +328,11 @@ export default mixins(household).extend({
       return useRegistrationStore().getHouseholdCreate();
     },
 
-    householdEntity() : IHouseholdEntity {
+    householdEntity(): IHouseholdEntity {
       return useHouseholdStore().getById(this.id);
     },
 
-    householdMetadata() : IHouseholdMetadata {
+    householdMetadata(): IHouseholdMetadata {
       return useHouseholdMetadataStore().getById(this.id);
     },
 
@@ -330,7 +352,7 @@ export default mixins(household).extend({
       return householdHelpers.getAddressLines(this.household?.homeAddress)[1];
     },
 
-    country() : string {
+    country(): string {
       return householdHelpers.countryName(this.household.homeAddress.country);
     },
 
@@ -352,11 +374,11 @@ export default mixins(household).extend({
       return date.format('ll');
     },
 
-    canEdit():boolean {
+    canEdit(): boolean {
       return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? UserRoles.level0 : UserRoles.level1);
     },
 
-    canMove():boolean {
+    canMove(): boolean {
       return this.$hasLevel(UserRoles.level2);
     },
 
@@ -414,6 +436,39 @@ export default mixins(household).extend({
       }
     },
 
+    movedMembers(): IMovedMember[] {
+      const moveSplitMemberActivities = this.activityItemsData.filter((e) => e.activityType === HouseholdActivityType.HouseholdMoved
+        || e.activityType === HouseholdActivityType.OriginalHouseholdSplit);
+      let movedMembers = [] as IMovedMember[];
+
+      moveSplitMemberActivities.reverse().forEach((e) => {
+        if (e.activityType === HouseholdActivityType.OriginalHouseholdSplit) {
+          (e.previousDetails as IHouseholdActivityMembers).memberDetails.forEach((m) => {
+            movedMembers.push({ ...m, status: HouseholdActivityType.OriginalHouseholdSplit });
+          });
+        } else if ((e.previousDetails as IHouseholdActivityMembers).memberDetails.length > 0) {
+          (e.previousDetails as IHouseholdActivityMembers).memberDetails.forEach((m) => {
+            movedMembers.push({ ...m, status: HouseholdActivityType.HouseholdMoved });
+          });
+        } else {
+          (e.newDetails as IHouseholdActivityMembers).memberDetails.forEach((m) => {
+            movedMembers = movedMembers.filter((i) => i.personId !== m.personId);
+          });
+        }
+      });
+
+      // parse identitySet
+      movedMembers.forEach((m) => {
+        m.currentAddress = new CurrentAddress(m.currentAddress);
+        m.identitySet.gender.name = m.genderName;
+        m.identitySet.birthDate = householdHelpers.convertBirthDateStringToObject(m.identitySet.dateOfBirth);
+        m.identitySet.indigenousType = m.indigenousIdentityInfo?.communityType;
+        m.identitySet.indigenousCommunityId = m.identitySet?.indigenousIdentity?.indigenousCommunityId;
+      });
+
+      return movedMembers;
+    },
+
     caseFileIdForPinnedStatus(): string {
       if (this.caseFiles?.length > 0) {
         return this.caseFiles[0].id;
@@ -435,6 +490,7 @@ export default mixins(household).extend({
     await this.fetchShelterLocations();
     await this.fetchHouseholdData();
     await this.fetchAllEvents();
+    this.activityItemsData = await this.$services.households.getHouseholdActivity(this.id);
     this.loading = false;
   },
 
@@ -508,7 +564,8 @@ export default mixins(household).extend({
        return null;
      },
   },
-});
+  });
+
 </script>
 
 <style scoped lang="scss">
