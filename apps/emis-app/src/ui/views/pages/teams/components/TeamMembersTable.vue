@@ -42,7 +42,7 @@
           role="button"
           tabindex="0"
           class="rc-link14 font-weight-bold"
-          data-test="member_name"
+          data-test="teamMembers__member_name"
           @keydown.enter="viewMemberCaseFiles(item)"
           @click=" viewMemberCaseFiles(item)">
           {{ item.metadata.displayName }}
@@ -50,15 +50,15 @@
       </template>
 
       <template #[`item.${customColumns.emailAddress}`]="{ item }">
-        {{ item.metadata.emailAddress }}
+        <span data-test="teamMembers__member_email_address"> {{ item.metadata.emailAddress }} </span>
       </template>
 
       <template #[`item.${customColumns.roleName}`]="{ item }">
-        {{ getRole(item) }}
+        <span data-test="teamMembers__member_role"> {{ getRole(item) }} </span>
       </template>
 
       <template #[`item.${customColumns.phoneNumber}`]="{ item }">
-        <rc-phone-display :value="item.metadata.phoneNumber" />
+        <span data-test="teamMembers__member_phoneNumber"> <rc-phone-display :value="item.metadata.phoneNumber" /> </span>
       </template>
 
       <template #[`item.${customColumns.teamCount}`]="{ item }">
@@ -66,7 +66,7 @@
           role="button"
           tabindex="0"
           class="rc-link14 font-weight-bold"
-          data-test="member_name"
+          data-test="teamMembers__member_teamCount"
           @keydown.enter="viewMemberTeams(item)"
           @click="viewMemberTeams(item)">
           {{ item.metadata.teamCount || '0' }}
@@ -74,15 +74,15 @@
       </template>
 
       <template #[`item.${customColumns.caseFileCount}`]="{ item }">
-        {{ item.caseFileCount }}
+        <span data-test="teamMembers__member_caseFileCount"> {{ item.caseFileCount }} </span>
       </template>
 
       <template #[`item.${customColumns.openCaseFileCount}`]="{ item }">
-        {{ item.openCaseFileCount }}
+        <span data-test="teamMembers__member_openCaseFileCount"> {{ item.openCaseFileCount }} </span>
       </template>
 
       <template #[`item.${customColumns.inactiveCaseFileCount}`]="{ item }">
-        {{ item.inactiveCaseFileCount }}
+        <span data-test="teamMembers__member_inactiveCaseFileCount"> {{ item.inactiveCaseFileCount }} </span>
       </template>
 
       <template #[`item.${customColumns.actions}`]="{ item }">

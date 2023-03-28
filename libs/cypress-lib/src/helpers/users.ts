@@ -9,3 +9,11 @@ export const getUserName = (roleName: string) => {
   } as Record<string, string>;
   return map[roleName];
 };
+
+export const getUserRoleDescription = (roleName: string) => {
+  const map = {
+    Level6: 'System Admin',
+    Level5: 'Systems Team Member',
+  } as Record<string, string>;
+  return map[roleName];
+};
