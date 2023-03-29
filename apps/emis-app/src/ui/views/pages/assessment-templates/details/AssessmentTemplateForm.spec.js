@@ -345,6 +345,7 @@ describe('AssessmentTemplateForm.vue', () => {
           label: utils.initMultilingualAttributes(),
           maxValue: null,
           minValue: null,
+          restrictFinancial: false,
         });
       });
     });

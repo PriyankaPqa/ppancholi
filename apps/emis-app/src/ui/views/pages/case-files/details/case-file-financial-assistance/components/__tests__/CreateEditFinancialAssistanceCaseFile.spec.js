@@ -241,13 +241,15 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should call the store to fetch categories - including inactives', async () => {
+      it('should call the store to fetch categories - including inactives, and assessments', async () => {
         jest.spyOn(wrapper.vm, 'searchTables').mockImplementation(() => financialAssistance);
+        jest.spyOn(wrapper.vm, 'fetchAssessmentResponseByCaseFileId').mockImplementation(() => null);
 
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
 
         expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalled();
+        expect(wrapper.vm.fetchAssessmentResponseByCaseFileId).toHaveBeenCalled();
       });
 
       it('call searchTables if it is add mode', async () => {
@@ -358,6 +360,9 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
             hasCompletedAssessments() {
               return true;
             },
+            hasBlockingAssessmentScore() {
+              return false;
+            },
           },
         });
 
@@ -379,6 +384,9 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
             hasCompletedAssessments() {
               return true;
             },
+            hasBlockingAssessmentScore() {
+              return false;
+            },
           },
         });
 
@@ -398,6 +406,9 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
               return true;
             },
             hasCompletedAssessments() {
+              return false;
+            },
+            hasBlockingAssessmentScore() {
               return false;
             },
           },
@@ -421,6 +432,33 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
             hasCompletedAssessments() {
               return false;
             },
+            hasBlockingAssessmentScore() {
+              return false;
+            },
+          },
+        });
+
+        expect(wrapper.vm.showWarning).toBe(true);
+      });
+
+      it('return true if all conditions are not meet', async () => {
+        await mountWrapper(false, 'edit', getPiniaForUser(UserRoles.level6), {
+          computed: {
+            caseFile() {
+              return mockCaseFile;
+            },
+            isAuthenticated() {
+              return true;
+            },
+            isImpacted() {
+              return true;
+            },
+            hasCompletedAssessments() {
+              return true;
+            },
+            hasBlockingAssessmentScore() {
+              return true;
+            },
           },
         });
 
@@ -441,6 +479,9 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
             },
             hasCompletedAssessments() {
               return true;
+            },
+            hasBlockingAssessmentScore() {
+              return false;
             },
           },
         });
@@ -494,6 +535,75 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         });
 
         expect(wrapper.vm.showWarning).toBe(true);
+      });
+    });
+
+    describe('hasBlockingAssessmentScore', () => {
+      it('0', async () => {
+        await wrapper.setData({
+          programAssessmentForms: [
+            {
+              ...mockAssessmentFormEntity,
+              id: 'assessmentId1',
+              scoringRanges: [{ minValue: 0, maxValue: 5, label: { translation: { en: 'less', fr: 'moins' } }, restrictFinancial: false },
+                { minValue: 6, maxValue: 10, label: { translation: { en: 'more', fr: 'plus' } }, restrictFinancial: true }],
+            },
+            {
+              ...mockAssessmentFormEntity,
+              id: 'assessmentId2',
+              scoringRanges: [{ minValue: 0, maxValue: 5, label: { translation: { en: 'less', fr: 'moins' } }, restrictFinancial: false },
+                { minValue: 6, maxValue: 10, label: { translation: { en: 'more', fr: 'plus' } }, restrictFinancial: true }],
+            },
+          ],
+          caseFileAssessmentResponses: [
+            {
+              ...mockAssessmentResponseEntity,
+              assessmentFormId: 'assessmentId1',
+              completionStatus: CompletionStatus.Completed,
+              totalScore: 25,
+            },
+            {
+              ...mockAssessmentResponseEntity,
+              assessmentFormId: 'assessmentId2',
+              completionStatus: CompletionStatus.Completed,
+              totalScore: 2,
+            },
+          ],
+        });
+
+        wrapper.vm.selectedProgram = program;
+
+        expect(wrapper.vm.hasBlockingAssessmentScore).toBe(false);
+
+        await wrapper.setData({
+          caseFileAssessmentResponses: [
+            {
+              ...mockAssessmentResponseEntity,
+              assessmentFormId: 'assessmentId1',
+              completionStatus: CompletionStatus.Partial,
+              totalScore: 7,
+            },
+          ],
+        });
+
+        wrapper.vm.selectedProgram = program;
+
+        expect(wrapper.vm.hasBlockingAssessmentScore).toBe(false);
+
+        await wrapper.setData({
+          caseFileAssessmentResponses: [
+            {
+              ...mockAssessmentResponseEntity,
+              assessmentFormId: 'assessmentId1',
+              completionStatus: CompletionStatus.Completed,
+              totalScore: 7,
+            },
+          ],
+        });
+
+        wrapper.vm.selectedProgram = program;
+
+        expect(wrapper.vm.hasBlockingAssessmentScore).toBe(true);
       });
     });
 
@@ -841,18 +951,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         await wrapper.setData({ selectedProgram: program });
         await wrapper.vm.updateSelectedProgram(financialAssistance);
         expect(wrapper.vm.makePaymentName).toBeCalledTimes(1);
-      });
-
-      it('calls fetchAssessmentResponseByCaseFileId if completedAssessments eligibility criteria is needed', async () => {
-        programStore.fetch = jest.fn(() => program);
-        program.eligibilityCriteria.completedAssessments = true;
-        wrapper.vm.fetchAssessmentResponseByCaseFileId = jest.fn();
-        wrapper.vm.fetchAssessmentFormByProgramId = jest.fn();
-
-        await wrapper.vm.updateSelectedProgram(financialAssistance);
-
-        expect(wrapper.vm.fetchAssessmentResponseByCaseFileId).toBeCalledTimes(1);
-        expect(wrapper.vm.fetchAssessmentResponseByCaseFileId).toHaveBeenCalledWith(wrapper.vm.caseFileId);
       });
 
       it('calls fetchAssessmentFormByProgramId if completedAssessments eligibility criteria is needed', async () => {

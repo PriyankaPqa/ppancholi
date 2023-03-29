@@ -160,6 +160,9 @@
                       <th>
                         {{ $t('assessmentTemplate.stepLabel') }}
                       </th>
+                      <th width="100px">
+                        {{ $t('assessmentTemplate.restrictFinancial') }}
+                      </th>
                       <th>&nbsp;</th>
                     </tr>
                   </thead>
@@ -198,6 +201,11 @@
                           :label="$t('assessmentTemplate.stepLabel') + '*'" />
                       </td>
                       <td>
+                        <v-checkbox-with-validation
+                          v-model="scoringRange.restrictFinancial"
+                          dense />
+                      </td>
+                      <td>
                         <v-btn class="ml-3" icon data-test="cancel" @click="deleteScoring(scoringRange)">
                           <v-icon size="20">
                             mdi-delete
@@ -232,6 +240,7 @@ import {
   VTextFieldWithValidation,
   VTextAreaWithValidation,
   VAutocompleteWithValidation,
+  VCheckboxWithValidation,
 } from '@libs/component-lib/components';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import {
@@ -253,6 +262,7 @@ export default Vue.extend({
     VTextFieldWithValidation,
     VTextAreaWithValidation,
     VAutocompleteWithValidation,
+    VCheckboxWithValidation,
     LanguageTabs,
   },
 
@@ -451,6 +461,7 @@ export default Vue.extend({
         label: utils.initMultilingualAttributes(),
         maxValue: null,
         minValue: null,
+        restrictFinancial: false,
       });
     },
 

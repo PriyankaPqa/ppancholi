@@ -928,6 +928,7 @@
     "errors.case-file-does-not-meet-program-authenticated-criteria": "Case file does not meet program authenticated criteria",
     "errors.case-file-does-not-meet-program-completed-assessments-criteria": "Case file does not meet program completed assessments criteria",
     "errors.case-file-does-not-meet-program-impacted-criteria": "Case file does not meet program impacted criteria",
+    "errors.case-file-has-an-ineligible-assessment-outcome": "Case file has an ineligible assessment outcome",
     "errors.case-file-id-is-not-valid": "Case file id is not valid",
     "errors.case-file-must-be-open": "Case file must be open",
     "errors.case-file-status-is-open": "Case file status is open",

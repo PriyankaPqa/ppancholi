@@ -928,6 +928,7 @@
     "errors.case-file-does-not-meet-program-authenticated-criteria": "Le dossier ne répond pas aux critères du programme en matière de vérification de l’identité.",
     "errors.case-file-does-not-meet-program-completed-assessments-criteria": "Le dossier ne répond pas aux critères du programme à respecter pour terminer l'analyse.",
     "errors.case-file-does-not-meet-program-impacted-criteria": "Le dossier ne répond pas aux critères du programme en matière de vérification de l’impact.",
+    "errors.case-file-has-an-ineligible-assessment-outcome": "Le dossier a un résultat d’évaluation inadmissible",
     "errors.case-file-id-is-not-valid": "L'identifiant du dossier n'est pas valide",
     "errors.case-file-must-be-open": "Le dossier doit être ouvert",
     "errors.case-file-status-is-open": "Le statut du dossier est ouvert",
