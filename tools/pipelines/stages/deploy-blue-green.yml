@@ -27,6 +27,9 @@ parameters:
   - name: azureSubscription
     type: string
     default: 'CRC Tech Dev'
+  - name: active_storage_name
+    type: string
+    default: ${{ if eq(variables['active_environment'], 'blue'), parameters.storage_account_name_blue, parameters.storage_account_name_green }}
 
 stages:
   - stage: deploy
@@ -44,7 +47,7 @@ stages:
               azureSubscription: '${{ parameters.azureSubscription }}'
               ContainerName: '$web'
               CleanTargetBeforeCopy: true
-              storage: ${{ if eq(variables.active_environment, 'blue') }}'${{ variables.storage_account_name_blue }}'${{ else }}'${{ variables.storage_account_name_green }}'${{ endif }}
+              storage: '${{ parameters.active_storage_name }}'
 
   - stage: switch_traffic
     dependsOn: deploy
