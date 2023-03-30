@@ -27,8 +27,10 @@ parameters:
 stages:
   - stage: deploy_and_switch_traffic
     condition: succeeded()
+    environment: 'Dev'
     variables:
-      active_environment: 'blue'
+      - group: Env-Dev
+        active_environment: 'blue'
     pool:
       vmImage: 'windows-2022'
     displayName: 'Blue/Green Deployment'
@@ -36,6 +38,20 @@ stages:
       - job: deploy
         displayName: 'Deploy'
         steps:
+          - task: replacetokens@3
+            displayName: 'Replace Tokens'
+            inputs:
+              targetFiles: "$(Pipeline.Workspace)/dist/**/index*.js"
+              encoding: "auto"
+              writeBOM: true
+              verbosity: "detailed"
+              actionOnMissing: "warn"
+              keepToken: false
+              tokenPrefix: "#{"
+              tokenSuffix: "}#"
+              useLegacyPattern: false
+              enableTelemetry: true
+              
           - task: AzureCLI@2
             condition: eq(variables['active_environment'], 'blue')
             displayName: 'Clean Storage Folder Blue'
