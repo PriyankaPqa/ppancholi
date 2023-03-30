@@ -33,64 +33,68 @@ stages:
       vmImage: 'windows-2022'
     displayName: 'Blue/Green Deployment'
     jobs:
-      - job: deploy
+      - deployment: deploy
+        displayName: 'Deploy'
+        environment: 'Dev'
         variables:
           - group: Env-Dev
-        displayName: 'Deploy'
-        steps:
-          - task: replacetokens@3
-            displayName: 'Replace Tokens'
-            inputs:
-              targetFiles: "$(Pipeline.Workspace)/dist/**/index*.js"
-              encoding: "auto"
-              writeBOM: true
-              verbosity: "detailed"
-              actionOnMissing: "warn"
-              keepToken: false
-              tokenPrefix: "#{"
-              tokenSuffix: "}#"
-              useLegacyPattern: false
-              enableTelemetry: true
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: replacetokens@3
+                  displayName: 'Replace Tokens'
+                  inputs:
+                    targetFiles: "$(Pipeline.Workspace)/dist/**/index*.js"
+                    encoding: "auto"
+                    writeBOM: true
+                    verbosity: "detailed"
+                    actionOnMissing: "warn"
+                    keepToken: false
+                    tokenPrefix: "#{"
+                    tokenSuffix: "}#"
+                    useLegacyPattern: false
+                    enableTelemetry: true
 
-          - task: AzureCLI@2
-            condition: eq(variables['active_environment'], 'blue')
-            displayName: 'Clean Storage Folder Blue'
-            inputs:
-              azureSubscription: '${{ parameters.azureSubscription }}'
-              scriptType: 'pscore'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage_account_name_blue }}
+                - task: AzureCLI@2
+                  condition: eq(variables['active_environment'], 'blue')
+                  displayName: 'Clean Storage Folder Blue'
+                  inputs:
+                    azureSubscription: '${{ parameters.azureSubscription }}'
+                    scriptType: 'pscore'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage_account_name_blue }}
 
-          - task: AzureFileCopy@3
-            condition: eq(variables['active_environment'], 'blue')
-            displayName: 'Upload to Azure Storage Blue'
-            inputs:
-              sourcePath: '$(Pipeline.Workspace)/dist'
-              azureSubscription: '${{ parameters.azureSubscription }}'
-              destination: 'AzureBlob'
-              storage: '${{ parameters.storage_account_name_blue }}'
-              containerName: '$web'
+                - task: AzureFileCopy@3
+                  condition: eq(variables['active_environment'], 'blue')
+                  displayName: 'Upload to Azure Storage Blue'
+                  inputs:
+                    sourcePath: '$(Pipeline.Workspace)/dist'
+                    azureSubscription: '${{ parameters.azureSubscription }}'
+                    destination: 'AzureBlob'
+                    storage: '${{ parameters.storage_account_name_blue }}'
+                    containerName: '$web'
 
-          - task: AzureCLI@2
-            condition: eq(variables['active_environment'], 'green')
-            displayName: 'Clean Storage Folder Green'
-            inputs:
-              azureSubscription: '${{ parameters.azureSubscription }}'
-              scriptType: 'pscore'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage_account_name_green }}
+                - task: AzureCLI@2
+                  condition: eq(variables['active_environment'], 'green')
+                  displayName: 'Clean Storage Folder Green'
+                  inputs:
+                    azureSubscription: '${{ parameters.azureSubscription }}'
+                    scriptType: 'pscore'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage_account_name_green }}
 
-          - task: AzureFileCopy@3
-            condition: eq(variables['active_environment'], 'green')
-            displayName: 'Upload to Azure Storage Green'
-            inputs:
-              sourcePath: '$(Pipeline.Workspace)/dist'
-              azureSubscription: '${{ parameters.azureSubscription }}'
-              destination: 'AzureBlob'
-              storage: '${{ parameters.storage_account_name_green }}'
-              containerName: '$web'
+                - task: AzureFileCopy@3
+                  condition: eq(variables['active_environment'], 'green')
+                  displayName: 'Upload to Azure Storage Green'
+                  inputs:
+                    sourcePath: '$(Pipeline.Workspace)/dist'
+                    azureSubscription: '${{ parameters.azureSubscription }}'
+                    destination: 'AzureBlob'
+                    storage: '${{ parameters.storage_account_name_green }}'
+                    containerName: '$web'
 
 
       - job: switch_traffic
