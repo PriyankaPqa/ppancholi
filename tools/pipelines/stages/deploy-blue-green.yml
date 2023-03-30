@@ -44,7 +44,7 @@ stages:
               azureSubscription: '${{ parameters.azureSubscription }}'
               ContainerName: '$web'
               CleanTargetBeforeCopy: true
-              storage: ${{ coalesce(parameters['storage_account_name_'+parameters.active_environment], '') }}
+              storage: ${{ coalesce(parameters['storage_account_name_' + parameters.active_environment], '') }}
 
   - stage: switch_traffic
     dependsOn: deploy
