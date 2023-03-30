@@ -39,7 +39,7 @@ stages:
         steps:
           - task: AzureFileCopy@4
             displayName: 'Upload static app to Azure Blob Storage - Blue'
-            condition: eq('${{ parameters.active_environment }}', 'blue')
+            condition: eq(variables['active_environment'], 'blue')
             inputs:
               SourcePath: '$(Pipeline.Workspace)/dist'
               Destination: 'AzureBlob'
@@ -49,7 +49,7 @@ stages:
               storage: '${{ parameters.storage_account_name_blue }}'
           - task: AzureFileCopy@4
             displayName: 'Upload static app to Azure Blob Storage - Green'
-            condition: eq('${{ parameters.active_environment }}', 'green')
+            condition: eq(variables['active_environment'], 'green')
             inputs:
               SourcePath: '$(Pipeline.Workspace)/dist'
               Destination: 'AzureBlob'
@@ -73,5 +73,5 @@ stages:
                   --front-door-name ${{ parameters.azure_front_door_name }} \
                   --resource-group ${{ parameters.resource_group_front_door }} \
                   --name '${{ parameters.backendPoolName }}' \
-                  --set "backends[?address=='${{ parameters.backend_address_blue }}'].priority=$([[ '${{ parameters.active_environment }}' == 'blue' ]] && echo 1 || echo 2)" \
-                  --set "backends[?address=='${{ parameters.backend_address_green }}'].priority=$([[ '${{ parameters.active_environment }}' == 'green' ]] && echo 1 || echo 2)"
+                  --set "backends[?address=='${{ parameters.backend_address_blue }}'].priority=$([[ '${{ variables.active_environment }}' == 'blue' ]] && echo 1 || echo 2)" \
+                  --set "backends[?address=='${{ parameters.backend_address_green }}'].priority=$([[ '${{ variables.active_environment }}' == 'green' ]] && echo 1 || echo 2)"
