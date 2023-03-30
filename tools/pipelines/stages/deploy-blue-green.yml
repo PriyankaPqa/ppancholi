@@ -28,7 +28,7 @@ stages:
   - stage: deploy_and_switch_traffic
     condition: succeeded()
     variables:
-      active_environment: 'blue'
+      active_environment: 'blue' ## should dynamic based on patch version from pipeline
     pool:
       vmImage: 'windows-2022'
     displayName: 'Blue/Green Deployment'
