@@ -1,0 +1,68 @@
+parameters:
+  - name: active_environment
+    type: string
+    default: $[ if(int(replace(parameters['Build.BuildNumber'], '.', '')) % 2 == 0, 'blue', 'green') ]
+    # The above expression switches the active_environment parameter between 'blue' and 'green' based on the parity of the build number.
+  - name: resource_group_front_door
+    type: string
+    default: 'front-door-leo'
+  - name: azure_front_door_name
+    type: string
+    default: 'fd-emis'
+  - name: storage_account_name_blue
+    type: string
+    default: 'fdbluestorage'
+  - name: storage_account_name_green
+    type: string
+    default: 'fdgreenstorage'
+  - name: backendPoolName
+    type: string
+    default: 'storage-accounts'
+  - name: backend_address_blue
+    type: string
+    default: 'fdbluestorage.z9.web.core.windows.net'
+  - name: backend_address_green
+    type: string
+    default: 'fdgreenstorage.z9.web.core.windows.net'
+  - name: azureSubscription
+    type: string
+    default: 'CRC Tech Dev'
+
+stages:
+  - stage: deploy
+    condition: succeeded()
+    displayName: 'Deploy to ${{ parameters.active_environment }} environment'
+    jobs:
+      - job: deploy
+        displayName: 'Deploy to ${{ parameters.active_environment }}'
+        steps:
+          - task: AzureFileCopy@4
+            displayName: 'Upload static app to Azure Blob Storage'
+            inputs:
+              SourcePath: '$(Pipeline.Workspace)/dist'
+              Destination: 'AzureBlob'
+              azureSubscription: '${{ parameters.azureSubscription }}'
+              ContainerName: '$web'
+              CleanTargetBeforeCopy: true
+              storage: ${{ coalesce(variables.storage_account_name_$(parameters.active_environment), '') }}
+
+  - stage: switch_traffic
+    dependsOn: deploy
+    displayName: 'Switch traffic'
+    jobs:
+      - job: switch_traffic
+        displayName: 'Switch traffic to ${{ if eq(parameters['active_environment'], 'blue'), 'green', 'blue' }}'
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Update backend priority'
+            inputs:
+              azureSubscription: '${{ parameters.azureSubscription }}'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az network front-door backend-pool update \
+                  --front-door-name ${{ parameters.azure_front_door_name }} \
+                  --resource-group ${{ parameters.resource_group_front_door }} \
+                  --name '${{ parameters.backendPoolName }}' \
+                  --set "backends[?address=='${{ parameters.backend_address_blue }}'].priority=$([[ '${{ parameters.active_environment }}' == 'blue' ]] && echo 1 || echo 2)" \
+                  --set "backends[?address=='${{ parameters.backend_address_green }}'].priority=$([[ '${{ parameters.active_environment }}' == 'green' ]] && echo 1 || echo 2)"

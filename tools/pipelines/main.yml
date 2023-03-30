@@ -33,6 +33,8 @@ stages:
       appVersion: ${{ parameters.appVersion }}
       disableCache: ${{ parameters.disableCache }}
 
+  - template: './stages/deploy-blue-green.yml'
+
   # Run unit tests & component tests
   - template: './stages/tests-stage.yml'
     parameters:
