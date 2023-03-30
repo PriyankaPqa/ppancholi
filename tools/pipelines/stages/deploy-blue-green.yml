@@ -1,8 +1,4 @@
 parameters:
-  - name: active_environment
-    type: string
-    default: $[ if(int(replace(parameters['Build.BuildNumber'], '.', '')) % 2 == 0, 'blue', 'green') ]
-    # The above expression switches the active_environment parameter between 'blue' and 'green' based on the parity of the build number.
   - name: resource_group_front_door
     type: string
     default: 'front-door-leo'
@@ -31,6 +27,9 @@ parameters:
 stages:
   - stage: deploy_and_switch_traffic
     condition: succeeded()
+    variables:
+      active_environment: $[ if(int(replace(variables['Build.BuildNumber'], '.', '')) % 2 == 0, 'blue', 'green')
+      # The above expression switches the active_environment parameter between 'blue' and 'green' based on the parity of the build number.
     pool:
       vmImage: 'windows-2022'
     displayName: 'Blue/Green Deployment'
