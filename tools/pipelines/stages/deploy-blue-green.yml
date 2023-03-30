@@ -42,14 +42,25 @@ stages:
         displayName: 'Deploy'
         steps:
           - task: AzureFileCopy@4
-            displayName: 'Upload static app to Azure Blob Storage'
+            displayName: 'Upload static app to Azure Blob Storage - Blue'
+            condition: eq('${{ parameters.active_environment }}', 'blue')
             inputs:
               SourcePath: '$(Pipeline.Workspace)/dist'
               Destination: 'AzureBlob'
               azureSubscription: '${{ parameters.azureSubscription }}'
               ContainerName: '$web'
               CleanTargetBeforeCopy: true
-              storage: '${{ parameters.active_storage_name }}'
+              storage: '${{ parameters.storage_account_name_blue }}'
+          - task: AzureFileCopy@4
+            displayName: 'Upload static app to Azure Blob Storage - Green'
+            condition: eq('${{ parameters.active_environment }}', 'green')
+            inputs:
+              SourcePath: '$(Pipeline.Workspace)/dist'
+              Destination: 'AzureBlob'
+              azureSubscription: '${{ parameters.azureSubscription }}'
+              ContainerName: '$web'
+              CleanTargetBeforeCopy: true
+              storage: '${{ parameters.storage_account_name_green }}'
 
       - job: switch_traffic
         dependsOn: deploy
