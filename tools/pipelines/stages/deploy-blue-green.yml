@@ -85,7 +85,7 @@ stages:
             displayName: 'Update backends priorities'
             inputs:
               azureSubscription: '${{ parameters.azureSubscription }}'
-              scriptType: 'bash'
+              scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az network front-door backend-pool update \
