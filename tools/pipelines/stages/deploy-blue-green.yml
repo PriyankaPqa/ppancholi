@@ -29,7 +29,7 @@ parameters:
     default: 'CRC Tech Dev'
   - name: active_storage_name
     type: string
-    default: ${{ if eq(variables['active_environment'], 'blue'), parameters.storage_account_name_blue, parameters.storage_account_name_green }}
+    default: $[if eq(variables['active_environment'], 'blue'), parameters.storage_account_name_blue, parameters.storage_account_name_green ]
 
 stages:
   - stage: deploy
