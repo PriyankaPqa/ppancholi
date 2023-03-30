@@ -28,8 +28,7 @@ stages:
   - stage: deploy_and_switch_traffic
     condition: succeeded()
     variables:
-      active_environment: $[ if(int(replace(variables['Build.BuildNumber'], '.', '')) % 2 == 0, 'blue', 'green')
-      # The above expression switches the active_environment parameter between 'blue' and 'green' based on the parity of the build number.
+      active_environment: 'blue'
     pool:
       vmImage: 'windows-2022'
     displayName: 'Blue/Green Deployment'
