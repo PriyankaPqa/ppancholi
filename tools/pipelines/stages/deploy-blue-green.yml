@@ -54,7 +54,7 @@ stages:
     displayName: 'Switch traffic'
     jobs:
       - job: switch_traffic
-        displayName: 'Switch traffic to ${{ if eq(parameters['active_environment'], 'blue'), 'green', 'blue' }}'
+        displayName: 'Switch traffic'
         steps:
           - task: AzureCLI@2
             displayName: 'Update backend priority'
