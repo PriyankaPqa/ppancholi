@@ -28,13 +28,14 @@ stages:
   - stage: deploy_and_switch_traffic
     condition: succeeded()
     variables:
-      - group: Env-Dev
-        active_environment: 'blue'
+      active_environment: 'blue'
     pool:
       vmImage: 'windows-2022'
     displayName: 'Blue/Green Deployment'
     jobs:
       - job: deploy
+        variables:
+          - group: Env-Dev
         displayName: 'Deploy'
         steps:
           - task: replacetokens@3
