@@ -32,12 +32,14 @@ parameters:
     default: $[if eq(variables['active_environment'], 'blue'), parameters.storage_account_name_blue, parameters.storage_account_name_green ]
 
 stages:
-  - stage: deploy
+  - stage: deploy_and_switch_traffic
     condition: succeeded()
-    displayName: 'Deploy to ${{ parameters.active_environment }} environment'
+    pool:
+      vmImage: 'windows-2022'
+    displayName: 'Blue/Green Deployment and Switch Traffic'
     jobs:
       - job: deploy
-        displayName: 'Deploy to ${{ parameters.active_environment }}'
+        displayName: 'Deploy'
         steps:
           - task: AzureFileCopy@4
             displayName: 'Upload static app to Azure Blob Storage'
@@ -49,15 +51,12 @@ stages:
               CleanTargetBeforeCopy: true
               storage: '${{ parameters.active_storage_name }}'
 
-  - stage: switch_traffic
-    dependsOn: deploy
-    displayName: 'Switch traffic'
-    jobs:
       - job: switch_traffic
+        dependsOn: deploy
         displayName: 'Switch traffic'
         steps:
           - task: AzureCLI@2
-            displayName: 'Update backend priority'
+            displayName: 'Update backends priorities'
             inputs:
               azureSubscription: '${{ parameters.azureSubscription }}'
               scriptType: 'bash'
