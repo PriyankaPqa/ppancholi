@@ -14,6 +14,10 @@ export const getUserRoleDescription = (roleName: string) => {
   const map = {
     Level6: 'System Admin',
     Level5: 'Systems Team Member',
+    Level4: 'Operations Manager',
+    Level3: 'EM Supervisor',
+    Level2: 'Case Worker',
+    Level1: 'Call Centre Agent',
   } as Record<string, string>;
   return map[roleName];
 };
