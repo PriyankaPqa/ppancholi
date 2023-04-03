@@ -19,7 +19,12 @@ stages:
       - job: Deploy
         displayName: 'Deploy'
         steps:
-
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: |
+                Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" -Directory
+                
           - powershell: |
               $response = Invoke-WebRequest "$(frontDoorUrl)" -UseBasicParsing -Method Head
               $targetStorageAccountName= If ($response.Headers["active-env"] -like "blue-app") {"$(storageAccountGreenName)"} Else {"$(storageAccountBlueName)"}
@@ -39,7 +44,7 @@ stages:
           - task: AzureFileCopy@3
             displayName: 'Upload to target storage account'
             inputs:
-              sourcePath: '$(System.DefaultWorkingDirectory)/dummy-index/$(targetStorageAccountName)'
+              sourcePath: '$(System.DefaultWorkingDirectory)/dummy-index/$(targetStorageAccountName)' #Becaus
               azureSubscription: 'CRC Tech Dev'
               destination: 'AzureBlob'
               storage: '$(targetStorageAccountName)'
