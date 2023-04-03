@@ -19,12 +19,6 @@ stages:
       - job: Deploy
         displayName: 'Deploy'
         steps:
-          - task: PowerShell@2
-            inputs:
-              targetType: 'inline'
-              script: |
-                Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" -Directory
-
           - powershell: |
               $response = Invoke-WebRequest "$(frontDoorUrl)" -UseBasicParsing -Method Head
               $targetStorageAccountName= If ($response.Headers["active-env"] -like "blue-app") {"$(storageAccountGreenName)"} Else {"$(storageAccountBlueName)"}
@@ -56,5 +50,5 @@ stages:
               azureSubscription: 'CRC Tech Dev'
               ScriptType: 'FilePath'
               ScriptPath: '$(System.DefaultWorkingDirectory)/tools/pipelines/AzureFrontDoorSwitchBackend.ps1'
-              ScriptArguments: '-frontDoorResourceGroup $(frontDoorResourceGroup) -frontDoorName $(frontDoorName) -frontDoorBackendPoolName $(frontDoorBackendPoolName) -frontDoorUrl $(frontDoorUrl) -backendStorageBlue $(backendStorageBlue) -backendStorageGreen $(backendStorageGreen)'
+              ScriptArguments: '-frontDoorResourceGroup $(frontDoorResourceGroup) -frontDoorName $(frontDoorName) -frontDoorBackendPoolName $(frontDoorBackendPoolName) -frontDoorUrl $(frontDoorUrl) -backendBlueHostName $(backendBlueHostName) -backendGreenHostName $(backendGreenHostName)'
               azurePowerShellVersion: 'LatestVersion'

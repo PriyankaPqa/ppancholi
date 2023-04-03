@@ -12,9 +12,9 @@ param (
     [Parameter(Mandatory)]
     [string]$frontDoorUrl,
     [Parameter(Mandatory)]
-    [string]$backendStorageBlue,
+    [string]$backendBlueHostName,
     [Parameter(Mandatory)]
-    [string]$backendStorageGreen,
+    [string]$backendGreenHostName,
 )
 
 function ListFrontdoorFrontEnds ()
@@ -27,8 +27,8 @@ az extension add --name front-door
 
 #Find the current web app (blue/green), and set the target release environment
 $response = Invoke-WebRequest $frontDoorUrl -UseBasicParsing -Method Head
-$currentDeploymentWebApp = If ($response.Headers["active-env"] -like "blue") {$backendStorageBlue} Else {$backendStorageGreen}
-$targetDeploymentWebApp = If ($response.Headers["active-env"] -like "green") {$backendStorageBlue} Else {$backendStorageGreen}
+$currentDeploymentWebApp = If ($response.Headers["active-env"] -like "blue") {$backendBlueHostName} Else {$backendGreenHostName}
+$targetDeploymentWebApp = If ($response.Headers["active-env"] -like "green") {$backendBlueHostName} Else {$backendGreenHostName}
 Write-Host "Active-Env: " $response.Headers["active-env"]
 Write-Host "Current Backend running: $currentDeploymentWebApp"
 Write-Host "Target Backend: $targetDeploymentWebApp"
