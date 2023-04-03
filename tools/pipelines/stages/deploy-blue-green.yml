@@ -1,25 +1,22 @@
 parameters:
-  - name: resource_group_front_door
+  - name: frontDoorResourceGroup
     type: string
     default: 'front-door-leo'
-  - name: azure_front_door_name
+  - name: frontDoorName
     type: string
     default: 'fd-emis'
-  - name: storage_account_name_blue
+  - name: frontDoorUrl
     type: string
-    default: 'fdbluestorage'
-  - name: storage_account_name_green
-    type: string
-    default: 'fdgreenstorage'
-  - name: backendPoolName
+    default: 'https://fd-leo.crc-tech.ca/'
+  - name: frontDoorBackendPoolName
     type: string
     default: 'storage-accounts'
-  - name: backend_address_blue
+  - name: backendStorageBlue
     type: string
-    default: 'fdbluestorage.z9.web.core.windows.net'
-  - name: backend_address_green
+    default: 'green-blue.azureedge.net'
+  - name: backendStorageGreen
     type: string
-    default: 'fdgreenstorage.z9.web.core.windows.net'
+    default: 'green-app.azureedge.net'
   - name: azureSubscription
     type: string
     default: 'CRC Tech Dev'
@@ -27,90 +24,54 @@ parameters:
 stages:
   - stage: deploy_and_switch_traffic
     condition: succeeded()
-    variables:
-      active_environment: 'blue' ## should dynamic based on patch version from pipeline
     pool:
       vmImage: 'windows-2022'
     displayName: 'Blue/Green Deployment'
     jobs:
-      - deployment: deploy
+      - job: Deploy
         displayName: 'Deploy'
-        environment: 'Dev'
-        variables:
-          - group: Env-Dev
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: replacetokens@3
-                  displayName: 'Replace Tokens'
-                  inputs:
-                    targetFiles: "$(Pipeline.Workspace)/dist/**/index*.js"
-                    encoding: "auto"
-                    writeBOM: true
-                    verbosity: "detailed"
-                    actionOnMissing: "warn"
-                    keepToken: false
-                    tokenPrefix: "#{"
-                    tokenSuffix: "}#"
-                    useLegacyPattern: false
-                    enableTelemetry: true
-
-                - task: AzureCLI@2
-                  condition: eq(variables['active_environment'], 'blue')
-                  displayName: 'Clean Storage Folder Blue'
-                  inputs:
-                    azureSubscription: '${{ parameters.azureSubscription }}'
-                    scriptType: 'pscore'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage_account_name_blue }}
-
-                - task: AzureFileCopy@3
-                  condition: eq(variables['active_environment'], 'blue')
-                  displayName: 'Upload to Azure Storage Blue'
-                  inputs:
-                    sourcePath: '$(Pipeline.Workspace)/dist'
-                    azureSubscription: '${{ parameters.azureSubscription }}'
-                    destination: 'AzureBlob'
-                    storage: '${{ parameters.storage_account_name_blue }}'
-                    containerName: '$web'
-
-                - task: AzureCLI@2
-                  condition: eq(variables['active_environment'], 'green')
-                  displayName: 'Clean Storage Folder Green'
-                  inputs:
-                    azureSubscription: '${{ parameters.azureSubscription }}'
-                    scriptType: 'pscore'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage_account_name_green }}
-
-                - task: AzureFileCopy@3
-                  condition: eq(variables['active_environment'], 'green')
-                  displayName: 'Upload to Azure Storage Green'
-                  inputs:
-                    sourcePath: '$(Pipeline.Workspace)/dist'
-                    azureSubscription: '${{ parameters.azureSubscription }}'
-                    destination: 'AzureBlob'
-                    storage: '${{ parameters.storage_account_name_green }}'
-                    containerName: '$web'
-
-
-      - job: switch_traffic
-        dependsOn: deploy
-        displayName: 'Switch traffic'
         steps:
+          - powershell: |
+              $response = Invoke-WebRequest "$(frontDoorUrl)" -UseBasicParsing -Method Head
+              $targetStorageAccountName= If ($response.Headers["active-env"] -like "blue-app") {"$(appServiceNameBlue)"} Else {"$(appServiceNameGreen)"}
+              Write-Host "##vso[task.setvariable variable=targetStorageAccountName]$targetStorageAccountName"
+              Write-Host "Target Storage Account Name for deployment: $targetStorageAccountName"
+              displayName: "Detect target environment color for deployment"
+
           - task: AzureCLI@2
-            displayName: 'Update backends priorities'
+            displayName: 'Clean Target Storage'
             inputs:
               azureSubscription: '${{ parameters.azureSubscription }}'
               scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
-                az network front-door backend-pool update \
-                  --front-door-name ${{ parameters.azure_front_door_name }} \
-                  --resource-group ${{ parameters.resource_group_front_door }} \
-                  --name '${{ parameters.backendPoolName }}' \
-                  --set "backends[?address=='${{ parameters.backend_address_blue }}'].priority=$([[ '${{ variables.active_environment }}' == 'blue' ]] && echo 1 || echo 2)" \
-                  --set "backends[?address=='${{ parameters.backend_address_green }}'].priority=$([[ '${{ variables.active_environment }}' == 'green' ]] && echo 1 || echo 2)"
+                az storage blob delete-batch --source '$web' --account-name '$(targetStorageAccountName)'
+
+          - task: AzureFileCopy@3
+            condition: eq(variables['targetStorageAccountName'], 'blue')
+            displayName: 'Upload to Azure Storage Blue'
+            inputs:
+              sourcePath: '$(Pipeline.Workspace)/dist/blue'
+              azureSubscription: '${{ parameters.azureSubscription }}'
+              destination: 'AzureBlob'
+              storage: '$(targetStorageAccountName)'
+              containerName: '$web'
+
+          - task: AzureFileCopy@3
+            condition: eq(variables['targetStorageAccountName'], 'green')
+            displayName: 'Upload to Azure Storage Green'
+            inputs:
+              sourcePath: '$(Pipeline.Workspace)/dist/green'
+              azureSubscription: '${{ parameters.azureSubscription }}'
+              destination: 'AzureBlob'
+              storage: '$(targetStorageAccountName)'
+              containerName: '$web'
+
+          - task: AzurePowerShell@4
+            displayName: 'Switch environments Blue/Green using Frontdoor Azure CLI'
+            inputs:
+              azureSubscription: '${{ parameters.azureSubscription }}'
+              ScriptType: 'FilePath'
+              ScriptPath: '$(Pipeline.Workspace)/tools/pipelines/switch-storage.ps1'
+              ScriptArguments: '-frontDoorResourceGroup $(frontDoorResourceGroup) -frontDoorName $(frontDoorName) -frontDoorBackendPoolName $(frontDoorBackendPoolName) -frontDoorUrl $(frontDoorUrl) -backendStorageBlue $(backendStorageBlue) -backendStorageGreen $(backendStorageGreen)'
+              azurePowerShellVersion: 'LatestVersion'
