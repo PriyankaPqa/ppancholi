@@ -34,11 +34,12 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az storage blob delete-batch --source '$web' --account-name '$(targetStorageAccountName)'
+              
 
           - task: AzureFileCopy@3
             displayName: 'Upload to target storage account'
             inputs:
-              sourcePath: '$(Pipeline.Workspace)/dist/$(targetStorageAccountName)'
+              sourcePath: '$(Pipeline.Workspace)/dummy-index/$(targetStorageAccountName)'
               azureSubscription: 'CRC Tech Dev'
               destination: 'AzureBlob'
               storage: '$(targetStorageAccountName)'
