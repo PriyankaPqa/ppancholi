@@ -25,6 +25,7 @@ stages:
               Write-Host "##vso[task.setvariable variable=targetStorageAccountName]$targetStorageAccountName"
               Write-Host "Target storage account: $targetStorageAccountName"
             displayName: "Detect target storage account for deployment"
+            # value of active-env are set in each CDN
 
           - task: AzureCLI@2
             displayName: 'Clean target storage account'
