@@ -19,6 +19,7 @@ stages:
       - job: Deploy
         displayName: 'Deploy'
         steps:
+
           - powershell: |
               $response = Invoke-WebRequest "$(frontDoorUrl)" -UseBasicParsing -Method Head
               $targetStorageAccountName= If ($response.Headers["active-env"] -like "blue-app") {"$(storageAccountGreenName)"} Else {"$(storageAccountBlueName)"}
@@ -34,12 +35,11 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az storage blob delete-batch --source '$web' --account-name '$(targetStorageAccountName)'
-              
 
           - task: AzureFileCopy@3
             displayName: 'Upload to target storage account'
             inputs:
-              sourcePath: '$(Pipeline.Workspace)/dummy-index/$(targetStorageAccountName)'
+              sourcePath: '$(System.DefaultWorkingDirectory)/dummy-index/$(targetStorageAccountName)'
               azureSubscription: 'CRC Tech Dev'
               destination: 'AzureBlob'
               storage: '$(targetStorageAccountName)'
