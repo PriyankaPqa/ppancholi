@@ -14,7 +14,7 @@ param (
     [Parameter(Mandatory)]
     [string]$backendBlueHostName,
     [Parameter(Mandatory)]
-    [string]$backendGreenHostName,
+    [string]$backendGreenHostName
 )
 
 function ListFrontdoorFrontEnds ()
