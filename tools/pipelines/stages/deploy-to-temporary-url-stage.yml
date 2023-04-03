@@ -91,15 +91,6 @@ stages:
                     useLegacyPattern: false
                     enableTelemetry: true
 
-                - task: AzureCLI@2
-                  displayName: 'Clean Storage Folder'
-                  inputs:
-                    azureSubscription: 'CRC Tech Dev'
-                    scriptType: 'pscore'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      az storage blob delete-batch --source '$web' --account-name $(featureStorageName)
-
                 - task: AzureFileCopy@3
                   displayName: 'Upload to Azure'
                   inputs:
@@ -117,7 +108,16 @@ stages:
                     scriptType: 'pscore'
                     scriptLocation: 'inlineScript'
                     inlineScript: |
-                      az cdn endpoint purge -n "$(cdnEndpointName)" -g "$(featureResourceGroup)" --profile-name "$(cdnProfileName)" --content-paths "/*" --no-wait
+                      az cdn endpoint purge -n "$(cdnEndpointName)" -g "$(featureResourceGroup)" --profile-name "$(cdnProfileName)" --content-paths "/index.html" "/app-details.json" "/img/*" --no-wait
+
+                - task: AzureCLI@2
+                  displayName: 'Clean Storage Folder'
+                  inputs:
+                    azureSubscription: 'CRC Tech Dev'
+                    scriptType: 'pscore'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      az storage blob delete-batch --source '$web' --account-name $(featureStorageName) --if-unmodified-since (Get-Date).AddDays(-1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mmZ")
 
                 - task: AzureCLI@2
                   displayName: 'Create Custom Domain'
