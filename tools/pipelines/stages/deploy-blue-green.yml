@@ -24,7 +24,7 @@ stages:
               targetType: 'inline'
               script: |
                 Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" -Directory
-                
+
           - powershell: |
               $response = Invoke-WebRequest "$(frontDoorUrl)" -UseBasicParsing -Method Head
               $targetStorageAccountName= If ($response.Headers["active-env"] -like "blue-app") {"$(storageAccountGreenName)"} Else {"$(storageAccountBlueName)"}
@@ -44,7 +44,7 @@ stages:
           - task: AzureFileCopy@3
             displayName: 'Upload to target storage account'
             inputs:
-              sourcePath: '$(System.DefaultWorkingDirectory)/dummy-index/$(targetStorageAccountName)' #Becaus
+              sourcePath: '$(System.DefaultWorkingDirectory)/apps/emis-app/dummy-index/$(targetStorageAccountName)'
               azureSubscription: 'CRC Tech Dev'
               destination: 'AzureBlob'
               storage: '$(targetStorageAccountName)'
@@ -55,6 +55,6 @@ stages:
             inputs:
               azureSubscription: 'CRC Tech Dev'
               ScriptType: 'FilePath'
-              ScriptPath: '$(Pipeline.Workspace)/tools/pipelines/switch-storage.ps1'
+              ScriptPath: '$(System.DefaultWorkingDirectory)/tools/pipelines/AzureFrontDoorSwitchBackend.ps1'
               ScriptArguments: '-frontDoorResourceGroup $(frontDoorResourceGroup) -frontDoorName $(frontDoorName) -frontDoorBackendPoolName $(frontDoorBackendPoolName) -frontDoorUrl $(frontDoorUrl) -backendStorageBlue $(backendStorageBlue) -backendStorageGreen $(backendStorageGreen)'
               azurePowerShellVersion: 'LatestVersion'

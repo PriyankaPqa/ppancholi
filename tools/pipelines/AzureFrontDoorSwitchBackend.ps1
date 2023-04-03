@@ -1,5 +1,5 @@
 <#
-  .\ToggleFrontdoorBackends.ps1 -frontDoorResourceGroup "frontdoor-bluegreen-rg" -frontDoorName "frontdoor-blue-green" -frontDoorBackendPoolName "backendpool" -frontDoorUrl "frontdoor-blue-green-demo-app.test.com" -backendStorageBlue "frontdoor-web-blue.azurewebsites.net" -backendStorageGreen "frontdoor-web-green.azurewebsites.net"
+  .\AzureFrontDoorSwitchBackend.ps1 -frontDoorResourceGroup "frontdoor-bluegreen-rg" -frontDoorName "frontdoor-blue-green" -frontDoorBackendPoolName "backendpool" -frontDoorUrl "frontdoor-blue-green-demo-app.test.com" -backendStorageBlue "frontdoor-web-blue.azurewebsites.net" -backendStorageGreen "frontdoor-web-green.azurewebsites.net"
 #>
 
 param (
