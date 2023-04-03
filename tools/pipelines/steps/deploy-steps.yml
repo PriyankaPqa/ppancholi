@@ -23,7 +23,15 @@ steps:
       useLegacyPattern: false
       enableTelemetry: true
 
-  # Upload to the $web container. This overwrites files by default.
+  - task: AzureCLI@2
+    displayName: 'Clean Storage Folder'
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscription }}'
+      scriptType: 'pscore'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage }}$(environment)
+
   - task: AzureFileCopy@3
     displayName: 'Upload to Azure'
     inputs:
@@ -33,8 +41,6 @@ steps:
       storage: '${{ parameters.storage }}$(environment)'
       containerName: '$web'
 
-  # Purge all images + index.html and json files in file root
-  # Intentionally leaving assets (js and css) as these are unique and excluding them should speed up the operation
   - task: AzureCLI@2
     displayName: 'Purge CDN'
     inputs:
@@ -42,17 +48,7 @@ steps:
       scriptType: 'pscore'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        az cdn endpoint purge -n "${{ parameters.cdnEndpoint }}-$(environment)" -g "$(ResourceGroup)" --profile-name "${{ parameters.cdnProfile }}-$(environment)" --content-paths "/index.html" "/app-details.json" "/manifest.json" "/img/*" --no-wait
+        az cdn endpoint purge -n "${{ parameters.cdnEndpoint }}-$(environment)" -g "$(ResourceGroup)" --profile-name "${{ parameters.cdnProfile }}-$(environment)" --content-paths "/*" --no-wait
 
-  # Maintenance: delete any files that are older than one day
-  # (the file presence is fine, we simply want to stop the container from growing indefinitely)
-  - task: AzureCLI@2
-    displayName: 'Clean Storage Folder'
-    inputs:
-      azureSubscription: '${{ parameters.azureSubscription }}'
-      scriptType: 'pscore'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        az storage blob delete-batch --source '$web' --account-name ${{ parameters.storage }}$(environment) --if-unmodified-since (Get-Date).AddDays(-1).ToUniversalTime().ToString("yyyy-MM-ddTHH:mmZ")
 
 

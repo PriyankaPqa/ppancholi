@@ -8,14 +8,13 @@ import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import { i18n } from '@/ui/plugins/i18n';
 import { IFeatureEntity } from '@libs/entities-lib/tenantSettings';
 import { httpClient } from '@/services/httpClient';
+import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { useUserStore } from '@/pinia/user/user';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { UserRoles } from '@libs/entities-lib/user';
 
 Vue.use(VueRouter);
-
-let isCheckingAppVersion = false;
 
 const router = new VueRouter({
   mode: 'history',
@@ -130,25 +129,19 @@ const notifyUserRefresh = () => {
 };
 
 const checkAppVersion = () => {
-  const currentVersion = process.env.VITE_VERSION;
-  if (isCheckingAppVersion || !currentVersion || currentVersion === 'Local build') {
+  if (!sessionStorage.getItem(sessionStorageKeys.appVersion.name) || sessionStorage.getItem(sessionStorageKeys.appVersion.name) === 'Local build') {
     return;
   }
-  isCheckingAppVersion = true;
   setTimeout(() => {
     fetch(`/app-details.json?d=${(new Date()).toISOString()}`)
       .then((response) => response.json())
       .then((json) => {
         const newVersion = json.app_version;
-        if (currentVersion === newVersion) {
-          isCheckingAppVersion = false;
-        } else {
-          applicationInsights.trackTrace(`Version mismatch - session cache ${currentVersion}, blob storage ${newVersion}`, { }, 'router', 'checkAppVersion');
+        const cacheVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
+        if (cacheVersion !== newVersion) {
+          applicationInsights.trackTrace(`Version mismatch - session cache ${cacheVersion}, blog storage ${newVersion}`, { }, 'router', 'checkAppVersion');
           notifyUserRefresh();
         }
-      })
-      .catch(() => {
-        isCheckingAppVersion = false;
       });
   }, 3000);
 };
