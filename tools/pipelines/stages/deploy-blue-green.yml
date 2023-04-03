@@ -10,7 +10,6 @@ stages:
       backendGreenHostName: 'green-app.azureedge.net'
       storageAccountBlueName: 'tfblue'
       storageAccountGreenName: 'tfgreen'
-      targetBackendHostName: '' # Set in line script
       targetStorageAccountName: '' # Set in inline script
       targetWebAppUrl: '' # Set in toggle script
     pool:
@@ -22,11 +21,9 @@ stages:
         steps:
           - powershell: |
               $response = Invoke-WebRequest "$(frontDoorUrl)" -UseBasicParsing -Method Head
-              $targetBackendHostName= If ($response.Headers["active-env"] -like "blue-app") {"$(backendGreenHostName)"} Else {"$(backendBlueHostName)"}
               $targetStorageAccountName= If ($response.Headers["active-env"] -like "blue-app") {"$(storageAccountGreenName)"} Else {"$(storageAccountBlueName)"}
-              Write-Host "##vso[task.setvariable variable=targetBackendHostName]$targetBackendHostName"
               Write-Host "##vso[task.setvariable variable=targetStorageAccountName]$targetStorageAccountName"
-              Write-Host "Target backend host name: $targetStorageAccountName"
+              Write-Host "Target storage account: $targetStorageAccountName"
             displayName: "Detect target storage account for deployment"
 
           - task: AzureCLI@2
