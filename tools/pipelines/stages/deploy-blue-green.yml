@@ -6,8 +6,11 @@ stages:
       frontDoorName: 'fd-emis'
       frontDoorUrl: 'fd-leo.crc-tech.ca'
       frontDoorBackendPoolName: 'storage-accounts'
-      backendStorageBlue: 'green-blue.azureedge.net'
-      backendStorageGreen: 'green-app.azureedge.net'
+      backendBlueHostName: 'blue-app.azureedge.net'
+      backendGreenHostName: 'green-app.azureedge.net'
+      storageAccountBlueName: 'tfblue'
+      storageAccountGreenName: 'tfgreen'
+      targetBackendHostName: '' # Set in line script
       targetStorageAccountName: '' # Set in inline script
       targetWebAppUrl: '' # Set in toggle script
     pool:
@@ -19,13 +22,15 @@ stages:
         steps:
           - powershell: |
               $response = Invoke-WebRequest "$(frontDoorUrl)" -UseBasicParsing -Method Head
-              $targetStorageAccountName= If ($response.Headers["active-env"] -like "blue-app") {"$(backendStorageBlue)"} Else {"$(backendStorageGreen)"}
+              $targetBackendHostName= If ($response.Headers["active-env"] -like "blue-app") {"$(backendGreenHostName)"} Else {"$(backendBlueHostName)"}
+              $targetStorageAccountName= If ($response.Headers["active-env"] -like "blue-app") {"$(storageAccountGreenName)"} Else {"$(storageAccountBlueName)"}
+              Write-Host "##vso[task.setvariable variable=targetBackendHostName]$targetBackendHostName"
               Write-Host "##vso[task.setvariable variable=targetStorageAccountName]$targetStorageAccountName"
-              Write-Host "Target Storage Account Name for deployment: $targetStorageAccountName"
-            displayName: "Detect target environment color for deployment"
+              Write-Host "Target backend host name: $targetStorageAccountName"
+            displayName: "Detect target storage account for deployment"
 
           - task: AzureCLI@2
-            displayName: 'Clean Target Storage'
+            displayName: 'Clean target storage account'
             inputs:
               azureSubscription: 'CRC Tech Dev'
               scriptType: 'pscore'
@@ -34,20 +39,9 @@ stages:
                 az storage blob delete-batch --source '$web' --account-name '$(targetStorageAccountName)'
 
           - task: AzureFileCopy@3
-            condition: eq(variables['targetStorageAccountName'], 'blue')
-            displayName: 'Upload to Azure Storage Blue'
+            displayName: 'Upload to target storage account'
             inputs:
-              sourcePath: '$(Pipeline.Workspace)/dist/blue'
-              azureSubscription: 'CRC Tech Dev'
-              destination: 'AzureBlob'
-              storage: '$(targetStorageAccountName)'
-              containerName: '$web'
-
-          - task: AzureFileCopy@3
-            condition: eq(variables['targetStorageAccountName'], 'green')
-            displayName: 'Upload to Azure Storage Green'
-            inputs:
-              sourcePath: '$(Pipeline.Workspace)/dist/green'
+              sourcePath: '$(Pipeline.Workspace)/dist/$(targetStorageAccountName)'
               azureSubscription: 'CRC Tech Dev'
               destination: 'AzureBlob'
               storage: '$(targetStorageAccountName)'

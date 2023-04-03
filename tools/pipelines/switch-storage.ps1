@@ -15,24 +15,11 @@ param (
     [string]$backendStorageBlue,
     [Parameter(Mandatory)]
     [string]$backendStorageGreen,
-    [Parameter(Mandatory=$false)]
-    [bool]$loginWithServicePrincipal = $false,
-    [Parameter(Mandatory=$false)]
-    [string]$spUsername = '',
-    [Parameter(Mandatory=$false)]
-    [string]$spPassword = '',
-    [Parameter(Mandatory=$false)]
-    [string]$tenant = ''
 )
 
 function ListFrontdoorFrontEnds ()
 {
     az network front-door backend-pool backend list --front-door-name $frontDoorName --pool-name $frontDoorBackendPoolName --resource-group $frontDoorResourceGroup -o table
-}
-
-if ($loginWithServicePrincipal) {
-    Write-Host "Loggin in with Service Principal..."
-    az login --service-principal -u $spUsername -p $spPassword --tenant $tenant
 }
 
 #Frontdoor extension currently in preview
