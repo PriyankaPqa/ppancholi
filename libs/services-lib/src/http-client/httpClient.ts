@@ -332,4 +332,12 @@ export class HttpClient implements IHttpClient {
     }
     return port;
   }
+
+  getPayloadAsFile(payload: any, propertyName = 'contentAsFile') {
+    const json = JSON.stringify(payload);
+    const blob = new Blob([json], { type: 'application/json' });
+    const data = new FormData();
+    data.append(propertyName, blob);
+    return data;
+  }
 }

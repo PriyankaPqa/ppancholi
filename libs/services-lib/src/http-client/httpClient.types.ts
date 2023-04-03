@@ -57,6 +57,7 @@ export interface IHttpClient {
   getTenant(): string;
   getFormattedError(error: IError): string;
   getRestResponseAsFile(response: IRestResponse<BlobPart>, saveFile?: boolean, fileName?: string) : string;
+  getPayloadAsFile(payload: any, propertyName?: string): FormData;
 }
 
 export interface IHttpMock {
@@ -74,4 +75,5 @@ export interface IHttpMock {
   getTenant: jest.Mock<string>;
   getFormattedError: jest.Mock<string>;
   getRestResponseAsFile: jest.Mock<string>;
+  getPayloadAsFile: jest.Mock<FormData>;
 }

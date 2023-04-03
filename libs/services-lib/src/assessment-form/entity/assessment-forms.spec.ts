@@ -46,7 +46,7 @@ describe('>>> AssessmentForms Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentFormEntity();
       await service.create(entity);
-      expect(http.post).toHaveBeenCalledWith('www.test.com/assessment/assessment-forms', entity, { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith('www.test.com/assessment/assessment-forms', http.getPayloadAsFile(entity), { globalHandler: false });
     });
   });
 
@@ -54,7 +54,7 @@ describe('>>> AssessmentForms Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentFormEntity();
       await service.update(entity);
-      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}`, entity, { globalHandler: false });
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}`, http.getPayloadAsFile(entity), { globalHandler: false });
     });
   });
 
@@ -62,14 +62,14 @@ describe('>>> AssessmentForms Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentFormEntity();
       await service.updateAssessmentStructure(entity);
-      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}/updateAssessmentStructure`, entity);
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-forms/${entity.id}/updateAssessmentStructure`, http.getPayloadAsFile(entity));
     });
   });
 
   describe('htmlToWord', () => {
     it('is linked to the correct URL and params', async () => {
       const ret = await service.htmlToWord('some data', 'file.docx');
-      expect(http.postFullResponse).toHaveBeenCalledWith('assessment/tools/HtmlToWord/extract.docx', 'some data', { responseType: 'blob' });
+      expect(http.postFullResponse).toHaveBeenCalledWith('assessment/tools/HtmlToWord/extract.docx', http.getPayloadAsFile('some data'), { responseType: 'blob' });
       expect(http.getRestResponseAsFile).toHaveBeenCalled();
       expect(ret).toEqual('myUrl');
     });

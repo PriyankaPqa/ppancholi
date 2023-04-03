@@ -31,7 +31,7 @@ describe('>>> AssessmentTemplates Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentTemplateEntity();
       await service.create(entity);
-      expect(http.post).toHaveBeenCalledWith('www.test.com/assessment/assessment-templates', entity, { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith('www.test.com/assessment/assessment-templates', http.getPayloadAsFile(entity), { globalHandler: false });
     });
   });
 
@@ -39,7 +39,7 @@ describe('>>> AssessmentTemplates Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentTemplateEntity();
       await service.update(entity);
-      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-templates/${entity.id}`, entity, { globalHandler: false });
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-templates/${entity.id}`, http.getPayloadAsFile(entity), { globalHandler: false });
     });
   });
 
@@ -47,7 +47,7 @@ describe('>>> AssessmentTemplates Service', () => {
     it('should call the proper endpoint', async () => {
       const entity = mockAssessmentTemplateEntity();
       await service.updateAssessmentStructure(entity);
-      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-templates/${entity.id}/updateAssessmentStructure`, entity);
+      expect(http.patch).toHaveBeenCalledWith(`www.test.com/assessment/assessment-templates/${entity.id}/updateAssessmentStructure`, http.getPayloadAsFile(entity));
     });
   });
 });
