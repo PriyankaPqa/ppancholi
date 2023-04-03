@@ -8,8 +8,8 @@ stages:
       frontDoorBackendPoolName: 'storage-accounts'
       backendBlueHostName: 'blue-app.azureedge.net'
       backendGreenHostName: 'green-app.azureedge.net'
-      storageAccountBlueName: 'tfblue'
-      storageAccountGreenName: 'tfgreen'
+      storageAccountBlueName: 'fdbluestorage'
+      storageAccountGreenName: 'fdgreenstorage'
       targetStorageAccountName: '' # Set in inline script
       targetWebAppUrl: '' # Set in toggle script
     pool:
@@ -26,14 +26,14 @@ stages:
               Write-Host "Target storage account: $targetStorageAccountName"
             displayName: "Detect target storage account for deployment"
 
-#          - task: AzureCLI@2
-#            displayName: 'Clean target storage account'
-#            inputs:
-#              azureSubscription: 'CRC Tech Dev'
-#              scriptType: 'pscore'
-#              scriptLocation: 'inlineScript'
-#              inlineScript: |
-#                az storage blob delete-batch --source '$web' --account-name '$(targetStorageAccountName)'
+          - task: AzureCLI@2
+            displayName: 'Clean target storage account'
+            inputs:
+              azureSubscription: 'CRC Tech Dev'
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az storage blob delete-batch --source '$web' --account-name '$(targetStorageAccountName)'
 
           - task: AzureFileCopy@3
             displayName: 'Upload to target storage account'
