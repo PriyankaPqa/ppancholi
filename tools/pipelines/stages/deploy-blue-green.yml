@@ -19,7 +19,7 @@ stages:
         steps:
           - powershell: |
               $response = Invoke-WebRequest "$(frontDoorUrl)" -UseBasicParsing -Method Head
-              $targetStorageAccountName= If ($response.Headers["active-env"] -like "blue-app") {"$(appServiceNameBlue)"} Else {"$(appServiceNameGreen)"}
+              $targetStorageAccountName= If ($response.Headers["active-env"] -like "blue-app") {"$(backendStorageBlue)"} Else {"$(backendStorageGreen)"}
               Write-Host "##vso[task.setvariable variable=targetStorageAccountName]$targetStorageAccountName"
               Write-Host "Target Storage Account Name for deployment: $targetStorageAccountName"
               displayName: "Detect target environment color for deployment"
