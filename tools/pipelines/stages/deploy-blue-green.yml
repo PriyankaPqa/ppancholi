@@ -1,29 +1,15 @@
-parameters:
-  - name: frontDoorResourceGroup
-    type: string
-    default: 'front-door-leo'
-  - name: frontDoorName
-    type: string
-    default: 'fd-emis'
-  - name: frontDoorUrl
-    type: string
-    default: 'https://fd-leo.crc-tech.ca/'
-  - name: frontDoorBackendPoolName
-    type: string
-    default: 'storage-accounts'
-  - name: backendStorageBlue
-    type: string
-    default: 'green-blue.azureedge.net'
-  - name: backendStorageGreen
-    type: string
-    default: 'green-app.azureedge.net'
-  - name: azureSubscription
-    type: string
-    default: 'CRC Tech Dev'
-
 stages:
   - stage: deploy_and_switch_traffic
     condition: succeeded()
+    variables:
+      frontDoorResourceGroup: 'front-door-leo'
+      frontDoorName: 'fd-emis'
+      frontDoorUrl: 'fd-leo.crc-tech.ca'
+      frontDoorBackendPoolName: 'storage-accounts'
+      backendStorageBlue: 'green-blue.azureedge.net'
+      backendStorageGreen: 'green-app.azureedge.net'
+      targetStorageAccountName: '' # Set in inline script
+      targetWebAppUrl: '' # Set in toggle script
     pool:
       vmImage: 'windows-2022'
     displayName: 'Blue/Green Deployment'
@@ -41,7 +27,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Clean Target Storage'
             inputs:
-              azureSubscription: '${{ parameters.azureSubscription }}'
+              azureSubscription: 'CRC Tech Dev'
               scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
@@ -52,7 +38,7 @@ stages:
             displayName: 'Upload to Azure Storage Blue'
             inputs:
               sourcePath: '$(Pipeline.Workspace)/dist/blue'
-              azureSubscription: '${{ parameters.azureSubscription }}'
+              azureSubscription: 'CRC Tech Dev'
               destination: 'AzureBlob'
               storage: '$(targetStorageAccountName)'
               containerName: '$web'
@@ -62,7 +48,7 @@ stages:
             displayName: 'Upload to Azure Storage Green'
             inputs:
               sourcePath: '$(Pipeline.Workspace)/dist/green'
-              azureSubscription: '${{ parameters.azureSubscription }}'
+              azureSubscription: 'CRC Tech Dev'
               destination: 'AzureBlob'
               storage: '$(targetStorageAccountName)'
               containerName: '$web'
@@ -70,7 +56,7 @@ stages:
           - task: AzurePowerShell@4
             displayName: 'Switch environments Blue/Green using Frontdoor Azure CLI'
             inputs:
-              azureSubscription: '${{ parameters.azureSubscription }}'
+              azureSubscription: 'CRC Tech Dev'
               ScriptType: 'FilePath'
               ScriptPath: '$(Pipeline.Workspace)/tools/pipelines/switch-storage.ps1'
               ScriptArguments: '-frontDoorResourceGroup $(frontDoorResourceGroup) -frontDoorName $(frontDoorName) -frontDoorBackendPoolName $(frontDoorBackendPoolName) -frontDoorUrl $(frontDoorUrl) -backendStorageBlue $(backendStorageBlue) -backendStorageGreen $(backendStorageGreen)'
