@@ -1,5 +1,5 @@
 <#
-  .\AzureFrontDoorSwitchBackend.ps1 -frontDoorResourceGroup "frontdoor-bluegreen-rg" -frontDoorName "frontdoor-blue-green" -frontDoorBackendPoolName "backendpool" -frontDoorUrl "frontdoor-blue-green-demo-app.test.com" -backendStorageBlue "frontdoor-web-blue.azurewebsites.net" -backendStorageGreen "frontdoor-web-green.azurewebsites.net"
+  .\ToggleFrontdoorBackends.ps1 -frontDoorResourceGroup "frontdoor-bluegreen-rg" -frontDoorName "frontdoor-blue-green" -frontDoorBackendPoolName "backendpool" -frontDoorUrl "frontdoor-blue-green-demo-app.test.com" -webAppBlueUrl "frontdoor-web-blue.azurewebsites.net" -webAppGreenUrl "frontdoor-web-green.azurewebsites.net"
 #>
 
 param (
@@ -40,8 +40,8 @@ az extension add --name front-door
 
 #Find the current web app (blue/green), and set the target release environment
 $response = Invoke-WebRequest $frontDoorUrl -UseBasicParsing -Method Head
-$currentDeploymentWebApp = If ($response.Headers["active-backend"] -like "blue-app") {$backendBlueHostName} Else {$backendGreenHostName}
-$targetDeploymentWebApp = If ($response.Headers["active-backend"] -like "green-app") {$backendBlueHostName} Else {$backendGreenHostName}
+$currentDeploymentWebApp = If ($response.Headers["active-backend"] -like "$backendBlueHostName") {$backendBlueHostName} Else {$backendGreenHostName}
+$targetDeploymentWebApp = If ($response.Headers["active-backend"] -like "$backendGreenHostName") {$backendBlueHostName} Else {$backendGreenHostName}
 Write-Host "Active-Env: " $response.Headers["active-backend"]
 Write-Host "Current Backend running: $currentDeploymentWebApp"
 Write-Host "Target Backend: $targetDeploymentWebApp"
