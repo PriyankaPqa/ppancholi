@@ -53,5 +53,5 @@ stages:
               azureSubscription: 'CRC Tech Dev'
               ScriptType: 'FilePath'
               ScriptPath: '$(System.DefaultWorkingDirectory)/tools/pipelines/AzureFrontDoorSwitchBackend.ps1'
-              ScriptArguments: '-frontDoorResourceGroup $(frontDoorResourceGroup) -frontDoorName $(frontDoorName) -frontDoorBackendPoolName $(frontDoorBackendPoolName) -frontDoorUrl $(frontDoorUrl) -backendBlueHostName $(backendBlueHostName) -backendGreenHostName $(backendGreenHostName) -loginWithServicePrincipal $true -spUsername $(spUsername) -spPassword $(spPassword) -tenant $(spTenant)'
+              ScriptArguments: '-frontDoorResourceGroup $(frontDoorResourceGroup) -frontDoorName $(frontDoorName) -frontDoorBackendPoolName $(frontDoorBackendPoolName) -frontDoorUrl $(frontDoorUrl) -backendBlueHostName $(backendBlueHostName) -backendGreenHostName $(backendGreenHostName) -loginWithServicePrincipal $true -spUsername $(spUsername) -spPassword $(spPassword) -spTenant $(spTenant)'
               azurePowerShellVersion: 'LatestVersion'
