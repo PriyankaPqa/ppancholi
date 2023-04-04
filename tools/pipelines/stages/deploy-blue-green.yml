@@ -11,9 +11,9 @@ stages:
       storageAccountBlueName: 'fdbluestorage'
       storageAccountGreenName: 'fdgreenstorage'
       targetStorageAccountName: '' # Set in inline script
-      spUsername: '' # Set in the pipeline variables
-      spPassword: '' # Set in the pipeline variables
-      spTenant: '' # Set in the pipeline variables
+#      spUsername: '' # Set in the pipeline variables
+#      spPassword: '' # Set in the pipeline variables
+#      spTenant: '' # Set in the pipeline variables
     pool:
       vmImage: 'windows-2022'
     displayName: 'Blue/Green Deployment'
