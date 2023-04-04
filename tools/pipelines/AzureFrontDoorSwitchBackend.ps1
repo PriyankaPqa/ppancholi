@@ -42,7 +42,6 @@ az extension add --name front-door
 $response = Invoke-WebRequest $frontDoorUrl -UseBasicParsing -Method Head
 $currentDeploymentWebApp = If ($response.Headers["active-backend"] -like "$backendBlueHostName") {$backendBlueHostName} Else {$backendGreenHostName}
 $targetDeploymentWebApp = If ($response.Headers["active-backend"] -like "$backendGreenHostName") {$backendBlueHostName} Else {$backendGreenHostName}
-Write-Host "Active-Env: " $response.Headers["active-backend"]
 Write-Host "Current Backend running: $currentDeploymentWebApp"
 Write-Host "Target Backend: $targetDeploymentWebApp"
 ListFrontdoorFrontEnds
