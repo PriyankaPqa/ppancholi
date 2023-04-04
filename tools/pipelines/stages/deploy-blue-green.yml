@@ -11,7 +11,9 @@ stages:
       storageAccountBlueName: 'fdbluestorage'
       storageAccountGreenName: 'fdgreenstorage'
       targetStorageAccountName: '' # Set in inline script
-      targetWebAppUrl: '' # Set in toggle script
+      spUsername: '' # Set in the pipeline variables
+      spPassword: '' # Set in the pipeline variables
+      spTenant: '' # Set in the pipeline variables
     pool:
       vmImage: 'windows-2022'
     displayName: 'Blue/Green Deployment'
@@ -51,5 +53,5 @@ stages:
               azureSubscription: 'CRC Tech Dev'
               ScriptType: 'FilePath'
               ScriptPath: '$(System.DefaultWorkingDirectory)/tools/pipelines/AzureFrontDoorSwitchBackend.ps1'
-              ScriptArguments: '-frontDoorResourceGroup $(frontDoorResourceGroup) -frontDoorName $(frontDoorName) -frontDoorBackendPoolName $(frontDoorBackendPoolName) -frontDoorUrl $(frontDoorUrl) -backendBlueHostName $(backendBlueHostName) -backendGreenHostName $(backendGreenHostName)'
+              ScriptArguments: '-frontDoorResourceGroup $(frontDoorResourceGroup) -frontDoorName $(frontDoorName) -frontDoorBackendPoolName $(frontDoorBackendPoolName) -frontDoorUrl $(frontDoorUrl) -backendBlueHostName $(backendBlueHostName) -backendGreenHostName $(backendGreenHostName) -loginWithServicePrincipal $true -spUsername $(spUsername) -spPassword $(spPassword) -tenant $(spTenant)'
               azurePowerShellVersion: 'LatestVersion'
