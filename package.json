@@ -74,6 +74,7 @@
     "benef-app:serve": "yarn --cwd apps/benef-app serve",
     "benef-app:dev": "yarn --cwd apps/benef-app dev",
     "benef-app:dev:lab": "yarn benef-app:dev --mode lab",
+    "benef-app:dev:local": "yarn benef-app:dev --mode localhost",
     "benef-app:lint": "yarn --cwd apps/benef-app lint",
     "benef-app:test": "yarn jest --projects apps/benef-app --maxWorkers=50%",
     "benef-app:test:graph": "jest-heap-graph 'yarn benef-app:test --logHeapUsage --no-cache'",

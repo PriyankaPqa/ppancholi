@@ -2,7 +2,7 @@ import { storeFactory } from '@/registration/registration';
 import { ERegistrationMode } from '@libs/shared-lib/types';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
-import { mockEvent, mockEventData, RegistrationEvent } from '@libs/entities-lib/registration-event';
+import { mockEvent, mockEventData, mockShelterLocations, RegistrationEvent } from '@libs/entities-lib/registration-event';
 import {
   EIndigenousTypes, mockGenders, mockIndigenousCommunitiesGetData, mockIndigenousTypesItems,
 } from '@libs/entities-lib/value-objects/identity-set';
@@ -14,24 +14,28 @@ import {
   mockHouseholdCreate,
   mockHouseholdCreateData,
   mockMember,
+  mockMemberData,
   mockSplitHousehold,
 } from '@libs/entities-lib/household-create';
 import { IRegistrationMenuItem } from '@libs/registration-lib/types';
 import { mockPublicService } from '@libs/services-lib/public';
 import { mockHouseholdsService } from '@libs/services-lib/households/entity';
-import { mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/entities-lib/household';
+import { IHouseholdEntity, mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/entities-lib/household';
 import { Status } from '@libs/entities-lib/src/base';
 import { PublishStatus } from '@libs/entities-lib/src/assessment-template';
+import { mockCaseFilesService } from '@libs/services-lib/case-files/entity';
 import _cloneDeep from 'lodash/cloneDeep';
 import * as registrationUtils from './registrationUtils';
 import { mockTabs } from './tabs.mock';
 
 let useRegistrationStore = null as ReturnType<typeof storeFactory>;
 
+const member = mockMember();
 const publicApi = mockPublicService();
 const householdApi = mockHouseholdsService();
+const caseFileApi = mockCaseFilesService();
 
-const initStore = (mode = ERegistrationMode.CRC) => storeFactory({
+const initStore = (mode = ERegistrationMode.CRC, mockedInternalMethods?: any) => storeFactory({
   pTabs: mockTabs(),
   i18n: {
     t: jest.fn((s: string) => s),
@@ -41,6 +45,9 @@ const initStore = (mode = ERegistrationMode.CRC) => storeFactory({
   mode,
   publicApi,
   householdApi,
+  caseFileApi,
+  testMode: true,
+  mockedInternalMethods,
 });
 // eslint-disable-next-line max-statements
 describe('>>> Registration Store', () => {
@@ -89,11 +96,11 @@ describe('>>> Registration Store', () => {
       expect(useRegistrationStore.getPreviousTabName()).toEqual('registration.privacy_statement.start_registration');
     });
 
-    it('should return nothing is currentTab is confirmation one', () => {
+    it('should return nothing is currentTab has no !disabled tabs before', () => {
       useRegistrationStore = initStore();
       useRegistrationStore.currentTabIndex = 1;
-      useRegistrationStore.tabs[1].id = 'confirmation';
-      expect(useRegistrationStore.getPreviousTabName()).toEqual('');
+      useRegistrationStore.tabs[0].disabled = true;
+      expect(useRegistrationStore.getPreviousTabName()).toBeFalsy();
     });
   });
 
@@ -473,14 +480,13 @@ describe('>>> Registration Store', () => {
     it('should call proper service for Self Registration', async () => {
       useRegistrationStore = initStore(ERegistrationMode.Self);
       useRegistrationStore.event = mockEventData();
-      await useRegistrationStore.submitRegistration('recaptchaToken');
+      await useRegistrationStore.submitRegistration();
       expect(householdApi.submitRegistration).toHaveBeenCalledTimes(1);
       expect(householdApi.submitCRCRegistration).toHaveBeenCalledTimes(0);
 
       expect(householdApi.submitRegistration).toHaveBeenCalledWith({
         household: useRegistrationStore.householdCreate,
         eventId: mockEventData().id,
-        recaptchaToken: 'recaptchaToken',
       });
     });
 
@@ -520,6 +526,7 @@ describe('>>> Registration Store', () => {
 
       expect(householdApi.updatePersonContactInformation).toHaveBeenCalledWith(
         member.id,
+        false,
         { contactInformation: member.contactInformation, identitySet: member.identitySet, isPrimaryBeneficiary: isPrimaryMember },
       );
     });
@@ -563,6 +570,7 @@ describe('>>> Registration Store', () => {
 
       expect(householdApi.updatePersonIdentity).toHaveBeenCalledWith(
         member.id,
+        false,
         { identitySet: member.identitySet, contactInformation: member.contactInformation },
       );
     });
@@ -602,7 +610,7 @@ describe('>>> Registration Store', () => {
 
       await useRegistrationStore.updatePersonAddress({ member, isPrimaryMember });
 
-      expect(householdApi.updatePersonAddress).toHaveBeenCalledWith(member.id, member.currentAddress);
+      expect(householdApi.updatePersonAddress).toHaveBeenCalledWith(member.id, false, member.currentAddress);
     });
 
     it('calls the right mutation when member is primary', async () => {
@@ -634,7 +642,7 @@ describe('>>> Registration Store', () => {
         member, isPrimaryMember, index, sameAddress,
       });
 
-      expect(householdApi.updatePersonAddress).toHaveBeenCalledWith(member.id, member.currentAddress);
+      expect(householdApi.updatePersonAddress).toHaveBeenCalledWith(member.id, false, member.currentAddress);
       expect(useRegistrationStore.householdCreate.additionalMembers[0].currentAddress).toEqual(member.currentAddress);
     });
 
@@ -655,7 +663,7 @@ describe('>>> Registration Store', () => {
         member, isPrimaryMember, index, sameAddress,
       });
 
-      expect(householdApi.updatePersonAddress).toHaveBeenCalledWith(member.id, {
+      expect(householdApi.updatePersonAddress).toHaveBeenCalledWith(member.id, false, {
         ...mockMember().currentAddress,
         addressType: ECurrentAddressTypes.Other,
       });
@@ -673,7 +681,7 @@ describe('>>> Registration Store', () => {
 
       await useRegistrationStore.addAdditionalMember({ householdId, member, sameAddress });
 
-      expect(householdApi.addMember).toHaveBeenCalledWith(householdId, member);
+      expect(householdApi.addMember).toHaveBeenCalledWith(householdId, false, member);
     });
 
     it('call the mutation after the resolution', async () => {
@@ -709,7 +717,7 @@ describe('>>> Registration Store', () => {
 
       await useRegistrationStore.deleteAdditionalMember({ householdId, memberId, index });
 
-      expect(householdApi.deleteAdditionalMember).toHaveBeenCalledWith(householdId, memberId);
+      expect(householdApi.deleteAdditionalMember).toHaveBeenCalledWith(householdId, false, memberId);
     });
 
     it('removes the member', async () => {
@@ -762,7 +770,6 @@ describe('>>> Registration Store', () => {
   });
 
   describe('setAssessmentToComplete', () => {
-    // TODO Ask MAD to review this
     it('sets assessmentToComplete and adjusts tabs', () => {
       useRegistrationStore = initStore(ERegistrationMode.Self);
       useRegistrationStore.setAssessmentToComplete(null);
@@ -796,6 +803,254 @@ describe('>>> Registration Store', () => {
 
       expect(useRegistrationStore.assessmentToComplete).toEqual(assessment);
       expect(useRegistrationStore.tabs).toEqual(useRegistrationStore.allTabs);
+    });
+  });
+
+  describe('fetchMembersInformation', () => {
+    it('should fetch information of each member', async () => {
+      useRegistrationStore = initStore();
+      const household = {
+        primaryBeneficiary: '1',
+        members: ['1', '2'],
+      } as IHouseholdEntity;
+      const shelterLocations = mockShelterLocations();
+      await useRegistrationStore.internalMethods.fetchMembersInformation(household, shelterLocations);
+      expect(householdApi.getPerson).toHaveBeenCalledWith('1');
+      expect(householdApi.getPerson).toHaveBeenCalledWith('2');
+    });
+
+    it('calls addShelterLocationData  with the member result of the storage call', async () => {
+      const addShelterLocationData = jest.fn(() => [member]);
+      useRegistrationStore = initStore(ERegistrationMode.CRC, { addShelterLocationData });
+      const household = {
+        primaryBeneficiary: '1',
+        members: ['1'],
+      } as IHouseholdEntity;
+      const shelterLocations = mockShelterLocations();
+      householdApi.getPerson = jest.fn(() => member);
+
+      await useRegistrationStore.internalMethods.fetchMembersInformation(household, shelterLocations);
+      expect(addShelterLocationData).toHaveBeenCalledWith([member], shelterLocations);
+    });
+  });
+
+  describe('parseIdentitySet', () => {
+    it('should rebuild identity of member', () => {
+      useRegistrationStore = initStore();
+      const member = mockMemberData();
+      const communities = mockIndigenousCommunitiesGetData();
+      const genderItems = mockGenders();
+
+      member.identitySet.indigenousIdentity = {
+        indigenousCommunityId: communities[0].id,
+      };
+
+      member.identitySet.gender.optionItemId = genderItems[0].id;
+
+      const res = useRegistrationStore.internalMethods.parseIdentitySet(member, communities, genderItems);
+      expect(res).toEqual({
+        birthDate: {
+          day: '12',
+          month: 2,
+          year: '1999',
+        },
+        gender: {
+          id: '676eb98b-d432-4924-90ee-2489e3acdc26',
+          isDefault: false,
+          isOther: false,
+          name: {
+            translation: {
+              en: 'Female',
+              fr: 'Femme',
+            },
+          },
+          orderRank: 0,
+          status: 1,
+        },
+        genderOther: undefined,
+        indigenousCommunityId: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
+        indigenousType: 1,
+        indigenousCommunityOther: undefined,
+      });
+    });
+
+    describe('getShelterLocationDatafromId', () => {
+      it('returns the shelterLocation data from the parameters if it finds one', async () => {
+        useRegistrationStore = initStore();
+        expect(await useRegistrationStore.internalMethods.getShelterLocationDatafromId('sl-1', [{ id: 'sl-1', name: 'SL-1' } as any], [])).toEqual({ id: 'sl-1', name: 'SL-1' });
+      });
+
+      it('calls the events search with the right filter if it does not find the shelter in the parameters and stores the result in otherShelterLocations', async () => {
+        useRegistrationStore = initStore();
+        publicApi.searchEvents = jest.fn(() => ({ value: [{ entity: { shelterLocations: [{ id: 'sl-1', name: 'SL-1' }] } }] } as any));
+        const otherShelterLocations = [] as any;
+        await useRegistrationStore.internalMethods.getShelterLocationDatafromId('sl-1', [], otherShelterLocations);
+        expect(publicApi.searchEvents).toHaveBeenCalledWith({
+          filter: {
+            Entity: {
+              ShelterLocations: {
+                any: { Id: 'sl-1' },
+              },
+            },
+          },
+        });
+        expect(otherShelterLocations).toEqual([{ id: 'sl-1', name: 'SL-1' }]);
+      });
+    });
+  });
+
+  describe('addShelterLocationData', () => {
+    it('calls getShelterLocationDatafromId and stores the data in the right place in the member object, if the member has a shelterLocationId', async () => {
+      const getShelterLocationDatafromId = jest.fn(() => ({ id: 'sl-1', name: 'SL 1' }));
+      useRegistrationStore = initStore(ERegistrationMode.Self, { getShelterLocationDatafromId });
+
+      const members = [{ currentAddress: { shelterLocationId: 'sl-1' } }] as any[];
+      const result = await useRegistrationStore.internalMethods.addShelterLocationData(members, []);
+      expect(getShelterLocationDatafromId).toHaveBeenCalledWith('sl-1', [], []);
+      expect(result).toEqual([{ currentAddress: { shelterLocationId: 'sl-1', shelterLocation: { id: 'sl-1', name: 'SL 1' } } }]);
+    });
+  });
+
+  describe('parseContactInformation', () => {
+    it('should rebuild contact information of member', () => {
+      useRegistrationStore = initStore();
+      const member = mockMemberData();
+      const preferredLanguagesItems = mockPreferredLanguages();
+      const primarySpokenLanguagesItems = mockPrimarySpokenLanguages();
+
+      member.contactInformation.preferredLanguage.optionItemId = preferredLanguagesItems[0].id;
+      member.contactInformation.primarySpokenLanguage.optionItemId = primarySpokenLanguagesItems[0].id;
+
+      const res = useRegistrationStore.internalMethods.parseContactInformation(member, preferredLanguagesItems, primarySpokenLanguagesItems);
+      expect(res).toEqual({
+        alternatePhoneNumber: {
+          countryCode: 'CA',
+          e164Number: '15145454548',
+          extension: '1234',
+          number: '(438) 888-8888',
+        },
+        homePhoneNumber: {
+          countryCode: 'CA',
+          e164Number: '15145454548',
+          number: '(514) 545-4548',
+        },
+        mobilePhoneNumber: {
+          countryCode: 'CA',
+          e164Number: '15145454548',
+          number: '(866) 866-6666',
+        },
+        preferredLanguage: {
+          id: '3dd21738-e599-443a-aae1-496d7decc458',
+          isDefault: false,
+          isOther: false,
+          name: {
+            translation: {
+              en: 'French',
+              fr: 'Français',
+            },
+          },
+          orderRank: 0,
+          status: 1,
+        },
+        primarySpokenLanguage: {
+          id: '5d0c1c8d-c3cd-4818-a670-c92b3cb84081',
+          isDefault: true,
+          isOther: false,
+          name: {
+            translation: {
+              en: 'English',
+              fr: 'Anglais',
+            },
+          },
+          orderRank: 0,
+          status: 1,
+        },
+        preferredLanguageOther: '',
+        primarySpokenLanguageOther: '',
+      });
+    });
+  });
+
+  describe('buildHouseholdCreateData', () => {
+    it('should call fetchMembersInformation', async () => {
+      const fetchMembersInformation = jest.fn(() => []);
+      const parseIdentitySet = jest.fn();
+      const parseContactInformation = jest.fn();
+      useRegistrationStore = initStore(ERegistrationMode.CRC, { fetchMembersInformation, parseIdentitySet, parseContactInformation });
+      const household = mockHouseholdEntity();
+      await useRegistrationStore.buildHouseholdCreateData(household);
+
+      expect(fetchMembersInformation).toHaveBeenCalledWith(household, undefined);
+    });
+
+    it('should return the final object of household to be used in the UI', async () => {
+      const parseIdentitySet = jest.fn(() => 'identitySet');
+      const parseContactInformation = jest.fn(() => 'contact');
+      useRegistrationStore = initStore(ERegistrationMode.CRC, { parseIdentitySet, parseContactInformation });
+
+      const expected = {
+        registrationNumber: '12345',
+        additionalMembers: [],
+        consentInformation: {
+          crcUserName: '',
+          registrationLocationId: '',
+          registrationMethod: null,
+          privacyDateTimeConsent: '',
+        },
+        homeAddress: {
+          city: 'New York',
+          country: 'USA',
+          latitude: 90,
+          longitude: 180,
+          postalCode: '123456',
+          province: 1,
+          specifiedOtherProvince: 'string',
+          streetAddress: 'West str.',
+          unitSuite: '100',
+        },
+        noFixedHome: false,
+        primaryBeneficiary: {
+          contactInformation: 'contact',
+          currentAddress: {
+            address: {
+              city: 'Ottawa',
+              country: 'CA',
+              latitude: 0,
+              longitude: 0,
+              postalCode: 'K1W 1G7',
+              province: 9,
+              streetAddress: '247 Some Street',
+              unitSuite: '123',
+            },
+            addressType: 2,
+            placeName: 'test',
+            placeNumber: '',
+          },
+          identitySet: 'identitySet',
+        },
+      } as any;
+
+      const household = mockHouseholdEntity();
+      household.registrationNumber = '12345';
+
+      const res = await useRegistrationStore.buildHouseholdCreateData(household);
+
+      expect(res).toMatchObject(expected);
+    });
+  });
+
+  describe('loadHousehold', () => {
+    it('sets householdCreate from the api and sets consent information', async () => {
+      useRegistrationStore = initStore(ERegistrationMode.Self);
+      const consent = {} as any;
+      useRegistrationStore.householdCreate.consentInformation = consent;
+      useRegistrationStore.householdCreate.primaryBeneficiary.contactInformation.emailValidatedByBackend = false;
+
+      const result = await useRegistrationStore.loadHousehold('someid');
+      expect(householdApi.publicGetHousehold).toHaveBeenCalledWith('someid');
+      expect(result).toEqual(useRegistrationStore.householdCreate);
+      expect(result.consentInformation).toBe(consent);
+      expect(result.primaryBeneficiary.contactInformation.emailValidatedByBackend).toBeTruthy();
     });
   });
 });

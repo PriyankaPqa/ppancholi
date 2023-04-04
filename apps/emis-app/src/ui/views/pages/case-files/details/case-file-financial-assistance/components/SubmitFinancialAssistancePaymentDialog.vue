@@ -22,7 +22,7 @@
       </v-row>
       <v-row v-else>
         <v-col cols="12" class="mb-4 pa-0">
-          <div v-if="hasNoUsers || hasInvalidTable" class="msg-box mb-1">
+          <div v-if="hasNoUsers || hasInvalidTable" class="mb-1">
             <message-box
               icon="mdi-alert"
               data-test="approval_action_warning"
@@ -74,12 +74,11 @@
 <script lang="ts">
 import { FinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
 import { IAzureTableSearchResults, VForm } from '@libs/shared-lib/types';
-import { RcDialog, VAutocompleteWithValidation, VCheckboxWithValidation } from '@libs/component-lib/components';
+import { RcDialog, VAutocompleteWithValidation, VCheckboxWithValidation, MessageBox } from '@libs/component-lib/components';
 import Vue from 'vue';
 import {
   IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
-import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Status } from '@libs/entities-lib/base';
 import { useUserStore } from '@/pinia/user/user';
@@ -254,10 +253,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.msg-box{
-  margin-left: -12px;
-  margin-right: -12px;
-}
-</style>

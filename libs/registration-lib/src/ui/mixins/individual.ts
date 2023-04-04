@@ -13,7 +13,6 @@ export default Vue.extend({
   data() {
     return {
       isFormReady: false,
-      recaptchaToken: null,
       showErrorDialog: false,
       retryCount: 0,
       retryMax: 5,
@@ -228,7 +227,7 @@ export default Vue.extend({
     },
 
     async submitRegistration() {
-      await this.$registrationStore.submitRegistration(this.recaptchaToken);
+      await this.$registrationStore.submitRegistration();
     },
 
     async handleErrors(submitFunction: ()=> void) {

@@ -7,6 +7,7 @@ import {
   mockPrimarySpokenLanguages,
 } from '@libs/entities-lib/src/household-create';
 import { mockEvent } from '@libs/entities-lib/src/registration-event';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { createLocalVue, shallowMount, mount } from '../../test/testSetup';
 import Component from './ContactInformationForm.vue';
@@ -46,6 +47,7 @@ describe('ContactInformationForm.vue', () => {
     } else {
       wrapper = mount(Component, options);
     }
+    jest.clearAllMocks();
   };
 
   beforeEach(() => {
@@ -535,24 +537,40 @@ describe('ContactInformationForm.vue', () => {
         expect(helpers.timeout).toHaveBeenCalledTimes(1);
       });
 
-      it('calls validateEmail if submitting is false and there is no recaptcha key', async () => {
+      it('emits fetchPublicToken if submitting is false and public registration mode and calls validateEmail after public token fetched', async () => {
+        let emitted = false;
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
+        EventHub.$emit = jest.fn((p1, p2) => {
+          emitted = p1 === 'fetchPublicToken'; p2();
+        });
         wrapper.vm.validateEmail = jest.fn();
         await wrapper.setData({ submitting: true });
         await wrapper.vm.validateEmailOnBlur('mock-email');
-        expect(wrapper.vm.validateEmail).toHaveBeenCalledTimes(0);
+        expect(EventHub.$emit).not.toHaveBeenCalled();
+        expect(wrapper.vm.validateEmail).not.toHaveBeenCalled();
         await wrapper.setData({ submitting: false });
         await wrapper.vm.validateEmailOnBlur('mock-email');
+        expect(EventHub.$emit).toHaveBeenCalledTimes(1);
+        expect(emitted).toBeTruthy();
         expect(wrapper.vm.validateEmail).toHaveBeenCalledWith('mock-email');
       });
 
-      it('calls getTokenAndValidate if there is a recaptcha key', async () => {
-        await wrapper.setProps({
-          recaptchaKey: '12345',
+      it('does not emits fetchPublicToken if submitting is false and crc registration mode and calls validateEmail right away', async () => {
+        let emitted = false;
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
+        EventHub.$emit = jest.fn((p1, p2) => {
+          emitted = p1 === 'fetchPublicToken'; p2();
         });
-        wrapper.vm.getTokenAndValidate = jest.fn();
+        wrapper.vm.validateEmail = jest.fn();
+        await wrapper.setData({ submitting: true });
+        await wrapper.vm.validateEmailOnBlur('mock-email');
+        expect(EventHub.$emit).not.toHaveBeenCalled();
+        expect(wrapper.vm.validateEmail).not.toHaveBeenCalled();
         await wrapper.setData({ submitting: false });
         await wrapper.vm.validateEmailOnBlur('mock-email');
-        expect(wrapper.vm.getTokenAndValidate).toHaveBeenCalledWith('mock-email');
+        expect(EventHub.$emit).toHaveBeenCalledTimes(0);
+        expect(emitted).toBeFalsy();
+        expect(wrapper.vm.validateEmail).toHaveBeenCalledWith('mock-email');
       });
 
       it('should be triggered when blurring email field if for CRC (no recaptcha key)', () => {
@@ -566,29 +584,42 @@ describe('ContactInformationForm.vue', () => {
     });
 
     describe('validateForm', () => {
-      it('calls the passed function if email was validated  by backend', async () => {
+      it('calls the passed function if email was validated  by backend, no fetchtoken', async () => {
         await wrapper.setData({ formCopy: { ...wrapper.vm.formCopy, emailValidatedByBackend: true } });
+        let emitted = false;
+        EventHub.$emit = jest.fn((p1, p2) => {
+          emitted = p1 === 'fetchPublicToken'; p2();
+        });
         const mockFn = jest.fn(() => false);
         await wrapper.vm.validateForm(mockFn);
         expect(mockFn).toHaveBeenCalledTimes(1);
+        expect(emitted).toBeFalsy();
       });
 
-      it('calls getTokenAndValidate if email was not validated by backend and there is a recaptcha key', async () => {
+      it('asks to fetchPublicToken if public registration', async () => {
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
         await wrapper.setData({ formCopy: { ...wrapper.vm.formCopy, emailValidatedByBackend: false } });
-        await wrapper.setProps({ recaptchaKey: '12345' });
-        wrapper.vm.getTokenAndValidate = jest.fn();
+        let emitted = false;
+        EventHub.$emit = jest.fn((p1, p2) => {
+          emitted = p1 === 'fetchPublicToken'; p2();
+        });
         const mockFn = jest.fn(() => false);
         await wrapper.vm.validateForm(mockFn);
-        expect(wrapper.vm.getTokenAndValidate).toHaveBeenCalledWith(wrapper.vm.formCopy.email);
+        expect(emitted).toBeTruthy();
+        expect(mockFn).toHaveBeenCalled();
       });
 
-      it('calls validateEmail if email was not validated by backend and there is no recaptcha key', async () => {
+      it('does not ask to fetchPublicToken if crc registration', async () => {
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
         await wrapper.setData({ formCopy: { ...wrapper.vm.formCopy, emailValidatedByBackend: false } });
-        await wrapper.setProps({ recaptchaKey: null });
-        wrapper.vm.validateEmail = jest.fn();
+        let emitted = false;
+        EventHub.$emit = jest.fn((p1, p2) => {
+          emitted = p1 === 'fetchPublicToken'; p2();
+        });
         const mockFn = jest.fn(() => false);
         await wrapper.vm.validateForm(mockFn);
-        expect(wrapper.vm.validateEmail).toHaveBeenCalledWith(wrapper.vm.formCopy.email, '', true);
+        expect(emitted).toBeFalsy();
+        expect(mockFn).toHaveBeenCalled();
       });
     });
 
@@ -621,13 +652,15 @@ describe('ContactInformationForm.vue', () => {
       });
 
       it('should disregard duplicate errors if allowDuplicateEmails', async () => {
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
         wrapper.vm.$services.households.validatePublicEmail = jest.fn(() => ({
           emailIsValid: false, errors: [{ code: 'hello' }, { code: 'errors.the-email-provided-already-exists-in-the-system' }],
         }));
         wrapper.vm.setEmailValidator = jest.fn();
+        await wrapper.setProps({ allowDuplicateEmails: false });
         await wrapper.setData({ previousEmail: '' });
         await wrapper.vm.validateEmail('test@test.ca');
-        expect(wrapper.vm.setEmailValidator).toBeCalledWith({
+        expect(wrapper.vm.setEmailValidator).toHaveBeenCalledWith({
           emailIsValid: false, errors: [{ code: 'hello' }, { code: 'errors.the-email-provided-already-exists-in-the-system' }],
         });
 
@@ -635,7 +668,7 @@ describe('ContactInformationForm.vue', () => {
         jest.clearAllMocks();
         await wrapper.setData({ previousEmail: '' });
         await wrapper.vm.validateEmail('test@test.ca');
-        expect(wrapper.vm.setEmailValidator).toBeCalledWith({
+        expect(wrapper.vm.setEmailValidator).toHaveBeenCalledWith({
           emailIsValid: false, errors: [{ code: 'hello' }],
         });
 
@@ -677,11 +710,10 @@ describe('ContactInformationForm.vue', () => {
       describe('Self Registration', () => {
         it('should trigger validatePublicEmail with proper params', async () => {
           wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
-          await wrapper.vm.validateEmail('test@test.ca', 'token');
+          await wrapper.vm.validateEmail('test@test.ca');
 
           expect(wrapper.vm.$services.households.validatePublicEmail).toHaveBeenCalledWith({
             emailAddress: 'test@test.ca',
-            recaptchaToken: 'token',
             personId: 'personId',
           });
           expect(wrapper.vm.formCopy.emailValidatedByBackend).toBe(true);
@@ -730,42 +762,6 @@ describe('ContactInformationForm.vue', () => {
         wrapper.vm.setEmailValidator(result);
 
         expect(wrapper.vm.emailValidator.messageKey).toBe('errorCode');
-      });
-    });
-
-    describe('recaptchaCallBack', () => {
-      it('should call validateEmail with the email and the token', async () => {
-        wrapper.vm.validateEmail = jest.fn();
-        await wrapper.vm.recaptchaCallBack('token');
-        expect(wrapper.vm.validateEmail).toHaveBeenCalledWith(wrapper.vm.formCopy.email, 'token');
-      });
-      it('should do nothing if no token (user will need to face a challenge)', async () => {
-        wrapper.vm.validateEmail = jest.fn();
-        await wrapper.vm.recaptchaCallBack('');
-        expect(wrapper.vm.validateEmail).not.toHaveBeenCalledWith(wrapper.vm.formCopy.email, 'token');
-      });
-    });
-
-    describe('getTokenAndValidate', () => {
-      beforeEach(() => {
-        doMount(false);
-        wrapper.vm.$refs = {
-          recaptchaEmail: {
-            execute: jest.fn(),
-          },
-        };
-      });
-
-      it('should call resetEmailValidation and not execute method if no email', () => {
-        wrapper.vm.resetEmailValidation = jest.fn();
-        wrapper.vm.getTokenAndValidate('');
-        expect(wrapper.vm.resetEmailValidation).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$refs.recaptchaEmail.execute).toHaveBeenCalledTimes(0);
-      });
-
-      it('should call execute method from recaptcha', () => {
-        wrapper.vm.getTokenAndValidate('test@test.ca');
-        expect(wrapper.vm.$refs.recaptchaEmail.execute).toHaveBeenCalledTimes(1);
       });
     });
 

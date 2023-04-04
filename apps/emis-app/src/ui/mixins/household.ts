@@ -3,17 +3,11 @@
 
 import Vue from 'vue';
 import { IHouseholdEntity } from '@libs/entities-lib/household';
-import { IMemberEntity } from '@libs/entities-lib/value-objects/member';
-import { IIndigenousCommunityData } from '@libs/entities-lib/value-objects/identity-set';
-import { IAddressData, IHouseholdCreateData } from '@libs/entities-lib/household-create';
-import deepmerge from 'deepmerge';
-import householdHelpers from '@/ui/helpers/household';
-import { IOptionItemData } from '@libs/shared-lib/types';
 import { IEventGenericLocation, IEventMainInfo } from '@libs/entities-lib/event';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { useRegistrationStore } from '@/pinia/registration/registration';
-import { IEventData } from '@libs/entities-lib/registration-event';
 import { useHouseholdStore } from '@/pinia/household/household';
+import { IHouseholdCreateData } from '@libs/entities-lib/household-create';
 
 export default Vue.extend({
   props: {
@@ -88,29 +82,6 @@ export default Vue.extend({
       return [];
     },
 
-    async fetchMembersInformation(household: IHouseholdEntity): Promise<IMemberEntity[]> {
-      if (!household.members?.length) {
-        return [];
-      }
-      let primaryBeneficiaryPromise;
-      const additionalMembersPromises = [] as Array<Promise<IMemberEntity>>;
-
-      household.members.forEach((id) => {
-        const promise = this.$services.households.getPerson(id) as Promise<IMemberEntity>;
-
-        if (id === household.primaryBeneficiary) {
-          primaryBeneficiaryPromise = promise;
-        } else {
-          additionalMembersPromises.push(promise);
-        }
-      });
-
-      let members: IMemberEntity[] = await Promise.all([primaryBeneficiaryPromise, ...additionalMembersPromises]);
-
-      members = await this.addShelterLocationData(members);
-      return members;
-    },
-
     /**
      * @param {string} [householdId] Optional. Id of the household for which we fetch the shelter locations.
      * To pass if the mixin is not used in a component that stores the case files and myEvents in the state (eg. for household move).
@@ -142,164 +113,8 @@ export default Vue.extend({
     async buildHouseholdCreateData(
       household: IHouseholdEntity,
     ): Promise<IHouseholdCreateData> {
-      let primaryBeneficiary;
-      const additionalMembers = [] as Array<IMemberEntity>;
-
-      let genderItems = useRegistrationStore().getGenders(true) as IOptionItemData[];
-      if (genderItems.length === 0) {
-        genderItems = await useRegistrationStore().fetchGenders() as IOptionItemData[];
-      }
-
-      let preferredLanguagesItems = useRegistrationStore().getPreferredLanguages() as IOptionItemData[];
-      if (preferredLanguagesItems.length === 0) {
-        preferredLanguagesItems = await useRegistrationStore().fetchPreferredLanguages() as IOptionItemData[];
-      }
-
-      let primarySpokenLanguagesItems = useRegistrationStore().getPrimarySpokenLanguages(true) as IOptionItemData[];
-      if (primarySpokenLanguagesItems.length === 0) {
-        primarySpokenLanguagesItems = await useRegistrationStore().fetchPrimarySpokenLanguages() as IOptionItemData[];
-      }
-
-      const members = await this.fetchMembersInformation(household);
-
-      const communitiesItems = await useRegistrationStore().fetchIndigenousCommunities();
-
-      const emptyCurrentAddress = {
-        country: 'CA',
-        streetAddress: null,
-        unitSuite: null,
-        province: null,
-        specifiedOtherProvince: null,
-        city: null,
-        postalCode: null,
-        latitude: 0,
-        longitude: 0,
-      } as IAddressData;
-
-      members.forEach((m, index) => {
-        const currentAddress = {
-          ...m.currentAddress,
-          address: !m.currentAddress || m.currentAddress.address === null ? emptyCurrentAddress : m.currentAddress.address,
-        };
-
-        const member = deepmerge(m, {
-          identitySet: this.parseIdentitySet(m, communitiesItems, genderItems),
-          contactInformation: this.parseContactInformation(m, preferredLanguagesItems, primarySpokenLanguagesItems),
-          currentAddress,
-        });
-
-        if (index === 0) {
-          primaryBeneficiary = member;
-        } else {
-          additionalMembers.push(member);
-        }
-      });
-
-      return {
-        id: household.id,
-        registrationNumber: household.registrationNumber,
-        consentInformation: {
-          crcUserName: '',
-          registrationLocationId: '',
-          registrationMethod: null,
-          privacyDateTimeConsent: '',
-        },
-        primaryBeneficiary,
-        homeAddress: household.address?.address,
-        additionalMembers,
-        noFixedHome: household.address?.address === null,
-      };
-    },
-
-    parseIdentitySet(member: IMemberEntity, indigenousCommunities: IIndigenousCommunityData[], genderItems: IOptionItemData[]) {
-      const indigenous = member.identitySet?.indigenousIdentity?.indigenousCommunityId
-        ? indigenousCommunities.find((c) => c.id === member.identitySet.indigenousIdentity.indigenousCommunityId) : null;
-
-      return {
-        birthDate: householdHelpers.convertBirthDateStringToObject(member.identitySet.dateOfBirth),
-        genderOther: member.identitySet.gender.specifiedOther,
-        gender: genderItems.find((i) => i.id === member.identitySet.gender.optionItemId),
-        indigenousCommunityId: indigenous?.id,
-        indigenousCommunityOther: member.identitySet?.indigenousIdentity?.specifiedOther,
-        indigenousType: indigenous?.communityType,
-      };
-    },
-
-    parseContactInformation(member: IMemberEntity, preferredLanguagesItems: IOptionItemData[], primarySpokenLanguagesItems: IOptionItemData[]) {
-      const emptyPhone = {
-        countryCode: 'CA',
-        e164Number: '',
-        extension: '',
-        number: '',
-      };
-
-      const primarySpokenLanguage = member.contactInformation?.primarySpokenLanguage?.optionItemId
-        ? primarySpokenLanguagesItems.find((i) => i.id === member.contactInformation.primarySpokenLanguage.optionItemId) : null;
-
-      const preferredLanguage = member.contactInformation?.preferredLanguage?.optionItemId
-        ? preferredLanguagesItems.find((i) => i.id === member.contactInformation.preferredLanguage.optionItemId) : null;
-
-      const primarySpokenLanguageOther = member.contactInformation?.primarySpokenLanguage?.specifiedOther
-        ? member.contactInformation.primarySpokenLanguage.specifiedOther : '';
-
-      const preferredLanguageOther = member.contactInformation?.preferredLanguage?.specifiedOther
-        ? member.contactInformation.preferredLanguage.specifiedOther : '';
-
-      return {
-        alternatePhoneNumber: member.contactInformation?.alternatePhoneNumber || emptyPhone,
-        mobilePhoneNumber: member.contactInformation?.mobilePhoneNumber || emptyPhone,
-        homePhoneNumber: member.contactInformation?.homePhoneNumber || emptyPhone,
-        preferredLanguage,
-        primarySpokenLanguage,
-        primarySpokenLanguageOther,
-        preferredLanguageOther,
-      };
-    },
-
-    async addShelterLocationData(members: IMemberEntity[]): Promise<IMemberEntity[]> {
-      const mem = await Promise.all(members.map(async (m) => {
-        if (m.currentAddress?.shelterLocationId) {
-          const shelterLocation = await this.getShelterLocationDatafromId(m.currentAddress?.shelterLocationId);
-          return {
-            ...m,
-            currentAddress: {
-              ...m.currentAddress,
-              shelterLocation,
-            },
-          };
-        }
-        return m;
-      }));
-
-      return mem;
-    },
-
-    async getShelterLocationDatafromId(shelterLocationId: string): Promise<IEventGenericLocation> {
-      const locationFromState = [...this.shelterLocations, ...this.otherShelterLocations].find((l) => l.id === shelterLocationId);
-      if (locationFromState) {
-        return locationFromState;
-      }
-
-      const filter = {
-        Entity: {
-          ShelterLocations: {
-            any: {
-              Id: shelterLocationId,
-            },
-          },
-        },
-      };
-
-      const events = await this.$services.publicApi.searchEvents({ filter });
-      if (events?.value?.length) {
-        const event = events?.value[0].entity as IEventData;
-        const location = event.shelterLocations.find((l) => l.id === shelterLocationId);
-        // cache the shelter location data, so that the next member that has the same shelter location id doesn't need to refetch the data
-        this.otherShelterLocations.push(location);
-        return location;
-      }
-
-      return null;
+      const householdCreate = await useRegistrationStore().buildHouseholdCreateData(household, this.shelterLocations);
+      return householdCreate;
     },
   },
 

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import {
-  EIndigenousTypes, HouseholdCreate, IHouseholdCreateData, IIndigenousCommunityData, IMember, ISplitHousehold, Member,
+  EIndigenousTypes, HouseholdCreate, IAddressData, IHouseholdCreateData, IIndigenousCommunityData, IMember, IMemberEntity, ISplitHousehold, Member,
 } from '@libs/entities-lib/household-create';
 import { IInformationFromBeneficiarySearch, IRegistrationMenuItem } from '@libs/registration-lib/src/types';
 import Vue, { ref, Ref } from 'vue';
@@ -8,22 +8,26 @@ import { IVueI18n, TranslateResult } from 'vue-i18n';
 import {
   EOptionItemStatus, ERegistrationMode, IOptionItemData, IServerError,
 } from '@libs/shared-lib/types';
-import { IEventData as IRegistrationEventData, RegistrationEvent } from '@libs/entities-lib/registration-event';
+import { IEventData, IEventData as IRegistrationEventData, RegistrationEvent } from '@libs/entities-lib/registration-event';
 import { Status } from '@libs/entities-lib/base';
 import _sortBy from 'lodash/sortBy';
 import _cloneDeep from 'lodash/cloneDeep';
+import deepmerge from 'deepmerge';
 import { IPublicService, IPublicServiceMock } from '@libs/services-lib/public';
 import { IHouseholdsService, IHouseholdsServiceMock } from '@libs/services-lib/households/entity';
 import { IDetailedRegistrationResponse, IHouseholdEntity } from '@libs/entities-lib/household';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
-import { IRegistrationAssessment } from '@libs/entities-lib/event';
+import { IEventGenericLocation, IRegistrationAssessment } from '@libs/entities-lib/event';
+import libHelpers from '@libs/entities-lib/helpers';
 import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
+import { ICaseFilesService, ICaseFilesServiceMock } from '@libs/services-lib/case-files/entity';
 import {
   additionalMembersValid,
   addressesValid,
   isRegisteredValid,
   personalInformationValid,
-  privacyStatementValid, reviewRegistrationValid,
+  privacyStatementValid,
+  reviewRegistrationValid,
 } from './registrationUtils';
 
 /**
@@ -39,10 +43,13 @@ export interface IRegistrationParams {
   mode: ERegistrationMode
   publicApi: IPublicService | IPublicServiceMock,
   householdApi: IHouseholdsService | IHouseholdsServiceMock,
+  caseFileApi: ICaseFilesService | ICaseFilesServiceMock,
+  testMode?: boolean,
+  mockedInternalMethods?: {},
 }
 // eslint-disable-next-line max-lines-per-function
 export function storeFactory({
-  pTabs, i18n, skipAgeRestriction, skipEmailPhoneRules, mode, publicApi, householdApi,
+  pTabs, i18n, skipAgeRestriction, skipEmailPhoneRules, mode, publicApi, householdApi, caseFileApi, testMode, mockedInternalMethods,
 }: IRegistrationParams) {
   // eslint-disable-next-line max-lines-per-function, max-statements
   return defineStore('registration', () => {
@@ -70,6 +77,129 @@ export function storeFactory({
     const informationFromBeneficiarySearch = ref({}) as Ref<IInformationFromBeneficiarySearch>;
     const assessmentToComplete = ref(null) as Ref<{ registrationAssessment: IRegistrationAssessment, assessmentForm: IAssessmentFormEntity }>;
     const allTabs = ref(_cloneDeep(pTabs)) as Ref<IRegistrationMenuItem[]>;
+
+    const internalMethods = {
+      parseIdentitySet(member: IMemberEntity, indigenousCommunities: IIndigenousCommunityData[], genderItems: IOptionItemData[]) {
+        const indigenous = member.identitySet?.indigenousIdentity?.indigenousCommunityId
+          ? indigenousCommunities.find((c) => c.id === member.identitySet.indigenousIdentity.indigenousCommunityId) : null;
+
+        return {
+          birthDate: libHelpers.convertBirthDateStringToObject(member.identitySet.dateOfBirth),
+          genderOther: member.identitySet.gender.specifiedOther,
+          gender: genderItems.find((i) => i.id === member.identitySet.gender.optionItemId),
+          indigenousCommunityId: indigenous?.id,
+          indigenousCommunityOther: member.identitySet?.indigenousIdentity?.specifiedOther,
+          indigenousType: indigenous?.communityType,
+        };
+      },
+
+      parseContactInformation(member: IMemberEntity, preferredLanguagesItems: IOptionItemData[], primarySpokenLanguagesItems: IOptionItemData[]) {
+        const emptyPhone = {
+          countryCode: 'CA',
+          e164Number: '',
+          extension: '',
+          number: '',
+        };
+
+        const primarySpokenLanguage = member.contactInformation?.primarySpokenLanguage?.optionItemId
+          ? primarySpokenLanguagesItems.find((i) => i.id === member.contactInformation.primarySpokenLanguage.optionItemId) : null;
+
+        const preferredLanguage = member.contactInformation?.preferredLanguage?.optionItemId
+          ? preferredLanguagesItems.find((i) => i.id === member.contactInformation.preferredLanguage.optionItemId) : null;
+
+        const primarySpokenLanguageOther = member.contactInformation?.primarySpokenLanguage?.specifiedOther
+          ? member.contactInformation.primarySpokenLanguage.specifiedOther : '';
+
+        const preferredLanguageOther = member.contactInformation?.preferredLanguage?.specifiedOther
+          ? member.contactInformation.preferredLanguage.specifiedOther : '';
+
+        return {
+          alternatePhoneNumber: member.contactInformation?.alternatePhoneNumber || emptyPhone,
+          mobilePhoneNumber: member.contactInformation?.mobilePhoneNumber || emptyPhone,
+          homePhoneNumber: member.contactInformation?.homePhoneNumber || emptyPhone,
+          preferredLanguage,
+          primarySpokenLanguage,
+          primarySpokenLanguageOther,
+          preferredLanguageOther,
+        };
+      },
+
+      async getShelterLocationDatafromId(
+        shelterLocationId: string,
+        shelterLocations: IEventGenericLocation[],
+        otherShelterLocations: IEventGenericLocation[],
+      ): Promise<IEventGenericLocation> {
+        const locationFromParameters = [...shelterLocations, ...otherShelterLocations].find((l) => l.id === shelterLocationId);
+        if (locationFromParameters) {
+          return locationFromParameters;
+        }
+
+        const filter = {
+          Entity: {
+            ShelterLocations: {
+              any: {
+                Id: shelterLocationId,
+              },
+            },
+          },
+        };
+
+        const events = await publicApi.searchEvents({ filter });
+        if (events?.value?.length) {
+          const event = events?.value[0].entity as IEventData;
+          const location = event.shelterLocations.find((l) => l.id === shelterLocationId);
+          // cache the shelter location data, so that the next member that has the same shelter location id doesn't need to refetch the data
+          otherShelterLocations.push(location);
+          return location;
+        }
+
+        return null;
+      },
+
+      async addShelterLocationData(members: IMemberEntity[], shelterLocations: IEventGenericLocation[]): Promise<IMemberEntity[]> {
+        const otherShelterLocations = [] as IEventGenericLocation[];
+        const mem = await Promise.all(members.map(async (m) => {
+          if (m.currentAddress?.shelterLocationId) {
+            const shelterLocation = await this.getShelterLocationDatafromId(m.currentAddress?.shelterLocationId, shelterLocations, otherShelterLocations);
+            return {
+              ...m,
+              currentAddress: {
+                ...m.currentAddress,
+                shelterLocation,
+              },
+            };
+          }
+          return m;
+        }));
+
+        return mem;
+      },
+
+      async fetchMembersInformation(household: IHouseholdEntity, shelterLocations: IEventGenericLocation[]): Promise<IMemberEntity[]> {
+        if (!household.members?.length) {
+          return [];
+        }
+        let primaryBeneficiaryPromise;
+        const additionalMembersPromises = [] as Array<Promise<IMemberEntity>>;
+
+        household.members.forEach((id) => {
+          const promise = (mode === ERegistrationMode.CRC ? householdApi.getPerson(id) : householdApi.publicGetPerson(id)) as Promise<IMemberEntity>;
+
+          if (id === household.primaryBeneficiary) {
+            primaryBeneficiaryPromise = promise;
+          } else {
+            additionalMembersPromises.push(promise);
+          }
+        });
+
+        let members: IMemberEntity[] = await Promise.all([primaryBeneficiaryPromise, ...additionalMembersPromises]);
+
+        members = await this.addShelterLocationData(members, shelterLocations);
+        return members;
+      },
+
+      ...(mockedInternalMethods || {}),
+    };
 
     function getAssessmentToComplete() {
       return _cloneDeep(assessmentToComplete.value);
@@ -116,10 +246,9 @@ export function storeFactory({
       if (currentTabIndex.value === 0) {
         return 'registration.privacy_statement.start_registration';
       }
-      if (getCurrentTab().id === 'confirmation') {
-        return '';
-      }
-      return tabs.value[currentTabIndex.value - 1].titleKey;
+
+      const nonDisabledTabs = tabs.value.filter((t, index) => index < currentTabIndex.value && !t.disabled);
+      return nonDisabledTabs.length ? nonDisabledTabs[nonDisabledTabs.length - 1].titleKey : null;
     }
     function getNextTabName() {
       if (currentTabIndex.value >= tabs.value.length - 2) {
@@ -271,7 +400,7 @@ export function storeFactory({
       registrationErrors.value = null;
     }
     function resetTabs() {
-      for (let index = 0; index < allTabs.value.length; index += 1) {
+      for (let index = 0; index < tabs.value.length; index += 1) {
         mutateTabAtIndex(index, (tab: IRegistrationMenuItem) => {
           tab.disabled = false;
           tab.isValid = true;
@@ -349,16 +478,23 @@ export function storeFactory({
       return communities;
     }
 
-    async function submitRegistration(recaptchaToken?: string): Promise<IDetailedRegistrationResponse> {
+    async function submitRegistration(): Promise<IDetailedRegistrationResponse> {
       let result: IDetailedRegistrationResponse;
       submitLoading.value = true;
       try {
         if (mode === ERegistrationMode.Self) {
-          result = await householdApi.submitRegistration({
-            household: householdCreate.value,
-            eventId: event.value.id,
-            recaptchaToken,
-          });
+          if (householdCreate.value.id) {
+            result = await caseFileApi.createCaseFile({
+              householdId: householdCreate.value.id,
+              eventId: event.value.id,
+              consentInformation: householdCreate.value.consentInformation,
+            }, true);
+          } else {
+            result = await householdApi.submitRegistration({
+              household: householdCreate.value,
+              eventId: event.value.id,
+            });
+          }
         } else {
           result = await householdApi.submitCRCRegistration(householdCreate.value, event.value.id);
         }
@@ -376,8 +512,8 @@ export function storeFactory({
 
     async function updatePersonContactInformation(
       { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index?: number },
-    ): Promise<IHouseholdEntity> {
-      const result = await householdApi.updatePersonContactInformation(member.id, {
+    ): Promise<IMemberEntity> {
+      const result = await householdApi.updatePersonContactInformation(member.id, mode === ERegistrationMode.Self, {
         contactInformation: member.contactInformation,
         identitySet: member.identitySet,
         isPrimaryBeneficiary: isPrimaryMember,
@@ -395,8 +531,8 @@ export function storeFactory({
 
     async function updatePersonIdentity(
       { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index?: number },
-    ): Promise<IHouseholdEntity> {
-      const result = await householdApi.updatePersonIdentity(member.id, {
+    ): Promise<IMemberEntity> {
+      const result = await householdApi.updatePersonIdentity(member.id, mode === ERegistrationMode.Self, {
         contactInformation: member.contactInformation,
         identitySet: member.identitySet,
       });
@@ -416,10 +552,10 @@ export function storeFactory({
       {
         member, isPrimaryMember, index = -1, sameAddress = false,
       }: { member: IMember; isPrimaryMember: boolean; index?: number; sameAddress?: boolean },
-    ): Promise<IHouseholdEntity> {
+    ): Promise<IMemberEntity> {
       let result;
       if (isPrimaryMember) {
-        result = await householdApi.updatePersonAddress(member.id, member.currentAddress);
+        result = await householdApi.updatePersonAddress(member.id, mode === ERegistrationMode.Self, member.currentAddress);
         if (result) {
           householdCreate.value.setCurrentAddress(member.currentAddress);
         }
@@ -428,7 +564,7 @@ export function storeFactory({
         if (sameAddress) {
           address = householdCreate.value.primaryBeneficiary.currentAddress;
         }
-        result = await householdApi.updatePersonAddress(member.id, address);
+        result = await householdApi.updatePersonAddress(member.id, mode === ERegistrationMode.Self, address);
         if (result) {
           householdCreate.value.editAdditionalMember(member, index, sameAddress);
         }
@@ -440,7 +576,7 @@ export function storeFactory({
       if (sameAddress) {
         member.currentAddress = { ...householdCreate.value.primaryBeneficiary.currentAddress };
       }
-      const res = await householdApi.addMember(householdId, member);
+      const res = await householdApi.addMember(householdId, mode === ERegistrationMode.Self, member);
       if (res) {
         const newMember = new Member({ ...member, id: res.members[res.members.length - 1] });
         householdCreate.value.addAdditionalMember(newMember, sameAddress);
@@ -449,7 +585,7 @@ export function storeFactory({
     }
 
     async function deleteAdditionalMember({ householdId, memberId, index }: { householdId: string; memberId: string; index: number }): Promise<IHouseholdEntity> {
-      const res = await householdApi.deleteAdditionalMember(householdId, memberId);
+      const res = await householdApi.deleteAdditionalMember(householdId, mode === ERegistrationMode.Self, memberId);
       if (res) {
         householdCreate.value.removeAdditionalMember(index);
       }
@@ -470,6 +606,91 @@ export function storeFactory({
         submitLoading.value = false;
       }
       return result;
+    }
+
+    async function buildHouseholdCreateData(household: IHouseholdEntity, shelterLocations?: IEventGenericLocation[]): Promise<IHouseholdCreateData> {
+      let primaryBeneficiary;
+      const additionalMembers = [] as Array<IMemberEntity>;
+
+      let genderItems = getGenders(true) as IOptionItemData[];
+      if (genderItems.length === 0) {
+        genderItems = await fetchGenders() as IOptionItemData[];
+      }
+
+      let preferredLanguagesItems = getPreferredLanguages() as IOptionItemData[];
+      if (preferredLanguagesItems.length === 0) {
+        preferredLanguagesItems = await fetchPreferredLanguages() as IOptionItemData[];
+      }
+
+      let primarySpokenLanguagesItems = getPrimarySpokenLanguages(true) as IOptionItemData[];
+      if (primarySpokenLanguagesItems.length === 0) {
+        primarySpokenLanguagesItems = await fetchPrimarySpokenLanguages() as IOptionItemData[];
+      }
+
+      const members = await internalMethods.fetchMembersInformation(household, shelterLocations || event.value?.shelterLocations);
+
+      const communitiesItems = await fetchIndigenousCommunities();
+
+      const emptyCurrentAddress = {
+        country: 'CA',
+        streetAddress: null,
+        unitSuite: null,
+        province: null,
+        specifiedOtherProvince: null,
+        city: null,
+        postalCode: null,
+        latitude: 0,
+        longitude: 0,
+      } as IAddressData;
+
+      members.forEach((m, index) => {
+        const currentAddress = {
+          ...m.currentAddress,
+          address: !m.currentAddress || m.currentAddress.address === null ? emptyCurrentAddress : m.currentAddress.address,
+        };
+
+        const member = deepmerge(m, {
+          identitySet: internalMethods.parseIdentitySet(m, communitiesItems, genderItems),
+          contactInformation: internalMethods.parseContactInformation(m, preferredLanguagesItems, primarySpokenLanguagesItems),
+          currentAddress,
+        });
+
+        if (index === 0) {
+          primaryBeneficiary = member;
+        } else {
+          additionalMembers.push(member);
+        }
+      });
+
+      return {
+        id: household.id,
+        registrationNumber: household.registrationNumber,
+        consentInformation: {
+          crcUserName: '',
+          registrationLocationId: '',
+          registrationMethod: null,
+          privacyDateTimeConsent: '',
+        },
+        primaryBeneficiary,
+        homeAddress: household.address?.address,
+        additionalMembers,
+        noFixedHome: household.address?.address === null,
+      };
+    }
+
+    async function loadHousehold(householdId: string): Promise<HouseholdCreate> {
+      try {
+        const consentInformation = householdCreate.value.consentInformation;
+        const household = mode === ERegistrationMode.CRC ? await householdApi.get(householdId) : await householdApi.publicGetHousehold(householdId);
+        setHouseholdCreate(await buildHouseholdCreateData(household));
+        householdCreate.value.primaryBeneficiary.contactInformation.emailValidatedByBackend = true;
+        householdCreate.value.consentInformation = consentInformation;
+        return householdCreate.value;
+      } catch (e) {
+        applicationInsights.trackTrace('loadHousehold error', { error: e }, 'store.registration', 'loadHousehold');
+        registrationErrors.value = e as IServerError;
+      }
+      return null;
     }
 
     return {
@@ -535,6 +756,9 @@ export function storeFactory({
       setAssessmentToComplete,
       allTabs,
       setTabs,
+      loadHousehold,
+      buildHouseholdCreateData,
+      internalMethods: testMode ? internalMethods : null,
     };
   })();
 }

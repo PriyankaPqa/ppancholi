@@ -24,7 +24,7 @@ export enum EIndigenousTypes {
 
 export interface IIndigenousIdentityOption {
   indigenousCommunityId: uuid;
-  specifiedOther: string;
+  specifiedOther?: string;
 }
 
 export interface IIdentitySetCreateRequest {

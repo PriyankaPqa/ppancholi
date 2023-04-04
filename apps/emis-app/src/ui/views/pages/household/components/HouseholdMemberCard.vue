@@ -139,7 +139,7 @@
       :member="member"
       :shelter-locations-list="shelterLocations"
       :disable-autocomplete="!enableAutocomplete"
-      in-household-profile
+      submit-changes-to-service
       @close="closeAndReload" />
 
     <split-household-dialog

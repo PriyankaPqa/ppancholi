@@ -238,7 +238,8 @@ export default Vue.extend({
       this.$router.push({ name: routes.landingPage.name });
     },
     next() {
-
+      this.$emit('verified-individual', this.duplicateResults.duplicateHouseholdId);
+      this.$emit('update:show', false);
     },
     resetScreen() {
       this.selectedCommunication = null;
@@ -258,6 +259,8 @@ export default Vue.extend({
         }),
         // adding a timeout else it may not look like we've sent something... especially on retry
         helpers.timeout(5000)]);
+        // focus the first character box
+        this.focusNextOncePopulated(-1, 0);
       } catch (error) {
         const e = (error as IServerError).response?.data?.errors || error;
         applicationInsights.trackTrace('sendOneTimeCodeRegistrationPublic error', { error: e }, 'DuplicateDialog.vue', 'sendOneTimeCodeRegistrationPublic');
@@ -268,8 +271,10 @@ export default Vue.extend({
 
     // used to change the focus between the boxes for the 6 digit code
     async focusNextOncePopulated(index: number, max: number) {
-      if (this.chars[index].length >= max) {
-        this.chars[index] = this.chars[index].substring(0, max);
+      if (index === -1 || this.chars[index].length >= max) {
+        if (index > -1) {
+          this.chars[index] = this.chars[index].substring(0, max);
+        }
         const nextElement = (this.$refs.charsinput as any)[index + 1];
 
         if (nextElement) {

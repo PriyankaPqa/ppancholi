@@ -39,13 +39,13 @@ describe('Individual.vue', () => {
       });
 
       test('Click next button triggers method', async () => {
-        wrapper.vm.next = jest.fn();
+        wrapper.vm.goNext = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         const btn = wrapper.findDataTest('nextButton');
         await btn.trigger('click');
 
-        expect(wrapper.vm.next).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.goNext).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -128,12 +128,12 @@ describe('Individual.vue', () => {
 
     describe('goNext', () => {
       it(
-        'should called execute from recaptcha if on review stage and if BotProtection is enabled and if ip address is not in allowed list',
+        'should called execute from recaptcha if a token was already fetched and if BotProtection is enabled and if ip address is not in allowed list',
         async () => {
           wrapper.vm.$refs.recaptchaSubmit = {};
           wrapper.vm.validateAndNext = jest.fn();
           wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
-          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'review'));
+          await wrapper.setData({ tokenFetchedLast: new Date(2000, 1, 1) });
           wrapper.vm.$hasFeature = jest.fn(() => true);
           tenantSettingsStore.recaptcha = {
             ipAddressIsAllowed: false,
@@ -145,7 +145,7 @@ describe('Individual.vue', () => {
         },
       );
       it(
-        'should called execute from recaptcha if on personalInfo stage and SelfRegistration is enabled and if BotProtection is enabled and if ip address is not in allowed list',
+        'should called execute from recaptcha if on personalInfo stage and BotProtection is enabled and if ip address is not in allowed list',
         async () => {
           wrapper.vm.$refs.recaptchaSubmit = {};
           wrapper.vm.validateAndNext = jest.fn();
@@ -159,7 +159,6 @@ describe('Individual.vue', () => {
           await wrapper.vm.goNext();
           expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(1);
           expect(wrapper.vm.$hasFeature).toHaveBeenCalledWith('BotProtection');
-          expect(wrapper.vm.$hasFeature).toHaveBeenCalledWith('SelfRegistration');
         },
       );
       it('should call next from mixin otherwise', async () => {
@@ -171,16 +170,87 @@ describe('Individual.vue', () => {
       });
     });
 
-    describe('recaptchaCallBack', () => {
-      it('should set the token and call validateAndNext', async () => {
-        wrapper.vm.validateAndNext = jest.fn();
-        await wrapper.vm.recaptchaCallBack('token');
-        expect(wrapper.vm.recaptchaToken).toBe('token');
-        expect(wrapper.vm.validateAndNext).toHaveBeenCalledTimes(1);
+    describe('fetchPublicToken', () => {
+      it('should call recaptcha if BotProtection is enabled and if ip address is not in allowed list', async () => {
+        wrapper.vm.$refs.recaptchaSubmit = {};
+        const nextFunc = jest.fn();
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
+        tenantSettingsStore.recaptcha = {
+          ipAddressIsAllowed: false,
+          clientIpAddress: '',
+        };
+        await wrapper.vm.fetchPublicToken(nextFunc);
+        expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalled();
+        expect(wrapper.vm.functionAfterToken).toBe(nextFunc);
+        expect(nextFunc).not.toHaveBeenCalled();
+      });
+
+      it('should not call recaptcha if BotProtection is disabled', async () => {
+        wrapper.vm.$refs.recaptchaSubmit = {};
+        const nextFunc = jest.fn();
+        wrapper.vm.$hasFeature = jest.fn(() => false);
+        wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
+        tenantSettingsStore.recaptcha = {
+          ipAddressIsAllowed: false,
+          clientIpAddress: '',
+        };
+        await wrapper.vm.fetchPublicToken(nextFunc);
+        expect(wrapper.vm.$refs.recaptchaSubmit.execute).not.toHaveBeenCalled();
+        expect(wrapper.vm.functionAfterToken).toBeFalsy();
+        expect(nextFunc).toHaveBeenCalled();
+      });
+
+      it('should not call recaptcha if was called recently', async () => {
+        wrapper.vm.$refs.recaptchaSubmit = {};
+        const nextFunc = jest.fn();
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
+        await wrapper.setData({ tokenFetchedLast: new Date() });
+        tenantSettingsStore.recaptcha = {
+          ipAddressIsAllowed: false,
+          clientIpAddress: '',
+        };
+        await wrapper.vm.fetchPublicToken(nextFunc);
+        expect(wrapper.vm.$refs.recaptchaSubmit.execute).not.toHaveBeenCalled();
+        expect(wrapper.vm.functionAfterToken).toBeFalsy();
+        expect(nextFunc).toHaveBeenCalled();
+
+        jest.clearAllMocks();
+        await wrapper.setData({ tokenFetchedLast: new Date(2000, 1, 1) });
+        await wrapper.vm.fetchPublicToken(nextFunc);
+        expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalled();
       });
     });
 
-    describe('validateAndNext', () => {
+    describe('recaptchaCallBack', () => {
+      it('should set the last date the token was fetched and call validateAndNext', async () => {
+        const nextFunc = jest.fn();
+        await wrapper.setData({ functionAfterToken: nextFunc });
+        await wrapper.vm.recaptchaCallBack('token');
+        expect(wrapper.vm.$services.households.getPublicToken).toHaveBeenCalledWith('token');
+        expect(wrapper.vm.tokenFetchedLast).toBeTruthy();
+        expect(nextFunc).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('loadHousehold', () => {
+      test('calls the store, jumps to review and disables other tabs', async () => {
+        wrapper.vm.jump = jest.fn();
+        wrapper.vm.disableOtherTabs = jest.fn();
+        wrapper.vm.$registrationStore.loadHousehold = jest.fn();
+
+        const details = { householdId: 'someId', verificationCode: 'someCode' };
+
+        await wrapper.vm.loadHousehold(details);
+
+        expect(wrapper.vm.jump).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.disableOtherTabs).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$registrationStore.loadHousehold).toHaveBeenCalledWith(details);
+      });
+    });
+
+    describe('validateAndNextPersonalInfo', () => {
       it('calls checkForPossibleDuplicatePublic if on personalInfo stage and SelfRegistration is enabled', async () => {
         window.confirm = () => true;
         wrapper.vm.$services.households.checkForPossibleDuplicatePublic = jest.fn(() => ({
@@ -191,9 +261,7 @@ describe('Individual.vue', () => {
         wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
         wrapper.vm.$hasFeature = jest.fn(() => true);
         wrapper.vm.next = jest.fn();
-        await wrapper.vm.validateAndNext();
-        expect(wrapper.vm.$services.households.getPublicToken)
-          .toHaveBeenCalledWith(wrapper.vm.recaptchaToken);
+        await wrapper.vm.validateAndNextPersonalInfo();
         expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic)
           .toHaveBeenCalledWith(wrapper.vm.event.id, wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary);
         // will change once be is implemented
@@ -201,18 +269,12 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.showDuplicateDialog).toBeTruthy();
         expect(wrapper.vm.next).toHaveBeenCalledTimes(0);
       });
-      it('doesnt call checkForPossibleDuplicatePublic if not personalInfo stage or SelfRegistration is not enabled', async () => {
+      it('doesnt call checkForPossibleDuplicatePublic if SelfRegistration is not enabled', async () => {
         window.confirm = () => true;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
         wrapper.vm.$hasFeature = jest.fn(() => false);
         wrapper.vm.next = jest.fn();
-        await wrapper.vm.validateAndNext();
-        expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic).not.toHaveBeenCalled();
-        expect(wrapper.vm.next).toHaveBeenCalledTimes(1);
-        jest.clearAllMocks();
-        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'review'));
-        wrapper.vm.$hasFeature = jest.fn(() => true);
         await wrapper.vm.validateAndNext();
         expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic).not.toHaveBeenCalled();
         expect(wrapper.vm.next).toHaveBeenCalledTimes(1);

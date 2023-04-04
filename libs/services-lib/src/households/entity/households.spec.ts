@@ -62,12 +62,11 @@ describe('>>> Beneficiaries Service', () => {
     await service.submitRegistration({
       household: mockHouseholdCreate(),
       eventId: 'event id',
-      recaptchaToken: 'token',
     });
 
     expect(http.post).toHaveBeenCalledWith(
 `${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`,
-      { ...createBeneficiaryRequest, recaptchaToken: 'token' },
+      { ...createBeneficiaryRequest },
       { globalHandler: false },
 );
   });
@@ -75,11 +74,11 @@ describe('>>> Beneficiaries Service', () => {
   test('postPublicRegistration is linked to the correct URL', async () => {
     service.parseHouseholdPayload = jest.fn(() => createBeneficiaryRequest);
 
-    await service.postPublicRegistration(createBeneficiaryRequest, 'token');
+    await service.postPublicRegistration(createBeneficiaryRequest);
 
     expect(http.post).toHaveBeenCalledWith(
       `${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`,
-      { ...createBeneficiaryRequest, recaptchaToken: 'token' },
+      { ...createBeneficiaryRequest },
       { globalHandler: false },
     );
   });
@@ -105,11 +104,27 @@ describe('>>> Beneficiaries Service', () => {
     expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}`);
   });
 
+  test('publicGetPerson is linked to the correct URL', async () => {
+    await service.publicGetPerson('123');
+    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/persons/public/${'123'}`);
+  });
+
+  test('publicGetHousehold is linked to the correct URL', async () => {
+    await service.publicGetHousehold('123');
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/public/${'123'}`);
+  });
+
   test('updatePersonContactInformation is linked to the correct URL', async () => {
     const contactInformation = mockContactInformation();
     const identitySet = mockIdentitySet();
-    await service.updatePersonContactInformation('123', { contactInformation, identitySet, isPrimaryBeneficiary: true });
+    await service.updatePersonContactInformation('123', false, { contactInformation, identitySet, isPrimaryBeneficiary: true });
     expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}/contact-information`, {
+      contactInformation: service.parseContactInformation(contactInformation),
+      identitySet: service.parseIdentitySet(identitySet),
+      isPrimaryBeneficiary: true,
+    });
+    await service.updatePersonContactInformation('123', true, { contactInformation, identitySet, isPrimaryBeneficiary: true });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/public/${'123'}/contact-information`, {
       contactInformation: service.parseContactInformation(contactInformation),
       identitySet: service.parseIdentitySet(identitySet),
       isPrimaryBeneficiary: true,
@@ -119,8 +134,13 @@ describe('>>> Beneficiaries Service', () => {
   test('updatePersonIdentity is linked to the correct URL', async () => {
     const contactInformation = mockContactInformation();
     const identitySet = mockIdentitySet();
-    await service.updatePersonIdentity('123', { contactInformation, identitySet });
+    await service.updatePersonIdentity('123', false, { contactInformation, identitySet });
     expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}/identity-set`, {
+      contactInformation: service.parseContactInformation(contactInformation),
+      identitySet: service.parseIdentitySet(identitySet),
+    });
+    await service.updatePersonIdentity('123', true, { contactInformation, identitySet });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/public/${'123'}/identity-set`, {
       contactInformation: service.parseContactInformation(contactInformation),
       identitySet: service.parseIdentitySet(identitySet),
     });
@@ -128,16 +148,27 @@ describe('>>> Beneficiaries Service', () => {
 
   test('updatePersonAddress is linked to the correct URL', async () => {
     const currentAddress = mockCampGround();
-    await service.updatePersonAddress('123', currentAddress);
+    await service.updatePersonAddress('123', false, currentAddress);
     expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}/current-address`, {
+      currentAddress: service.parseCurrentAddress(currentAddress),
+    });
+    await service.updatePersonAddress('123', true, currentAddress);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/public/${'123'}/current-address`, {
       currentAddress: service.parseCurrentAddress(currentAddress),
     });
   });
 
   test('updateHomeAddress is linked to the correct URL', async () => {
     const address = mockAddress();
-    await service.updateHomeAddress('123', address);
+    await service.updateHomeAddress('123', false, address);
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/address`, {
+      address: {
+        address: service.parseAddress(address),
+        from: moment.utc(moment()).format(),
+      },
+    });
+    await service.updateHomeAddress('123', true, address);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/public/${'123'}/address`, {
       address: {
         address: service.parseAddress(address),
         from: moment.utc(moment()).format(),
@@ -146,16 +177,23 @@ describe('>>> Beneficiaries Service', () => {
   });
 
   test('updateNoFixedHomeAddress is linked to the correct URL', async () => {
-    await service.updateNoFixedHomeAddress('123', 'test');
+    await service.updateNoFixedHomeAddress('123', false, 'test');
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/no-fixed-address`, {
+      from: moment.utc(moment()).format(),
+      observation: 'test',
+    });
+    await service.updateNoFixedHomeAddress('123', true, 'test');
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/public/${'123'}/no-fixed-address`, {
       from: moment.utc(moment()).format(),
       observation: 'test',
     });
   });
 
   test('deleteAdditionalMember is linked to the correct URL', async () => {
-    await service.deleteAdditionalMember('123', '345');
+    await service.deleteAdditionalMember('123', false, '345');
     expect(http.delete).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/members/${'345'}`);
+    await service.deleteAdditionalMember('123', true, '345');
+    expect(http.delete).toHaveBeenCalledWith(`${service.baseUrl}/public/${'123'}/members/${'345'}`);
   });
 
   test('splitHousehold is linked to the correct URL', async () => {
@@ -172,8 +210,13 @@ describe('>>> Beneficiaries Service', () => {
 
   test('addMember is linked to the correct URL', async () => {
     const member = mockMember();
-    await service.addMember('123', member);
+    await service.addMember('123', false, member);
     expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/members`, {
+      ...service.parseMember(member),
+      registrationType: ERegistrationMode.CRC,
+    });
+    await service.addMember('123', true, member);
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/public/${'123'}/members`, {
       ...service.parseMember(member),
       registrationType: ERegistrationMode.CRC,
     });
@@ -191,10 +234,9 @@ describe('>>> Beneficiaries Service', () => {
   test('validatePublicEmail is linked to the correct URL', async () => {
     const email = 'abc@abc.ca';
 
-    await service.validatePublicEmail({ emailAddress: email, recaptchaToken: '123' });
+    await service.validatePublicEmail({ emailAddress: email });
     expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/validate-email-address`, {
       emailAddress: email,
-      recaptchaToken: '123',
     }, { globalHandler: false });
   });
 

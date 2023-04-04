@@ -18,12 +18,10 @@
       @submit="onSubmit()">
       <v-row class="px-6">
         <v-col v-if="showWarning" cols="12" class="mb-4 pa-0">
-          <div class="msg-box">
-            <message-box
-              icon="mdi-alert"
-              data-test="approval_action_warning"
-              :message=" $t('approval.requests.action.noSupervisor')" />
-          </div>
+          <message-box
+            icon="mdi-alert"
+            data-test="approval_action_warning"
+            :message=" $t('approval.requests.action.noSupervisor')" />
         </v-col>
         <v-col cols="12" class="grey-container mb-4 px-8">
           <div class="rc-heading-5 fw-bold mb-4">
@@ -95,13 +93,12 @@
 import { ApprovalAction, IApprovalActionPayload, IFinancialAssistancePaymentCombined } from '@libs/entities-lib/financial-assistance-payment';
 import { IAzureTableSearchResults, VForm } from '@libs/shared-lib/types';
 import {
-  RcDialog, VAutocompleteWithValidation, VCheckboxWithValidation, VTextAreaWithValidation,
+  RcDialog, VAutocompleteWithValidation, VCheckboxWithValidation, VTextAreaWithValidation, MessageBox,
 } from '@libs/component-lib/components';
 import Vue from 'vue';
 import {
   IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
-import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
@@ -263,10 +260,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-  .msg-box{
-  margin-left: -12px;
-  margin-right: -12px;
-  }
-</style>

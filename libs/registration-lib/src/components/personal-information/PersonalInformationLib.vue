@@ -13,7 +13,6 @@
       :skip-phone-email-rules="skipPhoneEmailRules"
       :allow-duplicate-emails="allowDuplicateEmails"
       :person-id="member.id"
-      :recaptcha-key="recaptchaKey"
       @change="setContactInformation($event)" />
 
     <indigenous-identity-form
@@ -72,10 +71,6 @@ export default Vue.extend({
     memberProps: {
       type: Object as () => IMember,
       default: null,
-    },
-    recaptchaKey: {
-      type: String,
-      default: '',
     },
     includeInactiveOptions: {
       type: Boolean,

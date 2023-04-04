@@ -63,6 +63,7 @@ import Vue from 'vue';
 import moment from '@libs/shared-lib/plugins/moment';
 import { ICaseFileActivity } from '@libs/entities-lib/case-file';
 import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
+import { system } from '@/constants/system';
 
 /**
  * Template used for case note and case file activity items
@@ -115,8 +116,18 @@ export default Vue.extend({
           created: item.entity.created,
         };
       }
+
+      const cfActivity = (this.item as ICaseFileActivity);
+      let userName = cfActivity.user?.name;
+      if (cfActivity.user?.id === system.public_user_id) {
+        userName = this.$t('system.public_user_id') as string;
+      }
+      if (cfActivity.user?.id === system.system_user_id) {
+        userName = this.$t('system.system_user_id') as string;
+      }
+
       return {
-        userName: (this.item as ICaseFileActivity).user?.name,
+        userName,
         roleName: (this.item as ICaseFileActivity).role?.name,
         created: (this.item as ICaseFileActivity).created,
       };

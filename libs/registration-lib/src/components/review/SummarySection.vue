@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="title-container mb-2 mt-8">
+    <div class="title-container mb-2">
       <div data-test="title" class="rc-heading-5 flex-grow-1 fw-bold">
         {{ title }}
       </div>

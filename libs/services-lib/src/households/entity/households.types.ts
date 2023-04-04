@@ -10,7 +10,6 @@ import {
   IValidateEmailResponse,
   IValidateEmailRequest,
   IConsentInformation,
-  IValidateEmailPublicRequest,
   ICheckForPossibleDuplicateResponse,
   ISendOneTimeCodeRegistrationPublicPayload,
   IVerifyOneTimeCodeRegistrationPublicPayload,
@@ -31,23 +30,25 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
   getIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
   getPerson(id: uuid): Promise<IMemberEntity>;
-  submitRegistration({ household, eventId, recaptchaToken }: { household: IHouseholdCreate; eventId: string; recaptchaToken: string }): Promise<IDetailedRegistrationResponse>;
-  postPublicRegistration(payload: ICreateHouseholdRequest, recaptchaToken: string): Promise<IDetailedRegistrationResponse>
+  submitRegistration({ household, eventId }: { household: IHouseholdCreate; eventId: string; }): Promise<IDetailedRegistrationResponse>;
+  postPublicRegistration(payload: ICreateHouseholdRequest): Promise<IDetailedRegistrationResponse>
   submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IDetailedRegistrationResponse>;
   postCrcRegistration(payload: ICreateHouseholdRequest): Promise<IDetailedRegistrationResponse>
   updatePersonContactInformation(id: string,
-      payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet }): Promise<IHouseholdEntity> | false;
+      publicMode: boolean,
+      payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet }): Promise<IMemberEntity> | false;
   updatePersonIdentity(id: string,
-    payload: { contactInformation: IContactInformation; identitySet: IIdentitySet }): Promise<IHouseholdEntity> | false;
-  updatePersonAddress(id: string, payload: ICurrentAddress): Promise<IHouseholdEntity> | false;
-  updateHomeAddress(id: string, payload: IAddress): Promise<IHouseholdEntity> | false;
-  updateNoFixedHomeAddress(id: string, observation?: string): Promise<IHouseholdEntity> | false;
-  deleteAdditionalMember(householdId: string, memberId: string): Promise<IHouseholdEntity>;
-  addMember(householdId: string, payload: IMember): Promise<IHouseholdEntity>;
+      publicMode: boolean,
+      payload: { contactInformation: IContactInformation; identitySet: IIdentitySet }): Promise<IMemberEntity> | false;
+  updatePersonAddress(id: string, publicMode: boolean, payload: ICurrentAddress): Promise<IMemberEntity> | false;
+  updateHomeAddress(id: string, publicMode: boolean, payload: IAddress): Promise<IHouseholdEntity> | false;
+  updateNoFixedHomeAddress(id: string, publicMode: boolean, observation?: string): Promise<IHouseholdEntity> | false;
+  deleteAdditionalMember(householdId: string, publicMode: boolean, memberId: string): Promise<IHouseholdEntity>;
+  addMember(householdId: string, publicMode: boolean, payload: IMember): Promise<IHouseholdEntity>;
   splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IDetailedRegistrationResponse>;
   moveMembers(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]>;
   validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
-  validatePublicEmail(request: IValidateEmailPublicRequest): Promise<IValidateEmailResponse>;
+  validatePublicEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
   makePrimary(id: string, memberId: string, consentInformation: IConsentInformation): Promise<IHouseholdEntity>;
   hasOutstandingPayments(id: uuid): Promise<IOustandingPaymentResponse>;
   getHouseholdActivity(id: uuid): Promise<IHouseholdActivity[]>;
@@ -60,6 +61,8 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   sendOneTimeCodeRegistrationPublic(payload: ISendOneTimeCodeRegistrationPublicPayload): Promise<void>;
   verifyOneTimeCodeRegistrationPublic(payload: IVerifyOneTimeCodeRegistrationPublicPayload): Promise<boolean>;
   getPublicToken(recaptchaToken: string): Promise<string>;
+  publicGetHousehold(id: uuid): Promise<IHouseholdEntity>;
+  publicGetPerson(id: uuid): Promise<IMemberEntity>;
 }
 
 export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHouseholdEntity> {
@@ -72,9 +75,9 @@ export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHousehol
   getPerson: jest.Mock<IMemberEntity>;
   submitCRCRegistration: jest.Mock<IDetailedRegistrationResponse>;
   postCRCRegistration: jest.Mock<IDetailedRegistrationResponse>;
-  updatePersonContactInformation: jest.Mock<IHouseholdEntity>;
-  updatePersonIdentity: jest.Mock<IHouseholdEntity>;
-  updatePersonAddress: jest.Mock<IHouseholdEntity>;
+  updatePersonContactInformation: jest.Mock<IMemberEntity>;
+  updatePersonIdentity: jest.Mock<IMemberEntity>;
+  updatePersonAddress: jest.Mock<IMemberEntity>;
   updateHomeAddress: jest.Mock<IHouseholdEntity>;
   updateNoFixedHomeAddress: jest.Mock<IHouseholdEntity>;
   deleteAdditionalMember: jest.Mock<IHouseholdEntity>;
@@ -95,4 +98,6 @@ export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHousehol
   sendOneTimeCodeRegistrationPublic: jest.Mock<void>;
   verifyOneTimeCodeRegistrationPublic: jest.Mock<boolean>;
   getPublicToken: jest.Mock<string>;
+  publicGetHousehold: jest.Mock<IHouseholdEntity>;
+  publicGetPerson: jest.Mock<IMemberEntity>;
 }

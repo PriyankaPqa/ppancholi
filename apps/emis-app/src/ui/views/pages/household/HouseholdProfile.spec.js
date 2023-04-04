@@ -26,8 +26,6 @@ const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMemb
 const householdEntity = mockHouseholdEntity();
 const services = mockProvider();
 
-const member = mockMember();
-
 const { pinia, registrationStore } = useMockRegistrationStore();
 const { householdStore, householdMetadataStore } = useMockHouseholdStore(pinia);
 
@@ -1227,7 +1225,6 @@ describe('HouseholdProfile.vue', () => {
         });
 
         jest.spyOn(wrapper.vm, 'buildHouseholdCreateData').mockImplementation(() => householdCreate);
-        jest.spyOn(wrapper.vm, 'addShelterLocationData').mockImplementation(() => [member]);
         await wrapper.vm.setHouseholdCreate();
         expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(householdEntity);
         expect(registrationStore.setHouseholdCreate).toHaveBeenCalledWith(householdCreate);

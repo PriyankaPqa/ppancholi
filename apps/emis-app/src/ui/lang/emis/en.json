@@ -1,4 +1,6 @@
 {
+    "system.public_user_id": "Individual",
+    "system.system_user_id": "System",
     "DuplicateStatus.Added": "The case file has been identified as a potential duplicate",
     "DuplicateStatus.Removed": "Duplicate flag has been removed from the case file",
     "account_settings.preferredLanguage.notSet": "No set language",

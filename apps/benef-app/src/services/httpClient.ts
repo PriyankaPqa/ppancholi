@@ -7,7 +7,7 @@ export const getHttpClient = ({ accessToken, baseUrl, authentication }: { access
   baseUrl,
   redirect403Url: null,
   timerBeforeRedirection: 3000,
-  useErrorReport: true,
+  useErrorReport: false,
 });
 
 export const httpClient = getHttpClient({

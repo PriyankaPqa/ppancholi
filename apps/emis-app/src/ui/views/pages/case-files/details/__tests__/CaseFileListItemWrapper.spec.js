@@ -2,6 +2,7 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFileActivities } from '@libs/entities-lib/case-file';
 import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
 import moment from '@libs/shared-lib/plugins/moment';
+import { system } from '@/constants/system';
 
 import Component from '../components/CaseFileListItemWrapper.vue';
 
@@ -132,6 +133,33 @@ describe('CaseFileListItemWrapper.vue', () => {
         expect(wrapper.vm.listItem).toEqual({
           userName: item.user.name,
           roleName: item.role.name,
+          created: item.created,
+        });
+      });
+
+      it('overwrites the name for system users if item is an activity item', () => {
+        const item = mockCaseFileActivities()[0];
+        item.role = null;
+        item.user.id = system.public_user_id;
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            item,
+            sidebarIcon: 'mock-icon',
+            isCaseNote: false,
+          },
+        });
+
+        expect(wrapper.vm.listItem).toEqual({
+          userName: 'system.public_user_id',
+          roleName: undefined,
+          created: item.created,
+        });
+
+        item.user.id = system.system_user_id;
+        expect(wrapper.vm.listItem).toEqual({
+          userName: 'system.system_user_id',
+          roleName: undefined,
           created: item.created,
         });
       });

@@ -34,7 +34,7 @@
                   {{ $t(currentTab.backButtonTextKey) }}
                 </v-btn>
               </template>
-              <v-btn v-else :aria-label="$t(currentTab.backButtonTextKey)" data-test="backButton" :disabled="submitLoading || retrying" @click="back()">
+              <v-btn v-else-if="!!previousTabName" :aria-label="$t(currentTab.backButtonTextKey)" data-test="backButton" :disabled="submitLoading || retrying" @click="back()">
                 {{ $t(currentTab.backButtonTextKey) }}
               </v-btn>
 
@@ -76,7 +76,8 @@
       v-if="showDuplicateDialog"
       :show.sync="showDuplicateDialog"
       :duplicate-results="duplicateResult"
-      :phone="phoneAssistance" />
+      :phone="phoneAssistance"
+      @verified-individual="loadHousehold" />
   </div>
 </template>
 
@@ -124,12 +125,13 @@ export default mixins(individual).extend({
   },
 
   data: () => ({
-    recaptchaToken: null,
     recaptchaKey: localStorage.getItem(localStorageKeys.recaptchaKey.name),
     FeatureKeys,
     showErrorDialog: false,
     showDuplicateDialog: false,
     duplicateResult: null as ICheckForPossibleDuplicateResponse,
+    functionAfterToken: null as () => void,
+    tokenFetchedLast: null as Date,
   }),
 
   computed: {
@@ -138,7 +140,39 @@ export default mixins(individual).extend({
     },
   },
 
+created() {
+  // fetch public token will try to do a recaptcha if needed and return a valid beneficiary token
+  // if the token was last fetched less then 30 minutes ago we dont do anything as it is valid for an hour
+  EventHub.$on('fetchPublicToken', this.fetchPublicToken);
+},
+
+destroyed() {
+  if (EventHub) {
+    EventHub.$off('fetchPublicToken', this.fetchPublicToken);
+  }
+},
+
   methods: {
+    async fetchPublicToken(continueFnct: () => void, onlyIfNotFetchedRecently: boolean = true) {
+      // unless we specifically ask to renew the token, if one was fetched less then 30 minutes ago we continue
+      if (onlyIfNotFetchedRecently && this.tokenFetchedLast > new Date(new Date().getTime() - (30 * 60 * 1000))) {
+        await continueFnct();
+        return;
+      }
+      // if we have to do a recaptcha validation the token endpoint will require it first
+      // then we will be able to get the token on the recaptcha callback
+      if (this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
+        this.functionAfterToken = continueFnct;
+        // eslint-disable-next-line
+        (this.$refs.recaptchaSubmit as any).execute();
+      } else {
+        // no need for recaptcha the BE will not require one
+        await this.$services.households.getPublicToken(null);
+        this.tokenFetchedLast = new Date();
+        await continueFnct();
+      }
+    },
+
     async back() {
       if (this.currentTabIndex === 0) {
         await this.$router.push({ name: routes.landingPage.name });
@@ -148,27 +182,41 @@ export default mixins(individual).extend({
     },
 
     async goNext() {
-      if ((this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress)
-        && (this.currentTab.id === 'review' || (this.$hasFeature(FeatureKeys.SelfRegistration) && this.currentTab.id === 'personalInfo'))) {
-        // eslint-disable-next-line
-        (this.$refs.recaptchaSubmit as any).execute();
-      } else if (this.currentTab.id === 'personalInfo') {
-        EventHub.$emit('checkEmailValidation', this.validateAndNext);
+      if (this.currentTab.id === 'personalInfo') {
+        await this.fetchPublicToken(this.validateAndNextPersonalInfo);
+      } else if (this.tokenFetchedLast != null) {
+        // if we are passed personal info we keep the token alive
+        await this.fetchPublicToken(this.validateAndNext);
       } else {
+        // this is too early to have a token
         await this.validateAndNext();
       }
     },
 
-    async validateAndNext() {
+    async validateForm(): Promise<boolean> {
       const isValid = await (this.$refs.form as VForm).validate();
       if (!isValid) {
         helpers.scrollToFirstError('app');
+      }
+
+      return isValid;
+    },
+
+    async validateAndNext() {
+      const isValid = await this.validateForm();
+      if (isValid) {
+        await this.next();
+      }
+    },
+
+    async validateAndNextPersonalInfo() {
+      const isValid = await this.validateForm();
+      if (!isValid) {
         return;
       }
 
-      if (this.$hasFeature(FeatureKeys.SelfRegistration) && this.currentTab.id === 'personalInfo') {
+      if (this.$hasFeature(FeatureKeys.SelfRegistration)) {
         try {
-          await this.$services.households.getPublicToken(this.recaptchaToken);
           this.duplicateResult = await this.$services.households
             .checkForPossibleDuplicatePublic(this.event.id, useRegistrationStore().householdCreate.primaryBeneficiary);
         } catch (error) {
@@ -181,6 +229,8 @@ export default mixins(individual).extend({
           this.showDuplicateDialog = true;
           return;
         }
+        EventHub.$emit('checkEmailValidation', this.validateAndNext, false);
+        return;
       }
 
       await this.next();
@@ -188,9 +238,21 @@ export default mixins(individual).extend({
 
     async recaptchaCallBack(token: string) {
       if (token) { // you're not a robot
-        this.recaptchaToken = token;
-        await this.validateAndNext();
+        // we send the recaptcha to the BE to get the public token
+        await this.$services.households.getPublicToken(token);
+        this.tokenFetchedLast = new Date();
+        if (this.functionAfterToken) {
+          // if we wanted to do an action after getting the public token
+          await this.functionAfterToken();
+          this.functionAfterToken = null;
+        }
       }
+    },
+
+    async loadHousehold(householdId: string) {
+      await useRegistrationStore().loadHousehold(householdId);
+      await this.jump(this.allTabs.findIndex((x) => x.id === 'review'));
+      this.disableOtherTabs(this.currentTabIndex, false);
     },
   },
 });

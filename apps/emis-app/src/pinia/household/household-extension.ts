@@ -13,7 +13,7 @@ export function getExtensionComponents(
   const searchResultsShown = ref(false);
 
   async function updateNoFixedHomeAddress({ householdId, observation }: { householdId: string; observation: string }) {
-    const res = await entityService.updateNoFixedHomeAddress(householdId, observation);
+    const res = await entityService.updateNoFixedHomeAddress(householdId, false, observation);
     if (res) {
       baseComponents.set(res);
     }
@@ -21,14 +21,14 @@ export function getExtensionComponents(
   }
 
     async function updateHomeAddress({ householdId, address }: { householdId: string; address: IAddress }) {
-    const res = await entityService.updateHomeAddress(householdId, address);
+    const res = await entityService.updateHomeAddress(householdId, false, address);
     if (res) {
       baseComponents.set(res);
     }
     return res;
   }
 
-    async function fetchHouseholdHistory(household: IHouseholdEntity): Promise<IVersionedEntityCombined[]> {
+  async function fetchHouseholdHistory(household: IHouseholdEntity): Promise<IVersionedEntityCombined[]> {
     const householdEntityRequest = entityService.getHouseholdHistory(household.id);
     const householdMetadataRequest = entityService.getHouseholdMetadataHistory(household.id);
 

@@ -96,6 +96,7 @@
           </v-col>
           <message-box
             v-if="errorOutstandingPayments(i)"
+            class="ma-4"
             icon="mdi-alert"
             :message="m.identitySet.firstName + ' ' + m.identitySet.lastName + ' ' + $t('household.move.errorOutstandingPayments')" />
         </v-row>
@@ -247,11 +248,10 @@ import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentA
 import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
 import libHelpers from '@libs/entities-lib/helpers';
 import { IEventGenericLocation } from '@libs/entities-lib/registration-event';
-import { RcDialog } from '@libs/component-lib/components';
+import { RcDialog, MessageBox } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import householdHelpers from '@/ui/helpers/household';
 import { localStorageKeys } from '@/constants/localStorage';
-import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { VForm } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
 import { EEventLocationStatus } from '@libs/entities-lib/event';

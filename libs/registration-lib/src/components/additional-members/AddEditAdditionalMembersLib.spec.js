@@ -79,7 +79,7 @@ describe('AddEditAdditionalMembersLib.vue', () => {
       });
 
       it('returns the right value when in Household profile', async () => {
-        await wrapper.setProps({ inHouseholdProfile: true, index: 0 });
+        await wrapper.setProps({ submitChangesToService: true, index: 0 });
         expect(wrapper.vm.getTitle).toEqual({ key: 'household.details.edit.title', params: [{ x: 'Bob Smith' }] });
       });
     });
@@ -149,17 +149,18 @@ describe('AddEditAdditionalMembersLib.vue', () => {
           .toHaveBeenCalledWith(wrapper.vm.memberClone, 0, wrapper.vm.sameAddress);
       });
 
-      it('should calls addAdditionalMember with proper params', async () => {
+      it('should calls addAdditionalMember with proper params if submitChangesToService is true', async () => {
+        wrapper.setProps({ submitChangesToService: true });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.validate();
         expect(wrapper.vm.$registrationStore.addAdditionalMember)
           .toHaveBeenCalled();
       });
 
-      it('should call submitChanges if inHouseholdProfile is true', async () => {
+      it('should call submitChanges if submitChangesToService is true', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         jest.spyOn(wrapper.vm, 'submitChanges').mockImplementation(() => {});
-        wrapper.setProps({ inHouseholdProfile: true, index: 0 });
+        wrapper.setProps({ submitChangesToService: true, index: 0 });
         await wrapper.vm.validate();
         expect(wrapper.vm.submitChanges).toHaveBeenCalledTimes(1);
       });

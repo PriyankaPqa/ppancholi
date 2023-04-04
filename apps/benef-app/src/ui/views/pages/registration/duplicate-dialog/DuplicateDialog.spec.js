@@ -88,6 +88,14 @@ describe('DuplicateDialog.vue', () => {
       });
     });
 
+    describe('next', () => {
+      it('emits update:show false and verified-benficiary', async () => {
+        wrapper.vm.next();
+        expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
+        expect(wrapper.emitted('verified-individual')[0][0]).toEqual('duplicateHouseholdId');
+      });
+    });
+
     describe('goHome', () => {
       it('calls reset and goes home', () => {
         registrationStore.resetHouseholdCreate = jest.fn();

@@ -82,8 +82,8 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
     return this.http.patch<ICaseFileEntity>(`${this.baseUrl}/${id}/assign`, payload);
   }
 
-  async createCaseFile(payload: ICreateCaseFileRequest): Promise<IDetailedRegistrationResponse> {
-    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/case-file`, payload);
+  async createCaseFile(payload: ICreateCaseFileRequest, publicMode: boolean): Promise<IDetailedRegistrationResponse> {
+    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${publicMode ? 'public/' : ''}case-file`, payload);
   }
 
   async getCaseFileAssignedCounts(params: { eventId: uuid, teamId: uuid }): Promise<ICaseFileCount> {

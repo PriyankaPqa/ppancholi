@@ -97,7 +97,7 @@ export default Vue.extend({
       default: '',
     },
 
-    inHouseholdProfile: {
+    submitChangesToService: {
       type: Boolean,
       default: false,
     },
@@ -138,7 +138,7 @@ export default Vue.extend({
 
     getTitle(): TranslateResult {
       if (this.editMode) {
-        if (this.inHouseholdProfile) {
+        if (this.submitChangesToService) {
           const fullName = `${this.memberClone.identitySet.firstName} ${this.memberClone.identitySet.lastName}`;
           return this.$t('household.details.edit.title', { x: fullName });
         }
@@ -218,13 +218,13 @@ export default Vue.extend({
       this.submitLoading = true;
 
       if (this.editMode) {
-        if (this.inHouseholdProfile) {
+        if (this.submitChangesToService) {
           await this.submitChanges();
         } else {
           this.$registrationStore.householdCreate.editAdditionalMember(this.memberClone, this.index, this.sameAddress);
         }
       } else {
-        if (this.householdId) {
+        if (this.submitChangesToService) {
           await this.$registrationStore.addAdditionalMember({
             householdId: this.householdId, member: this.memberClone, sameAddress: this.sameAddress,
           });

@@ -23,7 +23,7 @@
       hide-footer>
       <template #[`item.${customColumns.editedBy}`]="{ item }">
         <div class="d-flex flex-column full-height py-2" data-test="household_history_edited-by">
-          <span class="fw-bold">{{ item.user.name }}</span>
+          <span class="fw-bold">{{ item.userName }}</span>
           <span class="rc-body12">{{ item.role ? $m(item.role.name) : '' }}</span>
         </div>
       </template>
@@ -75,6 +75,7 @@ import {
 }
   from '@libs/entities-lib/value-objects/household-activity';
 import moment from '@libs/shared-lib/plugins/moment';
+import { system } from '@/constants/system';
 
 interface IActivityItem extends IHouseholdActivity {
   activityName: string;
@@ -162,6 +163,10 @@ export default Vue.extend({
         activityName: this.$t(i.getActivityName()) as string,
         templateData: i.getTemplateData(false, this.$i18n),
         templatePreviousData: i.getTemplateData(true, this.$i18n),
+        // eslint-disable-next-line no-nested-ternary
+        userName: i.user?.id === system.public_user_id ? this.$t('system.public_user_id') : (
+          i.user?.id === system.system_user_id ? this.$t('system.system_user_id') : i.user?.name
+        ),
       }));
       return _orderBy(items, this.options.sortBy[0], this.options.sortDesc[0] ? 'desc' : 'asc');
     },

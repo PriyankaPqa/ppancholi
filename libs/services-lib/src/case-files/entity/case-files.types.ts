@@ -28,7 +28,7 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileEntity>;
   setCaseFileTriage(id: uuid, triage: CaseFileTriage): Promise<ICaseFileEntity>;
   setCaseFileAssign(id: uuid, payload: { individuals: uuid[], teams: uuid[] }): Promise<ICaseFileEntity>;
-  createCaseFile(payload: ICreateCaseFileRequest): Promise<IDetailedRegistrationResponse>;
+  createCaseFile(payload: ICreateCaseFileRequest, publicMode: boolean): Promise<IDetailedRegistrationResponse>;
   setCaseFileIdentityAuthentication(id: uuid, identityAuthentication: IIdentityAuthentication): Promise<ICaseFileEntity>;
   setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation): Promise<ICaseFileEntity>;
   getCaseFileAssignedCounts(params: { eventId: uuid, teamId: uuid }): Promise<ICaseFileCount>;

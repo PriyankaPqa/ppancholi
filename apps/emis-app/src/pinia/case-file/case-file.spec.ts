@@ -287,7 +287,7 @@ describe('>>> Case File Store', () => {
       const res = mockDetailedRegistrationResponse();
       await store.createCaseFile(payload);
 
-      expect(entityService.createCaseFile).toBeCalledWith(payload);
+      expect(entityService.createCaseFile).toBeCalledWith(payload, false);
       expect(bComponents.addNewlyCreatedId).toBeCalledWith(res.caseFile);
       expect(bComponents.set).toBeCalledWith(res.caseFile);
     });

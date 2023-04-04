@@ -385,7 +385,7 @@ describe('ReviewRegistrationLib.vue', () => {
         expect(wrapper.vm.personalInformation.inlineEdit).toBe(false);
       });
 
-      it('should call updatePersonalInformation in association mode ', async () => {
+      it('should call updatePersonalInformation in applySavesRightAway mode ', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -396,7 +396,7 @@ describe('ReviewRegistrationLib.vue', () => {
           },
 
           computed: {
-            associationMode: () => true,
+            applySavesRightAway: () => true,
           },
         });
         wrapper.vm.$refs.personalInfo = {
@@ -414,6 +414,7 @@ describe('ReviewRegistrationLib.vue', () => {
         await wrapper.vm.updatePersonalInformation();
         expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(
           wrapper.vm.householdCreate.primaryBeneficiary.id,
+          true,
           {
             identitySet: wrapper.vm.householdCreate.primaryBeneficiary.identitySet,
             contactInformation: wrapper.vm.householdCreate.primaryBeneficiary.contactInformation,
@@ -431,6 +432,7 @@ describe('ReviewRegistrationLib.vue', () => {
         await wrapper.vm.updatePersonalInformation();
         expect(wrapper.vm.$services.households.updatePersonContactInformation).toHaveBeenCalledWith(
           wrapper.vm.householdCreate.primaryBeneficiary.id,
+          true,
           {
             identitySet: wrapper.vm.householdCreate.primaryBeneficiary.identitySet,
             contactInformation: wrapper.vm.householdCreate.primaryBeneficiary.contactInformation,
@@ -464,7 +466,7 @@ describe('ReviewRegistrationLib.vue', () => {
         expect(wrapper.vm.addresses.inlineEdit).toBe(false);
       });
 
-      it('should call updateAddresses in association mode ', async () => {
+      it('should call updateAddresses in applySavesRightAway mode ', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -475,7 +477,7 @@ describe('ReviewRegistrationLib.vue', () => {
           },
 
           computed: {
-            associationMode: () => true,
+            applySavesRightAway: () => true,
           },
         });
         wrapper.vm.$refs.addresses = {
@@ -508,6 +510,7 @@ describe('ReviewRegistrationLib.vue', () => {
         await wrapper.vm.updateAddresses();
         expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
           wrapper.vm.householdCreate.primaryBeneficiary.id,
+          true,
           wrapper.vm.householdCreate.primaryBeneficiary.currentAddress,
         );
       });
@@ -544,7 +547,7 @@ describe('ReviewRegistrationLib.vue', () => {
           .toHaveBeenCalledWith(wrapper.vm.additionalMembersCopy[0], 0, wrapper.vm.additionalMembers[0].sameAddress);
       });
 
-      it('should call updateMember in association mode ', async () => {
+      it('should call updateMember in applySavesRightAway mode ', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -555,7 +558,7 @@ describe('ReviewRegistrationLib.vue', () => {
           },
 
           computed: {
-            associationMode: () => true,
+            applySavesRightAway: () => true,
           },
         });
         wrapper.vm.$refs.additionalMember_0 = [{
@@ -572,6 +575,7 @@ describe('ReviewRegistrationLib.vue', () => {
         await wrapper.vm.updateAddresses();
         expect(wrapper.vm.$services.households.updateHomeAddress).toHaveBeenCalledWith(
           wrapper.vm.householdCreate.id,
+          true,
           wrapper.vm.householdCreate.homeAddress,
         );
       });
@@ -587,6 +591,7 @@ describe('ReviewRegistrationLib.vue', () => {
         await wrapper.vm.updateAddresses();
         expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
           wrapper.vm.householdCreate.primaryBeneficiary.id,
+          true,
           wrapper.vm.householdCreate.primaryBeneficiary.currentAddress,
         );
       });
@@ -623,7 +628,7 @@ describe('ReviewRegistrationLib.vue', () => {
         expect(wrapper.vm.showAdditionalMemberDelete).toEqual(false);
       });
 
-      it('should call deleteAdditionalMember in association mode', async () => {
+      it('should call deleteAdditionalMember in applySavesRightAway mode', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -634,7 +639,7 @@ describe('ReviewRegistrationLib.vue', () => {
           },
 
           computed: {
-            associationMode: () => true,
+            applySavesRightAway: () => true,
           },
         });
         await wrapper.setData({ indexAdditionalMember: 0 });
@@ -724,12 +729,12 @@ describe('ReviewRegistrationLib.vue', () => {
     describe('updateHomeAddress', () => {
       it('should call updateNoFixedHomeAddress if no fixed home', async () => {
         await wrapper.vm.updateHomeAddress('123', { noFixedHome: true });
-        expect(wrapper.vm.$services.households.updateNoFixedHomeAddress).toHaveBeenCalledWith('123');
+        expect(wrapper.vm.$services.households.updateNoFixedHomeAddress).toHaveBeenCalledWith('123', true);
       });
 
       it('should call updateHomeAddress if fixed home', async () => {
         await wrapper.vm.updateHomeAddress('123', { noFixedHome: false, homeAddress: mockAddress() });
-        expect(wrapper.vm.$services.households.updateHomeAddress).toHaveBeenCalledWith('123', mockAddress());
+        expect(wrapper.vm.$services.households.updateHomeAddress).toHaveBeenCalledWith('123', true, mockAddress());
       });
     });
 
@@ -741,6 +746,7 @@ describe('ReviewRegistrationLib.vue', () => {
         await wrapper.vm.updateMember(index);
         expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(
           member.id,
+          true,
           { identitySet: member.identitySet, contactInformation: member.contactInformation },
         );
       });
@@ -761,7 +767,7 @@ describe('ReviewRegistrationLib.vue', () => {
         wrapper.vm.isNewMemberCurrentAddress = jest.fn(() => true);
         const member = wrapper.vm.householdCreate.additionalMembers[index];
         await wrapper.vm.updateMember(index);
-        expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(member.id, member.currentAddress);
+        expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(member.id, true, member.currentAddress);
       });
 
       it('should editAdditionalMember with backup containing updated identity if updateHomeAddress failed', async () => {

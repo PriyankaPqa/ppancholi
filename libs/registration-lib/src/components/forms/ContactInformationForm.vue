@@ -96,36 +96,15 @@
 
       <v-col cols="12" sm="6">
         <validation-observer ref="email">
-          <template v-if="recaptchaKey">
-            <vue-programmatic-invisible-google-recaptcha
-              ref="recaptchaEmail"
-              :sitekey="recaptchaKey"
-              element-id="recaptchaEmail"
-              badge-position="left"
-              :show-badge-mobile="false"
-              :show-badge-desktop="false"
-              @recaptcha-callback="recaptchaCallBack" />
-            <v-text-field-with-validation
-              v-model="formCopy.email"
-              :loading="emailChecking"
-              :data-test="`${prefixDataTest}__email`"
-              :rules="rules.email"
-              :label="emailLabel"
-              @input="resetEmailValidation"
-              @focusout="onFocusOut()"
-              @blur="validateEmailOnBlur($event.target.value)" />
-          </template>
-          <template v-else>
-            <v-text-field-with-validation
-              v-model="formCopy.email"
-              :loading="emailChecking"
-              :data-test="`${prefixDataTest}__email`"
-              :rules="rules.email"
-              :label="emailLabel"
-              @input="resetEmailValidation"
-              @focusout="onFocusOut()"
-              @blur="validateEmailOnBlur($event.target.value)" />
-          </template>
+          <v-text-field-with-validation
+            v-model="formCopy.email"
+            :loading="emailChecking"
+            :data-test="`${prefixDataTest}__email`"
+            :rules="rules.email"
+            :label="emailLabel"
+            @input="resetEmailValidation"
+            @focusout="onFocusOut()"
+            @blur="validateEmailOnBlur($event.target.value)" />
         </validation-observer>
       </v-col>
     </validation-observer>
@@ -188,11 +167,6 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
-
-    recaptchaKey: {
-      type: String,
-      default: '',
-    },
   },
 
   data() {
@@ -206,8 +180,6 @@ export default Vue.extend({
       },
       emailChecking: false,
       previousEmail: '',
-      recaptchaRequired: false,
-      recaptchaResolved: false,
       submitting: false,
       validateEntireFormFn: null,
     };
@@ -333,27 +305,6 @@ export default Vue.extend({
       this.focusPhoneCounter += 1;
     },
 
-    async getTokenAndValidate(email: string) {
-      if (!email) {
-        this.resetEmailValidation();
-      }
-
-      if (email && email !== this.previousEmail) {
-        // eslint-disable-next-line
-        (this.$refs.recaptchaEmail as any).execute();
-        // Display error, will be resolved automatically if no challenge to resolve
-        // eslint-disable-next-line
-        this.setEmailValidator({ emailIsValid: false, errors: [{ code: 'errors.need_to_resolve_challenge' } as any] });
-      }
-    },
-
-    async recaptchaCallBack(token: string) {
-      if (token) { // you're not a robot
-        this.setEmailValidator({ emailIsValid: true, errors: [] }); // Once token is got (with or without resolving challenge), we clean the previous error
-        await this.validateEmail(this.formCopy.email, token);
-      }
-    },
-
     setEmailValidator(result: IValidateEmailResponse) {
       this.emailValidator.isValid = result.emailIsValid;
 
@@ -370,15 +321,20 @@ export default Vue.extend({
       // wait for the validation on submit to trigger before
       await helpers.timeout(300);
       if (!this.submitting) {
-        if (this.recaptchaKey) {
-          this.getTokenAndValidate(email);
-        } else {
+        if (this.isCRCRegistration) {
           this.validateEmail(email);
+        } else {
+          // in order to validate emails we need a public token (recaptcha approved)
+          EventHub.$emit('fetchPublicToken', () => this.validateEmail(email));
         }
       }
     },
 
-    async validateForm(validateEntireForm: ()=> void) {
+    async validateForm(validateEntireForm: ()=> void, allowDuplicateOverride: boolean = null) {
+      // if for this specific call we have rules on duplicates we must ensure the validations are redone
+      if (allowDuplicateOverride != null) {
+        this.formCopy.emailValidatedByBackend = false;
+      }
       this.submitting = true;
       // Needed to trigger validation of all contact info fields
       await helpers.timeout(10);
@@ -386,15 +342,16 @@ export default Vue.extend({
         await validateEntireForm();
       } else {
         this.validateEntireFormFn = validateEntireForm;
-        if (this.recaptchaKey) {
-          await this.getTokenAndValidate(this.formCopy.email);
+        if (this.isCRCRegistration) {
+          this.validateEmail(this.formCopy.email, true, allowDuplicateOverride);
         } else {
-          await this.validateEmail(this.formCopy.email, '', true);
+          // in order to validate emails we need a public token (recaptcha approved)
+          EventHub.$emit('fetchPublicToken', () => this.validateEmail(this.formCopy.email, true, allowDuplicateOverride));
         }
       }
     },
 
-    async validateEmail(formEmail?: string, recaptchaToken?: string, onSubmit?: boolean) {
+    async validateEmail(formEmail?: string, onSubmit?: boolean, allowDuplicateOverride?: boolean) {
       let email = formEmail || this.formCopy.email;
 
       if (!email) {
@@ -412,9 +369,11 @@ export default Vue.extend({
           if (this.isCRCRegistration) {
             result = await this.$services.households.validateEmail({ emailAddress: email, personId: this.personId });
           } else {
-            result = await this.$services.households.validatePublicEmail({ emailAddress: email, personId: this.personId, recaptchaToken });
+            result = await this.$services.households.validatePublicEmail({ emailAddress: email, personId: this.personId });
           }
-          if (this.allowDuplicateEmails && result.errors?.length) {
+          // on some calls we want to make sure no duplicate is possible, while on others we can allow them
+          // if an override is sent that takes precedence
+          if ((allowDuplicateOverride == null ? this.allowDuplicateEmails : allowDuplicateOverride) && result.errors?.length) {
             result.errors = result.errors.filter((e) => e.code !== 'errors.the-email-provided-already-exists-in-the-system');
             result.emailIsValid = !result.errors.length;
           }
@@ -430,6 +389,7 @@ export default Vue.extend({
         (this.$refs.email as InstanceType<typeof ValidationObserver>).validate();
         if (this.validateEntireFormFn) {
           this.validateEntireFormFn();
+          this.validateEntireFormFn = null;
         }
       }
     },

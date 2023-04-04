@@ -34,3 +34,4 @@ export { default as RcNestedTable } from './organism/RcNestedTable/RcNestedTable
 export { default as RcTooltip } from './atoms/RcTooltip.vue';
 export { default as RcMenu } from './atoms/RcMenu.vue';
 export { default as RcItemAmount } from './atoms/RcItemAmount.vue';
+export { default as MessageBox } from './atoms/MessageBox.vue';

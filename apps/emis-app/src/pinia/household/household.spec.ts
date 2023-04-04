@@ -61,7 +61,7 @@ describe('>>> Household Store', () => {
         observation,
       });
 
-      expect(entityService.updateNoFixedHomeAddress).toBeCalledWith(householdId, observation);
+      expect(entityService.updateNoFixedHomeAddress).toBeCalledWith(householdId, false, observation);
       expect(bComponents.set).toBeCalledWith(mockHouseholdEntity());
     });
   });
@@ -77,7 +77,7 @@ describe('>>> Household Store', () => {
       const store = createTestStore(bComponents);
       await store.updateHomeAddress({ householdId, address });
 
-      expect(entityService.updateHomeAddress).toBeCalledWith(householdId, address);
+      expect(entityService.updateHomeAddress).toBeCalledWith(householdId, false, address);
       expect(bComponents.set).toBeCalledWith(mockHouseholdEntity());
     });
   });

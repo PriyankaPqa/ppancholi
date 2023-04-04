@@ -6,7 +6,7 @@ import {
   IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
   IIndigenousCommunityData, IMember, ICurrentAddress, ICurrentAddressCreateRequest, ECurrentAddressTypes,
   MemberCreateRequest, IIdentitySet, IIdentitySetCreateRequest, IMemberEntity, IAddress, IValidateEmailResponse,
-  IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest, IValidateEmailPublicRequest, IHoneyPotIdentitySet,
+  IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest, IHoneyPotIdentitySet,
   ICheckForPossibleDuplicateResponse, ISendOneTimeCodeRegistrationPublicPayload, IVerifyOneTimeCodeRegistrationPublicPayload,
 } from '@libs/entities-lib/household-create';
 import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity/versionedEntity.types';
@@ -43,14 +43,14 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     return this.http.get(`${API_URL_SUFFIX}/indigenous-communities`);
   }
 
-  async submitRegistration({ household, eventId, recaptchaToken }: { household: IHouseholdCreate; eventId: string; recaptchaToken: string }):
+  async submitRegistration({ household, eventId }: { household: IHouseholdCreate; eventId: string; }):
     Promise<IDetailedRegistrationResponse> {
     const payload = this.parseHouseholdPayload(household, eventId);
-    return this.postPublicRegistration(payload, recaptchaToken);
+    return this.postPublicRegistration(payload);
   }
 
-  async postPublicRegistration(payload: ICreateHouseholdRequest, recaptchaToken: string): Promise<IDetailedRegistrationResponse> {
-    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`, { ...payload, recaptchaToken }, { globalHandler: false });
+  async postPublicRegistration(payload: ICreateHouseholdRequest): Promise<IDetailedRegistrationResponse> {
+    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`, { ...payload }, { globalHandler: false });
   }
 
   async submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IDetailedRegistrationResponse> {
@@ -67,10 +67,11 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   async updatePersonContactInformation(
-id: string,
+    id: string,
+    publicMode: boolean,
     payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet },
-): Promise<IHouseholdEntity> {
-    return this.http.patch(`${this.baseApi}/persons/${id}/contact-information`, {
+): Promise<IMemberEntity> {
+    return this.http.patch(`${this.baseApi}/persons/${publicMode ? 'public/' : ''}${id}/contact-information`, {
       isPrimaryBeneficiary: payload.isPrimaryBeneficiary,
       contactInformation: this.parseContactInformation(payload.contactInformation),
       identitySet: this.parseIdentitySet(payload.identitySet),
@@ -78,23 +79,24 @@ id: string,
   }
 
   async updatePersonIdentity(
-id: string,
+    id: string,
+    publicMode: boolean,
     payload: { contactInformation: IContactInformation; identitySet: IIdentitySet },
-): Promise<IHouseholdEntity> {
-    return this.http.patch(`${this.baseApi}/persons/${id}/identity-set`, {
+): Promise<IMemberEntity> {
+    return this.http.patch(`${this.baseApi}/persons/${publicMode ? 'public/' : ''}${id}/identity-set`, {
       contactInformation: this.parseContactInformation(payload.contactInformation),
       identitySet: this.parseIdentitySet(payload.identitySet),
     });
   }
 
-  async updatePersonAddress(id: string, payload: ICurrentAddress): Promise<IHouseholdEntity> {
-    return this.http.patch(`${this.baseApi}/persons/${id}/current-address`, {
+  async updatePersonAddress(id: string, publicMode: boolean, payload: ICurrentAddress): Promise<IMemberEntity> {
+    return this.http.patch(`${this.baseApi}/persons/${publicMode ? 'public/' : ''}${id}/current-address`, {
       currentAddress: this.parseCurrentAddress(payload),
     });
   }
 
-  async updateHomeAddress(id: string, payload: IAddress): Promise<IHouseholdEntity> {
-    return this.http.patch(`${this.baseUrl}/${id}/address`, {
+  async updateHomeAddress(id: string, publicMode: boolean, payload: IAddress): Promise<IHouseholdEntity> {
+    return this.http.patch(`${this.baseUrl}/${publicMode ? 'public/' : ''}${id}/address`, {
       address: {
         address: this.parseAddress(payload),
         from: moment.utc(moment()).format(),
@@ -102,23 +104,23 @@ id: string,
     });
   }
 
-  async updateNoFixedHomeAddress(id: string, observation?: string): Promise<IHouseholdEntity> {
-    return this.http.patch(`${this.baseUrl}/${id}/no-fixed-address`, {
+  async updateNoFixedHomeAddress(id: string, publicMode: boolean, observation?: string): Promise<IHouseholdEntity> {
+    return this.http.patch(`${this.baseUrl}/${publicMode ? 'public/' : ''}${id}/no-fixed-address`, {
       from: moment.utc(moment()).format(),
       observation: observation || null,
     });
   }
 
-  async addMember(householdId: string, payload: IMember): Promise<IHouseholdEntity> {
+  async addMember(householdId: string, publicMode: boolean, payload: IMember): Promise<IHouseholdEntity> {
     const parsePayload = this.parseMember(payload);
-    return this.http.post(`${this.baseUrl}/${householdId}/members`, {
+    return this.http.post(`${this.baseUrl}/${publicMode ? 'public/' : ''}${householdId}/members`, {
       ...parsePayload,
       registrationType: ERegistrationMode.CRC,
     });
   }
 
-  async deleteAdditionalMember(householdId: string, memberId: string): Promise<IHouseholdEntity> {
-    return this.http.delete(`${this.baseUrl}/${householdId}/members/${memberId}`);
+  async deleteAdditionalMember(householdId: string, publicMode: boolean, memberId: string): Promise<IHouseholdEntity> {
+    return this.http.delete(`${this.baseUrl}/${publicMode ? 'public/' : ''}${householdId}/members/${memberId}`);
   }
 
   async splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IDetailedRegistrationResponse> {
@@ -136,7 +138,7 @@ id: string,
     return this.http.post(`${this.baseApi}/persons/validate-email-address`, request, { globalHandler: false });
   }
 
-  async validatePublicEmail(request: IValidateEmailPublicRequest): Promise<IValidateEmailResponse> {
+  async validatePublicEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse> {
     return this.http.post(`${this.baseApi}/persons/public/validate-email-address`, request, { globalHandler: false });
   }
 
@@ -166,6 +168,14 @@ id: string,
 
   async getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
     return this.http.get(`${this.baseApi}/persons/metadata/${id}/history`);
+  }
+
+  publicGetHousehold(id: uuid): Promise<IHouseholdEntity> {
+    return this.http.get(`${this.baseUrl}/public/${id}`);
+  }
+
+  publicGetPerson(id: uuid): Promise<IMemberEntity> {
+    return this.http.get(`${this.baseApi}/persons/public/${id}`);
   }
 
   checkForPossibleDuplicatePublic(eventId: string, member: IMember): Promise<ICheckForPossibleDuplicateResponse> {

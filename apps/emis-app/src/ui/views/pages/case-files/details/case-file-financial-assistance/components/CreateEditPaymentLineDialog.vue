@@ -68,7 +68,7 @@
                 :label="`${$t('caseFile.financialAssistance.supportingDocuments')} *`" />
             </v-col>
           </v-row>
-          <v-row v-if="paymentGroup.groupingInformation.modality === EPaymentModalities.ETransfer" class="pt-0 mt-0">
+          <div v-if="paymentGroup.groupingInformation.modality === EPaymentModalities.ETransfer" class="d-flex">
             <message-box
               v-if="defaultBeneficiaryData.email"
               icon="mdi-information"
@@ -92,7 +92,7 @@
                 color: 'var(--v-grey-darken4)',
               }"
               data-test="payment_eTransfer_noEmail" />
-          </v-row>
+          </div>
           <v-row>
             <v-col cols="3">
               <v-text-field-with-validation
@@ -201,8 +201,8 @@ import {
   VCheckboxWithValidation,
   VTextFieldWithValidation,
   VSelectWithValidation,
+  MessageBox,
 } from '@libs/component-lib/components';
-import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import AddressForm from '@libs/registration-lib/components/forms/AddressForm.vue';
 import libHelpers from '@libs/entities-lib/helpers';
 import { Address, IAddress } from '@libs/entities-lib/value-objects/address';

@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import {
   HouseholdActivity,
   mockHouseholdActivities,
@@ -5,6 +6,7 @@ import {
 } from '@libs/entities-lib/value-objects/household-activity';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockProvider } from '@/services/provider';
+import { system } from '@/constants/system';
 
 import Component from '../HouseholdProfileHistory.vue';
 
@@ -15,6 +17,7 @@ const displayedItem = mockHouseholdActivities()[0];
 displayedItem.templateData = [{ label: 'foo', value: 'bar' }];
 displayedItem.templatePreviousData = [{ label: 'foo1', value: 'bar1' }];
 displayedItem.activityName = 'Personal information changed';
+displayedItem.userName = 'John Smith';
 
 jest.mock('@libs/entities-lib/value-objects/household-activity/householdActivity');
 
@@ -39,7 +42,7 @@ describe('HouseholdProfileHistory', () => {
     });
     describe('edited by', () => {
       it('renders the name and role of the user', () => {
-        expect(wrapper.findDataTest('household_history_edited-by').text()).toContain(wrapper.vm.displayedItems[0].user.name);
+        expect(wrapper.findDataTest('household_history_edited-by').text()).toContain(wrapper.vm.displayedItems[0].userName);
         expect(wrapper.findDataTest('household_history_edited-by').text()).toContain(wrapper.vm.displayedItems[0].role.name.translation.en);
       });
     });
@@ -97,8 +100,8 @@ describe('HouseholdProfileHistory', () => {
   describe('Computed', () => {
     describe('displayedItems', () => {
       it('returns the proper data', async () => {
-        const item1 = new HouseholdActivity(mockHouseholdActivities()[0]);
-        const item2 = new HouseholdActivity(mockHouseholdActivities()[1]);
+        const item1 = { ...cloneDeep(mockHouseholdActivities()[0]), ...new HouseholdActivity(mockHouseholdActivities()[0]) };
+        const item2 = { ...cloneDeep(mockHouseholdActivities()[1]), ...new HouseholdActivity(mockHouseholdActivities()[1]) };
 
         item1.timestamp = '2021-01-01';
         item2.timestamp = '2021-02-10';
@@ -123,12 +126,19 @@ describe('HouseholdProfileHistory', () => {
           activityName: HouseholdActivityType[mockHouseholdActivities()[1].activityType],
           templateData: [{ label: 'foo2', value: 'bar2' }],
           templatePreviousData: [{ label: 'foo2', value: 'bar2' }],
+          userName: item2.user.name,
         }, {
           ...item1,
           activityName: HouseholdActivityType[mockHouseholdActivities()[0].activityType],
           templateData: [{ label: 'foo1', value: 'bar1' }],
           templatePreviousData: [{ label: 'foo1', value: 'bar1' }],
+          userName: item1.user.name,
         }]);
+
+        item1.user.id = system.public_user_id;
+        item2.user.id = system.system_user_id;
+        expect(wrapper.vm.displayedItems[1].userName).toBe('system.public_user_id');
+        expect(wrapper.vm.displayedItems[0].userName).toBe('system.system_user_id');
       });
     });
   });

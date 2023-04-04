@@ -187,7 +187,7 @@
       :shelter-locations-list="shelterLocations"
       :i18n="i18n"
       :disable-autocomplete="!enableAutocomplete"
-      in-household-profile
+      submit-changes-to-service
       @close="fetchHouseholdData" />
     <edit-household-address-dialog v-if="showEditAddress" :show.sync="showEditAddress" />
     <household-profile-history

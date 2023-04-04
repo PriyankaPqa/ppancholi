@@ -84,6 +84,14 @@ export default Vue.extend({
       return this.$registrationStore.householdAssociationMode;
     },
 
+    splitMode(): boolean {
+      return this.$registrationStore.isSplitMode();
+    },
+
+    applySavesRightAway(): boolean {
+      // when we are editing a household the save buttons are applied right away.  A split will apply everything only at the end.
+      return !!this.householdCreate.id && !this.splitMode;
+    },
   },
 
   created() {
@@ -132,7 +140,7 @@ export default Vue.extend({
         // Not watcher on this form to mutate so we need to do it here
         this.$registrationStore.householdCreate.editAdditionalMember(this.additionalMembersCopy[index], index, this.additionalMembers[index].sameAddress);
 
-        if (this.associationMode) {
+        if (this.applySavesRightAway) {
           await this.updateMember(index);
         }
         this.additionalMembers[index].inlineEdit = false;
@@ -148,6 +156,7 @@ export default Vue.extend({
 
       const resIdentity = await this.$services.households.updatePersonIdentity(
         member.id,
+        !this.$registrationStore.isCRCRegistration(),
         { identitySet: member.identitySet, contactInformation: member.contactInformation },
       );
       if (!resIdentity) {
@@ -158,7 +167,7 @@ export default Vue.extend({
       this.$toasted.global.success(this.$t('registration.identity.updated'));
 
       if (this.isNewMemberCurrentAddress(index)) {
-        const resAddress = await this.$services.households.updatePersonAddress(member.id, member.currentAddress);
+        const resAddress = await this.$services.households.updatePersonAddress(member.id, !this.$registrationStore.isCRCRegistration(), member.currentAddress);
 
         if (!resAddress) {
           const backUpWithUpdatedIdentity = {
@@ -183,7 +192,7 @@ export default Vue.extend({
     },
 
     deleteAdditionalMember() {
-      if (this.associationMode) {
+      if (this.applySavesRightAway) {
         const memberId = this.householdCreate.additionalMembers[this.indexAdditionalMember].id;
         const householdId = this.householdCreate.id;
         const index = this.indexAdditionalMember;

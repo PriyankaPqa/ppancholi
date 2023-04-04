@@ -136,7 +136,7 @@
 import mixins from 'vue-typed-mixins';
 import { format } from 'date-fns';
 import {
-  RcPageContent, RcDialog, VCheckboxWithValidation, RcPageLoading,
+  RcPageContent, RcDialog, VCheckboxWithValidation, RcPageLoading, MessageBox,
 } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import _find from 'lodash/find';
@@ -166,7 +166,6 @@ import
   CompletionStatus, IdParams,
 } from '@libs/entities-lib/assessment-template';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
-import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import routes from '@/constants/routes';
 import { VForm } from '@libs/shared-lib/types';

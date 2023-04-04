@@ -12,6 +12,7 @@ import {
 import { TranslateResult } from 'vue-i18n';
 import { mockEvent } from '@libs/entities-lib/registration-event';
 import { mockRegistrationAssessment } from '@libs/entities-lib/event';
+import { mockCaseFilesService } from '@libs/services-lib/case-files/entity';
 import { mockTabs } from './tabs.mock';
 import { storeFactory } from './registration';
 
@@ -55,6 +56,7 @@ export const useMockRegistrationStore = (pinia?: TestingPinia) => {
     mode: ERegistrationMode.Self,
     householdApi: mockHouseholdsService(),
     publicApi: mockPublicService(),
+    caseFileApi: mockCaseFilesService(),
   });
 
   registrationStore.getHouseholdCreate = jest.fn(() => new HouseholdCreate(mockHouseholdCreate()));

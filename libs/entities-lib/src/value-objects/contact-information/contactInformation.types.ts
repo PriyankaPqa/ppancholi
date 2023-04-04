@@ -57,10 +57,6 @@ export interface IValidateEmailRequest {
   emailAddress: string;
 }
 
-export interface IValidateEmailPublicRequest extends IValidateEmailRequest {
-  recaptchaToken: string;
-}
-
 export interface IApiError {
   status: string;
   code: string;

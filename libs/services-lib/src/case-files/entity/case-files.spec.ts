@@ -164,8 +164,10 @@ describe('>>> Case File Service', () => {
         },
       };
 
-      await service.createCaseFile(payload);
+      await service.createCaseFile(payload, false);
       expect(http.post).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/case-file`, payload);
+      await service.createCaseFile(payload, true);
+      expect(http.post).toHaveBeenCalledWith(`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public/case-file`, payload);
     });
   });
 

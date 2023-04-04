@@ -1,4 +1,6 @@
 {
+    "system.public_user_id": "Individu",
+    "system.system_user_id": "Système",
     "DuplicateStatus.Added": "Le dossier a été signalé comme un doublon potentiel",
     "DuplicateStatus.Removed": "L'indicateur de doublon potentiel a été supprimé du dossier",
     "account_settings.preferredLanguage.notSet": "Pas de langue définie",

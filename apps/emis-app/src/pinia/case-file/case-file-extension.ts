@@ -138,7 +138,7 @@ export function getExtensionComponents(
 
   async function createCaseFile(payload: ICreateCaseFileRequest) {
     try {
-      const res = await entityService.createCaseFile(payload);
+      const res = await entityService.createCaseFile(payload, false);
       if (res) {
         baseComponents.addNewlyCreatedId(res.caseFile);
         baseComponents.set(res.caseFile);

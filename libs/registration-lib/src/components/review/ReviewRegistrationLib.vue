@@ -18,6 +18,16 @@
       </template>
     </template>
     <validation-observer ref="personalInfo" v-slot="{ failed }">
+      <message-box
+        class="rc-body12"
+        small-icon
+        icon="mdi-alert"
+        icon-color="var(--v-notification_warning-base)"
+        :styles="{
+          'background-color': 'var(--v-status_yellow_pale-base)',
+          color: 'var(--v-grey-darken4)',
+        }"
+        :message="$t('registration.review.personalinfo')" />
       <summary-section
         :show-edit-button="!householdAlreadyRegistered && !splitMode"
         data-test="personalInformation"
@@ -29,13 +39,23 @@
         @cancel="cancelPersonalInformation()"
         @submit="validateEmailAndSubmitPersonalInfo()">
         <template #inline>
-          <personal-information :recaptcha-key="recaptchaKey" :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" is-edit-mode />
+          <personal-information :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" is-edit-mode />
         </template>
         <personal-information-template :personal-information="getPersonalInformation" :show-age-in-review="showAgeInReview" />
       </summary-section>
     </validation-observer>
 
     <validation-observer ref="addresses" v-slot="{ failed }">
+      <message-box
+        class="rc-body12 mt-8"
+        small-icon
+        icon="mdi-alert"
+        icon-color="var(--v-notification_warning-base)"
+        :styles="{
+          'background-color': 'var(--v-status_yellow_pale-base)',
+          color: 'var(--v-grey-darken4)',
+        }"
+        :message="$t('registration.review.addresses')" />
       <summary-section
         :show-edit-button="!householdAlreadyRegistered && !splitMode"
         data-test="addresses"
@@ -53,7 +73,17 @@
       </summary-section>
     </validation-observer>
 
-    <div data-test="title" class="rc-heading-5 mb-2 mt-8 fw-bold d-flex justify-space-between align-center">
+    <message-box
+      class="rc-body12 mt-8"
+      small-icon
+      icon="mdi-alert"
+      icon-color="var(--v-notification_warning-base)"
+      :styles="{
+        'background-color': 'var(--v-status_yellow_pale-base)',
+        color: 'var(--v-grey-darken4)',
+      }"
+      :message="$t('registration.review.members')" />
+    <div data-test="title" class="rc-heading-5 mb-2 fw-bold d-flex justify-space-between align-center">
       <div>
         {{ `${$t('registration.household_members.title')} (${householdCreate.additionalMembers.length})` }}
       </div>
@@ -125,12 +155,13 @@
       :show.sync="showAddAdditionalMember"
       :disable-autocomplete="disableAutocomplete"
       :index="-1"
+      :submit-changes-to-service="applySavesRightAway"
       :member="newAdditionalMember" />
   </div>
 </template>
 
 <script lang="ts">
-import { RcConfirmationDialog } from '@libs/component-lib/components';
+import { RcConfirmationDialog, MessageBox } from '@libs/component-lib/components';
 import VueI18n from 'vue-i18n';
 import { VForm } from '@libs/registration-lib/types';
 import _cloneDeep from 'lodash/cloneDeep';
@@ -161,6 +192,7 @@ export default mixins(additionalMemberForm).extend({
   name: 'ReviewRegistration',
 
   components: {
+    MessageBox,
     AddressesTemplate,
     AdditionalMemberForm,
     AdditionalMemberSection,
@@ -190,10 +222,6 @@ export default mixins(additionalMemberForm).extend({
     hideName: {
       type: Boolean,
       default: false,
-    },
-    recaptchaKey: {
-      type: String,
-      default: '',
     },
     disableAutocomplete: {
       type: Boolean,
@@ -232,14 +260,6 @@ export default mixins(additionalMemberForm).extend({
   computed: {
     getPersonalInformation(): IContactInformation & IIdentitySet {
       return _merge(this.$registrationStore.householdCreate.primaryBeneficiary.contactInformation, this.$registrationStore.householdCreate.primaryBeneficiary.identitySet);
-    },
-
-    associationMode(): boolean {
-      return this.$registrationStore.householdAssociationMode;
-    },
-
-    splitMode(): boolean {
-      return this.$registrationStore.isSplitMode();
     },
 
     householdAlreadyRegistered(): boolean {
@@ -307,7 +327,7 @@ export default mixins(additionalMemberForm).extend({
       const isValid = await (this.$refs.personalInfo as VForm).validate();
 
       if (isValid) {
-        if (this.associationMode) {
+        if (this.applySavesRightAway) {
           await this.updatePersonalInformation();
         }
         this.personalInformation.inlineEdit = false;
@@ -322,6 +342,7 @@ export default mixins(additionalMemberForm).extend({
 
       const resIdentity = await this.$services.households.updatePersonIdentity(
         this.householdCreate.primaryBeneficiary.id,
+        !this.$registrationStore.isCRCRegistration(),
         {
           contactInformation: this.householdCreate.primaryBeneficiary.contactInformation,
           identitySet: this.householdCreate.primaryBeneficiary.identitySet,
@@ -338,6 +359,7 @@ export default mixins(additionalMemberForm).extend({
 
       const resContactInfo = await this.$services.households.updatePersonContactInformation(
         this.householdCreate.primaryBeneficiary.id,
+        !this.$registrationStore.isCRCRegistration(),
         {
           contactInformation: this.householdCreate.primaryBeneficiary.contactInformation,
           identitySet: this.householdCreate.primaryBeneficiary.identitySet,
@@ -357,7 +379,7 @@ export default mixins(additionalMemberForm).extend({
     async submitAddresses() {
       const isValid = await (this.$refs.addresses as VForm).validate();
       if (isValid) {
-        if (this.associationMode) {
+        if (this.applySavesRightAway) {
           await this.updateAddresses();
         }
         this.addresses.inlineEdit = false;
@@ -384,7 +406,11 @@ export default mixins(additionalMemberForm).extend({
       }
 
       if (this.isNewPrimaryCurrentAddress()) {
-        const resCurrentAddress = await this.$services.households.updatePersonAddress(primaryBeneficiaryId, this.householdCreate.primaryBeneficiary.currentAddress);
+        const resCurrentAddress = await this.$services.households.updatePersonAddress(
+          primaryBeneficiaryId,
+          !this.$registrationStore.isCRCRegistration(),
+          this.householdCreate.primaryBeneficiary.currentAddress,
+        );
 
         if (!resCurrentAddress) {
           this.$registrationStore.householdCreate.setCurrentAddress(this.addresses.backupCurrentAddress);
@@ -400,9 +426,13 @@ export default mixins(additionalMemberForm).extend({
     async updateHomeAddress(householdId: string, household: IHouseholdCreate) {
       let res;
       if (household.noFixedHome) {
-        res = await this.$services.households.updateNoFixedHomeAddress(householdId);
+        res = await this.$services.households.updateNoFixedHomeAddress(householdId, !this.$registrationStore.isCRCRegistration());
       } else {
-        res = await this.$services.households.updateHomeAddress(householdId, household.homeAddress);
+        res = await this.$services.households.updateHomeAddress(
+          householdId,
+          !this.$registrationStore.isCRCRegistration(),
+          household.homeAddress,
+        );
       }
       return res;
     },
