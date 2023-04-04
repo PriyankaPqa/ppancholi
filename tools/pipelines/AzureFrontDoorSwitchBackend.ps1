@@ -40,9 +40,9 @@ az extension add --name front-door
 
 #Find the current web app (blue/green), and set the target release environment
 $response = Invoke-WebRequest $frontDoorUrl -UseBasicParsing -Method Head
-$currentDeploymentWebApp = If ($response.Headers["active-env"] -like "blue-app") {$backendBlueHostName} Else {$backendGreenHostName}
-$targetDeploymentWebApp = If ($response.Headers["active-env"] -like "green-app") {$backendBlueHostName} Else {$backendGreenHostName}
-Write-Host "Active-Env: " $response.Headers["active-env"]
+$currentDeploymentWebApp = If ($response.Headers["active-backend"] -like "blue-app") {$backendBlueHostName} Else {$backendGreenHostName}
+$targetDeploymentWebApp = If ($response.Headers["active-backend"] -like "green-app") {$backendBlueHostName} Else {$backendGreenHostName}
+Write-Host "Active-Env: " $response.Headers["active-backend"]
 Write-Host "Current Backend running: $currentDeploymentWebApp"
 Write-Host "Target Backend: $targetDeploymentWebApp"
 ListFrontdoorFrontEnds
@@ -82,6 +82,6 @@ DO
     $CurrentTime = $(get-date)
     $elapsedTime = $CurrentTime - $StartTime
     $totalSeconds = [math]::floor($elapsedTime.TotalSeconds)
-    Write-Host "$totalSeconds..." $response.Headers["active-env"]
+    Write-Host "$totalSeconds..." $response.Headers["active-backend"]
     Start-Sleep -s 1
-} Until ($response.Headers["active-env"] -like "$targetDeploymentWebApp")
+} Until ($response.Headers["active-backend"] -like "$targetDeploymentWebApp")

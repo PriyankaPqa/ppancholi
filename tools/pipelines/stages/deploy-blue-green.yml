@@ -23,11 +23,10 @@ stages:
         steps:
           - powershell: |
               $response = Invoke-WebRequest "$(frontDoorUrl)" -UseBasicParsing -Method Head
-              $targetStorageAccountName= If ($response.Headers["active-env"] -like "blue-app") {"$(storageAccountGreenName)"} Else {"$(storageAccountBlueName)"}
+              $targetStorageAccountName= If ($response.Headers["active-backend"] -like "$(backendBlueHostName)") {"$(storageAccountGreenName)"} Else {"$(storageAccountBlueName)"}
               Write-Host "##vso[task.setvariable variable=targetStorageAccountName]$targetStorageAccountName"
               Write-Host "Target storage account: $targetStorageAccountName"
             displayName: "Detect target storage account for deployment"
-            # value of active-env are set in each CDN
 
           - task: AzureCLI@2
             displayName: 'Clean target storage account'
