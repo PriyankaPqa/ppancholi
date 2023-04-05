@@ -523,20 +523,8 @@ describe('EventsTable.vue', () => {
 
     describe('getEventRoute', () => {
       it('returns the right route object when feature flag is off', () => {
-        wrapper.vm.$hasFeature = jest.fn(() => false);
         expect(wrapper.vm.getEventRoute(mockEvents()[0])).toEqual({
           name: routes.events.summary.name,
-          params: {
-            id: mockEvents()[0].entity.id,
-          },
-        });
-      });
-
-      it('returns the right route object when feature flag is on, and the user is contributorIM', () => {
-        doMount(getPiniaForUser(UserRoles.contributorIM));
-        wrapper.vm.$hasFeature = jest.fn(() => true);
-        expect(wrapper.vm.getEventRoute(mockEvents()[0])).toEqual({
-          name: routes.events.summaryForIM.name,
           params: {
             id: mockEvents()[0].entity.id,
           },

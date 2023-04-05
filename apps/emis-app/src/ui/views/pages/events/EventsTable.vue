@@ -94,7 +94,6 @@ import moment from '@libs/shared-lib/plugins/moment';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 
 export default mixins(TablePaginationSearchMixin).extend({
@@ -263,15 +262,6 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     getEventRoute(event: IEventCombined) {
-      const isFeatureFlagEnabled = this.$hasFeature(FeatureKeys.LetIMViewEventDetails); // TODO EMISV2-6088
-      if (isFeatureFlagEnabled && this.$hasRole(UserRoles.contributorIM)) {
-        return {
-          name: routes.events.summaryForIM.name,
-          params: {
-            id: event.entity.id,
-          },
-        };
-      }
       return {
         name: routes.events.summary.name,
         params: {

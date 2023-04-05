@@ -9,7 +9,6 @@ export enum FeatureKeys {
   BotProtection = 'BotProtection',
   AssessmentsWithinCasefiles = 'AssessmentsWithinCasefiles',
   ActionApprovals = 'ActionApprovals',
-  LetIMViewEventDetails = 'letIMViewEventDetails',
   CouplingAssessmentsWithRegistration = 'CouplingAssessmentsWithRegistration',
   ETransferCancellationHaveOptionForUnknown = 'ETransferCancellationHaveOptionForUnknown',
   AddShelterRoomNumber = 'AddShelterRoomNumber',

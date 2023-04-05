@@ -61,14 +61,7 @@ export const events: RouteConfig = {
           path: Routes.events.summary.path,
           name: Routes.events.summary.name,
           component: EventSummary,
-          meta: { level: UserRoles.level4 },
-          props: true,
-        },
-        {
-          path: Routes.events.summary.path, // TODO EMISV2-6088
-          name: Routes.events.summaryForIM.name, // Please remove this route when you remove the feature flag "letIMViewEventDetails"
-          component: EventSummary,
-          meta: { roles: [UserRoles.contributorIM] }, // Please add 'roles: [UserRoles.contributorIM]' to the meta of route 'events.summary'
+          meta: { level: UserRoles.level4, roles: [UserRoles.contributorIM] },
           props: true,
         },
         {
