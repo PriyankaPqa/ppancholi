@@ -12,6 +12,7 @@ import {
   mockPrimarySpokenLanguages,
   mockGenders, mockSplitHousehold,
 } from '@libs/entities-lib/src/household-create';
+import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
 import IdentityForm from '../forms/IdentityForm.vue';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
@@ -20,6 +21,7 @@ import { createLocalVue, shallowMount, mount } from '../../test/testSetup';
 import Component from './PersonalInformationLib.vue';
 
 const localVue = createLocalVue();
+const { pinia } = useMockRegistrationStore();
 
 describe('PersonalInformationLib.vue', () => {
   let wrapper;
@@ -29,6 +31,7 @@ describe('PersonalInformationLib.vue', () => {
   }) => {
     const options = {
       localVue,
+      pinia,
       propsData: {
         i18n,
         ...otherProps,
@@ -125,13 +128,31 @@ describe('PersonalInformationLib.vue', () => {
 
     describe('setContactInformation', () => {
       it('triggers mutations setContactInformation if storeMode but always emits', async () => {
-        const newValue = {};
-        await wrapper.vm.setContactInformation(newValue);
+        const newValue = {
+          alternatePhoneNumber: {
+            countryCode: 'CA',
+            e164Number: '',
+            extension: '',
+            number: '',
+          },
+          emailValidatedByBackend: true,
+          homePhoneNumber: {
+            countryCode: 'CA',
+            e164Number: '',
+            extension: '',
+            number: '',
+          },
+          preferredLanguage: null,
+          preferredLanguageOther: null,
+          primarySpokenLanguage: null,
+          primarySpokenLanguageOther: null,
+        };
+        wrapper.vm.setContactInformation(newValue);
         expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.setContactInformation).toHaveBeenCalledWith(newValue);
         expect(wrapper.emitted('setContactInformation')[0][0]).toEqual(newValue);
         jest.clearAllMocks();
         await wrapper.setProps({ memberProps: mockMember() });
-        await wrapper.vm.setContactInformation(newValue);
+        wrapper.vm.setContactInformation(newValue);
         expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.setContactInformation).not.toHaveBeenCalled();
         expect(wrapper.emitted('setContactInformation')[0][0]).toEqual(newValue);
       });
@@ -273,14 +294,13 @@ describe('PersonalInformationLib.vue', () => {
         expect(wrapper.vm.$registrationStore.fetchIndigenousCommunities).toHaveBeenCalled();
       });
 
-      it('should call function loadInitialDataFromBeneficiarySearch when props prefillPersonalInformation is true', async () => {
+      it('should call function loadInitialDataFromBeneficiarySearch', async () => {
         doMount(true, {
-          otherProps: { prefillPersonalInformation: true },
+          otherProps: null,
           otherComputed: { isTouched: () => false, isSplitMode: () => false },
         });
         wrapper.vm.loadInitialDataFromBeneficiarySearch = jest.fn();
         await wrapper.setProps({
-          prefillPersonalInformation: true,
           isEditMode: false,
         });
         await wrapper.vm.$options.created.forEach((hook) => {
@@ -290,10 +310,15 @@ describe('PersonalInformationLib.vue', () => {
         expect(wrapper.vm.loadInitialDataFromBeneficiarySearch).toHaveBeenCalled();
       });
 
-      it('should not call function loadInitialDataFromBeneficiarySearch when props prefillPersonalInformation is false', async () => {
+      it('should not call function loadInitialDataFromBeneficiarySearch in PrimaryMemberDialog', async () => {
+        doMount(true, {
+          otherProps: {
+            isInPrimaryMemberDialog: true,
+          },
+          otherComputed: { isTouched: () => false, isSplitMode: () => false },
+        });
         wrapper.vm.loadInitialDataFromBeneficiarySearch = jest.fn();
         await wrapper.setProps({
-          prefillPersonalInformation: false,
           isEditMode: false,
         });
         await wrapper.vm.$options.created.forEach((hook) => {
@@ -308,7 +333,6 @@ describe('PersonalInformationLib.vue', () => {
           true,
           {
             otherProps: {
-              prefillPersonalInformation: true,
               isEditMode: true,
             },
             otherComputed: { isSplitMode: () => true },
@@ -322,12 +346,11 @@ describe('PersonalInformationLib.vue', () => {
         expect(wrapper.vm.loadInitialDataFromBeneficiarySearch).not.toHaveBeenCalled();
       });
 
-      it('should call function loadInitialDataUnderSplitMode when props isSplitMode is true and prefillPersonalInformation is true', async () => {
+      it('should call function loadInitialDataUnderSplitMode when props isSplitMode is true', async () => {
         doMount(
           true,
           {
             otherProps: {
-              prefillPersonalInformation: true,
               isEditMode: false,
             },
             otherComputed: {
@@ -348,9 +371,7 @@ describe('PersonalInformationLib.vue', () => {
         doMount(
           true,
           {
-            otherProps: {
-              prefillPersonalInformation: true,
-            },
+            otherProps: null,
             otherComputed: {
               isTouched: () => true,
             },

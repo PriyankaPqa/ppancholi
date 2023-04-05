@@ -301,10 +301,7 @@ export default Vue.extend({
   },
 
   beforeDestroy() {
-    // TODO EMISV2-6226 remove feature flag
-    if (this.$hasFeature(FeatureKeys.PreFillPersonalInformation)) {
       this.storeBeneficiarySearchData();
-    }
   },
 
   methods: {

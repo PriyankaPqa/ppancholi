@@ -31,6 +31,7 @@
             :member-props="member"
             skip-phone-email-rules
             include-inactive-options
+            is-in-primary-member-dialog
             @setIdentity="setIdentity"
             @setIndigenousIdentity="setIndigenousIdentity"
             @setContactInformation="setContactInformation" />

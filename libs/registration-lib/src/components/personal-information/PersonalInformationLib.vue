@@ -76,11 +76,11 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
-    prefillPersonalInformation: {
+    isEditMode: {
       type: Boolean,
       default: false,
     },
-    isEditMode: {
+    isInPrimaryMemberDialog: {
       type: Boolean,
       default: false,
     },
@@ -150,15 +150,19 @@ export default Vue.extend({
     isTouched(): boolean {
       return this.$registrationStore.tabs.filter((el) => el.id === 'personalInfo')[0].isTouched;
     },
+
+    shouldLoadDataFromBeneficiarySearch(): boolean {
+      return !this.isEditMode && !this.isSplitMode && !this.isTouched && !this.isInPrimaryMemberDialog;
+    },
   },
 
   async created() {
     // Load data from Beneficiary Search
-    if (this.prefillPersonalInformation && !this.isEditMode && !this.isSplitMode && !this.isTouched) {
+    if (this.shouldLoadDataFromBeneficiarySearch) {
       this.loadInitialDataFromBeneficiarySearch();
     }
     // Under split mode, load data from split household member
-    if (this.prefillPersonalInformation && this.isSplitMode && !this.isTouched) {
+    if (this.isSplitMode && !this.isTouched) {
       this.loadInitialDataUnderSplitMode();
     }
     // Load IngigenousCommunities as soon as the page loads

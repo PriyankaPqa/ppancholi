@@ -233,20 +233,10 @@ describe('HouseholdSearch.vue', () => {
     describe('beforeDestroy', () => {
       it('should call storeBeneficiarySearchData when the feature flag is on', () => {
         wrapper.vm.storeBeneficiarySearchData = jest.fn();
-        wrapper.vm.$hasFeature = jest.fn(() => true);
         wrapper.vm.$options.beforeDestroy.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.storeBeneficiarySearchData).toHaveBeenCalled();
-      });
-
-      it('should not call storeBeneficiarySearchData when the feature flag is off', () => {
-        wrapper.vm.storeBeneficiarySearchData = jest.fn();
-        wrapper.vm.$hasFeature = jest.fn(() => false);
-        wrapper.vm.$options.beforeDestroy.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.storeBeneficiarySearchData).not.toHaveBeenCalled();
       });
     });
   });
