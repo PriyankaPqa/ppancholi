@@ -36,7 +36,7 @@ export class AssessmentFormsService extends DomainBaseService<IAssessmentFormEnt
   }
 
   async htmlToWord(data: string, filename: string) {
-    return this.http.postFullResponse<BlobPart>(`${API_URL_SUFFIX}/tools/HtmlToWord/extract.docx`, this.http.getPayloadAsFile(data), { responseType: 'blob' }).then(
+    return this.http.postFullResponse<BlobPart>(`${API_URL_SUFFIX}/tools/HtmlToWord/extract.docx`, data, { responseType: 'blob' }).then(
       (response) => this.http.getRestResponseAsFile(response, true, filename),
     );
   }
