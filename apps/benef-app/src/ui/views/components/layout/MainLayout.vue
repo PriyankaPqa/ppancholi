@@ -75,7 +75,6 @@ export default Vue.extend({
       } else {
         useRegistrationStore().setAssessmentToComplete(null);
       }
-
       httpClient.setHeadersTenant(event.tenantId);
       return true;
     },

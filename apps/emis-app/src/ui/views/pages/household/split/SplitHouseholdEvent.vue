@@ -16,7 +16,7 @@
       <h4 v-if="event" class="pb-3">
         {{ $t('household.split.privacy_policy') }}
       </h4>
-      <crc-privacy-statement v-if="event" :i18n="i18n" :user="user" />
+      <crc-privacy-statement v-if="event" :i18n="i18n" :user="user" :consent-statements="consentStatements" />
     </v-col>
   </v-row>
 </template>
@@ -29,6 +29,8 @@ import { RegistrationEvent, IEvent } from '@libs/entities-lib/registration-event
 import { IUser } from '@libs/entities-lib/user';
 import { useUserStore } from '@/pinia/user/user';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'SplitHouseholdEvent',
@@ -47,6 +49,9 @@ export default Vue.extend({
   computed: {
     user(): IUser {
       return useUserStore().getUser();
+    },
+    consentStatements(): Array<IConsentStatement> {
+      return useTenantSettingsStore().currentTenantSettings.consentStatements;
     },
   },
 

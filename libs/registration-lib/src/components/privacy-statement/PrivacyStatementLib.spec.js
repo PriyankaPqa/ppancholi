@@ -52,6 +52,49 @@ describe('PrivacyStatementLib.vue', () => {
         expect(wrapper.vm.$registrationStore.householdCreate.consentInformation.privacyDateTimeConsent).toEqual(moment.utc(moment()).format());
       });
     });
+
+    describe('activeStatementText', () => {
+      beforeEach(() => {
+        const consent = { id: 'id-1', name: { translation: { en: 'hello' } }, statement: { translation: { en: 'hello' } } };
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            checkboxLabel: 'label',
+            consentStatement: consent,
+          },
+          mocks: {
+            $hasFeature: () => true,
+            $t: (k) => k,
+          },
+        });
+      });
+
+      it('returns correct value if website placeholder is found', async () => {
+        await wrapper.vm.activeStatementText;
+        wrapper.vm.consentStatement.statement.translation.en = '{website} more';
+        const url = wrapper.vm.$t('registration.privacy_statement.website', 'en');
+        expect(wrapper.vm.activeStatementText).toEqual(
+          `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> more`,
+        );
+      });
+
+      it('returns correct value if email placeholder is found', async () => {
+        await wrapper.vm.activeStatementText;
+        wrapper.vm.consentStatement.statement.translation.en = '{email} more';
+        expect(wrapper.vm.activeStatementText).toEqual(
+          `<a href="mailto:${wrapper.vm.$t('registration.privacy_statement.email', 'en')}">${wrapper.vm.$t('registration.privacy_statement.email', 'en')}</a> more`,
+        );
+      });
+
+      it('returns correct value if either website nor email placeholder is found', async () => {
+        await wrapper.vm.activeStatementText;
+        wrapper.vm.consentStatement.statement.translation.en = 'statement';
+        expect(wrapper.vm.activeStatementText).toEqual(
+          'statement',
+        );
+      });
+    });
   });
 
   describe('Validation rules', () => {

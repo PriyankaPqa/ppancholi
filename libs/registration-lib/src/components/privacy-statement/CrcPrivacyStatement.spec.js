@@ -1,5 +1,5 @@
 import { ERegistrationMethod } from '@libs/shared-lib/src/types';
-import { mockEventData, mockRegistrationLocations } from '@libs/entities-lib/src/registration-event';
+import { mockEventData, mockRegistrationLocations, mockConsentStatments } from '@libs/entities-lib/src/registration-event';
 import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './CrcPrivacyStatement.vue';
@@ -108,6 +108,45 @@ describe('CrcPrivacyStatement.vue', () => {
           },
         });
         expect(wrapper.vm.activeRegistrationLocations).toEqual([location]);
+      });
+    });
+
+    describe('consentStatement', () => {
+      it('should return the consent statement from the current event', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            i18n,
+            user: mockUserL6(),
+          },
+          mocks: {
+            $hasFeature: () => false,
+          },
+          computed: {
+            event: () => mockEventData(),
+            consentStatement: () => mockConsentStatments(),
+          },
+        });
+        expect(wrapper.vm.consentStatement).toEqual(mockConsentStatments());
+        expect(wrapper.vm.event.consentStatementId).toEqual(mockConsentStatments()[0].id);
+      });
+
+      it('should return the consent statement prop data if there is any', () => {
+        const consent = { ...mockConsentStatments()[0], name: { translation: { en: 'mock-consent statement name' } } };
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            i18n,
+            consentStatements: [consent],
+            user: mockUserL6(),
+          },
+          mocks: {
+            $hasFeature: () => false,
+          },
+        });
+        expect(wrapper.vm.consentStatements).toEqual([consent]);
       });
     });
 

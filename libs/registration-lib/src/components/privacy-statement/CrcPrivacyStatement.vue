@@ -1,7 +1,8 @@
 <template>
   <privacy-statement-lib
     :checkbox-label="$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-      ? $t('registration.privacy_statement.agreeCRC.individual') : $t('registration.privacy_statement.agreeCRC')">
+      ? $t('registration.privacy_statement.agreeCRC.individual') : $t('registration.privacy_statement.agreeCRC')"
+    :consent-statement="consentStatement">
     <div class="grey-container py-3 px-3">
       <v-row>
         <v-col cols="12" md="6">
@@ -47,7 +48,8 @@ import helpers from '@libs/entities-lib/helpers';
 import VueI18n from 'vue-i18n';
 import { ERegistrationMethod } from '@libs/shared-lib/types';
 import { EEventLocationStatus, IEvent, IEventGenericLocation } from '@libs/entities-lib/registration-event';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IConsentStatement, FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import PrivacyStatementLib from './PrivacyStatementLib.vue';
 
 export interface IUser {
@@ -85,6 +87,11 @@ export default Vue.extend({
     user: {
       type: Object as () => IUser,
       required: true,
+    },
+
+    consentStatements: {
+      type: Array as () => IConsentStatement[],
+      default: null,
     },
   },
 
@@ -139,6 +146,12 @@ export default Vue.extend({
         return this.event.registrationLocations.filter((r) => r.status === EEventLocationStatus.Active);
       }
       return [];
+    },
+    consentStatement(): IConsentStatement {
+      if (this.consentStatements && this.event?.consentStatementId) {
+        return this.consentStatements.find((r) => r.id === this.event?.consentStatementId);
+      }
+      return null;
     },
 
     isRegistrationMethodInPerson(): boolean {

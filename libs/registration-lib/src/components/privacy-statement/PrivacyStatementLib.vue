@@ -1,6 +1,10 @@
 <template>
   <div>
-    <i18n path="registration.privacy_consent" tag="p" class="rc-body14 consent">
+    <div v-if="consentStatement" class="rc-body14 consent">
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <div v-html="activeStatementText" />
+    </div>
+    <i18n v-else path="registration.privacy_consent" tag="p" class="rc-body14 consent">
       <template #website>
         <a :href="$t('registration.privacy_statement.website')" target="_blank" rel="noopener noreferrer">{{ $t('registration.privacy_statement.website') }}</a>
       </template>
@@ -23,6 +27,7 @@
 import Vue from 'vue';
 import { VCheckboxWithValidation } from '@libs/component-lib/components';
 import moment from 'moment';
+import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'PrivacyStatement',
@@ -36,8 +41,11 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    consentStatement: {
+      type: Object as () => IConsentStatement,
+      default: null,
+    },
   },
-
   computed: {
     rules(): Record<string, unknown> {
       return {
@@ -57,6 +65,17 @@ export default Vue.extend({
         this.$registrationStore.isPrivacyAgreed = checked;
         this.$registrationStore.householdCreate.consentInformation.privacyDateTimeConsent = checked ? moment.utc(moment()).format() : null;
       },
+    },
+    activeStatementText(): string {
+      return this.$m(this.consentStatement.statement).replaceAll(
+        '{website}',
+        `<a href="${this.$t('registration.privacy_statement.website')}" target="_blank" rel="noopener noreferrer">${
+          this.$t('registration.privacy_statement.website')}</a>`,
+      )?.replaceAll(
+        '{email}',
+        `<a href="mailto:${this.$t('registration.privacy_statement.email')}">${
+          this.$t('registration.privacy_statement.email')}</a>`,
+      );
     },
   },
 });

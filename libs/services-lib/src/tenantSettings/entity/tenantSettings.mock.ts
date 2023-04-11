@@ -1,5 +1,5 @@
 import {
-  mockBrandingEntityData, mockFeatures, mockTenantSettingsEntity, mockTenantSettingsEntityData,
+  mockBrandingEntityData, mockFeatures, mockTenantSettingsEntity, mockTenantSettingsEntityData, mockConsentStatements,
 } from '@libs/entities-lib/tenantSettings';
 import { mockDomainBaseService } from '../../base';
 import { ITenantSettingsServiceMock } from './tenantSettings.types';
@@ -19,4 +19,5 @@ export const mockTenantSettingsService = (): ITenantSettingsServiceMock => ({
   getPublicFeatures: jest.fn(() => mockFeatures()),
   getBranding: jest.fn(() => mockBrandingEntityData()),
   validateCaptchaAllowedIpAddress: jest.fn(),
+  getConsentStatement: jest.fn(() => mockConsentStatements()[0]),
 });

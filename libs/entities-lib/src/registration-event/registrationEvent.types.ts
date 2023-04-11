@@ -80,6 +80,7 @@ export interface IEventData {
   selfRegistrationEnabled: boolean;
   schedule: IEventSchedule;
   registrationAssessments: IRegistrationAssessment[];
+  consentStatementId?: uuid;
 }
 
 /**
@@ -96,4 +97,5 @@ export interface IEvent {
   selfRegistrationEnabled: boolean;
   schedule: IEventSchedule;
   registrationAssessments: IRegistrationAssessment[];
+  consentStatementId?: uuid;
 }

@@ -5,7 +5,7 @@ import {
   mockEventMainInfo, mockEventEntityData,
 } from '@libs/entities-lib/event';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
-
+import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { mockProvider } from '@/services/provider';
 import Component from './SplitHouseholdEvent.vue';
 
@@ -13,6 +13,7 @@ const localVue = createLocalVue();
 const services = mockProvider();
 
 const { pinia, registrationStore } = useMockRegistrationStore();
+const tenantSettingsStore = useMockTenantSettingsStore(pinia).tenantSettingsStore;
 describe('SplitHouseholdEvent', () => {
   let wrapper;
 
@@ -31,6 +32,23 @@ describe('SplitHouseholdEvent', () => {
       it('renders the component', () => {
         const element = wrapper.findDataTest('household_profile_split_event_select');
         expect(element.exists()).toBeTruthy();
+      });
+    });
+  });
+
+  describe('Computed', () => {
+    describe('consentStatements', () => {
+      it('Should return the right value', async () => {
+        tenantSettingsStore.currentTenantSettings.consentStatements = [{ id: 'abc', name: { translation: { en: 'hello' } }, statement: { translation: { en: 'hello' } } },
+          { id: 'def', name: { translation: { en: 'second' } }, statement: { translation: { en: 'second' } } }];
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          mocks: {
+            $services: services,
+          },
+        });
+        expect(wrapper.vm.consentStatements).toEqual(tenantSettingsStore.currentTenantSettings.consentStatements);
       });
     });
   });

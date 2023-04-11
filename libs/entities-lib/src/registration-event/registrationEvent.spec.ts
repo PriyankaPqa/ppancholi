@@ -44,5 +44,8 @@ describe('>>> Event', () => {
     it('should instantiate registrationAssessments', () => {
       expect(event.registrationAssessments).toEqual(mockEventData().registrationAssessments);
     });
+    it('should instantiate consentStatementId', () => {
+      expect(event.consentStatementId).toBe(mockEventData().consentStatementId);
+    });
   });
 });

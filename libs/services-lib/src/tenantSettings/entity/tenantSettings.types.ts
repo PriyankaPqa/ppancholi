@@ -1,5 +1,6 @@
 import {
   IBrandingEntityData,
+  IConsentStatement,
   ICreateTenantSettingsRequest,
   IEditColoursRequest,
   IEditTenantDetailsRequest, IFeatureEntity,
@@ -14,6 +15,7 @@ export interface ITenantSettingsService extends IDomainBaseService<ITenantSettin
   getCurrentTenantSettings(): Promise<ITenantSettingsEntityData>;
   getPublicFeatures(): Promise<IFeatureEntity[]>;
   getBranding(): Promise<IBrandingEntityData>;
+  getConsentStatement(eventId: uuid): Promise<IConsentStatement>;
   createTenantSettings(payload: ICreateTenantSettingsRequest): Promise<ITenantSettingsEntityData>;
   createTenantDomains(payload: ISetDomainsRequest): Promise<ITenantSettingsEntityData>;
   enableFeature(featureId: uuid): Promise<ITenantSettingsEntityData>;
@@ -30,6 +32,7 @@ export interface ITenantSettingsServiceMock extends IDomainBaseServiceMock<ITena
   getCurrentTenantSettings: jest.Mock<ITenantSettingsEntityData>;
   getPublicFeatures: jest.Mock<IFeatureEntity[]>;
   getBranding: jest.Mock<IBrandingEntityData>;
+  getConsentStatement: jest.Mock<IConsentStatement>;
   createTenantSettings: jest.Mock<ITenantSettingsEntityData>;
   createTenantDomains: jest.Mock<ITenantSettingsEntityData>;
   enableFeature: jest.Mock<ITenantSettingsEntityData>;

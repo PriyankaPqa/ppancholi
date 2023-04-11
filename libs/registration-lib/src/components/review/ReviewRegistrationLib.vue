@@ -13,7 +13,7 @@
           {{ $t('registration.menu.privacy') }}
         </div>
         <validation-observer ref="privacyStatement">
-          <crc-privacy-statement :i18n="i18n" :user="user" />
+          <crc-privacy-statement :i18n="i18n" :user="user" :consent-statements="consentStatements" />
         </validation-observer>
       </template>
     </template>
@@ -177,6 +177,7 @@ import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { IContactInformation } from '@libs/entities-lib/src/value-objects/contact-information';
 import { IUser } from '@libs/entities-lib/user';
 import _merge from 'lodash/merge';
+import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
 import AddEditAdditionalMembersLib from '../additional-members/AddEditAdditionalMembersLib.vue';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
 import PersonalInformation from '../personal-information/PersonalInformationLib.vue';
@@ -231,6 +232,10 @@ export default mixins(additionalMemberForm).extend({
       type: Object as () => IUser,
       default: null,
     },
+    consentStatements: {
+      type: Array as () => IConsentStatement[],
+      default: null,
+    },
   },
 
   data() {
@@ -266,7 +271,6 @@ export default mixins(additionalMemberForm).extend({
       return this.$registrationStore.householdAlreadyRegistered;
     },
   },
-
   async beforeDestroy() {
     this.cancelPersonalInformation();
     this.cancelAddresses();

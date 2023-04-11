@@ -123,6 +123,13 @@ describe('>>> TenantSettings service', () => {
     });
   });
 
+  describe('getConsentStatement', () => {
+    it('should be linked to correct URL', async () => {
+      await service.getConsentStatement('id-1');
+      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/consent-statements/id-1');
+    });
+  });
+
   describe('validateCaptchaAllowedIpAddress', () => {
     it('is linked to the correct url', async () => {
       await service.validateCaptchaAllowedIpAddress();

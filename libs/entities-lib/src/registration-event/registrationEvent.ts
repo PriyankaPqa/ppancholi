@@ -28,6 +28,8 @@ export class RegistrationEvent implements IEvent {
 
   schedule: IEventSchedule;
 
+  consentStatementId?: uuid;
+
   constructor(data?: IEventData) {
     if (data) {
       this.id = data.id;
@@ -40,6 +42,7 @@ export class RegistrationEvent implements IEvent {
       this.schedule = _cloneDeep(data.schedule);
       this.selfRegistrationEnabled = data.selfRegistrationEnabled;
       this.registrationAssessments = data.registrationAssessments;
+      this.consentStatementId = data.consentStatementId;
     }
   }
 }

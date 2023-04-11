@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge';
 import { IAzureSearchResult, ECanadaProvinces, ICombinedIndex } from '@libs/shared-lib/types';
-import { mockEventMetadatum, IEventMetadata, IRegistrationAssessment } from '../event';
+import { mockEventMetadatum, IEventMetadata, IRegistrationAssessment, IConsentStatement } from '../event';
 import {
   IEventData, IEvent, IEventGenericLocation, EEventStatus, EResponseLevel,
 } from './registrationEvent.types';
@@ -50,6 +50,25 @@ export const mockRegistrationLocations = (): IEventGenericLocation[] => ([
   },
 ]);
 
+export const mockConsentStatments = (): IConsentStatement[] => ([
+  {
+    id: 'id-1',
+    name: {
+      translation: {
+        en: 'consent statement name-1 en',
+        fr: 'consent statement name-1 fr',
+      },
+    },
+
+    statement: {
+      translation: {
+        en: 'description-1 en',
+        fr: 'description-1 fr',
+      },
+    },
+  },
+]);
+
 export const mockEventData = (): IEventData => ({
   id: '7c076603-580a-4400-bef2-5ddececb0931',
   responseDetails: {
@@ -73,6 +92,7 @@ export const mockEventData = (): IEventData => ({
   },
   shelterLocations: mockShelterLocations(),
   registrationLocations: mockRegistrationLocations(),
+  consentStatementId: 'id-1',
   schedule: {
     status: EEventStatus.Open,
   },

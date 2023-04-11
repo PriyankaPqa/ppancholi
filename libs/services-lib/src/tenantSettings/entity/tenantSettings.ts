@@ -1,5 +1,5 @@
 import {
-  IBrandingEntityData, ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, IFeatureEntity,
+  IBrandingEntityData, IConsentStatement, ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, IFeatureEntity,
   ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData, IValidateCaptchaAllowedIpAddressResponse,
 } from '@libs/entities-lib/tenantSettings';
 import { IMultilingual } from '@libs/shared-lib/types';
@@ -76,5 +76,9 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
 
   async getBranding(): Promise<IBrandingEntityData> {
     return this.http.get(`${this.baseUrl}/current-branding`);
+  }
+
+  async getConsentStatement(eventId: string): Promise<IConsentStatement> {
+    return this.http.get(`${this.baseUrl}/consent-statements/${eventId}`);
   }
 }
