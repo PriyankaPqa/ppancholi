@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
-import { generateRandomTeamName, getToastMessage } from '@libs/cypress-lib/helpers';
+import { generateRandomTeamName } from '@libs/cypress-lib/helpers';
 import { CreateNewTeamPage } from '../../../pages/teams/createNewTeam.page';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
@@ -61,7 +61,7 @@ describe(`${title}`, () => {
           createNewTeamPage.fillPrimaryContactName(getUserName(`${roleName}`));
           createNewTeamPage.fillEventName(this.eventCreated.name.translation.en);
           createNewTeamPage.createTeam();
-          getToastMessage('The standard team has been successfully created.').should('be.visible');
+          cy.contains('The standard team has been successfully created.').should('be.visible');
           createNewTeamPage.getMemberName().should('eq', getUserName(`${roleName}`));
           createNewTeamPage.getMemberRole().should('eq', getUserRoleDescription(`${roleName}`));
           createNewTeamPage.getMemberTeamCount().should('be.visible'); // calculating count values is avoided to prevent test flakiness and reduce complexity.
@@ -97,7 +97,7 @@ describe(`${title}`, () => {
           cy.goTo('teams');
         });
         it('should not be able to create team and have no access to team page', () => {
-          getToastMessage('You do not have permission to access this page').should('be.visible');
+          cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });
     }

@@ -1,6 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { faker } from '@faker-js/faker';
-import { getToastMessage } from '@libs/cypress-lib/helpers/misc';
 import { IAddNewProgramFields, AddNewEventProgramPage } from '../../../pages/programs/addNewEventProgram.page';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
@@ -80,7 +79,7 @@ describe(`${title}`, () => {
           addNewEventProgramPage.fillFrenchData(programData);
 
           const programDetailsPage = addNewEventProgramPage.createProgram();
-          getToastMessage('The program has been successfully created.').should('be.visible');
+          cy.contains('The program has been successfully created.').should('be.visible');
           programDetailsPage.getProgramName().should('eq', programData.name.translation.en);
           programDetailsPage.getEditButton().should('be.visible');
         });
@@ -99,7 +98,7 @@ describe(`${title}`, () => {
           cy.goTo(`events/${this.eventCreated.id}/programs/create`);
         });
         it('should not be able to add an event program', () => {
-          getToastMessage('You do not have permission to access this page').should('be.visible');
+          cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });
     }

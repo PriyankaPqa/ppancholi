@@ -14,6 +14,7 @@ export enum DataTest {
 }
 
 export interface IAddressPageFields {
+  unitNumber?: string,
   streetAddress?: string;
   municipality?: string;
   province?: string;
@@ -39,11 +40,11 @@ export class AddressPage {
 
   async fill(data:IAddressPageFields) {
     if (data.streetAddress) {
-      cy.getByDataTest(this.streetAddress).type(data.streetAddress);
+      cy.getByDataTest(this.streetAddress).clear().type(data.streetAddress);
     }
 
     if (data.municipality) {
-      cy.getByDataTest(this.municipality).type(data.municipality);
+      cy.getByDataTest(this.municipality).clear().type(data.municipality);
     }
 
     if (data.province) {
@@ -51,7 +52,7 @@ export class AddressPage {
     }
 
     if (data.postalCode) {
-      cy.getByDataTest(this.postalCode).type(data.postalCode);
+      cy.getByDataTest(this.postalCode).clear().type(data.postalCode);
     }
 
     if (data.tempAddress) {

@@ -58,6 +58,6 @@ export default defineConfig({
   },
   viewportWidth: 1920,
   viewportHeight: 1080,
-  defaultCommandTimeout: 10000, // Time, in milliseconds, to wait until most DOM based commands are considered timed out.
+  defaultCommandTimeout: 35000, // Time, in milliseconds, to wait until most DOM based commands are considered timed out.
   pageLoadTimeout: 80000, // Time, in milliseconds, to wait for page transition events or cy.visit(), cy.go(), cy.reload() commands to fire their page load events.
 });

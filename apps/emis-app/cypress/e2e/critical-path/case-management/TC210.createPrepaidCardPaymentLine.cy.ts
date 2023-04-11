@@ -3,7 +3,6 @@ import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { mockFinancialAssistanceTableSubItemData } from '@libs/cypress-lib/mocks/financialAssistanceTables/financialAssistanceTables';
 import { AddFinancialAssistancePage } from 'cypress/pages/financial-assistance-payment/addFinancialAssistance.page';
-import { getToastMessage } from '@libs/cypress-lib/helpers/misc';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers, createProgramWithTableWithItemAndSubItem } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -103,7 +102,7 @@ describe(`${title}`, () => {
           addFinancialAssistancePage.getSubmitAssistanceButton().should('not.be.enabled');
           addFinancialAssistancePage.getCreateButton().click();
 
-          getToastMessage('The financial assistance has been successfully created').should('be.visible');
+          cy.contains('The financial assistance has been successfully created').should('be.visible');
           addFinancialAssistancePage.getPaymentStatus().should('eq', 'New');
           addFinancialAssistancePage.getPaymentEditButton().should('be.visible');
           addFinancialAssistancePage.getPaymentDeleteButton().should('be.visible');

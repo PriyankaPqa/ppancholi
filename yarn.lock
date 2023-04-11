@@ -3433,7 +3433,7 @@ are-we-there-yet@~1.1.2:
     delegates "^1.0.0"
     readable-stream "^2.0.6"
 
-arg@^5.0.2:
+arg@5.0.2, arg@^5.0.2:
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/arg/-/arg-5.0.2.tgz#c81433cc427c92c4dcf4865142dbca6f15acd59c"
   integrity sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==
@@ -4591,6 +4591,16 @@ cypress-multi-reporters@^1.6.2:
     debug "^4.1.1"
     lodash "^4.17.15"
 
+cypress-repeat@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/cypress-repeat/-/cypress-repeat-2.3.3.tgz#0a0d363347137248600eff57f4ae75e4526e88d9"
+  integrity sha512-DoPiN5A/SMC9p6B2lRbvOxQvQUS6LO8Zeblkc3ZQQl5cQMmGBa15EOMLdBpQ1ctjOgssvcYawodBkxiNMHI49g==
+  dependencies:
+    arg "5.0.2"
+    bluebird "3.7.2"
+    debug "4.3.4"
+    dotenv "8.2.0"
+
 cypress-terminal-report@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/cypress-terminal-report/-/cypress-terminal-report-5.0.0.tgz#a9c8efc1200b63e8a7ce3e93a768adea28ab6f12"
@@ -4973,6 +4983,11 @@ dotenv@16.0.1:
   version "16.0.1"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.1.tgz#8f8f9d94876c35dac989876a5d3a82a267fdce1d"
   integrity sha512-1K6hR6wtk2FviQ4kEiSjFiH5rpzEVi8WW0x96aztHVMhEspNpc4DVOUTEHtEva5VThQ8IaBX1Pe4gSzpVVUsKQ==
+
+dotenv@8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
+  integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
 
 duplexer2@~0.1.4:
   version "0.1.4"

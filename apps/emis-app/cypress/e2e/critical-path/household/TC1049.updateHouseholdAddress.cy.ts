@@ -1,28 +1,16 @@
+  /* eslint-disable max-nested-callbacks */
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
+import { ECanadaProvinces } from '@libs/shared-lib/types';
+import { addressData } from '@libs/cypress-lib/mocks/address/address';
 import { format } from 'date-fns';
-import { faker } from '@faker-js/faker';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { useProvider } from '../../../provider/provider';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
-import { IHouseholdMemberFields } from '../../../pages/casefiles/addHouseholdMember.page';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
-
-const firstName: string = faker.name.firstName();
-const lastName: string = faker.name.lastName();
-
-const householdMemberData: IHouseholdMemberFields = {
-  firstName,
-  lastName,
-  middleName: faker.name.middleName(),
-  preferredName: `${firstName} ${lastName}`,
-  gender: faker.helpers.arrayElement(['Female', 'Male']),
-  dateOfBirth: format(faker.date.birthdate({ min: 16, max: 100, mode: 'age' }), 'yyyy-MM-dd'),
-  indigenousIdentity: faker.helpers.arrayElement(['First Nation', 'Metis', 'Inuit', 'Other']),
-};
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -50,7 +38,7 @@ const prepareState = async (accessToken: string, event: IEventEntity) => {
   const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
   cy.wrap(mockCreateHousehold).as('household');
   const caseFileCreated = await provider.households.postCrcRegistration(mockCreateHousehold);
-  cy.wrap(caseFileCreated.caseFile.householdId).as('householdCreated');
+  cy.wrap(caseFileCreated.caseFile.householdId).as('householdId');
 };
 
 const prepareEventTeam = async (accessToken: string) => {
@@ -61,8 +49,7 @@ const prepareEventTeam = async (accessToken: string) => {
   cy.wrap(provider).as('provider');
 };
 
-const title = '#TC666# - Add Household Member Same Temp Address As Primary';
-
+const title = '#TC1049# - Update Household Address';
 describe(`${title}`, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
@@ -72,53 +59,54 @@ describe(`${title}`, () => {
   });
 
   after(function () {
-    if (this.provider && this.teamCreated?.id) {
+    if (this.teamCreated?.id && this.provider) {
       removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
     }
   });
-
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
         before(async () => {
           await prepareState(accessTokenL6, event);
           cy.login(roleValue);
-          // eslint-disable-next-line
-          cy.get('@householdCreated').then((householdId) => {
+          cy.get('@householdId').then((householdId) => {
             cy.goTo(`casefile/household/${householdId}`);
           });
         });
-        it('should successfully add household member with same temp address as primary', function () {
-          const householdSize = this.household.additionalMembers.length + 1; // 1 primary member + additional household members
-
+        it('should successfully update household address', function () {
           const householdProfilePage = new HouseholdProfilePage();
-          householdProfilePage.getHouseholdSize().should('be.visible').should('have.length', householdSize);
 
-          const addHouseholdMemberPage = householdProfilePage.addNewMember();
-          addHouseholdMemberPage.fill(householdMemberData);
-          addHouseholdMemberPage.assignSameTempAddressAsPrimaryMember();
-          addHouseholdMemberPage.addHouseholdMember();
+          const editHouseholdAddressPage = householdProfilePage.editAddress();
+          editHouseholdAddressPage.getNoFixedHomeAddressCheckbox().should('not.be.checked').and('not.have.attr', 'checked');
+          editHouseholdAddressPage.fillUpdatedAddressData(addressData, roleName); // roleName added in unitNumber to prevent creating potential duplicates.
+          editHouseholdAddressPage.saveUpdatedAddress();
 
-          householdProfilePage.getHouseholdSize().should('have.length', householdSize + 1);
+          cy.contains('The household address has been successfully updated').should('be.visible');
+          cy.contains(`${addressData.unitNumber} ${roleName}-${addressData.streetAddress}`).should('be.visible');
+          cy.contains(`${addressData.municipality}, ${addressData.province}, ${addressData.postalCode}`).should('be.visible');
 
-          if (roleName === 'Level1') {
-            householdProfilePage.getMakePrimaryButtons().should('not.exist');
-            householdProfilePage.getEditMemberButtons().eq(5).should('exist');
-            householdProfilePage.getSplitMemberButtons().should('not.exist');
-            householdProfilePage.getDeleteMemberButtons().eq(4).should('exist');
-          } else {
-            householdProfilePage.getMakePrimaryButtons().eq(4).should('exist');
-            householdProfilePage.getEditMemberButtons().eq(5).should('exist');
-            householdProfilePage.getSplitMemberButtons().eq(4).should('exist');
-            householdProfilePage.getDeleteMemberButtons().eq(4).should('exist');
-          }
+          const profileHistoryPage = householdProfilePage.goToProfileHistoryPage();
+          cy.get('@householdId').then((householdId) => {
+            profileHistoryPage.refreshUntilHouseholdProfileReady(householdId.toString());
+          });
+          profileHistoryPage.getHouseholdHistoryEditedBy().should('eq', `${getUserName(roleName)}${getUserRoleDescription(roleName)}`);
+          profileHistoryPage.getHouseholdHistoryChangeDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+          profileHistoryPage.getHouseholdHistoryLastAction().should('eq', 'Address information changed');
+          profileHistoryPage.getHouseholdHistoryPreviousValue()
+            .should('string', `${this.household.homeAddress.unitSuite}-${this.household.homeAddress.streetAddress}`)
+            .should('string', `${this.household.homeAddress.city}, ${ECanadaProvinces[Number(this.household.homeAddress.province.toString())]}, `
+             + `${this.household.homeAddress.postalCode}`);
+          profileHistoryPage.getHouseholdHistoryNewValue().should('string', `${addressData.unitNumber} ${roleName}-${addressData.streetAddress}`);
+          profileHistoryPage.getHouseholdHistoryNewValue().should('string', `${addressData.municipality}, ${addressData.province}, `
+          + `${addressData.postalCode}, Canada`);
+          profileHistoryPage.goToHouseholdProfilePage();
 
           const caseFileActivityPage = householdProfilePage.goToCaseFileActivityPage();
           caseFileActivityPage.getUserName().should('eq', getUserName(roleName));
           caseFileActivityPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
           caseFileActivityPage.getMemberCreationDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileActivityPage.getCaseFileActivityTitles().should('string', 'Modified household information');
-          caseFileActivityPage.getCaseFileActivityBodies().should('string', `Household member added: ${householdMemberData.preferredName}`);
+          caseFileActivityPage.getCaseFileActivityBodies().should('string', 'Address information changed');
         });
       });
     }
@@ -131,12 +119,12 @@ describe(`${title}`, () => {
           cy.login(roleValue);
           cy.goTo('casefile');
         });
-        it('should not be able to add household member with same temp address as primary', () => {
+        it('should not be able to update household address', () => {
           const caseFileHomePage = new CaseFilesHomePage();
 
-          const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold(); // re-using a household created for canRoles.
+          const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold(); // re-use already created household for canRoles.
           householdProfilePage.getHouseholdSize().should('be.visible');
-          householdProfilePage.getAddNewMemberButton().should('not.exist');
+          householdProfilePage.getEditAddressButton().should('not.exist');
         });
       });
     }

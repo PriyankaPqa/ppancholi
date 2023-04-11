@@ -43,13 +43,13 @@
               {{ $t('registration.addresses.noFixedHomeAddress') }}
             </template>
             <template v-else>
-              <div v-if="addressLine1">
+              <div v-if="addressLine1" data-test="household_profile_home_address_line1">
                 {{ addressLine1 }}
               </div>
-              <div v-if="addressLine2">
+              <div v-if="addressLine2" data-test="household_profile_home_address_line2">
                 {{ addressLine2 }}
               </div>
-              <div v-if="country">
+              <div v-if="country" data-test="household_profile_home_address_country">
                 {{ country }}
               </div>
             </template>

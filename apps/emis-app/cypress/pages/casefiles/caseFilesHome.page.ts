@@ -1,5 +1,5 @@
 import { MemberCreateRequest } from '@libs/entities-lib/household-create';
-import { HouseholdProfilePage } from './houseHoldProfile.page';
+import { HouseholdProfilePage } from './householdProfile.page';
 
 export enum DataTest {
   beneficiaryNameLink = 'beneficiaryName-link',

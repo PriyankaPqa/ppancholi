@@ -10,7 +10,7 @@ import { ICRCPrivacyStatementPageFields } from '../../../pages/registration/crcP
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
-import { DataTest } from '../../../pages/casefiles/houseHoldProfile.page';
+import { DataTest } from '../../../pages/casefiles/householdProfile.page';
 
 const privacyData: ICRCPrivacyStatementPageFields = {
   privacyRegistrationMethod: 'Phone',
