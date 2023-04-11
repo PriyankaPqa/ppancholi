@@ -506,13 +506,16 @@ describe('ReviewRegistrationLib.vue', () => {
         expect(wrapper.vm.$registrationStore.householdCreate.setHomeAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupHomeAddress);
       });
 
-      it('should call updatePersonAddress with proper params if updatePersonIdentity succeeded only if isNewPrimaryCurrentAddress is true', async () => {
+      // eslint-disable-next-line vue/max-len
+      it('should call updatePersonAddress with proper params and updateAdditionalMembersWithSameAddress if updatePersonIdentity succeeded only if isNewPrimaryCurrentAddress is true', async () => {
+        wrapper.vm.updateAdditionalMembersWithSameAddress = jest.fn();
         await wrapper.vm.updateAddresses();
         expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
           wrapper.vm.householdCreate.primaryBeneficiary.id,
           true,
           wrapper.vm.householdCreate.primaryBeneficiary.currentAddress,
         );
+        expect(wrapper.vm.updateAdditionalMembersWithSameAddress).toHaveBeenCalled();
       });
 
       it('should setCurrentAddress with backup if updatePersonAddress failed', async () => {
@@ -520,6 +523,29 @@ describe('ReviewRegistrationLib.vue', () => {
         wrapper.vm.$registrationStore.householdCreate.setCurrentAddress = jest.fn();
         await wrapper.vm.updateAddresses();
         expect(wrapper.vm.$registrationStore.householdCreate.setCurrentAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupCurrentAddress);
+      });
+    });
+
+    describe('updateAdditionalMembersWithSameAddress', () => {
+      it('should call service for all members with the same address', async () => {
+        await wrapper.setData({ additionalMembers: [
+          { ...wrapper.vm.additionalMembers[0], sameAddress: false },
+          { ...wrapper.vm.additionalMembers[1], sameAddress: true },
+          { ...wrapper.vm.additionalMembers[2], sameAddress: true },
+        ] });
+        await wrapper.vm.updateAdditionalMembersWithSameAddress();
+
+        expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledTimes(2);
+        expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
+          wrapper.vm.additionalMembersCopy[1].id,
+          true,
+          wrapper.vm.householdCreate.primaryBeneficiary.currentAddress,
+        );
+        expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
+          wrapper.vm.additionalMembersCopy[2].id,
+          true,
+          wrapper.vm.householdCreate.primaryBeneficiary.currentAddress,
+        );
       });
     });
 

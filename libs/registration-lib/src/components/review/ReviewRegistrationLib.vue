@@ -417,10 +417,30 @@ export default mixins(additionalMemberForm).extend({
           this.addresses.loading = false;
           return;
         }
+
+        await this.updateAdditionalMembersWithSameAddress();
+
         this.addresses.loading = false;
         this.$toasted.global.success(this.$t('registration.currentAddress.updated'));
       }
       this.addresses.loading = false;
+    },
+
+    async updateAdditionalMembersWithSameAddress() {
+      const promises = [] as Array<Promise<any>>;
+
+      (this.additionalMembers || []).forEach(async (otherMember, index) => {
+        if (otherMember.sameAddress) {
+          promises.push(this.$services.households.updatePersonAddress(
+            this.additionalMembersCopy[index].id,
+            !this.$registrationStore.isCRCRegistration(),
+            this.householdCreate.primaryBeneficiary.currentAddress,
+          ) as Promise<any>);
+        }
+      });
+
+      const addresses = await Promise.all(promises);
+      return addresses;
     },
 
     async updateHomeAddress(householdId: string, household: IHouseholdCreate) {

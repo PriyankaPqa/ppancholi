@@ -68,7 +68,6 @@ import {
 import { TranslateResult } from 'vue-i18n';
 import { IEventGenericLocation } from '@libs/entities-lib/registration-event';
 import libHelpers from '@libs/entities-lib/helpers';
-import { IHouseholdEntity } from '@libs/entities-lib/household';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { localStorageKeys } from '@/constants/localStorage';
@@ -269,14 +268,14 @@ export default Vue.extend({
     },
 
     async updateAdditionalMembersWithSameAddress() {
-      const promises = [] as Array<Promise<IHouseholdEntity>>;
+      const promises = [] as Array<Promise<IMember>>;
 
       this.additionalMembers.forEach(async (otherMember, index) => {
         if (_isEqual(otherMember.currentAddress, this.backupAddress)) {
           otherMember.setCurrentAddress(this.member.currentAddress);
           promises.push(useRegistrationStore().updatePersonAddress({
             member: otherMember, isPrimaryMember: false, index,
-          }) as Promise<IHouseholdEntity>);
+          }) as Promise<IMember>);
         }
       });
 
