@@ -106,7 +106,7 @@ export class HouseholdActivity implements IHouseholdActivity {
         return this.makePrimaryTemplate(data as IHouseholdActivityPerson);
 
       case HouseholdActivityType.StatusChanged:
-        return this.makeStatusTemplate((data as IHouseholdActivityStatus)?.status, i18n);
+        return this.makeStatusTemplate(data as IHouseholdActivityStatus, i18n);
 
       default:
         return this.makeEmptyTemplate();
@@ -375,11 +375,15 @@ export class HouseholdActivity implements IHouseholdActivity {
     return address;
   }
 
-  makeStatusTemplate(status: HouseholdStatus, i18n: VueI18n): IHistoryItemTemplateData[] {
+  makeStatusTemplate(data: IHouseholdActivityStatus, i18n: VueI18n): IHistoryItemTemplateData[] {
     return [
       {
-        label: '',
-        value: `${i18n.t(`household.profile.householdStatus.${HouseholdStatus[status]}`)}`,
+        label: 'household.history.label.status',
+        value: `${i18n.t(`household.profile.householdStatus.${HouseholdStatus[data.status]}`)}`,
+      },
+      {
+        label: 'household.history.label.rationale',
+        value: helpers.getMultilingualValue(data.rationale, i18n) || data.rationale?.translation[(i18n.fallbackLocale) as string],
       },
       ];
   }

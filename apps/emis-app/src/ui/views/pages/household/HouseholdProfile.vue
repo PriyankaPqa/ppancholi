@@ -97,7 +97,7 @@
             </div>
             <v-divider class="mt-4 mb-6" />
             <pinned-status
-              :id="caseFileIdForPinnedStatus" />
+              :pinned-household-status-activity="pinnedHouseholdStatusActivity" />
           </template>
           <h5 class="rc-heading-5">
             {{ $t('household.profile.active_in_events', { x: activeCaseFiles.length }) }}
@@ -229,6 +229,7 @@ import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { HouseholdActivityType, IHouseholdActivity, IHouseholdActivityMembers } from '@libs/entities-lib/value-objects/household-activity';
 import PinnedStatus from '@/ui/views/pages/household/components/PinnedStatus.vue';
+import _debounce from 'lodash/debounce';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
@@ -469,11 +470,8 @@ export default mixins(household).extend({
       return movedMembers;
     },
 
-    caseFileIdForPinnedStatus(): string {
-      if (this.caseFiles?.length > 0) {
-        return this.caseFiles[0].id;
-      }
-      return '';
+    pinnedHouseholdStatusActivity(): IHouseholdActivity {
+      return this.activityItemsData.filter((e) => e.activityType === HouseholdActivityType.StatusChanged)[0];
     },
   },
 
@@ -491,7 +489,12 @@ export default mixins(household).extend({
     await this.fetchHouseholdData();
     await this.fetchAllEvents();
     this.activityItemsData = await this.$services.households.getHouseholdActivity(this.id);
+    this.attachToChanges(true);
     this.loading = false;
+  },
+
+  destroyed() {
+    this.attachToChanges(false);
   },
 
   methods: {
@@ -563,6 +566,24 @@ export default mixins(household).extend({
       }
        return null;
      },
+
+    attachToChanges(on: boolean) {
+      if (this.$signalR.connection) {
+        if (on) {
+          this.$signalR.connection.on('household.HouseholdActivityCreated', this.householdActivityChanged);
+          this.$signalR.connection.on('household.HouseholdActivityUpdated', this.householdActivityChanged);
+        } else {
+          this.$signalR.connection.off('household.HouseholdActivityCreated', this.householdActivityChanged);
+          this.$signalR.connection.off('household.HouseholdActivityUpdated', this.householdActivityChanged);
+        }
+      }
+    },
+
+    householdActivityChanged: _debounce(async function func(this:any, item: IHouseholdActivity) {
+      if (this.id === item?.householdId) {
+        this.activityItemsData = await this.$services.households.getHouseholdActivity(this.id);
+      }
+    }, 1000),
   },
   });
 

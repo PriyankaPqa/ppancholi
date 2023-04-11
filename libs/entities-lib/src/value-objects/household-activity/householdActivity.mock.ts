@@ -180,9 +180,21 @@ export const mockHouseholdActivities = (type: HouseholdActivityType = null): IHo
       activityType: HouseholdActivityType.StatusChanged,
       newDetails: {
         status: HouseholdStatus.Open,
+            rationale: {
+      translation: {
+        en: 'Test-reopen',
+        fr: 'Test-reopen-fr',
+      },
+    },
       },
       previousDetails: {
         status: HouseholdStatus.Closed,
+            rationale: {
+      translation: {
+        en: 'Test-close',
+        fr: 'Test-close-fr',
+      },
+    },
       },
     },
   ];

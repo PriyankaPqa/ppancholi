@@ -1114,6 +1114,28 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.fetchShelterLocations).toHaveBeenCalled();
         expect(wrapper.vm.$services.households.getHouseholdActivity).toHaveBeenCalled();
       });
+
+      it('should call attachToChanges', async () => {
+        wrapper.vm.attachToChanges = jest.fn();
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledTimes(0);
+
+        await wrapper.vm.$options.created[0].call(wrapper.vm);
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledWith(true);
+      });
+    });
+
+    describe('destroyed', () => {
+      it('should call attachToChanges', async () => {
+        wrapper.vm.attachToChanges = jest.fn();
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledTimes(0);
+
+        wrapper.destroy();
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledWith(false);
+      });
     });
   });
 
@@ -1413,6 +1435,40 @@ describe('HouseholdProfile.vue', () => {
         await wrapper.vm.onStatusChange(payload);
         expect(wrapper.vm.$services.households.setHouseholdStatus).toHaveBeenCalledWith(wrapper.vm.id, HouseholdStatus.Open, 'test-rationale');
         expect(wrapper.vm.showHouseholdStatusDialog).toEqual(false);
+      });
+    });
+
+    describe('attachToChanges', () => {
+      it('should connect on to signalr updates when true', () => {
+        wrapper.vm.attachToChanges(true);
+        expect(wrapper.vm.$signalR.connection.on).toHaveBeenCalledWith('household.HouseholdActivityCreated', wrapper.vm.householdActivityChanged);
+        expect(wrapper.vm.$signalR.connection.on).toHaveBeenCalledWith('household.HouseholdActivityUpdated', wrapper.vm.householdActivityChanged);
+      });
+      it('should connect of to signalr updates when false', () => {
+        wrapper.vm.attachToChanges(false);
+        expect(wrapper.vm.$signalR.connection.off).toHaveBeenCalledWith('household.HouseholdActivityCreated', wrapper.vm.householdActivityChanged);
+        expect(wrapper.vm.$signalR.connection.off).toHaveBeenCalledWith('household.HouseholdActivityUpdated', wrapper.vm.householdActivityChanged);
+      });
+    });
+
+    describe('householdActivityChanged', () => {
+      it('calls getHouseholdActivity when the activity has the same household id after debounce', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'id-1',
+          },
+          mocks: {
+            $services: services,
+          },
+        });
+
+        jest.clearAllMocks();
+        await wrapper.vm.householdActivityChanged({ householdId: wrapper.vm.id });
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        expect(wrapper.vm.$services.households.getHouseholdActivity).toHaveBeenCalled();
       });
     });
   });

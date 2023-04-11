@@ -1675,6 +1675,8 @@
     "household.history.label.primaryMember": "Représentant(e) du ménage",
     "household.history.label.primary_spoken_language": "Principale langue utilisée",
     "household.history.label.temporary_address": "Adresse temporaire",
+    "household.history.label.status": "Statut",
+    "household.history.label.rationale": "Justification",
     "household.move.action.button": "Déplacer",
     "household.move.address_select_error_message": "Veuillez sélectionner l’une des deux options. Si vous cochez « Nouvelle adresse » , veuillez saisir une adresse valide.",
     "household.move.card.address": "Adresse",

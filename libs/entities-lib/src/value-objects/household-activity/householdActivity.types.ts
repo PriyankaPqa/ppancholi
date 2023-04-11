@@ -51,6 +51,7 @@ export interface IHouseholdActivityMembers {
 
 export interface IHouseholdActivityStatus {
   status: HouseholdStatus;
+  rationale: IMultilingual;
 }
 
 export interface IHouseholdActivity {

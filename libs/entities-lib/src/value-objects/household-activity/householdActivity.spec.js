@@ -216,7 +216,7 @@ describe('>>> Household Activity', () => {
 
       historyActivity.makeStatusTemplate = jest.fn();
       historyActivity.getTemplateData(true, i18n);
-      expect(historyActivity.makeStatusTemplate).toHaveBeenCalledWith(historyActivity.previousDetails.status, i18n);
+      expect(historyActivity.makeStatusTemplate).toHaveBeenCalledWith(historyActivity.previousDetails, i18n);
     });
   });
 
@@ -463,10 +463,17 @@ describe('>>> Household Activity', () => {
     it('returns the right data', () => {
       const activity = mockHouseholdActivities(HouseholdActivityType.StatusChanged)[0];
       const historyActivity = new HouseholdActivity(activity);
-      const expected = historyActivity.makeStatusTemplate(historyActivity.previousDetails.status, i18n);
+      const expected = historyActivity.makeStatusTemplate(historyActivity.previousDetails, i18n);
 
       expect(expected).toEqual([
-        { label: '', value: 'household.profile.householdStatus.Closed' },
+        {
+          label: 'household.history.label.status',
+          value: 'household.profile.householdStatus.Closed',
+        },
+        {
+          label: 'household.history.label.rationale',
+          value: 'Test-close',
+        },
       ]);
     });
   });

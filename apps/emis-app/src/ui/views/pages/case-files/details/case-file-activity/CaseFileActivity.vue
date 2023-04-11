@@ -118,7 +118,7 @@ import mixins from 'vue-typed-mixins';
 import _sortBy from 'lodash/sortBy';
 import _orderBy from 'lodash/orderBy';
 import { RcPageContent, RcPageLoading, RcTooltip } from '@libs/component-lib/components';
-import { CaseFileTriage } from '@libs/entities-lib/case-file';
+import { CaseFileTriage, ICaseFileActivity } from '@libs/entities-lib/case-file';
 import moment from '@libs/shared-lib/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
@@ -126,7 +126,7 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import entityUtils from '@libs/entities-lib/utils';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
-import caseFileActivity from '@/ui/mixins/caseFileActivity';
+import _debounce from 'lodash/debounce';
 import CaseFileTags from './components/CaseFileTags.vue';
 import CaseFileLabels from './components/CaseFileLabels.vue';
 import CaseFileStatus from './components/CaseFileStatus.vue';
@@ -136,7 +136,7 @@ import AssignCaseFile from './components/AssignCaseFile.vue';
 import CaseFileAssignments from './components/CaseFileAssignments.vue';
 import caseFileDetail from '../caseFileDetail';
 
-export default mixins(caseFileDetail, caseFileActivity).extend({
+export default mixins(caseFileDetail).extend({
   name: 'CaseFileActivity',
   components: {
     RcPageLoading,
@@ -150,13 +150,23 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
     AssignCaseFile,
     CaseFileAssignments,
   },
-
+  props: {
+    /*
+    Case file Id
+     */
+    id: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       moment,
       showLabelsDialog: false,
       loading: false,
       saving: false,
+      loadingActivity: false,
+      caseFileActivities: [] as ICaseFileActivity[],
       sortingListItems: [
         {
           value: 'asc', text: this.$t('caseFileActivity.ascending'),
@@ -232,6 +242,37 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
     async sortCaseFileActivities(direction: 'asc' | 'desc') {
       this.caseFileActivities = _orderBy(this.caseFileActivities, 'created', direction);
     },
+
+    async fetchCaseFileActivities() {
+      try {
+        this.loadingActivity = true;
+        const activities: ICaseFileActivity[] = await useCaseFileStore().fetchCaseFileActivities(this.id);
+        if (activities) {
+          this.caseFileActivities = activities;
+        }
+      } finally {
+        this.loadingActivity = false;
+      }
+    },
+
+    attachToChanges(on: boolean) {
+      if (this.$signalR.connection) {
+        if (on) {
+          this.$signalR.connection.on('case-file.CaseFileActivityCreated', this.activityChanged);
+          this.$signalR.connection.on('case-file.CaseFileActivityUpdated', this.activityChanged);
+        } else {
+          this.$signalR.connection.off('case-file.CaseFileActivityCreated', this.activityChanged);
+          this.$signalR.connection.off('case-file.CaseFileActivityUpdated', this.activityChanged);
+        }
+      }
+    },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    activityChanged: _debounce(function func(this:any, item: ICaseFileActivity) {
+      if (this.id === item?.caseFileId || this.id === item?.id) {
+        this.fetchCaseFileActivities();
+      }
+    }, 1000),
   },
 });
 </script>

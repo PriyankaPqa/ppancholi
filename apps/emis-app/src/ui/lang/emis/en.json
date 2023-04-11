@@ -1675,6 +1675,8 @@
     "household.history.label.primaryMember": "Primary member",
     "household.history.label.primary_spoken_language": "Primary spoken language",
     "household.history.label.temporary_address": "Temporary address",
+    "household.history.label.status": "Status",
+    "household.history.label.rationale": "Rationale",
     "household.move.action.button": "Move",
     "household.move.address_select_error_message": "Please select one of the two options. If you select 'new address', please input a valid address.\"",
     "household.move.card.address": "Address",
