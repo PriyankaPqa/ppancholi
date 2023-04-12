@@ -438,14 +438,7 @@ export default Vue.extend({
             By: this.item.user.name,
           },
         );
-        if (this.item.details.registrationMethod) {
-          body += `\n${this.$t('caseFileActivity.activityList.body.registrationMethod')}: `;
-          body += this.$t(`enums.RegistrationMethod.${ERegistrationMethod[this.item.details.registrationMethod as number]}`);
-          if (this.item.details.registrationMethod === ERegistrationMethod.InPerson && this.item.details.registrationLocation) {
-            body += `\n${this.$t('caseFileActivity.activityList.body.registrationLocation')}: `;
-            body += this.$m(this.item.details.registrationLocation as IMultilingual);
-          }
-        }
+       body += this.makeHouseholdRegistrationDetailsBody(this.item.details);
       } else {
         body += this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
           ? this.$t('caseFileActivity.activityList.body.PublicRegistration.individual')
@@ -540,11 +533,29 @@ export default Vue.extend({
         case HouseholdCaseFileActivityType.MemberRemoved:
           return `${this.$t('household.history.action.household_member_removed')}${displayedName}`;
         case HouseholdCaseFileActivityType.PrimaryAssigned:
-          return `${this.$t('household.history.action.household_member_assign_primary')}${displayedName}`;
-
+          return `${this.$t('household.history.action.household_member_assign_primary')}${displayedName}${
+           this.makeHouseholdRegistrationDetailsBody(this.item.details)}`;
         default:
           return '';
       }
+    },
+
+    makeHouseholdRegistrationDetailsBody(details: Record<string, unknown>) : TranslateResult {
+      let body = '';
+      if (details?.registrationMethod) {
+        body += `\n${this.$t('caseFileActivity.activityList.body.registrationMethod')}: `;
+        body += this.$t(`enums.RegistrationMethod.${ERegistrationMethod[details.registrationMethod as number]}`);
+
+        if (details.registrationMethod === ERegistrationMethod.InPerson && details.registrationLocation) {
+          body += `\n${this.$t('caseFileActivity.activityList.body.registrationLocation')}: `;
+          body += this.$m(this.item.details.registrationLocation as IMultilingual);
+          if (details.eventName) {
+            body += ` - ${this.$m(details.eventName as IMultilingual)}`;
+          }
+        }
+      }
+
+      return body;
     },
 
     makeContentForAssessmentAdded(): { title: TranslateResult, body: TranslateResult } {

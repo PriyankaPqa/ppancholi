@@ -1021,8 +1021,67 @@ describe('CaseFileActivityListItem.vue', () => {
           ...mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0],
           details: { householdActivityType: HouseholdCaseFileActivityType.PrimaryAssigned, member: { id: '1', name: 'Jane Doe' } },
         };
+        wrapper.vm.makeHouseholdRegistrationDetailsBody = jest.fn(() => ' mock-registration-details-body');
         await wrapper.setProps({ item });
-        expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.household_member_assign_primary: Jane Doe');
+        expect(wrapper.vm.makeHouseholdEditedBody()).toEqual('household.history.action.household_member_assign_primary: Jane Doe mock-registration-details-body');
+      });
+    });
+
+    describe('makeHouseholdRegistrationDetailsBody', () => {
+      it('returns the correct data when there is a registration method', async () => {
+        const item = {
+          ...mockCaseFileActivities(CaseFileActivityType.Registration)[0],
+          details: {
+            ...mockCaseFileActivities(CaseFileActivityType.Registration)[0].details,
+            registrationMethod: ERegistrationMethod.Phone,
+          },
+        };
+        wrapper.vm.$t = jest.fn((k) => k);
+        await wrapper.setProps({
+          item,
+        });
+        const body = '\ncaseFileActivity.activityList.body.registrationMethod: enums.RegistrationMethod.Phone';
+
+        expect(wrapper.vm.makeHouseholdRegistrationDetailsBody(wrapper.vm.item.details)).toEqual(body);
+      });
+
+      it('returns the correct data when registration method is in person and has location', async () => {
+        const item = {
+          ...mockCaseFileActivities(CaseFileActivityType.Registration)[0],
+          details: {
+            ...mockCaseFileActivities(CaseFileActivityType.Registration)[0].details,
+            registrationMethod: ERegistrationMethod.InPerson,
+            registrationLocation: { translation: { en: 'Town Hall', fr: '' } },
+          },
+        };
+        wrapper.vm.$t = jest.fn((k) => k);
+        await wrapper.setProps({
+          item,
+        });
+        let body = '\ncaseFileActivity.activityList.body.registrationMethod: enums.RegistrationMethod.InPerson';
+        body += '\ncaseFileActivity.activityList.body.registrationLocation: Town Hall';
+
+        expect(wrapper.vm.makeHouseholdRegistrationDetailsBody(wrapper.vm.item.details)).toEqual(body);
+      });
+
+      it('returns the correct data when registration method is in person and has location and event name', async () => {
+        const item = {
+          ...mockCaseFileActivities(CaseFileActivityType.Registration)[0],
+          details: {
+            ...mockCaseFileActivities(CaseFileActivityType.Registration)[0].details,
+            registrationMethod: ERegistrationMethod.InPerson,
+            registrationLocation: { translation: { en: 'Town Hall', fr: '' } },
+            eventName: { translation: { en: 'Quebec Earthquake', fr: '' } },
+          },
+        };
+        wrapper.vm.$t = jest.fn((k) => k);
+        await wrapper.setProps({
+          item,
+        });
+        let body = '\ncaseFileActivity.activityList.body.registrationMethod: enums.RegistrationMethod.InPerson';
+        body += '\ncaseFileActivity.activityList.body.registrationLocation: Town Hall - Quebec Earthquake';
+
+        expect(wrapper.vm.makeHouseholdRegistrationDetailsBody(wrapper.vm.item.details)).toEqual(body);
       });
     });
 

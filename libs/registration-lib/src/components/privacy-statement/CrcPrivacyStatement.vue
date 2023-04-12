@@ -29,7 +29,7 @@
             :value="privacyRegistrationLocation"
             background-color="white"
             data-test="privacyRegistrationLocation"
-            :item-text="(item) => $m(item.name)"
+            :item-text="(item) => getRegistrationLocationText(item)"
             return-object
             :items="activeRegistrationLocations"
             :rules="rules.privacyRegistrationLocation"
@@ -192,6 +192,13 @@ export default Vue.extend({
       if (registrationLocation) {
         this.privacyRegistrationLocation = registrationLocation;
       }
+    },
+
+    getRegistrationLocationText(item:IEventGenericLocation): string {
+        if (item.eventName) {
+          return `${this.$m(item.name)} - ${this.$m(item.eventName)}`;
+        }
+        return this.$m(item.name);
     },
   },
 });

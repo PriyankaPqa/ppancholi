@@ -276,6 +276,18 @@ describe('CrcPrivacyStatement.vue', () => {
         expect(wrapper.vm.privacyRegistrationLocation).toEqual({ id: 'location_id' });
       });
     });
+
+    describe('getRegistrationLocationText', () => {
+      it('returns the name of the location if it has no event name', () => {
+        const rl = { name: { translation: { en: 'rl-name' } } };
+        expect(wrapper.vm.getRegistrationLocationText(rl)).toEqual('rl-name');
+      });
+
+      it('returns the name of the location if it has no event name', () => {
+        const rl = { name: { translation: { en: 'rl-name' } }, eventName: { translation: { en: 'event-name' } } };
+        expect(wrapper.vm.getRegistrationLocationText(rl)).toEqual('rl-name - event-name');
+      });
+    });
   });
 
   describe('Lifecycle', () => {

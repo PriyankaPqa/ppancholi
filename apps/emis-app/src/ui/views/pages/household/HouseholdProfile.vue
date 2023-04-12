@@ -217,13 +217,13 @@ import AddEditAdditionalMembersLib from '@libs/registration-lib/components/addit
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
-import { EEventLocationStatus, IEventGenericLocation, IEventMetadata } from '@libs/entities-lib/event';
+import { EEventLocationStatus, IEventMetadata } from '@libs/entities-lib/event';
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 import routes from '@/constants/routes';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IAzureSearchResult, ICombinedIndex, IMultilingual } from '@libs/shared-lib/types';
 import { useRegistrationStore } from '@/pinia/registration/registration';
-import { IEventData } from '@libs/entities-lib/registration-event';
+import { IEventData, IEventGenericLocation } from '@libs/entities-lib/registration-event';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
@@ -317,7 +317,7 @@ export default mixins(household).extend({
         const event = this.allEvents.find((e) => e.entity.id === cf.eventId)?.entity;
         event?.registrationLocations?.forEach((rl) => {
           if (rl.status === EEventLocationStatus.Active) {
-            locations.push(rl);
+            locations.push({ ...rl, eventName: event.name });
           }
         });
       });

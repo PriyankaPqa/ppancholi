@@ -64,6 +64,7 @@ export interface IEventGenericLocation {
   name: IMultilingual;
   status: EEventLocationStatus;
   address: IEventGenericLocationAddress;
+  eventName? : IMultilingual;
 }
 
 /**

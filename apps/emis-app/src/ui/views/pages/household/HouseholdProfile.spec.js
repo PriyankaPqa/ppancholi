@@ -34,11 +34,13 @@ const events = [
     id: '1',
     shelterLocations: [{ id: 'loc-1', status: EEventLocationStatus.Active }],
     registrationLocations: [{ id: ' loc-id-1-active', status: EEventLocationStatus.Active }, { id: ' loc-id-2-inactive', status: EEventLocationStatus.Inactive }],
+    name: { translation: { en: 'event-name-1' } },
   }),
   mockEventMainInfo({
     id: '2',
     shelterLocations: [{ id: 'loc-2', status: EEventLocationStatus.Inactive }, { id: 'loc-3', status: EEventLocationStatus.Active }],
     registrationLocations: [{ id: ' loc-id-3-active', status: EEventLocationStatus.Active }, { id: ' loc-id-4-inactive', status: EEventLocationStatus.Inactive }],
+    name: { translation: { en: 'event-name-2' } },
   }),
 ];
 const otherEvent = mockEventMainInfo({
@@ -330,8 +332,8 @@ describe('HouseholdProfile.vue', () => {
         });
 
         expect(wrapper.vm.registrationLocations).toEqual([
-          { id: ' loc-id-1-active', status: EEventLocationStatus.Active },
-          { id: ' loc-id-3-active', status: EEventLocationStatus.Active },
+          { id: ' loc-id-1-active', status: EEventLocationStatus.Active, eventName: events[0].entity.name },
+          { id: ' loc-id-3-active', status: EEventLocationStatus.Active, eventName: events[1].entity.name },
         ]);
       });
     });
