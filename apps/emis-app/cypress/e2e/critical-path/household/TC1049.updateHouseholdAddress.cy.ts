@@ -19,6 +19,7 @@ const canRoles = {
   Level3: UserRoles.level3,
   Level2: UserRoles.level2,
   Level1: UserRoles.level1,
+  Level0: UserRoles.level0,
 };
 
 const cannotRoles = {

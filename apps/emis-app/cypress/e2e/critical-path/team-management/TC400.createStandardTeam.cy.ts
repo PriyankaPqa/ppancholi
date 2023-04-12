@@ -20,6 +20,7 @@ const partialRoles = {
 const cannotRoles = {
   Level2: UserRoles.level2,
   Level1: UserRoles.level1,
+  Level0: UserRoles.level0,
   Contributor1: UserRoles.contributor1,
   Contributor2: UserRoles.contributor2,
   Contributor3: UserRoles.contributor3,

@@ -31,6 +31,7 @@ const canRoles = {
   Level3: UserRoles.level3,
   Level2: UserRoles.level2,
   Level1: UserRoles.level1,
+  Level0: UserRoles.level0,
 };
 
 const cannotRoles = {
@@ -101,7 +102,7 @@ describe(`${title}`, () => {
 
           householdProfilePage.getHouseholdSize().should('have.length', householdSize + 1);
 
-          if (roleName === 'Level1') {
+          if (roleName === 'Level1' || roleName === 'Level0') {
             householdProfilePage.getMakePrimaryButtons().should('not.exist');
             householdProfilePage.getEditMemberButtons().eq(5).should('exist');
             householdProfilePage.getSplitMemberButtons().should('not.exist');

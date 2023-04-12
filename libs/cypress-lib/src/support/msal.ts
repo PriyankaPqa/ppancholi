@@ -14,6 +14,7 @@ export interface ITokens {
 
 export enum UserRoles {
   'noAccess' = 'noAccess',
+  'level0' = 'level0',
   'level1' = 'level1',
   'level2' = 'level2',
   'level3' = 'level3',
@@ -52,6 +53,10 @@ export const getCredentials = (as: UserRoles) => {
     [UserRoles.level1]: {
       username: Cypress.env('USER_1_MAIL'),
       password: Cypress.env('USER_1_PASSWORD'),
+    },
+    [UserRoles.level0]: {
+      username: Cypress.env('USER_0_MAIL'),
+      password: Cypress.env('USER_0_PASSWORD'),
     },
     [UserRoles.no_role]: {
       username: Cypress.env('USER_NO_ROLE_MAIL'),

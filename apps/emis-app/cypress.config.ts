@@ -23,6 +23,8 @@ export default defineConfig({
       AZURE_CLIENT_SECRET: 'VwNQd7XbIYrV7stj58oiaKKHKphkjiw7KS',
       MSAL_API_SCOPES: 'https://crctechmain.onmicrosoft.com/emis-dev/api/api_access',
       API_BASE_URL: 'https://api-dev.crc-tech.ca',
+      USER_0_MAIL: 'testdev0@crctechtesting.onmicrosoft.com',
+      USER_0_PASSWORD: 'I#cWVAo*EqA6',
       USER_1_MAIL: 'testdev1@crctechtesting.onmicrosoft.com',
       USER_1_PASSWORD: 'I#cWVAo*EqA6',
       USER_2_MAIL: 'testdev2@crctechtesting.onmicrosoft.com',

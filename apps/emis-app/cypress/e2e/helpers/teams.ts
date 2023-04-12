@@ -8,7 +8,7 @@ import {
   memberTestDev2,
   memberTestDev3,
   memberTestDev4,
-  memberTestDev5, memberTestDevReadonly, mockTeams, memberTestDev6,
+  memberTestDev5, memberTestDevReadonly, mockTeams, memberTestDev6, memberTestDev0,
 } from '@libs/cypress-lib/mocks/teams/team';
 import { ITeamMember, TeamType } from '@libs/entities-lib/team';
 import { IProvider } from '@/services/provider';
@@ -20,6 +20,7 @@ export const teamMemberId = {
   [UserRoles.level3]: memberTestDev3,
   [UserRoles.level2]: memberTestDev2,
   [UserRoles.level1]: memberTestDev1,
+  [UserRoles.level0]: memberTestDev0,
   [UserRoles.contributor1]: memberTestContributorIM,
   [UserRoles.contributor2]: memberTestContributorFinance,
   [UserRoles.contributor3]: memberTestContributor3,
