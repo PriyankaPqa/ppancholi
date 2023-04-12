@@ -71,8 +71,19 @@ export default Vue.extend({
         useRegistrationStore().setAssessmentToComplete(null);
       }
 
+      if (useRegistrationStore().event && useRegistrationStore().event !== event) {
+        this.resetConsent();
+      }
+
       useRegistrationStore().event = event;
       this.event = event;
+    },
+
+    resetConsent() {
+      useRegistrationStore().isPrivacyAgreed = false;
+      useRegistrationStore().householdCreate.consentInformation.registrationMethod = null;
+      useRegistrationStore().householdCreate.consentInformation.registrationLocationId = null;
+      useRegistrationStore().householdCreate.consentInformation.privacyDateTimeConsent = null;
     },
 
   },
