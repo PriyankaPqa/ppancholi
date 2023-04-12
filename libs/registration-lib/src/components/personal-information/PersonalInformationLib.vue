@@ -152,7 +152,7 @@ export default Vue.extend({
     },
 
     shouldLoadDataFromBeneficiarySearch(): boolean {
-      return !this.isEditMode && !this.isSplitMode && !this.isTouched && !this.isInPrimaryMemberDialog;
+      return this.$registrationStore.isCRCRegistration() && !this.isEditMode && !this.isSplitMode && !this.isTouched && !this.isInPrimaryMemberDialog;
     },
   },
 

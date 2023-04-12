@@ -297,7 +297,7 @@ describe('PersonalInformationLib.vue', () => {
       it('should call function loadInitialDataFromBeneficiarySearch', async () => {
         doMount(true, {
           otherProps: null,
-          otherComputed: { isTouched: () => false, isSplitMode: () => false },
+          otherComputed: { isTouched: () => false, isSplitMode: () => false, shouldLoadDataFromBeneficiarySearch: () => true },
         });
         wrapper.vm.loadInitialDataFromBeneficiarySearch = jest.fn();
         await wrapper.setProps({
