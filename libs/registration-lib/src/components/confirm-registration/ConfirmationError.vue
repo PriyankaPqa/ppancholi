@@ -9,7 +9,7 @@
             </v-icon>
           </div>
           <v-col v-if="firstError" cols="8" class="rc-body18 fw-bold" data-test="confirmation-errorRegistration-errorTitle">
-            {{ $t(firstError.code) }}
+            {{ $t(firstError) }}
           </v-col>
         </v-row>
         <v-col class="col pl-16" cols="12">
@@ -57,10 +57,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import { IError } from '@libs/services-lib/http-client';
 import { IServerError } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { keysForDuplicateErrors } from './keysForDuplicateErrors';
 
 type TranslateResult = VueI18n.TranslateResult;
 
@@ -70,7 +68,7 @@ export default Vue.extend({
   props: {
     errors: {
       type: Object as () => IServerError,
-      required: true,
+      default: null,
     },
     phone: {
       type: String,
@@ -84,23 +82,18 @@ export default Vue.extend({
 
   data() {
     return {
-      keysForDuplicateErrors,
       FeatureKeys,
     };
   },
 
   computed: {
-    firstError(): IError {
+    firstError(): string {
       const errors = (this.errors as IServerError)?.response?.data?.errors;
-      return errors?.[0];
+      return errors?.[0].code || (this.isDuplicateError ? 'errors.person-identified-as-duplicate' : '');
     },
 
     isDuplicateError(): boolean {
-      const errors = (this.errors as IServerError)?.response?.data?.errors;
-      if (errors && Array.isArray(errors)) {
-        return errors.some((e) => keysForDuplicateErrors.includes(e.code));
-      }
-      return false;
+      return this.$registrationStore.isDuplicateError();
     },
 
     errorMessage(): TranslateResult {

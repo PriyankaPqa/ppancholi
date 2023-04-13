@@ -86,7 +86,7 @@ export default Vue.extend({
 
   computed: {
     success(): boolean {
-      return !this.errors && this.response !== undefined;
+      return !this.errors && !this.$registrationStore.isDuplicateError() && this.response !== undefined;
     },
 
     associationMode(): boolean {

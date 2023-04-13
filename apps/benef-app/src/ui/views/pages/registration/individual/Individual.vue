@@ -94,7 +94,6 @@ import { IServerError, VForm } from '@libs/shared-lib/types';
 import helpers from '@libs/entities-lib/helpers';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
-import { ICheckForPossibleDuplicateResponse } from '@libs/entities-lib/household-create';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
@@ -129,7 +128,6 @@ export default mixins(individual).extend({
     FeatureKeys,
     showErrorDialog: false,
     showDuplicateDialog: false,
-    duplicateResult: null as ICheckForPossibleDuplicateResponse,
     functionAfterToken: null as () => void,
     tokenFetchedLast: null as Date,
   }),
@@ -217,7 +215,7 @@ destroyed() {
 
       if (this.$hasFeature(FeatureKeys.SelfRegistration)) {
         try {
-          this.duplicateResult = await this.$services.households
+          useRegistrationStore().duplicateResult = await this.$services.households
             .checkForPossibleDuplicatePublic(this.event.id, useRegistrationStore().householdCreate.primaryBeneficiary);
         } catch (error) {
           const e = (error as IServerError).response?.data?.errors || error;
@@ -225,8 +223,8 @@ destroyed() {
           this.showErrorDialog = true;
         }
 
-        if (this.duplicateResult?.duplicateFound) {
-          this.showDuplicateDialog = true;
+        if (useRegistrationStore().duplicateResult?.duplicateFound) {
+          this.tryDuplicateAssociation();
           return;
         }
         EventHub.$emit('checkEmailValidation', this.validateAndNext, false);
@@ -234,6 +232,16 @@ destroyed() {
       }
 
       await this.next();
+    },
+
+    // depending on whether we have the possiblity to do self registration - depending on the return of the BE - we either start
+    // 2 step verification or send the individual to an error screen (confirmation)
+    tryDuplicateAssociation() {
+      if (this.isDuplicateError) {
+        this.jump(this.allTabs.findIndex((x) => x.id === 'confirmation'));
+      } else {
+        this.showDuplicateDialog = true;
+      }
     },
 
     async recaptchaCallBack(token: string) {

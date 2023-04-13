@@ -33,3 +33,11 @@ export const addressesValid = (household: IHouseholdCreate, noFixedHome: boolean
 export const additionalMembersValid = (household: IHouseholdCreate): boolean => household.validateAdditionalMembers().length === 0;
 
 export const reviewRegistrationValid = (): boolean => true;
+
+export const keysForDuplicateErrors = [
+  'errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate',
+  'errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number',
+  'errors.the-household-have-duplicate-first-name-last-name-birthdate',
+  'errors.the-email-provided-already-exists-in-the-system',
+  'errors.person-identified-as-duplicate',
+];

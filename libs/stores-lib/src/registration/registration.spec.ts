@@ -104,6 +104,149 @@ describe('>>> Registration Store', () => {
     });
   });
 
+  describe('isDuplicateError', () => {
+    it('returns false if the error is not a duplicate of a kind', async () => {
+      const errors = {
+        response: {
+          data: {
+            errors: [
+              { code: 'errors.some-code' },
+            ],
+          },
+        },
+      };
+      useRegistrationStore = initStore();
+      useRegistrationStore.registrationErrors = errors as any;
+      expect(useRegistrationStore.isDuplicateError()).toEqual(false);
+    });
+
+    it('returns true if the duplicateresult is a match we cant process', async () => {
+      const errors = {
+        response: {
+          data: {
+            errors: [
+              { code: 'errors.some-code' },
+            ],
+          },
+        },
+      };
+      useRegistrationStore = initStore();
+      useRegistrationStore.registrationErrors = errors as any;
+      useRegistrationStore.duplicateResult = { duplicateFound: true, registeredToEvent: false, maskedEmail: 'xxx' };
+      expect(useRegistrationStore.isDuplicateError()).toEqual(false);
+      useRegistrationStore.duplicateResult = { duplicateFound: true, registeredToEvent: true, maskedEmail: 'xxx' };
+      expect(useRegistrationStore.isDuplicateError()).toEqual(true);
+      useRegistrationStore.duplicateResult = { duplicateFound: true, registeredToEvent: false };
+      expect(useRegistrationStore.isDuplicateError()).toEqual(true);
+    });
+
+    it('returns true if the error is a duplicate of a kind', async () => {
+      const errors = {
+        response: {
+          data: {
+            errors: [
+              { code: 'errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate' },
+            ],
+          },
+        },
+      };
+      useRegistrationStore = initStore();
+      useRegistrationStore.registrationErrors = errors as any;
+      expect(useRegistrationStore.isDuplicateError()).toEqual(true);
+    });
+
+    it('returns true if the error is a duplicate of a kind', async () => {
+      const errors = {
+        response: {
+          data: {
+            errors: [
+              { code: 'errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number' },
+            ],
+          },
+        },
+      };
+      useRegistrationStore = initStore();
+      useRegistrationStore.registrationErrors = errors as any;
+      expect(useRegistrationStore.isDuplicateError()).toEqual(true);
+    });
+
+    it('returns true if the error is a duplicate of a kind', async () => {
+      const errors = {
+        response: {
+          data: {
+            errors: [
+              { code: 'errors.the-household-have-duplicate-first-name-last-name-birthdate' },
+            ],
+          },
+        },
+      };
+      useRegistrationStore = initStore();
+      useRegistrationStore.registrationErrors = errors as any;
+      expect(useRegistrationStore.isDuplicateError()).toEqual(true);
+    });
+
+    it('returns true if the error is a duplicate of a kind', async () => {
+      const errors = {
+        response: {
+          data: {
+            errors: [
+              { code: 'errors.the-email-provided-already-exists-in-the-system' },
+            ],
+          },
+        },
+      };
+      useRegistrationStore = initStore();
+      useRegistrationStore.registrationErrors = errors as any;
+      expect(useRegistrationStore.isDuplicateError()).toEqual(true);
+    });
+
+    it('returns true if the error is a duplicate of a kind', async () => {
+      const errors = {
+        response: {
+          data: {
+            errors: [
+              { code: 'errors.person-identified-as-duplicate' },
+            ],
+          },
+        },
+      };
+      useRegistrationStore = initStore();
+      useRegistrationStore.registrationErrors = errors as any;
+      expect(useRegistrationStore.isDuplicateError()).toEqual(true);
+    });
+  });
+
+  describe('containsErrorCode', () => {
+    it('should be true if an error is coming from the BE with a code', () => {
+      const errors = {
+        response: {
+          data: {
+            errors: [
+              { code: 'errors.person-identified-as-duplicate' },
+            ],
+          },
+        },
+      };
+      useRegistrationStore = initStore();
+      useRegistrationStore.registrationErrors = errors as any;
+      expect(useRegistrationStore.containsErrorCode()).toEqual(true);
+    });
+    it('should be false if an error does not have an error code', () => {
+      const errors = {
+        response: {
+          data: {
+            errors: [
+              { code: '' },
+            ],
+          },
+        },
+      };
+      useRegistrationStore = initStore();
+      useRegistrationStore.registrationErrors = errors as any;
+      expect(useRegistrationStore.containsErrorCode()).toEqual(false);
+    });
+  });
+
   describe('getNextTabName', () => {
     it('should return the next tab', () => {
       useRegistrationStore = initStore();

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import {
-  EIndigenousTypes, HouseholdCreate, IAddressData, IHouseholdCreateData, IIndigenousCommunityData, IMember, IMemberEntity, ISplitHousehold, Member,
+  EIndigenousTypes, HouseholdCreate, IAddressData, ICheckForPossibleDuplicateResponse, IHouseholdCreateData,
+  IIndigenousCommunityData, IMember, IMemberEntity, ISplitHousehold, Member,
 } from '@libs/entities-lib/household-create';
 import { IInformationFromBeneficiarySearch, IRegistrationMenuItem } from '@libs/registration-lib/src/types';
 import Vue, { ref, Ref } from 'vue';
@@ -25,6 +26,7 @@ import {
   additionalMembersValid,
   addressesValid,
   isRegisteredValid,
+  keysForDuplicateErrors,
   personalInformationValid,
   privacyStatementValid,
   reviewRegistrationValid,
@@ -77,6 +79,26 @@ export function storeFactory({
     const informationFromBeneficiarySearch = ref({}) as Ref<IInformationFromBeneficiarySearch>;
     const assessmentToComplete = ref(null) as Ref<{ registrationAssessment: IRegistrationAssessment, assessmentForm: IAssessmentFormEntity }>;
     const allTabs = ref(_cloneDeep(pTabs)) as Ref<IRegistrationMenuItem[]>;
+    const duplicateResult = ref(null) as Ref<ICheckForPossibleDuplicateResponse>;
+
+    function isDuplicateError(): boolean {
+      if (duplicateResult.value?.duplicateFound && (duplicateResult.value.registeredToEvent || (!duplicateResult.value.maskedAlternatePhoneNumber
+        && !duplicateResult.value.maskedEmail && !duplicateResult.value.maskedHomePhone && !duplicateResult.value.maskedMobilePhone))) {
+        return true;
+      }
+      const errors = registrationErrors.value?.response?.data?.errors;
+      if (errors && Array.isArray(errors)) {
+        return errors.some((e) => keysForDuplicateErrors.includes(e.code));
+      }
+      return false;
+    }
+    function containsErrorCode(): boolean {
+      const errors = registrationErrors.value?.response?.data?.errors;
+      if (errors && Array.isArray(errors)) {
+        return errors.some((e) => e.code.length !== 0);
+      }
+      return false;
+    }
 
     const internalMethods = {
       parseIdentitySet(member: IMemberEntity, indigenousCommunities: IIndigenousCommunityData[], genderItems: IOptionItemData[]) {
@@ -694,6 +716,9 @@ export function storeFactory({
     }
 
     return {
+      duplicateResult,
+      isDuplicateError,
+      containsErrorCode,
       isPrivacyAgreed,
       event,
       isLeftMenuOpen,

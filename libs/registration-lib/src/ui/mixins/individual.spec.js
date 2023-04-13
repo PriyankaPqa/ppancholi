@@ -20,6 +20,7 @@ const doMount = ({ errorCode } = { errorCode: null }) => {
     localVue,
     computed: {
       submitErrors: () => ({ response: { data: { errors: [{ code: errorCode }] } } }),
+      containsErrorCode: () => !!errorCode,
     },
     mocks: {
       $hasFeature: () => false,
@@ -132,48 +133,6 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.phoneAssistance).toEqual(mockEvent().responseDetails.assistanceNumber);
       });
     });
-
-    describe('isDuplicateError', () => {
-      it('returns false if the error is not a duplicate of a kind', async () => {
-        expect(wrapper.vm.isDuplicateError).toEqual(false);
-      });
-
-      it('returns true if the error is a duplicate of a kind', async () => {
-        doMount({ errorCode: 'errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate' });
-        expect(wrapper.vm.isDuplicateError).toEqual(true);
-      });
-
-      it('returns true if the error is a duplicate of a kind', async () => {
-        doMount({ errorCode: 'errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number' });
-        expect(wrapper.vm.isDuplicateError).toEqual(true);
-      });
-
-      it('returns true if the error is a duplicate of a kind', async () => {
-        doMount({ errorCode: 'errors.the-household-have-duplicate-first-name-last-name-birthdate' });
-        expect(wrapper.vm.isDuplicateError).toEqual(true);
-      });
-
-      it('returns true if the error is a duplicate of a kind', async () => {
-        doMount({ errorCode: 'errors.the-email-provided-already-exists-in-the-system' });
-        expect(wrapper.vm.isDuplicateError).toEqual(true);
-      });
-
-      it('returns true if the error is a duplicate of a kind', async () => {
-        doMount({ errorCode: 'errors.person-identified-as-duplicate' });
-        expect(wrapper.vm.isDuplicateError).toEqual(true);
-      });
-    });
-
-    describe('containsErrorCode', () => {
-      it('should be true if an error is coming from the BE with a code', () => {
-        doMount({ errorCode: 'errors.example' });
-        expect(wrapper.vm.containsErrorCode).toEqual(true);
-      });
-      it('should be false if an error does not have an error code', () => {
-        doMount({ errorCode: '' });
-        expect(wrapper.vm.containsErrorCode).toEqual(false);
-      });
-    });
   });
 
   describe('Methods', () => {
@@ -256,12 +215,11 @@ describe('Individual.vue', () => {
       });
 
       describe('Review page', () => {
-        it('should call submit registration with recaptchaToken', async () => {
+        it('should call submit registration', async () => {
           wrapper.vm.$registrationStore.submitRegistration = jest.fn();
           wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({
             id: 'review',
           }));
-          await wrapper.setData({ recaptchaToken: 'recaptchaToken' });
           wrapper.vm.jump = jest.fn();
           await wrapper.vm.next();
 

@@ -4,10 +4,9 @@ import { TranslateResult } from 'vue-i18n';
 import _pickBy from 'lodash/pickBy';
 import Vue from 'vue';
 import helpers from '@libs/entities-lib/helpers';
-import { HouseholdCreate, IHouseholdCreateData } from '@libs/entities-lib/household-create';
+import { HouseholdCreate, ICheckForPossibleDuplicateResponse, IHouseholdCreateData } from '@libs/entities-lib/household-create';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IRegistrationMenuItem, VForm } from '../../types';
-import { keysForDuplicateErrors } from '../../components/confirm-registration/keysForDuplicateErrors';
 
 export default Vue.extend({
   data() {
@@ -24,6 +23,10 @@ export default Vue.extend({
   computed: {
     xSmallOrSmallMenu(): boolean {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm;
+    },
+
+    duplicateResult(): ICheckForPossibleDuplicateResponse {
+      return this.$registrationStore.duplicateResult;
     },
 
     currentTab(): IRegistrationMenuItem {
@@ -104,7 +107,7 @@ export default Vue.extend({
     },
 
     registrationSuccess(): boolean {
-      return !this.submitErrors && this.$registrationStore.registrationResponse !== undefined;
+      return !this.submitErrors && !this.$registrationStore.isDuplicateError() && this.$registrationStore.registrationResponse !== undefined;
     },
 
     phoneAssistance(): string {
@@ -112,18 +115,10 @@ export default Vue.extend({
     },
 
     isDuplicateError(): boolean {
-      const errors = (this.submitErrors as IServerError)?.response?.data?.errors;
-      if (errors && Array.isArray(errors)) {
-        return errors.some((e) => keysForDuplicateErrors.includes(e.code));
-      }
-      return false;
+      return this.$registrationStore.isDuplicateError();
     },
     containsErrorCode(): boolean {
-      const errors = (this.submitErrors as IServerError)?.response?.data?.errors;
-      if (errors && Array.isArray(errors)) {
-        return errors.some((e) => e.code.length !== 0);
-      }
-      return false;
+      return this.$registrationStore.containsErrorCode();
     },
   },
 
@@ -152,7 +147,6 @@ export default Vue.extend({
       this.$registrationStore.mutateCurrentTab((tab: IRegistrationMenuItem) => {
         tab.isTouched = true;
       });
-
       if (this.allTabs[toIndex].id === 'confirmation') {
         this.handleConfirmationScreen(toIndex);
         return;

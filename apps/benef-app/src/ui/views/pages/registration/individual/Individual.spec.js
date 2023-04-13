@@ -255,8 +255,10 @@ describe('Individual.vue', () => {
         window.confirm = () => true;
         wrapper.vm.$services.households.checkForPossibleDuplicatePublic = jest.fn(() => ({
           duplicateFound: true,
-          registeredToEvent: true,
+          maskedEmail: 'xxx@mail.com',
+          registeredToEvent: false,
         }));
+        wrapper.vm.tryDuplicateAssociation = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
         wrapper.vm.$hasFeature = jest.fn(() => true);
@@ -264,9 +266,7 @@ describe('Individual.vue', () => {
         await wrapper.vm.validateAndNextPersonalInfo();
         expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic)
           .toHaveBeenCalledWith(wrapper.vm.event.id, wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary);
-        // will change once be is implemented
-        // expect(wrapper.vm.duplicateResult).toEqual(wrapper.vm.$services.households.checkForPossibleDuplicatePublic());
-        expect(wrapper.vm.showDuplicateDialog).toBeTruthy();
+        expect(wrapper.vm.tryDuplicateAssociation).toHaveBeenCalled();
         expect(wrapper.vm.next).toHaveBeenCalledTimes(0);
       });
       it('doesnt call checkForPossibleDuplicatePublic if SelfRegistration is not enabled', async () => {
@@ -278,6 +278,40 @@ describe('Individual.vue', () => {
         await wrapper.vm.validateAndNext();
         expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic).not.toHaveBeenCalled();
         expect(wrapper.vm.next).toHaveBeenCalledTimes(1);
+      });
+
+      it('does not call tryDuplicateAssociation if no duplicate found', async () => {
+        window.confirm = () => true;
+        wrapper.vm.$services.households.checkForPossibleDuplicatePublic = jest.fn(() => ({
+          duplicateFound: false,
+          maskedEmail: 'xxx@mail.com',
+          registeredToEvent: false,
+        }));
+        wrapper.vm.tryDuplicateAssociation = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.next = jest.fn();
+        await wrapper.vm.validateAndNextPersonalInfo();
+        expect(wrapper.vm.tryDuplicateAssociation).not.toHaveBeenCalled();
+        expect(wrapper.vm.next).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('tryDuplicateAssociation', () => {
+      it('jumps to confirmation if there is a duplicate error else it shows dialog', async () => {
+        wrapper.vm.$registrationStore.isDuplicateError = () => true;
+        wrapper.vm.jump = jest.fn();
+
+        wrapper.vm.tryDuplicateAssociation();
+        expect(wrapper.vm.jump).toHaveBeenCalledWith(wrapper.vm.allTabs.findIndex((x) => x.id === 'confirmation'));
+        expect(wrapper.vm.showDuplicateDialog).toBeFalsy();
+
+        jest.clearAllMocks();
+        wrapper.vm.$registrationStore.isDuplicateError = () => false;
+        wrapper.vm.tryDuplicateAssociation();
+        expect(wrapper.vm.jump).not.toHaveBeenCalled();
+        expect(wrapper.vm.showDuplicateDialog).toBeTruthy();
       });
     });
   });
