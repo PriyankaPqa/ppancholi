@@ -1,0 +1,130 @@
+import { formatDate } from '@libs/cypress-lib/helpers';
+import { CaseFileActivityPage } from './caseFileActivity.page';
+
+export enum DataTest {
+  caseNoteCreate = 'caseNote__createBtn',
+  caseNoteSubject = 'case-note-form-subject',
+  caseNoteCategory = 'case-note-form-categories',
+  caseNoteDescription = 'case-note-form-description',
+  caseNoteSave = 'case-note-form-save',
+  caseFileUserName = 'caseFileItem__userName',
+  caseFileRoleName = 'caseFileItem__roleName',
+  caseFileCreated = 'caseFileItem__created',
+  caseNoteDisplayedSubject = 'caseNotes__subject',
+  caseNoteDisplayedCategory = 'caseNotes__category',
+  caseNoteDisplayedDescription = 'caseNotes__description',
+  caseFileLastEditBy = 'caseFileItem__lastEditBy',
+  caseFileLastModifiedDate = 'caseFileItem__lastModifiedDate',
+  caseFileEditButton = 'items__editButton',
+  caseFileActivity = 'case-file-activity',
+  menuButon = 'items__menuButton',
+  pageTitle = 'page-title',
+}
+
+export interface ICaseNotesData {
+  subject?: string;
+  category?: string;
+  description?: string;
+}
+
+export class CaseNotesPage {
+  private caseNoteCreate = { selector: DataTest.caseNoteCreate };
+
+  private caseNoteSubject = { selector: DataTest.caseNoteSubject, type: 'input' };
+
+  private caseNoteDescription = { selector: DataTest.caseNoteDescription, type: 'textarea' };
+
+  private caseNoteSave = { selector: DataTest.caseNoteSave };
+
+  private caseFileUserName = { selector: DataTest.caseFileUserName };
+
+  private caseFileRoleName = { selector: DataTest.caseFileRoleName };
+
+  private caseFileCreated = { selector: DataTest.caseFileCreated };
+
+  private caseNoteDisplayedSubject = { selector: DataTest.caseNoteDisplayedSubject };
+
+  private caseNoteDisplayedCategory = { selector: DataTest.caseNoteDisplayedCategory };
+
+  private caseNoteDisplayedDescription = { selector: DataTest.caseNoteDisplayedDescription };
+
+  private caseFileLastEditBy = { selector: DataTest.caseFileLastEditBy };
+
+  private caseFileLastModifiedDate = { selector: DataTest.caseFileLastModifiedDate };
+
+  private caseFileEditButton = { selector: DataTest.caseFileEditButton };
+
+  private caseFileActivity = { selector: DataTest.caseFileActivity };
+
+  private menuButon = { selector: DataTest.menuButon };
+
+  private pageTitle = { selector: DataTest.pageTitle };
+
+  public getCreateCaseNoteButton() {
+    return cy.getByDataTest(this.caseNoteCreate);
+  }
+
+  async fill(data: ICaseNotesData, roleName:string) {
+    if (data.subject) {
+      cy.getByDataTest(this.caseNoteSubject).type(`${data.subject} ${roleName}`);
+    }
+
+    if (data.category) {
+      cy.selectListElementByValue(DataTest.caseNoteCategory, data.category);
+    }
+
+    if (data.description) {
+      cy.getByDataTest(this.caseNoteDescription).type(`${data.description} ${roleName}`);
+    }
+  }
+
+  public getCaseNoteButton() {
+    return cy.getByDataTest(this.caseNoteSave);
+  }
+
+  public getCaseFileUserName() {
+    return cy.getByDataTest(this.caseFileUserName).invoke('text').then((text) => text.trim());
+  }
+
+  public getCaseFileRoleName() {
+    return cy.getByDataTest(this.caseFileRoleName).invoke('text').then((text) => text.trim());
+  }
+
+  public getCaseFileCreated() {
+    return cy.getByDataTest(this.caseFileCreated).invoke('text').then((date) => formatDate(date));
+  }
+
+  public getCaseNoteSubject() {
+    return cy.getByDataTest(this.caseNoteDisplayedSubject).invoke('text').then((text) => text.trim());
+  }
+
+  public getCaseNoteCategory() {
+    return cy.getByDataTest(this.caseNoteDisplayedCategory).invoke('text').then((text) => text.trim());
+  }
+
+  public getCaseNoteDescription() {
+    return cy.getByDataTest(this.caseNoteDisplayedDescription).invoke('text').then((text) => text.trim());
+  }
+
+  public getCaseFileLastEditBy() {
+    return cy.getByDataTest(this.caseFileLastEditBy).invoke('text').then((text) => text.trim());
+  }
+
+  public getCaseFileLastModifiedDate() {
+    return cy.getByDataTest(this.caseFileLastModifiedDate).invoke('text').then((date) => formatDate(date));
+  }
+
+  public getCaseFileEditButton() {
+    cy.getByDataTest(this.menuButon).click();
+    return cy.getByDataTest(this.caseFileEditButton);
+  }
+
+  public goToCaseFileActivityPage() {
+   cy.getByDataTest(this.caseFileActivity).click();
+   return new CaseFileActivityPage();
+  }
+
+  public getPageTitle() {
+    return cy.getByDataTest(this.pageTitle);
+  }
+}

@@ -8,6 +8,7 @@ export enum DataTest {
   roleName = 'caseFileItem__roleName',
   dateCreated = 'caseFileItem__created',
   backButton = 'back-button',
+  caseNote = 'case-note',
 }
 
 export class CaseFileActivityPage {
@@ -22,6 +23,8 @@ export class CaseFileActivityPage {
   private dateCreated = { selector: DataTest.dateCreated };
 
   private backButton = { selector: DataTest.backButton };
+
+  private caseNote = { selector: DataTest.caseNote };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).invoke('text').then((text) => text.trim());
@@ -39,11 +42,15 @@ export class CaseFileActivityPage {
     return cy.getByDataTest(this.roleName).eq(index).invoke('text').then((text) => text.trim());
   }
 
-  public getMemberCreationDate(index = 0) {
+  public getCaseFileActivityLogDate(index = 0) {
     return cy.getByDataTest(this.dateCreated).eq(index).invoke('text').then((date) => formatDate(date));
   }
 
   public goBackToHouseholdProfilePage() {
     cy.getByDataTest(this.backButton).click();
+  }
+
+  public goToCaseNotesPage() {
+    cy.getByDataTest(this.caseNote).click();
   }
 }

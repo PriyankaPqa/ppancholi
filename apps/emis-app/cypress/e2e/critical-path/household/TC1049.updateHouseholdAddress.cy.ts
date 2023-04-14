@@ -105,7 +105,7 @@ describe(`${title}`, () => {
           const caseFileActivityPage = householdProfilePage.goToCaseFileActivityPage();
           caseFileActivityPage.getUserName().should('eq', getUserName(roleName));
           caseFileActivityPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileActivityPage.getMemberCreationDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+          caseFileActivityPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileActivityPage.getCaseFileActivityTitles().should('string', 'Modified household information');
           caseFileActivityPage.getCaseFileActivityBodies().should('string', 'Address information changed');
         });
