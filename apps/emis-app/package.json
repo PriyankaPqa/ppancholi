@@ -18,7 +18,7 @@
     "cy:cache:list": "cypress cache list",
     "cy:run": "cypress run",
     "cy:run:record": "cypress run --record",
-    "cy:run:critical": "cross-env SPIRA=false yarn cy:run --spec 'cypress/e2e/critical-path/**/*.ts'",
+    "cy:run:smoke": "cross-env SPIRA=false yarn cy:run --spec 'cypress/e2e/smoke-tests/**/*.ts'",
     "cy:open": "cypress open",
     "cy:delete:reports": "rm cypress/results/* || true",
     "cy:combine:reports": "jrm cypress/results/combined-report.xml \"cypress/results/*.xml\"",

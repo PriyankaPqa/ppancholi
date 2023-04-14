@@ -5,12 +5,15 @@ import { CaseFileActivityPage } from './caseFileActivity.page';
 export enum DataTest {
   beneficiaryNameLink = 'beneficiaryName-link',
   caseFileDetailLink = 'caseFileDetail-link',
+  caseFileTable = 'case-files-table',
 }
 
 export class CaseFilesHomePage {
   private beneficiaryNameLink = { selector: DataTest.beneficiaryNameLink };
 
   private caseFileDetailLink = { selector: DataTest.caseFileDetailLink };
+
+  private caseFileTable = { selector: DataTest.caseFileTable };
 
   public waitUntilBeneficiaryIsDisplayed(primaryBeneficiary: MemberCreateRequest) {
     const beneficiarySelector = { selector: `"${DataTest.beneficiaryNameLink}_${primaryBeneficiary.identitySet.firstName} ${primaryBeneficiary.identitySet.lastName}"`, type: 'a' };
@@ -31,5 +34,9 @@ export class CaseFilesHomePage {
   public getFirstAvailableCaseFile() {
     cy.getByDataTestLike(this.caseFileDetailLink).eq(0).click();
     return new CaseFileActivityPage();
+  }
+
+  public getCaseFileTable() {
+    return cy.getByDataTest(this.caseFileTable);
   }
 }

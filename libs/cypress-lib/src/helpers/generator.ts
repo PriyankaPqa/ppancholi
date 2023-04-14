@@ -3,6 +3,10 @@ import { faker } from '@faker-js/faker';
 
 export const today = `${new Date().toISOString().split('T')[0]}T00:00:00.000Z`;
 
+function getRandomNumber() {
+  return Math.floor(Math.random() * 1001);
+}
+
 export function generateMultilingual(fr = '', en = '') {
   return {
     translation: {
@@ -31,9 +35,9 @@ export function generateDateOfBirth() {
 }
 
 export function generateRandomEventName() {
-  return `test-auto-event-${getCurrentDateString()}`;
+  return `test-auto-event-${getCurrentDateString()}-s${getRandomNumber()}`;
 }
 
 export function generateRandomTeamName() {
-  return `Atest-auto-team-${getCurrentDateString()}`;
+  return `test-auto-team-${getCurrentDateString()}-s${getRandomNumber()}`;
 }

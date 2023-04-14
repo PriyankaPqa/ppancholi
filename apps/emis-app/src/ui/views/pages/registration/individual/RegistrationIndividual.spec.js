@@ -311,7 +311,7 @@ describe('Individual.vue', () => {
           submitErrors: () => ({ response: { data: { errors: [{ code: 'error.code' }] } } }),
           associationMode: () => false,
           householdAlreadyRegistered: () => false,
-          isDuplicateError: () => false,
+          isDuplicateError: () => true,
         });
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);

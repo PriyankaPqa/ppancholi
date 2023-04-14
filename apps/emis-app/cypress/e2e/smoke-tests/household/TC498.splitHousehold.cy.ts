@@ -97,6 +97,7 @@ describe(`${title}`, () => {
         it('should successfully split the household', function() {
           const caseFileHomePage = new CaseFilesHomePage();
           const eventName = event.name.translation.en;
+          caseFileHomePage.getCaseFileTable().should('be.visible');
           caseFileHomePage.waitUntilBeneficiaryIsDisplayed(this.household.primaryBeneficiary);
           const householdProfilePage = caseFileHomePage.goToHouseholdProfile(this.household.primaryBeneficiary);
           const firstNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.firstName;

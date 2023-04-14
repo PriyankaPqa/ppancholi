@@ -61,10 +61,13 @@ export class ProfileHistoryPage {
         } else {
           retries += 1;
           if (retries <= maxRetries) {
-            cy.reload().then(() => {
-              this.waitFetchHouseholdProfileData(householdId);
-              cy.get("[data-test='household-profile-history-btn']").should('be.visible').click();
-              waitForElement();
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
+            cy.wait(2000).then(() => { // We wait for 2 seconds to pause the retries
+              cy.reload().then(() => {
+                this.waitFetchHouseholdProfileData(householdId);
+                cy.get("[data-test='household-profile-history-btn']").should('be.visible').click();
+                waitForElement();
+              });
             });
           } else {
             throw new Error(`Failed to find element after ${maxRetries} retries.`);
@@ -72,7 +75,7 @@ export class ProfileHistoryPage {
         }
       });
     };
-  waitForElement();
+    waitForElement();
   }
 
   public getTitleText() {
