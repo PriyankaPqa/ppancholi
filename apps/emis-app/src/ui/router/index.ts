@@ -158,6 +158,7 @@ const checkAppVersion = () => {
 
 router.onError((error: Error) => {
   if (error.message.includes('Failed to fetch dynamically imported module') || error.message.includes('error loading dynamically imported module')) {
+    applicationInsights.trackTrace('Error fetching module', { }, 'router', 'onError');
     notifyUserRefresh();
   }
 });
