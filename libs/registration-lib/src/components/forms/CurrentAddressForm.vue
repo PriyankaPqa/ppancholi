@@ -65,7 +65,7 @@
             :items="currentShelterLocations" />
         </v-col>
 
-        <v-col v-if="form.hasPlaceNumber() || (enableShelterLocationNumber && form.requiresShelterLocation())" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
+        <v-col v-if="form.hasPlaceNumber() || form.requiresShelterLocation()" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
           <v-text-field-with-validation
             v-model="form.placeNumber"
             background-color="white"
@@ -164,7 +164,6 @@ import {
   ICurrentAddress,
   CurrentAddress,
 } from '@libs/entities-lib/household-create';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 
 import googleAutoCompleteMixin from './mixins/address';
@@ -283,10 +282,6 @@ export default mixins(googleAutoCompleteMixin).extend({
           required: true,
         },
       };
-    },
-
-    enableShelterLocationNumber(): boolean {
-      return this.$hasFeature(FeatureKeys.AddShelterRoomNumber);
     },
 
     isCanada(): boolean {

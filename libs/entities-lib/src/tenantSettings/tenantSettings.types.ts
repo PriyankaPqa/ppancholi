@@ -11,7 +11,7 @@ export enum FeatureKeys {
   ActionApprovals = 'ActionApprovals',
   CouplingAssessmentsWithRegistration = 'CouplingAssessmentsWithRegistration',
   ETransferCancellationHaveOptionForUnknown = 'ETransferCancellationHaveOptionForUnknown',
-  AddShelterRoomNumber = 'AddShelterRoomNumber',
+  PreFillPersonalInformation = 'PreFillPersonalInformation',
   PaymentGroupStatusHistory = 'paymentGroupStatusHistory',
   AssessmentsMassAction = 'AssessmentsMassAction',
   L0Access = 'L0Access',
