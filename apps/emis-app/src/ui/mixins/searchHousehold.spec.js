@@ -1,7 +1,7 @@
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import moment from '@libs/shared-lib/plugins/moment';
-import { mockCombinedHousehold } from '@libs/entities-lib/household';
+import { HouseholdStatus, mockCombinedHousehold } from '@libs/entities-lib/household';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
 const Component = {
@@ -135,7 +135,8 @@ describe('searchHousehold', () => {
     });
 
     describe('filters', () => {
-      it('should return the correct filters', () => {
+      it('should return the correct filters, when the feature flag is off', () => {
+        wrapper.vm.$hasFeature = jest.fn(() => false);
         expect(wrapper.vm.filters).toEqual({
           and: [
             {
@@ -150,6 +151,29 @@ describe('searchHousehold', () => {
             {
               Entity: {
                 RegistrationNumber: wrapper.vm.criteria.registrationNumber,
+              },
+            },
+          ],
+        });
+      });
+
+      it('should return the correct filters, when the feature flag is on', () => {
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        expect(wrapper.vm.filters).toEqual({
+          and: [
+            {
+              Metadata: {
+                MemberMetadata: {
+                  any: {
+                    ...wrapper.vm.metadataFilters,
+                  },
+                },
+              },
+            },
+            {
+              Entity: {
+                RegistrationNumber: wrapper.vm.criteria.registrationNumber,
+                HouseholdStatus: HouseholdStatus.Open,
               },
             },
           ],

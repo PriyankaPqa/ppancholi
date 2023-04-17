@@ -5,7 +5,8 @@ import moment from '@libs/shared-lib/plugins/moment';
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { IdParams, IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
+import { HouseholdStatus, IdParams, IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   data() {
@@ -53,6 +54,9 @@ export default Vue.extend({
     },
 
     filters(): Record<string, unknown> {
+      const householdStatusFilter = this.$hasFeature(FeatureKeys.HouseholdProfileStatus)
+         ? { HouseholdStatus: HouseholdStatus.Open } : {};
+
       return {
         and: [
           {
@@ -67,6 +71,7 @@ export default Vue.extend({
           {
             Entity: {
               RegistrationNumber: this.criteria.registrationNumber,
+              ...householdStatusFilter,
             },
           },
         ],

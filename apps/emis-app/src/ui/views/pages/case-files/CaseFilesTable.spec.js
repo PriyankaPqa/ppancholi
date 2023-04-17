@@ -4,7 +4,7 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 
-import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFile, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 
 import { createTestingPinia } from '@pinia/testing';
@@ -536,6 +536,21 @@ describe('CaseFilesTable.vue', () => {
         const params = { filterKey: 'Entity/EventId', search: 'event', selectedItem: { text: '', value: '' } };
         await wrapper.vm.onAutoCompleteUpdate(params);
         expect(wrapper.vm.eventFilterQuery).toEqual('event');
+      });
+    });
+
+    describe('getBeneficiaryName', () => {
+      it('should return first name and last name from case file metadata', () => {
+        const combinedCaseFile = mockCombinedCaseFile();
+        expect(wrapper.vm.getBeneficiaryName(combinedCaseFile)).toEqual('Ben 2 Test');
+      });
+
+      it('should return Empty household when Identityset is unavailable', () => {
+        const combinedCaseFile = {
+          entity: {},
+          metadata: {},
+        };
+        expect(wrapper.vm.getBeneficiaryName(combinedCaseFile)).toEqual('caseFilesTable.tableContent.empty_household');
       });
     });
   });

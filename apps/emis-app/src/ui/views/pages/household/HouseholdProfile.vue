@@ -33,6 +33,7 @@
                 icon
                 x-small
                 data-test="member_address_edit_btn"
+                :disabled="editingDisabled"
                 @click="editAddress()">
                 <v-icon color="gray darken-2">
                   mdi-pencil
@@ -121,6 +122,7 @@
                 depressed
                 class="mr-4"
                 data-test="household_profile_move_members"
+                :disabled="editingDisabled"
                 @click="moveMembers()">
                 <v-icon left>
                   mdi-compare-horizontal
@@ -129,7 +131,7 @@
               </v-btn>
               <v-btn
                 v-if="canEdit && household.primaryBeneficiary"
-                :disabled="disabledAddMembers"
+                :disabled="disabledAddMembers || editingDisabled"
                 color="primary"
                 small
                 data-test="household_profile_add_new_member"
@@ -148,6 +150,8 @@
             is-primary-member
             :shelter-locations="makeShelterLocationsListForMember(household.primaryBeneficiary)"
             :registration-locations="registrationLocations"
+            :editing-disabled="editingDisabled"
+            data-test="household_profile_primary_member_card"
             @reload-household-create="fetchHouseholdData" />
 
           <household-member-card
@@ -157,6 +161,8 @@
             :index="index"
             :shelter-locations="makeShelterLocationsListForMember(member)"
             :registration-locations="registrationLocations"
+            :editing-disabled="editingDisabled"
+            data-test="household_profile_member_card"
             @reload-household-create="fetchHouseholdData" />
           <household-member-card
             v-for="(member, index) in movedMembers"
@@ -472,6 +478,10 @@ export default mixins(household).extend({
 
     pinnedHouseholdStatusActivity(): IHouseholdActivity {
       return this.activityItemsData.filter((e) => e.activityType === HouseholdActivityType.StatusChanged)[0];
+    },
+
+    editingDisabled(): boolean {
+      return this.householdEntity.householdStatus !== HouseholdStatus.Open && !this.$hasLevel(UserRoles.level6);
     },
   },
 
