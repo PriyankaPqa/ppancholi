@@ -133,7 +133,6 @@ import { useUserStore } from '@/pinia/user/user';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useCaseFileStore, useCaseFileMetadataStore } from '@/pinia/case-file/case-file';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { TranslateResult } from 'vue-i18n';
 
 export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'CaseFilesTable',
@@ -413,9 +412,9 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       return res;
     },
 
-    getBeneficiaryName(caseFile: ICaseFileCombined): string | TranslateResult {
+    getBeneficiaryName(caseFile: ICaseFileCombined): string {
       if (!caseFile?.metadata?.primaryBeneficiary?.identitySet) {
-        return this.$t('caseFilesTable.tableContent.empty_household');
+        return '';
       }
 
       const { firstName, lastName } = caseFile.metadata.primaryBeneficiary.identitySet;

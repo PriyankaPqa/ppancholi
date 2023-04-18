@@ -276,55 +276,6 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.onStatusChange).toHaveBeenCalled();
       });
     });
-
-    describe('household_profile_primary_member_card And household_profile_member_card', () => {
-      it('should receive props disabledEditingHousehold', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          data() {
-            return {
-              events,
-              loading: false,
-              caseFiles: mockCaseFileEntities(),
-              newStatus: HouseholdStatus.Open,
-            };
-          },
-          computed: {
-            country() {
-              return 'mock-country';
-            },
-            household() {
-              return householdCreate;
-            },
-            canEdit() {
-              return false;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-            editingDisabled() {
-              return true;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-
-        });
-        const primaryMemberCard = wrapper.findDataTest('household_profile_primary_member_card');
-        const memberCard = wrapper.findDataTest('household_profile_member_card');
-        const props = 'editingDisabled';
-        expect(primaryMemberCard.props(props)).toEqual(true);
-        expect(memberCard.props(props)).toEqual(true);
-      });
-    });
   });
 
   describe('Computed', () => {

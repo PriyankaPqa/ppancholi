@@ -5,9 +5,9 @@ import { IAssessmentResponseEntity } from '../assessment-template';
 import { ICaseFileEntity } from '../case-file';
 
 export enum HouseholdStatus {
-  Open = 1,
-  Closed = 2,
-  Archived = 3,
+  Open = 0,
+  Closed = 1,
+  Archived = 2,
 }
 
 export interface IHouseholdAddress {

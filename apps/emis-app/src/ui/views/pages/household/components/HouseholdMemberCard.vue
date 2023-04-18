@@ -28,7 +28,7 @@
         </v-chip>
 
         <div v-else-if="canChangePrimary" class="pr-4 mr-1 border-right">
-          <v-btn small depressed class="mr-2" data-test="household_profile_member_make_primary_btn" :disabled="editingDisabled" @click="makePrimary">
+          <v-btn small depressed class="mr-2" data-test="household_profile_member_make_primary_btn" @click="makePrimary">
             <v-icon color="grey darken-3" small class="mr-1">
               mdi-account
             </v-icon>
@@ -61,7 +61,6 @@
               icon
               class="ml-2"
               :data-test="`household_profile_member_action_btn_${btn.test}`"
-              :disabled="btn.disabled"
               v-on="on"
               @click="btn.event">
               <v-icon size="24" color="grey darken-2">
@@ -219,11 +218,6 @@ export default Vue.extend({
       type: Number as () => HouseholdActivityType,
       default: null,
     },
-
-    editingDisabled: {
-      type: Boolean,
-      default: false,
-    },
   },
 
   data() {
@@ -246,7 +240,6 @@ export default Vue.extend({
           additionalMemberOnly: false,
           event: () => this.openEditDialog(),
           hide: !this.canEdit,
-          disabled: this.editingDisabled,
         },
         {
           test: 'transfer',
@@ -255,7 +248,6 @@ export default Vue.extend({
           event: () => this.openSplitDialog(),
           hide: !this.canSplit,
           tooltipText: this.$t('household.profile.split.member.title'),
-          disabled: this.editingDisabled,
         },
         {
           test: 'delete',
@@ -263,7 +255,6 @@ export default Vue.extend({
           additionalMemberOnly: true,
           event: this.deleteAdditionalMember,
           hide: !this.canEdit,
-          disabled: this.editingDisabled,
         },
       ];
     },
