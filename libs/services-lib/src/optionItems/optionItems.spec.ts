@@ -156,4 +156,10 @@ describe('>>> OptionItems Service', () => {
     await service.setOptionItemIsDefault(list, 'ID', true);
     expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/is-default`, { isDefault: true });
   });
+
+  test('setOptionItemRestrictFinancial is linked to the correct URL', async () => {
+    const list = EOptionLists.CaseFileTags;
+    await service.setOptionItemRestrictFinancial(list, 'ID', true);
+    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/restrict-financial`, { restrictFinancial: true });
+  });
 });

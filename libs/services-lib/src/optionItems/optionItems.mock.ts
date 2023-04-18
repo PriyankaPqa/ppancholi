@@ -23,4 +23,6 @@ export const mockOptionItemsService = (): IOptionItemsServiceMock => ({
   setOptionItemIsOther: jest.fn(() => mockOptionItemData()[0]),
 
   setOptionItemIsDefault: jest.fn(() => mockOptionItemData()[0]),
+
+  setOptionItemRestrictFinancial: jest.fn(() => mockOptionItemData()[0]),
 });

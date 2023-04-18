@@ -111,4 +111,10 @@ export class OptionItemsService implements IOptionItemsService {
       isDefault,
     });
   }
+
+  async setOptionItemRestrictFinancial(list: EOptionLists, id: string, restrictFinancial: boolean): Promise<IOptionItemData> {
+    return this.http.patch(`${this.getPrefix(list)}/${id}/restrict-financial`, {
+      restrictFinancial,
+    });
+  }
 }

@@ -22,5 +22,6 @@ export function getMockOptionListExtensionComponents() {
     updateSubItemOrderRanks: jest.fn(),
     setIsOther: jest.fn(),
     setIsDefault: jest.fn(),
+    setRestrictFinancial: jest.fn(),
   };
 }
