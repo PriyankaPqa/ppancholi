@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.caseFileTags" add-button-label="caseFile.tags.AddTag" />
+  <option-list title="system_management.lists.caseFileTags" add-button-label="caseFile.tags.AddTag" has-restrict-financial />
 </template>
 
 <script lang="ts">
