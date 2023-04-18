@@ -782,6 +782,7 @@ export const mockTagsOptions = (): IOptionItem[] => [
     orderRank: 3,
     isOther: false,
     isDefault: false,
+    restrictFinancial: false,
     subitems: [],
   },
 ];

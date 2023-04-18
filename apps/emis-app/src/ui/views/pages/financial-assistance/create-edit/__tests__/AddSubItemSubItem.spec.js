@@ -74,6 +74,7 @@ describe('AddSubItemSubItem.vue', () => {
             status: Status.Active,
             isOther: false,
             isDefault: true,
+            restrictFinancial: false,
             id: '-1',
           },
         ]);

@@ -12,6 +12,7 @@ export const mockGenderFemale = (): IOptionItemData => ({
   orderRank: 0,
   isOther: false,
   isDefault: false,
+  restrictFinancial: false,
   status: 1,
   id: '676eb98b-d432-4924-90ee-2489e3acdc26',
 });
@@ -21,6 +22,7 @@ export const mockGenderMale = (): IOptionItemData => ({
   orderRank: 2,
   isOther: false,
   isDefault: true,
+  restrictFinancial: false,
   status: 1,
   id: '0db033fc-a52d-470e-9126-3e21c77d9a24',
 });
@@ -30,6 +32,7 @@ export const mockGenderOther = (): IOptionItemData => ({
   orderRank: 1,
   isOther: true,
   isDefault: false,
+  restrictFinancial: false,
   status: 1,
   id: '04718e75-2ae0-4a2a-8647-326edee4bb32',
 });
@@ -39,6 +42,7 @@ export const mockGenderInactive = (): IOptionItemData => ({
   orderRank: 1,
   isOther: true,
   isDefault: false,
+  restrictFinancial: false,
   status: 2,
   id: '14718e75-2ae0-4a2a-8647-326edee4bb32',
 });

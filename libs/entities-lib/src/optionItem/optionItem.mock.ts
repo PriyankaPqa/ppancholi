@@ -14,6 +14,7 @@ export const mockOptionSubItem = (force?: Partial<IOptionSubItem>): IOptionSubIt
   orderRank: 1,
   isOther: false,
   isDefault: false,
+  restrictFinancial: false,
   description: {
     translation: {
       en: 'case worker 2 description',
@@ -42,6 +43,7 @@ export const mockOptionItemData = (): IOptionItemData[] => [
     status: 1,
     isOther: true,
     isDefault: false,
+    restrictFinancial: false,
     subitems: [mockOptionSubItem({ id: '1' }), mockOptionSubItem({ id: '2' })],
   },
   {
@@ -62,6 +64,7 @@ export const mockOptionItemData = (): IOptionItemData[] => [
     status: 1,
     isOther: false,
     isDefault: true,
+    restrictFinancial: false,
     subitems: [],
   },
 
@@ -83,6 +86,7 @@ export const mockOptionItemData = (): IOptionItemData[] => [
     status: 2,
     isOther: false,
     isDefault: false,
+    restrictFinancial: false,
     subitems: [],
   },
 ];
@@ -105,6 +109,7 @@ export const mockOptionItem = (force?: Partial<IOptionItem>): IOptionItem => ({
   status: 1,
   isOther: true,
   isDefault: false,
+  restrictFinancial: false,
   subitems: [mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' }), mockOptionSubItem({ id: '2' })],
   ...force,
 });
@@ -136,6 +141,7 @@ export const mockSubItem = (): IOptionSubItem => ({
   },
   isOther: false,
   isDefault: false,
+  restrictFinancial: false,
 });
 
 // eslint-disable-next-line max-lines-per-function
@@ -146,6 +152,7 @@ export const mockRoles = (): IOptionItem[] => [
     orderRank: 4,
     isOther: false,
     isDefault: false,
+    restrictFinancial: false,
     subitems: [
       {
         name: { translation: { en: 'Operations Manager', fr: 'Gestionnaire des opérations' } },
@@ -153,6 +160,7 @@ export const mockRoles = (): IOptionItem[] => [
         orderRank: 1,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
         id: 'a6ffce22-8396-43c9-bdc3-6532925af251',
         tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
         created: '2021-04-13T14:31:39.1252272Z',
@@ -169,6 +177,7 @@ export const mockRoles = (): IOptionItem[] => [
         orderRank: 2,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
         id: '1bdf0ed1-284d-47e3-9366-a515d6af910d',
         tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
         created: '2021-04-13T14:31:39.1252804Z',
@@ -190,6 +199,7 @@ export const mockRoles = (): IOptionItem[] => [
         orderRank: 3,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
         id: '85315955-e20e-40bd-a672-f60b2871a0ab',
         tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
         created: '2021-04-13T14:31:39.1253016Z',
@@ -217,6 +227,7 @@ export const mockRoles = (): IOptionItem[] => [
     orderRank: 5,
     isOther: false,
     isDefault: false,
+    restrictFinancial: false,
     subitems: [
       {
         name: { translation: { en: 'Systems Team Member', fr: "Membre de l'équipe Systèmes" } },
@@ -224,6 +235,7 @@ export const mockRoles = (): IOptionItem[] => [
         orderRank: 1,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
         id: 'abafdc5b-09ea-42d2-9d96-2ecdb36a7e24',
         tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
         created: '2021-04-12T14:35:04.0556885Z',
@@ -240,6 +252,7 @@ export const mockRoles = (): IOptionItem[] => [
         orderRank: 2,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
         id: 'b1a85314-d88b-496d-a8c6-ebe462244311',
         tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
         created: '2021-04-12T14:35:04.0493245Z',
@@ -267,6 +280,7 @@ export const mockRoles = (): IOptionItem[] => [
     orderRank: 6,
     isOther: false,
     isDefault: false,
+    restrictFinancial: false,
     subitems: [
       {
         name: { translation: { en: 'System Admin', fr: 'Administrateur(-trice) de système' } },
@@ -274,6 +288,7 @@ export const mockRoles = (): IOptionItem[] => [
         orderRank: 1,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
         id: 'c926c6c8-380d-4307-ab77-55c39899d108',
         tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
         created: '2021-04-13T14:31:39.1256511Z',
@@ -292,6 +307,7 @@ export const mockRoles = (): IOptionItem[] => [
         orderRank: 2,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
         id: 'fbf863cf-a3f7-4dd1-8cd1-76212bd76493',
         tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
         created: '2021-04-19T19:25:43.2437653Z',
@@ -319,6 +335,7 @@ export const mockRoles = (): IOptionItem[] => [
     orderRank: 9,
     isOther: false,
     isDefault: false,
+    restrictFinancial: false,
     subitems: [
       {
         name: { translation: { en: 'Advisor', fr: 'Conseiller(-ère)' } },
@@ -326,6 +343,7 @@ export const mockRoles = (): IOptionItem[] => [
         orderRank: 1,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
         id: 'aa262875-f242-450b-8c4b-c07acf88627a',
         tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
         created: '2021-04-13T14:31:39.1257574Z',
