@@ -6,6 +6,7 @@ export interface IOptionItemData {
     orderRank: number;
     isOther: boolean;
     isDefault: boolean;
+    restrictFinancial: boolean;
     status?: number;
     optionItemId?: string;
     specifiedOther?: string;

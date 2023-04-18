@@ -18,6 +18,8 @@ export class OptionItem extends BaseEntity implements IOptionItem {
 
   readonly isDefault: boolean;
 
+  readonly restrictFinancial: boolean;
+
   readonly subitems: IOptionSubItem[];
 
   constructor(data: IOptionItemData) {
@@ -27,6 +29,7 @@ export class OptionItem extends BaseEntity implements IOptionItem {
     this.orderRank = data.orderRank;
     this.isOther = data.isOther;
     this.isDefault = data.isDefault;
+    this.restrictFinancial = data.restrictFinancial;
     this.subitems = _sortBy(_cloneDeep(data.subitems) || [], 'orderRank');
   }
 }

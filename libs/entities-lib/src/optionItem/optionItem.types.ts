@@ -24,6 +24,7 @@ export interface IOptionSubItem extends IEntity {
   orderRank: number;
   isOther: boolean;
   isDefault: boolean;
+  restrictFinancial: boolean;
   description?: IMultilingual;
 }
 
@@ -33,6 +34,7 @@ export interface IOptionItemData extends IEntity {
   orderRank: number;
   isOther: boolean;
   isDefault: boolean;
+  restrictFinancial: boolean;
   subitems: IOptionSubItem[];
 }
 
