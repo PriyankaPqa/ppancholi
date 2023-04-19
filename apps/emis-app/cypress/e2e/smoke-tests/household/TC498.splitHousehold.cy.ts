@@ -5,12 +5,12 @@ import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/person
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
+import { CaseFilesHomePage } from 'cypress/pages/casefiles/caseFilesHome.page';
 import { ICRCPrivacyStatementPageFields } from '../../../pages/registration/crcPrivacyStatement.page';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
-import { DataTest } from '../../../pages/casefiles/householdProfile.page';
+import { DataTest, HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 
 const privacyData: ICRCPrivacyStatementPageFields = {
   privacyRegistrationMethod: 'Phone',
@@ -57,7 +57,8 @@ const prepareState = async (accessToken: string, event: IEventEntity) => {
   const provider = useProvider(accessToken);
   const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
   cy.wrap(mockCreateHousehold).as('household');
-  await provider.households.postCrcRegistration(mockCreateHousehold);
+  const caseFileCreated = await provider.households.postCrcRegistration(mockCreateHousehold);
+  cy.wrap(caseFileCreated.caseFile.householdId).as('householdCreated');
 };
 
 const prepareEventTeam = async (accessToken: string) => {
@@ -91,17 +92,18 @@ describe(`${title}`, () => {
         beforeEach(async () => {
           await prepareState(accessTokenL6, event);
           cy.login(roleValue);
-          cy.goTo('casefile');
+         // eslint-disable-next-line
+          cy.get('@householdCreated').then((householdId) => {
+            cy.goTo(`casefile/household/${householdId}`);
+          });
         });
         // eslint-disable-next-line
         it('should successfully split the household', function() {
-          const caseFileHomePage = new CaseFilesHomePage();
+          const householdProfilePage = new HouseholdProfilePage();
           const eventName = event.name.translation.en;
-          caseFileHomePage.getCaseFileTable().should('be.visible');
-          caseFileHomePage.waitUntilBeneficiaryIsDisplayed(this.household.primaryBeneficiary);
-          const householdProfilePage = caseFileHomePage.goToHouseholdProfile(this.household.primaryBeneficiary);
           const firstNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.firstName;
           const lastNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.lastName;
+
           householdProfilePage.getGender().as('genderArray');
           householdProfilePage.getDateOfBirth().as('dateOfBirthArray');
           householdProfilePage.getRegistrationNumber().as('registrationNumber');
@@ -181,19 +183,16 @@ describe(`${title}`, () => {
   });
 
   describe('Cannot roles', () => {
-    before(() => {
-      prepareState(accessTokenL6, event);
-    });
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleValue);
           cy.goTo('casefile');
         });
-        it('should not be able to split the household', function () {
+        it('should not be able to split the household', () => {
           const caseFileHomePage = new CaseFilesHomePage();
-          caseFileHomePage.waitUntilBeneficiaryIsDisplayed(this.household.primaryBeneficiary);
-          const householdProfilePage = caseFileHomePage.goToHouseholdProfile(this.household.primaryBeneficiary);
+          // We don't need specific household as we just need to verify that spit button is not displayed.
+          const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();
 
           // We  make sure the page is loaded, by waiting for data to be displayed. Note that we could have chosen something else.
           cy.getByDataTest({ selector: DataTest.dateOfBirth }).should('be.visible');

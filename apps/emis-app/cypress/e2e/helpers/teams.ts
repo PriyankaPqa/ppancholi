@@ -67,3 +67,15 @@ export const removeTeamMembersFromTeam = async (teamId: string, provider: IProvi
     });
   });
 };
+
+export const removeAddedTeamMembersFromTeam = async (teamId: string, provider: IProvider, roles: UserRoles[]) => {
+  roles.filter((r) => teamMemberId[r]).forEach(async (r, i) => {
+    try {
+      if (i < roles.length) {
+        await provider.teams.removeTeamMember(teamId, teamMemberId[r]);
+      }
+    } catch {
+        // Ignore error
+    }
+  });
+};

@@ -311,7 +311,8 @@ describe('Individual.vue', () => {
           submitErrors: () => ({ response: { data: { errors: [{ code: 'error.code' }] } } }),
           associationMode: () => false,
           householdAlreadyRegistered: () => false,
-          isDuplicateError: () => true,
+          isDuplicateError: () => false,
+          containsErrorCode: () => true,
         });
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -328,6 +329,7 @@ describe('Individual.vue', () => {
           associationMode: () => false,
           householdAlreadyRegistered: () => false,
           isDuplicateError: () => false,
+          containsErrorCode: () => false,
         });
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);

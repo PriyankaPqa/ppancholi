@@ -5,7 +5,6 @@ import {
 } from '@libs/entities-lib/src/household-create';
 
 import { mockShelterLocations } from '@libs/entities-lib/src/registration-event';
-import { FeatureKeys } from '@libs/entities-lib/src/tenantSettings';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 
@@ -72,17 +71,6 @@ describe('CurrentAddressForm.vue', () => {
       it('should return true if country is CA', () => {
         wrapper.vm.form.address.country = 'CA';
         expect(wrapper.vm.isCanada).toBeTruthy();
-      });
-    });
-
-    describe('enableShelterLocationNumber', () => {
-      it('should return true if the feature FeatureKeys.AddShelterRoomNumber is on', async () => {
-        wrapper.vm.$hasFeature = jest.fn((feature) => feature === FeatureKeys.AddShelterRoomNumber);
-        expect(wrapper.vm.enableShelterLocationNumber).toEqual(true);
-      });
-      it('should return false if the feature FeatureKeys.AddShelterRoomNumber is off', async () => {
-        wrapper.vm.$hasFeature = jest.fn((feature) => feature !== FeatureKeys.AddShelterRoomNumber);
-        expect(wrapper.vm.enableShelterLocationNumber).toEqual(false);
       });
     });
 
@@ -271,25 +259,6 @@ describe('CurrentAddressForm.vue', () => {
         it('is linked to proper rules', () => {
           const element = wrapper.findDataTest('tempAddress__placeNumber');
           expect(element.props('rules')).toEqual(wrapper.vm.rules.placeNumber);
-        });
-      });
-
-      describe('Shelter Location Number', () => {
-        let element;
-        it('should return true if the feature enableShelterLocationNumber is true', async () => {
-          doMount(mockShelter(), {
-            enableShelterLocationNumber: () => true,
-          });
-          element = wrapper.findDataTest('tempAddress__placeNumber');
-          expect(element.exists()).toBeTruthy();
-        });
-
-        it('should return false if the feature enableShelterLocationNumber is false', async () => {
-          doMount(mockShelter(), {
-            enableShelterLocationNumber: () => false,
-          });
-          element = wrapper.findDataTest('tempAddress__placeNumber');
-          expect(element.exists()).toBeFalsy();
         });
       });
     });

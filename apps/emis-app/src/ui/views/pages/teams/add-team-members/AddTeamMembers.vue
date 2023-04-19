@@ -43,16 +43,30 @@
               :items-per-page="Math.max(filteredUsers.length, 1)"
               @toggle-select-all="onSelectAll">
               <template #[`item.data-table-select`]="{ item }">
-                <v-simple-checkbox
-                  :data-test="`select_${item.id}`"
-                  :ripple="false"
-                  :value="isSelected(item) || isAlreadyInTeam(item)"
-                  :readonly="isAlreadyInTeam(item)"
-                  :disabled="isAlreadyInTeam(item)"
-                  @input="updateSelection(item)" />
+                <div data-test="teams_addTeamMember_checkbox">
+                  <v-simple-checkbox
+                    :data-test="`select_${item.id}`"
+                    :ripple="false"
+                    :value="isSelected(item) || isAlreadyInTeam(item)"
+                    :readonly="isAlreadyInTeam(item)"
+                    :disabled="isAlreadyInTeam(item)"
+                    @input="updateSelection(item)" />
+                </div>
+              </template>
+              <template #[`item.displayName`]="{ item }">
+                <span data-test="teams_addTeamMember_displayName">
+                  {{ item.displayName }}
+                </span>
+              </template>
+              <template #[`item.emailAddress`]="{ item }">
+                <span data-test="teams_addTeamMember_emailAddress">
+                  {{ item.emailAddress }}
+                </span>
               </template>
               <template #[`item.role`]="{ item }">
-                {{ $m(item.roleName) }}
+                <span data-test="teams_addTeamMember_roleName">
+                  {{ $m(item.roleName) }}
+                </span>
               </template>
             </v-data-table>
           </div>
@@ -67,7 +81,9 @@
           <ul class="selected__members_container">
             <li v-for="user in selectedUsers" :key="user.id">
               <div class="py-2">
-                <span class="rc-body14 fw-bold"> {{ user.displayName }}</span>
+                <span class="rc-body14 fw-bold" :data-test="`teams_addTeamMember_selectedUser_${user.id}`">
+                  {{ user.displayName }}
+                </span>
                 <v-tooltip bottom>
                   <template #activator="{ on }">
                     <v-btn
@@ -174,7 +190,7 @@ export default Vue.extend({
           class: 'team_member_header',
           filterable: false,
           sortable: false,
-          value: '',
+          value: 'status',
         },
       ];
     },
