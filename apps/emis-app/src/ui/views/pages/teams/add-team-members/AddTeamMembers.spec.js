@@ -77,7 +77,7 @@ describe('AddTeamMembers.vue', () => {
             class: 'team_member_header',
             filterable: false,
             sortable: false,
-            value: '',
+            value: 'status',
           },
         ]);
       });

@@ -1,3 +1,5 @@
+import { TeamDetailsPage } from './teamDetails.page';
+
 export enum DataTest {
   createTeam = 'create-team-button',
   teamLink = 'team_link',
@@ -14,5 +16,10 @@ export class TeamsHomePage {
 
   public getTeams() {
     return cy.getByDataTestLike(this.teamLink);
+  }
+
+  public goToFirstTeamDetails() {
+    cy.getByDataTestLike(this.teamLink).eq(0).click();
+    return new TeamDetailsPage();
   }
 }
