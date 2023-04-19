@@ -2,6 +2,7 @@ import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseFinancialAssistance, ApprovalStatus, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
+import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
@@ -13,9 +14,10 @@ import Component from './FinancialAssistancePaymentsList.vue';
 const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 mockEvent.schedule.status = EEventStatus.Open;
+const mockCaseFile = mockCaseFileEntity({ id: '1' });
 
 const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
-useMockCaseFileStore(pinia);
+const { caseFileStore } = useMockCaseFileStore(pinia);
 
 describe('FinancialAssistancePaymentsList.vue', () => {
   let wrapper;
@@ -495,15 +497,30 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     });
 
     describe('routeToCreate', () => {
-      it('goes to route if active tables exist', async () => {
+      it('goes to route if active tables exist and has no restrict financial case file tags', async () => {
         await mountWrapper();
+        await wrapper.setData({
+          containsActiveTables: true,
+          hasRestrictFinancialTags: false,
+        });
         await wrapper.vm.routeToCreate();
         expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.caseFile.financialAssistance.create.name });
       });
-      it('goes to route if no active tables exist', async () => {
+      it('not goes to route if no active tables exist', async () => {
         await mountWrapper();
         await wrapper.setData({
           containsActiveTables: false,
+          hasRestrictFinancialTags: false,
+        });
+        await wrapper.vm.routeToCreate();
+        expect(wrapper.vm.$router.push).not.toHaveBeenCalled();
+      });
+
+      it('not goes to route if has restrict financial case file tags', async () => {
+        await mountWrapper();
+        await wrapper.setData({
+          containsActiveTables: true,
+          hasRestrictFinancialTags: true,
         });
         await wrapper.vm.routeToCreate();
         expect(wrapper.vm.$router.push).not.toHaveBeenCalled();
@@ -521,6 +538,30 @@ describe('FinancialAssistancePaymentsList.vue', () => {
           .toHaveBeenCalledWith('id-1');
         expect(financialAssistancePaymentStore.submitFinancialAssistancePayment)
           .toHaveBeenCalledWith('id-2');
+      });
+    });
+
+    describe('checkHasRestrictFinancialTags', () => {
+      it('set hasRestrictFinancialTags to true when case file tag with restrict fiancial exist', async () => {
+        await mountWrapper();
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: { id: 'mock-cf-id' },
+          computed: {
+            caseFile() {
+              return mockCaseFile;
+            },
+            event() {
+              return mockEvent;
+            },
+          },
+        });
+
+        wrapper.vm.checkHasRestrictFinancialTags();
+
+        expect(caseFileStore.getTagsOptions).toHaveBeenCalled();
+        expect(wrapper.vm.hasRestrictFinancialTags).toEqual(true);
       });
     });
   });
@@ -557,6 +598,51 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         });
 
         expect(wrapper.vm.initContainsActiveTables).toHaveBeenCalledTimes(1);
+      });
+
+      it('should not call the method checkHasRestrictFinancialTags', async () => {
+        await mountWrapper(false, null, UserRoles.readonly);
+
+        wrapper.vm.checkHasRestrictFinancialTags = jest.fn();
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.checkHasRestrictFinancialTags).toHaveBeenCalledTimes(0);
+      });
+
+      it('should call the method checkHasRestrictFinancialTags', async () => {
+        await mountWrapper(false, null, UserRoles.contributorFinance);
+
+        wrapper.vm.checkHasRestrictFinancialTags = jest.fn();
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(caseFileStore.fetchTagsOptions).toHaveBeenCalled();
+        expect(wrapper.vm.checkHasRestrictFinancialTags).toHaveBeenCalledTimes(1);
+      });
+
+      it('should not call fetchTagsOptions', async () => {
+        await mountWrapper(false, null, UserRoles.readonly);
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(caseFileStore.fetchTagsOptions).not.toHaveBeenCalled();
+      });
+
+      it('should call fetchTagsOptions', async () => {
+        await mountWrapper(false, null, UserRoles.contributorFinance);
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(caseFileStore.fetchTagsOptions).toHaveBeenCalled();
       });
     });
   });

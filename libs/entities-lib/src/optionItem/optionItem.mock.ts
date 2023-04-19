@@ -67,7 +67,6 @@ export const mockOptionItemData = (): IOptionItemData[] => [
     restrictFinancial: false,
     subitems: [],
   },
-
   {
     ...mockBaseData(),
     name: {
@@ -87,6 +86,27 @@ export const mockOptionItemData = (): IOptionItemData[] => [
     isOther: false,
     isDefault: false,
     restrictFinancial: false,
+    subitems: [],
+  },
+  {
+    ...mockBaseData({ id: 'mock-tag-restrict-financial-id-1' }),
+    name: {
+      translation: {
+        en: 'Do not communicate',
+        fr: 'Ne pas contacter',
+      },
+    },
+    description: {
+      translation: {
+        en: 'This is item 1 description',
+        fr: 'This is item 1 description FR',
+      },
+    },
+    orderRank: 5,
+    status: 1,
+    isOther: false,
+    isDefault: false,
+    restrictFinancial: true,
     subitems: [],
   },
 ];

@@ -55,7 +55,12 @@ export const mockCaseFileEntity = (force? : Partial<ICaseFileEntity>): ICaseFile
     status: ValidationOfImpactStatus.Impacted,
     method: ImpactValidationMethod.Manual,
   },
-  tags: [],
+  tags: [
+    {
+      optionItemId: 'mock-tag-restrict-financial-id-1',
+      specifiedOther: null,
+    },
+  ],
   isDuplicate: false,
   labels: [
     {
