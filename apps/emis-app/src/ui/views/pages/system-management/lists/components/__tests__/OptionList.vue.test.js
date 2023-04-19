@@ -35,7 +35,7 @@ describe('OptionList.vue', () => {
       doMount();
       const title = wrapper.findDataTest('page-title');
 
-      expect(title.text()).toBe('TITLE (3)');
+      expect(title.text()).toBe('TITLE (4)');
     });
 
     test('the add button is hidden if the showAddButton prop is false', async () => {
@@ -70,7 +70,7 @@ describe('OptionList.vue', () => {
       it('returns correct value', async () => {
         optionListStore.getItems = jest.fn(() => mockOptionItemData());
 
-        expect(wrapper.vm.formattedTitle).toBe('TITLE (3)');
+        expect(wrapper.vm.formattedTitle).toBe('TITLE (4)');
 
         await wrapper.setProps({
           embedded: true,
@@ -128,7 +128,7 @@ describe('OptionList.vue', () => {
     describe('>> highestRank', () => {
       it('returns the highestRank among the list', () => {
         optionListStore.getItems = jest.fn(() => mockOptionItemData());
-        expect(wrapper.vm.highestRank).toEqual(4);
+        expect(wrapper.vm.highestRank).toEqual(5);
       });
       it('returns 0 when list is empty', () => {
         optionListStore.getItems = jest.fn(() => []);

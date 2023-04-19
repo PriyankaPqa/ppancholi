@@ -68,27 +68,6 @@ export const mockOptionItemData = (): IOptionItemData[] => [
     subitems: [],
   },
   {
-    ...mockBaseData(),
-    name: {
-      translation: {
-        en: 'Earthquake',
-        fr: 'Tremblement de terre',
-      },
-    },
-    description: {
-      translation: {
-        en: 'This is item 1 description',
-        fr: 'This is item 1 description FR',
-      },
-    },
-    orderRank: 4,
-    status: 2,
-    isOther: false,
-    isDefault: false,
-    restrictFinancial: false,
-    subitems: [],
-  },
-  {
     ...mockBaseData({ id: 'mock-tag-restrict-financial-id-1' }),
     name: {
       translation: {
@@ -102,11 +81,32 @@ export const mockOptionItemData = (): IOptionItemData[] => [
         fr: 'This is item 1 description FR',
       },
     },
-    orderRank: 5,
+    orderRank: 4,
     status: 1,
     isOther: false,
     isDefault: false,
     restrictFinancial: true,
+    subitems: [],
+  },
+  {
+    ...mockBaseData(),
+    name: {
+      translation: {
+        en: 'Earthquake',
+        fr: 'Tremblement de terre',
+      },
+    },
+    description: {
+      translation: {
+        en: 'This is item 1 description',
+        fr: 'This is item 1 description FR',
+      },
+    },
+    orderRank: 5,
+    status: 2,
+    isOther: false,
+    isDefault: false,
+    restrictFinancial: false,
     subitems: [],
   },
 ];
