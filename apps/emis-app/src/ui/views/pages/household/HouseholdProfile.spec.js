@@ -276,6 +276,56 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.onStatusChange).toHaveBeenCalled();
       });
     });
+
+    describe('household_profile_primary_member_card And household_profile_member_card', () => {
+      it('should receive props disabledEditingHousehold', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              events,
+              loading: false,
+              caseFiles: mockCaseFileEntities(),
+              newStatus: HouseholdStatus.Open,
+            };
+          },
+          computed: {
+            country() {
+              return 'mock-country';
+            },
+            household() {
+              return householdCreate;
+            },
+            canEdit() {
+              return false;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+            editingDisabled() {
+              return true;
+            },
+          },
+          mocks: {
+            $services: services,
+            $hasFeature: () => true,
+          },
+
+        });
+        const primaryMemberCard = wrapper.findDataTest('household_profile_primary_member_card');
+        const memberCard = wrapper.findDataTest('household_profile_member_card');
+        const props = 'editingDisabled';
+        expect(primaryMemberCard.props(props)).toEqual(true);
+        expect(memberCard.props(props)).toEqual(true);
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -521,6 +571,7 @@ describe('HouseholdProfile.vue', () => {
       it('returns true if user has level 1 and feature flag is off', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser(UserRoles.level1),
           propsData: {
             id: householdEntity.id,
           },
@@ -538,7 +589,6 @@ describe('HouseholdProfile.vue', () => {
           mocks: {
             $services: services,
           },
-          pinia: getPiniaForUser(UserRoles.level1),
         });
         wrapper.vm.$hasFeature = jest.fn(() => false);
         expect(wrapper.vm.canEdit).toBeTruthy();
@@ -547,6 +597,7 @@ describe('HouseholdProfile.vue', () => {
       it('returns true if user has level 0 and feature flag is on', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          pinia: getPiniaForUser(UserRoles.level0),
           propsData: {
             id: householdEntity.id,
           },
@@ -564,7 +615,6 @@ describe('HouseholdProfile.vue', () => {
           mocks: {
             $services: services,
           },
-          pinia: getPiniaForUser(UserRoles.level0),
         });
         wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(wrapper.vm.canEdit).toBeTruthy();
@@ -604,17 +654,6 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: householdEntity.id,
           },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
           mocks: {
             $services: services,
           },
@@ -629,17 +668,6 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           propsData: {
             id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
           },
           mocks: {
             $services: services,
@@ -1056,6 +1084,46 @@ describe('HouseholdProfile.vue', () => {
           },
         ];
         expect(wrapper.vm.movedMembers).toEqual(expectResult);
+      });
+    });
+
+    describe('editingDisabled', () => {
+      beforeEach(() => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              myEvents: events,
+              casefiles: mockCaseFileEntities(),
+              activityItemsData: mockHouseholdActivities(HouseholdActivityType.HouseholdMoved),
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return mockHouseholdEntity({ householdStatus: HouseholdStatus.Closed });
+            },
+          },
+          mocks: {
+            $services: services,
+          },
+        });
+      });
+      it('should return false, when feature flag is off', () => {
+        wrapper.vm.$hasFeature = jest.fn(() => false);
+        expect(wrapper.vm.editingDisabled).toEqual(false);
+      });
+
+      it('should return true, when feature flag is on, and household status is not Open, and user has no level6', () => {
+        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.$hasLevel = jest.fn(() => false);
+        expect(wrapper.vm.editingDisabled).toEqual(true);
       });
     });
   });
