@@ -1,6 +1,6 @@
 import { MemberCreateRequest } from '@libs/entities-lib/household-create';
 import { HouseholdProfilePage } from './householdProfile.page';
-import { CaseFileActivityPage } from './caseFileActivity.page';
+import { CaseFileDetailsPage } from './caseFileDetails.page';
 
 export enum DataTest {
   beneficiaryNameLink = 'beneficiaryName-link',
@@ -33,7 +33,7 @@ export class CaseFilesHomePage {
 
   public getFirstAvailableCaseFile() {
     cy.getByDataTestLike(this.caseFileDetailLink).eq(0).click();
-    return new CaseFileActivityPage();
+    return new CaseFileDetailsPage();
   }
 
   public getCaseFileTable() {

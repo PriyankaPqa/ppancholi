@@ -1,5 +1,5 @@
 import { AddHouseholdMemberPage } from './addHouseholdMember.page';
-import { CaseFileActivityPage } from './caseFileActivity.page';
+import { CaseFileDetailsPage } from './caseFileDetails.page';
 import { EditHouseholdAddressPage } from './editHouseholdAddress.page';
 import { ProfileHistoryPage } from './profileHistory.page';
 import { SplitHouseholdMemberPage } from './splitHouseholdMember.page';
@@ -60,9 +60,9 @@ export class HouseholdProfilePage {
     return cy.getByDataTest(this.caseFileNumber).invoke('text').then((text) => text.trim());
   }
 
-  public goToCaseFileActivityPage() {
+  public goToCaseFileDetailsPage() {
     cy.getByDataTest(this.caseFileNumber).click();
-    return new CaseFileActivityPage();
+    return new CaseFileDetailsPage();
   }
 
   public selectMemberToSplit(index = 0) {

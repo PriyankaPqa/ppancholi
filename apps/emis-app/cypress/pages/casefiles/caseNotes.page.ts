@@ -1,5 +1,5 @@
 import { formatDate } from '@libs/cypress-lib/helpers';
-import { CaseFileActivityPage } from './caseFileActivity.page';
+import { CaseFileDetailsPage } from './caseFileDetails.page';
 
 export enum DataTest {
   caseNoteCreate = 'caseNote__createBtn',
@@ -119,9 +119,9 @@ export class CaseNotesPage {
     return cy.getByDataTest(this.caseFileEditButton);
   }
 
-  public goToCaseFileActivityPage() {
+  public goToCaseFileDetailsPage() {
    cy.getByDataTest(this.caseFileActivity).click();
-   return new CaseFileActivityPage();
+   return new CaseFileDetailsPage();
   }
 
   public getPageTitle() {

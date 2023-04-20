@@ -89,14 +89,14 @@ describe(`${title}`, () => {
           caseNotesPage.getCaseFileLastModifiedDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseNotesPage.getCaseFileEditButton().should('exist');
 
-          const caseFileActivityPage = caseNotesPage.goToCaseFileActivityPage();
-          caseFileActivityPage.getCaseFileActivityTitles().should('string', 'Case note added');
-          caseFileActivityPage.getCaseFileActivityBodies()
+          const caseFileDetailsPage = caseNotesPage.goToCaseFileDetailsPage();
+          caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Case note added');
+          caseFileDetailsPage.getCaseFileActivityBodies()
             .should('string', `Subject: ${caseNotesData.subject} ${roleName}`)
             .and('string', `Category: ${caseNotesData.category.trim()}`);
-          caseFileActivityPage.getUserName().should('eq', getUserName(roleName));
-          caseFileActivityPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileActivityPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+          caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
+          caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
+          caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
         });
       });
     }
@@ -112,8 +112,8 @@ describe(`${title}`, () => {
           const caseFileHomePage = new CaseFilesHomePage();
           const caseNotesPage = new CaseNotesPage();
 
-          const caseFileActivityPage = caseFileHomePage.getFirstAvailableCaseFile(); // re-use already created Case File for canRoles.
-          caseFileActivityPage.goToCaseNotesPage();
+          const caseFileDetailsPage = caseFileHomePage.getFirstAvailableCaseFile(); // re-use already created Case File for canRoles.
+          caseFileDetailsPage.goToCaseNotesPage();
 
           caseNotesPage.getPageTitle().should('be.visible');
           caseNotesPage.getCreateCaseNoteButton().should('not.exist');

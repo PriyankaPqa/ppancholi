@@ -102,12 +102,12 @@ describe(`${title}`, () => {
           + `${addressData.postalCode}, Canada`);
           profileHistoryPage.goToHouseholdProfilePage();
 
-          const caseFileActivityPage = householdProfilePage.goToCaseFileActivityPage();
-          caseFileActivityPage.getUserName().should('eq', getUserName(roleName));
-          caseFileActivityPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileActivityPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
-          caseFileActivityPage.getCaseFileActivityTitles().should('string', 'Modified household information');
-          caseFileActivityPage.getCaseFileActivityBodies().should('string', 'Address information changed');
+          const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
+          caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
+          caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
+          caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+          caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Modified household information');
+          caseFileDetailsPage.getCaseFileActivityBodies().should('string', 'Address information changed');
         });
       });
     }
