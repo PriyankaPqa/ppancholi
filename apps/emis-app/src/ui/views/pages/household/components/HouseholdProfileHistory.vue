@@ -8,7 +8,6 @@
     fullscreen
     persistent
     show-close
-    :loading="loading"
     :show-cancel="false"
     @close="$emit('update:show', false)"
     @submit="$emit('update:show', false)">
@@ -107,7 +106,6 @@ export default Vue.extend({
     return {
       moment,
       i18n: this.$i18n,
-      activityItems: [] as IHouseholdActivity[],
       loading: true,
       options: {
         sortBy: ['timestamp'],
@@ -158,7 +156,10 @@ export default Vue.extend({
     },
 
     displayedItems():IActivityItem[] {
-      const items = this.activityItems.map((i) => ({
+      const processedData = this.handleMoveActivity(this.activityItemsData);
+      const activityItems = processedData.length ? processedData.map((i: IHouseholdActivity) => new HouseholdActivity(i)) : [];
+
+      const items = activityItems.map((i) => ({
         ...i,
         activityName: this.$t(i.getActivityName()) as string,
         templateData: i.getTemplateData(false, this.$i18n),
@@ -170,17 +171,6 @@ export default Vue.extend({
       }));
       return _orderBy(items, this.options.sortBy[0], this.options.sortDesc[0] ? 'desc' : 'asc');
     },
-  },
-
-  async created() {
-    if (this.activityItemsData) {
-      try {
-        const processedData = this.handleMoveActivity(this.activityItemsData);
-        this.activityItems = processedData.length ? processedData.map((i: IHouseholdActivity) => new HouseholdActivity(i)) : [];
-      } finally {
-        this.loading = false;
-      }
-    }
   },
 
   methods: {
