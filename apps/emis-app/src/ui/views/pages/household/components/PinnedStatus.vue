@@ -42,8 +42,8 @@
     computed: {
       householdStatusActionAndUserInfo(): string {
         if (this.pinnedHouseholdStatusActivity) {
-          const user = ` ${this.pinnedHouseholdStatusActivity.user.name || ''}`;
-          const role = this.pinnedHouseholdStatusActivity.role.name ? ` (${this.$m(this.pinnedHouseholdStatusActivity.role.name)})` : '';
+          const user = ` ${this.pinnedHouseholdStatusActivity.user?.name || ''}`;
+          const role = this.pinnedHouseholdStatusActivity.role?.name ? ` (${this.$m(this.pinnedHouseholdStatusActivity.role.name)})` : '';
           let string = `${
             this.$t(`household.status.pinned_information.${HouseholdStatus[((this.pinnedHouseholdStatusActivity.newDetails as IHouseholdStatusUpdatedDetail).status)]}`)
              }`;
