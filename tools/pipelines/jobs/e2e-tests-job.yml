@@ -14,7 +14,7 @@ jobs:
     pool:
       vmImage: 'ubuntu-latest'
     strategy:
-      parallel: 2
+      parallel: 3
     steps:
       - template: '../steps/cypress-steps.yml'
         parameters:
