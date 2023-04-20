@@ -48,8 +48,8 @@ export function getExtensionComponents(
     return filterAndSortActiveItems(screeningIds.value, filterOutInactive, actualValue);
   }
 
-  async function fetchTagsOptions(refetch = false) {
-    if (!tagsOptionsFetched.value || refetch) {
+  async function fetchTagsOptions() {
+    if (!tagsOptionsFetched.value) {
       const data = await optionService.getOptionList(EOptionLists.CaseFileTags);
       tagsOptions.value = data;
       tagsOptionsFetched.value = true;

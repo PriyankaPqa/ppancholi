@@ -206,7 +206,7 @@ export default mixins(caseFileDetail).extend({
       this.loading = true;
 
       await Promise.all([
-        useCaseFileStore().fetchTagsOptions(true),
+        useCaseFileStore().fetchTagsOptions(),
         useCaseFileStore().fetch(this.caseFileId),
         this.fetchCaseFileActivities(),
       ]);

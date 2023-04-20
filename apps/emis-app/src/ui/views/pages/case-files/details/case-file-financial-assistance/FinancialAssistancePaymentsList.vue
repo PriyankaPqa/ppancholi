@@ -371,7 +371,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     this.saveState = true;
     this.loadState();
     if (!this.$hasRole(UserRoles.readonly)) {
-      useCaseFileStore().fetchTagsOptions(true);
+      useCaseFileStore().fetchTagsOptions();
 
       this.initContainsActiveTables();
       this.checkHasRestrictFinancialTags();
