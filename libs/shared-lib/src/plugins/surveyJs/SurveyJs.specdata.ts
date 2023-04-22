@@ -34,6 +34,39 @@ export class surveyData {
     question1: 'test text',
   };
 
+  static questionsTranslatedFrenchEglishDefault = JSON.stringify({
+    logo: {
+     default: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+     fr: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+    },
+    logoPosition: 'right',
+    pages: [
+     {
+      name: 'page1',
+      elements: [
+       {
+        type: 'radiogroup',
+        name: 'Where do you reside.',
+        title: {
+         fr: 'Où résidez vous',
+        },
+        choices: [
+         'Gatineau',
+         {
+          value: 'Other',
+          text: {
+           default: 'Other',
+           fr: 'Autre',
+          },
+         },
+        ],
+       },
+      ],
+     },
+    ],
+    clearInvisibleValues: 'onHiddenContainer',
+   });
+
   static checkboxQuestion = JSON.stringify({
     logo: {
       default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',

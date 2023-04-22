@@ -164,7 +164,7 @@ export default {
       Vue.prototype.$message = ({
         title, message, submitActionLabel, minHeight, maxWidth,
       }) => {
-        // we only show one message box at a time
+        // we only show one message box at a time.
         if (this.showMessage) {
           return false;
         }

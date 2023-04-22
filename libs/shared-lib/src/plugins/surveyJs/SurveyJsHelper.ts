@@ -373,7 +373,7 @@ export class SurveyJsHelper {
             questionType: qType,
             question: this.getPropertyAsMultilingual(
               // eslint-disable-next-line
-              simpleQuestion.title != null ? simpleQuestion.title : (simpleQuestion.html != null ? simpleQuestion.html : simpleQuestion.name),
+              simpleQuestion.title != null ? (typeof simpleQuestion.title === 'string' ? simpleQuestion.title : { default: simpleQuestion.name, ...simpleQuestion.title }) : (simpleQuestion.html != null ? simpleQuestion.html : simpleQuestion.name),
               simpleQuestion.suffix?.title != null ? simpleQuestion.suffix?.title : simpleQuestion.suffix?.name,
             ),
             score: simpleQuestion.score,

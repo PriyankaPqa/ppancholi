@@ -707,6 +707,46 @@ describe('SurveyJsHelper', () => {
         questionType: 'text',
       }]);
     });
+    it('extracts for questions translated in french but with default english', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = surveyData.questionsTranslatedFrenchEglishDefault;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions).toEqual([{
+        answerChoices: [
+          {
+            displayValue: {
+              translation: {
+                en: 'Gatineau',
+                fr: 'Gatineau',
+              },
+            },
+            identifier: 'Gatineau',
+            score: null,
+            textValue: 'Gatineau',
+          },
+          {
+            displayValue: {
+              translation: {
+                en: 'Other',
+                fr: 'Autre',
+              },
+            },
+            identifier: 'Other',
+            score: null,
+            textValue: 'Other',
+          },
+        ],
+        identifier: 'Where do you reside.',
+        question: {
+          translation: {
+            en: 'Where do you reside.',
+            fr: 'Où résidez vous',
+          },
+        },
+        questionType: 'radiogroup',
+        score: undefined,
+      }]);
+    });
     it('extracts for checkbox question type', () => {
       helper.initializeSurveyJsCreator('en');
       helper.creator.text = surveyData.checkboxQuestion;
