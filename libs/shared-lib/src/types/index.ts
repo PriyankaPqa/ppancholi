@@ -24,6 +24,7 @@ export type { IOptionItemData } from './interfaces/IOptionItemData';
 export type { IRestResponse } from './interfaces/IRestResponse';
 export type { ISearchData } from './interfaces/ISearchData';
 export type { IServerError } from './interfaces/IServerError';
+export type { IUserInformation } from './interfaces/IUserInformation';
 
 export type VForm = Vue & {
   validate: (type?: { silent?: boolean }) => Promise<boolean>;

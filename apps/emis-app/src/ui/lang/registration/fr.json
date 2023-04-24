@@ -1,7 +1,4 @@
 {
-    "registration.review.personalinfo": "Veuillez vérifier que les renseignements sont à jour",
-    "registration.review.addresses": "Veuillez vérifier que les adresses sont à jour",
-    "registration.review.members": "Veuillez vérifier que les membres sont ajoutés et que leurs renseignements sont à jour",
     "aria.header.language_select": "Sélecteur de langue: {currentlanguage} est actuellement choisi",
     "aria.label.menu": "Menu",
     "assessment.messageUnavailable": "Cette analyse n'est plus active.",
@@ -645,7 +642,7 @@
     "registration.review.addresses": "Veuillez vérifier que les adresses sont à jour",
     "registration.review.members": "Veuillez vérifier que les membres sont ajoutés et que leurs renseignements sont à jour",
     "registration.review.personalinfo": "Veuillez vérifier que les renseignements sont à jour",
-    "registration.start_assessment.label": "Débuter le questionnaire",
+    "registration.start_assessment.label": "Commencer le questionnaire",
     "registration.submit_registration.label": "Soumettre l'inscription",
     "registration.type.individual": "Inscription : Famille ou individu",
     "registration.version": "Version",

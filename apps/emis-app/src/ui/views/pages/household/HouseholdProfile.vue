@@ -85,9 +85,10 @@
             {{ $t('household.profile.profile_history') }}
           </v-btn>
         </v-col>
+
         <v-col cols="10" class="pa-6">
-          <template v-if="$hasFeature(FeatureKeys.HouseholdProfileStatus)">
-            <div>
+          <div class="d-flex flex-row">
+            <div v-if="$hasFeature(FeatureKeys.HouseholdProfileStatus)">
               <status-select
                 data-test="household-profile-status"
                 :value="householdEntity.householdStatus"
@@ -96,10 +97,38 @@
                 :disabled="!canChangeStatus"
                 @input="onStatusChangeInit($event)" />
             </div>
-            <v-divider class="mt-4 mb-6" />
-            <pinned-status
-              :pinned-household-status-activity="pinnedHouseholdStatusActivity" />
-          </template>
+
+            <v-divider
+              v-if="$hasFeature(FeatureKeys.ManageDuplicates) && $hasFeature(FeatureKeys.HouseholdProfileStatus)"
+              vertical
+              class="ml-4 mr-4" />
+
+            <div v-if="$hasFeature(FeatureKeys.ManageDuplicates)" class="flex-row rc-body12 align-center">
+              <v-icon
+                class="mr-2"
+                data-test="household-profile-duplicatesIcon"
+                :color="duplicateCount > 0 ? 'secondary' : ''">
+                $rctech-duplicate
+              </v-icon>
+              <span data-test="household-profile-duplicateCount" class="fw-bold rc-body14">
+                {{ duplicateCount }} {{ $t('householdDetails.potentialDuplicates') }} </span>
+
+              <v-btn
+                v-if="canManageDuplicates"
+                color="primary"
+                small
+                class="mx-4"
+                data-test="household-profile-manageDuplicatesBtn"
+                @click="showDuplicatesDialog = true">
+                {{ $t("householdDetails.manageDuplicates") }}
+              </v-btn>
+            </div>
+          </div>
+          <v-divider v-if="$hasFeature(FeatureKeys.ManageDuplicates) || $hasFeature(FeatureKeys.HouseholdProfileStatus)" class="mt-4 mb-6" />
+          <pinned-status
+            v-if="$hasFeature(FeatureKeys.HouseholdProfileStatus)"
+            :pinned-household-status-activity="pinnedHouseholdStatusActivity" />
+
           <h5 class="rc-heading-5">
             {{ $t('household.profile.active_in_events', { x: activeCaseFiles.length }) }}
           </h5>
@@ -196,16 +225,25 @@
       submit-changes-to-service
       @close="fetchHouseholdData" />
     <edit-household-address-dialog v-if="showEditAddress" :show.sync="showEditAddress" />
+
     <household-profile-history
       v-if="showProfileHistory && activityItemsData"
       :show.sync="showProfileHistory"
       :activity-items-data="activityItemsData" />
+
     <household-status-dialog
       v-if="showHouseholdStatusDialog"
       data-test="household-status-dialog"
       :show.sync="showHouseholdStatusDialog"
       :to-status="newStatus"
       @submit="onStatusChange($event)" />
+
+    <manage-duplicates
+      v-if="showDuplicatesDialog"
+      :show.sync="showDuplicatesDialog"
+      data-test="manage-duplicates-dialog"
+      :household-prop="householdEntity"
+      :household-metadata-prop="householdMetadata" />
   </rc-page-content>
 </template>
 
@@ -218,7 +256,7 @@ import _isEmpty from 'lodash/isEmpty';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { CurrentAddress, EIndigenousTypes, ICurrentAddress, IHouseholdCreate, IIdentitySet, IMember, Member } from '@libs/entities-lib/household-create';
-import { HouseholdStatus, IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
+import { HouseholdStatus, IHouseholdEntity, IHouseholdMetadata, DuplicateStatus } from '@libs/entities-lib/household';
 import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
@@ -240,6 +278,7 @@ import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
 import HouseholdStatusDialog from './components/HouseholdStatusDialog.vue';
+import ManageDuplicates from './duplicates/ManageDuplicates.vue';
 
 export interface IMovedMember {
   personId: string;
@@ -268,6 +307,7 @@ export default mixins(household).extend({
     AddEditAdditionalMembersLib,
     StatusSelect,
     HouseholdStatusDialog,
+    ManageDuplicates,
   },
 
   props: {
@@ -295,6 +335,7 @@ export default mixins(household).extend({
       showHouseholdStatusDialog: false,
       newStatus: null as HouseholdStatus,
       activityItemsData: [] as IHouseholdActivity[],
+      showDuplicatesDialog: false,
     };
   },
 
@@ -308,6 +349,14 @@ export default mixins(household).extend({
         }
       },
       deep: true,
+    },
+
+    async id() {
+      if (this.showDuplicatesDialog) {
+        this.loading = true;
+        this.showDuplicatesDialog = false;
+        await this.fetchData();
+      }
     },
   },
 
@@ -387,6 +436,10 @@ export default mixins(household).extend({
 
     canMove(): boolean {
       return this.$hasLevel(UserRoles.level2);
+    },
+
+    canManageDuplicates(): boolean {
+      return this.$hasLevel(UserRoles.level1);
     },
 
     enableAutocomplete(): boolean {
@@ -480,6 +533,10 @@ export default mixins(household).extend({
       return this.activityItemsData.filter((e) => e.activityType === HouseholdActivityType.StatusChanged)[0];
     },
 
+    duplicateCount(): Number {
+      return this.householdEntity.potentialDuplicates?.filter((d) => d.duplicateStatus === DuplicateStatus.Potential)?.length || 0;
+    },
+
     editingDisabled(): boolean {
       return this.$hasFeature(FeatureKeys.HouseholdProfileStatus)
         && (this.householdEntity.householdStatus === HouseholdStatus.Closed || this.householdEntity.householdStatus === HouseholdStatus.Archived)
@@ -494,15 +551,8 @@ export default mixins(household).extend({
       useRegistrationStore().fetchPrimarySpokenLanguages(),
       useRegistrationStore().fetchIndigenousCommunities(),
     ]);
-    useRegistrationStore().resetHouseholdCreate();
-    await this.fetchCaseFiles();
-    await this.fetchMyEvents();
-    await this.fetchShelterLocations();
-    await this.fetchHouseholdData();
-    await this.fetchAllEvents();
-    this.activityItemsData = await this.$services.households.getHouseholdActivity(this.id);
-    this.attachToChanges(true);
-    this.loading = false;
+    await this.fetchData();
+       this.attachToChanges(true);
   },
 
   destroyed() {
@@ -510,6 +560,17 @@ export default mixins(household).extend({
   },
 
   methods: {
+    async fetchData() {
+      useRegistrationStore().resetHouseholdCreate();
+      await this.fetchCaseFiles();
+      await this.fetchMyEvents();
+      await this.fetchShelterLocations();
+      await this.fetchHouseholdData();
+      await this.fetchAllEvents();
+      this.activityItemsData = await this.$services.households.getHouseholdActivity(this.id);
+      this.loading = false;
+    },
+
     async fetchAllEvents() {
       if (this.caseFiles?.length) {
         const eventIds = this.caseFiles.map((cf) => cf.eventId);
@@ -570,7 +631,7 @@ export default mixins(household).extend({
       this.showHouseholdStatusDialog = true;
     },
 
-     async onStatusChange({ status, rationale }: { status: HouseholdStatus, rationale: string }) {
+    async onStatusChange({ status, rationale }: { status: HouseholdStatus, rationale: string }) {
       try {
         await this.$services.households.setHouseholdStatus(this.id, status, rationale);
       } finally {
@@ -597,7 +658,7 @@ export default mixins(household).extend({
       }
     }, 1000),
   },
-  });
+});
 
 </script>
 

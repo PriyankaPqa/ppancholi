@@ -64,50 +64,18 @@
       <div
         v-if="primaryBeneficiary && primaryBeneficiary.email"
         class="d-flex flex-row align-start mb-2 rc-body14 break-word">
-        <v-icon small class="mr-2 mt-1">
+        <v-icon small class="mr-2 mt-1" color="gray darken-2">
           mdi-email
         </v-icon>
         <span data-test="caseFileDetails-email">{{ primaryBeneficiary.email }}</span>
       </div>
 
-      <div
-        v-if="hasPhoneNumbers"
-        class="d-flex flex-row align-start mb-2 rc-body14">
-        <v-icon small class="mr-2 mt-1">
-          mdi-phone
-        </v-icon>
-        <div class="d-flex flex-column">
-          <case-file-details-beneficiary-phone-number
-            v-if="primaryBeneficiary.homePhoneNumber"
-            data-test="caseFileDetails-home-phone-number"
-            :phone-number="primaryBeneficiary.homePhoneNumber"
-            :label="'caseFileDetail.beneficiaryPhoneNumber.homeInitial'" />
-
-          <case-file-details-beneficiary-phone-number
-            v-if="primaryBeneficiary.mobilePhoneNumber"
-            data-test="caseFileDetails-mobile-phone-number"
-            :phone-number="primaryBeneficiary.mobilePhoneNumber"
-            :label="'caseFileDetail.beneficiaryPhoneNumber.mobileInitial'" />
-
-          <case-file-details-beneficiary-phone-number
-            v-if="primaryBeneficiary.alternatePhoneNumber"
-            data-test="caseFileDetails-alternate-phone-number"
-            :phone-number="primaryBeneficiary.alternatePhoneNumber"
-            :label="'caseFileDetail.beneficiaryPhoneNumber.alternateInitial'" />
-        </div>
-      </div>
-
-      <div
-        v-if="household && (addressFirstLine || addressSecondLine)"
-        class="d-flex flex-row align-start mb-2 rc-body14">
-        <v-icon small class="mr-2 mt-1">
-          mdi-map-marker
-        </v-icon>
-        <div class="d-flex flex-column" data-test="caseFileDetails-home-address">
-          <span v-if="addressFirstLine">{{ addressFirstLine }}</span>
-          <span v-if="addressSecondLine">{{ addressSecondLine }}</span>
-        </div>
-      </div>
+      <household-details-list
+        v-if="household && primaryBeneficiary"
+        :primary-beneficiary="primaryBeneficiary"
+        :address-first-line="addressFirstLine"
+        :address-second-line="addressSecondLine"
+        :has-phone-numbers="hasPhoneNumbers" />
 
       <div
         class="d-flex flex-row rc-body14 mb-4">
@@ -149,54 +117,43 @@
 
 <script lang="ts">
 import { RcTooltip } from '@libs/component-lib/components';
-import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
 import mixins from 'vue-typed-mixins';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
-import householdHelpers from '@/ui/helpers/household';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useEventStore } from '@/pinia/event/event';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useUserStore } from '@/pinia/user/user';
-import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
+import householdDetails from '@/ui/views/pages/household/householdDetails';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
+import HouseholdDetailsList from './components/HouseholdDetailsList.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
 import caseFileDetail from './caseFileDetail';
 
-export default mixins(caseFileDetail).extend({
+export default mixins(caseFileDetail, householdDetails).extend({
   name: 'CaseFileDetails',
 
   components: {
     PageTemplate,
-    CaseFileDetailsBeneficiaryPhoneNumber,
     CaseFileVerifyIdentityDialog,
     ImpactValidation,
+    HouseholdDetailsList,
     RcTooltip,
   },
 
   data() {
     return {
       loading: false,
-      household: null as IHouseholdEntity,
-      householdMetadata: null as IHouseholdMetadata,
       showVerifyIdentityDialog: false,
       showImpact: false,
     };
   },
 
   computed: {
-    addressFirstLine(): string {
-      return householdHelpers.getAddressLines(this.household?.address?.address)[0] || '';
-    },
-
-    addressSecondLine(): string {
-      return householdHelpers.getAddressLines(this.household?.address?.address)[1] || '';
-    },
-
     canEdit(): boolean {
       return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
@@ -215,29 +172,6 @@ export default mixins(caseFileDetail).extend({
         case IdentityAuthenticationStatus.Failed: return 'status_error';
         default: return 'status_warning';
       }
-    },
-
-    hasPhoneNumbers(): boolean {
-      if (!this.primaryBeneficiary) {
-        return false;
-      }
-      return !!(this.primaryBeneficiary.mobilePhoneNumber || this.primaryBeneficiary.homePhoneNumber || this.primaryBeneficiary.alternatePhoneNumber);
-    },
-
-    primaryBeneficiary(): IHouseholdMemberMetadata {
-      return this.householdMetadata?.memberMetadata.find((m: IHouseholdMemberMetadata) => m.id === this.household.primaryBeneficiary);
-    },
-
-    primaryBeneficiaryFullName(): string {
-      if (!this.primaryBeneficiary) {
-        return '';
-      }
-      const { firstName, lastName } = this.primaryBeneficiary;
-      return `${firstName} ${lastName}`;
-    },
-
-    provinceCodeName(): string {
-      return householdHelpers.provinceCodeName(this.household?.address.address);
     },
 
     isL0(): boolean {
@@ -309,14 +243,13 @@ export default mixins(caseFileDetail).extend({
       await useCaseFileStore().fetch(this.caseFileId);
       await useCaseFileMetadataStore().fetch(this.caseFileId, false);
       await useEventStore().fetch(this.caseFile.eventId);
-      await this.getHouseholdInfo();
+            await this.getHouseholdInfo();
     } finally {
       this.loading = false;
     }
   },
 
   methods: {
-
     async getHouseholdInfo() {
       const { householdId } = this.caseFile;
       this.household = await useHouseholdStore().fetch(householdId);

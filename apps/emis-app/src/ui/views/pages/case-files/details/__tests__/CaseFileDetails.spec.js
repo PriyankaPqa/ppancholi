@@ -1,13 +1,9 @@
-import _cloneDeep from 'lodash/cloneDeep';
-import { mockHouseholdEntity } from '@libs/entities-lib/household';
-import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { mockCaseFileEntity, mockCaseFileMetadata } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { UserRoles } from '@libs/entities-lib/user';
-
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
@@ -368,46 +364,6 @@ describe('CaseFileDetails.vue', () => {
       });
     });
 
-    describe('addressFirstLine', () => {
-      it('return the right address information when there is a suite number', async () => {
-        const altHousehold = _cloneDeep(mockHouseholdEntity());
-        altHousehold.address.address.unitSuite = '100';
-        altHousehold.address.address.streetAddress = '200 Left ave';
-
-        await wrapper.setData({
-          household: altHousehold,
-        });
-
-        expect(wrapper.vm.addressFirstLine).toEqual('100-200 Left ave');
-      });
-
-      it('return the right address information when there is no suite number', async () => {
-        const altHousehold = _cloneDeep(mockHouseholdEntity());
-        altHousehold.address.address.unitSuite = '';
-        altHousehold.address.address.streetAddress = '200 Main ave';
-
-        await wrapper.setData({
-          household: altHousehold,
-        });
-        expect(wrapper.vm.addressFirstLine).toEqual('200 Main ave');
-      });
-    });
-
-    describe('addressSecondLine', () => {
-      it('return the right address information', async () => {
-        const altHousehold = _cloneDeep(mockHouseholdEntity());
-        altHousehold.address.address.postalCode = 'H2H 2H2';
-        altHousehold.address.address.city = 'Montreal';
-        altHousehold.address.address.province = ECanadaProvinces.QC;
-
-        await wrapper.setData({
-          household: altHousehold,
-        });
-
-        expect(wrapper.vm.addressSecondLine).toEqual('Montreal, QC, H2H 2H2');
-      });
-    });
-
     describe('caseFile', () => {
       it('return the case file by id from the storage', () => {
         wrapper = shallowMount(Component, {
@@ -419,149 +375,6 @@ describe('CaseFileDetails.vue', () => {
 
         });
         expect(JSON.stringify(wrapper.vm.caseFile)).toEqual(JSON.stringify(mockCaseFile));
-      });
-    });
-
-    describe('primaryBeneficiary', () => {
-      it('sets the right beneficiary from the household metadata', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-
-        });
-        const altHousehold = {
-          memberMetadata: [
-            { id: 'mock-beneficiary-id', firstName: 'Jane', lastName: 'Doe' },
-            { id: 'foo', firstName: 'Joe', lastName: 'Dane' },
-          ],
-        };
-        await wrapper.setData({
-          householdMetadata: altHousehold,
-          household: mockHouseholdEntity({ primaryBeneficiary: 'mock-beneficiary-id' }),
-        });
-
-        expect(wrapper.vm.primaryBeneficiary).toEqual({ id: 'mock-beneficiary-id', firstName: 'Jane', lastName: 'Doe' });
-      });
-    });
-
-    describe('primaryBeneficiaryFullName', () => {
-      it('return the beneficiary first and last name', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-
-          computed: {
-            primaryBeneficiary() {
-              return { firstName: 'Jack', lastName: 'White' };
-            },
-          },
-        });
-        expect(wrapper.vm.primaryBeneficiaryFullName).toEqual('Jack White');
-      });
-    });
-
-    describe('hasPhoneNumbers', () => {
-      it('return true if the beneficiary has a home phone number', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-
-          computed: {
-            primaryBeneficiary() {
-              return {
-                homePhoneNumber: {
-                  number: '514-555-5555',
-                  extension: '',
-                },
-                mobilePhoneNumber: null,
-                alternatePhoneNumber: null,
-              };
-            },
-          },
-        });
-
-        expect(wrapper.vm.hasPhoneNumbers).toBeTruthy();
-      });
-
-      it('return true if the beneficiary has a mobile phone number', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-
-          computed: {
-            primaryBeneficiary() {
-              return {
-                mobilePhoneNumber: {
-                  number: '514-555-5555',
-                  extension: '',
-                },
-                homePhoneNumber: null,
-                alternatePhoneNumber: null,
-              };
-            },
-          },
-        });
-
-        expect(wrapper.vm.hasPhoneNumbers).toBeTruthy();
-      });
-
-      it('return true if the beneficiary has an alternate phone number', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-
-          computed: {
-            primaryBeneficiary() {
-              return {
-                alternatePhoneNumber: {
-                  number: '514-555-5555',
-                  extension: '',
-                },
-                mobilePhoneNumber: null,
-                homePhoneNumber: null,
-              };
-            },
-          },
-        });
-
-        expect(wrapper.vm.hasPhoneNumbers).toBeTruthy();
-      });
-
-      it('return false if the beneficiary has no phone number', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-
-          computed: {
-            primaryBeneficiary() {
-              return {
-                alternatePhoneNumber: null,
-                mobilePhoneNumber: null,
-                homePhoneNumber: null,
-              };
-            },
-          },
-        });
-
-        expect(wrapper.vm.hasPhoneNumbers).toBeFalsy();
       });
     });
 

@@ -2,10 +2,9 @@ import { ERegistrationMethod } from '@libs/shared-lib/types/enums/ERegistrationM
 /* eslint-disable max-lines-per-function */
 import { mockBaseData } from '../base';
 import {
-  ICaseFileMetadata,
-  CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
-  ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType, HouseholdCaseFileActivityType, IAssignedTeamMembers,
-} from './case-file.types';
+  ICaseFileMetadata, CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
+  ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType, HouseholdCaseFileActivityType,
+  IAssignedTeamMembers } from './case-file.types';
 import { IOptionItem } from '../optionItem';
 import { EPaymentModalities } from '../program';
 import { CompletedByType } from '../assessment-template';
@@ -76,7 +75,6 @@ export const mockCaseFileEntity = (force? : Partial<ICaseFileEntity>): ICaseFile
   ...force,
   validate: () => true,
   privacyDateTimeConsent: '2021-02-02',
-
 });
 
 export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICaseFileMetadata => ({

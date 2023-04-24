@@ -1,7 +1,4 @@
 {
-    "registration.review.personalinfo": "Please make sure personal information is up to date",
-    "registration.review.addresses": "Please make sure addresses are up to date",
-    "registration.review.members": "Please make sure household members are added and their information is up to date",
     "aria.header.language_select": "Language selector, {currentLanguage} is currently selected",
     "aria.label.menu": "Menu",
     "assessment.messageUnavailable": "This assessment is no longer active.",

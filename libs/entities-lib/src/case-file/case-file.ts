@@ -4,8 +4,7 @@ import { BaseEntity } from '../base';
 import {
   CaseFileStatus, CaseFileTriage, IAssignedTeamMembers, ICaseFileEntity, ICaseFileLabel,
   IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication,
-  IImpactStatusValidation,
-  ImpactValidationMethod, ValidationOfImpactStatus,
+  IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus,
 } from './case-file.types';
 
 export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {

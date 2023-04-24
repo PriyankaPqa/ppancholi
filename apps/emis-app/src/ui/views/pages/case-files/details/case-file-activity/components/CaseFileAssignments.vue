@@ -1,5 +1,5 @@
 <template>
-  <v-col cols="12" md="6" class="flex-row justify-end">
+  <div class="flex-row justify-end my-1">
     <div class="rc-body12 mr-4" data-test="case-file-assigned-info">
       <div v-if="!loading" class="rc-body12 mr-4" data-test="case-file-assigned-info">
         <span v-if="assignedIndividualsInfo" class="fw-bold">{{ assignedIndividualsInfo }}</span>
@@ -42,7 +42,7 @@
       :show.sync="showViewAssignmentsDialog"
       data-test="view-assignments-dialog"
       :case-file="caseFile" />
-  </v-col>
+  </div>
 </template>
 
 <script lang="ts">

@@ -1,5 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IUserInformation } from '@libs/shared-lib/types';
 import { BaseEntity } from '../base';
 import { ICaseNoteEntity } from './case-note.types';
 
@@ -15,19 +15,9 @@ export class CaseNoteEntity extends BaseEntity {
     specifiedOther: string,
   };
 
-  userCreatedBy: {
-    userId: uuid,
-    userName: string,
-    roleId: uuid,
-    roleName: IMultilingual,
-  };
+  userCreatedBy: IUserInformation;
 
-  userUpdatedBy: {
-    userId: uuid,
-    userName: string,
-    roleId: uuid,
-    roleName: IMultilingual,
-  };
+  userUpdatedBy: IUserInformation;
 
   isPinned: boolean;
 

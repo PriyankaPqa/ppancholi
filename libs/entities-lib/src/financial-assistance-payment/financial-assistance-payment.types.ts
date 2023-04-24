@@ -1,4 +1,4 @@
-import { IMultilingual } from '@libs/shared-lib/types';
+import { IMultilingual, IUserInformation } from '@libs/shared-lib/types';
 import { EPaymentModalities } from '../program/program.types';
 import { IAddress } from '../value-objects/address';
 import { IEntity, IEntityCombined } from '../base';
@@ -89,15 +89,9 @@ export interface IApprovalActionPayload {
   rationale: string;
 }
 
-export interface IApprover {
-  userId: string;
-  userName: string;
-  roleName: IMultilingual;
-}
-
 export interface IApprovalStatusHistory {
-  submittedBy?: IApprover;
-  submittedTo?: IApprover;
+  submittedBy?: IUserInformation;
+  submittedTo?: IUserInformation;
   approvalAction: ApprovalAction;
   dateOfApprovalAction: string | Date;
   rationale: string;
@@ -115,8 +109,8 @@ export interface IFinancialAssistancePaymentEntity extends IEntity {
   approvalTableGroupsSnapshots? : Array<IApprovalTableGroupsSnapshot>,
   submissionStartedDate?: string | Date;
   initialSubmitter?: uuid;
-  submittedBy?: IApprover;
-  submittedTo?: IApprover;
+  submittedBy?: IUserInformation;
+  submittedTo?: IUserInformation;
   approvalStatusHistory?: IApprovalStatusHistory[];
 }
 
@@ -160,11 +154,7 @@ export interface PaymentsSummary {
 }
 
 export interface IPaymentStatusHistory {
-  userInformation:{
-    userId: string;
-    userName: string;
-    roleName: IMultilingual;
-  },
+  userInformation: IUserInformation,
   dateOfAction: string | Date;
   actualDateOfAction: string | Date;
   paymentStatus: PaymentStatus;

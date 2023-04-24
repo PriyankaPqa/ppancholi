@@ -13,8 +13,8 @@
         :case-file-id="caseFile.id"
         :tags="tags" />
 
-      <v-row class="ma-0 pa-0">
-        <v-col cols="12" md="6" class="flex-row">
+      <v-row class="ma-0 pa-3 flex-row justify-space-between">
+        <div class="flex-row">
           <case-file-status
             :case-file="caseFile"
             :event="event" />
@@ -43,11 +43,9 @@
             </template>
           </v-select>
 
-          <v-divider
-            vertical
-            class="ml-4 mr-4" />
+          <v-divider v-if="!$hasFeature(FeatureKeys.ManageDuplicates)" vertical class="ml-4 mr-4" />
 
-          <rc-tooltip right>
+          <rc-tooltip v-if="!$hasFeature(FeatureKeys.ManageDuplicates)" right>
             <template #activator="{ on }">
               <v-btn
                 data-test="caseFileActivity-duplicateBtn"
@@ -64,7 +62,7 @@
             </template>
             {{ $t('caseFileActivity.duplicate') }}
           </rc-tooltip>
-        </v-col>
+        </div>
 
         <case-file-assignments
           :case-file="caseFile"
@@ -149,6 +147,7 @@ export default mixins(caseFileDetail).extend({
     CaseFileActivityListItem,
     AssignCaseFile,
     CaseFileAssignments,
+
   },
   props: {
     /*
@@ -162,6 +161,7 @@ export default mixins(caseFileDetail).extend({
   data() {
     return {
       moment,
+      FeatureKeys,
       showLabelsDialog: false,
       loading: false,
       saving: false,

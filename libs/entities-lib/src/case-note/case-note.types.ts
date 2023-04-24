@@ -1,4 +1,4 @@
-import { IMultilingual, IListOption } from '@libs/shared-lib/types';
+import { IMultilingual, IListOption, IUserInformation } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 
 export interface ICaseNoteUser {
@@ -11,18 +11,8 @@ export interface ICaseNoteEntity extends IEntity {
   caseFileId?: uuid;
   description?: string;
   category?: IListOption;
-  userCreatedBy?: {
-    userId: uuid,
-    userName: string,
-    roleId: uuid,
-    roleName: IMultilingual,
-  };
-  userUpdatedBy?: {
-    userId: uuid,
-    userName: string,
-    roleId: uuid,
-    roleName: IMultilingual,
-  };
+  userCreatedBy?: IUserInformation;
+  userUpdatedBy?: IUserInformation;
   isPinned?: boolean;
   updatedDate: Date | string;
 
