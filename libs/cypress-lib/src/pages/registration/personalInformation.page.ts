@@ -44,9 +44,9 @@ export class PersonalInformationPage {
 
   private nextButton = { selector: DataTest.nextButton };
 
-  async fill(data:IPersonalInfoFields) {
+  async fill(data: IPersonalInfoFields, roleName: string) {
     if (data.firstName) {
-      cy.getByDataTest(this.firstName).type(data.firstName);
+      cy.getByDataTest(this.firstName).type(`${roleName}${data.firstName}`);
     }
 
     if (data.lastName) {
@@ -72,7 +72,7 @@ export class PersonalInformationPage {
     }
 
     if (data.emailAddress) {
-      cy.getByDataTest(this.emailAddress).type(data.emailAddress);
+      cy.getByDataTest(this.emailAddress).type(`${roleName}${data.emailAddress}`);
     }
 
     if (data.indigenousIdentity) {

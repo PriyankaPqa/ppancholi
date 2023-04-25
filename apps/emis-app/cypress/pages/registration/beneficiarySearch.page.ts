@@ -1,4 +1,5 @@
 import { SplitHouseholdPrivacyStatementPage } from '../split/splitHouseholdPrivacyStatement.page';
+import { CRCPrivacyStatementPage } from './crcPrivacyStatement.page';
 
 export enum DataTest {
   firstName = 'isRegistered__firstName',
@@ -38,5 +39,10 @@ export class BeneficiarySearchPage {
   public goToSelectEventPage() {
     cy.getByDataTest(this.nextButton).click();
     return new SplitHouseholdPrivacyStatementPage();
+  }
+
+  public goToCrcPrivacyStatementPage() {
+    cy.getByDataTest(this.nextButton).click();
+    return new CRCPrivacyStatementPage();
   }
 }

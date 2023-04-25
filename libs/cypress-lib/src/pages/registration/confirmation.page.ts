@@ -44,7 +44,7 @@ export class ConfirmationPage {
   }
 
   public getPrintButton() {
-    return cy.getByDataTest(this.printButton).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.printButton);
   }
 
   public closeRegistration() {
