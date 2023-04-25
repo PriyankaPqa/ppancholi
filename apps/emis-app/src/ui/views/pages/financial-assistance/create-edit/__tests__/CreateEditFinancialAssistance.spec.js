@@ -2,7 +2,7 @@ import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
 
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
 import { mockProgramEntity, mockProgramEntities } from '@libs/entities-lib/program';
@@ -159,7 +159,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         expect(wrapper.vm.rules).toEqual({
           name: {
             required: true,
-            max: MAX_LENGTH_SM,
+            max: MAX_LENGTH_MD,
           },
           required: {
             required: true,

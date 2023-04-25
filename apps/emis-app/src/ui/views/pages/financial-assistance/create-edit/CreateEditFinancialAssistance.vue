@@ -188,7 +188,7 @@ import {
 import helpers from '@/ui/helpers/helpers';
 import routes from '@/constants/routes';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
+import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem } from '@libs/entities-lib/financial-assistance';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { IProgramEntity } from '@libs/entities-lib/program';
@@ -249,7 +249,7 @@ export default Vue.extend({
       return {
         name: {
           required: true,
-          max: MAX_LENGTH_SM,
+          max: MAX_LENGTH_MD,
         },
         required: {
           required: true,
