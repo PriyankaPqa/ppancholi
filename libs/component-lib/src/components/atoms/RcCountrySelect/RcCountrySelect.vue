@@ -65,13 +65,6 @@ export default Vue.extend({
       type: String,
       default: '',
     },
-    /**
-     * The current language to display the countries in
-     */
-    language: {
-      type: String,
-      default: 'en',
-    },
 
     attach: {
       type: [String, Boolean, Object],
@@ -91,7 +84,7 @@ export default Vue.extend({
 
   computed: {
     countries(): { value: string; text: string }[] {
-      const countryNames = this.countriesData[this.language];
+      const countryNames = this.countriesData[this.$i18n?.locale === 'fr' ? 'fr' : 'en'];
       const countryOptions = Object.keys(countryNames)
         .map((key) => ({ value: key, text: countryNames[key] }))
         .sort((a, b) => a.text.localeCompare(b.text));

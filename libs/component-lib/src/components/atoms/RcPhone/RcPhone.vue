@@ -60,6 +60,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import en from '@libs/shared-lib/constants/countries/en';
+import fr from '@libs/shared-lib/constants/countries/fr';
 import PhoneNumber from 'awesome-phonenumber';
 import { ICountry, countries } from '@libs/component-lib/components/atoms/RcPhone/all-countries';
 import CountryListItem from './components/CountryListItem.vue';
@@ -70,54 +72,6 @@ interface IValue {
   number: string;
   countryCode: string;
   e164Number: string;
-}
-
-function getInitialNumber(number: string, defaultCountry: string): string {
-  const pn: PhoneNumber = new PhoneNumber(number, defaultCountry);
-
-  if (pn.isValid()) {
-    return pn.getNumber('national');
-  }
-
-  return number;
-}
-
-function getInitialCountry(value: IValue, defaultCountry: string): ICountry {
-  const countryCode = value.countryCode ? value.countryCode.toUpperCase() : defaultCountry.toUpperCase();
-
-  const pn: PhoneNumber = new PhoneNumber(
-    value.number,
-    countryCode,
-  );
-
-  const regionCode = pn.getRegionCode();
-
-  if (regionCode) {
-    if (regionCode === 'US' && pn.getType() === 'toll-free') {
-      return {
-        name: 'Canada',
-        iso2: 'CA',
-        dialCode: '1',
-        priority: 1,
-      };
-    }
-    const country = countries.find((c: ICountry) => c.iso2 === regionCode.toUpperCase());
-    if (country) {
-      return country;
-    }
-  }
-
-  const country = countries.find((c: ICountry) => c.iso2 === defaultCountry.toUpperCase());
-  if (country) {
-    return country;
-  }
-
-  return {
-    name: 'Canada',
-    iso2: 'CA',
-    dialCode: '1',
-    priority: 1,
-  };
 }
 
 /**
@@ -170,7 +124,9 @@ export default Vue.extend({
 
   computed: {
     countries(): Array<ICountry> {
-      return countries;
+      const countryNames = this.$i18n?.locale === 'fr' ? fr : en;
+      return countries.map((c) => ({ ...c, name: countryNames[c.iso2.toUpperCase()] || c.name }))
+        .sort((a, b) => a.name.localeCompare(b.name));
     },
 
     placeholder(): string {
@@ -195,8 +151,8 @@ export default Vue.extend({
           countryCode: newValue.countryCode || this.defaultCountry,
           e164Number: this.e164Number,
         };
-        this.innerValue = getInitialNumber(value.number, value.countryCode);
-        this.selectedCountry = getInitialCountry(value, this.defaultCountry);
+        this.innerValue = this.getInitialNumber(value.number, value.countryCode);
+        this.selectedCountry = this.getInitialCountry(value, this.defaultCountry);
       },
     },
 
@@ -213,8 +169,8 @@ export default Vue.extend({
 
   mounted() {
     if (this.value.number) {
-      this.innerValue = getInitialNumber(this.value.number, this.defaultCountry);
-      this.selectedCountry = getInitialCountry(this.value, this.defaultCountry);
+      this.innerValue = this.getInitialNumber(this.value.number, this.defaultCountry);
+      this.selectedCountry = this.getInitialCountry(this.value, this.defaultCountry);
     }
   },
 
@@ -227,6 +183,55 @@ export default Vue.extend({
   },
 
   methods: {
+
+    getInitialNumber(number: string, defaultCountry: string): string {
+      const pn: PhoneNumber = new PhoneNumber(number, defaultCountry);
+
+      if (pn.isValid()) {
+        return pn.getNumber('national');
+      }
+
+      return number;
+    },
+
+    getInitialCountry(value: IValue, defaultCountry: string): ICountry {
+      const countryCode = value.countryCode ? value.countryCode.toUpperCase() : defaultCountry.toUpperCase();
+
+      const pn: PhoneNumber = new PhoneNumber(
+        value.number,
+        countryCode,
+      );
+
+      const regionCode = pn.getRegionCode();
+
+      if (regionCode) {
+        if (regionCode === 'US' && pn.getType() === 'toll-free') {
+          return {
+            name: 'Canada',
+            iso2: 'CA',
+            dialCode: '1',
+            priority: 1,
+          };
+        }
+        const country = this.countries.find((c: ICountry) => c.iso2 === regionCode.toUpperCase());
+        if (country) {
+          return country;
+        }
+      }
+
+      const country = this.countries.find((c: ICountry) => c.iso2 === defaultCountry.toUpperCase());
+      if (country) {
+        return country;
+      }
+
+      return {
+        name: 'Canada',
+        iso2: 'CA',
+        dialCode: '1',
+        priority: 1,
+      };
+    },
+
     /**
      * Handles selecting the country from the country list
      * @param {ICountry} country The selected country
@@ -282,7 +287,7 @@ export default Vue.extend({
           const countryCode = currentActiveElem.getAttribute('data-iso');
 
           if (countryCode) {
-            const country = countries.find((c) => c.iso2 === countryCode);
+            const country = this.countries.find((c) => c.iso2 === countryCode);
 
             // eslint-disable-next-line max-depth
             if (country) {
@@ -296,7 +301,7 @@ export default Vue.extend({
         countrySearchBuffer += e.key;
 
         countrySearchBuffer = countrySearchBuffer.toLowerCase();
-        const country = countries.find((c: ICountry) => c.name.toLowerCase().startsWith(countrySearchBuffer));
+        const country = this.countries.find((c: ICountry) => c.name.toLowerCase().startsWith(countrySearchBuffer));
 
         if (country) {
           const elem = document.getElementsByClassName(`country__${country.iso2}`)[0];
