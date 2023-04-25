@@ -4,6 +4,7 @@ parameters:
   disableCache: ''
   distDir: ''
   workingDir: ''
+  cypressSpec: ''
 
 steps:
   - template: '../steps/cache-install-npm.yml'
@@ -59,7 +60,7 @@ steps:
   # Run a local server, wait for it and then start testing with cypress
   # Kill the server after it's done
   - script: |
-      yarn start-server-and-test 'yarn vite preview' http-get://localhost:8080 'yarn cy:report --spec "cypress/e2e/smoke-tests/**/*.ts" --record --parallel --ci-build-id "$BUILD_BUILDNUMBER" --group "Azure CI"'
+      yarn start-server-and-test 'yarn vite preview' http-get://localhost:8080 'yarn cy:report --spec "${{ parameters.cypressSpec }}" --record --parallel --ci-build-id "$BUILD_BUILDNUMBER" --group "Azure CI"'
     workingDirectory: ${{ parameters.workingDir }}
     displayName: 'Run cypress tests'
     env:

@@ -7,7 +7,7 @@ parameters:
 
 jobs:
   - job: Cypress
-    displayName: 'Critical path tests'
+    displayName: 'Smoke tests'
     variables:
       - group: Env-Dev
       - group: Cypress
@@ -23,3 +23,4 @@ jobs:
           disableCache: ${{ parameters.disableCache }}
           distDir: ${{ parameters.distDir }}
           workingDir: ${{ parameters.workingDir }}
+          cypressSpec: 'cypress/e2e/smoke-tests/**/*.ts'

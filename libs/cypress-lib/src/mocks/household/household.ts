@@ -8,7 +8,7 @@ import {
 } from '@libs/entities-lib/household-create';
 import { faker } from '@faker-js/faker';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
-import { Genders, generateDateOfBirth, getCurrentDateString, PreferredLanguages, PrimarySpokenLanguages, today } from '../../helpers';
+import { Genders, generateDateOfBirth, getCurrentDateString, getRandomNumber, PreferredLanguages, PrimarySpokenLanguages, today } from '../../helpers';
 
 const mockCurrentAddressCreateRequest = (force?: Partial<ICurrentAddressCreateRequest>): ICurrentAddressCreateRequest => ({
   addressType: ECurrentAddressTypes.RemainingInHome,
@@ -63,7 +63,7 @@ export const mockContactInformationCreateRequest = (force?: Partial<IContactInfo
 
 export const mockCreateHouseholdRequest = (force?: Partial<ICreateHouseholdRequest>): ICreateHouseholdRequest => {
   const firstName = `${faker.name.firstName()}`;
-  const lastName = `${faker.name.lastName()} - ${getCurrentDateString()}`;
+  const lastName = `${faker.name.lastName()} - ${getCurrentDateString()}-s${getRandomNumber()}`;
 
   return {
     noFixedHome: false,
