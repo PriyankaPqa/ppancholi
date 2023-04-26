@@ -374,7 +374,7 @@ export class SurveyJsHelper {
             question: this.getPropertyAsMultilingual(
               // eslint-disable-next-line
               simpleQuestion.title != null ? (typeof simpleQuestion.title === 'string' ? simpleQuestion.title : { default: simpleQuestion.name, ...simpleQuestion.title }) : (simpleQuestion.html != null ? simpleQuestion.html : simpleQuestion.name),
-              simpleQuestion.suffix?.title != null ? simpleQuestion.suffix?.title : simpleQuestion.suffix?.name,
+              simpleQuestion.suffix?.title != null ? (typeof simpleQuestion.suffix.title === 'string' ? simpleQuestion.suffix.title : { default: simpleQuestion.suffix.name, ...simpleQuestion.suffix.title }) : simpleQuestion.suffix?.name,
             ),
             score: simpleQuestion.score,
             answerChoices: choices ? [] : null,
@@ -507,8 +507,8 @@ export class SurveyJsHelper {
       questionType: 'comment',
       question: this.getPropertyAsMultilingual(
         // eslint-disable-next-line
-        simpleQuestion.title != null ? simpleQuestion.title : (simpleQuestion.html != null ? simpleQuestion.html : simpleQuestion.name),
-        simpleQuestion.suffix?.title != null ? simpleQuestion.suffix?.title : simpleQuestion.suffix?.name,
+        simpleQuestion.title != null ? (typeof simpleQuestion.title === 'string' ? simpleQuestion.title : { default: simpleQuestion.name, ...simpleQuestion.title }) : (simpleQuestion.html != null ? simpleQuestion.html : simpleQuestion.name),
+        simpleQuestion.suffix?.title != null ? (typeof simpleQuestion.suffix.title === 'string' ? simpleQuestion.suffix.title : { default: simpleQuestion.suffix.name, ...simpleQuestion.suffix.title }) : simpleQuestion.suffix?.name,
       ),
       answerChoices: null,
     } as IAssessmentQuestion;
@@ -523,7 +523,7 @@ export class SurveyJsHelper {
     const question = {
       identifier: `${qIdentifierPrefix}${simpleQuestion.name}`,
       questionType: 'matrixdynamic',
-      question: this.getPropertyAsMultilingual(simpleQuestion.title != null ? simpleQuestion.title : simpleQuestion.name),
+      question: this.getPropertyAsMultilingual(simpleQuestion.title != null ? (typeof simpleQuestion.title === 'string' ? simpleQuestion.title : { default: simpleQuestion.name, ...simpleQuestion.title }) : simpleQuestion.name),
       answerChoices: null,
     } as IAssessmentQuestion;
 

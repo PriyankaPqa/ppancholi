@@ -34,6 +34,60 @@ export class surveyData {
     question1: 'test text',
   };
 
+  static panelDynamicTranslatedFrenchEnglishDefault = JSON.stringify({
+    logo: {
+     default: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
+     fr: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/fr',
+    },
+    logoPosition: 'right',
+    pages: [
+     {
+      name: 'page1',
+      elements: [
+
+    {
+      type: 'paneldynamic',
+      name: 'Complete the following for each of your children:',
+      visibleIf: "{Do you have children?} = 'yes'",
+      title: {
+       fr: 'Si vous avez des enfants, remplissez ce qui suit :',
+      },
+      isRequired: true,
+      templateElements: [
+       {
+        type: 'multipletext',
+        name: 'What is the name of the school attended by each of your children?',
+        title: {
+         fr: 'Complétez ce qui suit pour chacun de vos enfants',
+        },
+        isRequired: true,
+        items: [
+         {
+          name: "Child's name:",
+          title: {
+           fr: "Nom de l'enfant :",
+          },
+         },
+         {
+          name: "School's name:",
+          title: {
+           fr: "Nom de l'école :",
+          },
+         },
+        ],
+       },
+      ],
+      panelCount: 1,
+      panelAddText: {
+       default: 'Add additional child',
+       fr: "Ajouter d'autres",
+      },
+     }],
+    },
+   ],
+   clearInvisibleValues: 'onHiddenContainer',
+  });
+
   static questionsTranslatedFrenchEglishDefault = JSON.stringify({
     logo: {
      default: 'https://api-dev.crc-tech.ca//system-management/tenant-settings/c400f50d-7a56-4ef2-8e44-211bfa434724/logo/en',
@@ -60,6 +114,7 @@ export class surveyData {
           },
          },
         ],
+        showOtherItem: true,
        },
       ],
      },
