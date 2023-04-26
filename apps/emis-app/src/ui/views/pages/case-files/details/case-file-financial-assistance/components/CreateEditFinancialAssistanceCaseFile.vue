@@ -125,8 +125,8 @@
       v-if="showSubmitPaymentDialog"
       :show.sync="showSubmitPaymentDialog"
       :total-amount-to-submit.sync="totalAmountToSubmit"
-      :approval-required="program.approvalRequired"
-      :program-id="program.id"
+      :approval-required="selectedProgram.approvalRequired"
+      :program-id="selectedProgram.id"
       :event-id="event.id"
       :financial-assistance.sync="financialAssistance" />
   </div>
@@ -235,7 +235,6 @@ export default mixins(caseFileDetail).extend({
       totalAmountToSubmit: '',
       submittingPaymentLine: false,
       savingFinancialAssistance: false,
-      program: null as IProgramEntity,
       programAssessmentForms: [] as IAssessmentFormEntity[],
       caseFileAssessmentResponses: [] as IAssessmentResponseEntity[],
       isDeletingPayment: false,
@@ -341,7 +340,6 @@ export default mixins(caseFileDetail).extend({
 
     await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
     this.isEditMode || this.isAddMode ? await this.searchTables() : await this.fetchTable();
-    await this.fetchProgram(this.financialTables[0].programId, this.caseFile.eventId);
     await this.fetchAssessmentResponseByCaseFileId(this.caseFileId);
 
     this.loading = false;
@@ -598,10 +596,6 @@ export default mixins(caseFileDetail).extend({
           this.$toasted.global.success(this.$t('financialAssistancePayment_edit.success'));
         }
       }
-    },
-
-    async fetchProgram(programId: string, eventId: string) {
-      this.program = await useProgramStore().fetch({ id: programId, eventId }) as IProgramEntity;
     },
 
     async fetchAssessmentFormByProgramId(programId: string) {
