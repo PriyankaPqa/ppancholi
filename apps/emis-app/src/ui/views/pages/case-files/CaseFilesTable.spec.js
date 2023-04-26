@@ -545,7 +545,8 @@ describe('CaseFilesTable.vue', () => {
         expect(wrapper.vm.getBeneficiaryName(combinedCaseFile)).toEqual('Ben 2 Test');
       });
 
-      it('should return Empty household when Identityset is unavailable', () => {
+      it('should return Empty household when Identityset is unavailable and has Feature Flag', () => {
+        wrapper.vm.$hasFeature = jest.fn(() => true);
         const combinedCaseFile = {
           entity: {},
           metadata: {},

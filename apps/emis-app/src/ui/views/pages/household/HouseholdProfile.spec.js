@@ -49,6 +49,72 @@ const otherEvent = mockEventMainInfo({
   registrationLocations: [{ id: ' loc-id-5-active', status: EEventLocationStatus.Active }, { id: ' loc-id-6-inactive', status: EEventLocationStatus.Inactive }],
 });
 
+const movedMemberList = [
+  {
+    currentAddress: {
+      address: {
+        city: 'Ottawa',
+        country: 'CA',
+        latitude: 0,
+        longitude: 0,
+        postalCode: 'K1W 1G7',
+        province: 9,
+        specifiedOtherProvince: undefined,
+        streetAddress: '247 Some Street',
+        unitSuite: '123',
+      },
+      addressType: 2,
+      placeName: 'test',
+      placeNumber: '',
+      shelterLocation: undefined,
+    },
+    genderName: {
+      translation: {
+        en: 'Male',
+        fr: 'Masculin',
+      },
+    },
+    identitySet: {
+      birthDate: {
+        day: '12',
+        month: 2,
+        year: '1999',
+      },
+      dateOfBirth: '1999-02-12T00:00:00.000Z',
+      firstName: 'Bob',
+      gender: {
+        id: '676eb98b-d432-4924-90ee-2489e3acdc26',
+        isDefault: false,
+        isOther: false,
+        name: {
+          translation: {
+            en: 'Male',
+            fr: 'Masculin',
+          },
+        },
+        orderRank: 0,
+        status: 1,
+      },
+      genderOther: null,
+      indigenousCommunityOther: '',
+      indigenousIdentity: null,
+      indigenousProvince: 1,
+      indigenousType: '',
+      lastName: 'Smith',
+      middleName: 'middle',
+      preferredName: 'preferredName',
+      indigenousCommunityId: undefined,
+      name: undefined,
+    },
+    indigenousIdentityInfo: {
+      communityType: '',
+      name: '',
+    },
+    personId: 'newId',
+    status: 6,
+  },
+];
+
 describe('HouseholdProfile.vue', () => {
   let wrapper;
   registrationStore.getHouseholdCreate = jest.fn(() => householdCreate);
@@ -386,6 +452,84 @@ describe('HouseholdProfile.vue', () => {
         });
         const element = wrapper.findDataTest('household-profile-manageDuplicatesBtn');
         expect(element.exists()).toBeFalsy();
+      });
+    });
+
+    describe('moved_member_card', () => {
+      it('should not be rendered when the feature flag is off', () => {
+        wrapper = shallowMount(Component, {
+          pinia,
+          localVue,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              events,
+              loading: false,
+              caseFiles: mockCaseFileEntities(),
+
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+            canManageDuplicates() {
+              return false;
+            },
+            movedMembers() {
+              return movedMemberList;
+            },
+          },
+          mocks: {
+            $services: services,
+            $hasFeature: () => false,
+          },
+        });
+        const element = wrapper.findDataTest('moved_member_card');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('should be rendered when the feature flag is on', () => {
+        wrapper = shallowMount(Component, {
+          pinia,
+          localVue,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              events,
+              loading: false,
+              caseFiles: mockCaseFileEntities(),
+
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+            canManageDuplicates() {
+              return false;
+            },
+            movedMembers() {
+              return movedMemberList;
+            },
+          },
+          mocks: {
+            $services: services,
+            $hasFeature: () => true,
+          },
+        });
+        const element = wrapper.findDataTest('moved_member_card');
+        expect(element.exists()).toBeTruthy();
       });
     });
   });

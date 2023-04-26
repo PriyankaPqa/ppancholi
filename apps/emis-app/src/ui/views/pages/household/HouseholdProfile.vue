@@ -193,13 +193,16 @@
             :editing-disabled="editingDisabled"
             data-test="household_profile_member_card"
             @reload-household-create="fetchHouseholdData" />
-          <household-member-card
-            v-for="(member, index) in movedMembers"
-            :key="member.personId"
-            :member="member"
-            :index="index"
-            :moved-status="member.status"
-            moved-member />
+          <template v-if="$hasFeature(FeatureKeys.HouseholdProfileStatus)">
+            <household-member-card
+              v-for="(member, index) in movedMembers"
+              :key="member.personId"
+              data-test="moved_member_card"
+              :member="member"
+              :index="index"
+              :moved-status="member.status"
+              moved-member />
+          </template>
 
           <h5 v-if="inactiveCaseFiles.length" class="rc-heading-5 pt-4 pb-4">
             {{ $t('household.profile.registered_previous_events') }} ({{ inactiveCaseFiles.length }})
