@@ -48,7 +48,9 @@ describe('PersonalInformationLib.vue', () => {
   };
   beforeEach(() => {
     doMount(true, {
-      otherProps: null,
+      otherProps: {
+
+      },
       otherComputed: null,
     });
   });
@@ -193,7 +195,9 @@ describe('PersonalInformationLib.vue', () => {
     describe('primarySpokenLanguagesItems', () => {
       it('returns active items only if no primarySpokenLanguage selected', async () => {
         doMount(true, {
-          otherProps: null,
+          otherProps: {
+            memberProps: mockMember(),
+          },
           otherComputed: null,
         });
 
@@ -206,6 +210,7 @@ describe('PersonalInformationLib.vue', () => {
           {
             otherProps: {
               includeInactiveOptions: true,
+              memberProps: mockMember(),
             },
             otherComputed: {
               contactInformation: () => ({
@@ -224,7 +229,9 @@ describe('PersonalInformationLib.vue', () => {
     describe('genderItems', () => {
       it('returns active items only if no gender selected', async () => {
         doMount(true, {
-          otherProps: null,
+          otherProps: {
+            memberProps: mockMember(),
+          },
           otherComputed: null,
         });
         expect(wrapper.vm.genderItems).toEqual(mockGenders().filter((g) => g.status === Status.Active));
@@ -232,7 +239,10 @@ describe('PersonalInformationLib.vue', () => {
 
       it('returns active items and selected inactive gender', async () => {
         doMount(true, {
-          otherProps: { includeInactiveOptions: true },
+          otherProps: {
+            includeInactiveOptions: true,
+            memberProps: mockMember(),
+          },
           otherComputed: {
             identitySet: () => ({
               gender: {
@@ -266,7 +276,9 @@ describe('PersonalInformationLib.vue', () => {
     describe('splitHousehold', () => {
       it('returns the proper data', async () => {
         doMount(true, {
-          otherProps: null,
+          otherProps: {
+            memberProps: mockMember(),
+          },
           otherComputed: null,
         });
         wrapper.vm.$registrationStore.splitHouseholdState = mockSplitHousehold();
@@ -277,7 +289,9 @@ describe('PersonalInformationLib.vue', () => {
     describe('isTouched', () => {
       it('should return isTouched of personalInformaiton tab', () => {
         doMount(true, {
-          otherProps: null,
+          otherProps: {
+            memberProps: mockMember(),
+          },
           otherComputed: null,
         });
         expect(wrapper.vm.isTouched).toEqual(false);
@@ -296,7 +310,9 @@ describe('PersonalInformationLib.vue', () => {
 
       it('should call function loadInitialDataFromBeneficiarySearch', async () => {
         doMount(true, {
-          otherProps: null,
+          otherProps: {
+            memberProps: mockMember(),
+          },
           otherComputed: { isTouched: () => false, isSplitMode: () => false, shouldLoadDataFromBeneficiarySearch: () => true },
         });
         wrapper.vm.loadInitialDataFromBeneficiarySearch = jest.fn();
@@ -334,6 +350,7 @@ describe('PersonalInformationLib.vue', () => {
           {
             otherProps: {
               isEditMode: true,
+              memberProps: mockMember(),
             },
             otherComputed: { isSplitMode: () => true },
           },
@@ -352,6 +369,7 @@ describe('PersonalInformationLib.vue', () => {
           {
             otherProps: {
               isEditMode: false,
+              memberProps: mockMember(),
             },
             otherComputed: {
               isSplitMode: () => true,

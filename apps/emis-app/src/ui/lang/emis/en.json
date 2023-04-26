@@ -1707,6 +1707,7 @@
     "household.move.results.name": "Name",
     "household.move.results.phone_email_dob": "Email, phone, date of birth",
     "household.move.results.registration_number": "Registration number",
+    "household.move.results.status_registration_number": "Status and registration#",
     "household.move.results.select": "Select",
     "household.move.results.status_registration_number": "Status and registration#",
     "household.move.right.title": "Second household",

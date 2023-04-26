@@ -1707,6 +1707,7 @@
     "household.move.results.name": "Nom",
     "household.move.results.phone_email_dob": "Adresse électronique, numéro de téléphone, date de naissance",
     "household.move.results.registration_number": "Numéro d’inscription",
+    "household.move.results.status_registration_number": "Statut et inscription#",
     "household.move.results.select": "Sélectionner",
     "household.move.results.status_registration_number": "Statut et inscription#",
     "household.move.right.title": "Deuxième ménage",

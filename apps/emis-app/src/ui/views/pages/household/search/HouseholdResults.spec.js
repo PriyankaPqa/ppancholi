@@ -1,5 +1,5 @@
 import Vuetify from 'vuetify';
-import { mockCombinedHouseholds, mockCombinedHousehold } from '@libs/entities-lib/household';
+import { mockCombinedHouseholds, mockCombinedHousehold, mockHouseholdMemberMetadata, HouseholdStatus } from '@libs/entities-lib/household';
 import {
   createLocalVue,
   shallowMount,
@@ -9,6 +9,7 @@ import Component from '@/ui/views/pages/household/search/HouseholdResults.vue';
 
 import { tabs } from '@/pinia/registration/tabs';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { mockMember } from '@libs/entities-lib/value-objects/member';
 
 const localVue = createLocalVue();
 
@@ -17,9 +18,10 @@ const vuetify = new Vuetify();
 const { pinia, registrationStore } = useMockRegistrationStore();
 
 const parsedHousehold = {
-  primaryBeneficiary: {},
-  additionalMembers: [],
-  id: '1',
+  ...mockHouseholdMemberMetadata(),
+  id: 'mock-id-1',
+  primaryBeneficiary: { ...mockMember(), id: 'mock-person-id-1', householdStatus: HouseholdStatus.Open },
+  additionalMembers: [mockMember({ id: 'mock-person-id-2' })],
 };
 
 describe('HouseholdResultsMove.vue', () => {
@@ -226,6 +228,47 @@ describe('HouseholdResultsMove.vue', () => {
           wrapper.vm.buildHouseholdCreateData = jest.fn();
           await wrapper.vm.viewDetails(parsedHousehold);
           expect(wrapper.emitted('showDetails')[0][0]).toEqual(parsedHousehold.id);
+        });
+      });
+
+      describe('detailsButtonDisabled', () => {
+        it('should return true when it is loading', () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            pinia,
+            vuetify,
+            propsData: {
+              items: mockCombinedHouseholds(),
+              isSplitMode: true,
+            },
+            data() {
+              return {
+                loading: true,
+              };
+            },
+          });
+          expect(wrapper.vm.detailsButtonDisabled(null)).toEqual(true);
+        });
+
+        it('should return false when household status is Open and has Feature', () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            pinia,
+            vuetify,
+            propsData: {
+              items: mockCombinedHouseholds(),
+              isSplitMode: true,
+            },
+            data() {
+              return {
+                loading: false,
+              };
+            },
+            computed: {
+              hasFeatureHouseholdStatus: () => true,
+            },
+          });
+          expect(wrapper.vm.detailsButtonDisabled(parsedHousehold)).toEqual(false);
         });
       });
     });

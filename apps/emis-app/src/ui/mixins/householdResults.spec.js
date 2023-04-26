@@ -100,6 +100,7 @@ describe('householdResults', () => {
                 ...member,
                 isPrimary: true,
                 registrationNumber: household.entity.registrationNumber,
+                householdStatus: household.entity.householdStatus,
               };
             } else {
               final.additionalMembers.push({

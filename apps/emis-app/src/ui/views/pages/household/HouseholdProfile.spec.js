@@ -19,6 +19,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { mockProvider } from '@/services/provider';
 import { HouseholdActivityType, mockHouseholdActivities } from '@libs/entities-lib/value-objects/household-activity';
 import PinnedActionAndRationale from '@/ui/views/pages/household/components/PinnedStatus.vue';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();
@@ -636,17 +637,6 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: householdEntity.id,
           },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
           mocks: {
             $services: services,
           },
@@ -666,22 +656,16 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: householdEntity.id,
           },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
           mocks: {
             $services: services,
           },
         });
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.$hasFeature = jest.fn((f) => {
+          if (f === FeatureKeys.L0Access) {
+            return true;
+          }
+          return false;
+        });
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
@@ -695,17 +679,6 @@ describe('HouseholdProfile.vue', () => {
           pinia,
           propsData: {
             id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
           },
           mocks: {
             $services: services,

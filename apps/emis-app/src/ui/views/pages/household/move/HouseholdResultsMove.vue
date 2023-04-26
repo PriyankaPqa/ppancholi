@@ -12,11 +12,11 @@
       <v-col cols="4">
         {{ $t('household.move.results.name') }}
       </v-col>
-      <v-col cols="4">
+      <v-col cols="4" :class="{ 'email-phone-dob-item': hasFeatureHouseholdStatus }">
         {{ $t('household.move.results.phone_email_dob') }}
       </v-col>
-      <v-col cols="4">
-        {{ $t('household.move.results.registration_number') }}
+      <v-col cols="4" :class="{ 'status-registration-number-item': hasFeatureHouseholdStatus }">
+        {{ hasFeatureHouseholdStatus ? $t('household.move.results.status_registration_number') : $t('household.move.results.registration_number') }}
       </v-col>
     </v-row>
 
@@ -32,7 +32,7 @@
             </span>
           </v-col>
 
-          <v-col cols="4">
+          <v-col cols="4" :class="{ 'email-phone-dob-item': hasFeatureHouseholdStatus }">
             <div data-test="emailAddress">
               {{ household.primaryBeneficiary.email || '-' }}
             </div>
@@ -46,20 +46,30 @@
           </v-col>
 
           <v-col cols="4">
-            <div>
+            <div v-if="hasFeatureHouseholdStatus" class="status-registration-number-item">
+              <status-select
+                data-test="household-profile-status-chip"
+                :value="household.primaryBeneficiary.householdStatus"
+                status-name="HouseholdStatus"
+                disabled />
+            </div>
+            <span :class="{ 'status-registration-number-item': hasFeatureHouseholdStatus }">
               {{ household.primaryBeneficiary.registrationNumber }}
+            </span>
+            <span :class="{ 'status-registration-number-item': hasFeatureHouseholdStatus }">
               <v-btn
                 class="ml-4"
                 small
                 color="primary"
                 data-test="household_move_results_select"
+                :disabled="hasFeatureHouseholdStatus && household.primaryBeneficiary.householdStatus !== HouseholdStatus.Open"
                 @click="select(household.id)">
                 <v-icon left>
                   mdi-check
                 </v-icon>
                 {{ $t('household.move.results.select') }}
               </v-btn>
-            </div>
+            </span>
           </v-col>
         </v-row>
         <v-row v-for="(member, j) in household.additionalMembers" :key="`${j}-add`" no-gutters class="mt-1">
@@ -71,7 +81,7 @@
               {{ member.firstName }} {{ member.lastName }}
             </span>
           </v-col>
-          <v-col cols="4">
+          <v-col cols="4" :class="{ 'email-phone-dob-item': hasFeatureHouseholdStatus }">
             {{ householdHelpers.getBirthDateDisplayWithAge(householdHelpers.convertBirthDateStringToObject(member.dateOfBirth)) }}
           </v-col>
         </v-row>
@@ -96,8 +106,11 @@ import { RcDataTable } from '@libs/component-lib/components';
 import householdResults from '@/ui/mixins/householdResults';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
+import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 
 import { Resize } from 'vuetify/es5/directives';
+import { HouseholdStatus } from '@libs/entities-lib/household';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(householdResults, household).extend({
   name: 'HouseholdResults',
@@ -110,6 +123,7 @@ export default mixins(householdResults, household).extend({
     return {
       householdHelpers,
       maxHeight: 0,
+      HouseholdStatus,
     };
   },
 
@@ -120,10 +134,15 @@ export default mixins(householdResults, household).extend({
         overflow: 'auto',
       };
     },
+
+    hasFeatureHouseholdStatus(): boolean {
+      return this.$hasFeature(FeatureKeys.HouseholdProfileStatus);
+    },
   },
 
   components: {
     RcDataTable,
+    StatusSelect,
   },
 
   mounted() {
@@ -160,5 +179,17 @@ export default mixins(householdResults, household).extend({
 
 .border-top {
   border-top: 1px solid var(--v-grey-lighten2);
+}
+
+.status-registration-number-item {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+
+.email-phone-dob-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
