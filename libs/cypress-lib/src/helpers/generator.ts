@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 
 export const today = `${new Date().toISOString().split('T')[0]}T00:00:00.000Z`;
 
-function getRandomNumber() {
+export function getRandomNumber() {
   return Math.floor(Math.random() * 1001);
 }
 

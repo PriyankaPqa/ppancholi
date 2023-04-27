@@ -80,7 +80,7 @@ export default {
 
   metaInfo() {
     return {
-      // if no subcomponents specify a metaInfo.title, this title will be used.
+      // if no subcomponents specify a metaInfo.title, this title will be used
       title: this.$t('metaInfo.app.title'),
       // all titles will be injected into this template
       titleTemplate: `${this.$t('metaInfo.app.short')} | %s`,
@@ -164,7 +164,7 @@ export default {
       Vue.prototype.$message = ({
         title, message, submitActionLabel, minHeight, maxWidth,
       }) => {
-        // we only show one message box at a time
+        // we only show one message box at a time.
         if (this.showMessage) {
           return false;
         }

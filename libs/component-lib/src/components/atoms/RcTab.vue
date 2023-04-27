@@ -38,9 +38,9 @@ export default Vue.extend({
 <style lang="scss" scoped>
 .optionsList__tab {
   background: var(--v-grey-lighten5);
-  border-top: 4px solid transparent;
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
+  border-top: 1px solid var(--v-grey-lighten4);
+  border-left: 1px solid var(--v-grey-lighten4);
+  border-right: 1px solid (--v-grey-lighten4);
   padding: 12px 32px;
   cursor: pointer;
 }

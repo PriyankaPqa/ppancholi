@@ -6,6 +6,7 @@ import Vuetify from 'vuetify/lib';
 import { DEFAULT_LANGUAGE } from '../../constants/trans';
 import fr from './locales/fr';
 import DuplicateIcon from './customIcons/DuplicateIcon.vue';
+import ResolvedIcon from './customIcons/ResolvedIcon.vue';
 import ActionsIcon from './customIcons/ActionsIcon.vue';
 import SearchPersonIcon from './customIcons/SearchPersonIcon.vue';
 import light from './light-theme';
@@ -28,6 +29,9 @@ export const options = {
     values: {
       'rctech-duplicate': {
         component: DuplicateIcon,
+      },
+      'rctech-resolved': {
+        component: ResolvedIcon,
       },
       'rctech-actions': {
         component: ActionsIcon,

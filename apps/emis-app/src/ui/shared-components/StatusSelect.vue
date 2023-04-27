@@ -56,7 +56,7 @@ export default Vue.extend({
 
     statuses: {
       type: Array as () => Array<number>,
-      required: true,
+      default: null,
     },
 
     disabled: {

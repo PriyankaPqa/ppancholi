@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash';
 import {
   HouseholdActivity,
   mockHouseholdActivities,
@@ -18,8 +17,6 @@ displayedItem.templateData = [{ label: 'foo', value: 'bar' }];
 displayedItem.templatePreviousData = [{ label: 'foo1', value: 'bar1' }];
 displayedItem.activityName = 'Personal information changed';
 displayedItem.userName = 'John Smith';
-
-jest.mock('@libs/entities-lib/value-objects/household-activity/householdActivity');
 
 describe('HouseholdProfileHistory', () => {
   let wrapper;
@@ -71,67 +68,32 @@ describe('HouseholdProfileHistory', () => {
     });
   });
 
-  describe('Lifecycle', () => {
-    describe('created', () => {
-      it(
-        'should call  fetchHouseholdHistory action store, call handleMoveActivity with the result, and save the result into activityItems',
-        async () => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            propsData: {
-              show: true,
-              activityItemsData: [householdActivity],
-            },
-            mocks: { $services: services },
-          });
-          wrapper.vm.handleMoveActivity = jest.fn(() => [{ ...householdActivity, timestamp: '2021-11-16T16:20:03.7678072Z' }]);
-          jest.clearAllMocks();
-          const hook = wrapper.vm.$options.created[0];
-          await hook.call(wrapper.vm);
-
-          expect(wrapper.vm.handleMoveActivity).toHaveBeenCalledWith([householdActivity]);
-          expect(wrapper.vm.activityItems.toString())
-            .toEqual([new HouseholdActivity({ ...householdActivity, timestamp: '2021-11-16T16:20:03.7678072Z' })].toString());
-        },
-      );
-    });
-  });
-
   describe('Computed', () => {
     describe('displayedItems', () => {
       it('returns the proper data', async () => {
-        const item1 = { ...cloneDeep(mockHouseholdActivities()[0]), ...new HouseholdActivity(mockHouseholdActivities()[0]) };
-        const item2 = { ...cloneDeep(mockHouseholdActivities()[1]), ...new HouseholdActivity(mockHouseholdActivities()[1]) };
-
-        item1.timestamp = '2021-01-01';
-        item2.timestamp = '2021-02-10';
-        item1.getActivityName = jest.fn(() => HouseholdActivityType[mockHouseholdActivities()[0].activityType]);
-        item2.getActivityName = jest.fn(() => HouseholdActivityType[mockHouseholdActivities()[1].activityType]);
-        item1.getTemplateData = jest.fn(() => ([{ label: 'foo1', value: 'bar1' }]));
-        item2.getTemplateData = jest.fn(() => ([{ label: 'foo2', value: 'bar2' }]));
+        const item1 = new HouseholdActivity(mockHouseholdActivities()[0]);
+        const item2 = new HouseholdActivity(mockHouseholdActivities()[1]);
 
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             show: true,
-          },
-          data() {
-            return { activityItems: [item1, item2] };
+            activityItemsData: [item1, item2],
           },
           mocks: { $services: services },
         });
 
         expect(wrapper.vm.displayedItems).toEqual([{
           ...item2,
-          activityName: HouseholdActivityType[mockHouseholdActivities()[1].activityType],
-          templateData: [{ label: 'foo2', value: 'bar2' }],
-          templatePreviousData: [{ label: 'foo2', value: 'bar2' }],
+          activityName: item2.getActivityName(),
+          templateData: item2.getTemplateData(false, wrapper.vm.$i18n),
+          templatePreviousData: item2.getTemplateData(true, wrapper.vm.$i18n),
           userName: item2.user.name,
         }, {
           ...item1,
-          activityName: HouseholdActivityType[mockHouseholdActivities()[0].activityType],
-          templateData: [{ label: 'foo1', value: 'bar1' }],
-          templatePreviousData: [{ label: 'foo1', value: 'bar1' }],
+          activityName: item1.getActivityName(),
+          templateData: item1.getTemplateData(false, wrapper.vm.$i18n),
+          templatePreviousData: item1.getTemplateData(true, wrapper.vm.$i18n),
           userName: item1.user.name,
         }]);
 

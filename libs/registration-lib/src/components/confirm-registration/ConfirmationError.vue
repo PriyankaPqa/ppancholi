@@ -89,7 +89,11 @@ export default Vue.extend({
   computed: {
     firstError(): string {
       const errors = (this.errors as IServerError)?.response?.data?.errors;
-      return errors?.[0].code || (this.isDuplicateError ? 'errors.person-identified-as-duplicate' : '');
+      let code = errors?.[0].code;
+      if (code === 'errors.this-individual-already-exists-in-the-system' && !this.$hasFeature(FeatureKeys.ManageDuplicates)) {
+        code = 'errors.person-identified-as-duplicate';
+      }
+      return code || (this.isDuplicateError ? 'errors.person-identified-as-duplicate' : '');
     },
 
     isDuplicateError(): boolean {

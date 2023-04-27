@@ -18,7 +18,7 @@
         :items="formattedItems"
         :loading="loading"
         :hide-toolbar="true"
-        :custom-columns="['name', 'actions', 'birthDate', 'phone', 'isRegisteredToEvent', 'registrationNumber', 'emailAddress']"
+        :custom-columns="['name', 'actions', 'birthDate', 'phone', 'isRegisteredToEvent', 'registrationNumber', 'emailAddress', 'status']"
         must-sort
         :hide-header="true"
         disable-pagination
@@ -97,6 +97,13 @@
             </div>
           </div>
         </template>
+        <template v-if="hasFeatureHouseholdStatus" #item.householdStatus="{ item: household }">
+          <status-select
+            data-test="household-profile-status-chip"
+            :value="household.primaryBeneficiary.householdStatus"
+            status-name="HouseholdStatus"
+            disabled />
+        </template>
         <template #item.isRegisteredToEvent="{ item: household }">
           <v-icon v-if="isRegisteredInCurrentEvent(household.id)" width="48" data-test="isRegistered" small>
             mdi-check-circle-outline
@@ -108,7 +115,7 @@
               small
               color="primary"
               data-test="details__button"
-              :disabled="loading"
+              :disabled="detailsButtonDisabled(household)"
               :loading="detailsLoading && detailsId === household.id"
               @click="viewDetails(household)">
               {{ $t('registration.isRegistered.details') }}
@@ -142,8 +149,9 @@
 
 <script lang="ts">
 import moment from 'moment';
-import { IHouseholdCombined } from '@libs/entities-lib/household';
+import { HouseholdStatus, IHouseholdCombined } from '@libs/entities-lib/household';
 import { RcDataTable } from '@libs/component-lib/components';
+import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import mixins from 'vue-typed-mixins';
 import { tabs } from '@/pinia/registration/tabs';
 import household from '@/ui/mixins/household';
@@ -154,11 +162,13 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { ICaseFileEntity, ICaseFileMetadata, IdParams } from '@libs/entities-lib/case-file';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(household, householdResults).extend({
   name: 'HouseholdResults',
   components: {
     RcDataTable,
+    StatusSelect,
   },
   props: {
     items: {
@@ -190,6 +200,7 @@ export default mixins(household, householdResults).extend({
       detailsId: '',
       householdsInEvent: [] as string[],
       combinedCaseFileStore: new CombinedStoreFactory<ICaseFileEntity, ICaseFileMetadata, IdParams>(useCaseFileStore(), useCaseFileMetadataStore()),
+      HouseholdStatus,
     };
   },
   computed: {
@@ -236,6 +247,16 @@ export default mixins(household, householdResults).extend({
         });
       }
 
+      if (this.hasFeatureHouseholdStatus) {
+        // TODO: when removing feature flag HouseholdProfileStatus, please move the content below to the headers list.
+        headers.push({
+          text: this.$t('registration.isRegistered.table.status'),
+          value: 'householdStatus',
+          sortable: false,
+          width: '110px',
+        });
+      }
+
       if (!this.hideDetailsButton) {
         headers.push({
           text: '',
@@ -249,6 +270,10 @@ export default mixins(household, householdResults).extend({
 
     currentEventId(): string {
       return useRegistrationStore().getEvent().id;
+    },
+
+    hasFeatureHouseholdStatus(): boolean {
+      return this.$hasFeature(FeatureKeys.HouseholdProfileStatus);
     },
   },
 
@@ -314,6 +339,12 @@ export default mixins(household, householdResults).extend({
       return false;
     },
 
+    detailsButtonDisabled(household?: IFormattedHousehold):boolean {
+      if (this.hasFeatureHouseholdStatus) {
+        return this.loading || household.primaryBeneficiary.householdStatus !== HouseholdStatus.Open;
+      }
+      return this.loading;
+    },
   },
 });
 </script>

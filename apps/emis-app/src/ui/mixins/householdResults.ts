@@ -2,7 +2,7 @@
 
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import { IHouseholdCombined } from '@libs/entities-lib/household/index';
+import { HouseholdStatus, IHouseholdCombined } from '@libs/entities-lib/household/index';
 import { IPhoneNumber } from '@libs/entities-lib/value-objects/contact-information/index';
 import moment from 'moment';
 import routes from '@/constants/routes';
@@ -17,6 +17,7 @@ export interface IMember {
   alternatePhoneNumber?: IPhoneNumber;
   isPrimary: boolean;
   registrationNumber: string;
+  householdStatus?: HouseholdStatus;
 }
 
 export interface IFormattedHousehold {
@@ -56,6 +57,7 @@ export default Vue.extend({
               ...member,
               isPrimary: true,
               registrationNumber: household.entity.registrationNumber,
+              householdStatus: household.entity.householdStatus,
             };
           } else {
             final.additionalMembers.push({

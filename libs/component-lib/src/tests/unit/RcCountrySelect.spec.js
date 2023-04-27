@@ -28,7 +28,11 @@ describe('RcCountrySelect.vue', () => {
       localVue,
       propsData: {
         value: 'US',
-        language: 'fr',
+      },
+      mocks: {
+        $i18n: {
+          locale: 'fr',
+        },
       },
     });
 

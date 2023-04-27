@@ -292,6 +292,14 @@ describe('>>> Beneficiaries Service', () => {
     expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/persons/metadata/${id}/history`);
   });
 
+  describe('getDuplicates', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+      await service.getDuplicates(id);
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}/duplicates`);
+    });
+  });
+
   describe('search', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
       const params = { filter: { Foo: 'foo' } };

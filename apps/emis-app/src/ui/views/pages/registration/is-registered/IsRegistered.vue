@@ -1,7 +1,7 @@
 <template>
   <div>
     <household-search v-if="!showResultPage" :loading="searchLoading" :is-split-mode="isSplitMode" @search="onSearch($event)" />
-    <household-results v-if="showResultPage" :items="searchResults" :is-split-mode="isSplitMode" @showDetails="showDetails" />
+    <household-results v-if="showResultPage" :items="searchResults" :is-split-mode="isSplitMode" link-to-household @showDetails="showDetails" />
     <rc-dialog
       v-if="showDetailsDialog"
       data-test="household-split-search-details-dialog"

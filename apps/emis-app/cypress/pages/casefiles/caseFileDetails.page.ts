@@ -9,9 +9,12 @@ export enum DataTest {
   dateCreated = 'caseFileItem__created',
   backButton = 'back-button',
   caseNote = 'case-note',
+  primaryBeneficiaryName = 'title-left-menu',
+  caseFileNumber = 'caseFileDetails-caseFileNumber',
+  eventName = 'caseFileDetails-event',
 }
 
-export class CaseFileActivityPage {
+export class CaseFileDetailsPage {
   private caseFileActivityTitle = { selector: DataTest.caseFileActivityTitle };
 
   private caseFileActivityBody = { selector: DataTest.caseFileActivityBody };
@@ -25,6 +28,12 @@ export class CaseFileActivityPage {
   private backButton = { selector: DataTest.backButton };
 
   private caseNote = { selector: DataTest.caseNote };
+
+  private primaryBeneficiaryName = { selector: DataTest.primaryBeneficiaryName };
+
+  private caseFileNumber = { selector: DataTest.caseFileNumber };
+
+  private eventName = { selector: DataTest.eventName };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).invoke('text').then((text) => text.trim());
@@ -52,5 +61,17 @@ export class CaseFileActivityPage {
 
   public goToCaseNotesPage() {
     cy.getByDataTest(this.caseNote).click();
+  }
+
+  public getPrimaryBeneficiaryName() {
+    return cy.getByDataTest(this.primaryBeneficiaryName).invoke('text').then((text) => text.trim());
+  }
+
+  public getCaseFileNumber() {
+    return cy.getByDataTest(this.caseFileNumber).invoke('text').then((text) => text.trim());
+  }
+
+  public getEventName() {
+    return cy.getByDataTest(this.eventName).invoke('text').then((text) => text.trim());
   }
 }

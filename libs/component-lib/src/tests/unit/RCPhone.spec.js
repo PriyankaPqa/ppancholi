@@ -101,7 +101,7 @@ describe('RcPhone.vue', () => {
 
     const flagIcon = wrapper.find('.vti__flag');
 
-    expect(flagIcon.element.classList.contains('ar')).toBe(true);
+    expect(flagIcon.element.classList.contains(wrapper.vm.countries[8].iso2.toLowerCase())).toBe(true);
   });
 
   describe('Phone number', () => {
@@ -152,6 +152,34 @@ describe('RcPhone.vue', () => {
         disabled: true,
       });
       expect(wrapper.find('.countryButton').attributes('disabled')).toBe('disabled');
+    });
+
+    test('it shows country name in user locale', () => {
+      let wrapper = mount(Component, {
+        localVue,
+      });
+
+      expect(wrapper.vm.countries.find((c) => c.iso2 === 'ES').name).toBe('Spain');
+      wrapper = mount(Component, {
+        localVue,
+        mocks: {
+          $i18n: {
+            locale: 'en',
+          },
+        },
+      });
+
+      expect(wrapper.vm.countries.find((c) => c.iso2 === 'ES').name).toBe('Spain');
+      wrapper = mount(Component, {
+        localVue,
+        mocks: {
+          $i18n: {
+            locale: 'fr',
+          },
+        },
+      });
+
+      expect(wrapper.vm.countries.find((c) => c.iso2 === 'ES').name).toBe('Espagne');
     });
   });
 });

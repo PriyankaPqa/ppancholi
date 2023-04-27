@@ -167,14 +167,14 @@ describe(`${title}`, () => {
           householdProfilePage.getFullNameOfMember(1).should('string', nameFirstMember);
           householdProfilePage.getFullNameOfMember(2).should('string', nameSecondMember);
 
-          const caseFileActivityPage = householdProfilePage.goToCaseFileActivityPage();
+          const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
           // eslint-disable-next-line max-nested-callbacks
           cy.get('@registrationNumber').then((registrationNumber) => {
-            caseFileActivityPage.getCaseFileActivityTitles()
+            caseFileDetailsPage.getCaseFileActivityTitles()
               .should('string', `Household member(s) split from Household #${registrationNumber}`)
               .and('string', 'Registration');
           });
-          caseFileActivityPage.getCaseFileActivityBodies()
+          caseFileDetailsPage.getCaseFileActivityBodies()
             .should('string', `Created By ${getUserName(roleName)}\nRegistration method: Phone`)
             .and('string', `Individual(s) split: ${namePrimaryMemberAfterSplit}, ${nameFirstMember}, ${nameSecondMember}`);
         });

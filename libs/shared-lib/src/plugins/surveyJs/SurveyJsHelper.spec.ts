@@ -707,6 +707,110 @@ describe('SurveyJsHelper', () => {
         questionType: 'text',
       }]);
     });
+
+    it('extracts for questions translated in french but with default english', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = surveyData.questionsTranslatedFrenchEglishDefault;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions).toEqual([{
+        answerChoices: [
+          {
+            displayValue: {
+              translation: {
+                en: 'Gatineau',
+                fr: 'Gatineau',
+              },
+            },
+            identifier: 'Gatineau',
+            score: null,
+            textValue: 'Gatineau',
+          },
+          {
+            displayValue: {
+              translation: {
+                en: 'Other',
+                fr: 'Autre',
+              },
+            },
+            identifier: 'Other',
+            score: null,
+            textValue: 'Other',
+          },
+          {
+            displayValue: {
+              translation: {
+                en: 'Other (describe)',
+                fr: 'Autre (préciser)',
+              },
+            },
+            identifier: 'other',
+            score: null,
+            textValue: 'other',
+          },
+        ],
+        identifier: 'Where do you reside.',
+        question: {
+          translation: {
+            en: 'Where do you reside.',
+            fr: 'Où résidez vous',
+          },
+        },
+        questionType: 'radiogroup',
+        score: undefined,
+      },
+      {
+         answerChoices: null,
+         identifier: 'Where do you reside.|Comment',
+         question: {
+           translation: {
+             en: 'Where do you reside.|Comment',
+             fr: 'Où résidez vous|Commentaires',
+           },
+         },
+         questionType: 'comment',
+      }]);
+    });
+
+    it('extracts for questions translated in french but with default english - dynamic panel with multitext', () => {
+      helper.initializeSurveyJsCreator('en');
+      helper.creator.text = surveyData.panelDynamicTranslatedFrenchEnglishDefault;
+      const questions = helper.getAssessmentQuestions();
+      expect(questions).toEqual([
+        {
+          identifier: 'Complete the following for each of your children:',
+          question: {
+              translation: {
+                  en: 'Complete the following for each of your children:',
+                  fr: 'Si vous avez des enfants, remplissez ce qui suit :',
+              },
+          },
+          questionType: 'paneldynamic',
+          score: undefined,
+          answerChoices: null,
+      }, {
+        identifier: "Complete the following for each of your children:|What is the name of the school attended by each of your children?|Child's name:",
+        question: {
+            translation: {
+                en: "What is the name of the school attended by each of your children?|Child's name:",
+                fr: "Complétez ce qui suit pour chacun de vos enfants|Nom de l'enfant :",
+            },
+        },
+        questionType: 'multipletext',
+        score: undefined,
+        answerChoices: null,
+    }, {
+      identifier: "Complete the following for each of your children:|What is the name of the school attended by each of your children?|School's name:",
+      question: {
+          translation: {
+              en: "What is the name of the school attended by each of your children?|School's name:",
+              fr: "Complétez ce qui suit pour chacun de vos enfants|Nom de l'école :",
+          },
+      },
+      questionType: 'multipletext',
+      score: undefined,
+      answerChoices: null,
+  }]);
+    });
     it('extracts for checkbox question type', () => {
       helper.initializeSurveyJsCreator('en');
       helper.creator.text = surveyData.checkboxQuestion;

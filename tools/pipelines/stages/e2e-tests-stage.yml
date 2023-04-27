@@ -11,7 +11,7 @@ stages:
     condition: and(succeeded(), eq('${{ parameters.runTests }}', true))
     displayName: 'E2E Tests'
     jobs:
-      - template: '../jobs/e2e-tests-job.yml'
+      - template: '../jobs/smoke-tests-job.yml'
         parameters:
           packageFeed: ${{ parameters.packageFeed }}
           nodeJsVersion: ${{ parameters.nodeJsVersion }}

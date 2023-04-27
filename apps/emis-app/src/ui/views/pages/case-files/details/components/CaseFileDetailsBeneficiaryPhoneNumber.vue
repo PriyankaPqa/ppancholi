@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="d-flex flex-column">
     <span data-test="caseFileDetails-beneficiary-phone-number">
-      {{ $t(label) }}: {{ displayPhone }}
+      <span v-if="showLabels">{{ $t(label) }}:</span> {{ displayPhone }}
     </span>
     <span
       v-if="displayExtension"
@@ -25,7 +25,11 @@ export default Vue.extend({
     },
     label: {
       type: String,
-      required: true,
+      default: '',
+    },
+    showLabels: {
+      type: Boolean,
+      default: true,
     },
   },
 

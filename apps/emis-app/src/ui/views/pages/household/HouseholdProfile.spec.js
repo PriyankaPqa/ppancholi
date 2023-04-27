@@ -19,6 +19,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { mockProvider } from '@/services/provider';
 import { HouseholdActivityType, mockHouseholdActivities } from '@libs/entities-lib/value-objects/household-activity';
 import PinnedActionAndRationale from '@/ui/views/pages/household/components/PinnedStatus.vue';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();
@@ -47,6 +48,72 @@ const otherEvent = mockEventMainInfo({
   id: '3',
   registrationLocations: [{ id: ' loc-id-5-active', status: EEventLocationStatus.Active }, { id: ' loc-id-6-inactive', status: EEventLocationStatus.Inactive }],
 });
+
+const movedMemberList = [
+  {
+    currentAddress: {
+      address: {
+        city: 'Ottawa',
+        country: 'CA',
+        latitude: 0,
+        longitude: 0,
+        postalCode: 'K1W 1G7',
+        province: 9,
+        specifiedOtherProvince: undefined,
+        streetAddress: '247 Some Street',
+        unitSuite: '123',
+      },
+      addressType: 2,
+      placeName: 'test',
+      placeNumber: '',
+      shelterLocation: undefined,
+    },
+    genderName: {
+      translation: {
+        en: 'Male',
+        fr: 'Masculin',
+      },
+    },
+    identitySet: {
+      birthDate: {
+        day: '12',
+        month: 2,
+        year: '1999',
+      },
+      dateOfBirth: '1999-02-12T00:00:00.000Z',
+      firstName: 'Bob',
+      gender: {
+        id: '676eb98b-d432-4924-90ee-2489e3acdc26',
+        isDefault: false,
+        isOther: false,
+        name: {
+          translation: {
+            en: 'Male',
+            fr: 'Masculin',
+          },
+        },
+        orderRank: 0,
+        status: 1,
+      },
+      genderOther: null,
+      indigenousCommunityOther: '',
+      indigenousIdentity: null,
+      indigenousProvince: 1,
+      indigenousType: '',
+      lastName: 'Smith',
+      middleName: 'middle',
+      preferredName: 'preferredName',
+      indigenousCommunityId: undefined,
+      name: undefined,
+    },
+    indigenousIdentityInfo: {
+      communityType: '',
+      name: '',
+    },
+    personId: 'newId',
+    status: 6,
+  },
+];
 
 describe('HouseholdProfile.vue', () => {
   let wrapper;
@@ -81,6 +148,12 @@ describe('HouseholdProfile.vue', () => {
           },
           statuses() {
             return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+          },
+          duplicateCount() {
+            return 3;
+          },
+          canManageDuplicates() {
+            return true;
           },
         },
         mocks: {
@@ -326,6 +399,139 @@ describe('HouseholdProfile.vue', () => {
         expect(memberCard.props(props)).toEqual(true);
       });
     });
+
+    describe('duplicates count', () => {
+      it('renders', async () => {
+        const element = wrapper.findDataTest('household-profile-duplicateCount');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('displays the right data', async () => {
+        const element = wrapper.findDataTest('household-profile-duplicateCount');
+        expect(element.text()).toContain('3 householdDetails.potentialDuplicates');
+      });
+    });
+
+    describe('manage duplicates button', () => {
+      it('renders if canManageDuplicates is true', async () => {
+        const element = wrapper.findDataTest('household-profile-manageDuplicatesBtn');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('does not render if canManageDuplicates is false', async () => {
+        wrapper = shallowMount(Component, {
+          pinia,
+          localVue,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              events,
+              loading: false,
+              caseFiles: mockCaseFileEntities(),
+
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+            canManageDuplicates() {
+              return false;
+            },
+          },
+          mocks: {
+            $services: services,
+            $hasFeature: () => true,
+          },
+
+        });
+        const element = wrapper.findDataTest('household-profile-manageDuplicatesBtn');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+
+    describe('moved_member_card', () => {
+      it('should not be rendered when the feature flag is off', () => {
+        wrapper = shallowMount(Component, {
+          pinia,
+          localVue,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              events,
+              loading: false,
+              caseFiles: mockCaseFileEntities(),
+
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+            canManageDuplicates() {
+              return false;
+            },
+            movedMembers() {
+              return movedMemberList;
+            },
+          },
+          mocks: {
+            $services: services,
+            $hasFeature: () => false,
+          },
+        });
+        const element = wrapper.findDataTest('moved_member_card');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('should be rendered when the feature flag is on', () => {
+        wrapper = shallowMount(Component, {
+          pinia,
+          localVue,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              events,
+              loading: false,
+              caseFiles: mockCaseFileEntities(),
+
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+            canManageDuplicates() {
+              return false;
+            },
+            movedMembers() {
+              return movedMemberList;
+            },
+          },
+          mocks: {
+            $services: services,
+            $hasFeature: () => true,
+          },
+        });
+        const element = wrapper.findDataTest('moved_member_card');
+        expect(element.exists()).toBeTruthy();
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -430,9 +636,6 @@ describe('HouseholdProfile.vue', () => {
             },
             statuses() {
               return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
             },
           },
           mocks: {
@@ -569,22 +772,14 @@ describe('HouseholdProfile.vue', () => {
 
     describe('canEdit', () => {
       it('returns true if user has level 1 and feature flag is off', () => {
+        const pinia = getPiniaForUser(UserRoles.level1);
+        useMockRegistrationStore(pinia);
+        useMockHouseholdStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
           pinia: getPiniaForUser(UserRoles.level1),
           propsData: {
             id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
           },
           mocks: {
             $services: services,
@@ -595,48 +790,39 @@ describe('HouseholdProfile.vue', () => {
       });
 
       it('returns true if user has level 0 and feature flag is on', () => {
+        const pinia = getPiniaForUser(UserRoles.level0);
+        useMockRegistrationStore(pinia);
+        useMockHouseholdStore(pinia);
+
         wrapper = shallowMount(Component, {
           localVue,
           pinia: getPiniaForUser(UserRoles.level0),
           propsData: {
             id: householdEntity.id,
           },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
           mocks: {
             $services: services,
           },
         });
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.$hasFeature = jest.fn((f) => {
+          if (f === FeatureKeys.L0Access) {
+            return true;
+          }
+          return false;
+        });
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
       it('returns false if user does not have level 1', () => {
+        const pinia = getPiniaForUser(UserRoles.contributorIM);
+        useMockRegistrationStore(pinia);
+        useMockHouseholdStore(pinia);
+
         wrapper = shallowMount(Component, {
           localVue,
-          pinia: getPiniaForUser(UserRoles.contributorIM),
+          pinia,
           propsData: {
             id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
           },
           mocks: {
             $services: services,
@@ -649,6 +835,10 @@ describe('HouseholdProfile.vue', () => {
 
     describe('canMove', () => {
       it('returns true if user has level 2', () => {
+        const pinia = getPiniaForUser(UserRoles.level2);
+        useMockRegistrationStore(pinia);
+        useMockHouseholdStore(pinia);
+
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -657,13 +847,17 @@ describe('HouseholdProfile.vue', () => {
           mocks: {
             $services: services,
           },
-          pinia: getPiniaForUser(UserRoles.level2),
+          pinia,
         });
 
         expect(wrapper.vm.canMove).toBeTruthy();
       });
 
       it('returns false if user does not have level 2', () => {
+        const pinia = getPiniaForUser(UserRoles.level1);
+        useMockRegistrationStore(pinia);
+        useMockHouseholdStore(pinia);
+
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -672,10 +866,68 @@ describe('HouseholdProfile.vue', () => {
           mocks: {
             $services: services,
           },
-          pinia: getPiniaForUser(UserRoles.level1),
+          pinia,
         });
 
         expect(wrapper.vm.canMove).toBeFalsy();
+      });
+    });
+
+    describe('canManageDuplicates', () => {
+      it('returns true if user has level 1', () => {
+        const pinia = getPiniaForUser(UserRoles.level1);
+        useMockRegistrationStore(pinia);
+        useMockHouseholdStore(pinia);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: householdEntity.id,
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+            statuses() {
+              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
+            },
+          },
+          mocks: {
+            $services: services,
+          },
+          pinia,
+        });
+
+        expect(wrapper.vm.canManageDuplicates).toBeTruthy();
+      });
+
+      it('returns false if user does not have level 1', () => {
+        const pinia = getPiniaForUser(UserRoles.contributor3);
+        useMockRegistrationStore(pinia);
+        useMockHouseholdStore(pinia);
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: householdEntity.id,
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+          },
+          mocks: {
+            $services: services,
+          },
+          pinia,
+        });
+
+        expect(wrapper.vm.canManageDuplicates).toBeFalsy();
       });
     });
 
@@ -1127,6 +1379,32 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.editingDisabled).toEqual(true);
       });
     });
+
+    describe('duplicateCount', () => {
+      it('returns the number of potential duplicates', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return mockHouseholdEntity();
+            },
+          },
+          mocks: {
+            $hasFeature: () => true,
+            $services: services,
+          },
+        });
+
+        expect(wrapper.vm.duplicateCount).toEqual(mockHouseholdEntity().potentialDuplicates.length);
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -1170,20 +1448,11 @@ describe('HouseholdProfile.vue', () => {
         expect(registrationStore.fetchPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
       });
 
-      it('calls fetchHouseholdData, fetchMyEvents, fetchAllEvents, fetchCaseFiles, fetchShelterLocations ,getHouseholdActivity', async () => {
-        wrapper.vm.fetchHouseholdData = jest.fn();
-        wrapper.vm.fetchMyEvents = jest.fn();
-        wrapper.vm.fetchAllEvents = jest.fn();
-        wrapper.vm.fetchCaseFiles = jest.fn();
-        wrapper.vm.fetchShelterLocations = jest.fn();
+      it('calls fetchData', async () => {
+        wrapper.vm.fetchData = jest.fn();
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
-        expect(wrapper.vm.fetchHouseholdData).toHaveBeenCalled();
-        expect(wrapper.vm.fetchMyEvents).toHaveBeenCalled();
-        expect(wrapper.vm.fetchAllEvents).toHaveBeenCalled();
-        expect(wrapper.vm.fetchCaseFiles).toHaveBeenCalled();
-        expect(wrapper.vm.fetchShelterLocations).toHaveBeenCalled();
-        expect(wrapper.vm.$services.households.getHouseholdActivity).toHaveBeenCalled();
+        expect(wrapper.vm.fetchData).toHaveBeenCalled();
       });
 
       it('should call attachToChanges', async () => {
@@ -1222,11 +1491,34 @@ describe('HouseholdProfile.vue', () => {
           statuses() {
             return [HouseholdStatus.Archived, HouseholdStatus.Closed];
           },
+          household() {
+            return householdCreate;
+          },
+          householdEntity() {
+            return householdEntity;
+          },
         },
         mocks: {
           $services: services,
         },
 
+      });
+    });
+
+    describe('fetchData', () => {
+      it('calls fetchHouseholdData, fetchMyEvents, fetchAllEvents, fetchCaseFiles, fetchShelterLocations ,getHouseholdActivity', async () => {
+        wrapper.vm.fetchHouseholdData = jest.fn();
+        wrapper.vm.fetchMyEvents = jest.fn();
+        wrapper.vm.fetchAllEvents = jest.fn();
+        wrapper.vm.fetchCaseFiles = jest.fn();
+        wrapper.vm.fetchShelterLocations = jest.fn();
+        await wrapper.vm.fetchData();
+        expect(wrapper.vm.fetchHouseholdData).toHaveBeenCalled();
+        expect(wrapper.vm.fetchMyEvents).toHaveBeenCalled();
+        expect(wrapper.vm.fetchAllEvents).toHaveBeenCalled();
+        expect(wrapper.vm.fetchCaseFiles).toHaveBeenCalled();
+        expect(wrapper.vm.fetchShelterLocations).toHaveBeenCalled();
+        expect(wrapper.vm.$services.households.getHouseholdActivity).toHaveBeenCalled();
       });
     });
 
@@ -1540,6 +1832,42 @@ describe('HouseholdProfile.vue', () => {
         // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 1500));
         expect(wrapper.vm.$services.households.getHouseholdActivity).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('watch', () => {
+    describe('id', () => {
+      it('closes the dialog and calls fetchData if the id changes and the dialog for manage duplicates is open', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: householdEntity.id,
+          },
+          data() {
+            return {
+              showDuplicatesDialog: true,
+            };
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+          },
+          mocks: {
+            $services: services,
+          },
+        });
+
+        wrapper.vm.fetchData = jest.fn();
+
+        await wrapper.setProps({ id: '1234' });
+        expect(wrapper.vm.showDuplicatesDialog).toEqual(false);
+        expect(wrapper.vm.fetchData).toHaveBeenCalledTimes(1);
       });
     });
   });

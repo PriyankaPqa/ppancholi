@@ -1,12 +1,58 @@
-import { mockCombinedHouseholds } from '@libs/entities-lib/household';
+import { HouseholdStatus, mockCombinedHouseholds, mockHouseholdMemberMetadata } from '@libs/entities-lib/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
+import { mockMember } from '@libs/entities-lib/value-objects/member';
 import Component from './HouseholdResultsMove.vue';
 
 const localVue = createLocalVue();
 
+const mockFormattedItem = (householdStatus) => ({
+  ...mockHouseholdMemberMetadata(),
+  id: 'mock-id-1',
+  primaryBeneficiary: { ...mockMember(), id: 'mock-person-id-1', householdStatus },
+  additionalMembers: [mockMember({ id: 'mock-person-id-2' })],
+});
+
 describe('HouseholdResultsMove.vue', () => {
   let wrapper;
+  beforeEach(() => {
+    wrapper = shallowMount(Component, {
+      localVue,
+      propsData: {
+        items: mockCombinedHouseholds(),
+      },
+      computed: {
+        formattedItems: () => [mockFormattedItem(HouseholdStatus.Open)],
+        hasFeatureHouseholdStatus: () => true,
+      },
+    });
+  });
+
+  describe('Template', () => {
+    describe('household-profile-status-chip', () => {
+      it('should exist when has feature', () => {
+        const element = wrapper.findDataTest('household-profile-status-chip');
+        expect(element.exists()).toBeTruthy();
+      });
+    });
+
+    describe('household_move_results_select', () => {
+      it('should exist when has feature and household status is not Open', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            items: mockCombinedHouseholds(),
+          },
+          computed: {
+            formattedItems: () => [mockFormattedItem(HouseholdStatus.Closed)],
+            hasFeatureHouseholdStatus: () => true,
+          },
+        });
+        const button = wrapper.findDataTest('household_move_results_select');
+        expect(button.props('disabled')).toBeTruthy();
+      });
+    });
+  });
 
   describe('Methods', () => {
     beforeEach(() => {
@@ -20,6 +66,7 @@ describe('HouseholdResultsMove.vue', () => {
           activeCaseFiles() {
             return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
           },
+          formattedItems: () => [mockFormattedItem(HouseholdStatus.Open)],
         },
 
       });

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { IConsentInformation, IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
-import { HouseholdStatus, IDetailedRegistrationResponse, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
+import { HouseholdStatus, IDetailedRegistrationResponse, IDuplicateData, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
 
 import {
   IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
@@ -168,6 +168,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
 
   async getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
     return this.http.get(`${this.baseApi}/persons/metadata/${id}/history`);
+  }
+
+  async getDuplicates(id: uuid): Promise<IDuplicateData[]> {
+    return this.http.get(`${this.baseUrl}/${id}/duplicates`);
   }
 
   publicGetHousehold(id: uuid): Promise<IHouseholdEntity> {

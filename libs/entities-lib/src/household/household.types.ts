@@ -1,3 +1,4 @@
+import { IMultilingual, IUserInformation } from '@libs/shared-lib/src/types';
 import { IEntity, IEntityCombined } from '../base';
 import { IPhoneNumber } from '../value-objects/contact-information';
 import { IAddressData } from '../value-objects/address';
@@ -10,11 +11,63 @@ export enum HouseholdStatus {
   Archived = 2,
 }
 
+export enum DuplicateReason {
+  FullName = 1,
+  HomeAddress = 2,
+  MemberHomePhoneNumber = 3,
+  MemberMobilePhoneNumber = 4,
+  AlternatePhoneNumber = 5,
+}
+
+export enum DuplicateStatus {
+  Potential = 1,
+  Resolved = 2,
+}
+
 export interface IHouseholdAddress {
   address?: IAddressData;
   from?: string;
   to?: string;
   observation?: string;
+}
+
+export interface IHouseholdDuplicateStatusHistory {
+  userInformation: IUserInformation;
+  dateOfAction: string | Date;
+  duplicateStatus: DuplicateStatus;
+  rationale: string;
+}
+
+export interface IHouseholdDuplicate extends IEntity {
+  pairDuplicateId: uuid;
+  householdId: uuid;
+  duplicateReasons: DuplicateReason[];
+  duplicateStatus: DuplicateStatus;
+  duplicateStatusHistory: IHouseholdDuplicateStatusHistory[];
+  memberId?: uuid;
+}
+
+export interface IDuplicateCaseFileData {
+  caseFileId: uuid;
+  caseFileNumber: string;
+  eventId: uuid;
+  eventName: IMultilingual;
+}
+
+export interface IDuplicateData {
+  potentialDuplicateId: uuid;
+  householdId: uuid;
+  registrationNumber: string;
+  caseFiles: IDuplicateCaseFileData[];
+  primaryBeneficiaryFullName: string;
+  memberFullName?: string;
+  homeAddress?: IHouseholdAddress;
+  memberHomePhoneNumber?: IPhoneNumber;
+  memberMobilePhoneNumber?: IPhoneNumber;
+  memberAlternatePhoneNumber?: IPhoneNumber;
+}
+
+export interface IHouseholdDuplicateFullData extends IHouseholdDuplicate, IDuplicateData {
 }
 
 export interface IHouseholdEntity extends IEntity {
@@ -24,6 +77,7 @@ export interface IHouseholdEntity extends IEntity {
   primaryBeneficiary?: string;
   registrationNumber?: string;
   householdStatus: HouseholdStatus;
+  potentialDuplicates?: IHouseholdDuplicate[];
 }
 
 export interface IHouseholdMemberMetadata {
