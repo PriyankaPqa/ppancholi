@@ -32,6 +32,18 @@ describe('CaseFileTagsList.vue', () => {
     it('uses correct title', () => {
       expect(wrapper.findComponent(OptionList).props('title')).toBe('system_management.lists.caseFileTags');
     });
+
+    it('has restrict financial when feature BlockFACaseFileIrregularTag is on', () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        mocks: {
+          $hasFeature: jest.fn(() => true),
+        },
+      });
+
+      expect(wrapper.findComponent(OptionList).props('hasRestrictFinancial')).toBe(true);
+    });
   });
 
   describe('Created hook', () => {

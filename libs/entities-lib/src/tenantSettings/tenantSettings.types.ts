@@ -20,6 +20,7 @@ export enum FeatureKeys {
   ManageDuplicates = 'manageDuplicates',
   CustomConsent = 'CustomConsent',
   ReplaceBeneficiaryTerm = 'replaceBeneficiaryTerm',
+  BlockFACaseFileIrregularTag = 'BlockFACaseFileIrregularTag',
 }
 
 export enum FeatureType {
