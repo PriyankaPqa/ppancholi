@@ -50,6 +50,13 @@ describe('>>> Public Service', () => {
       .toHaveBeenCalledWith('/system-management/tenants/id-from-domain?domain=myDomain', { globalHandler: false, noErrorLogging: true, ignoreJwt: true });
   });
 
+  // FeatureKeys.UseIdentityServer
+  test('getPublicFeatures is linked to the correct URL', async () => {
+    await service.getPublicFeatures();
+    expect(http.get)
+      .toHaveBeenCalledWith('/system-management/tenant-settings/public-features', { globalHandler: false, noErrorLogging: true, ignoreJwt: true });
+  });
+
   test('getTenantByRegistrationDomain is linked to the correct URL', async () => {
     await service.getTenantByRegistrationDomain('myDomain');
     expect(http.get).toHaveBeenCalledWith(

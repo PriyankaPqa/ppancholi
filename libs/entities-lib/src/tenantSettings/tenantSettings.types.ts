@@ -20,6 +20,7 @@ export enum FeatureKeys {
   ManageDuplicates = 'manageDuplicates',
   CustomConsent = 'CustomConsent',
   ReplaceBeneficiaryTerm = 'replaceBeneficiaryTerm',
+  UseIdentityServer = 'UseIdentityServer',
 }
 
 export enum FeatureType {

@@ -4,6 +4,7 @@ import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/ap
 import { IEventData } from '@libs/entities-lib/registration-event';
 import { IEventMetadata } from '@libs/entities-lib/event';
 import helpers from '@libs/shared-lib/helpers/helpers';
+import { IFeatureEntity } from '@libs/entities-lib/src/tenantSettings';
 import { IHttpClient } from '../http-client';
 import { IPublicService } from './public.types';
 
@@ -49,6 +50,20 @@ export class PublicService implements IPublicService {
       applicationInsights.trackTrace('PublicService.getTenantByEmisDomain', { error: e }, 'public', 'getTenantByEmisDomain');
     }
     return tenantId;
+  }
+
+  // added for FeatureKeys.UseIdentityServer, can be removed
+  async getPublicFeatures() : Promise<IFeatureEntity[]> {
+    let features = null;
+    try {
+      features = await this.http.get<IFeatureEntity[]>(
+        '/system-management/tenant-settings/public-features',
+        { globalHandler: false, noErrorLogging: true, ignoreJwt: true },
+      );
+    } catch (e) {
+      applicationInsights.trackTrace('PublicService.getPublicFeatures', { error: e }, 'public', 'getPublicFeatures');
+    }
+    return features;
   }
 
   async getTenantByRegistrationDomain(domain: string): Promise<string> {

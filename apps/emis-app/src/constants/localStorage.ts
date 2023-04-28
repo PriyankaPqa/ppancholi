@@ -2,6 +2,9 @@ export const localStorageKeys = {
   accessToken: {
     name: 'aad-access-token',
   },
+  accessTokenClientId: {
+    name: 'aad-access-token-client-id',
+  },
   googleMapsAPIKey: {
     name: 'google-maps-api-key',
   },

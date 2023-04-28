@@ -1,5 +1,5 @@
 import { BrowserAuthOptions, BrowserSystemOptions } from '@azure/msal-browser/dist/config/Configuration';
-import { BrowserCacheLocation, CacheOptions, RedirectRequest } from '@azure/msal-browser';
+import { BrowserCacheLocation, CacheOptions, ProtocolMode, RedirectRequest } from '@azure/msal-browser';
 import { localStorageKeys } from '@/constants/localStorage';
 import MSALMock from './MSAL.mock';
 import { MSAL } from './MSAL';
@@ -12,6 +12,12 @@ if (localStorage.getItem(localStorageKeys.automatedTests.name) === 'true') { // 
 } else {
   const clientId = process.env.VITE_AUTH_AAD_CLIENTID;
   const authority = process.env.VITE_AUTH_AAD_AUTHORITY;
+
+  // alternate settings if IdentityServer authentication enabled (feature)
+  const ids_clientId = process.env.VITE_AUTH_IDS_CLIENTID;
+  const ids_authority = process.env.VITE_AUTH_IDS_AUTHORITY;
+  const ids_apiPermissions = process.env.VITE_AUTH_IDS_API_PERMISSIONS;
+
   // Direct comparison with process.env variables in dev/prod does not seem to work well
   const navigateToLoginRequestUrlString = process.env.VITE_AUTH_AAD_NAVIGATE_TO_LOGIN_REQUEST_URL;
   const navigateToLoginRequestUrl = navigateToLoginRequestUrlString === 'true';
@@ -25,6 +31,7 @@ if (localStorage.getItem(localStorageKeys.automatedTests.name) === 'true') { // 
         authority,
       ],
       navigateToLoginRequestUrl,
+      protocolMode: ProtocolMode.AAD,
     } as BrowserAuthOptions,
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
@@ -44,6 +51,10 @@ if (localStorage.getItem(localStorageKeys.automatedTests.name) === 'true') { // 
     showConsole: false, // enable console added by us
     enableLogger: false, // process.env.DEV && false, // enable logger by microsoft
     enableAppInsights: process.env.VITE_APP_ENV === 'production',
+    // ids_ added for FeatureKeys.UseIdentityServer
+    ids_authority,
+    ids_clientId,
+    ids_apiPermissions,
   };
 
   AuthenticationProvider = new MSAL(msalConfig);
