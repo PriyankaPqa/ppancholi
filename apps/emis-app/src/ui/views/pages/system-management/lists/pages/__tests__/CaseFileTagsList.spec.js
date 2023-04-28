@@ -3,6 +3,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EOptionLists } from '@libs/entities-lib/optionItem';
 import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 
@@ -38,7 +39,7 @@ describe('CaseFileTagsList.vue', () => {
         localVue,
         pinia,
         mocks: {
-          $hasFeature: jest.fn(() => true),
+          $hasFeature: jest.fn((f) => f === FeatureKeys.BlockFACaseFileIrregularTag),
         },
       });
 
