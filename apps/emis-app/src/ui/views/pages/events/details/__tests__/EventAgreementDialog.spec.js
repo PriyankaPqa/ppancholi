@@ -245,20 +245,13 @@ describe('EventAgreementDialog.vue', () => {
       });
     });
 
-    describe('dayAfterStartDate', () => {
-      it('returns the right date', () => {
-        wrapper.vm.agreement.startDate = '2020-01-01';
-        expect(wrapper.vm.dayAfterStartDate).toEqual('2020-01-02');
-      });
-    });
-
     describe('endDateRule', () => {
       it('returns the right object if the agreement has a start and end date', async () => {
         wrapper.vm.agreement.endDate = '2021-03-20';
         wrapper.vm.agreement.startDate = '2021-03-01';
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.endDateRule).toEqual({
-          mustBeAfterOrSame: { X: '2021-03-20', Y: '2021-03-02' },
+          mustBeAfterOrSame: { X: '2021-03-20', Y: '2021-03-01' },
         });
       });
 

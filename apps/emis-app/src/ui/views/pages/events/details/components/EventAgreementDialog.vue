@@ -86,7 +86,7 @@
                   prepend-inner-icon="mdi-calendar"
                   :label="$t('eventSummary.agreement.endDate')"
                   :placeholder="$t('eventSummary.agreement.endDate')"
-                  :min="dayAfterStartDate"
+                  :min="agreement.startDate"
                   :picker-date="agreement.startDate" />
               </v-col>
             </v-row>
@@ -108,7 +108,6 @@ import {
   VTextAreaWithValidation,
   VSelectWithValidation,
 } from '@libs/component-lib/components';
-import moment from '@libs/shared-lib/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 
 import { EEventSummarySections } from '@/types';
@@ -173,19 +172,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
       return useEventStore().getAgreementTypes(true, this.isEditMode ? this.agreement.agreementType.optionItemId : null);
     },
 
-    dayAfterStartDate(): string {
-      if (!this.agreement.startDate) {
-        return null;
-      }
-      return (moment(this.agreement.startDate).clone().add(1, 'days').format('YYYY-MM-DD'));
-    },
-
     endDateRule(): Record<string, unknown> {
       if (this.agreement && this.agreement.startDate && this.agreement.endDate) {
         return {
           mustBeAfterOrSame: {
             X: this.agreement.endDate,
-            Y: this.dayAfterStartDate,
+            Y: this.agreement.startDate,
           },
         };
       }
