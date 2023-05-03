@@ -1,4 +1,4 @@
-import { ECanadaProvinces, IMultilingual } from '@libs/shared-lib/types';
+import { IEventGenericLocation } from '@libs/entities-lib/event';
 
 export enum DataTest {
   status = 'location-status',
@@ -10,15 +10,6 @@ export enum DataTest {
   country = 'location-country',
   frenchTab = 'tab-lang-fr',
   addButton = 'dialog-submit-action',
-}
-
-export interface IShelterLocationFields {
-  name?: IMultilingual;
-  country?: string;
-  streetAddress?: string;
-  city?: string;
-  provinceIndex?: ECanadaProvinces;
-  postalCode?: string;
 }
 
 export class AddShelterLocationPage {
@@ -40,29 +31,29 @@ export class AddShelterLocationPage {
     return cy.getByDataTest(this.status).invoke('text').then((text) => text.trim());
   }
 
-  async fill(data: IShelterLocationFields, roleName:string) {
+  async fill(data: IEventGenericLocation, roleName:string) {
     if (data.name.translation.en) {
       cy.getByDataTest(this.shelterLocationName).type(data.name.translation.en).type(roleName);
     }
 
-    if (data.country) {
-      cy.selectCountry(DataTest.country, { countryCode: data.country, search: 'Canada' });
+    if (data.address.country) {
+      cy.selectCountry(DataTest.country, { countryCode: data.address.country, search: 'Canada' });
     }
 
-    if (data.streetAddress) {
-      cy.getByDataTest(this.streetAddress).type(data.streetAddress);
+    if (data.address.streetAddress) {
+      cy.getByDataTest(this.streetAddress).type(data.address.streetAddress);
     }
 
-    if (data.city) {
-      cy.getByDataTest(this.municipality).type(data.city);
+    if (data.address.city) {
+      cy.getByDataTest(this.municipality).type(data.address.city);
     }
 
-    if (data.provinceIndex) {
-      cy.selectListElementByIndex(DataTest.province, data.provinceIndex - 1);
+    if (data.address.province) {
+      cy.selectListElementByIndex(DataTest.province, data.address.province - 1);
     }
 
-    if (data.postalCode) {
-      cy.getByDataTest(this.postalCode).type(data.postalCode);
+    if (data.address.postalCode) {
+      cy.getByDataTest(this.postalCode).type(data.address.postalCode);
     }
   }
 

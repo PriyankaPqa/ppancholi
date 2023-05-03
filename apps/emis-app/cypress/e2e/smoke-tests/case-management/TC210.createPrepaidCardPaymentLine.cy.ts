@@ -1,20 +1,12 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
-import { mockFinancialAssistanceTableSubItemData } from '@libs/cypress-lib/mocks/financialAssistanceTables/financialAssistanceTables';
 import { AddFinancialAssistancePage } from 'cypress/pages/financial-assistance-payment/addFinancialAssistance.page';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { fixturePaymentLine } from '../../../fixtures/case-management';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers, createProgramWithTableWithItemAndSubItem } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { IAddNewPaymentLineFields } from '../../../pages/financial-assistance-payment/addNewPaymentLine.page';
-
-const paymentLineData: IAddNewPaymentLineFields = {
-  item: 'Clothing',
-  subItem: 'Winter Clothing',
-  paymentModality: 'Prepaid Card',
-  amount: `${mockFinancialAssistanceTableSubItemData().maximumAmount}.00`,
-  relatedNumber: '11001',
-};
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -36,6 +28,7 @@ const cannotRoles = {
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
 
 let event = null as IEventEntity;
+let caseFile = null as ICaseFileEntity;
 let accessTokenL6 = '';
 
 const prepareState = async (accessToken: string, event: IEventEntity) => {
@@ -43,8 +36,7 @@ const prepareState = async (accessToken: string, event: IEventEntity) => {
   const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
   cy.wrap(mockCreateHousehold).as('household');
   const caseFileCreated = await provider.households.postCrcRegistration(mockCreateHousehold);
-  const id = caseFileCreated.caseFile.id;
-  return id;
+  caseFile = caseFileCreated.caseFile;
 };
 
 const prepareEventwithProgramWithTable = async (accessToken: string) => {
@@ -77,11 +69,13 @@ describe(`${title}`, () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
         beforeEach(async () => {
-          const caseFileId = await prepareState(accessTokenL6, event);
+          await prepareState(accessTokenL6, event);
           cy.login(roleValue);
-          cy.goTo(`casefile/${caseFileId}/financialAssistance/create`);
+          cy.goTo(`casefile/${caseFile.id}/financialAssistance/create`);
         });
         it('should successfully create a Prepaid Card Payment Line', function () {
+          const paymentLineData = fixturePaymentLine();
+
           const addFinancialAssistancePage = new AddFinancialAssistancePage();
           addFinancialAssistancePage.getAddPaymentLineButton().should('be.disabled');
           addFinancialAssistancePage.getCreateButton().should('not.be.enabled');
@@ -117,15 +111,12 @@ describe(`${title}`, () => {
     }
   });
   describe('Cannot Roles', () => {
-    before(async () => {
-      prepareState(accessTokenL6, event);
-    });
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
         beforeEach(async () => {
-          const caseFileId = await prepareState(accessTokenL6, event);
+          await prepareState(accessTokenL6, event);
           cy.login(roleValue);
-          cy.goTo(`casefile/${caseFileId}/financialAssistance`);
+          cy.goTo(`casefile/${caseFile.id}/financialAssistance`);
         });
         it('should not be able to create a Prepaid Card Payment Line', () => {
           const addFinancialAssistancePage = new AddFinancialAssistancePage();

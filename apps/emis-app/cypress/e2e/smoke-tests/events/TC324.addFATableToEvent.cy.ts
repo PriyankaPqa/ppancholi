@@ -1,26 +1,10 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
-import { faker } from '@faker-js/faker';
+import { fixtureFinancialAssistanceTable } from '../../../fixtures/events';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { IFinancialAssistanceTableData } from '../../../pages/financialAssistance/createFinancialAssistanceTable.page';
 import { FinancialAssistancePage } from '../../../pages/financialAssistance/financialAssistance.page';
-
-const tableData: IFinancialAssistanceTableData = {
-  name: {
-    translation: {
-      en: `table-${faker.datatype.number(1000)}`,
-      fr: `table-fr-${faker.datatype.number(1000)}`,
-    },
-  },
-  itemType: 'Clothing',
-  subItem: {
-    type: 'Winter Clothing',
-    maxAmount: '80',
-    frequency: 'Multiple',
-  },
-};
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -67,13 +51,13 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        before(() => {
+        beforeEach(function () {
           cy.login(roleValue);
+          cy.goTo(`events/${this.eventCreated.id}/financial-assistance`);
         });
         // eslint-disable-next-line
         it('should successfully add Financial Assistance Table to Event', function () {
-          cy.goTo(`events/${this.eventCreated.id}/financial-assistance`);
-          const programName = this.program.name.translation.en;
+          const tableData = fixtureFinancialAssistanceTable(this.test.retries.length);
 
           const financialAssistancePage = new FinancialAssistancePage();
           financialAssistancePage.getCreateFATableButton().click();
@@ -81,7 +65,7 @@ describe(`${title}`, () => {
           const createFinancialAssitanceTablePage = financialAssistancePage.createNewFATable();
           createFinancialAssitanceTablePage.getTableStatus().should('eq', 'INACTIVE');
           createFinancialAssitanceTablePage.fillTableName(tableData.name.translation.en);
-          createFinancialAssitanceTablePage.selectProgram(programName);
+          createFinancialAssitanceTablePage.selectProgram(this.program.name.translation.en);
           createFinancialAssitanceTablePage.toggleStatus();
           createFinancialAssitanceTablePage.getTableStatus().should('eq', 'ACTIVE');
           createFinancialAssitanceTablePage.addItem();
@@ -105,9 +89,9 @@ describe(`${title}`, () => {
           createFinancialAssitanceTablePage.addFinancialAssistanceTable();
 
           cy.contains('The financial assistance table has been successfully created.').should('be.visible');
-          financialAssistancePage.getTableName().should('eq', tableData.name.translation.en);
-          financialAssistancePage.getTableStatus().should('eq', 'Active');
-          financialAssistancePage.getTableEditButton().should('be.visible');
+          financialAssistancePage.getTableNameByIndex(0).should('eq', tableData.name.translation.en);
+          financialAssistancePage.getTableStatusByIndex(0).should('eq', 'Active');
+          financialAssistancePage.getTableEditButtonByIndex(0).should('be.visible');
         });
       });
     }
@@ -116,12 +100,11 @@ describe(`${title}`, () => {
   describe('Cannot Roles', () => {
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
-        beforeEach(() => {
+        beforeEach(function () {
           cy.login(roleValue);
-        });
-        it('should not be able to add Financial Assistance Table to Event', function () {
           cy.goTo(`events/${this.eventCreated.id}/financial-assistance`);
-
+        });
+        it('should not be able to add Financial Assistance Table to Event', () => {
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });

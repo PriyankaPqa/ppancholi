@@ -68,14 +68,18 @@ export const removeTeamMembersFromTeam = async (teamId: string, provider: IProvi
   });
 };
 
+// Removes specific team members passed through param
 export const removeAddedTeamMembersFromTeam = async (teamId: string, provider: IProvider, roles: UserRoles[]) => {
   roles.filter((r) => teamMemberId[r]).forEach(async (r, i) => {
-    try {
-      if (i < roles.length) {
-        await provider.teams.removeTeamMember(teamId, teamMemberId[r]);
+    // eslint-disable-next-line
+    cy.wait(100).then(async () => {
+      try {
+        if (i < roles.length) {
+          await provider.teams.removeTeamMember(teamId, teamMemberId[r]);
+        }
+      } catch {
+          // Ignore error
       }
-    } catch {
-        // Ignore error
-    }
+    });
   });
 };

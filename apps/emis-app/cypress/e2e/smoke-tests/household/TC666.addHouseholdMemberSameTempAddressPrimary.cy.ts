@@ -3,26 +3,12 @@ import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { format } from 'date-fns';
-import { faker } from '@faker-js/faker';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { useProvider } from '../../../provider/provider';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
-import { IHouseholdMemberFields } from '../../../pages/casefiles/addHouseholdMember.page';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
-
-const firstName: string = faker.name.firstName();
-const lastName: string = faker.name.lastName();
-
-const householdMemberData: IHouseholdMemberFields = {
-  firstName,
-  lastName,
-  middleName: faker.name.middleName(),
-  preferredName: `${firstName} ${lastName}`,
-  gender: faker.helpers.arrayElement(['Female', 'Male']),
-  dateOfBirth: format(faker.date.birthdate({ min: 16, max: 100, mode: 'age' }), 'yyyy-MM-dd'),
-  indigenousIdentity: faker.helpers.arrayElement(['First Nation', 'Metis', 'Inuit', 'Other']),
-};
+import { fixtureHouseholdMember } from '../../../fixtures/household';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -81,7 +67,7 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        before(async () => {
+        beforeEach(async () => {
           await prepareState(accessTokenL6, event);
           cy.login(roleValue);
           // eslint-disable-next-line
@@ -91,6 +77,7 @@ describe(`${title}`, () => {
         });
         it('should successfully add household member with same temp address as primary', function () {
           const householdSize = this.household.additionalMembers.length + 1; // 1 primary member + additional household members
+          const householdMemberData = fixtureHouseholdMember(this.test.retries.length);
 
           const householdProfilePage = new HouseholdProfilePage();
           householdProfilePage.getHouseholdSize().should('be.visible').should('have.length', householdSize);
@@ -119,7 +106,7 @@ describe(`${title}`, () => {
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
           caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Modified household information');
-          caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Household member added: ${householdMemberData.preferredName}`);
+          caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Household member added: ${householdMemberData.firstName} ${householdMemberData.lastName}`);
         });
       });
     }

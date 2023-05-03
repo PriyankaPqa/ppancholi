@@ -19,16 +19,16 @@ export class FinancialAssistancePage {
 
   private createNewTable = { selector: DataTest.createNewTable };
 
-  public getTableName() {
-    return cy.getByDataTest(this.tableName).invoke('text').then((text) => text.trim());
+  public getTableNameByIndex(index: number) {
+    return cy.getByDataTestLike(this.tableName).eq(index).invoke('text').then((text) => text.trim());
   }
 
-  public getTableStatus() {
-    return cy.getByDataTest(this.tableStatus).invoke('text').then((text) => text.trim());
+  public getTableStatusByIndex(index: number) {
+    return cy.getByDataTestLike(this.tableStatus).eq(index).invoke('text').then((text) => text.trim());
   }
 
-  public getTableEditButton() {
-    return cy.getByDataTestLike(this.tableEdit);
+  public getTableEditButtonByIndex(index: number) {
+    return cy.getByDataTestLike(this.tableEdit).eq(index);
   }
 
   public getCreateFATableButton() {

@@ -3,17 +3,12 @@ import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { format } from 'date-fns';
+import { fixtureCaseNotes } from '../../../fixtures/case-management';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { CaseNotesPage, ICaseNotesData } from '../../../pages/casefiles/caseNotes.page';
+import { CaseNotesPage } from '../../../pages/casefiles/caseNotes.page';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
-
-const caseNotesData: ICaseNotesData = {
-  subject: 'Case Notes',
-  category: ' Action log ',
-  description: 'Case Notes Description En',
-};
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -74,7 +69,9 @@ describe(`${title}`, () => {
             cy.goTo(`casefile/${householdId}/note`);
           });
         });
-        it('should successfully add a case note for L4-L6', () => {
+        it('should successfully add a case note for L4-L6', function () {
+          const caseNotesData = fixtureCaseNotes(this.test.retries.length);
+
           const caseNotesPage = new CaseNotesPage();
           caseNotesPage.getCreateCaseNoteButton().click();
           caseNotesPage.fill(caseNotesData, roleName);

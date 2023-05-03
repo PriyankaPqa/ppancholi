@@ -1,35 +1,13 @@
-import { faker } from '@faker-js/faker';
-import { IAddressPageFields } from '@libs/cypress-lib/pages/registration/address.page';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
-import { IPersonalInfoFields } from '@libs/cypress-lib/pages/registration/personalInformation.page';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { CaseFilesHomePage } from 'cypress/pages/casefiles/caseFilesHome.page';
-import { ICRCPrivacyStatementPageFields } from '../../../pages/registration/crcPrivacyStatement.page';
+import { fixtureCreateAddress, fixturePrimaryBeneficiary, fixturePrivacy } from 'cypress/fixtures/household';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { DataTest, HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
-
-const privacyData: ICRCPrivacyStatementPageFields = {
-  privacyRegistrationMethod: 'Phone',
-  userName: faker.name.fullName(),
-};
-
-const primaryBeneficiaryData: IPersonalInfoFields = {
-  preferredLanguage: 'French',
-  indigenousIdentity: faker.helpers.arrayElement(['First Nation', 'Metis', 'Inuit', 'Other']),
-};
-
-const createAddressData: IAddressPageFields = {
-  placeName: faker.address.city(),
-  streetAddress: faker.address.streetAddress(),
-  municipality: faker.address.cityName(),
-  province: faker.helpers.arrayElement(['ON', 'QC', 'MB', 'NU']),
-  postalCode: faker.helpers.replaceSymbols('?#?#?#'),
-  tempAddress: 'Remaining in home',
-};
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -92,18 +70,21 @@ describe(`${title}`, () => {
         beforeEach(async () => {
           await prepareState(accessTokenL6, event);
           cy.login(roleValue);
-         // eslint-disable-next-line
+          // eslint-disable-next-line
           cy.get('@householdCreated').then((householdId) => {
             cy.goTo(`casefile/household/${householdId}`);
           });
         });
         // eslint-disable-next-line
         it('should successfully split the household', function() {
-          const householdProfilePage = new HouseholdProfilePage();
           const eventName = event.name.translation.en;
           const firstNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.firstName;
           const lastNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.lastName;
+          const privacyData = fixturePrivacy();
+          const primaryBeneficiaryData = fixturePrimaryBeneficiary();
+          const createAddressData = fixtureCreateAddress();
 
+          const householdProfilePage = new HouseholdProfilePage();
           householdProfilePage.getGender().as('genderArray');
           householdProfilePage.getDateOfBirth().as('dateOfBirthArray');
           householdProfilePage.getRegistrationNumber().as('registrationNumber');
@@ -128,7 +109,7 @@ describe(`${title}`, () => {
           crcPrivacyStatementPage.fillPrivacyRegistrationMethod(privacyData.privacyRegistrationMethod);
           crcPrivacyStatementPage.fillUserNameIfEmpty(privacyData.userName); // checks if CRC User Name field is empty and fills with a name if application is run using localhost.
           const personalInfoSplitMemberPage = crcPrivacyStatementPage.goToPersonalInfoSplitMemberPage();
-          personalInfoSplitMemberPage.fill(primaryBeneficiaryData);
+          personalInfoSplitMemberPage.fill(primaryBeneficiaryData, roleName);
 
           const addressSplitHouseholdPage = personalInfoSplitMemberPage.goToAddressSplitHouseholdPage();
           addressSplitHouseholdPage.fill(createAddressData);
@@ -191,6 +172,7 @@ describe(`${title}`, () => {
         });
         it('should not be able to split the household', () => {
           const caseFileHomePage = new CaseFilesHomePage();
+
           // We don't need specific household as we just need to verify that spit button is not displayed.
           const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold();
 

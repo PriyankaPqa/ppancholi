@@ -51,11 +51,11 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        before(function () {
+        beforeEach(function () {
           cy.login(roleValue);
           cy.goTo(`teams/${this.teamCreated.id}`);
         });
-        after(function () {
+        afterEach(function () {
           // removes the added team member ie Level1 and Level2 to ensure state is prepared for next test run.
           if (this.provider && this.teamCreated?.id) {
             removeAddedTeamMembersFromTeam(this.teamCreated.id, this.provider, addedRolesValues);

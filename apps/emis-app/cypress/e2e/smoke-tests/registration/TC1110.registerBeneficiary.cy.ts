@@ -1,8 +1,8 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { CrcRegistrationPage } from 'cypress/pages/registration/crcRegistration.page';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { addressData, additionalMemberPersonalData, primaryMemberData } from '@libs/cypress-lib/helpers';
-import { ConfirmBeneficiaryRegistrationPage } from 'cypress/pages/registration/confirmBeneficiaryRegistration.page';
+import { CrcRegistrationPage } from '../../../pages/registration/crcRegistration.page';
+import { fixturePrimaryMember, fixtureAddressData, fixtureAdditionalMemberPersonalData } from '../../../fixtures/registration';
+import { ConfirmBeneficiaryRegistrationPage } from '../../../pages/registration/confirmBeneficiaryRegistration.page';
 import { useProvider } from '../../../provider/provider';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
@@ -52,13 +52,17 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        before(() => {
+        beforeEach(() => {
           cy.login(roleValue);
+          cy.goTo('registration');
         });
         // eslint-disable-next-line
-        it('should successfully register beneficiary for event', () => {
-          cy.goTo('registration');
+        it('should successfully register beneficiary for event', function() {
           const crcRegistrationPage = new CrcRegistrationPage();
+          const primaryMemberData = fixturePrimaryMember(this.test.retries.length);
+          const addressData = fixtureAddressData();
+          const additionalMemberPersonalData = fixtureAdditionalMemberPersonalData(this.test.retries.length);
+
           crcRegistrationPage.getPageTitle().should('eq', 'Welcome, let\'s get started. Please select an event:');
           crcRegistrationPage.getBeginRegistrationButton().should('be.disabled');
           crcRegistrationPage.fillEvent(event.name.translation.en);
@@ -124,9 +128,9 @@ describe(`${title}`, () => {
       describe(`${roleName}`, () => {
         beforeEach(() => {
           cy.login(roleValue);
+          cy.goTo('registration');
         });
         it('should not be able to register beneficiary for event', () => {
-          cy.goTo('registration');
           cy.contains('You do not have permission to access this page').should('be.visible');
         });
       });
