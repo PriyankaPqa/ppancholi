@@ -21,6 +21,7 @@ export enum FeatureKeys {
   CustomConsent = 'CustomConsent',
   ReplaceBeneficiaryTerm = 'replaceBeneficiaryTerm',
   BlockFACaseFileIrregularTag = 'BlockFACaseFileIrregularTag',
+  UseIdentityServer = 'UseIdentityServer',
 }
 
 export enum FeatureType {

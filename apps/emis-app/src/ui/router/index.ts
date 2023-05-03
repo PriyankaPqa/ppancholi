@@ -6,7 +6,7 @@ import { routes } from '@/ui/router/routes';
 import routeConstants from '@/constants/routes';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import { i18n } from '@/ui/plugins/i18n';
-import { IFeatureEntity } from '@libs/entities-lib/tenantSettings';
+import { FeatureKeys, IFeatureEntity } from '@libs/entities-lib/tenantSettings';
 import { httpClient } from '@/services/httpClient';
 import { useUserStore } from '@/pinia/user/user';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
@@ -44,7 +44,7 @@ const authenticationGuard = async (to: Route) => {
     // Check if the user is already signed in and redirect to login page if not
     const isSignedIn = await AuthenticationProvider.isAuthenticated();
     if (!isSignedIn) {
-      await AuthenticationProvider.signIn('authenticationGuard');
+      await AuthenticationProvider.signIn();
     }
 
     // Dispatch the action to the store to fetch the user data from the JWT token
@@ -115,10 +115,23 @@ const authorizationGuard = async (to: Route) => {
 };
 
 const initializeMSAL = async () => {
-  const currentTenant = await new PublicService(httpClient).getTenantByEmisDomain(window.location.host);
-  AuthenticationProvider.setCurrentTenantDomain(currentTenant);
+  const publicService = new PublicService(httpClient);
+  let currentTenant = null;
+  if (!window.location.host.startsWith('localhost')) {
+    currentTenant = await publicService.getTenantByEmisDomain(window.location.host);
+    AuthenticationProvider.setCurrentTenantDomain(currentTenant);
+  }
 
-  AuthenticationProvider.init();
+  // FeatureKeys.UseIdentityServer
+  // Use default tenant id for the public features lookup if localhost,
+  //   or if tenant not resolved (feature branch subdomain)
+  httpClient.setHeadersTenant(currentTenant || process.env.VITE_LOCALHOST_DEFAULT_TENANTID);
+
+  const features = await publicService.getPublicFeatures();
+  const feature = features.find((f: IFeatureEntity) => f.key === FeatureKeys.UseIdentityServer);
+  const useIdentityServer = !!feature?.enabled;
+
+  AuthenticationProvider.init(useIdentityServer);
   await AuthenticationProvider.loadAuthModule('router');
 };
 

@@ -13,7 +13,7 @@ parameters:
   nodeJsVersion: ''
   appVersion: ''
   disableCache: ''
-  runE2EStage: false
+  runE2EStage: true
 
 stages:
 
@@ -45,17 +45,18 @@ stages:
       distDir: ${{ parameters.distDir }}
 
   # Run E2E Tests
-  - stage: 'E2E_Test_Stage'
-    condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
-    displayName: 'E2E Tests'
-    jobs:
-      - template: './jobs/smoke-tests-job.yml'
-        parameters:
-          packageFeed: ${{ parameters.packageFeed }}
-          nodeJsVersion: ${{ parameters.nodeJsVersion }}
-          disableCache: ${{ parameters.disableCache }}
-          distDir: ${{ parameters.distDir }}
-          workingDir: ${{ parameters.workingDir }}
+  - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
+    - stage: 'E2E_Test_Stage'
+      condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
+      displayName: 'E2E Tests'
+      jobs:
+        - template: './jobs/smoke-tests-job.yml'
+          parameters:
+            packageFeed: ${{ parameters.packageFeed }}
+            nodeJsVersion: ${{ parameters.nodeJsVersion }}
+            disableCache: ${{ parameters.disableCache }}
+            distDir: ${{ parameters.distDir }}
+            workingDir: ${{ parameters.workingDir }}
 
   # Deploy to temporary environment for manual testing
   - ${{ if eq( variables['build.reason'], 'PullRequest') }}:
@@ -64,7 +65,7 @@ stages:
         cdnEndpoint: ${{ parameters.cdnEndpoint }}
         cdnProfile: ${{ parameters.cdnProfile }}
 
-  # Deploy to DEV
+  # Deploy to DEV automatically or manually depending on E2E stage results
   - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
     - template: './stages/deploy-to-dev-stage.yml'
       parameters:

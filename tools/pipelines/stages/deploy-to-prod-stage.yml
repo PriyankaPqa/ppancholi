@@ -6,8 +6,14 @@ parameters:
 stages:
   - stage: 'Deploy_to_Prod'
     displayName: 'Deploy to Prod'
-    dependsOn: 'Deploy_to_Dev'
-    condition: in(dependencies.Deploy_to_Dev.result, 'Succeeded')
+    dependsOn:
+      - Deploy_to_Dev
+      - Deploy_to_Dev_Manual
+    condition: |
+      or(
+        in(dependencies.Deploy_to_Dev.result, 'Succeeded'),
+        in(dependencies.Deploy_to_Dev_Manual.result, 'Succeeded')
+      )
     pool:
       vmImage: 'windows-2022'
     jobs:

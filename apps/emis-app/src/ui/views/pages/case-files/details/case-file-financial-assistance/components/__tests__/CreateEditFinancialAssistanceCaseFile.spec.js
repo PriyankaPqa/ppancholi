@@ -854,13 +854,6 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
     });
 
-    describe('fetchProgram', () => {
-      it('fetches program program by id', async () => {
-        await wrapper.vm.fetchProgram('programId', 'eventId');
-        expect(programStore.fetch).toHaveBeenCalledWith({ id: 'programId', eventId: 'eventId' });
-      });
-    });
-
     describe('fetchAssessmentFormByProgramId', () => {
       it('fetches assessment forms by program id', async () => {
         const assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;

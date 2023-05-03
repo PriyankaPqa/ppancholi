@@ -22,6 +22,10 @@ export interface Options extends Configuration {
   showConsole: boolean,
   enableLogger: boolean,
   enableAppInsights: boolean,
+  // temporary: ids_* to be removed when FeatureKeys.UseIdentityServer removed
+  ids_authority: string,
+  ids_clientId: string,
+  ids_apiPermissions: string
 }
 
 export interface IMSAL {
@@ -88,6 +92,8 @@ export class MSAL {
   };
 
   private config: Configuration;
+  private originalOptions: Options; // remove when FeatureKeys.UseIdentityServer is removed
+  private identityServerEnabled: boolean = false; // remove when FeatureKeys.UseIdentityServer is removed
 
   public accessToken: string;
 
@@ -95,6 +101,8 @@ export class MSAL {
     if (!options.auth.clientId) {
       throw new Error('auth.clientId is required');
     }
+
+    this.originalOptions = options;
 
     this.account = null;
     this.showConsole = options.showConsole;
@@ -158,7 +166,7 @@ export class MSAL {
     this.config = config;
   }
 
-  public init() {
+  public init(useIdentityServer?: boolean) {
     let configWithCurrentTenant = this.config;
     // if in localhost, the currentDomainTenant is null and the default authority is 'https://login.microsoftonline.com/common'
     if(this.currentDomainTenant){
@@ -170,6 +178,30 @@ export class MSAL {
         }
       }
     }
+    // modify when FeatureKeys.UseIdentityServer is removed
+    if (useIdentityServer) {
+      this.identityServerEnabled = true;
+      configWithCurrentTenant.auth.authority = this.originalOptions.ids_authority;
+      configWithCurrentTenant.auth.clientId = this.originalOptions.ids_clientId;
+      configWithCurrentTenant.auth.protocolMode = msal.ProtocolMode.OIDC;
+      configWithCurrentTenant.auth.redirectUri = window.location.origin;
+      configWithCurrentTenant.auth.knownAuthorities = [
+        this.originalOptions.ids_authority,
+      ];
+    }
+    
+    // bad state if:
+    // - interation status item is set but not for the expected client
+    // - access token exists but not for the expected client
+    const interactionStatus = sessionStorage.getItem("msal.interaction.status");
+    const accessTokenExists = !!localStorage[localStorageKeys.accessToken.name];
+    const accessTokenClientId = localStorage[localStorageKeys.accessTokenClientId.name];
+    if ((interactionStatus && interactionStatus !== configWithCurrentTenant.auth.clientId)
+      || (accessTokenExists && accessTokenClientId !== configWithCurrentTenant.auth.clientId)) {
+      sessionStorage.clear();
+      localStorage.clear();
+    }
+
     this.msalLibrary = new msal.PublicClientApplication(configWithCurrentTenant);
   }
 
@@ -259,6 +291,11 @@ export class MSAL {
 
       // Used by BE for convenience
       localStorage.setItem(localStorageKeys.accessToken.name, this.accessToken);
+      // FeatureKeys.UseIdentityServer
+      const clientId = this.identityServerEnabled 
+        ? this.originalOptions.ids_clientId 
+        : this.originalOptions.auth.clientId;
+      localStorage.setItem(localStorageKeys.accessTokenClientId.name, clientId);
       this.showConsole && console.debug("acquireToken - success", response.accessToken);
 
       return response.accessToken;
@@ -334,7 +371,10 @@ export class MSAL {
     this.showConsole && console.debug('SignIn', this.loginRedirectRequest)
     this.msalLibrary.loginRedirect({
       ...this.loginRedirectRequest,
-      authority: `https://login.microsoftonline.com/${specificTenant || 'common'}`,
+      // modify when FeatureKeys.UseIdentityServer is removed
+      authority: this.identityServerEnabled 
+        ? this.originalOptions.ids_authority 
+        : `https://login.microsoftonline.com/${specificTenant ?? (this.currentDomainTenant ? this.currentDomainTenant : 'common')}`,
     });
   }
 
@@ -349,6 +389,8 @@ export class MSAL {
     }
 
     localStorage.removeItem(localStorageKeys.accessToken.name);
+    // FeatureKeys.UseIdentityServer
+    localStorage.removeItem(localStorageKeys.accessTokenClientId.name);
 
     const logOutRequest: EndSessionRequest = {account};
     this.msalLibrary.logoutRedirect(logOutRequest);
@@ -403,8 +445,10 @@ export class MSAL {
   private getSilentRequest(force?: boolean): SilentRequest {
     return {
       account: this.account,
-      scopes: this.tokenRequest.scopes,
-      authority: `https://login.microsoftonline.com/${this.account.tenantId}`,
+      scopes: this.identityServerEnabled ? [ this.originalOptions.ids_apiPermissions ] : this.tokenRequest.scopes,
+      authority: this.identityServerEnabled 
+        ? this.originalOptions.ids_authority
+        : `https://login.microsoftonline.com/${this.account?.tenantId ?? (this.currentDomainTenant ? this.currentDomainTenant : "common")}`,
       forceRefresh: force,
       redirectUri: `${window.location.origin}/auth.html` // When doing acquireTokenSilent, redirect to blank page to prevent issues
     }
@@ -455,7 +499,7 @@ export class MSAL {
   private getInteractiveRequest(): RedirectRequest {
     return {
       account: this.account,
-      scopes: this.tokenRequest.scopes,
+      scopes: this.identityServerEnabled ? [ this.originalOptions.ids_apiPermissions ] : this.tokenRequest.scopes,
     }
   }
 
@@ -465,7 +509,7 @@ export class MSAL {
    * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
    */
   private getAccountForCurrentTenant() : AccountInfo | null {
-    if (this.account?.tenantId === this.currentDomainTenant) {
+    if (this.account && this.account?.tenantId === this.currentDomainTenant) {
       this.showConsole && console.debug("The current account matches tenant id, so we return it");
       return this.account;
     }
@@ -485,8 +529,10 @@ export class MSAL {
       return null;
     }
 
-    if(!this.currentDomainTenant){ // In localhost we return the default tenant
-      return currentAccounts[0];
+    if(!this.currentDomainTenant) { // In localhost we return the default tenant
+      // FeatureKeys.UseIdentityServer
+      const environmentSwitch = this.identityServerEnabled ? "crc-tech.ca" : "microsoft";
+      return currentAccounts.find(a => a.environment.includes(environmentSwitch));
     }
 
     if (currentAccounts.length > 1) {
