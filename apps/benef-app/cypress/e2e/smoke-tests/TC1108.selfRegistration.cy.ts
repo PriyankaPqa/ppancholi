@@ -1,4 +1,3 @@
-import { additionalMemberPersonalData, addressData, primaryMemberData } from '@libs/cypress-lib/helpers';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
 import { ReviewRegistrationPage } from '@libs/cypress-lib/pages/registration/reviewRegistration.page';
@@ -8,6 +7,7 @@ import { PersonalInformationPage } from '@libs/cypress-lib/pages/registration/pe
 import { AddressPage } from '@libs/cypress-lib/pages/registration/address.page';
 import { AddHouseholdMembersPage } from '@libs/cypress-lib/pages/registration/addHouseholdMembers.page';
 import { ConfirmationPage } from '@libs/cypress-lib/pages/registration/confirmation.page';
+import { fixturePrimaryMember, fixtureAddressData, fixtureAdditionalMemberPersonalData } from '../../fixtures/registration';
 import { RegistrationPage } from '../../pages/registration.page';
 import { useProvider } from '../../provider/provider';
 import { buildRegistrationUrl } from '../../support/helpers/urlBuilder';
@@ -30,7 +30,7 @@ before(() => {
 });
 
 describe(`${title}`, () => {
-  before(() => {
+  beforeEach(() => {
     cy.then(async () => {
       event = await provider.events.createEvent(mockCreateEvent());
       await provider.events.toggleSelfRegistration(event.id, true);
@@ -38,8 +38,12 @@ describe(`${title}`, () => {
     });
   });
 
-  it('should register someone successfully', () => {
+  it('should register someone successfully', function () {
+    const primaryMemberData = fixturePrimaryMember(this.test.retries.length);
+    const addressData = fixtureAddressData(this.test.retries.length);
+    const additionalMemberPersonalData = fixtureAdditionalMemberPersonalData(this.test.retries.length);
     const registrationPage = new RegistrationPage();
+
     cy.wrap(1).then(() => {
       privacyStatement = registrationPage.gotoRegistrationPage();
       // to check event displayed

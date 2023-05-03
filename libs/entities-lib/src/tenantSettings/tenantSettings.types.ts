@@ -4,12 +4,9 @@ import { IEntity, IEntityCombined } from '../base';
 
 export enum FeatureKeys {
   AddressAutoFill = 'AddressAutoFill',
-  Assessments = 'Assessments',
   ApprovalsWithinEvent = 'Approvals',
   BotProtection = 'BotProtection',
-  AssessmentsWithinCasefiles = 'AssessmentsWithinCasefiles',
   ActionApprovals = 'ActionApprovals',
-  CouplingAssessmentsWithRegistration = 'CouplingAssessmentsWithRegistration',
   ETransferCancellationHaveOptionForUnknown = 'ETransferCancellationHaveOptionForUnknown',
   PreFillPersonalInformation = 'PreFillPersonalInformation',
   PaymentGroupStatusHistory = 'paymentGroupStatusHistory',

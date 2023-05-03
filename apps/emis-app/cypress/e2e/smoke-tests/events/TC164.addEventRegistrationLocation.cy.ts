@@ -1,25 +1,10 @@
-import { faker } from '@faker-js/faker';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { IRegistrationLocationFields } from '../../../pages/events/addRegistrationLocation.page';
+import { fixtureLocation } from '../../../fixtures/events';
 import { EventDetailsPage } from '../../../pages/events/eventDetails.page';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-
-const registrationLocationData: IRegistrationLocationFields = {
-  name: {
-    translation: {
-      en: 'Toronto',
-      fr: 'Toronto-fr',
-    },
-  },
-  country: 'CA',
-  streetAddress: faker.address.streetAddress(),
-  city: faker.address.cityName(),
-  provinceIndex: ECanadaProvinces.NT,
-  postalCode: faker.helpers.replaceSymbols('?#?#?#'),
-};
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -64,11 +49,13 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        before(() => {
+        beforeEach(function () {
           cy.login(roleValue);
+          cy.goTo(`events/${this.eventCreated.id}`);
         });
         it('should successfully add event registration location', function () {
-          cy.goTo(`events/${this.eventCreated.id}`);
+          const registrationLocationData = fixtureLocation(this.test.retries.length);
+
           const eventDetailsPage = new EventDetailsPage();
 
           const addRegistrationLocationPage = eventDetailsPage.addRegistrationLocation();
@@ -78,9 +65,9 @@ describe(`${title}`, () => {
           addRegistrationLocationPage.fillFrenchRegistrationLocationName(registrationLocationData.name.translation.fr, roleName);
           addRegistrationLocationPage.addNewRegistrationLocation();
 
-          eventDetailsPage.getRegistrationLocationNameByRole(roleName).should('eq', `${registrationLocationData.name.translation.en}${roleName}`);
-          eventDetailsPage.getRegistrationLocationAddress().should('eq', `${registrationLocationData.streetAddress} ${registrationLocationData.city}`
-          + `, ${ECanadaProvinces[registrationLocationData.provinceIndex]}, ${registrationLocationData.postalCode}, ${registrationLocationData.country}`);
+          cy.contains(`${registrationLocationData.name.translation.en}${roleName}`).should('be.visible');
+          // eslint-disable-next-line
+          cy.contains(`${registrationLocationData.address.streetAddress} ${registrationLocationData.address.city}, ${ECanadaProvinces[registrationLocationData.address.province]}, ${registrationLocationData.address.postalCode}, ${registrationLocationData.address.country}`).should('be.visible');
           eventDetailsPage.getRegistrationLocationStatus().should('eq', 'Active');
         });
       });
@@ -90,12 +77,11 @@ describe(`${title}`, () => {
   describe('Cannot Roles', () => {
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
-        beforeEach(() => {
+        beforeEach(function () {
           cy.login(roleValue);
-        });
-        it('should not be able to add event registration location', function () {
           cy.goTo(`events/${this.eventCreated.id}`);
-
+        });
+        it('should not be able to add event registration location', () => {
           const eventDetailsPage = new EventDetailsPage();
           eventDetailsPage.getRegistrationLocationButton().should('not.exist');
         });

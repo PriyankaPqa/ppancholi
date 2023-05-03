@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      <div v-if="$hasFeature(FeatureKeys.CouplingAssessmentsWithRegistration)">
+      <div>
         <event-summary-section-title
           :section="EEventSummarySections.RegistrationAssessment"
           :can-add="canEditAssessmentSection && activeAssessments.length == 0"

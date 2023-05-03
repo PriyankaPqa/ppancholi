@@ -1,25 +1,9 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { faker } from '@faker-js/faker';
-import { IAddNewProgramFields, AddNewEventProgramPage } from '../../../pages/programs/addNewEventProgram.page';
+import { fixtureProgram } from '../../../fixtures/events';
+import { AddNewEventProgramPage } from '../../../pages/programs/addNewEventProgram.page';
 import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-
-const programData: IAddNewProgramFields = {
-  name: {
-    translation: {
-      en: `Program En ${faker.datatype.number(1000)}`,
-      fr: `Program Fr ${faker.datatype.number(1000)}`,
-    },
-  },
-  description: {
-    translation: {
-      en: 'Program Description En for TC323',
-      fr: 'Program Description Fr for TC323',
-    },
-  },
-  paymentModalitiesIndex: 1,
-};
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -63,11 +47,13 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        before(function () {
+        beforeEach(function () {
           cy.login(roleValue);
           cy.goTo(`events/${this.eventCreated.id}/programs/create`);
         });
-        it('should successfully add an event program', () => {
+        it('should successfully add an event program', function () {
+          const programData = fixtureProgram(this.test.retries.length);
+
           const addNewEventProgramPage = new AddNewEventProgramPage();
           addNewEventProgramPage.getStatusName().should('eq', 'Inactive');
           addNewEventProgramPage.getApprovalRequiredCheckbox().should('be.checked');
@@ -94,7 +80,7 @@ describe(`${title}`, () => {
     });
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
-        before(function () {
+        beforeEach(function () {
           cy.login(roleValue);
           cy.goTo(`events/${this.eventCreated.id}/programs/create`);
         });

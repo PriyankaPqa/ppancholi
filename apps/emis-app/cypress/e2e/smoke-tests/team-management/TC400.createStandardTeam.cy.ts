@@ -52,13 +52,14 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        before(() => {
+        beforeEach(() => {
           cy.login(roleValue);
           cy.goTo('teams/create/standard');
         });
         it('should successfully create standard team', function () {
           const createNewTeamPage = new CreateNewTeamPage();
-          createNewTeamPage.fillTeamName(generateRandomTeamName());
+
+          createNewTeamPage.fillTeamName(`${generateRandomTeamName()} - retries${this.test.retries.length}`);
           createNewTeamPage.fillPrimaryContactName(getUserName(`${roleName}`));
           createNewTeamPage.fillEventName(this.eventCreated.name.translation.en);
           createNewTeamPage.createTeam();
@@ -83,6 +84,7 @@ describe(`${title}`, () => {
         });
         it('should not be able to create team but have access till team page only', () => {
           const teamsHomePage = new TeamsHomePage();
+
           teamsHomePage.getCreateTeamButton().should('not.exist');
           teamsHomePage.getTeams().should('be.visible');
         });

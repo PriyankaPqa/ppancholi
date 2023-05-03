@@ -1,29 +1,9 @@
-import { EEventCallCentreStatus, IEventCallCentre } from '@libs/entities-lib/event';
-import { faker } from '@faker-js/faker';
-import { format } from 'date-fns';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EventDetailsPage } from '../../../pages/events/eventDetails.page';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { useProvider } from '../../../provider/provider';
-
-const callCentreData: IEventCallCentre = {
-  name: {
-    translation: {
-      en: 'Ontario',
-      fr: 'Montreal',
-    },
-  },
-  details: {
-    translation: {
-      en: 'This is English Description of Event',
-      fr: "Ceci est la description française de l'événement",
-    },
-  },
-  startDate: format(Date.now(), 'yyyy-MM-dd'),
-  endDate: format(faker.date.future(), 'yyyy-MM-dd'),
-  status: EEventCallCentreStatus.Active,
-};
+import { fixtureCallCentre } from '../../../fixtures/events';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -67,11 +47,12 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        before(() => {
+        beforeEach(function () {
           cy.login(roleValue);
+          cy.goTo(`events/${this.eventCreated.id}`);
         });
         it('should successfully add event call centre', function () {
-          cy.goTo(`events/${this.eventCreated.id}`);
+          const callCentreData = fixtureCallCentre(this.test.retries.length);
 
           const eventDetailsPage = new EventDetailsPage();
           eventDetailsPage.getEventStatus().should('eq', 'Open' || 'eq', 'On hold');
@@ -85,7 +66,7 @@ describe(`${title}`, () => {
           addCallCentrePage.fillFrenchData(callCentreData, roleName);
           addCallCentrePage.addNewCallCentre();
 
-          eventDetailsPage.getCallCentreNameByRole(roleName).should('string', `${callCentreData.name.translation.en}${roleName}`);
+          cy.contains(`${callCentreData.name.translation.en}${roleName}`);
           eventDetailsPage.getCallCentreStartDate().should('string', callCentreData.startDate);
           eventDetailsPage.getCallCentreEndDate().should('string', callCentreData.endDate);
         });
@@ -96,12 +77,11 @@ describe(`${title}`, () => {
   describe('Cannot Roles', () => {
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
-        beforeEach(() => {
+        beforeEach(function () {
           cy.login(roleValue);
-        });
-        it('should not be able to add event call centre', function () {
           cy.goTo(`events/${this.eventCreated.id}`);
-
+        });
+        it('should not be able to add event call centre', () => {
           const eventDetailsPage = new EventDetailsPage();
           eventDetailsPage.getCallCentreButton().should('not.exist');
         });

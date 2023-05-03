@@ -25,26 +25,6 @@ export class ProfileHistoryPage {
 
   private close = { selector: DataTest.close };
 
-  public getHouseholdHistoryEditedBy() {
-    return cy.getByDataTest(this.householdHistoryEditedBy).invoke('text').then((text) => text.trim());
-  }
-
-  public getHouseholdHistoryChangeDate() {
-    return cy.getByDataTest(this.householdHistoryChangeDate).invoke('text').then((date) => formatDate(date));
-  }
-
-  public getHouseholdHistoryLastAction() {
-    return cy.getByDataTest(this.householdHistoryLastAction).invoke('text').then((text) => text.trim());
-  }
-
-  public getHouseholdHistoryPreviousValue() {
-    return cy.getByDataTest(this.householdHistoryPreviousValue).invoke('text').then((text) => text.trim());
-  }
-
-  public getHouseholdHistoryNewValue() {
-    return cy.getByDataTest(this.householdHistoryNewValue).invoke('text').then((text) => text.trim());
-  }
-
   private waitFetchHouseholdProfileData(householdId: string) {
     cy.intercept({ method: 'GET', url: `**/household/households/${householdId}/activities` }).as('householdProfile');
     cy.wait('@householdProfile', { timeout: 45000 });
@@ -76,6 +56,26 @@ export class ProfileHistoryPage {
       });
     };
     waitForElement();
+  }
+
+  public getHouseholdHistoryEditedBy() {
+    return cy.getByDataTest(this.householdHistoryEditedBy).invoke('text').then((text) => text.trim());
+  }
+
+  public getHouseholdHistoryChangeDate() {
+    return cy.getByDataTest(this.householdHistoryChangeDate).invoke('text').then((date) => formatDate(date));
+  }
+
+  public getHouseholdHistoryLastAction() {
+    return cy.getByDataTest(this.householdHistoryLastAction).invoke('text').then((text) => text.trim());
+  }
+
+  public getHouseholdHistoryPreviousValue() {
+    return cy.getByDataTest(this.householdHistoryPreviousValue).invoke('text').then((text) => text.trim());
+  }
+
+  public getHouseholdHistoryNewValue() {
+    return cy.getByDataTest(this.householdHistoryNewValue).invoke('text').then((text) => text.trim());
   }
 
   public getTitleText() {

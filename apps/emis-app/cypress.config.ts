@@ -8,7 +8,10 @@ export default defineConfig({
   reporterOptions: {
     configFile: 'cypress-reporter-config.js',
   },
-  retries: 1,
+  retries: {
+    runMode: 1,
+    openMode: 0,
+  },
   projectId: 'CLyVZv',
   e2e: {
     setupNodeEvents(on) {

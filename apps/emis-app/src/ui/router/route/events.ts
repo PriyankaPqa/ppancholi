@@ -153,7 +153,7 @@ export const events: RouteConfig = {
           name: Routes.events.assessments.home.name,
           component: AssessmentTemplatesHome,
           meta: {
-            level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            level: UserRoles.level6, requiresAuthorization: true,
           },
           props: true,
         },
@@ -162,7 +162,7 @@ export const events: RouteConfig = {
           name: Routes.events.assessments.create.name,
           component: AssessmentTemplatesEdit,
           meta: {
-            level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            level: UserRoles.level6, requiresAuthorization: true,
           },
           props: true,
           children: [],
@@ -172,7 +172,7 @@ export const events: RouteConfig = {
           name: Routes.events.assessments.duplicate.name,
           component: AssessmentTemplatesEdit,
           meta: {
-            level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            level: UserRoles.level6, requiresAuthorization: true,
           },
           props: true,
           children: [],
@@ -182,7 +182,7 @@ export const events: RouteConfig = {
           name: Routes.events.assessments.edit.name,
           component: AssessmentTemplatesEdit,
           meta: {
-            level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            level: UserRoles.level6, requiresAuthorization: true,
           },
           props: true,
           children: [],
@@ -192,7 +192,7 @@ export const events: RouteConfig = {
           name: Routes.events.assessments.details.name,
           component: AssessmentTemplateDetails,
           meta: {
-            level: UserRoles.level6, requiresAuthorization: true, feature: FeatureKeys.Assessments,
+            level: UserRoles.level6, requiresAuthorization: true,
           },
           props: true,
           children: [],

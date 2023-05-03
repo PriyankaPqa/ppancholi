@@ -4,8 +4,8 @@ import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
-import { addressData } from '@libs/cypress-lib/mocks/address/address';
 import { format } from 'date-fns';
+import { fixtureAddress } from '../../../fixtures/household';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { useProvider } from '../../../provider/provider';
@@ -67,7 +67,7 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        before(async () => {
+        beforeEach(async () => {
           await prepareState(accessTokenL6, event);
           cy.login(roleValue);
           cy.get('@householdId').then((householdId) => {
@@ -75,6 +75,8 @@ describe(`${title}`, () => {
           });
         });
         it('should successfully update household address', function () {
+          const addressData = fixtureAddress();
+
           const householdProfilePage = new HouseholdProfilePage();
 
           const editHouseholdAddressPage = householdProfilePage.editAddress();
@@ -93,6 +95,7 @@ describe(`${title}`, () => {
           profileHistoryPage.getHouseholdHistoryEditedBy().should('eq', `${getUserName(roleName)}${getUserRoleDescription(roleName)}`);
           profileHistoryPage.getHouseholdHistoryChangeDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           profileHistoryPage.getHouseholdHistoryLastAction().should('eq', 'Address information changed');
+
           profileHistoryPage.getHouseholdHistoryPreviousValue()
             .should('string', `${this.household.homeAddress.unitSuite}-${this.household.homeAddress.streetAddress}`)
             .should('string', `${this.household.homeAddress.city}, ${ECanadaProvinces[Number(this.household.homeAddress.province.toString())]}, `
@@ -100,6 +103,7 @@ describe(`${title}`, () => {
           profileHistoryPage.getHouseholdHistoryNewValue().should('string', `${addressData.unitNumber} ${roleName}-${addressData.streetAddress}`);
           profileHistoryPage.getHouseholdHistoryNewValue().should('string', `${addressData.municipality}, ${addressData.province}, `
           + `${addressData.postalCode}, Canada`);
+
           profileHistoryPage.goToHouseholdProfilePage();
 
           const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();

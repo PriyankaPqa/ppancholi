@@ -2,7 +2,6 @@
 import { RouteConfig } from 'vue-router';
 import { Trans } from '@/ui/plugins/translation';
 import helpers from '@/ui/helpers/helpers';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { events } from '@/ui/router/route/events';
 import { caseFiles } from '@/ui/router/route/caseFiles';
 import { approvals } from '@/ui/router/route/approvals';
@@ -67,7 +66,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.assessmentTemplates.builder.name,
         component: AssessmentBuilder,
         meta: {
-          level: UserRoles.level6, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
+          level: UserRoles.level6, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -76,7 +75,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.events.assessments.builder.name,
         component: AssessmentBuilder,
         meta: {
-          level: UserRoles.level6, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
+          level: UserRoles.level6, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -85,7 +84,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.assessmentTemplates.runner.name,
         component: AssessmentRunner,
         meta: {
-          level: UserRoles.level6, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
+          level: UserRoles.level6, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -94,7 +93,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.events.assessments.runner.name,
         component: AssessmentRunner,
         meta: {
-          level: UserRoles.level6, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
+          level: UserRoles.level6, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },
@@ -103,7 +102,7 @@ export const routes: Array<RouteConfig> = [
         name: Routes.events.assessments.complete.name,
         component: AssessmentRunner,
         meta: {
-          level: UserRoles.level0, feature: FeatureKeys.Assessments, requiresAuthentication: true, requiresAuthorization: true,
+          level: UserRoles.level0, requiresAuthentication: true, requiresAuthorization: true,
         },
         props: true,
       },

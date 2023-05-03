@@ -24,15 +24,15 @@ const canRoles = {
 const allCanRolesValues = [...Object.values(canRoles)];
 
 let event = null as IEventEntity;
-let caseFileCreated = null as ICaseFileEntity;
+let caseFile = null as ICaseFileEntity;
 let accessTokenL6 = '';
 
 const prepareState = async (accessToken: string, event: IEventEntity) => {
   const provider = useProvider(accessToken);
   const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
   cy.wrap(mockCreateHousehold).as('household');
-  const caseFileCreatedResult = await provider.households.postCrcRegistration(mockCreateHousehold);
-  caseFileCreated = caseFileCreatedResult.caseFile;
+  const caseFileCreated = await provider.households.postCrcRegistration(mockCreateHousehold);
+  caseFile = caseFileCreated.caseFile;
 };
 
 const prepareEventwithTeamWithUsers = async (accessToken: string) => {
@@ -64,13 +64,13 @@ describe(`${title}`, () => {
         beforeEach(async () => {
           await prepareState(accessTokenL6, event);
           cy.login(roleValue);
-          cy.goTo(`casefile/${caseFileCreated.id}`);
+          cy.goTo(`casefile/${caseFile.id}`);
         });
         it('should successfully view case file details', function () {
           const caseFileDetailsPage = new CaseFileDetailsPage();
           // eslint-disable-next-line
           caseFileDetailsPage.getPrimaryBeneficiaryName().should('eq', `${this.household.primaryBeneficiary.identitySet.firstName} ${this.household.primaryBeneficiary.identitySet.lastName}`);
-          caseFileDetailsPage.getCaseFileNumber().should('eq', caseFileCreated.caseFileNumber);
+          caseFileDetailsPage.getCaseFileNumber().should('eq', caseFile.caseFileNumber);
           caseFileDetailsPage.getEventName().should('eq', event.name.translation.en);
         });
       });

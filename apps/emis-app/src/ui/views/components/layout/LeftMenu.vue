@@ -156,7 +156,6 @@ export default Vue.extend({
           text: 'leftMenu.assessments_title',
           test: 'assessments',
           level: UserRoles.level6,
-          feature: FeatureKeys.Assessments,
         },
         {
           to: routes.systemManagement.home.name,
