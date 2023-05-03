@@ -1015,7 +1015,7 @@
     "errors.field-max-value-invalid": "La valeur doit être inférieure ou égale à {MaxValue}",
     "errors.field-min-value-invalid": "La valeur doit être supérieure ou égale à {MinValue}.",
     "errors.file-contains-invalid-data-type": "Le fichier contient un type de données non valide",
-    "errors.financial-assistance-cannot-be-added-due-to-tags": "L'aide financière ne peut pas être ajoutée en raison des étiquettes",
+    "errors.financial-assistance-cannot-be-added-due-to-tags": "L'aide financière ne peut pas être ajoutée en raison des attributs",
     "errors.financial-assistance-payment-approval-status-must-be-approved": "Le statut d’approbation du paiement d’aide financière doit être « Approuvé ».",
     "errors.financial-assistance-payment-approval-status-must-be-approved-or-pending": "Le versement d'aide financière doit être approuvé ou en attente.",
     "errors.financial-assistance-payment-approval-status-must-be-new": "Le statut d’approbation du paiement d’aide financière doit être « Nouveau ».",
