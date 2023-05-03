@@ -234,7 +234,7 @@
     "caseFile.financialAssistance.cancelPaymentGroup.confirm.title": "Confirmer l’annulation",
     "caseFile.financialAssistance.cancellationReason.byOn": "Annulé par: {by} le {on}",
     "caseFile.financialAssistance.cancellationReason.reason": "Motif :",
-    "caseFile.financialAssistance.cannotAddDueToTags": "L'aide financière ne peut pas être ajoutée en raison des étiquettes",
+    "caseFile.financialAssistance.cannotAddDueToTags": "L'aide financière ne peut pas être ajoutée en raison des attributs",
     "caseFile.financialAssistance.changeStatusDialog.title": "Changer le statut de paiement",
     "caseFile.financialAssistance.confirm.delete.message": "Voulez-vous vraiment supprimer ce paiement?",
     "caseFile.financialAssistance.confirm.delete.title": "Supprimer le paiement",
