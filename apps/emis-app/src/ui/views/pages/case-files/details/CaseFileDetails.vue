@@ -205,7 +205,7 @@ export default mixins(caseFileDetail, householdDetails).extend({
           test: 'assessments',
           to: routes.caseFile.assessments.home.name,
           exact: false,
-          disabled: !this.$hasFeature(FeatureKeys.AssessmentsWithinCasefiles) || !this.canL0AccessAssessment,
+          disabled: !this.canL0AccessAssessment,
         },
           !this.isL0 && {
           text: this.$t('caseFileDetail.menu_referrals') as string,

@@ -357,7 +357,6 @@ describe('EventDetails.vue', () => {
             disabled: false,
             to: routes.events.assessments.home.name,
             level: UserRoles.level6,
-            feature: FeatureKeys.Assessments,
             exact: false,
           }],
         );
