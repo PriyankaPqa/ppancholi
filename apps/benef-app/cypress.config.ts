@@ -2,8 +2,8 @@ import { defineConfig } from 'cypress';
 import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
 
 require('tsconfig-paths').register();
+const { cloudPlugin } = require('cypress-cloud/plugin');
 
-const enableLogger = true; // https://github.com/archfz/cypress-terminal-report
 export default defineConfig({
   reporter: 'cypress-multi-reporters',
   reporterOptions: {
@@ -14,16 +14,15 @@ export default defineConfig({
     openMode: 0,
   },
   e2e: {
-    setupNodeEvents(on) {
-      if (enableLogger) {
-        installLogsPrinter(on, {
-          printLogsToConsole: 'onFail',
-          includeSuccessfulHookLogs: false,
-        });
-      }
+    setupNodeEvents(on, config) {
+      installLogsPrinter(on, {
+        printLogsToConsole: 'onFail',
+        includeSuccessfulHookLogs: false,
+      });
+      return cloudPlugin(on, config);
     },
+    videoUploadOnPasses: false,
     baseUrl: 'http://localhost:8080/',
-    projectId: 'FDDF6a',
     env: {
       AZURE_CLIENT_ID: '44dc9a29-39d1-462e-9cbe-b9507b34396d',
       AZURE_TENANT_ID: '56f61c9c-0a6f-4be2-954d-941c9f02cb4c',

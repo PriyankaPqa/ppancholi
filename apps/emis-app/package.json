@@ -22,8 +22,7 @@
     "cy:open": "cypress open",
     "cy:delete:reports": "rm cypress/results/* || true",
     "cy:combine:reports": "jrm cypress/results/combined-report.xml \"cypress/results/*.xml\"",
-    "cy:ci": "currents",
-    "cy:report": "yarn cy:delete:reports & currents run --reporter cypress-multi-reporters --reporter-options configFile=cypress-reporter-config.js"
+    "cy:report": "yarn cy:delete:reports & yarn cypress-cloud --reporter cypress-multi-reporters --reporter-options configFile=cypress-reporter-config.js"
   },
   "dependencies": {
     "@azure/msal-browser": "2.26.0",
@@ -73,13 +72,13 @@
   "devDependencies": {
     "@babel/core": "7.17.5",
     "@babel/plugin-transform-runtime": "7.17.0",
-    "@currents/cli": "^4.0.2",
     "@pinia/testing": "^0.0.14",
     "@types/jsonwebtoken": "8.5.8",
     "@types/lodash": "4.14.179",
     "@types/vuedraggable": "2.24.0",
     "@vue/test-utils": "^1.3.4",
-    "cypress": "^12.2.0",
+    "cypress": "^12.11.0",
+    "cypress-cloud": "^1.7.4",
     "cypress-multi-reporters": "^1.6.2",
     "cypress-repeat": "^2.3.3",
     "cypress-terminal-report": "^5.0.0",

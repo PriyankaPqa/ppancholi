@@ -1,6 +1,8 @@
 import { defineConfig } from 'cypress';
 import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
 
+const { cloudPlugin } = require('cypress-cloud/plugin');
+
 require('tsconfig-paths').register();
 
 export default defineConfig({
@@ -12,14 +14,15 @@ export default defineConfig({
     runMode: 1,
     openMode: 0,
   },
-  projectId: 'CLyVZv',
   e2e: {
-    setupNodeEvents(on) {
+    setupNodeEvents(on, config) {
       installLogsPrinter(on, { // https://github.com/archfz/cypress-terminal-report
         printLogsToConsole: 'onFail', // 'never'
         includeSuccessfulHookLogs: false,
       });
+      return cloudPlugin(on, config);
     },
+    videoUploadOnPasses: false,
     baseUrl: 'http://localhost:8080/',
     env: {
       AZURE_CLIENT_ID: '44dc9a29-39d1-462e-9cbe-b9507b34396d',

@@ -9,7 +9,7 @@ before(() => {
   });
 });
 
-describe('Foo', () => {
+describe('Foo.', () => {
   it('should check that registration button is displayed', () => {
     cy.then(async () => {
       const event = await provider.cypress.events.fetchOneOpenEvent();
