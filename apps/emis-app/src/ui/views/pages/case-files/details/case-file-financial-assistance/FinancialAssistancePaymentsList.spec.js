@@ -1,6 +1,7 @@
 import { RcDataTable } from '@libs/component-lib/components';
 import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import flushPromises from 'flush-promises';
 import { mockCombinedCaseFinancialAssistance, ApprovalStatus, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
@@ -597,6 +598,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
           hook.call(wrapper.vm);
         });
 
+        await flushPromises();
         expect(wrapper.vm.initContainsActiveTables).toHaveBeenCalledTimes(1);
       });
 
@@ -621,6 +623,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
           hook.call(wrapper.vm);
         });
 
+        await flushPromises();
         expect(caseFileStore.fetchTagsOptions).toHaveBeenCalled();
         expect(wrapper.vm.checkHasRestrictFinancialTags).toHaveBeenCalledTimes(1);
       });
