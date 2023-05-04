@@ -271,6 +271,26 @@ export function getExtensionComponents(
     return null;
   }
 
+  async function setRestrictFinancial(payload: { id: string, restrictFinancial: boolean }): Promise<IOptionItem> {
+    const { id, restrictFinancial } = payload;
+    if (!list.value) {
+      throw new Error('You must set a value for list');
+    }
+
+    const data = await optionItemService.setOptionItemRestrictFinancial(list.value, id, restrictFinancial);
+
+    if (data != null) {
+      // Must not unset the restrictFinancial value from all the items because we allow multiple items to have restrictFinancial set
+
+      // Update the modified item in the state
+      addOrUpdateItem(data);
+
+      return data;
+    }
+
+    return null;
+  }
+
   return {
     items,
     list,
@@ -289,5 +309,6 @@ export function getExtensionComponents(
     updateSubItemOrderRanks,
     setIsOther,
     setIsDefault,
+    setRestrictFinancial,
   };
 }

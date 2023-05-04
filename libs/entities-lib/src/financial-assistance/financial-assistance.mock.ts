@@ -21,6 +21,7 @@ export const mockSubItems = (): IFinancialAssistanceTableSubItem[] => [
       orderRank: 2,
       isOther: false,
       isDefault: false,
+      restrictFinancial: false,
     },
     maximumAmount: 1,
     amountType: EFinancialAmountModes.Fixed,
@@ -34,6 +35,7 @@ export const mockSubItems = (): IFinancialAssistanceTableSubItem[] => [
       orderRank: 3,
       isOther: false,
       isDefault: false,
+      restrictFinancial: false,
       ...mockBaseData(),
     },
     maximumAmount: 2,
@@ -63,6 +65,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
       orderRank: 3,
       isOther: false,
       isDefault: false,
+      restrictFinancial: false,
       subitems: [
         {
           ...mockBaseData(),
@@ -71,6 +74,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
           orderRank: 1,
           isOther: false,
           isDefault: false,
+          restrictFinancial: false,
         },
         {
           ...mockBaseData(),
@@ -79,6 +83,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
           orderRank: 2,
           isOther: false,
           isDefault: false,
+          restrictFinancial: false,
         },
         {
           ...mockBaseData(),
@@ -87,6 +92,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
           orderRank: 3,
           isOther: false,
           isDefault: false,
+          restrictFinancial: false,
         },
       ],
       ...mockBaseData(),
@@ -99,6 +105,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
           orderRank: 2,
           isOther: false,
           isDefault: false,
+          restrictFinancial: false,
           ...mockBaseData(),
         },
         maximumAmount: 1,
@@ -113,6 +120,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
           orderRank: 3,
           isOther: false,
           isDefault: false,
+          restrictFinancial: false,
           ...mockBaseData(),
         },
         maximumAmount: 2,
@@ -129,6 +137,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
       orderRank: 8,
       isOther: false,
       isDefault: false,
+      restrictFinancial: false,
       subitems: [
         {
           ...mockBaseData(),
@@ -137,6 +146,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
           orderRank: 1,
           isOther: false,
           isDefault: false,
+          restrictFinancial: false,
         },
         {
           ...mockBaseData(),
@@ -145,6 +155,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
           orderRank: 2,
           isOther: false,
           isDefault: false,
+          restrictFinancial: false,
         },
         {
           name: { translation: { en: 'Household Goods Replacement', fr: "Remplacement d'articles ménagers" } },
@@ -152,6 +163,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
           orderRank: 3,
           isOther: false,
           isDefault: false,
+          restrictFinancial: false,
           ...mockBaseData(),
         },
         {
@@ -160,6 +172,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
           orderRank: 4,
           isOther: false,
           isDefault: false,
+          restrictFinancial: false,
           ...mockBaseData(),
         },
       ],
@@ -174,6 +187,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
           orderRank: 4,
           isOther: false,
           isDefault: false,
+          restrictFinancial: false,
         },
         maximumAmount: 3,
         amountType: EFinancialAmountModes.Fixed,
@@ -273,6 +287,7 @@ const categories: IOptionItem[] = [
     orderRank: 1,
     isOther: false,
     isDefault: false,
+    restrictFinancial: false,
     subitems: [
       {
         ...mockBaseData(),
@@ -281,6 +296,7 @@ const categories: IOptionItem[] = [
         orderRank: 1,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
       },
       {
         ...mockBaseData(),
@@ -289,6 +305,7 @@ const categories: IOptionItem[] = [
         orderRank: 2,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
       },
       {
         ...mockBaseData(),
@@ -297,6 +314,7 @@ const categories: IOptionItem[] = [
         orderRank: 3,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
       },
       {
         ...mockBaseData(),
@@ -305,6 +323,7 @@ const categories: IOptionItem[] = [
         orderRank: 4,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
       },
       {
         ...mockBaseData(),
@@ -313,6 +332,7 @@ const categories: IOptionItem[] = [
         orderRank: 5,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
       },
       {
         ...mockBaseData(),
@@ -321,6 +341,7 @@ const categories: IOptionItem[] = [
         orderRank: 6,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
         id: '212565f3-6eb1-4dfc-adf5-4e23d26a4d47',
         status: 1,
       },
@@ -335,6 +356,7 @@ const categories: IOptionItem[] = [
     orderRank: 2,
     isOther: false,
     isDefault: false,
+    restrictFinancial: false,
     subitems: [
       {
         name: { translation: { en: 'Basic Needs', fr: 'Besoins essentiels' } },
@@ -342,6 +364,7 @@ const categories: IOptionItem[] = [
         orderRank: 1,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
         ...mockBaseData(),
       },
       {
@@ -350,6 +373,7 @@ const categories: IOptionItem[] = [
         orderRank: 2,
         isOther: false,
         isDefault: false,
+        restrictFinancial: false,
         ...mockBaseData(),
       },
     ],

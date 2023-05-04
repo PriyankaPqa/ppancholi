@@ -165,6 +165,7 @@ describe('>>> ContactInformation', () => {
           name: null,
           orderRank: 1,
           isDefault: false,
+          restrictFinancial: false,
         };
         p.primarySpokenLanguageOther = null;
 

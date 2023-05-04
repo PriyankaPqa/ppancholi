@@ -164,6 +164,7 @@ describe('Identity Set', () => {
             orderRank: 0,
             isOther: false,
             isDefault: false,
+            restrictFinancial: false,
             status: 0,
           };
           const results = p.validate();

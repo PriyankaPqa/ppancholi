@@ -95,6 +95,7 @@ export default Vue.extend({
             status: Status.Active,
             isOther: false,
             isDefault: true,
+            restrictFinancial: false,
             id: '-1',
           },
         ];

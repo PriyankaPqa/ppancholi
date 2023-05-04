@@ -82,6 +82,7 @@
                 :is-search-result="isSearchResult(item)"
                 :has-default="hasDefault"
                 :has-other="hasOther"
+                :has-restrict-financial="hasRestrictFinancial"
                 :hide-item-status="hideItemStatus"
                 :hide-item-drag="hideItemDrag"
                 @edit-item="editItem"
@@ -254,6 +255,11 @@ export default Vue.extend({
     },
 
     hasOther: {
+      type: Boolean,
+      default: false,
+    },
+
+    hasRestrictFinancial: {
       type: Boolean,
       default: false,
     },

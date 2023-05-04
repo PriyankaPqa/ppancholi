@@ -52,6 +52,17 @@
             @click:close="setIsOther">
             {{ $t('common.pleaseSpecify') }}
           </v-chip>
+
+          <v-chip
+            v-if="hasRestrictFinancial && item.restrictFinancial"
+            class="otherDefaultChip ml-2"
+            small
+            color="primary lighten-1"
+            text-color="grey darken-4"
+            close
+            @click:close="setRestrictFinancial">
+            {{ $t('common.restrictFinancial') }}
+          </v-chip>
         </div>
       </v-col>
 
@@ -91,7 +102,7 @@
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
 
-        <v-menu v-if="hasOther || hasDefault" offset-y>
+        <v-menu v-if="hasOther || hasDefault || hasRestrictFinancial" offset-y>
           <template #activator="{ on, attrs }">
             <v-btn v-bind="attrs" data-test="optionsListItem__menuBtn" icon :disabled="editDisabled" v-on="on">
               <v-icon>mdi-dots-vertical</v-icon>
@@ -109,6 +120,13 @@
             <v-list-item v-if="hasOther" @click="setIsOther">
               {{ $t('common.pleaseSpecify') }}
               <v-icon v-if="item.isOther" class="ml-2" small>
+                mdi-close
+              </v-icon>
+            </v-list-item>
+
+            <v-list-item v-if="hasRestrictFinancial" @click="setRestrictFinancial">
+              {{ $t('common.restrictFinancial') }}
+              <v-icon v-if="item.restrictFinancial" class="ml-2" small>
                 mdi-close
               </v-icon>
             </v-list-item>
@@ -320,6 +338,14 @@ export default Vue.extend({
     },
 
     /**
+     * If the list allows the user to set the restrict financial attribute for an item
+     */
+    hasRestrictFinancial: {
+      type: Boolean,
+      default: false,
+    },
+
+    /**
      * If the list allows the user to see and modify the status of the item
      */
     hideItemStatus: {
@@ -511,6 +537,16 @@ export default Vue.extend({
         this.$toasted.global.success(this.$t('system_management.lists.otherOptionSet'));
       } else {
         this.$toasted.global.success(this.$t('system_management.lists.otherOptionRemoved'));
+      }
+    },
+
+    async setRestrictFinancial() {
+      const value = !this.item.restrictFinancial;
+      await useOptionListStore().setRestrictFinancial({ id: this.item.id, restrictFinancial: value });
+      if (value) {
+        this.$toasted.global.success(this.$t('system_management.lists.restrictFinancialOptionSet'));
+      } else {
+        this.$toasted.global.success(this.$t('system_management.lists.restrictFinancialOptionUnset'));
       }
     },
 

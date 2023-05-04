@@ -74,7 +74,7 @@ describe('>>> Case File Store', () => {
       const res = store.getInactiveReasons();
       expect(res).toEqual(
         _sortBy(
-          [mockOptionItemData()[0], mockOptionItemData()[1]].map((e) => new OptionItem(e)),
+          [mockOptionItemData()[0], mockOptionItemData()[1], mockOptionItemData()[2]].map((e) => new OptionItem(e)),
           'orderRank',
         ),
       );
@@ -82,13 +82,13 @@ describe('>>> Case File Store', () => {
   });
 
   describe('closeReasons', () => {
-    test('the getter returns the sorted inactive reasons', () => {
+    test('the getter returns the sorted close reasons', () => {
       const store = createTestStore();
       store.closeReasons = mockOptionItemData();
       const res = store.getCloseReasons();
       expect(res).toEqual(
         _sortBy(
-          [mockOptionItemData()[0], mockOptionItemData()[1]].map((e) => new OptionItem(e)),
+          [mockOptionItemData()[0], mockOptionItemData()[1], mockOptionItemData()[2]].map((e) => new OptionItem(e)),
           'orderRank',
         ),
       );
@@ -102,7 +102,7 @@ describe('>>> Case File Store', () => {
       const res = store.getScreeningIds();
       expect(res).toEqual(
         _sortBy(
-          [mockOptionItemData()[0], mockOptionItemData()[1]].map((e) => new OptionItem(e)),
+          [mockOptionItemData()[0], mockOptionItemData()[1], mockOptionItemData()[2]].map((e) => new OptionItem(e)),
           'orderRank',
         ),
       );

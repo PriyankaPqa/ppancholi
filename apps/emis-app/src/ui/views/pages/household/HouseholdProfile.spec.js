@@ -1307,6 +1307,7 @@ describe('HouseholdProfile.vue', () => {
                 id: '676eb98b-d432-4924-90ee-2489e3acdc26',
                 isDefault: false,
                 isOther: false,
+                restrictFinancial: false,
                 name: {
                   translation: {
                     en: 'Male',

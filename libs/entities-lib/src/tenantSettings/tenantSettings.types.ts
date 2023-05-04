@@ -17,6 +17,7 @@ export enum FeatureKeys {
   ManageDuplicates = 'manageDuplicates',
   CustomConsent = 'CustomConsent',
   ReplaceBeneficiaryTerm = 'replaceBeneficiaryTerm',
+  BlockFACaseFileIrregularTag = 'BlockFACaseFileIrregularTag',
   UseIdentityServer = 'UseIdentityServer',
 }
 

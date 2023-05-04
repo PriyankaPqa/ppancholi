@@ -381,5 +381,27 @@ describe('>>> Option List Store', () => {
         );
       });
     });
+
+    describe('setRestrictFinancial', () => {
+      it('throws an error if list is not set in the store', async () => {
+        const store = createTestStore();
+        await expect(store.setRestrictFinancial).rejects.toThrow();
+      });
+
+      it('calls the setOptionItemRestrictFinancial endpoint if the list is Case File Tags', async () => {
+        const store = createTestStore();
+        store.list = EOptionLists.CaseFileTags;
+        await store.setRestrictFinancial({
+          id: 'ID',
+          restrictFinancial: true,
+        });
+
+        expect(entityService.setOptionItemRestrictFinancial).toHaveBeenCalledWith(
+          EOptionLists.CaseFileTags,
+          'ID',
+          true,
+        );
+      });
+    });
   });
 });

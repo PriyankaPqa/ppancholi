@@ -190,6 +190,7 @@ import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, IdP
 import { useFinancialAssistanceMetadataStore, useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { UserRoles } from '@libs/entities-lib/user';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
 import StatisticsDialog from './components/StatisticsDialog.vue';
@@ -226,6 +227,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       },
       getLocalStringDate: helpers.getLocalStringDate,
       containsActiveTables: null as boolean,
+      hasRestrictFinancialTags: false,
       showSubmitDialog: false,
       selectedItems: [] as string[],
       Status,
@@ -369,6 +371,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     this.saveState = true;
     this.loadState();
     if (!this.$hasRole(UserRoles.readonly)) {
+      await useCaseFileStore().fetchTagsOptions();
+      this.checkHasRestrictFinancialTags();
+
       this.initContainsActiveTables();
     }
     // we fetch all the payments for the case file because we will need to submit all at once possibly if some arent submitted
@@ -406,6 +411,14 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       }
     },
 
+    async checkHasRestrictFinancialTags() {
+      if (this.caseFile) {
+        const caseFileTagIds = this.caseFile.tags.map((t) => t.optionItemId);
+        const tags = useCaseFileStore().getTagsOptions(true);
+        this.hasRestrictFinancialTags = caseFileTagIds.some((id) => tags.some((t) => t.id === id && t.restrictFinancial));
+      }
+    },
+
     showApprovalDialog(item: IFinancialAssistancePaymentCombined) {
       this.selectedItem = item.entity;
       this.showApprovalHistory = true;
@@ -422,9 +435,13 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     routeToCreate() {
       if (this.containsActiveTables) {
-        this.$router.push({
-          name: routes.caseFile.financialAssistance.create.name,
-        });
+        if (!this.hasRestrictFinancialTags) {
+          this.$router.push({
+            name: routes.caseFile.financialAssistance.create.name,
+          });
+        } else {
+          this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.financialAssistance.cannotAddDueToTags') });
+        }
       } else {
         this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.financialAssistance.noActiveTables') });
       }

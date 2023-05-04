@@ -3,6 +3,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EOptionLists } from '@libs/entities-lib/optionItem';
 import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 
@@ -31,6 +32,18 @@ describe('CaseFileTagsList.vue', () => {
 
     it('uses correct title', () => {
       expect(wrapper.findComponent(OptionList).props('title')).toBe('system_management.lists.caseFileTags');
+    });
+
+    it('has restrict financial when feature BlockFACaseFileIrregularTag is on', () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        mocks: {
+          $hasFeature: jest.fn((f) => f === FeatureKeys.BlockFACaseFileIrregularTag),
+        },
+      });
+
+      expect(wrapper.findComponent(OptionList).props('hasRestrictFinancial')).toBe(true);
     });
   });
 

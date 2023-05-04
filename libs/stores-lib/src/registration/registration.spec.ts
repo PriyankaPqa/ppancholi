@@ -1001,6 +1001,7 @@ describe('>>> Registration Store', () => {
           id: '676eb98b-d432-4924-90ee-2489e3acdc26',
           isDefault: false,
           isOther: false,
+          restrictFinancial: false,
           name: {
             translation: {
               en: 'Female',
@@ -1086,6 +1087,7 @@ describe('>>> Registration Store', () => {
           id: '3dd21738-e599-443a-aae1-496d7decc458',
           isDefault: false,
           isOther: false,
+          restrictFinancial: false,
           name: {
             translation: {
               en: 'French',
@@ -1099,6 +1101,7 @@ describe('>>> Registration Store', () => {
           id: '5d0c1c8d-c3cd-4818-a670-c92b3cb84081',
           isDefault: true,
           isOther: false,
+          restrictFinancial: false,
           name: {
             translation: {
               en: 'English',
