@@ -1,13 +1,15 @@
 import { AddHouseholdMemberPage } from './addHouseholdMember.page';
 import { CaseFileDetailsPage } from './caseFileDetails.page';
 import { EditHouseholdAddressPage } from './editHouseholdAddress.page';
+import { EditHouseholdProfilePage } from './editHouseholdProfile.page';
 import { ProfileHistoryPage } from './profileHistory.page';
 import { SplitHouseholdMemberPage } from './splitHouseholdMember.page';
 
 export enum DataTest {
   caseFileNumber = 'household_profile_case_file_number',
   memberSplit = 'household_profile_member_action_btn_transfer',
-  memberName = 'household_profile_member_display_name',
+  memberNameDisplay = 'household_profile_member_display_name',
+  memberNameInfo = 'household_profile_member_info_data_name',
   dateOfBirth = 'household_profile_member_info_data_date_of_birth',
   gender = 'household_profile_member_info_data_gender',
   registrationNumber = 'registrationNumber',
@@ -28,7 +30,9 @@ export class HouseholdProfilePage {
 
   private memberSplit = { selector: DataTest.memberSplit };
 
-  private memberName = { selector: DataTest.memberName };
+  private memberNameDisplay = { selector: DataTest.memberNameDisplay };
+
+  private memberNameInfo = { selector: DataTest.memberNameInfo };
 
   private registrationNumber = { selector: DataTest.registrationNumber };
 
@@ -75,11 +79,15 @@ export class HouseholdProfilePage {
   }
 
   public getFullNameOfMember(index: number) {
-    return cy.getByDataTestLike(this.memberName).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.memberNameDisplay).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getMemberNameInfoByIndex(index: number) {
+    return cy.getByDataTestLike(this.memberNameInfo).eq(index);
   }
 
   public getHouseholdSize() {
-    return cy.getByDataTestLike(this.memberName);
+    return cy.getByDataTestLike(this.memberNameDisplay);
   }
 
   public getRegistrationNumber() {
@@ -108,6 +116,11 @@ export class HouseholdProfilePage {
 
   public getEditMemberButtons() {
     return cy.getByDataTest(this.memberEdit);
+  }
+
+  public editMemberByIndex(index: number) {
+    cy.getByDataTest(this.memberEdit).eq(index).click();
+    return new EditHouseholdProfilePage();
   }
 
   public getSplitMemberButtons() {
