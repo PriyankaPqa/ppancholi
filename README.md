@@ -74,6 +74,11 @@ To lint all packages
 yarn lint
 ```
 
+To automatically creates feature branch
+```
+yarn fb
+```
+
 # How to
 ## Add a new package
 
