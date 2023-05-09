@@ -18,6 +18,8 @@ export function getMockFinancialAssistanceExtensionComponents(entity: IFinancial
     setDeleteSubItem: jest.fn(),
     resetNewItem: jest.fn(),
     cancelOperation: jest.fn(),
+    removeItem: jest.fn(),
+    removeSubItem: jest.fn(),
     resetNewSubItem: jest.fn(),
     resetExtensionState: jest.fn(),
     setFinancialAssistance: jest.fn(),

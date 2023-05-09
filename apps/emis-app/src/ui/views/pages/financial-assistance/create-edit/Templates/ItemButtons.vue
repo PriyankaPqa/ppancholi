@@ -176,7 +176,7 @@ export default Vue.extend({
     },
 
     deleteLocally() {
-      useFinancialAssistanceStore().deleteItem({ itemIndex: this.itemBeingDeletedIndex });
+      useFinancialAssistanceStore().removeItem({ index: this.itemBeingDeletedIndex });
     },
   },
 });

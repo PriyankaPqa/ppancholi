@@ -170,6 +170,7 @@ import { useProgramStore } from '@/pinia/program/program';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { Status } from '@libs/entities-lib/base';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
@@ -227,7 +228,14 @@ export default mixins(caseFileDetail).extend({
     },
 
     mainItem(): IFinancialAssistanceTableItem {
-      return this.items.find((i) => i.mainCategory.id === this.paymentLine.mainCategoryId);
+            const subItemId = this.paymentLine.subCategoryId;
+      // We need to find the main item that contains the subItem category of this payment line item.
+      // The business rule is that there can only be one active main item of a certain category, but there can be several inactive items
+      // (which happens when a main item of a specific category is created and the deleted repeatedly).
+      // We need to find the active main item that contains the subItem category, and if there is none, then find an inactive item that contains it.
+      const allMainItemsWithSubitem = this.items.filter((i) => i.subItems.some((si) => si.subCategory.id === subItemId));
+      const activeMainItem = allMainItemsWithSubitem.find((i) => i.status === Status.Active);
+      return activeMainItem || allMainItemsWithSubitem[0];
     },
 
     subItem(): IFinancialAssistanceTableSubItem {

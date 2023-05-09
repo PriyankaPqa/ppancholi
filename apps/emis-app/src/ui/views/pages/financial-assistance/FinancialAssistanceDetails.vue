@@ -249,7 +249,7 @@ export default Vue.extend({
     const categories = await useFinancialAssistancePaymentStore().fetchFinancialAssistanceCategories();
     const program = await useProgramStore().fetch({ id: res.programId, eventId: res.eventId }) as IProgramEntity;
     useFinancialAssistanceStore().setFinancialAssistance({
-      fa: res, categories, newProgram: program, removeInactiveItems: false,
+      fa: res, categories, newProgram: program, removeInactiveItems: true,
     });
 
     if (!res) {

@@ -1,7 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockFinancialAssistanceTableEntity, mockSubItemData } from '@libs/entities-lib/financial-assistance';
+import { mockFinancialAssistanceTableEntity, mockSubItemData, mockItems } from '@libs/entities-lib/financial-assistance';
 import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups } from '@libs/entities-lib/financial-assistance-payment';
-
 import flushPromises from 'flush-promises';
 import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import householdHelpers from '@/ui/helpers/household';
@@ -16,6 +15,7 @@ const localVue = createLocalVue();
 let financialAssistance = mockCaseFinancialAssistanceEntity({ id: '1' });
 let paymentGroup = financialAssistance.groups[0];
 let line = paymentGroup.lines[0];
+const items = mockItems();
 
 const { pinia, programStore } = useMockProgramStore();
 const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
@@ -202,6 +202,70 @@ describe('ViewPaymentLineDetails.vue', () => {
 
         await wrapper.setProps({ financialAssistancePaymentLineId: 'filter' });
         expect(wrapper.vm.paymentLine).toEqual(newGroup.lines[0]);
+      });
+    });
+
+    describe('mainItem', () => {
+      it('returns the active main item that contains the subitem id from the payment line', async () => {
+        const subItem = { ...mockItems()[0].subItems[0], subCategory: { id: 'payment-line-subcategory-id' } };
+        const testItems = [
+          { ...mockItems()[0], subItems: [subItem], status: 1 },
+          { ...mockItems()[0], subItems: [subItem], status: 2 },
+        ];
+
+        await mountWrapper(false, 6, 'role', { computed: {
+          paymentLine() {
+            return { subCategoryId: 'payment-line-subcategory-id' };
+          },
+          items() {
+            return testItems;
+          },
+        } });
+
+        expect(wrapper.vm.mainItem).toEqual({ ...items[0], subItems: [subItem], status: 1 });
+      });
+
+      it('returns the  main item that contains the subitem id from the payment line', async () => {
+        const subItemToFind = { ...items[0].subItems[0], subCategory: { id: 'payment-line-subcategory-id' } };
+        const subItemToIgnore = { ...items[0].subItems[0], subCategory: { id: 'whatever' } };
+        const testItems = [
+          { ...items[0], subItems: [subItemToFind], status: 1 },
+          { ...items[0], subItems: [subItemToIgnore], status: 1 },
+
+        ];
+
+        await mountWrapper(false, 6, 'role', { computed: {
+          paymentLine() {
+            return { subCategoryId: 'payment-line-subcategory-id' };
+          },
+          items() {
+            return testItems;
+          },
+        } });
+
+        expect(wrapper.vm.mainItem).toEqual({ ...items[0], subItems: [subItemToFind], status: 1 });
+      });
+
+      it('finds the inactive main item that contains the subitem id from the payment line if there no active one', async () => {
+        const subItemToFind = { ...items[0].subItems[0], subCategory: { id: 'payment-line-subcategory-id' } };
+        const subItemToIgnore = { ...items[0].subItems[0], subCategory: { id: 'whatever' } };
+
+        const testItems = [
+          { ...items[0], subItems: [subItemToIgnore], status: 2 },
+          { ...items[0], subItems: [subItemToFind], status: 2 },
+          { ...items[0], subItems: [subItemToIgnore], status: 1 },
+        ];
+
+        await mountWrapper(false, 6, 'role', { computed: {
+          paymentLine() {
+            return { subCategoryId: 'payment-line-subcategory-id' };
+          },
+          items() {
+            return testItems;
+          },
+        } });
+
+        expect(wrapper.vm.mainItem).toEqual({ ...items[0], subItems: [subItemToFind], status: 2 });
       });
     });
 

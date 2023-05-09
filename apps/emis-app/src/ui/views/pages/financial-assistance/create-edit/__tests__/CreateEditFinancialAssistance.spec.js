@@ -1,21 +1,23 @@
 import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
-
+import { mockItems, mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import { mockItems } from '@libs/entities-lib/financial-assistance';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import { mockProgramEntity, mockProgramEntities } from '@libs/entities-lib/program';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+
 import { Status } from '@libs/entities-lib/base';
-import { useMockProgramStore } from '@/pinia/program/program.mock';
 import Component from '../CreateEditFinancialAssistance.vue';
 
 const localVue = createLocalVue();
 const { pinia } = useMockProgramStore();
 const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
 const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
+const { programStore } = useMockProgramStore(pinia);
 
 financialAssistanceStore.program = mockProgramEntity();
 financialAssistanceStore.status = Status.Inactive;
@@ -34,6 +36,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       stubs: {
         FinancialAssistanceItems: true,
       },
+
     });
   });
 
@@ -346,10 +349,25 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
             return true;
           },
         },
+        mocks: {
+          $route: {
+            params: {
+              faId: 'faId',
+            },
+          },
+        },
       });
 
       await wrapper.vm.$options.created.forEach((hook) => {
         hook.call(wrapper.vm);
+      });
+
+      await wrapper.vm.$nextTick();
+      expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalled();
+      expect(programStore.fetch).toHaveBeenCalled();
+      expect(financialAssistanceStore.fetch).toHaveBeenCalledWith('faId');
+      expect(financialAssistanceStore.setFinancialAssistance).toHaveBeenCalledWith({
+        fa: mockFinancialAssistanceTableEntity(), categories: mockOptionItemData(), newProgram: mockProgramEntity({ id: '1' }), removeInactiveItems: true,
       });
 
       expect(financialAssistanceStore.fetch).toHaveBeenCalled();

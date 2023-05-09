@@ -89,6 +89,51 @@ describe('CaseFilePaymentLineItem.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('mainItem', () => {
+      it('returns the active main item that contains the subitem id from the payment line', async () => {
+        await mountWrapper(false);
+        const subItem = { ...items[0].subItems[0], subCategory: { id: wrapper.vm.paymentLine.subCategoryId } };
+        const testItems = [
+          { ...items[0], subItems: [subItem], status: 1 },
+          { ...items[0], subItems: [subItem], status: 2 },
+
+        ];
+        await wrapper.setProps({ items: testItems });
+
+        expect(wrapper.vm.mainItem).toEqual({ ...items[0], subItems: [subItem], status: 1 });
+      });
+
+      it('returns the  main item that contains the subitem id from the payment line', async () => {
+        await mountWrapper(false);
+        const subItemToFind = { ...items[0].subItems[0], subCategory: { id: wrapper.vm.paymentLine.subCategoryId } };
+        const subItemToIgnore = { ...items[0].subItems[0], subCategory: { id: 'whatever' } };
+        const testItems = [
+          { ...items[0], subItems: [subItemToFind], status: 1 },
+          { ...items[0], subItems: [subItemToIgnore], status: 1 },
+
+        ];
+        await wrapper.setProps({ items: testItems });
+
+        expect(wrapper.vm.mainItem).toEqual({ ...items[0], subItems: [subItemToFind], status: 1 });
+      });
+
+      it('finds the inactive main item that contains the subitem id from the payment line if there no active one', async () => {
+        await mountWrapper(false);
+        const subItemToFind = { ...items[0].subItems[0], subCategory: { id: wrapper.vm.paymentLine.subCategoryId } };
+        const subItemToIgnore = { ...items[0].subItems[0], subCategory: { id: 'whatever' } };
+
+        const testItems = [
+          { ...items[0], subItems: [subItemToIgnore], status: 2 },
+          { ...items[0], subItems: [subItemToFind], status: 2 },
+          { ...items[0], subItems: [subItemToIgnore], status: 1 },
+        ];
+
+        await wrapper.setProps({ items: testItems });
+
+        expect(wrapper.vm.mainItem).toEqual({ ...items[0], subItems: [subItemToFind], status: 2 });
+      });
+    });
+
     describe('isInactive', () => {
       it('returns whether the current item/subitem is not available when the payment is still new', async () => {
         await mountWrapper(false, 6, null, {

@@ -196,9 +196,9 @@ export default Vue.extend({
 
     deleteLocally() {
       if (this.parent.subItems.length === 1) {
-        useFinancialAssistanceStore().deleteItem({ itemIndex: this.itemBeingDeletedIndex });
+        useFinancialAssistanceStore().removeItem({ index: this.itemBeingDeletedIndex });
       } else {
-        useFinancialAssistanceStore().deleteSubItem({ itemIndex: this.subItemBeingDeletedIndex, subItemIndex: this.itemBeingDeletedIndex });
+        useFinancialAssistanceStore().removeSubItem({ index: this.subItemBeingDeletedIndex, parentIndex: this.itemBeingDeletedIndex });
       }
     },
   },

@@ -410,7 +410,7 @@ export default Vue.extend({
       if (fa && categories) {
         const program = await useProgramStore().fetch({ id: fa.programId, eventId: fa.eventId }) as IProgramEntity;
         useFinancialAssistanceStore().setFinancialAssistance({
-          fa, categories, newProgram: program, removeInactiveItems: false,
+          fa, categories, newProgram: program, removeInactiveItems: true,
         });
         this.programs = [useFinancialAssistanceStore().program];
       }

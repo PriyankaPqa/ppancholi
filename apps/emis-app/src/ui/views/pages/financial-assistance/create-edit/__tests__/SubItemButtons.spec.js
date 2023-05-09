@@ -29,6 +29,7 @@ describe('AddSubItemSubItem.vue', () => {
         isTableMode: true,
       },
     });
+    wrapper.vm.$t = jest.fn((text) => text);
   });
 
   describe('Computed', () => {
@@ -247,7 +248,7 @@ describe('AddSubItemSubItem.vue', () => {
       it('delete subItem', async () => {
         wrapper.vm.deleteLocally();
 
-        expect(financialAssistanceStore.deleteSubItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.removeSubItem).toHaveBeenCalledTimes(1);
       });
 
       it('delete item', async () => {
@@ -255,7 +256,7 @@ describe('AddSubItemSubItem.vue', () => {
 
         wrapper.vm.deleteLocally();
 
-        expect(financialAssistanceStore.deleteItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.removeItem).toHaveBeenCalledTimes(1);
       });
     });
   });

@@ -1,15 +1,19 @@
 import { RcNestedTable } from '@libs/component-lib/components';
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockItems, EFinancialAmountModes, EFinancialFrequency } from '@libs/entities-lib/financial-assistance';
+import { mockItems, EFinancialAmountModes, EFinancialFrequency, mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance.mock';
+import { useMockProgramStore } from '@/pinia/program/program.mock';
 import routes from '@/constants/routes';
+import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { mockProgramEntity } from '@libs/entities-lib/program';
 import { Status } from '@libs/entities-lib/base';
 import Component from './FinancialAssistanceDetails.vue';
 
 const localVue = createLocalVue();
 const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
 const { financialAssistanceStore } = useMockFinancialAssistanceStore(pinia);
+const { programStore } = useMockProgramStore(pinia);
 
 financialAssistanceStore.$reset = jest.fn();
 financialAssistanceStore.program = {
@@ -179,9 +183,13 @@ describe('FinancialAssistanceDetailsMassAction.vue', () => {
           hook.call(wrapper.vm);
         });
 
+        await wrapper.vm.$nextTick();
         expect(financialAssistancePaymentStore.fetchFinancialAssistanceCategories).toHaveBeenCalledTimes(1);
-
+        expect(programStore.fetch).toHaveBeenCalledTimes(1);
         expect(financialAssistanceStore.fetch).toHaveBeenCalledWith('faId');
+        expect(financialAssistanceStore.setFinancialAssistance).toHaveBeenCalledWith({
+          fa: mockFinancialAssistanceTableEntity(), categories: mockOptionItemData(), newProgram: mockProgramEntity({ id: '1' }), removeInactiveItems: true,
+        });
       });
     });
   });

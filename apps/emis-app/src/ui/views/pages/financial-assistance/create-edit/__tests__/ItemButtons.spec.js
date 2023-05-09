@@ -27,6 +27,8 @@ describe('ItemButtons.vue', () => {
         isTableMode: true,
       },
     });
+
+    wrapper.vm.$t = jest.fn((text) => text);
   });
 
   describe('Computed', () => {
@@ -210,7 +212,7 @@ describe('ItemButtons.vue', () => {
       it('delete locally', async () => {
         wrapper.vm.deleteLocally();
 
-        expect(financialAssistanceStore.deleteItem).toHaveBeenCalledTimes(1);
+        expect(financialAssistanceStore.removeItem).toHaveBeenCalledTimes(1);
       });
     });
   });
