@@ -53,10 +53,10 @@ if (mode === Mode.edit) {
   console.log('## Current State ##')
   readFile();
 
-  emisToAdd = prompt("Enter values to add for emis (comma separated): ").split(",");
-  emisToRemove = prompt("Enter values to remove for emis (comma separated): ").split(",");
-  benefToAdd = prompt("Enter values to add for benef (comma separated): ").split(",");
-  benefToRemove = prompt("Enter values to remove for benef (comma separated): ").split(",");
+  emisToAdd = prompt("Enter values to add for emis (comma separated): ").split(",").filter(v => v !== '');
+  emisToRemove = prompt("Enter values to remove for emis (comma separated): ").split(",").filter(v => v !== '');
+  benefToAdd = prompt("Enter values to add for benef (comma separated): ").split(",").filter(v => v !== '');
+  benefToRemove = prompt("Enter values to remove for benef (comma separated): ").split(",").filter(v => v !== '');
 
   do {
     confirm = prompt(`Do you confirm and want to create the PR? (yes: ${Confirm.yes}, no:${Confirm.no}): `).toString();
@@ -68,32 +68,30 @@ if (mode === Mode.edit) {
   }
 }
 
-const actionString = `${mode}-${Math.random()}`;
-
 const branchName = generateFeatureBranchName(emisToAdd, emisToRemove, benefToAdd, benefToRemove)
 
 function generatePRDescription(emisToAdd, emisToRemove, benefToAdd, benefToRemove) {
-  const emisText = (emisToAdd || emisToRemove) ? `EMIS: ${emisToAdd ? 'add ' + emisToAdd : ''}${emisToAdd && emisToRemove ? ' ' : ''}${emisToRemove ? 'remove ' + emisToRemove : ''}` : '';
-  const benefText = (benefToAdd || benefToRemove) ? `BENEF: ${benefToAdd ? 'add ' + benefToAdd : ''}${benefToAdd && benefToRemove ? ' ' : ''}${benefToRemove ? 'remove ' + benefToRemove : ''}` : '';
+  const emisText = (emisToAdd.length > 0 || emisToRemove.length > 0) ? `EMIS: ${emisToAdd.length > 0 ? 'add ' + emisToAdd : ''} ${emisToRemove.length > 0 ? 'remove ' + emisToRemove : ''}` : '';
+  const benefText = (benefToAdd.length > 0 || benefToRemove.length > 0) ? `BENEF: ${benefToAdd ? 'add ' + benefToAdd : ''} ${benefToRemove.length > 0 ? 'remove ' + benefToRemove.length > 0 : ''}` : '';
   return `${emisText}${emisText && benefText ? '\n' : ''}${benefText}`;
 }
 
 function generateFeatureBranchName(emisToAdd, emisToRemove, benefToAdd, benefToRemove) {
   let branchName = 'auto';
 
-  if (emisToAdd[0] !== '') {
+  if (emisToAdd.length > 0) {
     branchName += `/${emisToAdd}`;
   }
 
-  if (emisToRemove[0] !== '') {
+  if (emisToRemove.length > 0) {
     branchName += `/-${emisToRemove}`;
   }
 
-  if (benefToAdd[0] !== '') {
+  if (benefToAdd.length > 0) {
     branchName += `/${benefToAdd}`;
   }
 
-  if (benefToRemove[0] !== '') {
+  if (benefToRemove. length > 0) {
     branchName += `/-${benefToRemove}`;
   }
 
@@ -101,15 +99,12 @@ function generateFeatureBranchName(emisToAdd, emisToRemove, benefToAdd, benefToR
 }
 
 
-
-
-
 const pullRequestConfig = {
   organization: 'CRC-Tech',
   project: 'EMIS',
   repositoryId: 'e8522925-9819-4359-b0e9-90e9193a1c69', // terraform
   branchName,
-  title: `[auto] - ${actionString}`,
+  title: `[auto-fb] - Edit feature branches`,
   description: generatePRDescription(emisToAdd, emisToRemove, benefToAdd, benefToRemove),
   personalAccessToken: userConfig.personalAccessToken,
 };
