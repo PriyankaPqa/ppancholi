@@ -89,14 +89,14 @@ describe('ManageDuplicatesTable.vue', () => {
 
     describe('showLine', () => {
       it('returns true if the duplicatesReason contains the reason passed as param', () => {
-        const duplicate = mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.FullName, DuplicateReason.MemberAlternatePhoneNumber] });
+        const duplicate = mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.FullName, DuplicateReason.AlternatePhoneNumber] });
         doMount();
         expect(wrapper.vm.showLine(duplicate, DuplicateReason.FullName)).toEqual(true);
       });
       it('returns false if the duplicatesReason does not contain the reason passed as param', () => {
-        const duplicate = mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.FullName, DuplicateReason.MemberAlternatePhoneNumber] });
+        const duplicate = mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.FullName, DuplicateReason.AlternatePhoneNumber] });
         doMount();
-        expect(wrapper.vm.showLine(duplicate, DuplicateReason.MemberMobilePhoneNumber)).toEqual(false);
+        expect(wrapper.vm.showLine(duplicate, DuplicateReason.MobilePhoneNumber)).toEqual(false);
       });
     });
 
@@ -178,7 +178,7 @@ describe('ManageDuplicatesTable.vue', () => {
     describe('duplicate name', () => {
       it('renders if reason contains name', async () => {
         doMount(false);
-        await wrapper.setProps({ duplicates: [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.FullName], memberFullName: 'Joe White' })] });
+        await wrapper.setProps({ duplicates: [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.FullName], memberFirstName: 'Joe', memberLastName: 'White' })] });
         const element = wrapper.findDataTest('householdDetails-duplicate-name');
         expect(element.exists()).toBeTruthy();
         expect(element.text()).toContain('Joe White');
@@ -196,7 +196,7 @@ describe('ManageDuplicatesTable.vue', () => {
       it('renders if reason contains home phone number', async () => {
         doMount(false);
         await wrapper.setProps({ duplicates:
-          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.MemberHomePhoneNumber], memberHomePhoneNumber: { number: 'home-phone' } })] });
+          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.HomePhoneNumber], homePhoneNumber: { number: 'home-phone' } })] });
         const element = wrapper.findDataTest('duplicate-home-phone-number');
         expect(element.exists()).toBeTruthy();
         expect(element.props('phoneNumber')).toEqual({ number: 'home-phone' });
@@ -214,7 +214,7 @@ describe('ManageDuplicatesTable.vue', () => {
       it('renders if reason contains mobile phone number', async () => {
         doMount(false);
         await wrapper.setProps({ duplicates:
-          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.MemberMobilePhoneNumber], memberMobilePhoneNumber: { number: 'mobile-phone' } })] });
+          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.MobilePhoneNumber], mobilePhoneNumber: { number: 'mobile-phone' } })] });
         const element = wrapper.findDataTest('duplicate-mobile-phone-number');
         expect(element.exists()).toBeTruthy();
         expect(element.props('phoneNumber')).toEqual({ number: 'mobile-phone' });
@@ -232,7 +232,7 @@ describe('ManageDuplicatesTable.vue', () => {
       it('renders if reason contains alternate phone number', async () => {
         doMount(false);
         await wrapper.setProps({ duplicates:
-          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.MemberAlternatePhoneNumber], memberAlternatePhoneNumber: { number: 'alternate-phone' } })] });
+          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.AlternatePhoneNumber], alternatePhoneNumber: { number: 'alternate-phone' } })] });
         const element = wrapper.findDataTest('duplicate-alternate-phone-number');
         expect(element.exists()).toBeTruthy();
         expect(element.props('phoneNumber')).toEqual({ number: 'alternate-phone' });

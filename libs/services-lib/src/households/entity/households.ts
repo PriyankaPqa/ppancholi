@@ -1,7 +1,6 @@
 import moment from 'moment';
 import { IConsentInformation, IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
-import { HouseholdStatus, IDetailedRegistrationResponse, IDuplicateData, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
-
+import { HouseholdStatus, IDetailedRegistrationResponse, IDuplicateData, IHouseholdEntity, IOustandingPaymentResponse, DuplicateReason } from '@libs/entities-lib/household';
 import {
   IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
   IIndigenousCommunityData, IMember, ICurrentAddress, ICurrentAddressCreateRequest, ECurrentAddressTypes,
@@ -44,7 +43,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   async submitRegistration({ household, eventId }: { household: IHouseholdCreate; eventId: string; }):
-    Promise<IDetailedRegistrationResponse> {
+  Promise<IDetailedRegistrationResponse> {
     const payload = this.parseHouseholdPayload(household, eventId);
     return this.postPublicRegistration(payload);
   }
@@ -70,7 +69,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     id: string,
     publicMode: boolean,
     payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet },
-): Promise<IMemberEntity> {
+  ): Promise<IMemberEntity> {
     return this.http.patch(`${this.baseApi}/persons/${publicMode ? 'public/' : ''}${id}/contact-information`, {
       isPrimaryBeneficiary: payload.isPrimaryBeneficiary,
       contactInformation: this.parseContactInformation(payload.contactInformation),
@@ -82,7 +81,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     id: string,
     publicMode: boolean,
     payload: { contactInformation: IContactInformation; identitySet: IIdentitySet },
-): Promise<IMemberEntity> {
+  ): Promise<IMemberEntity> {
     return this.http.patch(`${this.baseApi}/persons/${publicMode ? 'public/' : ''}${id}/identity-set`, {
       contactInformation: this.parseContactInformation(payload.contactInformation),
       identitySet: this.parseIdentitySet(payload.identitySet),
@@ -172,6 +171,13 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
 
   async getDuplicates(id: uuid): Promise<IDuplicateData[]> {
     return this.http.get(`${this.baseUrl}/${id}/duplicates`);
+  }
+
+  flagNewDuplicate(request: { id: uuid, duplicateHouseholdId: uuid, duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string })
+    : Promise<IHouseholdEntity[]> {
+    const { id, ...payload } = request;
+
+    return this.http.post(`${this.baseUrl}/${id}/duplicates/`, payload);
   }
 
   publicGetHousehold(id: uuid): Promise<IHouseholdEntity> {

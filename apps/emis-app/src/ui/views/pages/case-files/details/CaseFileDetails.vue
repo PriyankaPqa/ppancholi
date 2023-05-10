@@ -75,7 +75,8 @@
         :primary-beneficiary="primaryBeneficiary"
         :address-first-line="addressFirstLine"
         :address-second-line="addressSecondLine"
-        :has-phone-numbers="hasPhoneNumbers" />
+        :has-phone-numbers="hasPhoneNumbers"
+        :country="$hasFeature(FeatureKeys.ManageDuplicates) ? country : ''" />
 
       <div
         class="d-flex flex-row rc-body14 mb-4">
@@ -150,6 +151,7 @@ export default mixins(caseFileDetail, householdDetails).extend({
       loading: false,
       showVerifyIdentityDialog: false,
       showImpact: false,
+      FeatureKeys,
     };
   },
 

@@ -21,9 +21,9 @@ export const mockMember = (force?: Partial<IMemberEntity>): IMember => new Membe
 export const mockAdditionalMember = (force?: Partial<IMember>): IMember => new Member(deepmerge(mockMemberData(), force || {}));
 
 export const mockAdditionalMembers = (): IMember[] => [
-  mockMember(),
-  mockMember(),
-  mockMember(),
+  mockMember({ id: '1' }),
+  mockMember({ id: '2' }),
+  mockMember({ id: '3' }),
 ];
 
 export const mockMemberCreateRequest = (): MemberCreateRequest => ({

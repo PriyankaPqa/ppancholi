@@ -23,7 +23,8 @@ export const mockHouseholdDuplicate = (force = {}): IHouseholdDuplicate => ({
   householdId: 'household-id',
   duplicateReasons: [DuplicateReason.FullName, DuplicateReason.HomeAddress],
   duplicateStatus: DuplicateStatus.Potential,
-  memberId: null,
+  memberFirstName: 'Joe',
+  memberLastName: 'Smith',
   duplicateStatusHistory: [{
     userInformation: {
       userId: 'test-user-id-123456',
@@ -133,10 +134,10 @@ export const mockCombinedHouseholds = (): IHouseholdCombined[] => [
 
 export const mockDetailedRegistrationResponse = (): IDetailedRegistrationResponse => (
   JSON.parse(JSON.stringify({
-  assessmentResponses: [mockAssessmentResponseEntity({ id: '1' })],
-  caseFile: mockCaseFileEntity(),
-  household: mockHouseholdEntity(),
-})));
+    assessmentResponses: [mockAssessmentResponseEntity({ id: '1' })],
+    caseFile: mockCaseFileEntity(),
+    household: mockHouseholdEntity(),
+  })));
 
 export const mockDuplicateData = (force = {}): IDuplicateData => ({
   potentialDuplicateId: '1234',
@@ -152,8 +153,7 @@ export const mockDuplicateData = (force = {}): IDuplicateData => ({
         en: 'Gatineau Floods 2021',
         fr: 'Inondations Gatineau 2021',
       },
-  } }],
-  memberFullName: 'John Smith',
+    } }],
   homeAddress: {
     address: {
       country: 'USA',
@@ -170,18 +170,18 @@ export const mockDuplicateData = (force = {}): IDuplicateData => ({
     to: '2021-05-26T19:52:44.379Z',
     observation: 'observation',
   },
-  memberAlternatePhoneNumber: {
+  alternatePhoneNumber: {
     countryCode: 'CA',
     e164Number: '15145454548',
     extension: '1234',
     number: '(438) 888-8888',
   },
-  memberHomePhoneNumber: {
+  homePhoneNumber: {
     countryCode: 'CA',
     e164Number: '15145454548',
     number: '(514) 545-4548',
   },
-  memberMobilePhoneNumber: {
+  mobilePhoneNumber: {
     countryCode: 'CA',
     e164Number: '15145454548',
     number: '(866) 866-6666',

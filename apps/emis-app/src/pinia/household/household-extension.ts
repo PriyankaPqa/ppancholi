@@ -1,5 +1,5 @@
 import { BaseStoreComponents } from '@libs/stores-lib/base';
-import { IHouseholdEntity, IdParams } from '@libs/entities-lib/household';
+import { DuplicateReason, IHouseholdEntity, IdParams } from '@libs/entities-lib/household';
 import { IHouseholdsService, IHouseholdsServiceMock } from '@libs/services-lib/households/entity';
 import { ref } from 'vue';
 import { IAddress } from '@libs/entities-lib/value-objects/address';
@@ -24,6 +24,15 @@ export function getExtensionComponents(
     const res = await entityService.updateHomeAddress(householdId, false, address);
     if (res) {
       baseComponents.set(res);
+    }
+    return res;
+  }
+
+  async function flagNewDuplicate(request:
+    { id: uuid, duplicateHouseholdId: uuid, duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string }) {
+    const res = await entityService.flagNewDuplicate(request);
+    if (res?.length) {
+      res.forEach((i) => baseComponents.set(i));
     }
     return res;
   }
@@ -78,5 +87,6 @@ export function getExtensionComponents(
     updateNoFixedHomeAddress,
     updateHomeAddress,
     fetchHouseholdHistory,
+    flagNewDuplicate,
   };
 }

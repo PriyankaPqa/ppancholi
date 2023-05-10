@@ -47,6 +47,7 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   verifyOneTimeCodeRegistrationPublic: jest.fn(() => true),
   getPublicToken: jest.fn(() => 'some token'),
   getDuplicates: jest.fn(() => [mockDuplicateData()]),
+  flagNewDuplicate: jest.fn(() => [mockHouseholdEntity()]),
   publicGetHousehold: jest.fn(() => mockHouseholdEntity()),
   publicGetPerson: jest.fn(() => mockMemberData()),
 });

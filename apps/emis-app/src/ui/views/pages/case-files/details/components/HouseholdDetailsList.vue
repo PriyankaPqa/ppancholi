@@ -43,6 +43,7 @@
         <span v-if="onDuplicatePage"> {{ $t('caseFileDetail.addressLabel') }}: </span>
         <span v-if="addressFirstLine">{{ addressFirstLine }}</span>
         <span v-if="addressSecondLine">{{ addressSecondLine }}</span>
+        <span v-if="country">{{ country }}</span>
       </div>
     </div>
   </div>
@@ -74,6 +75,11 @@ export default Vue.extend({
     addressSecondLine: {
       type: String,
       required: true,
+    },
+
+    country: {
+      type: String,
+      default: '',
     },
 
     hasPhoneNumbers: {

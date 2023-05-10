@@ -17,7 +17,7 @@ import {
 } from '@libs/entities-lib/household-create';
 import {
   HouseholdStatus,
-  IDetailedRegistrationResponse, IdParams, IDuplicateData, IHouseholdEntity, IOustandingPaymentResponse,
+  IDetailedRegistrationResponse, IdParams, IDuplicateData, IHouseholdEntity, IOustandingPaymentResponse, DuplicateReason,
 } from '@libs/entities-lib/household';
 import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
@@ -35,11 +35,11 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IDetailedRegistrationResponse>;
   postCrcRegistration(payload: ICreateHouseholdRequest): Promise<IDetailedRegistrationResponse>
   updatePersonContactInformation(id: string,
-      publicMode: boolean,
-      payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet }): Promise<IMemberEntity> | false;
+    publicMode: boolean,
+    payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet }): Promise<IMemberEntity> | false;
   updatePersonIdentity(id: string,
-      publicMode: boolean,
-      payload: { contactInformation: IContactInformation; identitySet: IIdentitySet }): Promise<IMemberEntity> | false;
+    publicMode: boolean,
+    payload: { contactInformation: IContactInformation; identitySet: IIdentitySet }): Promise<IMemberEntity> | false;
   updatePersonAddress(id: string, publicMode: boolean, payload: ICurrentAddress): Promise<IMemberEntity> | false;
   updateHomeAddress(id: string, publicMode: boolean, payload: IAddress): Promise<IHouseholdEntity> | false;
   updateNoFixedHomeAddress(id: string, publicMode: boolean, observation?: string): Promise<IHouseholdEntity> | false;
@@ -57,6 +57,8 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   getMemberHistory(id: uuid): Promise<IVersionedEntity[]>;
   getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
   getDuplicates(id: uuid): Promise<IDuplicateData[]>;
+  flagNewDuplicate(request: { id: uuid, duplicateHouseholdId: uuid, duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string })
+  : Promise<IHouseholdEntity[]>
   setHouseholdStatus(householdId: string, status: HouseholdStatus, rationale: string): Promise<IHouseholdEntity>;
   checkForPossibleDuplicatePublic(eventId: uuid, member: IMember): Promise<ICheckForPossibleDuplicateResponse>;
   sendOneTimeCodeRegistrationPublic(payload: ISendOneTimeCodeRegistrationPublicPayload): Promise<void>;
@@ -100,6 +102,7 @@ export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHousehol
   verifyOneTimeCodeRegistrationPublic: jest.Mock<boolean>;
   getPublicToken: jest.Mock<string>;
   getDuplicates: jest.Mock<IDuplicateData[]>;
+  flagNewDuplicate: jest.Mock<IHouseholdEntity[]>;
   publicGetHousehold: jest.Mock<IHouseholdEntity>;
   publicGetPerson: jest.Mock<IMemberEntity>;
 }

@@ -37,5 +37,9 @@ export default Vue.extend({
       }
       return !!(this.primaryBeneficiary.mobilePhoneNumber || this.primaryBeneficiary.homePhoneNumber || this.primaryBeneficiary.alternatePhoneNumber);
     },
+
+    country(): string {
+      return householdHelpers.countryName(this.household?.address?.address?.country);
+    },
   },
 });

@@ -442,7 +442,8 @@ export default mixins(household).extend({
     },
 
     canManageDuplicates(): boolean {
-      return this.$hasLevel(UserRoles.level1);
+      const statusAllowsDuplicate = !this.$hasFeature(FeatureKeys.HouseholdProfileStatus) || this.householdEntity?.householdStatus !== HouseholdStatus.Archived;
+      return this.$hasLevel(UserRoles.level1) && statusAllowsDuplicate;
     },
 
     enableAutocomplete(): boolean {
@@ -555,7 +556,7 @@ export default mixins(household).extend({
       useRegistrationStore().fetchIndigenousCommunities(),
     ]);
     await this.fetchData();
-       this.attachToChanges(true);
+    this.attachToChanges(true);
   },
 
   destroyed() {
@@ -640,8 +641,8 @@ export default mixins(household).extend({
       } finally {
         this.showHouseholdStatusDialog = false;
       }
-       return null;
-     },
+      return null;
+    },
 
     attachToChanges(on: boolean) {
       if (this.$signalR.connection) {

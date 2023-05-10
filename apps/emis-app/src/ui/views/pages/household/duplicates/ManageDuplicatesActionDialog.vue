@@ -21,7 +21,8 @@
         </v-icon>
         <div class="d-flex align-center" data-test="householdDetails.manageDuplicates.actionDialog.flagAs">
           <span class="fw-bold mr-1">{{ $t('householdDetails.manageDuplicates.flagAs') }}:</span>
-          {{ capitalize($t(`householdDetails.manageDuplicates.enum.duplicateStatus.${newStatus}`)) }}
+          {{ newStatus === DuplicateStatus.Potential ? $t('householdDetails.manageDuplicates.potentialDuplicate')
+            : $t('householdDetails.manageDuplicates.resolvedDuplicate') }}
         </div>
       </v-sheet>
 
@@ -40,8 +41,6 @@
 <script lang='ts'>
 import Vue from 'vue';
 import { RcDialog, VTextAreaWithValidation } from '@libs/component-lib/components';
-import capitalize from 'lodash/capitalize';
-
 import { VForm } from '@libs/shared-lib/types';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { DuplicateStatus } from '@libs/entities-lib/household';
@@ -71,7 +70,6 @@ export default Vue.extend({
     return {
       rationale: null,
       DuplicateStatus,
-      capitalize,
     };
   },
 

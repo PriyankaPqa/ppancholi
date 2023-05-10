@@ -8,7 +8,7 @@
       :loading="loading"
       :items="duplicates">
       <template #[`item.primaryBeneficiaryFullName`]="{ item }">
-        <div class="d-flex flex-column my-4">
+        <div class="d-flex flex-column my-3">
           <router-link
             class="rc-link14 font-weight-bold"
             data-test="householdDetails-manageDuplicates-household-link"
@@ -26,44 +26,44 @@
             </span>
           </div>
 
-          <div v-if="showLine(item, DuplicateReason.FullName)" class="d-flex align-center mb-1">
+          <div v-if="showLine(item, DuplicateReason.FullName) && item.memberFirstName && item.memberLastName" class="d-flex align-center mb-1">
             <v-icon size="16" class="pr-2" color=" secondary ">
               mdi-account
             </v-icon>
             <span class="mr-1"> {{ $t('householdDetails.manageDuplicates.table.name') }}: </span>
-            <span data-test="householdDetails-duplicate-name"> {{ item.memberFullName }} </span>
+            <span data-test="householdDetails-duplicate-name"> {{ item.memberFirstName + " " + item.memberLastName }} </span>
           </div>
 
-          <div v-if="showLine(item, DuplicateReason.MemberHomePhoneNumber) && item.memberHomePhoneNumber" class="d-flex align-center mb-1">
+          <div v-if="showLine(item, DuplicateReason.HomePhoneNumber) && item.homePhoneNumber" class="d-flex align-center mb-1">
             <v-icon size="16" class="pr-2" color="secondary">
               mdi-phone
             </v-icon>
             <span class="mr-1"> {{ $t('household.profile.member.phone_numbers.home') }}: </span>
             <case-file-details-beneficiary-phone-number
               data-test="duplicate-home-phone-number"
-              :phone-number="item.memberHomePhoneNumber"
+              :phone-number="item.homePhoneNumber"
               :show-labels="false" />
           </div>
 
-          <div v-if="showLine(item, DuplicateReason.MemberMobilePhoneNumber) && item.memberMobilePhoneNumber" class="d-flex align-center mb-1">
+          <div v-if="showLine(item, DuplicateReason.MobilePhoneNumber) && item.mobilePhoneNumber" class="d-flex align-center mb-1">
             <v-icon size="16" class="pr-2" color=" secondary ">
               mdi-phone
             </v-icon>
             <span class="mr-1"> {{ $t('household.profile.member.phone_numbers.mobile') }}: </span>
             <case-file-details-beneficiary-phone-number
               data-test="duplicate-mobile-phone-number"
-              :phone-number="item.memberMobilePhoneNumber"
+              :phone-number="item.mobilePhoneNumber"
               :show-labels="false" />
           </div>
 
-          <div v-if="showLine(item, DuplicateReason.MemberAlternatePhoneNumber) && item.memberAlternatePhoneNumber" class="d-flex align-start mb-1">
+          <div v-if="showLine(item, DuplicateReason.AlternatePhoneNumber) && item.alternatePhoneNumber" class="d-flex align-start mb-1">
             <v-icon size="16" class="d-flex align-start pr-2" color=" secondary ">
               mdi-phone
             </v-icon>
             <span class="mr-1"> {{ $t('household.profile.member.phone_numbers.alternate') }}: </span>
             <case-file-details-beneficiary-phone-number
               data-test="duplicate-alternate-phone-number"
-              :phone-number="item.memberAlternatePhoneNumber"
+              :phone-number="item.alternatePhoneNumber"
               :show-labels="false" />
           </div>
 
@@ -89,7 +89,7 @@
             </span>
             <div class="px-1" data-test="householdDetails-duplicate-history-user">
               {{ $t('common.by') }}: {{ historyItem.userInformation.userName }} ({{ $m(historyItem.userInformation.roleName) }})
-              - {{ moment(historyItem.dateOfAction).local().format('lll') }}
+              - {{ moment(historyItem.dateOfAction).local().format('ll') }}
             </div>
             <div v-if="historyItem.rationale" class="px-1" data-test="householdDetails-duplicate-history-rationale">
               {{ historyItem.duplicateStatus === DuplicateStatus.Potential
@@ -113,7 +113,7 @@
               <template #selection>
                 <div class="d-flex flex-nowrap justify-center">
                   <v-icon
-                    class="mr-2"
+                    class="mr-1"
                     :color="isPotentialTable ? 'secondary' : 'green'">
                     {{ isPotentialTable ? '$rctech-duplicate' : '$rctech-resolved' }}
                   </v-icon>
@@ -128,7 +128,7 @@
                 <div class="d-flex flex-nowrap justify-center">
                   <v-icon
                     class="mr-2"
-                    :data-test="`householdDetails-manageDuplicates-action-menu-${item}`"
+                    :data-test="`householdDetails-manageDuplicates-action-menu-${item.id}`"
                     :color="item.value === DuplicateStatus.Potential ? 'secondary' : 'green'">
                     {{ item.value === DuplicateStatus.Potential ? '$rctech-duplicate' : '$rctech-resolved' }}
                   </v-icon>
@@ -199,21 +199,23 @@ export default Vue.extend({
     headers(): Array<DataTableHeader> {
       return [
         {
-          text: this.$t('householdDetails.manageDuplicates.table.households') as string,
+          text: this.$t('householdDetails.manageDuplicates.table.household') as string,
           value: 'primaryBeneficiaryFullName',
           sortable: true,
+          cellClass: 'vertical-align',
           width: '50%',
         },
         {
           text: this.$t('householdDetails.manageDuplicates.table.flaggedAs') as string,
           value: 'flaggedAs',
           sortable: false,
-          cellClass: 'flagged-as',
+          cellClass: 'vertical-align',
           width: '35%',
         },
         {
           text: this.$t('householdDetails.manageDuplicates.table.action') as string,
           value: 'action',
+          cellClass: 'vertical-align',
           sortable: false,
         },
       ];
@@ -277,7 +279,7 @@ export default Vue.extend({
 
 <style lang="scss">
 
-.flagged-as {
+.vertical-align {
   vertical-align: top;
 }
 </style>
@@ -298,7 +300,7 @@ export default Vue.extend({
 }
 
 ::v-deep .v-input {
-  padding-top: 4px;
+  padding-top: 2px;
 }
 
 .no-wrap {

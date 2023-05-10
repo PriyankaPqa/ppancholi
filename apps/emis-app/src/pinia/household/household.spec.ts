@@ -82,6 +82,28 @@ describe('>>> Household Store', () => {
     });
   });
 
+  describe('flagNewDuplicate', () => {
+    it('should call flagNewDuplicate service and set the result in the store', async () => {
+      const id = '0';
+      const duplicateHouseholdId = '1';
+      const duplicateReasons = [1];
+      const memberFirstName = 'John';
+      const memberLastName = 'Smith';
+      const rationale = 'rationale';
+      const bComponents = {
+        ...baseComponents,
+        set: jest.fn(),
+      };
+
+      const request = { id, duplicateHouseholdId, duplicateReasons, memberFirstName, memberLastName, rationale };
+      const store = createTestStore(bComponents);
+      await store.flagNewDuplicate(request);
+
+      expect(entityService.flagNewDuplicate).toBeCalledWith(request);
+      expect(bComponents.set).toBeCalledWith(mockHouseholdEntity());
+    });
+  });
+
   describe('fetchHouseholdHistory', () => {
     it('calls the fetchHistory service for the household and the members and calls mapResponses and combineEntities with the results', async () => {
       const household = mockHouseholdEntity();

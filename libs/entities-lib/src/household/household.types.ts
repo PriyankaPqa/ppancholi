@@ -14,8 +14,8 @@ export enum HouseholdStatus {
 export enum DuplicateReason {
   FullName = 1,
   HomeAddress = 2,
-  MemberHomePhoneNumber = 3,
-  MemberMobilePhoneNumber = 4,
+  HomePhoneNumber = 3,
+  MobilePhoneNumber = 4,
   AlternatePhoneNumber = 5,
 }
 
@@ -44,7 +44,8 @@ export interface IHouseholdDuplicate extends IEntity {
   duplicateReasons: DuplicateReason[];
   duplicateStatus: DuplicateStatus;
   duplicateStatusHistory: IHouseholdDuplicateStatusHistory[];
-  memberId?: uuid;
+  memberFirstName?: string;
+  memberLastName?: string;
 }
 
 export interface IDuplicateCaseFileData {
@@ -60,11 +61,10 @@ export interface IDuplicateData {
   registrationNumber: string;
   caseFiles: IDuplicateCaseFileData[];
   primaryBeneficiaryFullName: string;
-  memberFullName?: string;
   homeAddress?: IHouseholdAddress;
-  memberHomePhoneNumber?: IPhoneNumber;
-  memberMobilePhoneNumber?: IPhoneNumber;
-  memberAlternatePhoneNumber?: IPhoneNumber;
+  homePhoneNumber?: IPhoneNumber;
+  mobilePhoneNumber?: IPhoneNumber;
+  alternatePhoneNumber?: IPhoneNumber;
 }
 
 export interface IHouseholdDuplicateFullData extends IHouseholdDuplicate, IDuplicateData {

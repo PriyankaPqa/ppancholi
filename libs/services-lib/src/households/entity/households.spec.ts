@@ -19,7 +19,7 @@ import {
   mockMemberCreateRequest,
   mockSplitHouseholdRequest,
 } from '@libs/entities-lib/household-create';
-import { HouseholdStatus } from '@libs/entities-lib/household';
+import { HouseholdStatus, DuplicateReason } from '@libs/entities-lib/household';
 import { mockHttp } from '../../http-client';
 import { HouseholdsService } from './households';
 
@@ -65,10 +65,10 @@ describe('>>> Beneficiaries Service', () => {
     });
 
     expect(http.post).toHaveBeenCalledWith(
-`${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`,
+      `${http.baseUrl}/${ORCHESTRATION_CONTROLLER}/public`,
       { ...createBeneficiaryRequest },
       { globalHandler: false },
-);
+    );
   });
 
   test('postPublicRegistration is linked to the correct URL', async () => {
@@ -297,6 +297,19 @@ describe('>>> Beneficiaries Service', () => {
       const id = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
       await service.getDuplicates(id);
       expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}/duplicates`);
+    });
+  });
+
+  describe('flagNewDuplicate', () => {
+    it('is linked to the correct URL and params', async () => {
+      const duplicateHouseholdId = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+      const id = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c4';
+      const duplicateReasons = [DuplicateReason.HomePhoneNumber];
+      const rationale = 'rationale';
+      const memberFirstName = 'John';
+      const memberLastName = 'Smith';
+      await service.flagNewDuplicate({ duplicateHouseholdId, id, duplicateReasons, rationale, memberFirstName, memberLastName });
+      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/duplicates/`, { duplicateHouseholdId, duplicateReasons, rationale, memberFirstName, memberLastName });
     });
   });
 

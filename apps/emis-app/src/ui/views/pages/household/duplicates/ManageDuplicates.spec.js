@@ -2,11 +2,13 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockHouseholdDuplicate, mockHouseholdEntity, mockHouseholdMetadata, DuplicateStatus, mockHouseholdMemberMetadata,
   mockHouseholdDuplicateFullData, mockDuplicateData,
 } from '@libs/entities-lib/household';
+import helpers from '@/ui/helpers/helpers';
 import { mockProvider } from '@/services/provider';
 import Component, { SelectedTab } from './ManageDuplicates.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
+
 const duplicates = [
   mockHouseholdDuplicateFullData({ id: '1', duplicateStatus: DuplicateStatus.Potential }),
   mockHouseholdDuplicateFullData({ id: '2', duplicateStatus: DuplicateStatus.Resolved }),
@@ -26,7 +28,7 @@ describe('ManageDuplicates.vue', () => {
       propsData,
       data() {
         return {
-          duplicates,
+          duplicateData: [mockDuplicateData({ potentialDuplicateId: '1' })],
         };
       },
       mocks: {
@@ -45,15 +47,22 @@ describe('ManageDuplicates.vue', () => {
 
   describe('Computed', () => {
     describe('potentialDuplicates', () => {
-      it('returns the right value', () => {
-        doMount();
+      it('returns the right value', async () => {
+        await doMount(true, { computed: {
+          duplicates() {
+            return duplicates;
+          },
+        } });
+
         expect(wrapper.vm.potentialDuplicates).toEqual([mockHouseholdDuplicateFullData({ id: '1', duplicateStatus: DuplicateStatus.Potential })]);
       });
     });
 
     describe('resolvedDuplicates', () => {
       it('returns the right value', () => {
-        doMount();
+        doMount(true, { computed: { duplicates() {
+          return duplicates;
+        } } });
         expect(wrapper.vm.resolvedDuplicates).toEqual([mockHouseholdDuplicateFullData({ id: '2', duplicateStatus: DuplicateStatus.Resolved })]);
       });
     });
@@ -75,6 +84,32 @@ describe('ManageDuplicates.vue', () => {
         ]);
       });
     });
+
+    describe('subtitle', () => {
+      it('returns the right text depending on tab', async () => {
+        doMount(true, {
+          computed: { primaryBeneficiaryFullName() {
+            return 'John Smith';
+          } },
+        });
+        await wrapper.setData({ selectedTab: SelectedTab.Potential });
+        expect(wrapper.vm.subtitle).toEqual({ key: 'householdDetails.manageDuplicates.potentialDuplicates.subtitle', params: [{ name: 'John Smith' }] });
+        await wrapper.setData({ selectedTab: SelectedTab.Resolved });
+        expect(wrapper.vm.subtitle).toEqual('householdDetails.manageDuplicates.resolvedDuplicates');
+        await wrapper.setData({ selectedTab: SelectedTab.FlagNew });
+        expect(wrapper.vm.subtitle).toEqual({ key: 'householdDetails.manageDuplicates.flagNew.subtitle', params: [{ name: 'John Smith' }] });
+      });
+    });
+
+    describe('duplicates', () => {
+      it('calls mapDuplicates and returns the result', async () => {
+        await doMount();
+        wrapper.vm.mapDuplicates = jest.fn(() => duplicates);
+        await wrapper.setData({ duplicateData: [mockDuplicateData({ id: '1' })] });
+        expect(wrapper.vm.mapDuplicates).toHaveBeenCalledWith([mockDuplicateData({ id: '1' })], [mockHouseholdDuplicate()]);
+        expect(wrapper.vm.duplicates).toEqual(duplicates);
+      });
+    });
   });
 
   describe('Lifecycle', () => {
@@ -91,19 +126,11 @@ describe('ManageDuplicates.vue', () => {
 
   describe('Methods', () => {
     describe('fetchDuplicates', () => {
-      it('calls the service', async () => {
+      it('calls the service and saves the result in duplicateData', async () => {
         await doMount();
-        wrapper.vm.mapDuplicates = jest.fn(() => duplicates);
         await wrapper.vm.fetchDuplicates();
         expect(wrapper.vm.$services.households.getDuplicates).toHaveBeenCalledWith(wrapper.vm.household.id);
-      });
-
-      it('calls mapDuplicates and saves the result into duplicates variable', async () => {
-        doMount();
-        wrapper.vm.mapDuplicates = jest.fn(() => duplicates);
-        await wrapper.vm.fetchDuplicates();
-        expect(wrapper.vm.mapDuplicates).toBeCalledWith([mockDuplicateData()], [mockHouseholdDuplicate()]);
-        expect(wrapper.vm.duplicates).toEqual(duplicates);
+        expect(wrapper.vm.duplicateData).toEqual([mockDuplicateData()]);
       });
     });
 
@@ -127,6 +154,59 @@ describe('ManageDuplicates.vue', () => {
         await doMount();
         const label = await wrapper.vm.getTabLabel(SelectedTab.FlagNew);
         expect(label).toEqual('householdDetails.manageDuplicates.tab.FlagNew');
+      });
+    });
+
+    describe('allowLeave', () => {
+      it('calls exit if the tab is not flagNew', async () => {
+        doMount();
+        wrapper.vm.exit = jest.fn();
+        await wrapper.setData({ selectedTab: SelectedTab.Potential });
+        await wrapper.vm.allowLeave(false);
+        expect(wrapper.vm.exit).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls the helper confirmBeforeLeaving if the tab is flagNew', async () => {
+        doMount();
+        wrapper.vm.exit = jest.fn();
+        helpers.confirmBeforeLeaving = jest.fn();
+        await wrapper.setData({ selectedTab: SelectedTab.FlagNew });
+        await wrapper.vm.allowLeave(false);
+        expect(helpers.confirmBeforeLeaving).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls the helper confirmBeforeLeaving if the tab is flagNew and exit if confirmBeforeLeaving returns true', async () => {
+        doMount();
+        wrapper.vm.exit = jest.fn();
+        helpers.confirmBeforeLeaving = jest.fn(() => true);
+        await wrapper.setData({ selectedTab: SelectedTab.FlagNew });
+        await wrapper.vm.allowLeave(false);
+        expect(helpers.confirmBeforeLeaving).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.exit).toHaveBeenCalledTimes(1);
+      });
+      it('calls the helper confirmBeforeLeaving if the tab is flagNew and does not call exit if confirmBeforeLeaving returns false', async () => {
+        doMount();
+        wrapper.vm.exit = jest.fn();
+        helpers.confirmBeforeLeaving = jest.fn(() => false);
+        await wrapper.setData({ selectedTab: SelectedTab.FlagNew });
+        await wrapper.vm.allowLeave(false);
+        expect(helpers.confirmBeforeLeaving).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.exit).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('exit', () => {
+      it('calls emit when parameter changeTab is false', async () => {
+        doMount();
+        await wrapper.vm.exit(false);
+        expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
+      });
+
+      it('sets the tab to the new one when parameter changeTab is true', async () => {
+        doMount();
+        await wrapper.setData({ selectedTab: SelectedTab.FlagNew });
+        await wrapper.vm.exit(true, SelectedTab.Potential);
+        expect(wrapper.vm.selectedTab).toEqual(SelectedTab.Potential);
       });
     });
 
