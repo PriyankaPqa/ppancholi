@@ -33,8 +33,15 @@ const Confirm = {
 }
 
 const userConfig = getScriptConfig();
+const azureAPIConfig = {
+  organization: 'CRC-Tech',
+  project: 'EMIS',
+  repositoryId: 'e8522925-9819-4359-b0e9-90e9193a1c69', // terraform
+  personalAccessToken: userConfig.personalAccessToken,
+}
 const terraformFolderPath = userConfig.terraformFolderPath;
 const file = `${terraformFolderPath}/src/environments/dev/variables.tfvars`;
+
 
 const mode = prompt(`What do you want to do? (preview: ${Mode.preview}, edit:${Mode.edit})`).toString();
 
@@ -68,7 +75,6 @@ if (mode === Mode.edit) {
   }
 }
 
-const branchName = generateFeatureBranchName(emisToAdd, emisToRemove, benefToAdd, benefToRemove)
 
 function generatePRDescription(emisToAdd, emisToRemove, benefToAdd, benefToRemove) {
   const emisText = (emisToAdd.length > 0 || emisToRemove.length > 0) ? `EMIS: ${emisToAdd.length > 0 ? 'add ' + emisToAdd : ''} ${emisToRemove.length > 0 ? 'remove ' + emisToRemove : ''}` : '';
@@ -98,16 +104,6 @@ function generateFeatureBranchName(emisToAdd, emisToRemove, benefToAdd, benefToR
   return branchName.toLowerCase();
 }
 
-
-const pullRequestConfig = {
-  organization: 'CRC-Tech',
-  project: 'EMIS',
-  repositoryId: 'e8522925-9819-4359-b0e9-90e9193a1c69', // terraform
-  branchName,
-  title: `[auto-fb] - Edit feature branches`,
-  description: generatePRDescription(emisToAdd, emisToRemove, benefToAdd, benefToRemove),
-  personalAccessToken: userConfig.personalAccessToken,
-};
 
 function getScriptConfig(configPath = 'tools/scripts/config.json') {
   const jsonData = fs.readFileSync(configPath);
@@ -191,22 +187,26 @@ function updateFile(mode, emis, benef) {
   console.log(`File ${file} successfully updated.`);
 }
 
-async function createPullRequest(config) {
-  const repoUrl = `https://dev.azure.com/${config.organization}/${config.project}/_apis/git/repositories/${config.repositoryId}/pullrequests?api-version=7.0`;
+function getRepoUrl(azureConfig) {
+  return `https://dev.azure.com/${azureConfig.organization}/${azureConfig.project}/_apis/git/repositories/${azureConfig.repositoryId}`;
+}
+
+async function createPullRequest(azureConfig, branchName, title, description) {
+  const url = `${getRepoUrl(azureConfig)}/pullrequests?api-version=7.0`
   // Set up the request data
   const data = {
-    sourceRefName: `refs/heads/${config.branchName}`,
+    sourceRefName: `refs/heads/${branchName}`,
     targetRefName: 'refs/heads/master',
-    title: config.title,
-    description: config.description,
+    title,
+    description,
   };
 
   try {
     // Make the request
-    const response = await axios.post(repoUrl, data, {
+    const response = await axios.post(url, data, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Basic ${Buffer.from(`:${config.personalAccessToken}`).toString('base64')}`,
+        Authorization: `Basic ${Buffer.from(`:${azureConfig.personalAccessToken}`).toString('base64')}`,
       },
     });
 
@@ -217,13 +217,35 @@ async function createPullRequest(config) {
       if (!pullRequestId) {
         console.error(`Error creating pull request, please check if your PAT is still valid. In the meantime you can complete the process by creating the PR manually https://dev.azure.com/${config.organization}/${config.project}/_git/terraform/pullrequest/`);
       } else {
-        console.log(`Pull request created: https://dev.azure.com/${config.organization}/${config.project}/_git/terraform/pullrequest/${pullRequestId}`);
+        console.log(`Pull request created: https://dev.azure.com/${azureConfig.organization}/${azureConfig.project}/_git/terraform/pullrequest/${pullRequestId}`);
+        return jsonResponse;
       }
     } else {
       console.error(`Error creating pull request: ${response.status} ${response.statusText}`);
     }
   } catch (error) {
     console.error(`Error creating pull request: ${error.message}`);
+  }
+}
+
+async function updatePullRequest(azureConfig, pullRequestID, data) {
+  const url = `${getRepoUrl(azureConfig)}/pullrequests/${pullRequestID}?api-version=7.0`
+  try {
+    const response = await axios.patch(url, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Basic ${Buffer.from(`:${azureConfig.personalAccessToken}`).toString('base64')}`,
+      },
+    });
+
+    if (response.status >= 200 && response.status < 300) {
+      console.log(`Pull request updated`);
+    } else {
+      console.error(`Error updating pull request: ${response.status} ${response.statusText}`);
+    }
+  }
+  catch (error) {
+    console.error(`Error updating pull request: ${error.message}`);
   }
 }
 function main() {
@@ -242,6 +264,8 @@ function main() {
       if (err) {
         throw err;
       }
+
+      const branchName = generateFeatureBranchName(emisToAdd, emisToRemove, benefToAdd, benefToRemove)
 
       // Create new branch based on master
       git.checkoutBranch(branchName, 'master', (err) => {
@@ -271,8 +295,19 @@ function main() {
               if (err) {
                 throw err;
               }
-
-              createPullRequest(pullRequestConfig);
+              const description = generatePRDescription(emisToAdd, emisToRemove, benefToAdd, benefToRemove);
+              createPullRequest(azureAPIConfig, branchName, `[auto-fb] - Edit feature branches`,  description).then((jsonResponse) => {
+                const pullRequestId = jsonResponse.pullRequestId;
+                const createById = jsonResponse.createdBy.id;
+                  updatePullRequest(azureAPIConfig, pullRequestId, {
+                    autoCompleteSetBy: {id: createById},
+                    completionOptions: {
+                      mergeCommitMessage: 'auto pr feature branch',
+                      mergeStrategy: 'squash',
+                      deleteSourceBranch: true,
+                    }
+                  })
+                })
             });
           });
       });
