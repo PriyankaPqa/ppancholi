@@ -184,6 +184,8 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
       scheduledOpenDate: event.schedule.scheduledOpenDate ? new Date(event.schedule.scheduledOpenDate).toISOString() : null,
       // scheduledOpenDate: null,
       status: event.schedule.status,
+      authenticationTier1disabled: event.authenticationTier1disabled,
+      authenticationTier2disabled: event.authenticationTier2disabled,
     };
     return payload;
   }

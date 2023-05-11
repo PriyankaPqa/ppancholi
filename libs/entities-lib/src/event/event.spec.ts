@@ -108,6 +108,12 @@ describe('>>> EventEntity', () => {
       expect(event.eventStatus).toEqual(mockEvent.eventStatus);
     });
 
+    it('should instantiate authenticationTier1disabled and authenticationTier2disabled', () => {
+      const event = new EventEntity({ ...mockEvent, authenticationTier1disabled: false, authenticationTier2disabled: true });
+      expect(event.authenticationTier1disabled).toBeFalsy();
+      expect(event.authenticationTier2disabled).toBeTruthy();
+    });
+
     it('should instantiate location', () => {
       const event = new EventEntity(mockEvent);
       expect(event.location).toEqual(mockEvent.location);

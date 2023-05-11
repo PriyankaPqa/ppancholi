@@ -185,6 +185,8 @@ export interface ICreateEventRequest {
   scheduledOpenDate: Date | string;
   status: EEventStatus;
   consentStatementId?: uuid;
+  authenticationTier1disabled?: boolean;
+  authenticationTier2disabled?: boolean;
 }
 
 export interface IEditEventRequest extends ICreateEventRequest {
@@ -217,6 +219,8 @@ export interface IEventEntity extends IEntity {
    assessmentsForL0usersEnabled: boolean;
    registrationsForL0usersEnabled: boolean;
    consentStatementId?: uuid;
+   authenticationTier1disabled?: boolean;
+   authenticationTier2disabled?: boolean;
 
    validate(): Array<string> | boolean;
    fillEmptyMultilingualAttributes(): void;

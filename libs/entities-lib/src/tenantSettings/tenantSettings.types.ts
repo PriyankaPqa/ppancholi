@@ -18,6 +18,7 @@ export enum FeatureKeys {
   CustomConsent = 'CustomConsent',
   ReplaceBeneficiaryTerm = 'replaceBeneficiaryTerm',
   BlockFACaseFileIrregularTag = 'BlockFACaseFileIrregularTag',
+  AuthenticationPhaseII = 'AuthenticationPhaseII',
   UseIdentityServer = 'UseIdentityServer',
 }
 

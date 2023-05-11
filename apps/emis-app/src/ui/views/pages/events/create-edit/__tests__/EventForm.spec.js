@@ -22,6 +22,7 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import { mockProvider } from '@/services/provider';
 import { EEventSummarySections } from '@/types';
@@ -41,11 +42,13 @@ const pinia = createTestingPinia({
 });
 
 const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
+const featuresOn = [];
 
 describe('EventForm.vue', () => {
   let wrapper;
   afterEach(() => {
     jest.clearAllMocks();
+    featuresOn.length = 0;
   });
 
   describe('Mounted', () => {
@@ -313,6 +316,50 @@ describe('EventForm.vue', () => {
         wrapper.vm.event.consentStatementId = 'id-1';
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.consentStatement).toEqual('consent statement name-1 en');
+      });
+    });
+
+    describe('tier1Enabled', () => {
+      it('returns opposite of authenticationTier1disabled', async () => {
+        wrapper.vm.localEvent.authenticationTier1disabled = false;
+        expect(wrapper.vm.tier1Enabled).toBeTruthy();
+
+        wrapper.vm.localEvent.authenticationTier1disabled = true;
+        expect(wrapper.vm.tier1Enabled).toBeFalsy();
+
+        wrapper.vm.localEvent.authenticationTier1disabled = null;
+        expect(wrapper.vm.tier1Enabled).toBeTruthy();
+      });
+
+      it('set authenticationTier1disabled to opposite', () => {
+        wrapper.vm.localEvent.authenticationTier1disabled = true;
+        wrapper.vm.tier1Enabled = true;
+        expect(wrapper.vm.localEvent.authenticationTier1disabled).toBeFalsy();
+
+        wrapper.vm.tier1Enabled = false;
+        expect(wrapper.vm.localEvent.authenticationTier1disabled).toBeTruthy();
+      });
+    });
+
+    describe('tier2Enabled', () => {
+      it('returns opposite of authenticationTier2disabled', async () => {
+        wrapper.vm.localEvent.authenticationTier2disabled = false;
+        expect(wrapper.vm.tier2Enabled).toBeTruthy();
+
+        wrapper.vm.localEvent.authenticationTier2disabled = true;
+        expect(wrapper.vm.tier2Enabled).toBeFalsy();
+
+        wrapper.vm.localEvent.authenticationTier2disabled = null;
+        expect(wrapper.vm.tier2Enabled).toBeTruthy();
+      });
+
+      it('set authenticationTier2disabled to opposite', () => {
+        wrapper.vm.localEvent.authenticationTier2disabled = true;
+        wrapper.vm.tier2Enabled = true;
+        expect(wrapper.vm.localEvent.authenticationTier2disabled).toBeFalsy();
+
+        wrapper.vm.tier2Enabled = false;
+        expect(wrapper.vm.localEvent.authenticationTier2disabled).toBeTruthy();
       });
     });
 
@@ -845,8 +892,19 @@ describe('EventForm.vue', () => {
         },
         mocks: {
           $services: services,
+          $hasFeature: (f) => featuresOn.indexOf(f) > -1,
         },
       });
+    });
+
+    it('event tier section shows up depending on flag', async () => {
+      let section = wrapper.findDataTest('event-tier-section');
+      expect(section.exists()).toBe(false);
+      featuresOn.push(FeatureKeys.AuthenticationPhaseII);
+      // force refresh
+      await wrapper.setData({ languageMode: 'fr' });
+      section = wrapper.findDataTest('event-tier-section');
+      expect(section.exists()).toBe(true);
     });
 
     describe('Event handlers', () => {

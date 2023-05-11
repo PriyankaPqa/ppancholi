@@ -29,8 +29,11 @@ describe('>>> Events Service', () => {
 
   test('createEvent converts the event entity to the correct payload', async () => {
     const relatedEvent = new EventEntity(mockEventEntities()[1]);
+    const event = new EventEntity(mockEventEntities()[0]);
+    event.authenticationTier1disabled = false;
+    event.authenticationTier2disabled = true;
 
-    await service.createEvent(new EventEntity(mockEventEntities()[0]));
+    await service.createEvent(event);
     expect(http.post).toHaveBeenCalledWith(service.baseUrl, {
       assistanceNumber: '+15144544545',
       dateReported: '2021-01-01T00:00:00.000Z',
@@ -68,6 +71,8 @@ describe('>>> Events Service', () => {
       scheduledCloseDate: '2021-05-15T15:00:00.000Z',
       scheduledOpenDate: '2021-03-01T00:00:00.000Z',
       status: EEventStatus.OnHold,
+      authenticationTier1disabled: false,
+      authenticationTier2disabled: true,
     }, { globalHandler: false });
   });
 
@@ -79,6 +84,8 @@ describe('>>> Events Service', () => {
 
   test('updateEvent converts the event entity to the correct payload', async () => {
     const event = new EventEntity(mockEventEntities()[0]);
+    event.authenticationTier1disabled = false;
+    event.authenticationTier2disabled = true;
     const relatedEvent = new EventEntity(mockEventEntities()[1]);
 
     await service.updateEvent(event);
@@ -124,6 +131,8 @@ describe('>>> Events Service', () => {
       selfRegistrationEnabled: false,
       assessmentsForL0usersEnabled: false,
       registrationsForL0usersEnabled: false,
+      authenticationTier1disabled: false,
+      authenticationTier2disabled: true,
     }, { globalHandler: false });
   });
 

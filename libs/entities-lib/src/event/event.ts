@@ -59,6 +59,10 @@ export class EventEntity extends BaseEntity {
 
   consentStatementId?: uuid;
 
+  authenticationTier1disabled?: boolean;
+
+  authenticationTier2disabled?: boolean;
+
   constructor(data?: IEventEntity) {
     if (data) {
       super(data);
@@ -96,6 +100,8 @@ export class EventEntity extends BaseEntity {
       this.selfRegistrationEnabled = data.selfRegistrationEnabled;
       this.assessmentsForL0usersEnabled = data.assessmentsForL0usersEnabled;
       this.registrationsForL0usersEnabled = data.registrationsForL0usersEnabled;
+      this.authenticationTier1disabled = data.authenticationTier1disabled;
+      this.authenticationTier2disabled = data.authenticationTier2disabled;
       this.eventStatus = data.eventStatus;
       this.tenantId = data.tenantId;
       this.registrationLocations = _cloneDeep(data.registrationLocations) || [];
@@ -167,6 +173,8 @@ export class EventEntity extends BaseEntity {
     this.registrationLocations = [];
     this.registrationAssessments = [];
     this.shelterLocations = [];
+    this.authenticationTier1disabled = false;
+    this.authenticationTier2disabled = false;
   }
 
   private validateAttributes(errors: Array<string>) {
