@@ -9,7 +9,7 @@
     <template v-if="!loading" slot="top">
       <case-file-tags
         data-test="caseFileActivity-tags"
-        :readonly="!canEdit"
+        :readonly="!canEditTags"
         :case-file-id="caseFile.id"
         :tags="tags" />
 
@@ -180,6 +180,10 @@ export default mixins(caseFileDetail).extend({
   computed: {
     canEdit(): boolean {
       return this.$hasLevel(UserRoles.level1) && !this.readonly;
+    },
+
+    canEditTags(): boolean {
+      return this.$hasFeature(FeatureKeys.LimitTagDeletionL2Plus_5959) ? (this.$hasLevel(UserRoles.level2) && !this.readonly) : this.canEdit;
     },
 
     canEditLabels(): boolean {

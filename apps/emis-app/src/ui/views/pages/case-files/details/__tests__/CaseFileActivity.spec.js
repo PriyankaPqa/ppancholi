@@ -1,10 +1,11 @@
+/* eslint-disable max-params */
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
-import { UserRoles } from '@libs/entities-lib/user';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
@@ -19,7 +20,7 @@ const { pinia, caseFileStore } = useMockCaseFileStore();
 describe('CaseFileActivity', () => {
   let wrapper;
 
-  const mountWrapper = async (canEdit) => {
+  const mountWrapperOverwriteComputed = async (canEdit) => {
     wrapper = shallowMount(Component, {
       localVue,
       pinia,
@@ -31,6 +32,9 @@ describe('CaseFileActivity', () => {
       propsData: { id: mockCaseFile.id },
       computed: {
         canEdit() {
+          return canEdit;
+        },
+        canEditTags() {
           return canEdit;
         },
         caseFile() {
@@ -48,10 +52,35 @@ describe('CaseFileActivity', () => {
     await flushPromises();
   };
 
+  const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', readonly = false, mocks = {}) => {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
+      localVue,
+      pinia,
+      propsData: { id: mockCaseFile.id },
+      computed: {
+        caseFile() {
+          return mockCaseFile;
+        },
+        event() {
+          return mockEvent;
+        },
+        readonly() {
+          return readonly;
+        },
+      },
+      mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}` && level != null,
+        $hasRole: (r) => r === hasRole,
+        ...mocks,
+      },
+    });
+    await flushPromises();
+  };
+
   describe('Template', () => {
     beforeEach(async () => {
       jest.clearAllMocks();
-      await mountWrapper(true);
+      await mountWrapperOverwriteComputed(true);
     });
 
     describe('tags component', () => {
@@ -68,10 +97,10 @@ describe('CaseFileActivity', () => {
       });
 
       it('passes readonly as props', async () => {
-        await mountWrapper(false);
+        await mountWrapperOverwriteComputed(false);
         element = wrapper.findDataTest('caseFileActivity-tags');
         expect(element.props('readonly')).toBeTruthy();
-        await mountWrapper(true);
+        await mountWrapperOverwriteComputed(true);
         element = wrapper.findDataTest('caseFileActivity-tags');
         expect(element.props('readonly')).toBeFalsy();
       });
@@ -88,10 +117,10 @@ describe('CaseFileActivity', () => {
       });
 
       it('passes readonly as props', async () => {
-        await mountWrapper(false);
+        await mountWrapperOverwriteComputed(false);
         let element = wrapper.findDataTest('caseFileActivity-triage-select');
         expect(element.props('readonly')).toBeTruthy();
-        await mountWrapper(true);
+        await mountWrapperOverwriteComputed(true);
         element = wrapper.findDataTest('caseFileActivity-triage-select');
         expect(element.props('readonly')).toBeFalsy();
       });
@@ -247,182 +276,52 @@ describe('CaseFileActivity', () => {
 
     describe('canEdit', () => {
       it('returns the true for level 1+ users if not readonly', async () => {
-        mockCaseFile.readonly = false;
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: { id: mockCaseFile.id },
-          computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
-          },
-          mocks: {
-
-            $hasLevel: () => false,
-            $hasRole: (r) => r === UserRoles.contributor3,
-          },
-        });
+        await mountWrapper(false, 0);
         expect(wrapper.vm.canEdit).toBe(false);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: { id: mockCaseFile.id },
-          computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
-          },
-          mocks: {
-
-            $hasLevel: () => true,
-          },
-        });
+        await mountWrapper(false, 1);
         expect(wrapper.vm.canEdit).toBe(true);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: { id: mockCaseFile.id },
-          computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
-            readonly() {
-              return true;
-            },
-          },
-          mocks: {
-
-            $hasLevel: () => true,
-          },
-        });
+        await mountWrapper(false, 1, null, true);
         expect(wrapper.vm.canEdit).toBe(false);
       });
     });
 
-    describe('canEditLabels', () => {
-      it('returns the true for level 0+ users if not readonly and feature flag L0Access is on', async () => {
-        mockCaseFile.readonly = false;
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: { id: mockCaseFile.id },
-          computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
-          },
-          mocks: {
-
-            $hasLevel: () => false,
-            $hasRole: (r) => r === UserRoles.contributor3,
-          },
-        });
-        expect(wrapper.vm.canEdit).toBe(false);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: { id: mockCaseFile.id },
-          computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
-          },
-          mocks: {
-
-            $hasLevel: () => true,
-            $hasFeature: () => true,
-          },
-        });
-        expect(wrapper.vm.canEdit).toBe(true);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: { id: mockCaseFile.id },
-          computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
-            readonly() {
-              return true;
-            },
-          },
-          mocks: {
-
-            $hasLevel: () => true,
-            $hasFeature: () => true,
-          },
-        });
-        expect(wrapper.vm.canEdit).toBe(false);
+    describe('canEditTags', () => {
+      it('returns the true for level 2+ users if not readonly FF on', async () => {
+        await mountWrapper(false, 0, null, false, { $hasFeature: (f) => f === FeatureKeys.LimitTagDeletionL2Plus_5959 });
+        expect(wrapper.vm.canEditTags).toBe(false);
+        await mountWrapper(false, 1, null, false, { $hasFeature: (f) => f === FeatureKeys.LimitTagDeletionL2Plus_5959 });
+        expect(wrapper.vm.canEditTags).toBe(false);
+        await mountWrapper(false, 2, null, false, { $hasFeature: (f) => f === FeatureKeys.LimitTagDeletionL2Plus_5959 });
+        expect(wrapper.vm.canEditTags).toBe(true);
+        await mountWrapper(false, 1, null, true, { $hasFeature: (f) => f === FeatureKeys.LimitTagDeletionL2Plus_5959 });
+        expect(wrapper.vm.canEditTags).toBe(false);
       });
+      it('returns the true for level 1+ users if not readonly FF off', async () => {
+        await mountWrapper(false, 0);
+        expect(wrapper.vm.canEditTags).toBe(false);
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.canEditTags).toBe(true);
+        await mountWrapper(false, 2);
+        expect(wrapper.vm.canEditTags).toBe(true);
+        await mountWrapper(false, 1, null, true);
+        expect(wrapper.vm.canEditTags).toBe(false);
+      });
+    });
 
-      it('returns canEdit if feature flag L0Access is off', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: { id: mockCaseFile.id },
-          computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
-            readonly() {
-              return true;
-            },
-            canEdit() {
-              return true;
-            },
-          },
-          mocks: {
-
-            $hasFeature: () => false,
-          },
-        });
-        expect(wrapper.vm.canEdit).toBe(true);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: { id: mockCaseFile.id },
-          computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-            event() {
-              return mockEvent;
-            },
-            readonly() {
-              return true;
-            },
-            canEdit() {
-              return false;
-            },
-          },
-          mocks: {
-
-            $hasFeature: () => false,
-          },
-        });
-        expect(wrapper.vm.canEdit).toBe(false);
+    describe('canEditLabels', () => {
+      it('returns the true for level 0+ users if not readonly and feature flag L0Access is on, else level1+ and not readonly', async () => {
+        await mountWrapper(false, 0, null, false, { $hasFeature: () => false });
+        expect(wrapper.vm.canEditLabels).toBe(false);
+        await mountWrapper(false, 0, null, false, { $hasFeature: () => true });
+        expect(wrapper.vm.canEditLabels).toBe(true);
+        await mountWrapper(false, 1, null, false, { $hasFeature: () => true });
+        expect(wrapper.vm.canEditLabels).toBe(true);
+        await mountWrapper(false, 1, null, false, { $hasFeature: () => false });
+        expect(wrapper.vm.canEditLabels).toBe(true);
+        await mountWrapper(false, 1, null, true, { $hasFeature: () => false });
+        expect(wrapper.vm.canEditLabels).toBe(false);
+        await mountWrapper(false, 0, null, true, { $hasFeature: () => true });
+        expect(wrapper.vm.canEditLabels).toBe(false);
       });
     });
 
