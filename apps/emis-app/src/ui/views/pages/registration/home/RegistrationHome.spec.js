@@ -87,7 +87,7 @@ describe('RegistrationHome.vue', () => {
     describe('redirect', () => {
       it('should redirect to individual registration', () => {
         wrapper.vm.redirect();
-        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.registration.individual.name });
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({ name: routes.registration.individual.name });
       });
     });
 

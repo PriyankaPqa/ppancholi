@@ -62,7 +62,7 @@ export default Vue.extend({
 
   methods: {
     redirect() {
-      this.$router.push({ name: routes.registration.individual.name });
+      this.$router.replace({ name: routes.registration.individual.name });
     },
     async setEvent(event: IEvent) {
       if (!event) {

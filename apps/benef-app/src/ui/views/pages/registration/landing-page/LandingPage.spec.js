@@ -38,7 +38,7 @@ describe('LandingPage.vue', () => {
       test('Click the start registration button redirect to individual registration page', async () => {
         const btn = wrapper.find('[data-test="startRegistration-individual-button"]');
         await btn.trigger('click');
-        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.individual.name });
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({ name: routes.individual.name });
       });
 
       test('The start registration phone number is displayed correctly', async () => {
@@ -64,10 +64,11 @@ describe('LandingPage.vue', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should reset household and token', () => {
-        expect(registrationStore.resetHouseholdCreate).toHaveBeenCalled();
-        expect(registrationStore.resetTabs).toHaveBeenCalled();
-        expect(wrapper.vm.$services.publicApi.resetPublicToken).toHaveBeenCalled();
+      it('should call reset', () => {
+        wrapper.vm.reset = jest.fn();
+        const hook = wrapper.vm.$options.created[0];
+        hook.call(wrapper.vm);
+        expect(wrapper.vm.reset).toBeCalled();
       });
     });
   });
@@ -76,7 +77,17 @@ describe('LandingPage.vue', () => {
     describe('redirect', () => {
       it('should redirect to home page of registration', () => {
         wrapper.vm.redirect();
-        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.individual.name });
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({ name: routes.individual.name });
+      });
+    });
+    describe('reset', () => {
+      it('should reset household, tabs, token and privacy check', () => {
+        wrapper.vm.$registrationStore.isPrivacyAgreed = true;
+        wrapper.vm.reset();
+        expect(registrationStore.resetHouseholdCreate).toHaveBeenCalled();
+        expect(registrationStore.resetTabs).toHaveBeenCalled();
+        expect(wrapper.vm.$services.publicApi.resetPublicToken).toHaveBeenCalled();
+        expect(wrapper.vm.$registrationStore.isPrivacyAgreed).toBe(false);
       });
     });
   });

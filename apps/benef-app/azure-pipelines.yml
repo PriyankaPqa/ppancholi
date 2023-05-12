@@ -9,7 +9,7 @@ trigger:
     - apps/benef-app/cypress/*
 
 pool:
-  name: 'self-hosted-ubuntu-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
 - group: Build-Defaults

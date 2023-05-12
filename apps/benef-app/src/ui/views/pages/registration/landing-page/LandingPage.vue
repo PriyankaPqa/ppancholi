@@ -47,15 +47,19 @@ export default Vue.extend({
 
   created() {
     this.appVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
-    useRegistrationStore().resetHouseholdCreate();
-    useRegistrationStore().resetTabs();
-    this.$services.publicApi.resetPublicToken();
     document.title = this.$m(this.event.name) as string;
+    this.reset();
   },
 
   methods: {
+    reset() {
+      useRegistrationStore().resetHouseholdCreate();
+      useRegistrationStore().resetTabs();
+      this.$registrationStore.isPrivacyAgreed = false;
+      this.$services.publicApi.resetPublicToken();
+    },
     redirect() {
-      this.$router.push({ name: routes.individual.name });
+      this.$router.replace({ name: routes.individual.name });
     },
   },
 });
