@@ -7,6 +7,7 @@
         ref="secondaryLeftMenu"
         :class="{ 'fixed-menu': leftMenuFixed }"
         :title="leftMenuTitle"
+        :title-icon="leftMenuTitleIcon"
         :subtitle="leftMenuSubtitle"
         :tabs="navigationTabsFilteredForPermissionsAndFeatures"
         :hide-dividers="hideDividers"
@@ -99,6 +100,13 @@ export default Vue.extend({
      * Left menu sub title
      */
     leftMenuSubtitle: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Left menu title icon
+     */
+    leftMenuTitleIcon: {
       type: String,
       default: '',
     },

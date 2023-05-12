@@ -85,16 +85,16 @@
           :loading="initLoading"
           is-potential-table
           :duplicates="potentialDuplicates"
-          data-test="householdDetails-manageDuplicates-potentialDuplicatesTable"
-          @reloadData="reloadData" />
+          :current-household-id="household.id"
+          data-test="householdDetails-manageDuplicates-potentialDuplicatesTable" />
 
         <manage-duplicates-table
           v-if="selectedTab === SelectedTab.Resolved"
           :key="SelectedTab.Resolved"
           :loading="initLoading"
           :duplicates="resolvedDuplicates"
-          data-test="householdDetails-manageDuplicates-resolvedDuplicatesTable"
-          @reloadData="reloadData" />
+          :current-household-id="household.id"
+          data-test="householdDetails-manageDuplicates-resolvedDuplicatesTable" />
 
         <v-row v-if="selectedTab === SelectedTab.FlagNew" justify="center">
           <v-col cols="12" lg="8" class="full-width">
@@ -125,6 +125,7 @@ import { IHouseholdEntity, IHouseholdMetadata, IDuplicateData, IHouseholdDuplica
   DuplicateStatus, IHouseholdDuplicate } from '@libs/entities-lib/household';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
+import { UserRoles } from '@libs/entities-lib/user';
 import { useHouseholdStore } from '@/pinia/household/household';
 import householdDetails from '../householdDetails';
 import ManageDuplicatesTable from './ManageDuplicatesTable.vue';
@@ -165,7 +166,6 @@ export default mixins(householdDetails).extend({
 
   data() {
     return {
-      tabs: [SelectedTab.Potential, SelectedTab.Resolved, SelectedTab.FlagNew],
       SelectedTab,
       selectedTab: SelectedTab.Potential,
       initLoading: false,
@@ -177,6 +177,14 @@ export default mixins(householdDetails).extend({
   },
 
   computed: {
+    tabs() {
+      const tabs = [SelectedTab.Potential, SelectedTab.FlagNew];
+      if (this.$hasLevel(UserRoles.level5)) {
+        tabs.splice(1, 0, SelectedTab.Resolved);
+      }
+      return tabs;
+    },
+
     potentialDuplicates(): IHouseholdDuplicateFullData[] {
       return this.duplicates?.filter((d) => d.duplicateStatus === DuplicateStatus.Potential) || [];
     },

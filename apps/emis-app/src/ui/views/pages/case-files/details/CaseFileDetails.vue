@@ -2,6 +2,7 @@
   <page-template
     :loading="loading"
     :left-menu-title="primaryBeneficiaryFullName"
+    :left-menu-title-icon="isDuplicate ? '$rctech-duplicate' : ''"
     :navigation-tabs="tabs">
     <template v-if="caseFile" slot="left-menu">
       <div class="rc-body14 pb-2">
@@ -130,6 +131,7 @@ import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useUserStore } from '@/pinia/user/user';
 import householdDetails from '@/ui/views/pages/household/householdDetails';
+import { DuplicateStatus } from '@libs/entities-lib/household';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import HouseholdDetailsList from './components/HouseholdDetailsList.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
@@ -237,6 +239,10 @@ export default mixins(caseFileDetail, householdDetails).extend({
       }
       return true;
     },
+
+    isDuplicate(): boolean {
+      return this.$hasFeature(FeatureKeys.ManageDuplicates) && this.household?.potentialDuplicates?.some((d) => d.duplicateStatus === DuplicateStatus.Potential);
+    },
   },
 
   async created() {
@@ -245,7 +251,7 @@ export default mixins(caseFileDetail, householdDetails).extend({
       await useCaseFileStore().fetch(this.caseFileId);
       await useCaseFileMetadataStore().fetch(this.caseFileId, false);
       await useEventStore().fetch(this.caseFile.eventId);
-            await this.getHouseholdInfo();
+      await this.getHouseholdInfo();
     } finally {
       this.loading = false;
     }

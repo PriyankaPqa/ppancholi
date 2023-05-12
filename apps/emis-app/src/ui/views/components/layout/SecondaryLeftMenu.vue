@@ -20,8 +20,16 @@
       <div class="rc-body12 fw-bold" data-test="subtitle-title-left-menu">
         {{ subtitle }}
       </div>
-      <div class="rc-heading-5 mb-4 text-break" data-test="title-left-menu">
+      <div class="rc-heading-5 mb-4 text-break d-flex align-center" data-test="title-left-menu">
         {{ title }}
+        <v-icon
+          v-if="titleIcon"
+          data-test="title-left-menu-icon"
+          small
+          class="ml-2"
+          color="secondary">
+          {{ titleIcon }}
+        </v-icon>
       </div>
       <slot name="default" />
     </div>
@@ -156,6 +164,14 @@ export default Vue.extend({
     },
 
     subtitle: {
+      type: String,
+      default: '',
+    },
+
+    /**
+     * Icon next to the title
+     */
+    titleIcon: {
       type: String,
       default: '',
     },

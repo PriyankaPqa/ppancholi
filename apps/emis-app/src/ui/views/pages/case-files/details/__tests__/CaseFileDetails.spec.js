@@ -8,7 +8,8 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
-
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { DuplicateStatus, mockHouseholdEntity } from '@libs/entities-lib/household';
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
@@ -502,6 +503,74 @@ describe('CaseFileDetails.vue', () => {
           },
         });
         expect(wrapper.vm.canL0AccessAssessment).toBe(false);
+      });
+    });
+
+    describe('isDuplicate', () => {
+      it('returns true if household has potential duplicates', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: mockCaseFile.id,
+          },
+          data() {
+            return { household: mockHouseholdEntity({ potentialDuplicates: [{ duplicateStatus: DuplicateStatus.Potential }] }) };
+          },
+          mocks: {
+            $hasFeature: (f) => {
+              if (f === FeatureKeys.ManageDuplicates) {
+                return true;
+              }
+              return false;
+            },
+          },
+        });
+
+        expect(wrapper.vm.isDuplicate).toEqual(true);
+      });
+
+      it('returns false if household has no potential duplicates', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: mockCaseFile.id,
+          },
+          data() {
+            return { household: mockHouseholdEntity({ potentialDuplicates: [{ duplicateStatus: DuplicateStatus.Resolved }] }) };
+          },
+          mocks: {
+            $hasFeature: (f) => {
+              if (f === FeatureKeys.ManageDuplicates) {
+                return true;
+              }
+              return false;
+            },
+          },
+        });
+
+        expect(wrapper.vm.isDuplicate).toEqual(false);
+      });
+
+      it('returns false if feature flag is off', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: mockCaseFile.id,
+          },
+          mocks: {
+            $hasFeature: (f) => {
+              if (f === FeatureKeys.ManageDuplicates) {
+                return false;
+              }
+              return true;
+            },
+          },
+        });
+
+        expect(wrapper.vm.isDuplicate).toEqual(false);
       });
     });
   });
