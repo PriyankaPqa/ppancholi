@@ -118,9 +118,11 @@
                     <v-radio-group v-model="localAssessment.frequency" :error-messages="errors" class="mt-0" row>
                       <v-radio
                         :label="$t('enums.assessmentFrequencyType.OneTime')"
+                        data-test="assessment-form-frequency-oneTime"
                         :value="Frequency.OneTime" />
                       <v-radio
                         :label="$t('enums.assessmentFrequencyType.Multiple')"
+                        data-test="assessment-form-frequency-multiple"
                         :value="Frequency.Multiple" />
                     </v-radio-group>
                   </validation-provider>

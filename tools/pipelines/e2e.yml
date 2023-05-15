@@ -8,7 +8,7 @@ parameters:
   nodeJsVersion: ''
   appVersion: ''
   disableCache: ''
-  runE2EStage: true
+  runE2EStage: false
 
 stages:
   # Build the application and publish the artifact

@@ -8,7 +8,7 @@
               {{ $m(assessmentTemplate.name) }}
             </h3>
             <div>
-              <status-chip status-name="Status" :status="assessmentTemplate.status" class="mr-4" />
+              <status-chip data-test="assessmentTemplate_details_status" status-name="Status" :status="assessmentTemplate.status" class="mr-4" />
               <v-tooltip bottom>
                 <template #activator="{ on }">
                   <v-btn

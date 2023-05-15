@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { getRandomNumber } from '@libs/cypress-lib/helpers';
 import { EEventCallCentreStatus, IEventCallCentre, IEventGenericLocation } from '@libs/entities-lib/event';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
+import { IAssessmentBaseEntity } from '@libs/entities-lib/assessment-template';
 import { EventStatus, ICreateEventFields } from '../pages/events/createEvent.page';
 import { IAddNewProgramFields } from '../pages/programs/addNewEventProgram.page';
 import { IFinancialAssistanceTableData } from '../pages/financialAssistance/createFinancialAssistanceTable.page';
@@ -93,5 +94,20 @@ export const fixtureFinancialAssistanceTable = (retries: number): IFinancialAssi
     type: 'Winter Clothing',
     maxAmount: '80',
     frequency: 'Multiple',
+  },
+});
+
+export const fixtureAssessment = (retries: number): Partial<IAssessmentBaseEntity> => ({
+  name: {
+    translation: {
+      en: `assessment-${faker.datatype.number(1000)} - retry${retries}`,
+      fr: `assessment-fr-${faker.datatype.number(1000)} - retry${retries}`,
+    },
+  },
+  description: {
+    translation: {
+      en: 'description-en',
+      fr: 'description-fr',
+    },
   },
 });
