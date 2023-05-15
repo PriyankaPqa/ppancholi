@@ -1,14 +1,15 @@
+  /* eslint-disable max-nested-callbacks */
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { IEventEntity } from '@libs/entities-lib/event';
-import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
+import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
+import { IEventEntity } from '@libs/entities-lib/event';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { format } from 'date-fns';
+import { useProvider } from '../../../provider/provider';
 import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { useProvider } from '../../../provider/provider';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
-import { fixtureHouseholdMember } from '../../../fixtures/household';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -30,6 +31,7 @@ const cannotRoles = {
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
 
 let event = null as IEventEntity;
+let caseFile = null as ICaseFileEntity;
 let accessTokenL6 = '';
 
 const prepareState = async (accessToken: string, event: IEventEntity) => {
@@ -37,7 +39,7 @@ const prepareState = async (accessToken: string, event: IEventEntity) => {
   const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
   cy.wrap(mockCreateHousehold).as('household');
   const caseFileCreated = await provider.households.postCrcRegistration(mockCreateHousehold);
-  cy.wrap(caseFileCreated.caseFile.householdId).as('householdCreated');
+  caseFile = caseFileCreated.caseFile;
 };
 
 const prepareEventTeam = async (accessToken: string) => {
@@ -48,7 +50,7 @@ const prepareEventTeam = async (accessToken: string) => {
   cy.wrap(provider).as('provider');
 };
 
-const title = '#TC666# - Add Household Member Same Temp Address As Primary';
+const title = '#TC667# - Delete Household Member';
 
 describe(`${title}`, () => {
   before(() => {
@@ -70,48 +72,42 @@ describe(`${title}`, () => {
         beforeEach(async () => {
           await prepareState(accessTokenL6, event);
           cy.login(roleValue);
-          // eslint-disable-next-line
-          cy.get('@householdCreated').then((householdId) => {
-            cy.goTo(`casefile/household/${householdId}`);
-          });
+          cy.goTo(`casefile/household/${caseFile.householdId}`);
         });
-        it('should successfully add household member with same temp address as primary', function () {
-          const householdSize = this.household.additionalMembers.length + 1; // 1 primary member + additional household members
-          const householdMemberData = fixtureHouseholdMember(this.test.retries.length);
+        it('should successfully delete a household member', function () {
+          const householdSize = this.household.additionalMembers.length + 1;
 
           const householdProfilePage = new HouseholdProfilePage();
-          householdProfilePage.getHouseholdSize().should('be.visible').should('have.length', householdSize);
+          householdProfilePage.getHouseholdSize().should('have.length', householdSize);
+          householdProfilePage.getFullNameOfMemberByIndex(1).as('memberToDelete');
+          cy.get('@memberToDelete').then((memberName) => {
+            householdProfilePage.getHouseholdMember(memberName.toString()).should('be.visible');
+          });
+          householdProfilePage.getDeleteMemberButtonByIndex(0).click();
+          cy.contains('Are you sure you want to delete this household member?').should('be.visible');
+          householdProfilePage.getDialogCancelDeleteButton().should('be.visible').click();
+          householdProfilePage.getDialogCancelDeleteButton().should('not.be.visible');
 
-          const addHouseholdMemberPage = householdProfilePage.addNewMember();
-          addHouseholdMemberPage.fill(householdMemberData);
-          addHouseholdMemberPage.assignSameTempAddressAsPrimaryMember();
-          addHouseholdMemberPage.addHouseholdMember();
-
-          householdProfilePage.getHouseholdSize().should('have.length', householdSize + 1);
-
-          if (roleName === 'Level1' || roleName === 'Level0') {
-            householdProfilePage.getMakePrimaryButtons().should('not.exist');
-            householdProfilePage.getEditMemberButtons().eq(5).should('exist');
-            householdProfilePage.getSplitMemberButtons().should('not.exist');
-            householdProfilePage.getDeleteMemberButtonByIndex(4).should('exist');
-          } else {
-            householdProfilePage.getMakePrimaryButtons().eq(4).should('exist');
-            householdProfilePage.getEditMemberButtons().eq(5).should('exist');
-            householdProfilePage.getSplitMemberButtons().eq(4).should('exist');
-            householdProfilePage.getDeleteMemberButtonByIndex(4).should('exist');
-          }
+          householdProfilePage.getDeleteMemberButtonByIndex(0).click();
+          householdProfilePage.getDialogConfirmDeleteButton().should('be.visible').click();
+          cy.contains('Member was successfully removed').should('be.visible');
+          cy.get('@memberToDelete').then((memberName) => {
+            householdProfilePage.getHouseholdMember(memberName.toString()).should('not.exist');
+          });
+          householdProfilePage.getHouseholdSize().should('have.length', householdSize - 1); // confirms that member is deleted.
 
           const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
           caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Modified household information');
-          caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Household member added: ${householdMemberData.firstName} ${householdMemberData.lastName}`);
+          cy.get('@memberToDelete').then((memberName) => {
+            caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Household member removed: ${memberName}`);
+          });
         });
       });
     }
   });
-
   describe('Cannot roles', () => {
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
@@ -119,12 +115,12 @@ describe(`${title}`, () => {
           cy.login(roleValue);
           cy.goTo('casefile');
         });
-        it('should not be able to add household member with same temp address as primary', () => {
+        it('should not be able to delete a household member', () => {
           const caseFileHomePage = new CaseFilesHomePage();
 
           const householdProfilePage = caseFileHomePage.getFirstAvailableHousehold(); // re-using a household created for canRoles.
           householdProfilePage.getHouseholdSize().should('be.visible');
-          householdProfilePage.getAddNewMemberButton().should('not.exist');
+          householdProfilePage.getDeleteMemberButtons().should('not.exist');
         });
       });
     }

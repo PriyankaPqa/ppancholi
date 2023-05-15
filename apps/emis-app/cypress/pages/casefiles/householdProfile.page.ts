@@ -23,6 +23,8 @@ export enum DataTest {
   homeAddressLine1 = 'household_profile_home_address_line1',
   homeAddressLine2 = 'household_profile_home_address_line2',
   homeAddressCountry = 'household_profile_home_address_country',
+  dialogCancel = 'dialog-cancel-action',
+  dialogSubmit = 'dialog-submit-action',
 }
 
 export class HouseholdProfilePage {
@@ -60,6 +62,10 @@ export class HouseholdProfilePage {
 
   private homeAddressCountry = { selector: DataTest.homeAddressCountry };
 
+  private dialogCancel = { selector: DataTest.dialogCancel };
+
+  private dialogSubmit = { selector: DataTest.dialogSubmit };
+
   public getCaseFileNumber() {
     return cy.getByDataTest(this.caseFileNumber).invoke('text').then((text) => text.trim());
   }
@@ -78,8 +84,13 @@ export class HouseholdProfilePage {
     return cy.getByDataTest(this.memberSplit);
   }
 
-  public getFullNameOfMember(index: number) {
+  public getFullNameOfMemberByIndex(index: number) {
     return cy.getByDataTestLike(this.memberNameDisplay).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getHouseholdMember(name: string) {
+    const memberNameSelector = { selector: `"${DataTest.memberNameDisplay}_${name}"` };
+    return cy.getByDataTest(memberNameSelector);
   }
 
   public getMemberNameInfoByIndex(index: number) {
@@ -127,6 +138,10 @@ export class HouseholdProfilePage {
     return cy.getByDataTest(this.memberSplit);
   }
 
+  public getDeleteMemberButtonByIndex(index: number) {
+    return cy.getByDataTest(this.memberDelete).eq(index);
+  }
+
   public getDeleteMemberButtons() {
     return cy.getByDataTest(this.memberDelete);
   }
@@ -169,5 +184,13 @@ export class HouseholdProfilePage {
 
   public getEditAddressButton() {
     return cy.getByDataTest(this.memberEditAddress);
+  }
+
+  public getDialogCancelDeleteButton() {
+    return cy.getByDataTest(this.dialogCancel);
+  }
+
+  public getDialogConfirmDeleteButton() {
+    return cy.getByDataTest(this.dialogSubmit);
   }
 }

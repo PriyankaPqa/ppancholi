@@ -144,9 +144,9 @@ describe(`${title}`, () => {
           splitConfirmationPage.getEventName().should('string', eventName);
           splitConfirmationPage.closeRegistration(); // takes to household profile page
 
-          householdProfilePage.getFullNameOfMember(0).should('string', namePrimaryMemberAfterSplit);
-          householdProfilePage.getFullNameOfMember(1).should('string', nameFirstMember);
-          householdProfilePage.getFullNameOfMember(2).should('string', nameSecondMember);
+          householdProfilePage.getFullNameOfMemberByIndex(0).should('string', namePrimaryMemberAfterSplit);
+          householdProfilePage.getFullNameOfMemberByIndex(1).should('string', nameFirstMember);
+          householdProfilePage.getFullNameOfMemberByIndex(2).should('string', nameSecondMember);
 
           const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
           // eslint-disable-next-line max-nested-callbacks
