@@ -3,6 +3,7 @@ import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
 
 require('tsconfig-paths').register();
 const { cloudPlugin } = require('cypress-cloud/plugin');
+require('dotenv').config({ path: `${__dirname}/../../.env.local`, override: true });
 
 export default defineConfig({
   reporter: 'cypress-multi-reporters',
@@ -24,13 +25,13 @@ export default defineConfig({
     videoUploadOnPasses: false,
     baseUrl: 'http://localhost:8080/',
     env: {
-      AZURE_CLIENT_ID: '44dc9a29-39d1-462e-9cbe-b9507b34396d',
-      AZURE_TENANT_ID: '56f61c9c-0a6f-4be2-954d-941c9f02cb4c',
-      AZURE_CLIENT_SECRET: 'VwNQd7XbIYrV7stj58oiaKKHKphkjiw7KS',
-      MSAL_API_SCOPES: 'https://crctechmain.onmicrosoft.com/emis-dev/api/api_access',
-      API_BASE_URL: 'https://api-dev.crc-tech.ca',
-      USER_6_MAIL: 'TestDev6@crctechtesting.onmicrosoft.com',
-      USER_6_PASSWORD: 'I#cWVAo*EqA6',
+      AZURE_CLIENT_ID: process.env.AZURE_CLIENT_ID,
+      AZURE_TENANT_ID: process.env.AZURE_TENANT_ID,
+      AZURE_CLIENT_SECRET: process.env.AZURE_CLIENT_SECRET,
+      MSAL_API_SCOPES: process.env.MSAL_API_SCOPES,
+      API_BASE_URL: process.env.API_BASE_URL,
+      USER_6_MAIL: process.env.USER_6_MAIL,
+      USER_6_PASSWORD: process.env.USER_6_PASSWORD,
       CUSTOM_ENV: '',
     },
   },
