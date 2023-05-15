@@ -23,13 +23,11 @@ describe('ConfirmRegistrationLib.vue', () => {
   describe('Methods', () => {
     describe('goToSearch', () => {
       it('should call redirect to first page', () => {
-        wrapper.vm.resetAllTabs = jest.fn();
         wrapper.vm.goToSearch();
         expect(registrationStore.currentTabIndex).toEqual(tabs().findIndex((t) => t.id === 'isRegistered'));
       });
 
       it('should reset household create', () => {
-        wrapper.vm.resetAllTabs = jest.fn();
         wrapper.vm.goToSearch();
         expect(registrationStore.resetHouseholdCreate).toHaveBeenCalled();
         expect(registrationStore.resetTabs).toHaveBeenCalled();

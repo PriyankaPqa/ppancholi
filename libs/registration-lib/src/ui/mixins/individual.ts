@@ -164,6 +164,10 @@ export default Vue.extend({
 
       // If we stop on a step having errors, highlight errors
       if (effectiveToIndex !== toIndex) {
+        this.$registrationStore.mutateCurrentTab((tab: IRegistrationMenuItem) => {
+          tab.isTouched = true;
+          tab.isValid = false;
+        });
         // We validate before leaving, so we see error if we can't go next
         await (this.$refs.form as VForm).validate();
       }

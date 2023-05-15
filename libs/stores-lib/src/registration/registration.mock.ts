@@ -20,34 +20,7 @@ export const useMockRegistrationStore = (pinia?: TestingPinia) => {
   const p = pinia || createTestingPinia({ stubActions: false });
 
   const registrationStore = storeFactory({
-    pTabs: [
-      {
-        id: 'privacy',
-        labelKey: 'registration.menu.privacy',
-        titleKey: 'registration.menu.privacy',
-        icon: 'mdi-shield-check',
-        disabled: false,
-        isValid: true,
-        isTouched: false,
-        backButtonTextKey: 'common.button.back',
-        nextButtonTextKey: 'common.button.next',
-        componentName: 'PrivacyStatement',
-        helpLink: 'zendesk.beneficiary_registration.privacy_statement',
-      },
-      {
-        id: 'personalInfo',
-        labelKey: 'registration.menu.personal_info',
-        titleKey: 'registration.menu.personal_info',
-        icon: 'mdi-account',
-        disabled: false,
-        isValid: true,
-        isTouched: false,
-        backButtonTextKey: 'common.button.back',
-        nextButtonTextKey: 'common.button.next',
-        componentName: 'PersonalInformation',
-        helpLink: 'zendesk.beneficiary_registration.personal_information',
-      },
-      ],
+    pTabs: mockTabs(),
     i18n: {
       t: (t: string) => t,
     } as any,

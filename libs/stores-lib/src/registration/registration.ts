@@ -349,8 +349,8 @@ export function storeFactory({
       let currentIndex;
       const householdCreate = getHouseholdCreate();
       // For each step between where we are and where we're jumping to
-      for (currentIndex = currentTabIndex; currentIndex.value < targetIndex; currentIndex.value += 1) {
-        const currentTabName = tabs.value[currentIndex.value].componentName;
+      for (currentIndex = currentTabIndex.value; currentIndex < targetIndex; currentIndex += 1) {
+        const currentTabName = tabs.value[currentIndex].componentName;
 
         switch (currentTabName) {
           case 'isRegistered':
@@ -386,7 +386,7 @@ export function storeFactory({
           break;
         }
       }
-      return currentIndex.value;
+      return currentIndex;
     }
     function mutateCurrentTab(callback: (targetTab: IRegistrationMenuItem) => void) {
       const targetTab = getCurrentTab();
@@ -423,10 +423,11 @@ export function storeFactory({
     }
     function resetTabs() {
       for (let index = 0; index < tabs.value.length; index += 1) {
+        const originalTab = allTabs.value.find((t) => t.id === tabs.value[index].id);
         mutateTabAtIndex(index, (tab: IRegistrationMenuItem) => {
-          tab.disabled = false;
-          tab.isValid = true;
-          tab.isTouched = false;
+          tab.disabled = originalTab.disabled;
+          tab.isValid = originalTab.isValid;
+          tab.isTouched = originalTab.isTouched;
         });
       }
     }

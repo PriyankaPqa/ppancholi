@@ -516,7 +516,22 @@ describe('>>> Registration Store', () => {
         x.isTouched = true;
       });
       useRegistrationStore.resetTabs();
-      expect(useRegistrationStore.allTabs[1].isTouched).toEqual(false);
+      expect(useRegistrationStore.tabs[1].isTouched).toEqual(false);
+    });
+
+    it('should uses the default passed to it', () => {
+      useRegistrationStore = initStore();
+      const newTabs = mockTabs();
+      newTabs[1].isTouched = true;
+      useRegistrationStore.setTabs(newTabs);
+      useRegistrationStore.mutateTabAtIndex(2, (x) => {
+        x.isTouched = true;
+      });
+      expect(useRegistrationStore.tabs[1].isTouched).toEqual(true);
+      expect(useRegistrationStore.tabs[2].isTouched).toEqual(true);
+      useRegistrationStore.resetTabs();
+      expect(useRegistrationStore.tabs[1].isTouched).toEqual(true);
+      expect(useRegistrationStore.tabs[2].isTouched).toEqual(false);
     });
   });
 
