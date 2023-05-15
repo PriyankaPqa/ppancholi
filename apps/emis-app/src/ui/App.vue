@@ -82,7 +82,7 @@ export default {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used *-*-* hello!
       title: this.$t('metaInfo.app.title'),
-      // all titles will be injected into this template
+      // all titles will be injected into this template.
       titleTemplate: `${this.$t('metaInfo.app.short')} | %s`,
     };
   },

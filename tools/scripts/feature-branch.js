@@ -3,12 +3,7 @@
 /**
  This file automates the creation and deletion of feature branches by modifying the file in the Terraform project and by creating a pull request (PR) for it.
  IMPORTANT:
- Each developer must add their own Azure Personal Access Token (PAT) and path to the Terraform project on their machine into a config.json in the same folder as this script
-
- {
-  "terraformFolderPath": "",
-  "personalAccessToken": ""
-}
+ Each developer must add their own Azure Personal Access Token (PAT) and path to the Terraform project on their machine into a .env.local
 
  More information about PATs can be found here: https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows
  To create a PR, the PAT needs to have the permission Code Read+Write.
@@ -21,6 +16,7 @@ const simpleGit = require('simple-git');
 const axios = require('axios');
 const prompt = require('prompt-sync')({sigint: true});
 const args = minimist(process.argv.slice(2));
+require('dotenv').config({ path: __dirname + `/../../.env.local` , override: true })
 
 const Mode = {
   preview: '1',
@@ -32,14 +28,13 @@ const Confirm = {
   no: '2',
 }
 
-const userConfig = getScriptConfig();
 const azureAPIConfig = {
   organization: 'CRC-Tech',
   project: 'EMIS',
   repositoryId: 'e8522925-9819-4359-b0e9-90e9193a1c69', // terraform
-  personalAccessToken: userConfig.personalAccessToken,
+  personalAccessToken: process.env.AZURE_PAT,
 }
-const terraformFolderPath = userConfig.terraformFolderPath;
+const terraformFolderPath = process.env.TERRAFORM_PATH;
 const file = `${terraformFolderPath}/src/environments/dev/variables.tfvars`;
 
 

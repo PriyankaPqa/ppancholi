@@ -80,6 +80,11 @@ yarn fb
 ```
 
 # How to
+
+## Use scripts and test automation
+
+Some scripts and test automation rely on environment variables. 
+If not yet created, please create ``env.local`` at the root of this project (same level of this readme)
 ## Add a new package
 
 1) Update or add with proper path settings:

@@ -10,7 +10,9 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-const API_KEY_READ_WRITE = '012f35ddfa553d3fe3839189b37cb6bc320ea268';
+require('dotenv').config({ path: __dirname + `/../../.env.local` , override: true })
+
+const LOKALISE_API_TOKEN = process.env.LOKALISE_API_TOKEN;
 const EMIS_PROJECT_ID = '955065625d9745a35c6f72.71379721';
 const REGISTRATION_PROJECT_ID = '495058395f5240e2843ef1.45815308';
 
@@ -26,7 +28,7 @@ const timeout = (ms) => new Promise((resolve) => {
 });
 
 
-const lokaliseApi = new LokaliseApi({ apiKey: API_KEY_READ_WRITE });
+const lokaliseApi = new LokaliseApi({ apiKey: LOKALISE_API_TOKEN });
 
 // Documentation https://lokalise.github.io/node-lokalise-api/
 

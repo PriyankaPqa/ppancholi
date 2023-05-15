@@ -12,6 +12,8 @@ stages:
     displayName: 'Build'
     jobs:
       - job: 'Build_Web_App'
+        variables:
+          - group: Script
         displayName: 'Build application'
         steps:
           - template: '../steps/build-vue-steps.yml'
