@@ -139,7 +139,6 @@ export default Vue.extend({
           test: 'approvals',
           exact: false,
           roles: [UserRoles.level3, UserRoles.level4, UserRoles.level6],
-          feature: this.$hasLevel(UserRoles.level6) ? FeatureKeys.ApprovalsWithinEvent : FeatureKeys.ActionApprovals,
         },
         {
           to: routes.massActions.home.name,
@@ -200,7 +199,7 @@ export default Vue.extend({
         }
 
         if (item.feature) {
-          featureCheck = this.$hasFeature(item.feature);
+          featureCheck = this.$hasFeature(item.feature as FeatureKeys);
         }
 
         return (levelCheck || rolesCheck) && featureCheck;

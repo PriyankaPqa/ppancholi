@@ -1,4 +1,3 @@
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Routes from '@/constants/routes';
 import { RouteConfig } from 'vue-router/types/router';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -124,28 +123,28 @@ export const events: RouteConfig = {
           path: Routes.events.approvals.home.path,
           name: Routes.events.approvals.home.name,
           component: ApprovalTablesHome,
-          meta: { level: UserRoles.level6, feature: FeatureKeys.ApprovalsWithinEvent },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {
           path: Routes.events.approvals.create.path,
           name: Routes.events.approvals.create.name,
           component: ApprovalsTableCreateEdit,
-          meta: { level: UserRoles.level6, feature: FeatureKeys.ApprovalsWithinEvent },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {
           path: Routes.events.approvals.edit.path,
           name: Routes.events.approvals.edit.name,
           component: ApprovalsTableCreateEdit,
-          meta: { level: UserRoles.level6, feature: FeatureKeys.ApprovalsWithinEvent },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {
           path: Routes.events.approvals.details.path,
           name: Routes.events.approvals.details.name,
           component: ApprovalDetails,
-          meta: { level: UserRoles.level6, feature: FeatureKeys.ApprovalsWithinEvent },
+          meta: { level: UserRoles.level6 },
           props: true,
         },
         {

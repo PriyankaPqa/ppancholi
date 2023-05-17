@@ -144,7 +144,6 @@ import {
 } from '@libs/entities-lib/event';
 import { ECanadaProvinces, IMultilingual, INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useEventStore } from '@/pinia/event/event';
 import { Resize } from 'vuetify/es5/directives';
 import { UserRoles } from '@libs/entities-lib/user';
@@ -246,7 +245,6 @@ export default Vue.extend({
         disabled: false,
         to: routes.events.approvals.home.name,
         level: UserRoles.level6,
-        feature: FeatureKeys.ApprovalsWithinEvent,
         exact: false,
       },
       {

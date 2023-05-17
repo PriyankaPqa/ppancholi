@@ -4,7 +4,7 @@
       :title="$t('caseFile.financialAssistance.submitAssistance.confirmTitle')"
       :submit-action-label="$t('common.submit')"
       :cancel-action-label="$t('common.buttons.cancel')"
-      :submit-button-disabled="failed || submitLoading || ($hasFeature(FeatureKeys.ActionApprovals) && approvalRequired && !approvalTable)"
+      :submit-button-disabled="failed || submitLoading || (approvalRequired && !approvalTable)"
       :show.sync="show"
       :max-width="760"
       content-padding="10"
@@ -32,7 +32,7 @@
           <div v-if="useApprovalFlow">
             {{ $t('caseFile.financialAssistance.startApproval.confirmMessage') }}
           </div>
-          <div v-if="approvalNotRequired">
+          <div v-if="!approvalRequired">
             {{ $t('caseFile.financialAssistance.submitAssistance.confirmMessage') }}
           </div>
         </v-col>
@@ -57,15 +57,6 @@
             background-color="white"
             :items="users" />
         </v-col>
-        <v-col v-if="!$hasFeature(FeatureKeys.ActionApprovals)" class="grey-container mt-3 pl-2">
-          <v-checkbox-with-validation
-            v-model="agree"
-            :rules="rules.agree"
-            data-test="checkbox_agreed"
-            class="rc-body12"
-            dense
-            :label="$t('caseFile.financialAssistance.submitAssistance.agree')" />
-        </v-col>
       </v-row>
     </rc-dialog>
   </validation-observer>
@@ -74,12 +65,11 @@
 <script lang="ts">
 import { FinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
 import { IAzureTableSearchResults, VForm } from '@libs/shared-lib/types';
-import { RcDialog, VAutocompleteWithValidation, VCheckboxWithValidation, MessageBox } from '@libs/component-lib/components';
+import { RcDialog, VAutocompleteWithValidation, MessageBox } from '@libs/component-lib/components';
 import Vue from 'vue';
 import {
   IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Status } from '@libs/entities-lib/base';
 import { useUserStore } from '@/pinia/user/user';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
@@ -93,7 +83,6 @@ export default Vue.extend({
   components: {
     RcDialog,
     VAutocompleteWithValidation,
-    VCheckboxWithValidation,
     MessageBox,
   },
   props: {
@@ -130,7 +119,6 @@ export default Vue.extend({
       selectedUserId: null,
       loadingUsers: false,
       approvalTable: null,
-      FeatureKeys,
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
@@ -151,24 +139,20 @@ export default Vue.extend({
     },
 
     useApprovalFlow(): boolean {
-      return this.$hasFeature(FeatureKeys.ActionApprovals) && this.approvalRequired && !!this.approvalTable;
+      return this.approvalRequired && !!this.approvalTable;
     },
 
     hasInvalidTable(): boolean {
-      return this.$hasFeature(FeatureKeys.ActionApprovals) && this.approvalRequired && !this.approvalTable;
-    },
-
-    approvalNotRequired():boolean {
-      return !this.approvalRequired || !this.$hasFeature(FeatureKeys.ActionApprovals);
+      return this.approvalRequired && !this.approvalTable;
     },
 
     hasNoUsers():boolean {
-      return this.$hasFeature(FeatureKeys.ActionApprovals) && this.approvalRequired && !this.loadingUsers && !this.users?.length;
+      return this.approvalRequired && !this.loadingUsers && !this.users?.length;
     },
   },
 
   async mounted() {
-    if (this.$hasFeature(FeatureKeys.ActionApprovals) && this.approvalRequired) {
+    if (this.approvalRequired) {
       await this.fetchDataForApproval();
     }
   },

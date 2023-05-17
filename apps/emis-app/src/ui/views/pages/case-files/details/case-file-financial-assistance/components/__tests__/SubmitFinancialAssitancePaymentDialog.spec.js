@@ -20,7 +20,7 @@ const { pinia, userStore } = useMockUserStore();
 const { financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore(pinia);
 const { userAccountStore } = useMockUserAccountStore(pinia);
 
-const doMount = ({ approvalRequired = false, approvalTable, hasFeature = true, otherOptions = {} } = {}) => {
+const doMount = ({ approvalRequired = false, approvalTable, otherOptions = {} } = {}) => {
   const options = {
     localVue,
     pinia,
@@ -37,7 +37,6 @@ const doMount = ({ approvalRequired = false, approvalTable, hasFeature = true, o
     }),
     mocks: {
       $services: services,
-      $hasFeature: () => hasFeature,
     },
     ...otherOptions,
   };
@@ -70,7 +69,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
     });
 
     describe('useApprovalFlow', () => {
-      it('returns true if approval is required and there is a table and feature flag is on', async () => {
+      it('returns true if approval is required and there is a table', async () => {
         doMount({ approvalRequired: true, approvalTable: {} });
 
         expect(wrapper.vm.useApprovalFlow).toBeTruthy();
@@ -87,16 +86,10 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
 
         expect(wrapper.vm.useApprovalFlow).toBeFalsy();
       });
-
-      it('returns false if feature flag is off', async () => {
-        doMount({ approvalRequired: true, approvalTable: {}, hasFeature: false });
-
-        expect(wrapper.vm.useApprovalFlow).toBeFalsy();
-      });
     });
 
     describe('hasInvalidTable', () => {
-      it('returns true if approval is required and there is no table and feature flag is on', async () => {
+      it('returns true if approval is required and there is no table', async () => {
         doMount({ approvalRequired: true });
 
         expect(wrapper.vm.hasInvalidTable).toBeTruthy();
@@ -113,40 +106,9 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
 
         expect(wrapper.vm.hasInvalidTable).toBeFalsy();
       });
-
-      it('returns false if feature flag is off', async () => {
-        doMount({ approvalRequired: true, hasFeature: false });
-
-        expect(wrapper.vm.hasInvalidTable).toBeFalsy();
-      });
-    });
-
-    describe('approvalNotRequired', () => {
-      it('returns true if approval is not required ', async () => {
-        doMount();
-
-        expect(wrapper.vm.approvalNotRequired).toBeTruthy();
-      });
-
-      it('returns true if feature flag is off', async () => {
-        doMount({ approvalRequired: true, approvalTable: {}, hasFeature: false });
-
-        expect(wrapper.vm.approvalNotRequired).toBeTruthy();
-      });
-
-      it('returns false if feature flag is on and approvalRequired is true', async () => {
-        doMount({ approvalRequired: true, approvalTable: null, hasFeature: true });
-
-        expect(wrapper.vm.approvalNotRequired).toBeFalsy();
-      });
     });
 
     describe('hasNoUsers', () => {
-      it('returns false if feature flag is off', async () => {
-        doMount({ approvalRequired: true, approvalTable: {}, hasFeature: false });
-        expect(wrapper.vm.hasNoUsers).toBeFalsy();
-      });
-
       it('returns false if approval is not required', async () => {
         doMount({ approvalRequired: false, approvalTable: {} });
         expect(wrapper.vm.hasNoUsers).toBeFalsy();
@@ -239,7 +201,7 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
         expect(wrapper.emitted('update:total-amount-to-submit')[0][0]).toEqual('');
       });
 
-      it('should set agree to false if feature flag is not on', async () => {
+      it('should set agree to false', async () => {
         doMount();
         await wrapper.setData({ agree: true });
         wrapper.vm.$refs.submitPaymentForm.reset = jest.fn();

@@ -5,7 +5,6 @@ import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import flushPromises from 'flush-promises';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { mockProvider } from '@/services/provider';
@@ -347,7 +346,6 @@ describe('EventDetails.vue', () => {
             icon: '',
             exact: false,
             disabled: false,
-            feature: FeatureKeys.ApprovalsWithinEvent,
             to: routes.events.approvals.home.name,
             level: UserRoles.level6,
           }, {
