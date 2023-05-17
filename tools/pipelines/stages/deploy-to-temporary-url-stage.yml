@@ -9,8 +9,6 @@ stages:
     displayName: 'Deploy feature'
     dependsOn: 'Build_Stage'
     condition: succeeded()
-    pool:
-      vmImage: 'windows-2022'
     jobs:
       - deployment: 'Deploy_WebApp_Storage'
         displayName: 'Deploy WebApp to temporary URL'
@@ -77,6 +75,7 @@ stages:
 
                       echo "The files will be uploaded to the storage account $feature accessed at $redirect_uri"
 
+
                 - task: replacetokens@3
                   displayName: 'Replace Tokens'
                   inputs:
@@ -91,14 +90,14 @@ stages:
                     useLegacyPattern: false
                     enableTelemetry: true
 
-                - task: AzureFileCopy@3
+                - task: AzureCLI@2
                   displayName: 'Upload to Azure'
                   inputs:
-                    sourcePath: '$(Pipeline.Workspace)/dist'
                     azureSubscription: 'CRC Tech Dev'
-                    destination: 'AzureBlob'
-                    storage: $(featureStorageName)
-                    containerName: '$web'
+                    scriptType: 'pscore'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      az storage blob upload-batch --overwrite --destination '$web' --account-name $(featureStorageName) --source "$(Pipeline.Workspace)/dist"
 
                 - task: AzureCLI@2
                   displayName: 'Purge CDN'

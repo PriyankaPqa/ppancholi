@@ -14,8 +14,6 @@ stages:
         in(dependencies.E2E_Test_Stage.result, 'Succeeded', 'Skipped'),
         in(dependencies.Tests_Stage.result, 'Succeeded')
       )
-    pool:
-      vmImage: 'windows-2022'
     jobs:
       - deployment: 'Deploy_WebApp_Dev'
         displayName: 'Deploy WebApp to Dev'
@@ -43,8 +41,6 @@ stages:
         in(dependencies.E2E_Test_Stage.result, 'Failed', 'Canceled'),
         in(dependencies.Tests_Stage.result, 'Succeeded')
       )
-    pool:
-      vmImage: 'windows-2022'
     jobs:
       - deployment: 'Deploy_WebApp_Dev_Manual'
         displayName: 'Deploy WebApp to Dev'

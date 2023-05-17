@@ -8,8 +8,6 @@ stages:
     displayName: 'Deploy to Lab'
     dependsOn: 'Tests_Stage'
     condition: succeeded()
-    pool:
-      vmImage: 'windows-2022'
     jobs:
       - deployment: 'Deploy_WebApp_Lab'
         displayName: 'Deploy WebApp to Lab'

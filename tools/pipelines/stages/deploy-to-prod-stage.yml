@@ -14,8 +14,6 @@ stages:
         in(dependencies.Deploy_to_Dev.result, 'Succeeded'),
         in(dependencies.Deploy_to_Dev_Manual.result, 'Succeeded')
       )
-    pool:
-      vmImage: 'windows-2022'
     jobs:
       - deployment: 'Deploy_WebApp_Prod'
         displayName: 'Deploy WebApp to Prod'

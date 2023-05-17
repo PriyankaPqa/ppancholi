@@ -23,15 +23,14 @@ steps:
       useLegacyPattern: false
       enableTelemetry: true
 
-  # Upload to the $web container. This overwrites files by default.
-  - task: AzureFileCopy@3
+  - task: AzureCLI@2
     displayName: 'Upload to Azure'
     inputs:
-      sourcePath: '$(Pipeline.Workspace)/dist'
       azureSubscription: '${{ parameters.azureSubscription }}'
-      destination: 'AzureBlob'
-      storage: '${{ parameters.storage }}$(environment)'
-      containerName: '$web'
+      scriptType: 'pscore'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az storage blob upload-batch --overwrite --destination '$web' --account-name '${{ parameters.storage }}$(environment)' --source "$(Pipeline.Workspace)/dist"
 
   # Purge all CDN content
   # Note that client requests without extensions follow a URL rewrite rule, resolving to index.html.
