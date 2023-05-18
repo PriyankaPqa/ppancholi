@@ -2,7 +2,7 @@ import { IProvider } from '@/services/provider';
 import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
-import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/mocks/financialAssistanceTables/financialAssistanceTables';
+import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistanceTables';
 import { useProvider } from 'cypress/provider/provider';
 import { linkEventToTeamForManyRoles } from './teams';
 

@@ -82,10 +82,10 @@
             <tbody>
               <template v-for="group in item.entity.groups">
                 <tr v-if="group.status === Status.Active" :key="group.id">
-                  <td class="group-col">
+                  <td class="group-col" data-test="caseFile-financialAssistance-expand-groupTitle">
                     {{ getGroupTitle(group) }}
                   </td>
-                  <td class="text-right">
+                  <td class="text-right" data-test="caseFile-financialAssistance-expand-groupTotal">
                     {{ $formatCurrency(groupTotal([group])) }}
                   </td>
                   <td>
@@ -93,7 +93,7 @@
                       mdi-arrow-right
                     </v-icon>
                   </td>
-                  <td>
+                  <td data-test="caseFile-financialAssistance-expand-groupPaymentStatus">
                     {{ $t('common.status') }}: {{ $t(`caseFile.financialAssistance.paymentStatus.${PaymentStatus[group.paymentStatus]}`) }}
                   </td>
                 </tr>

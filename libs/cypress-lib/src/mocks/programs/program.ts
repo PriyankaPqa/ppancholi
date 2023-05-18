@@ -16,7 +16,7 @@ export const mockProgram = (force?: Partial<IProgramEntity>): IProgramEntity => 
       fr: 'Program Description FR',
     },
   },
-  approvalRequired: true,
+  approvalRequired: false,
   eligibilityCriteria: {
     authenticated: false,
     impacted: false,

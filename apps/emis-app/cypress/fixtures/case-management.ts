@@ -1,5 +1,5 @@
 import { IAddNewPaymentLineFields } from 'cypress/pages/financial-assistance-payment/addNewPaymentLine.page';
-import { mockFinancialAssistanceTableSubItemData } from '@libs/cypress-lib/mocks/financialAssistanceTables/financialAssistanceTables';
+import { mockFinancialAssistanceTableSubItemData } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistanceTables';
 import { ICaseNotesData } from '../pages/casefiles/caseNotes.page';
 
 export const fixtureCaseNotes = (retries: number): ICaseNotesData => ({
