@@ -20,7 +20,7 @@ export function getExtensionComponents(
     return res;
   }
 
-    async function updateHomeAddress({ householdId, address }: { householdId: string; address: IAddress }) {
+  async function updateHomeAddress({ householdId, address }: { householdId: string; address: IAddress }) {
     const res = await entityService.updateHomeAddress(householdId, false, address);
     if (res) {
       baseComponents.set(res);
@@ -28,9 +28,25 @@ export function getExtensionComponents(
     return res;
   }
 
-  async function flagNewDuplicate(request:
-    { id: uuid, duplicateHouseholdId: uuid, duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string }) {
-    const res = await entityService.flagNewDuplicate(request);
+  async function flagNewDuplicate(id: uuid, payload:
+    { duplicateHouseholdId: uuid, duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string }): Promise<IHouseholdEntity[]> {
+    const res = await entityService.flagNewDuplicate(id, payload);
+    if (res?.length) {
+      res.forEach((i) => baseComponents.set(i));
+    }
+    return res;
+  }
+
+  async function flagDuplicate(id: uuid, payload: { potentialDuplicateId: uuid; duplicateHouseholdId: uuid; rationale: string, }): Promise<IHouseholdEntity[]> {
+    const res = await entityService.flagDuplicate(id, payload);
+    if (res?.length) {
+      res.forEach((i) => baseComponents.set(i));
+    }
+    return res;
+  }
+
+  async function resolveDuplicate(id: uuid, payload: { potentialDuplicateId: uuid; duplicateHouseholdId: uuid; rationale: string }): Promise<IHouseholdEntity[]> {
+    const res = await entityService.resolveDuplicate(id, payload);
     if (res?.length) {
       res.forEach((i) => baseComponents.set(i));
     }
@@ -88,5 +104,7 @@ export function getExtensionComponents(
     updateHomeAddress,
     fetchHouseholdHistory,
     flagNewDuplicate,
+    flagDuplicate,
+    resolveDuplicate,
   };
 }

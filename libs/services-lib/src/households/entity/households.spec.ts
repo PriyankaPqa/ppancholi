@@ -308,8 +308,31 @@ describe('>>> Beneficiaries Service', () => {
       const rationale = 'rationale';
       const memberFirstName = 'John';
       const memberLastName = 'Smith';
-      await service.flagNewDuplicate({ duplicateHouseholdId, id, duplicateReasons, rationale, memberFirstName, memberLastName });
-      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/duplicates/`, { duplicateHouseholdId, duplicateReasons, rationale, memberFirstName, memberLastName });
+      await service.flagNewDuplicate(id, { duplicateHouseholdId, duplicateReasons, rationale, memberFirstName, memberLastName });
+      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/duplicates`, { duplicateHouseholdId, duplicateReasons, rationale, memberFirstName, memberLastName });
+    });
+  });
+
+  describe('flagDuplicate', () => {
+    it('is linked to the correct URL and params', async () => {
+      const potentialDuplicateId = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+      const id = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c4';
+      const rationale = 'rationale';
+      const duplicateHouseholdId = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+
+      await service.flagDuplicate(id, { duplicateHouseholdId, potentialDuplicateId, rationale });
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/flag-duplicates`, { duplicateHouseholdId, potentialDuplicateId, rationale });
+    });
+  });
+
+  describe('resolveDuplicate', () => {
+    it('is linked to the correct URL and params', async () => {
+      const potentialDuplicateId = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+      const id = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c4';
+      const rationale = 'rationale';
+      const duplicateHouseholdId = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+      await service.resolveDuplicate(id, { duplicateHouseholdId, potentialDuplicateId, rationale });
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/resolve-duplicates`, { duplicateHouseholdId, potentialDuplicateId, rationale });
     });
   });
 

@@ -19,11 +19,9 @@
         :label="$t('householdDetails.manageDuplicates.flagNew.registrationNumber') + '*'"
         data-test="flag-new-household-registration-number"
         :search-input.sync="searchTerm"
-        hide-spin-buttons
         :item-text="getRegistrationNumberText"
         :placeholder="`${$t('common.inputs.start_typing_to_search')}`"
         :items="households"
-        type="number"
         :loading="loading"
         return-object
         async-mode
@@ -34,7 +32,7 @@
         v-model="selectedDuplicateReasons"
         data-test="duplicate-reasons"
         attach
-        :label="`${$t('householdDetails.manageDuplicates.flagNew.duplicateBy')} *`"
+        :label="`${$t('householdDetails.manageDuplicates.flagNew.duplicatedBy')} *`"
         :items="duplicateReasons"
         :rules="rules.duplicateReason"
         multiple />
@@ -81,6 +79,7 @@ import { VForm, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import _debounce from 'lodash/debounce';
+import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { useHouseholdStore } from '@/pinia/household/household';
 import { DuplicateReason, HouseholdStatus, IHouseholdCombined, IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
 import { Status } from '@libs/entities-lib/base';
@@ -130,6 +129,7 @@ export default Vue.extend({
         },
         rationale: {
           required: true,
+          max: MAX_LENGTH_LG,
         },
         member: {
           required: true,
@@ -166,18 +166,6 @@ export default Vue.extend({
       return '';
     },
 
-    clearForm(clearHousehold = true) {
-      this.selectedDuplicateReasons = [];
-      this.member = null;
-      this.rationale = '';
-
-      if (clearHousehold) {
-        this.searchTerm = '';
-        this.selectedHousehold = null;
-        (this.$refs.form as VForm).reset();
-      }
-    },
-
     async fetchHouseholds(query: string) {
       if (!query) {
         return;
@@ -207,20 +195,23 @@ export default Vue.extend({
         },
         queryType: 'full',
         searchMode: 'all',
-        top: 10,
+        orderBy: 'Entity/RegistrationNumber',
       };
 
+    try {
       const res = await this.$services.households.search(params) as IAzureCombinedSearchResult<IHouseholdEntity, IHouseholdMetadata>;
       await helpers.timeout(VISUAL_DELAY);
 
       if (res?.value) {
-        this.households = res.value.filter((h) => h.entity.registrationNumber !== this.householdRegistrationNumber);
-      }
+          this.households = res.value.filter((h) => h.entity.registrationNumber !== this.householdRegistrationNumber);
+        }
+    } finally {
       this.loading = false;
+    }
     },
 
     inputRegistrationNumber(registrationNumber: string) {
-      if (registrationNumber !== this.selectedHousehold?.entity.registrationNumber) {
+      if (registrationNumber && registrationNumber !== this.selectedHousehold?.entity.registrationNumber) {
         this.clearForm();
         this.debounceSearch(registrationNumber);
       } else {
@@ -228,8 +219,21 @@ export default Vue.extend({
       }
     },
 
+    clearForm(clearHousehold = true) {
+      this.selectedDuplicateReasons = [];
+      this.member = null;
+      this.rationale = '';
+
+      if (clearHousehold) {
+        this.selectedHousehold = null;
+        (this.$refs.form as VForm).reset();
+      }
+    },
+
     debounceSearch: _debounce(function func(this: any, query: string) {
+      if (query?.length > 1) {
       this.fetchHouseholds(query);
+      }
     }, 500),
 
     async submit() {
@@ -239,12 +243,14 @@ export default Vue.extend({
 
         try {
           const res = await useHouseholdStore().flagNewDuplicate(
-            { id: this.householdId,
+            this.householdId,
+            {
               duplicateHouseholdId: this.selectedHousehold.entity.id,
               duplicateReasons: this.selectedDuplicateReasons,
               memberFirstName: this.member?.firstName,
               memberLastName: this.member?.lastName,
-              rationale: this.rationale },
+              rationale: this.rationale,
+            },
           );
           if (res) {
             this.$toasted.global.success(this.$t('householdDetails.manageDuplicates.message.success'));

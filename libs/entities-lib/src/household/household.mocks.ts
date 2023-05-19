@@ -19,7 +19,6 @@ import {
 export const mockHouseholdDuplicate = (force = {}): IHouseholdDuplicate => ({
   ...mockBaseData(),
   id: '1234',
-  pairDuplicateId: '2345',
   householdId: 'household-id',
   duplicateReasons: [DuplicateReason.FullName, DuplicateReason.HomeAddress],
   duplicateStatus: DuplicateStatus.Potential,
@@ -141,7 +140,6 @@ export const mockDetailedRegistrationResponse = (): IDetailedRegistrationRespons
 
 export const mockDuplicateData = (force = {}): IDuplicateData => ({
   potentialDuplicateId: '1234',
-  householdId: '919a8baf-8dbb-4c3c-b3bc-78aff773455a',
   primaryBeneficiaryFullName: 'John Smith',
   registrationNumber: '111222333',
   caseFiles: [{

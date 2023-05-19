@@ -126,7 +126,6 @@ import { IHouseholdEntity, IHouseholdMetadata, IDuplicateData, IHouseholdDuplica
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { UserRoles } from '@libs/entities-lib/user';
-import { useHouseholdStore } from '@/pinia/household/household';
 import householdDetails from '../householdDetails';
 import ManageDuplicatesTable from './ManageDuplicatesTable.vue';
 import ManageDuplicatesFlagNew from './ManageDuplicatesFlagNew.vue';
@@ -219,11 +218,6 @@ export default mixins(householdDetails).extend({
   },
 
   methods: {
-    async reloadData() {
-      this.household = await useHouseholdStore().fetch(this.household.id);
-      await this.fetchDuplicates();
-    },
-
     async fetchDuplicates() {
       this.initLoading = true;
       try {

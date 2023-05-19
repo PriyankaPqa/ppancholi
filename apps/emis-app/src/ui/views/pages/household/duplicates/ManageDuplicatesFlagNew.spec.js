@@ -96,7 +96,6 @@ describe('ManageDuplicatesFlagNew.vue', () => {
         expect(wrapper.vm.selectedDuplicateReasons).toEqual([]);
         expect(wrapper.vm.member).toEqual(null);
         expect(wrapper.vm.rationale).toEqual('');
-        expect(wrapper.vm.searchTerm).toEqual('');
         expect(wrapper.vm.selectedHousehold).toEqual(null);
       });
 
@@ -120,9 +119,9 @@ describe('ManageDuplicatesFlagNew.vue', () => {
     });
 
     describe('fetchHouseholds', () => {
-      it('calls the search with the right params and saves the result in households ', async () => {
+      it('calls the search with the right params and saves the result in households', async () => {
         doMount();
-        wrapper.vm.$services.households.search = jest.fn(() => ({ value: [mockCombinedHousehold({ id: '11' })] }));
+        wrapper.vm.$services.households.search = jest.fn(() => ({ value: [mockCombinedHousehold({ id: '1', registrationNumber: '111' })] }));
         await wrapper.vm.fetchHouseholds('abc');
         expect(wrapper.vm.$services.households.search).toHaveBeenCalledWith({
           search: 'Entity/RegistrationNumber: ((/.*abc.*/ OR "\\"abc\\""))',
@@ -144,10 +143,10 @@ describe('ManageDuplicatesFlagNew.vue', () => {
           },
           queryType: 'full',
           searchMode: 'all',
-          top: 10,
+          orderBy: 'Entity/RegistrationNumber',
         });
 
-        expect(wrapper.vm.households).toEqual([mockCombinedHousehold({ id: '11' })]);
+        expect(wrapper.vm.households).toEqual([mockCombinedHousehold({ id: '1', registrationNumber: '111' })]);
       });
 
       it('excludes the current household when it saves the result to households', async () => {
@@ -186,13 +185,22 @@ describe('ManageDuplicatesFlagNew.vue', () => {
     });
 
     describe('debounceSearch', () => {
-      it('should call fetchHouseholds', async () => {
+      it('should call fetchHouseholds if parameter is longer than 3 digits', async () => {
         doMount();
         wrapper.vm.fetchHouseholds = jest.fn();
-        wrapper.vm.debounceSearch('abc');
+        wrapper.vm.debounceSearch('1234');
         // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 800));
-        expect(wrapper.vm.fetchHouseholds).toHaveBeenCalledWith('abc');
+        expect(wrapper.vm.fetchHouseholds).toHaveBeenCalledWith('1234');
+      });
+
+      it('should not call fetchHouseholds if parameter is 3 digits or shorter', async () => {
+        doMount();
+        wrapper.vm.fetchHouseholds = jest.fn();
+        wrapper.vm.debounceSearch('123');
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        expect(wrapper.vm.fetchHouseholds).not.toHaveBeenCalledWith('1234');
       });
     });
 
@@ -205,8 +213,7 @@ describe('ManageDuplicatesFlagNew.vue', () => {
           member: { firstName: 'Joe', lastName: 'Black' },
           rationale: 'rationale' });
         await wrapper.vm.submit();
-        expect(householdStore.flagNewDuplicate).toHaveBeenCalledWith({
-          id: 'household-id',
+        expect(householdStore.flagNewDuplicate).toHaveBeenCalledWith('household-id', {
           duplicateHouseholdId: 'hh-id',
           duplicateReasons: [3],
           memberFirstName: 'Joe',

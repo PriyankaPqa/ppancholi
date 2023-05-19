@@ -57,8 +57,10 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   getMemberHistory(id: uuid): Promise<IVersionedEntity[]>;
   getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
   getDuplicates(id: uuid): Promise<IDuplicateData[]>;
-  flagNewDuplicate(request: { id: uuid, duplicateHouseholdId: uuid, duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string })
+  flagNewDuplicate(id: uuid, payload: { duplicateHouseholdId: uuid, duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string })
   : Promise<IHouseholdEntity[]>
+  flagDuplicate(id: string, payload : { potentialDuplicateId: uuid, duplicateHouseholdId: uuid, rationale: string }): Promise<IHouseholdEntity[]>
+  resolveDuplicate(id: string, payload : { potentialDuplicateId: uuid, duplicateHouseholdId: uuid, rationale: string }): Promise<IHouseholdEntity[]>
   setHouseholdStatus(householdId: string, status: HouseholdStatus, rationale: string): Promise<IHouseholdEntity>;
   checkForPossibleDuplicatePublic(eventId: uuid, member: IMember): Promise<ICheckForPossibleDuplicateResponse>;
   sendOneTimeCodeRegistrationPublic(payload: ISendOneTimeCodeRegistrationPublicPayload): Promise<void>;
@@ -103,6 +105,8 @@ export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHousehol
   getPublicToken: jest.Mock<string>;
   getDuplicates: jest.Mock<IDuplicateData[]>;
   flagNewDuplicate: jest.Mock<IHouseholdEntity[]>;
+  flagDuplicate: jest.Mock<IHouseholdEntity[]>;
+  resolveDuplicate: jest.Mock<IHouseholdEntity[]>;
   publicGetHousehold: jest.Mock<IHouseholdEntity>;
   publicGetPerson: jest.Mock<IMemberEntity>;
 }

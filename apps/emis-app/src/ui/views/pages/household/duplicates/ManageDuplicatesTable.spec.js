@@ -3,12 +3,16 @@ import { DuplicateStatus, mockHouseholdDuplicateFullData, DuplicateReason } from
 import routes from '@/constants/routes';
 import householdHelpers from '@/ui/helpers/household';
 import { mockProvider } from '@/services/provider';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import helpers from '@/ui/helpers/helpers';
 
+import { UserRoles } from '@libs/entities-lib/user';
 import Component from './ManageDuplicatesTable.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
+const { pinia, householdStore } = useMockHouseholdStore();
 const duplicates = [
   mockHouseholdDuplicateFullData({
     id: '1',
@@ -26,11 +30,13 @@ describe('ManageDuplicatesTable.vue', () => {
     isPotentialTable: true,
     duplicates,
     loading: false,
+    currentHouseholdId: 'current-household-id',
   };
 
   const doMount = async (isShallow = true, customOptions = null) => {
     const options = {
       localVue,
+      pinia,
       propsData,
       mocks: {
         $services: services,
@@ -52,6 +58,26 @@ describe('ManageDuplicatesTable.vue', () => {
         );
         doMount();
         expect(wrapper.vm.statuses).toEqual(['householdDetails.manageDuplicates.enum.duplicateStatus.1', 'householdDetails.manageDuplicates.enum.duplicateStatus.2']);
+      });
+    });
+
+    describe('canAction', () => {
+      it('returns true if table is isPotential', () => {
+        doMount();
+        wrapper.setProps({ isPotentialTable: true });
+        expect(wrapper.vm.canAction).toEqual(true);
+      });
+
+      it('returns true if table is Resolved and user is level 6', () => {
+        doMount(true, { pinia: getPiniaForUser(UserRoles.level6) });
+        wrapper.setProps({ isPotentialTable: false });
+        expect(wrapper.vm.canAction).toEqual(true);
+      });
+
+      it('returns true if table is Resolved and user is level 5 or lower', () => {
+        doMount(true, { pinia: getPiniaForUser(UserRoles.level5) });
+        wrapper.setProps({ isPotentialTable: false });
+        expect(wrapper.vm.canAction).toEqual(true);
       });
     });
   });
@@ -127,6 +153,41 @@ describe('ManageDuplicatesTable.vue', () => {
         await wrapper.vm.cancelAction();
         expect(wrapper.vm.initialSelect).toEqual(DuplicateStatus.Resolved);
         expect(wrapper.vm.showActionDialog).toEqual(false);
+      });
+    });
+
+    describe('submitAction', () => {
+      it('calls service flagDuplicate if status is Potential', async () => {
+        doMount();
+        const rationale = 'rationale';
+        const duplicateHouseholdId = 'householdId';
+        const potentialDuplicateId = 'potentialDuplicateId';
+        const arg = { status: DuplicateStatus.Potential, rationale: 'rationale' };
+        wrapper.vm.actionedDuplicate = { householdId: duplicateHouseholdId, id: potentialDuplicateId };
+
+        await wrapper.vm.submitAction(arg);
+        expect(householdStore.flagDuplicate).toHaveBeenCalledWith(wrapper.vm.currentHouseholdId, { duplicateHouseholdId, potentialDuplicateId, rationale });
+      });
+
+      it('calls service resolveDuplicate if status is Resolved', async () => {
+        doMount();
+        const rationale = 'rationale';
+        const duplicateHouseholdId = 'householdId';
+        const potentialDuplicateId = 'potentialDuplicateId';
+        const arg = { status: DuplicateStatus.Resolved, rationale };
+        wrapper.vm.actionedDuplicate = { householdId: duplicateHouseholdId, id: potentialDuplicateId };
+
+        await wrapper.vm.submitAction(arg);
+        expect(householdStore.resolveDuplicate).toHaveBeenCalledWith(wrapper.vm.currentHouseholdId, { potentialDuplicateId, duplicateHouseholdId, rationale });
+      });
+
+      it('resets actionedDuplicate and emits fetchDuplicates if call is successful', async () => {
+        doMount();
+        wrapper.vm.$emit = jest.fn();
+        const arg = { status: DuplicateStatus.Resolved, rationale: 'rationale' };
+        wrapper.vm.actionedDuplicate = { householdId: 'householdId', id: 'id' };
+        await wrapper.vm.submitAction(arg);
+        expect(wrapper.vm.actionedDuplicate).toEqual(null);
       });
     });
   });

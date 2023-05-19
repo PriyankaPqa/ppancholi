@@ -173,11 +173,17 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     return this.http.get(`${this.baseUrl}/${id}/duplicates`);
   }
 
-  flagNewDuplicate(request: { id: uuid, duplicateHouseholdId: uuid, duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string })
+  flagNewDuplicate(id: uuid, payload: { duplicateHouseholdId: uuid, duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string })
     : Promise<IHouseholdEntity[]> {
-    const { id, ...payload } = request;
+    return this.http.post(`${this.baseUrl}/${id}/duplicates`, payload);
+  }
 
-    return this.http.post(`${this.baseUrl}/${id}/duplicates/`, payload);
+  flagDuplicate(id: string, payload : { potentialDuplicateId: uuid, duplicateHouseholdId: uuid; rationale: string }): Promise<IHouseholdEntity[]> {
+    return this.http.patch(`${this.baseUrl}/${id}/flag-duplicates`, payload);
+  }
+
+  resolveDuplicate(id: string, payload : { potentialDuplicateId: uuid, duplicateHouseholdId: uuid; rationale: string }): Promise<IHouseholdEntity[]> {
+    return this.http.patch(`${this.baseUrl}/${id}/resolve-duplicates`, payload);
   }
 
   publicGetHousehold(id: uuid): Promise<IHouseholdEntity> {
@@ -219,6 +225,19 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
       this.http.setPublicToken(publicToken);
     }
     return success;
+  }
+
+  async setHouseholdStatus(householdId: string, status: HouseholdStatus, rationale: string): Promise<IHouseholdEntity> {
+    switch (status) {
+      case HouseholdStatus.Open:
+        return this.http.patch(`${this.baseUrl}/${householdId}/reopen/`, { rationale });
+      case HouseholdStatus.Archived:
+        return this.http.patch(`${this.baseUrl}/${householdId}/archive/`, { rationale });
+      case HouseholdStatus.Closed:
+        return this.http.patch(`${this.baseUrl}/${householdId}/close/`, { rationale });
+      default:
+        return null;
+    }
   }
 
   /** Private methods * */
@@ -357,18 +376,5 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
       currentAddress: this.parseCurrentAddress(member.currentAddress),
       identitySet: isPrimaryBeneficiary ? this.parseIdentitySet(member.identitySet) : null,
     };
-  }
-
-  async setHouseholdStatus(householdId: string, status: HouseholdStatus, rationale: string): Promise<IHouseholdEntity> {
-    switch (status) {
-      case HouseholdStatus.Open:
-        return this.http.patch(`${this.baseUrl}/${householdId}/reopen/`, { rationale });
-      case HouseholdStatus.Archived:
-        return this.http.patch(`${this.baseUrl}/${householdId}/archive/`, { rationale });
-      case HouseholdStatus.Closed:
-        return this.http.patch(`${this.baseUrl}/${householdId}/close/`, { rationale });
-      default:
-        return null;
-    }
   }
 }

@@ -45,7 +45,7 @@ describe('ManageDuplicatesActionDialog.vue', () => {
           } },
         });
 
-        expect(wrapper.vm.title).toEqual('householdDetails.manageDuplicates.title.flagCaseFilePotential');
+        expect(wrapper.vm.title).toEqual('householdDetails.manageDuplicates.title.flagHouseholdPotential');
       });
 
       it('returns the right value when new status is resolved', () => {
@@ -55,7 +55,7 @@ describe('ManageDuplicatesActionDialog.vue', () => {
           } },
         });
 
-        expect(wrapper.vm.title).toEqual('householdDetails.manageDuplicates.title.flagCaseFileResolved');
+        expect(wrapper.vm.title).toEqual('householdDetails.manageDuplicates.title.flagHouseholdResolved');
       });
     });
   });

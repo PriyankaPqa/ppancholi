@@ -89,8 +89,8 @@ export default Vue.extend({
 
     title(): TranslateResult {
       return this.newStatus === DuplicateStatus.Resolved
-        ? this.$t('householdDetails.manageDuplicates.title.flagCaseFileResolved')
-        : this.$t('householdDetails.manageDuplicates.title.flagCaseFilePotential');
+        ? this.$t('householdDetails.manageDuplicates.title.flagHouseholdResolved')
+        : this.$t('householdDetails.manageDuplicates.title.flagHouseholdPotential');
     },
   },
 

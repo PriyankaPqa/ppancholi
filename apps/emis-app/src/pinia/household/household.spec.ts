@@ -95,11 +95,51 @@ describe('>>> Household Store', () => {
         set: jest.fn(),
       };
 
-      const request = { id, duplicateHouseholdId, duplicateReasons, memberFirstName, memberLastName, rationale };
+      const payload = { duplicateHouseholdId, duplicateReasons, memberFirstName, memberLastName, rationale };
       const store = createTestStore(bComponents);
-      await store.flagNewDuplicate(request);
+      await store.flagNewDuplicate(id, payload);
 
-      expect(entityService.flagNewDuplicate).toBeCalledWith(request);
+      expect(entityService.flagNewDuplicate).toBeCalledWith(id, payload);
+      expect(bComponents.set).toBeCalledWith(mockHouseholdEntity());
+    });
+  });
+
+  describe('flagDuplicate', () => {
+    it('should call flagDuplicate service and set the result in the store', async () => {
+      const id = '0';
+      const duplicateHouseholdId = '1';
+      const potentialDuplicateId = '123';
+      const rationale = 'rationale';
+      const bComponents = {
+        ...baseComponents,
+        set: jest.fn(),
+      };
+
+      const payload = { duplicateHouseholdId, rationale, potentialDuplicateId };
+      const store = createTestStore(bComponents);
+      await store.flagDuplicate(id, payload);
+
+      expect(entityService.flagDuplicate).toBeCalledWith(id, payload);
+      expect(bComponents.set).toBeCalledWith(mockHouseholdEntity());
+    });
+  });
+
+  describe('resolveDuplicate', () => {
+    it('should call resolveDuplicate service and set the result in the store', async () => {
+      const id = '0';
+      const duplicateHouseholdId = '1';
+      const potentialDuplicateId = '123';
+      const rationale = 'rationale';
+      const bComponents = {
+        ...baseComponents,
+        set: jest.fn(),
+      };
+
+      const payload = { duplicateHouseholdId, rationale, potentialDuplicateId };
+      const store = createTestStore(bComponents);
+      await store.resolveDuplicate(id, payload);
+
+      expect(entityService.resolveDuplicate).toBeCalledWith(id, payload);
       expect(bComponents.set).toBeCalledWith(mockHouseholdEntity());
     });
   });

@@ -2,8 +2,10 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockHouseholdDuplicate, mockHouseholdEntity, mockHouseholdMetadata, DuplicateStatus, mockHouseholdMemberMetadata,
   mockHouseholdDuplicateFullData, mockDuplicateData,
 } from '@libs/entities-lib/household';
+import { getPiniaForUser } from '@/pinia/user/user.mock';
 import helpers from '@/ui/helpers/helpers';
 import { mockProvider } from '@/services/provider';
+import { UserRoles } from '@libs/entities-lib/user';
 import Component, { SelectedTab } from './ManageDuplicates.vue';
 
 const localVue = createLocalVue();
@@ -46,6 +48,18 @@ describe('ManageDuplicates.vue', () => {
   };
 
   describe('Computed', () => {
+    describe('tabs', () => {
+      it('returns 2 tabs if level below 5', () => {
+        doMount(true, { pinia: getPiniaForUser(UserRoles.level4) });
+        expect(wrapper.vm.tabs).toEqual([SelectedTab.Potential, SelectedTab.FlagNew]);
+      });
+
+      it('returns 3 tabs if level 5 plus', () => {
+        doMount(true, { pinia: getPiniaForUser(UserRoles.level5) });
+        expect(wrapper.vm.tabs).toEqual([SelectedTab.Potential, SelectedTab.Resolved, SelectedTab.FlagNew]);
+      });
+    });
+
     describe('potentialDuplicates', () => {
       it('returns the right value', async () => {
         await doMount(true, { computed: {
@@ -76,7 +90,11 @@ describe('ManageDuplicates.vue', () => {
         doMount(true, {
           computed: { primaryBeneficiary() {
             return mockHouseholdMemberMetadata({ id: 'primary-id' });
-          } },
+          },
+          country() {
+            return '';
+          },
+          },
         });
         await wrapper.setData({ householdMetadata: mockHouseholdMetadata({ memberMetadata }) });
         expect(wrapper.vm.sortedMembers).toEqual([mockHouseholdMemberMetadata({ id: 'member-id-2', firstName: 'A' }),
@@ -217,7 +235,9 @@ describe('ManageDuplicates.vue', () => {
           [mockDuplicateData({ potentialDuplicateId: '1' })],
           [mockHouseholdDuplicate({ id: '1' })],
         );
-        expect(result).toEqual([{ ...mockHouseholdDuplicate({ id: '1' }), ...mockDuplicateData({ potentialDuplicateId: '1' }) }]);
+        expect(result).toEqual([{ ...mockHouseholdDuplicate({ id: '1' }),
+          ...mockDuplicateData({ potentialDuplicateId: '1' }),
+        }]);
       });
     });
   });

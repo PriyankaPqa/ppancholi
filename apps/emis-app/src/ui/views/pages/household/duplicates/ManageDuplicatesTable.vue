@@ -5,7 +5,7 @@
       must-sort
       hide-default-footer
       :headers="headers"
-      :loading="loading"
+      :loading="loading || submitting"
       :items="duplicates">
       <template #[`item.primaryBeneficiaryFullName`]="{ item }">
         <div class="d-flex flex-column my-3">
@@ -26,45 +26,51 @@
             </span>
           </div>
 
-          <div v-if="showLine(item, DuplicateReason.FullName) && item.memberFirstName && item.memberLastName" class="d-flex align-center mb-1">
+          <div v-if="showLine(item, DuplicateReason.FullName)" class="d-flex align-center mb-1">
             <v-icon size="16" class="pr-2" color=" secondary ">
               mdi-account
             </v-icon>
             <span class="mr-1"> {{ $t('householdDetails.manageDuplicates.table.name') }}: </span>
-            <span data-test="householdDetails-duplicate-name"> {{ item.memberFirstName + " " + item.memberLastName }} </span>
+            <span data-test="householdDetails-duplicate-name"> {{ item.memberFirstName && item.memberLastName ? item.memberFirstName + " " + item.memberLastName : '-' }} </span>
           </div>
 
-          <div v-if="showLine(item, DuplicateReason.HomePhoneNumber) && item.homePhoneNumber" class="d-flex align-center mb-1">
+          <div v-if="showLine(item, DuplicateReason.HomePhoneNumber)" class="d-flex align-center mb-1">
             <v-icon size="16" class="pr-2" color="secondary">
               mdi-phone
             </v-icon>
             <span class="mr-1"> {{ $t('household.profile.member.phone_numbers.home') }}: </span>
             <case-file-details-beneficiary-phone-number
+              v-if="item.homePhoneNumber"
               data-test="duplicate-home-phone-number"
               :phone-number="item.homePhoneNumber"
               :show-labels="false" />
+            <span v-else>-</span>
           </div>
 
-          <div v-if="showLine(item, DuplicateReason.MobilePhoneNumber) && item.mobilePhoneNumber" class="d-flex align-center mb-1">
+          <div v-if="showLine(item, DuplicateReason.MobilePhoneNumber)" class="d-flex align-center mb-1">
             <v-icon size="16" class="pr-2" color=" secondary ">
               mdi-phone
             </v-icon>
             <span class="mr-1"> {{ $t('household.profile.member.phone_numbers.mobile') }}: </span>
             <case-file-details-beneficiary-phone-number
+              v-if="item.mobilePhoneNumber"
               data-test="duplicate-mobile-phone-number"
               :phone-number="item.mobilePhoneNumber"
               :show-labels="false" />
+            <span v-else>-</span>
           </div>
 
-          <div v-if="showLine(item, DuplicateReason.AlternatePhoneNumber) && item.alternatePhoneNumber" class="d-flex align-start mb-1">
+          <div v-if="showLine(item, DuplicateReason.AlternatePhoneNumber)" class="d-flex align-start mb-1">
             <v-icon size="16" class="d-flex align-start pr-2" color=" secondary ">
               mdi-phone
             </v-icon>
             <span class="mr-1"> {{ $t('household.profile.member.phone_numbers.alternate') }}: </span>
             <case-file-details-beneficiary-phone-number
+              v-if="item.alternatePhoneNumber"
               data-test="duplicate-alternate-phone-number"
               :phone-number="item.alternatePhoneNumber"
               :show-labels="false" />
+            <span v-else>-</span>
           </div>
 
           <div v-if="showLine(item, DuplicateReason.HomeAddress)" class="d-flex align-start mb-1">
@@ -74,7 +80,7 @@
             <div class="d-flex" data-test="caseFileDetails-home-address">
               <span class="mr-1 no-wrap"> {{ $t('caseFileDetail.addressLabel') }}: </span>
               <span class="mr-1" data-test="householdDetails-duplicate-address">
-                {{ getFormattedAddress(item.homeAddress) }}
+                {{ item.homeAddress && item.homeAddress.address ? getFormattedAddress(item.homeAddress) : '-' }}
               </span>
             </div>
           </div>
@@ -88,7 +94,8 @@
               {{ $t('householdDetails.manageDuplicates.flaggedAs') }} {{ $t(`householdDetails.manageDuplicates.enum.duplicateStatus.${historyItem.duplicateStatus}`) }}
             </span>
             <div class="px-1" data-test="householdDetails-duplicate-history-user">
-              {{ $t('common.by') }}: {{ historyItem.userInformation.userName }} ({{ $m(historyItem.userInformation.roleName) }})
+              {{ $t('common.by') }}: {{ historyItem.userInformation.userName }}
+              <span v-if="historyItem.userInformation.roleName">({{ $m(historyItem.userInformation.roleName) }})</span>
               - {{ moment(historyItem.dateOfAction).local().format('ll') }}
             </div>
             <div v-if="historyItem.rationale" class="px-1" data-test="householdDetails-duplicate-history-rationale">
@@ -108,6 +115,7 @@
               v-model="initialSelect"
               data-test="householdDetails-manageDuplicates-actionDropdown"
               :items="statuses"
+              :disabled="!canAction"
               hide-details
               @input="action(duplicate)">
               <template #selection>
@@ -156,9 +164,11 @@ import { DataTableHeader } from 'vuetify';
 import moment from 'moment';
 import routes from '@/constants/routes';
 import householdHelpers from '@/ui/helpers/household';
-import { IHouseholdAddress, IHouseholdDuplicateFullData, DuplicateReason, DuplicateStatus } from '@libs/entities-lib/household';
+import { IHouseholdAddress, IHouseholdDuplicateFullData, DuplicateReason, DuplicateStatus, IHouseholdEntity } from '@libs/entities-lib/household';
 import helpers from '@/ui/helpers/helpers';
 import CaseFileDetailsBeneficiaryPhoneNumber from '@/ui/views/pages/case-files/details/components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
+import { UserRoles } from '@libs/entities-lib/user';
+import { useHouseholdStore } from '@/pinia/household/household';
 import ManageDuplicatesActionDialog from './ManageDuplicatesActionDialog.vue';
 
 export default Vue.extend({
@@ -170,6 +180,10 @@ export default Vue.extend({
   },
 
   props: {
+    currentHouseholdId: {
+      type: String,
+      required: true,
+    },
     isPotentialTable: {
       type: Boolean,
       default: false,
@@ -192,6 +206,7 @@ export default Vue.extend({
       showActionDialog: false,
       actionedDuplicate: null as IHouseholdDuplicateFullData,
       initialSelect: this.isPotentialTable ? DuplicateStatus.Potential : DuplicateStatus.Resolved,
+      submitting: false,
     };
   },
 
@@ -223,6 +238,10 @@ export default Vue.extend({
 
     statuses() {
       return helpers.enumToTranslatedCollection(DuplicateStatus, 'householdDetails.manageDuplicates.enum.duplicateStatus');
+    },
+
+    canAction():boolean {
+      return this.isPotentialTable || this.$hasLevel(UserRoles.level6);
     },
   },
 
@@ -259,11 +278,33 @@ export default Vue.extend({
     },
 
     async submitAction({ status, rationale } : { status: DuplicateStatus, rationale: string }) {
-      // TO DO in next stories
-      // eslint-disable-next-line no-console
-      console.log({ rationale, status });
-      this.actionedDuplicate = null;
-      this.$emit('fetchDuplicates');
+      if (!this.actionedDuplicate) {
+        return;
+      }
+      this.submitting = true;
+      try {
+        let result = null as IHouseholdEntity[];
+
+        const payload = {
+          potentialDuplicateId: this.actionedDuplicate.id,
+          rationale,
+          duplicateHouseholdId: this.actionedDuplicate.householdId,
+        };
+
+        if (status === DuplicateStatus.Potential) {
+          result = await useHouseholdStore().flagDuplicate(this.currentHouseholdId, payload);
+        } else if (status === DuplicateStatus.Resolved) {
+          result = await useHouseholdStore().resolveDuplicate(this.currentHouseholdId, payload);
+        }
+
+        if (result) {
+          this.actionedDuplicate = null;
+        }
+      } finally {
+        this.submitting = false;
+        // So that the dropdown selection returns to initial value, after the use clicked on the other value
+        this.initialSelect = this.isPotentialTable ? DuplicateStatus.Potential : DuplicateStatus.Resolved;
+      }
     },
 
     cancelAction() {

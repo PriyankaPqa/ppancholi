@@ -39,7 +39,6 @@ export interface IHouseholdDuplicateStatusHistory {
 }
 
 export interface IHouseholdDuplicate extends IEntity {
-  pairDuplicateId: uuid;
   householdId: uuid;
   duplicateReasons: DuplicateReason[];
   duplicateStatus: DuplicateStatus;
@@ -57,7 +56,6 @@ export interface IDuplicateCaseFileData {
 
 export interface IDuplicateData {
   potentialDuplicateId: uuid;
-  householdId: uuid;
   registrationNumber: string;
   caseFiles: IDuplicateCaseFileData[];
   primaryBeneficiaryFullName: string;

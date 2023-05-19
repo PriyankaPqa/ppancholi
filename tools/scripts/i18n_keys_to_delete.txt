@@ -33,3 +33,4 @@ householdDetails.manageDuplicates.enum.duplicateReason.MemberHomePhoneNumber
 householdDetails.manageDuplicates.enum.duplicateReason.MemberMobilePhoneNumber
 householdDetails.manageDuplicates.referenceHousehold
 householdDetails.manageDuplicates.table.households
+householdDetails.manageDuplicates.flagNew.duplicateBy
