@@ -137,7 +137,6 @@ import { Status } from '@libs/entities-lib/base';
 import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { UserRolesNames, UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(TablePaginationSearchMixin).extend({
@@ -188,10 +187,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     roles(): IOptionItem[] {
-      let roles: IOptionItem[] = useUserAccountStore().getRoles();
-      if (!this.$hasFeature(FeatureKeys.L0Access)) {
-        roles = roles?.filter((r) => r.name.translation.en !== 'Level 0');
-      }
+      return useUserAccountStore().getRoles();
       return roles;
     },
 

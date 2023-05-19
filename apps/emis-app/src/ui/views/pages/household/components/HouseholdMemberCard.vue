@@ -277,7 +277,7 @@ export default Vue.extend({
     },
 
     canEdit():boolean {
-      return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? UserRoles.level0 : UserRoles.level1) && !this.isMovedMember;
+      return this.$hasLevel(UserRoles.level0) && !this.isMovedMember;
     },
 
     memberInfo(): Array<Record<string, unknown>> {

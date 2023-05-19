@@ -309,18 +309,14 @@ describe('CaseFileActivity', () => {
     });
 
     describe('canEditLabels', () => {
-      it('returns the true for level 0+ users if not readonly and feature flag L0Access is on, else level1+ and not readonly', async () => {
-        await mountWrapper(false, 0, null, false, { $hasFeature: () => false });
+      it('returns the true for level 0+ users if not readonly , else it returns false', async () => {
+        await mountWrapper(false, 0, null, false);
+        expect(wrapper.vm.canEditLabels).toBe(true);
+        await mountWrapper(false, 1, null, false);
+        expect(wrapper.vm.canEditLabels).toBe(true);
+        await mountWrapper(false, 1, null, true);
         expect(wrapper.vm.canEditLabels).toBe(false);
-        await mountWrapper(false, 0, null, false, { $hasFeature: () => true });
-        expect(wrapper.vm.canEditLabels).toBe(true);
-        await mountWrapper(false, 1, null, false, { $hasFeature: () => true });
-        expect(wrapper.vm.canEditLabels).toBe(true);
-        await mountWrapper(false, 1, null, false, { $hasFeature: () => false });
-        expect(wrapper.vm.canEditLabels).toBe(true);
-        await mountWrapper(false, 1, null, true, { $hasFeature: () => false });
-        expect(wrapper.vm.canEditLabels).toBe(false);
-        await mountWrapper(false, 0, null, true, { $hasFeature: () => true });
+        await mountWrapper(false, 0, null, true);
         expect(wrapper.vm.canEditLabels).toBe(false);
       });
     });

@@ -434,7 +434,7 @@ export default mixins(household).extend({
     },
 
     canEdit(): boolean {
-      return this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? UserRoles.level0 : UserRoles.level1);
+      return this.$hasLevel(UserRoles.level0);
     },
 
     canMove(): boolean {

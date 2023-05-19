@@ -92,7 +92,7 @@ export default Vue.extend({
     displayRegistrationButton(): boolean {
       return this.$route.name !== routes.registration.home.name
         && this.$route.name !== routes.registration.individual.name
-        && this.$hasLevel(this.$hasFeature(FeatureKeys.L0Access) ? UserRoles.level0 : UserRoles.level1);
+        && this.$hasLevel(UserRoles.level0);
     },
 
     logoUrl(): string {

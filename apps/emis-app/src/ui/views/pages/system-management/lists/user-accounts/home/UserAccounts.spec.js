@@ -102,20 +102,7 @@ describe('UserAccounts.vue', () => {
         mountWrapper();
         expect(wrapper.vm.roles).toEqual(mockOptionItemData());
       });
-
-      it('filters out level 0 roles if feature flag is off', () => {
-        const l0 = { ...mockOptionItemData()[0], name: { translation: { en: 'Level 0' } } };
-        userAccountStore.getRoles = jest.fn(() => [...mockOptionItemData(), l0]);
-        mountWrapper({
-          mocks: {
-            $hasFeature: jest.fn(() => false),
-
-          },
-        });
-        expect(wrapper.vm.roles).toEqual(mockOptionItemData());
-      });
     });
-
     describe('headers', () => {
       it('is correctly defined', async () => {
         mountWrapper();

@@ -315,7 +315,7 @@ export default Vue.extend({
     },
 
     showToggleForL0Access(): boolean {
-      return this.event.callCentres.length && this.$hasLevel(UserRoles.level6) && this.$hasFeature(FeatureKeys.L0Access);
+      return this.event.callCentres.length && this.$hasLevel(UserRoles.level6);
     },
 
     consentStatement(): TranslateResult {

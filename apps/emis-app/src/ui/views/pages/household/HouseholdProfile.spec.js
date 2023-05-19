@@ -788,7 +788,7 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
-      it('returns true if user has level 0 and feature flag is on', () => {
+      it('returns true if user has level 0', () => {
         const pinia = getPiniaForUser(UserRoles.level0);
         useMockRegistrationStore(pinia);
         useMockHouseholdStore(pinia);
@@ -803,12 +803,7 @@ describe('HouseholdProfile.vue', () => {
             $services: services,
           },
         });
-        wrapper.vm.$hasFeature = jest.fn((f) => {
-          if (f === FeatureKeys.L0Access) {
-            return true;
-          }
-          return false;
-        });
+        wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 

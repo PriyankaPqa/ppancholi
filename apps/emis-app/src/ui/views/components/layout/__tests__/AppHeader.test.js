@@ -61,24 +61,7 @@ describe('AppHeader.vue', () => {
     });
 
     describe('displayRegistrationButton', () => {
-      it('should return true if the user has minimum level 1 and the route has the right name and feature flag L0Access is off', () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level1),
-          vuetify,
-          mocks: {
-            $route: {
-              name: routes.events.home.name,
-            },
-            $hasFeature: jest.fn(() => false),
-            $services: services,
-          },
-        });
-
-        expect(wrapper.vm.displayRegistrationButton).toBeTruthy();
-      });
-
-      it('should return true if the user has minimum level 0 and the route has the right name and feature flag L0Access is on', () => {
+      it('should return true if the user has minimum level 0 and the route has the right name', () => {
         wrapper = mount(Component, {
           localVue,
           pinia: getPiniaForUser(UserRoles.level0),

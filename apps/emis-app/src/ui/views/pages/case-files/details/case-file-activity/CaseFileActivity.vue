@@ -187,7 +187,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     canEditLabels(): boolean {
-      return this.$hasFeature(FeatureKeys.L0Access) ? this.$hasLevel(UserRoles.level0) && !this.readonly : this.canEdit;
+      return  this.$hasLevel(UserRoles.level0) && !this.readonly;
     },
 
     triageLevels(): { value: unknown, text: string }[] {

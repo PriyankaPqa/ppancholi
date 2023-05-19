@@ -403,7 +403,7 @@ describe('HouseholdMemberCard.vue', () => {
     });
 
     describe('canEdit', () => {
-      it('returns true if the user has level 1 or more and feature flag L0Access is off ', () => {
+      it('returns true if the user has level 0 or more ', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -411,7 +411,7 @@ describe('HouseholdMemberCard.vue', () => {
             isPrimaryMember: false,
             shelterLocations: [],
           },
-          pinia: getPiniaForUser(UserRoles.level1),
+          pinia: getPiniaForUser(UserRoles.level0),
           mocks: {
 
             $hasFeature: () => false,
@@ -439,25 +439,6 @@ describe('HouseholdMemberCard.vue', () => {
         });
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
-
-      it('returns true if the user has level 0 or more  and feature flag L0Access is on', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            member,
-            isPrimaryMember: false,
-            shelterLocations: [],
-          },
-          pinia: getPiniaForUser(UserRoles.level0),
-          mocks: {
-
-            $hasFeature: () => true,
-          },
-        });
-
-        expect(wrapper.vm.canEdit).toBeTruthy();
-      });
-
       it('returns false if the user has a different role', () => {
         wrapper = shallowMount(Component, {
           localVue,

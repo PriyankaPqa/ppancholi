@@ -192,7 +192,6 @@ export default mixins(caseFileDetail, householdDetails).extend({
           text: this.$t('caseFileDetail.menu_case_note') as string,
           test: 'case-note',
           to: routes.caseFile.note.name,
-          disabled: !this.canAccess,
         },
           !this.isL0 && {
           text: this.$t('caseFileDetail.menu_documents') as string,
@@ -228,14 +227,7 @@ export default mixins(caseFileDetail, householdDetails).extend({
 
     canL0AccessAssessment(): boolean {
       if (useUserStore().getUser().currentRole() === 'level0') {
-        return this.$hasFeature(FeatureKeys.L0Access) && this.event.assessmentsForL0usersEnabled;
-      }
-      return true;
-    },
-
-    canAccess(): boolean {
-      if (useUserStore().getUser().currentRole() === UserRoles.level0) {
-        return this.$hasFeature(FeatureKeys.L0Access);
+        return this.event.assessmentsForL0usersEnabled;
       }
       return true;
     },

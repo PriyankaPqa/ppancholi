@@ -9,7 +9,6 @@ export enum FeatureKeys {
   PreFillPersonalInformation = 'PreFillPersonalInformation',
   PaymentGroupStatusHistory = 'paymentGroupStatusHistory',
   AssessmentsMassAction = 'AssessmentsMassAction',
-  L0Access = 'L0Access',
   SelfRegistration = 'SelfRegistration',
   HouseholdProfileStatus = 'HouseholdProfileStatus',
   ManageDuplicates = 'manageDuplicates',
