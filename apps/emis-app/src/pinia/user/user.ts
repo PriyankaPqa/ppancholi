@@ -13,6 +13,7 @@ import { defineStore } from 'pinia';
 import userHelpers from './userHelpers';
 import helpers from '../../ui/helpers/helpers';
 import AuthenticationProvider from '../../auth/AuthenticationProvider';
+import { localStorageKeys } from '../../constants/localStorage';
 
 export const useUserStore = defineStore('user', () => {
   const oid = ref('');
@@ -66,6 +67,9 @@ export const useUserStore = defineStore('user', () => {
       applicationInsights.setUserId(`${email.value}_${payload.oid}`);
       applicationInsights.setBasicContext({ name: email.value });
       applicationInsights.setBasicContext({ uid: oid.value });
+
+      // login_hint: passed in OIDC auth call in subsequent login flows
+      localStorage.setItem(localStorageKeys.loginHint.name, email.value);
     }
 
     family_name.value = payload.family_name;

@@ -15,6 +15,8 @@ import {BrowserAuthOptions} from "@azure/msal-browser/dist/config/Configuration"
 import helpers from '@/ui/helpers/helpers';
 import {localStorageKeys} from "../constants/localStorage";
 import routes from '@/constants/routes';
+import { i18n } from '@/ui/plugins';
+import { DEFAULT_LANGUAGE } from '@/constants/trans';
 
 export interface Options extends Configuration {
   loginRedirectRequest?: RedirectRequest,
@@ -372,6 +374,7 @@ export class MSAL {
     this.msalLibrary.loginRedirect({
       ...this.loginRedirectRequest,
       // modify when FeatureKeys.UseIdentityServer is removed
+      loginHint: this.identityServerEnabled ? localStorage[localStorageKeys.loginHint.name] : undefined,
       authority: this.identityServerEnabled 
         ? this.originalOptions.ids_authority 
         : `https://login.microsoftonline.com/${specificTenant ?? (this.currentDomainTenant ? this.currentDomainTenant : 'common')}`,
@@ -415,6 +418,16 @@ export class MSAL {
         ...this.loginRedirectRequest,
         // when the user gets back from microsoft we want to get them to where they were
         state: window.location.href,
+      }
+
+      //FeatureKeys.UseIdentityServer
+      if (this.identityServerEnabled) {
+        request.loginHint = localStorage[localStorageKeys.loginHint.name];
+        // Only pass ui_locale for non-default languages
+        // -> Falls back on user's browser language settings
+        if (i18n.locale != DEFAULT_LANGUAGE) {
+          request.extraQueryParameters = { ui_locales: i18n.locale };
+        }
       }
 
       return this.msalLibrary.loginRedirect(request).then(() => {
@@ -497,8 +510,10 @@ export class MSAL {
    * @private
    */
   private getInteractiveRequest(): RedirectRequest {
+    ///FeatureKeys.UseIdentityServer
     return {
       account: this.account,
+      loginHint: this.identityServerEnabled ? localStorage[localStorageKeys.loginHint.name] : undefined,
       scopes: this.identityServerEnabled ? [ this.originalOptions.ids_apiPermissions ] : this.tokenRequest.scopes,
     }
   }

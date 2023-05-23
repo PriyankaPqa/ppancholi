@@ -23,4 +23,7 @@ export const localStorageKeys = {
   automatedTests: {
     name: 'automated-tests',
   },
+  loginHint: {
+    name: 'login-hint',
+  },
 };
