@@ -410,8 +410,8 @@ describe('CaseFileDetails.vue', () => {
       });
     });
 
-    describe('canAccess', () => {
-      it('should return true if user has level 1+', () => {
+    describe('canL0AccessAssessment', () => {
+      it('should return true when user has level 1+', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia: getPiniaForUser(UserRoles.level1),
@@ -427,68 +427,10 @@ describe('CaseFileDetails.vue', () => {
         expect(wrapper.vm.canL0AccessAssessment).toBe(true);
       });
 
-      it('should return true if user has level 0, feature flag is on', () => {
+      it('should return false when user has level 0, event.assessmentsForL0usersEnabled it false', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia: getPiniaForUser(UserRoles.level0),
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          computed: {
-            event: () => mockEventEntity({ assessmentsForL0usersEnabled: true }),
-            primaryBeneficiary() {
-              return { email: null };
-            },
-          },
-          mocks: {
-            $hasFeature: () => true,
-          },
-        });
-        expect(wrapper.vm.canL0AccessAssessment).toBe(true);
-      });
-    });
-
-    describe('canL0AccessAssessment', () => {
-      it('should return true when user has level 1+', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser('level1'),
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          computed: {
-            primaryBeneficiary() {
-              return { email: null };
-            },
-          },
-        });
-        expect(wrapper.vm.canL0AccessAssessment).toBe(true);
-      });
-
-      it('should return true when user has level 0, has Feature, event.assessmentsForL0usersEnabled it true', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser('level0'),
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          computed: {
-            event: () => mockEventEntity({ assessmentsForL0usersEnabled: true }),
-            primaryBeneficiary() {
-              return { email: null };
-            },
-          },
-          mocks: {
-            $hasFeature: () => true,
-          },
-        });
-        expect(wrapper.vm.canL0AccessAssessment).toBe(true);
-      });
-
-      it('should return false when user has level 0, has Feature, event.assessmentsForL0usersEnabled it false', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser('level0'),
           propsData: {
             id: mockCaseFile.id,
           },
@@ -497,9 +439,6 @@ describe('CaseFileDetails.vue', () => {
             primaryBeneficiary() {
               return { email: null };
             },
-          },
-          mocks: {
-            $hasFeature: () => true,
           },
         });
         expect(wrapper.vm.canL0AccessAssessment).toBe(false);

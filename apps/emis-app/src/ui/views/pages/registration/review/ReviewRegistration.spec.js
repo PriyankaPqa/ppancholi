@@ -5,6 +5,7 @@ import {
 } from '@/test/testSetup';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './ReviewRegistration.vue';
 
 const localVue = createLocalVue();
@@ -35,18 +36,13 @@ describe('ReviewRegistrationLib.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
-          mocks: {
-            $hasFeature: () => true,
-          },
+          featureList: [FeatureKeys.AddressAutoFill],
         });
         expect(wrapper.vm.enableAutocomplete).toBe(true);
 
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
-          mocks: {
-            $hasFeature: () => false,
-          },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });

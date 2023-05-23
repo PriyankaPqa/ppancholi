@@ -14,6 +14,7 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { Status } from '@libs/entities-lib/base';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../EventSummary.vue';
 import { EDialogComponent } from '../components/DialogComponents';
 
@@ -61,47 +62,35 @@ const mountWithStatus = (status) => {
 
 describe('EventSummary.vue', () => {
   let wrapper;
-  const doMount = (pinia = getPiniaForUser(UserRoles.level5), level = 5, otherComputed = {}, hasFeature = false) => {
-    wrapper = mount(Component, {
+  const doMount = (pinia = getPiniaForUser(UserRoles.level5), otherComputed = {}, initialFeatures = [], shallow = true) => {
+    const options = {
       localVue,
       pinia,
+      featureList: initialFeatures,
       computed: {
         event() {
           return mockEvent;
         },
-        agreementTypes() {
-          return [];
-        },
-        responseLevelName() {
-          return 'mock-response-level';
-        },
-        canEditSections() {
-          return true;
-        },
-        canEdit() {
-          return true;
-        },
-        canEditConsentSection() {
-          return true;
-        },
         ...otherComputed,
       },
       mocks: {
-        $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $route: {
           name: routes.events.edit.name,
           params: {
             id: '7c076603-580a-4400-bef2-5ddececb0931',
           },
         },
-        $hasFeature: () => hasFeature,
       },
       stubs: {
         EventStatusDialog: true,
       },
-    });
+    };
+    wrapper = shallow ? shallowMount(Component, options) : mount(Component, options);
   };
 
+  beforeEach(() => {
+    doMount();
+  });
   describe('Template', () => {
     beforeEach(() => {
       doMount();
@@ -114,7 +103,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('is disabled for users with level below 5', async () => {
-        doMount(getPiniaForUser(UserRoles.level4), 4);
+        doMount(getPiniaForUser(UserRoles.level4));
         const element = wrapper.findDataTest('event-detail-status');
         expect(element.props('disabled')).toBeTruthy();
       });
@@ -146,35 +135,11 @@ describe('EventSummary.vue', () => {
       });
 
       it('does not render when canEditSections is false', async () => {
-        wrapper = mount(Component, {
-          localVue,
-          computed: {
-            event() {
-              return mockEvent;
-            },
-            agreementTypes() {
-              return [];
-            },
-            responseLevelName() {
-              return 'mock-response-level';
-            },
-            canEdit() {
-              return false;
-            },
+        doMount(getPiniaForUser(UserRoles.level5), {
+          canEdit() {
+            return false;
           },
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-
-          },
-          stubs: {
-            EventStatusDialog: true,
-          },
-        });
+        }, null, false);
 
         const element = wrapper.findDataTest('event-edit-button');
         expect(element.exists()).toBeFalsy();
@@ -202,11 +167,13 @@ describe('EventSummary.vue', () => {
 
     describe('call centre section', () => {
       it('renders when the event has call centres', () => {
+        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
         const element = wrapper.findDataTest('call-centre-section');
         expect(element.exists()).toBeTruthy();
       });
 
       it('calls the method editSection when method edit is emitted', () => {
+        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
         jest.spyOn(wrapper.vm, 'editSection').mockImplementation(() => {});
         const element = wrapper.findDataTest('call-centre-section');
         element.vm.$emit('edit');
@@ -214,28 +181,13 @@ describe('EventSummary.vue', () => {
       });
 
       it('does not render when the event has no call centres', () => {
-        wrapper = mount(Component, {
-          localVue,
-          computed: {
-            event() {
-              const event = _cloneDeep(mockEvent);
-              event.callCentres = [];
-              return event;
-            },
+        doMount(getPiniaForUser(UserRoles.level5), {
+          event() {
+            const event = _cloneDeep(mockEvent);
+            event.callCentres = [];
+            return event;
           },
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-
-          },
-          stubs: {
-            EventStatusDialog: true,
-          },
-        });
+        }, null, false);
 
         const element = wrapper.findDataTest('call-centre-section');
         expect(element.exists()).toBeFalsy();
@@ -243,11 +195,11 @@ describe('EventSummary.vue', () => {
 
       describe('event-summary-toggle-call-centre', () => {
         it('should display when showToggleForL0Access is true', () => {
-          doMount(getPiniaForUser(UserRoles.level6), 6, {
+          doMount(getPiniaForUser(UserRoles.level6), {
             showToggleForL0Access() {
               return true;
             },
-          });
+          }, null, false);
           const toggleRegistration = wrapper.findDataTest('event-summary-toggle-registration');
           const toggleAssessment = wrapper.findDataTest('event-summary-toggle-assessment');
           expect(toggleRegistration.exists()).toBeTruthy();
@@ -257,11 +209,11 @@ describe('EventSummary.vue', () => {
 
       describe('event-summary-toggle-assessment', () => {
         it('should call toggleAccessAssessment when changed', () => {
-          doMount(getPiniaForUser(UserRoles.level6), 6, {
+          doMount(getPiniaForUser(UserRoles.level6), {
             showToggleForL0Access() {
               return true;
             },
-          });
+          }, null, false);
           wrapper.vm.toggleAccessAssessment = jest.fn();
 
           expect(wrapper.vm.toggleAccessAssessment).toBeCalledTimes(0);
@@ -273,11 +225,11 @@ describe('EventSummary.vue', () => {
         });
 
         it('should pass correct Props to EventSummaryToggle for call centre', async () => {
-          doMount(getPiniaForUser(UserRoles.level6), 6, {
+          doMount(getPiniaForUser(UserRoles.level6), {
             showToggleForL0Access() {
               return true;
             },
-          });
+          }, null, false);
           await wrapper.setData({
             updatingAccessAssessmentToggle: false,
           });
@@ -294,11 +246,11 @@ describe('EventSummary.vue', () => {
 
       describe('event-summary-toggle-registration', () => {
         it('should call toggleRegistration when changed', () => {
-          doMount(getPiniaForUser('level6'), 6, {
+          doMount(getPiniaForUser('level6'), {
             showToggleForL0Access() {
               return true;
             },
-          });
+          }, null, false);
           wrapper.vm.toggleRegistration = jest.fn();
 
           expect(wrapper.vm.toggleRegistration).toBeCalledTimes(0);
@@ -310,11 +262,11 @@ describe('EventSummary.vue', () => {
         });
 
         it('should pass correct Props to EventSummaryToggle for call centre', async () => {
-          doMount(getPiniaForUser('level6'), 6, {
+          doMount(getPiniaForUser('level6'), {
             showToggleForL0Access() {
               return true;
             },
-          });
+          }, null, false);
           await wrapper.setData({
             updatingRegistrationToggle: false,
           });
@@ -332,11 +284,13 @@ describe('EventSummary.vue', () => {
 
     describe('agreement section', () => {
       it('renders when the event has agreements', () => {
+        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
         const element = wrapper.findDataTest('agreement-section');
         expect(element.exists()).toBeTruthy();
       });
 
       it('calls the method editSection when method edit is emitted', () => {
+        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
         jest.spyOn(wrapper.vm, 'editSection').mockImplementation(() => {});
         const element = wrapper.findDataTest('agreement-section');
         element.vm.$emit('edit');
@@ -344,28 +298,13 @@ describe('EventSummary.vue', () => {
       });
 
       it('does not render when the event has no agreements', () => {
-        wrapper = mount(Component, {
-          localVue,
-          computed: {
-            event() {
-              const event = _cloneDeep(mockEvent);
-              event.agreements = [];
-              return event;
-            },
+        doMount(getPiniaForUser('level5'), {
+          event() {
+            const event = _cloneDeep(mockEvent);
+            event.agreements = [];
+            return event;
           },
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-
-          },
-          stubs: {
-            EventStatusDialog: true,
-          },
-        });
+        }, null, false);
 
         const element = wrapper.findDataTest('agreement-section');
         expect(element.exists()).toBeFalsy();
@@ -374,12 +313,13 @@ describe('EventSummary.vue', () => {
 
     describe('registration location section', () => {
       it('renders when the event has registration locations', () => {
+        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
         const section = wrapper.findDataTest('registration-location-section');
-
         expect(section.exists()).toBeTruthy();
       });
 
       it('calls the method editSection when method edit is emitted', () => {
+        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
         jest.spyOn(wrapper.vm, 'editSection').mockImplementation(() => {});
         const element = wrapper.findDataTest('registration-location-section');
         element.vm.$emit('edit');
@@ -387,28 +327,13 @@ describe('EventSummary.vue', () => {
       });
 
       it('does not render when the event has no registration locations', () => {
-        wrapper = mount(Component, {
-          localVue,
-          computed: {
-            event() {
-              const event = _cloneDeep(mockEvent);
-              event.registrationLocations = [];
-              return event;
-            },
+        doMount(getPiniaForUser('level5'), {
+          event() {
+            const event = _cloneDeep(mockEvent);
+            event.registrationLocations = [];
+            return event;
           },
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-
-          },
-          stubs: {
-            EventStatusDialog: true,
-          },
-        });
+        }, null, false);
 
         const element = wrapper.findDataTest('registration-location-section');
         expect(element.exists()).toBeFalsy();
@@ -417,12 +342,13 @@ describe('EventSummary.vue', () => {
 
     describe('shelter location section', () => {
       it('renders when the event has shelter locations', () => {
+        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
         const section = wrapper.findDataTest('shelter-location-section');
-
         expect(section.exists()).toBeTruthy();
       });
 
       it('calls the method editSection when method edit is emitted', () => {
+        doMount(getPiniaForUser(UserRoles.level5), null, null, false);
         jest.spyOn(wrapper.vm, 'editSection').mockImplementation(() => {});
         const element = wrapper.findDataTest('shelter-location-section');
         element.vm.$emit('edit');
@@ -629,27 +555,15 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 6 and event is on hold', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+        doMount(getPiniaForUser(UserRoles.level6), {
+          event() {
+            return new EventEntity({
+              ...event,
+              schedule: {
+                ...event.schedule,
+                status: EEventStatus.Open,
               },
-            },
-          },
-          computed: {
-            event() {
-              return new EventEntity({
-                ...event,
-                schedule: {
-                  ...event.schedule,
-                  status: EEventStatus.Open,
-                },
-              });
-            },
+            });
           },
         });
 
@@ -657,27 +571,15 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 6 and event is not open or on hold', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+        doMount(getPiniaForUser(UserRoles.level6), {
+          event() {
+            return new EventEntity({
+              ...event,
+              schedule: {
+                ...event.schedule,
+                status: EEventStatus.Closed,
               },
-            },
-          },
-          computed: {
-            event() {
-              return new EventEntity({
-                ...event,
-                schedule: {
-                  ...event.schedule,
-                  status: EEventStatus.Closed,
-                },
-              });
-            },
+            });
           },
         });
 
@@ -691,27 +593,15 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 5 and event is not open', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level5),
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+        doMount(getPiniaForUser(UserRoles.level5), {
+          event() {
+            return new EventEntity({
+              ...event,
+              schedule: {
+                ...event.schedule,
+                status: EEventStatus.Closed,
               },
-            },
-          },
-          computed: {
-            event() {
-              return new EventEntity({
-                ...event,
-                schedule: {
-                  ...event.schedule,
-                  status: EEventStatus.Closed,
-                },
-              });
-            },
+            });
           },
         });
 
@@ -719,21 +609,7 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is not level 5', () => {
-        const pinia = getPiniaForUser(UserRoles.level3);
-        initEventStore(pinia);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-          },
-        });
+        doMount(getPiniaForUser(UserRoles.level3));
 
         expect(wrapper.vm.canEditSections).toBeFalsy();
       });
@@ -746,27 +622,15 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 6 and event is on hold', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+        doMount(getPiniaForUser(UserRoles.level6), {
+          event() {
+            return new EventEntity({
+              ...event,
+              schedule: {
+                ...event.schedule,
+                status: EEventStatus.OnHold,
               },
-            },
-          },
-          computed: {
-            event() {
-              return new EventEntity({
-                ...event,
-                schedule: {
-                  ...event.schedule,
-                  status: EEventStatus.OnHold,
-                },
-              });
-            },
+            });
           },
         });
 
@@ -774,27 +638,15 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 6 and event is not open or on hold', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+        doMount(getPiniaForUser(UserRoles.level6), {
+          event() {
+            return new EventEntity({
+              ...event,
+              schedule: {
+                ...event.schedule,
+                status: EEventStatus.Closed,
               },
-            },
-          },
-          computed: {
-            event() {
-              return new EventEntity({
-                ...event,
-                schedule: {
-                  ...event.schedule,
-                  status: EEventStatus.Closed,
-                },
-              });
-            },
+            });
           },
         });
 
@@ -802,27 +654,15 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 6 and event is open', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+        doMount(getPiniaForUser(UserRoles.level6), {
+          event() {
+            return new EventEntity({
+              ...event,
+              schedule: {
+                ...event.schedule,
+                status: EEventStatus.Open,
               },
-            },
-          },
-          computed: {
-            event() {
-              return new EventEntity({
-                ...event,
-                schedule: {
-                  ...event.schedule,
-                  status: EEventStatus.Open,
-                },
-              });
-            },
+            });
           },
         });
 
@@ -843,27 +683,15 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 6 and event is on hold', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+        doMount(getPiniaForUser(UserRoles.level6), {
+          event() {
+            return new EventEntity({
+              ...event,
+              schedule: {
+                ...event.schedule,
+                status: EEventStatus.OnHold,
               },
-            },
-          },
-          computed: {
-            event() {
-              return new EventEntity({
-                ...event,
-                schedule: {
-                  ...event.schedule,
-                  status: EEventStatus.OnHold,
-                },
-              });
-            },
+            });
           },
         });
 
@@ -871,27 +699,15 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 6 and event is not open or on hold', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+        doMount(getPiniaForUser(UserRoles.level6), {
+          event() {
+            return new EventEntity({
+              ...event,
+              schedule: {
+                ...event.schedule,
+                status: EEventStatus.Closed,
               },
-            },
-          },
-          computed: {
-            event() {
-              return new EventEntity({
-                ...event,
-                schedule: {
-                  ...event.schedule,
-                  status: EEventStatus.Closed,
-                },
-              });
-            },
+            });
           },
         });
 
@@ -899,27 +715,15 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 6 and event is open', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level6),
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+        doMount(getPiniaForUser(UserRoles.level6), {
+          event() {
+            return new EventEntity({
+              ...event,
+              schedule: {
+                ...event.schedule,
+                status: EEventStatus.Open,
               },
-            },
-          },
-          computed: {
-            event() {
-              return new EventEntity({
-                ...event,
-                schedule: {
-                  ...event.schedule,
-                  status: EEventStatus.Open,
-                },
-              });
-            },
+            });
           },
         });
 
@@ -940,27 +744,15 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns true if user is level 5 and event is on hold', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level5),
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+        doMount(getPiniaForUser(UserRoles.level5), {
+          event() {
+            return new EventEntity({
+              ...event,
+              schedule: {
+                ...event.schedule,
+                status: EEventStatus.OnHold,
               },
-            },
-          },
-          computed: {
-            event() {
-              return new EventEntity({
-                ...event,
-                schedule: {
-                  ...event.schedule,
-                  status: EEventStatus.OnHold,
-                },
-              });
-            },
+            });
           },
         });
 
@@ -968,27 +760,15 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is level 5 and event is not open or on hold', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia: getPiniaForUser(UserRoles.level5),
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+        doMount(getPiniaForUser(UserRoles.level5), {
+          event() {
+            return new EventEntity({
+              ...event,
+              schedule: {
+                ...event.schedule,
+                status: EEventStatus.Closed,
               },
-            },
-          },
-          computed: {
-            event() {
-              return new EventEntity({
-                ...event,
-                schedule: {
-                  ...event.schedule,
-                  status: EEventStatus.Closed,
-                },
-              });
-            },
+            });
           },
         });
 
@@ -1002,33 +782,21 @@ describe('EventSummary.vue', () => {
       });
 
       it('returns false if user is not level 5', () => {
-        const pinia = getPiniaForUser(UserRoles.level3);
-        initEventStore(pinia);
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          mocks: {
-            $route: {
-              name: routes.events.edit.name,
-              params: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
-              },
-            },
-          },
-        });
+        doMount(getPiniaForUser(UserRoles.level3));
 
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });
 
-    describe('showAccessAssessmentToggle', () => {
-      it('should return true when user has level6 and event has call centre', () => {
-        doMount(getPiniaForUser(UserRoles.level6), 6, null, true);
+    describe('showToggleForL0Access', () => {
+      it('should return true when user has level6 and event has call centre', async () => {
+        doMount(getPiniaForUser(UserRoles.level6), null, [FeatureKeys.L0Access]);
         expect(wrapper.vm.showToggleForL0Access).toBeTruthy();
       });
 
-      it('should return false when user doesnt have level 6,', () => {
-        doMount(getPiniaForUser(UserRoles.level5), 5, null, true);
+      it('should return false when user doesnt have level 6,', async () => {
+        doMount(getPiniaForUser(UserRoles.level5), null);
+        await wrapper.setFeature(FeatureKeys.L0Access, true);
         expect(wrapper.vm.showToggleForL0Access).toBeFalsy();
       });
     });

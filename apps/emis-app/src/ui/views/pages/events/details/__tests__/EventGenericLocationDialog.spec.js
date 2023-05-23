@@ -8,6 +8,7 @@ import { ECanadaProvinces } from '@libs/shared-lib/types';
 
 import { useMockEventStore } from '@/pinia/event/event.mock';
 
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../components/EventGenericLocationDialog.vue';
 
 const localVue = createLocalVue();
@@ -361,15 +362,12 @@ describe('EventGenericLocationDialog.vue', () => {
       it('returns true if storage returns true', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          featureList: [FeatureKeys.AddressAutoFill],
           propsData: {
             event: mockEvent,
             isEditMode: false,
             id: mockEvent.registrationLocations[0].name.translation.en,
             isRegistrationLocation: true,
-          },
-          mocks: {
-
-            $hasFeature: () => true,
           },
         });
 
@@ -384,10 +382,6 @@ describe('EventGenericLocationDialog.vue', () => {
             isEditMode: false,
             id: mockEvent.registrationLocations[0].name.translation.en,
             isRegistrationLocation: true,
-          },
-          mocks: {
-
-            $hasFeature: () => false,
           },
         });
 

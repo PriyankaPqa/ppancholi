@@ -140,7 +140,7 @@ describe('CaseNote.vue', () => {
   });
 
   describe('Computed', () => {
-    const doMount = (level, otherComputed, hasFeature) => {
+    const doMount = (level, otherComputed) => {
       const pinia = getPiniaForUser(level);
       useMockCaseFileStore(pinia);
       wrapper = mount(Component, {
@@ -154,9 +154,6 @@ describe('CaseNote.vue', () => {
             return mockEvent;
           },
           ...otherComputed,
-        },
-        mocks: {
-          $hasFeature: () => hasFeature,
         },
       });
     };

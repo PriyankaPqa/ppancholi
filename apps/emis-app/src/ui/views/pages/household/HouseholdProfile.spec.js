@@ -5,7 +5,7 @@ import {
 } from '@libs/entities-lib/household';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventMainInfo, EEventLocationStatus } from '@libs/entities-lib/event';
 import { CaseFileStatus, mockCaseFileEntities, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -118,48 +118,56 @@ describe('HouseholdProfile.vue', () => {
   let wrapper;
   registrationStore.getHouseholdCreate = jest.fn(() => householdCreate);
 
+  const doMount = async (otherComputed = {}, otherData = {}, shallow = true) => {
+    const options = {
+      localVue,
+      pinia,
+      propsData: {
+        id: householdEntity.id,
+      },
+      data() {
+        return {
+          events,
+          loading: false,
+          caseFiles: mockCaseFileEntities(),
+          newStatus: HouseholdStatus.Open,
+          ...otherData,
+        };
+      },
+      computed: {
+        household() {
+          return householdCreate;
+        },
+        householdEntity() {
+          return householdEntity;
+        },
+        ...otherComputed,
+      },
+      mocks: {
+        $services: services,
+      },
+    };
+
+    wrapper = shallow ? shallowMount(Component, options) : mount(Component, options);
+    await wrapper.vm.$nextTick();
+  };
+
   describe('Template', () => {
     beforeEach(async () => {
       jest.clearAllMocks();
-      wrapper = shallowMount(Component, {
-        pinia,
-        localVue,
-        propsData: {
-          id: householdEntity.id,
+      await doMount({
+        country() {
+          return 'mock-country';
         },
-        data() {
-          return {
-            events,
-            loading: false,
-            caseFiles: mockCaseFileEntities(),
-            newStatus: HouseholdStatus.Open,
-          };
+        statuses() {
+          return [HouseholdStatus.Archived, HouseholdStatus.Closed];
         },
-        computed: {
-          country() {
-            return 'mock-country';
-          },
-          household() {
-            return householdCreate;
-          },
-          householdEntity() {
-            return householdEntity;
-          },
-          statuses() {
-            return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-          },
-          duplicateCount() {
-            return 3;
-          },
-          canManageDuplicates() {
-            return true;
-          },
+        duplicateCount() {
+          return 3;
         },
-        mocks: {
-          $services: services,
-          $hasFeature: () => true,
+        canManageDuplicates() {
+          return true;
         },
-
       });
       householdStore.fetch = jest.fn(() => householdEntity);
       await flushPromises();
@@ -193,89 +201,28 @@ describe('HouseholdProfile.vue', () => {
         expect(element.text()).toContain(wrapper.vm.country);
       });
 
-      it('renders the edit button if the user can edit', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
+      it('renders the edit button if the user can edit', async () => {
+        await doMount({
+          canEdit() {
+            return true;
           },
-          data() {
-            return {
-              events,
-              loading: false,
-              caseFiles: mockCaseFileEntities(),
-              newStatus: HouseholdStatus.Open,
-            };
-          },
-          computed: {
-            country() {
-              return 'mock-country';
-            },
-            household() {
-              return householdCreate;
-            },
-            canEdit() {
-              return true;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-
         });
-
         expect(wrapper.findDataTest('member_address_edit_btn').exists()).toBeTruthy();
       });
-      it('does not render the edit button if the user cannot edit', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
+      it('does not render the edit button if the user cannot edit', async () => {
+        await doMount({
+          canEdit() {
+            return false;
           },
-          data() {
-            return {
-              events,
-              loading: false,
-              caseFiles: mockCaseFileEntities(),
-              newStatus: HouseholdStatus.Open,
-            };
-          },
-          computed: {
-            country() {
-              return 'mock-country';
-            },
-            household() {
-              return householdCreate;
-            },
-            canEdit() {
-              return false;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-
         });
-
         expect(wrapper.findDataTest('member_address_edit_btn').exists()).toBeFalsy();
       });
     });
 
     describe('household-profile-status', () => {
+      beforeEach(async () => {
+        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
+      });
       it('should render', () => {
         const element = wrapper.findDataTest('household-profile-status');
         expect(element.exists()).toBe(true);
@@ -290,9 +237,9 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('pinned-action-and-rationale', () => {
-      it('should exist when has feature flag', () => {
+      it('should exist when has feature flag', async () => {
+        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
         const component = wrapper.findComponent(PinnedActionAndRationale);
-        wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(component.exists()).toBeTruthy();
       });
     });
@@ -351,45 +298,10 @@ describe('HouseholdProfile.vue', () => {
 
     describe('household_profile_primary_member_card And household_profile_member_card', () => {
       it('should receive props disabledEditingHousehold', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
+        doMount({
+          editingDisabled() {
+            return true;
           },
-          data() {
-            return {
-              events,
-              loading: false,
-              caseFiles: mockCaseFileEntities(),
-              newStatus: HouseholdStatus.Open,
-            };
-          },
-          computed: {
-            country() {
-              return 'mock-country';
-            },
-            household() {
-              return householdCreate;
-            },
-            canEdit() {
-              return false;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-            editingDisabled() {
-              return true;
-            },
-          },
-          mocks: {
-            $services: services,
-            $hasFeature: () => true,
-          },
-
         });
         const primaryMemberCard = wrapper.findDataTest('household_profile_primary_member_card');
         const memberCard = wrapper.findDataTest('household_profile_member_card');
@@ -400,6 +312,9 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('duplicates count', () => {
+      beforeEach(async () => {
+        await wrapper.setFeature(FeatureKeys.ManageDuplicates, true);
+      });
       it('renders', async () => {
         const element = wrapper.findDataTest('household-profile-duplicateCount');
         expect(element.exists()).toBeTruthy();
@@ -412,42 +327,19 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('manage duplicates button', () => {
+      beforeEach(async () => {
+        await wrapper.setFeature(FeatureKeys.ManageDuplicates, true);
+      });
       it('renders if canManageDuplicates is true', async () => {
         const element = wrapper.findDataTest('household-profile-manageDuplicatesBtn');
         expect(element.exists()).toBeTruthy();
       });
 
       it('does not render if canManageDuplicates is false', async () => {
-        wrapper = shallowMount(Component, {
-          pinia,
-          localVue,
-          propsData: {
-            id: householdEntity.id,
+        doMount({
+          canManageDuplicates() {
+            return true;
           },
-          data() {
-            return {
-              events,
-              loading: false,
-              caseFiles: mockCaseFileEntities(),
-
-            };
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-            canManageDuplicates() {
-              return false;
-            },
-          },
-          mocks: {
-            $services: services,
-            $hasFeature: () => true,
-          },
-
         });
         const element = wrapper.findDataTest('household-profile-manageDuplicatesBtn');
         expect(element.exists()).toBeFalsy();
@@ -455,78 +347,22 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('moved_member_card', () => {
-      it('should not be rendered when the feature flag is off', () => {
-        wrapper = shallowMount(Component, {
-          pinia,
-          localVue,
-          propsData: {
-            id: householdEntity.id,
+      it('should not be rendered when the feature flag is off', async () => {
+        await doMount({
+          canManageDuplicates() {
+            return false;
           },
-          data() {
-            return {
-              events,
-              loading: false,
-              caseFiles: mockCaseFileEntities(),
-
-            };
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-            canManageDuplicates() {
-              return false;
-            },
-            movedMembers() {
-              return movedMemberList;
-            },
-          },
-          mocks: {
-            $services: services,
-            $hasFeature: () => false,
+          movedMembers() {
+            return movedMemberList;
           },
         });
+        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, false);
         const element = wrapper.findDataTest('moved_member_card');
         expect(element.exists()).toBeFalsy();
       });
 
-      it('should be rendered when the feature flag is on', () => {
-        wrapper = shallowMount(Component, {
-          pinia,
-          localVue,
-          propsData: {
-            id: householdEntity.id,
-          },
-          data() {
-            return {
-              events,
-              loading: false,
-              caseFiles: mockCaseFileEntities(),
-
-            };
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-            canManageDuplicates() {
-              return false;
-            },
-            movedMembers() {
-              return movedMemberList;
-            },
-          },
-          mocks: {
-            $services: services,
-            $hasFeature: () => true,
-          },
-        });
+      it('should be rendered when the feature flag is on', async () => {
+        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
         const element = wrapper.findDataTest('moved_member_card');
         expect(element.exists()).toBeTruthy();
       });
@@ -556,36 +392,14 @@ describe('HouseholdProfile.vue', () => {
             },
           )];
 
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
+        doMount({
+          activeCaseFiles() {
+            return caseFiles;
           },
-          data() {
-            return {
-              allEvents: events,
-              newStatus: HouseholdStatus.Open,
-              caseFiles: mockCaseFileEntities(),
-              myEvents: [mockEventMainInfo()],
-            };
-          },
-          computed: {
-            activeCaseFiles() {
-              return caseFiles;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
+        }, {
+          myEvents: [mockEventMainInfo()],
+          allEvents: events,
         });
-
         expect(wrapper.vm.registrationLocations).toEqual([
           { id: ' loc-id-1-active', status: EEventLocationStatus.Active, eventName: events[0].entity.name },
           { id: ' loc-id-3-active', status: EEventLocationStatus.Active, eventName: events[1].entity.name },
@@ -595,28 +409,7 @@ describe('HouseholdProfile.vue', () => {
 
     describe('household', () => {
       it('returns the right data', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-
-        });
+        doMount();
         expect(wrapper.vm.household).toEqual(householdCreate);
       });
     });
@@ -651,35 +444,10 @@ describe('HouseholdProfile.vue', () => {
         const cfOpen = { caseFileId: '1', caseFileStatus: CaseFileStatus.Open };
         const cfClosed = { caseFileId: '2', caseFileStatus: CaseFileStatus.Closed };
         const caseFiles = [cfOpen, cfClosed];
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          data() {
-            return {
-              caseFiles: [...caseFiles],
-              newStatus: HouseholdStatus.Open,
-            };
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
 
+        doMount(null, {
+          caseFiles: [...caseFiles],
         });
-
         expect(wrapper.vm.inactiveCaseFiles).toEqual([cfClosed]);
       });
     });
@@ -687,90 +455,25 @@ describe('HouseholdProfile.vue', () => {
     describe('country', () => {
       it(' calls helpers  countryName and returns the result', () => {
         jest.spyOn(householdHelpers, 'countryName').mockImplementation(() => 'mock-country');
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-
-        });
+        doMount();
         expect(wrapper.vm.country).toEqual('mock-country');
       });
     });
 
     describe('lastUpdated', () => {
       it(' returns the right date when there are timestamps for both entity and metadata', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-
-        });
-
+        doMount();
         expect(wrapper.vm.lastUpdated).toEqual('May 26, 2021');
       });
 
       it(' returns the right date when there are timestamps only for entity', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-
-        });
-
+        doMount();
         expect(wrapper.vm.lastUpdated).toEqual('May 26, 2021');
       });
     });
 
     describe('canEdit', () => {
-      it('returns true if user has level 1 and feature flag is off', () => {
+      it('returns true if user has level 1 and feature flag is off', async () => {
         const pinia = getPiniaForUser(UserRoles.level1);
         useMockRegistrationStore(pinia);
         useMockHouseholdStore(pinia);
@@ -784,7 +487,7 @@ describe('HouseholdProfile.vue', () => {
             $services: services,
           },
         });
-        wrapper.vm.$hasFeature = jest.fn(() => false);
+        await wrapper.setFeature(FeatureKeys.L0Access, false);
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
@@ -803,7 +506,6 @@ describe('HouseholdProfile.vue', () => {
             $services: services,
           },
         });
-        wrapper.vm.$hasFeature = jest.fn(() => true);
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
@@ -898,7 +600,7 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.canManageDuplicates).toBeFalsy();
       });
 
-      it('returns false if status is archived and household status flag is on', () => {
+      it('returns false if status is archived and household status flag is on', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -911,15 +613,14 @@ describe('HouseholdProfile.vue', () => {
           },
           mocks: {
             $services: services,
-            $hasFeature: (f) => f === FeatureKeys.HouseholdProfileStatus,
           },
           pinia,
         });
-
+        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
         expect(wrapper.vm.canManageDuplicates).toBeFalsy();
       });
 
-      it('returns true if status is not archived and household status flag is on', () => {
+      it('returns true if status is not archived and household status flag is on', async () => {
         const pinia = getPiniaForUser(UserRoles.level1);
         useMockRegistrationStore(pinia);
         useMockHouseholdStore(pinia);
@@ -936,9 +637,9 @@ describe('HouseholdProfile.vue', () => {
           },
           mocks: {
             $services: services,
-            $hasFeature: (f) => f === FeatureKeys.HouseholdProfileStatus,
           },
         });
+        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, false);
         expect(wrapper.vm.canManageDuplicates).toBeTruthy();
       });
 
@@ -958,7 +659,6 @@ describe('HouseholdProfile.vue', () => {
           },
           mocks: {
             $services: services,
-            $hasFeature: (f) => f !== FeatureKeys.HouseholdProfileStatus,
           },
           pinia,
         });
@@ -968,82 +668,21 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('enableAutocomplete', () => {
-      it('return correct value', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $hasFeature: () => true,
-            $services: services,
-          },
-        });
+      it('return correct value', async () => {
+        await doMount();
+        await wrapper.setFeature(FeatureKeys.AddressAutoFill, true);
         expect(wrapper.vm.enableAutocomplete).toBe(true);
 
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-            $hasFeature: () => false,
-          },
-        });
+        await doMount();
+        await wrapper.setFeature(FeatureKeys.AddressAutoFill, false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });
 
     describe('eventNames', () => {
       beforeEach(() => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          data() {
-            return {
-              allEvents: [...events, otherEvent],
-              newStatus: HouseholdStatus.Open,
-            };
-          },
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
+        doMount(null, {
+          allEvents: [...events, otherEvent],
         });
       });
       it('returns expected number of names', () => {
@@ -1058,29 +697,13 @@ describe('HouseholdProfile.vue', () => {
 
     describe('hasLinkedCasefiles', () => {
       it('should return true it myEvents id includes eventId in casefils', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
+        doMount({
+          householdEntity() {
+            return mockHouseholdEntity({ householdStatus: HouseholdStatus.Open });
           },
-          data() {
-            return {
-              newStatus: HouseholdStatus.Open,
-              caseFiles: [mockCaseFileEntity({ eventId: 'test-event-id-123' })],
-              myEvents: [mockEventMainInfo({ id: 'test-event-id-123' })],
-            };
-          },
-          computed: {
-            householdEntity() {
-              return mockHouseholdEntity({ householdStatus: HouseholdStatus.Open });
-            },
-          },
-          mocks: {
-            $hasLevel: () => true,
-            $hasFeature: () => true,
-            $services: services,
-          },
+        }, {
+          caseFiles: [mockCaseFileEntity({ eventId: 'test-event-id-123' })],
+          myEvents: [mockEventMainInfo({ id: 'test-event-id-123' })],
         });
         expect(wrapper.vm.hasLinkedCasefiles).toEqual(true);
       });
@@ -1088,189 +711,80 @@ describe('HouseholdProfile.vue', () => {
 
     describe('canChangeStatus', () => {
       it('should return true, when status is Open and it has Level and hasLinkedCasefiles is true', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
+        doMount({
+          hasLinkedCasefiles() {
+            return true;
           },
-          data() {
-            return {
-              newStatus: HouseholdStatus.Open,
-              caseFiles: mockCaseFileEntities(),
-              myEvents: [mockEventMainInfo()],
-            };
+          householdEntity() {
+            return mockHouseholdEntity({ householdStatus: HouseholdStatus.Open });
           },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return mockHouseholdEntity({ householdStatus: HouseholdStatus.Open });
-            },
-            hasLinkedCasefiles() {
-              return true;
-            },
-          },
-          mocks: {
-            $hasLevel: () => true,
-            $hasFeature: () => true,
-            $services: services,
-          },
+        }, {
+          newStatus: HouseholdStatus.Open,
+          myEvents: [mockEventMainInfo()],
+          caseFiles: mockCaseFileEntities(),
         });
+        wrapper.vm.$hasLevel = jest.fn(() => true);
         expect(wrapper.vm.canChangeStatus).toEqual(true);
       });
 
       it('should return true, when status is Archived and it has Level and members', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
+        doMount({
+          hasLinkedCasefiles() {
+            return true;
           },
-          data() {
-            return {
-              newStatus: HouseholdStatus.Open,
-              caseFiles: mockCaseFileEntities(),
-              myEvents: events,
-            };
+          householdEntity() {
+            return mockHouseholdEntity({ householdStatus: HouseholdStatus.Archived });
           },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return mockHouseholdEntity({
-                householdStatus: HouseholdStatus.Archived,
-              });
-            },
-          },
-          mocks: {
-            $hasLevel: () => true,
-            $hasFeature: () => true,
-            $services: services,
-          },
+        }, {
+          newStatus: HouseholdStatus.Open,
+          myEvents: [mockEventMainInfo()],
+          caseFiles: mockCaseFileEntities(),
         });
+        wrapper.vm.$hasLevel = jest.fn(() => true);
         expect(wrapper.vm.canChangeStatus).toEqual(true);
       });
 
       it('should return true, when status is Closed and it has Level', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
+        doMount({
+          hasLinkedCasefiles() {
+            return true;
           },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return mockHouseholdEntity({
-                householdStatus: HouseholdStatus.Closed,
-              });
-            },
+          householdEntity() {
+            return mockHouseholdEntity({ householdStatus: HouseholdStatus.Closed });
           },
-          mocks: {
-            $hasLevel: () => true,
-            $hasFeature: () => true,
-            $services: services,
-          },
+        }, {
+          newStatus: HouseholdStatus.Open,
+          myEvents: [mockEventMainInfo()],
+          caseFiles: mockCaseFileEntities(),
         });
+        wrapper.vm.$hasLevel = jest.fn(() => true);
         expect(wrapper.vm.canChangeStatus).toEqual(true);
       });
     });
 
     describe('statuses', () => {
       it('should return Archive and Closed, when status is Open', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          data() {
-            return {
-              myEvents: events,
-              casefiles: mockCaseFileEntities(),
-            };
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return mockHouseholdEntity({ householdStatus: HouseholdStatus.Open });
-            },
-          },
-          mocks: {
-            $hasLevel: () => true,
-            $hasFeature: () => true,
-            $services: services,
+        doMount({
+          householdEntity() {
+            return mockHouseholdEntity({ householdStatus: HouseholdStatus.Open });
           },
         });
         expect(wrapper.vm.statuses).toEqual([HouseholdStatus.Archived, HouseholdStatus.Closed]);
       });
 
       it('should return Open, when status is Archived', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          data() {
-            return {
-              myEvents: events,
-              casefiles: mockCaseFileEntities(),
-            };
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return mockHouseholdEntity({
-                householdStatus: HouseholdStatus.Archived,
-              });
-            },
-          },
-          mocks: {
-            $hasLevel: () => true,
-            $hasFeature: () => true,
-            $services: services,
+        doMount({
+          householdEntity() {
+            return mockHouseholdEntity({ householdStatus: HouseholdStatus.Archived });
           },
         });
         expect(wrapper.vm.statuses).toEqual([HouseholdStatus.Open]);
       });
 
       it('should return Open, when status is Closed', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          data() {
-            return {
-              myEvents: events,
-              casefiles: mockCaseFileEntities(),
-            };
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return mockHouseholdEntity({
-                householdStatus: HouseholdStatus.Closed,
-              });
-            },
-          },
-          mocks: {
-            $hasLevel: () => true,
-            $hasFeature: () => true,
-            $services: services,
+        doMount({
+          householdEntity() {
+            return mockHouseholdEntity({ householdStatus: HouseholdStatus.Closed });
           },
         });
         expect(wrapper.vm.statuses).toEqual([HouseholdStatus.Open]);
@@ -1279,32 +793,8 @@ describe('HouseholdProfile.vue', () => {
 
     describe('movedMembers', () => {
       it('should return correct data', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          data() {
-            return {
-              myEvents: events,
-              casefiles: mockCaseFileEntities(),
-              activityItemsData: mockHouseholdActivities(HouseholdActivityType.HouseholdMoved),
-            };
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return mockHouseholdEntity();
-            },
-          },
-          mocks: {
-            $hasLevel: () => true,
-            $hasFeature: () => true,
-            $services: services,
-          },
+        doMount(null, {
+          activityItemsData: mockHouseholdActivities(HouseholdActivityType.HouseholdMoved),
         });
         const expectResult = [
           {
@@ -1404,13 +894,13 @@ describe('HouseholdProfile.vue', () => {
           },
         });
       });
-      it('should return false, when feature flag is off', () => {
-        wrapper.vm.$hasFeature = jest.fn(() => false);
+      it('should return false, when feature flag is off', async () => {
+        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, false);
         expect(wrapper.vm.editingDisabled).toEqual(false);
       });
 
-      it('should return true, when feature flag is on, and household status is not Open, and user has no level6', () => {
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+      it('should return true, when feature flag is on, and household status is not Open, and user has no level6', async () => {
+        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
         wrapper.vm.$hasLevel = jest.fn(() => false);
         expect(wrapper.vm.editingDisabled).toEqual(true);
       });
@@ -1418,25 +908,7 @@ describe('HouseholdProfile.vue', () => {
 
     describe('duplicateCount', () => {
       it('returns the number of potential duplicates', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return mockHouseholdEntity();
-            },
-          },
-          mocks: {
-            $hasFeature: () => true,
-            $services: services,
-          },
-        });
+        doMount();
 
         expect(wrapper.vm.duplicateCount).toEqual(mockHouseholdEntity().potentialDuplicates.length);
       });
@@ -1516,29 +988,8 @@ describe('HouseholdProfile.vue', () => {
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        pinia,
-        propsData: {
-          id: householdEntity.id,
-        },
-        computed: {
-          statuses() {
-            return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-          },
-          household() {
-            return householdCreate;
-          },
-          householdEntity() {
-            return householdEntity;
-          },
-        },
-        mocks: {
-          $services: services,
-        },
-
-      });
+    beforeEach(async () => {
+      await doMount();
     });
 
     describe('fetchData', () => {
@@ -1560,27 +1011,9 @@ describe('HouseholdProfile.vue', () => {
 
     describe('fetchAllEvents', () => {
       it('calls public searchEventsById with the expected parameters', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          data() {
-            return {
-              caseFiles: [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }],
-              newStatus: HouseholdStatus.Open,
-            };
-          },
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-
+        await doMount(null, {
+          caseFiles: [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }],
+          newStatus: HouseholdStatus.Open,
         });
         jest.spyOn(wrapper.vm.$services.publicApi, 'searchEventsById').mockImplementation(() => {});
         await wrapper.vm.fetchAllEvents();
@@ -1596,27 +1029,9 @@ describe('HouseholdProfile.vue', () => {
 
     describe('fetchHouseholdData', () => {
       it('calls household storage action fetch with the id', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          data() {
-            return {
-              caseFiles: [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }],
-              newStatus: HouseholdStatus.Open,
-            };
-          },
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-
+        await doMount(null, {
+          caseFiles: [{ eventId: '1' }, { eventId: '2' }, { eventId: '3' }, { eventId: '4' }],
+          newStatus: HouseholdStatus.Open,
         });
         await wrapper.vm.fetchHouseholdData();
         expect(householdStore.fetch).toHaveBeenCalledWith(householdEntity.id);
@@ -1626,25 +1041,7 @@ describe('HouseholdProfile.vue', () => {
 
     describe('setHouseholdCreate', () => {
       it('calls buildHouseholdCreateData and the registration mutation with the data received from buildHouseholdCreateData', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            householdEntity() {
-              return householdEntity;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-
+        await doMount();
         jest.spyOn(wrapper.vm, 'buildHouseholdCreateData').mockImplementation(() => householdCreate);
         await wrapper.vm.setHouseholdCreate();
         expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(householdEntity);
@@ -1669,31 +1066,9 @@ describe('HouseholdProfile.vue', () => {
           altHousehold.additionalMembers.push(mockMember({ id: Math.random() + i }));
         });
 
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          data() {
-            return {
-              myEvents: events,
-              newStatus: HouseholdStatus.Open,
-            };
-          },
-          computed: {
-            country() {
-              return 'mock-country';
-            },
-            household() {
-              return altHousehold;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-          },
-          mocks: {
-            $services: services,
+        doMount({
+          household() {
+            return altHousehold;
           },
         });
 
@@ -1707,25 +1082,9 @@ describe('HouseholdProfile.vue', () => {
           altHousehold.additionalMembers.push(mockMember({ id: Math.random() + i }));
         });
 
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            country() {
-              return 'mock-country';
-            },
-            household() {
-              return altHousehold;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-          },
-          mocks: {
-            $services: services,
+        doMount({
+          household() {
+            return altHousehold;
           },
         });
 
@@ -1745,24 +1104,7 @@ describe('HouseholdProfile.vue', () => {
 
     describe('editAddress', () => {
       it('it show edit household address dialog', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-        });
+        await doMount();
         expect(wrapper.vm.showEditAddress).toBe(false);
 
         wrapper.vm.editAddress();
@@ -1808,26 +1150,8 @@ describe('HouseholdProfile.vue', () => {
 
     describe('onStatusChange', () => {
       it('should call the correct service, set showHouseholdStatusDialog to false', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          data() {
-            return {
-              showHouseholdStatusDialog: true,
-              newStatus: HouseholdStatus.Open,
-            };
-          },
-          computed: {
-            statuses() {
-              return [HouseholdStatus.Archived, HouseholdStatus.Closed];
-            },
-          },
-          mocks: {
-            $services: services,
-          },
+        await doMount(null, {
+          showHouseholdStatusDialog: true,
         });
         wrapper.vm.$services.households.setHouseholdStatus = jest.fn();
         const payload = { status: HouseholdStatus.Open, rationale: 'test-rationale' };
@@ -1852,17 +1176,6 @@ describe('HouseholdProfile.vue', () => {
 
     describe('householdActivityChanged', () => {
       it('calls getHouseholdActivity when the activity has the same household id after debounce', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: 'id-1',
-          },
-          mocks: {
-            $services: services,
-          },
-        });
-
         jest.clearAllMocks();
         await wrapper.vm.householdActivityChanged({ householdId: wrapper.vm.id });
         // eslint-disable-next-line no-promise-executor-return
@@ -1875,28 +1188,8 @@ describe('HouseholdProfile.vue', () => {
   describe('watch', () => {
     describe('id', () => {
       it('closes the dialog and calls fetchData if the id changes and the dialog for manage duplicates is open', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            id: householdEntity.id,
-          },
-          data() {
-            return {
-              showDuplicatesDialog: true,
-            };
-          },
-          computed: {
-            household() {
-              return householdCreate;
-            },
-            householdEntity() {
-              return householdEntity;
-            },
-          },
-          mocks: {
-            $services: services,
-          },
+        doMount(null, {
+          showDuplicatesDialog: true,
         });
 
         wrapper.vm.fetchData = jest.fn();

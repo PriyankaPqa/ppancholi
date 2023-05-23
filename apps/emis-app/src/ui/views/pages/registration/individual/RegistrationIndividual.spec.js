@@ -8,6 +8,7 @@ import { tabs } from '@/pinia/registration/tabs';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './RegistrationIndividual.vue';
 
 const localVue = createLocalVue();
@@ -545,18 +546,18 @@ describe('Individual.vue', () => {
     });
 
     describe('enableAutocomplete', () => {
-      it('return correct value', () => {
+      it('return correct value', async () => {
         doMount(true, {
           currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           associationMode: () => true,
         });
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+        await wrapper.setFeature(FeatureKeys.AddressAutoFill, true);
         expect(wrapper.vm.enableAutocomplete).toBe(true);
         doMount(true, {
           currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           associationMode: () => true,
         });
-        wrapper.vm.$hasFeature = jest.fn(() => false);
+        await wrapper.setFeature(FeatureKeys.AddressAutoFill, false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });

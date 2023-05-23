@@ -32,9 +32,6 @@ describe('ConfirmRegistrationLib.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         computed,
-        mocks: {
-          $hasFeature: () => false,
-        },
       });
     });
 
@@ -45,9 +42,6 @@ describe('ConfirmRegistrationLib.vue', () => {
           computed: {
             associationMode: () => false,
             isCRCRegistration: () => false,
-          },
-          mocks: {
-            $hasFeature: () => false,
           },
         });
 
@@ -62,9 +56,6 @@ describe('ConfirmRegistrationLib.vue', () => {
             associationMode: () => true,
             isCRCRegistration: () => false,
           },
-          mocks: {
-            $hasFeature: () => false,
-          },
         });
 
         const component = wrapper.findDataTest('confirm-registration-message');
@@ -77,9 +68,6 @@ describe('ConfirmRegistrationLib.vue', () => {
           computed: {
             associationMode: () => false,
             isCRCRegistration: () => true,
-          },
-          mocks: {
-            $hasFeature: () => false,
           },
         });
 
@@ -110,9 +98,6 @@ describe('ConfirmRegistrationLib.vue', () => {
             ...computed,
             isCRCRegistration: () => true,
           },
-          mocks: {
-            $hasFeature: () => false,
-          },
         });
         const component = wrapper.findDataTest('confirm-registration-additional_assistance-fullname');
         expect(component.text()).toBe('registration.crc_confirmation.additional_assistance');
@@ -124,9 +109,6 @@ describe('ConfirmRegistrationLib.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $hasFeature: () => false,
-        },
       });
       wrapper.vm.$registrationStore.householdAssociationMode = false;
       wrapper.vm.$registrationStore.registrationResponse = mockDetailedRegistrationResponse();
@@ -150,9 +132,6 @@ describe('ConfirmRegistrationLib.vue', () => {
             errors: () => mockServerError(),
             phoneAssistance: () => 'phone',
           },
-          mocks: {
-            $hasFeature: () => false,
-          },
         });
         expect(wrapper.vm.success).toEqual(false);
       });
@@ -163,9 +142,6 @@ describe('ConfirmRegistrationLib.vue', () => {
           computed: {
             errors: () => mockServerError(),
             response: () => undefined,
-          },
-          mocks: {
-            $hasFeature: () => false,
           },
         });
         expect(wrapper.vm.success).toEqual(false);

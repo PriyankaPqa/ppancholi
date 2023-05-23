@@ -40,6 +40,8 @@ export const getWrapper = (Component, options, {
     throw new Error('Must pass in localVue instance.');
   }
 
+  options.featureList = options.featureList || [];
+
   const mocks = {
     $router: {
       replace: jest.fn(),
@@ -85,6 +87,7 @@ export const getWrapper = (Component, options, {
       setBasicContext: jest.fn(),
     },
     $signalR: { connection: { on: jest.fn(), off: jest.fn() }, unsubscribeAll: jest.fn() },
+    $hasFeature: jest.fn((f) => options.featureList.indexOf(f) > -1),
   };
 
   document.body.setAttribute('data-app', true);

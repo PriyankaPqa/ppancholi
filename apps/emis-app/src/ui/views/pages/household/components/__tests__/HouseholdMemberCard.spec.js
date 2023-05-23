@@ -10,6 +10,7 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
 import { HouseholdActivityType } from '@libs/entities-lib/value-objects/household-activity';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../HouseholdMemberCard.vue';
 
 const localVue = createLocalVue();
@@ -420,7 +421,7 @@ describe('HouseholdMemberCard.vue', () => {
         expect(wrapper.vm.canEdit).toBeTruthy();
       });
 
-      it('returns false if the user has level 1 or more but isMovedMember is true', () => {
+      it('returns false if the user has level 1 or more but isMovedMember is true', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -432,11 +433,8 @@ describe('HouseholdMemberCard.vue', () => {
             isMovedMember: () => true,
           },
           pinia: getPiniaForUser(UserRoles.level1),
-          mocks: {
-
-            $hasFeature: () => false,
-          },
         });
+        await wrapper.setFeature(FeatureKeys.L0Access, false);
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
       it('returns false if the user has a different role', () => {
@@ -491,13 +489,13 @@ describe('HouseholdMemberCard.vue', () => {
     });
 
     describe('enableAutocomplete', () => {
-      it('return correct value', () => {
+      it('return correct value', async () => {
         doMount();
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+        await wrapper.setFeature(FeatureKeys.AddressAutoFill, true);
         expect(wrapper.vm.enableAutocomplete).toBe(true);
 
         doMount();
-        wrapper.vm.$hasFeature = jest.fn(() => false);
+        await wrapper.setFeature(FeatureKeys.AddressAutoFill, false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });

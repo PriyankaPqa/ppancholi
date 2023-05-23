@@ -128,7 +128,9 @@ describe('massActions', () => {
         expect(wrapper.vm.filterItems(items)).toMatchObject([items[1]]);
       });
 
-      it('returns items for which user has the feature key', async () => {
+      it('returns items for which user has the feature key', () => {
+        doMount(false, getPiniaForUser(UserRoles.level6));
+        wrapper.vm.$hasFeature = jest.fn((f) => f === 'feature key-2');
         const items = [
           {
             to: 'routes.caseFile.home.name',
@@ -140,7 +142,6 @@ describe('massActions', () => {
             feature: 'feature key-2',
           },
         ];
-        doMount(false, getPiniaForUser(UserRoles.level6));
         expect(wrapper.vm.filterItems(items)).toMatchObject(items);
       });
     });

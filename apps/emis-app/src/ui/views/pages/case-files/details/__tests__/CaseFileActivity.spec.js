@@ -6,7 +6,6 @@ import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
 const localVue = createLocalVue();

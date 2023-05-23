@@ -38,11 +38,8 @@ describe('CaseFileTagsList.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
-        mocks: {
-          $hasFeature: jest.fn((f) => f === FeatureKeys.BlockFACaseFileIrregularTag),
-        },
+        featureList: [FeatureKeys.BlockFACaseFileIrregularTag],
       });
-
       expect(wrapper.findComponent(OptionList).props('hasRestrictFinancial')).toBe(true);
     });
   });

@@ -10,6 +10,7 @@ import PaymentStatusHistoryDialog from '@/ui/views/pages/case-files/details/case
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 import flushPromises from 'flush-promises';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../PaymentLineGroup.vue';
 
 const localVue = createLocalVue();
@@ -602,13 +603,13 @@ describe('PaymentLineGroup.vue', () => {
         { value: 6, text: '6 - Unknown', dataTest: 'Unknown' },
       ];
       it('should return cancellation reasons with Unknown when feature flag is on', async () => {
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+        await wrapper.setFeature(FeatureKeys.ETransferCancellationHaveOptionForUnknown, true);
         wrapper.vm.helpers = jest.fn(() => mockReasons);
         expect(wrapper.vm.cancellationReasons).toEqual(mockReasons);
       });
 
       it('should return cancellation reasons without Unknown when feature flag is off', async () => {
-        wrapper.vm.$hasFeature = jest.fn(() => false);
+        await wrapper.setFeature(FeatureKeys.ETransferCancellationHaveOptionForUnknown, false);
         const mockReasonsWithoutUnknown = mockReasons.filter((reason) => reason.value !== EPaymentCancellationReason.Unknown);
         wrapper.vm.helpers = jest.fn(() => mockReasonsWithoutUnknown);
         expect(wrapper.vm.cancellationReasons).toEqual(mockReasonsWithoutUnknown);

@@ -938,8 +938,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         expect(wrapper.vm.selectedProgram?.id).toEqual(mockCombinedPrograms()[0].entity.id);
       });
 
-      it('calls makePaymentName if feature branch is on and there was an initial program', async () => {
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+      it('calls makePaymentName if there was an initial program', async () => {
         wrapper.vm.makePaymentName = jest.fn();
         await wrapper.setData({ selectedProgram: program });
         await wrapper.vm.updateSelectedProgram(financialAssistance);
@@ -1021,8 +1020,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         expect(wrapper.vm.savePaymentLine).toHaveBeenCalled();
       });
 
-      it('calls makePaymentName if it is on add mode and feature branch is on', async () => {
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+      it('calls makePaymentName if it is on add mode', async () => {
         wrapper.vm.makePaymentName = jest.fn();
         await wrapper.setData({ isEditMode: false, isAddMode: true });
         await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
@@ -1082,9 +1080,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         expect(wrapper.vm.financialAssistance.groups).toEqual(financialAssistancePaymentStore.editFinancialAssistancePaymentLine().groups);
       });
 
-      it('calls submitPaymentNameUpdate if  feature branch is on', async () => {
+      it('calls submitPaymentNameUpdate', async () => {
         const newGroup = mockCaseFinancialAssistancePaymentGroups();
-        wrapper.vm.$hasFeature = jest.fn(() => true);
         wrapper.vm.submitPaymentNameUpdate = jest.fn();
         await wrapper.vm.savePaymentLine(newGroup[0]);
         expect(wrapper.vm.submitPaymentNameUpdate).toBeCalledTimes(1);
@@ -1146,9 +1143,8 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
         expect(wrapper.vm.financialAssistance.groups).toEqual(financialAssistancePaymentStore.deleteFinancialAssistancePaymentLine().groups);
       });
 
-      it('calls submitPaymentNameUpdate if  feature branch is on', async () => {
+      it('calls submitPaymentNameUpdate', async () => {
         const newGroup = mockCaseFinancialAssistancePaymentGroups();
-        wrapper.vm.$hasFeature = jest.fn(() => true);
         wrapper.vm.submitPaymentNameUpdate = jest.fn();
         await wrapper.vm.deletePaymentLine({ line: newGroup[0].lines[0], group: newGroup[0] });
         expect(wrapper.vm.submitPaymentNameUpdate).toBeCalledTimes(1);

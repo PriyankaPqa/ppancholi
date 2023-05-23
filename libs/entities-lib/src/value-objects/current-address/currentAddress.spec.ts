@@ -369,85 +369,85 @@ describe('>>> CurrentAddress', () => {
         expect(t.shelterLocation).toEqual(null);
       });
     });
-  });
 
-  describe('>> validation', () => {
-    describe('placeName', () => {
-      test('when it is required', () => {
-        const currentAddress = mockCampGround();
-        currentAddress.placeName = '';
-        const results = currentAddress.validate();
-        expect(results).toContain('placeName is required');
+    describe('>> validation', () => {
+      describe('placeName', () => {
+        test('when it is required', () => {
+          const currentAddress = mockCampGround();
+          currentAddress.placeName = '';
+          const results = currentAddress.validate();
+          expect(results).toContain('placeName is required');
+        });
+
+        test(`when it has a max of ${MAX_LENGTH_MD} characters`, () => {
+          const currentAddress = mockCampGround();
+          currentAddress.placeName = longText;
+          expect(currentAddress.validate()).toContain(`placeName exceeds max length of ${MAX_LENGTH_MD}`);
+        });
       });
 
-      test(`when it has a max of ${MAX_LENGTH_MD} characters`, () => {
-        const currentAddress = mockCampGround();
-        currentAddress.placeName = longText;
-        expect(currentAddress.validate()).toContain(`placeName exceeds max length of ${MAX_LENGTH_MD}`);
-      });
-    });
-
-    describe('country', () => {
-      test('when it is required', () => {
-        const currentAddress = mockCampGround();
-        currentAddress.address.country = '';
-        const results = currentAddress.validate();
-        expect(results).toContain('country is required');
-      });
-    });
-
-    describe('street', () => {
-      test(`when it has a max of ${MAX_LENGTH_MD} characters`, () => {
-        const currentAddress = mockCampGround();
-        currentAddress.address.streetAddress = longText;
-        expect(currentAddress.validate()).toContain(`street exceeds max length of ${MAX_LENGTH_MD}`);
-      });
-    });
-
-    describe('city', () => {
-      test('when it is required', () => {
-        const currentAddress = mockCampGround();
-        currentAddress.address.city = '';
-        const results = currentAddress.validate();
-        expect(results).toContain('city is required');
+      describe('country', () => {
+        test('when it is required', () => {
+          const currentAddress = mockCampGround();
+          currentAddress.address.country = '';
+          const results = currentAddress.validate();
+          expect(results).toContain('country is required');
+        });
       });
 
-      test(`when it has a max of ${MAX_LENGTH_MD} characters`, () => {
-        const p = mockCampGround();
-        p.address.city = longText;
-        expect(p.validate()).toContain(`city exceeds max length of ${MAX_LENGTH_MD}`);
-      });
-    });
-
-    describe('Province Territory', () => {
-      test('when it is required', () => {
-        const currentAddress = mockCampGround();
-        currentAddress.address.province = null;
-        const results = currentAddress.validate();
-        expect(results).toContain('province is required');
-      });
-    });
-
-    describe('Postal Code', () => {
-      test(`when it has a max of ${MAX_LENGTH_SM} characters`, () => {
-        const p = mockCampGround();
-        p.address.country = 'FR';
-        p.address.postalCode = longSmallText;
-        expect(p.validate()).toContain(`postalCode exceeds max length of ${MAX_LENGTH_SM}`);
+      describe('street', () => {
+        test(`when it has a max of ${MAX_LENGTH_MD} characters`, () => {
+          const currentAddress = mockCampGround();
+          currentAddress.address.streetAddress = longText;
+          expect(currentAddress.validate()).toContain(`street exceeds max length of ${MAX_LENGTH_MD}`);
+        });
       });
 
-      it('should be valid for Canada', () => {
-        const p = mockCampGround();
-        p.address.postalCode = 'JJ J';
-        expect(p.validate()).toContain('postalCode is not valid');
-      });
-    });
+      describe('city', () => {
+        test('when it is required', () => {
+          const currentAddress = mockCampGround();
+          currentAddress.address.city = '';
+          const results = currentAddress.validate();
+          expect(results).toContain('city is required');
+        });
 
-    describe('placeNumber', () => {
-      test(`when it has a max of ${MAX_LENGTH_SM} characters`, () => {
-        const p = mockCampGround();
-        p.placeNumber = longSmallText;
-        expect(p.validate()).toContain(`placeNumber exceeds max length of ${MAX_LENGTH_SM}`);
+        test(`when it has a max of ${MAX_LENGTH_MD} characters`, () => {
+          const p = mockCampGround();
+          p.address.city = longText;
+          expect(p.validate()).toContain(`city exceeds max length of ${MAX_LENGTH_MD}`);
+        });
+      });
+
+      describe('Province Territory', () => {
+        test('when it is required', () => {
+          const currentAddress = mockCampGround();
+          currentAddress.address.province = null;
+          const results = currentAddress.validate();
+          expect(results).toContain('province is required');
+        });
+      });
+
+      describe('Postal Code', () => {
+        test(`when it has a max of ${MAX_LENGTH_SM} characters`, () => {
+          const p = mockCampGround();
+          p.address.country = 'FR';
+          p.address.postalCode = longSmallText;
+          expect(p.validate()).toContain(`postalCode exceeds max length of ${MAX_LENGTH_SM}`);
+        });
+
+        it('should be valid for Canada', () => {
+          const p = mockCampGround();
+          p.address.postalCode = 'JJ J';
+          expect(p.validate()).toContain('postalCode is not valid');
+        });
+      });
+
+      describe('placeNumber', () => {
+        test(`when it has a max of ${MAX_LENGTH_SM} characters`, () => {
+          const p = mockCampGround();
+          p.placeNumber = longSmallText;
+          expect(p.validate()).toContain(`placeNumber exceeds max length of ${MAX_LENGTH_SM}`);
+        });
       });
     });
   });

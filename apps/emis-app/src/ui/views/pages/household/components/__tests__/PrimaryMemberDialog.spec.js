@@ -9,6 +9,7 @@ import { EEventLocationStatus } from '@libs/entities-lib/event';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 
 import { mockProvider } from '@/services/provider';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../PrimaryMemberDialog.vue';
 
 const localVue = createLocalVue();
@@ -325,6 +326,7 @@ describe('PrimaryMemberDialog', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
+          featureList: [FeatureKeys.AddressAutoFill],
           propsData: {
             show: true,
             shelterLocations: [],
@@ -334,10 +336,6 @@ describe('PrimaryMemberDialog', () => {
               apiKey: '123',
               submitLoading: true,
             };
-          },
-          mocks: {
-
-            $hasFeature: () => true,
           },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(true);
@@ -354,10 +352,6 @@ describe('PrimaryMemberDialog', () => {
               apiKey: '123',
               submitLoading: true,
             };
-          },
-          mocks: {
-
-            $hasFeature: () => false,
           },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(false);

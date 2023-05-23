@@ -22,9 +22,6 @@ const doMount = ({ errorCode } = { errorCode: null }) => {
       submitErrors: () => ({ response: { data: { errors: [{ code: errorCode }] } } }),
       containsErrorCode: () => !!errorCode,
     },
-    mocks: {
-      $hasFeature: () => false,
-    },
   });
   wrapper.vm.submitRegistration = jest.fn();
   wrapper.vm.handleErrors = jest.fn();
@@ -39,9 +36,6 @@ describe('Individual.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $hasFeature: () => false,
-        },
       });
     });
 
@@ -140,9 +134,6 @@ describe('Individual.vue', () => {
       window.scrollTo = jest.fn();
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $hasFeature: () => false,
-        },
       });
       wrapper.vm.submitRegistration = jest.fn();
       wrapper.vm.handleErrors = jest.fn();

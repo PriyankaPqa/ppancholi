@@ -188,7 +188,6 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     roles(): IOptionItem[] {
       return useUserAccountStore().getRoles();
-      return roles;
     },
 
     headers(): Array<DataTableHeader> {

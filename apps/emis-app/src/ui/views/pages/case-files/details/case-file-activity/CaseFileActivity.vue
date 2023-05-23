@@ -187,7 +187,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     canEditLabels(): boolean {
-      return  this.$hasLevel(UserRoles.level0) && !this.readonly;
+      return this.$hasLevel(UserRoles.level0) && !this.readonly;
     },
 
     triageLevels(): { value: unknown, text: string }[] {

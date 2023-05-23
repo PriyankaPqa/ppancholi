@@ -41,14 +41,12 @@ const pinia = createTestingPinia({
   stubActions: false,
 });
 
-const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
-const featuresOn = [];
+useMockTenantSettingsStore(pinia);
 
 describe('EventForm.vue', () => {
   let wrapper;
   afterEach(() => {
     jest.clearAllMocks();
-    featuresOn.length = 0;
   });
 
   describe('Mounted', () => {
@@ -103,7 +101,6 @@ describe('EventForm.vue', () => {
         },
 
       });
-
       expect(wrapper.vm.prefixRegistrationLink).toEqual('https://registration domain en/en/registration/');
     });
   });
@@ -283,12 +280,21 @@ describe('EventForm.vue', () => {
   describe('Computed', () => {
     beforeEach(() => {
       const { pinia } = useMockEventStore();
+      const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
+
+      tenantSettingsStore.currentTenantSettings.consentStatements = [{ id: 'id-1',
+        name: {
+          translation: {
+            en: 'consent statement name-1 en',
+            fr: 'consent statement name-1 fr',
+          },
+        } }];
 
       wrapper = shallowMount(Component, {
         localVue: createLocalVue(),
         pinia,
         propsData: {
-          event,
+          event: { ...event, consentStatementId: 'id-1' },
           isEditMode: false,
           isNameUnique: true,
           isDirty: false,
@@ -304,17 +310,7 @@ describe('EventForm.vue', () => {
     });
 
     describe('consentStatement', () => {
-      it('returns correct value if consentStatementId is set', async () => {
-        tenantSettingsStore.currentTenantSettings.consentStatements = [{ id: 'id-1',
-          name: {
-            translation: {
-              en: 'consent statement name-1 en',
-              fr: 'consent statement name-1 fr',
-            },
-          } }];
-
-        wrapper.vm.event.consentStatementId = 'id-1';
-        await wrapper.vm.$nextTick();
+      it('returns correct value if consentStatementId is set', () => {
         expect(wrapper.vm.consentStatement).toEqual('consent statement name-1 en');
       });
     });
@@ -892,7 +888,6 @@ describe('EventForm.vue', () => {
         },
         mocks: {
           $services: services,
-          $hasFeature: (f) => featuresOn.indexOf(f) > -1,
         },
       });
     });
@@ -900,11 +895,14 @@ describe('EventForm.vue', () => {
     it('event tier section shows up depending on flag', async () => {
       let section = wrapper.findDataTest('event-tier-section');
       expect(section.exists()).toBe(false);
-      featuresOn.push(FeatureKeys.AuthenticationPhaseII);
-      // force refresh
-      await wrapper.setData({ languageMode: 'fr' });
+
+      await wrapper.setFeature(FeatureKeys.AuthenticationPhaseII, true);
       section = wrapper.findDataTest('event-tier-section');
       expect(section.exists()).toBe(true);
+
+      await wrapper.setFeature(FeatureKeys.AuthenticationPhaseII, false);
+      section = wrapper.findDataTest('event-tier-section');
+      expect(section.exists()).toBe(false);
     });
 
     describe('Event handlers', () => {

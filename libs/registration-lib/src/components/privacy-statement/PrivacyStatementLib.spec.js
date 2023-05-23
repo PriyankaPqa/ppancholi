@@ -64,7 +64,6 @@ describe('PrivacyStatementLib.vue', () => {
             consentStatement: consent,
           },
           mocks: {
-            $hasFeature: () => true,
             $t: (k) => k,
           },
         });

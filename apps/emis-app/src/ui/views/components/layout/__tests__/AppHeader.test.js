@@ -1,5 +1,5 @@
 import Vuetify from 'vuetify';
-import { mockBrandingEntity } from '@libs/entities-lib/tenantSettings';
+import { FeatureKeys, mockBrandingEntity } from '@libs/entities-lib/tenantSettings';
 import {
   createLocalVue,
   mount,
@@ -66,15 +66,14 @@ describe('AppHeader.vue', () => {
           localVue,
           pinia: getPiniaForUser(UserRoles.level0),
           vuetify,
+          featureList: [FeatureKeys.L0Access],
           mocks: {
             $route: {
               name: routes.events.home.name,
             },
-            $hasFeature: jest.fn(() => true),
             $services: services,
           },
         });
-
         expect(wrapper.vm.displayRegistrationButton).toBeTruthy();
       });
 

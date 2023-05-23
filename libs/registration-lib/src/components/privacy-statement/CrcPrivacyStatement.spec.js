@@ -29,9 +29,6 @@ describe('CrcPrivacyStatement.vue', () => {
         i18n,
         user: mockUserL6(),
       },
-      mocks: {
-        $hasFeature: () => false,
-      },
     });
     wrapper.vm.$registrationStore = registrationStore;
     wrapper.vm.$registrationStore.event = mockEventData();
@@ -86,9 +83,6 @@ describe('CrcPrivacyStatement.vue', () => {
           computed: {
             event: () => mockEventData(),
           },
-          mocks: {
-            $hasFeature: () => false,
-          },
         });
         expect(wrapper.vm.activeRegistrationLocations).toEqual(mockRegistrationLocations());
       });
@@ -103,9 +97,6 @@ describe('CrcPrivacyStatement.vue', () => {
             registrationLocations: [location],
             user: mockUserL6(),
           },
-          mocks: {
-            $hasFeature: () => false,
-          },
         });
         expect(wrapper.vm.activeRegistrationLocations).toEqual([location]);
       });
@@ -119,9 +110,6 @@ describe('CrcPrivacyStatement.vue', () => {
           propsData: {
             i18n,
             user: mockUserL6(),
-          },
-          mocks: {
-            $hasFeature: () => false,
           },
           computed: {
             event: () => mockEventData(),
@@ -142,9 +130,6 @@ describe('CrcPrivacyStatement.vue', () => {
             consentStatements: [consent],
             user: mockUserL6(),
           },
-          mocks: {
-            $hasFeature: () => false,
-          },
         });
         expect(wrapper.vm.consentStatements).toEqual([consent]);
       });
@@ -164,9 +149,6 @@ describe('CrcPrivacyStatement.vue', () => {
             i18n,
             user: mockUserL6(),
           },
-          mocks: {
-            $hasFeature: () => false,
-          },
         });
         expect(wrapper.vm.isRegistrationMethodInPerson).toEqual(true);
       });
@@ -183,9 +165,6 @@ describe('CrcPrivacyStatement.vue', () => {
           propsData: {
             i18n,
             user: mockUserL6(),
-          },
-          mocks: {
-            $hasFeature: () => false,
           },
         });
         expect(wrapper.vm.isRegistrationMethodInPerson).toEqual(false);
@@ -240,9 +219,6 @@ describe('CrcPrivacyStatement.vue', () => {
             i18n,
             user: mockUserL6(),
           },
-          mocks: {
-            $hasFeature: () => false,
-          },
         });
         jest.spyOn(wrapper.vm, 'setRegistrationLocation').mockImplementation(() => {});
         const component = wrapper.findDataTest('privacyRegistrationLocation');
@@ -266,9 +242,6 @@ describe('CrcPrivacyStatement.vue', () => {
                 id: 'location_id',
               }];
             },
-          },
-          mocks: {
-            $hasFeature: () => false,
           },
         });
         wrapper.vm.$registrationStore.householdCreate.consentInformation.registrationLocationId = 'location_id';

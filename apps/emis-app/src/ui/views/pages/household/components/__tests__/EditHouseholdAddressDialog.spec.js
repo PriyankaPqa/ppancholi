@@ -9,6 +9,7 @@ import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../EditHouseholdAddressDialog.vue';
 
 const localVue = createLocalVue();
@@ -17,17 +18,15 @@ const { registrationStore } = useMockRegistrationStore(pinia);
 describe('EditHouseholdAddressDialog.vue', () => {
   let wrapper;
 
-  const doMount = (mountMode = false, hasFeature = true) => {
+  const doMount = (mountMode = false, featureList = []) => {
     const options = {
       localVue,
       pinia,
+      featureList: [...featureList],
       propsData: {
         show: true,
       },
-      mocks: {
 
-        $hasFeature: () => hasFeature,
-      },
       data() {
         return {
           apiKey: 'apiKey',
@@ -122,9 +121,9 @@ describe('EditHouseholdAddressDialog.vue', () => {
 
     describe('enableAutocomplete', () => {
       it('return correct value', () => {
-        doMount(false, true);
+        doMount(false, [FeatureKeys.AddressAutoFill]);
         expect(wrapper.vm.enableAutocomplete).toBe(true);
-        doMount(false, false);
+        doMount(false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });

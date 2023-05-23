@@ -14,14 +14,12 @@ describe('ConfirmRegistrationLib.vue', () => {
   const mountWrapper = (computeds) => {
     wrapper = shallowMount(Component, {
       localVue,
+      featureList: [],
       propsData: {
         errors,
         phone: 'phone',
       },
       computed: { ...computeds },
-      mocks: {
-        $hasFeature: () => false,
-      },
     });
   };
 

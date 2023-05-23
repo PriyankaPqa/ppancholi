@@ -5,6 +5,7 @@ import { useMockRegistrationStore } from '@libs/stores-lib/registration/registra
 import { createTestingPinia } from '@pinia/testing';
 import { tabs } from '@/pinia/registration/tabs';
 import { mockProvider } from '@/services/provider';
+import { FeatureKeys } from '@libs/entities-lib/src/tenantSettings';
 import Component from './Individual.vue';
 
 const localVue = createLocalVue();
@@ -56,12 +57,10 @@ describe('Individual.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia,
+          featureList: [FeatureKeys.BotProtection],
           stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
           computed: {
             isCaptchaAllowedIpAddress: () => false,
-          },
-          mocks: {
-            $hasFeature: () => true,
           },
         });
 
@@ -77,9 +76,6 @@ describe('Individual.vue', () => {
           computed: {
             isCaptchaAllowedIpAddress: () => false,
           },
-          mocks: {
-            $hasFeature: () => false,
-          },
         });
 
         element = wrapper.findDataTest('google-recaptcha');
@@ -90,12 +86,10 @@ describe('Individual.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia,
+          featureList: [FeatureKeys.BotProtection],
           stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
           computed: {
             isCaptchaAllowedIpAddress: () => true,
-          },
-          mocks: {
-            $hasFeature: () => true,
           },
         });
 
@@ -134,7 +128,7 @@ describe('Individual.vue', () => {
           wrapper.vm.validateAndNext = jest.fn();
           wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
           await wrapper.setData({ tokenFetchedLast: new Date(2000, 1, 1) });
-          wrapper.vm.$hasFeature = jest.fn(() => true);
+          wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.BotProtection);
           tenantSettingsStore.recaptcha = {
             ipAddressIsAllowed: false,
             clientIpAddress: '',
@@ -151,7 +145,7 @@ describe('Individual.vue', () => {
           wrapper.vm.validateAndNext = jest.fn();
           wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
           wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
-          wrapper.vm.$hasFeature = jest.fn(() => true);
+          wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.BotProtection);
           tenantSettingsStore.recaptcha = {
             ipAddressIsAllowed: false,
             clientIpAddress: '',
@@ -174,7 +168,7 @@ describe('Individual.vue', () => {
       it('should call recaptcha if BotProtection is enabled and if ip address is not in allowed list', async () => {
         wrapper.vm.$refs.recaptchaSubmit = {};
         const nextFunc = jest.fn();
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.BotProtection);
         wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
         tenantSettingsStore.recaptcha = {
           ipAddressIsAllowed: false,
@@ -189,7 +183,6 @@ describe('Individual.vue', () => {
       it('should not call recaptcha if BotProtection is disabled', async () => {
         wrapper.vm.$refs.recaptchaSubmit = {};
         const nextFunc = jest.fn();
-        wrapper.vm.$hasFeature = jest.fn(() => false);
         wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
         tenantSettingsStore.recaptcha = {
           ipAddressIsAllowed: false,
@@ -204,7 +197,7 @@ describe('Individual.vue', () => {
       it('should not call recaptcha if was called recently', async () => {
         wrapper.vm.$refs.recaptchaSubmit = {};
         const nextFunc = jest.fn();
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.BotProtection);
         wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
         await wrapper.setData({ tokenFetchedLast: new Date() });
         tenantSettingsStore.recaptcha = {
@@ -261,7 +254,7 @@ describe('Individual.vue', () => {
         wrapper.vm.tryDuplicateAssociation = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.SelfRegistration);
         wrapper.vm.next = jest.fn();
         await wrapper.vm.validateAndNextPersonalInfo();
         expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic)
@@ -273,7 +266,6 @@ describe('Individual.vue', () => {
         window.confirm = () => true;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
-        wrapper.vm.$hasFeature = jest.fn(() => false);
         wrapper.vm.next = jest.fn();
         await wrapper.vm.validateAndNext();
         expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic).not.toHaveBeenCalled();
@@ -290,7 +282,7 @@ describe('Individual.vue', () => {
         wrapper.vm.tryDuplicateAssociation = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
-        wrapper.vm.$hasFeature = jest.fn(() => true);
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.SelfRegistration);
         wrapper.vm.next = jest.fn();
         await wrapper.vm.validateAndNextPersonalInfo();
         expect(wrapper.vm.tryDuplicateAssociation).not.toHaveBeenCalled();

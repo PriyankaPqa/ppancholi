@@ -10,6 +10,7 @@ import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { mockHouseholdEntity, mockHouseholdMetadata } from '@libs/entities-lib/household';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../CreateEditPaymentLineDialog.vue';
 
 const localVue = createLocalVue();
@@ -383,16 +384,13 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       it('return correct value', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          featureList: [FeatureKeys.AddressAutoFill],
           propsData: {
             show: true,
             program,
             items,
             financialAssistance,
             id: 'cfid',
-          },
-          mocks: {
-
-            $hasFeature: () => true,
           },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(true);
@@ -405,10 +403,6 @@ describe('CreateEditPaymentLineDialog.vue', () => {
             items,
             financialAssistance,
             id: 'cfid',
-          },
-          mocks: {
-
-            $hasFeature: () => false,
           },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(false);

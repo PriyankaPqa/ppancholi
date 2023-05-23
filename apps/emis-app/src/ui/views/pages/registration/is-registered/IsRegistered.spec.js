@@ -13,6 +13,7 @@ import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './IsRegistered.vue';
 
 const localVue = createLocalVue();
@@ -181,28 +182,22 @@ describe('IsRegistered.vue', () => {
     });
 
     describe('enableAutocomplete', () => {
-      it('return correct value', () => {
+      it('return correct value', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
           vuetify,
-          mocks: {
-
-            $hasFeature: () => true,
-          },
         });
-        expect(wrapper.vm.enableAutocomplete).toBe(true);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          vuetify,
-          mocks: {
-
-            $hasFeature: () => false,
-          },
-        });
+        await wrapper.setFeature(FeatureKeys.AddressAutoFill, false);
         expect(wrapper.vm.enableAutocomplete).toBe(false);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          vuetify,
+        });
+        await wrapper.setFeature(FeatureKeys.AddressAutoFill, true);
+        expect(wrapper.vm.enableAutocomplete).toBe(true);
       });
     });
   });
