@@ -1,8 +1,7 @@
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EventDetailsPage } from '../../../pages/events/eventDetails.page';
-import { useProvider } from '../../../provider/provider';
-import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
+import { createEventAndTeam } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureLocation } from '../../../fixtures/events';
 
@@ -25,18 +24,15 @@ const cannotRoles = {
 
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)] as UserRoles[];
 
-const prepareState = () => cy.getToken().then(async (accessToken) => {
-  const provider = useProvider(accessToken.access_token);
-  const { event, team } = await createEventWithTeamWithUsers(provider, allRolesValues);
-  cy.wrap(event).as('eventCreated');
-  cy.wrap(team).as('teamCreated');
-  cy.wrap(provider).as('provider');
-});
-
 const title = '#TC165# - Add Event Shelter Location';
 describe(`${title}`, () => {
   before(() => {
-    prepareState();
+    cy.getToken().then(async (accessToken) => {
+      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRolesValues);
+      cy.wrap(provider).as('provider');
+      cy.wrap(event).as('eventCreated');
+      cy.wrap(team).as('teamCreated');
+    });
   });
 
   after(function () {

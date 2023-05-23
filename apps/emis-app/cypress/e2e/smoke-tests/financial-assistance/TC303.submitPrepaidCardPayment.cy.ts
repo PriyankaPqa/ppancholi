@@ -1,16 +1,14 @@
+  /* eslint-disable max-nested-callbacks */
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { mockFinancialAssistancePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
-import { IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
 import { format } from 'date-fns';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { createEventWithTeamWithUsers, createProgramWithTableWithItemAndSubItem } from '../../helpers/prepareState';
-import { useProvider } from '../../../provider/provider';
+import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -35,36 +33,19 @@ let event = null as IEventEntity;
 let caseFile = null as ICaseFileEntity;
 let accessTokenL6 = '';
 let table = null as IFinancialAssistanceTableEntity;
-let financialAssistancePayment = null as IFinancialAssistancePaymentEntity;
-
-const prepareState = async (accessToken: string, event: IEventEntity, table: IFinancialAssistanceTableEntity) => {
-  const provider = useProvider(accessToken);
-  const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
-  cy.wrap(mockCreateHousehold).as('household');
-  const caseFileCreated = await provider.households.postCrcRegistration(mockCreateHousehold);
-  caseFile = caseFileCreated.caseFile;
-  const mockFinancialAssistancePayment = mockFinancialAssistancePaymentRequest({ caseFileId: caseFile.id, financialAssistanceTableId: table.id });
-  financialAssistancePayment = await provider.financialAssistancePaymentsService.addFinancialAssistancePayment(mockFinancialAssistancePayment);
-};
-
-const prepareEventWithProgramWithTable = async (accessToken: string) => {
-  const provider = useProvider(accessToken);
-  const result = await createEventWithTeamWithUsers(provider, allRolesValues);
-  event = result.event;
-  const { team } = result;
-  table = await createProgramWithTableWithItemAndSubItem(provider, event.id);
-  cy.wrap(event).as('eventCreated');
-  cy.wrap(team).as('teamCreated');
-  cy.wrap(provider).as('provider');
-  cy.wrap(table).as('fatable');
-};
 
 const title = '#TC303# - Submit a Pre-paid Card Payment';
 describe(`${title}`, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      await prepareEventWithProgramWithTable(accessTokenL6);
+      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
+      event = resultPrepareStateEvent.event;
+      const { provider, team } = resultPrepareStateEvent;
+      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id);
+      table = resultCreateProgram.table;
+      cy.wrap(provider).as('provider');
+      cy.wrap(team).as('teamCreated');
     });
   });
 
@@ -76,16 +57,22 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        beforeEach(async () => {
-          await prepareState(accessTokenL6, event, table);
-          cy.login(roleValue);
-          cy.goTo(`casefile/${caseFile.id}/financialAssistance`);
+        beforeEach(() => {
+          cy.then(async () => {
+            const result = await prepareStateHousehold(accessTokenL6, event);
+            caseFile = result.registrationResponse.caseFile;
+            const mockFinancialAssistancePayment = mockFinancialAssistancePaymentRequest({ caseFileId: caseFile.id, financialAssistanceTableId: table.id });
+            const financialAssistancePayment = await result.provider.financialAssistancePaymentsService.addFinancialAssistancePayment(mockFinancialAssistancePayment);
+            cy.wrap(financialAssistancePayment).as('financialAssistancePayment');
+            cy.login(roleValue);
+            cy.goTo(`casefile/${caseFile.id}/financialAssistance`);
+          });
         });
-        it('should successfully create a Prepaid Card Payment Line', () => {
+        it('should successfully create a Prepaid Card Payment Line', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'New');
 
-          const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(financialAssistancePayment.id);
+          const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.financialAssistancePayment.id);
           financialAssistanceDetailsPage.getAddPaymentLineButton().should('be.enabled');
           financialAssistanceDetailsPage.getBackToFinancialAssistanceButton().should('be.enabled');
           financialAssistanceDetailsPage.getSubmitAssistanceButton().should('be.enabled');
@@ -99,7 +86,7 @@ describe(`${title}`, () => {
           financialAssistanceDetailsPage.getFinancialAssistanceApprovalStatus().should('eq', 'Approved');
           financialAssistanceDetailsPage.goToFinancialAssistanceHomePage();
 
-          financialAssistanceHomePage.getFAPaymentNameById(financialAssistancePayment.id).should('eq', financialAssistancePayment.name);
+          financialAssistanceHomePage.getFAPaymentNameById(this.financialAssistancePayment.id).should('eq', this.financialAssistancePayment.name);
           financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
@@ -113,26 +100,33 @@ describe(`${title}`, () => {
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
           caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Financial assistance payment - Approved - Final');
-          caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Name: ${financialAssistancePayment.name}`).and('string', 'Amount: $80.00');
+          caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Name: ${this.financialAssistancePayment.name}`).and('string', 'Amount: $80.00');
         });
       });
     }
   });
 
   describe('Cannot roles', () => {
-    before(async () => {
-      await prepareState(accessTokenL6, event, table);
+    before(() => {
+      cy.then(async () => {
+        const result = await prepareStateHousehold(accessTokenL6, event);
+        caseFile = result.registrationResponse.caseFile;
+        const mockFinancialAssistancePayment = mockFinancialAssistancePaymentRequest({ caseFileId: caseFile.id, financialAssistanceTableId: table.id });
+        const financialAssistancePayment = await result.provider.financialAssistancePaymentsService.addFinancialAssistancePayment(mockFinancialAssistancePayment);
+        cy.wrap(caseFile).as('caseFile');
+        cy.wrap(financialAssistancePayment).as('financialAssistancePayment');
+      });
     });
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
-        beforeEach(() => {
+        beforeEach(function () {
           cy.login(roleValue);
-          cy.goTo(`casefile/${caseFile.id}/financialAssistance`);
+          cy.goTo(`casefile/${this.caseFile.id}/financialAssistance`);
         });
-        it('should not be able to create a Prepaid Card Payment Line', () => {
+        it('should not be able to create a Prepaid Card Payment Line', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
 
-          const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(financialAssistancePayment.id);
+          const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.financialAssistancePayment.id);
           financialAssistanceDetailsPage.getBackToFinancialAssistanceButton().should('be.enabled');
           financialAssistanceDetailsPage.getSubmitAssistanceButton().should('not.exist');
         });

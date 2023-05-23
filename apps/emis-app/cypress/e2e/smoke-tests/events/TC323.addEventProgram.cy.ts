@@ -1,8 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { fixtureProgram } from '../../../fixtures/events';
 import { AddNewEventProgramPage } from '../../../pages/programs/addNewEventProgram.page';
-import { useProvider } from '../../../provider/provider';
-import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
+import { createEventAndTeam } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 
 const canRoles = {
@@ -24,18 +23,15 @@ const cannotRoles = {
 
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)] as UserRoles[];
 
-const prepareState = () => cy.getToken().then(async (accessToken) => {
-  const provider = useProvider(accessToken.access_token);
-  const { event, team } = await createEventWithTeamWithUsers(provider, allRolesValues);
-  cy.wrap(event).as('eventCreated');
-  cy.wrap(team).as('teamCreated');
-  cy.wrap(provider).as('provider');
-});
-
 const title = '#TC323# - Add Event Program';
 describe(`${title}`, () => {
   before(() => {
-    prepareState();
+    cy.getToken().then(async (accessToken) => {
+      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRolesValues);
+      cy.wrap(provider).as('provider');
+      cy.wrap(event).as('eventCreated');
+      cy.wrap(team).as('teamCreated');
+    });
   });
 
   after(function () {
@@ -75,9 +71,6 @@ describe(`${title}`, () => {
   });
 
   describe('Cannot Roles', () => {
-    before(() => {
-      prepareState();
-    });
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
         beforeEach(function () {

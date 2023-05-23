@@ -1,14 +1,14 @@
   /* eslint-disable max-nested-callbacks */
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { format } from 'date-fns';
+import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { fixtureAddress } from '../../../fixtures/household';
-import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
+import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { useProvider } from '../../../provider/provider';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
 
@@ -33,29 +33,19 @@ const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles
 
 let event = null as IEventEntity;
 let accessTokenL6 = '';
-
-const prepareState = async (accessToken: string, event: IEventEntity) => {
-  const provider = useProvider(accessToken);
-  const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
-  cy.wrap(mockCreateHousehold).as('household');
-  const caseFileCreated = await provider.households.postCrcRegistration(mockCreateHousehold);
-  cy.wrap(caseFileCreated.caseFile.householdId).as('householdId');
-};
-
-const prepareEventTeam = async (accessToken: string) => {
-  const provider = useProvider(accessToken);
-  const result = await createEventWithTeamWithUsers(provider, allRolesValues);
-  event = result.event;
-  cy.wrap(result.team).as('teamCreated');
-  cy.wrap(provider).as('provider');
-};
+let caseFileCreated = null as ICaseFileEntity;
+let household = null as ICreateHouseholdRequest;
 
 const title = '#TC1049# - Update Household Address';
 describe(`${title}`, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      await prepareEventTeam(accessTokenL6);
+      const result = await createEventAndTeam(accessTokenL6, allRolesValues);
+      const { provider, team } = result;
+      event = result.event;
+      cy.wrap(provider).as('provider');
+      cy.wrap(team).as('teamCreated');
     });
   });
 
@@ -64,14 +54,18 @@ describe(`${title}`, () => {
       removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
     }
   });
+
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        beforeEach(async () => {
-          await prepareState(accessTokenL6, event);
-          cy.login(roleValue);
-          cy.get('@householdId').then((householdId) => {
-            cy.goTo(`casefile/household/${householdId}`);
+        beforeEach(() => {
+          cy.then(async () => {
+            const result = await prepareStateHousehold(accessTokenL6, event);
+            caseFileCreated = result.registrationResponse.caseFile;
+            household = result.mockCreateHousehold;
+            cy.wrap(household).as('household');
+            cy.login(roleValue);
+            cy.goTo(`casefile/household/${caseFileCreated.householdId}`);
           });
         });
         it('should successfully update household address', function () {
@@ -89,9 +83,7 @@ describe(`${title}`, () => {
           cy.contains(`${addressData.municipality}, ${addressData.province}, ${addressData.postalCode}`).should('be.visible');
 
           const profileHistoryPage = householdProfilePage.goToProfileHistoryPage();
-          cy.get('@householdId').then((householdId) => {
-            profileHistoryPage.refreshUntilHouseholdProfileReady(householdId.toString());
-          });
+          profileHistoryPage.refreshUntilHouseholdProfileReady(caseFileCreated.householdId.toString());
           profileHistoryPage.getHouseholdHistoryEditedBy().should('eq', `${getUserName(roleName)}${getUserRoleDescription(roleName)}`);
           profileHistoryPage.getHouseholdHistoryChangeDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           profileHistoryPage.getHouseholdHistoryLastAction().should('eq', 'Address information changed');

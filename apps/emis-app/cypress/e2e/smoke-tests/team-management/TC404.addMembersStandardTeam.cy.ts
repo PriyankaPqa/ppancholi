@@ -1,6 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { useProvider } from '../../../provider/provider';
-import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
+import { createEventAndTeam } from '../../helpers/prepareState';
 import { removeAddedTeamMembersFromTeam, removeTeamMembersFromTeam, teamMemberId } from '../../helpers/teams';
 import { TeamDetailsPage } from '../../../pages/teams/teamDetails.page';
 import { TeamsHomePage } from '../../../pages/teams/teamsHome.page';
@@ -28,18 +27,15 @@ const cannotRoles = {
 const canRolesValues = [...Object.values(canRoles)] as UserRoles[];
 const addedRolesValues = [UserRoles.level1, UserRoles.level2];
 
-const prepareState = () => cy.getToken().then(async (accessToken) => {
-  const provider = useProvider(accessToken.access_token);
-  const { event, team } = await createEventWithTeamWithUsers(provider, canRolesValues);
-  cy.wrap(team).as('teamCreated');
-  cy.wrap(provider).as('provider');
-  cy.wrap(event).as('eventCreated');
-});
-
 const title = '#TC404# - Add Members To Standard Team';
 describe(`${title}`, () => {
   before(() => {
-    prepareState();
+    cy.getToken().then(async (accessToken) => {
+      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, canRolesValues);
+      cy.wrap(provider).as('provider');
+      cy.wrap(event).as('eventCreated');
+      cy.wrap(team).as('teamCreated');
+    });
   });
 
   after(function () {

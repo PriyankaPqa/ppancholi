@@ -1,12 +1,12 @@
-import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { CaseFilesHomePage } from 'cypress/pages/casefiles/caseFilesHome.page';
 import { fixtureCreateAddress, fixturePrimaryBeneficiary, fixturePrivacy } from 'cypress/fixtures/household';
+import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { useProvider } from '../../../provider/provider';
-import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
+import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { DataTest, HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
 
 const canRoles = {
@@ -30,23 +30,8 @@ const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles
 
 let event = null as IEventEntity;
 let accessTokenL6 = '';
-
-const prepareState = async (accessToken: string, event: IEventEntity) => {
-  const provider = useProvider(accessToken);
-  const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
-  cy.wrap(mockCreateHousehold).as('household');
-  const caseFileCreated = await provider.households.postCrcRegistration(mockCreateHousehold);
-  cy.wrap(caseFileCreated.caseFile.householdId).as('householdCreated');
-};
-
-const prepareEventTeam = async (accessToken: string) => {
-  const provider = useProvider(accessToken);
-  const result = await createEventWithTeamWithUsers(provider, allRolesValues);
-  event = result.event;
-  const { team } = result;
-  cy.wrap(team).as('teamCreated');
-  cy.wrap(provider).as('provider');
-};
+let caseFileCreated = null as ICaseFileEntity;
+let household = null as ICreateHouseholdRequest;
 
 const title = '#TC498# - Split Household';
 
@@ -54,7 +39,11 @@ describe(`${title}`, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      await prepareEventTeam(accessTokenL6);
+      const result = await createEventAndTeam(accessTokenL6, allRolesValues);
+      const { provider, team } = result;
+      event = result.event;
+      cy.wrap(provider).as('provider');
+      cy.wrap(team).as('teamCreated');
     });
   });
 
@@ -68,18 +57,17 @@ describe(`${title}`, () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
         beforeEach(async () => {
-          await prepareState(accessTokenL6, event);
           cy.login(roleValue);
-          // eslint-disable-next-line
-          cy.get('@householdCreated').then((householdId) => {
-            cy.goTo(`casefile/household/${householdId}`);
-          });
+          const result = await prepareStateHousehold(accessTokenL6, event);
+          caseFileCreated = result.registrationResponse.caseFile;
+          household = result.mockCreateHousehold;
+          cy.goTo(`casefile/household/${caseFileCreated.householdId}`);
         });
         // eslint-disable-next-line
         it('should successfully split the household', function() {
           const eventName = event.name.translation.en;
-          const firstNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.firstName;
-          const lastNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.lastName;
+          const firstNamePrimaryMemberAfterSplit = household.additionalMembers[0].identitySet.firstName;
+          const lastNamePrimaryMemberAfterSplit = household.additionalMembers[0].identitySet.lastName;
           const privacyData = fixturePrivacy();
           const primaryBeneficiaryData = fixturePrimaryBeneficiary();
           const createAddressData = fixtureCreateAddress();
@@ -93,8 +81,8 @@ describe(`${title}`, () => {
           splitHouseholdMemberPage.selectCheckBoxes();
 
           const namePrimaryMemberAfterSplit = `${firstNamePrimaryMemberAfterSplit} ${lastNamePrimaryMemberAfterSplit}`;
-          const nameFirstMember = `${this.household.additionalMembers[1].identitySet.firstName} ${this.household.additionalMembers[1].identitySet.lastName}`;
-          const nameSecondMember = `${this.household.additionalMembers[2].identitySet.firstName} ${this.household.additionalMembers[2].identitySet.lastName}`;
+          const nameFirstMember = `${household.additionalMembers[1].identitySet.firstName} ${household.additionalMembers[1].identitySet.lastName}`;
+          const nameSecondMember = `${household.additionalMembers[2].identitySet.firstName} ${household.additionalMembers[2].identitySet.lastName}`;
 
           const beneficiarySearchPage = splitHouseholdMemberPage.goToBeneficiarySearchPage();
           beneficiarySearchPage.getFirstName().should('string', firstNamePrimaryMemberAfterSplit);

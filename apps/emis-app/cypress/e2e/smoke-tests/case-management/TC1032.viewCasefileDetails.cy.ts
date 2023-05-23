@@ -1,9 +1,9 @@
+  /* eslint-disable max-nested-callbacks */
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
+import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
-import { useProvider } from '../../../provider/provider';
-import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
+import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 
@@ -24,32 +24,20 @@ const canRoles = {
 const allCanRolesValues = [...Object.values(canRoles)];
 
 let event = null as IEventEntity;
-let caseFile = null as ICaseFileEntity;
 let accessTokenL6 = '';
-
-const prepareState = async (accessToken: string, event: IEventEntity) => {
-  const provider = useProvider(accessToken);
-  const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
-  cy.wrap(mockCreateHousehold).as('household');
-  const caseFileCreated = await provider.households.postCrcRegistration(mockCreateHousehold);
-  caseFile = caseFileCreated.caseFile;
-};
-
-const prepareEventwithTeamWithUsers = async (accessToken: string) => {
-  const provider = useProvider(accessToken);
-  const result = await createEventWithTeamWithUsers(provider, allCanRolesValues);
-  event = result.event;
-  const { team } = result;
-  cy.wrap(team).as('teamCreated');
-  cy.wrap(provider).as('provider');
-};
+let caseFileCreated = null as ICaseFileEntity;
+let household = null as ICreateHouseholdRequest;
 
 const title = '#TC1032# - View Case File Details';
 describe(`${title}`, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      await prepareEventwithTeamWithUsers(accessTokenL6);
+      const result = await createEventAndTeam(accessTokenL6, allCanRolesValues);
+      const { provider, team } = result;
+      event = result.event;
+      cy.wrap(provider).as('provider');
+      cy.wrap(team).as('teamCreated');
     });
   });
 
@@ -61,16 +49,22 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        beforeEach(async () => {
-          await prepareState(accessTokenL6, event);
-          cy.login(roleValue);
-          cy.goTo(`casefile/${caseFile.id}`);
+        beforeEach(() => {
+          cy.then(async () => {
+            const result = await prepareStateHousehold(accessTokenL6, event);
+            caseFileCreated = result.registrationResponse.caseFile;
+            household = result.mockCreateHousehold;
+            cy.wrap(household).as('household');
+            cy.wrap(caseFileCreated).as('caseFileCreated');
+            cy.login(roleValue);
+            cy.goTo(`casefile/${caseFileCreated.id}`);
+          });
         });
         it('should successfully view case file details', function () {
           const caseFileDetailsPage = new CaseFileDetailsPage();
           // eslint-disable-next-line
-          caseFileDetailsPage.getPrimaryBeneficiaryName().should('eq', `${this.household.primaryBeneficiary.identitySet.firstName} ${this.household.primaryBeneficiary.identitySet.lastName}`);
-          caseFileDetailsPage.getCaseFileNumber().should('eq', caseFile.caseFileNumber);
+          caseFileDetailsPage.getPrimaryBeneficiaryName().should('eq', `${this.household.primaryBeneficiary.identitySet.firstName} ${household.primaryBeneficiary.identitySet.lastName}`);
+          caseFileDetailsPage.getCaseFileNumber().should('eq', this.caseFileCreated.caseFileNumber);
           caseFileDetailsPage.getEventName().should('eq', event.name.translation.en);
         });
       });

@@ -31,7 +31,7 @@ describe(`${title}`, () => {
       cy.wrap(provider).as('provider');
       cy.wrap(event).as('eventCreated');
       cy.wrap(team).as('teamCreated');
-      cy.wrap(mockCreateProgram).as('program');
+      cy.wrap(mockCreateProgram).as('mockProgram');
     });
   });
 
@@ -53,7 +53,7 @@ describe(`${title}`, () => {
 
           const createNewAssessmentPage = new CreateNewAssessmentPage();
           createNewAssessmentPage.fill(assessmentData);
-          createNewAssessmentPage.selectProgram(this.program.name.translation.en);
+          createNewAssessmentPage.selectProgram(this.mockProgram.name.translation.en);
           createNewAssessmentPage.togglePublishedStatus();
           createNewAssessmentPage.checkFrequencyMultiple();
 

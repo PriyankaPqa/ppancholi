@@ -1,11 +1,9 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { IEventEntity } from '@libs/entities-lib/event';
 import { CrcRegistrationPage } from '../../../pages/registration/crcRegistration.page';
 import { fixturePrimaryMember, fixtureAddressData, fixtureAdditionalMemberPersonalData } from '../../../fixtures/registration';
 import { ConfirmBeneficiaryRegistrationPage } from '../../../pages/registration/confirmBeneficiaryRegistration.page';
-import { useProvider } from '../../../provider/provider';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
+import { createEventAndTeam } from '../../helpers/prepareState';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -26,21 +24,15 @@ const cannotRoles = {
 
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
 
-let event = null as IEventEntity;
-
-const prepareState = () => cy.getToken().then(async (accessToken) => {
-  const provider = useProvider(accessToken.access_token);
-  const result = await createEventWithTeamWithUsers(provider, allRolesValues);
-  event = result.event;
-  const { team } = result;
-  cy.wrap(team).as('teamCreated');
-  cy.wrap(provider).as('provider');
-});
-
 const title = '#TC1110# - Register Beneficiary for Event';
 describe(`${title}`, () => {
   before(() => {
-    prepareState();
+    cy.getToken().then(async (accessToken) => {
+      const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRolesValues);
+      cy.wrap(provider).as('provider');
+      cy.wrap(event).as('event');
+      cy.wrap(team).as('teamCreated');
+    });
   });
 
   after(function () {
@@ -65,7 +57,7 @@ describe(`${title}`, () => {
 
           crcRegistrationPage.getPageTitle().should('eq', 'Welcome, let\'s get started. Please select an event:');
           crcRegistrationPage.getBeginRegistrationButton().should('be.disabled');
-          crcRegistrationPage.fillEvent(event.name.translation.en);
+          crcRegistrationPage.fillEvent(this.event.name.translation.en);
 
           const beneficiarySearchPage = crcRegistrationPage.beginRegistration();
 
@@ -112,7 +104,7 @@ describe(`${title}`, () => {
           confirmBeneficiaryRegistrationPage.getFullName().should('string', `${roleName}${primaryMemberData.firstName}`).and('string', `${primaryMemberData.lastName}`);
           confirmBeneficiaryRegistrationPage.getMessage().should('string', ' is now registered!');
           confirmBeneficiaryRegistrationPage.getRegistrationNumber().should('exist');
-          confirmBeneficiaryRegistrationPage.getEventName().should('string', event.name.translation.en);
+          confirmBeneficiaryRegistrationPage.getEventName().should('string', this.event.name.translation.en);
           confirmBeneficiaryRegistrationPage.getPrintButton().should('be.visible');
           confirmBeneficiaryRegistrationPage.getNewRegistrationButton().should('be.visible');
 

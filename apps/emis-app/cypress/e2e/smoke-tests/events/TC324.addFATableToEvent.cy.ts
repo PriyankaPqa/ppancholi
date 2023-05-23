@@ -1,8 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
 import { fixtureFinancialAssistanceTable } from '../../../fixtures/events';
-import { useProvider } from '../../../provider/provider';
-import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
+import { prepareStateEventAndProgram } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { FinancialAssistancePage } from '../../../pages/financialAssistance/financialAssistance.page';
 
@@ -25,21 +23,16 @@ const cannotRoles = {
 
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)] as UserRoles[];
 
-const prepareState = () => cy.getToken().then(async (accessToken) => {
-  const provider = useProvider(accessToken.access_token);
-  const { event, team } = await createEventWithTeamWithUsers(provider, allRolesValues);
-  const mockCreateProgram = mockProgram({ eventId: event.id });
-  cy.wrap(mockCreateProgram).as('program');
-  await provider.programs.createProgram(mockCreateProgram);
-  cy.wrap(event).as('eventCreated');
-  cy.wrap(team).as('teamCreated');
-  cy.wrap(provider).as('provider');
-});
-
 const title = '#TC324# - Add Financial Assistance Table to Event';
 describe(`${title}`, () => {
   before(() => {
-    prepareState();
+    cy.getToken().then(async (accessToken) => {
+      const { provider, event, team, mockCreateProgram } = await prepareStateEventAndProgram(accessToken.access_token, allRolesValues);
+      cy.wrap(provider).as('provider');
+      cy.wrap(event).as('eventCreated');
+      cy.wrap(team).as('teamCreated');
+      cy.wrap(mockCreateProgram).as('mockProgram');
+    });
   });
 
   after(function () {
@@ -65,7 +58,7 @@ describe(`${title}`, () => {
           const createFinancialAssitanceTablePage = financialAssistancePage.createNewFATable();
           createFinancialAssitanceTablePage.getTableStatus().should('eq', 'INACTIVE');
           createFinancialAssitanceTablePage.fillTableName(tableData.name.translation.en);
-          createFinancialAssitanceTablePage.selectProgram(this.program.name.translation.en);
+          createFinancialAssitanceTablePage.selectProgram(this.mockProgram.name.translation.en);
           createFinancialAssitanceTablePage.toggleStatus();
           createFinancialAssitanceTablePage.getTableStatus().should('eq', 'ACTIVE');
           createFinancialAssitanceTablePage.addItem();

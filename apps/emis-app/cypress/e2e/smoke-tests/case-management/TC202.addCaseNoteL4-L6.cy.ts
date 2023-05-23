@@ -1,11 +1,11 @@
+  /* eslint-disable max-nested-callbacks */
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { format } from 'date-fns';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { fixtureCaseNotes } from '../../../fixtures/case-management';
-import { useProvider } from '../../../provider/provider';
-import { createEventWithTeamWithUsers } from '../../helpers/prepareState';
+import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { CaseNotesPage } from '../../../pages/casefiles/caseNotes.page';
 import { CaseFilesHomePage } from '../../../pages/casefiles/caseFilesHome.page';
@@ -25,31 +25,19 @@ const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles
 
 let event = null as IEventEntity;
 let accessTokenL6 = '';
-
-const prepareState = async (accessToken: string, event: IEventEntity) => {
-  const provider = useProvider(accessToken);
-  const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
-  cy.wrap(mockCreateHousehold).as('household');
-  const caseFileCreated = await provider.households.postCrcRegistration(mockCreateHousehold);
-  cy.wrap(caseFileCreated.caseFile.id).as('householdId');
-};
-
-const prepareEventwithTeamWithUsers = async (accessToken: string) => {
-  const provider = useProvider(accessToken);
-  const result = await createEventWithTeamWithUsers(provider, allRolesValues);
-  event = result.event;
-  const { team } = result;
-  cy.wrap(event).as('eventCreated');
-  cy.wrap(team).as('teamCreated');
-  cy.wrap(provider).as('provider');
-};
+let caseFileCreated = null as ICaseFileEntity;
 
 const title = '#TC202# -Add a Case Note L4-L6';
 describe(`${title}`, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      await prepareEventwithTeamWithUsers(accessTokenL6);
+      const result = await createEventAndTeam(accessTokenL6, allRolesValues);
+      const { provider, team } = result;
+      event = result.event;
+      cy.wrap(provider).as('provider');
+      cy.wrap(event).as('eventCreated');
+      cy.wrap(team).as('teamCreated');
     });
   });
 
@@ -61,12 +49,12 @@ describe(`${title}`, () => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        beforeEach(async () => {
-          await prepareState(accessTokenL6, event);
-          cy.login(roleValue);
-          // eslint-disable-next-line
-          cy.get('@householdId').then((householdId) => {                    
-            cy.goTo(`casefile/${householdId}/note`);
+        beforeEach(() => {
+          cy.then(async () => {
+            const result = await prepareStateHousehold(accessTokenL6, event);
+            caseFileCreated = result.registrationResponse.caseFile;
+            cy.login(roleValue);
+            cy.goTo(`casefile/${caseFileCreated.id}/note`);
           });
         });
         it('should successfully add a case note for L4-L6', function () {
