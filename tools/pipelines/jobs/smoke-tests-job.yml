@@ -1,26 +1,24 @@
 parameters:
   packageFeed: ''
   nodeJsVersion: ''
-  disableCache: ''
   distDir: ''
   workingDir: ''
 
 jobs:
   - job: Cypress
+    pool:
+      name: 'self-hosted-ubuntu-latest-fe' ## Need self-hosted to have static IP for security restrictions
     displayName: 'Smoke tests'
     variables:
       - group: Env-Dev
       - group: Cypress
-    pool:
-      vmImage: 'ubuntu-latest'
     strategy:
-      parallel: 3
+      parallel: 4
     steps:
       - template: '../steps/cypress-steps.yml'
         parameters:
           packageFeed: ${{ parameters.packageFeed }}
           nodeJsVersion: ${{ parameters.nodeJsVersion }}
-          disableCache: ${{ parameters.disableCache }}
           distDir: ${{ parameters.distDir }}
           workingDir: ${{ parameters.workingDir }}
           cypressSpec: 'cypress/e2e/smoke-tests/**/*.ts'

@@ -206,9 +206,14 @@ export default Vue.extend({
       if (this.userAccount) {
         this.currentTenantId = this.userAccount.tenantId;
       }
-      this.tenants = await useTenantSettingsStore().fetchUserTenants();
-      this.tenants = this.tenants.filter((t) => t.status === Status.Active);
-      (await useTenantSettingsStore().fetchAll());
+
+      // @ts-ignore
+      if (!window.Cypress) { // Those calls require a new token in the BE. Origin of those calls is the APIM which is hard to whitelist for sign-in. No impact on E2E, so we can skip them
+        this.tenants = await useTenantSettingsStore().fetchUserTenants();
+        this.tenants = this.tenants.filter((t) => t.status === Status.Active);
+
+        (await useTenantSettingsStore().fetchAll());
+      }
     }
   },
 

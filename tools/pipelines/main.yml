@@ -12,8 +12,7 @@ parameters:
   isPullRequest: ''
   nodeJsVersion: ''
   appVersion: ''
-  disableCache: ''
-  runE2EStage: false
+  runE2EStage: true
 
 stages:
 
@@ -31,7 +30,6 @@ stages:
       distDir: ${{ parameters.distDir }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
       appVersion: ${{ parameters.appVersion }}
-      disableCache: ${{ parameters.disableCache }}
 
   # Run unit tests & component tests
   - template: './stages/tests-stage.yml'
@@ -40,7 +38,6 @@ stages:
       packageFeed: ${{ parameters.packageFeed }}
       isPullRequest: ${{ parameters.isPullRequest }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
-      disableCache: ${{ parameters.disableCache }}
       workingDir: ${{ parameters.workingDir }}
       distDir: ${{ parameters.distDir }}
 
@@ -54,7 +51,6 @@ stages:
           parameters:
             packageFeed: ${{ parameters.packageFeed }}
             nodeJsVersion: ${{ parameters.nodeJsVersion }}
-            disableCache: ${{ parameters.disableCache }}
             distDir: ${{ parameters.distDir }}
             workingDir: ${{ parameters.workingDir }}
 

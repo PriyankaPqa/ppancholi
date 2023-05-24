@@ -1,7 +1,6 @@
 parameters:
   packageFeed: ''
   nodeJsVersion: ''
-  disableCache: ''
   distDir: ''
   workingDir: ''
   cypressSpec: ''
@@ -11,7 +10,6 @@ steps:
     parameters:
       packageFeed: ${{ parameters.packageFeed }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
-      disableCache: ${{ parameters.disableCache }}
 
   # Caching the binary takes roughly same amount of time as always downloading it
   - script: yarn cypress install

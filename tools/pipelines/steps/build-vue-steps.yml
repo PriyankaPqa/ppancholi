@@ -6,14 +6,12 @@ parameters:
   lokalise: 'true'
   nodeJsVersion: ''
   appVersion: ''
-  disableCache: ''
 
 steps:
   - template: '../steps/cache-install-npm.yml'
     parameters:
       packageFeed: ${{ parameters.packageFeed }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
-      disableCache: ${{ parameters.disableCache }}
 
   - script: node ./tools/scripts/replace.js emis-app/public/app-details.json "#{VITE_VERSION}#" ${{ parameters.appVersion }}
     displayName: 'Inject app version'

@@ -5,7 +5,6 @@ parameters:
   workingDir: ''
   nodeJsVersion: ''
   appVersion: ''
-  disableCache: ''
 
 stages:
   - stage: 'Build_Stage'
@@ -24,7 +23,6 @@ stages:
               workingDir:  ${{ parameters.workingDir }}
               nodeJsVersion:  ${{ parameters.nodeJsVersion }}
               appVersion: ${{ parameters.appVersion }}
-              disableCache: ${{ parameters.disableCache }}
 
           - publish: ${{ parameters.distDir }}
             artifact: dist

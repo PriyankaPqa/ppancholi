@@ -3,7 +3,6 @@ parameters:
   packageFeed: ''
   isPullRequest: ''
   nodeJsVersion: ''
-  disableCache: ''
   distDir: ''
   workingDir: ''
 
@@ -20,7 +19,7 @@ stages:
           testKindParameter: 'unit'
           packageFeed: ${{ parameters.packageFeed }}
           nodeJsVersion: ${{ parameters.nodeJsVersion }}
-          disableCache: ${{ parameters.disableCache }}
+
           isPullRequest: ${{parameters.isPullRequest}}
           appName: ${{parameters.appName}}
           parallel: 1
@@ -33,7 +32,6 @@ stages:
           testKindParameter: ''
           packageFeed: ${{ parameters.packageFeed }}
           nodeJsVersion: ${{ parameters.nodeJsVersion }}
-          disableCache: ${{ parameters.disableCache }}
           isPullRequest: ${{parameters.isPullRequest}}
           appName: ${{parameters.appName}}
           parallel: 3
