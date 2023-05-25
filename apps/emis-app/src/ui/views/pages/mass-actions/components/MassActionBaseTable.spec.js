@@ -7,6 +7,16 @@ import Component from './MassActionBaseTable.vue';
 
 const localVue = createLocalVue();
 
+const additionalColumns = [{ name: 'totalAmount',
+  index: 4,
+  header: {
+    text: 'massAction.common.total',
+    value: 'Metadata/LastRun/TotalAmount',
+    sortable: true,
+  },
+  templateFct: jest.fn(),
+}];
+
 let wrapper;
 
 const doMount = (props) => {
@@ -66,6 +76,20 @@ describe('MassActionBaseTable.vue', () => {
             successful: 'Metadata/LastRun/Results/Successes',
             status: 'Metadata/LastRun/RunStatus',
             deleteButton: 'deleteButton',
+          });
+      });
+
+      it('adds additionalColumns', () => {
+        doMount({ additionalColumns });
+        expect(wrapper.vm.customColumns)
+          .toEqual({
+            name: 'Entity/Name',
+            dateCreated: 'Entity/Created',
+            projected: 'Metadata/LastRun/Results/Total',
+            successful: 'Metadata/LastRun/Results/Successes',
+            status: 'Metadata/LastRun/RunStatus',
+            deleteButton: 'deleteButton',
+            totalAmount: 'Metadata/LastRun/TotalAmount',
           });
       });
     });
@@ -132,6 +156,45 @@ describe('MassActionBaseTable.vue', () => {
             text: 'massAction.common.successful',
             value: wrapper.vm.customColumns.successful,
             sortable: true,
+          }, {
+            text: 'massAction.common.status',
+            value: wrapper.vm.customColumns.status,
+            sortable: false,
+          }, {
+            align: 'end',
+            text: '',
+            value: 'deleteButton',
+            sortable: false,
+          }];
+        expect(wrapper.vm.headers)
+          .toEqual(headers);
+      });
+
+      it('adds additionalColumns', () => {
+        doMount({ additionalColumns });
+        const headers = [
+          {
+            text: 'massAction.common.name',
+            align: 'start',
+            sortable: true,
+            value: wrapper.vm.customColumns.name,
+          },
+          {
+            text: 'massAction.common.dateCreated',
+            value: wrapper.vm.customColumns.dateCreated,
+            sortable: true,
+          }, {
+            text: 'massAction.common.projected',
+            value: wrapper.vm.customColumns.projected,
+            sortable: true,
+          }, {
+            text: 'massAction.common.successful',
+            value: wrapper.vm.customColumns.successful,
+            sortable: true,
+          }, {
+            sortable: true,
+            text: 'massAction.common.total',
+            value: 'Metadata/LastRun/TotalAmount',
           }, {
             text: 'massAction.common.status',
             value: wrapper.vm.customColumns.status,

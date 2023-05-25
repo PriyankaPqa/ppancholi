@@ -2,7 +2,7 @@ import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
 import { TranslateResult } from 'vue-i18n';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
+import { MassActionDataCorrectionType, MassActionType } from '@libs/entities-lib/mass-action';
 
 export interface IMassActionCards {
   title: string;
@@ -103,6 +103,9 @@ export default Vue.extend({
         case 'downloadImportUsersTemplate':
           this.downloadTemplate(this.templateData.importUsers.fileName, this.templateData.importUsers.blobsParts);
           break;
+        case 'downloadFACustomTemplate':
+          this.downloadApiTemplate(MassActionType.FinancialAssistanceCustomOptions);
+          break;
         default:
       }
     },
@@ -126,7 +129,7 @@ export default Vue.extend({
       helpers.downloadBlob(blob, fileName);
     },
 
-    async downloadApiTemplate(massActionType: MassActionDataCorrectionType) {
+    async downloadApiTemplate(massActionType: (MassActionDataCorrectionType | MassActionType)) {
       const res = await this.$services.massActions.downloadTemplate(massActionType);
       if (res) {
         helpers.downloadFile(res);

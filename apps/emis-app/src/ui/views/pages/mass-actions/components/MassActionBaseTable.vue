@@ -39,6 +39,10 @@
         <status-chip status-name="MassActionRunStatus" :status="getLastRunEntity(item).runStatus" />
       </template>
 
+      <template v-for="col in additionalColumns" #[`item.${col.header.value}`]="{ item }">
+        {{ col.templateFct(item) }}
+      </template>
+
       <template #[`item.${customColumns.deleteButton}`]="{ item }">
         <v-btn v-if="showDeleteIcon(item)" icon class="mr-2" data-test="delete" @click="onDelete(item)">
           <v-icon size="24" color="grey darken-2">
@@ -121,6 +125,11 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
       type: Function,
       default: () => 'Default type',
     },
+
+    additionalColumns: {
+      type: Array as () => { name: string, header: DataTableHeader, index: number, templateFct: (item: any) => string }[],
+      default: () => [] as { name: string, header: DataTableHeader, index: number, templateFct: (item: any) => string }[],
+    },
   },
 
   // MassActionBaseTable and FinancialAssistanceHome are both using the same mixin
@@ -149,7 +158,12 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
         status: 'Metadata/LastRun/RunStatus',
         deleteButton: 'deleteButton',
       };
-      return !this.showType ? defaultColumns : { ...defaultColumns, type: 'Entity/Type' };
+      const cols = !this.showType ? defaultColumns : { ...defaultColumns, type: 'Entity/Type' };
+
+      for (let i = 0; i < this.additionalColumns.length; i += 1) {
+        (cols as any)[this.additionalColumns[i].name] = this.additionalColumns[i].header.value;
+      }
+      return cols;
     },
     headers(): Array<DataTableHeader> {
       const defaultHeaders = [
@@ -187,7 +201,13 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
         sortable: true,
         value: 'Entity/Type',
       } as DataTableHeader;
-      return !this.showType ? defaultHeaders : [...defaultHeaders.slice(0, 1), type, ...defaultHeaders.slice(1)];
+      const headers = !this.showType ? defaultHeaders : [...defaultHeaders.slice(0, 1), type, ...defaultHeaders.slice(1)];
+
+      for (let i = 0; i < this.additionalColumns.length; i += 1) {
+        headers.splice(this.additionalColumns[i].index, 0, this.additionalColumns[i].header);
+      }
+
+      return headers;
     },
   },
 

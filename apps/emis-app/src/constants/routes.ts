@@ -304,6 +304,20 @@ const routes = {
         name: 'massActions.financialAssistance.details',
       },
     },
+    financialAssistanceCustom: {
+      home: {
+        path: 'financial-assistance-custom',
+        name: 'massActions.financialAssistanceCustom.home',
+      },
+      create: {
+        path: 'financial-assistance-custom/create',
+        name: 'massActions.financialAssistanceCustom.create',
+      },
+      details: {
+        path: 'financial-assistance-custom/details/:id',
+        name: 'massActions.financialAssistanceCustom.details',
+      },
+    },
     assessments: {
       home: {
         path: 'assessments',

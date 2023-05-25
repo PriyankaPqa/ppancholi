@@ -44,6 +44,19 @@ describe('MassActionsLayout.vue', () => {
             ],
           },
           {
+            name: wrapper.vm.$t('mass_action.card.group', { x: 3 }),
+            items: [
+              {
+                text: wrapper.vm.$t('mass_action.card.finance_customoptions'),
+                test: 'mass_action.card.finance_customoptions',
+                to: routes.massActions.financialAssistanceCustom.home.name,
+                exact: false,
+                level: UserRoles.level6,
+                feature: FeatureKeys.FinancialAssistanceMassAction,
+              },
+            ],
+          },
+          {
             name: wrapper.vm.$t('mass_action.card.group', { x: 4 }),
             items: [
               {

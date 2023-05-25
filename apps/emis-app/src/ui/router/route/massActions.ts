@@ -9,6 +9,10 @@ const MassActionsFinancialAssistanceHome = () => import('@/ui/views/pages/mass-a
 const FinancialAssistanceCreate = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCreate.vue');
 const MassActionsFinancialAssistanceDetails = () => import('@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceDetailsMassAction.vue');
 
+const MassActionsFinancialAssistanceCustomHome = () => import('@/ui/views/pages/mass-actions/financial-assistance-custom/FinancialAssistanceCustomHome.vue');
+const FinancialAssistanceCustomCreate = () => import('@/ui/views/pages/mass-actions/financial-assistance-custom/FinancialAssistanceCustomCreate.vue');
+const MassActionsFinancialAssistanceCustomDetails = () => import('@/ui/views/pages/mass-actions/financial-assistance-custom/FinancialAssistanceCustomDetails.vue');
+
 const MassActionsAssessmentHome = () => import('@/ui/views/pages/mass-actions/assessments/AssessmentHomeMassAction.vue');
 const MassActionsAssessmentCreate = () => import('@/ui/views/pages/mass-actions/assessments/AssessmentCreate.vue');
 const MassActionsAssessmentDetails = () => import('@/ui/views/pages/mass-actions/assessments/AssessmentDetailsMassAction.vue');
@@ -63,6 +67,25 @@ export const massActions: RouteConfig = {
       path: Routes.massActions.financialAssistance.details.path,
       name: Routes.massActions.financialAssistance.details.name,
       component: MassActionsFinancialAssistanceDetails,
+      meta: { level: UserRoles.level6 },
+      props: true,
+    },
+    {
+      path: Routes.massActions.financialAssistanceCustom.home.path,
+      name: Routes.massActions.financialAssistanceCustom.home.name,
+      component: MassActionsFinancialAssistanceCustomHome,
+      meta: { level: UserRoles.level6 },
+    },
+    {
+      path: Routes.massActions.financialAssistanceCustom.create.path,
+      name: Routes.massActions.financialAssistanceCustom.create.name,
+      component: FinancialAssistanceCustomCreate,
+      meta: { level: UserRoles.level6 },
+    },
+    {
+      path: Routes.massActions.financialAssistanceCustom.details.path,
+      name: Routes.massActions.financialAssistanceCustom.details.name,
+      component: MassActionsFinancialAssistanceCustomDetails,
       meta: { level: UserRoles.level6 },
       props: true,
     },

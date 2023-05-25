@@ -61,6 +61,7 @@ export default Vue.extend({
         [MassActionType.ImportUsers]: 'massActions.type.importUsers',
         [MassActionType.GenerateFundingRequest]: 'massActions.type.fundingRequest',
         [MassActionType.Assessments]: 'massActions.type.assessment',
+        [MassActionType.FinancialAssistanceCustomOptions]: 'massAction.financialAssistanceCustomTable.title',
       } as Record<MassActionType, string>,
     };
   },

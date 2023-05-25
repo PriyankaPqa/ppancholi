@@ -20,6 +20,7 @@ export enum MassActionType {
   ImportPaymentStatuses = 5,
   ImportUsers = 6,
   Assessments = 14,
+  FinancialAssistanceCustomOptions = 15,
 }
 
 // this is actually also part of MassActionType!!

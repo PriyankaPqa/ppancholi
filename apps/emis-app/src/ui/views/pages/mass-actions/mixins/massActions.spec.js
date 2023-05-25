@@ -54,6 +54,12 @@ describe('massActions', () => {
         wrapper.vm.onClick('downloadImportUsersTemplate');
         expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('ImportUsersTemplate.csv', 'FirstName,LastName,Email,Role');
       });
+
+      it('should trigger proper method downloadFACustomTemplate', () => {
+        wrapper.vm.downloadApiTemplate = jest.fn();
+        wrapper.vm.onClick('downloadFACustomTemplate');
+        expect(wrapper.vm.downloadApiTemplate).toHaveBeenCalledWith(15);
+      });
     });
 
     describe('onClickMenu', () => {

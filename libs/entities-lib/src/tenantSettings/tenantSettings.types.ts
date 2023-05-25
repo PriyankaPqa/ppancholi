@@ -18,6 +18,7 @@ export enum FeatureKeys {
   BlockFACaseFileIrregularTag = 'BlockFACaseFileIrregularTag',
   AuthenticationPhaseII = 'AuthenticationPhaseII',
   UseIdentityServer = 'UseIdentityServer',
+  FinancialAssistanceMassAction = 'FinancialAssistanceMassAction',
 }
 
 export enum FeatureType {
