@@ -3,7 +3,7 @@ import { IListOption } from '@libs/shared-lib/types';
 import { BaseEntity } from '../base';
 import {
   CaseFileStatus, CaseFileTriage, IAssignedTeamMembers, ICaseFileEntity, ICaseFileLabel,
-  IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication,
+  IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication, IImpactedIndividual,
   IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus,
 } from './case-file.types';
 
@@ -34,6 +34,8 @@ export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
 
   privacyDateTimeConsent?: Date | string;
 
+  impactedIndividuals?: IImpactedIndividual[];
+
   constructor(data?: ICaseFileEntity) {
     if (data) {
       super(data);
@@ -55,6 +57,7 @@ export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
         method: IdentityAuthenticationMethod.NotApplicable,
         status: IdentityAuthenticationStatus.NotVerified,
       };
+      this.impactedIndividuals = _cloneDeep(data.impactedIndividuals);
     } else {
       super();
       this.assignedTeamMembers = [];
@@ -74,6 +77,7 @@ export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
         method: IdentityAuthenticationMethod.NotApplicable,
         status: IdentityAuthenticationStatus.NotVerified,
       };
+      this.impactedIndividuals = [];
     }
   }
 

@@ -12,7 +12,7 @@ export class Member extends BaseEntity implements IMember {
 
   contactInformation: IContactInformation;
 
-  addressHistory: string[];
+  addressHistory: ICurrentAddress[];
 
   constructor(data?: IMemberEntity) {
     if (!data) {
@@ -23,7 +23,7 @@ export class Member extends BaseEntity implements IMember {
       this.setIdentity(data.identitySet);
       this.setCurrentAddress(data.currentAddress);
       this.setContactInformation(data.contactInformation);
-      this.addressHistory = data.addressHistory ? [...data.addressHistory] : [];
+      this.addressHistory = data.addressHistory?.map((h) => new CurrentAddress(h)) || [];
     }
   }
 

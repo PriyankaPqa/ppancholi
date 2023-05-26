@@ -180,21 +180,46 @@ export function storeFactory({
 
       async addShelterLocationData(members: IMemberEntity[], shelterLocations: IEventGenericLocation[]): Promise<IMemberEntity[]> {
         const otherShelterLocations = [] as IEventGenericLocation[];
-        const mem = await Promise.all(members.map(async (m) => {
-          if (m.currentAddress?.shelterLocationId) {
-            const shelterLocation = await this.getShelterLocationDatafromId(m.currentAddress?.shelterLocationId, shelterLocations, otherShelterLocations);
+        const parsedMembers = [] as unknown as IMemberEntity[];
+
+        for (const m of members) {
+          // eslint-disable-next-line no-await-in-loop
+          const newAddressHistory = await Promise.all(m.addressHistory.map(async (a) => {
+            if (a.shelterLocationId) {
+              const shelterLocation = await this.getShelterLocationDatafromId(a.shelterLocationId, shelterLocations, otherShelterLocations);
+              return {
+                ...a,
+                shelterLocation,
+              };
+            }
             return {
-              ...m,
+              ...a,
+              shelterLocation: null,
+            };
+          }));
+
+          let parsedHistoryMember = {
+            ...m,
+            addressHistory: newAddressHistory,
+            currentAddress: m.currentAddress,
+          };
+
+          if (parsedHistoryMember.currentAddress?.shelterLocationId) {
+            // eslint-disable-next-line no-await-in-loop
+            const shelterLocation = await this.getShelterLocationDatafromId(m.currentAddress?.shelterLocationId, shelterLocations, otherShelterLocations);
+
+            parsedHistoryMember = {
+              ...parsedHistoryMember,
               currentAddress: {
-                ...m.currentAddress,
+                ...parsedHistoryMember.currentAddress,
                 shelterLocation,
               },
             };
           }
-          return m;
-        }));
 
-        return mem;
+          parsedMembers.push(parsedHistoryMember);
+        }
+        return parsedMembers;
       },
 
       async fetchMembersInformation(household: IHouseholdEntity, shelterLocations: IEventGenericLocation[]): Promise<IMemberEntity[]> {
@@ -580,7 +605,7 @@ export function storeFactory({
       if (isPrimaryMember) {
         result = await householdApi.updatePersonAddress(member.id, mode === ERegistrationMode.Self, member.currentAddress);
         if (result) {
-          householdCreate.value.setCurrentAddress(member.currentAddress);
+          householdCreate.value.setPrimaryBeneficiary(new Member(result));
         }
       } else if (index >= 0) {
         let address = { ...member.currentAddress };
@@ -589,7 +614,7 @@ export function storeFactory({
         }
         result = await householdApi.updatePersonAddress(member.id, mode === ERegistrationMode.Self, address);
         if (result) {
-          householdCreate.value.editAdditionalMember(member, index, sameAddress);
+          householdCreate.value.editAdditionalMember(new Member(result), index, sameAddress);
         }
       }
       return result || null;

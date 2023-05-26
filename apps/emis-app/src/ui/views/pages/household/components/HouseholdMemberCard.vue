@@ -304,7 +304,7 @@ export default Vue.extend({
           test: 'date_of_birth',
           primaryMemberOnly: false,
           label: 'household.profile.member.date_of_birth',
-          data: householdHelpers.getBirthDateDisplayWithAge(this.member.identitySet.birthDate) || '—',
+          data: this.member.identitySet.birthDate ? householdHelpers.getBirthDateDisplayWithAge(this.member.identitySet.birthDate) : '—',
         },
         {
           test: 'gender',

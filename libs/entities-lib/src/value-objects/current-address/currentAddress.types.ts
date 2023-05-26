@@ -32,6 +32,12 @@ export interface ICurrentAddressData {
     shelterLocation?: IShelterLocationData;
 
     shelterLocationId?: string;
+
+    cRcProvided?: boolean;
+
+    checkIn?: Date;
+
+    checkOut?: Date;
 }
 
 export interface ICurrentAddressCreateRequest {

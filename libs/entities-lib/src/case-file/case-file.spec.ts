@@ -61,6 +61,11 @@ describe('>>> Case File', () => {
         const caseFile = new CaseFileEntity(mockCaseFileData);
         expect(caseFile.privacyDateTimeConsent).toEqual(new Date(mockCaseFileData.privacyDateTimeConsent));
       });
+
+      it('should instantiate impactedIndividuals', () => {
+        const caseFile = new CaseFileEntity(mockCaseFileData);
+        expect(caseFile.impactedIndividuals).toEqual(mockCaseFileData.impactedIndividuals);
+      });
     });
 
     describe('instantiate when data is not passed', () => {
@@ -143,6 +148,11 @@ describe('>>> Case File', () => {
         expect(caseFile.impactStatusValidation).toEqual({
           method: ImpactValidationMethod.NotApplicable, status: ValidationOfImpactStatus.Undetermined,
         });
+      });
+
+      it('should instantiate impactedIndividuals', () => {
+        const caseFile = new CaseFileEntity();
+        expect(caseFile.impactedIndividuals).toEqual([]);
       });
     });
   });

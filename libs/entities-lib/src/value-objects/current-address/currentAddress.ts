@@ -17,6 +17,12 @@ export class CurrentAddress implements ICurrentAddress {
 
   shelterLocation?: IShelterLocationData;
 
+  crcProvided: boolean;
+
+  checkInDate: Date;
+
+  checkOutDate: Date;
+
   constructor(data?: ICurrentAddressData) {
     if (!data) {
       this.reset();
@@ -26,6 +32,9 @@ export class CurrentAddress implements ICurrentAddress {
       this.placeNumber = data.placeNumber;
       this.address = _cloneDeep(data.address);
       this.shelterLocation = _cloneDeep(data.shelterLocation);
+      this.crcProvided = data.cRcProvided;
+      this.checkInDate = data.checkIn;
+      this.checkOutDate = data.checkOut;
     }
   }
 

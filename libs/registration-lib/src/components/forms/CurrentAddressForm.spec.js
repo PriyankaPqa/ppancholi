@@ -262,6 +262,24 @@ describe('CurrentAddressForm.vue', () => {
         });
       });
     });
+
+    describe('crc_provided_check_in_check_out', () => {
+      it('should be rendered when showCrcProvidedAndCheckInCheckOut is true', async () => {
+        await wrapper.setProps({
+          showCrcProvidedAndCheckInCheckOut: true,
+        });
+        const element = wrapper.findDataTest('crc_provided_check_in_check_out');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not be rendered when showCrcProvidedAndCheckInCheckOut is false', async () => {
+        await wrapper.setProps({
+          showCrcProvidedAndCheckInCheckOut: false,
+        });
+        const element = wrapper.findDataTest('crc_provided_check_in_check_out');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
   });
 
   describe('Methods', () => {

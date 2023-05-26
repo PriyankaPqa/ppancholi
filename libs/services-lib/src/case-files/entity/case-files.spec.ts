@@ -233,4 +233,13 @@ describe('>>> Case File Service', () => {
       expect(http.get).toHaveBeenCalledWith('/case-file/case-files/get-all-case-files-related-to-household-id', { params: { householdId: id } });
     });
   });
+
+  describe('setPersonReceiveAssistance', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+      const params = { receiveAssistance: true, personId: '1ea8ebda-d0c8-4482-85cb-6f5f4447d3c3' };
+      await service.setPersonReceiveAssistance(id, params);
+      expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/receive-assistance`, params);
+    });
+  });
 });

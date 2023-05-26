@@ -140,6 +140,10 @@ export interface IAssignedTeamMembers {
   teamId: uuid;
   teamMembersIds: uuid[];
 }
+export interface IImpactedIndividual {
+  personId: uuid;
+  receivingAssistance: boolean;
+}
 
 export interface ICaseFileEntity extends IEntity {
   assignedTeamMembers?: IAssignedTeamMembers[],
@@ -155,6 +159,7 @@ export interface ICaseFileEntity extends IEntity {
   triage?: CaseFileTriage;
   privacyDateTimeConsent?: Date | string;
   identityAuthentication?: IIdentityAuthentication;
+  impactedIndividuals?: IImpactedIndividual[];
 
   readonly?: boolean;
 

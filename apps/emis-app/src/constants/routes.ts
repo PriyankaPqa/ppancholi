@@ -144,6 +144,12 @@ const routes = {
         name: 'casefile.documents.add',
       },
     },
+    impactedIndividuals: {
+      home: {
+        path: 'impactedIndividuals',
+        name: 'casefile.impactedIndividuals',
+      },
+    },
   },
   events: {
     layout: {

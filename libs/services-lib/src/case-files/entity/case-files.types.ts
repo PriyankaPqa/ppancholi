@@ -37,6 +37,7 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   getSummary(id: uuid): Promise<ICaseFileEntity>;
   getAssignedCaseFiles(teamMemberId: uuid): Promise<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>>;
   getAllCaseFilesRelatedToHouseholdId(householdId: uuid): Promise<ICaseFileEntity[]>;
+  setPersonReceiveAssistance(caseFileId: uuid, params: { receiveAssistance: boolean, personId: string }): Promise<ICaseFileEntity>;
 }
 
 export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileEntity> {
@@ -56,4 +57,5 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   getSummary: jest.Mock<ICaseFileEntity>;
   getAssignedCaseFiles: jest.Mock<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>>;
   getAllCaseFilesRelatedToHouseholdId: jest.Mock<ICaseFileEntity[]>;
+  setPersonReceiveAssistance: jest.Mock<ICaseFileEntity>;
 }

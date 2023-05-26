@@ -3,7 +3,7 @@ import { mockBaseData } from '../../base';
 import { EIndigenousTypes } from '../identity-set/identitySet.types';
 import { mockContactInformation, mockContactInformationCreateRequest } from '../contact-information';
 import { mockIdentitySet, mockIdentitySetCreateRequest } from '../identity-set';
-import { mockCampGround, mockCurrentAddressCreateRequest } from '../current-address';
+import { mockCampGround, mockCurrentAddressCreateRequest, mockOther } from '../current-address';
 import {
   IMember, IMemberEntity, IMemberMetadata, MemberCreateRequest,
 } from './member.types';
@@ -14,6 +14,7 @@ export const mockMemberData = (): IMemberEntity => ({
   identitySet: mockIdentitySet(),
   contactInformation: mockContactInformation(),
   currentAddress: mockCampGround(),
+  addressHistory: [mockOther(), mockCampGround()],
 } as IMemberEntity);
 
 export const mockMember = (force?: Partial<IMemberEntity>): IMember => new Member(deepmerge(mockMemberData(), force || {}));

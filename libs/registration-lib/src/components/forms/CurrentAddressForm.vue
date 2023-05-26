@@ -30,6 +30,32 @@
           @change="changeType($event)" />
       </v-col>
 
+      <v-col
+        v-if="showCrcProvidedAndCheckInCheckOut"
+        class="pl-3"
+        data-test="crc_provided_check_in_check_out"
+        cols="12"
+        sm="6"
+        md="8">
+        <div class="font-weight-bold ">
+          {{ $t('impactedIndividuals.temporary_address.edit.crc_provided_title') }}
+        </div>
+        <div class="pb-8">
+          <v-radio-group row hide-details>
+            <v-radio :label="$t('common.yes')" :value="true" data-test="CRC_provided_yes" />
+            <v-radio :label="$t('common.no')" :value="false" data-test="CRC_provided_no" />
+          </v-radio-group>
+        </div>
+        <div class="py-4">
+          <date-range
+            id="currentAddressForm"
+            :attach="true"
+            :value="['2023-04-18', '2023-05-01']"
+            :start-label="$t('impactedIndividuals.temporary_address.check_in')"
+            :end-label="$t('impactedIndividuals.temporary_address.check_out')" />
+        </div>
+      </v-col>
+
       <v-col v-if="form.hasStreet()" cols="12">
         <rc-google-autocomplete-with-validation
           prepend-inner-icon="mdi-map-marker"
@@ -164,8 +190,8 @@ import {
   ICurrentAddress,
   CurrentAddress,
 } from '@libs/entities-lib/household-create';
+import DateRange from '@libs/component-lib/components/molecule/RcFilterToolbar/inputs/DateRange.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-
 import googleAutoCompleteMixin from './mixins/address';
 
 export default mixins(googleAutoCompleteMixin).extend({
@@ -176,6 +202,7 @@ export default mixins(googleAutoCompleteMixin).extend({
     VTextFieldWithValidation,
     RcGoogleAutocompleteWithValidation,
     RcCountrySelectWithValidation,
+    DateRange,
   },
 
   props: {
@@ -227,6 +254,11 @@ export default mixins(googleAutoCompleteMixin).extend({
     disableAutocomplete: {
       type: Boolean,
       required: true,
+    },
+
+    showCrcProvidedAndCheckInCheckOut: {
+      type: Boolean,
+      default: false,
     },
   },
 

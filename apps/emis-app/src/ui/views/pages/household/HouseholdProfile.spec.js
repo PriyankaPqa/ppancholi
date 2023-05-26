@@ -520,6 +520,14 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: householdEntity.id,
           },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+          },
           mocks: {
             $services: services,
           },
@@ -540,6 +548,14 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: householdEntity.id,
           },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+          },
           mocks: {
             $services: services,
           },
@@ -558,6 +574,14 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           propsData: {
             id: householdEntity.id,
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $services: services,

@@ -12,7 +12,7 @@ export interface IMemberEntity extends IEntity {
 
   contactInformation: IContactInformation;
 
-  addressHistory: Array<string>;
+  addressHistory: Array<ICurrentAddress>;
 }
 
 export interface IMemberMetadata extends IEntity {

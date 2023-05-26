@@ -28,6 +28,8 @@ const HouseholdProfile = () => import('@/ui/views/pages/household/HouseholdProfi
 const SplitHousehold = () => import('@/ui/views/pages/household/split/SplitHousehold.vue');
 const MoveHouseholdMembers = () => import('@/ui/views/pages/household/move/MoveHouseholdMembers.vue');
 
+const ImpactedIndividuals = () => import('@/ui/views/pages/case-files/details/case-file-impacted-individuals/ImpactedIndividuals.vue');
+
 export const caseFiles: RouteConfig = {
   path: Routes.caseFile.layout.path,
   component: CaseFileLayout,
@@ -164,6 +166,13 @@ export const caseFiles: RouteConfig = {
           name: Routes.caseFile.documents.details.name,
           component: CaseFileDocumentDetails,
           meta: { level: UserRoles.level1, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.impactedIndividuals.home.path,
+          name: Routes.caseFile.impactedIndividuals.home.name,
+          component: ImpactedIndividuals,
+          meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
           props: true,
         },
       ],

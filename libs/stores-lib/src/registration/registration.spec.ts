@@ -775,16 +775,17 @@ describe('>>> Registration Store', () => {
       useRegistrationStore = initStore();
       const member = mockMember();
       const isPrimaryMember = true;
-      householdApi.updatePersonAddress = jest.fn(() => ({ id: 'foo' })) as any;
-      useRegistrationStore.householdCreate.setCurrentAddress = jest.fn();
+      householdApi.updatePersonAddress = jest.fn(() => mockMember({ id: '1' }));
+      useRegistrationStore.householdCreate.setPrimaryBeneficiary = jest.fn();
 
       await useRegistrationStore.updatePersonAddress({ member, isPrimaryMember });
 
-      expect(useRegistrationStore.householdCreate.setCurrentAddress).toHaveBeenCalledWith(member.currentAddress);
+      expect(useRegistrationStore.householdCreate.setPrimaryBeneficiary).toHaveBeenCalledWith(mockMember({ id: '1' }));
     });
 
     it('call the updatePersonAddress service and mutation with proper params when member is not primary and sameAddress is false', async () => {
       useRegistrationStore = initStore();
+      householdApi.updatePersonAddress = jest.fn(() => mockMember({ id: '1' }));
       useRegistrationStore.householdCreate.additionalMembers[0] = mockMember({
         currentAddress: {
           ...mockMember().currentAddress,
@@ -801,7 +802,7 @@ describe('>>> Registration Store', () => {
       });
 
       expect(householdApi.updatePersonAddress).toHaveBeenCalledWith(member.id, false, member.currentAddress);
-      expect(useRegistrationStore.householdCreate.additionalMembers[0].currentAddress).toEqual(member.currentAddress);
+      expect(useRegistrationStore.householdCreate.additionalMembers[0].currentAddress).toEqual(mockMember({ id: '1' }).currentAddress);
     });
 
     it('call the updatePersonAddress service and mutation with proper params when member is not primary and sameAddress is true', async () => {
@@ -1063,10 +1064,15 @@ describe('>>> Registration Store', () => {
       const getShelterLocationDatafromId = jest.fn(() => ({ id: 'sl-1', name: 'SL 1' }));
       useRegistrationStore = initStore(ERegistrationMode.Self, { getShelterLocationDatafromId });
 
-      const members = [{ currentAddress: { shelterLocationId: 'sl-1' } }] as any[];
+      const members = [{ currentAddress: { shelterLocationId: 'sl-1' }, addressHistory: [{ shelterLocationId: 'sl-1' }] }] as any[];
       const result = await useRegistrationStore.internalMethods.addShelterLocationData(members, []);
       expect(getShelterLocationDatafromId).toHaveBeenCalledWith('sl-1', [], []);
-      expect(result).toEqual([{ currentAddress: { shelterLocationId: 'sl-1', shelterLocation: { id: 'sl-1', name: 'SL 1' } } }]);
+      expect(result).toEqual(
+        [{
+          currentAddress: { shelterLocationId: 'sl-1', shelterLocation: { id: 'sl-1', name: 'SL 1' } },
+          addressHistory: [{ shelterLocationId: 'sl-1', shelterLocation: { id: 'sl-1', name: 'SL 1' } }],
+        }],
+      );
     });
   });
 
