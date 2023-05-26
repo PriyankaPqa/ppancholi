@@ -103,7 +103,7 @@ export class HttpClient implements IHttpClient {
       if (this.options.useErrorReport) {
         Vue.prototype.$reportToasted(this.i18n.t('error.unexpected_error'), error);
       } else {
-        Vue.toasted.global.error(this.i18n.t('error.unexpected_error'));
+        Vue?.toasted?.global.error(this.i18n.t('error.unexpected_error'));
       }
     }
 
