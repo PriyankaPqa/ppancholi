@@ -49,3 +49,4 @@ stages:
     isPullRequest: $(isPullRequest)
     nodeJsVersion: $(nodeJsVersion)
     disableCache: $(disableCache)
+    parallelJobsSmokeTests: 1

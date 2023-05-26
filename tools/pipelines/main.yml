@@ -13,6 +13,7 @@ parameters:
   nodeJsVersion: ''
   appVersion: ''
   runE2EStage: true
+  parallelJobsSmokeTests: 1
 
 stages:
 
@@ -47,8 +48,11 @@ stages:
       condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
       displayName: 'E2E Tests'
       jobs:
-        - template: './jobs/smoke-tests-job.yml'
+        - template: './jobs/cypress-job.yml'
           parameters:
+            displayName: 'Smoke Tests'
+            cypressSpec: 'cypress/e2e/smoke-tests/**/*.ts'
+            parallelJobs: ${{ parameters.parallelJobsSmokeTests }}
             packageFeed: ${{ parameters.packageFeed }}
             nodeJsVersion: ${{ parameters.nodeJsVersion }}
             distDir: ${{ parameters.distDir }}

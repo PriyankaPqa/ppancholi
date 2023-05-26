@@ -50,3 +50,4 @@ stages:
     nodeJsVersion: $(nodeJsVersion)
     appVersion: $(VITE_VERSION)
     disableCache: $(disableCache)
+    parallelJobsSmokeTests: 4
