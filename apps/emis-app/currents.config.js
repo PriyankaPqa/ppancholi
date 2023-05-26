@@ -5,6 +5,6 @@ module.exports = {
   component: {
     batchSize: 5, // how many specs to send in one batch
   },
-  projectId: 'CLyVZv',
+  projectId: 'vG2SLV',
   cloudServiceUrl: 'https://cy.currents.dev',
 };

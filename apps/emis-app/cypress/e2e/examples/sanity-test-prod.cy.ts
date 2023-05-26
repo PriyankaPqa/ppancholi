@@ -5,7 +5,7 @@ You can try increasing the `pageLoadTimeout` value in `cypress.config.ts` to wai
 Browsers will not fire the `load` event until all stylesheets and scripts are done downloading
 * */
 
-describe('After deployment', () => {
+describe('After deployment.', () => {
   before(() => {
     cy.loginProd();
     cy.visit('https://emis.crc-tech.ca/en/home');
