@@ -27,7 +27,7 @@ variables:
 name: E2E Benef App - $(Major).$(Minor).$(Patch)
 
 stages:
-  - template: '../../tools/pipelines/e2e.yml'
+  - template: '../../tools/pipelines/smoke-tests.yml'
     parameters:
       appVersion: $(VITE_VERSION)
       packageFeed: $(PackageFeed-Npm)
@@ -35,3 +35,4 @@ stages:
       distDir: $(distDir)
       nodeJsVersion: $(nodeJsVersion)
       disableCache: $(disableCache)
+      parallelJobs: 1

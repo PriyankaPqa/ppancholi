@@ -4,7 +4,7 @@ trigger:
       - master
   paths:
     include:
-      - apps/emis-app/cypress/*
+      - apps/benef-app/cypress/*
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -14,9 +14,9 @@ variables:
   - name: Patch
     value: $[counter(format('{0}.{1}',variables['Major'],variables['Minor']),0)]
   - name: workingDir
-    value: './apps/emis-app/'
+    value: './apps/benef-app/'
   - name: distDir
-    value: './apps/emis-app/dist'
+    value: './apps/benef-app/dist'
   - name: VITE_VERSION
     value: $(Major).$(Minor).$(Patch)
   - name: nodeJsVersion
@@ -24,10 +24,10 @@ variables:
   - name: disableCache
     value: 'false' # change this value to force npm package to be installed
 
-name: E2E EMIS App - $(Major).$(Minor).$(Patch)
+name: E2E Benef App - $(Major).$(Minor).$(Patch)
 
 stages:
-  - template: '../../tools/pipelines/smoke-tests.yml'
+  - template: '../../tools/pipelines/critical-path-tests.yml'
     parameters:
       appVersion: $(VITE_VERSION)
       packageFeed: $(PackageFeed-Npm)
@@ -35,4 +35,4 @@ stages:
       distDir: $(distDir)
       nodeJsVersion: $(nodeJsVersion)
       disableCache: $(disableCache)
-      parallelJobs: 4
+      parallelJobs: 1

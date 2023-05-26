@@ -27,7 +27,7 @@ variables:
 name: E2E EMIS App - $(Major).$(Minor).$(Patch)
 
 stages:
-  - template: '../../tools/pipelines/smoke-tests.yml'
+  - template: '../../tools/pipelines/critical-path-tests.yml'
     parameters:
       appVersion: $(VITE_VERSION)
       packageFeed: $(PackageFeed-Npm)
@@ -35,4 +35,4 @@ stages:
       distDir: $(distDir)
       nodeJsVersion: $(nodeJsVersion)
       disableCache: $(disableCache)
-      parallelJobs: 4
+      parallelJobs: 1

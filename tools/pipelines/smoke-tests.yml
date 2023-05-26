@@ -1,0 +1,41 @@
+parameters:
+  packageFeed: ''
+  lokalise: true
+  buildCommand: 'build --mode production'
+  lokaliseCommand: 'lokalise --mode production'
+  workingDir: ''
+  distDir: ''
+  nodeJsVersion: ''
+  appVersion: ''
+  runE2EStage: true
+  parallelJobs: 1
+
+stages:
+  # Build the application and publish the artifact
+  - template: './stages/build-stage.yml'
+    parameters:
+      packageFeed: ${{ parameters.packageFeed }}
+      lokalise: ${{ parameters.lokalise }}
+      lokaliseCommand: ${{ parameters.lokaliseCommand }}
+      buildCommand: ${{ parameters.buildCommand }}
+      workingDir: ${{ parameters.workingDir }}
+      distDir: ${{ parameters.distDir }}
+      nodeJsVersion: ${{ parameters.nodeJsVersion }}
+      appVersion: ${{ parameters.appVersion }}
+
+  # Run E2E Tests
+  - ${{ if eq( variables['build.reason'], 'PullRequest') }}:
+    - stage: 'E2E_Test_Stage'
+      condition: and(succeeded(), eq('${{ parameters.runE2EStage }}', true))
+      displayName: 'E2E Tests'
+      jobs:
+        - template: './jobs/cypress-job.yml'
+          parameters:
+            displayName: 'Smoke Tests'
+            cypressSpec: 'cypress/e2e/smoke-tests/**/*.ts'
+            parallelJobs: ${{ parameters.parallelJobs }}
+            packageFeed: ${{ parameters.packageFeed }}
+            nodeJsVersion: ${{ parameters.nodeJsVersion }}
+            distDir: ${{ parameters.distDir }}
+            workingDir: ${{ parameters.workingDir }}
+
