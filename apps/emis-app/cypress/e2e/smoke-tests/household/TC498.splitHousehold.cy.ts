@@ -56,18 +56,21 @@ describe(`${title}`, () => {
   describe('Can roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
-        beforeEach(async () => {
-          cy.login(roleValue);
-          const result = await prepareStateHousehold(accessTokenL6, event);
-          caseFileCreated = result.registrationResponse.caseFile;
-          household = result.mockCreateHousehold;
-          cy.goTo(`casefile/household/${caseFileCreated.householdId}`);
+        beforeEach(() => {
+          cy.then(async () => {
+            const result = await prepareStateHousehold(accessTokenL6, event);
+            caseFileCreated = result.registrationResponse.caseFile;
+            household = result.mockCreateHousehold;
+            cy.wrap(household).as('household');
+            cy.login(roleValue);
+            cy.goTo(`casefile/household/${caseFileCreated.householdId}`);
+          });
         });
         // eslint-disable-next-line
         it('should successfully split the household', function() {
           const eventName = event.name.translation.en;
-          const firstNamePrimaryMemberAfterSplit = household.additionalMembers[0].identitySet.firstName;
-          const lastNamePrimaryMemberAfterSplit = household.additionalMembers[0].identitySet.lastName;
+          const firstNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.firstName;
+          const lastNamePrimaryMemberAfterSplit = this.household.additionalMembers[0].identitySet.lastName;
           const privacyData = fixturePrivacy();
           const primaryBeneficiaryData = fixturePrimaryBeneficiary();
           const createAddressData = fixtureCreateAddress();
@@ -81,8 +84,8 @@ describe(`${title}`, () => {
           splitHouseholdMemberPage.selectCheckBoxes();
 
           const namePrimaryMemberAfterSplit = `${firstNamePrimaryMemberAfterSplit} ${lastNamePrimaryMemberAfterSplit}`;
-          const nameFirstMember = `${household.additionalMembers[1].identitySet.firstName} ${household.additionalMembers[1].identitySet.lastName}`;
-          const nameSecondMember = `${household.additionalMembers[2].identitySet.firstName} ${household.additionalMembers[2].identitySet.lastName}`;
+          const nameFirstMember = `${this.household.additionalMembers[1].identitySet.firstName} ${this.household.additionalMembers[1].identitySet.lastName}`;
+          const nameSecondMember = `${this.household.additionalMembers[2].identitySet.firstName} ${this.household.additionalMembers[2].identitySet.lastName}`;
 
           const beneficiarySearchPage = splitHouseholdMemberPage.goToBeneficiarySearchPage();
           beneficiarySearchPage.getFirstName().should('string', firstNamePrimaryMemberAfterSplit);
@@ -110,13 +113,11 @@ describe(`${title}`, () => {
           reviewSplitInformationPage.getPrimaryFullNameMember().should('string', firstNamePrimaryMemberAfterSplit);
           reviewSplitInformationPage.getPrimaryFullNameMember().should('string', lastNamePrimaryMemberAfterSplit);
 
-          // eslint-disable-next-line max-nested-callbacks
           cy.get('@dateOfBirthArray').then((birthdateMember) => {
             reviewSplitInformationPage.getBirthDate().should('string', birthdateMember[1]);
             reviewSplitInformationPage.getAdditionalMemberBirthdate(0).should('string', birthdateMember[2]);
             reviewSplitInformationPage.getAdditionalMemberBirthdate(1).should('string', birthdateMember[3]);
           });
-          // eslint-disable-next-line max-nested-callbacks
           cy.get('@genderArray').then((gender) => {
             reviewSplitInformationPage.getGender().should('string', gender[1]);
             reviewSplitInformationPage.getAdditionalMemberGender(0).should('string', gender[2]);
@@ -137,7 +138,6 @@ describe(`${title}`, () => {
           householdProfilePage.getFullNameOfMemberByIndex(2).should('string', nameSecondMember);
 
           const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
-          // eslint-disable-next-line max-nested-callbacks
           cy.get('@registrationNumber').then((registrationNumber) => {
             caseFileDetailsPage.getCaseFileActivityTitles()
               .should('string', `Household member(s) split from Household #${registrationNumber}`)

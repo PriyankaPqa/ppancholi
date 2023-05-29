@@ -1,13 +1,14 @@
 import { IProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
 
 import { mockBaseData } from '@libs/entities-lib/base';
+import { getRandomNumber } from '@libs/cypress-lib/helpers';
 
 export const mockProgram = (force?: Partial<IProgramEntity>): IProgramEntity => ({
   ...mockBaseData(),
   name: {
     translation: {
-      en: 'Program En',
-      fr: 'Program Fr',
+      en: `Program En -s${getRandomNumber()}`,
+      fr: `Program Fr -s${getRandomNumber()}`,
     },
   },
   description: {

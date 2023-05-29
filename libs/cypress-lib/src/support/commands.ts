@@ -40,6 +40,7 @@ declare global {
       ): Chainable<void>
       setDatePicker(dataTest: string, { year, month, day }: { year: number; month: number; day: number }): Chainable<void>
       searchAndSelect(dataTest: string, searchString: string, opts?: { timeout: number; interval: number }): Chainable<void>
+      shouldBeRequired(label:string): Chainable<void>
     }
   }
 }

@@ -23,6 +23,7 @@
       <template v-for="(group, $index) in approval.groups">
         <v-row
           :key="`item__${$index}`"
+          data-test="approvals_groupTable_row"
           :class="{ rcnestedtable__row: true, rcnestedtable__parentRow: true, large: isRowOpened(group) }"
           align="center">
           <v-col :key="`item__${$index}__group`" class="pl-6" :cols="2">
@@ -96,7 +97,7 @@
               </template>
 
               <template v-if="group.addMode">
-                <v-btn color="primary" :disabled="failed" :loading="addGroupLoading" small @click="addGroup(group)">
+                <v-btn color="primary" :disabled="failed" :loading="addGroupLoading" data-test="approvals_groupTable_add" small @click="addGroup(group)">
                   {{ $t('common.add') }}
                 </v-btn>
 
@@ -108,14 +109,18 @@
               </template>
 
               <template v-if="!group.addMode && !group.editMode">
-                <v-btn icon data-test="cancel" :disabled="disableAction($index)" @click="editGroup(group, $index)">
+                <v-btn
+                  icon
+                  :disabled="disableAction($index)"
+                  data-test="approvals_groupTable_edit"
+                  @click="editGroup(group, $index)">
                   <v-icon size="20">
                     mdi-pencil
                   </v-icon>
                 </v-btn>
                 <v-btn
                   icon
-                  data-test="cancel"
+                  data-test="approvals_groupTable_delete"
                   :loading="deleteGroupLoadingIndex === $index"
                   :disabled="disableAction($index) || editMode && hasOnlyOneGroup"
                   @click="deleteGroupWithConfirmation($index)">
@@ -131,7 +136,7 @@
 
       <v-row :class="{ rcnestedtable__row: true, rcnestedtable__parentRow: false }">
         <v-col>
-          <v-btn color="primary" small :disabled="disableAddGroup" @click="addNewGroupRow()">
+          <v-btn color="primary" small :disabled="disableAddGroup" data-test="approvals_groupTable_addGroupRow" @click="addNewGroupRow()">
             <v-icon left>
               mdi-plus
             </v-icon>

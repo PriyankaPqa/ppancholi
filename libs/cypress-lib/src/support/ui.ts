@@ -75,4 +75,12 @@ Cypress.Commands.add('getByDataTest', ({ selector, type = '' }, ...options) => c
     });
   });
 
+  Cypress.Commands.add('shouldBeRequired', { prevSubject: true }, (subject, label) => {
+    cy.wrap(subject)
+      .should('have.attr', 'label', label);
+    cy.wrap(subject)
+      .children()
+      .should('have.attr', 'class')
+      .and('contain', 'required');
+  });
   export {};

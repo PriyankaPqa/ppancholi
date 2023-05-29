@@ -5,16 +5,16 @@
         <v-col xl="10" lg="10" md="11" sm="12" xs="12">
           <v-row no-gutters>
             <v-col cols="8">
-              <div v-if="approvalMetadata" class="rc-body14 mb-2">
+              <div v-if="approvalMetadata" class="rc-body14 mb-2" data-test="approvalDetail_programName">
                 {{ $t('approvalsTable.programName') }}: {{ $m(approvalMetadata.programName) }}
               </div>
-              <div class="rc-heading-5 mb-2">
+              <div class="rc-heading-5 mb-2" data-test="approvalDetail_approval_name">
                 {{ $m(approval.name) }}
               </div>
             </v-col>
             <v-col cols="4" align-self="end">
               <v-row no-gutters align="center" justify="end">
-                <status-chip status-name="Status" data-test="approval_status" :status="approval.approvalBaseStatus" />
+                <status-chip status-name="Status" data-test="approvalDetail_approval_status" :status="approval.approvalBaseStatus" />
                 <v-btn icon class="ml-2" data-test="approval_edit_button" @click="goToEdit()">
                   <v-icon>
                     mdi-pencil
@@ -28,7 +28,7 @@
             <span class="fw-bold mr-4">
               {{ $t('approvals.aggregated_by') }}
             </span>
-            <span>
+            <span data-test="approvalDetail_approval_aggregatedBy">>
               <v-icon color="primary">
                 mdi-check-circle-outline
               </v-icon>
@@ -53,6 +53,7 @@
           </v-row>
           <v-data-table
             class="approval_group_table"
+            data-test="approvalDetail_groupTable"
             :headers="headers"
             :items="filteredGroups"
             hide-default-footer />

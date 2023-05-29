@@ -20,13 +20,23 @@ export const createEventWithTeamWithUsers = async (provider: IProvider, roles = 
 };
 
 /**
+ * Creates a program
+ * @param provider
+ * @param eventId
+ */
+export const createProgram = async (provider: IProvider, eventId: string) => {
+  const mockCreateProgram = mockProgram({ eventId });
+  const program = await provider.programs.createProgram(mockCreateProgram);
+  return { program, mockCreateProgram };
+};
+
+/**
  * Creates a program, adds financial assistance table to it with an Item and Sub-item
  * @param provider
  * @param eventId
  */
 export const createProgramWithTableWithItemAndSubItem = async (provider: IProvider, eventId: string) => {
-  const mockCreateProgram = mockProgram({ eventId });
-  const program = await provider.programs.createProgram(mockCreateProgram);
+  const { program, mockCreateProgram } = await createProgram(provider, eventId);
   const mockCreateFinancialAssistanceTable = mockCreateFinancialAssistanceTableRequest({ eventId, programId: program.id });
   const table = await provider.financialAssistanceTables.createFinancialAssistanceTable(mockCreateFinancialAssistanceTable);
   return { program, mockCreateProgram, table };
@@ -52,8 +62,7 @@ export const prepareStateHousehold = async (accessToken: string, event: IEventEn
 export const prepareStateEventAndProgram = async (accessToken: string, allRolesValues: UserRoles[]) => {
   const provider = useProvider(accessToken);
   const { event, team } = await createEventWithTeamWithUsers(provider, allRolesValues);
-  const mockCreateProgram = mockProgram({ eventId: event.id });
-  const program = await provider.programs.createProgram(mockCreateProgram);
+  const { program, mockCreateProgram } = await createProgram(provider, event.id);
   return { provider, event, team, mockCreateProgram, program };
 };
 

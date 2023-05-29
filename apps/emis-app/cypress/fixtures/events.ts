@@ -7,6 +7,7 @@ import { IAssessmentBaseEntity } from '@libs/entities-lib/assessment-template';
 import { EventStatus, ICreateEventFields } from '../pages/events/createEvent.page';
 import { IAddNewProgramFields } from '../pages/programs/addNewEventProgram.page';
 import { IFinancialAssistanceTableData } from '../pages/financialAssistance/createFinancialAssistanceTable.page';
+import { IApprovalTableData } from '../pages/approvals/createApprovalTable.page';
 
 export const fixtureEvent = (retries: number): ICreateEventFields => ({
   name: {
@@ -69,8 +70,8 @@ export const fixtureLocation = (retries: number): IEventGenericLocation => ({
 export const fixtureProgram = (retries: number): IAddNewProgramFields => ({
   name: {
     translation: {
-      en: `Program En ${faker.datatype.number(1000)} - retry${retries}`,
-      fr: `Program Fr ${faker.datatype.number(1000)} - retry${retries}`,
+      en: `Program En- ${getRandomNumber()} - retry${retries}`,
+      fr: `Program Fr- ${getRandomNumber()} - retry${retries}`,
     },
   },
   description: {
@@ -85,8 +86,8 @@ export const fixtureProgram = (retries: number): IAddNewProgramFields => ({
 export const fixtureFinancialAssistanceTable = (retries: number): IFinancialAssistanceTableData => ({
   name: {
     translation: {
-      en: `table-${faker.datatype.number(1000)} - retry${retries}`,
-      fr: `table-fr-${faker.datatype.number(1000)} - retry${retries}`,
+      en: `table-${getRandomNumber()} - retry${retries}`,
+      fr: `table-fr-${getRandomNumber()} - retry${retries}`,
     },
   },
   itemType: 'Clothing',
@@ -100,8 +101,8 @@ export const fixtureFinancialAssistanceTable = (retries: number): IFinancialAssi
 export const fixtureAssessment = (retries: number): Partial<IAssessmentBaseEntity> => ({
   name: {
     translation: {
-      en: `assessment-${faker.datatype.number(1000)} - retry${retries}`,
-      fr: `assessment-fr-${faker.datatype.number(1000)} - retry${retries}`,
+      en: `assessment-${getRandomNumber()} - retry${retries}`,
+      fr: `assessment-fr-${getRandomNumber()} - retry${retries}`,
     },
   },
   description: {
@@ -110,4 +111,12 @@ export const fixtureAssessment = (retries: number): Partial<IAssessmentBaseEntit
       fr: 'description-fr',
     },
   },
+});
+
+export const fixtureApprovalTable = (retries: number): IApprovalTableData => ({
+  tableName: `table-${getRandomNumber()} - retry${retries}`,
+  statusIndicator: 'Status ACTIVE',
+  userRole: 'Director of Operations',
+  minimumAmount: '10,000.00',
+  maximumAmount: '50,000.00',
 });
