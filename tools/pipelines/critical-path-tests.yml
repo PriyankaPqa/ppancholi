@@ -31,7 +31,7 @@ stages:
       - template: './jobs/cypress-job.yml'
         parameters:
           displayName: 'Critical Path Tests'
-          cypressSpec: 'cypress/e2e/examples/**/*.ts'
+          cypressSpec: 'cypress/e2e/critical-path-tests/**/*.ts'
           parallelJobs: ${{ parameters.parallelJobs }}
           packageFeed: ${{ parameters.packageFeed }}
           nodeJsVersion: ${{ parameters.nodeJsVersion }}

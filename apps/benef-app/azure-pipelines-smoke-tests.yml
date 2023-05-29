@@ -4,7 +4,7 @@ trigger:
       - master
   paths:
     include:
-      - apps/benef-app/cypress/*
+      - apps/benef-app/cypress/e2e/smoke-tests/*
 
 pool:
   vmImage: 'ubuntu-latest'

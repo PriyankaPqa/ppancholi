@@ -4,7 +4,7 @@ trigger:
       - master
   paths:
     include:
-      - apps/emis-app/cypress/*
+      - apps/emis-app/cypress/e2e/smoke-tests/*
 
 pool:
   vmImage: 'ubuntu-latest'

@@ -4,7 +4,7 @@ trigger:
       - master
   paths:
     include:
-      - apps/benef-app/cypress/*
+      - apps/benef-app/cypress/e2e/critical-path-tests/*
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -24,7 +24,7 @@ variables:
   - name: disableCache
     value: 'false' # change this value to force npm package to be installed
 
-name: E2E Benef App - $(Major).$(Minor).$(Patch)
+name: Critical Path Benef App - $(Major).$(Minor).$(Patch)
 
 stages:
   - template: '../../tools/pipelines/critical-path-tests.yml'
