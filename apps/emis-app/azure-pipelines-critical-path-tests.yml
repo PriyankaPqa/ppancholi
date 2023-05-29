@@ -24,7 +24,7 @@ variables:
   - name: disableCache
     value: 'false' # change this value to force npm package to be installed
 
-name: Critical Path EMIS App - $(Major).$(Minor).$(Patch)
+name: Critical Path - EMIS App - $(Major).$(Minor).$(Patch)
 
 stages:
   - template: '../../tools/pipelines/critical-path-tests.yml'

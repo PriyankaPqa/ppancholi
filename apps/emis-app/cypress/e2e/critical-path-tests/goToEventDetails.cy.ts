@@ -15,7 +15,7 @@ before(() => {
   });
 });
 
-describe('Go to event details page', () => {
+describe('Go to event details page.', () => {
   it('should load a random event details page ', () => {
     cy.getByDataTest({ selector: 'page-title', type: 'h1' })
       .invoke('text')

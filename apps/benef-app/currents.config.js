@@ -5,6 +5,6 @@ module.exports = {
   component: {
     batchSize: 5, // how many specs to send in one batch
   },
-  projectId: '7dAbNb',
+  projectId: process.env.CYPRESS_BENEF_PROJECT_ID, // defined in each pipelines variables to have different projects depending on tests type
   cloudServiceUrl: 'https://cy.currents.dev',
 };
