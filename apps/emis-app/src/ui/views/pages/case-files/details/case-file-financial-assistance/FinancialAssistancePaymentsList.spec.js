@@ -8,6 +8,8 @@ import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { DuplicateStatus, mockHouseholdEntity } from '@libs/entities-lib/household';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { UserRoles } from '@libs/entities-lib/user';
 
 import Component from './FinancialAssistancePaymentsList.vue';
@@ -368,6 +370,25 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         }]);
       });
     });
+
+    describe('isDuplicate', () => {
+      it('returns true if household has potential duplicates', async () => {
+        await mountWrapper();
+        await wrapper.setData({ household: mockHouseholdEntity({ potentialDuplicates: [{ duplicateStatus: DuplicateStatus.Potential }] }) });
+        expect(wrapper.vm.isDuplicate).toEqual(true);
+      });
+      it('returns false if household has no potential duplicates', async () => {
+        await mountWrapper();
+        await wrapper.setData({ household: mockHouseholdEntity({ potentialDuplicates: [{ duplicateStatus: DuplicateStatus.Resolved }] }) });
+        expect(wrapper.vm.isDuplicate).toEqual(false);
+      });
+
+      it('returns falsy if household has  potential duplicates null', async () => {
+        await mountWrapper();
+        await wrapper.setData({ household: mockHouseholdEntity({ potentialDuplicates: null }) });
+        expect(wrapper.vm.isDuplicate).toBeFalsy();
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -507,7 +528,8 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await wrapper.vm.routeToCreate();
         expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.caseFile.financialAssistance.create.name });
       });
-      it('not goes to route if no active tables exist', async () => {
+
+      it('does not go to route if no active tables exist', async () => {
         await mountWrapper();
         await wrapper.setData({
           containsActiveTables: false,
@@ -523,6 +545,50 @@ describe('FinancialAssistancePaymentsList.vue', () => {
           containsActiveTables: true,
           hasRestrictFinancialTags: true,
         });
+        await wrapper.vm.routeToCreate();
+        expect(wrapper.vm.$router.push).not.toHaveBeenCalled();
+      });
+
+      it('does not go to route if feature flag for manage duplicates is on and case file is duplicate', async () => {
+        await mountWrapper(false, 6, null, { computed: { isDuplicate() {
+          return true;
+        } } });
+        await wrapper.setData({ household: mockHouseholdEntity() });
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+
+        await wrapper.vm.routeToCreate();
+        expect(wrapper.vm.$router.push).not.toHaveBeenCalled();
+        expect(wrapper.vm.$message).toHaveBeenCalledWith({ title: 'common.error', message: 'caseFile.financialAssistance.error.potentialDuplicate' });
+      });
+
+      it('goes to route if active tables exist, feature flag for manage duplicates is on and the case file is not a duplicate', async () => {
+        jest.clearAllMocks();
+        await mountWrapper(false, 6, 'role', { computed:
+           { isDuplicate() {
+             return false;
+           } },
+        });
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+        await wrapper.setData({ containsActiveTables: true, hasRestrictFinancialTags: false, household: mockHouseholdEntity() });
+
+        await wrapper.vm.routeToCreate();
+        expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.caseFile.financialAssistance.create.name });
+      });
+
+      it('goes to route if active tables exist and feature flag for manage duplicates is off', async () => {
+        await mountWrapper();
+        await wrapper.setData({ containsActiveTables: true, hasRestrictFinancialTags: false });
+        wrapper.vm.$hasFeature = jest.fn((f) => f !== FeatureKeys.ManageDuplicates);
+        await wrapper.vm.routeToCreate();
+        expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.caseFile.financialAssistance.create.name });
+      });
+
+      it('does nothing if feature flag for manage duplicates is on and there is no household data', async () => {
+        await mountWrapper(false, 6, null, { computed: { isDuplicate() {
+          return true;
+        } } });
+        await wrapper.setData({ household: null });
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
         await wrapper.vm.routeToCreate();
         expect(wrapper.vm.$router.push).not.toHaveBeenCalled();
       });

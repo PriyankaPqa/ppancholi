@@ -189,9 +189,11 @@ import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePayme
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, IdParams as FAIdParams } from '@libs/entities-lib/financial-assistance';
 import { useFinancialAssistanceMetadataStore, useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { useHouseholdStore } from '@/pinia/household/household';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IHouseholdEntity, DuplicateStatus } from '@libs/entities-lib/household';
 import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
 import StatisticsDialog from './components/StatisticsDialog.vue';
 import caseFileDetail from '../caseFileDetail';
@@ -236,6 +238,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       showApprovalHistory: false,
       selectedItem: null as IFinancialAssistancePaymentEntity,
       showStats: false,
+      household: null as IHouseholdEntity,
       combinedFinancialAssistancePaymentStore: new CombinedStoreFactory<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, IdParams>(
         useFinancialAssistancePaymentStore(),
         useFinancialAssistancePaymentMetadataStore(),
@@ -365,6 +368,10 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     canDelete(): boolean {
       return this.$hasLevel(UserRoles.level1) && !this.readonly;
     },
+
+    isDuplicate(): boolean {
+      return this.household?.potentialDuplicates?.some((d) => d.duplicateStatus === DuplicateStatus.Potential);
+    },
   },
 
   async created() {
@@ -382,6 +389,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       filter: { 'Entity/CaseFileId': this.caseFileId },
     });
     this.allItemsIds = res.ids;
+    if (this.$hasFeature(FeatureKeys.ManageDuplicates)) {
+      this.household = await useHouseholdStore().fetch(this.caseFile.householdId);
+    }
   },
 
   methods: {
@@ -434,6 +444,16 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     routeToCreate() {
+      if (this.$hasFeature(FeatureKeys.ManageDuplicates)) {
+        if (!this.household) {
+          return;
+        }
+        if (this.isDuplicate) {
+          this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.financialAssistance.error.potentialDuplicate') });
+          return;
+        }
+      }
+
       if (this.containsActiveTables) {
         if (!this.hasRestrictFinancialTags) {
           this.$router.push({
