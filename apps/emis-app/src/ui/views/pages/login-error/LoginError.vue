@@ -2,11 +2,11 @@
   <div id="login-error">
     <div>
       <v-alert type="error" border="left" elevation="1">
-        {{ $t('loginError.title') }}
+        {{ title }}
       </v-alert>
 
       <v-card elevation="1" class="pa-4 rc-body14">
-        {{ $t('loginError.message') }}
+        {{ message }}
       </v-card>
 
       <div class="actions">
@@ -27,6 +27,14 @@ import AuthenticationProvider from '@/auth/AuthenticationProvider';
 
 export default Vue.extend({
   name: 'LoginError',
+
+  data() {
+    return {
+      title: this.$i18n.t(this.$route.params.title) || this.$i18n.t('loginError.title'),
+      message: this.$i18n.t(this.$route.params.message) || this.$i18n.t('loginError.message'),
+      userInactive: false,
+    };
+  },
 
   methods: {
     signIn() {

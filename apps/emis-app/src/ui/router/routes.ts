@@ -154,6 +154,7 @@ export const routes: Array<RouteConfig> = [
         path: Routes.loginError.path,
         name: Routes.loginError.name,
         component: LoginError,
+        props: true,
       },
       {
         path: '*',

@@ -73,6 +73,7 @@ export function getExtensionComponents(
       }
       return result;
     } catch {
+      throw new Error('fetchCurrentTenantSettings');
       return null;
     }
   }

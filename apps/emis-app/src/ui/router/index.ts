@@ -39,6 +39,16 @@ const hasRole = (roleToCheck: string) => {
   return user.hasRole(roleToCheck);
 };
 
+const errorContent = {
+  title: '',
+  message: '',
+};
+
+const setErrorContent = (title: string, message: string) => {
+  errorContent.title = title;
+  errorContent.message = message;
+};
+
 const authenticationGuard = async (to: Route) => {
   if (to.matched.some((record) => record.meta.requiresAuthentication)) {
     // Check if the user is already signed in and redirect to login page if not
@@ -49,7 +59,13 @@ const authenticationGuard = async (to: Route) => {
 
     // Dispatch the action to the store to fetch the user data from the JWT token
     // and store it in module state
-    const loggedIn = await useUserStore().fetchUserData();
+    let loggedIn = false;
+    try {
+      loggedIn = await useUserStore().fetchUserData();
+    } catch (e) {
+      setErrorContent('loginError.fetchingUser.title', 'loginError.fetchingUser.message');
+      return false;
+    }
     // if a currentUser is properly fetched, it means the user is allowed access to the app
     // (in the default tenants, even if the user has no access, his token is valid. Therefore, authentication check
     // based only on token check will pass, even if the user should not be allowed access)
@@ -64,8 +80,13 @@ const featureGuard = async (to: Route) => {
   let featureEnabled = true;
 
   const features = useTenantSettingsStore().currentTenantSettings.features;
+
   if (!features?.length) {
-    await useTenantSettingsStore().fetchCurrentTenantSettings();
+    try {
+      await useTenantSettingsStore().fetchCurrentTenantSettings();
+    } catch (e) {
+      setErrorContent('loginError.tenantSettings.title', 'loginError.tenantSettings.message');
+    }
   }
 
   if (to.meta.feature) {
@@ -177,6 +198,11 @@ router.onError((error: Error) => {
 });
 
 router.beforeEach(async (to, from, next) => {
+  if (to.name === routeConstants.loginError.name) {
+    next();
+    return;
+  }
+
   if (!AuthenticationProvider.msalLibrary) {
     await initializeMSAL();
   }
@@ -186,7 +212,6 @@ router.beforeEach(async (to, from, next) => {
 
   try {
     loginError = !await authenticationGuard(to);
-
     if (!loginError) {
       const authorized = await authorizationGuard(to);
 
@@ -197,7 +222,6 @@ router.beforeEach(async (to, from, next) => {
           return;
         }
         const featureEnabled = await featureGuard(to);
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         featureEnabled ? next() : next(from);
       } else {
         next(from);
@@ -208,13 +232,14 @@ router.beforeEach(async (to, from, next) => {
     applicationInsights.trackException(e, { context: 'route.beforeEach', to, from }, 'router', 'beforeEach');
     loginError = true;
   }
-
   if (loginError) {
     // If there is an error, redirect to the login error page
     next({
       name: routeConstants.loginError.name,
       params: {
         lang: to.params.lang,
+        title: errorContent.title,
+        message: errorContent.message,
       },
     });
   }

@@ -111,6 +111,10 @@ export const useUserStore = defineStore('user', () => {
 
   async function fetchUserData() {
     const currentRoles = await getCurrentRoles();
+
+    if (!currentRoles) {
+      throw new Error('currentRoles are undefined');
+    }
     const roleChanged = isRoleChanged(currentRoles);
 
     // A user's role is only valid if it is the same as their previous stored roles.
