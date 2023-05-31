@@ -21,3 +21,12 @@ export function formatDate(date: string) {
   const day = inputDate.getUTCDate().toString().padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
+
+/**
+ * output format example: May 30, 2023
+ */
+export function formatCurrentDate() {
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  return formattedDate;
+}

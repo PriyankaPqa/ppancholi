@@ -1,4 +1,3 @@
-  /* eslint-disable max-nested-callbacks */
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { IEventEntity } from '@libs/entities-lib/event';

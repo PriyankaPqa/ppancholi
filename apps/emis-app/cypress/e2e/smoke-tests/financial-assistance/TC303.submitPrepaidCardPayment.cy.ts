@@ -1,4 +1,3 @@
-  /* eslint-disable max-nested-callbacks */
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';

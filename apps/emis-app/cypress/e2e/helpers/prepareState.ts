@@ -1,5 +1,6 @@
 import { IProvider } from '@/services/provider';
 import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
+import { mockCreateAssessmentRequest } from '@libs/cypress-lib/mocks/events/assessment';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
 import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistanceTables';
@@ -75,4 +76,16 @@ export const createEventAndTeam = async (accessToken: string, allRolesValues: Us
   const provider = useProvider(accessToken);
   const { event, team } = await createEventWithTeamWithUsers(provider, allRolesValues);
   return { provider, event, team };
+};
+
+/**
+ * Creates an assessment
+ * @param provider
+ * @param eventId
+ * @param programId
+ */
+export const createAssessment = async (provider: IProvider, eventId: string, programId: string) => {
+  const mockCreateAssessment = mockCreateAssessmentRequest({ eventId, programId });
+  const assessment = await provider.assessmentForms.create(mockCreateAssessment);
+  return { assessment };
 };
