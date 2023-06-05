@@ -62,6 +62,9 @@ export class MSAL {
 
   public currentDomainTenant: string;
 
+  // FeatureKeys.UseIdentityServer
+  private defaultTenant: string;
+
   private readonly showConsole: boolean;
 
   private readonly enableAppInsights: boolean;
@@ -168,7 +171,7 @@ export class MSAL {
     this.config = config;
   }
 
-  public init(useIdentityServer?: boolean) {
+  public init(useIdentityServer?: boolean, defaultTenantId?: string) {
     let configWithCurrentTenant = this.config;
     // if in localhost, the currentDomainTenant is null and the default authority is 'https://login.microsoftonline.com/common'
     if(this.currentDomainTenant){
@@ -183,6 +186,7 @@ export class MSAL {
     // modify when FeatureKeys.UseIdentityServer is removed
     if (useIdentityServer) {
       this.identityServerEnabled = true;
+      this.defaultTenant = defaultTenantId ?? "";
       configWithCurrentTenant.auth.authority = this.originalOptions.ids_authority;
       configWithCurrentTenant.auth.clientId = this.originalOptions.ids_clientId;
       configWithCurrentTenant.auth.protocolMode = msal.ProtocolMode.OIDC;
@@ -190,6 +194,9 @@ export class MSAL {
       configWithCurrentTenant.auth.knownAuthorities = [
         this.originalOptions.ids_authority,
       ];
+
+      // scopes for IDS
+      this.loginRedirectRequest.scopes = ['openid', 'profile', 'email', 'emisid', this.originalOptions.ids_apiPermissions]
     }
     
     // bad state if:
@@ -396,6 +403,15 @@ export class MSAL {
     localStorage.removeItem(localStorageKeys.accessTokenClientId.name);
 
     const logOutRequest: EndSessionRequest = {account};
+
+    // FeatureKeys.UseIdentityServer
+    if (this.identityServerEnabled)
+    {
+      account = this.msalLibrary.getAccountByLocalId(account?.localAccountId)
+      logOutRequest.idTokenHint = account?.idToken;
+      logOutRequest.postLogoutRedirectUri = window.location.origin;
+    }
+    
     this.msalLibrary.logoutRedirect(logOutRequest);
   }
 
@@ -427,6 +443,10 @@ export class MSAL {
         // -> Falls back on user's browser language settings
         if (i18n.locale != DEFAULT_LANGUAGE) {
           request.extraQueryParameters = { ui_locales: i18n.locale };
+        }
+        request.extraQueryParameters = { 
+          ...request.extraQueryParameters,
+          acr_values: `tenant:${this.currentDomainTenant ?? this.defaultTenant}`
         }
       }
 
@@ -463,6 +483,7 @@ export class MSAL {
         ? this.originalOptions.ids_authority
         : `https://login.microsoftonline.com/${this.account?.tenantId ?? (this.currentDomainTenant ? this.currentDomainTenant : "common")}`,
       forceRefresh: force,
+      
       redirectUri: `${window.location.origin}/auth.html` // When doing acquireTokenSilent, redirect to blank page to prevent issues
     }
   }

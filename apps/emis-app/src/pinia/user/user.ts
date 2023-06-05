@@ -61,6 +61,11 @@ export const useUserStore = defineStore('user', () => {
   }
 
   function setUser(payload: IMSALUserData) {
+    // roles: single-value attribute is a string from IdentityServer, but is an array from Azure AD
+    if (typeof (payload?.roles) === 'string') {
+      payload.roles = [payload.roles];
+    }
+
     if (oid.value !== payload.oid || (email.value !== (payload.email || payload.preferred_username))) {
       oid.value = payload.oid;
       email.value = payload.email || payload.preferred_username;
@@ -104,7 +109,8 @@ export const useUserStore = defineStore('user', () => {
   async function getCurrentRoles(): Promise<UserRoles[] | null> {
     const currentToken = await AuthenticationProvider.acquireToken('fetchUserData', true);
     if (currentToken) {
-      return helpers.decodeJwt(currentToken).roles;
+      const tokenRoles = helpers.decodeJwt(currentToken).roles;
+      return typeof (tokenRoles) === 'string' ? [tokenRoles] : tokenRoles;
     }
     return null;
   }

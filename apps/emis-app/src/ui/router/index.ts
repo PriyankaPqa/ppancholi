@@ -91,7 +91,7 @@ const featureGuard = async (to: Route) => {
 
   if (to.meta.feature) {
     const features = useTenantSettingsStore().currentTenantSettings.features;
-    const feature = features.find((f: IFeatureEntity) => f.key === to.meta.feature);
+    const feature = features?.find((f: IFeatureEntity) => f.key === to.meta.feature);
     featureEnabled = feature?.enabled;
   }
 
@@ -146,13 +146,14 @@ const initializeMSAL = async () => {
   // FeatureKeys.UseIdentityServer
   // Use default tenant id for the public features lookup if localhost,
   //   or if tenant not resolved (feature branch subdomain)
-  httpClient.setHeadersTenant(currentTenant || process.env.VITE_LOCALHOST_DEFAULT_TENANTID);
+  const tenant = currentTenant || process.env.VITE_LOCALHOST_DEFAULT_TENANTID;
+  httpClient.setHeadersTenant(tenant);
 
   const features = await publicService.getPublicFeatures();
   const feature = features.find((f: IFeatureEntity) => f.key === FeatureKeys.UseIdentityServer);
   const useIdentityServer = !!feature?.enabled;
 
-  AuthenticationProvider.init(useIdentityServer);
+  AuthenticationProvider.init(useIdentityServer, tenant);
   await AuthenticationProvider.loadAuthModule('router');
 };
 
