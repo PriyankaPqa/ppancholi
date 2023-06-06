@@ -22,6 +22,7 @@
       :headers="headers"
       :custom-columns="Object.values(customColumns)"
       :options.sync="options"
+      data-test="massAction_caseFile_table"
       @search="search">
       <template #filter>
         <filter-toolbar

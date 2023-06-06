@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
+import _isEmpty from 'lodash/isEmpty';
 import {
   IMassActionEntity, IMassActionMetadata, IMassActionRun, IMassActionRunMetadataModel, IMassActionRunResultMetadataModel, MassActionRunStatus,
 } from '@libs/entities-lib/mass-action';
@@ -52,7 +53,7 @@ export default Vue.extend({
   },
 
   async created() {
-    if (!this.massAction) {
+    if (_isEmpty(this.massAction)) {
       await useMassActionStore().fetch(this.massActionId);
       await useMassActionMetadataStore().fetch(this.massActionId, false);
     }

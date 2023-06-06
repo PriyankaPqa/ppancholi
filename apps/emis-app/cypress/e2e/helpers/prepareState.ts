@@ -32,6 +32,17 @@ export const createProgram = async (provider: IProvider, eventId: string) => {
 };
 
 /**
+ * Creates a household
+ * @param accessToken
+ * @param event
+ */
+export const createHousehold = async (provider: IProvider, event: IEventEntity) => {
+  const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
+  const registrationResponse = await provider.households.postCrcRegistration(mockCreateHousehold);
+  return { registrationResponse, mockCreateHousehold };
+};
+
+/**
  * Creates a program, adds financial assistance table to it with an Item and Sub-item
  * @param provider
  * @param eventId
@@ -44,15 +55,31 @@ export const createProgramWithTableWithItemAndSubItem = async (provider: IProvid
 };
 
 /**
- * Creates a household
+ * Creates one household
  * @param accessToken
  * @param event
  */
 export const prepareStateHousehold = async (accessToken: string, event: IEventEntity) => {
   const provider = useProvider(accessToken);
-  const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
-  const registrationResponse = await provider.households.postCrcRegistration(mockCreateHousehold);
+  const { registrationResponse, mockCreateHousehold } = await createHousehold(provider, event);
   return { provider, registrationResponse, mockCreateHousehold };
+};
+
+/**
+ * Creates multiple households
+ * @param accessToken
+ * @param event
+ * @param caseFilesNeeded
+ */
+export const prepareStateMultipleHouseholds = async (accessToken: string, event: IEventEntity, householdQuantity: number) => {
+  const provider = useProvider(accessToken);
+  const householdArray = Array.from({ length: householdQuantity }, async () => {
+    const { registrationResponse, mockCreateHousehold } = await createHousehold(provider, event);
+    return { registrationResponse, mockCreateHousehold };
+  });
+  const householdsCreated = await Promise.all(householdArray);
+  const extractedResults = householdsCreated.map(({ registrationResponse, mockCreateHousehold }) => ({ registrationResponse, mockCreateHousehold }));
+  return { provider, householdsCreated: extractedResults, householdQuantity };
 };
 
 /**

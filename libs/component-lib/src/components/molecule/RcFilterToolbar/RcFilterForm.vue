@@ -41,7 +41,7 @@
             <v-text-field
               v-model="filterValues[filter.key].value"
               v-bind="filter.props"
-              :data-test="`filterToolbar__input-${filter.key}-${filter.type}`"
+              :data-test="getDataTest(filter)"
               clearable
               outlined
               :disabled="filter.disabled"
@@ -86,7 +86,7 @@
               v-model="filterValues[filter.key].value"
               v-bind="filter.props"
               :disabled="filter.disabled"
-              :data-test="`filterToolbar__input-${filter.key}-${filter.type}`"
+              :data-test="getDataTest(filter)"
               clearable
               outlined
               :label="filter.label"
@@ -101,7 +101,7 @@
             || filter.type === EFilterType.MultiSelectExclude"
           class="pa-0"
           cols="12">
-          <v-autocomplete
+          <v-autocomplete-with-validation
             :ref="`searchInput_${filter.key}`"
             v-model="filterValues[filter.key].value"
             :menu-props="menuProps"
@@ -111,7 +111,7 @@
             :loading="filter.loading"
             :disabled="filter.disabled"
             v-bind="filter.props"
-            :data-test="`filterToolbar__input-${filter.key}-${filter.type}`"
+            :data-test="getDataTest(filter)"
             :label="filter.label"
             :items="filter.items"
             :multiple="filter.type === EFilterType.MultiSelect || filter.type === EFilterType.MultiSelectExclude"
@@ -169,11 +169,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { VueConstructor } from 'vue';
 import _isArray from 'lodash/isArray';
 import {
   EFilterFormEvents, EFilterOperator, EFilterType, FilterFormData, FilterItems, IFilterSettings, IFilterToolbarLabels, IFilterTypeOperators,
 } from '@libs/component-lib/types';
+import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_MD } from '@libs/component-lib/constants/validations';
 import Number from './inputs/Number.vue';
 import Date from './inputs/Date.vue';
@@ -216,13 +217,14 @@ filterOptions: Array<IFilterSettings>,
  * A filter toolbar which allows the user to build preset filters used for search queries.
  *
  */
-export default Vue.extend({
+const vueComponent: VueConstructor = Vue.extend({
   name: 'RcFilterForm',
 
   components: {
     Number,
     Date,
     DateRange,
+    VAutocompleteWithValidation,
   },
 
   props: {
@@ -381,8 +383,17 @@ export default Vue.extend({
     onAutoCompleteChange(filterKey: string, $event: unknown) {
       this.$emit('change:autocomplete', { filterKey, value: $event });
     },
+
+    getDataTest(filter: IFilterSettings): string {
+      if (!filter) {
+        return '';
+      }
+      return `filterToolbar__input-${filter.key}-${filter.type}`.replace(/[\s,/]/g, '') as string;
+    },
   },
 });
+
+export default vueComponent;
 </script>
 
 <style scoped lang="scss">

@@ -25,7 +25,15 @@ export const mockProgram = (force?: Partial<IProgramEntity>): IProgramEntity => 
     completedAssessmentIds: [],
   },
   eventId: 'd3becde1-6ec7-4b59-85c0-6e7fa3511e2e',
-  paymentModalities: [EPaymentModalities.DirectDeposit, EPaymentModalities.PrepaidCard],
+  paymentModalities: [
+    EPaymentModalities.DirectDeposit,
+    EPaymentModalities.PrepaidCard,
+    EPaymentModalities.Cheque,
+    EPaymentModalities.ETransfer,
+    EPaymentModalities.Voucher,
+    EPaymentModalities.GiftCard,
+    EPaymentModalities.Invoice,
+  ],
   fillEmptyMultilingualAttributes: () => {},
   ...force,
   });

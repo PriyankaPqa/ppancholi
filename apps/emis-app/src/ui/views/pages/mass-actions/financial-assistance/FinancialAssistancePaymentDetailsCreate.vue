@@ -95,7 +95,7 @@
             v-model="formCopy.amount"
             :disabled="currentSubItem && currentSubItem.amountType === EFinancialAmountModes.Fixed"
             :rules="rules.amount"
-            data-test="payment_amount"
+            :data-test="`payment_amount_${formCopy.amount}`"
             show-all-decimal
             type="number"
             prefix="$"
