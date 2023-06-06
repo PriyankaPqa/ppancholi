@@ -297,6 +297,7 @@ export default Vue.extend({
           communicationMethod: this.selectedCommunication,
           duplicateHouseholdId: this.duplicateResults.duplicateHouseholdId,
           code: this.chars.join(''),
+          language: this.$i18n.locale,
         });
       } catch (error) {
         const e = (error as IServerError).response?.data?.errors || error;

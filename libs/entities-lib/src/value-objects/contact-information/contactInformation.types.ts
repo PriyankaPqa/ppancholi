@@ -91,4 +91,5 @@ export interface IVerifyOneTimeCodeRegistrationPublicPayload {
   communicationMethod: CommunicationMethod,
   duplicateHouseholdId: uuid;
   code: string;
+  language: string;
 }

@@ -127,6 +127,7 @@ describe('DuplicateDialog.vue', () => {
             communicationMethod: 1,
             duplicateHouseholdId: 'duplicateHouseholdId',
             code: '123456',
+            language: wrapper.vm.$i18n.locale,
           },
         );
         expect(wrapper.vm.codeIsValid).toBe(await wrapper.vm.$services.households.verifyOneTimeCodeRegistrationPublic());
