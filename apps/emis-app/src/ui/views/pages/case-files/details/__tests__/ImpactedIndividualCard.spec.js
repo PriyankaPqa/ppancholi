@@ -10,7 +10,7 @@ const mockImpactedIndividuals = [{ personId: 'mock-member-id', receivingAssistan
 
 describe('ImpactedIndividualCard.vue', () => {
   let wrapper;
-  const doMount = async (otherComputed = {}) => {
+  const doMount = async (otherComputed = {}, level = 5) => {
     const options = {
       localVue,
       propsData: {
@@ -30,6 +30,7 @@ describe('ImpactedIndividualCard.vue', () => {
         ...otherComputed,
       },
       mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}`,
       },
     };
     wrapper = shallowMount(Component, options);
@@ -101,6 +102,18 @@ describe('ImpactedIndividualCard.vue', () => {
         const toggle = wrapper.findDataTest('receiving_assistance_toggle');
         await toggle.vm.$emit('change');
         expect(wrapper.vm.onToggleChange).toHaveBeenCalled();
+      });
+
+      it('should be enabled when user has level 1', async () => {
+        await doMount(null, 1);
+        const toggle = wrapper.findDataTest('receiving_assistance_toggle');
+        expect(toggle.attributes('disabled')).toBeFalsy();
+      });
+
+      it('should be enabled when user doesnt has level 1', async () => {
+        await doMount(null, 0);
+        const toggle = wrapper.findDataTest('receiving_assistance_toggle');
+        expect(toggle.attributes('disabled')).toBeTruthy();
       });
     });
   });

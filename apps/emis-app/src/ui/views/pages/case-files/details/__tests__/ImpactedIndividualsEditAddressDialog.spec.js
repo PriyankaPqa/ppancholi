@@ -4,9 +4,10 @@ import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import helpers from '@libs/entities-lib/helpers';
 import { EEventLocationStatus } from '@libs/entities-lib/event';
-import { ECurrentAddressTypes } from '@libs/entities-lib/value-objects/current-address';
+import { ECurrentAddressTypes, mockCampGround } from '@libs/entities-lib/value-objects/current-address';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { mockHouseholdCreate } from '@libs/entities-lib/household-create';
+import { i18n } from '@/ui/plugins';
 import Component from '../case-file-impacted-individuals/components/ImpactedIndividualsEditAddressDialog.vue';
 
 const localVue = createLocalVue();
@@ -129,7 +130,7 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther());
+        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(i18n));
       });
     });
 
@@ -179,6 +180,31 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
     describe('shelterLocations', () => {
       it('should return proper data', () => {
         expect(wrapper.vm.shelterLocations).toEqual([mockShelters[0]]);
+      });
+    });
+
+    describe('currentAddressWithFormattedDate', () => {
+      it('should return proper data', () => {
+        const expectResult = {
+          address: {
+            city: 'Ottawa',
+            country: 'CA',
+            latitude: 0,
+            longitude: 0,
+            postalCode: 'K1W 1G7',
+            province: 9,
+            streetAddress: '247 Some Street',
+            unitSuite: '123',
+          },
+          addressType: 2,
+          checkIn: '2023-05-01',
+          checkOut: '2023-05-31',
+          crcProvided: false,
+          placeName: 'test',
+          placeNumber: '',
+        };
+        wrapper.vm.memberClone.currentAddress = mockCampGround();
+        expect(wrapper.vm.currentAddressWithFormattedDate).toEqual(expectResult);
       });
     });
   });

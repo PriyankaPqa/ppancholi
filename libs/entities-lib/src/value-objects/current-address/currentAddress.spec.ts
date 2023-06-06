@@ -1,5 +1,6 @@
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 
+import { mockAddress } from '@/value-objects/address';
 import { ECurrentAddressTypes } from './currentAddress.types';
 import {
   mockCampGround,
@@ -7,8 +8,8 @@ import {
   mockFriendsFamily,
   mockHotelMotel,
   mockMedicalFacility,
-  mockOther,
-  mockShelter,
+  mockOther, mockRemainingHome,
+  mockShelter, mockUnknown, mockUnknownData,
 } from './currentAddress.mock';
 import { CurrentAddress } from './currentAddress';
 
@@ -38,6 +39,43 @@ describe('>>> CurrentAddress', () => {
       expect(t.placeName).toEqual('');
       expect(t.placeNumber).toEqual('');
       expect(t.shelterLocation).toEqual(null);
+      expect(t.checkIn).toEqual(null);
+      expect(t.checkOut).toEqual(null);
+      expect(t.crcProvided).toEqual(null);
+    });
+
+    it('should set crcProvided to false when address type has crcProvided', () => {
+      const t = new CurrentAddress(mockCampgroundData());
+      expect(t.crcProvided).toEqual(false);
+    });
+
+    it('should set crcProvided to null when address type has no crcProvided', () => {
+      const t = new CurrentAddress(mockUnknownData());
+      expect(t.crcProvided).toEqual(null);
+    });
+
+    it('should set crcProvided properly when address type has crcProvided', () => {
+      const t = new CurrentAddress({
+        addressType: ECurrentAddressTypes.Campground,
+        address: mockAddress(),
+        placeName: 'test',
+        placeNumber: '',
+        checkIn: '2023-05-01T00:00:00.000Z',
+        checkOut: '2023-05-31T00:00:00.000Z',
+        crcProvided: true,
+      });
+      expect(t.crcProvided).toEqual(true);
+
+      const a = new CurrentAddress({
+        addressType: ECurrentAddressTypes.Campground,
+        address: mockAddress(),
+        placeName: 'test',
+        placeNumber: '',
+        checkIn: '2023-05-01T00:00:00.000Z',
+        checkOut: '2023-05-31T00:00:00.000Z',
+        crcProvided: false,
+      });
+      expect(a.crcProvided).toEqual(false);
     });
   });
 
@@ -370,6 +408,40 @@ describe('>>> CurrentAddress', () => {
       });
     });
 
+    describe('hasCrcProvided', () => {
+      it('should return false when address type is RamainingInHome/Family/Unknown', async () => {
+          let p = mockRemainingHome();
+          expect(p.hasCrcProvided()).toEqual(false);
+
+          p = mockFriendsFamily();
+          expect(p.hasCrcProvided()).toEqual(false);
+
+          p = mockUnknown();
+          expect(p.hasCrcProvided()).toEqual(false);
+      });
+
+      it('should return true when address type is not RamainingInHome/Family/Unknown', async () => {
+          const p = mockCampGround();
+          expect(p.hasCrcProvided()).toEqual(true);
+      });
+    });
+
+    describe('hasCheckInCheckOut', () => {
+      it('should return false when address type is RamainingInHome/Unknown', async () => {
+        let p = mockRemainingHome();
+        expect(p.hasCheckInCheckOut()).toEqual(false);
+
+        p = mockUnknown();
+        expect(p.hasCheckInCheckOut()).toEqual(false);
+      });
+
+      it('should return true when address type is not RamainingInHome/Unknown', async () => {
+          const p = mockCampGround();
+        expect(p.hasCheckInCheckOut()).toEqual(true);
+      });
+    });
+  });
+
     describe('>> validation', () => {
       describe('placeName', () => {
         test('when it is required', () => {
@@ -451,4 +523,3 @@ describe('>>> CurrentAddress', () => {
       });
     });
   });
-});

@@ -11,6 +11,7 @@ import { useMockRegistrationStore } from '@libs/stores-lib/registration/registra
 
 import { HouseholdActivityType } from '@libs/entities-lib/value-objects/household-activity';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import Component from '../HouseholdMemberCard.vue';
 
 const localVue = createLocalVue();
@@ -304,6 +305,22 @@ describe('HouseholdMemberCard.vue', () => {
         expect(element.text()).toContain('mock-mobilePhoneNumber');
         expect(element.text()).toContain('mock-alternatePhoneNumber');
         expect(element.text()).toContain('mock-alternatePhoneExtension');
+      });
+    });
+
+    describe('add-edit-additional-members-lib', () => {
+      it('should pass props disable-edit-temporary-address true when feature flag ImpactedIndividuals is on, and pass false when feature flag is off', async () => {
+        doMount();
+        await wrapper.setData({
+          showAdditionalMemberDialog: true,
+        });
+        await wrapper.setFeature(FeatureKeys.ImpactedIndividuals, true);
+        const component = wrapper.findComponent(AddEditAdditionalMembersLib);
+        const props = 'hideEditTemporaryAddress';
+        expect(component.props(props)).toBe(true);
+
+        await wrapper.setFeature(FeatureKeys.ImpactedIndividuals, false);
+        expect(component.props(props)).toBe(false);
       });
     });
   });

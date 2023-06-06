@@ -27,6 +27,7 @@
             :loading="loadingIndigenousCommunities"
             :member="member"
             :disable-autocomplete="disableAutocomplete"
+            :hide-edit-temporary-address="hideEditTemporaryAddress"
             @identity-change="setIdentity($event)"
             @indigenous-identity-change="setIndigenousIdentity($event)"
             @temporary-address-change="setCurrentAddress($event)" />
@@ -105,6 +106,11 @@ export default Vue.extend({
     disableAutocomplete: {
       type: Boolean,
       required: true,
+    },
+
+    hideEditTemporaryAddress: {
+      type: Boolean,
+      default: false,
     },
   },
 

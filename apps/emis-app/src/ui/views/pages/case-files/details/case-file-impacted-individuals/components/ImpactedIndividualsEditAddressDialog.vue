@@ -54,7 +54,7 @@
             :api-key="apiKey"
             :disable-autocomplete="false"
             show-crc-provided-and-check-in-check-out
-            :current-address="memberClone.currentAddress"
+            :current-address="currentAddressWithFormattedDate"
             @change="setCurrentAddress($event)" />
         </v-col>
       </v-row>
@@ -67,19 +67,23 @@ import Vue from 'vue';
 import { CurrentAddress, ECurrentAddressTypes, ICurrentAddress, IShelterLocationData } from '@libs/entities-lib/value-objects/current-address';
 import { EOptionItemStatus, VForm } from '@libs/shared-lib/types';
 import helpers from '@libs/entities-lib/helpers';
+import uiHelpers from '@/ui/helpers/helpers';
 import { IMember } from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
+import { i18n } from '@/ui/plugins';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import { localStorageKeys } from '@/constants/localStorage';
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { RcDialog } from '@libs/component-lib/components';
 
 export default Vue.extend({
   name: 'ImpactedIndividualsEditAddressDialog',
 
   components: {
     CurrentAddressForm,
+    RcDialog,
   },
 
   props: {
@@ -111,7 +115,6 @@ export default Vue.extend({
 
   data() {
     return {
-      i18n: this.$i18n,
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VITE_GOOGLE_API_KEY,
@@ -138,11 +141,11 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.getCanadianProvincesWithoutOther(this.i18n);
+      return helpers.getCanadianProvincesWithoutOther(i18n);
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      let list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', this.i18n);
+      let list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
 
       if (this.shelterLocations.length === 0) {
         list = list.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
@@ -161,6 +164,12 @@ export default Vue.extend({
       return (failed) => failed || !this.changedAddress || this.submitLoading;
     },
 
+    currentAddressWithFormattedDate(): ICurrentAddress {
+      const currentAddress = _cloneDeep(this.memberClone.currentAddress);
+      currentAddress.checkIn = uiHelpers.getLocalStringDate(currentAddress.checkIn, 'ImpactedIndividuals.checkIn');
+      currentAddress.checkOut = uiHelpers.getLocalStringDate(currentAddress.checkOut, 'ImpactedIndividuals.checkOut');
+      return currentAddress;
+    },
   },
 
   created() {

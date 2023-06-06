@@ -80,7 +80,7 @@
         :country="$hasFeature(FeatureKeys.ManageDuplicates) ? country : ''" />
 
       <div
-        class="d-flex flex-row rc-body14 mb-4">
+        class="d-flex flex-row rc-body14">
         <v-icon small class="mr-2">
           mdi-account-multiple
         </v-icon>
@@ -91,11 +91,25 @@
         </span>
       </div>
 
+      <div
+        v-if="$hasFeature(FeatureKeys.ImpactedIndividuals)"
+        class="d-flex flex-row rc-body14 mt-2"
+        data-test="caseFileDetails-receiving-assistance-member-count">
+        <v-icon small class="mr-2">
+          mdi-account-multiple
+        </v-icon>
+        <span>
+          {{
+            `${$t('caseFileDetail.totalImpacted')}  ${receivingAssistanceMembersCount}`
+          }}
+        </span>
+      </div>
+
       <v-btn
         v-if="household"
         small
         color="primary"
-        class="mb-4"
+        class="my-4"
         data-test="household-profile-btn"
         @click="goToHouseholdProfile()">
         {{ $t('caseFileDetail.household_profile.button') }}
@@ -243,13 +257,18 @@ export default mixins(caseFileDetail, householdDetails).extend({
 
     canL0AccessAssessment(): boolean {
       if (useUserStore().getUser().currentRole() === 'level0') {
-        return this.event.assessmentsForL0usersEnabled;
+        return this.event?.assessmentsForL0usersEnabled;
       }
       return true;
     },
 
     isDuplicate(): boolean {
       return this.$hasFeature(FeatureKeys.ManageDuplicates) && this.household?.potentialDuplicates?.some((d) => d.duplicateStatus === DuplicateStatus.Potential);
+    },
+
+    receivingAssistanceMembersCount(): number {
+        const receivingAssistanceMembers = this.caseFile.impactedIndividuals?.filter((m) => m.receivingAssistance);
+        return receivingAssistanceMembers?.length || 0;
     },
   },
 

@@ -134,7 +134,7 @@ export default Vue.extend({
     rules() {
       return {
         startRequired: (value: string) => {
-          if (this.pickerEnd && !value) {
+          if (this.pickerEnd && !value && this.labels) {
             return this.labels.formRequiredField;
           }
 
@@ -142,7 +142,7 @@ export default Vue.extend({
         },
 
         endRequired: (value: string) => {
-          if (this.pickerStart && !value) {
+          if (this.pickerStart && !value && this.labels) {
             return this.labels.formRequiredField;
           }
 
@@ -186,6 +186,10 @@ export default Vue.extend({
       if (!isOpen) {
         this.closeMenu();
       }
+    },
+    value(newValue) {
+      this.pickerStart = newValue[0];
+      this.pickerEnd = newValue[1];
     },
   },
   methods: {

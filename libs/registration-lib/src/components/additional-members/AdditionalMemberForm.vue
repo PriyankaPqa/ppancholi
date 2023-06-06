@@ -13,7 +13,7 @@
       :form="member.identitySet"
       prefix-data-test="additionalMember"
       @change="$emit('indigenous-identity-change', $event)" />
-    <v-row class="grey-container pa-2 pb-0">
+    <v-row v-if="!hideEditTemporaryAddress" class="grey-container pa-2 pb-0">
       <v-col class="pt-4 px-4">
         <div class="rc-body16 fw-bold">
           {{ $t('registration.household_member.sameAddress') }} *
@@ -136,6 +136,11 @@ export default Vue.extend({
     i18n: {
       type: Object as () => VueI18n,
       required: true,
+    },
+
+    hideEditTemporaryAddress: {
+      type: Boolean,
+      default: false,
     },
   },
 

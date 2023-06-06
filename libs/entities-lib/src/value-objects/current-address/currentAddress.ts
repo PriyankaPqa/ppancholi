@@ -2,9 +2,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { isValidCanadianPostalCode, maxLengthCheck, required } from '../../classValidation';
 import { Address, IAddress } from '../address';
-import {
-  ECurrentAddressTypes, IShelterLocationData, ICurrentAddress, ICurrentAddressData,
-} from './currentAddress.types';
+import { ECurrentAddressTypes, ICurrentAddress, ICurrentAddressData, IShelterLocationData } from './currentAddress.types';
 
 export class CurrentAddress implements ICurrentAddress {
   addressType: ECurrentAddressTypes;
@@ -19,9 +17,9 @@ export class CurrentAddress implements ICurrentAddress {
 
   crcProvided: boolean;
 
-  checkInDate: Date;
+  checkIn: Date | string;
 
-  checkOutDate: Date;
+  checkOut: Date | string;
 
   constructor(data?: ICurrentAddressData) {
     if (!data) {
@@ -32,9 +30,9 @@ export class CurrentAddress implements ICurrentAddress {
       this.placeNumber = data.placeNumber;
       this.address = _cloneDeep(data.address);
       this.shelterLocation = _cloneDeep(data.shelterLocation);
-      this.crcProvided = data.cRcProvided;
-      this.checkInDate = data.checkIn;
-      this.checkOutDate = data.checkOut;
+      this.crcProvided = this.hasCrcProvided() ? data.crcProvided === true : null;
+      this.checkIn = data.checkIn ? new Date(data.checkIn) : null;
+      this.checkOut = data.checkOut ? new Date(data.checkOut) : null;
     }
   }
 
@@ -97,6 +95,9 @@ export class CurrentAddress implements ICurrentAddress {
       this.address.reset(country);
     }
     this.shelterLocation = null;
+    this.checkIn = null;
+    this.checkOut = null;
+    this.crcProvided = this.hasCrcProvided() ? false : null;
   }
 
   hasPlaceNumber(): boolean {
@@ -142,4 +143,27 @@ export class CurrentAddress implements ICurrentAddress {
   requiresShelterLocation(): boolean {
     return this.addressType === ECurrentAddressTypes.Shelter;
   }
-}
+
+  hasCrcProvided() {
+    const addressTypeHasCrcProvided = [
+      ECurrentAddressTypes.Campground,
+      ECurrentAddressTypes.HotelMotel,
+      ECurrentAddressTypes.MedicalFacility,
+      ECurrentAddressTypes.Other,
+      ECurrentAddressTypes.Shelter,
+    ];
+    return addressTypeHasCrcProvided.indexOf(this.addressType) >= 0;
+  }
+
+  hasCheckInCheckOut(): boolean {
+    const addressTypeHasCheckInCheckOut = [
+      ECurrentAddressTypes.Campground,
+      ECurrentAddressTypes.FriendsFamily,
+      ECurrentAddressTypes.HotelMotel,
+      ECurrentAddressTypes.MedicalFacility,
+      ECurrentAddressTypes.Other,
+      ECurrentAddressTypes.Shelter,
+    ];
+    return addressTypeHasCheckInCheckOut.indexOf(this.addressType) >= 0;
+  }
+  }

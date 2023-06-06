@@ -456,6 +456,7 @@
     "caseFileDetail.caseFileNumber": "Numéro de dossier",
     "caseFileDetail.eventLabel": "Événement",
     "caseFileDetail.fullHouseHold": "Membres du ménage :",
+    "caseFileDetail.totalImpacted": "Membre impacté:",
     "caseFileDetail.household_profile.button": "Profil du ménage",
     "caseFileDetail.impactValidationDialog.method": "Méthode de vérification de l'impact",
     "caseFileDetail.impactValidationDialog.save.success": "L'information relative à la vérification de l'impact a été modifiée.",

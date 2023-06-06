@@ -37,22 +37,29 @@
         cols="12"
         sm="6"
         md="8">
-        <div class="font-weight-bold ">
-          {{ $t('impactedIndividuals.temporary_address.edit.crc_provided_title') }}
-        </div>
-        <div class="pb-8">
-          <v-radio-group row hide-details>
-            <v-radio :label="$t('common.yes')" :value="true" data-test="CRC_provided_yes" />
-            <v-radio :label="$t('common.no')" :value="false" data-test="CRC_provided_no" />
-          </v-radio-group>
-        </div>
-        <div class="py-4">
+        <template v-if="form.hasCrcProvided()">
+          <div class="font-weight-bold ">
+            {{ $t('impactedIndividuals.temporary_address.edit.crc_provided_title') }}
+          </div>
+          <div class="pb-8">
+            <v-radio-group
+              v-model="form.crcProvided"
+              row
+              hide-details>
+              <v-radio :label="$t('common.yes')" :value="true" data-test="CRC_provided_yes" />
+              <v-radio :label="$t('common.no')" :value="false" data-test="CRC_provided_no" />
+            </v-radio-group>
+          </div>
+        </template>
+        <div v-if="form.hasCheckInCheckOut()" class="py-4">
           <date-range
             id="currentAddressForm"
             :attach="true"
-            :value="['2023-04-18', '2023-05-01']"
+            :value="checkInCheckOutDate"
+            display-format="MMM d, yyyy"
             :start-label="$t('impactedIndividuals.temporary_address.check_in')"
-            :end-label="$t('impactedIndividuals.temporary_address.check_out')" />
+            :end-label="$t('impactedIndividuals.temporary_address.check_out')"
+            @input="setCheckInCheckOut($event)" />
         </div>
       </v-col>
 
@@ -266,6 +273,7 @@ export default mixins(googleAutoCompleteMixin).extend({
     return {
       form: null as ICurrentAddress,
       previousType: null,
+      checkInCheckOutDate: [] as string[],
     };
   },
 
@@ -385,17 +393,25 @@ export default mixins(googleAutoCompleteMixin).extend({
 
   created() {
     this.form = this.currentAddress;
+    this.checkInCheckOutDate = [this.form.checkIn, this.form.checkOut];
   },
 
   methods: {
     changeType(type: ECurrentAddressTypes) {
       this.form.reset(type);
       (this.$refs.form as VForm).reset();
+      this.checkInCheckOutDate = [null, null];
     },
 
     onCountryChange() {
       this.form.reset(this.form.addressType, true, this.form.address.country);
       (this.$refs.form as VForm).reset();
+    },
+
+    setCheckInCheckOut(newCheckInCheckOut: string[]) {
+      this.form.checkIn = newCheckInCheckOut[0];
+      this.form.checkOut = newCheckInCheckOut[1];
+      this.checkInCheckOutDate = [newCheckInCheckOut[0], newCheckInCheckOut[1]];
     },
   },
 

@@ -29,14 +29,19 @@
           </v-chip>
           <v-divider vertical />
         </template>
-        <v-switch v-model="isReceivingAssistance" class="mt-1 ml-3" data-test="receiving_assistance_toggle" @change="onToggleChange($event)" />
+        <v-switch
+          v-model="isReceivingAssistance"
+          :disabled="!$hasLevel(UserRoles.level1)"
+          class="mt-1 ml-3"
+          data-test="receiving_assistance_toggle"
+          @change="onToggleChange($event)" />
         <span class="rc-body12">
           {{ $t('impactedIndividuals.receiving_assistance') }}
         </span>
       </div>
     </div>
 
-    <impacted-individual-address-template :address="member.currentAddress" can-edit @open-edit-temporary-address-dialog="showEditMemberDialog = true" />
+    <impacted-individual-address-template :address="member.currentAddress" show-edit-button @open-edit-temporary-address-dialog="showEditMemberDialog = true" />
 
     <div v-if="reorderedAddressHistory.length > 0" data-test="previous-address-row">
       <div class="px-4 py-0 rc-body14 fw-bold background">
@@ -68,6 +73,7 @@ import { ICurrentAddress, IMember, IShelterLocationData } from '@libs/entities-l
 import ImpactedIndividualAddressTemplate from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualAddressTemplate.vue';
 import ImpactedIndividualsEditAddressDialog from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualsEditAddressDialog.vue';
 import { IImpactedIndividual } from '@libs/entities-lib/case-file';
+import { UserRoles } from '@libs/entities-lib/user';
 
 export default Vue.extend({
   name: 'ImpactedIndividualCard',
@@ -114,6 +120,7 @@ export default Vue.extend({
       showPreviousTemporaryAddress: false,
       showEditMemberDialog: false,
       isReceivingAssistance: true,
+      UserRoles,
     };
   },
 
@@ -135,7 +142,7 @@ export default Vue.extend({
 
   methods: {
      onToggleChange(receiveAssistance: boolean) {
-      // TODO will be done in 5453
+      // TODO will be done in 6822
       const params = {
         receiveAssistance,
         personId: this.member.id,

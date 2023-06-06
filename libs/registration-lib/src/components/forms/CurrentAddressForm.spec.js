@@ -1,7 +1,15 @@
 import { i18n } from '@/ui/plugins/i18n';
 import helpers from '@libs/entities-lib/src/helpers';
 import {
-  ECurrentAddressTypes, mockHouseholdCreate, mockCampGround, mockShelter, mockUnknown, mockRemainingHome, mockFriendsFamily, mockMedicalFacility, mockOther,
+  ECurrentAddressTypes,
+  mockHouseholdCreate,
+  mockCampGround,
+  mockShelter,
+  mockUnknown,
+  mockRemainingHome,
+  mockFriendsFamily,
+  mockMedicalFacility,
+  mockOther,
 } from '@libs/entities-lib/src/household-create';
 
 import { mockShelterLocations } from '@libs/entities-lib/src/registration-event';
@@ -282,6 +290,25 @@ describe('CurrentAddressForm.vue', () => {
     });
   });
 
+  describe('lifecycle', () => {
+    describe('created', () => {
+      it('should set value properly when component created', async () => {
+        const mockCurrentAddress = mockCampGround({
+          checkIn: '2023-05-01T00:00:00.000Z',
+          checkOut: '2023-05-20T00:00:00.000Z',
+        });
+        await wrapper.setProps({
+          currentAddress: mockCurrentAddress,
+        });
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.form).toEqual(mockCurrentAddress);
+        expect(wrapper.vm.checkInCheckOutDate).toEqual([new Date('2023-05-01T00:00:00.000Z'), new Date('2023-05-20T00:00:00.000Z')]);
+      });
+    });
+  });
+
   describe('Methods', () => {
     describe('changeType', () => {
       const type = ECurrentAddressTypes.MedicalFacility;
@@ -299,6 +326,11 @@ describe('CurrentAddressForm.vue', () => {
       it('resets the form', () => {
         expect(wrapper.vm.$refs.form.reset).toHaveBeenCalledTimes(1);
       });
+
+      it('should reset checkInCheckOutDate', () => {
+        wrapper.vm.changeType(type);
+        expect(wrapper.vm.checkInCheckOutDate).toEqual([null, null]);
+      });
     });
 
     describe('onCountryChange', () => {
@@ -314,6 +346,15 @@ describe('CurrentAddressForm.vue', () => {
 
       it('resets the form', () => {
         expect(wrapper.vm.$refs.form.reset).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('setCheckInCheckOut', () => {
+      it('should set value properly', () => {
+        wrapper.vm.setCheckInCheckOut(['2023-05-01', '2023-05-20']);
+        expect(wrapper.vm.form.checkIn).toEqual('2023-05-01');
+        expect(wrapper.vm.form.checkOut).toEqual('2023-05-20');
+        expect(wrapper.vm.checkInCheckOutDate).toEqual(['2023-05-01', '2023-05-20']);
       });
     });
   });

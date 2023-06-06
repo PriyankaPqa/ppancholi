@@ -11,6 +11,9 @@ export const mockCampgroundData = (): ICurrentAddressData => ({
   address: mockAddress(),
   placeName: 'test',
   placeNumber: '',
+  checkIn: '2023-05-01T00:00:00.000Z',
+  checkOut: '2023-05-31T00:00:00.000Z',
+  crcProvided: null,
 });
 
 export const mockHotelMotelData = (): ICurrentAddressData => ({
@@ -96,4 +99,8 @@ export const mockCurrentAddressCreateRequest = (): ICurrentAddressCreateRequest 
   address: mockAddressData(),
   shelterLocationId: null,
   from: '2021-05-27T16:47:32Z',
+  checkIn: '2021-05-27T00:00:00.000Z',
+  checkOut: '2021-05-27T00:00:00.000Z',
+  crcProvided: true,
+
 });

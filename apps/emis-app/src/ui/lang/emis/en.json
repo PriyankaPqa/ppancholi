@@ -456,6 +456,7 @@
     "caseFileDetail.caseFileNumber": "Case file number",
     "caseFileDetail.eventLabel": "Event",
     "caseFileDetail.fullHouseHold": "Total household:",
+    "caseFileDetail.totalImpacted": "Total impacted:",
     "caseFileDetail.household_profile.button": "Household profile",
     "caseFileDetail.impactValidationDialog.method": "Validation method",
     "caseFileDetail.impactValidationDialog.save.success": "The validation of impact has been successfully edited.",

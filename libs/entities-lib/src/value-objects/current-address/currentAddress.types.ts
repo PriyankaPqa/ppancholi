@@ -33,11 +33,11 @@ export interface ICurrentAddressData {
 
     shelterLocationId?: string;
 
-    cRcProvided?: boolean;
+    crcProvided?: boolean;
 
-    checkIn?: Date;
+    checkIn?: Date | string;
 
-    checkOut?: Date;
+    checkOut?: Date | string;
 }
 
 export interface ICurrentAddressCreateRequest {
@@ -52,6 +52,12 @@ export interface ICurrentAddressCreateRequest {
     address?: IAddressData;
 
     from: string;
+
+    crcProvided: boolean;
+
+    checkIn: Date | string;
+
+    checkOut: Date | string;
 }
 
 export interface ICurrentAddress extends ICurrentAddressData {
@@ -66,4 +72,6 @@ export interface ICurrentAddress extends ICurrentAddressData {
     requiresCity(): boolean;
     requiresShelterLocation(): boolean;
     reset(type?: ECurrentAddressTypes, preservePlace?: boolean, country?: string,): void;
+    hasCrcProvided(): boolean;
+    hasCheckInCheckOut(): boolean;
 }

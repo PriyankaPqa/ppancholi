@@ -140,6 +140,7 @@
       :member="member"
       :shelter-locations-list="shelterLocations"
       :disable-autocomplete="!enableAutocomplete"
+      :hide-edit-temporary-address="$hasFeature(FeatureKeys.ImpactedIndividuals)"
       submit-changes-to-service
       @close="closeAndReload" />
 
@@ -234,6 +235,7 @@ export default Vue.extend({
       i18n: this.$i18n,
       householdHelpers,
       HouseholdActivityType,
+      FeatureKeys,
     };
   },
 

@@ -10,6 +10,7 @@ import { useMockRegistrationStore } from '@libs/stores-lib/registration/registra
 
 import { mockProvider } from '@/services/provider';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import Component from '../PrimaryMemberDialog.vue';
 
 const localVue = createLocalVue();
@@ -549,6 +550,46 @@ describe('PrimaryMemberDialog', () => {
           });
         },
       );
+    });
+  });
+
+  describe('Template', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        pinia,
+        propsData: {
+          show: true,
+          shelterLocations: [],
+        },
+        data() {
+          return { apiKey: '123' };
+        },
+
+      });
+    });
+    describe('current-address-form', () => {
+      it('should exist when feature flag ImpactedIndividuals is off', () => {
+        const component = wrapper.findComponent(CurrentAddressForm);
+        expect(component.exists()).toBeTruthy();
+      });
+
+      it('should not exist when feature flag ImpactedIndividuals is on', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          featureList: [FeatureKeys.ImpactedIndividuals],
+          propsData: {
+            show: true,
+            shelterLocations: [],
+          },
+          data() {
+            return { apiKey: '123' };
+          },
+        });
+        const component = wrapper.findComponent(CurrentAddressForm);
+        expect(component.exists()).toBeFalsy();
+      });
     });
   });
 });

@@ -36,6 +36,7 @@
             @setIndigenousIdentity="setIndigenousIdentity"
             @setContactInformation="setContactInformation" />
           <current-address-form
+            v-if="!$hasFeature(FeatureKeys.ImpactedIndividuals)"
             :shelter-locations="shelterLocations"
             :canadian-provinces-items="canadianProvincesItems"
             :current-address-type-items="currentAddressTypeItems"
@@ -129,6 +130,7 @@ export default Vue.extend({
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VITE_GOOGLE_API_KEY,
+      FeatureKeys,
     };
   },
 

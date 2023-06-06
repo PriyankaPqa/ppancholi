@@ -10,6 +10,7 @@ import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { DuplicateStatus, mockHouseholdEntity } from '@libs/entities-lib/household';
+import flushPromises from 'flush-promises';
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
@@ -24,10 +25,11 @@ const { caseFileStore, caseFileMetadataStore } = useMockCaseFileStore(pinia);
 const { householdStore, householdMetadataStore } = useMockHouseholdStore(pinia);
 describe('CaseFileDetails.vue', () => {
   let wrapper;
-  const doMount = async () => {
+  const doMount = async (featureList = [], otherComputed = {}) => {
     const params = {
       localVue,
       pinia,
+      featureList,
       propsData: {
         id: mockCaseFile.id,
       },
@@ -67,6 +69,7 @@ describe('CaseFileDetails.vue', () => {
             },
           };
         },
+        ...otherComputed,
       },
 
     };
@@ -348,6 +351,27 @@ describe('CaseFileDetails.vue', () => {
         expect(wrapper.vm.goToHouseholdProfile).toHaveBeenCalledTimes(1);
       });
     });
+
+    describe('caseFileDetails-receiving-assistance-member-count', () => {
+      it('should display when has feature flag ImpactedIndividuals and not display when has no feature flag', async () => {
+        let element;
+        await doMount([FeatureKeys.ImpactedIndividuals]);
+        await flushPromises();
+        element = wrapper.findDataTest('caseFileDetails-receiving-assistance-member-count');
+        expect(element.exists()).toBeTruthy();
+
+        await doMount();
+        element = wrapper.findDataTest('caseFileDetails-receiving-assistance-member-count');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('should display proper content', async () => {
+        await doMount([FeatureKeys.ImpactedIndividuals]);
+        await flushPromises();
+        const element = wrapper.findDataTest('caseFileDetails-receiving-assistance-member-count');
+        expect(element.text()).toEqual('caseFileDetail.totalImpacted  1');
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -510,6 +534,12 @@ describe('CaseFileDetails.vue', () => {
         });
 
         expect(wrapper.vm.isDuplicate).toEqual(false);
+      });
+    });
+
+    describe('receivingAssistanceMembersCount', () => {
+      it('should return proper data', async () => {
+        expect(wrapper.vm.receivingAssistanceMembersCount).toEqual(1);
       });
     });
   });

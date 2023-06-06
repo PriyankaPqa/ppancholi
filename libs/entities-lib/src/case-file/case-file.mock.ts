@@ -81,9 +81,13 @@ export const mockCaseFileEntity = (force? : Partial<ICaseFileEntity>): ICaseFile
   validate: () => true,
   privacyDateTimeConsent: '2021-02-02',
   impactedIndividuals: [{
-    personId: 'mock-member-id',
-    receivingAssistance: true,
-  }],
+        personId: 'mock-member-id-1',
+        receivingAssistance: true,
+      },
+      {
+        personId: 'mock-member-id-2',
+        receivingAssistance: false,
+      }],
 });
 
 export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICaseFileMetadata => ({

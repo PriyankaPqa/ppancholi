@@ -312,6 +312,9 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
       shelterLocationId: currentAddress.shelterLocation ? currentAddress.shelterLocation.id : null,
       address: noPlaceAddress ? null : this.parseAddress(currentAddress.address),
       from: moment.utc(moment()).format(),
+      crcProvided: currentAddress.crcProvided,
+      checkIn: currentAddress.checkIn ? new Date(currentAddress.checkIn).toISOString() : null,
+      checkOut: currentAddress.checkOut ? new Date(currentAddress.checkOut).toISOString() : null,
     };
   }
 
