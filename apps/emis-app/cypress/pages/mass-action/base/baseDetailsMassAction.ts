@@ -7,6 +7,11 @@ export enum DataTest {
   typeMassAction = 'massActionTypeText',
   dateCreated = 'dateCreated',
   createdBy = 'createdBy',
+  dialogText = 'message__line_0',
+  dialogSubmit = 'dialog-submit-action',
+  dialogCancel = 'dialog-cancel-action',
+  failures = 'failures',
+  downloadButton = 'invalidDownloadButton',
   }
 
   export class BaseDetailsMassAction {
@@ -26,6 +31,16 @@ export enum DataTest {
 
     private createdBy = { selector: DataTest.createdBy };
 
+    private dialogSubmit = { selector: DataTest.dialogSubmit };
+
+    private dialogText = { selector: DataTest.dialogText };
+
+    private dialogCancel = { selector: DataTest.dialogCancel };
+
+    private failures = { selector: DataTest.failures };
+
+    private downloadButton = { selector: DataTest.downloadButton };
+
     public getMassActionName() {
       return cy.getByDataTest(this.name).invoke('text').then((text) => text.trim());
     }
@@ -38,23 +53,24 @@ export enum DataTest {
       return cy.getByDataTest(this.status);
     }
 
-    private waitForGetMassActionMetadata() {
-      cy.intercept({ method: 'GET', url: '**/case-file/mass-actions/metadata/**' }).as('getRequest');
+    private waitForGetEventProgram() {
+      // we can use any GET
+      cy.intercept({ method: 'GET', url: '**/event/events/**/programs/**' }).as('getRequest');
       cy.wait('@getRequest', { timeout: 300000 });
     }
 
-    public refreshUntilCurrentProcessComplete(eventName: string, maxRetries = 10) {
+    public refreshUntilCurrentProcessCompleteWithLabelString(eventName: string, labelString:string, maxRetries = 10) {
       let retries = 0;
-      const waitForSuccessToBeDisplayed = () => {
+      const waitForSuccessLabelToBe = (labelString: string) => {
         cy.contains(eventName).should('be.visible').then(() => {
-          if (Cypress.$("[data-test='successes']").length) {
+          if (Cypress.$("[data-test='successesLabel=']").text().endsWith(labelString)) {
             cy.log('current processing successful');
           } else {
             retries += 1;
             if (retries <= maxRetries) {
                 cy.reload().then(() => {
-                  this.waitForGetMassActionMetadata();
-                  waitForSuccessToBeDisplayed();
+                  this.waitForGetEventProgram();
+                  waitForSuccessLabelToBe(labelString);
                 });
             } else {
               throw new Error(`Failed to find success element after ${maxRetries} retries.`);
@@ -62,7 +78,7 @@ export enum DataTest {
           }
         });
       };
-      waitForSuccessToBeDisplayed();
+      waitForSuccessLabelToBe(labelString);
     }
 
     public getMassActionSuccessfulCaseFiles() {
@@ -83,5 +99,29 @@ export enum DataTest {
 
     public getMassActionCreatedBy() {
       return cy.getByDataTest(this.createdBy).invoke('text').then((text) => text.trim());
+    }
+
+    public getDialogSubmitButton() {
+      return cy.getByDataTest(this.dialogSubmit);
+    }
+
+    public getDialogCancelButton() {
+      return cy.getByDataTest(this.dialogCancel);
+    }
+
+    public getDialogText() {
+      return cy.getByDataTest(this.dialogText).invoke('text').then((text) => text.trim());
+    }
+
+    public confirmProcessing() {
+      cy.getByDataTest(this.dialogSubmit).click();
+    }
+
+    public getNumberFailedRecords() {
+      return cy.getByDataTest(this.failures).invoke('text').then((text) => text.trim());
+    }
+
+    public getInvalidCasefilesDownloadButton() {
+      return cy.getByDataTest(this.downloadButton);
     }
   }

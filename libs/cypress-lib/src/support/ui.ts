@@ -61,7 +61,7 @@ Cypress.Commands.add('getByDataTest', ({ selector, type = '' }, ...options) => c
     cy.getByDataTest({ selector: dataTest, type: 'input' }).click().then(() => {
       cy.get(`div[data-test="${dataTest}-date-picker"] .v-date-picker-header__value button`).as('header').click();
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(300);
+      cy.wait(500);
       cy.get('@header').click({ multiple: true });
       cy.xpath(`//div[@data-test='${dataTest}-date-picker']//ul[@class='v-date-picker-years']/*[contains(text(), '${year.toString()}')]`).click();
 

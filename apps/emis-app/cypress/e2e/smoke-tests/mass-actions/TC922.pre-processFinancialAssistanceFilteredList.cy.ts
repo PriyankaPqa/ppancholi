@@ -103,7 +103,7 @@ describe(`${title}`, () => {
           newMassFinancialAssistancePage.getDialogCancelButton().should('be.visible');
 
           const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
-          massFinancialAssistanceDetailsPage.refreshUntilCurrentProcessComplete(event.name.translation.en); // Here we wait for pre-processing to be done
+          massFinancialAssistanceDetailsPage.refreshUntilCurrentProcessCompleteWithLabelString(event.name.translation.en, ' Valid for processing '); // Here we wait for pre-processing to be done
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionName().should('eq', baseMassActionData.name);
           massFinancialAssistanceDetailsPage.getMassActionDescription().should('eq', baseMassActionData.description);

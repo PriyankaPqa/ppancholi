@@ -1,3 +1,4 @@
+import { itemFinancialAssistance, subItemFinancialAssistance } from '@libs/cypress-lib/helpers';
 import {
   ApprovalStatus,
   IFinancialAssistancePaymentEntity,
@@ -12,8 +13,8 @@ import { EPaymentModalities } from '@libs/entities-lib/src/program';
 export const mockFinancialAssistancePaymentLine = (force?: Partial<IFinancialAssistancePaymentLine>) : IFinancialAssistancePaymentLine => ({
   ...mockBaseData(),
   id: '',
-  mainCategoryId: 'ade08607-c1c8-4efe-8608-a5ad6e8d676f',
-  subCategoryId: '39443fea-7010-4e63-9d13-280db61a9715',
+  mainCategoryId: itemFinancialAssistance.clothing,
+  subCategoryId: subItemFinancialAssistance.winterClothing,
   documentReceived: false,
   amount: 80.00,
   actualAmount: null,

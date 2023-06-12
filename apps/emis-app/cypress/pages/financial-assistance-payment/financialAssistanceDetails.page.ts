@@ -6,6 +6,8 @@ export enum DataTest {
   backToFinancialAssistance = 'cancel',
   financialAssistanceApprovalStatus = 'approval_status',
   paymentLineStatus = 'statusSelect__chip',
+  itemTitle = 'paymentLineItem__title',
+  totalAmount = 'paymentLineGroup__total',
 }
 
 export class FinancialAssistanceDetailsPage {
@@ -22,6 +24,10 @@ export class FinancialAssistanceDetailsPage {
   private financialAssistanceApprovalStatus = { selector: DataTest.financialAssistanceApprovalStatus };
 
   private paymentLineStatus = { selector: DataTest.paymentLineStatus };
+
+  private itemTitle = { selector: DataTest.itemTitle };
+
+  private totalAmount = { selector: DataTest.totalAmount };
 
   public getAddPaymentLineButton() {
     return cy.getByDataTest(this.addPaymentLineButton);
@@ -53,5 +59,13 @@ export class FinancialAssistanceDetailsPage {
 
   public goToFinancialAssistanceHomePage() {
     return cy.getByDataTest(this.backToFinancialAssistance).click();
+  }
+
+  public getPaymentModalityGroup() {
+    return cy.getByDataTest(this.itemTitle).invoke('text').then((text) => text.trim());
+  }
+
+  public getPaymentAmount() {
+    return cy.getByDataTest(this.totalAmount).invoke('text').then((text) => text.trim());
   }
 }

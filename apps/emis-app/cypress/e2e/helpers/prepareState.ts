@@ -7,6 +7,7 @@ import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/moc
 import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
+import { mockCreateMassFinancialAssistanceRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { linkEventToTeamForManyRoles } from './teams';
 
 /**
@@ -115,4 +116,53 @@ export const createAssessment = async (provider: IProvider, eventId: string, pro
   const mockCreateAssessment = mockCreateAssessmentRequest({ eventId, programId });
   const assessment = await provider.assessmentForms.create(mockCreateAssessment);
   return { assessment };
+};
+
+// verifies if casefile created is indexed through search and wait
+const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, maxAttempt = 10): Promise<number> => {
+  let searchResult = 0;
+  let attempt = 0;
+  const waitForCaseFileIndexToBeUpdated = async (): Promise<number> => {
+    if (searchResult === 1) {
+      cy.log('Casefile index updated');
+    } else if (attempt < maxAttempt) {
+        const search = await provider.caseFiles.search({
+          filter: { Entity: { Id: caseFileId } },
+          top: 999,
+        });
+        searchResult = search.odataCount;
+        attempt += 1;
+        if (searchResult === 0) {
+          // eslint-disable-next-line
+          cy.wait(500)
+          cy.log(`casefile index search attempt ${attempt}`);
+          return waitForCaseFileIndexToBeUpdated();
+        }
+      } else {
+        throw new Error(`Failed to search for index after ${maxAttempt} retries.`);
+      } return searchResult;
+  };
+  return waitForCaseFileIndexToBeUpdated();
+};
+
+/**
+ * Creates a Mass Financial Assistance
+ * @param provider
+ * @param event
+ * @param eventId
+ * @param tableId
+ * @param programId
+ */
+// eslint-disable-next-line
+export const prepareStateHouseholdMassFinancialAssistance = async (accessToken: string, event:IEventEntity, eventId: string, tableId: string, programId: string) => {
+  const provider = useProvider(accessToken);
+  const responseCreateHousehold = await createHousehold(provider, event);
+  const caseFileId = responseCreateHousehold.registrationResponse.caseFile.id;
+  const searchResult = await searchCasefileAndWait(provider, caseFileId);
+  if (searchResult === 1) {
+    const mockCreateMassFinancialAssistance = mockCreateMassFinancialAssistanceRequest(event, { eventId, tableId, programId });
+    const responseMassFinancialAssistance = await provider.massActions.create('financial-assistance-from-list', mockCreateMassFinancialAssistance);
+    return { responseMassFinancialAssistance, responseCreateHousehold };
+  }
+    throw new Error('Casefile index not yet updated');
 };

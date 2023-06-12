@@ -28,6 +28,8 @@ export class FinancialAssistanceHomePage {
 
   private groupPaymentStatus = { selector: DataTest.groupPaymentStatus };
 
+  private faPayment = { selector: DataTest.faPayment };
+
   public getFAPaymentById(financialAssistancePaymentId: string) {
     cy.getByDataTest({ selector: `${DataTest.faPayment}${financialAssistancePaymentId}` }).click();
     return new FinancialAssistanceDetailsPage();
@@ -35,6 +37,15 @@ export class FinancialAssistanceHomePage {
 
   public getFAPaymentNameById(financialAssistancePaymentId: string) {
     return cy.getByDataTest({ selector: `${DataTest.faPayment}${financialAssistancePaymentId}` }).invoke('text').then((text) => text.trim());
+  }
+
+  public getFAPaymentName() {
+    return cy.getByDataTestLike(this.faPayment).invoke('text').then((text) => text.trim());
+  }
+
+  public getFAPayment() {
+    cy.getByDataTestLike(this.faPayment).click();
+    return new FinancialAssistanceDetailsPage();
   }
 
   public getApprovalStatus() {

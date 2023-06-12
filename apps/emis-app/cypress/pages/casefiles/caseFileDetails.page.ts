@@ -12,6 +12,7 @@ export enum DataTest {
   primaryBeneficiaryName = 'title-left-menu',
   caseFileNumber = 'caseFileDetails-caseFileNumber',
   eventName = 'caseFileDetails-event',
+  financialAssistance = 'case-financial-assistance',
 }
 
 export class CaseFileDetailsPage {
@@ -34,6 +35,8 @@ export class CaseFileDetailsPage {
   private caseFileNumber = { selector: DataTest.caseFileNumber };
 
   private eventName = { selector: DataTest.eventName };
+
+  private financialAssistance = { selector: DataTest.financialAssistance };
 
   public getCaseFileActivityTitles() {
     return cy.getByDataTest(this.caseFileActivityTitle).invoke('text').then((text) => text.trim());
@@ -73,5 +76,9 @@ export class CaseFileDetailsPage {
 
   public getEventName() {
     return cy.getByDataTest(this.eventName).invoke('text').then((text) => text.trim());
+  }
+
+  public goToFinancialAssistanceHomePage() {
+    return cy.getByDataTest(this.financialAssistance).click();
   }
 }
