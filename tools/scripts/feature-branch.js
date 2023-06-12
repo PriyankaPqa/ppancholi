@@ -37,46 +37,17 @@ const azureAPIConfig = {
 const terraformFolderPath = process.env.TERRAFORM_PATH;
 const file = `${terraformFolderPath}/src/environments/dev/variables.tfvars`;
 
-
-const mode = prompt(`What do you want to do? (preview: ${Mode.preview}, edit:${Mode.edit})`).toString();
-
-if (mode !== Mode.preview && mode !== Mode.edit) {
-  console.error('Wrong answer. Closed.')
-  process.exit(1);
-}
-
 let emisToAdd = [];
 let emisToRemove = []
 let benefToAdd = []
 let benefToRemove = [];
 let confirm = null;
 
-if (mode === Mode.edit) {
-  console.log('## Current State ##')
-  readFile();
-
-  emisToAdd = prompt("Enter values to add for emis (comma separated): ").split(",").filter(v => v !== '');
-  emisToRemove = prompt("Enter values to remove for emis (comma separated): ").split(",").filter(v => v !== '');
-  benefToAdd = prompt("Enter values to add for benef (comma separated): ").split(",").filter(v => v !== '');
-  benefToRemove = prompt("Enter values to remove for benef (comma separated): ").split(",").filter(v => v !== '');
-
-  do {
-    confirm = prompt(`Do you confirm and want to create the PR? (yes: ${Confirm.yes}, no:${Confirm.no}): `).toString();
-  } while (confirm !== Confirm.yes && confirm !== Confirm.no)
-
-  if (confirm.toString() === Confirm.no) {
-    console.error('Process closed. Not branch or PR has been created')
-    process.exit(1);
-  }
-}
-
-
 function generatePRDescription(emisToAdd, emisToRemove, benefToAdd, benefToRemove) {
   const emisText = (emisToAdd.length > 0 || emisToRemove.length > 0) ? `EMIS: ${emisToAdd.length > 0 ? 'add ' + emisToAdd : ''} ${emisToRemove.length > 0 ? 'remove ' + emisToRemove : ''}` : '';
   const benefText = (benefToAdd.length > 0 || benefToRemove.length > 0) ? `BENEF: ${benefToAdd ? 'add ' + benefToAdd : ''} ${benefToRemove.length > 0 ? 'remove ' + benefToRemove.length > 0 : ''}` : '';
   return `${emisText}${emisText && benefText ? '\n' : ''}${benefText}`;
 }
-
 function generateFeatureBranchName(emisToAdd, emisToRemove, benefToAdd, benefToRemove) {
   let branchName = 'auto';
 
@@ -85,7 +56,7 @@ function generateFeatureBranchName(emisToAdd, emisToRemove, benefToAdd, benefToR
   }
 
   if (emisToRemove.length > 0) {
-    branchName += `/-${emisToRemove}`;
+    branchName += `/${emisToRemove}`;
   }
 
   if (benefToAdd.length > 0) {
@@ -93,30 +64,21 @@ function generateFeatureBranchName(emisToAdd, emisToRemove, benefToAdd, benefToR
   }
 
   if (benefToRemove. length > 0) {
-    branchName += `/-${benefToRemove}`;
+    branchName += `/${benefToRemove}`;
   }
 
   return branchName.toLowerCase();
 }
-
-
-function getScriptConfig(configPath = 'tools/scripts/config.json') {
-  const jsonData = fs.readFileSync(configPath);
-  return JSON.parse(jsonData);
-}
-
 function extractArray(name, data) {
   const regex = new RegExp(`${name} = \\[(.*)\\]`, 'g');
   const match = regex.exec(data);
   return match[1].split(',').map((v) => v.trim().replace(/^"|"$/g, ''));
 }
-
 function replaceArray(name, arr, data) {
   const regex = new RegExp(`${name} = \\[(.*)\\]`, 'g');
   const str = arr.map((v) => `"${v}"`).join(', ');
   return data.replace(regex, `${name} = [${str}]`);
 }
-
 function addValues(arr, values) {
   values.forEach((value) => {
     if (arr.indexOf(value) === -1) {
@@ -125,7 +87,6 @@ function addValues(arr, values) {
   });
   return arr;
 }
-
 function deleteValues(arr, values) {
   values.forEach((value) => {
     const index = arr.indexOf(value);
@@ -135,8 +96,6 @@ function deleteValues(arr, values) {
   });
   return arr;
 }
-
-
 function readFile() {
   let data = fs.readFileSync(file, 'utf8');
   // Extract the array values from the file data
@@ -145,8 +104,6 @@ function readFile() {
   console.log('beneficiary_features', benefArr)
   console.log('emis_features', emisArr)
 }
-
-
 function updateFile(mode, emis, benef) {
   // Read the file
   let data = fs.readFileSync(file, 'utf8');
@@ -181,11 +138,9 @@ function updateFile(mode, emis, benef) {
 
   console.log(`File ${file} successfully updated.`);
 }
-
 function getRepoUrl(azureConfig) {
   return `https://dev.azure.com/${azureConfig.organization}/${azureConfig.project}/_apis/git/repositories/${azureConfig.repositoryId}`;
 }
-
 async function createPullRequest(azureConfig, branchName, title, description) {
   const url = `${getRepoUrl(azureConfig)}/pullrequests?api-version=7.0`
   // Set up the request data
@@ -222,7 +177,28 @@ async function createPullRequest(azureConfig, branchName, title, description) {
     console.error(`Error creating pull request: ${error.message}`);
   }
 }
+async function preview() {
+  return new Promise((resolve, reject) => {
+    const git = simpleGit();
+    git.cwd(terraformFolderPath); // Replace with the path to your local repository
+    // Checkout master branch
+    git.checkout('master', (err) => {
+      if (err) {
+        throw err;
+      }
 
+      // Pull latest changes on master
+      git.pull((err) => {
+        if (err) {
+          throw err;
+        }
+        console.log('## Current State (master) ##')
+        readFile();
+        resolve();
+      });
+    });
+  });
+}
 async function updatePullRequest(azureConfig, pullRequestID, data) {
   const url = `${getRepoUrl(azureConfig)}/pullrequests/${pullRequestID}?api-version=7.0`
   try {
@@ -310,9 +286,30 @@ function main() {
   });
 }
 
+const mode = prompt(`What do you want to do? (preview: ${Mode.preview}, edit:${Mode.edit})`).toString();
+
 if (mode === Mode.preview) {
-  readFile();
+  preview();
+} else if (mode === Mode.edit) {
+  preview().then(() => {
+    emisToAdd = prompt("Enter values to add for emis (comma separated): ").split(",").filter(v => v !== '');
+    emisToRemove = prompt("Enter values to remove for emis (comma separated): ").split(",").filter(v => v !== '');
+    benefToAdd = prompt("Enter values to add for benef (comma separated): ").split(",").filter(v => v !== '');
+    benefToRemove = prompt("Enter values to remove for benef (comma separated): ").split(",").filter(v => v !== '');
+
+    do {
+      confirm = prompt(`Do you confirm and want to create the PR? (yes: ${Confirm.yes}, no:${Confirm.no}): `).toString();
+    } while (confirm !== Confirm.yes && confirm !== Confirm.no)
+
+    if (confirm.toString() === Confirm.no) {
+      console.error('Process closed. Not branch or PR has been created')
+      process.exit(1);
+    }
+    main();
+  })
+
 } else {
-  main();
+  console.error('Wrong answer. Closed.')
+  process.exit(1);
 }
 
