@@ -385,6 +385,23 @@ describe('ContactInformationForm.vue', () => {
         });
         expect(wrapper.vm.prePopulate).toHaveBeenCalledTimes(1);
       });
+
+      test('events are attached and detached', async () => {
+        EventHub.$on = jest.fn();
+        EventHub.$off = jest.fn();
+        jest.clearAllMocks();
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(EventHub.$on).toHaveBeenCalledWith('checkEmailValidation', wrapper.vm.validateForm);
+        expect(EventHub.$on).toHaveBeenCalledWith('resetEmailValidation', wrapper.vm.resetEmailValidation);
+        jest.clearAllMocks();
+        wrapper.vm.$options.destroyed.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(EventHub.$off).toHaveBeenCalledWith('checkEmailValidation', wrapper.vm.validateForm);
+        expect(EventHub.$off).toHaveBeenCalledWith('resetEmailValidation', wrapper.vm.resetEmailValidation);
+      });
     });
   });
 

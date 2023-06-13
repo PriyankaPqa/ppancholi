@@ -6,6 +6,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { tabs } from '@/pinia/registration/tabs';
 import { mockProvider } from '@/services/provider';
 import { FeatureKeys } from '@libs/entities-lib/src/tenantSettings';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import Component from './Individual.vue';
 
 const localVue = createLocalVue();
@@ -26,7 +27,9 @@ describe('Individual.vue', () => {
         wrapper = mount(Component, {
           pinia,
           localVue,
-          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
+          mocks: { $services: services },
+          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'privacy-statement',
+            'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
         });
       });
       test('Click back button triggers method', async () => {
@@ -58,7 +61,9 @@ describe('Individual.vue', () => {
           localVue,
           pinia,
           featureList: [FeatureKeys.BotProtection],
-          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
+          mocks: { $services: services },
+          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'privacy-statement',
+            'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
           computed: {
             isCaptchaAllowedIpAddress: () => false,
           },
@@ -72,7 +77,9 @@ describe('Individual.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia,
-          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
+          mocks: { $services: services },
+          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'privacy-statement',
+            'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
           computed: {
             isCaptchaAllowedIpAddress: () => false,
           },
@@ -87,7 +94,9 @@ describe('Individual.vue', () => {
           localVue,
           pinia,
           featureList: [FeatureKeys.BotProtection],
-          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
+          mocks: { $services: services },
+          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'privacy-statement',
+            'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
           computed: {
             isCaptchaAllowedIpAddress: () => true,
           },
@@ -243,6 +252,15 @@ describe('Individual.vue', () => {
       });
     });
 
+    describe('validateAndNextPersonalInfo_prepareValidation', () => {
+      it('makes sure email validation occurs before continuing', async () => {
+        EventHub.$emit = jest.fn();
+        await wrapper.vm.validateAndNextPersonalInfo_prepareValidation();
+        expect(EventHub.$emit).toHaveBeenCalledWith('resetEmailValidation');
+        expect(EventHub.$emit).toHaveBeenCalledWith('checkEmailValidation', wrapper.vm.validateAndNextPersonalInfo);
+      });
+    });
+
     describe('validateAndNextPersonalInfo', () => {
       it('calls checkForPossibleDuplicatePublic if on personalInfo stage and SelfRegistration is enabled', async () => {
         window.confirm = () => true;
@@ -267,7 +285,7 @@ describe('Individual.vue', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
         wrapper.vm.next = jest.fn();
-        await wrapper.vm.validateAndNext();
+        await wrapper.vm.validateAndNextPersonalInfo();
         expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic).not.toHaveBeenCalled();
         expect(wrapper.vm.next).toHaveBeenCalledTimes(1);
       });

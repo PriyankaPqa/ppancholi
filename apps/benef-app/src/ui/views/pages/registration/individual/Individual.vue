@@ -2,6 +2,7 @@
   <div class="full-height grey lighten-4">
     <left-menu @jump="jump" />
 
+    <!-- eslint-disable-next-line vue/no-unused-vars  (validation observer reacts differently without failed in tests somehow...) -->
     <ValidationObserver ref="form" v-slot="{ failed }" slim>
       <rc-page-content
         :show-help="false && currentTab.helpLink !== '' "
@@ -58,7 +59,7 @@
                 data-test="nextButton"
                 :aria-label="$t(currentTab.nextButtonTextKey)"
                 :loading="submitLoading || retrying"
-                :disabled="failed || inlineEdit"
+                :disabled="inlineEdit"
                 @click="goNext()">
                 {{ $t(currentTab.nextButtonTextKey) }}
               </v-btn>
@@ -181,7 +182,7 @@ destroyed() {
 
     async goNext() {
       if (this.currentTab.id === 'personalInfo') {
-        await this.fetchPublicToken(this.validateAndNextPersonalInfo);
+        await this.fetchPublicToken(this.validateAndNextPersonalInfo_prepareValidation);
       } else if (this.tokenFetchedLast != null) {
         // if we are passed personal info we keep the token alive
         await this.fetchPublicToken(this.validateAndNext);
@@ -205,6 +206,12 @@ destroyed() {
       if (isValid) {
         await this.next();
       }
+    },
+
+    async validateAndNextPersonalInfo_prepareValidation() {
+      EventHub.$emit('resetEmailValidation');
+      await helpers.timeout(10);
+      EventHub.$emit('checkEmailValidation', this.validateAndNextPersonalInfo);
     },
 
     async validateAndNextPersonalInfo() {

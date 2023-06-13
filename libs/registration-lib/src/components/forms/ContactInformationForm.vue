@@ -98,6 +98,7 @@
         <validation-observer ref="email">
           <v-text-field-with-validation
             v-model="formCopy.email"
+            class="email-field"
             :loading="emailChecking"
             :data-test="`${prefixDataTest}__email`"
             :rules="rules.email"
@@ -279,11 +280,13 @@ export default Vue.extend({
     this.prePopulate();
 
     EventHub.$on('checkEmailValidation', this.validateForm);
+    EventHub.$on('resetEmailValidation', this.resetEmailValidation);
   },
 
   destroyed() {
     if (EventHub) {
       EventHub.$off('checkEmailValidation', this.validateForm);
+      EventHub.$off('resetEmailValidation', this.resetEmailValidation);
     }
   },
 
@@ -413,5 +416,9 @@ export default Vue.extend({
 }
 .invalidClass {
   color: var(--v-error-base)
+}
+
+::v-deep .email-field .v-messages__message {
+  white-space: pre-line;
 }
 </style>
