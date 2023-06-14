@@ -19,6 +19,67 @@ describe('SurveyJsTextExtractor', () => {
       expect(result).toEqual(surveyData.surveyExtractedFr);
     });
 
+    it('extracts translated completion pages', () => {
+      let result = extractor.extractAllText(JSON.parse(surveyData.completionPage));
+      expect(result.elements[1]).toEqual({
+        elements: [
+          {
+            elements: [],
+            identifier: '',
+            title: '<h3>why hello there</h3>',
+            type: 'html',
+          },
+        ],
+        identifier: 'Completion page',
+        type: 'page',
+      });
+
+      extractor.locale = 'fr';
+      result = extractor.extractAllText(JSON.parse(surveyData.completionPage));
+      expect(result.elements[1]).toEqual({
+        elements: [
+          {
+            elements: [],
+            identifier: '',
+            title: '<h3>why hello there</h3>',
+            type: 'html',
+          },
+        ],
+        identifier: 'Completion page',
+        type: 'page',
+      });
+
+      extractor.locale = 'en';
+      result = extractor.extractAllText(JSON.parse(surveyData.completionPageTranslated));
+      expect(result.elements[1]).toEqual({
+        elements: [
+          {
+            elements: [],
+            identifier: '',
+            title: '<h3>why hello there</h3>',
+            type: 'html',
+          },
+        ],
+        identifier: 'Completion page',
+        type: 'page',
+      });
+
+      extractor.locale = 'fr';
+      result = extractor.extractAllText(JSON.parse(surveyData.completionPageTranslated));
+      expect(result.elements[1]).toEqual({
+        elements: [
+          {
+            elements: [],
+            identifier: '',
+            title: '<h3>french text!</h3>',
+            type: 'html',
+          },
+        ],
+        identifier: 'Completion page',
+        type: 'page',
+      });
+    });
+
     it('extractAllText for text question', () => {
       let result = extractor.extractAllText(JSON.parse(surveyData.textQuestion));
       expect(result.elements[0].elements).toEqual([{

@@ -2587,6 +2587,18 @@ export class surveyData {
         ],
         validators: null,
       },
+      {
+        elements: [
+          {
+            elements: [],
+            identifier: '',
+            title: '<h3>Thank you for completing the survey</h3>',
+            type: 'html',
+          },
+        ],
+        identifier: 'Completion page',
+        type: 'page',
+      },
     ],
     logic: [
       "If 'Benef_consents' == ['item1'], make question 'question6' visible",
@@ -3467,6 +3479,18 @@ export class surveyData {
         ],
         validators: null,
       },
+      {
+        elements: [
+          {
+            elements: [],
+            identifier: '',
+            title: '<h3>Merci d\'avoir répondu au questionnaire !</h3>',
+            type: 'html',
+          },
+        ],
+        identifier: 'Completion page',
+        type: 'page',
+      },
     ],
     logic: [
       "If 'Benef_consents' == ['item1'], Rendre la question 'question6' visible",
@@ -3474,4 +3498,57 @@ export class surveyData {
       "If 'Attest' == ['item1', 'item2', 'item3'], Rendre la question 'question2' obligatoire",
     ],
   };
+
+  static completionPage = JSON.stringify({
+    logo: {
+      default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
+      fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
+    },
+    logoPosition: 'right',
+    completedHtml: '<h3>why hello there</h3>',
+    pages: [
+      {
+        name: 'page1',
+        elements: [
+          {
+            type: 'text',
+            name: 'question1',
+            title: {
+              default: 'Text eng',
+              fr: 'Text fr',
+            },
+            score: 1,
+          },
+        ],
+      },
+    ],
+  });
+
+  static completionPageTranslated = JSON.stringify({
+    logo: {
+      default: 'blob:http://localhost:8080/42ada456-4ec4-41d2-94ba-3e4d1fb23c1f',
+      fr: 'blob:http://localhost:8080/a48ce765-786c-46b1-b08c-f9cc1b9e0bdf',
+    },
+    logoPosition: 'right',
+    completedHtml: {
+     default: '<h3>why hello there</h3>',
+     fr: '<h3>french text!</h3>',
+    },
+    pages: [
+      {
+        name: 'page1',
+        elements: [
+          {
+            type: 'text',
+            name: 'question1',
+            title: {
+              default: 'Text eng',
+              fr: 'Text fr',
+            },
+            score: 1,
+          },
+        ],
+      },
+    ],
+  });
 }

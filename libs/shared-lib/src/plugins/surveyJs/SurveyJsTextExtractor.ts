@@ -16,6 +16,7 @@ import {
   MatrixDropdownColumn,
   MatrixDropdownRowModel,
   SurveyValidator,
+  SurveyModel,
 } from 'survey-core';
 import { CreatorBase, localization } from 'survey-creator-core';
 import { SurveyCreator } from 'survey-creator-knockout';
@@ -58,8 +59,23 @@ export class SurveyJsTextExtractor {
 
     extract.elements = (survey.pages as PageModel[]).map((p) => this.extractPanel(p));
 
+    extract.elements.push(this.extractCompletionPage(survey));
+
     // console.log(JSON.parse(JSON.stringify(extract)));
     return extract;
+  }
+
+  extractCompletionPage(survey: SurveyModel): IExtractedSurveyObject {
+    return {
+      type: 'page',
+      identifier: 'Completion page',
+      elements: [{
+        type: 'html',
+        identifier: '',
+        elements: [],
+        title: survey.completedHtml,
+      }],
+    };
   }
 
   extractPanel(panel: PanelModelBase | QuestionPanelDynamicModel) : IExtractedSurveyObject {
