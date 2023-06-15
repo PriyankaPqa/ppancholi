@@ -92,7 +92,7 @@ export function getExtensionComponents(
 
   async function genericSetAction(
       { id, payload, element }:
-        { id: uuid, payload: unknown, element: 'Tags' | 'Status' | 'IsDuplicate' | 'Labels' | 'IdentityAuthentication' | 'Triage' | 'ValidationOfImpact' | 'Assign' },
+        { id: uuid, payload: unknown, element: 'Tags' | 'Status' | 'IsDuplicate' | 'Labels' | 'IdentityAuthentication' | 'Triage' | 'ValidationOfImpact' },
   ) {
     try {
       const res = await (entityService[`setCaseFile${element}`] as any)(id, payload);
@@ -130,10 +130,6 @@ export function getExtensionComponents(
 
   async function setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation) {
     return genericSetAction({ id, payload: impactStatusValidation, element: 'ValidationOfImpact' });
-  }
-
-  async function setCaseFileAssign({ id, individuals, teams }: { id: uuid, individuals: uuid[]; teams: uuid[] }) {
-    return genericSetAction({ id, payload: { individuals, teams }, element: 'Assign' });
   }
 
   async function createCaseFile(payload: ICreateCaseFileRequest) {
@@ -211,7 +207,6 @@ export function getExtensionComponents(
     setCaseFileIdentityAuthentication,
     setCaseFileTriage,
     setCaseFileValidationOfImpact,
-    setCaseFileAssign,
     createCaseFile,
     fetchCaseFileAssignedCounts,
     fetchCaseFileDetailedCounts,

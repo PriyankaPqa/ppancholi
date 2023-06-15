@@ -77,11 +77,6 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
     return this.http.patch(`/case-file/case-files/${id}/validation-of-impact-status`, { ...impactStatusValidation });
   }
 
-  // TODO: Remove all references to setCaseFileAssign when EMISV2-4373
-  async setCaseFileAssign(id: uuid, payload: { individuals: uuid[], teams: uuid[] }): Promise<ICaseFileEntity> {
-    return this.http.patch<ICaseFileEntity>(`${this.baseUrl}/${id}/assign`, payload);
-  }
-
   async createCaseFile(payload: ICreateCaseFileRequest, publicMode: boolean): Promise<IDetailedRegistrationResponse> {
     return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${publicMode ? 'public/' : ''}case-file`, payload);
   }

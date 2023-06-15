@@ -258,18 +258,6 @@ describe('>>> Case File Store', () => {
     });
   });
 
-  describe('setCaseFileAssign', () => {
-    it('dispatches the right action with the right payload', async () => {
-      const store = createTestStore();
-      const id = 'mock-id';
-      const individuals = ['mock-individual-id'];
-      const teams = ['mock-teams-id'];
-
-      await store.setCaseFileAssign({ individuals, teams, id });
-      expect(entityService.setCaseFileAssign).toBeCalledWith(id, { individuals, teams });
-    });
-  });
-
   describe('createCaseFile', () => {
     it('should call createCaseFile service with proper params', async () => {
       const bComponents = { ...baseComponents, addNewlyCreatedId: jest.fn(), set: jest.fn() };

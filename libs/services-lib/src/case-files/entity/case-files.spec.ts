@@ -139,18 +139,6 @@ describe('>>> Case File Service', () => {
     });
   });
 
-  describe('setCaseFileAssign', () => {
-    it('is linked to the correct URL and params', async () => {
-      const { id } = mockCaseFileEntity();
-      const individuals = ['mock-individual-id'];
-      const teams = ['mock-teams-id'];
-      const payload = { individuals, teams };
-
-      await service.setCaseFileAssign(id, payload);
-      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/assign`, payload);
-    });
-  });
-
   describe('createCaseFile', () => {
     it('is linked to the correct URL and params', async () => {
       const payload = {

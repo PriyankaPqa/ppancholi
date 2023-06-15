@@ -499,33 +499,18 @@ describe('CaseFileActivityListItem.vue', () => {
       });
 
       describe('makeContentForAssignedToCaseFile', () => {
-        it('returns the correct data when action type is makeContentForAssignedToCaseFile and there is only one name to display', async () => {
-          const activity = {
-            ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
-            details: {
-              teams: [],
-              individuals: [{ id: '1', name: 'Jack White' }],
-            },
-
-          };
-          await wrapper.setProps({
-            item: activity,
-          });
-
-          expect(wrapper.vm.makeContentForAssignedToCaseFile()).toEqual({
-            title: { key: 'caseFileActivity.activityList.title.AssignedToCaseFile', params: [{ x: 'Jack White' }] },
-            body: null,
-          });
-        });
-
-        it(
-          'returns the correct data when action type is makeContentForAssignedToCaseFile and there are several individuals and no team',
-          async () => {
+        describe('New format', () => {
+          it('returns the correct data when action type is makeContentForAssignedToCaseFile and there is only one name to display', async () => {
             const activity = {
               ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
               details: {
                 teams: [],
-                individuals: [{ id: '1', name: 'Jack White' }, { id: '2', name: 'Joe Black' }],
+                teamMembers: [
+                  {
+                    team: { id: '0', name: 'test-team' },
+                    teamMembers: [{ id: '1', name: 'Jack White' }],
+                  },
+                ],
               },
 
             };
@@ -534,20 +519,67 @@ describe('CaseFileActivityListItem.vue', () => {
             });
 
             expect(wrapper.vm.makeContentForAssignedToCaseFile()).toEqual({
-              title: 'caseFileActivity.activityList.title.assigned_new_users_teams',
-              body: 'caseFileActivity.activityList.assign.new_user: Jack White, Joe Black\ncaseFileActivity.activityList.assign.new_team: -',
+              title: { key: 'caseFileActivity.activityList.title.AssignedToCaseFile', params: [{ x: 'Jack White, test-team' }] },
+              body: null,
             });
-          },
-        );
+          });
 
-        it(
-          'returns the correct data when action type is makeContentForAssignedToCaseFile and there are several teams and no individuals',
-          async () => {
+          it(
+            'returns the correct data when action type is makeContentForAssignedToCaseFile and there are several individuals and no team',
+            async () => {
+              const activity = {
+                ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
+                details: {
+                  teams: [],
+                  teamMembers: [
+                    {
+                      team: { id: '0', name: 'test-team' },
+                      teamMembers: [{ id: '1', name: 'Jack White' }, { id: '2', name: 'Joe Black' }],
+                    },
+                  ],
+                },
+
+              };
+              await wrapper.setProps({
+                item: activity,
+              });
+
+              expect(wrapper.vm.makeContentForAssignedToCaseFile()).toEqual({
+                title: 'caseFileActivity.activityList.title.assigned_new_users_teams',
+                body: 'caseFileActivity.activityList.assign.new_user: Jack White, test-team; Joe Black, test-team\ncaseFileActivity.activityList.assign.new_team: -',
+              });
+            },
+          );
+
+          it(
+            'returns the correct data when action type is makeContentForAssignedToCaseFile and there are several teams and no individuals',
+            async () => {
+              const activity = {
+                ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
+                details: {
+                  teams: [{ id: '1', name: 'Team 1' }, { id: '1', name: 'Team 2' }],
+                  teamMembers: [],
+                },
+
+              };
+              await wrapper.setProps({
+                item: activity,
+              });
+
+              expect(wrapper.vm.makeContentForAssignedToCaseFile()).toEqual({
+                title: 'caseFileActivity.activityList.title.assigned_new_users_teams',
+                body: 'caseFileActivity.activityList.assign.new_user: -\ncaseFileActivity.activityList.assign.new_team: Team 1; Team 2',
+              });
+            },
+          );
+        });
+        describe('Old format', () => {
+          it('returns the correct data when action type is makeContentForAssignedToCaseFile and there is only one name to display', async () => {
             const activity = {
               ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
               details: {
-                teams: [{ id: '1', name: 'Team 1' }, { id: '1', name: 'Team 2' }],
-                individuals: [],
+                teams: [],
+                individuals: [{ id: '1', name: 'Jack White' }],
               },
 
             };
@@ -556,22 +588,98 @@ describe('CaseFileActivityListItem.vue', () => {
             });
 
             expect(wrapper.vm.makeContentForAssignedToCaseFile()).toEqual({
-              title: 'caseFileActivity.activityList.title.assigned_new_users_teams',
-              body: 'caseFileActivity.activityList.assign.new_user: -\ncaseFileActivity.activityList.assign.new_team: Team 1, Team 2',
+              title: { key: 'caseFileActivity.activityList.title.AssignedToCaseFile', params: [{ x: 'Jack White' }] },
+              body: null,
             });
-          },
-        );
+          });
+
+          it(
+            'returns the correct data when action type is makeContentForAssignedToCaseFile and there are several individuals and no team',
+            async () => {
+              const activity = {
+                ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
+                details: {
+                  teams: [],
+                  individuals: [{ id: '1', name: 'Jack White' }, { id: '2', name: 'Joe Black' }],
+                },
+
+              };
+              await wrapper.setProps({
+                item: activity,
+              });
+
+              expect(wrapper.vm.makeContentForAssignedToCaseFile()).toEqual({
+                title: 'caseFileActivity.activityList.title.assigned_new_users_teams',
+                body: 'caseFileActivity.activityList.assign.new_user: Jack White, Joe Black\ncaseFileActivity.activityList.assign.new_team: -',
+              });
+            },
+          );
+
+          it(
+            'returns the correct data when action type is makeContentForAssignedToCaseFile and there are several teams and no individuals',
+            async () => {
+              const activity = {
+                ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
+                details: {
+                  teams: [{ id: '1', name: 'Team 1' }, { id: '1', name: 'Team 2' }],
+                  individuals: [],
+                },
+
+              };
+              await wrapper.setProps({
+                item: activity,
+              });
+
+              expect(wrapper.vm.makeContentForAssignedToCaseFile()).toEqual({
+                title: 'caseFileActivity.activityList.title.assigned_new_users_teams',
+                body: 'caseFileActivity.activityList.assign.new_user: -\ncaseFileActivity.activityList.assign.new_team: Team 1, Team 2',
+              });
+            },
+          );
+        });
       });
 
       describe('makeContentForUnassignedFromCaseFile', () => {
-        it('returns the correct data when action type is CaseFileStatusReopened', async () => {
-          await wrapper.setProps({
-            item: mockCaseFileActivities(CaseFileActivityType.UnassignedFromCaseFile)[0],
-          });
+        describe('New format', () => {
+          it('returns the correct data when action type is UnassignedFromCaseFile', async () => {
+            const activity = {
+              ...mockCaseFileActivities(CaseFileActivityType.UnassignedFromCaseFile)[0],
+              details: {
+                teams: [],
+                teamMembers: [
+                  {
+                    team: { id: '0', name: 'test-team' },
+                    teamMembers: [{ id: '1', name: 'Jack White' }],
+                  },
+                ],
+              },
 
-          expect(wrapper.vm.makeContentForUnassignedFromCaseFile()).toEqual({
-            title: { key: 'caseFileActivity.activityList.title.UnassignedFromCaseFile', params: [{ x: 'John Stevenson, Steven Johnson, Team 1, Team 2' }] },
-            body: null,
+            };
+            await wrapper.setProps({
+              item: activity,
+            });
+
+            expect(wrapper.vm.makeContentForUnassignedFromCaseFile()).toEqual({
+              title: { key: 'caseFileActivity.activityList.title.UnassignedFromCaseFile', params: [{ x: 'Jack White, test-team' }] },
+              body: null,
+            });
+          });
+        });
+
+        describe('Old format', () => {
+          it('returns the correct data when action type is CaseFileStatusReopened', async () => {
+            await wrapper.setProps({
+              item: mockCaseFileActivities(CaseFileActivityType.UnassignedFromCaseFile)[0],
+            });
+
+            expect(wrapper.vm.makeContentForUnassignedFromCaseFile())
+              .toEqual({
+                title: {
+                  key: 'caseFileActivity.activityList.title.UnassignedFromCaseFile',
+                  params: [{ x: 'John Stevenson, Steven Johnson, Team 1, Team 2' }],
+                },
+                body: null,
+              });
           });
         });
       });

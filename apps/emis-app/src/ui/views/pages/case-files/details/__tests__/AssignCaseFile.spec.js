@@ -459,7 +459,7 @@ describe('AssignCaseFile.vue', () => {
     });
 
     describe('submit', () => {
-      it('calls action setCaseFileAssign with the right payload', async () => {
+      it('calls action assignCaseFile with the right payload', async () => {
         wrapper.vm.assignedIndividuals = mockTeamMembersData();
         wrapper.vm.assignedTeams = [
           { ...mockTeamEntity(), id: 'team-id-1' },

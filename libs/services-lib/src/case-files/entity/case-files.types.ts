@@ -27,7 +27,6 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFileEntity>;
   setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileEntity>;
   setCaseFileTriage(id: uuid, triage: CaseFileTriage): Promise<ICaseFileEntity>;
-  setCaseFileAssign(id: uuid, payload: { individuals: uuid[], teams: uuid[] }): Promise<ICaseFileEntity>;
   createCaseFile(payload: ICreateCaseFileRequest, publicMode: boolean): Promise<IDetailedRegistrationResponse>;
   setCaseFileIdentityAuthentication(id: uuid, identityAuthentication: IIdentityAuthentication): Promise<ICaseFileEntity>;
   setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation): Promise<ICaseFileEntity>;
@@ -47,7 +46,6 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   setCaseFileLabels: jest.Mock<ICaseFileEntity>;
   setCaseFileIsDuplicate: jest.Mock<ICaseFileEntity>;
   setCaseFileTriage: jest.Mock<ICaseFileEntity>;
-  setCaseFileAssign: jest.Mock<ICaseFileEntity>;
   setCaseFileIdentityAuthentication: jest.Mock<ICaseFileEntity>;
   createCaseFile: jest.Mock<IDetailedRegistrationResponse>;
   setCaseFileValidationOfImpact: jest.Mock<ICaseFileEntity>;

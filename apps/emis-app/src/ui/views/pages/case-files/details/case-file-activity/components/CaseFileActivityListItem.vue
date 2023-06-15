@@ -280,8 +280,8 @@ export default Vue.extend({
     makeContentForAssignedToCaseFile():{ title: TranslateResult, body: TranslateResult } {
       let title = null;
       let body = null;
-      const teams = (this.item.details.teams as { name: string }[]).map((i) => i.name);
 
+      const teams = (this.item.details.teams as { name: string }[]).map((i) => i.name);
       if (this.item.details.teamMembers) {
         const usersWithTeams = [] as string[];
         (this.item.details.teamMembers as IAssignTeamMembersActivity[]).forEach((t) => {
@@ -298,22 +298,25 @@ export default Vue.extend({
           body = `${this.$t('caseFileActivity.activityList.assign.new_user')}: ${usersWithTeams.length ? usersWithTeams.join('; ') : '-'}`
             + `\n${this.$t('caseFileActivity.activityList.assign.new_team')}: ${teams.length ? teams.join('; ') : '-'}`;
         }
-      } else { // TODO: Remove when EMISV2-4373
-        const individuals = (this.item.details.individuals as { name: string }[]).map((i) => i.name);
-        if ((individuals).length + (teams).length === 1) {
-          const name = individuals[0] || teams[0];
-          title = this.$t('caseFileActivity.activityList.title.AssignedToCaseFile', { x: name });
-        } else {
-          title = this.$t('caseFileActivity.activityList.title.assigned_new_users_teams');
-          body = `${this.$t('caseFileActivity.activityList.assign.new_user')}: ${individuals.length ? individuals.join(', ') : '-'}`
-            + `\n${this.$t('caseFileActivity.activityList.assign.new_team')}: ${teams.length ? teams.join(', ') : '-'}`;
-        }
+      } else { // To keep to support case file activities with old format
+       try {
+         const individuals = (this.item.details.individuals as { name: string }[]).map((i) => i.name);
+         if ((individuals).length + (teams).length === 1) {
+           const name = individuals[0] || teams[0];
+           title = this.$t('caseFileActivity.activityList.title.AssignedToCaseFile', { x: name });
+         } else {
+           title = this.$t('caseFileActivity.activityList.title.assigned_new_users_teams');
+           body = `${this.$t('caseFileActivity.activityList.assign.new_user')}: ${individuals.length ? individuals.join(', ') : '-'}`
+             + `\n${this.$t('caseFileActivity.activityList.assign.new_team')}: ${teams.length ? teams.join(', ') : '-'}`;
+         }
+       } catch (e) { /* empty */ }
       }
-
       return { title, body };
     },
 
     makeContentForUnassignedFromCaseFile(): { title: TranslateResult, body: TranslateResult } {
+      let title = null;
+      let names = '';
       if (this.item.details.teamMembers) {
         const usersWithTeams = [] as string[];
         (this.item.details.teamMembers as IAssignTeamMembersActivity[]).forEach((t) => {
@@ -322,19 +325,20 @@ export default Vue.extend({
           });
         });
 
-        const names = [...usersWithTeams, ...(this.item.details.teams as { name: string }[]).map((i) => i.name)]
+        names = [...usersWithTeams, ...(this.item.details.teams as { name: string }[]).map((i) => i.name)]
           .join(', ');
 
-        const title = this.$t('caseFileActivity.activityList.title.UnassignedFromCaseFile', { x: names });
-        return { title, body: null };
+        title = this.$t('caseFileActivity.activityList.title.UnassignedFromCaseFile', { x: names });
+      } else {
+        // Keep to be compatible with old activity format
+        try {
+          names = ([...this.item.details.individuals as { name: string }[], ...this.item.details.teams as { name: string }[]])
+            .map((i) => i.name)
+            .join(', ');
+
+          title = this.$t('caseFileActivity.activityList.title.UnassignedFromCaseFile', { x: names });
+        } catch (e) { /* empty */ }
       }
-      // TODO: Remove when EMISV2-4373
-      const names = ([...this.item.details.individuals as { name: string }[], ...this.item.details.teams as { name: string }[]])
-        .map((i) => i.name)
-        .join(', ');
-
-      const title = this.$t('caseFileActivity.activityList.title.UnassignedFromCaseFile', { x: names });
-
       return { title, body: null };
     },
 
@@ -431,6 +435,7 @@ export default Vue.extend({
     makeContentForRegistration(): { title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.Registration');
       let body = '';
+
       if (this.item.details.registrationType === RegistrationType.Crc) {
         body += this.$t(
           'caseFileActivity.activityList.body.CRCRegistration',

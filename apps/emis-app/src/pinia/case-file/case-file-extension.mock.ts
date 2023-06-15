@@ -22,7 +22,6 @@ export function getMockExtensionComponents(entity = mockCaseFileEntity()) {
     setCaseFileIdentityAuthentication: jest.fn(() => entity),
     setCaseFileTriage: jest.fn(() => entity),
     setCaseFileValidationOfImpact: jest.fn(() => entity),
-    setCaseFileAssign: jest.fn(() => entity),
     createCaseFile: jest.fn(() => mockDetailedRegistrationResponse()),
     assignCaseFile: jest.fn(() => entity),
     genericSetAction: jest.fn(),
