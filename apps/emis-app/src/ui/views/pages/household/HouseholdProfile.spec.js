@@ -594,16 +594,49 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('canManageDuplicates', () => {
-      it('returns true if user has level 1', () => {
+      it('returns true if user has level 6 even if household is archived', async () => {
+        const pinia = getPiniaForUser(UserRoles.level6);
+        useMockRegistrationStore(pinia);
+        useMockHouseholdStore(pinia);
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             id: householdEntity.id,
           },
+          computed: {
+            householdEntity() {
+              return { ...householdEntity, householdStatus: HouseholdStatus.Archived };
+            },
+          },
           mocks: {
             $services: services,
           },
-          pinia: getPiniaForUser(UserRoles.level1),
+          pinia,
+        });
+        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
+
+        expect(wrapper.vm.canManageDuplicates).toBeTruthy();
+      });
+
+      it('returns true if user has level 1 and household is not archived', () => {
+        const pinia = getPiniaForUser(UserRoles.level1);
+        useMockRegistrationStore(pinia);
+        useMockHouseholdStore(pinia);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: householdEntity.id,
+          },
+          computed: {
+            householdEntity() {
+              return householdEntity;
+            },
+          },
+          mocks: {
+            $services: services,
+          },
+          pinia,
         });
 
         expect(wrapper.vm.canManageDuplicates).toBeTruthy();
@@ -644,7 +677,7 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.canManageDuplicates).toBeFalsy();
       });
 
-      it('returns true if status is not archived and household status flag is on', async () => {
+      it('returns true if status is not archived and household status flag is off', async () => {
         const pinia = getPiniaForUser(UserRoles.level1);
         useMockRegistrationStore(pinia);
         useMockHouseholdStore(pinia);
@@ -667,7 +700,7 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.canManageDuplicates).toBeTruthy();
       });
 
-      it('returns true if  household status flag is on', () => {
+      it('returns true if  household status flag is off', async () => {
         const pinia = getPiniaForUser(UserRoles.level1);
         useMockRegistrationStore(pinia);
         useMockHouseholdStore(pinia);
@@ -686,6 +719,7 @@ describe('HouseholdProfile.vue', () => {
           },
           pinia,
         });
+        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, false);
 
         expect(wrapper.vm.canManageDuplicates).toBeTruthy();
       });

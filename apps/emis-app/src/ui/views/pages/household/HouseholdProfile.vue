@@ -443,7 +443,7 @@ export default mixins(household).extend({
 
     canManageDuplicates(): boolean {
       const statusAllowsDuplicate = !this.$hasFeature(FeatureKeys.HouseholdProfileStatus) || this.householdEntity?.householdStatus !== HouseholdStatus.Archived;
-      return this.$hasLevel(UserRoles.level1) && statusAllowsDuplicate;
+      return this.$hasLevel(UserRoles.level6) || (this.$hasLevel(UserRoles.level1) && statusAllowsDuplicate);
     },
 
     enableAutocomplete(): boolean {
