@@ -18,7 +18,8 @@
     "cy:cache:list": "cypress cache list",
     "cy:run": "cypress run",
     "cy:run:record": "cypress run --record",
-    "cy:run:smoke": "cross-env SPIRA=false yarn cy:run --spec 'cypress/e2e/smoke-tests/**/*.ts'",
+    "cy:run:smoke": "yarn cy:run --spec 'cypress/e2e/smoke-tests/**/*.ts'",
+    "cy:run:critical": "yarn cy:run --spec 'cypress/e2e/critical-path-tests/**/*.ts'",
     "cy:open": "cypress open",
     "cy:delete:reports": "rm cypress/results/* || true",
     "cy:combine:reports": "jrm cypress/results/combined-report.xml \"cypress/results/*.xml\"",
@@ -72,6 +73,7 @@
   "devDependencies": {
     "@babel/core": "7.17.5",
     "@babel/plugin-transform-runtime": "7.17.0",
+    "@cypress/grep": "^3.1.5",
     "@pinia/testing": "^0.0.14",
     "@types/jsonwebtoken": "8.5.8",
     "@types/lodash": "4.14.179",

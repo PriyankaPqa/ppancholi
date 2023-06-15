@@ -12,7 +12,6 @@ import { RegistrationPage } from '../../pages/registration.page';
 import { useProvider } from '../../provider/provider';
 import { buildRegistrationUrl } from '../../support/helpers/urlBuilder';
 
-const title = '#TC1108# : SELF REG - Complete self registration..';
 let privacyStatement: PrivacyStatementPage;
 let personalInformation: PersonalInformationPage;
 let address: AddressPage;
@@ -29,7 +28,7 @@ before(() => {
   });
 });
 
-describe(`${title}`, () => {
+describe('#TC1108# : SELF REG - Complete self registration..', { tags: ['@registration'] }, () => {
   beforeEach(() => {
     cy.then(async () => {
       event = await provider.events.createEvent(mockCreateEvent());

@@ -28,8 +28,7 @@ const cannotRoles = {
 
 const allRolesValues = [...Object.values(canRoles), ...Object.values(partialRoles), ...Object.values(cannotRoles)] as UserRoles[];
 
-const title = '#TC400# - Create Standard Team';
-describe(`${title}`, () => {
+describe('#TC400# - Create Standard Team', { tags: ['@case-file', '@teams'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
       const { provider, event, team } = await createEventAndTeam(accessToken.access_token, allRolesValues);

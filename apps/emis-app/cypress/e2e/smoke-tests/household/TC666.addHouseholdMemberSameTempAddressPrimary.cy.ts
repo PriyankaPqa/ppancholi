@@ -34,9 +34,7 @@ let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
 let household = null as ICreateHouseholdRequest;
 
-const title = '#TC666# - Add Household Member Same Temp Address As Primary';
-
-describe(`${title}`, () => {
+describe('#TC666# - Add Household Member Same Temp Address As Primary', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

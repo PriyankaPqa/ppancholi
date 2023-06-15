@@ -1,3 +1,5 @@
+require('dotenv').config({ path: `${__dirname}/../../.env.local`, override: true });
+
 const spiraReporter = process.env.SPIRA !== 'false';
 
 const reporterEnabled = [

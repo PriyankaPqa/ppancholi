@@ -39,8 +39,7 @@ let program = null as IProgramEntity;
 let casefileId = '';
 let massFinancialAssistanceName = '';
 
-const title = '#TC1033# - Process a Financial Assistance filtered list';
-describe(`${title}`, () => {
+describe('#TC1033# - Process a Financial Assistance filtered list', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

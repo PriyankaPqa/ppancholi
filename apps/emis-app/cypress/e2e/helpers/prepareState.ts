@@ -124,7 +124,7 @@ const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, ma
   let attempt = 0;
   const waitForCaseFileIndexToBeUpdated = async (): Promise<number> => {
     if (searchResult === 1) {
-      cy.log('Casefile index updated');
+      cy.log('Casefile index successfully updated');
     } else if (attempt < maxAttempt) {
         const search = await provider.caseFiles.search({
           filter: { Entity: { Id: caseFileId } },

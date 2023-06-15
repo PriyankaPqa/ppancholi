@@ -26,8 +26,7 @@ let event = null as IEventEntity;
 let accessTokenL6 = '';
 let caseFileCreated = null as ICaseFileEntity;
 
-const title = '#TC202# -Add a Case Note L4-L6';
-describe(`${title}`, () => {
+describe('#TC202# -Add a Case Note L4-L6', { tags: ['@case-file'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

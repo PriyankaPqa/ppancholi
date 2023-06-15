@@ -30,16 +30,14 @@ const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles
 
 let event = null as IEventEntity;
 let accessTokenL6 = '';
+let programName = '';
 let table = null as IFinancialAssistanceTableEntity;
 let caseFileCreated1 = null as ICaseFileEntity;
 let caseFileCreated2 = null as ICaseFileEntity;
 let caseFileCreated3 = null as ICaseFileEntity;
 const householdQuantity = 3;
 
-let programName = '';
-
-const title = '#TC922# - Pre-process a Financial Assistance filtered list';
-describe(`${title}`, () => {
+describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

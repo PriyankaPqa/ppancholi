@@ -33,8 +33,7 @@ let caseFile = null as ICaseFileEntity;
 let accessTokenL6 = '';
 let table = null as IFinancialAssistanceTableEntity;
 
-const title = '#TC303# - Submit a Pre-paid Card Payment';
-describe(`${title}`, () => {
+describe('#TC303# - Submit a Pre-paid Card Payment', { tags: ['@case-file', '@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

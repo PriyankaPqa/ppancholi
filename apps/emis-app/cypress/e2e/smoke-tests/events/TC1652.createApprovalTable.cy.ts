@@ -27,8 +27,7 @@ let eventId = '';
 
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)] as UserRoles[];
 
-const title = '#TC1652# - Create an Approval table ';
-describe(`${title}`, () => {
+describe('#TC1652# - Create an Approval table ', { tags: ['@event', '@approval', '@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;

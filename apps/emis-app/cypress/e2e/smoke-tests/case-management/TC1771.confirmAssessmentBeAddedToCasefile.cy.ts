@@ -33,8 +33,7 @@
   let program = null as IProgramEntity;
   let assessment = null as IAssessmentFormEntity;
 
-  const title = '#TC1771# - Confirm that an Assessment can be added to a Case File';
-  describe(`${title}`, () => {
+  describe('#TC1771# - Confirm that an Assessment can be added to a Case File', { tags: ['@case-file', '@assessments'] }, () => {
     before(() => {
       cy.getToken().then(async (accessToken) => {
         accessTokenL6 = accessToken.access_token;

@@ -16,10 +16,10 @@ const cannotRoles = {
   ReadOnly: UserRoles.readonly,
 };
 
-const title = '#TC160# - Create an Event';
-describe(`${title}`, () => {
+describe('#TC160# - Create an Event', { tags: ['@event'] }, () => {
   describe('level6', () => {
     beforeEach(() => {
+      cy.log(Cypress.env('USER_0_MAIL'));
       cy.login();
       cy.goTo('events/create');
     });

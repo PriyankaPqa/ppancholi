@@ -22,6 +22,8 @@ export default defineConfig({
         printLogsToConsole: 'onFail', // 'never'
         includeSuccessfulHookLogs: false,
       });
+      // eslint-disable-next-line global-require
+      require('@cypress/grep/src/plugin')(config);
       return cloudPlugin(on, config);
     },
     videoUploadOnPasses: false,

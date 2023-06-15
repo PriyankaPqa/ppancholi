@@ -27,8 +27,7 @@ const cannotRoles = {
 const canRolesValues = [...Object.values(canRoles)] as UserRoles[];
 const addedRolesValues = [UserRoles.level1, UserRoles.level2];
 
-const title = '#TC404# - Add Members To Standard Team';
-describe(`${title}`, () => {
+describe('#TC404# - Add Members To Standard Team', { tags: ['@case-file', '@teams'] }, () => {
   before(() => {
     cy.getToken().then(async (accessToken) => {
       const { provider, event, team } = await createEventAndTeam(accessToken.access_token, canRolesValues);

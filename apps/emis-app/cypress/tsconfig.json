@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "types": ["cypress", "cypress-xpath"]
+    "types": ["cypress", "cypress-xpath", "@cypress/grep"]
   },
   "include": [
     // add all files in which you see the "parserOptions.project" error
