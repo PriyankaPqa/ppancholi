@@ -128,19 +128,21 @@ const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, ma
     } else if (attempt < maxAttempt) {
         const search = await provider.caseFiles.search({
           filter: { Entity: { Id: caseFileId } },
-          top: 999,
+          top: 1,
         });
         searchResult = search.odataCount;
         attempt += 1;
         if (searchResult === 0) {
           // eslint-disable-next-line
-          cy.wait(500)
-          cy.log(`casefile index search attempt ${attempt}`);
+          cy.wait(2000)
+          cy.log(`Casefile index search attempt ${attempt}`);
           return waitForCaseFileIndexToBeUpdated();
         }
       } else {
         throw new Error(`Failed to search for index after ${maxAttempt} retries.`);
-      } return searchResult;
+      }
+    cy.log('Casefile index successfully updated');
+    return searchResult;
   };
   return waitForCaseFileIndexToBeUpdated();
 };
@@ -154,9 +156,10 @@ const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, ma
  * @param programId
  */
 // eslint-disable-next-line
-export const prepareStateHouseholdMassFinancialAssistance = async (accessToken: string, event:IEventEntity, eventId: string, tableId: string, programId: string) => {
+export const prepareStateHouseholdMassFinancialAssistance = async (accessToken: string, event:IEventEntity, tableId: string, programId: string) => {
   const provider = useProvider(accessToken);
   const responseCreateHousehold = await createHousehold(provider, event);
+  const eventId = event.id;
   const caseFileId = responseCreateHousehold.registrationResponse.caseFile.id;
   const searchResult = await searchCasefileAndWait(provider, caseFileId);
   if (searchResult === 1) {
@@ -164,5 +167,5 @@ export const prepareStateHouseholdMassFinancialAssistance = async (accessToken: 
     const responseMassFinancialAssistance = await provider.massActions.create('financial-assistance-from-list', mockCreateMassFinancialAssistance);
     return { responseMassFinancialAssistance, responseCreateHousehold };
   }
-    throw new Error('Casefile index not yet updated');
+    throw new Error('Event index not yet updated');
 };

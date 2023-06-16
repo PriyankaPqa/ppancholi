@@ -80,7 +80,7 @@ export const fixtureProgram = (retries: number): IAddNewProgramFields => ({
       fr: 'Program Description Fr for TC323',
     },
   },
-  paymentModalitiesIndex: 1,
+  paymentModalityIndexes: [0, 1, 2, 3, 4, 5, 6],
 });
 
 export const fixtureFinancialAssistanceTable = (retries: number): IFinancialAssistanceTableData => ({

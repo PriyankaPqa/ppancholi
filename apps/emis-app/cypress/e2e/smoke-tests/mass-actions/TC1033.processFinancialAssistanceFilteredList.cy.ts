@@ -39,36 +39,41 @@ let program = null as IProgramEntity;
 let casefileId = '';
 let massFinancialAssistanceName = '';
 
-describe('#TC1033# - Process a Financial Assistance filtered list', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
-  before(() => {
-    cy.getToken().then(async (tokenResponse) => {
-      accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
-      const { provider, team } = resultPrepareStateEvent;
-      event = resultPrepareStateEvent.event;
-      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id);
-      table = resultCreateProgram.table;
-      program = resultCreateProgram.program;
-      cy.wrap(provider).as('provider');
-      cy.wrap(team).as('teamCreated');
-    });
-  });
-  after(function () {
-    if (this.teamCreated?.id && this.provider) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
-    }
-  });
+// There is a chance for this test to be flaky because of indexes and search. If that's the case, it's better to use test it with a CSV instead of filtered list
+describe(
+  '#TC1033# - Process a Financial Assistance filtered list',
+  {
+    tags: ['@financial-assistance', '@mass-actions'],
+    retries: {
+      runMode: 3,
+    },
+  },
+() => {
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.then(async () => {
-            const resultMassFinancialAssistance = await prepareStateHouseholdMassFinancialAssistance(accessTokenL6, event, event.id, table.id, program.id);
+          cy.getToken().then(async (tokenResponse) => {
+            accessTokenL6 = tokenResponse.access_token;
+            const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
+            const { provider, team } = resultPrepareStateEvent;
+            event = resultPrepareStateEvent.event;
+            const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id);
+            table = resultCreateProgram.table;
+            program = resultCreateProgram.program;
+            const resultMassFinancialAssistance = await prepareStateHouseholdMassFinancialAssistance(accessTokenL6, event, table.id, program.id);
             massFinancialAssistanceName = resultMassFinancialAssistance.responseMassFinancialAssistance.name;
             casefileId = resultMassFinancialAssistance.responseCreateHousehold.registrationResponse.caseFile.id;
             cy.login(roleValue);
             cy.goTo(`mass-actions/financial-assistance/details/${resultMassFinancialAssistance.responseMassFinancialAssistance.id}`);
+            cy.wrap(provider).as('provider');
+            cy.wrap(team).as('teamCreated');
           });
+        });
+        afterEach(function () {
+          if (this.teamCreated?.id && this.provider) {
+            removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+          }
         });
         it('should successfully process a financial assistance filtered list', () => {
           const massFinancialAssistanceDetailsPage = new MassFinancialAssistanceDetailsPage();
@@ -123,4 +128,5 @@ describe('#TC1033# - Process a Financial Assistance filtered list', { tags: ['@f
       });
     }
   });
-});
+},
+);

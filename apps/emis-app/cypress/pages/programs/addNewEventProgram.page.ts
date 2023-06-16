@@ -16,7 +16,7 @@ export enum DataTest {
 export interface IAddNewProgramFields {
   name: IMultilingual,
   description: IMultilingual,
-  paymentModalitiesIndex: number,
+  paymentModalityIndexes: number[],
 }
 
 export class AddNewEventProgramPage {
@@ -41,11 +41,9 @@ export class AddNewEventProgramPage {
       cy.getByDataTest(this.programName).type(data.name.translation.en);
     }
 
-    if (data.paymentModalitiesIndex) {
-      cy.selectListElementByIndex(DataTest.paymentModalities, data.paymentModalitiesIndex);
+    if (data.paymentModalityIndexes) {
+      cy.selectMultipleElementByIndex(DataTest.paymentModalities, data.paymentModalityIndexes);
     }
-
-    cy.getByDataTest(this.eligibilityCriteriaAuthenticated).check({ force: true });
 
     if (data.description) {
       cy.getByDataTest(this.programDescription).type(data.description.translation.en);
@@ -75,6 +73,10 @@ export class AddNewEventProgramPage {
 
   public getProgramCreateButton() {
     return cy.getByDataTest(this.programCreate);
+  }
+
+  public uncheckApprovalRequiredCheckbox() {
+    return cy.getByDataTest(this.approvalRequired).uncheck({ force: true });
   }
 
   public getApprovalRequiredCheckbox() {

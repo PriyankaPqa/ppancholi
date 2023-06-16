@@ -51,7 +51,8 @@ describe('#TC323# - Add Event Program', { tags: ['@event'] }, () => {
 
           const addNewEventProgramPage = new AddNewEventProgramPage();
           addNewEventProgramPage.getStatusName().should('eq', 'Inactive');
-          addNewEventProgramPage.getApprovalRequiredCheckbox().should('be.checked');
+          addNewEventProgramPage.uncheckApprovalRequiredCheckbox();
+          addNewEventProgramPage.getApprovalRequiredCheckbox().should('not.be.checked');
           addNewEventProgramPage.getProgramCreateButton().click().should('be.disabled');
           addNewEventProgramPage.fill(programData);
           addNewEventProgramPage.toggleStatus();

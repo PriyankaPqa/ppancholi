@@ -4,7 +4,7 @@ import { EPaymentModalities } from '@libs/entities-lib/src/program';
 import { IMassActionFinancialAssistanceCreatePayload } from '@libs/services-lib/src/mass-actions/entity';
 
 export const mockCreateMassFinancialAssistanceRequest = (event: IEventEntity, force?: Partial<IMassActionFinancialAssistanceCreatePayload>) => ({
-  name: `test mass action - financial assistance - s00${getRandomNumber()}00`,
+  name: `test mass action - financial assistance - ss${getRandomNumber()}`,
   description: 'description mass action',
   eventId: '',
   tableId: '',

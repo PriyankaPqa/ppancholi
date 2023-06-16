@@ -35,7 +35,7 @@ export const mockCreateEvent = (): IEventEntity => ({
       specifiedOther: '',
     },
     dateReported: today,
-    assistanceNumber: faker.phone.number('+1514######'),
+    assistanceNumber: faker.phone.number('+1514#######'),
   },
   callCentres: [],
   registrationLocations: [],
