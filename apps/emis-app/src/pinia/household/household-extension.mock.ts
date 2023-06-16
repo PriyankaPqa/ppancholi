@@ -6,7 +6,6 @@ export function getMockExtensionComponents(entity: IHouseholdEntity) {
     searchResultsShown: ref(false),
     updateNoFixedHomeAddress: jest.fn(() => entity),
     updateHomeAddress: jest.fn(() => entity),
-    fetchHouseholdHistory: jest.fn(),
     flagNewDuplicate: jest.fn(() => [entity]),
     flagDuplicate: jest.fn(() => [entity]),
     resolveDuplicate: jest.fn(() => [entity]),

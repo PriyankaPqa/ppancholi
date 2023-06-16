@@ -161,14 +161,6 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     return this.http.get(`${this.baseUrl}/metadata/${id}/history`);
   }
 
-  async getMemberHistory(id: uuid): Promise<IVersionedEntity[]> {
-    return this.http.get(`${this.baseApi}/persons/${id}/history`);
-  }
-
-  async getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
-    return this.http.get(`${this.baseApi}/persons/metadata/${id}/history`);
-  }
-
   async getDuplicates(id: uuid): Promise<IDuplicateData[]> {
     return this.http.get(`${this.baseUrl}/${id}/duplicates`);
   }

@@ -280,18 +280,6 @@ describe('>>> Beneficiaries Service', () => {
     expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/metadata/${id}/history`);
   });
 
-  test('getMemberHistory is linked to the correct URL', async () => {
-    const id = 'mock-id';
-    await service.getMemberHistory(id);
-    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/persons/${id}/history`);
-  });
-
-  test('getMemberMetadataHistory is linked to the correct URL', async () => {
-    const id = 'mock-id';
-    await service.getMemberMetadataHistory(id);
-    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/persons/metadata/${id}/history`);
-  });
-
   describe('getDuplicates', () => {
     it('is linked to the correct URL and params', async () => {
       const id = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
