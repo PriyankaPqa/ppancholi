@@ -1,5 +1,4 @@
 import { IAddNewPaymentLineFields } from 'cypress/pages/financial-assistance-payment/addNewPaymentLine.page';
-import { mockFinancialAssistanceTableSubItemData } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistanceTables';
 import { ICaseNotesData } from '../pages/casefiles/caseNotes.page';
 
 export const fixtureCaseNotes = (retries: number): ICaseNotesData => ({
@@ -8,10 +7,18 @@ export const fixtureCaseNotes = (retries: number): ICaseNotesData => ({
   description: 'Case Notes Description En',
 });
 
-export const fixturePaymentLine = (): IAddNewPaymentLineFields => ({
+export const fixturePrepaidCardPaymentLine = (): IAddNewPaymentLineFields => ({
   item: 'Clothing',
   subItem: 'Winter Clothing',
   paymentModality: 'Prepaid Card',
-  amount: `${mockFinancialAssistanceTableSubItemData().maximumAmount}.00`,
+  amount: '80.00',
   relatedNumber: '11001',
+});
+
+export const fixtureInvoicePaymentLine = (): IAddNewPaymentLineFields => ({
+  item: 'Clothing',
+  subItem: 'Winter Clothing',
+  paymentModality: 'Invoice',
+  amount: '100.00',
+  relatedNumber: '22222',
 });

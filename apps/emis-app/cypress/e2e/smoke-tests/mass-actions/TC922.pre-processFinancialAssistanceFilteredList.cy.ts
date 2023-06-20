@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
+import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { formatCurrentDate } from '@libs/cypress-lib/helpers';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
@@ -44,7 +44,7 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
       const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
       const { provider, team } = resultPrepareStateEvent;
       event = resultPrepareStateEvent.event;
-      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id);
+      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Fixed);
       table = resultCreateProgram.table;
       programName = resultCreateProgram.program.name.translation.en;
       cy.wrap(provider).as('provider');

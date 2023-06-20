@@ -2,7 +2,7 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { mockFinancialAssistancePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
-import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
+import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
 import { format } from 'date-fns';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
@@ -40,7 +40,7 @@ describe('#TC303# - Submit a Pre-paid Card Payment', { tags: ['@case-file', '@fi
       const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
       event = resultPrepareStateEvent.event;
       const { provider, team } = resultPrepareStateEvent;
-      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id);
+      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Fixed);
       table = resultCreateProgram.table;
       cy.wrap(provider).as('provider');
       cy.wrap(team).as('teamCreated');

@@ -8,6 +8,7 @@ import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { mockCreateMassFinancialAssistanceRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { linkEventToTeamForManyRoles } from './teams';
 
 /**
@@ -48,9 +49,9 @@ export const createHousehold = async (provider: IProvider, event: IEventEntity) 
  * @param provider
  * @param eventId
  */
-export const createProgramWithTableWithItemAndSubItem = async (provider: IProvider, eventId: string) => {
+export const createProgramWithTableWithItemAndSubItem = async (provider: IProvider, eventId: string, amountType:EFinancialAmountModes) => {
   const { program, mockCreateProgram } = await createProgram(provider, eventId);
-  const mockCreateFinancialAssistanceTable = mockCreateFinancialAssistanceTableRequest({ eventId, programId: program.id });
+  const mockCreateFinancialAssistanceTable = mockCreateFinancialAssistanceTableRequest(amountType, { eventId, programId: program.id });
   const table = await provider.financialAssistanceTables.createFinancialAssistanceTable(mockCreateFinancialAssistanceTable);
   return { program, mockCreateProgram, table };
 };

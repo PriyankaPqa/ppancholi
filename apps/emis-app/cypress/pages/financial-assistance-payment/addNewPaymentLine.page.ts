@@ -5,6 +5,7 @@ export enum DataTest {
   amount = 'txt_amount',
   addPaymentLineDetails = 'dialog-submit-action',
   relatedNumber = 'txt_related_number',
+  actualAmount = 'txt_actualamount',
 }
 
 export interface IAddNewPaymentLineFields {
@@ -22,6 +23,8 @@ export class AddNewPaymentLinePage {
 
   private relatedNumber = { selector: DataTest.relatedNumber, type: 'input' };
 
+  private actualAmount = { selector: DataTest.actualAmount, type: 'input' };
+
   async fill(data: IAddNewPaymentLineFields) {
     if (data.item) {
     cy.selectListElementByValue(DataTest.item, data.item);
@@ -34,6 +37,10 @@ export class AddNewPaymentLinePage {
     if (data.paymentModality) {
       cy.selectListElementByValue(DataTest.paymentModalities, data.paymentModality);
     }
+  }
+
+  public fillAmount(amount: string) {
+    cy.getByDataTest(this.amount).type(amount);
   }
 
   public fillRelatedNumber(relatedNumber: string) {
@@ -50,5 +57,9 @@ export class AddNewPaymentLinePage {
 
   public getAmountValue() {
     return cy.getByDataTest(this.amount).invoke('val').then((val) => `${val}`.trim());
+  }
+
+  public getActualAmountField() {
+    return cy.getByDataTest(this.actualAmount);
   }
 }

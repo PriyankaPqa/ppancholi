@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
+import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { format } from 'date-fns';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
@@ -58,7 +58,7 @@ describe(
             const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
             const { provider, team } = resultPrepareStateEvent;
             event = resultPrepareStateEvent.event;
-            const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id);
+            const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Fixed);
             table = resultCreateProgram.table;
             program = resultCreateProgram.program;
             const resultMassFinancialAssistance = await prepareStateHouseholdMassFinancialAssistance(accessTokenL6, event, table.id, program.id);

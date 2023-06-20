@@ -1,11 +1,11 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { AddFinancialAssistancePage } from 'cypress/pages/financial-assistance-payment/addFinancialAssistance.page';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
-import { fixturePrepaidCardPaymentLine } from '../../../fixtures/case-management';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
+import { fixtureInvoicePaymentLine } from '../../../fixtures/case-management';
+import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -26,31 +26,31 @@ const cannotRoles = {
 
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
 
-let event = null as IEventEntity;
 let accessTokenL6 = '';
+let event = null as IEventEntity;
 let caseFileCreated = null as ICaseFileEntity;
 let table = null as IFinancialAssistanceTableEntity;
 
-describe('#TC210# -Create a Pre-paid Card Payment Line', { tags: ['@case-file', '@financial-assistance'] }, () => {
+describe('#TC209# - Create Invoice Payment Line', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
       const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
       const { provider, team } = resultPrepareStateEvent;
       event = resultPrepareStateEvent.event;
-      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Fixed);
+      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Variable);
       table = resultCreateProgram.table;
       cy.wrap(provider).as('provider');
       cy.wrap(team).as('teamCreated');
       cy.wrap(table).as('faTable');
     });
   });
-
   after(function () {
     if (this.teamCreated?.id && this.provider) {
       removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
     }
   });
+
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
@@ -62,24 +62,25 @@ describe('#TC210# -Create a Pre-paid Card Payment Line', { tags: ['@case-file', 
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create a Prepaid Card Payment Line', function () {
-          const paymentLineData = fixturePrepaidCardPaymentLine();
+        it('should successfully create Invoice Payment Line', function () {
+          const paymentLineData = fixtureInvoicePaymentLine();
 
           const addFinancialAssistancePage = new AddFinancialAssistancePage();
-          addFinancialAssistancePage.getAddPaymentLineButton().should('be.disabled');
+          addFinancialAssistancePage.getAddPaymentLineButton().should('not.be.enabled');
           addFinancialAssistancePage.getCreateButton().should('not.be.enabled');
           addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
-          addFinancialAssistancePage.fillDescription('Financial Description Payment');
-          addFinancialAssistancePage.getAddPaymentLineButton().click();
+          addFinancialAssistancePage.fillDescription(`Financial Description Invoice Payment Line - retries - ${this.test.retries.length}`);
 
           const addNewPaymentLinePage = addFinancialAssistancePage.addPaymentLine();
           addNewPaymentLinePage.fill(paymentLineData);
-          addNewPaymentLinePage.getAmountValue().should('eq', paymentLineData.amount);
+          addNewPaymentLinePage.getActualAmountField().should('have.attr', 'disabled').and('contain', 'disabled');
           addNewPaymentLinePage.getRelatedNumberField().should('be.visible');
+          addNewPaymentLinePage.fillAmount(paymentLineData.amount);
           addNewPaymentLinePage.fillRelatedNumber(paymentLineData.relatedNumber);
           addNewPaymentLinePage.addNewPaymentLine();
 
-          addFinancialAssistancePage.getPaymentLineGroupTitle().should('eq', 'Prepaid card');
+          addFinancialAssistancePage.getSectionTitleElement().contains('Payment line(s)').should('be.visible');
+          addFinancialAssistancePage.getPaymentLineGroupTitle().should('eq', 'Invoice');
           addFinancialAssistancePage.getItemEditButton().should('be.visible');
           addFinancialAssistancePage.getItemDeleteButton().should('be.visible');
           addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
@@ -110,7 +111,7 @@ describe('#TC210# -Create a Pre-paid Card Payment Line', { tags: ['@case-file', 
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should not be able to create a Prepaid Card Payment Line', () => {
+        it('should not be able to create create Invoice Payment Line', () => {
           const addFinancialAssistancePage = new AddFinancialAssistancePage();
 
           cy.contains('You do not have permission to access this page').should('be.visible');
