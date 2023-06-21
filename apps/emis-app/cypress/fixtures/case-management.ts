@@ -28,5 +28,13 @@ export const fixtureGiftCardPaymentLine = (): IAddNewPaymentLineFields => ({
   subItem: 'Winter Clothing',
   paymentModality: 'Gift Card',
   amount: '100.00',
-  relatedNumber: '22222',
+  relatedNumber: '33333',
+});
+
+export const fixtureVoucherPaymentLine = (): IAddNewPaymentLineFields => ({
+  item: 'Clothing',
+  subItem: 'Winter Clothing',
+  paymentModality: 'Voucher',
+  amount: '100.00',
+  relatedNumber: '44444',
 });

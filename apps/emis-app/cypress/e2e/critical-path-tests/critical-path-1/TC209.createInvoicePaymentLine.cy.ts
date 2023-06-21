@@ -6,6 +6,7 @@ import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareSt
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureInvoicePaymentLine } from '../../../fixtures/case-management';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
+import { paymentLineCanSteps } from './canSteps';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -63,39 +64,12 @@ describe('#TC209# - Create Invoice Payment Line', { tags: ['@financial-assistanc
           });
         });
         it('should successfully create Invoice Payment Line', function () {
-          const paymentLineData = fixtureInvoicePaymentLine();
-
-          const addFinancialAssistancePage = new AddFinancialAssistancePage();
-          addFinancialAssistancePage.getAddPaymentLineButton().should('not.be.enabled');
-          addFinancialAssistancePage.getCreateButton().should('not.be.enabled');
-          addFinancialAssistancePage.selectTable(this.faTable.name.translation.en);
-          addFinancialAssistancePage.fillDescription(`Financial Description Invoice Payment Line - retries - ${this.test.retries.length}`);
-
-          const addNewPaymentLinePage = addFinancialAssistancePage.addPaymentLine();
-          addNewPaymentLinePage.fill(paymentLineData);
-          addNewPaymentLinePage.getActualAmountField().should('have.attr', 'disabled').and('contain', 'disabled');
-          addNewPaymentLinePage.getRelatedNumberField().should('be.visible');
-          addNewPaymentLinePage.fillAmount(paymentLineData.amount);
-          addNewPaymentLinePage.fillRelatedNumber(paymentLineData.relatedNumber);
-          addNewPaymentLinePage.addNewPaymentLine();
-
-          addFinancialAssistancePage.getSectionTitleElement().contains('Payment line(s)').should('be.visible');
-          addFinancialAssistancePage.getPaymentLineGroupTitle().should('eq', 'Invoice');
-          addFinancialAssistancePage.getItemEditButton().should('be.visible');
-          addFinancialAssistancePage.getItemDeleteButton().should('be.visible');
-          addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
-          addFinancialAssistancePage.getSubmitAssistanceButton().should('not.be.enabled');
-          addFinancialAssistancePage.getCreateButton().click();
-
-          cy.contains('The financial assistance has been successfully created').should('be.visible');
-          addFinancialAssistancePage.getPaymentStatus().should('eq', 'New');
-          addFinancialAssistancePage.getPaymentEditButton().should('be.visible');
-          addFinancialAssistancePage.getPaymentDeleteButton().should('be.visible');
-          addFinancialAssistancePage.getPaymentLineItemTitle().should('eq', `${paymentLineData.item} > ${paymentLineData.subItem}`);
-          addFinancialAssistancePage.getRelatedNumber().should('string', paymentLineData.relatedNumber);
-          addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');
-          addFinancialAssistancePage.getSubmitAssistanceButton().should('be.enabled');
-          addFinancialAssistancePage.getBackToFinancialAssistanceButton().should('be.enabled');
+          paymentLineCanSteps({
+            faTable: this.faTable,
+            retries: this.test.retries.length,
+            paymentLineData: fixtureInvoicePaymentLine(),
+            groupTitle: 'Invoice',
+          });
         });
       });
     }

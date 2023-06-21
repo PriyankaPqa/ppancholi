@@ -4,9 +4,9 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { fixtureGiftCardPaymentLine } from '../../../fixtures/case-management';
-import { paymentLineCanSteps } from './canSteps';
+import { fixtureVoucherPaymentLine } from '../../../fixtures/case-management';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
+import { paymentLineCanSteps } from './canSteps';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -32,7 +32,7 @@ let event = null as IEventEntity;
 let caseFileCreated = null as ICaseFileEntity;
 let table = null as IFinancialAssistanceTableEntity;
 
-describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assistance'] }, () => {
+describe('#TC211# - Create Voucher Payment Line', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -63,12 +63,12 @@ describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assista
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create Gift Card Payment Line', function () {
+        it('should successfully create Voucher Payment Line', function () {
           paymentLineCanSteps({
             faTable: this.faTable,
             retries: this.test.retries.length,
-            paymentLineData: fixtureGiftCardPaymentLine(),
-            groupTitle: 'Gift card',
+            paymentLineData: fixtureVoucherPaymentLine(),
+            groupTitle: 'Voucher',
           });
         });
       });
@@ -85,7 +85,7 @@ describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assista
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should not be able to create create Gift Card Payment Line', () => {
+        it('should not be able to create Voucher Payment Line', () => {
           const addFinancialAssistancePage = new AddFinancialAssistancePage();
 
           cy.contains('You do not have permission to access this page').should('be.visible');
