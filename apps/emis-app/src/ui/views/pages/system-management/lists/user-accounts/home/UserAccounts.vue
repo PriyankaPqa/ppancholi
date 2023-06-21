@@ -255,7 +255,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     tableProps(): Record<string, unknown> {
       return {
-        loading: this.loading,
+        loading: useUserAccountStore().searchLoading,
         footerProps: { itemsPerPageOptions: [5, 10, 15, 250] },
       };
     },

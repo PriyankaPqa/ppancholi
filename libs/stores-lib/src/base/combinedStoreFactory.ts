@@ -87,7 +87,6 @@ export class CombinedStoreFactory<TEntity extends IEntity, TMetadata extends IEn
   async search(params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean): Promise<IAzureTableSearchResults> {
     this.storeEntity.setSearchLoading(true);
     const newParams = { ...params };
-
     if (includeInactiveItems !== true) {
       newParams.filter = newParams.filter || {};
       if (typeof (newParams.filter) === 'string') {

@@ -277,6 +277,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     tableProps(): Record<string, unknown> {
       return {
+        loading: useAssessmentTemplateStore().searchLoading,
         itemClass: (item: IAssessmentBaseCombined) => (item.pinned ? 'pinned' : ''),
       };
     },

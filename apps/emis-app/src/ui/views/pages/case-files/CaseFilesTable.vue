@@ -165,7 +165,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       getLocalStringDate: helpers.getLocalStringDate,
       helpLink: 'zendesk.help_link.caseFilesTable',
       searchEventsResultIds: [] as string[],
-      searchLoading: false,
       searchEventMethod: 'searchMyEvents',
       options: {
         page: 1,
@@ -346,7 +345,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     tableProps(): Record<string, unknown> {
       return {
-        loading: this.searchLoading,
+        loading: useCaseFileStore().searchLoading,
         itemClass: (item: ICaseFileCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
@@ -399,7 +398,6 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     async fetchData(params: IAzureSearchParams) {
-      this.searchLoading = false;
       const res = await this.combinedCaseFileStore.search({
         search: params.search,
         filter: params.filter,

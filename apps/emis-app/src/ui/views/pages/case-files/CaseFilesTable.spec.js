@@ -11,9 +11,11 @@ import { createTestingPinia } from '@pinia/testing';
 import { useUserStore } from '@/pinia/user/user';
 
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './CaseFilesTable.vue';
 
 const mockCaseFiles = mockCombinedCaseFiles();
+const { caseFileStore, pinia } = useMockCaseFileStore(createTestingPinia({ stubActions: false }));
 
 const localVue = createLocalVue();
 
@@ -28,7 +30,7 @@ describe('CaseFilesTable.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
-        pinia: createTestingPinia({ stubActions: false }),
+        pinia,
         computed: {
           tableData: () => mockCombinedCaseFiles(),
         },
@@ -287,6 +289,15 @@ describe('CaseFilesTable.vue', () => {
 
     describe('tableProps', () => {
       it('returns the correct object', () => {
+        wrapper = mount(Component, {
+          localVue,
+          pinia,
+          computed: {
+            tableData: () => mockCombinedCaseFiles(),
+          },
+        });
+        caseFileStore.searchLoading = false;
+        wrapper.vm.search = jest.fn();
         expect(wrapper.vm.tableProps.loading).toEqual(false);
         expect(wrapper.vm.tableProps.itemClass).toBeDefined();
       });

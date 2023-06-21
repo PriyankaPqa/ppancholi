@@ -267,6 +267,16 @@ describe('AssessmentTemplatesHome.vue', () => {
         }]);
       });
     });
+
+    describe('tableProps', () => {
+      it('returns the correct object', async () => {
+        await mountWrapper();
+        assessmentTemplateStore.searchLoading = false;
+        wrapper.vm.search = jest.fn();
+        expect(wrapper.vm.tableProps.loading).toEqual(false);
+        expect(wrapper.vm.tableProps.itemClass).toBeDefined();
+      });
+    });
   });
 
   describe('Lifecycle', () => {
