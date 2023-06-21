@@ -15,6 +15,7 @@ export enum DataTest {
   paymentDelete = 'delete-link',
   backToFinancialAssistance = 'cancel',
   relatedNumber = 'paymentLineItem__related-number',
+  paymentLineGroupStatus = 'paymentLineGroup__statusMessage',
   title = 'page-title',
 }
 
@@ -48,6 +49,8 @@ export class AddFinancialAssistancePage {
   private relatedNumber = { selector: DataTest.relatedNumber };
 
   private title = { selector: DataTest.title };
+
+  private paymentLineGroupStatus = { selector: DataTest.paymentLineGroupStatus };
 
   public selectTable(tableName: string) {
     return cy.searchAndSelect(DataTest.tableSelect, tableName);
@@ -116,5 +119,9 @@ export class AddFinancialAssistancePage {
 
   public getRelatedNumber() {
     return cy.getByDataTest(this.relatedNumber).invoke('text').then((text) => text.trim());
+  }
+
+  public getPaymentLineGroupStatus() {
+    return cy.getByDataTest(this.paymentLineGroupStatus).invoke('text').then((text) => text.trim());
   }
 }

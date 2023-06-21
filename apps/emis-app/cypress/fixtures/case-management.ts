@@ -22,3 +22,11 @@ export const fixtureInvoicePaymentLine = (): IAddNewPaymentLineFields => ({
   amount: '100.00',
   relatedNumber: '22222',
 });
+
+export const fixtureGiftCardPaymentLine = (): IAddNewPaymentLineFields => ({
+  item: 'Clothing',
+  subItem: 'Winter Clothing',
+  paymentModality: 'Gift Card',
+  amount: '100.00',
+  relatedNumber: '22222',
+});
