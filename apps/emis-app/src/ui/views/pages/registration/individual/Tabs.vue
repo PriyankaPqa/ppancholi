@@ -42,7 +42,6 @@
 import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import Vue from 'vue';
 import { useRegistrationStore } from '@/pinia/registration/registration';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'Tabs',
@@ -56,21 +55,7 @@ export default Vue.extend({
 
   computed: {
     allTabs(): IRegistrationMenuItem[] {
-      const allTabs = useRegistrationStore().tabs;
-      // When feature flag is removed, the new translation keys need to be set in the files 'tabs'
-      if (this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)) {
-        return allTabs.map((t) => {
-          if (t.id === 'isRegistered') {
-            return {
-              ...t,
-              labelKey: t.labelKey === 'registration.menu.is_registered' ? 'registration.menu.isIndividualRegistered' : 'household.split.household_search',
-              titleKey: 'registration.menu.isIndividualRegistered',
-            };
-          }
-          return t;
-        });
-      }
-      return allTabs;
+        return useRegistrationStore().tabs;
     },
 
     currentTab(): IRegistrationMenuItem {

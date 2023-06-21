@@ -26,7 +26,7 @@
             <div v-if="assessmentResponse.completedBy">
               {{ assessmentResponse.completedBy.type === CompletedByType.Crc
                 ? assessmentResponse.completedBy.crcUserName
-                : $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm) ? $t('assessment.completedBy.individual') : $t('assessment.completedBy.beneficiary') }}
+                : $t('assessment.completedBy.individual') }}
             </div>
           </div>
           <div>

@@ -106,7 +106,7 @@ describe('ReferralForm.vue', () => {
         await wrapper.vm.confirmResetConsent();
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
           title: 'caseFile.referral.resetConsentConfirm.title',
-          messages: 'caseFile.referral.resetConsentConfirm.message',
+          messages: 'caseFile.referral.resetConsentConfirm.message.individual',
         });
       });
 

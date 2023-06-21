@@ -17,16 +17,13 @@
             v-if="isDuplicateError && isCrcRegistration"
             class="rc-body14 pt-6 pb-2">
             <div class="mt-2 mb-6">
-              {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-                ? $t('registration.confirmation.error.use.search.household')
-                : $t('registration.confirmation.error.use.search') }}
+              {{ $t('registration.confirmation.error.use.search.household') }}
             </div>
             <v-btn
               color="primary"
               data-test="confirmation-errorRegistration-beneficiarySearchButton"
               @click="$emit('search-household')">
-              {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-                ? $t('registration.confirmation.error.search.household.button') : $t('registration.confirmation.error.search.button') }}
+              {{ $t('registration.confirmation.error.search.household.button') }}
             </v-btn>
           </div>
           <template v-else>
@@ -101,8 +98,7 @@ export default Vue.extend({
     },
 
     errorMessage(): TranslateResult {
-      const duplicateErrorMessage = this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-        ? this.$t('registration.confirmation.error.message.duplicate.household') : this.$t('registration.confirmation.error.message.duplicate');
+      const duplicateErrorMessage = this.$t('registration.confirmation.error.message.duplicate.household');
 
       return this.isDuplicateError ? duplicateErrorMessage : this.$t('registration.confirmation.error');
     },

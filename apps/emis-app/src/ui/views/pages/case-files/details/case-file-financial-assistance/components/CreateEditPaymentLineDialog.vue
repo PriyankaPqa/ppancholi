@@ -84,9 +84,7 @@
               v-else
               icon="mdi-information-outline"
               small-icon
-              :message="$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-                ? $t('caseFile.financialAssistance.ETransfer.noEmailNotification.individual')
-                : $t('caseFile.financialAssistance.ETransfer.noEmailNotification') "
+              :message="$t('caseFile.financialAssistance.ETransfer.noEmailNotification.individual')"
               :styles="{
                 'background-color': 'var(--v-status_yellow_pale-base)',
                 color: 'var(--v-grey-darken4)',
@@ -282,10 +280,7 @@ export default mixins(caseFileDetail).extend({
     return {
       paymentGroup: null as IFinancialAssistancePaymentGroup,
       address: new Address(),
-      payeeTypes: helpers.enumToTranslatedCollection(
-        PayeeType,
-        this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm) ? 'enums.payeeType.new' : 'enums.payeeType',
-      ),
+      payeeTypes: helpers.enumToTranslatedCollection(PayeeType, 'enums.payeeType.new'),
       loaded: false,
       defaultBeneficiaryData: {
         address: null as IAddressData,
@@ -311,8 +306,7 @@ export default mixins(caseFileDetail).extend({
 
     modalityError() : string {
       if (this.paymentGroup.groupingInformation.modality === EPaymentModalities.ETransfer && !this.defaultBeneficiaryData.email) {
-        return this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm) ? 'caseFile.financialAssistance.ETransfer.noEmail.individual'
-          : 'caseFile.financialAssistance.ETransfer.noEmail';
+        return 'caseFile.financialAssistance.ETransfer.noEmail.individual';
       }
       return null;
     },

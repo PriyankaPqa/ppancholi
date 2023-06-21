@@ -1,7 +1,6 @@
 <template>
   <privacy-statement-lib
-    :checkbox-label="$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-      ? $t('registration.privacy_statement.agreeCRC.individual') : $t('registration.privacy_statement.agreeCRC')"
+    :checkbox-label="$t('registration.privacy_statement.agreeCRC.individual')"
     :consent-statement="consentStatement">
     <div class="grey-container py-3 px-3">
       <v-row>

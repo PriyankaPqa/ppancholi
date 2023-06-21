@@ -12,9 +12,7 @@
             <message-box
               v-if="showWarning"
               icon="mdi-alert"
-              :message="$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-                ? $t('caseFile.financialAssistance.warning.program.eligibility.household')
-                : $t('caseFile.financialAssistance.warning.program.eligibility')" />
+              :message="$t('caseFile.financialAssistance.warning.program.eligibility.household')" />
             <!-- Form -->
             <v-sheet v-if="!isDetailsMode" rounded outlined class="pa-8 mb-8">
               <create-edit-financial-assistance-form

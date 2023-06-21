@@ -46,9 +46,7 @@
                       data-test="refmethod_referral"
                       @click="confirmResetConsent" />
                     <div class="rc-body12 grey--text ml-8">
-                      {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-                        ? $t('referral.method.referral.details.individual')
-                        : $t('referral.method.referral.details') }}
+                      {{ $t('referral.method.referral.details.individual') }}
                     </div>
                   </v-col>
                   <v-col cols="6">
@@ -58,9 +56,7 @@
                       data-test="refmethod_warm"
                       @click="showConsent = true" />
                     <div class="rc-body12 grey--text ml-8">
-                      {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-                        ? $t('referral.method.warm.details.individual')
-                        : $t('referral.method.warm.details') }}
+                      {{ $t('referral.method.warm.details.individual') }}
                     </div>
                   </v-col>
                 </v-radio-group>
@@ -203,8 +199,7 @@ export default Vue.extend({
       if (this.isEditMode && this.localReferral.referralConsentInformation.dateTimeConsent) {
         const confirmReset = await this.$confirm({
           title: this.$t('caseFile.referral.resetConsentConfirm.title'),
-          messages: this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-            ? this.$t('caseFile.referral.resetConsentConfirm.message.individual') : this.$t('caseFile.referral.resetConsentConfirm.message'),
+          messages: this.$t('caseFile.referral.resetConsentConfirm.message.individual'),
         });
 
         if (confirmReset) {

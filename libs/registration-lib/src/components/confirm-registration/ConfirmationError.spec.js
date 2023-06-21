@@ -38,7 +38,7 @@ describe('ConfirmRegistrationLib.vue', () => {
     describe('errorMessage', () => {
       it('should return proper message for a duplicate', async () => {
         mountWrapper({ isDuplicateError: () => true });
-        expect(wrapper.vm.errorMessage).toEqual('registration.confirmation.error.message.duplicate');
+        expect(wrapper.vm.errorMessage).toEqual('registration.confirmation.error.message.duplicate.household');
       });
 
       it('should return proper message when not a duplicate', async () => {

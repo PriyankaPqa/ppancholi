@@ -385,7 +385,7 @@ describe('Individual.vue', () => {
           title: wrapper.vm.$t('registration.associate.confirmation.title'),
           messages: [
             wrapper.vm.$t('registration.associate.confirmation.message1'),
-            wrapper.vm.$t('registration.associate.confirmation.message2'),
+            wrapper.vm.$t('registration.associate.confirmation.message2.household'),
           ],
         });
       });
@@ -514,7 +514,7 @@ describe('Individual.vue', () => {
           currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           associationMode: () => true,
         });
-        expect(wrapper.vm.getTitle).toEqual('registration.details.associateBeneficiaryButton.label');
+        expect(wrapper.vm.getTitle).toEqual('registration.details.associateHouseholdButton.label');
       });
 
       it('should return proper text otherwise', () => {

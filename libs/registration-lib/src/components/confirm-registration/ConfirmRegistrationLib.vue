@@ -46,9 +46,7 @@
         </div>
         <div v-if="isCRCRegistration">
           <v-icon>mdi-information</v-icon>
-          <span class="rc-body14 ml-2">{{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-            ? $t('registration.crc_confirmation.email_sent.household')
-            : $t('registration.crc_confirmation.email_sent') }}</span>
+          <span class="rc-body14 ml-2">{{ $t('registration.crc_confirmation.email_sent.household') }}</span>
         </div>
       </div>
     </template>

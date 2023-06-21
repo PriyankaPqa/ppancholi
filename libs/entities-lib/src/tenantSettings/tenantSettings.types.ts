@@ -12,7 +12,6 @@ export enum FeatureKeys {
   HouseholdProfileStatus = 'HouseholdProfileStatus',
   ManageDuplicates = 'manageDuplicates',
   CustomConsent = 'CustomConsent',
-  ReplaceBeneficiaryTerm = 'replaceBeneficiaryTerm',
   ImpactedIndividuals = 'ImpactedIndividuals',
   LimitTagDeletionL2Plus_5959 = 'LimitTagDeletionL2Plus_5959',
   BlockFACaseFileIrregularTag = 'BlockFACaseFileIrregularTag',

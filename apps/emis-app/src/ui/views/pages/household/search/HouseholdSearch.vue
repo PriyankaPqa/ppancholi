@@ -134,7 +134,6 @@ import moment from 'moment';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { VForm } from '@libs/shared-lib/types';
 import WithRoot from '@/ui/views/components/WithRoot';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import _omit from 'lodash/omit';
 import _cloneDeep from 'lodash/cloneDeep';
 import { useRegistrationStore } from '@/pinia/registration/registration';
@@ -200,10 +199,7 @@ export default Vue.extend({
       if (this.title) {
         return this.title;
       }
-      if (this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)) {
-        return 'registration.isRegistered.title.householdSearch';
-      }
-      return 'registration.isRegistered.title';
+      return 'registration.isRegistered.title.householdSearch';
     },
 
     // Will return only non empty properties from the form object, Ex: {firstName: 'x', lastName: 'y'}

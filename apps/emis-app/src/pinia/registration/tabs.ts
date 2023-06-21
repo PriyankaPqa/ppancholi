@@ -3,8 +3,8 @@ import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/I
 export const tabs = (): IRegistrationMenuItem[] => [
   {
     id: 'isRegistered',
-    labelKey: 'registration.menu.is_registered',
-    titleKey: 'registration.menu.is_registered',
+    labelKey: 'registration.menu.isIndividualRegistered',
+    titleKey: 'registration.menu.isIndividualRegistered',
     icon: '',
     disabled: false,
     isValid: true,

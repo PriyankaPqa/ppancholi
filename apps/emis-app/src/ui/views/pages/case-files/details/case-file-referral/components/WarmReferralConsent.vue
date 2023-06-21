@@ -23,8 +23,7 @@
           data-test="checkbox-consent">
           <template #label>
             <span :class="{ 'rc-body14': true, 'red-text': failed }">
-              {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-                ? $t('referral.consent.individual') : $t('referral.consent') }}
+              {{ $t('referral.consent.individual') }}
             </span>
           </template>
         </v-checkbox-with-validation>

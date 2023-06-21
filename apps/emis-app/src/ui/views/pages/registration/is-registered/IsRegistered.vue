@@ -5,7 +5,7 @@
     <rc-dialog
       v-if="showDetailsDialog"
       data-test="household-split-search-details-dialog"
-      :title="$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm) ? $t('household.split.title.household_details') : $t('household.split.title.beneficiary_details')"
+      :title="$t('household.split.title.household_details')"
       :show-cancel="false"
       :submit-action-label="$t('common.close')"
       :show.sync="showDetailsDialog"

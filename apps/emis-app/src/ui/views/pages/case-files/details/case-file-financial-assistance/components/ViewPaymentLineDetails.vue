@@ -108,9 +108,7 @@
                   {{ $t("caseFile.financialAssistance.payee.paymentMadeTo") }}
                 </td>
                 <td class="data">
-                  {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-                    ? $t(`enums.payeeType.new.${PayeeType[paymentGroup.groupingInformation.payeeType]}`)
-                    : $t(`enums.payeeType.${PayeeType[paymentGroup.groupingInformation.payeeType]}`) }}
+                  {{ $t(`enums.payeeType.new.${PayeeType[paymentGroup.groupingInformation.payeeType]}`) }}
                 </td>
               </tr>
               <tr>

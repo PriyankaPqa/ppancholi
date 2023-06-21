@@ -5,7 +5,6 @@ import _pickBy from 'lodash/pickBy';
 import Vue from 'vue';
 import helpers from '@libs/entities-lib/helpers';
 import { HouseholdCreate, ICheckForPossibleDuplicateResponse, IHouseholdCreateData } from '@libs/entities-lib/household-create';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IRegistrationMenuItem, VForm } from '../../types';
 
 export default Vue.extend({
@@ -38,21 +37,7 @@ export default Vue.extend({
     },
 
     allTabs(): IRegistrationMenuItem[] {
-      const allTabs = this.$registrationStore.tabs;
-      // When feature flag is removed, the new translation keys need to be set in the files 'tabs'
-      if (this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)) {
-        return allTabs.map((t) => {
-          if (t.id === 'isRegistered') {
-            return {
-              ...t,
-              labelKey: 'registration.menu.isIndividualRegistered',
-              titleKey: 'registration.menu.isIndividualRegistered',
-            };
-          }
-          return t;
-        });
-      }
-      return allTabs;
+      return this.$registrationStore.tabs;
     },
 
     previousTabName(): TranslateResult {
@@ -296,9 +281,7 @@ export default Vue.extend({
 
       this.$registrationStore.mutateTabAtIndex(confirmationScreenIndex, (tab: IRegistrationMenuItem) => {
         if (this.$registrationStore.householdAssociationMode) {
-          tab.titleKey = this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-            ? 'registration.page.confirmation.association.title.household'
-            : 'registration.page.confirmation.association.title';
+          tab.titleKey = 'registration.page.confirmation.association.title.household';
         }
 
         tab.isTouched = true;

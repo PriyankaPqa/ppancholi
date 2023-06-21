@@ -182,13 +182,13 @@ describe('PaymentLineGroup.vue', () => {
 
     describe('title', () => {
       it('should return the modality + payeeType + payee name when cheque', () => {
-        expect(wrapper.vm.title).toBe('enums.PaymentModality.Cheque (enums.payeeType.Individual) - thl');
+        expect(wrapper.vm.title).toBe('enums.PaymentModality.Cheque (enums.payeeType.new.Individual) - thl');
         wrapper.vm.paymentGroup.groupingInformation = {
           modality: EPaymentModalities.Cheque,
           payeeType: 2,
           payeeName: 'abc',
         };
-        expect(wrapper.vm.title).toBe('enums.PaymentModality.Cheque (enums.payeeType.ThirdParty) - abc');
+        expect(wrapper.vm.title).toBe('enums.PaymentModality.Cheque (enums.payeeType.new.ThirdParty) - abc');
       });
 
       it('should return the modality if it isnt Cheque', () => {

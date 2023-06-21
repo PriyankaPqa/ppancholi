@@ -26,7 +26,7 @@
         <v-icon left>
           mdi-plus
         </v-icon>
-        {{ $hasFeature(FeatureKeys.ReplaceBeneficiaryTerm) ? $t('header.beginRegistration') : $t('header.registerBeneficiaries') }}
+        {{ $t('header.beginRegistration') }}
       </v-btn>
 
       <language-selector />

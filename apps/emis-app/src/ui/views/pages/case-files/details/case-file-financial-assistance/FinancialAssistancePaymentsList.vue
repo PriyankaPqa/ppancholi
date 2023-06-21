@@ -515,9 +515,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     getGroupTitle(paymentGroup: IFinancialAssistancePaymentGroup) {
       if (FinancialAssistancePaymentGroup.showPayee(paymentGroup)) {
         const modality = this.$t(`enums.PaymentModality.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`);
-        const payeeType = this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-          ? this.$t(`enums.payeeType.new.${PayeeType[paymentGroup.groupingInformation.payeeType]}`)
-          : this.$t(`enums.payeeType.${PayeeType[paymentGroup.groupingInformation.payeeType]}`);
+        const payeeType = this.$t(`enums.payeeType.new.${PayeeType[paymentGroup.groupingInformation.payeeType]}`);
 
         return `${modality} (${payeeType}) - ${paymentGroup.groupingInformation.payeeName}`;
       }

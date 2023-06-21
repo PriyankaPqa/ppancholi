@@ -911,7 +911,7 @@ describe('CaseFileActivityListItem.vue', () => {
           await wrapper.setProps({
             item,
           });
-          const body = 'caseFileActivity.activityList.body.PublicRegistration';
+          const body = 'caseFileActivity.activityList.body.PublicRegistration.individual';
 
           expect(wrapper.vm.makeContentForRegistration()).toEqual({
             title: 'caseFileActivity.activityList.title.Registration',

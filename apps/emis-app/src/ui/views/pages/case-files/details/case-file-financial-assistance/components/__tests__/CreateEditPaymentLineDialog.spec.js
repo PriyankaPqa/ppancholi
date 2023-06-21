@@ -351,7 +351,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         await wrapper.setData({ defaultBeneficiaryData: { email: 'myEmail' } });
         expect(wrapper.vm.modalityError).toBeNull();
         await wrapper.setData({ defaultBeneficiaryData: { email: null } });
-        expect(wrapper.vm.modalityError).toBe('caseFile.financialAssistance.ETransfer.noEmail');
+        expect(wrapper.vm.modalityError).toBe('caseFile.financialAssistance.ETransfer.noEmail.individual');
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
         expect(wrapper.vm.modalityError).toBeNull();
       });

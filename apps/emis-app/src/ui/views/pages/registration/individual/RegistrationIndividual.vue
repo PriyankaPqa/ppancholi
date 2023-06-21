@@ -185,9 +185,7 @@ export default mixins(individual).extend({
 
     getTitle(): TranslateResult {
       if (this.currentTab.id === 'review' && this.associationMode) {
-        return this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-          ? this.$t('registration.details.associateHouseholdButton.label')
-          : this.$t('registration.details.associateBeneficiaryButton.label');
+        return this.$t('registration.details.associateHouseholdButton.label');
       }
       return this.$t(this.allTabs[this.currentTabIndex].titleKey);
     },
@@ -339,9 +337,7 @@ export default mixins(individual).extend({
         title: this.$t('registration.associate.confirmation.title'),
         messages: [
           this.$t('registration.associate.confirmation.message1'),
-          this.$hasFeature(FeatureKeys.ReplaceBeneficiaryTerm)
-            ? this.$t('registration.associate.confirmation.message2.household')
-            : this.$t('registration.associate.confirmation.message2'),
+          this.$t('registration.associate.confirmation.message2.household'),
         ],
       }));
       if (userChoice) {
