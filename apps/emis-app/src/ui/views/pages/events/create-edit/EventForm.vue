@@ -130,7 +130,7 @@
                   <div>
                     <span
                       data-test="event-status-text"
-                      class="fw-medium text-uppercase mr-2">{{ isStatusOpen ? $t('event.status.open') : $t('event.status.on_hold') }}</span>
+                      class="fw-medium text-uppercase mr-2">{{ isStatusOpen ? $t('event.status.open') : $t('event.status.onHold') }}</span>
                     <span v-if="isStatusOpen">{{ $t('event.start_on_a_date') }}
                       {{ getLocalStringDate(event.schedule.scheduledOpenDate, 'EventSchedule.scheduledOpenDate', 'll') }}</span>
                   </div>

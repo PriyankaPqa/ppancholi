@@ -34,3 +34,10 @@ householdDetails.manageDuplicates.enum.duplicateReason.MemberMobilePhoneNumber
 householdDetails.manageDuplicates.referenceHousehold
 householdDetails.manageDuplicates.table.households
 householdDetails.manageDuplicates.flagNew.duplicateBy
+teams.status.active
+teams.status.Active
+teams.status.inactive
+teams.status.Inactive
+event_stats.tier4.label
+event_stats.tier5.label
+event.status.on_hold
