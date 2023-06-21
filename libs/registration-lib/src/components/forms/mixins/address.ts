@@ -40,6 +40,7 @@ export default Vue.extend({
       this.form.streetAddress = street;
       this.form.latitude = location.lat;
       this.form.longitude = location.lng;
+      this.form.unitSuite = null;
 
       await this.$nextTick();
       this.isAutocompleteAddress = false;
@@ -62,6 +63,12 @@ export default Vue.extend({
       this.form.address.streetAddress = street;
       this.form.address.latitude = location.lat;
       this.form.address.longitude = location.lng;
+
+      if (this.form.hasPlaceNumber()) {
+        this.form.placeNumber = null;
+      } else if (this.form.hasUnitSuite()) {
+        this.form.address.unitSuite = null;
+      }
 
       await this.$nextTick();
       this.isAutocompleteAddress = false;

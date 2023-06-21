@@ -218,6 +218,22 @@ describe('CurrentAddressForm.vue', () => {
           expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalledTimes(1);
         });
       });
+
+      describe('tempAddress__shelterLocation', () => {
+        it('should reset place number when shelter changed', async () => {
+          doMount(mockShelter(), {
+            currentShelterLocations: () => mockShelterLocations(),
+          });
+          const element = wrapper.findDataTest('tempAddress__shelterLocation');
+          await wrapper.setData({
+            form: mockShelter(),
+          });
+          wrapper.vm.form.placeNumber = '123';
+          wrapper.vm.form.requiresShelterLocation = jest.fn(() => true);
+          await element.vm.$emit('change');
+          expect(wrapper.vm.form.placeNumber).toEqual(null);
+        });
+      });
     });
 
     describe('Validation rules', () => {

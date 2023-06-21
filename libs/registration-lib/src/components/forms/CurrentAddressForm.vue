@@ -95,7 +95,8 @@
             return-object
             :data-test="`${prefixDataTest}__shelterLocation`"
             :label="`${$t('registration.addresses.temporaryAddressTypes.Shelter')} *`"
-            :items="currentShelterLocations" />
+            :items="currentShelterLocations"
+            @change="form.placeNumber = null" />
         </v-col>
 
         <v-col v-if="form.hasPlaceNumber() || form.requiresShelterLocation()" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
