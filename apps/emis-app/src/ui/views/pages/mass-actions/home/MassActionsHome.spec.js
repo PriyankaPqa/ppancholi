@@ -39,7 +39,6 @@ describe('MassActionsHome.vue', () => {
             button: 'mass_action.card.action.view',
             route: routes.massActions.assessments.home.name,
             dataTest: 'massAction_assessments',
-            feature: FeatureKeys.AssessmentsMassAction,
             level: UserRoles.level6,
             roles: null,
             group: 1,

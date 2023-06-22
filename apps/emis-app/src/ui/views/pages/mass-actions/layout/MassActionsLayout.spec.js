@@ -39,7 +39,6 @@ describe('MassActionsLayout.vue', () => {
                 to: routes.massActions.assessments.home.name,
                 exact: false,
                 level: UserRoles.level6,
-                feature: FeatureKeys.AssessmentsMassAction,
               },
             ],
           },

@@ -7,7 +7,6 @@ export enum FeatureKeys {
   BotProtection = 'BotProtection',
   ETransferCancellationHaveOptionForUnknown = 'ETransferCancellationHaveOptionForUnknown',
   PaymentGroupStatusHistory = 'paymentGroupStatusHistory',
-  AssessmentsMassAction = 'AssessmentsMassAction',
   SelfRegistration = 'SelfRegistration',
   HouseholdProfileStatus = 'HouseholdProfileStatus',
   ManageDuplicates = 'manageDuplicates',

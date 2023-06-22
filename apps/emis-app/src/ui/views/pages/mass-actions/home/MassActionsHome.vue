@@ -67,7 +67,6 @@ export default mixins(massActions).extend({
           level: UserRoles.level6,
           roles: null,
           group: MassActionGroup.Group1,
-          feature: FeatureKeys.AssessmentsMassAction,
         },
         {
           title: 'mass_action.card.finance_customoptions',
