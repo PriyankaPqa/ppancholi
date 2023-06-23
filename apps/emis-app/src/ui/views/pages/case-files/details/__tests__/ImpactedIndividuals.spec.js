@@ -1,4 +1,4 @@
-import { mockCaseFileEntities, mockCaseFileEntity } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, mockCaseFileEntities, mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { shallowMount, createLocalVue } from '@/test/testSetup';
 import { mockHouseholdCreate, mockMember } from '@libs/entities-lib/household-create';
@@ -11,7 +11,7 @@ import flushPromises from 'flush-promises';
 import Component from '../case-file-impacted-individuals/ImpactedIndividuals.vue';
 
 const localVue = createLocalVue();
-const caseFile = mockCaseFileEntity({ id: 'test-id-01' });
+let caseFile = mockCaseFileEntity({ id: 'test-id-01' });
 const services = mockProvider();
 const householdCreate = { ...mockHouseholdCreate({ id: 'mock-hh-id' }), additionalMembers: [mockMember({ id: '1' }), mockMember({ id: '2' }), mockMember({ id: '3' })] };
 const householdEntity = mockHouseholdEntity({ id: 'mock-hh-id' });
@@ -94,6 +94,26 @@ describe('ImpactedIndividuals.vue', () => {
         expect(wrapper.vm.householdEntity).toEqual(householdEntity);
       });
     });
+
+    describe('disableEditingByStatus', () => {
+      it('should be true when case file status is closed or archived or inactive', () => {
+        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed });
+        doMount();
+        expect(wrapper.vm.disableEditingByStatus).toEqual(true);
+
+        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Archived });
+        doMount();
+        expect(wrapper.vm.disableEditingByStatus).toEqual(true);
+
+        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Inactive });
+        doMount();
+        expect(wrapper.vm.disableEditingByStatus).toEqual(true);
+
+        caseFile = mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open });
+        doMount();
+        expect(wrapper.vm.disableEditingByStatus).toEqual(false);
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -102,6 +122,7 @@ describe('ImpactedIndividuals.vue', () => {
         await doMount();
         wrapper.vm.fetchHouseholdInfo = jest.fn();
         wrapper.vm.fetchData = jest.fn();
+        wrapper.vm.fetchCaseFileActivities = jest.fn();
 
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
@@ -110,6 +131,29 @@ describe('ImpactedIndividuals.vue', () => {
 
         expect(wrapper.vm.fetchHouseholdInfo).toHaveBeenCalled();
         expect(wrapper.vm.fetchData).toHaveBeenCalled();
+        expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalled();
+      });
+
+      it('should call attachToChanges', async () => {
+        wrapper.vm.attachToChanges = jest.fn();
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledTimes(0);
+
+        await wrapper.vm.$options.created[0].call(wrapper.vm);
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledWith(true);
+      });
+    });
+
+    describe('destroyed', () => {
+      it('should call attachToChanges', async () => {
+        wrapper.vm.attachToChanges = jest.fn();
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledTimes(0);
+
+        wrapper.destroy();
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledWith(false);
       });
     });
   });

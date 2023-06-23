@@ -31,17 +31,21 @@
         </template>
         <v-switch
           v-model="isReceivingAssistance"
-          :disabled="!$hasLevel(UserRoles.level1)"
+          :disabled="disableEditing"
           class="mt-1 ml-3"
           data-test="receiving_assistance_toggle"
           @change="onToggleChange($event)" />
         <span class="rc-body12">
-          {{ $t('impactedIndividuals.receiving_assistance') }}
+          {{ isReceivingAssistance ? $t('impactedIndividuals.receiving_assistance') : $t('impactedIndividuals.not_receiving_assistance') }}
         </span>
       </div>
     </div>
-
-    <impacted-individual-address-template :address="member.currentAddress" show-edit-button @open-edit-temporary-address-dialog="showEditMemberDialog = true" />
+    <impacted-individuals-card-pinned-activity v-if="pinnedActivity" :pinned-activity="pinnedActivity" />
+    <impacted-individual-address-template
+      :address="member.currentAddress"
+      show-edit-button
+      :disable-editing="disableEditing"
+      @open-edit-temporary-address-dialog="showEditMemberDialog = true" />
 
     <div v-if="reorderedAddressHistory.length > 0" data-test="previous-address-row">
       <div class="px-4 py-0 rc-body14 fw-bold background">
@@ -65,6 +69,14 @@
       :index="index"
       :is-primary-member="isPrimaryMember"
       :shelter-locations-list="shelterLocationsList" />
+
+    <impacted-individuals-require-rationale-dialog
+      v-if="showRequireRationaleDialog"
+      :person-id="member.id"
+      :case-file-id="caseFileId"
+      :is-receiving-assistance-change-to="isReceivingAssistance"
+      :show.sync="showRequireRationaleDialog"
+      @close="onCloseDialog()" />
   </v-sheet>
 </template>
 <script lang="ts">
@@ -72,8 +84,17 @@ import Vue from 'vue';
 import { ICurrentAddress, IMember, IShelterLocationData } from '@libs/entities-lib/household-create';
 import ImpactedIndividualAddressTemplate from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualAddressTemplate.vue';
 import ImpactedIndividualsEditAddressDialog from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualsEditAddressDialog.vue';
-import { IImpactedIndividual } from '@libs/entities-lib/case-file';
+import { ICaseFileActivity, IImpactedIndividual } from '@libs/entities-lib/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
+import ImpactedIndividualsCardPinnedActivity
+  from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualsCardPinnedActivity.vue';
+import ImpactedIndividualsRequireRationaleDialog
+  from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualsRequireRationaleDialog.vue';
+
+interface IndividualActivityDetailMember {
+    id: string,
+    name: string,
+}
 
 export default Vue.extend({
   name: 'ImpactedIndividualCard',
@@ -81,6 +102,8 @@ export default Vue.extend({
   components: {
     ImpactedIndividualAddressTemplate,
     ImpactedIndividualsEditAddressDialog,
+    ImpactedIndividualsCardPinnedActivity,
+    ImpactedIndividualsRequireRationaleDialog,
   },
 
   props: {
@@ -113,6 +136,16 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+
+    impactedIndividualActivities: {
+      type: Array as () => ICaseFileActivity[],
+      default: () => [] as ICaseFileActivity[],
+    },
+
+    disableEditingByStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -120,6 +153,8 @@ export default Vue.extend({
       showPreviousTemporaryAddress: false,
       showEditMemberDialog: false,
       isReceivingAssistance: true,
+      showRequireRationaleDialog: false,
+      backUpIsReceivingAssistance: false,
       UserRoles,
     };
   },
@@ -134,22 +169,34 @@ export default Vue.extend({
       reorderedAddressHistory.reverse().shift();
       return reorderedAddressHistory;
     },
+
+    pinnedActivity(): ICaseFileActivity {
+      return this.impactedIndividualActivities.filter((a) => (a.details.member as IndividualActivityDetailMember).id === this.member.id)[0];
+    },
+
+    disableEditing(): boolean {
+      if (this.$hasLevel(UserRoles.level6)) {
+        return false;
+      }
+      return this.disableEditingByStatus || !this.$hasLevel(UserRoles.level1);
+    },
   },
 
   async created() {
-      this.isReceivingAssistance = this.impactedIndividuals.find((i) => i.personId === this.member.id)?.receivingAssistance;
+    this.isReceivingAssistance = this.impactedIndividuals.find((i) => i.personId === this.member.id)?.receivingAssistance;
+    this.backUpIsReceivingAssistance = this.isReceivingAssistance;
   },
 
   methods: {
-     onToggleChange(receiveAssistance: boolean) {
-      // TODO will be done in 6822
-      const params = {
-        receiveAssistance,
-        personId: this.member.id,
-      };
-      this.$services.caseFiles.setPersonReceiveAssistance(this.caseFileId, params);
+     async onToggleChange(isReceivingAssistanceChangeTo: boolean) {
+       this.isReceivingAssistance = isReceivingAssistanceChangeTo;
+       this.showRequireRationaleDialog = true;
     },
 
+    onCloseDialog() {
+      this.isReceivingAssistance = this.backUpIsReceivingAssistance;
+      this.showRequireRationaleDialog = false;
+    },
   },
 });
 </script>

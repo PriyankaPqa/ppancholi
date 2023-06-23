@@ -54,10 +54,11 @@ describe('ImpactedIndividualAddressTemplate.vue', () => {
         expect(wrapper.emitted('open-edit-temporary-address-dialog')).toBeTruthy();
       });
 
-      it('should be disabled when user doesnt have level 1 ', async () => {
+      it('should be disabled when disableEditing is true ', async () => {
         await doMount(0);
         await wrapper.setProps({
           showEditButton: true,
+          disableEditing: true,
         });
         const button = wrapper.findDataTest('edit_button');
         expect(button.attributes('disabled')).toBeTruthy();
@@ -70,6 +71,36 @@ describe('ImpactedIndividualAddressTemplate.vue', () => {
         });
         const button = wrapper.findDataTest('edit_button');
         expect(button.attributes('disabled')).toBeFalsy();
+      });
+    });
+
+    describe('impacted_individuals_card_template_check_in', () => {
+      it('should display proper content', async () => {
+        await wrapper.setProps({
+          address: mockOther(),
+        });
+        const element = wrapper.findDataTest('impacted_individuals_card_template_check_in');
+        expect(element.text()).toEqual('-');
+
+        await wrapper.setProps({
+          address: mockCampGround(),
+        });
+        expect(element.text()).toEqual('May 1, 2023');
+      });
+    });
+
+    describe('impacted_individuals_card_template_check_out', () => {
+      it('should display proper content', async () => {
+        await wrapper.setProps({
+          address: mockOther(),
+        });
+        const element = wrapper.findDataTest('impacted_individuals_card_template_check_out');
+        expect(element.text()).toEqual('-');
+
+        await wrapper.setProps({
+          address: mockCampGround(),
+        });
+        expect(element.text()).toEqual('May 31, 2023');
       });
     });
 

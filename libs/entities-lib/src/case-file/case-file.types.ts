@@ -71,6 +71,10 @@ export enum CaseFileActivityType {
   PaymentCorrected = 33,
   AssessmentAdded = 34,
   HouseholdStatusChanged = 35,
+  ManageDuplicates = 36,
+  TempAddressUpdated = 37,
+  ImpactedIndividualReceivingAssistance = 38,
+  ImpactedIndividualNoLongerReceivingAssistance = 39,
 }
 
 export enum HouseholdCaseFileActivityType {

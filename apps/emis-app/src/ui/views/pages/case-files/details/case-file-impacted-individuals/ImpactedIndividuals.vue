@@ -13,14 +13,18 @@
         :shelter-locations-list="shelterLocations"
         :impacted-individuals="caseFile.impactedIndividuals"
         :case-file-id="caseFileId"
-        data-test="primary_impacted_individual_card" />
+        data-test="primary_impacted_individual_card"
+        :impacted-individual-activities="impactedIndividualActivities"
+        :disable-editing-by-status="disableEditingByStatus" />
       <div v-for="(member, index) in household.additionalMembers" :key="member.id">
         <impacted-individual-card
           :member="member"
           :index="index"
           :shelter-locations-list="shelterLocations"
           :impacted-individuals="caseFile.impactedIndividuals"
-          :case-file-id="caseFileId" />
+          :case-file-id="caseFileId"
+          :impacted-individual-activities="impactedIndividualActivities"
+          :disable-editing-by-status="disableEditingByStatus" />
       </div>
     </template>
   </rc-page-content>
@@ -33,12 +37,13 @@ import { IHouseholdCreate } from '@libs/entities-lib/household-create';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import household from '@/ui/mixins/household';
 import { IHouseholdEntity } from '@libs/entities-lib/household';
-import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { CaseFileActivityType, CaseFileStatus, ICaseFileActivity, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import mixins from 'vue-typed-mixins';
+import caseFileActivity from '@/ui/mixins/caseFileActivity';
 import ImpactedIndividualCard from './components/ImpactedIndividualCard.vue';
 
-export default mixins(household).extend({
+export default mixins(household, caseFileActivity).extend({
   name: 'ImpactedIndividuals',
 
   components: {
@@ -66,13 +71,29 @@ export default mixins(household).extend({
     householdEntity(): IHouseholdEntity {
       return useHouseholdStore().getById(this.caseFile.householdId);
     },
+
+    impactedIndividualActivities(): ICaseFileActivity[] {
+      return this.caseFileActivities.filter((a) => a.activityType === CaseFileActivityType.ImpactedIndividualReceivingAssistance
+        || a.activityType === CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance);
+    },
+
+    disableEditingByStatus(): boolean {
+      const caseFileStatusReadOnly = [CaseFileStatus.Closed, CaseFileStatus.Archived, CaseFileStatus.Inactive];
+      return caseFileStatusReadOnly.indexOf(this.caseFile.caseFileStatus) > -1;
+    },
   },
 
   async created() {
     this.loading = true;
     await this.fetchHouseholdInfo();
     await this.fetchData();
+    await this.fetchCaseFileActivities();
+    this.attachToChanges(true);
     this.loading = false;
+  },
+
+  destroyed() {
+    this.attachToChanges(false);
   },
 
   methods: {

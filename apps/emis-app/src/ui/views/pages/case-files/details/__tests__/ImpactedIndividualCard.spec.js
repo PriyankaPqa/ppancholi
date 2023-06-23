@@ -2,15 +2,18 @@ import { shallowMount, createLocalVue } from '@/test/testSetup';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { mockOther } from '@libs/entities-lib/value-objects/current-address';
 import flushPromises from 'flush-promises';
+import { mockProvider } from '@/services/provider';
+import { CaseFileActivityType, mockCaseFileActivities } from '@libs/entities-lib/case-file';
 import Component from '../case-file-impacted-individuals/components/ImpactedIndividualCard.vue';
 
 const localVue = createLocalVue();
+const services = mockProvider();
 
 const mockImpactedIndividuals = [{ personId: 'mock-member-id', receivingAssistance: true }];
 
 describe('ImpactedIndividualCard.vue', () => {
   let wrapper;
-  const doMount = async (otherComputed = {}, level = 5) => {
+  const doMount = async (otherComputed = {}, otherProps = {}, level = 5) => {
     const options = {
       localVue,
       propsData: {
@@ -18,6 +21,7 @@ describe('ImpactedIndividualCard.vue', () => {
         member: mockMember({ id: 'mock-member-id' }),
         impactedIndividuals: mockImpactedIndividuals,
         caseFileId: 'mock-cf-id',
+        ...otherProps,
       },
       data() {
         return {
@@ -31,6 +35,7 @@ describe('ImpactedIndividualCard.vue', () => {
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}`,
+        $services: services,
       },
     };
     wrapper = shallowMount(Component, options);
@@ -105,13 +110,13 @@ describe('ImpactedIndividualCard.vue', () => {
       });
 
       it('should be enabled when user has level 1', async () => {
-        await doMount(null, 1);
+        await doMount(null, null, 1);
         const toggle = wrapper.findDataTest('receiving_assistance_toggle');
         expect(toggle.attributes('disabled')).toBeFalsy();
       });
 
       it('should be enabled when user doesnt has level 1', async () => {
-        await doMount(null, 0);
+        await doMount(null, null, 0);
         const toggle = wrapper.findDataTest('receiving_assistance_toggle');
         expect(toggle.attributes('disabled')).toBeTruthy();
       });
@@ -130,6 +135,35 @@ describe('ImpactedIndividualCard.vue', () => {
         expect(wrapper.vm.reorderedAddressHistory).toEqual([mockOther()]);
       });
     });
+
+    describe('pinnedActivity', () => {
+      it('should return proper data', () => {
+        doMount({}, {
+          impactedIndividualActivities: [mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0],
+            mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance)[0]],
+        });
+        expect(wrapper.vm.pinnedActivity).toEqual(mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0]);
+      });
+    });
+
+    describe('disableEditing', () => {
+      it('should be true when props disableEditingByStatus is true', async () => {
+        await wrapper.setProps({
+          disableEditingByStatus: true,
+        });
+        expect(wrapper.vm.disableEditing).toEqual(true);
+      });
+
+      it('should be true when user doesnt have L1', async () => {
+        await doMount(null, null, 0);
+        expect(wrapper.vm.disableEditing).toEqual(true);
+      });
+
+      it('should return false when user has L6', async () => {
+        await doMount(null, null, 6);
+        expect(wrapper.vm.disableEditing).toEqual(false);
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -140,6 +174,30 @@ describe('ImpactedIndividualCard.vue', () => {
         });
         await flushPromises();
         expect(wrapper.vm.isReceivingAssistance).toEqual(true);
+      });
+    });
+  });
+
+  describe('Method', () => {
+    describe('onToggleChange', () => {
+      it('should set isReceivingAssistance to proper value and showRequireRationaleDialog to true ', () => {
+        wrapper.vm.$services.caseFiles.setPersonReceiveAssistance = jest.fn();
+        wrapper.vm.onToggleChange(true);
+        expect(wrapper.vm.isReceivingAssistance).toEqual(true);
+        expect(wrapper.vm.showRequireRationaleDialog).toEqual(true);
+      });
+    });
+
+    describe('onCloseDialog', () => {
+      it('should reset isReceivingAssistance and set showRequireRationaleDialog to false', async () => {
+        await wrapper.setData({
+          backUpIsReceivingAssistance: true,
+          isReceivingAssistance: false,
+          showRequireRationaleDialog: true,
+        });
+        wrapper.vm.onCloseDialog();
+        expect(wrapper.vm.isReceivingAssistance).toEqual(true);
+        expect(wrapper.vm.showRequireRationaleDialog).toEqual(false);
       });
     });
   });

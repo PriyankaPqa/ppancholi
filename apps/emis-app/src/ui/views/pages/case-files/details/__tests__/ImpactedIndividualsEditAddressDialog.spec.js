@@ -135,7 +135,7 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
     });
 
     describe('currentAddressTypeItems', () => {
-      it('returns the full list of temporary addresses types', async () => {
+      it('returns the full list of temporary addresses types when is primary member', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -143,6 +143,7 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
             show: true,
             member: mockMember({ id: 'mock-member-id' }),
             shelterLocationsList: [{ status: EEventLocationStatus.Active }],
+            isPrimaryMember: true,
           },
           data() {
             return {
@@ -154,6 +155,27 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
         expect(wrapper.vm.currentAddressTypeItems).toEqual(mockAddressTypes);
       });
 
+      it('returns the full list of temporary addresses types when is not primary member', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            show: true,
+            member: mockMember({ id: 'mock-member-id' }),
+            shelterLocationsList: [{ status: EEventLocationStatus.Active }],
+            isPrimaryMember: false,
+          },
+          data() {
+            return {
+              apiKey: '123',
+            };
+          },
+        });
+        const expectedRes = mockAddressTypes.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
+
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(expectedRes);
+      });
+
       it('excludes shelter', async () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -162,6 +184,7 @@ describe('ImpactedIndividualsEditAddressDialog.vue', () => {
             show: true,
             member: mockMember({ id: 'mock-member-id' }),
             shelterLocationsList: [],
+            isPrimaryMember: true,
           },
           data() {
             return {

@@ -777,6 +777,51 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         },
       },
     },
+    {
+      id: 'mock-activity-id-42',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.TempAddressUpdated,
+      details: {
+        member: {
+          id: 'mock-person-id-1',
+          name: 'mock-name',
+        },
+        rationale: 'test-rationale',
+      },
+    },
+    {
+      id: 'mock-activity-id-43',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.ImpactedIndividualReceivingAssistance,
+      details: {
+        member: {
+          id: 'mock-member-id',
+          name: 'mock-name',
+        },
+        rationale: 'test-rationale',
+      },
+    },
+    {
+      id: 'mock-activity-id-44',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance,
+      details: {
+        member: {
+          id: 'mock-member-id',
+          name: 'mock-name',
+        },
+        rationale: 'test-rationale',
+      },
+    },
   ];
 
   if (type) {

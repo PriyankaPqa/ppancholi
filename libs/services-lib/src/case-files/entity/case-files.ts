@@ -105,7 +105,7 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
     return this.http.get('/case-file/case-files/get-all-case-files-related-to-household-id', { params: { householdId } });
   }
 
-  async setPersonReceiveAssistance(caseFileId: uuid, params: { receiveAssistance: boolean, personId: string }): Promise<ICaseFileEntity> {
+  async setPersonReceiveAssistance(caseFileId: uuid, params: { receiveAssistance: boolean, personId: string, rationale: string }): Promise<ICaseFileEntity> {
     return this.http.patch(`/case-file/case-files/${caseFileId}/receive-assistance`, params);
   }
 }

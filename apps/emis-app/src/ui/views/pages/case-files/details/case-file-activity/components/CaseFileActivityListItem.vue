@@ -157,6 +157,11 @@ export default Vue.extend({
         case CaseFileActivityType.HouseholdStatusChanged:
           return this.makeContentForHouseholdStatusChanged();
 
+        case CaseFileActivityType.TempAddressUpdated:
+        case CaseFileActivityType.ImpactedIndividualReceivingAssistance:
+        case CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance:
+          return this.makeContentForImpactedIndividualsEdited();
+
         default:
           return null;
       }
@@ -177,6 +182,9 @@ export default Vue.extend({
         case CaseFileActivityType.DocumentDeactivated:
         case CaseFileActivityType.DocumentAdded:
         case CaseFileActivityType.DocumentUpdated:
+        case CaseFileActivityType.TempAddressUpdated:
+        case CaseFileActivityType.ImpactedIndividualReceivingAssistance:
+        case CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance:
           return '$rctech-actions';
 
         case CaseFileActivityType.AddedDuplicateFlag:
@@ -600,6 +608,19 @@ export default Vue.extend({
       body += `${this.$t(`household.profile.householdStatus.${HouseholdStatus[(this.item.details.newHouseholdStatus) as HouseholdStatus]}`)}`;
       body += `\n${this.$m(rationale) || rationale.translation[this.$i18n.fallbackLocale as string]}`;
 
+      return { title, body };
+    },
+
+    makeContentForImpactedIndividualsEdited(): { title: TranslateResult, body: TranslateResult | string } {
+      const contentObject: { [index: number ]: TranslateResult | string } = {
+        [CaseFileActivityType.TempAddressUpdated]: this.$t('caseFileActivity.activityList.body.temporaryAddressUpdated'),
+        [CaseFileActivityType.ImpactedIndividualReceivingAssistance]: `${this.$t('caseFileActivity.activityList.body.receivingAssistance')} \n${this.item.details.rationale}`,
+        [CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance]:
+          `${this.$t('caseFileActivity.activityList.body.noLongerReceivingAssistance')} \n${this.item.details.rationale}`,
+      };
+      const title = this.$t('caseFileActivity.activityList.title.ImpactedIndividualsEdited');
+      let body = `${(this.item.details.member as any).name} - `;
+      body += contentObject[this.item.activityType as CaseFileActivityType];
       return { title, body };
     },
   },

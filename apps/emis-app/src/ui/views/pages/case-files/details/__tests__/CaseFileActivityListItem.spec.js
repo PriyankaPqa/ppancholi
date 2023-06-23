@@ -180,6 +180,31 @@ describe('CaseFileActivityListItem.vue', () => {
         expect(wrapper.vm.makeContentForFinancialAssistancePayment).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.content).toEqual(mockContent);
       });
+
+      it(
+        'returns the correct data when activity type is TempAddressUpdated or ImpactedIndividualReceivingAssistance or ImpactedIndividualNoLongerReceivingAssistance',
+        async () => {
+          const mockContent = { title: 'mock-title', body: 'mock-body' };
+          jest.spyOn(wrapper.vm, 'makeContentForImpactedIndividualsEdited').mockImplementation(() => (mockContent));
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.TempAddressUpdated)[0],
+          });
+          expect(wrapper.vm.makeContentForImpactedIndividualsEdited).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.content).toEqual(mockContent);
+
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0],
+          });
+          expect(wrapper.vm.makeContentForImpactedIndividualsEdited).toHaveBeenCalledTimes(2);
+          expect(wrapper.vm.content).toEqual(mockContent);
+
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance)[0],
+          });
+          expect(wrapper.vm.makeContentForImpactedIndividualsEdited).toHaveBeenCalledTimes(3);
+          expect(wrapper.vm.content).toEqual(mockContent);
+        },
+      );
     });
 
     describe('icon', () => {
@@ -379,6 +404,27 @@ describe('CaseFileActivityListItem.vue', () => {
           item: mockCaseFileActivities(CaseFileActivityType.CaseFileLabelsUpdated)[0],
         });
         expect(wrapper.vm.icon).toEqual('mdi-message-text');
+      });
+
+      it('returns the correct icon when activity type is TempAddressUpdated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.TempAddressUpdated)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
+
+      it('returns the correct icon when activity type is ImpactedIndividualReceivingAssistance', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
+
+      it('returns the correct icon when activity type is ImpactedIndividualNoLongerReceivingAssistance', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
     });
 
@@ -1227,6 +1273,50 @@ describe('CaseFileActivityListItem.vue', () => {
         body += '\nrationale in EN';
 
         expect(wrapper.vm.makeContentForHouseholdStatusChanged()).toEqual({
+          title,
+          body,
+        });
+      });
+    });
+
+    describe('makeContentForImpactedIndividualsEdited', () => {
+      it('should return proper data when action type is TempAddressUpdated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.TempAddressUpdated)[0],
+        });
+        const title = wrapper.vm.$t('caseFileActivity.activityList.title.ImpactedIndividualsEdited');
+        let body = `${wrapper.vm.item.details.member.name} - `;
+        body += wrapper.vm.$t('caseFileActivity.activityList.body.temporaryAddressUpdated');
+
+        expect(wrapper.vm.makeContentForImpactedIndividualsEdited()).toEqual({
+          title,
+          body,
+        });
+      });
+
+      it('should return proper data when action type is ImpactedIndividualReceivingAssistance', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0],
+        });
+        const title = wrapper.vm.$t('caseFileActivity.activityList.title.ImpactedIndividualsEdited');
+        let body = `${wrapper.vm.item.details.member.name} - `;
+        body += `${wrapper.vm.$t('caseFileActivity.activityList.body.receivingAssistance')} \n${wrapper.vm.item.details.rationale}`;
+
+        expect(wrapper.vm.makeContentForImpactedIndividualsEdited()).toEqual({
+          title,
+          body,
+        });
+      });
+
+      it('should return proper data when action type is ImpactedIndividualNoLongerReceivingAssistance', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance)[0],
+        });
+        const title = wrapper.vm.$t('caseFileActivity.activityList.title.ImpactedIndividualsEdited');
+        let body = `${wrapper.vm.item.details.member.name} - `;
+        body += `${wrapper.vm.$t('caseFileActivity.activityList.body.noLongerReceivingAssistance')} \n${wrapper.vm.item.details.rationale}`;
+
+        expect(wrapper.vm.makeContentForImpactedIndividualsEdited()).toEqual({
           title,
           body,
         });

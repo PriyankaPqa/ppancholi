@@ -151,7 +151,10 @@ export default Vue.extend({
         list = list.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
       }
 
-      return list;
+      if (this.isPrimaryMember) {
+        return list;
+      }
+      return list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
     },
 
     title(): TranslateResult {
