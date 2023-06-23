@@ -38,3 +38,10 @@ export const fixtureVoucherPaymentLine = (): IAddNewPaymentLineFields => ({
   amount: '100.00',
   relatedNumber: '44444',
 });
+
+export const fixtureChequePaymentLine = (): IAddNewPaymentLineFields => ({
+  item: 'Clothing',
+  subItem: 'Winter Clothing',
+  paymentModality: 'Cheque',
+  amount: '80.00',
+});

@@ -2,11 +2,18 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
-import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
+import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { fixtureGiftCardPaymentLine } from '../../../fixtures/case-management';
-import { paymentLineGeneralCanSteps } from './canSteps';
+import { fixtureChequePaymentLine } from '../../../fixtures/case-management';
+import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
+import { paymentLineChequeCanSteps } from './canSteps';
+
+let event = null as IEventEntity;
+let caseFileCreated = null as ICaseFileEntity;
+let table = null as IFinancialAssistanceTableEntity;
+let accessTokenL6 = '';
+let householdCreated = null as ICreateHouseholdRequest;
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -27,19 +34,14 @@ const cannotRoles = {
 
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
 
-let accessTokenL6 = '';
-let event = null as IEventEntity;
-let caseFileCreated = null as ICaseFileEntity;
-let table = null as IFinancialAssistanceTableEntity;
-
-describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assistance'] }, () => {
+describe('#TC205# - Create Cheque Payment Line', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
       const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
       const { provider, team } = resultPrepareStateEvent;
       event = resultPrepareStateEvent.event;
-      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Variable);
+      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Fixed);
       table = resultCreateProgram.table;
       cy.wrap(provider).as('provider');
       cy.wrap(team).as('teamCreated');
@@ -51,7 +53,6 @@ describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assista
       removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
     }
   });
-
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
@@ -59,16 +60,18 @@ describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assista
           cy.then(async () => {
             const result = await prepareStateHousehold(accessTokenL6, event);
             caseFileCreated = result.registrationResponse.caseFile;
+            householdCreated = result.mockCreateHousehold;
             cy.login(roleValue);
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create Gift Card Payment Line', function () {
-          paymentLineGeneralCanSteps({
+        it('should successfully create Cheque Payment Line', function () {
+          paymentLineChequeCanSteps({
             faTable: this.faTable,
             retries: this.test.retries.length,
-            paymentLineData: fixtureGiftCardPaymentLine(),
-            groupTitle: 'Gift card',
+            paymentLineData: fixtureChequePaymentLine(),
+            groupTitle: 'Cheque',
+            household: householdCreated,
           });
         });
       });
@@ -85,7 +88,7 @@ describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assista
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should not be able to create create Gift Card Payment Line', () => {
+        it('should not be able to create Cheque Payment Line', () => {
           const addFinancialAssistancePage = new AddFinancialAssistancePage();
 
           cy.contains('You do not have permission to access this page').should('be.visible');

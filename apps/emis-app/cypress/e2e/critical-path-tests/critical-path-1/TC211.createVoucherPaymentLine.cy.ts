@@ -6,7 +6,7 @@ import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareSt
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureVoucherPaymentLine } from '../../../fixtures/case-management';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
-import { paymentLineCanSteps } from './canSteps';
+import { paymentLineGeneralCanSteps } from './canSteps';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -64,7 +64,7 @@ describe('#TC211# - Create Voucher Payment Line', { tags: ['@financial-assistanc
           });
         });
         it('should successfully create Voucher Payment Line', function () {
-          paymentLineCanSteps({
+          paymentLineGeneralCanSteps({
             faTable: this.faTable,
             retries: this.test.retries.length,
             paymentLineData: fixtureVoucherPaymentLine(),
