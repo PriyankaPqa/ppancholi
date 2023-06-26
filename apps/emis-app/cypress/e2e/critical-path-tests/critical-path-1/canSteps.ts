@@ -18,9 +18,11 @@ const addPaymentLineCanSteps = ({ faTable, retries, paymentLineData, groupTitle 
 
   const addNewPaymentLinePage = addFinancialAssistancePage.addPaymentLine();
   addNewPaymentLinePage.fill(paymentLineData);
-  addNewPaymentLinePage.getRelatedNumberField().should('be.visible');
-  addNewPaymentLinePage.fillRelatedNumber(paymentLineData.relatedNumber);
-  addNewPaymentLinePage.fillAmount(paymentLineData.amount);
+  if (groupTitle !== 'Direct deposit') {
+    addNewPaymentLinePage.getRelatedNumberField().should('be.visible');
+    addNewPaymentLinePage.fillRelatedNumber(paymentLineData.relatedNumber);
+    addNewPaymentLinePage.fillAmount(paymentLineData.amount);
+  }
   addNewPaymentLinePage.addNewPaymentLine();
 };
 
@@ -62,7 +64,7 @@ const financialAssistanceCanSteps = ({ paymentLineData, groupTitle }: Partial<Pa
   addFinancialAssistancePage.getPaymentEditButton().should('be.visible');
   addFinancialAssistancePage.getPaymentDeleteButton().should('be.visible');
   addFinancialAssistancePage.getPaymentLineItemTitle().should('eq', `${paymentLineData.item} > ${paymentLineData.subItem}`);
-  if (groupTitle !== 'Cheque') {
+  if (groupTitle !== 'Cheque' && groupTitle !== 'Direct deposit') {
     addFinancialAssistancePage.getRelatedNumber().should('string', paymentLineData.relatedNumber);
   }
   addFinancialAssistancePage.getAddPaymentLineButton().should('be.enabled');

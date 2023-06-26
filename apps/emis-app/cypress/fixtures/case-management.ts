@@ -45,3 +45,11 @@ export const fixtureChequePaymentLine = (): IAddNewPaymentLineFields => ({
   paymentModality: 'Cheque',
   amount: '80.00',
 });
+
+export const fixtureDirectDepositPaymentLine = (): IAddNewPaymentLineFields => ({
+  item: 'Clothing',
+  subItem: 'Winter Clothing',
+  paymentModality: 'Direct Deposit',
+  amount: '80.00',
+  relatedNumber: '55555',
+});
