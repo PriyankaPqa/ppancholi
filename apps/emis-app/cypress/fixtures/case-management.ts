@@ -51,5 +51,4 @@ export const fixtureDirectDepositPaymentLine = (): IAddNewPaymentLineFields => (
   subItem: 'Winter Clothing',
   paymentModality: 'Direct Deposit',
   amount: '80.00',
-  relatedNumber: '55555',
 });
