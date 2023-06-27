@@ -4,6 +4,7 @@ import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import massActions from './massActions';
 /* eslint-disable max-len */
 const Component = {
@@ -14,10 +15,11 @@ const Component = {
 const localVue = createLocalVue();
 let wrapper;
 
-const doMount = (fullMount = false, pinia = getPiniaForUser(UserRoles.level6), additionalOverwrites = {}) => {
+const doMount = (fullMount = false, pinia = getPiniaForUser(UserRoles.level6), additionalOverwrites = {}, featureList = []) => {
   useMockTenantSettingsStore(pinia);
   wrapper = (fullMount ? mount : shallowMount)(Component, {
     localVue,
+    featureList,
     pinia,
     ...additionalOverwrites,
   });
@@ -200,12 +202,21 @@ describe('massActions', () => {
         expect(wrapper.vm.downloadTemplate).toHaveBeenCalledWith('IdentitySetTemplate.csv', 'PersonId,FirstName,LastName,MiddleName,GenderSpecifiedOther,ETag');
       });
 
-      it('should call downloadTemplate with proper data for TemporaryAddress', () => {
+      it('should call downloadTemplate with proper data for TemporaryAddress when feature flag Impacted Individuals is off', () => {
         wrapper.vm.downloadTemplate = jest.fn();
         wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.TemporaryAddress);
         expect(wrapper.vm.downloadTemplate)
           // eslint-disable-next-line vue/max-len
           .toHaveBeenCalledWith('TemporaryAddressTemplate.csv', 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,ETag');
+      });
+
+      it('should call downloadTemplate with proper data for TemporaryAddress when feature flag Impacted Individuals is on', () => {
+        doMount(false, getPiniaForUser(UserRoles.level6), {}, [FeatureKeys.ImpactedIndividuals]);
+        wrapper.vm.downloadTemplate = jest.fn();
+        wrapper.vm.downloadDataCorrectionTemplate(MassActionDataCorrectionType.TemporaryAddress);
+        expect(wrapper.vm.downloadTemplate)
+          // eslint-disable-next-line vue/max-len
+          .toHaveBeenCalledWith('TemporaryAddressTemplate.csv', 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,CrcProvided,CheckIn,CheckOut,ETag');
       });
 
       it('should call downloadApiTemplate for FinancialAssistance', () => {

@@ -51,7 +51,9 @@ export default Vue.extend({
         },
         [MassActionDataCorrectionType.TemporaryAddress]: {
           fileName: 'TemporaryAddressTemplate.csv',
-          blobsParts: 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,ETag',
+          blobsParts: this.$hasFeature(FeatureKeys.ImpactedIndividuals)
+            ? 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,CrcProvided,CheckIn,CheckOut,ETag'
+            : 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,ETag',
         },
         [MassActionDataCorrectionType.FinancialAssistance]: {
           fileName: 'FinancialAssistanceTemplate.csv',
