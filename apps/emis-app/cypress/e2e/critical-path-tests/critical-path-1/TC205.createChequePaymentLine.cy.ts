@@ -4,7 +4,7 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { fixtureChequePaymentLine } from '../../../fixtures/case-management';
+import { fixtureChequePaymentLine } from '../../../fixtures/financial-assistance';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
 import { paymentLineChequeCanSteps } from './canSteps';

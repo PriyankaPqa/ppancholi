@@ -4,9 +4,9 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { fixtureGiftCardPaymentLine } from '../../../fixtures/financial-assistance';
-import { paymentLineGeneralCanSteps } from './canSteps';
+import { fixtureDirectDepositPaymentLine } from '../../../fixtures/financial-assistance';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
+import { paymentLineGeneralCanSteps } from './canSteps';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -32,14 +32,14 @@ let event = null as IEventEntity;
 let caseFileCreated = null as ICaseFileEntity;
 let table = null as IFinancialAssistanceTableEntity;
 
-describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assistance'] }, () => {
+describe('#TC206# - Create Direct Deposit Payment Line', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
       const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
       const { provider, team } = resultPrepareStateEvent;
       event = resultPrepareStateEvent.event;
-      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Variable);
+      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Fixed);
       table = resultCreateProgram.table;
       cy.wrap(provider).as('provider');
       cy.wrap(team).as('teamCreated');
@@ -63,12 +63,12 @@ describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assista
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should successfully create Gift Card Payment Line', function () {
+        it('should successfully create Direct Deposit Payment Line', function () {
           paymentLineGeneralCanSteps({
             faTable: this.faTable,
             retries: this.test.retries.length,
-            paymentLineData: fixtureGiftCardPaymentLine(),
-            groupTitle: 'Gift card',
+            paymentLineData: fixtureDirectDepositPaymentLine(),
+            groupTitle: 'Direct deposit',
           });
         });
       });
@@ -85,7 +85,7 @@ describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assista
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
           });
         });
-        it('should not be able to create create Gift Card Payment Line', () => {
+        it('should not be able to create Direct Deposit Payment Line', () => {
           const addFinancialAssistancePage = new AddFinancialAssistancePage();
 
           cy.contains('You do not have permission to access this page').should('be.visible');
