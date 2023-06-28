@@ -569,12 +569,41 @@ describe('PrimaryMemberDialog', () => {
       });
     });
     describe('current-address-form', () => {
-      it('should exist when feature flag ImpactedIndividuals is off', () => {
+      it('should exist when feature flag ImpactedIndividuals is off, and makePrimaryMode is false', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+            makePrimaryMode: false,
+          },
+          data() {
+            return { apiKey: '123' };
+          },
+        });
         const component = wrapper.findComponent(CurrentAddressForm);
         expect(component.exists()).toBeTruthy();
       });
 
-      it('should not exist when feature flag ImpactedIndividuals is on', () => {
+      it('should exist when feature flag ImpactedIndividuals is off, and makePrimaryMode is true', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+            makePrimaryMode: true,
+          },
+          data() {
+            return { apiKey: '123' };
+          },
+        });
+        const component = wrapper.findComponent(CurrentAddressForm);
+        expect(component.exists()).toBeTruthy();
+      });
+
+      it('should not exist when feature flag ImpactedIndividuals is on and makePrimaryMode is false', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
@@ -582,6 +611,7 @@ describe('PrimaryMemberDialog', () => {
           propsData: {
             show: true,
             shelterLocations: [],
+            makePrimaryMode: false,
           },
           data() {
             return { apiKey: '123' };
@@ -589,6 +619,24 @@ describe('PrimaryMemberDialog', () => {
         });
         const component = wrapper.findComponent(CurrentAddressForm);
         expect(component.exists()).toBeFalsy();
+      });
+
+      it('should exist when feature flag ImpactedIndividuals is on and makePrimaryMode is true', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          featureList: [FeatureKeys.ImpactedIndividuals],
+          propsData: {
+            show: true,
+            shelterLocations: [],
+            makePrimaryMode: true,
+          },
+          data() {
+            return { apiKey: '123' };
+          },
+        });
+        const component = wrapper.findComponent(CurrentAddressForm);
+        expect(component.exists()).toBeTruthy();
       });
     });
   });
