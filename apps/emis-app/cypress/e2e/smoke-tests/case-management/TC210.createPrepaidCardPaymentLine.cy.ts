@@ -3,7 +3,7 @@ import { IEventEntity } from '@libs/entities-lib/event';
 import { AddFinancialAssistancePage } from 'cypress/pages/financial-assistance-payment/addFinancialAssistance.page';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
-import { fixturePrepaidCardPaymentLine } from '../../../fixtures/case-management';
+import { fixturePrepaidCardPaymentLine } from '../../../fixtures/financial-assistance';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 
