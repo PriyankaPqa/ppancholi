@@ -98,9 +98,7 @@ export default Vue.extend({
     },
 
     errorMessage(): TranslateResult {
-      const duplicateErrorMessage = this.$t('registration.confirmation.error.message.duplicate.household');
-
-      return this.isDuplicateError ? duplicateErrorMessage : this.$t('registration.confirmation.error');
+      return this.isDuplicateError ? this.$t('registration.confirmation.error.message.duplicate') : this.$t('registration.confirmation.error');
     },
   },
 });
