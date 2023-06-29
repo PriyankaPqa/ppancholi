@@ -1,8 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { IEventEntity } from '@libs/entities-lib/event';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
-import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
-import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
+import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
+import { prepareStateHousehold, prepareStateEventTeamProgramTableWithItemSubItem } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { fixtureGiftCardPaymentLine } from '../../../fixtures/financial-assistance';
 import { paymentLineGeneralCanSteps } from './canSteps';
@@ -28,22 +27,17 @@ const cannotRoles = {
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
 
 let accessTokenL6 = '';
-let event = null as IEventEntity;
 let caseFileCreated = null as ICaseFileEntity;
-let table = null as IFinancialAssistanceTableEntity;
 
 describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
-      const { provider, team } = resultPrepareStateEvent;
-      event = resultPrepareStateEvent.event;
-      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Variable);
-      table = resultCreateProgram.table;
-      cy.wrap(provider).as('provider');
-      cy.wrap(team).as('teamCreated');
-      cy.wrap(table).as('faTable');
+      const resultPrepareStateEventTeamProgramTable = await prepareStateEventTeamProgramTableWithItemSubItem(accessTokenL6, allRolesValues, EFinancialAmountModes.Variable);
+      cy.wrap(resultPrepareStateEventTeamProgramTable.event).as('event');
+      cy.wrap(resultPrepareStateEventTeamProgramTable.table).as('table');
+      cy.wrap(resultPrepareStateEventTeamProgramTable.provider).as('provider');
+      cy.wrap(resultPrepareStateEventTeamProgramTable.team).as('teamCreated');
     });
   });
   after(function () {
@@ -56,8 +50,8 @@ describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assista
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.then(async () => {
-            const result = await prepareStateHousehold(accessTokenL6, event);
+          cy.then(async function () {
+            const result = await prepareStateHousehold(accessTokenL6, this.event);
             caseFileCreated = result.registrationResponse.caseFile;
             cy.login(roleValue);
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);
@@ -65,7 +59,7 @@ describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assista
         });
         it('should successfully create Gift Card Payment Line', function () {
           paymentLineGeneralCanSteps({
-            faTable: this.faTable,
+            faTable: this.table,
             retries: this.test.retries.length,
             paymentLineData: fixtureGiftCardPaymentLine(),
             groupTitle: 'Gift card',
@@ -78,8 +72,8 @@ describe('#TC208# - Create Gift Card Payment Line', { tags: ['@financial-assista
     for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.then(async () => {
-            const result = await prepareStateHousehold(accessTokenL6, event);
+          cy.then(async function () {
+            const result = await prepareStateHousehold(accessTokenL6, this.event);
             caseFileCreated = result.registrationResponse.caseFile;
             cy.login(roleValue);
             cy.goTo(`casefile/${caseFileCreated.id}/financialAssistance/create`);

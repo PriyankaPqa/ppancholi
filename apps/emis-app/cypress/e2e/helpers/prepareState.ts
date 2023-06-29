@@ -9,6 +9,9 @@ import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { mockCreateMassFinancialAssistanceRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
+import { mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
+import { EPaymentModalities } from '@libs/entities-lib/program';
+import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { linkEventToTeamForManyRoles } from './teams';
 
 /**
@@ -48,6 +51,7 @@ export const createHousehold = async (provider: IProvider, event: IEventEntity) 
  * Creates a program, adds financial assistance table to it with an Item and Sub-item
  * @param provider
  * @param eventId
+ * @param amountType
  */
 export const createProgramWithTableWithItemAndSubItem = async (provider: IProvider, eventId: string, amountType:EFinancialAmountModes) => {
   const { program, mockCreateProgram } = await createProgram(provider, eventId);
@@ -71,7 +75,7 @@ export const prepareStateHousehold = async (accessToken: string, event: IEventEn
  * Creates multiple households
  * @param accessToken
  * @param event
- * @param caseFilesNeeded
+ * @param householdQuantity
  */
 export const prepareStateMultipleHouseholds = async (accessToken: string, event: IEventEntity, householdQuantity: number) => {
   const provider = useProvider(accessToken);
@@ -150,9 +154,8 @@ const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, ma
 
 /**
  * Creates a Mass Financial Assistance
- * @param provider
+ * @param accessToken
  * @param event
- * @param eventId
  * @param tableId
  * @param programId
  */
@@ -169,4 +172,56 @@ export const prepareStateHouseholdMassFinancialAssistance = async (accessToken: 
     return { responseMassFinancialAssistance, responseCreateHousehold };
   }
     throw new Error('Event index not yet updated');
+};
+
+/**
+ * Adds financial assistance to a casefile
+ * @param provider
+ * @param modality
+ * @param caseFileId
+ * @param financialAssistanceTableId
+ */
+export const addFinancialAssistancePayment = async (provider: IProvider, modality: EPaymentModalities, caseFileId: string, financialAssistanceTableId: string) => {
+  const mockFinancialAssistancePayment = mockFinancialAssistancePaymentRequest(modality, { caseFileId, financialAssistanceTableId });
+  const createdFinancialAssistancePayment = await provider.financialAssistancePaymentsService.addFinancialAssistancePayment(mockFinancialAssistancePayment);
+  return createdFinancialAssistancePayment;
+};
+
+/**
+ * Submit financial assistance
+ * @param provider
+ * @param financialAssistancePaymentId
+ */
+export const submitFinancialAssistancePayment = async (provider: IProvider, financialAssistancePaymentId: string) => {
+  const submittedFinancialAssistancePayment = await provider.financialAssistancePaymentsService.submitFinancialAssistancePayment(financialAssistancePaymentId);
+  return submittedFinancialAssistancePayment;
+};
+
+/**
+ * Updates financial assistance status
+ * @param provider
+ * @param entityId
+ * @param paymentGroupId
+ * @param status
+ */
+export const updateFinancialAssistancePayment = async (provider: IProvider, entityId: string, paymentGroupId: string, status: PaymentStatus) => {
+  const mockUpdatePayment = mockUpdatePaymentRequest(status, { entityId, paymentGroupId });
+  const updatedFinancialAssistancePayment = await provider.financialAssistancePaymentsService.updatePaymentStatus(mockUpdatePayment);
+  return updatedFinancialAssistancePayment;
+};
+
+/**
+ * Creates a event, add a team to it, assign roles to this team, creates a program for that event
+ * and adds financial assistance table to it with an Item and Sub-item
+ * @param accessTokenL6
+ * @param allRolesValues
+ * @param amountMode
+ */
+export const prepareStateEventTeamProgramTableWithItemSubItem = async (accessTokenL6: string, allRolesValues: UserRoles[], amountMode:EFinancialAmountModes) => {
+  const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
+  const event = resultPrepareStateEvent.event;
+  const { provider, team } = resultPrepareStateEvent;
+  const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, amountMode);
+  const table = resultCreateProgram.table;
+  return { event, team, table, provider };
 };
