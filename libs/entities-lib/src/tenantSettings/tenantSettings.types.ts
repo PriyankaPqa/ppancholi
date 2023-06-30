@@ -13,7 +13,6 @@ export enum FeatureKeys {
   CustomConsent = 'CustomConsent',
   ImpactedIndividuals = 'ImpactedIndividuals',
   LimitTagDeletionL2Plus_5959 = 'LimitTagDeletionL2Plus_5959',
-  BlockFACaseFileIrregularTag = 'BlockFACaseFileIrregularTag',
   AuthenticationPhaseII = 'AuthenticationPhaseII',
   UseIdentityServer = 'UseIdentityServer',
   FinancialAssistanceMassAction = 'FinancialAssistanceMassAction',
