@@ -238,6 +238,7 @@ export const mockFinancialAssistanceTableEntity = (force = {}): IFinancialAssist
           status: Status.Active,
         },
       ],
+      status: Status.Active,
     },
     {
       mainCategory: { optionItemId: '62421874-aed8-43bb-a668-bff1f45f08df', specifiedOther: null },
@@ -259,6 +260,7 @@ export const mockFinancialAssistanceTableEntity = (force = {}): IFinancialAssist
           status: Status.Active,
         },
       ],
+      status: Status.Active,
     },
   ],
   ...force,
