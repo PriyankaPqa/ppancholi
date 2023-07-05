@@ -12,6 +12,7 @@ import {
 } from '@libs/cypress-lib/mocks/teams/team';
 import { ITeamMember, TeamType } from '@libs/entities-lib/team';
 import { IProvider } from '@/services/provider';
+import { CypressTeamsService } from '@libs/cypress-lib/services/teams';
 
 export const teamMemberId = {
   [UserRoles.level6]: memberTestDev6,
@@ -52,20 +53,12 @@ export const linkEventToTeamForManyRoles = async (event: IEventEntity, provider:
   return team;
 };
 
-export const removeTeamMembersFromTeam = async (teamId: string, provider: IProvider, roles: UserRoles[]) => {
-  roles.filter((r) => teamMemberId[r]).forEach((r, i) => {
-    cy.wait(100 * i).then(async () => {
-      try {
-        if (i < roles.length - 1) {
-          await provider.teams.removeTeamMember(teamId, teamMemberId[r]);
-        } else {
-          await provider.teams.emptyTeam(teamId);
-        }
-      } catch {
-        // Ignore errors
-      }
-    });
-  });
+export const removeTeamMembersFromTeam = async (teamId: string, provider: IProvider & { cypress: { teams: CypressTeamsService } }) => {
+  try {
+    await provider.cypress.teams.removeAllTeamMembers(teamId);
+  } catch {
+    // Ignore error
+  }
 };
 
 // Removes specific team members passed through param

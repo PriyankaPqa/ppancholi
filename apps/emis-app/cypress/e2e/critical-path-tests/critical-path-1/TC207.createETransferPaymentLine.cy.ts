@@ -42,7 +42,7 @@ describe('#TC207# - Create e-transfer payment line', { tags: ['@financial-assist
   });
   after(function () {
     if (this.teamCreated?.id && this.provider) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
 

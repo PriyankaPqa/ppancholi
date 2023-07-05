@@ -48,7 +48,7 @@ describe('#TC666# - Add Household Member Same Temp Address As Primary', { tags: 
 
   after(function () {
     if (this.provider && this.teamCreated?.id) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
 

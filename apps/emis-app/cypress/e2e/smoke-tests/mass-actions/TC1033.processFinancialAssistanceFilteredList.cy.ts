@@ -72,7 +72,7 @@ describe(
         });
         afterEach(function () {
           if (this.teamCreated?.id && this.provider) {
-            removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+            removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
           }
         });
         it('should successfully process a financial assistance filtered list', () => {

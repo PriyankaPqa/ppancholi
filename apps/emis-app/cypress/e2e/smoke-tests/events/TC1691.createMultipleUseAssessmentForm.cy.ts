@@ -36,7 +36,7 @@ describe('#TC1691# - Create a multiple use Assessment form', { tags: ['@event', 
 
   after(function () {
     if (this.provider && this.teamCreated?.id) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
 

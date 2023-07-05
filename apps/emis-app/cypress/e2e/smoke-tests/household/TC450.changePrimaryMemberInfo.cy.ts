@@ -49,7 +49,7 @@ describe('#TC450# - Change/Add primary member info - middle name', { tags: ['@ho
 
   after(function () {
     if (this.provider && this.teamCreated?.id) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
 

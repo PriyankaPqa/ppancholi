@@ -41,7 +41,7 @@ describe('#TC202# -Add a Case Note L4-L6', { tags: ['@case-file'] }, () => {
 
   after(function () {
     if (this.teamCreated?.id && this.provider) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
   describe('Can Roles', () => {

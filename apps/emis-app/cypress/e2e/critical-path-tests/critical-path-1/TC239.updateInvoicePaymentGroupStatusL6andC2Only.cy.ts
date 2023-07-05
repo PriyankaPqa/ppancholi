@@ -50,7 +50,7 @@ describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags
 
   after(function () {
     if (this.teamCreated?.id && this.provider) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
   describe('Can Roles', () => {

@@ -35,7 +35,7 @@ describe('#TC323# - Add Event Program', { tags: ['@event'] }, () => {
 
   after(function () {
     if (this.provider && this.teamCreated?.id) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
 

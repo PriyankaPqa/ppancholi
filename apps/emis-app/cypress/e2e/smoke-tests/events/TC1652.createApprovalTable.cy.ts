@@ -40,7 +40,7 @@ describe('#TC1652# - Create an Approval table ', { tags: ['@event', '@approval',
   });
   after(function () {
     if (this.provider && this.teamCreated?.id) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
   describe('Can Roles', () => {

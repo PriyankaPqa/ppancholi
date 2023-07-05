@@ -42,7 +42,7 @@ describe('#TC206# - Create Direct Deposit Payment Line', { tags: ['@financial-as
   });
   after(function () {
     if (this.teamCreated?.id && this.provider) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
 

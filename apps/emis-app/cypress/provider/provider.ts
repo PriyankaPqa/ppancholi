@@ -1,4 +1,5 @@
 import { CypressEventsService } from '@libs/cypress-lib/services/events';
+import { CypressTeamsService } from '@libs/cypress-lib/services/teams';
 import { getHttpClient } from '../../src/services/httpClient';
 import { provider as appProvider } from '../../src/services/provider';
 
@@ -7,6 +8,7 @@ export const useProvider = (accessToken: string) => {
   return {
     cypress: {
       events: new CypressEventsService(httpClient),
+      teams: new CypressTeamsService(httpClient),
     },
     ...appProvider(httpClient),
   };

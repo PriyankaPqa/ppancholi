@@ -49,7 +49,7 @@ describe('#TC1049# - Update Household Address', { tags: ['@household'] }, () => 
 
   after(function () {
     if (this.teamCreated?.id && this.provider) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
 

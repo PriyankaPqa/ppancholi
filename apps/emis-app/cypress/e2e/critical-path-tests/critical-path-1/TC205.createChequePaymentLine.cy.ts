@@ -44,7 +44,7 @@ describe('#TC205# - Create Cheque Payment Line', { tags: ['@financial-assistance
   });
   after(function () {
     if (this.teamCreated?.id && this.provider) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
   describe('Can Roles', () => {

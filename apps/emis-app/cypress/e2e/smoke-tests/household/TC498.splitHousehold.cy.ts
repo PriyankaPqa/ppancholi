@@ -47,7 +47,7 @@ describe('#TC498# - Split Household', { tags: ['@household'] }, () => {
 
   after(function () {
     if (this.teamCreated?.id && this.provider) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
 
