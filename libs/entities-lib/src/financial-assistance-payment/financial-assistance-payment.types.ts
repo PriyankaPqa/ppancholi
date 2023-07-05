@@ -42,7 +42,7 @@ export enum EPaymentCancellationReason {
   Expired = 3,
   AdminCancellation4 = 4,
   FailedDelivery = 5,
-  Unknown = 6, // TODO: EMISV2-6124 remove feature flag
+  Unknown = 6,
 }
 
 /**

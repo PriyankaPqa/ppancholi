@@ -169,6 +169,7 @@ export default Vue.extend({
       ApprovalStatus,
       showCancelConfirmationReason: false,
       showPaymentStatusHistory: false,
+      cancellationReasons: helpers.enumToTranslatedCollection(EPaymentCancellationReason, 'enums.paymentCancellationReason'),
     };
   },
 
@@ -335,16 +336,6 @@ export default Vue.extend({
       }
 
       return statusArr.filter((s) => s);
-    },
-
-    cancellationReasons() {
-      // TODO: EMISV2-6124 remove feature flag
-      // when remove this feature flag, please move 'cancellationReasons' to data(){}
-      const reasons = helpers.enumToTranslatedCollection(EPaymentCancellationReason, 'enums.paymentCancellationReason');
-      if (this.$hasFeature(FeatureKeys.ETransferCancellationHaveOptionForUnknown)) {
-        return reasons;
-      }
-      return reasons.filter((reason) => reason.value !== EPaymentCancellationReason.Unknown);
     },
 
     hasFeatureFlagPaymentStatusHistory() {

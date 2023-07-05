@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@libs/entities-lib/financial-assistance';
 import {
-  mockCaseFinancialAssistancePaymentGroups, PaymentStatus, EPaymentCancellationReason, ApprovalStatus,
+  mockCaseFinancialAssistancePaymentGroups, PaymentStatus, ApprovalStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { mockProgramEntity, EPaymentModalities } from '@libs/entities-lib/program';
 import helpers from '@/ui/helpers/helpers';
@@ -10,7 +10,6 @@ import PaymentStatusHistoryDialog from '@/ui/views/pages/case-files/details/case
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 import flushPromises from 'flush-promises';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../PaymentLineGroup.vue';
 
 const localVue = createLocalVue();
@@ -589,30 +588,6 @@ describe('PaymentLineGroup.vue', () => {
 
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
-      });
-    });
-
-    describe('cancellationReasons', () => {
-      const mockReasons = [
-        { value: 0, text: '0 - Admin cancellation', dataTest: 'AdminCancellation0' },
-        { value: 1, text: '1 - Recipient rejected', dataTest: 'RecipientRejected' },
-        { value: 2, text: '2 - Invalid PIN', dataTest: 'InvalidPIN' },
-        { value: 3, text: '3 - Expired', dataTest: 'Expired' },
-        { value: 4, text: '4 - Admin cancellation', dataTest: 'AdminCancellation4' },
-        { value: 5, text: '5 - Failed delivery', dataTest: 'FailedDelivery' },
-        { value: 6, text: '6 - Unknown', dataTest: 'Unknown' },
-      ];
-      it('should return cancellation reasons with Unknown when feature flag is on', async () => {
-        await wrapper.setFeature(FeatureKeys.ETransferCancellationHaveOptionForUnknown, true);
-        wrapper.vm.helpers = jest.fn(() => mockReasons);
-        expect(wrapper.vm.cancellationReasons).toEqual(mockReasons);
-      });
-
-      it('should return cancellation reasons without Unknown when feature flag is off', async () => {
-        await wrapper.setFeature(FeatureKeys.ETransferCancellationHaveOptionForUnknown, false);
-        const mockReasonsWithoutUnknown = mockReasons.filter((reason) => reason.value !== EPaymentCancellationReason.Unknown);
-        wrapper.vm.helpers = jest.fn(() => mockReasonsWithoutUnknown);
-        expect(wrapper.vm.cancellationReasons).toEqual(mockReasonsWithoutUnknown);
       });
     });
   });
