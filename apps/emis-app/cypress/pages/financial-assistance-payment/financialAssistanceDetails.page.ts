@@ -88,21 +88,15 @@ export class FinancialAssistanceDetailsPage {
     return cy.getByDataTest(this.statusIssued);
   }
 
-  public selectPaymentLineStatusIssued() {
-    cy.getByDataTest(this.paymentLineStatus).click().then(() => {
-      cy.getByDataTest(this.statusIssued).click();
-    });
-  }
+  public selectPaymentLineStatus(status: string) {
+    const mapPaymentLineStatus = {
+    Issued: this.statusIssued,
+    Completed: this.statusCompleted,
+    Cancelled: this.statusCancelled,
+    } as Record<string, { selector: DataTest }>;
 
-  public selectPaymentLineStatusCompleted() {
     cy.getByDataTest(this.paymentLineStatus).click().then(() => {
-      cy.getByDataTest(this.statusCompleted).click();
-    });
-  }
-
-  public selectPaymentLineStatusCancelled() {
-    cy.getByDataTest(this.paymentLineStatus).click().then(() => {
-      cy.getByDataTest(this.statusCancelled).click();
+      cy.getByDataTest(mapPaymentLineStatus[status]).click();
     });
   }
 

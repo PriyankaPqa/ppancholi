@@ -225,3 +225,21 @@ export const prepareStateEventTeamProgramTableWithItemSubItem = async (accessTok
   const table = resultCreateProgram.table;
   return { event, team, table, provider };
 };
+/**
+ * Creates a household, adds financial assistance to a casefile, Submit and updates financial assistance
+ * @param accessTokenL6
+ * @param event
+ * @param tableId
+ * @param paymentStatus
+ * @param paymentModalities
+ */
+// eslint-disable-next-line
+export const prepareStateHouseholdAddSubmitUpdateFAPayment = async (accessTokenL6: string, event:IEventEntity, tableId:string, paymentStatus:PaymentStatus, paymentModalities: EPaymentModalities) => {
+  const resultPrepareStateHousehold = await prepareStateHousehold(accessTokenL6, event);
+  const caseFile = resultPrepareStateHousehold.registrationResponse.caseFile;
+  const provider = resultPrepareStateHousehold.provider;
+  const createdFinancialAssistancePayment = await addFinancialAssistancePayment(provider, paymentModalities, caseFile.id, tableId);
+  const submittedFinancialAssistancePayment = await submitFinancialAssistancePayment(provider, createdFinancialAssistancePayment.id);
+  await updateFinancialAssistancePayment(provider, submittedFinancialAssistancePayment.id, submittedFinancialAssistancePayment.groups[0].id, paymentStatus);
+  return { caseFile, submittedFinancialAssistancePayment };
+};

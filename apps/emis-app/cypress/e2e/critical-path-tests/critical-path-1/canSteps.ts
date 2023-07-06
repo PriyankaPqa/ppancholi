@@ -1,5 +1,6 @@
 import { IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
+import { FinancialAssistanceDetailsPage } from 'cypress/pages/financial-assistance-payment/financialAssistanceDetails.page';
 import { AddFinancialAssistancePage } from '../../../pages/financial-assistance-payment/addFinancialAssistance.page';
 import { IAddNewPaymentLineFields } from '../../../pages/financial-assistance-payment/addNewPaymentLine.page';
 
@@ -9,6 +10,11 @@ export interface PaymentLineCanStepsParams {
   paymentLineData: IAddNewPaymentLineFields,
   groupTitle: string,
   household: ICreateHouseholdRequest,
+}
+
+export interface paymentGroupStatusUpdateParam {
+  paymentStatus: string,
+  paymentModality: string,
 }
 
 const addPaymentLineCanSteps = ({ faTable, retries, paymentLineData, groupTitle }: Partial<PaymentLineCanStepsParams>) => {
@@ -80,4 +86,24 @@ export const paymentLineGeneralCanSteps = ({ faTable, retries, paymentLineData, 
 export const paymentLineChequeCanSteps = ({ faTable, retries, paymentLineData, groupTitle, household }: Partial<PaymentLineCanStepsParams>) => {
   addPaymentLineChequeCanSteps({ faTable, retries, paymentLineData, household });
   financialAssistanceCanSteps({ paymentLineData, groupTitle });
+};
+
+export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality }: Partial<paymentGroupStatusUpdateParam>) => {
+  const financialAssistanceDetailsPage = new FinancialAssistanceDetailsPage();
+  financialAssistanceDetailsPage.selectPaymentLineStatus(paymentStatus);
+  if (paymentStatus === 'Cancelled') {
+    cy.contains(`Are you sure you want to cancel all ${paymentModality} payment lines?`).should('be.visible');
+    financialAssistanceDetailsPage.getDialogSubmitConfirmCancellationButton().should('be.enabled');
+    financialAssistanceDetailsPage.getDialogCancelConfirmCancellationButton().should('be.enabled');
+    financialAssistanceDetailsPage.getDialogSubmitConfirmCancellationButton().click();
+  }
+  cy.contains('Payment status successfully updated.').should('be.visible');
+  financialAssistanceDetailsPage.getPaymentLineStatusElement().contains(`${paymentStatus}`).should('be.visible');
+  if (paymentStatus === 'Cancelled') {
+    financialAssistanceDetailsPage.getPaymentLineItemAmountField().should('have.attr', 'class').and('contains', 'line-through');
+    financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00');
+  } else {
+    financialAssistanceDetailsPage.getPaymentLineItemAmountField().should('have.attr', 'class').and('not.have.string', 'line-through');
+    financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $80.00');
+  }
 };
