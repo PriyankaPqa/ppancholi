@@ -11,7 +11,7 @@
         </span>
 
         <v-icon
-          v-if="paymentGroup.paymentStatusHistory && hasFeatureFlagPaymentStatusHistory"
+          v-if="paymentGroup.paymentStatusHistory"
           data-test="paymentLineGroup__historyLink"
           class="mr-2"
           @click="showPaymentStatusHistoryDialog()">
@@ -89,14 +89,13 @@
     </rc-confirmation-dialog>
 
     <payment-status-history-dialog
-      v-if="showPaymentStatusHistory && hasFeatureFlagPaymentStatusHistory"
+      v-if="showPaymentStatusHistory"
       :payment-group="paymentGroup"
       :show.sync="showPaymentStatusHistory" />
   </div>
 </template>
 
 <script lang="ts">
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcConfirmationDialog, VSelectWithValidation } from '@libs/component-lib/components';
@@ -336,11 +335,6 @@ export default Vue.extend({
       }
 
       return statusArr.filter((s) => s);
-    },
-
-    hasFeatureFlagPaymentStatusHistory() {
-      // TODO: EMISV2-6268 remove feature flag
-      return this.$hasFeature(FeatureKeys.PaymentGroupStatusHistory);
     },
   },
 

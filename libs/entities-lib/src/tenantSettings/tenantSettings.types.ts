@@ -5,7 +5,6 @@ import { IEntity, IEntityCombined } from '../base';
 export enum FeatureKeys {
   AddressAutoFill = 'AddressAutoFill',
   BotProtection = 'BotProtection',
-  PaymentGroupStatusHistory = 'paymentGroupStatusHistory',
   SelfRegistration = 'SelfRegistration',
   HouseholdProfileStatus = 'HouseholdProfileStatus',
   ManageDuplicates = 'manageDuplicates',

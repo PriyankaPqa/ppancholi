@@ -100,12 +100,8 @@ describe('PaymentLineGroup.vue', () => {
     });
 
     describe('paymentLineGroup__historyLink', () => {
-      it('should render when the payment group has payment status history and the feature flag is on', async () => {
-        await mountWrapper(false, 6, 'role', {
-          computed: {
-            hasFeatureFlagPaymentStatusHistory: () => true,
-          },
-        });
+      it('should render when the payment group has payment status history', async () => {
+        await mountWrapper(false, 6, 'role');
         await wrapper.setProps({
           paymentGroup: mockCaseFinancialAssistancePaymentGroups()[0],
         });
@@ -115,12 +111,8 @@ describe('PaymentLineGroup.vue', () => {
     });
 
     describe('PaymentStatusHistoryDialog', () => {
-      it('should exist when showPaymentStatusHistory is true and the feature flag is on, and passing the correct props', async () => {
-        await mountWrapper(false, 6, 'role', {
-          computed: {
-            hasFeatureFlagPaymentStatusHistory: () => true,
-          },
-        });
+      it('should exist when showPaymentStatusHistory is true and passing the correct props', async () => {
+        await mountWrapper(false, 6, 'role');
         await wrapper.setData({
           showPaymentStatusHistory: true,
         });
