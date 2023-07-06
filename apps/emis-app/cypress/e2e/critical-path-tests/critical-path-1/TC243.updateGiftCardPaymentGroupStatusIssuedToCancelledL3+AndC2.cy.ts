@@ -3,7 +3,7 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { prepareStateEventTeamProgramTableWithItemSubItem, prepareStateHouseholdAddSubmitUpdateFAPayment } from '../../helpers/prepareState';
+import { prepareStateHouseholdAddSubmitUpdateFAPayment, prepareStateEventTeamProgramTableWithItemSubItem } from '../../helpers/prepareState';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 import { updatePaymentGroupStatusTo } from './canSteps';
 
@@ -28,7 +28,7 @@ const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles
 
 let accessTokenL6 = '';
 
-describe('#TC281# - Update Invoice payment group Status from Issued to Cancelled- L3+ and C2', { tags: ['@financial-assistance'] }, () => {
+describe('#TC243# - Update Gift Card payment group Status from Issued to Cancelled- L3+ and C2', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -51,13 +51,13 @@ describe('#TC281# - Update Invoice payment group Status from Issued to Cancelled
         beforeEach(() => {
           cy.then(async function () {
             // eslint-disable-next-line
-            const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Issued, EPaymentModalities.Invoice);
+            const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Issued, EPaymentModalities.GiftCard);
             cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
             cy.login(roleValue);
             cy.goTo(`casefile/${resultPrepareStateHouseholdFAPayment.caseFile.id}/financialAssistance`);
           });
         });
-        it('should successfully update Invoice Payment Group Status from Issued to Cancelled', function () {
+        it('should successfully update Gift Card Payment Group Status from Issued to Cancelled', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
@@ -65,7 +65,7 @@ describe('#TC281# - Update Invoice payment group Status from Issued to Cancelled
           financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Issued');
           updatePaymentGroupStatusTo({
             paymentStatus: 'Cancelled',
-            paymentModality: 'invoice',
+            paymentModality: 'gift card',
           });
         });
       });
@@ -75,7 +75,7 @@ describe('#TC281# - Update Invoice payment group Status from Issued to Cancelled
     before(() => {
       cy.then(async function () {
         // eslint-disable-next-line
-        const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Issued, EPaymentModalities.Invoice);
+        const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Issued, EPaymentModalities.GiftCard);
         cy.wrap(resultPrepareStateHouseholdFAPayment.caseFile.id).as('caseFileId');
         cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
       });
@@ -86,7 +86,7 @@ describe('#TC281# - Update Invoice payment group Status from Issued to Cancelled
           cy.login(roleValue);
           cy.goTo(`casefile/${this.caseFileId}/financialAssistance`);
         });
-        it('should not be able to update Invoice Payment Group Status', function () {
+        it('should not be able to update Gift Card Payment Group Status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
