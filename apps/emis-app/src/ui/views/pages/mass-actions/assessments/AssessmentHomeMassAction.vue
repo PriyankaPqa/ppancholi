@@ -27,7 +27,7 @@
       </template>
 
       <template #[`item.${customColumns.dateCreated}`]="{ item }">
-        {{ moment(item.entity.created).local().format('ll') }}
+        {{ format(parseISO(item.entity.created), 'MMM d, yyyy') }}
       </template>
 
       <template #[`item.${customColumns.projected}`]="{ item }">

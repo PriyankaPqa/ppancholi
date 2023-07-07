@@ -107,7 +107,7 @@ export const mockCaseNoteEntity = (force? : Partial<ICaseNoteEntity>) : ICaseNot
     },
   },
   isPinned: false,
-  updatedDate: new Date('0001-01-01T00:00:00'),
+  updatedDate: new Date('2001-01-01T00:00:00'),
   ...force,
   validate: () => true,
 });

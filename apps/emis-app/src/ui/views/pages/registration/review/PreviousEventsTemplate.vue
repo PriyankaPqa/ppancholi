@@ -16,7 +16,7 @@
               {{ $m(eventNames[c.eventId]) }}
             </v-col>
             <v-col cols="3" class="rc-body14" :data-test="`previous_event_registered_${index}`">
-              {{ $t('registration.details.registered') }}: {{ moment(c.registeredDate).format('ll') }}
+              {{ $t('registration.details.registered') }}: {{ format(new Date(c.created), 'MMM d, yyyy') }}
             </v-col>
             <v-col cols="3" class="rc-body14" data-test="`previous_casefileNumber_${index}`">
               {{ $t('registration.details.caseFile') }}: {{ c.caseFileNumber }}
@@ -30,10 +30,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import moment from 'moment';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { IEventMainInfo } from '@libs/entities-lib/event';
+import { format } from 'date-fns';
 
 export default Vue.extend({
   name: 'PreviousEventsTemplate',
@@ -46,7 +46,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      moment,
+      format,
       events: [] as IEventMainInfo[],
       caseFiles: [] as ICaseFileEntity[],
       loading: false,

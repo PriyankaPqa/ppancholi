@@ -135,7 +135,6 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import _orderBy from 'lodash/orderBy';
 import { RcPhoneDisplay } from '@libs/component-lib/components';
-import moment from '@libs/shared-lib/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
@@ -172,7 +171,6 @@ export default Vue.extend({
 
   data() {
     return {
-      moment,
       removeBorder: false,
       showExpandedLeftMenu: false,
       idDigitsCount: 6,

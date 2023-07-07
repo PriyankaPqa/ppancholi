@@ -20,7 +20,7 @@ describe('ImpactedIndividualsCardPinnedActivity.vue', () => {
     describe('rationaleActionAndUserInfo', () => {
       it('should return proper data', () => {
         doMount(CaseFileActivityType.ImpactedIndividualReceivingAssistance);
-        expect(wrapper.vm.rationaleAndUserInfo).toEqual('impactedIndividuals.pinned_rationale.by Jane Doe (sys admin) common.on May 4, 2021');
+        expect(wrapper.vm.rationaleAndUserInfo).toEqual('impactedIndividuals.pinned_rationale.by Jane Doe (sys admin) - May 4, 2021');
       });
     });
   });

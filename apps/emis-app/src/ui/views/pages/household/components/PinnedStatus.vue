@@ -13,9 +13,9 @@
 
   <script lang="ts">
   import { HouseholdStatus } from '@libs/entities-lib/household';
-  import moment from '@libs/shared-lib/plugins/moment';
   import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
   import { IMultilingual } from '@libs/shared-lib/types';
+  import { format, parseISO } from 'date-fns';
   import Vue from 'vue';
 
   interface IHouseholdStatusUpdatedDetail {
@@ -33,12 +33,6 @@
       },
     },
 
-    data() {
-      return {
-        moment,
-      };
-    },
-
     computed: {
       householdStatusActionAndUserInfo(): string {
         if (this.pinnedHouseholdStatusActivity) {
@@ -49,7 +43,7 @@
              }`;
             string += user;
             string += role;
-            string += ` - ${this.moment(this.pinnedHouseholdStatusActivity.timestamp).local().format('ll')}`;
+            string += ` - ${format(parseISO(this.pinnedHouseholdStatusActivity.timestamp as string), 'MMM d, yyyy')}`;
           return string;
         }
         return '';

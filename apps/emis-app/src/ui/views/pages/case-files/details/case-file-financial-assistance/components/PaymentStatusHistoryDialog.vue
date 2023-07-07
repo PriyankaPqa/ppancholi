@@ -35,11 +35,11 @@
         <span v-if="item.userInformation.roleName" class="pl-2 no-word-break">({{ $m(item.userInformation.roleName) }})</span>
       </template>
       <template #[`item.dateOfAction`]="{ item }">
-        {{ moment(item.dateOfAction).format('ll') }}
+        {{ format(new Date(item.dateOfAction), 'MMM d, yyyy') }}
       </template>
       <template #[`item.actualDateOfAction`]="{ item }">
         <div class="text-no-wrap">
-          {{ item.actualDateOfAction ? moment(item.actualDateOfAction).format('ll') : '-' }}
+          {{ item.actualDateOfAction ? format(new Date(item.actualDateOfAction), 'MMM d, yyyy') : '-' }}
         </div>
       </template>
       <template #[`item.paymentStatusText`]="{ item }">
@@ -58,11 +58,11 @@ import { IVersionedEntityCombined } from '@libs/entities-lib/src/value-objects/v
 import { DataTableHeader } from 'vuetify';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import moment from 'moment';
 import { EPaymentModalities } from '@libs/entities-lib/program/program.types';
 import {
   IFinancialAssistancePaymentGroup, IPaymentStatusHistory, PaymentStatus,
 } from '@libs/entities-lib/financial-assistance-payment';
+import { format } from 'date-fns';
 
 export default Vue.extend({
   name: 'PaymentStatusHistoryDialog',
@@ -91,7 +91,7 @@ export default Vue.extend({
       getLocalStringDate: helpers.getLocalStringDate,
       PaymentStatus,
       EPaymentModalities,
-      moment,
+      format,
     };
   },
 

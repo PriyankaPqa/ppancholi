@@ -11,7 +11,7 @@ import {
 
 import helpers from '@libs/entities-lib/helpers';
 import Vue from 'vue';
-import moment from '@libs/shared-lib/plugins/moment';
+import { isValid as isValidDate, isSameDay, isAfter, startOfDay, subYears, isBefore, endOfDay, parseISO } from 'date-fns';
 
 import { i18n } from './i18n';
 
@@ -103,12 +103,15 @@ extend('mustBeAfterOrSame', {
   message: (_, values) => i18n.t('validations.mustBeAfterOrSame', values),
   params: ['X', 'Y'],
   validate: (value, { X, Y }) => {
-    const xValid = moment(X, 'YYYY-MM-DD', true).isValid();
-    const yValid = moment(Y, 'YYYY-MM-DD', true).isValid();
+    const parsedX = parseISO(X);
+    const parsedY = parseISO(Y);
+
+    const xValid = isValidDate(parsedX);
+    const yValid = isValidDate(parsedY);
     if (!xValid || !yValid) {
       return false;
     }
-    return moment(X).isSameOrAfter(Y);
+    return isSameDay(parsedX, parsedY) || isAfter(parsedX, parsedY);
   },
 });
 
@@ -117,12 +120,15 @@ extend('mustBeBeforeOrSame', {
   message: (_, values) => i18n.t('validations.mustBeBeforeOrSame', values),
   params: ['X', 'Y'],
   validate: (value, { X, Y }) => {
-    const xValid = moment(X, 'YYYY-MM-DD', true).isValid();
-    const yValid = moment(Y, 'YYYY-MM-DD', true).isValid();
+    const parsedX = parseISO(X);
+    const parsedY = parseISO(Y);
+
+    const xValid = isValidDate(parsedX);
+    const yValid = isValidDate(parsedY);
     if (!xValid || !yValid) {
       return false;
     }
-    return moment(X).isSameOrBefore(Y);
+    return isSameDay(parsedX, parsedY) || isBefore(parsedX, parsedY);
   },
 });
 
@@ -162,9 +168,10 @@ extend('birthday', {
       return false;
     }
 
-    const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
-    if (momentBirthdate.isValid()) {
-      if (momentBirthdate.isSameOrAfter(moment())) {
+    const dateFnsBirthdate = helpers.getBirthDateDateFnsObject(birthdate);
+    if (isValidDate(dateFnsBirthdate)) {
+      const dayStart = startOfDay(new Date());
+      if (isSameDay(dateFnsBirthdate, dayStart) || isAfter(dateFnsBirthdate, dayStart)) {
         return i18n.t('registration.personal_info.validations.notInFuture');
       }
       return true;
@@ -181,11 +188,11 @@ extend('minimumAge', {
       return true;
     }
 
-    const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
-    const now = moment().endOf('day');
-    now.subtract(age, 'years');
+    const dateFnsBirthdate = helpers.getBirthDateDateFnsObject(birthdate);
+    const now = endOfDay(new Date());
+    const nowSubYears = subYears(now, age);
 
-    if (momentBirthdate.isSameOrBefore(now)) {
+    if (isSameDay(dateFnsBirthdate, nowSubYears) || isBefore(dateFnsBirthdate, nowSubYears)) {
       return true;
     }
 

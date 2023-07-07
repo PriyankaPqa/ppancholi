@@ -26,7 +26,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VCheckboxWithValidation } from '@libs/component-lib/components';
-import moment from 'moment';
+import { utcToZonedTime, format } from 'date-fns-tz';
 import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
@@ -63,7 +63,9 @@ export default Vue.extend({
       },
       set(checked: boolean) {
         this.$registrationStore.isPrivacyAgreed = checked;
-        this.$registrationStore.householdCreate.consentInformation.privacyDateTimeConsent = checked ? moment.utc(moment()).format() : null;
+        this.$registrationStore.householdCreate.consentInformation.privacyDateTimeConsent = checked
+          ? format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' })
+          : null;
       },
     },
     activeStatementText(): string {

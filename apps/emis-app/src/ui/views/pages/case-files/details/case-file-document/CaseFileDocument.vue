@@ -41,7 +41,7 @@
       </template>
 
       <template #[`item.${customColumns.created}`]="{ item }">
-        {{ item.created.format('ll') }}
+        {{ item.created }}
       </template>
 
       <template #[`item.${customColumns.documentStatusName}`]="{ item }">
@@ -89,7 +89,6 @@ import { RcDataTable } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import isEmpty from 'lodash/isEmpty';
-import moment from '@libs/shared-lib/plugins/moment';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import {
   DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined, ICaseFileDocumentMetadata,
@@ -104,6 +103,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { format } from 'date-fns';
 import caseFileDetail from '../caseFileDetail';
 
 interface caseFileDocumentsMapped {
@@ -173,7 +173,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         category: this.$m(d.metadata?.documentCategoryName) || '-',
         documentStatus: d.entity?.documentStatus || '-',
         documentStatusName: this.$m(d.metadata?.documentStatusName) || '-',
-        created: moment(d.entity?.created) || '-',
+        created: format(new Date(d.entity?.created), 'MMM d, yyyy') || '-',
         entity: d.entity,
         pinned: d.pinned,
       }));

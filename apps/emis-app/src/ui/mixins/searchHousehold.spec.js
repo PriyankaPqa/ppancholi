@@ -1,8 +1,8 @@
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import moment from '@libs/shared-lib/plugins/moment';
 import { mockCombinedHousehold } from '@libs/entities-lib/household';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+import { format, parseISO } from 'date-fns';
 
 const Component = {
   render() {},
@@ -75,7 +75,7 @@ describe('searchHousehold', () => {
           },
         });
         const expected = {
-          DateOfBirth: moment.utc(wrapper.vm.criteria.birthDate).format(),
+          DateOfBirth: format(parseISO(wrapper.vm.criteria.birthDate), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
         };
         expect(wrapper.vm.metadataFilters).toEqual(expected);
       });

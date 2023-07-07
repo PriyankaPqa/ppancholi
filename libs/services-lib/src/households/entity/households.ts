@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { utcToZonedTime, format } from 'date-fns-tz';
 import { IConsentInformation, IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
 import { HouseholdStatus, IDetailedRegistrationResponse, IDuplicateData, IHouseholdEntity, IOustandingPaymentResponse, DuplicateReason } from '@libs/entities-lib/household';
 import {
@@ -98,14 +98,14 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     return this.http.patch(`${this.baseUrl}/${publicMode ? 'public/' : ''}${id}/address`, {
       address: {
         address: this.parseAddress(payload),
-        from: moment.utc(moment()).format(),
+        from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       },
     });
   }
 
   async updateNoFixedHomeAddress(id: string, publicMode: boolean, observation?: string): Promise<IHouseholdEntity> {
     return this.http.patch(`${this.baseUrl}/${publicMode ? 'public/' : ''}${id}/no-fixed-address`, {
-      from: moment.utc(moment()).format(),
+      from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       observation: observation || null,
     });
   }
@@ -303,7 +303,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
       placeName: currentAddress.placeName,
       shelterLocationId: currentAddress.shelterLocation ? currentAddress.shelterLocation.id : null,
       address: noPlaceAddress ? null : this.parseAddress(currentAddress.address),
-      from: moment.utc(moment()).format(),
+      from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       crcProvided: currentAddress.crcProvided,
       checkIn: currentAddress.checkIn ? new Date(currentAddress.checkIn).toISOString() : null,
       checkOut: currentAddress.checkOut ? new Date(currentAddress.checkOut).toISOString() : null,

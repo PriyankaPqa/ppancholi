@@ -19,7 +19,9 @@
         <v-row class="stacked-details rc-body14">
           <div>
             <div>{{ $t('assessmentResponse.dateAssigned') }}:</div>
-            <div>{{ moment(assessmentResponse.dateAssigned).format('ll') }}</div>
+            <div data-test="date_assigned">
+              {{ format(new Date(assessmentResponse.dateAssigned), 'MMM d, yyyy') }}
+            </div>
           </div>
           <div>
             <div>{{ $t('assessmentResponse.completedBy') }}:</div>
@@ -31,7 +33,9 @@
           </div>
           <div>
             <div>{{ $t('assessmentResponse.dateCompleted') }}:</div>
-            <div>{{ assessmentResponse.dateCompleted ? moment(assessmentResponse.dateCompleted).format('ll') : '' }}</div>
+            <div data-test="date_completed">
+              {{ assessmentResponse.dateCompleted ? format(new Date(assessmentResponse.dateCompleted), 'MMM d, yyyy') : '' }}
+            </div>
           </div>
           <div v-if="scoringRange">
             <div>{{ scoringRange }}</div>
@@ -68,7 +72,6 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import moment from 'moment';
 import {
   RcPageContent, RcTab, RcTabs,
 } from '@libs/component-lib/components';
@@ -81,6 +84,7 @@ import { useAssessmentFormStore } from '@/pinia/assessment-form/assessment-form'
 import { useAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response';
 import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { format } from 'date-fns';
 import caseFileDetail from '../../caseFileDetail';
 import QuestionTab from './QuestionTab.vue';
 
@@ -105,10 +109,10 @@ export default mixins(caseFileDetail).extend({
   data() {
     return {
       CompletedByType,
-      moment,
       FeatureKeys,
       selectedTab: 'Questions',
       tabs: ['Questions'],
+      format,
     };
   },
 

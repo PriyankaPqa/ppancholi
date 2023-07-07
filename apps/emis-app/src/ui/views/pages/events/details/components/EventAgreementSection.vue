@@ -151,11 +151,11 @@ export default Vue.extend({
       return {
         startDate: {
           key: 'eventSummary.agreement.startDate',
-          value: this.agreement.startDate ? this.getLocalStringDate(this.agreement.startDate, 'EventAgreement.startDate', 'll') : '-',
+          value: this.agreement.startDate ? this.getLocalStringDate(this.agreement.startDate, 'EventAgreement.startDate', 'MMM d, yyyy') : '-',
         },
         endDate: {
           key: 'eventSummary.agreement.endDate',
-          value: this.agreement.endDate ? this.getLocalStringDate(this.agreement.endDate, 'EventAgreement.endDate', 'll') : '-',
+          value: this.agreement.endDate ? this.getLocalStringDate(this.agreement.endDate, 'EventAgreement.endDate', 'MMM d, yyyy') : '-',
         },
         type: {
           key: 'eventSummary.agreement.type',

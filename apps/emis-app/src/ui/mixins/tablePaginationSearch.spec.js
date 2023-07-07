@@ -79,7 +79,7 @@ describe('tablePaginationSearch.vue', () => {
       it('returns the date of last search', () => {
         wrapper.vm.$t = jest.fn(() => 'hello');
         wrapper.setData({
-          searchExecutionDate: '20200101',
+          searchExecutionDate: '2020-01-01',
         });
         expect(wrapper.vm.footerText).toBe('hello');
         expect(wrapper.vm.$t).toHaveBeenCalledWith('searchTable.footer', { date: 'Jan 1, 2020 12:00 AM' });

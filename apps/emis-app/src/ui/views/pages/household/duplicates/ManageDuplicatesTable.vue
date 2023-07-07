@@ -96,7 +96,7 @@
             <div class="px-1" data-test="householdDetails-duplicate-history-user">
               {{ $t('common.by') }}: {{ historyItem.userInformation.userName }}
               <span v-if="historyItem.userInformation.roleName">({{ $m(historyItem.userInformation.roleName) }})</span>
-              - {{ moment(historyItem.dateOfAction).local().format('ll') }}
+              - {{ format(parseISO(historyItem.dateOfAction), 'MMM d, yyyy') }}
             </div>
             <div v-if="historyItem.rationale" class="px-1" data-test="householdDetails-duplicate-history-rationale">
               {{ historyItem.duplicateStatus === DuplicateStatus.Potential
@@ -161,7 +161,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
-import moment from 'moment';
 import routes from '@/constants/routes';
 import householdHelpers from '@/ui/helpers/household';
 import { IHouseholdAddress, IHouseholdDuplicateFullData, DuplicateReason, DuplicateStatus, IHouseholdEntity } from '@libs/entities-lib/household';
@@ -169,6 +168,7 @@ import helpers from '@/ui/helpers/helpers';
 import CaseFileDetailsBeneficiaryPhoneNumber from '@/ui/views/pages/case-files/details/components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useHouseholdStore } from '@/pinia/household/household';
+import { format, parseISO } from 'date-fns';
 import ManageDuplicatesActionDialog from './ManageDuplicatesActionDialog.vue';
 
 export default Vue.extend({
@@ -200,13 +200,14 @@ export default Vue.extend({
 
   data() {
     return {
-      moment,
       DuplicateReason,
       DuplicateStatus,
       showActionDialog: false,
       actionedDuplicate: null as IHouseholdDuplicateFullData,
       initialSelect: this.isPotentialTable ? DuplicateStatus.Potential : DuplicateStatus.Resolved,
       submitting: false,
+      format,
+      parseISO,
     };
   },
 

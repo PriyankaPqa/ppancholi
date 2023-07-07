@@ -36,7 +36,14 @@ describe('ApprovalHistoryDialog.vue', () => {
 
   describe('Template', () => {
     beforeEach(async () => {
-      await mountWrapper();
+      await mountWrapper(false, 6, 'role', {
+        computed: {
+          paymentStatusHistory: [{
+            dateOfAction: '2023-06-23T19:53:50.4088276Z',
+            actualDateOfAction: '2023-06-23T19:53:50.4088276Z',
+          }],
+        },
+      });
     });
 
     describe('payment-modality', () => {

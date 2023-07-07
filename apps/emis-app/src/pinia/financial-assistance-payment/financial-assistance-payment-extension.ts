@@ -12,8 +12,6 @@ import {
   IFinancialAssistancePaymentsServiceMock,
   IUpdatePaymentStatusParams,
 } from '@libs/services-lib/financial-assistance-payments/entity';
-import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
-import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
 
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<IFinancialAssistancePaymentEntity, IdParams>,
@@ -114,27 +112,6 @@ export function getExtensionComponents(
     return result;
   }
 
-  async function fetchHistory(financialAssistanceId: uuid, includeMetadata: boolean) {
-    const entityRequest = entityService.getHistory(financialAssistanceId);
-    const metadataRequest = includeMetadata ? entityService.getMetadataHistory(financialAssistanceId) : null;
-
-    // Fetch  history from the entity and metadata endpoints for financialAssistancePayment
-    const [entityResponse, metadataResponse] = await Promise.all([entityRequest, metadataRequest]);
-
-    // Add the type of change 'financialAssistancePayment' to the financialAssistancePayment history items
-    const entityResponseWithType = entityResponse?.map((r) => {
-      r.entityType = 'financialAssistancePayment';
-      return r;
-    });
-
-    // add the previous entity to each history item and order them chronologically
-    const mappedEntityResponses: IVersionedEntity[] = utils.mapResponses([entityResponseWithType]);
-    const mappedMetadataResponses = utils.mapResponses([metadataResponse || []]);
-
-    // Combine the entities and metadata history items into one object
-    return utils.combineEntities(mappedEntityResponses, mappedMetadataResponses);
-  }
-
   return {
     financialAssistanceCategories,
     financialAssistanceCategoriesFetched,
@@ -149,6 +126,5 @@ export function getExtensionComponents(
     addFinancialAssistancePaymentLine,
     editFinancialAssistancePaymentLine,
     deleteFinancialAssistancePaymentLine,
-    fetchHistory,
   };
 }

@@ -17,10 +17,11 @@ const { pinia, caseFileStore } = useMockCaseFileStore();
 const { registrationStore } = useMockRegistrationStore(pinia);
 describe('Individual.vue', () => {
   let wrapper;
-  const doMount = (shallow, otherComputed = {}, otherOptions = {}) => {
+  const doMount = (shallow, otherComputed = {}, otherOptions = {}, featureList = []) => {
     const options = {
       localVue,
       pinia,
+      featureList,
       computed: {
         allTabs() {
           return tabs();
@@ -547,11 +548,15 @@ describe('Individual.vue', () => {
 
     describe('enableAutocomplete', () => {
       it('return correct value', async () => {
-        doMount(true, {
-          currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-          associationMode: () => true,
-        });
-        await wrapper.setFeature(FeatureKeys.AddressAutoFill, true);
+        doMount(
+          true,
+          {
+            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+            associationMode: () => true,
+          },
+          {},
+          [FeatureKeys.AddressAutoFill],
+        );
         expect(wrapper.vm.enableAutocomplete).toBe(true);
         doMount(true, {
           currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),

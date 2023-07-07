@@ -1,6 +1,6 @@
 import PhoneNumber from 'awesome-phonenumber';
-import moment from 'moment';
 import { IOptionItemData } from '@libs/shared-lib/types';
+import { isValid, isSameDay, isAfter, isBefore, startOfDay, endOfDay, subYears } from 'date-fns';
 import { MIN_AGE_REGISTRATION } from '@libs/shared-lib/constants/validations';
 import birthdateHelper from './helpers/birthdate/birthdate';
 import { IBirthDate } from './value-objects/identity-set/identitySet.types';
@@ -83,8 +83,9 @@ const regex = /^([a-zA-Z]\d[a-zA-Z]\s?\d[a-zA-Z]\d)$/;
 };
 
 export const isValidBirthday = (birthdate: IBirthDate, errorMsg: string, errors: string[]) => {
-  const momentBirthdate = birthdateHelper.getBirthDateMomentObject(birthdate);
-  const valid = birthdate.year > 0 && momentBirthdate.isValid() && !momentBirthdate.isSameOrAfter(moment());
+  const dateFnsBirthdate = birthdateHelper.getBirthDateDateFnsObject(birthdate);
+  const dayStart = startOfDay(new Date());
+  const valid = birthdate.year > 0 && isValid(dateFnsBirthdate) && !(isSameDay(dateFnsBirthdate, dayStart) || isAfter(dateFnsBirthdate, dayStart));
   if (!valid) {
     errors.push(errorMsg);
   }
@@ -96,11 +97,10 @@ export const hasMinimumAge = (birthdate: IBirthDate, errorMsg: string, errors: s
   }
 
   const age = MIN_AGE_REGISTRATION;
-  const momentBirthdate = birthdateHelper.getBirthDateMomentObject(birthdate);
-  const now = moment().endOf('day');
-  now.subtract(age, 'years');
-
-  if (momentBirthdate.isSameOrBefore(now)) {
+  const dateFnsBirthdate = birthdateHelper.getBirthDateDateFnsObject(birthdate);
+  const now = endOfDay(new Date());
+  const nowSubYears = subYears(now, age);
+  if (isSameDay(dateFnsBirthdate, nowSubYears) || isBefore(dateFnsBirthdate, nowSubYears)) {
     return;
   }
 

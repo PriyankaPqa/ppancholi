@@ -44,7 +44,7 @@ export default Vue.extend({
 
     footerText(): string {
       return this.searchExecutionDate
-        ? this.$t('searchTable.footer', { date: helpers.getLocalStringDate(this.searchExecutionDate, 'local', 'lll') }) as string : '';
+        ? this.$t('searchTable.footer', { date: helpers.getLocalStringDate(this.searchExecutionDate, 'local', 'MMM d, yyyy h:mm a') }) as string : '';
     },
 
     /**

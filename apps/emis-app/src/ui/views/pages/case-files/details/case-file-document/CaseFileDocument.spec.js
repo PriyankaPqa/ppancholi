@@ -7,7 +7,6 @@ import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import { mockCombinedCaseFile } from '@libs/entities-lib/case-file';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
-import moment from '@libs/shared-lib/plugins/moment';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
@@ -38,7 +37,7 @@ describe('CaseFileDocument.vue', () => {
       category: options[0].name.translation.en,
       documentStatus: document.entity.documentStatus,
       documentStatusName: document.metadata.documentStatusName.translation.en,
-      created: 'Jul 20, 2021',
+      created: 'Jul 2, 2021',
       entity: document.entity,
     };
     wrapper = shallowMount(Component, {
@@ -568,7 +567,7 @@ describe('CaseFileDocument.vue', () => {
             name: document.entity.name,
             id: document.entity.id,
             category: wrapper.vm.$m(document.metadata.documentCategoryName),
-            created: moment(document.entity.created),
+            created: 'Apr 6, 2021',
             documentStatus: document.entity.documentStatus,
             documentStatusName: wrapper.vm.$m(document.metadata.documentStatusName),
             entity: document.entity,

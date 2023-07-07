@@ -64,7 +64,7 @@
               :key="`history__${$index}`">
               <td class="history">
                 <div>
-                  {{ $index == 0 ? $t('assessment.originalResponse') : moment(h.answeredOn).format('ll') }}
+                  {{ $index == 0 ? $t('assessment.originalResponse') : format(new Date(h.answeredOn), 'MMM d, yyyy') }}
                 </div>
                 <div v-if="$index > 0">
                   {{ $t('assessment.answeredBy', { user: h.crcUserName }) }}
@@ -85,7 +85,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import moment from 'moment';
 import {
   RcDialog,
 } from '@libs/component-lib/components';
@@ -93,6 +92,7 @@ import {
   CompletedByType, IAnsweredQuestion, IAssessmentFormEntity, IAssessmentQuestion, IAssessmentResponseEntity,
 } from '@libs/entities-lib/assessment-template';
 import { SurveyJsHelper } from '@libs/shared-lib/plugins/surveyJs/SurveyJsHelper';
+import { format } from 'date-fns';
 
 interface IQuestionAndAnswer {
   question: IAssessmentQuestion,
@@ -128,7 +128,7 @@ export default Vue.extend({
   data() {
     return {
       CompletedByType,
-      moment,
+      format,
       selectedTab: 'Questions',
       tabs: ['Questions', 'Scoring'],
       editedQuestion: null as IQuestionAndAnswer,

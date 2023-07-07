@@ -234,15 +234,6 @@ describe('CaseFileAssessment.vue', () => {
         await mountWrapper();
         expect(wrapper.vm.oneTimeAssessmentsIds).toEqual([]);
 
-        const assessments = assessmentFormStore.getByIds();
-        assessments[0].frequency = AssessmentFrequencyType.OneTime;
-
-        assessmentFormStore.getByIds = jest.fn(() => assessments);
-        assessmentResponseStore.getByIds = jest.fn(() => assessments.map((a) => ({ assessmentFormId: a.id })));
-        await mountWrapper();
-
-        expect(wrapper.vm.oneTimeAssessmentsIds).toEqual([assessments[0].id]);
-
         await mountWrapper(false, 1, null, {
           computed: {
             assessments() {

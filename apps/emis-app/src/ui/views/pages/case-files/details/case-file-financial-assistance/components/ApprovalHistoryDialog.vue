@@ -37,7 +37,7 @@
       </template>
       <template #[`item.dateOfApprovalAction`]="{ item }">
         <div class="text-no-wrap">
-          {{ getLocalStringDate(item.dateOfApprovalAction, 'Entity.timestamp', 'll') }}
+          {{ getLocalStringDate(item.dateOfApprovalAction, 'Entity.timestamp', 'MMM d, yyyy') }}
         </div>
       </template>
       <template #[`item.actionText`]="{ item }">

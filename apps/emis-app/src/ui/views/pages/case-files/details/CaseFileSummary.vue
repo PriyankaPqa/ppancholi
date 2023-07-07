@@ -142,7 +142,6 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import _flatten from 'lodash/flatten';
-import moment from 'moment';
 import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
 import {
   CaseFileActivityType, CaseFileStatus, ICaseFileActivity, ICaseFileEntity, ICaseFileMetadata,
@@ -160,6 +159,7 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { useTeamStore } from '@/pinia/team/team';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import { subMinutes } from 'date-fns';
 import CaseFileTags from './case-file-activity/components/CaseFileTags.vue';
 
 export interface CaseFileSummary {
@@ -233,7 +233,7 @@ export default Vue.extend({
         s.closedArchivedActivity = {
           name: this.closeActivity.user.name,
           isClosed: this.closeActivity.activityType === CaseFileActivityType.CaseFileStatusClosed,
-          date: helpers.getLocalStringDate(this.closeActivity.created, 'Entity.created', 'll'),
+          date: helpers.getLocalStringDate(this.closeActivity.created, 'Entity.created', 'MMM d, yyyy'),
           reason: this.closeActivity.activityType === CaseFileActivityType.CaseFileStatusClosed
             ? this.$m((this.closeActivity.details.reason as IIdMultilingualName).name) : null,
         };
@@ -293,7 +293,7 @@ export default Vue.extend({
     async getHouseholdMembers() {
       const mapToMember = (m: IHouseholdMemberMetadata) => ({
         name: `${m.firstName} ${m.lastName}`,
-        birthDate: helpers.getLocalStringDate(m.dateOfBirth, 'HouseholdMemberMetadata.dateOfBirth', 'll'),
+        birthDate: helpers.getLocalStringDate(m.dateOfBirth, 'HouseholdMemberMetadata.dateOfBirth', 'MMM d, yyyy'),
       });
       // if we have a date of archival/close we get the household at that date else we get the current households
       if (!this.closeActivity?.created) {
@@ -310,7 +310,7 @@ export default Vue.extend({
         historyM = _orderBy(historyM, 'timestamp', 'desc');
         // since our BE stuff happens async, some history might not be recorded at the exact same time
         // it has been decided that we will look at the version of history that was valid one minute before the close/archive
-        const oneMinuteBeforeCloseArchive = moment(this.closeActivity.created).add(-1, 'minute').toISOString();
+        const oneMinuteBeforeCloseArchive = subMinutes(new Date(this.closeActivity.created), 1).toISOString();
         const lastMeta = historyM.filter((h) => h.timestamp <= oneMinuteBeforeCloseArchive)[0]?.entity as IHouseholdMetadata;
         const lastEntity = historyE.filter((h) => h.timestamp <= oneMinuteBeforeCloseArchive)[0]?.entity as IHouseholdEntity;
         if (lastMeta) {

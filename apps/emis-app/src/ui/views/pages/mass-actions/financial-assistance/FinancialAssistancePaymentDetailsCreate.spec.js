@@ -120,7 +120,9 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         const expected = [mockFinancialAssistanceTableEntity()]
           .filter((t) => t.items.length > 0
             && t.status === Status.Active
-            && t.items.some((item) => item.status === Status.Active && item.subItems.some((subItem) => subItem.status === Status.Active && subItem.documentationRequired === false)));
+            && t.items.some((item) => item.status === Status.Active
+              && item.subItems.some((subItem) => subItem.status === Status.Active
+                && subItem.documentationRequired === false)));
 
         expect(wrapper.vm.financialAssistanceTables).toEqual(expected);
       });

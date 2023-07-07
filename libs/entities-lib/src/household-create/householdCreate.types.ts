@@ -30,6 +30,7 @@ export interface IHouseholdCreateData {
   consentInformation: IConsentInformation;
   id?: uuid;
   registrationNumber?: string;
+  created?: string;
 }
 
 export interface IHouseholdCreate {

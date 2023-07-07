@@ -1,19 +1,21 @@
-import moment from 'moment';
 import VueI18n from 'vue-i18n';
+import { format, set, toDate, differenceInYears, subYears, getYear, getMonth, getDate } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
 import { IBirthDate } from '../../value-objects/identity-set/identitySet.types';
 
 export default {
-  // Return moment object of a birthdate, with proper index for the month
-  getBirthDateMomentObject(birthdate: IBirthDate) {
+  // Return date-fns object of a birthdate, with proper index for the month
+  getBirthDateDateFnsObject(birthdate: IBirthDate) {
     const year = birthdate.year as number;
     const month = birthdate.month as number;
     const day = birthdate.day as number;
 
-    return moment({
+    const date = set(new Date(), {
       year,
       month: typeof month === 'number' ? month - 1 : 0,
-      day,
+      date: day,
     });
+    return toDate(date);
   },
 
   getBirthDateUTCString(birthdate: IBirthDate) {
@@ -33,27 +35,28 @@ export default {
   },
 
   convertBirthDateStringToObject(birthdate: string) {
-    const bdayMoment = moment(birthdate).utc();
+    const bdayDateFns = utcToZonedTime(birthdate, 'UTC');
 
     return {
-      month: bdayMoment.month() + 1,
-      day: `${bdayMoment.date()}`,
-      year: `${bdayMoment.year()}`,
+      month: getMonth(bdayDateFns) + 1,
+      day: `${getDate(bdayDateFns)}`,
+      year: `${getYear(bdayDateFns)}`,
     };
   },
 
   getAge(birthDate: IBirthDate) {
-    return moment().diff(moment({
-      month: (birthDate.month as number) - 1,
-      day: (birthDate.day as number),
-      year: (birthDate.year as number),
-    }), 'years');
+    const dateOfBirth = subYears(new Date(
+      birthDate.year as number,
+      (birthDate.month as number) - 1,
+        birthDate.day as number,
+  ), 0);
+    return differenceInYears(new Date(), dateOfBirth);
   },
 
   displayBirthDate(birthDate: IBirthDate) {
     if (birthDate.year && birthDate.month && birthDate.day) {
-      const birthdate = this.getBirthDateMomentObject(birthDate);
-      return birthdate.format('ll');
+      const birthdate = this.getBirthDateDateFnsObject(birthDate);
+      return format(birthdate, 'MMM d, yyyy');
     }
     return '';
   },

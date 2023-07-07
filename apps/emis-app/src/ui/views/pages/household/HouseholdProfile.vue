@@ -63,7 +63,7 @@
               </v-icon>
               {{ $t('household.profile.account_created') }}:
             </div>
-            <span>{{ moment(householdEntity.created).format('ll') }}</span>
+            <span>{{ format(new Date(householdEntity.created), 'MMM d, yyyy') }}</span>
           </div>
 
           <div class="pt-6  d-flex flex-column" data-test="household_profile_last_updated_date">
@@ -252,7 +252,6 @@
 
 <script lang="ts">
 
-import moment, { Moment } from 'moment';
 import mixins from 'vue-typed-mixins';
 import _isEmpty from 'lodash/isEmpty';
 
@@ -277,6 +276,7 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { HouseholdActivityType, IHouseholdActivity, IHouseholdActivityMembers } from '@libs/entities-lib/value-objects/household-activity';
 import PinnedStatus from '@/ui/views/pages/household/components/PinnedStatus.vue';
 import _debounce from 'lodash/debounce';
+import { format, max } from 'date-fns';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
@@ -326,7 +326,7 @@ export default mixins(household).extend({
   data() {
     return {
       i18n: this.$i18n,
-      moment,
+      format,
       loading: true,
       allEvents: [] as ICombinedIndex<IEventData, IEventMetadata>[],
       showAddAdditionalMember: false,
@@ -422,15 +422,16 @@ export default mixins(household).extend({
       }
 
       const metadataTimestamp = this.householdMetadata?.timestamp;
-      let date: Moment;
+      let date;
 
       if (metadataTimestamp) {
-        date = moment.max(moment(entityTimestamp), moment(metadataTimestamp));
+        const maxDate = max([new Date(entityTimestamp), new Date(metadataTimestamp)]);
+        date = format(maxDate, 'MMM d, yyyy');
       } else {
-        date = moment(entityTimestamp);
+        date = format(new Date(entityTimestamp), 'MMM d, yyyy');
       }
 
-      return date.format('ll');
+      return date;
     },
 
     canEdit(): boolean {

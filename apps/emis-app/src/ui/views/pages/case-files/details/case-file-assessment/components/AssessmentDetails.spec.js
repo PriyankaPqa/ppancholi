@@ -47,6 +47,7 @@ describe('AssessmentDetails.vue', () => {
   };
 
   beforeEach(async () => {
+    await mountWrapper();
     pinia = createTestingPinia({ stubActions: false });
     assessmentFormStore = useMockAssessmentFormStore(pinia).assessmentFormStore;
     assessmentResponseStore = useMockAssessmentResponseStore(pinia).assessmentResponseStore;
@@ -73,6 +74,40 @@ describe('AssessmentDetails.vue', () => {
         await wrapper.setData({ selectedTab: 'Questions' });
         dataTable = wrapper.findDataTest('question-list');
         expect(dataTable.exists()).toBeTruthy();
+      });
+    });
+
+    describe('date_completed', () => {
+      it('should display proper date data', async () => {
+        await mountWrapper(false, 5, 'role', {
+          computed: {
+            assessmentResponse() {
+              return {
+                dateAssigned: '2023-06-06T18:09:45.898928Z',
+                dateCompleted: '2023-06-06T18:09:45.898928Z',
+              };
+            },
+          },
+        });
+        const element = wrapper.findDataTest('date_completed');
+        expect(element.text()).toEqual('Jun 6, 2023');
+      });
+    });
+
+    describe('date_assigned', () => {
+      it('should display proper date data', async () => {
+        await mountWrapper(false, 5, 'role', {
+          computed: {
+            assessmentResponse() {
+              return {
+                dateAssigned: '2023-06-06T18:09:45.898928Z',
+                dateCompleted: '2023-06-06T18:09:45.898928Z',
+              };
+            },
+          },
+        });
+        const element = wrapper.findDataTest('date_assigned');
+        expect(element.text()).toEqual('Jun 6, 2023');
       });
     });
   });

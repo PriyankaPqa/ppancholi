@@ -161,7 +161,6 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
-import moment from '@libs/shared-lib/plugins/moment';
 import {
   AssociationType, IAssessmentBaseEntity, AssessmentFrequencyType,
   IAssessmentResponseCombined, CompletionStatus, PublishStatus, IAssessmentFormEntity,
@@ -176,6 +175,7 @@ import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings'
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useHouseholdStore } from '@/pinia/household/household';
 import { UserRoles } from '@libs/entities-lib/user';
+import { format } from 'date-fns';
 import caseFileDetail from '../caseFileDetail';
 import AddCaseFileAssessment from './components/AddCaseFileAssessment.vue';
 
@@ -383,12 +383,12 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         name: this.$m(r.form?.name) as string,
         nameLowerCase: (this.$m(r.form?.name) as string || '').toLowerCase(),
         dateAssigned: r.response.entity.dateAssigned,
-        dateAssignedFormatted: moment(r.response.entity.dateAssigned).format('ll'),
+        dateAssignedFormatted: format(new Date(r.response.entity.dateAssigned), 'MMM d, yyyy'),
         dateModified: r.response.entity.timestamp as Date,
-        dateModifiedFormatted: moment(r.response.entity.timestamp).format('ll'),
+        dateModifiedFormatted: format(new Date(r.response.entity.timestamp), 'MMM d, yyyy'),
         // default to crazy date because _orderBy sorts empty differently then normal BE search
         dateCompleted: r.response.entity.dateCompleted ? new Date(r.response.entity.dateCompleted) : new Date(1950, 0, 1),
-        dateCompletedFormatted: r.response.entity.dateCompleted ? moment(r.response.entity.dateCompleted).format('ll') : '',
+        dateCompletedFormatted: r.response.entity.dateCompleted ? format(new Date(r.response.entity.dateCompleted), 'MMM d, yyyy') : '',
         completionStatus: r.response.entity.completionStatus,
         formFrequency: r.form?.frequency,
         formId: r.form?.id,

@@ -54,12 +54,12 @@
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@libs/component-lib/components';
-import moment from '@libs/shared-lib/plugins/moment';
 import routes from '@/constants/routes';
 import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@libs/entities-lib/case-file-document';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useCaseFileDocumentStore } from '@/pinia/case-file-document/case-file-document';
 import { UserRoles } from '@libs/entities-lib/user';
+import { format } from 'date-fns';
 import DownloadViewDocument from './DownloadViewDocument.vue';
 import caseFileDetail from '../../caseFileDetail';
 
@@ -122,7 +122,7 @@ export default mixins(caseFileDetail).extend({
         },
         {
           label: 'caseFile.document.dateAdded',
-          data: moment(this.document.created).format('ll'),
+          data: format(new Date(this.document.created), 'MMM d, yyyy'),
           test: 'method',
         },
         {

@@ -240,14 +240,14 @@ export default Vue.extend({
 
     currentItem(): IFinancialAssistanceTableItemData {
       if (this.currentFinancialAssistanceTable?.items && this.formCopy.item) {
-        return this.currentFinancialAssistanceTable.items.find((i) => i.mainCategory.optionItemId === this.formCopy.item.id && i.status === Status.Active );
+        return this.currentFinancialAssistanceTable.items.find((i) => i.mainCategory.optionItemId === this.formCopy.item.id && i.status === Status.Active);
       }
       return null;
     },
 
     currentSubItem(): IFinancialAssistanceTableSubItemData {
       if (this.currentItem?.subItems && this.formCopy.subItem) {
-        return this.currentItem.subItems.find((s) => s.subCategory.optionItemId === this.formCopy.subItem.id && s.status == Status.Active);
+        return this.currentItem.subItems.find((s) => s.subCategory.optionItemId === this.formCopy.subItem.id && s.status === Status.Active);
       }
       return null;
     },

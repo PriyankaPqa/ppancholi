@@ -1,7 +1,6 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFileActivities } from '@libs/entities-lib/case-file';
 import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
-import moment from '@libs/shared-lib/plugins/moment';
 import { system } from '@/constants/system';
 
 import Component from '../components/CaseFileListItemWrapper.vue';
@@ -65,6 +64,7 @@ describe('CaseFileListItemWrapper.vue', () => {
       it('renders', () => {
         const element = wrapper.findDataTest('caseFileItem__created');
         expect(element.exists()).toBeTruthy();
+        expect(element.text()).toEqual('Apr 6, 2021 6:39 AM');
       });
     });
 
@@ -78,7 +78,7 @@ describe('CaseFileListItemWrapper.vue', () => {
     describe('last modified date', () => {
       it('renders', async () => {
         const element = wrapper.findDataTest('caseFileItem__lastModifiedDate');
-        expect(element.text()).toBe(moment(wrapper.vm.listItem.lastModifiedDate).format('ll'));
+        expect(element.text()).toBe('Jan 1, 2001');
       });
     });
 

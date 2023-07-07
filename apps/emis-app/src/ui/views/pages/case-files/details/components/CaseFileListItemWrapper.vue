@@ -11,7 +11,7 @@
         </span>
 
         <span class="rc-caption12" data-test="caseFileItem__created">
-          {{ moment(listItem.created).local().format('lll') }}
+          {{ format(new Date(listItem.created), 'MMM d, yyyy h:mm a') }}
         </span>
       </div>
 
@@ -50,7 +50,7 @@
           <div class="item__editedBy rc-caption10">
             {{ $t('item.lastEditBy') }}
             <strong class="mr-2" data-test="caseFileItem__lastEditBy">{{ listItem.lastModifiedByFullName }}</strong>
-            <span data-test="caseFileItem__lastModifiedDate">{{ moment(listItem.lastModifiedDate).format('ll') }}</span>
+            <span data-test="caseFileItem__lastModifiedDate">{{ format(new Date(listItem.lastModifiedDate), 'MMM d, yyyy') }}</span>
           </div>
         </div>
       </div>
@@ -60,10 +60,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import moment from '@libs/shared-lib/plugins/moment';
 import { ICaseFileActivity } from '@libs/entities-lib/case-file';
 import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
 import { system } from '@/constants/system';
+import { format } from 'date-fns';
 
 /**
  * Template used for case note and case file activity items
@@ -95,7 +95,7 @@ export default Vue.extend({
 
   data() {
     return {
-      moment,
+      format,
     };
   },
 

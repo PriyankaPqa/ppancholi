@@ -1,8 +1,9 @@
 import { NavigationGuardNext } from 'vue-router';
+import { format, parseISO } from 'date-fns';
+import { utcToZonedTime, format as formatUtc } from 'date-fns-tz';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { i18n } from '@/ui/plugins/i18n';
-import moment from '@libs/shared-lib/plugins/moment';
 import { IRestResponse } from '@libs/services-lib/http-client';
 import { DateTypes, dateTypes } from '@/constants/dateTypes';
 import routes from '@/constants/routes';
@@ -133,27 +134,27 @@ export default {
     return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   },
 
-  getLocalStringDate(date: Date | string, dateFieldName: string, format = 'YYYY-MM-DD'): string {
+  getLocalStringDate(date: Date | string, dateFieldName: string, formatTo = 'yyyy-MM-dd'): string {
     const dateType = dateTypes.getType(dateFieldName);
     if (!date) {
       return '';
     }
     if (typeof date === 'string' && /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/.test(date)) {
       // here we have been passed a string date already in YYYY-MM-DD = we HAVE to consider it local as it doesnt have time...
-      return moment(date).format(format);
+      return format(parseISO(date), formatTo);
     }
 
     if (dateType === DateTypes.ConvertToUtc || dateType === DateTypes.Static) {
-      return moment(date).utc().format(format);
+      return formatUtc(utcToZonedTime(new Date(date), 'UTC'), formatTo);
     }
-    return moment(date).format(format);
+    return format(new Date(date), formatTo);
   },
 
-  getUtcStringDate(date: Date | string, format = 'YYYY-MM-DD'): string {
+  getUtcStringDate(date: Date | string, formatTo = 'YYYY-MM-DD'): string {
     if (!date) {
       return '';
     }
-    return moment(date).utc().format(format);
+    return formatUtc(utcToZonedTime(new Date(date), 'UTC'), formatTo);
   },
 
   /**

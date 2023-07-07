@@ -16,7 +16,6 @@ import {
 } from '@libs/shared-lib/types';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
-import moment from '@libs/shared-lib/plugins/moment';
 import { createTestingPinia } from '@pinia/testing';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
@@ -26,13 +25,14 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import { mockProvider } from '@/services/provider';
 import { EEventSummarySections } from '@/types';
+import { format, formatISO } from 'date-fns';
 import Component from '../EventForm.vue';
 import { EDialogComponent } from '../../details/components/DialogComponents';
 
 const event = mockEventEntity();
-event.schedule.scheduledCloseDate = moment(event.schedule.scheduledCloseDate).toISOString();
-event.schedule.scheduledOpenDate = moment(event.schedule.scheduledOpenDate).toISOString();
-event.responseDetails.dateReported = moment(event.responseDetails.dateReported).toISOString();
+event.schedule.scheduledCloseDate = formatISO(new Date(event.schedule.scheduledCloseDate), { representation: 'complete' });
+event.schedule.scheduledOpenDate = formatISO(new Date(event.schedule.scheduledOpenDate), { representation: 'complete' });
+event.responseDetails.dateReported = formatISO(new Date(event.responseDetails.dateReported), { representation: 'complete' });
 event.fillEmptyMultilingualAttributes = jest.fn();
 
 const localVue = createLocalVue();
@@ -380,7 +380,7 @@ describe('EventForm.vue', () => {
       it('set scheduledOpenDate to today if true, null otherwise', () => {
         wrapper.vm.localEvent.schedule.scheduledOpenDate = null;
         wrapper.vm.isStatusOpen = true;
-        expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toEqual(moment(new Date()).format());
+        expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toEqual(format(new Date(), 'yyyy-MM-dd'));
 
         wrapper.vm.isStatusOpen = false;
         expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toEqual(null);
@@ -413,15 +413,15 @@ describe('EventForm.vue', () => {
           },
         });
 
-        const initialOpenDate = moment(wrapper.vm.localEvent.schedule.scheduledOpenDate).format('YYYY-MM-DD');
-        const initialCloseDate = moment(wrapper.vm.localEvent.schedule.scheduledCloseDate).format('YYYY-MM-DD');
+        const initialCloseDate = wrapper.vm.localEvent.schedule.scheduledCloseDate;
+        const initialOpenDate = wrapper.vm.localEvent.schedule.scheduledOpenDate;
 
         expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toBe(initialOpenDate);
         expect(wrapper.vm.localEvent.schedule.scheduledCloseDate).toBe(initialCloseDate);
 
         wrapper.vm.isStatusOpen = true;
 
-        expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toBe(moment(new Date()).format());
+        expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toBe(format(new Date(), 'yyyy-MM-dd'));
         expect(wrapper.vm.localEvent.schedule.scheduledCloseDate).toBe(initialCloseDate);
 
         wrapper.vm.isStatusOpen = false;
@@ -861,7 +861,7 @@ describe('EventForm.vue', () => {
 
     describe('today', () => {
       it('returns the date of today', () => {
-        const today = moment(new Date()).format('YYYY-MM-DD');
+        const today = format(new Date(), 'yyyy-MM-dd');
         expect(wrapper.vm.today).toEqual(today);
       });
     });
@@ -944,6 +944,21 @@ describe('EventForm.vue', () => {
         const component = wrapper.findComponent(EventsSelector);
         const props = 'excludedEvent';
         expect(component.props(props)).toBe(wrapper.vm.event.id);
+      });
+    });
+
+    describe('event-status-open-date', () => {
+      it('should display proper date when status is open', async () => {
+        await wrapper.setData({
+          localEvent: mockEventEntity({
+            schedule: {
+              status: EEventStatus.Open,
+            },
+          }),
+        });
+        const element = wrapper.findDataTest('event-status-open-date');
+        expect(element.text()).toBe('event.start_on_a_date\n'
+          + '                    Mar 31, 2021');
       });
     });
   });

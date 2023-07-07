@@ -128,7 +128,7 @@ describe('HouseholdCaseFileCard.vue', () => {
           localVue,
           propsData: {
             isActive: true,
-            caseFile: { eventId: 'id-1' },
+            caseFile: { eventId: 'id-1', created: '2001-01-01T00:00:00Z' },
             myEvents: [{ entity: { id: 'id-1' } }, { entity: { id: 'id-2' } }],
           },
         });
@@ -141,7 +141,7 @@ describe('HouseholdCaseFileCard.vue', () => {
           localVue,
           propsData: {
             isActive: true,
-            caseFile: { eventId: 'foo' },
+            caseFile: { eventId: 'foo', created: '2001-01-01T00:00:00Z' },
             myEvents: [{ entity: { id: 'id-1' } }, { entity: { id: 'id-2' } }],
           },
         });

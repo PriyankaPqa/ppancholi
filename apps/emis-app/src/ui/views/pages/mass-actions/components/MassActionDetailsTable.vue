@@ -14,7 +14,7 @@
         <span class="rc-body14 fw-bold">{{ $t('massActions.date_created') }}</span>
       </v-col>
       <v-col md="7">
-        <span class="rc-body14" data-test="dateCreated">{{ moment(massAction.created).local().format('ll') }}</span>
+        <span class="rc-body14" data-test="dateCreated">{{ format(parseISO(massAction.created), 'MMM d, yyyy') }}</span>
       </v-col>
     </v-row>
 
@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import moment from 'moment';
+import { format, parseISO } from 'date-fns';
 import {
   IMassActionEntity, MassActionDataCorrectionType, MassActionRunStatus, MassActionType,
 } from '@libs/entities-lib/mass-action';
@@ -51,7 +51,8 @@ export default Vue.extend({
 
   data() {
     return {
-      moment,
+      format,
+      parseISO,
       MassActionRunStatus,
       loading: false,
       labels: {

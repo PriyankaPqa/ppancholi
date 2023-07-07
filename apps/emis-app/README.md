@@ -103,8 +103,4 @@ import _ from 'lodash';
 import { _find } from 'lodash';
 ```
 
-### [moment 2.x](https://momentjs.com/docs/)
 
-Moment is a popular library used for managing time and dates in JavaScript.
-Moment can be used whenever complicated date comparisons or formatting needs to be done.
-If you need to add a locale to moment, that can be done in `@/ui/plugins/moment.js`.

@@ -88,7 +88,7 @@
 
       <template #[`item.${customColumns.submissionStartedDate}`]="{ item }">
         <div class="text-no-wrap">
-          {{ item.entity.submissionStartedDate ? getLocalStringDate(item.entity.submissionStartedDate, '', 'll') : '-' }}
+          {{ item.entity.submissionStartedDate ? getLocalStringDate(item.entity.submissionStartedDate, '', 'MMM d, yyyy') : '-' }}
         </div>
       </template>
 

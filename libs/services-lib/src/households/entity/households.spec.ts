@@ -1,5 +1,4 @@
 import { ECanadaProvinces, ERegistrationMethod, ERegistrationMode } from '@libs/shared-lib/types';
-import moment from 'moment';
 import { IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
 import {
   ECurrentAddressTypes,
@@ -20,6 +19,7 @@ import {
   mockSplitHouseholdRequest,
 } from '@libs/entities-lib/household-create';
 import { HouseholdStatus, DuplicateReason } from '@libs/entities-lib/household';
+import { format, utcToZonedTime } from 'date-fns-tz';
 import { mockHttp } from '../../http-client';
 import { HouseholdsService } from './households';
 
@@ -164,14 +164,14 @@ describe('>>> Beneficiaries Service', () => {
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/address`, {
       address: {
         address: service.parseAddress(address),
-        from: moment.utc(moment()).format(),
+        from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       },
     });
     await service.updateHomeAddress('123', true, address);
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/public/${'123'}/address`, {
       address: {
         address: service.parseAddress(address),
-        from: moment.utc(moment()).format(),
+        from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       },
     });
   });
@@ -179,12 +179,12 @@ describe('>>> Beneficiaries Service', () => {
   test('updateNoFixedHomeAddress is linked to the correct URL', async () => {
     await service.updateNoFixedHomeAddress('123', false, 'test');
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/no-fixed-address`, {
-      from: moment.utc(moment()).format(),
+      from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       observation: 'test',
     });
     await service.updateNoFixedHomeAddress('123', true, 'test');
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/public/${'123'}/no-fixed-address`, {
-      from: moment.utc(moment()).format(),
+      from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       observation: 'test',
     });
   });

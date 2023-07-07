@@ -1,5 +1,4 @@
 import { RcDataTable } from '@libs/component-lib/components';
-import moment from 'moment';
 import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
@@ -11,6 +10,7 @@ import { getPiniaForUser } from '@/pinia/user/user.mock';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { UserRoles } from '@libs/entities-lib/user';
 
+import { sub, add } from 'date-fns';
 import Component from './EventsTable.vue';
 
 const localVue = createLocalVue();
@@ -534,7 +534,7 @@ describe('EventsTable.vue', () => {
 
     describe('getFormattedDate', () => {
       it('returns the correct date format', () => {
-        expect(wrapper.vm.getFormattedDate('2021-01-01')).toEqual('Jan 1, 2021');
+        expect(wrapper.vm.getFormattedDate('2023-06-23T14:10:11.5499981Z')).toEqual('Jun 23, 2023');
       });
       it('returns a dash when the argument is empty', () => {
         expect(wrapper.vm.getFormattedDate(null)).toEqual('-');
@@ -553,7 +553,7 @@ describe('EventsTable.vue', () => {
 
       it('returns the number of days between open date and today if closeDate is not defined', () => {
         const mockSchedule = {
-          openDate: moment().subtract(5, 'days'),
+          openDate: sub(new Date(), { days: 5 }),
           closeDate: null,
         };
 
@@ -562,7 +562,7 @@ describe('EventsTable.vue', () => {
 
       it('returns the number of days between today and scheduled open date if neither closeDate nor openDate are defined', () => {
         const mockSchedule = {
-          scheduledOpenDate: moment().add(5, 'days'),
+          scheduledOpenDate: add(new Date(), { days: 5 }),
           openDate: null,
           closeDate: null,
         };

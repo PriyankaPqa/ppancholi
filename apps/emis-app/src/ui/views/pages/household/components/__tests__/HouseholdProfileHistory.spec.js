@@ -17,6 +17,7 @@ displayedItem.templateData = [{ label: 'foo', value: 'bar' }];
 displayedItem.templatePreviousData = [{ label: 'foo1', value: 'bar1' }];
 displayedItem.activityName = 'Personal information changed';
 displayedItem.userName = 'John Smith';
+displayedItem.timestamp = '2023-06-21T14:40:07.1594681Z';
 
 describe('HouseholdProfileHistory', () => {
   let wrapper;
@@ -45,7 +46,7 @@ describe('HouseholdProfileHistory', () => {
     });
     describe('date of change', () => {
       it('renders the right date', () => {
-        expect(wrapper.findDataTest('household_history_date-of-change').text()).toContain('Jan 1, 2021');
+        expect(wrapper.findDataTest('household_history_date-of-change').text()).toContain('Jun 21, 2023');
       });
     });
     describe('last action', () => {

@@ -90,11 +90,11 @@ import { UserRoles } from '@libs/entities-lib/user';
 import helpers from '@/ui/helpers/helpers';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
-import moment from '@libs/shared-lib/plugins/moment';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { useEventStore, useEventMetadataStore } from '@/pinia/event/event';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { differenceInDays, format, startOfDay } from 'date-fns';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'EventsTable',
@@ -272,7 +272,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     getFormattedDate(date: string | Date) {
       if (date) {
-        return moment(date).format('ll');
+        return format(new Date(date), 'MMM d, yyyy');
       }
       return '-';
     },
@@ -283,14 +283,14 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
       const { openDate, closeDate, scheduledOpenDate } = schedule;
       if (openDate && closeDate) {
-        return moment(closeDate).startOf('day').diff(moment(openDate).startOf('day'), 'days');
+        return differenceInDays(new Date(closeDate), new Date(openDate));
       }
       if (openDate) {
-        return moment(moment()).startOf('day').diff(moment(openDate).startOf('day'), 'days');
+        return differenceInDays(startOfDay(new Date()), startOfDay(new Date(openDate)));
       }
 
       if (scheduledOpenDate) {
-        return moment(scheduledOpenDate).startOf('day').diff(moment(moment()).startOf('day'), 'days');
+        return differenceInDays(startOfDay(new Date(scheduledOpenDate)), startOfDay(new Date()));
       }
       return null;
     },

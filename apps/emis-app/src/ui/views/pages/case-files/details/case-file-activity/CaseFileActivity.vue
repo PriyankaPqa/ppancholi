@@ -117,7 +117,6 @@ import _sortBy from 'lodash/sortBy';
 import _orderBy from 'lodash/orderBy';
 import { RcPageContent, RcPageLoading, RcTooltip } from '@libs/component-lib/components';
 import { CaseFileTriage } from '@libs/entities-lib/case-file';
-import moment from '@libs/shared-lib/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -160,7 +159,6 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
   },
   data() {
     return {
-      moment,
       FeatureKeys,
       showLabelsDialog: false,
       loading: false,

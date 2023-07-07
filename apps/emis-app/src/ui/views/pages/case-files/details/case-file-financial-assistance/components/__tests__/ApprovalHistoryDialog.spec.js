@@ -1,5 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockFinancialPaymentHistory, mockCaseFinancialAssistanceEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
+import { mockCaseFinancialAssistanceEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 
 import Component from '../ApprovalHistoryDialog.vue';
@@ -8,7 +8,7 @@ const localVue = createLocalVue();
 
 let financialAssistance = mockCaseFinancialAssistanceEntity();
 
-const { pinia, financialAssistancePaymentStore } = useMockFinancialAssistancePaymentStore();
+const { pinia } = useMockFinancialAssistancePaymentStore();
 
 describe('ApprovalHistoryDialog.vue', () => {
   let wrapper;
@@ -29,7 +29,6 @@ describe('ApprovalHistoryDialog.vue', () => {
       },
       ...additionalOverwrites,
     });
-    financialAssistancePaymentStore.fetchHistory = jest.fn(() => mockFinancialPaymentHistory());
     await wrapper.vm.$nextTick();
   };
 

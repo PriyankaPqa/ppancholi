@@ -110,11 +110,11 @@ export default Vue.extend({
       return {
         startDate: {
           key: 'eventSummary.callCentre.startDate',
-          value: this.callCentre.startDate ? this.getLocalStringDate(this.callCentre.startDate, 'EventCallCentre.startDate', 'll') : '-',
+          value: this.callCentre.startDate ? this.getLocalStringDate(this.callCentre.startDate, 'EventCallCentre.startDate', 'MMM d, yyyy') : '-',
         },
         endDate: {
           key: 'eventSummary.callCentre.endDate',
-          value: this.callCentre.endDate ? this.getLocalStringDate(this.callCentre.endDate, 'EventCallCentre.endDate', 'll') : '-',
+          value: this.callCentre.endDate ? this.getLocalStringDate(this.callCentre.endDate, 'EventCallCentre.endDate', 'MMM d, yyyy') : '-',
         },
         details: {
           key: 'eventSummary.callCentre.details',

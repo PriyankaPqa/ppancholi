@@ -1,6 +1,6 @@
-import moment from 'moment';
 import { HouseholdCreate } from '@libs/entities-lib/src/household-create';
 import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
+import { format, utcToZonedTime } from 'date-fns-tz';
 import { createLocalVue, mount, shallowMount } from '../../test/testSetup';
 import Component from './PrivacyStatementLib.vue';
 
@@ -49,7 +49,9 @@ describe('PrivacyStatementLib.vue', () => {
 
       it('calls setDateTimeConsent with date of now if checked', () => {
         wrapper.vm.isPrivacyAgreed = true;
-        expect(wrapper.vm.$registrationStore.householdCreate.consentInformation.privacyDateTimeConsent).toEqual(moment.utc(moment()).format());
+        expect(wrapper.vm.$registrationStore.householdCreate.consentInformation.privacyDateTimeConsent).toEqual(
+          format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
+        );
       });
     });
 

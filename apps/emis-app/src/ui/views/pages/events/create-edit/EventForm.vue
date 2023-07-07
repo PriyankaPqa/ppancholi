@@ -131,8 +131,8 @@
                     <span
                       data-test="event-status-text"
                       class="fw-medium text-uppercase mr-2">{{ isStatusOpen ? $t('event.status.open') : $t('event.status.onHold') }}</span>
-                    <span v-if="isStatusOpen">{{ $t('event.start_on_a_date') }}
-                      {{ getLocalStringDate(event.schedule.scheduledOpenDate, 'EventSchedule.scheduledOpenDate', 'll') }}</span>
+                    <span v-if="isStatusOpen" data-test="event-status-open-date">{{ $t('event.start_on_a_date') }}
+                      {{ getLocalStringDate(event.schedule.timestamp, 'EventSchedule.scheduledOpenDate', 'MMM d, yyyy') }}</span>
                   </div>
 
                   <v-switch
@@ -320,7 +320,6 @@ import {
 } from '@libs/entities-lib/event';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
-import moment from 'moment';
 import EventsSelector from '@/ui/shared-components/EventsSelector.vue';
 import { useEventStore } from '@/pinia/event/event';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
@@ -328,6 +327,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { TranslateResult } from 'vue-i18n';
 import { EEventSummarySections } from '@/types';
+import { format } from 'date-fns';
 import { DialogData, EDialogComponent } from '../details/components/DialogComponents';
 import EventConsentSelectionDialog from '../details/components/EventConsentSelectionDialog.vue';
 
@@ -461,12 +461,12 @@ export default Vue.extend({
         this.localEvent.schedule.status = isOpen ? EEventStatus.Open : EEventStatus.OnHold;
 
         if (this.isEditMode) {
-          this.localEvent.schedule.scheduledOpenDate = isOpen ? moment(new Date()).format() : this.initialOpenDate;
+          this.localEvent.schedule.scheduledOpenDate = isOpen ? format(new Date(), 'yyyy-MM-dd') : this.initialOpenDate;
           if (!isOpen) {
             this.localEvent.schedule.scheduledCloseDate = this.initialCloseDate;
           }
         } else {
-          this.localEvent.schedule.scheduledOpenDate = isOpen ? moment(new Date()).format() : null;
+          this.localEvent.schedule.scheduledOpenDate = isOpen ? format(new Date(), 'yyyy-MM-dd') : null;
           if (!isOpen) {
             this.localEvent.schedule.scheduledCloseDate = null;
           }

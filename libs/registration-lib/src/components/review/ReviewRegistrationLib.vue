@@ -4,7 +4,7 @@
       <div v-if="!hideName" class="mb-8" data-test="summary__existingBeneficiary__section">
         <span class="rc-heading-3">{{ getPersonalInformation.firstName }} {{ getPersonalInformation.lastName }}</span>
         <div class="rc-body14">
-          {{ $t('registration.details.registered') }} {{ moment(householdCreate.primaryBeneficiary.created).format('ll') }}
+          {{ $t('registration.details.registered') }} {{ format(new Date(householdCreate.primaryBeneficiary.created), 'MMM d, yyyy') }}
         </div>
       </div>
       <slot name="previous-events" :household-id="householdCreate.id" />
@@ -167,7 +167,6 @@ import { VForm } from '@libs/registration-lib/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import mixins from 'vue-typed-mixins';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
-import moment from 'moment';
 import { IHouseholdCreate, IIdentitySet, Member } from '@libs/entities-lib/household-create';
 import _isEqual from 'lodash/isEqual';
 
@@ -178,6 +177,7 @@ import { IContactInformation } from '@libs/entities-lib/src/value-objects/contac
 import { IUser } from '@libs/entities-lib/user';
 import _merge from 'lodash/merge';
 import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
+import { format } from 'date-fns';
 import AddEditAdditionalMembersLib from '../additional-members/AddEditAdditionalMembersLib.vue';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
 import PersonalInformation from '../personal-information/PersonalInformationLib.vue';
@@ -240,7 +240,7 @@ export default mixins(additionalMemberForm).extend({
 
   data() {
     return {
-      moment,
+      format,
       personalInformation: {
         inlineEdit: false,
         backup: {

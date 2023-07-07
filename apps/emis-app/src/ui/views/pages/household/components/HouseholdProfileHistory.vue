@@ -29,7 +29,7 @@
 
       <template #[`item.${customColumns.dateOfChange}`]="{ item }">
         <div class="full-height py-2" data-test="household_history_date-of-change">
-          {{ moment(item.timestamp).format('ll') }}
+          {{ format(new Date(item.timestamp), 'MMM d, yyyy') }}
         </div>
       </template>
 
@@ -73,8 +73,8 @@ import {
   IHouseholdActivity, HouseholdActivity, HouseholdActivityType, IHouseholdActivityMembers,
 }
   from '@libs/entities-lib/value-objects/household-activity';
-import moment from '@libs/shared-lib/plugins/moment';
 import { system } from '@/constants/system';
+import { format } from 'date-fns';
 
 interface IActivityItem extends IHouseholdActivity {
   activityName: string;
@@ -104,7 +104,7 @@ export default Vue.extend({
 
   data() {
     return {
-      moment,
+      format,
       i18n: this.$i18n,
       loading: true,
       options: {

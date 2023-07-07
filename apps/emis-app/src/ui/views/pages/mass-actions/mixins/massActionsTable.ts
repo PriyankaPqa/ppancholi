@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import moment from 'moment';
 import { TranslateResult } from 'vue-i18n';
 import {
   IdParams,
@@ -10,12 +9,14 @@ import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { Status } from '@libs/entities-lib/base';
 import { useMassActionMetadataStore, useMassActionStore } from '@/pinia/mass-action/mass-action';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { format, parseISO } from 'date-fns';
 
 export default Vue.extend({
 
   data() {
     return {
-      moment,
+      format,
+      parseISO,
       options: {
         page: 1,
         sortBy: ['Entity/Created'],

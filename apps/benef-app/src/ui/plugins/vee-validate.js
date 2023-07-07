@@ -4,10 +4,10 @@ import {
   ValidationProvider, extend, ValidationObserver, configure,
 } from 'vee-validate';
 import PhoneNumber from 'awesome-phonenumber';
+import { isValid as isValidDate, isSameDay, isAfter, startOfDay, endOfDay, subYears, isBefore } from 'date-fns';
 import {
   required, min, max, email, regex, min_value, max_value, numeric, oneOf,
 } from 'vee-validate/dist/rules.umd.min';
-import moment from 'moment';
 import Vue from 'vue';
 import helpers from '@libs/entities-lib/helpers';
 import { i18n } from './i18n';
@@ -102,9 +102,10 @@ extend('birthday', {
       return false;
     }
 
-    const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
-    if (momentBirthdate.isValid()) {
-      if (momentBirthdate.isSameOrAfter(moment())) {
+    const dateFnsBirthdate = helpers.getBirthDateDateFnsObject(birthdate);
+    if (isValidDate(dateFnsBirthdate)) {
+      const dayStart = startOfDay(new Date());
+      if (isSameDay(dateFnsBirthdate, dayStart) || isAfter(dateFnsBirthdate, dayStart)) {
         return i18n.t('registration.personal_info.validations.notInFuture');
       }
       return true;
@@ -122,11 +123,10 @@ extend('minimumAge', {
       return true;
     }
 
-    const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
-    const now = moment().endOf('day');
-    now.subtract(age, 'years');
-
-    if (momentBirthdate.isSameOrBefore(now)) {
+    const dateFnsBirthdate = helpers.getBirthDateDateFnsObject(birthdate);
+    const now = endOfDay(new Date());
+    const nowSubYears = subYears(now, age);
+    if (isSameDay(dateFnsBirthdate, nowSubYears) || isBefore(dateFnsBirthdate, nowSubYears)) {
       return true;
     }
 

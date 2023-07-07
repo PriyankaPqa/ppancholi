@@ -10,7 +10,7 @@
     "@libs/shared-lib": "*",
     "axios": "0.27.2",
     "js-convert-case": "^4.1.1",
-    "moment": "2.29.4",
+    "date-fns-tz": "^2.0.0",
     "uuid": "^8.3.2",
     "vue": "2.7.14",
     "vue-toasted": "1.1.28"

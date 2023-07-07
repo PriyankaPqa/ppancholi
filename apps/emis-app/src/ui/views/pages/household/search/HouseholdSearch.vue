@@ -127,10 +127,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { set, format } from 'date-fns';
 import { RcPhoneWithValidation, VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import isEmpty from 'lodash/isEmpty';
 import months from '@libs/registration-lib/constants/months';
-import moment from 'moment';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { VForm } from '@libs/shared-lib/types';
 import WithRoot from '@/ui/views/components/WithRoot';
@@ -277,11 +277,12 @@ export default Vue.extend({
         });
 
         if (this.dateComponentFilled) {
-          this.form.birthDate = moment({
+          const date = set(new Date(), {
             month: newVal.month - 1,
-            day: newVal.day,
+            date: newVal.day,
             year: newVal.year,
-          }).format('YYYY-MM-DD');
+          });
+          this.form.birthDate = format(date, 'yyyy-MM-dd');
         } else {
           this.form.birthDate = '';
         }

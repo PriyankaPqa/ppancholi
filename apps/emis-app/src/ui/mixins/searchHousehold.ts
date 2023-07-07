@@ -1,11 +1,11 @@
 // Mixin used for household search in registration (EMIS) and household profile move
 
 import Vue from 'vue';
-import moment from '@libs/shared-lib/plugins/moment';
 import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { IdParams, IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
+import { parseISO, format } from 'date-fns';
 
 export default Vue.extend({
   data() {
@@ -25,7 +25,7 @@ export default Vue.extend({
       }
 
       if (this.criteria.birthDate) {
-        metadataFilters.DateOfBirth = moment.utc(this.criteria.birthDate).format();
+        metadataFilters.DateOfBirth = format(parseISO(this.criteria.birthDate), "yyyy-MM-dd'T'HH:mm:ss'Z'");
       }
 
       if (this.criteria.phone) {

@@ -334,6 +334,7 @@ describe('ManageDuplicatesTable.vue', () => {
         const element = wrapper.findDataTest('householdDetails-duplicate-history-user');
         expect(element.text()).toContain(mockHouseholdDuplicateFullData().duplicateStatusHistory[0].userInformation.userName);
         expect(element.text()).toContain(mockHouseholdDuplicateFullData().duplicateStatusHistory[0].userInformation.roleName.translation.en);
+        expect(element.text()).toContain('Jan 18, 2023');
       });
     });
 

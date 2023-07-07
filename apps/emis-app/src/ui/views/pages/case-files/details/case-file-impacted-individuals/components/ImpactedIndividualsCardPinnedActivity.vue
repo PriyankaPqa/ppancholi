@@ -15,10 +15,10 @@
 </template>
 
 <script lang="ts">
-import moment from '@libs/shared-lib/plugins/moment';
 import Vue from 'vue';
 import { ICaseFileActivity, CaseFileActivityType } from '@libs/entities-lib/case-file';
 import { TranslateResult } from 'vue-i18n';
+import { parseISO, format } from 'date-fns';
 
 export default Vue.extend({
   name: 'ImpactedIndividualsCardPinnedRationale',
@@ -32,7 +32,6 @@ export default Vue.extend({
 
   data() {
     return {
-      moment,
       CaseFileActivityType,
     };
   },
@@ -45,8 +44,8 @@ export default Vue.extend({
         let string = this.$t('impactedIndividuals.pinned_rationale.by');
         string += user;
         string += role;
-        string += ` ${this.$t('common.on')}`;
-        string += ` ${this.moment(this.pinnedActivity.created).local().format('ll')}`;
+        string += ' -';
+        string += ` ${format(parseISO(this.pinnedActivity.created as string), 'MMM d, yyyy')}`;
         return string;
       }
       return '';

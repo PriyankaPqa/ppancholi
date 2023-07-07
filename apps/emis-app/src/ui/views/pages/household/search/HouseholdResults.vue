@@ -72,13 +72,13 @@
         <template #item.birthDate="{ item: household }">
           <div>
             <span data-test="birthDate" class="no-wrap">
-              {{ moment(household.primaryBeneficiary.dateOfBirth).utc().format('ll') }}
+              {{ format(utcToZonedTime(new Date(household.primaryBeneficiary.dateOfBirth), 'UTC'), 'MMM d, yyyy') }}
             </span>
           </div>
           <div v-if="hasAdditionalMember(household)">
             <div v-for="(member, i) in household.additionalMembers" :key="i">
               <span :data-test="`birthdate__houseHoldMember_${i}`">
-                {{ moment(member.dateOfBirth).utc().format('ll') }}
+                {{ format(utcToZonedTime(new Date(member.dateOfBirth), 'UTC'), 'MMM d, yyyy') }}
               </span>
             </div>
           </div>
@@ -148,7 +148,6 @@
 </template>
 
 <script lang="ts">
-import moment from 'moment';
 import { HouseholdStatus, IHouseholdCombined } from '@libs/entities-lib/household';
 import { RcDataTable } from '@libs/component-lib/components';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
@@ -163,6 +162,7 @@ import { ICaseFileEntity, ICaseFileMetadata, IdParams } from '@libs/entities-lib
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { format, utcToZonedTime } from 'date-fns-tz';
 
 export default mixins(household, householdResults).extend({
   name: 'HouseholdResults',
@@ -194,7 +194,8 @@ export default mixins(household, householdResults).extend({
   },
   data() {
     return {
-      moment,
+      format,
+      utcToZonedTime,
       loading: false,
       detailsLoading: false,
       detailsId: '',

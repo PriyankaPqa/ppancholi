@@ -10,8 +10,6 @@ import {
   mockCaseFinancialAssistanceEntity,
 } from '@libs/entities-lib/financial-assistance-payment';
 import { getExtensionComponents } from '@/pinia/financial-assistance-payment/financial-assistance-payment-extension';
-import utils from '@libs/entities-lib/value-objects/versioned-entity/versionedEntityUtils';
-import { mockVersionedEntityCombined } from '@libs/entities-lib/value-objects/versioned-entity';
 import { EOptionLists, OptionItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
 
 const entityService = mockFinancialAssistanceService();
@@ -164,23 +162,6 @@ describe('Financial assistance payment store', () => {
       const res = await store.deleteFinancialAssistancePaymentLine(id, 'myId');
       expect(entityService.deleteFinancialAssistancePaymentLine).toBeCalledWith(id, 'myId');
       expect(res).toEqual(entity);
-    });
-  });
-
-  describe('fetchHistory', () => {
-    it('calls the fetchHistory service for the financial assistance and metadata if true and calls mapResponses and combineEntities with the results', async () => {
-      utils.mapResponses = jest.fn();
-      const combinedEntity = mockVersionedEntityCombined('financialAssistancePayment');
-      utils.combineEntities = jest.fn(() => ([combinedEntity]));
-
-      const expectedRes = await store.fetchHistory('id', true);
-
-      expect(entityService.getHistory).toHaveBeenCalledWith('id');
-      expect(entityService.getMetadataHistory).toHaveBeenCalledWith('id');
-
-      expect(utils.mapResponses).toHaveBeenCalledTimes(2);
-      expect(utils.combineEntities).toHaveBeenCalled();
-      expect(expectedRes).toEqual([combinedEntity]);
     });
   });
 });

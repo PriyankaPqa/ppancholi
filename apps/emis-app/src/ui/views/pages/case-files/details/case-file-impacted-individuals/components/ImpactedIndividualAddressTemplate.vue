@@ -11,14 +11,14 @@
         <div>
           <span class="font-weight-bold">{{ $t('impactedIndividuals.temporary_address.check_in') + ':' }}</span>
           <span data-test="impacted_individuals_card_template_check_in">
-            {{ address.checkIn ? helpers.getLocalStringDate(address.checkIn, 'ImpactedIndividuals.checkIn', 'LL') : '-' }}
+            {{ address.checkIn ? helpers.getLocalStringDate(address.checkIn, 'ImpactedIndividuals.checkIn', 'MMM d, yyyy') : '-' }}
           </span>
         </div>
         <v-divider vertical class="mx-4" />
         <div>
           <span class="font-weight-bold">{{ $t('impactedIndividuals.temporary_address.check_out') + ':' }}</span>
           <span data-test="impacted_individuals_card_template_check_out">
-            {{ address.checkOut ? helpers.getLocalStringDate(address.checkOut, 'ImpactedIndividuals.checkOut', 'LL') : '-' }}
+            {{ address.checkOut ? helpers.getLocalStringDate(address.checkOut, 'ImpactedIndividuals.checkOut', 'MMM d, yyyy') : '-' }}
           </span>
         </div>
       </div>

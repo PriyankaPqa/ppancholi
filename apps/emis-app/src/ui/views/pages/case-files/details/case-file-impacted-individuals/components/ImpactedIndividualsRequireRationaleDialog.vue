@@ -12,7 +12,7 @@
       :help-link="$t('zendesk.help_link.change_event_status')"
       :tooltip-label="$t('common.tooltip_label')"
       :max-width="750"
-      content-padding="6"
+      content-padding="5"
       data-test="household-status-dialog"
       @cancel="$emit('close');"
       @close="$emit('close');"
@@ -26,7 +26,7 @@
               ? $t('impactedIndividuals.remove_member_from_receiving_assistance.actioned_by')
               : $t('impactedIndividuals.remove_member_from_receiving_assistance.removed_by') }}
           </span>
-          <span>{{ `${userInfo} ${$t('common.on')} ${moment(new Date()).format('LL')}` }}</span>
+          <span>{{ `${userInfo} - ${format(new Date(), 'MMM d, yyyy')}` }}</span>
         </v-col>
 
         <v-text-area-with-validation
@@ -52,8 +52,8 @@ import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useUserStore } from '@/pinia/user/user';
 import { VForm } from '@libs/shared-lib/types';
-import moment from '@libs/shared-lib/plugins/moment';
 import { TranslateResult } from 'vue-i18n';
+import { format } from 'date-fns';
 
 export default Vue.extend({
   name: 'ImpactedIndividualsRequireRationaleDialog',
@@ -84,9 +84,9 @@ export default Vue.extend({
 
   data() {
     return {
+      format,
       rationale: null,
       HouseholdStatus,
-      moment,
       loading: false,
     };
   },
