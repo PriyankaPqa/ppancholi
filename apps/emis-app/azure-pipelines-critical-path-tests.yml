@@ -35,4 +35,4 @@ stages:
       distDir: $(distDir)
       nodeJsVersion: $(nodeJsVersion)
       disableCache: $(disableCache)
-      parallelJobs: 1
+      parallelJobs: 3
