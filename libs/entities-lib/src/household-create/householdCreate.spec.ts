@@ -6,7 +6,7 @@ import {
   mockAdditionalMember,
   Member,
   mockMember,
-  mockAddress, mockFriendsFamily,
+  mockAddress, mockFriendsFamily, mockIdentitySet,
 } from './index';
 
 describe('>>> Household', () => {
@@ -120,6 +120,104 @@ describe('>>> Household', () => {
         h.additionalMembers[0].setCurrentAddress(mockFriendsFamily());
         h.setCurrentAddress(mockCampGround());
         expect(h.additionalMembers[0].currentAddress).toEqual(mockCampGround());
+      });
+    });
+
+    describe('isDuplicateMember', () => {
+      it('returns false if the form does not contain all the data', () => {
+        const h = new HouseholdCreate();
+        expect(h.isDuplicateMember(mockIdentitySet({ firstName: null, lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }))).toBe(false);
+        expect(h.isDuplicateMember(mockIdentitySet({ firstName: 'a', lastName: null, dateOfBirth: '1991-01-01T00:00:00Z' }))).toBe(false);
+        expect(h.isDuplicateMember(mockIdentitySet({ firstName: 'a', lastName: 'b', dateOfBirth: null }))).toBe(false);
+      });
+
+      describe('test primary member', () => {
+        it('returns false if it is calculated for primary member and there is no duplicate additional member in the household - different first name', () => {
+          const h = new HouseholdCreate();
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'a', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          const form = mockIdentitySet({ firstName: 'firstName', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' });
+          expect(h.isDuplicateMember(form, true)).toBe(false);
+        });
+
+        it('returns false if it is calculated for primary member and there is no duplicate additional member in the household - different last name', () => {
+          const h = new HouseholdCreate();
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'a', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          const form = mockIdentitySet({ firstName: 'a', lastName: 'lastName', dateOfBirth: '1991-01-01T00:00:00Z' });
+          expect(h.isDuplicateMember(form, true)).toBe(false);
+        });
+
+        it('returns false if it is calculated for primary member and there is no duplicate additional member in the household - different birthdate', () => {
+          const h = new HouseholdCreate();
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'a', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          const form = mockIdentitySet({ firstName: 'a', lastName: 'a', dateOfBirth: '1991-01-02T00:00:00Z' });
+          expect(h.isDuplicateMember(form, true)).toBe(false);
+        });
+
+        it('returns false if it is calculated for primary member and there is the same primary member already in the household', () => {
+          const h = new HouseholdCreate();
+          h.setPrimaryBeneficiary(mockMember({ identitySet: mockIdentitySet({ firstName: 'a', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }));
+          const form = mockIdentitySet({ firstName: 'a', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' });
+          expect(h.isDuplicateMember(form, true)).toBe(false);
+        });
+
+        it('returns true if it is calculated for primary member and there is a duplicate additional member in the household', () => {
+          const h = new HouseholdCreate();
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'a', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          const form = mockIdentitySet({ firstName: 'a', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' });
+          expect(h.isDuplicateMember(form, true)).toBe(true);
+        });
+      });
+
+      describe('test additional member', () => {
+        it('returns false if there is no duplicate additional or primary member in the household', () => {
+          const h = new HouseholdCreate();
+          h.setPrimaryBeneficiary(mockMember({ identitySet: mockIdentitySet({ firstName: 'primary', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }));
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'additional', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          const form = mockIdentitySet({ firstName: 'new', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' });
+
+          expect(h.isDuplicateMember(form, false, 0)).toBe(false);
+        });
+
+        it('returns false if there is a duplicate additional member in the household at the same index', () => {
+          const h = new HouseholdCreate();
+          h.setPrimaryBeneficiary(mockMember({ identitySet: mockIdentitySet({ firstName: 'primary', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }));
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'additional1', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'additional2', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          const form = mockIdentitySet({ firstName: 'additional2', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' });
+
+          expect(h.isDuplicateMember(form, false, 1)).toBe(false);
+        });
+
+        it('returns false if there is a duplicate additional member with the same memberId', () => {
+          const h = new HouseholdCreate();
+          h.setPrimaryBeneficiary(mockMember({ identitySet: mockIdentitySet({ firstName: 'primary', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }));
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'additional1', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          h.addAdditionalMember(mockMember({ id: 'additional2-id',
+          identitySet: mockIdentitySet({ firstName: 'additional2', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          const form = mockIdentitySet({ firstName: 'additional2', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' });
+
+          expect(h.isDuplicateMember(form, false, 1, 'additional2-id')).toBe(false);
+        });
+
+        it('returns true if there is a duplicate additional member in the household at a different index', () => {
+          const h = new HouseholdCreate();
+          h.setPrimaryBeneficiary(mockMember({ identitySet: mockIdentitySet({ firstName: 'primary', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }));
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'additional1', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'additional2', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          const form = mockIdentitySet({ firstName: 'additional2', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' });
+
+          expect(h.isDuplicateMember(form, false, 0)).toBe(true);
+        });
+
+        it('returns true if there is a duplicate primary member', () => {
+          const h = new HouseholdCreate();
+          h.setPrimaryBeneficiary(mockMember({ identitySet: mockIdentitySet({ firstName: 'a', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }));
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'additional1', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          h.addAdditionalMember(mockMember({ identitySet: mockIdentitySet({ firstName: 'additional2', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' }) }), false);
+          const form = mockIdentitySet({ firstName: 'a', lastName: 'a', dateOfBirth: '1991-01-01T00:00:00Z' });
+
+          expect(h.isDuplicateMember(form, false, 0)).toBe(true);
+        });
       });
     });
 

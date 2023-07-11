@@ -27,8 +27,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { VueConstructor } from 'vue';
 import VueI18n, { TranslateResult } from 'vue-i18n';
+import _debounce from 'lodash/debounce';
 import { Status } from '@libs/entities-lib/base';
 import helpers from '@libs/entities-lib/helpers';
 import { IOptionItemData } from '@libs/shared-lib/types';
@@ -38,11 +39,12 @@ import {
 } from '@libs/entities-lib/household-create';
 import { IInformationFromBeneficiarySearch } from '@/types/interfaces/IInformationFromBeneficiarySearch';
 import _cloneDeep from 'lodash/cloneDeep';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
 
-export default Vue.extend({
+const vueComponent: VueConstructor = Vue.extend({
   name: 'PersonalInformation',
 
   components: {
@@ -81,6 +83,14 @@ export default Vue.extend({
       default: false,
     },
     isInPrimaryMemberDialog: {
+      type: Boolean,
+      default: false,
+    },
+    makePrimaryMode: {
+      type: Boolean,
+      default: false,
+    },
+    preventDbDuplicateCheck: {
       type: Boolean,
       default: false,
     },
@@ -165,17 +175,31 @@ export default Vue.extend({
     if (this.isSplitMode && !this.isTouched) {
       this.loadInitialDataUnderSplitMode();
     }
-    // Load IngigenousCommunities as soon as the page loads
+    // Load IndigenousCommunities as soon as the page loads
     await this.$registrationStore.fetchIndigenousCommunities();
   },
 
   methods: {
     setIdentity(form: IIdentitySet) {
+      if (!this.isSplitMode && this.$hasFeature(FeatureKeys.ManageDuplicates)) {
+        this.$registrationStore.submitLoading = true;
+        this.checkDuplicates(new IdentitySet(form));
+      }
+
       if (this.storeMode) {
-        this.$registrationStore.householdCreate.primaryBeneficiary.identitySet.setIdentity(form);
+         this.$registrationStore.householdCreate.primaryBeneficiary.identitySet.setIdentity(form);
       }
       this.$emit('setIdentity', form);
     },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    checkDuplicates: _debounce(async function func(this:any, form: IIdentitySet) {
+      await this.$registrationStore.checkDuplicates({
+        form, isPrimaryMember: !this.makePrimaryMode, preventDbCheck: this.preventDbDuplicateCheck, memberId: this.memberProps?.id,
+      });
+      this.member.identitySet.setIdentity(form);
+      this.$registrationStore.submitLoading = false;
+    }, 500),
 
     setIndigenousIdentity(form: IIdentitySet) {
       if (this.storeMode) {
@@ -225,4 +249,6 @@ export default Vue.extend({
     },
   },
 });
+
+export default vueComponent;
 </script>

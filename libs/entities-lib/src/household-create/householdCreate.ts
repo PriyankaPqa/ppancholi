@@ -1,5 +1,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEqual from 'lodash/isEqual';
+import { IIdentitySet } from '../value-objects/identity-set';
 import { ICurrentAddress } from '../value-objects/current-address';
 import { IConsentInformation, IHouseholdCreate, IHouseholdCreateData } from './householdCreate.types';
 import { IAddress, Address } from '../value-objects/address';
@@ -77,6 +78,28 @@ export class HouseholdCreate implements IHouseholdCreate {
     this.primaryBeneficiary.setCurrentAddress(address);
   }
 
+  isDuplicateMember(form: IIdentitySet, isPrimaryBeneficiary:boolean = false, index = -1, memberId = ''): boolean {
+    if (form.firstName && form.lastName && form.dateOfBirth) {
+      let members = [...this.additionalMembers];
+      // remove the member themselves, so we do not compare with self
+      if (index >= 0) {
+        members.splice(index, 1);
+      }
+      // Remove the member themselves if we know their Id (used in makePrimaryMember)
+      if (memberId) {
+        members = members.filter((m) => m.id !== memberId);
+      }
+      // we do not want to compare the primary beneficiary with themselves, only add when we compare additional members
+      if (!isPrimaryBeneficiary) {
+        members.push(this.primaryBeneficiary);
+      }
+
+      return members.some((m:IMember) => this.hasSameNameAndDOB(form, m.identitySet));
+    }
+
+    return false;
+  }
+
   reset() {
     this.noFixedHome = false;
     this.primaryBeneficiary = new Member();
@@ -126,5 +149,15 @@ export class HouseholdCreate implements IHouseholdCreate {
     const additionalMembersErrors = this.validateAdditionalMembers();
 
     return [...primaryBeneficiaryErrors, ...homeAddressErrors, ...additionalMembersErrors];
+  }
+
+ private hasSameNameAndDOB?(form: IIdentitySet, memberIdentity: IIdentitySet): boolean {
+    if (!memberIdentity?.firstName || !memberIdentity.lastName || !memberIdentity.dateOfBirth) {
+      return false;
+    }
+
+    return form.dateOfBirth === memberIdentity.dateOfBirth
+    && form.firstName.toLowerCase() === memberIdentity.firstName.toLowerCase()
+    && form.lastName.toLowerCase() === memberIdentity.lastName.toLowerCase();
   }
 }

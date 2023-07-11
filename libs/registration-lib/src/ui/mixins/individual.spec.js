@@ -265,7 +265,7 @@ describe('Individual.vue', () => {
 
         const toIndex = 4;
         await wrapper.vm.jump(toIndex);
-        expect(wrapper.vm.$registrationStore.mutateTabAtIndex).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$registrationStore.mutateTabAtIndex).toHaveBeenCalledTimes(2);
         expect(wrapper.vm.$registrationStore.jump).toHaveBeenCalledWith(toIndex);
       });
 
@@ -275,13 +275,13 @@ describe('Individual.vue', () => {
           validate: jest.fn(() => true),
         };
 
-        wrapper.vm.$registrationStore.findEffectiveJumpIndex = jest.fn(() => 3);
+        wrapper.vm.$registrationStore.findEffectiveJumpIndex = jest.fn(() => 2);
         wrapper.vm.$registrationStore.currentTabIndex = 2;
 
         const toIndex = 4;
         await wrapper.vm.jump(toIndex);
         expect(wrapper.vm.$registrationStore.mutateTabAtIndex).toHaveBeenCalledTimes(0);
-        expect(wrapper.vm.$registrationStore.jump).toHaveBeenCalledWith(3);
+        expect(wrapper.vm.$registrationStore.jump).toHaveBeenCalledWith(2);
       });
 
       it('call handleConfirmationScreen if it is confirmation', async () => {

@@ -1,5 +1,13 @@
 <template>
   <v-row>
+    <v-col v-if="$hasFeature(FeatureKeys.ManageDuplicates) && form.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate" cols="12" sm="12" class="failed">
+      <message-box
+        icon="mdi-alert"
+        data-test="personal_info_duplicate_error"
+        :message="form.duplicateStatusInCurrentHousehold === MemberDuplicateStatus.Duplicate ? $t('errors.a-household-cannot-have-the-same-members-twice')
+          : $t('errors.this-individual-already-exists-in-the-system')" />
+    </v-col>
+
     <v-col cols="12" sm="6">
       <v-text-field-with-validation
         v-model="formCopy.firstName"
@@ -98,9 +106,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { VTextFieldWithValidation, VSelectWithValidation } from '@libs/component-lib/components';
+import { VTextFieldWithValidation, VSelectWithValidation, MessageBox } from '@libs/component-lib/components';
 import { IOptionItemData } from '@libs/shared-lib/types';
-import { IBirthDate, IHoneyPotIdentitySet, IIdentitySet } from '@libs/entities-lib/household-create';
+import { IBirthDate, IHoneyPotIdentitySet, IIdentitySet, MemberDuplicateStatus } from '@libs/entities-lib/household-create';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Pot from './HoneyPot.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import months from '../../constants/months';
@@ -112,6 +121,7 @@ export default Vue.extend({
     VSelectWithValidation,
     VTextFieldWithValidation,
     Pot,
+    MessageBox,
   },
 
   props: {
@@ -140,6 +150,8 @@ export default Vue.extend({
   data() {
     return {
       months,
+      FeatureKeys,
+      MemberDuplicateStatus,
       formCopy: null as IHoneyPotIdentitySet,
     };
   },

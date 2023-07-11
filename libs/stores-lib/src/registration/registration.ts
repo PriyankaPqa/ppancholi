@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import {
   EIndigenousTypes, HouseholdCreate, IAddressData, ICheckForPossibleDuplicateResponse, IHouseholdCreateData,
-  IIndigenousCommunityData, IMember, IMemberEntity, ISplitHousehold, Member,
+  IIdentitySet, IIndigenousCommunityData, IMember, IMemberEntity, ISplitHousehold, Member,
 } from '@libs/entities-lib/household-create';
 import { IInformationFromBeneficiarySearch, IRegistrationMenuItem } from '@libs/registration-lib/src/types';
 import Vue, { ref, Ref } from 'vue';
@@ -469,6 +469,45 @@ export function storeFactory({
       householdResultsShown.value = false;
     }
 
+    async function checkDuplicates({ form, isPrimaryMember, index = -1, preventDbCheck = false, memberId = '' }
+      :{ form:IIdentitySet, isPrimaryMember: boolean, index?: number, preventDbCheck?:boolean, memberId?:string }) {
+      const dateOfBirth = form?.birthDate && libHelpers.getBirthDateUTCString(form.birthDate);
+      if (!form.firstName || !form.lastName || !dateOfBirth) {
+        return false;
+      }
+
+      const isDuplicateInCurrentHousehold = householdCreate.value.isDuplicateMember({ ...form, dateOfBirth }, isPrimaryMember, index, memberId);
+
+      form.setDuplicateStatusInCurrentHousehold(isDuplicateInCurrentHousehold);
+      if (isPrimaryMember) {
+        householdCreate.value.primaryBeneficiary.identitySet.setDuplicateStatusInCurrentHousehold(isDuplicateInCurrentHousehold);
+      } else {
+        householdCreate.value.additionalMembers[index]?.identitySet.setDuplicateStatusInCurrentHousehold(isDuplicateInCurrentHousehold);
+      }
+
+      if (isDuplicateInCurrentHousehold) {
+        return true;
+      }
+
+      if (!preventDbCheck) {
+        const member = new Member();
+        member.setIdentity({ ...form, dateOfBirth });
+        const checkDuplicateResult = await householdApi.checkForPossibleDuplicatePublic(null, member);
+        if (checkDuplicateResult) {
+          const systemDuplicateFound = checkDuplicateResult.duplicateFound && checkDuplicateResult.duplicateHouseholdId !== householdCreate.value.id;
+          form.setDuplicateStatusInDb(systemDuplicateFound);
+          if (isPrimaryMember) {
+            householdCreate.value.primaryBeneficiary.identitySet.setDuplicateStatusInDb(systemDuplicateFound);
+          } else {
+            householdCreate.value.additionalMembers[index]?.identitySet.setDuplicateStatusInDb(systemDuplicateFound);
+          }
+          return systemDuplicateFound;
+        }
+      }
+
+      return false;
+    }
+
     async function fetchEvent(lang: string, registrationLink: string) {
       const result = await publicApi.fetchRegistrationEvent(lang, registrationLink);
       const eventData = result?.value?.length > 0 ? result.value[0].entity : null;
@@ -790,6 +829,7 @@ export function storeFactory({
       resetTabs,
       setSplitHousehold,
       resetSplitHousehold,
+      checkDuplicates,
       fetchEvent,
       fetchGenders,
       fetchPreferredLanguages,

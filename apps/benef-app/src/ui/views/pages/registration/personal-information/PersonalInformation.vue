@@ -2,6 +2,7 @@
   <personal-information-lib
     :min-age-registration="MIN_AGE_REGISTRATION"
     :i18n="i18n"
+    prevent-db-duplicate-check
     :allow-duplicate-emails="$hasFeature(FeatureKeys.SelfRegistration)" />
 </template>
 <script lang="ts">

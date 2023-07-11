@@ -914,6 +914,8 @@ describe('HouseholdProfile.vue', () => {
               preferredName: 'preferredName',
               indigenousCommunityId: undefined,
               name: undefined,
+              duplicateStatusInCurrentHousehold: undefined,
+              duplicateStatusInDb: undefined,
             },
             indigenousIdentityInfo: {
               communityType: '',
@@ -923,6 +925,7 @@ describe('HouseholdProfile.vue', () => {
             status: 6,
           },
         ];
+
         expect(wrapper.vm.movedMembers).toEqual(expectResult);
       });
     });

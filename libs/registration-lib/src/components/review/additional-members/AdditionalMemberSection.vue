@@ -33,7 +33,14 @@
       <v-btn class="mr-2" data-test="inlineEdit__cancel" @click.native="cancel()">
         {{ $t('common.cancel') }}
       </v-btn>
-      <v-btn class="ml-2" color="primary" data-test="inlineEdit__save" :loading="loading" @click.native="onSubmit()">
+      <v-btn
+        class="ml-2"
+        color="primary"
+        data-test="inlineEdit__save"
+        :loading="loading"
+        :disabled="loading || (member.identitySet && $hasFeature(FeatureKeys.ManageDuplicates)
+          && member.identitySet.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate)"
+        @click.native="onSubmit()">
         {{ $t('common.save') }}
       </v-btn>
     </div>
@@ -43,12 +50,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import { IMember } from '@libs/entities-lib/value-objects/member';
+import { MemberDuplicateStatus } from '@libs/entities-lib/value-objects/identity-set';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'AdditionalMemberSection',
 
   props: {
-
     member: {
       type: Object as () => IMember,
       required: true,
@@ -73,6 +81,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+  },
+
+  data() {
+    return { FeatureKeys, MemberDuplicateStatus };
   },
 
   methods: {

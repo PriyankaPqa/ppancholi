@@ -4,9 +4,12 @@ import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import { mockEvent, mockEventData, mockShelterLocations, RegistrationEvent } from '@libs/entities-lib/registration-event';
 import {
-  EIndigenousTypes, mockGenders, mockIndigenousCommunitiesGetData, mockIndigenousTypesItems,
-} from '@libs/entities-lib/value-objects/identity-set';
+  EIndigenousTypes, IdentitySet, mockGenders, mockIndigenousCommunitiesGetData, mockIndigenousTypesItems,
+ mockIdentitySet,
+ MemberDuplicateStatus,
+ IIdentitySetData } from '@libs/entities-lib/value-objects/identity-set';
 import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@libs/entities-lib/value-objects/contact-information';
+import libHelpers from '@libs/entities-lib/helpers';
 import {
   ECurrentAddressTypes,
   HouseholdCreate,
@@ -557,6 +560,129 @@ describe('>>> Registration Store', () => {
       expect(useRegistrationStore.currentTabIndex).toEqual(0);
       expect(useRegistrationStore.isPrivacyAgreed).toEqual(false);
       expect(useRegistrationStore.householdResultsShown).toEqual(false);
+    });
+  });
+
+  describe('checkDuplicates', () => {
+    it('calls isDuplicateMember on the household and set the result into the member identity set and the form passed as argument - primary member', async () => {
+      useRegistrationStore = initStore();
+      useRegistrationStore.setHouseholdCreate(mockHouseholdCreateData());
+      useRegistrationStore.householdCreate.isDuplicateMember = jest.fn(() => true);
+      const form = new IdentitySet({ ...mockIdentitySet(), firstName: 'a', lastName: 'b', birthDate: { year: '2000', month: '1', day: '1' } });
+
+     const result = await useRegistrationStore.checkDuplicates({ form, isPrimaryMember: true });
+      expect(useRegistrationStore.householdCreate.isDuplicateMember)
+      .toHaveBeenCalledWith({ ...form,
+      dateOfBirth: libHelpers.getBirthDateUTCString({ year: '2000', month: '1', day: '1' }),
+      duplicateStatusInCurrentHousehold: undefined }, true, -1, '');
+      expect(form.duplicateStatusInCurrentHousehold).toBe(MemberDuplicateStatus.Duplicate);
+      expect(useRegistrationStore.householdCreate.primaryBeneficiary.identitySet.duplicateStatusInCurrentHousehold).toBe(MemberDuplicateStatus.Duplicate);
+      expect(result).toBe(true);
+    });
+
+    it('calls isDuplicateMember on the household and set the result into the member identity set and the form passed as argument - additional member', async () => {
+      useRegistrationStore = initStore();
+      useRegistrationStore.setHouseholdCreate(mockHouseholdCreateData());
+      useRegistrationStore.householdCreate.additionalMembers = [mockMember()];
+      useRegistrationStore.householdCreate.isDuplicateMember = jest.fn(() => true);
+      const form = new IdentitySet({ ...mockIdentitySet(), firstName: 'a', lastName: 'b', birthDate: { year: '2000', month: '1', day: '1' } });
+
+      const result = await useRegistrationStore.checkDuplicates({ form, isPrimaryMember: false, index: 0 });
+      expect(useRegistrationStore.householdCreate.isDuplicateMember)
+      .toHaveBeenCalledWith({ ...form,
+      dateOfBirth: libHelpers.getBirthDateUTCString({ year: '2000', month: '1', day: '1' }),
+      duplicateStatusInCurrentHousehold: undefined }, false, 0, '');
+      expect(form.duplicateStatusInCurrentHousehold).toBe(MemberDuplicateStatus.Duplicate);
+      expect(useRegistrationStore.householdCreate.additionalMembers[0].identitySet.duplicateStatusInCurrentHousehold).toBe(MemberDuplicateStatus.Duplicate);
+      expect(result).toBe(true);
+    });
+
+    it(
+      // eslint-disable-next-line vue/max-len
+'calls household service checkForPossibleDuplicatePublic and set the result into the member identity set and the form passed as argument, if isDuplicateMember returns false - primary member',
+    async () => {
+      useRegistrationStore = initStore();
+      useRegistrationStore.setHouseholdCreate(mockHouseholdCreateData());
+      useRegistrationStore.householdCreate.isDuplicateMember = jest.fn(() => false);
+      householdApi.checkForPossibleDuplicatePublic = jest.fn(() => ({ duplicateFound: true, duplicateHouseholdId: '123', registeredToEvent: false }));
+      const form = new IdentitySet({ ...mockIdentitySet(), firstName: 'a', lastName: 'b', birthDate: { year: '2000', month: '1', day: '1' } });
+
+     const result = await useRegistrationStore.checkDuplicates({ form, isPrimaryMember: true });
+      const member = new Member();
+      member.setIdentity(new IdentitySet({ ...form,
+      dateOfBirth: libHelpers.getBirthDateUTCString({ year: '2000', month: '1', day: '1' }),
+      duplicateStatusInDb: undefined } as IIdentitySetData));
+      expect(householdApi.checkForPossibleDuplicatePublic)
+      .toHaveBeenCalledWith(null, member);
+      expect(form.duplicateStatusInDb).toBe(MemberDuplicateStatus.Duplicate);
+      expect(useRegistrationStore.householdCreate.primaryBeneficiary.identitySet.duplicateStatusInDb).toBe(MemberDuplicateStatus.Duplicate);
+      expect(result).toBe(true);
+    },
+);
+
+    it(
+      // eslint-disable-next-line vue/max-len
+'calls household service checkForPossibleDuplicatePublic and set the result into the member identity set and the form passed as argument, if isDuplicateMember returns false - additional member',
+    async () => {
+      useRegistrationStore = initStore();
+      useRegistrationStore.setHouseholdCreate(mockHouseholdCreateData());
+      useRegistrationStore.householdCreate.additionalMembers = [mockMember()];
+      useRegistrationStore.householdCreate.isDuplicateMember = jest.fn(() => false);
+      householdApi.checkForPossibleDuplicatePublic = jest.fn(() => ({ duplicateFound: true, duplicateHouseholdId: '123', registeredToEvent: false }));
+      const form = new IdentitySet({ ...mockIdentitySet(), firstName: 'a', lastName: 'b', birthDate: { year: '2000', month: '1', day: '1' } });
+
+     const result = await useRegistrationStore.checkDuplicates({ form, isPrimaryMember: false, index: 0 });
+      const member = new Member();
+      member.setIdentity(new IdentitySet({ ...form,
+      dateOfBirth: libHelpers.getBirthDateUTCString({ year: '2000', month: '1', day: '1' }),
+      duplicateStatusInDb: undefined } as IIdentitySetData));
+      expect(householdApi.checkForPossibleDuplicatePublic)
+      .toHaveBeenCalledWith(null, member);
+      expect(form.duplicateStatusInDb).toBe(MemberDuplicateStatus.Duplicate);
+      expect(useRegistrationStore.householdCreate.additionalMembers[0].identitySet.duplicateStatusInDb).toBe(MemberDuplicateStatus.Duplicate);
+      expect(result).toBe(true);
+    },
+);
+
+    it(
+'calls household service checkForPossibleDuplicatePublic and returns false if the result has the same household id as the current household',
+    async () => {
+      useRegistrationStore = initStore();
+      useRegistrationStore.setHouseholdCreate(mockHouseholdCreateData());
+      useRegistrationStore.householdCreate.additionalMembers = [mockMember()];
+      useRegistrationStore.householdCreate.isDuplicateMember = jest.fn(() => false);
+      householdApi.checkForPossibleDuplicatePublic = jest.fn(
+        () => ({ duplicateFound: true, duplicateHouseholdId: useRegistrationStore.householdCreate.id, registeredToEvent: false }),
+      );
+      const form = new IdentitySet({ ...mockIdentitySet(), firstName: 'a', lastName: 'b', birthDate: { year: '2000', month: '1', day: '1' } });
+
+      const result = await useRegistrationStore.checkDuplicates({ form, isPrimaryMember: false, index: 0 });
+      expect(result).toBe(false);
+    },
+  );
+
+    it('calls household service checkForPossibleDuplicatePublic and returns false if the result duplicateFound is false', async () => {
+      useRegistrationStore = initStore();
+      useRegistrationStore.setHouseholdCreate(mockHouseholdCreateData());
+      useRegistrationStore.householdCreate.additionalMembers = [mockMember()];
+      useRegistrationStore.householdCreate.isDuplicateMember = jest.fn(() => false);
+      householdApi.checkForPossibleDuplicatePublic = jest.fn(() => ({ duplicateFound: false, duplicateHouseholdId: '12', registeredToEvent: false }));
+      const form = new IdentitySet({ ...mockIdentitySet(), firstName: 'a', lastName: 'b', birthDate: { year: '2000', month: '1', day: '1' } });
+
+      const result = await useRegistrationStore.checkDuplicates({ form, isPrimaryMember: false, index: 0 });
+      expect(result).toBe(false);
+    });
+
+    it('does not call household service checkForPossibleDuplicatePublic if passed the param preventDbCheck', async () => {
+      useRegistrationStore = initStore();
+      useRegistrationStore.setHouseholdCreate(mockHouseholdCreateData());
+      useRegistrationStore.householdCreate.additionalMembers = [mockMember()];
+      useRegistrationStore.householdCreate.isDuplicateMember = jest.fn(() => false);
+      householdApi.checkForPossibleDuplicatePublic = jest.fn();
+      const form = new IdentitySet({ ...mockIdentitySet(), firstName: 'a', lastName: 'b', birthDate: { year: '2000', month: '1', day: '1' } });
+
+      await useRegistrationStore.checkDuplicates({ form, isPrimaryMember: false, index: 0, preventDbCheck: true });
+      expect(householdApi.checkForPossibleDuplicatePublic).not.toHaveBeenCalledWith(null, member);
     });
   });
 

@@ -34,12 +34,12 @@
         :title="$t('registration.menu.personal_info')"
         :inline-edit="personalInformation.inlineEdit"
         :loading="personalInformation.loading"
-        :submit-disabled="failed"
+        :submit-disabled="failed || isDuplicate"
         @edit="editPersonalInformation()"
         @cancel="cancelPersonalInformation()"
         @submit="validateEmailAndSubmitPersonalInfo()">
         <template #inline>
-          <personal-information :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" is-edit-mode />
+          <personal-information-lib :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" is-edit-mode />
         </template>
         <personal-information-template :personal-information="getPersonalInformation" :show-age-in-review="showAgeInReview" />
       </summary-section>
@@ -163,24 +163,24 @@
 <script lang="ts">
 import { RcConfirmationDialog, MessageBox } from '@libs/component-lib/components';
 import VueI18n from 'vue-i18n';
+import { VueConstructor } from 'vue';
 import { VForm } from '@libs/registration-lib/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import mixins from 'vue-typed-mixins';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
-import { IHouseholdCreate, IIdentitySet, Member } from '@libs/entities-lib/household-create';
+import { IHouseholdCreate, IIdentitySet, Member, MemberDuplicateStatus } from '@libs/entities-lib/household-create';
 import _isEqual from 'lodash/isEqual';
-
+import { FeatureKeys, IConsentStatement } from '@libs/entities-lib/tenantSettings';
 import helpers from '@libs/entities-lib/helpers';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { IContactInformation } from '@libs/entities-lib/src/value-objects/contact-information';
 import { IUser } from '@libs/entities-lib/user';
 import _merge from 'lodash/merge';
-import { IConsentStatement } from '@libs/entities-lib/tenantSettings';
 import { format } from 'date-fns';
 import AddEditAdditionalMembersLib from '../additional-members/AddEditAdditionalMembersLib.vue';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
-import PersonalInformation from '../personal-information/PersonalInformationLib.vue';
+import PersonalInformationLib from '../personal-information/PersonalInformationLib.vue';
 import AddressesLib from '../addresses/AddressesLib.vue';
 import PersonalInformationTemplate from './personal-information/PersonalInformationTemplate.vue';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
@@ -189,7 +189,7 @@ import AdditionalMemberForm from '../additional-members/AdditionalMemberForm.vue
 import AdditionalMemberSection from './additional-members/AdditionalMemberSection.vue';
 import AdditionalMemberTemplate from './additional-members/AdditionalMemberTemplate.vue';
 
-export default mixins(additionalMemberForm).extend({
+const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
   name: 'ReviewRegistration',
 
   components: {
@@ -200,7 +200,7 @@ export default mixins(additionalMemberForm).extend({
     AdditionalMemberTemplate,
     PersonalInformationTemplate,
     SummarySection,
-    PersonalInformation,
+    PersonalInformationLib,
     AddressesLib,
     RcConfirmationDialog,
     CrcPrivacyStatement,
@@ -269,6 +269,12 @@ export default mixins(additionalMemberForm).extend({
 
     householdAlreadyRegistered(): boolean {
       return this.$registrationStore.householdAlreadyRegistered;
+    },
+
+    isDuplicate():boolean {
+      return this.$hasFeature(FeatureKeys.ManageDuplicates)
+      && (this.getPersonalInformation.duplicateStatusInCurrentHousehold === MemberDuplicateStatus.Duplicate
+       || this.getPersonalInformation.duplicateStatusInDb === MemberDuplicateStatus.Duplicate);
     },
   },
   async beforeDestroy() {
@@ -480,4 +486,6 @@ export default mixins(additionalMemberForm).extend({
     },
   },
 });
+
+export default vueComponent;
 </script>

@@ -1,4 +1,5 @@
 import { ERegistrationMode, ERegistrationMethod } from '@libs/shared-lib/types';
+import { IIdentitySet } from '../value-objects/identity-set';
 import { IAddress, IAddressData } from '../value-objects/address/address.types';
 import {
   IMemberEntity, IMember, MemberCreateRequest, IMemberMoveRequest,
@@ -48,6 +49,7 @@ export interface IHouseholdCreate {
   setPrimaryBeneficiary(member: IMember): void;
   setHomeAddress(address: IAddress): void;
   setCurrentAddress(address: ICurrentAddress): void;
+  isDuplicateMember(form: IIdentitySet, isPrimaryBeneficiary:boolean, index?: number): boolean;
   validatePersonalInformation(skipAgeRestriction: boolean, skipEmailPhoneRules: boolean): string[];
   validateAddresses(noFixedHome: boolean): string[];
   validateAdditionalMembers(): string[];

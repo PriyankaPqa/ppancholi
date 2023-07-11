@@ -3,7 +3,7 @@ import { IOptionItemData } from '@libs/shared-lib/types';
 import { isValid, isSameDay, isAfter, isBefore, startOfDay, endOfDay, subYears } from 'date-fns';
 import { MIN_AGE_REGISTRATION } from '@libs/shared-lib/constants/validations';
 import birthdateHelper from './helpers/birthdate/birthdate';
-import { IBirthDate } from './value-objects/identity-set/identitySet.types';
+import { IBirthDate, IIdentitySet, MemberDuplicateStatus } from './value-objects/identity-set/identitySet.types';
 import { IPhoneNumber } from './value-objects/contact-information/contactInformation.types';
 
 export const required = (value: unknown, errorMsg: string, errors: string[]) => {
@@ -105,6 +105,12 @@ export const hasMinimumAge = (birthdate: IBirthDate, errorMsg: string, errors: s
   }
 
   errors.push(errorMsg);
+};
+
+export const isUnique = (identity: IIdentitySet, errorMsg: string, errors: string[]) => {
+  if (identity.getMemberDuplicateStatus() && identity.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate) {
+    errors.push(errorMsg);
+  }
 };
 
 export const isValidOption = (option: IOptionItemData, specifiedOther: string, errorMsg: string, errors: string[]) => {

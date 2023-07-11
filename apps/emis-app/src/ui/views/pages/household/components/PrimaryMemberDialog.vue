@@ -32,6 +32,7 @@
             skip-phone-email-rules
             include-inactive-options
             is-in-primary-member-dialog
+            :make-primary-mode="makePrimaryMode"
             @setIdentity="setIdentity"
             @setIndigenousIdentity="setIndigenousIdentity"
             @setContactInformation="setContactInformation" />
@@ -59,12 +60,11 @@ import _isEqual from 'lodash/isEqual';
 import PersonalInformationLib from '@libs/registration-lib/components/personal-information/PersonalInformationLib.vue';
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
-
 import { RcDialog } from '@libs/component-lib/components';
 import {
   ContactInformation,
   CurrentAddress,
-  ECurrentAddressTypes, IContactInformation, ICurrentAddress, IdentitySet, IIdentitySet, IMember,
+  ECurrentAddressTypes, IContactInformation, ICurrentAddress, IdentitySet, IIdentitySet, IMember, MemberDuplicateStatus,
 } from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
 import { IEventGenericLocation } from '@libs/entities-lib/registration-event';
@@ -180,7 +180,8 @@ export default Vue.extend({
     },
 
     submitButtonDisabled(): (failed: boolean, pristine:boolean) => boolean {
-      return (failed, pristine) => failed || (pristine && !this.changedAddress && !this.makePrimaryMode) || this.submitLoading;
+      const isDuplicate = this.$hasFeature(FeatureKeys.ManageDuplicates) && this.member.identitySet.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate;
+      return (failed, pristine) => failed || (pristine && !this.changedAddress && !this.makePrimaryMode) || this.submitLoading || isDuplicate;
     },
 
     enableAutocomplete(): boolean {

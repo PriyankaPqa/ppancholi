@@ -1,5 +1,10 @@
 import { ECanadaProvinces, IListOption, IOptionItemData } from '@libs/shared-lib/types';
 
+export enum MemberDuplicateStatus {
+  Unique = 1,
+  Duplicate = 2,
+}
+
 export interface IBirthDate {
   month?: number | string;
   day?: number | string;
@@ -63,12 +68,18 @@ export interface IIdentitySetData {
   indigenousCommunityOther: string;
 
   indigenousIdentity?: IIndigenousIdentityOption;
+
 }
 
 export interface IIdentitySet extends IIdentitySetData {
+  duplicateStatusInCurrentHousehold?: MemberDuplicateStatus;
+  duplicateStatusInDb?: MemberDuplicateStatus;
   validate(skipAgeRestriction?: boolean): string[];
   setIdentity(data: IIdentitySetData): void;
   setIndigenousIdentity(data: IIdentitySetData): void;
+  setDuplicateStatusInCurrentHousehold(isDuplicate: boolean):void;
+  setDuplicateStatusInDb(isDuplicate: boolean):void;
+  getMemberDuplicateStatus():MemberDuplicateStatus;
 }
 
 export interface IHoneyPotIdentitySet extends IIdentitySet {

@@ -3,10 +3,10 @@ import { ECanadaProvinces, IOptionItemData } from '@libs/shared-lib/types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import helpers from '../../helpers';
 import {
-  maxLengthCheck, required, isValidBirthday, hasMinimumAge,
+  maxLengthCheck, required, isValidBirthday, hasMinimumAge, isUnique,
 } from '../../classValidation';
 import {
-  IIdentitySetData, IBirthDate, EIndigenousTypes, IIndigenousIdentityOption, IHoneyPotIdentitySet,
+  IIdentitySetData, IBirthDate, EIndigenousTypes, IIndigenousIdentityOption, IHoneyPotIdentitySet, MemberDuplicateStatus, IIdentitySet,
 } from './identitySet.types';
 
 export class IdentitySet implements IHoneyPotIdentitySet {
@@ -36,6 +36,10 @@ export class IdentitySet implements IHoneyPotIdentitySet {
 
   indigenousIdentity: IIndigenousIdentityOption;
 
+  duplicateStatusInCurrentHousehold?: MemberDuplicateStatus;
+
+  duplicateStatusInDb?: MemberDuplicateStatus;
+
   name: string;
 
   constructor(data?: IIdentitySetData) {
@@ -55,6 +59,8 @@ export class IdentitySet implements IHoneyPotIdentitySet {
       this.indigenousCommunityId = data.indigenousCommunityId;
       this.indigenousCommunityOther = data.indigenousCommunityOther;
       this.indigenousIdentity = _cloneDeep(data.indigenousIdentity);
+      this.duplicateStatusInCurrentHousehold = (data as IIdentitySet).duplicateStatusInCurrentHousehold;
+      this.duplicateStatusInDb = (data as IIdentitySet).duplicateStatusInDb;
       // name is honey pot - it should always be null...
       this.name = (data as IHoneyPotIdentitySet).name;
     }
@@ -83,6 +89,7 @@ export class IdentitySet implements IHoneyPotIdentitySet {
     required(this.birthDate.month, 'month is required', errors);
     required(this.birthDate.day, 'day is required', errors);
     isValidBirthday(this.birthDate, 'birth date not valid', errors);
+    isUnique(this, 'member is not unique', errors);
 
     if (!skipAgeRestriction) {
       hasMinimumAge(this.birthDate, 'minimum age required', errors);
@@ -112,6 +119,8 @@ export class IdentitySet implements IHoneyPotIdentitySet {
     this.genderOther = data.genderOther;
     this.birthDate = _cloneDeep(data.birthDate);
     this.dateOfBirth = helpers.getBirthDateUTCString(data.birthDate);
+    this.duplicateStatusInCurrentHousehold = (data as IIdentitySet).duplicateStatusInCurrentHousehold;
+    this.duplicateStatusInDb = (data as IIdentitySet).duplicateStatusInDb;
     // name is honey pot - it should always be null...
     this.name = (data as IHoneyPotIdentitySet).name;
   }
@@ -130,6 +139,29 @@ export class IdentitySet implements IHoneyPotIdentitySet {
         specifiedOther: this.indigenousCommunityOther,
       };
     }
+  }
+
+  setDuplicateStatusInCurrentHousehold(isDuplicate:boolean) {
+    if (isDuplicate !== null) {
+      this.duplicateStatusInCurrentHousehold = isDuplicate === false ? MemberDuplicateStatus.Unique : MemberDuplicateStatus.Duplicate;
+    }
+  }
+
+  setDuplicateStatusInDb(isDuplicate: boolean) {
+    if (isDuplicate !== null) {
+      this.duplicateStatusInDb = isDuplicate === false ? MemberDuplicateStatus.Unique : MemberDuplicateStatus.Duplicate;
+    }
+  }
+
+  getMemberDuplicateStatus(): MemberDuplicateStatus {
+    if (this.duplicateStatusInCurrentHousehold != null) {
+      if (this.duplicateStatusInDb != null) {
+        return this.duplicateStatusInCurrentHousehold === MemberDuplicateStatus.Unique && this.duplicateStatusInDb === MemberDuplicateStatus.Unique
+        ? MemberDuplicateStatus.Unique : MemberDuplicateStatus.Duplicate;
+      }
+      return this.duplicateStatusInCurrentHousehold;
+    }
+    return null;
   }
 
   reset(): void {

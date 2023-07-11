@@ -3,7 +3,7 @@ import { ECanadaProvinces } from '@libs/shared-lib/types';
 import helpers from '@/helpers';
 import {
   IdentitySet, EIndigenousTypes, mockIdentitySetData,
-  mockGenderOther, IHoneyPotIdentitySet,
+  mockGenderOther, IHoneyPotIdentitySet, MemberDuplicateStatus,
 } from './index';
 
 const longText = 'x'.repeat(MAX_LENGTH_MD + 1);
@@ -71,6 +71,50 @@ describe('Identity Set', () => {
         });
       });
     });
+
+  describe('setDuplicateStatusInCurrentHousehold', () => {
+    it('should set duplicateStatusInCurrentHousehold to the argument', () => {
+      const p = new IdentitySet();
+      p.setDuplicateStatusInCurrentHousehold(true);
+      expect(p.duplicateStatusInCurrentHousehold).toBe(MemberDuplicateStatus.Duplicate);
+    });
+  });
+
+  describe('setDuplicateStatusInDb', () => {
+    it('should set duplicateStatusInDb to the argument', () => {
+      const p = new IdentitySet();
+      p.setDuplicateStatusInDb(true);
+      expect(p.duplicateStatusInDb).toBe(MemberDuplicateStatus.Duplicate);
+    });
+  });
+
+  describe('get', () => {
+    it('returns Duplicate if duplicateStatusInCurrentHousehold is true', () => {
+      const p = new IdentitySet();
+      p.setDuplicateStatusInCurrentHousehold(true);
+      p.setDuplicateStatusInDb(true);
+      expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Duplicate);
+    });
+    it('returns Duplicate if duplicateStatusInDb is true', () => {
+      const p = new IdentitySet();
+      p.setDuplicateStatusInCurrentHousehold(false);
+      p.setDuplicateStatusInDb(true);
+      expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Duplicate);
+    });
+    it('returns Unique if duplicateStatusInCurrentHousehold and duplicateStatusInDb are false', () => {
+      const p = new IdentitySet();
+      p.setDuplicateStatusInCurrentHousehold(false);
+      p.setDuplicateStatusInDb(false);
+      expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Unique);
+    });
+
+    it('returns the duplicateStatusInCurrentHousehold if duplicateStatusInDb is null', () => {
+      const p = new IdentitySet();
+      p.setDuplicateStatusInCurrentHousehold(true);
+      p.setDuplicateStatusInDb(null);
+      expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Duplicate);
+    });
+  });
 
     describe('validate', () => {
       describe('First name', () => {

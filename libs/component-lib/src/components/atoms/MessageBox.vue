@@ -2,7 +2,7 @@
   <v-sheet rounded class="mb-3 pa-4" :style="styles">
     <div class="d-flex  pl-1" style="text-align: justify;font-weight: bold;">
       <v-icon
-        class="pr-2"
+        class="pr-3"
         :small="smallIcon"
         :color="iconColor">
         {{ icon }}

@@ -13,6 +13,7 @@ import {
   mockGenders, mockSplitHousehold,
 } from '@libs/entities-lib/src/household-create';
 import { useMockRegistrationStore } from '@libs/stores-lib/src/registration/registration.mock';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import IdentityForm from '../forms/IdentityForm.vue';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
@@ -26,9 +27,9 @@ const { pinia } = useMockRegistrationStore();
 describe('PersonalInformationLib.vue', () => {
   let wrapper;
 
-  const doMount = (shallow, {
-    otherProps, otherComputed,
-  }) => {
+  const doMount = (shallow = true, {
+    otherProps = {}, otherComputed = null,
+  } = {}) => {
     const options = {
       localVue,
       pinia,
@@ -47,12 +48,8 @@ describe('PersonalInformationLib.vue', () => {
     }
   };
   beforeEach(() => {
-    doMount(true, {
-      otherProps: {
-
-      },
-      otherComputed: null,
-    });
+    jest.clearAllMocks();
+    doMount();
   });
 
   describe('Template', () => {
@@ -410,6 +407,51 @@ describe('PersonalInformationLib.vue', () => {
         });
 
         expect(wrapper.vm.loadInitialDataFromBeneficiarySearch).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('Methods', () => {
+    describe('setIdentity', () => {
+      it('calls emit with setIdentity ', async () => {
+        wrapper.vm.$emit = jest.fn();
+        await wrapper.vm.setIdentity(mockIdentitySet());
+        expect(wrapper.vm.$emit).toHaveBeenCalledWith('setIdentity', mockIdentitySet());
+      });
+
+      it('calls setIdentitySet on the primary member ', async () => {
+        jest.spyOn(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.identitySet, 'setIdentity');
+        await wrapper.vm.setIdentity(mockIdentitySet());
+        expect(wrapper.vm.$registrationStore.householdCreate.primaryBeneficiary.identitySet.setIdentity).toHaveBeenCalledWith(mockIdentitySet());
+      });
+
+      it('calls checkDuplicates if the feature flag is on and it is not split mode', async () => {
+        doMount(
+          true,
+          {
+            otherProps: null,
+            otherComputed: {
+              isSplitMode: () => false,
+            },
+          },
+        );
+        wrapper.vm.checkDuplicates = jest.fn();
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+        await wrapper.vm.setIdentity(mockIdentitySet());
+        expect(wrapper.vm.checkDuplicates).toHaveBeenCalledWith(mockIdentitySet());
+      });
+    });
+
+    describe('checkDuplicates', () => {
+      it('calls store method checkDuplicates with the right params and sets the form in identitySet of the member', async () => {
+        wrapper.setData({ member: { ...mockMember(), identitySet: { ...mockIdentitySet(), setIdentity: jest.fn() } } });
+        wrapper.setProps({ preventDbDuplicateCheck: true });
+        wrapper.vm.$registrationStore.checkDuplicates = jest.fn();
+        await wrapper.vm.checkDuplicates(mockIdentitySet());
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        expect(wrapper.vm.$registrationStore.checkDuplicates).toHaveBeenCalledWith({ form: mockIdentitySet(), isPrimaryMember: true, preventDbCheck: true, memberId: undefined });
+        expect(wrapper.vm.member.identitySet.setIdentity).toHaveBeenCalledWith(mockIdentitySet());
       });
     });
   });

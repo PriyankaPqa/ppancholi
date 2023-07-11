@@ -1,5 +1,5 @@
 import { mockMember } from '@libs/entities-lib/value-objects/member';
-import { mockHouseholdCreate, mockIdentitySetData, ECurrentAddressTypes } from '@libs/entities-lib/household-create';
+import { mockHouseholdCreate, mockIdentitySetData, ECurrentAddressTypes, MemberDuplicateStatus } from '@libs/entities-lib/household-create';
 import libHelpers from '@libs/entities-lib/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
@@ -315,6 +315,34 @@ describe('PrimaryMemberDialog', () => {
             changedAddress() {
               return false;
             },
+          },
+        });
+
+        expect(wrapper.vm.submitButtonDisabled(false, false)).toBeTruthy();
+      });
+
+      it('returns true if member identity is duplicate and feature flag is on', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+          },
+          data() {
+            return {
+              apiKey: '123',
+              submitLoading: true,
+              member: mockMember({ identitySet: { getMemberDuplicateStatus: jest.fn(() => MemberDuplicateStatus.Duplicate) } }),
+            };
+          },
+          computed: {
+            changedAddress() {
+              return false;
+            },
+          },
+          mocks: {
+            $hasFeature: jest.fn((f) => f === FeatureKeys.ManageDuplicates),
           },
         });
 

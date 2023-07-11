@@ -8,7 +8,8 @@
       :content-only-scrolling="true"
       :persistent="true"
       fullscreen
-      :submit-button-disabled="failed || (!identityChanged && !addressChanged && !sameAddressChanged) || submitLoading"
+      :submit-button-disabled="failed || submitDisabled"
+      :loading="submitLoading"
       @cancel="cancel()"
       @close="cancel()"
       @submit="validate()">
@@ -25,7 +26,7 @@
             :indigenous-types-items="indigenousTypesItems"
             :current-address-type-items="currentAddressTypeItems"
             :loading="loadingIndigenousCommunities"
-            :member="member"
+            :member="memberClone"
             :disable-autocomplete="disableAutocomplete"
             :hide-edit-temporary-address="hideEditTemporaryAddress"
             @identity-change="setIdentity($event)"
@@ -39,19 +40,19 @@
 
 <script lang="ts">
 import { RcDialog } from '@libs/component-lib/components';
-import Vue from 'vue';
+import Vue, { VueConstructor } from 'vue';
 import VueI18n, { TranslateResult } from 'vue-i18n';
 import _isEqual from 'lodash/isEqual';
+import _debounce from 'lodash/debounce';
 import _cloneDeep from 'lodash/cloneDeep';
-
-import { IIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
+import { IdentitySet, IIdentitySet, MemberDuplicateStatus } from '@libs/entities-lib/value-objects/identity-set';
 import helpers from '@libs/entities-lib/helpers';
 import {
   EOptionItemStatus,
   IOptionItemData,
   VForm,
 } from '@libs/shared-lib/types';
-
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import {
   ECurrentAddressTypes, ICurrentAddress, IShelterLocationData,
 } from '@libs/entities-lib/value-objects/current-address';
@@ -59,7 +60,7 @@ import { IMember } from '@libs/entities-lib/value-objects/member';
 import { localStorageKeys } from '../../constants/localStorage';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
 
-export default Vue.extend({
+const vueComponent: VueConstructor = Vue.extend({
   name: 'AddEditAdditionalMembers',
 
   components: {
@@ -189,6 +190,12 @@ export default Vue.extend({
       const locations = this.shelterLocationsList || this.$registrationStore.getEvent()?.shelterLocations || [];
       return locations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active || s.id === this.member?.currentAddress?.shelterLocation?.id);
     },
+
+    submitDisabled():boolean {
+      const isMemberDuplicate = this.$hasFeature(FeatureKeys.ManageDuplicates)
+      && this.identityChanged && this.memberClone.identitySet.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate;
+      return (!this.identityChanged && !this.addressChanged && !this.sameAddressChanged) || isMemberDuplicate;
+    },
   },
 
   created() {
@@ -265,7 +272,13 @@ export default Vue.extend({
       if (!_isEqual(form, this.backupPerson?.identitySet)) {
         this.identityChanged = true;
       }
-      this.memberClone.identitySet.setIdentity(form);
+
+      if (this.$hasFeature(FeatureKeys.ManageDuplicates)) {
+        this.submitLoading = true;
+        this.checkDuplicates(new IdentitySet(form));
+      } else {
+        this.memberClone.identitySet.setIdentity(form);
+      }
     },
 
     setIndigenousIdentity(form: IIdentitySet) {
@@ -283,8 +296,17 @@ export default Vue.extend({
       }
       this.memberClone.setCurrentAddress(form);
     },
+
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    checkDuplicates: _debounce(async function func(this:any, form: IIdentitySet) {
+      await this.$registrationStore.checkDuplicates({ form, isPrimaryMember: false, index: this.index });
+      this.memberClone.identitySet.setIdentity(form);
+      this.submitLoading = false;
+    }, 500),
   },
 });
+
+export default vueComponent;
 </script>
 
 <style scoped lang="scss">

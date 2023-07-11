@@ -307,7 +307,7 @@ export default Vue.extend({
 
     setSkippedStepsToValid(indexStart: number, indexEnd: number) {
       if (indexStart <= indexEnd) {
-        for (let i = indexStart + 1; i <= indexEnd; i += 1) {
+        for (let i = indexStart; i <= indexEnd; i += 1) {
           this.$registrationStore.mutateTabAtIndex(i, (tab: IRegistrationMenuItem) => {
             tab.isValid = true;
             tab.isTouched = true;

@@ -19,6 +19,9 @@ export default {
   },
 
   getBirthDateUTCString(birthdate: IBirthDate) {
+    if (!birthdate) {
+      return null;
+    }
     const year = +birthdate.year;
     const month = +birthdate.month;
     const day = +birthdate.day;

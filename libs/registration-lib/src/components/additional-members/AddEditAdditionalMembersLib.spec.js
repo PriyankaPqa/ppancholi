@@ -10,6 +10,8 @@ import {
 import { mockAdditionalMember } from '@libs/entities-lib/value-objects/member';
 import { mockIdentitySet } from '@libs/entities-lib/value-objects/identity-set';
 import { mockAddress, mockHouseholdCreate } from '@libs/entities-lib/household-create';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { MemberDuplicateStatus } from '@libs/entities-lib/src/household-create';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AddEditAdditionalMembersLib.vue';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
@@ -129,6 +131,42 @@ describe('AddEditAdditionalMembersLib.vue', () => {
         expect(wrapper.vm.shelterLocations.filter((s) => s.status === EOptionItemStatus.Inactive)).toHaveLength(0);
       });
     });
+
+    describe('submitDisabled', () => {
+      it('returns true if no form data has changed', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            member: mockAdditionalMember(),
+            index: -1,
+            i18n,
+            householdId,
+            disableAutocomplete: false,
+          },
+          data() {
+            return {
+              apiKey: 'google-key',
+              identityChanged: false,
+              addressChanged: false,
+            };
+          },
+          computed: {
+            sameAddressChanged() {
+              return false;
+            },
+          },
+        });
+
+        expect(wrapper.vm.submitDisabled).toEqual(true);
+      });
+
+      it('returns true if identity is duplicate and feature flag is on', async () => {
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+        await wrapper.setProps({ member: mockAdditionalMember({ identitySet: { getMemberDuplicateStatus: jest.fn(() => MemberDuplicateStatus.Duplicate) } }) });
+        expect(wrapper.vm.submitDisabled).toEqual(true);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -242,6 +280,14 @@ describe('AddEditAdditionalMembersLib.vue', () => {
         await wrapper.vm.setIdentity(mockIdentitySet());
         expect(wrapper.vm.memberClone.identitySet.setIdentity).toHaveBeenCalledWith(mockIdentitySet());
       });
+
+      it('calls checkDuplicates if the feature flag is on and it is crc registration', async () => {
+        wrapper.vm.checkDuplicates = jest.fn();
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
+        await wrapper.vm.setIdentity(mockIdentitySet());
+        expect(wrapper.vm.checkDuplicates).toHaveBeenCalledWith(mockIdentitySet());
+      });
     });
 
     describe('setIndigenousIdentity', () => {
@@ -282,104 +328,117 @@ describe('AddEditAdditionalMembersLib.vue', () => {
         expect(wrapper.vm.memberClone.setCurrentAddress).toHaveBeenCalledWith(mockAddress());
       });
     });
-  });
 
-  describe('Template', () => {
-    it('Submit calls validate method', async () => {
-      wrapper.vm.$refs.form.validate = jest.fn(() => true);
-      jest.spyOn(wrapper.vm, 'validate');
-      const dialog = wrapper.findComponent(RcDialog);
-      await dialog.vm.$emit('submit');
-      expect(wrapper.vm.validate).toHaveBeenCalledTimes(1);
+    describe('checkDuplicates', () => {
+      it('calls store method checkDuplicates with the right params and sets the form in identityset of the memberclone', async () => {
+        wrapper.vm.$registrationStore.checkDuplicates = jest.fn();
+        wrapper.setData({ memberClone: { ...mockAdditionalMember(), identitySet: { ...mockIdentitySet(), setIdentity: jest.fn() } } });
+        await wrapper.vm.checkDuplicates(mockIdentitySet());
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
+        expect(wrapper.vm.$registrationStore.checkDuplicates).toHaveBeenCalledWith({ form: mockIdentitySet(), isPrimaryMember: false, index: wrapper.vm.index });
+        expect(wrapper.vm.memberClone.identitySet.setIdentity).toHaveBeenCalledWith(mockIdentitySet());
+      });
     });
-  });
 
-  describe('Lifecycle hook', () => {
-    describe('mounted', () => {
-      describe('Edit mode', () => {
-        it('should set sameAddress to true if household member and household has the same temporary address', () => {
-          const member = mockAdditionalMember();
-          member.currentAddress = mockCampGround();
-          wrapper = shallowMount(Component, {
-            localVue,
-            propsData: {
-              show: true,
-              member,
-              index: 0,
-              i18n,
-              householdId,
-              disableAutocomplete: false,
-            },
-            data() {
-              return {
-                apiKey: 'google-key',
-              };
-            },
-            computed: {
-              primaryBeneficiaryAddress() {
-                return mockCampGround();
+    describe('Template', () => {
+      it('Submit calls validate method', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        jest.spyOn(wrapper.vm, 'validate');
+        const dialog = wrapper.findComponent(RcDialog);
+        await dialog.vm.$emit('submit');
+        expect(wrapper.vm.validate).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('Lifecycle hook', () => {
+      describe('mounted', () => {
+        describe('Edit mode', () => {
+          it('should set sameAddress to true if household member and household has the same temporary address', () => {
+            const member = mockAdditionalMember();
+            member.currentAddress = mockCampGround();
+            wrapper = shallowMount(Component, {
+              localVue,
+              propsData: {
+                show: true,
+                member,
+                index: 0,
+                i18n,
+                householdId,
+                disableAutocomplete: false,
               },
-            },
-          });
-          wrapper.vm.$options.created.forEach((hook) => {
-            hook.call(wrapper.vm);
-          });
-          expect(wrapper.vm.sameAddress).toBeTruthy();
-        });
-
-        it('should set sameAddress to false if household member and primary beneficiary does not have the same temporary address', () => {
-          const member = mockAdditionalMember();
-          member.currentAddress = mockCampGround({ placeNumber: '888' });
-          wrapper = shallowMount(Component, {
-            localVue,
-            propsData: {
-              show: true,
-              member,
-              index: 0,
-              i18n,
-              householdId,
-              disableAutocomplete: false,
-            },
-            data() {
-              return {
-                apiKey: 'google-key',
-              };
-            },
-            computed: {
-              primaryBeneficiaryAddress() {
-                return mockCampGround();
+              data() {
+                return {
+                  apiKey: 'google-key',
+                };
               },
-            },
+              computed: {
+                primaryBeneficiaryAddress() {
+                  return mockCampGround();
+                },
+              },
+            });
+            wrapper.vm.$options.created.forEach((hook) => {
+              hook.call(wrapper.vm);
+            });
+            expect(wrapper.vm.sameAddress).toBeTruthy();
           });
-          wrapper.vm.$options.created.forEach((hook) => {
-            hook.call(wrapper.vm);
-          });
-          expect(wrapper.vm.sameAddress).toBeFalsy();
-        });
 
-        it('should backup the member and sameAddress', () => {
-          const member = mockAdditionalMember();
-          wrapper = shallowMount(Component, {
-            localVue,
-            propsData: {
-              show: true,
-              member,
-              index: 0,
-              i18n,
-              householdId,
-              disableAutocomplete: false,
-            },
-            data() {
-              return {
-                apiKey: 'google-key',
-              };
-            },
+          it('should set sameAddress to false if household member and primary beneficiary does not have the same temporary address', () => {
+            const member = mockAdditionalMember();
+            member.currentAddress = mockCampGround({ placeNumber: '888' });
+            wrapper = shallowMount(Component, {
+              localVue,
+              propsData: {
+                show: true,
+                member,
+                index: 0,
+                i18n,
+                householdId,
+                disableAutocomplete: false,
+              },
+              data() {
+                return {
+                  apiKey: 'google-key',
+                };
+              },
+              computed: {
+                primaryBeneficiaryAddress() {
+                  return mockCampGround();
+                },
+              },
+            });
+            wrapper.vm.$options.created.forEach((hook) => {
+              hook.call(wrapper.vm);
+            });
+            expect(wrapper.vm.sameAddress).toBeFalsy();
           });
-          wrapper.vm.$options.created.forEach((hook) => {
-            hook.call(wrapper.vm);
+
+          it('should backup the member and sameAddress', () => {
+            const member = mockAdditionalMember();
+            wrapper = shallowMount(Component, {
+              localVue,
+              propsData: {
+                show: true,
+                member,
+                index: 0,
+                i18n,
+                householdId,
+                disableAutocomplete: false,
+              },
+              data() {
+                return {
+                  apiKey: 'google-key',
+                };
+              },
+            });
+            wrapper.vm.$options.created.forEach((hook) => {
+              hook.call(wrapper.vm);
+            });
+            expect(wrapper.vm.backupPerson).toEqual(member);
+            expect(wrapper.vm.backupSameAddress).toEqual(wrapper.vm.sameAddress);
           });
-          expect(wrapper.vm.backupPerson).toEqual(member);
-          expect(wrapper.vm.backupSameAddress).toEqual(wrapper.vm.sameAddress);
         });
       });
     });

@@ -7,9 +7,10 @@ import {
   mockHouseholdCreate,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems,
-  mockCampGround, mockIdentitySet, mockAddress, mockAdditionalMember, Member,
-} from '@libs/entities-lib/src/household-create';
+  mockCampGround, mockIdentitySet, mockAddress, mockAdditionalMember, Member, mockContactInformation, MemberDuplicateStatus,
+} from '@libs/entities-lib/household-create';
 import { mockUserL6 } from '@libs/entities-lib/src/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { i18n } from '../../ui/plugins/i18n';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
 import PersonalInformationTemplate from './personal-information/PersonalInformationTemplate.vue';
@@ -932,6 +933,93 @@ describe('ReviewRegistrationLib.vue', () => {
         },
       });
       wrapper.vm.$registrationStore.getHouseholdCreate = jest.fn(() => mockHouseholdCreate());
+    });
+
+    describe('isDuplicate', () => {
+      it('returns false is feature flag is off', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+            disableAutocomplete: false,
+            user: mockUserL6(),
+          },
+          mocks: {
+            $hasFeature: (f) => f !== FeatureKeys.ManageDuplicates,
+          },
+        });
+
+        expect(wrapper.vm.isDuplicate).toBeFalsy();
+      });
+
+      it('returns true is feature flag is on and duplicateStatusInCurrentHousehold of getPersonalInformation is Duplicate', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+            disableAutocomplete: false,
+            user: mockUserL6(),
+          },
+          mocks: {
+            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
+          },
+          computed: {
+            getPersonalInformation() {
+              return { ...mockIdentitySet(), ...mockContactInformation(), duplicateStatusInCurrentHousehold: MemberDuplicateStatus.Duplicate };
+            },
+          },
+        });
+
+        expect(wrapper.vm.isDuplicate).toBeTruthy();
+      });
+      it('returns true is feature flag is on and duplicateStatusInDb of getPersonalInformation is Duplicate', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+            disableAutocomplete: false,
+            user: mockUserL6(),
+          },
+          mocks: {
+            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
+          },
+          computed: {
+            getPersonalInformation() {
+              return { ...mockIdentitySet(), ...mockContactInformation(), duplicateStatusInDb: MemberDuplicateStatus.Duplicate };
+            },
+          },
+        });
+
+        expect(wrapper.vm.isDuplicate).toBeTruthy();
+      });
+
+      it('returns false is feature flag is on and duplicateStatusInDb and duplicateStatusInCurrentHousehold of getPersonalInformation are unique', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+            disableAutocomplete: false,
+            user: mockUserL6(),
+          },
+          mocks: {
+            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
+          },
+          computed: {
+            getPersonalInformation() {
+              return { ...mockIdentitySet(),
+                ...mockContactInformation(),
+                duplicateStatusInDb: MemberDuplicateStatus.Unique,
+                duplicateStatusInCurrentHousehold: MemberDuplicateStatus.Unique };
+            },
+          },
+        });
+
+        expect(wrapper.vm.isDuplicate).toBeFalsy();
+      });
     });
     describe('additionalMembersCopy', () => {
       it('should return additional members', () => {
