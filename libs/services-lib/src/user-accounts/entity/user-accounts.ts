@@ -7,7 +7,7 @@ import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 
 import {
-  IUserAccountsService, IAddRoleToUserRequest, IEditFilterRequest,
+  IUserAccountsService, IAddRoleToUserRequest, IEditFilterRequest, ICreateUserRequest,
 } from './user-accounts.types';
 
 const API_URL_SUFFIX = 'user-account';
@@ -51,6 +51,10 @@ export class UserAccountsService extends DomainBaseService<IUserAccountEntity, u
         },
       },
     });
+  }
+
+  async createUserAccount(payload: ICreateUserRequest): Promise<IUserAccountEntity> {
+    return this.http.post<IUserAccountEntity>(`${this.baseUrl}/user`, payload);
   }
 
   async assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity> {

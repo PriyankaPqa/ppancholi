@@ -9,7 +9,7 @@
       :footer-text="footerText"
       :labels="labels"
       :table-props="tableProps"
-      :show-add-button="true"
+      :show-add-button="!hasFeatureUseIdentityServer"
       :options.sync="options"
       :initial-search="params && params.search"
       :custom-columns="Object.values(customColumns)"
@@ -22,6 +22,15 @@
           :to="getUserAccountDetailsRoute(item.entity.id)">
           <span data-test="user_displayName"> {{ item.metadata.displayName }}</span>
         </router-link>
+      </template>
+
+      <template #headerLeft>
+        <rc-add-button-with-menu
+          v-if="hasFeatureUseIdentityServer"
+          :items="menuItems"
+          data-test="create-user-account-button"
+          :add-button-label="$t('system_management.userAccounts.add_user_account_title')"
+          @click-item="addUser($event)" />
       </template>
 
       <template #[`item.${customColumns.email}`]="{ item }">
@@ -95,6 +104,15 @@
       @hide="showAddEmisUserDialog = false"
       @users-added="search(params)" />
 
+    <add-user-account
+      v-if="showAddUserAccountDialog"
+      data-test="add-user-account"
+      :all-sub-roles="allActiveSubRoles"
+      :all-access-level-roles="allAccessLevelRoles"
+      :show.sync="showAddUserAccountDialog"
+      @hide="showAddUserAccountDialog = false"
+      @users-added="search(params)" />
+
     <rc-confirmation-dialog
       v-if="showDeleteUserAccountDialog"
       data-test="delete-user-account-dialog"
@@ -115,6 +133,7 @@ import {
   VSelectWithValidation,
   RcConfirmationDialog,
   RcDataTable,
+  RcAddButtonWithMenu,
 } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import _cloneDeep from 'lodash/cloneDeep';
@@ -126,6 +145,7 @@ import {
 } from '@libs/entities-lib/optionItem';
 
 import AddEmisUser from '@/ui/views/pages/system-management/lists/add-emis-user/AddEmisUser.vue';
+import AddUserAccount from '@/ui/views/pages/system-management/lists/add-user-account/AddUserAccount.vue';
 import routes from '@/constants/routes';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import {
@@ -138,6 +158,7 @@ import { useUiStateStore } from '@/pinia/ui-state/uiState';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { UserRolesNames, UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'UserAccounts',
@@ -146,9 +167,11 @@ export default mixins(TablePaginationSearchMixin).extend({
     RcPageContent,
     RcDataTable,
     AddEmisUser,
+    AddUserAccount,
     StatusChip,
     VSelectWithValidation,
     RcConfirmationDialog,
+    RcAddButtonWithMenu,
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
@@ -164,6 +187,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         itemsPerPage: 10,
       },
       showAddEmisUserDialog: false,
+      showAddUserAccountDialog: false,
       showDeleteUserAccountDialog: false,
       userToDelete: null as IUserAccountCombined,
       loading: true,
@@ -188,6 +212,24 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     roles(): IOptionItem[] {
       return useUserAccountStore().getRoles();
+    },
+
+    hasFeatureUseIdentityServer(): boolean {
+      return this.$hasFeature(FeatureKeys.UseIdentityServer);
+    },
+
+    menuItems(): Array<Record<string, string>> {
+      return [{
+        text: this.$t('system_management.userAccounts.add_new_user') as string,
+        value: 'standard',
+        icon: 'mdi-account',
+        dataTest: 'add-standard-user-link',
+      }, {
+        text: this.$t('system_management.userAccounts.add_new_ad_user') as string,
+        value: 'activeDirectory',
+        icon: 'mdi-account-outline',
+        dataTest: 'add-activeDirectory-user-link',
+      }];
     },
 
     headers(): Array<DataTableHeader> {
@@ -306,8 +348,19 @@ export default mixins(TablePaginationSearchMixin).extend({
       return res;
     },
 
-    addUser() {
-      this.showAddEmisUserDialog = true;
+    addUser(item: Record<string, string> = null) {
+      // FeatureKeys.UseIdentityServer: if item is null then FF is off
+      if (item === null) {
+        this.showAddEmisUserDialog = true;
+        return;
+      }
+
+      const addType = item.value;
+      if (addType === 'standard') {
+        this.showAddUserAccountDialog = true;
+      } else {
+        this.showAddEmisUserDialog = true;
+      }
     },
 
     modifiedUser(user: IUserAccountCombined): IUserAccountCombined {

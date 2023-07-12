@@ -8,5 +8,6 @@ export const mockUserAccountsService = (): IUserAccountsServiceMock => ({
   addFilter: jest.fn(() => mockUserAccountEntity()),
   editFilter: jest.fn(() => mockUserAccountEntity()),
   deleteFilter: jest.fn(() => mockUserAccountEntity()),
+  createUserAccount: jest.fn(() => mockUserAccountEntity()),
   assignRole: jest.fn(() => mockUserAccountEntity()),
 });

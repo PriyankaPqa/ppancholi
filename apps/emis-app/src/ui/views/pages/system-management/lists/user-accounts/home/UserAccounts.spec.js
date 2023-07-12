@@ -103,6 +103,24 @@ describe('UserAccounts.vue', () => {
         expect(wrapper.vm.roles).toEqual(mockOptionItemData());
       });
     });
+
+    describe('menuItems', () => {
+      it('should return proper menuItems', async () => {
+        mountWrapper();
+        expect(wrapper.vm.menuItems).toEqual([{
+          text: 'system_management.userAccounts.add_new_user',
+          value: 'standard',
+          icon: 'mdi-account',
+          dataTest: 'add-standard-user-link',
+        }, {
+          text: 'system_management.userAccounts.add_new_ad_user',
+          value: 'activeDirectory',
+          icon: 'mdi-account-outline',
+          dataTest: 'add-activeDirectory-user-link',
+        }]);
+      });
+    });
+
     describe('headers', () => {
       it('is correctly defined', async () => {
         mountWrapper();
@@ -233,9 +251,30 @@ describe('UserAccounts.vue', () => {
     describe('addUser', () => {
       it('toggles visibility of Add EMIS USer dialog', () => {
         wrapper.vm.showAddEmisUserDialog = false;
+        wrapper.vm.showAddUserAccountDialog = false;
         wrapper.vm.addUser();
         wrapper.vm.$nextTick();
         expect(wrapper.vm.showAddEmisUserDialog).toEqual(true);
+        expect(wrapper.vm.showAddUserAccountDialog).toEqual(false);
+      });
+
+      // FeatureKey.UseIdentityServer
+      it('toggles visibility of Add EMIS User dialog from menu shown with FF on', () => {
+        wrapper.vm.showAddEmisUserDialog = false;
+        wrapper.vm.showAddUserAccountDialog = false;
+        wrapper.vm.addUser({ value: 'activeDirectory' });
+        wrapper.vm.$nextTick();
+        expect(wrapper.vm.showAddEmisUserDialog).toEqual(true);
+        expect(wrapper.vm.showAddUserAccountDialog).toEqual(false);
+      });
+
+      it('toggles visibility of Add User Account dialog from menu shown with FF on', () => {
+        wrapper.vm.showAddEmisUserDialog = false;
+        wrapper.vm.showAddUserAccountDialog = false;
+        wrapper.vm.addUser({ value: 'standard' });
+        wrapper.vm.$nextTick();
+        expect(wrapper.vm.showAddEmisUserDialog).toEqual(false);
+        expect(wrapper.vm.showAddUserAccountDialog).toEqual(true);
       });
     });
 

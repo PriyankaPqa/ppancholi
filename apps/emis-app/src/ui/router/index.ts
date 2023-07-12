@@ -150,7 +150,7 @@ const initializeMSAL = async () => {
   httpClient.setHeadersTenant(tenant);
 
   const features = await publicService.getPublicFeatures();
-  const feature = features.find((f: IFeatureEntity) => f.key === FeatureKeys.UseIdentityServer);
+  const feature = features?.find((f: IFeatureEntity) => f.key === FeatureKeys.UseIdentityServer);
   const useIdentityServer = !!feature?.enabled;
 
   AuthenticationProvider.init(useIdentityServer, tenant);

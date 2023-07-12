@@ -3,7 +3,7 @@ import { defineStore, setActivePinia } from 'pinia';
 import { getExtensionComponents } from '@/pinia/user-account/user-account-extension';
 import { mockOptionItemsService } from '@libs/services-lib/optionItems';
 import { getBaseStoreComponents } from '@libs/stores-lib/base';
-import { IAddRoleToUserRequest, mockUserAccountsService } from '@libs/services-lib/user-accounts/entity';
+import { IAddRoleToUserRequest, ICreateUserRequest, mockUserAccountsService } from '@libs/services-lib/user-accounts/entity';
 import {
  IUserAccountEntity, IdParams, mockUserAccountEntity, mockUserFilters, FilterKey, UserAccountEntity,
 } from '@libs/entities-lib/user-account';
@@ -105,6 +105,26 @@ describe('User Account Store', () => {
         const res = mockUserAccountEntity();
         await store.deleteFilter(filter);
         expect(entityService.deleteFilter).toBeCalledWith(filter);
+        expect(bComponents.set).toBeCalledWith(res);
+      });
+    });
+
+    describe('createUserAccount', () => {
+      it('should call service createUserAccount with proper parameters and commit the result', async () => {
+        const bComponents = { ...baseComponents, set: jest.fn() };
+        const store = createTestStore(bComponents);
+        const payload = {
+          emailAddress: '',
+          givenName: '',
+          surname: '',
+          roleId: '',
+        } as ICreateUserRequest;
+        const res = mockUserAccountEntity();
+        entityService.createUserAccount = jest.fn(() => res);
+
+        await store.createUserAccount(payload);
+
+        expect(entityService.createUserAccount).toBeCalledWith(payload);
         expect(bComponents.set).toBeCalledWith(res);
       });
     });

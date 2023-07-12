@@ -78,6 +78,17 @@ describe('>>> UserAccounts Service', () => {
     });
   });
 
+  test('createUserAccount is linked to the correct URL and payload', async () => {
+    const request = {
+      emailAddress: 'u@ser.com',
+      givenName: 'g',
+      surname: 's',
+      roleId: 'id',
+    };
+    await service.createUserAccount(request);
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/user`, request);
+  });
+
   test('assignRole is linked to the correct URL and payload', async () => {
     const request = {
       subRole: { id: 'role-id' } as IOptionSubItem,

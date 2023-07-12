@@ -10,6 +10,7 @@ export function getMockUserAccountExtensionComponents(entity = mockUserAccountEn
     editFilter: jest.fn(() => entity),
     deleteFilter: jest.fn(() => entity),
     assignRole: jest.fn(() => entity),
+    createUserAccount: jest.fn(() => entity),
     fetchCurrentUserAccount: jest.fn(() => entity),
     fetchRoles: jest.fn(() => mockOptionItems()),
   };

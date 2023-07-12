@@ -1,7 +1,7 @@
 import { BaseStoreComponents } from '@libs/stores-lib/base';
 import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/optionItems';
 import {
- IAddRoleToUserRequest, IEditFilterRequest, IUserAccountsService, IUserAccountsServiceMock,
+ IAddRoleToUserRequest, ICreateUserRequest, IEditFilterRequest, IUserAccountsService, IUserAccountsServiceMock,
 } from '@libs/services-lib/user-accounts/entity';
 import {
  FilterKey, IFilter, IUserAccountEntity, UserAccountEntity, IdParams,
@@ -73,6 +73,19 @@ export function getExtensionComponents(
     return genericFilterAction({ payload: filter, methodName: 'deleteFilter' });
   }
 
+  async function createUserAccount(payload: ICreateUserRequest): Promise<IUserAccountEntity> {
+    try {
+      const res = await service.createUserAccount(payload);
+      if (res) {
+        baseComponents.set(res);
+      }
+      return res;
+    } catch (e) {
+      applicationInsights.trackException(e, { payload }, 'module.userAccountEntity', 'createUserAccount');
+      return null;
+    }
+  }
+
   async function assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity> {
     try {
       const res = await service.assignRole(payload);
@@ -120,6 +133,7 @@ export function getExtensionComponents(
     addFilter,
     editFilter,
     deleteFilter,
+    createUserAccount,
     assignRole,
     fetchCurrentUserAccount,
     fetchRoles,

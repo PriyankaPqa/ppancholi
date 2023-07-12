@@ -4,6 +4,13 @@ import {
 } from '@libs/entities-lib/user-account';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
+export interface ICreateUserRequest {
+  emailAddress: string;
+  givenName: string;
+  surname: string;
+  roleId: uuid;
+}
+
 export interface IAddRoleToUserRequest {
   subRole: IOptionSubItem;
   userId: uuid;
@@ -20,6 +27,7 @@ export interface IUserAccountsService extends IDomainBaseService<IUserAccountEnt
   editFilter(payload: IEditFilterRequest): Promise<IUserAccountEntity>;
   deleteFilter(filter: IFilter): Promise<IUserAccountEntity>;
   assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity>;
+  createUserAccount(payload: ICreateUserRequest): Promise<IUserAccountEntity>;
 }
 
 export interface IUserAccountsServiceMock extends IDomainBaseServiceMock<IUserAccountEntity> {
@@ -28,4 +36,5 @@ export interface IUserAccountsServiceMock extends IDomainBaseServiceMock<IUserAc
   editFilter: jest.Mock<IUserAccountEntity>;
   deleteFilter: jest.Mock<IUserAccountEntity>;
   assignRole: jest.Mock<IUserAccountEntity>;
+  createUserAccount: jest.Mock<IUserAccountEntity>;
 }

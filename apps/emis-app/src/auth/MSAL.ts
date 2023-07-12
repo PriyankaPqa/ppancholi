@@ -11,6 +11,7 @@ import {
   SilentRequest,
   Configuration, LogLevel, CacheOptions
 } from "@azure/msal-browser";
+import { Constants as MSALConstants } from "@azure/msal-common"
 import {BrowserAuthOptions} from "@azure/msal-browser/dist/config/Configuration";
 import helpers from '@/ui/helpers/helpers';
 import {localStorageKeys} from "../constants/localStorage";
@@ -73,9 +74,16 @@ export class MSAL {
 
   private readonly maxSignInAttempts = 2;
 
+  private readonly Constants = {
+    ...MSALConstants,
+    USER_READ_SCOPE: 'User.Read',
+    EMIS_ID_SCOPE: 'emisid',
+    MSAL: 'MSAL'
+  };
+
   private readonly auth: BrowserAuthOptions = {
     clientId: '',
-    authority: 'common',
+    authority: this.Constants.DEFAULT_COMMON_TENANT,
     redirectUri: window.location.origin,
     navigateToLoginRequestUrl: true,
     postLogoutRedirectUri: window.location.origin,
@@ -88,12 +96,12 @@ export class MSAL {
 
   // Add here scopes for id token to be used at MS Identity Platform endpoints.
   private readonly loginRedirectRequest: RedirectRequest = {
-    scopes: ['openid', 'profile', 'User.Read'],
+    scopes: [this.Constants.OPENID_SCOPE, this.Constants.PROFILE_SCOPE, this.Constants.USER_READ_SCOPE],
   };
 
   // Add here scopes for access token to be used at MS Graph API endpoints.
   private readonly tokenRequest: RedirectRequest = {
-    scopes: ['User.Read'],
+    scopes: [this.Constants.USER_READ_SCOPE],
   };
 
   private config: Configuration;
@@ -196,7 +204,7 @@ export class MSAL {
       ];
 
       // scopes for IDS
-      this.loginRedirectRequest.scopes = ['openid', 'profile', 'email', 'emisid', this.originalOptions.ids_apiPermissions]
+      this.loginRedirectRequest.scopes = [this.Constants.OPENID_SCOPE, this.Constants.PROFILE_SCOPE, this.Constants.EMAIL_SCOPE, this.Constants.EMIS_ID_SCOPE, this.originalOptions.ids_apiPermissions]
     }
     
     // bad state if:
@@ -230,7 +238,7 @@ export class MSAL {
         this.enableAppInsights && applicationInsights.trackTrace(
           'handleRedirectPromise - error',
           { e },
-          'MSAL',
+          this.Constants.MSAL,
           'handleRedirectPromise'
         );
         reject(false)
@@ -273,7 +281,7 @@ export class MSAL {
       this.enableAppInsights && applicationInsights.trackTrace(
         'acquireToken - no account',
         { account: this.account },
-        'MSAL',
+        this.Constants.MSAL,
         'acquireToken'
       );
     }
@@ -282,7 +290,7 @@ export class MSAL {
     this.enableAppInsights && applicationInsights.trackTrace(
       'acquireToken - account',
       { account: this.account },
-      'MSAL',
+      this.Constants.MSAL,
       'acquireToken'
     );
 
@@ -313,7 +321,7 @@ export class MSAL {
       this.enableAppInsights && applicationInsights.trackTrace(
         'silent token acquisition fails',
         { },
-        'MSAL',
+        this.Constants.MSAL,
         'acquireToken'
       );
       // user is required to interact with the server to provide credentials or consent for authentication/authorization.
@@ -322,7 +330,7 @@ export class MSAL {
         this.enableAppInsights && applicationInsights.trackTrace(
           'acquiring token using redirect',
           { },
-          'MSAL',
+          this.Constants.MSAL,
           'acquireToken');
 
 
@@ -335,7 +343,7 @@ export class MSAL {
         this.enableAppInsights && applicationInsights.trackTrace(
           'acquireToken error - will trigger sign in method',
           {error: e },
-          'MSAL',
+          this.Constants.MSAL,
           'acquireToken'
         );
 
@@ -384,7 +392,7 @@ export class MSAL {
       loginHint: this.identityServerEnabled ? localStorage[localStorageKeys.loginHint.name] : undefined,
       authority: this.identityServerEnabled 
         ? this.originalOptions.ids_authority 
-        : `https://login.microsoftonline.com/${specificTenant ?? (this.currentDomainTenant ? this.currentDomainTenant : 'common')}`,
+        : `https://login.microsoftonline.com/${specificTenant ?? (this.currentDomainTenant ? this.currentDomainTenant : this.Constants.DEFAULT_COMMON_TENANT)}`,
     });
   }
 
@@ -424,7 +432,7 @@ export class MSAL {
         this.enableAppInsights && applicationInsights.trackTrace(
           'isAuthenticated - account - true',
           {value: true },
-          'MSAL',
+          this.Constants.MSAL,
           'isAuthenticated'
         );
         return true;
@@ -455,7 +463,7 @@ export class MSAL {
         this.enableAppInsights && applicationInsights.trackTrace(
           'isAuthenticated - loginRedirect',
           {value: true },
-          'MSAL',
+          this.Constants.MSAL,
           'isAuthenticated'
         );
         return true;
@@ -464,7 +472,7 @@ export class MSAL {
         this.enableAppInsights && applicationInsights.trackTrace(
           'isAuthenticated - loginRedirect - false',
           {value: false },
-          'MSAL',
+          this.Constants.MSAL,
           'isAuthenticated'
         );
         return false;
@@ -478,10 +486,10 @@ export class MSAL {
   private getSilentRequest(force?: boolean): SilentRequest {
     return {
       account: this.account,
-      scopes: this.identityServerEnabled ? [ this.originalOptions.ids_apiPermissions ] : this.tokenRequest.scopes,
+      scopes: this.identityServerEnabled ? [ this.originalOptions.ids_apiPermissions, this.Constants.EMIS_ID_SCOPE ] : this.tokenRequest.scopes,
       authority: this.identityServerEnabled 
         ? this.originalOptions.ids_authority
-        : `https://login.microsoftonline.com/${this.account?.tenantId ?? (this.currentDomainTenant ? this.currentDomainTenant : "common")}`,
+        : `https://login.microsoftonline.com/${this.account?.tenantId ?? (this.currentDomainTenant ? this.currentDomainTenant : this.Constants.DEFAULT_COMMON_TENANT)}`,
       forceRefresh: force,
       
       redirectUri: `${window.location.origin}/auth.html` // When doing acquireTokenSilent, redirect to blank page to prevent issues
@@ -494,7 +502,7 @@ export class MSAL {
     this.enableAppInsights && applicationInsights.trackTrace(
       'setAccountForCurrentTenant',
       {},
-      'MSAL',
+      this.Constants.MSAL,
       'setAccountForCurrentTenant'
     );
     const accountForTenant = this.getAccountForCurrentTenant();
@@ -504,7 +512,7 @@ export class MSAL {
       this.enableAppInsights && applicationInsights.trackTrace(
         'accountForTenant is null, will sign in',
         {accountForTenant},
-        'MSAL',
+        this.Constants.MSAL,
         'setAccountForCurrentTenant'
       );
       this.signIn();
@@ -516,7 +524,7 @@ export class MSAL {
       this.enableAppInsights && applicationInsights.trackTrace(
         'accountForTenant - Setting new account',
         {accountForTenant},
-        'MSAL',
+        this.Constants.MSAL,
         'setAccountForCurrentTenant'
       );
       this.account = accountForTenant;
@@ -535,7 +543,7 @@ export class MSAL {
     return {
       account: this.account,
       loginHint: this.identityServerEnabled ? localStorage[localStorageKeys.loginHint.name] : undefined,
-      scopes: this.identityServerEnabled ? [ this.originalOptions.ids_apiPermissions ] : this.tokenRequest.scopes,
+      scopes: this.identityServerEnabled ? [ this.originalOptions.ids_apiPermissions, this.Constants.EMIS_ID_SCOPE ] : this.tokenRequest.scopes,
     }
   }
 
@@ -545,7 +553,7 @@ export class MSAL {
    * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
    */
   private getAccountForCurrentTenant() : AccountInfo | null {
-    if (this.account && this.account?.tenantId === this.currentDomainTenant) {
+    if (this.account && (this.account.tenantId === this.currentDomainTenant || this.account.idTokenClaims?.tid === this.currentDomainTenant)) {
       this.showConsole && console.debug("The current account matches tenant id, so we return it");
       return this.account;
     }
@@ -559,7 +567,7 @@ export class MSAL {
       this.enableAppInsights && applicationInsights.trackTrace(
         'getAccountForCurrentTenant - No accounts detected',
         {},
-        'MSAL',
+        this.Constants.MSAL,
         'getAccountForCurrentTenant'
       );
       return null;
@@ -578,11 +586,11 @@ export class MSAL {
       this.enableAppInsights && applicationInsights.trackTrace(
         'getAccountForCurrentTenant - Multiple accounts detected,',
         {currentAccounts, currentDomainTenant: this.currentDomainTenant},
-        'MSAL',
+        this.Constants.MSAL,
         'getAccountForCurrentTenant'
       );
       this.showConsole && console.debug('currentDomainTenant', this.currentDomainTenant);
-      const accountsForCurrentTenant = currentAccounts.filter((a) =>  a.tenantId === this.currentDomainTenant);
+      const accountsForCurrentTenant = currentAccounts.filter((a) =>  a.tenantId === this.currentDomainTenant || a.idTokenClaims?.tid === this.currentDomainTenant);
       // If we have multiple accounts in the same tenant, we return null when we first load the app (this.account = null)
       // so that the user is forced to go to the login page and pick an account
       if(accountsForCurrentTenant.length > 1){
@@ -597,12 +605,12 @@ export class MSAL {
       this.enableAppInsights && applicationInsights.trackTrace(
         'getAccountForCurrentTenant - one account',
         {currentAccounts, currentDomainTenant: this.currentDomainTenant},
-        'MSAL',
+        this.Constants.MSAL,
         'getAccountForCurrentTenant'
       );
       this.showConsole && console.debug('currentDomainTenant', this.currentDomainTenant);
 
-      return currentAccounts.filter((a) => a.tenantId === this.currentDomainTenant)[0]
+      return currentAccounts.filter((a) => a.tenantId === this.currentDomainTenant || a.idTokenClaims?.tid === this.currentDomainTenant)[0];
     }
   }
 
