@@ -2,14 +2,20 @@
   <div class="mt-4">
     <div :class="{ item__header: true, 'item__header--pinned': item.pinned }" data-test="caseFileItem__header">
       <div>
-        <span class="rc-caption12 fw-bold" data-test="caseFileItem__userName">
-          {{ listItem.userName }}
-        </span>
+        <template v-if="displaySystemAdminOnly">
+          <span class="rc-caption12 fw-bold" data-test="caseFileItem__systemAdmin">
+            {{ $m(listItem.roleName) }}
+          </span>
+        </template>
 
-        <span v-if="listItem.roleName" class="rc-caption12 fw-bold mr-1" data-test="caseFileItem__roleName">
-          ({{ $m(listItem.roleName) }})
-        </span>
-
+        <template v-else>
+          <span class="rc-caption12 fw-bold" data-test="caseFileItem__userName">
+            {{ listItem.userName }}
+          </span>
+          <span v-if="listItem.roleName" class="rc-caption12 fw-bold mr-1" data-test="caseFileItem__roleName">
+            ({{ $m(listItem.roleName) }})
+          </span>
+        </template>
         <span class="rc-caption12" data-test="caseFileItem__created">
           {{ format(new Date(listItem.created), 'MMM d, yyyy h:mm a') }}
         </span>
@@ -60,7 +66,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseFileActivity } from '@libs/entities-lib/case-file';
+import { CaseFileActivityType, ICaseFileActivity } from '@libs/entities-lib/case-file';
 import { ICaseNoteCombined } from '@libs/entities-lib/case-note';
 import { system } from '@/constants/system';
 import { format } from 'date-fns';
@@ -131,6 +137,15 @@ export default Vue.extend({
         roleName: (this.item as ICaseFileActivity).role?.name,
         created: (this.item as ICaseFileActivity).created,
       };
+    },
+
+    displaySystemAdminOnly() : boolean {
+      if (!this.isCaseNote) {
+        const cfActivity = this.item as ICaseFileActivity;
+
+        return cfActivity.activityType === CaseFileActivityType.FinancialAssistancePayment && cfActivity.role.name.translation.en === 'System Admin';
+      }
+      return false;
     },
   },
 });

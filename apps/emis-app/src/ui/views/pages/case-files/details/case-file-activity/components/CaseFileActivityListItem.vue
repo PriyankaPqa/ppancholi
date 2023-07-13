@@ -213,7 +213,6 @@ export default Vue.extend({
           return 'mdi-message-text';
       }
     },
-
   },
 
   methods: {

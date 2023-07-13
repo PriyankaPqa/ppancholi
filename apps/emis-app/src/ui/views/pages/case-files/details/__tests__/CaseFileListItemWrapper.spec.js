@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockCaseFileActivities } from '@libs/entities-lib/case-file';
+import { CaseFileActivityType, mockCaseFileActivities } from '@libs/entities-lib/case-file';
 import { mockCombinedCaseNote } from '@libs/entities-lib/case-note';
 import { system } from '@/constants/system';
 
@@ -162,6 +162,68 @@ describe('CaseFileListItemWrapper.vue', () => {
           roleName: undefined,
           created: item.created,
         });
+      });
+    });
+
+    describe('displaySystemAdminOnly', () => {
+      it('should be true when isCaseNote false, activity type is FinancialAssistancePayment and role is System Admin', () => {
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            item: {
+              ...mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
+              role: {
+                name: {
+                  translation: {
+                    en: 'System Admin',
+                  },
+                },
+              },
+            },
+            isCaseNote: false,
+          },
+        });
+        expect(wrapper.vm.displaySystemAdminOnly).toEqual(true);
+      });
+
+      it('should be false when isCaseNote false, activity type is not FinancialAssistancePayment and role is System Admin', () => {
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            item: {
+              ...mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0],
+              role: {
+                name: {
+                  translation: {
+                    en: 'System Admin',
+                  },
+                },
+              },
+            },
+            isCaseNote: false,
+          },
+        });
+        expect(wrapper.vm.displaySystemAdminOnly).toEqual(false);
+      });
+
+      it('should be false when isCaseNote false, activity type is FinancialAssistancePayment and role is not System Admin', () => {
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            item: {
+              ...mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
+              role: {
+                name: {
+                  translation: {
+                    en: 'Level 5',
+                  },
+                },
+              },
+            },
+            isCaseNote: false,
+          },
+        });
+        expect(wrapper.vm.displaySystemAdminOnly).toEqual(false);
       });
     });
   });
