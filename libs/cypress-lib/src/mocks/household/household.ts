@@ -1,5 +1,6 @@
 import {
   ECurrentAddressTypes,
+  IAddressData,
   IContactInformationCreateRequest,
   ICreateHouseholdRequest,
   ICurrentAddressCreateRequest,
@@ -61,6 +62,19 @@ export const mockContactInformationCreateRequest = (force?: Partial<IContactInfo
   ...force,
 });
 
+ export const mockBaseAddressData = (force?: Partial<IAddressData>): IAddressData => ({
+  country: 'CA',
+  streetAddress: faker.address.streetAddress(),
+  city: 'Quebec',
+  province: ECanadaProvinces.AB,
+  postalCode: faker.helpers.replaceSymbols('?#? #?#'),
+  latitude: parseFloat(faker.address.latitude()),
+  longitude: parseFloat(faker.address.longitude()),
+  unitSuite: faker.address.buildingNumber(),
+  specifiedOtherProvince: null,
+  ...force,
+});
+
 export const mockCreateHouseholdRequest = (force?: Partial<ICreateHouseholdRequest>): ICreateHouseholdRequest => {
   const firstName = `${faker.name.firstName()}`;
   const lastName = `${faker.name.lastName()} - ${getCurrentDateString()}-s${getRandomNumber()}`;
@@ -78,17 +92,7 @@ export const mockCreateHouseholdRequest = (force?: Partial<ICreateHouseholdReque
       mockAdditionalMemberCreateRequest(),
       mockAdditionalMemberCreateRequest(),
     ],
-    homeAddress: {
-      country: 'CA',
-      streetAddress: faker.address.streetAddress(),
-      unitSuite: faker.address.buildingNumber(),
-      province: ECanadaProvinces.AB,
-      specifiedOtherProvince: null,
-      city: 'Quebec',
-      postalCode: faker.helpers.replaceSymbols('?#? #?#'),
-      latitude: parseFloat(faker.address.latitude()),
-      longitude: parseFloat(faker.address.longitude()),
-    },
+    homeAddress: mockBaseAddressData(),
     eventId: faker.datatype.uuid(),
     consentInformation: {
       crcUserName: faker.name.fullName(),

@@ -98,7 +98,13 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality }: P
     financialAssistanceDetailsPage.getDialogSubmitConfirmCancellationButton().click();
   }
   cy.contains('Payment status successfully updated.').should('be.visible');
-  financialAssistanceDetailsPage.getPaymentLineStatusElement().contains(`${paymentStatus}`).should('be.visible');
+
+  if (paymentStatus === 'Inprogress') {
+    financialAssistanceDetailsPage.getPaymentLineStatusElement().contains('In progress').should('be.visible');
+  } else {
+    financialAssistanceDetailsPage.getPaymentLineStatusElement().contains(paymentStatus).should('be.visible');
+  }
+
   if (paymentStatus === 'Cancelled') {
     financialAssistanceDetailsPage.getPaymentLineItemAmountField().should('have.attr', 'class').and('contains', 'line-through');
     financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00');

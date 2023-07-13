@@ -9,7 +9,9 @@ import {
   PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { mockBaseData } from '@libs/entities-lib/src/base';
 import { EPaymentModalities } from '@libs/entities-lib/src/program';
+import { IAddress } from '@libs/entities-lib/src/value-objects/address/address.types';
 import { IUpdatePaymentStatusParams } from '@libs/services-lib/src/financial-assistance-payments/entity';
+import { mockBaseAddressData } from '../household/household';
 
 export const mockFinancialAssistancePaymentLine = (force?: Partial<IFinancialAssistancePaymentLine>) : IFinancialAssistancePaymentLine => ({
   ...mockBaseData(),
@@ -21,8 +23,8 @@ export const mockFinancialAssistancePaymentLine = (force?: Partial<IFinancialAss
   actualAmount: null,
   relatedNumber: '2211',
   careOf: null,
-  address: null,
-...force,
+  address: mockBaseAddressData() as unknown as IAddress,
+  ...force,
 });
 
 export const mockGroupingInformation = (modality: EPaymentModalities, force?: Partial<IGroupingInformation>) : IGroupingInformation => ({

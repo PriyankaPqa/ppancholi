@@ -10,6 +10,8 @@ export enum DataTest {
   itemAmount = 'paymentLineItem__amount',
   totalAmount = 'paymentLineGroup__total',
   paymentGroupList = 'paymentGroupList',
+  statusNew = 'statusSelect__1',
+  statusInProgress = 'statusSelect__2',
   statusIssued = 'statusSelect__4',
   statusCompleted = 'statusSelect__5',
   statusCancelled = 'statusSelect__6',
@@ -33,6 +35,10 @@ export class FinancialAssistanceDetailsPage {
   private itemTitle = { selector: DataTest.itemTitle };
 
   private totalAmount = { selector: DataTest.totalAmount };
+
+  private statusNew = { selector: DataTest.statusNew };
+
+  private statusInProgress = { selector: DataTest.statusInProgress };
 
   private statusIssued = { selector: DataTest.statusIssued };
 
@@ -93,6 +99,8 @@ export class FinancialAssistanceDetailsPage {
     Issued: this.statusIssued,
     Completed: this.statusCompleted,
     Cancelled: this.statusCancelled,
+    Inprogress: this.statusInProgress,
+    New: this.statusNew,
     } as Record<string, { selector: DataTest }>;
 
     cy.getByDataTest(this.paymentLineStatus).click().then(() => {
