@@ -88,18 +88,16 @@
 
         <v-col cols="10" class="pa-6">
           <div class="d-flex flex-row">
-            <div v-if="$hasFeature(FeatureKeys.HouseholdProfileStatus)">
-              <status-select
-                data-test="household-profile-status"
-                :value="householdEntity.householdStatus"
-                :statuses="statuses"
-                status-name="HouseholdStatus"
-                :disabled="!canChangeStatus"
-                @input="onStatusChangeInit($event)" />
-            </div>
+            <status-select
+              data-test="household-profile-status"
+              :value="householdEntity.householdStatus"
+              :statuses="statuses"
+              status-name="HouseholdStatus"
+              :disabled="!canChangeStatus"
+              @input="onStatusChangeInit($event)" />
 
             <v-divider
-              v-if="$hasFeature(FeatureKeys.ManageDuplicates) && $hasFeature(FeatureKeys.HouseholdProfileStatus)"
+              v-if="$hasFeature(FeatureKeys.ManageDuplicates)"
               vertical
               class="ml-4 mr-4" />
 
@@ -124,9 +122,8 @@
               </v-btn>
             </div>
           </div>
-          <v-divider v-if="$hasFeature(FeatureKeys.ManageDuplicates) || $hasFeature(FeatureKeys.HouseholdProfileStatus)" class="mt-4 mb-6" />
+          <v-divider class="mt-4 mb-6" />
           <pinned-status
-            v-if="$hasFeature(FeatureKeys.HouseholdProfileStatus)"
             :pinned-household-status-activity="pinnedHouseholdStatusActivity" />
 
           <h5 class="rc-heading-5">
@@ -193,16 +190,15 @@
             :editing-disabled="editingDisabled"
             data-test="household_profile_member_card"
             @reload-household-create="fetchHouseholdData" />
-          <template v-if="$hasFeature(FeatureKeys.HouseholdProfileStatus)">
-            <household-member-card
-              v-for="(member, index) in movedMembers"
-              :key="member.personId"
-              data-test="moved_member_card"
-              :member="member"
-              :index="index"
-              :moved-status="member.status"
-              moved-member />
-          </template>
+
+          <household-member-card
+            v-for="(member, index) in movedMembers"
+            :key="member.personId"
+            data-test="moved_member_card"
+            :member="member"
+            :index="index"
+            :moved-status="member.status"
+            moved-member />
 
           <h5 v-if="inactiveCaseFiles.length" class="rc-heading-5 pt-4 pb-4">
             {{ $t('household.profile.registered_previous_events') }} ({{ inactiveCaseFiles.length }})
@@ -443,7 +439,7 @@ export default mixins(household).extend({
     },
 
     canManageDuplicates(): boolean {
-      const statusAllowsDuplicate = !this.$hasFeature(FeatureKeys.HouseholdProfileStatus) || this.householdEntity?.householdStatus !== HouseholdStatus.Archived;
+      const statusAllowsDuplicate = this.householdEntity?.householdStatus !== HouseholdStatus.Archived;
       return this.$hasLevel(UserRoles.level6) || (this.$hasLevel(UserRoles.level1) && statusAllowsDuplicate);
     },
 
@@ -543,8 +539,8 @@ export default mixins(household).extend({
     },
 
     editingDisabled(): boolean {
-      return this.$hasFeature(FeatureKeys.HouseholdProfileStatus)
-        && (this.householdEntity.householdStatus === HouseholdStatus.Closed || this.householdEntity.householdStatus === HouseholdStatus.Archived)
+      return (this.householdEntity.householdStatus === HouseholdStatus.Closed
+          || this.householdEntity.householdStatus === HouseholdStatus.Archived)
         && !this.$hasLevel(UserRoles.level6);
     },
   },

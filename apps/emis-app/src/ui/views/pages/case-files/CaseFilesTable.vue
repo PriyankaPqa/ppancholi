@@ -413,7 +413,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     getBeneficiaryName(caseFile: ICaseFileCombined): string | TranslateResult {
       if (!caseFile?.metadata?.primaryBeneficiary?.identitySet) {
-        return this.$hasFeature(FeatureKeys.HouseholdProfileStatus) ? this.$t('caseFilesTable.tableContent.empty_household') : '';
+        return this.$t('caseFilesTable.tableContent.empty_household');
       }
 
       const { firstName, lastName } = caseFile.metadata.primaryBeneficiary.identitySet;

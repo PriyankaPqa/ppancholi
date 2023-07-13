@@ -12,11 +12,11 @@
       <v-col cols="4">
         {{ $t('household.move.results.name') }}
       </v-col>
-      <v-col cols="4" :class="{ 'email-phone-dob-item': hasFeatureHouseholdStatus }">
+      <v-col cols="4" class="email-phone-dob-item">
         {{ $t('household.move.results.phone_email_dob') }}
       </v-col>
-      <v-col cols="4" :class="{ 'status-registration-number-item': hasFeatureHouseholdStatus }">
-        {{ hasFeatureHouseholdStatus ? $t('household.move.results.status_registration_number') : $t('household.move.results.registration_number') }}
+      <v-col cols="4" class="status-registration-number-item">
+        {{ $t('household.move.results.status_registration_number') }}
       </v-col>
     </v-row>
 
@@ -32,7 +32,7 @@
             </span>
           </v-col>
 
-          <v-col cols="4" :class="{ 'email-phone-dob-item': hasFeatureHouseholdStatus }">
+          <v-col cols="4" class="email-phone-dob-item">
             <div data-test="emailAddress">
               {{ household.primaryBeneficiary.email || '-' }}
             </div>
@@ -46,23 +46,23 @@
           </v-col>
 
           <v-col cols="4">
-            <div v-if="hasFeatureHouseholdStatus" class="status-registration-number-item">
+            <div class="status-registration-number-item">
               <status-select
                 data-test="household-profile-status-chip"
                 :value="household.primaryBeneficiary.householdStatus"
                 status-name="HouseholdStatus"
                 disabled />
             </div>
-            <span :class="{ 'status-registration-number-item': hasFeatureHouseholdStatus }">
+            <span class="status-registration-number-item">
               {{ household.primaryBeneficiary.registrationNumber }}
             </span>
-            <span :class="{ 'status-registration-number-item': hasFeatureHouseholdStatus }">
+            <span class="status-registration-number-item">
               <v-btn
                 class="ml-4"
                 small
                 color="primary"
                 data-test="household_move_results_select"
-                :disabled="hasFeatureHouseholdStatus && household.primaryBeneficiary.householdStatus !== HouseholdStatus.Open"
+                :disabled="household.primaryBeneficiary.householdStatus !== HouseholdStatus.Open"
                 @click="select(household.id)">
                 <v-icon left>
                   mdi-check
@@ -81,7 +81,7 @@
               {{ member.firstName }} {{ member.lastName }}
             </span>
           </v-col>
-          <v-col cols="4" :class="{ 'email-phone-dob-item': hasFeatureHouseholdStatus }">
+          <v-col cols="4" class="email-phone-dob-item">
             {{ householdHelpers.getBirthDateDisplayWithAge(householdHelpers.convertBirthDateStringToObject(member.dateOfBirth)) }}
           </v-col>
         </v-row>
@@ -110,7 +110,6 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 
 import { Resize } from 'vuetify/es5/directives';
 import { HouseholdStatus } from '@libs/entities-lib/household';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(householdResults, household).extend({
   name: 'HouseholdResults',
@@ -133,10 +132,6 @@ export default mixins(householdResults, household).extend({
         maxHeight: `${this.maxHeight}px`,
         overflow: 'auto',
       };
-    },
-
-    hasFeatureHouseholdStatus(): boolean {
-      return this.$hasFeature(FeatureKeys.HouseholdProfileStatus);
     },
   },
 

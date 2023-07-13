@@ -97,7 +97,7 @@
             </div>
           </div>
         </template>
-        <template v-if="hasFeatureHouseholdStatus" #item.householdStatus="{ item: household }">
+        <template #item.householdStatus="{ item: household }">
           <status-select
             data-test="household-profile-status-chip"
             :value="household.primaryBeneficiary.householdStatus"
@@ -161,7 +161,6 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { ICaseFileEntity, ICaseFileMetadata, IdParams } from '@libs/entities-lib/case-file';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { format, utcToZonedTime } from 'date-fns-tz';
 
 export default mixins(household, householdResults).extend({
@@ -237,6 +236,12 @@ export default mixins(household, householdResults).extend({
           sortable: false,
           width: '110px',
         },
+        {
+          text: this.$t('registration.isRegistered.table.status'),
+          value: 'householdStatus',
+          sortable: false,
+          width: '110px',
+        },
       ];
 
       if (!this.isSplitMode && !this.hideEventInfo) {
@@ -245,16 +250,6 @@ export default mixins(household, householdResults).extend({
           value: 'isRegisteredToEvent',
           sortable: false,
           width: '10px',
-        });
-      }
-
-      if (this.hasFeatureHouseholdStatus) {
-        // TODO: when removing feature flag HouseholdProfileStatus, please move the content below to the headers list.
-        headers.push({
-          text: this.$t('registration.isRegistered.table.status'),
-          value: 'householdStatus',
-          sortable: false,
-          width: '110px',
         });
       }
 
@@ -271,10 +266,6 @@ export default mixins(household, householdResults).extend({
 
     currentEventId(): string {
       return useRegistrationStore().getEvent().id;
-    },
-
-    hasFeatureHouseholdStatus(): boolean {
-      return this.$hasFeature(FeatureKeys.HouseholdProfileStatus);
     },
   },
 
@@ -341,10 +332,7 @@ export default mixins(household, householdResults).extend({
     },
 
     detailsButtonDisabled(household?: IFormattedHousehold):boolean {
-      if (this.hasFeatureHouseholdStatus) {
         return this.loading || household.primaryBeneficiary.householdStatus !== HouseholdStatus.Open;
-      }
-      return this.loading;
     },
   },
 });

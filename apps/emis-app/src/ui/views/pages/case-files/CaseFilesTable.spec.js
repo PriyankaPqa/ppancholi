@@ -10,7 +10,6 @@ import helpers from '@/ui/helpers/helpers';
 import { createTestingPinia } from '@pinia/testing';
 import { useUserStore } from '@/pinia/user/user';
 
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from './CaseFilesTable.vue';
 
@@ -557,8 +556,7 @@ describe('CaseFilesTable.vue', () => {
         expect(wrapper.vm.getBeneficiaryName(combinedCaseFile)).toEqual('Ben 2 Test');
       });
 
-      it('should return Empty household when Identityset is unavailable and has Feature Flag', async () => {
-        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
+      it('should return Empty household when Identityset is unavailable ', () => {
         const combinedCaseFile = {
           entity: {},
           metadata: {},

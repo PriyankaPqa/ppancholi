@@ -118,7 +118,7 @@ describe('HouseholdProfile.vue', () => {
   let wrapper;
   registrationStore.getHouseholdCreate = jest.fn(() => householdCreate);
 
-  const doMount = async (otherComputed = {}, otherData = {}, shallow = true) => {
+  const doMount = async (otherComputed = {}, otherData = {}, shallow = true, otherMocks = {}) => {
     const options = {
       localVue,
       pinia,
@@ -145,6 +145,7 @@ describe('HouseholdProfile.vue', () => {
       },
       mocks: {
         $services: services,
+        ...otherMocks,
       },
     };
 
@@ -220,9 +221,6 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('household-profile-status', () => {
-      beforeEach(async () => {
-        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
-      });
       it('should render', () => {
         const element = wrapper.findDataTest('household-profile-status');
         expect(element.exists()).toBe(true);
@@ -237,8 +235,7 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('pinned-action-and-rationale', () => {
-      it('should exist when has feature flag', async () => {
-        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
+      it('should exist', async () => {
         const component = wrapper.findComponent(PinnedActionAndRationale);
         expect(component.exists()).toBeTruthy();
       });
@@ -347,7 +344,7 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('moved_member_card', () => {
-      it('should not be rendered when the feature flag is off', async () => {
+      it('should rendered when there is movedMembers', async () => {
         await doMount({
           canManageDuplicates() {
             return false;
@@ -356,13 +353,6 @@ describe('HouseholdProfile.vue', () => {
             return movedMemberList;
           },
         });
-        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, false);
-        const element = wrapper.findDataTest('moved_member_card');
-        expect(element.exists()).toBeFalsy();
-      });
-
-      it('should be rendered when the feature flag is on', async () => {
-        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
         const element = wrapper.findDataTest('moved_member_card');
         expect(element.exists()).toBeTruthy();
       });
@@ -613,7 +603,6 @@ describe('HouseholdProfile.vue', () => {
           },
           pinia,
         });
-        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
 
         expect(wrapper.vm.canManageDuplicates).toBeTruthy();
       });
@@ -657,7 +646,7 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.canManageDuplicates).toBeFalsy();
       });
 
-      it('returns false if status is archived and household status flag is on', async () => {
+      it('returns false if status is archived', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -673,11 +662,10 @@ describe('HouseholdProfile.vue', () => {
           },
           pinia,
         });
-        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
         expect(wrapper.vm.canManageDuplicates).toBeFalsy();
       });
 
-      it('returns true if status is not archived and household status flag is off', async () => {
+      it('returns true if status is not archived', async () => {
         const pinia = getPiniaForUser(UserRoles.level1);
         useMockRegistrationStore(pinia);
         useMockHouseholdStore(pinia);
@@ -696,31 +684,6 @@ describe('HouseholdProfile.vue', () => {
             $services: services,
           },
         });
-        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, false);
-        expect(wrapper.vm.canManageDuplicates).toBeTruthy();
-      });
-
-      it('returns true if  household status flag is off', async () => {
-        const pinia = getPiniaForUser(UserRoles.level1);
-        useMockRegistrationStore(pinia);
-        useMockHouseholdStore(pinia);
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: householdEntity.id,
-          },
-          computed: {
-            householdEntity() {
-              return { ...householdEntity, householdStatus: HouseholdStatus.Archived };
-            },
-          },
-          mocks: {
-            $services: services,
-          },
-          pinia,
-        });
-        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, false);
-
         expect(wrapper.vm.canManageDuplicates).toBeTruthy();
       });
     });
@@ -768,54 +731,72 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('canChangeStatus', () => {
-      it('should return true, when status is Open and it has Level and hasLinkedCasefiles is true', () => {
-        doMount({
-          hasLinkedCasefiles() {
-            return true;
+      it('should return true, when status is Open and it has Level and hasLinkedCasefiles is true', async () => {
+        await doMount(
+          {
+            hasLinkedCasefiles() {
+              return true;
+            },
+            householdEntity() {
+              return mockHouseholdEntity({ householdStatus: HouseholdStatus.Open });
+            },
           },
-          householdEntity() {
-            return mockHouseholdEntity({ householdStatus: HouseholdStatus.Open });
+          {
+            newStatus: HouseholdStatus.Open,
+            myEvents: [mockEventMainInfo()],
+            caseFiles: mockCaseFileEntities(),
           },
-        }, {
-          newStatus: HouseholdStatus.Open,
-          myEvents: [mockEventMainInfo()],
-          caseFiles: mockCaseFileEntities(),
-        });
-        wrapper.vm.$hasLevel = jest.fn(() => true);
+          true,
+          {
+            $hasLevel: () => true,
+          },
+        );
         expect(wrapper.vm.canChangeStatus).toEqual(true);
       });
 
-      it('should return true, when status is Archived and it has Level and members', () => {
-        doMount({
-          hasLinkedCasefiles() {
-            return true;
+      it('should return true, when status is Archived and it has Level and members', async () => {
+        await doMount(
+          {
+            hasLinkedCasefiles() {
+              return true;
+            },
+            householdEntity() {
+              return mockHouseholdEntity({ householdStatus: HouseholdStatus.Archived });
+            },
           },
-          householdEntity() {
-            return mockHouseholdEntity({ householdStatus: HouseholdStatus.Archived });
+          {
+            newStatus: HouseholdStatus.Open,
+            myEvents: [mockEventMainInfo()],
+            caseFiles: mockCaseFileEntities(),
           },
-        }, {
-          newStatus: HouseholdStatus.Open,
-          myEvents: [mockEventMainInfo()],
-          caseFiles: mockCaseFileEntities(),
-        });
-        wrapper.vm.$hasLevel = jest.fn(() => true);
+          true,
+          {
+            $hasLevel: () => true,
+          },
+        );
         expect(wrapper.vm.canChangeStatus).toEqual(true);
       });
 
-      it('should return true, when status is Closed and it has Level', () => {
-        doMount({
-          hasLinkedCasefiles() {
-            return true;
+      it('should return true, when status is Closed and it has Level', async () => {
+        await doMount(
+          {
+            hasLinkedCasefiles() {
+              return true;
+            },
+            householdEntity() {
+              return mockHouseholdEntity({ householdStatus: HouseholdStatus.Closed });
+            },
           },
-          householdEntity() {
-            return mockHouseholdEntity({ householdStatus: HouseholdStatus.Closed });
+          {
+            newStatus: HouseholdStatus.Open,
+            myEvents: [mockEventMainInfo()],
+            caseFiles: mockCaseFileEntities(),
           },
-        }, {
-          newStatus: HouseholdStatus.Open,
-          myEvents: [mockEventMainInfo()],
-          caseFiles: mockCaseFileEntities(),
-        });
-        wrapper.vm.$hasLevel = jest.fn(() => true);
+          true,
+          {
+            $hasLevel: () => true,
+          },
+        );
         expect(wrapper.vm.canChangeStatus).toEqual(true);
       });
     });
@@ -958,13 +939,8 @@ describe('HouseholdProfile.vue', () => {
           },
         });
       });
-      it('should return false, when feature flag is off', async () => {
-        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, false);
-        expect(wrapper.vm.editingDisabled).toEqual(false);
-      });
 
-      it('should return true, when feature flag is on, and household status is not Open, and user has no level6', async () => {
-        await wrapper.setFeature(FeatureKeys.HouseholdProfileStatus, true);
+      it('should return true when household status is not Open, and user has no level6', () => {
         wrapper.vm.$hasLevel = jest.fn(() => false);
         expect(wrapper.vm.editingDisabled).toEqual(true);
       });

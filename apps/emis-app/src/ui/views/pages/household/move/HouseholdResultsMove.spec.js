@@ -23,7 +23,6 @@ describe('HouseholdResultsMove.vue', () => {
       },
       computed: {
         formattedItems: () => [mockFormattedItem(HouseholdStatus.Open)],
-        hasFeatureHouseholdStatus: () => true,
       },
     });
   });
@@ -37,7 +36,7 @@ describe('HouseholdResultsMove.vue', () => {
     });
 
     describe('household_move_results_select', () => {
-      it('should exist when has feature and household status is not Open', () => {
+      it('should exist  household status is not Open', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -45,7 +44,6 @@ describe('HouseholdResultsMove.vue', () => {
           },
           computed: {
             formattedItems: () => [mockFormattedItem(HouseholdStatus.Closed)],
-            hasFeatureHouseholdStatus: () => true,
           },
         });
         const button = wrapper.findDataTest('household_move_results_select');

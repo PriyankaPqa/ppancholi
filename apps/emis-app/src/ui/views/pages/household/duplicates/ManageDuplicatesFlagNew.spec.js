@@ -3,7 +3,6 @@ import { HouseholdStatus, mockCombinedHousehold, mockHouseholdMemberMetadata, Du
 import { Status } from '@libs/entities-lib/base';
 import { mockProvider } from '@/services/provider';
 import { useMockHouseholdStore } from '@/pinia/household/household.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './ManageDuplicatesFlagNew.vue';
 
 const services = mockProvider();
@@ -17,7 +16,6 @@ describe('ManageDuplicatesFlagNew.vue', () => {
     const options = {
       localVue,
       pinia,
-      featureList: [FeatureKeys.HouseholdProfileStatus],
       propsData: {
         householdId: 'household-id',
         householdRegistrationNumber: '123456',

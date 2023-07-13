@@ -250,7 +250,7 @@ describe('HouseholdResultsMove.vue', () => {
           expect(wrapper.vm.detailsButtonDisabled(null)).toEqual(true);
         });
 
-        it('should return false when household status is Open and has Feature', () => {
+        it('should return false when household status is Open', () => {
           wrapper = shallowMount(Component, {
             localVue,
             pinia,
@@ -263,9 +263,6 @@ describe('HouseholdResultsMove.vue', () => {
               return {
                 loading: false,
               };
-            },
-            computed: {
-              hasFeatureHouseholdStatus: () => true,
             },
           });
           expect(wrapper.vm.detailsButtonDisabled(parsedHousehold)).toEqual(false);

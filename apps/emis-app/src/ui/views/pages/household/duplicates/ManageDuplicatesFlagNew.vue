@@ -77,7 +77,6 @@
 import Vue from 'vue';
 import { VForm, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import _debounce from 'lodash/debounce';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { useHouseholdStore } from '@/pinia/household/household';
@@ -173,13 +172,13 @@ export default Vue.extend({
 
       this.loading = true;
       this.households = [];
-      const filterForArchivedStatus = this.$hasFeature(FeatureKeys.HouseholdProfileStatus) ? {
+      const filterForArchivedStatus = {
         not: {
           Entity: {
             HouseholdStatus: HouseholdStatus.Archived,
           },
         },
-      } : {};
+      };
 
       const params = {
         search: `Entity/RegistrationNumber: ${helpers.toQuickSearch(query)}`,

@@ -6,7 +6,6 @@ export enum FeatureKeys {
   AddressAutoFill = 'AddressAutoFill',
   BotProtection = 'BotProtection',
   SelfRegistration = 'SelfRegistration',
-  HouseholdProfileStatus = 'HouseholdProfileStatus',
   ManageDuplicates = 'manageDuplicates',
   CustomConsent = 'CustomConsent',
   ImpactedIndividuals = 'ImpactedIndividuals',
