@@ -113,7 +113,7 @@ describe('#TC278# - Update E-Transfer payment group status- L6 and C2', { tags: 
     before(() => {
       cy.then(async function () {
         // eslint-disable-next-line
-        const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Cancelled, EPaymentModalities.Invoice);
+        const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.InProgress, EPaymentModalities.ETransfer);
         cy.wrap(resultPrepareStateHouseholdFAPayment.caseFile.id).as('caseFileId');
         cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
       });

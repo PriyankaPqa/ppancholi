@@ -9,18 +9,18 @@ import { updatePaymentGroupStatusTo } from './canSteps';
 
 const canRoles = {
   Level6: UserRoles.level6,
+  Level5: UserRoles.level5,
+  Level4: UserRoles.level4,
+  Level3: UserRoles.level3,
   Contributor2: UserRoles.contributor2,
 };
 
 const cannotRoles = {
-  Level5: UserRoles.level5,
-  Level4: UserRoles.level4,
-  Level3: UserRoles.level3,
   Level2: UserRoles.level2,
   Level1: UserRoles.level1,
   Level0: UserRoles.level0,
-  Contributor1: UserRoles.contributor1,
   Contributor3: UserRoles.contributor3,
+  Contributor1: UserRoles.contributor1,
   ReadOnly: UserRoles.readonly,
 };
 
@@ -28,7 +28,7 @@ const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles
 
 let accessTokenL6 = '';
 
-describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@financial-assistance'] }, () => {
+describe('#TC280# - Update E-Transfer payment group status from New to Cancelled- L3+ and C2', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -51,67 +51,33 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
         beforeEach(() => {
           cy.then(async function () {
             // eslint-disable-next-line
-            const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Cancelled, EPaymentModalities.Cheque);
+            const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.New, EPaymentModalities.ETransfer);
             cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
             cy.login(roleValue);
             cy.goTo(`casefile/${resultPrepareStateHouseholdFAPayment.caseFile.id}/financialAssistance`);
           });
         });
-        it('should successfully update Cheque payment group status', function () {
+        it('should successfully update E-Transfer payment group status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
-          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Cancelled');
-          financialAssistanceDetailsPage.getPaymentLineItemAmountField().should('have.attr', 'class').and('contains', 'line-through');
-          financialAssistanceDetailsPage.getPaymentGroupListField().contains('Payment total: $0.00');
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
-          });
+          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'New');
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Cancelled',
-            paymentModality: 'cheque',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Inprogress',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Cancelled',
-            paymentModality: 'cheque',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'New',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Inprogress',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
-          });
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'New',
+            paymentModality: 'E-Transfer',
           });
         });
       });
     }
   });
+
   describe('Cannot roles', () => {
     before(() => {
       cy.then(async function () {
         // eslint-disable-next-line
-        const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Cancelled, EPaymentModalities.Cheque);
+        const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.New, EPaymentModalities.ETransfer);
         cy.wrap(resultPrepareStateHouseholdFAPayment.caseFile.id).as('caseFileId');
         cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
       });
@@ -122,7 +88,7 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
           cy.login(roleValue);
           cy.goTo(`casefile/${this.caseFileId}/financialAssistance`);
         });
-        it('should not be able to update Cheque Payment Group Status', function () {
+        it('should not be able to update E-Transfer Payment Group Status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
