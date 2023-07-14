@@ -92,11 +92,19 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality }: P
   const financialAssistanceDetailsPage = new FinancialAssistanceDetailsPage();
   financialAssistanceDetailsPage.selectPaymentLineStatus(paymentStatus);
   if (paymentStatus === 'Cancelled') {
-    cy.contains(`Are you sure you want to cancel all ${paymentModality} payment lines?`).should('be.visible');
+    if (paymentModality === 'E-Transfer') {
+      cy.contains('Please choose a reason for the cancellation').should('be.visible');
+      financialAssistanceDetailsPage.getCancellationReasonField();
+      financialAssistanceDetailsPage.getCancellationReasonFieldItems().should('have.length', 7); // 7 option as reason for cancellation
+      financialAssistanceDetailsPage.chooseAnyCancellationReason();
+    } else {
+      cy.contains(`Are you sure you want to cancel all ${paymentModality} payment lines?`).should('be.visible');
+    }
     financialAssistanceDetailsPage.getDialogSubmitConfirmCancellationButton().should('be.enabled');
     financialAssistanceDetailsPage.getDialogCancelConfirmCancellationButton().should('be.enabled');
     financialAssistanceDetailsPage.getDialogSubmitConfirmCancellationButton().click();
   }
+
   cy.contains('Payment status successfully updated.').should('be.visible');
 
   if (paymentStatus === 'Inprogress') {

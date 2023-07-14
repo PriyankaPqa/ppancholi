@@ -68,7 +68,6 @@ describe('#TC289# - Update Gift Card payment group Status from Cancelled to Issu
           financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Cancelled');
           updatePaymentGroupStatusTo({
             paymentStatus: 'Issued',
-            paymentModality: 'gift card',
           });
         });
       });

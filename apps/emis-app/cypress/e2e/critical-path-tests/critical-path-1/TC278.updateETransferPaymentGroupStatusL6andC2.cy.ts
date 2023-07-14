@@ -28,7 +28,7 @@ const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles
 
 let accessTokenL6 = '';
 
-describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags: ['@financial-assistance'] }, () => {
+describe('#TC278# - Update E-Transfer payment group status- L6 and C2', { tags: ['@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -51,30 +51,34 @@ describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags
         beforeEach(() => {
           cy.then(async function () {
             // eslint-disable-next-line
-            const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.Cancelled, EPaymentModalities.Invoice);
+            const resultPrepareStateHouseholdFAPayment = await prepareStateHouseholdAddSubmitUpdateFAPayment(accessTokenL6, this.event, this.table.id, PaymentStatus.InProgress, EPaymentModalities.ETransfer);
             cy.wrap(resultPrepareStateHouseholdFAPayment.submittedFinancialAssistancePayment.id).as('FAPaymentId');
             cy.login(roleValue);
             cy.goTo(`casefile/${resultPrepareStateHouseholdFAPayment.caseFile.id}/financialAssistance`);
           });
         });
-        it('should successfully update Invoice Payment Group Status', function () {
+        it('should successfully update E-Transfer payment group status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
-          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'Cancelled');
-
-          updatePaymentGroupStatusTo({
-            paymentStatus: 'Completed',
-          });
+          financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'In progress');
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Cancelled',
-            paymentModality: 'invoice',
+            paymentModality: 'E-Transfer',
           });
 
           updatePaymentGroupStatusTo({
-            paymentStatus: 'Issued',
+            paymentStatus: 'New',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Sent',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'New',
           });
 
           updatePaymentGroupStatusTo({
@@ -82,12 +86,29 @@ describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags
           });
 
           updatePaymentGroupStatusTo({
-            paymentStatus: 'Issued',
+            paymentStatus: 'Inprogress',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'New',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Sent',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Inprogress',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Sent',
           });
         });
       });
     }
   });
+
   describe('Cannot roles', () => {
     before(() => {
       cy.then(async function () {
@@ -103,7 +124,7 @@ describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags
           cy.login(roleValue);
           cy.goTo(`casefile/${this.caseFileId}/financialAssistance`);
         });
-        it('should not be able to update Invoice Payment Group Status', function () {
+        it('should not be able to update E-Transfer Payment Group Status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

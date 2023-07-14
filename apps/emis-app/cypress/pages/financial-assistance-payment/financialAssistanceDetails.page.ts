@@ -3,6 +3,8 @@ export enum DataTest {
   submitAssistanceButton = 'submit',
   dialogCancel = 'dialog-cancel-action',
   dialogSubmit = 'dialog-submit-action',
+  dialogCancellationReasonETransfer = 'paymentGroup__cancellationReason',
+  dialogCancellationReasonETransferItems = 'paymentGroup__cancellationReason__item',
   backToFinancialAssistance = 'cancel',
   financialAssistanceApprovalStatus = 'approval_status',
   paymentLineStatus = 'statusSelect__chip',
@@ -12,6 +14,7 @@ export enum DataTest {
   paymentGroupList = 'paymentGroupList',
   statusNew = 'statusSelect__1',
   statusInProgress = 'statusSelect__2',
+  statusSent = 'statusSelect__3',
   statusIssued = 'statusSelect__4',
   statusCompleted = 'statusSelect__5',
   statusCancelled = 'statusSelect__6',
@@ -26,6 +29,10 @@ export class FinancialAssistanceDetailsPage {
 
   private dialogSubmit = { selector: DataTest.dialogSubmit };
 
+  private dialogCancellationReasonETransfer = { selector: DataTest.dialogCancellationReasonETransfer, type: 'input' };
+
+  private dialogCancellationReasonETransferItems = { selector: DataTest.dialogCancellationReasonETransferItems };
+
   private backToFinancialAssistance = { selector: DataTest.backToFinancialAssistance };
 
   private financialAssistanceApprovalStatus = { selector: DataTest.financialAssistanceApprovalStatus };
@@ -39,6 +46,8 @@ export class FinancialAssistanceDetailsPage {
   private statusNew = { selector: DataTest.statusNew };
 
   private statusInProgress = { selector: DataTest.statusInProgress };
+
+  private statusSent = { selector: DataTest.statusSent };
 
   private statusIssued = { selector: DataTest.statusIssued };
 
@@ -82,6 +91,18 @@ export class FinancialAssistanceDetailsPage {
     return cy.getByDataTest(this.paymentGroupList);
   }
 
+  public getCancellationReasonField() {
+    return cy.getByDataTest(this.dialogCancellationReasonETransfer).click();
+  }
+
+  public getCancellationReasonFieldItems() {
+    return cy.getByDataTestLike(this.dialogCancellationReasonETransferItems);
+  }
+
+  public chooseAnyCancellationReason() {
+    return cy.selectListElementByIndex(DataTest.dialogCancellationReasonETransfer, 1);
+  }
+
   public getPaymentLineStatus() {
     return cy.getByDataTest(this.paymentLineStatus).invoke('text').then((text) => text.trim());
   }
@@ -101,6 +122,7 @@ export class FinancialAssistanceDetailsPage {
     Cancelled: this.statusCancelled,
     Inprogress: this.statusInProgress,
     New: this.statusNew,
+    Sent: this.statusSent,
     } as Record<string, { selector: DataTest }>;
 
     cy.getByDataTest(this.paymentLineStatus).click().then(() => {

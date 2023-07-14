@@ -65,7 +65,6 @@ describe('#TC244# - Update Prepaid card payment group status from New to Complet
           financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', 'New');
           updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
-            paymentModality: 'prepaid card',
           });
         });
       });

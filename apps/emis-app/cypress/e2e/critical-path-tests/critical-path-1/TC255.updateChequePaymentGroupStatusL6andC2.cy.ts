@@ -68,7 +68,6 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
-            paymentModality: 'cheque',
           });
 
           updatePaymentGroupStatusTo({
@@ -78,7 +77,6 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Inprogress',
-            paymentModality: 'cheque',
           });
 
           updatePaymentGroupStatusTo({
@@ -88,27 +86,22 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'New',
-            paymentModality: 'cheque',
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
-            paymentModality: 'cheque',
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Inprogress',
-            paymentModality: 'cheque',
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Completed',
-            paymentModality: 'cheque',
           });
 
           updatePaymentGroupStatusTo({
             paymentStatus: 'New',
-            paymentModality: 'cheque',
           });
         });
       });
