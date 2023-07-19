@@ -3,7 +3,7 @@ import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
 import { mockCreateAssessmentRequest } from '@libs/cypress-lib/mocks/events/assessment';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
-import { mockApprovalTableData, mockApprovalTableRequest } from '@libs/cypress-lib/mocks/approval-table/approvalTable';
+import { mockApprovalTableData, mockCreateApprovalTableRequest } from '@libs/cypress-lib/mocks/approval-table/approvalTable';
 import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistanceTables';
 import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
@@ -35,7 +35,7 @@ export const createEventWithTeamWithUsers = async (provider: IProvider, roles = 
 export const createCustomProgram = async (provider: IProvider, eventId: string, approvalRequired: boolean) => {
   const mockCreateProgram = mockProgram({ approvalRequired, eventId });
   const program = await provider.programs.createProgram(mockCreateProgram);
-  return { program, mockCreateProgram };
+  return program;
 };
 
 /**
@@ -57,7 +57,7 @@ export const createProgram = async (provider: IProvider, eventId: string) => {
 export const createFATable = async (provider: IProvider, eventId: string, programId: string, amountType:EFinancialAmountModes) => {
   const mockCreateFinancialAssistanceTable = mockCreateFinancialAssistanceTableRequest(amountType, { eventId, programId });
   const table = await provider.financialAssistanceTables.createFinancialAssistanceTable(mockCreateFinancialAssistanceTable);
-  return { mockCreateFinancialAssistanceTable, table };
+  return table;
 };
 
 /**
@@ -66,7 +66,7 @@ export const createFATable = async (provider: IProvider, eventId: string, progra
  * @param event
  */
 export const createApprovalTable = async (provider: IProvider, eventId: string, programId: string) => {
-  const mockCreateApprovalTable = mockApprovalTableRequest({ ...mockApprovalTableData({ eventId, programId }) });
+  const mockCreateApprovalTable = mockCreateApprovalTableRequest({ ...mockApprovalTableData({ eventId, programId }) });
   const table = await provider.approvalTables.create(mockCreateApprovalTable);
   return table;
 };

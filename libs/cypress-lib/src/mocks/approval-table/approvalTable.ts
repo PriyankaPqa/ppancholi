@@ -26,4 +26,4 @@ export const mockApprovalTableData = (force? : Partial<IApprovalTableEntityData>
   ...force,
 });
 
-export const mockApprovalTableRequest = (force = mockApprovalTableData()): IApprovalTableEntity => new ApprovalTableEntity(force);
+export const mockCreateApprovalTableRequest = (force = mockApprovalTableData()): IApprovalTableEntity => new ApprovalTableEntity(force);

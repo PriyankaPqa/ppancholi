@@ -133,11 +133,11 @@ export class FinancialAssistanceDetailsPage {
     });
   }
 
-  public getDialogSubmitConfirmCancellationButton() {
+  public getDialogSubmitButton() {
     return cy.getByDataTest(this.dialogSubmit);
   }
 
-  public getDialogCancelConfirmCancellationButton() {
+  public getDialogCancelButton() {
     return cy.getByDataTest(this.dialogCancel);
   }
 
@@ -145,7 +145,7 @@ export class FinancialAssistanceDetailsPage {
     return cy.getByDataTest(this.selectSupervisor);
   }
 
-  public selectAvailableSupervisor() {
+  public selectFirstAvailableSupervisor() {
     cy.selectListElementByIndex(DataTest.selectSupervisor, 0);
   }
 

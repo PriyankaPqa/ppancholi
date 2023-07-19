@@ -40,10 +40,10 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
       accessTokenL6 = tokenResponse.access_token;
       const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
       const resultProgram = await createCustomProgram(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, true);
-      const resultFATable = await createFATable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.program.id, EFinancialAmountModes.Fixed);
-      await createApprovalTable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.program.id);
+      const resultFATable = await createFATable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id, EFinancialAmountModes.Fixed);
+      await createApprovalTable(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, resultProgram.id);
       cy.wrap(resultPrepareStateEvent.event).as('event');
-      cy.wrap(resultFATable.table.id).as('tableId');
+      cy.wrap(resultFATable.id).as('tableId');
     });
   });
   after(function () {
@@ -78,10 +78,10 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
           cy.contains(`${this.FAPaymentName}`).should('be.visible');
           financialAssistanceDetailsPage.getDialogSelectSupervisorDropdown().should('be.visible');
           financialAssistanceDetailsPage.getDialogSelectSupervisorDropdown().should('have.attr', 'label').and('contains', 'Select supervisor to submit for approval');
-          financialAssistanceDetailsPage.getDialogSubmitConfirmCancellationButton().should('be.enabled');
-          financialAssistanceDetailsPage.getDialogCancelConfirmCancellationButton().should('be.enabled');
-          financialAssistanceDetailsPage.selectAvailableSupervisor();
-          financialAssistanceDetailsPage.getDialogSubmitConfirmCancellationButton().click();
+          financialAssistanceDetailsPage.getDialogSubmitButton().should('be.enabled');
+          financialAssistanceDetailsPage.getDialogCancelButton().should('be.enabled');
+          financialAssistanceDetailsPage.selectFirstAvailableSupervisor();
+          financialAssistanceDetailsPage.getDialogSubmitButton().click();
           cy.contains('The financial assistance has been successfully submitted for approval').should('be.visible');
           financialAssistanceDetailsPage.getFinancialAssistanceApprovalStatus().should('eq', 'Pending');
           financialAssistanceDetailsPage.goToFinancialAssistanceHomePage();
