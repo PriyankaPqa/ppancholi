@@ -26,11 +26,14 @@
       :headers="headers"
       hide-default-footer
       must-sort
+      multi-line
       :items="approvalHistoryItems"
       :items-per-page="-1">
       <template #[`item.submittedBy.userName`]="{ item }">
-        <b class="no-word-break">{{ item.submittedBy.userName }}</b>
-        <span v-if="item.submittedBy.roleName" class="pl-2 no-word-break">({{ $m(item.submittedBy.roleName) }})</span>
+        <div class="text-no-wrap">
+          <b class="no-word-break">{{ item.submittedBy.userName }}</b>
+          <span v-if="item.submittedBy.roleName" class="pl-2 no-word-break">({{ $m(item.submittedBy.roleName) }})</span>
+        </div>
       </template>
       <template #[`item.rationale`]="{ item }">
         {{ getRationaleText(item) }}
@@ -43,6 +46,10 @@
       <template #[`item.actionText`]="{ item }">
         <div class="no-word-break">
           {{ item.actionText }}
+        </div>
+        <div
+          v-if="displayUserSubmittedTo(item.approvalAction) && item.submittedTo && item.submittedTo.userName">
+          {{ `${item.submittedTo.userName} (${$m(item.submittedTo.roleName)})` }}
         </div>
       </template>
     </v-data-table>
@@ -57,9 +64,8 @@ import { IVersionedEntityCombined } from '@libs/entities-lib/src/value-objects/v
 import { DataTableHeader } from 'vuetify';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import {
- ApprovalAction, IFinancialAssistancePaymentEntity, IApprovalStatusHistory,
-} from '@libs/entities-lib/financial-assistance-payment';
+import { ApprovalAction, IApprovalStatusHistory, IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'ApprovalHistoryDialog',
@@ -86,6 +92,7 @@ export default Vue.extend({
       submittedHistory: null as IVersionedEntityCombined,
       getLocalStringDate: helpers.getLocalStringDate,
       ApprovalAction,
+      FeatureKeys,
     };
   },
 
@@ -93,10 +100,38 @@ export default Vue.extend({
     approvalHistoryItems(): IApprovalStatusHistory[] {
       const approvalHistoryItemsWithText: IApprovalStatusHistory[] = [];
       this.financialAssistance.approvalStatusHistory.forEach((e) => {
-        const approvalHistoryItemsWithTextItem = {
-          ...e,
-          actionText: this.$t(`enums.approvalAction.${ApprovalAction[e.approvalAction]}`) as string,
-        };
+        let approvalHistoryItemsWithTextItem;
+        if (this.$hasFeature(FeatureKeys.ApprovalHistoryNonFinalApprover)) {
+          switch (e.approvalAction) {
+            case ApprovalAction.Submitted:
+              approvalHistoryItemsWithTextItem = e.submittedTo?.userName ? {
+                ...e,
+                actionText: `${this.$t('caseFile.financialAssistance.approvalHistory.action.submittedTo')}` as string,
+              } : {
+                ...e,
+                actionText: `${this.$t('enums.approvalAction.Submitted')}` as string,
+              };
+              break;
+
+            case ApprovalAction.Approved:
+              approvalHistoryItemsWithTextItem = {
+                ...e,
+                actionText: `${this.$t('caseFile.financialAssistance.approvalHistory.action.approvedAndSubmittedTo')}` as string,
+              };
+              break;
+
+            default: approvalHistoryItemsWithTextItem = {
+              ...e,
+              actionText: this.$t(`enums.approvalAction.${ApprovalAction[e.approvalAction]}`) as string,
+            };
+          }
+        } else {
+          approvalHistoryItemsWithTextItem = {
+            ...e,
+            actionText: this.$t(`enums.approvalAction.${ApprovalAction[e.approvalAction]}`) as string,
+          };
+        }
+
         approvalHistoryItemsWithText.push(approvalHistoryItemsWithTextItem);
       });
 
@@ -150,6 +185,11 @@ export default Vue.extend({
 
     close() {
       this.$emit('update:show', false);
+    },
+
+    displayUserSubmittedTo(approvalAction: ApprovalAction): boolean {
+      return this.$hasFeature(FeatureKeys.ApprovalHistoryNonFinalApprover)
+        && (approvalAction === ApprovalAction.Submitted || approvalAction === ApprovalAction.Approved);
     },
   },
 });

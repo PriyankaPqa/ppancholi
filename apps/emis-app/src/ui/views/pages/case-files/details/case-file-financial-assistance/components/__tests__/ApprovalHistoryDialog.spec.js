@@ -2,6 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCaseFinancialAssistanceEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../ApprovalHistoryDialog.vue';
 
 const localVue = createLocalVue();
@@ -55,7 +56,7 @@ describe('ApprovalHistoryDialog.vue', () => {
     });
 
     describe('approvalHistoryItems', () => {
-      it('returns the right data', async () => {
+      it('returns the right data when has no feature ApprovalHistoryNonFinalApprover', async () => {
         await mountWrapper();
         const approvalHistoryItemsWithText = [];
         wrapper.vm.financialAssistance.approvalStatusHistory.forEach((e) => {
@@ -63,6 +64,41 @@ describe('ApprovalHistoryDialog.vue', () => {
             ...e,
             actionText: wrapper.vm.$t(`enums.approvalAction.${ApprovalAction[e.approvalAction]}`),
           };
+          approvalHistoryItemsWithText.push(approvalHistoryItemsWithTextItem);
+        });
+        expect(wrapper.vm.approvalHistoryItems).toEqual(approvalHistoryItemsWithText);
+      });
+
+      it('returns the right data when has feature ApprovalHistoryNonFinalApprover', async () => {
+        await mountWrapper(false, 6, 'role', {
+          featureList: [FeatureKeys.ApprovalHistoryNonFinalApprover],
+        });
+        const approvalHistoryItemsWithText = [];
+        wrapper.vm.financialAssistance.approvalStatusHistory.forEach((e) => {
+          let approvalHistoryItemsWithTextItem;
+          switch (e.approvalAction) {
+            case ApprovalAction.Submitted:
+              approvalHistoryItemsWithTextItem = e.submittedTo?.userName ? {
+                ...e,
+                actionText: `${wrapper.vm.$t('caseFile.financialAssistance.approvalHistory.action.submittedTo')}`,
+              } : {
+                ...e,
+                actionText: `${wrapper.vm.$t('enums.approvalAction.Submitted')}`,
+              };
+              break;
+
+            case ApprovalAction.Approved:
+              approvalHistoryItemsWithTextItem = {
+                ...e,
+                actionText: `${wrapper.vm.$t('caseFile.financialAssistance.approvalHistory.action.approvedAndSubmittedTo')}`,
+              };
+              break;
+
+            default: approvalHistoryItemsWithTextItem = {
+              ...e,
+              actionText: wrapper.vm.$t(`enums.approvalAction.${ApprovalAction[e.approvalAction]}`),
+            };
+          }
           approvalHistoryItemsWithText.push(approvalHistoryItemsWithTextItem);
         });
         expect(wrapper.vm.approvalHistoryItems).toEqual(approvalHistoryItemsWithText);
@@ -106,6 +142,27 @@ describe('ApprovalHistoryDialog.vue', () => {
       it('returns the rationale', async () => {
         await mountWrapper();
         expect(wrapper.vm.getRationaleText({ rationale: 'need more info' })).toEqual('need more info');
+      });
+    });
+
+    describe('displayUserSubmittedTo', () => {
+      it('should return true when has feature ApprovalHistoryNonFinalApprover, approval action is submitted or approved', async () => {
+        await mountWrapper(false, 6, 'role', {
+          featureList: [FeatureKeys.ApprovalHistoryNonFinalApprover],
+        });
+        expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Submitted)).toEqual(true);
+        expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Approved)).toEqual(true);
+        expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.ApprovedFinal)).toEqual(false);
+        expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Declined)).toEqual(false);
+        expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.RequestAdditionalInfo)).toEqual(false);
+      });
+
+      it('should return false when has no feature ApprovalHistoryNonFinalApprover, approval action is submitted or approved', async () => {
+        await mountWrapper(false, 6, 'role', {
+          featureList: [],
+        });
+        expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Submitted)).toEqual(false);
+        expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Approved)).toEqual(false);
       });
     });
   });
