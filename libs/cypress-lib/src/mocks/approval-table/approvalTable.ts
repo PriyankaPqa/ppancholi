@@ -5,7 +5,7 @@ import { IApprovalGroupData, mockApprovalGroup } from '@libs/entities-lib/src/ap
 
 export const mockApprovalGroupData = (force? : Partial<IApprovalGroupData>): IApprovalGroupData => ({
   ...mockBaseData(),
-  roles: ['e626199b-7358-40d3-a246-c5f8759862c6', 'ebbf9e55-d817-4a35-8f4c-653993f73956'],
+  roles: ['9a8b8859-1f7e-483d-9e31-3c334a14230d', 'd214dd7d-f7e0-455d-8b25-e7c32b77aea5'],
   minimumAmount: 1,
   maximumAmount: 10,
   editMode: false,
