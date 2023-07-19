@@ -3,6 +3,7 @@ import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
 import { mockCreateAssessmentRequest } from '@libs/cypress-lib/mocks/events/assessment';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
+import { mockApprovalTableData, mockCreateApprovalTableRequest } from '@libs/cypress-lib/mocks/approval-table/approvalTable';
 import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistanceTables';
 import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
@@ -26,6 +27,18 @@ export const createEventWithTeamWithUsers = async (provider: IProvider, roles = 
 };
 
 /**
+ * Creates a Program with custom param
+ * @param provider
+ * @param eventId
+ * @param approvalRequired
+ */
+export const createCustomProgram = async (provider: IProvider, eventId: string, approvalRequired: boolean) => {
+  const mockCreateProgram = mockProgram({ approvalRequired, eventId });
+  const program = await provider.programs.createProgram(mockCreateProgram);
+  return program;
+};
+
+/**
  * Creates a program
  * @param provider
  * @param eventId
@@ -34,6 +47,28 @@ export const createProgram = async (provider: IProvider, eventId: string) => {
   const mockCreateProgram = mockProgram({ eventId });
   const program = await provider.programs.createProgram(mockCreateProgram);
   return { program, mockCreateProgram };
+};
+
+/**
+ * Creates a Financial Assistance Table
+ * @param accessToken
+ * @param event
+ */
+export const createFATable = async (provider: IProvider, eventId: string, programId: string, amountType:EFinancialAmountModes) => {
+  const mockCreateFinancialAssistanceTable = mockCreateFinancialAssistanceTableRequest(amountType, { eventId, programId });
+  const table = await provider.financialAssistanceTables.createFinancialAssistanceTable(mockCreateFinancialAssistanceTable);
+  return table;
+};
+
+/**
+ * Creates Approval Table
+ * @param accessToken
+ * @param event
+ */
+export const createApprovalTable = async (provider: IProvider, eventId: string, programId: string) => {
+  const mockCreateApprovalTable = mockCreateApprovalTableRequest({ ...mockApprovalTableData({ eventId, programId }) });
+  const table = await provider.approvalTables.create(mockCreateApprovalTable);
+  return table;
 };
 
 /**
@@ -55,8 +90,7 @@ export const createHousehold = async (provider: IProvider, event: IEventEntity) 
  */
 export const createProgramWithTableWithItemAndSubItem = async (provider: IProvider, eventId: string, amountType:EFinancialAmountModes) => {
   const { program, mockCreateProgram } = await createProgram(provider, eventId);
-  const mockCreateFinancialAssistanceTable = mockCreateFinancialAssistanceTableRequest(amountType, { eventId, programId: program.id });
-  const table = await provider.financialAssistanceTables.createFinancialAssistanceTable(mockCreateFinancialAssistanceTable);
+  const table = await createFATable(provider, eventId, program.id, amountType);
   return { program, mockCreateProgram, table };
 };
 

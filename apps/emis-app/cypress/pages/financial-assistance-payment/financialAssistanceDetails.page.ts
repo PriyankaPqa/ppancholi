@@ -18,6 +18,7 @@ export enum DataTest {
   statusIssued = 'statusSelect__4',
   statusCompleted = 'statusSelect__5',
   statusCancelled = 'statusSelect__6',
+  selectSupervisor = 'approval_supervisor',
 }
 
 export class FinancialAssistanceDetailsPage {
@@ -32,6 +33,8 @@ export class FinancialAssistanceDetailsPage {
   private dialogCancellationReasonETransfer = { selector: DataTest.dialogCancellationReasonETransfer, type: 'input' };
 
   private dialogCancellationReasonETransferItems = { selector: DataTest.dialogCancellationReasonETransferItems };
+
+  private selectSupervisor = { selector: DataTest.selectSupervisor };
 
   private backToFinancialAssistance = { selector: DataTest.backToFinancialAssistance };
 
@@ -130,12 +133,20 @@ export class FinancialAssistanceDetailsPage {
     });
   }
 
-  public getDialogSubmitConfirmCancellationButton() {
+  public getDialogSubmitButton() {
     return cy.getByDataTest(this.dialogSubmit);
   }
 
-  public getDialogCancelConfirmCancellationButton() {
+  public getDialogCancelButton() {
     return cy.getByDataTest(this.dialogCancel);
+  }
+
+  public getDialogSelectSupervisorDropdown() {
+    return cy.getByDataTest(this.selectSupervisor);
+  }
+
+  public selectFirstAvailableSupervisor() {
+    cy.selectListElementByIndex(DataTest.selectSupervisor, 0);
   }
 
   public goToFinancialAssistanceHomePage() {
