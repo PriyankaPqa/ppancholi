@@ -90,7 +90,7 @@ export const createHousehold = async (provider: IProvider, event: IEventEntity) 
  */
 export const createProgramWithTableWithItemAndSubItem = async (provider: IProvider, eventId: string, amountType:EFinancialAmountModes) => {
   const { program, mockCreateProgram } = await createProgram(provider, eventId);
-  const { table } = await createFATable(provider, eventId, program.id, amountType);
+  const table = await createFATable(provider, eventId, program.id, amountType);
   return { program, mockCreateProgram, table };
 };
 
