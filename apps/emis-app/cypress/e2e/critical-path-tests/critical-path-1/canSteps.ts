@@ -100,9 +100,9 @@ export const updatePaymentGroupStatusTo = ({ paymentStatus, paymentModality }: P
     } else {
       cy.contains(`Are you sure you want to cancel all ${paymentModality} payment lines?`).should('be.visible');
     }
-    financialAssistanceDetailsPage.getDialogSubmitConfirmCancellationButton().should('be.enabled');
-    financialAssistanceDetailsPage.getDialogCancelConfirmCancellationButton().should('be.enabled');
-    financialAssistanceDetailsPage.getDialogSubmitConfirmCancellationButton().click();
+    financialAssistanceDetailsPage.getDialogSubmitButton().should('be.enabled');
+    financialAssistanceDetailsPage.getDialogCancelButton().should('be.enabled');
+    financialAssistanceDetailsPage.getDialogSubmitButton().click();
   }
 
   cy.contains('Payment status successfully updated.').should('be.visible');
