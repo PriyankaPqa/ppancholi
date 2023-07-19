@@ -13,6 +13,7 @@ export enum FeatureKeys {
   AuthenticationPhaseII = 'AuthenticationPhaseII',
   UseIdentityServer = 'UseIdentityServer',
   FinancialAssistanceMassAction = 'FinancialAssistanceMassAction',
+  AutoCapitalizationForRegistration = 'AutoCapitalizationForRegistration',
   ApprovalHistoryNonFinalApprover = 'approvalHistoryNonFinalApprover',
 }
 

@@ -54,6 +54,42 @@ describe('IdentityForm.vue', () => {
       const element = wrapper.findDataTest('personal_info_duplicate_error');
       expect(element.exists()).toBeFalsy();
     });
+
+    describe('personalInfo__firstName', () => {
+      it('should ', async () => {
+        wrapper.vm.capitalize = jest.fn();
+        const element = wrapper.findDataTest('personalInfo__firstName');
+        await element.vm.$emit('input');
+        expect(wrapper.vm.capitalize).toHaveBeenCalledWith('firstName');
+      });
+    });
+
+    describe('personalInfo__lastName', () => {
+      it('should ', async () => {
+        wrapper.vm.capitalize = jest.fn();
+        const element = wrapper.findDataTest('personalInfo__lastName');
+        await element.vm.$emit('input');
+        expect(wrapper.vm.capitalize).toHaveBeenCalledWith('lastName');
+      });
+    });
+
+    describe('personalInfo__preferredName', () => {
+      it('should ', async () => {
+        wrapper.vm.capitalize = jest.fn();
+        const element = wrapper.findDataTest('personalInfo__preferredName');
+        await element.vm.$emit('input');
+        expect(wrapper.vm.capitalize).toHaveBeenCalledWith('preferredName');
+      });
+    });
+
+    describe('personalInfo__middleName', () => {
+      it('should ', async () => {
+        wrapper.vm.capitalize = jest.fn();
+        const element = wrapper.findDataTest('personalInfo__middleName');
+        await element.vm.$emit('input');
+        expect(wrapper.vm.capitalize).toHaveBeenCalledWith('middleName');
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -209,6 +245,54 @@ describe('IdentityForm.vue', () => {
 
         wrapper.vm.prePopulate();
         expect(wrapper.vm.formCopy.gender).toEqual(defaultGender);
+      });
+    });
+
+    describe('capitalize', () => {
+      it('should update data properly when feature flag AutoCapitalizationForRegistration is on', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          featureList: [FeatureKeys.AutoCapitalizationForRegistration],
+          propsData: {
+            form: mockIdentitySet({
+              firstName: 'goodman',
+            }),
+            genderItems: mockGenders(),
+          },
+          data() {
+            return {
+              formCopy: {
+                firstName: 'goodman',
+              },
+            };
+          },
+        });
+
+        wrapper.vm.capitalize('firstName');
+        expect(wrapper.vm.formCopy.firstName).toEqual('Goodman');
+      });
+
+      it('will not update data properly when feature flag AutoCapitalizationForRegistration is off', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          featureList: [],
+          propsData: {
+            form: mockIdentitySet({
+              firstName: 'goodman',
+            }),
+            genderItems: mockGenders(),
+          },
+          data() {
+            return {
+              formCopy: {
+                firstName: 'goodman',
+              },
+            };
+          },
+        });
+
+        wrapper.vm.capitalize('firstName');
+        expect(wrapper.vm.formCopy.firstName).toEqual('goodman');
       });
     });
   });

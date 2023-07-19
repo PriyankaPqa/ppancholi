@@ -84,4 +84,5 @@ export interface IIdentitySet extends IIdentitySetData {
 
 export interface IHoneyPotIdentitySet extends IIdentitySet {
   name?: string;
+  [key: string]: any;
 }

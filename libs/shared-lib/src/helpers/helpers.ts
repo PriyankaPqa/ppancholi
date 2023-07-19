@@ -122,4 +122,21 @@ export default {
     }
     return null;
   },
+
+  capitalize(str: string): string {
+    if (str) {
+      return str.charAt(0).toUpperCase() + str.substring(1);
+    }
+    return '';
+  },
+
+  // format 'abc abc abc' into 'Abc Abc Abc'
+  toTitleCase(str: string): string {
+    if (str) {
+      const words = str.split(' ');
+      const formattedWords = words.map((word :string) => this.capitalize(word));
+      return formattedWords.join(' ');
+    }
+    return '';
+  },
 };

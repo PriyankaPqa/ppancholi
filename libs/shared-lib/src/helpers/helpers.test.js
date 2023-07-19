@@ -114,4 +114,18 @@ describe('helpers', () => {
       });
     });
   });
+
+  describe('capitalize', () => {
+    it('should format string correctle', () => {
+      const str = 'abc abc';
+      expect(helpers.capitalize(str)).toEqual('Abc abc');
+    });
+  });
+
+  describe('toTitleCase', () => {
+    it('should format string correctly', () => {
+      const str = 'abc abc abc';
+      expect(helpers.toTitleCase(str)).toEqual('Abc Abc Abc');
+    });
+  });
 });
