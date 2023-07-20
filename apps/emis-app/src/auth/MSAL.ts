@@ -109,6 +109,7 @@ export class MSAL {
   private identityServerEnabled: boolean = false; // remove when FeatureKeys.UseIdentityServer is removed
 
   public accessToken: string;
+  private identityToken: string;
 
   constructor(options: Options) {
     if (!options.auth.clientId) {
@@ -302,6 +303,7 @@ export class MSAL {
       const response = await this.msalLibrary.acquireTokenSilent(silentRequest);
 
       this.accessToken = response.accessToken;
+      this.identityToken = response.idToken;
 
       // Reset the number of sign in attempts in the local storage when user successfully signs in
       localStorage.setItem(attemptsLocalStorageKey, '0');
@@ -415,8 +417,7 @@ export class MSAL {
     // FeatureKeys.UseIdentityServer
     if (this.identityServerEnabled)
     {
-      account = this.msalLibrary.getAccountByLocalId(account?.localAccountId)
-      logOutRequest.idTokenHint = account?.idToken;
+      logOutRequest.idTokenHint = this.identityToken;
       logOutRequest.postLogoutRedirectUri = window.location.origin;
     }
     

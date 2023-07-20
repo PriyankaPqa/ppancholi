@@ -6,8 +6,8 @@
     "lint": "eslint src --fix --max-warnings=0"
   },
   "devDependencies": {
-    "@azure/msal-browser": "2.26.0",
-    "@azure/msal-common": "^9.0.1",
+    "@azure/msal-browser": "2.38.0",
+    "@azure/msal-common": "^13.2.0",
     "@faker-js/faker": "^7.6.0",
     "@libs/entities-lib": "*",
     "@libs/services-lib": "*",

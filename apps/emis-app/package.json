@@ -26,7 +26,7 @@
     "cy:report": "yarn cy:delete:reports & yarn cypress-cloud --reporter cypress-multi-reporters --reporter-options configFile=cypress-reporter-config.js"
   },
   "dependencies": {
-    "@azure/msal-browser": "2.37.0",
+    "@azure/msal-browser": "2.38.0",
     "@faker-js/faker": "^7.6.0",
     "@libs/component-lib": "*",
     "@libs/cypress-lib": "*",

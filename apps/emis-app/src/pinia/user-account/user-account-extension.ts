@@ -73,7 +73,7 @@ export function getExtensionComponents(
     return genericFilterAction({ payload: filter, methodName: 'deleteFilter' });
   }
 
-  async function createUserAccount(payload: ICreateUserRequest): Promise<IUserAccountEntity> {
+  async function createUserAccount(payload: ICreateUserRequest, rethrowExceptions: boolean): Promise<IUserAccountEntity> {
     try {
       const res = await service.createUserAccount(payload);
       if (res) {
@@ -82,6 +82,9 @@ export function getExtensionComponents(
       return res;
     } catch (e) {
       applicationInsights.trackException(e, { payload }, 'module.userAccountEntity', 'createUserAccount');
+      if (rethrowExceptions) {
+throw e;
+}
       return null;
     }
   }
