@@ -260,7 +260,8 @@ export class MSAL {
    * Silently acquire an access token for a given set of scopes and return it
    * If this function is called within the renewal offset (5 min before expiration), or after the expiration, it will renew the token automatically.
    * If your session on the server is not valid, it will throw an InteractionRequiredAuthError which will force to call an interactive API
-   * @param caller
+   * @param caller label for logging
+   * @param forceRefresh if true, local token cache will be bypassed and a call to the token server will be made
    */
   public async acquireToken(caller?: string, forceRefresh?:boolean): Promise<string|null> {
     this.showConsole && console.debug(`acquireToken called by ${caller}`)
@@ -377,7 +378,7 @@ export class MSAL {
       console.warn(`You may end up with expired token. Please use <= to ${this.tokenRenewalOffsetSeconds}`)
     }
     setInterval(async () => {
-      const token = await this.acquireToken();
+      const token = await this.acquireToken('startAccessTokenAutoRenewal', true);
       this.showConsole && console.debug('Automatic token renewal', token)
     }, interval);
   }
