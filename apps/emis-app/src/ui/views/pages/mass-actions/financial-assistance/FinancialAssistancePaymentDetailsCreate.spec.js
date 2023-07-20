@@ -7,7 +7,7 @@ import {
 import {
   mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems, mockCategories,
 } from '@libs/entities-lib/financial-assistance';
-import { EPaymentModalities, mockCombinedProgram, mockProgramEntity } from '@libs/entities-lib/program';
+import { EPaymentModalities, mockProgramEntity } from '@libs/entities-lib/program';
 import { mockOptionItem, mockOptionSubItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import helpers from '@/ui/helpers/helpers';
@@ -23,6 +23,7 @@ const formCopy = {
   subItem: mockOptionSubItem(),
   amount: 25,
   paymentModality: 1,
+  program: mockProgramEntity(),
 };
 
 const formCopyNull = {
@@ -32,6 +33,7 @@ const formCopyNull = {
   subItem: null,
   amount: null,
   paymentModality: null,
+  program: null,
 };
 const localVue = createLocalVue();
 
@@ -292,11 +294,11 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
       });
 
       it('should set program', async () => {
-        programStore.fetch = jest.fn(() => mockCombinedProgram());
+        programStore.fetch = jest.fn(() => mockProgramEntity());
 
         await wrapper.vm.fetchProgram(mockFinancialAssistanceTableEntity());
 
-        expect(wrapper.vm.program).toEqual(mockCombinedProgram());
+        expect(wrapper.vm.formCopy.program).toEqual(mockProgramEntity());
       });
     });
 

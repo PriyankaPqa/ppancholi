@@ -40,7 +40,7 @@
         <v-col cols="6">
           <div class="mt-4">
             {{ $t('massActions.financialAssistance.create.program.label') }}
-            <span v-if="program" data-test="payment_program">{{ $m(program.name) }}</span>
+            <span v-if="formCopy && formCopy.program" data-test="payment_program">{{ $m(formCopy.program.name) }}</span>
           </div>
         </v-col>
       </v-row>
@@ -152,7 +152,6 @@ export default Vue.extend({
       loadingEvent: false,
       filteredEvents: [],
       formCopy: null as PaymentDetailsForm,
-      program: null as IProgramEntity,
       isEmpty,
       EFinancialAmountModes,
     };
@@ -231,9 +230,9 @@ export default Vue.extend({
     },
 
     paymentModalities(): Record<string, unknown>[] {
-      if (this.program?.paymentModalities) {
+      if (this.formCopy?.program?.paymentModalities) {
         return helpers.enumToTranslatedCollection(EPaymentModalities, 'enums.PaymentModality')
-          .filter((p) => this.program.paymentModalities.includes(p.value as EPaymentModalities));
+          .filter((p) => this.formCopy.program.paymentModalities.includes(p.value as EPaymentModalities));
       }
       return [];
     },
@@ -327,7 +326,7 @@ export default Vue.extend({
       this.formCopy.subItem = null;
       this.formCopy.paymentModality = null;
       this.formCopy.amount = null;
-      this.program = null;
+      this.formCopy.program = null;
     },
 
     onSetFinancialAssistanceTable(table: IFinancialAssistanceTableEntity) {
@@ -336,7 +335,7 @@ export default Vue.extend({
       this.formCopy.subItem = null;
       this.formCopy.paymentModality = null;
       this.formCopy.amount = null;
-      this.program = null;
+      this.formCopy.program = null;
     },
 
     onSetItem(item: IOptionItem) {
@@ -353,7 +352,7 @@ export default Vue.extend({
     },
 
     async fetchProgram(fa: IFinancialAssistanceTableEntity) {
-      this.program = await useProgramStore().fetch({ id: fa.programId, eventId: fa.eventId }) as IProgramEntity;
+      this.formCopy.program = await useProgramStore().fetch({ id: fa.programId, eventId: fa.eventId }) as IProgramEntity;
     },
 
     filterEvents(events: Array<IEvent>) {
