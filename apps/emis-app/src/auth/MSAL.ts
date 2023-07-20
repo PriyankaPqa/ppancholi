@@ -109,6 +109,7 @@ export class MSAL {
   private identityServerEnabled: boolean = false; // remove when FeatureKeys.UseIdentityServer is removed
 
   public accessToken: string;
+  private identityToken: string;
 
   constructor(options: Options) {
     if (!options.auth.clientId) {
@@ -259,7 +260,8 @@ export class MSAL {
    * Silently acquire an access token for a given set of scopes and return it
    * If this function is called within the renewal offset (5 min before expiration), or after the expiration, it will renew the token automatically.
    * If your session on the server is not valid, it will throw an InteractionRequiredAuthError which will force to call an interactive API
-   * @param caller
+   * @param caller label for logging
+   * @param forceRefresh if true, local token cache will be bypassed and a call to the token server will be made
    */
   public async acquireToken(caller?: string, forceRefresh?:boolean): Promise<string|null> {
     this.showConsole && console.debug(`acquireToken called by ${caller}`)
@@ -302,6 +304,7 @@ export class MSAL {
       const response = await this.msalLibrary.acquireTokenSilent(silentRequest);
 
       this.accessToken = response.accessToken;
+      this.identityToken = response.idToken;
 
       // Reset the number of sign in attempts in the local storage when user successfully signs in
       localStorage.setItem(attemptsLocalStorageKey, '0');
@@ -375,7 +378,7 @@ export class MSAL {
       console.warn(`You may end up with expired token. Please use <= to ${this.tokenRenewalOffsetSeconds}`)
     }
     setInterval(async () => {
-      const token = await this.acquireToken();
+      const token = await this.acquireToken('startAccessTokenAutoRenewal', true);
       this.showConsole && console.debug('Automatic token renewal', token)
     }, interval);
   }
@@ -415,8 +418,7 @@ export class MSAL {
     // FeatureKeys.UseIdentityServer
     if (this.identityServerEnabled)
     {
-      account = this.msalLibrary.getAccountByLocalId(account?.localAccountId)
-      logOutRequest.idTokenHint = account?.idToken;
+      logOutRequest.idTokenHint = this.identityToken;
       logOutRequest.postLogoutRedirectUri = window.location.origin;
     }
     

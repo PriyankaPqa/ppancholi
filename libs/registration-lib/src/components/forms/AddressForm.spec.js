@@ -2,6 +2,7 @@ import { i18n } from '@/ui/plugins/i18n';
 import helpers from '@libs/entities-lib/helpers';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { mockAddress } from '@libs/entities-lib/src/household-create';
+import { FeatureKeys } from '@libs/entities-lib/src/tenantSettings';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 
@@ -112,6 +113,106 @@ describe('AddressForm.vue', () => {
           jest.spyOn(wrapper.vm, '$onChangeCountry');
           await element.vm.$emit('change');
           expect(wrapper.vm.$onChangeCountry).toHaveBeenCalledTimes(1);
+        });
+      });
+
+      describe('address__street', () => {
+        it('should call formatAddressInput with proper value when keyup', async () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            featureList: [FeatureKeys.AutoCapitalizationForRegistration],
+            propsData: {
+              apiKey: '1235',
+              homeAddress: mockAddress({ streetAddress: 'abc abc abc' }),
+              canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
+              disableAutocomplete: false,
+            },
+            data() {
+              return {
+                form: {
+                  streetAddress: 'abc abc abc',
+                },
+              };
+            },
+          });
+          wrapper.vm.formatAddressInput = jest.fn();
+          const element = wrapper.findDataTest('address__street');
+          await element.vm.$emit('keyup');
+          expect(wrapper.vm.formatAddressInput).toHaveBeenCalledWith('streetAddress');
+        });
+      });
+
+      describe('address__city', () => {
+        it('should call formatAddressInput with proper value when keyup', async () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            featureList: [FeatureKeys.AutoCapitalizationForRegistration],
+            propsData: {
+              apiKey: '1235',
+              homeAddress: mockAddress({ city: 'abc abc abc' }),
+              canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
+              disableAutocomplete: false,
+            },
+            data() {
+              return {
+                form: {
+                  city: 'abc abc abc',
+                },
+              };
+            },
+          });
+          wrapper.vm.formatAddressInput = jest.fn();
+          const element = wrapper.findDataTest('address__city');
+          await element.vm.$emit('keyup');
+          expect(wrapper.vm.formatAddressInput).toHaveBeenCalledWith('city');
+        });
+      });
+
+      describe('address__postalCode', () => {
+        it('should uppercase the value when keyup and has feature flag AutoCapitalizationForRegistration', async () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            featureList: [FeatureKeys.AutoCapitalizationForRegistration],
+            propsData: {
+              apiKey: '1235',
+              homeAddress: mockAddress({ postalCode: 'abc' }),
+              canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
+              disableAutocomplete: false,
+            },
+            data() {
+              return {
+                form: {
+                  postalCode: 'abc',
+                },
+              };
+            },
+          });
+          const element = wrapper.findDataTest('address__postalCode');
+          await element.vm.$emit('keyup');
+          expect(wrapper.vm.form.postalCode).toEqual('ABC');
+        });
+
+        it('should not uppercase the value when keyup but has not feature flag AutoCapitalizationForRegistration', async () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            featureList: [],
+            propsData: {
+              apiKey: '1235',
+              homeAddress: mockAddress({ postalCode: 'abc' }),
+              canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
+              disableAutocomplete: false,
+            },
+            data() {
+              return {
+                form: {
+                  postalCode: 'abc',
+                },
+              };
+            },
+          });
+          const element = wrapper.findDataTest('address__postalCode');
+          await element.vm.$emit('keyup');
+          expect(wrapper.vm.form.postalCode).toEqual('abc');
         });
       });
 
@@ -251,6 +352,30 @@ describe('AddressForm.vue', () => {
         wrapper.vm.$resetGeoLocation = jest.fn();
         wrapper.vm.resetGeoLocationInEditMode();
         expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalled();
+      });
+    });
+
+    describe('formatAddressInput', () => {
+      it('should format string properly when has feature flag AutoCapitalizationForRegistration', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          featureList: [FeatureKeys.AutoCapitalizationForRegistration],
+          propsData: {
+            apiKey: '1235',
+            homeAddress: mockAddress({ city: 'abc abc abc' }),
+            canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
+            disableAutocomplete: false,
+          },
+          data() {
+            return {
+              form: {
+                city: 'abc abc abc',
+              },
+            };
+          },
+        });
+        wrapper.vm.formatAddressInput('city');
+        expect(wrapper.vm.form.city).toEqual('Abc Abc Abc');
       });
     });
   });

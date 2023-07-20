@@ -1,5 +1,6 @@
 <template>
   <mass-action-base-details
+    :disable-name="$hasFeature(FeatureKeys.MassActionAutoGenerateName)"
     :back-route-name="routes.massActions.financialAssistance.home.name"
     details-title="massActions.financialAssistance.status.details.title"
     processing-title="massActions.financialAssistance.status.processing.title"
@@ -25,6 +26,7 @@ import {
 import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
 import routes from '@/constants/routes';
 import { useMassActionStore } from '@/pinia/mass-action/mass-action';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'FinancialAssistanceDetails',
@@ -35,6 +37,7 @@ export default Vue.extend({
 
   data() {
     return {
+      FeatureKeys,
       routes,
     };
   },

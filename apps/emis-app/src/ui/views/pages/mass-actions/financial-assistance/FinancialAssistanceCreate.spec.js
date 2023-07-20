@@ -11,10 +11,13 @@ import { MassActionMode, MassActionType, mockMassActionEntity } from '@libs/enti
 import { mockFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { mockOptionItem, mockOptionSubItem } from '@libs/entities-lib/optionItem';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
+import { format } from 'date-fns';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import Component from './FinancialAssistanceCreate.vue';
 
 const localVue = createLocalVue();
+jest.mock('date-fns', () => ({ format: jest.fn() }));
 
 // eslint-disable-next-line max-len,vue/max-len
 const filtersString = '{"search":"Metadata/PrimaryBeneficiary/ContactInformation/Email: /.*tammy.*/","skip":0,"top":10,"orderBy":"","filter":{"and":{"Entity/EventId":"60983874-18bb-467d-b55a-94dc55818151"}}}';
@@ -29,7 +32,6 @@ describe('FinancialAssistanceCreate.vue', () => {
       localVue,
       pinia,
       mocks: {
-
         $route: {
           query: {
             azureSearchParams: filtersString,
@@ -189,9 +191,11 @@ describe('FinancialAssistanceCreate.vue', () => {
     });
 
     describe('onPost', () => {
-      it('should call create action with proper parameters', async () => {
+      it('should call create action with proper parameters and generate name if feature flag is on', async () => {
         doMount(true);
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.MassActionAutoGenerateName);
         wrapper.vm.formData.append = jest.fn();
+        wrapper.vm.makeFormName = jest.fn(() => 'form-name');
         massActionStore.create = jest.fn();
 
         const name = 'Mass action';
@@ -211,7 +215,48 @@ describe('FinancialAssistanceCreate.vue', () => {
         });
 
         const payload = {
-          name,
+          name: 'form-name',
+          description,
+          eventId: wrapper.vm.form.event.id,
+          tableId: wrapper.vm.form.table.id,
+          programId: wrapper.vm.form.table.programId,
+          mainCategoryId: wrapper.vm.form.item.id,
+          subCategoryId: wrapper.vm.form.subItem.id,
+          paymentModality: wrapper.vm.form.paymentModality,
+          amount: wrapper.vm.form.amount,
+          search: azureSearchParams.search,
+          filter: "Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 1",
+        };
+        await wrapper.vm.onPost({ name, description });
+
+        expect(massActionStore.create).toHaveBeenCalledWith(MassActionType.FinancialAssistance, payload);
+      });
+
+      it('should call create action with proper parameters and get name from input if feature flag is off', async () => {
+        doMount(true);
+        wrapper.vm.$hasFeature = jest.fn((f) => f !== FeatureKeys.MassActionAutoGenerateName);
+        wrapper.vm.formData.append = jest.fn();
+        wrapper.vm.makeFormName = jest.fn(() => 'form-name');
+        massActionStore.create = jest.fn();
+
+        const name = 'Mass action';
+        const description = '';
+
+        const azureSearchParams = JSON.parse(filtersString);
+
+        await wrapper.setData({
+          form: {
+            event: mockEvent(),
+            table: mockFinancialAssistanceTableEntity(),
+            item: mockOptionItem(),
+            subItem: mockOptionSubItem(),
+            amount: 25,
+            paymentModality: 1,
+          },
+        });
+
+        const payload = {
+          name: 'Mass action',
           description,
           eventId: wrapper.vm.form.event.id,
           tableId: wrapper.vm.form.table.id,
@@ -229,7 +274,6 @@ describe('FinancialAssistanceCreate.vue', () => {
       });
 
       it('should call onSuccess method with proper parameters', async () => {
-        const name = 'Mass action';
         const description = '';
         wrapper = shallowMount(Component, {
           localVue,
@@ -257,10 +301,26 @@ describe('FinancialAssistanceCreate.vue', () => {
           },
         });
         wrapper.vm.onSuccess = jest.fn();
+        wrapper.vm.makeFormName = jest.fn(() => 'form-name');
         massActionStore.create = jest.fn(() => mockMassActionEntity());
-        await wrapper.vm.onPost({ name, description });
+        await wrapper.vm.onPost({ description });
 
         expect(wrapper.vm.onSuccess).toHaveBeenLastCalledWith(mockMassActionEntity());
+      });
+    });
+
+    describe('makeFormName', () => {
+      it('returns the correct name format', async () => {
+        format.mockImplementation(() => '20220530 101010');
+        await wrapper.setData({
+          form: {
+            program: { name: { translation: { en: 'programName' } } },
+            item: mockOptionItem({ name: { translation: { en: 'itemName' } } }),
+          },
+        });
+
+        const name = wrapper.vm.makeFormName();
+        expect(name).toEqual('programName - itemName - 20220530 101010');
       });
     });
   });

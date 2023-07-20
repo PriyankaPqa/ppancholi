@@ -54,7 +54,7 @@ export class UserAccountsService extends DomainBaseService<IUserAccountEntity, u
   }
 
   async createUserAccount(payload: ICreateUserRequest): Promise<IUserAccountEntity> {
-    return this.http.post<IUserAccountEntity>(`${this.baseUrl}/user`, payload);
+    return this.http.post<IUserAccountEntity>(`${this.baseUrl}/user`, payload, { globalHandler: false });
   }
 
   async assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity> {

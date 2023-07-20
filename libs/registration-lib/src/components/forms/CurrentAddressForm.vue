@@ -83,7 +83,8 @@
             background-color="white"
             :rules="rules.placeName"
             :data-test="`${prefixDataTest}__placeName`"
-            :label="placeNameLabel" />
+            :label="placeNameLabel"
+            @keyup="formatAddressInput('placeName')" />
         </v-col>
 
         <v-col v-if="form.requiresShelterLocation() && currentShelterLocations.length > 0" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
@@ -115,7 +116,8 @@
             :data-test="`${prefixDataTest}__street`"
             :rules="rules.streetAddress"
             :label="`${$t('registration.addresses.streetAddress')}`"
-            @input="$resetGeoLocation()" />
+            @input="$resetGeoLocation()"
+            @keyup="formatAddressInput('streetAddress', 'address')" />
         </v-col>
 
         <v-col v-if="form.hasUnitSuite()" cols="6" sm="3" md="4" :class="{ 'py-0': compactView }">
@@ -135,7 +137,8 @@
             :rules="rules.city"
             :data-test="`${prefixDataTest}__city`"
             :label="`${$t('registration.addresses.city')} *`"
-            @input="$resetGeoLocation()" />
+            @input="$resetGeoLocation()"
+            @keyup="formatAddressInput('city', 'address')" />
         </v-col>
 
         <v-col v-if="form.requiresProvince()" cols="12" sm="6" md="4" :class="{ 'py-0': compactView }">
@@ -165,7 +168,9 @@
             :rules="rules.postalCode"
             :data-test="`${prefixDataTest}__postalCode`"
             :label="`${$t('registration.addresses.postalCode')}`"
-            @input="$resetGeoLocation()" />
+            @input="$resetGeoLocation()"
+            @keyup="form.address.postalCode = (hasFeatureAutoCapitalizationForRegistration && form.address.postalCode)
+              ? form.address.postalCode.toUpperCase() : form.address.postalCode" />
         </v-col>
 
         <v-col v-if="form.requiresCountry()" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
@@ -198,7 +203,9 @@ import {
   ICurrentAddress,
   CurrentAddress,
 } from '@libs/entities-lib/household-create';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import DateRange from '@libs/component-lib/components/molecule/RcFilterToolbar/inputs/DateRange.vue';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import googleAutoCompleteMixin from './mixins/address';
 
@@ -376,6 +383,10 @@ export default mixins(googleAutoCompleteMixin).extend({
 
       return predictionForAddress[this.addressType];
     },
+
+    hasFeatureAutoCapitalizationForRegistration(): boolean {
+      return this.$hasFeature(FeatureKeys.AutoCapitalizationForRegistration);
+    },
   },
 
   watch: {
@@ -413,6 +424,16 @@ export default mixins(googleAutoCompleteMixin).extend({
       this.form.checkIn = newCheckInCheckOut[0];
       this.form.checkOut = newCheckInCheckOut[1];
       this.checkInCheckOutDate = [newCheckInCheckOut[0], newCheckInCheckOut[1]];
+    },
+
+    formatAddressInput(item: string, path: string = null) {
+      if (this.hasFeatureAutoCapitalizationForRegistration) {
+        if (path && this.form[path][item]) {
+          this.form[path][item] = helpers.toTitleCase(this.form[path][item]);
+        } else if (this.form[item]) {
+          this.form[item] = helpers.toTitleCase(this.form[item]);
+        }
+      }
     },
   },
 

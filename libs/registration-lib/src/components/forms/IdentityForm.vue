@@ -13,7 +13,8 @@
         v-model="formCopy.firstName"
         :data-test="`${prefixDataTest}__firstName`"
         :rules="rules.firstName"
-        :label="`${$t('registration.personal_info.firstName')}*`" />
+        :label="`${$t('registration.personal_info.firstName')}*`"
+        @input="capitalize('firstName')" />
     </v-col>
 
     <v-col cols="12" sm="6">
@@ -21,7 +22,8 @@
         v-model="formCopy.middleName"
         :data-test="`${prefixDataTest}__middleName`"
         :rules="rules.middleName"
-        :label="$t('registration.personal_info.middleName')" />
+        :label="$t('registration.personal_info.middleName')"
+        @input="capitalize('middleName')" />
     </v-col>
 
     <v-col cols="12" sm="6">
@@ -29,7 +31,8 @@
         v-model="formCopy.lastName"
         :rules="rules.lastName"
         :data-test="`${prefixDataTest}__lastName`"
-        :label="`${$t('registration.personal_info.lastName')}*`" />
+        :label="`${$t('registration.personal_info.lastName')}*`"
+        @input="capitalize('lastName')" />
     </v-col>
 
     <pot @change="formCopy.name = $event" />
@@ -39,7 +42,8 @@
         v-model="formCopy.preferredName"
         :data-test="`${prefixDataTest}__preferredName`"
         :rules="rules.preferredName"
-        :label="$t('registration.personal_info.preferredName')" />
+        :label="$t('registration.personal_info.preferredName')"
+        @input="capitalize('preferredName')" />
     </v-col>
 
     <v-col cols="12" sm="6">
@@ -106,10 +110,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { VTextFieldWithValidation, VSelectWithValidation, MessageBox } from '@libs/component-lib/components';
+import { MessageBox, VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { IOptionItemData } from '@libs/shared-lib/types';
 import { IBirthDate, IHoneyPotIdentitySet, IIdentitySet, MemberDuplicateStatus } from '@libs/entities-lib/household-create';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import Pot from './HoneyPot.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import months from '../../constants/months';
@@ -153,6 +158,7 @@ export default Vue.extend({
       FeatureKeys,
       MemberDuplicateStatus,
       formCopy: null as IHoneyPotIdentitySet,
+      helpers,
     };
   },
 
@@ -214,7 +220,6 @@ export default Vue.extend({
         && this.formCopy.birthDate.month !== null && this.formCopy.birthDate.month !== ''
         && this.formCopy.birthDate.year !== null && this.formCopy.birthDate.year !== '';
     },
-
   },
 
   watch: {
@@ -246,6 +251,12 @@ export default Vue.extend({
       if (this.form.gender?.optionItemId) {
         const gender = this.genderItems.find((option: IOptionItemData) => option.id === this.form.gender.optionItemId);
         this.formCopy.gender = { ...gender, ...this.form.gender };
+      }
+    },
+
+    capitalize(itemKey: string) {
+      if (this.$hasFeature(FeatureKeys.AutoCapitalizationForRegistration)) {
+        this.formCopy[itemKey] = helpers.capitalize(this.formCopy[itemKey]);
       }
     },
   },

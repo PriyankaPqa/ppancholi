@@ -122,7 +122,7 @@ describe('User Account Store', () => {
         const res = mockUserAccountEntity();
         entityService.createUserAccount = jest.fn(() => res);
 
-        await store.createUserAccount(payload);
+        await store.createUserAccount(payload, true);
 
         expect(entityService.createUserAccount).toBeCalledWith(payload);
         expect(bComponents.set).toBeCalledWith(res);

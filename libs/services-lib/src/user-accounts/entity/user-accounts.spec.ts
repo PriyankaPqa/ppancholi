@@ -86,7 +86,7 @@ describe('>>> UserAccounts Service', () => {
       roleId: 'id',
     };
     await service.createUserAccount(request);
-    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/user`, request);
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/user`, request, { globalHandler: false });
   });
 
   test('assignRole is linked to the correct URL and payload', async () => {

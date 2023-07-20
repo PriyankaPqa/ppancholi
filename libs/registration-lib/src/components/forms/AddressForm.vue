@@ -18,7 +18,8 @@
           :data-test="`${prefixDataTest}__street`"
           :rules="rules.streetAddress"
           :label="`${$t('registration.addresses.streetAddress')} *`"
-          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
+          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()"
+          @keyup="formatAddressInput('streetAddress')" />
       </v-col>
 
       <v-col cols="6" sm="3" md="4">
@@ -35,7 +36,8 @@
           :rules="rules.city"
           :data-test="`${prefixDataTest}__city`"
           :label="`${$t('registration.addresses.city')} *`"
-          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
+          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()"
+          @keyup="formatAddressInput('city')" />
       </v-col>
 
       <v-col cols="12" sm="6" md="4">
@@ -46,13 +48,14 @@
           :data-test="`${prefixDataTest}__province`"
           :label="`${$t('registration.addresses.province')}*`"
           :items="canadianProvincesItems"
-          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />        <v-text-field-with-validation
-            v-else
-            v-model="form.specifiedOtherProvince"
-            :rules="rules.specifiedOtherProvince"
-            :data-test="`${prefixDataTest}__specifiedOtherProvince`"
-            :label="`${$t('registration.addresses.province')}*`"
-            @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
+          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
+        <v-text-field-with-validation
+          v-else
+          v-model="form.specifiedOtherProvince"
+          :rules="rules.specifiedOtherProvince"
+          :data-test="`${prefixDataTest}__specifiedOtherProvince`"
+          :label="`${$t('registration.addresses.province')}*`"
+          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
       </v-col>
 
       <v-col cols="6" sm="6" md="4">
@@ -61,7 +64,8 @@
           :rules="rules.postalCode"
           :data-test="`${prefixDataTest}__postalCode`"
           :label="`${$t('registration.addresses.postalCode')} *`"
-          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
+          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()"
+          @keyup="form.postalCode = (hasFeatureAutoCapitalizationForRegistration && form.postalCode) ? form.postalCode.toUpperCase() : form.postalCode" />
       </v-col>
 
       <v-col cols="12" sm="6" md="8">
@@ -87,6 +91,8 @@ import {
 import mixins from 'vue-typed-mixins';
 import { IAddress } from '@libs/entities-lib/household-create';
 import _cloneDeep from 'lodash/cloneDeep';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import googleAutoCompleteMixin from './mixins/address';
 
@@ -188,6 +194,10 @@ export default mixins(googleAutoCompleteMixin).extend({
     isSameUnit(): boolean {
       return this.form.unitSuite === this.backUpForm.unitSuite;
     },
+
+    hasFeatureAutoCapitalizationForRegistration(): boolean {
+      return this.$hasFeature(FeatureKeys.AutoCapitalizationForRegistration);
+    },
   },
 
   watch: {
@@ -214,6 +224,12 @@ export default mixins(googleAutoCompleteMixin).extend({
     // Here we want to disable $resetGeoLocation when initial load in edit mode
     resetGeoLocationInEditMode() {
       !this.isSameGeoLocation && this.$resetGeoLocation();
+    },
+
+     formatAddressInput(item: string) {
+      if (this.hasFeatureAutoCapitalizationForRegistration && !!this.form[item]) {
+        this.form[item] = helpers.toTitleCase(this.form[item]);
+      }
     },
   },
 });

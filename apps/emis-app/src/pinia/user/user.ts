@@ -107,7 +107,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   async function getCurrentRoles(): Promise<UserRoles[] | null> {
-    const currentToken = await AuthenticationProvider.acquireToken('fetchUserData', true);
+    const currentToken = await AuthenticationProvider.acquireToken('fetchUserData', false);
     if (currentToken) {
       const tokenRoles = helpers.decodeJwt(currentToken).roles;
       return typeof (tokenRoles) === 'string' ? [tokenRoles] : tokenRoles;

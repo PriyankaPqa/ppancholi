@@ -38,6 +38,7 @@ import { useMockFinancialAssistanceStore } from '@/pinia/financial-assistance/fi
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import Component from '../CreateEditFinancialAssistanceCaseFile.vue';
 
+jest.mock('date-fns', () => ({ format: jest.fn() }));
 const localVue = createLocalVue();
 const financialAssistance = mockFinancialAssistanceTableEntity();
 const caseFileFinancialAssistance = mockCaseFinancialAssistanceEntity();
@@ -1204,13 +1205,11 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
       it('sets the right name to the financial assistance in create mode', async () => {
         wrapper.vm.makePaymentLineNames = jest.fn(() => 'mock-payment-line');
-        const dateNow = format(new Date(), 'yyyyMMdd HH');
+        format.mockImplementation(() => '20220530 101022');
         await wrapper.setData({ isEditMode: false });
         await wrapper.setData({ selectedProgram: program });
         wrapper.vm.makePaymentName();
-        // ignore mmss (minutes-seconds) as test sometimes fail...
-        expect(wrapper.vm.financialAssistance.name.substr(0, wrapper.vm.financialAssistance.name.length - 4))
-          .toEqual(`${program.name.translation.en} - mock-payment-line - ${dateNow}`);
+        expect(wrapper.vm.financialAssistance.name).toEqual(`${program.name.translation.en} - mock-payment-line - 20220530 101022`);
       });
     });
 

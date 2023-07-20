@@ -13,6 +13,7 @@ import {
 } from '@libs/entities-lib/src/household-create';
 
 import { mockShelterLocations } from '@libs/entities-lib/src/registration-event';
+import { FeatureKeys } from '@libs/entities-lib/src/tenantSettings';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 
@@ -21,10 +22,11 @@ import Component from './CurrentAddressForm.vue';
 const localVue = createLocalVue();
 let wrapper;
 
-const doMount = (currentAddress = mockCampGround(), computed = {}) => {
+const doMount = (currentAddress = mockCampGround(), computed = {}, featureList = [], otherOptions = {}) => {
   const options = {
     localVue,
     computed,
+    featureList,
     propsData: {
       apiKey: '12345',
       currentAddress,
@@ -37,6 +39,7 @@ const doMount = (currentAddress = mockCampGround(), computed = {}) => {
     mocks: {
       $hasFeature: jest.fn(),
     },
+    ...otherOptions,
   };
 
   wrapper = shallowMount(Component, options);
@@ -304,6 +307,84 @@ describe('CurrentAddressForm.vue', () => {
         expect(element.exists()).toBeFalsy();
       });
     });
+
+    describe('tempAddress__postalCode', () => {
+      it('should uppercase the value when has feature flag AutoCapitalizationForRegistration', async () => {
+        doMount(mockCampGround({
+          address: {
+            postalCode: 'abc',
+          },
+        }), {
+          hasFeatureAutoCapitalizationForRegistration: () => true,
+        }, [FeatureKeys.AutoCapitalizationForRegistration], {
+          data() {
+            return {
+              form: {
+                address: {
+                  postalCode: 'abc',
+                },
+              },
+            };
+          },
+        });
+        const element = wrapper.findDataTest('tempAddress__postalCode');
+        await element.vm.$emit('keyup');
+        expect(wrapper.vm.form.address.postalCode).toEqual('ABC');
+      });
+
+      it('should not uppercase the value when has no feature flag AutoCapitalizationForRegistration', async () => {
+        doMount(mockCampGround({
+          address: {
+            postalCode: 'abc',
+          },
+        }), {
+          hasFeatureAutoCapitalizationForRegistration: () => false,
+        }, [], {
+          data() {
+            return {
+              form: {
+                address: {
+                  postalCode: 'abc',
+                },
+              },
+            };
+          },
+        });
+        const element = wrapper.findDataTest('tempAddress__postalCode');
+        await element.vm.$emit('keyup');
+        expect(wrapper.vm.form.address.postalCode).toEqual('abc');
+      });
+    });
+
+    describe('tempAddress__city', () => {
+      it('should call formatAddressInput when keyup', async () => {
+        doMount();
+        wrapper.vm.formatAddressInput = jest.fn();
+        const element = wrapper.findDataTest('tempAddress__city');
+        await element.vm.$emit('keyup');
+        expect(wrapper.vm.formatAddressInput).toHaveBeenLastCalledWith('city', 'address');
+      });
+    });
+
+    describe('tempAddress__street', () => {
+      it('should call formatAddressInput when keyup', async () => {
+        doMount();
+        wrapper.vm.formatAddressInput = jest.fn();
+        const element = wrapper.findDataTest('tempAddress__street');
+        await element.vm.$emit('keyup');
+        expect(wrapper.vm.formatAddressInput).toHaveBeenLastCalledWith('streetAddress', 'address');
+      });
+    });
+
+    describe('tempAddress__placeName', () => {
+      it('should call formatAddressInput when keyup', async () => {
+        doMount();
+        wrapper.vm.formatAddressInput = jest.fn();
+        const element = wrapper.findDataTest('tempAddress__placeName');
+        await element.vm.$emit('keyup');
+        expect(wrapper.vm.formatAddressInput).toHaveBeenLastCalledWith('placeName');
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -371,6 +452,48 @@ describe('CurrentAddressForm.vue', () => {
         expect(wrapper.vm.form.checkIn).toEqual('2023-05-01');
         expect(wrapper.vm.form.checkOut).toEqual('2023-05-20');
         expect(wrapper.vm.checkInCheckOutDate).toEqual(['2023-05-01', '2023-05-20']);
+      });
+    });
+
+    describe('formatAddressInput', () => {
+      it('should format string with path properly when has feature flag AutoCapitalizationForRegistration', () => {
+        doMount(mockCampGround({
+          address: {
+            city: 'abc abc abc',
+          },
+        }), {
+          hasFeatureAutoCapitalizationForRegistration: () => true,
+        }, [FeatureKeys.AutoCapitalizationForRegistration], {
+          data() {
+            return {
+              form: {
+                address: {
+                  city: 'abc abc abc',
+                },
+              },
+            };
+          },
+        });
+        wrapper.vm.formatAddressInput('city', 'address');
+        expect(wrapper.vm.form.address.city).toEqual('Abc Abc Abc');
+      });
+
+      it('should format string without path properly when has feature flag AutoCapitalizationForRegistration', () => {
+        doMount(mockCampGround({
+          placeName: 'abc abc abc',
+        }), {
+          hasFeatureAutoCapitalizationForRegistration: () => true,
+        }, [FeatureKeys.AutoCapitalizationForRegistration], {
+          data() {
+            return {
+              form: {
+                placeName: 'abc abc abc',
+              },
+            };
+          },
+        });
+        wrapper.vm.formatAddressInput('placeName');
+        expect(wrapper.vm.form.placeName).toEqual('Abc Abc Abc');
       });
     });
   });
