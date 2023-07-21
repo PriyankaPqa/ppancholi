@@ -66,6 +66,7 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
             cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/financialAssistance`);
           });
         });
+        // eslint-disable-next-line
         it('should successfully submit FA payment to an Approver', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'New');
@@ -80,6 +81,7 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
           financialAssistanceDetailsPage.getDialogSelectSupervisorDropdown().should('have.attr', 'label').and('contains', 'Select supervisor to submit for approval');
           financialAssistanceDetailsPage.getDialogSubmitButton().should('be.enabled');
           financialAssistanceDetailsPage.getDialogCancelButton().should('be.enabled');
+          financialAssistanceDetailsPage.refreshUntilApproverGroupVisible();
           financialAssistanceDetailsPage.selectFirstAvailableSupervisor();
           financialAssistanceDetailsPage.getDialogSubmitButton().click();
           cy.contains('The financial assistance has been successfully submitted for approval').should('be.visible');

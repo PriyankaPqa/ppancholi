@@ -39,7 +39,7 @@ describe('#TC404# - Add Members To Standard Team', { tags: ['@case-file', '@team
 
   after(function () {
     if (this.provider && this.teamCreated?.id) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, canRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
 

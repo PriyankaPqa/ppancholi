@@ -41,7 +41,7 @@ describe('#TC1032# - View Case File Details', { tags: ['@case-file'] }, () => {
 
   after(function () {
     if (this.teamCreated?.id && this.provider) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider, allCanRolesValues);
+      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
     }
   });
   describe('Can Roles', () => {

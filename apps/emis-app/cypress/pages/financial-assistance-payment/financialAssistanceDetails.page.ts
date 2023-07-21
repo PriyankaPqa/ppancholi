@@ -145,6 +145,31 @@ export class FinancialAssistanceDetailsPage {
     return cy.getByDataTest(this.selectSupervisor);
   }
 
+  public refreshUntilApproverGroupVisible(maxRetries = 5) {
+    let retries = 0;
+    const waitForApproverList = () => {
+      cy.contains('You are submitting the following financial assistance payment').should('be.visible').then(() => {
+        if (!Cypress.$("[data-test='approval_action_warning']").length) {
+          cy.log('Approver group loading success');
+        } else {
+          retries += 1;
+          if (retries <= maxRetries) {
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
+            cy.wait(1000).then(() => {
+              cy.reload().then(() => {
+                cy.get("[data-test='submit']").should('be.visible').click();
+                waitForApproverList();
+              });
+            });
+          } else {
+            throw new Error(`Failed to find approver group after ${maxRetries} retries.`);
+          }
+        }
+      });
+    };
+    waitForApproverList();
+  }
+
   public selectFirstAvailableSupervisor() {
     cy.selectListElementByIndex(DataTest.selectSupervisor, 0);
   }
