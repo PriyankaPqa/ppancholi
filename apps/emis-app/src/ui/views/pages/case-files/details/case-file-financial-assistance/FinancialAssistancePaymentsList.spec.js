@@ -8,7 +8,7 @@ import routes from '@/constants/routes';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
-import { DuplicateStatus, mockHouseholdEntity } from '@libs/entities-lib/household';
+import { DuplicateStatus, mockPotentialDuplicateEntity } from '@libs/entities-lib/potential-duplicate';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { UserRoles } from '@libs/entities-lib/user';
 
@@ -374,18 +374,18 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     describe('isDuplicate', () => {
       it('returns true if household has potential duplicates', async () => {
         await mountWrapper();
-        await wrapper.setData({ household: mockHouseholdEntity({ potentialDuplicates: [{ duplicateStatus: DuplicateStatus.Potential }] }) });
+        await wrapper.setData({ householdDuplicates: [mockPotentialDuplicateEntity({ duplicateStatus: DuplicateStatus.Potential })] });
         expect(wrapper.vm.isDuplicate).toEqual(true);
       });
       it('returns false if household has no potential duplicates', async () => {
         await mountWrapper();
-        await wrapper.setData({ household: mockHouseholdEntity({ potentialDuplicates: [{ duplicateStatus: DuplicateStatus.Resolved }] }) });
+        await wrapper.setData({ householdDuplicates: [mockPotentialDuplicateEntity({ duplicateStatus: DuplicateStatus.Resolved })] });
         expect(wrapper.vm.isDuplicate).toEqual(false);
       });
 
       it('returns falsy if household has  potential duplicates null', async () => {
         await mountWrapper();
-        await wrapper.setData({ household: mockHouseholdEntity({ potentialDuplicates: null }) });
+        await wrapper.setData({ householdDuplicates: null });
         expect(wrapper.vm.isDuplicate).toBeFalsy();
       });
     });
@@ -553,7 +553,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await mountWrapper(false, 6, null, { computed: { isDuplicate() {
           return true;
         } } });
-        await wrapper.setData({ household: mockHouseholdEntity() });
+        await wrapper.setData({ householdDuplicates: [mockPotentialDuplicateEntity({ duplicateStatus: DuplicateStatus.Potential })] });
         wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
 
         await wrapper.vm.routeToCreate();
@@ -569,7 +569,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
            } },
         });
         wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
-        await wrapper.setData({ containsActiveTables: true, hasRestrictFinancialTags: false, household: mockHouseholdEntity() });
+        await wrapper.setData({ containsActiveTables: true, hasRestrictFinancialTags: false, householdDuplicates: [mockPotentialDuplicateEntity()] });
 
         await wrapper.vm.routeToCreate();
         expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.caseFile.financialAssistance.create.name });
@@ -587,7 +587,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await mountWrapper(false, 6, null, { computed: { isDuplicate() {
           return true;
         } } });
-        await wrapper.setData({ household: null });
+        await wrapper.setData({ householdDuplicates: null });
         wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
         await wrapper.vm.routeToCreate();
         expect(wrapper.vm.$router.push).not.toHaveBeenCalled();

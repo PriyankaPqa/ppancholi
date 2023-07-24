@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockHouseholdDuplicate, DuplicateStatus } from '@libs/entities-lib/household';
+import { mockPotentialDuplicateEntity, DuplicateStatus } from '@libs/entities-lib/potential-duplicate';
 import Component from './ManageDuplicatesActionDialog.vue';
 
 const localVue = createLocalVue();
@@ -18,7 +18,7 @@ describe('ManageDuplicatesActionDialog.vue', () => {
     };
 
     wrapper = shallowMount(Component, options);
-    wrapper.vm.fetchDuplicates = jest.fn(() => [mockHouseholdDuplicate()]);
+    wrapper.vm.fetchDuplicates = jest.fn(() => [mockPotentialDuplicateEntity()]);
   };
 
   describe('Computed', () => {

@@ -3,24 +3,23 @@
     <v-data-table
       :data-test="`duplicate-table-${isPotentialTable ? 'potential' : 'resolved'}`"
       must-sort
-      hide-default-footer
       :headers="headers"
       :loading="loading || submitting"
       :items="duplicates">
-      <template #[`item.primaryBeneficiaryFullName`]="{ item }">
+      <template #[`item.duplicateHousehold.primaryBeneficiaryFullName`]="{ item }">
         <div class="d-flex flex-column my-3">
           <router-link
             class="rc-link14 font-weight-bold"
             data-test="householdDetails-manageDuplicates-household-link"
-            :to="getHouseholdRoute(item.householdId)">
-            {{ item.primaryBeneficiaryFullName }}
+            :to="getHouseholdRoute(item)">
+            {{ item.duplicateHousehold.primaryBeneficiaryFullName }}
           </router-link>
 
           <div class="mb-2 d-flex flex-column rc-body12 case-file-data">
             <span data-test="householdDetails-manageDuplicates-household-registration-number">
-              {{ $t('household.profile.registration_number') }}: {{ item.registrationNumber }}
+              {{ $t('household.profile.registration_number') }}: {{ item.duplicateHousehold.registrationNumber }}
             </span>
-            <span v-for="cf in item.caseFiles" :key="cf.id" data-test="householdDetails-manageDuplicates-caseFile-data">
+            <span v-for="cf in item.duplicateHousehold.caseFiles" :key="cf.id" data-test="householdDetails-manageDuplicates-caseFile-data">
               <span class="mr-2"> {{ $t('caseFileDetail.caseFileNumber') }}: {{ cf.caseFileNumber }} </span>
               {{ $t('caseFileDetail.eventLabel') }}: {{ $m(cf.eventName) }}
             </span>
@@ -40,9 +39,9 @@
             </v-icon>
             <span class="mr-1"> {{ $t('household.profile.member.phone_numbers.home') }}: </span>
             <case-file-details-beneficiary-phone-number
-              v-if="item.homePhoneNumber"
+              v-if="item.duplicateHousehold.homePhoneNumber"
               data-test="duplicate-home-phone-number"
-              :phone-number="item.homePhoneNumber"
+              :phone-number="item.duplicateHousehold.homePhoneNumber"
               :show-labels="false" />
             <span v-else>-</span>
           </div>
@@ -53,9 +52,9 @@
             </v-icon>
             <span class="mr-1"> {{ $t('household.profile.member.phone_numbers.mobile') }}: </span>
             <case-file-details-beneficiary-phone-number
-              v-if="item.mobilePhoneNumber"
+              v-if="item.duplicateHousehold.mobilePhoneNumber"
               data-test="duplicate-mobile-phone-number"
-              :phone-number="item.mobilePhoneNumber"
+              :phone-number="item.duplicateHousehold.mobilePhoneNumber"
               :show-labels="false" />
             <span v-else>-</span>
           </div>
@@ -66,9 +65,9 @@
             </v-icon>
             <span class="mr-1"> {{ $t('household.profile.member.phone_numbers.alternate') }}: </span>
             <case-file-details-beneficiary-phone-number
-              v-if="item.alternatePhoneNumber"
+              v-if="item.duplicateHousehold.alternatePhoneNumber"
               data-test="duplicate-alternate-phone-number"
-              :phone-number="item.alternatePhoneNumber"
+              :phone-number="item.duplicateHousehold.alternatePhoneNumber"
               :show-labels="false" />
             <span v-else>-</span>
           </div>
@@ -80,7 +79,7 @@
             <div class="d-flex" data-test="caseFileDetails-home-address">
               <span class="mr-1 no-wrap"> {{ $t('caseFileDetail.addressLabel') }}: </span>
               <span class="mr-1" data-test="householdDetails-duplicate-address">
-                {{ item.homeAddress && item.homeAddress.address ? getFormattedAddress(item.homeAddress) : '-' }}
+                {{ item.duplicateHousehold.homeAddress && item.duplicateHousehold.homeAddress.address ? getFormattedAddress(item.duplicateHousehold.homeAddress) : '-' }}
               </span>
             </div>
           </div>
@@ -98,7 +97,7 @@
               <span v-if="historyItem.userInformation.roleName">({{ $m(historyItem.userInformation.roleName) }})</span>
               - {{ format(parseISO(historyItem.dateOfAction), 'MMM d, yyyy') }}
             </div>
-            <div v-if="historyItem.rationale" class="px-1" data-test="householdDetails-duplicate-history-rationale">
+            <div v-if="historyItem.rationale" class="px-1 pre-line" data-test="householdDetails-duplicate-history-rationale">
               {{ historyItem.duplicateStatus === DuplicateStatus.Potential
                 ? $t('householdDetails.manageDuplicates.rationale')
                 : $t('householdDetails.manageDuplicates.actionTaken') }}:
@@ -163,11 +162,12 @@ import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import routes from '@/constants/routes';
 import householdHelpers from '@/ui/helpers/household';
-import { IHouseholdAddress, IHouseholdDuplicateFullData, DuplicateReason, DuplicateStatus, IHouseholdEntity } from '@libs/entities-lib/household';
+import { IHouseholdAddress } from '@libs/entities-lib/household';
+import { IPotentialDuplicateExtended, DuplicateStatus, DuplicateReason, IPotentialDuplicateEntity } from '@libs/entities-lib/potential-duplicate';
+import { usePotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate';
 import helpers from '@/ui/helpers/helpers';
 import CaseFileDetailsBeneficiaryPhoneNumber from '@/ui/views/pages/case-files/details/components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import { UserRoles } from '@libs/entities-lib/user';
-import { useHouseholdStore } from '@/pinia/household/household';
 import { format, parseISO } from 'date-fns';
 import ManageDuplicatesActionDialog from './ManageDuplicatesActionDialog.vue';
 
@@ -189,7 +189,7 @@ export default Vue.extend({
       default: false,
     },
     duplicates: {
-      type: Array as () => IHouseholdDuplicateFullData[],
+      type: Array as () => IPotentialDuplicateExtended[],
       required: true,
     },
     loading: {
@@ -203,7 +203,7 @@ export default Vue.extend({
       DuplicateReason,
       DuplicateStatus,
       showActionDialog: false,
-      actionedDuplicate: null as IHouseholdDuplicateFullData,
+      actionedDuplicate: null as IPotentialDuplicateExtended,
       initialSelect: this.isPotentialTable ? DuplicateStatus.Potential : DuplicateStatus.Resolved,
       submitting: false,
       format,
@@ -216,7 +216,7 @@ export default Vue.extend({
       return [
         {
           text: this.$t('householdDetails.manageDuplicates.table.household') as string,
-          value: 'primaryBeneficiaryFullName',
+          value: 'duplicateHousehold.primaryBeneficiaryFullName',
           sortable: true,
           cellClass: 'vertical-align',
           width: '50%',
@@ -256,11 +256,12 @@ export default Vue.extend({
       };
     },
 
-    getHouseholdRoute(id: string) {
+    getHouseholdRoute(duplicate: IPotentialDuplicateExtended) {
+      const householdId = duplicate.duplicateHousehold.householdId;
       return {
         name: routes.household.householdProfile.name,
         params: {
-          id,
+          id: householdId,
         },
       };
     },
@@ -269,11 +270,11 @@ export default Vue.extend({
       return householdHelpers.getAddressLines(address?.address).join(', ');
     },
 
-    showLine(duplicate: IHouseholdDuplicateFullData, reason: DuplicateReason): boolean {
+    showLine(duplicate: IPotentialDuplicateExtended, reason: DuplicateReason): boolean {
       return duplicate.duplicateReasons.includes(reason);
     },
 
-    action(duplicate: IHouseholdDuplicateFullData) {
+    action(duplicate: IPotentialDuplicateExtended) {
       this.actionedDuplicate = duplicate;
       this.showActionDialog = true;
     },
@@ -284,18 +285,11 @@ export default Vue.extend({
       }
       this.submitting = true;
       try {
-        let result = null as IHouseholdEntity[];
-
-        const payload = {
-          potentialDuplicateId: this.actionedDuplicate.id,
-          rationale,
-          duplicateHouseholdId: this.actionedDuplicate.householdId,
-        };
-
+        let result = null as IPotentialDuplicateEntity;
         if (status === DuplicateStatus.Potential) {
-          result = await useHouseholdStore().flagDuplicate(this.currentHouseholdId, payload);
+          result = await usePotentialDuplicateStore().flagDuplicate(this.actionedDuplicate.id, rationale);
         } else if (status === DuplicateStatus.Resolved) {
-          result = await useHouseholdStore().resolveDuplicate(this.currentHouseholdId, payload);
+          result = await usePotentialDuplicateStore().resolveDuplicate(this.actionedDuplicate.id, rationale);
         }
 
         if (result) {
@@ -356,5 +350,9 @@ export default Vue.extend({
 
 .case-file-data {
   color: var(--v-grey-darken2);
+}
+
+.pre-line {
+  white-space: pre-line;
 }
 </style>

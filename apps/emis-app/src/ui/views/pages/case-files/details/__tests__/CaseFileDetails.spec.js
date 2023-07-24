@@ -9,7 +9,7 @@ import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { DuplicateStatus, mockHouseholdEntity } from '@libs/entities-lib/household';
+import { mockHouseholdEntity, mockHouseholdMetadata } from '@libs/entities-lib/household';
 import flushPromises from 'flush-promises';
 import Component from '../CaseFileDetails.vue';
 
@@ -40,40 +40,29 @@ describe('CaseFileDetails.vue', () => {
         event() {
           return mockEvent;
         },
-        primaryBeneficiaryFullName() {
-          return 'mock-full-name';
-        },
-        hasPhoneNumbers() {
-          return true;
-        },
-        addressFirstLine() {
-          return '100 Right ave';
-        },
-        addressSecondLine() {
-          return 'Montreal, QC H2H 2H2';
-        },
-        primaryBeneficiary() {
-          return {
-            email: 'Jane.doe@email.com',
-            mobilePhoneNumber: {
-              number: '(514) 123 4444',
-              extension: '',
-            },
-            homePhoneNumber: {
-              number: '(514) 123 2222',
-              extension: '123',
-            },
-            alternatePhoneNumber: {
-              number: '(514) 123 1111',
-              extension: '',
-            },
-          };
-        },
         ...otherComputed,
       },
-
     };
     wrapper = mount(Component, params);
+    wrapper.vm.getPrimaryMemberFullName = jest.fn(() => 'mock-full-name');
+    wrapper.vm.hasPhoneNumbers = jest.fn(() => true);
+    wrapper.vm.getAddressFirstLine = jest.fn(() => '100 Right ave');
+    wrapper.vm.getAddressSecondLine = jest.fn(() => 'Montreal, QC H2H 2H2');
+    wrapper.vm.getPrimaryMember = jest.fn(() => ({
+      email: 'Jane.doe@email.com',
+      mobilePhoneNumber: {
+        number: '(514) 123 4444',
+        extension: '',
+      },
+      homePhoneNumber: {
+        number: '(514) 123 2222',
+        extension: '123',
+      },
+      alternatePhoneNumber: {
+        number: '(514) 123 1111',
+        extension: '',
+      },
+    }));
   };
 
   describe('Template', () => {
@@ -168,7 +157,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.text()).toEqual(wrapper.vm.primaryBeneficiary.email);
+        expect(element.text()).toEqual('Jane.doe@email.com');
       });
 
       it('is NOT rendered if the beneficiary does not have an email', () => {
@@ -186,11 +175,14 @@ describe('CaseFileDetails.vue', () => {
             event() {
               return mockEvent;
             },
-            primaryBeneficiary() {
-              return { email: null };
-            },
+          },
+          mocks: {
+            getPrimaryMember: () => ({
+              email: null,
+            }),
           },
         });
+
         element = wrapper.findDataTest('caseFileDetails-email');
         expect(element.exists()).toBeFalsy();
       });
@@ -206,7 +198,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.homePhoneNumber);
+        expect(element.props('phoneNumber')).toEqual({ extension: '123', number: '(514) 123 2222' });
       });
 
       it('is NOT rendered if the beneficiary does not have a home phone number', () => {
@@ -224,9 +216,9 @@ describe('CaseFileDetails.vue', () => {
             event() {
               return mockEvent;
             },
-            primaryBeneficiary() {
-              return { homePhoneNumber: null };
-            },
+          },
+          mocks: {
+            getPrimaryMember: () => ({}),
           },
         });
         element = wrapper.findDataTest('caseFileDetails-home-phone-number');
@@ -244,7 +236,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.mobilePhoneNumber);
+        expect(element.props('phoneNumber')).toEqual({ extension: '', number: '(514) 123 4444' });
       });
 
       it('is NOT rendered if the beneficiary does not have a mobile number', () => {
@@ -254,7 +246,6 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-
           computed: {
             caseFile() {
               return mockCaseFile;
@@ -262,9 +253,9 @@ describe('CaseFileDetails.vue', () => {
             event() {
               return mockEvent;
             },
-            primaryBeneficiary() {
-              return { mobilePhoneNumber: null };
-            },
+          },
+          mocks: {
+            getPrimaryMember: () => ({}),
           },
         });
         element = wrapper.findDataTest('caseFileDetails-mobile-phone-number');
@@ -282,7 +273,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.alternatePhoneNumber);
+        expect(element.props('phoneNumber')).toEqual({ extension: '', number: '(514) 123 1111' });
       });
 
       it('is NOT rendered if the beneficiary does not have a alternate number', () => {
@@ -292,16 +283,12 @@ describe('CaseFileDetails.vue', () => {
           propsData: {
             id: mockCaseFile.id,
           },
-
           computed: {
             caseFile() {
               return mockCaseFile;
             },
             event() {
               return mockEvent;
-            },
-            primaryBeneficiary() {
-              return { alternatePhoneNumber: null };
             },
           },
         });
@@ -320,8 +307,8 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.text()).toContain(wrapper.vm.addressFirstLine);
-        expect(element.text()).toContain(wrapper.vm.addressSecondLine);
+        expect(element.text()).toContain(wrapper.vm.getAddressFirstLine());
+        expect(element.text()).toContain(wrapper.vm.getAddressSecondLine());
       });
     });
 
@@ -478,15 +465,11 @@ describe('CaseFileDetails.vue', () => {
             id: mockCaseFile.id,
           },
           data() {
-            return { household: mockHouseholdEntity({ potentialDuplicates: [{ duplicateStatus: DuplicateStatus.Potential }] }) };
+            return { household: mockHouseholdEntity(),
+              householdMetadata: mockHouseholdMetadata({ potentialDuplicatesCount: 1 }) };
           },
           mocks: {
-            $hasFeature: (f) => {
-              if (f === FeatureKeys.ManageDuplicates) {
-                return true;
-              }
-              return false;
-            },
+            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
           },
         });
 
@@ -501,15 +484,10 @@ describe('CaseFileDetails.vue', () => {
             id: mockCaseFile.id,
           },
           data() {
-            return { household: mockHouseholdEntity({ potentialDuplicates: [{ duplicateStatus: DuplicateStatus.Resolved }] }) };
+            return { household: mockHouseholdEntity(), householdMetadata: mockHouseholdMetadata({ potentialDuplicatesCount: 0 }) };
           },
           mocks: {
-            $hasFeature: (f) => {
-              if (f === FeatureKeys.ManageDuplicates) {
-                return true;
-              }
-              return false;
-            },
+            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
           },
         });
 
@@ -524,12 +502,7 @@ describe('CaseFileDetails.vue', () => {
             id: mockCaseFile.id,
           },
           mocks: {
-            $hasFeature: (f) => {
-              if (f === FeatureKeys.ManageDuplicates) {
-                return false;
-              }
-              return true;
-            },
+            $hasFeature: (f) => f !== FeatureKeys.ManageDuplicate,
           },
         });
 

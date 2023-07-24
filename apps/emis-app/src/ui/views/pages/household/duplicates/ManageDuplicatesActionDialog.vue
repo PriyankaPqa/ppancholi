@@ -43,7 +43,7 @@ import Vue from 'vue';
 import { RcDialog, VTextAreaWithValidation } from '@libs/component-lib/components';
 import { VForm } from '@libs/shared-lib/types';
 import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
-import { DuplicateStatus } from '@libs/entities-lib/household';
+import { DuplicateStatus } from '@libs/entities-lib/potential-duplicate';
 import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({

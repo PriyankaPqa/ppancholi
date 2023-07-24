@@ -63,7 +63,7 @@
               </v-icon>
               {{ $t('household.profile.account_created') }}:
             </div>
-            <span>{{ format(new Date(householdEntity.created), 'MMM d, yyyy') }}</span>
+            <span>{{ householdEntity && householdEntity.created ? format(new Date(householdEntity.created), 'MMM d, yyyy') : '-' }}</span>
           </div>
 
           <div class="pt-6  d-flex flex-column" data-test="household_profile_last_updated_date">
@@ -241,8 +241,9 @@
       v-if="showDuplicatesDialog"
       :show.sync="showDuplicatesDialog"
       data-test="manage-duplicates-dialog"
-      :household-prop="householdEntity"
-      :household-metadata-prop="householdMetadata" />
+      :household="householdEntity"
+      :household-metadata="householdMetadata"
+      @close="fetchMetadataAndClose" />
   </rc-page-content>
 </template>
 
@@ -254,7 +255,7 @@ import _isEmpty from 'lodash/isEmpty';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { CurrentAddress, EIndigenousTypes, ICurrentAddress, IHouseholdCreate, IIdentitySet, IMember, Member } from '@libs/entities-lib/household-create';
-import { HouseholdStatus, IHouseholdEntity, IHouseholdMetadata, DuplicateStatus } from '@libs/entities-lib/household';
+import { HouseholdStatus, IHouseholdEntity, IHouseholdMetadata } from '@libs/entities-lib/household';
 import AddEditAdditionalMembersLib from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembersLib.vue';
 import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import household from '@/ui/mixins/household';
@@ -340,22 +341,18 @@ export default mixins(household).extend({
 
   watch: {
     householdEntity: {
-      handler(newValue) {
-        if (newValue && !_isEmpty(newValue)) {
-          this.fetchMyEvents();
-          this.fetchAllEvents();
-          this.setHouseholdCreate();
+      async handler(newValue) {
+         if (this.showDuplicatesDialog) {
+            this.loading = true;
+            this.showDuplicatesDialog = false;
+            await this.fetchData();
+          } else if (newValue && !_isEmpty(newValue)) {
+            this.fetchMyEvents();
+            this.fetchAllEvents();
+            this.setHouseholdCreate();
         }
       },
       deep: true,
-    },
-
-    async id() {
-      if (this.showDuplicatesDialog) {
-        this.loading = true;
-        this.showDuplicatesDialog = false;
-        await this.fetchData();
-      }
     },
   },
 
@@ -535,7 +532,7 @@ export default mixins(household).extend({
     },
 
     duplicateCount(): Number {
-      return this.householdEntity.potentialDuplicates?.filter((d) => d.duplicateStatus === DuplicateStatus.Potential)?.length || 0;
+      return this.householdMetadata?.potentialDuplicatesCount || 0;
     },
 
     editingDisabled(): boolean {
@@ -589,6 +586,11 @@ export default mixins(household).extend({
       } finally {
         this.loading = false;
       }
+    },
+
+    async fetchMetadataAndClose() {
+      await useHouseholdMetadataStore().fetch(this.id, false);
+      this.showDuplicatesDialog = false;
     },
 
     async setHouseholdCreate() {

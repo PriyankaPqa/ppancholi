@@ -1,7 +1,7 @@
 import { mockHouseholdCreate, Member } from '@libs/entities-lib/household-create';
 import {
   HouseholdStatus,
-  mockHouseholdCaseFile, mockHouseholdEntity,
+  mockHouseholdCaseFile, mockHouseholdEntity, mockHouseholdMetadata,
 } from '@libs/entities-lib/household';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
@@ -473,6 +473,14 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: householdEntity.id,
           },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
+          },
           mocks: {
             $services: services,
           },
@@ -491,6 +499,14 @@ describe('HouseholdProfile.vue', () => {
           pinia: getPiniaForUser(UserRoles.level0),
           propsData: {
             id: householdEntity.id,
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $services: services,
@@ -637,6 +653,14 @@ describe('HouseholdProfile.vue', () => {
           pinia: getPiniaForUser(UserRoles.contributor3),
           propsData: {
             id: householdEntity.id,
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+            householdEntity() {
+              return householdEntity;
+            },
           },
           mocks: {
             $services: services,
@@ -950,7 +974,7 @@ describe('HouseholdProfile.vue', () => {
       it('returns the number of potential duplicates', () => {
         doMount();
 
-        expect(wrapper.vm.duplicateCount).toEqual(mockHouseholdEntity().potentialDuplicates.length);
+        expect(wrapper.vm.duplicateCount).toEqual(mockHouseholdMetadata().potentialDuplicatesCount);
       });
     });
   });
@@ -1076,6 +1100,15 @@ describe('HouseholdProfile.vue', () => {
         await wrapper.vm.fetchHouseholdData();
         expect(householdStore.fetch).toHaveBeenCalledWith(householdEntity.id);
         expect(householdMetadataStore.fetch).toHaveBeenCalledWith(householdEntity.id, false);
+      });
+    });
+
+    describe('fetchMetadataAndClose', () => {
+      it('fetches household metadata and closes the manage duplicate dialog', async () => {
+        await doMount();
+        await wrapper.vm.fetchMetadataAndClose();
+        expect(householdMetadataStore.fetch).toHaveBeenCalledWith(householdEntity.id, false);
+        expect(wrapper.vm.showDuplicatesDialog).toBeFalsy();
       });
     });
 
@@ -1221,22 +1254,6 @@ describe('HouseholdProfile.vue', () => {
         // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 1500));
         expect(wrapper.vm.$services.households.getHouseholdActivity).toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('watch', () => {
-    describe('id', () => {
-      it('closes the dialog and calls fetchData if the id changes and the dialog for manage duplicates is open', async () => {
-        doMount(null, {
-          showDuplicatesDialog: true,
-        });
-
-        wrapper.vm.fetchData = jest.fn();
-
-        await wrapper.setProps({ id: '1234' });
-        expect(wrapper.vm.showDuplicatesDialog).toEqual(false);
-        expect(wrapper.vm.fetchData).toHaveBeenCalledTimes(1);
       });
     });
   });

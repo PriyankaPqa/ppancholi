@@ -1,12 +1,15 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockHouseholdDuplicate, mockHouseholdEntity, mockHouseholdMetadata, DuplicateStatus, mockHouseholdMemberMetadata,
-  mockHouseholdDuplicateFullData, mockDuplicateData,
-} from '@libs/entities-lib/household';
+import { mockDuplicateHousehold, DuplicateStatus, mockHouseholdDuplicateFullData, mockPotentialDuplicateEntity } from '@libs/entities-lib/potential-duplicate';
+import { mockHouseholdEntity, mockHouseholdMetadata, mockHouseholdMemberMetadata } from '@libs/entities-lib/household';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import helpers from '@/ui/helpers/helpers';
 import { mockProvider } from '@/services/provider';
 import { UserRoles } from '@libs/entities-lib/user';
+import { useMockPotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate.mock';
+
 import Component, { SelectedTab } from './ManageDuplicates.vue';
+
+const { pinia, potentialDuplicateStore } = useMockPotentialDuplicateStore();
 
 const localVue = createLocalVue();
 const services = mockProvider();
@@ -19,8 +22,20 @@ const duplicates = [
 describe('ManageDuplicates.vue', () => {
   let wrapper;
   const propsData = {
-    householdProp: mockHouseholdEntity(),
-    householdMetadataProp: mockHouseholdMetadata(),
+    household: mockHouseholdEntity({ primaryBeneficiary: 'id-1' }),
+    householdMetadata: mockHouseholdMetadata({ memberMetadata: [{ id: 'id-1',
+      firstName: 'John',
+      lastName: 'Smith',
+      email: 'Test@mail.com',
+      alternatePhoneNumber: null,
+      homePhoneNumber: null,
+      mobilePhoneNumber: null,
+    },
+    { id: 'id-2',
+      firstName: 'Jane',
+      lastName: 'Doe',
+    },
+    ] }),
     show: true,
   };
 
@@ -28,9 +43,10 @@ describe('ManageDuplicates.vue', () => {
     const options = {
       localVue,
       propsData,
+      pinia,
       data() {
         return {
-          duplicateData: [mockDuplicateData({ potentialDuplicateId: '1' })],
+          duplicateHousehold: [mockDuplicateHousehold({ potentialDuplicateId: '1' })],
         };
       },
       mocks: {
@@ -44,7 +60,26 @@ describe('ManageDuplicates.vue', () => {
       wrapper = mount(Component, options);
     }
 
-    wrapper.vm.fetchDuplicates = jest.fn(() => [mockHouseholdDuplicate()]);
+    wrapper.vm.fetchDuplicateHouseholds = jest.fn(() => [mockDuplicateHousehold()]);
+    // wrapper.vm.getPrimaryMemberFullName = jest.fn(() => 'John Smith');
+    // wrapper.vm.hasPhoneNumbers = jest.fn(() => true);
+    // wrapper.vm.getAddressFirstLine = jest.fn(() => '100 Right ave');
+    // wrapper.vm.getAddressSecondLine = jest.fn(() => 'Montreal, QC H2H 2H2');
+    // wrapper.vm.getPrimaryMember = jest.fn(() => ({
+    //   email: 'Jane.doe@email.com',
+    //   mobilePhoneNumber: {
+    //     number: '(514) 123 4444',
+    //     extension: '',
+    //   },
+    //   homePhoneNumber: {
+    //     number: '(514) 123 2222',
+    //     extension: '123',
+    //   },
+    //   alternatePhoneNumber: {
+    //     number: '(514) 123 1111',
+    //     extension: '',
+    //   },
+    // }));
   };
 
   describe('Computed', () => {
@@ -87,16 +122,10 @@ describe('ManageDuplicates.vue', () => {
           mockHouseholdMemberMetadata({ id: 'primary-id' }),
           mockHouseholdMemberMetadata({ id: 'member-id-1', firstName: 'B' }),
           mockHouseholdMemberMetadata({ id: 'member-id-2', firstName: 'A' })];
-        doMount(true, {
-          computed: { primaryBeneficiary() {
-            return mockHouseholdMemberMetadata({ id: 'primary-id' });
-          },
-          country() {
-            return '';
-          },
-          },
-        });
-        await wrapper.setData({ householdMetadata: mockHouseholdMetadata({ memberMetadata }) });
+
+        doMount();
+
+        await wrapper.setProps({ householdMetadata: mockHouseholdMetadata({ memberMetadata }), household: { id: '1', primaryBeneficiary: 'primary-id' } });
         expect(wrapper.vm.sortedMembers).toEqual([mockHouseholdMemberMetadata({ id: 'member-id-2', firstName: 'A' }),
           mockHouseholdMemberMetadata({ id: 'member-id-1', firstName: 'B' }),
         ]);
@@ -105,11 +134,8 @@ describe('ManageDuplicates.vue', () => {
 
     describe('subtitle', () => {
       it('returns the right text depending on tab', async () => {
-        doMount(true, {
-          computed: { primaryBeneficiaryFullName() {
-            return 'John Smith';
-          } },
-        });
+        jest.clearAllMocks();
+        await doMount();
         await wrapper.setData({ selectedTab: SelectedTab.Potential });
         expect(wrapper.vm.subtitle).toEqual({ key: 'householdDetails.manageDuplicates.potentialDuplicates.subtitle', params: [{ name: 'John Smith' }] });
         await wrapper.setData({ selectedTab: SelectedTab.Resolved });
@@ -120,11 +146,14 @@ describe('ManageDuplicates.vue', () => {
     });
 
     describe('duplicates', () => {
-      it('calls mapDuplicates and returns the result', async () => {
+      it('calls usePotentialDuplicateStore, filters duplicates, calls mapDuplicates on the filter results and returns the result', async () => {
         await doMount();
         wrapper.vm.mapDuplicates = jest.fn(() => duplicates);
-        await wrapper.setData({ duplicateData: [mockDuplicateData({ id: '1' })] });
-        expect(wrapper.vm.mapDuplicates).toHaveBeenCalledWith([mockDuplicateData({ id: '1' })], [mockHouseholdDuplicate()]);
+        const hh1 = mockPotentialDuplicateEntity({ id: '1', householdIds: ['a', 'b'] });
+        const hh2 = mockPotentialDuplicateEntity({ id: '1', householdIds: [wrapper.vm.household.id, 'duplicate-hh-id'] });
+        potentialDuplicateStore.getAll = jest.fn(() => [hh1, hh2]);
+        await wrapper.setData({ duplicateHouseholds: [mockDuplicateHousehold({ id: 'duplicate-hh-id' })] });
+        expect(wrapper.vm.mapDuplicates).toHaveBeenCalledWith([hh2], wrapper.vm.duplicateHouseholds);
         expect(wrapper.vm.duplicates).toEqual(duplicates);
       });
     });
@@ -132,23 +161,24 @@ describe('ManageDuplicates.vue', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should call fetchDuplicates', async () => {
+      it('should call fetchDuplicates and store fetch', async () => {
         await doMount();
         wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-        expect(wrapper.vm.fetchDuplicates).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$services.potentialDuplicates.getHouseholds).toHaveBeenCalledWith(wrapper.vm.household.id);
+        expect(potentialDuplicateStore.getDuplicates).toHaveBeenCalledWith(wrapper.vm.household.id);
       });
     });
   });
 
   describe('Methods', () => {
-    describe('fetchDuplicates', () => {
-      it('calls the service and saves the result in duplicateData', async () => {
+    describe('fetchDuplicateHouseholds', () => {
+      it('calls the service and saves the result in duplicateHouseholds', async () => {
         await doMount();
-        await wrapper.vm.fetchDuplicates();
-        expect(wrapper.vm.$services.households.getDuplicates).toHaveBeenCalledWith(wrapper.vm.household.id);
-        expect(wrapper.vm.duplicateData).toEqual([mockDuplicateData()]);
+        await wrapper.vm.fetchDuplicateHouseholds();
+        expect(wrapper.vm.$services.potentialDuplicates.getHouseholds).toHaveBeenCalledWith(wrapper.vm.household.id);
+        expect(wrapper.vm.duplicateHouseholds).toEqual([mockDuplicateHousehold()]);
       });
     });
 
@@ -217,7 +247,7 @@ describe('ManageDuplicates.vue', () => {
       it('calls emit when parameter changeTab is false', async () => {
         doMount();
         await wrapper.vm.exit(false);
-        expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
+        expect(wrapper.emitted('close')).toBeTruthy();
       });
 
       it('sets the tab to the new one when parameter changeTab is true', async () => {
@@ -231,13 +261,21 @@ describe('ManageDuplicates.vue', () => {
     describe('mapDuplicates', () => {
       it('returns the mapped duplicates', async () => {
         doMount();
+        const duplicate1 = mockPotentialDuplicateEntity({ householdIds: ['hh-id-1', wrapper.vm.household.id] });
+        const duplicate2 = mockPotentialDuplicateEntity({ householdIds: ['hh-id-2', wrapper.vm.household.id] });
+        const household1 = mockDuplicateHousehold({ householdId: 'hh-id-1' });
+        const household2 = mockDuplicateHousehold({ householdId: 'hh-id-2' });
         const result = await wrapper.vm.mapDuplicates(
-          [mockDuplicateData({ potentialDuplicateId: '1' })],
-          [mockHouseholdDuplicate({ id: '1' })],
+          [duplicate1, duplicate2],
+          [household1, household2],
         );
-        expect(result).toEqual([{ ...mockHouseholdDuplicate({ id: '1' }),
-          ...mockDuplicateData({ potentialDuplicateId: '1' }),
-        }]);
+        expect(result).toEqual([
+          { ...duplicate1,
+            duplicateHousehold: household1,
+          },
+          { ...duplicate2,
+            duplicateHousehold: household2,
+          }]);
       });
     });
   });
@@ -251,10 +289,7 @@ describe('ManageDuplicates.vue', () => {
       });
 
       it('contains the right data', () => {
-        doMount(true, { computed: { primaryBeneficiaryFullName() {
-          return 'John Smith';
-        } } });
-
+        doMount();
         const element = wrapper.findDataTest('householdDetails-manageDuplicate-primaryBeneficiaryFullName');
         expect(element.text()).toContain('John Smith');
       });

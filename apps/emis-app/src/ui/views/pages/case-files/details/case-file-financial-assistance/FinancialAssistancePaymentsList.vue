@@ -189,11 +189,11 @@ import { useFinancialAssistancePaymentMetadataStore, useFinancialAssistancePayme
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, IdParams as FAIdParams } from '@libs/entities-lib/financial-assistance';
 import { useFinancialAssistanceMetadataStore, useFinancialAssistanceStore } from '@/pinia/financial-assistance/financial-assistance';
 import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useHouseholdStore } from '@/pinia/household/household';
+import { usePotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
-import { IHouseholdEntity, DuplicateStatus } from '@libs/entities-lib/household';
+import { IPotentialDuplicateEntity, DuplicateStatus } from '@libs/entities-lib/potential-duplicate';
 import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
 import StatisticsDialog from './components/StatisticsDialog.vue';
 import caseFileDetail from '../caseFileDetail';
@@ -238,7 +238,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       showApprovalHistory: false,
       selectedItem: null as IFinancialAssistancePaymentEntity,
       showStats: false,
-      household: null as IHouseholdEntity,
+      householdDuplicates: null as IPotentialDuplicateEntity[],
       combinedFinancialAssistancePaymentStore: new CombinedStoreFactory<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, IdParams>(
         useFinancialAssistancePaymentStore(),
         useFinancialAssistancePaymentMetadataStore(),
@@ -370,7 +370,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     isDuplicate(): boolean {
-      return this.household?.potentialDuplicates?.some((d) => d.duplicateStatus === DuplicateStatus.Potential);
+      return this.householdDuplicates?.some((d) => d.duplicateStatus === DuplicateStatus.Potential);
     },
   },
 
@@ -390,7 +390,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     });
     this.allItemsIds = res.ids;
     if (this.$hasFeature(FeatureKeys.ManageDuplicates)) {
-      this.household = await useHouseholdStore().fetch(this.caseFile.householdId);
+      this.householdDuplicates = await usePotentialDuplicateStore().getDuplicates(this.caseFile.householdId);
     }
   },
 
@@ -445,7 +445,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     routeToCreate() {
       if (this.$hasFeature(FeatureKeys.ManageDuplicates)) {
-        if (!this.household) {
+        if (this.householdDuplicates == null) {
           return;
         }
         if (this.isDuplicate) {

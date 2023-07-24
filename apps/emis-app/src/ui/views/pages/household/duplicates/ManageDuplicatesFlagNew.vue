@@ -79,8 +79,9 @@ import { VForm, IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import _debounce from 'lodash/debounce';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
-import { useHouseholdStore } from '@/pinia/household/household';
-import { DuplicateReason, HouseholdStatus, IHouseholdCombined, IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
+import { HouseholdStatus, IHouseholdCombined, IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
+import { DuplicateReason } from '@libs/entities-lib/potential-duplicate';
+import { usePotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate';
 import { Status } from '@libs/entities-lib/base';
 
 const VISUAL_DELAY = 500;
@@ -241,10 +242,9 @@ export default Vue.extend({
         this.submitting = true;
 
         try {
-          const res = await useHouseholdStore().flagNewDuplicate(
-            this.householdId,
+          const res = await usePotentialDuplicateStore().flagNewDuplicate(
             {
-              duplicateHouseholdId: this.selectedHousehold.entity.id,
+              householdIds: [this.selectedHousehold.entity.id, this.householdId],
               duplicateReasons: this.selectedDuplicateReasons,
               memberFirstName: this.member?.firstName,
               memberLastName: this.member?.lastName,
@@ -253,7 +253,7 @@ export default Vue.extend({
           );
           if (res) {
             this.$toasted.global.success(this.$t('householdDetails.manageDuplicates.message.success'));
-            this.$emit('fetchDuplicates');
+            this.$emit('fetchDuplicateHouseholds');
             this.$emit('goToFirstTab');
           }
         } finally {

@@ -22,7 +22,7 @@
             {{ $t('householdDetails.manageDuplicates.referenceHousehold') }}
           </div>
           <h5 class="rc-heading-5 px-6 py-3" data-test="householdDetails-manageDuplicate-primaryBeneficiaryFullName">
-            {{ primaryBeneficiaryFullName }}
+            {{ getPrimaryMemberFullName() }}
           </h5>
 
           <div class="px-4 pb-4">
@@ -48,16 +48,16 @@
                 </div>
               </div>
             </div>
-            <v-divider v-if="hasPhoneNumbers || addressFirstLine" class="mx-0 mb-3" />
+            <v-divider v-if="hasPhoneNumbers || addressFirstLine()" class="mx-0 mb-3" />
 
             <household-details-list
-              v-if="primaryBeneficiary && household"
+              v-if="getPrimaryMember() && household"
               data-test="householdDetails-manageDuplicates-details"
-              :primary-beneficiary="primaryBeneficiary"
-              :address-first-line="addressFirstLine"
-              :address-second-line="addressSecondLine"
-              :has-phone-numbers="hasPhoneNumbers"
-              :country="country"
+              :primary-beneficiary="getPrimaryMember()"
+              :address-first-line="getAddressFirstLine()"
+              :address-second-line="getAddressSecondLine()"
+              :has-phone-numbers="hasPhoneNumbers()"
+              :country="getCountry()"
               on-duplicate-page />
           </div>
         </v-sheet>
@@ -107,7 +107,7 @@
               :household-registration-number="household.registrationNumber"
               :household-id="household.id"
               @goToFirstTab="selectedTab = SelectedTab.Potential"
-              @fetchDuplicates="fetchDuplicates" />
+              @fetchDuplicateHouseholds="fetchDuplicateHouseholds" />
           </v-col>
         </v-row>
       </v-col>
@@ -116,17 +116,18 @@
 </template>
 
 <script lang="ts">
-import mixins from 'vue-typed-mixins';
+import Vue, { toRef } from 'vue';
 import _orderBy from 'lodash/orderBy';
 import { TranslateResult } from 'vue-i18n';
 import { RcDialog, RcTab, RcTabs } from '@libs/component-lib/components';
 import HouseholdDetailsList from '@/ui/views/pages/case-files/details/components/HouseholdDetailsList.vue';
-import { IHouseholdEntity, IHouseholdMetadata, IDuplicateData, IHouseholdDuplicateFullData,
-  DuplicateStatus, IHouseholdDuplicate } from '@libs/entities-lib/household';
+import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/entities-lib/household';
 import { VForm } from '@libs/shared-lib/types';
 import helpers from '@/ui/helpers/helpers';
+import { IDuplicateHousehold, IPotentialDuplicateEntity, DuplicateStatus, IPotentialDuplicateExtended } from '@libs/entities-lib/potential-duplicate';
 import { UserRoles } from '@libs/entities-lib/user';
-import householdDetails from '../householdDetails';
+import { usePotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate';
+import { useHouseholdDetails } from '../useHouseholdDetails';
 import ManageDuplicatesTable from './ManageDuplicatesTable.vue';
 import ManageDuplicatesFlagNew from './ManageDuplicatesFlagNew.vue';
 
@@ -136,7 +137,7 @@ export enum SelectedTab {
   FlagNew = 3,
 }
 
-export default mixins(householdDetails).extend({
+export default Vue.extend({
   name: 'ManageDuplicates',
 
   components: {
@@ -153,14 +154,25 @@ export default mixins(householdDetails).extend({
       type: Boolean,
       required: true,
     },
-    householdProp: {
+    household: {
       type: Object as () => IHouseholdEntity,
       required: true,
     },
-    householdMetadataProp: {
+    householdMetadata: {
       type: Object as () => IHouseholdMetadata,
       required: true,
     },
+  },
+
+  setup(props) {
+    const { getAddressFirstLine,
+    getAddressSecondLine,
+    getPrimaryMember,
+    getPrimaryMemberFullName,
+    hasPhoneNumbers,
+    getCountry,
+     } = useHouseholdDetails(toRef(props, 'household'), toRef(props, 'householdMetadata'));
+    return { getAddressFirstLine, getAddressSecondLine, getPrimaryMember, getCountry, getPrimaryMemberFullName, hasPhoneNumbers };
   },
 
   data() {
@@ -169,9 +181,7 @@ export default mixins(householdDetails).extend({
       selectedTab: SelectedTab.Potential,
       initLoading: false,
       submitLoading: false,
-      duplicateData: [] as IDuplicateData[],
-      household: this.householdProp,
-      householdMetadata: this.householdMetadataProp,
+      duplicateHouseholds: [] as IDuplicateHousehold[],
     };
   },
 
@@ -184,44 +194,56 @@ export default mixins(householdDetails).extend({
       return tabs;
     },
 
-    potentialDuplicates(): IHouseholdDuplicateFullData[] {
+    potentialDuplicates(): IPotentialDuplicateExtended[] {
       return this.duplicates?.filter((d) => d.duplicateStatus === DuplicateStatus.Potential) || [];
     },
 
-    resolvedDuplicates(): IHouseholdDuplicateFullData[] {
+    resolvedDuplicates(): IPotentialDuplicateExtended[] {
       return this.duplicates?.filter((d) => d.duplicateStatus === DuplicateStatus.Resolved) || [];
     },
 
-    sortedMembers() {
+    sortedMembers(): IHouseholdMemberMetadata[] {
       if (!this.householdMetadata?.memberMetadata) {
         return [];
       }
-      return _orderBy(this.householdMetadata.memberMetadata.filter((m) => m.id !== this.primaryBeneficiary?.id), 'firstName');
+      return _orderBy(this.householdMetadata.memberMetadata.filter((m) => m.id !== this.getPrimaryMember()?.id), 'firstName');
     },
 
     subtitle():TranslateResult {
       // eslint-disable-next-line no-nested-ternary
       return this.selectedTab === SelectedTab.Potential
-        ? this.$t('householdDetails.manageDuplicates.potentialDuplicates.subtitle', { name: this.primaryBeneficiaryFullName })
+        ? this.$t('householdDetails.manageDuplicates.potentialDuplicates.subtitle', { name: this.getPrimaryMemberFullName() })
         : this.selectedTab === SelectedTab.Resolved
           ? this.$t('householdDetails.manageDuplicates.resolvedDuplicates')
-          : this.$t('householdDetails.manageDuplicates.flagNew.subtitle', { name: this.primaryBeneficiaryFullName }) as TranslateResult;
+          : this.$t('householdDetails.manageDuplicates.flagNew.subtitle', { name: this.getPrimaryMemberFullName() }) as TranslateResult;
     },
 
-    duplicates(): IHouseholdDuplicateFullData[] {
-      return this.mapDuplicates(this.duplicateData, this.householdProp.potentialDuplicates);
+    duplicates(): IPotentialDuplicateExtended[] {
+      const entities = usePotentialDuplicateStore().getAll();
+      const duplicatesOfCurrentHousehold = entities.filter((d) => d.householdIds.includes(this.household.id));
+      return this.mapDuplicates(duplicatesOfCurrentHousehold, this.duplicateHouseholds);
     },
   },
 
   async created() {
-    await this.fetchDuplicates();
+      this.initLoading = true;
+      try {
+       // eslint-disable-next-line @typescript-eslint/no-unused-vars
+       const [_, households] = await Promise.all([
+          usePotentialDuplicateStore().getDuplicates(this.household.id),
+          this.$services.potentialDuplicates.getHouseholds(this.household.id),
+        ]);
+        this.duplicateHouseholds = households;
+      } finally {
+        this.initLoading = false;
+      }
   },
 
   methods: {
-    async fetchDuplicates() {
+    async fetchDuplicateHouseholds() {
       this.initLoading = true;
       try {
-        this.duplicateData = await this.$services.households.getDuplicates(this.household.id);
+        this.duplicateHouseholds = await this.$services.potentialDuplicates.getHouseholds(this.household.id);
       } finally {
         this.initLoading = false;
       }
@@ -247,27 +269,29 @@ export default mixins(householdDetails).extend({
       if (changeTab && !!tab) {
         this.selectedTab = tab;
       } else {
-        this.$emit('update:show', false);
+        this.$emit('close');
       }
     },
 
-    mapDuplicates(duplicatesData: IDuplicateData[], duplicatesFromEntity: IHouseholdDuplicate[]): IHouseholdDuplicateFullData[] {
-      if (!duplicatesData?.length || !duplicatesFromEntity?.length) {
+    mapDuplicates(duplicates: IPotentialDuplicateEntity[], households: IDuplicateHousehold[]): IPotentialDuplicateExtended[] {
+      if (!duplicates?.length || !households?.length) {
         return [];
       }
 
-      const fullData = duplicatesFromEntity.map((d) => {
-        const duplicateData = duplicatesData.find((dup) => dup.potentialDuplicateId === d.id);
-        if (duplicateData) {
+      return duplicates.map((d) => {
+          const duplicateHouseholdId = d.householdIds.find((id) => id !== this.household.id);
+          const duplicateHousehold = households.find((h) => h.householdId === duplicateHouseholdId) || {
+            registrationNumber: '-',
+            caseFiles: [],
+            primaryBeneficiaryFullName: '-',
+            householdId: '',
+          } as IDuplicateHousehold;
+
           return {
             ...d,
-            ...duplicateData,
+            duplicateHousehold,
           };
-        }
-        return null;
       });
-
-      return fullData.filter((d) => d);
     },
 
   },

@@ -1,12 +1,13 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { HouseholdStatus, mockCombinedHousehold, mockHouseholdMemberMetadata, DuplicateReason } from '@libs/entities-lib/household';
+import { HouseholdStatus, mockCombinedHousehold, mockHouseholdMemberMetadata } from '@libs/entities-lib/household';
+import { DuplicateReason } from '@libs/entities-lib/potential-duplicate';
 import { Status } from '@libs/entities-lib/base';
 import { mockProvider } from '@/services/provider';
-import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+import { useMockPotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate.mock';
 import Component from './ManageDuplicatesFlagNew.vue';
 
 const services = mockProvider();
-const { pinia, householdStore } = useMockHouseholdStore();
+const { pinia, potentialDuplicateStore } = useMockPotentialDuplicateStore();
 const localVue = createLocalVue();
 
 describe('ManageDuplicatesFlagNew.vue', () => {
@@ -212,8 +213,8 @@ describe('ManageDuplicatesFlagNew.vue', () => {
           member: { firstName: 'Joe', lastName: 'Black' },
           rationale: 'rationale' });
         await wrapper.vm.submit();
-        expect(householdStore.flagNewDuplicate).toHaveBeenCalledWith('household-id', {
-          duplicateHouseholdId: 'hh-id',
+        expect(potentialDuplicateStore.flagNewDuplicate).toHaveBeenCalledWith({
+          householdIds: ['hh-id', wrapper.vm.householdId],
           duplicateReasons: [3],
           memberFirstName: 'Joe',
           memberLastName: 'Black',
@@ -225,7 +226,7 @@ describe('ManageDuplicatesFlagNew.vue', () => {
         doMount();
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
         await wrapper.vm.submit();
-        expect(householdStore.flagNewDuplicate).not.toHaveBeenCalledWith();
+        expect(potentialDuplicateStore.flagNewDuplicate).not.toHaveBeenCalledWith();
       });
 
       it('emits 2 events and displays a toast message if the service call is successful', async () => {
@@ -234,7 +235,7 @@ describe('ManageDuplicatesFlagNew.vue', () => {
         wrapper.vm.$emit = jest.fn();
         wrapper.setData({ selectedHousehold: { entity: { id: 'hh-id' } }, selectedDuplicateReasons: [3], member: { id: 'member-id' }, rationale: 'rationale' });
         await wrapper.vm.submit();
-        expect(wrapper.vm.$emit).toHaveBeenCalledWith('fetchDuplicates');
+        expect(wrapper.vm.$emit).toHaveBeenCalledWith('fetchDuplicateHouseholds');
         expect(wrapper.vm.$emit).toHaveBeenCalledWith('goToFirstTab');
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('householdDetails.manageDuplicates.message.success');
       });

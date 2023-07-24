@@ -183,49 +183,48 @@ export function storeFactory({
         const parsedMembers = [] as unknown as IMemberEntity[];
 
         for (const m of members) {
-          // eslint-disable-next-line no-await-in-loop
-          const newAddressHistory = await Promise.all(m.addressHistory.map(async (a) => {
-            if (a.shelterLocationId) {
-              const shelterLocation = await this.getShelterLocationDatafromId(a.shelterLocationId, shelterLocations, otherShelterLocations);
+          if (m) {
+            // eslint-disable-next-line no-await-in-loop
+            const newAddressHistory = await Promise.all(m.addressHistory.map(async (a) => {
+              if (a.shelterLocationId) {
+                const shelterLocation = await this.getShelterLocationDatafromId(a.shelterLocationId, shelterLocations, otherShelterLocations);
+                return {
+                  ...a,
+                  shelterLocation,
+                };
+              }
               return {
                 ...a,
-                shelterLocation,
+                shelterLocation: null,
+              };
+            }));
+
+            let parsedHistoryMember = {
+              ...m,
+              addressHistory: newAddressHistory,
+              currentAddress: m.currentAddress,
+            };
+
+            if (parsedHistoryMember.currentAddress?.shelterLocationId) {
+              // eslint-disable-next-line no-await-in-loop
+              const shelterLocation = await this.getShelterLocationDatafromId(m.currentAddress?.shelterLocationId, shelterLocations, otherShelterLocations);
+
+              parsedHistoryMember = {
+                ...parsedHistoryMember,
+                currentAddress: {
+                  ...parsedHistoryMember.currentAddress,
+                  shelterLocation,
+                },
               };
             }
-            return {
-              ...a,
-              shelterLocation: null,
-            };
-          }));
 
-          let parsedHistoryMember = {
-            ...m,
-            addressHistory: newAddressHistory,
-            currentAddress: m.currentAddress,
-          };
-
-          if (parsedHistoryMember.currentAddress?.shelterLocationId) {
-            // eslint-disable-next-line no-await-in-loop
-            const shelterLocation = await this.getShelterLocationDatafromId(m.currentAddress?.shelterLocationId, shelterLocations, otherShelterLocations);
-
-            parsedHistoryMember = {
-              ...parsedHistoryMember,
-              currentAddress: {
-                ...parsedHistoryMember.currentAddress,
-                shelterLocation,
-              },
-            };
+            parsedMembers.push(parsedHistoryMember);
           }
-
-          parsedMembers.push(parsedHistoryMember);
         }
         return parsedMembers;
       },
 
       async fetchMembersInformation(household: IHouseholdEntity, shelterLocations: IEventGenericLocation[]): Promise<IMemberEntity[]> {
-        if (!household.members?.length) {
-          return [];
-        }
         let primaryBeneficiaryPromise;
         const additionalMembersPromises = [] as Array<Promise<IMemberEntity>>;
 
@@ -730,24 +729,26 @@ export function storeFactory({
         longitude: 0,
       } as IAddressData;
 
-      members.forEach((m, index) => {
-        const currentAddress = {
-          ...m.currentAddress,
-          address: !m.currentAddress || m.currentAddress.address === null ? emptyCurrentAddress : m.currentAddress.address,
-        };
+      if (members) {
+        members.forEach((m, index) => {
+          const currentAddress = {
+            ...m.currentAddress,
+            address: !m.currentAddress || m.currentAddress.address === null ? emptyCurrentAddress : m.currentAddress.address,
+          };
 
-        const member = deepmerge(m, {
-          identitySet: internalMethods.parseIdentitySet(m, communitiesItems, genderItems),
-          contactInformation: internalMethods.parseContactInformation(m, preferredLanguagesItems, primarySpokenLanguagesItems),
-          currentAddress,
+          const member = deepmerge(m, {
+            identitySet: internalMethods.parseIdentitySet(m, communitiesItems, genderItems),
+            contactInformation: internalMethods.parseContactInformation(m, preferredLanguagesItems, primarySpokenLanguagesItems),
+            currentAddress,
+          });
+
+          if (index === 0) {
+            primaryBeneficiary = member;
+          } else {
+            additionalMembers.push(member);
+          }
         });
-
-        if (index === 0) {
-          primaryBeneficiary = member;
-        } else {
-          additionalMembers.push(member);
-        }
-      });
+      }
 
       return {
         id: household.id,

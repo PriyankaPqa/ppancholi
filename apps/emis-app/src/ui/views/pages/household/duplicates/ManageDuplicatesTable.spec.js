@@ -1,10 +1,10 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { DuplicateStatus, mockHouseholdDuplicateFullData, DuplicateReason } from '@libs/entities-lib/household';
+import { DuplicateStatus, mockHouseholdDuplicateFullData, DuplicateReason } from '@libs/entities-lib/potential-duplicate';
 import routes from '@/constants/routes';
 import householdHelpers from '@/ui/helpers/household';
 import { mockProvider } from '@/services/provider';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
-import { useMockHouseholdStore } from '@/pinia/household/household.mock';
+import { useMockPotentialDuplicateStore } from '@/pinia/potential-duplicate/potential-duplicate.mock';
 import helpers from '@/ui/helpers/helpers';
 
 import { UserRoles } from '@libs/entities-lib/user';
@@ -12,14 +12,17 @@ import Component from './ManageDuplicatesTable.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
-const { pinia, householdStore } = useMockHouseholdStore();
+const { pinia, potentialDuplicateStore } = useMockPotentialDuplicateStore();
 const duplicates = [
   mockHouseholdDuplicateFullData({
     id: '1',
     duplicateStatus: DuplicateStatus.Potential,
-    primaryBeneficiaryFullName: 'Jane Doe',
-    registrationNumber: 'registration-number',
-    caseFiles: [{ caseFileNumber: 'case-file-number', eventName: { translation: { en: 'event-name' } } }],
+    duplicateHousehold: {
+      householdId: 'hh-id',
+      primaryBeneficiaryFullName: 'Jane Doe',
+      registrationNumber: 'registration-number',
+      caseFiles: [{ caseFileNumber: 'case-file-number', eventName: { translation: { en: 'event-name' } } }],
+    },
   }),
   mockHouseholdDuplicateFullData({ id: '2', duplicateStatus: DuplicateStatus.Resolved }),
 ];
@@ -97,10 +100,10 @@ describe('ManageDuplicatesTable.vue', () => {
     describe('getHouseholdRoute', () => {
       it('should return the right route data', () => {
         doMount();
-        const id = '1234';
-        expect(wrapper.vm.getHouseholdRoute(id)).toEqual({
+        const duplicate = duplicates[0];
+        expect(wrapper.vm.getHouseholdRoute(duplicate)).toEqual({
           name: routes.household.householdProfile.name,
-          params: { id },
+          params: { id: 'hh-id' },
         });
       });
     });
@@ -163,10 +166,10 @@ describe('ManageDuplicatesTable.vue', () => {
         const duplicateHouseholdId = 'householdId';
         const potentialDuplicateId = 'potentialDuplicateId';
         const arg = { status: DuplicateStatus.Potential, rationale: 'rationale' };
-        wrapper.vm.actionedDuplicate = { householdId: duplicateHouseholdId, id: potentialDuplicateId };
+        wrapper.vm.actionedDuplicate = { householdIds: [duplicateHouseholdId, wrapper.vm.currentHouseholdId], id: potentialDuplicateId };
 
         await wrapper.vm.submitAction(arg);
-        expect(householdStore.flagDuplicate).toHaveBeenCalledWith(wrapper.vm.currentHouseholdId, { duplicateHouseholdId, potentialDuplicateId, rationale });
+        expect(potentialDuplicateStore.flagDuplicate).toHaveBeenCalledWith(potentialDuplicateId, rationale);
       });
 
       it('calls service resolveDuplicate if status is Resolved', async () => {
@@ -175,17 +178,17 @@ describe('ManageDuplicatesTable.vue', () => {
         const duplicateHouseholdId = 'householdId';
         const potentialDuplicateId = 'potentialDuplicateId';
         const arg = { status: DuplicateStatus.Resolved, rationale };
-        wrapper.vm.actionedDuplicate = { householdId: duplicateHouseholdId, id: potentialDuplicateId };
+        wrapper.vm.actionedDuplicate = { householdIds: [duplicateHouseholdId, wrapper.vm.currentHouseholdId], id: potentialDuplicateId };
 
         await wrapper.vm.submitAction(arg);
-        expect(householdStore.resolveDuplicate).toHaveBeenCalledWith(wrapper.vm.currentHouseholdId, { potentialDuplicateId, duplicateHouseholdId, rationale });
+        expect(potentialDuplicateStore.resolveDuplicate).toHaveBeenCalledWith(potentialDuplicateId, rationale);
       });
 
       it('resets actionedDuplicate and emits fetchDuplicates if call is successful', async () => {
         doMount();
         wrapper.vm.$emit = jest.fn();
         const arg = { status: DuplicateStatus.Resolved, rationale: 'rationale' };
-        wrapper.vm.actionedDuplicate = { householdId: 'householdId', id: 'id' };
+        wrapper.vm.actionedDuplicate = { householdIds: ['hh-id', wrapper.vm.currentHouseholdId], id: 'id' };
         await wrapper.vm.submitAction(arg);
         expect(wrapper.vm.actionedDuplicate).toEqual(null);
       });
@@ -257,7 +260,7 @@ describe('ManageDuplicatesTable.vue', () => {
       it('renders if reason contains home phone number', async () => {
         doMount(false);
         await wrapper.setProps({ duplicates:
-          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.HomePhoneNumber], homePhoneNumber: { number: 'home-phone' } })] });
+          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.HomePhoneNumber], duplicateHousehold: { homePhoneNumber: { number: 'home-phone' } } })] });
         const element = wrapper.findDataTest('duplicate-home-phone-number');
         expect(element.exists()).toBeTruthy();
         expect(element.props('phoneNumber')).toEqual({ number: 'home-phone' });
@@ -275,7 +278,7 @@ describe('ManageDuplicatesTable.vue', () => {
       it('renders if reason contains mobile phone number', async () => {
         doMount(false);
         await wrapper.setProps({ duplicates:
-          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.MobilePhoneNumber], mobilePhoneNumber: { number: 'mobile-phone' } })] });
+          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.MobilePhoneNumber], duplicateHousehold: { mobilePhoneNumber: { number: 'mobile-phone' } } })] });
         const element = wrapper.findDataTest('duplicate-mobile-phone-number');
         expect(element.exists()).toBeTruthy();
         expect(element.props('phoneNumber')).toEqual({ number: 'mobile-phone' });
@@ -293,7 +296,8 @@ describe('ManageDuplicatesTable.vue', () => {
       it('renders if reason contains alternate phone number', async () => {
         doMount(false);
         await wrapper.setProps({ duplicates:
-          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.AlternatePhoneNumber], alternatePhoneNumber: { number: 'alternate-phone' } })] });
+          [mockHouseholdDuplicateFullData({ duplicateReasons: [DuplicateReason.AlternatePhoneNumber],
+            duplicateHousehold: { alternatePhoneNumber: { number: 'alternate-phone' } } })] });
         const element = wrapper.findDataTest('duplicate-alternate-phone-number');
         expect(element.exists()).toBeTruthy();
         expect(element.props('phoneNumber')).toEqual({ number: 'alternate-phone' });

@@ -20,13 +20,15 @@
       <div class="rc-body12 fw-bold" data-test="subtitle-title-left-menu">
         {{ subtitle }}
       </div>
-      <div class="rc-heading-5 mb-4 text-break d-flex align-center" data-test="title-left-menu">
-        {{ title }}
+      <div class="rc-heading-5 mb-4 text-break d-inline" data-test="title-left-menu">
+        <div class="d-inline mr-1">
+          {{ title }}
+        </div>
         <v-icon
           v-if="titleIcon"
           data-test="title-left-menu-icon"
           small
-          class="ml-2"
+          class="d-inline"
           color="secondary">
           {{ titleIcon }}
         </v-icon>

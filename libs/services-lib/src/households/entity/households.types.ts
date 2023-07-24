@@ -15,10 +15,7 @@ import {
   IVerifyOneTimeCodeRegistrationPublicPayload,
   ICreateHouseholdRequest,
 } from '@libs/entities-lib/household-create';
-import {
-  HouseholdStatus,
-  IDetailedRegistrationResponse, IdParams, IDuplicateData, IHouseholdEntity, IOustandingPaymentResponse, DuplicateReason,
-} from '@libs/entities-lib/household';
+import { HouseholdStatus, IDetailedRegistrationResponse, IdParams, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
 import { IVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
 import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
 import { IOptionItemData } from '@libs/shared-lib/types';
@@ -54,11 +51,6 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   getHouseholdActivity(id: uuid): Promise<IHouseholdActivity[]>;
   getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]>;
   getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
-  getDuplicates(id: uuid): Promise<IDuplicateData[]>;
-  flagNewDuplicate(id: uuid, payload: { duplicateHouseholdId: uuid, duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string })
-  : Promise<IHouseholdEntity[]>
-  flagDuplicate(id: string, payload : { potentialDuplicateId: uuid, duplicateHouseholdId: uuid, rationale: string }): Promise<IHouseholdEntity[]>
-  resolveDuplicate(id: string, payload : { potentialDuplicateId: uuid, duplicateHouseholdId: uuid, rationale: string }): Promise<IHouseholdEntity[]>
   setHouseholdStatus(householdId: string, status: HouseholdStatus, rationale: string): Promise<IHouseholdEntity>;
   checkForPossibleDuplicatePublic(eventId: uuid, member: IMember): Promise<ICheckForPossibleDuplicateResponse>;
   sendOneTimeCodeRegistrationPublic(payload: ISendOneTimeCodeRegistrationPublicPayload): Promise<void>;
@@ -99,10 +91,6 @@ export interface IHouseholdsServiceMock extends IDomainBaseServiceMock<IHousehol
   sendOneTimeCodeRegistrationPublic: jest.Mock<void>;
   verifyOneTimeCodeRegistrationPublic: jest.Mock<boolean>;
   getPublicToken: jest.Mock<string>;
-  getDuplicates: jest.Mock<IDuplicateData[]>;
-  flagNewDuplicate: jest.Mock<IHouseholdEntity[]>;
-  flagDuplicate: jest.Mock<IHouseholdEntity[]>;
-  resolveDuplicate: jest.Mock<IHouseholdEntity[]>;
   publicGetHousehold: jest.Mock<IHouseholdEntity>;
   publicGetPerson: jest.Mock<IMemberEntity>;
 }

@@ -1,6 +1,6 @@
 import { utcToZonedTime, format } from 'date-fns-tz';
 import { IConsentInformation, IMoveHouseholdRequest } from '@libs/entities-lib/household-create/householdCreate.types';
-import { HouseholdStatus, IDetailedRegistrationResponse, IDuplicateData, IHouseholdEntity, IOustandingPaymentResponse, DuplicateReason } from '@libs/entities-lib/household';
+import { HouseholdStatus, IDetailedRegistrationResponse, IHouseholdEntity, IOustandingPaymentResponse } from '@libs/entities-lib/household';
 import {
   IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
   IIndigenousCommunityData, IMember, ICurrentAddress, ICurrentAddressCreateRequest, ECurrentAddressTypes,
@@ -159,23 +159,6 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
 
   async getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
     return this.http.get(`${this.baseUrl}/metadata/${id}/history`);
-  }
-
-  async getDuplicates(id: uuid): Promise<IDuplicateData[]> {
-    return this.http.get(`${this.baseUrl}/${id}/duplicates`);
-  }
-
-  flagNewDuplicate(id: uuid, payload: { duplicateHouseholdId: uuid, duplicateReasons: DuplicateReason[], memberFirstName: string, memberLastName: string, rationale: string })
-    : Promise<IHouseholdEntity[]> {
-    return this.http.post(`${this.baseUrl}/${id}/duplicates`, payload);
-  }
-
-  flagDuplicate(id: string, payload : { potentialDuplicateId: uuid, duplicateHouseholdId: uuid; rationale: string }): Promise<IHouseholdEntity[]> {
-    return this.http.patch(`${this.baseUrl}/${id}/flag-duplicates`, payload);
-  }
-
-  resolveDuplicate(id: string, payload : { potentialDuplicateId: uuid, duplicateHouseholdId: uuid; rationale: string }): Promise<IHouseholdEntity[]> {
-    return this.http.patch(`${this.baseUrl}/${id}/resolve-duplicates`, payload);
   }
 
   publicGetHousehold(id: uuid): Promise<IHouseholdEntity> {

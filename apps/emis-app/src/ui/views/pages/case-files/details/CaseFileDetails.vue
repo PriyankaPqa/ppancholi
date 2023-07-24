@@ -1,7 +1,7 @@
 <template>
   <page-template
     :loading="loading"
-    :left-menu-title="primaryBeneficiaryFullName"
+    :left-menu-title="getPrimaryMemberFullName()"
     :left-menu-title-icon="isDuplicate ? '$rctech-duplicate' : ''"
     :navigation-tabs="tabs">
     <template v-if="caseFile" slot="left-menu">
@@ -63,21 +63,21 @@
       </div>
 
       <div
-        v-if="primaryBeneficiary && primaryBeneficiary.email"
+        v-if="getPrimaryMember() && getPrimaryMember().email"
         class="d-flex flex-row align-start mb-2 rc-body14 break-word">
         <v-icon small class="mr-2 mt-1" color="gray darken-2">
           mdi-email
         </v-icon>
-        <span data-test="caseFileDetails-email">{{ primaryBeneficiary.email }}</span>
+        <span data-test="caseFileDetails-email">{{ getPrimaryMember().email }}</span>
       </div>
 
       <household-details-list
-        v-if="household && primaryBeneficiary"
-        :primary-beneficiary="primaryBeneficiary"
-        :address-first-line="addressFirstLine"
-        :address-second-line="addressSecondLine"
-        :has-phone-numbers="hasPhoneNumbers"
-        :country="$hasFeature(FeatureKeys.ManageDuplicates) ? country : ''" />
+        v-if="household && getPrimaryMember()"
+        :primary-beneficiary="getPrimaryMember()"
+        :address-first-line="getAddressFirstLine()"
+        :address-second-line="getAddressSecondLine()"
+        :has-phone-numbers="hasPhoneNumbers()"
+        :country="$hasFeature(FeatureKeys.ManageDuplicates) ? getCountry() : ''" />
 
       <div
         class="d-flex flex-row rc-body14">
@@ -85,7 +85,7 @@
           mdi-account-multiple
         </v-icon>
         <span data-test="caseFileDetails-household-member-count">
-          {{ household && household && household.members
+          {{ household && household.members
             ? `${$t('caseFileDetail.fullHouseHold')} ${household.members.length}`
             : "-" }}
         </span>
@@ -132,6 +132,7 @@
 </template>
 
 <script lang="ts">
+import { computed } from 'vue';
 import { RcTooltip } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
@@ -144,14 +145,14 @@ import { useEventStore } from '@/pinia/event/event';
 import { useHouseholdMetadataStore, useHouseholdStore } from '@/pinia/household/household';
 import { useCaseFileMetadataStore, useCaseFileStore } from '@/pinia/case-file/case-file';
 import { useUserStore } from '@/pinia/user/user';
-import householdDetails from '@/ui/views/pages/household/householdDetails';
-import { DuplicateStatus } from '@libs/entities-lib/household';
+import { useHouseholdDetails } from '@/ui/views/pages/household/useHouseholdDetails';
+import { IHouseholdMetadata } from '@libs/entities-lib/household';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import HouseholdDetailsList from './components/HouseholdDetailsList.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
 import caseFileDetail from './caseFileDetail';
 
-export default mixins(caseFileDetail, householdDetails).extend({
+export default mixins(caseFileDetail).extend({
   name: 'CaseFileDetails',
 
   components: {
@@ -160,6 +161,21 @@ export default mixins(caseFileDetail, householdDetails).extend({
     ImpactValidation,
     HouseholdDetailsList,
     RcTooltip,
+  },
+
+  setup(props: { id: string }) {
+    const caseFile = computed(() => useCaseFileStore().getById(props.id));
+    const household = computed(() => useHouseholdStore().getById(caseFile.value.householdId));
+    const householdMetadata = computed(() => useHouseholdMetadataStore().getById(caseFile.value.householdId));
+
+    const { getAddressFirstLine,
+    getAddressSecondLine,
+    getPrimaryMember,
+    getPrimaryMemberFullName,
+    hasPhoneNumbers,
+    getCountry,
+     } = useHouseholdDetails(household, householdMetadata);
+    return { household, householdMetadata, getAddressFirstLine, getAddressSecondLine, getPrimaryMember, getCountry, getPrimaryMemberFullName, hasPhoneNumbers };
   },
 
   data() {
@@ -263,7 +279,7 @@ export default mixins(caseFileDetail, householdDetails).extend({
     },
 
     isDuplicate(): boolean {
-      return this.$hasFeature(FeatureKeys.ManageDuplicates) && this.household?.potentialDuplicates?.some((d) => d.duplicateStatus === DuplicateStatus.Potential);
+      return this.$hasFeature(FeatureKeys.ManageDuplicates) && (this.householdMetadata as unknown as IHouseholdMetadata)?.potentialDuplicatesCount > 0;
     },
 
     receivingAssistanceMembersCount(): number {
@@ -287,8 +303,8 @@ export default mixins(caseFileDetail, householdDetails).extend({
   methods: {
     async getHouseholdInfo() {
       const { householdId } = this.caseFile;
-      this.household = await useHouseholdStore().fetch(householdId);
-      this.householdMetadata = await useHouseholdMetadataStore().fetch(householdId, false);
+      await useHouseholdStore().fetch(householdId);
+      await useHouseholdMetadataStore().fetch(householdId, false);
     },
 
     goToHouseholdProfile() {

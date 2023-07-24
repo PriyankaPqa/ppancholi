@@ -1,5 +1,5 @@
 import { mockVersionedEntity } from '@libs/entities-lib/value-objects/versioned-entity';
-import { mockDetailedRegistrationResponse, mockDuplicateData, mockHouseholdEntity } from '@libs/entities-lib/household';
+import { mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/entities-lib/household';
 import {
   mockCheckForPossibleDuplicateResponse,
   mockGenders,
@@ -44,10 +44,6 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   sendOneTimeCodeRegistrationPublic: jest.fn(),
   verifyOneTimeCodeRegistrationPublic: jest.fn(() => true),
   getPublicToken: jest.fn(() => 'some token'),
-  getDuplicates: jest.fn(() => [mockDuplicateData()]),
-  flagNewDuplicate: jest.fn(() => [mockHouseholdEntity()]),
-  flagDuplicate: jest.fn(() => [mockHouseholdEntity()]),
-  resolveDuplicate: jest.fn(() => [mockHouseholdEntity()]),
   publicGetHousehold: jest.fn(() => mockHouseholdEntity()),
   publicGetPerson: jest.fn(() => mockMemberData()),
 });

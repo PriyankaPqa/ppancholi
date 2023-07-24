@@ -27,6 +27,7 @@ import { ApprovalTablesService } from '@libs/services-lib/approval-tables/entity
 import { ApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalTables';
 import { AssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
 import { AssessmentFormsService } from '@libs/services-lib/assessment-form/entity';
+import { PotentialDuplicatesService } from '@libs/services-lib/potential-duplicates/entity';
 import { IProvider } from './provider.types';
 
 export const provider = (httpClient = client): IProvider => ({
@@ -58,4 +59,5 @@ export const provider = (httpClient = client): IProvider => ({
   errorReporting: new ErrorReportingService(httpClient),
   assessmentForms: new AssessmentFormsService(httpClient),
   assessmentResponses: new AssessmentResponsesService(httpClient),
+  potentialDuplicates: new PotentialDuplicatesService(httpClient),
 });
