@@ -117,7 +117,7 @@
       </template>
 
       <template #[`item.${customColumns.isDuplicate}`]="{ item: caseFile }">
-        {{ caseFile.entity.isDuplicate ? $t('common.yes') : $t('common.no') }}
+        {{ getIsDuplicateText(caseFile) }}
       </template>
     </rc-data-table>
   </rc-dialog>
@@ -132,14 +132,16 @@ import {
   EDateMode, EFilterKeyType, EFilterType, IFilterSettings,
 } from '@libs/component-lib/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
+import { TranslateResult } from 'vue-i18n';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
-import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, ICaseFileCombined, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@libs/entities-lib/case-file';
 import routes from '@/constants/routes';
 import { MassActionMode, MassActionType } from '@libs/entities-lib/mass-action';
 import helpers from '@/ui/helpers/helpers';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import massActionCaseFileFiltering from '@/ui/views/pages/mass-actions/mixins/massActionCaseFileFiltering';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default mixins(massActionCaseFileFiltering).extend({
   name: 'FinancialAssistanceCaseFileFiltering',
@@ -174,7 +176,7 @@ export default mixins(massActionCaseFileFiltering).extend({
         email: 'Metadata/PrimaryBeneficiary/ContactInformation/Email',
         authenticationStatus: `Metadata/IdentityAuthenticationStatusName/Translation/${this.$i18n.locale}`,
         validationOfImpact: `Metadata/ImpactStatusValidationName/Translation/${this.$i18n.locale}`,
-        isDuplicate: 'Entity/IsDuplicate',
+        isDuplicate: this.$hasFeature(FeatureKeys.ManageDuplicates) ? 'Metadata/HasPotentialDuplicates' : 'Entity/IsDuplicate',
       };
     },
 
@@ -381,6 +383,13 @@ export default mixins(massActionCaseFileFiltering).extend({
       }
 
       await this.onApplyFilter({ preparedFilters, searchFilters });
+    },
+
+    getIsDuplicateText(caseFile: ICaseFileCombined): TranslateResult {
+      if (this.$hasFeature(FeatureKeys.ManageDuplicates)) {
+        return caseFile.metadata.isDuplicate ? this.$t('common.yes') : this.$t('common.no');
+      }
+      return caseFile.entity.isDuplicate ? this.$t('common.yes') : this.$t('common.no');
     },
   },
 });

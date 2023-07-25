@@ -3,14 +3,12 @@ import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
-
 import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFile, mockCombinedCaseFiles } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
-
 import { createTestingPinia } from '@pinia/testing';
 import { useUserStore } from '@/pinia/user/user';
-
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './CaseFilesTable.vue';
 
 const mockCaseFiles = mockCombinedCaseFiles();
@@ -114,6 +112,40 @@ describe('CaseFilesTable.vue', () => {
             name: routes.household.householdProfile.name,
             params: mockParams,
           });
+      });
+    });
+
+    describe('isDuplicate', () => {
+      it('renders the filter if the feature flag is on', () => {
+        wrapper = mount(Component, {
+          localVue,
+          pinia: createTestingPinia({ stubActions: false }),
+          computed: {
+            tableData: () => mockCombinedCaseFiles(),
+          },
+          mocks: {
+            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
+          },
+        });
+
+        const toggle = wrapper.findDataTest('caseFilesTable__duplicatesOnlySwitch');
+        expect(toggle.exists()).toBeTruthy();
+      });
+
+      it('does not render the filter if the feature flag is on', () => {
+        wrapper = mount(Component, {
+          localVue,
+          pinia: createTestingPinia({ stubActions: false }),
+          computed: {
+            tableData: () => mockCombinedCaseFiles(),
+          },
+          mocks: {
+            $hasFeature: (f) => f !== FeatureKeys.ManageDuplicates,
+          },
+        });
+
+        const toggle = wrapper.findDataTest('caseFilesTable__duplicatesOnlySwitch');
+        expect(toggle.exists()).toBeFalsy();
       });
     });
   });
@@ -380,6 +412,80 @@ describe('CaseFilesTable.vue', () => {
 
         expect(wrapper.vm.filters).toEqual(expected);
       });
+
+      it('should have correct filters when feature flag is on', () => {
+        wrapper = mount(Component, {
+          localVue,
+          pinia: createTestingPinia({ stubActions: false }),
+          mocks: {
+            $hasFeature: jest.fn((f) => f === FeatureKeys.ManageDuplicates),
+          },
+        });
+        const expected = [
+          {
+            key: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
+            type: EFilterType.Text,
+            label: 'caseFilesTable.tableHeaders.firstName',
+          },
+          {
+            key: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
+            type: EFilterType.Text,
+            label: 'caseFilesTable.tableHeaders.lastName',
+          },
+          {
+            key: 'Entity/EventId',
+            type: EFilterType.Select,
+            label: 'caseFileTable.filters.eventName',
+            items: wrapper.vm.eventsFilter,
+            loading: wrapper.vm.eventsFilterLoading,
+            disabled: wrapper.vm.eventsFilterDisabled,
+            props: {
+              'no-data-text': 'common.inputs.start_typing_to_search',
+              'search-input': null,
+              'no-filter': true,
+              'return-object': true,
+              placeholder: 'common.filters.autocomplete.placeholder',
+            },
+          },
+          {
+            key: `Metadata/TriageName/Translation/${wrapper.vm.$i18n.locale}`,
+            type: EFilterType.MultiSelect,
+            label: 'caseFileTable.tableHeaders.triage',
+            items: helpers.enumToTranslatedCollection(CaseFileTriage, 'enums.Triage', true),
+          },
+          {
+            key: 'Entity/Created',
+            type: EFilterType.Date,
+            label: 'caseFileTable.filters.createdDate',
+          },
+          {
+            key: `Metadata/CaseFileStatusName/Translation/${wrapper.vm.$i18n.locale}`,
+            type: EFilterType.MultiSelect,
+            label: 'caseFileTable.tableHeaders.status',
+            items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', true),
+          },
+
+          {
+            key: 'Entity/AssignedTeamMembers',
+            type: EFilterType.Select,
+            label: 'caseFileTable.filters.isAssigned',
+            items: [{
+              text: 'common.yes',
+              value: 'arrayNotEmpty',
+            }, {
+              text: 'common.no',
+              value: 'arrayEmpty',
+            }],
+          },
+          {
+            key: 'Metadata/LastActionDate',
+            type: EFilterType.Date,
+            label: 'caseFileTable.filters.lastActionDate',
+          },
+        ];
+
+        expect(wrapper.vm.filters).toEqual(expected);
+      });
     });
   });
 
@@ -514,6 +620,70 @@ describe('CaseFilesTable.vue', () => {
           expect(wrapper.vm.onApplyFilter)
             .toHaveBeenLastCalledWith({
               preparedFilters: { ...preparedFilters, ...wrapper.vm.myCaseFilesFilter },
+              searchFilters: null,
+            }, { name: 'filterState' });
+        });
+      });
+
+      describe('when user is using duplicates filter', () => {
+        it('should call onApplyFilter with proper filters if filters panel also', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          await wrapper.setData({
+            duplicatesOnly: true,
+          });
+
+          const preparedFilters = { test: {} };
+
+          await wrapper.vm.onApplyFilterLocal({
+            preparedFilters,
+            searchFilters: null,
+          }, { name: 'filterState' });
+
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({
+              preparedFilters: { ...preparedFilters, ...wrapper.vm.duplicatesOnlyFilter },
+              searchFilters: null,
+            }, { name: 'filterState' });
+        });
+      });
+
+      describe('when user is using both duplicates and my cases filter', () => {
+        it('should call onApplyFilter with proper filters if filters panel also', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          await wrapper.setData({
+            duplicatesOnly: true,
+            myCaseFiles: true,
+          });
+
+          const preparedFilters = { test: {} };
+
+          await wrapper.vm.onApplyFilterLocal({
+            preparedFilters,
+            searchFilters: null,
+          }, { name: 'filterState' });
+
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({
+              preparedFilters: { ...preparedFilters, ...wrapper.vm.duplicatesOnlyFilter, ...wrapper.vm.myCaseFilesFilter },
+              searchFilters: null,
+            }, { name: 'filterState' });
+        });
+
+        it('should call onApplyFilter with proper filters if no filters from panel', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          await wrapper.setData({
+            duplicatesOnly: true,
+            myCaseFiles: true,
+          });
+
+          await wrapper.vm.onApplyFilterLocal({
+            preparedFilters: null,
+            searchFilters: null,
+          }, { name: 'filterState' });
+
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({
+              preparedFilters: { ...wrapper.vm.duplicatesOnlyFilter, ...wrapper.vm.myCaseFilesFilter },
               searchFilters: null,
             }, { name: 'filterState' });
         });

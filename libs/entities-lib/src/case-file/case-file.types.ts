@@ -205,7 +205,7 @@ export interface ICaseFileMetadata extends IEntity {
   impactStatusValidationName: IMultilingual,
   appliedProgramIds: uuid[]
   assessments?: { assessmentResponseId: uuid, assessmentFormId: uuid }[],
-  isDuplicate?: boolean,
+  hasPotentialDuplicates?: boolean,
 }
 
 export type ICaseFileCombined = IEntityCombined<ICaseFileEntity, ICaseFileMetadata>;

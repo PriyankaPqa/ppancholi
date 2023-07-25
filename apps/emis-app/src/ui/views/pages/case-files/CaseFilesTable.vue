@@ -73,7 +73,7 @@
           {{ caseFile.entity.caseFileNumber }}
         </router-link>
         <v-icon
-          v-if="caseFile.entity.isDuplicate"
+          v-if="!$hasFeature(FeatureKeys.ManageDuplicates) && caseFile.entity.isDuplicate"
           :data-test="`caseFilesTable__duplicateIcon--${caseFile.entity.caseFileNumber}`"
           small
           color="secondary">
@@ -89,6 +89,14 @@
         :data-test="`beneficiaryName-link_${getBeneficiaryName(caseFile)}`"
         :to="getHouseholdProfileRoute(caseFile)">
         {{ getBeneficiaryName(caseFile) }}
+        <v-icon
+          v-if="$hasFeature(FeatureKeys.ManageDuplicates) && caseFile.metadata.hasPotentialDuplicates"
+          :data-test="`caseFilesTable__duplicateIcon--${caseFile.entity.caseFileNumber}`"
+          small
+          class="ml-1"
+          color="secondary">
+          $rctech-duplicate
+        </v-icon>
       </router-link>
     </template>
 
@@ -118,7 +126,6 @@ import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
-import isEmpty from 'lodash/isEmpty';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@libs/shared-lib/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
@@ -204,7 +211,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     duplicatesOnlyFilter(): Record<string, unknown> {
       return {
-      'Entity/IsDuplicate': true,
+        'Metadata/HasPotentialDuplicates': true,
       };
     },
 
@@ -259,7 +266,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     },
 
     filters(): Array<IFilterSettings> {
-      return [
+      const filters = [
         {
           key: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
           type: EFilterType.Text,
@@ -332,6 +339,8 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           label: this.$t('caseFileTable.filters.lastActionDate') as string,
         },
       ];
+
+      return this.$hasFeature(FeatureKeys.ManageDuplicates) ? filters.filter((f) => f.key !== 'Entity/IsDuplicate') : filters;
     },
 
     labels(): Record<string, unknown> {
@@ -441,12 +450,16 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
 
     async onApplyFilterLocal({ preparedFilters, searchFilters }
     : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown) {
-      let finalFilters = {};
+      let finalFilters = preparedFilters;
+
       if (this.myCaseFiles) {
-        finalFilters = isEmpty(preparedFilters) ? this.myCaseFilesFilter : { ...preparedFilters, ...this.myCaseFilesFilter };
-      } else {
-        finalFilters = isEmpty(preparedFilters) ? null : preparedFilters;
+        finalFilters = { ...finalFilters, ...this.myCaseFilesFilter };
       }
+
+      if (this.duplicatesOnly) {
+        finalFilters = { ...finalFilters, ...this.duplicatesOnlyFilter };
+      }
+
       await this.onApplyFilter({ preparedFilters: finalFilters, searchFilters }, filterState);
     },
 
