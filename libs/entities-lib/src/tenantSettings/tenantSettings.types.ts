@@ -12,7 +12,6 @@ export enum FeatureKeys {
   LimitTagDeletionL2Plus_5959 = 'LimitTagDeletionL2Plus_5959',
   AuthenticationPhaseII = 'AuthenticationPhaseII',
   UseIdentityServer = 'UseIdentityServer',
-  FinancialAssistanceMassAction = 'FinancialAssistanceMassAction',
   MassActionAutoGenerateName = 'MassActionAutoGenerateName',
   AutoCapitalizationForRegistration = 'AutoCapitalizationForRegistration',
   ApprovalHistoryNonFinalApprover = 'approvalHistoryNonFinalApprover',

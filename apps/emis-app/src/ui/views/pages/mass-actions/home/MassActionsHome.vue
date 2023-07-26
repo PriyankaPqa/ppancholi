@@ -30,7 +30,6 @@ import massActions, { IMassActionCards } from '@/ui/views/pages/mass-actions/mix
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
 import helpers from '@/ui/helpers/helpers';
 import { MassActionDataCorrectionType, MassActionGroup } from '@libs/entities-lib/mass-action';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(massActions).extend({
@@ -80,7 +79,6 @@ export default mixins(massActions).extend({
           roles: null,
           group: MassActionGroup.Group3,
           onSecondaryClick: 'downloadFACustomTemplate',
-          feature: FeatureKeys.FinancialAssistanceMassAction,
         },
         {
           title: 'mass_action.card.export_validation_impact',

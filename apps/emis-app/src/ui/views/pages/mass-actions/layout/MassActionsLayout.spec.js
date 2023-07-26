@@ -5,7 +5,6 @@ import {
 import { UserRoles } from '@libs/entities-lib/user';
 
 import routes from '@/constants/routes';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './MassActionsLayout.vue';
 
 const localVue = createLocalVue();
@@ -51,7 +50,6 @@ describe('MassActionsLayout.vue', () => {
                 to: routes.massActions.financialAssistanceCustom.home.name,
                 exact: false,
                 level: UserRoles.level6,
-                feature: FeatureKeys.FinancialAssistanceMassAction,
               },
             ],
           },

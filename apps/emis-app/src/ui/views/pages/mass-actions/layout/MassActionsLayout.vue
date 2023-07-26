@@ -22,7 +22,6 @@ import { PageTemplate } from '@/ui/views/components/layout';
 import massActions from '@/ui/views/pages/mass-actions/mixins/massActions';
 import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
 import { INavigationTabGroup } from '@libs/shared-lib/types';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { UserRoles } from '@libs/entities-lib/user';
 
 export default mixins(massActions).extend({
@@ -74,7 +73,6 @@ export default mixins(massActions).extend({
               to: routes.massActions.financialAssistanceCustom.home.name,
               exact: false,
               level: UserRoles.level6,
-              feature: FeatureKeys.FinancialAssistanceMassAction,
             },
           ],
         },

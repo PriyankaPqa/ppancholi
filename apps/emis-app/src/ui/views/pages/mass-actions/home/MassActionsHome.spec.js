@@ -4,7 +4,6 @@ import {
 } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { MassActionDataCorrectionType } from '@libs/entities-lib/mass-action';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { UserRoles } from '@libs/entities-lib/user';
 import Component from './MassActionsHome.vue';
 
@@ -55,7 +54,6 @@ describe('MassActionsHome.vue', () => {
             roles: null,
             group: 3,
             onSecondaryClick: 'downloadFACustomTemplate',
-            feature: FeatureKeys.FinancialAssistanceMassAction,
           },
           {
             title: 'mass_action.card.export_validation_impact',
