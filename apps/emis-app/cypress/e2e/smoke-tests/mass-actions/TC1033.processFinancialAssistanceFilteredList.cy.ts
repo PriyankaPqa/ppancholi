@@ -45,6 +45,7 @@ describe(
   {
     tags: ['@financial-assistance', '@mass-actions'],
     retries: {
+      openMode: 2,
       runMode: 3,
     },
   },
@@ -83,7 +84,7 @@ describe(
           massFinancialAssistanceDetailsPage.getDialogCancelButton().should('be.visible');
           massFinancialAssistanceDetailsPage.getDialogText().should('eq', 'Are you sure you want to start processing this mass action?');
           massFinancialAssistanceDetailsPage.confirmProcessing();
-          massFinancialAssistanceDetailsPage.refreshUntilCurrentProcessCompleteWithLabelString(event.name.translation.en, ' Processed '); // waiting for processing to be done
+          massFinancialAssistanceDetailsPage.refreshUntilCurrentProcessCompleteWithLabelString('edit', massFinancialAssistanceName, ' Processed '); // Waiting for processing to be done
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getNumberFailedRecords().then((quantity) => {
             if (quantity === '0') {

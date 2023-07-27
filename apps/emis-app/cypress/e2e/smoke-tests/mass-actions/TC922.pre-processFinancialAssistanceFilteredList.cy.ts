@@ -1,6 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { IEventEntity } from '@libs/entities-lib/event';
-import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
+import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { formatCurrentDate } from '@libs/cypress-lib/helpers';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
@@ -28,47 +27,39 @@ const cannotRoles = {
 
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
 
-let event = null as IEventEntity;
 let accessTokenL6 = '';
-let programName = '';
-let table = null as IFinancialAssistanceTableEntity;
 let caseFileCreated1 = null as ICaseFileEntity;
 let caseFileCreated2 = null as ICaseFileEntity;
 let caseFileCreated3 = null as ICaseFileEntity;
 const householdQuantity = 3;
 
 describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: ['@financial-assistance', '@mass-actions'] }, () => {
-  before(() => {
-    cy.getToken().then(async (tokenResponse) => {
-      accessTokenL6 = tokenResponse.access_token;
-      const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
-      const { provider, team } = resultPrepareStateEvent;
-      event = resultPrepareStateEvent.event;
-      const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(provider, event.id, EFinancialAmountModes.Fixed);
-      table = resultCreateProgram.table;
-      programName = resultCreateProgram.program.name.translation.en;
-      cy.wrap(provider).as('provider');
-      cy.wrap(team).as('teamCreated');
-      cy.wrap(table).as('faTable');
-    });
-  });
-  after(function () {
-    if (this.teamCreated?.id && this.provider) {
-      removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
-    }
-  });
   describe('Can Roles', () => {
     for (const [roleName, roleValue] of Object.entries(canRoles)) {
       describe(`${roleName}`, () => {
         beforeEach(() => {
-          cy.then(async () => {
-            const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, event, householdQuantity);
+          cy.getToken().then(async (tokenResponse) => {
+            accessTokenL6 = tokenResponse.access_token;
+            const resultPrepareStateEvent = await createEventAndTeam(accessTokenL6, allRolesValues);
+            // eslint-disable-next-line
+            const resultCreateProgram = await createProgramWithTableWithItemAndSubItem(resultPrepareStateEvent.provider, resultPrepareStateEvent.event.id, EFinancialAmountModes.Fixed);
+            const resultMultipleHousehold = await prepareStateMultipleHouseholds(accessTokenL6, resultPrepareStateEvent.event, householdQuantity);
             caseFileCreated1 = resultMultipleHousehold.householdsCreated[0].registrationResponse.caseFile;
             caseFileCreated2 = resultMultipleHousehold.householdsCreated[1].registrationResponse.caseFile;
             caseFileCreated3 = resultMultipleHousehold.householdsCreated[2].registrationResponse.caseFile;
+            cy.wrap(resultPrepareStateEvent.provider).as('provider');
+            cy.wrap(resultPrepareStateEvent.event).as('event');
+            cy.wrap(resultPrepareStateEvent.team).as('teamCreated');
+            cy.wrap(resultCreateProgram.table).as('faTable');
+            cy.wrap(resultCreateProgram.program.name.translation.en).as('programName');
             cy.login(roleValue);
             cy.goTo('mass-actions/financial-assistance');
           });
+        });
+        afterEach(function () {
+          if (this.teamCreated?.id && this.provider) {
+            removeTeamMembersFromTeam(this.teamCreated.id, this.provider);
+          }
         });
         // eslint-disable-next-line max-statements
         it('should successfully pre-process a financial assistance filtered list', function () {
@@ -80,7 +71,7 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
 
           const massActionViaListPage = massFinancialAssistanceHomePage.selectProcessViaFilteredList();
           massActionViaListPage.addFilter();
-          massActionViaListPage.enterEventName(event.name.translation.en);
+          massActionViaListPage.enterEventName(this.event.name.translation.en);
           massActionViaListPage.applyFilter();
           massActionViaListPage.getCaseFileTable().contains(caseFileCreated1.caseFileNumber).should('be.visible');
           massActionViaListPage.getCaseFileTable().contains(caseFileCreated2.caseFileNumber).should('be.visible');
@@ -88,7 +79,7 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
 
           const newMassFinancialAssistancePage = massActionViaListPage.goToNewMassFinancialAssistancePage();
           newMassFinancialAssistancePage.fillNameDescription(baseMassActionData);
-          newMassFinancialAssistancePage.fillEvent(event.name.translation.en);
+          newMassFinancialAssistancePage.fillEvent(this.event.name.translation.en);
           newMassFinancialAssistancePage.fillTableName(this.faTable.name.translation.en);
           newMassFinancialAssistancePage.fillItemSubItem(newMassFinancialAssistanceData);
           newMassFinancialAssistancePage.fillPaymentModality(newMassFinancialAssistanceData.paymentModality);
@@ -101,22 +92,22 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
           newMassFinancialAssistancePage.getDialogCancelButton().should('be.visible');
 
           const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
-          massFinancialAssistanceDetailsPage.refreshUntilCurrentProcessCompleteWithLabelString(event.name.translation.en, ' Valid for processing '); // Here we wait for pre-processing to be done
+          massFinancialAssistanceDetailsPage.refreshUntilCurrentProcessCompleteWithLabelString('next', baseMassActionData.name, ' Valid for processing '); // here we wait for pre-processing to be done
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionName().should('eq', baseMassActionData.name);
           massFinancialAssistanceDetailsPage.getMassActionDescription().should('eq', baseMassActionData.description);
           massFinancialAssistanceDetailsPage.getMassActionProjectedAmount().should('string', `${parseFloat(newMassFinancialAssistanceData.paymentAmount) * householdQuantity}.00`);
-          massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().should('eq', householdQuantity.toString());
+          massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().should('eq', `${householdQuantity}`.toString());
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Financial assistance');
           massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', formatCurrentDate());
-          massFinancialAssistanceDetailsPage.getMassActionCreatedBy().should('eq', getUserName(roleName));
-          massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsEvent().should('eq', event.name.translation.en);
+          massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsEvent().should('eq', this.event.name.translation.en);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsTable().should('eq', this.faTable.name.translation.en);
-          massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsProgram().should('eq', programName);
+          massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsProgram().should('eq', this.programName);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsItem().should('eq', newMassFinancialAssistanceData.item);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsSubItem().should('eq', newMassFinancialAssistanceData.subItem);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentModality().should('eq', newMassFinancialAssistanceData.paymentModality.toLowerCase());
+          massFinancialAssistanceDetailsPage.getMassActionCreatedBy().should('eq', getUserName(roleName));
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentAmount().should('eq', `$${newMassFinancialAssistanceData.paymentAmount}`);
         });
       });

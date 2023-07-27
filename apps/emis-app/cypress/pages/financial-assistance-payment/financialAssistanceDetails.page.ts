@@ -155,7 +155,7 @@ export class FinancialAssistanceDetailsPage {
           retries += 1;
           if (retries <= maxRetries) {
             // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(1000).then(() => {
+            cy.wait(10000).then(() => {
               cy.reload().then(() => {
                 cy.get("[data-test='submit']").should('be.visible').click();
                 waitForApproverList();

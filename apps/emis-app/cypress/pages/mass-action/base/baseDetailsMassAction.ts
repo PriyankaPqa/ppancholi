@@ -53,23 +53,19 @@ export enum DataTest {
       return cy.getByDataTest(this.status);
     }
 
-    private waitForGetEventProgram() {
-      // we can use any GET
-      cy.intercept({ method: 'GET', url: '**/event/events/**/programs/**' }).as('getRequest');
-      cy.wait('@getRequest', { timeout: 300000 });
-    }
-
-    public refreshUntilCurrentProcessCompleteWithLabelString(eventName: string, labelString:string, maxRetries = 10) {
+    public refreshUntilCurrentProcessCompleteWithLabelString(absentElementAttributeValue:string, massFinancialAssistanceName: string, labelString:string, maxRetries = 10) {
       let retries = 0;
       const waitForSuccessLabelToBe = (labelString: string) => {
-        cy.contains(eventName).should('be.visible').then(() => {
+        // We do negative assertion of absentElementAttributeValue present on previous page, to make sure that next page is loaded before reload() fires
+        cy.get(`[data-test='${absentElementAttributeValue}']`).should('not.exist');
+        // We make sure the next page (ie Processing mass financial assistance/Mass financial assistance details) is completely loaded
+        cy.contains(massFinancialAssistanceName).should('be.visible').then(() => {
           if (Cypress.$("[data-test='successesLabel=']").text().endsWith(labelString)) {
             cy.log('current processing successful');
           } else {
             retries += 1;
             if (retries <= maxRetries) {
                 cy.reload().then(() => {
-                  this.waitForGetEventProgram();
                   waitForSuccessLabelToBe(labelString);
                 });
             } else {

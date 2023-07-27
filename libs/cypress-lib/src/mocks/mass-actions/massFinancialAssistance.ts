@@ -1,10 +1,10 @@
-import { getRandomNumber, itemFinancialAssistance, subItemFinancialAssistance } from '@libs/cypress-lib/helpers';
+import { getCurrentDateString, getRandomNumber, itemFinancialAssistance, subItemFinancialAssistance } from '@libs/cypress-lib/helpers';
 import { IEventEntity } from '@libs/entities-lib/src/event';
 import { EPaymentModalities } from '@libs/entities-lib/src/program';
 import { IMassActionFinancialAssistanceCreatePayload } from '@libs/services-lib/src/mass-actions/entity';
 
 export const mockCreateMassFinancialAssistanceRequest = (event: IEventEntity, force?: Partial<IMassActionFinancialAssistanceCreatePayload>) => ({
-  name: `test mass action - financial assistance - ss${getRandomNumber()}`,
+  name: `test mass financial assistance- - ${getCurrentDateString()} - s${getRandomNumber()}`,
   description: 'description mass action',
   eventId: '',
   tableId: '',

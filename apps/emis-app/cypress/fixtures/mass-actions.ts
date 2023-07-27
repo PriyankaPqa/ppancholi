@@ -1,9 +1,9 @@
-import { getRandomNumber } from '@libs/cypress-lib/helpers';
+import { getCurrentDateString, getRandomNumber } from '@libs/cypress-lib/helpers';
 import { IBaseMassActionFields } from '../pages/mass-action/base/baseCreateMassAction';
 import { INewMassFinancialAssistanceFields } from '../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
 
 export const fixtureBaseMassAction = (retries: number) : IBaseMassActionFields => ({
-  name: `test mass action - s0${getRandomNumber()} - retry(${retries})`,
+  name: `test mass action - ${getCurrentDateString()} - s${getRandomNumber()} - retry(${retries})`,
   description: `description mass action - retry ${retries}`,
 });
 
