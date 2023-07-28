@@ -1,12 +1,20 @@
+import { formatDate } from '@libs/cypress-lib/helpers';
 import { AddAssessmentsPage } from './addAssessments.page';
 
 export enum DataTest {
   add = 'table__addButton',
   tablePendingAssessment = 'pending-assessment-table',
+  tableCompletedAssessment = 'completed-assessment-table',
   assessmentStatus = 'chip-text',
   assessmentStart = 'start-link',
   linkCopy = 'copy-link',
   assessmentDelete = 'delete-link',
+  assessmentDetailLink = 'assessmentDetail-link',
+  resumeAssessment = 'resume-link',
+  dateAssigned = 'date-assigned',
+  dateModified = 'date-modified',
+  dateCompleted = 'date-completed',
+  resumePartialAssessmentLink = 'resume-link',
 }
 
 export class AssessmentsListPage {
@@ -16,11 +24,23 @@ export class AssessmentsListPage {
 
   private tablePendingAssessment = { selector: DataTest.tablePendingAssessment };
 
+  private tableCompletedAssessment = { selector: DataTest.tableCompletedAssessment };
+
   private assessmentStart = { selector: DataTest.assessmentStart };
+
+  private assessmentDetailLink = { selector: DataTest.assessmentDetailLink };
 
   private linkCopy = { selector: DataTest.linkCopy };
 
   private assessmentDelete = { selector: DataTest.assessmentDelete };
+
+  private dateAssigned = { selector: DataTest.dateAssigned };
+
+  private dateModified = { selector: DataTest.dateModified };
+
+  private dateCompleted = { selector: DataTest.dateCompleted };
+
+  private resumePartialAssessmentLink = { selector: DataTest.resumePartialAssessmentLink };
 
   public addAssessment() {
     cy.getByDataTest(this.add).click();
@@ -39,12 +59,36 @@ export class AssessmentsListPage {
     return cy.getByDataTest(this.tablePendingAssessment);
   }
 
+  public getCompletedAssessmentTable() {
+    return cy.getByDataTest(this.tableCompletedAssessment);
+  }
+
   public getCopyLinkButton() {
     return cy.getByDataTest(this.linkCopy);
   }
 
   public getAssessmentStartButton() {
     return cy.getByDataTest(this.assessmentStart);
+  }
+
+  public getAssessmentDetailLink() {
+    return cy.getByDataTest(this.assessmentDetailLink);
+  }
+
+  public getAssessmentDateAssigned() {
+    return cy.getByDataTest(this.dateAssigned).invoke('text').then((date) => formatDate(date));
+  }
+
+  public getAssessmentDateModified() {
+    return cy.getByDataTest(this.dateModified).invoke('text').then((date) => formatDate(date));
+  }
+
+  public getAssessmentDateCompleted() {
+    return cy.getByDataTest(this.dateCompleted);
+  }
+
+  public getResumePartialAssessmentButton() {
+    return cy.getByDataTest(this.resumePartialAssessmentLink);
   }
 
   public getDeleteAssessmentButton() {

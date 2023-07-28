@@ -1,6 +1,10 @@
 import { IProvider } from '@/services/provider';
 import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
-import { mockCreateAssessmentRequest } from '@libs/cypress-lib/mocks/events/assessment';
+import {
+  mockAssessmentResponseRequest,
+  mockCreateAssessmentRequest,
+  mockPartialSaveAssessmentAnsweredQuestionsRequest,
+  mockUpdateAssessmentRequest } from '@libs/cypress-lib/mocks/assessments/assessment';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
 import { mockApprovalTableData, mockCreateApprovalTableRequest } from '@libs/cypress-lib/mocks/approval-table/approvalTable';
@@ -106,6 +110,30 @@ export const prepareStateHousehold = async (accessToken: string, event: IEventEn
 };
 
 /**
+ * Adds assessment to a casefile
+ * @param provider
+ * @param casefileId
+ * @param assessmentFormId
+ */
+export const addAssessmentToCasefile = async (provider: IProvider, casefileId: string, assessmentFormId: string) => {
+  const mockAssessmentResponse = mockAssessmentResponseRequest(casefileId, assessmentFormId);
+  const createAssessmentResponse = await provider.assessmentResponses.create(mockAssessmentResponse);
+  return createAssessmentResponse;
+};
+
+/**
+ * Partially completes the assessment added to the casefile
+ * @param provider
+ * @param assessmentResponseId
+ * @param casefileId
+ * @param assessmentFormId
+ */
+export const partiallyCompleteCasefileAssessment = async (provider: IProvider, assessmentResponseId: string, casefileId: string, assessmentFormId: string) => {
+  const mockPartialSaveAssessmentAnsweredQuestions = mockPartialSaveAssessmentAnsweredQuestionsRequest(assessmentResponseId, casefileId, assessmentFormId);
+  await provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockPartialSaveAssessmentAnsweredQuestions);
+};
+
+/**
  * Creates multiple households
  * @param accessToken
  * @param event
@@ -155,6 +183,18 @@ export const createAssessment = async (provider: IProvider, eventId: string, pro
   const mockCreateAssessment = mockCreateAssessmentRequest({ eventId, programId });
   const assessment = await provider.assessmentForms.create(mockCreateAssessment);
   return { assessment };
+};
+
+/**
+ * Create and updates an assessment to build survey
+ * @param provider
+ * @param eventId
+ * @param programId
+ */
+export const createAndUpdateAssessment = async (provider: IProvider, eventId: string, programId: string) => {
+  const assessment = await provider.assessmentForms.create(mockCreateAssessmentRequest({ eventId, programId }));
+  const updatedAssessment = await provider.assessmentForms.updateAssessmentStructure(mockUpdateAssessmentRequest(assessment.id, { eventId, programId }));
+  return updatedAssessment;
 };
 
 // verifies if casefile created is indexed through search and wait

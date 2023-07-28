@@ -101,15 +101,21 @@
           </template>
 
           <template #[`item.${customColumns.dateAssigned}`]="{ item }">
-            {{ item.dateAssignedFormatted }}
+            <span data-test="date-assigned">
+              {{ item.dateAssignedFormatted }}
+            </span>
           </template>
 
           <template #[`item.${customColumns.dateModified}`]="{ item }">
-            {{ item.dateModifiedFormatted }}
+            <span data-test="date-modified">
+              {{ item.dateModifiedFormatted }}
+            </span>
           </template>
 
           <template #[`item.${customColumns.dateCompleted}`]="{ item }">
-            {{ item.dateCompletedFormatted }}
+            <span data-test="date-completed">
+              {{ item.dateCompletedFormatted }}
+            </span>
           </template>
 
           <template #[`item.${customColumns.completionStatus}`]="{ item }">
