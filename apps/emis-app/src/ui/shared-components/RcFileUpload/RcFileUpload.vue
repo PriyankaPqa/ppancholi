@@ -64,7 +64,7 @@ export default Vue.extend({
      */
     maxSize: {
       type: [Number, String],
-      default: 5000000, // 5Mb
+      default: 50000000, // 50Mb
     },
     counter: {
       type: Boolean,
@@ -91,7 +91,7 @@ export default Vue.extend({
      */
     errorSize: {
       type: String,
-      default: 'The size should not exceed',
+      default: '',
     },
     /**
      * Error message regarding size of file
@@ -176,11 +176,12 @@ export default Vue.extend({
       } else {
         // We check if the size of the file does not exceed the limit
         if (!this.isFileSizeOK(file.size)) {
-          this.errorMessages.push(`${this.errorSize} ${helpers.formatBytes(this.maxSize as number, 2)}`);
+          const formatBytes = helpers.formatBytes(this.maxSize as number, 2);
+          this.errorMessages.push(this.errorSize ? `${this.errorSize} ${formatBytes}` : this.$t('common.upload.max_file.size', { x: formatBytes }) as string);
         }
         // We check if extension of the file is authorized
         if (!this.isFileExtensionAuthorized(this.getFileExtension(file))) {
-          this.errorMessages.push(`${this.allowedExtensions.join(', ')} ${this.errorExtensions}`);
+          this.errorMessages.push(`${this.allowedExtensions.join(', ')} ${this.$t('common.upload.file.extension')}`);
         }
       }
     },

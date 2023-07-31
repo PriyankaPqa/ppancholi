@@ -89,12 +89,12 @@ describe('RcFileUpload.spec', () => {
 
       test('if file size is not ok, push the right message to messages', async () => {
         const mockFile = new File(['1'], 'mock-name');
-        helpers.formatBytes = jest.fn(() => '5 MB');
+        helpers.formatBytes = jest.fn(() => '50 MB');
         doMount(mockFile);
         wrapper.vm.isFileSizeOK = jest.fn(() => false);
         await wrapper.vm.checkRules();
-
-        expect(wrapper.vm.errorMessages).toEqual(expect.arrayContaining(['The size should not exceed 5 MB']));
+        expect(wrapper.vm.errorMessages[0].key).toBe('common.upload.max_file.size');
+        expect(wrapper.vm.errorMessages[0].params[0].x).toBe('50 MB');
       });
 
       test('if file extension is not authorized, push the right message to messages', async () => {
@@ -108,7 +108,7 @@ describe('RcFileUpload.spec', () => {
         wrapper.vm.isFileExtensionAuthorized = jest.fn(() => false);
         await wrapper.vm.checkRules();
 
-        expect(wrapper.vm.errorMessages).toEqual(expect.arrayContaining(['csv files only are authorized']));
+        expect(wrapper.vm.errorMessages).toEqual(expect.arrayContaining(['csv common.upload.file.extension']));
       });
     });
 
