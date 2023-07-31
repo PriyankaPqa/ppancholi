@@ -7,6 +7,7 @@ import { i18n } from '@/ui/plugins/i18n';
 import { IRestResponse } from '@libs/services-lib/http-client';
 import { DateTypes, dateTypes } from '@/constants/dateTypes';
 import routes from '@/constants/routes';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import { Trans } from '../plugins';
 
 export default {
@@ -119,19 +120,6 @@ export default {
     return [...array]
       .sort((a, b) => this.getMultilingualValue(a[key] as unknown as IMultilingual, trim)
         .localeCompare(this.getMultilingualValue(b[key] as unknown as IMultilingual, trim)));
-  },
-
-  /**
-   * Returns a normalized string value (replaces accents and special characters)
-   * Useful for comparing string
-   * @param value The string to normalize
-   */
-  getNormalizedString(value: string) {
-    if (!value) {
-      return value;
-    }
-
-    return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   },
 
   getLocalStringDate(date: Date | string, dateFieldName: string, formatTo = 'yyyy-MM-dd'): string {
@@ -268,7 +256,7 @@ export default {
 
   // Used for search query in Azure search. Only the input query needs to be sanitize.
   sanitize(query: string) {
-    return encodeURIComponent(query.replace(/[-[\]{}&~!():*+?./\\,^$|#\s]/g, '\\$&'));
+    return encodeURIComponent(helpers.getNormalizedString(query).replace(/[-[\]{}&~!():*+?./\\,^$|#\s]/g, '\\$&'));
   },
 
   toQuickSearch(query: string) {

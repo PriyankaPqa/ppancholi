@@ -3,6 +3,19 @@ import isEmpty from 'lodash/isEmpty';
 import { IAzureCombinedSearchResult, IAzureSearchResult, IAzureTableSearchResults } from '../types/interfaces/IAzureSearchParams';
 
 export default {
+  /**
+  * Returns a normalized string value (replaces accents and special characters)
+  * Useful for comparing string
+  * @param value The string to normalize
+  */
+  getNormalizedString(value: string) {
+  if (!value) {
+    return value;
+  }
+
+  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  },
+
   flattenObj(obj: Record<string, unknown>, parent?: string, res: Record<string, unknown> = {}): Record<string, unknown> {
     Object.keys(obj).forEach((key) => {
       // eslint-disable-next-line
@@ -29,6 +42,7 @@ export default {
     if (query == null || query === '') {
       return collection;
     }
+    const normalizedQuery = this.getNormalizedString(query).toLowerCase();
     return collection.filter((o: Record<string, unknown>) => {
       const flat = deepSearch ? this.flattenObj(o) : o;
       return Object.keys(flat).some((k) => {
@@ -37,7 +51,7 @@ export default {
         }
 
         if (typeof flat[k] === 'string') {
-          return (flat[k] as string).toLowerCase().includes(query.toLowerCase());
+          return this.getNormalizedString((flat[k] as string)).toLowerCase().includes(normalizedQuery);
         }
         return false;
       });

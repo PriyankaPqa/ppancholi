@@ -42,17 +42,4 @@ export default {
       document.body.removeChild(link);
     }
   },
-
-  /**
-   * Returns a normalized string value (replaces accents and special characters)
-   * Useful for comparing string
-   * @param value The string to normalize
-   */
-  getNormalizedString(value: string) {
-    if (!value) {
-      return value;
-    }
-
-    return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  },
 };

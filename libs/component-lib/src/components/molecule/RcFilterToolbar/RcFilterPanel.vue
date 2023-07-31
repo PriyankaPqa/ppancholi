@@ -54,6 +54,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _slice from 'lodash/slice';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import RcDialog from '@libs/component-lib/components/atoms/RcDialog.vue';
 import {
   EFilterOperator,
@@ -203,7 +204,7 @@ export default Vue.extend({
             dateMode: option.dateMode,
             type: option.type,
             operator: filterValue.operator,
-            value: filterValue.value,
+            value: typeof filterValue.value === 'string' ? helpers.getNormalizedString(filterValue.value) : filterValue.value,
           };
           counter += 1;
         }

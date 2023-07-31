@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import helpers from '@libs/component-lib/helpers';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import { IMultilingual } from '@libs/shared-lib/types';
 import VTextFieldWithValidation from './VTextFieldWithValidation.vue';
 

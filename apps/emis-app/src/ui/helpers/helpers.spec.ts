@@ -77,6 +77,7 @@ describe('>>>> helpers', () => {
   describe('toQuickSearch', () => {
     it('returns with sanitized quickSearch', () => {
       expect(helpers.toQuickSearch('[search')).toEqual('((/.*%5C%5Bsearch.*/ OR "\\"%5C%5Bsearch\\""))');
+      expect(helpers.toQuickSearch('moépìstöè')).toEqual('((/.*moepistoe.*/ OR "\\"moepistoe\\""))');
     });
 
     it('sets azureSearchParams.search with quickSearch split by space', () => {

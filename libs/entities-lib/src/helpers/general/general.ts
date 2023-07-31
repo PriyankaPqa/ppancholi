@@ -1,5 +1,6 @@
 import VueI18n from 'vue-i18n';
 import { IMultilingual } from '@libs/shared-lib/types';
+import helpers from '@libs/shared-lib/helpers/helpers';
 
 export default {
   getMultilingualValue(m: IMultilingual, i18n: VueI18n, trim = false) {
@@ -31,19 +32,6 @@ export default {
       }
     });
     return data.sort((a, b) => a.text.localeCompare(b.text));
-  },
-
-  /**
-   * Returns a normalized string value (replaces accents and special characters)
-   * Useful for comparing string
-   * @param value The string to normalize
-   */
-  getNormalizedString(value: string) {
-    if (!value) {
-      return value;
-    }
-
-    return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   },
 
   scrollToFirstError(containerID: string) {
@@ -94,7 +82,7 @@ export default {
    */
 
   encodeUrl(value: string): string {
-    let s = this.getNormalizedString(value);
+    let s = helpers.getNormalizedString(value);
     s = s.replace(/[.|~|"]/g, '');
     s = s.replace(/[/\s]/g, '-');
     s = encodeURIComponent(s);
