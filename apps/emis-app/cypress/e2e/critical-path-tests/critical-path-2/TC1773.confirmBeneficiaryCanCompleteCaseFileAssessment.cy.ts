@@ -1,11 +1,12 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { format } from 'date-fns';
+import { formatCurrentDate } from '@libs/cypress-lib/helpers';
 import {
   prepareStateEventAndProgram,
   prepareStateHousehold,
   createAndUpdateAssessment,
   addAssessmentToCasefile,
-  partiallyCompleteCasefileAssessment } from '../../helpers/prepareState';
+  completeAndSubmitCasefileAssessment } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
 
@@ -27,7 +28,7 @@ const canRolesValues = [...Object.values(canRoles)];
 
 let accessTokenL6 = '';
 
-describe('#TC1772# - Confirm that the Beneficiary can partially complete a Case File Assessment', { tags: ['@assessments'] }, () => {
+describe('#TC1773# - Confirm that Beneficiary can complete a Case File Assessment', { tags: ['@assessments'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -37,6 +38,7 @@ describe('#TC1772# - Confirm that the Beneficiary can partially complete a Case 
       cy.wrap(event).as('eventCreated');
       cy.wrap(team).as('teamCreated');
       cy.wrap(resultAssessment.id).as('assessmentFormId');
+      cy.wrap(resultAssessment.name.translation.en).as('assessmentName');
     });
   });
   after(function () {
@@ -58,20 +60,20 @@ describe('#TC1772# - Confirm that the Beneficiary can partially complete a Case 
             cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/assessments`);
           });
         });
-        it('should successfully partially complete a Case File Assessment', function () {
+        it('should successfully complete a Case File Assessment', function () {
           // eslint-disable-next-line
-          partiallyCompleteCasefileAssessment(this.householdCreated.provider, this.casefileAssessment.id, this.householdCreated.registrationResponse.caseFile.id, this.assessmentFormId); //partially respond to assessment as a beneficiary
+          completeAndSubmitCasefileAssessment(this.householdCreated.provider, this.casefileAssessment.id, this.householdCreated.registrationResponse.caseFile.id, this.assessmentFormId); //completely respond to assessment as a beneficiary and click on submit
 
           const assessmentsListPage = new AssessmentsListPage();
-          assessmentsListPage.getAssessmentDetailLink().should('be.visible');
+          assessmentsListPage.getCompletedAssessmentTable().contains(`${this.assessmentName}`).should('be.visible');
           assessmentsListPage.getAssessmentDateAssigned().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           assessmentsListPage.getAssessmentDateModified().should('eq', format(Date.now(), 'yyyy-MM-dd'));
-          assessmentsListPage.getAssessmentDateCompletedElement().should('not.be.visible');
-          assessmentsListPage.getCompletedAssessmentTable().contains('Partial').should('be.visible');
-          if (roleName === 'Contributor3' || roleName === 'Contributor2' || roleName === 'Contributor1' || roleName === 'ReadOnly') {
-            assessmentsListPage.getResumePartialAssessmentButton().should('not.exist');
+          assessmentsListPage.getAssessmentDateCompletedElement().contains(`${formatCurrentDate()}`).should('be.visible');
+          assessmentsListPage.getAssessmentStatusTag().should('eq', 'Completed');
+          if (roleName === 'Level6' || roleName === 'Level5' || roleName === 'Level4' || roleName === 'Level3') {
+            assessmentsListPage.getEditCompletedAssessmentButton().should('be.visible');
           } else {
-            assessmentsListPage.getResumePartialAssessmentButton().should('be.visible');
+            assessmentsListPage.getEditCompletedAssessmentButton().should('not.exist');
           }
         });
       });

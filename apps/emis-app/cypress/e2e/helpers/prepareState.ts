@@ -4,6 +4,7 @@ import {
   mockAssessmentResponseRequest,
   mockCreateAssessmentRequest,
   mockPartialSaveAssessmentAnsweredQuestionsRequest,
+  mockSaveAssessmentAnsweredQuestionsRequest,
   mockUpdateAssessmentRequest } from '@libs/cypress-lib/mocks/assessments/assessment';
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { mockProgram } from '@libs/cypress-lib/mocks/programs/program';
@@ -131,6 +132,19 @@ export const addAssessmentToCasefile = async (provider: IProvider, casefileId: s
 export const partiallyCompleteCasefileAssessment = async (provider: IProvider, assessmentResponseId: string, casefileId: string, assessmentFormId: string) => {
   const mockPartialSaveAssessmentAnsweredQuestions = mockPartialSaveAssessmentAnsweredQuestionsRequest(assessmentResponseId, casefileId, assessmentFormId);
   await provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockPartialSaveAssessmentAnsweredQuestions);
+};
+
+/**
+ * Complete and submit the assessment added to the casefile
+ * @param provider
+ * @param assessmentResponseId
+ * @param casefileId
+ * @param assessmentFormId
+ */
+export const completeAndSubmitCasefileAssessment = async (provider: IProvider, assessmentResponseId: string, casefileId: string, assessmentFormId: string) => {
+  const mockSaveAssessmentAnsweredQuestions = mockSaveAssessmentAnsweredQuestionsRequest(assessmentResponseId, casefileId, assessmentFormId);
+  await provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockSaveAssessmentAnsweredQuestions);
+  await provider.assessmentResponses.completeSurveyByBeneficiary(mockSaveAssessmentAnsweredQuestions);
 };
 
 /**

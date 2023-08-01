@@ -159,3 +159,13 @@ answeredQuestionsHistory: [],
 dateAssigned: new Date('2022-09-09T16:33:11.700Z'),
 ...force,
 });
+
+// eslint-disable-next-line
+export const mockSaveAssessmentAnsweredQuestionsRequest = (id: string, caseFileId:string, assessmentFormId:string, force? : Partial<IAssessmentResponseEntity>) : IAssessmentResponseEntity => ({
+  ...mockPartialSaveAssessmentAnsweredQuestionsRequest(id, caseFileId, assessmentFormId),
+  // eslint-disable-next-line
+  externalToolState: new SurveyJsAssessmentResponseState('{\"question1\":\"no\",\"question2\":false,\"_currentPageNo\":0}','[{\"name\":\"question1\",\"title\":\"Do you have school aged children\",\"value\":\"no\",\"displayValue\":\"Non\",\"isNode\":false,\"questionType\":\"yes-no\"},{\"name\":\"question2\",\"title\":\"Is you home livable ?\",\"value\":false,\"displayValue\":\"Non\",\"isNode\":false,\"questionType\":\"boolean\"}]'),
+  // eslint-disable-next-line
+  answeredQuestions: [{"assessmentQuestionIdentifier":"question1","responses":[{"displayValue":"Non","textValue":"no","numericValue":null}]},{"assessmentQuestionIdentifier":"question2","responses":[{"displayValue":"Non","textValue":"false","numericValue":null}]}],
+  ...force,
+  });

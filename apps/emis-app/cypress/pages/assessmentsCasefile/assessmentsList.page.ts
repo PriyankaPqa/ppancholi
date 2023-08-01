@@ -15,6 +15,7 @@ export enum DataTest {
   dateModified = 'date-modified',
   dateCompleted = 'date-completed',
   resumePartialAssessmentLink = 'resume-link',
+  editAssessmentLink = 'edit-link',
 }
 
 export class AssessmentsListPage {
@@ -41,6 +42,8 @@ export class AssessmentsListPage {
   private dateCompleted = { selector: DataTest.dateCompleted };
 
   private resumePartialAssessmentLink = { selector: DataTest.resumePartialAssessmentLink };
+
+  private editAssessmentLink = { selector: DataTest.editAssessmentLink };
 
   public addAssessment() {
     cy.getByDataTest(this.add).click();
@@ -84,11 +87,19 @@ export class AssessmentsListPage {
   }
 
   public getAssessmentDateCompleted() {
+    return cy.getByDataTest(this.dateCompleted).invoke('text').then((date) => formatDate(date));
+  }
+
+  public getAssessmentDateCompletedElement() {
     return cy.getByDataTest(this.dateCompleted);
   }
 
   public getResumePartialAssessmentButton() {
     return cy.getByDataTest(this.resumePartialAssessmentLink);
+  }
+
+  public getEditCompletedAssessmentButton() {
+    return cy.getByDataTest(this.editAssessmentLink);
   }
 
   public getDeleteAssessmentButton() {
