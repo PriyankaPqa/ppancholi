@@ -822,6 +822,20 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         rationale: 'test-rationale',
       },
     },
+    {
+      id: 'mock-activity-id-45',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.HouseholdPotentialDuplicateUpdated,
+      details: {
+        duplicateHouseholdId: 'hh-id',
+        duplicateHouseholdRegistrationNumber: '12345',
+        duplicateStatus: 1,
+        rationale: 'rationale',
+      },
+    },
   ];
 
   if (type) {

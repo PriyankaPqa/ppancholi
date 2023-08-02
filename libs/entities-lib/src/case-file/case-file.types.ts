@@ -75,6 +75,7 @@ export enum CaseFileActivityType {
   TempAddressUpdated = 37,
   ImpactedIndividualReceivingAssistance = 38,
   ImpactedIndividualNoLongerReceivingAssistance = 39,
+  HouseholdPotentialDuplicateUpdated = 40,
 }
 
 export enum HouseholdCaseFileActivityType {

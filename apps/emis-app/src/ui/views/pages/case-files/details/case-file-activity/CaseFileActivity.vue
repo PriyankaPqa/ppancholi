@@ -99,7 +99,7 @@
             </v-row>
 
             <component
-              :is="getComponentName()"
+              :is="getComponentName(item)"
               v-for="item in caseFileActivities"
               :key="item.id"
               :force-hide-menu="true"
@@ -116,7 +116,7 @@ import mixins from 'vue-typed-mixins';
 import _sortBy from 'lodash/sortBy';
 import _orderBy from 'lodash/orderBy';
 import { RcPageContent, RcPageLoading, RcTooltip } from '@libs/component-lib/components';
-import { CaseFileTriage } from '@libs/entities-lib/case-file';
+import { CaseFileActivityType, CaseFileTriage, ICaseFileActivity } from '@libs/entities-lib/case-file';
 import helpers from '@/ui/helpers/helpers';
 import { IIdMultilingualName } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -132,6 +132,7 @@ import CaseFileActivityListItem from './components/CaseFileActivityListItem.vue'
 import AssignCaseFile from './components/AssignCaseFile.vue';
 import CaseFileAssignments from './components/CaseFileAssignments.vue';
 import caseFileDetail from '../caseFileDetail';
+import CaseFileActivityDuplicateUpdated from './components/CaseFileActivityDuplicateUpdated.vue';
 
 export default mixins(caseFileDetail, caseFileActivity).extend({
   name: 'CaseFileActivity',
@@ -146,7 +147,7 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
     CaseFileActivityListItem,
     AssignCaseFile,
     CaseFileAssignments,
-
+    CaseFileActivityDuplicateUpdated,
   },
   props: {
     /*
@@ -222,8 +223,11 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
   },
 
   methods: {
-    getComponentName(): string {
-      return 'CaseFileActivityListItem';
+      getComponentName(item: ICaseFileActivity): string {
+        if (item.activityType === CaseFileActivityType.HouseholdPotentialDuplicateUpdated) {
+          return 'CaseFileActivityDuplicateUpdated';
+        }
+        return 'CaseFileActivityListItem';
     },
 
     async setCaseFileIsDuplicate() {
