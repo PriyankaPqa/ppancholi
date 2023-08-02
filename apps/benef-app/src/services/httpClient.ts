@@ -2,7 +2,20 @@ import { HttpClient } from '@libs/services-lib/http-client';
 import { i18n } from '../ui/plugins/i18n';
 
 export const getHttpClient = (
-  { accessToken, baseUrl, authentication, useErrorReport }: { accessToken: string; baseUrl: string; authentication: boolean; useErrorReport: boolean },
+  {
+    accessToken,
+    baseUrl,
+    authentication,
+    useErrorReport,
+    localApiPortMap,
+  }:
+  {
+    accessToken: string;
+    baseUrl: string;
+    authentication: boolean;
+    useErrorReport: boolean;
+    localApiPortMap: string
+  },
 ) => new HttpClient(i18n, {
   authentication,
   accessToken,
@@ -10,6 +23,7 @@ export const getHttpClient = (
   redirect403Url: null,
   timerBeforeRedirection: 3000,
   useErrorReport,
+  localApiPortMap,
 });
 
 export const httpClient = getHttpClient({
@@ -17,4 +31,5 @@ export const httpClient = getHttpClient({
   accessToken: null,
   baseUrl: `${process.env.VITE_API_BASE_URL}/`,
   useErrorReport: false,
+  localApiPortMap: process.env.VITE_API_PORTS,
 });

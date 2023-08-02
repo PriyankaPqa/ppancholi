@@ -45,6 +45,7 @@ describe('httpClient', () => {
         timerBeforeRedirection: 1000,
         useErrorReport: true,
         baseUrl: 'baseUrl',
+        localApiPortMap: '',
       });
     });
 
@@ -86,6 +87,7 @@ describe('httpClient', () => {
         timerBeforeRedirection: 10000,
         useErrorReport: true,
         baseUrl: 'baseUrl',
+        localApiPortMap: '',
       });
 
       Vue.toasted = {

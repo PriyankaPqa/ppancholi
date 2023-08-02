@@ -40,6 +40,7 @@ export interface IHttpClientOptions {
   timerBeforeRedirection: number;
   useErrorReport: boolean;
   baseUrl: string;
+  localApiPortMap: string;
 }
 
 export interface IHttpClient {

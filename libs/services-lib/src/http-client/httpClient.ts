@@ -25,6 +25,8 @@ export class HttpClient implements IHttpClient {
 
   public baseUrl: string;
 
+  private localApiPortMap: string;
+
   constructor(i18n: any, options: IHttpClientOptions) {
     this.axios = axios.create({
       baseURL: options.baseUrl,
@@ -47,6 +49,7 @@ export class HttpClient implements IHttpClient {
     this.i18n = i18n;
     this.options = options;
     this.baseUrl = options.baseUrl;
+    this.localApiPortMap = options.localApiPortMap;
   }
 
   public setHeadersTenant(tenantId: string) {
@@ -168,7 +171,7 @@ export class HttpClient implements IHttpClient {
   }
 
   private requestHandler(request: any) {
-    this.mapRequestForLocalhost(request, process.env.VITE_API_PORTS);
+    this.mapRequestForLocalhost(request, this.localApiPortMap);
 
     if (this.options.authentication) {
       if (!request.ignoreJwt) {

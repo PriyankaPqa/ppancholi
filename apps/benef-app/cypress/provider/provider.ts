@@ -9,6 +9,7 @@ export const useProvider = (accessToken: string) => {
     baseUrl: Cypress.env('API_BASE_URL'),
     authentication: true,
     useErrorReport: false,
+    localApiPortMap: Cypress.env('API_PORTS'),
   });
   return {
     cypress: {

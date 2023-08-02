@@ -83,7 +83,8 @@ export const getCredentials = (as: UserRoles) => {
 };
 
 export const buildAccountInfo = (tokenResponse: ServerAuthorizationTokenResponse): AccountInfo => {
-  const environment = 'login.windows.net';
+  const useIdentityServer = !!Cypress.env('USE_IDS'); // FeatureKeys.UseIdentityServer
+  const environment = useIdentityServer ? 'ids.crc-tech.ca' : 'login.windows.net';
   const tenantId = Cypress.env('AZURE_TENANT_ID');
   const idToken = decode(tokenResponse.id_token) as TokenClaims;
   const localAccountId = idToken.oid || idToken.sid;
@@ -104,6 +105,8 @@ export const buildAccountInfo = (tokenResponse: ServerAuthorizationTokenResponse
 };
 
 const buildAccountEntity = (
+  authorityType: string,
+  environment: string,
   homeAccountId: string,
   realm: string,
   localAccountId: string,
@@ -111,10 +114,10 @@ const buildAccountEntity = (
   name: string,
   // eslint-disable-next-line max-params
 ) => ({
-  authorityType: 'MSSTS',
+  authorityType,
   clientInfo: '',
   homeAccountId,
-  environment: 'login.windows.net',
+  environment,
   realm,
   localAccountId,
   username,
@@ -122,8 +125,10 @@ const buildAccountEntity = (
 });
 
 const buildAccessTokenEntity = ({
-  homeAccountId, accessToken, expiresIn, extExpiresIn, realm, scopes,
+  environment, clientId, homeAccountId, accessToken, expiresIn, extExpiresIn, realm, scopes,
 }: {
+    environment: string,
+    clientId: string,
     homeAccountId: string,
     accessToken: string,
     expiresIn: number,
@@ -132,8 +137,6 @@ const buildAccessTokenEntity = ({
     scopes: string[],
 }) => {
   const now = Math.floor(Date.now() / 1000);
-  const environment = 'login.windows.net';
-  const clientId = Cypress.env('AZURE_CLIENT_ID');
   return {
     homeAccountId,
     credentialType: 'AccessToken',
@@ -149,23 +152,30 @@ const buildAccessTokenEntity = ({
   };
 };
 
-const buildIdTokenEntity = (homeAccountId: string, idToken: string, realm: string) => {
-  const environment = 'login.windows.net';
-  const clientId = Cypress.env('AZURE_CLIENT_ID');
-  return {
+const buildIdTokenEntity = ({
+  environment, clientId, homeAccountId, idToken, realm,
+}: {
+  environment: string,
+  clientId: string,
+  homeAccountId: string,
+  idToken: string,
+  realm: string,
+}) => ({
     credentialType: 'IdToken',
     homeAccountId,
     environment,
     clientId,
     secret: idToken,
     realm,
-  };
-};
+  });
 
 export const getInjectTokens = (tokenResponse: ServerAuthorizationTokenResponse): ITokens => {
-  const environment = 'login.windows.net';
-  const clientId = Cypress.env('AZURE_CLIENT_ID');
-  const apiScopes = [Cypress.env('MSAL_API_SCOPES')] as Array<string>;
+  const useIdentityServer = !!Cypress.env('USE_IDS'); // FeatureKeys.UseIdentityServer
+  // environment: could parse the token issuer, but this shouldn't be necessary
+  const environment = useIdentityServer ? 'ids.crc-tech.ca' : 'login.windows.net';
+  const authorityType = useIdentityServer ? 'Generic' : 'MSSTS';
+  const clientId = useIdentityServer ? 'cypress' : Cypress.env('AZURE_CLIENT_ID');
+  const apiScopes = (useIdentityServer ? [Cypress.env('IDS_API_SCOPES')] : [Cypress.env('MSAL_API_SCOPES')]) as Array<string>;
   const idToken: JwtPayload = decode(tokenResponse.id_token) as JwtPayload;
   const localAccountId = idToken.oid || idToken.sid;
   const realm = idToken.tid;
@@ -174,10 +184,12 @@ export const getInjectTokens = (tokenResponse: ServerAuthorizationTokenResponse)
   const { name } = idToken;
 
   const accountKey = `${homeAccountId}-${environment}-${realm}`;
-  const accountEntity = buildAccountEntity(homeAccountId, realm, localAccountId, username, name);
+  const accountEntity = buildAccountEntity(authorityType, environment, homeAccountId, realm, localAccountId, username, name);
 
   const accessTokenKey = `${homeAccountId}-${environment}-accesstoken-${clientId}-${realm}-${apiScopes.join(' ')}`;
   const accessTokenEntity = buildAccessTokenEntity({
+    environment,
+    clientId,
     homeAccountId,
     accessToken: tokenResponse.access_token,
     expiresIn: tokenResponse.expires_in,
@@ -187,7 +199,7 @@ export const getInjectTokens = (tokenResponse: ServerAuthorizationTokenResponse)
   });
 
   const idTokenKey = `${homeAccountId}-${environment}-idtoken-${clientId}-${realm}-`;
-  const idTokenEntity = buildIdTokenEntity(homeAccountId, tokenResponse.id_token, realm);
+  const idTokenEntity = buildIdTokenEntity({ environment, clientId, homeAccountId, idToken: tokenResponse.id_token, realm });
 
   return {
     accountKey,
@@ -199,7 +211,28 @@ export const getInjectTokens = (tokenResponse: ServerAuthorizationTokenResponse)
   };
 };
 
-Cypress.Commands.add('getToken', (as = UserRoles.level6) => {
+const getTokenIDS = (as = UserRoles.level6) => {
+  const { username } = getCredentials(as as UserRoles);
+  cy.request({
+    method: 'POST',
+    url: Cypress.env('IDS_TOKEN_ENDPOINT'),
+    form: true,
+    body: {
+      grant_type: 'client_credentials_impersonation',
+      client_id: 'cypress',
+      client_secret: Cypress.env('IDS_CLIENT_SECRET'),
+      scope: ['openid profile email emisid'].concat(Cypress.env('IDS_API_SCOPES')).join(' '),
+      username,
+      tid: Cypress.env('AZURE_TENANT_ID'),
+    },
+  }).then((response) => {
+    const tokenResponse = response.body as ServerAuthorizationTokenResponse;
+    tokenResponse.id_token = tokenResponse.access_token;
+    return tokenResponse;
+  });
+};
+
+const getTokenAD = (as = UserRoles.level6) => {
   const { username, password } = getCredentials(as as UserRoles);
   cy.request({
     method: 'POST',
@@ -219,6 +252,15 @@ Cypress.Commands.add('getToken', (as = UserRoles.level6) => {
     const tokenResponse = response.body as ServerAuthorizationTokenResponse;
     return tokenResponse;
   });
+};
+
+Cypress.Commands.add('getToken', (as = UserRoles.level6) => {
+  const useIdentityServer = !!Cypress.env('USE_IDS');
+  if (useIdentityServer) {
+    return getTokenIDS(as);
+  }
+
+    return getTokenAD(as);
 });
 
 Cypress.Commands.add('login', (as = UserRoles.level6) => {

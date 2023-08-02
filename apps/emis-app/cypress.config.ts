@@ -29,10 +29,23 @@ export default defineConfig({
     videoUploadOnPasses: false,
     baseUrl: 'http://localhost:8080/',
     env: {
+      /* Azure AD Config
+       * Can eventually by removed when FeatureKeys.UseIdentityServer is in place
+       */
       AZURE_CLIENT_ID: process.env.CYPRESS_AZURE_CLIENT_ID,
       AZURE_TENANT_ID: process.env.CYPRESS_AZURE_TENANT_ID,
       AZURE_CLIENT_SECRET: process.env.CYPRESS_AZURE_CLIENT_SECRET,
       MSAL_API_SCOPES: process.env.CYPRESS_MSAL_API_SCOPES,
+      // End Azure AD Config
+
+      // FeatureKeys.UseIdentityServer
+      USE_IDS: process.env.CYPRESS_USE_IDS,
+      IDS_TOKEN_ENDPOINT: process.env.CYPRESS_IDS_TOKEN_ENDPOINT,
+      IDS_API_SCOPES: process.env.CYPRESS_IDS_API_SCOPES,
+      API_PORTS: process.env.CYPRESS_API_PORTS,
+      IDS_CLIENT_SECRET: process.env.CYPRESS_IDS_CLIENT_SECRET,
+      // End FeatureKeys.UseIdentityServer
+
       API_BASE_URL: process.env.CYPRESS_API_BASE_URL,
       USER_0_MAIL: process.env.CYPRESS_USER_0_MAIL,
       USER_0_PASSWORD: process.env.CYPRESS_USER_0_PASSWORD,
