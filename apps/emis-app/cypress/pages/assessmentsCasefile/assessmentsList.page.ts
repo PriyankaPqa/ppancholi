@@ -1,4 +1,4 @@
-import { formatDate } from '@libs/cypress-lib/helpers';
+import { formatCurrentDate, formatDate } from '@libs/cypress-lib/helpers';
 import { AddAssessmentsPage } from './addAssessments.page';
 
 export enum DataTest {
@@ -104,5 +104,30 @@ export class AssessmentsListPage {
 
   public getDeleteAssessmentButton() {
     return cy.getByDataTest(this.assessmentDelete);
+  }
+
+  public refreshUntilFilledAssessmentUpdated(maxRetries = 5) {
+    let retries = 0;
+    const waitForAssessmentUpdation = () => {
+      cy.contains('Pending assessments').should('be.visible').then(() => {
+        if (Cypress.$("[data-test='assessmentDetail-link']").length) {
+          cy.log('Assessment status updated');
+        } else {
+          retries += 1;
+          if (retries <= maxRetries) {
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
+            cy.wait(1000).then(() => {
+              cy.reload().then(() => {
+                this.getCompletedAssessmentTable().contains(`${formatCurrentDate()}`).should('be.visible');
+                waitForAssessmentUpdation();
+              });
+            });
+          } else {
+            throw new Error('Failed to update assessment after 5 retries.');
+          }
+        }
+      });
+    };
+    waitForAssessmentUpdation();
   }
 }
