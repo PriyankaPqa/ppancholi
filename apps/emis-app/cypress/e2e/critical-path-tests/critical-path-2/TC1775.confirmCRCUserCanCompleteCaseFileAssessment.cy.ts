@@ -4,10 +4,10 @@ import {
   prepareStateHousehold,
   createAndUpdateAssessment,
   addAssessmentToCasefile,
-  partiallyCompleteCasefileAssessment } from '../../helpers/prepareState';
+  completeAndSubmitCasefileAssessment } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
-import { verifyPartiallyCompletedCaseFileAssessment, verifyPendingCaseFileAssessment } from './canSteps';
+import { verifyFullyCompletedCaseFileAssessment, verifyPendingCaseFileAssessment } from './canSteps';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -27,7 +27,7 @@ const canRolesValues = [...Object.values(canRoles)];
 
 let accessTokenL6 = '';
 
-describe('#TC1774# - Confirm that the CRC User can partially complete a Case File Assessment', { tags: ['@assessments'] }, () => {
+describe('#TC1775# - Confirm that the CRC User can complete a Case File Assessment', { tags: ['@assessments'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -59,15 +59,15 @@ describe('#TC1774# - Confirm that the CRC User can partially complete a Case Fil
             cy.goTo(`casefile/${resultHousehold.registrationResponse.caseFile.id}/assessments`);
           });
         });
-        it('should successfully partially complete a Case File Assessment', function () {
+        it('should successfully complete a Case File Assessment', function () {
           const assessmentsListPage = new AssessmentsListPage();
           verifyPendingCaseFileAssessment(roleName, this.assessmentName);
           cy.wrap(1).then(() => {
             // eslint-disable-next-line
-            partiallyCompleteCasefileAssessment(this.householdCreated.provider, this.casefileAssessment.id, this.householdCreated.registrationResponse.caseFile.id, this.assessmentFormId); //partially respond to assessment as a crc user
+            completeAndSubmitCasefileAssessment(this.householdCreated.provider, this.casefileAssessment.id, this.householdCreated.registrationResponse.caseFile.id, this.assessmentFormId); // completely respond to assessment as a CRC user and click on submit
           });
           assessmentsListPage.refreshUntilFilledAssessmentUpdated();
-          verifyPartiallyCompletedCaseFileAssessment(roleName);
+          verifyFullyCompletedCaseFileAssessment(roleName, this.assessmentName);
         });
       });
     }

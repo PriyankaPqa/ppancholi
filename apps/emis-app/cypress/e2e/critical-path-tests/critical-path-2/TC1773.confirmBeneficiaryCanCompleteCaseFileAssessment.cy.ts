@@ -1,6 +1,4 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { format } from 'date-fns';
-import { formatCurrentDate } from '@libs/cypress-lib/helpers';
 import {
   prepareStateEventAndProgram,
   prepareStateHousehold,
@@ -8,7 +6,7 @@ import {
   addAssessmentToCasefile,
   completeAndSubmitCasefileAssessment } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
+import { verifyFullyCompletedCaseFileAssessment } from './canSteps';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -64,17 +62,7 @@ describe('#TC1773# - Confirm that Beneficiary can complete a Case File Assessmen
           // eslint-disable-next-line
           completeAndSubmitCasefileAssessment(this.householdCreated.provider, this.casefileAssessment.id, this.householdCreated.registrationResponse.caseFile.id, this.assessmentFormId); //completely respond to assessment as a beneficiary and click on submit
 
-          const assessmentsListPage = new AssessmentsListPage();
-          assessmentsListPage.getCompletedAssessmentTable().contains(`${this.assessmentName}`).should('be.visible');
-          assessmentsListPage.getAssessmentDateAssigned().should('eq', format(Date.now(), 'yyyy-MM-dd'));
-          assessmentsListPage.getAssessmentDateModified().should('eq', format(Date.now(), 'yyyy-MM-dd'));
-          assessmentsListPage.getAssessmentDateCompletedElement().contains(`${formatCurrentDate()}`).should('be.visible');
-          assessmentsListPage.getAssessmentStatusTag().should('eq', 'Completed');
-          if (roleName === 'Level6' || roleName === 'Level5' || roleName === 'Level4' || roleName === 'Level3') {
-            assessmentsListPage.getEditCompletedAssessmentButton().should('be.visible');
-          } else {
-            assessmentsListPage.getEditCompletedAssessmentButton().should('not.exist');
-          }
+          verifyFullyCompletedCaseFileAssessment(roleName, this.assessmentName);
         });
       });
     }
