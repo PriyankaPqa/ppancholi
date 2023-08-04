@@ -141,7 +141,7 @@ describe('CreatEditEvent.vue', () => {
       it('should redirect to details page in case of success', async () => {
         doMount(true, false);
         await wrapper.vm.submitCreate();
-        expect(wrapper.vm.$router.replace).toBeCalledWith({ name: routes.events.summary.name, params: { id: wrapper.vm.event.id } });
+        expect(wrapper.vm.$router.replace).toBeCalledWith({ name: routes.events.summary.name, params: { id: eventStore.createEvent().id } });
       });
     });
   });

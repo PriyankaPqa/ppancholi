@@ -59,6 +59,7 @@
                   <rc-google-autocomplete
                     ref="address__street_autocomplete"
                     v-model="location.address.streetAddress"
+                    :prediction-countries-restriction="location.address.country"
                     data-test="location-streetAddress"
                     :class="classes"
                     :clear-after-selection="false"

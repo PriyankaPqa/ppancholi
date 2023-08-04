@@ -139,7 +139,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
     async submitCreate() {
       const newEvent = await useEventStore().createEvent(this.event);
       if (newEvent) {
-        this.event = new EventEntity(newEvent);
         this.$toasted.global.success(this.$t('event_create.success'));
         this.$router.replace({ name: routes.events.summary.name, params: { id: newEvent.id } });
       }
