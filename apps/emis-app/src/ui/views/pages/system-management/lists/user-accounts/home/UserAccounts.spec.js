@@ -7,6 +7,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 import {
   AccountStatus, mockCombinedUserAccounts, mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Status } from '@libs/entities-lib/base';
 import { useMockUiStateStore } from '@/pinia/ui-state/uiState.mock';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
@@ -101,23 +102,6 @@ describe('UserAccounts.vue', () => {
       it('returns theroles from the store ', async () => {
         mountWrapper();
         expect(wrapper.vm.roles).toEqual(mockOptionItemData());
-      });
-    });
-
-    describe('menuItems', () => {
-      it('should return proper menuItems', async () => {
-        mountWrapper();
-        expect(wrapper.vm.menuItems).toEqual([{
-          text: 'system_management.userAccounts.add_new_user',
-          value: 'standard',
-          icon: 'mdi-account',
-          dataTest: 'add-standard-user-link',
-        }, {
-          text: 'system_management.userAccounts.add_new_ad_user',
-          value: 'activeDirectory',
-          icon: 'mdi-account-outline',
-          dataTest: 'add-activeDirectory-user-link',
-        }]);
       });
     });
 
@@ -259,10 +243,11 @@ describe('UserAccounts.vue', () => {
       });
 
       // FeatureKey.UseIdentityServer
-      it('toggles visibility of Add EMIS User dialog from menu shown with FF on', () => {
+      it('toggles visibility of Add EMIS User dialog from menu shown with FF off', () => {
         wrapper.vm.showAddEmisUserDialog = false;
         wrapper.vm.showAddUserAccountDialog = false;
-        wrapper.vm.addUser({ value: 'activeDirectory' });
+        wrapper.vm.$hasFeature = jest.fn(() => false);
+        wrapper.vm.addUser();
         wrapper.vm.$nextTick();
         expect(wrapper.vm.showAddEmisUserDialog).toEqual(true);
         expect(wrapper.vm.showAddUserAccountDialog).toEqual(false);
@@ -271,7 +256,8 @@ describe('UserAccounts.vue', () => {
       it('toggles visibility of Add User Account dialog from menu shown with FF on', () => {
         wrapper.vm.showAddEmisUserDialog = false;
         wrapper.vm.showAddUserAccountDialog = false;
-        wrapper.vm.addUser({ value: 'standard' });
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.UseIdentityServer);
+        wrapper.vm.addUser();
         wrapper.vm.$nextTick();
         expect(wrapper.vm.showAddEmisUserDialog).toEqual(false);
         expect(wrapper.vm.showAddUserAccountDialog).toEqual(true);
