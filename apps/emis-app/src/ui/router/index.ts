@@ -153,6 +153,11 @@ const initializeMSAL = async () => {
   const feature = features?.find((f: IFeatureEntity) => f.key === FeatureKeys.UseIdentityServer);
   const useIdentityServer = !!feature?.enabled;
 
+  // Feature branch case for IdentityServer
+  if (useIdentityServer && !window.location.host.startsWith('localhost') && !currentTenant) {
+    AuthenticationProvider.setCurrentTenantDomain(tenant);
+  }
+
   AuthenticationProvider.init(useIdentityServer, tenant);
   await AuthenticationProvider.loadAuthModule('router');
 };
@@ -204,14 +209,15 @@ router.beforeEach(async (to, from, next) => {
     return;
   }
 
-  if (!AuthenticationProvider.msalLibrary) {
-    await initializeMSAL();
-  }
-
-  localStorage.setItem('fromOutside', (from.name === null).toString());
   let loginError = false;
 
   try {
+    if (!AuthenticationProvider.msalLibrary) {
+      await initializeMSAL();
+    }
+
+    localStorage.setItem('fromOutside', (from.name === null).toString());
+
     loginError = !await authenticationGuard(to);
     if (!loginError) {
       const authorized = await authorizationGuard(to);

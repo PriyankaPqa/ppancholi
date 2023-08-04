@@ -388,15 +388,20 @@ export class MSAL {
    * @param specificTenant
    */
   public signIn(specificTenant?: string): void {
-    this.showConsole && console.debug('SignIn', this.loginRedirectRequest)
-    this.msalLibrary.loginRedirect({
+    this.showConsole && console.debug('SignIn', this.loginRedirectRequest);
+
+    const request = {
       ...this.loginRedirectRequest,
-      // modify when FeatureKeys.UseIdentityServer is removed
-      loginHint: this.identityServerEnabled ? localStorage[localStorageKeys.loginHint.name] : undefined,
-      authority: this.identityServerEnabled 
-        ? this.originalOptions.ids_authority 
-        : `https://login.microsoftonline.com/${specificTenant ?? (this.currentDomainTenant ? this.currentDomainTenant : this.Constants.DEFAULT_COMMON_TENANT)}`,
-    });
+      authority: `https://login.microsoftonline.com/${specificTenant ?? (this.currentDomainTenant ? this.currentDomainTenant : this.Constants.DEFAULT_COMMON_TENANT)}`,
+    };
+
+    // FeatureKeys.UseIdentityServer
+    // The parameter forceLogin is set to true here as one scenario is that the user has 
+    // an active authentication session on IdentityServer for a different tenant. This
+    // will override that and force re-authentication against the current tenant.
+    this.updateLoginRequestForIdentityServer(request, true);
+
+    this.msalLibrary.loginRedirect(request);
   }
 
   /**
@@ -447,18 +452,7 @@ export class MSAL {
       }
 
       //FeatureKeys.UseIdentityServer
-      if (this.identityServerEnabled) {
-        request.loginHint = localStorage[localStorageKeys.loginHint.name];
-        // Only pass ui_locale for non-default languages
-        // -> Falls back on user's browser language settings
-        if (i18n.locale != DEFAULT_LANGUAGE) {
-          request.extraQueryParameters = { ui_locales: i18n.locale };
-        }
-        request.extraQueryParameters = { 
-          ...request.extraQueryParameters,
-          acr_values: `tenant:${this.currentDomainTenant ?? this.defaultTenant}`
-        }
-      }
+      this.updateLoginRequestForIdentityServer(request, false);
 
       return this.msalLibrary.loginRedirect(request).then(() => {
         this.showConsole && console.debug('isAuthenticated - loginRedirect', true)
@@ -495,6 +489,27 @@ export class MSAL {
       forceRefresh: force,
       
       redirectUri: `${window.location.origin}/auth.html` // When doing acquireTokenSilent, redirect to blank page to prevent issues
+    }
+  }
+
+  private updateLoginRequestForIdentityServer(request: any, forceLogin: boolean) {
+    //FeatureKeys.UseIdentityServer
+    if (this.identityServerEnabled) {
+      request.authority = this.originalOptions.ids_authority;
+      request.loginHint = localStorage[localStorageKeys.loginHint.name];
+      if (forceLogin) {
+        request.prompt = "login";
+        this.msalLibrary["browserStorage"].clear();
+      }
+      // Only pass ui_locale for non-default languages
+      // -> Falls back on user's browser language settings
+      if (i18n.locale != DEFAULT_LANGUAGE) {
+        request.extraQueryParameters = { ui_locales: i18n.locale };
+      }
+      request.extraQueryParameters = { 
+        ...request.extraQueryParameters,
+        acr_values: `tenant:${!!this.currentDomainTenant ? this.currentDomainTenant : this.defaultTenant}`
+      }
     }
   }
 
