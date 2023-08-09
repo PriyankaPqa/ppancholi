@@ -3,6 +3,7 @@ import { mockCreateEvent } from '@libs/cypress-lib/mocks/events/event';
 import {
   mockAssessmentResponseRequest,
   mockCreateAssessmentRequest,
+  mockEditAssessmentAnsweredQuestionsRequest,
   mockPartialSaveAssessmentAnsweredQuestionsRequest,
   mockSaveAssessmentAnsweredQuestionsRequest,
   mockUpdateAssessmentRequest } from '@libs/cypress-lib/mocks/assessments/assessment';
@@ -18,6 +19,7 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
+import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
 import { linkEventToTeamForManyRoles } from './teams';
 
 /**
@@ -144,7 +146,36 @@ export const partiallyCompleteCasefileAssessment = async (provider: IProvider, a
 export const completeAndSubmitCasefileAssessment = async (provider: IProvider, assessmentResponseId: string, casefileId: string, assessmentFormId: string) => {
   const mockSaveAssessmentAnsweredQuestions = mockSaveAssessmentAnsweredQuestionsRequest(assessmentResponseId, casefileId, assessmentFormId);
   await provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockSaveAssessmentAnsweredQuestions);
-  await provider.assessmentResponses.completeSurveyByBeneficiary(mockSaveAssessmentAnsweredQuestions);
+  const submitAssessmentResponse = await provider.assessmentResponses.completeSurveyByBeneficiary(mockSaveAssessmentAnsweredQuestions);
+  return submitAssessmentResponse;
+};
+
+/**
+ * Complete and submit the assessment added to the casefile as CRC user
+ * @param provider
+ * @param assessmentResponseId
+ * @param casefileId
+ * @param assessmentFormId
+ */
+export const completeAndSubmitCasefileAssessmentByCrcUser = async (provider: IProvider, assessmentResponseId: string, casefileId: string, assessmentFormId: string) => {
+  const mockSaveAssessmentAnsweredQuestions = mockSaveAssessmentAnsweredQuestionsRequest(assessmentResponseId, casefileId, assessmentFormId);
+  await provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockSaveAssessmentAnsweredQuestions);
+  const submitAssessmentResponse = await provider.assessmentResponses.completeSurvey(mockSaveAssessmentAnsweredQuestions);
+  return submitAssessmentResponse;
+};
+
+/**
+ * Edit the completed assessment added to the casefile
+ * @param provider
+ * @param assessmentResponseId
+ * @param casefileId
+ * @param assessmentFormId
+ */
+// eslint-disable-next-line
+export const editCompletedCasefileAssessment = async (provider: IProvider, assessmentResponseId: string, casefileId: string, assessmentFormId: string, answeredQuestionsHistory:IAnsweredQuestion[]) => {
+  const mockEditAssessmentAnsweredQuestions = mockEditAssessmentAnsweredQuestionsRequest(assessmentResponseId, casefileId, assessmentFormId, answeredQuestionsHistory);
+  await provider.assessmentResponses.saveAssessmentAnsweredQuestions(mockEditAssessmentAnsweredQuestions);
+  return mockEditAssessmentAnsweredQuestions;
 };
 
 /**

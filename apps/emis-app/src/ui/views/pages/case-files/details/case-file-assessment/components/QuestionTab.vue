@@ -33,7 +33,7 @@
           </td>
           <td class="answer">
             {{ qAndA.displayAnswer }}
-            <v-btn v-if="qAndA.history.length > 1" icon class="pl-1" @click="showHistory(qAndA)">
+            <v-btn v-if="qAndA.history.length > 1" data-test="answer-history-open-button" icon class="pl-1" @click="showHistory(qAndA)">
               <v-icon size="20">
                 mdi-history
               </v-icon>
@@ -62,7 +62,7 @@
             <tr
               v-for="(h, $index) in currentHistoryData"
               :key="`history__${$index}`">
-              <td class="history">
+              <td class="history" :data-test="`history-response-${$index}`">
                 <div>
                   {{ $index == 0 ? $t('assessment.originalResponse') : format(new Date(h.answeredOn), 'MMM d, yyyy') }}
                 </div>
@@ -71,7 +71,7 @@
                 </div>
               </td>
               <td>
-                <div class="answer">
+                <div class="answer" :data-test="`history-answer-${$index}`">
                   {{ h.displayAnswer }}
                 </div>
               </td>
