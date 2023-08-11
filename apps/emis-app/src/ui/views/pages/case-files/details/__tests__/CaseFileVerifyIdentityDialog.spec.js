@@ -4,16 +4,22 @@ import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus } from '@libs/entities-lib/case-file';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 
+import flushPromises from 'flush-promises';
+import { useMockEventStore } from '@/pinia/event/event.mock';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../components/CaseFileVerifyIdentityDialog.vue';
 
 const localVue = createLocalVue();
 const { pinia, caseFileStore } = useMockCaseFileStore();
+const eventStore = useMockEventStore(pinia).eventStore;
+
 describe('CaseFileVerifyIdentityDialog.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
     wrapper = await mount(Component, {
       localVue,
+      featureList: [FeatureKeys.AuthenticationPhaseII],
       pinia,
       propsData: {
         show: true,
@@ -83,10 +89,14 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
           },
 
         });
+
+        await flushPromises();
         expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.NotApplicable);
         expect(wrapper.vm.form.status).toEqual(IdentityAuthenticationStatus.NotVerified);
         expect(wrapper.vm.form.identificationIds).toEqual([]);
         expect(wrapper.vm.form.specifiedOther).toEqual(null);
+        expect(wrapper.vm.form.exceptionalTypeId).toEqual('defaultOption');
+        expect(wrapper.vm.form.exceptionalTypeOther).toBeFalsy();
       });
 
       it('sets form when identityAuthentication is passed', async () => {
@@ -101,20 +111,25 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
                 method: IdentityAuthenticationMethod.Exceptional,
                 status: IdentityAuthenticationStatus.Passed,
                 identificationIds: [{ optionItemId: 'abc', specifiedOther: 'def' }],
+                exceptionalAuthenticationTypeId: { optionItemId: 'abc123', specifiedOther: 'def123' },
               },
             },
           },
 
         });
+        await flushPromises();
 
         expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.Exceptional);
         expect(wrapper.vm.form.status).toEqual(IdentityAuthenticationStatus.Passed);
         expect(wrapper.vm.form.identificationIds).toEqual(['abc']);
         expect(wrapper.vm.form.specifiedOther).toEqual('def');
+        expect(wrapper.vm.form.exceptionalTypeId).toEqual('abc123');
+        expect(wrapper.vm.form.exceptionalTypeOther).toEqual('def123');
       });
 
-      it('calls fetchScreeningIds', async () => {
+      it('calls stores', async () => {
         expect(caseFileStore.fetchScreeningIds).toHaveBeenCalled();
+        expect(eventStore.fetchExceptionalAuthenticationTypes).toHaveBeenCalled();
       });
 
       it('should display the status and method from with the data from BE during the initial loading', async () => {
@@ -129,7 +144,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
             },
           },
         });
-        await wrapper.vm.$nextTick();
+        await flushPromises();
         wrapper.vm.form.method = wrapper.vm.caseFile.identityAuthentication.method;
         wrapper.vm.form.status = wrapper.vm.caseFile.identityAuthentication.status;
         expect(wrapper.vm.form.status).toEqual(IdentityAuthenticationStatus.Failed);
@@ -165,6 +180,16 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         expect(caseFileStore.getScreeningIds).toHaveBeenCalledWith(true, ['abc']);
         await wrapper.setData({ form: { identificationIds: [] } });
         expect(caseFileStore.getScreeningIds).toHaveBeenCalledWith(true, []);
+      });
+    });
+
+    describe('exceptionalTypes', () => {
+      it('calls the store for exceptionalTypes and passes current value', async () => {
+        await wrapper.setData({ form: { exceptionalTypeId: 'abc' } });
+        expect(eventStore.getExceptionalAuthenticationTypes).toHaveBeenCalledWith(true, 'abc', eventStore.getById());
+        expect(eventStore.getById).toHaveBeenCalledWith(wrapper.vm.caseFile.eventId);
+        await wrapper.setData({ form: { exceptionalTypeId: null } });
+        expect(eventStore.getExceptionalAuthenticationTypes).toHaveBeenCalledWith(true, null, eventStore.getById());
       });
     });
 
@@ -223,6 +248,29 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
       });
     });
 
+    describe('exceptionalMustSpecifyOther', () => {
+      it('returns true selected item has isOther = true', async () => {
+        const withOther = mockOptionItemData().filter((m) => m.isOther)[0].id;
+        const notOther = mockOptionItemData().filter((m) => !m.isOther)[0].id;
+        await wrapper.setData({
+          form: { status: IdentityAuthenticationStatus.Passed, method: IdentityAuthenticationMethod.InPerson, exceptionalTypeId: null },
+        });
+        expect(wrapper.vm.exceptionalMustSpecifyOther).toBeFalsy();
+        await wrapper.setData({
+          form: { status: IdentityAuthenticationStatus.Passed, method: IdentityAuthenticationMethod.InPerson, exceptionalTypeId: notOther },
+        });
+        expect(wrapper.vm.exceptionalMustSpecifyOther).toBeFalsy();
+        await wrapper.setData({
+          form: {
+            status: IdentityAuthenticationStatus.Passed,
+            method: IdentityAuthenticationMethod.InPerson,
+            exceptionalTypeId: withOther,
+          },
+        });
+        expect(wrapper.vm.exceptionalMustSpecifyOther).toBeTruthy();
+      });
+    });
+
     describe('watcher isValidAuthStatus', () => {
       it('empties form when validation of identity isnt ok', async () => {
         await wrapper.setData({
@@ -260,12 +308,38 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
             method: IdentityAuthenticationMethod.Exceptional,
             identificationIds: [withOther],
             specifiedOther: 'xxx',
+            exceptionalTypeId: 'exid',
+            exceptionalTypeOther: 'exceptionalTypeOther',
           },
         });
         await wrapper.vm.save();
         expect(caseFileStore.setCaseFileIdentityAuthentication).toHaveBeenCalledWith(wrapper.vm.caseFile.id, {
           status: IdentityAuthenticationStatus.Passed,
           method: IdentityAuthenticationMethod.Exceptional,
+          identificationIds: [{ optionItemId: withOther, specifiedOther: 'xxx' }],
+          exceptionalAuthenticationTypeId: { optionItemId: 'exid', specifiedOther: 'exceptionalTypeOther' },
+        });
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);
+        expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
+      });
+
+      it('includes exceptionalAuthenticationType only when exceptional', async () => {
+        wrapper.vm.$toasted.global.success = jest.fn();
+        const withOther = mockOptionItemData().filter((m) => m.isOther)[0].id;
+        await wrapper.setData({
+          form: {
+            status: IdentityAuthenticationStatus.Passed,
+            method: IdentityAuthenticationMethod.InPerson,
+            identificationIds: [withOther],
+            specifiedOther: 'xxx',
+            exceptionalTypeId: 'exid',
+            exceptionalTypeOther: 'exceptionalTypeOther',
+          },
+        });
+        await wrapper.vm.save();
+        expect(caseFileStore.setCaseFileIdentityAuthentication).toHaveBeenCalledWith(wrapper.vm.caseFile.id, {
+          status: IdentityAuthenticationStatus.Passed,
+          method: IdentityAuthenticationMethod.InPerson,
           identificationIds: [{ optionItemId: withOther, specifiedOther: 'xxx' }],
         });
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);

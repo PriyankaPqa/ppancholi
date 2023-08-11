@@ -9,6 +9,7 @@ import { IOptionItemsService } from './optionItems.types';
 export class OptionItemsService implements IOptionItemsService {
   constructor(private readonly http: IHttpClient) {}
 
+  // eslint-disable-next-line complexity
   getPrefix(list: EOptionLists): string {
     switch (list) {
       case EOptionLists.CaseFileTags:
@@ -41,6 +42,8 @@ export class OptionItemsService implements IOptionItemsService {
         return '/case-file/referral-types';
       case EOptionLists.DocumentCategories:
         return '/case-file/document-categories';
+      case EOptionLists.ExceptionalAuthenticationTypes:
+        return '/event/exceptional-authentication-types';
       default:
         return '';
     }

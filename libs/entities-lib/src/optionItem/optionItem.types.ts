@@ -17,6 +17,7 @@ export enum EOptionLists {
   ReferralOutcomeStatus = 13,
   ReferralTypes = 14,
   DocumentCategories = 15,
+  ExceptionalAuthenticationTypes = 16,
 }
 
 export interface IOptionSubItem extends IEntity {

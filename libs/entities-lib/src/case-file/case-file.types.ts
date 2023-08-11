@@ -134,6 +134,7 @@ export interface IIdentityAuthentication {
   status: IdentityAuthenticationStatus;
   method: IdentityAuthenticationMethod;
   identificationIds: IListOption[];
+  exceptionalAuthenticationTypeId?: IListOption;
 }
 
 export interface IImpactStatusValidation {

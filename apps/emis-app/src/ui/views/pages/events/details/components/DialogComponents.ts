@@ -5,6 +5,7 @@ export enum EDialogComponent {
   Agreement = 'EventAgreementDialog',
   RegistrationAssessment = 'EventRegistrationAssessmentDialog',
   EventConsent = 'EventConsentSelectionDialog',
+  ExceptionalAuthenticationType = 'EventExceptionalAuthenticationDialog',
 }
 
 export interface DialogData {

@@ -23,4 +23,5 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   getAssignedCaseFiles: jest.fn(() => ({ odataContext: '', odataCount: 0, value: [] })),
   getAllCaseFilesRelatedToHouseholdId: jest.fn(() => mockCaseFileEntities()),
   setPersonReceiveAssistance: jest.fn(() => mockCaseFileEntity()),
+  getExceptionalTypeCounts: jest.fn(() => Promise.resolve([{ exceptionalAuthenticationTypeId: 'id1', caseFileCount: 3 }])),
 });

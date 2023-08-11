@@ -136,6 +136,20 @@
           @edit="editSection($event, EEventSummarySections.Agreement)" />
       </event-summary-section-body>
 
+      <div v-if="$hasFeature(FeatureKeys.AuthenticationPhaseII)">
+        <event-summary-section-title
+          :section="EEventSummarySections.ExceptionalAuthenticationType"
+          :can-add="$hasLevel(UserRoles.level6)"
+          @click-add-button="onSectionAdd($event)" />
+        <event-summary-section-body v-slot="{ item, index }" :items="sortedExceptionalAuth">
+          <event-exceptional-authentication-section
+            data-test="exceptional-authentication-section"
+            :excpt-auth="item"
+            :index="index"
+            :event-id="event.id" />
+        </event-summary-section-body>
+      </div>
+
       <div v-if="$hasFeature(FeatureKeys.CustomConsent)">
         <event-summary-section-title
           :section="EEventSummarySections.EventConsent"
@@ -174,7 +188,9 @@ import { TranslateResult } from 'vue-i18n';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
-import { EEventStatus, EResponseLevel, EventEntity, IEventAgreement, IEventCallCentre, IEventGenericLocation, IRegistrationAssessment } from '@libs/entities-lib/event';
+import { EEventStatus, EResponseLevel, EventEntity, IEventAgreement,
+  IEventCallCentre, IEventGenericLocation,
+  IRegistrationAssessment } from '@libs/entities-lib/event';
 import { EEventSummarySections } from '@/types';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useEventStore } from '@/pinia/event/event';
@@ -182,6 +198,7 @@ import { Status } from '@libs/entities-lib/base';
 import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
+import { ICaseFileCountByExceptionalAuthentication } from '@libs/services-lib/case-files/entity';
 import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
 import EventSummarySectionBody from './components/EventSummarySectionBody.vue';
@@ -192,6 +209,8 @@ import EventShelterLocationDialog from './components/EventShelterLocationDialog.
 import EventAgreementDialog from './components/EventAgreementDialog.vue';
 import EventCallCentreSection from './components/EventCallCentreSection.vue';
 import EventAgreementSection from './components/EventAgreementSection.vue';
+import EventExceptionalAuthenticationSection from './components/EventExceptionalAuthenticationSection.vue';
+import EventExceptionalAuthenticationDialog from './components/EventExceptionalAuthenticationDialog.vue';
 import EventLocationSection from './components/EventLocationSection.vue';
 import EventRegistrationAssessmentSection from './components/EventRegistrationAssessmentSection.vue';
 import EventRegistrationAssessmentDialog from './components/EventRegistrationAssessmentDialog.vue';
@@ -214,6 +233,8 @@ export default Vue.extend({
     EventCallCentreSection,
     EventAgreementSection,
     EventAgreementDialog,
+    EventExceptionalAuthenticationSection,
+    EventExceptionalAuthenticationDialog,
     EventLocationSection,
     EventRegistrationAssessmentSection,
     EventRegistrationAssessmentDialog,
@@ -233,6 +254,7 @@ export default Vue.extend({
       updatingAccessAssessmentToggle: false,
       updatingRegistrationToggle: false,
       UserRoles,
+      exceptionalTypeCounts: null as ICaseFileCountByExceptionalAuthentication[],
     };
   },
 
@@ -274,8 +296,19 @@ export default Vue.extend({
       return [];
     },
 
-    sortedAgreements():Array<IEventAgreement> {
+    sortedAgreements(): Array<IEventAgreement> {
       return helpers.sortMultilingualArray(this.event.agreements, 'name');
+    },
+
+    sortedExceptionalAuth(): Array<{ item: IOptionItem, max?: number, count?: number }> {
+      const types = useEventStore().getExceptionalAuthenticationTypes(true, this.event.exceptionalAuthenticationTypes.map((x) => x.exceptionalAuthenticationTypeId), this.event);
+
+      return types.map((t) => ({
+        item: t,
+        max: this.event.exceptionalAuthenticationTypes.find((e) => e.exceptionalAuthenticationTypeId === t.id)?.maxNumberOfUsages,
+        count: this.exceptionalTypeCounts ? ((this.exceptionalTypeCounts.find((e) => e.exceptionalAuthenticationTypeId === t.id)?.caseFileCount || 0)
+          + (this.exceptionalTypeCounts.find((e) => !e.exceptionalAuthenticationTypeId && t.isDefault)?.caseFileCount || 0)) : null,
+      }));
     },
 
     sortedCallCentres(): Array<IEventCallCentre> {
@@ -328,6 +361,10 @@ export default Vue.extend({
     try {
       // No need to fetch event again, because event is already fetched in EventDetails.vue
       await useEventStore().fetchAgreementTypes();
+      await useEventStore().fetchExceptionalAuthenticationTypes();
+      this.$services.caseFiles.getExceptionalTypeCounts(this.event.id).then((counts) => {
+        this.exceptionalTypeCounts = counts;
+      });
     } catch (e) {
       this.$appInsights.trackException(e, {}, 'EventSummary', 'created');
     }

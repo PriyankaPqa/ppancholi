@@ -15,15 +15,18 @@ import { useMockEventStore } from '@/pinia/event/event.mock';
 import { useMockTenantSettingsStore } from '@libs/stores-lib/tenant-settings/tenant-settings.mock';
 import { Status } from '@libs/entities-lib/base';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { mockProvider } from '@/services/provider';
+import flushPromises from 'flush-promises';
 import Component from '../EventSummary.vue';
 import { EDialogComponent } from '../components/DialogComponents';
 
 const localVue = createLocalVue();
 
 const mockEvent = mockEventEntities()[0];
+const services = mockProvider();
 
 const pinia = getPiniaForUser(UserRoles.level5);
-const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
+let eventStore;
 
 const initEventStore = (pinia) => {
   const { eventStore } = useMockEventStore(pinia);
@@ -33,7 +36,7 @@ const initEventStore = (pinia) => {
 
 const mountWithStatus = (status) => {
   const event = mockEventEntity();
-  initEventStore(pinia);
+  eventStore = initEventStore(pinia);
   return shallowMount(Component, {
     localVue,
     pinia,
@@ -62,7 +65,8 @@ const mountWithStatus = (status) => {
 
 describe('EventSummary.vue', () => {
   let wrapper;
-  const doMount = (pinia = getPiniaForUser(UserRoles.level5), otherComputed = {}, initialFeatures = [], shallow = true) => {
+  const doMount = async (pinia = getPiniaForUser(UserRoles.level5), otherComputed = {}, initialFeatures = [], shallow = true) => {
+    eventStore = initEventStore(pinia);
     const options = {
       localVue,
       pinia,
@@ -80,12 +84,14 @@ describe('EventSummary.vue', () => {
             id: '7c076603-580a-4400-bef2-5ddececb0931',
           },
         },
+        $services: services,
       },
       stubs: {
         EventStatusDialog: true,
       },
     };
     wrapper = shallow ? shallowMount(Component, options) : mount(Component, options);
+    await flushPromises();
   };
 
   beforeEach(() => {
@@ -94,6 +100,18 @@ describe('EventSummary.vue', () => {
   describe('Template', () => {
     beforeEach(() => {
       doMount();
+    });
+
+    describe('exceptional-authentication-section', () => {
+      it('shows depending on flag', async () => {
+        doMount(getPiniaForUser(UserRoles.level5), {}, [FeatureKeys.AuthenticationPhaseII], false);
+        let element = wrapper.findDataTest('exceptional-authentication-section');
+        expect(element.exists()).toBeTruthy();
+
+        doMount(getPiniaForUser(UserRoles.level5), {}, [], false);
+        element = wrapper.findDataTest('exceptional-authentication-section');
+        expect(element.exists()).toBeFalsy();
+      });
     });
 
     describe('status select', () => {
@@ -424,8 +442,11 @@ describe('EventSummary.vue', () => {
   });
 
   describe('Computed', () => {
+    let eventStore;
+    let pinia;
     beforeEach(() => {
-      initEventStore(pinia);
+      pinia = getPiniaForUser(UserRoles.level5);
+      eventStore = initEventStore(pinia);
       wrapper = shallowMount(Component, {
         localVue,
         pinia,
@@ -545,6 +566,23 @@ describe('EventSummary.vue', () => {
       it('return the agreements sorted by name', () => {
         expect(wrapper.vm.sortedAgreements).toEqual(helpers.sortMultilingualArray(mockEvent.agreements, 'name')
           .map((a) => ({ ...a, startDate: new Date(a.startDate) })));
+      });
+    });
+
+    describe('sortedExceptionalAuth', () => {
+      it('calls store and returns mapped data', async () => {
+        await wrapper.setData({ exceptionalTypeCounts: [
+          { exceptionalAuthenticationTypeId: '111', caseFileCount: 3 },
+          { exceptionalAuthenticationTypeId: null, caseFileCount: 5 },
+        ] });
+        eventStore.getExceptionalAuthenticationTypes = jest.fn(() => [{ id: '111' }, { id: '222' }, { id: '333', isDefault: true }]);
+        const data = wrapper.vm.sortedExceptionalAuth;
+        expect(eventStore.getExceptionalAuthenticationTypes).toHaveBeenCalledWith(
+          true,
+          wrapper.vm.event.exceptionalAuthenticationTypes.map((x) => x.exceptionalAuthenticationTypeId),
+          wrapper.vm.event,
+        );
+        expect(data).toEqual([{ count: 3, item: { id: '111' }, max: 2 }, { count: 0, item: { id: '222' } }, { count: 5, item: { id: '333', isDefault: true } }]);
       });
     });
 
@@ -803,6 +841,7 @@ describe('EventSummary.vue', () => {
 
     describe('consentStatement', () => {
       it('returns correct value if consentStatementId is set', async () => {
+        const { tenantSettingsStore } = useMockTenantSettingsStore(pinia);
         tenantSettingsStore.currentTenantSettings.consentStatements = [{ id: 'id-1',
           name: {
             translation: {
@@ -941,6 +980,15 @@ describe('EventSummary.vue', () => {
 
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.accessAssessmentDisabled');
       });
+    });
+  });
+
+  describe('lifecycle', () => {
+    it('calls store and services', async () => {
+      await doMount();
+      expect(eventStore.fetchAgreementTypes).toHaveBeenCalled();
+      expect(eventStore.fetchExceptionalAuthenticationTypes).toHaveBeenCalled();
+      expect(services.caseFiles.getExceptionalTypeCounts).toHaveBeenCalledWith(wrapper.vm.event.id);
     });
   });
 });

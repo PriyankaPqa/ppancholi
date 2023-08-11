@@ -320,6 +320,13 @@ export class SignalR implements ISignalR {
       prop: 'eventTypesFetched',
     });
 
+    this.listenForOptionItemChanges({
+      domain: 'event',
+      optionItemName: 'ExceptionalAuthenticationType',
+      store: useEventStore(),
+      prop: 'exceptionalAuthenticationTypesFetched',
+    });
+
     this.watchedPiniaStores.push(useEventStore());
     this.watchedPiniaStores.push(useEventMetadataStore());
   }

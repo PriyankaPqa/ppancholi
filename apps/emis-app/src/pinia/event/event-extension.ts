@@ -4,7 +4,9 @@ import { IOptionItemsServiceMock, OptionItemsService } from '@libs/services-lib/
 import { Ref, ref } from 'vue';
 import { EOptionLists, IOptionItem, IOptionItemData } from '@libs/entities-lib/optionItem';
 import {
-  EEventStatus, EventEntity, IEventAgreement, IEventCallCentre, IEventEntity, IEventGenericLocation, IEventLocation, IRegistrationAssessment, IdParams,
+  EEventStatus, EventEntity, IEventAgreement, IEventCallCentre,
+  IEventEntity, IEventExceptionalAuthenticationType, IEventGenericLocation, IEventLocation,
+  IRegistrationAssessment, IdParams,
 } from '@libs/entities-lib/event';
 import helpers from '@/ui/helpers/helpers';
 import { EEventSummarySections } from '@/types';
@@ -20,6 +22,8 @@ export function getExtensionComponents(
   const eventTypes = ref([]) as Ref<IOptionItemData[]>;
   const agreementTypesFetched = ref(false);
   const eventTypesFetched = ref(false);
+  const exceptionalAuthenticationTypesFetched = ref(false);
+  const exceptionalAuthenticationTypes = ref([]) as Ref<IOptionItemData[]>;
 
   function getAgreementTypes(filterOutInactive = true, actualValue?: string[] | string) {
     return filterAndSortActiveItems(agreementTypes.value, filterOutInactive, actualValue);
@@ -29,9 +33,28 @@ export function getExtensionComponents(
     return filterAndSortActiveItems(eventTypes.value, filterOutInactive, actualValue);
   }
 
+  function getExceptionalAuthenticationTypes(filterOutInactive = true, actualValue?: string[] | string, event?: IEventEntity) {
+    let items = filterAndSortActiveItems(exceptionalAuthenticationTypes.value, filterOutInactive, actualValue);
+    if (event) {
+      items = items.filter((x) => x.isDefault || x.isOther
+      || event.exceptionalAuthenticationTypes?.find((y) => y.exceptionalAuthenticationTypeId === x.id) != null);
+    }
+    return items;
+  }
+
   function getEventsByStatus(statuses: Array<EEventStatus>) {
     const events = baseComponents.items.value.filter((e: IEventEntity) => e?.schedule?.status && statuses.includes(e.schedule.status));
     return helpers.sortMultilingualArray(events, 'name');
+  }
+
+  async function fetchExceptionalAuthenticationTypes(): Promise<IOptionItem[]> {
+    if (!exceptionalAuthenticationTypesFetched.value) {
+      const data = await optionsService.getOptionList(EOptionLists.ExceptionalAuthenticationTypes);
+      exceptionalAuthenticationTypes.value = data;
+      exceptionalAuthenticationTypesFetched.value = true;
+    }
+
+    return getExceptionalAuthenticationTypes();
   }
 
   async function fetchAgreementTypes(): Promise<IOptionItem[]> {
@@ -89,6 +112,15 @@ export function getExtensionComponents(
   }): Promise<IEventEntity> {
     // @ts-ignore
     const data = await entityService[`edit${section}`](eventId, consentStatementId);
+    if (data) {
+      baseComponents.set(data);
+      return data;
+    }
+    return null;
+  }
+
+  async function updateExceptionalAuthenticationType({ eventId, types }: { eventId: uuid, types: IEventExceptionalAuthenticationType[] }): Promise<IEventEntity> {
+    const data = await entityService.updateExceptionalAuthenticationType(eventId, types);
     if (data) {
       baseComponents.set(data);
       return data;
@@ -176,15 +208,20 @@ export function getExtensionComponents(
     eventTypes,
     agreementTypesFetched,
     eventTypesFetched,
+    exceptionalAuthenticationTypes,
+    exceptionalAuthenticationTypesFetched,
     getAgreementTypes,
     getEventTypes,
     getEventsByStatus,
+    getExceptionalAuthenticationTypes,
     fetchAgreementTypes,
     fetchEventTypes,
     fetchOtherProvinces,
     fetchRegions,
+    fetchExceptionalAuthenticationTypes,
     updateEventSection,
     updateEventConsent,
+    updateExceptionalAuthenticationType,
     deleteAgreement,
     deleteRegistrationAssessment,
     toggleSelfRegistration,

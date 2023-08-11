@@ -5,7 +5,7 @@ import { getExtensionComponents } from '@/pinia/event/event-extension';
 import { Entity } from '@/pinia/event/event';
 import { defineStore, setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
-import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
+import { EOptionLists, mockOptionItem, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import _sortBy from 'lodash/sortBy';
 import { Status } from '@libs/entities-lib/base';
 import {
@@ -20,6 +20,10 @@ const baseComponents = getBaseStoreComponents<Entity, IdParams>(entityService);
 
 const mockAgreementTypes = mockOptionItemData().map((e) => new OptionItem(e));
 const mockEventTypes = mockOptionItemData().map((e) => new OptionItem(e));
+const exceptionalTypes = [mockOptionItem(),
+  { ...mockOptionItem(), name: { translation: { fr: 'nope' } }, isOther: false, id: 'AA' },
+  { ...mockOptionItem(), name: { translation: { fr: 'ZZ' } }, isOther: false, isDefault: true, id: 'defaultOption' },
+  { ...mockOptionItem(), name: { translation: { fr: 'BB' } }, isOther: false, id: 'BB' }];
 
 const getPinia = () => {
   const pinia = createTestingPinia({
@@ -27,6 +31,7 @@ const getPinia = () => {
       'test-event': {
         items: mockEventEntities(),
         agreementTypes: mockAgreementTypes,
+        exceptionalAuthenticationTypes: exceptionalTypes,
         eventTypes: mockEventTypes,
       },
     },
@@ -74,6 +79,26 @@ describe('>>> Event Store', () => {
     });
   });
 
+  describe('getExceptionalAuthenticationTypes', () => {
+    it('returns an array of items sorted by orderRank and filtered by status', () => {
+      const store = createTestStore();
+      const res = store.getExceptionalAuthenticationTypes();
+      expect(res)
+        .toEqual(
+          _sortBy(exceptionalTypes, 'orderRank')
+            .filter((i) => i.status === Status.Active),
+        );
+    });
+
+    it('returns default and isother + all from event if event is passed', () => {
+      const store = createTestStore();
+      let res = store.getExceptionalAuthenticationTypes(true, [], { exceptionalAuthenticationTypes: [] } as IEventEntity);
+      expect(res).toEqual([exceptionalTypes[0], exceptionalTypes[2]]);
+      res = store.getExceptionalAuthenticationTypes(true, [], { exceptionalAuthenticationTypes: [{ exceptionalAuthenticationTypeId: exceptionalTypes[1].id }] } as IEventEntity);
+      expect(res).toEqual([exceptionalTypes[0], exceptionalTypes[1], exceptionalTypes[2]]);
+    });
+  });
+
   describe('getEventTypes', () => {
     it('returns an array of EventTypes sorted by orderRank and filtered by status', () => {
       const store = createTestStore();
@@ -96,6 +121,26 @@ describe('>>> Event Store', () => {
 
       expect(JSON.stringify(res))
         .toEqual(JSON.stringify(sortedActiveEvents));
+    });
+  });
+
+  describe('fetchExceptionalAuthenticationTypes', () => {
+    it('calls the getOptionList service and returns the getter', async () => {
+      const store = createTestStore();
+      store.exceptionalAuthenticationTypesFetched = false;
+      expect(optionsService.getOptionList).toHaveBeenCalledTimes(0);
+      await store.fetchExceptionalAuthenticationTypes();
+      expect(optionsService.getOptionList).toHaveBeenCalledWith(EOptionLists.ExceptionalAuthenticationTypes);
+      expect(store.exceptionalAuthenticationTypesFetched).toEqual(true);
+      expect(store.exceptionalAuthenticationTypes).toEqual(mockOptionItemData());
+    });
+
+    test('if the getOptionList action has already been called it will not call the service again', async () => {
+      const store = createTestStore();
+      store.exceptionalAuthenticationTypesFetched = true;
+      expect(optionsService.getOptionList).toHaveBeenCalledTimes(0);
+      await store.fetchExceptionalAuthenticationTypes();
+      expect(optionsService.getOptionList).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -455,6 +500,24 @@ describe('>>> Event Store', () => {
 
       expect(entityService.toggleRegistrationForL0Users).toHaveBeenCalledTimes(1);
       expect(entityService.toggleRegistrationForL0Users).toHaveBeenCalledWith(event.id, true);
+      expect(bComponents.set).toBeCalledWith(res);
+    });
+  });
+
+  describe('updateExceptionalAuthenticationType', () => {
+    it('calls the updateExceptionalAuthenticationType service', async () => {
+      const bComponents = { ...baseComponents, set: jest.fn() };
+      const store = createTestStore(bComponents);
+      const payload = {
+        eventId: 'id',
+        types: [{ exceptionalAuthenticationTypeId: 'some id' }, { exceptionalAuthenticationTypeId: 'id2', maxNumberOfUsages: 2 }],
+      };
+      expect(entityService.updateExceptionalAuthenticationType).toHaveBeenCalledTimes(0);
+
+      const res = await store.updateExceptionalAuthenticationType(payload);
+
+      expect(entityService.updateExceptionalAuthenticationType).toHaveBeenCalledTimes(1);
+      expect(entityService.updateExceptionalAuthenticationType).toHaveBeenCalledWith(payload.eventId, payload.types);
       expect(bComponents.set).toBeCalledWith(res);
     });
   });

@@ -22,6 +22,7 @@ export const mockEventsService = (): IEventsServiceMock => ({
   addAgreement: jest.fn(() => mockEventEntity()),
   editAgreement: jest.fn(() => mockEventEntity()),
   removeAgreement: jest.fn(() => mockEventEntity()),
+  updateExceptionalAuthenticationType: jest.fn(() => mockEventEntity()),
   addRegistrationLocation: jest.fn(() => mockEventEntity()),
   editRegistrationLocation: jest.fn(() => mockEventEntity()),
   addRegistrationAssessment: jest.fn(() => mockEventEntity()),

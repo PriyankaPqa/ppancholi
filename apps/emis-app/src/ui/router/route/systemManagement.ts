@@ -25,6 +25,7 @@ const ReferralTypes = () => import('@/ui/views/pages/system-management/lists/pag
 const FinancialAssistanceItems = () => import('@/ui/views/pages/system-management/lists/pages/FinancialAssistance.vue');
 const ScreeningId = () => import('@/ui/views/pages/system-management/lists/pages/ScreeningId.vue');
 const DocumentCategories = () => import('@/ui/views/pages/system-management/lists/pages/DocumentCategories.vue');
+const ExceptionalAuthenticationTypes = () => import('@/ui/views/pages/system-management/lists/pages/ExceptionalAuthenticationTypes.vue');
 
 export const systemManagement: RouteConfig = {
   path: Routes.systemManagement.layout.path,
@@ -163,6 +164,12 @@ export const systemManagement: RouteConfig = {
       path: Routes.systemManagement.documentCategories.path,
       name: Routes.systemManagement.documentCategories.name,
       component: DocumentCategories,
+      meta: { level: UserRoles.level6 },
+    },
+    {
+      path: Routes.systemManagement.exceptionalAuthenticationTypes.path,
+      name: Routes.systemManagement.exceptionalAuthenticationTypes.name,
+      component: ExceptionalAuthenticationTypes,
       meta: { level: UserRoles.level6 },
     },
   ],

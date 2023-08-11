@@ -196,6 +196,8 @@ export interface IEditEventRequest extends ICreateEventRequest {
   registrationsForL0usersEnabled: boolean;
 }
 
+export interface IEventExceptionalAuthenticationType { exceptionalAuthenticationTypeId: uuid, maxNumberOfUsages?: number }
+
 /**
  * Interface used for the Event entity class
  */
@@ -221,6 +223,7 @@ export interface IEventEntity extends IEntity {
    consentStatementId?: uuid;
    authenticationTier1disabled?: boolean;
    authenticationTier2disabled?: boolean;
+   exceptionalAuthenticationTypes?: Array<IEventExceptionalAuthenticationType>;
 
    validate(): Array<string> | boolean;
    fillEmptyMultilingualAttributes(): void;

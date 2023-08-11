@@ -9,7 +9,7 @@ import { ICaseFileMetadata } from '@libs/entities-lib/src/case-file/case-file.ty
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
-import { ICaseFilesService, ICreateCaseFileRequest } from './case-files.types';
+import { ICaseFileCountByExceptionalAuthentication, ICaseFilesService, ICreateCaseFileRequest } from './case-files.types';
 
 const API_URL_SUFFIX = 'case-file';
 const CONTROLLER = 'case-files';
@@ -107,5 +107,9 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
 
   async setPersonReceiveAssistance(caseFileId: uuid, params: { receiveAssistance: boolean, personId: string, rationale: string }): Promise<ICaseFileEntity> {
     return this.http.patch(`/case-file/case-files/${caseFileId}/receive-assistance`, params);
+  }
+
+  async getExceptionalTypeCounts(eventId: uuid): Promise<ICaseFileCountByExceptionalAuthentication[]> {
+    return this.http.get(`${this.baseUrl}/exceptional-type-counts`, { params: { eventId } });
   }
 }

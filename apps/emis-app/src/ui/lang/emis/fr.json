@@ -2513,5 +2513,7 @@
     "zendesk.question.create_case_note": "Comment créer une note évolutive?",
     "zendesk.question.forgot_password": "Mot de passe oublié ?",
     "zendesk.question.register_a_beneficiary": "Comment inscrire un bénéficiaire?",
-    "zendesk.question.select_language_preferences": "Comment sélectionner mes préférences linguistiques?"
+    "zendesk.question.select_language_preferences": "Comment sélectionner mes préférences linguistiques?",
+    "eventSummary.exceptionalAuthenticationType.count": "Utilisé {count} sur {max}",
+    "eventSummary.exceptionalAuthenticationType.max": "Max"
 }

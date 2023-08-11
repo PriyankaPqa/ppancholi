@@ -97,6 +97,10 @@ describe('EventSummarySectionTitle.vue', () => {
             title: 'eventSummary.agreement',
             buttonCaption: 'eventSummary.addAgreement',
           },
+          [EEventSummarySections.ExceptionalAuthenticationType]: {
+            title: 'eventSummary.exceptionalAuthenticationType',
+            buttonCaption: 'eventSummary.selectTypes',
+          },
           [EEventSummarySections.RegistrationAssessment]: {
             title: 'eventSummary.registrationAssessment',
             buttonCaption: 'eventSummary.addRegistrationAssessment',

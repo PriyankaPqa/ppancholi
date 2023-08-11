@@ -69,6 +69,9 @@ describe('>>> OptionItems Service', () => {
     it('returns correct prefix for EOptionLists.DocumentCategories', () => {
       expect(service.getPrefix(EOptionLists.DocumentCategories)).toBe('/case-file/document-categories');
     });
+    it('returns correct prefix for EOptionLists.ExceptionalAuthenticationTypes', () => {
+      expect(service.getPrefix(EOptionLists.ExceptionalAuthenticationTypes)).toBe('/event/exceptional-authentication-types');
+    });
   });
 
   test('createOptionItem is linked to the correct URL', async () => {

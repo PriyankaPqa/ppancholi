@@ -19,6 +19,11 @@ export interface ICreateCaseFileRequest {
   }
 }
 
+export interface ICaseFileCountByExceptionalAuthentication {
+  exceptionalAuthenticationTypeId: uuid,
+  caseFileCount: number,
+}
+
 export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, uuid> {
   fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity[]>;
   setCaseFileTags(id: uuid, payload: IListOption[]): Promise<ICaseFileEntity>;
@@ -37,6 +42,7 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   getAssignedCaseFiles(teamMemberId: uuid): Promise<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>>;
   getAllCaseFilesRelatedToHouseholdId(householdId: uuid): Promise<ICaseFileEntity[]>;
   setPersonReceiveAssistance(caseFileId: uuid, params: { receiveAssistance: boolean, personId: string, rationale: string }): Promise<ICaseFileEntity>;
+  getExceptionalTypeCounts(eventId: uuid): Promise<ICaseFileCountByExceptionalAuthentication[]>;
 }
 
 export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileEntity> {
@@ -56,4 +62,5 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   getAssignedCaseFiles: jest.Mock<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>>;
   getAllCaseFilesRelatedToHouseholdId: jest.Mock<ICaseFileEntity[]>;
   setPersonReceiveAssistance: jest.Mock<ICaseFileEntity>;
+  getExceptionalTypeCounts: jest.Mock<Promise<ICaseFileCountByExceptionalAuthentication[]>>;
 }

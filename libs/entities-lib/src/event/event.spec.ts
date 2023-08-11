@@ -98,6 +98,12 @@ describe('>>> EventEntity', () => {
       expect(event.registrationAssessments).toEqual(mockEvent.registrationAssessments);
     });
 
+    it('should instantiate exceptionalAuthenticationTypes', () => {
+      const event = new EventEntity(mockEvent);
+      expect(event.exceptionalAuthenticationTypes).toEqual(mockEvent.exceptionalAuthenticationTypes);
+      expect(new EventEntity().exceptionalAuthenticationTypes).toEqual([]);
+    });
+
     it('should instantiate description', () => {
       const event = new EventEntity(mockEvent);
       expect(event.description).toEqual(mockEvent.description);

@@ -3,6 +3,7 @@ import {
   IEventAgreement,
   IEventCallCentre,
   IEventEntity,
+  IEventExceptionalAuthenticationType,
   IEventGenericLocation,
   IEventLocation,
   IEventMainInfo,
@@ -33,6 +34,8 @@ export interface IEventsService extends IDomainBaseService<IEventEntity, uuid> {
   editAgreement(eventId:uuid, payload: IEventAgreement): Promise<IEventEntity>;
 
   removeAgreement(eventId:uuid, agreementId: uuid): Promise<IEventEntity>;
+
+  updateExceptionalAuthenticationType(eventId:uuid, payload: IEventExceptionalAuthenticationType[]): Promise<IEventEntity>;
 
   addRegistrationLocation(eventId: uuid, payload: IEventGenericLocation): Promise<IEventEntity>;
 
@@ -73,6 +76,7 @@ export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity>
   addAgreement: jest.Mock<IEventEntity>;
   editAgreement: jest.Mock<IEventEntity>;
   removeAgreement: jest.Mock<IEventEntity>;
+  updateExceptionalAuthenticationType: jest.Mock<IEventEntity>;
   addRegistrationLocation: jest.Mock<IEventEntity>;
   editRegistrationLocation: jest.Mock<IEventEntity>;
   addRegistrationAssessment: jest.Mock<IEventEntity>;

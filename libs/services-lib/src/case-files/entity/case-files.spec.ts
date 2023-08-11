@@ -230,4 +230,12 @@ describe('>>> Case File Service', () => {
       expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/receive-assistance`, params);
     });
   });
+
+  describe('getExceptionalTypeCounts', () => {
+    it('is linked to the correct URL and params', async () => {
+      const eventId = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+      await service.getExceptionalTypeCounts(eventId);
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/exceptional-type-counts`, { params: { eventId } });
+    });
+  });
 });

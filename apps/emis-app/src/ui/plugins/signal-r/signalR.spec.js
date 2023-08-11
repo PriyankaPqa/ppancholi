@@ -267,6 +267,13 @@ describe('signalR', () => {
           store: useEventStore(),
           prop: 'eventTypesFetched',
         });
+      expect(conn.listenForOptionItemChanges)
+        .toHaveBeenCalledWith({
+          domain: 'event',
+          optionItemName: 'ExceptionalAuthenticationType',
+          store: useEventStore(),
+          prop: 'exceptionalAuthenticationTypesFetched',
+        });
     });
   });
 

@@ -536,6 +536,10 @@ const routes = {
       path: 'lists/document-categories',
       name: 'systemManagement.lists.documentCategories',
     },
+    exceptionalAuthenticationTypes: {
+      path: 'lists/exceptional-authentication-types',
+      name: 'systemManagement.lists.exceptionalAuthenticationTypes',
+    },
   },
   teams: {
     layout: {

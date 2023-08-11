@@ -5,4 +5,5 @@ export enum EEventSummarySections {
   Agreement = 'Agreement',
   RegistrationAssessment = 'RegistrationAssessment',
   EventConsent = 'EventConsent',
+  ExceptionalAuthenticationType = 'ExceptionalAuthenticationType',
 }

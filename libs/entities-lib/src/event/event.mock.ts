@@ -10,6 +10,7 @@ import {
   IEventMetadata,
   IEventLocation,
 } from './event.types';
+
 /* eslint-disable max-lines-per-function */
 
 export const mockRegistrationAssessment = () => ({
@@ -303,6 +304,7 @@ export const mockEventEntityData = (): IEventEntity[] => [
         },
       },
     }],
+    exceptionalAuthenticationTypes: [{ exceptionalAuthenticationTypeId: '111', maxNumberOfUsages: 2 }, { exceptionalAuthenticationTypeId: '222' }],
   },
   {
     ...mockBaseData(),
@@ -489,6 +491,7 @@ export const mockEventEntityData = (): IEventEntity[] => [
         },
       },
     }],
+    exceptionalAuthenticationTypes: [{ exceptionalAuthenticationTypeId: '111', maxNumberOfUsages: 2 }, { exceptionalAuthenticationTypeId: '222' }],
   },
 ];
 
@@ -677,6 +680,7 @@ const getEventEntity = (index = 0) : IEventEntity => ({
   scheduleHistory: mockEventEntityData()[index].scheduleHistory,
   relatedEventIds: [mockBaseData().id + (index + 1)],
   agreements: mockEventEntityData()[index].agreements,
+  exceptionalAuthenticationTypes: mockEventEntityData()[index].exceptionalAuthenticationTypes,
 
   validate: jest.fn(),
   fillEmptyMultilingualAttributes: jest.fn(),

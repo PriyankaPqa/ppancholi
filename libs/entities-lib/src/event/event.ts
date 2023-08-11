@@ -18,6 +18,7 @@ import {
   IEventSchedule,
   IEventAgreement,
   IRegistrationAssessment,
+  IEventExceptionalAuthenticationType,
 } from './event.types';
 
 export class EventEntity extends BaseEntity {
@@ -62,6 +63,8 @@ export class EventEntity extends BaseEntity {
   authenticationTier1disabled?: boolean;
 
   authenticationTier2disabled?: boolean;
+
+  exceptionalAuthenticationTypes: Array<IEventExceptionalAuthenticationType>;
 
   constructor(data?: IEventEntity) {
     if (data) {
@@ -124,6 +127,7 @@ export class EventEntity extends BaseEntity {
       }));
       this.relatedEventIds = data.relatedEventIds ? [...data.relatedEventIds] : null;
       this.consentStatementId = data.consentStatementId;
+      this.exceptionalAuthenticationTypes = data.exceptionalAuthenticationTypes || [];
     } else {
       super();
       this.reset();
@@ -175,6 +179,7 @@ export class EventEntity extends BaseEntity {
     this.shelterLocations = [];
     this.authenticationTier1disabled = false;
     this.authenticationTier2disabled = false;
+    this.exceptionalAuthenticationTypes = [];
   }
 
   private validateAttributes(errors: Array<string>) {

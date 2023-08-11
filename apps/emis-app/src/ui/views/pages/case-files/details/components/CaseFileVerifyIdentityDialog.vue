@@ -75,6 +75,31 @@
                 :rules="rules.method" />
             </v-col>
           </v-row>
+          <div v-if="$hasFeature(FeatureKeys.AuthenticationPhaseII) && form.method === IdentityAuthenticationMethod.Exceptional">
+            <v-row>
+              <v-col cols="12" xl="12" lg="12">
+                <v-select-with-validation
+                  v-model="form.exceptionalTypeId"
+                  :attach="false"
+                  data-test="verifyIdentity_options"
+                  :items="exceptionalTypes"
+                  :item-text="(item) => $m(item.name)"
+                  :item-value="(item) => item.id"
+                  :label="$t('caseFileDetail.verifyIdentityDialog.exceptionalType')"
+                  :rules="rules.exceptionalType" />
+              </v-col>
+            </v-row>
+            <v-row v-if="exceptionalMustSpecifyOther">
+              <v-col>
+                <v-text-field-with-validation
+                  v-model="form.exceptionalTypeOther"
+                  data-test="exceptional-specified-other"
+                  autocomplete="nope"
+                  :label="`${$t('common.pleaseSpecify')} *`"
+                  :rules="rules.exceptionalTypeOther" />
+              </v-col>
+            </v-row>
+          </div>
           <v-row>
             <v-col cols="12" xl="12" lg="12">
               <div class="rc-body16 fw-bold mb-4">
@@ -125,6 +150,8 @@ import {
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { useEventStore } from '@/pinia/event/event';
 
 export default Vue.extend({
   name: 'VerifyIdentity',
@@ -156,8 +183,12 @@ export default Vue.extend({
         identificationIds: [] as Array<string>,
         status: null as IdentityAuthenticationStatus,
         specifiedOther: null as string,
+        exceptionalTypeId: null as string,
+        exceptionalTypeOther: null as string,
       },
       helpLink: this.$t('zendesk.authentication_identity'),
+      IdentityAuthenticationMethod,
+      FeatureKeys,
     };
   },
   computed: {
@@ -176,6 +207,10 @@ export default Vue.extend({
      */
     verificationOptions(): Array<IOptionItem> {
       return useCaseFileStore().getScreeningIds(true, this.form.identificationIds);
+    },
+
+    exceptionalTypes(): Array<IOptionItem> {
+      return useEventStore().getExceptionalAuthenticationTypes(true, this.form.exceptionalTypeId, useEventStore().getById(this.caseFile.eventId));
     },
 
     isValidAuthStatus(): boolean {
@@ -199,11 +234,20 @@ export default Vue.extend({
           required: true,
           max: MAX_LENGTH_SM,
         },
+        exceptionalType: { required: true },
+        exceptionalTypeOther: {
+          required: true,
+          max: MAX_LENGTH_SM,
+        },
       };
     },
 
     mustSpecifyOther(): boolean {
       return this.verificationOptions.filter((v) => this.form.identificationIds.indexOf(v.id) > -1 && v.isOther).length > 0;
+    },
+
+    exceptionalMustSpecifyOther(): boolean {
+      return !!this.exceptionalTypes.find((v) => this.form.exceptionalTypeId === v.id && v.isOther);
     },
   },
 
@@ -219,15 +263,23 @@ export default Vue.extend({
         this.form.specifiedOther = null;
       }
     },
+    exceptionalMustSpecifyOther(newValue: boolean) {
+      if (!newValue) {
+        this.form.exceptionalTypeOther = null;
+      }
+    },
   },
 
   async created() {
     await useCaseFileStore().fetchScreeningIds();
+    await useEventStore().fetchExceptionalAuthenticationTypes();
     this.form.method = this.caseFile.identityAuthentication?.method || IdentityAuthenticationMethod.NotApplicable;
     this.form.status = this.caseFile.identityAuthentication?.status || IdentityAuthenticationStatus.NotVerified;
     this.form.identificationIds = (this.caseFile.identityAuthentication?.identificationIds || []).map((x) => x.optionItemId);
     this.form.specifiedOther = (this.caseFile.identityAuthentication?.identificationIds || [])
       .filter((x) => x.specifiedOther)[0]?.specifiedOther || null;
+    this.form.exceptionalTypeId = this.caseFile.identityAuthentication?.exceptionalAuthenticationTypeId?.optionItemId || this.exceptionalTypes.find((x) => x.isDefault)?.id;
+    this.form.exceptionalTypeOther = this.caseFile.identityAuthentication?.exceptionalAuthenticationTypeId?.specifiedOther;
   },
   methods: {
     /**
@@ -245,6 +297,9 @@ export default Vue.extend({
         this.loading = true;
 
         const value = ({ status: this.form.status, method: this.form.method, identificationIds: [] }) as IIdentityAuthentication;
+        if (this.$hasFeature(FeatureKeys.AuthenticationPhaseII) && value.method === IdentityAuthenticationMethod.Exceptional) {
+          value.exceptionalAuthenticationTypeId = { optionItemId: this.form.exceptionalTypeId, specifiedOther: this.form.exceptionalTypeOther };
+        }
         value.identificationIds = this.form.identificationIds.map((m: string) => (
           {
             optionItemId: m,

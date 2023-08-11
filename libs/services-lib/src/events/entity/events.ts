@@ -6,6 +6,7 @@ import {
   IEventAgreement,
   IEventCallCentre,
   IEventEntity,
+  IEventExceptionalAuthenticationType,
   IEventGenericLocation,
   IEventLocation,
   IEventMainInfo,
@@ -107,6 +108,13 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
 
   async removeAgreement(eventId:uuid, agreementId: uuid): Promise<IEventEntity> {
     return this.http.delete(`${this.baseUrl}/${eventId}/agreement/${agreementId}`);
+  }
+
+  async updateExceptionalAuthenticationType(eventId:uuid, payload: IEventExceptionalAuthenticationType[]): Promise<IEventEntity> {
+    return this.http.patch(
+      `${this.baseUrl}/${eventId}/exceptionalAuthenticationTypes`,
+      payload,
+    );
   }
 
   async addRegistrationLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity> {

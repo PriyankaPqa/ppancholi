@@ -132,6 +132,11 @@ export default Vue.extend({
         route: routes.systemManagement.documentCategories.name,
         dataTest: 'documentCategories',
       },
+      {
+        name: 'system_management.lists.exceptionalAuthenticationTypes',
+        route: routes.systemManagement.exceptionalAuthenticationTypes.name,
+        dataTest: 'exceptionalAuthenticationTypes',
+      },
     ];
 
     return {

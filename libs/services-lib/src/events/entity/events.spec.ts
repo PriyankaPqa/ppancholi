@@ -257,6 +257,14 @@ describe('>>> Events Service', () => {
     expect(http.delete).toHaveBeenCalledWith(`${service.baseUrl}/${id}/agreement/${agreementId}`);
   });
 
+  test('updateExceptionalAuthenticationType calls the correct URL with the right payload ', async () => {
+    const event = new EventEntity(mockEventEntities()[0]);
+    const exceptionalAuthenticationType = event.exceptionalAuthenticationTypes;
+    const { id } = event;
+    await service.updateExceptionalAuthenticationType(id, exceptionalAuthenticationType);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/exceptionalAuthenticationTypes`, exceptionalAuthenticationType);
+  });
+
   test('editEventConsent calls the correct URL with the right payload ', async () => {
     await service.editEventConsent('eventid', 'consentid');
     expect(http.patch).toHaveBeenCalledWith(
