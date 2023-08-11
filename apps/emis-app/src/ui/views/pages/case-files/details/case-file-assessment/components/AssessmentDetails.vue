@@ -25,7 +25,7 @@
           </div>
           <div>
             <div>{{ $t('assessmentResponse.completedBy') }}:</div>
-            <div v-if="assessmentResponse.completedBy">
+            <div v-if="assessmentResponse.completedBy" data-test="completed_by">
               {{ assessmentResponse.completedBy.type === CompletedByType.Crc
                 ? assessmentResponse.completedBy.crcUserName
                 : $t('assessment.completedBy.individual') }}

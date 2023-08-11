@@ -15,7 +15,7 @@
         <tr
           v-for="(qAndA, $index) in group"
           :key="`item__${$index}`">
-          <td class="question">
+          <td class="question" :data-test="`question_item__${$index}`">
             <div class="d-flex">
               <div
                 v-for="(childIndex, $sub) in qAndA.childEntryIndexes"
@@ -31,7 +31,7 @@
               </div>
             </div>
           </td>
-          <td class="answer">
+          <td class="answer" :data-test="`answer_item__${$index}`">
             {{ qAndA.displayAnswer }}
             <v-btn v-if="qAndA.history.length > 1" data-test="answer-history-open-button" icon class="pl-1" @click="showHistory(qAndA)">
               <v-icon size="20">
