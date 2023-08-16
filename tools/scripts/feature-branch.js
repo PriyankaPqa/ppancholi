@@ -21,6 +21,7 @@ require('dotenv').config({ path: __dirname + `/../../.env.local` , override: tru
 const Mode = {
   preview: '1',
   edit: '2',
+  clean: '3'
 }
 
 const Confirm = {
@@ -37,15 +38,24 @@ const azureAPIConfig = {
 const terraformFolderPath = process.env.TERRAFORM_PATH;
 const file = `${terraformFolderPath}/src/environments/dev/variables.tfvars`;
 
+const jiraAPIConfig = {
+  baseUrl: 'https://rctech.atlassian.net',
+  apiToken: process.env.JIRA_TOKEN,
+  email: process.env.JIRA_EMAIL,
+  project: 'EMISV2'
+}
+
 let emisToAdd = [];
 let emisToRemove = []
 let benefToAdd = []
 let benefToRemove = [];
 let confirm = null;
 
+const jiraStatusCleanTarget = 'Resolved';
+
 function generatePRDescription(emisToAdd, emisToRemove, benefToAdd, benefToRemove) {
   const emisText = (emisToAdd.length > 0 || emisToRemove.length > 0) ? `EMIS: ${emisToAdd.length > 0 ? 'add ' + emisToAdd : ''} ${emisToRemove.length > 0 ? 'remove ' + emisToRemove : ''}` : '';
-  const benefText = (benefToAdd.length > 0 || benefToRemove.length > 0) ? `BENEF: ${benefToAdd ? 'add ' + benefToAdd : ''} ${benefToRemove.length > 0 ? 'remove ' + benefToRemove.length > 0 : ''}` : '';
+  const benefText = (benefToAdd.length > 0 || benefToRemove.length > 0) ? `BENEF: ${benefToAdd.length > 0 ? 'add ' + benefToAdd : ''} ${benefToRemove.length > 0 ? 'remove ' + benefToRemove : ''}` : '';
   return `${emisText}${emisText && benefText ? '\n' : ''}${benefText}`;
 }
 function generateFeatureBranchName(emisToAdd, emisToRemove, benefToAdd, benefToRemove) {
@@ -103,6 +113,7 @@ function readFile() {
   let emisArr = extractArray('emis_features', data);
   console.log('beneficiary_features', benefArr)
   console.log('emis_features', emisArr)
+  return [benefArr, emisArr]
 }
 function updateFile(mode, emis, benef) {
   // Read the file
@@ -193,8 +204,8 @@ async function preview() {
           throw err;
         }
         console.log('## Current State (master) ##')
-        readFile();
-        resolve();
+        const [benefArr, emisArr] = readFile();
+        resolve([benefArr, emisArr]);
       });
     });
   });
@@ -251,9 +262,6 @@ function main() {
           updateFile('delete', emisToRemove, benefToRemove);
         }
 
-        // Updating
-
-
         // Add and commit changes
         git.add('.')
           .commit(`Edit feature branches values`, (err) => {
@@ -286,29 +294,95 @@ function main() {
   });
 }
 
-const mode = prompt(`What do you want to do? (preview: ${Mode.preview}, edit:${Mode.edit})`).toString();
+function confirmAndProceed() {
+  do {
+    confirm = prompt(`Do you confirm and want to create the PR? (yes: ${Confirm.yes}, no:${Confirm.no}): `)
+      .toString();
+  } while (confirm !== Confirm.yes && confirm !== Confirm.no)
+
+  if (confirm.toString() === Confirm.no) {
+    console.error('Process closed. Not branch or PR has been created')
+    process.exit(1);
+  }
+  main();
+}
+
+async function getJiraItemById(id) {
+  const url = `${jiraAPIConfig.baseUrl}/rest/api/3/issue/${jiraAPIConfig.project}-${id}`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Basic ${Buffer.from(`:${jiraAPIConfig.email}:${jiraAPIConfig.apiToken}`).toString('base64')}`, // Use Bearer Token
+      },
+    });
+    return response.data;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function hasJiraItemStatus(id, status) {
+  const item = await getJiraItemById(id);
+  if (item) {
+    return item.fields.status.name === status;
+  }
+  return false;
+}
+
+async function filterJiraItemsByStatus(ids, status) {
+  const resolvedPromises = ids.map(async (id) => {
+    const isResolved = await hasJiraItemStatus(id, status)
+    return isResolved === true ? id : null;
+  })
+  const results = await Promise.all(resolvedPromises)
+  return results.filter(r => r !== null)
+}
+
+
+const mode = prompt(`What do you want to do? (preview: ${Mode.preview}, edit:${Mode.edit}, auto-clean:${Mode.clean})`).toString();
 
 if (mode === Mode.preview) {
   preview();
 } else if (mode === Mode.edit) {
-  preview().then(() => {
-    emisToAdd = prompt("Enter values to add for emis (comma separated): ").split(",").filter(v => v !== '');
-    emisToRemove = prompt("Enter values to remove for emis (comma separated): ").split(",").filter(v => v !== '');
-    benefToAdd = prompt("Enter values to add for benef (comma separated): ").split(",").filter(v => v !== '');
-    benefToRemove = prompt("Enter values to remove for benef (comma separated): ").split(",").filter(v => v !== '');
+  preview()
+    .then(() => {
+      emisToAdd = prompt("Enter values to add for emis (comma separated): ")
+        .split(",")
+        .filter(v => v !== '');
+      emisToRemove = prompt("Enter values to remove for emis (comma separated): ")
+        .split(",")
+        .filter(v => v !== '');
+      benefToAdd = prompt("Enter values to add for benef (comma separated): ")
+        .split(",")
+        .filter(v => v !== '');
+      benefToRemove = prompt("Enter values to remove for benef (comma separated): ")
+        .split(",")
+        .filter(v => v !== '');
 
-    do {
-      confirm = prompt(`Do you confirm and want to create the PR? (yes: ${Confirm.yes}, no:${Confirm.no}): `).toString();
-    } while (confirm !== Confirm.yes && confirm !== Confirm.no)
+      confirmAndProceed();
 
-    if (confirm.toString() === Confirm.no) {
-      console.error('Process closed. Not branch or PR has been created')
-      process.exit(1);
-    }
-    main();
-  })
+    })
+}
+else if (mode === Mode.clean) {
+  console.log('Starting cleaning process');
+  preview()
+    .then(([benefArr, emisArr]) => {
+      filterJiraItemsByStatus(benefArr, jiraStatusCleanTarget).then((resolvedBenef) => {
+        console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (benef-app)`);
+        benefToRemove = resolvedBenef;
+        console.log(resolvedBenef)
+        filterJiraItemsByStatus(emisArr, jiraStatusCleanTarget).then((resolvedEmis) => {
+          console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (emis-app)`);
+          emisToRemove = resolvedEmis;
+          console.log(resolvedEmis);
+          confirmAndProceed();
+        })
+      })
+    });
+}
 
-} else {
+ else {
   console.error('Wrong answer. Closed.')
   process.exit(1);
 }
