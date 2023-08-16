@@ -340,25 +340,32 @@ async function filterJiraItemsByStatus(ids, status) {
 }
 
 
-const mode = prompt(`What do you want to do? (preview: ${Mode.preview}, edit:${Mode.edit}, auto-clean:${Mode.clean})`).toString();
+const mode = prompt(`Pick you mode (preview: ${Mode.preview}, edit:${Mode.edit}, clean:${Mode.clean}). Note that edit will auto-clean ${jiraStatusCleanTarget} items: `).toString();
 
 if (mode === Mode.preview) {
   preview();
 } else if (mode === Mode.edit) {
   preview()
-    .then(() => {
+    .then(([benefArr, emisArr]) => {
       emisToAdd = prompt("Enter values to add for emis (comma separated): ")
         .split(",")
         .filter(v => v !== '');
-      emisToRemove = prompt("Enter values to remove for emis (comma separated): ")
-        .split(",")
-        .filter(v => v !== '');
+
+      filterJiraItemsByStatus(emisArr, jiraStatusCleanTarget).then((items) => {
+        console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (benef-app)`);
+        emisToRemove = items;
+        console.log(items)
+      });
+
       benefToAdd = prompt("Enter values to add for benef (comma separated): ")
         .split(",")
         .filter(v => v !== '');
-      benefToRemove = prompt("Enter values to remove for benef (comma separated): ")
-        .split(",")
-        .filter(v => v !== '');
+
+        filterJiraItemsByStatus(benefArr, jiraStatusCleanTarget).then((items) => {
+          console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (benef-app)`);
+          benefToRemove = items;
+          console.log(items)
+        });
 
       confirmAndProceed();
 
@@ -368,14 +375,14 @@ else if (mode === Mode.clean) {
   console.log('Starting cleaning process');
   preview()
     .then(([benefArr, emisArr]) => {
-      filterJiraItemsByStatus(benefArr, jiraStatusCleanTarget).then((resolvedBenef) => {
+      filterJiraItemsByStatus(benefArr, jiraStatusCleanTarget).then((items) => {
         console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (benef-app)`);
-        benefToRemove = resolvedBenef;
-        console.log(resolvedBenef)
-        filterJiraItemsByStatus(emisArr, jiraStatusCleanTarget).then((resolvedEmis) => {
+        benefToRemove = items;
+        console.log(items)
+        filterJiraItemsByStatus(emisArr, jiraStatusCleanTarget).then((items) => {
           console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (emis-app)`);
-          emisToRemove = resolvedEmis;
-          console.log(resolvedEmis);
+          emisToRemove = items;
+          console.log(items);
           confirmAndProceed();
         })
       })
