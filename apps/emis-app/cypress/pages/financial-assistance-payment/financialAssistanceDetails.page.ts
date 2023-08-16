@@ -220,4 +220,10 @@ export class FinancialAssistanceDetailsPage {
     cy.getByDataTest(this.caseFileActivityTab).click();
     return new CaseFileDetailsPage();
   }
+
+  public closeConfirmationMessageAndGoToCaseFileDetailsPage() {
+    cy.getByDataTest(this.caseFileActivityTab).click();
+    cy.getByDataTest(this.dialogSubmit).click();
+    return new CaseFileDetailsPage();
+  }
 }

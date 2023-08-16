@@ -34,7 +34,7 @@ const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles
 
 let accessTokenL6 = '';
 
-describe('#TC1792# - Confirm that an Approver can decline a payment request', { tags: ['@approval', '@financial-assistance'] }, () => {
+describe('#TC1791# - Confirm that an Approver can submit a request for more information', { tags: ['@approval', '@financial-assistance'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -69,16 +69,17 @@ describe('#TC1792# - Confirm that an Approver can decline a payment request', { 
             cy.goTo('approvals/request');
           });
         });
-        it('should successfully decline a payment request by approver', function () {
+        it('should successfully submit a request for more information', function () {
           const approvalsPage = new ApprovalsPage();
 
           approvalsPage.getPendingRequestsTable().contains(`${this.FAPaymentName}`).should('be.visible');
           approvalsPage.getActionsButton().last().click();
           approvalsPage.getDialogTitle().contains('Action approval').should('be.visible');
-          approvalsPage.checkApprovalActionDecline();
-          approvalsPage.getLabelConfirmedCheckboxField().contains('I confirm that I have informed the requestor that the approval has been declined.').should('be.visible');
+          approvalsPage.checkApprovalActionRequestInfo();
+          // eslint-disable-next-line
+          approvalsPage.getLabelConfirmedCheckboxField().contains('I confirm that I have informed the requestor that this requires additional information prior to approval.').should('be.visible');
           approvalsPage.checkConfirmedCheckbox();
-          approvalsPage.enterApprovalActionRationale().type('you did not provide the information that I previously needed in order to approve it');
+          approvalsPage.enterApprovalActionRationale().type('Please upload the results of the beneficiary assessment');
           approvalsPage.submitActionApproval();
           cy.contains('Approval status has been updated').should('be.visible');
 
@@ -87,15 +88,15 @@ describe('#TC1792# - Confirm that an Approver can decline a payment request', { 
           cy.contains(`${this.FAPaymentName}`).should('be.visible');
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(0).should('eq', `Payment submitted to  ${getUserName(roleName)}`);
           financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(0).should('eq', 'Submitted');
-          financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(1).should('eq', 'you did not provide the information that I previously needed in order to approve it');
-          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(1).should('eq', 'Declined');
+          financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(1).should('eq', 'Please upload the results of the beneficiary assessment');
+          financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(1).should('eq', 'Request additional information');
           financialAssistanceDetailsPage.closeDialogApprovalStatusHistory();
 
-          const caseFileDetailsPage = financialAssistanceDetailsPage.goToCaseFileDetailsPage();
+          const caseFileDetailsPage = financialAssistanceDetailsPage.closeConfirmationMessageAndGoToCaseFileDetailsPage();
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
           caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
-          caseFileDetailsPage.getCaseFileActivityTitle().should('string', 'Financial assistance payment - Declined');
+          caseFileDetailsPage.getCaseFileActivityTitle().should('string', 'Financial assistance payment - Request additional information');
           caseFileDetailsPage.getCaseFileActivityBody().should('string', `Name: ${this.FAPaymentName}`).and('string', 'Amount: $80.00');
         });
       });
@@ -118,7 +119,7 @@ describe('#TC1792# - Confirm that an Approver can decline a payment request', { 
             cy.goTo('approvals/request');
           });
         });
-        it('should not be able to decline a payment request by approver', () => {
+        it('should not be able to submit a request for more information', () => {
           const approvalsPage = new ApprovalsPage();
 
           cy.contains('You do not have permission to access this page').should('be.visible');

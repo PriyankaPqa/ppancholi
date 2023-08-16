@@ -5,7 +5,8 @@ export enum DataTest {
   pendingRequestsTable = 'approval-requests-table-pending',
   titleDialog = 'dialog-title',
   approvalActionDeclined = 'approval_action_action_declined',
-  confirmedDecline = 'checkbox_confirmed',
+  approvalActionRequestInfo = 'approval_action_action_requestInfo',
+  confirmCheckbox = 'checkbox_confirmed',
   approvalActionRationale = 'approval_action_rationale',
   approvalActionSubmit = 'dialog-submit-action',
   faPaymentLink = 'approval_requests_fa-link_',
@@ -20,9 +21,11 @@ export enum DataTest {
 
     private approvalActionDeclined = { selector: DataTest.approvalActionDeclined, type: 'input' };
 
-    private confirmedDeclineField = { selector: DataTest.confirmedDecline };
+    private approvalActionRequestInfo = { selector: DataTest.approvalActionRequestInfo, type: 'input' };
 
-    private confirmedDeclineCheckbox = { selector: DataTest.confirmedDecline, type: 'input' };
+    private confirmCheckboxField = { selector: DataTest.confirmCheckbox };
+
+    private confirmCheckbox = { selector: DataTest.confirmCheckbox, type: 'input' };
 
     private approvalActionRationale = { selector: DataTest.approvalActionRationale, type: 'textarea' };
 
@@ -46,12 +49,16 @@ export enum DataTest {
       return cy.getByDataTest(this.approvalActionDeclined).check({ force: true });
     }
 
-    public getLabelConfirmedDecline() {
-      return cy.getByDataTest(this.confirmedDeclineField);
+    public checkApprovalActionRequestInfo() {
+      return cy.getByDataTest(this.approvalActionRequestInfo).check({ force: true });
     }
 
-    public checkConfirmedDecline() {
-      return cy.getByDataTest(this.confirmedDeclineCheckbox).check({ force: true });
+    public getLabelConfirmedCheckboxField() {
+      return cy.getByDataTest(this.confirmCheckboxField);
+    }
+
+    public checkConfirmedCheckbox() {
+      return cy.getByDataTest(this.confirmCheckbox).check({ force: true });
     }
 
     public enterApprovalActionRationale() {
