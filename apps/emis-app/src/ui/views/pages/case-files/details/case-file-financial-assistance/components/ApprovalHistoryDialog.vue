@@ -36,7 +36,9 @@
         </div>
       </template>
       <template #[`item.rationale`]="{ item }">
-        {{ getRationaleText(item) }}
+        <span :data-test="`rationale-item`">
+          {{ getRationaleText(item) }}
+        </span>
       </template>
       <template #[`item.dateOfApprovalAction`]="{ item }">
         <div class="text-no-wrap">
@@ -44,7 +46,7 @@
         </div>
       </template>
       <template #[`item.actionText`]="{ item }">
-        <div class="no-word-break">
+        <div class="no-word-break" :data-test="`action-item`">
           {{ item.actionText }}
         </div>
         <div

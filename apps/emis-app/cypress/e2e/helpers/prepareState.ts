@@ -307,6 +307,17 @@ export const addFinancialAssistancePayment = async (provider: IProvider, modalit
 };
 
 /**
+ * Submits financial assistance payment request to approver for decision
+ * @param provider
+ * @param paymentId
+ * @param submitTo
+ */
+export const submitFinancialAssistancePaymentToApprover = async (provider: IProvider, paymentId: string, submitTo: string) => {
+  const submittedApprovalRequest = await provider.financialAssistancePaymentsService.submitApprovalRequest(paymentId, submitTo);
+  return submittedApprovalRequest;
+};
+
+/**
  * Submit financial assistance
  * @param provider
  * @param financialAssistancePaymentId

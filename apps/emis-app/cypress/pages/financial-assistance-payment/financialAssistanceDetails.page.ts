@@ -1,3 +1,5 @@
+import { CaseFileDetailsPage } from '../casefiles/caseFileDetails.page';
+
 export enum DataTest {
   addPaymentLineBtn = 'financial-addPaymentLineBtn',
   submitAssistanceButton = 'submit',
@@ -19,6 +21,10 @@ export enum DataTest {
   statusCompleted = 'statusSelect__5',
   statusCancelled = 'statusSelect__6',
   selectSupervisor = 'approval_supervisor',
+  approvalStatusHistory = 'approval-status-history-icon',
+  dialogApprovalHistoryRationale = 'rationale-item',
+  dialogApprovalHistoryAction = 'action-item',
+  caseFileActivityTab = 'item-text-0',
 }
 
 export class FinancialAssistanceDetailsPage {
@@ -61,6 +67,14 @@ export class FinancialAssistanceDetailsPage {
   private itemAmount = { selector: DataTest.itemAmount };
 
   private paymentGroupList = { selector: DataTest.paymentGroupList };
+
+  private approvalStatusHistory = { selector: DataTest.approvalStatusHistory };
+
+  private dialogApprovalHistoryRationale = { selector: DataTest.dialogApprovalHistoryRationale };
+
+  private dialogApprovalHistoryAction = { selector: DataTest.dialogApprovalHistoryAction };
+
+  private caseFileActivityTab = { selector: DataTest.caseFileActivityTab };
 
   public getAddPaymentLineButton() {
     return cy.getByDataTest(this.addPaymentLineButton);
@@ -184,5 +198,26 @@ export class FinancialAssistanceDetailsPage {
 
   public getPaymentAmount() {
     return cy.getByDataTest(this.totalAmount).invoke('text').then((text) => text.trim());
+  }
+
+  public getApprovalHistory() {
+    return cy.getByDataTest(this.approvalStatusHistory).click();
+  }
+
+  public getApprovalHistoryRationaleByIndex(index: number) {
+    return cy.getByDataTest(this.dialogApprovalHistoryRationale).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getApprovalHistoryActionByIndex(index: number) {
+    return cy.getByDataTest(this.dialogApprovalHistoryAction).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public closeDialogApprovalStatusHistory() {
+    return cy.getByDataTest(this.dialogCancel).click();
+  }
+
+  public goToCaseFileDetailsPage() {
+    cy.getByDataTest(this.caseFileActivityTab).click();
+    return new CaseFileDetailsPage();
   }
 }

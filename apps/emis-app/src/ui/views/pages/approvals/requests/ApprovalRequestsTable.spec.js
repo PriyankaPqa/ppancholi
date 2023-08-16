@@ -645,6 +645,14 @@ describe('ApprovalRequestsTable', () => {
         computed: {
           mappedPayments: () => [FAPayment],
         },
+        data() {
+          return {
+            combinedFinancialAssistancePaymentStore: {
+              getByIds: jest.fn(() => [mockCombinedCaseFinancialAssistance({ id: 'id-1', caseFileId: 'cf-id-1' })]),
+              search: jest.fn(),
+            },
+          };
+        },
       });
 
       wrapper.vm.getFinancialAssistanceDetailsRoute = jest.fn(() => ({
@@ -707,7 +715,7 @@ describe('ApprovalRequestsTable', () => {
 
     describe('table elements', () => {
       test('case file number redirects to getCaseFileRoute', () => {
-        const link = wrapper.findDataTest('approval_requests_case-file-link');
+        const link = wrapper.findDataTest('approval_requests_case-file-link_cf-id-1');
         expect(link.props('to'))
           .toEqual({
             name: routes.caseFile.activity.name,
@@ -718,7 +726,7 @@ describe('ApprovalRequestsTable', () => {
       });
 
       test('Payment redirects to getFinancialAssistanceDetailsRoute', () => {
-        const link = wrapper.findDataTest('approval_requests_fa-link');
+        const link = wrapper.findDataTest('approval_requests_fa-link_id-1');
         expect(link.props('to'))
           .toEqual({
             name: routes.caseFile.financialAssistance.details.name,

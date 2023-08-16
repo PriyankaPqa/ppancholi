@@ -58,6 +58,14 @@ export class CaseFileDetailsPage {
     return cy.getByDataTest(this.dateCreated).eq(index).invoke('text').then((date) => formatDate(date));
   }
 
+  public getCaseFileActivityTitle(index = 0) {
+    return cy.getByDataTest(this.caseFileActivityTitle).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getCaseFileActivityBody(index = 0) {
+    return cy.getByDataTest(this.caseFileActivityBody).eq(index).invoke('text').then((text) => text.trim());
+  }
+
   public goBackToHouseholdProfilePage() {
     cy.getByDataTest(this.backButton).click();
   }

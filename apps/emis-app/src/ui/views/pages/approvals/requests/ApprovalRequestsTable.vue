@@ -59,7 +59,7 @@
       <template #[`item.${customColumns.caseFileNumber}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold"
-          data-test="approval_requests_case-file-link"
+          :data-test="`approval_requests_case-file-link_${item.entity.caseFileId}`"
           :to="getCaseFileDetailsRoute(item.entity.caseFileId)">
           {{ item.metadata ? item.metadata.caseFileNumber : '' }}
         </router-link>
@@ -68,7 +68,7 @@
       <template #[`item.${customColumns.payment}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold"
-          data-test="approval_requests_fa-link"
+          :data-test="`approval_requests_fa-link_${item.entity.id}`"
           :to="getFinancialAssistanceDetailsRoute(item.entity.caseFileId, item.entity.id)">
           {{ item.entity.name }}
         </router-link>
