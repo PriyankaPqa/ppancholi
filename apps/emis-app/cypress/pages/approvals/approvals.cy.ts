@@ -1,7 +1,7 @@
 import { FinancialAssistanceDetailsPage } from '../financial-assistance-payment/financialAssistanceDetails.page';
 
 export enum DataTest {
-  actionButton = 'action_button',
+  actionButton = 'action_button_',
   pendingRequestsTable = 'approval-requests-table-pending',
   titleDialog = 'dialog-title',
   approvalActionDeclined = 'approval_action_action_declined',
@@ -33,8 +33,9 @@ export enum DataTest {
 
     private faPaymentLink = { selector: DataTest.faPaymentLink };
 
-    public getActionsButton() {
-      return cy.getByDataTest(this.actionButton);
+    public getActionsButtonByPaymentId(faPaymentId: string) {
+      cy.getByDataTest({ selector: `${DataTest.actionButton}${faPaymentId}` }).click();
+      return new FinancialAssistanceDetailsPage();
     }
 
     public getPendingRequestsTable() {

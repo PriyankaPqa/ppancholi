@@ -100,7 +100,9 @@
 
       <template #[`item.${customColumns.actionable}`]="{ item }">
         <v-btn v-if="!isActionDone(item.entity.id)" color="primary" data-test="action_button" @click="openActionDialog(item)">
-          {{ $t('approval.requests.action.label') }}
+          <span :data-test="`action_button_${item.entity.id}`">
+            {{ $t('approval.requests.action.label') }}
+          </span>
         </v-btn>
         <v-icon v-else left>
           mdi-check
