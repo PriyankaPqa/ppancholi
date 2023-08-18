@@ -439,6 +439,35 @@ describe('EventSummary.vue', () => {
         expect(wrapper.vm.showEventStatusDialog).toBeFalsy();
       });
     });
+
+    describe('consent statement section', () => {
+      describe('Feature flag CustomConsent is on', () => {
+        it('should render if user is a level 6', async () => {
+          await doMount(getPiniaForUser(UserRoles.level6), null, [FeatureKeys.CustomConsent], false);
+          const element = wrapper.findDataTest('event-summary-section-title-EventConsent');
+          expect(element.exists()).toBeTruthy();
+        });
+        it('should not render if user is lower than level 6', async () => {
+          await doMount(getPiniaForUser(UserRoles.level5), null, [FeatureKeys.CustomConsent], false);
+          const element = wrapper.findDataTest('event-summary-section-title-EventConsent');
+          expect(element.exists()).toBeFalsy();
+        });
+      });
+      describe('Feature flag CustomConsent is off', () => {
+        it('should not render if user is a level 6', async () => {
+          await doMount(getPiniaForUser(UserRoles.level6), null, false);
+          await wrapper.setFeature(FeatureKeys.CustomConsent, false);
+          const element = wrapper.findDataTest('event-summary-section-title-EventConsent');
+          expect(element.exists()).toBeFalsy();
+        });
+        it('should not render if user is lower than level 6', async () => {
+          await doMount(getPiniaForUser(UserRoles.level5), null, false);
+          await wrapper.setFeature(FeatureKeys.CustomConsent, false);
+          const element = wrapper.findDataTest('event-summary-section-title-EventConsent');
+          expect(element.exists()).toBeFalsy();
+        });
+      });
+    });
   });
 
   describe('Computed', () => {
