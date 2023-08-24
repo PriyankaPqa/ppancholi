@@ -49,6 +49,7 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
       eventIds: team.eventIds,
       primaryContact: team.teamMembers.find((m) => m.isPrimaryContact),
       status: team.status,
+      isEscalation: team.isEscalation,
     };
   }
 }

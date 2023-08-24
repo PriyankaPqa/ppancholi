@@ -40,6 +40,7 @@ describe('>>> Teams Service', () => {
       eventIds: payload.eventIds,
       primaryContact,
       status: payload.status,
+      isEscalation: payload.isEscalation,
     };
 
     expect(http.patch).toHaveBeenCalledWith(`/team/teams/${payload.id}`, expectedPayload, { globalHandler: false });

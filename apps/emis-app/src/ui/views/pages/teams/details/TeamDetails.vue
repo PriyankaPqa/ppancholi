@@ -24,21 +24,24 @@
                 <h5 data-test="team-title" class="rc-heading-5 mr-3">
                   {{ team.name }}
                 </h5>
+                <h5 v-if="displayEscalationLabel" data-test="team-title-escalation" class="rc-heading-5 mr-3">
+                  {{ `(${$t('teams.escalation')})` }}
+                </h5>
                 <status-chip :status="team.status" data-test="team_status" status-name="Status" />
               </div>
 
-              <v-row no-gutters class="flex justify-space-between mt-6">
-                <div class="team_data">
+              <v-row no-gutters class="mt-6">
+                <v-col class="team_data">
                   <span class="rc-body14 fw-bold">{{ $t('teams.teamtype') }}</span>
                   <span class="rc-body14" data-test="team_type">{{ $m(teamMetadata.teamTypeName) }}</span>
-                </div>
+                </v-col>
 
-                <div class="team_data">
+                <v-col class="team_data">
                   <span class="rc-body14 fw-bold">{{ $t('teams.team_members') }}</span>
                   <span class="rc-body14" data-test="team_members_count">{{ teamMemberAmount }}</span>
-                </div>
+                </v-col>
 
-                <div class="team_data">
+                <v-col class="team_data">
                   <span class="rc-body14 fw-bold">
                     <v-icon size="24" color="red">mdi-account</v-icon>
                     {{ $t('teams.primary_contact') }}
@@ -48,14 +51,22 @@
                     class="rc-body14"
                     style="padding-left: 28px"
                     data-test="team_primary_contact">{{ primaryContact }}</span>
-                </div>
+                </v-col>
               </v-row>
 
-              <v-row no-gutters class="mt-6">
-                <div class="team_data">
+              <v-row no-gutters class="mt-6 flex justify-space-between">
+                <v-col class="team_data">
                   <span class="rc-body14 fw-bold">{{ $tc('teams.related_events', eventAmount) }}</span>
                   <span class="rc-body14" data-test="team_events">{{ buildEventsString(teamMetadata.events) }}</span>
-                </div>
+                </v-col>
+                <v-col
+                  v-if="displayEscalationLabel"
+                  cols="8"
+                  class="team_data"
+                  data-test="team_escalation">
+                  <span class="rc-body14 fw-bold">{{ $t('teams.set_as') }}</span>
+                  <span class="rc-body14">{{ $t('teams.escalation') }}</span>
+                </v-col>
               </v-row>
             </v-col>
           </v-row>
@@ -87,6 +98,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'TeamDetails',
@@ -106,6 +118,9 @@ export default Vue.extend({
   data() {
     return {
       UserRoles,
+      TeamType,
+      FeatureKeys,
+      isEscalation: true,
     };
   },
 
@@ -136,6 +151,10 @@ export default Vue.extend({
 
     teamId(): string {
       return this.team?.id || this.$route.params.id;
+    },
+
+    displayEscalationLabel(): boolean {
+      return this.$hasFeature(FeatureKeys.TaskManagement) && this.team.teamType === TeamType.AdHoc && this.team.isEscalation;
     },
   },
 

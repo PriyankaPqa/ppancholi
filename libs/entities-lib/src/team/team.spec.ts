@@ -38,6 +38,14 @@ describe('>>> Team', () => {
       const team = new TeamEntity({ ...mockTeamData, teamMembers: mockTeamMembersData() });
       expect(team.teamMembers).toEqual(mockTeamMembersData());
     });
+
+    it('should instantiate isEscalation', () => {
+      const team = new TeamEntity({ ...mockTeamData, isEscalation: true });
+      expect(team.isEscalation).toEqual(true);
+
+      const teamEntity = new TeamEntity();
+      expect(teamEntity.isEscalation).toEqual(false);
+    });
   });
 
   describe('Methods', () => {

@@ -45,6 +45,7 @@ export const mockTeamsDataStandard = (force? : Partial<IEntity>): ITeamEntity =>
   status: Status.Active,
   teamMembers: [mockTeamMembersData()[0]],
   eventIds: ['id-1'],
+  isEscalation: false,
   ...force,
 });
 
@@ -81,6 +82,7 @@ export const mockTeamsDataAddHoc = (force? : Partial<IEntity>): ITeamEntity => (
   status: Status.Inactive,
   teamMembers: mockTeamMembersData(),
   eventIds: ['id-1'],
+  isEscalation: false,
   ...force,
 });
 

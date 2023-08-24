@@ -39,6 +39,14 @@
                   </validation-provider>
                 </div>
 
+                <div v-if="$hasFeature(FeatureKeys.TaskManagement) && teamType === 'adhoc'" class="mb-4">
+                  <v-checkbox-with-validation
+                    v-model="team.isEscalation"
+                    :label="$t('teams.set_escalation_team')"
+                    data-test="team-isEscalation-checkbox"
+                    :disabled="!$hasLevel(UserRoles.level5)" />
+                </div>
+
                 <v-row>
                   <v-col cols="12" md="8">
                     <v-text-field-with-validation
@@ -176,6 +184,7 @@ import {
   RcDialog,
   RcPageContent,
   VAutocompleteWithValidation,
+  VCheckboxWithValidation,
   VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import _isEqual from 'lodash/isEqual';
@@ -202,6 +211,7 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamMetadataStore, useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,
@@ -223,6 +233,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
     StatusSelect,
     RcDialog,
     RcConfirmationDialog,
+    VCheckboxWithValidation,
   },
 
   beforeRouteEnter(to: Route, from: Route, next: NavigationGuardNext) {
@@ -242,6 +253,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
 
   data() {
     return {
+      FeatureKeys,
       UserRoles,
       userAccounts: [] as IUserAccountCombined[],
       currentPrimaryContact: null as UserTeamMember,
@@ -261,6 +273,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         status: null as Status,
         events: null as string | string[],
         primaryContact: null as string,
+        isEscalation: null as boolean,
       },
       showErrorDialog: false,
       errorMessage: '' as TranslateResult,
@@ -327,6 +340,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         status: this.team.status,
         events: this.teamType === 'standard' ? _sortBy(this.team.eventIds) : this.team.eventIds[0],
         primaryContact: (this.currentPrimaryContact || {}).email,
+        isEscalation: this.team.isEscalation,
       });
     },
 
@@ -358,6 +372,7 @@ export default mixins(handleUniqueNameSubmitError, UserAccountsFilter).extend({
         status: this.team.status,
         events: this.teamType === 'standard' ? _sortBy(this.team.eventIds) : this.team.eventIds[0],
         primaryContact: (this.currentPrimaryContact || {}).email,
+        isEscalation: this.team.isEscalation,
       });
     },
 

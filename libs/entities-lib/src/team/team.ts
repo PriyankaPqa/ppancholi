@@ -14,6 +14,8 @@ export class TeamEntity extends BaseEntity implements ITeamEntity {
 
   teamMembers: Array<ITeamMember>;
 
+  isEscalation: boolean;
+
   constructor(data?: ITeamEntity) {
     if (data) {
       super(data);
@@ -21,10 +23,12 @@ export class TeamEntity extends BaseEntity implements ITeamEntity {
       this.teamType = data.teamType;
       this.eventIds = data.eventIds ? [...data.eventIds] : [];
       this.teamMembers = _cloneDeep(data.teamMembers) || [];
+      this.isEscalation = data.isEscalation;
     } else {
       super();
       this.eventIds = [];
       this.teamMembers = [];
+      this.isEscalation = false;
     }
   }
 

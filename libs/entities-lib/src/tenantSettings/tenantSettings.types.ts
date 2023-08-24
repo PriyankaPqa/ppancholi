@@ -15,6 +15,7 @@ export enum FeatureKeys {
   MassActionAutoGenerateName = 'MassActionAutoGenerateName',
   AutoCapitalizationForRegistration = 'AutoCapitalizationForRegistration',
   ApprovalHistoryNonFinalApprover = 'approvalHistoryNonFinalApprover',
+  TaskManagement = 'TaskManagement',
 }
 
 export enum FeatureType {

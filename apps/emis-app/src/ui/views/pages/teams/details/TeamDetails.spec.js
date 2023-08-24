@@ -1,12 +1,13 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import {
-  mockTeamEntity, mockTeamEvents, mockTeamsMetadataStandard,
+  mockTeamEntity, mockTeamEvents, mockTeamsDataAddHoc, mockTeamsDataStandard, mockTeamsMetadataStandard,
 } from '@libs/entities-lib/team';
 import { RcPageContent } from '@libs/component-lib/components';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import Component from './TeamDetails.vue';
 
@@ -93,6 +94,50 @@ describe('TeamDetails.vue', () => {
         const component = wrapper.findComponent(TeamMembersTable);
         const props = 'teamId';
         expect(component.props(props)).toEqual('mock-team-id-1');
+      });
+    });
+
+    describe('team-title-escalation', () => {
+      it('should be rendered if displayEscalationLabel is true', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            displayEscalationLabel: () => true,
+          },
+        });
+        const element = wrapper.findDataTest('team-title-escalation');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not be rendered if displayEscalationLabel is false', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            displayEscalationLabel: () => false,
+          },
+        });
+        const element = wrapper.findDataTest('team-title-escalation');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+
+    describe('team_escalation', () => {
+      it('should be rendered if displayEscalationLabel is true', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            displayEscalationLabel: () => true,
+          },
+        });
+        const element = wrapper.findDataTest('team_escalation');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not be rendered if displayEscalationLabel is false', async () => {
+        await mountWrapper(false, 5, {
+          computed: {
+            displayEscalationLabel: () => false,
+          },
+        });
+        const element = wrapper.findDataTest('team_escalation');
+        expect(element.exists()).toBeFalsy();
       });
     });
   });
@@ -203,6 +248,48 @@ describe('TeamDetails.vue', () => {
         );
         wrapper.vm.$route = { params: { id: 'mock-team-2' } };
         expect(wrapper.vm.teamId).toEqual('mock-team-2');
+      });
+    });
+
+    describe('displayEscalationLabel', () => {
+      it('should be true if has feature flag TaskManagement and teamType is Ad Hoc and isEscalation is true', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [FeatureKeys.TaskManagement],
+          computed: {
+            team: () => mockTeamsDataAddHoc({ isEscalation: true }),
+          },
+        });
+        expect(wrapper.vm.displayEscalationLabel).toBeTruthy();
+      });
+
+      it('should be false if has no feature flag TaskManagement', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [],
+          computed: {
+            team: () => mockTeamsDataAddHoc(),
+          },
+        });
+        expect(wrapper.vm.displayEscalationLabel).toBeFalsy();
+      });
+
+      it('should be false if has feature flag TaskManagement and teamType is Ad Hoc but isEscalation is false', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [FeatureKeys.TaskManagement],
+          computed: {
+            team: () => mockTeamsDataAddHoc({ isEscalation: false }),
+          },
+        });
+        expect(wrapper.vm.displayEscalationLabel).toBeFalsy();
+      });
+
+      it('should be false if has feature flag TaskManagement but teamType is standard', async () => {
+        await mountWrapper(false, 5, {
+          featureList: [FeatureKeys.TaskManagement],
+          computed: {
+            team: () => mockTeamsDataStandard(),
+          },
+        });
+        expect(wrapper.vm.displayEscalationLabel).toBeFalsy();
       });
     });
   });
