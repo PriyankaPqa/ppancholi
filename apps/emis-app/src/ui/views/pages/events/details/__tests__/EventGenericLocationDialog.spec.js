@@ -9,6 +9,7 @@ import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { Address } from '@libs/entities-lib/value-objects/address';
 import Component from '../components/EventGenericLocationDialog.vue';
 
 const localVue = createLocalVue();
@@ -540,14 +541,7 @@ describe('EventGenericLocationDialog.vue', () => {
         expect(wrapper.vm.location).toEqual({
           name: { translation: { en: '', fr: '' } },
           status: EEventLocationStatus.Active,
-          address: {
-            country: null,
-            streetAddress: null,
-            province: null,
-            specifiedOtherProvince: null,
-            city: null,
-            postalCode: null,
-          },
+          address: new Address(),
         });
       });
 
@@ -690,18 +684,6 @@ describe('EventGenericLocationDialog.vue', () => {
       });
     });
 
-    describe('onChangeCountry', () => {
-      it('resets location address fields', async () => {
-        await wrapper.vm.onChangeCountry('CA');
-        expect(wrapper.vm.location.address.country).toEqual('CA');
-        expect(wrapper.vm.location.address.streetAddress).toBeNull();
-        expect(wrapper.vm.location.address.province).toBeNull();
-        expect(wrapper.vm.location.address.specifiedOtherProvince).toBeNull();
-        expect(wrapper.vm.location.address.city).toBeNull();
-        expect(wrapper.vm.location.address.postalCode).toBeNull();
-      });
-    });
-
     describe('onSubmit', () => {
       it('calls fillEmptyMultilingualFields only if isValid is true', async () => {
         jest.spyOn(wrapper.vm, 'fillEmptyMultilingualFields').mockImplementation(() => {});
@@ -723,6 +705,14 @@ describe('EventGenericLocationDialog.vue', () => {
 
         await wrapper.vm.onSubmit();
         expect(wrapper.vm.submitLocation).toHaveBeenCalledTimes(0);
+      });
+
+      it('calls fixNonCanadianProvince if validate is true', async () => {
+        jest.spyOn(wrapper.vm, 'fixNonCanadianProvince').mockImplementation(() => {});
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.fixNonCanadianProvince).toHaveBeenCalledTimes(1);
       });
 
       it('calls submitLocation if validate is true', async () => {
@@ -803,43 +793,16 @@ describe('EventGenericLocationDialog.vue', () => {
       });
     });
 
-    describe('streetAddressAutocomplete', () => {
-      it('sets into the location object the data it receives as argument correctly when country is Canada', async () => {
-        const mockAutocomplete = {
-          country: 'CA',
-          street: '2295 Rue Bercy',
-          unitSuite: null,
-          province: 'QC',
-          city: 'Montréal',
-          postalCode: 'H2K 2V6',
-        };
-        await wrapper.vm.streetAddressAutocomplete(mockAutocomplete);
-
-        expect(wrapper.vm.location.address.country).toEqual(mockAutocomplete.country);
-        expect(wrapper.vm.location.address.streetAddress).toEqual(mockAutocomplete.street);
-        expect(wrapper.vm.location.address.province).toEqual(Number(ECanadaProvinces[mockAutocomplete.province]));
-        expect(wrapper.vm.location.address.specifiedOtherProvince).toEqual(null);
-        expect(wrapper.vm.location.address.city).toEqual(mockAutocomplete.city);
-        expect(wrapper.vm.location.address.postalCode).toEqual(mockAutocomplete.postalCode);
-      });
-
-      it('sets into the location object the data it receives as argument correctly when country is not Canada', async () => {
-        const mockAutocomplete = {
-          country: 'US',
-          street: '2295 South Str',
-          unitSuite: null,
-          province: 'NY',
-          city: 'New York',
-          postalCode: '12345',
-        };
-        await wrapper.vm.streetAddressAutocomplete(mockAutocomplete);
-
-        expect(wrapper.vm.location.address.country).toEqual(mockAutocomplete.country);
-        expect(wrapper.vm.location.address.streetAddress).toEqual(mockAutocomplete.street);
+    describe('fixNonCanadianProvince', () => {
+      it('should set province to other if null', () => {
+        wrapper.vm.location.address.province = null;
+        wrapper.vm.fixNonCanadianProvince();
         expect(wrapper.vm.location.address.province).toEqual(ECanadaProvinces.OT);
-        expect(wrapper.vm.location.address.specifiedOtherProvince).toEqual(mockAutocomplete.province);
-        expect(wrapper.vm.location.address.city).toEqual(mockAutocomplete.city);
-        expect(wrapper.vm.location.address.postalCode).toEqual(mockAutocomplete.postalCode);
+      });
+      it('should do nothing if not null', () => {
+        wrapper.vm.location.address.province = ECanadaProvinces.AB;
+        wrapper.vm.fixNonCanadianProvince();
+        expect(wrapper.vm.location.address.province).toEqual(ECanadaProvinces.AB);
       });
     });
   });

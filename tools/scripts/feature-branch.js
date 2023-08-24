@@ -352,7 +352,7 @@ if (mode === Mode.preview) {
         .filter(v => v !== '');
 
       filterJiraItemsByStatus(emisArr, jiraStatusCleanTarget).then((items) => {
-        console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (benef-app)`);
+        console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (emis-app)`);
         emisToRemove = items;
         console.log(items)
       });

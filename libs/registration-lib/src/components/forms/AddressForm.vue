@@ -10,7 +10,7 @@
           :prediction-countries-restriction="form.country"
           :disable-autocomplete="disableAutocomplete"
           :label="`${$t('search_autocomplete.label')}`"
-          @on-autocompleted="$streetAddressAutocomplete($event)" />
+          @on-autocompleted="streetAddressAutocomplete($event, form)" />
       </v-col>
       <v-col cols="12" sm="9" md="8">
         <v-text-field-with-validation
@@ -18,7 +18,7 @@
           :data-test="`${prefixDataTest}__street`"
           :rules="rules.streetAddress"
           :label="`${$t('registration.addresses.streetAddress')} *`"
-          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()"
+          @input="isEditMode ? resetGeoLocationInEditMode() : resetGeoLocation(form)"
           @keyup="formatAddressInput('streetAddress')" />
       </v-col>
 
@@ -36,7 +36,7 @@
           :rules="rules.city"
           :data-test="`${prefixDataTest}__city`"
           :label="`${$t('registration.addresses.city')} *`"
-          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()"
+          @input="isEditMode ? resetGeoLocationInEditMode() : resetGeoLocation(form)"
           @keyup="formatAddressInput('city')" />
       </v-col>
 
@@ -48,14 +48,14 @@
           :data-test="`${prefixDataTest}__province`"
           :label="`${$t('registration.addresses.province')}*`"
           :items="canadianProvincesItems"
-          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
+          @input="isEditMode ? resetGeoLocationInEditMode() : resetGeoLocation(form)" />
         <v-text-field-with-validation
           v-else
           v-model="form.specifiedOtherProvince"
           :rules="rules.specifiedOtherProvince"
           :data-test="`${prefixDataTest}__specifiedOtherProvince`"
           :label="`${$t('registration.addresses.province')}*`"
-          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()" />
+          @input="isEditMode ? resetGeoLocationInEditMode() : resetGeoLocation(form)" />
       </v-col>
 
       <v-col cols="6" sm="6" md="4">
@@ -64,7 +64,7 @@
           :rules="rules.postalCode"
           :data-test="`${prefixDataTest}__postalCode`"
           :label="`${$t('registration.addresses.postalCode')} *`"
-          @input="isEditMode ? resetGeoLocationInEditMode() : $resetGeoLocation()"
+          @input="isEditMode ? resetGeoLocationInEditMode() : resetGeoLocation(form)"
           @keyup="form.postalCode = (hasFeatureAutoCapitalizationForRegistration && form.postalCode) ? form.postalCode.toUpperCase() : form.postalCode" />
       </v-col>
 
@@ -74,7 +74,7 @@
           :rules="rules.country"
           :data-test="`${prefixDataTest}__country`"
           :label="`${$t('registration.addresses.country')} *`"
-          @change="$onChangeCountry($event)" />
+          @change="onChangeCountry($event, form, $refs.form)" />
       </v-col>
     </v-row>
   </validation-observer>
@@ -88,15 +88,15 @@ import {
   RcGoogleAutocompleteWithValidation,
   RcCountrySelectWithValidation,
 } from '@libs/component-lib/components';
-import mixins from 'vue-typed-mixins';
 import { IAddress } from '@libs/entities-lib/household-create';
 import _cloneDeep from 'lodash/cloneDeep';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import helpers from '@libs/shared-lib/helpers/helpers';
+import Vue from 'vue';
+import { useAutocomplete } from './mixins/useAutocomplete';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import googleAutoCompleteMixin from './mixins/address';
 
-export default mixins(googleAutoCompleteMixin).extend({
+export default Vue.extend({
   name: 'AddressForm',
 
   components: {
@@ -136,6 +136,11 @@ export default mixins(googleAutoCompleteMixin).extend({
       type: Boolean,
       default: false,
     },
+  },
+
+  setup() {
+    const { streetAddressAutocomplete, resetGeoLocation, onChangeCountry } = useAutocomplete();
+    return { streetAddressAutocomplete, resetGeoLocation, onChangeCountry };
   },
 
   data() {
@@ -223,7 +228,7 @@ export default mixins(googleAutoCompleteMixin).extend({
   methods: {
     // Here we want to disable $resetGeoLocation when initial load in edit mode
     resetGeoLocationInEditMode() {
-      !this.isSameGeoLocation && this.$resetGeoLocation();
+      !this.isSameGeoLocation && this.resetGeoLocation(this.form);
     },
 
      formatAddressInput(item: string) {

@@ -73,7 +73,7 @@
           :prediction-types="predictionTypes"
           :prediction-countries-restriction="form.address.country"
           :label="`${$t('search_autocomplete.label')}`"
-          @on-autocompleted="$streetCurrentAddressAutocomplete($event)" />
+          @on-autocompleted="streetCurrentAddressAutocomplete($event, form)" />
       </v-col>
 
       <template v-if="addressType">
@@ -116,7 +116,7 @@
             :data-test="`${prefixDataTest}__street`"
             :rules="rules.streetAddress"
             :label="`${$t('registration.addresses.streetAddress')}`"
-            @input="$resetGeoLocation()"
+            @input="resetGeoLocation(form.address)"
             @keyup="formatAddressInput('streetAddress', 'address')" />
         </v-col>
 
@@ -137,7 +137,7 @@
             :rules="rules.city"
             :data-test="`${prefixDataTest}__city`"
             :label="`${$t('registration.addresses.city')} *`"
-            @input="$resetGeoLocation()"
+            @input="resetGeoLocation(form.address)"
             @keyup="formatAddressInput('city', 'address')" />
         </v-col>
 
@@ -150,7 +150,7 @@
             :data-test="`${prefixDataTest}__province`"
             :label="`${$t('registration.addresses.province')} *`"
             :items="canadianProvincesItems"
-            @input="$resetGeoLocation()" />
+            @input="resetGeoLocation(form.address)" />
           <v-text-field-with-validation
             v-else
             v-model="form.address.specifiedOtherProvince"
@@ -158,7 +158,7 @@
             :rules="rules.specifiedOtherProvince"
             :data-test="`${prefixDataTest}__specifiedOtherProvince`"
             :label="`${$t('registration.addresses.province')}*`"
-            @input="$resetGeoLocation()" />
+            @input="resetGeoLocation(form.address)" />
         </v-col>
 
         <v-col v-if="form.hasPostalCode()" cols="6" sm="6" md="4" :class="{ 'py-0': compactView }">
@@ -168,7 +168,7 @@
             :rules="rules.postalCode"
             :data-test="`${prefixDataTest}__postalCode`"
             :label="`${$t('registration.addresses.postalCode')}`"
-            @input="$resetGeoLocation()"
+            @input="resetGeoLocation(form.address)"
             @keyup="form.address.postalCode = (hasFeatureAutoCapitalizationForRegistration && form.address.postalCode)
               ? form.address.postalCode.toUpperCase() : form.address.postalCode" />
         </v-col>
@@ -195,7 +195,6 @@ import {
   VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
-import mixins from 'vue-typed-mixins';
 import { EOptionItemStatus, VForm } from '@libs/shared-lib/types';
 import {
   ECurrentAddressTypes,
@@ -206,10 +205,11 @@ import {
 import helpers from '@libs/shared-lib/helpers/helpers';
 import DateRange from '@libs/component-lib/components/molecule/RcFilterToolbar/inputs/DateRange.vue';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import Vue from 'vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import googleAutoCompleteMixin from './mixins/address';
+import { useAutocomplete } from './mixins/useAutocomplete';
 
-export default mixins(googleAutoCompleteMixin).extend({
+export default Vue.extend({
   name: 'CurrentAddressForm',
 
   components: {
@@ -275,6 +275,11 @@ export default mixins(googleAutoCompleteMixin).extend({
       type: Boolean,
       default: false,
     },
+  },
+
+  setup() {
+    const { streetCurrentAddressAutocomplete, resetGeoLocation, onChangeCountry } = useAutocomplete();
+    return { streetCurrentAddressAutocomplete, resetGeoLocation, onChangeCountry };
   },
 
   data() {

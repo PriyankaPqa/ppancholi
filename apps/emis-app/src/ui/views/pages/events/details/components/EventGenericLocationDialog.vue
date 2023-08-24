@@ -68,7 +68,7 @@
                     outlined
                     :disable-autocomplete="!enableAutocomplete"
                     :label="`${$t('common.address.streetAddress')} *`"
-                    @on-autocompleted="streetAddressAutocomplete" />
+                    @on-autocompleted="streetAddressAutocomplete($event, location.address)" />
                 </validation-provider>
               </v-col>
 
@@ -113,7 +113,7 @@
                     :error-messages="errors"
                     :class="classes"
                     :label="`${$t('common.address.country')} *`"
-                    @change="onChangeCountry($event)" />
+                    @change="onChangeCountry($event, location.address, $refs.form)" />
                 </validation-provider>
               </v-col>
             </v-row>
@@ -151,6 +151,8 @@ import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@/ui/helpers/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { Address } from '@libs/entities-lib/value-objects/address';
+import { useAutocomplete } from '@libs/registration-lib/components/forms/mixins/useAutocomplete';
 
 export default mixins(handleUniqueNameSubmitError).extend({
 
@@ -182,6 +184,11 @@ export default mixins(handleUniqueNameSubmitError).extend({
       type: Boolean,
       required: true,
     },
+  },
+
+  setup() {
+    const { streetAddressAutocomplete, onChangeCountry } = useAutocomplete();
+    return { streetAddressAutocomplete, onChangeCountry };
   },
 
   data() {
@@ -284,14 +291,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.location = {
         name: entityUtils.initMultilingualAttributes(),
         status: EEventLocationStatus.Active,
-        address: {
-          country: null,
-          streetAddress: null,
-          province: null,
-          specifiedOtherProvince: null,
-          city: null,
-          postalCode: null,
-        },
+        address: new Address(),
       };
       this.isActive = true;
     },
@@ -300,6 +300,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       const location = this.allLocations.find((location: IEventGenericLocation) => location.id === this.id);
       if (location) {
         this.location = _cloneDeep(location);
+        this.location.address = new Address(this.location.address);
         this.isActive = this.location.status === EEventLocationStatus.Active;
       }
     },
@@ -308,23 +309,13 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.location.name = entityUtils.getFilledMultilingualField(this.location.name);
     },
 
-    onChangeCountry(country: string) {
-      this.location.address = {
-        country,
-        streetAddress: null,
-        province: null,
-        specifiedOtherProvince: null,
-        city: null,
-        postalCode: null,
-      };
-    },
-
     async onSubmit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
         this.fillEmptyMultilingualFields();
         this.loading = true;
         try {
+          this.fixNonCanadianProvince();
           await this.submitLocation();
           this.$emit('close');
         } catch (e) {
@@ -335,6 +326,10 @@ export default mixins(handleUniqueNameSubmitError).extend({
           this.loading = false;
         }
       }
+    },
+
+    fixNonCanadianProvince() {
+      this.location.address.province = this.location.address.province ?? ECanadaProvinces.OT;
     },
 
     async submitLocation() {
@@ -355,19 +350,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     updateStatus(value: boolean) {
       this.location.status = value ? EEventLocationStatus.Active : EEventLocationStatus.Inactive;
-    },
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    streetAddressAutocomplete(autocomplete: any) {
-      const {
-        country, province, postalCode, city, street,
-      } = autocomplete;
-      this.location.address.country = country;
-      this.location.address.streetAddress = street;
-      this.location.address.city = city;
-      this.location.address.postalCode = postalCode;
-      this.location.address.province = country === 'CA' ? Number(ECanadaProvinces[province]) : ECanadaProvinces.OT;
-      this.location.address.specifiedOtherProvince = country === 'CA' ? null : province;
     },
   },
 });

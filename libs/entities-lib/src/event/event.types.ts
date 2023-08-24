@@ -72,7 +72,7 @@ export interface IEventGenericLocation {
   id?: uuid;
   name: IMultilingual;
   status: EEventLocationStatus;
-  address: IAddressData | IAddress;
+  address: IAddress | IAddressData
 }
 
 export interface IEventAgreement {

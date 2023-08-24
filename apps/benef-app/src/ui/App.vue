@@ -8,12 +8,11 @@
 import { localStorageKeys } from '@/constants/localStorage';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
 
-// dummy
 export default {
   name: 'App',
 
   async created() {
-    // The values of environment variables are currently not loaded in components in production...
+    // The values of environment variables are currently not loaded in components in production
     localStorage.setItem(
       localStorageKeys.googleMapsAPIKey.name,
       process.env.VITE_GOOGLE_API_KEY,

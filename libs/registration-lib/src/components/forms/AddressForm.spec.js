@@ -99,20 +99,20 @@ describe('AddressForm.vue', () => {
   describe('Template', () => {
     describe('Event handlers', () => {
       test('autocomplete triggers $streetAddressAutocomplete', async () => {
-        wrapper.vm.$streetAddressAutocomplete = jest.fn();
+        wrapper.vm.streetAddressAutocomplete = jest.fn();
         const element = wrapper.findDataTest('address_autocomplete');
         await element.vm.$emit('on-autocompleted');
-        expect(wrapper.vm.$streetAddressAutocomplete).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.streetAddressAutocomplete).toHaveBeenCalledTimes(1);
       });
 
       describe('Changing country', () => {
-        it('should trigger $onChangeCountry', async () => {
+        it('should trigger onChangeCountry', async () => {
           const element = wrapper.findDataTest('address__country');
           wrapper.vm.$refs.form = {};
           wrapper.vm.$refs.form.reset = jest.fn();
-          jest.spyOn(wrapper.vm, '$onChangeCountry');
+          jest.spyOn(wrapper.vm, 'onChangeCountry');
           await element.vm.$emit('change');
-          expect(wrapper.vm.$onChangeCountry).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.onChangeCountry).toHaveBeenCalledTimes(1);
         });
       });
 
@@ -141,7 +141,6 @@ describe('AddressForm.vue', () => {
           expect(wrapper.vm.formatAddressInput).toHaveBeenCalledWith('streetAddress');
         });
       });
-
       describe('address__city', () => {
         it('should call formatAddressInput with proper value when keyup', async () => {
           wrapper = shallowMount(Component, {
@@ -219,30 +218,30 @@ describe('AddressForm.vue', () => {
       describe('Reset geo-location', () => {
         it('is triggered when updating city', async () => {
           const element = wrapper.findDataTest('address__city');
-          jest.spyOn(wrapper.vm, '$resetGeoLocation');
+          jest.spyOn(wrapper.vm, 'resetGeoLocation');
           await element.vm.$emit('input');
-          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.resetGeoLocation).toHaveBeenCalledTimes(1);
         });
 
         it('is triggered when updating street', async () => {
           const element = wrapper.findDataTest('address__street');
-          jest.spyOn(wrapper.vm, '$resetGeoLocation');
+          jest.spyOn(wrapper.vm, 'resetGeoLocation');
           await element.vm.$emit('input');
-          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.resetGeoLocation).toHaveBeenCalledTimes(1);
         });
 
         it('is triggered when updating province', async () => {
           const element = wrapper.findDataTest('address__province');
-          jest.spyOn(wrapper.vm, '$resetGeoLocation');
+          jest.spyOn(wrapper.vm, 'resetGeoLocation');
           await element.vm.$emit('input');
-          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.resetGeoLocation).toHaveBeenCalledTimes(1);
         });
 
         it('is triggered when updating postal code', async () => {
           const element = wrapper.findDataTest('address__postalCode');
-          jest.spyOn(wrapper.vm, '$resetGeoLocation');
+          jest.spyOn(wrapper.vm, 'resetGeoLocation');
           await element.vm.$emit('input');
-          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.resetGeoLocation).toHaveBeenCalledTimes(1);
         });
 
         it('triggers resetGeoLocationInEditMode when is in edit mode', async () => {
@@ -267,26 +266,26 @@ describe('AddressForm.vue', () => {
           expect(wrapper.vm.resetGeoLocationInEditMode).toHaveBeenCalled();
         });
 
-        it('triggers $resetGeoLocation when is not in edit mode', async () => {
+        it('triggers resetGeoLocation when is not in edit mode', async () => {
           const elementCity = wrapper.findDataTest('address__city');
           const elementStreet = wrapper.findDataTest('address__street');
           const elementProvince = wrapper.findDataTest('address__province');
           const elementPostalCode = wrapper.findDataTest('address__postalCode');
-          jest.spyOn(wrapper.vm, '$resetGeoLocation');
+          jest.spyOn(wrapper.vm, 'resetGeoLocation');
           await wrapper.setProps({
             isEditMode: false,
           });
           await elementCity.vm.$emit('input');
-          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalled();
+          expect(wrapper.vm.resetGeoLocation).toHaveBeenCalled();
 
           await elementStreet.vm.$emit('input');
-          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalled();
+          expect(wrapper.vm.resetGeoLocation).toHaveBeenCalled();
 
           await elementProvince.vm.$emit('input');
-          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalled();
+          expect(wrapper.vm.resetGeoLocation).toHaveBeenCalled();
 
           await elementPostalCode.vm.$emit('input');
-          expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalled();
+          expect(wrapper.vm.resetGeoLocation).toHaveBeenCalled();
         });
       });
 
@@ -336,7 +335,7 @@ describe('AddressForm.vue', () => {
 
   describe('Methods', () => {
     describe('resetGeoLocationInEditMode', () => {
-      it('should call $resetGeoLocation when isSameGeoLocation is false', () => {
+      it('should call resetGeoLocation when isSameGeoLocation is false', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -349,9 +348,9 @@ describe('AddressForm.vue', () => {
             isSameGeoLocation: () => false,
           },
         });
-        wrapper.vm.$resetGeoLocation = jest.fn();
+        wrapper.vm.resetGeoLocation = jest.fn();
         wrapper.vm.resetGeoLocationInEditMode();
-        expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalled();
+        expect(wrapper.vm.resetGeoLocation).toHaveBeenCalled();
       });
     });
 
