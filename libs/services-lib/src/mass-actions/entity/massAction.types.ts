@@ -48,7 +48,12 @@ export interface IMassActionService extends IDomainBaseService<IMassActionEntity
   getInvalidFile({ massActionId, runId, language }: { massActionId: uuid; runId: uuid; language: string }): Promise<IRestResponse<string>>
   create(urlSuffix: string, payload: unknown): Promise<IMassActionEntity>
   exportList(massActionType: MassActionType, payload: IMassActionExportListPayload): Promise<IRestResponse<string>>
-  getValidFile({ massActionId, runId, language }: { massActionId: uuid; runId: uuid; language: string }): Promise<IRestResponse<string>>
+  getValidFile({ massActionId, runId, language, massActionType }: {
+    massActionId: uuid;
+    runId: uuid;
+    language: string;
+    massActionType?: MassActionType | MassActionDataCorrectionType
+  }): Promise<IRestResponse<string>>
   downloadTemplate(massActionDataCorrectionType: MassActionType | MassActionDataCorrectionType): Promise<IRestResponse<BlobPart>>
 }
 

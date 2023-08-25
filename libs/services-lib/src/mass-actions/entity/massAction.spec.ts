@@ -87,6 +87,21 @@ describe('>>> Mass Action Service', () => {
     });
   });
 
+  test('getValidFile is linked to the correct URL when mass action type is passed', async () => {
+    const massActionId = '1';
+    const runId = '1';
+    const language = 'en';
+    const massActionType = MassActionType.GenerateFundingRequest;
+    await service.getValidFile({ massActionId, runId, language, massActionType });
+    expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${massActionId}/valid-file`, {
+      params: {
+        runId,
+        language,
+        massActionType,
+      },
+    });
+  });
+
   describe('search', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
       const params = { filter: { Foo: 'foo' } };
