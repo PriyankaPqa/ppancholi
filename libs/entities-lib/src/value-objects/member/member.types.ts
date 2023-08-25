@@ -49,7 +49,7 @@ export interface IMember extends IMemberEntity {
   setContactInformation(contactInformation: IContactInformation): void;
   setPersonalInformation(contactInformation: IContactInformation, identitySet: IIdentitySet): void;
   validate(skipAgeRestriction?: boolean): string[];
-  validateIdentity(skipAgeRestriction: boolean): string[];
+  validateIdentity(skipAgeRestriction: boolean, isCRCRegistration?: boolean): string[];
   validateCurrentAddress(): string[];
   validateContactInformation(skipEmailPhoneRules: boolean): string[];
 }

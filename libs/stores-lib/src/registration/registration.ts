@@ -385,7 +385,7 @@ export function storeFactory({
             isValid = privacyStatementValid({ mode, isPrivacyAgreed: isPrivacyAgreed.value, householdCreate });
             break;
           case 'PersonalInformation':
-            isValid = personalInformationValid(householdCreate, skipAgeRestriction, skipEmailPhoneRules);
+            isValid = personalInformationValid(householdCreate, skipAgeRestriction, skipEmailPhoneRules, isCRCRegistration());
             break;
           case 'Addresses':
             isValid = addressesValid(householdCreate, householdCreate.noFixedHome);
@@ -491,9 +491,9 @@ export function storeFactory({
       if (!preventDbCheck) {
         const member = new Member();
         member.setIdentity({ ...form, dateOfBirth });
-        const checkDuplicateResult = await householdApi.checkForPossibleDuplicatePublic(null, member);
+        const checkDuplicateResult = await householdApi.checkForPossibleDuplicatePublic(null, member, householdCreate.value.id);
         if (checkDuplicateResult) {
-          const systemDuplicateFound = checkDuplicateResult.duplicateFound && checkDuplicateResult.duplicateHouseholdId !== householdCreate.value.id;
+          const systemDuplicateFound = checkDuplicateResult.duplicateFound;
           form.setDuplicateStatusInDb(systemDuplicateFound);
           if (isPrimaryMember) {
             householdCreate.value.primaryBeneficiary.identitySet.setDuplicateStatusInDb(systemDuplicateFound);

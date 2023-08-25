@@ -50,7 +50,7 @@ export interface IHouseholdCreate {
   setHomeAddress(address: IAddress): void;
   setCurrentAddress(address: ICurrentAddress): void;
   isDuplicateMember(form: IIdentitySet, isPrimaryBeneficiary:boolean, index?: number): boolean;
-  validatePersonalInformation(skipAgeRestriction: boolean, skipEmailPhoneRules: boolean): string[];
+  validatePersonalInformation(skipAgeRestriction: boolean, skipEmailPhoneRules: boolean, isCRCRegistration?: boolean): string[];
   validateAddresses(noFixedHome: boolean): string[];
   validateAdditionalMembers(): string[];
   // eslint-disable-next-line

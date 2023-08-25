@@ -1119,6 +1119,7 @@
     "errors.impact-validation-method-should-not-be-not-applicable": "Impact validation method should not be not applicable",
     "errors.impacted-individual-already-exist": "Impacted individual already exist",
     "errors.impacted-individual-does-not-exist": "Impacted individual does not exist",
+    "errors.individual-appears-to-already-exist-in-the-system": "This individual appears to already exist in the system. Please confirm this individual is not a duplicate before proceeding.",
     "errors.individual-does-not-belong-to-the-selected-event": "Individual does not belong to the selected event",
     "errors.individual-does-not-have-an-email-address": "Individual does not have an email address.",
     "errors.information-management-internal-id-max-length-exceeded": "InformationManagementInternalId length must be {MaxLength} or less",

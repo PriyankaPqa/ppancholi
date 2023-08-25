@@ -66,7 +66,7 @@ export class IdentitySet implements IHoneyPotIdentitySet {
     }
   }
 
-  validate(skipAgeRestriction = false): string[] {
+  validate(skipAgeRestriction = false, isCRCRegistration = true): string[] {
     const errors: string[] = [];
     required(this.firstName, 'first name is required', errors);
     maxLengthCheck(this.firstName, MAX_LENGTH_SM, 'first name', errors);
@@ -89,7 +89,7 @@ export class IdentitySet implements IHoneyPotIdentitySet {
     required(this.birthDate.month, 'month is required', errors);
     required(this.birthDate.day, 'day is required', errors);
     isValidBirthday(this.birthDate, 'birth date not valid', errors);
-    isUnique(this, 'member is not unique', errors);
+    isUnique(this, isCRCRegistration, 'member is not unique', errors);
 
     if (!skipAgeRestriction) {
       hasMinimumAge(this.birthDate, 'minimum age required', errors);

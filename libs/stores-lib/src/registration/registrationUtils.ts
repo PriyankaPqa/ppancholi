@@ -26,7 +26,7 @@ export const privacyStatementValid = (
 };
 
 // eslint-disable-next-line
-export const personalInformationValid = (household: IHouseholdCreate, skipAgeRestriction: boolean, skipEmailPhoneRules: boolean): boolean => household.validatePersonalInformation(skipAgeRestriction, skipEmailPhoneRules).length === 0;
+export const personalInformationValid = (household: IHouseholdCreate, skipAgeRestriction: boolean, skipEmailPhoneRules: boolean, isCRCRegistration: boolean = true): boolean => household.validatePersonalInformation(skipAgeRestriction, skipEmailPhoneRules, isCRCRegistration).length === 0;
 
 export const addressesValid = (household: IHouseholdCreate, noFixedHome: boolean): boolean => household.validateAddresses(noFixedHome).length === 0;
 

@@ -38,8 +38,7 @@
         color="primary"
         data-test="inlineEdit__save"
         :loading="loading"
-        :disabled="loading || (member.identitySet && $hasFeature(FeatureKeys.ManageDuplicates)
-          && member.identitySet.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate)"
+        :disabled="loading || saveDisabled"
         @click.native="onSubmit()">
         {{ $t('common.save') }}
       </v-btn>
@@ -48,12 +47,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { VueConstructor } from 'vue';
 import { IMember } from '@libs/entities-lib/value-objects/member';
 import { MemberDuplicateStatus } from '@libs/entities-lib/value-objects/identity-set';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
-export default Vue.extend({
+const vueComponent: VueConstructor = Vue.extend({
   name: 'AdditionalMemberSection',
 
   props: {
@@ -77,6 +76,11 @@ export default Vue.extend({
       default: true,
     },
 
+    saveDisabledIfDuplicate: {
+      type: Boolean,
+      default: false,
+    },
+
     loading: {
       type: Boolean,
       default: false,
@@ -84,7 +88,14 @@ export default Vue.extend({
   },
 
   data() {
-    return { FeatureKeys, MemberDuplicateStatus };
+    return { MemberDuplicateStatus };
+  },
+
+  computed: {
+    saveDisabled():boolean {
+      return this.member.identitySet && this.$hasFeature(FeatureKeys.ManageDuplicates) && this.saveDisabledIfDuplicate
+          && this.member.identitySet.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate;
+    },
   },
 
   methods: {
@@ -105,6 +116,8 @@ export default Vue.extend({
     },
   },
 });
+
+export default vueComponent;
 </script>
 
 <style lang="scss" scoped>

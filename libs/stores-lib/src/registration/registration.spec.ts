@@ -602,7 +602,7 @@ describe('>>> Registration Store', () => {
 'calls household service checkForPossibleDuplicatePublic and set the result into the member identity set and the form passed as argument, if isDuplicateMember returns false - primary member',
     async () => {
       useRegistrationStore = initStore();
-      useRegistrationStore.setHouseholdCreate(mockHouseholdCreateData());
+      useRegistrationStore.setHouseholdCreate(mockHouseholdCreate({ id: '123' }));
       useRegistrationStore.householdCreate.isDuplicateMember = jest.fn(() => false);
       householdApi.checkForPossibleDuplicatePublic = jest.fn(() => ({ duplicateFound: true, duplicateHouseholdId: '123', registeredToEvent: false }));
       const form = new IdentitySet({ ...mockIdentitySet(), firstName: 'a', lastName: 'b', birthDate: { year: '2000', month: '1', day: '1' } });
@@ -612,8 +612,7 @@ describe('>>> Registration Store', () => {
       member.setIdentity(new IdentitySet({ ...form,
       dateOfBirth: libHelpers.getBirthDateUTCString({ year: '2000', month: '1', day: '1' }),
       duplicateStatusInDb: undefined } as IIdentitySetData));
-      expect(householdApi.checkForPossibleDuplicatePublic)
-      .toHaveBeenCalledWith(null, member);
+      expect(householdApi.checkForPossibleDuplicatePublic).toHaveBeenCalledWith(null, member, '123');
       expect(form.duplicateStatusInDb).toBe(MemberDuplicateStatus.Duplicate);
       expect(useRegistrationStore.householdCreate.primaryBeneficiary.identitySet.duplicateStatusInDb).toBe(MemberDuplicateStatus.Duplicate);
       expect(result).toBe(true);
@@ -625,7 +624,7 @@ describe('>>> Registration Store', () => {
 'calls household service checkForPossibleDuplicatePublic and set the result into the member identity set and the form passed as argument, if isDuplicateMember returns false - additional member',
     async () => {
       useRegistrationStore = initStore();
-      useRegistrationStore.setHouseholdCreate(mockHouseholdCreateData());
+      useRegistrationStore.setHouseholdCreate(mockHouseholdCreate({ id: '123' }));
       useRegistrationStore.householdCreate.additionalMembers = [mockMember()];
       useRegistrationStore.householdCreate.isDuplicateMember = jest.fn(() => false);
       householdApi.checkForPossibleDuplicatePublic = jest.fn(() => ({ duplicateFound: true, duplicateHouseholdId: '123', registeredToEvent: false }));
@@ -637,29 +636,12 @@ describe('>>> Registration Store', () => {
       dateOfBirth: libHelpers.getBirthDateUTCString({ year: '2000', month: '1', day: '1' }),
       duplicateStatusInDb: undefined } as IIdentitySetData));
       expect(householdApi.checkForPossibleDuplicatePublic)
-      .toHaveBeenCalledWith(null, member);
+      .toHaveBeenCalledWith(null, member, '123');
       expect(form.duplicateStatusInDb).toBe(MemberDuplicateStatus.Duplicate);
       expect(useRegistrationStore.householdCreate.additionalMembers[0].identitySet.duplicateStatusInDb).toBe(MemberDuplicateStatus.Duplicate);
       expect(result).toBe(true);
     },
 );
-
-    it(
-'calls household service checkForPossibleDuplicatePublic and returns false if the result has the same household id as the current household',
-    async () => {
-      useRegistrationStore = initStore();
-      useRegistrationStore.setHouseholdCreate(mockHouseholdCreateData());
-      useRegistrationStore.householdCreate.additionalMembers = [mockMember()];
-      useRegistrationStore.householdCreate.isDuplicateMember = jest.fn(() => false);
-      householdApi.checkForPossibleDuplicatePublic = jest.fn(
-        () => ({ duplicateFound: true, duplicateHouseholdId: useRegistrationStore.householdCreate.id, registeredToEvent: false }),
-      );
-      const form = new IdentitySet({ ...mockIdentitySet(), firstName: 'a', lastName: 'b', birthDate: { year: '2000', month: '1', day: '1' } });
-
-      const result = await useRegistrationStore.checkDuplicates({ form, isPrimaryMember: false, index: 0 });
-      expect(result).toBe(false);
-    },
-  );
 
     it('calls household service checkForPossibleDuplicatePublic and returns false if the result duplicateFound is false', async () => {
       useRegistrationStore = initStore();

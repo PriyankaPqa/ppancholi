@@ -74,7 +74,7 @@ export interface IIdentitySetData {
 export interface IIdentitySet extends IIdentitySetData {
   duplicateStatusInCurrentHousehold?: MemberDuplicateStatus;
   duplicateStatusInDb?: MemberDuplicateStatus;
-  validate(skipAgeRestriction?: boolean): string[];
+  validate(skipAgeRestriction?: boolean, isCRCRegistration?:boolean): string[];
   setIdentity(data: IIdentitySetData): void;
   setIndigenousIdentity(data: IIdentitySetData): void;
   setDuplicateStatusInCurrentHousehold(isDuplicate: boolean):void;

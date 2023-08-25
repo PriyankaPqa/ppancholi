@@ -935,7 +935,7 @@ describe('ReviewRegistrationLib.vue', () => {
       wrapper.vm.$registrationStore.getHouseholdCreate = jest.fn(() => mockHouseholdCreate());
     });
 
-    describe('isDuplicate', () => {
+    describe('saveDisabled', () => {
       it('returns false is feature flag is off', () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -950,10 +950,10 @@ describe('ReviewRegistrationLib.vue', () => {
           },
         });
 
-        expect(wrapper.vm.isDuplicate).toBeFalsy();
+        expect(wrapper.vm.saveDisabled).toBeFalsy();
       });
 
-      it('returns true is feature flag is on and duplicateStatusInCurrentHousehold of getPersonalInformation is Duplicate', () => {
+      it('returns true is feature flag is on and duplicateStatusInCurrentHousehold of getPersonalInformation is Duplicate and not in crc registration', () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -972,9 +972,34 @@ describe('ReviewRegistrationLib.vue', () => {
           },
         });
 
-        expect(wrapper.vm.isDuplicate).toBeTruthy();
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
+
+        expect(wrapper.vm.saveDisabled).toBeTruthy();
       });
-      it('returns true is feature flag is on and duplicateStatusInDb of getPersonalInformation is Duplicate', () => {
+      it('returns true is feature flag is on and duplicateStatusInDb of getPersonalInformation is Duplicate and not in crc registration', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+            disableAutocomplete: false,
+            user: mockUserL6(),
+          },
+          mocks: {
+            $hasFeature: (f) => f === FeatureKeys.ManageDuplicates,
+          },
+          computed: {
+            getPersonalInformation() {
+              return { ...mockIdentitySet(), ...mockContactInformation(), duplicateStatusInDb: MemberDuplicateStatus.Duplicate };
+            },
+          },
+        });
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
+
+        expect(wrapper.vm.saveDisabled).toBeTruthy();
+      });
+
+      it('returns false if is feature flag is on and is crc registration', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -993,7 +1018,9 @@ describe('ReviewRegistrationLib.vue', () => {
           },
         });
 
-        expect(wrapper.vm.isDuplicate).toBeTruthy();
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
+
+        expect(wrapper.vm.saveDisabled).toBeFalsy();
       });
 
       it('returns false is feature flag is on and duplicateStatusInDb and duplicateStatusInCurrentHousehold of getPersonalInformation are unique', () => {
@@ -1018,7 +1045,7 @@ describe('ReviewRegistrationLib.vue', () => {
           },
         });
 
-        expect(wrapper.vm.isDuplicate).toBeFalsy();
+        expect(wrapper.vm.saveDisabled).toBeFalsy();
       });
     });
     describe('additionalMembersCopy', () => {

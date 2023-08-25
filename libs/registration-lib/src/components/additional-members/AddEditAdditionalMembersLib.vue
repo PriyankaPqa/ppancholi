@@ -192,7 +192,7 @@ const vueComponent: VueConstructor = Vue.extend({
     },
 
     submitDisabled():boolean {
-      const isMemberDuplicate = this.$hasFeature(FeatureKeys.ManageDuplicates)
+      const isMemberDuplicate = this.$hasFeature(FeatureKeys.ManageDuplicates) && !this.$registrationStore.isCRCRegistration()
       && this.identityChanged && this.memberClone.identitySet.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate;
       return (!this.identityChanged && !this.addressChanged && !this.sameAddressChanged) || isMemberDuplicate;
     },

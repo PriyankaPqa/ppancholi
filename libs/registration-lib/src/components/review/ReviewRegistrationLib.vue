@@ -34,7 +34,7 @@
         :title="$t('registration.menu.personal_info')"
         :inline-edit="personalInformation.inlineEdit"
         :loading="personalInformation.loading"
-        :submit-disabled="failed || isDuplicate"
+        :submit-disabled="failed || saveDisabled"
         @edit="editPersonalInformation()"
         @cancel="cancelPersonalInformation()"
         @submit="validateEmailAndSubmitPersonalInfo()">
@@ -110,6 +110,7 @@
           :member="member"
           :inline-edit="additionalMembers[index].inlineEdit"
           :loading="additionalMembers[index].loading"
+          :save-disabled-if-duplicate="!$registrationStore.isCRCRegistration()"
           @edit="editAdditionalMember(index)"
           @cancel="cancelAdditionalMember(index)"
           @submit="submitAdditionalMember(index)"
@@ -271,8 +272,8 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
       return this.$registrationStore.householdAlreadyRegistered;
     },
 
-    isDuplicate():boolean {
-      return this.$hasFeature(FeatureKeys.ManageDuplicates)
+    saveDisabled():boolean {
+      return this.$hasFeature(FeatureKeys.ManageDuplicates) && !this.$registrationStore.isCRCRegistration()
       && (this.getPersonalInformation.duplicateStatusInCurrentHousehold === MemberDuplicateStatus.Duplicate
        || this.getPersonalInformation.duplicateStatusInDb === MemberDuplicateStatus.Duplicate);
     },

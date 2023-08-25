@@ -107,8 +107,8 @@ export const hasMinimumAge = (birthdate: IBirthDate, errorMsg: string, errors: s
   errors.push(errorMsg);
 };
 
-export const isUnique = (identity: IIdentitySet, errorMsg: string, errors: string[]) => {
-  if (identity.getMemberDuplicateStatus() && identity.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate) {
+export const isUnique = (identity: IIdentitySet, isCRCRegistration: boolean, errorMsg: string, errors: string[]) => {
+  if (!isCRCRegistration && identity.duplicateStatusInCurrentHousehold && identity.duplicateStatusInCurrentHousehold === MemberDuplicateStatus.Duplicate) {
     errors.push(errorMsg);
   }
 };

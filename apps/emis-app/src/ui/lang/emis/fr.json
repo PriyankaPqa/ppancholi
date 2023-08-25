@@ -1119,6 +1119,7 @@
     "errors.impact-validation-method-should-not-be-not-applicable": "La méthode de vérification de l'impact ne peut pas être « sans objet ».",
     "errors.impacted-individual-already-exist": "",
     "errors.impacted-individual-does-not-exist": "",
+    "errors.individual-appears-to-already-exist-in-the-system": "Cette personne semble déjà exister dans le système. Veuillez confirmer que cette personne n’est pas un doublon avant de continuer.",
     "errors.individual-does-not-belong-to-the-selected-event": "L'individu n'appartient pas à l'événement sélectionné",
     "errors.individual-does-not-have-an-email-address": "La personne n'a pas d'adresse courriel.",
     "errors.information-management-internal-id-max-length-exceeded": "Le InformationManagementInternalId ne doit pas dépasser {MaxLength} caractères.",

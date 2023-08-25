@@ -161,8 +161,16 @@ describe('AddEditAdditionalMembersLib.vue', () => {
         expect(wrapper.vm.submitDisabled).toEqual(true);
       });
 
-      it('returns true if identity is duplicate and feature flag is on', async () => {
+      it('returns true if identity is duplicate and feature flag is on and is not crc registration', async () => {
         wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
+        await wrapper.setProps({ member: mockAdditionalMember({ identitySet: { getMemberDuplicateStatus: jest.fn(() => MemberDuplicateStatus.Duplicate) } }) });
+        expect(wrapper.vm.submitDisabled).toEqual(true);
+      });
+
+      it('returns false if identity is duplicate and feature flag is on and is  crc registration', async () => {
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
         await wrapper.setProps({ member: mockAdditionalMember({ identitySet: { getMemberDuplicateStatus: jest.fn(() => MemberDuplicateStatus.Duplicate) } }) });
         expect(wrapper.vm.submitDisabled).toEqual(true);
       });

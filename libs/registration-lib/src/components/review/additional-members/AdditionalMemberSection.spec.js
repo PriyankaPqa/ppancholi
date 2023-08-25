@@ -1,6 +1,8 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockMember } from '@libs/entities-lib/value-objects/member';
+import { MemberDuplicateStatus } from '@libs/entities-lib/value-objects/identity-set';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './AdditionalMemberSection.vue';
 
 const localVue = createLocalVue();
@@ -49,6 +51,37 @@ describe('AdditionalMemberSection.vue', () => {
         await wrapper.setProps({ inlineEdit: true });
         const deleteButton = wrapper.find('[data-test="inlineEdit__additionalMember__delete"]');
         expect(deleteButton.exists()).toBe(false);
+      });
+    });
+  });
+
+  describe('computed', () => {
+    describe('saveDisabled', () => {
+      it('returns true if saveDisabledIfDuplicate is true and getMemberDuplicateStatus is duplicate', async () => {
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+        await wrapper.setProps({ saveDisabledIfDuplicate: true,
+          member: { ...mockMember(), identitySet: { ...mockMember().identitySet, getMemberDuplicateStatus: jest.fn(() => MemberDuplicateStatus.Duplicate) } },
+        });
+
+        expect(wrapper.vm.saveDisabled).toBeTruthy();
+      });
+
+      it('returns false if saveDisabledIfDuplicate is true and getMemberDuplicateStatus is not duplicate', async () => {
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+        await wrapper.setProps({ saveDisabledIfDuplicate: true,
+          member: { ...mockMember(), identitySet: { ...mockMember().identitySet, getMemberDuplicateStatus: jest.fn(() => MemberDuplicateStatus.Unique) } },
+        });
+
+        expect(wrapper.vm.saveDisabled).toBeFalsy();
+      });
+
+      it('returns false if saveDisabledIfDuplicate is false and getMemberDuplicateStatus is duplicate', async () => {
+        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
+        await wrapper.setProps({ saveDisabledIfDuplicate: false,
+          member: { ...mockMember(), identitySet: { ...mockMember().identitySet, getMemberDuplicateStatus: jest.fn(() => MemberDuplicateStatus.Duplicate) } },
+        });
+
+        expect(wrapper.vm.saveDisabled).toBeFalsy();
       });
     });
   });

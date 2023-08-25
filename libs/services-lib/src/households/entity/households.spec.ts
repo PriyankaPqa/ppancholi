@@ -298,10 +298,11 @@ describe('>>> Beneficiaries Service', () => {
   describe('checkForPossibleDuplicatePublic', () => {
     it('should call the proper endpoint', async () => {
       const member = mockMember();
-      await service.checkForPossibleDuplicatePublic('eventId', member);
+      const hhId = '111';
+      await service.checkForPossibleDuplicatePublic('eventId', member, hhId);
       expect(http.post).toHaveBeenCalledWith(
         `${service.baseApi}/persons/public/check-possible-duplicate`,
-        { eventId: 'eventId', contactInformation: member.contactInformation, identitySet: member.identitySet },
+        { eventId: 'eventId', contactInformation: member.contactInformation, identitySet: member.identitySet, householdId: hhId },
         { globalHandler: false },
       );
     });

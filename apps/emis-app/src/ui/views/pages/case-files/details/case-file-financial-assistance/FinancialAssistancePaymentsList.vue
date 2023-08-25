@@ -389,7 +389,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       filter: { 'Entity/CaseFileId': this.caseFileId },
     });
     this.allItemsIds = res.ids;
-    if (this.$hasFeature(FeatureKeys.ManageDuplicates)) {
+    if (this.$hasFeature(FeatureKeys.ManageDuplicates) && this.canAdd) {
       this.householdDuplicates = await usePotentialDuplicateStore().getDuplicates(this.caseFile.householdId);
     }
   },

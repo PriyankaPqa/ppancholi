@@ -64,7 +64,7 @@ import { RcDialog } from '@libs/component-lib/components';
 import {
   ContactInformation,
   CurrentAddress,
-  ECurrentAddressTypes, IContactInformation, ICurrentAddress, IdentitySet, IIdentitySet, IMember, MemberDuplicateStatus,
+  ECurrentAddressTypes, IContactInformation, ICurrentAddress, IdentitySet, IIdentitySet, IMember,
 } from '@libs/entities-lib/household-create';
 import { TranslateResult } from 'vue-i18n';
 import { IEventGenericLocation } from '@libs/entities-lib/registration-event';
@@ -180,8 +180,7 @@ export default Vue.extend({
     },
 
     submitButtonDisabled(): (failed: boolean, pristine:boolean) => boolean {
-      const isDuplicate = this.$hasFeature(FeatureKeys.ManageDuplicates) && this.member.identitySet.getMemberDuplicateStatus() === MemberDuplicateStatus.Duplicate;
-      return (failed, pristine) => failed || (pristine && !this.changedAddress && !this.makePrimaryMode) || this.submitLoading || isDuplicate;
+      return (failed, pristine) => failed || (pristine && !this.changedAddress && !this.makePrimaryMode) || this.submitLoading;
     },
 
     enableAutocomplete(): boolean {

@@ -52,7 +52,7 @@ export interface IHouseholdsService extends IDomainBaseService<IHouseholdEntity,
   getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]>;
   getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
   setHouseholdStatus(householdId: string, status: HouseholdStatus, rationale: string): Promise<IHouseholdEntity>;
-  checkForPossibleDuplicatePublic(eventId: uuid, member: IMember): Promise<ICheckForPossibleDuplicateResponse>;
+  checkForPossibleDuplicatePublic(eventId: uuid, member: IMember, householdId? : uuid): Promise<ICheckForPossibleDuplicateResponse>;
   sendOneTimeCodeRegistrationPublic(payload: ISendOneTimeCodeRegistrationPublicPayload): Promise<void>;
   verifyOneTimeCodeRegistrationPublic(payload: IVerifyOneTimeCodeRegistrationPublicPayload): Promise<boolean>;
   getPublicToken(recaptchaToken: string): Promise<string>;

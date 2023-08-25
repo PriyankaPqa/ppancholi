@@ -32,7 +32,7 @@ describe('Member', () => {
       it('should return results of validate of identitySet', () => {
         const p = new Member();
         const results = p.identitySet.validate();
-        expect(p.validateIdentity(false)).toEqual(results);
+        expect(p.validateIdentity(false, false)).toEqual(results);
       });
     });
 
@@ -49,7 +49,7 @@ describe('Member', () => {
         const p = new Member();
         const res = p.validate();
         expect(res).toEqual([
-          ...p.validateIdentity(false),
+          ...p.validateIdentity(false, false),
           ...p.validateCurrentAddress(),
           ...p.validateContactInformation(false),
         ]);

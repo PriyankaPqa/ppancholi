@@ -169,10 +169,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     return this.http.get(`${this.baseApi}/persons/public/${id}`);
   }
 
-  checkForPossibleDuplicatePublic(eventId: string, member: IMember): Promise<ICheckForPossibleDuplicateResponse> {
+  checkForPossibleDuplicatePublic(eventId: string, member: IMember, householdId: uuid = null): Promise<ICheckForPossibleDuplicateResponse> {
     return this.http.post(
       `${this.baseApi}/persons/public/check-possible-duplicate`,
-      { eventId, contactInformation: member.contactInformation, identitySet: member.identitySet },
+      { eventId, contactInformation: member.contactInformation, identitySet: member.identitySet, householdId },
       { globalHandler: false },
     );
   }

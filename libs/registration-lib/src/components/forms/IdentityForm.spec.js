@@ -34,8 +34,9 @@ describe('IdentityForm.vue', () => {
 
   describe('Template', () => {
     test('change event is emitted when form changes', async () => {
-      wrapper.vm.formCopy.firstName = 'test';
-      expect(wrapper.emitted('change')[0]).toEqual([wrapper.vm.formCopy]);
+      wrapper.vm.$emit = jest.fn();
+      await wrapper.setData({ formCopy: { firstName: 'test' } });
+      expect(wrapper.vm.$emit).toHaveBeenCalledWith('change', wrapper.vm.formCopy);
     });
 
     test('displays the error if there is a duplicate if feature flag is on', async () => {
@@ -233,6 +234,78 @@ describe('IdentityForm.vue', () => {
           },
         });
         expect(wrapper.vm.fullDate).toBe(true);
+      });
+    });
+
+    describe('isDuplicateWarning', () => {
+      it('returns false if not crc registration', () => {
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
+        expect(wrapper.vm.isDuplicateWarning).toBeFalsy();
+      });
+
+      it('returns false if not duplicate in db', async () => {
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
+        await wrapper.setProps({ form: mockIdentitySet({ duplicateStatusInDb: MemberDuplicateStatus.Unique }) });
+        expect(wrapper.vm.isDuplicateWarning).toBeFalsy();
+      });
+
+      it('returns true if crc reg and duplicate in db', async () => {
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
+        await wrapper.setProps({ form: mockIdentitySet({ duplicateStatusInDb: MemberDuplicateStatus.Duplicate }) });
+        expect(wrapper.vm.isDuplicateWarning).toBeTruthy();
+      });
+    });
+
+    describe('duplicateMessage', () => {
+      it('returns the right text if isDuplicateWarning is true', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            form: mockIdentitySetModified,
+            genderItems: mockGenders(),
+          },
+          computed: {
+            isDuplicateWarning() {
+              return true;
+            },
+          },
+        });
+
+        expect(wrapper.vm.duplicateMessage).toEqual('errors.individual-appears-to-already-exist-in-the-system');
+      });
+
+      it('returns the right text if isDuplicateWarning is false and duplicate is in household', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            form: mockIdentitySet({ duplicateStatusInCurrentHousehold: MemberDuplicateStatus.Duplicate }),
+            genderItems: mockGenders(),
+          },
+          computed: {
+            isDuplicateWarning() {
+              return false;
+            },
+          },
+        });
+
+        expect(wrapper.vm.duplicateMessage).toEqual('errors.a-household-cannot-have-the-same-members-twice');
+      });
+
+      it('returns the right text if isDuplicateWarning is false and duplicate is in db', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            form: mockIdentitySet({ duplicateStatusInCurrentHousehold: MemberDuplicateStatus.Unique }),
+            genderItems: mockGenders(),
+          },
+          computed: {
+            isDuplicateWarning() {
+              return false;
+            },
+          },
+        });
+
+        expect(wrapper.vm.duplicateMessage).toEqual('errors.this-individual-already-exists-in-the-system');
       });
     });
   });

@@ -117,8 +117,8 @@ export class HouseholdCreate implements IHouseholdCreate {
 
   // Validation used for each page of registration
 
-  validatePersonalInformation(skipAgeRestriction: boolean, skipEmailPhoneRules: boolean): string[] {
-    const identityErrors = this.primaryBeneficiary.validateIdentity(skipAgeRestriction);
+  validatePersonalInformation(skipAgeRestriction: boolean, skipEmailPhoneRules: boolean, isCRCRegistration:boolean = true): string[] {
+    const identityErrors = this.primaryBeneficiary.validateIdentity(skipAgeRestriction, isCRCRegistration);
     const contactInformationErrors = this.primaryBeneficiary.validateContactInformation(skipEmailPhoneRules);
     return [...identityErrors, ...contactInformationErrors];
   }

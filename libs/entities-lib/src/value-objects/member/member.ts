@@ -44,8 +44,8 @@ export class Member extends BaseEntity implements IMember {
     this.contactInformation = new ContactInformation(contactInformation);
   }
 
-  validate(skipAgeRestriction = false, skipEmailPhoneRules = false): string[] {
-    const identityErrors = this.validateIdentity(skipAgeRestriction);
+  validate(skipAgeRestriction = false, skipEmailPhoneRules = false, isCRCRegistration = true): string[] {
+    const identityErrors = this.validateIdentity(skipAgeRestriction, isCRCRegistration);
 
     const currentAddressErrors = this.validateCurrentAddress();
 
@@ -58,8 +58,8 @@ export class Member extends BaseEntity implements IMember {
     return this.currentAddress.validate();
   }
 
-  validateIdentity(skipAgeRestriction: boolean): Array<string> {
-    return this.identitySet.validate(skipAgeRestriction);
+  validateIdentity(skipAgeRestriction: boolean, isCRCRegistration: boolean): Array<string> {
+    return this.identitySet.validate(skipAgeRestriction, isCRCRegistration);
   }
 
   validateContactInformation(skipEmailPhoneRules: boolean): Array<string> {

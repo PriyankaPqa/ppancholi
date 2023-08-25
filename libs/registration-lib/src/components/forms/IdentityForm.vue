@@ -4,8 +4,7 @@
       <message-box
         icon="mdi-alert"
         data-test="personal_info_duplicate_error"
-        :message="form.duplicateStatusInCurrentHousehold === MemberDuplicateStatus.Duplicate ? $t('errors.a-household-cannot-have-the-same-members-twice')
-          : $t('errors.this-individual-already-exists-in-the-system')" />
+        :message="duplicateMessage" />
     </v-col>
 
     <v-col cols="12" sm="6">
@@ -108,18 +107,19 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { VueConstructor } from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { MessageBox, VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { IOptionItemData } from '@libs/shared-lib/types';
 import { IBirthDate, IHoneyPotIdentitySet, IIdentitySet, MemberDuplicateStatus } from '@libs/entities-lib/household-create';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import helpers from '@libs/shared-lib/helpers/helpers';
+import { TranslateResult } from 'vue-i18n';
 import Pot from './HoneyPot.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import months from '../../constants/months';
 
-export default Vue.extend({
+const vueComponent: VueConstructor = Vue.extend({
   name: 'IdentityForm',
 
   components: {
@@ -220,6 +220,18 @@ export default Vue.extend({
         && this.formCopy.birthDate.month !== null && this.formCopy.birthDate.month !== ''
         && this.formCopy.birthDate.year !== null && this.formCopy.birthDate.year !== '';
     },
+
+    isDuplicateWarning():boolean {
+      return this.$registrationStore.isCRCRegistration() && this.form.duplicateStatusInDb === MemberDuplicateStatus.Duplicate;
+    },
+
+    duplicateMessage(): TranslateResult {
+      // eslint-disable-next-line no-nested-ternary
+      return this.isDuplicateWarning ? this.$t('errors.individual-appears-to-already-exist-in-the-system')
+      : this.form.duplicateStatusInCurrentHousehold === MemberDuplicateStatus.Duplicate
+      ? this.$t('errors.a-household-cannot-have-the-same-members-twice')
+          : this.$t('errors.this-individual-already-exists-in-the-system');
+    },
   },
 
   watch: {
@@ -229,7 +241,11 @@ export default Vue.extend({
         if (form.gender && !form.gender.isOther) {
           form.genderOther = null;
         }
-        this.$emit('change', form);
+        this.$emit('change', { ...form,
+        // keep the duplicate status up to date with the parent form
+          duplicateStatusInDb: this.form.duplicateStatusInDb,
+          duplicateStatusInCurrentHousehold: this.form.duplicateStatusInCurrentHousehold,
+        });
       },
     },
   },
@@ -261,4 +277,6 @@ export default Vue.extend({
     },
   },
 });
+
+export default vueComponent;
 </script>

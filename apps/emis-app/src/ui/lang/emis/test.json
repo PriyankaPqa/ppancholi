@@ -1120,6 +1120,7 @@
     "errors.impact-validation-method-should-not-be-not-applicable": "errors.impact-validation-method-should-not-be-not-applicable",
     "errors.impacted-individual-already-exist": "",
     "errors.impacted-individual-does-not-exist": "",
+    "errors.individual-appears-to-already-exist-in-the-system": "",
     "errors.individual-does-not-belong-to-the-selected-event": "errors.individual-does-not-belong-to-the-selected-event",
     "errors.individual-does-not-have-an-email-address": "",
     "errors.information-management-internal-id-max-length-exceeded": "errors.information-management-internal-id-max-length-exceeded",
