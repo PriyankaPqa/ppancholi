@@ -8,7 +8,7 @@
       :submit-action-label="$t('common.buttons.save')"
       :cancel-action-label="$t('common.cancel')"
       :loading="loading"
-      :submit-button-disabled="(!dirty && !isChanged) || failed"
+      :submit-button-disabled="(!dirty && !isChanged) || failed || readonly"
       max-width="800"
       :persistent="true"
       @cancel="close"
@@ -29,6 +29,7 @@
                       :error-messages="errors"
                       data-test="verifyIdentity_status"
                       row
+                      :disabled="readonly"
                       @change="onStatusChange">
                       <v-icon left color="status_success">
                         mdi-shield-check
@@ -69,7 +70,7 @@
                 v-model="form.method"
                 data-test="verifyIdentity_method"
                 :attach="false"
-                :disabled="!isValidAuthStatus"
+                :disabled="!isValidAuthStatus || readonly"
                 :items="verificationMethods"
                 :label="isValidAuthStatus ? $t('caseFileDetail.verifyIdentityDialog.method.label') : $t('common.notApplicable')"
                 :rules="rules.method" />
@@ -82,6 +83,7 @@
                   v-model="form.exceptionalTypeId"
                   :attach="false"
                   data-test="verifyIdentity_options"
+                  :disabled="readonly"
                   :items="exceptionalTypes"
                   :item-text="(item) => $m(item.name)"
                   :item-value="(item) => item.id"
@@ -95,6 +97,7 @@
                   v-model="form.exceptionalTypeOther"
                   data-test="exceptional-specified-other"
                   autocomplete="nope"
+                  :disabled="readonly"
                   :label="`${$t('common.pleaseSpecify')} *`"
                   :rules="rules.exceptionalTypeOther" />
               </v-col>
@@ -110,7 +113,7 @@
                 :attach="false"
                 data-test="verifyIdentity_options"
                 multiple
-                :disabled="!canSelectIds"
+                :disabled="!canSelectIds || readonly"
                 :items="verificationOptions"
                 :item-text="(item) => $m(item.name)"
                 :item-value="(item) => item.id"
@@ -125,6 +128,7 @@
                 v-model="form.specifiedOther"
                 data-test="specified-other"
                 autocomplete="nope"
+                :disabled="readonly"
                 :label="`${$t('common.pleaseSpecify')} *`"
                 :rules="rules.specifiedOther" />
             </v-col>
@@ -150,6 +154,8 @@ import {
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import { useHouseholdStore } from '@/pinia/household/household';
+import { UserRoles } from '@libs/entities-lib/user';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useEventStore } from '@/pinia/event/event';
 
@@ -192,6 +198,10 @@ export default Vue.extend({
     };
   },
   computed: {
+    readonly(): boolean {
+      return this.$hasFeature(FeatureKeys.AuthenticationPhaseII)
+        && useHouseholdStore().getById(this.caseFile.householdId)?.address?.address === null && !this.$hasLevel(UserRoles.level4);
+    },
     /**
      * Return list of methods. System method is read only
     */
@@ -200,6 +210,12 @@ export default Vue.extend({
         .filter((x) => x.value !== IdentityAuthenticationMethod.NotApplicable) as { value: number, text: string, disabled?: boolean }[];
       const systemMethod = methods.find((m) => m.value === IdentityAuthenticationMethod.System);
       systemMethod.disabled = true;
+      // if the household doesnt have a permanent address, only exceptional is allowed with level4+.
+      if (this.$hasFeature(FeatureKeys.AuthenticationPhaseII) && useHouseholdStore().getById(this.caseFile.householdId)?.address?.address === null) {
+        methods.forEach((m) => {
+          m.disabled = !(m.value === IdentityAuthenticationMethod.Exceptional && this.$hasLevel(UserRoles.level4));
+        });
+      }
       return methods;
     },
     /**

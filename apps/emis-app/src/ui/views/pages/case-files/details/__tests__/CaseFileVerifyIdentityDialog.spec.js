@@ -3,7 +3,9 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus } from '@libs/entities-lib/case-file';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { useMockHouseholdStore } from '@/pinia/household/household.mock';
 
+import { mockHouseholdEntity } from '@libs/entities-lib/household';
 import flushPromises from 'flush-promises';
 import { useMockEventStore } from '@/pinia/event/event.mock';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
@@ -11,15 +13,17 @@ import Component from '../components/CaseFileVerifyIdentityDialog.vue';
 
 const localVue = createLocalVue();
 const { pinia, caseFileStore } = useMockCaseFileStore();
+const householdStore = useMockHouseholdStore(pinia).householdStore;
 const eventStore = useMockEventStore(pinia).eventStore;
 
 describe('CaseFileVerifyIdentityDialog.vue', () => {
   let wrapper;
 
-  beforeEach(async () => {
-    wrapper = await mount(Component, {
+  const doMount = async (fullMount = false, level = 5, additionalOverwrites = {}) => {
+    const featureList = additionalOverwrites.featureList || [FeatureKeys.AuthenticationPhaseII];
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
-      featureList: [FeatureKeys.AuthenticationPhaseII],
+      featureList,
       pinia,
       propsData: {
         show: true,
@@ -32,15 +36,25 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
           },
         },
       },
+      mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}`,
 
+      },
+      ...additionalOverwrites,
     });
-  });
+
+    await wrapper.vm.$nextTick();
+  };
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   describe('Template', () => {
+    beforeEach(async () => {
+      await doMount(true);
+    });
+
     describe('Information are correctly loaded', () => {
       it('preselects status correctly', () => {
         const inputSelect = wrapper.find('[data-test="status-notVerified"]');
@@ -164,6 +178,9 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
   });
 
   describe('Computed', () => {
+    beforeEach(async () => {
+      await doMount();
+    });
     describe('verificationMethods', () => {
       it('Returns the list of verification methods, with system disabled, no N/A', () => {
         const verifs = wrapper.vm.verificationMethods;
@@ -171,6 +188,60 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.NotApplicable).length).toBe(0);
         expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.System && x.disabled).length).toBe(1);
         expect(verifs.filter((x) => x.disabled).length).toBe(1);
+      });
+      it('disables in person if no permanent address and not level 4+', async () => {
+        const household = mockHouseholdEntity();
+        householdStore.getById = jest.fn(() => household);
+        await doMount(false, 3);
+        let verifs = wrapper.vm.verificationMethods;
+        expect(verifs.length).toBe(3);
+        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.NotApplicable).length).toBe(0);
+        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.System && x.disabled).length).toBe(1);
+        expect(verifs.filter((x) => x.disabled).length).toBe(1);
+
+        household.address.address = null;
+        await doMount(false, 3);
+        verifs = wrapper.vm.verificationMethods;
+        expect(verifs.length).toBe(3);
+        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.NotApplicable).length).toBe(0);
+        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.System && x.disabled).length).toBe(1);
+        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.InPerson && x.disabled).length).toBe(1);
+        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.Exceptional && x.disabled).length).toBe(1);
+        expect(verifs.filter((x) => x.disabled).length).toBe(verifs.length);
+
+        await doMount(false, 3, { featureList: [] });
+        verifs = wrapper.vm.verificationMethods;
+        expect(verifs.length).toBe(3);
+        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.NotApplicable).length).toBe(0);
+        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.System && x.disabled).length).toBe(1);
+        expect(verifs.filter((x) => x.disabled).length).toBe(1);
+
+        await doMount(false, 4);
+        verifs = wrapper.vm.verificationMethods;
+        expect(verifs.length).toBe(3);
+        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.NotApplicable).length).toBe(0);
+        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.System && x.disabled).length).toBe(1);
+        expect(verifs.filter((x) => x.value === IdentityAuthenticationMethod.Exceptional && !x.disabled).length).toBe(1);
+        expect(verifs.filter((x) => x.disabled).length).toBe(verifs.length - 1);
+      });
+    });
+
+    describe('readonly', () => {
+      it('When no address and not l4+ and flag is on', async () => {
+        const household = mockHouseholdEntity();
+        householdStore.getById = jest.fn(() => household);
+        await doMount(false, 3);
+        expect(wrapper.vm.readonly).toBeFalsy();
+
+        household.address.address = null;
+        await doMount(false, 3);
+        expect(wrapper.vm.readonly).toBeTruthy();
+
+        await doMount(false, 4);
+        expect(wrapper.vm.readonly).toBeFalsy();
+
+        await doMount(false, 3, { featureList: [] });
+        expect(wrapper.vm.readonly).toBeFalsy();
       });
     });
 
@@ -294,7 +365,8 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
+      await doMount(true);
       jest.clearAllMocks();
     });
 
