@@ -54,6 +54,7 @@ describe('#TC164# - Add Event Registration Location', { tags: ['@event'] }, () =
 
           const addRegistrationLocationPage = eventDetailsPage.addRegistrationLocation();
           addRegistrationLocationPage.getRegistrationLocationStatus().should('eq', 'Active');
+          addRegistrationLocationPage.getRegistrationLocationCountry().should('eq', 'Canada'); // Canada is default country value
           addRegistrationLocationPage.fill(registrationLocationData, roleName);
           addRegistrationLocationPage.selectFrenchTab();
           addRegistrationLocationPage.fillFrenchRegistrationLocationName(registrationLocationData.name.translation.fr, roleName);

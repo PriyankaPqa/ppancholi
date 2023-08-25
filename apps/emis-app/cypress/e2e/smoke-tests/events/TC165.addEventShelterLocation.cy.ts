@@ -54,6 +54,7 @@ describe('#TC165# - Add Event Shelter Location', { tags: ['@event'] }, () => {
 
           const addShelterLocationPage = eventDetailsPage.addShelterLocation();
           addShelterLocationPage.getShelterLocationStatus().should('eq', 'Active');
+          addShelterLocationPage.getShelterLocationCountry().should('eq', 'Canada'); // Canada is default country value
           addShelterLocationPage.fill(shelterLocationData, roleName);
           addShelterLocationPage.selectFrenchTab();
           addShelterLocationPage.fillFrenchShelterLocationName(shelterLocationData.name.translation.fr, roleName);

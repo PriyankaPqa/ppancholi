@@ -10,6 +10,7 @@ export enum DataTest {
   country = 'location-country',
   frenchTab = 'tab-lang-fr',
   addButton = 'dialog-submit-action',
+  countryText = 'selection',
 }
 
 export class AddShelterLocationPage {
@@ -27,21 +28,19 @@ export class AddShelterLocationPage {
 
   private addButton = { selector: DataTest.addButton };
 
+  private countryText = { selector: DataTest.countryText };
+
   public getShelterLocationStatus() {
     return cy.getByDataTest(this.status).invoke('text').then((text) => text.trim());
+  }
+
+  public getShelterLocationCountry() {
+    return cy.getByDataTest(this.countryText).invoke('text').then((text) => text.trim());
   }
 
   async fill(data: IEventGenericLocation, roleName:string) {
     if (data.name.translation.en) {
       cy.getByDataTest(this.shelterLocationName).type(data.name.translation.en).type(roleName);
-    }
-
-    if (data.address.country) {
-      cy.selectCountry(DataTest.country, { countryCode: data.address.country, search: 'Canada' });
-    }
-
-    if (data.address.streetAddress) {
-      cy.getByDataTest(this.streetAddress).type(data.address.streetAddress);
     }
 
     if (data.address.city) {
@@ -54,6 +53,10 @@ export class AddShelterLocationPage {
 
     if (data.address.postalCode) {
       cy.getByDataTest(this.postalCode).type(data.address.postalCode);
+    }
+
+    if (data.address.streetAddress) {
+      cy.getByDataTest(this.streetAddress).type(data.address.streetAddress);
     }
   }
 
