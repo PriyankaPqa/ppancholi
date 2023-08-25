@@ -75,25 +75,31 @@
       </template>
 
       <template #[`item.${customColumns.submittedBy}`]="{ item }">
-        {{ item.entity.submittedBy ? item.entity.submittedBy.userName : '' }}
+        <span :data-test="`submitted_by_fa_id_${item.entity.id}`">
+          {{ item.entity.submittedBy ? item.entity.submittedBy.userName : '' }}
+        </span>
       </template>
 
       <template #[`item.${customColumns.submittedTo}`]="{ item }">
-        {{ item.entity.submittedTo ? item.entity.submittedTo.userName : '' }}
+        <span :data-test="`submitted_to_fa_id_${item.entity.id}`">
+          {{ item.entity.submittedTo ? item.entity.submittedTo.userName : '' }}
+        </span>
       </template>
 
       <template #[`item.${customColumns.event}`]="{ item }">
-        {{ item.metadata ? $m(item.metadata.eventName) : '' }}
+        <span :data-test="`associated_event_fa_id_${item.entity.id}`">
+          {{ item.metadata ? $m(item.metadata.eventName) : '' }}
+        </span>
       </template>
 
       <template #[`item.${customColumns.submissionStartedDate}`]="{ item }">
-        <div class="text-no-wrap">
+        <div class="text-no-wrap" :data-test="`submission_date_fa_id_${item.entity.id}`">
           {{ item.entity.submissionStartedDate ? getLocalStringDate(item.entity.submissionStartedDate, '', 'MMM d, yyyy') : '-' }}
         </div>
       </template>
 
       <template #[`item.${customColumns.amount}`]="{ item }">
-        <div class="text-no-wrap">
+        <div class="text-no-wrap" :data-test="`payment_amount_fa_id_${item.entity.id}`">
           {{ $formatCurrency(item.metadata.total) }}
         </div>
       </template>
@@ -104,7 +110,7 @@
             {{ $t('approval.requests.action.label') }}
           </span>
         </v-btn>
-        <v-icon v-else left>
+        <v-icon v-else left :data-test="`check_icon_${item.entity.id}`">
           mdi-check
         </v-icon>
       </template>

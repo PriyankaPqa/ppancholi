@@ -30,7 +30,7 @@
       :items="approvalHistoryItems"
       :items-per-page="-1">
       <template #[`item.submittedBy.userName`]="{ item }">
-        <div class="text-no-wrap">
+        <div class="text-no-wrap" :data-test="`crc-personnel-item`">
           <b class="no-word-break">{{ item.submittedBy.userName }}</b>
           <span v-if="item.submittedBy.roleName" class="pl-2 no-word-break">({{ $m(item.submittedBy.roleName) }})</span>
         </div>
@@ -41,7 +41,7 @@
         </span>
       </template>
       <template #[`item.dateOfApprovalAction`]="{ item }">
-        <div class="text-no-wrap">
+        <div class="text-no-wrap" :data-test="`date-item`">
           {{ getLocalStringDate(item.dateOfApprovalAction, 'Entity.timestamp', 'MMM d, yyyy') }}
         </div>
       </template>

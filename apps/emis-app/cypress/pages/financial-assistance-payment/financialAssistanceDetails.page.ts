@@ -22,7 +22,9 @@ export enum DataTest {
   statusCancelled = 'statusSelect__6',
   selectSupervisor = 'approval_supervisor',
   approvalStatusHistory = 'approval-status-history-icon',
+  dialogApprovalHistoryCRCPersonnel = 'crc-personnel-item',
   dialogApprovalHistoryRationale = 'rationale-item',
+  dialogApprovalHistoryDate = 'date-item',
   dialogApprovalHistoryAction = 'action-item',
   caseFileActivityTab = 'item-text-0',
 }
@@ -70,7 +72,11 @@ export class FinancialAssistanceDetailsPage {
 
   private approvalStatusHistory = { selector: DataTest.approvalStatusHistory };
 
+  private dialogApprovalHistoryCRCPersonnel = { selector: DataTest.dialogApprovalHistoryCRCPersonnel };
+
   private dialogApprovalHistoryRationale = { selector: DataTest.dialogApprovalHistoryRationale };
+
+  private dialogApprovalHistoryDate = { selector: DataTest.dialogApprovalHistoryDate };
 
   private dialogApprovalHistoryAction = { selector: DataTest.dialogApprovalHistoryAction };
 
@@ -204,12 +210,20 @@ export class FinancialAssistanceDetailsPage {
     return cy.getByDataTest(this.approvalStatusHistory).click();
   }
 
-  public getApprovalHistoryRationaleByIndex(index: number) {
-    return cy.getByDataTest(this.dialogApprovalHistoryRationale).eq(index).invoke('text').then((text) => text.trim());
+  public getApprovalHistoryCRCPersonnelByIndex(index: number) {
+    return cy.getByDataTest(this.dialogApprovalHistoryCRCPersonnel).eq(index).invoke('text').then((text) => text.trim());
   }
 
   public getApprovalHistoryActionByIndex(index: number) {
     return cy.getByDataTest(this.dialogApprovalHistoryAction).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getApprovalHistoryDateSubmittedByIndex(index: number) {
+    return cy.getByDataTest(this.dialogApprovalHistoryDate).eq(index).invoke('text').then((text) => text.trim());
+  }
+
+  public getApprovalHistoryRationaleByIndex(index: number) {
+    return cy.getByDataTest(this.dialogApprovalHistoryRationale).eq(index).invoke('text').then((text) => text.trim());
   }
 
   public closeDialogApprovalStatusHistory() {

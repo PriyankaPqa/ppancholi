@@ -63,7 +63,7 @@ describe('#TC1792# - Confirm that an Approver can decline a payment request', { 
             const resultFAPayment = await addFinancialAssistancePayment(resultHousehold.provider, EPaymentModalities.Voucher, resultHousehold.registrationResponse.caseFile.id, this.tableId);
             await submitFinancialAssistancePaymentToApprover(resultHousehold.provider, resultFAPayment.id, getUserId(roleName));
             cy.wrap(resultFAPayment.id).as('FAPaymentId');
-            cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('CaseFileId');
+            cy.wrap(resultHousehold.registrationResponse.caseFile.caseFileNumber).as('CaseFileNumber');
             cy.wrap(resultFAPayment.name).as('FAPaymentName');
             cy.login(roleValue);
             cy.goTo('approvals/request');
@@ -73,7 +73,8 @@ describe('#TC1792# - Confirm that an Approver can decline a payment request', { 
           const approvalsPage = new ApprovalsPage();
 
           approvalsPage.getPendingRequestsTable().contains(`${this.FAPaymentName}`).should('be.visible');
-          approvalsPage.getActionsButtonByPaymentId(this.FAPaymentId);
+          approvalsPage.searchPendingApprovalRequestsUsingCaseFileNumber(this.CaseFileNumber);
+          approvalsPage.clickActionsButtonByPaymentId(this.FAPaymentId);
           approvalsPage.getDialogTitle().contains('Action approval').should('be.visible');
           approvalsPage.checkApprovalActionDecline();
           approvalsPage.getLabelConfirmedCheckboxField().contains('I confirm that I have informed the requestor that the approval has been declined.').should('be.visible');
