@@ -1,0 +1,35 @@
+parameters:
+  workingDir: ''
+
+stages:
+  - stage: FindCypressAffectedTestsStage
+    displayName: 'Get affected tests'
+    jobs:
+      - job: FindCypressAffectedTestsJob
+        displayName: 'Determine affected tests'
+        steps:
+          - checkout: 'self'
+            submodules: 'true'
+            fetchDepth: 0
+            persistCredentials: true
+          - script: |
+              # Determine whether the pipeline is running in the context of a pull request
+              if [ "$(Build.Reason)" == "PullRequest" ]; then
+                 # We take the current working director and remove ./
+                 WORKING_DIR=$(echo "${{ parameters.workingDir }}" | sed 's/^\.\///')
+              
+                 # Get the list of affected Cypress tests files compared to master
+                 # Remove working director from the path
+                 # Put multiline on the same line separated by a comma
+                 AFFECTED_TESTS=$(git diff --name-only --diff-filter=AMR HEAD^1 HEAD | grep -E '.*\.cy\.ts$' | sed "s|$WORKING_DIR||" | tr '\n' ',')
+                 # Remove last , 
+                 AFFECTED_TESTS=${AFFECTED_TESTS%?}
+                 echo "$AFFECTED_TESTS"
+                # Will only test changed tests
+                echo "##vso[task.setvariable variable=affectedTests;isOutput=true]$AFFECTED_TESTS"
+              else
+                # Will test all critical-path-tests
+                echo "##vso[task.setvariable variable=affectedTests;isOutput=true]cypress/e2e/critical-path-tests/**/*.ts"
+              fi
+            name: getAffectedTests
+            displayName: 'Generate cypress spec parameter'

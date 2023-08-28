@@ -15,13 +15,20 @@ jobs:
     variables:
       - group: Env-Dev
       - group: Cypress
+      - name: cypressAffectedTests
+        value: $[ stageDependencies.FindCypressAffectedTestsStage.FindCypressAffectedTestsJob.outputs['getAffectedTests.affectedTests'] ] # Exists for critical-path
     strategy:
       parallel: ${{ parameters.parallelJobs }}
     steps:
+      # If cypressAffectedTests is not null we use it, otherwise use the parameter cypressSpec. Typically used for critical path tests
+      # The variable CYPRESS_SPEC will be used in the template cypress-steps.yml. It can't be passed as a parameter because it's generated after evaluation of template
+      - script: |
+          computedCypressSpec=$([ -n "$(cypressAffectedTests)" ] && echo "$(cypressAffectedTests)" || echo "${{ parameters.cypressSpec }}")
+          echo "##vso[task.setvariable variable=CYPRESS_SPEC]$computedCypressSpec"
+
       - template: '../steps/cypress-steps.yml'
         parameters:
           packageFeed: ${{ parameters.packageFeed }}
           nodeJsVersion: ${{ parameters.nodeJsVersion }}
           distDir: ${{ parameters.distDir }}
           workingDir: ${{ parameters.workingDir }}
-          cypressSpec: ${{ parameters.cypressSpec }}
