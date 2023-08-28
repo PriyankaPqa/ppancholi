@@ -12,8 +12,6 @@ let caseFileCreated = null as ICaseFileEntity;
 let accessTokenL6 = '';
 let householdCreated = null as ICreateHouseholdRequest;
 
-// dummy
-
 const canRoles = {
   Level6: UserRoles.level6,
   Level5: UserRoles.level5,
