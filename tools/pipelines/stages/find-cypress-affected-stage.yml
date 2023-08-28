@@ -13,8 +13,8 @@ stages:
             fetchDepth: 0
             persistCredentials: true
           - script: |
-              # Determine whether the pipeline is running in the context of a pull request
-              if [ "$(Build.Reason)" == "PullRequest" ]; then
+              # In the context of pull requests, or after code is merge
+              if [ "$(Build.Reason)" != "Schedule" ]; then
                  # We take the current working director and remove ./
                  WORKING_DIR=$(echo "${{ parameters.workingDir }}" | sed 's/^\.\///')
               
@@ -28,7 +28,7 @@ stages:
                 # Will only test changed tests
                 echo "##vso[task.setvariable variable=affectedTests;isOutput=true]$AFFECTED_TESTS"
               else
-                # Will test all critical-path-tests
+                # Will test all critical-path-tests when triggered by a schedule job
                 echo "##vso[task.setvariable variable=affectedTests;isOutput=true]cypress/e2e/critical-path-tests/**/*.ts"
               fi
             name: getAffectedTests
