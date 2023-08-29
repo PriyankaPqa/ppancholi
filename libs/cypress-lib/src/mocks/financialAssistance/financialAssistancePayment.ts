@@ -1,6 +1,8 @@
 import { itemFinancialAssistance, subItemFinancialAssistance } from '@libs/cypress-lib/helpers';
 import {
+  ApprovalAction,
   ApprovalStatus,
+  IApprovalActionPayload,
   IFinancialAssistancePaymentEntity,
   IFinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentLine,
@@ -62,4 +64,10 @@ export const mockUpdatePaymentRequest = (status: PaymentStatus, force?: Partial<
   paymentGroupId: '',
   status,
   ...force,
+});
+
+export const mockApprovalActionRequest = (submittedTo: string) : IApprovalActionPayload => ({
+  approvalAction: ApprovalAction.Approved,
+  submittedTo,
+  rationale: 'sending this for next level approval',
 });

@@ -66,7 +66,7 @@
       </rc-data-table-body>
       <div v-if="footerText" class="rc-caption12 fw-light table-footer">
         {{ footerText }}
-        <button type="button" class="rc-link12 refresh-button" @click="emitSearchEvent">
+        <button type="button" :data-test="`${$attrs['data-test']}_refresh_button`" class="rc-link12 refresh-button" @click="emitSearchEvent">
           {{ $t("table.refresh") }}
         </button>
       </div>

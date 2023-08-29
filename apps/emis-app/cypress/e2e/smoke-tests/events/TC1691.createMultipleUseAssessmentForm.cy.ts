@@ -54,11 +54,13 @@ describe('#TC1691# - Create a multiple use Assessment form', { tags: ['@event', 
           createNewAssessmentPage.fill(assessmentData);
           createNewAssessmentPage.selectProgram(this.mockProgram.name.translation.en);
           createNewAssessmentPage.togglePublishedStatus();
+          createNewAssessmentPage.savePartialAssessmentsResults();
           createNewAssessmentPage.checkFrequencyMultiple();
 
           const assessmentDetailsPage = createNewAssessmentPage.saveAssessment();
           cy.contains('The assessment has been successfully created.').should('be.visible');
           assessmentDetailsPage.getFrequency().contains('Frequency Multiple').should('be.visible');
+          assessmentDetailsPage.getSavePartialAssessmentsResultsElement().contains('Yes').should('be.visible');
           assessmentDetailsPage.getAssessmentStatusTag().should('eq', 'Active');
         });
       });

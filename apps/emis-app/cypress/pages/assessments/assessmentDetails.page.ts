@@ -1,6 +1,7 @@
 export enum DataTest {
   frequency = 'assessmentTemplate_details_frequency',
   assessmentStatus = 'assessmentTemplate_details_status',
+  savePartialAssessmentsSurveyResults = 'assessmentTemplate_details_savePartialSurveyResults',
 }
 
 export class AssessmentDetailsPage {
@@ -8,11 +9,17 @@ export class AssessmentDetailsPage {
 
   private assessmentStatus = { selector: DataTest.assessmentStatus };
 
+  private savePartialAssessmentsSurveyResults = { selector: DataTest.savePartialAssessmentsSurveyResults };
+
   public getFrequency() {
     return cy.getByDataTestLike(this.frequency);
   }
 
   public getAssessmentStatusTag() {
     return cy.getByDataTestLike(this.assessmentStatus).invoke('text').then((text) => text.trim());
+  }
+
+  public getSavePartialAssessmentsResultsElement() {
+    return cy.getByDataTestLike(this.savePartialAssessmentsSurveyResults);
   }
 }

@@ -131,3 +131,12 @@ Cypress.Commands.add('searchAndSelect', (dataTest: string, searchString: string,
 
   search();
 });
+
+/**
+ Cypress command that waits until the Table is fully loaded using data-test of refresh button because it is loaded after the data table, before we try to assert something on that table
+ @param {string} tableDataTest - The table name part of data test of the table waiting to be loaded
+ @returns {void}
+ */
+Cypress.Commands.add('waitUntilTableFullyLoaded', (tableDataTest) => {
+  cy.get(`[data-test="${tableDataTest}_refresh_button"]`).should('be.visible');
+});

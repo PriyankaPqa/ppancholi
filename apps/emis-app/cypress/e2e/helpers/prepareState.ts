@@ -16,7 +16,7 @@ import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
 import { mockCreateMassFinancialAssistanceRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
+import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
@@ -330,6 +330,22 @@ export const addFinancialAssistancePayment = async (provider: IProvider, modalit
 export const submitFinancialAssistancePaymentToApprover = async (provider: IProvider, paymentId: string, submitTo: string) => {
   const submittedApprovalRequest = await provider.financialAssistancePaymentsService.submitApprovalRequest(paymentId, submitTo);
   return submittedApprovalRequest;
+};
+
+/**
+ * Escalate financial assistance payment request to next level approver for final decision
+ * @param paymentId
+ * @param submittedToUserId
+ * @param submittedByroleValue
+ */
+export const escalateFinancialAssistancePaymentToNextLevelApprover = async (paymentId: string, submittedToUserId: string, submittedByRoleValue: UserRoles) => {
+  cy.getToken(submittedByRoleValue).then(async (tokenResponse) => {
+    const provider = useProvider(tokenResponse.access_token);
+    await provider.financialAssistancePaymentsService.getNextApprovalGroupRoles(paymentId);
+    const mockApprovalAction = mockApprovalActionRequest(submittedToUserId);
+    const escalatedApprovalRequest = await provider.financialAssistancePaymentsService.submitApprovalAction(paymentId, mockApprovalAction);
+    return escalatedApprovalRequest;
+  });
 };
 
 /**

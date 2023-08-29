@@ -7,6 +7,7 @@ export enum DataTest {
   assessmentDescription = 'assessment-description',
   publishStatus = 'assessment-switch-publishstatus',
   frequencyMultiple = 'assessment-form-frequency-multiple',
+  savePartialResults = 'save-partial-survey-results',
   create = 'save',
 }
 
@@ -19,6 +20,8 @@ export class CreateNewAssessmentPage {
 
   private frequencyMultiple = { selector: DataTest.frequencyMultiple, type: 'input' };
 
+  private savePartialResults = { selector: DataTest.savePartialResults, type: 'input' };
+
   private create = { selector: DataTest.create };
 
   async fill(data: Partial<IAssessmentBaseEntity>) {
@@ -29,6 +32,10 @@ export class CreateNewAssessmentPage {
     if (data.description) {
       cy.getByDataTest(this.assessmentDescription).type(data.description.translation.en);
     }
+  }
+
+  public savePartialAssessmentsResults() {
+    cy.getByDataTest(this.savePartialResults).check({ force: true });
   }
 
   public togglePublishedStatus() {
