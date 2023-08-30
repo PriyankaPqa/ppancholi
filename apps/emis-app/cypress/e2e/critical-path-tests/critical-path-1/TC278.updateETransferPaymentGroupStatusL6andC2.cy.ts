@@ -104,6 +104,53 @@ describe('#TC278# - Update E-Transfer payment group status- L6 and C2', { tags: 
           updatePaymentGroupStatusTo({
             paymentStatus: 'Sent',
           });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Completed',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'New',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Completed',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Sent',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Cancelled',
+            paymentModality: 'E-Transfer',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Inprogress',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Completed',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Cancelled',
+            paymentModality: 'E-Transfer',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Inprogress',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Cancelled',
+            paymentModality: 'E-Transfer',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Completed',
+          });
         });
       });
     }

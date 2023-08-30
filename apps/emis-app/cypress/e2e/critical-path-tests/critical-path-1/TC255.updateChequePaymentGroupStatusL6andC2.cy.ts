@@ -103,6 +103,18 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
           updatePaymentGroupStatusTo({
             paymentStatus: 'New',
           });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Completed',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Inprogress',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'New',
+          });
         });
       });
     }
