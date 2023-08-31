@@ -83,6 +83,7 @@
     "cypress-cloud": "^1.7.4",
     "cypress-multi-reporters": "^1.6.2",
     "cypress-repeat": "^2.3.3",
+    "cypress-slow-down": "^1.2.1",
     "cypress-terminal-report": "^5.0.0",
     "cypress-xpath": "^2.0.1",
     "eslint-plugin-cypress": "^2.12.1",

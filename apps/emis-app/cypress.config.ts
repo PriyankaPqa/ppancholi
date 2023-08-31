@@ -81,6 +81,8 @@ export default defineConfig({
       USER_PROD_PASSWORD: process.env.CYPRESS_USER_PROD_PASSWORD,
 
       CUSTOM_ENV: '',
+
+      commandDelay: process.env.CYPRESS_SLOW_DOWN_DELAY || 0, // cross-env CYPRESS_SLOW_DOWN_DELAY=1000 yarn cy:open
     },
   },
   viewportWidth: 1920,

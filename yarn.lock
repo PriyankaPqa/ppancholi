@@ -4686,6 +4686,11 @@ cypress-multi-reporters@^1.6.2:
     debug "^4.1.1"
     lodash "^4.17.15"
 
+cypress-plugin-config@^1.0.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/cypress-plugin-config/-/cypress-plugin-config-1.2.1.tgz#aa7eaa55ab5ce5e186ab7d0e37cc7e42bfb609b4"
+  integrity sha512-z+bQ7oyfDKun51HiCVNBOR+g38/nYRJ7zVdCZT2/9UozzE8P4iA1zF/yc85ePZLy5NOj/0atutoUPBBR5SqjSQ==
+
 cypress-repeat@^2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/cypress-repeat/-/cypress-repeat-2.3.3.tgz#0a0d363347137248600eff57f4ae75e4526e88d9"
@@ -4695,6 +4700,13 @@ cypress-repeat@^2.3.3:
     bluebird "3.7.2"
     debug "4.3.4"
     dotenv "8.2.0"
+
+cypress-slow-down@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/cypress-slow-down/-/cypress-slow-down-1.2.1.tgz#d10c75c2f79240812f4e58824e09d057a2d0e24d"
+  integrity sha512-Pd+nESR+Ca8I+mLGbBrPVMEFvJBWxkJcEdcIUDxSBnMoWI00hiIKxzEgVqCv5c6Oap2OPpnrPLbJBwveCNKLig==
+  dependencies:
+    cypress-plugin-config "^1.0.0"
 
 cypress-terminal-report@^5.0.0:
   version "5.0.0"
