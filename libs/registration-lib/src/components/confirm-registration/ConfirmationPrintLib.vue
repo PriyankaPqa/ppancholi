@@ -194,8 +194,8 @@
           {{ $t('registration.confirmation.event') }} <span class="fw-bold" data-test="event-name">{{ event ? $m(event.name) : "" }}</span>
         </div>
       </div>
-      <div class="rc-body14 text-center footer" data-test="phone-assistance">
-        {{ $t('registration.confirmation.additional_assistance', { phone: event && event.responseDetails ? event.responseDetails.assistanceNumber : "" }) }}
+      <div v-if="event && event.responseDetails && event.responseDetails.assistanceNumber" class="rc-body14 text-center footer" data-test="phone-assistance">
+        {{ $t('registration.confirmation.additional_assistance', { phone: helpers.getFormattedPhoneNumber(event.responseDetails.assistanceNumber) }) }}
       </div>
     </div>
   </div>
@@ -204,6 +204,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { IEvent } from '@libs/entities-lib/src/registration-event';
+import helpers from '@libs/shared-lib/helpers/helpers';
 
 export default Vue.extend({
   name: 'ConfirmationPrint',
@@ -217,6 +218,11 @@ export default Vue.extend({
       required: true,
     },
   },
+  data() {
+    return {
+        helpers,
+      };
+},
 });
 
 </script>

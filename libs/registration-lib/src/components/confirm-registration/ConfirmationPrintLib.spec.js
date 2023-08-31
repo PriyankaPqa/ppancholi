@@ -46,6 +46,7 @@ describe('ConfirmationPrintLib.vue', () => {
       it('should render it', () => {
         const component = wrapper.findDataTest('phone-assistance');
         expect(component.text()).toContain('registration.confirmation.additional_assistance');
+        expect(component.text()).toContain('1 (504) 555-5555');
       });
     });
   });

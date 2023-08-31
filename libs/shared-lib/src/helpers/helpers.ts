@@ -1,3 +1,4 @@
+import PhoneNumber from 'awesome-phonenumber';
 import _chunk from 'lodash/chunk';
 import isEmpty from 'lodash/isEmpty';
 import { IAzureCombinedSearchResult, IAzureSearchResult, IAzureTableSearchResults } from '../types/interfaces/IAzureSearchParams';
@@ -152,5 +153,19 @@ export default {
       return formattedWords.join(' ');
     }
     return '';
+  },
+
+  getFormattedPhoneNumber(value: string, showCountryCode = true): string {
+    if (!value) {
+      return '';
+    }
+    const phoneObject = value ? new PhoneNumber(value) : null;
+    if (phoneObject && phoneObject.isValid()) {
+      if (showCountryCode) {
+        return `${phoneObject.getCountryCode()} ${phoneObject.getNumber('national')}`;
+      }
+      return phoneObject.getNumber('national');
+    }
+    return value;
   },
 };

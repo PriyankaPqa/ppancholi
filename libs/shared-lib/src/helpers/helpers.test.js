@@ -128,4 +128,17 @@ describe('helpers', () => {
       expect(helpers.toTitleCase(str)).toEqual('Abc Abc Abc');
     });
   });
+
+  describe('getFormattedPhoneNumber', () => {
+    it('returns the right value when showCountryCode is false', () => {
+      expect(helpers.getFormattedPhoneNumber('+15144567777', false)).toEqual('(514) 456-7777');
+    });
+    it('returns the right value when showCountryCode is true/default', () => {
+      expect(helpers.getFormattedPhoneNumber('+15144567777')).toEqual('1 (514) 456-7777');
+    });
+
+    test('When value is an invalid phone number, it displays the value untouched', () => {
+      expect(helpers.getFormattedPhoneNumber('+15147777', false)).toEqual('+15147777');
+    });
+  });
 });
