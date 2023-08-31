@@ -2,6 +2,7 @@ import helpers from '@libs/entities-lib/src/helpers';
 import { mockEvent } from '@libs/entities-lib/src/registration-event/registrationEvent.mock';
 import { mockTabs } from '@libs/stores-lib/src/registration/tabs.mock';
 import { mockDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
+import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 
 import individual from './individual';
@@ -177,7 +178,7 @@ describe('Individual.vue', () => {
       describe('Assessment page', () => {
         it('opens assessment', async () => {
           wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({
-            id: 'assessment',
+            id: TabId.Assessment,
           }));
           window.open = jest.fn();
           wrapper.vm.closeRegistration = jest.fn();
@@ -191,7 +192,7 @@ describe('Individual.vue', () => {
       describe('Confirmation page', () => {
         it('calls closeRegistration', async () => {
           wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({
-            id: 'confirmation',
+            id: TabId.Confirmation,
           }));
           wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
           wrapper.vm.closeRegistration = jest.fn();
@@ -267,6 +268,20 @@ describe('Individual.vue', () => {
         await wrapper.vm.jump(toIndex);
         expect(wrapper.vm.$registrationStore.mutateTabAtIndex).toHaveBeenCalledTimes(2);
         expect(wrapper.vm.$registrationStore.jump).toHaveBeenCalledWith(toIndex);
+      });
+
+      it('disables other tabs when going to tier 2', async () => {
+        wrapper.vm.$refs.form = {
+          validate: jest.fn(() => true),
+        };
+        wrapper.vm.disableOtherTabs = jest.fn();
+
+        await wrapper.vm.jump(3);
+        expect(wrapper.vm.disableOtherTabs).not.toHaveBeenCalled();
+
+        wrapper.vm.allTabs[3].id = TabId.Tier2auth;
+        await wrapper.vm.jump(3);
+        expect(wrapper.vm.disableOtherTabs).toHaveBeenCalledWith(3, false);
       });
 
       it('make correct interrupted jump', async () => {

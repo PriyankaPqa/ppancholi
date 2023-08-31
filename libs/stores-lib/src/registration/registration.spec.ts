@@ -20,7 +20,7 @@ import {
   mockMemberData,
   mockSplitHousehold,
 } from '@libs/entities-lib/household-create';
-import { IRegistrationMenuItem } from '@libs/registration-lib/types';
+import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import { mockPublicService } from '@libs/services-lib/public';
 import { mockHouseholdsService } from '@libs/services-lib/households/entity';
 import { IHouseholdEntity, mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/entities-lib/household';
@@ -778,6 +778,18 @@ describe('>>> Registration Store', () => {
       await useRegistrationStore.submitRegistration();
       expect(useRegistrationStore.registrationErrors).toEqual({ response: { data: { errors: 'mock-errors' } } });
     });
+
+    it('adds tier2Tab if required by result', async () => {
+      useRegistrationStore = initStore(ERegistrationMode.Self);
+      useRegistrationStore.event = mockEventData();
+      await useRegistrationStore.submitRegistration();
+      expect(useRegistrationStore.tabs.find((x) => x.id === TabId.Tier2auth)).toBeFalsy();
+      householdApi.submitRegistration = jest.fn(() => ({
+        ...mockDetailedRegistrationResponse(), mustDoTier2authentication: true,
+      }));
+      await useRegistrationStore.submitRegistration();
+      expect(useRegistrationStore.tabs.find((x) => x.id === TabId.Tier2auth)).toBeTruthy();
+    });
   });
 
   describe('updatePersonContactInformation', () => {
@@ -1042,20 +1054,20 @@ describe('>>> Registration Store', () => {
       useRegistrationStore.setAssessmentToComplete(null);
       expect(useRegistrationStore.assessmentToComplete).toEqual(null);
       expect(useRegistrationStore.tabs).not.toEqual(useRegistrationStore.allTabs);
-      expect(useRegistrationStore.tabs).toEqual(useRegistrationStore.allTabs.filter((t) => t.id !== 'assessment'));
+      expect(useRegistrationStore.tabs).toEqual(useRegistrationStore.allTabs.filter((t) => t.id !== TabId.Assessment));
 
       const assessment = { assessmentForm: { status: Status.Active, publishStatus: PublishStatus.Unpublished } };
       useRegistrationStore.setAssessmentToComplete(assessment as any);
 
       expect(useRegistrationStore.assessmentToComplete).toEqual(assessment);
-      expect(useRegistrationStore.tabs).toEqual(useRegistrationStore.allTabs.filter((t) => t.id !== 'assessment'));
+      expect(useRegistrationStore.tabs).toEqual(useRegistrationStore.allTabs.filter((t) => t.id !== TabId.Assessment));
 
       assessment.assessmentForm.publishStatus = PublishStatus.Published;
       useRegistrationStore.setAssessmentToComplete(assessment as any);
 
       expect(useRegistrationStore.assessmentToComplete).toEqual(assessment);
       const allTabsWithNextLabel = _cloneDeep(useRegistrationStore.allTabs);
-      allTabsWithNextLabel.find((t) => t.id === 'confirmation').nextButtonTextKey = 'common.button.next';
+      allTabsWithNextLabel.find((t) => t.id === TabId.Confirmation).nextButtonTextKey = 'common.button.next';
       expect(useRegistrationStore.tabs).toEqual(allTabsWithNextLabel);
 
       setActivePinia(createTestingPinia({ stubActions: false }));

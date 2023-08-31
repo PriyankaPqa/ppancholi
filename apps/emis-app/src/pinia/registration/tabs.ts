@@ -1,8 +1,8 @@
-import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
+import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 
 export const tabs = (): IRegistrationMenuItem[] => [
   {
-    id: 'isRegistered',
+    id: TabId.IsRegistered,
     labelKey: 'registration.menu.isIndividualRegistered',
     titleKey: 'registration.menu.isIndividualRegistered',
     icon: '',
@@ -16,7 +16,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
 
   },
   {
-    id: 'privacy',
+    id: TabId.Privacy,
     labelKey: 'registration.menu.privacy',
     titleKey: 'registration.menu.privacy',
     icon: '',
@@ -29,7 +29,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'registration.zendesk.privacyStatement',
   },
   {
-    id: 'personalInfo',
+    id: TabId.PersonalInfo,
     labelKey: 'registration.menu.personal_info',
     titleKey: 'registration.menu.personal_info',
     icon: '',
@@ -42,7 +42,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'zendesk.registration.personalInformation',
   },
   {
-    id: 'addresses',
+    id: TabId.Addresses,
     labelKey: 'registration.menu.addresses',
     titleKey: 'registration.menu.addresses',
     icon: '',
@@ -55,7 +55,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'zendesk.registration.addresses',
   },
   {
-    id: 'additionalMembers',
+    id: TabId.AdditionalMembers,
     labelKey: 'registration.menu.household_members',
     titleKey: 'registration.menu.household_members',
     icon: '',
@@ -68,7 +68,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'registration.zendesk.householdmembers',
   },
   {
-    id: 'review',
+    id: TabId.Review,
     labelKey: 'registration.menu.review',
     titleKey: 'registration.menu.review',
     icon: '',
@@ -81,7 +81,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'zendesk.registration.review',
   },
   {
-    id: 'confirmation',
+    id: TabId.Confirmation,
     labelKey: 'registration.menu.confirmation',
     titleKey: 'registration.page.confirmation',
     icon: '',
@@ -94,7 +94,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'assessment',
+    id: TabId.Assessment,
     labelKey: 'registration.menu.assessment',
     titleKey: 'registration.page.assessment',
     icon: '',

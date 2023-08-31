@@ -1,8 +1,8 @@
-import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
+import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 
 export const tabs = (): IRegistrationMenuItem[] => [
   {
-    id: 'isRegistered',
+    id: TabId.IsRegistered,
     labelKey: 'registration.menu.isIndividualRegistered',
     titleKey: 'registration.menu.isIndividualRegistered',
     icon: '',
@@ -15,7 +15,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'event',
+    id: TabId.Event,
     labelKey: 'household.split.choose_event',
     titleKey: 'household.split.select_event',
     icon: '',
@@ -28,7 +28,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'personalInfo',
+    id: TabId.PersonalInfo,
     labelKey: 'registration.menu.personal_info',
     titleKey: 'registration.menu.personal_info',
     icon: '',
@@ -41,7 +41,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'addresses',
+    id: TabId.Addresses,
     labelKey: 'registration.menu.addresses',
     titleKey: 'registration.menu.addresses',
     icon: '',
@@ -54,7 +54,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'additionalSplitMembers',
+    id: TabId.AdditionalSplitMembers,
     labelKey: 'registration.menu.household_members',
     titleKey: 'registration.menu.household_members',
     icon: '',
@@ -67,7 +67,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'reviewSplitInfo',
+    id: TabId.ReviewSplitInfo,
     labelKey: 'household.split.review_split_info',
     titleKey: 'household.split.review_split_information',
     icon: '',
@@ -80,7 +80,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'confirmation',
+    id: TabId.Confirmation,
     labelKey: 'household.split.confirm_split',
     titleKey: 'household.split.split_confirmation',
     icon: '',
@@ -93,7 +93,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'assessment',
+    id: TabId.Assessment,
     labelKey: 'registration.menu.assessment',
     titleKey: 'registration.page.assessment',
     icon: '',

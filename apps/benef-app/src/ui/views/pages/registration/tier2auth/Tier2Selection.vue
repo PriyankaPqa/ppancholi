@@ -1,0 +1,204 @@
+<template>
+  <div>
+    <div v-if="!iframeUrl">
+      <p>{{ $t('registration.tier2.introduction') }}</p>
+      <h2 class="mt-8">
+        {{ $t('registration.tier2.selectIdHeader') }}
+      </h2>
+      <div class="font-italic">
+        <div>
+          <v-icon size="20">
+            mdi-information
+          </v-icon>
+          {{ $t('registration.tier2.help1') }}
+        </div>
+        <div>
+          <v-icon size="20">
+            mdi-information
+          </v-icon>
+          {{ $t('registration.tier2.help2') }}
+        </div>
+        <div>
+          <v-icon size="20">
+            mdi-information
+          </v-icon>
+          {{ $t('registration.tier2.help3') }}
+        </div>
+      </div>
+
+      <div class="grey-container pa-4 mt-4 rc-body14">
+        <v-row>
+          <v-col>
+            <v-select-with-validation
+              v-model="selectedId"
+              outlined
+              background-color="white"
+              rules="required"
+              :items="validIdOptions"
+              :label="$t('registration.tier2.selectValidId')" />
+          </v-col>
+        </v-row>
+        <div v-if="selectedId == 0">
+          <v-row>
+            <v-col>
+              <v-select-with-validation
+                v-model="otherIdType"
+                outlined
+                background-color="white"
+                rules="required"
+                :items="otherIdTypeList"
+                :label="$t('registration.tier2.selectOtherId')" />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-select-with-validation
+                v-model="proofAddress"
+                outlined
+                background-color="white"
+                rules="required"
+                :items="proofAddressList"
+                :label="$t('registration.tier2.selectProofAddress')" />
+            </v-col>
+          </v-row>
+        </div>
+      </div>
+    </div>
+    <div v-else>
+      <iframe ref="iframeObj" :src="iframeUrl" title="auth" allow="camera;microphone" class="iframe-full" @load="attachListener" />
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import { useRegistrationStore } from '@/pinia/registration/registration';
+import { IDetailedRegistrationResponse } from '@libs/entities-lib/household';
+import { VSelectWithValidation } from '@libs/component-lib/components';
+import { EventHub } from '@libs/shared-lib/plugins/event-hub';
+import helpers from '@libs/entities-lib/helpers';
+import { Tier2GambitScreeningId } from '@libs/shared-lib/types';
+
+export default Vue.extend({
+  name: 'Tier2Selection',
+  components: {
+    VSelectWithValidation,
+  },
+  data() {
+    return {
+      selectedId: 82,
+      otherIdType: null as number,
+      proofAddress: null as number,
+      iframeUrl: '',
+    };
+  },
+
+  computed: {
+    registrationResponse(): IDetailedRegistrationResponse {
+      return useRegistrationStore().registrationResponse;
+    },
+
+    tier2Ids(): { value: number, text: string }[] {
+      return helpers.enumToTranslatedCollection(Tier2GambitScreeningId, 'enums.Tier2GambitScreeningId', this.$i18n) as { value: number, text: string }[];
+    },
+
+    validIdOptions(): { text: string, value: number }[] {
+      return [Tier2GambitScreeningId.CanadianDriverLicense, Tier2GambitScreeningId.ProvincialPhotoId].map((x) => this.tier2Ids.find((y) => y.value === x)).concat(
+        [{ text: this.$t('registration.tier2.NoBasicId') as string, value: 0 }],
+      );
+    },
+
+    otherIdTypeList(): { text: string, value: number }[] {
+      return [Tier2GambitScreeningId.Passport, Tier2GambitScreeningId.CanadianCitizenshipCard, Tier2GambitScreeningId.CanadianPermanentResidentCard,
+          Tier2GambitScreeningId.IndianStatusCard, Tier2GambitScreeningId.CanadianFirearmsLicense, Tier2GambitScreeningId.NexusCard,
+          Tier2GambitScreeningId.OntarioHealthCard, Tier2GambitScreeningId.QuebecHealthCard].map((x) => this.tier2Ids.find((y) => y.value === x));
+    },
+
+    proofAddressList(): { text: string, value: number }[] {
+      return [Tier2GambitScreeningId.UtilityBill, Tier2GambitScreeningId.MortgageStatement, Tier2GambitScreeningId.PropertyTaxAssessment,
+          Tier2GambitScreeningId.ProvincialGovernmentMail, Tier2GambitScreeningId.FederalGovernmentMail, Tier2GambitScreeningId.BankStatement,
+          Tier2GambitScreeningId.InsuranceStatement].map((x) => this.tier2Ids.find((y) => y.value === x));
+    },
+  },
+
+  created() {
+    EventHub.$on('tier2ProcessStart', this.tier2ProcessStart);
+    EventHub.$on('tier2ProcessReset', this.tier2ProcessReset);
+  },
+
+  destroyed() {
+    this.tier2ProcessReset();
+    if (EventHub) {
+      EventHub.$off('tier2ProcessStart', this.tier2ProcessStart);
+      EventHub.$off('tier2ProcessReset', this.tier2ProcessReset);
+    }
+  },
+
+  methods: {
+    attachListener() {
+      const requestObject = {
+        requestName: 'status',
+      };
+      window.removeEventListener('message', this.onMessage);
+      window.addEventListener('message', this.onMessage);
+      (this.$refs.iframeObj as any).contentWindow.postMessage(requestObject, '*');
+    },
+
+    async onMessage(event: { data: { status: string } }) {
+      if (event.data.status === 'completed') {
+        // future...
+        // await this.$services.caseFiles.getTier2Result(this.registrationResponse.caseFile.id);
+        await helpers.timeout(2000);
+        this.tier2ProcessReset();
+        EventHub.$emit('next');
+      }
+    },
+
+    async tier2ProcessReset() {
+      this.iframeUrl = '';
+
+      window.removeEventListener('message', this.onMessage);
+    },
+
+    async tier2ProcessStart() {
+      this.iframeUrl = null;
+      const result = await this.$services.caseFiles.tier2ProcessStart({
+        id: this.registrationResponse.caseFile.id,
+        identityVerificationTier1transactionId: this.registrationResponse.tier1transactionId,
+        mainDocumentTypeId: this.selectedId || this.otherIdType,
+        subDocumentTypeId: this.proofAddress,
+        locale: this.$i18n.locale,
+      });
+
+      this.iframeUrl = result.identityVerificationInfoSubmissionUrl;
+    },
+  },
+});
+</script>
+
+<style scoped lang="scss">
+
+.iframe-full {
+    height: calc(100vh - 245px);
+    position: absolute;
+    top: 64px;
+    width: calc(100vw - 335px);
+    left: 0px;
+  }
+
+  @media only screen and (max-width: $breakpoint-sm-max) {
+    .iframe-full {
+      height: calc(100vh - 210px);
+      top: 56px;
+      width: calc(100vw - 49px);
+    }
+  }
+
+  @media only screen and (max-width: $breakpoint-xs-max) {
+    .iframe-full {
+      height: calc(100vh - 192px);
+      top: 56px;
+      width: calc(100vw - 17px);
+    }
+  }
+</style>

@@ -8,6 +8,7 @@ import { tabs } from '@/pinia/registration/tabs';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
 
+import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './RegistrationIndividual.vue';
 
@@ -45,7 +46,7 @@ describe('Individual.vue', () => {
     describe('print button', () => {
       it('is rendered if is on confirmation tab and no error', () => {
         doMount(false, {
-          currentTab: () => ({ id: 'confirmation' }),
+          currentTab: () => ({ id: TabId.Confirmation }),
           registrationSuccess: () => true,
           getTitle: () => 'title',
         });
@@ -54,7 +55,7 @@ describe('Individual.vue', () => {
 
       it('is not rendered if is on confirmation tab but has error', () => {
         doMount(false, {
-          currentTab: () => ({ id: 'confirmation' }),
+          currentTab: () => ({ id: TabId.Confirmation }),
           registrationSuccess: () => false,
           getTitle: () => 'title',
         });
@@ -64,7 +65,7 @@ describe('Individual.vue', () => {
 
       it('is not rendered if is not on confirmation tab', () => {
         doMount(false, {
-          currentTab: () => ({ id: 'review' }),
+          currentTab: () => ({ id: TabId.Review }),
           registrationSuccess: () => true,
           getTitle: () => 'title',
         });
@@ -76,7 +77,7 @@ describe('Individual.vue', () => {
     describe('new registration button', () => {
       it('is rendered if is on confirmation tab and no error', () => {
         doMount(false, {
-          currentTab: () => ({ id: 'confirmation' }),
+          currentTab: () => ({ id: TabId.Confirmation }),
           registrationSuccess: () => true,
           getTitle: () => 'title',
         });
@@ -85,7 +86,7 @@ describe('Individual.vue', () => {
 
       it('is not rendered if is on confirmation tab but has error', () => {
         doMount(false, {
-          currentTab: () => ({ id: 'confirmation' }),
+          currentTab: () => ({ id: TabId.Confirmation }),
           registrationSuccess: () => false,
           getTitle: () => 'title',
         });
@@ -117,7 +118,7 @@ describe('Individual.vue', () => {
         doMount(
           true,
           {
-            currentTab: () => ({ id: 'isRegistered' }),
+            currentTab: () => ({ id: TabId.IsRegistered }),
           },
         );
         registrationStore.householdResultsShown = true;
@@ -193,7 +194,7 @@ describe('Individual.vue', () => {
 
       it('should set current tab to isRegistered', () => {
         wrapper.vm.backToHouseholdResults();
-        expect(registrationStore.currentTabIndex).toEqual(wrapper.vm.allTabs.findIndex((t) => t.id === 'isRegistered'));
+        expect(registrationStore.currentTabIndex).toEqual(wrapper.vm.allTabs.findIndex((t) => t.id === TabId.IsRegistered));
       });
 
       it('should call resetHouseholdCreate', () => {
@@ -205,7 +206,7 @@ describe('Individual.vue', () => {
     describe('next', () => {
       it('calls eventhub emit if current tab is personalInfo', async () => {
         doMount(true, {
-          currentTab: () => ({ id: 'personalInfo' }),
+          currentTab: () => ({ id: TabId.PersonalInfo }),
         });
 
         EventHub.$emit = jest.fn();
@@ -234,7 +235,7 @@ describe('Individual.vue', () => {
 
       it('calls closeRegistration if current tab is confirmation', async () => {
         doMount(true, {
-          currentTab: () => ({ id: 'confirmation' }),
+          currentTab: () => ({ id: TabId.Confirmation }),
         });
         wrapper.vm.closeRegistration = jest.fn();
         await wrapper.vm.next();
@@ -484,7 +485,7 @@ describe('Individual.vue', () => {
       it('should return the proper value', () => {
         expect(wrapper.vm.showBackButton).toEqual(true);
         doMount(true, {
-          currentTab: () => ({ id: 'confirmation', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          currentTab: () => ({ id: TabId.Confirmation, titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
           associationMode: () => true,
         });
 
@@ -584,7 +585,7 @@ describe('Individual.vue', () => {
 
     it('opens the dialog if not on the confirmation page and then calls next', async () => {
       doMount(true, {
-        currentTab: () => ({ id: 'isRegistered', titleKey: '', nextButtonTextKey: '' }),
+        currentTab: () => ({ id: TabId.IsRegistered, titleKey: '', nextButtonTextKey: '' }),
       });
 
       wrapper.vm.$confirm = jest.fn(() => true);

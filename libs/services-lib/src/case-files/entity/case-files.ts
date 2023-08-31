@@ -5,7 +5,7 @@ import {
   ICaseFileDetailedCount, IAssignedTeamMembers,
 } from '@libs/entities-lib/case-file';
 import { IAzureCombinedSearchResult, IListOption } from '@libs/shared-lib/types';
-import { ICaseFileMetadata } from '@libs/entities-lib/src/case-file/case-file.types';
+import { ICaseFileMetadata, ITier2Request, ITier2Response } from '@libs/entities-lib/src/case-file/case-file.types';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -78,7 +78,7 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
   }
 
   async createCaseFile(payload: ICreateCaseFileRequest, publicMode: boolean): Promise<IDetailedRegistrationResponse> {
-    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${publicMode ? 'public/' : ''}case-file`, payload);
+    return this.http.post<IDetailedRegistrationResponse>(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${publicMode ? 'public/' : ''}case-file`, payload);
   }
 
   async getCaseFileAssignedCounts(params: { eventId: uuid, teamId: uuid }): Promise<ICaseFileCount> {
@@ -107,6 +107,14 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
 
   async setPersonReceiveAssistance(caseFileId: uuid, params: { receiveAssistance: boolean, personId: string, rationale: string }): Promise<ICaseFileEntity> {
     return this.http.patch(`/case-file/case-files/${caseFileId}/receive-assistance`, params);
+  }
+
+  async tier2ProcessStart(payload: ITier2Request): Promise<ITier2Response> {
+    return this.http.post(`${this.baseUrl}/public/${payload.id}/start-customer-identity-verification-tier-2`, payload);
+  }
+
+  async getTier2Result(id: string): Promise<ITier2Response> {
+    return this.http.get(`${this.baseUrl}/public/customer-identity-verification-tier-2-result/${id}`);
   }
 
   async getExceptionalTypeCounts(eventId: uuid): Promise<ICaseFileCountByExceptionalAuthentication[]> {

@@ -2,6 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { tabs } from '@/pinia/registration/tabs';
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
+import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 
 import Component from './ConfirmRegistration.vue';
 
@@ -24,7 +25,7 @@ describe('ConfirmRegistrationLib.vue', () => {
     describe('goToSearch', () => {
       it('should call redirect to first page', () => {
         wrapper.vm.goToSearch();
-        expect(registrationStore.currentTabIndex).toEqual(tabs().findIndex((t) => t.id === 'isRegistered'));
+        expect(registrationStore.currentTabIndex).toEqual(tabs().findIndex((t) => t.id === TabId.IsRegistered));
       });
 
       it('should reset household create', () => {

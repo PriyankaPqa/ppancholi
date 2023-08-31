@@ -22,7 +22,7 @@
         <template slot="actions">
           <div class="actions">
             <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
-              <template v-if="currentTab.id === 'confirmation'">
+              <template v-if="currentTab.id === TabId.Confirmation">
                 <v-btn
                   v-if="registrationSuccess"
                   class="printButton"
@@ -33,6 +33,18 @@
                     mdi-printer
                   </v-icon>
                   {{ $t(currentTab.backButtonTextKey) }}
+                </v-btn>
+              </template>
+              <template v-if="currentTab.id === TabId.Tier2auth">
+                <!-- buttons are in the individual page for now but we want to move them to the component eventually - we'll use events to communicate -->
+                <v-btn
+                  v-if="tier2ProcessStarted"
+                  @click="restartAuthentication()">
+                  {{ $t('registration.button.select_different_id') }}
+                </v-btn>
+                <v-btn
+                  @click="skipAuthentication()">
+                  {{ $t('registration.button.skip_authentication') }}
                 </v-btn>
               </template>
               <v-btn v-else-if="!!previousTabName" :aria-label="$t(currentTab.backButtonTextKey)" data-test="backButton" :disabled="submitLoading || retrying" @click="back()">
@@ -59,7 +71,7 @@
                 data-test="nextButton"
                 :aria-label="$t(currentTab.nextButtonTextKey)"
                 :loading="submitLoading || retrying"
-                :disabled="inlineEdit"
+                :disabled="inlineEdit || tier2ProcessStarted"
                 @click="goNext()">
                 {{ $t(currentTab.nextButtonTextKey) }}
               </v-btn>
@@ -97,6 +109,7 @@ import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import applicationInsights from '@libs/shared-lib/plugins/applicationInsights/applicationInsights';
 import { useRegistrationStore } from '@/pinia/registration/registration';
+import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
@@ -106,6 +119,7 @@ import ReviewRegistration from '../review/ReviewRegistration.vue';
 import ConfirmRegistration from '../confirmation/ConfirmRegistration.vue';
 import CompleteAssessment from '../complete-assessment/CompleteAssessment.vue';
 import DuplicateDialog from '../duplicate-dialog/DuplicateDialog.vue';
+import Tier2Selection from '../tier2auth/Tier2Selection.vue';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -122,6 +136,7 @@ export default mixins(individual).extend({
     ConfirmationPrintLib,
     SystemErrorDialog,
     DuplicateDialog,
+    Tier2Selection,
   },
 
   data: () => ({
@@ -131,6 +146,8 @@ export default mixins(individual).extend({
     showDuplicateDialog: false,
     functionAfterToken: null as () => void,
     tokenFetchedLast: null as Date,
+    tier2ProcessStarted: false,
+    TabId,
   }),
 
   computed: {
@@ -139,17 +156,21 @@ export default mixins(individual).extend({
     },
   },
 
-created() {
-  // fetch public token will try to do a recaptcha if needed and return a valid beneficiary token
-  // if the token was last fetched less then 30 minutes ago we dont do anything as it is valid for an hour
-  EventHub.$on('fetchPublicToken', this.fetchPublicToken);
-},
+  created() {
+    // fetch public token will try to do a recaptcha if needed and return a valid beneficiary token
+    // if the token was last fetched less then 30 minutes ago we dont do anything as it is valid for an hour
+    EventHub.$on('fetchPublicToken', this.fetchPublicToken);
 
-destroyed() {
-  if (EventHub) {
-    EventHub.$off('fetchPublicToken', this.fetchPublicToken);
-  }
-},
+    // for when a component wants to trigger moving to the next step without a button pressed
+    EventHub.$on('next', this.goNext);
+  },
+
+  destroyed() {
+    if (EventHub) {
+      EventHub.$off('fetchPublicToken', this.fetchPublicToken);
+      EventHub.$off('next', this.goNext);
+    }
+  },
 
   methods: {
     async fetchPublicToken(continueFnct: () => void, onlyIfNotFetchedRecently: boolean = true) {
@@ -181,7 +202,7 @@ destroyed() {
     },
 
     async goNext() {
-      if (this.currentTab.id === 'personalInfo') {
+      if (this.currentTab.id === TabId.PersonalInfo) {
         await this.fetchPublicToken(this.validateAndNextPersonalInfo_prepareValidation);
       } else if (this.tokenFetchedLast != null) {
         // if we are passed personal info we keep the token alive
@@ -190,6 +211,17 @@ destroyed() {
         // this is too early to have a token
         await this.validateAndNext();
       }
+    },
+
+    async skipAuthentication() {
+      // user does not wish to complete the authentication process for now, we complete the registration
+      await this.next();
+    },
+
+    async restartAuthentication() {
+      // component will restart the authentication process
+      this.tier2ProcessStarted = false;
+      EventHub.$emit('tier2ProcessReset');
     },
 
     async validateForm(): Promise<boolean> {
@@ -204,6 +236,14 @@ destroyed() {
     async validateAndNext() {
       const isValid = await this.validateForm();
       if (isValid) {
+        if (this.currentTab.id === TabId.Tier2auth && !this.tier2ProcessStarted) {
+          // component will open the iframe to the next step in the authentication - it's still within the authentication process
+          EventHub.$emit('tier2ProcessStart');
+          // we give a second or 2 just so the iframe shows up before the button - it just looks better
+          await helpers.timeout(1500);
+          this.tier2ProcessStarted = true;
+          return;
+        }
         await this.next();
       }
     },
@@ -245,7 +285,7 @@ destroyed() {
     // 2 step verification or send the individual to an error screen (confirmation)
     tryDuplicateAssociation() {
       if (this.isDuplicateError) {
-        this.jump(this.allTabs.findIndex((x) => x.id === 'confirmation'));
+        this.jump(this.allTabs.findIndex((x) => x.id === TabId.Confirmation));
       } else {
         this.showDuplicateDialog = true;
       }

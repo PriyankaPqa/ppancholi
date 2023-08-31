@@ -21,7 +21,7 @@
           @back="backToHouseholdResults()">
           <template slot="default">
             <v-row justify="center" class="mt-12 full-height" no-gutters>
-              <v-col v-if="currentTab.componentName === 'isRegistered'" cols="12">
+              <v-col v-if="currentTab.componentName === TabId.IsRegistered" cols="12">
                 <component :is="currentTab.componentName" :disable-autocomplete="!enableAutocomplete" />
               </v-col>
               <v-col v-else cols="12" xl="10" lg="10" md="11" sm="12" xs="12">
@@ -33,7 +33,7 @@
           <template slot="actions">
             <div class="actions">
               <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
-                <template v-if="currentTab.id === 'confirmation'">
+                <template v-if="currentTab.id === TabId.Confirmation">
                   <v-btn
                     v-if="registrationSuccess"
                     class="printButton"
@@ -55,7 +55,7 @@
 
               <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
                 <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
-                <div v-if="currentTab.id === 'confirmation' && registrationSuccess">
+                <div v-if="currentTab.id === TabId.Confirmation && registrationSuccess">
                   <v-btn data-test="new-registration-button" @click="routeToNewRegistration">
                     {{ $t('registration.new_registration.label') }}
                   </v-btn>
@@ -118,7 +118,7 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import SystemErrorDialog from '@libs/registration-lib/components/review/SystemErrorDialog.vue';
 import { IRegistrationAssessment } from '@libs/entities-lib/event';
-import { IRegistrationMenuItem } from '@libs/registration-lib/types';
+import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { useCaseFileStore } from '@/pinia/case-file/case-file';
 
@@ -139,7 +139,7 @@ export default mixins(individual).extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if (this.currentTab.id === 'confirmation' || (this.currentTab.id === 'review' && this.householdAlreadyRegistered)) {
+    if (this.currentTab.id === TabId.Confirmation || (this.currentTab.id === 'review' && this.householdAlreadyRegistered)) {
       next();
     } else {
       const userChoice = await (this.$confirm({
@@ -171,12 +171,13 @@ export default mixins(individual).extend({
   data() {
     return {
       showErrorDialog: false,
+      TabId,
     };
   },
 
   computed: {
     showBackButton(): boolean {
-      return this.associationMode && this.currentTab.id !== 'confirmation';
+      return this.associationMode && this.currentTab.id !== TabId.Confirmation;
     },
 
     eventName(): string {
@@ -220,14 +221,14 @@ export default mixins(individual).extend({
     },
 
     isPersonalInfoTouched(): boolean {
-      return useRegistrationStore().tabs.filter((el) => el.id === 'personalInfo')[0].isTouched;
+      return useRegistrationStore().tabs.filter((el) => el.id === TabId.PersonalInfo)[0].isTouched;
     },
 
   },
 
   methods: {
     async back() {
-      if (this.currentTab.id === 'isRegistered' && useRegistrationStore().householdResultsShown) {
+      if (this.currentTab.id === TabId.IsRegistered && useRegistrationStore().householdResultsShown) {
         useRegistrationStore().householdResultsShown = false;
         return;
       }
@@ -256,19 +257,19 @@ export default mixins(individual).extend({
 
     async next() {
       switch (this.currentTab.id) {
-        case 'isRegistered':
+        case TabId.IsRegistered:
           await this.resetPersonalInfoTab();
           return;
 
-        case 'personalInfo':
+        case TabId.PersonalInfo:
           EventHub.$emit('checkEmailValidation', this.nextDefault);
           return;
 
-        case 'review':
+        case TabId.Review:
           await this.nextOnReview();
           return;
 
-        case 'confirmation':
+        case TabId.Confirmation:
           await this.closeRegistration();
           return;
 
@@ -320,7 +321,7 @@ export default mixins(individual).extend({
       useRegistrationStore().resetHouseholdCreate();
       useRegistrationStore().householdAssociationMode = false;
       useRegistrationStore().householdAlreadyRegistered = false;
-      useRegistrationStore().currentTabIndex = (this.allTabs.findIndex((t) => t.id === 'isRegistered'));
+      useRegistrationStore().currentTabIndex = (this.allTabs.findIndex((t) => t.id === TabId.IsRegistered));
     },
 
     goToHouseholdProfile(householdId: string) {

@@ -20,7 +20,7 @@ export default Vue.extend({
   },
 
   async created() {
-    this.consentStatement = await this.getConsentStatement();
+    this.consentStatement = (await this.getConsentStatement()) || null;
   },
   methods: {
     async getConsentStatement() : Promise<IConsentStatement> {

@@ -7,6 +7,8 @@ import { tabs } from '@/pinia/registration/tabs';
 import { mockProvider } from '@/services/provider';
 import { FeatureKeys } from '@libs/entities-lib/src/tenantSettings';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
+import helpers from '@libs/entities-lib/helpers';
+import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import Component from './Individual.vue';
 
 const localVue = createLocalVue();
@@ -17,22 +19,55 @@ useMockRegistrationStore(pinia);
 
 describe('Individual.vue', () => {
   let wrapper;
+
+  const doMount = async (fullmount = false, otherComputed = {}, featureList = []) => {
+    wrapper = (fullmount ? mount : shallowMount)(Component, {
+      localVue,
+      pinia,
+      featureList,
+      mocks: {
+        $services: services,
+      },
+      stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'privacy-statement',
+        'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
+      computed: {
+        ...otherComputed,
+      },
+    });
+    await wrapper.vm.$nextTick();
+  };
+
   afterEach(() => {
     jest.clearAllMocks();
   });
 
+  describe('Lifecycle', () => {
+    describe('Event handlers', () => {
+      beforeEach(async () => {
+        await doMount();
+      });
+      it('connects and disconnects to event hub on created/destroyed', async () => {
+        EventHub.$on = jest.fn();
+        EventHub.$off = jest.fn();
+        jest.clearAllMocks();
+        wrapper.vm.$options.created[0].call(wrapper.vm);
+        expect(EventHub.$on).toHaveBeenCalledWith('fetchPublicToken', wrapper.vm.fetchPublicToken);
+        expect(EventHub.$on).toHaveBeenCalledWith('next', wrapper.vm.goNext);
+
+        jest.clearAllMocks();
+        wrapper.vm.$options.destroyed[1].call(wrapper.vm);
+        expect(EventHub.$off).toHaveBeenCalledWith('fetchPublicToken', wrapper.vm.fetchPublicToken);
+        expect(EventHub.$off).toHaveBeenCalledWith('next', wrapper.vm.goNext);
+      });
+    });
+  });
+
   describe('Template', () => {
     describe('Event handlers', () => {
-      beforeEach(() => {
-        wrapper = mount(Component, {
-          pinia,
-          localVue,
-          mocks: { $services: services },
-          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'privacy-statement',
-            'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
-        });
+      beforeEach(async () => {
+        await doMount(true);
       });
-      test('Click back button triggers method', async () => {
+      it('Click back button triggers method', async () => {
         wrapper.vm.back = jest.fn();
 
         const btn = wrapper.findDataTest('backButton');
@@ -42,7 +77,7 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.back).toHaveBeenCalledTimes(1);
       });
 
-      test('Click next button triggers method', async () => {
+      it('Click next button triggers method', async () => {
         wrapper.vm.goNext = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
@@ -56,50 +91,27 @@ describe('Individual.vue', () => {
     describe('Google recaptcha', () => {
       let element;
 
-      test('google recaptcha is shown if BotProtection is enabled and if ip address is not in allowed list', async () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          featureList: [FeatureKeys.BotProtection],
-          mocks: { $services: services },
-          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'privacy-statement',
-            'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
-          computed: {
-            isCaptchaAllowedIpAddress: () => false,
-          },
-        });
+      it('google recaptcha is shown if BotProtection is enabled and if ip address is not in allowed list', async () => {
+        await doMount(true, {
+          isCaptchaAllowedIpAddress: () => false,
+        }, [FeatureKeys.BotProtection]);
 
         element = wrapper.findDataTest('google-recaptcha');
         expect(element.exists()).toBeTruthy();
       });
 
-      test('google recaptcha is not shown if BotProtection is disabled', async () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          mocks: { $services: services },
-          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'privacy-statement',
-            'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
-          computed: {
-            isCaptchaAllowedIpAddress: () => false,
-          },
+      it('google recaptcha is not shown if BotProtection is disabled', async () => {
+        await doMount(true, {
+          isCaptchaAllowedIpAddress: () => false,
         });
 
         element = wrapper.findDataTest('google-recaptcha');
         expect(element.exists()).toBeFalsy();
       });
 
-      test('google recaptcha is not shown if ip address is in allowed list', async () => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          featureList: [FeatureKeys.BotProtection],
-          mocks: { $services: services },
-          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha', 'privacy-statement',
-            'current-address-form', 'address-form', 'personal-information', 'personal-information-template'],
-          computed: {
-            isCaptchaAllowedIpAddress: () => true,
-          },
+      it('google recaptcha is not shown if ip address is in allowed list', async () => {
+        await doMount(true, {
+          isCaptchaAllowedIpAddress: () => true,
         });
 
         element = wrapper.findDataTest('google-recaptcha');
@@ -109,23 +121,66 @@ describe('Individual.vue', () => {
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        pinia,
-        mocks: {
-          $services: services,
-        },
-      });
+    beforeEach(async () => {
+      await doMount();
     });
     describe('back', () => {
-      test('back calls jump', async () => {
+      it('back calls jump', async () => {
         wrapper.vm.$registrationStore.currentTabIndex = 2;
         wrapper.vm.jump = jest.fn();
 
         await wrapper.vm.back();
 
         expect(wrapper.vm.jump).toHaveBeenCalledWith(1);
+      });
+    });
+
+    describe('skipAuthentication', () => {
+      it('calls next', async () => {
+        wrapper.vm.next = jest.fn();
+        await wrapper.vm.skipAuthentication();
+        expect(wrapper.vm.next).toHaveBeenCalled();
+      });
+    });
+
+    describe('restartAuthentication', () => {
+      it('sets tier2ProcessStarted to false and emits', async () => {
+        EventHub.$emit = jest.fn();
+        await wrapper.setData({ tier2ProcessStarted: true });
+        await wrapper.vm.restartAuthentication();
+        expect(EventHub.$emit).toHaveBeenCalledWith('tier2ProcessReset');
+        expect(wrapper.vm.tier2ProcessStarted).toBeFalsy();
+      });
+    });
+
+    describe('validateAndNext', () => {
+      it('if valid, calls next if not tier2auth tab and not tier2ProcessStarted', async () => {
+        EventHub.$emit = jest.fn();
+        helpers.timeout = jest.fn();
+        wrapper.vm.next = jest.fn();
+
+        wrapper.vm.validateForm = jest.fn(() => false);
+        await wrapper.vm.validateAndNext();
+        expect(EventHub.$emit).not.toHaveBeenCalled();
+        expect(wrapper.vm.next).not.toHaveBeenCalled();
+
+        jest.clearAllMocks();
+        wrapper.vm.validateForm = jest.fn(() => true);
+        await wrapper.vm.validateAndNext();
+        expect(EventHub.$emit).not.toHaveBeenCalled();
+        expect(wrapper.vm.next).toHaveBeenCalled();
+
+        jest.clearAllMocks();
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({ ...tabs()[0], id: TabId.Tier2auth }));
+        await wrapper.vm.validateAndNext();
+        expect(EventHub.$emit).toHaveBeenCalledWith('tier2ProcessStart');
+        expect(wrapper.vm.next).not.toHaveBeenCalled();
+        expect(wrapper.vm.tier2ProcessStarted).toBeTruthy();
+
+        jest.clearAllMocks();
+        await wrapper.vm.validateAndNext();
+        expect(EventHub.$emit).not.toHaveBeenCalled();
+        expect(wrapper.vm.next).toHaveBeenCalled();
       });
     });
 
@@ -153,7 +208,7 @@ describe('Individual.vue', () => {
           wrapper.vm.$refs.recaptchaSubmit = {};
           wrapper.vm.validateAndNext = jest.fn();
           wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
-          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
+          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === TabId.PersonalInfo));
           wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.BotProtection);
           tenantSettingsStore.recaptcha = {
             ipAddressIsAllowed: false,
@@ -167,7 +222,7 @@ describe('Individual.vue', () => {
       it('should call next from mixin otherwise', async () => {
         wrapper.vm.next = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'additionalMembers'));
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === TabId.AdditionalMembers));
         await wrapper.vm.goNext();
         expect(wrapper.vm.next).toHaveBeenCalledTimes(1);
       });
@@ -237,7 +292,7 @@ describe('Individual.vue', () => {
     });
 
     describe('loadHousehold', () => {
-      test('calls the store, jumps to review and disables other tabs', async () => {
+      it('calls the store, jumps to review and disables other tabs', async () => {
         wrapper.vm.jump = jest.fn();
         wrapper.vm.disableOtherTabs = jest.fn();
         wrapper.vm.$registrationStore.loadHousehold = jest.fn();
@@ -271,7 +326,7 @@ describe('Individual.vue', () => {
         }));
         wrapper.vm.tryDuplicateAssociation = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === TabId.PersonalInfo));
         wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.SelfRegistration);
         wrapper.vm.next = jest.fn();
         await wrapper.vm.validateAndNextPersonalInfo();
@@ -283,7 +338,7 @@ describe('Individual.vue', () => {
       it('doesnt call checkForPossibleDuplicatePublic if SelfRegistration is not enabled', async () => {
         window.confirm = () => true;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === TabId.PersonalInfo));
         wrapper.vm.next = jest.fn();
         await wrapper.vm.validateAndNextPersonalInfo();
         expect(wrapper.vm.$services.households.checkForPossibleDuplicatePublic).not.toHaveBeenCalled();
@@ -299,7 +354,7 @@ describe('Individual.vue', () => {
         }));
         wrapper.vm.tryDuplicateAssociation = jest.fn();
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === 'personalInfo'));
+        wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => tabs().find((t) => t.id === TabId.PersonalInfo));
         wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.SelfRegistration);
         wrapper.vm.next = jest.fn();
         await wrapper.vm.validateAndNextPersonalInfo();
@@ -314,7 +369,7 @@ describe('Individual.vue', () => {
         wrapper.vm.jump = jest.fn();
 
         wrapper.vm.tryDuplicateAssociation();
-        expect(wrapper.vm.jump).toHaveBeenCalledWith(wrapper.vm.allTabs.findIndex((x) => x.id === 'confirmation'));
+        expect(wrapper.vm.jump).toHaveBeenCalledWith(wrapper.vm.allTabs.findIndex((x) => x.id === TabId.Confirmation));
         expect(wrapper.vm.showDuplicateDialog).toBeFalsy();
 
         jest.clearAllMocks();

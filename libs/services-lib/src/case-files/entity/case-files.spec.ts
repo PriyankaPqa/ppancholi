@@ -1,5 +1,5 @@
 import {
-  ICaseFileLabel, mockCaseFileEntity, CaseFileTriage, CaseFileStatus, mockAssignedTeamMembers,
+  ICaseFileLabel, mockCaseFileEntity, CaseFileTriage, CaseFileStatus, mockAssignedTeamMembers, ITier2Request,
 } from '@libs/entities-lib/case-file';
 import { IListOption } from '@libs/shared-lib/types';
 import { IHttpMock, mockHttp } from '../../http-client';
@@ -15,6 +15,21 @@ describe('>>> Case File Service', () => {
     jest.clearAllMocks();
     http = mockHttp();
     service = new CaseFilesService(http as never);
+  });
+
+  describe('tier2ProcessStart', () => {
+    it('tier2ProcessStart is linked to the correct URL', async () => {
+      const payload = {} as ITier2Request;
+      await service.tier2ProcessStart(payload);
+      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/public/${payload.id}/start-customer-identity-verification-tier-2`, payload);
+    });
+  });
+
+  describe('tier2ProcessStart', () => {
+    it('getTier2Result is linked to the correct URL', async () => {
+      await service.getTier2Result('someid');
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/public/customer-identity-verification-tier-2-result/someid`);
+    });
   });
 
   describe('fetchCaseFileActivities', () => {

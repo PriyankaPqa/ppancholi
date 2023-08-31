@@ -1,8 +1,8 @@
-import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
+import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 
 export const tabs = (): IRegistrationMenuItem[] => [
   {
-    id: 'privacy',
+    id: TabId.Privacy,
     labelKey: 'registration.menu.privacy',
     titleKey: 'registration.menu.privacy',
     icon: 'mdi-shield-check',
@@ -15,7 +15,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'zendesk.beneficiary_registration.privacy_statement',
   },
   {
-    id: 'personalInfo',
+    id: TabId.PersonalInfo,
     labelKey: 'registration.menu.personal_info',
     titleKey: 'registration.menu.personal_info',
     icon: 'mdi-account',
@@ -28,7 +28,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'zendesk.beneficiary_registration.personal_information',
   },
   {
-    id: 'addresses',
+    id: TabId.Addresses,
     labelKey: 'registration.menu.addresses',
     titleKey: 'registration.menu.addresses',
     icon: 'mdi-map-marker',
@@ -41,7 +41,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'zendesk.beneficiary_registration.addresses',
   },
   {
-    id: 'additionalMembers',
+    id: TabId.AdditionalMembers,
     labelKey: 'registration.menu.household_members',
     titleKey: 'registration.menu.household_members',
     icon: 'mdi-account-multiple',
@@ -54,7 +54,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'zendesk.beneficiary_registration.household_members',
   },
   {
-    id: 'review',
+    id: TabId.Review,
     labelKey: 'registration.menu.review',
     titleKey: 'registration.menu.review',
     icon: 'mdi-file-search',
@@ -67,7 +67,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'zendesk.beneficiary_registration.review_confirm',
   },
   {
-    id: 'confirmation',
+    id: TabId.Confirmation,
     labelKey: 'registration.menu.confirmation',
     titleKey: 'registration.page.confirmation',
     icon: 'mdi-check',
@@ -80,7 +80,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'zendesk.beneficiary_registration.review_confirm',
   },
   {
-    id: 'assessment',
+    id: TabId.Assessment,
     labelKey: 'registration.menu.assessment',
     titleKey: 'registration.page.assessment',
     icon: 'mdi-list-box-outline',

@@ -1,8 +1,8 @@
-import { IRegistrationMenuItem } from '@libs/registration-lib/types';
+import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 
 export const mockTabs = (): IRegistrationMenuItem[] => [
   {
-    id: 'privacy',
+    id: TabId.Privacy,
     labelKey: 'registration.menu.privacy',
     titleKey: 'registration.menu.privacy',
     icon: '',
@@ -15,7 +15,7 @@ export const mockTabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'personalInfo',
+    id: TabId.PersonalInfo,
     labelKey: 'registration.menu.personal_info',
     titleKey: 'registration.menu.personal_info',
     icon: '',
@@ -28,7 +28,7 @@ export const mockTabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'addresses',
+    id: TabId.Addresses,
     labelKey: 'registration.menu.addresses',
     titleKey: 'registration.menu.addresses',
     icon: '',
@@ -41,7 +41,7 @@ export const mockTabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'additionalMembers',
+    id: TabId.AdditionalMembers,
     labelKey: 'registration.menu.household_members',
     titleKey: 'registration.menu.household_members',
     icon: '',
@@ -54,7 +54,7 @@ export const mockTabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'review',
+    id: TabId.Review,
     labelKey: 'registration.menu.review',
     titleKey: 'registration.menu.review',
     icon: '',
@@ -67,7 +67,7 @@ export const mockTabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'confirmation',
+    id: TabId.Confirmation,
     labelKey: 'registration.menu.confirmation',
     titleKey: 'registration.page.confirmation',
     icon: '',
@@ -80,7 +80,7 @@ export const mockTabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'assessment',
+    id: TabId.Assessment,
     labelKey: 'registration.menu.assessment',
     titleKey: 'registration.page.assessment',
     icon: '',

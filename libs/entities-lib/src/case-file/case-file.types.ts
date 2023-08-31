@@ -1,4 +1,4 @@
-import { IMultilingual, IListOption, IIdMultilingualName } from '@libs/shared-lib/types';
+import { IMultilingual, IListOption, IIdMultilingualName, IdentityAuthenticationStatus, IdentityAuthenticationMethod } from '@libs/shared-lib/types';
 import { IEntity, IEntityCombined } from '../base';
 
 /**
@@ -22,18 +22,7 @@ export enum CaseFileTriage {
   // Tier5 = 5,
 }
 
-export enum IdentityAuthenticationStatus {
-  NotVerified = 0,
-  Passed = 1,
-  Failed = 2,
-}
-
-export enum IdentityAuthenticationMethod {
-  NotApplicable = 0,
-  Exceptional = 1,
-  InPerson = 2,
-  System = 3,
-}
+export { IdentityAuthenticationMethod, IdentityAuthenticationStatus };
 
 export enum CaseFileActivityType {
   AddedTag = 1,
@@ -235,6 +224,21 @@ export interface ICaseFileDetailedCount {
     tier5: number,
     tierNone: number,
   },
+}
+
+export interface ITier2Request {
+  id: uuid,
+  identityVerificationTier1transactionId: string,
+  mainDocumentTypeId: number,
+  subDocumentTypeId: number,
+  locale: string,
+}
+
+export interface ITier2Response {
+  identityAuthenticationStatus: IdentityAuthenticationStatus,
+  processCompleted: boolean,
+  transactionUniqueId: uuid,
+  identityVerificationInfoSubmissionUrl: string,
 }
 
 export type IdParams = uuid;

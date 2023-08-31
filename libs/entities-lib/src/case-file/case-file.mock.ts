@@ -4,7 +4,8 @@ import { mockBaseData } from '../base';
 import {
   ICaseFileMetadata, CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
   ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType, HouseholdCaseFileActivityType,
-  IAssignedTeamMembers } from './case-file.types';
+  IAssignedTeamMembers,
+  ITier2Response } from './case-file.types';
 import { IOptionItem } from '../optionItem';
 import { EPaymentModalities } from '../program';
 import { CompletedByType } from '../assessment-template';
@@ -856,3 +857,10 @@ export const mockTagsOptions = (): IOptionItem[] => [
     subitems: [],
   },
 ];
+
+export const mockTier2Response = (): ITier2Response => ({
+  identityAuthenticationStatus: IdentityAuthenticationStatus.Passed,
+  identityVerificationInfoSubmissionUrl: 'some url',
+  processCompleted: true,
+  transactionUniqueId: 'some id',
+});

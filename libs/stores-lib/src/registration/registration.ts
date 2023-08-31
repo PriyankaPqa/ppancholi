@@ -3,7 +3,8 @@ import {
   EIndigenousTypes, HouseholdCreate, IAddressData, ICheckForPossibleDuplicateResponse, IHouseholdCreateData,
   IIdentitySet, IIndigenousCommunityData, IMember, IMemberEntity, ISplitHousehold, Member,
 } from '@libs/entities-lib/household-create';
-import { IInformationFromBeneficiarySearch, IRegistrationMenuItem } from '@libs/registration-lib/src/types';
+import { IInformationFromBeneficiarySearch } from '@libs/registration-lib/src/types';
+import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import Vue, { ref, Ref } from 'vue';
 import { IVueI18n, TranslateResult } from 'vue-i18n';
 import {
@@ -266,12 +267,12 @@ export function storeFactory({
       // we keep the Assessment tab only if we have an assessment that can be completed
       // rules say that it must be active and published to be visible to self-registration
       // but can be unpublished if CRC is doing the registration
-      const newTabs = _cloneDeep(allTabs.value.filter((t) => t.id !== 'assessment'
+      const newTabs = _cloneDeep(allTabs.value.filter((t) => t.id !== TabId.Assessment
         || (assessmentToComplete.value?.assessmentForm?.status === Status.Active
           && (mode === ERegistrationMode.CRC || assessmentToComplete.value.assessmentForm.publishStatus === PublishStatus.Published))));
-      if (newTabs.find((t) => t.id === 'assessment')) {
+      if (newTabs.find((t) => t.id === TabId.Assessment)) {
         // for self registration the confirmation will not be the last step so we rename the button
-        const confTab = newTabs.find((t) => t.id === 'confirmation' && mode === ERegistrationMode.Self);
+        const confTab = newTabs.find((t) => t.id === TabId.Confirmation && mode === ERegistrationMode.Self);
         if (confTab) {
           confTab.nextButtonTextKey = 'common.button.next';
         }
@@ -564,6 +565,22 @@ export function storeFactory({
       return communities;
     }
 
+    function tier2Tab() : IRegistrationMenuItem {
+      return {
+        id: TabId.Tier2auth,
+        labelKey: 'registration.menu.identity_authentication',
+        titleKey: 'registration.page.identity_authentication',
+        icon: 'mdi-account-box',
+        disabled: false,
+        isValid: true,
+        isTouched: false,
+        backButtonTextKey: 'registration.button.skip_authentication',
+        nextButtonTextKey: 'registration.button.authenticate',
+        componentName: 'Tier2Selection',
+        helpLink: '',
+      };
+    }
+
     async function submitRegistration(): Promise<IDetailedRegistrationResponse> {
       let result: IDetailedRegistrationResponse;
       submitLoading.value = true;
@@ -586,6 +603,11 @@ export function storeFactory({
         }
         registrationResponse.value = result;
         registrationErrors.value = null;
+
+        // BE will decide whether a tier 2 authentication should occur - if so a tab is inserted
+        if (result?.mustDoTier2authentication) {
+          tabs.value.splice(currentTabIndex.value + 1, 0, tier2Tab());
+        }
       } catch (error) {
         const e = (error as IServerError).response?.data?.errors || error;
         applicationInsights.trackTrace(`submitRegistration error - self: ${mode === ERegistrationMode.Self}`, { error: e }, 'store.registration', 'submitRegistration');

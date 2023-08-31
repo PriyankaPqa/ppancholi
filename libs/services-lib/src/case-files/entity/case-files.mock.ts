@@ -1,5 +1,5 @@
 import {
-  mockCaseFileActivities, mockCaseFileEntity, mockCaseFileCount, mockCaseFileDetailedCount, mockCaseFileEntities,
+  mockCaseFileActivities, mockCaseFileEntity, mockCaseFileCount, mockCaseFileDetailedCount, mockCaseFileEntities, mockTier2Response,
 } from '@libs/entities-lib/case-file';
 import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { mockDomainBaseService } from '../../base';
@@ -23,5 +23,7 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   getAssignedCaseFiles: jest.fn(() => ({ odataContext: '', odataCount: 0, value: [] })),
   getAllCaseFilesRelatedToHouseholdId: jest.fn(() => mockCaseFileEntities()),
   setPersonReceiveAssistance: jest.fn(() => mockCaseFileEntity()),
+  tier2ProcessStart: jest.fn(() => mockTier2Response()),
+  getTier2Result: jest.fn(() => mockTier2Response()),
   getExceptionalTypeCounts: jest.fn(() => Promise.resolve([{ exceptionalAuthenticationTypeId: 'id1', caseFileCount: 3 }])),
 });

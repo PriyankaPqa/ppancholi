@@ -27,7 +27,7 @@
             <div class="actions">
               <div :class="{ half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly }">
                 <v-btn
-                  v-if="currentTab.id === 'confirmation'"
+                  v-if="currentTab.id === TabId.Confirmation"
                   class="printButton"
                   :aria-label="$t(currentTab.backButtonTextKey)"
                   data-test="printButton"
@@ -48,14 +48,14 @@
                 <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
                 <v-btn
                   data-test="nextButton"
-                  :color="currentTab.id === 'confirmation' && registrationAssessment ? '' : 'primary'"
+                  :color="currentTab.id === TabId.Confirmation && registrationAssessment ? '' : 'primary'"
                   :aria-label="nextButtonLabel"
                   :loading="submitLoading"
                   :disabled="failed"
                   @click="next()">
                   {{ nextButtonLabel }}
                 </v-btn>
-                <v-btn v-if="currentTab.id === 'confirmation' && registrationAssessment" color="primary" data-test="new-registration-button" @click="openAssessmentIfAvailable">
+                <v-btn v-if="currentTab.id === TabId.Confirmation && registrationAssessment" color="primary" data-test="new-registration-button" @click="openAssessmentIfAvailable">
                   {{ $t('registration.start_assessment.label') }}
                 </v-btn>
               </div>
@@ -95,12 +95,13 @@ import helpers from '@/ui/helpers/helpers';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { tabs } from '@/ui/views/pages/household/split/tabs';
+import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 
 export default mixins(individual).extend({
   name: 'SplitHousehold',
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if (this.currentTab.id === 'confirmation') {
+    if (this.currentTab.id === TabId.Confirmation) {
       useRegistrationStore().resetSplitHousehold();
       next();
     } else if (!this.allowExit) {
@@ -136,6 +137,7 @@ export default mixins(individual).extend({
     return {
       allowExit: false,
       awaiting: false,
+      TabId,
     };
   },
 
@@ -183,7 +185,7 @@ export default mixins(individual).extend({
   created() {
     let allTabs = tabs();
     if (!this.splitHousehold?.splitMembers.additionalMembers.length) {
-      allTabs = allTabs.filter((t) => t.id !== 'additionalSplitMembers');
+      allTabs = allTabs.filter((t) => t.id !== TabId.AdditionalSplitMembers);
     }
     useRegistrationStore().setTabs(allTabs);
     useRegistrationStore().setAssessmentToComplete(null);
@@ -215,20 +217,20 @@ export default mixins(individual).extend({
 
     async next() {
       switch (this.currentTab.id) {
-        case 'isRegistered':
+        case TabId.IsRegistered:
           this.createNewHousehold();
           this.nextDefault();
           return;
 
-        case 'personalInfo':
+        case TabId.PersonalInfo:
           EventHub.$emit('checkEmailValidation', this.nextDefault);
           return;
 
-        case 'reviewSplitInfo':
+        case TabId.ReviewSplitInfo:
           this.nextDefault(true);
           return;
 
-        case 'confirmation':
+        case TabId.Confirmation:
           this.closeSplit();
           return;
 

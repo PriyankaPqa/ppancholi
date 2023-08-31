@@ -12,6 +12,7 @@ export { ECanadaProvinces } from './enums/ECanadaProvinces';
 export { EOptionItemStatus } from './enums/EOptionItemStatus';
 export { ERegistrationMode } from './enums/ERegistrationMode';
 export { ERegistrationMethod } from './enums/ERegistrationMethod';
+export { IdentityAuthenticationMethod, IdentityAuthenticationStatus, Tier2GambitScreeningId } from './enums/IdentityAuthentication';
 
 export type { IDropdownItem } from './interfaces/IDropdownItem';
 export type { IErrorReport } from './interfaces/IErrorReport';

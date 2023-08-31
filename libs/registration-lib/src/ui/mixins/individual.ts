@@ -5,7 +5,8 @@ import _pickBy from 'lodash/pickBy';
 import Vue from 'vue';
 import helpers from '@libs/entities-lib/helpers';
 import { HouseholdCreate, ICheckForPossibleDuplicateResponse, IHouseholdCreateData } from '@libs/entities-lib/household-create';
-import { IRegistrationMenuItem, VForm } from '../../types';
+import { VForm } from '../../types';
+import { IRegistrationMenuItem, TabId } from '../../types/interfaces/IRegistrationMenuItem';
 
 export default Vue.extend({
   data() {
@@ -132,7 +133,13 @@ export default Vue.extend({
       this.$registrationStore.mutateCurrentTab((tab: IRegistrationMenuItem) => {
         tab.isTouched = true;
       });
-      if (this.allTabs[toIndex].id === 'confirmation') {
+
+      if (this.allTabs[toIndex].id === TabId.Tier2auth) {
+        // when doing tier 2, only that tab is available
+        this.disableOtherTabs(toIndex, false);
+      }
+
+      if (this.allTabs[toIndex].id === TabId.Confirmation) {
         this.handleConfirmationScreen(toIndex);
         return;
       }
@@ -159,13 +166,13 @@ export default Vue.extend({
     },
 
     async next() {
-      if (this.currentTab.id === 'assessment') {
+      if (this.currentTab.id === TabId.Assessment) {
         this.openAssessmentIfAvailable();
       }
 
       // if this is the last page of the process, or if we dont go to the last page - assessment
       // (confirmation did not generate an assessment due to an error or crc where we never get to the last tab)
-      if ((this.currentTab.id === 'confirmation' && (this.$registrationStore.isCRCRegistration() || !this.registrationSuccess))
+      if ((this.currentTab.id === TabId.Confirmation && (this.$registrationStore.isCRCRegistration() || !this.registrationSuccess))
         || this.currentTabIndex === this.allTabs.length - 1) {
         await this.closeRegistration();
         return;

@@ -4,6 +4,7 @@ import { mockDetailedRegistrationResponse, mockHouseholdEntity } from '@libs/ent
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 
+import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import helpers from '@/ui/helpers/helpers';
 
 import routes from '@/constants/routes';
@@ -109,7 +110,7 @@ describe('SplitHousehold.vue', () => {
           localVue,
           pinia,
           computed: {
-            currentTab: () => ({ id: 'isRegistered' }),
+            currentTab: () => ({ id: TabId.IsRegistered }),
           },
         });
         wrapper.vm.createNewHousehold = jest.fn();
@@ -125,7 +126,7 @@ describe('SplitHousehold.vue', () => {
           localVue,
           pinia,
           computed: {
-            currentTab: () => ({ id: 'personalInfo' }),
+            currentTab: () => ({ id: TabId.PersonalInfo }),
           },
         });
         EventHub.$emit = jest.fn();
@@ -138,7 +139,7 @@ describe('SplitHousehold.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            currentTab: () => ({ id: 'reviewSplitInfo' }),
+            currentTab: () => ({ id: TabId.ReviewSplitInfo }),
           },
         });
         wrapper.vm.nextDefault = jest.fn();
@@ -251,7 +252,7 @@ describe('SplitHousehold.vue', () => {
           pinia,
           computed: {
             currentTab: () => ({
-              id: 'reviewSplitInfo', titleKey: '', nextButtonTextKey: '', isValid: '',
+              id: TabId.ReviewSplitInfo, titleKey: '', nextButtonTextKey: '', isValid: '',
             }),
             splitHousehold() {
               return mockSplitHousehold();
@@ -432,7 +433,7 @@ describe('SplitHousehold.vue', () => {
         },
       });
 
-      expect(registrationStore.setTabs).toHaveBeenCalledWith(tabs().filter((t) => t.id !== 'additionalSplitMembers'));
+      expect(registrationStore.setTabs).toHaveBeenCalledWith(tabs().filter((t) => t.id !== TabId.AdditionalSplitMembers));
     });
 
     it('calls back if there is no split household data', () => {

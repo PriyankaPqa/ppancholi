@@ -40,6 +40,7 @@ import {
 import { IInformationFromBeneficiarySearch } from '@/types/interfaces/IInformationFromBeneficiarySearch';
 import _cloneDeep from 'lodash/cloneDeep';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { TabId } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
@@ -158,7 +159,7 @@ const vueComponent: VueConstructor = Vue.extend({
     },
 
     isTouched(): boolean {
-      return this.$registrationStore.tabs.filter((el) => el.id === 'personalInfo')[0].isTouched;
+      return this.$registrationStore.tabs.filter((el) => el.id === TabId.PersonalInfo)[0].isTouched;
     },
 
     shouldLoadDataFromBeneficiarySearch(): boolean {

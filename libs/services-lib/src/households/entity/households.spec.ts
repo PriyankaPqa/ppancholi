@@ -30,7 +30,7 @@ const createBeneficiaryRequest = mockCreateHouseholdRequest();
 const splitBeneficiaryRequest = mockSplitHouseholdRequest();
 let service: HouseholdsService = null;
 
-describe('>>> Beneficiaries Service', () => {
+describe('>>> Household Service', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     service = new HouseholdsService(http as never);

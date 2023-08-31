@@ -60,6 +60,8 @@ export interface IDetailedRegistrationResponse {
   assessmentResponses: IAssessmentResponseEntity[];
   caseFile: ICaseFileEntity;
   household: IHouseholdEntity;
+  mustDoTier2authentication: boolean;
+  tier1transactionId: string;
 }
 
 export type IdParams = uuid;
