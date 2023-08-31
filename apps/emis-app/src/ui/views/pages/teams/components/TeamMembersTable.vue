@@ -119,6 +119,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
+import _isEmpty from 'lodash/isEmpty';
 import { DataTableHeader } from 'vuetify';
 import { RcPhoneDisplay } from '@libs/component-lib/components';
 import {
@@ -137,12 +138,11 @@ import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useTeamStore } from '@/pinia/team/team';
 import { UserRoles } from '@libs/entities-lib/user';
+import { IAzureTableSearchResults } from '@libs/shared-lib/types';
 
 export interface Result extends IUserAccountCombined {
   isPrimaryContact: boolean;
 }
-
-export const LOAD_SIZE = 999;
 
 export default Vue.extend({
   name: 'TeamMembersTable',
@@ -319,62 +319,50 @@ export default Vue.extend({
     },
 
     primaryContactId(): string {
-      return this.primaryContact?.entity?.id || this.team.teamMembers.find((m:ITeamMember) => m.isPrimaryContact).id;
+      return this.primaryContact?.entity?.id || this.team?.teamMembers?.find((m:ITeamMember) => m.isPrimaryContact).id;
     },
   },
 
   watch: {
     async primaryContact(newValue) {
       if (newValue?.entity?.id) {
-        await this.loadTeamMembers();
-
-        const teamMemberIds = this.teamMembers?.map((m) => m.entity.id) || [];
+        const teamMemberIds = this.team?.teamMembers?.map((m) => m.id) || [];
         if (!teamMemberIds.includes(newValue.entity.id)) {
           this.addMembers([newValue]);
         }
+        this.teamMembers = this.makeMappedMembers(this.teamMembers);
+      }
+    },
+
+    team(newValue, oldValue) {
+      if (_isEmpty(oldValue) && !_isEmpty(newValue)) {
+        this.loadTeamMembers();
       }
     },
   },
 
   async created() {
-    await this.loadTeamMembers();
+    if (!_isEmpty(this.team)) {
+      await this.loadTeamMembers();
+    }
   },
 
   methods: {
-    async loadTeamMembers(skip = 0) {
-      const filter = {
-        Metadata: {
-          Teams: {
-            any: {
-              TeamId: this.teamId,
-            },
-          },
-        },
-      };
+    async loadTeamMembers() {
+      const teamMemberIds = this.team.teamMembers?.map((m) => m.id) || [];
 
-      const res = await this.combinedUserAccountStore.search({
-        search: this.search,
-        filter,
-        top: LOAD_SIZE,
-        skip,
-        count: true,
-        queryType: 'full',
-        searchMode: 'all',
+      const fetchedAssignedUserAccountData = await sharedHelpers.callSearchInInBatches({
+        service: this.combinedUserAccountStore,
+        ids: teamMemberIds,
+        searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
+        otherOptions: { queryType: 'full',
+          searchMode: 'all' },
       });
 
-      if (res) {
-        const members = this.combinedUserAccountStore.getByIds(res.ids);
-        const mappedTeamMembers = this.makeMappedMembers(members);
-
-        if (skip === 0) {
-          this.teamMembers = mappedTeamMembers;
-        } else {
-          this.teamMembers.push(...mappedTeamMembers);
-        }
-
-        if (res.count > skip + LOAD_SIZE) {
-          this.loadTeamMembers(skip + LOAD_SIZE);
-        }
+      const ids = (fetchedAssignedUserAccountData as IAzureTableSearchResults)?.ids;
+      if (ids) {
+        const members = this.combinedUserAccountStore.getByIds(ids);
+        this.teamMembers = this.makeMappedMembers(members);
       }
       this.loading = false;
     },

@@ -11,7 +11,7 @@ import { useMockTeamStore } from '@/pinia/team/team.mock';
 import TeamMemberCaseFiles from '@/ui/views/pages/teams/components/TeamMemberCaseFiles.vue';
 
 import { mockProvider } from '@/services/provider';
-import Component, { LOAD_SIZE } from './TeamMembersTable.vue';
+import Component from './TeamMembersTable.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
@@ -235,21 +235,22 @@ describe('TeamMembersTable.vue', () => {
 
   describe('watch', () => {
     describe('primaryContact', () => {
-      it(' should call loadTeamMembers', async () => {
-        await mountWrapper();
-        jest.clearAllMocks();
-        wrapper.vm.loadTeamMembers = jest.fn();
-        await wrapper.setProps({ primaryContact: mockCombinedUserAccount({ id: 'my-id' }) });
-        expect(wrapper.vm.loadTeamMembers).toHaveBeenCalledTimes(1);
-      });
-
       it('should call addMembers with the new primary contact, if it is not included in the team members list', async () => {
         await mountWrapper();
-        await wrapper.setData({ teamMembers: [mockTeamMembers[0]] });
-        wrapper.vm.loadTeamMembers = jest.fn();
+        await wrapper.setData({ team: { teamMembers: [{ id: '1', isPrimaryContact: true }] } });
         wrapper.vm.addMembers = jest.fn();
         await wrapper.setProps({ primaryContact: mockCombinedUserAccount({ id: 'new-id' }) });
         expect(wrapper.vm.addMembers).toHaveBeenCalledWith([mockCombinedUserAccount({ id: 'new-id' })]);
+      });
+    });
+
+    describe('team', () => {
+      it('calls loadTeamMembers if the old value was empty ', async () => {
+        jest.spyOn(teamStore, 'getById').mockImplementationOnce(() => {});
+        await mountWrapper();
+        wrapper.vm.loadTeamMembers = jest.fn();
+        await wrapper.setProps({ teamId: 'aaa' });
+        expect(wrapper.vm.loadTeamMembers).toBeCalledTimes(1);
       });
     });
   });
@@ -269,56 +270,28 @@ describe('TeamMembersTable.vue', () => {
     });
 
     describe('loadTeamMembers', () => {
-      it('calls userAccount search with the right payload', async () => {
-        wrapper.vm.combinedUserAccountStore.search = jest.fn();
-        await wrapper.setData({ search: 'query' });
+      it('calls helper callSearchInInBatches with the right payload ', async () => {
+        sharedHelpers.callSearchInInBatches = jest.fn(() => ({ ids: ['1', '2'] }));
+        await wrapper.setData({ team: { teamMembers: [{ id: 'id-1', isPrimaryContact: true }] } });
         await wrapper.vm.loadTeamMembers();
-        expect(wrapper.vm.combinedUserAccountStore.search).toHaveBeenCalledWith(
-          {
-            search: 'query',
-            filter: {
-              Metadata: {
-                Teams: {
-                  any: {
-                    TeamId: wrapper.vm.teamId,
-                  },
-                },
-              },
-            },
-            top: LOAD_SIZE,
-            skip: 0,
-            count: true,
-            queryType: 'full',
-            searchMode: 'all',
-          },
-        );
+
+        expect(sharedHelpers.callSearchInInBatches).toHaveBeenCalledWith({
+          service: wrapper.vm.combinedUserAccountStore,
+          ids: ['id-1'],
+          searchInFilter: { Entity: { Id: { searchIn_az: '{ids}' } } },
+          otherOptions: { queryType: 'full',
+            searchMode: 'all' },
+        });
       });
 
       it('calls userAccount getter , calls makeMappedMembers with the result of the userAccount getter and stores the result into teamMembers', async () => {
-        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: ['search-id'] }));
+        sharedHelpers.callSearchInInBatches = jest.fn(() => ({ ids: ['search-id'] }));
         wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
         wrapper.vm.makeMappedMembers = jest.fn(() => mockTeamMembers);
         await wrapper.vm.loadTeamMembers();
         expect(wrapper.vm.combinedUserAccountStore.getByIds).toHaveBeenCalledWith(['search-id']);
         expect(wrapper.vm.makeMappedMembers).toHaveBeenCalledWith([mockCombinedUserAccount()]);
         expect(wrapper.vm.teamMembers).toEqual(mockTeamMembers);
-      });
-
-      it('pushes the result from  makeMappedMembers into teamMembers instead of replacing it if skip is higher than 0', async () => {
-        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: ['search-id'] }));
-        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
-        wrapper.vm.makeMappedMembers = jest.fn(() => [mockTeamMembers[1]]);
-        await wrapper.setData({ teamMembers: [mockTeamMembers[0]] });
-        await wrapper.vm.loadTeamMembers(1000);
-        expect(wrapper.vm.teamMembers).toEqual([mockTeamMembers[0], mockTeamMembers[1]]);
-      });
-
-      it('calls loadTeamMembers again with a higher skip if the response count of search is higher than the LOAD_SIZE plus skip', async () => {
-        const realLoadTeamMembers = wrapper.vm.loadTeamMembers;
-        wrapper.vm.loadTeamMembers = jest.fn();
-        wrapper.vm.combinedUserAccountStore.search = jest.fn(() => ({ ids: ['search-id'], count: 1500 }));
-        await realLoadTeamMembers();
-        expect(wrapper.vm.loadTeamMembers).toHaveBeenCalledWith(LOAD_SIZE);
       });
     });
 
