@@ -540,6 +540,10 @@ const routes = {
       path: 'lists/exceptional-authentication-types',
       name: 'systemManagement.lists.exceptionalAuthenticationTypes',
     },
+    taskCategories: {
+      path: 'lists/task-categories',
+      name: 'systemManagement.lists.taskCategories',
+    },
   },
   teams: {
     layout: {

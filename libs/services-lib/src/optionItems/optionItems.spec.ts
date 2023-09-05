@@ -154,6 +154,14 @@ describe('>>> OptionItems Service', () => {
     expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/is-other`, { isOther: true });
   });
 
+  test('setOptionSubItemIsOther is linked to the correct URL', async () => {
+    const itemId = 'id';
+    const subItemId = 'sub-id';
+    const list = EOptionLists.EventTypes;
+    await service.setOptionSubItemIsOther(list, itemId, subItemId, true);
+    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/${itemId}/subitem/${subItemId}/is-other`, { isOther: true });
+  });
+
   test('setOptionItemIsDefault is linked to the correct URL', async () => {
     const list = EOptionLists.EventTypes;
     await service.setOptionItemIsDefault(list, 'ID', true);

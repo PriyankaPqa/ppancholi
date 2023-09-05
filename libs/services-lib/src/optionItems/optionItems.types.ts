@@ -32,6 +32,8 @@ export interface IOptionItemsService {
 
   setOptionItemIsOther(target: EOptionLists, id: string, isOther: boolean): Promise<IOptionItemData>;
 
+  setOptionSubItemIsOther(target: EOptionLists, itemId: string, subItemId: string, isOther: boolean): Promise<IOptionItemData>;
+
   setOptionItemIsDefault(target: EOptionLists, id: string, isDefault: boolean): Promise<IOptionItemData>;
 
   setOptionItemRestrictFinancial(target: EOptionLists, id: string, restrictFinancial: boolean): Promise<IOptionItemData>;
@@ -57,6 +59,8 @@ export interface IOptionItemsServiceMock {
   updateOptionSubItemOrderRanks: jest.Mock<IOptionItemData[]>;
 
   setOptionItemIsOther: jest.Mock<IOptionItemData>;
+
+  setOptionSubItemIsOther: jest.Mock<IOptionItemData>;
 
   setOptionItemIsDefault: jest.Mock<IOptionItemData>;
 

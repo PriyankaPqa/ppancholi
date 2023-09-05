@@ -74,6 +74,7 @@
                 :key="item.id"
                 :loading="itemLoading"
                 :item="item"
+                :items="items"
                 :is-cascading="isCascading"
                 :has-description="hasDescription"
                 :language-mode="languageMode"
@@ -101,10 +102,12 @@
                       :loading="itemLoading"
                       :item="subItem"
                       :items="items"
+                      :parent-item-id="item.id"
                       :language-mode="languageMode"
                       :edit-mode="!!editedItem && editedItem === subItem.id"
                       :edit-disabled="addingMode"
                       :is-search-result="isSearchResult(subItem)"
+                      :has-other="subItemHasOther"
                       is-sub-item
                       :item-name-label="subItemNameLabel"
                       :has-description="hasDescription"
@@ -123,7 +126,7 @@
                       :has-description="hasDescription"
                       :add-mode="addingItemId === item.id"
                       :language-mode="languageMode"
-                      :item-id="item.id"
+                      :parent-item-id="item.id"
                       :loading="itemLoading"
                       :add-sub-item-label="addSubItemLabel"
                       :item-name-label="subItemNameLabel"
@@ -139,6 +142,7 @@
               v-if="addingMode"
               ref="addItem"
               :loading="itemLoading"
+              :items="items"
               :has-description="hasDescription"
               :language-mode="languageMode"
               @save="saveNewItem"
@@ -254,6 +258,11 @@ export default Vue.extend({
     },
 
     hasOther: {
+      type: Boolean,
+      default: false,
+    },
+
+    subItemHasOther: {
       type: Boolean,
       default: false,
     },

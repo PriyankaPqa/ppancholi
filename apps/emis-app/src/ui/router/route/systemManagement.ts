@@ -26,6 +26,7 @@ const FinancialAssistanceItems = () => import('@/ui/views/pages/system-managemen
 const ScreeningId = () => import('@/ui/views/pages/system-management/lists/pages/ScreeningId.vue');
 const DocumentCategories = () => import('@/ui/views/pages/system-management/lists/pages/DocumentCategories.vue');
 const ExceptionalAuthenticationTypes = () => import('@/ui/views/pages/system-management/lists/pages/ExceptionalAuthenticationTypes.vue');
+const TaskCategories = () => import('@/ui/views/pages/system-management/lists/pages/TaskCategories.vue');
 
 export const systemManagement: RouteConfig = {
   path: Routes.systemManagement.layout.path,
@@ -170,6 +171,12 @@ export const systemManagement: RouteConfig = {
       path: Routes.systemManagement.exceptionalAuthenticationTypes.path,
       name: Routes.systemManagement.exceptionalAuthenticationTypes.name,
       component: ExceptionalAuthenticationTypes,
+      meta: { level: UserRoles.level6 },
+    },
+    {
+      path: Routes.systemManagement.taskCategories.path,
+      name: Routes.systemManagement.taskCategories.name,
+      component: TaskCategories,
       meta: { level: UserRoles.level6 },
     },
   ],

@@ -86,14 +86,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { IMultilingual, VForm } from '@libs/shared-lib/types';
+import Vue, { ref, toRef } from 'vue';
+import { VForm } from '@libs/shared-lib/types';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import entityUtils from '@libs/entities-lib/utils';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
+import { useOptionListItem } from './useOptionListItem';
 
 export default Vue.extend({
   name: 'OptionListNewItem',
@@ -153,7 +153,7 @@ export default Vue.extend({
     /**
      * The id of the parent item (if this is a sub-item)
      */
-    itemId: {
+    parentItemId: {
       type: String,
       default: '',
     },
@@ -164,6 +164,11 @@ export default Vue.extend({
     },
   },
 
+  setup(props) {
+    const { rules, getParentItem, checkNameUniqueness } = useOptionListItem(props.isSubItem, ref(false), toRef(props, 'items'), null, props.parentItemId);
+    return { rules, getParentItem, checkNameUniqueness };
+  },
+
   data() {
     return {
       name: entityUtils.initMultilingualAttributes(),
@@ -172,40 +177,8 @@ export default Vue.extend({
 
       currentStatus: Status.Active,
 
-      isNameUnique: true,
+      itemStatuses: [Status.Active, Status.Inactive],
     };
-  },
-
-  computed: {
-    itemStatuses(): Array<Status> {
-      return [
-        Status.Active,
-        Status.Inactive,
-      ];
-    },
-
-    rules(): Record<string, unknown> {
-      return {
-        name: {
-          required: true,
-          max: MAX_LENGTH_MD,
-          customValidator: { isValid: this.isNameUnique, messageKey: 'validations.alreadyExists' },
-        },
-        description: {
-          max: MAX_LENGTH_MD,
-        },
-      };
-    },
-
-    allNames(): IMultilingual[] {
-      let names: IMultilingual[] = [];
-      this.items.forEach((item) => {
-        names.push(item.name);
-        names = names.concat(item.subitems.map((sub) => sub.name));
-      });
-
-      return names;
-    },
   },
 
   watch: {
@@ -258,7 +231,7 @@ export default Vue.extend({
      * Emits the 'add-mode' event with the item ID when the + Add sub-item button is pressed
      */
     enterAddMode() {
-      this.$emit('add-mode', this.itemId);
+      this.$emit('add-mode', this.parentItemId);
     },
 
     /**
@@ -268,7 +241,7 @@ export default Vue.extend({
       const valid = await (this.$refs.form as VForm).validate();
 
       if (valid) {
-        this.$emit('save', this.name, this.description, this.currentStatus, this.itemId);
+        this.$emit('save', this.name, this.description, this.currentStatus, this.parentItemId);
 
         this.name = entityUtils.initMultilingualAttributes();
 
@@ -285,17 +258,6 @@ export default Vue.extend({
      */
     cancel() {
       this.$emit('cancel');
-    },
-
-    checkNameUniqueness(input: string) {
-      const treat = ((str: string) => str.trim().toLowerCase());
-
-      const treatedInput = treat(input);
-
-      this.isNameUnique = !this.allNames.some((name) => {
-        const langs = Object.keys(name.translation);
-        return langs.some((lang) => treat(name.translation[lang]) === treatedInput);
-      });
     },
 
     clearDescription() {

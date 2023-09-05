@@ -5,7 +5,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockOptionItemData, EOptionLists } from '@libs/entities-lib/optionItem';
+import { mockOptionItemData, EOptionLists, mockOptionItem } from '@libs/entities-lib/optionItem';
 import entityUtils from '@libs/entities-lib/utils';
 import { Status } from '@libs/entities-lib/base';
 import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
@@ -60,54 +60,6 @@ describe('OptionListItem.vue', () => {
       });
     });
 
-    describe('allNames', () => {
-      it('returns the correct value', async () => {
-        await wrapper.setProps({
-          items: [{
-            name: {
-              translation: {
-                en: 'name 1 en',
-                fr: 'name 1 fr',
-              },
-            },
-            subitems: [{
-              name: {
-                translation: {
-                  en: 'sub name en',
-                  fr: 'sub name fr',
-                },
-              },
-            }],
-          }, {
-            name: {
-              translation: {
-                en: 'name 2 en',
-                fr: 'name 2 fr',
-              },
-            },
-            subitems: [],
-          }],
-        });
-
-        expect(wrapper.vm.allNames).toEqual([{
-          translation: {
-            en: 'name 1 en',
-            fr: 'name 1 fr',
-          },
-        }, {
-          translation: {
-            en: 'sub name en',
-            fr: 'sub name fr',
-          },
-        }, {
-          translation: {
-            en: 'name 2 en',
-            fr: 'name 2 fr',
-          },
-        }]);
-      });
-    });
-
     describe('renameNotAllowed', () => {
       it('returns true if is Role name', async () => {
         optionListStore.list = EOptionLists.Roles;
@@ -142,64 +94,13 @@ describe('OptionListItem.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('checkNameUniqueness', () => {
-      let wrapper;
-      beforeEach(() => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            item: mockOptionItemData()[0],
-            isSubItem: true,
-            editMode: true,
-            languageMode: 'en',
-          },
-          computed: {
-            allNames() {
-              return [{
-                translation: {
-                  en: 'name 1 en',
-                  fr: 'name 1 fr',
-                },
-              }, {
-                translation: {
-                  en: 'name 2 en',
-                  fr: 'name 2 fr  ',
-                },
-              }];
-            },
-          },
-        });
-      });
-      it('should set isNameUnique to true if the name is unique', () => {
-        wrapper.vm.checkNameUniqueness('name 3 en');
-        expect(wrapper.vm.isNameUnique).toBeTruthy();
-      });
-      it('should set isNameUnique to false if the name is not unique', () => {
-        wrapper.vm.checkNameUniqueness('name 1 en');
-        expect(wrapper.vm.isNameUnique).toBeFalsy();
-
-        wrapper.vm.checkNameUniqueness('name 1 EN');
-        expect(wrapper.vm.isNameUnique).toBeFalsy();
-
-        wrapper.vm.checkNameUniqueness('name 2 fr');
-        expect(wrapper.vm.isNameUnique).toBeFalsy();
-      });
-      it('is called when @input is emitted on sub item name', () => {
-        wrapper.vm.checkNameUniqueness = jest.fn();
-
-        const nameInput = wrapper.findDataTest('optionsListItem__nameInput');
-        nameInput.trigger('input');
-
-        expect(wrapper.vm.checkNameUniqueness).toHaveBeenCalledTimes(1);
-      });
-    });
-
     describe('>> confirmChangeStatus', () => {
       it('dispatches the updateSubItemStatus action if is subItem', async () => {
         const items = mockOptionItemData();
         const item = items[0];
         const subItem = item.subitems[0];
+
+        wrapper.vm.getParentItem = jest.fn(() => mockOptionItem({ id: 'id-1' }));
 
         await wrapper.setProps({
           isSubItem: true,
@@ -213,7 +114,7 @@ describe('OptionListItem.vue', () => {
 
         await wrapper.vm.confirmChangeStatus();
         const payload = {
-          itemId: item.id,
+          itemId: 'id-1',
           subItemId: subItem.id,
           status,
         };
@@ -528,5 +429,48 @@ describe('OptionListItem.vue', () => {
 
     expect(wrapper.vm.name).toEqual({ translation: { en: 'Clementine', fr: 'Clementine' } });
     expect(wrapper.vm.description).toEqual({ translation: { en: 'Description Clementine', fr: 'Description Clementine' } });
+  });
+
+  describe('setIsOther', () => {
+    it('calls the right action when is not subitem', async () => {
+      await wrapper.setProps({ isSubItem: false });
+      await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
+      optionListStore.setIsOther = jest.fn();
+      wrapper.vm.setIsOther();
+      expect(optionListStore.setIsOther).toHaveBeenCalledWith({ id: wrapper.vm.item.id, isOther: true });
+    });
+
+    it('calls the right action when is  subitem', async () => {
+      await wrapper.setProps({ isSubItem: true });
+      await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
+      optionListStore.setSubItemIsOther = jest.fn();
+      wrapper.vm.getParentItem = jest.fn(() => ({ id: 'p-id-1' }));
+      wrapper.vm.setIsOther();
+      expect(optionListStore.setSubItemIsOther).toHaveBeenCalledWith({ itemId: 'p-id-1', subItemId: wrapper.vm.item.id, isOther: true });
+    });
+
+    it('displays error if no response', async () => {
+      await wrapper.setProps({ isSubItem: false });
+      optionListStore.setIsOther = jest.fn();
+      await wrapper.vm.setIsOther();
+      expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('system_management.lists.errorUpdating');
+    });
+
+    it('displays right message if isOther is set to false', async () => {
+      await wrapper.setProps({ isSubItem: false });
+      optionListStore.setIsOther = jest.fn(() => ({ res: '' }));
+      await wrapper.setData({ item: { ...wrapper.vm.item, isOther: true } });
+      await wrapper.vm.setIsOther();
+      expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('system_management.lists.otherOptionRemoved');
+    });
+
+    it('displays right message if isOther is set to true', async () => {
+      await wrapper.setProps({ isSubItem: false });
+      await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
+      optionListStore.setIsOther = jest.fn(() => ({ res: '' }));
+      await wrapper.vm.setIsOther();
+
+      expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('system_management.lists.otherOptionSet');
+    });
   });
 });

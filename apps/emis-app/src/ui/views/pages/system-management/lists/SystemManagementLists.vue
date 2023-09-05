@@ -46,6 +46,7 @@ import _orderBy from 'lodash/orderBy';
 import { RcPageContent } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import helpers from '@libs/shared-lib/helpers/helpers';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 interface IList {
   name: string;
@@ -138,6 +139,14 @@ export default Vue.extend({
         dataTest: 'exceptionalAuthenticationTypes',
       },
     ];
+
+    if (this.$hasFeature(FeatureKeys.TaskManagement)) {
+      optionLists.push({
+        name: 'system_management.lists.taskCategories',
+        route: routes.systemManagement.taskCategories.name,
+        dataTest: 'taskCategories',
+      });
+    }
 
     return {
       ascendingSort: true,
