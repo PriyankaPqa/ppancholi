@@ -741,6 +741,7 @@ describe('>>> Registration Store', () => {
       expect(householdApi.submitRegistration).toHaveBeenCalledTimes(0);
       expect(householdApi.submitCRCRegistration).toHaveBeenCalledTimes(1);
       expect(householdApi.submitCRCRegistration).toHaveBeenCalledWith(useRegistrationStore.householdCreate, useRegistrationStore.event.id);
+      expect(useRegistrationStore.tier2State.mustDoTier2).toBeFalsy();
     });
 
     it('should call proper service for Self Registration', async () => {
@@ -789,6 +790,7 @@ describe('>>> Registration Store', () => {
       }));
       await useRegistrationStore.submitRegistration();
       expect(useRegistrationStore.tabs.find((x) => x.id === TabId.Tier2auth)).toBeTruthy();
+      expect(useRegistrationStore.tier2State.mustDoTier2).toBeTruthy();
     });
   });
 

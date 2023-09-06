@@ -39,10 +39,12 @@
                 <!-- buttons are in the individual page for now but we want to move them to the component eventually - we'll use events to communicate -->
                 <v-btn
                   v-if="tier2ProcessStarted"
+                  :loading="submitLoading"
                   @click="restartAuthentication()">
                   {{ $t('registration.button.select_different_id') }}
                 </v-btn>
                 <v-btn
+                  :loading="submitLoading"
                   @click="skipAuthentication()">
                   {{ $t('registration.button.skip_authentication') }}
                 </v-btn>
@@ -71,7 +73,7 @@
                 data-test="nextButton"
                 :aria-label="$t(currentTab.nextButtonTextKey)"
                 :loading="submitLoading || retrying"
-                :disabled="inlineEdit || tier2ProcessStarted"
+                :disabled="inlineEdit || (tier2ProcessStarted && !tier2ProcessCompleted)"
                 @click="goNext()">
                 {{ $t(currentTab.nextButtonTextKey) }}
               </v-btn>
@@ -154,6 +156,9 @@ export default mixins(individual).extend({
     isCaptchaAllowedIpAddress(): boolean {
       return useTenantSettingsStore().recaptcha.ipAddressIsAllowed;
     },
+    tier2ProcessCompleted(): boolean {
+      return useRegistrationStore().tier2State?.completed;
+    },
   },
 
   created() {
@@ -215,10 +220,16 @@ export default mixins(individual).extend({
 
     async skipAuthentication() {
       // user does not wish to complete the authentication process for now, we complete the registration
-      await this.next();
+      if (await this.$confirm({
+        title: this.$t('registration.tier2.skipConfirmationTitle'),
+        messages: this.$t('registration.tier2.skipConfirmationMessage'),
+      })) {
+        this.restartAuthentication();
+        await this.next();
+      }
     },
 
-    async restartAuthentication() {
+    restartAuthentication() {
       // component will restart the authentication process
       this.tier2ProcessStarted = false;
       EventHub.$emit('tier2ProcessReset');

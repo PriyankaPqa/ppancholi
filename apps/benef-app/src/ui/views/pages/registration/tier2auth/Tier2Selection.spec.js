@@ -1,3 +1,4 @@
+/* eslint-disable no-global-assign */
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
@@ -198,17 +199,31 @@ describe('Tier2Selection.vue', () => {
 
     describe('onMessage', () => {
       it('finishes tier2 if completed', async () => {
-        helpers.timeout = jest.fn();
-        wrapper.vm.tier2ProcessReset = jest.fn();
-        EventHub.$emit = jest.fn();
+        wrapper.vm.waitForFinalResult = jest.fn();
 
         await wrapper.vm.onMessage({ data: { status: 'nope' } });
-        expect(wrapper.vm.tier2ProcessReset).not.toHaveBeenCalled();
-        expect(EventHub.$emit).not.toHaveBeenCalled();
+        expect(wrapper.vm.waitForFinalResult).not.toHaveBeenCalled();
 
         await wrapper.vm.onMessage({ data: { status: 'completed' } });
-        expect(wrapper.vm.tier2ProcessReset).toHaveBeenCalled();
+        expect(wrapper.vm.waitForFinalResult).toHaveBeenCalled();
+      });
+    });
+
+    describe('waitForFinalResult', () => {
+      it('finishes tier2 if completed', async () => {
+        helpers.timeout = jest.fn();
+        EventHub.$emit = jest.fn();
+        const bck = window.setInterval;
+        window.setInterval = jest.fn((fct) => fct());
+
+        await wrapper.vm.waitForFinalResult();
+        expect(helpers.timeout).toHaveBeenCalled();
+        expect(setInterval).toHaveBeenCalled();
         expect(EventHub.$emit).toHaveBeenCalledWith('next');
+        expect(registrationStore.tier2State.completed).toBeTruthy();
+        expect(services.caseFiles.getTier2Result).toHaveBeenCalledWith(wrapper.vm.registrationResponse.caseFile.id);
+
+        window.setInterval = bck;
       });
     });
 
@@ -216,11 +231,12 @@ describe('Tier2Selection.vue', () => {
       it('resets frame and removes listener', async () => {
         window.removeEventListener = jest.fn();
 
-        await wrapper.setData({ iframeUrl: 'some url' });
+        await wrapper.setData({ iframeUrl: 'some url', interval: 888 });
         wrapper.vm.tier2ProcessReset();
 
         expect(window.removeEventListener).toHaveBeenCalledWith('message', wrapper.vm.onMessage);
         expect(wrapper.vm.iframeUrl).toBeFalsy();
+        expect(wrapper.vm.interval).toBeFalsy();
       });
     });
 
@@ -236,6 +252,7 @@ describe('Tier2Selection.vue', () => {
           subDocumentTypeId: null,
         });
         expect(wrapper.vm.iframeUrl).toBe('some url');
+        expect(registrationStore.tier2State.basicDocumentsOnly).toBeTruthy();
       });
     });
   });

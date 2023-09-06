@@ -3,8 +3,14 @@
     <template v-if="success">
       <div class="fixed-height mb-n8 flex-container">
         <div class="flex-body">
+          <v-row v-if="showCompleteAssessmentMessage" class="mb-3">
+            <v-col cols="12">
+              <h2>{{ $t('registration.confirmation.part1completed') }}</h2>
+              <hr>
+            </v-col>
+          </v-row>
           <v-row no-gutters>
-            <v-col cols="12" class="registration-result mb-3" data-test="confirm-registration-message">
+            <v-col cols="12" class="large-header mb-3" data-test="confirm-registration-message">
               <i18n :path="confirmationMessagePath" tag="div">
                 <template #x>
                   <span class="fw-bold" data-test="confirm-registration-full-name">{{ fullName }}</span>
@@ -17,12 +23,32 @@
             <v-col cols="12" sm="6">
               <span class="rc-body12">{{ $t('event.beneficiaries.registration_number') }}</span>
               <br>
-              <span class="registration-result" data-test="confirm-registration-number">{{ registrationNumber }}</span>
+              <span class="large-header" data-test="confirm-registration-number">{{ registrationNumber }}</span>
             </v-col>
             <v-col cols="12" sm="6">
               <span class="rc-body12">{{ $t('registration.confirmation.event') }}</span>
               <br>
-              <span class="registration-result" data-test="confirm-registration-event-name">{{ $m(event.name) }}</span>
+              <span class="large-header" data-test="confirm-registration-event-name">{{ $m(event.name) }}</span>
+            </v-col>
+            <v-col v-if="identityAuthenticationMessage" cols="12" class="pt-3" data-test="identity-authentication-section">
+              <span class="rc-body12">{{ $t('registration.confirmation.identityAuthentication') }}</span>
+              <br>
+              <span class="large-header">
+                <v-icon :color="identityAuthenticationMessage.color">
+                  {{ identityAuthenticationMessage.icon }}
+                </v-icon> {{ identityAuthenticationMessage.header }}
+              </span>
+              <br>
+              <span class="rc-body14">
+                <i18n :path="identityAuthenticationMessage.details" tag="div" class="data">
+                  <template #visit_bold>
+                    <span class="fw-bold">{{ $t('registration.confirmation.identityAuthentication.notVerified.details.visit') }}</span>
+                  </template>
+                  <template #phone>
+                    <span class="fw-bold">{{ phoneAssistance }}</span>
+                  </template>
+                </i18n>
+              </span>
             </v-col>
           </v-row>
 
@@ -43,6 +69,25 @@
               </i18n>
             </v-col>
           </v-row>
+
+          <div v-if="showCompleteAssessmentMessage" class="mt-9" data-test="complete-assessment-message">
+            <v-row class="mb-3">
+              <v-col cols="12">
+                <h2>{{ $t('registration.confirmation.part2') }}</h2>
+                <hr>
+              </v-col>
+            </v-row>
+            <v-row no-gutters>
+              <v-col cols="12">
+                <span class="large-header">{{ $t('registration.page.assessment') }}</span>
+              </v-col>
+            </v-row>
+            <v-row no-gutters class="yellow-container pa-6">
+              <v-col cols="12">
+                <span class="rc-body14">{{ isCRCRegistration ? $t('registration.confirmation.beginQuestionnaire.crc') : $t('registration.confirmation.beginQuestionnaire') }}</span>
+              </v-col>
+            </v-row>
+          </div>
         </div>
         <div v-if="isCRCRegistration">
           <v-icon>mdi-information</v-icon>
@@ -69,6 +114,9 @@ import { IEvent } from '@libs/entities-lib/src/registration-event';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IServerError } from '@libs/shared-lib/src/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import {
+  IdentityAuthenticationStatus,
+} from '@libs/shared-lib/types';
 import ConfirmationError from './ConfirmationError.vue';
 import { IRegistrationMenuItem } from '../../types';
 
@@ -138,8 +186,52 @@ export default Vue.extend({
     initialTitle(): string {
       return this.$registrationStore.getCurrentTab()?.titleKey || '';
     },
+
     initialButtonText(): string {
       return this.$registrationStore.getCurrentTab()?.nextButtonTextKey || '';
+    },
+
+    showCompleteAssessmentMessage(): boolean {
+      return this.$hasFeature(FeatureKeys.AuthenticationPhaseII) && !!this.$registrationStore.assessmentToComplete;
+    },
+
+    identityAuthenticationMessage(): { color?: string, icon?: string, header: TranslateResult, details: TranslateResult } {
+      const state = this.$registrationStore.tier2State;
+      if (!state?.mustDoTier2) {
+        return null;
+      }
+
+      if (!state.completed) {
+        return {
+          header: this.$t('registration.confirmation.identityAuthentication.notVerified'),
+          details: 'registration.confirmation.identityAuthentication.notVerified.details',
+          color: 'red',
+          icon: 'mdi-alert',
+        };
+      }
+
+      if (state.status === IdentityAuthenticationStatus.Passed) {
+        return {
+          header: this.$t('registration.confirmation.identityAuthentication.verified'),
+          details: '',
+          icon: 'mdi-check',
+        };
+      }
+
+      if (state.basicDocumentsOnly) {
+        return {
+          header: this.$t('registration.confirmation.identityAuthentication.pending1Document'),
+          details: 'registration.confirmation.identityAuthentication.pending1Document.details',
+          color: 'red',
+          icon: 'mdi-alert',
+        };
+      }
+
+      return {
+        header: this.$t('registration.confirmation.identityAuthentication.pending2Document'),
+        details: 'registration.confirmation.identityAuthentication.pending2Document.details',
+        icon: 'mdi-information',
+      };
     },
   },
 
@@ -193,7 +285,7 @@ export default Vue.extend({
   flex-grow: 0;
 }
 
-.registration-result {
+.large-header {
   font-size: 24px;
   font-weight: 500;
 }

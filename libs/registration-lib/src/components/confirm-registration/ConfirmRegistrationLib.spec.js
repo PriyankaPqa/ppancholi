@@ -2,6 +2,7 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { mockEvent } from '@libs/entities-lib/registration-event';
 import { mockServerError } from '@libs/services-lib/src/http-client';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from './ConfirmRegistrationLib.vue';
 
 const localVue = createLocalVue();
@@ -32,6 +33,54 @@ describe('ConfirmRegistrationLib.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         computed,
+      });
+    });
+
+    describe('complete-assessment-message', () => {
+      it('should render depending on showCompleteAssessmentMessage', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            showCompleteAssessmentMessage: () => false,
+          },
+        });
+
+        let component = wrapper.findDataTest('complete-assessment-message');
+        expect(component.exists()).toBeFalsy();
+
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            showCompleteAssessmentMessage: () => true,
+          },
+        });
+
+        component = wrapper.findDataTest('complete-assessment-message');
+        expect(component.text()).toContain('registration.page.assessment');
+      });
+    });
+
+    describe('identity-authentication-section', () => {
+      it('should render depending on identityAuthenticationMessage', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            identityAuthenticationMessage: () => null,
+          },
+        });
+
+        let component = wrapper.findDataTest('identity-authentication-section');
+        expect(component.exists()).toBeFalsy();
+
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            identityAuthenticationMessage: () => ({ header: 'identity-authentication-section' }),
+          },
+        });
+
+        component = wrapper.findDataTest('identity-authentication-section');
+        expect(component.text()).toContain('registration.confirmation.identityAuthentication');
       });
     });
 
@@ -117,6 +166,68 @@ describe('ConfirmRegistrationLib.vue', () => {
     describe('associationMode', () => {
       it('returns the proper data', async () => {
         expect(wrapper.vm.associationMode).toEqual(wrapper.vm.$registrationStore.householdAssociationMode);
+      });
+    });
+
+    describe('showCompleteAssessmentMessage', () => {
+      it('returns the proper data according to flag and assessmentToComplete', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          featureList: [FeatureKeys.AuthenticationPhaseII],
+        });
+        wrapper.vm.$registrationStore.assessmentToComplete = true;
+        expect(wrapper.vm.showCompleteAssessmentMessage).toBeTruthy();
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          featureList: [],
+        });
+        wrapper.vm.$registrationStore.assessmentToComplete = true;
+        expect(wrapper.vm.showCompleteAssessmentMessage).toBeFalsy();
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          featureList: [FeatureKeys.AuthenticationPhaseII],
+        });
+        wrapper.vm.$registrationStore.assessmentToComplete = false;
+        expect(wrapper.vm.showCompleteAssessmentMessage).toBeFalsy();
+      });
+    });
+
+    describe('identityAuthenticationMessage', () => {
+      it('returns the proper data according to tier2Completed and mustDoTier2authentication', async () => {
+        wrapper.vm.$registrationStore.tier2State = { mustDoTier2: false };
+        expect(wrapper.vm.identityAuthenticationMessage).toBeFalsy();
+
+        wrapper.vm.$registrationStore.tier2State = { mustDoTier2: true, completed: false };
+        expect(wrapper.vm.identityAuthenticationMessage).toEqual({
+          header: 'registration.confirmation.identityAuthentication.notVerified',
+          details: 'registration.confirmation.identityAuthentication.notVerified.details',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+
+        wrapper.vm.$registrationStore.tier2State = { mustDoTier2: true, completed: true, status: 1 };
+        expect(wrapper.vm.identityAuthenticationMessage).toEqual({
+          header: 'registration.confirmation.identityAuthentication.verified',
+          details: '',
+          icon: 'mdi-check',
+        });
+
+        wrapper.vm.$registrationStore.tier2State = { mustDoTier2: true, completed: true, status: 0, basicDocumentsOnly: true };
+        expect(wrapper.vm.identityAuthenticationMessage).toEqual({
+          header: 'registration.confirmation.identityAuthentication.pending1Document',
+          details: 'registration.confirmation.identityAuthentication.pending1Document.details',
+          color: 'red',
+          icon: 'mdi-alert',
+        });
+
+        wrapper.vm.$registrationStore.tier2State = { mustDoTier2: true, completed: true, status: 0, basicDocumentsOnly: false };
+        expect(wrapper.vm.identityAuthenticationMessage).toEqual({
+          header: 'registration.confirmation.identityAuthentication.pending2Document',
+          details: 'registration.confirmation.identityAuthentication.pending2Document.details',
+          icon: 'mdi-information',
+        });
       });
     });
 

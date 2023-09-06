@@ -136,10 +136,15 @@ describe('Individual.vue', () => {
     });
 
     describe('skipAuthentication', () => {
-      it('calls next', async () => {
+      it('calls next if confirmed', async () => {
         wrapper.vm.next = jest.fn();
         await wrapper.vm.skipAuthentication();
         expect(wrapper.vm.next).toHaveBeenCalled();
+
+        jest.clearAllMocks();
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.skipAuthentication();
+        expect(wrapper.vm.next).not.toHaveBeenCalled();
       });
     });
 

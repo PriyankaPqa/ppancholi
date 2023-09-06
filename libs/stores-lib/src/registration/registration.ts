@@ -8,7 +8,7 @@ import { IRegistrationMenuItem, TabId } from '@libs/registration-lib/types/inter
 import Vue, { ref, Ref } from 'vue';
 import { IVueI18n, TranslateResult } from 'vue-i18n';
 import {
-  EOptionItemStatus, ERegistrationMode, IOptionItemData, IServerError,
+  EOptionItemStatus, ERegistrationMode, IOptionItemData, IServerError, IdentityAuthenticationStatus,
 } from '@libs/shared-lib/types';
 import { IEventData, IEventData as IRegistrationEventData, RegistrationEvent } from '@libs/entities-lib/registration-event';
 import { Status } from '@libs/entities-lib/base';
@@ -81,6 +81,8 @@ export function storeFactory({
     const assessmentToComplete = ref(null) as Ref<{ registrationAssessment: IRegistrationAssessment, assessmentForm: IAssessmentFormEntity }>;
     const allTabs = ref(_cloneDeep(pTabs)) as Ref<IRegistrationMenuItem[]>;
     const duplicateResult = ref(null) as Ref<ICheckForPossibleDuplicateResponse>;
+    const tier2State = ref({ mustDoTier2: null, completed: false }) as
+      Ref<{ mustDoTier2: boolean, completed: boolean, basicDocumentsOnly: boolean, status: IdentityAuthenticationStatus }>;
 
     function isDuplicateError(): boolean {
       if (duplicateResult.value?.duplicateFound && (duplicateResult.value.registeredToEvent || (!duplicateResult.value.maskedAlternatePhoneNumber
@@ -604,6 +606,8 @@ export function storeFactory({
         registrationResponse.value = result;
         registrationErrors.value = null;
 
+        tier2State.value.mustDoTier2 = result?.mustDoTier2authentication;
+
         // BE will decide whether a tier 2 authentication should occur - if so a tab is inserted
         if (result?.mustDoTier2authentication) {
           tabs.value.splice(currentTabIndex.value + 1, 0, tier2Tab());
@@ -805,6 +809,7 @@ export function storeFactory({
 
     return {
       duplicateResult,
+      tier2State,
       isDuplicateError,
       containsErrorCode,
       isPrivacyAgreed,
