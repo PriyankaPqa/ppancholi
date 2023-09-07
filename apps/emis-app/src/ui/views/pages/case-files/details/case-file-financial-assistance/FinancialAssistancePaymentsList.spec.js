@@ -38,7 +38,6 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
-
       },
       data() {
         return {
@@ -288,12 +287,12 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         const data = [mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance()];
         data[1].entity.approvalStatus = 2;
         await mountWrapper();
-        wrapper.vm.combinedFinancialAssistancePaymentStore.getByIds = jest.fn(() => data);
         jest.clearAllMocks();
-        await wrapper.setData({ allItemsIds: ['abc'] });
+        wrapper.vm.combinedFinancialAssistancePaymentStore.getByIds = jest.fn(() => data);
+        await wrapper.vm.$nextTick();
         expect(wrapper.vm.itemsToSubmit).toEqual([data[0], data[2]]);
         expect(wrapper.vm.combinedFinancialAssistancePaymentStore.getByIds).toHaveBeenCalledWith(
-          ['abc'],
+          wrapper.vm.allItemsIds,
           {
             baseDate: null, onlyActive: true, prependPinnedItems: true, parentId: { caseFileId: 'mock-cf-id' },
           },
@@ -637,6 +636,8 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     describe('created', () => {
       it('should call storage for all items', async () => {
         await mountWrapper();
+        wrapper.vm.initContainsActiveTables = jest.fn();
+        await wrapper.vm.$nextTick();
         expect(wrapper.vm.combinedFinancialAssistancePaymentStore.search).toHaveBeenCalledWith(
           { filter: { 'Entity/CaseFileId': wrapper.vm.id } },
         );
