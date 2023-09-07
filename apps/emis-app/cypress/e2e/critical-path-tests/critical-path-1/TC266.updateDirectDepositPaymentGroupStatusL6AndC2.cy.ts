@@ -103,6 +103,14 @@ describe('#TC266# - Update Direct Deposit payment group status - L6 and C2', { t
           updatePaymentGroupStatusTo({
             paymentStatus: 'New',
           });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'Completed',
+          });
+
+          updatePaymentGroupStatusTo({
+            paymentStatus: 'New',
+          });
         });
       });
     }

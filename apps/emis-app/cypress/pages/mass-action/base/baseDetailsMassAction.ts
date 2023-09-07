@@ -12,6 +12,8 @@ export enum DataTest {
   dialogCancel = 'dialog-cancel-action',
   failures = 'failures',
   downloadButton = 'invalidDownloadButton',
+  processLabelOne = 'processLabelOne',
+  processLabelTwo = 'processLabelTwo',
   }
 
   export class BaseDetailsMassAction {
@@ -40,6 +42,10 @@ export enum DataTest {
     private failures = { selector: DataTest.failures };
 
     private downloadButton = { selector: DataTest.downloadButton };
+
+    private processLabelOne = { selector: DataTest.processLabelOne };
+
+    private processLabelTwo = { selector: DataTest.processLabelTwo };
 
     public getMassActionName() {
       return cy.getByDataTest(this.name).invoke('text').then((text) => text.trim());
@@ -119,5 +125,13 @@ export enum DataTest {
 
     public getInvalidCasefilesDownloadButton() {
       return cy.getByDataTest(this.downloadButton);
+    }
+
+    public getPreProcessingLabelOne() {
+      return cy.getByDataTest(this.processLabelOne).invoke('text').then((text) => text.trim());
+    }
+
+    public getPreProcessingLabelTwo() {
+      return cy.getByDataTest(this.processLabelTwo).invoke('text').then((text) => text.trim());
     }
   }

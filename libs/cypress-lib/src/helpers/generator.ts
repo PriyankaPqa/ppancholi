@@ -41,3 +41,9 @@ export function generateRandomEventName() {
 export function generateRandomTeamName() {
   return `test-auto-team-${getCurrentDateString()}-s${getRandomNumber()}`;
 }
+
+export function generateCSVContent<T>(data: T[]): string {
+  const header = Object.keys(data[0]).join(',') + '\n';
+  const rows = data.map(entry => Object.values(entry).join(',')).join('\n');
+  return header + rows;
+}
