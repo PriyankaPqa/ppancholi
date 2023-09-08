@@ -322,6 +322,30 @@ async function getJiraItemById(id) {
   }
 }
 
+async function verifyJiraAuth () {
+  return new Promise((resolve, reject) => {
+    axios.get(`${jiraAPIConfig.baseUrl}/rest/api/latest/myself`, { headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Basic ${Buffer.from(`:${jiraAPIConfig.email}:${jiraAPIConfig.apiToken}`).toString('base64')}`, // Use Bearer Token
+      }, })
+      .then((response) => {
+        if (response.status === 200) {
+          console.log("JIRA authenticated successfully");
+          resolve(true);
+        } else {
+          console.error(`JIRA authentication failed with status code: ${response.status}`);
+          console.error(response.data);
+          resolve(false);
+        }
+      })
+      .catch((error) => {
+        console.error("Jira authentication error:", error.message);
+        resolve(false);
+      });
+  });
+
+}
+
 async function hasJiraItemStatus(id, status) {
   const item = await getJiraItemById(id);
   if (item) {
@@ -345,8 +369,12 @@ const mode = prompt(`Pick you mode (preview: ${Mode.preview}, edit:${Mode.edit},
 if (mode === Mode.preview) {
   preview();
 } else if (mode === Mode.edit) {
-  preview()
-    .then(([benefArr, emisArr]) => {
+  verifyJiraAuth().then((jiraOk) => {
+    if (!jiraOk) {
+      process.exit(1);
+    }
+    preview()
+      .then(([benefArr, emisArr]) => {
       emisToAdd = prompt("Enter values to add for emis (comma separated): ")
         .split(",")
         .filter(v => v !== '');
@@ -370,23 +398,29 @@ if (mode === Mode.preview) {
       confirmAndProceed();
 
     })
+  })
 }
 else if (mode === Mode.clean) {
-  console.log('Starting cleaning process');
-  preview()
-    .then(([benefArr, emisArr]) => {
-      filterJiraItemsByStatus(benefArr, jiraStatusCleanTarget).then((items) => {
-        console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (benef-app)`);
-        benefToRemove = items;
-        console.log(items)
-        filterJiraItemsByStatus(emisArr, jiraStatusCleanTarget).then((items) => {
-          console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (emis-app)`);
-          emisToRemove = items;
-          console.log(items);
-          confirmAndProceed();
+  verifyJiraAuth().then((jiraOk) => {
+    if (!jiraOk) {
+      process.exit(1);
+    }
+    console.log('Starting cleaning process');
+    preview()
+      .then(([benefArr, emisArr]) => {
+        filterJiraItemsByStatus(benefArr, jiraStatusCleanTarget).then((items) => {
+          console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (benef-app)`);
+          benefToRemove = items;
+          console.log(items)
+          filterJiraItemsByStatus(emisArr, jiraStatusCleanTarget).then((items) => {
+            console.log(`The following feature branches are ${jiraStatusCleanTarget} and will be deleted (emis-app)`);
+            emisToRemove = items;
+            console.log(items);
+            confirmAndProceed();
+          })
         })
-      })
-    });
+      });
+  })
 }
 
  else {
