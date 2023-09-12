@@ -1,5 +1,8 @@
 <template>
+  <notification-center
+    v-if="showNotificationCenter" />
   <v-navigation-drawer
+    v-else-if="show"
     :value="show"
     app
     right
@@ -182,6 +185,9 @@ export default Vue.extend({
   computed: {
     show(): boolean {
       return useDashboardStore().rightMenuVisible;
+    },
+    showNotificationCenter(): boolean {
+      return useDashboardStore().notificationCenterVisible;
     },
     user(): IUser {
       return useUserStore().getUser();

@@ -30,7 +30,11 @@ describe('RightMenu.vue', () => {
   };
 
   beforeEach(async () => {
-    await mountWrapper(true);
+    await mountWrapper(true, {
+      computed: {
+        show: () => true,
+      },
+    });
   });
 
   afterEach(() => {
@@ -77,6 +81,9 @@ describe('RightMenu.vue', () => {
         wrapper = mount(Component, {
           localVue,
           pinia: getPiniaForUser('noRole'),
+          computed: {
+            show: () => true,
+          },
         });
         const role = wrapper.find('[data-test="rightMenu__role"]');
 
