@@ -168,7 +168,7 @@ extend('birthday', {
       return false;
     }
 
-    const dateFnsBirthdate = helpers.getBirthDateDateFnsObject(birthdate);
+    const dateFnsBirthdate = helpers.parseDateObject(birthdate);
     if (isValidDate(dateFnsBirthdate)) {
       const dayStart = startOfDay(new Date());
       if (isSameDay(dateFnsBirthdate, dayStart) || isAfter(dateFnsBirthdate, dayStart)) {
@@ -188,7 +188,7 @@ extend('minimumAge', {
       return true;
     }
 
-    const dateFnsBirthdate = helpers.getBirthDateDateFnsObject(birthdate);
+    const dateFnsBirthdate = helpers.parseDateObject(birthdate);
     const now = endOfDay(new Date());
     const nowSubYears = subYears(now, age);
 

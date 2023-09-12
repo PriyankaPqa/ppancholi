@@ -83,7 +83,7 @@ const regex = /^([a-zA-Z]\d[a-zA-Z]\s?\d[a-zA-Z]\d)$/;
 };
 
 export const isValidBirthday = (birthdate: IBirthDate, errorMsg: string, errors: string[]) => {
-  const dateFnsBirthdate = birthdateHelper.getBirthDateDateFnsObject(birthdate);
+  const dateFnsBirthdate = birthdateHelper.parseDateObject(birthdate);
   const dayStart = startOfDay(new Date());
   const valid = birthdate.year > 0 && isValid(dateFnsBirthdate) && !(isSameDay(dateFnsBirthdate, dayStart) || isAfter(dateFnsBirthdate, dayStart));
   if (!valid) {
@@ -97,7 +97,7 @@ export const hasMinimumAge = (birthdate: IBirthDate, errorMsg: string, errors: s
   }
 
   const age = MIN_AGE_REGISTRATION;
-  const dateFnsBirthdate = birthdateHelper.getBirthDateDateFnsObject(birthdate);
+  const dateFnsBirthdate = birthdateHelper.parseDateObject(birthdate);
   const now = endOfDay(new Date());
   const nowSubYears = subYears(now, age);
   if (isSameDay(dateFnsBirthdate, nowSubYears) || isBefore(dateFnsBirthdate, nowSubYears)) {
