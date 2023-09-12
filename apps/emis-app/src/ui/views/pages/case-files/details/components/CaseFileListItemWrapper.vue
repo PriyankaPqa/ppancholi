@@ -142,8 +142,7 @@ export default Vue.extend({
     displaySystemAdminOnly() : boolean {
       if (!this.isCaseNote) {
         const cfActivity = this.item as ICaseFileActivity;
-
-        return cfActivity.activityType === CaseFileActivityType.FinancialAssistancePayment && cfActivity.role.name.translation.en === 'System Admin';
+        return cfActivity.activityType === CaseFileActivityType.FinancialAssistancePayment && cfActivity.triggeredByMassAction;
       }
       return false;
     },

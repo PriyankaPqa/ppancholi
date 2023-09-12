@@ -115,6 +115,7 @@ export interface ICaseFileActivity {
   user: ICaseFileActivityUser;
   role: IIdMultilingualName;
   created: Date | string;
+  triggeredByMassAction?: boolean;
   activityType: CaseFileActivityType;
   details: Record<string, unknown>;
 }
