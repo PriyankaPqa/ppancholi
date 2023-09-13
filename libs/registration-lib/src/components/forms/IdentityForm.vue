@@ -12,6 +12,7 @@
         v-model="formCopy.firstName"
         :data-test="`${prefixDataTest}__firstName`"
         :rules="rules.firstName"
+        :disabled="nameDobDisabled"
         :label="`${$t('registration.personal_info.firstName')}*`"
         @input="capitalize('firstName')" />
     </v-col>
@@ -21,6 +22,7 @@
         v-model="formCopy.middleName"
         :data-test="`${prefixDataTest}__middleName`"
         :rules="rules.middleName"
+        :disabled="nameDobDisabled"
         :label="$t('registration.personal_info.middleName')"
         @input="capitalize('middleName')" />
     </v-col>
@@ -29,6 +31,7 @@
       <v-text-field-with-validation
         v-model="formCopy.lastName"
         :rules="rules.lastName"
+        :disabled="nameDobDisabled"
         :data-test="`${prefixDataTest}__lastName`"
         :label="`${$t('registration.personal_info.lastName')}*`"
         @input="capitalize('lastName')" />
@@ -41,6 +44,7 @@
         v-model="formCopy.preferredName"
         :data-test="`${prefixDataTest}__preferredName`"
         :rules="rules.preferredName"
+        :disabled="nameDobDisabled"
         :label="$t('registration.personal_info.preferredName')"
         @input="capitalize('preferredName')" />
     </v-col>
@@ -50,6 +54,7 @@
         v-model="formCopy.gender"
         :data-test="`${prefixDataTest}__gender`"
         :items="genderItems"
+        :disabled="nameDobDisabled"
         :item-text="(item) => $m(item.name)"
         return-object
         :rules="rules.gender"
@@ -60,6 +65,7 @@
       <v-text-field-with-validation
         v-if="formCopy.gender && formCopy.gender.isOther"
         v-model="formCopy.genderOther"
+        :disabled="nameDobDisabled"
         :data-test="`${prefixDataTest}__genderOther`"
         :rules="rules.genderOther"
         :label="`${$t('registration.personal_info.gender.other')}*`" />
@@ -77,6 +83,7 @@
             v-model="formCopy.birthDate.month"
             :data-test="`${prefixDataTest}__month`"
             :items="months"
+            :disabled="nameDobDisabled"
             :item-text="(item) => $t(item.label)"
             item-value="number"
             :rules="rules.month"
@@ -86,6 +93,7 @@
           <v-text-field-with-validation
             v-model="formCopy.birthDate.day"
             :data-test="`${prefixDataTest}__day`"
+            :disabled="nameDobDisabled"
             type="number"
             min="1"
             max="31"
@@ -96,6 +104,7 @@
           <v-text-field-with-validation
             v-model="formCopy.birthDate.year"
             :data-test="`${prefixDataTest}__year`"
+            :disabled="nameDobDisabled"
             type="number"
             min="1901"
             :rules="rules.year"
@@ -148,6 +157,11 @@ const vueComponent: VueConstructor = Vue.extend({
     genderItems: {
       type: Array as () => IOptionItemData[],
       required: true,
+    },
+
+    nameDobDisabled: {
+      type: Boolean,
+      default: false,
     },
 
   },
