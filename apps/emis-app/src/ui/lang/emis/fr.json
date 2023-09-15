@@ -2294,6 +2294,8 @@
     "notifications.mark_read": "Marquer comme lu",
     "notifications.mark_unread": "Marquer comme non lu",
     "notifications.read": "Lu",
+    "notifications.subjects.new_task": "",
+    "notifications.subjects.urgent_task": "",
     "notifications.title": "Notifications",
     "notifications.unread": "Non lu",
     "pageNotFound.message": "Cette page n'existe pas.",

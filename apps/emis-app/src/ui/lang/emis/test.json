@@ -2294,6 +2294,8 @@
     "notifications.mark_read": "",
     "notifications.mark_unread": "",
     "notifications.read": "",
+    "notifications.subjects.new_task": "",
+    "notifications.subjects.urgent_task": "",
     "notifications.title": "",
     "notifications.unread": "",
     "pageNotFound.message": "pageNotFound.message",

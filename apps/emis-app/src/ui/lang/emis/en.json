@@ -2294,6 +2294,8 @@
     "notifications.mark_read": "Mark as read",
     "notifications.mark_unread": "Mark as unread",
     "notifications.read": "Read",
+    "notifications.subjects.new_task": "You have new task(s)",
+    "notifications.subjects.urgent_task": "You have urgent task(s)",
     "notifications.title": "Notifications",
     "notifications.unread": "Unread",
     "pageNotFound.message": "This page doesn't exist.",

@@ -27,14 +27,12 @@ describe('RightMenu.vue', () => {
       pinia,
       ...otherOptions,
     });
+
+    wrapper.vm.show = true;
   };
 
   beforeEach(async () => {
-    await mountWrapper(true, {
-      computed: {
-        show: () => true,
-      },
-    });
+    await mountWrapper(true);
   });
 
   afterEach(() => {
@@ -82,7 +80,10 @@ describe('RightMenu.vue', () => {
           localVue,
           pinia: getPiniaForUser('noRole'),
           computed: {
-            show: () => true,
+            show: { get() {
+              return true;
+            },
+            set() {} },
           },
         });
         const role = wrapper.find('[data-test="rightMenu__role"]');
@@ -104,15 +105,6 @@ describe('RightMenu.vue', () => {
         const dd = wrapper.findDataTest('rightMenu__tenantdd');
         await dd.vm.$emit('change');
         expect(wrapper.vm.changeTenant).toHaveBeenCalledTimes(1);
-      });
-
-      test('close button closes the sidebar', async () => {
-        dashboardStore.rightMenuVisible = true;
-
-        const button = wrapper.find('[data-test="closeButton"]');
-        await button.trigger('click');
-
-        expect(dashboardStore.rightMenuVisible).toBe(false);
       });
 
       test('the logout button dispatches the logout action and redirects to the sign in page', async () => {
@@ -144,6 +136,22 @@ describe('RightMenu.vue', () => {
 
   describe('Computed', () => {
     userStore.getUserId = jest.fn(() => 'id');
+
+    it('should show when right menu visible is set', () => {
+      dashboardStore.rightMenuVisible = true;
+      expect(wrapper.vm.show).toBeTruthy();
+    });
+
+    it('should not show when right menu visible is not set', () => {
+      dashboardStore.rightMenuVisible = false;
+      expect(wrapper.vm.show).toBeFalsy();
+    });
+
+    it('should update store when show setter is called', () => {
+      dashboardStore.rightMenuVisible = true;
+      wrapper.vm.show = false;
+      expect(dashboardStore.rightMenuVisible).toBeFalsy();
+    });
 
     describe('userAccount', () => {
       it('should get data frome store this correct id', () => {

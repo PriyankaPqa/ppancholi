@@ -1,126 +1,106 @@
 <template>
-  <notification-center
-    v-if="showNotificationCenter" />
-  <v-navigation-drawer
-    v-else-if="show"
-    :value="show"
-    app
-    right
-    temporary
-    :width="$vuetify.breakpoint.xs ? '100%' : '450px'"
-    :style="$vuetify.breakpoint.xs ? '' : `top: ${$vuetify.application.top}px`"
-    :height="$vuetify.breakpoint.xs ? '100%' : `calc(100vh - ${$vuetify.application.top}px)`"
-    @input="updateShow">
-    <v-toolbar color="grey darken-2" height="56" flat dark>
-      <v-toolbar-title class="rc-title-3 white--text">
-        {{ $t('rightmenu.title') }}
-      </v-toolbar-title>
-      <v-spacer />
-      <v-btn icon data-test="closeButton" @click="updateShow(false)">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-toolbar>
+  <right-menu-template v-if="show" title-key="rightmenu.title" :show.sync="show">
+    <template #main>
+      <div class="pa-4">
+        <div class="flex-row align-start">
+          <v-avatar class="mr-4" color="grey darken-2" size="32" data-test="rightMenu__avatar">
+            <span class="rc-body12 fw-medium white--text">
+              {{ user.getInitials() }}
+            </span>
+          </v-avatar>
 
-    <div class="pa-4">
-      <div class="flex-row align-start">
-        <v-avatar class="mr-4" color="grey darken-2" size="32" data-test="rightMenu__avatar">
-          <span class="rc-body12 fw-medium white--text">
-            {{ user.getInitials() }}
-          </span>
-        </v-avatar>
-
-        <div>
-          <div class="rc-title-3 fw-medium break-word" data-test="rightMenu__userName">
-            {{ user.getFullName() }}
+          <div>
+            <div class="rc-title-3 fw-medium break-word" data-test="rightMenu__userName">
+              {{ user.getFullName() }}
+            </div>
           </div>
         </div>
-      </div>
 
-      <v-divider v-if="user.email" class="my-4" />
+        <v-divider v-if="user.email" class="my-4" />
 
-      <div v-if="user.email" class="flex-row align-start align-center">
-        <v-icon small>
-          mdi-email
-        </v-icon>
-        <div class="rc-body14 break-word pl-2" data-test="rightMenu__email">
-          {{ user.email }}
+        <div v-if="user.email" class="flex-row align-start align-center">
+          <v-icon small>
+            mdi-email
+          </v-icon>
+          <div class="rc-body14 break-word pl-2" data-test="rightMenu__email">
+            {{ user.email }}
+          </div>
         </div>
-      </div>
 
-      <v-divider class="my-4" />
+        <v-divider class="my-4" />
 
-      <div class="flex-row align-start align-center">
-        <v-icon small>
-          mdi-account-circle
-        </v-icon>
-        <div class="rc-body14 break-word pl-2" data-test="rightMenu__role">
-          <template v-if="user.hasRole(UserRoles.no_role)">
-            {{ $t('rightmenu.noRoleAssigned') }}
-          </template>
-          <template v-else>
-            {{ userAccountMetadata ? $m(userAccountMetadata.roleName) : '' }}
-          </template>
-        </div>
-      </div>
-
-      <v-divider class="my-4" />
-
-      <div>
-        <div class="rc-body12">
-          {{ $t('rightmenu.switchTenant') }}
-        </div>
-        <div data-test="rightMenu__tenant">
-          <v-select
-            v-model="currentTenantId"
-            data-test="rightMenu__tenantdd"
-            :items="tenants"
-            item-value="id"
-            outlined
-            @change="changeTenant()">
-            <template #item="data">
-              <div class="flex-row justify-space-between full-width">
-                <div>
-                  {{ $m(data.item.name) }}
-                </div>
-                <v-icon v-if="currentTenantId === data.item.id" small color="status_success">
-                  mdi-check-circle
-                </v-icon>
-              </div>
+        <div class="flex-row align-start align-center">
+          <v-icon small>
+            mdi-account-circle
+          </v-icon>
+          <div class="rc-body14 break-word pl-2" data-test="rightMenu__role">
+            <template v-if="user.hasRole(UserRoles.no_role)">
+              {{ $t('rightmenu.noRoleAssigned') }}
             </template>
-            <template #selection="data">
-              <div class="flex-row justify-space-between full-width">
-                <div>
-                  {{ $m(data.item.name) }}
-                </div>
-                <v-icon v-if="currentTenantId === data.item.id" small color="status_success">
-                  mdi-check-circle
-                </v-icon>
-              </div>
+            <template v-else>
+              {{ userAccountMetadata ? $m(userAccountMetadata.roleName) : '' }}
             </template>
-          </v-select>
+          </div>
         </div>
+
+        <v-divider class="my-4" />
+
+        <div>
+          <div class="rc-body12">
+            {{ $t('rightmenu.switchTenant') }}
+          </div>
+          <div data-test="rightMenu__tenant">
+            <v-select
+              v-model="currentTenantId"
+              data-test="rightMenu__tenantdd"
+              :items="tenants"
+              item-value="id"
+              outlined
+              @change="changeTenant()">
+              <template #item="data">
+                <div class="flex-row justify-space-between full-width">
+                  <div>
+                    {{ $m(data.item.name) }}
+                  </div>
+                  <v-icon v-if="currentTenantId === data.item.id" small color="status_success">
+                    mdi-check-circle
+                  </v-icon>
+                </div>
+              </template>
+              <template #selection="data">
+                <div class="flex-row justify-space-between full-width">
+                  <div>
+                    {{ $m(data.item.name) }}
+                  </div>
+                  <v-icon v-if="currentTenantId === data.item.id" small color="status_success">
+                    mdi-check-circle
+                  </v-icon>
+                </div>
+              </template>
+            </v-select>
+          </div>
+        </div>
+
+        <v-divider v-if="isDev" class="my-4" />
+
+        <v-select
+          v-if="isDev"
+          outlined
+          :items="[
+            { text: 'No role', value: '' },
+            { text: UserRoles.level1, value: UserRoles.level1 },
+            { text: UserRoles.level2, value: UserRoles.level2 },
+            { text: UserRoles.level3, value: UserRoles.level3 },
+            { text: UserRoles.level4, value: UserRoles.level4 },
+            { text: UserRoles.level5, value: UserRoles.level5 },
+            { text: UserRoles.level6, value: UserRoles.level6 },
+            { text: UserRoles.contributorIM, value: UserRoles.contributorIM },
+            { text: UserRoles.contributorFinance, value: UserRoles.contributorFinance },
+          ]"
+          @change="useUserStore().setRole($event)" />
       </div>
-
-      <v-divider v-if="isDev" class="my-4" />
-
-      <v-select
-        v-if="isDev"
-        outlined
-        :items="[
-          { text: 'No role', value: '' },
-          { text: UserRoles.level1, value: UserRoles.level1 },
-          { text: UserRoles.level2, value: UserRoles.level2 },
-          { text: UserRoles.level3, value: UserRoles.level3 },
-          { text: UserRoles.level4, value: UserRoles.level4 },
-          { text: UserRoles.level5, value: UserRoles.level5 },
-          { text: UserRoles.level6, value: UserRoles.level6 },
-          { text: UserRoles.contributorIM, value: UserRoles.contributorIM },
-          { text: UserRoles.contributorFinance, value: UserRoles.contributorFinance },
-        ]"
-        @change="useUserStore().setRole($event)" />
-    </div>
-
-    <template #append>
+    </template>
+    <template #footer>
       <div class="rc-body12 pl-4 pb-1">
         {{ $t('rightmenu.version') }}: {{ appVersion }}
       </div>
@@ -152,7 +132,7 @@
         </v-list-item-content>
       </v-list-item>
     </template>
-  </v-navigation-drawer>
+  </right-menu-template>
 </template>
 
 <script lang="ts">
@@ -169,9 +149,14 @@ import { useUserStore } from '@/pinia/user/user';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useTenantSettingsStore } from '@/pinia/tenant-settings/tenant-settings';
 import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
+import RightMenuTemplate from './RightMenuTemplate.vue';
 
 export default Vue.extend({
   name: 'RightMenu',
+
+  components: {
+    RightMenuTemplate,
+  },
 
   data() {
     return {
@@ -183,11 +168,13 @@ export default Vue.extend({
   },
 
   computed: {
-    show(): boolean {
-      return useDashboardStore().rightMenuVisible;
-    },
-    showNotificationCenter(): boolean {
-      return useDashboardStore().notificationCenterVisible;
+    show: {
+      get(): boolean {
+        return useDashboardStore().rightMenuVisible;
+      },
+      set(value: boolean) {
+        useDashboardStore().rightMenuVisible = value;
+      },
     },
     user(): IUser {
       return useUserStore().getUser();
@@ -224,10 +211,6 @@ export default Vue.extend({
   },
 
   methods: {
-    updateShow(value: boolean) {
-      useDashboardStore().rightMenuVisible = value;
-    },
-
     accountSettings() {
       if (this.$route.name !== routes.accountSettings.home.name) {
         this.$router.push({

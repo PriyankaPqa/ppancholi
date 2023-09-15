@@ -1,10 +1,11 @@
 import { NotificationEntity } from './notification';
 import { mockNotificationEntity } from './notification.mock';
+import utils from '../utils';
 
 const mockNotification = mockNotificationEntity();
 
 describe('>>> Notification', () => {
-  describe('>> constructor', () => {
+  describe('>> constructor (from entity)', () => {
     it('should instantiate id', () => {
       const notification = new NotificationEntity(mockNotification);
       expect(notification.id).toBe(mockNotification.id);
@@ -63,6 +64,19 @@ describe('>>> Notification', () => {
     it('should instantiate expires after', () => {
       const notification = new NotificationEntity(mockNotification);
       expect(notification.expiresAfterDateTimeUtc).toEqual(mockNotification.expiresAfterDateTimeUtc);
+    });
+  });
+  describe('>> constructor (no parameters)', () => {
+    const emptyMultilingual = utils.initMultilingualAttributes();
+
+    it('should instantiate subject', () => {
+      const notification = new NotificationEntity();
+      expect(notification.subject).toEqual(emptyMultilingual);
+    });
+
+    it('should instantiate category', () => {
+      const notification = new NotificationEntity();
+      expect(notification.category).toEqual(emptyMultilingual);
     });
   });
 });

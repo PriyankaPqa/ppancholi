@@ -1,64 +1,54 @@
 <template>
-  <v-navigation-drawer
-    :value="show"
-    app
-    right
-    temporary
-    :width="$vuetify.breakpoint.xs ? '100%' : '450px'"
-    :style="$vuetify.breakpoint.xs ? '' : `top: ${$vuetify.application.top}px`"
-    :height="$vuetify.breakpoint.xs ? '100%' : `calc(100vh - ${$vuetify.application.top}px)`"
-    @input="updateShow">
-    <v-toolbar color="grey darken-2" height="56" flat dark>
-      <v-toolbar-title class="rc-title-3 white--text">
-        {{ $t('notifications.title') }}
-      </v-toolbar-title>
-      <v-spacer />
-      <v-btn icon data-test="close-button" @click="updateShow(false)">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-toolbar>
-    <rc-tabs>
-      <rc-tab
-        v-for="tab in tabs"
-        :key="tab"
-        :label="getTabLabel(tab)"
-        :data-test="`notificationCenter-category--${tab}`"
-        :active="selectedTab === tab"
-        @click="switchTab(tab)" />
-    </rc-tabs>
-    <rc-page-loading v-if="initLoading" />
-    <div v-if="!initLoading" class="pa-2">
-      <div v-if="unreadNotifications.length > 0" class="d-flex justify-space-between pa-1">
-        <div class="rc-body12 fw-medium section-heading" data-test="notifications-unread-text">
-          {{ $t('notifications.unread') }}
+  <right-menu-template v-if="show" title-key="notifications.title" :show.sync="show">
+    <template slot="main">
+      <rc-tabs>
+        <rc-tab
+          v-for="tab in tabs"
+          :key="tab"
+          :label="getTabLabel(tab)"
+          :data-test="`notificationCenter-category--${tab}`"
+          :active="selectedTab === tab"
+          @click="switchTab(tab)" />
+      </rc-tabs>
+      <rc-page-loading v-if="initLoading" />
+      <div v-if="!initLoading" class="pa-2">
+        <div v-if="unreadNotifications.length > 0" class="d-flex justify-space-between pa-1">
+          <div class="rc-body12 fw-medium section-heading" data-test="notifications-unread-text">
+            {{ $t('notifications.unread') }}
+          </div>
+          <div class="rc-body14 fw-normal mark-all">
+            {{ $t('notifications.mark_all_read') }}
+          </div>
         </div>
-        <div class="rc-body14 fw-normal mark-all">
-          {{ $t('notifications.mark_all_read') }}
+        <v-col v-for="item in unreadNotifications" :key="item.id" class="pa-1 pb-3">
+          <notification-card
+            :notification="item"
+            @toggleIsRead="toggleIsRead" />
+        </v-col>
+        <div v-if="readNotifications.length > 0" class="rc-body12 fw-medium section-heading pa-1" data-test="notifications-read-text">
+          {{ $t('notifications.read') }}
+        </div>
+        <v-col v-for="item in readNotifications" :key="item.id" class="pa-1 pb-3">
+          <notification-card
+            :notification="item"
+            @toggleIsRead="toggleIsRead" />
+        </v-col>
+        <div class="d-flex justify-center">
+          <v-btn
+            color="primary"
+            class="mx-md-4 my-4"
+            data-test="notifications-load-more">
+            {{ $t('notifications.load_more') }}
+          </v-btn>
         </div>
       </div>
-      <v-col v-for="item in unreadNotifications" :key="item.id" class="pa-1 pb-3">
-        <notification-card
-          :notification="item"
-          @toggleIsRead="toggleIsRead" />
-      </v-col>
-      <div v-if="readNotifications.length > 0" class="rc-body12 fw-medium section-heading pa-1" data-test="notifications-read-text">
-        {{ $t('notifications.read') }}
+    </template>
+    <template slot="footer">
+      <div class="d-flex justify-center rc-body14 fw-normal footer-text pa-2">
+        {{ $t('notifications.all_in_message') }}
       </div>
-      <v-col v-for="item in readNotifications" :key="item.id" class="pa-1 pb-3">
-        <notification-card
-          :notification="item"
-          @toggleIsRead="toggleIsRead" />
-      </v-col>
-      <div class="d-flex justify-center">
-        <v-btn
-          color="primary"
-          class="mx-md-4 my-4"
-          data-test="notifications-load-more">
-          {{ $t('notifications.load_more') }}
-        </v-btn>
-      </div>
-    </div>
-  </v-navigation-drawer>
+    </template>
+  </right-menu-template>
 </template>
 
 <script lang="ts">
@@ -68,6 +58,7 @@ import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useNotificationStore } from '@/pinia/notification/notification';
 import { INotificationEntity, NotificationCategoryType } from '@libs/entities-lib/notification';
 import NotificationCard from '@/ui/shared-components/NotificationCard.vue';
+import RightMenuTemplate from '../views/components/layout/RightMenuTemplate.vue';
 
 export default Vue.extend({
   name: 'NotificationCenter',
@@ -77,6 +68,7 @@ export default Vue.extend({
     RcPageLoading,
     RcTabs,
     RcTab,
+    RightMenuTemplate,
   },
 
   data() {
@@ -88,8 +80,13 @@ export default Vue.extend({
   },
 
   computed: {
-    show(): boolean {
-      return useDashboardStore().notificationCenterVisible;
+    show: {
+      get(): boolean {
+        return useDashboardStore().notificationCenterVisible;
+      },
+      set(value: boolean) {
+        useDashboardStore().notificationCenterVisible = value;
+      },
     },
     tabs(): NotificationCategoryType[] {
       return [...new Set(this.notifications.map((n) => n.categoryType))];
@@ -112,10 +109,6 @@ export default Vue.extend({
   },
 
   methods: {
-    updateShow(value: boolean) {
-      useDashboardStore().notificationCenterVisible = value;
-    },
-
     async toggleIsRead(notification: INotificationEntity) {
       await useNotificationStore().updateIsRead(notification.id, notification.isRead);
     },
@@ -134,11 +127,15 @@ export default Vue.extend({
 
 <style scoped lang="scss">
   .section-heading {
-    color: (--v-grey-darken2);
+    color: var(--v-grey-darken2);
     text-transform: uppercase;
   }
 
   .mark-all {
-    color: (--v-primary-darken1);
+    color: var(--v-primary-darken1);
+  }
+
+  .footer-text {
+    color: var(--v-grey-darken4);
   }
 </style>

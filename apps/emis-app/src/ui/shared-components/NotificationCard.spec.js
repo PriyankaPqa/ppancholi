@@ -1,6 +1,7 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, mount } from '@/test/testSetup';
 import Component from '@/ui/shared-components/NotificationCard.vue';
 import { mockNotificationEntity } from '@libs/entities-lib/notification';
+import { format, utcToZonedTime } from 'date-fns-tz';
 
 const localVue = createLocalVue();
 
@@ -10,7 +11,7 @@ const mockReadNotification = mockNotificationEntity({ isRead: true });
 describe('NotificationCard.vue', () => {
   let wrapper;
   const mountWithNotification = (notification) => {
-    wrapper = shallowMount(Component, {
+    wrapper = mount(Component, {
       localVue,
       propsData: {
         notification,
@@ -24,6 +25,22 @@ describe('NotificationCard.vue', () => {
         mountWithNotification(mockNotification);
         const text = wrapper.findDataTest('notification-subject-text');
         expect(text.text()).toEqual(mockNotification.subject.translation.en);
+      });
+      it('should render expected date', () => {
+        mountWithNotification(mockNotification);
+        const text = wrapper.findDataTest('notification-created-date');
+        const dateText = format(utcToZonedTime(new Date(mockNotification.created), 'UTC'), 'MMM d, yyyy');
+        expect(text.text()).toEqual(`eventDetail.created ${dateText}`);
+      });
+      it('should checkbox with expected label when unread', () => {
+        mountWithNotification(mockNotification);
+        const checkbox = wrapper.findDataTest('notification-chk-read');
+        expect(checkbox.element.labels[0].innerHTML).toEqual('notifications.mark_read');
+      });
+      it('should checkbox with expected label when read', () => {
+        mountWithNotification(mockReadNotification);
+        const checkbox = wrapper.findDataTest('notification-chk-read');
+        expect(checkbox.element.labels[0].innerHTML).toEqual('notifications.mark_unread');
       });
     });
 

@@ -25,20 +25,15 @@ describe('NotificationCenter.vue', () => {
       localVue,
       pinia,
     });
+
+    wrapper.vm.show = true;
   };
 
   describe('Template', () => {
-    it('should update show when close button clicked', async () => {
-      await doMount();
-      wrapper.vm.updateShow = jest.fn();
-      const btn = wrapper.find('[data-test="close-button"]');
-      await btn.trigger('click');
-      expect(wrapper.vm.updateShow).toBeCalledWith(false);
-    });
     it('should switch tabs when clicked', async () => {
       await doMount();
       wrapper.vm.switchTab = jest.fn();
-      const tab = wrapper.find(`[data-test="notificationCenter-category--${NotificationCategoryType.Tasks}"]`);
+      const tab = wrapper.findDataTest(`notificationCenter-category--${NotificationCategoryType.Tasks}`);
       await tab.trigger('click');
       expect(wrapper.vm.switchTab).toBeCalledWith(NotificationCategoryType.Tasks);
     });
@@ -71,6 +66,11 @@ describe('NotificationCenter.vue', () => {
       dashboardStore.notificationCenterVisible = false;
       expect(wrapper.vm.show).toBeFalsy();
     });
+    it('should update store when show setter is called', () => {
+      dashboardStore.notificationCenterVisible = true;
+      wrapper.vm.show = false;
+      expect(dashboardStore.notificationCenterVisible).toBeFalsy();
+    });
     it('should have expected tabs from mock notification data', () => {
       expect(wrapper.vm.tabs).toEqual([NotificationCategoryType.General, NotificationCategoryType.Tasks]);
     });
@@ -85,11 +85,6 @@ describe('NotificationCenter.vue', () => {
   describe('Methods', () => {
     beforeEach(async () => {
       await doMount();
-    });
-    it('should update store when updateShow is called', () => {
-      dashboardStore.notificationCenterVisible = true;
-      wrapper.vm.updateShow(false);
-      expect(dashboardStore.notificationCenterVisible).toBeFalsy();
     });
     it('should update isRead in store when toggled', async () => {
       mockNotificationEntity.updateIsRead = jest.fn();

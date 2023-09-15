@@ -7,10 +7,12 @@
       <div class="fw-bold" data-test="notification-subject-text">
         {{ $m(notification.subject) }}
       </div>
-      <div>{{ $t('eventDetail.created') }} {{ format(utcToZonedTime(new Date(notification.created), 'UTC'), 'MMM d, yyyy') }}</div>
+      <div data-test="notification-created-date">
+        {{ $t('eventDetail.created') }} {{ format(utcToZonedTime(new Date(notification.created), 'UTC'), 'MMM d, yyyy') }}
+      </div>
     </div>
     <div class="d-flex align-center">
-      <v-checkbox v-model="notification.isRead" label="Mark as Read" @change="toggleIsRead" />
+      <v-checkbox v-model="notification.isRead" :label="$t(checkboxLabel)" data-test="notification-chk-read" @change="toggleIsRead" />
     </div>
   </v-sheet>
 </template>
@@ -39,6 +41,9 @@ export default Vue.extend({
   computed: {
     backgroundColor(): string {
       return this.notification?.isRead ? 'grey lighten5' : 'primary lighten-2';
+    },
+    checkboxLabel(): string {
+      return this.notification?.isRead ? 'notifications.mark_unread' : 'notifications.mark_read';
     },
   },
   methods: {

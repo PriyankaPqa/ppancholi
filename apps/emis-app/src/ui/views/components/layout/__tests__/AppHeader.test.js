@@ -303,6 +303,26 @@ describe('AppHeader.vue', () => {
         await button.trigger('click');
         expect(wrapper.vm.routeToRegistration).toBeCalledTimes(1);
       });
+
+      test('Clicking on the Notifications button calls handleNotificationCenter', async () => {
+        // feature must be on
+        const wrapper = mount(Component, {
+          localVue,
+          featureList: [FeatureKeys.DisplayNotificationCenter],
+          pinia,
+          vuetify,
+          mocks: {
+            $route: {
+              name: routes.events.home.name,
+            },
+            $services: services,
+          },
+        });
+        const button = wrapper.find('[data-test="right-menu-trigger-notifications"]');
+        jest.spyOn(wrapper.vm, 'handleNotificationCenter').mockImplementation(() => {});
+        await button.trigger('click');
+        expect(wrapper.vm.handleNotificationCenter).toBeCalledTimes(1);
+      });
     });
   });
 });
