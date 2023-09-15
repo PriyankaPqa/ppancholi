@@ -1,5 +1,5 @@
 <template>
-  <right-menu-template v-if="show" title-key="notifications.title" :show.sync="show">
+  <right-menu-template title-key="notifications.title" :show.sync="show">
     <template slot="main">
       <rc-tabs>
         <rc-tab
@@ -89,7 +89,7 @@ export default Vue.extend({
       },
     },
     tabs(): NotificationCategoryType[] {
-      return [...new Set(this.notifications.map((n) => n.categoryType))];
+      return [...new Set(this.notifications?.map((n) => n.categoryType))];
     },
     readNotifications(): INotificationEntity[] {
       return this.notifications?.filter((n) => n.categoryType === this.selectedTab && n.isRead === true) || [];
@@ -100,7 +100,6 @@ export default Vue.extend({
   },
 
   async created() {
-      // this.initLoading = true;
       try {
        this.notifications = await useNotificationStore().getCurrentUserNotifications();
       } finally {
