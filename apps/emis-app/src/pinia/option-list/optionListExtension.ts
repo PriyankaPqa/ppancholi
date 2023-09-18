@@ -247,6 +247,23 @@ export function getExtensionComponents(
     return null;
   }
 
+  async function setSubItemIsOther(payload: { itemId: string, subItemId: string, isOther: boolean }): Promise<IOptionItem> {
+    const { itemId, subItemId, isOther } = payload;
+    if (!list.value) {
+      throw new Error('You must set a value for list');
+    }
+
+    const data = await optionItemService.setOptionSubItemIsOther(list.value, itemId, subItemId, isOther);
+
+    if (data != null) {
+      addOrUpdateItem(data);
+
+      return data;
+    }
+
+    return null;
+  }
+
   async function setIsDefault(payload: { id: string, isDefault: boolean }): Promise<IOptionItem> {
     const { id, isDefault } = payload;
     if (!list.value) {
@@ -308,6 +325,7 @@ export function getExtensionComponents(
     updateOrderRanks,
     updateSubItemOrderRanks,
     setIsOther,
+    setSubItemIsOther,
     setIsDefault,
     setRestrictFinancial,
   };

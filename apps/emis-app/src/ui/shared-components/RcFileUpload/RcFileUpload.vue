@@ -5,6 +5,7 @@
         id="inputUpload"
         ref="input"
         v-model="localFiles"
+        data-test="upload-file"
         :counter="counter"
         :multiple="multiple"
         :show-size="showSize"

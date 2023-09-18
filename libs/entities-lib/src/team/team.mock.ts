@@ -1,4 +1,5 @@
 /* eslint-disable max-lines-per-function */
+import { IAzureCombinedSearchResult } from '@libs/shared-lib/types';
 import { IEntity, mockBaseData, Status } from '../base';
 import {
   ITeamEntity, ITeamMetadata, ITeamEvent, ITeamMember, TeamType, ITeamCombined,
@@ -130,12 +131,13 @@ export const mockCombinedTeams = (): ITeamCombined[] => [
   },
 ];
 
-export const mockTeamSearchData = () => ({
-  '@odata.context': "https://emis-search-dev.search.windows.net/indexes('index-teams')/$metadata#docs(*)",
-  '@odata.count': mockCombinedTeams().length,
+export const mockTeamSearchData: IAzureCombinedSearchResult<ITeamEntity, ITeamMetadata> = {
+  odataContext: "https://emis-search-dev.search.windows.net/indexes('index-teams')/$metadata#docs(*)",
+  odataCount: mockCombinedTeams().length,
   value: mockCombinedTeams().map((t) => ({
-    Metadata: t.metadata,
-    Entity: t.entity,
+    id: t.entity.id,
+    tenantId: t.entity.tenantId,
+    metadata: t.metadata,
+    entity: t.entity,
   })),
-}
-);
+};

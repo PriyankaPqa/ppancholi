@@ -3,6 +3,10 @@ const routes = {
     path: 'registration/:registrationLink',
     name: 'registration',
   },
+  authenticationLink: {
+    path: 'tier2/:eventId/:caseFileId',
+    name: 'authenticationLink',
+  },
   landingPage: {
     path: '',
     name: 'landingPage.name',

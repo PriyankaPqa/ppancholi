@@ -136,10 +136,15 @@ describe('Individual.vue', () => {
     });
 
     describe('skipAuthentication', () => {
-      it('calls next', async () => {
+      it('calls next if confirmed', async () => {
         wrapper.vm.next = jest.fn();
         await wrapper.vm.skipAuthentication();
         expect(wrapper.vm.next).toHaveBeenCalled();
+
+        jest.clearAllMocks();
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.skipAuthentication();
+        expect(wrapper.vm.next).not.toHaveBeenCalled();
       });
     });
 
@@ -158,11 +163,13 @@ describe('Individual.vue', () => {
         EventHub.$emit = jest.fn();
         helpers.timeout = jest.fn();
         wrapper.vm.next = jest.fn();
+        await wrapper.setData({ localSubmitLoading: true });
 
         wrapper.vm.validateForm = jest.fn(() => false);
         await wrapper.vm.validateAndNext();
         expect(EventHub.$emit).not.toHaveBeenCalled();
         expect(wrapper.vm.next).not.toHaveBeenCalled();
+        expect(wrapper.vm.localSubmitLoading).toBeFalsy();
 
         jest.clearAllMocks();
         wrapper.vm.validateForm = jest.fn(() => true);
@@ -171,11 +178,13 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.next).toHaveBeenCalled();
 
         jest.clearAllMocks();
+        await wrapper.setData({ localSubmitLoading: true });
         wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({ ...tabs()[0], id: TabId.Tier2auth }));
         await wrapper.vm.validateAndNext();
         expect(EventHub.$emit).toHaveBeenCalledWith('tier2ProcessStart');
         expect(wrapper.vm.next).not.toHaveBeenCalled();
         expect(wrapper.vm.tier2ProcessStarted).toBeTruthy();
+        expect(wrapper.vm.localSubmitLoading).toBeFalsy();
 
         jest.clearAllMocks();
         await wrapper.vm.validateAndNext();
@@ -200,6 +209,36 @@ describe('Individual.vue', () => {
           await wrapper.vm.goNext();
           expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(1);
           expect(wrapper.vm.$hasFeature).toHaveBeenCalledWith('BotProtection');
+        },
+      );
+      it(
+        'should fetch token if this is a Tier 2 link process starting',
+        async () => {
+          wrapper.vm.$refs.recaptchaSubmit = {};
+          wrapper.vm.validateAndNext = jest.fn();
+          wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
+          wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.BotProtection);
+          tenantSettingsStore.recaptcha = {
+            ipAddressIsAllowed: false,
+            clientIpAddress: '',
+          };
+
+          wrapper.vm.$registrationStore.currentTabIndex = 1;
+          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({ id: TabId.Tier2auth }));
+          await wrapper.vm.goNext();
+          expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(0);
+
+          wrapper.vm.$registrationStore.currentTabIndex = 0;
+          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({ id: 'some other' }));
+          await wrapper.vm.goNext();
+          expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(0);
+
+          wrapper.vm.$registrationStore.currentTabIndex = 0;
+          wrapper.vm.$registrationStore.getCurrentTab = jest.fn(() => ({ id: TabId.Tier2auth }));
+          await wrapper.vm.goNext();
+          expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.$hasFeature).toHaveBeenCalledWith('BotProtection');
+          expect(wrapper.vm.localSubmitLoading).toBeTruthy();
         },
       );
       it(

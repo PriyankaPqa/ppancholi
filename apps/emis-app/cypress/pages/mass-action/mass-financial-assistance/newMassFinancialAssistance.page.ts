@@ -13,6 +13,7 @@ dialogTitle = 'dialog-title',
 dialogText = 'message__line_0',
 dialogSubmit = 'dialog-submit-action',
 dialogCancel = 'dialog-cancel-action',
+uploadFile = 'upload-file',
 }
 
 export interface INewMassFinancialAssistanceFields {
@@ -34,6 +35,8 @@ export class NewMassFinancialAssistancePage extends BaseCreateMassAction {
   private modalityPayment = { selector: DataTest.modalityPayment, type: 'input' };
 
   private amountPayment = { selector: DataTest.amountPayment, type: 'input' };
+
+  private uploadFile = { selector: DataTest.uploadFile };
 
   private next = { selector: DataTest.next };
 
@@ -64,6 +67,10 @@ export class NewMassFinancialAssistancePage extends BaseCreateMassAction {
 
   public fillPaymentModality(paymentModality: string) {
     cy.searchAndSelect(DataTest.modalityPayment, paymentModality);
+  }
+
+  public uploadCSVFile() {
+    return cy.getByDataTest(this.uploadFile);
   }
 
   public getPaymentAmount() {

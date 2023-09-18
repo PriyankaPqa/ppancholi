@@ -39,10 +39,12 @@
                 <!-- buttons are in the individual page for now but we want to move them to the component eventually - we'll use events to communicate -->
                 <v-btn
                   v-if="tier2ProcessStarted"
+                  :loading="submitLoading"
                   @click="restartAuthentication()">
                   {{ $t('registration.button.select_different_id') }}
                 </v-btn>
                 <v-btn
+                  :loading="submitLoading"
                   @click="skipAuthentication()">
                   {{ $t('registration.button.skip_authentication') }}
                 </v-btn>
@@ -71,7 +73,7 @@
                 data-test="nextButton"
                 :aria-label="$t(currentTab.nextButtonTextKey)"
                 :loading="submitLoading || retrying"
-                :disabled="inlineEdit || tier2ProcessStarted"
+                :disabled="inlineEdit || (tier2ProcessStarted && !tier2ProcessCompleted)"
                 @click="goNext()">
                 {{ $t(currentTab.nextButtonTextKey) }}
               </v-btn>
@@ -154,6 +156,9 @@ export default mixins(individual).extend({
     isCaptchaAllowedIpAddress(): boolean {
       return useTenantSettingsStore().recaptcha.ipAddressIsAllowed;
     },
+    tier2ProcessCompleted(): boolean {
+      return useRegistrationStore().tier2State?.completed;
+    },
   },
 
   created() {
@@ -204,6 +209,9 @@ export default mixins(individual).extend({
     async goNext() {
       if (this.currentTab.id === TabId.PersonalInfo) {
         await this.fetchPublicToken(this.validateAndNextPersonalInfo_prepareValidation);
+      } else if (this.currentTabIndex === 0 && this.currentTab.id === TabId.Tier2auth) {
+        this.localSubmitLoading = true;
+        await this.fetchPublicToken(this.validateAndNext);
       } else if (this.tokenFetchedLast != null) {
         // if we are passed personal info we keep the token alive
         await this.fetchPublicToken(this.validateAndNext);
@@ -215,10 +223,16 @@ export default mixins(individual).extend({
 
     async skipAuthentication() {
       // user does not wish to complete the authentication process for now, we complete the registration
-      await this.next();
+      if (await this.$confirm({
+        title: this.$t('registration.tier2.skipConfirmationTitle'),
+        messages: this.$t('registration.tier2.skipConfirmationMessage'),
+      })) {
+        this.restartAuthentication();
+        await this.next();
+      }
     },
 
-    async restartAuthentication() {
+    restartAuthentication() {
       // component will restart the authentication process
       this.tier2ProcessStarted = false;
       EventHub.$emit('tier2ProcessReset');
@@ -234,14 +248,17 @@ export default mixins(individual).extend({
     },
 
     async validateAndNext() {
+      this.localSubmitLoading = false;
       const isValid = await this.validateForm();
       if (isValid) {
         if (this.currentTab.id === TabId.Tier2auth && !this.tier2ProcessStarted) {
+          this.localSubmitLoading = true;
           // component will open the iframe to the next step in the authentication - it's still within the authentication process
           EventHub.$emit('tier2ProcessStart');
           // we give a second or 2 just so the iframe shows up before the button - it just looks better
           await helpers.timeout(1500);
           this.tier2ProcessStarted = true;
+          this.localSubmitLoading = false;
           return;
         }
         await this.next();

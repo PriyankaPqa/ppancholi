@@ -10,6 +10,7 @@ import { Status } from '@libs/entities-lib/base';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { CompletionStatus as AssessmentResponseCompletionStatus } from '@libs/entities-lib/assessment-template';
 import { HouseholdStatus } from '@libs/entities-lib/household';
+import { TaskStatus } from '@libs/entities-lib/task';
 
 const localVue = createLocalVue();
 
@@ -243,6 +244,18 @@ describe('StatusChip.vue', () => {
         mountWithStatus('HouseholdStatus', HouseholdStatus.Archived);
         expect(wrapper.vm.color).toEqual(colors.chips.grey);
         expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('household.profile.householdStatus.Archived'));
+      });
+    });
+
+    describe('TaskStatus', () => {
+      it('should render proper color and text', () => {
+        mountWithStatus('TaskStatus', TaskStatus.InProgress);
+        expect(wrapper.vm.color).toEqual(colors.chips.orange);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('task.task_status.InProgress'));
+
+        mountWithStatus('TaskStatus', TaskStatus.Completed);
+        expect(wrapper.vm.color).toEqual(colors.chips.green);
+        expect(wrapper.vm.textFromEnum).toEqual(wrapper.vm.$t('task.task_status.Completed'));
       });
     });
   });

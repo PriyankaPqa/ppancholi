@@ -381,7 +381,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       await useCaseFileStore().fetchTagsOptions();
       this.checkHasRestrictFinancialTags();
 
-      this.initContainsActiveTables();
+      await this.initContainsActiveTables();
     }
     // we fetch all the payments for the case file because we will need to submit all at once possibly if some arent submitted
     // and since ApprovalStatus is not filterable...  we will filter on the computed - not really a problem

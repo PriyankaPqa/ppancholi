@@ -11,6 +11,7 @@ export interface ITeamsService extends IDomainBaseService<ITeamEntity, uuid> {
   removeTeamMember(teamId: uuid, teamMemberId: uuid) : Promise<ITeamEntity>;
   emptyTeam(teamId: uuid) : Promise<ITeamEntity>;
   getTeamsAssigned(caseFileId: uuid): Promise<ITeamEntity[]>;
+  getEscalationTeam(eventId: uuid): Promise<ITeamEntity>;
 }
 
 export interface ITeamsServiceMock extends IDomainBaseServiceMock<ITeamEntity> {
@@ -21,4 +22,5 @@ export interface ITeamsServiceMock extends IDomainBaseServiceMock<ITeamEntity> {
   removeTeamMember: jest.Mock <ITeamEntity>;
   emptyTeam: jest.Mock <ITeamEntity>;
   getTeamsAssigned: jest.Mock <ITeamEntity[]>;
+  getEscalationTeam: jest.Mock <ITeamEntity>;
 }

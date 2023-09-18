@@ -225,15 +225,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { toRef } from 'vue';
 import { RcDialog } from '@libs/component-lib/components';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { IMultilingual, VForm } from '@libs/shared-lib/types';
-import { MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
+import { VForm } from '@libs/shared-lib/types';
 import entityUtils from '@libs/entities-lib/utils';
 import { EOptionLists, IOptionItem } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
 import { useOptionListStore } from '@/pinia/option-list/optionList';
+import { useOptionListItem } from './useOptionListItem';
 
 export default Vue.extend({
   name: 'OptionListItem',
@@ -279,6 +279,14 @@ export default Vue.extend({
     isSubItem: {
       type: Boolean,
       default: false,
+    },
+
+    /**
+     * The id of the parent item (if this is a sub-item)
+     */
+    parentItemId: {
+      type: String,
+      default: '',
     },
 
     /**
@@ -367,6 +375,12 @@ export default Vue.extend({
     },
   },
 
+  setup(props) {
+    const { rules, getParentItem, checkNameUniqueness,
+     } = useOptionListItem(props.isSubItem, toRef(props, 'editMode'), toRef(props, 'items'), props.item, props.parentItemId);
+    return { rules, getParentItem, checkNameUniqueness };
+  },
+
   data() {
     return {
       name: this.item.name ? entityUtils.getFilledMultilingualField(this.item.name) : entityUtils.initMultilingualAttributes(),
@@ -381,52 +395,18 @@ export default Vue.extend({
 
       subItemsExpanded: true,
 
-      isNameUnique: true,
-
       updatingStatus: false,
+
+      itemStatuses: [Status.Active, Status.Inactive],
     };
   },
 
   computed: {
-    itemStatuses(): Array<Status> {
-      return [
-        Status.Active,
-        Status.Inactive,
-      ];
-    },
-
-    rules(): Record<string, unknown> {
-      return {
-        name: {
-          required: true,
-          max: MAX_LENGTH_MD,
-          customValidator: { isValid: this.isNameUnique, messageKey: 'validations.alreadyExists' },
-        },
-        description: {
-          max: MAX_LENGTH_MD,
-        },
-      };
-    },
-
-    allNames(): IMultilingual[] {
-      const names: IMultilingual[] = [];
-      this.items.forEach((item) => {
-        if (item.id !== this.item.id) {
-          names.push(item.name);
-        }
-        item.subitems.forEach((sub) => {
-          if (sub.id !== this.item.id) {
-            names.push(sub.name);
-          }
-        });
-      });
-
-      return names;
-    },
 
     renameNotAllowed(): boolean {
       return useOptionListStore().list === EOptionLists.Roles && !this.isSubItem;
     },
+
   },
 
   watch: {
@@ -444,12 +424,6 @@ export default Vue.extend({
           (this.$refs.input as HTMLInputElement).focus();
         });
       }
-
-      this.isNameUnique = true;
-    },
-
-    item() {
-      // this.subItems = _cloneDeep((this.item as IOptionItem).optionsListSubItems);
     },
 
     languageMode() {
@@ -457,10 +431,6 @@ export default Vue.extend({
 
       this.description = entityUtils.getFilledMultilingualField(this.description);
     },
-  },
-
-  mounted() {
-    // this.subItems = _cloneDeep((this.item as IOptionItem).optionsListSubItems);
   },
 
   methods: {
@@ -505,8 +475,7 @@ export default Vue.extend({
 
       try {
         if (this.isSubItem) {
-          const parentItem = this.items.find((i) => i.subitems.some((sub) => sub.id === this.item.id));
-          await useOptionListStore().updateSubItemStatus({ itemId: parentItem.id, subItemId: this.item.id, status: this.changeToStatus });
+          !!this.getParentItem() && await useOptionListStore().updateSubItemStatus({ itemId: this.getParentItem().id, subItemId: this.item.id, status: this.changeToStatus });
         } else {
           await useOptionListStore().updateStatus({ id: this.item.id, status: this.changeToStatus });
         }
@@ -532,9 +501,17 @@ export default Vue.extend({
 
     async setIsOther() {
       const value = !this.item.isOther;
-      await useOptionListStore().setIsOther({ id: this.item.id, isOther: value });
-      if (value) {
-        this.$toasted.global.success(this.$t('system_management.lists.otherOptionSet'));
+      let res = null as IOptionItem;
+      if (this.isSubItem) {
+        res = !!this.getParentItem() && await useOptionListStore().setSubItemIsOther({ itemId: this.getParentItem().id, subItemId: this.item.id, isOther: value });
+      } else {
+        res = await useOptionListStore().setIsOther({ id: this.item.id, isOther: value });
+      }
+
+      if (!res) {
+        this.$toasted.global.error(this.$t('system_management.lists.errorUpdating'));
+      } else if (value) {
+          this.$toasted.global.success(this.$t('system_management.lists.otherOptionSet'));
       } else {
         this.$toasted.global.success(this.$t('system_management.lists.otherOptionRemoved'));
       }
@@ -548,17 +525,6 @@ export default Vue.extend({
       } else {
         this.$toasted.global.success(this.$t('system_management.lists.restrictFinancialOptionUnset'));
       }
-    },
-
-    checkNameUniqueness(input: string) {
-      const treat = ((str: string) => str.trim().toLowerCase());
-
-      const treatedInput = treat(input);
-
-      this.isNameUnique = !this.allNames.some((name) => {
-        const langs = Object.keys(name.translation);
-        return langs.some((lang) => treat(name.translation[lang]) === treatedInput);
-      });
     },
 
     clearDescription() {

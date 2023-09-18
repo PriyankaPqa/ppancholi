@@ -29,6 +29,8 @@ const SplitHousehold = () => import('@/ui/views/pages/household/split/SplitHouse
 const MoveHouseholdMembers = () => import('@/ui/views/pages/household/move/MoveHouseholdMembers.vue');
 
 const ImpactedIndividuals = () => import('@/ui/views/pages/case-files/details/case-file-impacted-individuals/ImpactedIndividuals.vue');
+const CaseFileTaskTable = () => import('@/ui/views/pages/case-files/details/case-file-task/CaseFileTaskTable.vue');
+const CreateEditTask = () => import('@/ui/views/pages/case-files/details/case-file-task/create-edit/CreateEditTask.vue');
 
 export const caseFiles: RouteConfig = {
   path: Routes.caseFile.layout.path,
@@ -173,6 +175,27 @@ export const caseFiles: RouteConfig = {
           name: Routes.caseFile.impactedIndividuals.home.name,
           component: ImpactedIndividuals,
           meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.task.home.path,
+          name: Routes.caseFile.task.home.name,
+          component: CaseFileTaskTable,
+          meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.task.create.path,
+          name: Routes.caseFile.task.create.name,
+          component: CreateEditTask,
+          meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.task.edit.path,
+          name: Routes.caseFile.task.edit.name,
+          component: CreateEditTask,
+          meta: { level: UserRoles.level1, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
           props: true,
         },
       ],

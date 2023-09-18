@@ -3,6 +3,7 @@ import { Trans } from '@/ui/plugins';
 import Routes from '@/constants/routes';
 
 const MainLayout = () => import('@/ui/views/components/layout/MainLayout.vue');
+const Tier2LinkMainLayout = () => import('@/ui/views/components/layout/Tier2LinkMainLayout.vue');
 const LandingPage = () => import('@/ui/views/pages/registration/landing-page/LandingPage.vue');
 const Individual = () => import('@/ui/views/pages/registration/individual/Individual.vue');
 const AssessmentRunner = () => import('@/ui/views/pages/assessment/AssessmentRunner.vue');
@@ -40,6 +41,10 @@ export const routes: Array<RouteConfig> = [
             component: Individual,
           },
         ],
+      },
+      {
+        path: Routes.authenticationLink.path,
+        component: Tier2LinkMainLayout,
       },
       {
         path: Routes.assessmentRunner.path,

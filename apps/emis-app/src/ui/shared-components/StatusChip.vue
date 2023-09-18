@@ -25,6 +25,7 @@ import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { Status } from '@libs/entities-lib/base';
 import { CompletionStatus as AssessmentResponseCompletionStatus } from '@libs/entities-lib/assessment-template';
 import { HouseholdStatus } from '@libs/entities-lib/household';
+import { TaskStatus } from '@libs/entities-lib/task';
 
 export default Vue.extend({
   name: 'StatusChip',
@@ -53,6 +54,7 @@ export default Vue.extend({
           'MassActionRunStatus',
           'AssessmentResponseCompletionStatus',
           'HouseholdStatus',
+          'TaskStatus',
         ].indexOf(value) > -1
       ),
     },
@@ -104,6 +106,8 @@ export default Vue.extend({
           return this.getAssessmentResponseCompletionStatusColor();
         case 'HouseholdStatus':
           return this.getHouseholdStatusColor();
+        case 'TaskStatus':
+          return this.getTaskStatusColor();
         default:
           return colors.chips.green;
       }
@@ -147,6 +151,8 @@ export default Vue.extend({
           return `enums.completionStatus.${AssessmentResponseCompletionStatus[this.status]}`;
         case 'HouseholdStatus':
           return `household.profile.householdStatus.${HouseholdStatus[this.status]}`;
+        case 'TaskStatus':
+          return `task.task_status.${TaskStatus[this.status]}`;
 
         default:
           return '';
@@ -325,6 +331,19 @@ export default Vue.extend({
 
         default:
           return colors.chips.green;
+      }
+    },
+
+    getTaskStatusColor(): string {
+      switch (this.status) {
+        case TaskStatus.InProgress:
+          return colors.chips.orange;
+
+        case TaskStatus.Completed:
+          return colors.chips.green;
+
+        default:
+          return colors.chips.orange;
       }
     },
   },

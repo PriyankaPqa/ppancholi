@@ -150,6 +150,20 @@ const routes = {
         name: 'casefile.impactedIndividuals',
       },
     },
+    task: {
+      home: {
+        path: 'task',
+        name: 'casefile.task',
+      },
+      create: {
+        path: 'task/create/:taskType',
+        name: 'casefile.task.create',
+      },
+      edit: {
+        path: 'task/edit/:taskType/:taskId',
+        name: 'casefile.task.edit',
+      },
+    },
   },
   events: {
     layout: {
@@ -539,6 +553,10 @@ const routes = {
     exceptionalAuthenticationTypes: {
       path: 'lists/exceptional-authentication-types',
       name: 'systemManagement.lists.exceptionalAuthenticationTypes',
+    },
+    taskCategories: {
+      path: 'lists/task-categories',
+      name: 'systemManagement.lists.taskCategories',
     },
   },
   teams: {

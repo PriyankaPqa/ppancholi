@@ -1,21 +1,15 @@
 import VueI18n from 'vue-i18n';
-import { format, set, toDate, differenceInYears, subYears, getYear, getMonth, getDate } from 'date-fns';
+import { format, differenceInYears, subYears, getYear, getMonth, getDate, parse } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { IBirthDate } from '../../value-objects/identity-set/identitySet.types';
 
 export default {
-  // Return date-fns object of a birthdate, with proper index for the month
-  getBirthDateDateFnsObject(birthdate: IBirthDate) {
+  parseDateObject(birthdate: IBirthDate) {
     const year = birthdate.year as number;
     const month = birthdate.month as number;
     const day = birthdate.day as number;
 
-    const date = set(new Date(), {
-      year,
-      month: typeof month === 'number' ? month - 1 : 0,
-      date: day,
-    });
-    return toDate(date);
+    return parse(`${year}-${month}-${day}`, 'yyyy-MM-dd', new Date());
   },
 
   getBirthDateUTCString(birthdate: IBirthDate) {
@@ -58,7 +52,7 @@ export default {
 
   displayBirthDate(birthDate: IBirthDate) {
     if (birthDate.year && birthDate.month && birthDate.day) {
-      const birthdate = this.getBirthDateDateFnsObject(birthDate);
+      const birthdate = this.parseDateObject(birthDate);
       return format(birthdate, 'MMM d, yyyy');
     }
     return '';

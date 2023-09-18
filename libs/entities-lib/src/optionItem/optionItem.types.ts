@@ -18,6 +18,7 @@ export enum EOptionLists {
   ReferralTypes = 14,
   DocumentCategories = 15,
   ExceptionalAuthenticationTypes = 16,
+  TaskCategories = 17,
 }
 
 export interface IOptionSubItem extends IEntity {

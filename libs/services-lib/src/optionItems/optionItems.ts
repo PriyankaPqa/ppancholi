@@ -44,6 +44,8 @@ export class OptionItemsService implements IOptionItemsService {
         return '/case-file/document-categories';
       case EOptionLists.ExceptionalAuthenticationTypes:
         return '/event/exceptional-authentication-types';
+      case EOptionLists.TaskCategories:
+        return '/case-file/task-categories';
       default:
         return '';
     }
@@ -105,6 +107,12 @@ export class OptionItemsService implements IOptionItemsService {
 
   async setOptionItemIsOther(list: EOptionLists, id: string, isOther: boolean): Promise<IOptionItemData> {
     return this.http.patch(`${this.getPrefix(list)}/${id}/is-other`, {
+      isOther,
+    });
+  }
+
+  async setOptionSubItemIsOther(list: EOptionLists, itemId: string, subItemId: string, isOther: boolean): Promise<IOptionItemData> {
+    return this.http.patch(`${this.getPrefix(list)}/${itemId}/subitem/${subItemId}/is-other`, {
       isOther,
     });
   }

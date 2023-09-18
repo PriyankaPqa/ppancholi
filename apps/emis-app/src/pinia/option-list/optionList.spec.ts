@@ -360,6 +360,28 @@ describe('>>> Option List Store', () => {
       });
     });
 
+    describe('setSubItemIsOther', () => {
+      it('throws an error if list is not set in the store', async () => {
+        const store = createTestStore();
+
+        await expect(store.setSubItemIsOther).rejects.toThrow();
+      });
+
+      it('calls the setOptionSubItemIsOther endpoint with the proper list', async () => {
+        const store = createTestStore();
+
+        store.list = list;
+
+        const itemId = 'itemId';
+        const subItemId = 'subItemId';
+        const isOther = true;
+
+        await store.setSubItemIsOther({ itemId, subItemId, isOther });
+
+        expect(entityService.setOptionSubItemIsOther).toHaveBeenCalledWith(list, itemId, subItemId, isOther);
+      });
+    });
+
     describe('setIsDefault', () => {
       it('throws an error if list is not set in the store', async () => {
         const store = createTestStore();

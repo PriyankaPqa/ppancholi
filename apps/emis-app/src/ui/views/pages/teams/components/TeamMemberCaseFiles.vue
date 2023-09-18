@@ -166,8 +166,8 @@ export default Vue.extend({
             if (memberDataInAssignedTeamMembersList) {
               const teamId = memberDataInAssignedTeamMembersList.teamId;
               const team = this.member.metadata.teams.find((t) => t?.teamId === teamId);
-              const teamName = team.name;
-              const eventName = team.events.find((e:IUserAccountTeamEvent) => e.id === cf.entity.eventId).name;
+              const teamName = team?.name || '';
+              const eventName = team?.events.find((e:IUserAccountTeamEvent) => e.id === cf.entity.eventId).name || { translation: {} };
 
               return {
                 event: {

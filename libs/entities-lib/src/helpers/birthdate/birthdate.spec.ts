@@ -28,3 +28,13 @@ describe('getBirthDateUTCString', () => {
     expect(birthdate.getBirthDateUTCString(b)).toEqual(null);
   });
 });
+
+describe('parseDateObject', () => {
+  it('should correctly parse a birthdate object with all fields present', () => {
+    const b = { year: 1990, month: 10, day: 15 };
+
+    const result = birthdate.parseDateObject(b);
+
+    expect(result).toEqual(new Date(1990, 9, 15));
+  });
+});

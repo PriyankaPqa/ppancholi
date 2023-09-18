@@ -1,3 +1,4 @@
+/* eslint-disable no-global-assign */
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { useMockRegistrationStore } from '@libs/stores-lib/registration/registration.mock';
@@ -7,6 +8,7 @@ import helpers from '@libs/entities-lib/helpers';
 import { Tier2GambitScreeningId } from '@libs/shared-lib/types';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
+import { mockTier2Details } from '@libs/entities-lib/case-file';
 import Component from './Tier2Selection.vue';
 
 const localVue = createLocalVue();
@@ -33,10 +35,24 @@ describe('Tier2Selection.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('registrationResponse', () => {
-      it('returns from store', async () => {
-        const response = wrapper.vm.registrationResponse;
-        expect(response).toEqual(registrationStore.registrationResponse);
+    describe('requiredInformation', () => {
+      it('comes from response if not in email mode', async () => {
+        const response = wrapper.vm.requiredInformation;
+        expect(response).toEqual({
+          caseFileId: registrationStore.registrationResponse.caseFile.id,
+          tier1transactionId: registrationStore.registrationResponse.tier1transactionId,
+          canCompleteTier2: registrationStore.registrationResponse.mustDoTier2authentication,
+        });
+      });
+      it('comes from email details when in email mode', async () => {
+        registrationStore.basicInformationWhenTier2FromEmail = mockTier2Details();
+        const response = wrapper.vm.requiredInformation;
+        expect(response).toEqual({
+          caseFileId: registrationStore.basicInformationWhenTier2FromEmail.caseFileId,
+          tier1transactionId: registrationStore.basicInformationWhenTier2FromEmail.tier2response.transactionUniqueId,
+          canCompleteTier2: registrationStore.basicInformationWhenTier2FromEmail.canCompleteTier2,
+        });
+        registrationStore.basicInformationWhenTier2FromEmail = null;
       });
     });
 
@@ -198,17 +214,31 @@ describe('Tier2Selection.vue', () => {
 
     describe('onMessage', () => {
       it('finishes tier2 if completed', async () => {
-        helpers.timeout = jest.fn();
-        wrapper.vm.tier2ProcessReset = jest.fn();
-        EventHub.$emit = jest.fn();
+        wrapper.vm.waitForFinalResult = jest.fn();
 
         await wrapper.vm.onMessage({ data: { status: 'nope' } });
-        expect(wrapper.vm.tier2ProcessReset).not.toHaveBeenCalled();
-        expect(EventHub.$emit).not.toHaveBeenCalled();
+        expect(wrapper.vm.waitForFinalResult).not.toHaveBeenCalled();
 
         await wrapper.vm.onMessage({ data: { status: 'completed' } });
-        expect(wrapper.vm.tier2ProcessReset).toHaveBeenCalled();
+        expect(wrapper.vm.waitForFinalResult).toHaveBeenCalled();
+      });
+    });
+
+    describe('waitForFinalResult', () => {
+      it('finishes tier2 if completed', async () => {
+        helpers.timeout = jest.fn();
+        EventHub.$emit = jest.fn();
+        const bck = window.setInterval;
+        window.setInterval = jest.fn((fct) => fct());
+
+        await wrapper.vm.waitForFinalResult();
+        expect(helpers.timeout).toHaveBeenCalled();
+        expect(setInterval).toHaveBeenCalled();
         expect(EventHub.$emit).toHaveBeenCalledWith('next');
+        expect(registrationStore.tier2State.completed).toBeTruthy();
+        expect(services.caseFiles.getTier2Result).toHaveBeenCalledWith(wrapper.vm.requiredInformation.caseFileId);
+
+        window.setInterval = bck;
       });
     });
 
@@ -216,11 +246,12 @@ describe('Tier2Selection.vue', () => {
       it('resets frame and removes listener', async () => {
         window.removeEventListener = jest.fn();
 
-        await wrapper.setData({ iframeUrl: 'some url' });
+        await wrapper.setData({ iframeUrl: 'some url', interval: 888 });
         wrapper.vm.tier2ProcessReset();
 
         expect(window.removeEventListener).toHaveBeenCalledWith('message', wrapper.vm.onMessage);
         expect(wrapper.vm.iframeUrl).toBeFalsy();
+        expect(wrapper.vm.interval).toBeFalsy();
       });
     });
 
@@ -236,6 +267,7 @@ describe('Tier2Selection.vue', () => {
           subDocumentTypeId: null,
         });
         expect(wrapper.vm.iframeUrl).toBe('some url');
+        expect(registrationStore.tier2State.basicDocumentsOnly).toBeTruthy();
       });
     });
   });

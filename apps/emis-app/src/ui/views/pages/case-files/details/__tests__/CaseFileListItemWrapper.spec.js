@@ -166,19 +166,13 @@ describe('CaseFileListItemWrapper.vue', () => {
     });
 
     describe('displaySystemAdminOnly', () => {
-      it('should be true when isCaseNote false, activity type is FinancialAssistancePayment and role is System Admin', () => {
+      it('should be true when isCaseNote false, activity type is FinancialAssistancePayment and activity is triggered by mass action', () => {
         wrapper = mount(Component, {
           localVue,
           propsData: {
             item: {
               ...mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
-              role: {
-                name: {
-                  translation: {
-                    en: 'System Admin',
-                  },
-                },
-              },
+              triggeredByMassAction: true,
             },
             isCaseNote: false,
           },
@@ -186,19 +180,12 @@ describe('CaseFileListItemWrapper.vue', () => {
         expect(wrapper.vm.displaySystemAdminOnly).toEqual(true);
       });
 
-      it('should be false when isCaseNote false, activity type is not FinancialAssistancePayment and role is System Admin', () => {
+      it('should be false when isCaseNote false, activity type is not FinancialAssistancePayment', () => {
         wrapper = mount(Component, {
           localVue,
           propsData: {
             item: {
               ...mockCaseFileActivities(CaseFileActivityType.ImpactedIndividualReceivingAssistance)[0],
-              role: {
-                name: {
-                  translation: {
-                    en: 'System Admin',
-                  },
-                },
-              },
             },
             isCaseNote: false,
           },
@@ -206,19 +193,13 @@ describe('CaseFileListItemWrapper.vue', () => {
         expect(wrapper.vm.displaySystemAdminOnly).toEqual(false);
       });
 
-      it('should be false when isCaseNote false, activity type is FinancialAssistancePayment and role is not System Admin', () => {
+      it('should be false when isCaseNote false, activity type is FinancialAssistancePayment and activity is not triggered by mass action', () => {
         wrapper = mount(Component, {
           localVue,
           propsData: {
             item: {
               ...mockCaseFileActivities(CaseFileActivityType.FinancialAssistancePayment)[0],
-              role: {
-                name: {
-                  translation: {
-                    en: 'Level 5',
-                  },
-                },
-              },
+              triggeredByMassAction: false,
             },
             isCaseNote: false,
           },

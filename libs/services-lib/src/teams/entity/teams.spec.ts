@@ -72,6 +72,11 @@ describe('>>> Teams Service', () => {
     expect(http.patch).toHaveBeenCalledWith(`/team/teams/${teamId}/empty-team`);
   });
 
+  test('getEscalationTeam is linked to the correct URL', async () => {
+    await service.getEscalationTeam('1234');
+    expect(http.get).toHaveBeenCalledWith('team/teams/events/1234/escalation');
+  });
+
   describe('search', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
       const params = { filter: { Foo: 'foo' } };

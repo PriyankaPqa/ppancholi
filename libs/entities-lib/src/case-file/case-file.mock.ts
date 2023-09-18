@@ -1,11 +1,14 @@
-import { ERegistrationMethod } from '@libs/shared-lib/types/enums/ERegistrationMethod';
+/* eslint-disable max-lines */
 /* eslint-disable max-lines-per-function */
+import { ERegistrationMethod } from '@libs/shared-lib/types/enums/ERegistrationMethod';
 import { mockBaseData } from '../base';
 import {
   ICaseFileMetadata, CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
   ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType, HouseholdCaseFileActivityType,
   IAssignedTeamMembers,
-  ITier2Response } from './case-file.types';
+  ITier2Response,
+  ITier2Details,
+} from './case-file.types';
 import { IOptionItem } from '../optionItem';
 import { EPaymentModalities } from '../program';
 import { CompletedByType } from '../assessment-template';
@@ -863,4 +866,54 @@ export const mockTier2Response = (): ITier2Response => ({
   identityVerificationInfoSubmissionUrl: 'some url',
   processCompleted: true,
   transactionUniqueId: 'some id',
+  tier2State: 1,
+});
+
+export const mockTier2Details = (): ITier2Details => ({
+  caseFileId: '056865e7-a715-4daa-8173-090a36277c8f',
+  event: {
+      name: {
+          translation: {
+              en: 'Assessments',
+              fr: 'Assessments',
+          },
+      },
+      selfRegistrationEnabled: true,
+      registrationLink: {
+          translation: {
+              en: 'assessments',
+              fr: 'assessments',
+          },
+      },
+      schedule: {
+          status: 2,
+      },
+      responseDetails: {
+          responseLevel: 1,
+          eventType: {
+              optionItemId: '725c9af6-4cda-431e-91b7-49184fffe2ae',
+              specifiedOther: null,
+          },
+          dateReported: '2022-09-09T00:00:00Z',
+          assistanceNumber: '+15145445555',
+      },
+      consentStatementId: '7831b761-5aa3-4ecb-a2de-a01f5ca82d11',
+      registrationLocations: [],
+      shelterLocations: [],
+      id: '38ff3de1-89d5-4437-993b-30da7448d9d3',
+      tenantId: '',
+      registrationAssessments: [],
+  },
+  canCompleteTier2: true,
+  tier2response: {
+      identityAuthenticationStatus: 0,
+      processCompleted: false,
+      transactionUniqueId: '3f2d8d91-e410-4b4b-96e3-49055220c521',
+      identityVerificationInfoSubmissionUrl: 'https://test.gambitid.com/GambitIDScheduling/public/securityScreening/submitInfo.html?q=RJgzwMGlxtA9jO8ALtsp8u4dqNQHfNCspR90zQ%2Fh3dpLSLihUPSy0eKljeYQfWuBrRkub%2B01Evogs6B24EpBwdtUn3%2BRzemkP9%2F8jdTMzUJ%2BgcUX6idTJN04ym2P&locale=fr',
+      tier2State: 1,
+  },
+  registrationNumber: '000010541',
+  firstName: 'fgh',
+  middleName: '',
+  lastName: 'hgj',
 });

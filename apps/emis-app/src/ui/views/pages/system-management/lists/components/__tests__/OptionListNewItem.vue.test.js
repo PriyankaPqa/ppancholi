@@ -36,111 +36,9 @@ describe('OptionListNewItem.vue', () => {
         ]);
       });
     });
-
-    describe('allNames', () => {
-      it('returns the correct value', async () => {
-        await wrapper.setProps({
-          items: [{
-            name: {
-              translation: {
-                en: 'name 1 en',
-                fr: 'name 1 fr',
-              },
-            },
-            subitems: [{
-              name: {
-                translation: {
-                  en: 'sub name en',
-                  fr: 'sub name fr',
-                },
-              },
-            }],
-          }, {
-            name: {
-              translation: {
-                en: 'name 2 en',
-                fr: 'name 2 fr',
-              },
-            },
-            subitems: [],
-          }],
-        });
-
-        expect(wrapper.vm.allNames).toEqual([{
-          translation: {
-            en: 'name 1 en',
-            fr: 'name 1 fr',
-          },
-        }, {
-          translation: {
-            en: 'sub name en',
-            fr: 'sub name fr',
-          },
-        }, {
-          translation: {
-            en: 'name 2 en',
-            fr: 'name 2 fr',
-          },
-        }]);
-      });
-    });
   });
 
   describe('Methods', () => {
-    describe('checkNameUniqueness', () => {
-      let wrapper;
-      beforeEach(() => {
-        wrapper = mount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            isSubItem: true,
-            hasDescription: true,
-            addMode: true,
-            languageMode: 'en',
-            addSubItemLabel: 'add sub item',
-          },
-          computed: {
-            allNames() {
-              return [{
-                translation: {
-                  en: 'name 1 en',
-                  fr: 'name 1 fr',
-                },
-              }, {
-                translation: {
-                  en: 'name 2 en',
-                  fr: 'name 2 fr  ',
-                },
-              }];
-            },
-          },
-        });
-      });
-      it('should set isNameUnique to true if the name is unique', () => {
-        wrapper.vm.checkNameUniqueness('name 3 en');
-        expect(wrapper.vm.isNameUnique).toBeTruthy();
-      });
-      it('should set isNameUnique to false if the name is not unique', () => {
-        wrapper.vm.checkNameUniqueness('name 1 en');
-        expect(wrapper.vm.isNameUnique).toBeFalsy();
-
-        wrapper.vm.checkNameUniqueness('name 1 EN');
-        expect(wrapper.vm.isNameUnique).toBeFalsy();
-
-        wrapper.vm.checkNameUniqueness('name 2 fr');
-        expect(wrapper.vm.isNameUnique).toBeFalsy();
-      });
-      it('is called when @input is emitted on sub item name', () => {
-        wrapper.vm.checkNameUniqueness = jest.fn();
-
-        const nameInput = wrapper.findDataTest('optionListNewItem__nameInput');
-        nameInput.trigger('input');
-
-        expect(wrapper.vm.checkNameUniqueness).toHaveBeenCalledTimes(1);
-      });
-    });
-
     describe('clearDescription', () => {
       it('clears the field description', async () => {
         const wrapper = shallowMount(Component, {
@@ -230,7 +128,7 @@ describe('OptionListNewItem.vue', () => {
       propsData: {
         isSubItem: true,
         addMode: false,
-        itemId: 'parentid',
+        parentItemId: 'parentid',
         languageMode: 'en',
         addSubItemLabel: 'add sub item',
       },
@@ -268,7 +166,7 @@ describe('OptionListNewItem.vue', () => {
       propsData: {
         isSubItem: true,
         addMode: true,
-        itemId: 'parentid',
+        parentItemId: 'parentid',
         languageMode: 'en',
         addSubItemLabel: 'add sub item',
       },
@@ -319,7 +217,7 @@ describe('OptionListNewItem.vue', () => {
         isSubItem: true,
         hasDescription: true,
         addMode: true,
-        itemId: 'parentid',
+        parentItemId: 'parentid',
         languageMode: 'en',
         addSubItemLabel: 'add sub item',
       },
@@ -377,7 +275,7 @@ describe('OptionListNewItem.vue', () => {
         isSubItem: true,
         hasDescription: true,
         addMode: true,
-        itemId: 'parentid',
+        parentItemId: 'parentid',
         languageMode: 'en',
         addSubItemLabel: 'add sub item',
       },

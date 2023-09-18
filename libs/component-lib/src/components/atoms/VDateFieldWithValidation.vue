@@ -15,9 +15,9 @@
         :disabled="$attrs.disabled"
         clearable
         readonly
-        :prepend-inner-icon="$attrs.prependInnerIcon"
         background-color="white"
         :rules="rules"
+        v-bind="$attrs"
         v-on="on"
         @click:clear="innerValue = null" />
     </template>
@@ -41,6 +41,8 @@ import { ValidationProvider } from 'vee-validate';
 import VTextFieldWithValidation from './VTextFieldWithValidation.vue';
 
 export default {
+  name: 'VDateFieldWithValidation',
+
   components: {
     VTextFieldWithValidation,
     ValidationProvider,

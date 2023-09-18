@@ -3,6 +3,7 @@
     <identity-form
       :form="identitySet"
       :gender-items="genderItems"
+      :name-dob-disabled="$hasFeature(FeatureKeys.ManageDuplicates) && isSplitMode"
       :min-age-restriction="minAgeRegistration"
       @change="setIdentity($event)" />
 
@@ -95,6 +96,10 @@ const vueComponent: VueConstructor = Vue.extend({
       type: Boolean,
       default: false,
     },
+  },
+
+  data() {
+    return { FeatureKeys };
   },
 
   computed: {

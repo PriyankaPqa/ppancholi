@@ -63,6 +63,12 @@ describe('IdentityForm.vue', () => {
         await element.vm.$emit('input');
         expect(wrapper.vm.capitalize).toHaveBeenCalledWith('firstName');
       });
+
+      it('is disabled if the property nameDobDisabled is true', async () => {
+        await wrapper.setProps({ nameDobDisabled: true });
+        const element = wrapper.findDataTest('personalInfo__firstName');
+        expect(element.attributes('disabled')).toBeTruthy();
+      });
     });
 
     describe('personalInfo__lastName', () => {
@@ -71,6 +77,12 @@ describe('IdentityForm.vue', () => {
         const element = wrapper.findDataTest('personalInfo__lastName');
         await element.vm.$emit('input');
         expect(wrapper.vm.capitalize).toHaveBeenCalledWith('lastName');
+      });
+
+      it('is disabled if the property nameDobDisabled is true', async () => {
+        await wrapper.setProps({ nameDobDisabled: true });
+        const element = wrapper.findDataTest('personalInfo__lastName');
+        expect(element.attributes('disabled')).toBeTruthy();
       });
     });
 
@@ -81,6 +93,12 @@ describe('IdentityForm.vue', () => {
         await element.vm.$emit('input');
         expect(wrapper.vm.capitalize).toHaveBeenCalledWith('preferredName');
       });
+
+      it('is disabled if the property nameDobDisabled is true', async () => {
+        await wrapper.setProps({ nameDobDisabled: true });
+        const element = wrapper.findDataTest('personalInfo__preferredName');
+        expect(element.attributes('disabled')).toBeTruthy();
+      });
     });
 
     describe('personalInfo__middleName', () => {
@@ -89,6 +107,36 @@ describe('IdentityForm.vue', () => {
         const element = wrapper.findDataTest('personalInfo__middleName');
         await element.vm.$emit('input');
         expect(wrapper.vm.capitalize).toHaveBeenCalledWith('middleName');
+      });
+
+      it('is disabled if the property nameDobDisabled is true', async () => {
+        await wrapper.setProps({ nameDobDisabled: true });
+        const element = wrapper.findDataTest('personalInfo__middleName');
+        expect(element.attributes('disabled')).toBeTruthy();
+      });
+    });
+
+    describe('personalInfo__month', () => {
+      it('is disabled if the property nameDobDisabled is true', async () => {
+        await wrapper.setProps({ nameDobDisabled: true });
+        const element = wrapper.findDataTest('personalInfo__month');
+        expect(element.attributes('disabled')).toBeTruthy();
+      });
+    });
+
+    describe('personalInfo__day', () => {
+      it('is disabled if the property nameDobDisabled is true', async () => {
+        await wrapper.setProps({ nameDobDisabled: true });
+        const element = wrapper.findDataTest('personalInfo__day');
+        expect(element.attributes('disabled')).toBeTruthy();
+      });
+    });
+
+    describe('personalInfo__year', () => {
+      it('is disabled if the property nameDobDisabled is true', async () => {
+        await wrapper.setProps({ nameDobDisabled: true });
+        const element = wrapper.findDataTest('personalInfo__year');
+        expect(element.attributes('disabled')).toBeTruthy();
       });
     });
   });

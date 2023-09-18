@@ -17,6 +17,7 @@ export default Vue.extend({
       retryMax: 5,
       retrying: false,
       retryInterval: 3000,
+      localSubmitLoading: false,
     };
   },
 
@@ -68,7 +69,7 @@ export default Vue.extend({
     },
 
     submitLoading(): boolean {
-      return this.$registrationStore.submitLoading;
+      return this.$registrationStore.submitLoading || this.localSubmitLoading;
     },
 
     inlineEdit(): boolean {
