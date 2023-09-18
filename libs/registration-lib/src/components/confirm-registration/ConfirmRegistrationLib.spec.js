@@ -75,7 +75,7 @@ describe('ConfirmRegistrationLib.vue', () => {
         wrapper = mount(Component, {
           localVue,
           computed: {
-            identityAuthenticationMessage: () => ({ header: 'identity-authentication-section' }),
+            identityAuthenticationMessage: () => ({ header: 'identity-authentication-section', details: 'hi' }),
           },
         });
 
@@ -266,7 +266,7 @@ describe('ConfirmRegistrationLib.vue', () => {
     });
 
     describe('fullName', () => {
-      it('returns the proper data', async () => {
+      it('returns the proper data when household mode', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
@@ -283,6 +283,18 @@ describe('ConfirmRegistrationLib.vue', () => {
         });
 
         expect(wrapper.vm.fullName).toEqual('firstName middleName lastName');
+      });
+      it('returns the proper data when tier 2 link mode', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+        });
+        wrapper.vm.$registrationStore.basicInformationWhenTier2FromEmail = {
+          firstName: 'firstName2',
+          middleName: 'middleName',
+          lastName: 'lastName',
+        };
+
+        expect(wrapper.vm.fullName).toEqual('firstName2 middleName lastName');
       });
     });
 
@@ -338,6 +350,16 @@ describe('ConfirmRegistrationLib.vue', () => {
         });
 
         expect(wrapper.vm.registrationNumber).toEqual('associate registrationNumber');
+      });
+      it('returns the proper data when tier 2 link mode', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+        });
+        wrapper.vm.$registrationStore.basicInformationWhenTier2FromEmail = {
+          registrationNumber: 'registrationNumber2',
+        };
+
+        expect(wrapper.vm.registrationNumber).toEqual('registrationNumber2');
       });
     });
 

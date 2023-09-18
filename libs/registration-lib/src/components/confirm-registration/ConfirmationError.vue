@@ -56,6 +56,7 @@ import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import { IServerError } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { IRegistrationMenuItem } from '@libs/registration-lib/types';
 
 type TranslateResult = VueI18n.TranslateResult;
 
@@ -98,7 +99,23 @@ export default Vue.extend({
     },
 
     errorMessage(): TranslateResult {
+      if (this.firstError === 'errors.cannotcompletetier2') {
+        return this.$t('errors.cannotcompletetier2.details');
+      }
       return this.isDuplicateError ? this.$t('registration.confirmation.error.message.duplicate') : this.$t('registration.confirmation.error');
+    },
+  },
+  created() {
+    this.setTabWithError();
+  },
+
+  methods: {
+    setTabWithError() {
+      this.$registrationStore.mutateCurrentTab((tab: IRegistrationMenuItem) => {
+        tab.nextButtonTextKey = 'common.cancel';
+        tab.titleKey = this.firstError === 'errors.cannotcompletetier2' ? 'errors.cannotcompletetier2.title' : 'registration.confirmation.error';
+        tab.isValid = false;
+      });
     },
   },
 });

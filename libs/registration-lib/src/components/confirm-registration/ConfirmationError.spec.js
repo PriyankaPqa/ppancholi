@@ -8,7 +8,7 @@ const errors = { response: { data: { errors: [mockHttpError()] } } };
 // eslint-disable-next-line no-console
 console.warn = jest.fn();
 
-describe('ConfirmRegistrationLib.vue', () => {
+describe('ConfirmationError.vue', () => {
   let wrapper;
 
   const mountWrapper = (computeds) => {
@@ -28,6 +28,14 @@ describe('ConfirmRegistrationLib.vue', () => {
   describe('Template', () => {
   });
 
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('sets the tab details', () => {
+        expect(wrapper.vm.$registrationStore.mutateCurrentTab).toHaveBeenCalled();
+      });
+    });
+  });
+
   describe('Computed', () => {
     describe('firstError', () => {
       it('returns the first error', async () => {
@@ -36,6 +44,10 @@ describe('ConfirmRegistrationLib.vue', () => {
     });
 
     describe('errorMessage', () => {
+      it('should return proper message for cannotcompletetier2', async () => {
+        mountWrapper({ firstError: () => 'errors.cannotcompletetier2' });
+        expect(wrapper.vm.errorMessage).toEqual('errors.cannotcompletetier2.details');
+      });
       it('should return proper message for a duplicate', async () => {
         mountWrapper({ isDuplicateError: () => true });
         expect(wrapper.vm.errorMessage).toEqual('registration.confirmation.error.message.duplicate');

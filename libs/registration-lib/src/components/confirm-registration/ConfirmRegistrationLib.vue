@@ -40,7 +40,7 @@
               </span>
               <br>
               <span class="rc-body14">
-                <i18n :path="identityAuthenticationMessage.details" tag="div" class="data">
+                <i18n v-if="identityAuthenticationMessage.details" :path="identityAuthenticationMessage.details" tag="div" class="data">
                   <template #visit_bold>
                     <span class="fw-bold">{{ $t('registration.confirmation.identityAuthentication.notVerified.details.visit') }}</span>
                   </template>
@@ -144,7 +144,8 @@ export default Vue.extend({
     },
 
     fullName(): string {
-      const identity = this.household.primaryBeneficiary.identitySet;
+      const identity = this.$registrationStore.basicInformationWhenTier2FromEmail
+        ? this.$registrationStore.basicInformationWhenTier2FromEmail : this.household.primaryBeneficiary.identitySet;
       const fullName = `${identity.firstName} ${identity.middleName} ${identity.lastName}`;
       return fullName;
     },
@@ -172,6 +173,9 @@ export default Vue.extend({
     },
 
     registrationNumber(): string {
+      if (this.$registrationStore.basicInformationWhenTier2FromEmail?.registrationNumber) {
+        return this.$registrationStore.basicInformationWhenTier2FromEmail.registrationNumber;
+      }
       return this.associationMode ? (this.household as IHouseholdCreateData).registrationNumber : this.response?.household?.registrationNumber;
     },
 
@@ -195,7 +199,7 @@ export default Vue.extend({
       return this.$hasFeature(FeatureKeys.AuthenticationPhaseII) && !!this.$registrationStore.assessmentToComplete;
     },
 
-    identityAuthenticationMessage(): { color?: string, icon?: string, header: TranslateResult, details: TranslateResult } {
+    identityAuthenticationMessage(): { color?: string, icon?: string, header: TranslateResult, details: string } {
       const state = this.$registrationStore.tier2State;
       if (!state?.mustDoTier2) {
         return null;
@@ -239,9 +243,7 @@ export default Vue.extend({
     success: {
       immediate: true,
       handler(success) {
-        if (!success) {
-          this.setTabWithError();
-        } else {
+        if (success) {
           this.clearTabError();
         }
       },
@@ -249,14 +251,6 @@ export default Vue.extend({
   },
 
   methods: {
-    setTabWithError() {
-      this.$registrationStore.mutateCurrentTab((tab: IRegistrationMenuItem) => {
-        tab.nextButtonTextKey = 'common.cancel';
-        tab.titleKey = 'registration.confirmation.error';
-        tab.isValid = false;
-      });
-    },
-
     clearTabError() {
       this.$registrationStore.mutateCurrentTab(this.clearTabErrorFunc);
     },

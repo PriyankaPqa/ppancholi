@@ -23,6 +23,7 @@ import { IEventGenericLocation, IRegistrationAssessment } from '@libs/entities-l
 import libHelpers from '@libs/entities-lib/helpers';
 import { IAssessmentFormEntity, PublishStatus } from '@libs/entities-lib/assessment-template';
 import { ICaseFilesService, ICaseFilesServiceMock } from '@libs/services-lib/case-files/entity';
+import { ITier2Details } from '@libs/entities-lib/src/case-file';
 import {
   additionalMembersValid,
   addressesValid,
@@ -82,7 +83,8 @@ export function storeFactory({
     const allTabs = ref(_cloneDeep(pTabs)) as Ref<IRegistrationMenuItem[]>;
     const duplicateResult = ref(null) as Ref<ICheckForPossibleDuplicateResponse>;
     const tier2State = ref({ mustDoTier2: null, completed: false }) as
-      Ref<{ mustDoTier2: boolean, completed: boolean, basicDocumentsOnly: boolean, status: IdentityAuthenticationStatus }>;
+      Ref<{ mustDoTier2: boolean, completed: boolean, basicDocumentsOnly?: boolean, status: IdentityAuthenticationStatus }>;
+    const basicInformationWhenTier2FromEmail = ref(null) as Ref<ITier2Details>;
 
     function isDuplicateError(): boolean {
       if (duplicateResult.value?.duplicateFound && (duplicateResult.value.registeredToEvent || (!duplicateResult.value.maskedAlternatePhoneNumber
@@ -292,7 +294,7 @@ export function storeFactory({
       return tabs.value[currentTabIndex.value];
     }
     function getPreviousTabName() {
-      if (currentTabIndex.value === 0) {
+      if (currentTabIndex.value === 0 && getCurrentTab().id !== TabId.Confirmation) {
         return 'registration.privacy_statement.start_registration';
       }
 
@@ -807,7 +809,29 @@ export function storeFactory({
       return null;
     }
 
+    async function fetchDetailsForTier2Process(caseFileId: uuid) {
+      const result = await caseFileApi.getTier2Details(caseFileId);
+      const eventData = result?.event;
+      event.value = eventData;
+      tier2State.value = {
+        status: result?.tier2response?.identityAuthenticationStatus,
+        completed: result?.tier2response?.processCompleted,
+        mustDoTier2: result?.canCompleteTier2,
+      };
+      basicInformationWhenTier2FromEmail.value = result;
+
+      if (result?.canCompleteTier2) {
+        tabs.value = [tier2Tab(), allTabs.value.find((t) => t.id === TabId.Confirmation)];
+      } else {
+        registrationErrors.value = { response: { data: { errors: [{ code: 'errors.cannotcompletetier2' }] } } } as IServerError;
+        tabs.value = [allTabs.value.find((t) => t.id === TabId.Confirmation)];
+      }
+
+      return result;
+    }
+
     return {
+      basicInformationWhenTier2FromEmail,
       duplicateResult,
       tier2State,
       isDuplicateError,
@@ -859,6 +883,7 @@ export function storeFactory({
       resetSplitHousehold,
       checkDuplicates,
       fetchEvent,
+      fetchDetailsForTier2Process,
       fetchGenders,
       fetchPreferredLanguages,
       fetchPrimarySpokenLanguages,

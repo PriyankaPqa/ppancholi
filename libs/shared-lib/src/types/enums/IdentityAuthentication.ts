@@ -11,6 +11,16 @@ export enum IdentityAuthenticationStatus {
   Failed = 2,
 }
 
+export enum Tier2State {
+  None = 0,
+  ToDo = 1,
+  StartedButDocumentsNotSubmitted = 2,
+  Pending = 3,
+  Passed = 4,
+  Failed = 5,
+  Cancelled = 6,
+}
+
 export enum Tier2GambitScreeningId {
   CanadianDriverLicense = 82,
   ProvincialPhotoId = 53,

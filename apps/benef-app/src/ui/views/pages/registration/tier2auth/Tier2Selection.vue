@@ -76,7 +76,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { useRegistrationStore } from '@/pinia/registration/registration';
-import { IDetailedRegistrationResponse } from '@libs/entities-lib/household';
 import { VSelectWithValidation, RcPageLoading } from '@libs/component-lib/components';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import helpers from '@libs/entities-lib/helpers';
@@ -99,8 +98,20 @@ export default Vue.extend({
   },
 
   computed: {
-    registrationResponse(): IDetailedRegistrationResponse {
-      return useRegistrationStore().registrationResponse;
+    requiredInformation(): { caseFileId: string, tier1transactionId: string, canCompleteTier2: boolean } {
+      if (useRegistrationStore().basicInformationWhenTier2FromEmail?.caseFileId) {
+        return {
+          caseFileId: useRegistrationStore().basicInformationWhenTier2FromEmail.caseFileId,
+          tier1transactionId: useRegistrationStore().basicInformationWhenTier2FromEmail.tier2response.transactionUniqueId,
+          canCompleteTier2: useRegistrationStore().basicInformationWhenTier2FromEmail.canCompleteTier2,
+         };
+      }
+
+      return {
+        caseFileId: useRegistrationStore().registrationResponse.caseFile.id,
+        tier1transactionId: useRegistrationStore().registrationResponse.tier1transactionId,
+        canCompleteTier2: useRegistrationStore().registrationResponse.mustDoTier2authentication,
+        };
     },
 
     tier2Ids(): { value: number, text: string }[] {
@@ -161,8 +172,7 @@ export default Vue.extend({
       await helpers.timeout(2000);
       this.interval = setInterval(async () => {
           try {
-            const result = await this.$services.caseFiles.getTier2Result(this.registrationResponse.caseFile.id);
-
+            const result = await this.$services.caseFiles.getTier2Result(this.requiredInformation.caseFileId);
             // if 15 seconds elapsed since we started too bad - gambit didnt tell us the final status we move with unverified on confirmation
             if (new Date().getTime() - startTime > 15000 || result.processCompleted) {
               useRegistrationStore().tier2State.completed = true;
@@ -194,8 +204,8 @@ export default Vue.extend({
       this.iframeUrl = null;
       useRegistrationStore().tier2State.basicDocumentsOnly = !!this.selectedId;
       const result = await this.$services.caseFiles.tier2ProcessStart({
-        id: this.registrationResponse.caseFile.id,
-        identityVerificationTier1transactionId: this.registrationResponse.tier1transactionId,
+        id: this.requiredInformation.caseFileId,
+        identityVerificationTier1transactionId: this.requiredInformation.tier1transactionId,
         mainDocumentTypeId: this.selectedId || this.otherIdType,
         subDocumentTypeId: this.proofAddress,
         locale: this.$i18n.locale,

@@ -209,6 +209,9 @@ export default mixins(individual).extend({
     async goNext() {
       if (this.currentTab.id === TabId.PersonalInfo) {
         await this.fetchPublicToken(this.validateAndNextPersonalInfo_prepareValidation);
+      } else if (this.currentTabIndex === 0 && this.currentTab.id === TabId.Tier2auth) {
+        this.localSubmitLoading = true;
+        await this.fetchPublicToken(this.validateAndNext);
       } else if (this.tokenFetchedLast != null) {
         // if we are passed personal info we keep the token alive
         await this.fetchPublicToken(this.validateAndNext);
@@ -245,14 +248,17 @@ export default mixins(individual).extend({
     },
 
     async validateAndNext() {
+      this.localSubmitLoading = false;
       const isValid = await this.validateForm();
       if (isValid) {
         if (this.currentTab.id === TabId.Tier2auth && !this.tier2ProcessStarted) {
+          this.localSubmitLoading = true;
           // component will open the iframe to the next step in the authentication - it's still within the authentication process
           EventHub.$emit('tier2ProcessStart');
           // we give a second or 2 just so the iframe shows up before the button - it just looks better
           await helpers.timeout(1500);
           this.tier2ProcessStarted = true;
+          this.localSubmitLoading = false;
           return;
         }
         await this.next();

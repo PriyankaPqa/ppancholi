@@ -8,6 +8,7 @@ import helpers from '@libs/entities-lib/helpers';
 import { Tier2GambitScreeningId } from '@libs/shared-lib/types';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { mockDetailedRegistrationResponse } from '@libs/entities-lib/household';
+import { mockTier2Details } from '@libs/entities-lib/case-file';
 import Component from './Tier2Selection.vue';
 
 const localVue = createLocalVue();
@@ -34,10 +35,24 @@ describe('Tier2Selection.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('registrationResponse', () => {
-      it('returns from store', async () => {
-        const response = wrapper.vm.registrationResponse;
-        expect(response).toEqual(registrationStore.registrationResponse);
+    describe('requiredInformation', () => {
+      it('comes from response if not in email mode', async () => {
+        const response = wrapper.vm.requiredInformation;
+        expect(response).toEqual({
+          caseFileId: registrationStore.registrationResponse.caseFile.id,
+          tier1transactionId: registrationStore.registrationResponse.tier1transactionId,
+          canCompleteTier2: registrationStore.registrationResponse.mustDoTier2authentication,
+        });
+      });
+      it('comes from email details when in email mode', async () => {
+        registrationStore.basicInformationWhenTier2FromEmail = mockTier2Details();
+        const response = wrapper.vm.requiredInformation;
+        expect(response).toEqual({
+          caseFileId: registrationStore.basicInformationWhenTier2FromEmail.caseFileId,
+          tier1transactionId: registrationStore.basicInformationWhenTier2FromEmail.tier2response.transactionUniqueId,
+          canCompleteTier2: registrationStore.basicInformationWhenTier2FromEmail.canCompleteTier2,
+        });
+        registrationStore.basicInformationWhenTier2FromEmail = null;
       });
     });
 
@@ -221,7 +236,7 @@ describe('Tier2Selection.vue', () => {
         expect(setInterval).toHaveBeenCalled();
         expect(EventHub.$emit).toHaveBeenCalledWith('next');
         expect(registrationStore.tier2State.completed).toBeTruthy();
-        expect(services.caseFiles.getTier2Result).toHaveBeenCalledWith(wrapper.vm.registrationResponse.caseFile.id);
+        expect(services.caseFiles.getTier2Result).toHaveBeenCalledWith(wrapper.vm.requiredInformation.caseFileId);
 
         window.setInterval = bck;
       });

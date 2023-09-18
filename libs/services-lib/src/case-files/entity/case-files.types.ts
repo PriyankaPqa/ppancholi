@@ -3,7 +3,7 @@ import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
   ICaseFileCount,
-  ICaseFileDetailedCount, IAssignedTeamMembers, ICaseFileMetadata, ITier2Request, ITier2Response,
+  ICaseFileDetailedCount, IAssignedTeamMembers, ICaseFileMetadata, ITier2Request, ITier2Response, ITier2Details,
 } from '@libs/entities-lib/case-file';
 import { IDetailedRegistrationResponse } from '@libs/entities-lib/src/household';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
@@ -44,6 +44,7 @@ export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, u
   setPersonReceiveAssistance(caseFileId: uuid, params: { receiveAssistance: boolean, personId: string, rationale: string }): Promise<ICaseFileEntity>;
   tier2ProcessStart(payload: ITier2Request): Promise<ITier2Response>;
   getTier2Result(id: string): Promise<ITier2Response>;
+  getTier2Details(id: string): Promise<ITier2Details>;
   getExceptionalTypeCounts(eventId: uuid): Promise<ICaseFileCountByExceptionalAuthentication[]>;
 }
 
@@ -66,5 +67,6 @@ export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileE
   setPersonReceiveAssistance: jest.Mock<ICaseFileEntity>;
   tier2ProcessStart: jest.Mock<ITier2Response>;
   getTier2Result: jest.Mock<ITier2Response>;
+  getTier2Details: jest.Mock<ITier2Details>;
   getExceptionalTypeCounts: jest.Mock<Promise<ICaseFileCountByExceptionalAuthentication[]>>;
 }
