@@ -14,6 +14,8 @@ steps:
 
 - script: yarn test:parallel ${{parameters.isPullRequest}} ${{parameters.appName}} $(System.TotalJobsInPhase) $(System.JobPositionInPhase) ${{ parameters.testKindParameter }}
   displayName: ${{ parameters.scriptDisplayName }}
+  env:
+    NODE_OPTIONS: --max-old-space-size=8192
 
 #- task: PublishPipelineArtifact@1
 #  condition: eq(variables['build.sourceBranch'], 'refs/heads/master') # We only publish coverage after merge, so no need to create the artifact here
