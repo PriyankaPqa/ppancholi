@@ -22,7 +22,7 @@
       <v-row>
         <v-col class="pb-1">
           <v-text-field-with-validation
-            v-model="task.name.specifiedOther"
+            v-model="localPersonalTaskForm.name.specifiedOther"
             :rules="rules.personalTaskName"
             :label="$t('task.create_edit.task_name') + ' *'"
             data-test="task-name-personal-task" />
@@ -32,7 +32,7 @@
       <v-row>
         <v-col cols="6" class="py-1">
           <v-date-field-with-validation
-            v-model="task.dueDate"
+            v-model="localPersonalTaskForm.dueDate"
             :prepend-inner-icon="'mdi-calendar'"
             :rules="rules.dueDate"
             :label="$t('task.create_edit.due_date') + ' *'"
@@ -43,7 +43,7 @@
       <v-row>
         <v-col cols="12" class="py-1">
           <v-text-area-with-validation
-            v-model="task.description"
+            v-model="localPersonalTaskForm.description"
             :rules="rules.description"
             :label="$t('task.create_edit.task_description') + ' *'"
             rows="4"
@@ -62,6 +62,14 @@ import { VSelectWithValidation, VTextAreaWithValidation, VTextFieldWithValidatio
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@libs/shared-lib/constants/validations';
 import { format } from 'date-fns';
 import VDateFieldWithValidation from '@libs/component-lib/components/atoms/VDateFieldWithValidation.vue';
+import { IListOption } from '@libs/shared-lib/types';
+import { useTaskStore } from '@/pinia/task/task';
+
+interface ILocalPersonalTaskForm {
+  name: IListOption;
+  description: string;
+  dueDate: string | Date;
+}
 
 export default mixins(caseFileTask).extend({
   name: 'PersonalTaskForm',
@@ -83,6 +91,16 @@ export default mixins(caseFileTask).extend({
       type: Boolean,
       default: false,
     },
+  },
+
+  data() {
+    return {
+      localPersonalTaskForm: {
+        name: { optionItemId: null, specifiedOther: null },
+        dueDate: '',
+        description: '',
+      } as ILocalPersonalTaskForm,
+    };
   },
 
   computed: {
@@ -111,6 +129,28 @@ export default mixins(caseFileTask).extend({
         },
       };
     },
+  },
+
+  watch: {
+    localPersonalTaskForm: {
+      handler(newTaskForm) {
+        this.$emit('update:task', {
+          ...this.task,
+          ...newTaskForm,
+        });
+      },
+      deep: true,
+    },
+  },
+
+  async created() {
+    await useTaskStore().fetchTaskCategories();
+    this.localPersonalTaskForm = {
+      name: this.task.name,
+      description: this.task.description,
+      dueDate: this.task.dueDate,
+    };
+    this.localPersonalTaskForm.name.optionItemId = this.taskNames?.filter((t) => t.isOther && t.subitems.length === 0)[0]?.id;
   },
 
 });

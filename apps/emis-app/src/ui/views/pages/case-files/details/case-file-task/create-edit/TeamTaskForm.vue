@@ -39,7 +39,7 @@
       <v-row>
         <v-col class="pb-1">
           <v-select-with-validation
-            v-model="localTaskForm.name.optionItemId"
+            v-model="localTeamTaskForm.name.optionItemId"
             :items="taskNames"
             :item-text="(item) => item ? $m(item.name) : null"
             :item-value="(item) => item ? item.id : null"
@@ -61,7 +61,7 @@
       <v-row>
         <v-col cols="6" class="py-1">
           <v-select-with-validation
-            v-model="localTaskForm.category.optionItemId"
+            v-model="localTeamTaskForm.category.optionItemId"
             :items="taskCategories"
             :item-text="(item) => item ? $m(item.name) : ''"
             :item-value="(item) => item ? item.id : ''"
@@ -84,7 +84,7 @@
       <v-row v-if="selectedCategory && selectedCategory.isOther">
         <v-col cols="6" class="py-2">
           <v-text-field-with-validation
-            v-model="localTaskForm.category.specifiedOther"
+            v-model="localTeamTaskForm.category.specifiedOther"
             :label="`${$t('common.pleaseSpecify')} *`"
             rows="1"
             :rules="rules.specifyOtherCategory"
@@ -95,7 +95,7 @@
       <v-row>
         <v-col cols="12" class="py-1">
           <v-text-area-with-validation
-            v-model="localTaskForm.description"
+            v-model="localTeamTaskForm.description"
             :rules="rules.description"
             :label="$t('task.create_edit.task_description') + ' *'"
             rows="4"
@@ -114,8 +114,9 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { VSelectWithValidation, VTextAreaWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { MAX_LENGTH_LG } from '@libs/shared-lib/constants/validations';
 import { IListOption } from '@libs/shared-lib/types';
+import { useTaskStore } from '@/pinia/task/task';
 
-interface LocalTaskForm {
+interface ILocalTeamTaskForm {
   name: IListOption;
   category: IListOption;
   description: string;
@@ -150,13 +151,17 @@ export default mixins(caseFileTask).extend({
 
   data() {
     return {
-      localTaskForm: null as LocalTaskForm,
+      localTeamTaskForm: {
+        name: this.task.name,
+        category: this.task.category,
+        description: this.task.description,
+      } as ILocalTeamTaskForm,
     };
   },
 
   computed: {
     shouldDisableCategorySelect(): boolean {
-      return !this.localTaskForm.name.optionItemId || this.taskCategories?.length === 0;
+      return !this.localTeamTaskForm.name.optionItemId || this.taskCategories?.length === 0;
     },
 
     rules(): Record<string, unknown> {
@@ -179,7 +184,7 @@ export default mixins(caseFileTask).extend({
   },
 
   watch: {
-    localTaskForm: {
+    localTeamTaskForm: {
       handler(newTaskForm) {
         this.$emit('update:task', {
           ...this.task,
@@ -190,8 +195,9 @@ export default mixins(caseFileTask).extend({
     },
   },
 
-  created() {
-    this.localTaskForm = {
+  async created() {
+    await useTaskStore().fetchTaskCategories();
+    this.localTeamTaskForm = {
       name: this.task.name,
       category: this.task.category,
       description: this.task.description,
@@ -200,16 +206,16 @@ export default mixins(caseFileTask).extend({
 
   methods: {
     setTaskNameIdAndResetForm() {
-      this.selectedTaskNameId = this.localTaskForm.name.optionItemId;
-      this.localTaskForm.description = '';
-      this.localTaskForm.category.optionItemId = null;
-      this.localTaskForm.category.specifiedOther = null;
+      this.selectedTaskNameId = this.localTeamTaskForm.name.optionItemId;
+      this.localTeamTaskForm.description = '';
+      this.localTeamTaskForm.category.optionItemId = null;
+      this.localTeamTaskForm.category.specifiedOther = null;
       this.$emit('reset-form-validation');
     },
 
     setCategoryIdAndResetSpecifiedOther(categoryId: string) {
       this.selectedCategoryId = categoryId;
-      this.localTaskForm.category.specifiedOther = null;
+      this.localTeamTaskForm.category.specifiedOther = null;
     },
   },
 });

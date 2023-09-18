@@ -84,7 +84,7 @@ import Vue from 'vue';
 import { ICurrentAddress, IMember, IShelterLocationData } from '@libs/entities-lib/household-create';
 import ImpactedIndividualAddressTemplate from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualAddressTemplate.vue';
 import ImpactedIndividualsEditAddressDialog from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualsEditAddressDialog.vue';
-import { CaseFileActivityType, ICaseFileActivity, IImpactedIndividual } from '@libs/entities-lib/case-file';
+import { ICaseFileActivity, IImpactedIndividual } from '@libs/entities-lib/case-file';
 import { UserRoles } from '@libs/entities-lib/user';
 import ImpactedIndividualsCardPinnedActivity
   from '@/ui/views/pages/case-files/details/case-file-impacted-individuals/components/ImpactedIndividualsCardPinnedActivity.vue';
@@ -171,14 +171,7 @@ export default Vue.extend({
     },
 
     pinnedActivity(): ICaseFileActivity {
-      const lastActivity = this.impactedIndividualActivities.filter((a) => (a.details.member as IndividualActivityDetailMember).id === this.member.id)[0];
-
-      // when we move people between households and back, they can have the last activity for them not match their current state
-      if ((this.isReceivingAssistance && lastActivity?.activityType === CaseFileActivityType.ImpactedIndividualReceivingAssistance)
-        || (!this.isReceivingAssistance && lastActivity?.activityType === CaseFileActivityType.ImpactedIndividualNoLongerReceivingAssistance)) {
-          return lastActivity;
-      }
-      return null;
+      return this.impactedIndividualActivities.filter((a) => (a.details.member as IndividualActivityDetailMember).id === this.member.id)[0];
     },
 
     disableEditing(): boolean {

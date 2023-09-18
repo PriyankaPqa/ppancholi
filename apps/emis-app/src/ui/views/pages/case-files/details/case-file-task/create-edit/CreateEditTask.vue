@@ -136,7 +136,6 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
   },
 
   async created() {
-    await useTaskStore().fetchTaskCategories();
     if (this.isEditMode) {
       // TODO load task data and backup original task
       await this.loadTask();
@@ -224,10 +223,6 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         task.taskType = this.taskType === 'team' ? TaskType.Team : TaskType.Personal;
         task.taskStatus = TaskStatus.InProgress;
       this.task = task;
-      if (this.task.taskType === TaskType.Personal) {
-        this.task.name.optionItemId = this.taskNames.filter((t) => t.isOther && t.subitems.length === 0)[0]?.id;
-        // TODO this will be modified in EMIS 7318
-      }
     },
 
     async fetchEscalationTeamAndSetTeamId() {

@@ -1,18 +1,22 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockTeamTaskEntity } from '@libs/entities-lib/task';
-import { mockOptionItems } from '@libs/entities-lib/optionItem';
+import { mockOptionItems, mockOptionItem } from '@libs/entities-lib/optionItem';
 import { format } from 'date-fns';
+import { mockPersonalTaskEntity } from '@libs/entities-lib/task';
+import flushPromises from 'flush-promises';
+import { useMockTaskStore } from '@/pinia/task/task.mock';
 import Component from './PersonalTaskForm.vue';
 
 const localVue = createLocalVue();
+const { pinia, taskStore } = useMockTaskStore();
 
 describe('PersonalTaskForm.vue', () => {
   let wrapper;
   const doMount = async (shallow = true, otherOptions = {}) => {
     const option = {
       localVue,
+      pinia,
       propsData: {
-        task: mockTeamTaskEntity(),
+        task: mockPersonalTaskEntity(),
       },
       computed: {
         taskNames: () => mockOptionItems(),
@@ -40,6 +44,80 @@ describe('PersonalTaskForm.vue', () => {
         wrapper.vm.task.dueDate = null;
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.dueDateRule).toEqual({ });
+      });
+    });
+  });
+
+  describe('watcher', () => {
+    describe('localPersonalTaskForm', () => {
+      it('should emit update:task event and send proper data', async () => {
+        jest.clearAllMocks();
+        await doMount(true, {
+          computed: {
+            taskNames: () => [mockOptionItem({ id: 'mock-item-id', isOther: true, subitems: [] })],
+          },
+        });
+        await wrapper.setProps({
+          task: mockPersonalTaskEntity({ description: '' }),
+        });
+
+        const updatedForm = {
+          name: {
+            optionItemId: 'mock-item-id',
+            specifiedOther: '',
+          },
+          description: 'mock-description',
+          dueDate: '2023-08-01',
+        };
+        await wrapper.setData({
+          localPersonalTaskForm: updatedForm,
+        });
+        expect(wrapper.emitted('update:task')[0][0]).toEqual({
+          ...wrapper.vm.task,
+          ...updatedForm,
+        });
+      });
+    });
+  });
+
+  describe('lifecycle', () => {
+    describe('created', () => {
+      it('should assign data properly', async () => {
+        await doMount(true, {
+          propsData: {
+            task: mockPersonalTaskEntity(),
+          },
+          computed: {
+            taskNames: () => [mockOptionItem({ id: 'mock-item-id', isOther: true, subitems: [] })],
+          },
+        });
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(wrapper.vm.localPersonalTaskForm).toEqual({
+          name: {
+            optionItemId: 'mock-item-id',
+            specifiedOther: '',
+          },
+          dueDate: '2023-08-01',
+          description: 'mock-description',
+        });
+      });
+
+      it('should call fetchTaskCategories', async () => {
+        await doMount(true, {
+          propsData: {
+            task: mockPersonalTaskEntity(),
+          },
+        });
+        taskStore.fetchTaskCategories = jest.fn();
+        taskStore.taskCategories = jest.fn(() => []);
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(taskStore.fetchTaskCategories).toHaveBeenCalled();
       });
     });
   });

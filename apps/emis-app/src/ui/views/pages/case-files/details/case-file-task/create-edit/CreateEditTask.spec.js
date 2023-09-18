@@ -154,7 +154,6 @@ describe('CreateEditTask.vue', () => {
           optionItemId: null,
           specifiedOther: null,
         };
-        expectedResult.name.optionItemId = '1';
         await wrapper.vm.prepareCreateTask();
         expect(wrapper.vm.task).toEqual(expectedResult);
       });
@@ -315,28 +314,6 @@ describe('CreateEditTask.vue', () => {
         });
         await flushPromises();
         expect(wrapper.vm.prepareCreateTask).toHaveBeenCalled();
-      });
-
-      it('should call fetchTaskCategories', async () => {
-        await doMount(false, {
-          propsData: {
-            id: 'mock-id-1',
-            taskType: 'team',
-          },
-          computed: {
-            isEditMode: () => false,
-            caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
-            event: () => mockEventEntity({ id: 'mock-event-id' }),
-            taskNames: () => mockOptionItems(),
-          },
-        });
-        taskStore.fetchTaskCategories = jest.fn();
-        taskStore.taskCategories = jest.fn(() => []);
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        await flushPromises();
-        expect(taskStore.fetchTaskCategories).toHaveBeenCalled();
       });
 
       it('should call fetchAssignedTeamAndSetTeamId when task type is team', async () => {

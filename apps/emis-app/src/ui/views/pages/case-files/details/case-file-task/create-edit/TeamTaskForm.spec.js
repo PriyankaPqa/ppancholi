@@ -273,11 +273,11 @@ describe('TeamTaskForm.vue', () => {
           }),
         });
         wrapper.vm.setTaskNameIdAndResetForm();
-        expect(wrapper.vm.localTaskForm.category).toEqual({
+        expect(wrapper.vm.localTeamTaskForm.category).toEqual({
           optionItemId: null,
           specifiedOther: null,
         });
-        expect(wrapper.vm.localTaskForm.description).toEqual('');
+        expect(wrapper.vm.localTeamTaskForm.description).toEqual('');
         expect(wrapper.vm.selectedTaskNameId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
         expect(wrapper.emitted('reset-form-validation')).toBeTruthy();
       });
@@ -299,7 +299,7 @@ describe('TeamTaskForm.vue', () => {
         });
         wrapper.vm.setCategoryIdAndResetSpecifiedOther('mock-category-id-123');
         expect(wrapper.vm.selectedCategoryId).toEqual('mock-category-id-123');
-        expect(wrapper.vm.localTaskForm.category.specifiedOther).toEqual(null);
+        expect(wrapper.vm.localTeamTaskForm.category.specifiedOther).toEqual(null);
       });
     });
   });
@@ -316,7 +316,7 @@ describe('TeamTaskForm.vue', () => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
-        expect(wrapper.vm.localTaskForm).toEqual({
+        expect(wrapper.vm.localTeamTaskForm).toEqual({
           name: {
             optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
             specifiedOther: '',
@@ -328,11 +328,26 @@ describe('TeamTaskForm.vue', () => {
           description: 'mock-description',
         });
       });
+
+      it('should call fetchTaskCategories', async () => {
+        await doMount(true, {
+          propsData: {
+            task: mockTeamTaskEntity(),
+          },
+        });
+        taskStore.fetchTaskCategories = jest.fn();
+        taskStore.taskCategories = jest.fn(() => []);
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(taskStore.fetchTaskCategories).toHaveBeenCalled();
+      });
     });
   });
 
   describe('watcher', () => {
-    describe('localTaskForm', () => {
+    describe('localTeamTaskForm', () => {
       it('should emit update:task event and send proper data', async () => {
         jest.clearAllMocks();
         await wrapper.setProps({
@@ -351,7 +366,7 @@ describe('TeamTaskForm.vue', () => {
           description: 'mock-description',
         };
         await wrapper.setData({
-          localTaskForm: updatedForm,
+          localTeamTaskForm: updatedForm,
         });
         expect(wrapper.emitted('update:task')[0][0]).toEqual({
           ...wrapper.vm.task,
