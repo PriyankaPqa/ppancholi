@@ -150,6 +150,20 @@ const routes = {
         name: 'casefile.impactedIndividuals',
       },
     },
+    task: {
+      home: {
+        path: 'task',
+        name: 'casefile.task',
+      },
+      create: {
+        path: 'task/create/:taskType',
+        name: 'casefile.task.create',
+      },
+      edit: {
+        path: 'task/edit/:taskType/:taskId',
+        name: 'casefile.task.edit',
+      },
+    },
   },
   events: {
     layout: {

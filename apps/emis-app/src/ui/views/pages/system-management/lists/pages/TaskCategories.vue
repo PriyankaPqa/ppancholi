@@ -6,6 +6,7 @@
     has-default
     sub-item-has-other
     hide-item-drag
+    has-other
     item-label="taskCategories.nestedTable.headers.item"
     sub-item-label="taskCategories.nestedTable.headers.subItem"
     sub-item-name-label="taskCategories.nestedTable.headers.subItem"

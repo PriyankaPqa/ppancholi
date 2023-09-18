@@ -235,6 +235,13 @@ export default mixins(caseFileDetail).extend({
         exact: false,
       };
 
+      const taskTab = {
+          text: this.$t('caseFileDetail.menu_tasks') as string,
+          test: 'tasks',
+          to: routes.caseFile.task.home.name,
+          exact: false,
+      };
+
         const tabs = [{
             text: this.$t('caseFileDetail.menu_activity') as string,
             test: 'case-file-activity',
@@ -266,6 +273,7 @@ export default mixins(caseFileDetail).extend({
               disabled: true,
             },
             this.$hasFeature(FeatureKeys.ImpactedIndividuals) && documentTab,
+            this.$hasFeature(FeatureKeys.TaskManagement) && taskTab,
         ];
 
         return tabs.filter((t) => t);
