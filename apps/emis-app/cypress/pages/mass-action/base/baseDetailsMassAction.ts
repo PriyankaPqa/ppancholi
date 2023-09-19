@@ -48,11 +48,11 @@ export enum DataTest {
     private processLabelTwo = { selector: DataTest.processLabelTwo };
 
     public getMassActionName() {
-      return cy.getByDataTest(this.name).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.name).getAndTrimText();
     }
 
     public getMassActionDescription() {
-      return cy.getByDataTest(this.description).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.description).getAndTrimText();
     }
 
     public getMassActionStatus() {
@@ -84,7 +84,7 @@ export enum DataTest {
     }
 
     public getMassActionSuccessfulCaseFiles() {
-      return cy.getByDataTest(this.successes).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.successes).getAndTrimText();
     }
 
     public getMassActionProcessButton() {
@@ -92,15 +92,15 @@ export enum DataTest {
     }
 
     public getMassActionType() {
-      return cy.getByDataTest(this.typeMassAction).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.typeMassAction).getAndTrimText();
     }
 
     public getMassActionDateCreated() {
-      return cy.getByDataTest(this.dateCreated).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.dateCreated).getAndTrimText();
     }
 
     public getMassActionCreatedBy() {
-      return cy.getByDataTest(this.createdBy).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.createdBy).getAndTrimText();
     }
 
     public getDialogSubmitButton() {
@@ -112,7 +112,7 @@ export enum DataTest {
     }
 
     public getDialogText() {
-      return cy.getByDataTest(this.dialogText).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.dialogText).getAndTrimText();
     }
 
     public confirmProcessing() {
@@ -120,7 +120,7 @@ export enum DataTest {
     }
 
     public getNumberFailedRecords() {
-      return cy.getByDataTest(this.failures).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.failures).getAndTrimText();
     }
 
     public getInvalidCasefilesDownloadButton() {
@@ -128,10 +128,10 @@ export enum DataTest {
     }
 
     public getPreProcessingLabelOne() {
-      return cy.getByDataTest(this.processLabelOne).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.processLabelOne).getAndTrimText();
     }
 
     public getPreProcessingLabelTwo() {
-      return cy.getByDataTest(this.processLabelTwo).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.processLabelTwo).getAndTrimText();
     }
   }

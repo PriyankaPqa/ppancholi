@@ -93,6 +93,7 @@ describe('#TC1833# - 1st Approval Group - Confirm that payment can be escalated 
           approvalsPage.getActionIconElementUsingPaymentId(this.FAPaymentId).should('have.attr', 'class').and('contains', 'check theme'); // verify if checkmark icon is visible instead of Actions button
 
           const financialAssistanceDetailsPage = approvalsPage.getFAPaymentById(this.FAPaymentId);
+          financialAssistanceDetailsPage.getPageTitleElement().contains('Financial assistance details').should('be.visible');
           financialAssistanceDetailsPage.getFinancialAssistanceApprovalStatus().should('eq', 'Pending');
           financialAssistanceDetailsPage.getApprovalHistory();
           cy.contains(`${this.FAPaymentName}`).should('be.visible');

@@ -91,7 +91,7 @@ export class CreateFinancialAssistanceTablePage {
   }
 
   public getTableStatus() {
-    return cy.getByDataTest(this.status).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.status).getAndTrimText();
   }
 
   public selectFrenchTab() {
@@ -107,27 +107,27 @@ export class CreateFinancialAssistanceTablePage {
   }
 
   public getItemType() {
-    return cy.getByDataTestLike(this.itemDispayed).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.itemDispayed).getAndTrimText();
   }
 
   public getSubItemCategory() {
-    return cy.getByDataTestLike(this.subItemCategoryDisplay).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.subItemCategoryDisplay).getAndTrimText();
   }
 
   public getSubItemMaxAmount() {
-    return cy.getByDataTestLike(this.subItemMaxAmountDisplay).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.subItemMaxAmountDisplay).getAndTrimText();
   }
 
   public getSubItemFrequency() {
-    return cy.getByDataTestLike(this.subItemFrequencyDisplay).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.subItemFrequencyDisplay).getAndTrimText();
   }
 
   public getSubItemAmountType() {
-    return cy.getByDataTestLike(this.subItemAmountTypeDisplay).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.subItemAmountTypeDisplay).getAndTrimText();
   }
 
   public getSubItemDocsRequired() {
-    return cy.getByDataTestLike(this.subItemDocsRequiredDisplay).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.subItemDocsRequiredDisplay).getAndTrimText();
   }
 
   public toggleStatus() {

@@ -16,7 +16,7 @@ export class AssessmentDetailsPage {
   }
 
   public getAssessmentStatusTag() {
-    return cy.getByDataTestLike(this.assessmentStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.assessmentStatus).getAndTrimText();
   }
 
   public getSavePartialAssessmentsResultsElement() {

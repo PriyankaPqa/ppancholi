@@ -47,11 +47,11 @@ export class CreateNewTeamPage {
   }
 
   public getMemberName() {
-    return cy.getByDataTest(this.memberName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.memberName).getAndTrimText();
   }
 
   public getMemberRole() {
-    return cy.getByDataTest(this.memberRole).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.memberRole).getAndTrimText();
   }
 
   public getMemberTeamCount() {

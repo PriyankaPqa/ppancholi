@@ -83,4 +83,6 @@ Cypress.Commands.add('getByDataTest', ({ selector, type = '' }, ...options) => c
       .should('have.attr', 'class')
       .and('contain', 'required');
   });
+
+  Cypress.Commands.add('getAndTrimText', { prevSubject: true }, (subject) => cy.wrap(subject).invoke('text').then((text) => text.trim()));
   export {};

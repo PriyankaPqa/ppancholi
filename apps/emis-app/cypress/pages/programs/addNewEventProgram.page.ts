@@ -55,7 +55,7 @@ export class AddNewEventProgramPage {
   }
 
   public getStatusName() {
-    return cy.getByDataTest(this.statusName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.statusName).getAndTrimText();
   }
 
   public selectFrenchTab() {

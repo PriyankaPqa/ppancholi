@@ -85,6 +85,9 @@ describe('#TC1791# - Confirm that an Approver can submit a request for more info
           cy.contains('Approval status has been updated').should('be.visible');
 
           const financialAssistanceDetailsPage = approvalsPage.getFAPaymentById(this.FAPaymentId);
+          financialAssistanceDetailsPage.getPageTitleElement().contains('Financial assistance details').should('be.visible');
+          financialAssistanceDetailsPage.getFinancialAssistanceApprovalStatus().should('eq', 'New');
+          financialAssistanceDetailsPage.getSubmitAssistanceButton().should('be.enabled');
           financialAssistanceDetailsPage.getApprovalHistory();
           cy.contains(`${this.FAPaymentName}`).should('be.visible');
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(0).should('eq', `Payment submitted to  ${getUserName(roleName)}`);

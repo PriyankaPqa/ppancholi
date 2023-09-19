@@ -59,7 +59,7 @@ export class ProfileHistoryPage {
   }
 
   public getHouseholdHistoryEditedBy() {
-    return cy.getByDataTest(this.householdHistoryEditedBy).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.householdHistoryEditedBy).getAndTrimText();
   }
 
   public getHouseholdHistoryChangeDate() {
@@ -67,19 +67,19 @@ export class ProfileHistoryPage {
   }
 
   public getHouseholdHistoryLastAction() {
-    return cy.getByDataTest(this.householdHistoryLastAction).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.householdHistoryLastAction).getAndTrimText();
   }
 
   public getHouseholdHistoryPreviousValue() {
-    return cy.getByDataTest(this.householdHistoryPreviousValue).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.householdHistoryPreviousValue).getAndTrimText();
   }
 
   public getHouseholdHistoryNewValue() {
-    return cy.getByDataTest(this.householdHistoryNewValue).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.householdHistoryNewValue).getAndTrimText();
   }
 
   public getTitleText() {
-    return cy.getByDataTest(this.title).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.title).getAndTrimText();
   }
 
   public goToHouseholdProfilePage() {

@@ -103,51 +103,51 @@ export class EventDetailsPage {
   }
 
   public getEventName() {
-    return cy.getByDataTest(this.eventName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventName).getAndTrimText();
   }
 
   public getEventType() {
-    return cy.getByDataTest(this.eventType).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventType).getAndTrimText();
   }
 
   public getEventId() {
-    return cy.getByDataTest(this.eventId).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventId).getAndTrimText();
   }
 
   public getEventProvince() {
-    return cy.getByDataTest(this.eventProvince).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventProvince).getAndTrimText();
   }
 
   public getEventRegion() {
-    return cy.getByDataTest(this.eventRegion).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventRegion).getAndTrimText();
   }
 
   public getEventPhone() {
-    return cy.getByDataTest(this.eventPhone).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventPhone).getAndTrimText();
   }
 
   public getEventCreatedDate() {
-    return cy.getByDataTest(this.eventCreatedDate).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventCreatedDate).getAndTrimText();
   }
 
   public getEventReportedDate() {
-    return cy.getByDataTest(this.eventReportedDate).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventReportedDate).getAndTrimText();
   }
 
   public getEventDescription() {
-    return cy.getByDataTest(this.eventDescription).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventDescription).getAndTrimText();
   }
 
   public getEventResponseLevel() {
-    return cy.getByDataTest(this.eventResponseLevel).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventResponseLevel).getAndTrimText();
   }
 
   public getEventLink() {
-    return cy.getByDataTest(this.eventLink).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventLink).getAndTrimText();
   }
 
   public getEventStatus() {
-    return cy.getByDataTest(this.eventStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventStatus).getAndTrimText();
   }
 
   public addCallCentre() {
@@ -163,7 +163,7 @@ export class EventDetailsPage {
     if (roleName === 'Level5') {
       cy.getByDataTestLike(this.callCentreName).eq(1).should('exist');
     }
-    return cy.getByDataTestLike(this.callCentreName).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.callCentreName).eq(index).getAndTrimText();
   }
 
   public getCallCentreStartDate(index = 0) {
@@ -183,15 +183,15 @@ export class EventDetailsPage {
     if (roleName === 'Level5') {
       cy.getByDataTestLike(this.registrationLocationName).eq(1).should('exist');
     }
-    return cy.getByDataTestLike(this.registrationLocationName).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.registrationLocationName).eq(index).getAndTrimText();
   }
 
   public getRegistrationLocationAddress(index = 0) {
-    return cy.getByDataTestLike(this.registrationLocationAddress).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.registrationLocationAddress).eq(index).getAndTrimText();
   }
 
   public getRegistrationLocationStatus(index = 0) {
-    return cy.getByDataTestLike(this.registrationLocationStatus).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.registrationLocationStatus).eq(index).getAndTrimText();
   }
 
   public getRegistrationLocationButton() {
@@ -207,15 +207,15 @@ export class EventDetailsPage {
     if (roleName === 'Level5') {
       cy.getByDataTestLike(this.shelterLocationName).eq(1).should('exist');
     }
-    return cy.getByDataTestLike(this.shelterLocationName).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.shelterLocationName).eq(index).getAndTrimText();
   }
 
   public getShelterLocationAddress(index = 0) {
-    return cy.getByDataTestLike(this.shelterLocationAddress).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.shelterLocationAddress).eq(index).getAndTrimText();
   }
 
   public getShelterLocationStatus(index = 0) {
-    return cy.getByDataTestLike(this.shelterLocationStatus).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.shelterLocationStatus).eq(index).getAndTrimText();
   }
 
   public getShelterLocationButton() {

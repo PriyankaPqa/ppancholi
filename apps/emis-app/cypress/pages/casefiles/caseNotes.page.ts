@@ -83,11 +83,11 @@ export class CaseNotesPage {
   }
 
   public getCaseFileUserName() {
-    return cy.getByDataTest(this.caseFileUserName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseFileUserName).getAndTrimText();
   }
 
   public getCaseFileRoleName() {
-    return cy.getByDataTest(this.caseFileRoleName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseFileRoleName).getAndTrimText();
   }
 
   public getCaseFileCreated() {
@@ -95,19 +95,19 @@ export class CaseNotesPage {
   }
 
   public getCaseNoteSubject() {
-    return cy.getByDataTest(this.caseNoteDisplayedSubject).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseNoteDisplayedSubject).getAndTrimText();
   }
 
   public getCaseNoteCategory() {
-    return cy.getByDataTest(this.caseNoteDisplayedCategory).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseNoteDisplayedCategory).getAndTrimText();
   }
 
   public getCaseNoteDescription() {
-    return cy.getByDataTest(this.caseNoteDisplayedDescription).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseNoteDisplayedDescription).getAndTrimText();
   }
 
   public getCaseFileLastEditBy() {
-    return cy.getByDataTest(this.caseFileLastEditBy).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseFileLastEditBy).getAndTrimText();
   }
 
   public getCaseFileLastModifiedDate() {

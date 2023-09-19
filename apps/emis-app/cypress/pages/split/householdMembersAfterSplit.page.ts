@@ -11,7 +11,7 @@ export class HouseholdMembersAfterSplitPage {
   private nextButton = { selector: DataTest.nextButton };
 
   public getAdditionalMemberDetails(index: number) {
-    return cy.getByDataTest(this.additionalMemberInfo).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.additionalMemberInfo).eq(index).getAndTrimText();
   }
 
   public goToReviewSplitInformationPage() {

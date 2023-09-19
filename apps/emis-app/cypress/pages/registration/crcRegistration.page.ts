@@ -12,7 +12,7 @@ export class CrcRegistrationPage {
   private title = { selector: DataTest.title };
 
   public getPageTitle() {
-    return cy.getByDataTest(this.title).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.title).getAndTrimText();
   }
 
   public fillEvent(eventName: string) {

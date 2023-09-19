@@ -56,7 +56,7 @@ export class CreateApprovalTablePage {
   private approvalTableCreate = { selector: DataTest.approvalTableCreate };
 
   public getApprovalTableStatus() {
-    return cy.getByDataTest(this.approvalStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.approvalStatus).getAndTrimText();
   }
 
   public fillTableName(tableName: string) {

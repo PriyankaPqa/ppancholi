@@ -1,6 +1,16 @@
 import { format } from 'date-fns';
 import { faker } from '@faker-js/faker';
+import { saveAs } from 'file-saver';
 
+const ExcelJS = require('exceljs');
+
+export interface IXlsxTableColumnProperties {
+  name: string;
+  totalsRowLabel?: string;
+  totalsRowFunction?: string;
+  filterButton?: boolean;
+  style?: object;
+}
 export const today = `${new Date().toISOString().split('T')[0]}T00:00:00.000Z`;
 
 export function getRandomNumber() {
@@ -46,4 +56,28 @@ export function generateCSVContent<T>(data: T[]): string {
   const header = `${Object.keys(data[0]).join(',')}\n`;
   const rows = data.map((entry) => Object.values(entry).join(',')).join('\n');
   return header + rows;
+}
+
+export async function generateXlsxFile(columns: IXlsxTableColumnProperties[], rows: string[][], tableName: string, fileName: string) {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Data Correction');
+
+  worksheet.addTable({
+    name: tableName,
+    ref: 'A1',
+    headerRow: true,
+    totalsRow: false,
+    style: {
+      theme: 'TableStyle',
+      showRowStripes: true,
+    },
+    columns,
+    rows,
+  });
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const fileExtension = '.xlsx';
+
+  saveAs(new Blob([buffer]), fileName + fileExtension);
+  return new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 }

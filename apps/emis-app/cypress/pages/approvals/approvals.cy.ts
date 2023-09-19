@@ -149,15 +149,15 @@ export enum DataTest {
     }
 
     public getSubmittedByUserNameUsingPaymentId(faPaymentId: string) {
-      return cy.getByDataTest({ selector: `${DataTest.submittedBy}${faPaymentId}` }).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest({ selector: `${DataTest.submittedBy}${faPaymentId}` }).getAndTrimText();
     }
 
     public getSubmittedToUserNameUsingPaymentId(faPaymentId: string) {
-      return cy.getByDataTest({ selector: `${DataTest.submittedTo}${faPaymentId}` }).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest({ selector: `${DataTest.submittedTo}${faPaymentId}` }).getAndTrimText();
     }
 
     public getDateSubmittedUsingPaymentId(faPaymentId: string) {
-      return cy.getByDataTest({ selector: `${DataTest.submissionDate}${faPaymentId}` }).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest({ selector: `${DataTest.submissionDate}${faPaymentId}` }).getAndTrimText();
     }
 
     public getActionIconElementUsingPaymentId(faPaymentId: string) {

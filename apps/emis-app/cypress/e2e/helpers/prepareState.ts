@@ -14,12 +14,15 @@ import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/moc
 import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
-import { mockCreateMassFinancialAssistanceRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import { mockCreateMassFinancialAssistanceCustomFileRequest, mockCreateMassFinancialAssistanceRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
+import { fixtureGenerateFaCustomOptionsXlsxFile } from 'cypress/fixtures/mass-actions';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import { linkEventToTeamForManyRoles } from './teams';
 
 /**
@@ -258,7 +261,7 @@ export const createAndUpdateAssessment = async (provider: IProvider, eventId: st
 };
 
 // verifies if casefile created is indexed through search and wait
-const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, maxAttempt = 10): Promise<number> => {
+const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, maxAttempt = 10, throttle = 2000): Promise<number> => {
   let searchResult = 0;
   let attempt = 0;
   const waitForCaseFileIndexToBeUpdated = async (): Promise<number> => {
@@ -273,7 +276,7 @@ const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, ma
         attempt += 1;
         if (searchResult === 0) {
           // eslint-disable-next-line
-          cy.wait(2000)
+          helpers.timeout(throttle)
           cy.log(`Casefile index search attempt ${attempt}`);
           return waitForCaseFileIndexToBeUpdated();
         }
@@ -284,6 +287,14 @@ const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, ma
     return searchResult;
   };
   return waitForCaseFileIndexToBeUpdated();
+};
+
+export const searchCaseFilesRecursively = async (provider: IProvider, caseFiles: ICaseFileEntity[]) => {
+  await Promise.all(
+    caseFiles.map(async (caseFile) => {
+    await searchCasefileAndWait(provider, caseFile.id);
+    }),
+  );
 };
 
 /**
@@ -299,13 +310,10 @@ export const prepareStateHouseholdMassFinancialAssistance = async (accessToken: 
   const responseCreateHousehold = await createHousehold(provider, event);
   const eventId = event.id;
   const caseFileId = responseCreateHousehold.registrationResponse.caseFile.id;
-  const searchResult = await searchCasefileAndWait(provider, caseFileId);
-  if (searchResult === 1) {
-    const mockCreateMassFinancialAssistance = mockCreateMassFinancialAssistanceRequest(event, { eventId, tableId, programId });
-    const responseMassFinancialAssistance = await provider.massActions.create('financial-assistance-from-list', mockCreateMassFinancialAssistance);
-    return { responseMassFinancialAssistance, responseCreateHousehold };
-  }
-    throw new Error('Event index not yet updated');
+  await searchCasefileAndWait(provider, caseFileId);
+  const mockCreateMassFinancialAssistance = mockCreateMassFinancialAssistanceRequest(event, { eventId, tableId, programId });
+  const responseMassFinancialAssistance = await provider.massActions.create('financial-assistance-from-list', mockCreateMassFinancialAssistance);
+  return { responseMassFinancialAssistance, responseCreateHousehold };
 };
 
 /**
@@ -404,4 +412,27 @@ export const prepareStateHouseholdAddSubmitUpdateFAPayment = async (accessTokenL
   const submittedFinancialAssistancePayment = await submitFinancialAssistancePayment(provider, createdFinancialAssistancePayment.id);
   await updateFinancialAssistancePayment(provider, submittedFinancialAssistancePayment.id, submittedFinancialAssistancePayment.groups[0].id, paymentStatus);
   return { caseFile, submittedFinancialAssistancePayment };
+};
+
+/**
+ * Creates a Mass Financial Assistance using custom file
+ * @param accessToken
+ * @param event
+ * @param tableId
+ * @param programId
+ * @param householdQuantity
+ * @param filePath
+ */
+// eslint-disable-next-line
+export const prepareStateMassActionFinancialAssistanceCustomFile = async (accessToken: string, event:IEventEntity, tableId: string, householdQuantity: number, fileName: string, tableName = 'MassActionTable') => {
+  const responseCreateHouseholds = await prepareStateMultipleHouseholds(accessToken, event, householdQuantity);
+  const caseFileCreated1 = responseCreateHouseholds.householdsCreated[0].registrationResponse.caseFile;
+  const caseFileCreated2 = responseCreateHouseholds.householdsCreated[1].registrationResponse.caseFile;
+  const caseFileCreated3 = responseCreateHouseholds.householdsCreated[2].registrationResponse.caseFile;
+  await searchCaseFilesRecursively(responseCreateHouseholds.provider, [caseFileCreated1, caseFileCreated2, caseFileCreated3]);
+  const generatedFaCustomOptionsXlsxFileData = await fixtureGenerateFaCustomOptionsXlsxFile([caseFileCreated1, caseFileCreated2, caseFileCreated3], tableId, tableName, fileName);
+  const mockCreateMassFinancialAssistanceCustomFile = mockCreateMassFinancialAssistanceCustomFileRequest(event.id, generatedFaCustomOptionsXlsxFileData);
+  // eslint-disable-next-line
+  const responseMassFinancialAssistance = await responseCreateHouseholds.provider.massActions.create('financial-assistance-custom-options', mockCreateMassFinancialAssistanceCustomFile);
+  return { responseMassFinancialAssistance, responseCreateHouseholds };
 };

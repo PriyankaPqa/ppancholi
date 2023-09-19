@@ -55,7 +55,7 @@ export class AssessmentsListPage {
   }
 
   public getAssessmentStatusTag() {
-    return cy.getByDataTest(this.assessmentStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.assessmentStatus).getAndTrimText();
   }
 
   public getPendingAssessmentTable() {

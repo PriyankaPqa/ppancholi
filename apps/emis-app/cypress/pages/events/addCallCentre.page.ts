@@ -28,7 +28,7 @@ export class AddCallCentrePage {
   private addButton = { selector: DataTest.addButton };
 
   public getCallCentreStatus() {
-    return cy.getByDataTest(this.callCentreStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.callCentreStatus).getAndTrimText();
   }
 
   public fillCallCentreName(name: string) {

@@ -9,7 +9,7 @@ export class ProgramDetailsPage {
   private editButton = { selector: DataTest.editButton };
 
   public getProgramName() {
-    return cy.getByDataTest(this.programName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.programName).getAndTrimText();
   }
 
   public getEditButton() {

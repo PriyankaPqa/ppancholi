@@ -67,7 +67,7 @@ export class HouseholdProfilePage {
   private dialogSubmit = { selector: DataTest.dialogSubmit };
 
   public getCaseFileNumber() {
-    return cy.getByDataTest(this.caseFileNumber).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseFileNumber).getAndTrimText();
   }
 
   public goToCaseFileDetailsPage() {
@@ -85,7 +85,7 @@ export class HouseholdProfilePage {
   }
 
   public getFullNameOfMemberByIndex(index: number) {
-    return cy.getByDataTestLike(this.memberNameDisplay).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.memberNameDisplay).eq(index).getAndTrimText();
   }
 
   public getHouseholdMember(name: string) {
@@ -102,7 +102,7 @@ export class HouseholdProfilePage {
   }
 
   public getRegistrationNumber() {
-    return cy.getByDataTest(this.registrationNumber).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.registrationNumber).getAndTrimText();
   }
 
   public getDateOfBirth() {
@@ -167,15 +167,15 @@ export class HouseholdProfilePage {
   }
 
   public getHomeAddressLine1() {
-    return cy.getByDataTest(this.homeAddressLine1).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.homeAddressLine1).getAndTrimText();
   }
 
   public getHomeAddressLine2() {
-    return cy.getByDataTest(this.homeAddressLine2).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.homeAddressLine2).getAndTrimText();
   }
 
   public getHomeAddressCountry() {
-    return cy.getByDataTest(this.homeAddressCountry).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.homeAddressCountry).getAndTrimText();
   }
 
   public getHomeAddress() {

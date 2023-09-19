@@ -51,35 +51,35 @@ export class CaseFileAssessmentDetailsPage {
   }
 
   public getAssessmentDateAssigned() {
-    return cy.getByDataTestLike(this.dateAssigned).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.dateAssigned).getAndTrimText();
   }
 
   public getAssessmentCompletedBy() {
-    return cy.getByDataTestLike(this.completedBy).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.completedBy).getAndTrimText();
   }
 
   public getAssessmentDateCompleted() {
-    return cy.getByDataTestLike(this.dateCompleted).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.dateCompleted).getAndTrimText();
   }
 
   public getAssessmentStatus() {
-    return cy.getByDataTestLike(this.assessmentStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.assessmentStatus).getAndTrimText();
   }
 
   public getAssessmentFirstQuestion() {
-    return cy.getByDataTestLike(this.questionFirst).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.questionFirst).getAndTrimText();
   }
 
   public getAssessmentFirstResponse() {
-    return cy.getByDataTestLike(this.responseFirst).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.responseFirst).getAndTrimText();
   }
 
   public getAssessmentSecondQuestion() {
-    return cy.getByDataTestLike(this.questionSecond).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.questionSecond).getAndTrimText();
   }
 
   public getAssessmentSecondResponse() {
-    return cy.getByDataTestLike(this.responseSecond).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.responseSecond).getAndTrimText();
   }
 
   public getBackToAssessmentButton() {

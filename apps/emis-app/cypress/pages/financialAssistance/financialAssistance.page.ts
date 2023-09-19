@@ -20,11 +20,11 @@ export class FinancialAssistancePage {
   private createNewTable = { selector: DataTest.createNewTable };
 
   public getTableNameByIndex(index: number) {
-    return cy.getByDataTestLike(this.tableName).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.tableName).eq(index).getAndTrimText();
   }
 
   public getTableStatusByIndex(index: number) {
-    return cy.getByDataTestLike(this.tableStatus).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.tableStatus).eq(index).getAndTrimText();
   }
 
   public getTableEditButtonByIndex(index: number) {

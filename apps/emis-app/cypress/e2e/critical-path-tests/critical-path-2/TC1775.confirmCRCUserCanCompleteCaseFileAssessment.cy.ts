@@ -17,13 +17,16 @@ const canRoles = {
   Level2: UserRoles.level2,
   Level1: UserRoles.level1,
   Level0: UserRoles.level0,
+};
+
+const cannotRoles = {
   Contributor3: UserRoles.contributor3,
   Contributor2: UserRoles.contributor2,
   Contributor1: UserRoles.contributor1,
   ReadOnly: UserRoles.readonly,
 };
 
-const canRolesValues = [...Object.values(canRoles)];
+const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
 
 let accessTokenL6 = '';
 
@@ -31,7 +34,7 @@ describe('#TC1775# - Confirm that the CRC User can complete a Case File Assessme
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
-      const { provider, event, team, program } = await prepareStateEventAndProgram(accessTokenL6, canRolesValues);
+      const { provider, event, team, program } = await prepareStateEventAndProgram(accessTokenL6, allRolesValues);
       const resultAssessment = await createAndUpdateAssessment(provider, event.id, program.id);
       cy.wrap(provider).as('provider');
       cy.wrap(event).as('eventCreated');
@@ -68,6 +71,28 @@ describe('#TC1775# - Confirm that the CRC User can complete a Case File Assessme
           });
           assessmentsListPage.refreshUntilFilledAssessmentUpdated();
           verifyFullyCompletedCaseFileAssessment(roleName, this.assessmentName);
+        });
+      });
+    }
+  });
+  describe('Cannot Roles', () => {
+    before(() => {
+      cy.then(async function () {
+        const resultHousehold = await prepareStateHousehold(accessTokenL6, this.eventCreated);
+        await addAssessmentToCasefile(resultHousehold.provider, resultHousehold.registrationResponse.caseFile.id, this.assessmentFormId);
+        cy.wrap(resultHousehold.registrationResponse.caseFile.id).as('casefileId');
+      });
+    });
+    for (const [roleName, roleValue] of Object.entries(cannotRoles)) {
+      describe(`${roleName}`, () => {
+        beforeEach(() => {
+          cy.then(async function () {
+            cy.login(roleValue);
+            cy.goTo(`casefile/${this.casefileId}/assessments`);
+          });
+        });
+        it('should not be able to complete a Case File Assessment', function () {
+          verifyPendingCaseFileAssessment(roleName, this.assessmentName);
         });
       });
     }

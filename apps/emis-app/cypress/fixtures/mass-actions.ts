@@ -1,4 +1,4 @@
-import { formatDate, generateCSVContent, getCurrentDateString, getRandomNumber } from '@libs/cypress-lib/helpers';
+import { generateXlsxFile, formatDate, generateCSVContent, getCurrentDateString, getRandomNumber, IXlsxTableColumnProperties } from '@libs/cypress-lib/helpers';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { faker } from '@faker-js/faker';
 import { IBaseMassActionFields } from '../pages/mass-action/base/baseCreateMassAction';
@@ -16,12 +16,6 @@ export const fixtureNewMassFinancialAssistance = () : INewMassFinancialAssistanc
   paymentAmount: '80.00',
 });
 
-export const writeCSVContentToFile = <T>(filePath: string, data: T[]): string => {
-  cy.writeFile(filePath, generateCSVContent(data));
-  return generateCSVContent(data);
-};
-
-// properties also act as first row of financial assistance custom file
 export interface IFinancialAssistanceCustomOptionsTemplate {
   CaseFileNumber: string;
   CaseFileId: string;
@@ -33,6 +27,7 @@ export interface IFinancialAssistanceCustomOptionsTemplate {
   SubItem: string;
   Amount: number;
   RelatedNumber: number;
+  PayeeType:string,
   PayeeName: string;
   CareOf: string;
   Country: string;
@@ -44,32 +39,67 @@ export interface IFinancialAssistanceCustomOptionsTemplate {
   PostalCode: string
 }
 
-export const generateRandomUserData = (caseFile:ICaseFileEntity, FinancialAssistanceTableId: string): IFinancialAssistanceCustomOptionsTemplate => ({
+// properties also act as first row of financial assistance custom file
+export const generateRandomFaCustomFileUserData = (caseFile:ICaseFileEntity, FinancialAssistanceTableId: string): IFinancialAssistanceCustomOptionsTemplate => ({
   CaseFileNumber: caseFile.caseFileNumber,
   CaseFileId: caseFile.id,
   Description: 'Description Payment',
   RevisedCreateDate: formatDate(`${faker.date.soon()}`),
   FinancialAssistanceTableId,
-  PaymentModality: 'Direct Deposit',
+  PaymentModality: 'Cheque',
   Item: 'Clothing',
   SubItem: 'Winter Clothing',
-  Amount: 50,
-  RelatedNumber: faker.datatype.number(1000),
+  Amount: 80,
+  RelatedNumber: null,
+  PayeeType: 'Beneficiary',
   PayeeName: faker.name.fullName(),
   CareOf: faker.name.fullName(),
-  Country: 'Canada',
+  Country: 'CA',
   StreetAddress: faker.address.streetAddress(),
   UnitSuite: faker.datatype.number(1000),
   City: faker.address.cityName(),
   Province: 'Ontario',
-  SpecifiedOtherProvince: 'Quebec',
+  SpecifiedOtherProvince: null,
   PostalCode: faker.helpers.replaceSymbols('?#?#?#'),
 });
 
-export const fixtureGenerateCustomFinancialAssistanceFile = (caseFiles: ICaseFileEntity[], FinancialAssistanceTableId:string, filePath: string) => {
+export const writeCSVContentToFile = <T>(filePath: string, data: T[]): string => {
+  cy.writeFile(filePath, generateCSVContent(data));
+  return generateCSVContent(data);
+};
+
+export const fixtureGenerateFaCsvFile = (caseFiles: ICaseFileEntity[], FinancialAssistanceTableId:string, filePath: string) => {
   const faData: IFinancialAssistanceCustomOptionsTemplate[] = [];
   for (const caseFile of caseFiles) {
-    faData.push(generateRandomUserData(caseFile, FinancialAssistanceTableId));
+    faData.push(generateRandomFaCustomFileUserData(caseFile, FinancialAssistanceTableId));
   }
   return writeCSVContentToFile(filePath, faData);
+};
+
+function extractXlsxRowFromUserData(caseFile: ICaseFileEntity, FinancialAssistanceTableId: string): string[] {
+  return Object.values(generateRandomFaCustomFileUserData(caseFile, FinancialAssistanceTableId));
+}
+
+function generateXlsxRowsData(caseFiles: ICaseFileEntity[], FinancialAssistanceTableId: string): string[][] {
+  const allRowsData: string[][] = [];
+  caseFiles.forEach((caseFile) => {
+    const individualRowData = extractXlsxRowFromUserData(caseFile, FinancialAssistanceTableId);
+    allRowsData.push(individualRowData);
+  });
+  return allRowsData;
+}
+
+function extractXlsxColumnNamesFromUserData(caseFile: ICaseFileEntity, FinancialAssistanceTableId: string): IXlsxTableColumnProperties[] {
+  const userData = generateRandomFaCustomFileUserData(caseFile, FinancialAssistanceTableId);
+  const columnNames = Object.keys(userData).map((columnName) => ({
+    name: columnName,
+    filterButton: true,
+  }));
+  return columnNames;
+}
+
+export const fixtureGenerateFaCustomOptionsXlsxFile = (caseFiles: ICaseFileEntity[], FinancialAssistanceTableId:string, tableName: string, fileName: string) => {
+  const columns = extractXlsxColumnNamesFromUserData(caseFiles[0], FinancialAssistanceTableId);
+  const rows = generateXlsxRowsData(caseFiles, FinancialAssistanceTableId);
+  return generateXlsxFile(columns, rows, tableName, fileName);
 };

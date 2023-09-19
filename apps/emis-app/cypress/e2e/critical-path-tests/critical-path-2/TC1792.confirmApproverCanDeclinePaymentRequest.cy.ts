@@ -84,6 +84,8 @@ describe('#TC1792# - Confirm that an Approver can decline a payment request', { 
           cy.contains('Approval status has been updated').should('be.visible');
 
           const financialAssistanceDetailsPage = approvalsPage.getFAPaymentById(this.FAPaymentId);
+          financialAssistanceDetailsPage.getPageTitleElement().contains('Financial assistance details').should('be.visible');
+          financialAssistanceDetailsPage.getFinancialAssistanceApprovalStatus().should('eq', 'Declined');
           financialAssistanceDetailsPage.getApprovalHistory();
           cy.contains(`${this.FAPaymentName}`).should('be.visible');
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(0).should('eq', `Payment submitted to  ${getUserName(roleName)}`);

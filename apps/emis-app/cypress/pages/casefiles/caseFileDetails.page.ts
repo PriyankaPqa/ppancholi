@@ -39,19 +39,19 @@ export class CaseFileDetailsPage {
   private financialAssistance = { selector: DataTest.financialAssistance };
 
   public getCaseFileActivityTitles() {
-    return cy.getByDataTest(this.caseFileActivityTitle).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseFileActivityTitle).getAndTrimText();
   }
 
   public getCaseFileActivityBodies() {
-    return cy.getByDataTest(this.caseFileActivityBody).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseFileActivityBody).getAndTrimText();
   }
 
   public getUserName(index = 0) {
-    return cy.getByDataTest(this.userName).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.userName).eq(index).getAndTrimText();
   }
 
   public getRoleName(index = 0) {
-    return cy.getByDataTest(this.roleName).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.roleName).eq(index).getAndTrimText();
   }
 
   public getCaseFileActivityLogDate(index = 0) {
@@ -59,11 +59,11 @@ export class CaseFileDetailsPage {
   }
 
   public getCaseFileActivityTitle(index = 0) {
-    return cy.getByDataTest(this.caseFileActivityTitle).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseFileActivityTitle).eq(index).getAndTrimText();
   }
 
   public getCaseFileActivityBody(index = 0) {
-    return cy.getByDataTest(this.caseFileActivityBody).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseFileActivityBody).eq(index).getAndTrimText();
   }
 
   public goBackToHouseholdProfilePage() {
@@ -75,15 +75,15 @@ export class CaseFileDetailsPage {
   }
 
   public getPrimaryBeneficiaryName() {
-    return cy.getByDataTest(this.primaryBeneficiaryName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.primaryBeneficiaryName).getAndTrimText();
   }
 
   public getCaseFileNumber() {
-    return cy.getByDataTest(this.caseFileNumber).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.caseFileNumber).getAndTrimText();
   }
 
   public getEventName() {
-    return cy.getByDataTest(this.eventName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventName).getAndTrimText();
   }
 
   public goToFinancialAssistanceHomePage() {

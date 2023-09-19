@@ -29,23 +29,23 @@ export enum DataTest {
     private projectedAmount = { selector: DataTest.projectedAmount };
 
     public getMassActionPaymentDetailsEvent() {
-      return cy.getByDataTest(this.event).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.event).getAndTrimText();
     }
 
     public getMassActionPaymentDetailsTable() {
-      return cy.getByDataTest(this.table).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.table).getAndTrimText();
     }
 
     public getMassActionPaymentDetailsProgram() {
-      return cy.getByDataTest(this.program).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.program).getAndTrimText();
     }
 
     public getMassActionPaymentDetailsItem() {
-      return cy.getByDataTest(this.item).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.item).getAndTrimText();
     }
 
     public getMassActionPaymentDetailsSubItem() {
-      return cy.getByDataTest(this.sub_item).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.sub_item).getAndTrimText();
     }
 
     public getMassActionPaymentDetailsPaymentModality() {
@@ -53,10 +53,10 @@ export enum DataTest {
     }
 
     public getMassActionPaymentDetailsPaymentAmount() {
-      return cy.getByDataTest(this.amount).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.amount).getAndTrimText();
     }
 
     public getMassActionProjectedAmount() {
-      return cy.getByDataTest(this.projectedAmount).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.projectedAmount).getAndTrimText();
     }
   }

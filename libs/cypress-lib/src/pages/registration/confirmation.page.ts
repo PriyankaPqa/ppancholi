@@ -24,23 +24,23 @@ export class ConfirmationPage {
   private closeRegistrationButton = { selector: DataTest.closeRegistrationButton };
 
   public getMessage() {
-    return cy.getByDataTest(this.registrationMessage).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.registrationMessage).getAndTrimText();
   }
 
   public getFullName() {
-    return cy.getByDataTest(this.fullName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.fullName).getAndTrimText();
   }
 
   public getRegistrationNumber() {
-    return cy.getByDataTest(this.registrationNumber).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.registrationNumber).getAndTrimText();
   }
 
   public getEventName() {
-    return cy.getByDataTest(this.eventName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventName).getAndTrimText();
   }
 
   public getPhoneAssistance() {
-    return cy.getByDataTest(this.phoneAssistance).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.phoneAssistance).getAndTrimText();
   }
 
   public getPrintButton() {

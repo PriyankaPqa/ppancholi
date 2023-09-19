@@ -36,11 +36,11 @@ export class FinancialAssistanceHomePage {
   }
 
   public getFAPaymentNameById(financialAssistancePaymentId: string) {
-    return cy.getByDataTest({ selector: `${DataTest.faPayment}${financialAssistancePaymentId}` }).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest({ selector: `${DataTest.faPayment}${financialAssistancePaymentId}` }).getAndTrimText();
   }
 
   public getFAPaymentName() {
-    return cy.getByDataTestLike(this.faPayment).invoke('text').then((text) => text.trim());
+    return cy.getByDataTestLike(this.faPayment).getAndTrimText();
   }
 
   public getFAPayment() {
@@ -49,7 +49,7 @@ export class FinancialAssistanceHomePage {
   }
 
   public getApprovalStatus() {
-    return cy.getByDataTest(this.approvalStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.approvalStatus).getAndTrimText();
   }
 
   public getFAPaymentCreatedDate() {
@@ -57,7 +57,7 @@ export class FinancialAssistanceHomePage {
   }
 
   public getFAPaymentAmount() {
-    return cy.getByDataTest(this.totalAmount).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.totalAmount).getAndTrimText();
   }
 
   public expandFAPayment() {
@@ -65,15 +65,15 @@ export class FinancialAssistanceHomePage {
   }
 
   public getFAPaymentGroupTitle() {
-    return cy.getByDataTest(this.groupTitle).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.groupTitle).getAndTrimText();
   }
 
   public getFAPaymentGroupTotal() {
-    return cy.getByDataTest(this.groupTotal).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.groupTotal).getAndTrimText();
   }
 
   public getFAPaymentPaymentStatus() {
-    return cy.getByDataTest(this.groupPaymentStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.groupPaymentStatus).getAndTrimText();
   }
 
   public goToCaseFileDetailsPage() {

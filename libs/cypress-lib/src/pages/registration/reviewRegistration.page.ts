@@ -51,11 +51,11 @@ export class ReviewRegistrationPage {
   private saveAfterEditButton = { selector: DataTest.saveAfterEdit };
 
   public getFirstName() {
-    return cy.getByDataTest(this.firstName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.firstName).getAndTrimText();
   }
 
   public getLastName() {
-    return cy.getByDataTest(this.lastName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.lastName).getAndTrimText();
   }
 
   public getPrimaryFullNameMember() {
@@ -65,43 +65,43 @@ export class ReviewRegistrationPage {
   }
 
   public getBirthDate() {
-    return cy.getByDataTest(this.birthDate).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.birthDate).getAndTrimText();
   }
 
   public getGender() {
-    return cy.getByDataTest(this.gender).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.gender).getAndTrimText();
   }
 
   public getPreferredLanguage() {
-    return cy.getByDataTest(this.preferredLanguage).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.preferredLanguage).getAndTrimText();
   }
 
   public getHomePhoneNumber() {
-    return cy.getByDataTest(this.homePhoneNumber).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.homePhoneNumber).getAndTrimText();
   }
 
   public getStreetHomeAddress() {
-    return cy.getByDataTest(this.streetHomeAddress).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.streetHomeAddress).getAndTrimText();
   }
 
   public getLineHomeAddress() {
-    return cy.getByDataTest(this.lineHomeAddress).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.lineHomeAddress).getAndTrimText();
   }
 
   public getAdditionalMemberName(index: number) {
-    return cy.getByDataTest(this.additionalMemberName).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.additionalMemberName).eq(index).getAndTrimText();
   }
 
   public getAdditionalMemberBirthdate(index: number) {
-    return cy.getByDataTest(this.additionalMemberBirthdate).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.additionalMemberBirthdate).eq(index).getAndTrimText();
   }
 
   public getAdditionalMemberGender(index: number) {
-    return cy.getByDataTest(this.additionalMemberGender).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.additionalMemberGender).eq(index).getAndTrimText();
   }
 
   public getAdditionalMemberIndigenousIdentity() {
-    return cy.getByDataTest(this.additionalMemberIndigenousIdentity).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.additionalMemberIndigenousIdentity).getAndTrimText();
   }
 
   public editPersonalInformation() {

@@ -82,11 +82,11 @@ export class AddFinancialAssistancePage {
   }
 
   public getPaymentLineGroupTitle() {
-    return cy.getByDataTest(this.paymentLineGroupTitle).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.paymentLineGroupTitle).getAndTrimText();
   }
 
   public getPaymentLineItemTitle() {
-    return cy.getByDataTest(this.paymentLineItemTitle).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.paymentLineItemTitle).getAndTrimText();
   }
 
   public getItemEditButton() {
@@ -102,7 +102,7 @@ export class AddFinancialAssistancePage {
   }
 
   public getPaymentStatus() {
-    return cy.getByDataTest(this.paymentStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.paymentStatus).getAndTrimText();
   }
 
   public getPaymentEditButton() {
@@ -118,10 +118,10 @@ export class AddFinancialAssistancePage {
   }
 
   public getRelatedNumber() {
-    return cy.getByDataTest(this.relatedNumber).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.relatedNumber).getAndTrimText();
   }
 
   public getPaymentLineGroupStatus() {
-    return cy.getByDataTest(this.paymentLineGroupStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.paymentLineGroupStatus).getAndTrimText();
   }
 }

@@ -31,11 +31,11 @@ export class AddShelterLocationPage {
   private countryText = { selector: DataTest.countryText };
 
   public getShelterLocationStatus() {
-    return cy.getByDataTest(this.status).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.status).getAndTrimText();
   }
 
   public getShelterLocationCountry() {
-    return cy.getByDataTest(this.countryText).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.countryText).getAndTrimText();
   }
 
   async fill(data: IEventGenericLocation, roleName:string) {

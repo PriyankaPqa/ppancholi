@@ -22,15 +22,15 @@ export enum DataTest {
     }
 
     public getProgramName() {
-      return cy.getByDataTest(this.programName).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.programName).getAndTrimText();
     }
 
     public getApprovalTableName() {
-      return cy.getByDataTest(this.approvalName).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.approvalName).getAndTrimText();
     }
 
     public getApprovalStatus() {
-      return cy.getByDataTest(this.approvalStatus).invoke('text').then((text) => text.trim());
+      return cy.getByDataTest(this.approvalStatus).getAndTrimText();
     }
 
     public getApprovalEditButton() {

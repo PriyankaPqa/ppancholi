@@ -10,6 +10,7 @@ export enum DataTest {
   backToFinancialAssistance = 'cancel',
   financialAssistanceApprovalStatus = 'approval_status',
   paymentLineStatus = 'statusSelect__chip',
+  paymentLineGroup = 'paymentLineGroup__title',
   itemTitle = 'paymentLineItem__title',
   itemAmount = 'paymentLineItem__amount',
   totalAmount = 'paymentLineGroup__total',
@@ -27,6 +28,7 @@ export enum DataTest {
   dialogApprovalHistoryDate = 'date-item',
   dialogApprovalHistoryAction = 'action-item',
   caseFileActivityTab = 'item-text-0',
+  pageTitle = 'page-title',
 }
 
 export class FinancialAssistanceDetailsPage {
@@ -49,6 +51,8 @@ export class FinancialAssistanceDetailsPage {
   private financialAssistanceApprovalStatus = { selector: DataTest.financialAssistanceApprovalStatus };
 
   private paymentLineStatus = { selector: DataTest.paymentLineStatus };
+
+  private paymentLineGroup = { selector: DataTest.paymentLineGroup };
 
   private itemTitle = { selector: DataTest.itemTitle };
 
@@ -82,6 +86,8 @@ export class FinancialAssistanceDetailsPage {
 
   private caseFileActivityTab = { selector: DataTest.caseFileActivityTab };
 
+  private pageTitle = { selector: DataTest.pageTitle };
+
   public getAddPaymentLineButton() {
     return cy.getByDataTest(this.addPaymentLineButton);
   }
@@ -103,7 +109,11 @@ export class FinancialAssistanceDetailsPage {
   }
 
   public getFinancialAssistanceApprovalStatus() {
-    return cy.getByDataTest(this.financialAssistanceApprovalStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.financialAssistanceApprovalStatus).getAndTrimText();
+  }
+
+  public getPaymentLineGroupTitle() {
+    return cy.getByDataTest(this.paymentLineGroup);
   }
 
   public getPaymentLineItemAmountField() {
@@ -127,7 +137,7 @@ export class FinancialAssistanceDetailsPage {
   }
 
   public getPaymentLineStatus() {
-    return cy.getByDataTest(this.paymentLineStatus).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.paymentLineStatus).getAndTrimText();
   }
 
   public getPaymentLineStatusElement() {
@@ -199,11 +209,11 @@ export class FinancialAssistanceDetailsPage {
   }
 
   public getPaymentModalityGroup() {
-    return cy.getByDataTest(this.itemTitle).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.itemTitle).getAndTrimText();
   }
 
   public getPaymentAmount() {
-    return cy.getByDataTest(this.totalAmount).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.totalAmount).getAndTrimText();
   }
 
   public getApprovalHistory() {
@@ -211,19 +221,19 @@ export class FinancialAssistanceDetailsPage {
   }
 
   public getApprovalHistoryCRCPersonnelByIndex(index: number) {
-    return cy.getByDataTest(this.dialogApprovalHistoryCRCPersonnel).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.dialogApprovalHistoryCRCPersonnel).eq(index).getAndTrimText();
   }
 
   public getApprovalHistoryActionByIndex(index: number) {
-    return cy.getByDataTest(this.dialogApprovalHistoryAction).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.dialogApprovalHistoryAction).eq(index).getAndTrimText();
   }
 
   public getApprovalHistoryDateSubmittedByIndex(index: number) {
-    return cy.getByDataTest(this.dialogApprovalHistoryDate).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.dialogApprovalHistoryDate).eq(index).getAndTrimText();
   }
 
   public getApprovalHistoryRationaleByIndex(index: number) {
-    return cy.getByDataTest(this.dialogApprovalHistoryRationale).eq(index).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.dialogApprovalHistoryRationale).eq(index).getAndTrimText();
   }
 
   public closeDialogApprovalStatusHistory() {
@@ -239,5 +249,9 @@ export class FinancialAssistanceDetailsPage {
     cy.getByDataTest(this.caseFileActivityTab).click();
     cy.getByDataTest(this.dialogSubmit).click();
     return new CaseFileDetailsPage();
+  }
+
+  public getPageTitleElement() {
+    return cy.getByDataTest(this.pageTitle);
   }
 }

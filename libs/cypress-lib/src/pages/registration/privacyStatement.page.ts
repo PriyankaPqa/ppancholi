@@ -14,7 +14,7 @@ export class PrivacyStatementPage {
   private nextButton = { selector: DataTest.nextButton };
 
   public getEventName() {
-    return cy.getByDataTest(this.eventName).invoke('text').then((text) => text.trim());
+    return cy.getByDataTest(this.eventName).getAndTrimText();
   }
 
   public getPrivacyCheckbox() {

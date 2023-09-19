@@ -42,6 +42,7 @@ declare global {
       searchAndSelect(dataTest: string, searchString: string, opts?: { timeout: number; interval: number }): Chainable<void>
       shouldBeRequired(label:string): Chainable<void>
       waitUntilTableFullyLoaded(tableDataTest: string): Chainable<void>
+      getAndTrimText(): Chainable<string>
     }
   }
 }
