@@ -14,10 +14,10 @@ export function getExtensionComponents(
     return res;
   }
 
-  async function updateIsRead(id: uuid, isRead: boolean): Promise<INotificationEntity> {
-    const res = await service.updateIsRead(id, isRead);
+  async function updateIsRead(idList: uuid[], isRead: boolean): Promise<INotificationEntity[]> {
+    const res = await service.updateIsRead(idList, isRead);
     if (res) {
-      baseComponents.set(res);
+      baseComponents.setAll(res);
     }
     return res;
   }

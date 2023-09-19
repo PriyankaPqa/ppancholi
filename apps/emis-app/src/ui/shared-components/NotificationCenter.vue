@@ -16,8 +16,10 @@
           <div class="rc-body12 fw-medium section-heading" data-test="notifications-unread-text">
             {{ $t('notifications.unread') }}
           </div>
-          <div class="rc-body14 fw-normal mark-all">
-            {{ $t('notifications.mark_all_read') }}
+          <div class="">
+            <button type="button" class="rc-link14 fw-normal" data-test="btn-mark-all-read" @click="markAllAsRead">
+              {{ $t('notifications.mark_all_read') }}
+            </button>
           </div>
         </div>
         <v-col v-for="item in unreadNotifications" :key="item.id" class="pa-1 pb-3">
@@ -100,16 +102,22 @@ export default Vue.extend({
   },
 
   async created() {
-      try {
-       this.notifications = await useNotificationStore().getCurrentUserNotifications();
-      } finally {
-        this.initLoading = false;
-      }
+    try {
+      this.initLoading = true;
+      this.notifications = await useNotificationStore().getCurrentUserNotifications();
+    } finally {
+      this.initLoading = false;
+    }
   },
 
   methods: {
     async toggleIsRead(notification: INotificationEntity) {
-      await useNotificationStore().updateIsRead(notification.id, notification.isRead);
+      await useNotificationStore().updateIsRead([notification.id], notification.isRead);
+    },
+
+    async markAllAsRead() {
+      await useNotificationStore().updateIsRead(this.unreadNotifications.map((n) => n.id), true);
+      this.notifications = useNotificationStore().getAll();
     },
 
     getTabLabel(tab: NotificationCategoryType): string {
@@ -128,10 +136,6 @@ export default Vue.extend({
   .section-heading {
     color: var(--v-grey-darken2);
     text-transform: uppercase;
-  }
-
-  .mark-all {
-    color: var(--v-primary-darken1);
   }
 
   .footer-text {

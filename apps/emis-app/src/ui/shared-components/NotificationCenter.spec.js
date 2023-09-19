@@ -52,6 +52,14 @@ describe('NotificationCenter.vue', () => {
       expect(wrapper.findDataTest('notifications-unread-text').exists()).toBeTruthy();
       expect(wrapper.findDataTest('notifications-read-text').exists()).toBeFalsy();
     });
+    it('should show mark all as read button when unread notifications', async () => {
+      await doMount([mockUnreadGeneral]);
+      expect(wrapper.findDataTest('btn-mark-all-read').exists()).toBeTruthy();
+    });
+    it('should not show mark all as read button when only read notifications', async () => {
+      await doMount([mockReadGeneral]);
+      expect(wrapper.findDataTest('btn-mark-all-read').exists()).toBeFalsy();
+    });
   });
 
   describe('Computed', () => {
@@ -87,9 +95,14 @@ describe('NotificationCenter.vue', () => {
       await doMount();
     });
     it('should update isRead in store when toggled', async () => {
-      mockNotificationEntity.updateIsRead = jest.fn();
+      notificationStore.updateIsRead = jest.fn();
       await wrapper.vm.toggleIsRead(mockUnreadGeneral);
-      expect(notificationStore.updateIsRead).toBeCalledWith(mockUnreadGeneral.id, mockUnreadGeneral.isRead);
+      expect(notificationStore.updateIsRead).toBeCalledWith([mockUnreadGeneral.id], mockUnreadGeneral.isRead);
+    });
+    it('should update isRead in store when mark all clicked', async () => {
+      notificationStore.updateIsRead = jest.fn();
+      await wrapper.vm.markAllAsRead();
+      expect(notificationStore.updateIsRead).toBeCalledWith([mockUnreadGeneral.id], true);
     });
     it('should return expected tab label', () => {
       expect(wrapper.vm.getTabLabel(NotificationCategoryType.General)).toEqual('Category');

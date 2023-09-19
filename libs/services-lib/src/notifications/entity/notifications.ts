@@ -21,7 +21,7 @@ export class NotificationsService extends DomainBaseService<INotificationEntity,
     return this.http.get(`${this.baseUrl}/user`, { globalHandler: false });
   }
 
-  async updateIsRead(id: uuid, isRead: boolean): Promise<INotificationEntity> {
-    return this.http.patch(`${this.baseUrl}/${id}/isRead`, { isRead });
+  async updateIsRead(idList: uuid[], isRead: boolean): Promise<INotificationEntity[]> {
+    return this.http.patch(`${this.baseUrl}/user`, { isRead, notificationIds: idList });
   }
 }

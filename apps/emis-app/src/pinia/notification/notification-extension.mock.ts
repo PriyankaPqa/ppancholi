@@ -5,6 +5,6 @@ export function getMockExtensionComponents() {
 
   return {
     getCurrentUserNotifications: jest.fn(() => [notification]),
-    updateIsRead: jest.fn(() => notification),
+    updateIsRead: jest.fn(() => [notification]),
   };
 }

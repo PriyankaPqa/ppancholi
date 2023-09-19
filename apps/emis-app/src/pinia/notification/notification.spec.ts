@@ -4,7 +4,7 @@ import { getExtensionComponents } from '@/pinia/notification/notification-extens
 import { defineStore, setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import { mockNotificationsService } from '@libs/services-lib/notifications/entity';
-import { IdParams, INotificationEntity, mockNotificationEntity, mockNotificationEntities } from '@libs/entities-lib/notification';
+import { IdParams, INotificationEntity, mockNotificationEntities } from '@libs/entities-lib/notification';
 
 const entityService = mockNotificationsService();
 const baseComponents = getBaseStoreComponents<INotificationEntity, IdParams>(entityService);
@@ -58,17 +58,16 @@ describe('>>> Notification Store', () => {
   });
 
   describe('updateIsRead', () => {
-    it('should call updateIsRead service and set the result in the store', async () => {
+    it('should call updateIsRead service', async () => {
       const notificationId = '1';
       const bComponents = {
         ...baseComponents,
         set: jest.fn(),
       };
       const store = createTestStore(bComponents);
-      await store.updateIsRead(notificationId, true);
+      await store.updateIsRead([notificationId], true);
 
-      expect(entityService.updateIsRead).toBeCalledWith(notificationId, true);
-      expect(bComponents.set).toBeCalledWith(mockNotificationEntity());
+      expect(entityService.updateIsRead).toBeCalledWith([notificationId], true);
     });
   });
 });
