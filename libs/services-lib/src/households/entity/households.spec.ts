@@ -135,12 +135,12 @@ describe('>>> Household Service', () => {
     const contactInformation = mockContactInformation();
     const identitySet = mockIdentitySet();
     await service.updatePersonIdentity('123', false, { contactInformation, identitySet });
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}/identity-set`, {
+    expect(http.patch).toHaveBeenCalledWith('www.test.com/orchestration/orchestration-households/123/identity-set', {
       contactInformation: service.parseContactInformation(contactInformation),
       identitySet: service.parseIdentitySet(identitySet),
     });
     await service.updatePersonIdentity('123', true, { contactInformation, identitySet });
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/public/${'123'}/identity-set`, {
+    expect(http.patch).toHaveBeenCalledWith('www.test.com/household/persons/public/123/identity-set', {
       contactInformation: service.parseContactInformation(contactInformation),
       identitySet: service.parseIdentitySet(identitySet),
     });
@@ -161,14 +161,14 @@ describe('>>> Household Service', () => {
   test('updateHomeAddress is linked to the correct URL', async () => {
     const address = mockAddress();
     await service.updateHomeAddress('123', false, address);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/address`, {
+    expect(http.patch).toHaveBeenCalledWith('www.test.com/orchestration/orchestration-households/123/address', {
       address: {
         address: service.parseAddress(address),
         from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       },
     });
     await service.updateHomeAddress('123', true, address);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/public/${'123'}/address`, {
+    expect(http.patch).toHaveBeenCalledWith('www.test.com/household/public/123/address', {
       address: {
         address: service.parseAddress(address),
         from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
@@ -178,12 +178,12 @@ describe('>>> Household Service', () => {
 
   test('updateNoFixedHomeAddress is linked to the correct URL', async () => {
     await service.updateNoFixedHomeAddress('123', false, 'test');
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/no-fixed-address`, {
+    expect(http.patch).toHaveBeenCalledWith('www.test.com/orchestration/orchestration-households/123/no-fixed-address', {
       from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       observation: 'test',
     });
     await service.updateNoFixedHomeAddress('123', true, 'test');
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/public/${'123'}/no-fixed-address`, {
+    expect(http.patch).toHaveBeenCalledWith('www.test.com/household/households/public/123/no-fixed-address', {
       from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       observation: 'test',
     });
@@ -249,7 +249,7 @@ describe('>>> Household Service', () => {
       privacyDateTimeConsent: '2021-01-01',
     };
     await service.makePrimary(id, 'member', consentInformation);
-    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/assign-primary`, {
+    expect(http.post).toHaveBeenCalledWith(`www.test.com/orchestration/orchestration-households/${id}/assign-primary`, {
       memberId: 'member',
       consentInformation,
     });

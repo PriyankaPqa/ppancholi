@@ -82,7 +82,9 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
     publicMode: boolean,
     payload: { contactInformation: IContactInformation; identitySet: IIdentitySet },
   ): Promise<IMemberEntity> {
-    return this.http.patch(`${this.baseApi}/persons/${publicMode ? 'public/' : ''}${id}/identity-set`, {
+    const url = publicMode ? `${this.baseApi}/persons/public/${id}/identity-set`
+      : `${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${id}/identity-set`;
+    return this.http.patch(url, {
       contactInformation: this.parseContactInformation(payload.contactInformation),
       identitySet: this.parseIdentitySet(payload.identitySet),
     });
@@ -95,7 +97,9 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   async updateHomeAddress(id: string, publicMode: boolean, payload: IAddress): Promise<IHouseholdEntity> {
-    return this.http.patch(`${this.baseUrl}/${publicMode ? 'public/' : ''}${id}/address`, {
+    const url = publicMode ? `${this.baseApi}/public/${id}/address`
+      : `${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${id}/address`;
+    return this.http.patch(url, {
       address: {
         address: this.parseAddress(payload),
         from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
@@ -104,7 +108,8 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   async updateNoFixedHomeAddress(id: string, publicMode: boolean, observation?: string): Promise<IHouseholdEntity> {
-    return this.http.patch(`${this.baseUrl}/${publicMode ? 'public/' : ''}${id}/no-fixed-address`, {
+    const url = publicMode ? `${this.baseUrl}/public/${id}/no-fixed-address` : `${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${id}/no-fixed-address`;
+    return this.http.patch(url, {
       from: format(utcToZonedTime(new Date(), 'UTC'), "yyyy-MM-dd'T'HH:mm:ss'Z'", { timeZone: 'UTC' }),
       observation: observation || null,
     });
@@ -142,7 +147,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   async makePrimary(id: string, memberId: string, consentInformation: IConsentInformation): Promise<IHouseholdEntity> {
-    return this.http.post(`${this.baseUrl}/${id}/assign-primary`, { memberId, consentInformation });
+    return this.http.post(`${this.http.baseUrl}/${ORCHESTRATION_CONTROLLER}/${id}/assign-primary`, { memberId, consentInformation });
   }
 
   async hasOutstandingPayments(id: uuid): Promise<IOustandingPaymentResponse> {
