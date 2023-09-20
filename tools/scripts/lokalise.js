@@ -1,5 +1,5 @@
 /* eslint-disable */
-const unzipper = require('unzipper');
+const AdmZip = require('adm-zip');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
@@ -9,6 +9,7 @@ const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+const axios = require('axios');
 
 require('dotenv').config({ path: __dirname + `/../../.env.local` , override: true })
 
@@ -26,6 +27,17 @@ const THROTTLE = 1500; //ms
 const timeout = (ms) => new Promise((resolve) => {
   setTimeout(resolve, ms);
 });
+
+async function downloadAndExtractZip(url, outputPath) {
+  try {
+    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    const zip = new AdmZip(response.data);
+    zip.extractAllTo(outputPath, true);
+    console.log('ZIP file downloaded and extracted successfully.');
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
 
 
 const lokaliseApi = new LokaliseApi({ apiKey: LOKALISE_API_TOKEN });
@@ -46,7 +58,7 @@ const uploadToLokalise = ({
 }) => new Promise((resolve, reject) => {
   const replaceModified = false;
   const tagUpdatedKeys = replaceModified;
-  lokaliseApi.files.upload(projectId, {
+  lokaliseApi.files().upload(projectId, {
     data: base64File,
     filename: fileName, // fr.json, en.json, ....
     lang_iso: langISO, // fr, en, it, jp, ...
@@ -197,22 +209,23 @@ const uploadErrors = (projectId) => new Promise((resolve, reject) => {
  * @param projectId
  * @param path
  */
-const down = (projectId, path) => new Promise((resolve) => {
+const down = (projectId, path) => new Promise(async (resolve) => {
   console.log(`Download keys from project ${projectId} to ${path}`);
-  lokaliseApi.files.download(projectId, {
-    format: 'json',
-    bundle_structure: '%LANG_ISO%.json',
-    original_filenames: false,
-    placeholder_format: 'icu', // Placeholder will be converted to be used with our app
-    replace_breaks: false,
-  }).then((data) => {
-     https.get(data.bundle_url, (response) => {
-       const unzipExtractor = unzipper.Extract({ path });
-       response.pipe(unzipExtractor);
-       unzipExtractor.on('close', () => resolve(true));
+  try {
+    const data = await lokaliseApi.files().download(projectId, {
+      format: 'json',
+      bundle_structure: '%LANG_ISO%.json',
+      original_filenames: false,
+      placeholder_format: 'icu', // Placeholder will be converted to be used with our app
+      replace_breaks: false,
     });
 
-  });
+    await downloadAndExtractZip(data.bundle_url, path)
+    resolve(true);
+  } catch (error) {
+    console.error('Error:', error);
+    resolve(false);
+  }
 });
 
 async function deleteKeys(filePath, projectID, sliceSize = SLICE_SIZE) {
