@@ -5,6 +5,8 @@ parameters:
 
 steps:
   - task: NodeTool@0
+    retryCountOnTaskFailure: 3
+    timeoutInMinutes: 5
     inputs:
       versionSpec: '${{ parameters.nodeJsVersion }}'
     displayName: 'Install Node.js'
