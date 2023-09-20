@@ -20,6 +20,7 @@ import {
   HouseholdCaseFileActivityType,
   ICaseFileActivity,
   IdentityAuthenticationStatus,
+  IdentityAuthenticationMethod,
   RegistrationType,
   ValidationOfImpactStatus,
 } from '@libs/entities-lib/case-file';
@@ -27,6 +28,9 @@ import { ERegistrationMethod, IIdMultilingualName, IMultilingual } from '@libs/s
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { HouseholdStatus } from '@libs/entities-lib/household';
+import { useCaseFileStore } from '@/pinia/case-file/case-file';
+import { useEventStore } from '@/pinia/event/event';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export interface IAssignInfo {
   id: string;
@@ -50,7 +54,11 @@ export default Vue.extend({
       required: true,
     },
   },
-
+  data() {
+    return {
+      FeatureKeys,
+    };
+  },
   computed: {
     // eslint-disable-next-line
     content(): {title: TranslateResult, body: TranslateResult} {
@@ -214,6 +222,10 @@ export default Vue.extend({
       }
     },
   },
+  async created() {
+    await useCaseFileStore().fetchScreeningIds();
+    await useEventStore().fetchExceptionalAuthenticationTypes();
+  },
 
   methods: {
     makeContentForTags(activityType:CaseFileActivityType): { title: TranslateResult, body: TranslateResult } {
@@ -348,6 +360,7 @@ export default Vue.extend({
       return { title, body: null };
     },
 
+    // will not be needed when AuthenticationPhaseII feature flag is removed
     makeContentForIdentityAuthenticationUpdatedStatus():{ title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdated');
 
@@ -369,7 +382,50 @@ export default Vue.extend({
 
     makeContentForIdentityAuthenticationUpdatedId():{ title: TranslateResult, body: TranslateResult } {
       const title = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId');
-      const body = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId.idUpdated');
+      let body = this.$hasFeature(FeatureKeys.AuthenticationPhaseII) ? '' : this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId.idUpdated');
+      if (this.$hasFeature(FeatureKeys.AuthenticationPhaseII)) {
+        // this too lengthy for tenary
+        if (this.item.details.status === this.item.details.previousStatus) {
+          body += `${this.$t('caseFileActivity.activityList.identity_authentication_status')}: `;
+        } else {
+          body += `${this.$t('caseFileActivity.activityList.identity_authentication_updated')}: `;
+        }
+        switch (this.item.details.status) {
+          case IdentityAuthenticationStatus.Passed:
+            body += `${this.$t('caseFile.beneficiaryIdentityVerificationStatus.Passed')}`;
+            break;
+          case IdentityAuthenticationStatus.Failed:
+            body += `${this.$t('caseFile.beneficiaryIdentityVerificationStatus.Failed')}`;
+            break;
+          default:
+            body += `${this.$t('caseFile.beneficiaryIdentityVerificationStatus.NotVerified')}`;
+            break;
+        }
+
+        switch (this.item.details.method) {
+          case IdentityAuthenticationMethod.Exceptional:
+            body += `\n${this.$t('caseFileDetail.verifyIdentityDialog.method')}: ${this.$t('caseFile.verifyMethod.Exceptional')}`;
+            break;
+          case IdentityAuthenticationMethod.InPerson:
+            body += `\n${this.$t('caseFileDetail.verifyIdentityDialog.method')}: ${this.$t('caseFile.verifyMethod.InPerson')}`;
+            break;
+          default:
+              // need only two case
+            break;
+        }
+
+        const exceptionalTypeId = this.item.details.exceptionalAuthenticationTypeId as any;
+        const exceptionalType = useEventStore().getExceptionalAuthenticationTypes().find((item: { id: any; }) => item.id === exceptionalTypeId?.optionItemId);
+        const otherId = exceptionalTypeId?.specifiedOther;
+        body += (exceptionalType) ? `\n${this.$t('caseFileDetail.verifyIdentityDialog.exceptionalType')}: ${otherId ?? this.$m(exceptionalType.name)}` : '';
+        const identificationIds = this.item.details.identificationIds as Record<string, any>;
+        const identifications = identificationIds?.map((id: any) => {
+          const foundItem = useCaseFileStore().getScreeningIds().find((item: { id: any; }) => item.id === id.optionItemId);
+          return foundItem ? id.specifiedOther ?? this.$m(foundItem.name) : '';
+        });
+
+        body += (identifications && identifications.length > 0) ? `\n${this.$t('caseFileDetail.verifyIdentityDialog.options')}: ${identifications.join(', ')}` : '';
+      }
       return { title, body };
     },
 

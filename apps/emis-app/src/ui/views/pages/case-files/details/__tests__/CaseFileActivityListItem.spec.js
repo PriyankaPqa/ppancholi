@@ -3,10 +3,17 @@ import { CaseFileActivityType, mockCaseFileActivities, HouseholdCaseFileActivity
 import { ERegistrationMethod } from '@libs/shared-lib/src/types/enums/ERegistrationMethod';
 import { ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { HouseholdStatus } from '@libs/entities-lib/household';
+
+import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
+import { useMockEventStore } from '@/pinia/event/event.mock';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+
 import Component from '../case-file-activity/components/CaseFileActivityListItem.vue';
 
 const localVue = createLocalVue();
 const item = mockCaseFileActivities()[0];
+const { pinia, caseFileStore } = useMockCaseFileStore();
+const eventStore = useMockEventStore(pinia).eventStore;
 
 describe('CaseFileActivityListItem.vue', () => {
   let wrapper;
@@ -17,6 +24,7 @@ describe('CaseFileActivityListItem.vue', () => {
 
       wrapper = shallowMount(Component, {
         localVue,
+        pinia,
         propsData: {
           item,
         },
@@ -78,6 +86,13 @@ describe('CaseFileActivityListItem.vue', () => {
     });
   });
 
+  describe('Created', () => {
+    it('calls stores', async () => {
+      expect(caseFileStore.fetchScreeningIds).toHaveBeenCalled();
+      expect(eventStore.fetchExceptionalAuthenticationTypes).toHaveBeenCalled();
+    });
+  });
+
   describe('Computed', () => {
     beforeEach(() => {
       jest.clearAllMocks();
@@ -87,7 +102,9 @@ describe('CaseFileActivityListItem.vue', () => {
         propsData: {
           item,
         },
-
+        mocks: {
+          $hasFeature: (f) => f === FeatureKeys.AuthenticationPhaseII,
+        },
       });
     });
 
@@ -770,7 +787,44 @@ describe('CaseFileActivityListItem.vue', () => {
           await wrapper.setProps({
             item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedId)[0],
           });
+          expect(wrapper.vm.makeContentForIdentityAuthenticationUpdatedId()).toEqual({
+            title: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId',
+            body: 'caseFileActivity.activityList.identity_authentication_updated: caseFile.beneficiaryIdentityVerificationStatus.NotVerified',
+          });
+        });
 
+        it('returns the correct data when action type is IdentityAuthenticationUpdatedId and status same', async () => {
+          const activity = {
+            ...mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedId)[0],
+            details: {
+              status: 1,
+              previousStatus: 1,
+            },
+
+          };
+          await wrapper.setProps({
+            item: activity,
+          });
+
+          expect(wrapper.vm.makeContentForIdentityAuthenticationUpdatedId()).toEqual({
+            title: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId',
+            body: 'caseFileActivity.activityList.identity_authentication_status: caseFile.beneficiaryIdentityVerificationStatus.Passed',
+          });
+        });
+
+        it('returns the correct data when action type is IdentityAuthenticationUpdatedId and AuthenticationPhaseII flag is off', async () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            propsData: {
+              item,
+            },
+            mocks: {
+              $hasFeature: (f) => f !== FeatureKeys.AuthenticationPhaseII,
+            },
+          });
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdatedId)[0],
+          });
           expect(wrapper.vm.makeContentForIdentityAuthenticationUpdatedId()).toEqual({
             title: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId',
             body: 'caseFileActivity.activityList.title.IdentityAuthenticationUpdatedId.idUpdated',

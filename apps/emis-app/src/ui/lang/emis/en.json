@@ -362,6 +362,7 @@
     "caseFileActivity.activityList.caseNote.category": "Category",
     "caseFileActivity.activityList.caseNote.subject": "Subject",
     "caseFileActivity.activityList.document.document_name": "Document name",
+    "caseFileActivity.activityList.identity_authentication_status": "Status",
     "caseFileActivity.activityList.identity_authentication_updated": "New status",
     "caseFileActivity.activityList.impact_status_validation_updated": "New status",
     "caseFileActivity.activityList.referral.referral_name": "Referral name",
