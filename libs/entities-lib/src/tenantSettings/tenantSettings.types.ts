@@ -7,7 +7,6 @@ export enum FeatureKeys {
   BotProtection = 'BotProtection',
   SelfRegistration = 'SelfRegistration',
   ManageDuplicates = 'manageDuplicates',
-  CustomConsent = 'CustomConsent',
   ImpactedIndividuals = 'ImpactedIndividuals',
   LimitTagDeletionL2Plus_5959 = 'LimitTagDeletionL2Plus_5959',
   AuthenticationPhaseII = 'AuthenticationPhaseII',

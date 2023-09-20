@@ -159,7 +159,7 @@
               </div>
             </v-col>
           </v-row>
-          <div v-if="$hasFeature(FeatureKeys.CustomConsent) && $hasLevel(UserRoles.level6)">
+          <div v-if="$hasLevel(UserRoles.level6)">
             <v-row data-test="custom-consent">
               <v-col cols="12">
                 <div class="grey-container py-4 px-8">

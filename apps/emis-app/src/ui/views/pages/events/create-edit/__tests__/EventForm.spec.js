@@ -1167,33 +1167,15 @@ describe('EventForm.vue', () => {
     });
 
     describe('consent statement section', () => {
-      describe('Feature flag CustomConsent is on', () => {
-        it('should render if user is a level 6', async () => {
-          await doMount(getPiniaForUser(UserRoles.level6));
-          await wrapper.setFeature(FeatureKeys.CustomConsent, true);
-          const element = wrapper.findDataTest('custom-consent');
-          expect(element.exists()).toBeTruthy();
-        });
-        it('should not render if user is lower than level 6', async () => {
-          await doMount(getPiniaForUser(UserRoles.level5));
-          await wrapper.setFeature(FeatureKeys.CustomConsent, true);
-          const element = wrapper.findDataTest('custom-consent');
-          expect(element.exists()).toBeFalsy();
-        });
+      it('should render if user is a level 6', async () => {
+        await doMount(getPiniaForUser(UserRoles.level6));
+        const element = wrapper.findDataTest('custom-consent');
+        expect(element.exists()).toBeTruthy();
       });
-      describe('Feature flag CustomConsent is off', () => {
-        it('should not render if user is a level 6', async () => {
-          await doMount(getPiniaForUser(UserRoles.level6));
-          await wrapper.setFeature(FeatureKeys.CustomConsent, false);
-          const element = wrapper.findDataTest('custom-consent');
-          expect(element.exists()).toBeFalsy();
-        });
-        it('should not render if user is lower than level 6', async () => {
-          await doMount(getPiniaForUser(UserRoles.level5));
-          await wrapper.setFeature(FeatureKeys.CustomConsent, false);
-          const element = wrapper.findDataTest('custom-consent');
-          expect(element.exists()).toBeFalsy();
-        });
+      it('should not render if user is lower than level 6', async () => {
+        await doMount(getPiniaForUser(UserRoles.level5));
+        const element = wrapper.findDataTest('custom-consent');
+        expect(element.exists()).toBeFalsy();
       });
     });
   });

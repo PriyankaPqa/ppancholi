@@ -150,7 +150,7 @@
         </event-summary-section-body>
       </div>
 
-      <div v-if="$hasFeature(FeatureKeys.CustomConsent) && $hasLevel(UserRoles.level6)">
+      <div v-if="$hasLevel(UserRoles.level6)">
         <event-summary-section-title
           :section="EEventSummarySections.EventConsent"
           :can-add="canEditConsentSection"
