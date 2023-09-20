@@ -39,12 +39,12 @@
                 <!-- buttons are in the individual page for now but we want to move them to the component eventually - we'll use events to communicate -->
                 <v-btn
                   v-if="tier2ProcessStarted"
-                  :loading="submitLoading"
+                  :disabled="submitLoading"
                   @click="restartAuthentication()">
                   {{ $t('registration.button.select_different_id') }}
                 </v-btn>
                 <v-btn
-                  :loading="submitLoading"
+                  :disabled="submitLoading"
                   @click="skipAuthentication()">
                   {{ $t('registration.button.skip_authentication') }}
                 </v-btn>
@@ -68,11 +68,13 @@
                 :show-badge-mobile="false"
                 :show-badge-desktop="false"
                 @recaptcha-callback="recaptchaCallBack" />
+
+              <!-- during tier 2 we prefer disabling to loading during a server action since its not always the buttons that do this... -->
               <v-btn
                 color="primary"
                 data-test="nextButton"
                 :aria-label="$t(currentTab.nextButtonTextKey)"
-                :loading="submitLoading || retrying"
+                :loading="(submitLoading && !(tier2ProcessStarted && !tier2ProcessCompleted)) || retrying"
                 :disabled="inlineEdit || (tier2ProcessStarted && !tier2ProcessCompleted)"
                 @click="goNext()">
                 {{ $t(currentTab.nextButtonTextKey) }}

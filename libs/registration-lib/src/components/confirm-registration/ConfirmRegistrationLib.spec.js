@@ -210,7 +210,6 @@ describe('ConfirmRegistrationLib.vue', () => {
         wrapper.vm.$registrationStore.tier2State = { mustDoTier2: true, completed: true, status: 1 };
         expect(wrapper.vm.identityAuthenticationMessage).toEqual({
           header: 'registration.confirmation.identityAuthentication.verified',
-          details: '',
           icon: 'mdi-check',
         });
 

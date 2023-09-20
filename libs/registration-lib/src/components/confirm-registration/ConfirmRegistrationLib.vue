@@ -31,19 +31,16 @@
               <span class="large-header" data-test="confirm-registration-event-name">{{ $m(event.name) }}</span>
             </v-col>
             <v-col v-if="identityAuthenticationMessage" cols="12" class="pt-3" data-test="identity-authentication-section">
-              <span class="rc-body12">{{ $t('registration.confirmation.identityAuthentication') }}</span>
-              <br>
-              <span class="large-header">
+              <div class="rc-body12">
+                {{ $t('registration.confirmation.identityAuthentication') }}
+              </div>
+              <div v-if="identityAuthenticationMessage.header || identityAuthenticationMessage.icon" class="large-header">
                 <v-icon :color="identityAuthenticationMessage.color">
                   {{ identityAuthenticationMessage.icon }}
                 </v-icon> {{ identityAuthenticationMessage.header }}
-              </span>
-              <br>
+              </div>
               <span class="rc-body14">
                 <i18n v-if="identityAuthenticationMessage.details" :path="identityAuthenticationMessage.details" tag="div" class="data">
-                  <template #visit_bold>
-                    <span class="fw-bold">{{ $t('registration.confirmation.identityAuthentication.notVerified.details.visit') }}</span>
-                  </template>
                   <template #phone>
                     <span class="fw-bold">{{ phoneAssistance }}</span>
                   </template>
@@ -199,8 +196,9 @@ export default Vue.extend({
       return this.$hasFeature(FeatureKeys.AuthenticationPhaseII) && !!this.$registrationStore.assessmentToComplete;
     },
 
-    identityAuthenticationMessage(): { color?: string, icon?: string, header: TranslateResult, details: string } {
+    identityAuthenticationMessage(): { color?: string, icon?: string, header?: TranslateResult, details?: string } {
       const state = this.$registrationStore.tier2State;
+
       if (!state?.mustDoTier2) {
         return null;
       }
@@ -217,7 +215,6 @@ export default Vue.extend({
       if (state.status === IdentityAuthenticationStatus.Passed) {
         return {
           header: this.$t('registration.confirmation.identityAuthentication.verified'),
-          details: '',
           icon: 'mdi-check',
         };
       }
