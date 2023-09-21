@@ -14,13 +14,16 @@ import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/moc
 import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
-import { mockCreateMassFinancialAssistanceCustomFileRequest, mockCreateMassFinancialAssistanceRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
+import {
+  mockCreateMassFinancialAssistanceCustomFileRequest,
+  mockCreateMassFinancialAssistanceRequest,
+  mockCreateMassFinancialAssistanceUploadCsvFileRequest } from '@libs/cypress-lib/mocks/mass-actions/massFinancialAssistance';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { mockApprovalActionRequest, mockFinancialAssistancePaymentRequest, mockUpdatePaymentRequest } from '@libs/cypress-lib/mocks/financialAssistance/financialAssistancePayment';
 import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
-import { fixtureGenerateFaCustomOptionsXlsxFile } from 'cypress/fixtures/mass-actions';
+import { fixtureGenerateFaCsvFile, fixtureGenerateFaCustomOptionsXlsxFile } from 'cypress/fixtures/mass-actions';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import { linkEventToTeamForManyRoles } from './teams';
@@ -415,13 +418,13 @@ export const prepareStateHouseholdAddSubmitUpdateFAPayment = async (accessTokenL
 };
 
 /**
- * Creates a Mass Financial Assistance using custom file
+ * Creates a Mass Financial Assistance using custom xlsx file
  * @param accessToken
  * @param event
  * @param tableId
- * @param programId
  * @param householdQuantity
- * @param filePath
+ * @param fileName
+ * @param tableName
  */
 // eslint-disable-next-line
 export const prepareStateMassActionFinancialAssistanceCustomFile = async (accessToken: string, event:IEventEntity, tableId: string, householdQuantity: number, fileName: string, tableName = 'MassActionTable') => {
@@ -434,5 +437,28 @@ export const prepareStateMassActionFinancialAssistanceCustomFile = async (access
   const mockCreateMassFinancialAssistanceCustomFile = mockCreateMassFinancialAssistanceCustomFileRequest(event.id, generatedFaCustomOptionsXlsxFileData);
   // eslint-disable-next-line
   const responseMassFinancialAssistance = await responseCreateHouseholds.provider.massActions.create('financial-assistance-custom-options', mockCreateMassFinancialAssistanceCustomFile);
+  return { responseMassFinancialAssistance, responseCreateHouseholds };
+};
+
+/**
+ * Creates a Mass Financial Assistance using csv file
+ * @param accessToken
+ * @param event
+ * @param tableId
+ * @param programId
+ * @param householdQuantity
+ * @param filePath
+ */
+// eslint-disable-next-line
+export const prepareStateMassActionFinancialAssistanceUploadFile = async (accessToken: string, event:IEventEntity, tableId: string, programId: string, householdQuantity: number, filePath: string) => {
+  const responseCreateHouseholds = await prepareStateMultipleHouseholds(accessToken, event, householdQuantity);
+  const caseFileCreated1 = responseCreateHouseholds.householdsCreated[0].registrationResponse.caseFile;
+  const caseFileCreated2 = responseCreateHouseholds.householdsCreated[1].registrationResponse.caseFile;
+  const caseFileCreated3 = responseCreateHouseholds.householdsCreated[2].registrationResponse.caseFile;
+  await searchCaseFilesRecursively(responseCreateHouseholds.provider, [caseFileCreated1, caseFileCreated2, caseFileCreated3]);
+  const generatedFaCsvData = fixtureGenerateFaCsvFile([caseFileCreated1, caseFileCreated2, caseFileCreated3], tableId, filePath);
+  const mockCreateMassFinancialAssistanceUploadCsvFile = mockCreateMassFinancialAssistanceUploadCsvFileRequest(event.id, tableId, programId, generatedFaCsvData);
+  // eslint-disable-next-line
+  const responseMassFinancialAssistance = await responseCreateHouseholds.provider.massActions.create('financial-assistance', mockCreateMassFinancialAssistanceUploadCsvFile);
   return { responseMassFinancialAssistance, responseCreateHouseholds };
 };

@@ -29,3 +29,24 @@ export const mockCreateMassFinancialAssistanceCustomFileRequest = (eventId: stri
   const payload = data;
   return payload;
 };
+
+export const mockCreateMassFinancialAssistanceUploadCsvFileRequest = (eventId: string, tableId: string, programId: string, fileContents: string) => {
+  const data = new FormData();
+
+  // Append each property individually to the FormData
+  data.append('eventId', eventId);
+  data.append('tableId', tableId);
+  data.append('programId', programId);
+  data.append('mainCategoryId', itemFinancialAssistance.clothing);
+  data.append('subCategoryId', subItemFinancialAssistance.winterClothing);
+  data.append('paymentModality', `${EPaymentModalities.Cheque}`);
+  data.append('amount', '80.00');
+  data.append('name', `test mass financial assistance- - ${getCurrentDateString()} - s${getRandomNumber()}`);
+  data.append('description', 'description mass action custom file');
+
+  // Append the file separately
+  const blob = new Blob([fileContents], { type: 'text/csv' });
+  data.append('file', blob);
+  const payload = data;
+  return payload;
+};
