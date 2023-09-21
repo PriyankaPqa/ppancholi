@@ -533,6 +533,28 @@ describe('HouseholdMemberCard.vue', () => {
         expect(wrapper.vm.isMovedMember).toEqual(false);
       });
     });
+
+    describe('showUnderageWarning', () => {
+      it('returns false if feature flag UnderageValidation is turned off', () => {
+        doMount();
+        wrapper.vm.$hasFeature = jest.fn((fb) => fb !== FeatureKeys.UnderageValidation);
+        expect(wrapper.vm.showUnderageWarning).toBeFalsy();
+      });
+
+      it('returns false if feature flag UnderageValidation is turned on and identitySet hasMinimumAge is true', () => {
+        doMount();
+        wrapper.vm.$hasFeature = jest.fn((fb) => fb === FeatureKeys.UnderageValidation);
+        wrapper.vm.member.identitySet.hasMinimumAge = jest.fn(() => true);
+        expect(wrapper.vm.showUnderageWarning).toBeFalsy();
+      });
+
+      it('returns true if feature flag UnderageValidation is turned on and identitySet hasMinimumAge is false', () => {
+        doMount();
+        wrapper.vm.$hasFeature = jest.fn((fb) => fb === FeatureKeys.UnderageValidation);
+        wrapper.vm.member.identitySet.hasMinimumAge = jest.fn(() => false);
+        expect(wrapper.vm.showUnderageWarning).toBeTruthy();
+      });
+    });
   });
 
   describe('Lifecycle', () => {
@@ -583,6 +605,62 @@ describe('HouseholdMemberCard.vue', () => {
         doMount(true);
         await wrapper.vm.openSplitDialog();
         expect(registrationStore.resetSplitHousehold).toHaveBeenCalled();
+      });
+
+      it('calls the confirmation window if showUnderageWarning is true', async () => {
+        await doMount(true, true, { computed: { showUnderageWarning() {
+          return true;
+        },
+        underageWarning() {
+          return 'underageWarning ';
+        } },
+        });
+
+        wrapper.vm.$confirm = jest.fn();
+        await wrapper.vm.openSplitDialog();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'household.profile.member.split_underage.confirm_title',
+          messages: null,
+          htmlContent: `underageWarning ${wrapper.vm.$t('household.profile.member.split_underage.confirm_message', { name: wrapper.vm.displayName })}`,
+        });
+      });
+    });
+
+    describe('makePrimary', () => {
+      it('calls the confirmation window with the underage warning if showUnderageWarning is true', async () => {
+        doMount(true, true, { computed: { showUnderageWarning() {
+          return true;
+        },
+        underageWarning() {
+          return 'underageWarning ';
+        } },
+        });
+
+        wrapper.vm.$confirm = jest.fn();
+        await wrapper.vm.makePrimary();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'household.profile.member.make_primary.confirm_title',
+          messages: null,
+          htmlContent: `underageWarning ${wrapper.vm.$t('household.profile.member.make_primary.confirm_message', { name: wrapper.vm.displayName })}`,
+        });
+      });
+
+      it('calls the confirmation window without the underage warning if showUnderageWarning is true', async () => {
+        doMount(true, true, { computed: { showUnderageWarning() {
+          return false;
+        },
+        underageWarning() {
+          return 'underageWarning ';
+        } },
+        });
+
+        wrapper.vm.$confirm = jest.fn();
+        await wrapper.vm.makePrimary();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'household.profile.member.make_primary.confirm_title',
+          messages: null,
+          htmlContent: `${wrapper.vm.$t('household.profile.member.make_primary.confirm_message', { name: wrapper.vm.displayName })}`,
+        });
       });
     });
 

@@ -24,6 +24,20 @@ describe('SplitHousehold.vue', () => {
     jest.clearAllMocks();
   });
 
+  beforeEach(() => {
+    wrapper = shallowMount(Component, {
+      localVue,
+      pinia,
+      computed: {
+        currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
+        splitHousehold() {
+          return mockSplitHousehold();
+        },
+      },
+
+    });
+  });
+
   describe('Methods', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
@@ -231,6 +245,7 @@ describe('SplitHousehold.vue', () => {
 
         });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        registrationStore.splitHousehold = jest.fn();
 
         await wrapper.vm.nextDefault(true);
         expect(registrationStore.splitHousehold).toHaveBeenCalledTimes(1);
@@ -299,7 +314,17 @@ describe('SplitHousehold.vue', () => {
   describe('Computed', () => {
     describe('registrationAssessment', () => {
       it('should return the registrationAssessment', () => {
-        jest.clearAllMocks();
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          computed: {
+            currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
+          },
+
+        });
         const registrationAssessment = wrapper.vm.registrationAssessment;
         expect(registrationStore.getAssessmentToComplete).toHaveBeenCalled();
         expect(registrationAssessment).toEqual(registrationStore.getAssessmentToComplete().registrationAssessment);

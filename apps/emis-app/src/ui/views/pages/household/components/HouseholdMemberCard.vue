@@ -162,7 +162,6 @@ import { RcTooltip } from '@libs/component-lib/components';
 import householdHelpers from '@/ui/helpers/household';
 import { IEventGenericLocation } from '@libs/entities-lib/event';
 import { UserRoles } from '@libs/entities-lib/user';
-
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { useRegistrationStore } from '@/pinia/registration/registration';
 import { HouseholdActivityType } from '@libs/entities-lib/value-objects/household-activity';
@@ -270,6 +269,11 @@ export default Vue.extend({
       ];
     },
 
+    underageWarning(): string {
+      return `<div class='underage-warning-text d-flex pb-2'><i class='v-icon mdi mdi-alert-outline underage-alert-icon pr-2'></i>
+      ${this.$t('household.profile.member.warning.member-under-16')}</div>`;
+    },
+
     canChangePrimary():boolean {
       return this.$hasLevel(UserRoles.level2) && !this.isMovedMember;
     },
@@ -363,6 +367,10 @@ export default Vue.extend({
     isMovedMember(): boolean {
       return !!this.movedStatus;
     },
+
+    showUnderageWarning(): boolean {
+      return this.$hasFeature(FeatureKeys.UnderageValidation) && !this.member.identitySet.hasMinimumAge();
+    },
   },
 
   created() {
@@ -382,10 +390,11 @@ export default Vue.extend({
     },
 
     async makePrimary() {
+      const htmlContent = `${this.showUnderageWarning ? this.underageWarning : ''}${this.$t('household.profile.member.make_primary.confirm_message', { name: this.displayName })}`;
       const userChoice = await this.$confirm({
         title: this.$t('household.profile.member.make_primary.confirm_title'),
         messages: null,
-        htmlContent: this.$t('household.profile.member.make_primary.confirm_message', { name: this.displayName }).toString(),
+        htmlContent,
       });
 
       if (userChoice) {
@@ -401,10 +410,23 @@ export default Vue.extend({
       }
     },
 
-    openSplitDialog() {
+    async openSplitDialog() {
       if (!useRegistrationStore().isSplitMode()) {
         useRegistrationStore().resetSplitHousehold();
       }
+
+      if (this.showUnderageWarning) {
+        const htmlContent = `${this.underageWarning}${this.$t('household.profile.member.split_underage.confirm_message', { name: this.displayName })}`;
+        const userChoice = await this.$confirm({
+          title: this.$t('household.profile.member.split_underage.confirm_title'),
+          messages: null,
+          htmlContent,
+        });
+        if (!userChoice) {
+          return;
+        }
+      }
+
       this.showSplitDialog = true;
     },
 
@@ -469,5 +491,14 @@ export default Vue.extend({
 
   .disabled-table{
     color: var(--v-grey-lighten1) !important;
+  }
+</style>
+
+<style lang="scss">
+  .underage-warning-text {
+    color: red
+  }
+  .underage-alert-icon {
+    font-size: 20px !important;
   }
 </style>

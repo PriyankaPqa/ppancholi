@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockProvider } from '@/services/provider';
+import { mockAssessmentResponseEntity } from '@libs/entities-lib/assessment-template';
 import flushPromises from 'flush-promises';
 import { createTestingPinia } from '@pinia/testing';
 import { useMockAssessmentResponseStore } from '@/pinia/assessment-response/assessment-response.mock';
@@ -138,18 +139,20 @@ describe('AssessmentRunner.vue', () => {
   describe('methods', () => {
     describe('saveAnswers', () => {
       it('sets response answers from helper and calls save method', async () => {
-        wrapper.vm.surveyJsHelper.surveyToAssessmentResponse = jest.fn(() => 'some object');
+        const response = mockAssessmentResponseEntity();
+        wrapper.vm.surveyJsHelper.surveyToAssessmentResponse = jest.fn(() => response);
         await wrapper.vm.saveAnswers(null);
-        expect(assessmentResponseStore.saveAssessmentAnsweredQuestions).toHaveBeenCalledWith('some object');
-        expect(wrapper.vm.response).toEqual(await assessmentResponseStore.saveAssessmentAnsweredQuestions('some object'));
+        expect(assessmentResponseStore.saveAssessmentAnsweredQuestions).toHaveBeenCalledWith(response);
+        expect(wrapper.vm.response).toEqual(await assessmentResponseStore.saveAssessmentAnsweredQuestions(response));
       });
 
       it('doesnt call save method if no assessmentResponseId', async () => {
         await mount('eventId', null);
-        wrapper.vm.surveyJsHelper.surveyToAssessmentResponse = jest.fn(() => 'some object');
+        const response = mockAssessmentResponseEntity();
+        wrapper.vm.surveyJsHelper.surveyToAssessmentResponse = jest.fn(() => response);
         await wrapper.vm.saveAnswers(null);
         expect(assessmentResponseStore.saveAssessmentAnsweredQuestions).not.toHaveBeenCalled();
-        expect(wrapper.vm.response).toEqual('some object');
+        expect(wrapper.vm.response).toEqual(response);
       });
     });
 

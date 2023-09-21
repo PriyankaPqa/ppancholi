@@ -80,6 +80,7 @@ export interface IIdentitySet extends IIdentitySetData {
   setDuplicateStatusInCurrentHousehold(isDuplicate: boolean):void;
   setDuplicateStatusInDb(isDuplicate: boolean):void;
   getMemberDuplicateStatus():MemberDuplicateStatus;
+  hasMinimumAge(): boolean;
 }
 
 export interface IHoneyPotIdentitySet extends IIdentitySet {

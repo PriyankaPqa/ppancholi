@@ -1171,6 +1171,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
 
     describe('onClickSubmitPayment', () => {
       it('sets totalAmountToSubmit', async () => {
+        await wrapper.setData({ selectedProgram: program });
         const total = '$10.00';
 
         wrapper.vm.onClickSubmitPayment({ total });
@@ -1179,6 +1180,7 @@ describe('CreateEditFinancialAssistanceCaseFile.vue', () => {
       });
 
       it('sets showSubmitPaymentDialog', async () => {
+        await wrapper.setData({ selectedProgram: program });
         expect(wrapper.vm.showSubmitPaymentDialog).toBe(false);
 
         wrapper.vm.onClickSubmitPayment({ total: '$10.00' });

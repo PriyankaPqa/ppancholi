@@ -164,6 +164,10 @@ export class IdentitySet implements IHoneyPotIdentitySet {
     return null;
   }
 
+  hasMinimumAge(): boolean {
+    return hasMinimumAge(this.birthDate);
+  }
+
   reset(): void {
     this.firstName = '';
     this.middleName = '';

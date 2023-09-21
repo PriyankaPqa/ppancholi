@@ -72,7 +72,7 @@ export default mixins(assessmentDetail).extend({
       this.survey = this.surveyJsHelper.initializeSurveyJsRunner(
         this.$i18n.locale,
         this.assessmentTemplate.externalToolState?.data?.rawJson,
-        this.response.completionStatus === CompletionStatus.Completed,
+        this.response?.completionStatus === CompletionStatus.Completed,
       );
 
       if (this.response?.externalToolState?.data?.rawJson) {

@@ -697,7 +697,7 @@
     "registration.tier2.selectOtherId": "Select another type of ID",
     "registration.tier2.selectProofAddress": "Select proof of address",
     "registration.tier2.selectValidId": "Select valid ID",
-    "registration.tier2.skipConfirmationMessage": "Are you sure you want to skip authentication?",
+    "registration.tier2.skipConfirmationMessage": "Are you sure you want to skip authentication?\nIf you skip your authentication process, you will not be able to receive financial assistance until this has been completed in the eventuality that financial assistance is added as part of Canadian Red Cross support.",
     "registration.tier2.skipConfirmationTitle": "Skip Authentication",
     "registration.type.individual": "Registration: Family or individual",
     "registration.version": "Version",

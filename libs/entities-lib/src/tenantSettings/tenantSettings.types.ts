@@ -16,6 +16,7 @@ export enum FeatureKeys {
   ApprovalHistoryNonFinalApprover = 'approvalHistoryNonFinalApprover',
   ClearSpecialCharactersFromFundingRequest = 'ClearSpecialCharactersFromFundingRequest',
   TaskManagement = 'TaskManagement',
+  UnderageValidation = 'UnderageValidation',
 }
 
 export enum FeatureType {

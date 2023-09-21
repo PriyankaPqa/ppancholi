@@ -94,6 +94,7 @@ export const getWrapper = (Component, options, {
 
   const i18n = new VueI18n({
     locale: 'en',
+    silentTranslationWarn: true,
   });
 
   const vuetify = new Vuetify({

@@ -697,7 +697,7 @@
     "registration.tier2.selectOtherId": "Choisir un autre type d'identification",
     "registration.tier2.selectProofAddress": "Choisir une preuve d'adresse",
     "registration.tier2.selectValidId": "Choisissez une pièce d'identité",
-    "registration.tier2.skipConfirmationMessage": "Êtes-vous sûr de vouloir passer l'authentification?",
+    "registration.tier2.skipConfirmationMessage": "Êtes-vous sûr de vouloir passer l'authentification?\nSi vous sautez votre processus d'authentification, vous ne pourrez pas recevoir d'aide financière tant que celle-ci n'est pas terminée dans le cas où une aide financière serait ajoutée dans le cadre du soutien de la Croix-Rouge canadienne.",
     "registration.tier2.skipConfirmationTitle": "Passer l'authentification",
     "registration.type.individual": "Inscription : Famille ou individu",
     "registration.version": "Version",

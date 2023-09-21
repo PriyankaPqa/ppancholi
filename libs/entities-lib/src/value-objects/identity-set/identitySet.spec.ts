@@ -1,4 +1,4 @@
-import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@libs/shared-lib/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM, MIN_AGE_REGISTRATION } from '@libs/shared-lib/constants/validations';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import helpers from '@/helpers';
 import {
@@ -72,49 +72,49 @@ describe('Identity Set', () => {
       });
     });
 
-  describe('setDuplicateStatusInCurrentHousehold', () => {
-    it('should set duplicateStatusInCurrentHousehold to the argument', () => {
-      const p = new IdentitySet();
-      p.setDuplicateStatusInCurrentHousehold(true);
-      expect(p.duplicateStatusInCurrentHousehold).toBe(MemberDuplicateStatus.Duplicate);
-    });
-  });
-
-  describe('setDuplicateStatusInDb', () => {
-    it('should set duplicateStatusInDb to the argument', () => {
-      const p = new IdentitySet();
-      p.setDuplicateStatusInDb(true);
-      expect(p.duplicateStatusInDb).toBe(MemberDuplicateStatus.Duplicate);
-    });
-  });
-
-  describe('get', () => {
-    it('returns Duplicate if duplicateStatusInCurrentHousehold is true', () => {
-      const p = new IdentitySet();
-      p.setDuplicateStatusInCurrentHousehold(true);
-      p.setDuplicateStatusInDb(true);
-      expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Duplicate);
-    });
-    it('returns Duplicate if duplicateStatusInDb is true', () => {
-      const p = new IdentitySet();
-      p.setDuplicateStatusInCurrentHousehold(false);
-      p.setDuplicateStatusInDb(true);
-      expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Duplicate);
-    });
-    it('returns Unique if duplicateStatusInCurrentHousehold and duplicateStatusInDb are false', () => {
-      const p = new IdentitySet();
-      p.setDuplicateStatusInCurrentHousehold(false);
-      p.setDuplicateStatusInDb(false);
-      expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Unique);
+    describe('setDuplicateStatusInCurrentHousehold', () => {
+      it('should set duplicateStatusInCurrentHousehold to the argument', () => {
+        const p = new IdentitySet();
+        p.setDuplicateStatusInCurrentHousehold(true);
+        expect(p.duplicateStatusInCurrentHousehold).toBe(MemberDuplicateStatus.Duplicate);
+      });
     });
 
-    it('returns the duplicateStatusInCurrentHousehold if duplicateStatusInDb is null', () => {
-      const p = new IdentitySet();
-      p.setDuplicateStatusInCurrentHousehold(true);
-      p.setDuplicateStatusInDb(null);
-      expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Duplicate);
+    describe('setDuplicateStatusInDb', () => {
+      it('should set duplicateStatusInDb to the argument', () => {
+        const p = new IdentitySet();
+        p.setDuplicateStatusInDb(true);
+        expect(p.duplicateStatusInDb).toBe(MemberDuplicateStatus.Duplicate);
+      });
     });
-  });
+
+    describe('get', () => {
+      it('returns Duplicate if duplicateStatusInCurrentHousehold is true', () => {
+        const p = new IdentitySet();
+        p.setDuplicateStatusInCurrentHousehold(true);
+        p.setDuplicateStatusInDb(true);
+        expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Duplicate);
+      });
+      it('returns Duplicate if duplicateStatusInDb is true', () => {
+        const p = new IdentitySet();
+        p.setDuplicateStatusInCurrentHousehold(false);
+        p.setDuplicateStatusInDb(true);
+        expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Duplicate);
+      });
+      it('returns Unique if duplicateStatusInCurrentHousehold and duplicateStatusInDb are false', () => {
+        const p = new IdentitySet();
+        p.setDuplicateStatusInCurrentHousehold(false);
+        p.setDuplicateStatusInDb(false);
+        expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Unique);
+      });
+
+      it('returns the duplicateStatusInCurrentHousehold if duplicateStatusInDb is null', () => {
+        const p = new IdentitySet();
+        p.setDuplicateStatusInCurrentHousehold(true);
+        p.setDuplicateStatusInDb(null);
+        expect(p.getMemberDuplicateStatus()).toBe(MemberDuplicateStatus.Duplicate);
+      });
+    });
 
     describe('validate', () => {
       describe('First name', () => {
@@ -338,6 +338,32 @@ describe('Identity Set', () => {
           const results = p.validate();
           expect(results).toContain(`indigenousCommunityOther exceeds max length of ${MAX_LENGTH_MD}`);
         });
+      });
+    });
+
+    describe('hasMinimumAge', () => {
+      it('returns false if the member has less than minimum age', () => {
+        const p = new IdentitySet();
+        p.birthDate = {
+          year: new Date().getFullYear() - MIN_AGE_REGISTRATION + 10,
+          month: 1,
+          day: 2,
+        };
+
+       const result = p.hasMinimumAge();
+       expect(result).toBeFalsy();
+      });
+
+      it('returns true if the member has less than minimum age', () => {
+        const p = new IdentitySet();
+        p.birthDate = {
+          year: new Date().getFullYear() - MIN_AGE_REGISTRATION - 10,
+          month: 1,
+          day: 2,
+        };
+
+       const result = p.hasMinimumAge();
+       expect(result).toBeTruthy();
       });
     });
   });

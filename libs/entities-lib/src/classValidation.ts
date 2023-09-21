@@ -91,9 +91,9 @@ export const isValidBirthday = (birthdate: IBirthDate, errorMsg: string, errors:
   }
 };
 
-export const hasMinimumAge = (birthdate: IBirthDate, errorMsg: string, errors: string[]) => {
+export const hasMinimumAge = (birthdate: IBirthDate, errorMsg?: string, errors?: string[]): boolean => {
   if (!birthdate.year || !birthdate.month || !birthdate.day) {
-    return;
+    return false;
   }
 
   const age = MIN_AGE_REGISTRATION;
@@ -101,10 +101,12 @@ export const hasMinimumAge = (birthdate: IBirthDate, errorMsg: string, errors: s
   const now = endOfDay(new Date());
   const nowSubYears = subYears(now, age);
   if (isSameDay(dateFnsBirthdate, nowSubYears) || isBefore(dateFnsBirthdate, nowSubYears)) {
-    return;
+    return true;
   }
-
-  errors.push(errorMsg);
+  if (errorMsg && errors) {
+    errors.push(errorMsg);
+  }
+  return false;
 };
 
 export const isUnique = (identity: IIdentitySet, isCRCRegistration: boolean, errorMsg: string, errors: string[]) => {

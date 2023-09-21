@@ -17,19 +17,6 @@ const tenantSettingsStore = useMockTenantSettingsStore(pinia).tenantSettingsStor
 describe('ReviewRegistrationLib.vue', () => {
   let wrapper;
 
-  beforeEach(async () => {
-    jest.clearAllMocks();
-    wrapper = shallowMount(Component, {
-      localVue,
-      vuetify,
-      stubs: {
-        'previous-events-template': {
-          template: '<div />',
-        },
-      },
-    });
-  });
-
   describe('Computed', () => {
     describe('enableAutocomplete', () => {
       it('return correct value', () => {
@@ -37,12 +24,22 @@ describe('ReviewRegistrationLib.vue', () => {
           localVue,
           vuetify,
           featureList: [FeatureKeys.AddressAutoFill],
+          stubs: {
+            'previous-events-template': {
+              template: '<div />',
+            },
+          },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(true);
 
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
+          stubs: {
+            'previous-events-template': {
+              template: '<div />',
+            },
+          },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
@@ -54,6 +51,11 @@ describe('ReviewRegistrationLib.vue', () => {
           wrapper = shallowMount(Component, {
             localVue,
             pinia,
+            stubs: {
+              'previous-events-template': {
+                template: '<div />',
+              },
+            },
           });
           expect(wrapper.vm.consentStatements).toEqual(tenantSettingsStore.currentTenantSettings.consentStatements);
         });
