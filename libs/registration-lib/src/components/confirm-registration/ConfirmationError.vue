@@ -9,7 +9,7 @@
             </v-icon>
           </div>
           <v-col v-if="firstError" cols="8" class="rc-body18 fw-bold" data-test="confirmation-errorRegistration-errorTitle">
-            {{ $t(firstError) }}
+            {{ $t(firstError, metaMessage) }}
           </v-col>
         </v-row>
         <v-col class="col pl-16" cols="12">
@@ -52,15 +52,18 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { VueConstructor } from 'vue';
 import VueI18n from 'vue-i18n';
+import _isEmpty from 'lodash/isEmpty';
+import helpers from '@libs/shared-lib/helpers/helpers';
 import { IServerError } from '@libs/shared-lib/types';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { IRegistrationMenuItem } from '@libs/registration-lib/types';
+import { IMultilingual } from '@libs/shared-lib/src/types';
 
 type TranslateResult = VueI18n.TranslateResult;
 
-export default Vue.extend({
+const vueComponent: VueConstructor = Vue.extend({
   name: 'ConfirmationError',
 
   props: {
@@ -104,7 +107,23 @@ export default Vue.extend({
       }
       return this.isDuplicateError ? this.$t('registration.confirmation.error.message.duplicate') : this.$t('registration.confirmation.error');
     },
+
+    metaMessage(): Record<string, string> {
+      const errors = (this.errors as IServerError)?.response?.data?.errors;
+      const errorMeta = errors?.[0]?.meta;
+
+      if (errorMeta && !_isEmpty(errorMeta)) {
+        const key = Object.keys(errorMeta)[0];
+        let value = errorMeta[key];
+        if (typeof value === 'object') {
+          value = this.$m(value as IMultilingual);
+        }
+        return { [helpers.capitalize(key)]: value };
+      }
+      return null;
+    },
   },
+
   created() {
     this.setTabWithError();
   },
@@ -119,4 +138,7 @@ export default Vue.extend({
     },
   },
 });
+
+export default vueComponent;
+
 </script>

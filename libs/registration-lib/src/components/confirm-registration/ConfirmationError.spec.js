@@ -58,5 +58,22 @@ describe('ConfirmationError.vue', () => {
         expect(wrapper.vm.errorMessage).toEqual('registration.confirmation.error');
       });
     });
+
+    describe('metaMessage', () => {
+      it('returns null if there is no error meta', async () => {
+        await wrapper.setProps({ errors: { response: { data: { errors: [mockHttpError({ meta: null })] } } } });
+        expect(wrapper.vm.metaMessage).toBeNull();
+      });
+
+      it('returns the capitalized key of the error meta', async () => {
+        await wrapper.setProps({ errors: { response: { data: { errors: [mockHttpError({ meta: { abc: 'def' } })] } } } });
+        expect(wrapper.vm.metaMessage).toEqual({ Abc: 'def' });
+      });
+
+      it('returns the tranlation of the value if it is a translation object', async () => {
+        await wrapper.setProps({ errors: { response: { data: { errors: [mockHttpError({ meta: { abc: { translation: { en: 'def-en' } } } })] } } } });
+        expect(wrapper.vm.metaMessage).toEqual({ Abc: 'def-en' });
+      });
+    });
   });
 });

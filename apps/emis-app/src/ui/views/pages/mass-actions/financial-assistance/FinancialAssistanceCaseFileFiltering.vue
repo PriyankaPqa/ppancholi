@@ -387,7 +387,7 @@ export default mixins(massActionCaseFileFiltering).extend({
 
     getIsDuplicateText(caseFile: ICaseFileCombined): TranslateResult {
       if (this.$hasFeature(FeatureKeys.ManageDuplicates)) {
-        return caseFile.metadata.isDuplicate ? this.$t('common.yes') : this.$t('common.no');
+        return caseFile.metadata.hasPotentialDuplicates ? this.$t('common.yes') : this.$t('common.no');
       }
       return caseFile.entity.isDuplicate ? this.$t('common.yes') : this.$t('common.no');
     },

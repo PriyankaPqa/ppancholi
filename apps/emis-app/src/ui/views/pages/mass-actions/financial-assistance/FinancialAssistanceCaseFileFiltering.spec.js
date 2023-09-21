@@ -345,7 +345,7 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
     describe('getIsDuplicateText', () => {
       it('returns yes if is duplicate and feature flag is on', async () => {
         wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ManageDuplicates);
-        const caseFile = { entity: mockCombinedCaseFile().entity, metadata: { ...mockCombinedCaseFile().metadata, isDuplicate: true } };
+        const caseFile = { entity: mockCombinedCaseFile().entity, metadata: { ...mockCombinedCaseFile().metadata, hasPotentialDuplicates: true } };
         const result = wrapper.vm.getIsDuplicateText(caseFile);
         expect(result).toEqual('common.yes');
       });
