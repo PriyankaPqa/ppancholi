@@ -11,6 +11,7 @@ export enum DataTest {
   groupTotal = 'caseFile-financialAssistance-expand-groupTotal',
   groupPaymentStatus = 'caseFile-financialAssistance-expand-groupPaymentStatus',
   caseFileDetails = 'item-text-0',
+  faHistory = 'history-link',
 }
 
 export class FinancialAssistanceHomePage {
@@ -29,6 +30,8 @@ export class FinancialAssistanceHomePage {
   private groupPaymentStatus = { selector: DataTest.groupPaymentStatus };
 
   private faPayment = { selector: DataTest.faPayment };
+
+  private faHistory = { selector: DataTest.faHistory };
 
   public getFAPaymentById(financialAssistancePaymentId: string) {
     cy.getByDataTest({ selector: `${DataTest.faPayment}${financialAssistancePaymentId}` }).click();
@@ -79,5 +82,9 @@ export class FinancialAssistanceHomePage {
   public goToCaseFileDetailsPage() {
     cy.getByDataTest(this.caseFileDetails).click();
     return new CaseFileDetailsPage();
+  }
+
+  public getApprovalStatusHistoryIcon() {
+    return cy.getByDataTest(this.faHistory);
   }
 }
