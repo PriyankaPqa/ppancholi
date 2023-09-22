@@ -4,6 +4,9 @@ import { i18n } from '@/ui/plugins/i18n';
 import { httpClient } from '@/services/httpClient';
 import vuetify from '@libs/shared-lib/plugins/vuetify/vuetify';
 
+import { fr, enCA } from 'date-fns/locale';
+import { setDefaultOptions } from 'date-fns';
+
 const Trans = {
   get defaultLanguage() {
     return DEFAULT_LANGUAGE;
@@ -16,6 +19,11 @@ const Trans = {
   },
   set currentLanguage(lang) {
     i18n.locale = lang;
+    const dateFnsMap = {
+      fr,
+      en: enCA,
+    };
+    setDefaultOptions({ locale: dateFnsMap[lang] });
   },
   /**
    * Gets the first supported language that matches the user's

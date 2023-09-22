@@ -95,7 +95,7 @@
             <div class="px-1" data-test="householdDetails-duplicate-history-user">
               {{ $t('common.by') }}: {{ historyItem.userInformation.userName }}
               <span v-if="historyItem.userInformation.roleName">({{ $m(historyItem.userInformation.roleName) }})</span>
-              - {{ format(parseISO(historyItem.dateOfAction), 'MMM d, yyyy') }}
+              - {{ format(parseISO(historyItem.dateOfAction), 'PP') }}
             </div>
             <div v-if="historyItem.rationale" class="px-1 pre-line" data-test="householdDetails-duplicate-history-rationale">
               {{ historyItem.duplicateStatus === DuplicateStatus.Potential

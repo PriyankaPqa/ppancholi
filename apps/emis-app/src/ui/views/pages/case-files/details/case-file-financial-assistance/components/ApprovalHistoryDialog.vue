@@ -42,7 +42,7 @@
       </template>
       <template #[`item.dateOfApprovalAction`]="{ item }">
         <div class="text-no-wrap" :data-test="`date-item`">
-          {{ getLocalStringDate(item.dateOfApprovalAction, 'Entity.timestamp', 'MMM d, yyyy') }}
+          {{ getLocalStringDate(item.dateOfApprovalAction, 'Entity.timestamp', 'PP') }}
         </div>
       </template>
       <template #[`item.actionText`]="{ item }">

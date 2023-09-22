@@ -19,7 +19,6 @@ export const dateTypes = {
   ] as string[],
 
   static: [
-
     'EventSchedule.scheduledCloseDate',
     'EventSchedule.openDate',
     'EventSchedule.closeDate',

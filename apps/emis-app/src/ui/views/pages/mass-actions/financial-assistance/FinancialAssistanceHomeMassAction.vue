@@ -27,7 +27,7 @@
       </template>
 
       <template #[`item.${customColumns.dateCreated}`]="{ item }">
-        {{ format(parseISO(item.entity.created), 'MMM d, yyyy') }}
+        {{ format(parseISO(item.entity.created), 'PP') }}
       </template>
 
       <template #[`item.${customColumns.projected}`]="{ item }">

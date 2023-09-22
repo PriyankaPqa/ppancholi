@@ -64,7 +64,7 @@ describe('CaseFileListItemWrapper.vue', () => {
       it('renders', () => {
         const element = wrapper.findDataTest('caseFileItem__created');
         expect(element.exists()).toBeTruthy();
-        expect(element.text()).toEqual('Apr 6, 2021 6:39 AM');
+        expect(element.text()).toEqual('Apr 6, 2021, 6:39 AM');
       });
     });
 

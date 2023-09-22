@@ -57,7 +57,7 @@
         <tr>
           <td />
           <td data-test="household_profile_case_file_registered_date">
-            {{ `${$t('household.profile.registered')}: ${format(new Date(caseFile.created), 'MMM d, yyyy')}` }}
+            {{ `${$t('household.profile.registered')}: ${format(new Date(caseFile.created), 'PP')}` }}
           </td>
         </tr>
       </tbody>

@@ -147,6 +147,7 @@
               :id="filter.key"
               v-model="filterValues[filter.key].value"
               :attach="true"
+              :locale="$i18n.locale"
               :disabled="filter.disabled"
               :label="filter.label"
               :labels="labels"
@@ -157,6 +158,7 @@
               v-else
               :id="filter.key"
               v-model="filterValues[filter.key].value"
+              :locale="$i18n.locale"
               :disabled="filter.disabled"
               :label="filter.label"
               :operators="filterOperators[filter.type]"

@@ -14,7 +14,7 @@
     "@libs/shared-lib": "*",
     "@types/file-saver": "^2.0.5",
     "cypress-wait-until": "^1.7.2",
-    "date-fns": "2.28.0",
+    "date-fns": "2.30.0",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
     "jsonwebtoken": "^8.5.1"

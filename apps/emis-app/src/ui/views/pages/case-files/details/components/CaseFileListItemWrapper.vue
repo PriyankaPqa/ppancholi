@@ -17,7 +17,7 @@
           </span>
         </template>
         <span class="rc-caption12" data-test="caseFileItem__created">
-          {{ format(new Date(listItem.created), 'MMM d, yyyy h:mm a') }}
+          {{ format(new Date(listItem.created), 'PPp') }}
         </span>
       </div>
 
@@ -56,7 +56,7 @@
           <div class="item__editedBy rc-caption10">
             {{ $t('item.lastEditBy') }}
             <strong class="mr-2" data-test="caseFileItem__lastEditBy">{{ listItem.lastModifiedByFullName }}</strong>
-            <span data-test="caseFileItem__lastModifiedDate">{{ format(new Date(listItem.lastModifiedDate), 'MMM d, yyyy') }}</span>
+            <span data-test="caseFileItem__lastModifiedDate">{{ format(new Date(listItem.lastModifiedDate), 'PP') }}</span>
           </div>
         </div>
       </div>

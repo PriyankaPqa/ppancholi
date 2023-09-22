@@ -14,7 +14,7 @@
         <span class="rc-body14 fw-bold">{{ $t('massActions.date_created') }}</span>
       </v-col>
       <v-col md="7">
-        <span class="rc-body14" data-test="dateCreated">{{ format(parseISO(massAction.created), 'MMM d, yyyy') }}</span>
+        <span class="rc-body14" data-test="dateCreated">{{ format(parseISO(massAction.created), 'PP') }}</span>
       </v-col>
     </v-row>
 

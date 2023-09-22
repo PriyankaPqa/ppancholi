@@ -233,7 +233,7 @@ export default Vue.extend({
         s.closedArchivedActivity = {
           name: this.closeActivity.user.name,
           isClosed: this.closeActivity.activityType === CaseFileActivityType.CaseFileStatusClosed,
-          date: helpers.getLocalStringDate(this.closeActivity.created, 'Entity.created', 'MMM d, yyyy'),
+          date: helpers.getLocalStringDate(this.closeActivity.created, 'Entity.created', 'PP'),
           reason: this.closeActivity.activityType === CaseFileActivityType.CaseFileStatusClosed
             ? this.$m((this.closeActivity.details.reason as IIdMultilingualName).name) : null,
         };
@@ -293,7 +293,7 @@ export default Vue.extend({
     async getHouseholdMembers() {
       const mapToMember = (m: IHouseholdMemberMetadata) => ({
         name: `${m.firstName} ${m.lastName}`,
-        birthDate: helpers.getLocalStringDate(m.dateOfBirth, 'HouseholdMemberMetadata.dateOfBirth', 'MMM d, yyyy'),
+        birthDate: helpers.getLocalStringDate(m.dateOfBirth, 'HouseholdMemberMetadata.dateOfBirth', 'PP'),
       });
       // if we have a date of archival/close we get the household at that date else we get the current households
       if (!this.closeActivity?.created) {

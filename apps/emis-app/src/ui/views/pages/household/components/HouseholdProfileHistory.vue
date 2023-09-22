@@ -29,7 +29,7 @@
 
       <template #[`item.${customColumns.dateOfChange}`]="{ item }">
         <div class="full-height py-2" data-test="household_history_date-of-change">
-          {{ format(new Date(item.timestamp), 'MMM d, yyyy') }}
+          {{ format(new Date(item.timestamp), 'PP') }}
         </div>
       </template>
 

@@ -1,6 +1,6 @@
 import { NavigationGuardNext } from 'vue-router';
 import { format, parseISO } from 'date-fns';
-import { utcToZonedTime, format as formatUtc } from 'date-fns-tz';
+import { utcToZonedTime } from 'date-fns-tz';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { IMultilingual } from '@libs/shared-lib/types';
 import { i18n } from '@/ui/plugins/i18n';
@@ -133,7 +133,7 @@ export default {
     }
 
     if (dateType === DateTypes.ConvertToUtc || dateType === DateTypes.Static) {
-      return formatUtc(utcToZonedTime(new Date(date), 'UTC'), formatTo);
+      return format(utcToZonedTime(new Date(date), 'UTC'), formatTo);
     }
     return format(new Date(date), formatTo);
   },
@@ -142,7 +142,7 @@ export default {
     if (!date) {
       return '';
     }
-    return formatUtc(utcToZonedTime(new Date(date), 'UTC'), formatTo);
+    return format(utcToZonedTime(new Date(date), 'UTC'), formatTo);
   },
 
   /**

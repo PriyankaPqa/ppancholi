@@ -122,7 +122,7 @@ export default mixins(caseFileDetail).extend({
         },
         {
           label: 'caseFile.document.dateAdded',
-          data: format(new Date(this.document.created), 'MMM d, yyyy'),
+          data: format(new Date(this.document.created), 'PP'),
           test: 'method',
         },
         {

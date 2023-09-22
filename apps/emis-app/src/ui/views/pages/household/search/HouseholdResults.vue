@@ -72,13 +72,13 @@
         <template #item.birthDate="{ item: household }">
           <div>
             <span data-test="birthDate" class="no-wrap">
-              {{ format(utcToZonedTime(new Date(household.primaryBeneficiary.dateOfBirth), 'UTC'), 'MMM d, yyyy') }}
+              {{ format(utcToZonedTime(new Date(household.primaryBeneficiary.dateOfBirth), 'UTC'), 'PP') }}
             </span>
           </div>
           <div v-if="hasAdditionalMember(household)">
             <div v-for="(member, i) in household.additionalMembers" :key="i">
               <span :data-test="`birthdate__houseHoldMember_${i}`">
-                {{ format(utcToZonedTime(new Date(member.dateOfBirth), 'UTC'), 'MMM d, yyyy') }}
+                {{ format(utcToZonedTime(new Date(member.dateOfBirth), 'UTC'), 'PP') }}
               </span>
             </div>
           </div>

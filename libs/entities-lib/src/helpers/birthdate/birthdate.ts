@@ -53,7 +53,7 @@ export default {
   displayBirthDate(birthDate: IBirthDate) {
     if (birthDate.year && birthDate.month && birthDate.day) {
       const birthdate = this.parseDateObject(birthDate);
-      return format(birthdate, 'MMM d, yyyy');
+      return format(birthdate, 'PP');
     }
     return '';
   },

@@ -69,6 +69,7 @@
               <v-col cols="6" sm="12" md="6" class="pb-0">
                 <v-date-field-with-validation
                   v-model="agreement.startDate"
+                  :locale="$i18n.locale"
                   :close-on-content-click="false"
                   data-test="agreement-start-date"
                   :rules="rules.startDate"
@@ -80,6 +81,7 @@
               <v-col cols="6" sm="12" md="6" class="pb-0">
                 <v-date-field-with-validation
                   v-model="agreement.endDate"
+                  :locale="$i18n.locale"
                   :close-on-content-click="false"
                   :data-test="'agreement-end-date'"
                   :rules="rules.endDate"

@@ -173,7 +173,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
         category: this.$m(d.metadata?.documentCategoryName) || '-',
         documentStatus: d.entity?.documentStatus || '-',
         documentStatusName: this.$m(d.metadata?.documentStatusName) || '-',
-        created: format(new Date(d.entity?.created), 'MMM d, yyyy') || '-',
+        created: format(new Date(d.entity?.created), 'PP') || '-',
         entity: d.entity,
         pinned: d.pinned,
       }));

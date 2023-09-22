@@ -20,7 +20,7 @@
           <div>
             <div>{{ $t('assessmentResponse.dateAssigned') }}:</div>
             <div data-test="date_assigned">
-              {{ format(new Date(assessmentResponse.dateAssigned), 'MMM d, yyyy') }}
+              {{ format(new Date(assessmentResponse.dateAssigned), 'PP') }}
             </div>
           </div>
           <div>
@@ -34,7 +34,7 @@
           <div>
             <div>{{ $t('assessmentResponse.dateCompleted') }}:</div>
             <div data-test="date_completed">
-              {{ assessmentResponse.dateCompleted ? format(new Date(assessmentResponse.dateCompleted), 'MMM d, yyyy') : '' }}
+              {{ assessmentResponse.dateCompleted ? format(new Date(assessmentResponse.dateCompleted), 'PP') : '' }}
             </div>
           </div>
           <div v-if="scoringRange">

@@ -57,6 +57,7 @@
               <v-col cols="6" sm="12" md="6" class="pb-0">
                 <v-date-field-with-validation
                   v-model="callCentre.startDate"
+                  :locale="$i18n.locale"
                   :close-on-content-click="false"
                   data-test="callcentre-start-date"
                   :rules="rules.startDate"
@@ -68,6 +69,7 @@
               <v-col cols="6" sm="12" md="6" class="pb-0">
                 <v-date-field-with-validation
                   v-model="callCentre.endDate"
+                  :locale="$i18n.locale"
                   :close-on-content-click="false"
                   :data-test="'callcentre-end-date'"
                   :rules="rules.endDate"

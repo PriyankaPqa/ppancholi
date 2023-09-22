@@ -43,7 +43,7 @@
              }`;
             string += user;
             string += role;
-            string += ` - ${format(parseISO(this.pinnedHouseholdStatusActivity.timestamp as string), 'MMM d, yyyy')}`;
+            string += ` - ${format(parseISO(this.pinnedHouseholdStatusActivity.timestamp as string), 'PP')}`;
           return string;
         }
         return '';

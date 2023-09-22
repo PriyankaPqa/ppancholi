@@ -112,6 +112,7 @@
                 v-model="localEvent.responseDetails.dateReported"
                 :data-test="'event-reported-date'"
                 readonly
+                :locale="$i18n.locale"
                 :rules="rules.responseDetails.dateReported"
                 :label="`${$t('event.date_reported')} *`"
                 :disabled="inputDisabled"
@@ -132,7 +133,7 @@
                       data-test="event-status-text"
                       class="fw-medium text-uppercase mr-2">{{ isStatusOpen ? $t('event.status.open') : $t('event.status.onHold') }}</span>
                     <span v-if="isStatusOpen" data-test="event-status-open-date">{{ $t('event.start_on_a_date') }}
-                      {{ getLocalStringDate(event.schedule.timestamp, 'EventSchedule.scheduledOpenDate', 'MMM d, yyyy') }}</span>
+                      {{ getLocalStringDate(event.schedule.timestamp, 'EventSchedule.scheduledOpenDate', 'PP') }}</span>
                   </div>
 
                   <v-switch

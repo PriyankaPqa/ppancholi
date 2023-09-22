@@ -45,7 +45,7 @@ export default Vue.extend({
         string += user;
         string += role;
         string += ' -';
-        string += ` ${format(parseISO(this.pinnedActivity.created as string), 'MMM d, yyyy')}`;
+        string += ` ${format(parseISO(this.pinnedActivity.created as string), 'PP')}`;
         return string;
       }
       return '';

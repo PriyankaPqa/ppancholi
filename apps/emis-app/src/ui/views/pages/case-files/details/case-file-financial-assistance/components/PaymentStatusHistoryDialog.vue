@@ -35,11 +35,11 @@
         <span v-if="item.userInformation.roleName" class="pl-2 no-word-break">({{ $m(item.userInformation.roleName) }})</span>
       </template>
       <template #[`item.dateOfAction`]="{ item }">
-        {{ format(new Date(item.dateOfAction), 'MMM d, yyyy') }}
+        {{ format(new Date(item.dateOfAction), 'PP') }}
       </template>
       <template #[`item.actualDateOfAction`]="{ item }">
         <div class="text-no-wrap">
-          {{ item.actualDateOfAction ? format(new Date(item.actualDateOfAction), 'MMM d, yyyy') : '-' }}
+          {{ item.actualDateOfAction ? format(new Date(item.actualDateOfAction), 'PP') : '-' }}
         </div>
       </template>
       <template #[`item.paymentStatusText`]="{ item }">

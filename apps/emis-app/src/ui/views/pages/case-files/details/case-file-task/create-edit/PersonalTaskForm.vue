@@ -33,6 +33,7 @@
         <v-col cols="6" class="py-1">
           <v-date-field-with-validation
             v-model="localPersonalTaskForm.dueDate"
+            :locale="$i18n.locale"
             :prepend-inner-icon="'mdi-calendar'"
             :rules="rules.dueDate"
             :label="$t('task.create_edit.due_date') + ' *'"

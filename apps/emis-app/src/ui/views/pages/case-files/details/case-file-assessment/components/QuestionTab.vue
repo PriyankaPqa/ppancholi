@@ -64,7 +64,7 @@
               :key="`history__${$index}`">
               <td class="history" :data-test="`history-response-${$index}`">
                 <div>
-                  {{ $index == 0 ? $t('assessment.originalResponse') : format(new Date(h.answeredOn), 'MMM d, yyyy') }}
+                  {{ $index == 0 ? $t('assessment.originalResponse') : format(new Date(h.answeredOn), 'PP') }}
                 </div>
                 <div v-if="$index > 0">
                   {{ $t('assessment.answeredBy', { user: h.crcUserName }) }}

@@ -55,6 +55,7 @@
           <date-range
             id="currentAddressForm"
             :attach="true"
+            :locale="$i18n.locale"
             :value="checkInCheckOutDate"
             display-format="MMM d, yyyy"
             :start-label="$t('impactedIndividuals.temporary_address.check_in')"

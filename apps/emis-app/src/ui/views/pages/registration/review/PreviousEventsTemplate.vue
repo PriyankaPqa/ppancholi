@@ -16,7 +16,7 @@
               {{ $m(eventNames[c.eventId]) }}
             </v-col>
             <v-col cols="3" class="rc-body14" :data-test="`previous_event_registered_${index}`">
-              {{ $t('registration.details.registered') }}: {{ format(new Date(c.created), 'MMM d, yyyy') }}
+              {{ $t('registration.details.registered') }}: {{ format(new Date(c.created), 'PP') }}
             </v-col>
             <v-col cols="3" class="rc-body14" data-test="`previous_casefileNumber_${index}`">
               {{ $t('registration.details.caseFile') }}: {{ c.caseFileNumber }}

@@ -47,7 +47,7 @@
     </template>
 
     <template #[`item.${customColumns.openDate}`]="{ item: event }">
-      {{ event.entity.schedule ? getFormattedDate(event.entity.schedule.openDate) : "" }}
+      {{ event.entity.schedule ? getLocalStringDate(event.entity.schedule.openDate, 'EventSchedule.openDate', 'PP') : "" }}
     </template>
 
     <template #[`item.${customColumns.daysOpen}`]="{ item: event }">
@@ -117,6 +117,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       FilterKey,
       routes,
       loading: false,
+      getLocalStringDate: helpers.getLocalStringDate,
       EResponseLevel,
       EEventStatus,
       UserRoles,
@@ -272,7 +273,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     getFormattedDate(date: string | Date) {
       if (date) {
-        return format(new Date(date), 'MMM d, yyyy');
+        return format(new Date(date), 'PP');
       }
       return '-';
     },

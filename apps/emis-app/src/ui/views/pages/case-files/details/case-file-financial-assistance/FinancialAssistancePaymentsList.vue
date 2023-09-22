@@ -41,7 +41,7 @@
 
       <template #[`item.${customColumns.created}`]="{ item }">
         <span data-test="fap_created" class="text-no-wrap">
-          {{ getLocalStringDate(item.entity.created, 'Entity.created', 'MMM d, yyyy') }}
+          {{ getLocalStringDate(item.entity.created, 'Entity.created', 'PP') }}
         </span>
       </template>
 

@@ -2,7 +2,7 @@
 import { dateTypes } from '@/constants/dateTypes';
 import { UserRoles } from '@libs/entities-lib/user';
 import { format } from 'date-fns';
-import { utcToZonedTime, format as formatUtc } from 'date-fns-tz';
+import { utcToZonedTime } from 'date-fns-tz';
 import helpers from './helpers';
 
 describe('>>>> helpers', () => {
@@ -25,7 +25,7 @@ describe('>>>> helpers', () => {
     it('returns the date considering UTC formatted when passed a static date', () => {
       const d = new Date();
       let res = helpers.getLocalStringDate(d, dateTypes.static[0], 'yyyy-MM-dd HH:mm');
-      expect(res).toBe(formatUtc(utcToZonedTime(d, 'UTC'), 'yyyy-MM-dd HH:mm'));
+      expect(res).toBe(format(utcToZonedTime(d, 'UTC'), 'yyyy-MM-dd HH:mm'));
 
       // EventSchedule.scheduledCloseDate is a static date (ie: we've stored as midnight UTC)- here it is an example of how it would be called normally
       res = helpers.getLocalStringDate(new Date('2021-10-01T00:00:00.000Z'), 'EventSchedule.scheduledCloseDate', 'yyyy-MM-dd HH:mm');

@@ -6,6 +6,7 @@
       :cancel-action-label="$t('common.buttons.cancel')"
       :submit-action-label="$t('common.save')"
       :content-only-scrolling="true"
+      :loading="loading"
       :persistent="true"
       fullscreen
       @cancel="$emit('close')"
@@ -87,6 +88,7 @@ export default Vue.extend({
           },
         },
       } as IConsentStatementData,
+      loading: false,
     };
   },
 
@@ -116,11 +118,16 @@ export default Vue.extend({
       if (isValid) {
         this.event.consentStatementId = this.selectedStatement.id;
         if (this.event.id) {
-          await useEventStore().updateEventConsent({
-            eventId: this.event.id,
-            consentStatementId: this.selectedStatement.id,
-            section: EEventSummarySections.EventConsent,
-          });
+          try {
+            this.loading = true;
+            await useEventStore().updateEventConsent({
+              eventId: this.event.id,
+              consentStatementId: this.selectedStatement.id,
+              section: EEventSummarySections.EventConsent,
+            });
+          } finally {
+            this.loading = false;
+          }
         }
         this.$emit('close');
       }

@@ -26,7 +26,7 @@
               ? $t('impactedIndividuals.remove_member_from_receiving_assistance.actioned_by')
               : $t('impactedIndividuals.remove_member_from_receiving_assistance.removed_by') }}
           </span>
-          <span>{{ `${userInfo} - ${format(new Date(), 'MMM d, yyyy')}` }}</span>
+          <span>{{ `${userInfo} - ${format(new Date(), 'PP')}` }}</span>
         </v-col>
 
         <v-text-area-with-validation

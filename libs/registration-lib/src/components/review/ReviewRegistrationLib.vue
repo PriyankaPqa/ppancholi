@@ -4,7 +4,7 @@
       <div v-if="!hideName" class="mb-8" data-test="summary__existingBeneficiary__section">
         <span class="rc-heading-3">{{ getPersonalInformation.firstName }} {{ getPersonalInformation.lastName }}</span>
         <div class="rc-body14">
-          {{ $t('registration.details.registered') }} {{ format(new Date(householdCreate.primaryBeneficiary.created), 'MMM d, yyyy') }}
+          {{ $t('registration.details.registered') }} {{ format(new Date(householdCreate.primaryBeneficiary.created), 'PP') }}
         </div>
       </div>
       <slot name="previous-events" :household-id="householdCreate.id" />

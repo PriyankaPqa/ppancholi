@@ -211,7 +211,7 @@ export default Vue.extend({
         'caseFile.financialAssistance.cancellationReason.byOn',
         {
           by: useUserAccountMetadataStore().getById(this.paymentGroup.cancellationBy)?.displayName,
-          on: helpers.getLocalStringDate(this.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'MMM d, yyyy'),
+          on: helpers.getLocalStringDate(this.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'PP'),
         },
       );
     },

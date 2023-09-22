@@ -113,7 +113,7 @@
     </template>
 
     <template #[`item.${customColumns.created}`]="{ item: caseFile }">
-      {{ getLocalStringDate(caseFile.entity.created, 'Entity.created', 'MMM d, yyyy') }}
+      {{ getLocalStringDate(caseFile.entity.created, 'Entity.created', 'PP') }}
     </template>
   </rc-data-table>
 </template>

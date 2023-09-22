@@ -63,7 +63,7 @@
               </v-icon>
               {{ $t('household.profile.account_created') }}:
             </div>
-            <span>{{ householdEntity && householdEntity.created ? format(new Date(householdEntity.created), 'MMM d, yyyy') : '-' }}</span>
+            <span>{{ householdEntity && householdEntity.created ? format(new Date(householdEntity.created), 'PP') : '-' }}</span>
           </div>
 
           <div class="pt-6  d-flex flex-column" data-test="household_profile_last_updated_date">
@@ -419,9 +419,9 @@ export default mixins(household).extend({
 
       if (metadataTimestamp) {
         const maxDate = max([new Date(entityTimestamp), new Date(metadataTimestamp)]);
-        date = format(maxDate, 'MMM d, yyyy');
+        date = format(maxDate, 'PP');
       } else {
-        date = format(new Date(entityTimestamp), 'MMM d, yyyy');
+        date = format(new Date(entityTimestamp), 'PP');
       }
 
       return date;

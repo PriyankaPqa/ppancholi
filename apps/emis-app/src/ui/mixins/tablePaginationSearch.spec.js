@@ -82,7 +82,7 @@ describe('tablePaginationSearch.vue', () => {
           searchExecutionDate: '2020-01-01',
         });
         expect(wrapper.vm.footerText).toBe('hello');
-        expect(wrapper.vm.$t).toHaveBeenCalledWith('searchTable.footer', { date: 'Jan 1, 2020 12:00 AM' });
+        expect(wrapper.vm.$t).toHaveBeenCalledWith('searchTable.footer', { date: 'Jan 1, 2020, 12:00 AM' });
       });
     });
 

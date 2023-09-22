@@ -138,10 +138,10 @@ describe('CaseFileSummary.vue', () => {
         await wrapper.vm.getHouseholdMembers();
         expect(wrapper.vm.$services.households.getHouseholdMetadataHistory).toHaveBeenCalledWith(caseFileStore.fetch().householdId);
         expect(wrapper.vm.householdMembers).toEqual([
-          { birthDate: helpers.getLocalStringDate('1991-01-01T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'MMM d, yyyy'), name: 'firstName2 lName2' },
+          { birthDate: helpers.getLocalStringDate('1991-01-01T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'PP'), name: 'firstName2 lName2' },
         ]);
         expect(wrapper.vm.primary).toEqual(
-          { birthDate: helpers.getLocalStringDate('1990-01-01T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'MMM d, yyyy'), name: 'firstName lastName' },
+          { birthDate: helpers.getLocalStringDate('1990-01-01T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'PP'), name: 'firstName lastName' },
         );
       });
     });

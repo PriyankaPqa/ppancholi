@@ -200,7 +200,7 @@ describe('PaymentLineGroup.vue', () => {
         expect(c).toEqual({ key: 'caseFile.financialAssistance.cancellationReason.byOn', params: [{ by: 'Jane Smith', on: 'Oct 13, 2021' }] });
         expect(wrapper.vm.$t).toHaveBeenCalledWith(
           'caseFile.financialAssistance.cancellationReason.byOn',
-          { by: 'Jane Smith', on: helpers.getLocalStringDate(wrapper.vm.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'MMM d, yyyy') },
+          { by: 'Jane Smith', on: helpers.getLocalStringDate(wrapper.vm.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'PP') },
         );
       });
     });
