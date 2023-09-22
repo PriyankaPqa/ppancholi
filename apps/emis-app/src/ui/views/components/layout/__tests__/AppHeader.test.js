@@ -239,6 +239,40 @@ describe('AppHeader.vue', () => {
         const element = wrapper.find('[data-test="appHeader__logo"]');
         expect(element.classes('logo')).toBeTruthy();
       });
+
+      describe('Notifications icon', () => {
+        it('is shown when the feature flag is on', () => {
+          const wrapper = mount(Component, {
+            localVue,
+            featureList: [FeatureKeys.DisplayNotificationCenter],
+            pinia,
+            vuetify,
+            mocks: {
+              $route: {
+                name: routes.events.home.name,
+              },
+              $services: services,
+            },
+          });
+          const button = wrapper.find('[data-test="right-menu-trigger-notifications"]');
+          expect(button.exists()).toBe(true);
+        });
+        it('is hidden when the feature flag is off', () => {
+          const wrapper = mount(Component, {
+            localVue,
+            pinia,
+            vuetify,
+            mocks: {
+              $route: {
+                name: routes.events.home.name,
+              },
+              $services: services,
+            },
+          });
+          const button = wrapper.find('[data-test="right-menu-trigger-notifications"]');
+          expect(button.exists()).toBe(false);
+        });
+      });
     });
 
     describe('Event handlers', () => {
@@ -268,6 +302,26 @@ describe('AppHeader.vue', () => {
         jest.spyOn(wrapper.vm, 'routeToRegistration').mockImplementation(() => {});
         await button.trigger('click');
         expect(wrapper.vm.routeToRegistration).toBeCalledTimes(1);
+      });
+
+      test('Clicking on the Notifications button calls handleNotificationCenter', async () => {
+        // feature must be on
+        const wrapper = mount(Component, {
+          localVue,
+          featureList: [FeatureKeys.DisplayNotificationCenter],
+          pinia,
+          vuetify,
+          mocks: {
+            $route: {
+              name: routes.events.home.name,
+            },
+            $services: services,
+          },
+        });
+        const button = wrapper.find('[data-test="right-menu-trigger-notifications"]');
+        jest.spyOn(wrapper.vm, 'handleNotificationCenter').mockImplementation(() => {});
+        await button.trigger('click');
+        expect(wrapper.vm.handleNotificationCenter).toBeCalledTimes(1);
       });
     });
   });

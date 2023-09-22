@@ -42,6 +42,17 @@
         {{ $t('common.help') }}
       </rc-tooltip>
 
+      <rc-tooltip v-if="hasFeatureDisplayNotificationCenter" bottom>
+        <template #activator="{ on }">
+          <v-btn icon data-test="right-menu-trigger-notifications" v-on="on" @click.stop="handleNotificationCenter">
+            <v-icon color="grey darken-2">
+              mdi-bell
+            </v-icon>
+          </v-btn>
+        </template>
+        {{ $t('notifications.title') }}
+      </rc-tooltip>
+
       <rc-tooltip bottom>
         <template #activator="{ on }">
           <v-btn icon data-test="right-menu-trigger" v-on="on" @click.stop="handleRightMenu">
@@ -108,6 +119,10 @@ export default Vue.extend({
     hasRole():boolean {
       return !this.$hasRole(UserRoles.noAccess);
     },
+
+    hasFeatureDisplayNotificationCenter(): boolean {
+      return this.$hasFeature(FeatureKeys.DisplayNotificationCenter);
+    },
   },
 
   methods: {
@@ -117,6 +132,11 @@ export default Vue.extend({
         dashboardStore.leftMenuVisible = !dashboardStore.leftMenuVisible;
       }
       dashboardStore.leftMenuExpanded = !dashboardStore.leftMenuExpanded;
+    },
+
+    handleNotificationCenter() {
+      const dashboardStore = useDashboardStore();
+      dashboardStore.notificationCenterVisible = !dashboardStore.notificationCenterVisible;
     },
 
     handleRightMenu() {

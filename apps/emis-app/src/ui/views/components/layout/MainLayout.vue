@@ -2,6 +2,7 @@
   <div id="ema__dashboard" class="full-height grey lighten-4">
     <app-header />
     <left-menu :mini.sync="miniLeftMenu" :show.sync="showLeftMenu" @update-mini="updateMini" />
+    <notification-center v-if="showNotificationCenter" />
     <right-menu />
     <general-help-menu :menu-links="helpMenuLinks" />
     <v-main :class="{ 'menu-container': paddingLeft }">
@@ -14,11 +15,12 @@
 import Vue from 'vue';
 import { RcRouterViewTransition } from '@libs/component-lib/components';
 import { INavigationTab } from '@libs/shared-lib/types';
-
+import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import LeftMenu from '@/ui/views/components/layout/LeftMenu.vue';
 import RightMenu from '@/ui/views/components/layout/RightMenu.vue';
 import GeneralHelpMenu from '@/ui/views/components/layout/GeneralHelpMenu.vue';
+import NotificationCenter from '@/ui/shared-components/NotificationCenter.vue';
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -29,7 +31,8 @@ export default Vue.extend({
     RightMenu,
     GeneralHelpMenu,
     RcRouterViewTransition,
-  },
+    NotificationCenter,
+},
   data() {
     return {
       showLeftMenu: true,
@@ -61,6 +64,9 @@ export default Vue.extend({
         text: this.$t('zendesk.question.create_case_note'),
         test: 'zendesk-create-case-note',
       }];
+    },
+    showNotificationCenter(): boolean {
+      return useDashboardStore().notificationCenterVisible;
     },
   },
   methods: {
