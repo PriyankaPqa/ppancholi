@@ -332,7 +332,7 @@ export default mixins(household, householdResults).extend({
     },
 
     detailsButtonDisabled(household?: IFormattedHousehold):boolean {
-        return this.loading || household.primaryBeneficiary.householdStatus !== HouseholdStatus.Open;
+      return this.loading || household.primaryBeneficiary.householdStatus !== HouseholdStatus.Open;
     },
   },
 });

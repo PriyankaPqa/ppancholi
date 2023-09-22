@@ -45,8 +45,8 @@ export default {
     const dateOfBirth = subYears(new Date(
       birthDate.year as number,
       (birthDate.month as number) - 1,
-        birthDate.day as number,
-  ), 0);
+      birthDate.day as number,
+    ), 0);
     return differenceInYears(new Date(), dateOfBirth);
   },
 

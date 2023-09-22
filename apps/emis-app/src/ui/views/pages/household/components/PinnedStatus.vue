@@ -11,46 +11,46 @@
   </v-col>
 </template>
 
-  <script lang="ts">
-  import { HouseholdStatus } from '@libs/entities-lib/household';
-  import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
-  import { IMultilingual } from '@libs/shared-lib/types';
-  import { format, parseISO } from 'date-fns';
-  import Vue from 'vue';
+<script lang="ts">
+import { HouseholdStatus } from '@libs/entities-lib/household';
+import { IHouseholdActivity } from '@libs/entities-lib/value-objects/household-activity';
+import { IMultilingual } from '@libs/shared-lib/types';
+import { format, parseISO } from 'date-fns';
+import Vue from 'vue';
 
-  interface IHouseholdStatusUpdatedDetail {
-    status: HouseholdStatus;
-    rationale: IMultilingual;
-  }
+interface IHouseholdStatusUpdatedDetail {
+  status: HouseholdStatus;
+  rationale: IMultilingual;
+}
 
-  export default Vue.extend({
-    name: 'PinnedStatus',
+export default Vue.extend({
+  name: 'PinnedStatus',
 
-    props: {
-      pinnedHouseholdStatusActivity: {
-        type: Object as () => IHouseholdActivity,
-        default: null,
-      },
+  props: {
+    pinnedHouseholdStatusActivity: {
+      type: Object as () => IHouseholdActivity,
+      default: null,
     },
+  },
 
-    computed: {
-      householdStatusActionAndUserInfo(): string {
-        if (this.pinnedHouseholdStatusActivity) {
-          const user = ` ${this.pinnedHouseholdStatusActivity.user?.name || ''}`;
-          const role = this.pinnedHouseholdStatusActivity.role?.name ? ` (${this.$m(this.pinnedHouseholdStatusActivity.role.name)})` : '';
-          let string = `${
-            this.$t(`household.status.pinned_information.${HouseholdStatus[((this.pinnedHouseholdStatusActivity.newDetails as IHouseholdStatusUpdatedDetail).status)]}`)
-             }`;
-            string += user;
-            string += role;
-            string += ` - ${format(parseISO(this.pinnedHouseholdStatusActivity.timestamp as string), 'PP')}`;
-          return string;
-        }
-        return '';
-      },
+  computed: {
+    householdStatusActionAndUserInfo(): string {
+      if (this.pinnedHouseholdStatusActivity) {
+        const user = ` ${this.pinnedHouseholdStatusActivity.user?.name || ''}`;
+        const role = this.pinnedHouseholdStatusActivity.role?.name ? ` (${this.$m(this.pinnedHouseholdStatusActivity.role.name)})` : '';
+        let string = `${
+          this.$t(`household.status.pinned_information.${HouseholdStatus[((this.pinnedHouseholdStatusActivity.newDetails as IHouseholdStatusUpdatedDetail).status)]}`)
+        }`;
+        string += user;
+        string += role;
+        string += ` - ${format(parseISO(this.pinnedHouseholdStatusActivity.timestamp as string), 'PP')}`;
+        return string;
+      }
+      return '';
     },
-    });
-  </script>
+  },
+});
+</script>
 
   <style scoped lang="scss">
   .pinnedInfoBackground{

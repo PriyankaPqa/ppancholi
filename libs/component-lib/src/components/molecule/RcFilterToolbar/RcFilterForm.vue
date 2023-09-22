@@ -189,7 +189,7 @@ import DateRange from './inputs/DateRange.vue';
  * @param {IFilterTypeOperators} operators The list of available operators per filter type
  */
 function generateFilters(
-filterOptions: Array<IFilterSettings>,
+  filterOptions: Array<IFilterSettings>,
   operators: IFilterTypeOperators,
 ): FilterItems {
   const filterItems: FilterItems = {};

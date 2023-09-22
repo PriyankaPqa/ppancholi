@@ -342,14 +342,14 @@ export default mixins(household).extend({
   watch: {
     householdEntity: {
       async handler(newValue) {
-         if (this.showDuplicatesDialog) {
-            this.loading = true;
-            this.showDuplicatesDialog = false;
-            await this.fetchData();
-          } else if (newValue && !_isEmpty(newValue)) {
-            this.fetchMyEvents();
-            this.fetchAllEvents();
-            this.setHouseholdCreate();
+        if (this.showDuplicatesDialog) {
+          this.loading = true;
+          this.showDuplicatesDialog = false;
+          await this.fetchData();
+        } else if (newValue && !_isEmpty(newValue)) {
+          this.fetchMyEvents();
+          this.fetchAllEvents();
+          this.setHouseholdCreate();
         }
       },
       deep: true,

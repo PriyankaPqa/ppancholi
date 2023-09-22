@@ -107,6 +107,10 @@ export default Vue.extend({
     },
 
     async fetchData(params: IAzureSearchParams) {
+      if (!this.searchEndpointData) {
+        return null;
+      }
+
       const res = await this.combinedMassActionStore.search({
         search: params.search,
         filter: {

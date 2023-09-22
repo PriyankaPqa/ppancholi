@@ -87,6 +87,7 @@ describe('massActionsTable', () => {
           search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
         };
         wrapper.vm.combinedMassActionStore.search = jest.fn();
+        wrapper.vm.searchEndpointData = 'search-endpoint';
         await wrapper.vm.fetchData(params);
 
         expect(wrapper.vm.combinedMassActionStore.search).toHaveBeenCalledWith({
