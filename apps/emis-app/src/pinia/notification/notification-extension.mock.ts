@@ -4,7 +4,8 @@ export function getMockExtensionComponents() {
   const notification = mockNotificationEntity();
 
   return {
-    getCurrentUserNotifications: jest.fn(() => [notification]),
-    updateIsRead: jest.fn(() => notification),
+    getNotificationsByRecipient: jest.fn(() => [notification]),
+    fetchCurrentUserNotifications: jest.fn(() => [notification]),
+    updateIsRead: jest.fn(() => [notification]),
   };
 }

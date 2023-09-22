@@ -51,7 +51,7 @@ describe('NotificationCard.vue', () => {
       });
       it('should have expected color when read', () => {
         mountWithNotification(mockReadNotification);
-        expect(wrapper.vm.backgroundColor).toEqual('grey lighten5');
+        expect(wrapper.vm.backgroundColor).toEqual('grey lighten-5');
       });
       it('should emit toggle isRead event when checked', () => {
         wrapper.vm.toggleIsRead(true);

@@ -19,7 +19,7 @@ describe('>>> Notifications Service', () => {
   test('updateIsRead is linked to the correct URL', async () => {
     const id = 'id1';
     const isRead = true;
-    await service.updateIsRead(id, isRead);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/isRead`, { isRead });
+    await service.updateIsRead([id], isRead);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/user`, { isRead, notificationIds: [id] });
   });
 });

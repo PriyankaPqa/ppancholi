@@ -16,8 +16,10 @@
           <div class="rc-body12 fw-medium section-heading" data-test="notifications-unread-text">
             {{ $t('notifications.unread') }}
           </div>
-          <div class="rc-body14 fw-normal mark-all">
-            {{ $t('notifications.mark_all_read') }}
+          <div class="">
+            <button type="button" class="rc-link14 fw-normal" data-test="btn-mark-all-read" @click="markAllAsRead">
+              {{ $t('notifications.mark_all_read') }}
+            </button>
           </div>
         </div>
         <v-col v-for="item in unreadNotifications" :key="item.id" class="pa-1 pb-3">
@@ -56,6 +58,7 @@ import Vue from 'vue';
 import { RcPageLoading, RcTab, RcTabs } from '@libs/component-lib/components';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
 import { useNotificationStore } from '@/pinia/notification/notification';
+import { useUserStore } from '@/pinia/user/user';
 import { INotificationEntity, NotificationCategoryType } from '@libs/entities-lib/notification';
 import NotificationCard from '@/ui/shared-components/NotificationCard.vue';
 import RightMenuTemplate from '../views/components/layout/RightMenuTemplate.vue';
@@ -74,7 +77,6 @@ export default Vue.extend({
   data() {
     return {
       initLoading: true,
-      notifications: [] as INotificationEntity[],
       selectedTab: NotificationCategoryType.General,
     };
   },
@@ -96,6 +98,12 @@ export default Vue.extend({
         ? this.selectedTab
         : this.tabs[0];
     },
+    currentUserId(): string {
+      return useUserStore().getUserId();
+    },
+    notifications(): INotificationEntity[] {
+      return useNotificationStore().getNotificationsByRecipient(this.currentUserId);
+    },
     readNotifications(): INotificationEntity[] {
       return this.notifications?.filter((n) => n.categoryType === this.activeTab && n.isRead === true) || [];
     },
@@ -105,16 +113,21 @@ export default Vue.extend({
   },
 
   async created() {
-      try {
-       this.notifications = await useNotificationStore().getCurrentUserNotifications();
-      } finally {
-        this.initLoading = false;
-      }
+    try {
+      this.initLoading = true;
+      await useNotificationStore().fetchCurrentUserNotifications();
+    } finally {
+      this.initLoading = false;
+    }
   },
 
   methods: {
     async toggleIsRead(notification: INotificationEntity) {
-      await useNotificationStore().updateIsRead(notification.id, notification.isRead);
+      await useNotificationStore().updateIsRead([notification.id], notification.isRead);
+    },
+
+    async markAllAsRead() {
+      await useNotificationStore().updateIsRead(this.unreadNotifications.map((n) => n.id), true);
     },
 
     getTabLabel(tab: NotificationCategoryType): string {
@@ -133,10 +146,6 @@ export default Vue.extend({
   .section-heading {
     color: var(--v-grey-darken2);
     text-transform: uppercase;
-  }
-
-  .mark-all {
-    color: var(--v-primary-darken1);
   }
 
   .footer-text {

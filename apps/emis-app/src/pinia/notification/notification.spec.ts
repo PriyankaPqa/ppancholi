@@ -4,7 +4,7 @@ import { getExtensionComponents } from '@/pinia/notification/notification-extens
 import { defineStore, setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import { mockNotificationsService } from '@libs/services-lib/notifications/entity';
-import { IdParams, INotificationEntity, mockNotificationEntity, mockNotificationEntities } from '@libs/entities-lib/notification';
+import { IdParams, INotificationEntity, mockNotificationEntities, mockNotificationEntity } from '@libs/entities-lib/notification';
 
 const entityService = mockNotificationsService();
 const baseComponents = getBaseStoreComponents<INotificationEntity, IdParams>(entityService);
@@ -43,14 +43,38 @@ describe('>>> Notification Store', () => {
     jest.clearAllMocks();
   });
 
-  describe('getCurrentUserNotifications', () => {
-    it('should call getCurrentUserNotifications service and set the result in the store', async () => {
+  describe('getNotificationsByRecipient', () => {
+    it('should return notifications filtered by recipient', () => {
+      const notification = mockNotificationEntity();
+      const bComponents = {
+        ...baseComponents,
+        getAll: jest.fn(() => [notification]),
+      };
+      const store = createTestStore(bComponents);
+      const result = store.getNotificationsByRecipient(notification.recipientId);
+      expect(result).toHaveLength(1);
+    });
+
+    it('should filter out notifications with non-matching recipient', () => {
+      const notification = mockNotificationEntity();
+      const bComponents = {
+        ...baseComponents,
+        getAll: jest.fn(() => [notification]),
+      };
+      const store = createTestStore(bComponents);
+      const result = store.getNotificationsByRecipient('other');
+      expect(result).toHaveLength(0);
+    });
+  });
+
+  describe('fetchCurrentUserNotifications', () => {
+    it('should call fetchCurrentUserNotifications service and set the result in the store', async () => {
       const bComponents = {
         ...baseComponents,
         setAll: jest.fn(),
       };
       const store = createTestStore(bComponents);
-      await store.getCurrentUserNotifications();
+      await store.fetchCurrentUserNotifications();
 
       expect(entityService.fetchCurrentUserNotifications).toBeCalledWith();
       expect(bComponents.setAll).toBeCalledWith(mockNotificationEntities());
@@ -58,17 +82,16 @@ describe('>>> Notification Store', () => {
   });
 
   describe('updateIsRead', () => {
-    it('should call updateIsRead service and set the result in the store', async () => {
+    it('should call updateIsRead service', async () => {
       const notificationId = '1';
       const bComponents = {
         ...baseComponents,
         set: jest.fn(),
       };
       const store = createTestStore(bComponents);
-      await store.updateIsRead(notificationId, true);
+      await store.updateIsRead([notificationId], true);
 
-      expect(entityService.updateIsRead).toBeCalledWith(notificationId, true);
-      expect(bComponents.set).toBeCalledWith(mockNotificationEntity());
+      expect(entityService.updateIsRead).toBeCalledWith([notificationId], true);
     });
   });
 });

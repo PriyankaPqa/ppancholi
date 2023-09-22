@@ -40,7 +40,7 @@ export default Vue.extend({
   },
   computed: {
     backgroundColor(): string {
-      return this.notification?.isRead ? 'grey lighten5' : 'primary lighten-2';
+      return this.notification?.isRead ? 'grey lighten-5' : 'primary lighten-2';
     },
     checkboxLabel(): string {
       return this.notification?.isRead ? 'notifications.mark_unread' : 'notifications.mark_read';

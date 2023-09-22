@@ -6,7 +6,11 @@ export function getExtensionComponents(
   baseComponents: BaseStoreComponents<INotificationEntity, IdParams>,
   service: NotificationsService | INotificationsServiceMock,
 ) {
-  async function getCurrentUserNotifications(): Promise<INotificationEntity[]> {
+  function getNotificationsByRecipient(recipientId: uuid): INotificationEntity[] {
+    return baseComponents.getAll().filter((n) => n.recipientId === recipientId);
+  }
+
+  async function fetchCurrentUserNotifications(): Promise<INotificationEntity[]> {
     const res = await service.fetchCurrentUserNotifications();
     if (res) {
       baseComponents.setAll(res);
@@ -14,16 +18,17 @@ export function getExtensionComponents(
     return res;
   }
 
-  async function updateIsRead(id: uuid, isRead: boolean): Promise<INotificationEntity> {
-    const res = await service.updateIsRead(id, isRead);
+  async function updateIsRead(idList: uuid[], isRead: boolean): Promise<INotificationEntity[]> {
+    const res = await service.updateIsRead(idList, isRead);
     if (res) {
-      baseComponents.set(res);
+      baseComponents.setAll(res);
     }
     return res;
   }
 
   return {
-    getCurrentUserNotifications,
+    getNotificationsByRecipient,
+    fetchCurrentUserNotifications,
     updateIsRead,
   };
 }
