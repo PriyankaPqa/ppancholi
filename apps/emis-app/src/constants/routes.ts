@@ -422,6 +422,20 @@ const routes = {
         name: 'massActions.dataCorrection.details',
       },
     },
+    caseFileStatus: {
+      home: {
+        path: 'case-file-status',
+        name: 'massActions.caseFileStatus.home',
+      },
+      create: {
+        path: 'case-file-status/create',
+        name: 'massActions.caseFileStatus.create',
+      },
+      details: {
+        path: 'case-file-status/details/:id',
+        name: 'massActions.caseFileStatus.details',
+      },
+    },
   },
   programs: {
     home: {

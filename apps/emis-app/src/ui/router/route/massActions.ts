@@ -37,6 +37,10 @@ const MassActionsDataCorrectionHome = () => import('@/ui/views/pages/mass-action
 const MassActionsDataCorrectionCreate = () => import('@/ui/views/pages/mass-actions/data-correction/DataCorrectionCreate.vue');
 const MassActionsDataCorrectionDetails = () => import('@/ui/views/pages/mass-actions/data-correction/DataCorrectionDetails.vue');
 
+const MassActionsCaseFileStatusHome = () => import('@/ui/views/pages/mass-actions/case-file-status/CaseFileStatusMassActionHome.vue');
+const MassActionsCaseFileStatusCreate = () => import('@/ui/views/pages/mass-actions/case-file-status/CaseFileStatusMassActionCreate.vue');
+const MassActionsCaseFileStatusDetails = () => import('@/ui/views/pages/mass-actions/case-file-status/CaseFileStatusMassActionDetails.vue');
+
 export const massActions: RouteConfig = {
   path: Routes.massActions.layout.path,
   component: MassActionsLayout,
@@ -201,6 +205,25 @@ export const massActions: RouteConfig = {
       path: Routes.massActions.dataCorrection.details.path,
       name: Routes.massActions.dataCorrection.details.name,
       component: MassActionsDataCorrectionDetails,
+      meta: { level: UserRoles.level6 },
+      props: true,
+    },
+    {
+      path: Routes.massActions.caseFileStatus.home.path,
+      name: Routes.massActions.caseFileStatus.home.name,
+      component: MassActionsCaseFileStatusHome,
+      meta: { level: UserRoles.level6 },
+    },
+    {
+      path: Routes.massActions.caseFileStatus.create.path,
+      name: Routes.massActions.caseFileStatus.create.name,
+      component: MassActionsCaseFileStatusCreate,
+      meta: { level: UserRoles.level6 },
+    },
+    {
+      path: Routes.massActions.caseFileStatus.details.path,
+      name: Routes.massActions.caseFileStatus.details.name,
+      component: MassActionsCaseFileStatusDetails,
       meta: { level: UserRoles.level6 },
       props: true,
     },
