@@ -1054,6 +1054,17 @@ describe('ReviewRegistrationLib.vue', () => {
       });
     });
 
+    describe('minAgeRegistration', () => {
+      it('returns null on crcregistration', () => {
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => true);
+        expect(wrapper.vm.minAgeRegistration).toEqual(null);
+      });
+      it('returns 16 where self registration', () => {
+        wrapper.vm.$registrationStore.isCRCRegistration = jest.fn(() => false);
+        expect(wrapper.vm.minAgeRegistration).toEqual(16);
+      });
+    });
+
     describe('householdCreate', () => {
       it('should return to householdCreate in the store', () => {
         expect(wrapper.vm.householdCreate).toEqual(mockHouseholdCreate());

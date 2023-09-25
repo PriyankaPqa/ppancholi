@@ -39,7 +39,7 @@
         @cancel="cancelPersonalInformation()"
         @submit="validateEmailAndSubmitPersonalInfo()">
         <template #inline>
-          <personal-information-lib :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" is-edit-mode />
+          <personal-information-lib :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" :min-age-registration="minAgeRegistration" is-edit-mode />
         </template>
         <personal-information-template :personal-information="getPersonalInformation" :show-age-in-review="showAgeInReview" />
       </summary-section>
@@ -173,7 +173,7 @@ import { IHouseholdCreate, IIdentitySet, Member, MemberDuplicateStatus } from '@
 import _isEqual from 'lodash/isEqual';
 import { FeatureKeys, IConsentStatement } from '@libs/entities-lib/tenantSettings';
 import helpers from '@libs/entities-lib/helpers';
-import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
+import { MAX_ADDITIONAL_MEMBERS, MIN_AGE_REGISTRATION } from '@libs/registration-lib/constants/validations';
 import { EventHub } from '@libs/shared-lib/plugins/event-hub';
 import { IContactInformation } from '@libs/entities-lib/src/value-objects/contact-information';
 import { IUser } from '@libs/entities-lib/user';
@@ -276,6 +276,10 @@ const vueComponent: VueConstructor = mixins(additionalMemberForm).extend({
       return this.$hasFeature(FeatureKeys.ManageDuplicates) && !this.$registrationStore.isCRCRegistration()
       && (this.getPersonalInformation.duplicateStatusInCurrentHousehold === MemberDuplicateStatus.Duplicate
        || this.getPersonalInformation.duplicateStatusInDb === MemberDuplicateStatus.Duplicate);
+    },
+
+    minAgeRegistration(): number {
+      return this.$registrationStore.isCRCRegistration() ? null : MIN_AGE_REGISTRATION;
     },
   },
   async beforeDestroy() {
