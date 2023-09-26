@@ -28,6 +28,7 @@
 
         <v-text-field-with-validation
           v-model="rationale"
+          data-test="input-rationale"
           :label="`${$t('household.status.confirmation.rationale')} *`"
           class="full-width"
           :rules="rules.rationale" />

@@ -25,6 +25,15 @@ export enum DataTest {
   homeAddressCountry = 'household_profile_home_address_country',
   dialogCancel = 'dialog-cancel-action',
   dialogSubmit = 'dialog-submit-action',
+  householdStatus = 'statusSelect__chip',
+  statusSelectOpen = 'statusSelect__0',
+  dialogTitle = 'dialog-title',
+  dialogStatus = 'household-status-chip',
+  dialogUserInfo = 'user-info',
+  inputRationale = 'input-rationale',
+  actionUserInformation = 'action_user_information',
+  rationale = 'rationale',
+  statusSelectChevronIcon = 'chevron-icon',
 }
 
 export class HouseholdProfilePage {
@@ -65,6 +74,26 @@ export class HouseholdProfilePage {
   private dialogCancel = { selector: DataTest.dialogCancel };
 
   private dialogSubmit = { selector: DataTest.dialogSubmit };
+
+  private householdStatus = { selector: DataTest.householdStatus };
+
+  private statusSelectOpen = { selector: DataTest.statusSelectOpen };
+
+  private dialogTitle = { selector: DataTest.dialogTitle };
+
+  private dialogStatus = { selector: DataTest.dialogStatus };
+
+  private dialogUserInfo = { selector: DataTest.dialogUserInfo };
+
+  private rationaleInput = { selector: DataTest.inputRationale, type: 'input' };
+
+  private rationaleLabel = { selector: DataTest.inputRationale, type: 'span' };
+
+  private actionUserInformation = { selector: DataTest.actionUserInformation };
+
+  private rationale = { selector: DataTest.rationale };
+
+  private statusSelectChevronIcon = { selector: DataTest.statusSelectChevronIcon };
 
   public getCaseFileNumber() {
     return cy.getByDataTest(this.caseFileNumber).getAndTrimText();
@@ -192,5 +221,84 @@ export class HouseholdProfilePage {
 
   public getDialogConfirmDeleteButton() {
     return cy.getByDataTest(this.dialogSubmit);
+  }
+
+  public getHouseholdStatus() {
+    return cy.getByDataTest(this.householdStatus).getAndTrimText();
+  }
+
+  public selectStatusToOpen() {
+    cy.getByDataTest(this.householdStatus).click();
+    cy.getByDataTest(this.statusSelectOpen).click();
+  }
+
+  public getDialogTitle() {
+    return cy.getByDataTest(this.dialogTitle);
+  }
+
+  public getDialogStatus() {
+    return cy.getByDataTest(this.dialogStatus).getAndTrimText();
+  }
+
+  public getDialogUserInfo() {
+    return cy.getByDataTest(this.dialogUserInfo).getAndTrimText();
+  }
+
+  public getDialogCancelButton() {
+    return cy.getByDataTest(this.dialogCancel);
+  }
+
+  public getDialogApplyButton() {
+    return cy.getByDataTest(this.dialogSubmit);
+  }
+
+  public getDialogRationaleElement() {
+    return cy.getByDataTest(this.rationaleLabel);
+  }
+
+  public enterDialogRationale(rationale: string) {
+    return cy.getByDataTest(this.rationaleInput).type(rationale);
+  }
+
+  public getUserActionInformationElement() {
+    return cy.getByDataTest(this.actionUserInformation);
+  }
+
+  public getUserRationaleElement() {
+    return cy.getByDataTest(this.rationale);
+  }
+
+  public getHouseholdStatusElement() {
+    return cy.getByDataTest(this.householdStatus);
+  }
+
+  public getHouseholdStatusChevronDownIcon() {
+    return cy.getByDataTest(this.statusSelectChevronIcon);
+  }
+
+  public refreshUntilHouseholdStatusUpdatedTo(statusEnum: number, maxRetries = 10) {
+    let retries = 0;
+    const waitForElement = () => {
+      // wait for dialog box to disappear
+      this.getDialogApplyButton().should('not.exist').then(() => {
+        // logic in if() statement verifies that expected status is displayed in chip-text
+        if (!Cypress.$(`[data-test='statusSelect__${statusEnum}']`).length) {
+          cy.log('household status successfully updated on UI');
+        } else {
+          retries += 1;
+          if (retries <= maxRetries) {
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
+            cy.wait(2000).then(() => {
+              cy.reload().then(() => {
+                waitForElement();
+              });
+            });
+          } else {
+            throw new Error(`unable to update status after ${maxRetries} retries.`);
+          }
+        }
+      });
+    };
+    waitForElement();
   }
 }

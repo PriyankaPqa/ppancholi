@@ -14,6 +14,7 @@ import { mockCreateFinancialAssistanceTableRequest } from '@libs/cypress-lib/moc
 import { useProvider } from 'cypress/provider/provider';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { mockCreateHouseholdRequest } from '@libs/cypress-lib/mocks/household/household';
+import { mockSetCaseFileStatusRequest } from '@libs/cypress-lib/mocks/casefiles/casefile';
 import {
   mockCreateMassFinancialAssistanceCustomFileRequest,
   mockCreateMassFinancialAssistanceRequest,
@@ -24,8 +25,9 @@ import { EPaymentModalities } from '@libs/entities-lib/program';
 import { PaymentStatus } from '@libs/entities-lib/financial-assistance-payment';
 import { IAnsweredQuestion } from '@libs/entities-lib/assessment-template';
 import { fixtureGenerateFaCsvFile, fixtureGenerateFaCustomOptionsXlsxFile } from 'cypress/fixtures/mass-actions';
-import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { CaseFileStatus, ICaseFileEntity } from '@libs/entities-lib/case-file';
 import helpers from '@libs/shared-lib/helpers/helpers';
+import { HouseholdStatus } from '@libs/entities-lib/household';
 import { linkEventToTeamForManyRoles } from './teams';
 
 /**
@@ -108,6 +110,29 @@ export const createHousehold = async (provider: IProvider, event: IEventEntity) 
   const mockCreateHousehold = mockCreateHouseholdRequest({ eventId: event.id });
   const registrationResponse = await provider.households.postCrcRegistration(mockCreateHousehold);
   return { registrationResponse, mockCreateHousehold };
+};
+
+/**
+ * Sets casefile status
+ * @param provider
+ * @param caseFileId
+ * @param status
+ */
+export const setCasefileStatus = async (provider: IProvider, caseFileId: string, status: CaseFileStatus) => {
+  const mockSetCaseFileStatus = mockSetCaseFileStatusRequest(status);
+  const setCaseFileStatusResponse = await provider.caseFiles.setCaseFileStatus(caseFileId, mockSetCaseFileStatus);
+  return setCaseFileStatusResponse;
+};
+
+/**
+ * Sets household status
+ * @param provider
+ * @param householdId
+ * @param status
+ */
+export const setHouseholdStatus = async (provider: IProvider, householdId: string, status: HouseholdStatus) => {
+  const setHouseholdStatusResponse = await provider.households.setHouseholdStatus(householdId, status, 'This is my reasoning for updating the status');
+  return setHouseholdStatusResponse;
 };
 
 /**
