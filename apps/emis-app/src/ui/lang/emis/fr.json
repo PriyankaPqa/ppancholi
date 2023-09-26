@@ -2100,7 +2100,7 @@
     "massAction.caseFileStatus.table.header.firstName": "Prénom",
     "massAction.caseFileStatus.table.header.lastActionDate": "Date de la dernière action",
     "massAction.caseFileStatus.table.header.lastName": "Nom de famille",
-    "massAction.caseFileStatus.table.header.status": "Statut",
+    "massAction.caseFileStatus.table.header.status": "Statut du dossier",
     "massAction.caseFileStatus.table.header.tags": "Attributs",
     "massAction.caseFileStatus.title": "Mise à jour en masse de l'état des dossiers",
     "massAction.caseFileStatus.tooltip.add": "Ajout d'une mise à jour en masse de l'état des dossiers",

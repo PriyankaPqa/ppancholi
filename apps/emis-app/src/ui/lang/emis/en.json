@@ -2100,7 +2100,7 @@
     "massAction.caseFileStatus.table.header.firstName": "First name",
     "massAction.caseFileStatus.table.header.lastActionDate": "Date of last action",
     "massAction.caseFileStatus.table.header.lastName": "Last name",
-    "massAction.caseFileStatus.table.header.status": "Status",
+    "massAction.caseFileStatus.table.header.status": "Case file status",
     "massAction.caseFileStatus.table.header.tags": "Tags",
     "massAction.caseFileStatus.title": "Mass case file status update",
     "massAction.caseFileStatus.tooltip.add": "Add mass case file status update",
