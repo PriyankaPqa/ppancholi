@@ -8,7 +8,32 @@ import './ui';
 
 Cypress.Commands.add('goTo', (url: string, lang = 'en', options = {}) => {
   const newUrl = `${lang}/${url}`;
-  return cy.visit(newUrl, options);
+  cy.visit(newUrl, options);
+  cy.interceptAndRetryUntilNoMoreStatus(404);
+});
+
+Cypress.Commands.add('interceptAndRetryUntilNoMoreStatus', (statusCode, maxRetries = 10, throttleTimeMs = 2000) => {
+  let retries = 0;
+  function interceptAndRetry() {
+    cy.intercept({
+      method: 'GET',
+      url: '**',
+      https: true,
+    }).as('interceptedRequest');
+
+    cy.wait('@interceptedRequest', { timeout: throttleTimeMs }).then((interception) => {
+      if (interception.response.statusCode === statusCode) {
+        cy.wait(throttleTimeMs);
+        cy.reload();
+        retries += 1;
+        if (retries < maxRetries) {
+          interceptAndRetry();
+        }
+      }
+    });
+  }
+
+  interceptAndRetry();
 });
 
 declare global {
@@ -43,6 +68,7 @@ declare global {
       shouldBeRequired(label:string): Chainable<void>
       waitUntilTableFullyLoaded(tableDataTest: string): Chainable<void>
       getAndTrimText(): Chainable<string>
+      interceptAndRetryUntilNoMoreStatus(statusCode: number, maxRetries?: number, throttleTimeMs?:number): Chainable<string>
     }
   }
 }
