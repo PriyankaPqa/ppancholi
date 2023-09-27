@@ -99,8 +99,31 @@ export enum DataTest {
       return cy.getByDataTest(this.dateCreated).getAndTrimText();
     }
 
-    public getMassActionCreatedBy() {
+    public verifyAndGetMassActionCreatedBy(roleName:string) {
+      this.waitAndRefreshUntilCreatedByTextVisible(roleName);
       return cy.getByDataTest(this.createdBy).getAndTrimText();
+    }
+
+    public waitAndRefreshUntilCreatedByTextVisible(roleName:string, maxRetries = 10) {
+      let retries = 0;
+      const waitForTextToBeVisible = () => {
+        cy.contains('Created by').should('be.visible').then(() => {
+          if (Cypress.$("[data-test='createdBy']").text().includes(roleName)) {
+            cy.log('Created By text visible');
+          } else {
+            retries += 1;
+            if (retries <= maxRetries) {
+                // eslint-disable-next-line cypress/no-unnecessary-waiting
+                cy.wait(2000).reload().then(() => {
+                  waitForTextToBeVisible();
+                });
+            } else {
+              throw new Error(`Failed to find Created By text after ${maxRetries} retries.`);
+            }
+          }
+        });
+      };
+      waitForTextToBeVisible();
     }
 
     public getDialogSubmitButton() {
