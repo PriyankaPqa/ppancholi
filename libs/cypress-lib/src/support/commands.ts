@@ -16,7 +16,7 @@ Cypress.Commands.add('interceptAndRetryUntilNoMoreStatus', (statusCode, maxRetri
   let retries = 0;
   function interceptAndRetry() {
     cy.intercept('GET', /^https:\/\/api-dev\.crc-tech\.ca\/.*metadata/).as('interceptedRequest');
-    cy.wait('@interceptedRequest').then((interception) => {
+    cy.wait('@interceptedRequest', { timeout: 45000 }).then((interception) => {
       if (interception.response.statusCode === statusCode) {
         cy.log(`There was a ${statusCode} error while fetching metadata ${interception.request.url}`);
         cy.reload();
