@@ -9,7 +9,6 @@ import './ui';
 Cypress.Commands.add('goTo', (url: string, lang = 'en', options = {}) => {
   const newUrl = `${lang}/${url}`;
   cy.visit(newUrl, options);
-  // cy.interceptAndRetryUntilNoMoreStatus(/^https:\/\/api-dev\.crc-tech\.ca\/.*metadata/, 404);
 });
 
 Cypress.Commands.add('interceptAndRetryUntilNoMoreStatus', (url, statusCode, maxRetries = 50) => {
@@ -18,7 +17,7 @@ Cypress.Commands.add('interceptAndRetryUntilNoMoreStatus', (url, statusCode, max
     cy.intercept('GET', url).as('interceptedRequest');
     cy.wait('@interceptedRequest', { timeout: 45000 }).then((interception) => {
       if (interception.response.statusCode === statusCode) {
-        cy.log(`There was a ${statusCode} error while fetching metadata ${interception.request.url}`);
+        cy.log(`There was a ${statusCode} error while fetching ${interception.request.url}`);
         cy.reload();
         retries += 1;
         if (retries < maxRetries) {

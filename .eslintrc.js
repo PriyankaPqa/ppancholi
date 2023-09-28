@@ -135,6 +135,9 @@ module.exports = {
         'func-names': 'off',
         '@typescript-eslint/no-loop-func': 'off',
         'max-nested-callbacks': 'off',
+        'max-statements': ['error', 40, {
+          ignoreTopLevelFunctions: true,
+        }],
       },
     },
   ],

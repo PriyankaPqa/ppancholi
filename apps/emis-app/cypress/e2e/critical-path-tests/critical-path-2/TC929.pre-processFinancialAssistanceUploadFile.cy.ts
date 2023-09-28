@@ -1,6 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { formatCurrentDate } from '@libs/cypress-lib/helpers';
+import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { MassFinancialAssistanceHomePage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceHome.page';
@@ -84,7 +85,7 @@ describe('#TC929# - Pre-process a Financial Assistance upload file', { tags: ['@
           const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
           massFinancialAssistanceDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the file is being pre-processed.');
           massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes, depending on the number of case files');
-          massFinancialAssistanceDetailsPage.refreshUntilCurrentProcessCompleteWithLabelString('next', baseMassActionData.name, ' Valid for processing ');
+          cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionName().should('eq', baseMassActionData.name);
           massFinancialAssistanceDetailsPage.getMassActionDescription().should('eq', baseMassActionData.description);

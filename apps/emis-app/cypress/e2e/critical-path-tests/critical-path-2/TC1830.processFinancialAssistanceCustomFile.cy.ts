@@ -1,6 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { format } from 'date-fns';
+import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateMassActionFinancialAssistanceCustomFile } from '../../helpers/prepareState';
 import { MassFinancialAssistanceDetailsPage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceDetails.page';
@@ -58,6 +59,7 @@ describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@fin
         });
         it('should successfully process a financial assistance custom file', function () {
           const massFinancialAssistanceDetailsPage = new MassFinancialAssistanceDetailsPage();
+          cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().click();
           massFinancialAssistanceDetailsPage.getDialogText().should('eq', 'Are you sure you want to start processing this mass action?');
@@ -66,7 +68,7 @@ describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@fin
           massFinancialAssistanceDetailsPage.confirmProcessing();
           massFinancialAssistanceDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the case files are being processed.');
           massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes depending on the number of processed case files.');
-          massFinancialAssistanceDetailsPage.refreshUntilCurrentProcessCompleteWithLabelString('edit', this.massFinancialAssistanceName, ' Processed ');
+          cy.waitForMassActionToBe(MassActionRunStatus.Processed);
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().then((quantity) => {
             if (quantity === householdQuantity.toString()) {

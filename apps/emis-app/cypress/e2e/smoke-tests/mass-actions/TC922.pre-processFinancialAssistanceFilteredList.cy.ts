@@ -3,9 +3,10 @@ import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { formatCurrentDate } from '@libs/cypress-lib/helpers';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
+import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { fixtureBaseMassAction, fixtureNewMassFinancialAssistance } from '../../../fixtures/mass-actions';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
+import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { MassFinancialAssistanceHomePage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceHome.page';
 
 const canRoles = {
@@ -92,7 +93,7 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
           newMassFinancialAssistancePage.getDialogCancelButton().should('be.visible');
 
           const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
-          massFinancialAssistanceDetailsPage.refreshUntilCurrentProcessCompleteWithLabelString('next', baseMassActionData.name, ' Valid for processing '); // here we wait for pre-processing to be done
+          cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionName().should('eq', baseMassActionData.name);
           massFinancialAssistanceDetailsPage.getMassActionDescription().should('eq', baseMassActionData.description);
@@ -107,7 +108,7 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsItem().should('eq', newMassFinancialAssistanceData.item);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsSubItem().should('eq', newMassFinancialAssistanceData.subItem);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentModality().should('eq', newMassFinancialAssistanceData.paymentModality.toLowerCase());
-          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
+          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy().should('eq', getUserName(roleName));
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsPaymentAmount().should('eq', `$${newMassFinancialAssistanceData.paymentAmount}`);
         });
       });

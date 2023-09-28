@@ -3,13 +3,10 @@ import { IEventEntity } from '@libs/entities-lib/event';
 import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { IProgramEntity } from '@libs/entities-lib/program';
 import { format } from 'date-fns';
+import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import {
-  createProgramWithTableWithItemAndSubItem,
-  createEventAndTeam,
-  prepareStateHouseholdMassFinancialAssistance,
-} from '../../helpers/prepareState';
+import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHouseholdMassFinancialAssistance } from '../../helpers/prepareState';
 import { MassFinancialAssistanceDetailsPage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceDetails.page';
 import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 
@@ -78,15 +75,14 @@ describe(
         });
         it('should successfully process a financial assistance filtered list', () => {
           const massFinancialAssistanceDetailsPage = new MassFinancialAssistanceDetailsPage();
-          cy.interceptAndRetryUntilNoMoreStatus('**/case-file/mass-actions/metadata/*', 404);
+          cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().click();
           massFinancialAssistanceDetailsPage.getDialogSubmitButton().should('be.visible');
           massFinancialAssistanceDetailsPage.getDialogCancelButton().should('be.visible');
           massFinancialAssistanceDetailsPage.getDialogText().should('eq', 'Are you sure you want to start processing this mass action?');
           massFinancialAssistanceDetailsPage.confirmProcessing();
-          massFinancialAssistanceDetailsPage.refreshUntilCurrentProcessCompleteWithLabelString('edit', massFinancialAssistanceName, ' Processed '); // Waiting for processing to be done
-          massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Processed').should('be.visible');
+          cy.waitForMassActionToBe(MassActionRunStatus.Processed);
           massFinancialAssistanceDetailsPage.getNumberFailedRecords().then((quantity) => {
             if (quantity === '0') {
               massFinancialAssistanceDetailsPage.getInvalidCasefilesDownloadButton().should('be.disabled');

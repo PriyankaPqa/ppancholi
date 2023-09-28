@@ -2,8 +2,9 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { formatCurrentDate } from '@libs/cypress-lib/helpers';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
+import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
-import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
+import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { fixtureBaseMassAction, fixtureGenerateFaCustomOptionsXlsxFile } from '../../../fixtures/mass-actions';
 import { NewMassFinancialAssistancePage } from '../../../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
 
@@ -78,7 +79,7 @@ describe('#TC1829# - Pre-process a Financial Assistance custom file', { tags: ['
           const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
           massFinancialAssistanceDetailsPage.getPreProcessingLabelOne().should('eq', 'Please wait while the file is being pre-processed.');
           massFinancialAssistanceDetailsPage.getPreProcessingLabelTwo().should('eq', 'This might take a few minutes, depending on the number of case files');
-          massFinancialAssistanceDetailsPage.refreshUntilCurrentProcessCompleteWithLabelString('next', baseMassActionData.name, ' Valid for processing ');
+          cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().then((quantity) => {
             if (quantity === householdQuantity.toString()) {
@@ -93,7 +94,7 @@ describe('#TC1829# - Pre-process a Financial Assistance custom file', { tags: ['
           massFinancialAssistanceDetailsPage.getMassActionDescription().should('eq', baseMassActionData.description);
           massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Mass financial assistance - custom options');
           massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', formatCurrentDate());
-          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy(getUserName(roleName)).should('eq', getUserName(roleName));
+          massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy().should('eq', getUserName(roleName));
         });
       });
     }

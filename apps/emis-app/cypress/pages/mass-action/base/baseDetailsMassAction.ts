@@ -59,30 +59,6 @@ export enum DataTest {
       return cy.getByDataTest(this.status);
     }
 
-    public refreshUntilCurrentProcessCompleteWithLabelString(absentElementAttributeValue:string, massFinancialAssistanceName: string, labelString:string, maxRetries = 10) {
-      let retries = 0;
-      const waitForSuccessLabelToBe = (labelString: string) => {
-        // We do negative assertion of absentElementAttributeValue present on previous page, to make sure that next page is loaded before reload() fires
-        cy.get(`[data-test='${absentElementAttributeValue}']`).should('not.exist');
-        // We make sure the next page (ie Processing mass financial assistance/Mass financial assistance details) is completely loaded
-        cy.contains(massFinancialAssistanceName).should('be.visible').then(() => {
-          if (Cypress.$("[data-test='successesLabel=']").text().endsWith(labelString)) {
-            cy.log('current processing successful');
-          } else {
-            retries += 1;
-            if (retries <= maxRetries) {
-                cy.reload().then(() => {
-                  waitForSuccessLabelToBe(labelString);
-                });
-            } else {
-              throw new Error(`Failed to find success element after ${maxRetries} retries.`);
-            }
-          }
-        });
-      };
-      waitForSuccessLabelToBe(labelString);
-    }
-
     public getMassActionSuccessfulCaseFiles() {
       return cy.getByDataTest(this.successes).getAndTrimText();
     }
@@ -99,31 +75,20 @@ export enum DataTest {
       return cy.getByDataTest(this.dateCreated).getAndTrimText();
     }
 
-    public verifyAndGetMassActionCreatedBy(roleName:string) {
-      this.waitAndRefreshUntilCreatedByTextVisible(roleName);
-      return cy.getByDataTest(this.createdBy).getAndTrimText();
-    }
-
-    public waitAndRefreshUntilCreatedByTextVisible(roleName:string, maxRetries = 10) {
-      let retries = 0;
-      const waitForTextToBeVisible = () => {
-        cy.contains('Created by').should('be.visible').then(() => {
-          if (Cypress.$("[data-test='createdBy']").text().includes(roleName)) {
-            cy.log('Created By text visible');
-          } else {
-            retries += 1;
-            if (retries <= maxRetries) {
-                // eslint-disable-next-line cypress/no-unnecessary-waiting
-                cy.wait(2000).reload().then(() => {
-                  waitForTextToBeVisible();
-                });
-            } else {
-              throw new Error(`Failed to find Created By text after ${maxRetries} retries.`);
-            }
+    public verifyAndGetMassActionCreatedBy() {
+      return cy.getByDataTest(this.createdBy)
+        .invoke('text')
+        .then((text) => {
+          if (text) {
+            return text.trim();
           }
+
+          // If text is not found, wait for a network request to complete and retry
+          return cy.interceptAndRetryUntilNoMoreStatus('**/user-account/user-accounts/metadata/*', 404)
+            .then(() => cy.getByDataTest(this.createdBy)
+                .invoke('text')
+                .then((retryText) => retryText.trim()));
         });
-      };
-      waitForTextToBeVisible();
     }
 
     public getDialogSubmitButton() {
