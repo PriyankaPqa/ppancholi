@@ -43,6 +43,12 @@ Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStat
     }
   }
 
+  function reload() {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // Needed so we make sure we are on details page to reload
+    cy.reload(); // We reload to make sure mass action metadata endpoint will be called
+  }
+
   function interceptAndRetry() {
     cy.intercept('GET', '**/case-file/mass-actions/metadata/*').as('massActionMetadata');
     cy.wait('@massActionMetadata', { timeout: 45000 }).then(async (interception) => {
@@ -57,14 +63,13 @@ Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStat
           await handleRetry();
         } else {
           cy.log(`Mass action has status ${MassActionRunStatus[expectedStatus]}`);
+          reload();
         }
       }
     });
   }
   if (forceReload) {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000); // Needed
-    cy.reload(); // We reload to make sure mass action metadata endpoint will be called
+    reload();
   }
 
   interceptAndRetry();
