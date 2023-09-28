@@ -289,7 +289,7 @@ export const createAndUpdateAssessment = async (provider: IProvider, eventId: st
 };
 
 // verifies if casefile created is indexed through search and wait
-const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, maxAttempt = 10, throttle = 2000): Promise<number> => {
+const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, maxAttempt = 20, throttle = 2000): Promise<number> => {
   let searchResult = 0;
   let attempt = 0;
   const waitForCaseFileIndexToBeUpdated = async (): Promise<number> => {
@@ -304,7 +304,7 @@ const searchCasefileAndWait = async (provider: IProvider, caseFileId: string, ma
         attempt += 1;
         if (searchResult === 0) {
           // eslint-disable-next-line
-          helpers.timeout(throttle)
+          await helpers.timeout(throttle)
           cy.log(`Casefile index search attempt ${attempt}`);
           return waitForCaseFileIndexToBeUpdated();
         }

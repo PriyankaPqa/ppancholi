@@ -9,13 +9,13 @@ import './ui';
 Cypress.Commands.add('goTo', (url: string, lang = 'en', options = {}) => {
   const newUrl = `${lang}/${url}`;
   cy.visit(newUrl, options);
-  cy.interceptAndRetryUntilNoMoreStatus(404);
+  // cy.interceptAndRetryUntilNoMoreStatus(/^https:\/\/api-dev\.crc-tech\.ca\/.*metadata/, 404);
 });
 
-Cypress.Commands.add('interceptAndRetryUntilNoMoreStatus', (statusCode, maxRetries = 50) => {
+Cypress.Commands.add('interceptAndRetryUntilNoMoreStatus', (url, statusCode, maxRetries = 50) => {
   let retries = 0;
   function interceptAndRetry() {
-    cy.intercept('GET', /^https:\/\/api-dev\.crc-tech\.ca\/.*metadata/).as('interceptedRequest');
+    cy.intercept('GET', url).as('interceptedRequest');
     cy.wait('@interceptedRequest', { timeout: 45000 }).then((interception) => {
       if (interception.response.statusCode === statusCode) {
         cy.log(`There was a ${statusCode} error while fetching metadata ${interception.request.url}`);
@@ -27,7 +27,6 @@ Cypress.Commands.add('interceptAndRetryUntilNoMoreStatus', (statusCode, maxRetri
       }
     });
   }
-
   interceptAndRetry();
 });
 
@@ -63,7 +62,7 @@ declare global {
       shouldBeRequired(label:string): Chainable<void>
       waitUntilTableFullyLoaded(tableDataTest: string): Chainable<void>
       getAndTrimText(): Chainable<string>
-      interceptAndRetryUntilNoMoreStatus(statusCode: number, maxRetries?: number): Chainable<string>
+      interceptAndRetryUntilNoMoreStatus(url: string | RegExp, statusCode: number, maxRetries?: number): Chainable<string>
     }
   }
 }

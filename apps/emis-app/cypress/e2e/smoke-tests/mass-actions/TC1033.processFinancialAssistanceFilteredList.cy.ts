@@ -78,6 +78,7 @@ describe(
         });
         it('should successfully process a financial assistance filtered list', () => {
           const massFinancialAssistanceDetailsPage = new MassFinancialAssistanceDetailsPage();
+          cy.interceptAndRetryUntilNoMoreStatus('**/case-file/mass-actions/metadata/*', 404);
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().click();
           massFinancialAssistanceDetailsPage.getDialogSubmitButton().should('be.visible');
