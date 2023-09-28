@@ -84,6 +84,7 @@ export enum DataTest {
           }
 
           // If text is not found, wait for a network request to complete and retry
+          cy.reload();
           return cy.interceptAndRetryUntilNoMoreStatus('**/user-account/user-accounts/metadata/*', 404)
             .then(() => cy.getByDataTest(this.createdBy)
                 .invoke('text')

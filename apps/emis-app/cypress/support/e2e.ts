@@ -32,10 +32,15 @@ slowCypressDown();
 Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStatus, forceReload = true, maxRetries = 40) => {
   let retries = 0;
 
+  function reload() {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(6000); // Needed so we make sure we are on details page to reload
+    cy.reload(); // We reload to make sure mass action metadata endpoint will be called
+  }
+
   async function handleRetry() {
     // eslint-disable-next-line ,cypress/no-unnecessary-waiting
-    cy.wait(2000);
-    cy.reload();
+    reload();
     retries += 1;
     if (retries < maxRetries) {
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -43,12 +48,6 @@ Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStat
     } else {
       throw new Error(`Maximal number of retries reached without seeing the mass action with a status ${MassActionRunStatus[expectedStatus]}`);
     }
-  }
-
-  function reload() {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000); // Needed so we make sure we are on details page to reload
-    cy.reload(); // We reload to make sure mass action metadata endpoint will be called
   }
 
   function interceptAndRetry() {
@@ -61,7 +60,7 @@ Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStat
         const response = interception.response.body as IMassActionMetadata;
         const runStatus = response.lastRun.runStatus;
         if (runStatus !== expectedStatus) {
-          cy.log(`Mass action does not have status ${MassActionRunStatus[expectedStatus]} #${retries}`);
+          cy.log(`Mass action does not have status ${MassActionRunStatus[expectedStatus]} it has ${MassActionRunStatus[runStatus]} #${retries}`);
           await handleRetry();
         } else {
           cy.log(`Mass action has status ${MassActionRunStatus[expectedStatus]}`);

@@ -60,6 +60,7 @@ describe('#TC1032# - View Case File Details', { tags: ['@case-file'] }, () => {
         });
         it('should successfully view case file details', function () {
           const caseFileDetailsPage = new CaseFileDetailsPage();
+          cy.interceptAndRetryUntilNoMoreStatus('**/case-file/case-files/metadata/*', 404);
           cy.interceptAndRetryUntilNoMoreStatus('**/household/households/metadata/*', 404);
           // eslint-disable-next-line
           caseFileDetailsPage.getPrimaryBeneficiaryName().should('eq', `${this.household.primaryBeneficiary.identitySet.firstName} ${household.primaryBeneficiary.identitySet.lastName}`);
