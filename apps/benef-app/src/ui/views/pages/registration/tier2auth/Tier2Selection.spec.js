@@ -86,9 +86,14 @@ describe('Tier2Selection.vue', () => {
         const result = wrapper.vm.otherIdTypeList;
         expect(result).toEqual([
           {
-            dataTest: 'Passport',
-            text: 'enums.Tier2GambitScreeningId.Passport',
-            value: 2,
+            dataTest: 'CanadianPassport',
+            text: 'enums.Tier2GambitScreeningId.CanadianPassport',
+            value: 56,
+          },
+          {
+            dataTest: 'NonCanadianPassport',
+            text: 'enums.Tier2GambitScreeningId.NonCanadianPassport',
+            value: 57,
           },
           {
             dataTest: 'CanadianCitizenshipCard',

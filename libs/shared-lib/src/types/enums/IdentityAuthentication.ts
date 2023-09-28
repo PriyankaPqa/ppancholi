@@ -33,6 +33,8 @@ export enum Tier2GambitScreeningId {
   NexusCard = 28,
   OntarioHealthCard = 51,
   QuebecHealthCard = 84,
+  CanadianPassport = 56,
+  NonCanadianPassport = 57,
 
   UtilityBill = 74,
   MortgageStatement = 76,

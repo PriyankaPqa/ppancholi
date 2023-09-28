@@ -125,7 +125,8 @@ export default Vue.extend({
     },
 
     otherIdTypeList(): { text: string, value: number }[] {
-      return [Tier2GambitScreeningId.Passport, Tier2GambitScreeningId.CanadianCitizenshipCard, Tier2GambitScreeningId.CanadianPermanentResidentCard,
+      return [Tier2GambitScreeningId.CanadianPassport, Tier2GambitScreeningId.NonCanadianPassport,
+          Tier2GambitScreeningId.CanadianCitizenshipCard, Tier2GambitScreeningId.CanadianPermanentResidentCard,
           Tier2GambitScreeningId.IndianStatusCard, Tier2GambitScreeningId.CanadianFirearmsLicense, Tier2GambitScreeningId.NexusCard,
           Tier2GambitScreeningId.OntarioHealthCard, Tier2GambitScreeningId.QuebecHealthCard].map((x) => this.tier2Ids.find((y) => y.value === x));
     },
