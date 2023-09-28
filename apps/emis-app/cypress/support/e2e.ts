@@ -40,6 +40,8 @@ Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStat
     if (retries < maxRetries) {
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       interceptAndRetry();
+    } else {
+      throw new Error(`Maximal number of retries reached without seeing the mass action with a status ${MassActionRunStatus[expectedStatus]}`);
     }
   }
 

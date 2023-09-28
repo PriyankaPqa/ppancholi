@@ -26,7 +26,7 @@ export default defineConfig({
       require('@cypress/grep/src/plugin')(config);
       return cloudPlugin(on, config);
     },
-    videoUploadOnPasses: false,
+    videoUploadOnPasses: true,
     baseUrl: 'http://localhost:8080/',
     env: {
       /* Azure AD Config
