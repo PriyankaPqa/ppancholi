@@ -2,7 +2,8 @@ import {
   IMassActionEntity, MassActionRunType, MassActionType, MassActionDataCorrectionType,
 } from '@libs/entities-lib/mass-action/massActions.types';
 import { EPaymentModalities } from '@libs/entities-lib/program';
-import { IMultilingual } from '@libs/shared-lib/src/types';
+import { IListOption, IMultilingual } from '@libs/shared-lib/src/types';
+import { CaseFileStatus } from '@libs/entities-lib/src/case-file';
 import { IRestResponse } from '../../http-client';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
@@ -40,6 +41,17 @@ export interface IMassActionExportListPayload {
 export interface IMassActionFundingRequestCreatePayload {
   name: string;
   description: string;
+}
+
+export interface IMassActionCaseFileStatusCreatePayload {
+  name: string;
+  description: string;
+  eventId: uuid;
+  status: CaseFileStatus;
+  reason: IListOption;
+  rationale: string;
+  search: string;
+  filter: string;
 }
 
 export interface IMassActionService extends IDomainBaseService<IMassActionEntity, uuid> {

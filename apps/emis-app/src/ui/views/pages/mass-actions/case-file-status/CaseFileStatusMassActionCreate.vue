@@ -1,5 +1,3 @@
-  <!-- DONE in a later story, no need to review -->
-
 <template>
   <mass-action-base-create
     ref="base"
@@ -12,27 +10,52 @@
     @back="back()"
     @upload:start="onUploadStart()"
     @upload:success="onSuccess($event)"
-    @post="onPost($event)" />
+    @post="onPost($event)">
+    <template #form>
+      <case-file-status-mass-action-create-details :form.sync="form" />
+    </template>
+  </mass-action-base-create>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
-import { IMassActionEntity } from '@libs/entities-lib/mass-action';
+import { IMassActionEntity, MassActionType } from '@libs/entities-lib/mass-action';
+import { IEventEntity } from '@libs/entities-lib/event';
+import { IListOption } from '@libs/shared-lib/types';
+import { CaseFileStatus } from '@libs/entities-lib/case-file';
+import { buildQuery } from '@libs/services-lib/odata-query';
+import { IMassActionCaseFileStatusCreatePayload } from '@libs/services-lib/mass-actions/entity';
+import { useMassActionStore } from '@/pinia/mass-action/mass-action';
+import CaseFileStatusMassActionCreateDetails from './CaseFileStatusMassActionCreateDetails.vue';
+
+export interface MassActionCaseFileStatusForm {
+  event?: IEventEntity,
+  status?: CaseFileStatus,
+  reason?: IListOption,
+  rationale?: string,
+}
 
 export default Vue.extend({
   name: 'CaseFileStatusMassActionCreate',
 
   components: {
     MassActionBaseCreate,
+    CaseFileStatusMassActionCreateDetails,
   },
 
   data() {
     return {
       formData: new FormData(),
-      uploadUrl: '',
+      uploadUrl: 'case-file/mass-actions/case-file-status',
       loading: false,
+      form: {
+        event: null,
+        status: null,
+        reason: { optionItemId: null, specifiedOther: null },
+        rationale: null,
+      } as MassActionCaseFileStatusForm,
     };
   },
 
@@ -42,66 +65,51 @@ export default Vue.extend({
     },
 
     onSuccess(entity: IMassActionEntity) {
-      this.goToDetail(entity.id);
-    },
-
-    goToDetail(id: string) {
-      this.$router.push({ name: routes.massActions.caseFileStatus.details.name, params: { id } });
-    },
-
-    onUpdate() {
-      // this.form = form;
+      this.$router.push({ name: routes.massActions.caseFileStatus.details.name, params: { id: entity.id } });
     },
 
     /**
      * Triggered when creating a mass action from a filtered list
      */
-    async onPost() {
-    // async onPost({ name, description }: { name: string, description: string }) {
-      // const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
+    async onPost({ name, description }: { name: string, description: string }) {
+      const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
 
-      // const filter = buildQuery({ filter: azureSearchParams.filter }).replace('?$filter=', '');
+      const filter = buildQuery({ filter: azureSearchParams.filter }).replace('?$filter=', '');
+      const { reason, rationale, status } = this.form;
 
-      // const payload = {
-      //   name: this.$hasFeature(FeatureKeys.MassActionAutoGenerateName) ? this.makeFormName() : name,
-      //   description,
-      //   eventId: this.form.event.id,
-      //   tableId: this.form.table.id,
-      //   programId: this.form.table.programId,
-      //   mainCategoryId: this.form.item.id,
-      //   subCategoryId: this.form.subItem.id,
-      //   paymentModality: this.form.paymentModality,
-      //   amount: this.form.amount,
-      //   search: azureSearchParams.search,
-      //   filter: `${filter} and Entity/Status eq 1`,
-      // } as IMassActionFinancialAssistanceCreatePayload;
+      const payload = {
+        name,
+        description,
+        eventId: this.form.event?.id,
+        reason,
+        rationale,
+        status,
+        search: azureSearchParams.search,
+        filter: `${filter} and Entity/Status eq 1`,
+      } as IMassActionCaseFileStatusCreatePayload;
 
-      // this.loading = true;
-      // const entity = await useMassActionStore().create(MassActionType.FinancialAssistance, payload);
-      // this.loading = false;
+      this.loading = true;
+      const entity = await useMassActionStore().create(MassActionType.CaseFileStatus, payload);
+      this.loading = false;
 
-      // if (entity) {
-      //   this.onSuccess(entity);
-      // }
+      if (entity) {
+        this.onSuccess(entity);
+      }
     },
     /**
      * Triggered when creating a mass action from a file
      */
     async onUploadStart() {
-      // this.formData.set('eventId', this.form.event.id);
-      // this.formData.set('tableId', this.form.table.id);
-      // this.formData.set('programId', this.form.table.programId);
-      // this.formData.set('mainCategoryId', this.form.item.id);
-      // this.formData.set('subCategoryId', this.form.subItem.id);
-      // this.formData.set('paymentModality', this.form.paymentModality.toString());
-      // this.formData.set('amount', this.form.amount.toString());
-      // if (this.$hasFeature(FeatureKeys.MassActionAutoGenerateName)) {
-      //   this.formData.set('name', this.makeFormName());
-      // }
+      const { reason, rationale, status } = this.form;
 
-      // this.loading = true;
-      // await (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();
-      // this.loading = false;
+      this.formData.set('eventId', this.form.event?.id);
+      this.formData.set('reason', reason?.toString());
+      this.formData.set('rationale', rationale);
+      this.formData.set('status', status?.toString());
+
+      this.loading = true;
+      await (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();
+      this.loading = false;
     },
   },
 });

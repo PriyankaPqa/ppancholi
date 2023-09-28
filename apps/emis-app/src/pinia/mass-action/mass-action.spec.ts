@@ -4,8 +4,8 @@ import { getExtensionComponents } from '@/pinia/mass-action/mass-action-extensio
 import { defineStore } from 'pinia';
 import { mockMassActionCreatePayload, mockMassActionService } from '@libs/services-lib/mass-actions/entity';
 import {
- IMassActionEntity, MassActionRunType, MassActionType, mockMassActionEntity,
- IdParams,
+  IMassActionEntity, MassActionRunType, MassActionType, mockMassActionEntity,
+  IdParams,
 } from '@libs/entities-lib/mass-action';
 
 const entityService = mockMassActionService();
@@ -107,19 +107,19 @@ describe('>>> Mass Action Store', () => {
         expect(entityService.create).toHaveBeenCalledWith(urlSuffix, payload);
       });
 
-        it('should set the res', async () => {
-          const massAction = mockMassActionEntity();
-          const bComponents = { ...baseComponents, set: jest.fn(), addNewlyCreatedId: jest.fn() };
-          const store = createTestStore(bComponents);
-          const massActionType = MassActionType.FinancialAssistance;
-          const payload = mockMassActionCreatePayload();
+      it('should set the res', async () => {
+        const massAction = mockMassActionEntity();
+        const bComponents = { ...baseComponents, set: jest.fn(), addNewlyCreatedId: jest.fn() };
+        const store = createTestStore(bComponents);
+        const massActionType = MassActionType.FinancialAssistance;
+        const payload = mockMassActionCreatePayload();
 
-          entityService.create = jest.fn(() => massAction);
-          await store.create(massActionType, payload);
+        entityService.create = jest.fn(() => massAction);
+        await store.create(massActionType, payload);
 
-          expect(bComponents.set).toBeCalledWith(massAction);
-          expect(bComponents.addNewlyCreatedId).toBeCalledWith(massAction);
-        });
+        expect(bComponents.set).toBeCalledWith(massAction);
+        expect(bComponents.addNewlyCreatedId).toBeCalledWith(massAction);
+      });
     });
 
     describe('Generate funding request', () => {
@@ -144,6 +144,22 @@ describe('>>> Mass Action Store', () => {
         const store = createTestStore(bComponents);
         const urlSuffix = 'assessment-from-list';
         const massActionType = MassActionType.Assessments;
+        const payload = { name: 'test', description: '' };
+        const massAction = mockMassActionEntity();
+
+        await store.create(massActionType, payload);
+
+        expect(entityService.create).toHaveBeenCalledWith(urlSuffix, payload);
+        expect(bComponents.set).toBeCalledWith(massAction);
+      });
+    });
+
+    describe('CaseFileStatus request', () => {
+      it('should call the create service with proper parameters and commit the res', async () => {
+        const bComponents = { ...baseComponents, set: jest.fn() };
+        const store = createTestStore(bComponents);
+        const urlSuffix = 'case-file-status-from-list';
+        const massActionType = MassActionType.CaseFileStatus;
         const payload = { name: 'test', description: '' };
         const massAction = mockMassActionEntity();
 

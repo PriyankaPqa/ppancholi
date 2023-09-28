@@ -1,9 +1,10 @@
 import { BaseStoreComponents } from '@libs/stores-lib/base';
 import {
- IdParams, IMassActionEntity, MassActionRunType, MassActionType,
+  IdParams, IMassActionEntity, MassActionRunType, MassActionType,
 } from '@libs/entities-lib/mass-action';
 import {
   IMassActionAssessmentCreatePayload,
+  IMassActionCaseFileStatusCreatePayload,
   IMassActionFinancialAssistanceCreatePayload,
   IMassActionFundingRequestCreatePayload,
   IMassActionServiceMock,
@@ -50,6 +51,11 @@ export function getExtensionComponents(
     if (massActionType === MassActionType.GenerateFundingRequest) {
       const urlSuffix = 'generate-funding';
       data = await entityService.create(urlSuffix, payload as IMassActionFundingRequestCreatePayload);
+    }
+
+    if (massActionType === MassActionType.CaseFileStatus) {
+      const urlSuffix = 'case-file-status-from-list';
+      data = await entityService.create(urlSuffix, payload as IMassActionCaseFileStatusCreatePayload);
     }
 
     /* Add future mass action call here */
