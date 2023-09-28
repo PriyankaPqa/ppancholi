@@ -14,7 +14,7 @@ stages:
             persistCredentials: true
           - script: |
               # In the context of pull requests, or after code is merge
-              if [ "$(Build.Reason)" != "Schedule" ]; then
+              if [ "$(Build.Reason)" != "Schedule" ] && [ "$(Build.Reason)" != "Manual" ]; then
                  # We take the current working director and remove ./
                  WORKING_DIR=$(echo "${{ parameters.workingDir }}" | sed 's/^\.\///')
               
