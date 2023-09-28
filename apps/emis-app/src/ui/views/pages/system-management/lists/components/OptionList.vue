@@ -2,7 +2,7 @@
   <rc-page-content
     :title="formattedTitle"
     :help-link="helpLink"
-    :show-add-button="showAddButton"
+    :show-add-button="showAddButton && !readonly"
     :add-button-label="$t(addButtonLabel)"
     :show-help="false && !embedded"
     show-search
@@ -68,6 +68,7 @@
             <draggable
               v-model="items"
               handle=".optionsList__dragHandle"
+              :disabled="readonly"
               ghost-class="ghost">
               <option-list-item
                 v-for="item in items"
@@ -79,13 +80,14 @@
                 :has-description="hasDescription"
                 :language-mode="languageMode"
                 :edit-mode="!!editedItem && editedItem === item.id"
-                :edit-disabled="addingMode"
+                :edit-disabled="addingMode || readonly"
                 :is-search-result="isSearchResult(item)"
                 :has-default="hasDefault"
                 :has-other="hasOther"
                 :has-restrict-financial="hasRestrictFinancial"
                 :hide-item-status="hideItemStatus"
                 :hide-item-drag="hideItemDrag"
+                :readonly="readonly"
                 @edit-item="editItem"
                 @save-item="saveItem"
                 @cancel-edit="cancelEdit">
@@ -105,7 +107,7 @@
                       :parent-item-id="item.id"
                       :language-mode="languageMode"
                       :edit-mode="!!editedItem && editedItem === subItem.id"
-                      :edit-disabled="addingMode"
+                      :edit-disabled="addingMode || readonly"
                       :is-search-result="isSearchResult(subItem)"
                       :has-other="subItemHasOther"
                       is-sub-item
@@ -268,6 +270,11 @@ export default Vue.extend({
     },
 
     hasRestrictFinancial: {
+      type: Boolean,
+      default: false,
+    },
+
+    readonly: {
       type: Boolean,
       default: false,
     },

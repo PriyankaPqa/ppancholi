@@ -90,6 +90,7 @@
       <v-col :class="{ search: isSearchResult, 'pb-2': true }" cols="3">
         <status-select
           v-if="!hideItemStatus && !editMode"
+          :disabled="readonly"
           :value="item.status"
           :statuses="itemStatuses"
           status-name="Status"
@@ -373,6 +374,11 @@ export default Vue.extend({
       type: String,
       default: 'system_management.lists.itemName',
     },
+
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   setup(props) {
@@ -490,6 +496,9 @@ export default Vue.extend({
     },
 
     async setIsDefault() {
+      if (this.readonly) {
+        return;
+      }
       const value = !this.item.isDefault;
       await useOptionListStore().setIsDefault({ id: this.item.id, isDefault: value });
       if (value) {
@@ -500,6 +509,9 @@ export default Vue.extend({
     },
 
     async setIsOther() {
+      if (this.readonly) {
+        return;
+      }
       const value = !this.item.isOther;
       let res = null as IOptionItem;
       if (this.isSubItem) {
@@ -518,6 +530,9 @@ export default Vue.extend({
     },
 
     async setRestrictFinancial() {
+      if (this.readonly) {
+        return;
+      }
       const value = !this.item.restrictFinancial;
       await useOptionListStore().setRestrictFinancial({ id: this.item.id, restrictFinancial: value });
       if (value) {

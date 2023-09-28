@@ -431,6 +431,40 @@ describe('OptionListItem.vue', () => {
     expect(wrapper.vm.description).toEqual({ translation: { en: 'Description Clementine', fr: 'Description Clementine' } });
   });
 
+  describe('setIsDefault', () => {
+    it('calls the right action', async () => {
+      await wrapper.setData({ item: { ...wrapper.vm.item, isDefault: false } });
+      optionListStore.setIsDefault = jest.fn();
+      wrapper.vm.setIsDefault();
+      expect(optionListStore.setIsDefault).toHaveBeenCalledWith({ id: wrapper.vm.item.id, isDefault: true });
+    });
+
+    it('doesnt do anything in readonly', async () => {
+      await wrapper.setProps({ isSubItem: false, readonly: true });
+      await wrapper.setData({ item: { ...wrapper.vm.item, isDefault: false } });
+      optionListStore.setIsDefault = jest.fn();
+      wrapper.vm.setIsDefault();
+      expect(optionListStore.setIsDefault).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('setRestrictFinancial', () => {
+    it('calls the right action', async () => {
+      await wrapper.setData({ item: { ...wrapper.vm.item, restrictFinancial: false } });
+      optionListStore.setRestrictFinancial = jest.fn();
+      wrapper.vm.setRestrictFinancial();
+      expect(optionListStore.setRestrictFinancial).toHaveBeenCalledWith({ id: wrapper.vm.item.id, restrictFinancial: true });
+    });
+
+    it('doesnt do anything in readonly', async () => {
+      await wrapper.setProps({ isSubItem: false, readonly: true });
+      await wrapper.setData({ item: { ...wrapper.vm.item, restrictFinancial: false } });
+      optionListStore.setRestrictFinancial = jest.fn();
+      wrapper.vm.setRestrictFinancial();
+      expect(optionListStore.setRestrictFinancial).not.toHaveBeenCalled();
+    });
+  });
+
   describe('setIsOther', () => {
     it('calls the right action when is not subitem', async () => {
       await wrapper.setProps({ isSubItem: false });
@@ -438,6 +472,14 @@ describe('OptionListItem.vue', () => {
       optionListStore.setIsOther = jest.fn();
       wrapper.vm.setIsOther();
       expect(optionListStore.setIsOther).toHaveBeenCalledWith({ id: wrapper.vm.item.id, isOther: true });
+    });
+
+    it('doesnt do anything in readonly', async () => {
+      await wrapper.setProps({ isSubItem: false, readonly: true });
+      await wrapper.setData({ item: { ...wrapper.vm.item, isOther: false } });
+      optionListStore.setIsOther = jest.fn();
+      wrapper.vm.setIsOther();
+      expect(optionListStore.setIsOther).not.toHaveBeenCalled();
     });
 
     it('calls the right action when is  subitem', async () => {
