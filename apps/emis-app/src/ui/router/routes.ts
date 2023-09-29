@@ -6,6 +6,7 @@ import { events } from '@/ui/router/route/events';
 import { caseFiles } from '@/ui/router/route/caseFiles';
 import { approvals } from '@/ui/router/route/approvals';
 import { massActions } from '@/ui/router/route/massActions';
+import { reporting } from '@/ui/router/route/reporting';
 import { systemManagement } from '@/ui/router/route/systemManagement';
 import { financialAssistance } from '@/ui/router/route/financialAssistance';
 import { registration } from '@/ui/router/route/registration';
@@ -127,6 +128,7 @@ export const routes: Array<RouteConfig> = [
               requiresAuthorization: false,
             },
           },
+          ...reporting,
           approvals,
           ...assessmentTemplates,
           caseFiles,

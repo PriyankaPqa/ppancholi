@@ -58,6 +58,7 @@ import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import { ClickOutside } from 'vuetify/es5/directives';
 import { useDashboardStore } from '@/pinia/dashboard/dashboard';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   name: 'LeftMenu',
@@ -157,6 +158,15 @@ export default Vue.extend({
           level: UserRoles.level6,
         },
         {
+          to: routes.reporting.home.name,
+          icon: 'mdi-alert-octagon',
+          text: 'reporting.leftMenu.title',
+          test: 'reporting',
+          exact: false,
+          level: UserRoles.level6,
+          feature: FeatureKeys.InSystemQuerying,
+        },
+        {
           to: routes.systemManagement.home.name,
           icon: 'dvr',
           text: 'system_management.leftMenu.title',
@@ -185,25 +195,7 @@ export default Vue.extend({
     },
 
     availableItems(): INavigationTab[] {
-      return this.items.filter((item) => {
-        let levelCheck = false;
-        let rolesCheck = false;
-        let featureCheck = true;
-
-        if (item.level) {
-          levelCheck = this.$hasLevel(item.level);
-        }
-
-        if (item.roles) {
-          rolesCheck = item.roles.some((r: string) => this.$hasRole(r));
-        }
-
-        if (item.feature) {
-          featureCheck = this.$hasFeature(item.feature as FeatureKeys);
-        }
-
-        return (levelCheck || rolesCheck) && featureCheck;
-      });
+      return helpers.availableItems(this, this.items);
     },
 
     approvalRedirection(): string {

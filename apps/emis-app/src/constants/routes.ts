@@ -5,6 +5,12 @@ const routes = {
       name: 'account',
     },
   },
+  reporting: {
+    home: {
+      path: 'reporting',
+      name: 'reporting.home',
+    },
+  },
   assessmentTemplates: {
     home: {
       path: 'assessment-templates',

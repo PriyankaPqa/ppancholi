@@ -8,7 +8,9 @@ import { IRestResponse } from '@libs/services-lib/http-client';
 import { DateTypes, dateTypes } from '@/constants/dateTypes';
 import routes from '@/constants/routes';
 import helpers from '@libs/shared-lib/helpers/helpers';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { Trans } from '../plugins';
+import { VuePlugin } from '../plugins/features';
 
 export default {
   // Method to format the backend error messages and display in a toast.
@@ -288,6 +290,31 @@ export default {
   redirectToLoginErrorPage() {
     const locale = Trans.getUserLang()?.langNoISO ?? i18n.locale;
     window.location.href = `${window.location.origin}/${locale}/${routes.loginError.path}`;
+  },
+
+  availableItems<Items extends { level?: string; roles?: string[]; feature?: string }>(vue: VuePlugin, items: Items[]): Items[] {
+    return items.filter((item) => {
+      let levelOrRoleFilter = false;
+      let levelCheck = false;
+      let rolesCheck = false;
+      let featureCheck = true;
+
+      if (item.level) {
+        levelOrRoleFilter = true;
+        levelCheck = vue.$hasLevel(item.level);
+      }
+
+      if (item.roles) {
+        levelOrRoleFilter = true;
+        rolesCheck = item.roles.some((r: string) => vue.$hasRole(r));
+      }
+
+      if (item.feature) {
+        featureCheck = vue.$hasFeature(item.feature as FeatureKeys);
+      }
+
+      return (!levelOrRoleFilter || levelCheck || rolesCheck) && featureCheck;
+    });
   },
 
 };

@@ -1,26 +1,11 @@
 import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
-import { TranslateResult } from 'vue-i18n';
 import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
+import { ICardSettings } from '@/types/interfaces/ICardSettings';
 import { MassActionDataCorrectionType, MassActionType } from '@libs/entities-lib/mass-action';
 
-export interface IMassActionCards {
-  title: string;
-  description: string | TranslateResult;
-  button: string;
-  secondaryButton?: string;
-  showSecondaryButton?: boolean;
-  route: string;
-  dataTest: string;
-  level: string;
-  roles: Array<string>;
+export interface IMassActionCards extends ICardSettings {
   group: number;
-  onClick?: string;
-  onClickMenu?: string;
-  onSecondaryClick?: string;
-  feature?: FeatureKeys
-  secondaryButtonIsMenu?: boolean;
-  secondaryMenuItems?: Array<Record<string, unknown>>
 }
 /* eslint-disable max-len */
 export default Vue.extend({
@@ -69,26 +54,8 @@ export default Vue.extend({
     };
   },
   methods: {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    filterItems(items: any) {
-      return items.filter((item: any) => {
-        let levelCheck = false;
-        let rolesCheck = false;
-        let featureCheck = true;
-
-        if (item.level) {
-          levelCheck = this.$hasLevel(item.level);
-        }
-
-        if (item.roles) {
-          rolesCheck = item.roles.some((r: string) => this.$hasRole(r));
-        }
-
-        if (item.feature) {
-          featureCheck = this.$hasFeature(item.feature);
-        }
-        return featureCheck && (levelCheck || rolesCheck);
-      });
+    filterItems(items: IMassActionCards[]) {
+      return helpers.availableItems(this, items);
     },
 
     onClick(methodName: string) {

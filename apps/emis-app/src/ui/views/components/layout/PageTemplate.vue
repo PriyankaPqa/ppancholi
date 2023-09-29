@@ -51,6 +51,7 @@ import SecondaryLeftMenu from '@/ui/views/components/layout/SecondaryLeftMenu.vu
 import SecondaryRightMenu from '@/ui/views/components/layout/SecondaryRightMenu.vue';
 import { INavigationTab } from '@libs/shared-lib/types';
 import routes from '@/constants/routes';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   name: 'PageTemplate',
@@ -143,9 +144,7 @@ export default Vue.extend({
   },
   computed: {
     navigationTabsFilteredForPermissionsAndFeatures(): Array<INavigationTab> {
-      return this.navigationTabs
-        .filter((tab: INavigationTab) => (this.$hasLevel(tab.level) || !tab.level))
-        .filter((tab: INavigationTab) => !tab.feature || (tab.feature && this.$hasFeature(tab.feature)));
+      return helpers.availableItems(this, this.navigationTabs);
     },
   },
   methods: {

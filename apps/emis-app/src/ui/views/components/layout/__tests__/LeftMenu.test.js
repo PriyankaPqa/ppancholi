@@ -1,7 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { UserRoles } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
-import { createTestingPinia } from '@pinia/testing';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
 import Component from '../LeftMenu.vue';
 
@@ -10,33 +9,6 @@ const localVue = createLocalVue();
 describe('LeftMenu.vue', () => {
   describe('Computed properties', () => {
     describe('availableItems', () => {
-      it('does not return items with no level', () => {
-        const items = [
-          {
-            to: 'routes.home.name',
-            icon: 'mdi-home',
-            text: 'leftMenu.home_title',
-            test: 'home',
-          },
-          {
-            to: 'routes.caseFile.home.name',
-            icon: 'mdi-clipboard-text',
-            text: 'leftMenu.caseFiles_title',
-            test: 'caseFile',
-          },
-        ];
-        const wrapper = shallowMount(Component, {
-          localVue,
-          pinia: createTestingPinia({ stubActions: false }),
-          computed: {
-            items() {
-              return items;
-            },
-          },
-        });
-        expect(wrapper.vm.availableItems).toEqual([]);
-      });
-
       it('returns items for which user has the proper level', () => {
         const items = [
           {
@@ -194,7 +166,7 @@ describe('LeftMenu.vue', () => {
         });
       });
 
-      test('Item[0]', () => {
+      test('home', () => {
         const item = wrapper.vm.items[0];
         expect(item.to).toBe(routes.home.name);
         expect(item.icon).toBe('mdi-home');
@@ -204,7 +176,7 @@ describe('LeftMenu.vue', () => {
         expect(item.roles).toEqual([UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly, UserRoles.no_role]);
       });
 
-      describe('Item[1]', () => {
+      describe('caseFile', () => {
         test('its properties are ok', () => {
           const item = wrapper.vm.items[1];
           expect(item.to).toBe(routes.caseFile.home.name);
@@ -226,7 +198,7 @@ describe('LeftMenu.vue', () => {
         });
       });
 
-      test('Item[2]', () => {
+      test('householdSearch', () => {
         const item = wrapper.vm.items[2];
         expect(item.to).toBe(routes.householdSearch.name);
         expect(item.icon).toBe('$rctech-search-person');
@@ -235,7 +207,7 @@ describe('LeftMenu.vue', () => {
         expect(item.level).toBe(UserRoles.level0);
       });
 
-      test('Item[3]', () => {
+      test('events', () => {
         const item = wrapper.vm.items[3];
         expect(item.to).toBe(routes.events.home.name);
         expect(item.icon).toBe('mdi-calendar');
@@ -244,7 +216,7 @@ describe('LeftMenu.vue', () => {
         expect(item.level).toBe(UserRoles.level4);
       });
 
-      test('Item[4]', () => {
+      test('teams', () => {
         const item = wrapper.vm.items[4];
         expect(item.to).toBe(routes.teams.home.name);
         expect(item.icon).toBe('mdi-account-multiple-plus');
@@ -253,7 +225,7 @@ describe('LeftMenu.vue', () => {
         expect(item.level).toBe(UserRoles.level3);
       });
 
-      test('Item[5]', () => {
+      test('financialAssistance', () => {
         const item = wrapper.vm.items[5];
         expect(item.to).toBe(routes.financialAssistance.home.name);
         expect(item.icon).toBe('mdi-currency-usd');
@@ -262,7 +234,7 @@ describe('LeftMenu.vue', () => {
         expect(item.level).toBe(UserRoles.level6);
       });
 
-      test('Item[6]', () => {
+      test('approval', () => {
         const item = wrapper.vm.items[6];
         expect(item.to).toBe(wrapper.vm.approvalRedirection);
         expect(item.icon).toBe('mdi-check');
@@ -271,7 +243,7 @@ describe('LeftMenu.vue', () => {
         expect(item.roles).toEqual([UserRoles.level3, UserRoles.level4, UserRoles.level6]);
       });
 
-      test('Item[7]', () => {
+      test('massActions', () => {
         const item = wrapper.vm.items[7];
         expect(item.to).toBe(routes.massActions.home.name);
         expect(item.icon).toBe('mdi-file-document');
@@ -281,7 +253,16 @@ describe('LeftMenu.vue', () => {
         expect(item.roles).toEqual([UserRoles.contributorIM, UserRoles.contributorFinance]);
       });
 
-      test('Item[8]', () => {
+      test('reporting', () => {
+        const item = wrapper.vm.items[9];
+        expect(item.to).toBe(routes.reporting.home.name);
+        expect(item.icon).toBe('mdi-alert-octagon');
+        expect(item.text).toBe('reporting.leftMenu.title');
+        expect(item.test).toBe('reporting');
+        expect(item.level).toBe(UserRoles.level6);
+      });
+
+      test('assessmentTemplates', () => {
         const item = wrapper.vm.items[8];
         expect(item.to).toBe(routes.assessmentTemplates.home.name);
         expect(item.icon).toBe('mdi-chart-box');
@@ -290,8 +271,8 @@ describe('LeftMenu.vue', () => {
         expect(item.level).toBe(UserRoles.level6);
       });
 
-      test('Item[9]', () => {
-        const item = wrapper.vm.items[9];
+      test('systemManagement', () => {
+        const item = wrapper.vm.items[10];
         expect(item.to).toBe(routes.systemManagement.home.name);
         expect(item.icon).toBe('dvr');
         expect(item.text).toBe('system_management.leftMenu.title');

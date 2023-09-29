@@ -82,6 +82,7 @@ export default defineConfig(({ mode }) => {
         '@libs/stores-lib': path.resolve(__dirname, '../../libs/stores-lib/src'),
         '@libs/services-lib': path.resolve(__dirname, '../../libs/services-lib/src'),
         '@libs/assets': path.resolve(__dirname, '../../libs/assets'),
+        'devextreme/ui': 'devextreme/esm/ui',
       },
     },
     define: envWithProcessPrefix,

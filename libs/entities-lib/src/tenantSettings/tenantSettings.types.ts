@@ -19,6 +19,7 @@ export enum FeatureKeys {
   MassActionCaseFileStatus = 'MassActionCaseFileStatus',
   DisplayNotificationCenter = 'DisplayNotificationCenter',
   UnderageValidation = 'UnderageValidation',
+  InSystemQuerying = 'InSystemQuerying',
 }
 
 export enum FeatureType {

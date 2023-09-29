@@ -18,6 +18,8 @@ import Vue from 'vue';
 import { RcMenuCard } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import { UserRoles } from '@libs/entities-lib/user';
+import { ICardSettings } from '@/types/interfaces/ICardSettings';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   name: 'SystemManagementHome',
@@ -31,7 +33,7 @@ export default Vue.extend({
       return routes;
     },
 
-    cards(): Array<Record<string, string>> {
+    cards(): ICardSettings[] {
       return [{
         title: 'system_management.card.lists_title',
         description: 'system_management.card.lists_description',
@@ -77,13 +79,8 @@ export default Vue.extend({
       }];
     },
 
-    accessibleCards(): Array<Record<string, string>> {
-      return this.cards.filter((card) => {
-        if (card.level) {
-          return this.$hasLevel(card.level);
-        }
-        return true;
-      });
+    accessibleCards(): ICardSettings[] {
+      return helpers.availableItems(this, this.cards);
     },
   },
 });

@@ -3,6 +3,7 @@ import { dateTypes } from '@/constants/dateTypes';
 import { UserRoles } from '@libs/entities-lib/user';
 import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
+import { createLocalVue } from '@/test/testSetup';
 import helpers from './helpers';
 
 describe('>>>> helpers', () => {
@@ -82,6 +83,115 @@ describe('>>>> helpers', () => {
 
     it('sets azureSearchParams.search with quickSearch split by space', () => {
       expect(helpers.toQuickSearch('search test')).toEqual('((/.*search.*/ OR "\\"search\\"") AND (/.*test.*/ OR "\\"test\\""))');
+    });
+  });
+
+  describe('availableItems', () => {
+    it('returns items with no level', () => {
+      const items = [
+        {
+          to: 'routes.home.name',
+          icon: 'mdi-home',
+          text: 'leftMenu.home_title',
+          test: 'home',
+        },
+        {
+          to: 'routes.caseFile.home.name',
+          icon: 'mdi-clipboard-text',
+          text: 'leftMenu.caseFiles_title',
+          test: 'caseFile',
+        },
+      ];
+
+      const localVue = createLocalVue();
+      expect(helpers.availableItems(localVue.prototype, items as any)).toEqual(items);
+    });
+
+    it('returns items for which user has the proper level', () => {
+      const items = [
+        {
+          to: 'routes.home.name',
+          icon: 'mdi-home',
+          text: 'leftMenu.home_title',
+          test: 'home',
+          level: UserRoles.level1,
+        },
+        {
+          to: 'routes.caseFile.home.name',
+          icon: 'mdi-clipboard-text',
+          text: 'leftMenu.caseFiles_title',
+          test: 'caseFile',
+          level: UserRoles.level6,
+        },
+      ];
+
+      const localVue = createLocalVue();
+      localVue.prototype.$hasLevel = (lvl: string) => lvl === UserRoles.level1;
+      localVue.prototype.$hasRole = () => false;
+      expect(helpers.availableItems(localVue.prototype, items)).toEqual([items[0]]);
+    });
+
+    it('returns items for which user has the proper role', () => {
+      const items = [
+        {
+          to: 'routes.home.name',
+          icon: 'mdi-home',
+          text: 'leftMenu.home_title',
+          test: 'home',
+          level: UserRoles.level1,
+        },
+        {
+          to: 'routes.caseFile.home.name',
+          icon: 'mdi-clipboard-text',
+          text: 'leftMenu.caseFiles_title',
+          test: 'caseFile',
+          level: UserRoles.level6,
+          roles: [UserRoles.contributorIM],
+        },
+      ];
+
+      const localVue = createLocalVue();
+      localVue.prototype.$hasLevel = () => false;
+      localVue.prototype.$hasRole = (lvl: string) => lvl === UserRoles.contributorIM;
+      expect(helpers.availableItems(localVue.prototype, items)).toEqual([items[1]]);
+    });
+
+    it('does not return items with feature disabled', () => {
+      const items = [
+        {
+          to: 'routes.home.name',
+          icon: 'mdi-home',
+          text: 'leftMenu.home_title',
+          test: 'home',
+          level: UserRoles.level6,
+          roles: [UserRoles.contributorIM],
+          feature: 'feature',
+        },
+      ];
+      const localVue = createLocalVue();
+      localVue.prototype.$hasLevel = () => true;
+      localVue.prototype.$hasRole = () => true;
+      localVue.prototype.$hasFeature = () => false;
+      expect(helpers.availableItems(localVue.prototype, items)).toEqual([]);
+    });
+
+    it('returns items with feature enabled', () => {
+      const items = [
+        {
+          to: 'routes.home.name',
+          icon: 'mdi-home',
+          text: 'leftMenu.home_title',
+          test: 'home',
+          level: UserRoles.level6,
+          roles: [UserRoles.contributorIM],
+          feature: 'feature',
+        },
+      ];
+      const localVue = createLocalVue();
+      localVue.prototype.$hasLevel = () => true;
+      localVue.prototype.$hasRole = () => true;
+      localVue.prototype.$hasFeature = () => true;
+      expect(helpers.availableItems(localVue.prototype, items)).toEqual(items);
     });
   });
 });
