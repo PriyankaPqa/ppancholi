@@ -1,64 +1,181 @@
 <template>
-  <rc-data-table
-    ref="tasksTable"
-    data-test="tasks-table"
-    :items="[]"
-    :count="itemsCount"
-    :show-help="false"
-    labels="Tasks enenenen"
-    :headers="headers">
-    <template #filter>
-      <filter-toolbar
-        :count="itemsCount"
-        :loading="loading"
-        add-filter-label="caseFileTable.filter">
-        <template #toolbarActions>
-          <div class="flex-row">
-            <v-icon class="mr-2">
-              mdi-account-check
-            </v-icon>
-            <span class="rc-body14">
-              {{ $t('caseFilesTable.myCaseFiles') }}
-            </span>
-          </div>
-        </template>
-      </filter-toolbar>
-    </template>
-    <template v-if="isInCaseFile" #headerLeft>
-      <rc-add-button-with-menu
-        :items="menuItems"
-        data-test="create-team-button"
-        :add-button-label="$t('teams.add_team')"
-        @click-item="goToCreateTask($event)" />
-    </template>
-  </rc-data-table>
+  <div :class="{ 'pa-4': isInCaseFile }">
+    <rc-data-table
+      ref="tasksTable"
+      :items="parsedTableData"
+      :count="itemsCount"
+      :show-help="false"
+      :labels="labels"
+      :custom-columns="Object.values(customColumns)"
+      :table-props="tableProps"
+      :footer-text="footerText"
+      :headers="headers"
+      :options.sync="options"
+      :initial-search="params && params.search"
+      @search="search">
+      <template v-if="isInCaseFile" #headerLeft>
+        <rc-add-button-with-menu
+          :items="menuItems"
+          data-test="task-table-create-task-button"
+          :add-button-label="$t('task.add_task')"
+          @click-item="goToCreateTask($event)" />
+      </template>
+
+      <template #filter>
+        <filter-toolbar
+          :filter-key="FilterKey.Tasks"
+          :count="itemsCount"
+          :initial-filter="filterState"
+          :filter-options="filterOptions"
+          add-filter-label="tasksTable.filter"
+          @update:appliedFilter="onApplyFilterLocal">
+          <template #toolbarActions>
+            <div class="d-flex">
+              <div class="d-flex">
+                <v-switch
+                  v-model="personalTaskOnly"
+                  data-test="task-table-personal-task-switch"
+                  hide-details />
+                <v-icon class="mx-2" small>
+                  mdi-account-check
+                </v-icon>
+                <span class="rc-body14">
+                  {{ $t('task.task_table.my_personal_tasks') }}
+                </span>
+              </div>
+            </div>
+          </template>
+        </filter-toolbar>
+      </template>
+
+      <template v-if="isInCaseFile" #expanded-item="{ item }">
+        <!-- Custom content to show when a row is expanded -->
+        <td :colspan="headers.length ">
+          <v-row class="pl-8 mb-1" data-test="task-table-expanded-row">
+            <template v-if="item.entity.taskType === TaskType.Team">
+              <v-col cols="2">
+                <div class="fw-bold">
+                  {{ $t('task.create_edit.task_category') }}
+                </div>
+                <div v-if="item.entity.category">
+                  {{ $m(item.entity.category.displayName) }}
+                </div>
+              </v-col>
+              <v-col cols="2">
+                <div class="fw-bold">
+                  {{ $t("task.create_edit.assigned_to") }}
+                </div>
+                <div> {{ item.entity.assignedTeamName }} </div>
+              </v-col>
+            </template>
+
+            <template v-else>
+              <v-col cols="2">
+                <div class="fw-bold">
+                  {{ $t('task.create_edit.due_date') }}
+                </div>
+                <div>{{ helpers.getLocalStringDate(item.entity.dueDate, '', 'MMM d, yyyy') }}</div>
+              </v-col>
+            </template>
+          </v-row>
+        </td>
+      </template>
+
+      <template #[`item.${customColumns.taskName}`]="{ item }">
+        <v-icon class="adjust-margin" :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
+          mdi-account-check
+        </v-icon>
+        <router-link
+          class="rc-link14 font-weight-bold pr-1"
+          data-test="task-table-details-link"
+          :to="getTaskDetailsRoute(item.entity.id)">
+          <span data-test="task-table-task-name"> {{ $m(item.metadata.name) }}</span>
+        </router-link>
+      </template>
+      <template #[`item.${customColumns.isUrgent}`]="{ item }">
+        <span class="red--text font-weight-bold"> {{ item.entity.isUrgent ? $t('task.create_edit.urgent') : '' }}</span>
+      </template>
+      <template #[`item.${customColumns.dateAdded}`]="{ item }">
+        <span data-test="task-table-date-added"> {{ helpers.getLocalStringDate(item.entity.dateAdded, '', 'MMM d, yyyy') }}</span>
+      </template>
+      <template #[`item.${customColumns.taskStatus}`]="{ item }">
+        <status-chip
+          v-if="item.entity.taskType === TaskType.Team"
+          data-test="task-table-task-status"
+          x-small
+          :status="item.entity.taskStatus"
+          status-name="TaskStatus" />
+      </template>
+      <template #[`item.${customColumns.action}`]="{ item }">
+        <v-btn
+          color="primary"
+          small
+          :data-test="`task-table-action-btn-${item.entity.id}`">
+          {{ $t('task.action') }}
+        </v-btn>
+      </template>
+      <template #[`item.${customColumns.edit}`]="{ item }">
+        <v-btn
+          v-if="canEdit(item.entity)"
+          icon
+          small>
+          <v-icon>
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+      </template>
+    </rc-data-table>
+  </div>
 </template>
 
 <script lang="ts">
 import { DataTableHeader } from 'vuetify';
-import { RcDataTable, RcAddButtonWithMenu } from '@libs/component-lib/components';
+import { RcAddButtonWithMenu, RcDataTable } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
+import { IdParams, ITaskCombined, ITaskEntity, ITaskEntityData, ITaskMetadata, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { TranslateResult } from 'vue-i18n';
+import helpers from '@/ui/helpers/helpers';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import { useTaskMetadataStore, useTaskStore } from '@/pinia/task/task';
+import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
+import { UserRoles } from '@libs/entities-lib/user';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
+import { FilterKey } from '@libs/entities-lib/user-account';
 import mixins from 'vue-typed-mixins';
 import caseFileDetail from '@/ui/views/pages/case-files/details/caseFileDetail';
-import { useTaskStore } from '@/pinia/task/task';
+import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
+import { IOptionItem } from '@libs/entities-lib/optionItem';
+import { useUserStore } from '@/pinia/user/user';
+import { IAzureSearchParams, IMultilingual } from '@libs/shared-lib/types';
+import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
+import isEqual from 'lodash/isEqual';
+import pickBy from 'lodash/pickBy';
+import { ITeamEntity } from '@libs/entities-lib/team';
+import { IEntityCombined } from '@libs/entities-lib/base';
 
-export default mixins(caseFileDetail).extend({
+interface IParsedTaskEntity extends ITaskEntityData {
+  category: {
+    optionItemId: string;
+    specifiedOther: string;
+    displayName: IMultilingual | string;
+  }
+  assignedTeamName: string;
+}
+
+type IParsedTaskCombined = IEntityCombined<IParsedTaskEntity, ITaskMetadata>;
+
+export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
   name: 'TasksTable',
 
   components: {
     RcDataTable,
     FilterToolbar,
     RcAddButtonWithMenu,
+    StatusChip,
   },
 
   props: {
-    // case file id
-    id: {
-      type: String,
-      default: '',
-    },
-
     isInCaseFile: {
       type: Boolean,
       default: false,
@@ -67,43 +184,146 @@ export default mixins(caseFileDetail).extend({
 
   data() {
     return {
-      itemsCount: 0,
-      loading: false,
+      personalTaskOnly: false,
+      dataTableParams: {
+        search: '',
+        orderBy: 'Entity/DateAdded',
+        descending: true,
+        pageIndex: 1,
+        pageSize: 10,
+      },
+      options: {
+        page: 1,
+        sortBy: ['Entity/DateAdded'],
+        sortDesc: [true],
+      },
+      helpers,
+      TaskType,
+      UserRoles,
+      FilterKey,
+      teamsByEvent: [] as ITeamEntity[],
+      combinedTaskStore: new CombinedStoreFactory<ITaskEntity, ITaskMetadata, IdParams>(useTaskStore(), useTaskMetadataStore()),
     };
   },
 
   computed: {
+    personalTaskOnlyFilter(): Record<string, unknown> {
+      const userId = useUserStore().getUserId();
+      return {
+        Entity: {
+          TaskType: {
+              [ITEM_ROOT]: TaskType.Personal,
+          },
+          CreatedBy: {
+            [ITEM_ROOT]: userId,
+          },
+        },
+      };
+    },
+
+    labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
+      // TODO add task amount when in Main menu tab EMIS-7315
+
+      return {
+        header: {
+          title: this.$t('task.table_title'),
+          searchPlaceholder: this.$t('common.inputs.quick_search'),
+        },
+      };
+    },
+
+    tableProps(): Record<string, unknown> {
+      return {
+        loading: useTaskStore().searchLoading,
+        itemClass: (item: ITaskCombined) => (item.pinned ? 'pinned' : ''),
+        itemKey: 'entity.id',
+        showExpand: this.isInCaseFile,
+      };
+    },
+
+    customColumns(): Record<string, string> {
+      return {
+        taskName: `Metadata/Name/Translation/${this.$i18n.locale}`,
+        isUrgent: 'Entity/IsUrgent',
+        dateAdded: 'Entity/DateAdded',
+        taskStatus: 'Entity/TaskStatus',
+        action: 'action',
+        edit: 'edit',
+      };
+    },
+
     headers(): Array<DataTableHeader> {
       return [
         {
-          text: this.$t('caseFileTable.tableHeaders.caseFileNumber') as string,
+          text: this.$t('task.task_table_header.task') as string,
           sortable: true,
-          value: '1',
+          value: this.customColumns.taskName,
+          width: '60%',
         },
         {
-          text: this.$t('caseFilesTable.tableHeaders.name') as string,
+          text: this.$t('task.task_table_header.priority') as string,
           sortable: true,
-          value: '2',
+          value: this.customColumns.isUrgent,
+          width: '10%',
         },
         {
-          text: this.$t('caseFilesTable.tableHeaders.event') as string,
+          text: this.$t('task.task_table_header.date_added') as string,
           sortable: true,
-          value: '3',
+          value: this.customColumns.dateAdded,
+          width: '10%',
+
         },
         {
-          text: this.$t('caseFilesTable.tableHeaders.triage') as string,
+          text: this.$t('task.task_table_header.status') as string,
           sortable: true,
-          value: '4',
+          value: this.customColumns.taskStatus,
+          width: '10%',
+
         },
         {
-          text: this.$t('caseFilesTable.tableHeaders.status') as string,
-          sortable: true,
-          value: '5',
+          text: '',
+          sortable: false,
+          value: this.customColumns.action,
+          width: '5%',
         },
         {
-          text: this.$t('caseFilesTable.tableHeaders.createdDate') as string,
-          sortable: true,
-          value: '6',
+          text: '',
+          sortable: false,
+          value: this.customColumns.edit,
+          width: '5%',
+        },
+      ];
+    },
+
+    filterOptions(): Array<IFilterSettings> {
+      const taskNames = useTaskStore().getTaskCategories().map((t: IOptionItem) => ({ text: this.$m(t.name), value: t.id }));
+      const priorityItems = [
+        { text: this.$t('common.yes') as string, value: true },
+        { text: this.$t('common.no') as string, value: false },
+      ];
+      return [
+        {
+          key: 'Entity/Name/OptionItemId',
+          type: EFilterType.MultiSelect,
+          label: this.$t('task.create_edit.task_name') as string,
+          items: taskNames,
+        },
+        {
+          key: 'Entity/DateAdded',
+          type: EFilterType.Date,
+          label: this.$t('task.task_table_header.date_added') as string,
+        },
+        {
+          key: 'Entity/IsUrgent',
+          type: EFilterType.Select,
+          label: this.$t('task.task_table_header.priority') as string,
+          items: priorityItems,
+        },
+        {
+          key: 'Entity/TaskStatus',
+          type: EFilterType.MultiSelect,
+          label: this.$t('task.task_table_header.status') as string,
+          items: helpers.enumToTranslatedCollection(TaskStatus, 'task.task_status'),
         },
       ];
     },
@@ -119,13 +339,77 @@ export default mixins(caseFileDetail).extend({
         dataTest: 'create-team-task-link',
       }];
     },
+
+    parsedTableData(): IParsedTaskCombined[] {
+      const rawTableData: ITaskCombined[] = this.combinedTaskStore.getByIds(
+        this.searchResultIds,
+        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId } },
+      );
+      const taskNames = useTaskStore().getTaskCategories();
+      return rawTableData.map((d: any) => {
+        const currentTaskName = taskNames?.filter((n) => n.id === d?.entity?.name.optionItemId)[0];
+        const currentCategory = currentTaskName?.subitems.filter((c) => c.id === d?.entity.category?.optionItemId)[0];
+        const assignedTeamName = this.teamsByEvent?.filter((t) => t.id === d?.entity?.assignedTeamId)[0];
+        const parsedEntity = {
+          ...d.entity,
+          category: {
+            ...d.entity.category,
+            displayName: currentCategory ? currentCategory.name : null,
+          },
+          assignedTeamName: assignedTeamName ? assignedTeamName.name : '',
+        };
+        return {
+          ...d,
+          entity: parsedEntity,
+          metadata: d.metadata,
+        };
+      });
+    },
+  },
+
+  watch: {
+    personalTaskOnly(newValue, oldValue) {
+      if (oldValue == null || newValue === oldValue) {
+        return;
+      }
+      this.applyCustomFilter(newValue, this.personalTaskOnlyFilter);
+    },
   },
 
   async created() {
-    await useTaskStore().fetchTaskCategories();
-  },
+     await useTaskStore().fetchTaskCategories();
+     await this.getTeamsByEvent();
+     await this.search(this.dataTableParams);
+     },
 
   methods: {
+    applyCustomFilter(value: boolean, filter: Record<string, unknown>) {
+      let preparedFilters = {} as Record<string, unknown>;
+
+      if (value) {
+        // We apply filters from the switch + the ones from the filters panel
+        preparedFilters = { ...this.userFilters, ...filter };
+      } else if (isEqual(filter, this.userFilters)) {
+        preparedFilters = null;
+      } else {
+        const filterValue = Object.values(filter)[0];
+        preparedFilters = pickBy(this.userFilters, (value) => !isEqual(filterValue, value)); // Only the other filters
+      }
+
+      this.onApplyFilter({ preparedFilters, searchFilters: this.userSearchFilters }, this.filterState);
+    },
+
+    async onApplyFilterLocal({ preparedFilters, searchFilters }
+                               : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown) {
+      let finalFilters = preparedFilters;
+
+      if (this.personalTaskOnly) {
+        finalFilters = { ...finalFilters, ...this.personalTaskOnlyFilter };
+      }
+
+      await this.onApplyFilter({ preparedFilters: finalFilters, searchFilters }, filterState);
+    },
+
     goToCreateTask(item: Record<string, string>) {
       const taskType = item.value;
       this.$router.push({ name: routes.caseFile.task.create.name,
@@ -134,7 +418,68 @@ export default mixins(caseFileDetail).extend({
           id: this.id,
         } });
     },
+
+    getTaskDetailsRoute(taskId: string) {
+      return {
+        name: routes.caseFile.task.details.name,
+        params: {
+          taskId,
+        },
+      };
+    },
+
+    canEdit(taskEntity: ITaskEntity): boolean {
+      if (this.$hasLevel(UserRoles.level6)) {
+        return true;
+      }
+      const userId = useUserStore().getUserId();
+      if (taskEntity.taskType === TaskType.Team) {
+        if (taskEntity.taskStatus === TaskStatus.InProgress) {
+          return this.$hasLevel(UserRoles.level1) || taskEntity.createdBy === userId;
+        }
+      }
+      return taskEntity.createdBy === userId;
+      },
+
+    async getTeamsByEvent() {
+      const teams = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId);
+      if (teams) {
+        this.teamsByEvent = teams;
+      }
+    },
+
+    async fetchData(params: IAzureSearchParams) {
+      const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
+      const res = await this.combinedTaskStore.search({
+        search: params.search,
+        filter: { 'Entity/CaseFileId': this.$route.params.id, ...filterParams },
+        top: params.top,
+        skip: params.skip,
+        orderBy: params.orderBy,
+        count: true,
+        queryType: 'full',
+        searchMode: 'all',
+      });
+      return res;
+    },
   },
 
 });
 </script>
+
+<style scoped lang="scss">
+::v-deep .v-data-table > .v-data-table__wrapper tbody tr.v-data-table__expanded__row td {
+  border-bottom: 0 !important;
+}
+
+::v-deep .v-data-table > .v-data-table__wrapper tbody tr.v-data-table__expanded__content {
+  box-shadow: initial !important;
+  & td {
+    height: initial;
+  }
+}
+
+.adjust-margin{
+  margin-left: -16px
+}
+</style>

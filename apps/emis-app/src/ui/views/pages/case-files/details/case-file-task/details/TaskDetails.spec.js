@@ -19,12 +19,11 @@ const { pinia, taskStore } = useMockTaskStore();
 const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
 const { userStore } = useMockUserStore(pinia);
 const { caseFileStore } = useMockCaseFileStore(pinia);
-taskStore.getById = jest.fn(() => mockTeamTaskEntity({ createdBy: 'mock-id-1' }));
 const services = mockProvider();
 
 describe('TaskDetails.vue', () => {
   let wrapper;
-  const doMount = async (shallow = true, otherOptions = {}) => {
+  const doMount = async (shallow = true, otherOptions = {}, level = 5) => {
     const options = {
       localVue,
       pinia,
@@ -34,6 +33,7 @@ describe('TaskDetails.vue', () => {
       },
       mocks: {
         $services: services,
+        $hasLevel: (lvl) => lvl <= `level${level}`,
       },
       ...otherOptions,
     };
@@ -216,16 +216,30 @@ describe('TaskDetails.vue', () => {
     });
 
     describe('task-details-assigned-to', () => {
-      it('should render assigned to me when personal task', async () => {
+      it('should render assigned to me when personal task and user is creator', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-user-1');
         await doMount(true, {
           computed: {
-            task: () => mockPersonalTaskEntity(),
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
             isTeamTask: () => false,
           },
         });
         await flushPromises();
         const element = wrapper.findDataTest('task-details-assigned-to');
         expect(element.text()).toEqual('task.create_edit.assigned_to.me');
+      });
+
+      it('should render the name of creator when personal task but user not creator', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-user-2');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
+            isTeamTask: () => false,
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-assigned-to');
+        expect(element.text()).toEqual('Jane Smith');
       });
 
       it('should render assigned team name when team task', async () => {
@@ -469,7 +483,7 @@ describe('TaskDetails.vue', () => {
       it('should be true when user has Level6', async () => {
         await doMount(true, {
           pinia: getPiniaForUser(UserRoles.level6),
-        });
+        }, 6);
         expect(wrapper.vm.canEdit).toEqual(true);
       });
 
@@ -520,6 +534,32 @@ describe('TaskDetails.vue', () => {
         expect(wrapper.vm.canEdit).toEqual(false);
       });
     });
+
+    describe('assignedToPerson', () => {
+      it('should render assigned to me when user is creator', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-user-1');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
+            isTeamTask: () => false,
+          },
+        });
+        await flushPromises();
+        expect(wrapper.vm.assignedToPerson).toEqual('task.create_edit.assigned_to.me');
+      });
+
+      it('should return the name of creator when user is not creator', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-user-2');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
+            isTeamTask: () => false,
+          },
+        });
+        await flushPromises();
+        expect(wrapper.vm.assignedToPerson).toEqual('Jane Smith');
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -536,7 +576,7 @@ describe('TaskDetails.vue', () => {
         taskStore.getById = jest.fn(() => mockTeamTaskEntity({ assignedTeamId: 'guid-team-1' }));
         caseFileStore.getById = jest.fn(() => mockCaseFileEntity({ eventId: 'event-id-1' }));
         wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => [mockTeamEntity({ id: 'guid-team-1' })]);
-        await doMount({
+        await doMount(true, {
           propsData: {
             id: 'mock-case-file-id-1',
             taskId: 'mock-task-id-1',
@@ -555,6 +595,9 @@ describe('TaskDetails.vue', () => {
   });
 
   describe('lifecycle', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
     describe('Created', () => {
       it('should call fetch task entity with taskID and case file id', async () => {
         taskStore.fetch = jest.fn();
@@ -574,9 +617,39 @@ describe('TaskDetails.vue', () => {
         expect(taskStore.fetchTaskCategories).toHaveBeenCalled();
       });
 
+      it('should call userAccountMetadataStore fetch when is personal task and user has L5 ', async () => {
+        jest.clearAllMocks();
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-id-10' }),
+            isTeamTask: () => false,
+          },
+        });
+        taskStore.getById = jest.fn(() => mockPersonalTaskEntity({ createdBy: 'mock-user-id-10' }));
+
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        await flushPromises();
+
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-10', false);
+      });
+
+      it('should not call userAccountMetadataStore fetch when is personal task and user doesnt have L5 ', async () => {
+        jest.clearAllMocks();
+        taskStore.getById = jest.fn(() => mockPersonalTaskEntity({ createdBy: 'mock-user-id-10' }));
+        await doMount(true, {
+          computed: {
+            isTeamTask: () => false,
+          },
+        }, 4);
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        expect(userAccountMetadataStore.fetch).not.toHaveBeenCalled();
+      });
+
       it('should call useUserAccountMetadataStore fetch and getAssignedTeam if is team task', async () => {
         taskStore.getById = jest.fn(() => mockTeamTaskEntity({ createdBy: 'mock-user-id-1' }));
-        await doMount({
+        await doMount(true, {
           computed: {
             isTeamTask: () => true,
           },
@@ -584,8 +657,8 @@ describe('TaskDetails.vue', () => {
         wrapper.vm.getAssignedTeam = jest.fn();
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
-        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-1', false);
         expect(wrapper.vm.getAssignedTeam).toHaveBeenCalled();
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-1', false);
       });
 
       it('should set selectedTaskNameId and selectedCategoryId properly if is team task', async () => {
@@ -593,7 +666,7 @@ describe('TaskDetails.vue', () => {
           name: { optionItemId: 'mock-task-name-1' },
           category: { optionItemId: 'mock-category-name-1' },
         }));
-        await doMount({
+        await doMount(true, {
           computed: {
             isTeamTask: () => true,
           },
@@ -609,7 +682,7 @@ describe('TaskDetails.vue', () => {
           name: { optionItemId: 'mock-task-name-1' },
           category: null,
         }));
-        await doMount({
+        await doMount(true, {
           computed: {
             isTeamTask: () => true,
           },

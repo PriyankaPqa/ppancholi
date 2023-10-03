@@ -17,6 +17,7 @@ export const useMockTaskStore = (pinia? : TestingPinia) => {
   const useTaskMetadataStore = defineStore(`${storeId}-entities`, () => ({
     ...getMockBaseStoreComponents(mockTaskMetadatum()),
   }));
+
   return {
     pinia: p,
     taskStore: useTaskStore(),

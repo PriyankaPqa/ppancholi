@@ -20,6 +20,21 @@ describe('>>> Tasks Service', () => {
     expect(http.post).toHaveBeenCalledWith('/case-file/tasks/mock-task-id-123/edit', payload, { globalHandler: false });
   });
 
+  describe('search', () => {
+    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      const searchEndpoint = 'mock-endpoint';
+      await service.search(params, searchEndpoint);
+      expect(http.get).toHaveBeenCalledWith(`case-file/search/${searchEndpoint}`, { params, isOData: true });
+    });
+
+    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      await service.search(params);
+      expect(http.get).toHaveBeenCalledWith('case-file/search/tasks', { params, isOData: true });
+    });
+  });
+
   describe('parseTaskPayload', () => {
     it('should parse data properly', () => {
       const task = mockTeamTaskEntity();

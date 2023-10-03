@@ -1,5 +1,5 @@
 import { IListOption } from '@libs/shared-lib/types';
-import { ITaskEntity, ITaskHistoryItem, TaskStatus, TaskType, ITaskEntityData } from './task.types';
+import { ITaskEntity, TaskStatus, TaskType, ITaskEntityData } from './task.types';
 import { BaseEntity } from '../base';
 
 export class TaskEntity extends BaseEntity implements ITaskEntity {
@@ -23,8 +23,6 @@ export class TaskEntity extends BaseEntity implements ITaskEntity {
 
   dueDate: Date | string;
 
-  taskHistory: ITaskHistoryItem[];
-
   constructor(data?: ITaskEntityData) {
     if (data) {
       super(data);
@@ -38,7 +36,6 @@ export class TaskEntity extends BaseEntity implements ITaskEntity {
       this.taskType = data.taskType || null;
       this.dateAdded = data.dateAdded || '';
       this.dueDate = data.dueDate || '';
-      this.taskHistory = data.taskHistory || [];
     } else {
       super();
       this.name = { optionItemId: null, specifiedOther: null };
@@ -51,7 +48,6 @@ export class TaskEntity extends BaseEntity implements ITaskEntity {
       this.taskType = null;
       this.dateAdded = '';
       this.dueDate = '';
-      this.taskHistory = [];
     }
   }
 }

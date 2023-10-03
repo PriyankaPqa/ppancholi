@@ -322,7 +322,7 @@ describe('TeamTaskForm.vue', () => {
             specifiedOther: '',
           },
           category: {
-            optionItemId: '986192ea-3f7b-4539-8a65-214161aea123',
+            optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
             specifiedOther: '',
           },
           description: 'mock-description',

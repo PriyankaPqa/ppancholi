@@ -1,7 +1,5 @@
-import { IListOption } from '@libs/shared-lib/types';
-import { IUser } from '../user';
-import { ITeamEntity } from '../team';
-import { IEntity } from '../base';
+import { IListOption, IMultilingual } from '@libs/shared-lib/types';
+import { IEntity, IEntityCombined } from '../base';
 
 export enum TaskType {
   Team = 1,
@@ -20,16 +18,6 @@ export enum TaskActionTaken {
   Reopen = 4,
 }
 
-export interface ITaskHistoryItem {
-  actionTaken: TaskActionTaken;
-  rationale: string;
-  editedBy: {
-    user: IUser;
-    team: ITeamEntity;
-  };
-  dateOfChange: Date | string;
-}
-
 export interface ITaskEntityData extends IEntity {
   name: IListOption;
   caseFileId: string;
@@ -41,16 +29,19 @@ export interface ITaskEntityData extends IEntity {
   taskType: TaskType;
   dateAdded: Date | string;
   dueDate: Date | string;
-  taskHistory: ITaskHistoryItem[];
 }
 
 export interface ITaskEntity extends ITaskEntityData {
 }
 
 export interface ITaskMetadata extends IEntity {
+  caseFileId: uuid;
   caseFileNumber: string;
-  teamName: string;
-  teamId: string;
+  name: IMultilingual;
+  nameId: uuid;
+  taskStatusName: IMultilingual;
 }
+
+export type ITaskCombined = IEntityCombined<ITaskEntity, ITaskMetadata>;
 
 export type IdParams = { id: uuid, caseFileId: uuid };

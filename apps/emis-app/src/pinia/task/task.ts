@@ -4,8 +4,8 @@ import { httpClient } from '@/services/httpClient';
 import { getBaseStoreComponents, getEntityStoreComponents } from '@libs/stores-lib/base';
 import { getExtensionComponents } from '@/pinia/task/task-extension';
 import { defineStore } from 'pinia';
-import { OptionItemsService } from '@libs/services-lib/optionItems';
 import { TaskMetadataService } from '@libs/services-lib/task/metadata';
+import { OptionItemsService } from '@libs/services-lib/optionItems';
 
 export type Entity = ITaskEntity;
 export type Metadata = ITaskMetadata;

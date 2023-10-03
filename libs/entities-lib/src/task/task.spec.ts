@@ -1,5 +1,5 @@
 import { TaskEntity } from '@/task/task';
-import { mockTaskHistory, mockTeamTaskEntity } from '@/task/task.mock';
+import { mockTeamTaskEntity } from '@/task/task.mock';
 import { TaskStatus, TaskType } from '@/task/task.types';
 
 const mockTaskData = mockTeamTaskEntity();
@@ -80,11 +80,6 @@ describe('>>> Task', () => {
       expect(task.dueDate).toBe('2023-08-01');
     });
 
-    it('should instantiate taskHistory', () => {
-      const task = new TaskEntity({ ...mockTaskData, taskHistory: mockTaskHistory() });
-      expect(task.taskHistory).toEqual(mockTaskHistory());
-    });
-
     it('should instantiate properties with proper data when no params', () => {
       const task = new TaskEntity();
       expect(task.id).toBe('');
@@ -96,7 +91,6 @@ describe('>>> Task', () => {
       expect(task.description).toBe('');
       expect(task.dateAdded).toBe('');
       expect(task.dueDate).toBe('');
-      expect(task.taskHistory).toEqual([]);
       expect(task.taskStatus).toBe(null);
       expect(task.assignedTeamId).toBe('');
     });

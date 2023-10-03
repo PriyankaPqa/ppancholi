@@ -47,7 +47,7 @@
           {{ $t('task.create_edit.assigned_to') }}
         </v-col>
         <v-col class="pa-0 pl-2" data-test="task-details-assigned-to">
-          {{ (isTeamTask && assignedTeam) ? assignedTeam.name : $t('task.create_edit.assigned_to.me') }}
+          {{ (isTeamTask && assignedTeam) ? assignedTeam.name : assignedToPerson }}
         </v-col>
         <div>
           <v-btn
@@ -141,6 +141,7 @@ import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 import { UserRoles } from '@libs/entities-lib/user';
 import { useUserStore } from '@/pinia/user/user';
 import { ITeamEntity } from '@libs/entities-lib/team';
+import { IUserAccountMetadata } from '@libs/entities-lib/user-account';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileTask, caseFileDetail).extend({
@@ -193,10 +194,24 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       return this.task?.name?.specifiedOther || '';
     },
 
+    userAccountMetadata(): IUserAccountMetadata {
+      return useUserAccountMetadataStore().getById(this.task.createdBy);
+    },
+
+    assignedToPerson(): string | TranslateResult {
+      const userId = useUserStore().getUserId();
+      if (userId === this.task.createdBy) {
+        return this.$t('task.create_edit.assigned_to.me');
+      }
+      if (this.$hasLevel(UserRoles.level5)) {
+        return this.userAccountMetadata.displayName;
+      }
+      return '';
+    },
+
     teamTaskCreatorInfo(): TranslateResult {
-      const userAccountMetadata = useUserAccountMetadataStore().getById(this.task.createdBy);
-      const user = ` ${userAccountMetadata.displayName}`;
-      const role = ` (${this.$m(userAccountMetadata.roleName)})`;
+      const user = ` ${this.userAccountMetadata.displayName}`;
+      const role = ` (${this.$m(this.userAccountMetadata.roleName)})`;
       let creatorInfo = this.$t('task.task_details.by');
       creatorInfo += user;
       creatorInfo += role;
@@ -204,10 +219,10 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     },
 
     canEdit(): boolean {
-      const userId = useUserStore().getUserId();
       if (this.$hasLevel(UserRoles.level6)) {
         return true;
       }
+      const userId = useUserStore().getUserId();
       if (this.isTeamTask) {
         if (this.task.taskStatus === TaskStatus.InProgress) {
           return this.$hasLevel(UserRoles.level1) || this.task.createdBy === userId;
@@ -225,6 +240,8 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       await Promise.all([useUserAccountMetadataStore().fetch(this.task.createdBy, false), this.getAssignedTeam()]);
       this.selectedTaskNameId = this.task.name?.optionItemId;
       this.selectedCategoryId = this.task.category ? this.task.category.optionItemId : '';
+    } else if (this.$hasLevel(UserRoles.level5)) {
+      await useUserAccountMetadataStore().fetch(this.task.createdBy, false);
     }
     this.loading = false;
   },

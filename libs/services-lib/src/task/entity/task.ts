@@ -1,4 +1,5 @@
-import { ITaskEntity, ITaskEntityData, IdParams } from '@libs/entities-lib/task';
+import { ITaskEntity, ITaskEntityData, IdParams, ITaskMetadata } from '@libs/entities-lib/task';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import { ITaskService } from './task.types';
 import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
@@ -18,6 +19,11 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
 
   async editTask(taskId: uuid, task: ITaskEntityData): Promise<ITaskEntityData> {
     return this.http.post(`/case-file/tasks/${taskId}/edit`, task, { globalHandler: false });
+  }
+
+  async search(params: IAzureSearchParams, searchEndpoint: string = null):
+    Promise<IAzureCombinedSearchResult<ITaskEntityData, ITaskMetadata>> {
+    return this.http.get(`case-file/search/${searchEndpoint ?? 'tasks'}`, { params, isOData: true });
   }
 
   /** Private methods * */

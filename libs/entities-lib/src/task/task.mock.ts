@@ -1,7 +1,5 @@
-import { mockUserL6 } from '../user';
-import { mockTeamsDataAddHoc } from '../team';
 import { IEntity, mockBaseData, mockBaseMetadata } from '../base';
-import { ITaskEntity, ITaskEntityData, ITaskHistoryItem, ITaskMetadata, TaskActionTaken, TaskStatus, TaskType } from './task.types';
+import { ITaskEntity, ITaskEntityData, ITaskMetadata, TaskStatus, TaskType, ITaskCombined } from './task.types';
 
 const mockBaseTaskEntityData = (force? : Partial<IEntity>): ITaskEntityData => ({
   ...mockBaseData(),
@@ -22,7 +20,6 @@ const mockBaseTaskEntityData = (force? : Partial<IEntity>): ITaskEntityData => (
   taskType: null,
   dateAdded: '2020-02-01T00:00:00Z',
   dueDate: '',
-  taskHistory: [],
   ...force,
 });
 
@@ -35,7 +32,7 @@ export const mockTeamTaskEntity = (force? : Partial<IEntity>): ITaskEntityData =
     specifiedOther: '',
   },
   category: {
-    optionItemId: '986192ea-3f7b-4539-8a65-214161aea123',
+    optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
     specifiedOther: '',
   },
   ...force,
@@ -72,23 +69,15 @@ export const mockTaskMetadatum = (force? : Partial<IEntity>): ITaskMetadata[] =>
   mockTaskMetadata(force),
 ];
 
-export const mockTaskHistory = (): ITaskHistoryItem[] => ([
+export const mockCombinedTaskData = (): ITaskCombined[] => ([
   {
-    actionTaken: TaskActionTaken.Assign,
-    rationale: 'mock-rationale-1',
-    editedBy: {
-      user: mockUserL6(),
-      team: mockTeamsDataAddHoc(),
-    },
-    dateOfChange: '2023-08-01',
+    entity: mockTeamTaskEntity({ id: '1' }),
+    metadata: mockTaskMetadata({ id: '1' }),
+    pinned: false,
   },
   {
-    actionTaken: TaskActionTaken.ActionCompleted,
-    rationale: 'mock-rationale-2',
-    editedBy: {
-      user: mockUserL6(),
-      team: mockTeamsDataAddHoc(),
-    },
-    dateOfChange: '2023-08-02',
+    entity: mockTeamTaskEntity({ id: '2' }),
+    metadata: mockTaskMetadata({ id: '2' }),
+    pinned: false,
   },
 ]);

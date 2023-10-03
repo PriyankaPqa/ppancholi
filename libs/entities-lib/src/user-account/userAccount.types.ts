@@ -22,6 +22,7 @@ export enum FilterKey {
   AssessmentTemplates = 17,
   ApprovalRequests = 18,
   MassActionAssessment = 19,
+  Tasks = 20,
   MassActionCaseFileStatus = 21,
 }
 
