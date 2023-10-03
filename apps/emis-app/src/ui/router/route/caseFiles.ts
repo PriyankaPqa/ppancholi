@@ -31,6 +31,7 @@ const MoveHouseholdMembers = () => import('@/ui/views/pages/household/move/MoveH
 const ImpactedIndividuals = () => import('@/ui/views/pages/case-files/details/case-file-impacted-individuals/ImpactedIndividuals.vue');
 const CaseFileTaskTable = () => import('@/ui/views/pages/case-files/details/case-file-task/CaseFileTaskTable.vue');
 const CreateEditTask = () => import('@/ui/views/pages/case-files/details/case-file-task/create-edit/CreateEditTask.vue');
+const TaskDetails = () => import('@/ui/views/pages/case-files/details/case-file-task/details/TaskDetails.vue');
 
 export const caseFiles: RouteConfig = {
   path: Routes.caseFile.layout.path,
@@ -195,7 +196,14 @@ export const caseFiles: RouteConfig = {
           path: Routes.caseFile.task.edit.path,
           name: Routes.caseFile.task.edit.name,
           component: CreateEditTask,
-          meta: { level: UserRoles.level1, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
+          props: true,
+        },
+        {
+          path: Routes.caseFile.task.details.path,
+          name: Routes.caseFile.task.details.name,
+          component: TaskDetails,
+          meta: { level: UserRoles.level0, roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly] },
           props: true,
         },
       ],

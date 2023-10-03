@@ -51,11 +51,15 @@ const createTestStore = (bComponents = {}) => {
 describe('Task Store', () => {
     describe('createTask', () => {
       it('should call the service createTask with right params', async () => {
-        const store = createTestStore();
-        entityService.createTask = jest.fn();
-        const task = mockTeamTaskEntity();
-        await store.createTask(task);
-        expect(entityService.createTask).toHaveBeenCalledWith(task);
+        const bComponents = { ...baseComponents, addNewlyCreatedId: jest.fn(), set: jest.fn() };
+        const store = createTestStore(bComponents);
+        const payload = mockTeamTaskEntity({ id: '' });
+        const res = mockTeamTaskEntity({ id: 'mock-id-1' });
+        entityService.createTask = jest.fn(() => res);
+        await store.createTask(payload);
+        expect(entityService.createTask).toHaveBeenCalledWith(payload);
+        expect(bComponents.addNewlyCreatedId).toBeCalledWith(res);
+        expect(bComponents.set).toBeCalledWith(res);
       });
     });
 

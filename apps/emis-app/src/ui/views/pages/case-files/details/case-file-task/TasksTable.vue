@@ -73,7 +73,6 @@ export default mixins(caseFileDetail).extend({
   },
 
   computed: {
-    // TODO this component will be completed in ticket 3215
     headers(): Array<DataTableHeader> {
       return [
         {

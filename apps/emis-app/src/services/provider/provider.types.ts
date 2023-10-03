@@ -29,6 +29,7 @@ import { IApprovalTablesService, IApprovalTablesServiceMock } from '@libs/servic
 import { IApprovalTablesMetadataService, IApprovalTablesMetadataServiceMock } from '@libs/services-lib/approval-tables/metadata/approvals.types';
 import { IAssessmentResponsesService, IAssessmentResponsesServiceMock } from '@libs/services-lib/assessment-response/entity';
 import { IAssessmentFormsService, IAssessmentFormsServiceMock } from '@libs/services-lib/assessment-form/entity';
+import { ITaskService, ITaskServiceMock } from '@libs/services-lib/task/entity';
 import { IPotentialDuplicatesService, IPotentialDuplicatesServiceMock } from '@libs/services-lib/potential-duplicates/entity';
 import { INotificationsService, INotificationsServiceMock } from '@libs/services-lib/notifications/entity';
 
@@ -61,6 +62,7 @@ export interface IProvider {
   errorReporting: IErrorReportingService;
   assessmentForms: IAssessmentFormsService;
   assessmentResponses: IAssessmentResponsesService;
+  task: ITaskService;
   potentialDuplicates: IPotentialDuplicatesService;
   notifications: INotificationsService;
 }
@@ -88,6 +90,7 @@ export interface IProviderMock {
   errorReporting: IErrorReportingServiceMock;
   assessmentForms: IAssessmentFormsServiceMock;
   assessmentResponses: IAssessmentResponsesServiceMock;
+  task: ITaskServiceMock;
   potentialDuplicates: IPotentialDuplicatesServiceMock;
   notifications: INotificationsServiceMock;
 }

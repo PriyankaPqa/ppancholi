@@ -17,6 +17,7 @@ export enum TaskActionTaken {
   Assign = 1,
   ActionCompleted = 2,
   TaskCompleted = 3,
+  Reopen = 4,
 }
 
 export interface ITaskHistoryItem {
@@ -46,8 +47,10 @@ export interface ITaskEntityData extends IEntity {
 export interface ITaskEntity extends ITaskEntityData {
 }
 
-export interface ITeamMetadata extends IEntity {
+export interface ITaskMetadata extends IEntity {
   caseFileNumber: string;
+  teamName: string;
+  teamId: string;
 }
 
-export type IdParams = uuid;
+export type IdParams = { id: uuid, caseFileId: uuid };

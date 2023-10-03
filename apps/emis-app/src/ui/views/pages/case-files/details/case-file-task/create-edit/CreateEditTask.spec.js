@@ -7,6 +7,7 @@ import { mockOptionItem, mockOptionItems } from '@libs/entities-lib/optionItem';
 import { mockEventEntity } from '@libs/entities-lib/event';
 import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
+import routes from '@/constants/routes';
 import { mockProvider } from '@/services/provider';
 import Component from './CreateEditTask.vue';
 
@@ -160,7 +161,7 @@ describe('CreateEditTask.vue', () => {
     });
 
     describe('fetchEscalationTeamAndSetTeamId', () => {
-      it('should call teams service getEscalationTeam and assign team id and name properly', async () => {
+      it('should call teams service getTeamsByEvent and assign team id and name properly', async () => {
         await doMount(false, {
           propsData: {
             id: 'mock-case-file-id-1',
@@ -172,11 +173,14 @@ describe('CreateEditTask.vue', () => {
             taskNames: () => mockOptionItems(),
           },
         });
-        wrapper.vm.$services.teams.getEscalationTeam = jest.fn(() => mockTeamEntity({ id: 'mock-id-1', name: 'mock-team-name' }));
+        wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => [
+          mockTeamEntity({ id: 'mock-id-1', name: 'mock-team-name-1', isEscalation: true }),
+          mockTeamEntity({ id: 'mock-id-2', name: 'mock-team-name-2', isEscalation: false }),
+        ]);
         await wrapper.vm.fetchEscalationTeamAndSetTeamId();
-        expect(wrapper.vm.$services.teams.getEscalationTeam).toHaveBeenCalledWith('mock-event-id');
+        expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('mock-event-id');
         expect(wrapper.vm.task.assignedTeamId).toEqual('mock-id-1');
-        expect(wrapper.vm.assignedTeamName).toEqual('mock-team-name');
+        expect(wrapper.vm.assignedTeamName).toEqual('mock-team-name-1');
       });
     });
 
@@ -184,7 +188,6 @@ describe('CreateEditTask.vue', () => {
       it('should toast an error message when creating team task without escalation team, and not call createTask', async () => {
         wrapper.vm.$toasted.global.error = jest.fn();
         taskStore.createTask = jest.fn();
-        wrapper.vm.$services.teams.getEscalationTeam = jest.fn();
         await doMount(true, {
           propsData: {
             id: 'case-file-id-1',
@@ -229,6 +232,13 @@ describe('CreateEditTask.vue', () => {
         taskStore.createTask = jest.fn(() => mockPersonalTaskEntity());
         await wrapper.vm.submitCreateTask();
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('task.personal_task_created');
+      });
+
+      it('should replace router with proper path and params', async () => {
+        taskStore.createTask = jest.fn(() => mockTeamTaskEntity({ id: 'mock-task-id-1' }));
+        wrapper.vm.$router.replace = jest.fn();
+        await wrapper.vm.submitCreateTask();
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({ name: routes.caseFile.task.details.name, params: { taskId: 'mock-task-id-1' } });
       });
     });
 

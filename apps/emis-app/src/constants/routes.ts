@@ -169,6 +169,10 @@ const routes = {
         path: 'task/edit/:taskType/:taskId',
         name: 'casefile.task.edit',
       },
+      details: {
+        path: 'task/:taskId',
+        name: 'casefile.task.details',
+      },
     },
   },
   events: {

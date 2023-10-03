@@ -20,6 +20,7 @@ import { mockApprovalTablesService } from '@libs/services-lib/approval-tables/en
 import { mockApprovalTablesMetadataService } from '@libs/services-lib/approval-tables/metadata/approvalsTables.mock';
 import { mockAssessmentResponsesService } from '@libs/services-lib/assessment-response/entity';
 import { mockAssessmentFormsService } from '@libs/services-lib/assessment-form/entity';
+import { mockTaskService } from '@libs/services-lib/task/entity';
 import { mockPotentialDuplicatesService } from '@libs/services-lib/potential-duplicates/entity';
 import { mockNotificationsService } from '@libs/services-lib/notifications/entity';
 import { IProviderMock } from './provider.types';
@@ -47,6 +48,7 @@ export const mockProvider = (): IProviderMock => ({
   errorReporting: mockErrorReportingService(),
   assessmentResponses: mockAssessmentResponsesService(),
   assessmentForms: mockAssessmentFormsService(),
+  task: mockTaskService(),
   potentialDuplicates: mockPotentialDuplicatesService(),
   notifications: mockNotificationsService(),
 });

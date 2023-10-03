@@ -43,8 +43,8 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
     return this.http.patch(`/team/teams/${teamId}/empty-team`);
   }
 
-  async getEscalationTeam(eventId: uuid): Promise<ITeamEntity> {
-    return this.http.get(`team/teams/events/${eventId}/escalation`);
+  async getTeamsByEvent(eventId: uuid, teamIds = ''): Promise<ITeamEntity[]> {
+    return this.http.get(`team/teams/teams-by-event/${eventId}/`, { params: { teamIds } });
   }
 
   private teamToEditTeamRequestPayload(team: ITeamEntity) {

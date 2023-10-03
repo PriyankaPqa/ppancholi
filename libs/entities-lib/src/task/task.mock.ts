@@ -1,7 +1,7 @@
 import { mockUserL6 } from '../user';
 import { mockTeamsDataAddHoc } from '../team';
-import { IEntity, mockBaseData } from '../base';
-import { ITaskEntity, ITaskEntityData, ITaskHistoryItem, TaskActionTaken, TaskStatus, TaskType } from './task.types';
+import { IEntity, mockBaseData, mockBaseMetadata } from '../base';
+import { ITaskEntity, ITaskEntityData, ITaskHistoryItem, ITaskMetadata, TaskActionTaken, TaskStatus, TaskType } from './task.types';
 
 const mockBaseTaskEntityData = (force? : Partial<IEntity>): ITaskEntityData => ({
   ...mockBaseData(),
@@ -20,7 +20,7 @@ const mockBaseTaskEntityData = (force? : Partial<IEntity>): ITaskEntityData => (
   assignedTeamId: 'mock-team-id-1',
   taskStatus: TaskStatus.InProgress,
   taskType: null,
-  dateAdded: '2020-02-01T00:04:55Z',
+  dateAdded: '2020-02-01T00:00:00Z',
   dueDate: '',
   taskHistory: [],
   ...force,
@@ -60,6 +60,16 @@ export const mockPersonalTaskEntity = (force? : Partial<IEntity>): ITaskEntityDa
 export const mockTaskEntities = (): ITaskEntity[] => [
   mockTeamTaskEntity({ id: '1' }),
   mockPersonalTaskEntity({ id: '2' }),
+];
+
+export const mockTaskMetadata = (force? : Partial<IEntity>): ITaskMetadata => ({
+  ...mockBaseMetadata(),
+  caseFileNmuber: 'mock-case-file-number-1',
+  ...force,
+});
+
+export const mockTaskMetadatum = (force? : Partial<IEntity>): ITaskMetadata[] => [
+  mockTaskMetadata(force),
 ];
 
 export const mockTaskHistory = (): ITaskHistoryItem[] => ([

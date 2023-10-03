@@ -4,13 +4,14 @@ import { mockHttp } from '../../http-client';
 
 const http = mockHttp();
 
-describe('>>> Teams Service', () => {
+describe('>>> Tasks Service', () => {
     const service = new TaskService(http as never);
 
   test('createTask is linked to the correct URL', async () => {
-    const payload = mockTeamTaskEntity();
-    await service.createTask(payload);
-    expect(http.post).toHaveBeenCalledWith('/case-file/tasks', payload, { globalHandler: false });
+    const entity = mockTeamTaskEntity();
+    entity.caseFileId = 'mock-case-file-id-1';
+    await service.createTask(entity);
+    expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks', entity, { globalHandler: false });
   });
 
   test('editTask is linked to the correct URL', async () => {

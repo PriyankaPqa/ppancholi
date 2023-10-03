@@ -13,5 +13,5 @@ export const mockTeamsService = (): ITeamsServiceMock => ({
   removeTeamMember: jest.fn(() => mockTeamEntity()),
   emptyTeam: jest.fn(() => mockTeamEntity()),
   getTeamsAssigned: jest.fn(() => [mockTeamEntity()]),
-  getEscalationTeam: jest.fn(() => mockTeamEntity()),
+  getTeamsByEvent: jest.fn(() => [mockTeamEntity()]),
 });

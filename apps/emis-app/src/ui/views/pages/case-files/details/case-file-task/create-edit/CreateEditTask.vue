@@ -52,7 +52,6 @@ import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError
 import caseFileTask from '@/ui/mixins/caseFileTask';
 import TeamTaskForm from '@/ui/views/pages/case-files/details/case-file-task/create-edit/TeamTaskForm.vue';
 import PersonalTaskForm from '@/ui/views/pages/case-files/details/case-file-task/create-edit/PersonalTaskForm.vue';
-import { ITeamEntity } from '@libs/entities-lib/team';
 
 export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask).extend({
   name: 'CreateEditTask',
@@ -170,9 +169,8 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
             : this.$t('task.personal_task_created');
 
           this.$toasted.global.success(message);
+          await this.$router.replace({ name: routes.caseFile.task.details.name, params: { taskId: res.id } });
         }
-
-        // TODO router jump to task details
 
         this.resetFormValidation();
       } catch (e) {
@@ -226,17 +224,19 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     },
 
     async fetchEscalationTeamAndSetTeamId() {
-      const escalationTeam: ITeamEntity = await this.$services.teams.getEscalationTeam(this.caseFile.eventId);
-      if (escalationTeam) {
-        this.assignedTeamName = escalationTeam.name;
-        this.task.assignedTeamId = escalationTeam.id;
+      const teamsOfEvent = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId);
+      if (teamsOfEvent) {
+        const escalationTeam = teamsOfEvent.filter((t) => t.isEscalation)[0];
+        this.assignedTeamName = escalationTeam?.name;
+        this.task.assignedTeamId = escalationTeam?.id;
       }
     },
 
     async loadTask() {
-      if (this.taskId) {
-        await useTaskStore().fetch(this.taskId);
-      }
+      // TODO complete this function in Edit Task
+      // if (this.taskId) {
+      //   await useTaskStore().fetch(this.taskId);
+      // }
       // const storeTaskEntityData = _cloneDeep(useTaskStore().getById(this.taskId));
       // this.task = new TaskEntity(storeTaskEntityData);
       // this.backupTask = new TaskEntity(storeTaskEntityData);

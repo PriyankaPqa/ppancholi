@@ -33,6 +33,7 @@ export function getExtensionComponents(
     try {
       const res = await entityService.createTask(task);
       if (res) {
+        baseComponents.addNewlyCreatedId(res);
         baseComponents.set(res);
       }
       return res;
