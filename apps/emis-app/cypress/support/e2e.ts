@@ -32,9 +32,9 @@ slowCypressDown();
 Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStatus, forceReload = true, maxRetries = 40) => {
   let retries = 0;
 
-  function reload() {
+  function reload(waitTime = 20000) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(6000); // Needed so we make sure we are on details page to reload
+    cy.wait(waitTime); // Needed so we make sure we are on details page to reload
     cy.reload(); // We reload to make sure mass action metadata endpoint will be called
   }
 
@@ -64,13 +64,13 @@ Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStat
           await handleRetry();
         } else {
           cy.log(`Mass action has status ${MassActionRunStatus[expectedStatus]}`);
-          reload();
+          reload(5000);
         }
       }
     });
   }
   if (forceReload) {
-    reload();
+    reload(5000);
   }
 
   interceptAndRetry();

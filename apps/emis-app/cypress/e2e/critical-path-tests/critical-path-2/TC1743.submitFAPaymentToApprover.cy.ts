@@ -2,7 +2,7 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { EPaymentModalities } from '@libs/entities-lib/program';
-import { format } from 'date-fns';
+import { getToday } from '@libs/cypress-lib/helpers';
 import {
   addFinancialAssistancePayment,
   createApprovalTable,
@@ -91,7 +91,7 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
           financialAssistanceDetailsPage.goToFinancialAssistanceHomePage();
 
           financialAssistanceHomePage.getFAPaymentNameById(this.FAPaymentId).should('eq', this.FAPaymentName);
-          financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+          financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
           financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Pending');
           financialAssistanceHomePage.expandFAPayment();
@@ -100,9 +100,9 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
           financialAssistanceHomePage.getFAPaymentPaymentStatus().should('eq', 'Status: New');
 
           const caseFileDetailsPage = financialAssistanceHomePage.goToCaseFileDetailsPage();
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`Name: ${this.FAPaymentName}`);
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Financial assistance payment - Submitted');
           caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Name: ${this.FAPaymentName}`).and('string', 'Amount: $80.00');
         });

@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 /**
  * Split a date string into year, month(1-12) and day.
  */
@@ -23,10 +25,19 @@ export function formatDate(date: string) {
 }
 
 /**
- * output format example: May 30, 2023
+ * Format a current date in the format
+ * @param toFormat - format type, default: PPp
+ * @returns {string} - Formatted date string
  */
-export function formatCurrentDate() {
-  const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  return formattedDate;
+export function getToday(toFormat = 'PP'): string {
+  return format(Date.now(), toFormat);
+}
+
+/**
+ * Format a date in the given format
+ * @param toFormat - format type, default: PPp
+ * @returns {string} - Formatted date string
+ */
+export function returnDateInFormat(date: string, toFormat = 'PPp'): string {
+  return format(new Date(date), toFormat);
 }

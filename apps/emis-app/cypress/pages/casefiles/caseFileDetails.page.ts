@@ -1,5 +1,3 @@
-import { formatDate } from '@libs/cypress-lib/helpers';
-
 export enum DataTest {
   caseFileActivityTitle = 'caseFileActivity-listItem-content-title',
   caseFileActivityBody = 'caseFileActivity-listItem-content-body',
@@ -55,7 +53,7 @@ export class CaseFileDetailsPage {
   }
 
   public getCaseFileActivityLogDate(index = 0) {
-    return cy.getByDataTest(this.dateCreated).eq(index).invoke('text').then((date) => formatDate(date));
+    return cy.getByDataTest(this.dateCreated).eq(index);
   }
 
   public getCaseFileActivityTitle(index = 0) {
@@ -88,5 +86,19 @@ export class CaseFileDetailsPage {
 
   public goToFinancialAssistanceHomePage() {
     return cy.getByDataTest(this.financialAssistance).click();
+  }
+
+  public waitAndRefreshUntilCaseFileActivityVisibleWithBody(expectedCaseFileActivityBody: string) {
+    cy.waitAndRefreshUntilConditions(
+      {
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        visibilityCondition: () => cy.contains('Case file activity').should('be.visible').wait(2000),
+        checkCondition: () => Cypress.$("[data-test='caseFileActivity-listItem-content-body']").text().includes(expectedCaseFileActivityBody),
+      },
+      {
+        errorMsg: 'Failed to find case file activity',
+        foundMsg: 'Case file Activity visible',
+      },
+    );
   }
 }

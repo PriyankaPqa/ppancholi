@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { formatCurrentDate } from '@libs/cypress-lib/helpers';
+import { getToday } from '@libs/cypress-lib/helpers';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -93,7 +93,7 @@ describe('#TC1829# - Pre-process a Financial Assistance custom file', { tags: ['
           massFinancialAssistanceDetailsPage.getMassActionName().should('eq', baseMassActionData.name);
           massFinancialAssistanceDetailsPage.getMassActionDescription().should('eq', baseMassActionData.description);
           massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Mass financial assistance - custom options');
-          massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', formatCurrentDate());
+          massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', getToday());
           massFinancialAssistanceDetailsPage.verifyAndGetMassActionCreatedBy().should('eq', getUserName(roleName));
         });
       });

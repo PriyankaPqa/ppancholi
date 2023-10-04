@@ -113,31 +113,24 @@ export enum DataTest {
       return new FinancialAssistanceDetailsPage();
     }
 
-    public refreshUntilApproverSupervisorVisible(faPaymentId: string, maxRetries = 5) {
-      let retries = 0;
-      const waitForApproverList = () => {
-        this.getSelectSupervisorField().should('be.visible').then(() => {
-          if (Cypress.$("div[data-test='approval_action_supervisor']").length) {
-            cy.log('Approver supervisor loading success');
-          } else {
-            retries += 1;
-            if (retries <= maxRetries) {
-              // eslint-disable-next-line cypress/no-unnecessary-waiting
-              cy.wait(10000).then(() => {
-                cy.reload().then(() => {
-                  cy.contains('Pending requests').should('be.visible');
-                  this.clickActionsButtonByPaymentId(faPaymentId);
-                  this.checkApprovalActionRequestApproved();
-                  waitForApproverList();
-                });
-              });
-            } else {
-              throw new Error(`Failed to find approver supervisor after ${maxRetries} retries.`);
-            }
-          }
-        });
-      };
-      waitForApproverList();
+    public refreshUntilApproverSupervisorVisible(faPaymentId: string) {
+      cy.waitAndRefreshUntilConditions(
+        {
+          visibilityCondition: () => this.getSelectSupervisorField().should('be.visible'),
+          checkCondition: () => Cypress.$("div[data-test='approval_action_supervisor']").length > 0,
+          actionsAfterReload: () => {
+            cy.contains('Pending requests').should('be.visible');
+            this.clickActionsButtonByPaymentId(faPaymentId);
+            this.checkApprovalActionRequestApproved();
+          },
+        },
+        {
+          timeoutInSec: 5,
+          intervalInSec: 10,
+          errorMsg: 'Failed to find approver supervisor',
+          foundMsg: 'Approver supervisor found',
+        },
+      );
     }
 
     public getActionsButtonByPaymentId(faPaymentId: string) {
@@ -172,7 +165,7 @@ export enum DataTest {
       return cy.getByDataTest(this.pageTitle);
     }
 
-    public searchPendingApprovalRequestsUsingCaseFileNumber(caseFile: string) {
-      return cy.getByDataTest(this.searchField).type(caseFile);
+    public searchApprovalTableFor(caseFileNumber: string, faPaymentId: string) {
+      cy.typeAndWaitUntilSearchResultsVisible(caseFileNumber, DataTest.searchField, `${DataTest.faPaymentLink}${faPaymentId}`);
     }
   }

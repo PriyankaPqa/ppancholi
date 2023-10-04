@@ -3,7 +3,7 @@
   import { ICaseFileEntity } from '@libs/entities-lib/case-file';
   import { IProgramEntity } from '@libs/entities-lib/program';
   import { IAssessmentFormEntity } from '@libs/entities-lib/assessment-template';
-  import { formatCurrentDate } from '@libs/cypress-lib/helpers';
+  import { getToday } from '@libs/cypress-lib/helpers';
   import { prepareStateHousehold, createAssessment, prepareStateEventAndProgram } from '../../helpers/prepareState';
   import { removeTeamMembersFromTeam } from '../../helpers/teams';
   import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
@@ -78,7 +78,7 @@
             cy.contains('The assessment was assigned').should('be.visible');
 
             assessmentsListPage.getPendingAssessmentTable().contains(`${assessment.name.translation.en}`).should('be.visible');
-            assessmentsListPage.getPendingAssessmentTable().contains(formatCurrentDate()).should('be.visible');
+            assessmentsListPage.getPendingAssessmentTable().contains(getToday()).should('be.visible');
             assessmentsListPage.getAssessmentStatusTag().should('eq', 'Pending');
             assessmentsListPage.getAssessmentStartButton().should('be.visible');
 

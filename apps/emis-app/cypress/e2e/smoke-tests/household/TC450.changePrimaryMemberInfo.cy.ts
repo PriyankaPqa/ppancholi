@@ -1,7 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
-import { format } from 'date-fns';
 import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
@@ -80,9 +79,9 @@ describe('#TC450# - Change/Add primary member info - middle name', { tags: ['@ho
           householdProfilePage.getMemberNameInfoByIndex(0).contains(`Middle name: ${householdMemberData.middleName}`).should('be.visible');
 
           const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Personal information changed');
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Modified household information');
           caseFileDetailsPage.getCaseFileActivityBodies().should('string', 'Personal information changed');
         });

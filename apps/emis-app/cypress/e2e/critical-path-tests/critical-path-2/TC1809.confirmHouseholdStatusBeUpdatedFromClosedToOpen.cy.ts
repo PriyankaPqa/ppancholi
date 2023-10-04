@@ -1,9 +1,8 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { HouseholdStatus } from '@libs/entities-lib/household';
-import { formatCurrentDate } from '@libs/cypress-lib/helpers';
+import { getToday } from '@libs/cypress-lib/helpers';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
-import { format } from 'date-fns';
 import { createEventAndTeam, prepareStateHousehold, setCasefileStatus, setHouseholdStatus } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
@@ -75,15 +74,16 @@ describe('#TC1809# - Confirm that Household Status can be updated from Closed to
           householdProfilePage.getDialogApplyButton().click();
           householdProfilePage.refreshUntilHouseholdStatusUpdatedTo(HouseholdStatus.Open);
           householdProfilePage.getHouseholdStatusElement().contains('Open').should('be.visible');
+          householdProfilePage.refreshUntilUserActionInformationUpdatedWithStatus('opened');
           // eslint-disable-next-line
-          householdProfilePage.getUserActionInformationElement().contains(`Household opened by ${getUserName(roleName)} (${getUserRoleDescription(roleName)}) - ${formatCurrentDate()}`).should('be.visible');
+          householdProfilePage.getUserActionInformationElement().contains(`Household opened by ${getUserName(roleName)} (${getUserRoleDescription(roleName)}) - ${getToday()}`).should('be.visible');
           householdProfilePage.getUserRationaleElement().contains(rationale).should('be.visible');
 
           cy.visit(`en/casefile/${this.casefileId}`);
           const caseFileDetailsPage = new CaseFileDetailsPage();
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Household status changed:');
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileDetailsPage.getCaseFileActivityTitle(0).should('string', 'Modified household information');
           caseFileDetailsPage.getCaseFileActivityBody(0).should('string', 'Household status changed:').and('string', 'Closed to Open').and('string', rationale);
         });

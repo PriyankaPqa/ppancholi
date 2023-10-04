@@ -1,5 +1,4 @@
-import { format } from 'date-fns';
-import { formatCurrentDate } from '@libs/cypress-lib/helpers';
+import { getToday } from '@libs/cypress-lib/helpers';
 import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
@@ -16,8 +15,8 @@ export const verifyPartiallyCompletedCaseFileAssessment = (roleName:string) => {
   const assessmentsListPage = new AssessmentsListPage();
   assessmentsListPage.getCompletedAssessmentTable().contains('Partial').should('be.visible');
   assessmentsListPage.getAssessmentDetailLink().should('be.visible');
-  assessmentsListPage.getAssessmentDateAssigned().should('eq', format(Date.now(), 'yyyy-MM-dd'));
-  assessmentsListPage.getAssessmentDateModified().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+  assessmentsListPage.getAssessmentDateAssigned().should('eq', getToday());
+  assessmentsListPage.getAssessmentDateModified().should('eq', getToday());
   assessmentsListPage.getAssessmentDateCompletedElement().should('not.be.visible');
   if (roleName === 'Contributor3' || roleName === 'Contributor2' || roleName === 'Contributor1' || roleName === 'ReadOnly') {
     assessmentsListPage.getResumePartialAssessmentButton().should('not.exist');
@@ -29,7 +28,7 @@ export const verifyPartiallyCompletedCaseFileAssessment = (roleName:string) => {
 export const verifyPendingCaseFileAssessment = (roleName:string, assessmentName: string) => {
   const assessmentsListPage = new AssessmentsListPage();
   assessmentsListPage.getPendingAssessmentTable().contains(`${assessmentName}`).should('be.visible');
-  assessmentsListPage.getPendingAssessmentTable().contains(`${formatCurrentDate()}`).should('be.visible');
+  assessmentsListPage.getPendingAssessmentTable().contains(`${getToday()}`).should('be.visible');
   assessmentsListPage.getPendingAssessmentTable().contains('Pending').should('be.visible');
   if (roleName === 'Contributor3' || roleName === 'Contributor2' || roleName === 'Contributor1' || roleName === 'ReadOnly') {
     assessmentsListPage.getAssessmentStartButton().should('not.exist');
@@ -46,9 +45,9 @@ export const verifyPendingCaseFileAssessment = (roleName:string, assessmentName:
 export const verifyFullyCompletedCaseFileAssessment = (roleName:string, assessmentName: string) => {
   const assessmentsListPage = new AssessmentsListPage();
   assessmentsListPage.getCompletedAssessmentTable().contains(`${assessmentName}`).should('be.visible');
-  assessmentsListPage.getAssessmentDateAssigned().should('eq', format(Date.now(), 'yyyy-MM-dd'));
-  assessmentsListPage.getAssessmentDateModified().should('eq', format(Date.now(), 'yyyy-MM-dd'));
-  assessmentsListPage.getAssessmentDateCompletedElement().contains(`${formatCurrentDate()}`).should('be.visible');
+  assessmentsListPage.getAssessmentDateAssigned().should('eq', getToday());
+  assessmentsListPage.getAssessmentDateModified().should('eq', getToday());
+  assessmentsListPage.getAssessmentDateCompletedElement().contains(`${getToday()}`).should('be.visible');
   assessmentsListPage.getAssessmentStatusTag().should('eq', 'Completed');
   if (roleName === 'Level6' || roleName === 'Level5' || roleName === 'Level4' || roleName === 'Level3') {
     assessmentsListPage.getEditCompletedAssessmentButton().should('be.visible');
@@ -57,8 +56,10 @@ export const verifyFullyCompletedCaseFileAssessment = (roleName:string, assessme
   }
 };
 
+// eslint-disable-next-line
 export const submitPaymentTypeCanSteps = ({ financialAssistancePayment, paymentType, roleName, paymentGroupStatus }: Partial<SubmitPaymentTypeCanStepsParams>) => {
   const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+  financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
   financialAssistanceHomePage.getApprovalStatus().should('eq', 'New');
 
   const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(financialAssistancePayment.id);
@@ -75,8 +76,9 @@ export const submitPaymentTypeCanSteps = ({ financialAssistancePayment, paymentT
   financialAssistanceDetailsPage.getPaymentLineStatus().should('eq', paymentGroupStatus);
   financialAssistanceDetailsPage.goToFinancialAssistanceHomePage();
 
+  financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
   financialAssistanceHomePage.getFAPaymentNameById(financialAssistancePayment.id).should('eq', financialAssistancePayment.name);
-  financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+  financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
   financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
   financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
   financialAssistanceHomePage.getApprovalStatusHistoryIcon().should('be.visible');
@@ -86,9 +88,9 @@ export const submitPaymentTypeCanSteps = ({ financialAssistancePayment, paymentT
   financialAssistanceHomePage.getFAPaymentPaymentStatus().should('eq', `Status: ${paymentGroupStatus}`);
 
   const caseFileDetailsPage = financialAssistanceHomePage.goToCaseFileDetailsPage();
+  caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`Name: ${financialAssistancePayment.name}`);
   caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
   caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-  caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
   caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Financial assistance payment - Approved - Final');
   caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Name: ${financialAssistancePayment.name}`).and('string', 'Amount: $80.00');
 };

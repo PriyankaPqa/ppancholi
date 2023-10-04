@@ -108,7 +108,7 @@ describe('#TC1110# - Register Beneficiary for Event', { tags: ['@registration'] 
           confirmBeneficiaryRegistrationPage.getNewRegistrationButton().should('be.visible');
 
           const caseFilesHomePage = confirmBeneficiaryRegistrationPage.goToCaseFiles();
-          caseFilesHomePage.getCaseFileTable().should('be.visible');
+          caseFilesHomePage.refreshUntilCaseFilesUpdated(`${roleName}${primaryMemberData.firstName} ${primaryMemberData.lastName}`);
           cy.contains(`${roleName}${primaryMemberData.firstName} ${primaryMemberData.lastName}`).should('be.visible');
         });
       });

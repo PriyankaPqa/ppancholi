@@ -62,6 +62,21 @@ declare global {
       waitUntilTableFullyLoaded(tableDataTest: string): Chainable<void>
       getAndTrimText(): Chainable<string>
       interceptAndRetryUntilNoMoreStatus(url: string | RegExp, statusCode: number, maxRetries?: number): Chainable<string>
+      // eslint-disable-next-line
+      typeAndWaitUntilSearchResultsVisible(searchString: string, dataTestSearchField: string, dataTestSearchResult:string, opts?: { timeout: number; interval: number }): Chainable<void>
+      waitAndRefreshUntilConditions(
+        conditions: {
+          visibilityCondition: () => Chainable<undefined> | Chainable<JQuery<HTMLElement>>,
+          checkCondition: () => boolean,
+          actionsAfterReload?: () => void
+        },
+        options?: {
+          timeoutInSec?: number,
+          intervalInSec?: number,
+          errorMsg?: string,
+          foundMsg?: string,
+        }
+      ): Chainable<string>
     }
   }
 }

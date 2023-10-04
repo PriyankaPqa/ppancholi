@@ -1,5 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { formatCurrentDate } from '@libs/cypress-lib/helpers';
+import { getToday } from '@libs/cypress-lib/helpers';
 import {
   prepareStateEventAndProgram,
   prepareStateHousehold,
@@ -62,8 +62,8 @@ describe('#TC1738# - Confirm that responses to a completed Case File Assessment 
           const caseFileAssessmentDetailsPage = new CaseFileAssessmentDetailsPage();
           cy.contains(this.assessmentName).should('be.visible');
           caseFileAssessmentDetailsPage.getAssessmentStatus().should('eq', 'Completed');
-          caseFileAssessmentDetailsPage.getAssessmentDateAssigned().should('eq', formatCurrentDate());
-          caseFileAssessmentDetailsPage.getAssessmentDateCompleted().should('eq', formatCurrentDate());
+          caseFileAssessmentDetailsPage.getAssessmentDateAssigned().should('eq', getToday());
+          caseFileAssessmentDetailsPage.getAssessmentDateCompleted().should('eq', getToday());
           caseFileAssessmentDetailsPage.getAssessmentCompletedBy().should('eq', 'TestDev6');
           caseFileAssessmentDetailsPage.getAssessmentFirstQuestion().should('eq', 'Do you have school aged children ?');
           caseFileAssessmentDetailsPage.getAssessmentFirstResponse().should('eq', 'No');

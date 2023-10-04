@@ -45,8 +45,8 @@ export const fixtureCallCentre = (retries: number) : IEventCallCentre => ({
       fr: "Ceci est la description française de l'événement",
     },
   },
-  startDate: format(Date.now(), 'yyyy-MM-dd'),
-  endDate: format(faker.date.future(), 'yyyy-MM-dd'),
+  startDate: format(Date.now(), 'PPp'),
+  endDate: format(faker.date.future(), 'PPp'),
   status: EEventCallCentreStatus.Active,
 });
 

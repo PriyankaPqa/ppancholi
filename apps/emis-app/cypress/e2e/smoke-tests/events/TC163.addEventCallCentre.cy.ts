@@ -1,4 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
+import { returnDateInFormat } from '@libs/cypress-lib/helpers';
 import { EventDetailsPage } from '../../../pages/events/eventDetails.page';
 import { createEventAndTeam } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -62,8 +63,8 @@ describe('#TC163# - Add Event Call Centre', { tags: ['@event'] }, () => {
           addCallCentrePage.addNewCallCentre();
 
           cy.contains(`${callCentreData.name.translation.en}${roleName}`);
-          eventDetailsPage.getCallCentreStartDate().should('string', callCentreData.startDate);
-          eventDetailsPage.getCallCentreEndDate().should('string', callCentreData.endDate);
+          eventDetailsPage.getCallCentreStartDate().should('string', returnDateInFormat(callCentreData.startDate.toString(), 'PP'));
+          eventDetailsPage.getCallCentreEndDate().should('string', returnDateInFormat(callCentreData.endDate.toString(), 'PP'));
         });
       });
     }

@@ -1,7 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { formatCurrentDate } from '@libs/cypress-lib/helpers';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
+import { getToday } from '@libs/cypress-lib/helpers';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateMultipleHouseholds } from '../../helpers/prepareState';
 import { MassFinancialAssistanceHomePage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceHome.page';
@@ -93,7 +93,7 @@ describe('#TC929# - Pre-process a Financial Assistance upload file', { tags: ['@
           massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().should('eq', `${householdQuantity}`.toString());
           massFinancialAssistanceDetailsPage.getMassActionProcessButton().should('be.visible');
           massFinancialAssistanceDetailsPage.getMassActionType().should('eq', 'Financial assistance');
-          massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', formatCurrentDate());
+          massFinancialAssistanceDetailsPage.getMassActionDateCreated().should('eq', getToday());
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsEvent().should('eq', this.event.name.translation.en);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsTable().should('eq', this.faTable.name.translation.en);
           massFinancialAssistanceDetailsPage.getMassActionPaymentDetailsProgram().should('eq', this.programName);

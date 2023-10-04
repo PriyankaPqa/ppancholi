@@ -1,5 +1,3 @@
-import { formatDate } from '@libs/cypress-lib/helpers';
-
 export enum DataTest {
   householdHistoryEditedBy = 'household_history_edited-by',
   householdHistoryLastAction = 'household_history_last-action',
@@ -31,31 +29,21 @@ export class ProfileHistoryPage {
     cy.log('Household profile is fetched');
   }
 
-  public refreshUntilHouseholdProfileReady(householdId: string, maxRetries = 10) {
-    let retries = 0;
-    const waitForElement = () => {
-      // Make sure popup is displayed
-      cy.getByDataTest(this.title).should('be.visible').then(() => {
-        if (Cypress.$("[data-test='household_history_edited-by']").length) {
-          cy.log('history loading success');
-        } else {
-          retries += 1;
-          if (retries <= maxRetries) {
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(2000).then(() => { // We wait for 2 seconds to pause the retries
-              cy.reload().then(() => {
-                this.waitFetchHouseholdProfileData(householdId);
-                cy.get("[data-test='household-profile-history-btn']").should('be.visible').click();
-                waitForElement();
-              });
-            });
-          } else {
-            throw new Error(`Failed to find element after ${maxRetries} retries.`);
-          }
-        }
-      });
-    };
-    waitForElement();
+  public refreshUntilHouseholdProfileReady(householdId: string) {
+    cy.waitAndRefreshUntilConditions(
+      {
+        visibilityCondition: () => cy.getByDataTest(this.title).should('be.visible'),
+        checkCondition: () => Cypress.$("[data-test='household_history_edited-by']").length > 0,
+        actionsAfterReload: () => {
+          this.waitFetchHouseholdProfileData(householdId);
+          cy.get("[data-test='household-profile-history-btn']").should('be.visible').click();
+        },
+      },
+      {
+        errorMsg: 'Failed to find element',
+        foundMsg: 'History loading success',
+      },
+    );
   }
 
   public getHouseholdHistoryEditedBy() {
@@ -63,7 +51,7 @@ export class ProfileHistoryPage {
   }
 
   public getHouseholdHistoryChangeDate() {
-    return cy.getByDataTest(this.householdHistoryChangeDate).invoke('text').then((date) => formatDate(date));
+    return cy.getByDataTest(this.householdHistoryChangeDate).getAndTrimText();
   }
 
   public getHouseholdHistoryLastAction() {

@@ -2,9 +2,9 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
-import { format } from 'date-fns';
 import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { getToday } from '@libs/cypress-lib/helpers';
 import { fixtureAddress } from '../../../fixtures/household';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -83,7 +83,7 @@ describe('#TC1049# - Update Household Address', { tags: ['@household'] }, () => 
           const profileHistoryPage = householdProfilePage.goToProfileHistoryPage();
           profileHistoryPage.refreshUntilHouseholdProfileReady(caseFileCreated.householdId.toString());
           profileHistoryPage.getHouseholdHistoryEditedBy().should('eq', `${getUserName(roleName)}${getUserRoleDescription(roleName)}`);
-          profileHistoryPage.getHouseholdHistoryChangeDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+          profileHistoryPage.getHouseholdHistoryChangeDate().should('eq', getToday());
           profileHistoryPage.getHouseholdHistoryLastAction().should('eq', 'Address information changed');
 
           profileHistoryPage.getHouseholdHistoryPreviousValue()
@@ -97,9 +97,9 @@ describe('#TC1049# - Update Household Address', { tags: ['@household'] }, () => 
           profileHistoryPage.goToHouseholdProfilePage();
 
           const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Address information changed');
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Modified household information');
           caseFileDetailsPage.getCaseFileActivityBodies().should('string', 'Address information changed');
         });

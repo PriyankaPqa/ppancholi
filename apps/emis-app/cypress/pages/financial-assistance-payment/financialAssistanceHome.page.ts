@@ -1,4 +1,3 @@
-import { formatDate } from '@libs/cypress-lib/helpers';
 import { FinancialAssistanceDetailsPage } from './financialAssistanceDetails.page';
 import { CaseFileDetailsPage } from '../casefiles/caseFileDetails.page';
 
@@ -12,6 +11,7 @@ export enum DataTest {
   groupPaymentStatus = 'caseFile-financialAssistance-expand-groupPaymentStatus',
   caseFileDetails = 'item-text-0',
   faHistory = 'history-link',
+  addFaPayment = 'table__addButton',
 }
 
 export class FinancialAssistanceHomePage {
@@ -32,6 +32,8 @@ export class FinancialAssistanceHomePage {
   private faPayment = { selector: DataTest.faPayment };
 
   private faHistory = { selector: DataTest.faHistory };
+
+  private addFaPayment = { selector: DataTest.addFaPayment };
 
   public getFAPaymentById(financialAssistancePaymentId: string) {
     cy.getByDataTest({ selector: `${DataTest.faPayment}${financialAssistancePaymentId}` }).click();
@@ -56,7 +58,7 @@ export class FinancialAssistanceHomePage {
   }
 
   public getFAPaymentCreatedDate() {
-    return cy.getByDataTest(this.createdDate).invoke('text').then((date) => formatDate(date));
+    return cy.getByDataTest(this.createdDate).getAndTrimText();
   }
 
   public getFAPaymentAmount() {
@@ -86,5 +88,22 @@ export class FinancialAssistanceHomePage {
 
   public getApprovalStatusHistoryIcon() {
     return cy.getByDataTest(this.faHistory);
+  }
+
+  public getAddFaPaymentButton() {
+    return cy.getByDataTest(this.addFaPayment);
+  }
+
+  public refreshUntilFaPaymentDisplayedWithTotal(faPaymentTotal: string) {
+    cy.waitAndRefreshUntilConditions(
+      {
+        visibilityCondition: () => this.getAddFaPaymentButton().should('be.visible'),
+        checkCondition: () => Cypress.$("[data-test='fap_total']").text().includes(faPaymentTotal),
+      },
+      {
+        errorMsg: 'Unable to display update FA Payment',
+        foundMsg: 'FA Payment updated',
+      },
+    );
   }
 }

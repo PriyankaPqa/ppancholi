@@ -39,4 +39,17 @@ export class CaseFilesHomePage {
   public getCaseFileTable() {
     return cy.getByDataTest(this.caseFileTable);
   }
+
+  public refreshUntilCaseFilesUpdated(beneficiaryName: string) {
+    cy.waitAndRefreshUntilConditions(
+      {
+        visibilityCondition: () => this.getCaseFileTable().should('be.visible'),
+        checkCondition: () => Cypress.$(`[data-test='beneficiaryName-link_${beneficiaryName}']`).length > 0,
+      },
+      {
+        errorMsg: 'Failed to update Case Files',
+        foundMsg: 'Case File updated',
+      },
+    );
+  }
 }

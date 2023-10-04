@@ -136,6 +136,7 @@ describe('#TC498# - Split Household', { tags: ['@household'] }, () => {
           householdProfilePage.getFullNameOfMemberByIndex(2).should('string', nameSecondMember);
 
           const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Individual(s) split');
           cy.get('@registrationNumber').then((registrationNumber) => {
             caseFileDetailsPage.getCaseFileActivityTitles()
               .should('string', `Household member(s) split from Household #${registrationNumber}`)

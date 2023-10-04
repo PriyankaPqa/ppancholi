@@ -1,6 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { format } from 'date-fns';
+import { getToday } from '@libs/cypress-lib/helpers';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createProgramWithTableWithItemAndSubItem, createEventAndTeam, prepareStateMassActionFinancialAssistanceCustomFile } from '../../helpers/prepareState';
@@ -86,7 +86,7 @@ describe('#TC1830# - Process a Financial Assistance custom file', { tags: ['@fin
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // avoiding dependency cycle error
           financialAssistanceHomePage.getFAPaymentName().should('string', `${this.programName} - Clothing`);
-          financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+          financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
           financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
           financialAssistanceHomePage.expandFAPayment();

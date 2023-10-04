@@ -140,3 +140,69 @@ Cypress.Commands.add('searchAndSelect', (dataTest: string, searchString: string,
 Cypress.Commands.add('waitUntilTableFullyLoaded', (tableDataTest) => {
   cy.get(`[data-test="${tableDataTest}_refresh_button"]`).should('be.visible');
 });
+
+/**
+ Custom Cypress command that types a search string into the associated search field, and selects a corresponding element in the table that matches the search string.
+ @param {string} searchString - The string typed into the search field and used to select the corresponding element in the table.
+ @param {string} dataTestSearchField - The data-test attribute value of the search field
+ @param {string} dataTestSearchResult - The data-test attribute value of the element we expect to find as a result of search operation.
+ @param {Object} [opts] - Optional object with timeout and interval properties.
+ @param {number} [opts.timeout=20000] - The maximum amount of time in milliseconds to wait for the option to be displayed.
+ @param {number} [opts.interval=4000] - The amount of time in milliseconds to wait between retry attempts to find the option.
+ @throws Will throw an error if the element cannot be found after the maximum number of retries has been reached.
+ @returns {void}
+ */
+Cypress.Commands.add('typeAndWaitUntilSearchResultsVisible', (searchString, dataTestSearchField, dataTestSearchResult, opts = { timeout: 40000, interval: 2000 }) => {
+  let retries = Math.floor(opts.timeout / opts.interval);
+  const searchResultElementSelector = `[data-test=${dataTestSearchResult}]`;
+
+  const search = () => {
+    if (retries < 1) {
+      throw Error(`${searchString} was not found after ${retries}`);
+    }
+
+    cy.getByDataTest({
+      selector: dataTestSearchField,
+      type: 'input',
+    })
+      .clear({ force: true })
+      .type(searchString, { force: true });
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(opts.interval)
+      .then(() => {
+        if (Cypress.$(searchResultElementSelector).length) {
+          cy.log('Search operation successful');
+        } else {
+          retries -= 1;
+          search();
+        }
+      });
+  };
+  search();
+});
+
+// eslint-disable-next-line vue/max-len
+Cypress.Commands.add('waitAndRefreshUntilConditions', ({ visibilityCondition, checkCondition, actionsAfterReload = () => {} }, { timeoutInSec = 30, intervalInSec = 2, errorMsg = 'Timeout: Failed to meet the conditions', foundMsg = 'Condition met' }) => {
+  const timeout = timeoutInSec * 1000;
+  const interval = intervalInSec * 1000;
+  let retries = Math.floor(timeout / interval);
+
+  const waitForConditions = () => {
+    visibilityCondition().then(() => {
+      if (checkCondition()) {
+        cy.log(foundMsg);
+      } else if (retries > 0) {
+        cy.wait(interval).then(() => {
+          cy.reload().then(() => {
+            actionsAfterReload();
+            retries -= 1;
+            waitForConditions();
+          });
+        });
+      } else {
+        throw new Error(`${errorMsg} after ${timeoutInSec}s`);
+      }
+    });
+  };
+  waitForConditions();
+});

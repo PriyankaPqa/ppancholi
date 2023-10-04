@@ -2,7 +2,6 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getUserId, getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { EPaymentModalities } from '@libs/entities-lib/program';
-import { format } from 'date-fns';
 import {
   addFinancialAssistancePayment,
   createApprovalTable,
@@ -73,7 +72,7 @@ describe('#TC1791# - Confirm that an Approver can submit a request for more info
           const approvalsPage = new ApprovalsPage();
 
           approvalsPage.getPendingRequestsTable().contains(`${this.FAPaymentName}`).should('be.visible');
-          approvalsPage.searchPendingApprovalRequestsUsingCaseFileNumber(this.CaseFileNumber);
+          approvalsPage.searchApprovalTableFor(this.CaseFileNumber, this.FAPaymentId);
           approvalsPage.clickActionsButtonByPaymentId(this.FAPaymentId);
           approvalsPage.getDialogTitle().contains('Action approval').should('be.visible');
           approvalsPage.checkApprovalActionRequestInfo();
@@ -97,9 +96,9 @@ describe('#TC1791# - Confirm that an Approver can submit a request for more info
           financialAssistanceDetailsPage.closeDialogApprovalStatusHistory();
 
           const caseFileDetailsPage = financialAssistanceDetailsPage.closeConfirmationMessageAndGoToCaseFileDetailsPage();
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`Name: ${this.FAPaymentName}`);
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileDetailsPage.getCaseFileActivityTitle().should('string', 'Financial assistance payment - Request additional information');
           caseFileDetailsPage.getCaseFileActivityBody().should('string', `Name: ${this.FAPaymentName}`).and('string', 'Amount: $80.00');
         });

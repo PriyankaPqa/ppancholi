@@ -2,8 +2,8 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { EFinancialAmountModes, IFinancialAssistanceTableEntity } from '@libs/entities-lib/financial-assistance';
 import { IProgramEntity } from '@libs/entities-lib/program';
-import { format } from 'date-fns';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
+import { getToday } from '@libs/cypress-lib/helpers';
 import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateHouseholdMassFinancialAssistance } from '../../helpers/prepareState';
@@ -96,7 +96,7 @@ describe(
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // initialising to avoid dependency cycle
           financialAssistanceHomePage.getFAPaymentName().should('eq', massFinancialAssistanceName);
-          financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+          financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
           financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
           financialAssistanceHomePage.expandFAPayment();

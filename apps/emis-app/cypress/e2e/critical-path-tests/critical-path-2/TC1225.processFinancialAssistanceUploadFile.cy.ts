@@ -1,7 +1,7 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
-import { format } from 'date-fns';
 import { MassActionRunStatus } from '@libs/entities-lib/mass-action';
+import { getToday } from '@libs/cypress-lib/helpers';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { createEventAndTeam, createProgramWithTableWithItemAndSubItem, prepareStateMassActionFinancialAssistanceUploadFile } from '../../helpers/prepareState';
 import { MassFinancialAssistanceDetailsPage } from '../../../pages/mass-action/mass-financial-assistance/massFinancialAssistanceDetails.page';
@@ -85,7 +85,7 @@ describe('#TC1225# - Process a Financial Assistance upload file', { tags: ['@fin
 
           const financialAssistanceHomePage = new FinancialAssistanceHomePage(); // avoiding dependency cycle error
           financialAssistanceHomePage.getFAPaymentName().should('eq', this.massFinancialAssistanceName);
-          financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+          financialAssistanceHomePage.getFAPaymentCreatedDate().should('eq', getToday());
           financialAssistanceHomePage.getFAPaymentAmount().should('eq', '$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
           financialAssistanceHomePage.expandFAPayment();

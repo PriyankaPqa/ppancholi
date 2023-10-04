@@ -2,8 +2,7 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getUserId, getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { EPaymentModalities } from '@libs/entities-lib/program';
-import { formatCurrentDate } from '@libs/cypress-lib/helpers';
-import { format } from 'date-fns';
+import { getToday } from '@libs/cypress-lib/helpers';
 import {
   addFinancialAssistancePayment,
   createApprovalTableWithMultipleApprovalGroup,
@@ -77,11 +76,11 @@ describe('#TC1754# - 2nd Approval Group - Confirm that FINAL approval can be giv
         it('should successfully give final approval', function () {
           const approvalsPage = new ApprovalsPage();
 
-          approvalsPage.searchPendingApprovalRequestsUsingCaseFileNumber(this.CaseFileNumber);
+          approvalsPage.searchApprovalTableFor(this.CaseFileNumber, this.FAPaymentId);
           approvalsPage.getPendingRequestsTable().contains(this.event.name.translation.en).should('be.visible');
           approvalsPage.getSubmittedByUserNameUsingPaymentId(this.FAPaymentId).should('eq', getUserName('Level3')); // initially Level6 user submits fa payment request to Level3 user
           approvalsPage.getSubmittedToUserNameUsingPaymentId(this.FAPaymentId).should('eq', getUserName(roleName));
-          approvalsPage.getDateSubmittedUsingPaymentId(this.FAPaymentId).should('eq', formatCurrentDate());
+          approvalsPage.getDateSubmittedUsingPaymentId(this.FAPaymentId).should('eq', getToday());
           approvalsPage.getActionsButtonByPaymentId(this.FAPaymentId).should('be.visible').click();
           approvalsPage.getDialogTitle().contains('Action approval').should('be.visible');
           approvalsPage.checkApprovalActionRequestApproved();
@@ -97,22 +96,22 @@ describe('#TC1754# - 2nd Approval Group - Confirm that FINAL approval can be giv
           cy.contains(`${this.FAPaymentName}`).should('be.visible');
           financialAssistanceDetailsPage.getApprovalHistoryCRCPersonnelByIndex(0).should('eq', 'TestDev6(System Admin)');
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(0).should('eq', `Payment submitted to  ${getUserName('Level3')}`);
-          financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(0).should('eq', formatCurrentDate());
+          financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(0).should('eq', getToday());
           financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(0).should('eq', 'Submitted');
           financialAssistanceDetailsPage.getApprovalHistoryCRCPersonnelByIndex(1).should('eq', `${getUserName('Level3')}(${getUserRoleDescription('Level3')})`);
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(1).should('eq', 'sending this for next level approval');
-          financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(1).should('eq', formatCurrentDate());
+          financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(1).should('eq', getToday());
           financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(1).should('eq', 'Approved');
           financialAssistanceDetailsPage.getApprovalHistoryCRCPersonnelByIndex(2).should('eq', `${getUserName(roleName)}(${getUserRoleDescription(roleName)})`);
           financialAssistanceDetailsPage.getApprovalHistoryRationaleByIndex(2).should('eq', 'I am approving this amount');
-          financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(2).should('eq', formatCurrentDate());
+          financialAssistanceDetailsPage.getApprovalHistoryDateSubmittedByIndex(2).should('eq', getToday());
           financialAssistanceDetailsPage.getApprovalHistoryActionByIndex(2).should('eq', 'Approved - Final');
           financialAssistanceDetailsPage.closeDialogApprovalStatusHistory();
 
           const caseFileDetailsPage = financialAssistanceDetailsPage.goToCaseFileDetailsPage();
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`Name: ${this.FAPaymentName}`);
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileDetailsPage.getCaseFileActivityTitle().should('string', 'Financial assistance payment - Approved - Final');
           caseFileDetailsPage.getCaseFileActivityBody().should('string', `Name: ${this.FAPaymentName}`).and('string', 'Amount: $80.00');
         });

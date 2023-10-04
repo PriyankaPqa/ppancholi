@@ -276,29 +276,29 @@ export class HouseholdProfilePage {
     return cy.getByDataTest(this.statusSelectChevronIcon);
   }
 
-  public refreshUntilHouseholdStatusUpdatedTo(statusEnum: number, maxRetries = 10) {
-    let retries = 0;
-    const waitForElement = () => {
-      // wait for dialog box to disappear
-      this.getDialogApplyButton().should('not.exist').then(() => {
-        // logic in if() statement verifies that expected status is displayed in chip-text
-        if (!Cypress.$(`[data-test='statusSelect__${statusEnum}']`).length) {
-          cy.log('household status successfully updated on UI');
-        } else {
-          retries += 1;
-          if (retries <= maxRetries) {
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(2000).then(() => {
-              cy.reload().then(() => {
-                waitForElement();
-              });
-            });
-          } else {
-            throw new Error(`unable to update status after ${maxRetries} retries.`);
-          }
-        }
-      });
-    };
-    waitForElement();
+  public refreshUntilHouseholdStatusUpdatedTo(statusEnum: number) {
+    cy.waitAndRefreshUntilConditions(
+      {
+        visibilityCondition: () => this.getDialogApplyButton().should('not.exist'),
+        checkCondition: () => !Cypress.$(`[data-test='statusSelect__${statusEnum}']`).length,
+      },
+      {
+        errorMsg: 'Unable to update status',
+        foundMsg: 'Household status successfully updated on UI',
+      },
+    );
+  }
+
+  public refreshUntilUserActionInformationUpdatedWithStatus(status: string) {
+    cy.waitAndRefreshUntilConditions(
+      {
+        visibilityCondition: () => this.getUserActionInformationElement().should('be.visible'),
+        checkCondition: () => Cypress.$('[data-test=\'action_user_information\']').text().includes(status),
+      },
+      {
+        errorMsg: 'Unable to update user action information',
+        foundMsg: 'User action successfully updated on UI',
+      },
+    );
   }
 }

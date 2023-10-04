@@ -72,7 +72,10 @@ export class PersonalInformationPage {
     }
 
     if (data.emailAddress) {
+      cy.intercept({ method: 'POST', url: '**/household/persons/validate-email-address' }).as('validateEmail');
       cy.getByDataTest(this.emailAddress).type(`${roleName}${data.emailAddress}`);
+      cy.getByDataTest(this.emailAddress).blur();
+      cy.wait('@validateEmail');
     }
 
     if (data.indigenousIdentity) {
@@ -85,8 +88,6 @@ export class PersonalInformationPage {
   }
 
   goToAddressPage() {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500); // Validate email could fail otherwise
     cy.getByDataTest(this.nextButton).click();
     return new AddressPage();
   }

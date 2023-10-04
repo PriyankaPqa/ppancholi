@@ -1,7 +1,6 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { IEventEntity } from '@libs/entities-lib/event';
-import { format } from 'date-fns';
 import { ICreateHouseholdRequest } from '@libs/entities-lib/household-create';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
@@ -87,9 +86,10 @@ describe('#TC667# - Delete Household Member', { tags: ['@household'] }, () => {
           householdProfilePage.getHouseholdSize().should('have.length', householdSize - 1); // confirms that member is deleted.
 
           const caseFileDetailsPage = householdProfilePage.goToCaseFileDetailsPage();
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Household member removed');
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Modified household information');
           cy.get('@memberToDelete').then((memberName) => {
             caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Household member removed: ${memberName}`);

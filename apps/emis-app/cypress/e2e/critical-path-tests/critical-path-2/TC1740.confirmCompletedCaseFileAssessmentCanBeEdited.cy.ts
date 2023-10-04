@@ -1,5 +1,5 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { formatCurrentDate } from '@libs/cypress-lib/helpers';
+import { getToday } from '@libs/cypress-lib/helpers';
 import { getUserName } from '@libs/cypress-lib/helpers/users';
 import {
   prepareStateEventAndProgram,
@@ -78,7 +78,7 @@ describe('#TC1740# - Confirm that a Completed Case File Assessment can be edited
           caseFileAssessmentDetailsPage.getDialogAnswerHistoryResponseLogByIndex(0).contains('Original response').should('be.visible');
           caseFileAssessmentDetailsPage.getDialogAnswerHistoryResponseValueByIndex(0).should('eq', 'no');
           caseFileAssessmentDetailsPage.getDialogAnswerHistoryResponseLogByIndex(1).contains(getUserName(roleName)).should('be.visible');
-          caseFileAssessmentDetailsPage.getDialogAnswerHistoryResponseLogByIndex(1).contains(formatCurrentDate()).should('be.visible');
+          caseFileAssessmentDetailsPage.getDialogAnswerHistoryResponseLogByIndex(1).contains(getToday()).should('be.visible');
           caseFileAssessmentDetailsPage.getDialogAnswerHistoryResponseValueByIndex(1).should('eq', 'yes');
         });
       });

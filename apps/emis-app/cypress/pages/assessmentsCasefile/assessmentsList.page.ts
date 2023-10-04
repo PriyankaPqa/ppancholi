@@ -1,4 +1,4 @@
-import { formatCurrentDate, formatDate } from '@libs/cypress-lib/helpers';
+import { getToday } from '@libs/cypress-lib/helpers';
 import { AddAssessmentsPage } from './addAssessments.page';
 
 export enum DataTest {
@@ -79,15 +79,15 @@ export class AssessmentsListPage {
   }
 
   public getAssessmentDateAssigned() {
-    return cy.getByDataTest(this.dateAssigned).invoke('text').then((date) => formatDate(date));
+    return cy.getByDataTest(this.dateAssigned).getAndTrimText();
   }
 
   public getAssessmentDateModified() {
-    return cy.getByDataTest(this.dateModified).invoke('text').then((date) => formatDate(date));
+    return cy.getByDataTest(this.dateModified).getAndTrimText();
   }
 
   public getAssessmentDateCompleted() {
-    return cy.getByDataTest(this.dateCompleted).invoke('text').then((date) => formatDate(date));
+    return cy.getByDataTest(this.dateCompleted).getAndTrimText();
   }
 
   public getAssessmentDateCompletedElement() {
@@ -106,28 +106,19 @@ export class AssessmentsListPage {
     return cy.getByDataTest(this.assessmentDelete);
   }
 
-  public refreshUntilFilledAssessmentUpdated(maxRetries = 5) {
-    let retries = 0;
-    const waitForAssessmentUpdation = () => {
-      cy.contains('Pending assessments').should('be.visible').then(() => {
-        if (Cypress.$("[data-test='assessmentDetail-link']").length) {
-          cy.log('Assessment status updated');
-        } else {
-          retries += 1;
-          if (retries <= maxRetries) {
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(1000).then(() => {
-              cy.reload().then(() => {
-                this.getCompletedAssessmentTable().contains(`${formatCurrentDate()}`).should('be.visible');
-                waitForAssessmentUpdation();
-              });
-            });
-          } else {
-            throw new Error('Failed to update assessment after 5 retries.');
-          }
-        }
-      });
-    };
-    waitForAssessmentUpdation();
+  public refreshUntilFilledAssessmentUpdated() {
+    cy.waitAndRefreshUntilConditions(
+      {
+        visibilityCondition: () => cy.contains('Pending assessments').should('be.visible'),
+        checkCondition: () => Cypress.$("[data-test='assessmentDetail-link']").length > 0,
+        actionsAfterReload: () => {
+          this.getCompletedAssessmentTable().contains(`${getToday()}`).should('be.visible');
+        },
+      },
+      {
+        errorMsg: 'Failed to update assessment',
+        foundMsg: 'Assessment status updated',
+      },
+    );
   }
 }

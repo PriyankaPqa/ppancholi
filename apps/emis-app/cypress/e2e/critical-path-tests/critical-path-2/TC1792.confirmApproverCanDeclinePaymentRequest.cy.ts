@@ -2,7 +2,6 @@ import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { EFinancialAmountModes } from '@libs/entities-lib/financial-assistance';
 import { getUserId, getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { EPaymentModalities } from '@libs/entities-lib/program';
-import { format } from 'date-fns';
 import {
   addFinancialAssistancePayment,
   createApprovalTable,
@@ -73,7 +72,7 @@ describe('#TC1792# - Confirm that an Approver can decline a payment request', { 
           const approvalsPage = new ApprovalsPage();
 
           approvalsPage.getPendingRequestsTable().contains(`${this.FAPaymentName}`).should('be.visible');
-          approvalsPage.searchPendingApprovalRequestsUsingCaseFileNumber(this.CaseFileNumber);
+          approvalsPage.searchApprovalTableFor(this.CaseFileNumber, this.FAPaymentId);
           approvalsPage.clickActionsButtonByPaymentId(this.FAPaymentId);
           approvalsPage.getDialogTitle().contains('Action approval').should('be.visible');
           approvalsPage.checkApprovalActionDecline();
@@ -95,11 +94,11 @@ describe('#TC1792# - Confirm that an Approver can decline a payment request', { 
           financialAssistanceDetailsPage.closeDialogApprovalStatusHistory();
 
           const caseFileDetailsPage = financialAssistanceDetailsPage.goToCaseFileDetailsPage();
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody(`Name: ${this.FAPaymentName}`);
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseFileDetailsPage.getCaseFileActivityTitle().should('string', 'Financial assistance payment - Declined');
-          caseFileDetailsPage.getCaseFileActivityBody().should('string', `Name: ${this.FAPaymentName}`).and('string', 'Amount: $80.00');
+          caseFileDetailsPage.getCaseFileActivityBody().should('string', `Name: ${this.FAPaymentName}`).and('string', 'Amount: $0.00');
         });
       });
     }

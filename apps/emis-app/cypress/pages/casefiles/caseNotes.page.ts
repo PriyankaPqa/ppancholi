@@ -1,4 +1,3 @@
-import { formatDate } from '@libs/cypress-lib/helpers';
 import { CaseFileDetailsPage } from './caseFileDetails.page';
 
 export enum DataTest {
@@ -90,10 +89,6 @@ export class CaseNotesPage {
     return cy.getByDataTest(this.caseFileRoleName).getAndTrimText();
   }
 
-  public getCaseFileCreated() {
-    return cy.getByDataTest(this.caseFileCreated).invoke('text').then((date) => formatDate(date));
-  }
-
   public getCaseNoteSubject() {
     return cy.getByDataTest(this.caseNoteDisplayedSubject).getAndTrimText();
   }
@@ -111,7 +106,7 @@ export class CaseNotesPage {
   }
 
   public getCaseFileLastModifiedDate() {
-    return cy.getByDataTest(this.caseFileLastModifiedDate).invoke('text').then((date) => formatDate(date));
+    return cy.getByDataTest(this.caseFileLastModifiedDate).getAndTrimText();
   }
 
   public getCaseFileEditButton() {

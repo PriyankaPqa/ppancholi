@@ -1,4 +1,3 @@
-import { formatDate } from '@libs/cypress-lib/helpers/date';
 import { AddCallCentrePage } from './addCallCentre.page';
 import { AddShelterLocationPage } from './addShelterLocation.page';
 import { AddRegistrationLocationPage } from './addRegistrationLocation.page';
@@ -167,11 +166,11 @@ export class EventDetailsPage {
   }
 
   public getCallCentreStartDate(index = 0) {
-    return cy.getByDataTestLike(this.callCentreStartDate).eq(index).invoke('text').then((date) => formatDate(date));
+    return cy.getByDataTestLike(this.callCentreStartDate).eq(index).getAndTrimText();
   }
 
   public getCallCentreEndDate(index = 0) {
-    return cy.getByDataTestLike(this.callCentreEndDate).eq(index).invoke('text').then((date) => formatDate(date));
+    return cy.getByDataTestLike(this.callCentreEndDate).eq(index).getAndTrimText();
   }
 
   public addRegistrationLocation() {

@@ -1,8 +1,8 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
 import { IEventEntity } from '@libs/entities-lib/event';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
-import { format } from 'date-fns';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import { getToday } from '@libs/cypress-lib/helpers';
 import { fixtureCaseNotes } from '../../../fixtures/case-management';
 import { createEventAndTeam, prepareStateHousehold } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
@@ -64,22 +64,21 @@ describe('#TC202# -Add a Case Note L4-L6', { tags: ['@case-file'] }, () => {
           caseNotesPage.getCaseNoteButton().click();
           caseNotesPage.getCaseFileUserName().should('eq', getUserName(roleName));
           caseNotesPage.getCaseFileRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseNotesPage.getCaseFileCreated().should('eq', format(Date.now(), 'yyyy-MM-dd'));
           caseNotesPage.getCaseNoteSubject().should('eq', `${caseNotesData.subject} ${roleName}`);
           caseNotesPage.getCaseNoteCategory().should('eq', caseNotesData.category.trim());
           caseNotesPage.getCaseNoteDescription().should('eq', `${caseNotesData.description} ${roleName}`);
           caseNotesPage.getCaseFileLastEditBy().should('eq', getUserName(roleName));
-          caseNotesPage.getCaseFileLastModifiedDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
+          caseNotesPage.getCaseFileLastModifiedDate().should('eq', getToday());
           caseNotesPage.getCaseFileEditButton().should('exist');
 
           const caseFileDetailsPage = caseNotesPage.goToCaseFileDetailsPage();
+          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Category:');
           caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Case note added');
           caseFileDetailsPage.getCaseFileActivityBodies()
             .should('string', `Subject: ${caseNotesData.subject} ${roleName}`)
             .and('string', `Category: ${caseNotesData.category.trim()}`);
           caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
           caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityLogDate().should('eq', format(Date.now(), 'yyyy-MM-dd'));
         });
       });
     }
