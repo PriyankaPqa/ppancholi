@@ -12,6 +12,7 @@ jobs:
     pool:
       name: 'self-hosted-ubuntu-latest-fe' ## Need self-hosted to have static IP for security restrictions
     displayName: ${{ parameters.displayName }}
+    timeoutInMinutes: 180
     variables:
       - group: Env-Dev
       - group: Cypress
