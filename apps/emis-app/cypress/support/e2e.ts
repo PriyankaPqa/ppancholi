@@ -29,8 +29,10 @@ installLogsCollector();
 registerCypressGrep();
 slowCypressDown();
 
-Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStatus, forceReload = true, maxRetries = 40) => {
-  let retries = 0;
+Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStatus, forceReload = true, timeoutInSec = 300, intervalInSec = 10) => {
+  const timeout = timeoutInSec * 1000;
+  const interval = intervalInSec * 1000;
+  let retries = Math.floor(timeout / interval);
 
   function reload(waitTime = 20000) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -41,8 +43,8 @@ Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStat
   async function handleRetry() {
     // eslint-disable-next-line ,cypress/no-unnecessary-waiting
     reload();
-    retries += 1;
-    if (retries < maxRetries) {
+    retries -= 1;
+    if (retries > 0) {
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       interceptAndRetry();
     } else {
@@ -79,7 +81,7 @@ Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStat
 declare global {
   namespace Cypress {
     interface Chainable {
-      waitForMassActionToBe(expectedStatus: MassActionRunStatus, forceReload?: boolean, maxRetries?:number): Chainable<string>
+      waitForMassActionToBe(expectedStatus: MassActionRunStatus, forceReload?: boolean, timeoutInSec?:number, intervalInSec?: number): Chainable<string>
     }
     }
   }

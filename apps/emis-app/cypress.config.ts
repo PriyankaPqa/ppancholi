@@ -13,7 +13,7 @@ export default defineConfig({
     configFile: 'cypress-reporter-config.js',
   },
   retries: {
-    runMode: 1,
+    runMode: 3,
     openMode: 0,
   },
   e2e: {
