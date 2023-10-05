@@ -1,14 +1,13 @@
 import { shallowMount, mount, createLocalVue } from '@/test/testSetup';
-import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockCombinedCaseFinancialAssistance, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { mockProvider } from '@/services/provider';
-import helpers from '@libs/shared-lib/helpers/helpers';
+import { createTestingPinia } from '@pinia/testing';
 import Component from './ApprovalActionDialog.vue';
 
 const localVue = createLocalVue();
 const services = mockProvider();
-const { pinia } = useMockUserAccountStore();
+const pinia = createTestingPinia({ stubActions: false });
 let wrapper;
 
 const FAPayment = mockCombinedCaseFinancialAssistance({ eventId: 'mock-event-id' });
@@ -195,37 +194,42 @@ describe('ApprovalActionDialog', () => {
     });
 
     describe('getUsersByRolesAndEvent', () => {
-      it('should call helper callSearchInInBatches and return all users having a role for an event', async () => {
-        doMount();
+      it('should call store and return all users having a role for an event', async () => {
         const users = [
           {
-            entity: {
-              roles: [{ optionItemId: '1' }],
-            },
-
+            id: '1',
+            roles: [{ optionItemId: '1' }],
           },
           {
-            entity: {
-              roles: [{ optionItemId: '1' }],
-            },
-
+            id: '2',
+            roles: [{ optionItemId: '1' }],
           }];
         const targetRoles = ['1', '2'];
         const targetEvent = 'B';
-        helpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1'] }));
-        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => users);
+        services.userAccounts.fetchByEventAndRole = jest.fn(() => users);
+        doMount();
 
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
-        expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
-          service: wrapper.vm.combinedUserAccountStore,
-          searchInFilter: 'Entity/Roles/any(r: search.in(r/OptionItemId, \'{ids}\'))',
-          ids: targetRoles,
-          otherFilter: `Metadata/Teams/any(team:team/Events/any(event:event/Id eq '${targetEvent}'))`,
-        });
+
         expect(wrapper.vm.users).toEqual(users);
+        expect(services.userAccounts.fetchByEventAndRole).toHaveBeenCalledWith(targetEvent, targetRoles);
       });
 
       it('should exclude users from excludedUsers list', async () => {
+        const users = [
+          {
+            id: '1',
+            roles: [{ optionItemId: '1' }],
+          },
+          {
+            id: 'excluded-id',
+            roles: [{ optionItemId: '1' }],
+          },
+        ];
+        const targetRoles = ['1', '2'];
+        const targetEvent = 'B';
+        services.userAccounts.fetchByEventAndRole = jest.fn(() => users);
+
         doMount({
           computed: {
             excludedUsers() {
@@ -233,35 +237,18 @@ describe('ApprovalActionDialog', () => {
             },
           },
         });
-        const users = [
-          {
-            entity: {
-              id: '1',
-              roles: [{ optionItemId: '1' }],
-            },
-          },
-          {
-            entity: {
-              id: 'excluded-id',
-              roles: [{ optionItemId: '1' }],
-            },
-          }];
-        const targetRoles = ['1', '2'];
-        const targetEvent = 'B';
-        helpers.callSearchInInBatches = jest.fn(() => ({ ids: ['id-1'] }));
-        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => users);
 
-        // eslint-disable-next-line max-len
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
 
         expect(wrapper.vm.users).toEqual([users[0]]);
+        expect(services.userAccounts.fetchByEventAndRole).toHaveBeenCalledWith(targetEvent, targetRoles);
       });
     });
 
     describe('getUserName', () => {
       it('returns the user display name', () => {
         doMount();
-        const user = { metadata: { displayName: 'John Smith' } };
+        const user = { displayName: 'John Smith' };
         expect(wrapper.vm.getUserName(user)).toEqual('John Smith');
       });
     });

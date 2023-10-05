@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  IFilter, IUserAccountEntity,
+  IFilter, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/shared-lib/types';
 import { IHttpClient } from '../../http-client';
@@ -59,6 +59,10 @@ export class UserAccountsService extends DomainBaseService<IUserAccountEntity, u
 
   async assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity> {
     return this.http.post<IUserAccountEntity>(`${this.baseUrl}/${payload.userId}/role`, { roleId: payload.subRole.id });
+  }
+
+  async fetchByEventAndRole(targetEvent: uuid, targetRoles: Array<uuid>): Promise<IUserAccountMetadata[]> {
+    return this.http.get(`${this.baseUrl}/users-by-event-role?eventId=${targetEvent}&roleIds=${(targetRoles || []).join('&roleIds=')}`);
   }
 
   async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<IUserAccountEntity, unknown>> {

@@ -6,7 +6,6 @@ import { useMockUserStore } from '@/pinia/user/user.mock';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import { mockProvider } from '@/services/provider';
-import helpers from '@libs/shared-lib/helpers/helpers';
 import Component from '../SubmitFinancialAssistancePaymentDialog.vue';
 
 const localVue = createLocalVue();
@@ -221,58 +220,44 @@ describe('SubmitFinancialAssistancePaymentDialog.vue', () => {
     describe('getUsersByRolesAndEvent', () => {
       it('should return all users having a role for an event', async () => {
         userStore.getUserId = jest.fn(() => 'my-id');
-        doMount();
         const users = [
           {
-            entity: {
-              roles: [{ optionItemId: '1' }],
-            },
+            roles: [{ optionItemId: '1' }],
           },
           {
-            entity: {
-              roles: [{ optionItemId: '1' }],
-            },
+            roles: [{ optionItemId: '1' }],
           }];
         const targetRoles = ['1', '2'];
         const targetEvent = 'B';
-        helpers.callSearchInInBatches = jest.fn(() => ({ ids: [] }));
-        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => users);
+        services.userAccounts.fetchByEventAndRole = jest.fn(() => users);
+        doMount();
 
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
 
-        expect(helpers.callSearchInInBatches).toHaveBeenCalledWith({
-          service: wrapper.vm.combinedUserAccountStore,
-          searchInFilter: "Entity/Roles/any(r: search.in(r/OptionItemId, '{ids}'))",
-          ids: targetRoles,
-          otherFilter: `Metadata/Teams/any(team:team/Events/any(event:event/Id eq '${targetEvent}'))`,
-        });
         expect(wrapper.vm.users).toEqual(users);
+        expect(services.userAccounts.fetchByEventAndRole).toHaveBeenCalledWith(targetEvent, targetRoles);
       });
 
       it('should exclude the id of the current user', async () => {
         userStore.getUserId = jest.fn(() => 'my-id');
-        doMount();
         const users = [
           {
-            entity: {
-              id: '1',
-              roles: [{ optionItemId: '1' }],
-            },
+            id: '1',
+            roles: [{ optionItemId: '1' }],
           },
           {
-            entity: {
-              id: 'my-id',
-              roles: [{ optionItemId: '1' }],
-            },
+            id: 'my-id',
+            roles: [{ optionItemId: '1' }],
           }];
         const targetRoles = ['1', '2'];
         const targetEvent = 'B';
-        helpers.callSearchInInBatches = jest.fn(() => ({ ids: [] }));
-        wrapper.vm.combinedUserAccountStore.getByIds = jest.fn(() => users);
+        services.userAccounts.fetchByEventAndRole = jest.fn(() => users);
+        doMount();
 
-        // eslint-disable-next-line max-len
         await wrapper.vm.getUsersByRolesAndEvent(targetRoles, targetEvent);
+
         expect(wrapper.vm.users).toEqual([users[0]]);
+        expect(services.userAccounts.fetchByEventAndRole).toHaveBeenCalledWith(targetEvent, targetRoles);
       });
     });
 

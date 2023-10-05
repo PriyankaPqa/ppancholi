@@ -67,7 +67,7 @@
             :attach="false"
             :loading="loadingUsers"
             :item-text="getUserName"
-            :item-value="(item) => item && item.entity && item.entity.id"
+            :item-value="(item) => item && item.id"
             background-color="white"
             :items="users" />
         </v-col>
@@ -91,18 +91,15 @@
 
 <script lang="ts">
 import { ApprovalAction, IApprovalActionPayload, IFinancialAssistancePaymentCombined } from '@libs/entities-lib/financial-assistance-payment';
-import { IAzureTableSearchResults, VForm } from '@libs/shared-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import {
   RcDialog, VAutocompleteWithValidation, VCheckboxWithValidation, VTextAreaWithValidation, MessageBox,
 } from '@libs/component-lib/components';
 import Vue from 'vue';
 import {
-  IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
+  IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
-import helpers from '@libs/shared-lib/helpers/helpers';
 
 export default Vue.extend({
   name: 'ApprovalActionDialog',
@@ -133,13 +130,12 @@ export default Vue.extend({
       action: {} as IApprovalActionPayload,
       confirm: false,
       submitLoading: false,
-      users: [] as IUserAccountCombined[],
+      users: [] as IUserAccountMetadata[],
       selectedUserId: null,
       loadingUsers: false,
       ApprovalAction,
       usersFetched: false,
       nextApprovalGroupRoles: [] as string[],
-      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
 
@@ -236,23 +232,14 @@ export default Vue.extend({
     },
 
     async getUsersByRolesAndEvent(targetRoles: Array<string>, targetEvent: string) { // TO DO: replace with dropdown that searches on user input
-      const usersData = await helpers.callSearchInInBatches({
-        service: this.combinedUserAccountStore,
-        searchInFilter: "Entity/Roles/any(r: search.in(r/OptionItemId, '{ids}'))",
-        ids: targetRoles,
-        otherFilter: `Metadata/Teams/any(team:team/Events/any(event:event/Id eq '${targetEvent}'))`,
-      });
-
-      const ids = (usersData as IAzureTableSearchResults)?.ids;
-      if (ids) {
-        this.users = this.combinedUserAccountStore.getByIds(ids).filter((u) => !this.excludedUsers.includes(u.entity.id));
-        this.usersFetched = true;
-      }
+      const usersData = await this.$services.userAccounts.fetchByEventAndRole(targetEvent, targetRoles);
+      this.users = usersData.filter((u) => !this.excludedUsers.includes(u.id));
+      this.usersFetched = true;
     },
 
-    getUserName(item: IUserAccountCombined): string {
-      if (item?.metadata) {
-        return item.metadata.displayName;
+    getUserName(item: IUserAccountMetadata): string {
+      if (item) {
+        return item.displayName;
       }
       return '';
     },

@@ -53,7 +53,7 @@
             :attach="false"
             :loading="loadingUsers"
             :item-text="getUserName"
-            :item-value="(item) => item && item.entity && item.entity.id"
+            :item-value="(item) => item && item.id"
             background-color="white"
             :items="users" />
         </v-col>
@@ -64,19 +64,17 @@
 
 <script lang="ts">
 import { FinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
-import { IAzureTableSearchResults, VForm } from '@libs/shared-lib/types';
+import { VForm } from '@libs/shared-lib/types';
 import { RcDialog, VAutocompleteWithValidation, MessageBox } from '@libs/component-lib/components';
 import Vue from 'vue';
 import {
-  IdParams, IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata,
+  IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { Status } from '@libs/entities-lib/base';
 import { useUserStore } from '@/pinia/user/user';
-import { CombinedStoreFactory } from '@libs/stores-lib/base/combinedStoreFactory';
-import { useUserAccountMetadataStore, useUserAccountStore } from '@/pinia/user-account/user-account';
+import { useUserAccountStore } from '@/pinia/user-account/user-account';
 import { useFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment';
 import { IApprovalTableEntityData } from '@libs/entities-lib/approvals/approvals-table';
-import helpers from '@libs/shared-lib/helpers/helpers';
 
 export default Vue.extend({
   name: 'SubmitFinancialAssistancePaymentDialog',
@@ -115,11 +113,10 @@ export default Vue.extend({
     return {
       agree: false,
       submitLoading: false,
-      users: [],
+      users: [] as IUserAccountMetadata[],
       selectedUserId: null,
       loadingUsers: false,
       approvalTable: null,
-      combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
     };
   },
   computed: {
@@ -192,17 +189,8 @@ export default Vue.extend({
     },
 
     async getUsersByRolesAndEvent(targetRoles: Array<string>, targetEvent: string) {
-      const usersData = await helpers.callSearchInInBatches({
-        service: this.combinedUserAccountStore,
-        searchInFilter: "Entity/Roles/any(r: search.in(r/OptionItemId, '{ids}'))",
-        ids: targetRoles,
-        otherFilter: `Metadata/Teams/any(team:team/Events/any(event:event/Id eq '${targetEvent}'))`,
-      });
-
-      const ids = (usersData as IAzureTableSearchResults)?.ids;
-      if (ids) {
-        this.users = this.combinedUserAccountStore.getByIds(ids).filter((u) => u.entity.id !== useUserStore().getUserId());
-      }
+      const usersData = await this.$services.userAccounts.fetchByEventAndRole(targetEvent, targetRoles);
+      this.users = usersData.filter((u) => u.id !== useUserStore().getUserId());
     },
 
     async fetchDataForApproval() {
@@ -228,9 +216,9 @@ export default Vue.extend({
       return groupContainingCurrentUserRole?.roles || approvalTable.groups?.[0].roles;
     },
 
-    getUserName(item: IUserAccountCombined): string {
-      if (item?.metadata) {
-        return item.metadata.displayName;
+    getUserName(item: IUserAccountMetadata): string {
+      if (item) {
+        return item.displayName;
       }
       return '';
     },

@@ -1,6 +1,6 @@
 import { IOptionSubItem } from '@libs/entities-lib/optionItem';
 import {
-  IFilter, IUserAccountEntity,
+  IFilter, IUserAccountEntity, IUserAccountMetadata,
 } from '@libs/entities-lib/user-account';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
@@ -28,6 +28,7 @@ export interface IUserAccountsService extends IDomainBaseService<IUserAccountEnt
   deleteFilter(filter: IFilter): Promise<IUserAccountEntity>;
   assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity>;
   createUserAccount(payload: ICreateUserRequest): Promise<IUserAccountEntity>;
+  fetchByEventAndRole(targetEvent: uuid, targetRoles: Array<uuid>): Promise<IUserAccountMetadata[]>;
 }
 
 export interface IUserAccountsServiceMock extends IDomainBaseServiceMock<IUserAccountEntity> {
@@ -37,4 +38,5 @@ export interface IUserAccountsServiceMock extends IDomainBaseServiceMock<IUserAc
   deleteFilter: jest.Mock<IUserAccountEntity>;
   assignRole: jest.Mock<IUserAccountEntity>;
   createUserAccount: jest.Mock<IUserAccountEntity>;
+  fetchByEventAndRole: jest.Mock<IUserAccountMetadata[]>;
 }

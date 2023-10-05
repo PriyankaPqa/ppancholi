@@ -98,6 +98,11 @@ describe('>>> UserAccounts Service', () => {
     expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${request.userId}/role`, { roleId: request.subRole.id });
   });
 
+  test('fetchByEventAndRole is linked to the correct URL', async () => {
+    await service.fetchByEventAndRole('event1', ['r1', 'r2']);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/users-by-event-role?eventId=event1&roleIds=r1&roleIds=r2`);
+  });
+
   describe('search', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
       const params = { filter: { Foo: 'foo' } };
