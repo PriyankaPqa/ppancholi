@@ -158,7 +158,7 @@ Cypress.Commands.add('typeAndWaitUntilSearchResultsVisible', (searchString, data
   const start = Date.now();
   let elapsedTime = 0;
   const search = () => {
-    elapsedTime += Date.now() - start;
+    elapsedTime = Date.now() - start;
     if (elapsedTime >= opts.timeout) {
       throw new Error(`${searchString} was not found after ${opts.timeout}ms`);
     }
@@ -201,7 +201,7 @@ Cypress.Commands.add(
           cy.log(foundMsg);
         } else {
           cy.wait(interval).then(() => {
-            elapsedTime += Date.now() - start;
+            elapsedTime = Date.now() - start;
             if (elapsedTime >= timeout) {
               throw new Error(`${errorMsg} after ${timeoutInSec}s`);
             }

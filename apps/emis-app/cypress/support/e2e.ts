@@ -41,7 +41,7 @@ Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStat
   }
 
   async function handleRetry(waitTime: number) {
-    elapsedTime += Date.now() - start;
+    elapsedTime = Date.now() - start;
     if (elapsedTime >= timeout) {
       throw new Error(`Timeout after ${timeoutInSec}s without seeing the mass action with a status ${MassActionRunStatus[expectedStatus]}`);
     }
