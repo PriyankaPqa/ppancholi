@@ -105,14 +105,16 @@ Cypress.Commands.add('waitItemsRefreshUntilDisplayed', (piniaStoreId, selector, 
  @throws Will throw an error if the option cannot be found after the maximum number of retries has been reached.
  @returns {void}
  */
-Cypress.Commands.add('searchAndSelect', (dataTest: string, searchString: string, opts = { timeout: 5000, interval: 500 }) => {
-  let retries = Math.floor(opts.timeout / opts.interval);
+Cypress.Commands.add('searchAndSelect', (dataTest, searchString, opts = { timeout: 5000, interval: 500 }) => {
   const valueWithoutSpace = searchString.replace(/\s/g, '');
   const optionSelector = `div[data-test=${dataTest}__item--${valueWithoutSpace}]`;
+  const start = Date.now();
+  let elapsedTime = 0;
 
   const search = () => {
-    if (retries < 1) {
-      throw Error(`${searchString} was not found and could not be selected. Try another query or increase timeout`);
+    elapsedTime = Date.now() - start;
+    if (elapsedTime >= opts.timeout) {
+      throw new Error(`${searchString} was not found and could not be selected. Try another query or increase timeout`);
     }
 
     cy.getByDataTest({ selector: dataTest, type: 'input' }).clear({ force: true }).type(searchString, { force: true });
@@ -122,7 +124,6 @@ Cypress.Commands.add('searchAndSelect', (dataTest: string, searchString: string,
         cy.get(optionSelector).click();
       } else {
         cy.wait(opts.interval).then(() => {
-          retries -= 1;
           search();
         });
       }
@@ -153,56 +154,66 @@ Cypress.Commands.add('waitUntilTableFullyLoaded', (tableDataTest) => {
  @returns {void}
  */
 Cypress.Commands.add('typeAndWaitUntilSearchResultsVisible', (searchString, dataTestSearchField, dataTestSearchResult, opts = { timeout: 40000, interval: 2000 }) => {
-  let retries = Math.floor(opts.timeout / opts.interval);
   const searchResultElementSelector = `[data-test=${dataTestSearchResult}]`;
-
+  const start = Date.now();
+  let elapsedTime = 0;
   const search = () => {
-    if (retries < 1) {
-      throw Error(`${searchString} was not found after ${retries}`);
+    elapsedTime += Date.now() - start;
+    if (elapsedTime >= opts.timeout) {
+      throw new Error(`${searchString} was not found after ${opts.timeout}ms`);
     }
 
-    cy.getByDataTest({
-      selector: dataTestSearchField,
-      type: 'input',
-    })
-      .clear({ force: true })
-      .type(searchString, { force: true });
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.getByDataTest({ selector: dataTestSearchField, type: 'input' }).clear({ force: true }).type(searchString, { force: true });
+
     cy.wait(opts.interval)
       .then(() => {
         if (Cypress.$(searchResultElementSelector).length) {
           cy.log('Search operation successful');
         } else {
-          retries -= 1;
           search();
         }
       });
   };
+
   search();
 });
 
 // eslint-disable-next-line vue/max-len
-Cypress.Commands.add('waitAndRefreshUntilConditions', ({ visibilityCondition, checkCondition, actionsAfterReload = () => {} }, { timeoutInSec = 30, intervalInSec = 2, errorMsg = 'Timeout: Failed to meet the conditions', foundMsg = 'Condition met' }) => {
-  const timeout = timeoutInSec * 1000;
-  const interval = intervalInSec * 1000;
-  let retries = Math.floor(timeout / interval);
+Cypress.Commands.add(
+  'waitAndRefreshUntilConditions',
+  (
+    { visibilityCondition, checkCondition, actionsAfterReload = () => {} },
+    {
+      timeoutInSec = 30,
+      intervalInSec = 2,
+      errorMsg = 'Timeout: Failed to meet the conditions',
+      foundMsg = 'Condition met',
+    },
+  ) => {
+    const timeout = timeoutInSec * 1000;
+    const interval = intervalInSec * 1000;
+    let elapsedTime = 0;
+    const start = Date.now();
 
-  const waitForConditions = () => {
-    visibilityCondition().then(() => {
-      if (checkCondition()) {
-        cy.log(foundMsg);
-      } else if (retries > 0) {
-        cy.wait(interval).then(() => {
-          cy.reload().then(() => {
-            actionsAfterReload();
-            retries -= 1;
-            waitForConditions();
+    const waitForConditions = () => {
+      visibilityCondition().then(() => {
+        if (checkCondition()) {
+          cy.log(foundMsg);
+        } else {
+          cy.wait(interval).then(() => {
+            elapsedTime += Date.now() - start;
+            if (elapsedTime >= timeout) {
+              throw new Error(`${errorMsg} after ${timeoutInSec}s`);
+            }
+            cy.reload().then(() => {
+              actionsAfterReload();
+              waitForConditions();
+            });
           });
-        });
-      } else {
-        throw new Error(`${errorMsg} after ${timeoutInSec}s`);
-      }
-    });
-  };
-  waitForConditions();
-});
+        }
+      });
+    };
+
+    waitForConditions();
+  },
+);

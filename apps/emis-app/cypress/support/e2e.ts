@@ -32,24 +32,23 @@ slowCypressDown();
 Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStatus, forceReload = true, timeoutInSec = 300, intervalInSec = 10) => {
   const timeout = timeoutInSec * 1000;
   const interval = intervalInSec * 1000;
-  let retries = Math.floor(timeout / interval);
+  let elapsedTime = 0;
+  const start = Date.now();
 
   function reload(waitTime = 20000) {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(waitTime); // Needed so we make sure we are on details page to reload
     cy.reload(); // We reload to make sure mass action metadata endpoint will be called
   }
 
-  async function handleRetry() {
-    // eslint-disable-next-line ,cypress/no-unnecessary-waiting
-    reload();
-    retries -= 1;
-    if (retries > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      interceptAndRetry();
-    } else {
-      throw new Error(`Maximal number of retries reached without seeing the mass action with a status ${MassActionRunStatus[expectedStatus]}`);
+  async function handleRetry(waitTime: number) {
+    elapsedTime += Date.now() - start;
+    if (elapsedTime >= timeout) {
+      throw new Error(`Timeout after ${timeoutInSec}s without seeing the mass action with a status ${MassActionRunStatus[expectedStatus]}`);
     }
+    reload(waitTime);
+
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    interceptAndRetry();
   }
 
   function interceptAndRetry() {
@@ -57,13 +56,13 @@ Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStat
     cy.wait('@massActionMetadata', { timeout: 45000 }).then(async (interception) => {
       if (interception.response.statusCode === 404) {
         cy.log(`There was a 404 error while fetching ${interception.request.url}`);
-        await handleRetry();
+        await handleRetry(interval);
       } else if (interception.response.statusCode === 200) {
         const response = interception.response.body as IMassActionMetadata;
         const runStatus = response.lastRun.runStatus;
         if (runStatus !== expectedStatus) {
-          cy.log(`Mass action does not have status ${MassActionRunStatus[expectedStatus]} it has ${MassActionRunStatus[runStatus]} #${retries}`);
-          await handleRetry();
+          cy.log(`Mass action does not have status ${MassActionRunStatus[expectedStatus]} it has ${MassActionRunStatus[runStatus]}`);
+          await handleRetry(interval);
         } else {
           cy.log(`Mass action has status ${MassActionRunStatus[expectedStatus]}`);
           reload(5000);
@@ -83,5 +82,5 @@ declare global {
     interface Chainable {
       waitForMassActionToBe(expectedStatus: MassActionRunStatus, forceReload?: boolean, timeoutInSec?:number, intervalInSec?: number): Chainable<string>
     }
-    }
   }
+}
