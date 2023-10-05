@@ -605,6 +605,12 @@ const routes = {
       name: 'team.details',
     },
   },
+  tasks: {
+    home: {
+      path: '',
+      name: 'tasks.home',
+    },
+  },
 };
 
 export default routes;

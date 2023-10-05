@@ -1,25 +1,18 @@
 <template>
-  <tasks-table :id="id" is-in-case-file />
+  <tasks-table :id="id" :case-file="caseFile" is-in-case-file />
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
 import TasksTable from '@/ui/views/pages/case-files/details/case-file-task/TasksTable.vue';
+import mixins from 'vue-typed-mixins';
+import caseFileDetail from '@/ui/views/pages/case-files/details/caseFileDetail';
 
-export default Vue.extend({
+export default mixins(caseFileDetail).extend({
   name: 'CaseFileTaskTable',
 
   components: {
     TasksTable,
-  },
-
-  props: {
-    // case file id
-    id: {
-      type: String,
-      required: true,
-    },
   },
 });
 </script>

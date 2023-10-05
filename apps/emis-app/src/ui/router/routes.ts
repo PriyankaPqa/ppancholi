@@ -32,6 +32,8 @@ const MainHouseholdSearch = () => import('@/ui/views/pages/household/search/Main
 
 const AccountSettings = () => import('@/ui/views/pages/system-management/lists/user-accounts/account-settings/AccountSettings.vue');
 
+const MainTasksTable = () => import('@/ui/views/pages/case-files/details/case-file-task/TasksTable.vue');
+
 // NOTE: Be aware of the importance of routes order. Details pages have the route pattern 'entityName/:entityId'
 // and create pages have the route pattern 'entityName/add'. Therefore, the create pages for an entity need to place before the details pages,
 // otherwise when loading the page the router will first try to go to the details page,
@@ -149,6 +151,11 @@ export const routes: Array<RouteConfig> = [
             path: Routes.accountSettings.home.path,
             name: Routes.accountSettings.home.name,
             component: AccountSettings,
+          },
+          {
+            path: Routes.tasks.home.path,
+            name: Routes.tasks.home.name,
+            component: MainTasksTable,
           },
         ],
       },

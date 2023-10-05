@@ -138,7 +138,7 @@ export default Vue.extend({
       { filterKey, search, selectedItem }:
       { filterKey: string, search: string, selectedItem: IDropdownItem },
     ) {
-      if (filterKey === 'Entity/EventId' && search !== selectedItem?.text) {
+      if ((filterKey === 'Entity/EventId' || filterKey === 'Metadata/EventId') && search !== selectedItem?.text) {
         this.eventFilterQuery = search;
       }
     },

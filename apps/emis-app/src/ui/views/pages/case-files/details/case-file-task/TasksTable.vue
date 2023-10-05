@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'pa-4': isInCaseFile }">
+  <div class="pa-4">
     <rc-data-table
       ref="tasksTable"
       :items="parsedTableData"
@@ -28,6 +28,8 @@
           :initial-filter="filterState"
           :filter-options="filterOptions"
           add-filter-label="tasksTable.filter"
+          @open="isInCaseFile ? null : fetchEventsFilter()"
+          @update:autocomplete="onAutoCompleteUpdate($event)"
           @update:appliedFilter="onApplyFilterLocal">
           <template #toolbarActions>
             <div class="d-flex">
@@ -82,14 +84,25 @@
       </template>
 
       <template #[`item.${customColumns.taskName}`]="{ item }">
-        <v-icon class="adjust-margin" :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
-          mdi-account-check
-        </v-icon>
+        <div :class="{ 'ml-4': !isInCaseFile }">
+          <v-icon class="adjust-margin" :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
+            mdi-account-check
+          </v-icon>
+          <router-link
+            type="button"
+            class="rc-link14 font-weight-bold pr-1"
+            data-test="task-table-task-name"
+            :to="getTaskDetailsRoute(item.metadata.caseFileId, item.entity.id)">
+            {{ $m(item.metadata.name) }}
+          </router-link>
+        </div>
+      </template>
+      <template v-if="!isInCaseFile" #[`item.${customColumns.caseFileNumber}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
-          data-test="task-table-details-link"
-          :to="getTaskDetailsRoute(item.entity.id)">
-          <span data-test="task-table-task-name"> {{ $m(item.metadata.name) }}</span>
+          data-test="task-table-case-file-number-link"
+          :to="getCaseFileDetailsRoute(item.metadata.caseFileId)">
+          <span data-test="task-table-case-file-number"> {{ item.metadata.caseFileNumber }}</span>
         </router-link>
       </template>
       <template #[`item.${customColumns.isUrgent}`]="{ item }">
@@ -143,7 +156,6 @@ import { UserRoles } from '@libs/entities-lib/user';
 import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import { FilterKey } from '@libs/entities-lib/user-account';
 import mixins from 'vue-typed-mixins';
-import caseFileDetail from '@/ui/views/pages/case-files/details/caseFileDetail';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useUserStore } from '@/pinia/user/user';
@@ -153,6 +165,8 @@ import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
 import { ITeamEntity } from '@libs/entities-lib/team';
 import { IEntityCombined } from '@libs/entities-lib/base';
+import { ICaseFileEntity } from '@libs/entities-lib/case-file';
+import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 
 interface IParsedTaskEntity extends ITaskEntityData {
   category: {
@@ -165,7 +179,7 @@ interface IParsedTaskEntity extends ITaskEntityData {
 
 type IParsedTaskCombined = IEntityCombined<IParsedTaskEntity, ITaskMetadata>;
 
-export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
+export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
   name: 'TasksTable',
 
   components: {
@@ -176,9 +190,19 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
   },
 
   props: {
+    id: {
+      type: String,
+      default: '',
+    },
+
     isInCaseFile: {
       type: Boolean,
       default: false,
+    },
+
+    caseFile: {
+      type: Object as () => ICaseFileEntity,
+      default: null,
     },
   },
 
@@ -222,11 +246,13 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
     },
 
     labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
-      // TODO add task amount when in Main menu tab EMIS-7315
-
+      let title: TranslateResult = this.$t('task.table_title');
+      if (!this.isInCaseFile) {
+        title += ` (${this.itemsCount})`;
+      }
       return {
         header: {
-          title: this.$t('task.table_title'),
+          title,
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };
@@ -244,6 +270,7 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
     customColumns(): Record<string, string> {
       return {
         taskName: `Metadata/Name/Translation/${this.$i18n.locale}`,
+        caseFileNumber: 'Metadata/CaseFileNumber',
         isUrgent: 'Entity/IsUrgent',
         dateAdded: 'Entity/DateAdded',
         taskStatus: 'Entity/TaskStatus',
@@ -253,12 +280,12 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
     },
 
     headers(): Array<DataTableHeader> {
-      return [
+      const headersList = [
         {
           text: this.$t('task.task_table_header.task') as string,
           sortable: true,
           value: this.customColumns.taskName,
-          width: '60%',
+          width: this.isInCaseFile ? '60%' : '40%',
         },
         {
           text: this.$t('task.task_table_header.priority') as string,
@@ -267,11 +294,10 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
           width: '10%',
         },
         {
-          text: this.$t('task.task_table_header.date_added') as string,
+          text: this.isInCaseFile ? this.$t('task.task_table_header.date_added') as string : this.$t('task.task_table_header.created_date') as string,
           sortable: true,
           value: this.customColumns.dateAdded,
           width: '10%',
-
         },
         {
           text: this.$t('task.task_table_header.status') as string,
@@ -293,6 +319,18 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
           width: '5%',
         },
       ];
+
+      const caseFileNumberHeader = {
+        text: this.$t('task.task_table_header.case_file_number') as string,
+        sortable: true,
+        value: this.customColumns.caseFileNumber,
+        width: '20%',
+      };
+
+      if (!this.isInCaseFile) {
+        headersList.splice(1, 0, caseFileNumberHeader);
+      }
+      return headersList;
     },
 
     filterOptions(): Array<IFilterSettings> {
@@ -301,7 +339,23 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
         { text: this.$t('common.yes') as string, value: true },
         { text: this.$t('common.no') as string, value: false },
       ];
-      return [
+      const eventFilter = {
+          key: 'Metadata/EventId',
+          type: EFilterType.Select,
+          label: this.$t('caseFileTable.filters.eventName') as string,
+          items: this.sortedEventsFilter,
+          loading: this.eventsFilterLoading,
+          disabled: this.eventsFilterDisabled,
+          props: {
+            'no-data-text': !this.eventFilterQuery ? this.$t('common.inputs.start_typing_to_search') : this.$t('common.search.no_result'),
+            'search-input': this.eventFilterQuery,
+            'no-filter': true,
+            'return-object': true,
+            placeholder: this.$t('common.filters.autocomplete.placeholder'),
+          },
+        };
+
+      const filters = [
         {
           key: 'Entity/Name/OptionItemId',
           type: EFilterType.MultiSelect,
@@ -326,6 +380,10 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
           items: helpers.enumToTranslatedCollection(TaskStatus, 'task.task_status'),
         },
       ];
+      if (!this.isInCaseFile) {
+        filters.unshift(eventFilter);
+      }
+      return filters;
     },
 
     menuItems(): Array<Record<string, string>> {
@@ -343,7 +401,7 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
     parsedTableData(): IParsedTaskCombined[] {
       const rawTableData: ITaskCombined[] = this.combinedTaskStore.getByIds(
         this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId } },
+        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.isInCaseFile ? this.id : null } },
       );
       const taskNames = useTaskStore().getTaskCategories();
       return rawTableData.map((d: any) => {
@@ -377,8 +435,12 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
   },
 
   async created() {
+    this.saveState = true;
+    this.loadState();
+    if (this.isInCaseFile) {
+      await this.getTeamsByEvent();
+    }
      await useTaskStore().fetchTaskCategories();
-     await this.getTeamsByEvent();
      await this.search(this.dataTableParams);
      },
 
@@ -419,11 +481,21 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
         } });
     },
 
-    getTaskDetailsRoute(taskId: string) {
+    getTaskDetailsRoute(id: string, taskId: string) {
       return {
-        name: routes.caseFile.task.details.name,
+            name: routes.caseFile.task.details.name,
+            params: {
+              taskId,
+              id,
+            },
+          };
+    },
+
+    getCaseFileDetailsRoute(caseFileId: string) {
+      return {
+        name: routes.caseFile.activity.name,
         params: {
-          taskId,
+          id: caseFileId,
         },
       };
     },
@@ -442,17 +514,27 @@ export default mixins(caseFileDetail, TablePaginationSearchMixin).extend({
       },
 
     async getTeamsByEvent() {
-      const teams = await this.$services.teams.getTeamsByEvent(this.caseFile.eventId);
+      const teams = await this.$services.teams.getTeamsByEvent(this.caseFile?.eventId);
       if (teams) {
         this.teamsByEvent = teams;
       }
+    },
+
+    additionalFilters() {
+      return {
+        personalTaskOnlyFilter: this.personalTaskOnly,
+      };
+    },
+    setAdditionalFilters(state: unknown) {
+      // eslint-disable-next-line
+      this.personalTaskOnly = (state as any)?.personalTaskOnlyFilter || false;
     },
 
     async fetchData(params: IAzureSearchParams) {
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
       const res = await this.combinedTaskStore.search({
         search: params.search,
-        filter: { 'Entity/CaseFileId': this.$route.params.id, ...filterParams },
+        filter: this.isInCaseFile ? { 'Entity/CaseFileId': this.$route.params.id, ...filterParams } : { ...filterParams },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,

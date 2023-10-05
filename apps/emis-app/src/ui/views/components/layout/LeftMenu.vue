@@ -80,7 +80,16 @@ export default Vue.extend({
 
   computed: {
     items(): INavigationTab[] {
-      return [
+      const tasksTab = {
+        to: routes.tasks.home.name,
+        icon: 'mdi-clipboard-check',
+        text: 'leftMenu.tasks_title',
+        test: 'tasks',
+        level: UserRoles.level0,
+        roles: [UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly, UserRoles.no_role],
+      };
+
+      const tabs = [
         {
           to: routes.home.name,
           icon: 'mdi-home',
@@ -175,6 +184,11 @@ export default Vue.extend({
           level: UserRoles.level5,
         },
       ];
+
+      if (this.$hasFeature(FeatureKeys.TaskManagement)) {
+        tabs.splice(7, 0, tasksTab);
+      }
+      return tabs;
     },
 
     mini(): boolean {

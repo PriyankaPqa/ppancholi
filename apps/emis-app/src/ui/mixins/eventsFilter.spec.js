@@ -156,6 +156,16 @@ describe('eventsFilter', () => {
 
         expect(wrapper.vm.eventFilterQuery).toEqual('search');
       });
+
+      it('should set eventFilterQuery if filter key is Metadata/EventId', () => {
+        wrapper.vm.onAutoCompleteUpdate({
+          filterKey: 'Metadata/EventId',
+          search: 'search',
+          selectedItem: { text: '', value: '' },
+        });
+
+        expect(wrapper.vm.eventFilterQuery).toEqual('search');
+      });
     });
   });
   describe('Watch', () => {

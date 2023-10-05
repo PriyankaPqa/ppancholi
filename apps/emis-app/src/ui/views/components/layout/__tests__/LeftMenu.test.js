@@ -2,6 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { UserRoles } from '@libs/entities-lib/user';
 import routes from '@/constants/routes';
 import { getPiniaForUser } from '@/pinia/user/user.mock';
+import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../LeftMenu.vue';
 
 const localVue = createLocalVue();
@@ -278,6 +279,22 @@ describe('LeftMenu.vue', () => {
         expect(item.text).toBe('system_management.leftMenu.title');
         expect(item.test).toBe('system_management');
         expect(item.level).toBe(UserRoles.level5);
+      });
+
+      describe('taskManagement', () => {
+        it('should be render when feature flag is on', () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            featureList: [FeatureKeys.TaskManagement],
+          });
+          const item = wrapper.vm.items[7];
+          expect(item.to).toBe(routes.tasks.home.name);
+          expect(item.icon).toBe('mdi-clipboard-check');
+          expect(item.text).toBe('leftMenu.tasks_title');
+          expect(item.test).toBe('tasks');
+          expect(item.level).toBe(UserRoles.level0);
+          expect(item.roles).toEqual([UserRoles.contributorIM, UserRoles.contributorFinance, UserRoles.contributor3, UserRoles.readonly, UserRoles.no_role]);
+        });
       });
     });
   });
