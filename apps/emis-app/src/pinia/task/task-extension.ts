@@ -15,8 +15,9 @@ export function getExtensionComponents(
   const taskCategoriesFetched = ref(false);
   const taskCategories = ref([]) as Ref<IOptionItem[]>;
 
-  function getTaskCategories(filterOutInactive = true, actualValue?: string[] | string) {
-    return filterAndSortActiveItems(taskCategories.value, filterOutInactive, actualValue);
+  function getTaskCategories(filterOutHidden = true, filterOutInactive = true, actualValue?: string[] | string) {
+    const items = filterAndSortActiveItems(taskCategories.value, filterOutInactive, actualValue);
+    return filterOutHidden ? items.filter((i) => !i.isHidden) : items;
   }
 
   async function fetchTaskCategories() {

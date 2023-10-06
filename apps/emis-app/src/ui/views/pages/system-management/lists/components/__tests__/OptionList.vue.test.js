@@ -2,7 +2,7 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { mockOptionItemData } from '@libs/entities-lib/optionItem';
+import { mockOptionItem, mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { Status } from '@libs/entities-lib/base';
 import { useMockOptionListStore } from '@/pinia/option-list/optionList.mock';
 import OptionListItem from '@/ui/views/pages/system-management/lists/components/OptionListItem.vue';
@@ -103,6 +103,11 @@ describe('OptionList.vue', () => {
         ]);
 
         spy.mockRestore();
+      });
+
+      it('should filter out hidden item', () => {
+        optionListStore.getItems = jest.fn(() => [mockOptionItem({ id: '1', isHidden: true }), mockOptionItem({ id: '2', isHidden: false })]);
+        expect(wrapper.vm.items).toEqual([mockOptionItem({ id: '2', isHidden: false })]);
       });
     });
 

@@ -64,6 +64,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
       description: null,
       orderRank: 3,
       isOther: false,
+      isHidden: false,
       isDefault: false,
       restrictFinancial: false,
       subitems: [
@@ -136,6 +137,7 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
       description: null,
       orderRank: 8,
       isOther: false,
+      isHidden: false,
       isDefault: false,
       restrictFinancial: false,
       subitems: [
@@ -288,6 +290,7 @@ const categories: IOptionItem[] = [
     description: null,
     orderRank: 1,
     isOther: false,
+    isHidden: false,
     isDefault: false,
     restrictFinancial: false,
     subitems: [
@@ -357,6 +360,7 @@ const categories: IOptionItem[] = [
     description: null,
     orderRank: 2,
     isOther: false,
+    isHidden: false,
     isDefault: false,
     restrictFinancial: false,
     subitems: [

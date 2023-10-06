@@ -88,7 +88,7 @@ describe('PersonalTaskForm.vue', () => {
             task: mockPersonalTaskEntity(),
           },
           computed: {
-            taskNames: () => [mockOptionItem({ id: 'mock-item-id', isOther: true, subitems: [] })],
+            taskNames: () => [mockOptionItem({ id: 'mock-item-id', isHidden: true, isOther: true, subitems: [] })],
           },
         });
         await wrapper.vm.$options.created.forEach((hook) => {
@@ -105,7 +105,7 @@ describe('PersonalTaskForm.vue', () => {
         });
       });
 
-      it('should call fetchTaskCategories', async () => {
+      it('should set filterOutHiddenTaskName to false and call fetchTaskCategories', async () => {
         await doMount(true, {
           propsData: {
             task: mockPersonalTaskEntity(),
@@ -117,6 +117,7 @@ describe('PersonalTaskForm.vue', () => {
           hook.call(wrapper.vm);
         });
         await flushPromises();
+        expect(wrapper.vm.filterOutHiddenTaskName).toEqual(false);
         expect(taskStore.fetchTaskCategories).toHaveBeenCalled();
       });
     });

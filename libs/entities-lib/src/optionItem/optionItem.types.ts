@@ -35,6 +35,7 @@ export interface IOptionItemData extends IEntity {
   description?: IMultilingual;
   orderRank: number;
   isOther: boolean;
+  isHidden: boolean;
   isDefault: boolean;
   restrictFinancial: boolean;
   subitems: IOptionSubItem[];

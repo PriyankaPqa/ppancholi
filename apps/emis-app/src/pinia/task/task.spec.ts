@@ -7,7 +7,7 @@ import { defineStore, setActivePinia } from 'pinia';
 import { mockTaskService } from '@libs/services-lib/task/entity';
 import { getExtensionComponents } from '@/pinia/task/task-extension';
 import { mockOptionItemsService } from '@libs/services-lib/optionItems';
-import { EOptionLists, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
+import { EOptionLists, mockOptionItem, mockOptionItemData, OptionItem } from '@libs/entities-lib/optionItem';
 import _sortBy from 'lodash/sortBy';
 
 const entityService = mockTaskService();
@@ -88,13 +88,25 @@ describe('Task Store', () => {
     });
 
     describe('getTaskCategories', () => {
-      it('returns the sorted types', () => {
+      it('returns the sorted types, filter out hidden', () => {
         const store = createTestStore();
-        store.taskCategories = mockOptionItemData();
-        const res = store.getTaskCategories(false);
+        store.taskCategories = [mockOptionItem({ id: '111', isHidden: true }), mockOptionItem({ id: '222', isHidden: false })];
+        const res = store.getTaskCategories(true, false);
         expect(res).toEqual(
           _sortBy(
-            mockOptionItemData().map((e) => new OptionItem(e)),
+            [mockOptionItem({ id: '222', isHidden: false })].map((e) => new OptionItem(e)),
+            'orderRank',
+          ),
+        );
+      });
+
+      it('returns the sorted types, with hidden', () => {
+        const store = createTestStore();
+        store.taskCategories = [mockOptionItem({ id: '111', isHidden: true }), mockOptionItem({ id: '222', isHidden: false })];
+        const res = store.getTaskCategories(false, false);
+        expect(res).toEqual(
+          _sortBy(
+            [mockOptionItem({ id: '111', isHidden: true }), mockOptionItem({ id: '222', isHidden: false })].map((e) => new OptionItem(e)),
             'orderRank',
           ),
         );

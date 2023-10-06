@@ -8,12 +8,13 @@ export default Vue.extend({
     return {
       selectedTaskNameId: '',
       selectedCategoryId: '',
+      filterOutHiddenTaskName: true,
     };
   },
 
   computed: {
     taskNames(): IOptionItem[] {
-      return useTaskStore().getTaskCategories();
+      return useTaskStore().getTaskCategories(this.filterOutHiddenTaskName);
     },
 
     taskCategories(): IOptionSubItem[] {

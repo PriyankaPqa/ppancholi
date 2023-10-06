@@ -56,5 +56,10 @@ describe('>>> Option Item', () => {
       const optionItem = new OptionItem(mockData);
       expect(optionItem.subitems).toEqual(mockData.subitems);
     });
+
+    it('should instantiate isHidden', () => {
+      const optionItem = new OptionItem(mockData);
+      expect(optionItem.isHidden).toEqual(mockData.isHidden);
+    });
   });
 });

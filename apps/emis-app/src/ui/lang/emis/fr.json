@@ -2616,6 +2616,7 @@
     "task.task_table_header.status": "Statut",
     "task.task_table_header.case_file_number": "Numéro de dossier",
     "task.task_table.my_personal_tasks": "Mes tâches personnelles",
+    "tasksTable.filter": "Filtrer les tâches",
     "task.personal_task_created": "La tâche personnelle a été créée avec succès.",
     "task.table_title": "Tâches",
     "task.task_table_header.task": "Tâche",

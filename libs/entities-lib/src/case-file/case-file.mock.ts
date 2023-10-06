@@ -855,6 +855,7 @@ export const mockTagsOptions = (): IOptionItem[] => [
     name: { translation: { en: 'tag option en', fr: 'tag option fr' } },
     orderRank: 3,
     isOther: false,
+    isHidden: false,
     isDefault: false,
     restrictFinancial: false,
     subitems: [],

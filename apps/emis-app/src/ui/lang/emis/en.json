@@ -2637,6 +2637,7 @@
     "task.edit.title.personal": "Edit personal task",
     "tasksTable.filter": "Filter tasks",
     "task.edit.title.team": "Edit team task",
+    "tasksTable.filter": "Filter tasks",
     "task.error.escalation_team_is_not_available_for_the_event": "Escalations team is not available for the event.",
     "taskCategories.addSubItem": "Add sub-item",
     "taskCategories.nestedTable.headers.item": "Item",

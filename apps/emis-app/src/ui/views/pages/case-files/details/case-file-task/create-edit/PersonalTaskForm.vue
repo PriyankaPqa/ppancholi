@@ -145,13 +145,14 @@ export default mixins(caseFileTask).extend({
   },
 
   async created() {
+    this.filterOutHiddenTaskName = false;
     await useTaskStore().fetchTaskCategories();
     this.localPersonalTaskForm = {
       name: this.task.name,
       description: this.task.description,
       dueDate: this.task.dueDate,
     };
-    this.localPersonalTaskForm.name.optionItemId = this.taskNames?.filter((t) => t.isOther && t.subitems.length === 0)[0]?.id;
+    this.localPersonalTaskForm.name.optionItemId = this.taskNames?.filter((t) => t.isHidden && t.isOther && t.subitems.length === 0)[0]?.id;
   },
 
 });

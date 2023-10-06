@@ -311,7 +311,7 @@ export default Vue.extend({
 
     items: {
       get(): OptionItem[] {
-        return useOptionListStore().getItems();
+        return useOptionListStore().getItems().filter((i) => !i.isHidden);
       },
 
       set(value: IOptionItem[]) {
