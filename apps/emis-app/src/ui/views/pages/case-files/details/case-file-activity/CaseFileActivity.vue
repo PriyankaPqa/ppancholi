@@ -180,7 +180,7 @@ export default mixins(caseFileDetail, caseFileActivity).extend({
     },
 
     canEditTags(): boolean {
-      return this.$hasFeature(FeatureKeys.LimitTagDeletionL2Plus_5959) ? (this.$hasLevel(UserRoles.level2) && !this.readonly) : this.canEdit;
+      return (this.$hasLevel(UserRoles.level2) && !this.readonly);
     },
 
     canEditLabels(): boolean {

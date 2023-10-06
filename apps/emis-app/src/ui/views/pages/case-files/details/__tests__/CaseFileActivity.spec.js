@@ -5,7 +5,6 @@ import { mockCaseFileActivities, CaseFileTriage, mockCaseFileEntity } from '@lib
 import { mockOptionItemData } from '@libs/entities-lib/optionItem';
 import { EEventStatus, mockEventEntity } from '@libs/entities-lib/event';
 import { useMockCaseFileStore } from '@/pinia/case-file/case-file.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
 const localVue = createLocalVue();
@@ -285,22 +284,12 @@ describe('CaseFileActivity', () => {
     });
 
     describe('canEditTags', () => {
-      it('returns the true for level 2+ users if not readonly FF on', async () => {
-        await mountWrapper(false, 0, null, false, { $hasFeature: (f) => f === FeatureKeys.LimitTagDeletionL2Plus_5959 });
+      it('returns the true for level 2+ users', async () => {
+        await mountWrapper(false, 0, null, false);
         expect(wrapper.vm.canEditTags).toBe(false);
-        await mountWrapper(false, 1, null, false, { $hasFeature: (f) => f === FeatureKeys.LimitTagDeletionL2Plus_5959 });
+        await mountWrapper(false, 1, null, false);
         expect(wrapper.vm.canEditTags).toBe(false);
-        await mountWrapper(false, 2, null, false, { $hasFeature: (f) => f === FeatureKeys.LimitTagDeletionL2Plus_5959 });
-        expect(wrapper.vm.canEditTags).toBe(true);
-        await mountWrapper(false, 1, null, true, { $hasFeature: (f) => f === FeatureKeys.LimitTagDeletionL2Plus_5959 });
-        expect(wrapper.vm.canEditTags).toBe(false);
-      });
-      it('returns the true for level 1+ users if not readonly FF off', async () => {
-        await mountWrapper(false, 0);
-        expect(wrapper.vm.canEditTags).toBe(false);
-        await mountWrapper(false, 1);
-        expect(wrapper.vm.canEditTags).toBe(true);
-        await mountWrapper(false, 2);
+        await mountWrapper(false, 2, null, false);
         expect(wrapper.vm.canEditTags).toBe(true);
         await mountWrapper(false, 1, null, true);
         expect(wrapper.vm.canEditTags).toBe(false);

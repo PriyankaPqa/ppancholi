@@ -8,7 +8,6 @@ export enum FeatureKeys {
   SelfRegistration = 'SelfRegistration',
   ManageDuplicates = 'manageDuplicates',
   ImpactedIndividuals = 'ImpactedIndividuals',
-  LimitTagDeletionL2Plus_5959 = 'LimitTagDeletionL2Plus_5959',
   AuthenticationPhaseII = 'AuthenticationPhaseII',
   UseIdentityServer = 'UseIdentityServer',
   MassActionAutoGenerateName = 'MassActionAutoGenerateName',
