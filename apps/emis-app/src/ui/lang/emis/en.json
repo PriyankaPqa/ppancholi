@@ -2643,6 +2643,7 @@
     "taskCategories.nestedTable.headers.item": "Item",
     "taskCategories.nestedTable.headers.subItem": "Sub-item",
     "taskManagement.addSubItem": "Add sub-item",
+    "tasksTable.filter": "Filter tasks",
     "team.add_members.success": "Members added successfully",
     "team.event.confirmDeleteDialog.message": "Are you sure you want to delete {name}?",
     "team.event.confirmDeleteDialog.title": "Delete event",

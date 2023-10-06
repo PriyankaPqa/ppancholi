@@ -8,7 +8,7 @@
         {{ $m(notification.subject) }}
       </div>
       <div data-test="notification-created-date">
-        {{ $t('eventDetail.created') }} {{ format(utcToZonedTime(new Date(notification.created), 'UTC'), 'MMM d, yyyy') }}
+        {{ $t('eventDetail.created') }} {{ helpers.getLocalStringDate((notification.created), 'local', 'PP') }}
       </div>
     </div>
     <div class="d-flex align-center">
@@ -20,7 +20,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { INotificationEntity } from '@libs/entities-lib/notification';
-import { format, utcToZonedTime } from 'date-fns-tz';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   name: 'NotificationCard',
@@ -34,8 +34,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      format,
-      utcToZonedTime,
+      helpers,
     };
   },
   computed: {

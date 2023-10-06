@@ -6,6 +6,7 @@ import { IHttpClient } from '../../http-client';
 import { DomainBaseService } from '../../base';
 
 import {
+  IFetchParams,
   INotificationsService,
 } from './notifications.types';
 
@@ -17,8 +18,8 @@ export class NotificationsService extends DomainBaseService<INotificationEntity,
     super(http, API_URL_SUFFIX, CONTROLLER);
   }
 
-  async fetchCurrentUserNotifications(): Promise<INotificationEntity[]> {
-    return this.http.get(`${this.baseUrl}/user`, { globalHandler: false });
+  async fetchCurrentUserNotifications(params?: IFetchParams): Promise<INotificationEntity[]> {
+    return this.http.get(`${this.baseUrl}/user`, { params, globalHandler: false });
   }
 
   async updateIsRead(idList: uuid[], isRead: boolean): Promise<INotificationEntity[]> {

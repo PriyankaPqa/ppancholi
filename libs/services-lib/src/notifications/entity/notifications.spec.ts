@@ -12,8 +12,12 @@ describe('>>> Notifications Service', () => {
   });
 
   test('fetchCurrentUserNotifications is linked to the correct URL', async () => {
-    await service.fetchCurrentUserNotifications();
-    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/user`, { globalHandler: false });
+    const params = {
+      limit: 5,
+      beforeDateTimeUtc: '2023-09-05',
+    };
+    await service.fetchCurrentUserNotifications(params);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/user`, { params, globalHandler: false });
   });
 
   test('updateIsRead is linked to the correct URL', async () => {

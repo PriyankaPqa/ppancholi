@@ -1,7 +1,7 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import Component from '@/ui/shared-components/NotificationCard.vue';
 import { mockNotificationEntity } from '@libs/entities-lib/notification';
-import { format, utcToZonedTime } from 'date-fns-tz';
+import helpers from '@/ui/helpers/helpers';
 
 const localVue = createLocalVue();
 
@@ -29,7 +29,7 @@ describe('NotificationCard.vue', () => {
       it('should render expected date', () => {
         mountWithNotification(mockNotification);
         const text = wrapper.findDataTest('notification-created-date');
-        const dateText = format(utcToZonedTime(new Date(mockNotification.created), 'UTC'), 'MMM d, yyyy');
+        const dateText = helpers.getLocalStringDate((mockNotification.created), 'local', 'PP');
         expect(text.text()).toEqual(`eventDetail.created ${dateText}`);
       });
       it('should checkbox with expected label when unread', () => {

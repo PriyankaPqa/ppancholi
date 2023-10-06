@@ -2625,6 +2625,7 @@
     "taskCategories.nestedTable.headers.item": "Élément",
     "taskCategories.nestedTable.headers.subItem": "Sous-élément",
     "taskManagement.addSubItem": "Ajouter un sous-élément",
+    "tasksTable.filter": "Filtrer les tâches",
     "team.add_members.success": "Les membres ont été ajouté(e)s.",
     "task.task_edited": "La tâche a été modifiée avec succès.",
     "task.task_status.InProgress": "En cours",

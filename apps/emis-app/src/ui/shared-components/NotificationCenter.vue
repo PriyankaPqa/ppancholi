@@ -1,6 +1,6 @@
 <template>
   <right-menu-template title-key="notifications.title" :show.sync="show">
-    <template slot="main">
+    <template #main>
       <rc-tabs>
         <rc-tab
           v-for="tab in tabs"
@@ -36,16 +36,26 @@
             @toggleIsRead="toggleIsRead" />
         </v-col>
         <div class="d-flex justify-center">
+          <div v-if="notifications.length === 0" data-test="no_notifications" class="rc-body14 mt-2">
+            {{ $t('common.search.no_result') }}
+          </div>
+        </div>
+        <div class="d-flex justify-center">
+          <span v-if="noMoreNotifications" data-test="no_more_notifications" class="rc-body14 mt-2">
+            {{ $t('notifications.no_more') }}
+          </span>
           <v-btn
+            v-else
             color="primary"
             class="mx-md-4 my-4"
-            data-test="notifications-load-more">
+            data-test="notifications-load-more"
+            @click="throttleLoadMore()">
             {{ $t('notifications.load_more') }}
           </v-btn>
         </div>
       </div>
     </template>
-    <template slot="footer">
+    <template #footer>
       <div class="d-flex justify-center rc-body14 fw-normal footer-text pa-2">
         {{ $t('notifications.all_in_message') }}
       </div>
@@ -61,9 +71,14 @@ import { useNotificationStore } from '@/pinia/notification/notification';
 import { useUserStore } from '@/pinia/user/user';
 import { INotificationEntity, NotificationCategoryType } from '@libs/entities-lib/notification';
 import NotificationCard from '@/ui/shared-components/NotificationCard.vue';
+import { IFetchParams } from '@libs/services-lib/notifications/entity';
+import _throttle from 'lodash/throttle';
 import RightMenuTemplate from '../views/components/layout/RightMenuTemplate.vue';
 
+const INITIAL_DAY_LIMIT = 30;
+const LOAD_LIMIT = 25;
 export default Vue.extend({
+
   name: 'NotificationCenter',
 
   components: {
@@ -78,6 +93,8 @@ export default Vue.extend({
     return {
       initLoading: true,
       selectedTab: NotificationCategoryType.General,
+      noMoreNotifications: false,
+      initialDayLimit: INITIAL_DAY_LIMIT,
     };
   },
 
@@ -113,12 +130,7 @@ export default Vue.extend({
   },
 
   async created() {
-    try {
-      this.initLoading = true;
-      await useNotificationStore().fetchCurrentUserNotifications();
-    } finally {
-      this.initLoading = false;
-    }
+    await this.fetchNotifications({ numberOfDays: INITIAL_DAY_LIMIT });
   },
 
   methods: {
@@ -137,6 +149,28 @@ export default Vue.extend({
 
     switchTab(tab: NotificationCategoryType) {
       this.selectedTab = tab;
+    },
+
+    async loadMore(limit = LOAD_LIMIT) {
+      const fetchParams = this.notifications.length > 0
+        ? { limit, beforeDateTimeUtc: this.notifications[this.notifications.length - 1].created }
+        : { limit };
+      const loadMoreResults = await this.fetchNotifications(fetchParams);
+      this.noMoreNotifications = !loadMoreResults?.length || loadMoreResults.length < limit;
+    },
+
+    throttleLoadMore: _throttle(function func(this:any, limit = LOAD_LIMIT) {
+      this.loadMore(limit);
+    }, 5000),
+
+    async fetchNotifications(params?: IFetchParams) {
+      try {
+        this.initLoading = true;
+        const res = await useNotificationStore().fetchCurrentUserNotifications(params);
+        return res;
+      } finally {
+        this.initLoading = false;
+      }
     },
   },
 });

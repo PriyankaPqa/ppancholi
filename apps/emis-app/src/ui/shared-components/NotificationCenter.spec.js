@@ -4,6 +4,7 @@ import { useMockUserStore } from '@/pinia/user/user.mock';
 import { createLocalVue, mount } from '@/test/testSetup';
 import Component from '@/ui/shared-components/NotificationCenter.vue';
 import { NotificationCategoryType, mockNotificationEntity } from '@libs/entities-lib/notification';
+import { useNotificationStore } from '@/pinia/notification/notification';
 
 const localVue = createLocalVue();
 
@@ -65,6 +66,49 @@ describe('NotificationCenter.vue', () => {
     it('should not show mark all as read button when only read notifications', async () => {
       await doMount([mockReadGeneral]);
       expect(wrapper.findDataTest('btn-mark-all-read').exists()).toBeFalsy();
+    });
+
+    describe('Load more button', () => {
+      it('should call throttleLoadMore on click', async () => {
+        await doMount([mockUnreadGeneral]);
+        wrapper.vm.throttleLoadMore = jest.fn();
+        const element = wrapper.findDataTest('notifications-load-more');
+        await element.trigger('click');
+        expect(wrapper.vm.throttleLoadMore).toHaveBeenCalledTimes(1);
+      });
+      it('should initially be displayed if no notifications', async () => {
+        await doMount([]);
+        const element = wrapper.findDataTest('notifications-load-more');
+        expect(element.exists()).toBe(true);
+      });
+      it('should not be displayed if no more is true', async () => {
+        await doMount([mockUnreadGeneral]);
+        await wrapper.setData({ noMoreNotifications: true });
+        const element = wrapper.findDataTest('notifications-load-more');
+        expect(element.exists()).toBe(false);
+      });
+    });
+
+    describe('No results', () => {
+      it('should be displayed if no notifications', async () => {
+        await doMount([]);
+        const element = wrapper.findDataTest('no_notifications');
+        expect(element.exists()).toBe(true);
+      });
+    });
+
+    describe('No more results', () => {
+      it('should not be displayed if no notifications', async () => {
+        await doMount([]);
+        const element = wrapper.findDataTest('no_more_notifications');
+        expect(element.exists()).toBe(false);
+      });
+      it('should be displayed if no more is true', async () => {
+        await doMount([mockUnreadGeneral]);
+        await wrapper.setData({ noMoreNotifications: true });
+        const element = wrapper.findDataTest('no_more_notifications');
+        expect(element.exists()).toBe(true);
+      });
     });
   });
 
@@ -132,6 +176,76 @@ describe('NotificationCenter.vue', () => {
       expect(wrapper.vm.selectedTab).toEqual(NotificationCategoryType.General);
       wrapper.vm.switchTab(NotificationCategoryType.Tasks);
       expect(wrapper.vm.selectedTab).toEqual(NotificationCategoryType.Tasks);
+    });
+
+    describe('loadMore', () => {
+      it('should call fetchNotifications with created date of the bottom notification and a limit of 25 per default', async () => {
+        wrapper.vm.fetchNotifications = jest.fn();
+        await wrapper.vm.loadMore();
+        expect(wrapper.vm.fetchNotifications).toHaveBeenCalledWith({ beforeDateTimeUtc: '2021-04-06 06:39:04', limit: 25 });
+      });
+      it('should set noMoreNotifications to true if there are no results', async () => {
+        wrapper.vm.fetchNotifications = jest.fn();
+        expect(wrapper.vm.noMoreNotifications).toBe(false);
+        await wrapper.vm.loadMore();
+        expect(wrapper.vm.noMoreNotifications).toBe(true);
+      });
+      it('should set noMoreNotifications to true if there are fewer results than limit', async () => {
+        wrapper.vm.fetchNotifications = jest.fn(() => mockNotifications);
+        expect(wrapper.vm.noMoreNotifications).toBe(false);
+        await wrapper.vm.loadMore(mockNotifications.length + 1);
+        expect(wrapper.vm.noMoreNotifications).toBe(true);
+      });
+      it('should set noMoreNotifications to false if there are more results', async () => {
+        wrapper.vm.fetchNotifications = jest.fn(() => mockNotifications);
+        expect(wrapper.vm.noMoreNotifications).toBe(false);
+        await wrapper.vm.loadMore(mockNotifications.length);
+        expect(wrapper.vm.noMoreNotifications).toBe(false);
+      });
+    });
+
+    describe('fetchNotifications', () => {
+      it('should call fetchCurrentUserNotifications from the store', async () => {
+        await wrapper.vm.fetchNotifications({
+          limit: 2,
+          beforeDateTimeUtc: '2023-09-12',
+          numberOfDays: 15,
+        });
+        expect(useNotificationStore().fetchCurrentUserNotifications).toHaveBeenCalledWith({
+          limit: 2,
+          beforeDateTimeUtc: '2023-09-12',
+          numberOfDays: 15,
+        });
+      });
+    });
+
+    describe('throttleLoadMore', () => {
+      it('should throttle loadMore by 5s', async () => {
+        wrapper.vm.loadMore = jest.fn();
+
+        wrapper.vm.throttleLoadMore();
+        wrapper.vm.throttleLoadMore();
+        // eslint-disable-next-line no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, 4000));
+        wrapper.vm.throttleLoadMore();
+
+        expect(wrapper.vm.loadMore).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('Lifecycle', () => {
+    describe('Created', () => {
+      it('should call fetchNotifications with default day limit', async () => {
+        await doMount();
+        wrapper.vm.fetchNotifications = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.fetchNotifications).toHaveBeenCalledWith({
+          numberOfDays: wrapper.vm.initialDayLimit,
+        });
+      });
     });
   });
 });

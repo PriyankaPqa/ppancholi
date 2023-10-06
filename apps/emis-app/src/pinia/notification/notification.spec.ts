@@ -65,6 +65,20 @@ describe('>>> Notification Store', () => {
       const result = store.getNotificationsByRecipient('other');
       expect(result).toHaveLength(0);
     });
+
+    it('should return notifications sorted by descending creation date', () => {
+      const nA = mockNotificationEntity({ created: '2023-10-01 00:00:00' });
+      const nB = mockNotificationEntity({ created: '2023-10-02 00:00:00' });
+      const nC = mockNotificationEntity({ created: '2023-10-03 00:00:00' });
+      const nD = mockNotificationEntity({ created: '2023-10-04 00:00:00' });
+      const bComponents = {
+        ...baseComponents,
+        getAll: jest.fn(() => [nB, nD, nA, nC]),
+      };
+      const store = createTestStore(bComponents);
+      const result = store.getNotificationsByRecipient(nA.recipientId);
+      expect(result).toEqual([nD, nC, nB, nA]);
+    });
   });
 
   describe('fetchCurrentUserNotifications', () => {
@@ -74,9 +88,9 @@ describe('>>> Notification Store', () => {
         setAll: jest.fn(),
       };
       const store = createTestStore(bComponents);
-      await store.fetchCurrentUserNotifications();
+      await store.fetchCurrentUserNotifications({ limit: 1 });
 
-      expect(entityService.fetchCurrentUserNotifications).toBeCalledWith();
+      expect(entityService.fetchCurrentUserNotifications).toBeCalledWith({ limit: 1 });
       expect(bComponents.setAll).toBeCalledWith(mockNotificationEntities());
     });
   });

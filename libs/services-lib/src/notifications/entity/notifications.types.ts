@@ -3,8 +3,14 @@ import {
 } from '@libs/entities-lib/notification';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base';
 
+export interface IFetchParams {
+  beforeDateTimeUtc?: Date | string;
+  numberOfDays?: number;
+  limit?: number;
+}
+
 export interface INotificationsService extends IDomainBaseService<INotificationEntity, uuid> {
-  fetchCurrentUserNotifications(): Promise<INotificationEntity[]>;
+  fetchCurrentUserNotifications(fetchParams: IFetchParams): Promise<INotificationEntity[]>;
   updateIsRead(idList: uuid[], isRead: boolean): Promise<INotificationEntity[]>;
 }
 

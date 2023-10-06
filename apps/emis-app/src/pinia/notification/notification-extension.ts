@@ -1,17 +1,20 @@
 import { BaseStoreComponents } from '@libs/stores-lib/base';
 import { INotificationEntity, IdParams } from '@libs/entities-lib/notification';
-import { NotificationsService, INotificationsServiceMock } from '@libs/services-lib/notifications/entity';
+import { NotificationsService, INotificationsServiceMock, IFetchParams } from '@libs/services-lib/notifications/entity';
 
 export function getExtensionComponents(
   baseComponents: BaseStoreComponents<INotificationEntity, IdParams>,
   service: NotificationsService | INotificationsServiceMock,
 ) {
   function getNotificationsByRecipient(recipientId: uuid): INotificationEntity[] {
-    return baseComponents.getAll().filter((n) => n.recipientId === recipientId);
+    return baseComponents
+      .getAll()
+      .filter((n) => n.recipientId === recipientId)
+      .sort((a, b) => (a.created > b.created ? -1 : 1));
   }
 
-  async function fetchCurrentUserNotifications(): Promise<INotificationEntity[]> {
-    const res = await service.fetchCurrentUserNotifications();
+  async function fetchCurrentUserNotifications(fetchParams?: IFetchParams): Promise<INotificationEntity[]> {
+    const res = await service.fetchCurrentUserNotifications(fetchParams);
     if (res) {
       baseComponents.setAll(res);
     }
