@@ -79,11 +79,13 @@ const financialAssistanceCanSteps = ({ paymentLineData, groupTitle }: Partial<Pa
 };
 
 export const paymentLineGeneralCanSteps = ({ faTable, retries, paymentLineData, groupTitle }: Partial<PaymentLineCanStepsParams>) => {
+  cy.interceptAndRetryUntilNoMoreStatus('**/case-file/case-files/metadata/*', 404);
   addPaymentLineCanSteps({ faTable, retries, paymentLineData, groupTitle });
   financialAssistanceCanSteps({ paymentLineData, groupTitle });
 };
 
 export const paymentLineChequeCanSteps = ({ faTable, retries, paymentLineData, groupTitle, household }: Partial<PaymentLineCanStepsParams>) => {
+  cy.interceptAndRetryUntilNoMoreStatus('**/case-file/case-files/metadata/*', 404);
   addPaymentLineChequeCanSteps({ faTable, retries, paymentLineData, household });
   financialAssistanceCanSteps({ paymentLineData, groupTitle });
 };

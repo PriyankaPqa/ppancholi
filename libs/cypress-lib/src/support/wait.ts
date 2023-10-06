@@ -105,7 +105,9 @@ Cypress.Commands.add('waitItemsRefreshUntilDisplayed', (piniaStoreId, selector, 
  @throws Will throw an error if the option cannot be found after the maximum number of retries has been reached.
  @returns {void}
  */
-Cypress.Commands.add('searchAndSelect', (dataTest, searchString, opts = { timeout: 5000, interval: 500 }) => {
+Cypress.Commands.add('searchAndSelect', (dataTest, searchString, opts = { timeoutInSec: 20, intervalInSec: 2 }) => {
+  const timeout = opts.timeoutInSec * 1000;
+  const interval = opts.intervalInSec * 1000;
   const valueWithoutSpace = searchString.replace(/\s/g, '');
   const optionSelector = `div[data-test=${dataTest}__item--${valueWithoutSpace}]`;
   const start = Date.now();
@@ -113,7 +115,7 @@ Cypress.Commands.add('searchAndSelect', (dataTest, searchString, opts = { timeou
 
   const search = () => {
     elapsedTime = Date.now() - start;
-    if (elapsedTime >= opts.timeout) {
+    if (elapsedTime >= timeout) {
       throw new Error(`${searchString} was not found and could not be selected. Try another query or increase timeout`);
     }
 
@@ -123,7 +125,7 @@ Cypress.Commands.add('searchAndSelect', (dataTest, searchString, opts = { timeou
       if (Cypress.$(optionSelector).length) {
         cy.get(optionSelector).click();
       } else {
-        cy.wait(opts.interval).then(() => {
+        cy.wait(interval).then(() => {
           search();
         });
       }
