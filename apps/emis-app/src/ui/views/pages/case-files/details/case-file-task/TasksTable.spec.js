@@ -759,6 +759,20 @@ describe('TasksTable.vue', () => {
         });
       });
     });
+
+    describe('getEditTaskRoute', () => {
+      it('should call $router push with proper object', () => {
+        wrapper.vm.getEditTaskRoute(mockTeamTaskEntity());
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: 'casefile.task.edit',
+          params: {
+            id: 'mock-case-file-id-1',
+            taskId: 'mock-team-task-id-1',
+            taskType: 'team',
+          },
+        });
+      });
+    });
   });
 
   describe('watcher', () => {

@@ -3,7 +3,7 @@
     <v-col md="8" sm="12">
       <v-row class="mb-6 ml-0 align-center">
         <v-checkbox
-          v-model="task.isUrgent"
+          v-model="localTeamTaskForm.isUrgent"
           :label="$t('task.create_edit.urgent')"
           class="ma-0 mt-1"
           data-test="is-urgent-check-box" />
@@ -120,6 +120,7 @@ interface ILocalTeamTaskForm {
   name: IListOption;
   category: IListOption;
   description: string;
+  isUrgent: boolean;
 }
 
 export default mixins(caseFileTask).extend({
@@ -150,12 +151,15 @@ export default mixins(caseFileTask).extend({
   },
 
   data() {
-    return {
-      localTeamTaskForm: {
+      const localTeamTaskForm = {
         name: this.task.name,
         category: this.task.category,
         description: this.task.description,
-      } as ILocalTeamTaskForm,
+        isUrgent: this.task.isUrgent,
+      } as ILocalTeamTaskForm;
+
+      return {
+      localTeamTaskForm,
     };
   },
 
@@ -197,11 +201,10 @@ export default mixins(caseFileTask).extend({
 
   async created() {
     await useTaskStore().fetchTaskCategories();
-    this.localTeamTaskForm = {
-      name: this.task.name,
-      category: this.task.category,
-      description: this.task.description,
-    };
+    if (this.isEditMode) {
+      this.selectedTaskNameId = this.task.name.optionItemId;
+      this.selectedCategoryId = this.task.category.optionItemId;
+    }
   },
 
   methods: {

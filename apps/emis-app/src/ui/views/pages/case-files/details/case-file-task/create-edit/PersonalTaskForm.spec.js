@@ -4,14 +4,18 @@ import { format } from 'date-fns';
 import { mockPersonalTaskEntity } from '@libs/entities-lib/task';
 import flushPromises from 'flush-promises';
 import { useMockTaskStore } from '@/pinia/task/task.mock';
+import { useMockUserStore } from '@/pinia/user/user.mock';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import Component from './PersonalTaskForm.vue';
 
 const localVue = createLocalVue();
 const { pinia, taskStore } = useMockTaskStore();
+const { userStore } = useMockUserStore(pinia);
+const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
 
 describe('PersonalTaskForm.vue', () => {
   let wrapper;
-  const doMount = async (shallow = true, otherOptions = {}) => {
+  const doMount = async (shallow = true, otherOptions = {}, level = 5) => {
     const option = {
       localVue,
       pinia,
@@ -21,6 +25,9 @@ describe('PersonalTaskForm.vue', () => {
       computed: {
         taskNames: () => mockOptionItems(),
       },
+      mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}`,
+      },
       ...otherOptions,
     };
     wrapper = shallow ? shallowMount(Component, option) : mount(Component, option);
@@ -28,6 +35,35 @@ describe('PersonalTaskForm.vue', () => {
   };
   beforeEach(async () => {
     await doMount();
+  });
+
+  describe('Template', () => {
+    describe('task-assigned-to', () => {
+      it('should display Me when is not edit mode', async () => {
+        await doMount(true, {
+          propsData: {
+            task: mockPersonalTaskEntity(),
+            isEditMode: false,
+          },
+        });
+        const element = wrapper.findDataTest('task-assigned-to');
+        expect(element.text()).toEqual('task.create_edit.assigned_to.me');
+      });
+
+      it('should display the value of assignedToPerson', async () => {
+        await doMount(true, {
+          propsData: {
+            task: mockPersonalTaskEntity(),
+            isEditMode: true,
+          },
+          computed: {
+            assignedToPerson: () => 'Good Man',
+          },
+        }, 6);
+        const element = wrapper.findDataTest('task-assigned-to');
+        expect(element.text()).toEqual('Good Man');
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -44,6 +80,33 @@ describe('PersonalTaskForm.vue', () => {
         wrapper.vm.task.dueDate = null;
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.dueDateRule).toEqual({ });
+      });
+    });
+
+    describe('assignedToPerson', () => {
+      it('should render assigned to me when user is creator', async () => {
+        await doMount(true, {
+          propsData: {
+            task: mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
+          },
+        });
+
+        await flushPromises();
+        userStore.getUserId = jest.fn(() => 'mock-user-1');
+
+        expect(wrapper.vm.assignedToPerson).toEqual('task.create_edit.assigned_to.me');
+      });
+
+      it('should return the name of creator when user is not creator and user has level6', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-user-2');
+        // userAccountMetadataStore.getById = jest.fn(() => mockUser);
+        await doMount(true, {
+          propsData: {
+            task: mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
+          },
+        }, 6);
+        await flushPromises();
+        expect(wrapper.vm.assignedToPerson).toEqual('Jane Smith');
       });
     });
   });
@@ -119,6 +182,36 @@ describe('PersonalTaskForm.vue', () => {
         await flushPromises();
         expect(wrapper.vm.filterOutHiddenTaskName).toEqual(false);
         expect(taskStore.fetchTaskCategories).toHaveBeenCalled();
+      });
+
+      it('should call useUserAccountMetadataStore fetch with proper data if user is not the creator', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-user-id-2');
+        await doMount(true, {
+          propsData: {
+            task: mockPersonalTaskEntity({ createdBy: 'mock-user-id-1' }),
+          },
+        });
+        userAccountMetadataStore.fetch = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-1', false);
+      });
+
+      it('should not call useUserAccountMetadataStore fetch with proper data if user is the creator', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-user-id-1');
+        await doMount(true, {
+          propsData: {
+            task: mockPersonalTaskEntity({ createdBy: 'mock-user-id-1' }),
+          },
+        });
+        userAccountMetadataStore.fetch = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(userAccountMetadataStore.fetch).not.toHaveBeenCalled();
       });
     });
   });

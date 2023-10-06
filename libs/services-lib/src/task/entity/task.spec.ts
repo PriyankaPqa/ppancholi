@@ -17,7 +17,7 @@ describe('>>> Tasks Service', () => {
   test('editTask is linked to the correct URL', async () => {
     const payload = mockTeamTaskEntity();
     await service.editTask('mock-task-id-123', payload);
-    expect(http.post).toHaveBeenCalledWith('/case-file/tasks/mock-task-id-123/edit', payload, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks', payload, { globalHandler: false });
   });
 
   describe('search', () => {

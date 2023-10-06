@@ -4,126 +4,132 @@
     show-back-button
     @back="navigateBack">
     <rc-page-loading v-if="loading" />
-    <v-container v-else class="px-16 pt-8">
-      <v-row class="px-16 mb-5 justify-space-between flex-nowrap">
-        <div class="font-weight-bold rc-heading-4">
-          {{ helpers.capitalize(displayedTaskName) }}
-        </div>
-        <div class="d-flex align-center">
-          <template v-if="isTeamTask && task.isUrgent">
-            <span class="red--text font-weight-bold" data-test="task-details-is-urgent">{{ $t('task.create_edit.urgent') }}</span>
-            <v-divider vertical class="ml-4" />
-          </template>
+    <v-row v-else class="justify-center mt-6">
+      <v-col cols="12" lg="8">
+        <v-container>
+          <v-row class="px-16 mb-5 justify-space-between flex-nowrap">
+            <div class="font-weight-bold rc-heading-4">
+              {{ helpers.capitalize(displayedTaskName) }}
+            </div>
+            <div class="d-flex align-center">
+              <template v-if="isTeamTask && task.isUrgent">
+                <span class="red--text font-weight-bold" data-test="task-details-is-urgent">{{ $t('task.create_edit.urgent') }}</span>
+                <v-divider vertical class="ml-4" />
+              </template>
 
-          <v-btn icon color="primary" class="mx-2">
-            <v-icon>
-              mdi-history
-            </v-icon>
-          </v-btn>
-
-          <status-chip v-if="isTeamTask" status-name="TaskStatus" :status="task.taskStatus" class="mr-4" />
-          <template v-if="canEdit">
-            <v-divider vertical class="mr-2" />
-            <v-btn icon data-test="task-details-edit-button">
-              <v-icon> mdi-pencil </v-icon>
-            </v-btn>
-          </template>
-        </div>
-      </v-row>
-      <template v-if="isTeamTask">
-        <div class="creator-info px-13 grey--text rc-body14" data-test="task-details-team-task-creator-info">
-          {{ teamTaskCreatorInfo }}
-        </div>
-        <div v-if="selectedTaskName && $m(selectedTaskName.description)" class="px-13 mt-2 grey-text rc-body16">
-          <v-icon small class="mr-1 pb-1">
-            mdi-alert-circle
-          </v-icon>
-          <span data-test="task-details-team-task-name-description"> {{ $m(selectedTaskName.description) }} </span>
-        </div>
-      </template>
-
-      <v-row class="pl-4 py-2 d-flex justify-space-between d-flex assigned-to-action align-center mx-13 mb-4 mt-4 pr-4 pa-0">
-        <v-col cols="4" class="font-weight-bold pa-0">
-          {{ $t('task.create_edit.assigned_to') }}
-        </v-col>
-        <v-col class="pa-0 pl-2" data-test="task-details-assigned-to">
-          {{ (isTeamTask && assignedTeam) ? assignedTeam.name : assignedToPerson }}
-        </v-col>
-        <div>
-          <v-btn
-            color="primary"
-            small
-            data-test="task-details-action-button"
-            @click="showTaskActionDialog = true">
-            {{ $t('task.action') }}
-          </v-btn>
-        </div>
-      </v-row>
-
-      <div class="task-details-container mt-4 mx-13 py-2">
-        <template v-if="isTeamTask">
-          <v-row class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-category-section">
-            <v-col cols="4" class="font-weight-bold">
-              {{ $t('task.create_edit.task_category') }}
-            </v-col>
-            <v-col v-if="selectedCategory">
-              <div data-test="task-details-category">
-                {{ $m(selectedCategory.name) }}
-              </div>
-              <div v-if="$m(selectedCategory.description)" class="">
-                <v-icon small class="mr-1 pb-1">
-                  mdi-alert-circle
+              <v-btn icon color="primary" class="mx-2">
+                <v-icon>
+                  mdi-history
                 </v-icon>
-                <span data-test="task-details-category-description"> {{ $m(selectedCategory.description) }}</span>
-              </div>
+              </v-btn>
+
+              <status-chip v-if="isTeamTask" status-name="TaskStatus" :status="task.taskStatus" class="mr-4" />
+              <template v-if="canEdit">
+                <v-divider vertical class="mr-2" />
+                <v-btn icon data-test="task-details-edit-button" @click="getEditTaskRoute()">
+                  <v-icon> mdi-pencil </v-icon>
+                </v-btn>
+              </template>
+            </div>
+          </v-row>
+          <template v-if="isTeamTask">
+            <div class="creator-info px-13 grey--text rc-body14" data-test="task-details-team-task-creator-info">
+              {{ teamTaskCreatorInfo }}
+            </div>
+            <div v-if="selectedTaskName && $m(selectedTaskName.description)" class="px-13 mt-2 grey-text rc-body16">
+              <v-icon small class="mr-1 pb-1">
+                mdi-alert-circle
+              </v-icon>
+              <span data-test="task-details-team-task-name-description"> {{ $m(selectedTaskName.description) }} </span>
+            </div>
+          </template>
+
+          <v-row class="pl-4 py-2 d-flex justify-space-between d-flex assigned-to-action align-center mx-13 mb-4 mt-4 pr-4 pa-0">
+            <v-col cols="4" class="font-weight-bold pa-0">
+              {{ $t('task.create_edit.assigned_to') }}
             </v-col>
+            <v-col class="pa-0 pl-2" data-test="task-details-assigned-to">
+              {{ (isTeamTask && assignedTeam) ? assignedTeam.name : assignedToPerson }}
+            </v-col>
+            <div>
+              <v-btn
+                color="primary"
+                small
+                data-test="task-details-action-button"
+                @click="showTaskActionDialog = true">
+                {{ $t('task.action') }}
+              </v-btn>
+            </div>
           </v-row>
 
-          <v-row v-if="task.category && task.category.specifiedOther" class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-category-specified-other">
-            <v-col cols="4" class="font-weight-bold" />
-            <v-col>
-              <div data-test="task-details-category">
-                {{ task.category.specifiedOther }}
-              </div>
-            </v-col>
-          </v-row>
-        </template>
+          <div class="task-details-container mt-4 mx-13 py-2">
+            <template v-if="isTeamTask">
+              <v-row class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-category-section">
+                <v-col cols="4" class="font-weight-bold">
+                  {{ $t('task.create_edit.task_category') }}
+                </v-col>
+                <v-col v-if="selectedCategory">
+                  <div data-test="task-details-category">
+                    {{ selectedCategory.isOther ? task.category.specifiedOther : $m(selectedCategory.name) }}
+                  </div>
+                  <div v-if="$m(selectedCategory.description)" class="">
+                    <v-icon small class="mr-1 pb-1">
+                      mdi-alert-circle
+                    </v-icon>
+                    <span data-test="task-details-category-description"> {{ $m(selectedCategory.description) }}</span>
+                  </div>
+                </v-col>
+                <v-col v-else>
+                  <span> {{ $t('common.N/A') }} </span>
+                </v-col>
+              </v-row>
+            </template>
 
-        <v-row v-else class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-due-date-section">
-          <v-col cols="4" class="font-weight-bold d-flex align-center">
-            <v-icon color="red">
-              mdi-flag
-            </v-icon>
-            {{ $t('task.create_edit.due_date') }}
-          </v-col>
-          <v-col>
-            <div data-test="task-details-due-date">
-              {{ helpers.getLocalStringDate(task.dueDate, '', 'MMM d, yyyy') }}
-            </div>
-          </v-col>
-        </v-row>
+            <v-row v-else class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-due-date-section">
+              <v-col cols="4" class="font-weight-bold d-flex align-center">
+                <v-icon color="red">
+                  mdi-flag
+                </v-icon>
+                {{ $t('task.create_edit.due_date') }}
+              </v-col>
+              <v-col>
+                <div data-test="task-details-due-date">
+                  {{ helpers.getLocalStringDate(task.dueDate, '', 'MMM d, yyyy') }}
+                </div>
+              </v-col>
+            </v-row>
 
-        <v-row class="border-bottom py-2 px-2 ma-0">
-          <v-col cols="4" class="font-weight-bold">
-            {{ $t('task.task_details.date_added') }}
-          </v-col>
-          <v-col>
-            <div data-test="task-details-date-added">
-              {{ helpers.getLocalStringDate(task.dateAdded, '', 'MMM d, yyyy') }}
-            </div>
-          </v-col>
-        </v-row>
+            <v-row class="border-bottom py-2 px-2 ma-0">
+              <v-col cols="4" class="font-weight-bold">
+                {{ $t('task.task_details.date_added') }}
+              </v-col>
+              <v-col>
+                <div data-test="task-details-date-added">
+                  {{ helpers.getLocalStringDate(task.dateAdded, '', 'MMM d, yyyy') }}
+                </div>
+              </v-col>
+            </v-row>
 
-        <v-row class="pt-2 px-2 ma-0">
-          <v-col cols="4" class="font-weight-bold">
-            {{ $t('task.create_edit.task_description') }}
-          </v-col>
-          <v-col>
-            <div>{{ task.description }}</div>
-          </v-col>
-        </v-row>
-      </div>
-    </v-container>
+            <v-row class="pt-2 px-2 ma-0">
+              <v-col cols="4" class="font-weight-bold">
+                {{ $t('task.create_edit.task_description') }}
+              </v-col>
+              <v-col>
+                <div>{{ task.description }}</div>
+              </v-col>
+            </v-row>
+          </div>
+        </v-container>
+      </v-col>
+    </v-row>
+    <template slot="actions">
+      <v-btn
+        color="primary"
+        data-test="task_details_back_btn"
+        @click="navigateBack">
+        {{ $t('task.task_details.back_to_tasks') }}
+      </v-btn>
+    </template>
   </rc-page-content>
 </template>
 
@@ -249,6 +255,17 @@ export default mixins(caseFileTask, caseFileDetail).extend({
   methods: {
     navigateBack() {
       this.$router.push({ name: routes.caseFile.task.home.name });
+    },
+
+    getEditTaskRoute() {
+      this.$router.push({
+        name: routes.caseFile.task.edit.name,
+        params: {
+          id: this.task.caseFileId,
+          taskId: this.task.id,
+          taskType: this.task.taskType === TaskType.Team ? 'team' : 'personal',
+        },
+      });
     },
 
     async getAssignedTeam() {

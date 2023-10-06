@@ -326,6 +326,7 @@ describe('TeamTaskForm.vue', () => {
             specifiedOther: '',
           },
           description: 'mock-description',
+          isUrgent: false,
         });
       });
 
@@ -342,6 +343,21 @@ describe('TeamTaskForm.vue', () => {
         });
         await flushPromises();
         expect(taskStore.fetchTaskCategories).toHaveBeenCalled();
+      });
+
+      it('should set selectedTaskNameId and selectedCategoryId in edit mode', async () => {
+        await doMount(true, {
+          propsData: {
+            task: mockTeamTaskEntity(),
+            isEditMode: true,
+          },
+        });
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(wrapper.vm.selectedTaskNameId).toEqual('986192ea-3f7b-4539-8a65-214161aea367');
+        expect(wrapper.vm.selectedCategoryId).toEqual('7eb37c59-4947-4edf-8146-c2458bd2b6f6');
       });
     });
   });

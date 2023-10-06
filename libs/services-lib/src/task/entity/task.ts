@@ -18,7 +18,8 @@ export class TaskService extends DomainBaseService<ITaskEntity, IdParams> implem
   }
 
   async editTask(taskId: uuid, task: ITaskEntityData): Promise<ITaskEntityData> {
-    return this.http.post(`/case-file/tasks/${taskId}/edit`, task, { globalHandler: false });
+    const parseTask = this.parseTaskPayload(task);
+    return this.http.patch(this.getItemUrl(`${this.baseUrl}/${taskId}`, task), parseTask, { globalHandler: false });
   }
 
   async search(params: IAzureSearchParams, searchEndpoint: string = null):

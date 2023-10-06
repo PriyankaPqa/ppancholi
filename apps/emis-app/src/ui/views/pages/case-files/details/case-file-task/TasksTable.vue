@@ -90,7 +90,7 @@
           </v-icon>
           <router-link
             type="button"
-            class="rc-link14 font-weight-bold pr-1"
+            class="rc-link14 font-weight-bold pl-2"
             data-test="task-table-task-name"
             :to="getTaskDetailsRoute(item.metadata.caseFileId, item.entity.id)">
             {{ $m(item.metadata.name) }}
@@ -131,7 +131,8 @@
         <v-btn
           v-if="canEdit(item.entity)"
           icon
-          small>
+          small
+          @click="getEditTaskRoute(item.entity)">
           <v-icon>
             mdi-pencil
           </v-icon>
@@ -500,6 +501,17 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
       };
     },
 
+    getEditTaskRoute(task: ITaskEntity) {
+      this.$router.push({
+        name: routes.caseFile.task.edit.name,
+        params: {
+          id: task.caseFileId,
+          taskId: task.id,
+          taskType: task.taskType === TaskType.Team ? 'team' : 'personal',
+        },
+      });
+    },
+
     canEdit(taskEntity: ITaskEntity): boolean {
       if (this.$hasLevel(UserRoles.level6)) {
         return true;
@@ -525,6 +537,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         personalTaskOnlyFilter: this.personalTaskOnly,
       };
     },
+
     setAdditionalFilters(state: unknown) {
       // eslint-disable-next-line
       this.personalTaskOnly = (state as any)?.personalTaskOnlyFilter || false;

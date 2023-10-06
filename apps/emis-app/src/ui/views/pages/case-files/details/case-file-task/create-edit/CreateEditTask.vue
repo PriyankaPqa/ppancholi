@@ -3,7 +3,7 @@
     <page-template ref="pageTemplate" :show-left-menu="false" :loading="loading">
       <rc-page-content :title="isEditMode ? $t(`task.edit.title.${taskType}`) : $t(`task.create.title.${taskType}`)" :show-help="false">
         <team-task-form
-          v-if="taskType === 'team'"
+          v-if="task.taskType === TaskType.Team"
           :id="id"
           :task.sync="task"
           :is-edit-mode="isEditMode"
@@ -37,12 +37,10 @@ import VDateFieldWithValidation from '@libs/component-lib/components/atoms/VDate
 import routes from '@/constants/routes';
 import { TranslateResult } from 'vue-i18n';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { ITaskEntityData, TaskStatus, TaskType } from '@libs/entities-lib/task/task.types';
+import { TaskStatus, TaskType } from '@libs/entities-lib/task/task.types';
 import { TaskEntity } from '@libs/entities-lib/task/task';
-import { IServerError, VForm } from '@libs/shared-lib/types';
+import { IListOption, IServerError, VForm } from '@libs/shared-lib/types';
 import { useTaskStore } from '@/pinia/task/task';
-import _cloneDeep from 'lodash/cloneDeep';
-import { mockPersonalTaskEntity } from '@libs/entities-lib/task';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import _isEqual from 'lodash/isEqual';
 import { NavigationGuardNext, Route } from 'vue-router';
@@ -52,6 +50,8 @@ import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError
 import caseFileTask from '@/ui/mixins/caseFileTask';
 import TeamTaskForm from '@/ui/views/pages/case-files/details/case-file-task/create-edit/TeamTaskForm.vue';
 import PersonalTaskForm from '@/ui/views/pages/case-files/details/case-file-task/create-edit/PersonalTaskForm.vue';
+import _cloneDeep from 'lodash/cloneDeep';
+import helpers from '@/ui/helpers/helpers';
 
 export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask).extend({
   name: 'CreateEditTask',
@@ -112,9 +112,15 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
       loading: false,
       isSubmitting: false,
       task: new TaskEntity(),
-      backupTask: null as ITaskEntityData,
       assignedTeamName: '',
       TaskType,
+      originalForm: {
+        name: null as IListOption,
+        category: null as IListOption,
+        description: '',
+        dueDate: '' as string | Date,
+        isUrgent: false,
+      },
     };
   },
 
@@ -124,26 +130,32 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     },
 
     isEditMode(): boolean {
-      // TODO add unit test in the ticket Edit Task
       return this.$route.name === routes.caseFile.task.edit.name;
     },
 
     isDirty(): boolean {
-      // TODO add unit test in the ticket Edit Task
-      return !_isEqual(this.task, this.backupTask);
+      return !_isEqual(this.originalForm, {
+        name: this.task.name,
+        category: this.task.category,
+        description: this.task.description,
+        dueDate: helpers.getLocalStringDate(this.task.dueDate, ''),
+        isUrgent: this.task.isUrgent,
+      });
     },
   },
 
   async created() {
+    this.loading = true;
     if (this.isEditMode) {
-      // TODO load task data and backup original task
       await this.loadTask();
+      this.setOriginalData();
     } else {
       this.prepareCreateTask();
-      if (this.task.taskType === TaskType.Team) {
-        await this.fetchEscalationTeamAndSetTeamId();
-      }
     }
+    if (this.task.taskType === TaskType.Team) {
+      await this.fetchEscalationTeamAndSetTeamId();
+    }
+    this.loading = false;
   },
 
   methods: {
@@ -153,6 +165,16 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
 
     back(): void {
       this.$router.replace({ name: routes.caseFile.task.home.name });
+    },
+
+    setOriginalData() {
+      this.originalForm = _cloneDeep({
+        name: this.task.name,
+        category: this.task.category,
+        description: this.task.description,
+        dueDate: helpers.getLocalStringDate(this.task.dueDate, ''),
+        isUrgent: this.task.isUrgent,
+      });
     },
 
     async submitCreateTask() {
@@ -182,7 +204,6 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     },
 
     async submitEditTask() {
-      // TODO add unit test in ticket Edit Task
       try {
         this.isSubmitting = true;
         const res = await useTaskStore().editTask(this.taskId, this.task);
@@ -190,13 +211,13 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
         if (res) {
           this.$toasted.global.success(this.$t('task.task_edited'));
         }
-
-        // TODO router jump to task details
+        this.setOriginalData();
+        await this.$router.replace({ name: routes.caseFile.task.details.name, params: { taskId: res.id } });
 
         this.resetFormValidation();
       } catch (e) {
-        // TODO handle error
-
+        this.$appInsights.trackTrace('Task submit error', { error: (e as IServerError).response?.data?.errors }, 'CreateEditTask', 'submit');
+        this.handleSubmitError(e);
       } finally {
         this.isSubmitting = false;
       }
@@ -233,31 +254,11 @@ export default mixins(caseFileDetail, handleUniqueNameSubmitError, caseFileTask)
     },
 
     async loadTask() {
-      // TODO complete this function in Edit Task
-      // if (this.taskId) {
-      //   await useTaskStore().fetch(this.taskId);
-      // }
-      // const storeTaskEntityData = _cloneDeep(useTaskStore().getById(this.taskId));
-      // this.task = new TaskEntity(storeTaskEntityData);
-      // this.backupTask = new TaskEntity(storeTaskEntityData);
-
-      // TODO remove mock
-      // const mockTeamTask: ITaskEntityData = {
-      //   ...mockTeamTaskEntity(),
-      //   isUrgent: true,
-      //   taskName: 'mock-id-1',
-      //   categoryId: 'mock-id-2',
-      //   taskStatus: TaskStatus.Completed,
-      // };
-
-      const mockPersonalTask: ITaskEntityData = {
-        ...mockPersonalTaskEntity(),
-        dueDate: '2023-09-01',
-      };
-          this.task = new TaskEntity(_cloneDeep(mockPersonalTask));
-          this.backupTask = new TaskEntity(_cloneDeep(mockPersonalTask));
-
-      // TODO set taskType when refresh edit page
+        const res = await useTaskStore().fetch({ id: this.taskId, caseFileId: this.id });
+        if (res) {
+          const storeTask = useTaskStore().getById(this.taskId);
+          this.task = new TaskEntity(storeTask);
+        }
     },
   },
 });

@@ -101,6 +101,72 @@ describe('CreateEditTask.vue', () => {
     });
   });
 
+  describe('Computed', () => {
+    describe('submitLabel', () => {
+      it('should return save when is edit mode', async () => {
+        await doMount(true, {
+          computed: {
+            isEditMode: () => true,
+          },
+        });
+        expect(wrapper.vm.submitLabel).toEqual('common.save');
+      });
+
+      it('should return create when is edit mode', async () => {
+        await doMount(true, {
+          computed: {
+            isEditMode: () => false,
+          },
+        });
+        expect(wrapper.vm.submitLabel).toEqual('common.buttons.create');
+      });
+    });
+
+    describe('isDirty', () => {
+      it('should return false if original form data is same as the current form', async () => {
+        await wrapper.setData({
+          originalForm: {
+            name: {
+              optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
+              specifiedOther: '',
+            },
+            category: {
+              optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
+              specifiedOther: '',
+            },
+            isUrgent: false,
+            dueDate: '',
+            description: 'mock-description',
+          },
+          task: mockTeamTaskEntity(),
+        });
+        expect(wrapper.vm.isDirty).toEqual(false);
+      });
+
+      it('should return true if original form data is not same as the current form', async () => {
+        await wrapper.setData({
+          originalForm: {
+            name: {
+              optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
+              specifiedOther: '',
+            },
+            category: {
+              optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
+              specifiedOther: '',
+            },
+            isUrgent: false,
+            dueDate: '',
+            description: 'mock-description',
+          },
+          task: mockTeamTaskEntity({
+            description: 'new-description',
+          }),
+        });
+        expect(wrapper.vm.isDirty).toEqual(true);
+      });
+    });
+  });
+
   describe('Method', () => {
     describe('prepareCreateTask', () => {
       it('should set proper data if create team task', async () => {
@@ -257,6 +323,13 @@ describe('CreateEditTask.vue', () => {
         expect(taskStore.editTask).toHaveBeenCalledWith('mock-task-id-1', mockTeamTaskEntity());
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('task.task_edited');
       });
+
+      it('should replace router with proper path and params', async () => {
+        taskStore.editTask = jest.fn(() => mockTeamTaskEntity({ id: 'mock-task-id-1' }));
+        wrapper.vm.$router.replace = jest.fn();
+        await wrapper.vm.submitEditTask();
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({ name: routes.caseFile.task.details.name, params: { taskId: 'mock-task-id-1' } });
+      });
     });
 
     describe('submit', () => {
@@ -298,6 +371,43 @@ describe('CreateEditTask.vue', () => {
         wrapper.vm.submitEditTask = jest.fn();
         await wrapper.vm.submit();
         expect(wrapper.vm.submitEditTask).toHaveBeenCalled();
+      });
+    });
+
+    describe('setOriginalData', () => {
+      it('should set originalForm properly', async () => {
+        await wrapper.setData({
+          task: mockTeamTaskEntity(),
+        });
+        wrapper.vm.setOriginalData();
+        expect(wrapper.vm.originalForm).toEqual({
+          category: {
+            optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
+            specifiedOther: '',
+          },
+          description: 'mock-description',
+          dueDate: '',
+          isUrgent: false,
+          name: {
+            optionItemId: '986192ea-3f7b-4539-8a65-214161aea367',
+            specifiedOther: '',
+          },
+        });
+      });
+    });
+
+    describe('loadTask', () => {
+      it('should fetch task properly', async () => {
+        taskStore.fetch = jest.fn();
+        await wrapper.setProps({
+          taskId: 'mock-task-id-1',
+          id: 'mock-case-file-id-1',
+        });
+        await wrapper.vm.loadTask();
+        expect(taskStore.fetch).toHaveBeenCalledWith({
+          caseFileId: 'mock-case-file-id-1',
+          id: 'mock-task-id-1',
+        });
       });
     });
   });
@@ -350,6 +460,35 @@ describe('CreateEditTask.vue', () => {
         });
         await flushPromises();
         expect(wrapper.vm.fetchEscalationTeamAndSetTeamId).toHaveBeenCalled();
+      });
+
+      it('should call loadTask and setOriginalData when is edit mode', async () => {
+        await doMount(false, {
+          propsData: {
+            id: 'mock-id-1',
+            taskType: 'team',
+          },
+          data() {
+            return {
+              task: mockTeamTaskEntity(),
+            };
+          },
+          computed: {
+            isEditMode: () => true,
+            caseFile: () => mockCaseFileEntity({ id: 'mock-case-file-id-1', eventId: 'mock-event-id' }),
+            event: () => mockEventEntity({ id: 'mock-event-id' }),
+            taskNames: () => mockOptionItems(),
+          },
+        });
+        wrapper.vm.loadTask = jest.fn();
+        wrapper.vm.setOriginalData = jest.fn();
+
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+        expect(wrapper.vm.loadTask).toHaveBeenCalled();
+        expect(wrapper.vm.setOriginalData).toHaveBeenCalled();
       });
     });
   });

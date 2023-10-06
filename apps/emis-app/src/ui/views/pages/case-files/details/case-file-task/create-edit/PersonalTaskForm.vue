@@ -7,7 +7,7 @@
             {{ $t('task.create_edit.assigned_to') }}
           </span>
           <span data-test="task-assigned-to">
-            {{ $t('task.create_edit.assigned_to.me') }}
+            {{ isEditMode ? assignedToPerson : $t('task.create_edit.assigned_to.me') }}
           </span>
         </div>
         <div v-if="isEditMode" class="pl-0 py-2">
@@ -65,6 +65,11 @@ import { format } from 'date-fns';
 import VDateFieldWithValidation from '@libs/component-lib/components/atoms/VDateFieldWithValidation.vue';
 import { IListOption } from '@libs/shared-lib/types';
 import { useTaskStore } from '@/pinia/task/task';
+import helpers from '@/ui/helpers/helpers';
+import { TranslateResult } from 'vue-i18n';
+import { useUserStore } from '@/pinia/user/user';
+import { UserRoles } from '@libs/entities-lib/user';
+import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 
 interface ILocalPersonalTaskForm {
   name: IListOption;
@@ -95,12 +100,13 @@ export default mixins(caseFileTask).extend({
   },
 
   data() {
-    return {
-      localPersonalTaskForm: {
-        name: { optionItemId: null, specifiedOther: null },
-        dueDate: '',
-        description: '',
-      } as ILocalPersonalTaskForm,
+      const localPersonalTaskForm = {
+        name: this.task.name,
+        dueDate: helpers.getLocalStringDate(this.task.dueDate, ''),
+        description: this.task.description,
+      } as ILocalPersonalTaskForm;
+      return {
+      localPersonalTaskForm,
     };
   },
 
@@ -130,6 +136,18 @@ export default mixins(caseFileTask).extend({
         },
       };
     },
+
+    assignedToPerson(): string | TranslateResult {
+      const userId = useUserStore().getUserId();
+      if (userId === this.task.createdBy) {
+        return this.$t('task.create_edit.assigned_to.me');
+      }
+      if (this.$hasLevel(UserRoles.level6)) {
+        const userAccountMetadata = useUserAccountMetadataStore().getById(this.task.createdBy);
+        return userAccountMetadata.displayName;
+      }
+      return '';
+    },
   },
 
   watch: {
@@ -147,12 +165,11 @@ export default mixins(caseFileTask).extend({
   async created() {
     this.filterOutHiddenTaskName = false;
     await useTaskStore().fetchTaskCategories();
-    this.localPersonalTaskForm = {
-      name: this.task.name,
-      description: this.task.description,
-      dueDate: this.task.dueDate,
-    };
-    this.localPersonalTaskForm.name.optionItemId = this.taskNames?.filter((t) => t.isHidden && t.isOther && t.subitems.length === 0)[0]?.id;
+    this.localPersonalTaskForm.name.optionItemId = this.taskNames?.filter((t) => t.isOther && t.subitems.length === 0)[0]?.id;
+    const userId = useUserStore().getUserId();
+    if (userId !== this.task.createdBy) {
+      await useUserAccountMetadataStore().fetch(this.task.createdBy, false);
+    }
   },
 
 });

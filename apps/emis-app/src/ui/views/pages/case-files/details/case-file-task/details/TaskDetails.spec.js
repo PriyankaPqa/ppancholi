@@ -136,6 +136,26 @@ describe('TaskDetails.vue', () => {
         const element = wrapper.findDataTest('task-details-edit-button');
         expect(element.exists()).toBeFalsy();
       });
+
+      it('should call getEditTaskRoute when click', async () => {
+        await doMount(true, {
+          pinia: getPiniaForUser(UserRoles.level1),
+          data() {
+            return {
+              loading: false,
+            };
+          },
+          computed: {
+            task: () => mockTeamTaskEntity(),
+            isTeamTask: () => true,
+          },
+        });
+        await flushPromises();
+        wrapper.vm.getEditTaskRoute = jest.fn();
+        const element = wrapper.findDataTest('task-details-edit-button');
+        await element.vm.$emit('click');
+        expect(wrapper.vm.getEditTaskRoute).toHaveBeenCalled();
+      });
     });
 
     describe('task-details-team-task-creator-info', () => {
@@ -275,6 +295,28 @@ describe('TaskDetails.vue', () => {
         expect(element.exists()).toBeTruthy();
         expect(element.text()).toEqual('case worker 2');
       });
+
+      it('should render value from specifiedOther when category is other', async () => {
+        await doMount(true, {
+          computed: {
+            isTeamTask: () => true,
+            task: () => mockTeamTaskEntity({
+              category: {
+                optionItemId: 'mock-category-id-1',
+                specifiedOther: 'mock-specified-content',
+              },
+            }),
+            selectedCategory: () => mockOptionSubItem({
+              id: 'mock-category-id-1',
+              isOther: true,
+            }),
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-category');
+        expect(element.exists()).toBeTruthy();
+        expect(element.text()).toEqual('mock-specified-content');
+      });
     });
 
     describe('task-details-category-description', () => {
@@ -323,56 +365,45 @@ describe('TaskDetails.vue', () => {
       });
     });
 
-    describe('task-details-category-specified-other', () => {
-      it('should rendered specified other when there is', async () => {
+    describe('task-details-category-section', () => {
+      it('should display category name and description if there is selectedCategory', async () => {
         await doMount(true, {
           computed: {
             isTeamTask: () => true,
-            task: () => mockTeamTaskEntity({
-              category: {
-                optionItemId: 'mock-category-id-1',
-                specifiedOther: 'mock-specified-content',
-              },
-            }),
+            selectedCategory: () => mockOptionSubItem(),
           },
         });
         await flushPromises();
-        const element = wrapper.findDataTest('task-details-category-specified-other');
-        expect(element.exists()).toBeTruthy();
-        expect(element.text()).toEqual('mock-specified-content');
+        const element = wrapper.findDataTest('task-details-category-section');
+        expect(element.text()).toEqual('task.create_edit.task_category\n'
+          + '               \n'
+          + '                  case worker 2\n'
+          + '                 \n'
+          + '                    mdi-alert-circle\n'
+          + '                    case worker 2 description');
       });
 
-      describe('task-details-due-date', () => {
-        beforeEach(() => {
-          jest.clearAllMocks();
+      it('should display N/A if there is no selectedCategory', async () => {
+        await doMount(true, {
+          computed: {
+            isTeamTask: () => true,
+            selectedCategory: () => null,
+          },
         });
-        it('should be rendered proper data when is personal task', async () => {
-          await doMount(true, {
-            computed: {
-              task: () => mockPersonalTaskEntity(),
-              isTeamTask: () => false,
-            },
-          });
-          await flushPromises();
-          const element = wrapper.findDataTest('task-details-due-date');
-          expect(element.text()).toEqual('Aug 1, 2023');
-        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-category-section');
+        expect(element.text()).toEqual('task.create_edit.task_category\n'
+        + '                common.N/A');
       });
+    });
 
-      describe('task-details-date-added', () => {
-        beforeEach(() => {
-          jest.clearAllMocks();
-        });
-        it('should be rendered proper data', async () => {
-          await doMount(true, {
-            computed: {
-              task: () => mockTeamTaskEntity({ dateAdded: '2020-02-01' }),
-              isTeamTask: () => true,
-            },
-          });
-          await flushPromises();
-          const element = wrapper.findDataTest('task-details-date-added');
-          expect(element.text()).toEqual('Feb 1, 2020');
+    describe('task_details_back_btn', () => {
+      it('should router back to case file tasks', async () => {
+        await doMount(false);
+        const element = wrapper.findDataTest('task_details_back_btn');
+        await element.vm.$emit('click');
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.caseFile.task.home.name,
         });
       });
     });
@@ -590,6 +621,23 @@ describe('TaskDetails.vue', () => {
         await wrapper.vm.getAssignedTeam();
         expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('event-id-1', 'guid-team-1');
         expect(wrapper.vm.assignedTeam).toEqual(mockTeamEntity({ id: 'guid-team-1' }));
+      });
+    });
+
+    describe('getEditTaskRoute', () => {
+      it('should call $router push with proper object', async () => {
+        await wrapper.setData({
+          task: mockTeamTaskEntity(),
+        });
+        wrapper.vm.getEditTaskRoute();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: 'casefile.task.edit',
+          params: {
+            id: 'mock-case-file-id-1',
+            taskId: 'mock-team-task-id-1',
+            taskType: 'team',
+          },
+        });
       });
     });
   });
