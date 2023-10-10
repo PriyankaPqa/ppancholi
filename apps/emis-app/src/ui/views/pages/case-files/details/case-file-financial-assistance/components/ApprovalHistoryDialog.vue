@@ -67,7 +67,6 @@ import { DataTableHeader } from 'vuetify';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
 import { ApprovalAction, IApprovalStatusHistory, IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'ApprovalHistoryDialog',
@@ -94,7 +93,6 @@ export default Vue.extend({
       submittedHistory: null as IVersionedEntityCombined,
       getLocalStringDate: helpers.getLocalStringDate,
       ApprovalAction,
-      FeatureKeys,
     };
   },
 
@@ -103,7 +101,6 @@ export default Vue.extend({
       const approvalHistoryItemsWithText: IApprovalStatusHistory[] = [];
       this.financialAssistance.approvalStatusHistory.forEach((e) => {
         let approvalHistoryItemsWithTextItem;
-        if (this.$hasFeature(FeatureKeys.ApprovalHistoryNonFinalApprover)) {
           switch (e.approvalAction) {
             case ApprovalAction.Submitted:
               approvalHistoryItemsWithTextItem = e.submittedTo?.userName ? {
@@ -127,13 +124,6 @@ export default Vue.extend({
               actionText: this.$t(`enums.approvalAction.${ApprovalAction[e.approvalAction]}`) as string,
             };
           }
-        } else {
-          approvalHistoryItemsWithTextItem = {
-            ...e,
-            actionText: this.$t(`enums.approvalAction.${ApprovalAction[e.approvalAction]}`) as string,
-          };
-        }
-
         approvalHistoryItemsWithText.push(approvalHistoryItemsWithTextItem);
       });
 
@@ -190,8 +180,7 @@ export default Vue.extend({
     },
 
     displayUserSubmittedTo(approvalAction: ApprovalAction): boolean {
-      return this.$hasFeature(FeatureKeys.ApprovalHistoryNonFinalApprover)
-        && (approvalAction === ApprovalAction.Submitted || approvalAction === ApprovalAction.Approved);
+      return (approvalAction === ApprovalAction.Submitted || approvalAction === ApprovalAction.Approved);
     },
   },
 });

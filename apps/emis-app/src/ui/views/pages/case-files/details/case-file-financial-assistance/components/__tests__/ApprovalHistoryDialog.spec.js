@@ -1,8 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCaseFinancialAssistanceEntity, ApprovalAction } from '@libs/entities-lib/financial-assistance-payment';
 import { useMockFinancialAssistancePaymentStore } from '@/pinia/financial-assistance-payment/financial-assistance-payment.mock';
-
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Component from '../ApprovalHistoryDialog.vue';
 
 const localVue = createLocalVue();
@@ -56,23 +54,8 @@ describe('ApprovalHistoryDialog.vue', () => {
     });
 
     describe('approvalHistoryItems', () => {
-      it('returns the right data when has no feature ApprovalHistoryNonFinalApprover', async () => {
-        await mountWrapper();
-        const approvalHistoryItemsWithText = [];
-        wrapper.vm.financialAssistance.approvalStatusHistory.forEach((e) => {
-          const approvalHistoryItemsWithTextItem = {
-            ...e,
-            actionText: wrapper.vm.$t(`enums.approvalAction.${ApprovalAction[e.approvalAction]}`),
-          };
-          approvalHistoryItemsWithText.push(approvalHistoryItemsWithTextItem);
-        });
-        expect(wrapper.vm.approvalHistoryItems).toEqual(approvalHistoryItemsWithText);
-      });
-
-      it('returns the right data when has feature ApprovalHistoryNonFinalApprover', async () => {
-        await mountWrapper(false, 6, 'role', {
-          featureList: [FeatureKeys.ApprovalHistoryNonFinalApprover],
-        });
+      it('returns the right data', async () => {
+        await mountWrapper(false, 6, 'role');
         const approvalHistoryItemsWithText = [];
         wrapper.vm.financialAssistance.approvalStatusHistory.forEach((e) => {
           let approvalHistoryItemsWithTextItem;
@@ -147,22 +130,12 @@ describe('ApprovalHistoryDialog.vue', () => {
 
     describe('displayUserSubmittedTo', () => {
       it('should return true when has feature ApprovalHistoryNonFinalApprover, approval action is submitted or approved', async () => {
-        await mountWrapper(false, 6, 'role', {
-          featureList: [FeatureKeys.ApprovalHistoryNonFinalApprover],
-        });
+        await mountWrapper(false, 6, 'role');
         expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Submitted)).toEqual(true);
         expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Approved)).toEqual(true);
         expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.ApprovedFinal)).toEqual(false);
         expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Declined)).toEqual(false);
         expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.RequestAdditionalInfo)).toEqual(false);
-      });
-
-      it('should return false when has no feature ApprovalHistoryNonFinalApprover, approval action is submitted or approved', async () => {
-        await mountWrapper(false, 6, 'role', {
-          featureList: [],
-        });
-        expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Submitted)).toEqual(false);
-        expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Approved)).toEqual(false);
       });
     });
   });
