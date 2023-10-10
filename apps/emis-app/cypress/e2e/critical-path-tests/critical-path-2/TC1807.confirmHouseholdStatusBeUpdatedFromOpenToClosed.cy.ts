@@ -9,12 +9,12 @@ import { updateHouseholdStatusCanSteps } from './canSteps';
 const canRoles = {
   Level6: UserRoles.level6,
   Level5: UserRoles.level5,
-};
-
-const cannotRoles = {
   Level4: UserRoles.level4,
   Level3: UserRoles.level3,
   Level2: UserRoles.level2,
+};
+
+const cannotRoles = {
   Level1: UserRoles.level1,
   Level0: UserRoles.level0,
   Contributor1: UserRoles.contributor1,
@@ -26,9 +26,9 @@ const cannotRoles = {
 const allRolesValues = [...Object.values(canRoles), ...Object.values(cannotRoles)];
 
 let accessTokenL6 = '';
-const rationale = 'This is my reasoning for updating the status to Open';
+const rationale = 'This is my reasoning for updating the status to Closed';
 
-describe('#TC1808# - Confirm that Household Status can be updated from Archived to Open (L5+)', { tags: ['@household'] }, () => {
+describe('#TC1807# - Confirm that Household Status can be updated from Open to Closed (L2+)', { tags: ['@household'] }, () => {
   before(() => {
     cy.getToken().then(async (tokenResponse) => {
       accessTokenL6 = tokenResponse.access_token;
@@ -51,27 +51,27 @@ describe('#TC1808# - Confirm that Household Status can be updated from Archived 
           cy.then(async function () {
             const result = await prepareStateHousehold(accessTokenL6, this.eventCreated);
             await setCasefileStatus(result.provider, result.registrationResponse.caseFile.id, CaseFileStatus.Closed);
-            await setHouseholdStatus(result.provider, result.registrationResponse.household.id, HouseholdStatus.Archived);
+            await setHouseholdStatus(result.provider, result.registrationResponse.household.id, HouseholdStatus.Open);
             cy.wrap(result.registrationResponse.caseFile.id).as('casefileId');
             cy.wrap(result.registrationResponse.household.id).as('householdId');
             cy.login(roleValue);
             cy.goTo(`casefile/household/${result.registrationResponse.household.id}`);
           });
         });
-        it('should successfully update Household Status from Archived to Open', function () {
+        it('should successfully update Household Status from Open to Closed', function () {
           const householdProfilePage = new HouseholdProfilePage();
-          householdProfilePage.getHouseholdStatus().should('eq', 'Archived');
-          householdProfilePage.selectStatusToOpen();
+          householdProfilePage.getHouseholdStatus().should('eq', 'Open');
+          householdProfilePage.selectStatusToClosed();
 
           updateHouseholdStatusCanSteps({
-            actionUpdateHousehold: 'Open',
-            updatedStatus: 'Open',
-            userActionInformation: 'Opened',
+            actionUpdateHousehold: 'Close',
+            updatedStatus: 'Closed',
+            userActionInformation: 'Closed',
             rationale,
             roleName,
-            statusEnum: HouseholdStatus.Open,
+            statusEnum: HouseholdStatus.Closed,
             casefileId: this.casefileId,
-            casefileActivityBody: 'Archived to Open',
+            casefileActivityBody: 'Open to Closed',
           });
         });
       });
@@ -82,7 +82,7 @@ describe('#TC1808# - Confirm that Household Status can be updated from Archived 
       cy.then(async function () {
         const result = await prepareStateHousehold(accessTokenL6, this.eventCreated);
         await setCasefileStatus(result.provider, result.registrationResponse.caseFile.id, CaseFileStatus.Closed);
-        await setHouseholdStatus(result.provider, result.registrationResponse.household.id, HouseholdStatus.Archived);
+        await setHouseholdStatus(result.provider, result.registrationResponse.household.id, HouseholdStatus.Open);
         cy.wrap(result.registrationResponse.household.id).as('householdId');
       });
     });
@@ -94,9 +94,9 @@ describe('#TC1808# - Confirm that Household Status can be updated from Archived 
             cy.goTo(`casefile/household/${this.householdId}`);
           });
         });
-        it('should not be able to update Household Status from Archived to Open', () => {
+        it('should not be able to update Household Status from Open to Closed', () => {
           const householdProfilePage = new HouseholdProfilePage();
-          householdProfilePage.getHouseholdStatus().should('eq', 'Archived');
+          householdProfilePage.getHouseholdStatus().should('eq', 'Open');
           householdProfilePage.getHouseholdStatusChevronDownIcon().should('not.exist');
         });
       });

@@ -1,12 +1,10 @@
 import { UserRoles } from '@libs/cypress-lib/support/msal';
-import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { HouseholdStatus } from '@libs/entities-lib/household';
-import { getToday } from '@libs/cypress-lib/helpers';
 import { CaseFileStatus } from '@libs/entities-lib/case-file';
 import { createEventAndTeam, prepareStateHousehold, setCasefileStatus, setHouseholdStatus } from '../../helpers/prepareState';
 import { removeTeamMembersFromTeam } from '../../helpers/teams';
 import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
-import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
+import { updateHouseholdStatusCanSteps } from './canSteps';
 
 const canRoles = {
   Level6: UserRoles.level6,
@@ -64,28 +62,17 @@ describe('#TC1809# - Confirm that Household Status can be updated from Closed to
           const householdProfilePage = new HouseholdProfilePage();
           householdProfilePage.getHouseholdStatus().should('eq', 'Closed');
           householdProfilePage.selectStatusToOpen();
-          householdProfilePage.getDialogTitle().contains('Open household profile').should('be.visible');
-          householdProfilePage.getDialogStatus().should('eq', 'Open');
-          householdProfilePage.getDialogUserInfo().should('string', `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`);
-          householdProfilePage.getDialogRationaleElement().should('have.attr', 'label').and('have.string', 'Rationale *'); // verifies Rationale entry field as mandatory marked with asterisk
-          householdProfilePage.getDialogCancelButton().should('be.visible');
-          householdProfilePage.getDialogApplyButton().should('be.visible');
-          householdProfilePage.enterDialogRationale(rationale);
-          householdProfilePage.getDialogApplyButton().click();
-          householdProfilePage.refreshUntilHouseholdStatusUpdatedTo(HouseholdStatus.Open);
-          householdProfilePage.getHouseholdStatusElement().contains('Open').should('be.visible');
-          householdProfilePage.refreshUntilUserActionInformationUpdatedWithStatus('opened');
-          // eslint-disable-next-line
-          householdProfilePage.getUserActionInformationElement().contains(`Household opened by ${getUserName(roleName)} (${getUserRoleDescription(roleName)}) - ${getToday()}`).should('be.visible');
-          householdProfilePage.getUserRationaleElement().contains(rationale).should('be.visible');
 
-          cy.visit(`en/casefile/${this.casefileId}`);
-          const caseFileDetailsPage = new CaseFileDetailsPage();
-          caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Household status changed:');
-          caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
-          caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
-          caseFileDetailsPage.getCaseFileActivityTitle(0).should('string', 'Modified household information');
-          caseFileDetailsPage.getCaseFileActivityBody(0).should('string', 'Household status changed:').and('string', 'Closed to Open').and('string', rationale);
+          updateHouseholdStatusCanSteps({
+            actionUpdateHousehold: 'Open',
+            updatedStatus: 'Open',
+            userActionInformation: 'Opened',
+            rationale,
+            roleName,
+            statusEnum: HouseholdStatus.Open,
+            casefileId: this.casefileId,
+            casefileActivityBody: 'Closed to Open',
+          });
         });
       });
     }
@@ -109,6 +96,7 @@ describe('#TC1809# - Confirm that Household Status can be updated from Closed to
         });
         it('should not be able to update Household Status from Closed to Open', () => {
           const householdProfilePage = new HouseholdProfilePage();
+          householdProfilePage.getHouseholdStatus().should('eq', 'Closed');
           householdProfilePage.getHouseholdStatusChevronDownIcon().should('not.exist');
         });
       });

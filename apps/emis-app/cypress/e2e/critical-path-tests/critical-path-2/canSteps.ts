@@ -1,14 +1,27 @@
 import { getToday } from '@libs/cypress-lib/helpers';
-import { FinancialAssistanceHomePage } from 'cypress/pages/financial-assistance-payment/financialAssistanceHome.page';
 import { getUserName, getUserRoleDescription } from '@libs/cypress-lib/helpers/users';
 import { IFinancialAssistancePaymentEntity } from '@libs/entities-lib/financial-assistance-payment';
+import { FinancialAssistanceHomePage } from '../../../pages/financial-assistance-payment/financialAssistanceHome.page';
 import { AssessmentsListPage } from '../../../pages/assessmentsCasefile/assessmentsList.page';
+import { HouseholdProfilePage } from '../../../pages/casefiles/householdProfile.page';
+import { CaseFileDetailsPage } from '../../../pages/casefiles/caseFileDetails.page';
 
 export interface SubmitPaymentTypeCanStepsParams {
   financialAssistancePayment: IFinancialAssistancePaymentEntity,
   paymentType: string,
   roleName: string,
   paymentGroupStatus: string,
+}
+
+export interface UpdateHouseholdStatusCanStepsParams {
+  actionUpdateHousehold: string,
+  updatedStatus: string,
+  userActionInformation: string,
+  rationale: string,
+  roleName: string,
+  statusEnum: number,
+  casefileId: string,
+  casefileActivityBody: string,
 }
 
 export const verifyPartiallyCompletedCaseFileAssessment = (roleName:string) => {
@@ -93,4 +106,31 @@ export const submitPaymentTypeCanSteps = ({ financialAssistancePayment, paymentT
   caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
   caseFileDetailsPage.getCaseFileActivityTitles().should('string', 'Financial assistance payment - Approved - Final');
   caseFileDetailsPage.getCaseFileActivityBodies().should('string', `Name: ${financialAssistancePayment.name}`).and('string', 'Amount: $80.00');
+};
+
+// eslint-disable-next-line
+export const updateHouseholdStatusCanSteps = ({ actionUpdateHousehold, updatedStatus, userActionInformation, rationale, roleName, statusEnum, casefileId, casefileActivityBody }: Partial<UpdateHouseholdStatusCanStepsParams>) => {
+  const householdProfilePage = new HouseholdProfilePage();
+  householdProfilePage.getDialogTitle().contains(`${actionUpdateHousehold} household profile`).should('be.visible');
+  householdProfilePage.getDialogStatus().should('eq', updatedStatus);
+  householdProfilePage.getDialogUserInfo().should('string', `${getUserName(roleName)} (${getUserRoleDescription(roleName)})`);
+  householdProfilePage.getDialogRationaleElement().should('have.attr', 'label').and('have.string', 'Rationale *');
+  householdProfilePage.getDialogCancelButton().should('be.visible');
+  householdProfilePage.getDialogApplyButton().should('be.visible');
+  householdProfilePage.enterDialogRationale(rationale);
+  householdProfilePage.getDialogApplyButton().click();
+  householdProfilePage.refreshUntilHouseholdStatusUpdatedTo(statusEnum);
+  householdProfilePage.getHouseholdStatusElement().contains(updatedStatus).should('be.visible');
+  householdProfilePage.refreshUntilUserActionInformationUpdatedWithStatus(userActionInformation.toLowerCase());
+  // eslint-disable-next-line
+  householdProfilePage.getUserActionInformationElement().contains(`Household ${userActionInformation.toLowerCase()} by ${getUserName(roleName)} (${getUserRoleDescription(roleName)}) - ${getToday()}`).should('be.visible');
+  householdProfilePage.getUserRationaleElement().contains(rationale).should('be.visible');
+
+  cy.visit(`en/casefile/${casefileId}`);
+  const caseFileDetailsPage = new CaseFileDetailsPage();
+  caseFileDetailsPage.waitAndRefreshUntilCaseFileActivityVisibleWithBody('Household status changed:');
+  caseFileDetailsPage.getUserName().should('eq', getUserName(roleName));
+  caseFileDetailsPage.getRoleName().should('eq', `(${getUserRoleDescription(roleName)})`);
+  caseFileDetailsPage.getCaseFileActivityTitle(0).should('string', 'Modified household information');
+  caseFileDetailsPage.getCaseFileActivityBody(0).should('string', 'Household status changed:').and('string', casefileActivityBody).and('string', rationale);
 };
