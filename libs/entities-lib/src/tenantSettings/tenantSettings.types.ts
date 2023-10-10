@@ -17,7 +17,6 @@ export enum FeatureKeys {
   TaskManagement = 'TaskManagement',
   MassActionCaseFileStatus = 'MassActionCaseFileStatus',
   DisplayNotificationCenter = 'DisplayNotificationCenter',
-  UnderageValidation = 'UnderageValidation',
   InSystemQuerying = 'InSystemQuerying',
 }
 

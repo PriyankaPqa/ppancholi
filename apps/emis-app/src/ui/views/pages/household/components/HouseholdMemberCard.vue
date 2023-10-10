@@ -369,7 +369,7 @@ export default Vue.extend({
     },
 
     showUnderageWarning(): boolean {
-      return this.$hasFeature(FeatureKeys.UnderageValidation) && !this.member.identitySet.hasMinimumAge();
+      return !this.member.identitySet.hasMinimumAge();
     },
   },
 

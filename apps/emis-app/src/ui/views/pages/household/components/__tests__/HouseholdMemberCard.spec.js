@@ -535,22 +535,14 @@ describe('HouseholdMemberCard.vue', () => {
     });
 
     describe('showUnderageWarning', () => {
-      it('returns false if feature flag UnderageValidation is turned off', () => {
+      it('returns false if identitySet hasMinimumAge is true', () => {
         doMount();
-        wrapper.vm.$hasFeature = jest.fn((fb) => fb !== FeatureKeys.UnderageValidation);
-        expect(wrapper.vm.showUnderageWarning).toBeFalsy();
-      });
-
-      it('returns false if feature flag UnderageValidation is turned on and identitySet hasMinimumAge is true', () => {
-        doMount();
-        wrapper.vm.$hasFeature = jest.fn((fb) => fb === FeatureKeys.UnderageValidation);
         wrapper.vm.member.identitySet.hasMinimumAge = jest.fn(() => true);
         expect(wrapper.vm.showUnderageWarning).toBeFalsy();
       });
 
-      it('returns true if feature flag UnderageValidation is turned on and identitySet hasMinimumAge is false', () => {
+      it('returns true if identitySet hasMinimumAge is false', () => {
         doMount();
-        wrapper.vm.$hasFeature = jest.fn((fb) => fb === FeatureKeys.UnderageValidation);
         wrapper.vm.member.identitySet.hasMinimumAge = jest.fn(() => false);
         expect(wrapper.vm.showUnderageWarning).toBeTruthy();
       });
