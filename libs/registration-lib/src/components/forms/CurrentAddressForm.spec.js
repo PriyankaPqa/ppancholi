@@ -13,7 +13,6 @@ import {
 } from '@libs/entities-lib/src/household-create';
 
 import { mockShelterLocations } from '@libs/entities-lib/src/registration-event';
-import { FeatureKeys } from '@libs/entities-lib/src/tenantSettings';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 
@@ -309,14 +308,12 @@ describe('CurrentAddressForm.vue', () => {
     });
 
     describe('tempAddress__postalCode', () => {
-      it('should uppercase the value when has feature flag AutoCapitalizationForRegistration', async () => {
+      it('should uppercase the value', async () => {
         doMount(mockCampGround({
           address: {
             postalCode: 'abc',
           },
         }), {
-          hasFeatureAutoCapitalizationForRegistration: () => true,
-        }, [FeatureKeys.AutoCapitalizationForRegistration], {
           data() {
             return {
               form: {
@@ -330,29 +327,6 @@ describe('CurrentAddressForm.vue', () => {
         const element = wrapper.findDataTest('tempAddress__postalCode');
         await element.vm.$emit('keyup');
         expect(wrapper.vm.form.address.postalCode).toEqual('ABC');
-      });
-
-      it('should not uppercase the value when has no feature flag AutoCapitalizationForRegistration', async () => {
-        doMount(mockCampGround({
-          address: {
-            postalCode: 'abc',
-          },
-        }), {
-          hasFeatureAutoCapitalizationForRegistration: () => false,
-        }, [], {
-          data() {
-            return {
-              form: {
-                address: {
-                  postalCode: 'abc',
-                },
-              },
-            };
-          },
-        });
-        const element = wrapper.findDataTest('tempAddress__postalCode');
-        await element.vm.$emit('keyup');
-        expect(wrapper.vm.form.address.postalCode).toEqual('abc');
       });
     });
 
@@ -456,14 +430,12 @@ describe('CurrentAddressForm.vue', () => {
     });
 
     describe('formatAddressInput', () => {
-      it('should format string with path properly when has feature flag AutoCapitalizationForRegistration', () => {
+      it('should format string with path properly', () => {
         doMount(mockCampGround({
           address: {
             city: 'abc abc abc',
           },
         }), {
-          hasFeatureAutoCapitalizationForRegistration: () => true,
-        }, [FeatureKeys.AutoCapitalizationForRegistration], {
           data() {
             return {
               form: {
@@ -478,12 +450,10 @@ describe('CurrentAddressForm.vue', () => {
         expect(wrapper.vm.form.address.city).toEqual('Abc Abc Abc');
       });
 
-      it('should format string without path properly when has feature flag AutoCapitalizationForRegistration', () => {
+      it('should format string without path properly', () => {
         doMount(mockCampGround({
           placeName: 'abc abc abc',
         }), {
-          hasFeatureAutoCapitalizationForRegistration: () => true,
-        }, [FeatureKeys.AutoCapitalizationForRegistration], {
           data() {
             return {
               form: {

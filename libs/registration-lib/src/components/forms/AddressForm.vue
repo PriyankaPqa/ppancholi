@@ -65,7 +65,7 @@
           :data-test="`${prefixDataTest}__postalCode`"
           :label="`${$t('registration.addresses.postalCode')} *`"
           @input="isEditMode ? resetGeoLocationInEditMode() : resetGeoLocation(form)"
-          @keyup="form.postalCode = (hasFeatureAutoCapitalizationForRegistration && form.postalCode) ? form.postalCode.toUpperCase() : form.postalCode" />
+          @keyup="form.postalCode = form.postalCode ? form.postalCode.toUpperCase() : null" />
       </v-col>
 
       <v-col cols="12" sm="6" md="8">
@@ -90,7 +90,6 @@ import {
 } from '@libs/component-lib/components';
 import { IAddress } from '@libs/entities-lib/household-create';
 import _cloneDeep from 'lodash/cloneDeep';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import Vue from 'vue';
 import { useAutocomplete } from './mixins/useAutocomplete';
@@ -199,10 +198,6 @@ export default Vue.extend({
     isSameUnit(): boolean {
       return this.form.unitSuite === this.backUpForm.unitSuite;
     },
-
-    hasFeatureAutoCapitalizationForRegistration(): boolean {
-      return this.$hasFeature(FeatureKeys.AutoCapitalizationForRegistration);
-    },
   },
 
   watch: {
@@ -232,7 +227,7 @@ export default Vue.extend({
     },
 
      formatAddressInput(item: string) {
-      if (this.hasFeatureAutoCapitalizationForRegistration && !!this.form[item]) {
+      if (this.form[item]) {
         this.form[item] = helpers.toTitleCase(this.form[item]);
       }
     },

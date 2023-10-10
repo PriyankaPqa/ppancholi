@@ -285,9 +285,7 @@ const vueComponent: VueConstructor = Vue.extend({
     },
 
     capitalize(itemKey: string) {
-      if (this.$hasFeature(FeatureKeys.AutoCapitalizationForRegistration)) {
-        this.formCopy[itemKey] = helpers.capitalize(this.formCopy[itemKey]);
-      }
+      this.formCopy[itemKey] = helpers.capitalize(this.formCopy[itemKey]);
     },
   },
 });

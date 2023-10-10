@@ -129,7 +129,7 @@ describe('ApprovalHistoryDialog.vue', () => {
     });
 
     describe('displayUserSubmittedTo', () => {
-      it('should return true when has feature ApprovalHistoryNonFinalApprover, approval action is submitted or approved', async () => {
+      it('should return true approval action is submitted or approved', async () => {
         await mountWrapper(false, 6, 'role');
         expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Submitted)).toEqual(true);
         expect(wrapper.vm.displayUserSubmittedTo(ApprovalAction.Approved)).toEqual(true);

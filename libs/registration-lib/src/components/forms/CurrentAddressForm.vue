@@ -170,8 +170,7 @@
             :data-test="`${prefixDataTest}__postalCode`"
             :label="`${$t('registration.addresses.postalCode')}`"
             @input="resetGeoLocation(form.address)"
-            @keyup="form.address.postalCode = (hasFeatureAutoCapitalizationForRegistration && form.address.postalCode)
-              ? form.address.postalCode.toUpperCase() : form.address.postalCode" />
+            @keyup="form.address.postalCode = form.address.postalCode ? form.address.postalCode.toUpperCase() : null" />
         </v-col>
 
         <v-col v-if="form.requiresCountry()" cols="12" sm="6" md="8" :class="{ 'py-0': compactView }">
@@ -205,7 +204,6 @@ import {
 } from '@libs/entities-lib/household-create';
 import helpers from '@libs/shared-lib/helpers/helpers';
 import DateRange from '@libs/component-lib/components/molecule/RcFilterToolbar/inputs/DateRange.vue';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import Vue from 'vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import { useAutocomplete } from './mixins/useAutocomplete';
@@ -389,10 +387,6 @@ export default Vue.extend({
 
       return predictionForAddress[this.addressType];
     },
-
-    hasFeatureAutoCapitalizationForRegistration(): boolean {
-      return this.$hasFeature(FeatureKeys.AutoCapitalizationForRegistration);
-    },
   },
 
   watch: {
@@ -433,13 +427,11 @@ export default Vue.extend({
     },
 
     formatAddressInput(item: string, path: string = null) {
-      if (this.hasFeatureAutoCapitalizationForRegistration) {
         if (path && this.form[path][item]) {
           this.form[path][item] = helpers.toTitleCase(this.form[path][item]);
         } else if (this.form[item]) {
           this.form[item] = helpers.toTitleCase(this.form[item]);
         }
-      }
     },
   },
 

@@ -370,10 +370,9 @@ describe('IdentityForm.vue', () => {
     });
 
     describe('capitalize', () => {
-      it('should update data properly when feature flag AutoCapitalizationForRegistration is on', () => {
+      it('should update data properly', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [FeatureKeys.AutoCapitalizationForRegistration],
           propsData: {
             form: mockIdentitySet({
               firstName: 'goodman',
@@ -391,29 +390,6 @@ describe('IdentityForm.vue', () => {
 
         wrapper.vm.capitalize('firstName');
         expect(wrapper.vm.formCopy.firstName).toEqual('Goodman');
-      });
-
-      it('will not update data properly when feature flag AutoCapitalizationForRegistration is off', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          featureList: [],
-          propsData: {
-            form: mockIdentitySet({
-              firstName: 'goodman',
-            }),
-            genderItems: mockGenders(),
-          },
-          data() {
-            return {
-              formCopy: {
-                firstName: 'goodman',
-              },
-            };
-          },
-        });
-
-        wrapper.vm.capitalize('firstName');
-        expect(wrapper.vm.formCopy.firstName).toEqual('goodman');
       });
     });
   });

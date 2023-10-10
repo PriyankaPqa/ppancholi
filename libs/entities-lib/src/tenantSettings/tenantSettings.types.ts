@@ -11,7 +11,6 @@ export enum FeatureKeys {
   AuthenticationPhaseII = 'AuthenticationPhaseII',
   UseIdentityServer = 'UseIdentityServer',
   MassActionAutoGenerateName = 'MassActionAutoGenerateName',
-  AutoCapitalizationForRegistration = 'AutoCapitalizationForRegistration',
   ClearSpecialCharactersFromFundingRequest = 'ClearSpecialCharactersFromFundingRequest',
   TaskManagement = 'TaskManagement',
   MassActionCaseFileStatus = 'MassActionCaseFileStatus',

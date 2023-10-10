@@ -2,7 +2,6 @@ import { i18n } from '@/ui/plugins/i18n';
 import helpers from '@libs/entities-lib/helpers';
 import { ECanadaProvinces } from '@libs/shared-lib/types';
 import { mockAddress } from '@libs/entities-lib/src/household-create';
-import { FeatureKeys } from '@libs/entities-lib/src/tenantSettings';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 
@@ -120,7 +119,6 @@ describe('AddressForm.vue', () => {
         it('should call formatAddressInput with proper value when keyup', async () => {
           wrapper = shallowMount(Component, {
             localVue,
-            featureList: [FeatureKeys.AutoCapitalizationForRegistration],
             propsData: {
               apiKey: '1235',
               homeAddress: mockAddress({ streetAddress: 'abc abc abc' }),
@@ -145,7 +143,6 @@ describe('AddressForm.vue', () => {
         it('should call formatAddressInput with proper value when keyup', async () => {
           wrapper = shallowMount(Component, {
             localVue,
-            featureList: [FeatureKeys.AutoCapitalizationForRegistration],
             propsData: {
               apiKey: '1235',
               homeAddress: mockAddress({ city: 'abc abc abc' }),
@@ -168,10 +165,9 @@ describe('AddressForm.vue', () => {
       });
 
       describe('address__postalCode', () => {
-        it('should uppercase the value when keyup and has feature flag AutoCapitalizationForRegistration', async () => {
+        it('should uppercase the value when keyup', async () => {
           wrapper = shallowMount(Component, {
             localVue,
-            featureList: [FeatureKeys.AutoCapitalizationForRegistration],
             propsData: {
               apiKey: '1235',
               homeAddress: mockAddress({ postalCode: 'abc' }),
@@ -189,29 +185,6 @@ describe('AddressForm.vue', () => {
           const element = wrapper.findDataTest('address__postalCode');
           await element.vm.$emit('keyup');
           expect(wrapper.vm.form.postalCode).toEqual('ABC');
-        });
-
-        it('should not uppercase the value when keyup but has not feature flag AutoCapitalizationForRegistration', async () => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            featureList: [],
-            propsData: {
-              apiKey: '1235',
-              homeAddress: mockAddress({ postalCode: 'abc' }),
-              canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
-              disableAutocomplete: false,
-            },
-            data() {
-              return {
-                form: {
-                  postalCode: 'abc',
-                },
-              };
-            },
-          });
-          const element = wrapper.findDataTest('address__postalCode');
-          await element.vm.$emit('keyup');
-          expect(wrapper.vm.form.postalCode).toEqual('abc');
         });
       });
 
@@ -355,10 +328,9 @@ describe('AddressForm.vue', () => {
     });
 
     describe('formatAddressInput', () => {
-      it('should format string properly when has feature flag AutoCapitalizationForRegistration', () => {
+      it('should format string properly', () => {
         wrapper = shallowMount(Component, {
           localVue,
-          featureList: [FeatureKeys.AutoCapitalizationForRegistration],
           propsData: {
             apiKey: '1235',
             homeAddress: mockAddress({ city: 'abc abc abc' }),
