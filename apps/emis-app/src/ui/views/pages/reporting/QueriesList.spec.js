@@ -1,0 +1,257 @@
+import { createLocalVue, shallowMount } from '@/test/testSetup';
+import _orderBy from 'lodash/orderBy';
+import routes from '@/constants/routes';
+import { createTestingPinia } from '@pinia/testing';
+import sharedHelpers from '@libs/shared-lib/helpers/helpers';
+import { mockProvider } from '@/services/provider';
+import flushPromises from 'flush-promises';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import {
+  QueryType,
+} from '@libs/entities-lib/reporting';
+import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
+import Component from './QueriesList.vue';
+
+const localVue = createLocalVue();
+
+const pinia = createTestingPinia({ stubActions: false });
+const userAccountMetadataStore = useMockUserAccountStore(pinia).userAccountMetadataStore;
+let services = mockProvider();
+
+describe('QueriesList.vue', () => {
+  let wrapper;
+
+  const doMount = async (queryTypeName = 'Custom', level = 5, otherComputed = {}) => {
+    wrapper = shallowMount(Component, {
+      localVue,
+      pinia,
+      computed: {
+        ...otherComputed,
+      },
+      propsData: { queryTypeName },
+      mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}`,
+        $services: services,
+      },
+    });
+
+    await flushPromises();
+  };
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    services = mockProvider();
+    await doMount();
+  });
+
+  describe('Template', () => {
+    describe('queries-table', () => {
+      it('should exist', () => {
+        expect(wrapper.findDataTest('queries-table').exists()).toBeTruthy();
+      });
+
+      it('should be bound to the items', () => {
+        expect(wrapper.findDataTest('queries-table').props('items').length).toEqual(wrapper.vm.queryItems.length);
+      });
+    });
+
+    describe('add button', () => {
+      it('exists when type is custom', () => {
+        expect(wrapper.findDataTest('queries-table').props('showAddButton')).toBeTruthy();
+      });
+      it('doesnt exist type is not custom', async () => {
+        await doMount('StandardL6');
+        expect(wrapper.findDataTest('queries-table').props('showAddButton')).toBeFalsy();
+      });
+    });
+  });
+
+  describe('Computed', () => {
+    describe('queryType', () => {
+      it('returns the correct QueryType', async () => {
+        expect(wrapper.vm.queryType).toEqual(QueryType.Custom);
+        await wrapper.setProps({ queryTypeName: 'StandardL6' });
+        expect(wrapper.vm.queryType).toEqual(QueryType.StandardL6en);
+      });
+    });
+
+    describe('customColumns', () => {
+      it('is defined correctly', () => {
+        expect(wrapper.vm.customColumns).toEqual({
+          name: 'name',
+          category: 'category',
+          sharedBy: 'sharedBy',
+          delete: 'delete',
+        });
+      });
+    });
+
+    describe('headers', () => {
+      it('they are defined correctly depending on type being custom', async () => {
+        expect(wrapper.vm.headers).toEqual([
+          {
+            text: 'common.name',
+            sortable: true,
+            value: wrapper.vm.customColumns.name,
+            width: '60%',
+          },
+          {
+            text: 'reporting.query.category',
+            value: wrapper.vm.customColumns.category,
+            sortable: true,
+          },
+          {
+            text: 'reporting.query.sharedBy',
+            sortable: true,
+            value: wrapper.vm.customColumns.sharedBy,
+          },
+          {
+            text: '',
+            value: wrapper.vm.customColumns.delete,
+            sortable: false,
+            width: '5%',
+          },
+        ]);
+
+        await doMount('StandardL6');
+        expect(wrapper.vm.headers).toEqual([
+          {
+            text: 'common.name',
+            sortable: true,
+            value: wrapper.vm.customColumns.name,
+            width: '60%',
+          },
+          {
+            text: 'reporting.query.category',
+            value: wrapper.vm.customColumns.category,
+            sortable: true,
+          },
+        ]);
+      });
+    });
+
+    describe('labels', () => {
+      it('is defined correctly depending on query type', async () => {
+        expect(wrapper.vm.labels).toEqual({
+          header: {
+            title: `reporting.query.title.Custom (${wrapper.vm.queryItems.length})`,
+            searchPlaceholder: 'common.inputs.quick_search',
+            addButtonLabel: 'reporting.query.add.title',
+          },
+        });
+        await doMount('StandardL6');
+        expect(wrapper.vm.labels).toEqual({
+          header: {
+            title: `reporting.query.title.StandardL6en (${wrapper.vm.queryItems.length})`,
+            searchPlaceholder: 'common.inputs.quick_search',
+            addButtonLabel: 'reporting.query.add.title',
+          },
+        });
+      });
+    });
+
+    describe('queryItems', () => {
+      it('calls helper and orders', async () => {
+        sharedHelpers.filterCollectionByValue = jest.fn((items) => items);
+        await doMount();
+        await wrapper.setData({ params: { search: 'some q' }, options: { sortDesc: [true], sortBy: ['category'] } });
+        const r = wrapper.vm.queryItems;
+        expect(sharedHelpers.filterCollectionByValue).toHaveBeenCalledWith(wrapper.vm.items, 'some q');
+        expect(r).toEqual(_orderBy(wrapper.vm.items, ['pinned', 'category'], ['desc', 'desc']));
+      });
+    });
+  });
+
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('calls loadData and loadState', async () => {
+        jest.clearAllMocks();
+        wrapper.vm.loadState = jest.fn();
+        wrapper.vm.loadData = jest.fn();
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+
+        expect(wrapper.vm.loadState).toHaveBeenCalled();
+        expect(wrapper.vm.loadData).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('Methods', () => {
+    describe('loadData', () => {
+      it('calls service and store', async () => {
+        sharedHelpers.callSearchInInBatches = jest.fn();
+        userAccountMetadataStore.getByIds = jest.fn(() => [mockUserAccountMetadata({ id: '0d22f50a-e1ab-435d-a9f0-cfda502866f4', displayName: 'abc' }),
+          mockUserAccountMetadata({ id: 'd9cd254a-f527-4000-95ea-285442253cda', displayName: 'def' })]);
+        await doMount();
+        jest.clearAllMocks();
+        await wrapper.vm.loadData();
+        expect(services.queries.fetchByType).toHaveBeenCalledWith(QueryType.Custom);
+        const params = sharedHelpers.callSearchInInBatches.mock.calls[0];
+        expect(params[0].ids).toEqual(['0d22f50a-e1ab-435d-a9f0-cfda502866f4', 'd9cd254a-f527-4000-95ea-285442253cda']);
+        expect(userAccountMetadataStore.getByIds).toHaveBeenLastCalledWith(['0d22f50a-e1ab-435d-a9f0-cfda502866f4', 'd9cd254a-f527-4000-95ea-285442253cda']);
+        expect(wrapper.vm.items).toEqual([
+          {
+            category: 'reporting.query.category.HouseholdMembers',
+            id: '1',
+            name: 'some query',
+            sharedBy: 'abc',
+          },
+          {
+            category: 'reporting.query.category.HouseholdMembers',
+            id: '2',
+            name: 'second',
+            sharedBy: 'abc',
+          },
+          {
+            category: 'reporting.query.category.HouseholdPrimary',
+            id: '3',
+            name: 'mon troisième',
+            sharedBy: 'def',
+          },
+          {
+            category: 'reporting.query.category.HouseholdPrimary',
+            id: '4',
+            name: 'mon quatrième',
+            sharedBy: 'def',
+          },
+        ]);
+      });
+    });
+
+    describe('deleteQuery', () => {
+      it('calls deactivate after confirmation', async () => {
+        const id = wrapper.vm.queryItems[0].id;
+        expect(wrapper.vm.items.find((i) => i.id === id)).toBeTruthy();
+        await wrapper.vm.deleteQuery(wrapper.vm.queryItems[0]);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'reporting.query.confirm.delete.title',
+          messages: 'reporting.query.confirm.delete.message',
+        });
+        expect(services.queries.deactivate).toHaveBeenCalledWith(id);
+        expect(wrapper.vm.items.find((i) => i.id === id)).toBeFalsy();
+      });
+      it('doesnt call deactivate if no confirmation', async () => {
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.deleteQuery(wrapper.vm.queryItems[0]);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'reporting.query.confirm.delete.title',
+          messages: 'reporting.query.confirm.delete.message',
+        });
+        expect(services.queries.deactivate).toHaveBeenCalledTimes(0);
+      });
+    });
+
+    describe('getQueryRoute', () => {
+      it('should redirect to the case referral edit page', async () => {
+        const result = wrapper.vm.getQueryRoute('abc');
+        expect(result).toEqual({
+          name: routes.reporting.query.name,
+          params: {
+            queryId: 'abc',
+          },
+        });
+      });
+    });
+  });
+});

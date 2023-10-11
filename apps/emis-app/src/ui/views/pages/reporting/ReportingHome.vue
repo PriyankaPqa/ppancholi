@@ -7,7 +7,7 @@
           :text="card.description"
           :button-text="$t(card.button)"
           :data-test="card.dataTest"
-          :route-name="card.route" />
+          :route="card.route" />
       </v-col>
     </v-row>
   </v-container>
@@ -16,10 +16,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcMenuCard } from '@libs/component-lib/components';
-import routes from '@/constants/routes';
-import { UserRoles } from '@libs/entities-lib/user';
-import { ICardSettings } from '@/types/interfaces/ICardSettings';
-import helpers from '@/ui/helpers/helpers';
+import { ReportingPages } from './reportingPages';
 
 export default Vue.extend({
   name: 'ReportingHome',
@@ -28,32 +25,15 @@ export default Vue.extend({
     RcMenuCard,
   },
 
-  computed: {
-    cards(): ICardSettings[] {
-      return [{
-        title: 'reporting.standardQueriesL6',
-        button: 'reporting.start',
-        route: routes.reporting.home.name,
-        dataTest: 'standardQueriesL6',
-        level: UserRoles.level6,
-      }, {
-        title: 'reporting.customQueries',
-        button: 'reporting.start',
-        route: routes.reporting.home.name,
-        dataTest: 'customQueries',
-        level: UserRoles.level6,
-      }, {
-        title: 'reporting.eventStatistics',
-        button: 'reporting.start',
-        route: routes.reporting.home.name,
-        dataTest: 'eventStatistics',
-        level: UserRoles.level6,
-      },
-      ];
-    },
+  data() {
+    return {
+      reportingMenus: new ReportingPages(),
+    };
+  },
 
-    accessibleCards(): ICardSettings[] {
-      return helpers.availableItems(this, this.cards);
+  computed: {
+    accessibleCards() {
+      return this.reportingMenus.availableCards(this);
     },
   },
 });

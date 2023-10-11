@@ -6,6 +6,7 @@ export interface INavigationTab {
   icon?: string;
   disabled?: boolean;
   to?: string;
+  route?: { name: string, [key: string]: any; };
   exact?: boolean;
   level?: string;
   roles?: string[];

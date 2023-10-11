@@ -66,7 +66,7 @@
                 :disabled="tab.disabled"
                 link
                 :exact="typeof tab.exact === 'undefined' ? true : tab.exact"
-                :to="tab.to ? { name: tab.to } : null"
+                :to="tab.to ? { name: tab.to } : tab.route"
                 replace
                 active-class="secondaryLeftMenuTab__active"
                 @click="$emit('click:tab', tab.onClick)">
@@ -97,7 +97,7 @@
             :disabled="tab.disabled"
             link
             :exact="typeof tab.exact === 'undefined' ? true : tab.exact"
-            :to="tab.to ? { name: tab.to } : null"
+            :to="tab.to ? { name: tab.to } : tab.route"
             replace
             active-class="secondaryLeftMenuTab__active"
             @click="$emit('click:tab', index)">

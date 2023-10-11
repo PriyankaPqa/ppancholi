@@ -10,6 +10,18 @@ const routes = {
       path: 'reporting',
       name: 'reporting.home',
     },
+    menu: {
+      path: 'reporting/menu',
+      name: 'reporting.menu',
+    },
+    list: {
+      path: ':queryTypeName',
+      name: 'reporting.list',
+    },
+    query: {
+      path: ':queryId',
+      name: 'reporting.query',
+    },
   },
   assessmentTemplates: {
     home: {

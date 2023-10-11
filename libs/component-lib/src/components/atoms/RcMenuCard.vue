@@ -14,7 +14,7 @@
         :loading="loadingPrimary"
         :disabled="disabledPrimary"
         :data-test="`${$attrs['data-test']}__button`"
-        :to="routeName ? { name: routeName } : null"
+        :to="routeName ? { name: routeName } : route"
         @click="$emit('click')">
         {{ buttonText }}
       </v-btn>
@@ -60,7 +60,7 @@ export default Vue.extend({
 
     text: {
       type: String,
-      required: true,
+      default: '',
     },
 
     buttonText: {
@@ -81,6 +81,11 @@ export default Vue.extend({
     routeName: {
       type: String,
       default: '',
+    },
+
+    route: {
+      type: Object,
+      default: null,
     },
 
     loadingPrimary: {

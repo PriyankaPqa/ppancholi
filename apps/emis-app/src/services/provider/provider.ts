@@ -30,6 +30,7 @@ import { AssessmentFormsService } from '@libs/services-lib/assessment-form/entit
 import { TaskService } from '@libs/services-lib/task/entity';
 import { PotentialDuplicatesService } from '@libs/services-lib/potential-duplicates/entity';
 import { NotificationsService } from '@libs/services-lib/notifications/entity';
+import { QueriesService } from '@libs/services-lib/queries/entity';
 import { IProvider } from './provider.types';
 
 export const provider = (httpClient = client): IProvider => ({
@@ -64,4 +65,5 @@ export const provider = (httpClient = client): IProvider => ({
   task: new TaskService(httpClient),
   potentialDuplicates: new PotentialDuplicatesService(httpClient),
   notifications: new NotificationsService(httpClient),
+  queries: new QueriesService(httpClient),
 });

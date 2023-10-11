@@ -7,7 +7,7 @@ export interface ICardSettings {
   button: string;
   secondaryButton?: string;
   showSecondaryButton?: boolean;
-  route: string;
+  route: string | { name: string, [key: string]: any; };
   dataTest: string;
   level: string;
   roles?: Array<string>;
