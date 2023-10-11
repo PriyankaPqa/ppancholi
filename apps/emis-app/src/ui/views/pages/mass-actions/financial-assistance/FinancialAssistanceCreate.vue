@@ -7,7 +7,7 @@
     :mode="$route.query.mode"
     :form-data="formData"
     :loading="loading"
-    :hide-name="$hasFeature(FeatureKeys.MassActionAutoGenerateName)"
+    :hide-name="true"
     @back="back()"
     @upload:start="onUploadStart()"
     @upload:success="onSuccess($event)"
@@ -32,7 +32,6 @@ import { EPaymentModalities, IProgramEntity } from '@libs/entities-lib/program';
 import { IMassActionFinancialAssistanceCreatePayload } from '@libs/services-lib/mass-actions/entity';
 import { buildQuery } from '@libs/services-lib/odata-query';
 import { useMassActionStore } from '@/pinia/mass-action/mass-action';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export interface PaymentDetailsForm {
   event: IEventEntity,
@@ -53,7 +52,6 @@ export default Vue.extend({
 
   data() {
     return {
-      FeatureKeys,
       showConfirmation: false,
       formData: new FormData(),
       uploadUrl: 'case-file/mass-actions/financial-assistance',
@@ -90,13 +88,13 @@ export default Vue.extend({
     /**
      * Triggered when creating a mass action from a filtered list
      */
-    async onPost({ name, description }: { name: string, description: string }) {
+    async onPost({ description }: { description: string }) {
       const azureSearchParams = JSON.parse(this.$route.query.azureSearchParams as string);
 
       const filter = buildQuery({ filter: azureSearchParams.filter }).replace('?$filter=', '');
 
       const payload = {
-        name: this.$hasFeature(FeatureKeys.MassActionAutoGenerateName) ? this.makeFormName() : name,
+        name: this.makeFormName(),
         description,
         eventId: this.form.event.id,
         tableId: this.form.table.id,
@@ -128,9 +126,7 @@ export default Vue.extend({
       this.formData.set('subCategoryId', this.form.subItem.id);
       this.formData.set('paymentModality', this.form.paymentModality.toString());
       this.formData.set('amount', this.form.amount.toString());
-      if (this.$hasFeature(FeatureKeys.MassActionAutoGenerateName)) {
-        this.formData.set('name', this.makeFormName());
-      }
+      this.formData.set('name', this.makeFormName());
 
       this.loading = true;
       await (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();

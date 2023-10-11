@@ -1,6 +1,6 @@
 <template>
   <mass-action-base-details
-    :disable-name="$hasFeature(FeatureKeys.MassActionAutoGenerateName)"
+    :disable-name="true"
     :back-route-name="routes.massActions.financialAssistance.home.name"
     details-title="massActions.financialAssistance.status.details.title"
     processing-title="massActions.financialAssistance.status.processing.title"
