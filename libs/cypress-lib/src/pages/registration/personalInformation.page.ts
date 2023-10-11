@@ -72,7 +72,7 @@ export class PersonalInformationPage {
     }
 
     if (data.emailAddress) {
-      cy.intercept({ method: 'POST', url: '**/household/persons/validate-email-address' }).as('validateEmail');
+      cy.intercept({ method: 'POST', url: '**/validate-email-address' }).as('validateEmail');
       cy.getByDataTest(this.emailAddress).type(`${roleName}${data.emailAddress}`);
       cy.getByDataTest(this.emailAddress).blur();
       cy.wait('@validateEmail');
