@@ -139,7 +139,6 @@ import colors from '@libs/shared-lib/plugins/vuetify/colors';
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
 import helpers from '@/ui/helpers/helpers';
 import { useMassActionStore } from '@/pinia/mass-action/mass-action';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 export default Vue.extend({
   name: 'MassActionPreProcessedProcessedBase',
@@ -322,7 +321,7 @@ export default Vue.extend({
         massActionId: this.massAction.id,
         runId: this.massActionMetadata.lastRun.runId,
         language: this.$i18n.locale,
-        massActionType: this.$hasFeature(FeatureKeys.ClearSpecialCharactersFromFundingRequest) ? this.massAction.type : null,
+        massActionType: this.massAction.type,
       });
       if (res) {
         helpers.downloadFile(res, `${this.massAction.name}.valid.csv`);

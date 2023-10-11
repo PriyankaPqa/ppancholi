@@ -13,7 +13,6 @@ import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/Mas
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
 import helpers from '@/ui/helpers/helpers';
 import { useMockMassActionStore } from '@/pinia/mass-action/mass-action.mock';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 
 import { mockProvider } from '@/services/provider';
 import Component from './MassActionPreProcessedProcessedBase.vue';
@@ -198,7 +197,6 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
 
     describe('downloadValid', () => {
       it('should call service getValidFile with proper params', async () => {
-        wrapper.vm.$hasFeature = jest.fn((f) => f === FeatureKeys.ClearSpecialCharactersFromFundingRequest);
         await wrapper.vm.downloadValid();
         expect(wrapper.vm.$services.massActions.getValidFile)
           .toHaveBeenCalledWith({
@@ -206,18 +204,6 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
             runId: wrapper.vm.massActionMetadata.lastRun.runId,
             language: 'en',
             massActionType: wrapper.vm.massAction.type,
-          });
-      });
-
-      it('should call service getValidFile with optional param null when flag is off', async () => {
-        wrapper.vm.$hasFeature = jest.fn((f) => f !== FeatureKeys.ClearSpecialCharactersFromFundingRequest);
-        await wrapper.vm.downloadValid();
-        expect(wrapper.vm.$services.massActions.getValidFile)
-          .toHaveBeenCalledWith({
-            massActionId: wrapper.vm.massAction.id,
-            runId: wrapper.vm.massActionMetadata.lastRun.runId,
-            language: 'en',
-            massActionType: null,
           });
       });
 
