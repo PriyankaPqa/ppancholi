@@ -62,6 +62,7 @@ describe('#TC289# - Update Gift Card payment group Status from Cancelled to Issu
         });
         it('should successfully update Gift Card Payment Group Status from Cancelled to Issued', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$0.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

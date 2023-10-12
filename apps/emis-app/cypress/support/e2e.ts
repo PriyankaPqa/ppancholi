@@ -29,7 +29,7 @@ installLogsCollector();
 registerCypressGrep();
 slowCypressDown();
 
-Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStatus, forceReload = true, timeoutInSec = 180, intervalInSec = 10) => {
+Cypress.Commands.add('waitForMassActionToBe', (expectedStatus: MassActionRunStatus, forceReload = true, timeoutInSec = 120, intervalInSec = 10) => {
   const timeout = timeoutInSec * 1000;
   const interval = intervalInSec * 1000;
   let elapsedTime = 0;

@@ -84,6 +84,7 @@ describe('#TC1652# - Create an Approval table ', { tags: ['@event', '@approval',
           const approvalTableHomePage = createApprovalTablePage.createApprovalTable();
 
           const approvalTableDetailsPage = approvalTableHomePage.getApprovalTableDetails();
+          cy.interceptAndRetryUntilNoMoreStatus('**/finance/approval-tables/metadata/*', 404);
           approvalTableDetailsPage.getProgramName().should('string', this.mockProgram.name.translation.en);
           approvalTableDetailsPage.getApprovalTableName().should('eq', approvalTableData.tableName);
           cy.contains('Approval aggregated by').should('be.visible');

@@ -12,6 +12,7 @@ export enum DataTest {
   caseFileDetails = 'item-text-0',
   faHistory = 'history-link',
   addFaPayment = 'table__addButton',
+  refreshButton = 'undefined_refresh_button',
 }
 
 export class FinancialAssistanceHomePage {
@@ -34,6 +35,8 @@ export class FinancialAssistanceHomePage {
   private faHistory = { selector: DataTest.faHistory };
 
   private addFaPayment = { selector: DataTest.addFaPayment };
+
+  private refreshButton = { selector: DataTest.refreshButton };
 
   public getFAPaymentById(financialAssistancePaymentId: string) {
     cy.getByDataTest({ selector: `${DataTest.faPayment}${financialAssistancePaymentId}` }).click();
@@ -97,7 +100,7 @@ export class FinancialAssistanceHomePage {
   public refreshUntilFaPaymentDisplayedWithTotal(faPaymentTotal: string) {
     cy.waitAndRefreshUntilConditions(
       {
-        visibilityCondition: () => this.getAddFaPaymentButton().should('be.visible'),
+        visibilityCondition: () => cy.getByDataTest(this.refreshButton).should('be.visible'),
         checkCondition: () => Cypress.$("[data-test='fap_total']").text().includes(faPaymentTotal),
       },
       {

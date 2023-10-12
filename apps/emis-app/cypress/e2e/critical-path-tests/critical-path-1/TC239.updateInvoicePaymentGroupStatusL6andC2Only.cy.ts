@@ -59,6 +59,7 @@ describe('#TC239# - Update Invoice payment group Status- L6 and C2 only', { tags
         });
         it('should successfully update Invoice Payment Group Status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$0.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

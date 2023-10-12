@@ -59,6 +59,7 @@ describe('#TC281# - Update Invoice payment group Status from Issued to Cancelled
         });
         it('should successfully update Invoice Payment Group Status from Issued to Cancelled', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

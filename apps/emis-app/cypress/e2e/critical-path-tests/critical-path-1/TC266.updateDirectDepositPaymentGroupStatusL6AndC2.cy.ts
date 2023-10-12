@@ -59,6 +59,7 @@ describe('#TC266# - Update Direct Deposit payment group status - L6 and C2', { t
         });
         it('should successfully update Direct Deposit payment group status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$0.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

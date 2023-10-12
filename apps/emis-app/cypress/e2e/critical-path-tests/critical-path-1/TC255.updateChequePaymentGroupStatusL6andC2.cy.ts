@@ -59,6 +59,7 @@ describe('#TC255# - Update Cheque payment group status- L6 and C2', { tags: ['@f
         });
         it('should successfully update Cheque payment group status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$0.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

@@ -59,6 +59,7 @@ describe('#TC246# - Update Cheque payment group status from New to Cancelled- L3
         });
         it('should successfully update Cheque payment group status from New to Cancelled', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

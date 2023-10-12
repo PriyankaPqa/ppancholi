@@ -28,6 +28,7 @@ export enum DataTest {
   householdStatus = 'statusSelect__chip',
   statusSelectOpen = 'statusSelect__0',
   statusSelectClosed = 'statusSelect__1',
+  statusSelectArchived = 'statusSelect__2',
   dialogTitle = 'dialog-title',
   dialogStatus = 'household-status-chip',
   dialogUserInfo = 'user-info',
@@ -81,6 +82,8 @@ export class HouseholdProfilePage {
   private statusSelectOpen = { selector: DataTest.statusSelectOpen };
 
   private statusSelectClosed = { selector: DataTest.statusSelectClosed };
+
+  private statusSelectArchived = { selector: DataTest.statusSelectArchived };
 
   private dialogTitle = { selector: DataTest.dialogTitle };
 
@@ -238,6 +241,11 @@ export class HouseholdProfilePage {
   public selectStatusToClosed() {
     cy.getByDataTest(this.householdStatus).click();
     cy.getByDataTest(this.statusSelectClosed).click();
+  }
+
+  public selectStatusToArchived() {
+    cy.getByDataTest(this.householdStatus).click();
+    cy.getByDataTest(this.statusSelectArchived).click();
   }
 
   public getDialogTitle() {

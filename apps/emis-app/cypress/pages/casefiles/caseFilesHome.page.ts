@@ -47,6 +47,7 @@ export class CaseFilesHomePage {
         checkCondition: () => Cypress.$(`[data-test='beneficiaryName-link_${beneficiaryName}']`).length > 0,
       },
       {
+        timeoutInSec: 45,
         errorMsg: 'Failed to update Case Files',
         foundMsg: 'Case File updated',
       },

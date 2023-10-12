@@ -59,6 +59,7 @@ describe('#TC245# - Update Voucher payment group status - L6 and C2 only', { tag
         });
         it('should successfully update Voucher payment group status', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$0.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

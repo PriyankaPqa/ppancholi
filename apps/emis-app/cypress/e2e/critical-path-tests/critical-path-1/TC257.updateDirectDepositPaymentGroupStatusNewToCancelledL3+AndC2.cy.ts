@@ -59,6 +59,7 @@ describe('#TC257# - Update Direct Deposit payment group status from New to Cance
         });
         it('should successfully update Direct Deposit payment group status from New to Cancelled', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'Approved');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);

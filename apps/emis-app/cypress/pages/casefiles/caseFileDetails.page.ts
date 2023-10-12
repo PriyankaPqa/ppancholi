@@ -96,6 +96,7 @@ export class CaseFileDetailsPage {
         checkCondition: () => Cypress.$("[data-test='caseFileActivity-listItem-content-body']").text().includes(expectedCaseFileActivityBody),
       },
       {
+        timeoutInSec: 45,
         errorMsg: 'Failed to find case file activity',
         foundMsg: 'Case file Activity visible',
       },

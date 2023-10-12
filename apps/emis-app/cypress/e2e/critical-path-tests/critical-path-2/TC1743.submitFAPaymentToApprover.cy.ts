@@ -71,6 +71,7 @@ describe('#TC1743# - Submit FA payment to an Approver', { tags: ['@approval', '@
         // eslint-disable-next-line
         it('should successfully submit FA payment to an Approver', function () {
           const financialAssistanceHomePage = new FinancialAssistanceHomePage();
+          financialAssistanceHomePage.refreshUntilFaPaymentDisplayedWithTotal('$80.00');
           financialAssistanceHomePage.getApprovalStatus().should('eq', 'New');
 
           const financialAssistanceDetailsPage = financialAssistanceHomePage.getFAPaymentById(this.FAPaymentId);
