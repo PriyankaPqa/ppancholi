@@ -1,11 +1,10 @@
-import { generateXlsxFile, formatDate, generateCSVContent, getCurrentDateString, getRandomNumber, IXlsxTableColumnProperties } from '@libs/cypress-lib/helpers';
+import { generateXlsxFile, formatDate, generateCSVContent, IXlsxTableColumnProperties } from '@libs/cypress-lib/helpers';
 import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import { faker } from '@faker-js/faker';
 import { IBaseMassActionFields } from '../pages/mass-action/base/baseCreateMassAction';
 import { INewMassFinancialAssistanceFields } from '../pages/mass-action/mass-financial-assistance/newMassFinancialAssistance.page';
 
 export const fixtureBaseMassAction = (retries: number) : IBaseMassActionFields => ({
-  name: `test mass action - ${getCurrentDateString()} - s${getRandomNumber()} - retry(${retries})`,
   description: `description mass action - retry ${retries}`,
 });
 

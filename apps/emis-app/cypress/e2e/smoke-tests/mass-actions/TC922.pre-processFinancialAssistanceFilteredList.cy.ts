@@ -79,7 +79,7 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
           massActionViaListPage.getCaseFileTable().contains(caseFileCreated3.caseFileNumber).should('be.visible');
 
           const newMassFinancialAssistancePage = massActionViaListPage.goToNewMassFinancialAssistancePage();
-          newMassFinancialAssistancePage.fillNameDescription(baseMassActionData);
+          newMassFinancialAssistancePage.fillDescription(baseMassActionData);
           newMassFinancialAssistancePage.fillEvent(this.event.name.translation.en);
           newMassFinancialAssistancePage.fillTableName(this.faTable.name.translation.en);
           newMassFinancialAssistancePage.fillItemSubItem(newMassFinancialAssistanceData);
@@ -95,7 +95,7 @@ describe('#TC922# - Pre-process a Financial Assistance filtered list', { tags: [
           const massFinancialAssistanceDetailsPage = newMassFinancialAssistancePage.confirmPreprocessing();
           cy.waitForMassActionToBe(MassActionRunStatus.PreProcessed);
           massFinancialAssistanceDetailsPage.getMassActionStatus().contains('Pre-processed').should('be.visible');
-          massFinancialAssistanceDetailsPage.getMassActionName().should('eq', baseMassActionData.name);
+          massFinancialAssistanceDetailsPage.getMassActionName().should('string', `${this.programName} - ${newMassFinancialAssistanceData.item}`);
           massFinancialAssistanceDetailsPage.getMassActionDescription().should('eq', baseMassActionData.description);
           massFinancialAssistanceDetailsPage.getMassActionProjectedAmount().should('string', `${parseFloat(newMassFinancialAssistanceData.paymentAmount) * householdQuantity}.00`);
           massFinancialAssistanceDetailsPage.getMassActionSuccessfulCaseFiles().should('eq', `${householdQuantity}`.toString());
