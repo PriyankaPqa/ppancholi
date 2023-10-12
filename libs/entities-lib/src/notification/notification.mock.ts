@@ -23,6 +23,8 @@ export const mockNotificationEntity = (force?: Partial<IEntity>) : INotification
   },
   message: null,
   targetUri: null,
+  targetEntityId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
+  targetEntityParentId: null,
   displayAfterDateTimeUtc: null,
   expiresAfterDateTimeUtc: null,
   ...force,

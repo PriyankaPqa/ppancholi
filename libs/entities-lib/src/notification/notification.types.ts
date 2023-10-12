@@ -28,6 +28,8 @@ export interface INotificationEntity extends IEntity {
   subject: IMultilingual;
   message?: IMultilingual;
   targetUri?: string;
+  targetEntityId?: uuid;
+  targetEntityParentId?: uuid;
   displayAfterDateTimeUtc: Date;
   expiresAfterDateTimeUtc: Date;
 }

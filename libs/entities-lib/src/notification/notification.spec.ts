@@ -1,6 +1,7 @@
 import { NotificationEntity } from './notification';
 import { mockNotificationEntity } from './notification.mock';
 import utils from '../utils';
+import { NotificationCategoryType, NotificationRecipientType, NotificationType } from './notification.types';
 
 const mockNotification = mockNotificationEntity();
 
@@ -56,6 +57,16 @@ describe('>>> Notification', () => {
       expect(notification.targetUri).toEqual(mockNotification.targetUri);
     });
 
+    it('should instantiate target entity id', () => {
+      const notification = new NotificationEntity(mockNotification);
+      expect(notification.targetEntityId).toEqual(mockNotification.targetEntityId);
+    });
+
+    it('should instantiate target entity parent id', () => {
+      const notification = new NotificationEntity(mockNotification);
+      expect(notification.targetEntityParentId).toEqual(mockNotification.targetEntityParentId);
+    });
+
     it('should instantiate display after', () => {
       const notification = new NotificationEntity(mockNotification);
       expect(notification.displayAfterDateTimeUtc).toEqual(mockNotification.displayAfterDateTimeUtc);
@@ -77,6 +88,21 @@ describe('>>> Notification', () => {
     it('should instantiate category', () => {
       const notification = new NotificationEntity();
       expect(notification.category).toEqual(emptyMultilingual);
+    });
+
+    it('should have general category type', () => {
+      const notification = new NotificationEntity();
+      expect(notification.categoryType).toEqual(NotificationCategoryType.General);
+    });
+
+    it('should have general notification type', () => {
+      const notification = new NotificationEntity();
+      expect(notification.notificationType).toEqual(NotificationType.General);
+    });
+
+    it('should have user recipient type', () => {
+      const notification = new NotificationEntity();
+      expect(notification.notificationRecipientType).toEqual(NotificationRecipientType.User);
     });
   });
 });

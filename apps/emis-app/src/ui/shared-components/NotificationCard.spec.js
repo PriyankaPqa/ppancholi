@@ -1,18 +1,28 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import Component from '@/ui/shared-components/NotificationCard.vue';
-import { mockNotificationEntity } from '@libs/entities-lib/notification';
+import { NotificationCategoryType, mockNotificationEntity } from '@libs/entities-lib/notification';
+import { mockTeamTaskEntity } from '@libs/entities-lib/task';
 import helpers from '@/ui/helpers/helpers';
+import routes from '@/constants/routes';
+import { useMockTaskStore } from '@/pinia/task/task.mock';
 
 const localVue = createLocalVue();
 
+const { pinia, taskStore } = useMockTaskStore();
+
 const mockNotification = mockNotificationEntity();
 const mockReadNotification = mockNotificationEntity({ isRead: true });
+const mockTaskNotification = mockNotificationEntity({
+  categoryType: NotificationCategoryType.Tasks,
+  targetEntityParentId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
+});
 
 describe('NotificationCard.vue', () => {
   let wrapper;
   const mountWithNotification = (notification) => {
     wrapper = mount(Component, {
       localVue,
+      pinia,
       propsData: {
         notification,
       },
@@ -20,11 +30,28 @@ describe('NotificationCard.vue', () => {
   };
 
   describe('Template', () => {
-    describe('text', () => {
-      it('should render expected subject', () => {
+    describe('text and link', () => {
+      it('should render subject text when not linked', () => {
         mountWithNotification(mockNotification);
         const text = wrapper.findDataTest('notification-subject-text');
         expect(text.text()).toEqual(mockNotification.subject.translation.en);
+      });
+      it('should hide link div when not linked', () => {
+        mountWithNotification(mockNotification);
+        const linkDiv = wrapper.findDataTest('notification-subject-link');
+        expect(linkDiv.exists()).toBeFalsy();
+      });
+      it('should render expected link when displayLink is set', async () => {
+        mountWithNotification(mockTaskNotification);
+        await wrapper.setData({ targetEntityLoaded: true });
+        const linkDiv = wrapper.findDataTest('notification-subject-link');
+        expect(linkDiv.text()).toEqual(mockTaskNotification.subject.translation.en);
+      });
+      it('should hide subject text when displayLink is set', async () => {
+        mountWithNotification(mockTaskNotification);
+        await wrapper.setData({ targetEntityLoaded: true });
+        const textDiv = wrapper.findDataTest('notification-subject-text');
+        expect(textDiv.exists()).toBeFalsy();
       });
       it('should render expected date', () => {
         mountWithNotification(mockNotification);
@@ -53,10 +80,103 @@ describe('NotificationCard.vue', () => {
         mountWithNotification(mockReadNotification);
         expect(wrapper.vm.backgroundColor).toEqual('grey lighten-5');
       });
+    });
+  });
+
+  describe('computed', () => {
+    describe('displayLink', () => {
+      it('should display a link for Task notifications when entity is loaded', async () => {
+        mountWithNotification(mockTaskNotification);
+        await wrapper.setData({ targetEntityLoaded: true });
+        expect(wrapper.vm.displayLink).toBeTruthy();
+      });
+      it('should not display a link for Task notifications when entity is not loaded', async () => {
+        mountWithNotification(mockTaskNotification);
+        await wrapper.setData({ targetEntityLoaded: false, targetEntity: null });
+        expect(wrapper.vm.displayLink).toBeFalsy();
+      });
+      it('should not display a link for General notifications', async () => {
+        mountWithNotification(mockNotification);
+        await wrapper.setData({ targetEntity: mockTeamTaskEntity });
+        expect(wrapper.vm.displayLink).toBeFalsy();
+      });
+    });
+  });
+
+  describe('methods', () => {
+    describe('toggleIsRead', () => {
       it('should emit toggle isRead event when checked', () => {
         wrapper.vm.toggleIsRead(true);
         wrapper.vm.$nextTick();
         expect(wrapper.emitted('toggleIsRead')).toBeTruthy();
+      });
+    });
+    describe('fetchLinkedEntity', () => {
+      it('should fetch Task entities from the store for Task notifications', async () => {
+        mountWithNotification(mockTaskNotification);
+        taskStore.getById = jest.fn(() => {});
+        taskStore.fetch = jest.fn(() => {});
+        await wrapper.vm.fetchLinkedEntity();
+        expect(taskStore.getById).toHaveBeenCalledWith(mockTaskNotification.targetEntityId);
+        expect(taskStore.fetch).toHaveBeenCalledWith({
+          caseFileId: mockTaskNotification.targetEntityParentId,
+          id: mockTaskNotification.targetEntityId,
+        }, false);
+      });
+    });
+    describe('subjectClick', () => {
+      it('marks the notificaiton as read', async () => {
+        expect(mockNotification.isRead).toBeFalsy();
+        mountWithNotification(mockNotification);
+        wrapper.vm.toggleIsRead = jest.fn();
+        await wrapper.vm.subjectClick();
+        expect(mockNotification.isRead).toBeTruthy();
+        expect(wrapper.vm.toggleIsRead).toBeCalled();
+      });
+      it('navigates to the target link', async () => {
+        mountWithNotification(mockTaskNotification);
+        await wrapper.setData({ targetEntityLoaded: true, targetEntity: mockTeamTaskEntity });
+        await wrapper.vm.subjectClick();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.caseFile.task.details.name,
+          params: {
+            id: mockTaskNotification.targetEntityParentId,
+            taskId: mockTaskNotification.targetEntityId,
+          },
+        });
+      });
+    });
+    describe('targetEntityLink', () => {
+      it('does not return a link for General notifications', () => {
+        mountWithNotification(mockNotification);
+        const link = wrapper.vm.targetEntityLink();
+        expect(link).toBeFalsy();
+      });
+      it('returns a link for Task notifications when the target entity is loaded', async () => {
+        mountWithNotification(mockTaskNotification);
+        await wrapper.setData({ targetEntityLoaded: true, targetEntity: mockTeamTaskEntity });
+        const link = wrapper.vm.targetEntityLink();
+        expect(link.name).toBeTruthy();
+        expect(link.params.id).toEqual(mockTaskNotification.targetEntityParentId);
+      });
+      it('does not return a link for Task notifications when the target entity is not loaded', async () => {
+        mountWithNotification(mockTaskNotification);
+        await wrapper.setData({ targetEntityLoaded: false, targetEntity: null });
+        const link = wrapper.vm.targetEntityLink();
+        expect(link).toBeFalsy();
+      });
+    });
+  });
+
+  describe('Lifecycle', () => {
+    describe('Created', () => {
+      it('should call fetchLinkedEntity', async () => {
+        mountWithNotification(mockNotification);
+        wrapper.vm.fetchLinkedEntity = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.fetchLinkedEntity).toHaveBeenCalled();
       });
     });
   });

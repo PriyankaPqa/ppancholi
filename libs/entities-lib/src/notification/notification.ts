@@ -24,6 +24,10 @@ export class NotificationEntity extends BaseEntity {
 
   targetUri?: string;
 
+  targetEntityId?: uuid;
+
+  targetEntityParentId?: uuid;
+
   displayAfterDateTimeUtc?: Date;
 
   expiresAfterDateTimeUtc?: Date;
@@ -40,12 +44,17 @@ export class NotificationEntity extends BaseEntity {
       this.subject = utils.initMultilingualAttributes(data.subject);
       this.message = data.message ? utils.initMultilingualAttributes(data.message) : null;
       this.targetUri = data.targetUri;
+      this.targetEntityId = data.targetEntityId;
+      this.targetEntityParentId = data.targetEntityParentId;
       this.displayAfterDateTimeUtc = data.displayAfterDateTimeUtc;
       this.expiresAfterDateTimeUtc = data.expiresAfterDateTimeUtc;
     } else {
       super();
       this.subject = utils.initMultilingualAttributes();
       this.category = utils.initMultilingualAttributes();
+      this.notificationType = NotificationType.General;
+      this.categoryType = NotificationCategoryType.General;
+      this.notificationRecipientType = NotificationRecipientType.User;
     }
   }
 }
