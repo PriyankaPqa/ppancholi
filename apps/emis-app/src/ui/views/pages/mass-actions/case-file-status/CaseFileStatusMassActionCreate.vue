@@ -81,7 +81,7 @@ export default Vue.extend({
         name,
         description,
         eventId: this.form.event?.id,
-        reason,
+        reason: reason.optionItemId ? reason : null,
         rationale,
         status,
         search: azureSearchParams.search,
@@ -103,7 +103,7 @@ export default Vue.extend({
       const { reason, rationale, status } = this.form;
 
       this.formData.set('eventId', this.form.event?.id);
-      this.formData.set('reason', reason?.toString());
+      this.formData.set('reason', reason && reason.optionItemId ? JSON.stringify(reason) : null);
       this.formData.set('rationale', rationale);
       this.formData.set('status', status?.toString());
 

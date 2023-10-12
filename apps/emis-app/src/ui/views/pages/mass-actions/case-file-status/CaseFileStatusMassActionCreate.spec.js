@@ -119,7 +119,7 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
 
         const form = {
           event: mockEvent(),
-          reason: { mockOptionItemId: 'option-item-id', specifiedOther: 'other' },
+          reason: { optionItemId: 'option-item-id', specifiedOther: 'other' },
           rationale: 'rationale',
           status: 1,
         };
@@ -129,7 +129,7 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
 
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('eventId', wrapper.vm.form.event.id);
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('status', '1');
-        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('reason', wrapper.vm.form.reason.toString());
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('reason', JSON.stringify(wrapper.vm.form.reason));
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('rationale', wrapper.vm.form.rationale);
       });
 
@@ -162,7 +162,7 @@ describe('CaseFileStatusMassActionCreate.vue', () => {
         await wrapper.setData({
           form: {
             event: mockEvent(),
-            reason: { mockOptionItemId: 'option-item-id', specifiedOther: 'other' },
+            reason: { optionItemId: 'option-item-id', specifiedOther: 'other' },
             rationale: 'rationale',
             status: 1,
           },
