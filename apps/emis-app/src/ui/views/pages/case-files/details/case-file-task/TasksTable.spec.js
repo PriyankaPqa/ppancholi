@@ -8,7 +8,7 @@ import {
   TaskStatus,
   TaskType,
 } from '@libs/entities-lib/task';
-import { mockOptionItem, mockOptionItems, mockOptionSubItem } from '@libs/entities-lib/optionItem';
+import { mockOptionItems } from '@libs/entities-lib/optionItem';
 import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';
 import routes from '@/constants/routes';
@@ -257,6 +257,7 @@ describe('TasksTable.vue', () => {
       it('should return proper data when is in case File', () => {
         expect(wrapper.vm.customColumns).toEqual({
           taskName: 'Metadata/Name/Translation/en',
+          taskCategory: 'Metadata/TaskCategoryName/Translation/en',
           caseFileNumber: 'Metadata/CaseFileNumber',
           isUrgent: 'Entity/IsUrgent',
           dateAdded: 'Entity/DateAdded',
@@ -277,7 +278,13 @@ describe('TasksTable.vue', () => {
             text: 'task.task_table_header.task',
             sortable: true,
             value: wrapper.vm.customColumns.taskName,
-            width: '60%',
+            width: '50%',
+          },
+          {
+            sortable: true,
+            text: 'task.task_table_header.category',
+            value: 'Metadata/TaskCategoryName/Translation/en',
+            width: '15%',
           },
           {
             text: 'task.task_table_header.priority',
@@ -323,13 +330,19 @@ describe('TasksTable.vue', () => {
             text: 'task.task_table_header.task',
             sortable: true,
             value: wrapper.vm.customColumns.taskName,
-            width: '40%',
+            width: '30%',
+          },
+          {
+            sortable: true,
+            text: 'task.task_table_header.category',
+            value: 'Metadata/TaskCategoryName/Translation/en',
+            width: '15%',
           },
           {
             text: 'task.task_table_header.case_file_number',
             sortable: true,
             value: wrapper.vm.customColumns.caseFileNumber,
-            width: '20%',
+            width: '15%',
           },
           {
             text: 'task.task_table_header.priority',
@@ -338,7 +351,7 @@ describe('TasksTable.vue', () => {
             width: '10%',
           },
           {
-            text: 'task.task_table_header.created_date',
+            text: 'task.task_table_header.date_added',
             sortable: true,
             value: wrapper.vm.customColumns.dateAdded,
             width: '10%',
@@ -504,10 +517,6 @@ describe('TasksTable.vue', () => {
           metadata: mockTaskMetadata({ id: '1' }),
           pinned: false,
         }]);
-        taskStore.getTaskCategories = jest.fn(() => [mockOptionItem({
-          id: '986192ea-3f7b-4539-8a65-214161aea367',
-          subitems: [mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' })],
-        })]);
 
         wrapper.vm.$services.teams.getTeamsByEvent = jest.fn(() => [mockTeamEntity(({ id: 'mock-team-id-1', name: 'mock-team-name' }))]);
 
@@ -520,16 +529,6 @@ describe('TasksTable.vue', () => {
             id: '1',
             assignedTeamId: 'mock-team-id-1',
             assignedTeamName: 'mock-team-name',
-            category: {
-              displayName: {
-                translation: {
-                  en: 'case worker 2',
-                  fr: 'case worker 2 fr',
-                },
-              },
-              optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6',
-              specifiedOther: '',
-            },
           }),
           metadata: mockTaskMetadata({ id: '1' }),
           pinned: false,

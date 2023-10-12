@@ -57,14 +57,6 @@
             <template v-if="item.entity.taskType === TaskType.Team">
               <v-col cols="2">
                 <div class="fw-bold">
-                  {{ $t('task.create_edit.task_category') }}
-                </div>
-                <div v-if="item.entity.category">
-                  {{ $m(item.entity.category.displayName) }}
-                </div>
-              </v-col>
-              <v-col cols="2">
-                <div class="fw-bold">
                   {{ $t("task.create_edit.assigned_to") }}
                 </div>
                 <div> {{ item.entity.assignedTeamName }} </div>
@@ -82,7 +74,6 @@
           </v-row>
         </td>
       </template>
-
       <template #[`item.${customColumns.taskName}`]="{ item }">
         <div :class="{ 'ml-4': !isInCaseFile }">
           <v-icon class="adjust-margin" :color=" item.entity.taskType === TaskType.Team ? 'transparent' : 'grey'" small>
@@ -96,6 +87,9 @@
             {{ $m(item.metadata.name) }}
           </router-link>
         </div>
+      </template>
+      <template #[`item.${customColumns.taskCategory}`]="{ item }">
+        <span data-test="task-table-task-category"> {{ item.entity.taskType === TaskType.Personal ? '' : ($m(item.metadata.taskCategoryName) || $t('common.N/A')) }}</span>
       </template>
       <template v-if="!isInCaseFile" #[`item.${customColumns.caseFileNumber}`]="{ item }">
         <router-link
@@ -160,7 +154,7 @@ import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IOptionItem } from '@libs/entities-lib/optionItem';
 import { useUserStore } from '@/pinia/user/user';
-import { IAzureSearchParams, IMultilingual } from '@libs/shared-lib/types';
+import { IAzureSearchParams } from '@libs/shared-lib/types';
 import { ITEM_ROOT } from '@libs/services-lib/odata-query/odata-query';
 import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
@@ -170,11 +164,6 @@ import { ICaseFileEntity } from '@libs/entities-lib/case-file';
 import EventsFilterMixin from '@/ui/mixins/eventsFilter';
 
 interface IParsedTaskEntity extends ITaskEntityData {
-  category: {
-    optionItemId: string;
-    specifiedOther: string;
-    displayName: IMultilingual | string;
-  }
   assignedTeamName: string;
 }
 
@@ -271,6 +260,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
     customColumns(): Record<string, string> {
       return {
         taskName: `Metadata/Name/Translation/${this.$i18n.locale}`,
+        taskCategory: `Metadata/TaskCategoryName/Translation/${this.$i18n.locale}`,
         caseFileNumber: 'Metadata/CaseFileNumber',
         isUrgent: 'Entity/IsUrgent',
         dateAdded: 'Entity/DateAdded',
@@ -286,7 +276,13 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           text: this.$t('task.task_table_header.task') as string,
           sortable: true,
           value: this.customColumns.taskName,
-          width: this.isInCaseFile ? '60%' : '40%',
+          width: this.isInCaseFile ? '50%' : '30%',
+        },
+        {
+          text: this.$t('task.task_table_header.category') as string,
+          sortable: true,
+          value: this.customColumns.taskCategory,
+          width: '15%',
         },
         {
           text: this.$t('task.task_table_header.priority') as string,
@@ -295,7 +291,7 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
           width: '10%',
         },
         {
-          text: this.isInCaseFile ? this.$t('task.task_table_header.date_added') as string : this.$t('task.task_table_header.created_date') as string,
+          text: this.$t('task.task_table_header.date_added') as string,
           sortable: true,
           value: this.customColumns.dateAdded,
           width: '10%',
@@ -325,11 +321,11 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         text: this.$t('task.task_table_header.case_file_number') as string,
         sortable: true,
         value: this.customColumns.caseFileNumber,
-        width: '20%',
+        width: '15%',
       };
 
       if (!this.isInCaseFile) {
-        headersList.splice(1, 0, caseFileNumberHeader);
+        headersList.splice(2, 0, caseFileNumberHeader);
       }
       return headersList;
     },
@@ -404,17 +400,10 @@ export default mixins(TablePaginationSearchMixin, EventsFilterMixin).extend({
         this.searchResultIds,
         { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.isInCaseFile ? this.id : null } },
       );
-      const taskNames = useTaskStore().getTaskCategories();
       return rawTableData.map((d: any) => {
-        const currentTaskName = taskNames?.filter((n) => n.id === d?.entity?.name.optionItemId)[0];
-        const currentCategory = currentTaskName?.subitems.filter((c) => c.id === d?.entity.category?.optionItemId)[0];
         const assignedTeamName = this.teamsByEvent?.filter((t) => t.id === d?.entity?.assignedTeamId)[0];
         const parsedEntity = {
           ...d.entity,
-          category: {
-            ...d.entity.category,
-            displayName: currentCategory ? currentCategory.name : null,
-          },
           assignedTeamName: assignedTeamName ? assignedTeamName.name : '',
         };
         return {

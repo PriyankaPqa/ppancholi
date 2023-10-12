@@ -2620,7 +2620,6 @@
     "task.task_table_header.category": "Category",
     "task.task_table_header.priority": "Priority",
     "task.task_table_header.date_added": "Date added",
-    "task.task_table_header.created_date": "Created date",
     "task.task_table_header.status": "Status",
     "task.task_table_header.case_file_number": "Case file number",
     "task.task_table.my_personal_tasks": "My personal tasks",

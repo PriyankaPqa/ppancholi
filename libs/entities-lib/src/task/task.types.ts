@@ -39,6 +39,7 @@ export interface ITaskMetadata extends IEntity {
   caseFileId: uuid;
   caseFileNumber: string;
   name: IMultilingual;
+  taskCategoryName: IMultilingual;
   nameId: uuid;
   taskStatusName: IMultilingual;
 }
