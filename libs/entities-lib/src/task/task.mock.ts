@@ -20,6 +20,7 @@ const mockBaseTaskEntityData = (force? : Partial<IEntity>): ITaskEntityData => (
   taskType: null,
   dateAdded: '2020-02-01T00:00:00Z',
   dueDate: '',
+  userWorkingOn: '',
   ...force,
 });
 

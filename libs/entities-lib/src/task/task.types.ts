@@ -29,6 +29,7 @@ export interface ITaskEntityData extends IEntity {
   taskType: TaskType;
   dateAdded: Date | string;
   dueDate: Date | string;
+  userWorkingOn: string;
 }
 
 export interface ITaskEntity extends ITaskEntityData {

@@ -407,6 +407,58 @@ describe('TaskDetails.vue', () => {
         });
       });
     });
+
+    describe('task-details-working-on-it', () => {
+      it('should be rendered when displayWorkingOnIt is true', async () => {
+        await doMount(true, {
+          computed: {
+            displayWorkingOnIt: () => true,
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
+            isTeamTask: () => true,
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-working-on-it');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not be rendered when displayWorkingOnIt is false', async () => {
+        await doMount(true, {
+          computed: {
+            displayWorkingOnIt: () => false,
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Completed }),
+            isTeamTask: () => true,
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-working-on-it');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('should display N/A if there is no selectedCategory', async () => {
+        await doMount(true, {
+          computed: {
+            isTeamTask: () => true,
+            selectedCategory: () => null,
+          },
+        });
+        await flushPromises();
+        const element = wrapper.findDataTest('task-details-category-section');
+        expect(element.text()).toEqual('task.create_edit.task_category\n'
+        + '                common.N/A');
+      });
+    });
+
+    describe('task_details_back_btn', () => {
+      it('should router back to case file tasks', async () => {
+        await doMount(false);
+        const element = wrapper.findDataTest('task_details_back_btn');
+        await element.vm.$emit('click');
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.caseFile.task.home.name,
+        });
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -591,6 +643,35 @@ describe('TaskDetails.vue', () => {
         expect(wrapper.vm.assignedToPerson).toEqual('Jane Smith');
       });
     });
+
+    describe('displayWorkingOnIt', () => {
+      it('should return true when is team task and in progress', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
+          },
+        });
+        expect(wrapper.vm.displayWorkingOnIt).toEqual(true);
+      });
+
+      it('should return false when is team task but Completed', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.Completed }),
+          },
+        });
+        expect(wrapper.vm.displayWorkingOnIt).toEqual(false);
+      });
+
+      it('should return false when is personal task but in progress', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
+          },
+        });
+        expect(wrapper.vm.displayWorkingOnIt).toEqual(false);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -709,10 +790,11 @@ describe('TaskDetails.vue', () => {
         expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-1', false);
       });
 
-      it('should set selectedTaskNameId and selectedCategoryId properly if is team task', async () => {
+      it('should set data properly if is team task', async () => {
         taskStore.getById = jest.fn(() => mockTeamTaskEntity({
           name: { optionItemId: 'mock-task-name-1' },
           category: { optionItemId: 'mock-category-name-1' },
+          userWorkingOn: 'mock-user-id-1',
         }));
         await doMount(true, {
           computed: {
@@ -723,6 +805,7 @@ describe('TaskDetails.vue', () => {
         await hook.call(wrapper.vm);
         expect(wrapper.vm.selectedTaskNameId).toEqual('mock-task-name-1');
         expect(wrapper.vm.selectedCategoryId).toEqual('mock-category-name-1');
+        expect(wrapper.vm.isWorkingOn).toEqual(true);
       });
 
       it('should set selectedCategoryId to empty if there is no category', async () => {

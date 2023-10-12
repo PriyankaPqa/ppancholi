@@ -23,6 +23,8 @@ export class TaskEntity extends BaseEntity implements ITaskEntity {
 
   dueDate: Date | string;
 
+  userWorkingOn: string;
+
   constructor(data?: ITaskEntityData) {
     if (data) {
       super(data);
@@ -36,6 +38,7 @@ export class TaskEntity extends BaseEntity implements ITaskEntity {
       this.taskType = data.taskType || null;
       this.dateAdded = data.dateAdded || '';
       this.dueDate = data.dueDate || '';
+      this.userWorkingOn = data.userWorkingOn || null;
     } else {
       super();
       this.name = { optionItemId: null, specifiedOther: null };
@@ -48,6 +51,7 @@ export class TaskEntity extends BaseEntity implements ITaskEntity {
       this.taskType = null;
       this.dateAdded = '';
       this.dueDate = '';
+      this.userWorkingOn = null;
     }
   }
 }

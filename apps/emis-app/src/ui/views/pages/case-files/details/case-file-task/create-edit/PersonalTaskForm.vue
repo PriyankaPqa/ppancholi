@@ -1,23 +1,7 @@
 <template>
   <v-row justify="center" class="my-8 rc-body14">
-    <v-col md="8" sm="12">
-      <v-row class="assigned-to-action justify-space-between align-center mb-6 ml-0 pr-4 mr-0">
-        <div class="pl-4 py-2">
-          <span class="font-weight-bold">
-            {{ $t('task.create_edit.assigned_to') }}
-          </span>
-          <span data-test="task-assigned-to">
-            {{ isEditMode ? assignedToPerson : $t('task.create_edit.assigned_to.me') }}
-          </span>
-        </div>
-        <div v-if="isEditMode" class="pl-0 py-2">
-          <v-btn
-            color="primary"
-            small>
-            {{ $t('task.action') }}
-          </v-btn>
-        </div>
-      </v-row>
+    <v-col>
+      <slot name="actionSection" />
 
       <v-row>
         <v-col class="pb-1">
@@ -66,10 +50,6 @@ import VDateFieldWithValidation from '@libs/component-lib/components/atoms/VDate
 import { IListOption } from '@libs/shared-lib/types';
 import { useTaskStore } from '@/pinia/task/task';
 import helpers from '@/ui/helpers/helpers';
-import { TranslateResult } from 'vue-i18n';
-import { useUserStore } from '@/pinia/user/user';
-import { UserRoles } from '@libs/entities-lib/user';
-import { useUserAccountMetadataStore } from '@/pinia/user-account/user-account';
 
 interface ILocalPersonalTaskForm {
   name: IListOption;
@@ -88,7 +68,7 @@ export default mixins(caseFileTask).extend({
   },
 
   props: {
-    task: {
+    taskData: {
       type: Object as () => ITaskEntityData,
       required: true,
     },
@@ -101,9 +81,9 @@ export default mixins(caseFileTask).extend({
 
   data() {
       const localPersonalTaskForm = {
-        name: this.task.name,
-        dueDate: helpers.getLocalStringDate(this.task.dueDate, ''),
-        description: this.task.description,
+        name: this.taskData.name,
+        dueDate: helpers.getLocalStringDate(this.taskData.dueDate, ''),
+        description: this.taskData.description,
       } as ILocalPersonalTaskForm;
       return {
       localPersonalTaskForm,
@@ -112,9 +92,9 @@ export default mixins(caseFileTask).extend({
 
   computed: {
     dueDateRule(): Record<string, unknown> {
-      if (this.task.dueDate) {
+      if (this.taskData.dueDate) {
         return {
-          mustBeAfterOrSame: { X: this.task.dueDate, Y: format(Date.now(), 'yyyy-MM-dd') },
+          mustBeAfterOrSame: { X: this.taskData.dueDate, Y: format(Date.now(), 'yyyy-MM-dd') },
         };
       }
       return {};
@@ -136,25 +116,13 @@ export default mixins(caseFileTask).extend({
         },
       };
     },
-
-    assignedToPerson(): string | TranslateResult {
-      const userId = useUserStore().getUserId();
-      if (userId === this.task.createdBy) {
-        return this.$t('task.create_edit.assigned_to.me');
-      }
-      if (this.$hasLevel(UserRoles.level6)) {
-        const userAccountMetadata = useUserAccountMetadataStore().getById(this.task.createdBy);
-        return userAccountMetadata.displayName;
-      }
-      return '';
-    },
   },
 
   watch: {
     localPersonalTaskForm: {
       handler(newTaskForm) {
-        this.$emit('update:task', {
-          ...this.task,
+        this.$emit('update:taskData', {
+          ...this.taskData,
           ...newTaskForm,
         });
       },
@@ -166,18 +134,6 @@ export default mixins(caseFileTask).extend({
     this.filterOutHiddenTaskName = false;
     await useTaskStore().fetchTaskCategories();
     this.localPersonalTaskForm.name.optionItemId = this.taskNames?.filter((t) => t.isOther && t.subitems.length === 0)[0]?.id;
-    const userId = useUserStore().getUserId();
-    if (userId !== this.task.createdBy) {
-      await useUserAccountMetadataStore().fetch(this.task.createdBy, false);
-    }
   },
-
 });
 </script>
-
-<style scoped lang="scss">
-.assigned-to-action {
-  background-color: var(--v-grey-lighten4);
-  border-radius: 4px;
-}
-</style>

@@ -10,5 +10,6 @@ export function getMockExtensionComponents() {
     editTask: jest.fn(() => entity),
     fetchTaskCategories: jest.fn(() => options),
     getTaskCategories: jest.fn(() => options),
+    setWorkingOn: jest.fn(() => entity),
   };
 }

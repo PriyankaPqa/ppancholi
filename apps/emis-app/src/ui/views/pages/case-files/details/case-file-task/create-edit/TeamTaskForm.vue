@@ -1,6 +1,6 @@
 <template>
   <v-row v-if="task" justify="center" class="my-8 rc-body14">
-    <v-col md="8" sm="12">
+    <v-col>
       <v-row class="mb-6 ml-0 align-center">
         <v-checkbox
           v-model="localTeamTaskForm.isUrgent"
@@ -12,29 +12,13 @@
           <v-divider vertical class="mx-2" />
           <status-chip
             x-small
-            :status="task.taskStatus"
+            :status="taskData.taskStatus"
             status-name="TaskStatus"
             data-test="task-status-chip" />
         </template>
       </v-row>
 
-      <v-row class="assigned-to-action justify-space-between align-center mb-6 ml-0 pr-4 mr-0">
-        <div class="pl-4 py-2">
-          <span class="font-weight-bold">
-            {{ $t('task.create_edit.assigned_to') }}
-          </span>
-          <span data-test="task-assigned-to">
-            {{ assignedTeamName }}
-          </span>
-        </div>
-        <div v-if="isEditMode" class="pl-0 py-2">
-          <v-btn
-            color="primary"
-            small>
-            {{ $t('task.action') }}
-          </v-btn>
-        </div>
-      </v-row>
+      <slot name="actionSection" />
 
       <v-row>
         <v-col class="pb-1">
@@ -134,7 +118,7 @@ export default mixins(caseFileTask).extend({
   },
 
   props: {
-    task: {
+    taskData: {
       type: Object as () => ITaskEntityData,
       required: true,
     },
@@ -143,23 +127,18 @@ export default mixins(caseFileTask).extend({
       type: Boolean,
       default: false,
     },
-
-    assignedTeamName: {
-      type: String,
-      default: '',
-    },
   },
 
   data() {
       const localTeamTaskForm = {
-        name: this.task.name,
-        category: this.task.category,
-        description: this.task.description,
-        isUrgent: this.task.isUrgent,
+        name: this.taskData.name,
+        category: this.taskData.category,
+        description: this.taskData.description,
+        isUrgent: this.taskData.isUrgent,
       } as ILocalTeamTaskForm;
 
       return {
-      localTeamTaskForm,
+        localTeamTaskForm,
     };
   },
 
@@ -190,8 +169,8 @@ export default mixins(caseFileTask).extend({
   watch: {
     localTeamTaskForm: {
       handler(newTaskForm) {
-        this.$emit('update:task', {
-          ...this.task,
+        this.$emit('update:taskData', {
+          ...this.taskData,
           ...newTaskForm,
         });
       },
@@ -202,8 +181,8 @@ export default mixins(caseFileTask).extend({
   async created() {
     await useTaskStore().fetchTaskCategories();
     if (this.isEditMode) {
-      this.selectedTaskNameId = this.task.name.optionItemId;
-      this.selectedCategoryId = this.task.category.optionItemId;
+      this.selectedTaskNameId = this.taskData.name.optionItemId;
+      this.selectedCategoryId = this.taskData.category.optionItemId;
     }
   },
 
@@ -225,11 +204,6 @@ export default mixins(caseFileTask).extend({
 </script>
 
 <style scoped lang="scss">
-.assigned-to-action {
-  background-color: var(--v-grey-lighten4);
-  border-radius: 4px;
-}
-
 .option-list-description {
   color: var(--v-grey-darken1);
   margin-top: -24px !important;

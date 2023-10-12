@@ -16,7 +16,7 @@ describe('TeamTaskForm.vue', () => {
       localVue,
       pinia,
       propsData: {
-        task: mockTeamTaskEntity(),
+        taskData: mockTeamTaskEntity(),
       },
       computed: {
         taskNames: () => mockOptionItems(),
@@ -309,7 +309,7 @@ describe('TeamTaskForm.vue', () => {
       it('should assign data properly', async () => {
         await doMount(true, {
           propsData: {
-            task: mockTeamTaskEntity(),
+            taskData: mockTeamTaskEntity(),
           },
         });
         await wrapper.vm.$options.created.forEach((hook) => {
@@ -333,7 +333,7 @@ describe('TeamTaskForm.vue', () => {
       it('should call fetchTaskCategories', async () => {
         await doMount(true, {
           propsData: {
-            task: mockTeamTaskEntity(),
+            taskData: mockTeamTaskEntity(),
           },
         });
         taskStore.fetchTaskCategories = jest.fn();
@@ -345,10 +345,10 @@ describe('TeamTaskForm.vue', () => {
         expect(taskStore.fetchTaskCategories).toHaveBeenCalled();
       });
 
-      it('should set selectedTaskNameId and selectedCategoryId in edit mode', async () => {
+      it('should set data properly in edit mode', async () => {
         await doMount(true, {
           propsData: {
-            task: mockTeamTaskEntity(),
+            taskData: mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }),
             isEditMode: true,
           },
         });
@@ -367,7 +367,7 @@ describe('TeamTaskForm.vue', () => {
       it('should emit update:task event and send proper data', async () => {
         jest.clearAllMocks();
         await wrapper.setProps({
-          task: mockTeamTaskEntity({ description: '' }),
+          taskData: mockTeamTaskEntity({ description: '' }),
         });
 
         const updatedForm = {
@@ -384,8 +384,8 @@ describe('TeamTaskForm.vue', () => {
         await wrapper.setData({
           localTeamTaskForm: updatedForm,
         });
-        expect(wrapper.emitted('update:task')[0][0]).toEqual({
-          ...wrapper.vm.task,
+        expect(wrapper.emitted('update:taskData')[0][0]).toEqual({
+          ...wrapper.vm.taskData,
           ...updatedForm,
         });
       });

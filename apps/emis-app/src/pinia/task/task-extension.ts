@@ -57,6 +57,19 @@ export function getExtensionComponents(
     }
   }
 
+  async function setWorkingOn(id: uuid, caseFileId: uuid, userId: string) {
+    try {
+      const res = await entityService.setWorkingOn(id, caseFileId, userId);
+      if (res) {
+        baseComponents.set(res);
+      }
+      return res;
+    } catch (e) {
+      applicationInsights.trackException(e, {}, 'module.taskEntity', 'setWorkingOn');
+      return null;
+    }
+  }
+
   return {
     taskCategoriesFetched,
     taskCategories,
@@ -64,5 +77,6 @@ export function getExtensionComponents(
     editTask,
     fetchTaskCategories,
     getTaskCategories,
+    setWorkingOn,
   };
 }

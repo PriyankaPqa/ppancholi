@@ -20,6 +20,11 @@ describe('>>> Tasks Service', () => {
     expect(http.post).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks', payload, { globalHandler: false });
   });
 
+  test('setWorkingOn is linked to the correct URL', async () => {
+    await service.setWorkingOn('mock-task-id-123', 'mock-case-file-id-1', 'mock-user-id-1');
+    expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/mock-case-file-id-1/tasks/mock-task-id-123/set-working-on', { userWorkingOn: 'mock-user-id-1' });
+  });
+
   describe('search', () => {
     it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
       const params = { filter: { Foo: 'foo' } };

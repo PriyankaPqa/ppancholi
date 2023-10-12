@@ -9,7 +9,6 @@
       :content-only-scrolling="true"
       :persistent="true"
       :show-help="false"
-      :help-link="$t('zendesk.help_link.change_event_status')"
       :tooltip-label="$t('common.tooltip_label')"
       :max-width="750"
       data-test="household-status-dialog"

@@ -9,11 +9,15 @@ import { mockCaseFileEntity } from '@libs/entities-lib/case-file';
 import { useMockTeamStore } from '@/pinia/team/team.mock';
 import routes from '@/constants/routes';
 import { mockProvider } from '@/services/provider';
+import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
+import { useMockUserStore } from '@/pinia/user/user.mock';
 import Component from './CreateEditTask.vue';
 
 const localVue = createLocalVue();
 const { pinia, taskStore } = useMockTaskStore();
 const { teamStore } = useMockTeamStore(pinia);
+const { userAccountMetadataStore } = useMockUserAccountStore(pinia);
+const { userStore } = useMockUserStore(pinia);
 const services = mockProvider();
 
 describe('CreateEditTask.vue', () => {
@@ -22,7 +26,7 @@ describe('CreateEditTask.vue', () => {
   taskStore.getTaskCategories = jest.fn(() => mockOptionItems());
   teamStore.getByIds = jest.fn(() => mockTeamEntities());
 
-  const doMount = async (shallow = true, otherOptions = {}) => {
+  const doMount = async (shallow = true, otherOptions = {}, level = 6) => {
     const option = {
       localVue,
       pinia,
@@ -31,7 +35,7 @@ describe('CreateEditTask.vue', () => {
       },
       data() {
         return {
-          task: mockTeamTaskEntity(),
+          localTask: mockTeamTaskEntity(),
         };
       },
       computed: {
@@ -41,6 +45,7 @@ describe('CreateEditTask.vue', () => {
       },
       mocks: {
         $services: services,
+        $hasLevel: (lvl) => lvl <= `level${level}`,
       },
       ...otherOptions,
     };
@@ -138,7 +143,7 @@ describe('CreateEditTask.vue', () => {
             dueDate: '',
             description: 'mock-description',
           },
-          task: mockTeamTaskEntity(),
+          localTask: mockTeamTaskEntity(),
         });
         expect(wrapper.vm.isDirty).toEqual(false);
       });
@@ -158,11 +163,75 @@ describe('CreateEditTask.vue', () => {
             dueDate: '',
             description: 'mock-description',
           },
-          task: mockTeamTaskEntity({
+          localTask: mockTeamTaskEntity({
             description: 'new-description',
           }),
         });
         expect(wrapper.vm.isDirty).toEqual(true);
+      });
+    });
+
+    describe('assignedToPerson', () => {
+      it('should render assigned to me when user is creator', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
+          },
+        });
+
+        await flushPromises();
+        userStore.getUserId = jest.fn(() => 'mock-user-1');
+
+        expect(wrapper.vm.assignedToPerson).toEqual('task.create_edit.assigned_to.me');
+      });
+
+      it('should return the name of creator when user is not creator and user has level6', async () => {
+        userStore.getUserId = jest.fn(() => 'mock-user-2');
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-1' }),
+          },
+        }, 6);
+        await flushPromises();
+        expect(wrapper.vm.assignedToPerson).toEqual('Jane Smith');
+      });
+    });
+
+    describe('displayWorkingOnIt', () => {
+      it('should be true when task is in progress and is edit mode', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
+            isEditMode: () => true,
+          },
+        });
+        expect(wrapper.vm.displayWorkingOnIt).toEqual(true);
+      });
+
+      it('should be false when task is completed', async () => {
+        await wrapper.setProps({
+          task: mockTeamTaskEntity({ taskStatus: TaskStatus.Completed }),
+          isEditMode: () => true,
+        });
+        expect(wrapper.vm.displayWorkingOnIt).toEqual(false);
+      });
+
+      it('should be false when is not edit mode', async () => {
+        await wrapper.setProps({
+          task: mockTeamTaskEntity({ taskStatus: TaskStatus.InProgress }),
+          isEditMode: () => false,
+        });
+        expect(wrapper.vm.displayWorkingOnIt).toEqual(false);
+      });
+
+      it('should be false when is personal task', async () => {
+        await doMount(true, {
+          computed: {
+            task: () => mockPersonalTaskEntity({ taskStatus: TaskStatus.InProgress }),
+            isEditMode: () => true,
+          },
+        });
+        expect(wrapper.vm.displayWorkingOnIt).toEqual(false);
       });
     });
   });
@@ -182,7 +251,7 @@ describe('CreateEditTask.vue', () => {
           },
         });
         await wrapper.setData({
-          task: new TaskEntity(),
+          localTask: new TaskEntity(),
         });
         teamStore.getByIds = jest.fn(() => [
           mockTeamsDataStandard({ isEscalation: false }),
@@ -194,7 +263,7 @@ describe('CreateEditTask.vue', () => {
         expectedResult.caseFileId = 'mock-case-file-id-1';
         expectedResult.assignedTeamId = '';
         await wrapper.vm.prepareCreateTask();
-        expect(wrapper.vm.task).toEqual(expectedResult);
+        expect(wrapper.vm.localTask).toEqual(expectedResult);
       });
 
       it('should set proper data if create personal task', async () => {
@@ -210,7 +279,7 @@ describe('CreateEditTask.vue', () => {
           },
         });
         await wrapper.setData({
-          task: new TaskEntity(),
+          localTask: new TaskEntity(),
         });
         const expectedResult = new TaskEntity();
         expectedResult.taskType = TaskType.Personal;
@@ -222,7 +291,7 @@ describe('CreateEditTask.vue', () => {
           specifiedOther: null,
         };
         await wrapper.vm.prepareCreateTask();
-        expect(wrapper.vm.task).toEqual(expectedResult);
+        expect(wrapper.vm.localTask).toEqual(expectedResult);
       });
     });
 
@@ -245,7 +314,7 @@ describe('CreateEditTask.vue', () => {
         ]);
         await wrapper.vm.fetchEscalationTeamAndSetTeamId();
         expect(wrapper.vm.$services.teams.getTeamsByEvent).toHaveBeenCalledWith('mock-event-id');
-        expect(wrapper.vm.task.assignedTeamId).toEqual('mock-id-1');
+        expect(wrapper.vm.localTask.assignedTeamId).toEqual('mock-id-1');
         expect(wrapper.vm.assignedTeamName).toEqual('mock-team-name-1');
       });
     });
@@ -262,7 +331,7 @@ describe('CreateEditTask.vue', () => {
           data() {
             return {
               assignedTeamName: '',
-              task: mockTeamTaskEntity(),
+              localTask: mockTeamTaskEntity(),
             };
           },
           computed: {
@@ -283,7 +352,7 @@ describe('CreateEditTask.vue', () => {
       it('should call pinia store method createTask', async () => {
         taskStore.createTask = jest.fn();
         await wrapper.setData({
-          task: mockTeamTaskEntity(),
+          localTask: mockTeamTaskEntity(),
         });
         await wrapper.vm.submitCreateTask();
         expect(taskStore.createTask).toHaveBeenCalledWith(mockTeamTaskEntity());
@@ -314,7 +383,7 @@ describe('CreateEditTask.vue', () => {
         wrapper.vm.$toasted.global.success = jest.fn();
 
         await wrapper.setData({
-          task: mockTeamTaskEntity(),
+          localTask: mockTeamTaskEntity(),
         });
         await wrapper.setProps({
           taskId: 'mock-task-id-1',
@@ -377,7 +446,7 @@ describe('CreateEditTask.vue', () => {
     describe('setOriginalData', () => {
       it('should set originalForm properly', async () => {
         await wrapper.setData({
-          task: mockTeamTaskEntity(),
+          localTask: mockTeamTaskEntity(),
         });
         wrapper.vm.setOriginalData();
         expect(wrapper.vm.originalForm).toEqual({
@@ -408,6 +477,69 @@ describe('CreateEditTask.vue', () => {
           caseFileId: 'mock-case-file-id-1',
           id: 'mock-task-id-1',
         });
+      });
+
+      it('should store task locally', async () => {
+        jest.clearAllMocks();
+        taskStore.fetch = jest.fn(() => mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }));
+        taskStore.getById = jest.fn(() => mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }));
+        await doMount(true, {
+          propsData: {
+            taskId: 'mock-task-id-1',
+            id: 'mock-case-file-id-1',
+            taskType: 'team',
+          },
+          computed: {
+            isEditMode: () => true,
+            task: () => mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }),
+          },
+        });
+        await wrapper.vm.loadTask();
+        expect(wrapper.vm.localTask).toEqual(mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }));
+      });
+
+      it('should set isWorkingOn properly and call useUserAccountMetadataStore fetch if there is user working on when is team task', async () => {
+        jest.clearAllMocks();
+        await doMount(true, {
+          propsData: {
+            taskId: 'mock-task-id-1',
+            id: 'mock-case-file-id-1',
+            taskType: 'team',
+          },
+          computed: {
+            isEditMode: () => true,
+            task: () => mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }),
+          },
+        });
+        taskStore.fetch = jest.fn(() => mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }));
+        taskStore.getById = jest.fn(() => mockTeamTaskEntity({ userWorkingOn: 'mock-user-id-1' }));
+        userAccountMetadataStore.fetch = jest.fn();
+        await wrapper.vm.loadTask();
+        await flushPromises();
+        expect(wrapper.vm.isWorkingOn).toEqual(true);
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-1', false);
+      });
+
+      it('should set call useUserAccountMetadataStore fetch if user is not the creator when is personal task', async () => {
+        jest.clearAllMocks();
+        await doMount(true, {
+          propsData: {
+            taskId: 'mock-task-id-1',
+            id: 'mock-case-file-id-1',
+            taskType: 'personal',
+          },
+          computed: {
+            isEditMode: () => true,
+            task: () => mockPersonalTaskEntity({ createdBy: 'mock-user-id-1' }),
+          },
+        });
+        taskStore.fetch = jest.fn(() => mockPersonalTaskEntity({ createdBy: 'mock-user-id-1' }));
+        taskStore.getById = jest.fn(() => mockPersonalTaskEntity({ createdBy: 'mock-user-id-1' }));
+        userAccountMetadataStore.fetch = jest.fn();
+        userStore.getUserId = jest.fn(() => 'mock-user-id-2');
+        await wrapper.vm.loadTask();
+        await flushPromises();
+        expect(userAccountMetadataStore.fetch).toHaveBeenCalledWith('mock-user-id-1', false);
       });
     });
   });
@@ -444,7 +576,7 @@ describe('CreateEditTask.vue', () => {
           },
           data() {
             return {
-              task: mockTeamTaskEntity(),
+              localTask: mockTeamTaskEntity(),
             };
           },
           computed: {
@@ -470,7 +602,7 @@ describe('CreateEditTask.vue', () => {
           },
           data() {
             return {
-              task: mockTeamTaskEntity(),
+              localTask: mockTeamTaskEntity(),
             };
           },
           computed: {
@@ -489,6 +621,38 @@ describe('CreateEditTask.vue', () => {
         await flushPromises();
         expect(wrapper.vm.loadTask).toHaveBeenCalled();
         expect(wrapper.vm.setOriginalData).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('watcher', () => {
+    describe('task.userWorkingOn', () => {
+      it('should update localTask userWorkingOn when changed', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          pinia,
+          propsData: {
+            id: 'mock-case-file-id-1',
+          },
+          data() {
+            return {
+              mockTask: mockTeamTaskEntity({ userWorkingOn: null }),
+            };
+          },
+          computed: {
+            task: {
+              get() {
+                return this.mockTask;
+              },
+              set(value) {
+                this.mockTask = value;
+              },
+            },
+          },
+        });
+        wrapper.vm.task = mockTeamTaskEntity({ userWorkingOn: 'user-1' });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.localTask.userWorkingOn).toEqual('user-1');
       });
     });
   });

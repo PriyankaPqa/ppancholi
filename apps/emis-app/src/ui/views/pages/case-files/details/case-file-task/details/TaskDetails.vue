@@ -8,7 +8,7 @@
       <v-col cols="12" lg="8">
         <v-container>
           <v-row class="px-16 mb-5 justify-space-between flex-nowrap">
-            <div class="font-weight-bold rc-heading-4">
+            <div class="font-weight-bold rc-heading-5">
               {{ helpers.capitalize(displayedTaskName) }}
             </div>
             <div class="d-flex align-center">
@@ -33,10 +33,10 @@
             </div>
           </v-row>
           <template v-if="isTeamTask">
-            <div class="creator-info px-13 grey--text rc-body14" data-test="task-details-team-task-creator-info">
+            <div class="creator-info px-13 grey--text rc-body12" data-test="task-details-team-task-creator-info">
               {{ teamTaskCreatorInfo }}
             </div>
-            <div v-if="selectedTaskName && $m(selectedTaskName.description)" class="px-13 mt-2 grey-text rc-body16">
+            <div v-if="selectedTaskName && $m(selectedTaskName.description)" class="px-13 mt-2 grey-text rc-body14">
               <v-icon small class="mr-1 pb-1">
                 mdi-alert-circle
               </v-icon>
@@ -44,7 +44,9 @@
             </div>
           </template>
 
-          <v-row class="pl-4 py-2 d-flex justify-space-between d-flex assigned-to-action align-center mx-13 mb-4 mt-4 pr-4 pa-0">
+          <v-row
+            class="pl-4 py-2 d-flex justify-space-between d-flex align-center mx-13 mt-4 pr-4 pa-0 rc-body14"
+            :class="{ 'assigned-to-action-team-task mb-0': displayWorkingOnIt, 'assigned-to-action mb-4': !displayWorkingOnIt }">
             <v-col cols="4" class="font-weight-bold pa-0">
               {{ $t('task.create_edit.assigned_to') }}
             </v-col>
@@ -62,7 +64,30 @@
             </div>
           </v-row>
 
-          <div class="task-details-container mt-4 mx-13 py-2">
+          <v-row
+            v-if="displayWorkingOnIt"
+            class="d-flex justify-space-between d-flex working-on-section align-center mx-13 mb-4 mt-0 px-4 pa-1 rc-body14"
+            data-test="task-details-working-on-it">
+            <v-col cols="4" class="font-weight-bold pa-0">
+              {{ $t('task.task_details.working_on_it') }}
+            </v-col>
+            <v-col class="pa-0 pl-2">
+              {{ personIsWorkingOn }}
+            </v-col>
+            <div>
+              <v-switch
+                v-model="isWorkingOn"
+                color="primary"
+                small
+                data-test="task-details-working-on-it-toggle"
+                class="ma-0"
+                :loading="toggleLoading"
+                :disabled="toggleLoading"
+                @change="onToggleChange($event)" />
+            </div>
+          </v-row>
+
+          <div class="task-details-container mt-4 mx-13 py-2 rc-body14">
             <template v-if="isTeamTask">
               <v-row class="border-bottom pa-0 px-2 ma-0 pb-1" data-test="task-details-category-section">
                 <v-col cols="4" class="font-weight-bold">
@@ -72,7 +97,7 @@
                   <div data-test="task-details-category">
                     {{ selectedCategory.isOther ? task.category.specifiedOther : $m(selectedCategory.name) }}
                   </div>
-                  <div v-if="$m(selectedCategory.description)" class="">
+                  <div v-if="$m(selectedCategory.description)">
                     <v-icon small class="mr-1 pb-1">
                       mdi-alert-circle
                     </v-icon>
@@ -115,7 +140,9 @@
                 {{ $t('task.create_edit.task_description') }}
               </v-col>
               <v-col>
-                <div>{{ task.description }}</div>
+                <div class="task-details-description">
+                  {{ task.description }}
+                </div>
               </v-col>
             </v-row>
           </div>
@@ -137,7 +164,7 @@
 import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { useTaskStore } from '@/pinia/task/task';
-import { ITaskEntity, TaskStatus, TaskType } from '@libs/entities-lib/task';
+import { TaskStatus, TaskType } from '@libs/entities-lib/task';
 import { TranslateResult } from 'vue-i18n';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
@@ -179,10 +206,6 @@ export default mixins(caseFileTask, caseFileDetail).extend({
   },
 
   computed: {
-    task(): ITaskEntity {
-      return useTaskStore().getById(this.taskId);
-    },
-
     title(): string {
       return this.task?.taskType === TaskType.Team
         ? this.$t('task.task_details.title.team_task_details') as string
@@ -236,6 +259,10 @@ export default mixins(caseFileTask, caseFileDetail).extend({
       }
       return this.task.createdBy === userId;
     },
+
+    displayWorkingOnIt(): boolean {
+      return this.isTeamTask && this.task.taskStatus === TaskStatus.InProgress;
+    },
   },
 
   async created() {
@@ -243,9 +270,16 @@ export default mixins(caseFileTask, caseFileDetail).extend({
     await useTaskStore().fetch({ id: this.taskId, caseFileId: this.id });
     await useTaskStore().fetchTaskCategories();
     if (this.isTeamTask) {
-      await Promise.all([useUserAccountMetadataStore().fetch(this.task.createdBy, false), this.getAssignedTeam()]);
+      await Promise.all([
+        useUserAccountMetadataStore().fetch(this.task.createdBy, false),
+        this.getAssignedTeam(),
+      ]);
       this.selectedTaskNameId = this.task.name?.optionItemId;
       this.selectedCategoryId = this.task.category ? this.task.category.optionItemId : '';
+      this.isWorkingOn = !!this.task.userWorkingOn;
+      if (this.isWorkingOn) {
+        await useUserAccountMetadataStore().fetch(this.task.userWorkingOn, false);
+      }
     } else if (this.$hasLevel(UserRoles.level5)) {
       await useUserAccountMetadataStore().fetch(this.task.createdBy, false);
     }
@@ -288,6 +322,17 @@ export default mixins(caseFileTask, caseFileDetail).extend({
   border-radius: 4px;
 }
 
+.assigned-to-action-team-task {
+  background-color: var(--v-grey-lighten4);
+  border-radius: 4px 4px 0px 0px;
+}
+
+.working-on-section {
+  border-top: solid 1px var(--v-grey-lighten2);
+  background-color: var(--v-grey-lighten4);
+  border-radius: 0px 0px 4px 4px;
+}
+
 .task-details-container {
   border-radius: 4px;
   border: 1px solid var(--v-grey-lighten3);
@@ -300,6 +345,10 @@ export default mixins(caseFileTask, caseFileDetail).extend({
 
 .creator-info {
   margin-top: -20px;
+}
+
+.task-details-description {
+  white-space: pre-line;
 }
 
 </style>

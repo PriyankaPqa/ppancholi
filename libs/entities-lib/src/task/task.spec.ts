@@ -80,6 +80,11 @@ describe('>>> Task', () => {
       expect(task.dueDate).toBe('2023-08-01');
     });
 
+    it('should instantiate userWorkingOn', () => {
+      const task = new TaskEntity({ ...mockTaskData, userWorkingOn: 'user-id-1' });
+      expect(task.userWorkingOn).toBe('user-id-1');
+    });
+
     it('should instantiate properties with proper data when no params', () => {
       const task = new TaskEntity();
       expect(task.id).toBe('');
@@ -93,6 +98,7 @@ describe('>>> Task', () => {
       expect(task.dueDate).toBe('');
       expect(task.taskStatus).toBe(null);
       expect(task.assignedTeamId).toBe('');
+      expect(task.userWorkingOn).toBe(null);
     });
   });
 });

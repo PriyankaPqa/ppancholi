@@ -16,7 +16,3 @@ export default mixins(caseFileDetail).extend({
   },
 });
 </script>
-
-<style scoped>
-
-</style>
