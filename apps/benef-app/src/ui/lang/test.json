@@ -594,6 +594,7 @@
     "registration.confirmation.identityAuthentication.pending1Document.details": "registration.confirmation.identityAuthentication.pending1Document.details",
     "registration.confirmation.identityAuthentication.pending2Document": "registration.confirmation.identityAuthentication.pending2Document",
     "registration.confirmation.identityAuthentication.pending2Document.details": "registration.confirmation.identityAuthentication.pending2Document.details",
+    "registration.confirmation.identityAuthentication.underlined": "",
     "registration.confirmation.identityAuthentication.verified": "registration.confirmation.identityAuthentication.verified",
     "registration.confirmation.part1completed": "registration.confirmation.part1completed",
     "registration.confirmation.part2": "registration.confirmation.part2",

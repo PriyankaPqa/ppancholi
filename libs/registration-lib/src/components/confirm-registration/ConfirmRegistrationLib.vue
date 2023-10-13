@@ -44,6 +44,9 @@
                   <template #phone>
                     <span class="fw-bold">{{ phoneAssistance }}</span>
                   </template>
+                  <template #underlined>
+                    <u>{{ $t('registration.confirmation.identityAuthentication.underlined') }}</u>
+                  </template>
                 </i18n>
               </span>
             </v-col>

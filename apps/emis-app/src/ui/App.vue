@@ -133,7 +133,7 @@ export default {
 
     this.subscribeSignalR();
 
-    // The access token will be refreshed automatically every 5 minutes.
+    // The access token will be refreshed automatically every 5 minutes..
     AuthenticationProvider.startAccessTokenAutoRenewal(60000 * 5);
 
     document.addEventListener('DOMContentLoaded', () => {
