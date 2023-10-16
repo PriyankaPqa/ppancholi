@@ -7,7 +7,6 @@ export enum FeatureKeys {
   BotProtection = 'BotProtection',
   SelfRegistration = 'SelfRegistration',
   ManageDuplicates = 'manageDuplicates',
-  ImpactedIndividuals = 'ImpactedIndividuals',
   AuthenticationPhaseII = 'AuthenticationPhaseII',
   UseIdentityServer = 'UseIdentityServer',
   MassActionAutoGenerateName = 'MassActionAutoGenerateName',

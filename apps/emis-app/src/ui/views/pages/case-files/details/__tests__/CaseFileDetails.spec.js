@@ -340,20 +340,15 @@ describe('CaseFileDetails.vue', () => {
     });
 
     describe('caseFileDetails-receiving-assistance-member-count', () => {
-      it('should display when has feature flag ImpactedIndividuals and not display when has no feature flag', async () => {
-        let element;
-        await doMount([FeatureKeys.ImpactedIndividuals]);
-        await flushPromises();
-        element = wrapper.findDataTest('caseFileDetails-receiving-assistance-member-count');
-        expect(element.exists()).toBeTruthy();
-
+      it('should display', async () => {
         await doMount();
-        element = wrapper.findDataTest('caseFileDetails-receiving-assistance-member-count');
-        expect(element.exists()).toBeFalsy();
+        await flushPromises();
+        const element = wrapper.findDataTest('caseFileDetails-receiving-assistance-member-count');
+        expect(element.exists()).toBeTruthy();
       });
 
       it('should display proper content', async () => {
-        await doMount([FeatureKeys.ImpactedIndividuals]);
+        await doMount();
         await flushPromises();
         const element = wrapper.findDataTest('caseFileDetails-receiving-assistance-member-count');
         expect(element.text()).toEqual('caseFileDetail.totalImpacted  1');

@@ -140,7 +140,7 @@
       :member="member"
       :shelter-locations-list="shelterLocations"
       :disable-autocomplete="!enableAutocomplete"
-      :hide-edit-temporary-address="$hasFeature(FeatureKeys.ImpactedIndividuals)"
+      :hide-edit-temporary-address="true"
       submit-changes-to-service
       @close="closeAndReload" />
 

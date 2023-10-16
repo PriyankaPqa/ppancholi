@@ -569,45 +569,10 @@ describe('PrimaryMemberDialog', () => {
       });
     });
     describe('current-address-form', () => {
-      it('should exist when feature flag ImpactedIndividuals is off, and makePrimaryMode is false', () => {
+      it('should not exist makePrimaryMode is false', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          propsData: {
-            show: true,
-            shelterLocations: [],
-            makePrimaryMode: false,
-          },
-          data() {
-            return { apiKey: '123' };
-          },
-        });
-        const component = wrapper.findComponent(CurrentAddressForm);
-        expect(component.exists()).toBeTruthy();
-      });
-
-      it('should exist when feature flag ImpactedIndividuals is off, and makePrimaryMode is true', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          propsData: {
-            show: true,
-            shelterLocations: [],
-            makePrimaryMode: true,
-          },
-          data() {
-            return { apiKey: '123' };
-          },
-        });
-        const component = wrapper.findComponent(CurrentAddressForm);
-        expect(component.exists()).toBeTruthy();
-      });
-
-      it('should not exist when feature flag ImpactedIndividuals is on and makePrimaryMode is false', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          pinia,
-          featureList: [FeatureKeys.ImpactedIndividuals],
           propsData: {
             show: true,
             shelterLocations: [],
@@ -621,11 +586,10 @@ describe('PrimaryMemberDialog', () => {
         expect(component.exists()).toBeFalsy();
       });
 
-      it('should exist when feature flag ImpactedIndividuals is on and makePrimaryMode is true', () => {
+      it('should exist makePrimaryMode is true', () => {
         wrapper = shallowMount(Component, {
           localVue,
           pinia,
-          featureList: [FeatureKeys.ImpactedIndividuals],
           propsData: {
             show: true,
             shelterLocations: [],

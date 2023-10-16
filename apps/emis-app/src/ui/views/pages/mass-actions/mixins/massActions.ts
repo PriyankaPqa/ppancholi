@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import helpers from '@/ui/helpers/helpers';
-import { FeatureKeys } from '@libs/entities-lib/tenantSettings';
 import { ICardSettings } from '@/types/interfaces/ICardSettings';
 import { MassActionDataCorrectionType, MassActionType } from '@libs/entities-lib/mass-action';
 
@@ -36,9 +35,7 @@ export default Vue.extend({
         },
         [MassActionDataCorrectionType.TemporaryAddress]: {
           fileName: 'TemporaryAddressTemplate.csv',
-          blobsParts: this.$hasFeature(FeatureKeys.ImpactedIndividuals)
-            ? 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,CrcProvided,CheckIn,CheckOut,ETag'
-            : 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,ETag',
+          blobsParts: 'PersonId,PlaceName,StreetAddress,PlaceNumber,UnitSuite,City,PostalCode,ProvinceEn,SpecifiedOtherProvince,CrcProvided,CheckIn,CheckOut,ETag',
         },
         [MassActionDataCorrectionType.FinancialAssistance]: {
           fileName: 'FinancialAssistanceTemplate.csv',

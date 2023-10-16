@@ -309,18 +309,14 @@ describe('HouseholdMemberCard.vue', () => {
     });
 
     describe('add-edit-additional-members-lib', () => {
-      it('should pass props disable-edit-temporary-address true when feature flag ImpactedIndividuals is on, and pass false when feature flag is off', async () => {
+      it('should pass props disable-edit-temporary-address true', async () => {
         doMount();
         await wrapper.setData({
           showAdditionalMemberDialog: true,
         });
-        await wrapper.setFeature(FeatureKeys.ImpactedIndividuals, true);
         const component = wrapper.findComponent(AddEditAdditionalMembersLib);
         const props = 'hideEditTemporaryAddress';
         expect(component.props(props)).toBe(true);
-
-        await wrapper.setFeature(FeatureKeys.ImpactedIndividuals, false);
-        expect(component.props(props)).toBe(false);
       });
     });
   });

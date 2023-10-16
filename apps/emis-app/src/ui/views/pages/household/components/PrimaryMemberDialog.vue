@@ -37,7 +37,7 @@
             @setIndigenousIdentity="setIndigenousIdentity"
             @setContactInformation="setContactInformation" />
           <current-address-form
-            v-if="!$hasFeature(FeatureKeys.ImpactedIndividuals) || makePrimaryMode"
+            v-if="makePrimaryMode"
             :shelter-locations="shelterLocations"
             :canadian-provinces-items="canadianProvincesItems"
             :current-address-type-items="currentAddressTypeItems"

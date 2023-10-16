@@ -91,10 +91,7 @@
         </span>
       </div>
 
-      <div
-        v-if="$hasFeature(FeatureKeys.ImpactedIndividuals)"
-        class="d-flex flex-row rc-body14 mt-2"
-        data-test="caseFileDetails-receiving-assistance-member-count">
+      <div class="d-flex flex-row rc-body14 mt-2" data-test="caseFileDetails-receiving-assistance-member-count">
         <v-icon small class="mr-2">
           mdi-account-multiple
         </v-icon>
@@ -213,28 +210,6 @@ export default mixins(caseFileDetail).extend({
     },
 
     tabs(): Array<INavigationTab> {
-      const documentTab = !this.isL0 && {
-        text: this.$t('caseFileDetail.menu_documents') as string,
-        test: 'documents',
-        to: routes.caseFile.documents.home.name,
-        exact: false,
-      };
-
-      const assessmentsTab = {
-        text: this.$t('caseFileDetail.menu_assessments') as string,
-        test: 'assessments',
-        to: routes.caseFile.assessments.home.name,
-        exact: false,
-        disabled: !this.canL0AccessAssessment,
-      };
-
-      const impactedIndividualsTab = {
-        text: this.$t('caseFileDetail.menu_impacted_individuals') as string,
-        test: 'impacted_individuals',
-        to: routes.caseFile.impactedIndividuals.home.name,
-        exact: false,
-      };
-
       const taskTab = {
           text: this.$t('caseFileDetail.menu_tasks') as string,
           test: 'tasks',
@@ -242,38 +217,55 @@ export default mixins(caseFileDetail).extend({
           exact: false,
       };
 
-        const tabs = [{
+        const tabs = [
+          {
             text: this.$t('caseFileDetail.menu_activity') as string,
             test: 'case-file-activity',
             icon: '',
             to: routes.caseFile.activity.name,
-          }, {
+          },
+          {
             text: this.$t('caseFileDetail.menu_case_note') as string,
             test: 'case-note',
             to: routes.caseFile.note.name,
           },
-            this.$hasFeature(FeatureKeys.ImpactedIndividuals) ? assessmentsTab : documentTab,
           {
-              text: this.$t('caseFileDetail.menu_financial_assistance') as string,
-              test: 'case-financial-assistance',
-              to: routes.caseFile.financialAssistance.home.name,
-              exact: false,
-            },
-            !this.$hasFeature(FeatureKeys.ImpactedIndividuals) && assessmentsTab,
-            !this.isL0 && {
-              text: this.$t('caseFileDetail.menu_referrals') as string,
-              test: 'referrals',
-              to: routes.caseFile.referrals.home.name,
-              exact: false,
-            },
-            this.$hasFeature(FeatureKeys.ImpactedIndividuals) && impactedIndividualsTab,
-            !this.isL0 && {
-              text: this.$t('caseFileDetail.menu_recoveryPlan') as string,
-              test: 'recovery-plan',
-              disabled: true,
-            },
-            this.$hasFeature(FeatureKeys.ImpactedIndividuals) && documentTab,
-            this.$hasFeature(FeatureKeys.TaskManagement) && taskTab,
+            text: this.$t('caseFileDetail.menu_assessments') as string,
+            test: 'assessments',
+            to: routes.caseFile.assessments.home.name,
+            exact: false,
+            disabled: !this.canL0AccessAssessment,
+          },
+          {
+            text: this.$t('caseFileDetail.menu_financial_assistance') as string,
+            test: 'case-financial-assistance',
+            to: routes.caseFile.financialAssistance.home.name,
+            exact: false,
+          },
+          !this.isL0 && {
+            text: this.$t('caseFileDetail.menu_referrals') as string,
+            test: 'referrals',
+            to: routes.caseFile.referrals.home.name,
+            exact: false,
+          },
+          {
+            text: this.$t('caseFileDetail.menu_impacted_individuals') as string,
+            test: 'impacted_individuals',
+            to: routes.caseFile.impactedIndividuals.home.name,
+            exact: false,
+          },
+          !this.isL0 && {
+            text: this.$t('caseFileDetail.menu_recoveryPlan') as string,
+            test: 'recovery-plan',
+            disabled: true,
+          },
+          !this.isL0 && {
+            text: this.$t('caseFileDetail.menu_documents') as string,
+            test: 'documents',
+            to: routes.caseFile.documents.home.name,
+            exact: false,
+          },
+          this.$hasFeature(FeatureKeys.TaskManagement) && taskTab,
         ];
 
         return tabs.filter((t) => t);
