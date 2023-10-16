@@ -7,7 +7,7 @@ import { mockProvider } from '@/services/provider';
 import flushPromises from 'flush-promises';
 import { useMockUserAccountStore } from '@/pinia/user-account/user-account.mock';
 import {
-  QueryType,
+  QueryType, ReportingTopic,
 } from '@libs/entities-lib/reporting';
 import { mockUserAccountMetadata } from '@libs/entities-lib/user-account';
 import Component from './QueriesList.vue';
@@ -79,7 +79,7 @@ describe('QueriesList.vue', () => {
       it('is defined correctly', () => {
         expect(wrapper.vm.customColumns).toEqual({
           name: 'name',
-          category: 'category',
+          theme: 'theme',
           sharedBy: 'sharedBy',
           delete: 'delete',
         });
@@ -96,8 +96,8 @@ describe('QueriesList.vue', () => {
             width: '60%',
           },
           {
-            text: 'reporting.query.category',
-            value: wrapper.vm.customColumns.category,
+            text: 'reporting.query.theme',
+            value: wrapper.vm.customColumns.theme,
             sortable: true,
           },
           {
@@ -122,8 +122,8 @@ describe('QueriesList.vue', () => {
             width: '60%',
           },
           {
-            text: 'reporting.query.category',
-            value: wrapper.vm.customColumns.category,
+            text: 'reporting.query.theme',
+            value: wrapper.vm.customColumns.theme,
             sortable: true,
           },
         ]);
@@ -150,14 +150,39 @@ describe('QueriesList.vue', () => {
       });
     });
 
+    describe('availableThemes', () => {
+      it('returns data filtered by searchTheme', async () => {
+        expect(wrapper.vm.availableThemes).toEqual([
+          {
+            id: ReportingTopic.HouseholdMembers,
+            name: 'reporting.query.theme.HouseholdMembers',
+            description: 'reporting.query.theme.HouseholdMembers.description',
+          },
+          {
+            id: ReportingTopic.HouseholdPrimary,
+            name: 'reporting.query.theme.HouseholdPrimary',
+            description: 'reporting.query.theme.HouseholdPrimary.description',
+          },
+        ]);
+        await wrapper.setData({ searchTheme: 'HouseholdPrimary' });
+        expect(wrapper.vm.availableThemes).toEqual([
+          {
+            id: ReportingTopic.HouseholdPrimary,
+            name: 'reporting.query.theme.HouseholdPrimary',
+            description: 'reporting.query.theme.HouseholdPrimary.description',
+          },
+        ]);
+      });
+    });
+
     describe('queryItems', () => {
       it('calls helper and orders', async () => {
         sharedHelpers.filterCollectionByValue = jest.fn((items) => items);
         await doMount();
-        await wrapper.setData({ params: { search: 'some q' }, options: { sortDesc: [true], sortBy: ['category'] } });
+        await wrapper.setData({ params: { search: 'some q' }, options: { sortDesc: [true], sortBy: ['theme'] } });
         const r = wrapper.vm.queryItems;
         expect(sharedHelpers.filterCollectionByValue).toHaveBeenCalledWith(wrapper.vm.items, 'some q');
-        expect(r).toEqual(_orderBy(wrapper.vm.items, ['pinned', 'category'], ['desc', 'desc']));
+        expect(r).toEqual(_orderBy(wrapper.vm.items, ['pinned', 'theme'], ['desc', 'desc']));
       });
     });
   });
@@ -192,25 +217,25 @@ describe('QueriesList.vue', () => {
         expect(userAccountMetadataStore.getByIds).toHaveBeenLastCalledWith(['0d22f50a-e1ab-435d-a9f0-cfda502866f4', 'd9cd254a-f527-4000-95ea-285442253cda']);
         expect(wrapper.vm.items).toEqual([
           {
-            category: 'reporting.query.category.HouseholdMembers',
+            theme: 'reporting.query.theme.HouseholdMembers',
             id: '1',
             name: 'some query',
             sharedBy: 'abc',
           },
           {
-            category: 'reporting.query.category.HouseholdMembers',
+            theme: 'reporting.query.theme.HouseholdMembers',
             id: '2',
             name: 'second',
             sharedBy: 'abc',
           },
           {
-            category: 'reporting.query.category.HouseholdPrimary',
+            theme: 'reporting.query.theme.HouseholdPrimary',
             id: '3',
             name: 'mon troisième',
             sharedBy: 'def',
           },
           {
-            category: 'reporting.query.category.HouseholdPrimary',
+            theme: 'reporting.query.theme.HouseholdPrimary',
             id: '4',
             name: 'mon quatrième',
             sharedBy: 'def',
@@ -249,6 +274,28 @@ describe('QueriesList.vue', () => {
           name: routes.reporting.query.name,
           params: {
             queryId: 'abc',
+          },
+        });
+      });
+    });
+
+    describe('addQuery', () => {
+      it('shows theme picker', async () => {
+        expect(wrapper.vm.showThemePicker).toBeFalsy();
+        wrapper.vm.addQuery();
+        expect(wrapper.vm.showThemePicker).toBeTruthy();
+      });
+    });
+
+    describe('submitAddQuery', () => {
+      it('hides theme picker and navigates', async () => {
+        await wrapper.setData({ showThemePicker: true, selectedTheme: 1 });
+        wrapper.vm.submitAddQuery();
+        expect(wrapper.vm.showThemePicker).toBeFalsy();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.reporting.newQuery.name,
+          params: {
+            theme: 1,
           },
         });
       });

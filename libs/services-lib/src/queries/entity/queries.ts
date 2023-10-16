@@ -20,4 +20,12 @@ export class QueriesService extends DomainBaseService<IQuery, uuid> implements I
   async fetchByType(type: QueryType): Promise<IQuery[]> {
     return this.http.get(`${this.baseUrl}/fetch-by-type/${type}`);
   }
+
+  async create(query: IQuery) {
+    return this.http.post<Promise<IQuery>>(`${this.baseUrl}`, query);
+  }
+
+  async edit(query: IQuery) {
+    return this.http.patch<Promise<IQuery>>(`${this.baseUrl}/${query.id}`, query);
+  }
 }

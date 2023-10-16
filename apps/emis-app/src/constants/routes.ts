@@ -19,8 +19,12 @@ const routes = {
       name: 'reporting.list',
     },
     query: {
-      path: ':queryId',
+      path: 'reporting/:queryTypeName/:queryId',
       name: 'reporting.query',
+    },
+    newQuery: {
+      path: 'reporting/:queryTypeName/add/:theme',
+      name: 'reporting.newQuery',
     },
   },
   assessmentTemplates: {

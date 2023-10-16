@@ -45,6 +45,7 @@
         </template>
         {{ $t('common.help') }}
       </rc-tooltip>
+      <slot name="headerRight" />
     </v-toolbar-items>
   </v-toolbar>
 </template>

@@ -5,6 +5,7 @@ import { UserRoles } from '@libs/entities-lib/user';
 const Home = () => import('@/ui/views/pages/reporting/ReportingHome.vue');
 const ReportingMenus = () => import('@/ui/views/pages/reporting/ReportingMenus.vue');
 const QueriesList = () => import('@/ui/views/pages/reporting/QueriesList.vue');
+const QueryView = () => import('@/ui/views/pages/reporting/QueryView.vue');
 
 export const reporting: Array<RouteConfig> = [
   {
@@ -27,16 +28,21 @@ export const reporting: Array<RouteConfig> = [
         component: QueriesList,
         props: true,
         meta: { level: UserRoles.level6 },
-        children: [
-          {
-            path: Routes.reporting.query.path,
-            name: Routes.reporting.query.name,
-            component: QueriesList,
-            props: true,
-            meta: { level: UserRoles.level6 },
-          },
-        ],
       },
     ],
+  },
+  {
+    path: Routes.reporting.query.path,
+    name: Routes.reporting.query.name,
+    component: QueryView,
+    props: true,
+    meta: { level: UserRoles.level6 },
+  },
+  {
+    path: Routes.reporting.newQuery.path,
+    name: Routes.reporting.newQuery.name,
+    component: QueryView,
+    props: true,
+    meta: { level: UserRoles.level6 },
   },
 ];

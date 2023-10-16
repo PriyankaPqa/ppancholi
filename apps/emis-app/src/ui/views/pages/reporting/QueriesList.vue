@@ -23,8 +23,8 @@
         </router-link>
       </template>
 
-      <template #[`item.${customColumns.category}`]="{ item }">
-        {{ item.category }}
+      <template #[`item.${customColumns.theme}`]="{ item }">
+        {{ item.theme }}
       </template>
 
       <template #[`item.${customColumns.sharedBy}`]="{ item }">
@@ -39,6 +39,52 @@
         </v-btn>
       </template>
     </rc-data-table>
+
+    <rc-dialog
+      v-if="showThemePicker"
+      data-test="theme-dialog"
+      :title="$t('reporting.query.selectTheme')"
+      :cancel-action-label="$t('common.cancel')"
+      :submit-action-label="$t('common.buttons.create')"
+      :show.sync="showThemePicker"
+      :content-only-scrolling="true"
+      :persistent="true"
+      :max-width="750"
+      :min-height="600"
+      @cancel="showThemePicker = false;"
+      @close="showThemePicker = false;"
+      @submit="submitAddQuery()">
+      <div data-test="theme-dialog-content" class="px-2">
+        <p class="rc-body14 my-2">
+          {{ $t('reporting.query.themeTitle') }}
+        </p>
+        <div>
+          <v-text-field
+            v-model="searchTheme"
+            clearable
+            outlined
+            prepend-inner-icon="mdi-magnify"
+            data-test="search-input"
+            :placeholder="$t('common.search')" />
+        </div>
+        <v-sheet class="overflow-y-auto" max-height="330" outlined rounded>
+          <v-radio-group v-model="selectedTheme" class="pa-0 ma-0 theme-radio-group" mandatory>
+            <v-sheet v-for="(item) in availableThemes" :key="item.id" outlined>
+              <v-radio :value="item.id" class="pa-4 ma-0 theme-radio">
+                <template #label>
+                  <div class="px-4 rc-body14">
+                    <div class="fw-bold">
+                      {{ item.name }}
+                    </div>
+                    <div>{{ item.description }}</div>
+                  </div>
+                </template>
+              </v-radio>
+            </v-sheet>
+          </v-radio-group>
+        </v-sheet>
+      </div>
+    </rc-dialog>
   </div>
 </template>
 
@@ -46,7 +92,7 @@
 import _orderBy from 'lodash/orderBy';
 import { DataTableHeader } from 'vuetify';
 import sharedHelpers from '@libs/shared-lib/helpers/helpers';
-import { RcDataTable } from '@libs/component-lib/components';
+import { RcDataTable, RcDialog } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import { useUserStore } from '@/pinia/user/user';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
@@ -62,7 +108,7 @@ import routes from '@/constants/routes';
 interface IQueryMapped {
   name: string;
   id: string;
-  category: string;
+  theme: string;
   sharedBy: string;
   pinned?: boolean;
 }
@@ -72,6 +118,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   components: {
     RcDataTable,
+    RcDialog,
   },
 
   props: {
@@ -92,6 +139,9 @@ export default mixins(TablePaginationSearchMixin).extend({
       },
       items: [] as IQueryMapped[],
       combinedUserAccountStore: new CombinedStoreFactory<IUserAccountEntity, IUserAccountMetadata, IdParams>(useUserAccountStore(), useUserAccountMetadataStore()),
+      showThemePicker: false,
+      searchTheme: '',
+      selectedTheme: null as ReportingTopic,
     };
   },
 
@@ -122,7 +172,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     customColumns(): Record<string, string> {
       return {
         name: 'name',
-        category: 'category',
+        theme: 'theme',
         sharedBy: 'sharedBy',
         delete: 'delete',
       };
@@ -137,9 +187,9 @@ export default mixins(TablePaginationSearchMixin).extend({
           width: '60%',
         },
         {
-          text: this.$t('reporting.query.category') as string,
+          text: this.$t('reporting.query.theme') as string,
           sortable: true,
-          value: this.customColumns.category,
+          value: this.customColumns.theme,
         },
       ];
 
@@ -172,6 +222,23 @@ export default mixins(TablePaginationSearchMixin).extend({
         },
       };
     },
+
+    availableThemes(): { name: string, description: string, id: ReportingTopic }[] {
+      const themes = sharedHelpers.filterCollectionByValue([
+        {
+          id: ReportingTopic.HouseholdMembers,
+          name: this.$t('reporting.query.theme.HouseholdMembers'),
+          description: this.$t('reporting.query.theme.HouseholdMembers.description'),
+        },
+        {
+          id: ReportingTopic.HouseholdPrimary,
+          name: this.$t('reporting.query.theme.HouseholdPrimary'),
+          description: this.$t('reporting.query.theme.HouseholdPrimary.description'),
+        },
+      ], this.searchTheme);
+
+      return _orderBy(themes, ['name'], ['asc']);
+    },
   },
 
   async created() {
@@ -199,7 +266,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
       this.items = res.map((q) => ({
         id: q.id,
-        category: this.$t(`reporting.query.category.${ReportingTopic[q.topic]}`) as string,
+        theme: this.$t(`reporting.query.theme.${ReportingTopic[q.topic]}`) as string,
         name: q.name,
         sharedBy: users.find((u) => u.id === q.createdBy)?.displayName,
       }));
@@ -210,9 +277,18 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     addQuery() {
-      // this.$router.push({
-      //   name: routes.caseFile.documents.add.name,
-      // });
+      this.showThemePicker = true;
+    },
+
+    submitAddQuery() {
+      this.showThemePicker = false;
+
+      this.$router.push({
+        name: routes.reporting.newQuery.name,
+        params: {
+          theme: this.selectedTheme,
+        },
+      });
     },
 
     async deleteQuery(item: IQueryMapped) {
@@ -238,3 +314,13 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 });
 </script>
+<style scoped lang="scss">
+  .theme-radio {
+    flex-direction: row-reverse;
+  }
+  .theme-radio-group {
+    ::v-deep .v-input__slot {
+      margin-bottom: 0;
+    }
+  }
+</style>
